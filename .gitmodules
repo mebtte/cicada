@@ -1,9 +1,0 @@
-[submodule "modules/pwa"]
-path = modules/pwa
-url = https://github.com/mebtte/cicada_pwa.git
-[submodule "modules/electron"]
-path = modules/electron
-url = https://github.com/mebtte/cicada_electron.git
-[submodule "modules/expo"]
-path = modules/expo
-url = https://github.com/mebtte/cicada_expo.git
