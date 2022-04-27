@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "lib": ["ES2015", "ESNext"],
     "baseUrl": ".",
     "paths": {
-      "#": ["packages/shared"]
+      "#/*": ["pkgs/shared/*"]
     }
   },
-  "exclude": []
+  "exclude": ["node_modules"]
 }
