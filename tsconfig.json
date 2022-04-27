@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "lib": ["ES2015", "ESNext"],
+    "sourceMap": true,
+    "lib": ["ESNext"],
     "baseUrl": ".",
     "paths": {
       "#/*": ["pkgs/shared/*"]
     }
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "**/node_modules/*"]
 }

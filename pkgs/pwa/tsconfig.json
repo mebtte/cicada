@@ -3,6 +3,11 @@
   "compilerOptions": {
     "lib": ["DOM"],
     "jsx": "preserve",
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["../../global.d.ts", "src/**/*"]
 }

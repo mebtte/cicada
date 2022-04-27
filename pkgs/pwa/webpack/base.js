@@ -13,16 +13,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: [
-          {
-            loader: 'ts-loader',
-          },
-        ],
-        exclude: [/node_modules/],
-      },
-      {
-        test: /\.js$/,
+        test: /\.(js|tsx?)$/,
         use: ['babel-loader'],
         exclude: [/node_modules/],
       },
@@ -39,17 +30,15 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
-      '@': path.resolve(__dirname, '..', 'src'),
+      '@': path.resolve(__dirname, '../src'),
+      '#': path.resolve(__dirname, '../../shared'),
     },
     symlinks: false,
   },
   plugins: [
     new webpack.DefinePlugin({
       __CONFIG__: JSON.stringify({
-        version: cp
-          .execSync('git tag --sort=-taggerdate | head -n 1')
-          .toString()
-          .trim(),
+        version: cp.execSync('git tag --sort=-taggerdate | head -n 1').toString().trim(),
         buildTime: new Date(),
         emptyImageList: fs
           .readdirSync(`${STATIC_DIR}/empty_image`)

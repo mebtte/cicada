@@ -29,6 +29,7 @@ async function initialize() {
   }
 
   if (getToken()) {
+    // @ts-expect-error
     window.requestIdleCallback(() => store.dispatch(reloadUser()));
   }
 }
