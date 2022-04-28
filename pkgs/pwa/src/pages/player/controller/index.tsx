@@ -46,7 +46,7 @@ const Style = styled.div`
 `;
 const openLyric = () => eventemitter.emit(EventType.TOGGEL_LYRIC);
 
-const Controller = () => {
+function Controller() {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   const queueMusic = playqueue[currentPlayqueuePosition];
 
@@ -55,7 +55,7 @@ const Controller = () => {
       <div className="right">
         <Progress />
         <div className="right-bottom">
-          <MusicInfo music={queueMusic ? queueMusic.music : null} />
+          <MusicInfo music={queueMusic ? queueMusic.music : undefined} />
           <Action music={queueMusic ? queueMusic.music : null} />
         </div>
       </div>
@@ -68,6 +68,6 @@ const Controller = () => {
       />
     </Style>
   );
-};
+}
 
 export default Controller;

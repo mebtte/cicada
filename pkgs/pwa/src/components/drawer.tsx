@@ -44,12 +44,12 @@ const Drawer = ({
   maskProps?: HTMLAttributes<HTMLDivElement>;
   bodyProps?: HTMLAttributes<HTMLDivElement>;
 }>) => {
-  const bodyRef = useRef<HTMLDivElement>();
+  const bodyRef = useRef<HTMLDivElement>(null);
   const onRequestClose = (event) => {
     // eslint-disable-next-line no-unused-expressions
     maskProps.onClick && maskProps.onClick(event);
 
-    if (onClose && !bodyRef.current.contains(event.target)) {
+    if (onClose && !bodyRef.current!.contains(event.target)) {
       onClose();
     }
   };

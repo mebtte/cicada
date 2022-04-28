@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import day from '@/utils/day';
 import getRandomCover from '@/utils/get_random_cover';
 import { USER } from '../constants/storage_key';
@@ -52,10 +53,11 @@ export const clearUser = () => (dispatch) => {
 
 const token = getToken();
 let user: User | null = null;
-if (token) {
+const userString = localStorage.getItem(USER);
+if (token && userString) {
   try {
-    user = JSON.parse(localStorage.getItem(USER));
-    user.joinTime = new Date(user.joinTime);
+    user = JSON.parse(userString);
+    user!.joinTime = new Date(user!.joinTime);
   } catch (error) {
     logger.error(error, {
       description: '解析本地用户信息失败',
@@ -63,6 +65,7 @@ if (token) {
   }
 }
 
+// eslint-disable-next-line default-param-last
 export default (state: User | null = user, { type, payload }): User | null => {
   switch (type) {
     case TYPE.SET_USER:

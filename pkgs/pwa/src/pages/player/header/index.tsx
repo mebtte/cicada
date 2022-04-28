@@ -27,10 +27,10 @@ const actionStyle = {
   WebkitAppRegion: 'no-drag',
 };
 
-const Header = () => {
+function Header() {
   const { pathname } = useLocation();
 
-  let title = null;
+  let title = '';
   // eslint-disable-next-line default-case
   switch (pathname) {
     case PLAYER_PATH.SEARCH: {
@@ -64,6 +64,6 @@ const Header = () => {
       ) : null}
     </Style>
   );
-};
+}
 
 export default React.memo(Header);

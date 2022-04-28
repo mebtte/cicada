@@ -98,7 +98,7 @@ function Select<Item>({
   value: Item | null;
   onChange: (item: Item) => void;
   array: Item[];
-  itemRenderer: (item: Item | null, customInput: string) => string;
+  itemRenderer: (item: Item | null, customInput: string) => string | null;
   customInputDisabled?: boolean;
   onInputChange?: (value: string) => void;
   loading?: boolean;
@@ -131,7 +131,7 @@ function Select<Item>({
             arrayVisible
               ? customInput
               : value !== null
-              ? itemRenderer(value, '')
+              ? itemRenderer(value, '') || ''
               : ''
           }
           onChange={onCustomInputChange}

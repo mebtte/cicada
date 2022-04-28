@@ -1,8 +1,12 @@
 {
   "extends": "../../tsconfig.json",
+
   "compilerOptions": {
+    "allowJs": true,
+    "module": "esnext",
+    "target": "esnext",
     "lib": ["DOM"],
-    "jsx": "preserve",
+    "jsx": "react",
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {

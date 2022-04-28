@@ -4,9 +4,9 @@ import eventemitter, { EventType } from '../eventemitter';
 import { Music as MusicType } from '../constants';
 import MusicbillListDrawer from './musicbill_list_drawer';
 
-const Wrapper = () => {
+function Wrapper() {
   const [open, setOpen] = useState(false);
-  const [music, setMusic] = useState<MusicType>(null);
+  const [music, setMusic] = useState<MusicType | null>(null);
   const onClose = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
@@ -29,6 +29,6 @@ const Wrapper = () => {
     return null;
   }
   return <MusicbillListDrawer open={open} onClose={onClose} music={music} />;
-};
+}
 
 export default React.memo(Wrapper);

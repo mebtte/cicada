@@ -1,8 +1,12 @@
 const keyboardHandlerWrapper =
   <T extends (...params: any[]) => void>(handler: T) =>
   (...params: Parameters<T>) => {
-    const { tagName } = document.activeElement;
-    if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
+    const { activeElement } = document;
+    if (
+      !activeElement ||
+      activeElement.tagName === 'INPUT' ||
+      activeElement.tagName === 'TEXTAREA'
+    ) {
       return;
     }
     return void handler(...params);

@@ -53,8 +53,8 @@ const Original = styled.div`
   }
 `;
 
-const EditMusicResourceDialog = () => {
-  const [music, setMusic] = useState<Music>(null);
+function EditMusicResourceDialog() {
+  const [music, setMusic] = useState<Music | null>(null);
   const [type, setType] = useState(EditMusicResourceType.SQ);
   const [original, setOriginal] = useState('');
   const { label, mimes, maxSize } = TYPE_MAP[type];
@@ -182,6 +182,6 @@ const EditMusicResourceDialog = () => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default EditMusicResourceDialog;

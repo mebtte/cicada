@@ -23,7 +23,7 @@ const useHistory = () => {
     };
     return history.push(
       `${pathname}?${Object.keys(targetQuery)
-        .map((key) => `${key}=${encodeURIComponent(targetQuery[key])}`)
+        .map((key) => `${key}=${encodeURIComponent(targetQuery[key] || '')}`)
         .join('&')}`,
     );
   };

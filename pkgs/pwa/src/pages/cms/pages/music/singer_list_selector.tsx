@@ -48,7 +48,7 @@ const Style = styled.div`
 const itemRenderer = (singer: Figure | null) =>
   singer ? `${singer.name}${singer.alias ? `(${singer.alias})` : ''}` : null;
 
-const SingerListSelector = ({
+function SingerListSelector({
   singerList,
   onSingerSelect,
   onSingerRemove,
@@ -59,7 +59,7 @@ const SingerListSelector = ({
   onSingerSelect: (singer: Figure) => void;
   onSingerRemove: (singer: Figure) => void;
   disabled: boolean;
-}) => {
+}) {
   const history = useHistory();
 
   const [loading, setLoading] = useState(0);
@@ -129,6 +129,6 @@ const SingerListSelector = ({
       </Style>
     </Label>
   );
-};
+}
 
 export default SingerListSelector;

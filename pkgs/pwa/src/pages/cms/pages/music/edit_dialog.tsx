@@ -35,7 +35,7 @@ const musicTypeItemRenderer = (t: MusicType | null) => {
   return MUSIC_TYPE_MAP_LABEL[t];
 };
 
-const EditMusicDialog = () => {
+function EditMusicDialog() {
   const [music, setMusic] = useState<Music | null>(null);
 
   const [name, setName] = useState('');
@@ -73,6 +73,10 @@ const EditMusicDialog = () => {
 
   const [loading, setLoading] = useState(false);
   const onUpdate = async () => {
+    if (!music) {
+      return;
+    }
+
     const trimName = name.trim();
     if (!trimName) {
       return toast.error('请输入名字');
@@ -204,6 +208,6 @@ const EditMusicDialog = () => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default React.memo(EditMusicDialog);

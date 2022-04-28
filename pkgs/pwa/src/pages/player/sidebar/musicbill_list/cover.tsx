@@ -29,8 +29,8 @@ const Style = styled.div<{ publiz: boolean }>`
   `}
 `;
 
-const Cover = ({ src, publiz }: { src: string; publiz: boolean }) => {
-  const abortRef = useRef<() => void | null>(null);
+function Cover({ src, publiz }: { src: string; publiz: boolean }) {
+  const abortRef = useRef<(() => void) | null>(null);
 
   const [currentSrc, setCurrentSrc] = useState('');
   const onEnter = () => {
@@ -73,6 +73,6 @@ const Cover = ({ src, publiz }: { src: string; publiz: boolean }) => {
       </Style>
     </Waypoint>
   );
-};
+}
 
 export default Cover;

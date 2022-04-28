@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import React from 'react';
 import throttle from 'lodash/throttle';
 
@@ -44,7 +45,7 @@ class Audio extends React.PureComponent<Props, {}> {
   }
 
   componentDidMount() {
-    this.audioRef.current.volume = this.props.volume;
+    this.audioRef.current!.volume = this.props.volume;
 
     eventemitter.on(EventType.ACTION_SET_TIME, this.onActionSetTime);
     eventemitter.on(EventType.ACTION_TOGGLE_PLAY, this.onActionTogglePlay);
@@ -67,13 +68,13 @@ class Audio extends React.PureComponent<Props, {}> {
     const { volume, queueMusic } = this.props;
 
     if (prevProps.volume !== volume) {
-      this.audioRef.current.volume = volume;
+      this.audioRef.current!.volume = volume;
     }
 
     if (prevProps.queueMusic.pid !== queueMusic.pid) {
-      this.audioRef.current.currentTime = 0;
-      this.audioRef.current
-        .play()
+      this.audioRef.current!.currentTime = 0;
+      this.audioRef
+        .current!.play()
         .catch((error) => logger.error(error, { description: '音频播放失败' }));
       eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: 0,
@@ -96,9 +97,9 @@ class Audio extends React.PureComponent<Props, {}> {
   onActionSetTime = ({ second }: { second: number }) => {
     onWaiting();
     return window.setTimeout(() => {
-      this.audioRef.current.currentTime = second;
-      this.audioRef.current
-        .play()
+      this.audioRef.current!.currentTime = second;
+      this.audioRef
+        .current!.play()
         .catch((error) => logger.error(error, { description: '音频播放失败' }));
       eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: second * 1000,
@@ -116,34 +117,34 @@ class Audio extends React.PureComponent<Props, {}> {
         break;
       }
       case 'ArrowLeft': {
-        this.audioRef.current.currentTime -= JUMP_STEP;
+        this.audioRef.current!.currentTime -= JUMP_STEP;
         break;
       }
       case 'ArrowRight': {
-        this.audioRef.current.currentTime += JUMP_STEP;
+        this.audioRef.current!.currentTime += JUMP_STEP;
         break;
       }
     }
   });
 
   onActionTogglePlay = () =>
-    this.audioRef.current.paused
-      ? this.audioRef.current
-          .play()
+    this.audioRef.current!.paused
+      ? this.audioRef
+          .current!.play()
           .catch((error) =>
             logger.error(error, { description: '音频播放失败' }),
           )
-      : this.audioRef.current.pause();
+      : this.audioRef.current!.pause();
 
   onActionPlay = () =>
-    this.audioRef.current
-      .play()
+    this.audioRef
+      .current!.play()
       .catch((error) => logger.error(error, { description: '音频播放失败' }));
 
-  onActionPause = () => this.audioRef.current.pause();
+  onActionPause = () => this.audioRef.current!.pause();
 
   onTimeUpdate = throttle(() => {
-    const { currentTime } = this.audioRef.current;
+    const { currentTime } = this.audioRef.current!;
     return eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
       currentMillisecond: currentTime * 1000,
     });
@@ -167,7 +168,7 @@ class Audio extends React.PureComponent<Props, {}> {
   };
 
   getPlayedSeconeds = () => {
-    const { played } = this.audioRef.current;
+    const { played } = this.audioRef.current!;
     let playedSeconeds = 0;
     for (let i = 0, { length } = played; i < length; i += 1) {
       const start = played.start(i);
@@ -178,7 +179,7 @@ class Audio extends React.PureComponent<Props, {}> {
   };
 
   uploadPlayRecord = (music: Music) => {
-    const { duration } = this.audioRef.current;
+    const { duration } = this.audioRef.current!;
     const playedSeconds = this.getPlayedSeconeds();
     return createMusicPlayRecord({
       musicId: music.id,

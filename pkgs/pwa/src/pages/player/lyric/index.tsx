@@ -17,7 +17,7 @@ const Style = styled(animated.div)`
   height: 100%;
 `;
 
-const Lyric = ({
+function Lyric({
   music,
   onClose,
   style,
@@ -29,22 +29,25 @@ const Lyric = ({
   style: unknown;
   turntable: boolean;
   toggleTurntable: () => void;
-}) => (
-  <Style style={style}>
-    <Background cover={music.cover} />
-    <Content
-      music={music}
-      turntable={turntable}
-      toggleTurntable={toggleTurntable}
-    />
-    <Action
-      music={music}
-      onClose={onClose}
-      turntable={turntable}
-      toggleTurntable={toggleTurntable}
-    />
-  </Style>
-);
+}) {
+  return (
+    // @ts-expect-error
+    <Style style={style}>
+      <Background cover={music.cover} />
+      <Content
+        music={music}
+        turntable={turntable}
+        toggleTurntable={toggleTurntable}
+      />
+      <Action
+        music={music}
+        onClose={onClose}
+        turntable={turntable}
+        toggleTurntable={toggleTurntable}
+      />
+    </Style>
+  );
+}
 
 const Wrapper = ({ music }: { music: Music }) => {
   const { open, onClose } = useOpen();

@@ -29,7 +29,7 @@ function generateMethod(method: METHOD) {
       defer = 1000,
       headers,
     }: {
-      params?: { [key: string]: string | number };
+      params?: { [key: string]: string | number | undefined };
       data?: any;
       timeout?: number;
       withToken?: boolean;

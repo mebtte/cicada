@@ -6,6 +6,7 @@ module.exports = {
   },
   globals: {
     ValueOf: 'readonly',
+    AsyncReturnType: 'readonly',
   },
   extends: ['plugin:react/recommended', 'airbnb', 'prettier'],
   parser: '@typescript-eslint/parser',
@@ -34,6 +35,8 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'error',
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': 'error',
+    'no-redeclare': 'off',
+    '@typescript-eslint/no-redeclare': 'error',
 
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'import/extensions': [
@@ -44,7 +47,15 @@ module.exports = {
     ],
 
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
+    'react/require-default-props': 'off',
+    'react/jsx-props-no-spreading': 'off',
 
     'no-void': 'off',
+    'no-promise-executor-return': 'off',
+    'consistent-return': 'off',
+
+    // a11y
+    'jsx-a11y/no-static-element-interactions': 'off',
+    'jsx-a11y/click-events-have-key-events': 'off',
   },
 };

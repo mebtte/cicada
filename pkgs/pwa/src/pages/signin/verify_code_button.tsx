@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 import { EMAIL } from '@/constants/regexp';
 import toast from '@/platform/toast';
@@ -13,8 +13,7 @@ const STYLE = {
   marginLeft: 10,
 };
 
-const VerifyCodeButton = ({ email }: { email: string }) => {
-  const timer = useRef<ReturnType<typeof setTimeout>>();
+function VerifyCodeButton({ email }: { email: string }) {
   const [timeString, setTimeString] = useState('');
   const [endTime, setEndTime] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -39,16 +38,16 @@ const VerifyCodeButton = ({ email }: { email: string }) => {
 
   useEffect(() => {
     if (endTime) {
-      timer.current = setInterval(() => {
+      const timer = window.setInterval(() => {
         const now = Date.now();
         if (now > endTime) {
           setTimeString('');
-          clearInterval(timer.current);
+          clearInterval(timer);
         } else {
           setTimeString(formatSecond((endTime - now) / 1000));
         }
       }, 900);
-      return () => clearInterval(timer.current);
+      return () => clearInterval(timer);
     }
   }, [endTime]);
 
@@ -63,6 +62,6 @@ const VerifyCodeButton = ({ email }: { email: string }) => {
       size={32}
     />
   );
-};
+}
 
 export default VerifyCodeButton;

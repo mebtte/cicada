@@ -1,7 +1,15 @@
 {
   "compilerOptions": {
+    "strictNullChecks": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "lib": ["ESNext"],
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+
     "baseUrl": ".",
     "paths": {
       "#/*": ["pkgs/shared/*"]

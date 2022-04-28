@@ -18,7 +18,7 @@ const WidthResizeDetector = React.forwardRef<HTMLDivElement, Props>(
     const [visible, setVisible] = useState(false);
 
     const [width, setWidth] = useState(0);
-    const innerRef = useRef<HTMLDivElement>();
+    const innerRef = useRef<HTMLDivElement>(null);
 
     useLayoutEffect(() => {
       const resizeObserver = new ResizeObserver(
@@ -30,10 +30,10 @@ const WidthResizeDetector = React.forwardRef<HTMLDivElement, Props>(
           setWidth(w);
         }, 300),
       );
-      resizeObserver.observe(innerRef.current);
+      resizeObserver.observe(innerRef.current!);
       return () => resizeObserver.disconnect();
     }, []);
-    useImperativeHandle(ref, () => innerRef.current);
+    useImperativeHandle(ref, () => innerRef.current!);
 
     return (
       <div

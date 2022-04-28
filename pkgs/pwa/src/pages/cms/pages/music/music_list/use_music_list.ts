@@ -42,7 +42,7 @@ export default ({
           hq: m.hq,
           ac: m.ac,
           mvLink: m.mv_link,
-          forkFrom: m.fork_from,
+          forkFrom: m.fork_from || [],
           recommendable: !!m.recommendable,
         })),
       );

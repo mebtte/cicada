@@ -43,7 +43,7 @@ const StyledInput = styled(Input)`
  * 页码
  * @author mebtte<hi@mebtte.com>
  */
-const Pagination = ({
+function Pagination({
   currentPage,
   pageCount,
   onPageChange,
@@ -56,7 +56,7 @@ const Pagination = ({
   /** 切换页面回调 */
   onPageChange?: (page: number) => void;
   [key: string]: any;
-}) => {
+}) {
   const [customPage, setCustomPage] = useState('');
   const onCustomPageChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setCustomPage(event.target.value);
@@ -68,7 +68,8 @@ const Pagination = ({
       targetPage = pageCount;
     }
     setCustomPage(targetPage.toString());
-    onPageChange(targetPage);
+    // eslint-disable-next-line no-unused-expressions
+    onPageChange && onPageChange(targetPage);
   };
   const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === 'Enter') {
@@ -83,7 +84,7 @@ const Pagination = ({
           className="page"
           label="1"
           size={ACTION_SIZE}
-          onClick={() => onPageChange(1)}
+          onClick={onPageChange ? () => onPageChange(1) : undefined}
         />
       )}
       {currentPage >= 4 ? (
@@ -92,7 +93,7 @@ const Pagination = ({
             className="page"
             label="2"
             size={ACTION_SIZE}
-            onClick={() => onPageChange(2)}
+            onClick={onPageChange ? () => onPageChange(2) : undefined}
           />
         ) : (
           <div className="ellipsis page">···</div>
@@ -103,7 +104,9 @@ const Pagination = ({
           className="page"
           label={currentPage - 1}
           size={ACTION_SIZE}
-          onClick={() => onPageChange(currentPage - 1)}
+          onClick={
+            onPageChange ? () => onPageChange(currentPage - 1) : undefined
+          }
         />
       )}
       <Button
@@ -117,7 +120,9 @@ const Pagination = ({
           className="page"
           label={currentPage + 1}
           size={ACTION_SIZE}
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={
+            onPageChange ? () => onPageChange(currentPage + 1) : undefined
+          }
         />
       )}
       {pageCount - currentPage >= 3 ? (
@@ -126,7 +131,9 @@ const Pagination = ({
             className="page"
             label={pageCount - 1}
             size={ACTION_SIZE}
-            onClick={() => onPageChange(pageCount - 1)}
+            onClick={
+              onPageChange ? () => onPageChange(pageCount - 1) : undefined
+            }
           />
         ) : (
           <div className="ellipsis page">···</div>
@@ -137,7 +144,7 @@ const Pagination = ({
           className="page"
           label={pageCount}
           size={ACTION_SIZE}
-          onClick={() => onPageChange(pageCount)}
+          onClick={onPageChange ? () => onPageChange(pageCount) : undefined}
         />
       )}
       {pageCount > 3 && (
@@ -160,6 +167,6 @@ const Pagination = ({
       )}
     </Style>
   );
-};
+}
 
 export default Pagination;

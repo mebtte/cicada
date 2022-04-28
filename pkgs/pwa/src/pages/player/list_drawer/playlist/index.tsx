@@ -39,18 +39,18 @@ const Style = styled(Container)`
   }
 `;
 
-const Wrapper = ({
+function Wrapper({
   playlist,
   onClear,
 }: {
   playlist: MusicWithIndex[];
   onClear: Function;
-}) => {
+}) {
   const [loading, setLoading] = useState(false);
   const [keyword, setKeyword] = useState('');
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof window.setTimeout>>();
   const onKeywordChange = useCallback((event) => {
-    clearTimeout(timerRef.current);
+    clearTimeout(timerRef.current!);
     const { value } = event.target;
     setLoading(true);
     timerRef.current = setTimeout(() => {
@@ -60,9 +60,9 @@ const Wrapper = ({
   }, []);
 
   // auto focus
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    const timer = setTimeout(() => inputRef.current.focus(), 1000);
+    const timer = setTimeout(() => inputRef.current?.focus(), 1000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -96,6 +96,6 @@ const Wrapper = ({
       )}
     </Style>
   );
-};
+}
 
 export default Wrapper;

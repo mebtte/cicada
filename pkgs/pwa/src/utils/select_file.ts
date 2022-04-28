@@ -9,7 +9,7 @@ export default ({
   input.type = 'file';
   input.accept = acceptTypes.join(',') || '*';
   input.onchange = () => {
-    const [file] = Array.from(input.files);
+    const [file] = Array.from(input.files || []);
     if (!file) {
       return;
     }

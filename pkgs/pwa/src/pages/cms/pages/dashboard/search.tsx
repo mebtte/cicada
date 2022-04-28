@@ -22,15 +22,17 @@ const Style = styled.div`
   }
 `;
 
-const Search = () => {
+function Search() {
   const history = useHistory();
 
-  const musicRef = useRef<HTMLInputElement>();
+  const musicRef = useRef<HTMLInputElement>(null);
   const onMusicSearch = () =>
     history.push({
       pathname: CMS_PATH.MUSIC,
       query: {
-        [MusicQuery.SEARCH_VALUE]: musicRef.current.value,
+        [MusicQuery.SEARCH_VALUE]: musicRef.current
+          ? musicRef.current.value
+          : '',
       },
     });
   const onMusicKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -39,12 +41,14 @@ const Search = () => {
     }
   };
 
-  const figureRef = useRef<HTMLInputElement>();
+  const figureRef = useRef<HTMLInputElement>(null);
   const onFigureSearch = () =>
     history.push({
       pathname: CMS_PATH.FIGURE,
       query: {
-        [FigureQuery.SEARCH_VALUE]: figureRef.current.value,
+        [FigureQuery.SEARCH_VALUE]: figureRef.current
+          ? figureRef.current.value
+          : '',
       },
     });
   const onFigureKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -53,12 +57,12 @@ const Search = () => {
     }
   };
 
-  const userRef = useRef<HTMLInputElement>();
+  const userRef = useRef<HTMLInputElement>(null);
   const onUserSearch = () =>
     history.push({
       pathname: CMS_PATH.USER,
       query: {
-        [UserQuery.SEARCH_VALUE]: userRef.current.value,
+        [UserQuery.SEARCH_VALUE]: userRef.current ? userRef.current.value : '',
       },
     });
   const onUserKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -68,7 +72,7 @@ const Search = () => {
   };
 
   useLayoutEffect(() => {
-    musicRef.current.focus();
+    musicRef.current?.focus();
   }, []);
 
   return (
@@ -84,6 +88,6 @@ const Search = () => {
       </Label>
     </Style>
   );
-};
+}
 
 export default Search;

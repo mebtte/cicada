@@ -22,7 +22,7 @@ const Item = styled.div`
   }
 `;
 
-const SkeletonWrapper = ({ style }: { style: unknown }) => {
+function SkeletonWrapper({ style }: { style: unknown }) {
   const array = useMemo(
     () =>
       new Array(getRandomInteger(3, 10)).fill(0).map((_, index) => ({
@@ -32,6 +32,7 @@ const SkeletonWrapper = ({ style }: { style: unknown }) => {
     [],
   );
   return (
+    // @ts-expect-error
     <Style style={style}>
       {array.map(({ key, nameWidth }) => (
         <Item key={key}>
@@ -43,6 +44,6 @@ const SkeletonWrapper = ({ style }: { style: unknown }) => {
       ))}
     </Style>
   );
-};
+}
 
 export default SkeletonWrapper;

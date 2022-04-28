@@ -22,11 +22,11 @@ const Style = styled.div<{
   `}
 `;
 
-const CheckboxWithLabel = ({
+function CheckboxWithLabel({
   label,
   checked,
   onChange,
-  disabled,
+  disabled = false,
   onClick,
   ...props
 }: {
@@ -36,7 +36,7 @@ const CheckboxWithLabel = ({
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   disabled?: boolean;
   [key: string]: any;
-}) => {
+}) {
   const onClickWrapper: React.MouseEventHandler<HTMLDivElement> = (event) => {
     if (disabled) {
       return;
@@ -50,6 +50,6 @@ const CheckboxWithLabel = ({
       <div className="label">{label}</div>
     </Style>
   );
-};
+}
 
 export default React.memo(CheckboxWithLabel);

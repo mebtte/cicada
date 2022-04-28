@@ -19,8 +19,8 @@ const inputStyle = {
   width: '100%',
 };
 
-const EditFigureDialog = () => {
-  const [figure, setFigure] = useState<Figure>(null);
+function EditFigureDialog() {
+  const [figure, setFigure] = useState<Figure | null>(null);
   const onClose = () => setFigure(null);
 
   const [name, setName] = useState('');
@@ -33,6 +33,10 @@ const EditFigureDialog = () => {
 
   const [loading, setLoading] = useState(false);
   const onUpdate = async () => {
+    if (!figure) {
+      return;
+    }
+
     const trimName = name.trim();
     if (!trimName) {
       return toast.error('请输入角色名字');
@@ -120,6 +124,6 @@ const EditFigureDialog = () => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default React.memo(EditFigureDialog);

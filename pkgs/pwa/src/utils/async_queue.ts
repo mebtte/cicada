@@ -76,6 +76,7 @@ class AsyncQueue {
     }).finally(() => {
       finished = true;
     });
+    // @ts-expect-error
     return { promise, finished: () => finished, abort };
   }
 

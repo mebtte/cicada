@@ -14,7 +14,7 @@ const Style = styled.div`
   overflow: visible;
 `;
 
-const Wrapper = ({ music }: { music?: MusicType }) => {
+function Wrapper({ music }: { music?: MusicType }) {
   const transitions = useTransition(music, {
     from: { opacity: 0, transform: 'translate(0, -150%)' },
     enter: { opacity: 1, transform: 'translate(0, -50%)' },
@@ -27,6 +27,6 @@ const Wrapper = ({ music }: { music?: MusicType }) => {
       )}
     </Style>
   );
-};
+}
 
 export default Wrapper;

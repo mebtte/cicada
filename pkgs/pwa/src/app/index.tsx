@@ -6,10 +6,12 @@ import UncaughtError from './uncaught_error';
 
 const fallback = (error: Error) => <UncaughtError error={error} />;
 
-const Wrapper = () => (
-  <ErrorBoundary fallback={fallback}>
-    <App />
-  </ErrorBoundary>
-);
+function Wrapper() {
+  return (
+    <ErrorBoundary fallback={fallback}>
+      <App />
+    </ErrorBoundary>
+  );
+}
 
 export default Wrapper;

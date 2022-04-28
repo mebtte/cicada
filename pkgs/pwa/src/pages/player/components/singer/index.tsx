@@ -28,9 +28,12 @@ const Style = styled.span`
   }
 `;
 
-const Singer = ({ singer }: { singer?: Figure }) => {
+function Singer({ singer }: { singer?: Figure }) {
   const onViewSinger = useCallback(
-    () => eventemitter.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id }),
+    () =>
+      singer
+        ? eventemitter.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })
+        : null,
     [singer],
   );
   return (
@@ -44,6 +47,6 @@ const Singer = ({ singer }: { singer?: Figure }) => {
       )}
     </Style>
   );
-};
+}
 
 export default React.memo(Singer);

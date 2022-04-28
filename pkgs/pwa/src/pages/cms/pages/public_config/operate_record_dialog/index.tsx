@@ -39,13 +39,13 @@ const TableBox = styled.div<{ isLoading: boolean }>`
   `}
 `;
 
-const OperateRecordDialog = ({
+function OperateRecordDialog({
   open,
   key,
 }: {
   open: boolean;
   key?: PublicConfigKey;
-}) => {
+}) {
   const history = useHistory();
   const onClose = () =>
     history.push({
@@ -57,7 +57,7 @@ const OperateRecordDialog = ({
   const { error, retry, loading, recordList, page, onPageChange, total } =
     useOperateRecordList({
       open,
-      key,
+      key: key!,
     });
 
   let content: ReactNode;
@@ -88,6 +88,6 @@ const OperateRecordDialog = ({
       <Content>{content}</Content>
     </Dialog>
   );
-};
+}
 
 export default React.memo(OperateRecordDialog);

@@ -116,7 +116,7 @@ const OperationBox = styled.div`
   gap: 3px;
 `;
 
-const MusicList = ({
+function MusicList({
   loading,
   musicList,
   page,
@@ -128,9 +128,9 @@ const MusicList = ({
   page: number;
   searchKey: SearchKey;
   searchValue: string;
-}) => {
+}) {
   const history = useHistory();
-  const contentRef = useRef<HTMLDivElement>();
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const rowRenderer = (music: Music) => [
     <Small>{music.id}</Small>,
@@ -287,6 +287,6 @@ const MusicList = ({
       )}
     </Style>
   );
-};
+}
 
 export default MusicList;

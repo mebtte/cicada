@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 
 import { RequestStatus } from '@/constants';
@@ -19,13 +19,13 @@ const Cover = styled(Avatar)<{ publiz: boolean }>`
     border: ${publiz ? '3px solid var(--color-primary)' : 'none'};
   `}
 `;
-const Musicbill = ({
+function Musicbill({
   music,
   musicbill,
 }: {
   music?: MusicType;
   musicbill: MusicbillType;
-}) => {
+}) {
   const onToggleMusicbill = useCallback(() => {
     const { status } = musicbill;
     if (status === RequestStatus.LOADING) {
@@ -36,7 +36,9 @@ const Musicbill = ({
         id: musicbill.id,
       });
     }
-    const checked = !!musicbill.musicList.find((m) => m.music.id === music.id);
+    const checked = !!(
+      music && musicbill.musicList.find((m) => m.music.id === music.id)
+    );
     if (checked) {
       return playerEventemitter.emit(
         PlayerEventType.REMOVE_MUSIC_FROM_MUSICBILL,
@@ -50,9 +52,9 @@ const Musicbill = ({
   }, [musicbill, music]);
   const { cover, name, musicList, status } = musicbill;
 
-  let icon = null;
+  let icon: ReactNode = null;
   if (status === RequestStatus.SUCCESS) {
-    const checked = music && !!musicList.find((m) => m.music.id === music.id);
+    const checked = !!(music && musicList.find((m) => m.music.id === music.id));
     icon = <Checkbox checked={checked} size={ICON_SIZE} />;
   } else if (status === RequestStatus.LOADING) {
     icon = <CircularLoader size={ICON_SIZE} style={ICON_STYLE} />;
@@ -68,6 +70,6 @@ const Musicbill = ({
       <div className="name">{name}</div>
     </MusicbillContainer>
   );
-};
+}
 
 export default Musicbill;

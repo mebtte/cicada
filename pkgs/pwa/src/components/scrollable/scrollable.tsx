@@ -101,7 +101,7 @@ const Scollable = React.forwardRef<HTMLDivElement, Props>(
     }: Props,
     ref,
   ) => {
-    const innerRef = useRef<HTMLDivElement>();
+    const innerRef = useRef<HTMLDivElement>(null);
 
     const [leftVisible, setLeftVisible] = useState(false);
     const [rightVisible, setRightVisible] = useState(false);
@@ -115,7 +115,7 @@ const Scollable = React.forwardRef<HTMLDivElement, Props>(
         clientWidth,
         scrollHeight,
         scrollWidth,
-      } = innerRef.current;
+      } = innerRef.current!;
       setLeftVisible(scrollLeft !== 0);
       setRightVisible(scrollLeft + clientWidth < scrollWidth);
       setTopVisible(scrollTop !== 0);

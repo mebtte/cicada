@@ -11,10 +11,13 @@ const COVER_SIZE = {
   height: COVER_MAX_SIZE,
 };
 
-const EditFigureAvatarDialog = () => {
-  const [music, setMusic] = useState<Music>(null);
+function EditFigureAvatarDialog() {
+  const [music, setMusic] = useState<Music | null>(null);
   const onClose = () => setMusic(null);
   const onUpdate = async (file: File) => {
+    if (!music) {
+      return;
+    }
     await cmsUpdateMusic({ id: music.id, key: Key.COVER, value: file });
     eventemitter.emit(EventType.MUSIC_CREATED_OR_UPDATED_OR_DELETED);
   };
@@ -34,6 +37,6 @@ const EditFigureAvatarDialog = () => {
       onUpdate={onUpdate}
     />
   );
-};
+}
 
 export default EditFigureAvatarDialog;

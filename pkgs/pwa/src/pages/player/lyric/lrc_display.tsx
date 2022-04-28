@@ -46,12 +46,12 @@ const lrcLineRenderer = ({
   </LyricLine>
 );
 
-const LrcDisplay = ({ lrc }: { lrc: string }) => {
-  const lrcRef = useRef<LrcInstance>();
+function LrcDisplay({ lrc }: { lrc: string }) {
+  const lrcRef = useRef<LrcInstance>(null);
   const currentMillisecond = useAudioCurrentMillisecond();
 
   useEffect(() => {
-    const onScrollToCurrentLine = () => lrcRef.current.scrollToCurrentLine();
+    const onScrollToCurrentLine = () => lrcRef.current?.scrollToCurrentLine();
     eventemitter.on(EventType.SCROLL_TO_CURRENT_LINE, onScrollToCurrentLine);
     return () =>
       void eventemitter.off(
@@ -70,6 +70,6 @@ const LrcDisplay = ({ lrc }: { lrc: string }) => {
       bottomBlank
     />
   );
-};
+}
 
 export default LrcDisplay;
