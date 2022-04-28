@@ -18,9 +18,12 @@ module.exports = {
   },
   plugins: ['import', 'react', '@typescript-eslint'],
   settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
+    },
     'import/resolver': {
-      node: {
-        extensions: ['.tsx', '.ts', '.jsx', '.js'],
+      typescript: {
+        project: ['tsconfig.json', 'pkgs/*/tsconfig.json'],
       },
     },
   },

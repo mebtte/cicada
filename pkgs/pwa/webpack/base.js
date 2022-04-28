@@ -13,7 +13,12 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|tsx?)$/,
+        test: /\.tsx?$/,
+        use: ['ts-loader', 'babel-loader'],
+        exclude: [/node_modules/],
+      },
+      {
+        test: /\.jsx?$/,
         use: ['babel-loader'],
         exclude: [/node_modules/],
       },
@@ -38,7 +43,10 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       __CONFIG__: JSON.stringify({
-        version: cp.execSync('git tag --sort=-taggerdate | head -n 1').toString().trim(),
+        version: cp
+          .execSync('git tag --sort=-taggerdate | head -n 1')
+          .toString()
+          .trim(),
         buildTime: new Date(),
         emptyImageList: fs
           .readdirSync(`${STATIC_DIR}/empty_image`)
