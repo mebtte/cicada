@@ -18,8 +18,9 @@
   },
   "homepage": "https://cicada.mebtte.com",
   "workspaces": [
+    "pkgs/desktop",
     "pkgs/pwa",
-    "pkgs/electron"
+    "pkgs/server"
   ],
   "engines": {
     "node": ">=16"
