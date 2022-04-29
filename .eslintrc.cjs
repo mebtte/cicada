@@ -50,6 +50,8 @@ module.exports = {
     'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/static-property-placement': 'off',
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
 
     'no-void': 'off',
     'no-promise-executor-return': 'off',
