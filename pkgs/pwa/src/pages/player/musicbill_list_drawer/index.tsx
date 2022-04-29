@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { memo, useState, useCallback, useEffect } from 'react';
 
 import eventemitter, { EventType } from '../eventemitter';
 import { Music as MusicType } from '../constants';
@@ -31,4 +31,4 @@ function Wrapper() {
   return <MusicbillListDrawer open={open} onClose={onClose} music={music} />;
 }
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

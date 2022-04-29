@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTransition } from 'react-spring';
 import styled from 'styled-components';
 

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { memo, useContext } from 'react';
 import styled from 'styled-components';
 
 import electron from '@/platform/electron';
@@ -28,4 +28,4 @@ const Setting = () => {
   );
 };
 
-export default React.memo(Setting);
+export default memo(Setting);

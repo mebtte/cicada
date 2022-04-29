@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 
 import { IS_WINDOWS, IS_MAC_OS } from '@/constants';

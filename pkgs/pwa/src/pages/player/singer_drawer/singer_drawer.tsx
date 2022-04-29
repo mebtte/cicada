@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 
@@ -87,4 +87,4 @@ const SingerDrawer = ({
   );
 };
 
-export default React.memo(SingerDrawer);
+export default memo(SingerDrawer);

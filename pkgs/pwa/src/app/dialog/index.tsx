@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 
 import { eventemitter, EVENT_TYPE, DIALOG_TYPE } from '@/platform/dialog';
 import getRandomString from '@/utils/get_random_string';

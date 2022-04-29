@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { memo, useContext } from 'react';
 
 import Context from '../../context';
 import Empty from './empty';
@@ -16,4 +16,4 @@ const Wrapper = () => {
   );
 };
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

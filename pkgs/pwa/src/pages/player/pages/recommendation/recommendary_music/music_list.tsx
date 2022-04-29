@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 
 import { Music as MusicType } from '../../../constants';
 import Music from './music';
@@ -11,4 +11,4 @@ const MusicList = ({ musicList }: { musicList: MusicType[] }) => (
   </>
 );
 
-export default React.memo(MusicList);
+export default memo(MusicList);

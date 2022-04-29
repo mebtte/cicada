@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 
 import config from '@/config';
@@ -44,4 +44,4 @@ const Empty = ({
   );
 };
 
-export default React.memo(Empty);
+export default memo(Empty);

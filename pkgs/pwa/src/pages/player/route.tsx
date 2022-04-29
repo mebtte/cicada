@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { useTransition, animated } from 'react-spring';

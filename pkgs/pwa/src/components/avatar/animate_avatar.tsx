@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { forwardRef, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 
@@ -31,7 +31,7 @@ const Img = styled(animated.div)`
   background-position: center;
 `;
 
-const AnimatedAvatar = React.forwardRef<HTMLDivElement, CommonProps>(
+const AnimatedAvatar = forwardRef<HTMLDivElement, CommonProps>(
   ({ src, size, shape, style, ...props }: CommonProps, ref) => {
     const transtion = useMemo(
       () => TRANSITION_LIST[getRandomInteger(0, TRANSITION_LIST.length)],

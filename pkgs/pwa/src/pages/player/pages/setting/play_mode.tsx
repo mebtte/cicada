@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Tooltip from '@/components/tooltip';
 import Tag from '@/components/tag';
 import {

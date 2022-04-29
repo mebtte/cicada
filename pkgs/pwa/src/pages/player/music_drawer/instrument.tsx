@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 
 const Style = styled.div`
@@ -10,4 +10,4 @@ function Instrument() {
   return <Style>纯音乐, 无歌词</Style>;
 }
 
-export default React.memo(Instrument);
+export default memo(Instrument);

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 
 import Dialog from '@/components/dialog';
 import { Music } from '../constants';
@@ -32,4 +32,4 @@ const EditMusicLrcDialog = () => {
   );
 };
 
-export default React.memo(EditMusicLrcDialog);
+export default memo(EditMusicLrcDialog);

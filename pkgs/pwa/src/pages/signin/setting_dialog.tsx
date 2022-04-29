@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import * as React from 'react';
 
 import { SERVER_ORIGIN } from '@/constants/storage_key';
 import toast from '@/platform/toast';

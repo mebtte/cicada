@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import ErrorCard from '@/components/error_card';
 import Label from '../label';

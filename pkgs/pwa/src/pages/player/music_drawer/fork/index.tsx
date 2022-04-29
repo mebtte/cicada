@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Music } from '../constants';
 import MusicList from './music_list';
 

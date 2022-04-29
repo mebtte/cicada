@@ -1,10 +1,5 @@
-import React, {
-  HTMLAttributes,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { HTMLAttributes, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import * as React from 'react';
 import styled, { css } from 'styled-components';
 
 import scrollbarAlways from '@/style/scrollbar_always';

@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 
 import { RequestStatus } from '@/constants';

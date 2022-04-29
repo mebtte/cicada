@@ -1,5 +1,3 @@
-import React from 'react';
-
 import ErrorCard from '../components/error_card';
 import LoadingCard from '../components/loading_card';
 

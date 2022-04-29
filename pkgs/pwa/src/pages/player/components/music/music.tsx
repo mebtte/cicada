@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import IconButton, { Name } from '@/components/icon_button';
 import { MusicWithIndex, Figure } from '../../constants';

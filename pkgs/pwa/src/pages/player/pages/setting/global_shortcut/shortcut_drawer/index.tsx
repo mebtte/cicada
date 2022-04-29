@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { memo, useState, useCallback } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 
 import Drawer, { Title } from '@/components/drawer';
@@ -65,4 +65,4 @@ const ShortcutDrawer = ({
   );
 };
 
-export default React.memo(ShortcutDrawer);
+export default memo(ShortcutDrawer);

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Container from './container';
 import Singer from '../../components/singer';
 import MusicTagList from '../../components/music_tag_list';

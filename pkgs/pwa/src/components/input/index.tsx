@@ -1,10 +1,7 @@
 /* eslint-disable react/prop-types */
-import React, {
-  InputHTMLAttributes,
-  useCallback,
-  useRef,
-  useImperativeHandle,
-} from 'react';
+import { InputHTMLAttributes, useCallback, useRef, useImperativeHandle } from 'react';
+
+import * as React from 'react';
 import styled from 'styled-components';
 
 const Style = styled.input`

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 
 import { State as GlobalShortcutState } from '@/store/global_shortcut/constants';
@@ -54,4 +54,4 @@ function Electron() {
   return null;
 }
 
-export default React.memo(Electron);
+export default memo(Electron);

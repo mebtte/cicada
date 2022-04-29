@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useRef, useState } from 'react';
+import { HTMLAttributes, useRef, useState } from 'react';
 import styled from 'styled-components';
 import debounce from 'lodash/debounce';
 

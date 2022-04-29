@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { DIALOG_TYPE } from '@/platform/dialog';
 import Dialog, { Title, Content, Action } from '@/components/dialog';

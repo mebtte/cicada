@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  useState,
-  useCallback,
-  useEffect,
-  useContext,
-} from 'react';
+import { memo, ReactNode, useState, useCallback, useEffect, useContext } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 
@@ -99,4 +93,4 @@ const MusicDrawer = () => {
   );
 };
 
-export default React.memo(MusicDrawer);
+export default memo(MusicDrawer);

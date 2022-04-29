@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 import CircularLoader from '@/components/circular_loader';
@@ -90,4 +90,4 @@ function OperateRecordDialog({
   );
 }
 
-export default React.memo(OperateRecordDialog);
+export default memo(OperateRecordDialog);

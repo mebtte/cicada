@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import CircularLoader from '@/components/circular_loader';

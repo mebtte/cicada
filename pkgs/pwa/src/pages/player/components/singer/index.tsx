@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import styled from 'styled-components';
 
 import { Figure } from '../../constants';
@@ -49,4 +49,4 @@ function Singer({ singer }: { singer?: Figure }) {
   );
 }
 
-export default React.memo(Singer);
+export default memo(Singer);

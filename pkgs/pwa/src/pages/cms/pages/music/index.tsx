@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import { SearchKey, SEARCH_KEYS } from '@/server/cms_get_music_list';

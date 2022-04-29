@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 
 import SingerDrawer from './singer_drawer';
 import useOpen from './use_open';
@@ -12,4 +12,4 @@ const Wrapper = () => {
   return <SingerDrawer open={open} onClose={onClose} id={id} />;
 };
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

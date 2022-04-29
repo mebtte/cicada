@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 
 const Style = styled.div`
@@ -23,4 +23,4 @@ const Replacement = () => (
   </Style>
 );
 
-export default React.memo(Replacement);
+export default memo(Replacement);

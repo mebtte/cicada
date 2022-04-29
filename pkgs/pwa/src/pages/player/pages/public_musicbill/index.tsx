@@ -1,4 +1,3 @@
-import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 import { PLAYER_PATH } from '@/constants/route';

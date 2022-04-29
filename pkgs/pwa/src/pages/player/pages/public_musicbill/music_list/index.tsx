@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 import List from 'react-list';
 
 import Empty from '@/components/empty';

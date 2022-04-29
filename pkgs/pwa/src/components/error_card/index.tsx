@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 
 import config from '@/config';
@@ -52,4 +52,4 @@ const ErrorCard = ({
   );
 };
 
-export default React.memo(ErrorCard);
+export default memo(ErrorCard);

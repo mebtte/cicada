@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import keyboard from 'keyboardjs';
 

@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 
 import { KEYWORD_MAX_LENGTH } from '@/server/search_music';

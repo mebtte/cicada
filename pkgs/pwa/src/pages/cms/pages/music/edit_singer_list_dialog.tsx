@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import cmsUpdateMusic, { Key } from '@/server/cms_update_music';
 import logger from '@/platform/logger';

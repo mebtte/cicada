@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
 import { LrcInstance, Lrc, LyricLine as LyricLineType } from 'react-lrc';
 

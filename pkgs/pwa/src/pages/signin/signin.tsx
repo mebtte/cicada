@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
 
@@ -38,4 +38,4 @@ const Signin = () => {
   );
 };
 
-export default React.memo(Signin);
+export default memo(Signin);

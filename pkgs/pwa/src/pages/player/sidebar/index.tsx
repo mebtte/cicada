@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 
@@ -30,4 +30,4 @@ const Sidebar = () => {
   );
 };
 
-export default React.memo(Sidebar);
+export default memo(Sidebar);

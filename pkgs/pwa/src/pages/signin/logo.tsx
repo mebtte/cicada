@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -25,4 +25,4 @@ const Logo = () => (
   </Style>
 );
 
-export default React.memo(Logo);
+export default memo(Logo);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { memo, useState } from 'react';
 
 import getRandomInteger from '@/utils/get_random_integer';
 import Skeleton from '@/components/skeleton';
@@ -8,4 +8,4 @@ const Wrapper = () => {
   return <Skeleton width={width} />;
 };
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

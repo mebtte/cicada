@@ -1,5 +1,3 @@
-import React from 'react';
-
 import ErrorCard from '../components/error_card';
 
 const style = {

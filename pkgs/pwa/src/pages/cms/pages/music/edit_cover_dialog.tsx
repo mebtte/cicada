@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import cmsUpdateMusic, { Key } from '@/server/cms_update_music';
 import { COVER_MAX_SIZE } from '@/constants/music';

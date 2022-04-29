@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import * as React from 'react';
 
 import useMusicLrc from '@/utils/use_music_lrc';
 import { RequestStatus } from '@/constants';

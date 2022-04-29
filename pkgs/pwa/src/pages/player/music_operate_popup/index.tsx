@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { memo, useState, useCallback, useEffect } from 'react';
 
 import { Music as MusicType } from '../constants';
 import eventemitter, { EventType } from '../eventemitter';
@@ -31,4 +31,4 @@ const Wrapper = () => {
   return <MusicOperatePopup open={open} onClose={onClose} music={music} />;
 };
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

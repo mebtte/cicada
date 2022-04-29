@@ -1,5 +1,3 @@
-import React from 'react';
-
 import IconButton from '@/components/icon_button';
 import Tooltip from '@/components/tooltip';
 import { ActionNavigator as ActionNavigatorType } from './constant';

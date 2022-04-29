@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { PLAYER_PATH } from '@/constants/route';
 import useHistory from '@/utils/use_history';
 import { Musicbill as MusicbillType } from './constants';

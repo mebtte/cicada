@@ -1,5 +1,3 @@
-import React from 'react';
-
 import day from '@/utils/day';
 import Table from '@/components/table';
 import { Record as RecordType } from './constants';

@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import ErrorCard from '@/components/error_card';

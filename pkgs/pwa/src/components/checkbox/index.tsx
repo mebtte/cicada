@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 
 import { ComponentSize } from '@/constants/style';
@@ -74,4 +74,4 @@ const Checkbox = ({
   );
 };
 
-export default React.memo(Checkbox);
+export default memo(Checkbox);

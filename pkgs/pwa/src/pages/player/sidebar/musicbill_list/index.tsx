@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { memo, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { useTransition } from 'react-spring';
@@ -94,4 +94,4 @@ const Wrapper = () => {
   );
 };
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

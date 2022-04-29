@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef, memo } from 'react';
 import styled, { css } from 'styled-components';
 
 export enum Type {
@@ -63,7 +63,7 @@ interface Props {
   [key: string]: any;
 }
 
-const Tag = React.forwardRef<HTMLDivElement, Props>(
+const Tag = forwardRef<HTMLDivElement, Props>(
   ({ type, gray = false, ...props }: Props, ref) => {
     const { label, color } = TYPE_MAP[type];
     return (
@@ -74,4 +74,4 @@ const Tag = React.forwardRef<HTMLDivElement, Props>(
   },
 );
 
-export default React.memo(Tag);
+export default memo(Tag);

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { COVER_MAX_SIZE } from '@/constants/musicbill';
 import updateMusicbill, { Key } from '@/server/update_musicbill';

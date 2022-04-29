@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
 const Style = styled.table<{ stickyHeader: boolean }>`

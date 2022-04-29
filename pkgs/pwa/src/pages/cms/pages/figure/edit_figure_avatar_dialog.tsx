@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import cmsUpdateFigure, { Key } from '@/server/cms_update_figure';
 import { AVATAR_MAX_SIZE } from '@/constants/figure';
@@ -42,4 +42,4 @@ function EditFigureAvatarDialog() {
   );
 }
 
-export default React.memo(EditFigureAvatarDialog);
+export default memo(EditFigureAvatarDialog);

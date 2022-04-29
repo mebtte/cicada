@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { CMS_PATH } from '@/constants/route';
 import useHistory from '@/utils/use_history';
 import { Name as IconName } from '@/components/icon';

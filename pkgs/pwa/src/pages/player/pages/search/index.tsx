@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Empty from '@/components/empty';
 import CircularLoader from '@/components/circular_loader';
 import ErrorCard from '@/components/error_card';

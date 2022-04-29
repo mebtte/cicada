@@ -1,5 +1,3 @@
-import React from 'react';
-
 import ErrorBoundary from '@/components/error_boundary';
 import App from './app';
 import UncaughtError from './uncaught_error';

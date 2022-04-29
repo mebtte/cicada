@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import { EMAIL } from '@/constants/regexp';
 import toast from '@/platform/toast';

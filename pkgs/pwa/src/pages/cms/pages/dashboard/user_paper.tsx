@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { CMS_PATH } from '@/constants/route';
 import useHistory from '@/utils/use_history';

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import loadable from 'react-loadable';
 import { shallowEqual, useSelector } from 'react-redux';

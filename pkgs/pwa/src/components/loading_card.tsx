@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 
 import CircularLoader from './circular_loader';
@@ -32,4 +32,4 @@ const LoadingDisplay = ({
   </Style>
 );
 
-export default React.memo(LoadingDisplay);
+export default memo(LoadingDisplay);

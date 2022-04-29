@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from 'react';
+import { ReactNode, useContext } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import * as React from 'react';
 
 import cmsUpdatePublicConfig from '@/server/cms_update_public_config';
 import logger from '@/platform/logger';

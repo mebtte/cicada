@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 
 import Avatar from '@/components/avatar';
 import getRandomInteger from '@/utils/get_random_integer';
@@ -20,4 +20,4 @@ const Wrapper = () => (
   </>
 );
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

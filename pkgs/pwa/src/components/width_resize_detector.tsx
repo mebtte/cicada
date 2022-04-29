@@ -1,10 +1,5 @@
-import React, {
-  ReactNode,
-  useState,
-  useRef,
-  useImperativeHandle,
-  useLayoutEffect,
-} from 'react';
+import { ReactNode, useState, useRef, useImperativeHandle, useLayoutEffect } from 'react';
+import * as React from 'react';
 import debounce from 'lodash/debounce';
 
 interface Props {

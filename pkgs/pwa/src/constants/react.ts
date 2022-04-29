@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 // 给React.memo封装的组件添加属性
 export type CustomMemoExoticComponent<

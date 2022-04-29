@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { Helmet } from 'react-helmet';
 
 import JpegDefaultAvatar from '@/components/avatar/default_avatar.jpeg';
@@ -15,4 +15,4 @@ const Prefetch = () => (
   </Helmet>
 );
 
-export default React.memo(Prefetch);
+export default memo(Prefetch);

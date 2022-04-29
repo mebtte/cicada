@@ -1,5 +1,3 @@
-import React from 'react';
-
 import IconButton, { Name } from '@/components/icon_button';
 import day from '@/utils/day';
 import Table from '@/components/table';

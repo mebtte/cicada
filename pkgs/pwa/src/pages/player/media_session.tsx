@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import MediaSession from '@mebtte/react-media-session';
 
 import useAudioControl from './use_audio_control';
@@ -25,4 +25,4 @@ const Wrapper = ({ music }: { music: MusicType }) => {
   );
 };
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

@@ -1,5 +1,7 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState } from 'react';
+import { useState } from 'react';
+
+import * as React from 'react';
 import styled from 'styled-components';
 
 import Button, { Type } from '../button';

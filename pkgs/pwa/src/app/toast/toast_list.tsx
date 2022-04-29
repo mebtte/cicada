@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { memo, useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
 import { ZIndex } from '../../constants/style';
@@ -118,4 +118,4 @@ function ToastList() {
   );
 }
 
-export default React.memo(ToastList);
+export default memo(ToastList);

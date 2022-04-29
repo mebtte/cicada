@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import * as React from 'react';
 import styled, { css } from 'styled-components';
 import Tippy from '@tippyjs/react/headless';
 import { useSpring, animated } from 'react-spring';

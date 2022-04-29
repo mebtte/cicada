@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef } from 'react';
 import styled, { css } from 'styled-components';
 
 import { BORDER_RADIUS, Shape, CommonProps } from './constants';
@@ -17,7 +17,7 @@ const Style = styled.div<{
  * 头像
  * @author mebtte<hi@mebtte.com>
  */
-const Avatar = React.forwardRef<HTMLDivElement, CommonProps>(
+const Avatar = forwardRef<HTMLDivElement, CommonProps>(
   ({ src, size, shape, style, ...props }: CommonProps, ref) => (
     <Style
       {...props}

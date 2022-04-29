@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import styled, { css } from 'styled-components';
 
 import ellipsis from '@/style/ellipsis';

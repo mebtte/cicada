@@ -1,4 +1,4 @@
-import React from 'react';
+import { forwardRef, memo } from 'react';
 
 import useImage from '@/utils/use_image';
 import Avatar from './avatar';
@@ -10,7 +10,7 @@ type Props = Partial<CommonProps> & {
   animated?: boolean;
 };
 
-const Wrapper = React.forwardRef<HTMLDivElement, Props>(
+const Wrapper = forwardRef<HTMLDivElement, Props>(
   (
     {
       src = JpegDefaultAvatar,
@@ -45,4 +45,4 @@ const Wrapper = React.forwardRef<HTMLDivElement, Props>(
 );
 
 export { Shape };
-export default React.memo(Wrapper);
+export default memo(Wrapper);

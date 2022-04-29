@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import { memo, useContext, useMemo } from 'react';
 import styled from 'styled-components';
 
 import Slider from '@/components/slider';
@@ -72,4 +72,4 @@ const Progress = () => {
   );
 };
 
-export default React.memo(Progress);
+export default memo(Progress);

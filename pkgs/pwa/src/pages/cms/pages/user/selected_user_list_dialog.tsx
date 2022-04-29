@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Empty from '@/components/empty';
 import Checkbox from '@/components/checkbox';
 import Table from '@/components/table';

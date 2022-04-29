@@ -1,5 +1,3 @@
-import React from 'react';
-
 import useHistory from '@/utils/use_history';
 import Pagination from '@/components/pagination';
 import { MusicWithIndex } from '@/pages/player/constants';

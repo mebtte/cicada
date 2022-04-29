@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 import styled, { css } from 'styled-components';
 
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';

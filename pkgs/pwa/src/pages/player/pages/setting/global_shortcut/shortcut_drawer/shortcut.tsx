@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import IconButton, { Name } from '@/components/icon_button';

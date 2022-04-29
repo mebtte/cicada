@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Waypoint } from 'react-waypoint';
 import styled, { css } from 'styled-components';
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import UserDrawer from './user_drawer';
 import useOpen from './use_open';
 

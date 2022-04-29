@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import { Lrc, LyricLine } from 'react-lrc';
 import styled from 'styled-components';
 
@@ -24,4 +24,4 @@ const LyricList = ({ lrc }: { lrc: string }) => (
   </Style>
 );
 
-export default React.memo(LyricList);
+export default memo(LyricList);

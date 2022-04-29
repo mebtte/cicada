@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 
 import Avatar from '@/components/avatar';
@@ -31,4 +31,4 @@ const Header = () => (
   </Style>
 );
 
-export default React.memo(Header);
+export default memo(Header);

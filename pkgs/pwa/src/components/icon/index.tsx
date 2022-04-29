@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import React from 'react';
+import { forwardRef, memo } from 'react';
 
 import { Svg } from './base';
 import { Name, NAME_MAP_CONTENT } from './constants';
@@ -16,7 +16,7 @@ interface Props {
  * 图标
  * @author mebtte<hi@mebtte.com>
  */
-const Icon = React.forwardRef<SVGSVGElement, Props>(
+const Icon = forwardRef<SVGSVGElement, Props>(
   ({ name, size = '1em', ...props }: Props, ref) => {
     const Content = NAME_MAP_CONTENT[name];
     return (
@@ -34,4 +34,4 @@ const Icon = React.forwardRef<SVGSVGElement, Props>(
 );
 
 export { Name };
-export default React.memo(Icon);
+export default memo(Icon);

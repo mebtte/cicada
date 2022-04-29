@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect } from 'react';
+import { useRef, useLayoutEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 
 import { TOAST_TYPE } from '@/platform/toast';

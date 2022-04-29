@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { memo, useState, useEffect } from 'react';
 import JSONView from 'react-json-view';
 
 import Dialog, { Content } from '@/components/dialog';
@@ -30,4 +30,4 @@ const JsonViewDialog = () => {
   );
 };
 
-export default React.memo(JsonViewDialog);
+export default memo(JsonViewDialog);

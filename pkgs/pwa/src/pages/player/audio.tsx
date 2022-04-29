@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import React from 'react';
+import * as React from 'react';
 import throttle from 'lodash/throttle';
 
 import keyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 
@@ -74,4 +74,4 @@ const Wrapper = ({ music }: { music?: Music }) => {
   );
 };
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

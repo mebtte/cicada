@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Avatar from '@/components/avatar';
 import { Singer } from '../constants';
 import { COVER_SIZE, Container } from './constants';

@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 
 import Empty from '@/components/empty';
@@ -16,4 +16,4 @@ const Wrapper = () => (
   </Style>
 );
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

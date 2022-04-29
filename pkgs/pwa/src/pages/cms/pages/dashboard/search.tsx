@@ -1,4 +1,5 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 
 import useHistory from '@/utils/use_history';

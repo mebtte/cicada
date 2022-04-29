@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 
 import useHistory from '@/utils/use_history';
 import cmsCreateFigure from '@/server/cms_create_figure';

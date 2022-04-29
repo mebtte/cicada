@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Path } from './base';
 
 const GarbageOutline = () => (

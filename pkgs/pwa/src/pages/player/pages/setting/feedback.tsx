@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { PWA_GITHUB_REPOSITORY } from '@/constants';
 import dialog from '@/platform/dialog';
 import openLink from '@/utils/open_link';

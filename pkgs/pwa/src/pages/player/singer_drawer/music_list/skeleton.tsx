@@ -1,5 +1,5 @@
 import getRandomInteger from '@/utils/get_random_integer';
-import React, { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 
 import { Container } from './constants';
 import { Skeleton } from '../../components/music';
@@ -16,4 +16,4 @@ const Wrapper = () => {
   );
 };
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

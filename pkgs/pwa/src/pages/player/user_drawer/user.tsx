@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Avatar, { Shape } from '@/components/avatar';
 import { MUSICBILL_COVER_SIZE, User as UserType } from './constants';
 import Container from './container';

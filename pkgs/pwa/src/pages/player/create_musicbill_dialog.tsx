@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { memo, useState, useEffect, useCallback, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { easeCubicInOut } from 'd3-ease';
 
@@ -116,4 +116,4 @@ function CreateMusicbillDialog() {
   );
 }
 
-export default React.memo(CreateMusicbillDialog);
+export default memo(CreateMusicbillDialog);

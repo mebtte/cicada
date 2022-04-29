@@ -1,5 +1,4 @@
 import { useTransition } from '@react-spring/core';
-import React from 'react';
 import styled from 'styled-components';
 
 import { TopContent } from '../constants';

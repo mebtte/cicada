@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 
 import { Musicbill as MusicbillType } from './constants';
 import Musicbill from './musicbill';
@@ -15,4 +15,4 @@ const MusicbillList = ({
   </>
 );
 
-export default React.memo(MusicbillList);
+export default memo(MusicbillList);

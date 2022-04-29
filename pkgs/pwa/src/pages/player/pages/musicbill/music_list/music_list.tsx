@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { animated } from 'react-spring';
 import styled from 'styled-components';
 import List from 'react-list';

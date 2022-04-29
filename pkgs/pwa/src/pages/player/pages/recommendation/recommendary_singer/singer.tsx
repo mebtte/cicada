@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Figure } from '../../../constants';
 import Cover from '../cover';
 import Style from './singer_style';

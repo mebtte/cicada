@@ -1,4 +1,3 @@
-import React from 'react';
 import { Redirect, useLocation } from 'react-router-dom';
 import { useSelector, shallowEqual } from 'react-redux';
 

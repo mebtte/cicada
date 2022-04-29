@@ -1,4 +1,5 @@
-import React, { HTMLAttributes, useRef } from 'react';
+import { HTMLAttributes, useRef } from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';

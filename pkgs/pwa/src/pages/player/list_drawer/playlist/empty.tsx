@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import Empty from '@/components/empty';

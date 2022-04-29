@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from 'react';
+import { memo, ReactNode, useContext } from 'react';
 
 import { RequestStatus } from '@/constants';
 import LoadingCard from '@/components/loading_card';
@@ -61,4 +61,4 @@ function MusicbillListDrawer({
   );
 }
 
-export default React.memo(MusicbillListDrawer);
+export default memo(MusicbillListDrawer);

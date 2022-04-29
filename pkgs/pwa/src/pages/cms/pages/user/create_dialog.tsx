@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import * as React from 'react';
 
 import toast from '@/platform/toast';
 import logger from '@/platform/logger';

@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import * as React from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const INITIAL_BACKGROUND_COLOR = 'rgb(0 0 0 / 0.05)';

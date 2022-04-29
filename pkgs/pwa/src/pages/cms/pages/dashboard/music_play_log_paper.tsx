@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Name } from '@/components/icon';
 import Paper from './paper';
 

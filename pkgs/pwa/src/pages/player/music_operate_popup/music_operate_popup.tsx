@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 
 import VerticalDrawer from '@/components/vertical_drawer';
@@ -70,4 +70,4 @@ const MusicOperateDrawer = ({
   );
 };
 
-export default React.memo(MusicOperateDrawer);
+export default memo(MusicOperateDrawer);

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 
 import IconButton, { Name as IconButtonName } from '@/components/icon_button';

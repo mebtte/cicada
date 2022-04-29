@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 
 import { Figure } from '../../../constants';
 import Singer from './singer';
@@ -11,4 +11,4 @@ const SingerList = ({ singerList }: { singerList: Figure[] }) => (
   </>
 );
 
-export default React.memo(SingerList);
+export default memo(SingerList);

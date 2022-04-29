@@ -1,4 +1,4 @@
-import React from 'react';
+import { memo } from 'react';
 
 import Slider from '@/components/slider';
 import Item from './item';
@@ -25,4 +25,4 @@ const Volume = ({ volume }: { volume: number }) => (
   </Item>
 );
 
-export default React.memo(Volume);
+export default memo(Volume);

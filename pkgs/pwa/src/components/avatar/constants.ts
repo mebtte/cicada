@@ -1,4 +1,5 @@
-import React, { HTMLAttributes } from 'react';
+import { HTMLAttributes } from 'react';
+import * as React from 'react';
 
 export const BORDER_RADIUS = 4;
 

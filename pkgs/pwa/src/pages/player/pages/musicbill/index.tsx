@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
 
 import { ROOT_PATH } from '@/constants/route';
