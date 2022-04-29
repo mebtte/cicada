@@ -2,16 +2,14 @@
   "extends": "../../tsconfig.json",
 
   "compilerOptions": {
-    "allowJs": true,
     "module": "esnext",
     "target": "ES2015",
     "lib": ["DOM"],
     "jsx": "react-jsx",
-    "esModuleInterop": true,
+
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }
-  },
-  "include": ["../../global.d.ts", "src/**/*"]
+  }
 }

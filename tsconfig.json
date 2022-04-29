@@ -2,18 +2,16 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "skipLibCheck": true,
-    "sourceMap": true,
     "lib": ["ESNext"],
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
-    "noFallthroughCasesInSwitch": true,
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
+    "esModuleInterop": true,
 
     "baseUrl": ".",
     "paths": {
-      "#/*": ["pkgs/shared/*"]
+      "#/*": ["shared/*"]
     }
   },
-  "exclude": ["node_modules", "**/node_modules/*"]
+  "exclude": ["node_modules", "**/node_modules/*"],
+  "include": ["global.d.ts"]
 }
