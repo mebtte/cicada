@@ -1,6 +1,7 @@
 {
   "name": "cicada",
   "description": "知了, 一个自托管的音乐服务.",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "repository": {
@@ -44,5 +45,5 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
-  "license": "GNU"
+  "license": "GPL"
 }

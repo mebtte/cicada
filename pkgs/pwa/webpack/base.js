@@ -1,9 +1,10 @@
 const path = require('path');
-const cp = require('child_process');
 const fs = require('fs-extra');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
+
+const pkg = require('../../../package.json');
 
 const INVALID_FILES = ['.DS_Store'];
 const STATIC_DIR = path.join(__dirname, '../src/static');
@@ -36,17 +37,14 @@ module.exports = {
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
       '@': path.resolve(__dirname, '../src'),
-      '#': path.resolve(__dirname, '../../shared'),
+      '#': path.resolve(__dirname, '../../../shared'),
     },
     symlinks: false,
   },
   plugins: [
     new webpack.DefinePlugin({
       __CONFIG__: JSON.stringify({
-        version: cp
-          .execSync('git tag --sort=-taggerdate | head -n 1')
-          .toString()
-          .trim(),
+        version: pkg.version,
         buildTime: new Date(),
         emptyImageList: fs
           .readdirSync(`${STATIC_DIR}/empty_image`)
