@@ -1,4 +1,5 @@
 const path = require('path');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const base = require('./base');
 
@@ -15,7 +16,7 @@ module.exports = {
     type: 'filesystem',
   },
   devtool: 'eval-cheap-module-source-map',
-  plugins: [...base.plugins],
+  plugins: [...base.plugins, new ForkTsCheckerWebpackPlugin()],
   devServer: {
     port: 8000,
     hot: true,

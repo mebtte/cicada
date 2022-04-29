@@ -13,7 +13,7 @@ const Style = styled(animated.div)`
   justify-content: center;
 `;
 
-const ErrorDisplay = ({
+function ErrorDisplay({
   error,
   reload,
   style,
@@ -21,10 +21,13 @@ const ErrorDisplay = ({
   error: Error;
   reload: () => void;
   style: unknown;
-}) => (
-  <Style style={style}>
-    <ErrorCard errorMessage={error.message} retry={reload} />
-  </Style>
-);
+}) {
+  return (
+    // @ts-expect-error
+    <Style style={style}>
+      <ErrorCard errorMessage={error.message} retry={reload} />
+    </Style>
+  );
+}
 
 export default ErrorDisplay;

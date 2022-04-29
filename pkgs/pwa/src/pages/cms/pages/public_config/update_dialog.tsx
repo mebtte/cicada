@@ -23,7 +23,7 @@ const textareaStyle = {
   resize: 'vertical' as 'vertical',
 };
 
-const UpdateDialog = () => {
+function UpdateDialog() {
   const [publicConfig, setPublicConfig] = useState<PublicConfig | null>(null);
   const onClose = () => setPublicConfig(null);
 
@@ -33,6 +33,10 @@ const UpdateDialog = () => {
 
   const [loading, setLoading] = useState(false);
   const onUpdate = async () => {
+    if (!publicConfig) {
+      return;
+    }
+
     if (publicConfig.value === value) {
       return onClose();
     }
@@ -92,6 +96,6 @@ const UpdateDialog = () => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default React.memo(UpdateDialog);

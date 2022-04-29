@@ -21,8 +21,8 @@ const Style = styled.div`
   cursor: pointer;
 `;
 
-const Cover = ({ src, onClick }: { src: string; onClick: () => void }) => {
-  const abortRef = useRef<() => void | null>(null);
+function Cover({ src, onClick }: { src: string; onClick: () => void }) {
+  const abortRef = useRef<(() => void) | null>(null);
 
   const [currentSrc, setCurrentSrc] = useState('');
   const onEnter = () => {
@@ -70,6 +70,6 @@ const Cover = ({ src, onClick }: { src: string; onClick: () => void }) => {
       </Style>
     </Waypoint>
   );
-};
+}
 
 export default Cover;

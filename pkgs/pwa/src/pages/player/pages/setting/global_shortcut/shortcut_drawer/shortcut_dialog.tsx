@@ -36,7 +36,7 @@ const StyledContent = styled(Content)`
   }
 `;
 
-const ShortcutDialog = ({
+function ShortcutDialog({
   globalShortcut,
   open,
   onClose,
@@ -46,8 +46,8 @@ const ShortcutDialog = ({
   open: boolean;
   onClose: () => void;
   shortcut: string;
-}) => {
-  const [currentKeys, setCurrentKeys] = useState([]);
+}) {
+  const [currentKeys, setCurrentKeys] = useState<string[]>([]);
   const onRemove = useCallback(() => {
     // @ts-ignore
     store.dispatch(setShortcutKeys(shortcut, []));
@@ -171,6 +171,6 @@ const ShortcutDialog = ({
       </Action>
     </Dialog>
   );
-};
+}
 
 export default ShortcutDialog;

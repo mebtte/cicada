@@ -45,30 +45,38 @@ const Cover = styled(Avatar)<{ publiz: boolean }>`
   `}
 `;
 
-const MusicbillInfo = ({
+function MusicbillInfo({
   musicbill,
   style,
 }: {
   musicbill: Musicbill;
   style: unknown;
-}) => (
-  <Style style={style}>
-    <Cover animated src={musicbill.cover} size={70} publiz={musicbill.public} />
-    <div className="info">
-      <div className="name">{musicbill.name}</div>
-      {musicbill.description ? (
-        <div className="description" title={musicbill.description}>
-          {musicbill.description}
-        </div>
-      ) : null}
-      <div className="description">
-        创建于 {day(musicbill.createTime).format('YYYY-MM-DD HH:mm')}
-        {musicbill.status === RequestStatus.SUCCESS ? (
-          <span>, 共 {musicbill.musicList.length} 首音乐</span>
+}) {
+  return (
+    // @ts-expect-error
+    <Style style={style}>
+      <Cover
+        animated
+        src={musicbill.cover}
+        size={70}
+        publiz={musicbill.public}
+      />
+      <div className="info">
+        <div className="name">{musicbill.name}</div>
+        {musicbill.description ? (
+          <div className="description" title={musicbill.description}>
+            {musicbill.description}
+          </div>
         ) : null}
+        <div className="description">
+          创建于 {day(musicbill.createTime).format('YYYY-MM-DD HH:mm')}
+          {musicbill.status === RequestStatus.SUCCESS ? (
+            <span>, 共 {musicbill.musicList.length} 首音乐</span>
+          ) : null}
+        </div>
       </div>
-    </div>
-  </Style>
-);
+    </Style>
+  );
+}
 
 export default MusicbillInfo;

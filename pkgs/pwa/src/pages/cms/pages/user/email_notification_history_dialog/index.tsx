@@ -40,13 +40,13 @@ const TableBox = styled.div<{ isLoading: boolean }>`
   `}
 `;
 
-const EmailNotificationHistoryDialog = ({
+function EmailNotificationHistoryDialog({
   open,
   toUserId,
 }: {
   open: boolean;
-  toUserId: string;
-}) => {
+  toUserId?: string;
+}) {
   const history = useHistory();
   const onClose = () =>
     history.push({
@@ -94,6 +94,6 @@ const EmailNotificationHistoryDialog = ({
       <Content>{content}</Content>
     </Dialog>
   );
-};
+}
 
 export default EmailNotificationHistoryDialog;

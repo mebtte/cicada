@@ -19,7 +19,7 @@ const Style = styled(animated.div)`
   justify-content: center;
 `;
 
-const ErrorDisplay = ({
+function ErrorDisplay({
   id,
   error,
   style,
@@ -27,15 +27,18 @@ const ErrorDisplay = ({
   id: string;
   error: Error;
   style: unknown;
-}) => (
-  <Style style={style}>
-    <ErrorCard
-      errorMessage={error.message}
-      retry={() =>
-        playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, { id })
-      }
-    />
-  </Style>
-);
+}) {
+  return (
+    // @ts-expect-error
+    <Style style={style}>
+      <ErrorCard
+        errorMessage={error.message}
+        retry={() =>
+          playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, { id })
+        }
+      />
+    </Style>
+  );
+}
 
 export default ErrorDisplay;

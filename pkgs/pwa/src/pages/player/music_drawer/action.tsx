@@ -14,7 +14,7 @@ const Style = styled.div`
   gap: 5px;
 `;
 
-const Action = ({ music, onClose }: { music: Music; onClose: () => void }) => {
+function Action({ music, onClose }: { music: Music; onClose: () => void }) {
   const baseMusic = useMemo<BaseMusic>(
     () => ({
       ...music,
@@ -65,6 +65,6 @@ const Action = ({ music, onClose }: { music: Music; onClose: () => void }) => {
       />
     </Style>
   );
-};
+}
 
 export default Action;

@@ -38,13 +38,13 @@ const TableBox = styled.div<{ isLoading: boolean }>`
   `}
 `;
 
-const OperateRecordDialog = ({
+function OperateRecordDialog({
   open,
   searchFigureId,
 }: {
   open: boolean;
   searchFigureId?: string;
-}) => {
+}) {
   const history = useHistory();
   const onClose = () =>
     history.push({
@@ -87,6 +87,6 @@ const OperateRecordDialog = ({
       <Content>{content}</Content>
     </Dialog>
   );
-};
+}
 
 export default OperateRecordDialog;

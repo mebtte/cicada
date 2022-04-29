@@ -9,7 +9,7 @@ import eventemitter, { EventType } from './eventemitter';
 import { Music, Figure } from './constants';
 import SingerListSelector from './singer_list_selector';
 
-const EditMusicSingerListDialog = () => {
+function EditMusicSingerListDialog() {
   const [music, setMusic] = useState<Music | null>(null);
   const [singerList, setSingerList] = useState<Figure[]>([]);
   const onSingerSelect = (singer: Figure) =>
@@ -32,6 +32,10 @@ const EditMusicSingerListDialog = () => {
 
   const [loading, setLoading] = useState(false);
   const onUpdate = async () => {
+    if (!music) {
+      return;
+    }
+
     if (singerList === music.singers) {
       return onClose();
     }
@@ -91,6 +95,6 @@ const EditMusicSingerListDialog = () => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default EditMusicSingerListDialog;

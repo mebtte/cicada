@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { ReactNode, useContext } from 'react';
 
 import { RequestStatus } from '@/constants';
 import LoadingCard from '@/components/loading_card';
@@ -27,7 +27,7 @@ const cardStyle = {
 const reloadMusicbillList = () =>
   eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST);
 
-const MusicbillListDrawer = ({
+function MusicbillListDrawer({
   open,
   onClose,
   music,
@@ -35,10 +35,10 @@ const MusicbillListDrawer = ({
   open: boolean;
   onClose: () => void;
   music: MusicType;
-}) => {
+}) {
   const { getMusicbillListStatus: status, musicbillList } = useContext(Context);
 
-  let content = null;
+  let content: ReactNode = null;
   if (status === RequestStatus.SUCCESS) {
     content = <MusicbillList music={music} musicbillList={musicbillList} />;
   } else if (status === RequestStatus.LOADING) {
@@ -59,6 +59,6 @@ const MusicbillListDrawer = ({
       {content}
     </Drawer>
   );
-};
+}
 
 export default React.memo(MusicbillListDrawer);

@@ -44,13 +44,13 @@ const bodyProps = {
   style: { width: 650 },
 };
 
-const SendEmailNotificationDialog = ({
+function SendEmailNotificationDialog({
   open,
   selectedUserList,
 }: {
   open: boolean;
   selectedUserList: User[];
-}) => {
+}) {
   const history = useHistory();
   const onSelectedUserListDialog = () =>
     history.push({ query: { [Query.SELECTED_USER_LIST_DIALOG_OPEN]: '1' } });
@@ -89,7 +89,7 @@ const SendEmailNotificationDialog = ({
       onConfirm: async () => {
         try {
           const { user } = store.getState();
-          await cmsSendEmailNotification({ toUserId: user.id, title, html });
+          await cmsSendEmailNotification({ toUserId: user!.id, title, html });
           toast.success('已发送到你的邮箱');
           setTimeout(() => {
             setTitle('');
@@ -202,6 +202,6 @@ const SendEmailNotificationDialog = ({
       </Action>
     </Dialog>
   );
-};
+}
 
 export default SendEmailNotificationDialog;

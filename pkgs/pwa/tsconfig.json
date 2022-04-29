@@ -4,9 +4,9 @@
   "compilerOptions": {
     "allowJs": true,
     "module": "esnext",
-    "target": "esnext",
+    "target": "ES2015",
     "lib": ["DOM"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {

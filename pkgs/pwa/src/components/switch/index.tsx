@@ -25,7 +25,7 @@ const Thumb = styled.div<{ open: boolean }>`
   transition: 300ms;
 `;
 
-const Switch = ({
+function Switch({
   open,
   onChange,
   disabled = false,
@@ -39,7 +39,7 @@ const Switch = ({
   loading?: boolean;
   size?: number;
   style?: React.CSSProperties;
-}) => {
+}) {
   const thumbSize = size * THUMB_SIZE;
   const space = size * SPACE;
   return (
@@ -52,7 +52,7 @@ const Switch = ({
         borderRadius: size / 2,
         ...style,
       }}
-      onClick={() => onChange(!open)}
+      onClick={onChange ? () => onChange(!open) : undefined}
     >
       <Thumb
         open={open}
@@ -65,6 +65,6 @@ const Switch = ({
       />
     </Style>
   );
-};
+}
 
 export default Switch;

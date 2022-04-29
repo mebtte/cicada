@@ -57,7 +57,7 @@ const Style = styled.div`
   }
 `;
 
-const Wrapper = () => {
+function Wrapper() {
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
   const playMode = usePlayMode();
   const {
@@ -74,6 +74,7 @@ const Wrapper = () => {
 
   return (
     <Context.Provider
+      // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         getMusicbillListStatus,
         musicbillList,
@@ -106,7 +107,7 @@ const Wrapper = () => {
           </div>
           <Controller />
 
-          <Lyric music={queueMusic ? queueMusic.music : null} />
+          <Lyric music={queueMusic ? queueMusic.music : undefined} />
         </Style>
       </Scrollable>
 
@@ -131,6 +132,6 @@ const Wrapper = () => {
       {electron ? <Electron /> : null}
     </Context.Provider>
   );
-};
+}
 
 export default withSignin()(Wrapper);

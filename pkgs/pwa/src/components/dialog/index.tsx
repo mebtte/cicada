@@ -77,7 +77,7 @@ const Dialog = ({
     // eslint-disable-next-line no-unused-expressions
     maskProps.onClick && maskProps.onClick(event);
 
-    if (onClose && !bodyRef.current.contains(event.target)) {
+    if (onClose && !bodyRef.current?.contains(event.target)) {
       onClose();
     }
   };

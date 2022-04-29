@@ -31,7 +31,7 @@ const itemRenderer = (d: 0 | 1 | null) => {
   return '可用';
 };
 
-const UpdateDialog = () => {
+function UpdateDialog() {
   const [user, setUser] = useState<User | null>(null);
   const onClose = () => setUser(null);
 
@@ -44,6 +44,10 @@ const UpdateDialog = () => {
 
   const [loading, setLoading] = useState(false);
   const onUpdate = async () => {
+    if (!user) {
+      return;
+    }
+
     if (!remark) {
       return toast.error('请输入备注');
     }
@@ -124,6 +128,6 @@ const UpdateDialog = () => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default UpdateDialog;

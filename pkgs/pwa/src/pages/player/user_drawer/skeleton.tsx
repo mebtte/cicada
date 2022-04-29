@@ -10,10 +10,11 @@ const coverStyle = {
   borderRadius: '50%',
 };
 
-const Wrapper = ({ style }: { style: unknown }) => {
+function Wrapper({ style }: { style: unknown }) {
   const nameWidth = useMemo(() => getRandomInteger(100, 200), []);
   const joinTimeWidth = useMemo(() => getRandomInteger(100, 200), []);
   return (
+    // @ts-expect-error
     <Container style={style}>
       <div className="top">
         <Skeleton
@@ -33,6 +34,6 @@ const Wrapper = ({ style }: { style: unknown }) => {
       <MusicbillListSkeleton />
     </Container>
   );
-};
+}
 
 export default Wrapper;

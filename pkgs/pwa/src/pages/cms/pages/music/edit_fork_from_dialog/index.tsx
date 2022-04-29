@@ -17,7 +17,7 @@ const cardStyle = {
   padding: '50px 0',
 };
 
-const EditForkFromDialog = () => {
+function EditForkFromDialog() {
   const [music, setMusic] = useState<null | WholeMusic>(null);
   const onClose = () => {
     setMusic(null);
@@ -61,6 +61,9 @@ const EditForkFromDialog = () => {
 
   const [updating, setUpdating] = useState(false);
   const onUpdate = async () => {
+    if (!music) {
+      return;
+    }
     setUpdating(true);
     try {
       await cmsUpdateMusic({
@@ -128,6 +131,6 @@ const EditForkFromDialog = () => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default EditForkFromDialog;

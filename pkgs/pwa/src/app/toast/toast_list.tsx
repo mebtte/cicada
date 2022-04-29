@@ -17,7 +17,7 @@ const Style = styled.div`
   width: 300px;
 `;
 
-const ToastList = () => {
+function ToastList() {
   const [toastList, setToastList] = useState<ToastType[]>([]);
   const removeToast = useCallback((id) => {
     setTimeout(
@@ -28,7 +28,9 @@ const ToastList = () => {
       tl
         .map((toast) => {
           if (toast.id === id) {
-            clearTimeout(toast.timer);
+            if (toast.timer) {
+              clearTimeout(toast.timer);
+            }
             return {
               ...toast,
               hidden: true,
@@ -114,6 +116,6 @@ const ToastList = () => {
       ))}
     </Style>
   );
-};
+}
 
 export default React.memo(ToastList);

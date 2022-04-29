@@ -7,7 +7,7 @@ import { EmailNotification, PAGE_SIZE } from './constants';
 const INITIAL_TOTAL = 0;
 const INITIAL_PAGE = 1;
 
-export default ({ open, toUserId }: { open: boolean; toUserId: string }) => {
+export default ({ open, toUserId }: { open: boolean; toUserId?: string }) => {
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(INITIAL_TOTAL);

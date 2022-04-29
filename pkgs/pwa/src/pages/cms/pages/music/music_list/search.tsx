@@ -35,15 +35,15 @@ const itemRenderer = (key: SearchKey | null) => {
   return SEARCH_KEY_MAP_LABEL[key];
 };
 
-const Search = ({
+function Search({
   searchKey,
   searchValue: initialSearchValue,
 }: {
   searchKey: SearchKey;
   searchValue: string;
-}) => {
+}) {
   const history = useHistory();
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const onSearchKeyChange = (key: SearchKey) =>
     history.push({ query: { [Query.PAGE]: '1', [Query.SEARCH_KEY]: key } });
@@ -73,7 +73,7 @@ const Search = ({
         return;
       }
       event.preventDefault();
-      return inputRef.current.focus();
+      return inputRef.current?.focus();
     });
     document.addEventListener('keydown', onDocumentKeyDown);
     return () => document.removeEventListener('keydown', onDocumentKeyDown);
@@ -101,6 +101,6 @@ const Search = ({
       <IconButton name={Name.SEARCH_OUTLINE} onClick={onSearch} />
     </Style>
   );
-};
+}
 
 export default Search;

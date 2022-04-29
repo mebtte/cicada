@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, {
   InputHTMLAttributes,
   useCallback,
@@ -35,8 +36,8 @@ type Props = InputHTMLAttributes<HTMLInputElement>;
  * @author mebtte<hi@mebtte.com>
  */
 const Input = React.forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
-  const innerRef = useRef<HTMLInputElement>();
-  useImperativeHandle(ref, () => innerRef.current);
+  const innerRef = useRef<HTMLInputElement>(null);
+  useImperativeHandle(ref, () => innerRef.current!);
 
   const { onKeyDown } = props;
   const onKeyDownWrapper = useCallback(
@@ -47,7 +48,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>((props: Props, ref) => {
 
       const { key } = event;
       if (key.toLowerCase() === 'escape') {
-        innerRef.current.blur();
+        innerRef.current?.blur();
       }
     },
     [onKeyDown],

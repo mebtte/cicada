@@ -20,7 +20,7 @@ const Style = styled.div`
   display: flex;
 `;
 
-const User = () => {
+function User() {
   const query = useQuery();
   let searchKey = query[Query.SEARCH_KEY] as SearchKey;
   if (!SEARCH_KEYS.includes(searchKey)) {
@@ -75,6 +75,6 @@ const User = () => {
       />
     </Style>
   );
-};
+}
 
 export default User;

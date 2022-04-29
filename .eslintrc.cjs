@@ -49,10 +49,12 @@ module.exports = {
     'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
     'react/require-default-props': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'react/static-property-placement': 'off',
 
     'no-void': 'off',
     'no-promise-executor-return': 'off',
     'consistent-return': 'off',
+    'no-restricted-syntax': 'off',
 
     // a11y
     'jsx-a11y/no-static-element-interactions': 'off',

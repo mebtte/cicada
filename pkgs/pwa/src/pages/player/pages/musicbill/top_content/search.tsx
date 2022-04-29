@@ -39,8 +39,8 @@ const switchToMusicbillInfo = () =>
     topContent: TopContent.INFO,
   });
 
-const Search = ({ cover, style }: { cover: string; style: unknown }) => {
-  const inputRef = useRef<HTMLInputElement>();
+function Search({ cover, style }: { cover: string; style: unknown }) {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
 
   const [keyword, setKeyword] = useState('');
@@ -62,11 +62,12 @@ const Search = ({ cover, style }: { cover: string; style: unknown }) => {
   }, [keyword]);
 
   useLayoutEffect(() => {
-    const timer = window.setTimeout(() => inputRef.current.focus(), 1000);
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 1000);
     return () => window.clearTimeout(timer);
   }, []);
 
   return (
+    // @ts-expect-error
     <Style style={style}>
       <Avatar animated src={cover} />
       <div className="input-box">
@@ -81,6 +82,6 @@ const Search = ({ cover, style }: { cover: string; style: unknown }) => {
       <IconButton name={Name.DOWN_OUTLINE} onClick={switchToMusicbillInfo} />
     </Style>
   );
-};
+}
 
 export default Search;

@@ -6,8 +6,8 @@ const Style = styled.div`
   color: rgb(155 155 155);
 `;
 
-const Instrument = () => {
+function Instrument() {
   return <Style>纯音乐, 无歌词</Style>;
-};
+}
 
 export default React.memo(Instrument);

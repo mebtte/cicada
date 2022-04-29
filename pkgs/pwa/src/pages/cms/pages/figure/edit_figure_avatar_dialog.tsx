@@ -11,10 +11,13 @@ const AVATAR_SIZE = {
   height: AVATAR_MAX_SIZE,
 };
 
-const EditFigureAvatarDialog = () => {
-  const [figure, setFigure] = useState<Figure>(null);
+function EditFigureAvatarDialog() {
+  const [figure, setFigure] = useState<Figure | null>(null);
   const onClose = () => setFigure(null);
   const onUpdate = async (file: File) => {
+    if (!figure) {
+      return;
+    }
     await cmsUpdateFigure({ id: figure.id, key: Key.AVATAR, value: file });
     eventemitter.emit(EventType.FIGURE_CREATED_OR_UPDATED_OR_DELETED);
   };
@@ -37,6 +40,6 @@ const EditFigureAvatarDialog = () => {
       onUpdate={onUpdate}
     />
   );
-};
+}
 
 export default React.memo(EditFigureAvatarDialog);

@@ -12,7 +12,7 @@ enum TOAST_TYPE {
 
 export { eventemitter, EVENT_TYPE, TOAST_TYPE };
 
-function success(message, { duration = DEFAULT_DURATION } = {}) {
+function success(message: string, { duration = DEFAULT_DURATION } = {}) {
   return eventemitter.emit(EVENT_TYPE, {
     type: TOAST_TYPE.SUCCESS,
     message,
@@ -20,7 +20,7 @@ function success(message, { duration = DEFAULT_DURATION } = {}) {
   });
 }
 
-function info(message, { duration = DEFAULT_DURATION } = {}) {
+function info(message: string, { duration = DEFAULT_DURATION } = {}) {
   return eventemitter.emit(EVENT_TYPE, {
     type: TOAST_TYPE.INFO,
     message,
@@ -28,7 +28,7 @@ function info(message, { duration = DEFAULT_DURATION } = {}) {
   });
 }
 
-function error(message, { duration = DEFAULT_DURATION } = {}) {
+function error(message: string, { duration = DEFAULT_DURATION } = {}) {
   return eventemitter.emit(EVENT_TYPE, {
     type: TOAST_TYPE.ERROR,
     message,

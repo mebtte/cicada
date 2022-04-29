@@ -12,7 +12,7 @@ export default ({
   searchFigureId,
 }: {
   open: boolean;
-  searchFigureId: string;
+  searchFigureId?: string;
 }) => {
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);

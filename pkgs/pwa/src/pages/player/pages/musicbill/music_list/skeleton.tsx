@@ -16,12 +16,13 @@ const Style = styled(animated.div)`
   ${scrollbarAsNeeded}
 `;
 
-const Wrapper = ({ style }: { style: unknown }) => {
+function Wrapper({ style }: { style: unknown }) {
   const musicList = useMemo(
     () => new Array(getRandomInteger(5, 15)).fill(0),
     [],
   );
   return (
+    // @ts-expect-error
     <Style style={style}>
       {musicList.map((_, index) => (
         // eslint-disable-next-line react/no-array-index-key
@@ -29,6 +30,6 @@ const Wrapper = ({ style }: { style: unknown }) => {
       ))}
     </Style>
   );
-};
+}
 
 export default Wrapper;

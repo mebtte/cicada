@@ -49,13 +49,13 @@ function Lyric({
   );
 }
 
-const Wrapper = ({ music }: { music: Music }) => {
+const Wrapper = ({ music }: { music?: Music }) => {
   const { open, onClose } = useOpen();
 
   const [turntable, setTurntable] = useState(false);
   const toggleTurntable = useCallback(() => setTurntable((t) => !t), []);
 
-  const openComposite = music && open;
+  const openComposite = !!(music && open);
   const transitions = useTransition(openComposite, {
     from: { transform: 'translateY(100%)', opacity: 0 },
     enter: { transform: 'translateY(0%)', opacity: 1 },
@@ -64,7 +64,7 @@ const Wrapper = ({ music }: { music: Music }) => {
   return transitions((style, o) =>
     o ? (
       <Lyric
-        music={music}
+        music={music!}
         onClose={onClose}
         style={style}
         turntable={turntable}
