@@ -37,7 +37,7 @@ const List = styled.div<{ topBoxShadow: boolean }>`
   `}
 `;
 
-const MusicbillOrderDrawer = () => {
+function MusicbillOrderDrawer() {
   const { musicbillList } = useContext(Context);
 
   const [localMusicbillList, setLocalMusicbillList] = useState<MusicbillType[]>(
@@ -106,6 +106,7 @@ const MusicbillOrderDrawer = () => {
   return (
     <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
       <Title>排序歌单</Title>
+      {/* @ts-expect-error */}
       <DndProvider backend={HTML5Backend}>
         <List onScroll={onListScroll} topBoxShadow={topBoxShadow}>
           {localMusicbillList.map((mb, index) => (
@@ -115,6 +116,6 @@ const MusicbillOrderDrawer = () => {
       </DndProvider>
     </Drawer>
   );
-};
+}
 
 export default React.memo(MusicbillOrderDrawer);

@@ -35,7 +35,7 @@ async function initialize() {
 
 initialize()
   .then(() => {
-    const root = createRoot(document.querySelector('#root'));
+    const root = createRoot(document.querySelector('#root')!);
     return root.render(
       <HashRouter>
         <Provider store={store}>
@@ -46,6 +46,6 @@ initialize()
   })
   .catch((error: Error) => {
     logger.error(error, { description: '初始化失败', report: true });
-    const root = document.querySelector('#root');
+    const root = document.querySelector('#root')!;
     root.textContent = error.message;
   });

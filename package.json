@@ -41,10 +41,12 @@
     "prettier": "^2.6.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
   },
   "scripts": {
-    "dev:pwa": "npm run dev -w pkgs/pwa"
+    "dev:pwa": "npm run dev -w pkgs/pwa",
+    "tslint": "ts-node-esm scripts/tslint.ts"
   },
   "overrides": {
     "react": "^18.1.0",

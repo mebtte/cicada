@@ -67,6 +67,7 @@ function Cover({ src, publiz }: { src: string; publiz: boolean }) {
   );
 
   return (
+    // @ts-expect-error
     <Waypoint onEnter={onEnter}>
       <Style publiz={publiz}>
         <Avatar className="cover" src={currentSrc} size={COVER_SIZE} animated />

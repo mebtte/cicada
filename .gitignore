@@ -7,3 +7,6 @@ package-lock.json
 
 # vs code
 .vscode/
+
+# build & dist
+dist/

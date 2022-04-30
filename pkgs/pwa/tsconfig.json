@@ -11,5 +11,6 @@
     "paths": {
       "@/*": ["src/*"]
     }
-  }
+  },
+  "include": ["src/**/*", "../../global.d.ts"]
 }

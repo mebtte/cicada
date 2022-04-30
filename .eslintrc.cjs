@@ -56,6 +56,7 @@ module.exports = {
     'no-promise-executor-return': 'off',
     'consistent-return': 'off',
     'no-restricted-syntax': 'off',
+    'no-await-in-loop': 'off',
 
     // a11y
     'jsx-a11y/no-static-element-interactions': 'off',
