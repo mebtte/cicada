@@ -1,5 +1,5 @@
 {
-  "name": "cicada_pwa",
+  "name": "pwa",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack/development.js --progress",
     "build": "cross-env NODE_ENV=production webpack --config webpack/production.js --progress"
@@ -30,7 +30,6 @@
     "babel-loader": "^8.2.2",
     "copy-webpack-plugin": "^7.0.0",
     "cropperjs": "^1.5.11",
-    "cross-env": "^7.0.2",
     "css-loader": "^5.2.6",
     "d3-ease": "^2.0.0",
     "dayjs": "^1.10.6",

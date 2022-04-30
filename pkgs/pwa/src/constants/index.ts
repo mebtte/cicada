@@ -15,7 +15,7 @@ export enum RequestStatus {
 
 export const ORIGINAL_SCROLLBAR_WIDTH = getOriginalScrollbarWidth(); // 浏览器默认滚动条宽度
 
-export const PWA_GITHUB_REPOSITORY = 'https://github.com/mebtte/cicada_pwa';
+export const PWA_GITHUB_REPOSITORY = 'https://github.com/mebtte/cicada';
 export const ELECTRON_GITHUB_REPOSITORY =
   'https://github.com/mebtte/cicada_electron';
 export const EXPO_GITHUB_REPOSITORY = 'https://github.com/mebtte/cicada_expo';
