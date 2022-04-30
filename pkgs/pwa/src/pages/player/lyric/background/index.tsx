@@ -28,7 +28,7 @@ const Style = styled.div`
   }
 `;
 
-const Background = ({ cover }: { cover: string }) => {
+function Background({ cover }: { cover: string }) {
   const src = useImage(cover, JpegDefaultBackground);
   const transitions = useTransition(src, {
     from: { opacity: 0 },
@@ -49,6 +49,6 @@ const Background = ({ cover }: { cover: string }) => {
       <div className="child mask" />
     </Style>
   );
-};
+}
 
 export default Background;
