@@ -1,5 +1,6 @@
 import './polyfill';
-import ReactDOM from 'react-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 import 'cropperjs/dist/cropper.min.css';
@@ -12,7 +13,6 @@ import store from './store';
 import { reloadUser } from './store/user';
 import logger from './platform/logger';
 import App from './app';
-import ErrorCard from './components/error_card';
 
 async function initialize() {
   if (config.sentryDSN) {
@@ -34,31 +34,18 @@ async function initialize() {
 }
 
 initialize()
-  .then(
-    () =>
-      void ReactDOM.render(
-        <HashRouter>
-          <Provider store={store}>
-            <App />
-          </Provider>
-        </HashRouter>,
-        document.querySelector('#root'),
-      ),
-  )
-  .catch((error) => {
-    logger.error(error, { description: '初始化失败', report: true });
-    return void ReactDOM.render(
-      <ErrorCard
-        errorMessage="初始化失败"
-        retry={() => window.location.reload()}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          left: 0,
-          top: 0,
-        }}
-      />,
-      document.querySelector('#root'),
+  .then(() => {
+    const root = createRoot(document.querySelector('#root'));
+    return root.render(
+      <HashRouter>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </HashRouter>,
     );
+  })
+  .catch((error: Error) => {
+    logger.error(error, { description: '初始化失败', report: true });
+    const root = document.querySelector('#root');
+    root.textContent = error.message;
   });

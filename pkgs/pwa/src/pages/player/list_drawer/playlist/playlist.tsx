@@ -13,7 +13,7 @@ const Style = styled.div`
   ${scrollbarAsNeeded}
 `;
 
-const Playlist = ({ playlist }: { playlist: MusicWithIndex[] }) => {
+function Playlist({ playlist }: { playlist: MusicWithIndex[] }) {
   const itemRenderer = (index, key) => (
     <Music key={key} listMusic={playlist[index]} />
   );
@@ -26,6 +26,6 @@ const Playlist = ({ playlist }: { playlist: MusicWithIndex[] }) => {
       />
     </Style>
   );
-};
+}
 
 export default Playlist;
