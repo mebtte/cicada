@@ -72,11 +72,8 @@ function generateMethod(method: METHOD) {
     }
 
     const { status, statusText } = response;
-    if (status !== 200 && !response.data) {
-      throw new ErrorWithCode(
-        `${status === 404 ? '请升级客户端到最新版本' : statusText}(#${status})`,
-        status,
-      );
+    if (status !== 200 || !response.data) {
+      throw new ErrorWithCode(`${statusText}(#${status})`, status);
     }
 
     const {
