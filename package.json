@@ -13,12 +13,14 @@
     "email": "hi@mebtte.com",
     "url": "https://mebtte.com"
   },
+  "contributors": [],
   "bugs": {
     "url": "https://github.com/mebtte/cicada/issues"
   },
   "homepage": "https://cicada.mebtte.com",
   "workspaces": [
     "pkgs/desktop",
+    "pkgs/desktop_setting",
     "pkgs/pwa",
     "pkgs/server"
   ],
