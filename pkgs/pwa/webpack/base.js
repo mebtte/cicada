@@ -33,6 +33,7 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, '../src'),
       '#': path.resolve(__dirname, '../../../shared'),
+      '@mui/styled-engine': '@mui/styled-engine-sc',
     },
     symlinks: false,
   },

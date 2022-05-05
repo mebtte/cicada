@@ -6,6 +6,7 @@ import { HashRouter } from 'react-router-dom';
 import 'cropperjs/dist/cropper.min.css';
 import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
+import CssBaseline from '@mui/material/CssBaseline';
 
 import { getToken } from './platform/token';
 import env from './env';
@@ -38,6 +39,7 @@ initialize()
     const root = createRoot(document.querySelector('#root')!);
     return root.render(
       <HashRouter>
+        <CssBaseline />
         <Provider store={store}>
           <App />
         </Provider>

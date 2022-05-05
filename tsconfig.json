@@ -11,7 +11,8 @@
 
     "baseUrl": ".",
     "paths": {
-      "#/*": ["shared/*"]
+      "#/*": ["shared/*"],
+      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
     }
   },
   "exclude": ["node_modules", "**/node_modules/*"],
