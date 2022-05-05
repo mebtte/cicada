@@ -57,6 +57,7 @@ module.exports = {
     'consistent-return': 'off',
     'no-restricted-syntax': 'off',
     'no-await-in-loop': 'off',
+    'no-console': ['error', { allow: ['error'] }],
 
     // a11y
     'jsx-a11y/no-static-element-interactions': 'off',

@@ -8,22 +8,22 @@ import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
 
 import { getToken } from './platform/token';
-import config from './config';
+import env from './env';
 import store from './store';
 import { reloadUser } from './store/user';
 import logger from './platform/logger';
 import App from './app';
 
 async function initialize() {
-  if (config.sentryDSN) {
+  if (env.SENTRY_DSN) {
     Sentry.init({
-      dsn: config.sentryDSN,
+      dsn: env.SENTRY_DSN,
       integrations: [new Integrations.BrowserTracing()],
       tracesSampleRate: 1.0,
       enabled: process.env.NODE_ENV === 'production',
     });
     Sentry.configureScope((scope) => {
-      scope.setExtra('version', config.version);
+      scope.setExtra('version', env.VERSION);
     });
   }
 

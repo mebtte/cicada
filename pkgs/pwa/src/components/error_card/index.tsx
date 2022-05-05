@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 
-import config from '@/config';
+import env from '@/env';
 import getRandomInteger from '@/utils/get_random_integer';
 import Avatar from '../avatar';
 import IconButton, { Name } from '../icon_button';
@@ -40,7 +40,7 @@ const ErrorCard = ({
 }) => {
   const errorImage = useMemo(
     () =>
-      config.errorImageList[getRandomInteger(0, config.errorImageList.length)],
+      env.ERROR_IMAGE_LIST[getRandomInteger(0, env.ERROR_IMAGE_LIST.length)],
     [],
   );
   return (

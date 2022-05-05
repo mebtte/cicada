@@ -1,4 +1,4 @@
-export const SERVER_ORIGIN = 'server_origin';
+export const SERVER_ADDRESS = 'server_address';
 
 export const LAST_SIGNIN_EMAIL = 'last_signin_email_v1';
 

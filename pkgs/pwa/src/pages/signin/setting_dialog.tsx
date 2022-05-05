@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 
-import { SERVER_ORIGIN } from '@/constants/storage_key';
 import toast from '@/platform/toast';
 import { ORIGIN } from '@/constants/regexp';
-import config from '@/config';
+import setting from '@/setting';
 import Label from '@/components/label';
 import Input from '@/components/input';
 import Button from '@/components/button';
@@ -15,22 +14,25 @@ const inputStyle = {
   width: '100%',
 };
 
-const SettingDialog = () => {
+function SettingDialog() {
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
 
-  const [serverOrigin, setServerOrigin] = useState(config.serverOrigin);
-  const onServerOriginChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setServerOrigin(event.target.value);
+  const [serverAddress, setServerAddress] = useState(
+    setting.getServerAddress(),
+  );
+  const onServerAddressChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setServerAddress(event.target.value);
 
   const [loading, setLoading] = useState(false);
   const onConfirm = () => {
-    if (!ORIGIN.test(serverOrigin)) {
-      return toast.error('Server origin 格式错误');
+    if (!ORIGIN.test(serverAddress)) {
+      return toast.error('服务器地址格式错误');
     }
     setLoading(true);
-    localStorage.setItem(SERVER_ORIGIN, serverOrigin);
-    setTimeout(() => window.location.reload(), 0);
+    setting.setServerAddress(serverAddress);
+    setLoading(false);
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -46,10 +48,10 @@ const SettingDialog = () => {
     <Dialog open={open}>
       <Title>设置</Title>
       <Content>
-        <Label label="Server Origin">
+        <Label label="服务器地址">
           <Input
-            value={serverOrigin}
-            onChange={onServerOriginChange}
+            value={serverAddress}
+            onChange={onServerAddressChange}
             style={inputStyle}
             disabled={loading}
           />
@@ -61,6 +63,6 @@ const SettingDialog = () => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default SettingDialog;

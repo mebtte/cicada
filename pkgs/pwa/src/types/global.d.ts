@@ -8,9 +8,6 @@ interface Config {
   errorImageList: string[];
   coverList: string[];
 
-  serverOrigin: string;
-  pwaOrigin: string;
-
   sentryDSN?: string;
 }
 

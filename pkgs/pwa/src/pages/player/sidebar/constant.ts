@@ -9,7 +9,6 @@ import {
 import { Name } from '@/components/icon';
 import openLink from '@/utils/open_link';
 import dialog from '@/platform/dialog';
-import config from '@/config';
 
 export enum NavigatorKey {
   HOME,
@@ -62,7 +61,7 @@ const NAVIGATORS: Navigator[] = [
     type: NavigatorType.ACTION,
     label: 'CMS',
     icon: Name.CMS_OUTLINE,
-    action: () => openLink(`${config.pwaOrigin}#${ROOT_PATH.CMS}`),
+    action: () => openLink(`#${ROOT_PATH.CMS}`),
   },
 ];
 if (!IS_ELECTRON) {

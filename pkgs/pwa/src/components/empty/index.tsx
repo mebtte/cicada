@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 
-import config from '@/config';
+import env from '@/env';
 import getRandomInteger from '@/utils/get_random_integer';
 import Avatar from '../avatar';
 
@@ -33,7 +33,7 @@ const Empty = ({
 }) => {
   const emptyImage = useMemo(
     () =>
-      config.emptyImageList[getRandomInteger(0, config.emptyImageList.length)],
+      env.EMPTY_IMAGE_LIST[getRandomInteger(0, env.EMPTY_IMAGE_LIST.length)],
     [],
   );
   return (

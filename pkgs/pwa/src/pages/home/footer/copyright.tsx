@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import config from '@/config';
+import env from '@/env';
 import { CICADA_START_YEAR } from '@/constants';
 
 const Style = styled.div`
@@ -18,17 +18,19 @@ const Style = styled.div`
   }
 `;
 
-const Copyright = () => (
-  <Style>
-    <div className="version">知了&nbsp;@&nbsp;{config.version}</div>
-    <div className="copyright">
-      <a href="https://mebtte.com">MEBTTE</a>
-      &nbsp;&copy;&nbsp;
-      {CICADA_START_YEAR}
-      &nbsp;~&nbsp;
-      {new Date().getFullYear()}
-    </div>
-  </Style>
-);
+function Copyright() {
+  return (
+    <Style>
+      <div className="version">知了&nbsp;@&nbsp;{env.VERSION}</div>
+      <div className="copyright">
+        <a href="https://mebtte.com">MEBTTE</a>
+        &nbsp;&copy;&nbsp;
+        {CICADA_START_YEAR}
+        &nbsp;~&nbsp;
+        {new Date().getFullYear()}
+      </div>
+    </Style>
+  );
+}
 
 export default Copyright;

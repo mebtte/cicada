@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs-extra');
+const fs = require('fs');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
@@ -38,18 +38,18 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __CONFIG__: JSON.stringify({
-        version: pkg.version,
-        buildTime: new Date(),
-        emptyImageList: fs
+      __ENV__: JSON.stringify({
+        VERSION: pkg.version,
+        BUILD_TIME: new Date(),
+        EMPTY_IMAGE_LIST: fs
           .readdirSync(`${STATIC_DIR}/empty_image`)
           .filter((f) => !INVALID_FILES.includes(f))
           .map((f) => `/empty_image/${f}`),
-        errorImageList: fs
+        ERROR_IMAGE_LIST: fs
           .readdirSync(`${STATIC_DIR}/error_image`)
           .filter((f) => !INVALID_FILES.includes(f))
           .map((f) => `/error_image/${f}`),
-        coverList: fs
+        COVER_LIST: fs
           .readdirSync(`${STATIC_DIR}/cover`)
           .filter((f) => !INVALID_FILES.includes(f))
           .map((f) => `/cover/${f}`),
