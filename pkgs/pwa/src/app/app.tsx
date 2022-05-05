@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import loadable from 'react-loadable';
 import { shallowEqual, useSelector } from 'react-redux';
 import * as Sentry from '@sentry/browser';
 
@@ -13,54 +12,48 @@ import RouteLoader from './route_loader';
 import ProfileDialog from './profile_dialog';
 import Prefetch from './prefetch';
 
-const ROUTE_MAP_COMPONENT = {
-  [ROOT_PATH.HOME]: loadable({
-    loader: () => import(/* webpackChunkName: "page_home" */ '../pages/home'),
-    loading: RouteLoader,
-    timeout: 30000,
-    delay: 300,
-  }),
-  [ROOT_PATH.SIGNIN]: loadable({
-    loader: () =>
-      import(/* webpackChunkName: "page_signin" */ '../pages/signin'),
-    loading: RouteLoader,
-    timeout: 30000,
-    delay: 300,
-  }),
-  [ROOT_PATH.PLAYER]: loadable({
-    loader: () =>
-      import(/* webpackChunkName: "page_player" */ '../pages/player'),
-    loading: RouteLoader,
-    timeout: 30000,
-    delay: 300,
-  }),
-  [ROOT_PATH.CMS]: loadable({
-    loader: () => import(/* webpackChunkName: "page_cms" */ '../pages/cms'),
-    loading: RouteLoader,
-    timeout: 30000,
-    delay: 300,
-  }),
-  [ROOT_PATH.DESKTOP_CONFIGURE]: loadable({
-    loader: () =>
-      import(
-        /* webpackChunkName: "page_electron_setting" */ '../pages/desktop_configure'
-      ),
-    loading: RouteLoader,
-    timeout: 30000,
-    delay: 300,
-  }),
-};
+const ROUTES: {
+  path: string;
+  exact?: boolean;
+  component: ReturnType<typeof lazy>;
+}[] = [
+  {
+    path: ROOT_PATH.HOME,
+    exact: true,
+    component: lazy(
+      () => import(/* webpackChunkName: "page_home" */ '../pages/home'),
+    ),
+  },
+  {
+    path: ROOT_PATH.SIGNIN,
+    component: lazy(
+      () => import(/* webpackChunkName: "page_signin" */ '../pages/signin'),
+    ),
+  },
+  {
+    path: ROOT_PATH.PLAYER,
+    component: lazy(
+      () => import(/* webpackChunkName: "page_player" */ '../pages/player'),
+    ),
+  },
+  {
+    path: ROOT_PATH.CMS,
+    component: lazy(
+      () => import(/* webpackChunkName: "page_cms" */ '../pages/cms'),
+    ),
+  },
+];
 
-const routeList = Object.keys(ROUTE_MAP_COMPONENT).map((path) => (
+const routeList = ROUTES.map((r) => (
   <Route
-    key={path}
-    path={path}
-    component={ROUTE_MAP_COMPONENT[path]}
-    exact={path === ROOT_PATH.HOME}
+    key={r.path}
+    path={r.path}
+    component={r.component}
+    exact={r.exact || false}
   />
 ));
 
-const App = () => {
+function App() {
   const user = useSelector(
     ({ user: u }: { user: User | null }) => u,
     shallowEqual,
@@ -80,14 +73,16 @@ const App = () => {
       <Toast />
       <Dialog />
 
-      <Switch>
-        {routeList}
-        <Redirect to={ROOT_PATH.HOME} />
-      </Switch>
+      <Suspense fallback={<RouteLoader />}>
+        <Switch>
+          {routeList}
+          <Redirect to={ROOT_PATH.HOME} />
+        </Switch>
+      </Suspense>
 
       {user ? <ProfileDialog user={user} /> : null}
     </>
   );
-};
+}
 
 export default App;
