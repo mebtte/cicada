@@ -12,7 +12,7 @@ const pkgs = await readdir(join(CURRENT_DIR, '../pkgs'));
 
 for (const pkg of pkgs) {
   try {
-    await execAsync('tsc --outDir dist', {
+    await execAsync('tsc --noEmit', {
       cwd: join(CURRENT_DIR, '../pkgs', pkg),
     });
   } catch (error) {
