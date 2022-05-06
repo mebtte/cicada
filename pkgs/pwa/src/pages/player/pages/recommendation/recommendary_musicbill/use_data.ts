@@ -21,7 +21,7 @@ export default () => {
         })),
       );
     } catch (e) {
-      logger.error(e, { description: '获取推荐歌单列表失败', report: true });
+      logger.error(e, { description: '获取推荐歌单列表失败' });
       setError(e);
     }
     setLoading(false);

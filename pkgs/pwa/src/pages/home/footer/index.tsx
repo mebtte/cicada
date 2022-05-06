@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import { VERTICAL_SPACE } from '../constants';
-import ProjectList from './project_list';
 import Copyright from './copyright';
 import { HORIZONTAL_LAYOUT_WIDTH } from './constants';
 
@@ -23,13 +22,14 @@ const Style = styled.div`
   }
 `;
 
-const Footer = () => (
-  <Style>
-    <div className="content">
-      <ProjectList />
-      <Copyright />
-    </div>
-  </Style>
-);
+function Footer() {
+  return (
+    <Style>
+      <div className="content">
+        <Copyright />
+      </div>
+    </Style>
+  );
+}
 
 export default Footer;

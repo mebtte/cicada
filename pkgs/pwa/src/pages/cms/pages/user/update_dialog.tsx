@@ -76,7 +76,7 @@ function UpdateDialog() {
 
       onClose();
     } catch (error) {
-      logger.error(error, { description: '更新用户失败', report: true });
+      logger.error(error, { description: '更新用户失败' });
       toast.error(error.message);
     }
     setLoading(false);

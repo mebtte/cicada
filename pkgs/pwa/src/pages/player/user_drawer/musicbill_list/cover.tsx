@@ -38,7 +38,6 @@ function Cover({ src, onClick }: { src: string; onClick: () => void }) {
         }
         return logger.error(error, {
           description: '加载图片失败',
-          report: true,
         });
       });
     abortRef.current = () => {

@@ -16,7 +16,7 @@ export default () => {
       const ml = await getRecommendatoryMusicListRequest();
       setMusicList(ml.map(transformMusic));
     } catch (e) {
-      logger.error(e, { description: '获取推荐音乐列表失败', report: true });
+      logger.error(e, { description: '获取推荐音乐列表失败' });
       setError(e);
     }
     setLoading(false);

@@ -40,7 +40,6 @@ export default () => {
     } catch (error) {
       logger.error(error, {
         description: '获取歌单列表失败',
-        report: true,
       });
       dialog.alert({
         title: '获取歌单列表失败',
@@ -95,9 +94,7 @@ export default () => {
           }),
         );
       } catch (error) {
-        logger.error(error, {
-          report: true,
-        });
+        logger.error(error, {});
         dialog.alert({
           title: '获取歌单详情失败',
           content: error.message,
@@ -160,7 +157,6 @@ export default () => {
         const description = `添加音乐"${musicName}"到歌单"${musicbillName}"失败`;
         logger.error(error, {
           description,
-          report: true,
         });
         dialog.alert({
           title: description,
@@ -222,7 +218,6 @@ export default () => {
         const description = `从歌单"${musicbillName}"移除音乐"${musicName}"失败`;
         logger.error(error, {
           description,
-          report: true,
         });
         dialog.alert({
           title: description,

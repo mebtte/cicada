@@ -68,7 +68,7 @@ export default (music: Music, turntable: boolean) => {
         if (canceled) {
           return;
         }
-        logger.error(error, { description: '获取音乐 LRC 失败', report: true });
+        logger.error(error, { description: '获取音乐 LRC 失败' });
         setState({ status: Status.LRC_ERROR, error, retry: getMusicLrc });
       }
     };

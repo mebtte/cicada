@@ -1,7 +1,7 @@
-import { SERVER_ADDRESS } from '@/constants/storage_key';
+import storage, { Key } from '@/platform/storage';
 
 function setServerAddress(sa: string) {
-  window.localStorage.setItem(SERVER_ADDRESS, sa);
+  storage.setItem({ key: Key.SERVER_ADDRESS, value: sa });
   window.setTimeout(() => window.location.reload(), 0);
 }
 
@@ -9,7 +9,7 @@ export default new (class {
   private serverAddress: string;
 
   constructor() {
-    this.serverAddress = window.localStorage.getItem(SERVER_ADDRESS) || '';
+    this.serverAddress = storage.getItem(Key.SERVER_ADDRESS) || '';
   }
 
   getServerAddress() {

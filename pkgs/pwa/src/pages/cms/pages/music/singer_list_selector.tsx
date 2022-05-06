@@ -78,7 +78,7 @@ function SingerListSelector({
         });
         setSearchSingerList(fl);
       } catch (error) {
-        logger.error(error, { description: '搜索角色列表失败', report: true });
+        logger.error(error, { description: '搜索角色列表失败' });
         toast.error(error.message);
       }
       setLoading((l) => l - 1);

@@ -46,7 +46,6 @@ function Cover({ src, publiz }: { src: string; publiz: boolean }) {
         }
         return logger.error(error, {
           description: '加载图片失败',
-          report: true,
         });
       });
     abortRef.current = () => {

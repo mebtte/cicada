@@ -31,7 +31,7 @@ export default ({
       setTotal(latestTotal);
       setUserList(list);
     } catch (e) {
-      logger.error(e, { description: '获取角色列表失败', report: true });
+      logger.error(e, { description: '获取角色列表失败' });
       setError(e);
     }
     setLoading(false);

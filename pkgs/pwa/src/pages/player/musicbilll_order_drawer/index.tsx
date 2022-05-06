@@ -61,7 +61,6 @@ function MusicbillOrderDrawer() {
       .catch((error) => {
         logger.error(error, {
           description: '更新歌单顺序失败',
-          report: true,
         });
         dialog.alert({
           title: '更新歌单顺序失败',

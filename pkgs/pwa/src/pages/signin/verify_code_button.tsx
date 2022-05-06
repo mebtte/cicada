@@ -27,7 +27,7 @@ function VerifyCodeButton({ email }: { email: string }) {
       setEndTime(new Date(Date.now() + GET_VERIFY_CODE_INTERVAL).getTime());
       setTimeString(formatSecond(GET_VERIFY_CODE_INTERVAL / 1000));
     } catch (error) {
-      logger.error(error, { description: '获取验证码失败', report: true });
+      logger.error(error, { description: '获取验证码失败' });
       dialog.alert({
         title: '获取验证码失败',
         content: error.message,

@@ -51,7 +51,6 @@ function EditMusicSingerListDialog() {
     } catch (error) {
       logger.error(error, {
         description: '更新音乐歌手列表失败',
-        report: true,
       });
       dialog.alert({ title: '更新音乐歌手列表失败', content: error.message });
     }

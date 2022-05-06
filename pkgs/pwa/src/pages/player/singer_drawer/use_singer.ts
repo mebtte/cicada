@@ -38,7 +38,6 @@ export default ({ id }: { id: string }) => {
     } catch (error) {
       logger.error(error, {
         description: '获取歌手音乐列表失败',
-        report: true,
       });
       setData({
         error,

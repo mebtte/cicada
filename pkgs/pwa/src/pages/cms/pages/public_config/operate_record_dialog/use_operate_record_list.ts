@@ -31,7 +31,6 @@ export default ({ open, key }: { open: boolean; key: PublicConfigKey }) => {
     } catch (e) {
       logger.error(e, {
         description: '获取公共配置操作记录列表失败',
-        report: true,
       });
       setError(e);
     }

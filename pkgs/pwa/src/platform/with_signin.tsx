@@ -1,14 +1,11 @@
 import { Redirect, useLocation } from 'react-router-dom';
-import { useSelector, shallowEqual } from 'react-redux';
 
+import u from '@/platform/user';
 import { ROOT_PATH } from '@/constants/route';
 import { User } from '../constants/user';
 
 const withSignin = () => (Component) => (props) => {
-  const user = useSelector(
-    ({ user: u }: { user: User | null }) => u,
-    shallowEqual,
-  );
+  const user = u.useUser();
   const { pathname } = useLocation();
   return user ? (
     <Component {...props} />

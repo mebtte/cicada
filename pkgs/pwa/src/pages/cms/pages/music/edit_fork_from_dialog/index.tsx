@@ -52,7 +52,6 @@ function EditForkFromDialog() {
     } catch (e) {
       logger.error(e, {
         description: '获取音乐二次创作来源失败',
-        report: true,
       });
       setError(e);
     }
@@ -76,7 +75,6 @@ function EditForkFromDialog() {
     } catch (e) {
       logger.error(e, {
         description: '更新音乐二次创作来源失败',
-        report: true,
       });
       dialog.alert({ title: '更新音乐二次创作来源失败', content: e.message });
     }

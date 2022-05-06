@@ -23,7 +23,6 @@ export default () => {
           .catch((error) =>
             logger.error(error, {
               description: '获取搜索词失败',
-              report: true,
             }),
           ),
       );

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { useSelector, shallowEqual } from 'react-redux';
 import { Helmet } from 'react-helmet';
 
+import u from '@/platform/user';
 import { User } from '@/constants/user';
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
 import PageContainer from '../page_container';
@@ -20,10 +20,7 @@ const Style = styled(PageContainer)`
 `;
 
 const Home = () => {
-  const user = useSelector(
-    ({ user: u }: { user: User | null }) => u,
-    shallowEqual,
-  );
+  const user = u.useUser();
   return (
     <Style>
       <Helmet>

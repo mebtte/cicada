@@ -69,7 +69,7 @@ function CreateMusicbillDialog() {
         0,
       );
     } catch (error) {
-      logger.error(error, { description: '创建歌单失败', report: true });
+      logger.error(error, { description: '创建歌单失败' });
       dialog.alert({
         title: '创建歌单失败',
         content: error.message,

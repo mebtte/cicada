@@ -47,7 +47,7 @@ function UpdateDialog() {
       onClose();
       eventemitter.emit(EventType.PUBLIC_CONFIG_UPDATED);
     } catch (error) {
-      logger.error(error, { description: '更新公共配置失败', report: true });
+      logger.error(error, { description: '更新公共配置失败' });
       toast.error(error.message);
     }
     setLoading(false);

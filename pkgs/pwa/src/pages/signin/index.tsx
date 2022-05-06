@@ -1,12 +1,12 @@
-import { connect } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
 
+import u from '@/platform/user';
 import { ROOT_PATH } from '@/constants/route';
 import parseSearch from '@/utils/parse_search';
-import { User } from '@/constants/user';
 import Signin from './signin';
 
-function Wrapper({ user }: { user: User | null }) {
+function Wrapper() {
+  const user = u.useUser();
   const location = useLocation();
   if (user) {
     return (
@@ -22,6 +22,4 @@ function Wrapper({ user }: { user: User | null }) {
   return <Signin />;
 }
 
-export default connect(({ user }: { user: User | null }) => ({ user }))(
-  Wrapper,
-);
+export default Wrapper

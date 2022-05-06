@@ -38,6 +38,7 @@ module.exports = {
     'no-redeclare': 'off',
     '@typescript-eslint/no-redeclare': 'error',
 
+    'import/prefer-default-export': 'off',
     'import/extensions': [
       'error',
       {

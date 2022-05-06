@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 
+import u from '@/platform/user';
 import toast from '@/platform/toast';
 import logger from '@/platform/logger';
 import dialog from '@/platform/dialog';
-import store from '@/store';
-import { clearUser, setUser } from '@/store/user';
 import Label from '@/components/label';
 import Input from '@/components/input';
 import Textarea from '@/components/textarea';
@@ -34,11 +33,10 @@ const textareaStyle = {
 const onSignout = () =>
   dialog.confirm({
     title: '确定退出登录吗?',
-    // @ts-expect-error
-    onConfirm: () => void store.dispatch(clearUser()),
+    onConfirm: () => u.updateUser(null),
   });
 
-const ProfileDialog = ({ user }: { user: User }) => {
+function ProfileDialog({ user }: { user: User }) {
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
 
@@ -70,19 +68,16 @@ const ProfileDialog = ({ user }: { user: User }) => {
       }
 
       if (needUpdate) {
-        store.dispatch(
-          // @ts-expect-error
-          setUser({
-            ...user,
-            nickname,
-            condition,
-          }),
-        );
+        u.updateUser({
+          ...user,
+          nickname,
+          condition,
+        });
       }
 
       onClose();
     } catch (error) {
-      logger.error(error, { description: '更新个人资料失败', report: true });
+      logger.error(error, { description: '更新个人资料失败' });
       toast.error(error.message);
     }
     setLoading(false);
@@ -154,6 +149,6 @@ const ProfileDialog = ({ user }: { user: User }) => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default React.memo(ProfileDialog);

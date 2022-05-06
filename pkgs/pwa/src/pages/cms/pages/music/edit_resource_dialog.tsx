@@ -115,7 +115,7 @@ function EditMusicResourceDialog() {
       onClose();
       eventemitter.emit(EventType.MUSIC_CREATED_OR_UPDATED_OR_DELETED);
     } catch (error) {
-      logger.error(error, { description: '更新音乐资源失败', report: true });
+      logger.error(error, { description: '更新音乐资源失败' });
       dialog.alert({ title: `更新${label}失败`, content: error.message });
     }
     setLoading(false);

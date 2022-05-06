@@ -72,7 +72,7 @@ function EditFigureDialog() {
 
       onClose();
     } catch (error) {
-      logger.error(error, { description: '更新角色失败', report: true });
+      logger.error(error, { description: '更新角色失败' });
       dialog.alert({ title: '更新角色失败', content: error.message });
     }
     setLoading(false);

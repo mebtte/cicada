@@ -28,7 +28,7 @@ export default (id: string) => {
         setLrc({ status: RequestStatus.SUCCESS, value: l });
       }
     } catch (error) {
-      logger.error(error, { description: '获取音乐 lrc 失败', report: true });
+      logger.error(error, { description: '获取音乐 lrc 失败' });
 
       if (idRef.current === id) {
         setLrc({

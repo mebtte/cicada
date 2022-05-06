@@ -60,7 +60,7 @@ export default ({
         );
       }
     } catch (e) {
-      logger.error(e, { description: '搜索音乐失败', report: true });
+      logger.error(e, { description: '搜索音乐失败' });
       setError(e);
     }
     setLoading(false);

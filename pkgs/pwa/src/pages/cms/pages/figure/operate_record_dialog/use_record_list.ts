@@ -36,7 +36,6 @@ export default ({
     } catch (e) {
       logger.error(e, {
         description: '获取角色操作记录列表失败',
-        report: true,
       });
       setError(e);
     }

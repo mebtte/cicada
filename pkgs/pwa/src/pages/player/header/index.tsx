@@ -4,12 +4,6 @@ import styled from 'styled-components';
 
 import Avatar from '@/components/avatar';
 import { PLAYER_PATH } from '@/constants/route';
-import { IS_ELECTRON, IS_WINDOWS } from '@/constants';
-import {
-  minimizePlayerWindow,
-  hidePlayerWindow,
-} from '@/platform/electron_new';
-import IconButton, { Name } from '@/components/icon_button';
 import Search from './search';
 import Title from './title';
 
@@ -22,10 +16,6 @@ const Style = styled.div`
   box-sizing: border-box;
   -webkit-app-region: drag;
 `;
-const actionStyle = {
-  marginLeft: 10,
-  WebkitAppRegion: 'no-drag',
-};
 
 function Header() {
   const { pathname } = useLocation();
@@ -48,20 +38,6 @@ function Header() {
       <Avatar animated src="/logo.png" size={32} />
       <Title title={title} />
       <Search />
-      {IS_ELECTRON && IS_WINDOWS ? (
-        <>
-          <IconButton
-            name={Name.MINIMIZE_OUTLINE}
-            style={actionStyle}
-            onClick={minimizePlayerWindow}
-          />
-          <IconButton
-            name={Name.WRONG_OUTLINE}
-            style={actionStyle}
-            onClick={hidePlayerWindow}
-          />
-        </>
-      ) : null}
     </Style>
   );
 }

@@ -75,7 +75,7 @@ const CreateDialog = ({ open }: { open: boolean }) => {
       eventemitter.emit(EventType.USER_CREATED, {});
       onClose();
     } catch (error) {
-      logger.error(error, { description: '创建用户失败', report: true });
+      logger.error(error, { description: '创建用户失败' });
       dialog.alert({ title: '创建用户失败', content: error.message });
     }
     setLoading(false);

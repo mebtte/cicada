@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import store from '@/store';
-import { reloadUser } from '@/store/user';
+import u from '@/platform/user';
 import updateUser, { Key } from '@/server/update_user';
+import getUser from '@/server/get_user';
 import ImageCutterDialog from '@/components/image_cutter_dialog';
 import IconButton, { Name } from '@/components/icon_button';
 import Avatar from '@/components/avatar';
@@ -24,12 +24,15 @@ const Style = styled.div`
   }
 `;
 
-const Wrapper = ({ user }: { user: User }) => {
+function Wrapper({ user }: { user: User }) {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const onUpdateAvatar = async (file: File) => {
     await updateUser({ key: Key.AVATAR, value: file });
-    // @ts-expect-error
-    return store.dispatch(reloadUser());
+    const newUser = await getUser();
+    u.updateUser({
+      ...u.getUser()!,
+      avatar: newUser.avatar,
+    });
   };
   return (
     <Style>
@@ -46,6 +49,6 @@ const Wrapper = ({ user }: { user: User }) => {
       />
     </Style>
   );
-};
+}
 
 export default Wrapper;

@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
+import u from '@/platform/user';
 import setting from '@/setting';
-import store from '@/store';
-import { clearUser } from '@/store/user';
 import sleep from '@/utils/sleep';
 import toast from '@/platform/toast';
 import { getToken, clearToken } from '@/platform/token';
@@ -89,8 +88,7 @@ function generateMethod(method: METHOD) {
       // 未登录/登录过期
       if (code === Code.NOT_AUTHORIZE) {
         toast.error('登录过期, 请重新登录');
-        // @ts-ignore
-        store.dispatch(clearUser());
+        u.updateUser(null);
       }
       throw new ErrorWithCode(`${message}(#${code})`, code);
     }

@@ -128,7 +128,7 @@ const CreateMusicDialog = ({ open }: { open: boolean }) => {
       eventemitter.emit(EventType.MUSIC_CREATED_OR_UPDATED_OR_DELETED);
       onClose();
     } catch (error) {
-      logger.error(error, { description: '创建音乐失败', report: true });
+      logger.error(error, { description: '创建音乐失败' });
       dialog.alert({ title: '创建音乐失败', content: error.message });
     }
     setLoading(false);

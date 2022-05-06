@@ -1,8 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
 
-import { User as UserType } from '@/constants/user';
+import u from '@/platform/user';
 import User from './user';
 import MusicbillList from './musicbill_list';
 import Menu from './menu';
@@ -18,13 +17,11 @@ const Style = styled.div`
 `;
 
 const Sidebar = () => {
-  const { user } = useSelector(({ user: u }: { user: UserType }) => ({
-    user: u,
-  }));
+  const user = u.useUser();
   return (
     <Style>
-      <User user={user} />
-      <Menu user={user} />
+      <User user={user!} />
+      <Menu user={user!} />
       <MusicbillList />
     </Style>
   );

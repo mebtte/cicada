@@ -65,7 +65,6 @@ const Action = ({ musicbill }: { musicbill: Musicbill }) => {
             } catch (error) {
               logger.error(error, {
                 description: '删除歌单失败',
-                report: true,
               });
               dialog.alert({
                 title: '删除歌单失败',

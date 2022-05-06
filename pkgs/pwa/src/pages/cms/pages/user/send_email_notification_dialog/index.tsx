@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 import logger from '@/platform/logger';
-import store from '@/store';
+import u from '@/platform/user';
 import cmsSendEmailNotification from '@/server/cms_send_email_notication';
 import cmsCreateEmailNotification from '@/server/cms_create_email_notification';
 import toast from '@/platform/toast';
@@ -89,7 +89,7 @@ function SendEmailNotificationDialog({
       title: '预览将会发送一封邮件通知给自己, 是否继续?',
       onConfirm: async () => {
         try {
-          const { user } = store.getState();
+          const user = u.getUser();
           await cmsSendEmailNotification({ toUserId: user!.id, title, html });
           toast.success('已发送到你的邮箱');
           setTimeout(() => {
@@ -99,7 +99,6 @@ function SendEmailNotificationDialog({
         } catch (error) {
           logger.error(error, {
             description: '发送邮件通知失败',
-            report: true,
           });
           dialog.alert({ title: '预览失败', content: error.message });
         }
@@ -130,7 +129,6 @@ function SendEmailNotificationDialog({
         } catch (error) {
           logger.error(error, {
             description: '创建邮件通知失败',
-            report: true,
           });
           dialog.alert({
             title: '创建邮件通知失败',

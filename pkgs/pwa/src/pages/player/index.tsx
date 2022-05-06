@@ -3,7 +3,6 @@ import { Helmet } from 'react-helmet';
 
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
 import withSignin from '@/platform/with_signin';
-import electron from '@/platform/electron';
 import PageContainer from '../page_container';
 import Sidebar from './sidebar';
 import Header from './header';
@@ -18,7 +17,6 @@ import useSearchWord from './use_search_word';
 import useVolume from './use_volume';
 import Context from './context';
 import Audio from './audio';
-import Electron from './electron';
 import MediaSession from './media_session';
 import SingerDrawer from './singer_drawer';
 import MusicOperatePopup from './music_operate_popup';
@@ -127,8 +125,6 @@ function Wrapper() {
           <MediaSession music={queueMusic.music} />
         </>
       ) : null}
-
-      {electron ? <Electron /> : null}
     </Context.Provider>
   );
 }

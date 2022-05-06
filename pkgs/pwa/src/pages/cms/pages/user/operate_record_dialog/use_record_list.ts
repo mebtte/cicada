@@ -30,7 +30,6 @@ export default ({ open, userId }: { open: boolean; userId?: string }) => {
     } catch (e) {
       logger.error(e, {
         description: '获取用户操作记录列表失败',
-        report: true,
       });
       setError(e);
     }

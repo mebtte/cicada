@@ -22,7 +22,6 @@ class ErrorBoundary extends React.PureComponent<
     onError: (error: Error) =>
       logger.error(error, {
         description: '渲染发生错误',
-        report: true,
       }),
   };
 

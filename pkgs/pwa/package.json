@@ -33,14 +33,10 @@
     "react-json-view": "^1.21.3",
     "react-list": "^0.8.16",
     "react-lrc": "^2.1.5",
-    "react-redux": "^8.0.1",
     "react-router-dom": "^5.3.1",
     "react-slider": "^1.1.4",
     "react-spring": "^9.2.1",
     "react-styleguidist": "^11.2.0",
-    "react-waypoint": "^10.1.0",
-    "redux": "^4.1.0",
-    "redux-devtools-extension": "^2.13.9",
-    "redux-thunk": "^2.3.0"
+    "react-waypoint": "^10.1.0"
   }
 }

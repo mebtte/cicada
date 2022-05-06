@@ -1,23 +1,21 @@
 import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 
+import { setToken } from '@/platform/token';
+import day from '@/utils/day';
+import u from '@/platform/user';
 import IconButton, { Name as IconButtonName } from '@/components/icon_button';
 import Icon, { Name as IconName } from '@/components/icon';
 import { EMAIL } from '@/constants/regexp';
-import {
-  TOKEN,
-  TOKEN_EXPIRED_AT,
-  LAST_SIGNIN_EMAIL,
-} from '@/constants/storage_key';
 import toast from '@/platform/toast';
 import logger from '@/platform/logger';
 import signin from '@/server/signin';
 import getUser from '@/server/get_user';
-import store from '@/store';
-import { setUser } from '@/store/user';
 import dialog from '@/platform/dialog';
 import Input from '@/components/input';
 import Button, { Type } from '@/components/button';
+import storage, { Key } from '@/platform/storage';
+import sleep from '@/utils/sleep';
 import Logo from './logo';
 import VerifyCodeButton from './verify_code_button';
 import eventemitter, { EventType } from './eventemitter';
@@ -63,9 +61,9 @@ const inputStyle = {
 const openSettingDialog = () =>
   eventemitter.emit(EventType.OPEN_SETTING_DIALOG);
 
-const Content = () => {
+function Content() {
   const [email, setEmail] = useState(
-    localStorage.getItem(LAST_SIGNIN_EMAIL) || '',
+    storage.getItem(Key.LAST_SIGNIN_EMAIL) || '',
   );
   const onEmailChange = useCallback(
     (event) => setEmail(event.target.value),
@@ -84,14 +82,22 @@ const Content = () => {
     setLoading(true);
     try {
       const { token, tokenExpiredAt } = await signin({ email, verifyCode });
-      localStorage.setItem(TOKEN_EXPIRED_AT, tokenExpiredAt);
-      localStorage.setItem(TOKEN, token);
-      localStorage.setItem(LAST_SIGNIN_EMAIL, email);
+      setToken(token, tokenExpiredAt);
+
+      await sleep(0);
+
       const user = await getUser();
-      // @ts-expect-error
-      setTimeout(() => store.dispatch(setUser(user)), 0);
+      const joinTime = new Date(user.join_time);
+      u.updateUser({
+        ...user,
+        joinTime,
+        joinTimeString: day(joinTime).format('YYYY-MM-DD HH:mm'),
+        cms: !!user.cms,
+      });
+
+      storage.setItem({ key: Key.LAST_SIGNIN_EMAIL, value: email });
     } catch (error) {
-      logger.error(error, { description: '登录失败', report: true });
+      logger.error(error, { description: '登录失败' });
       dialog.alert({
         title: '登录失败',
         content: error.message,
@@ -146,6 +152,6 @@ const Content = () => {
       />
     </Style>
   );
-};
+}
 
 export default Content;

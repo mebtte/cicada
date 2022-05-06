@@ -1,4 +1,4 @@
-import { USER, TOKEN, TOKEN_EXPIRED_AT } from '../constants/storage_key';
+import storage, { Key } from '@/platform/storage';
 
 /**
  * 检查是否有效的Date
@@ -15,13 +15,13 @@ function isValidDate(date: any) {
 }
 
 export const clearToken = () => {
-  localStorage.removeItem(TOKEN_EXPIRED_AT);
-  localStorage.removeItem(TOKEN);
-  localStorage.removeItem(USER);
+  storage.removeItem(Key.TOKEN_EXPIRED_AT);
+  storage.removeItem(Key.TOKEN);
+  storage.removeItem(Key.USER);
 };
 
 export const getToken = () => {
-  const tokenExpireAtString = localStorage.getItem(TOKEN_EXPIRED_AT);
+  const tokenExpireAtString = storage.getItem(Key.TOKEN_EXPIRED_AT);
   if (!tokenExpireAtString) {
     return '';
   }
@@ -29,5 +29,13 @@ export const getToken = () => {
   if (!isValidDate(tokenExpireAt) || tokenExpireAt.getTime() < Date.now()) {
     return '';
   }
-  return localStorage.getItem(TOKEN) || '';
+  return storage.getItem(Key.TOKEN) || '';
+};
+
+export const setToken = (token: string, tokenExpireAt: string) => {
+  storage.setItem({ key: Key.TOKEN, value: token });
+  storage.setItem({
+    key: Key.TOKEN_EXPIRED_AT,
+    value: tokenExpireAt.toString(),
+  });
 };

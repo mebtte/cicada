@@ -1,14 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { ROOT_PATH, PLAYER_PATH } from '@/constants/route';
-import {
-  IS_ELECTRON,
-  IS_WINDOWS,
-  IS_MAC_OS,
-  ELECTRON_GITHUB_REPOSITORY,
-} from '@/constants';
 import { Name } from '@/components/icon';
 import openLink from '@/utils/open_link';
-import dialog from '@/platform/dialog';
 
 export enum NavigatorKey {
   HOME,
@@ -64,22 +57,5 @@ const NAVIGATORS: Navigator[] = [
     action: () => openLink(`#${ROOT_PATH.CMS}`),
   },
 ];
-if (!IS_ELECTRON) {
-  NAVIGATORS.push({
-    key: NavigatorKey.DESKTOP_APP,
-    type: NavigatorType.ACTION,
-    label: '桌面客户端',
-    icon: IS_WINDOWS
-      ? Name.WINDOW_COLORFULE
-      : IS_MAC_OS
-      ? Name.MAC_OS_COLORFULE
-      : Name.COMPUTER_FILL,
-    action: () =>
-      dialog.confirm({
-        title: '即将打开新的页面, 是否继续?',
-        onConfirm: () =>
-          void openLink(`${ELECTRON_GITHUB_REPOSITORY}/releases`),
-      }),
-  });
-}
+
 export { NAVIGATORS };

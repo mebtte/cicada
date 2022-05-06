@@ -1,9 +1,9 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import { shallowEqual, useSelector } from 'react-redux';
 import * as Sentry from '@sentry/browser';
 
-import { User } from '@/constants/user';
+
+import u from '@/platform/user';
 import { ROOT_PATH } from '@/constants/route';
 import GlobalStyle from './global_style';
 import Toast from './toast';
@@ -54,10 +54,7 @@ const routeList = ROUTES.map((r) => (
 ));
 
 function App() {
-  const user = useSelector(
-    ({ user: u }: { user: User | null }) => u,
-    shallowEqual,
-  );
+  const user = u.useUser();
 
   useEffect(() => {
     if (user) {

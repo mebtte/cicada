@@ -22,7 +22,7 @@ const onPlay = () => eventemitter.emit(EventType.AUDIO_PLAY);
 const onPause = () => eventemitter.emit(EventType.AUDIO_PAUSE);
 const onEnded = () => eventemitter.emit(EventType.ACTION_NEXT);
 const onError = (e) => {
-  logger.error(e, { description: '播放发生错误', report: true });
+  logger.error(e, { description: '播放发生错误' });
   dialog.alert({
     title: '播放发生错误',
     content: e.message,

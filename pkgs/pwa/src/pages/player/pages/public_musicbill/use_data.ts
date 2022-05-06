@@ -39,7 +39,7 @@ export default (id: string) => {
         error: null,
       });
     } catch (error) {
-      logger.error(error, { description: '获取公共歌单失败', report: true });
+      logger.error(error, { description: '获取公共歌单失败' });
       setData({
         loading: false,
         musicbill: null,

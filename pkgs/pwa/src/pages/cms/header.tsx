@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { useSelector, shallowEqual } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import u from '@/platform/user';
 import Tooltip, { Placement } from '@/components/tooltip';
 import IconButton, { Name } from '@/components/icon_button';
 import { User } from '@/constants/user';
@@ -41,7 +41,7 @@ const openProfileDialog = () =>
   globalEentemitter.emit(EventType.OPEN_PROFILE_DIALOG);
 
 const Header = () => {
-  const user = useSelector(({ user: u }: { user: User }) => u, shallowEqual);
+  const user = u.useUser();
   return (
     <Style>
       <Link className="logo" to={ROOT_PATH.HOME}>
@@ -56,7 +56,7 @@ const Header = () => {
       </Tooltip>
       <Avatar
         animated
-        src={user.avatar}
+        src={user!.avatar}
         onClick={openProfileDialog}
         style={avatarStyle}
         size={28}

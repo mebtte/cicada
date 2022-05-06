@@ -40,7 +40,7 @@ const Wrapper = ({ music, onClose }: { music: Music; onClose: () => void }) => {
       await cmsUdpateMusic({ id: music.id, key: Key.LRC, value: lrc });
       onClose();
     } catch (e) {
-      logger.error(e, { description: '更新音乐 lrc 失败', report: true });
+      logger.error(e, { description: '更新音乐 lrc 失败' });
       dialog.alert({ title: '更新歌词失败', content: e.message });
     }
     setLoading(false);

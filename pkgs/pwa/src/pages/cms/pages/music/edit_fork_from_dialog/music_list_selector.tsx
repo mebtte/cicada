@@ -74,7 +74,7 @@ const MusicListSelector = ({
           })),
         );
       } catch (error) {
-        logger.error(error, { description: '搜索音乐失败', report: true });
+        logger.error(error, { description: '搜索音乐失败' });
         toast.error(error.message);
       }
       setLoading((l) => l - 1);

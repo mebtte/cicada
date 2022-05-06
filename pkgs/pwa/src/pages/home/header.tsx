@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import globalEventemitter, { EventType } from '@/platform/global_eventemitter';
-import { PWA_GITHUB_REPOSITORY } from '@/constants';
 import { ROOT_PATH } from '@/constants/route';
 import Avatar from '@/components/avatar';
 import { User } from '@/constants/user';
@@ -51,48 +50,45 @@ const avatarStyle = {
 const openProfileDialog = () =>
   globalEventemitter.emit(EventType.OPEN_PROFILE_DIALOG);
 
-const Header = ({ user }: { user: User | null }) => (
-  <Style>
-    <div className="content">
-      <div className="logo">
-        <img className="icon-logo" src="/logo.png" alt="logo" />
-        <img className="text-logo" src="/text_logo.png" alt="logo" />
-      </div>
-      <div className="right">
-        <Tooltip title="源代码" placement={Placement.BOTTOM}>
-          <a href={PWA_GITHUB_REPOSITORY}>
-            <IconButton name={Name.GITHUB_FILL} size={ACTION_SIZE} />
-          </a>
-        </Tooltip>
-        {user && user.cms ? (
-          <Tooltip title="CMS" placement={Placement.BOTTOM}>
-            <Link to={ROOT_PATH.CMS}>
-              <IconButton name={Name.CMS_OUTLINE} size={ACTION_SIZE} />
+function Header({ user }: { user: User | null }) {
+  return (
+    <Style>
+      <div className="content">
+        <div className="logo">
+          <img className="icon-logo" src="/logo.png" alt="logo" />
+          <img className="text-logo" src="/text_logo.png" alt="logo" />
+        </div>
+        <div className="right">
+          {user && user.cms ? (
+            <Tooltip title="CMS" placement={Placement.BOTTOM}>
+              <Link to={ROOT_PATH.CMS}>
+                <IconButton name={Name.CMS_OUTLINE} size={ACTION_SIZE} />
+              </Link>
+            </Tooltip>
+          ) : null}
+          <Tooltip title="播放器" placement={Placement.BOTTOM}>
+            <Link to={ROOT_PATH.PLAYER}>
+              <IconButton name={Name.MUSIC_FILL} size={ACTION_SIZE} />
             </Link>
           </Tooltip>
+          {user ? null : (
+            <Link to={ROOT_PATH.SIGNIN}>
+              <Button label="登录" size={ACTION_SIZE} />
+            </Link>
+          )}
+        </div>
+        {user ? (
+          <Avatar
+            src={user.avatar}
+            animated
+            size={48}
+            style={avatarStyle}
+            onClick={openProfileDialog}
+          />
         ) : null}
-        <Tooltip title="播放器" placement={Placement.BOTTOM}>
-          <Link to={ROOT_PATH.PLAYER}>
-            <IconButton name={Name.MUSIC_FILL} size={ACTION_SIZE} />
-          </Link>
-        </Tooltip>
-        {user ? null : (
-          <Link to={ROOT_PATH.SIGNIN}>
-            <Button label="登录" size={ACTION_SIZE} />
-          </Link>
-        )}
       </div>
-      {user ? (
-        <Avatar
-          src={user.avatar}
-          animated
-          size={48}
-          style={avatarStyle}
-          onClick={openProfileDialog}
-        />
-      ) : null}
-    </div>
-  </Style>
-);
+    </Style>
+  );
+}
 
 export default Header;

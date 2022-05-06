@@ -107,7 +107,7 @@ const EditDialog = ({ musicbill }: { musicbill: Musicbill }) => {
 
       onClose();
     } catch (error) {
-      logger.error(error, { description: '更新歌单信息失败', report: true });
+      logger.error(error, { description: '更新歌单信息失败' });
       dialog.alert({ title: '更新歌单信息失败', content: error.message });
     }
     setSaving(false);

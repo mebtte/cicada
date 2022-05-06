@@ -30,7 +30,6 @@ export default ({ open, musicId }: { open: boolean; musicId?: string }) => {
     } catch (e) {
       logger.error(e, {
         description: '获取音乐操作记录列表失败',
-        report: true,
       });
       setError(e);
     }

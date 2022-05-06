@@ -140,7 +140,7 @@ function EditMusicDialog() {
 
       onClose();
     } catch (error) {
-      logger.error(error, { description: '更新音乐失败', report: true });
+      logger.error(error, { description: '更新音乐失败' });
       dialog.alert({
         title: '更新音乐失败',
         content: error.message,

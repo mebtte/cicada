@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { shallowEqual, useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { lazy, Suspense } from 'react';
 
+import u from '@/platform/user';
 import toast from '@/platform/toast';
 import { CMS_PATH, ROOT_PATH } from '@/constants/route';
 import { User } from '@/constants/user';
@@ -83,8 +83,8 @@ const routeList = ROUTES.map((r) => (
 ));
 
 function Dashboard() {
-  const user = useSelector((state: { user: User }) => state.user, shallowEqual);
-  if (!user.cms) {
+  const user = u.useUser();
+  if (!user || !user.cms) {
     toast.error('抱歉, 当前账号暂无 CMS 权限');
     return <Redirect to={ROOT_PATH.HOME} />;
   }

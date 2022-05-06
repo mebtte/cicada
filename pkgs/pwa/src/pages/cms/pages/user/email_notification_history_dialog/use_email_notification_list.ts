@@ -30,7 +30,7 @@ export default ({ open, toUserId }: { open: boolean; toUserId?: string }) => {
       setTotal(data.total);
       setEmailNotificationList(data.list);
     } catch (e) {
-      logger.error(e, { description: '获取邮件通知列表失败', report: true });
+      logger.error(e, { description: '获取邮件通知列表失败' });
       setError(e);
     }
     setLoading(false);
