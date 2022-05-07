@@ -3,8 +3,9 @@
 
   "compilerOptions": {
     "outDir": "dist",
-    "module": "ESNext",
-    "target": "ESNext",
+    "sourceMap": true,
+    "module": "CommonJS",
+    "target": "ES2015",
     "lib": ["ES2015.Promise"],
 
     "baseUrl": ".",

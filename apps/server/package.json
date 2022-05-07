@@ -2,12 +2,18 @@
   "name": "server",
   "scripts": {
     "watch": "tsc --watch",
-    "dev": "cross-env NODE_ENV=development webpack --config webpack/dev.js --progress"
+    "nodemon": "cross-env RUNENV=development nodemon --enable-source-maps dist/apps/server/src/index.js",
+    "dev": "tsc && concurrently \"npm run watch\" \"npm run nodemon\"",
+    "build": "ncc build src/index.ts --out build --minify --no-cache --source-map"
+  },
+  "dependencies": {
+    "knex": "^2.0.0",
+    "koa": "^2.13.4"
   },
   "devDependencies": {
     "@types/koa": "^2.13.4",
-    "knex": "^2.0.0",
-    "koa": "^2.13.4",
+    "@vercel/ncc": "^0.33.4",
+    "concurrently": "^7.1.0",
     "nodemon": "^2.0.16"
   }
 }

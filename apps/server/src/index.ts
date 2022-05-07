@@ -9,12 +9,12 @@ async function initialize() {}
 
 async function start() {
   if (cluster.isPrimary) {
-    console.log(`---port: ${config.port}---`);
+    console.log(`--- port: ${config.port} ---`);
 
     await initialize();
 
     const clusterCount = env.development ? 1 : os.cpus().length;
-    console.log(`---clusterCount: ${clusterCount}---`);
+    console.log(`--- clusterCount: ${clusterCount} ---`);
     for (let i = 0; i < clusterCount; i += 1) {
       cluster.fork();
     }
