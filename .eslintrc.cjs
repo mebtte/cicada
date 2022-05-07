@@ -5,7 +5,6 @@ module.exports = {
     node: true,
   },
   globals: {
-    ValueOf: 'readonly',
     AsyncReturnType: 'readonly',
   },
   extends: ['plugin:react/recommended', 'airbnb', 'prettier'],

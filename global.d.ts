@@ -13,8 +13,6 @@ declare module '*.png' {
   export default value;
 }
 
-type ValueOf<T> = T[keyof T];
-
 type AsyncReturnType<T extends (...args: any[]) => Promise<any>> = T extends (
   ...args: any[]
 ) => infer P
