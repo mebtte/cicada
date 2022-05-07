@@ -1,9 +1,7 @@
 {
   "name": "server",
   "scripts": {
-    "watch": "tsc --watch",
-    "nodemon": "cross-env RUNENV=development nodemon --enable-source-maps dist/apps/server/src/index.js",
-    "dev": "tsc && concurrently \"npm run watch\" \"npm run nodemon\"",
+    "dev": "cross-env RUNENV=development nodemon",
     "build": "ncc build src/index.ts --out build --minify --no-cache --source-map"
   },
   "dependencies": {
@@ -13,7 +11,6 @@
   "devDependencies": {
     "@types/koa": "^2.13.4",
     "@vercel/ncc": "^0.33.4",
-    "concurrently": "^7.1.0",
     "nodemon": "^2.0.16"
   }
 }

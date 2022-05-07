@@ -2,8 +2,6 @@
   "extends": "../../tsconfig.json",
 
   "compilerOptions": {
-    "outDir": "dist",
-    "sourceMap": true,
     "module": "CommonJS",
     "target": "ES2015",
     "lib": ["ES2015.Promise"],
