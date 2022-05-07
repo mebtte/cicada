@@ -1,8 +1,8 @@
 {
   "name": "pwa",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack serve --config webpack/development.js --progress",
-    "build": "cross-env NODE_ENV=production webpack --config webpack/production.js --progress"
+    "dev": "cross-env NODE_ENV=development webpack serve --config webpack/dev.js --progress",
+    "build": "cross-env NODE_ENV=production webpack --config webpack/prod.js --progress"
   },
   "devDependencies": {
     "@mebtte/react-media-session": "^1.1.1",

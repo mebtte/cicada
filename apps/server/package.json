@@ -1,0 +1,12 @@
+{
+  "name": "server",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack --config webpack/dev.js --progress"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16",
+    "@types/koa": "^2.13.4",
+    "koa": "^2.13.4",
+    "knex": "^2.0.0"
+  }
+}

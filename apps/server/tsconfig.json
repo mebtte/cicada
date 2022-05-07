@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["ES2015.Promise"],
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*", "../../global.d.ts"]
+}

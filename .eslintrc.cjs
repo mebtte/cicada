@@ -38,6 +38,13 @@ module.exports = {
     'no-redeclare': 'off',
     '@typescript-eslint/no-redeclare': 'error',
 
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: true,
+      },
+    ],
+    'import/no-relative-packages': 'off',
     'import/prefer-default-export': 'off',
     'import/extensions': [
       'error',
