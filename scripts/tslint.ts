@@ -8,12 +8,12 @@ import { promisify } from 'util';
 const CURRENT_DIR = dirname(fileURLToPath(import.meta.url));
 
 const execAsync = promisify(exec);
-const pkgs = await readdir(join(CURRENT_DIR, '../pkgs'));
+const apps = await readdir(join(CURRENT_DIR, '../apps'));
 
-for (const pkg of pkgs) {
+for (const app of apps) {
   try {
     await execAsync('tsc --noEmit', {
-      cwd: join(CURRENT_DIR, '../pkgs', pkg),
+      cwd: join(CURRENT_DIR, '../apps', app),
     });
   } catch (error) {
     console.log(error.stdout || error.stderr);

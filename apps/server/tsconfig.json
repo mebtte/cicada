@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
 
   "compilerOptions": {
+    "outDir": "dist",
     "module": "ESNext",
     "target": "ESNext",
     "lib": ["ES2015.Promise"],
