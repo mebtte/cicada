@@ -23,7 +23,7 @@ module.exports = {
     },
     'import/resolver': {
       typescript: {
-        project: ['tsconfig.json', 'pkgs/*/tsconfig.json'],
+        project: ['tsconfig.json', 'apps/*/tsconfig.json'],
       },
     },
   },
