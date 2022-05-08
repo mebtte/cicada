@@ -70,10 +70,12 @@
     "webpack-dev-server": "^4.9.0"
   },
   "scripts": {
+    "prepare": "./bin/prepare.sh && husky install",
     "dev:pwa": "npm run dev -w apps/pwa",
+    "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev -w apps/server",
-    "tslint": "ts-node-esm scripts/tslint.ts",
-    "prepare": "husky install"
+    "build:server": "npm run build -w apps/server",
+    "tslint": "ts-node-esm scripts/tslint.ts"
   },
   "overrides": {
     "react": "^18.1.0",
