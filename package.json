@@ -75,6 +75,7 @@
     "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev -w apps/server",
     "build:server": "npm run build -w apps/server",
+    "build": "./bin/build.sh",
     "tslint": "ts-node-esm scripts/tslint.ts"
   },
   "overrides": {
