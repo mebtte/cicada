@@ -3,7 +3,6 @@
   "description": "知了, 一个自托管的音乐服务.",
   "version": "0.0.1",
   "private": true,
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mebtte/cicada.git"
@@ -76,7 +75,7 @@
     "dev:server": "npm run dev -w apps/server",
     "build:server": "npm run build -w apps/server",
     "build": "./bin/build.sh",
-    "tslint": "ts-node-esm scripts/tslint.ts"
+    "tslint": "ts-node scripts/tslint.ts"
   },
   "overrides": {
     "react": "^18.1.0",
