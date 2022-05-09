@@ -2,7 +2,10 @@
 /* eslint-disable no-underscore-dangle,no-undef */
 declare global {
   const __ENV__: {
+    SERVER_ADDRESS: string;
+
     VERSION: string;
+
     BUILD_TIME: string;
     EMPTY_IMAGE_LIST: string[];
     ERROR_IMAGE_LIST: string[];
