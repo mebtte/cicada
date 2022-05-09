@@ -24,6 +24,7 @@
 | port          | number | 否       | 8000                      | server 提供服务的端口                                                |
 | serverAddress | string | 否       | http://localhost:{{port}} | server **实际**部署地址, 比如通过 https://cicada.mebtte.com 暴露服务 |
 | base          | string | 否       | {{os.homedir()}}/.cicada  | server 数据存放目录                                                  |
+| clusterCount  | number | 否       | {{os.cups().length}}      | server 进程数量                                                      |
 
 ## 构建/部署
 
