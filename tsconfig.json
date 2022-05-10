@@ -8,14 +8,7 @@
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-
-    "baseUrl": ".",
-    "paths": {
-      "#/*": ["shared/*"],
-      "@mui/styled-engine": ["./node_modules/@mui/styled-engine-sc"]
-    }
+    "resolveJsonModule": true
   },
-  "exclude": ["node_modules", "**/node_modules/*"],
-  "include": ["global.d.ts"]
+  "exclude": ["node_modules", "**/node_modules/*"]
 }
