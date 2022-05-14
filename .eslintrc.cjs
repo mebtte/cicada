@@ -36,6 +36,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': 'error',
     'no-redeclare': 'off',
     '@typescript-eslint/no-redeclare': 'error',
+    '@typescript-eslint/no-explicit-any': 'error',
 
     'import/no-extraneous-dependencies': [
       'error',
