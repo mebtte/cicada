@@ -70,6 +70,7 @@
   },
   "scripts": {
     "prepare": "./bin/prepare.sh && husky install",
+    "test": "jest",
     "dev:pwa": "npm run dev -w apps/pwa",
     "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev -w apps/server",
