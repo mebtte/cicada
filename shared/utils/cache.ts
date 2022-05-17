@@ -3,12 +3,14 @@ const { setInterval, clearInterval } = globalThis;
 interface ValueWrapper {
   ttl: number;
   timestamp: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
 }
 
 class Cache<
   Key extends string,
   Value extends {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key in Key]: any;
   },
 > {
@@ -27,7 +29,7 @@ class Cache<
       }
 
       for (const key of this.cache.keys()) {
-        const { ttl, timestamp } = this.cache[key];
+        const { ttl, timestamp } = this.cache.get(key)!;
         if (Date.now() - timestamp > ttl) {
           this.cache.delete(key);
         }
