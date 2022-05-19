@@ -1,5 +1,5 @@
 import { Context, Next } from 'koa';
-import { ExceptionCode } from '../exception';
+import { ExceptionCode } from '#/constants/exception';
 
 export default async (ctx: Context, next: Next) => {
   try {

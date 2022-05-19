@@ -1,4 +1,4 @@
-# [知了](https://cicada.mebtte.com)
+# 知了
 
 知了, 一个自托管的音乐服务.
 
@@ -20,12 +20,14 @@
 
 知了配置文件位于根目录下的 `config.json`, 可用配置如下:
 
-| 字段          | 类型   | 是否必须 | 默认值                    | 描述                                                                 |
-| ------------- | ------ | -------- | ------------------------- | -------------------------------------------------------------------- |
-| port          | number | 否       | 8000                      | server 提供服务的端口                                                |
-| serverAddress | string | 否       | http://localhost:{{port}} | server **实际**部署地址, 比如通过 https://cicada.mebtte.com 暴露服务 |
-| base          | string | 否       | {{os.homedir()}}/.cicada  | server 数据存放目录                                                  |
-| clusterCount  | number | 否       | {{os.cups().length}}      | server 进程数量                                                      |
+| 字段               | 类型   | 是否必须 | 默认值                          | 描述                                                                 |
+| ------------------ | ------ | -------- | ------------------------------- | -------------------------------------------------------------------- |
+| serverPort         | number | 否       | 8000                            | server 提供服务的端口                                                |
+| serverAddress      | string | 否       | http://localhost:{{serverPort}} | server **实际**部署地址, 比如通过 https://cicada.mebtte.com 暴露服务 |
+| serverClusterCount | number | 否       | {{os.cups().length}}            | server 进程数量                                                      |
+| serverBase         | string | 否       | {{os.homedir()}}/.cicada        | server 数据存放目录                                                  |
+|                    |        |          |                                 |                                                                      |
+| pwaDevPort         | number | 否       | 8001                            | pwa 开发使用端口                                                     |
 
 ## 构建/部署
 

@@ -1,5 +1,5 @@
-import { Context } from 'koa';
-import { ExceptionCode, EXCEPTION_CODE_MAP } from '../exception';
+import { ExceptionCode, EXCEPTION_CODE_MAP } from '#/constants/exception';
+import { Context } from '../constants/koa';
 
 export default (ctx: Context) => {
   ctx.success = (data) => {
@@ -8,7 +8,7 @@ export default (ctx: Context) => {
       data,
     };
   };
-  ctx.except = (exceptionCode) => {
+  ctx.except = (exceptionCode: ExceptionCode) => {
     ctx.body = {
       code: exceptionCode,
       message: EXCEPTION_CODE_MAP[exceptionCode].description,

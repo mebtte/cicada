@@ -1,6 +1,6 @@
-import config from '@/config';
+import config from '#/config';
 
-const ASSET_DIR = `${config.base}/assets`;
+const ASSET_DIR = `${config.serverBase}/assets`;
 
 enum AssetType {
   CHARACTER_AVATAR = 'character_avatar',

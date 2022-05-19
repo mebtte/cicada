@@ -2,17 +2,28 @@ import cluster from 'cluster';
 import http from 'http';
 import Koa from 'koa';
 import mount from 'koa-mount';
+import config from '#/config';
 import api from './api';
 import asset from './asset';
 import pwa from './pwa';
-import config from './config';
 import schedule from './schedule';
 
 async function start() {
   if (cluster.isPrimary) {
+    const PRINT_CONFIG_KEYS = [
+      'serverPort',
+      'serverAddress',
+      'serverBase',
+      'serverClusterCount',
+    ];
+    for (const key of PRINT_CONFIG_KEYS) {
+      // eslint-disable-next-line no-console
+      console.log(`--- config | ${key} = ${config[key]} ---`);
+    }
+
     schedule.start();
 
-    for (let i = 0; i < config.clusterCount; i += 1) {
+    for (let i = 0; i < config.serverClusterCount; i += 1) {
       cluster.fork();
     }
   } else {
@@ -22,7 +33,7 @@ async function start() {
     server.use(mount('/api', api));
     server.use(mount('/assets', asset));
 
-    http.createServer(server.callback()).listen(config.port);
+    http.createServer(server.callback()).listen(config.serverPort);
   }
 }
 
