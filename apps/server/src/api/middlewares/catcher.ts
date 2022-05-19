@@ -1,10 +1,15 @@
-import { Context, Next } from 'koa';
+import { Next } from 'koa';
 import { ExceptionCode } from '#/constants/exception';
+import env from '@/env';
+import { Context } from '../constants/koa';
 
 export default async (ctx: Context, next: Next) => {
   try {
     await next();
   } catch (error) {
-    ctx.error(ExceptionCode.SERVER_ERROR);
+    if (env.development) {
+      console.error(error);
+    }
+    ctx.except(ExceptionCode.SERVER_ERROR);
   }
 };

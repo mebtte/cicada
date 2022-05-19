@@ -8,14 +8,20 @@
     "@types/koa": "^2.13.4",
     "@types/koa-mount": "^4.0.1",
     "@types/koa-range": "^0.3.2",
+    "@types/koa-router": "^7.4.4",
     "@types/koa-static": "^4.0.2",
+    "@types/shortid": "^0.0.29",
     "@vercel/ncc": "^0.33.4",
     "knex": "^2.0.0",
     "koa": "^2.13.4",
+    "koa-logger": "^3.2.1",
     "koa-mount": "^4.0.0",
     "koa-range": "^0.3.0",
+    "koa-router": "^10.1.1",
     "koa-static": "^5.0.0",
     "nodemon": "^2.0.16",
+    "shortid": "^2.2.16",
+    "svg-captcha": "^1.4.0",
     "tsconfig-paths": "^4.0.0"
   }
 }
