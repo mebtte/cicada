@@ -1,21 +1,21 @@
 import captcha from 'svg-captcha';
 import shortid from 'shortid';
-import cache, { Key } from '@/platform/cache';
-import { CAPTCHA_TTL } from '#/constants';
+import db from '@/platform/db';
 import { Context } from '../constants/koa';
 
 export default async (ctx: Context) => {
   const captchaData = captcha.create({
-    size: 4,
-    ignoreChars: '0o1i',
+    size: 5,
+    ignoreChars: '0o1il',
     noise: 2,
   });
   const id = shortid.generate();
-  cache.set({
-    key: Key.CAPTCHA,
-    value: captchaData.text,
-    ttl: CAPTCHA_TTL,
-    keyReplace: (key) => key.replace('{{id}}', id),
-  });
+  await new Promise<void>((resolve, reject) =>
+    db.run(
+      'insert into captcha(id, value, createTimestamp) values(?, ?, ?)',
+      [id, captchaData.text, Date.now()],
+      (_, error) => (error ? reject(error) : resolve()),
+    ),
+  );
   ctx.success({ id, svg: captchaData.data });
 };
