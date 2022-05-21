@@ -14,7 +14,7 @@ export default async (ctx: Context) => {
     db.run(
       'insert into captcha(id, value, createTimestamp) values(?, ?, ?)',
       [id, captchaData.text, Date.now()],
-      (_, error) => (error ? reject(error) : resolve()),
+      (error) => (error ? reject(error) : resolve()),
     ),
   );
   ctx.success({ id, svg: captchaData.data });

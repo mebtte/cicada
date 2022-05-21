@@ -1,3 +1,10 @@
+/**
+ * 全局配置文件
+ * 除 server 外, 客户端请勿直接引用
+ * 否则敏感信息将构建在客户端中
+ * 造成安全问题
+ * @author mebtte<hi@mebtte.com>
+ */
 const os = require('os');
 const config = require('../config.json');
 

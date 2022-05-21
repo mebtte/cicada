@@ -1,6 +1,6 @@
 import fs from 'fs';
 import util from 'util';
-import { DB_LOG_DIR } from '@/constants/directory';
+import { DB_LOG_DIR } from '#/constants/directory';
 
 const TTL = 1000 * 60 * 60 * 24 * 30;
 const readdirAsync = util.promisify(fs.readdir);

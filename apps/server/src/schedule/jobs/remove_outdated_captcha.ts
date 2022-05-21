@@ -7,7 +7,7 @@ function removeOutdatedCaptcha() {
     db.run(
       'delete from captcha where createTimestamp <= ?',
       [Date.now() - TTL],
-      (_, error) => (error ? reject(error) : resolve()),
+      (error) => (error ? reject(error) : resolve()),
     ),
   );
 }

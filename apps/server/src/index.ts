@@ -9,6 +9,7 @@ import asset from './asset';
 import pwa from './pwa';
 import schedule from './schedule';
 import env from './env';
+import initialize from './initialize';
 
 async function start() {
   if (cluster.isPrimary) {
@@ -28,6 +29,8 @@ async function start() {
       // eslint-disable-next-line no-console
       console.log(`--- env | ${key} = ${env[key]} ---`);
     }
+
+    await initialize();
 
     schedule.start();
 

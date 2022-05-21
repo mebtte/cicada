@@ -1,6 +1,6 @@
 import fs from 'fs';
 import util from 'util';
-import { SCHEDULE_LOG_DIR } from '@/constants/directory';
+import { SCHEDULE_LOG_DIR } from '#/constants/directory';
 
 const TTL = 1000 * 60 * 60 * 24 * 90;
 const readdirAsync = util.promisify(fs.readdir);

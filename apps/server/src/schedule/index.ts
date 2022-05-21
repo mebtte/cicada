@@ -2,16 +2,13 @@ import * as schedule from 'node-schedule';
 import fs from 'fs';
 import util from 'util';
 import day from '#/utils/day';
-import { SCHEDULE_LOG_DIR } from '@/constants/directory';
-import removeOutdatedScheduleLog from './remove_outdated_schedule_log';
-import removeOutdatedDBLog from './remove_outdated_db_log';
-import removeOutdatedCaptcha from './remove_outdated_captcha';
+import { SCHEDULE_LOG_DIR } from '#/constants/directory';
+import removeOutdatedScheduleLog from './jobs/remove_outdated_schedule_log';
+import removeOutdatedDBLog from './jobs/remove_outdated_db_log';
+import removeOutdatedCaptcha from './jobs/remove_outdated_captcha';
+import createAndRemoveOutdatedDBSnapshot from './jobs/create_and_remove_outdated_db_snapshot';
 
 const appendFileAysnc = util.promisify(fs.appendFile);
-
-if (!fs.existsSync(SCHEDULE_LOG_DIR)) {
-  fs.mkdirSync(SCHEDULE_LOG_DIR);
-}
 
 const onRun = (job: string) => {
   const now = day();
@@ -59,6 +56,15 @@ export default {
       .addListener('error', (error) =>
         onError({
           job: 'removeOutdatedCaptcha',
+          error,
+        }),
+      );
+    schedule
+      .scheduleJob('0 15 4 * * *', createAndRemoveOutdatedDBSnapshot)
+      .addListener('run', () => onRun('createAndRemoveOutdatedDBSnapshot'))
+      .addListener('error', (error) =>
+        onError({
+          job: 'createAndRemoveOutdatedDBSnapshot',
           error,
         }),
       );
