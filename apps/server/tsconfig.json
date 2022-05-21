@@ -10,7 +10,8 @@
     "baseUrl": ".",
     "paths": {
       "#/*": ["../../shared/*"],
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "$/*": ["src/api/*"]
     }
   },
   "include": ["src/**/*", "../../global.d.ts"]

@@ -5,6 +5,7 @@ import day from '#/utils/day';
 import { SCHEDULE_LOG_DIR } from '@/constants/directory';
 import removeOutdatedScheduleLog from './remove_outdated_schedule_log';
 import removeOutdatedDBLog from './remove_outdated_db_log';
+import removeOutdatedCaptcha from './remove_outdated_captcha';
 
 const appendFileAysnc = util.promisify(fs.appendFile);
 
@@ -49,6 +50,15 @@ export default {
       .addListener('error', (error) =>
         onError({
           job: 'removeOutdatedDBLog',
+          error,
+        }),
+      );
+    schedule
+      .scheduleJob('0 10 4 * * *', removeOutdatedCaptcha)
+      .addListener('run', () => onRun('removeOutdatedCaptcha'))
+      .addListener('error', (error) =>
+        onError({
+          job: 'removeOutdatedCaptcha',
           error,
         }),
       );
