@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import styled from 'styled-components';
 
 import { setToken } from '@/platform/token';
-import day from '@/utils/day';
+import day from '#/utils/day';
 import u from '@/platform/user';
 import IconButton, { Name as IconButtonName } from '@/components/icon_button';
 import Icon, { Name as IconName } from '@/components/icon';

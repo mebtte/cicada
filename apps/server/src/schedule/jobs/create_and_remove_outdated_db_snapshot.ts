@@ -2,9 +2,9 @@ import zlib from 'zlib';
 import fs from 'fs';
 import util from 'util';
 import stream from 'stream';
-import { DB_SNAPSHOT_DIR } from '#/constants/directory';
+import { DB_SNAPSHOT_DIR } from '@/constants/directory';
 import day from '#/utils/day';
-import { DB_FILE_PATH } from '#/constants';
+import { DB_FILE_PATH } from '../../constants';
 
 const TTL = 1000 * 60 * 60 * 24 * 90;
 const readdirAsync = util.promisify(fs.readdir);

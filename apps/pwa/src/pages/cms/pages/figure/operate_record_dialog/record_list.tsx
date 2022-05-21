@@ -1,6 +1,6 @@
 import IconButton, { Name } from '@/components/icon_button';
-import day from '@/utils/day';
 import Table from '@/components/table';
+import day from '#/utils/day';
 import { Record as RecordType } from './constants';
 import CMSEventemitter, {
   EventType as CMSEventType,
@@ -15,7 +15,7 @@ const style = {
 };
 const headers = ['角色 ID', '操作用户', '类型', '操作时间', '详情'];
 
-const RecordList = ({ recordList }: { recordList: RecordType[] }) => {
+function RecordList({ recordList }: { recordList: RecordType[] }) {
   const rowRenderer = (record: RecordType) => [
     record.figure_id,
     <span title={record.operate_user.id}>{record.operate_user.nickname}</span>,
@@ -43,6 +43,6 @@ const RecordList = ({ recordList }: { recordList: RecordType[] }) => {
       style={style}
     />
   );
-};
+}
 
 export default RecordList;

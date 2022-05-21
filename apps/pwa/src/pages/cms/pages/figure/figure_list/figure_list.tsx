@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import styled, { css } from 'styled-components';
 
 import useHistory from '@/utils/use_history';
-import day from '@/utils/day';
+import day from '#/utils/day';
 import { SearchKey } from '@/server/cms_get_figure_list';
 import IconButton, { Name } from '@/components/icon_button';
 import Empty from '@/components/empty';
@@ -66,7 +66,7 @@ const OperationBox = styled.div`
   gap: 3px;
 `;
 
-const FigureList = ({
+function FigureList({
   figureList,
   loading,
   page,
@@ -78,7 +78,7 @@ const FigureList = ({
   page: number;
   searchKey: SearchKey;
   searchValue: string;
-}) => {
+}) {
   const history = useHistory();
   const contentRef = useRef<HTMLDivElement | null>(null);
 
@@ -150,6 +150,6 @@ const FigureList = ({
       )}
     </Style>
   );
-};
+}
 
 export default FigureList;

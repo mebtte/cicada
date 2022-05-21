@@ -1,3 +1,3 @@
 export default {
-  development: process.env.RUNENV === 'development',
+  RUNENV: process.env.RUNENV as undefined | 'development',
 };

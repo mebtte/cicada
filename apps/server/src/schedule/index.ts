@@ -2,7 +2,7 @@ import * as schedule from 'node-schedule';
 import fs from 'fs';
 import util from 'util';
 import day from '#/utils/day';
-import { SCHEDULE_LOG_DIR } from '#/constants/directory';
+import { SCHEDULE_LOG_DIR } from '@/constants/directory';
 import removeOutdatedScheduleLog from './jobs/remove_outdated_schedule_log';
 import removeOutdatedDBLog from './jobs/remove_outdated_db_log';
 import removeOutdatedCaptcha from './jobs/remove_outdated_captcha';

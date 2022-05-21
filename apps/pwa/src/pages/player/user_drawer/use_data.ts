@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import getRandomCover from '@/utils/get_random_cover';
-import day from '@/utils/day';
+import day from '#/utils/day';
 import getUserDetailRequest from '@/server/get_user_detail';
 import { Data } from './constants';
 

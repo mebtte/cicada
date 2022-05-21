@@ -1,4 +1,5 @@
-import getRandomString from './get_random_string';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import generateRandomString from '#/utils/generate_random_string';
 import timeout from './timeout';
 import sleep from './sleep';
 
@@ -48,7 +49,7 @@ class AsyncQueue {
   }
 
   run<Result>(task: () => Promise<Result>) {
-    const id = getRandomString();
+    const id = generateRandomString();
 
     let abort: () => void;
     let finished = false;

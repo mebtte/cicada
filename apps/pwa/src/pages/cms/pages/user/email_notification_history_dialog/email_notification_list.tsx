@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 import IconButton, { Name } from '@/components/icon_button';
-import day from '@/utils/day';
+import day from '#/utils/day';
 import ellipsis from '@/style/ellipsis';
 import Table from '@/components/table';
 import { EmailNotification } from './constants';
@@ -26,11 +26,11 @@ const Small = styled.div`
   font-size: 12px;
 `;
 
-const EmailNotificationList = ({
+function EmailNotificationList({
   emailNotificationList,
 }: {
   emailNotificationList: EmailNotification[];
-}) => {
+}) {
   const rowRenderer = (emailNotification: EmailNotification) => [
     emailNotification.to_user_id,
     <span title={`ID:${emailNotification.send_user.id}`}>
@@ -64,6 +64,6 @@ const EmailNotificationList = ({
       stickyHeader
     />
   );
-};
+}
 
 export default EmailNotificationList;

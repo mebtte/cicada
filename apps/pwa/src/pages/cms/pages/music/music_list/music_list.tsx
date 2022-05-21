@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
 import useHistory from '@/utils/use_history';
-import day from '@/utils/day';
+import day from '#/utils/day';
 import Tooltip from '@/components/tooltip';
 import Tag, { Type as TagType } from '@/components/tag';
 import { SearchKey as FigureSearchKey } from '@/server/cms_get_figure_list';

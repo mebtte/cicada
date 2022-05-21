@@ -3,7 +3,7 @@ import http from 'http';
 import Koa from 'koa';
 import log from 'koa-logger';
 import mount from 'koa-mount';
-import config from '#/config';
+import argv from './argv';
 import api from './api';
 import asset from './asset';
 import pwa from './pwa';
@@ -13,18 +13,13 @@ import initialize from './initialize';
 
 async function start() {
   if (cluster.isPrimary) {
-    const PRINT_CONFIG_KEYS = [
-      'serverPort',
-      'serverAddress',
-      'serverBase',
-      'serverClusterCount',
-    ];
-    for (const key of PRINT_CONFIG_KEYS) {
+    const PRINT_ARGV_KEYS = ['base', 'port', 'publicAddress', 'clusterCount'];
+    for (const key of PRINT_ARGV_KEYS) {
       // eslint-disable-next-line no-console
-      console.log(`--- config | ${key} = ${config[key]} ---`);
+      console.log(`--- argv | ${key} = ${argv[key]} ---`);
     }
 
-    const PRINT_ENV_KEYS = ['development'];
+    const PRINT_ENV_KEYS = ['RUNENV'];
     for (const key of PRINT_ENV_KEYS) {
       // eslint-disable-next-line no-console
       console.log(`--- env | ${key} = ${env[key]} ---`);
@@ -34,13 +29,13 @@ async function start() {
 
     schedule.start();
 
-    for (let i = 0; i < config.serverClusterCount; i += 1) {
+    for (let i = 0; i < argv.clusterCount; i += 1) {
       cluster.fork();
     }
   } else {
     const server = new Koa();
 
-    if (env.development) {
+    if (env.RUNENV === 'development') {
       server.use(log());
     }
 
@@ -48,7 +43,7 @@ async function start() {
     server.use(mount('/api', api));
     server.use(mount('/', pwa));
 
-    http.createServer(server.callback()).listen(config.serverPort);
+    http.createServer(server.callback()).listen(argv.port);
   }
 }
 

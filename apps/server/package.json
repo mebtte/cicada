@@ -13,6 +13,7 @@
     "@types/koa-static": "^4.0.2",
     "@types/node-schedule": "^2.1.0",
     "@types/shortid": "^0.0.29",
+    "@types/yargs": "^17.0.10",
     "@vercel/ncc": "^0.33.4",
     "colors": "^1.4.0",
     "knex": "^2.0.0",
@@ -26,6 +27,11 @@
     "nodemon": "^2.0.16",
     "shortid": "^2.2.16",
     "svg-captcha": "^1.4.0",
-    "tsconfig-paths": "^4.0.0"
+    "tsconfig-paths": "^4.0.0",
+    "yargs": "^17.5.1"
+  },
+  "dependencies": {
+    "@types/md5": "^2.3.2",
+    "md5": "^2.3.0"
   }
 }

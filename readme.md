@@ -1,8 +1,6 @@
 # 知了
 
-知了, 一个自托管的音乐服务.
-
-知了服务包含多个子应用:
+知了, 一个自托管的音乐服务. 知了服务包含多个子应用:
 
 | 应用            | 描述                                                        | 状态        |
 | --------------- | ----------------------------------------------------------- | ----------- |
@@ -16,38 +14,22 @@
 
 - Node.js >= 16 && npm >= 8
 
-## 配置
-
-知了配置文件位于根目录下的 `config.json`, 可用配置如下:
-
-| 字段               | 类型   | 是否必须 | 默认值                          | 描述                                                                 |
-| ------------------ | ------ | -------- | ------------------------------- | -------------------------------------------------------------------- |
-| serverPort         | number | 否       | 8000                            | server 提供服务的端口                                                |
-| serverAddress      | string | 否       | http://localhost:{{serverPort}} | server **实际**部署地址, 比如通过 https://cicada.mebtte.com 暴露服务 |
-| serverClusterCount | number | 否       | {{os.cups().length}}            | server 进程数量                                                      |
-| serverBase         | string | 否       | {{os.homedir()}}/.cicada        | server 数据存放目录                                                  |
-|                    |        |          |                                 |                                                                      |
-| pwaDevPort         | number | 否       | 8001                            | pwa 开发使用端口                                                     |
-
-## 构建/部署
+## 构建并部署
 
 ```sh
+npm i
 npm run build
-cd build
-node index.js
+node build/index.js --port=8000
 ```
 
-## 开发
+知了支持使用参数进行配置:
 
-知了多个子应用在开发环境下相互独立, 需要采用不同的开发方式.
-
-### server
-
-代码位于 `apps/server` 下, 通过 `npm run dev:server` 启动服务.
-
-### pwa
-
-代码位于 `apps/pwa` 下, 通过 `npm run dev:pwa` 启动服务.
+| 参数          | 类型   | 是否必须 | 默认值                          | 描述                                                         |
+| ------------- | ------ | -------- | ------------------------------- | ------------------------------------------------------------ |
+| port          | number | 否       | 8000                            | 提供服务的端口                                               |
+| publicAddress | string | 否       | http://localhost:{{serverPort}} | **实际**暴露服务的地址, 比如通过 https://cicada.com 暴露服务 |
+| clusterCount  | number | 否       | {{os.cups().length}}            | 服务进程数量                                                 |
+| base          | string | 否       | {{os.homedir()}}/.cicada        | 数据存放目录                                                 |
 
 ## 开源协议
 

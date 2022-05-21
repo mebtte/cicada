@@ -6,8 +6,8 @@ import util from 'util';
 import * as sqlite3 from 'sqlite3';
 import day from '#/utils/day';
 import color from 'colors/safe';
-import { DB_FILE_PATH } from '#/constants';
-import { DB_LOG_DIR } from '#/constants/directory';
+import { DB_LOG_DIR } from '@/constants/directory';
+import { DB_FILE_PATH } from '../constants';
 import env from '../env';
 
 const appendFileAsync = util.promisify(fs.appendFile);
@@ -18,7 +18,7 @@ db.on('profile', (sql, ms) => {
   const dateString = now.format('YYYYMMDD');
   const timeString = now.format('HH:mm:ss');
 
-  if (env.development) {
+  if (env.RUNENV === 'development') {
     // eslint-disable-next-line no-console
     console.log(`[${timeString}] ${color.underline(`${ms}ms`)}\n${sql}`);
   }

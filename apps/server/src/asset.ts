@@ -1,7 +1,7 @@
 import Koa from 'koa';
 import range from 'koa-range';
 import serve from 'koa-static';
-import { ASSET_DIR } from '#/constants/directory';
+import { ASSET_DIR } from '@/constants/directory';
 
 const app = new Koa();
 app.use(range);

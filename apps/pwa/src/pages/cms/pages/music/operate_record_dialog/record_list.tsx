@@ -1,5 +1,5 @@
 import IconButton, { Name } from '@/components/icon_button';
-import day from '@/utils/day';
+import day from '#/utils/day';
 import Table from '@/components/table';
 import { Record as RecordType } from './constants';
 import CMSEventemitter, {
@@ -15,7 +15,7 @@ const style = {
 };
 const headers = ['音乐 ID', '操作用户', '类型', '操作时间', '详情'];
 
-const RecordList = ({ recordList }: { recordList: RecordType[] }) => {
+function RecordList({ recordList }: { recordList: RecordType[] }) {
   const rowRenderer = (record: RecordType) => [
     record.music_id,
     <span title={record.operate_user.id}>{record.operate_user.nickname}</span>,
@@ -43,6 +43,6 @@ const RecordList = ({ recordList }: { recordList: RecordType[] }) => {
       style={style}
     />
   );
-};
+}
 
 export default RecordList;

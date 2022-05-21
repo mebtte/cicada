@@ -1,4 +1,4 @@
-import day from '@/utils/day';
+import day from '#/utils/day';
 import Table from '@/components/table';
 import { Record as RecordType } from './constants';
 
@@ -7,7 +7,7 @@ const style = {
 };
 const headers = ['键', '值', '操作用户', '操作时间'];
 
-const RecordList = ({ recordList }: { recordList: RecordType[] }) => {
+function RecordList({ recordList }: { recordList: RecordType[] }) {
   const rowRenderer = (record: RecordType) => [
     record.key,
     record.value,
@@ -25,6 +25,6 @@ const RecordList = ({ recordList }: { recordList: RecordType[] }) => {
       style={style}
     />
   );
-};
+}
 
 export default RecordList;

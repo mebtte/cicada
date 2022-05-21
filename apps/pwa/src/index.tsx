@@ -8,12 +8,12 @@ import { Integrations } from '@sentry/tracing';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import u from '@/platform/user';
+import day from '#/utils/day';
 import { getToken } from './platform/token';
 import env from './env';
 import logger from './platform/logger';
 import App from './app';
 import getUser from './server/get_user';
-import day from './utils/day';
 
 async function initialize() {
   if (env.SENTRY_DSN) {

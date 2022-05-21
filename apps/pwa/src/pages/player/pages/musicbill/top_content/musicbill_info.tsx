@@ -1,7 +1,7 @@
 import { animated } from 'react-spring';
 import styled, { css } from 'styled-components';
 
-import day from '@/utils/day';
+import day from '#/utils/day';
 import { RequestStatus } from '@/constants';
 import ellipsis from '@/style/ellipsis';
 import Avatar from '@/components/avatar';

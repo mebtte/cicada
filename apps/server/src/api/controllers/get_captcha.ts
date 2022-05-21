@@ -1,6 +1,6 @@
 import captcha from 'svg-captcha';
 import shortid from 'shortid';
-import db from '@/platform/db';
+import { saveCaptcha } from '@/platform/captcha';
 import { Context } from '../constants/koa';
 
 export default async (ctx: Context) => {
@@ -10,12 +10,6 @@ export default async (ctx: Context) => {
     noise: 2,
   });
   const id = shortid.generate();
-  await new Promise<void>((resolve, reject) =>
-    db.run(
-      'insert into captcha(id, value, createTimestamp) values(?, ?, ?)',
-      [id, captchaData.text, Date.now()],
-      (error) => (error ? reject(error) : resolve()),
-    ),
-  );
+  await saveCaptcha({ id, value: captchaData.text });
   ctx.success({ id, svg: captchaData.data });
 };

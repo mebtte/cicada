@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import toast from '@/platform/toast';
 import getRandomInteger from '@/utils/get_random_integer';
-import getRandomString from '@/utils/get_random_string';
+import getRandomString from '#/utils/generate_random_string';
 import eventemitter, { EventType } from './eventemitter';
 import { Music, MusicWithIndex, QueueMusic } from './constants';
 

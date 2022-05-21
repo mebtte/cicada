@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { DB_FILE_PATH } from '#/constants';
+import { DB_FILE_PATH } from './constants';
 import db from './platform/db';
 
 const TABLE_CAPTCHA = `CREATE TABLE captcha (\n  id text PRIMARY KEY NOT NULL,\n  value text NOT NULL,\n  createTimestamp int NOT NULL\n);

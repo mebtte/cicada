@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import Tooltip from '@/components/tooltip';
 import useHistory from '@/utils/use_history';
 import Checkbox from '@/components/checkbox';
-import day from '@/utils/day';
+import day from '#/utils/day';
 import { SearchKey } from '@/server/cms_get_user_list';
 import IconButton, { Name as IconButtonName } from '@/components/icon_button';
 import Icon, { Name as IconName } from '@/components/icon';
@@ -86,7 +86,7 @@ const headers = [
   '操作',
 ];
 
-const UserList = ({
+function UserList({
   selectedUserList,
   userList,
   loading,
@@ -100,7 +100,7 @@ const UserList = ({
   page: number;
   searchKey: SearchKey;
   searchValue: string;
-}) => {
+}) {
   const history = useHistory();
   const contentRef = useRef<HTMLDivElement | null>(null);
 
@@ -206,6 +206,6 @@ const UserList = ({
       )}
     </Style>
   );
-};
+}
 
 export default UserList;
