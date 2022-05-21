@@ -13,6 +13,16 @@
     "url": "https://mebtte.com"
   },
   "contributors": [],
+  "scripts": {
+    "prepare": "./bin/prepare.sh && husky install",
+    "test": "jest",
+    "tslint": "ts-node scripts/tslint.ts",
+    "dev:pwa": "npm run dev -w apps/pwa",
+    "build:pwa": "npm run build -w apps/pwa",
+    "dev:server": "npm run dev -w apps/server",
+    "build:server": "npm run build -w apps/server",
+    "build": "./bin/build.sh"
+  },
   "bugs": {
     "url": "https://github.com/mebtte/cicada/issues"
   },
@@ -71,16 +81,6 @@
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.9.0"
-  },
-  "scripts": {
-    "prepare": "./bin/prepare.sh && husky install",
-    "test": "jest",
-    "dev:pwa": "npm run dev -w apps/pwa",
-    "build:pwa": "npm run build -w apps/pwa",
-    "dev:server": "npm run dev -w apps/server",
-    "build:server": "npm run build -w apps/server",
-    "build": "./bin/build.sh",
-    "tslint": "ts-node scripts/tslint.ts"
   },
   "overrides": {
     "react": "^18.1.0",

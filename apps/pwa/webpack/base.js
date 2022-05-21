@@ -5,7 +5,6 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 
 const pkg = require('../../../package.json');
-const config = require('../../../shared/config');
 
 const INVALID_FILES = ['.DS_Store'];
 const STATIC_DIR = path.join(__dirname, '../src/static');
@@ -41,8 +40,6 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       __ENV__: JSON.stringify({
-        SERVER_ADDRESS: config.serverAddress,
-
         VERSION: pkg.version,
 
         BUILD_TIME: new Date(),

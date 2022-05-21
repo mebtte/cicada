@@ -1,5 +1,4 @@
 import storage, { Key } from './platform/storage';
-import env from './env';
 
 function setServerAddress(sa: string) {
   storage.setItem({ key: Key.SERVER_ADDRESS, value: sa });
@@ -10,8 +9,7 @@ export default new (class {
   private serverAddress: string;
 
   constructor() {
-    this.serverAddress =
-      storage.getItem(Key.SERVER_ADDRESS) || env.SERVER_ADDRESS;
+    this.serverAddress = storage.getItem(Key.SERVER_ADDRESS) || '';
   }
 
   getServerAddress() {
