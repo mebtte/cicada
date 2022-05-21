@@ -13,6 +13,8 @@ import initialize from './initialize';
 
 async function start() {
   if (cluster.isPrimary) {
+    process.title = 'cicada_primary';
+
     const PRINT_ARGV_KEYS = ['base', 'port', 'publicAddress', 'clusterCount'];
     for (const key of PRINT_ARGV_KEYS) {
       // eslint-disable-next-line no-console
@@ -33,6 +35,8 @@ async function start() {
       cluster.fork();
     }
   } else {
+    process.title = 'cicada_worker';
+
     const server = new Koa();
 
     if (env.RUNENV === 'development') {
