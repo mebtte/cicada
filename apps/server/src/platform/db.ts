@@ -7,13 +7,13 @@ import * as sqlite3 from 'sqlite3';
 import config from '#/config';
 import day from '#/utils/day';
 import color from 'colors/safe';
+import { DB_LOG_DIR } from '@/constants/directory';
 import env from '../env';
 
-const LOG_DIR = `${config.serverBase}/db_logs`;
 const appendFileAsync = util.promisify(fs.appendFile);
 
-if (!fs.existsSync(LOG_DIR)) {
-  fs.mkdirSync(LOG_DIR);
+if (!fs.existsSync(DB_LOG_DIR)) {
+  fs.mkdirSync(DB_LOG_DIR);
 }
 
 if (env.development) {
@@ -32,7 +32,7 @@ db.on('profile', (sql, ms) => {
   }
 
   appendFileAsync(
-    `${LOG_DIR}/${dateString}.log`,
+    `${DB_LOG_DIR}/${dateString}.log`,
     `[${timeString}] ${ms}ms\n${sql}\n\n`,
   ).catch((error) => console.error(error));
 });
