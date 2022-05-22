@@ -1,4 +1,4 @@
-import getRandomInteger from './get_random_integer';
+import getRandomInteger from '#/utils/generate_random_integer';
 
 const VALUES = [true, false];
 

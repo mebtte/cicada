@@ -2,7 +2,7 @@
  * Get a random string.
  * @author mebtte<hi@mebtte.com>
  */
-function generateRandomString(length = 10) {
+function generateRandomString(length = 10, sign = true) {
   const randomChars = [
     '0',
     '1',
@@ -68,16 +68,25 @@ function generateRandomString(length = 10) {
     'X',
     'Y',
     'Z',
-
-    '!',
-    '@',
-    '#',
-    '$',
-    '%',
-    '^',
-    '&',
-    '*',
   ];
+
+  if (sign) {
+    randomChars.push(
+      '!',
+      '@',
+      '#',
+      '$',
+      '%',
+      '^',
+      '&',
+      '*',
+      '-',
+      '_',
+      '=',
+      '+',
+    );
+  }
+
   const randomCharLength = randomChars.length;
   const array = new Array(length);
   for (let i = 0; i < length; i += 1) {

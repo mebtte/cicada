@@ -30,3 +30,17 @@ db.on('profile', (sql, ms) => {
 });
 
 export default db;
+
+export function run(sql: string, params?: unknown) {
+  return new Promise<void>((resolve, reject) =>
+    db.run(sql, params, (error) => (error ? reject(error) : resolve())),
+  );
+}
+
+export function get<Row = unknown>(sql: string, params?: unknown) {
+  return new Promise<Row | null>((resolve, reject) =>
+    db.get(sql, params, (error: Error | null, row?: Row) =>
+      error ? reject(error) : resolve(row || null),
+    ),
+  );
+}

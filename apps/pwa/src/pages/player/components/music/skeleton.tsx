@@ -1,11 +1,11 @@
 import { memo, useMemo } from 'react';
 
-import getRandomInteger from '@/utils/get_random_integer';
+import getRandomInteger from '#/utils/generate_random_integer';
 import Skeleton from '@/components/skeleton';
 import SingerSkeleton from '../singer/skeleton';
 import Container from './container';
 
-const Wrapper = (props: { [key: string]: any }) => {
+function Wrapper(props: { [key: string]: unknown }) {
   const nameWidth = useMemo(() => getRandomInteger(50, 150), []);
   return (
     <Container {...props}>
@@ -24,6 +24,6 @@ const Wrapper = (props: { [key: string]: any }) => {
       </div>
     </Container>
   );
-};
+}
 
 export default memo(Wrapper);

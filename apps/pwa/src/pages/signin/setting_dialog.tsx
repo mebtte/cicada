@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import * as React from 'react';
 
 import toast from '@/platform/toast';
-import { ORIGIN } from '@/constants/regexp';
+import { ORIGIN } from '#/constants/regexp';
 import setting from '@/setting';
 import Label from '@/components/label';
 import Input from '@/components/input';

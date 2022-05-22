@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 
 import env from '@/env';
-import getRandomInteger from '@/utils/get_random_integer';
+import getRandomInteger from '#/utils/generate_random_integer';
 import Avatar from '../avatar';
 import IconButton, { Name } from '../icon_button';
 
@@ -27,7 +27,7 @@ const Style = styled.div`
  * 错误卡片
  * @author mebtte<hi@mebtte.com>
  */
-const ErrorCard = ({
+function ErrorCard({
   errorMessage,
   retry,
   ...props
@@ -36,8 +36,8 @@ const ErrorCard = ({
   errorMessage: string;
   /** 重试方法 */
   retry: () => void;
-  [key: string]: any;
-}) => {
+  [key: string]: unknown;
+}) {
   const errorImage = useMemo(
     () =>
       env.ERROR_IMAGE_LIST[getRandomInteger(0, env.ERROR_IMAGE_LIST.length)],
@@ -50,6 +50,6 @@ const ErrorCard = ({
       <IconButton name={Name.REFRESH_OUTLINE} onClick={retry} size={24} />
     </Style>
   );
-};
+}
 
 export default memo(ErrorCard);

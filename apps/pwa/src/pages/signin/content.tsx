@@ -6,7 +6,7 @@ import day from '#/utils/day';
 import u from '@/platform/user';
 import IconButton, { Name as IconButtonName } from '@/components/icon_button';
 import Icon, { Name as IconName } from '@/components/icon';
-import { EMAIL } from '@/constants/regexp';
+import { EMAIL } from '#/constants/regexp';
 import toast from '@/platform/toast';
 import logger from '@/platform/logger';
 import signin from '@/server/signin';

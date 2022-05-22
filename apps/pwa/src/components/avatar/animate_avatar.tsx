@@ -2,13 +2,13 @@ import { forwardRef, useMemo } from 'react';
 import styled, { css } from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 
+import getRandomInteger from '#/utils/generate_random_integer';
 import {
   BORDER_RADIUS,
   Shape,
   CommonProps,
   TRANSITION_LIST,
 } from './constants';
-import getRandomInteger from '../../utils/get_random_integer';
 
 const Style = styled.div<{
   shape: Shape;
@@ -32,6 +32,7 @@ const Img = styled(animated.div)`
 `;
 
 const AnimatedAvatar = forwardRef<HTMLDivElement, CommonProps>(
+  // eslint-disable-next-line react/prop-types
   ({ src, size, shape, style, ...props }: CommonProps, ref) => {
     const transtion = useMemo(
       () => TRANSITION_LIST[getRandomInteger(0, TRANSITION_LIST.length)],

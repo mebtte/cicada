@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import getRandomInteger from '@/utils/get_random_integer';
+import getRandomInteger from '#/utils/generate_random_integer';
 import Skeleton from '@/components/skeleton';
 import Container from './container';
 import { MUSICBILL_COVER_SIZE } from './constants';

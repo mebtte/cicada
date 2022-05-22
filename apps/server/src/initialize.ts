@@ -4,6 +4,7 @@ import {
   DB_LOG_DIR,
   DB_SNAPSHOT_DIR,
   SCHEDULE_LOG_DIR,
+  ERROR_LOG_DIR,
 } from './constants/directory';
 import argv from './argv';
 import dbInitialize from './db_initialize';
@@ -17,6 +18,7 @@ function directoryInitialize() {
     DB_LOG_DIR,
     DB_SNAPSHOT_DIR,
     SCHEDULE_LOG_DIR,
+    ERROR_LOG_DIR,
   ];
   for (const d of directories) {
     if (!fs.existsSync(d)) {

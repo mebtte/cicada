@@ -3,7 +3,7 @@ import { animated } from 'react-spring';
 import styled from 'styled-components';
 
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
-import getRandomInteger from '@/utils/get_random_integer';
+import getRandomInteger from '#/utils/generate_random_integer';
 import { Skeleton } from '../../../components/music';
 
 const Style = styled(animated.div)`

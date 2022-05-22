@@ -12,8 +12,25 @@ const port: number = argv.port || 8000;
 const publicAddress: string = argv.publicAddress || `http://localhost:${port}`;
 const clusterCount: number = argv.clusterCount || os.cpus().length;
 
+const {
+  emailHost,
+  emailPort,
+  emailUser,
+  emailPass,
+}: {
+  emailHost: string;
+  emailPort: number;
+  emailUser: string;
+  emailPass: string;
+} = argv;
+
 // eslint-disable-next-line import/no-mutable-exports
 let result = {
+  emailHost,
+  emailPort,
+  emailUser,
+  emailPass,
+
   base,
   port,
   publicAddress,
@@ -28,6 +45,17 @@ if (env.RUNENV === 'development' && fs.existsSync(DEVELOPMENT_CONFIG_FILE)) {
     ...result,
     ...developmentConfig,
   };
+}
+
+if (
+  !result.emailHost ||
+  !result.emailPort ||
+  !result.emailUser ||
+  !result.emailPass
+) {
+  throw new Error(
+    '请通过 [--emailHost] [--emailPort] [--emailUser] [--emailPass] 指定发信邮箱',
+  );
 }
 
 export default result;

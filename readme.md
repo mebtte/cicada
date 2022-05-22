@@ -10,22 +10,28 @@
 | desktop_setting | 用户端, 提供桌面客户端设置界面                              | `开发中...` |
 | mobile          | 用户端, 提供移动设备客户端, 支持 Android/iOS                | `规划中...` |
 
-## 环境要求
+## 服务运行要求
 
 - Node.js >= 16 && npm >= 8
+- 用于发信的邮箱账号
 
 ## 构建并部署
 
 ```sh
 npm i
 npm run build
-node build/index.js --port=8000
+node build/index.js --emailHost=email.com --emailPort=567 --emailUser=mebtte@email.com --emailPass=secret
 ```
 
 知了支持使用参数进行配置:
 
 | 参数          | 类型   | 是否必须 | 默认值                          | 描述                                                         |
 | ------------- | ------ | -------- | ------------------------------- | ------------------------------------------------------------ |
+| emailHost     | string | 是       | -                               | 发信邮箱域名                                                 |
+| emailPort     | number | 是       | -                               | 发信邮箱端口                                                 |
+| emailUser     | string | 是       | -                               | 发信邮箱账号                                                 |
+| eamilPass     | string | 是       | -                               | 发信邮箱密码                                                 |
+| ---           | ---    | ---      | ---                             | ---                                                          |
 | port          | number | 否       | 8000                            | 提供服务的端口                                               |
 | publicAddress | string | 否       | http://localhost:{{serverPort}} | **实际**暴露服务的地址, 比如通过 https://cicada.com 暴露服务 |
 | clusterCount  | number | 否       | {{os.cups().length}}            | 服务进程数量                                                 |

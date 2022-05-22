@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 
-import { EMAIL } from '@/constants/regexp';
+import { EMAIL } from '#/constants/regexp';
 import toast from '@/platform/toast';
 import logger from '@/platform/logger';
 import getSigninVerifyCode from '@/server/get_signin_verify_code';

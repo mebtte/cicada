@@ -8,7 +8,7 @@ import cmsCreateUser from '@/server/cms_create_user';
 import Label from '@/components/label';
 import Input from '@/components/input';
 import Textarea from '@/components/textarea';
-import { EMAIL } from '@/constants/regexp';
+import { EMAIL } from '#/constants/regexp';
 import { NICKNAME_MAX_LENGTH } from '@/constants/user';
 import Button, { Type as ButtonType } from '@/components/button';
 import Dialog, { Title, Content, Action } from '@/components/dialog';
@@ -28,7 +28,7 @@ const textareaStyle = {
   resize: 'vertical' as 'vertical',
 };
 
-const CreateDialog = ({ open }: { open: boolean }) => {
+function CreateDialog({ open }: { open: boolean }) {
   const history = useHistory();
 
   const [email, setEmail] = useState('');
@@ -122,6 +122,6 @@ const CreateDialog = ({ open }: { open: boolean }) => {
       </Action>
     </Dialog>
   );
-};
+}
 
 export default CreateDialog;

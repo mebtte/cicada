@@ -1,18 +1,43 @@
 import fs from 'fs';
 import { DB_FILE_PATH } from './constants';
-import db from './platform/db';
+import { run } from './platform/db';
 
-const TABLE_CAPTCHA = `CREATE TABLE captcha (\n  id text PRIMARY KEY NOT NULL,\n  value text NOT NULL,\n  createTimestamp int NOT NULL\n);
+const TABLE_USER = `
+  CREATE TABLE user (
+    id TEXT PRIMARY KEY NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    avatar TEXT,
+    nickname TEXT NOT NULL,
+    joinTimestamp INTEGER NOT NULL,
+    super INTEGER NOT NULL DEFAULT 0,
+    remark TEXT
+  );
+`;
+const TABLE_CAPTCHA = `
+  CREATE TABLE captcha (
+    id TEXT PRIMARY KEY NOT NULL,
+    value TEXT NOT NULL,
+    createTimestamp INTEGER NOT NULL,
+    used INTEGER NOT NULL DEFAULT 0
+  );
+`;
+const TABLE_LOGIN_CODE = `
+  CREATE TABLE login_code (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId TEXT NOT NULL,
+    code TEXT NOT NULL,
+    createTimestamp INTEGER NOT NULL,
+    used INTEGER NOT NULL DEFAULT 0,
+    CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
+  );
 `;
 
 async function dbInitialize() {
   if (!fs.readFileSync(DB_FILE_PATH).length) {
     /** 注意表创建顺序 */
-    const TABLES = [TABLE_CAPTCHA];
+    const TABLES = [TABLE_USER, TABLE_CAPTCHA, TABLE_LOGIN_CODE];
     for (const table of TABLES) {
-      await new Promise<void>((resolve, reject) =>
-        db.run(table, (error) => (error ? reject(error) : resolve())),
-      );
+      await run(table);
     }
   }
 }

@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 
 import env from '@/env';
-import getRandomInteger from '@/utils/get_random_integer';
+import getRandomInteger from '#/utils/generate_random_integer';
 import Avatar from '../avatar';
 
 const Style = styled.div`
@@ -23,14 +23,14 @@ const Style = styled.div`
  * 空数据
  * @author mebtte<hi@mebtte.com>
  */
-const Empty = ({
+function Empty({
   /** 描述 */
   description = '暂时没有数据',
   ...props
 }: {
   description?: string;
-  [key: string]: any;
-}) => {
+  [key: string]: unknown;
+}) {
   const emptyImage = useMemo(
     () =>
       env.EMPTY_IMAGE_LIST[getRandomInteger(0, env.EMPTY_IMAGE_LIST.length)],
@@ -42,6 +42,6 @@ const Empty = ({
       <div className="description">{description}</div>
     </Style>
   );
-};
+}
 
 export default memo(Empty);

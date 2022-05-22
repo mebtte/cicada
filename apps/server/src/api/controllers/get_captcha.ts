@@ -1,15 +1,15 @@
 import captcha from 'svg-captcha';
-import shortid from 'shortid';
 import { saveCaptcha } from '@/platform/captcha';
+import generateRandomString from '#/utils/generate_random_string';
 import { Context } from '../constants/koa';
 
 export default async (ctx: Context) => {
   const captchaData = captcha.create({
     size: 5,
-    ignoreChars: '0o1il',
+    ignoreChars: '01oOiIlL',
     noise: 2,
   });
-  const id = shortid.generate();
+  const id = generateRandomString(8, false);
   await saveCaptcha({ id, value: captchaData.text });
   ctx.success({ id, svg: captchaData.data });
 };

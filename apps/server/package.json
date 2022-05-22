@@ -12,7 +12,7 @@
     "@types/koa-router": "^7.4.4",
     "@types/koa-static": "^4.0.2",
     "@types/node-schedule": "^2.1.0",
-    "@types/shortid": "^0.0.29",
+    "@types/nodemailer": "^6.4.4",
     "@types/yargs": "^17.0.10",
     "@vercel/ncc": "^0.33.4",
     "colors": "^1.4.0",
@@ -24,8 +24,8 @@
     "koa-router": "^10.1.1",
     "koa-static": "^5.0.0",
     "node-schedule": "^2.1.0",
+    "nodemailer": "^6.7.5",
     "nodemon": "^2.0.16",
-    "shortid": "^2.2.16",
     "svg-captcha": "^1.4.0",
     "tsconfig-paths": "^4.0.0",
     "yargs": "^17.5.1"

@@ -1,10 +1,10 @@
 import { memo, useMemo } from 'react';
 
-import getRandomInteger from '@/utils/get_random_integer';
+import getRandomInteger from '#/utils/generate_random_integer';
 import Container from './container';
 import { Skeleton as MusicSkeleton } from '../../../components/music';
 
-const Wrapper = () => {
+function Wrapper() {
   const amount = useMemo(() => getRandomInteger(10, 30), []);
   return (
     <Container>
@@ -14,6 +14,6 @@ const Wrapper = () => {
       ))}
     </Container>
   );
-};
+}
 
 export default memo(Wrapper);

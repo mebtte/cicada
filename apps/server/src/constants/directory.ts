@@ -10,3 +10,5 @@ export const DB_LOG_DIR = `${argv.base}/db_logs`;
 export const DB_SNAPSHOT_DIR = `${argv.base}/db_snapshots`;
 
 export const SCHEDULE_LOG_DIR = `${argv.base}/schedule_logs`;
+
+export const ERROR_LOG_DIR = `${argv.base}/error_logs`;

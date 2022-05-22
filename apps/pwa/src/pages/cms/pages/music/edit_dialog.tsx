@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import * as React from 'react';
 
 import Checkbox from '@/components/checkbox';
-import { URL } from '@/constants/regexp';
+import { URL } from '#/constants/regexp';
 import Select from '@/components/select';
 import cmsUpdateMusic, { Key } from '@/server/cms_update_music';
 import toast from '@/platform/toast';
