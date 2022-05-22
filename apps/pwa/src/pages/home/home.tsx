@@ -1,36 +1,9 @@
 import styled from 'styled-components';
-import { Helmet } from 'react-helmet';
 
-import u from '@/platform/user';
-import { User } from '@/constants/user';
-import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
-import PageContainer from '../page_container';
-import Header from './header';
-import { CONTENT_MAX_WIDTH } from './constants';
-import Footer from './footer';
+const Style = styled.div``;
 
-const Style = styled(PageContainer)`
-  background-color: #f3f3f3;
-  overflow: auto;
-  ${scrollbarAsNeeded}
-  >.content {
-    max-width: ${CONTENT_MAX_WIDTH}px;
-    margin: 0 auto;
-  }
-`;
-
-const Home = () => {
-  const user = u.useUser();
-  return (
-    <Style>
-      <Helmet>
-        <title>知了 - 在线音乐播放器</title>
-      </Helmet>
-      <Header user={user} />
-      <section className="content" />
-      <Footer />
-    </Style>
-  );
-};
+function Home() {
+  return <Style>home</Style>;
+}
 
 export default Home;

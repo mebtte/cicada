@@ -1,9 +1,7 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import * as Sentry from '@sentry/browser';
 
-
-import u from '@/platform/user';
+import u from '@/global_state/user';
 import { ROOT_PATH } from '@/constants/route';
 import GlobalStyle from './global_style';
 import Toast from './toast';
@@ -25,21 +23,15 @@ const ROUTES: {
     ),
   },
   {
-    path: ROOT_PATH.SIGNIN,
+    path: ROOT_PATH.LOGIN,
     component: lazy(
-      () => import(/* webpackChunkName: "page_signin" */ '../pages/signin'),
+      () => import(/* webpackChunkName: "page_login" */ '../pages/login'),
     ),
   },
   {
     path: ROOT_PATH.PLAYER,
     component: lazy(
       () => import(/* webpackChunkName: "page_player" */ '../pages/player'),
-    ),
-  },
-  {
-    path: ROOT_PATH.CMS,
-    component: lazy(
-      () => import(/* webpackChunkName: "page_cms" */ '../pages/cms'),
     ),
   },
 ];
@@ -54,14 +46,7 @@ const routeList = ROUTES.map((r) => (
 ));
 
 function App() {
-  const user = u.useUser();
-
-  useEffect(() => {
-    if (user) {
-      Sentry.configureScope((scope) => scope.setUser({ id: user.id }));
-    }
-  }, [user]);
-
+  const user = u.useState();
   return (
     <>
       <GlobalStyle />

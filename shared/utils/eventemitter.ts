@@ -33,7 +33,7 @@ class Eventemitter<
       listeners.forEach(({ once, listener }) => {
         listener(data);
         if (once) {
-          this.unlisten(eventType, listener, {
+          this.off(eventType, listener, {
             once: true,
             eventTypeReplace,
           });
@@ -86,14 +86,6 @@ class Eventemitter<
     );
     this.eventTypeMapListeners.set(et, listeners);
   }
-
-  listen = this.on;
-
-  unlisten = this.off;
-
-  addListener = this.on;
-
-  removeListener = this.off;
 }
 
 export default Eventemitter;

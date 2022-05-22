@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 
-import u from '@/platform/user';
+import u, { User } from '@/global_state/user';
 import updateUser, { Key } from '@/server/update_user';
 import getUser from '@/server/get_user';
 import ImageCutterDialog from '@/components/image_cutter_dialog';
 import IconButton, { Name } from '@/components/icon_button';
 import Avatar from '@/components/avatar';
-import { User, AVATAR_MAX_SIZE } from '@/constants/user';
+import { AVATAR_MAX_SIZE } from '@/constants/user';
 import { PART_SPACE } from './constants';
 
 const avatarSize = {
@@ -29,8 +29,8 @@ function Wrapper({ user }: { user: User }) {
   const onUpdateAvatar = async (file: File) => {
     await updateUser({ key: Key.AVATAR, value: file });
     const newUser = await getUser();
-    u.updateUser({
-      ...u.getUser()!,
+    u.set({
+      ...u.get()!,
       avatar: newUser.avatar,
     });
   };

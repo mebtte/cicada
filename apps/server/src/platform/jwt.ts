@@ -2,8 +2,8 @@ import fs from 'fs';
 import argv from '@/argv';
 import generateRandomString from '#/utils/generate_random_string';
 import jwt from 'jsonwebtoken';
-import { JWT_TTL } from '../constants';
 
+const JWT_TTL = 1000 * 60 * 60 * 24 * 180;
 const JWT_SECRET_FILE_PATH = `${argv.base}/jwt_secret`;
 
 let jwtSecret: string;

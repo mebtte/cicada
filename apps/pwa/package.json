@@ -6,8 +6,6 @@
   },
   "devDependencies": {
     "@mebtte/react-media-session": "^1.1.1",
-    "@sentry/browser": "^6.11.0",
-    "@sentry/tracing": "^6.11.0",
     "@tippyjs/react": "^4.2.5",
     "@types/d3-ease": "^2.0.0",
     "@types/dompurify": "^2.2.2",

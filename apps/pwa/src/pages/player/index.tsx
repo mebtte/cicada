@@ -129,4 +129,4 @@ function Wrapper() {
   );
 }
 
-export default withSignin()(Wrapper);
+export default withSignin(Wrapper);

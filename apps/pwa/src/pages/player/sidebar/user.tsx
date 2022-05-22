@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { User as UserType } from '@/constants/user';
+import { User as UserType } from '@/global_state/user';
 import Avatar, { Shape } from '@/components/avatar';
 import globalEventemitter, {
   EventType as GlobalEventType,
@@ -30,25 +30,27 @@ const Style = styled.div`
 const openProfileDialog = () =>
   globalEventemitter.emit(GlobalEventType.OPEN_PROFILE_DIALOG);
 
-const User = ({ user }: { user: UserType }) => (
-  <Style>
-    <Avatar
-      className="avatar"
-      animated
-      src={user.avatar}
-      size={AVATAR_SIZE}
-      shape={Shape.CIRCLE}
-      onClick={openProfileDialog}
-    />
-    <div
-      className="nickname"
-      onClick={() =>
-        eventemitter.emit(EventType.OPEN_USER_DRAWER, { id: user.id })
-      }
-    >
-      {user.nickname}
-    </div>
-  </Style>
-);
+function User({ user }: { user: UserType }) {
+  return (
+    <Style>
+      <Avatar
+        className="avatar"
+        animated
+        src={user.avatar}
+        size={AVATAR_SIZE}
+        shape={Shape.CIRCLE}
+        onClick={openProfileDialog}
+      />
+      <div
+        className="nickname"
+        onClick={() =>
+          eventemitter.emit(EventType.OPEN_USER_DRAWER, { id: user.id })
+        }
+      >
+        {user.nickname}
+      </div>
+    </Style>
+  );
+}
 
 export default User;

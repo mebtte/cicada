@@ -8,7 +8,6 @@ declare global {
     EMPTY_IMAGE_LIST: string[];
     ERROR_IMAGE_LIST: string[];
     COVER_LIST: string[];
-    SENTRY_DSN?: string;
   };
 }
 

@@ -2,7 +2,6 @@ export enum Key {
   SERVER_ADDRESS = 'server_address',
 
   TOKEN = 'token',
-  TOKEN_EXPIRED_AT = 'token_expired_at',
 
   USER = 'user',
 

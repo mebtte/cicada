@@ -1,12 +1,10 @@
 /* eslint-disable no-nested-ternary */
-import { ROOT_PATH, PLAYER_PATH } from '@/constants/route';
+import { PLAYER_PATH } from '@/constants/route';
 import { Name } from '@/components/icon';
-import openLink from '@/utils/open_link';
 
 export enum NavigatorKey {
   HOME,
   SETTING,
-  CMS,
   ABOUT,
   DESKTOP_APP,
 }
@@ -48,13 +46,6 @@ const NAVIGATORS: Navigator[] = [
     label: '设置',
     icon: Name.SETTING_OUTLINE,
     link: PLAYER_PATH.SETTING,
-  },
-  {
-    key: NavigatorKey.CMS,
-    type: NavigatorType.ACTION,
-    label: 'CMS',
-    icon: Name.CMS_OUTLINE,
-    action: () => openLink(`#${ROOT_PATH.CMS}`),
   },
 ];
 

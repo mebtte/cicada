@@ -1,5 +1,5 @@
 import setting from '@/setting';
-import { getToken } from '@/platform/token';
+import token from '@/global_state/token';
 
 /**
  * 创建音乐播放记录
@@ -17,7 +17,7 @@ function createMusicPlayRecord({
       JSON.stringify({
         music_id: musicId,
         percent,
-        token: getToken(),
+        token: token.get(),
       }),
     ],
     {

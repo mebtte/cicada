@@ -3,7 +3,6 @@ import api from '.';
 export enum Key {
   AVATAR = 'avatar',
   NICKNAME = 'nickname',
-  CONDITION = 'condition',
 }
 
 /**

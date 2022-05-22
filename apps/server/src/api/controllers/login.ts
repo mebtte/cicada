@@ -2,7 +2,6 @@ import { EMAIL } from '#/constants/regexp';
 import { ExceptionCode } from '#/constants/exception';
 import { verifyLoginCode } from '@/platform/login_code';
 import { sign } from '@/platform/jwt';
-import { JWT_TTL } from '../../constants';
 import { Property, getUserByEmail } from '../../platform/user';
 import { Context } from '../constants/koa';
 
@@ -38,5 +37,5 @@ export default async (ctx: Context) => {
   }
 
   const token = sign(user.id);
-  ctx.success({ token, tokenExpiredAt: Date.now() + JWT_TTL });
+  ctx.success(token);
 };

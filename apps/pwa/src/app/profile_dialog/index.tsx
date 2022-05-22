@@ -1,18 +1,14 @@
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 
-import u from '@/platform/user';
+import u, { User } from '@/global_state/user';
+import token from '@/global_state/token';
 import toast from '@/platform/toast';
 import logger from '@/platform/logger';
 import dialog from '@/platform/dialog';
 import Label from '@/components/label';
 import Input from '@/components/input';
-import Textarea from '@/components/textarea';
-import {
-  User,
-  NICKNAME_MAX_LENGTH,
-  CONDITION_MAX_LENGTH,
-} from '@/constants/user';
+import { NICKNAME_MAX_LENGTH } from '@/constants/user';
 import Dialog, { Title, Content, Action } from '@/components/dialog';
 import globalEventemitter, { EventType } from '@/platform/global_eventemitter';
 import Button, { Type as ButtonType } from '@/components/button';
@@ -26,14 +22,10 @@ const labelStyle = {
 const inputStyle = {
   width: '100%',
 };
-const textareaStyle = {
-  ...inputStyle,
-  height: 100,
-};
 const onSignout = () =>
   dialog.confirm({
     title: '确定退出登录吗?',
-    onConfirm: () => u.updateUser(null),
+    onConfirm: () => token.set(''),
   });
 
 function ProfileDialog({ user }: { user: User }) {
@@ -43,10 +35,6 @@ function ProfileDialog({ user }: { user: User }) {
   const [nickname, setNickname] = useState(user.nickname);
   const onNicknameChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setNickname(event.target.value);
-
-  const [condition, setCondition] = useState(user.condition);
-  const onConditionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) =>
-    setCondition(event.target.value);
 
   const [loading, setLoading] = useState(false);
   const onUpdate = async () => {
@@ -62,16 +50,10 @@ function ProfileDialog({ user }: { user: User }) {
         needUpdate = true;
       }
 
-      if (condition !== user.condition) {
-        await updateUser({ key: Key.CONDITION, value: condition });
-        needUpdate = true;
-      }
-
       if (needUpdate) {
-        u.updateUser({
+        u.set({
           ...user,
           nickname,
-          condition,
         });
       }
 
@@ -86,7 +68,6 @@ function ProfileDialog({ user }: { user: User }) {
   useEffect(() => {
     if (open) {
       setNickname(user.nickname);
-      setCondition(user.condition);
     }
   }, [open, user]);
 
@@ -109,7 +90,11 @@ function ProfileDialog({ user }: { user: User }) {
           <Input value={user.email} disabled style={inputStyle} />
         </Label>
         <Label label="注册时间" style={labelStyle}>
-          <Input value={user.joinTimeString} disabled style={inputStyle} />
+          <Input
+            value={user.joinTimestamp.toString()}
+            disabled
+            style={inputStyle}
+          />
         </Label>
         <Label label="昵称" style={labelStyle}>
           <Input
@@ -118,15 +103,6 @@ function ProfileDialog({ user }: { user: User }) {
             style={inputStyle}
             disabled={loading}
             maxLength={NICKNAME_MAX_LENGTH}
-          />
-        </Label>
-        <Label label="状态" style={labelStyle}>
-          <Textarea
-            value={condition}
-            onChange={onConditionChange}
-            style={textareaStyle}
-            disabled={loading}
-            maxLength={CONDITION_MAX_LENGTH}
           />
         </Label>
       </Content>

@@ -1,10 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 
-import u from '@/platform/user';
 import setting from '@/setting';
 import sleep from '@/utils/sleep';
-import toast from '@/platform/toast';
-import { getToken, clearToken } from '@/platform/token';
+import token from '@/global_state/token';
 import ErrorWithCode from '@/utils/error_with_code';
 
 export enum Code {
@@ -29,6 +27,7 @@ function generateMethod(method: METHOD) {
       headers,
     }: {
       params?: { [key: string]: string | number | undefined };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data?: any;
       timeout?: number;
       withToken?: boolean;
@@ -38,15 +37,10 @@ function generateMethod(method: METHOD) {
     } = {},
   ) => {
     if (withToken) {
-      const token = getToken();
-      if (!token) {
-        clearToken();
-        throw new ErrorWithCode('登录过期', Code.NOT_AUTHORIZE);
-      }
       // eslint-disable-next-line no-param-reassign
       headers = {
         ...headers,
-        authorization: token,
+        authorization: token.get(),
       };
     }
 
@@ -87,8 +81,7 @@ function generateMethod(method: METHOD) {
     if (code !== Code.SUCCESS) {
       // 未登录/登录过期
       if (code === Code.NOT_AUTHORIZE) {
-        toast.error('登录过期, 请重新登录');
-        u.updateUser(null);
+        token.set('');
       }
       throw new ErrorWithCode(`${message}(#${code})`, code);
     }

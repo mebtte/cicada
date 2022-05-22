@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 
-import u from '@/platform/user';
+import u from '@/global_state/user';
 import User from './user';
 import MusicbillList from './musicbill_list';
 import Menu from './menu';
@@ -16,15 +16,15 @@ const Style = styled.div`
   padding-top: 30px;
 `;
 
-const Sidebar = () => {
-  const user = u.useUser();
+function Sidebar() {
+  const user = u.useState();
   return (
     <Style>
       <User user={user!} />
-      <Menu user={user!} />
+      <Menu />
       <MusicbillList />
     </Style>
   );
-};
+}
 
 export default memo(Sidebar);
