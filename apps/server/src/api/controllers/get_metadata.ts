@@ -3,5 +3,6 @@ import { Context } from '../constants/koa';
 
 export default async (ctx: Context) =>
   ctx.success({
-    version: pkg.version,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    version: (pkg as any).version,
   });
