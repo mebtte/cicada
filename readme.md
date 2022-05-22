@@ -20,7 +20,7 @@
 ```sh
 npm i
 npm run build
-node build/index.js --emailHost=email.com --emailPort=567 --emailUser=mebtte@email.com --emailPass=secret
+node build/index.js --emailHost=email.com --emailUser=mebtte@email.com --emailPass=secret
 ```
 
 知了支持使用参数进行配置:
@@ -28,7 +28,7 @@ node build/index.js --emailHost=email.com --emailPort=567 --emailUser=mebtte@ema
 | 参数          | 类型   | 是否必须 | 默认值                          | 描述                                                         |
 | ------------- | ------ | -------- | ------------------------------- | ------------------------------------------------------------ |
 | emailHost     | string | 是       | -                               | 发信邮箱域名                                                 |
-| emailPort     | number | 是       | -                               | 发信邮箱端口                                                 |
+| emailPort     | number | 否       | 465                             | 发信邮箱端口                                                 |
 | emailUser     | string | 是       | -                               | 发信邮箱账号                                                 |
 | eamilPass     | string | 是       | -                               | 发信邮箱密码                                                 |
 | ---           | ---    | ---      | ---                             | ---                                                          |

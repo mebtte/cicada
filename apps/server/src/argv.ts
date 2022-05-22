@@ -14,15 +14,14 @@ const clusterCount: number = argv.clusterCount || os.cpus().length;
 
 const {
   emailHost,
-  emailPort,
   emailUser,
   emailPass,
 }: {
   emailHost: string;
-  emailPort: number;
   emailUser: string;
   emailPass: string;
 } = argv;
+const emailPort: number = argv.emailPort || 465;
 
 // eslint-disable-next-line import/no-mutable-exports
 let result = {
@@ -47,14 +46,9 @@ if (env.RUNENV === 'development' && fs.existsSync(DEVELOPMENT_CONFIG_FILE)) {
   };
 }
 
-if (
-  !result.emailHost ||
-  !result.emailPort ||
-  !result.emailUser ||
-  !result.emailPass
-) {
+if (!result.emailHost || !result.emailUser || !result.emailPass) {
   throw new Error(
-    '请通过 [--emailHost] [--emailPort] [--emailUser] [--emailPass] 指定发信邮箱',
+    '请通过 [--emailHost] [--emailUser] [--emailPass] 指定发信邮箱',
   );
 }
 
