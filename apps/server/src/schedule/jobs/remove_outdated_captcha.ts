@@ -1,15 +1,11 @@
-import db from '@/platform/db';
+import * as db from '@/platform/db';
 
 const TTL = 1000 * 60 * 60 * 24 * 30;
 
 function removeOutdatedCaptcha() {
-  return new Promise<void>((resolve, reject) =>
-    db.run(
-      'delete from captcha where createTimestamp <= ?',
-      [Date.now() - TTL],
-      (error) => (error ? reject(error) : resolve()),
-    ),
-  );
+  return db.run('delete from captcha where createTimestamp <= ?', [
+    Date.now() - TTL,
+  ]);
 }
 
 export default removeOutdatedCaptcha;

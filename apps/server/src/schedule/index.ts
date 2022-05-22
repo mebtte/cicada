@@ -7,6 +7,8 @@ import removeOutdatedScheduleLog from './jobs/remove_outdated_schedule_log';
 import removeOutdatedDBLog from './jobs/remove_outdated_db_log';
 import removeOutdatedCaptcha from './jobs/remove_outdated_captcha';
 import createAndRemoveOutdatedDBSnapshot from './jobs/create_and_remove_outdated_db_snapshot';
+import removeOutdatedLoginCode from './jobs/remove_outdated_login_code';
+import removeOutdatedErrorLog from './jobs/remove_outdated_error_log';
 
 const appendFileAysnc = util.promisify(fs.appendFile);
 
@@ -60,7 +62,25 @@ export default {
         }),
       );
     schedule
-      .scheduleJob('0 15 4 * * *', createAndRemoveOutdatedDBSnapshot)
+      .scheduleJob('0 15 4 * * *', removeOutdatedLoginCode)
+      .addListener('run', () => onRun('removeOutdatedLoginCode'))
+      .addListener('error', (error) =>
+        onError({
+          job: 'removeOutdatedLoginCode',
+          error,
+        }),
+      );
+    schedule
+      .scheduleJob('0 20 4 * * *', removeOutdatedErrorLog)
+      .addListener('run', () => onRun('removeOutdatedErrorLog'))
+      .addListener('error', (error) =>
+        onError({
+          job: 'removeOutdatedErrorLog',
+          error,
+        }),
+      );
+    schedule
+      .scheduleJob('0 25 4 * * *', createAndRemoveOutdatedDBSnapshot)
       .addListener('run', () => onRun('createAndRemoveOutdatedDBSnapshot'))
       .addListener('error', (error) =>
         onError({
