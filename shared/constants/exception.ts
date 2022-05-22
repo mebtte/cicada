@@ -5,6 +5,7 @@ export enum ExceptionCode {
   CAPTCHA_ERROR,
   GET_LOGIN_CODE_TOO_FREQUENT,
   WRONG_LOGIN_CODE,
+  NOT_AUTHORIZE,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -30,5 +31,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.WRONG_LOGIN_CODE]: {
     description: '错误的登录验证码',
+  },
+  [ExceptionCode.NOT_AUTHORIZE]: {
+    description: '未验证权限',
   },
 };

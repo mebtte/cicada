@@ -10,7 +10,7 @@ export enum Property {
   REMARK = 'remark',
 }
 
-type PropertyMapType = {
+export type User = {
   [Property.ID]: string;
   [Property.EMAIL]: string;
   [Property.AVATAR]: string;
@@ -26,6 +26,13 @@ export function getUserByEmail<P extends Property>(
 ) {
   return db.get<{
     // @ts-expect-error
-    [key in P]: PropertyMapType[key];
+    [key in P]: User[key];
   }>(`select ${properties.join(',')} from user where email = ?`, [email]);
+}
+
+export function getUserById<P extends Property>(id: string, properties: P[]) {
+  return db.get<{
+    // @ts-expect-error
+    [key in P]: User[key];
+  }>(`select ${properties.join(',')} from user where id = ?`, [id]);
 }

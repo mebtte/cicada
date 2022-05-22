@@ -10,7 +10,7 @@ let jwtSecret: string;
 if (fs.existsSync(JWT_SECRET_FILE_PATH)) {
   jwtSecret = fs.readFileSync(JWT_SECRET_FILE_PATH).toString();
 } else {
-  jwtSecret = generateRandomString();
+  jwtSecret = generateRandomString(33);
   fs.writeFileSync(JWT_SECRET_FILE_PATH, jwtSecret);
 }
 

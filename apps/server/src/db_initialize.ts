@@ -6,11 +6,11 @@ const TABLE_USER = `
   CREATE TABLE user (
     id TEXT PRIMARY KEY NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    avatar TEXT,
+    avatar TEXT NOT NULL DEFAULT '',
     nickname TEXT NOT NULL,
     joinTimestamp INTEGER NOT NULL,
     super INTEGER NOT NULL DEFAULT 0,
-    remark TEXT
+    remark TEXT NOT NULL DEFAULT ''
   );
 `;
 const TABLE_CAPTCHA = `
