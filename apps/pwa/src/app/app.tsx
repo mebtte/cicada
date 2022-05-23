@@ -1,8 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-
 import u from '@/global_state/user';
 import { ROOT_PATH } from '@/constants/route';
+import ErrorBoundary from '@/components/error_boundary';
 import GlobalStyle from './global_style';
 import Toast from './toast';
 import Dialog from './dialog';
@@ -44,6 +44,7 @@ const routeList = ROUTES.map((r) => (
     exact={r.exact || false}
   />
 ));
+const onErrorFallback = (error: Error) => <RouteLoader error={error} />;
 
 function App() {
   const user = u.useState();
@@ -55,12 +56,14 @@ function App() {
       <Toast />
       <Dialog />
 
-      <Suspense fallback={<RouteLoader />}>
-        <Switch>
-          {routeList}
-          <Redirect to={ROOT_PATH.HOME} />
-        </Switch>
-      </Suspense>
+      <ErrorBoundary fallback={onErrorFallback}>
+        <Suspense fallback={<RouteLoader />}>
+          <Switch>
+            {routeList}
+            <Redirect to={ROOT_PATH.HOME} />
+          </Switch>
+        </Suspense>
+      </ErrorBoundary>
 
       {user ? <ProfileDialog user={user} /> : null}
     </>
