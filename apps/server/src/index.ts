@@ -1,9 +1,9 @@
+import './initialize';
 import cluster from 'cluster';
 import http from 'http';
 import Koa from 'koa';
 import log from 'koa-logger';
 import mount from 'koa-mount';
-import initialize from './initialize';
 import argv from './argv';
 import api from './api';
 import asset from './asset';
@@ -32,10 +32,7 @@ async function start() {
       console.log(`--- env | ${key} = ${env[key]} ---`);
     }
 
-    await initialize();
-
     schedule.start();
-
     for (let i = 0; i < argv.clusterCount; i += 1) {
       cluster.fork();
     }

@@ -1,21 +1,11 @@
 import fs from 'fs';
-import argv from '@/argv';
 import md5 from 'md5';
-import generateRandomString from '#/utils/generate_random_string';
 import env from '@/env';
 import { GET_LOGIN_CODE_INTERVAL } from '#/constants';
-import { LOGIN_CODE_TTL } from '../constants';
+import { LOGIN_CODE_SALT_FILE_PATH, LOGIN_CODE_TTL } from '../constants';
 import * as db from './db';
 
-const LOGIN_CODE_SALT_FILE_PATH = `${argv.base}/login_code_salt`;
-
-let loginCodeSalt: string;
-if (fs.existsSync(LOGIN_CODE_SALT_FILE_PATH)) {
-  loginCodeSalt = fs.readFileSync(LOGIN_CODE_SALT_FILE_PATH).toString();
-} else {
-  loginCodeSalt = generateRandomString();
-  fs.writeFileSync(LOGIN_CODE_SALT_FILE_PATH, loginCodeSalt);
-}
+const LOGIN_CODE_SALT = fs.readFileSync(LOGIN_CODE_SALT_FILE_PATH).toString();
 
 export async function hasLoginCodeInGetInterval({
   userId,
@@ -42,7 +32,7 @@ export function saveLoginCode({
   code: string;
 }) {
   const encodedCode =
-    env.RUNENV === 'development' ? code : md5(code + loginCodeSalt);
+    env.RUNENV === 'development' ? code : md5(code + LOGIN_CODE_SALT);
   return db.run(
     'insert into login_code(userId, code, createTimestamp) values(?, ?, ?)',
     [userId, encodedCode, Date.now()],
@@ -72,7 +62,7 @@ export async function verifyLoginCode({
 
   if (
     loginCode.code !==
-    (env.RUNENV === 'development' ? code : md5(code + loginCodeSalt))
+    (env.RUNENV === 'development' ? code : md5(code + LOGIN_CODE_SALT))
   ) {
     return false;
   }
