@@ -33,6 +33,9 @@ const TABLE_LOGIN_CODE = `
 `;
 
 async function dbInitialize() {
+  if (!fs.existsSync(DB_FILE_PATH)) {
+    fs.writeFileSync(DB_FILE_PATH, '');
+  }
   if (!fs.readFileSync(DB_FILE_PATH).length) {
     /** 注意表创建顺序 */
     const TABLES = [TABLE_USER, TABLE_CAPTCHA, TABLE_LOGIN_CODE];

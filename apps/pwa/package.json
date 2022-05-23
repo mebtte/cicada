@@ -3,38 +3,5 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack/dev.js --progress",
     "build": "cross-env NODE_ENV=production webpack --config webpack/prod.js --progress"
-  },
-  "devDependencies": {
-    "@mebtte/react-media-session": "^1.1.1",
-    "@tippyjs/react": "^4.2.5",
-    "@types/d3-ease": "^2.0.0",
-    "@types/dompurify": "^2.2.2",
-    "@types/lodash": "^4.14.170",
-    "@types/react-helmet": "^6.1.1",
-    "@types/react-list": "^0.8.5",
-    "@types/react-router-dom": "^5.3.3",
-    "@types/react-slider": "^1.1.2",
-    "@types/resize-observer-browser": "^0.1.5",
-    "axios": "^0.21.1",
-    "cropperjs": "^1.5.11",
-    "d3-ease": "^2.0.0",
-    "dayjs": "^1.10.6",
-    "dnd-core": "^11.1.3",
-    "dompurify": "^2.2.9",
-    "eventemitter3": "^4.0.4",
-    "keyboardjs": "^2.6.3",
-    "lodash": "^4.17.21",
-    "react-dnd": "^11.1.3",
-    "react-dnd-html5-backend": "^11.1.3",
-    "react-docgen-typescript": "^1.22.0",
-    "react-helmet": "^6.1.0",
-    "react-json-view": "^1.21.3",
-    "react-list": "^0.8.16",
-    "react-lrc": "^2.1.5",
-    "react-router-dom": "^5.3.1",
-    "react-slider": "^1.1.4",
-    "react-spring": "^9.2.1",
-    "react-styleguidist": "^11.2.0",
-    "react-waypoint": "^10.1.0"
   }
 }

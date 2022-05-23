@@ -3,13 +3,13 @@ import http from 'http';
 import Koa from 'koa';
 import log from 'koa-logger';
 import mount from 'koa-mount';
+import initialize from './initialize';
 import argv from './argv';
 import api from './api';
 import asset from './asset';
 import pwa from './pwa';
 import schedule from './schedule';
 import env from './env';
-import initialize from './initialize';
 
 async function start() {
   if (cluster.isPrimary) {
