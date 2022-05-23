@@ -2,6 +2,6 @@
   "name": "server",
   "scripts": {
     "dev": "cross-env RUNENV=development nodemon",
-    "build": "ncc build src/index.ts --out build --minify --no-cache --source-map"
+    "start": "ts-node -r tsconfig-paths/register src/index.ts"
   }
 }

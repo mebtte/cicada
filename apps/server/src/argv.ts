@@ -2,49 +2,40 @@ import os from 'os';
 import fs from 'fs';
 import path from 'path';
 import * as yargs from 'yargs';
-import env from './env';
 
-const DEVELOPMENT_CONFIG_FILE = path.join(__dirname, '../../../config.json');
+const ARGV_FILE = path.join(__dirname, '../../../argv.json');
+let fromFile: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+} = {};
+if (fs.existsSync(ARGV_FILE)) {
+  fromFile = JSON.parse(fs.readFileSync(ARGV_FILE).toString());
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const argv = yargs.parse(process.argv) as any;
-const base: string = argv.base || `${os.homedir()}/.cicada`;
-const port: number = argv.port || 8000;
-const publicAddress: string = argv.publicAddress || `http://localhost:${port}`;
-const clusterCount: number = argv.clusterCount || os.cpus().length;
+const port: number = argv.port || fromFile.port || 8000;
+const result = {
+  /** default */
+  base: `${os.homedir()}/.cicada`,
+  publicAddress: `http://localhost:${port}`,
+  clusterCount: os.cpus().length,
+  emailPort: 465,
 
-const {
-  emailHost,
-  emailUser,
-  emailPass,
-}: {
+  ...fromFile,
+  ...argv,
+
+  port,
+} as {
+  base: string;
+  publicAddress: string;
+  clusterCount: number;
+  emailPort: number;
   emailHost: string;
   emailUser: string;
   emailPass: string;
-} = argv;
-const emailPort: number = argv.emailPort || 465;
-
-// eslint-disable-next-line import/no-mutable-exports
-let result = {
-  emailHost,
-  emailPort,
-  emailUser,
-  emailPass,
-
-  base,
-  port,
-  publicAddress,
-  clusterCount,
+  port: number;
 };
-
-if (env.RUNENV === 'development' && fs.existsSync(DEVELOPMENT_CONFIG_FILE)) {
-  const developmentConfig = JSON.parse(
-    fs.readFileSync(DEVELOPMENT_CONFIG_FILE).toString(),
-  );
-  result = {
-    ...result,
-    ...developmentConfig,
-  };
-}
 
 if (!result.emailHost || !result.emailUser || !result.emailPass) {
   throw new Error(

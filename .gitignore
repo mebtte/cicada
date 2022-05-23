@@ -12,5 +12,4 @@ package-lock.json
 dist/
 build/
 
-# config
-config.json
+argv.json

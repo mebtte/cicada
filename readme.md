@@ -12,15 +12,17 @@
 
 ## 服务运行要求
 
-- Node.js >= 16 && npm >= 8
-- 用于发信的邮箱账号
+- [Node.js](https://nodejs.org) >= 16
+- 邮箱账号(可发送邮件)
 
-## 构建并部署
+## 部署
 
 ```sh
-npm i
-npm run build
-node build/index.js --emailHost=email.com --emailUser=mebtte@email.com --emailPass=secret
+git clone https://github.com/mebtte/cicada.git
+cd cicada
+npm install --verbose
+# start 后面的 -- 不能省略
+npm start -- --emailHost=email.com --emailUser=mebtte@email.com --emailPass=secret
 ```
 
 知了支持使用参数进行配置:
@@ -36,6 +38,10 @@ node build/index.js --emailHost=email.com --emailUser=mebtte@email.com --emailPa
 | publicAddress | string | 否       | http://localhost:{{serverPort}} | **实际**暴露服务的地址, 比如通过 https://cicada.com 暴露服务 |
 | clusterCount  | number | 否       | {{os.cups().length}}            | 服务进程数量                                                 |
 | base          | string | 否       | {{os.homedir()}}/.cicada        | 数据存放目录                                                 |
+
+除 CLI 参数外, 配置还支持文件的方式. 在根目录创建 `argv.json`, 将同名配置写入文件中. 优先级 `CLI` > `argv.json` > `default`.
+
+`npm start` 将会启动 `api` 服务, 如果需要托管 `pwa` 静态资源, 需要执行 `npm run build:pwa`.
 
 ## 开源协议
 

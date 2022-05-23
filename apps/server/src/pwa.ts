@@ -6,7 +6,7 @@ import serve from 'koa-static';
 const app = new Koa();
 app.use(range);
 app.use(
-  serve(path.join(__dirname, 'pwa'), {
+  serve(path.join(__dirname, '../../pwa/build'), {
     maxage: 365 * 24 * 60 * 3600,
   }),
 );

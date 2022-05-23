@@ -15,13 +15,18 @@ async function start() {
   if (cluster.isPrimary) {
     process.title = 'cicada_primary';
 
-    const PRINT_ARGV_KEYS = ['base', 'port', 'publicAddress', 'clusterCount'];
+    const PRINT_ARGV_KEYS: (keyof typeof argv)[] = [
+      'base',
+      'port',
+      'publicAddress',
+      'clusterCount',
+    ];
     for (const key of PRINT_ARGV_KEYS) {
       // eslint-disable-next-line no-console
       console.log(`--- argv | ${key} = ${argv[key]} ---`);
     }
 
-    const PRINT_ENV_KEYS = ['RUNENV'];
+    const PRINT_ENV_KEYS: (keyof typeof env)[] = ['RUNENV'];
     for (const key of PRINT_ENV_KEYS) {
       // eslint-disable-next-line no-console
       console.log(`--- env | ${key} = ${env[key]} ---`);

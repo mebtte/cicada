@@ -14,14 +14,13 @@
   },
   "contributors": [],
   "scripts": {
-    "prepare": "./bin/prepare.sh && husky install",
+    "prepare": "husky install",
     "test": "jest",
     "tslint": "ts-node scripts/tslint.ts",
     "dev:pwa": "npm run dev -w apps/pwa",
     "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev -w apps/server",
-    "build:server": "npm run build -w apps/server",
-    "build": "./bin/build.sh"
+    "start": "npm run start -w apps/server --"
   },
   "bugs": {
     "url": "https://github.com/mebtte/cicada/issues"
@@ -48,7 +47,6 @@
     "@types/node-schedule": "^2.1.0",
     "@types/nodemailer": "^6.4.4",
     "@types/yargs": "^17.0.10",
-    "@vercel/ncc": "^0.33.4",
     "colors": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^2.0.0",
