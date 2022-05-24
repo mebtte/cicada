@@ -6,6 +6,7 @@ export enum ExceptionCode {
   GET_LOGIN_CODE_TOO_FREQUENT,
   WRONG_LOGIN_CODE,
   NOT_AUTHORIZE,
+  NOT_AUTHORIZE_SUPER,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -34,5 +35,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.NOT_AUTHORIZE]: {
     description: '未验证权限',
+  },
+  [ExceptionCode.NOT_AUTHORIZE_SUPER]: {
+    description: '未验证超级权限',
   },
 };
