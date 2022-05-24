@@ -1,14 +1,21 @@
+import { ThemeProvider } from '@mui/material';
 import { SnackbarProvider, OptionsObject, useSnackbar } from 'notistack';
 import Eventemitter from '#/utils/eventemitter';
 import { createRoot } from 'react-dom/client';
 import { useEffect } from 'react';
+import theme from '@/style/theme';
 
-const DEFAULT_AUTO_HIDE_DURATION = 3000;
+const DEFAULT_OPTIONS: OptionsObject = {
+  autoHideDuration: 5000,
+  anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+};
 enum EventType {
   NOTICE = 'notice',
+  CLOSE = 'close',
 }
 type EventTypeMapData = {
   [EventType.NOTICE]: { message: string; options?: OptionsObject };
+  [EventType.CLOSE]: string;
 };
 const eventemitter = new Eventemitter<EventType, EventTypeMapData>();
 
@@ -29,18 +36,23 @@ function NoticeApp() {
 
 const root = createRoot(node);
 root.render(
-  <SnackbarProvider>
-    <NoticeApp />
-  </SnackbarProvider>,
+  <ThemeProvider theme={theme}>
+    <SnackbarProvider maxSnack={5}>
+      <NoticeApp />
+    </SnackbarProvider>
+  </ThemeProvider>,
 );
 
 export default {
+  close(key: string) {
+    eventemitter.emit(EventType.CLOSE, key);
+  },
   default(message: string, options?: OptionsObject) {
     eventemitter.emit(EventType.NOTICE, {
       message,
       options: {
         variant: 'default',
-        autoHideDuration: DEFAULT_AUTO_HIDE_DURATION,
+        ...DEFAULT_OPTIONS,
         ...options,
       },
     });
@@ -50,7 +62,7 @@ export default {
       message,
       options: {
         variant: 'error',
-        autoHideDuration: DEFAULT_AUTO_HIDE_DURATION + 2000,
+        ...DEFAULT_OPTIONS,
         ...options,
       },
     });
