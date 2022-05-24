@@ -4,6 +4,7 @@ const ASSET_DIR_ROOT = `${argv.base}/assets`;
 export const ASSET_DIR = {
   ROOT: ASSET_DIR_ROOT,
   USER_AVATAR: `${ASSET_DIR_ROOT}/user_avatar`,
+  CHARACTER_AVATAR: `${ASSET_DIR_ROOT}/character_avatar`,
 };
 
 export const DB_LOG_DIR = `${argv.base}/db_logs`;

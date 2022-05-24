@@ -38,6 +38,7 @@ if (cluster.isPrimary) {
     argv.base,
     ASSET_DIR.ROOT,
     ASSET_DIR.USER_AVATAR,
+    ASSET_DIR.CHARACTER_AVATAR,
     DB_LOG_DIR,
     DB_SNAPSHOT_DIR,
     SCHEDULE_LOG_DIR,
@@ -112,12 +113,41 @@ if (cluster.isPrimary) {
           code TEXT NOT NULL,
           createTimestamp INTEGER NOT NULL,
           used INTEGER NOT NULL DEFAULT 0,
-          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
+          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id )
+        );
+      `;
+
+      const TABLE_CHARACTER = `
+        CREATE TABLE character (
+          id TEXT PRIMARY KEY NOT NULL,
+          avatar TEXT NOT NULL DEFAULT '',
+          name TEXT NOT NULL,
+          alias TEXT NOT NULL DEFAULT '',
+          createUserId TEXT NOT NULL,
+          createTimestamp INTEGER NOT NULL,
+          CONSTRAINT fkUser FOREIGN KEY ( createUserId ) REFERENCES user ( id )
+        );
+      `;
+      const TABLE_CHARACTER_MODIFY_RECORD = `
+        CREATE TABLE character_modify_record (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          characterId TEXT NOT NULL,
+          modifyUserId TEXT NOT NULL,
+          value TEXT NOT NULL,
+          modifyTimestamp INTEGER NOT NULL,
+          CONSTRAINT fkCharacter FOREIGN KEY ( characterId ) REFERENCES character ( id ),
+          CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
         );
       `;
 
       /** 注意表创建顺序 */
-      const TABLES = [TABLE_USER, TABLE_CAPTCHA, TABLE_LOGIN_CODE];
+      const TABLES = [
+        TABLE_USER,
+        TABLE_CAPTCHA,
+        TABLE_LOGIN_CODE,
+        TABLE_CHARACTER,
+        TABLE_CHARACTER_MODIFY_RECORD,
+      ];
       for (const table of TABLES) {
         await run(table);
       }

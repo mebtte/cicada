@@ -13,12 +13,17 @@ import getProfile from './controllers/get_profile';
 import createUser from './controllers/create_user';
 
 const router = new Router<DefaultState, Context>();
+const parseBody = bodyParser();
 
 router.get('/metadata', getMetadata);
 router.get('/captcha', getCaptcha);
 router.get('/login_code', getLoginCode);
-router.post('/login', bodyParser(), login);
+router.post('/login', parseBody, login);
+
+/** authorize */
 router.get('/profile', authorize, getProfile);
-router.put('/user', authorize, superAuthorize, createUser);
+
+/** super authorize */
+router.post('/user', authorize, superAuthorize, parseBody, createUser);
 
 export default router;

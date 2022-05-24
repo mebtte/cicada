@@ -7,6 +7,7 @@ export enum ExceptionCode {
   WRONG_LOGIN_CODE,
   NOT_AUTHORIZE,
   NOT_AUTHORIZE_SUPER,
+  EMAIL_EXISTED,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -38,5 +39,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.NOT_AUTHORIZE_SUPER]: {
     description: '未验证超级权限',
+  },
+  [ExceptionCode.EMAIL_EXISTED]: {
+    description: '邮箱已注册',
   },
 };

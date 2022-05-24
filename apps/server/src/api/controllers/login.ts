@@ -10,10 +10,10 @@ export default async (ctx: Context) => {
     ctx.request.body;
 
   if (
-    !email ||
+    typeof email !== 'string' ||
     !EMAIL.test(email) ||
-    !loginCode ||
-    typeof loginCode !== 'string'
+    typeof loginCode !== 'string' ||
+    !loginCode.length
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
