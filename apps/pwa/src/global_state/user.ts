@@ -1,5 +1,7 @@
 import XState from '@/utils/x_state';
 import storage, { Key } from '@/platform/storage';
+import getProfile from '@/api/get_profile';
+import notice from '@/platform/notice';
 import token from './token';
 
 export interface User {
@@ -7,14 +9,13 @@ export interface User {
   email: string;
   avatar: string;
   nickname: string;
-  joinTimestamp: Date;
+  joinTimestamp: number;
   super: boolean;
 }
 
 let initialUser: User | null = null;
 const userString = storage.getItem(Key.USER);
 if (token.get() && userString) {
-  // @todo(mebtte<hi@mebtte.com>)[发送请求更新用户信息]
   try {
     initialUser = JSON.parse(userString);
   } catch (error) {
@@ -23,6 +24,20 @@ if (token.get() && userString) {
 }
 
 const user = new XState<User | null>(initialUser);
+
+if (initialUser) {
+  getProfile()
+    .then((u) =>
+      user.set({
+        ...u,
+        super: !!u.super,
+      }),
+    )
+    .catch((e) => {
+      console.error(e);
+      return notice.error('更新用户信息失败');
+    });
+}
 
 user.onChange((u) => {
   if (u) {

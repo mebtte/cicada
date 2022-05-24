@@ -20,10 +20,10 @@ class Eventemitter<
     eventType: E,
     data: EventTypeMapData[E],
     {
-      async = true,
+      sync = false,
       eventTypeReplace,
     }: {
-      async?: boolean;
+      sync?: boolean;
       eventTypeReplace?: (et: string) => string;
     } = {},
   ) {
@@ -40,10 +40,10 @@ class Eventemitter<
         }
       });
     };
-    if (async) {
-      Promise.resolve().then(() => execute());
-    } else {
+    if (sync) {
       execute();
+    } else {
+      Promise.resolve().then(() => execute());
     }
   }
 

@@ -48,6 +48,7 @@ const onErrorFallback = (error: Error) => <RouteLoader error={error} />;
 
 function App() {
   const user = u.useState();
+
   return (
     <>
       <GlobalStyle />
