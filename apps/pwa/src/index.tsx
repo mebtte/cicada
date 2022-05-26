@@ -3,7 +3,6 @@ import './polyfill';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import 'cropperjs/dist/cropper.min.css';
-import CssBaseline from '@mui/material/CssBaseline';
 
 import logger from './platform/logger';
 import App from './app';
@@ -16,7 +15,6 @@ initialize()
     const root = createRoot(document.querySelector('#root')!);
     return root.render(
       <HashRouter>
-        <CssBaseline />
         <App />
       </HashRouter>,
     );

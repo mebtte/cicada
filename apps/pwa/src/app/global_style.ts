@@ -1,6 +1,10 @@
 import { createGlobalStyle } from 'styled-components';
 
 export default createGlobalStyle`
+  * {
+    box-sizing: border-box;
+  }
+
   html {
     font-family: Helvetica, Tahoma, Arial, STXihei, '华文细黑', 'Microsoft YaHei',
       '微软雅黑', SimSun, '宋体', Heiti, '黑体', sans-serif;
