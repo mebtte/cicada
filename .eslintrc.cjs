@@ -54,6 +54,7 @@ module.exports = {
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
 
+    'default-case': 'off',
     'no-void': 'off',
     'no-promise-executor-return': 'off',
     'consistent-return': 'off',

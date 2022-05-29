@@ -46,7 +46,7 @@ export default async (ctx: Context) => {
     userId: user.id,
   });
   if (hasLoginCodeAlready) {
-    return ctx.except(ExceptionCode.GET_LOGIN_CODE_TOO_FREQUENT);
+    return ctx.except(ExceptionCode.HAS_LOGIN_CODE_ALREADY);
   }
 
   const code = generateRandomInteger(100000, 1000000).toString();

@@ -7,7 +7,7 @@ export default async (ctx: Context) => {
   const captchaData = captcha.create({
     size: 5,
     ignoreChars: '01oOiIlL',
-    noise: 2,
+    noise: 4,
   });
   const id = generateRandomString(8, false);
   await saveCaptcha({ id, value: captchaData.text });

@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-
 import setting from '@/setting';
-import sleep from '@/utils/sleep';
+import sleep from '#/utils/sleep';
 import token from '@/global_state/token';
 import ErrorWithCode from '@/utils/error_with_code';
 

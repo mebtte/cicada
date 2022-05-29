@@ -67,4 +67,24 @@ export default {
       },
     });
   },
+  success(message: string, options?: OptionsObject) {
+    eventemitter.emit(EventType.NOTICE, {
+      message,
+      options: {
+        variant: 'success',
+        ...DEFAULT_OPTIONS,
+        ...options,
+      },
+    });
+  },
+  info(message: string, options?: OptionsObject) {
+    eventemitter.emit(EventType.NOTICE, {
+      message,
+      options: {
+        variant: 'info',
+        ...DEFAULT_OPTIONS,
+        ...options,
+      },
+    });
+  },
 };

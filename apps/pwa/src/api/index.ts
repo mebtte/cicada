@@ -2,6 +2,7 @@ import { ExceptionCode } from '#/constants/exception';
 import token from '@/global_state/token';
 import setting from '@/setting';
 import ErrorWithCode from '@/utils/error_with_code';
+import sleep from '#/utils/sleep';
 
 export enum Method {
   GET = 'get',
@@ -11,13 +12,14 @@ export enum Method {
   DELETE = 'delete',
 }
 
-export async function request<Data>({
+export async function request<Data = void>({
   path,
   method = Method.GET,
   params,
   body,
   headers = {},
   withToken = false,
+  minDuration = 1000,
 }: {
   path: string;
   method?: Method;
@@ -29,6 +31,7 @@ export async function request<Data>({
     [key: string]: string;
   };
   withToken?: boolean;
+  minDuration?: number;
 }) {
   const serverAddress = setting.getServerAddress();
   let url = `${serverAddress}${path}`;
@@ -55,11 +58,14 @@ export async function request<Data>({
     }
   }
 
-  const response = await window.fetch(url, {
-    method,
-    headers,
-    body: processedBody,
-  });
+  const [response] = await Promise.all([
+    window.fetch(url, {
+      method,
+      headers,
+      body: processedBody,
+    }),
+    sleep(minDuration),
+  ]);
 
   const { status, statusText } = response;
   if (status !== 200) {

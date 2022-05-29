@@ -5,7 +5,7 @@ export enum Key {
 
   USER = 'user',
 
-  LAST_SIGNIN_EMAIL = 'last_signin_email_v1',
+  LAST_SIGNIN_EMAIL = 'last_signin_email',
 }
 
 export default {

@@ -3,6 +3,7 @@ import cluster from 'cluster';
 import http from 'http';
 import Koa from 'koa';
 import log from 'koa-logger';
+import cors from '@koa/cors';
 import mount from 'koa-mount';
 import argv from './argv';
 import api from './api';
@@ -45,6 +46,11 @@ async function start() {
       server.use(log());
     }
 
+    server.use(
+      cors({
+        origin: '*',
+      }),
+    );
     server.use(mount('/assets', asset));
     server.use(mount('/api', api));
     server.use(mount('/', pwa));

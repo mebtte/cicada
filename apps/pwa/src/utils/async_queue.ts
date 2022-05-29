@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import generateRandomString from '#/utils/generate_random_string';
+import sleep from '#/utils/sleep';
 import timeout from './timeout';
-import sleep from './sleep';
 
 interface Task {
   id: string;

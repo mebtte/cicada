@@ -3,7 +3,7 @@ export enum ExceptionCode {
   SERVER_ERROR = 1000,
   PARAMETER_ERROR,
   CAPTCHA_ERROR,
-  GET_LOGIN_CODE_TOO_FREQUENT,
+  HAS_LOGIN_CODE_ALREADY,
   WRONG_LOGIN_CODE,
   NOT_AUTHORIZE,
   NOT_AUTHORIZE_SUPER,
@@ -28,8 +28,8 @@ export const EXCEPTION_CODE_MAP: Record<
   [ExceptionCode.CAPTCHA_ERROR]: {
     description: '图形验证码错误',
   },
-  [ExceptionCode.GET_LOGIN_CODE_TOO_FREQUENT]: {
-    description: '获取登录验证码过于频繁',
+  [ExceptionCode.HAS_LOGIN_CODE_ALREADY]: {
+    description: '已经获取过登录验证码',
   },
   [ExceptionCode.WRONG_LOGIN_CODE]: {
     description: '错误的登录验证码',

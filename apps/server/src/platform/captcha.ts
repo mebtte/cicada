@@ -35,13 +35,17 @@ export async function verifyCaptcha({
     return false;
   }
 
-  if (value.toLowerCase() !== captcha.value.toLowerCase()) {
-    return false;
-  }
-
+  /**
+   * 无论验证成功与否
+   * 都需要记录已使用
+   */
   db.run('update captcha set used = 1 where id = ?', [id]).catch((error) =>
     console.error(error),
   );
+
+  if (value.toLowerCase() !== captcha.value.toLowerCase()) {
+    return false;
+  }
 
   return true;
 }

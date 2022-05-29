@@ -1,10 +1,11 @@
-import styled from 'styled-components';
-import Paper from '@mui/material/Paper';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
+import styled, { css } from 'styled-components';
+import { useState } from 'react';
+import storage, { Key } from '@/platform/storage';
+import EmailPanel from './email_panel';
+import LoginCodePanel from './login_code_panel';
+import { Step, STEPS } from './constants';
 
-const Style = styled.div`
+const Style = styled.div<{ step: Step }>`
   min-height: 100vh;
 
   display: flex;
@@ -12,24 +13,52 @@ const Style = styled.div`
   justify-content: center;
 
   > .container {
-    width: 80%;
+    width: 90%;
     max-width: 350px;
-    padding: 30px;
 
-    display: flex;
-    flex-direction: column;
+    overflow: visible;
+    touch-action: none;
+
+    > .content {
+      width: ${100 * STEPS.length}%;
+
+      display: flex;
+      align-items: center;
+
+      transition: transform ease-in-out 300ms;
+    }
   }
+
+  ${({ step }) => css`
+    > .container {
+      > .content {
+        transform: translateX(-${STEPS.indexOf(step) * (100 / STEPS.length)}%);
+      }
+    }
+  `}
 `;
+const getInitialEmail = () => storage.getItem(Key.LAST_SIGNIN_EMAIL) || '';
 
 function Login() {
+  const [step, setStep] = useState(Step.FIRST);
+  const [email, setEmail] = useState(getInitialEmail);
   return (
-    <Style>
-      <Paper className="container">
-        <Stack spacing={2}>
-          <TextField label="邮箱" />
-          <Button variant="contained">下一步</Button>
-        </Stack>
-      </Paper>
+    <Style step={step}>
+      <div className="container">
+        <div className="content">
+          <EmailPanel
+            visible={step === Step.FIRST}
+            initialEmail={email}
+            updateEmail={setEmail}
+            toNext={() => setStep(Step.SECOND)}
+          />
+          <LoginCodePanel
+            visible={step === Step.SECOND}
+            email={email}
+            toPrevious={() => setStep(Step.FIRST)}
+          />
+        </div>
+      </div>
     </Style>
   );
 }
