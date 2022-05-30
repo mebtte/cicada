@@ -3,6 +3,7 @@ import { useState } from 'react';
 import storage, { Key } from '@/platform/storage';
 import EmailPanel from './email_panel';
 import LoginCodePanel from './login_code_panel';
+import UserPanel from './user_panel';
 import { Step, STEPS } from './constants';
 
 const Style = styled.div<{ step: Step }>`
@@ -57,6 +58,7 @@ function Login() {
             email={email}
             toPrevious={() => setStep(Step.FIRST)}
           />
+          <UserPanel visible={step === Step.THIRD} />
         </div>
       </div>
     </Style>

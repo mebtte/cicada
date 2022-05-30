@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import theme from '@/style/theme';
 
 const DEFAULT_OPTIONS: OptionsObject = {
-  autoHideDuration: 5000,
+  autoHideDuration: 6000,
   anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
 };
 enum EventType {

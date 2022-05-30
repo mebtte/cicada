@@ -32,6 +32,8 @@ const Content = styled(Stack)`
   padding: 30px;
 
   > .graph {
+    cursor: pointer;
+
     > svg {
       width: 100%;
       height: auto;
@@ -179,6 +181,7 @@ function CaptchaDialog({
           dangerouslySetInnerHTML={{
             __html: captchaData.value.svg,
           }}
+          onClick={getCaptcha}
         />
         <TextField
           label="验证码"
@@ -200,7 +203,7 @@ function CaptchaDialog({
     );
   }
   return (
-    <Dialog open fullWidth maxWidth="xs" onClose={onClose}>
+    <Dialog open fullWidth maxWidth="xs" onClose={onClose} closeAfterTransition>
       {content}
     </Dialog>
   );

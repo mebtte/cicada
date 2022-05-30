@@ -2,9 +2,16 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import styled from 'styled-components';
-import { ChangeEventHandler, useLayoutEffect, useRef, useState } from 'react';
+import {
+  ChangeEventHandler,
+  KeyboardEventHandler,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
+import notice from '@/platform/notice';
 import { panelCSS } from './constants';
 import Logo from './logo';
 
@@ -27,6 +34,23 @@ function LoginCodePanel({
   const onLoginCodeChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setLoginCode(event.target.value);
 
+  const [logining, setLogining] = useState(false);
+  const login = async () => {
+    if (!loginCode.length) {
+      return notice.error('请输入登录验证码');
+    }
+
+    setLogining(true);
+
+    setLogining(false);
+  };
+
+  const onKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
+    if (event.key === 'Enter') {
+      login();
+    }
+  };
+
   useLayoutEffect(() => {
     if (visible) {
       loginCodeRef.current?.focus();
@@ -45,9 +69,16 @@ function LoginCodePanel({
           value={loginCode}
           onChange={onLoginCodeChange}
           inputRef={loginCodeRef}
+          onKeyDown={onKeyDown}
         />
-        <LoadingButton variant="contained">继续</LoadingButton>
-        <Button variant="outlined" onClick={toPrevious}>
+        <LoadingButton
+          variant="contained"
+          disabled={!loginCode.length}
+          loading={logining}
+        >
+          继续
+        </LoadingButton>
+        <Button variant="outlined" onClick={toPrevious} disabled={logining}>
           上一步
         </Button>
       </Stack>

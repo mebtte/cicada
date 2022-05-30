@@ -18,14 +18,16 @@ db.on('profile', (sql, ms) => {
   const dateString = now.format('YYYYMMDD');
   const timeString = now.format('HH:mm:ss');
 
+  const trimedSQL = sql.replace(/\s+/g, ' ');
+
   if (env.RUNENV === 'development') {
     // eslint-disable-next-line no-console
-    console.log(`[${timeString}] ${color.underline(`${ms}ms`)}\n${sql}`);
+    console.log(`[${timeString}] ${color.underline(`${ms}ms`)}\n${trimedSQL}`);
   }
 
   appendFileAsync(
     `${DB_LOG_DIR}/${dateString}.log`,
-    `[${timeString}] ${ms}ms\n${sql}\n\n`,
+    `[${timeString}] ${ms}ms\n${trimedSQL}\n\n`,
   ).catch((error) => console.error(error));
 });
 
