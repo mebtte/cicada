@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
 
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
-import withSignin from '@/platform/with_signin';
+import withLogin from '@/platform/with_login';
 import PageContainer from '../page_container';
 import Sidebar from './sidebar';
 import Header from './header';
@@ -129,4 +129,4 @@ function Wrapper() {
   );
 }
 
-export default withSignin(Wrapper);
+export default withLogin(Wrapper);

@@ -1,13 +1,11 @@
 import { lazy, Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
-import u from '@/global_state/user';
 import { ROOT_PATH } from '@/constants/route';
 import ErrorBoundary from '@/components/error_boundary';
 import GlobalStyle from './global_style';
 import Toast from './toast';
 import Dialog from './dialog';
 import RouteLoader from './route_loader';
-import ProfileDialog from './profile_dialog';
 import Prefetch from './prefetch';
 
 const ROUTES: {
@@ -47,8 +45,6 @@ const routeList = ROUTES.map((r) => (
 const onErrorFallback = (error: Error) => <RouteLoader error={error} />;
 
 function App() {
-  const user = u.useState();
-
   return (
     <>
       <GlobalStyle />
@@ -65,8 +61,6 @@ function App() {
           </Switch>
         </Suspense>
       </ErrorBoundary>
-
-      {user ? <ProfileDialog user={user} /> : null}
     </>
   );
 }

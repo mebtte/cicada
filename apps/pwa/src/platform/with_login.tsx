@@ -2,8 +2,9 @@ import { Redirect, useLocation } from 'react-router-dom';
 import u from '@/global_state/user';
 import { ROOT_PATH } from '@/constants/route';
 import { ComponentType } from 'react';
+import { LoginQuery } from '@/constants/query';
 
-function withSignin<Props = {}>(Component: ComponentType<Props>) {
+function withLogin<Props = {}>(Component: ComponentType<Props>) {
   return function ComponentWithUser(props: Props) {
     const user = u.useState();
     const { pathname } = useLocation();
@@ -11,10 +12,12 @@ function withSignin<Props = {}>(Component: ComponentType<Props>) {
       <Component {...props} />
     ) : (
       <Redirect
-        to={`${ROOT_PATH.LOGIN}?redirect=${encodeURIComponent(pathname)}`}
+        to={`${ROOT_PATH.LOGIN}?${LoginQuery.REDIRECT}=${encodeURIComponent(
+          pathname,
+        )}`}
       />
     );
   };
 }
 
-export default withSignin;
+export default withLogin;

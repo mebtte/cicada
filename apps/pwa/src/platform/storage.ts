@@ -1,5 +1,5 @@
 export enum Key {
-  SERVER_ADDRESS = 'server_address',
+  SETTING = 'setting',
 
   TOKEN = 'token',
 

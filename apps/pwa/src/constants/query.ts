@@ -1,1 +1,3 @@
-import {} from './route';
+export enum LoginQuery {
+  REDIRECT = 'redirect',
+}

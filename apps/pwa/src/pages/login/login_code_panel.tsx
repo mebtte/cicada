@@ -12,8 +12,13 @@ import {
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
 import notice from '@/platform/notice';
-import { panelCSS } from './constants';
+import loginRequest from '@/api/login';
+import t from '@/global_state/token';
+import u from '@/global_state/user';
+import getProfile from '@/api/get_profile';
+import sleep from '#/utils/sleep';
 import Logo from './logo';
+import { panelCSS } from './constants';
 
 const StyledPaper = styled(Paper)`
   ${panelCSS}
@@ -23,10 +28,12 @@ function LoginCodePanel({
   visible,
   email,
   toPrevious,
+  toNext,
 }: {
   visible: boolean;
   email: string;
   toPrevious: () => void;
+  toNext: () => void;
 }) {
   const loginCodeRef = useRef<HTMLInputElement>(null);
 
@@ -41,7 +48,19 @@ function LoginCodePanel({
     }
 
     setLogining(true);
-
+    try {
+      const token = await loginRequest({ email, loginCode });
+      t.set(token);
+      await sleep(0);
+      const user = await getProfile();
+      u.set({
+        ...user,
+        super: !!user.super,
+      });
+      sleep(0).then(() => toNext());
+    } catch (error) {
+      notice.error(error.message);
+    }
     setLogining(false);
   };
 
@@ -75,6 +94,7 @@ function LoginCodePanel({
           variant="contained"
           disabled={!loginCode.length}
           loading={logining}
+          onClick={login}
         >
           继续
         </LoadingButton>

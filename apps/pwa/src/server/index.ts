@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import setting from '@/setting';
+import setting from '@/global_state/setting';
 import sleep from '#/utils/sleep';
 import token from '@/global_state/token';
 import ErrorWithCode from '@/utils/error_with_code';
@@ -47,7 +47,7 @@ function generateMethod(method: METHOD) {
     try {
       [response] = await Promise.all([
         axios({
-          url: `${setting.getServerAddress()}${path}`,
+          url: `${setting.get().serverAddress}${path}`,
           method,
           timeout,
           params,

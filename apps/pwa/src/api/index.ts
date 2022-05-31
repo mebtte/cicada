@@ -1,6 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
 import token from '@/global_state/token';
-import setting from '@/setting';
+import setting from '@/global_state/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 
@@ -33,7 +33,7 @@ export async function request<Data = void>({
   withToken?: boolean;
   minDuration?: number;
 }) {
-  const serverAddress = setting.getServerAddress();
+  const { serverAddress } = setting.get();
   let url = `${serverAddress}${path}`;
 
   if (params) {

@@ -7,7 +7,7 @@ import theme from '@/style/theme';
 
 const DEFAULT_OPTIONS: OptionsObject = {
   autoHideDuration: 6000,
-  anchorOrigin: { vertical: 'bottom', horizontal: 'right' },
+  anchorOrigin: { vertical: 'top', horizontal: 'right' },
 };
 enum EventType {
   NOTICE = 'notice',

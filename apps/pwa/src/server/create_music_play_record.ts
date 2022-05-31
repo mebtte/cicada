@@ -1,4 +1,4 @@
-import setting from '@/setting';
+import setting from '@/global_state/setting';
 import token from '@/global_state/token';
 
 /**
@@ -25,7 +25,7 @@ function createMusicPlayRecord({
     },
   );
   return window.navigator.sendBeacon(
-    `${setting.getServerAddress()}/api/create_music_play_record`,
+    `${setting.get().serverAddress}/api/create_music_play_record`,
     blob,
   );
 }

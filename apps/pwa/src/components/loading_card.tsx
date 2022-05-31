@@ -1,17 +1,12 @@
-import { memo } from 'react';
+import { HtmlHTMLAttributes, memo } from 'react';
 import styled from 'styled-components';
+import CircularProgress from '@mui/material/CircularProgress';
 
-import CircularLoader from './circular_loader';
-
-const LOADER_SIZE = 24;
 const Style = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  > .loader {
-    color: rgb(55 55 55);
-  }
   > .message {
     font-size: 12px;
     margin-top: 15px;
@@ -19,17 +14,18 @@ const Style = styled.div`
   }
 `;
 
-const LoadingDisplay = ({
+function LoadingDisplay({
   message,
   ...props
 }: {
   message?: string;
-  [key: string]: any;
-}) => (
-  <Style {...props}>
-    <CircularLoader className="loader" size={LOADER_SIZE} />
-    {message ? <div className="message">{message}</div> : null}
-  </Style>
-);
+} & HtmlHTMLAttributes<HTMLDivElement>) {
+  return (
+    <Style {...props}>
+      <CircularProgress />
+      {message ? <div className="message">{message}</div> : null}
+    </Style>
+  );
+}
 
 export default memo(LoadingDisplay);

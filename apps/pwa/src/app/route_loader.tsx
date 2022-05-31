@@ -1,7 +1,8 @@
+import { CSSProperties } from 'react';
 import ErrorCard from '../components/error_card';
 import LoadingCard from '../components/loading_card';
 
-const style = {
+const style: CSSProperties = {
   position: 'absolute',
   width: '100%',
   height: '100%',
