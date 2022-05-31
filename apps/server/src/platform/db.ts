@@ -18,7 +18,7 @@ db.on('profile', (sql, ms) => {
   const dateString = now.format('YYYYMMDD');
   const timeString = now.format('HH:mm:ss');
 
-  const trimedSQL = sql.replace(/\s+/g, ' ');
+  const trimedSQL = sql.replace(/\s+/g, ' ').trim();
 
   if (env.RUNENV === 'development') {
     // eslint-disable-next-line no-console
