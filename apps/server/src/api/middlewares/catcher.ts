@@ -20,7 +20,7 @@ export default async (ctx: Context, next: Next) => {
 
     const now = day();
     const dateString = now.format('YYYYMMDD');
-    const timeString = now.format('HHmmss');
+    const timeString = now.format('HH:mm:ss');
     appendFileAsync(
       `${ERROR_LOG_DIR}/${dateString}.log`,
       `[${timeString}] ${ctx.path}\n${error.stack}\n\n`,
