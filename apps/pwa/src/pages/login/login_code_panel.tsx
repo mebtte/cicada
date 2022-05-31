@@ -17,6 +17,7 @@ import t from '@/global_state/token';
 import u from '@/global_state/user';
 import getProfile from '@/api/get_profile';
 import sleep from '#/utils/sleep';
+import storage, { Key } from '@/platform/storage';
 import Logo from './logo';
 import { panelCSS } from './constants';
 
@@ -51,13 +52,18 @@ function LoginCodePanel({
     try {
       const token = await loginRequest({ email, loginCode });
       t.set(token);
+
       await sleep(0);
+
       const user = await getProfile();
       u.set({
         ...user,
         super: !!user.super,
       });
+
       sleep(0).then(() => toNext());
+
+      storage.setItem({ key: Key.LAST_SIGNIN_EMAIL, value: email });
     } catch (error) {
       notice.error(error.message);
     }
