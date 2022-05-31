@@ -7,7 +7,7 @@ import u from '@/global_state/user';
 import getRandomCover from '@/utils/get_random_cover';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
-import { useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import parseSearch from '@/utils/parse_search';
 import { LoginQuery } from '@/constants/query';
 import Logo from './logo';
@@ -41,31 +41,36 @@ function UserPanel({ visible }: { visible: boolean }) {
   const user = u.useState();
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const query = parseSearch<LoginQuery>(location.search);
-      const redirect = query.redirect || '/';
-      history.push(redirect);
-    }, 5000);
-    return () => window.clearTimeout(timer);
-  }, [history, location.search]);
+    if (user) {
+      const timer = window.setTimeout(() => {
+        const query = parseSearch<LoginQuery>(location.search);
+        const redirect = query.redirect || '/';
+        history.push(redirect);
+      }, 5000);
+      return () => window.clearTimeout(timer);
+    }
+  }, [history, location.search, user]);
 
-  return (
-    <Style visible={visible ? 1 : 0}>
+  let content: ReactNode = null;
+  if (user) {
+    content = (
       <Stack spacing={4}>
         <Logo />
         <div className="avatar-box">
-          <Avatar className="avatar" src={user!.avatar || DEFAULT_AVATAR} />
+          <Avatar className="avatar" src={user.avatar || DEFAULT_AVATAR} />
         </div>
         <Typography className="text">
           🎉 欢迎回来,{' '}
-          {user!.nickname.length > NICKNAME_MAX_LENGTH
-            ? `${user!.nickname.slice(0, NICKNAME_MAX_LENGTH)}...`
-            : user!.nickname}
+          {user.nickname.length > NICKNAME_MAX_LENGTH
+            ? `${user.nickname.slice(0, NICKNAME_MAX_LENGTH)}...`
+            : user.nickname}
         </Typography>
         <LinearProgress />
       </Stack>
-    </Style>
-  );
+    );
+  }
+
+  return <Style visible={visible ? 1 : 0}>{content}</Style>;
 }
 
 export default UserPanel;

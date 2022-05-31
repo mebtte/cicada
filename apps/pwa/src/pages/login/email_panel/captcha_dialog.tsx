@@ -82,7 +82,14 @@ function CaptchaDialog({
       }
   >(loadingCaptchaData);
   const [lastGetCaptchaTimestamp, setLastGetCaptchaTimestamp] = useState(0);
+
+  const [gettingLoginCode, setGettingLoginCode] = useState(false);
+
   const getCaptcha = useCallback(async () => {
+    if (gettingLoginCode) {
+      return;
+    }
+
     setCaptchaCode('');
     setCaptchaData(loadingCaptchaData);
     try {
@@ -101,7 +108,7 @@ function CaptchaDialog({
         value: null,
       });
     }
-  }, []);
+  }, [gettingLoginCode]);
 
   useEffect(() => {
     const interval = lastGetCaptchaTimestamp + CAPTCHA_TTL - Date.now();
@@ -115,7 +122,6 @@ function CaptchaDialog({
     sleep(0).then(() => toNext());
   };
 
-  const [gettingLoginCode, setGettingLoginCode] = useState(false);
   const getLoginCode = async () => {
     if (!captchaCode.length) {
       return notice.error('请输入验证码');
