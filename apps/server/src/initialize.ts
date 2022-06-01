@@ -139,6 +139,91 @@ if (cluster.isPrimary) {
           CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
         );
       `;
+      const TABLE_MUSIC = `
+        CREATE TABLE music (
+          id TEXT PRIMARY KEY NOT NULL,
+          type INTEGER NOT NULL,
+          name TEXT NOT NULL,
+          alias TEXT NOT NULL DEFAULT '',
+          cover TEXT NOT NULL DEFAULT '',
+          sq TEXT NOT NULL,
+          hq TEXT NOT NULL DEFAULT '',
+          ac TEXT NOT NULL DEFAULT '',
+          effectivePlayTimes INTEGER NOT NULL DEFAULT 0,
+          createTimestamp INTEGER NOT NULL
+        );
+      `;
+      const TABLE_MUSIC_MODIGY_RECORD = `
+        CREATE TABLE music_modify_record (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          musicId TEXT NOT NULL,
+          modifyUserId TEXT NOT NULL,
+          value TEXT NOT NULL,
+          modifyTimestamp INTEGER NOT NULL,
+          CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
+          CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
+        );
+      `;
+      const TABLE_MUSIC_FORK = `
+        CREATE TABLE music_fork (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          musicId TEXT NOT NULL,
+          forkFrom TEXT NOT NULL,
+          CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
+          CONSTRAINT fkForkFrom FOREIGN KEY ( forkFrom ) REFERENCES music ( id )
+        );
+      `;
+      const TABLE_MUSIC_LRC = `
+        CREATE TABLE music_lrc (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          musicId TEXT NOT NULL,
+          lrc TEXT NOT NULL,
+          CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
+        );
+      `;
+      const TABLE_MUSIC_PLAY_RECORD = `
+        CREATE TABLE music_play_record (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          userId TEXT NOT NULL,
+          musicId TEXT NOT NULL,
+          percent REAL NOT NULL,
+          timestamp INTEGER NOT NULL,
+          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ),
+          CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
+        );
+      `;
+      const TABLE_MUSIC_SINGER_RELATION = `
+        CREATE TABLE music_singer_relation (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          musicId TEXT NOT NULL,
+          singerId TEXT NOT NULL,
+          CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
+          CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES character ( id ) 
+        );
+      `;
+      const TABLE_MUSICBILL = `
+        CREATE TABLE musicbill (
+          id TEXT PRIMARY KEY NOT NULL,
+          userId TEXT NOT NULL,
+          cover TEXT NOT NULL DEFAULT '',
+          name TEXT NOT NULL,
+          public INTEGER NOT NULL DEFAULT 0,
+          \`order\` INTEGER NOT NULL,
+          orderTimestamp INTEGER NOT NULL,
+          createTimestamp INTEGER NOT NULL,
+          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
+        );
+      `;
+      const TABLE_MUSICBILL_MUSIC = `
+        CREATE TABLE musicbill_music (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          musicbillId TEXT NOT NULL,
+          musicId TEXT NOT NULL,
+          addTimestamp INTEGER NOT NULL,
+          CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ),
+          CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
+        );
+      `;
 
       /** 注意表创建顺序 */
       const TABLES = [
@@ -147,6 +232,14 @@ if (cluster.isPrimary) {
         TABLE_LOGIN_CODE,
         TABLE_CHARACTER,
         TABLE_CHARACTER_MODIFY_RECORD,
+        TABLE_MUSIC,
+        TABLE_MUSIC_MODIGY_RECORD,
+        TABLE_MUSIC_FORK,
+        TABLE_MUSIC_LRC,
+        TABLE_MUSIC_PLAY_RECORD,
+        TABLE_MUSIC_SINGER_RELATION,
+        TABLE_MUSICBILL,
+        TABLE_MUSICBILL_MUSIC,
       ];
       for (const table of TABLES) {
         await run(table);

@@ -45,6 +45,19 @@ npm start -- --emailHost=email.com --emailUser=mebtte@email.com --emailPass=secr
 
 `npm start` 将会启动 `api` 服务, 如果需要托管 `pwa` 静态资源, 需要执行 `npm run build:pwa`.
 
+## 常见问题
+
+<details>
+  <summary>为什么初始超级账号昵称是 `pangu` ?</summary>
+
+`pangu` === `盘古`
+
+</details>
+
+## 其他
+
+- [数据库变更记录](./db_changelog.md)
+
 ## 开源协议
 
 [GPL](./license)
