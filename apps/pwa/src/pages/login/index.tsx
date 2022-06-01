@@ -67,7 +67,10 @@ function Login() {
             toPrevious={() => setStep(Step.FIRST)}
             toNext={() => setStep(Step.THIRD)}
           />
-          <UserPanel visible={step === Step.THIRD} />
+          <UserPanel
+            visible={step === Step.THIRD}
+            toFirst={() => setStep(Step.FIRST)}
+          />
         </div>
       </div>
     </Style>
