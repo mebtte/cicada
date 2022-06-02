@@ -5,6 +5,11 @@ export const ASSET_DIR = {
   ROOT: ASSET_DIR_ROOT,
   USER_AVATAR: `${ASSET_DIR_ROOT}/user_avatar`,
   CHARACTER_AVATAR: `${ASSET_DIR_ROOT}/character_avatar`,
+  MUSIC_COVER: `${ASSET_DIR_ROOT}/music_cover`,
+  MUSIC_SQ: `${ASSET_DIR_ROOT}/music_sq`,
+  MUSIC_HQ: `${ASSET_DIR_ROOT}/music_hq`,
+  MUSIC_AC: `${ASSET_DIR_ROOT}/music_ac`,
+  MUSICBILL_COVER: `${ASSET_DIR_ROOT}/musicbill_cover`,
 };
 
 export const DB_LOG_DIR = `${argv.base}/db_logs`;
