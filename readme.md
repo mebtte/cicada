@@ -48,9 +48,16 @@ npm start -- --emailHost=email.com --emailUser=mebtte@email.com --emailPass=secr
 ## 常见问题
 
 <details>
+  <summary>如何迁移数据 ?</summary>
+
+知了所有数据都位于 `base` 目录下, 将 `base` 目录复制或者移动即可完成迁移.
+
+</details>
+
+<details>
   <summary>为什么初始超级账号昵称是 `pangu` ?</summary>
 
-`pangu` === `盘古`
+`pangu` === `盘古`.
 
 </details>
 
