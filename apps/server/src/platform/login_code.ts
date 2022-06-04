@@ -48,11 +48,12 @@ export async function verifyLoginCode({
 }): Promise<boolean> {
   const loginCode = await db.get<{ id: string; code: string }>(
     `
-    select id, code from login_code
-    where userId = ?
-      and createTimestamp >= ?
-      and used = 0
-  `,
+      select id, code from login_code
+        where userId = ?
+          and createTimestamp >= ?
+          and used = 0
+        order by createTimestamp DESC
+    `,
     [userId, Date.now() - LOGIN_CODE_TTL],
   );
 

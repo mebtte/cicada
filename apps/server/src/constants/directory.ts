@@ -1,9 +1,12 @@
 import argv from '@/argv';
+import { AssetType, ASSET_TYPE_MAP } from '@/platform/asset';
 
 const ASSET_DIR_ROOT = `${argv.base}/assets`;
 export const ASSET_DIR = {
   ROOT: ASSET_DIR_ROOT,
-  USER_AVATAR: `${ASSET_DIR_ROOT}/user_avatar`,
+  USER_AVATAR: `${ASSET_DIR_ROOT}/${
+    ASSET_TYPE_MAP[AssetType.USER_AVATAR].directoryName
+  }`,
   CHARACTER_AVATAR: `${ASSET_DIR_ROOT}/character_avatar`,
   MUSIC_COVER: `${ASSET_DIR_ROOT}/music_cover`,
   MUSIC_SQ: `${ASSET_DIR_ROOT}/music_sq`,

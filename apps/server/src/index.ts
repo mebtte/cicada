@@ -11,6 +11,7 @@ import asset from './asset';
 import pwa from './pwa';
 import schedule from './schedule';
 import env from './env';
+import { ASSET_PREFIX } from './constants';
 
 async function start() {
   if (cluster.isPrimary) {
@@ -51,7 +52,7 @@ async function start() {
         origin: '*',
       }),
     );
-    server.use(mount('/assets', asset));
+    server.use(mount(`/${ASSET_PREFIX}`, asset));
     server.use(mount('/api', api));
     server.use(mount('/', pwa));
 

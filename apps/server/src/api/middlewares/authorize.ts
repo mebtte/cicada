@@ -1,6 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
 import { verify } from '@/platform/jwt';
 import { Next } from 'koa';
+import { getAssetUrl, AssetType } from '@/platform/asset';
 import { getUserById, Property } from '../../platform/user';
 import { Context } from '../constants/koa';
 
@@ -24,6 +25,9 @@ export default async (ctx: Context, next: Next) => {
     return ctx.except(ExceptionCode.NOT_AUTHORIZE);
   }
 
-  ctx.user = user;
+  ctx.user = {
+    ...user,
+    avatar: getAssetUrl(user.avatar, AssetType.USER_AVATAR),
+  };
   return next();
 };

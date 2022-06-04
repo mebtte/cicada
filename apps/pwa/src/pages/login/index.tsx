@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import storage, { Key } from '@/platform/storage';
 import u from '@/global_state/user';
 import EmailPanel from './email_panel';
@@ -40,17 +40,21 @@ const Style = styled.div<{ step: Step }>`
   `}
 `;
 const getInitialEmail = () => storage.getItem(Key.LAST_SIGNIN_EMAIL) || '';
-const getStep = () => {
-  const user = u.get();
-  if (user) {
-    return Step.THIRD;
-  }
-  return Step.FIRST;
-};
 
 function Login() {
-  const [step, setStep] = useState(getStep);
+  const user = u.useState();
+
+  const [step, setStep] = useState(Step.FIRST);
   const [email, setEmail] = useState(getInitialEmail);
+
+  useEffect(() => {
+    if (user) {
+      setStep(Step.THIRD);
+    } else {
+      setStep(Step.FIRST);
+    }
+  }, [user]);
+
   return (
     <Style step={step}>
       <div className="container">
@@ -67,10 +71,7 @@ function Login() {
             toPrevious={() => setStep(Step.FIRST)}
             toNext={() => setStep(Step.THIRD)}
           />
-          <UserPanel
-            visible={step === Step.THIRD}
-            toFirst={() => setStep(Step.FIRST)}
-          />
+          <UserPanel visible={step === Step.THIRD} />
         </div>
       </div>
     </Style>

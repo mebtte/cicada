@@ -35,13 +35,7 @@ const Style = styled(Paper)`
   }
 `;
 
-function UserPanel({
-  visible,
-  toFirst,
-}: {
-  visible: boolean;
-  toFirst: () => void;
-}) {
+function UserPanel({ visible }: { visible: boolean }) {
   const history = useHistory();
   const location = useLocation();
   const user = u.useState();
@@ -56,12 +50,6 @@ function UserPanel({
       return () => window.clearTimeout(timer);
     }
   }, [history, location.search, user]);
-
-  useEffect(() => {
-    if (!user) {
-      toFirst();
-    }
-  }, [user, toFirst]);
 
   let content: ReactNode = null;
   if (user) {

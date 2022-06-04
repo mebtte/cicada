@@ -1,5 +1,7 @@
 import argv from '@/argv';
 
+export const ASSET_PREFIX = 'asset';
+
 export const LOGIN_CODE_SALT_FILE_PATH = `${argv.base}/login_code_salt`;
 export const JWT_SECRET_FILE_PATH = `${argv.base}/jwt_secret`;
 export const DB_FILE_PATH = `${argv.base}/db`;
