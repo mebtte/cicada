@@ -2,7 +2,7 @@ import { EMAIL } from '#/constants/regexp';
 import { ExceptionCode } from '#/constants/exception';
 import { verifyLoginCode } from '@/platform/login_code';
 import { sign } from '@/platform/jwt';
-import { Property, getUserByEmail } from '../../platform/user';
+import { Property, getUserByEmail } from '@/db/user';
 import { Context } from '../constants/koa';
 
 export default async (ctx: Context) => {

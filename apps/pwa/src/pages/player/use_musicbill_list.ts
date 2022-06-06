@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 import getRandomCover from '@/utils/get_random_cover';
 import { RequestStatus } from '@/constants';
-import getMusicbillListRequest from '@/server/get_musicbill_list';
+import getSelfMusicbillList from '@/api/get_self_musicbill_list';
 import getMusicbillDetailRequest from '@/server/get_musicbill_detail';
 import addMusicToMusicbill from '@/server/add_music_to_musicbill';
 import removeMusicFromMusicbill from '@/server/remove_music_from_musicbill';
@@ -18,7 +18,7 @@ export default () => {
   const getMusicbillList = useCallback(async () => {
     setStatus(RequestStatus.LOADING);
     try {
-      const mbl = await getMusicbillListRequest();
+      const mbl = await getSelfMusicbillList();
       setMusicbillList(
         mbl
           .map((mb) => ({
@@ -26,10 +26,11 @@ export default () => {
             name: mb.name,
             cover: mb.cover || getRandomCover(),
             order: mb.order,
-            description: mb.description,
-            createTime: new Date(mb.create_time),
-            musicList: [],
+            orderTimestamp: mb.orderTimestamp,
+            createTimestamp: mb.createTimestamp,
             public: !!mb.public,
+
+            musicList: [],
 
             status: RequestStatus.NOT_START,
             error: null,

@@ -95,6 +95,7 @@ function LoginCodePanel({
           onChange={onLoginCodeChange}
           inputRef={loginCodeRef}
           onKeyDown={onKeyDown}
+          disabled={logining}
         />
         <LoadingButton
           variant="contained"

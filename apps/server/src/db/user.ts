@@ -1,4 +1,4 @@
-import * as db from '@/platform/db';
+import * as db from '.';
 
 export enum Property {
   ID = 'id',
@@ -17,7 +17,7 @@ export type User = {
   [Property.NICKNAME]: string;
   [Property.JOIN_TIMESTAMP]: number;
   [Property.SUPER]: number;
-  [Property.ID]: string;
+  [Property.REMARK]: string;
 };
 
 export function getUserByEmail<P extends Property>(
@@ -25,14 +25,12 @@ export function getUserByEmail<P extends Property>(
   properties: P[],
 ) {
   return db.get<{
-    // @ts-expect-error
     [key in P]: User[key];
   }>(`select ${properties.join(',')} from user where email = ?`, [email]);
 }
 
 export function getUserById<P extends Property>(id: string, properties: P[]) {
   return db.get<{
-    // @ts-expect-error
     [key in P]: User[key];
   }>(`select ${properties.join(',')} from user where id = ?`, [id]);
 }

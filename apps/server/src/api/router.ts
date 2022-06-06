@@ -11,6 +11,7 @@ import getLoginCode from './controllers/get_login_code';
 import login from './controllers/login';
 import getProfile from './controllers/get_profile';
 import createUser from './controllers/create_user';
+import getSelfMusicbillList from './controllers/get_self_musicbill_list';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -22,6 +23,7 @@ router.post('/login', parseBody, login);
 
 /** authorize */
 router.get('/profile', authorize, getProfile);
+router.get('/self_musicbill_list', authorize, getSelfMusicbillList);
 
 /** super authorize */
 router.post('/user', authorize, superAuthorize, parseBody, createUser);

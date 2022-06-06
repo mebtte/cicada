@@ -1,6 +1,6 @@
 import { EMAIL } from '#/constants/regexp';
 import { ExceptionCode } from '#/constants/exception';
-import * as db from '@/platform/db';
+import * as db from '@/db';
 import { verifyCaptcha } from '@/platform/captcha';
 import {
   hasLoginCodeInGetInterval,

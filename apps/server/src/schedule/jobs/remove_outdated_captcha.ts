@@ -1,4 +1,4 @@
-import * as db from '@/platform/db';
+import * as db from '@/db';
 
 const TTL = 1000 * 60 * 60 * 24 * 3;
 

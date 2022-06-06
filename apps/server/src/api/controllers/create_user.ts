@@ -1,12 +1,12 @@
 import day from '#/utils/day';
 import { ExceptionCode } from '#/constants/exception';
 import { EMAIL } from '#/constants/regexp';
-import { Property, getUserByEmail } from '@/platform/user';
-import * as db from '@/platform/db';
+import * as db from '@/db';
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
 import { sendMail } from '@/platform/email';
 import argv from '@/argv';
+import { Property, getUserByEmail } from '@/db/user';
 import { Context } from '../constants/koa';
 
 const generateEmailHtml = () => `Hi,

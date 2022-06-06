@@ -46,3 +46,11 @@ export function get<Row = unknown>(sql: string, params?: unknown) {
     ),
   );
 }
+
+export function all<Row = unknown>(sql: string, params?: unknown) {
+  return new Promise<Row[]>((resolve, reject) =>
+    db.all(sql, params, (error, rows) =>
+      error ? reject(error) : resolve(rows),
+    ),
+  );
+}

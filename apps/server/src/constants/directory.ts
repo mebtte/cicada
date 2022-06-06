@@ -12,7 +12,9 @@ export const ASSET_DIR = {
   MUSIC_SQ: `${ASSET_DIR_ROOT}/music_sq`,
   MUSIC_HQ: `${ASSET_DIR_ROOT}/music_hq`,
   MUSIC_AC: `${ASSET_DIR_ROOT}/music_ac`,
-  MUSICBILL_COVER: `${ASSET_DIR_ROOT}/musicbill_cover`,
+  MUSICBILL_COVER: `${ASSET_DIR_ROOT}/${
+    ASSET_TYPE_MAP[AssetType.MUSICBILL_COVER].directoryName
+  }`,
 };
 
 export const DB_LOG_DIR = `${argv.base}/db_logs`;

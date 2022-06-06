@@ -53,10 +53,11 @@ function CreateMusicbillDialog() {
         name: data.name,
         cover: getRandomCover(),
         order: data.order,
-        description: '',
-        createTime: new Date(data.create_time),
-        musicList: [],
+        orderTimestamp: Date.now(),
+        createTimestamp: new Date(data.create_time).getTime(),
         public: false,
+
+        musicList: [],
 
         status: RequestStatus.SUCCESS,
         error: null,

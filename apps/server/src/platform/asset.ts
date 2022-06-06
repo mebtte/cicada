@@ -3,6 +3,7 @@ import { ASSET_PREFIX } from '../constants';
 
 export enum AssetType {
   USER_AVATAR = 'user_avatar',
+  MUSICBILL_COVER = 'musicbill_cover',
 }
 export const ASSET_TYPE_MAP: Record<
   AssetType,
@@ -12,6 +13,9 @@ export const ASSET_TYPE_MAP: Record<
 > = {
   [AssetType.USER_AVATAR]: {
     directoryName: 'user_avatar',
+  },
+  [AssetType.MUSICBILL_COVER]: {
+    directoryName: 'musicbill_cover',
   },
 };
 

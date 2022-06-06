@@ -1,9 +1,7 @@
 import { animated } from 'react-spring';
 import styled, { css } from 'styled-components';
-
 import day from '#/utils/day';
 import { RequestStatus } from '@/constants';
-import ellipsis from '@/style/ellipsis';
 import Avatar from '@/components/avatar';
 import { Musicbill } from '../../../constants';
 
@@ -31,11 +29,6 @@ const Style = styled(animated.div)`
       font-weight: bold;
       color: var(--text-color-primary);
     }
-    > .description {
-      ${ellipsis}
-      font-size: 12px;
-      color: var(--text-color-secondary);
-    }
   }
 `;
 const Cover = styled(Avatar)<{ publiz: boolean }>`
@@ -62,13 +55,8 @@ function MusicbillInfo({
       />
       <div className="info">
         <div className="name">{musicbill.name}</div>
-        {musicbill.description ? (
-          <div className="description" title={musicbill.description}>
-            {musicbill.description}
-          </div>
-        ) : null}
         <div className="description">
-          创建于 {day(musicbill.createTime).format('YYYY-MM-DD HH:mm')}
+          创建于 {day(musicbill.createTimestamp).format('YYYY-MM-DD HH:mm')}
           {musicbill.status === RequestStatus.SUCCESS ? (
             <span>, 共 {musicbill.musicList.length} 首音乐</span>
           ) : null}

@@ -69,10 +69,11 @@ export interface Musicbill {
   name: string;
   cover: string;
   order: number;
-  description: string;
-  createTime: Date;
-  musicList: MusicWithIndex[];
+  orderTimestamp: number;
+  createTimestamp: number;
   public: boolean;
+
+  musicList: MusicWithIndex[];
 
   status: RequestStatus;
   error: Error | null;
