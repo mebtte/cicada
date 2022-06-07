@@ -85,7 +85,7 @@ const Content = styled(Container)`
   }
 `;
 
-const MusicDrawer = ({
+function MusicDrawer({
   id,
   open,
   onClose,
@@ -93,7 +93,7 @@ const MusicDrawer = ({
   id: string;
   open: boolean;
   onClose: () => void;
-}) => {
+}) {
   const { data, reload } = useMusic(id);
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -158,7 +158,7 @@ const MusicDrawer = ({
                   ))}
                 </div>
               ) : null}
-              <Action music={music} onClose={onClose} />
+              <Action music={music} />
               <Fork music={music} />
               {music.lrc && music.type === MusicType.NORMAL ? (
                 <Lyric lrc={music.lrc} />
@@ -169,6 +169,6 @@ const MusicDrawer = ({
       })}
     </Drawer>
   );
-};
+}
 
 export default MusicDrawer;

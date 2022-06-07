@@ -48,11 +48,8 @@ export interface Music {
   alias: string;
   ac: string;
   hq: string;
-  mvLink: string;
   sq: string;
   singers: Figure[];
-  fork: string[];
-  forkFrom: string[];
 }
 
 export interface MusicWithIndex {

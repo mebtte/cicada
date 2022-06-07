@@ -7,11 +7,21 @@ export const ASSET_DIR = {
   USER_AVATAR: `${ASSET_DIR_ROOT}/${
     ASSET_TYPE_MAP[AssetType.USER_AVATAR].directoryName
   }`,
-  CHARACTER_AVATAR: `${ASSET_DIR_ROOT}/character_avatar`,
-  MUSIC_COVER: `${ASSET_DIR_ROOT}/music_cover`,
-  MUSIC_SQ: `${ASSET_DIR_ROOT}/music_sq`,
-  MUSIC_HQ: `${ASSET_DIR_ROOT}/music_hq`,
-  MUSIC_AC: `${ASSET_DIR_ROOT}/music_ac`,
+  CHARACTER_AVATAR: `${ASSET_DIR_ROOT}/${
+    ASSET_TYPE_MAP[AssetType.CHARACTER_AVATAR].directoryName
+  }`,
+  MUSIC_COVER: `${ASSET_DIR_ROOT}/${
+    ASSET_TYPE_MAP[AssetType.MUSIC_COVER].directoryName
+  }`,
+  MUSIC_SQ: `${ASSET_DIR_ROOT}/${
+    ASSET_TYPE_MAP[AssetType.MUSIC_SQ].directoryName
+  }`,
+  MUSIC_HQ: `${ASSET_DIR_ROOT}/${
+    ASSET_TYPE_MAP[AssetType.MUSIC_HQ].directoryName
+  }`,
+  MUSIC_AC: `${ASSET_DIR_ROOT}/${
+    ASSET_TYPE_MAP[AssetType.MUSIC_AC].directoryName
+  }`,
   MUSICBILL_COVER: `${ASSET_DIR_ROOT}/${
     ASSET_TYPE_MAP[AssetType.MUSICBILL_COVER].directoryName
   }`,

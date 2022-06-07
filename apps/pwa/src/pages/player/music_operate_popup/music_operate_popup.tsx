@@ -17,7 +17,7 @@ const bodyProps = {
   },
 };
 
-const MusicOperateDrawer = ({
+function MusicOperateDrawer({
   open,
   onClose,
   music,
@@ -25,13 +25,12 @@ const MusicOperateDrawer = ({
   open: boolean;
   onClose: () => void;
   music: MusicType;
-}) => {
+}) {
   const {
     onPlay,
     onAddToPlayqueue,
     onAddToMusicbill,
     onAddToPlaylist,
-    onWatchMv,
     onCopyID,
   } = useMusicOperate(music, onClose);
 
@@ -58,16 +57,9 @@ const MusicOperateDrawer = ({
         label="添加到播放列表"
         onClick={onAddToPlaylist}
       />
-      {music && music.mvLink ? (
-        <MenuItem
-          icon={Name.VIDEO_OUTLINE}
-          label="观看MV"
-          onClick={onWatchMv}
-        />
-      ) : null}
       <MenuItem icon={Name.COPY_OUTLINE} label="复制 ID" onClick={onCopyID} />
     </VerticalDrawer>
   );
-};
+}
 
 export default memo(MusicOperateDrawer);

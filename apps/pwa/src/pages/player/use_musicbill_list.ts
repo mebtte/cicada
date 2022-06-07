@@ -1,16 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
-
 import getRandomCover from '@/utils/get_random_cover';
 import { RequestStatus } from '@/constants';
 import getSelfMusicbillList from '@/api/get_self_musicbill_list';
-import getMusicbillDetailRequest from '@/server/get_musicbill_detail';
 import addMusicToMusicbill from '@/server/add_music_to_musicbill';
 import removeMusicFromMusicbill from '@/server/remove_music_from_musicbill';
 import logger from '@/platform/logger';
 import dialog from '@/platform/dialog';
+import getSelfMusicbill from '@/api/get_self_musicbill';
 import eventemitter, { EventType } from './eventemitter';
 import { Music, Musicbill } from './constants';
-import { transformMusic } from './utils';
 
 export default () => {
   const [status, setStatus] = useState(RequestStatus.LOADING);
@@ -73,18 +71,17 @@ export default () => {
         }),
       );
       try {
-        const data = await getMusicbillDetailRequest(id);
+        const data = await getSelfMusicbill(id);
         setMusicbillList((mbl) =>
           mbl.map((mb) => {
             if (mb.id === id) {
               return {
                 ...mb,
                 name: data.name,
-                description: data.description,
                 cover: data.cover || mb.cover || getRandomCover(),
-                musicList: data.music_list.map((m, index) => ({
-                  music: transformMusic(m),
-                  index: data.music_list.length - index,
+                musicList: data.musicList.map((m, index) => ({
+                  music: m,
+                  index: data.musicList.length - index,
                 })),
                 public: !!data.public,
 

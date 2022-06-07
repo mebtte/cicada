@@ -14,7 +14,7 @@ const Style = styled.div`
   gap: 5px;
 `;
 
-function Action({ music, onClose }: { music: Music; onClose: () => void }) {
+function Action({ music }: { music: Music }) {
   const baseMusic = useMemo<BaseMusic>(
     () => ({
       ...music,
@@ -23,7 +23,7 @@ function Action({ music, onClose }: { music: Music; onClose: () => void }) {
     }),
     [music],
   );
-  const { onPlay, onAddToPlayqueue, onAddToMusicbill, onWatchMv, onOperate } =
+  const { onPlay, onAddToPlayqueue, onAddToMusicbill, onOperate } =
     useMusicOperate(baseMusic);
   return (
     <Style>
@@ -46,18 +46,6 @@ function Action({ music, onClose }: { music: Music; onClose: () => void }) {
           size={ACTION_SIZE}
         />
       </Tooltip>
-      {music.mvLink ? (
-        <Tooltip title="观看MV">
-          <IconButton
-            name={Name.VIDEO_OUTLINE}
-            onClick={() => {
-              onWatchMv();
-              onClose();
-            }}
-            size={ACTION_SIZE}
-          />
-        </Tooltip>
-      ) : null}
       <IconButton
         name={Name.MORE_OUTLINE}
         onClick={onOperate}

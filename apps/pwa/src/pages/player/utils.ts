@@ -17,20 +17,7 @@ export const transformMusic = (originalMusic: {
   fork?: string[];
   fork_from?: string[];
 }): Music => {
-  const {
-    id,
-    cover,
-    name,
-    type,
-    alias,
-    singers,
-    sq,
-    hq,
-    ac,
-    mv_link: mvLink,
-    fork,
-    fork_from: forkFrom,
-  } = originalMusic;
+  const { id, cover, name, type, alias, singers, sq, hq, ac } = originalMusic;
   return {
     id,
     cover: cover || getRandomCover(),
@@ -44,8 +31,5 @@ export const transformMusic = (originalMusic: {
     sq,
     ac,
     hq,
-    mvLink,
-    fork: fork || [],
-    forkFrom: forkFrom || [],
   };
 };

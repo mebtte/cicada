@@ -16,11 +16,13 @@ export const MUSIC_AC = {
 };
 
 export enum MusicType {
-  NORMAL = 'normal',
-  INSTRUMENT = 'instrument',
+  NORMAL = 1,
+  INSTRUMENT = 2,
 }
 export const MUSIC_TYPE_MAP_LABEL: Record<MusicType, string> = {
   [MusicType.NORMAL]: '普通',
   [MusicType.INSTRUMENT]: '纯音乐',
 };
-export const MUSIC_TYPES = Object.keys(MUSIC_TYPE_MAP_LABEL) as MusicType[];
+export const MUSIC_TYPES = Object.keys(MUSIC_TYPE_MAP_LABEL).map((mt) =>
+  Number(mt),
+) as MusicType[];

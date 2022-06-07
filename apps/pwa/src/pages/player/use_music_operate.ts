@@ -1,12 +1,14 @@
 import { useCallback } from 'react';
 
-import openLink from '@/utils/open_link';
 import dialog from '@/platform/dialog';
 import toast from '@/platform/toast';
 import { Music as MusicType } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 
-export default (music: MusicType, afterOperate?: (...params: any[]) => any) => {
+export default (
+  music: MusicType,
+  afterOperate?: (...params: unknown[]) => unknown,
+) => {
   const onView = useCallback(
     () => eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, music),
     [music],
@@ -37,13 +39,6 @@ export default (music: MusicType, afterOperate?: (...params: any[]) => any) => {
       afterOperate();
     }
   }, [music, afterOperate]);
-  const onWatchMv = useCallback(() => {
-    eventemitter.emit(EventType.ACTION_PAUSE, {});
-    openLink(music.mvLink);
-    if (afterOperate) {
-      afterOperate();
-    }
-  }, [music, afterOperate]);
   const onOperate = useCallback(
     () => eventemitter.emit(EventType.OPEN_MUSIC_OPERATE_POPUP, music),
     [music],
@@ -69,7 +64,6 @@ export default (music: MusicType, afterOperate?: (...params: any[]) => any) => {
     onAddToPlayqueue,
     onAddToMusicbill,
     onAddToPlaylist,
-    onWatchMv,
     onOperate,
     onCopyID,
   };

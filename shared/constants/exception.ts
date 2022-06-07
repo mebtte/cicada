@@ -8,6 +8,7 @@ export enum ExceptionCode {
   NOT_AUTHORIZE,
   NOT_AUTHORIZE_SUPER,
   EMAIL_EXISTED,
+  MUSICBILL_NOT_EXIST,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -42,5 +43,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.EMAIL_EXISTED]: {
     description: '邮箱已注册',
+  },
+  [ExceptionCode.MUSICBILL_NOT_EXIST]: {
+    description: '歌单不存在',
   },
 };

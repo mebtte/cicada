@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Tag, { Type } from '@/components/tag';
+import { HtmlHTMLAttributes } from 'react';
 import { Music } from '../constants';
 
 const Style = styled.div`
@@ -13,23 +14,19 @@ const Style = styled.div`
   }
 `;
 
-const MusicTagList = ({
+function MusicTagList({
   music,
   ...props
 }: {
   music: Music;
-  [key: string]: any;
-}) => {
-  const { hq, ac, mvLink, fork, forkFrom } = music;
+} & HtmlHTMLAttributes<HTMLDivElement>) {
+  const { hq, ac } = music;
   return (
     <Style {...props}>
       {hq ? <Tag type={Type.HQ} /> : null}
       {ac ? <Tag type={Type.AC} /> : null}
-      {mvLink ? <Tag type={Type.MV} /> : null}
-      {fork.length ? <Tag type={Type.FORK} /> : null}
-      {forkFrom.length ? <Tag type={Type.FORK_FROM} /> : null}
     </Style>
   );
-};
+}
 
 export default MusicTagList;

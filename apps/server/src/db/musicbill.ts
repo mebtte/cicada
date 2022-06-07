@@ -22,6 +22,21 @@ export interface Musicbill {
   [Property.CREATE_TIMESTAMP]: number;
 }
 
+export function getMusicbillById<P extends Property>(
+  id: string,
+  properties: P[],
+) {
+  return db.get<{
+    [key in P]: Musicbill[key];
+  }>(
+    `
+      select ${properties.map((p) => `\`${p}\``).join(',')} from musicbill
+        where id = ?
+    `,
+    [id],
+  );
+}
+
 export function getUserMusicbillList<P extends Property>(
   userId: string,
   properties: P[],
