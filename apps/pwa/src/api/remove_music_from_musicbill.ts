@@ -5,6 +5,7 @@ function removeMusicFromMusicbill(musicbillId: string, musicId: string) {
     method: Method.DELETE,
     path: '/api/musicbill_music',
     params: { musicbillId, musicId },
+    withToken: true,
   });
 }
 

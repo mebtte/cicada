@@ -8,6 +8,7 @@ function addMusicToMusicbill(musicbillId: string, musicId: string) {
       musicbillId,
       musicId,
     },
+    withToken: true,
   });
 }
 
