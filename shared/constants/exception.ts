@@ -11,6 +11,7 @@ export enum ExceptionCode {
   MUSICBILL_NOT_EXIST,
   MUSIC_NOT_EXIST,
   MUSIC_IN_MUSICBILL_ALREADY,
+  MUSIC_NOT_IN_MUSICBILL,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -54,5 +55,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.MUSIC_IN_MUSICBILL_ALREADY]: {
     description: '音乐已在歌单中',
+  },
+  [ExceptionCode.MUSIC_NOT_IN_MUSICBILL]: {
+    description: '音乐不存在歌单中',
   },
 };

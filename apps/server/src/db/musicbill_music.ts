@@ -8,7 +8,7 @@ export enum Property {
 }
 
 export type Music = {
-  [Property.ID]: string;
+  [Property.ID]: number;
   [Property.MUSICBILL_ID]: string;
   [Property.MUSIC_ID]: string;
   [Property.ADD_TIMESTAMP]: number;
@@ -37,5 +37,15 @@ export function addMusicbillMusic(musicbillId: string, musicId: string) {
         values(?, ?, ?)
     `,
     [musicbillId, musicId, Date.now()],
+  );
+}
+
+export function removeMusicbillMusicById(id: number) {
+  return db.run(
+    `
+      delete from musicbill_music
+        where id = ?
+    `,
+    [id],
   );
 }
