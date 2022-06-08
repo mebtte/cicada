@@ -3,7 +3,6 @@ const fs = require('fs');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
-
 const pkg = require('../../../package.json');
 
 const INVALID_FILES = ['.DS_Store'];

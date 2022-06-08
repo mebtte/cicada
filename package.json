@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "description": "知了, 一个自托管的音乐服务.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -136,7 +136,7 @@
     "react-router-dom": "^5.3.1",
     "react-slider": "^1.1.4",
     "react-spring": "^9.4.5",
-    "react-styleguidist": "^5.5.10",
+    "react-styleguidist": "^11.2.0",
     "react-waypoint": "^10.1.0",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.5",
@@ -145,6 +145,7 @@
     "webpack": "^5.72.0",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.9.0",
+    "workbox-webpack-plugin": "^6.5.3",
     "yargs": "^17.5.1"
   },
   "overrides": {

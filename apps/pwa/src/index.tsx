@@ -3,7 +3,6 @@ import './polyfill';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import 'cropperjs/dist/cropper.min.css';
-
 import logger from './platform/logger';
 import App from './app';
 
@@ -24,3 +23,11 @@ initialize()
     const root = document.querySelector('#root')!;
     root.textContent = error.message;
   });
+
+if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/service-worker.js')
+      .catch((error) => console.error(error));
+  });
+}

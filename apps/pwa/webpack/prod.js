@@ -1,5 +1,5 @@
 const path = require('path');
-
+const WorkboxPlugin = require('workbox-webpack-plugin');
 const base = require('./base');
 
 module.exports = {
@@ -11,7 +11,13 @@ module.exports = {
     chunkFilename: '[name]_[contenthash].js',
     publicPath: '/',
   },
-  plugins: [...base.plugins],
+  plugins: [
+    ...base.plugins,
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+    }),
+  ],
   devtool: 'nosources-source-map',
   optimization: {
     minimize: true,
