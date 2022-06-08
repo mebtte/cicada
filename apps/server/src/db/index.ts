@@ -22,7 +22,9 @@ db.on('profile', (sql, ms) => {
 
   if (env.RUNENV === 'development') {
     // eslint-disable-next-line no-console
-    console.log(`[${timeString}] ${color.underline(`${ms}ms`)}\n${trimedSQL}`);
+    console.log(
+      `\n[${timeString}] ${color.underline(`${ms}ms`)}\n${trimedSQL}\n`,
+    );
   }
 
   appendFileAsync(

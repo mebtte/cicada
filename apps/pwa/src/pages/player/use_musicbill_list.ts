@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import getRandomCover from '@/utils/get_random_cover';
 import { RequestStatus } from '@/constants';
 import getSelfMusicbillList from '@/api/get_self_musicbill_list';
-import addMusicToMusicbill from '@/server/add_music_to_musicbill';
+import addMusicToMusicbill from '@/api/add_music_to_musicbill';
 import removeMusicFromMusicbill from '@/server/remove_music_from_musicbill';
 import logger from '@/platform/logger';
 import dialog from '@/platform/dialog';
@@ -147,10 +147,7 @@ export default () => {
         }),
       );
       try {
-        await addMusicToMusicbill({
-          musicId,
-          musicbillId,
-        });
+        await addMusicToMusicbill(musicbillId, musicId);
       } catch (error) {
         const description = `添加音乐"${musicName}"到歌单"${musicbillName}"失败`;
         logger.error(error, {

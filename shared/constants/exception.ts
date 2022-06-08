@@ -9,6 +9,8 @@ export enum ExceptionCode {
   NOT_AUTHORIZE_SUPER,
   EMAIL_EXISTED,
   MUSICBILL_NOT_EXIST,
+  MUSIC_NOT_EXIST,
+  MUSIC_IN_MUSICBILL_ALREADY,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -46,5 +48,11 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.MUSICBILL_NOT_EXIST]: {
     description: '歌单不存在',
+  },
+  [ExceptionCode.MUSIC_NOT_EXIST]: {
+    description: '音乐不存在',
+  },
+  [ExceptionCode.MUSIC_IN_MUSICBILL_ALREADY]: {
+    description: '音乐已在歌单中',
   },
 };

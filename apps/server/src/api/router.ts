@@ -13,6 +13,7 @@ import getProfile from './controllers/get_profile';
 import createUser from './controllers/create_user';
 import getSelfMusicbillList from './controllers/get_self_musicbill_list';
 import getSelfMusicbill from './controllers/get_self_musicbill';
+import addMusicToMusicbill from './controllers/add_music_to_musicbill';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -26,6 +27,7 @@ router.post('/login', parseBody, login);
 router.get('/profile', authorize, getProfile);
 router.get('/self_musicbill_list', authorize, getSelfMusicbillList);
 router.get('/self_musicbill', authorize, getSelfMusicbill);
+router.post('/musicbill_music', authorize, parseBody, addMusicToMusicbill);
 
 /** super authorize */
 router.post('/user', authorize, superAuthorize, parseBody, createUser);
