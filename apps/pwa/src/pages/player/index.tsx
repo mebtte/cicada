@@ -13,7 +13,6 @@ import useAudioState from './use_audio_state';
 import usePlaylist from './use_playlist';
 import usePlayqueue from './use_playqueue';
 import usePlayMode from './use_play_mode';
-import useSearchWord from './use_search_word';
 import useVolume from './use_volume';
 import Context from './context';
 import Audio from './audio';
@@ -65,7 +64,6 @@ function Wrapper() {
   const playlist = usePlaylist();
   const { playqueue, currentPosition: currentPlayqueuePosition } =
     usePlayqueue(playlist);
-  const searchWord = useSearchWord();
   const queueMusic = playqueue[currentPlayqueuePosition] as QueueMusic | null;
   const volume = useVolume();
 
@@ -86,7 +84,6 @@ function Wrapper() {
         currentPlayqueuePosition,
 
         playMode,
-        searchWord,
         volume,
       }}
     >

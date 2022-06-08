@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import * as React from 'react';
 import styled from 'styled-components';
 
@@ -8,7 +8,6 @@ import useHistory from '@/utils/use_history';
 import { PLAYER_PATH } from '@/constants/route';
 import toast from '@/platform/toast';
 import Input from '@/components/input';
-import Context from '../../context';
 import useKeyboard from './use_keyboard';
 import { Query, SearchType } from '../../pages/search/constants';
 import eventemitter, { EventType } from '../../eventemitter';
@@ -24,16 +23,15 @@ const Style = styled.div`
   }
 `;
 
-const Wrapper = () => {
+function Wrapper() {
   const history = useHistory();
-  const { searchWord } = useContext(Context);
 
   const [keyword, setKeyword] = useState('');
   const onKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setKeyword(event.target.value);
 
   const onSearch = (searchType?: SearchType) => {
-    const trimKeyword = keyword.trim() || searchWord;
+    const trimKeyword = keyword.trim();
     if (!trimKeyword) {
       return toast.error('请输入关键字');
     }
@@ -73,7 +71,7 @@ const Wrapper = () => {
         className="keyword"
         value={keyword}
         onChange={onKeywordChange}
-        placeholder={searchWord || '搜索'}
+        placeholder="搜索"
         onKeyDown={onKeyDown}
         onFocus={onFocus}
         ref={inputRef}
@@ -89,6 +87,6 @@ const Wrapper = () => {
       />
     </Style>
   );
-};
+}
 
 export default React.memo(Wrapper);
