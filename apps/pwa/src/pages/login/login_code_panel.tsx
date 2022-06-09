@@ -12,10 +12,10 @@ import {
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
 import notice from '@/platform/notice';
-import loginRequest from '@/api/login';
+import loginRequest from '@/apis/login';
 import t from '@/global_state/token';
 import u from '@/global_state/user';
-import getProfile from '@/api/get_profile';
+import getProfile from '@/apis/get_profile';
 import sleep from '#/utils/sleep';
 import storage, { Key } from '@/platform/storage';
 import Logo from './logo';

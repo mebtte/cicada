@@ -16,8 +16,4 @@ const env = {
   BUILD_TIME: new Date(__ENV__.BUILD_TIME),
 };
 
-if (process.env.NODE_ENV !== 'production') {
-  console.log(env);
-}
-
 export default env;

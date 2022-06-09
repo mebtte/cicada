@@ -3,6 +3,7 @@ import token from '@/global_state/token';
 import setting from '@/global_state/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
+import env from '@/env';
 
 export enum Method {
   GET = 'get',
@@ -36,11 +37,13 @@ export async function request<Data = void>({
   const { serverAddress } = setting.get();
   let url = `${serverAddress}${path}`;
 
-  if (params) {
-    url += `?${Object.keys(params)
-      .map((key) => `${key}=${params[key]}`)
-      .join('&')}`;
-  }
+  const combineParams = {
+    ...params,
+    version: env.VERSION,
+  };
+  url += `?${Object.keys(combineParams)
+    .map((key) => `${key}=${combineParams[key]}`)
+    .join('&')}`;
 
   if (withToken) {
     // eslint-disable-next-line no-param-reassign

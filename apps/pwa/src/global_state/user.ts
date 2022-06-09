@@ -1,6 +1,6 @@
 import XState from '@/utils/x_state';
 import storage, { Key } from '@/platform/storage';
-import getProfile from '@/api/get_profile';
+import getProfile from '@/apis/get_profile';
 import notice from '@/platform/notice';
 import token from './token';
 
