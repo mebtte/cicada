@@ -7,6 +7,7 @@ import cors from '@koa/cors';
 import mount from 'koa-mount';
 import argv from './argv';
 import api from './api';
+import blob from './blob';
 import asset from './asset';
 import pwa from './pwa';
 import schedule from './schedule';
@@ -54,6 +55,7 @@ async function start() {
     );
     server.use(mount(`/${ASSET_PREFIX}`, asset));
     server.use(mount('/api', api));
+    server.use(mount('/blob', blob));
     server.use(mount('/', pwa));
 
     http.createServer(server.callback()).listen(argv.port);

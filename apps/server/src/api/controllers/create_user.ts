@@ -7,7 +7,7 @@ import { REMARK_MAX_LENGTH } from '#/constants/user';
 import { sendMail } from '@/platform/email';
 import argv from '@/argv';
 import { Property, getUserByEmail } from '@/db/user';
-import { Context } from '../constants/koa';
+import { Context } from '../constants';
 
 const generateEmailHtml = () => `Hi,
 <br>

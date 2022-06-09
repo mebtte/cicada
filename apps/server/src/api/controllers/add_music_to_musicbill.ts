@@ -9,7 +9,7 @@ import {
   getMusicbillMusic,
   Property as MusicbillMusicProperty,
 } from '@/db/musicbill_music';
-import { Context } from '../constants/koa';
+import { Context } from '../constants';
 
 export default async (ctx: Context) => {
   const { musicbillId, musicId } = ctx.request.body as {

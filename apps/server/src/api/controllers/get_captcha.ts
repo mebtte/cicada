@@ -1,7 +1,7 @@
 import captcha from 'svg-captcha';
 import { saveCaptcha } from '@/platform/captcha';
 import generateRandomString from '#/utils/generate_random_string';
-import { Context } from '../constants/koa';
+import { Context } from '../constants';
 
 export default async (ctx: Context) => {
   const captchaData = captcha.create({

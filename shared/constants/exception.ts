@@ -12,6 +12,8 @@ export enum ExceptionCode {
   MUSIC_NOT_EXIST,
   MUSIC_IN_MUSICBILL_ALREADY,
   MUSIC_NOT_IN_MUSICBILL,
+  ASSET_OVER_MAX_SIZE,
+  WRONG_ASSET_ACCEPT_TYPES,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -58,5 +60,11 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.MUSIC_NOT_IN_MUSICBILL]: {
     description: '音乐不存在歌单中',
+  },
+  [ExceptionCode.ASSET_OVER_MAX_SIZE]: {
+    description: '资源过大',
+  },
+  [ExceptionCode.WRONG_ASSET_ACCEPT_TYPES]: {
+    description: '错误的资源类型',
   },
 };

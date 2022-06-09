@@ -1,9 +1,10 @@
+import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getMusicbillById, Property } from '@/db/musicbill';
 import excludeProperty from '#/utils/exclude_property';
-import { AssetType, getAssetUrl } from '@/platform/asset';
+import { getAssetUrl } from '@/platform/asset';
 import * as db from '@/db';
-import { Context } from '../constants/koa';
+import { Context } from '../constants';
 
 export default async (ctx: Context) => {
   const { id } = ctx.query as { id?: string };

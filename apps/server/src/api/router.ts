@@ -1,9 +1,9 @@
 import Router from 'koa-router';
 import { DefaultState } from 'koa';
 import bodyParser from 'koa-bodyparser';
-import { Context } from './constants/koa';
-import authorize from './middlewares/authorize';
-import superAuthorize from './middlewares/super_authorize';
+import authorize from '@/middlewares/authorize';
+import superAuthorize from '@/middlewares/super_authorize';
+import { Context } from './constants';
 
 import getMetadata from './controllers/get_metadata';
 import getCaptcha from './controllers/get_captcha';

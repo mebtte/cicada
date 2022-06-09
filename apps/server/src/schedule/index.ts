@@ -9,6 +9,7 @@ import removeOutdatedCaptcha from './jobs/remove_outdated_captcha';
 import createAndRemoveOutdatedDBSnapshot from './jobs/create_and_remove_outdated_db_snapshot';
 import removeOutdatedLoginCode from './jobs/remove_outdated_login_code';
 import removeOutdatedErrorLog from './jobs/remove_outdated_error_log';
+import removeOutdatedAssetLog from './jobs/remove_outdated_asset_log';
 
 const appendFileAysnc = util.promisify(fs.appendFile);
 
@@ -80,7 +81,16 @@ export default {
         }),
       );
     schedule
-      .scheduleJob('0 25 4 * * *', createAndRemoveOutdatedDBSnapshot)
+      .scheduleJob('0 25 4 * * *', removeOutdatedAssetLog)
+      .addListener('run', () => onRun('removeOutdatedAssetLog'))
+      .addListener('error', (error) =>
+        onError({
+          job: 'removeOutdatedAssetLog',
+          error,
+        }),
+      );
+    schedule
+      .scheduleJob('0 30 4 * * *', createAndRemoveOutdatedDBSnapshot)
       .addListener('run', () => onRun('createAndRemoveOutdatedDBSnapshot'))
       .addListener('error', (error) =>
         onError({

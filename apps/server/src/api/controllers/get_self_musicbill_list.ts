@@ -1,6 +1,7 @@
+import { AssetType } from '#/constants';
 import { getUserMusicbillList, Property } from '@/db/musicbill';
-import { AssetType, getAssetUrl } from '@/platform/asset';
-import { Context } from '../constants/koa';
+import { getAssetUrl } from '@/platform/asset';
+import { Context } from '../constants';
 
 export default async (ctx: Context) => {
   const musicbillList = await getUserMusicbillList(ctx.user.id, [

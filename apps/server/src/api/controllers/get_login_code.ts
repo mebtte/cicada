@@ -9,7 +9,7 @@ import {
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { sendMail } from '@/platform/email';
 import { LOGIN_CODE_TTL } from '../../constants';
-import { Context } from '../constants/koa';
+import { Context } from '../constants';
 
 export default async (ctx: Context) => {
   const { email, captchaId, captchaValue } = ctx.query as {

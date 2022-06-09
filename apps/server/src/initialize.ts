@@ -1,6 +1,8 @@
 /**
  * 初始化
  * 需要保证依赖的其他模块不依赖初始化生成的产物
+ * 比如不能 import src/db
+ * 因为 src/db 依赖 base 目录
  * @author mebtte<hi@mebtte.com>
  */
 import cluster from 'cluster';
@@ -15,11 +17,13 @@ import {
   DB_FILE_PATH,
 } from './constants';
 import {
+  ROOT_ASSET_DIR,
   ASSET_DIR,
   DB_LOG_DIR,
   DB_SNAPSHOT_DIR,
   SCHEDULE_LOG_DIR,
   ERROR_LOG_DIR,
+  ASSET_LOG_DIR,
 } from './constants/directory';
 import argv from './argv';
 
@@ -40,8 +44,10 @@ if (cluster.isPrimary) {
     DB_SNAPSHOT_DIR,
     SCHEDULE_LOG_DIR,
     ERROR_LOG_DIR,
-    ASSET_DIR.ROOT,
-    ...Object.values(ASSET_DIR).filter((d) => d !== ASSET_DIR.ROOT),
+    ASSET_LOG_DIR,
+
+    ROOT_ASSET_DIR,
+    ...Object.values(ASSET_DIR),
   ];
   for (const directory of directories) {
     mkdirIfNotExist(directory);

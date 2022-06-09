@@ -14,8 +14,11 @@ module.exports = {
   plugins: [
     ...base.plugins,
     new WorkboxPlugin.GenerateSW({
+      mode: 'production',
       clientsClaim: true,
       skipWaiting: true,
+      cleanupOutdatedCaches: true,
+      disableDevLogs: true,
     }),
   ],
   devtool: 'nosources-source-map',

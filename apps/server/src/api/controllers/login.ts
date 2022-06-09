@@ -3,7 +3,7 @@ import { ExceptionCode } from '#/constants/exception';
 import { verifyLoginCode } from '@/platform/login_code';
 import { sign } from '@/platform/jwt';
 import { Property, getUserByEmail } from '@/db/user';
-import { Context } from '../constants/koa';
+import { Context } from '../constants';
 
 export default async (ctx: Context) => {
   const { email, loginCode }: { email?: string; loginCode?: string } =
