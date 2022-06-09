@@ -15,6 +15,7 @@ import getSelfMusicbillList from './controllers/get_self_musicbill_list';
 import getSelfMusicbill from './controllers/get_self_musicbill';
 import addMusicToMusicbill from './controllers/add_music_to_musicbill';
 import removeMusicFromMusicbill from './controllers/remove_music_from_musicbill';
+import uploadMusicPlayRecord from './controllers/upload_music_play_record';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -33,5 +34,12 @@ router.delete('/musicbill_music', authorize, removeMusicFromMusicbill);
 
 /** super authorize */
 router.post('/user', authorize, superAuthorize, parseBody, createUser);
+
+/**
+ * 上传音乐记录使用的是 navigator.sendBeacon
+ * 无法设置 http header
+ * 需要特殊处理鉴权
+ */
+router.post('/music_play_record', parseBody, uploadMusicPlayRecord);
 
 export default router;

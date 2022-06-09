@@ -1,9 +1,8 @@
 import styled from 'styled-components';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { useTransition, animated } from 'react-spring';
-
 import { PLAYER_PATH } from '@/constants/route';
-import Recommendation from './pages/recommendation';
+import Home from './pages/home';
 import Search from './pages/search';
 import Musicbill from './pages/musicbill';
 import PublicMusicbill from './pages/public_musicbill';
@@ -23,7 +22,7 @@ const AnimatedDiv = styled(animated.div)`
   left: 0;
 `;
 
-const Wrapper = () => {
+function Wrapper() {
   const location = useLocation();
   const transitions = useTransition(location, {
     from: { opacity: 0, transform: 'translate(-100%)' },
@@ -42,12 +41,12 @@ const Wrapper = () => {
               component={PublicMusicbill}
             />
             <Route path={PLAYER_PATH.SETTING} component={Setting} />
-            <Route path="*" component={Recommendation} />
+            <Route path="*" component={Home} />
           </Switch>
         </AnimatedDiv>
       ))}
     </Style>
   );
-};
+}
 
 export default Wrapper;

@@ -58,7 +58,6 @@ function Cover({ src, onClick }: { src: string; onClick: () => void }) {
   );
 
   return (
-    // @ts-expect-error
     <Waypoint onEnter={onEnter}>
       <Style>
         <Avatar
