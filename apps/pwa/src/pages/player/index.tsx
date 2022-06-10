@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
-
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
 import withLogin from '@/platform/with_login';
 import PageContainer from '../page_container';
@@ -13,7 +12,6 @@ import useAudioState from './use_audio_state';
 import usePlaylist from './use_playlist';
 import usePlayqueue from './use_playqueue';
 import usePlayMode from './use_play_mode';
-import useVolume from './use_volume';
 import Context from './context';
 import Audio from './audio';
 import MediaSession from './media_session';
@@ -65,7 +63,6 @@ function Wrapper() {
   const { playqueue, currentPosition: currentPlayqueuePosition } =
     usePlayqueue(playlist);
   const queueMusic = playqueue[currentPlayqueuePosition] as QueueMusic | null;
-  const volume = useVolume();
 
   return (
     <Context.Provider
@@ -84,7 +81,6 @@ function Wrapper() {
         currentPlayqueuePosition,
 
         playMode,
-        volume,
       }}
     >
       <Helmet>
@@ -118,7 +114,7 @@ function Wrapper() {
 
       {queueMusic ? (
         <>
-          <Audio volume={volume} playMode={playMode} queueMusic={queueMusic} />
+          <Audio playMode={playMode} queueMusic={queueMusic} />
           <MediaSession music={queueMusic.music} />
         </>
       ) : null}

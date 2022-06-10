@@ -1,5 +1,5 @@
 import { Redirect, useLocation } from 'react-router-dom';
-import u from '@/global_state/user';
+import u from '@/global_states/user';
 import { ROOT_PATH } from '@/constants/route';
 import { ComponentType } from 'react';
 import { LoginQuery } from '@/constants/query';

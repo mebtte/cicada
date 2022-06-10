@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
-import u from '@/global_state/user';
+import u from '@/global_states/user';
 import getRandomCover from '@/utils/get_random_cover';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';

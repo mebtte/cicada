@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
-
-import logger from '@/platform/logger';
-import getMusicLrcRequest from '@/server/get_music_lrc';
 import { MusicType } from '@/constants/music';
+import getMusicLrcRequest from '@/server_new/get_music_lrc';
+import { ExceptionCode } from '#/constants/exception';
 import { Music } from '../constants';
 import { Status } from './constants';
 
@@ -53,23 +52,23 @@ export default (music: Music, turntable: boolean) => {
 
       setState(LRC_LOADING_STATE);
       try {
-        const lrc = await getMusicLrcRequest({ musicId: music.id, defer: 0 });
+        const musicLrc = await getMusicLrcRequest(music.id);
 
         if (canceled) {
           return;
         }
 
-        if (lrc) {
-          setState({ status: Status.LRC_SUCCESS, lrc });
-        } else {
-          setState(LRC_EMPTY_STATE);
-        }
+        setState({ status: Status.LRC_SUCCESS, lrc: musicLrc.lrc });
       } catch (error) {
+        console.error(error);
         if (canceled) {
           return;
         }
-        logger.error(error, { description: '获取音乐 LRC 失败' });
-        setState({ status: Status.LRC_ERROR, error, retry: getMusicLrc });
+        if (error.code === ExceptionCode.MUSIC_LRC_NOT_EXIST) {
+          setState(LRC_EMPTY_STATE);
+        } else {
+          setState({ status: Status.LRC_ERROR, error, retry: getMusicLrc });
+        }
       }
     };
 

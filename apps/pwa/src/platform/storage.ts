@@ -1,11 +1,10 @@
 export enum Key {
   SETTING = 'setting',
-
   TOKEN = 'token',
-
   USER = 'user',
-
   LAST_SIGNIN_EMAIL = 'last_signin_email',
+
+  PLAYER_VOLUME = 'player_volume',
 }
 
 export default {

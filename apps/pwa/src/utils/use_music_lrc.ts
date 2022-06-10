@@ -1,7 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-
-import getMusicLrc from '@/server/get_music_lrc';
-import logger from '@/platform/logger';
+import getMusicLrc from '@/server_new/get_music_lrc';
 import { RequestStatus } from '@/constants';
 
 export default (id: string) => {
@@ -22,14 +20,13 @@ export default (id: string) => {
   const getLrc = useCallback(async () => {
     setLrc({ status: RequestStatus.LOADING });
     try {
-      const l = await getMusicLrc({ musicId: id });
+      const musicLrc = await getMusicLrc(id);
 
       if (idRef.current === id) {
-        setLrc({ status: RequestStatus.SUCCESS, value: l });
+        setLrc({ status: RequestStatus.SUCCESS, value: musicLrc.lrc });
       }
     } catch (error) {
-      logger.error(error, { description: '获取音乐 lrc 失败' });
-
+      console.error(error);
       if (idRef.current === id) {
         setLrc({
           status: RequestStatus.ERROR,

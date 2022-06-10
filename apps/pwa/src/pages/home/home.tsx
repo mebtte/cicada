@@ -9,6 +9,7 @@ function Home() {
     <Style>
       <div>home</div>
       <Link to={ROOT_PATH.LOGIN}>login</Link>
+      <br />
       <Link to={ROOT_PATH.PLAYER}>player</Link>
     </Style>
   );

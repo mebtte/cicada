@@ -164,7 +164,7 @@ if (cluster.isPrimary) {
       const TABLE_MUSIC_LRC = `
         CREATE TABLE music_lrc (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          musicId TEXT NOT NULL,
+          musicId TEXT NOT NULL UNIQUE,
           lrc TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
         );

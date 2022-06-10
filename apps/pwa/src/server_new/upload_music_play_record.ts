@@ -1,5 +1,5 @@
-import setting from '@/global_state/setting';
-import token from '@/global_state/token';
+import setting from '@/global_states/setting';
+import token from '@/global_states/token';
 
 function uploadMusicPlayRecord({
   musicId,

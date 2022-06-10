@@ -1,6 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
-import token from '@/global_state/token';
-import setting from '@/global_state/setting';
+import token from '@/global_states/token';
+import setting from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import env from '@/env';

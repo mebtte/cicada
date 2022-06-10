@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { useEffect, useState } from 'react';
 import storage, { Key } from '@/platform/storage';
-import u from '@/global_state/user';
+import u from '@/global_states/user';
 import EmailPanel from './email_panel';
 import LoginCodePanel from './login_code_panel';
 import UserPanel from './user_panel';

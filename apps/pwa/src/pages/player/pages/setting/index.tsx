@@ -14,11 +14,11 @@ const Style = styled.div`
 `;
 
 function Setting() {
-  const { playMode, volume } = useContext(Context);
+  const { playMode } = useContext(Context);
   return (
     <Style>
       <PlayMode playMode={playMode} />
-      <Volume volume={volume} />
+      <Volume />
     </Style>
   );
 }

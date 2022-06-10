@@ -1,9 +1,9 @@
 /* eslint-disable react/destructuring-assignment */
 import * as React from 'react';
 import throttle from 'lodash/throttle';
-
 import keyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';
 import uploadMusicPlayRecord from '@/server_new/upload_music_play_record';
+import volumeState from './share_states/volume';
 import eventemitter, { EventType } from './eventemitter';
 import logger from '../../platform/logger';
 import dialog from '../../platform/dialog';
@@ -213,4 +213,4 @@ class Audio extends React.PureComponent<Props, {}> {
   }
 }
 
-export default Audio;
+export default volumeState.withState('volume', Audio);

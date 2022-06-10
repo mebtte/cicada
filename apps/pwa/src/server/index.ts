@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
-import setting from '@/global_state/setting';
+import setting from '@/global_states/setting';
 import sleep from '#/utils/sleep';
-import token from '@/global_state/token';
+import token from '@/global_states/token';
 import ErrorWithCode from '@/utils/error_with_code';
 
 export enum Code {

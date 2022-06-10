@@ -24,8 +24,6 @@ export enum EventType {
   ACTION_MOVE_PLAYQUEUE_MUSIC_LATER = 'action_move_playqueue_music_LATER',
   ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY = 'action_move_playqueue_music_EARLY',
 
-  ACTION_UPDATE_VOLUME = 'action_update_volume', // 调整音量
-
   RELOAD_MUSICBILL_LIST = 'update_musicbill_list', // 重新获取歌单列表, { }
   FETCH_MUSICBILL = 'fetch_musicbill', // 获取歌单 { id: string }
   ADD_MUSIC_TO_MUSICBILL = 'add_music_to_musicbill', // 添加音乐到歌单

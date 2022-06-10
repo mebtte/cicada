@@ -17,8 +17,6 @@ interface Context {
 
   playqueue: QueueMusic[];
   currentPlayqueuePosition: number;
-
-  volume: number; // 音量
 }
 
 const context = createContext<Context>({
@@ -35,8 +33,6 @@ const context = createContext<Context>({
 
   playqueue: [],
   currentPlayqueuePosition: -1,
-
-  volume: 1,
 });
 
 export default context;

@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-
-import u from '@/global_state/user';
+import u from '@/global_states/user';
 import User from './user';
 import MusicbillList from './musicbill_list';
 import Menu from './menu';
