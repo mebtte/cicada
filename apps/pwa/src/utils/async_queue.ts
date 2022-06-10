@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import generateRandomString from '#/utils/generate_random_string';
 import sleep from '#/utils/sleep';
-import timeout from './timeout';
+import timeout from '#/utils/timeout';
 
 interface Task {
   id: string;
@@ -92,9 +92,7 @@ class AsyncQueue {
     try {
       const [a] = await Promise.race([
         Promise.all([task(), sleep(this.taskMinDuration)]),
-        timeout(this.taskTimeout, {
-          errorGenerator: this.timeoutErrorGenerator,
-        }),
+        timeout(this.taskTimeout, this.timeoutErrorGenerator),
       ]);
       resolve(a as Result);
     } catch (error) {

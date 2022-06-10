@@ -15,7 +15,7 @@ export interface User {
 
 let initialUser: User | null = null;
 const userString = storage.getItem(Key.USER);
-if (token.get() && userString) {
+if (userString) {
   try {
     initialUser = JSON.parse(userString);
   } catch (error) {
@@ -23,7 +23,7 @@ if (token.get() && userString) {
   }
 }
 
-const user = new XState<User | null>(initialUser);
+const user = new XState<User | null>(token.get() ? initialUser : null);
 
 if (initialUser) {
   getProfile()

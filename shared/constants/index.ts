@@ -52,3 +52,5 @@ export const ASSET_TYPE_MAP: Record<
     maxSize: 1024 * 1024 * 50,
   },
 };
+
+export const EFFECTIVE_PLAY_PERCENT = 0.75;

@@ -3,7 +3,7 @@ import * as React from 'react';
 import throttle from 'lodash/throttle';
 
 import keyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';
-import createMusicPlayRecord from '@/server/create_music_play_record';
+import uploadMusicPlayRecord from '@/server_new/upload_music_play_record';
 import eventemitter, { EventType } from './eventemitter';
 import logger from '../../platform/logger';
 import dialog from '../../platform/dialog';
@@ -181,7 +181,7 @@ class Audio extends React.PureComponent<Props, {}> {
   uploadPlayRecord = (music: Music) => {
     const { duration } = this.audioRef.current!;
     const playedSeconds = this.getPlayedSeconeds();
-    return createMusicPlayRecord({
+    return uploadMusicPlayRecord({
       musicId: music.id,
       percent: duration ? playedSeconds / duration : 0,
     });

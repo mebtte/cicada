@@ -1,6 +1,7 @@
 import fs from 'fs';
 import util from 'util';
 import { ASSET_LOG_DIR } from '@/constants/directory';
+import withTimeout from '#/utils/with_timeout';
 
 const TTL = 1000 * 60 * 60 * 24 * 30;
 const readdirAsync = util.promisify(fs.readdir);
@@ -21,4 +22,4 @@ async function removeOutdatedAssetLog() {
   }
 }
 
-export default removeOutdatedAssetLog;
+export default withTimeout(removeOutdatedAssetLog, 60 * 1000);

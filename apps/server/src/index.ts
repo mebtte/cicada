@@ -50,7 +50,7 @@ async function start() {
 
     server.use(
       cors({
-        origin: '*',
+        credentials: true,
       }),
     );
     server.use(mount(`/${ASSET_PREFIX}`, asset));

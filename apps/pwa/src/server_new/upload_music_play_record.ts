@@ -1,11 +1,7 @@
 import setting from '@/global_state/setting';
 import token from '@/global_state/token';
 
-/**
- * 创建音乐播放记录
- * @author mebtte<hi@mebtte.com>
- */
-function createMusicPlayRecord({
+function uploadMusicPlayRecord({
   musicId,
   percent,
 }: {
@@ -15,9 +11,9 @@ function createMusicPlayRecord({
   const blob = new Blob(
     [
       JSON.stringify({
-        music_id: musicId,
-        percent,
         token: token.get(),
+        musicId,
+        percent,
       }),
     ],
     {
@@ -25,9 +21,9 @@ function createMusicPlayRecord({
     },
   );
   return window.navigator.sendBeacon(
-    `${setting.get().serverAddress}/api/create_music_play_record`,
+    `${setting.get().serverAddress}/api/music_play_record`,
     blob,
   );
 }
 
-export default createMusicPlayRecord;
+export default uploadMusicPlayRecord;

@@ -13,9 +13,9 @@ class XState<State> extends Eventemitter<
 > {
   private state: State;
 
-  constructor(state: State) {
+  constructor(initialState: State) {
     super();
-    this.state = state;
+    this.state = initialState;
   }
 
   get() {
@@ -33,8 +33,10 @@ class XState<State> extends Eventemitter<
   }
 
   useState() {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [state, setState] = useState(this.state);
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
       const unsubscribe = this.onChange((s) => setState(s));
       return unsubscribe;

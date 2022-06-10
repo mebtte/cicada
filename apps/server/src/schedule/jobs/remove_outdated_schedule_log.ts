@@ -1,6 +1,7 @@
 import fs from 'fs';
 import util from 'util';
 import { SCHEDULE_LOG_DIR } from '@/constants/directory';
+import withTimeout from '#/utils/with_timeout';
 
 const TTL = 1000 * 60 * 60 * 24 * 7;
 const readdirAsync = util.promisify(fs.readdir);
@@ -21,4 +22,4 @@ async function removeOutdatedScheduleLog() {
   }
 }
 
-export default removeOutdatedScheduleLog;
+export default withTimeout(removeOutdatedScheduleLog, 60 * 1000);

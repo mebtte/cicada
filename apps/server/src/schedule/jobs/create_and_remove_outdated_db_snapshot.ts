@@ -4,6 +4,7 @@ import util from 'util';
 import stream from 'stream';
 import { DB_SNAPSHOT_DIR } from '@/constants/directory';
 import day from '#/utils/day';
+import withTimeout from '#/utils/with_timeout';
 import { DB_FILE_PATH } from '../../constants';
 
 const TTL = 1000 * 60 * 60 * 24 * 90;
@@ -41,4 +42,4 @@ async function createAndRemoveOutdatedDBSnapshot() {
   await createDBSnapshot();
 }
 
-export default createAndRemoveOutdatedDBSnapshot;
+export default withTimeout(createAndRemoveOutdatedDBSnapshot, 60 * 1000);

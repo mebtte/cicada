@@ -72,6 +72,7 @@ function EmailPanel({
         <Stack spacing={3}>
           <Logo />
           <TextField
+            type="email"
             label="邮箱"
             value={email}
             onChange={onEmailChange}

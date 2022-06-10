@@ -1,4 +1,6 @@
+import { EFFECTIVE_PLAY_PERCENT } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
+import * as db from '@/db';
 import { getMusicById, Property as MusicProperty } from '@/db/music';
 import { addMusicPlayRecord } from '@/db/music_play_record';
 import { verify } from '@/platform/jwt';
@@ -35,5 +37,17 @@ export default async (ctx: Context) => {
   }
 
   await addMusicPlayRecord({ userId, musicId, percent });
+
+  /** 有效播放次数 */
+  if (percent >= EFFECTIVE_PLAY_PERCENT) {
+    db.run(
+      `
+        update music set effectivePlayTimes = effectivePlayTimes + 1
+          where id = ?;
+      `,
+      [musicId],
+    );
+  }
+
   return ctx.success();
 };
