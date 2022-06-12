@@ -5,7 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import styled, { css } from 'styled-components';
 
 import Drawer, { Title } from '@/components/drawer';
-import updateMusicbillOrder from '@/server/update_musicbill_order';
+import updateSelfMusicbillOrder from '@/server_new/update_self_musicbill_order';
 import logger from '@/platform/logger';
 import dialog from '@/platform/dialog';
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
@@ -56,7 +56,7 @@ function MusicbillOrderDrawer() {
       return;
     }
 
-    return updateMusicbillOrder(orderedMusicbillIdList)
+    return updateSelfMusicbillOrder(orderedMusicbillIdList)
       .then(() => eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST))
       .catch((error) => {
         logger.error(error, {

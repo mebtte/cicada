@@ -47,3 +47,13 @@ export async function getUserMusicbillOrders(
     return [];
   }
 }
+
+export function updateUserMusicbillOrders(userId: string, orders: string[]) {
+  return db.run(
+    `
+      insert or replace into user_musicbill_order(userId, ordersJSON)
+        values(?, ?);
+    `,
+    [userId, JSON.stringify(orders)],
+  );
+}

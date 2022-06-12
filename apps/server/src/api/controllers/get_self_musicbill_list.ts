@@ -11,8 +11,6 @@ export default async (ctx: Context) => {
       Property.COVER,
       Property.NAME,
       Property.PUBLIC,
-      Property.ORDER,
-      Property.ORDER_TIMESTAMP,
       Property.CREATE_TIMESTAMP,
     ]),
     getUserMusicbillOrders(ctx.user.id),
@@ -23,9 +21,13 @@ export default async (ctx: Context) => {
         ...mb,
         cover: getAssetUrl(mb.cover, AssetType.MUSICBILL_COVER),
       }))
-      .sort(
-        (a, b) =>
-          orders.indexOf(a.id) || Infinity - orders.indexOf(b.id) || Infinity,
-      ),
+      .sort((a, b) => {
+        const aOrder = orders.indexOf(a.id);
+        const bOrder = orders.indexOf(b.id);
+        return (
+          (aOrder === -1 ? Infinity : aOrder) -
+          (bOrder === -1 ? Infinity : bOrder)
+        );
+      }),
   );
 };

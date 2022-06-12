@@ -18,6 +18,7 @@ import removeMusicFromMusicbill from './controllers/remove_music_from_musicbill'
 import uploadMusicPlayRecord from './controllers/upload_music_play_record';
 import getMusicLrc from './controllers/get_music_lrc';
 import createMusicbill from './controllers/create_musicbill';
+import updateSelfMusicbillOrder from './controllers/update_self_musicbill_order';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -35,6 +36,12 @@ router.post('/musicbill_music', authorize, parseBody, addMusicToMusicbill);
 router.delete('/musicbill_music', authorize, removeMusicFromMusicbill);
 router.get('/music_lrc', authorize, getMusicLrc);
 router.post('/musicbill', authorize, parseBody, createMusicbill);
+router.post(
+  '/self_musicbill_order',
+  authorize,
+  parseBody,
+  updateSelfMusicbillOrder,
+);
 
 /** super authorize */
 router.post('/user', authorize, superAuthorize, parseBody, createUser);
