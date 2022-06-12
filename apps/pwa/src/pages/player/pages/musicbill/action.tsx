@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-
 import toast from '@/platform/toast';
 import { RequestStatus } from '@/constants';
 import dialog from '@/platform/dialog';
@@ -7,6 +6,8 @@ import logger from '@/platform/logger';
 import deleteMusicbill from '@/server/delete_musicbill';
 import Tooltip, { Placement } from '@/components/tooltip';
 import IconButton, { Name } from '@/components/icon_button';
+import { useHistory } from 'react-router-dom';
+import { PLAYER_PATH } from '@/constants/route';
 import eventemitter, { EventType } from './eventemitter';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -29,7 +30,9 @@ const onSearch = () =>
   });
 const openTextEditDialog = () => eventemitter.emit(EventType.OPEN_EDIT_DIALOG);
 
-const Action = ({ musicbill }: { musicbill: Musicbill }) => {
+function Action({ musicbill }: { musicbill: Musicbill }) {
+  const history = useHistory();
+
   const onAddToPlaylist = () => {
     const { musicList } = musicbill;
     return playerEventemitter.emit(
@@ -59,9 +62,8 @@ const Action = ({ musicbill }: { musicbill: Musicbill }) => {
           onConfirm: async () => {
             try {
               await deleteMusicbill(musicbill.id);
-              playerEventemitter.emit(PlayerEventType.MUSICBILL_DELETED, {
-                id: musicbill.id,
-              });
+              playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST);
+              history.push(PLAYER_PATH.HOME);
             } catch (error) {
               logger.error(error, {
                 description: '删除歌单失败',
@@ -131,6 +133,6 @@ const Action = ({ musicbill }: { musicbill: Musicbill }) => {
       </Tooltip>
     </Style>
   );
-};
+}
 
 export default Action;

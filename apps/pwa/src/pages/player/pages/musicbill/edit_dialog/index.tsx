@@ -8,7 +8,7 @@ import Avatar from '@/components/avatar';
 import updateMusicbillRequest, { Key } from '@/server/update_musicbill';
 import toast from '@/platform/toast';
 import logger from '@/platform/logger';
-import { NAME } from '@/constants/musicbill';
+import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/platform/dialog';
 import Dialog, { Content, Action } from '@/components/dialog';
 import Button, { Type } from '@/components/button';
@@ -47,11 +47,11 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
 
   const [saving, setSaving] = useState(false);
   const onSave = async () => {
-    if (name.length < NAME.MIN_LENGTH) {
-      return toast.error(`"歌单名字"长度应大于等于${NAME.MIN_LENGTH}`);
+    if (!name.length) {
+      return toast.error('请输入歌单名');
     }
-    if (name.length > NAME.MAX_LENGTH) {
-      return toast.error(`"歌单名字"长度应小于等于${NAME.MAX_LENGTH}`);
+    if (name.length > NAME_MAX_LENGTH) {
+      return toast.error(`歌单名长度应小于等于${NAME_MAX_LENGTH}`);
     }
     setSaving(true);
     try {
@@ -76,9 +76,7 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
       }
 
       if (updated) {
-        playerEventemitter.emit(PlayerEventType.MUSICBILL_UPDATED, {
-          id: musicbill.id,
-        });
+        playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST);
       }
 
       onClose();
@@ -113,7 +111,7 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
             value={name}
             onChange={onNameChange}
             style={inputStyle}
-            maxLength={NAME.MAX_LENGTH}
+            maxLength={NAME_MAX_LENGTH}
             disabled={saving}
             type="text"
           />

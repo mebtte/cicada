@@ -1,13 +1,11 @@
 import * as db from '.';
 
 export enum Property {
-  ID = 'id',
   MUSIC_ID = 'musicId',
   LRC = 'lrc',
 }
 
 export type MusicLrc = {
-  [Property.ID]: number;
   [Property.MUSIC_ID]: string;
   [Property.LRC]: string;
 };

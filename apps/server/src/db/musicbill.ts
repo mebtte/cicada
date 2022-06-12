@@ -1,3 +1,4 @@
+import generateRandomString from '#/utils/generate_random_string';
 import * as db from '.';
 
 export enum Property {
@@ -50,4 +51,22 @@ export function getUserMusicbillList<P extends Property>(
     `,
     [userId],
   );
+}
+
+export async function createMusicbill({
+  userId,
+  name,
+}: {
+  userId: string;
+  name: string;
+}) {
+  const id = generateRandomString(8, false);
+  await db.run(
+    `
+      insert into musicbill(id, userId, name, createTimestamp)
+        values(?, ?, ?, ?)
+    `,
+    [id, userId, name, Date.now()],
+  );
+  return id;
 }

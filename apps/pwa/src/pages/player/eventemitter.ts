@@ -24,7 +24,7 @@ export enum EventType {
   ACTION_MOVE_PLAYQUEUE_MUSIC_LATER = 'action_move_playqueue_music_LATER',
   ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY = 'action_move_playqueue_music_EARLY',
 
-  RELOAD_MUSICBILL_LIST = 'update_musicbill_list', // 重新获取歌单列表, { }
+  RELOAD_MUSICBILL_LIST = 'reload_musicbill_list', // 重新获取歌单列表, { }
   FETCH_MUSICBILL = 'fetch_musicbill', // 获取歌单 { id: string }
   ADD_MUSIC_TO_MUSICBILL = 'add_music_to_musicbill', // 添加音乐到歌单
   REMOVE_MUSIC_FROM_MUSICBILL = 'remove_music_from_musicbill', // 从歌单移除音乐
@@ -44,10 +44,6 @@ export enum EventType {
   OPEN_MUSICBILL_ORDER_DRAWER = 'open_musicbill_order_drawer',
   OPEN_PLAYLIST_PLAYQUEUE_DRAWER = 'open_playlist_playqueue_drawer',
   TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER = 'toggle_playlist_playqueue_drawer',
-
-  MUSICBILL_CREATED = 'musicbill_created', // 歌单已创建, { id: string }
-  MUSICBILL_UPDATED = 'musicbill_updated', // 歌单已更新, { id: string }
-  MUSICBILL_DELETED = 'musicbill_deleted', // 歌单已删除, { id: string }
 }
 
 export default new Eventemitter();

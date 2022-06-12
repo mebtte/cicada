@@ -163,8 +163,7 @@ if (cluster.isPrimary) {
       `;
       const TABLE_MUSIC_LRC = `
         CREATE TABLE music_lrc (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          musicId TEXT NOT NULL UNIQUE,
+          musicId TEXT PRIMARY KEY NOT NULL,
           lrc TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
         );
@@ -196,8 +195,6 @@ if (cluster.isPrimary) {
           cover TEXT NOT NULL DEFAULT '',
           name TEXT NOT NULL,
           public INTEGER NOT NULL DEFAULT 0,
-          \`order\` INTEGER NOT NULL,
-          orderTimestamp INTEGER NOT NULL,
           createTimestamp INTEGER NOT NULL,
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
         );
@@ -210,6 +207,13 @@ if (cluster.isPrimary) {
           addTimestamp INTEGER NOT NULL,
           CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ),
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
+        );
+      `;
+      const TABLE_USER_MUSICBILL_ORDER = `
+        CREATE TABLE user_musicbill_order (
+          userId TEXT PRIMARY KEY NOT NULL,
+          ordersJSON TEXT NOT NULL,
+          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
         );
       `;
 
@@ -228,6 +232,7 @@ if (cluster.isPrimary) {
         TABLE_MUSIC_SINGER_RELATION,
         TABLE_MUSICBILL,
         TABLE_MUSICBILL_MUSIC,
+        TABLE_USER_MUSICBILL_ORDER,
       ];
       for (const table of TABLES) {
         await dbRun(table);

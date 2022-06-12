@@ -65,8 +65,6 @@ export interface Musicbill {
   id: string;
   name: string;
   cover: string;
-  order: number;
-  orderTimestamp: number;
   createTimestamp: number;
   public: boolean;
 

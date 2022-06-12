@@ -1,12 +1,7 @@
 import { memo, useState, useEffect, useCallback, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
 import { easeCubicInOut } from 'd3-ease';
-
-import { RequestStatus } from '@/constants';
-import getRandomCover from '@/utils/get_random_cover';
-import createMusicbill from '@/server/create_musicbill';
-import { PLAYER_PATH } from '@/constants/route';
-import { NAME } from '@/constants/musicbill';
+import createMusicbill from '@/server_new/create_musicbill';
+import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import toast from '@/platform/toast';
 import logger from '@/platform/logger';
 import dialog from '@/platform/dialog';
@@ -14,7 +9,6 @@ import Dialog, { Title, Content, Action } from '@/components/dialog';
 import Button, { Type } from '@/components/button';
 import Input from '@/components/input';
 import eventemitter, { EventType } from './eventemitter';
-import { Musicbill } from './constants';
 
 const DIALOG_TRANSITION_DURATION = 650;
 
@@ -28,7 +22,6 @@ const inputStyle = {
 };
 
 function CreateMusicbillDialog() {
-  const history = useHistory();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [creating, setCreating] = useState(false);
@@ -39,36 +32,17 @@ function CreateMusicbillDialog() {
   }, []);
   const onCreate = async () => {
     const name = inputRef.current!.value;
-    if (name.length < NAME.MIN_LENGTH) {
-      return toast.error(`"歌单名字"长度应大于等于${NAME.MIN_LENGTH}`);
+    if (!name.length) {
+      return toast.error('请输入歌单名');
     }
-    if (name.length > NAME.MAX_LENGTH) {
-      return toast.error(`"歌单名字"长度应小于等于${NAME.MAX_LENGTH}`);
+    if (name.length > NAME_MAX_LENGTH) {
+      return toast.error(`歌单名长度应小于等于${NAME_MAX_LENGTH}`);
     }
     setCreating(true);
     try {
-      const data = await createMusicbill(name);
-      const musicbill: Musicbill = {
-        id: data.id,
-        name: data.name,
-        cover: getRandomCover(),
-        order: data.order,
-        orderTimestamp: Date.now(),
-        createTimestamp: new Date(data.create_time).getTime(),
-        public: false,
-
-        musicList: [],
-
-        status: RequestStatus.SUCCESS,
-        error: null,
-      };
-      eventemitter.emit(EventType.MUSICBILL_CREATED, { musicbill });
+      await createMusicbill(name);
+      eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, {});
       onClose();
-
-      setTimeout(
-        () => history.push(PLAYER_PATH.MUSICBILL.replace(':id', data.id)),
-        0,
-      );
     } catch (error) {
       logger.error(error, { description: '创建歌单失败' });
       dialog.alert({

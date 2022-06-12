@@ -7,8 +7,6 @@ function getSelfMusicbillList() {
       cover: string;
       name: string;
       public: 0 | 1;
-      order: number;
-      orderTimestamp: number;
       createTimestamp: number;
     }[]
   >({

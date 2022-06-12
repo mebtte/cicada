@@ -14,7 +14,7 @@ const COVER_SIZE = {
   height: COVER_MAX_SIZE,
 };
 
-const CoverEditDialog = ({ musicbill }: { musicbill: Musicbill }) => {
+function CoverEditDialog({ musicbill }: { musicbill: Musicbill }) {
   const { open, onClose } = useOpen();
 
   const onUpdate = useCallback(
@@ -24,9 +24,7 @@ const CoverEditDialog = ({ musicbill }: { musicbill: Musicbill }) => {
         key: Key.COVER,
         value: image,
       });
-      playerEventemitter.emit(PlayerEventType.MUSICBILL_UPDATED, {
-        id: musicbill.id,
-      });
+      playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, {});
     },
     [musicbill],
   );
@@ -38,6 +36,6 @@ const CoverEditDialog = ({ musicbill }: { musicbill: Musicbill }) => {
       imageSize={COVER_SIZE}
     />
   );
-};
+}
 
 export default CoverEditDialog;

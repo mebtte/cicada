@@ -35,7 +35,7 @@ const Container = styled(animated.div)`
   }
 `;
 
-const PublicMusicbill = ({ id }: { id: string }) => {
+function PublicMusicbill({ id }: { id: string }) {
   const { data, reload } = useData(id);
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -75,6 +75,6 @@ const PublicMusicbill = ({ id }: { id: string }) => {
       })}
     </Style>
   );
-};
+}
 
 export default PublicMusicbill;
