@@ -24,13 +24,13 @@ const EmptyBox = styled(Container)`
   justify-content: center;
 `;
 
-const MusicbillList = ({
+function MusicbillList({
   musicbillList,
   onCloseDrawer,
 }: {
   musicbillList: Musicbill[];
   onCloseDrawer: () => void;
-}) => {
+}) {
   const history = useHistory();
 
   const [topBoxShadow, setTopBoxShadow] = useState(false);
@@ -42,7 +42,7 @@ const MusicbillList = ({
   if (!musicbillList.length) {
     return (
       <EmptyBox>
-        <Empty description="暂无公开歌单" />
+        <Empty description="暂无公开乐单" />
       </EmptyBox>
     );
   }
@@ -67,6 +67,6 @@ const MusicbillList = ({
       })}
     </StyledContainer>
   );
-};
+}
 
 export default MusicbillList;

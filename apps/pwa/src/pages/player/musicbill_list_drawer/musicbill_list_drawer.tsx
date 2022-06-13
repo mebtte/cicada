@@ -42,11 +42,11 @@ function MusicbillListDrawer({
   if (status === RequestStatus.SUCCESS) {
     content = <MusicbillList music={music} musicbillList={musicbillList} />;
   } else if (status === RequestStatus.LOADING) {
-    content = <LoadingCard message="正在获取歌单列表..." style={cardStyle} />;
+    content = <LoadingCard message="正在获取乐单列表..." style={cardStyle} />;
   } else {
     content = (
       <ErrorCard
-        errorMessage="获取歌单列表失败"
+        errorMessage="获取乐单列表失败"
         retry={reloadMusicbillList}
         style={cardStyle}
       />
@@ -54,7 +54,7 @@ function MusicbillListDrawer({
   }
   return (
     <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
-      <Title>添加到歌单</Title>
+      <Title>添加到乐单</Title>
       <MusicInfo music={music} style={musicInfoStyle} />
       {content}
     </Drawer>

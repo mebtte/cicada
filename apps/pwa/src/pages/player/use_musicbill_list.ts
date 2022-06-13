@@ -34,10 +34,10 @@ export default () => {
       setStatus(RequestStatus.SUCCESS);
     } catch (error) {
       logger.error(error, {
-        description: '获取歌单列表失败',
+        description: '获取乐单列表失败',
       });
       dialog.alert({
-        title: '获取歌单列表失败',
+        title: '获取乐单列表失败',
         content: error.message,
       });
       setStatus(RequestStatus.ERROR);
@@ -90,7 +90,7 @@ export default () => {
       } catch (error) {
         logger.error(error, {});
         dialog.alert({
-          title: '获取歌单详情失败',
+          title: '获取乐单详情失败',
           content: error.message,
         });
         setMusicbillList((mbl) =>
@@ -135,7 +135,7 @@ export default () => {
       try {
         await addMusicToMusicbill(musicbillId, musicId);
       } catch (error) {
-        const description = `添加音乐"${musicName}"到歌单"${musicbillName}"失败`;
+        const description = `添加音乐"${musicName}"到乐单"${musicbillName}"失败`;
         logger.error(error, {
           description,
         });
@@ -193,7 +193,7 @@ export default () => {
       try {
         await removeMusicFromMusicbill(musicbillId, musicId);
       } catch (error) {
-        const description = `从歌单"${musicbillName}"移除音乐"${musicName}"失败`;
+        const description = `从乐单"${musicbillName}"移除音乐"${musicName}"失败`;
         logger.error(error, {
           description,
         });

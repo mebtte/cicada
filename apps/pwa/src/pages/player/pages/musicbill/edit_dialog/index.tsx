@@ -48,10 +48,10 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
   const [saving, setSaving] = useState(false);
   const onSave = async () => {
     if (!name.length) {
-      return toast.error('请输入歌单名');
+      return toast.error('请输入乐单名');
     }
     if (name.length > NAME_MAX_LENGTH) {
-      return toast.error(`歌单名长度应小于等于${NAME_MAX_LENGTH}`);
+      return toast.error(`乐单名长度应小于等于${NAME_MAX_LENGTH}`);
     }
     setSaving(true);
     try {
@@ -81,8 +81,8 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
 
       onClose();
     } catch (error) {
-      logger.error(error, { description: '更新歌单信息失败' });
-      dialog.alert({ title: '更新歌单信息失败', content: error.message });
+      logger.error(error, { description: '更新乐单信息失败' });
+      dialog.alert({ title: '更新乐单信息失败', content: error.message });
     }
     setSaving(false);
   };

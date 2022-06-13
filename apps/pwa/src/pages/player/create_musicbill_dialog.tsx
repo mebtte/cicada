@@ -33,10 +33,10 @@ function CreateMusicbillDialog() {
   const onCreate = async () => {
     const name = inputRef.current!.value;
     if (!name.length) {
-      return toast.error('请输入歌单名');
+      return toast.error('请输入乐单名');
     }
     if (name.length > NAME_MAX_LENGTH) {
-      return toast.error(`歌单名长度应小于等于${NAME_MAX_LENGTH}`);
+      return toast.error(`乐单名长度应小于等于${NAME_MAX_LENGTH}`);
     }
     setCreating(true);
     try {
@@ -44,9 +44,9 @@ function CreateMusicbillDialog() {
       eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, {});
       onClose();
     } catch (error) {
-      logger.error(error, { description: '创建歌单失败' });
+      logger.error(error, { description: '创建乐单失败' });
       dialog.alert({
-        title: '创建歌单失败',
+        title: '创建乐单失败',
         content: error.message,
       });
     }
@@ -68,13 +68,13 @@ function CreateMusicbillDialog() {
 
   return (
     <Dialog open={open} springConfig={springConfig}>
-      <Title>创建歌单</Title>
+      <Title>创建乐单</Title>
       <Content>
         <Input
           ref={inputRef}
           type="text"
           style={inputStyle}
-          placeholder="歌单名字"
+          placeholder="乐单名字"
           disabled={creating}
         />
       </Content>

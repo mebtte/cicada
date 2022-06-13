@@ -13,7 +13,7 @@ const flexCenter = {
   justifyContent: 'center',
 };
 
-const MusicList = ({ musicbill }: { musicbill: Musicbill }) => {
+function MusicList({ musicbill }: { musicbill: Musicbill }) {
   const [topBoxShadow, setTopBoxShadow] = useState(false);
 
   const { musicList } = musicbill;
@@ -21,7 +21,7 @@ const MusicList = ({ musicbill }: { musicbill: Musicbill }) => {
   if (!musicList.length) {
     return (
       <Container style={flexCenter}>
-        <Empty description="歌单暂无音乐" />
+        <Empty description="乐单暂无音乐" />
       </Container>
     );
   }
@@ -42,6 +42,6 @@ const MusicList = ({ musicbill }: { musicbill: Musicbill }) => {
       />
     </Container>
   );
-};
+}
 
 export default MusicList;

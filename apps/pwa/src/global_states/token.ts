@@ -1,4 +1,4 @@
-import XState from '@/utils/x_state';
+import XState from '#/utils/x_state';
 import storage, { Key } from '@/platform/storage';
 
 const initialToken = storage.getItem(Key.TOKEN) || '';

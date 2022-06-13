@@ -3,7 +3,7 @@ import { MusicType } from '@/constants/music';
 import server from '.';
 
 /**
- * 获取公开歌单详情
+ * 获取公开乐单详情
  * @author mebtte<hi@mebtte.com>
  */
 function getPublicMusicbillDetail(id: string) {

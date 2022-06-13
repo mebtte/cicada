@@ -1,5 +1,5 @@
 import storage, { Key } from '@/platform/storage';
-import XState from '@/utils/x_state';
+import XState from '#/utils/x_state';
 
 interface Setting {
   serverAddress: string;

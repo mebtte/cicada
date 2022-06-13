@@ -31,16 +31,16 @@ const onOrderMusicbillList = () =>
 const onReloadMusicbillList = () =>
   eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST);
 
-const Action = ({
+function Action({
   status,
   musicbillList,
 }: {
   status: RequestStatus;
   musicbillList: Musicbill[];
-}) => (
-  <Style>
-    <div className="label">我的歌单</div>
-    <Tooltip title="创建歌单">
+}) {
+  return <Style>
+    <div className="label">我的乐单</div>
+    <Tooltip title="创建乐单">
       <IconButton
         name={IconButtonName.PLUS_OUTLINE}
         size={ACTION_SIZE}
@@ -48,7 +48,7 @@ const Action = ({
         disabled={status !== RequestStatus.SUCCESS}
       />
     </Tooltip>
-    <Tooltip title="排序歌单">
+    <Tooltip title="排序乐单">
       <IconButton
         name={IconButtonName.EXCHANGE_OUTLINE}
         size={ACTION_SIZE}
@@ -56,7 +56,7 @@ const Action = ({
         disabled={status !== RequestStatus.SUCCESS || !musicbillList.length}
       />
     </Tooltip>
-    <Tooltip title="重新获取歌单">
+    <Tooltip title="重新获取乐单">
       <IconButton
         name={IconButtonName.REFRESH_OUTLINE}
         size={ACTION_SIZE}
@@ -65,6 +65,6 @@ const Action = ({
       />
     </Tooltip>
   </Style>
-);
+}
 
 export default Action;

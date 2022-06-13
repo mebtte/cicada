@@ -5,7 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import styled, { css } from 'styled-components';
 
 import Drawer, { Title } from '@/components/drawer';
-import updateSelfMusicbillOrder from '@/server_new/update_self_musicbill_order';
+import updateMusicbillOrder from '@/server_new/update_musicbill_order';
 import logger from '@/platform/logger';
 import dialog from '@/platform/dialog';
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
@@ -56,14 +56,14 @@ function MusicbillOrderDrawer() {
       return;
     }
 
-    return updateSelfMusicbillOrder(orderedMusicbillIdList)
+    return updateMusicbillOrder(orderedMusicbillIdList)
       .then(() => eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST))
       .catch((error) => {
         logger.error(error, {
-          description: '更新歌单顺序失败',
+          description: '更新乐单顺序失败',
         });
         dialog.alert({
-          title: '更新歌单顺序失败',
+          title: '更新乐单顺序失败',
           content: error.message,
         });
       });
@@ -104,7 +104,7 @@ function MusicbillOrderDrawer() {
 
   return (
     <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
-      <Title>排序歌单</Title>
+      <Title>排序乐单</Title>
       {/* @ts-expect-error */}
       <DndProvider backend={HTML5Backend}>
         <List onScroll={onListScroll} topBoxShadow={topBoxShadow}>

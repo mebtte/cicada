@@ -43,6 +43,7 @@ module.exports = {
     '@typescript-eslint/no-redeclare': 'error',
     '@typescript-eslint/no-explicit-any': 'error',
 
+    'import/no-extraneous-dependencies': 'off',
     'import/no-relative-packages': 'off',
     'import/prefer-default-export': 'off',
     'import/extensions': [

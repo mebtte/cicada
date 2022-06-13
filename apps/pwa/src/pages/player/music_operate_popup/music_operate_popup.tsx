@@ -49,7 +49,7 @@ function MusicOperateDrawer({
       />
       <MenuItem
         icon={Name.ADD_TO_OUTLINE}
-        label="添加到歌单"
+        label="添加到乐单"
         onClick={onAddToMusicbill}
       />
       <MenuItem

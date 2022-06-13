@@ -29,7 +29,7 @@ function Musicbill({
   const onToggleMusicbill = useCallback(() => {
     const { status } = musicbill;
     if (status === RequestStatus.LOADING) {
-      return toast.info('请等待歌单加载完毕...');
+      return toast.info('请等待乐单加载完毕...');
     }
     if (status === RequestStatus.NOT_START || status === RequestStatus.ERROR) {
       return playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, {

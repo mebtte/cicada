@@ -35,7 +35,7 @@ const CenterBox = styled(MusicbillListContainer)`
 const onReloadMusicbillList = () =>
   eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST);
 
-const Wrapper = () => {
+function Wrapper() {
   const location = useLocation();
   const { getMusicbillListStatus, musicbillList } = useContext(Context);
 
@@ -70,7 +70,7 @@ const Wrapper = () => {
       }
       return (
         <CenterBox style={style}>
-          <Empty description="空的歌单列表" />
+          <Empty description="空的乐单列表" />
         </CenterBox>
       );
     }
@@ -80,7 +80,7 @@ const Wrapper = () => {
     return (
       <CenterBox style={style}>
         <ErrorCard
-          errorMessage="获取歌单列表失败"
+          errorMessage="获取乐单列表失败"
           retry={onReloadMusicbillList}
         />
       </CenterBox>
@@ -92,6 +92,6 @@ const Wrapper = () => {
       <div className="musicbill-list">{animatedContent}</div>
     </Style>
   );
-};
+}
 
 export default memo(Wrapper);

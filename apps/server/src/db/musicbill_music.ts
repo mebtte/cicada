@@ -30,6 +30,21 @@ export function getMusicbillMusic<P extends Property>(
   );
 }
 
+export function getMusicbillMusicList<P extends Property>(
+  musicbillId: string,
+  properties: P[],
+) {
+  return db.all<{
+    [key in P]: Music[key];
+  }>(
+    `
+      select ${properties.join(',')} from musicbill_music
+        where musicbillId = ?
+    `,
+    [musicbillId],
+  );
+}
+
 export function addMusicbillMusic(musicbillId: string, musicId: string) {
   return db.run(
     `

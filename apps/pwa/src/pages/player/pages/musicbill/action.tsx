@@ -3,7 +3,7 @@ import toast from '@/platform/toast';
 import { RequestStatus } from '@/constants';
 import dialog from '@/platform/dialog';
 import logger from '@/platform/logger';
-import deleteMusicbill from '@/server/delete_musicbill';
+import deleteMusicbill from '@/server_new/delete_musicbill';
 import Tooltip, { Placement } from '@/components/tooltip';
 import IconButton, { Name } from '@/components/icon_button';
 import { useHistory } from 'react-router-dom';
@@ -52,13 +52,13 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
       );
   const onDelete = () =>
     dialog.confirm({
-      title: `确定删除歌单"${musicbill.name}"?`,
-      content: '注意, 歌单删除后无法恢复.',
+      title: `确定删除乐单"${musicbill.name}"?`,
+      content: '注意, 乐单删除后无法恢复.',
       onConfirm: () =>
         dialog.confirm({
-          title: `确定删除歌单"${musicbill.name}"?`,
+          title: `确定删除乐单"${musicbill.name}"?`,
           content:
-            '注意, 歌单删除后无法恢复. 现在是第二次确认, 也是最后一次确认.',
+            '注意, 乐单删除后无法恢复. 现在是第二次确认, 也是最后一次确认.',
           onConfirm: async () => {
             try {
               await deleteMusicbill(musicbill.id);
@@ -66,10 +66,10 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
               history.push(PLAYER_PATH.HOME);
             } catch (error) {
               logger.error(error, {
-                description: '删除歌单失败',
+                description: '删除乐单失败',
               });
               dialog.alert({
-                title: '删除歌单失败',
+                title: '删除乐单失败',
                 content: error.message,
               });
               return true;
@@ -103,28 +103,28 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
           }
         />
       </Tooltip>
-      <Tooltip title="歌单内查找" placement={Placement.LEFT}>
+      <Tooltip title="乐单内查找" placement={Placement.LEFT}>
         <IconButton
           onClick={onSearch}
           size={ACTION_SIZE}
           name={Name.SEARCH_LIST_OUTLINE}
         />
       </Tooltip>
-      <Tooltip title="更新歌单信息" placement={Placement.LEFT}>
+      <Tooltip title="更新乐单信息" placement={Placement.LEFT}>
         <IconButton
           name={Name.EDIT_OUTLINE}
           size={ACTION_SIZE}
           onClick={openTextEditDialog}
         />
       </Tooltip>
-      <Tooltip title="复制歌单 ID" placement={Placement.LEFT}>
+      <Tooltip title="复制乐单 ID" placement={Placement.LEFT}>
         <IconButton
           name={Name.COPY_OUTLINE}
           size={ACTION_SIZE}
           onClick={onCopyID}
         />
       </Tooltip>
-      <Tooltip title="删除歌单" placement={Placement.LEFT}>
+      <Tooltip title="删除乐单" placement={Placement.LEFT}>
         <IconButton
           name={Name.GARBAGE_OUTLINE}
           size={ACTION_SIZE}

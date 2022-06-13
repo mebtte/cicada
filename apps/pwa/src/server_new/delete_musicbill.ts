@@ -1,11 +1,9 @@
-import api from '.';
+import { request, Method } from '.';
 
-/**
- * 删除歌单
- * @author mebtte<hi@mebtte.com>
- */
 function deleteMusicbill(id: string) {
-  return api.get('/api/delete_musicbill', {
+  return request({
+    method: Method.DELETE,
+    path: '/api/musicbill',
     params: { id },
     withToken: true,
   });

@@ -19,7 +19,7 @@ const iconButtonStyle = {
   margin: '5px 0',
 };
 
-const Action = ({ singer, reload }: { singer: Singer; reload: () => void }) => {
+function Action({ singer, reload }: { singer: Singer; reload: () => void }) {
   const copySingerID = useCallback(
     () =>
       window.navigator.clipboard
@@ -43,7 +43,7 @@ const Action = ({ singer, reload }: { singer: Singer; reload: () => void }) => {
           style={iconButtonStyle}
         />
       </Tooltip>
-      <Tooltip title="全部添加到歌单" placement={Placement.LEFT}>
+      <Tooltip title="全部添加到乐单" placement={Placement.LEFT}>
         <IconButton
           name={Name.PLUS_OUTLINE}
           size={ACTION_SIZE}
@@ -65,6 +65,6 @@ const Action = ({ singer, reload }: { singer: Singer; reload: () => void }) => {
       </Tooltip>
     </Style>
   );
-};
+}
 
 export default Action;

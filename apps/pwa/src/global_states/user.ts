@@ -1,4 +1,4 @@
-import XState from '@/utils/x_state';
+import XState from '#/utils/x_state';
 import storage, { Key } from '@/platform/storage';
 import getProfile from '@/server_new/get_profile';
 import notice from '@/platform/notice';

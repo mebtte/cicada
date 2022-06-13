@@ -51,16 +51,16 @@ export const EXCEPTION_CODE_MAP: Record<
     description: '邮箱已注册',
   },
   [ExceptionCode.MUSICBILL_NOT_EXIST]: {
-    description: '歌单不存在',
+    description: '乐单不存在',
   },
   [ExceptionCode.MUSIC_NOT_EXIST]: {
     description: '音乐不存在',
   },
   [ExceptionCode.MUSIC_IN_MUSICBILL_ALREADY]: {
-    description: '音乐已在歌单中',
+    description: '音乐已在乐单中',
   },
   [ExceptionCode.MUSIC_NOT_IN_MUSICBILL]: {
-    description: '音乐不存在歌单中',
+    description: '音乐不存在乐单中',
   },
   [ExceptionCode.ASSET_OVER_MAX_SIZE]: {
     description: '资源过大',

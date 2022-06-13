@@ -18,39 +18,42 @@ import removeMusicFromMusicbill from './controllers/remove_music_from_musicbill'
 import uploadMusicPlayRecord from './controllers/upload_music_play_record';
 import getMusicLrc from './controllers/get_music_lrc';
 import createMusicbill from './controllers/create_musicbill';
-import updateSelfMusicbillOrder from './controllers/update_self_musicbill_order';
+import updateMusicbillOrder from './controllers/update_musicbill_order';
+import deleteMusicbill from './controllers/delete_musicbill';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
 
-router.get('/metadata', getMetadata);
-router.get('/captcha', getCaptcha);
-router.get('/login_code', getLoginCode);
-router.post('/login', parseBody, login);
-
-/** authorize */
-router.get('/profile', authorize, getProfile);
-router.get('/self_musicbill_list', authorize, getSelfMusicbillList);
-router.get('/self_musicbill', authorize, getSelfMusicbill);
-router.post('/musicbill_music', authorize, parseBody, addMusicToMusicbill);
-router.delete('/musicbill_music', authorize, removeMusicFromMusicbill);
-router.get('/music_lrc', authorize, getMusicLrc);
-router.post('/musicbill', authorize, parseBody, createMusicbill);
-router.post(
-  '/self_musicbill_order',
-  authorize,
-  parseBody,
-  updateSelfMusicbillOrder,
-);
-
-/** super authorize */
-router.post('/user', authorize, superAuthorize, parseBody, createUser);
+router.get('/metadata', getMetadata); // 元数据
+router.get('/captcha', getCaptcha); // 获取验证码
+router.get('/login_code', getLoginCode); // 获取登录验证码
+router.post('/login', parseBody, login); // 登录
 
 /**
- * 上传音乐记录使用的是 navigator.sendBeacon
+ * authorize
+ */
+router.get('/profile', authorize, getProfile); // 获取个人资料
+
+router.get('/self_musicbill_list', authorize, getSelfMusicbillList); // 获取个人乐单列表
+router.get('/self_musicbill', authorize, getSelfMusicbill); // 获取个人乐单
+router.post('/musicbill', authorize, parseBody, createMusicbill); // 创建乐单
+router.delete('/musicbill', authorize, deleteMusicbill); // 删除乐单
+router.post('/musicbill_music', authorize, parseBody, addMusicToMusicbill); // 添加音乐到乐单
+router.delete('/musicbill_music', authorize, removeMusicFromMusicbill); // 从乐单移除音乐
+router.post('/musicbill_order', authorize, parseBody, updateMusicbillOrder); // 更新乐单顺序
+
+router.get('/music_lrc', authorize, getMusicLrc); // 获取音乐歌词
+
+/**
+ * super authorize
+ */
+router.post('/user', authorize, superAuthorize, parseBody, createUser); // 创建用户
+
+/**
+ * 上传音乐播放记录使用的是 navigator.sendBeacon
  * 无法设置 http header
  * 需要特殊处理鉴权
  */
-router.post('/music_play_record', parseBody, uploadMusicPlayRecord);
+router.post('/music_play_record', parseBody, uploadMusicPlayRecord); // 上传音乐播放记录
 
 export default router;

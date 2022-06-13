@@ -19,7 +19,7 @@ const Style = styled.div`
   padding: 10px 0;
 `;
 
-const Action = ({ musicbill }: { musicbill: Musicbill }) => {
+function Action({ musicbill }: { musicbill: Musicbill }) {
   const { id, musicList } = musicbill;
   return (
     <Style>
@@ -36,7 +36,7 @@ const Action = ({ musicbill }: { musicbill: Musicbill }) => {
           disabled={!musicList.length}
         />
       </Tooltip>
-      <Tooltip title="复制歌单 ID" placement={Placement.LEFT}>
+      <Tooltip title="复制乐单 ID" placement={Placement.LEFT}>
         <IconButton
           name={Name.COPY_OUTLINE}
           size={ACTION_SIZE}
@@ -55,6 +55,6 @@ const Action = ({ musicbill }: { musicbill: Musicbill }) => {
       </Tooltip>
     </Style>
   );
-};
+}
 
 export default Action;

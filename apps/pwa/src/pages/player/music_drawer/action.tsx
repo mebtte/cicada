@@ -39,7 +39,7 @@ function Action({ music }: { music: Music }) {
           size={ACTION_SIZE}
         />
       </Tooltip>
-      <Tooltip title="添加到歌单">
+      <Tooltip title="添加到乐单">
         <IconButton
           name={Name.ADD_TO_OUTLINE}
           onClick={onAddToMusicbill}

@@ -1,6 +1,6 @@
 import { request, Method } from '.';
 
-function updateSelfMusicbillOrder(orders: string[]) {
+function updateMusicbillOrder(orders: string[]) {
   return request<void>({
     method: Method.POST,
     path: '/api/self_musicbill_order',
@@ -11,4 +11,4 @@ function updateSelfMusicbillOrder(orders: string[]) {
   });
 }
 
-export default updateSelfMusicbillOrder;
+export default updateMusicbillOrder;

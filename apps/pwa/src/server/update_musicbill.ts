@@ -8,7 +8,7 @@ export enum Key {
 }
 
 /**
- * 更新歌单
+ * 更新乐单
  * @author mebtte<hi@mebtte.com>
  */
 async function updateMusicbill({

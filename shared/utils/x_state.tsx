@@ -1,5 +1,5 @@
 import { useState, useEffect, ComponentType } from 'react';
-import Eventemitter from '#/utils/eventemitter';
+import Eventemitter from './eventemitter';
 
 enum EventType {
   UPDATED = 'updated',

@@ -24,6 +24,7 @@ import {
   SCHEDULE_LOG_DIR,
   ERROR_LOG_DIR,
   ASSET_LOG_DIR,
+  DELETED_MUSICBILL_DIR,
 } from './constants/directory';
 import argv from './argv';
 
@@ -45,6 +46,7 @@ if (cluster.isPrimary) {
     SCHEDULE_LOG_DIR,
     ERROR_LOG_DIR,
     ASSET_LOG_DIR,
+    DELETED_MUSICBILL_DIR,
 
     ROOT_ASSET_DIR,
     ...Object.values(ASSET_DIR),
