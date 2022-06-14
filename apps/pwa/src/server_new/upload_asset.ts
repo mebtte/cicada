@@ -13,6 +13,7 @@ function uploadAsset(asset: Blob, assetType: AssetType) {
     method: Method.POST,
     path: '/blob/asset',
     body: form,
+    withToken: true,
   });
 }
 
