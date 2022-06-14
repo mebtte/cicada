@@ -5,10 +5,10 @@ import Switch from '@/components/switch';
 import Label from '@/components/label';
 import IconButton, { Name } from '@/components/icon_button';
 import Avatar from '@/components/avatar';
-import updateMusicbillRequest, { Key } from '@/server/update_musicbill';
+import updateMusicbillRequest from '@/server_new/update_musicbill';
 import toast from '@/platform/toast';
 import logger from '@/platform/logger';
-import { NAME_MAX_LENGTH } from '#/constants/musicbill';
+import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/platform/dialog';
 import Dialog, { Content, Action } from '@/components/dialog';
 import Button, { Type } from '@/components/button';
@@ -58,20 +58,16 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
       let updated = false;
 
       if (musicbill.name !== name) {
-        await updateMusicbillRequest({
-          id: musicbill.id,
-          key: Key.NAME,
-          value: name,
-        });
+        await updateMusicbillRequest(musicbill.id, AllowUpdateKey.NAME, name);
         updated = true;
       }
 
       if (musicbill.public !== publiz) {
-        await updateMusicbillRequest({
-          id: musicbill.id,
-          key: Key.PUBLIC,
-          value: publiz ? '1' : '0',
-        });
+        await updateMusicbillRequest(
+          musicbill.id,
+          AllowUpdateKey.PUBLIC,
+          publiz,
+        );
         updated = true;
       }
 

@@ -7,26 +7,22 @@ import {
 } from '@/db/musicbill';
 import { getAssetPath } from '@/platform/asset';
 import { AssetType } from '#/constants';
-import { NAME_MAX_LENGTH } from '#/constants/musicbill';
+import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import { Context } from '../constants';
 
-const ALLOW_UPDATE_PROPERTIES = [
-  MusicbillProperty.COVER,
-  MusicbillProperty.NAME,
-  MusicbillProperty.PUBLIC,
-] as const;
+const ALLOW_UPDATE_KEYS = Object.values(AllowUpdateKey) as string[];
 
 export default async (ctx: Context) => {
   const { id, key, value } = ctx.request.body as {
     id?: string;
-    key?: MusicbillProperty;
+    key?: string;
     value?: unknown;
   };
   if (
     typeof id !== 'string' ||
     !id.length ||
-    // @ts-expect-error
-    !ALLOW_UPDATE_PROPERTIES.includes(key)
+    !key ||
+    !ALLOW_UPDATE_KEYS.includes(key)
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
