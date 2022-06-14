@@ -63,7 +63,7 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
             try {
               await deleteMusicbill(musicbill.id);
               playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST);
-              history.push(PLAYER_PATH.HOME);
+              history.replace(PLAYER_PATH.HOME);
             } catch (error) {
               logger.error(error, {
                 description: '删除乐单失败',

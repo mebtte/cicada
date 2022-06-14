@@ -20,6 +20,7 @@ import getMusicLrc from './controllers/get_music_lrc';
 import createMusicbill from './controllers/create_musicbill';
 import updateMusicbillOrder from './controllers/update_musicbill_order';
 import deleteMusicbill from './controllers/delete_musicbill';
+import updateMusicbill from './controllers/update_musicbill';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -38,6 +39,7 @@ router.get('/self_musicbill_list', authorize, getSelfMusicbillList); // 获取�
 router.get('/self_musicbill', authorize, getSelfMusicbill); // 获取个人乐单
 router.post('/musicbill', authorize, parseBody, createMusicbill); // 创建乐单
 router.delete('/musicbill', authorize, deleteMusicbill); // 删除乐单
+router.put('/musicbill', authorize, parseBody, updateMusicbill); // 更新乐单
 router.post('/musicbill_music', authorize, parseBody, addMusicToMusicbill); // 添加音乐到乐单
 router.delete('/musicbill_music', authorize, removeMusicFromMusicbill); // 从乐单移除音乐
 router.post('/musicbill_order', authorize, parseBody, updateMusicbillOrder); // 更新乐单顺序

@@ -81,3 +81,17 @@ export async function createMusicbill({
   );
   return id;
 }
+
+export function updateMusicbill<P extends Property>(
+  id: string,
+  property: P,
+  value: Musicbill[P],
+) {
+  return db.run(
+    `
+      update musicbill set ${property} = ?
+        where id = ?
+    `,
+    [value, id],
+  );
+}
