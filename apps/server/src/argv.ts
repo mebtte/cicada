@@ -41,6 +41,7 @@ const result = {
 /** 环境变量覆盖 */
 type ENV_PROPERTIES = Extract<
   keyof typeof env,
+  | 'PORT'
   | 'PUBLIC_ADDRESS'
   | 'CLUSTER_COUNT'
   | 'EMAIL_HOST'
@@ -51,6 +52,7 @@ type ENV_PROPERTIES = Extract<
 const ENV_KEY_MAP: {
   [key in ENV_PROPERTIES]: keyof typeof result;
 } = {
+  PORT: 'port',
   PUBLIC_ADDRESS: 'publicAddress',
   CLUSTER_COUNT: 'clusterCount',
   EMAIL_HOST: 'emailHost',
