@@ -1,0 +1,33 @@
+name: gh-pages
+on:
+  push:
+    branches:
+      - master
+jobs:
+  gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@main
+        with:
+          node-version: 16
+
+      - run: |
+          npm install
+          npm run build:pwa
+
+      - run: |
+          echo 'cicada.mebtte.com' > build/CNAME
+
+      - env:
+          TOKEN: ${{secrets.TOKEN}}
+        run: |
+          cd apps/pwa/build
+          git init
+          git config --local user.name mebtte
+          git config --local user.email hi@mebtte.com
+          git remote add origin https://$TOKEN@github.com/$GITHUB_REPOSITORY.git
+          git switch -c gh-pages
+          git add --all
+          git commit -m "gh-pages"
+          git push -f origin gh-pages

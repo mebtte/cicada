@@ -36,11 +36,13 @@ const result = {
   emailUser: string;
   emailPass: string;
   port: number;
+  initialSuperUserEmail?: string;
 };
 
 /** 环境变量覆盖 */
 type ENV_PROPERTIES = Extract<
   keyof typeof env,
+  | 'INITIAL_SUPER_USER_EMAIL'
   | 'PORT'
   | 'PUBLIC_ADDRESS'
   | 'CLUSTER_COUNT'
@@ -52,6 +54,7 @@ type ENV_PROPERTIES = Extract<
 const ENV_KEY_MAP: {
   [key in ENV_PROPERTIES]: keyof typeof result;
 } = {
+  INITIAL_SUPER_USER_EMAIL: 'initialSuperUserEmail',
   PORT: 'port',
   PUBLIC_ADDRESS: 'publicAddress',
   CLUSTER_COUNT: 'clusterCount',
