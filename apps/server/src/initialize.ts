@@ -27,6 +27,7 @@ import {
   DELETED_MUSICBILL_DIR,
 } from './constants/directory';
 import argv from './argv';
+import env from './env';
 
 function mkdirIfNotExist(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -255,7 +256,7 @@ if (cluster.isPrimary) {
       );
     const superUser = await dbGet('select * from user where super = 1');
     if (!superUser) {
-      let superUserEmail = '';
+      let superUserEmail = env.INITIAL_SUPER_USER_EMAIL;
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,

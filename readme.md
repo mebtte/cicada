@@ -39,11 +39,16 @@ npm start -- --emailHost=email.com --emailUser=mebtte@email.com --emailPass=secr
 | port          | number | 否       | 8000                            | 提供服务的端口                                               |
 | publicAddress | string | 否       | http://localhost:{{serverPort}} | **实际**暴露服务的地址, 比如通过 https://cicada.com 暴露服务 |
 | clusterCount  | number | 否       | {{os.cups().length}}            | 服务进程数量                                                 |
-| base          | string | 否       | {{os.homedir()}}/.cicada        | 数据存放目录                                                 |
+| base          | string | 否       | {{project}}/resources           | 数据存放目录                                                 |
 
-除 CLI 参数外, 配置还支持文件的方式. 在根目录创建 `argv.json`, 将同名配置写入文件中. 优先级 `CLI` > `argv.json` > `default`.
+除 CLI 参数外, 配置还支持以下方式:
 
-`npm start` 将会启动 `api` 服务, 如果需要托管 `pwa` 静态资源, 需要执行 `npm run build:pwa`.
+1. 配置文件, 在根目录创建 `argv.json`, 将同名配置写入文件中.
+2. 环境变量, 只支持[部分配置](./apps/server/src/env.ts), 且命名改为*大写+下划线*, 比如 `emailHost` --> `EMAIL_HOST`.
+
+如果多个配置同时存在, 则按照 `ENV` > `CLI` > `argv.json` > `default` 的优先级.
+
+`npm start` 仅会启动 `server`, 执行 `npm run build:pwa` 后 `server` 会托管 `pwa` 静态资源.
 
 ## 常见问题
 

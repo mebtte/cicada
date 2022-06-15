@@ -32,7 +32,7 @@ export function saveLoginCode({
   code: string;
 }) {
   const encodedCode =
-    env.RUNENV === 'development' ? code : md5(code + LOGIN_CODE_SALT);
+    env.RUN_ENV === 'development' ? code : md5(code + LOGIN_CODE_SALT);
   return db.run(
     'insert into login_code(userId, code, createTimestamp) values(?, ?, ?)',
     [userId, encodedCode, Date.now()],
@@ -63,7 +63,7 @@ export async function verifyLoginCode({
 
   if (
     loginCode.code !==
-    (env.RUNENV === 'development' ? code : md5(code + LOGIN_CODE_SALT))
+    (env.RUN_ENV === 'development' ? code : md5(code + LOGIN_CODE_SALT))
   ) {
     return false;
   }

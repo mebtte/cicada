@@ -18,6 +18,12 @@ async function start() {
   if (cluster.isPrimary) {
     process.title = 'cicada_primary';
 
+    const PRINT_ENV_KEYS: (keyof typeof env)[] = ['RUN_ENV'];
+    for (const key of PRINT_ENV_KEYS) {
+      // eslint-disable-next-line no-console
+      console.log(`--- env | ${key} = ${env[key]} ---`);
+    }
+
     const PRINT_ARGV_KEYS: (keyof typeof argv)[] = [
       'base',
       'port',
@@ -29,12 +35,6 @@ async function start() {
       console.log(`--- argv | ${key} = ${argv[key]} ---`);
     }
 
-    const PRINT_ENV_KEYS: (keyof typeof env)[] = ['RUNENV'];
-    for (const key of PRINT_ENV_KEYS) {
-      // eslint-disable-next-line no-console
-      console.log(`--- env | ${key} = ${env[key]} ---`);
-    }
-
     schedule.start();
     for (let i = 0; i < argv.clusterCount; i += 1) {
       cluster.fork();
@@ -44,7 +44,7 @@ async function start() {
 
     const server = new Koa();
 
-    if (env.RUNENV === 'development') {
+    if (env.RUN_ENV === 'development') {
       server.use(log());
     }
 

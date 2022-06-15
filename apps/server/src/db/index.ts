@@ -20,7 +20,7 @@ db.on('profile', (sql, ms) => {
 
   const trimedSQL = sql.replace(/\s+/g, ' ').trim();
 
-  if (env.RUNENV === 'development') {
+  if (env.RUN_ENV === 'development') {
     // eslint-disable-next-line no-console
     console.log(
       `\n[${timeString}] ${color.underline(`${ms}ms`)}\n${trimedSQL}\n`,

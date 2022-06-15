@@ -1,7 +1,7 @@
 {
   "name": "server",
   "scripts": {
-    "dev": "cross-env RUNENV=development nodemon",
+    "dev": "cross-env RUN_ENV=development nodemon",
     "start": "ts-node -r tsconfig-paths/register src/index.ts"
   }
 }
