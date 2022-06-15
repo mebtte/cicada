@@ -16,13 +16,13 @@ jobs:
           npm install
           npm run build:pwa
 
-      - run: |
-          echo 'cicada.mebtte.com' > build/CNAME
-
       - env:
           TOKEN: ${{secrets.TOKEN}}
         run: |
           cd apps/pwa/build
+
+          echo 'cicada.mebtte.com' > CNAME
+
           git init
           git config --local user.name mebtte
           git config --local user.email hi@mebtte.com
