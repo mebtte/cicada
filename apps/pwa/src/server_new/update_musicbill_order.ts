@@ -3,7 +3,7 @@ import { request, Method } from '.';
 function updateMusicbillOrder(orders: string[]) {
   return request<void>({
     method: Method.POST,
-    path: '/api/self_musicbill_order',
+    path: '/api/musicbill_order',
     body: {
       orders,
     },
