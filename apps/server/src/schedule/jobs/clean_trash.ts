@@ -3,7 +3,7 @@ import util from 'util';
 import { TRASH_DIR } from '@/constants/directory';
 import withTimeout from '#/utils/with_timeout';
 
-const TTL = 1000 * 60 * 60 * 24 * 60;
+const TTL = 1000 * 60 * 60 * 24 * 120;
 const readdirAsync = util.promisify(fs.readdir);
 const rmAsync = util.promisify(fs.rm);
 const statAsync = util.promisify(fs.stat);

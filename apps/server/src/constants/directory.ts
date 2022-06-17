@@ -21,6 +21,4 @@ export const ERROR_LOG_DIR = `${argv.base}/error_logs`;
 
 export const ASSET_LOG_DIR = `${argv.base}/asset_logs`;
 
-export const DELETED_MUSICBILL_DIR = `${argv.base}/deleted_musicbills`;
-
 export const TRASH_DIR = `${argv.base}/trash`;

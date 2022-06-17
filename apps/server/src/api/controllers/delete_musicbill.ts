@@ -5,7 +5,7 @@ import {
   getMusicbillMusicList,
   Property as MusicbillMusicProperty,
 } from '@/db/musicbill_music';
-import { DELETED_MUSICBILL_DIR } from '@/constants/directory';
+import { TRASH_DIR } from '@/constants/directory';
 import * as db from '@/db';
 import { getAssetPath } from '@/platform/asset';
 import { AssetType } from '#/constants';
@@ -35,7 +35,7 @@ export default async (ctx: Context) => {
     MusicbillMusicProperty.ADD_TIMESTAMP,
   ]);
   await fs.writeFile(
-    `${DELETED_MUSICBILL_DIR}/${musicbill.userId}_${id}.json`,
+    `${TRASH_DIR}/deleted_musicbill_${id}.json`,
     JSON.stringify({
       ...musicbill,
       musicList,
