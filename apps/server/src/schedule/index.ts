@@ -13,13 +13,12 @@ import removeOutdatedAssetLog from './jobs/remove_outdated_asset_log';
 import cleanTrash from './jobs/clean_trash';
 
 const appendFileAysnc = util.promisify(fs.appendFile);
-
 const onRun = (job: string) => {
   const now = day();
   const dateString = now.format('YYYYMMDD');
   const timeString = now.format('HH:mm:ss');
   appendFileAysnc(
-    `${SCHEDULE_LOG_DIR}/emit_${dateString}.log`,
+    `${SCHEDULE_LOG_DIR}/schedule_emit_${dateString}.log`,
     `[${timeString}] ${job}\n`,
   );
 };
@@ -28,85 +27,70 @@ const onError = ({ job, error }: { job: string; error: Error }) => {
   const dateString = now.format('YYYYMMDD');
   const timeString = now.format('HH:mm:ss');
   appendFileAysnc(
-    `${SCHEDULE_LOG_DIR}/error_${dateString}.log`,
+    `${SCHEDULE_LOG_DIR}/schedule_error_${dateString}.log`,
     `[${timeString}] ${job}\n${error.stack}\n\n`,
   );
 };
 
+const DAILY_JOBS: {
+  name: string;
+  job: schedule.JobCallback;
+}[] = [
+  {
+    name: 'remove_outdated_schedule_log',
+    job: removeOutdatedScheduleLog,
+  },
+  {
+    name: 'remove_outdated_db_log',
+    job: removeOutdatedDBLog,
+  },
+  {
+    name: 'remove_outdated_captcha',
+    job: removeOutdatedCaptcha,
+  },
+  {
+    name: 'remove_outdated_login_code',
+    job: removeOutdatedLoginCode,
+  },
+  {
+    name: 'remove_outdated_error_log',
+    job: removeOutdatedErrorLog,
+  },
+  {
+    name: 'remove_outdated_asset_log',
+    job: removeOutdatedAssetLog,
+  },
+  {
+    name: 'clean_trash',
+    job: cleanTrash,
+  },
+  {
+    name: 'create_and_remove_outdated_db_snapshot',
+    job: createAndRemoveOutdatedDBSnapshot,
+  },
+];
+
 export default {
   start: () => {
     /** daily */
-    schedule
-      .scheduleJob('0 0 4 * * *', removeOutdatedScheduleLog)
-      .addListener('run', () => onRun('removeOutdatedScheduleLog'))
-      .addListener('error', (error) =>
-        onError({
-          job: 'removeOutdatedScheduleLog',
-          error,
-        }),
-      );
-    schedule
-      .scheduleJob('0 5 4 * * *', removeOutdatedDBLog)
-      .addListener('run', () => onRun('removeOutdatedDBLog'))
-      .addListener('error', (error) =>
-        onError({
-          job: 'removeOutdatedDBLog',
-          error,
-        }),
-      );
-    schedule
-      .scheduleJob('0 10 4 * * *', removeOutdatedCaptcha)
-      .addListener('run', () => onRun('removeOutdatedCaptcha'))
-      .addListener('error', (error) =>
-        onError({
-          job: 'removeOutdatedCaptcha',
-          error,
-        }),
-      );
-    schedule
-      .scheduleJob('0 15 4 * * *', removeOutdatedLoginCode)
-      .addListener('run', () => onRun('removeOutdatedLoginCode'))
-      .addListener('error', (error) =>
-        onError({
-          job: 'removeOutdatedLoginCode',
-          error,
-        }),
-      );
-    schedule
-      .scheduleJob('0 20 4 * * *', removeOutdatedErrorLog)
-      .addListener('run', () => onRun('removeOutdatedErrorLog'))
-      .addListener('error', (error) =>
-        onError({
-          job: 'removeOutdatedErrorLog',
-          error,
-        }),
-      );
-    schedule
-      .scheduleJob('0 25 4 * * *', removeOutdatedAssetLog)
-      .addListener('run', () => onRun('removeOutdatedAssetLog'))
-      .addListener('error', (error) =>
-        onError({
-          job: 'removeOutdatedAssetLog',
-          error,
-        }),
-      );
-    schedule
-      .scheduleJob('0 30 4 * * *', cleanTrash)
-      .addListener('run', () => onRun('cleanTrash'))
-      .addListener('error', (error) =>
-        onError({
-          job: 'cleanTrash',
-          error,
-        }),
-      );
-    schedule
-      .scheduleJob('0 35 4 * * *', createAndRemoveOutdatedDBSnapshot)
-      .addListener('run', () => onRun('createAndRemoveOutdatedDBSnapshot'))
-      .addListener('error', (error) =>
-        onError({
-          job: 'createAndRemoveOutdatedDBSnapshot',
-          error,
-        }),
-      );
+    let hour = 4;
+    let minute = 0;
+    for (const dailyJob of DAILY_JOBS) {
+      schedule
+        .scheduleJob(`0 ${minute} ${hour} * * *`, dailyJob.job)
+        .addListener('run', () => onRun(dailyJob.name))
+        .addListener('error', (error) =>
+          onError({
+            job: dailyJob.name,
+            error,
+          }),
+        );
+
+      minute += 5;
+      if (minute >= 60) {
+        minute = 0;
+        hour += 1;
+      }
+    }
   },
 };

@@ -13,7 +13,7 @@ async function cleanTrash() {
   for (const file of files) {
     const absolutePath = `${TRASH_DIR}/${file}`;
     const stat = await statAsync(absolutePath);
-    if (stat.isDirectory() || Date.now() - stat.birthtimeMs >= TTL) {
+    if (Date.now() - stat.birthtimeMs >= TTL) {
       await rmAsync(absolutePath, {
         recursive: true,
         force: true,
