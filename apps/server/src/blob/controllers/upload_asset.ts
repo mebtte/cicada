@@ -135,7 +135,7 @@ export default async (ctx: Context) => {
   const dateString = now.format('YYYYMMDD');
   const timeString = now.format('HH:mm:ss');
   appendFileAsync(
-    `${ASSET_LOG_DIR}/upload_${dateString}.log`,
+    `${ASSET_LOG_DIR}/asset_upload_${dateString}.log`,
     `[${timeString}] ${ctx.user.id} ${assetPath}\n`,
   ).catch((e) => console.error(e));
 

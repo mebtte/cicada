@@ -28,7 +28,7 @@ db.on('profile', (sql, ms) => {
   }
 
   appendFileAsync(
-    `${DB_LOG_DIR}/${dateString}.log`,
+    `${DB_LOG_DIR}/db_${dateString}.log`,
     `[${timeString}] ${ms}ms\n${trimedSQL}\n\n`,
   ).catch((error) => console.error(error));
 });
