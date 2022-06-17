@@ -29,17 +29,17 @@ npm start -- --emailHost=email.com --emailUser=mebtte@email.com --emailPass=secr
 
 知了支持使用参数进行配置:
 
-| 参数                  | 类型   | 是否必须 | 默认值                          | 描述                                                         |
-| --------------------- | ------ | -------- | ------------------------------- | ------------------------------------------------------------ |
-| emailHost             | string | 是       | -                               | 发信邮箱域名                                                 |
-| emailPort             | number | 否       | 465                             | 发信邮箱端口                                                 |
-| emailUser             | string | 是       | -                               | 发信邮箱账号                                                 |
-| eamilPass             | string | 是       | -                               | 发信邮箱密码                                                 |
-| port                  | number | 否       | 8000                            | 提供服务的端口                                               |
-| publicAddress         | string | 否       | http://localhost:{{serverPort}} | **实际**暴露服务的地址, 比如通过 https://cicada.com 暴露服务 |
-| clusterCount          | number | 否       | {{os.cups().length}}            | 服务进程数量                                                 |
-| base                  | string | 否       | {{project}}/resources           | 数据存放目录                                                 |
-| initialSuperUserEmail | string | 否       | -                               | 初始超级账号邮箱, 如果未指定, 将在首次运行提示输入           |
+| 参数                  | 类型   | 是否必须 | 默认值                          | 描述                                                                |
+| --------------------- | ------ | -------- | ------------------------------- | ------------------------------------------------------------------- |
+| emailHost             | string | 是       | -                               | 发信邮箱域名                                                        |
+| emailPort             | number | 否       | 465                             | 发信邮箱端口                                                        |
+| emailUser             | string | 是       | -                               | 发信邮箱账号                                                        |
+| eamilPass             | string | 是       | -                               | 发信邮箱密码                                                        |
+| port                  | number | 否       | 8000                            | 提供服务的端口                                                      |
+| publicAddress         | string | 否       | http://localhost:{{serverPort}} | **实际**暴露服务的地址, 比如通过 https://cicada.mebtte.com 暴露服务 |
+| clusterCount          | number | 否       | {{os.cups().length}}            | 服务进程数量                                                        |
+| base                  | string | 否       | {{project}}/resources           | 数据存放目录                                                        |
+| initialSuperUserEmail | string | 否       | -                               | 初始超级账号邮箱, 如果未指定, 将在首次运行提示输入                  |
 
 除 CLI 参数外, 配置还支持以下方式:
 
