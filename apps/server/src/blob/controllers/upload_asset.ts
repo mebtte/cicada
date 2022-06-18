@@ -10,7 +10,7 @@ import generateRandomString from '#/utils/generate_random_string';
 import fileType from 'file-type';
 import md5 from 'md5';
 import { getAssetUrl } from '@/platform/asset';
-import { ASSET_DIR, ASSET_LOG_DIR } from '@/constants/directory';
+import { ASSET_DIR, LOG_DIR } from '@/constants/directory';
 import day from '#/utils/day';
 import { ASSET_PREFIX } from '../../constants';
 import { Context } from '../constants';
@@ -135,7 +135,7 @@ export default async (ctx: Context) => {
   const dateString = now.format('YYYYMMDD');
   const timeString = now.format('HH:mm:ss');
   appendFileAsync(
-    `${ASSET_LOG_DIR}/asset_upload_${dateString}.log`,
+    `${LOG_DIR}/asset_upload_${dateString}.log`,
     `[${timeString}] ${ctx.user.id} ${assetPath}\n`,
   ).catch((e) => console.error(e));
 

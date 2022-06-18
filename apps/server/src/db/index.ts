@@ -5,10 +5,8 @@ import fs from 'fs';
 import util from 'util';
 import * as sqlite3 from 'sqlite3';
 import day from '#/utils/day';
-import color from 'colors/safe';
-import { DB_LOG_DIR } from '@/constants/directory';
+import { LOG_DIR } from '@/constants/directory';
 import { DB_FILE_PATH } from '../constants';
-import env from '../env';
 
 const appendFileAsync = util.promisify(fs.appendFile);
 const db = new sqlite3.Database(DB_FILE_PATH);
@@ -20,15 +18,8 @@ db.on('profile', (sql, ms) => {
 
   const trimedSQL = sql.replace(/\s+/g, ' ').trim();
 
-  if (env.RUN_ENV === 'development') {
-    // eslint-disable-next-line no-console
-    console.log(
-      `\n[${timeString}] ${color.underline(`${ms}ms`)}\n${trimedSQL}\n`,
-    );
-  }
-
   appendFileAsync(
-    `${DB_LOG_DIR}/db_${dateString}.log`,
+    `${LOG_DIR}/db_${dateString}.log`,
     `[${timeString}] ${ms}ms\n${trimedSQL}\n\n`,
   ).catch((error) => console.error(error));
 });

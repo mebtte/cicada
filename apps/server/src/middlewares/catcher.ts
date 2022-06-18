@@ -3,7 +3,7 @@ import util from 'util';
 import { Next } from 'koa';
 import { ExceptionCode } from '#/constants/exception';
 import env from '@/env';
-import { ERROR_LOG_DIR } from '@/constants/directory';
+import { LOG_DIR } from '@/constants/directory';
 import day from '#/utils/day';
 import { Context } from '../constants/koa';
 
@@ -22,7 +22,7 @@ export default async (ctx: Context, next: Next) => {
     const dateString = now.format('YYYYMMDD');
     const timeString = now.format('HH:mm:ss');
     appendFileAsync(
-      `${ERROR_LOG_DIR}/server_error_${dateString}.log`,
+      `${LOG_DIR}/server_error_${dateString}.log`,
       `[${timeString}] ${ctx.path}\n${error.stack}\n\n`,
     ).catch((e) => console.error(e));
   }

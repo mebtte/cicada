@@ -2,7 +2,7 @@ import * as schedule from 'node-schedule';
 import fs from 'fs';
 import util from 'util';
 import day from '#/utils/day';
-import { SCHEDULE_LOG_DIR } from '@/constants/directory';
+import { LOG_DIR } from '@/constants/directory';
 import removeOutdatedCaptcha from './jobs/remove_outdated_captcha';
 import createDBSnapshot from './jobs/create_db_snapshot';
 import removeOutdatedLoginCode from './jobs/remove_outdated_login_code';
@@ -19,14 +19,14 @@ const appendFileAysnc = util.promisify(fs.appendFile);
 const onRun = (job: string) => {
   const timeString = getTimeString();
   appendFileAysnc(
-    `${SCHEDULE_LOG_DIR}/schedule_emit_${timeString.date}.log`,
+    `${LOG_DIR}/schedule_emit_${timeString.date}.log`,
     `[${timeString.time}] ${job}\n`,
   );
 };
 const onError = ({ job, error }: { job: string; error: Error }) => {
   const timeString = getTimeString();
   appendFileAysnc(
-    `${SCHEDULE_LOG_DIR}/schedule_error_${timeString.date}.log`,
+    `${LOG_DIR}/schedule_error_${timeString.date}.log`,
     `[${timeString.time}] ${job}\n${error.stack}\n\n`,
   );
 };

@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { ROOT_PATH } from '@/constants/route';
 import ErrorBoundary from '@/components/error_boundary';
-import GlobalStyle from './global_style';
 import Toast from './toast';
 import Dialog from './dialog';
 import RouteLoader from './route_loader';
@@ -47,7 +46,6 @@ const onErrorFallback = (error: Error) => <RouteLoader error={error} />;
 function App() {
   return (
     <>
-      <GlobalStyle />
       <Prefetch />
 
       <Toast />

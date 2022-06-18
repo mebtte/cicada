@@ -19,11 +19,8 @@ import {
 import {
   ROOT_ASSET_DIR,
   ASSET_DIR,
-  DB_LOG_DIR,
   DB_SNAPSHOT_DIR,
-  SCHEDULE_LOG_DIR,
-  ERROR_LOG_DIR,
-  ASSET_LOG_DIR,
+  LOG_DIR,
   TRASH_DIR,
 } from './constants/directory';
 import argv from './argv';
@@ -41,12 +38,9 @@ if (cluster.isPrimary) {
    */
   const directories = [
     argv.base,
-    DB_LOG_DIR,
     DB_SNAPSHOT_DIR,
-    SCHEDULE_LOG_DIR,
-    ERROR_LOG_DIR,
-    ASSET_LOG_DIR,
     TRASH_DIR,
+    LOG_DIR,
 
     ROOT_ASSET_DIR,
     ...Object.values(ASSET_DIR),

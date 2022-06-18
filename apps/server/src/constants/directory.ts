@@ -12,13 +12,8 @@ export const ASSET_DIR: Record<AssetType, string> = {
   [AssetType.MUSICBILL_COVER]: `${ROOT_ASSET_DIR}/${AssetType.MUSICBILL_COVER}`,
 };
 
-export const DB_LOG_DIR = `${argv.base}/db_logs`;
 export const DB_SNAPSHOT_DIR = `${argv.base}/db_snapshots`;
 
-export const SCHEDULE_LOG_DIR = `${argv.base}/schedule_logs`;
-
-export const ERROR_LOG_DIR = `${argv.base}/error_logs`;
-
-export const ASSET_LOG_DIR = `${argv.base}/asset_logs`;
-
 export const TRASH_DIR = `${argv.base}/trash`;
+
+export const LOG_DIR = `${argv.base}/logs`;
