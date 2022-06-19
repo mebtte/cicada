@@ -6,7 +6,7 @@ import { LOG_DIR } from '@/constants/directory';
 import removeOutdatedCaptcha from './jobs/remove_outdated_captcha';
 import createDBSnapshot from './jobs/create_db_snapshot';
 import removeOutdatedLoginCode from './jobs/remove_outdated_login_code';
-import cleanTrash from './jobs/clean_trash';
+import cleanOutdatedFile from './jobs/clean_outdated_file';
 import moveOutdatedFileToTrash from './jobs/move_outdated_file_to_trash';
 
 const getTimeString = () => {
@@ -40,8 +40,8 @@ const DAILY_JOBS: {
   job: schedule.JobCallback;
 }[] = [
   {
-    name: 'clean_trash',
-    job: cleanTrash,
+    name: 'clean_outdated_file',
+    job: cleanOutdatedFile,
   },
   {
     name: 'move_outdated_file_to_trash',

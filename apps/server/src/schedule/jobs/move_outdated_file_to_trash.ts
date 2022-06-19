@@ -1,38 +1,26 @@
-import fs from 'fs';
-import util from 'util';
-import { LOG_DIR, TRASH_DIR, DB_SNAPSHOT_DIR } from '@/constants/directory';
+import fs from 'fs/promises';
+import { TRASH_DIR, DB_SNAPSHOT_DIR } from '@/constants/directory';
 import withTimeout from '#/utils/with_timeout';
+import mv from '#/utils/mv';
 
 const DIRECTORIES: {
   directory: string;
   ttl: number;
 }[] = [
   {
-    directory: LOG_DIR,
-    ttl: 1000 * 60 * 60 * 24 * 30,
-  },
-  {
     directory: DB_SNAPSHOT_DIR,
     ttl: 1000 * 60 * 60 * 24 * 60,
   },
 ];
-const readdirAsync = util.promisify(fs.readdir);
-const statAsync = util.promisify(fs.stat);
-const rmAsync = util.promisify(fs.rm);
-const cpAsync = util.promisify(fs.cp);
-const mvAsync = async (source: string, dest: string) => {
-  await cpAsync(source, dest);
-  await rmAsync(source);
-};
 
 async function moveOutdatedFileToTrash() {
   for (const { directory, ttl } of DIRECTORIES) {
-    const files = await readdirAsync(directory);
+    const files = await fs.readdir(directory);
     for (const file of files) {
       const absolutePath = `${directory}/${file}`;
-      const stat = await statAsync(absolutePath);
+      const stat = await fs.stat(absolutePath);
       if (Date.now() - stat.birthtimeMs >= ttl) {
-        await mvAsync(absolutePath, `${TRASH_DIR}/${file}`);
+        await mv(absolutePath, `${TRASH_DIR}/${file}`);
       }
     }
   }
