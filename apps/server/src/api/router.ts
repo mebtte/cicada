@@ -16,11 +16,12 @@ import getSelfMusicbill from './controllers/get_self_musicbill';
 import addMusicToMusicbill from './controllers/add_music_to_musicbill';
 import removeMusicFromMusicbill from './controllers/remove_music_from_musicbill';
 import uploadMusicPlayRecord from './controllers/upload_music_play_record';
-import getMusicLrc from './controllers/get_music_lrc';
+import getLyric from './controllers/get_lyric';
 import createMusicbill from './controllers/create_musicbill';
 import updateMusicbillOrder from './controllers/update_musicbill_order';
 import deleteMusicbill from './controllers/delete_musicbill';
 import updateMusicbill from './controllers/update_musicbill';
+import searchMusic from './controllers/search_music';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -44,7 +45,9 @@ router.post('/musicbill_music', authorize, parseBody, addMusicToMusicbill); // �
 router.delete('/musicbill_music', authorize, removeMusicFromMusicbill); // 从乐单移除音乐
 router.post('/musicbill_order', authorize, parseBody, updateMusicbillOrder); // 更新乐单顺序
 
-router.get('/music_lrc', authorize, getMusicLrc); // 获取音乐歌词
+router.get('/music/search', authorize, searchMusic); // 搜索音乐
+
+router.get('/lyric', authorize, getLyric); // 获取音乐歌词
 
 /**
  * super authorize

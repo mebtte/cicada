@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MusicType } from '@/constants/music';
-import getMusicLrcRequest from '@/server_new/get_music_lrc';
 import { ExceptionCode } from '#/constants/exception';
+import getLyric from '@/server_new/get_lyric';
 import { Music } from '../constants';
 import { Status } from './constants';
 
@@ -52,19 +52,19 @@ export default (music: Music, turntable: boolean) => {
 
       setState(LRC_LOADING_STATE);
       try {
-        const musicLrc = await getMusicLrcRequest(music.id);
+        const lyric = await getLyric(music.id);
 
         if (canceled) {
           return;
         }
 
-        setState({ status: Status.LRC_SUCCESS, lrc: musicLrc.lrc });
+        setState({ status: Status.LRC_SUCCESS, lrc: lyric });
       } catch (error) {
         console.error(error);
         if (canceled) {
           return;
         }
-        if (error.code === ExceptionCode.MUSIC_LRC_NOT_EXIST) {
+        if (error.code === ExceptionCode.LYRIC_NOT_EXIST) {
           setState(LRC_EMPTY_STATE);
         } else {
           setState({ status: Status.LRC_ERROR, error, retry: getMusicLrc });

@@ -157,10 +157,10 @@ if (cluster.isPrimary) {
           CONSTRAINT fkForkFrom FOREIGN KEY ( forkFrom ) REFERENCES music ( id )
         );
       `;
-      const TABLE_MUSIC_LRC = `
-        CREATE TABLE music_lrc (
+      const TABLE_LYRIC = `
+        CREATE TABLE lyric (
           musicId TEXT PRIMARY KEY NOT NULL,
-          lrc TEXT NOT NULL,
+          content TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
         );
       `;
@@ -223,7 +223,7 @@ if (cluster.isPrimary) {
         TABLE_MUSIC,
         TABLE_MUSIC_MODIGY_RECORD,
         TABLE_MUSIC_FORK,
-        TABLE_MUSIC_LRC,
+        TABLE_LYRIC,
         TABLE_MUSIC_PLAY_RECORD,
         TABLE_MUSIC_SINGER_RELATION,
         TABLE_MUSICBILL,

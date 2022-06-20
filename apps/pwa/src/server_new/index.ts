@@ -4,15 +4,6 @@ import setting from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import env from '@/env';
-import dialog from '@/platform/dialog';
-
-function showLowVersionAlert() {
-  return dialog.alert({
-    title: '版本过低',
-    // @todo(mebtte<hi@mebtte.com>)[版本过低提示]
-    content: '',
-  });
-}
 
 export enum Method {
   GET = 'get',
@@ -81,12 +72,6 @@ export async function request<Data = void>({
 
   const { status, statusText } = response;
   if (status !== 200) {
-    switch (status) {
-      case 404: {
-        showLowVersionAlert();
-        break;
-      }
-    }
     throw new ErrorWithCode(`${statusText}(#${status})`, status);
   }
 
@@ -102,10 +87,6 @@ export async function request<Data = void>({
 
   if (code !== ExceptionCode.SUCCESS) {
     switch (code) {
-      case ExceptionCode.PARAMETER_ERROR: {
-        showLowVersionAlert();
-        break;
-      }
       case ExceptionCode.NOT_AUTHORIZE: {
         token.set('');
         break;

@@ -6,7 +6,7 @@ import { CONTROLLER_HEIGHT, Music } from '../constants';
 import PlayerContext from '../context';
 import LrcDisplay from './lrc_display';
 import TurnTable from './turntable';
-import useMusicLrc from './use_music_lrc';
+import useLyric from './use_lyric';
 import { Status } from './constants';
 
 const Container = styled(animated.div)`
@@ -44,7 +44,7 @@ const Content = ({
   music: Music;
 }) => {
   const { audioPaused } = useContext(PlayerContext);
-  const state = useMusicLrc(music, turntable);
+  const state = useLyric(music, turntable);
 
   const transitions = useTransition(state, {
     from: {

@@ -57,3 +57,5 @@ export const ASSET_TYPE_MAP: Record<
 };
 
 export const EFFECTIVE_PLAY_PERCENT = 0.75;
+
+export const ALIAS_DIVIDER = '|';
