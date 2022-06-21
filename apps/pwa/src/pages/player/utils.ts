@@ -1,29 +1,28 @@
 /* eslint-disable camelcase */
 import getRandomCover from '@/utils/get_random_cover';
-import { MusicType } from '@/constants/music';
-import { Figure, Music } from './constants';
+import { MusicType } from '#/constants/music';
+import { Character } from '@/constants/character';
+import { Music } from './constants';
 
 export const transformMusic = (originalMusic: {
   id: string;
   cover: string;
   name: string;
   type: MusicType;
-  alias: string;
-  singers: Figure[];
+  aliases: string;
+  singers: Character[];
   sq: string;
   hq: string;
   ac: string;
   mv_link: string;
-  fork?: string[];
-  fork_from?: string[];
 }): Music => {
-  const { id, cover, name, type, alias, singers, sq, hq, ac } = originalMusic;
+  const { id, cover, name, type, aliases, singers, sq, hq, ac } = originalMusic;
   return {
     id,
     cover: cover || getRandomCover(),
     name,
     type,
-    alias,
+    aliases,
     singers: singers.map((s) => ({
       ...s,
       avatar: s.avatar || getRandomCover(),

@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import styled from 'styled-components';
-
+import { Character } from '@/constants/character';
 import ellipsis from '@/style/ellipsis';
 import IconButton, { Name, Type } from '@/components/icon_button';
 import useMusicOperate from '../../use_music_operate';
 import eventemitter, { EventType } from '../../eventemitter';
 import Singer from '../../components/singer';
-import { Figure, MusicWithIndex } from '../../constants';
+import { MusicWithIndex } from '../../constants';
 
 const HEIGHT = 36;
 const ACTION_SIZE = 20;
@@ -51,9 +51,9 @@ const Style = styled.div`
   }
 `;
 
-const renderSinger = (s: Figure) => <Singer key={s.id} singer={s} />;
+const renderSinger = (s: Character) => <Singer key={s.id} singer={s} />;
 
-const Music = ({ listMusic }: { listMusic: MusicWithIndex }) => {
+function Music({ listMusic }: { listMusic: MusicWithIndex }) {
   const { onPlay, onView, onOperate, onAddToPlayqueue } = useMusicOperate(
     listMusic.music,
   );
@@ -101,6 +101,6 @@ const Music = ({ listMusic }: { listMusic: MusicWithIndex }) => {
       </div>
     </Style>
   );
-};
+}
 
 export default Music;

@@ -1,26 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
-
-import searchMusic from '@/server/search_music';
-import searchMusicByLrc from '@/server/search_music_by_lrc';
+import searchMusic from '@/server_new/search_music';
 import logger from '@/platform/logger';
 import { MusicWithIndex } from '../../constants';
-import { MusicWithIndexAndLrc, SearchType, PAGE_SIZE } from './constants';
-import { transformMusic } from '../../utils';
+import { PAGE_SIZE } from './constants';
 
 export default ({
   page,
-  searchType,
   searchValue,
 }: {
   page: number;
-  searchType: SearchType;
   searchValue: string;
 }) => {
   const [error, setError] = useState<Error | null>();
   const [loading, setLoading] = useState(false);
-  const [musicList, setMusicList] = useState<
-    MusicWithIndex[] | MusicWithIndexAndLrc[]
-  >([]);
+  const [musicList, setMusicList] = useState<MusicWithIndex[]>([]);
   const [total, setTotal] = useState(0);
   const getMusicList = useCallback(async () => {
     if (!searchValue) {
@@ -29,42 +22,24 @@ export default ({
     setError(null);
     setLoading(true);
     try {
-      if (searchType === SearchType.COMPOSITE) {
-        const data = await searchMusic({
-          page,
-          pageSize: PAGE_SIZE,
-          keyword: searchValue,
-        });
-        setTotal(data.total);
-        setMusicList(
-          data.list.map((m, index) => ({
-            index: data.list.length - index,
-            music: transformMusic(m),
-          })),
-        );
-      } else if (searchType === SearchType.LYRIC) {
-        const data = await searchMusicByLrc({
-          page,
-          pageSize: PAGE_SIZE,
-          keyword: searchValue,
-        });
-        setTotal(data.total);
-        setMusicList(
-          data.list.map((m, index) => ({
-            index: data.list.length - index,
-            music: {
-              ...transformMusic(m),
-              lrc: m.lrc,
-            },
-          })),
-        );
-      }
+      const data = await searchMusic({
+        page,
+        pageSize: PAGE_SIZE,
+        keyword: searchValue,
+      });
+      setTotal(data.total);
+      setMusicList(
+        data.musicList.map((m, i) => ({
+          index: data.musicList.length - i,
+          music: m,
+        })),
+      );
     } catch (e) {
       logger.error(e, { description: '搜索音乐失败' });
       setError(e);
     }
     setLoading(false);
-  }, [searchType, searchValue, page]);
+  }, [searchValue, page]);
 
   useEffect(() => {
     getMusicList();

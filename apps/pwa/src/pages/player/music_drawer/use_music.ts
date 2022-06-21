@@ -22,7 +22,6 @@ export default (id: string) => {
         error: null,
         loading: false,
         music: {
-          // @ts-expect-error
           ...transformMusic(music),
           fork: music.fork.map(transformMusic),
           forkFrom: music.fork_from.map(transformMusic),

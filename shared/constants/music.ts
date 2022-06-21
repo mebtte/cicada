@@ -4,3 +4,8 @@ export enum MusicSearchType {
   COMPOSITE = 'composite',
   LYRIC = 'lyric',
 }
+
+export enum MusicType {
+  SONG = 1, // 歌曲
+  INSTRUMENT = 2, // 乐曲
+}

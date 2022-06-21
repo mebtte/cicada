@@ -1,3 +1,4 @@
+import { MusicType } from '#/constants/music';
 import * as db from '.';
 
 export enum Property {
@@ -16,7 +17,7 @@ export enum Property {
 
 export type Music = {
   [Property.ID]: string;
-  [Property.TYPE]: 1 | 2;
+  [Property.TYPE]: MusicType;
   [Property.NAME]: string;
   [Property.ALIASES]: string;
   [Property.COVER]: string;

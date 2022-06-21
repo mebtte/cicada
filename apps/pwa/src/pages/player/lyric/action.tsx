@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-
-import { MusicType } from '@/constants/music';
+import { MusicType } from '#/constants/music';
 import IconButton, { Name } from '@/components/icon_button';
 import { Music } from '../constants';
 import eventemitter, { EventType } from './eventemitter';
@@ -28,7 +27,7 @@ const Style = styled.div`
 const scrollToCurrentLine = () =>
   eventemitter.emit(EventType.SCROLL_TO_CURRENT_LINE);
 
-const Action = ({
+function Action({
   music,
   turntable,
   toggleTurntable,
@@ -38,29 +37,31 @@ const Action = ({
   turntable: boolean;
   toggleTurntable: () => void;
   onClose: () => void;
-}) => (
-  <Style>
-    <IconButton
-      name={Name.AIM_OUTLINE}
-      onClick={scrollToCurrentLine}
-      size={ACTION_SIZE}
-      className="action"
-      disabled={turntable || music.type === MusicType.INSTRUMENT}
-    />
-    <IconButton
-      name={Name.EXCHANGE_OUTLINE}
-      onClick={toggleTurntable}
-      size={ACTION_SIZE}
-      className="action"
-      disabled={music.type === MusicType.INSTRUMENT}
-    />
-    <IconButton
-      name={Name.DOWN_OUTLINE}
-      onClick={onClose}
-      size={ACTION_SIZE}
-      className="action"
-    />
-  </Style>
-);
+}) {
+  return (
+    <Style>
+      <IconButton
+        name={Name.AIM_OUTLINE}
+        onClick={scrollToCurrentLine}
+        size={ACTION_SIZE}
+        className="action"
+        disabled={turntable || music.type === MusicType.INSTRUMENT}
+      />
+      <IconButton
+        name={Name.EXCHANGE_OUTLINE}
+        onClick={toggleTurntable}
+        size={ACTION_SIZE}
+        className="action"
+        disabled={music.type === MusicType.INSTRUMENT}
+      />
+      <IconButton
+        name={Name.DOWN_OUTLINE}
+        onClick={onClose}
+        size={ACTION_SIZE}
+        className="action"
+      />
+    </Style>
+  );
+}
 
 export default Action;

@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { MusicType } from '@/constants/music';
+import { MusicType } from '#/constants/music';
 import server from '.';
 
 /**
@@ -23,7 +23,7 @@ function getPublicMusicbillDetail(id: string) {
       cover: string;
       name: string;
       type: MusicType;
-      alias: string;
+      aliases: string;
       ac: string;
       hq: string;
       mv_link: string;
@@ -32,7 +32,7 @@ function getPublicMusicbillDetail(id: string) {
         id: string;
         name: string;
         avatar: string;
-        alias: string;
+        aliases: string;
       }[];
       fork?: string[];
       fork_from?: string[];

@@ -1,12 +1,12 @@
 /* eslint-disable camelcase */
-import { MusicType } from '@/constants/music';
+import { MusicType } from '#/constants/music';
 import server from '.';
 
 interface Singer {
   id: string;
   name: string;
   avatar: string;
-  alias: string;
+  aliases: string;
 }
 
 interface Music {
@@ -14,7 +14,7 @@ interface Music {
   cover: string;
   name: string;
   type: MusicType;
-  alias: string;
+  aliases: string;
   ac: string;
   hq: string;
   mv_link: string;

@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import styled, { css } from 'styled-components';
-
 import ellipsis from '@/style/ellipsis';
 import IconButton, { Name, Type } from '@/components/icon_button';
+import { Character } from '@/constants/character';
 import useMusicOperate from '../../use_music_operate';
 import eventemitter, { EventType } from '../../eventemitter';
 import Singer from '../../components/singer';
-import { Figure, QueueMusic } from '../../constants';
+import { QueueMusic } from '../../constants';
 
 const HEIGHT = 36;
 const ACTION_SIZE = 20;
@@ -58,9 +58,9 @@ const Style = styled.div<{ active: boolean }>`
   `}
 `;
 
-const renderSinger = (s: Figure) => <Singer key={s.id} singer={s} />;
+const renderSinger = (s: Character) => <Singer key={s.id} singer={s} />;
 
-const Music = ({
+function Music({
   activeIndex,
   queueMusic,
   playqueueLength,
@@ -68,7 +68,7 @@ const Music = ({
   activeIndex: number;
   playqueueLength: number;
   queueMusic: QueueMusic;
-}) => {
+}) {
   const { index } = queueMusic;
   const { onView, onOperate } = useMusicOperate(queueMusic.music);
   const onJump = useCallback(() => {
@@ -150,6 +150,6 @@ const Music = ({
       </div>
     </Style>
   );
-};
+}
 
 export default Music;

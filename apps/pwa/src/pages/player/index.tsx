@@ -15,7 +15,6 @@ import usePlayMode from './use_play_mode';
 import Context from './context';
 import Audio from './audio';
 import MediaSession from './media_session';
-import SingerDrawer from './singer_drawer';
 import MusicOperatePopup from './music_operate_popup';
 import MusicDrawer from './music_drawer';
 import ListDrawer from './list_drawer';
@@ -100,7 +99,6 @@ function Wrapper() {
         </Style>
       </Scrollable>
 
-      <SingerDrawer />
       <MusicDrawer />
       <ListDrawer />
       <MusicbillListDrawer />

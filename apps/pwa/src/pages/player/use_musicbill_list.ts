@@ -88,10 +88,8 @@ export default () => {
           }),
         );
       } catch (error) {
-        logger.error(error, {});
-        dialog.alert({
-          title: '获取乐单详情失败',
-          content: error.message,
+        logger.error(error, {
+          description: '获取自己的歌单详情失败',
         });
         setMusicbillList((mbl) =>
           mbl.map((mb) => {
@@ -114,8 +112,8 @@ export default () => {
       musicbill: Musicbill;
       music: Music;
     }) => {
-      const { id: musicbillId, name: musicbillName } = musicbill;
-      const { id: musicId, name: musicName } = music;
+      const { id: musicbillId } = musicbill;
+      const { id: musicId } = music;
       setMusicbillList((mbl) =>
         mbl.map((mb) => {
           if (mb.id === musicbillId) {
@@ -135,12 +133,11 @@ export default () => {
       try {
         await addMusicToMusicbill(musicbillId, musicId);
       } catch (error) {
-        const description = `添加音乐"${musicName}"到乐单"${musicbillName}"失败`;
         logger.error(error, {
-          description,
+          description: '添加音乐到乐单失败',
         });
         dialog.alert({
-          title: description,
+          title: '添加音乐到乐单失败',
           content: error.message,
         });
         setMusicbillList((mbl) =>
@@ -170,8 +167,8 @@ export default () => {
       musicbill: Musicbill;
       music: Music;
     }) => {
-      const { id: musicbillId, name: musicbillName } = musicbill;
-      const { id: musicId, name: musicName } = music;
+      const { id: musicbillId } = musicbill;
+      const { id: musicId } = music;
       setMusicbillList((mbl) =>
         mbl.map((mb) => {
           if (mb.id === musicbillId) {
@@ -193,12 +190,11 @@ export default () => {
       try {
         await removeMusicFromMusicbill(musicbillId, musicId);
       } catch (error) {
-        const description = `从乐单"${musicbillName}"移除音乐"${musicName}"失败`;
         logger.error(error, {
-          description,
+          description: '从乐单移除音乐失败',
         });
         dialog.alert({
-          title: description,
+          title: '从乐单移除音乐失败',
           content: error.message,
         });
         setMusicbillList((mbl) =>

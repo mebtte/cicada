@@ -1,4 +1,3 @@
-import { Character } from '@/constants/character';
 import { request } from '.';
 
 function getSelfMusicbill(id: string) {
@@ -12,12 +11,17 @@ function getSelfMusicbill(id: string) {
       id: string;
       type: 1 | 2;
       name: string;
-      alias: string;
+      aliases: string;
       cover: string;
       sq: string;
       hq: string;
       ac: string;
-      singers: Character[];
+      singers: {
+        id: string;
+        name: string;
+        aliases: string;
+        avatar: string;
+      }[];
     }[];
   }>({
     path: '/api/self_musicbill',

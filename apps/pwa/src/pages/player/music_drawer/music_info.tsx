@@ -33,23 +33,27 @@ const Style = styled.div`
   }
 `;
 
-const MusicInfo = ({ music }: { music: Music }) => (
-  <Style>
-    <div className="top">
-      <Scrollable className="text">
-        <span className="name">{music.name}</span>
-        {music.alias ? <span className="alias">{music.alias}</span> : null}
+function MusicInfo({ music }: { music: Music }) {
+  return (
+    <Style>
+      <div className="top">
+        <Scrollable className="text">
+          <span className="name">{music.name}</span>
+          {music.aliases ? (
+            <span className="alias">{music.aliases}</span>
+          ) : null}
+        </Scrollable>
+        <MusicTagList className="tag" music={music} />
+      </div>
+      <Scrollable className="singer-list">
+        {music.singers.length ? (
+          music.singers.map((s) => <Singer key={s.id} singer={s} />)
+        ) : (
+          <Singer />
+        )}
       </Scrollable>
-      <MusicTagList className="tag" music={music} />
-    </div>
-    <Scrollable className="singer-list">
-      {music.singers.length ? (
-        music.singers.map((s) => <Singer key={s.id} singer={s} />)
-      ) : (
-        <Singer />
-      )}
-    </Scrollable>
-  </Style>
-);
+    </Style>
+  );
+}
 
 export default MusicInfo;

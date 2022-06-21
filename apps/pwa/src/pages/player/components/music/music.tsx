@@ -1,26 +1,26 @@
-import * as React from 'react';
-
 import IconButton, { Name } from '@/components/icon_button';
-import { MusicWithIndex, Figure } from '../../constants';
+import { Character } from '@/constants/character';
+import { CSSProperties } from 'react';
+import { MusicWithIndex } from '../../constants';
 import useMusicOperate from '../../use_music_operate';
 import Container from './container';
 import Singer from '../singer';
 import MusicTagList from '../music_tag_list';
 
 const ACTION_SIZE = 22;
-const renderSinger = (s: Figure) => <Singer key={s.id} singer={s} />;
+const renderSinger = (s: Character) => <Singer key={s.id} singer={s} />;
 
-const Music = ({
+function Music({
   musicWithIndex,
   style,
 }: {
   musicWithIndex: MusicWithIndex;
-  style?: React.CSSProperties;
-}) => {
+  style?: CSSProperties;
+}) {
   const { index, music } = musicWithIndex;
   const { onPlay, onAddToMusicbill, onAddToPlayqueue, onOperate, onView } =
     useMusicOperate(music);
-  const { name, alias, singers } = music;
+  const { name, aliases, singers } = music;
   return (
     <Container style={style}>
       <div className="index">{index}</div>
@@ -30,7 +30,7 @@ const Music = ({
             <span className="name" onClick={onView}>
               {name}
             </span>
-            {alias ? <span className="alias">{alias}</span> : null}
+            {aliases ? <span className="alias">{aliases}</span> : null}
           </div>
           <MusicTagList music={music} />
         </div>
@@ -62,6 +62,6 @@ const Music = ({
       </div>
     </Container>
   );
-};
+}
 
 export default Music;

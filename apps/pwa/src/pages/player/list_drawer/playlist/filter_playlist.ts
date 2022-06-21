@@ -2,18 +2,18 @@ import { MusicWithIndex } from '../../constants';
 
 function filterMusic(keyword: string) {
   return (listMusic: MusicWithIndex) => {
-    const { name, alias, singers } = listMusic.music;
+    const { name, aliases, singers } = listMusic.music;
     if (
       name.toLowerCase().indexOf(keyword) > -1 ||
-      alias.toLowerCase().indexOf(keyword) > -1
+      aliases.toLowerCase().indexOf(keyword) > -1
     ) {
       return true;
     }
     for (const singer of singers) {
-      const { name: singerName, alias: singerAlias } = singer;
+      const { name: singerName, aliases: singerAliases } = singer;
       if (
         singerName.toLowerCase().indexOf(keyword) > -1 ||
-        singerAlias.toLowerCase().indexOf(keyword) > -1
+        singerAliases.toLowerCase().indexOf(keyword) > -1
       ) {
         return true;
       }

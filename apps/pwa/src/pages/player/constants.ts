@@ -1,5 +1,6 @@
 import { RequestStatus } from '@/constants';
-import { MusicType } from '@/constants/music';
+import { Character } from '@/constants/character';
+import { MusicType } from '#/constants/music';
 import { Type as TagType } from '@/components/tag';
 
 export const CONTROLLER_HEIGHT = 60;
@@ -33,23 +34,16 @@ export const PLAY_MODE_MAP: Record<
 
 export const PLAY_MODES = Object.keys(PLAY_MODE_MAP) as PlayMode[];
 
-export interface Figure {
-  id: string;
-  name: string;
-  avatar: string;
-  alias: string;
-}
-
 export interface Music {
   id: string;
   cover: string;
   name: string;
   type: MusicType;
-  alias: string;
+  aliases: string;
   ac: string;
   hq: string;
   sq: string;
-  singers: Figure[];
+  singers: Character[];
 }
 
 export interface MusicWithIndex {

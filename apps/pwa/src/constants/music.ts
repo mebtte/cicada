@@ -1,3 +1,5 @@
+import { MusicType } from '#/constants/music';
+
 export const COVER_MAX_SIZE = 1000;
 export const NAME_MAX_LENGTH = 255;
 export const ALIAS_MAX_LENGTH = 255;
@@ -15,12 +17,8 @@ export const MUSIC_AC = {
   MAX_SIZE: 1024 * 1024 * 10,
 };
 
-export enum MusicType {
-  NORMAL = 1,
-  INSTRUMENT = 2,
-}
 export const MUSIC_TYPE_MAP_LABEL: Record<MusicType, string> = {
-  [MusicType.NORMAL]: '歌曲',
+  [MusicType.SONG]: '歌曲',
   [MusicType.INSTRUMENT]: '乐曲',
 };
 export const MUSIC_TYPES = Object.keys(MUSIC_TYPE_MAP_LABEL).map((mt) =>

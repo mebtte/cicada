@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import * as React from 'react';
 import styled from 'styled-components';
-
-import { KEYWORD_MAX_LENGTH } from '@/server/search_music';
 import IconButton, { Name } from '@/components/icon_button';
 import useHistory from '@/utils/use_history';
 import { PLAYER_PATH } from '@/constants/route';
 import toast from '@/platform/toast';
 import Input from '@/components/input';
+import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import useKeyboard from './use_keyboard';
-import { Query, SearchType } from '../../pages/search/constants';
+import { Query } from '../../pages/search/constants';
 import eventemitter, { EventType } from '../../eventemitter';
 
 const Style = styled.div`
@@ -30,20 +29,10 @@ function Wrapper() {
   const onKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setKeyword(event.target.value);
 
-  const onSearch = (searchType?: SearchType) => {
+  const onSearch = () => {
     const trimKeyword = keyword.trim();
     if (!trimKeyword) {
       return toast.error('请输入关键字');
-    }
-    if (searchType) {
-      return history.push({
-        pathname: PLAYER_PATH.SEARCH,
-        query: {
-          [Query.SEARCH_TYPE]: searchType,
-          [Query.SEARCH_VALUE]: trimKeyword,
-          [Query.PAGE]: '1',
-        },
-      });
     }
     return history.push({
       pathname: PLAYER_PATH.SEARCH,
@@ -75,16 +64,9 @@ function Wrapper() {
         onKeyDown={onKeyDown}
         onFocus={onFocus}
         ref={inputRef}
-        maxLength={KEYWORD_MAX_LENGTH}
+        maxLength={SEARCH_KEYWORD_MAX_LENGTH}
       />
-      <IconButton
-        name={Name.SEARCH_OUTLINE}
-        onClick={() => onSearch(SearchType.COMPOSITE)}
-      />
-      <IconButton
-        name={Name.LYRIC_OUTLINE}
-        onClick={() => onSearch(SearchType.LYRIC)}
-      />
+      <IconButton name={Name.SEARCH_OUTLINE} onClick={onSearch} />
     </Style>
   );
 }

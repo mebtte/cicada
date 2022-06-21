@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MusicType } from '@/constants/music';
+import { MusicType } from '#/constants/music';
 import { ExceptionCode } from '#/constants/exception';
 import getLyric from '@/server_new/get_lyric';
 import { Music } from '../constants';
