@@ -98,13 +98,12 @@ if (cluster.isPrimary) {
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id )
         );
       `;
-
       const TABLE_CHARACTER = `
         CREATE TABLE character (
           id TEXT PRIMARY KEY NOT NULL,
           avatar TEXT NOT NULL DEFAULT '',
           name TEXT NOT NULL,
-          alias TEXT NOT NULL DEFAULT '',
+          aliases TEXT NOT NULL DEFAULT '',
           createUserId TEXT NOT NULL,
           createTimestamp INTEGER NOT NULL,
           CONSTRAINT fkUser FOREIGN KEY ( createUserId ) REFERENCES user ( id )
@@ -126,7 +125,7 @@ if (cluster.isPrimary) {
           id TEXT PRIMARY KEY NOT NULL,
           type INTEGER NOT NULL,
           name TEXT NOT NULL,
-          alias TEXT NOT NULL DEFAULT '',
+          aliases TEXT NOT NULL DEFAULT '',
           cover TEXT NOT NULL DEFAULT '',
           sq TEXT NOT NULL,
           hq TEXT NOT NULL DEFAULT '',

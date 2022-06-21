@@ -1,6 +1,14 @@
 import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import { getMusicbillById, Property } from '@/db/musicbill';
+import {
+  getMusicbillById,
+  Property as MusicbillProperty,
+} from '@/db/musicbill';
+import { Music, Property as MusicProperty } from '@/db/music';
+import {
+  getSingerListInMusicIds,
+  Property as CharacterProperty,
+} from '@/db/character';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetUrl } from '@/platform/asset';
 import * as db from '@/db';
@@ -14,34 +22,37 @@ export default async (ctx: Context) => {
   }
 
   const musicbill = await getMusicbillById(id, [
-    Property.ID,
-    Property.USER_ID,
-    Property.COVER,
-    Property.NAME,
-    Property.PUBLIC,
-    Property.CREATE_TIMESTAMP,
+    MusicbillProperty.ID,
+    MusicbillProperty.USER_ID,
+    MusicbillProperty.COVER,
+    MusicbillProperty.NAME,
+    MusicbillProperty.PUBLIC,
+    MusicbillProperty.CREATE_TIMESTAMP,
   ]);
 
   if (!musicbill || musicbill.userId !== ctx.user.id) {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
 
-  const musicList = await db.all<{
-    id: string;
-    type: 1 | 2;
-    name: string;
-    alias: string;
-    cover: string;
-    sq: string;
-    hq: string;
-    ac: string;
-  }>(
+  const musicList = await db.all<
+    Pick<
+      Music,
+      | MusicProperty.ID
+      | MusicProperty.TYPE
+      | MusicProperty.NAME
+      | MusicProperty.ALIASES
+      | MusicProperty.COVER
+      | MusicProperty.SQ
+      | MusicProperty.HQ
+      | MusicProperty.AC
+    >
+  >(
     `
       SELECT
         m.id,
         m.type,
         m.name,
-        m.alias,
+        m.aliases,
         m.cover,
         m.sq,
         m.hq,
@@ -57,33 +68,20 @@ export default async (ctx: Context) => {
     [id],
   );
 
-  const allSingerList = await db.all<{
-    musicId: string;
-    id: string;
-    name: string;
-    alias: string;
-    avatar: string;
-  }>(
-    `
-      SELECT
-        c.id,
-        c.name,
-        c.alias,
-        c.avatar,
-        msr.musicId
-      FROM
-        music_singer_relation AS msr
-        LEFT JOIN character AS c ON msr.singerId = c.id 
-      WHERE
-        msr.musicId IN ( ${musicList.map(() => '?').join(',')} );
-    `,
+  const allSingerList = await getSingerListInMusicIds(
     musicList.map((m) => m.id),
+    [
+      CharacterProperty.ID,
+      CharacterProperty.AVATAR,
+      CharacterProperty.NAME,
+      CharacterProperty.ALIASES,
+    ],
   );
   const musicIdMapSingers: {
     [key: string]: {
       id: string;
       name: string;
-      alias: string;
+      aliases: string;
       avatar: string;
     }[];
   } = {};
@@ -98,7 +96,7 @@ export default async (ctx: Context) => {
   }
 
   return ctx.success({
-    ...excludeProperty(musicbill, [Property.USER_ID]),
+    ...excludeProperty(musicbill, [MusicbillProperty.USER_ID]),
     cover: getAssetUrl(musicbill.cover, AssetType.MUSICBILL_COVER),
     musicList: musicList.map((m) => ({
       ...m,
