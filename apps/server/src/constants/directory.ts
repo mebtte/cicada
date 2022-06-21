@@ -17,3 +17,5 @@ export const DB_SNAPSHOT_DIR = `${argv.base}/db_snapshots`;
 export const TRASH_DIR = `${argv.base}/trash`;
 
 export const LOG_DIR = `${argv.base}/logs`;
+
+export const MUSICBILL_EXPORT_DIR = `${argv.base}/musicbill_exports`;

@@ -22,6 +22,7 @@ import {
   DB_SNAPSHOT_DIR,
   LOG_DIR,
   TRASH_DIR,
+  MUSICBILL_EXPORT_DIR,
 } from './constants/directory';
 import argv from './argv';
 
@@ -41,6 +42,7 @@ if (cluster.isPrimary) {
     DB_SNAPSHOT_DIR,
     TRASH_DIR,
     LOG_DIR,
+    MUSICBILL_EXPORT_DIR,
 
     ROOT_ASSET_DIR,
     ...Object.values(ASSET_DIR),
@@ -211,6 +213,17 @@ if (cluster.isPrimary) {
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
         );
       `;
+      const TABLE_MUSICBILL_EXPORT = `
+        CREATE TABLE musicbill_export (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          userId TEXT NOT NULL,
+          musicbillId TEXT NOT NULL,
+          createTimestamp INTEGER NOT NULL,
+          exportedTimestamp INTEGER DEFAULT NULL,
+          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ),
+          CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ) 
+        );
+      `;
 
       /** 注意表创建顺序 */
       const TABLES = [
@@ -228,6 +241,7 @@ if (cluster.isPrimary) {
         TABLE_MUSICBILL,
         TABLE_MUSICBILL_MUSIC,
         TABLE_USER_MUSICBILL_ORDER,
+        TABLE_MUSICBILL_EXPORT,
       ];
       for (const table of TABLES) {
         await dbRun(table);

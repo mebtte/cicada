@@ -22,6 +22,7 @@ import updateMusicbillOrder from './controllers/update_musicbill_order';
 import deleteMusicbill from './controllers/delete_musicbill';
 import updateMusicbill from './controllers/update_musicbill';
 import searchMusic from './controllers/search_music';
+import createMusicbillExport from './controllers/create_musicbill_export';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -44,6 +45,7 @@ router.put('/musicbill', authorize, parseBody, updateMusicbill); // 更新乐单
 router.post('/musicbill_music', authorize, parseBody, addMusicToMusicbill); // 添加音乐到乐单
 router.delete('/musicbill_music', authorize, removeMusicFromMusicbill); // 从乐单移除音乐
 router.post('/musicbill_order', authorize, parseBody, updateMusicbillOrder); // 更新乐单顺序
+router.post('/musicbill_export', authorize, parseBody, createMusicbillExport); // 创建乐单导出
 
 router.get('/music/search', authorize, searchMusic); // 搜索音乐
 

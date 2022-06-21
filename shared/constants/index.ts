@@ -59,3 +59,5 @@ export const ASSET_TYPE_MAP: Record<
 export const EFFECTIVE_PLAY_PERCENT = 0.75;
 
 export const ALIAS_DIVIDER = '|';
+
+export const MUSICBILL_EXPORT_TTL = 1000 * 60 * 60 * 24;

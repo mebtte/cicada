@@ -17,6 +17,7 @@ export enum ExceptionCode {
   LYRIC_NOT_EXIST,
   ASSET_NOT_EXIST,
   MUSICBILL_DO_NOT_NEED_TO_UPDATE,
+  OVER_EXPORT_MUSICBILL_TIMES_PER_DAY,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -78,5 +79,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.MUSICBILL_DO_NOT_NEED_TO_UPDATE]: {
     description: '乐单无需更新',
+  },
+  [ExceptionCode.OVER_EXPORT_MUSICBILL_TIMES_PER_DAY]: {
+    description: '超出每天导出乐单最大次数',
   },
 };
