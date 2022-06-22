@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import argv from '@/argv';
+import { BRAND_NAME } from '#/constants';
 
 const transporter = nodemailer.createTransport({
   host: argv.emailHost,
@@ -14,7 +15,7 @@ const transporter = nodemailer.createTransport({
  * 发送邮件
  * @author mebtte<hi@mebtte.com>
  */
-export function sendMail({
+export function sendEmail({
   to,
   title,
   html,
@@ -26,7 +27,7 @@ export function sendMail({
   return new Promise((resolve, reject) => {
     transporter.sendMail(
       {
-        from: `知了 <${argv.emailUser}>`,
+        from: `${BRAND_NAME} <${argv.emailUser}>`,
         to,
         subject: title,
         html,

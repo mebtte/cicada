@@ -1,3 +1,4 @@
+import { encode } from 'html-entities';
 import { EMAIL } from '#/constants/regexp';
 import { ExceptionCode } from '#/constants/exception';
 import * as db from '@/db';
@@ -7,7 +8,9 @@ import {
   saveLoginCode,
 } from '@/platform/login_code';
 import generateRandomInteger from '#/utils/generate_random_integer';
-import { sendMail } from '@/platform/email';
+import { sendEmail } from '@/platform/email';
+import { BRAND_NAME } from '#/constants';
+import day from '#/utils/day';
 import { LOGIN_CODE_TTL } from '../../constants';
 import { Context } from '../constants';
 
@@ -51,14 +54,22 @@ export default async (ctx: Context) => {
 
   const code = generateRandomInteger(100000, 1000000).toString();
 
-  await sendMail({
+  await sendEmail({
     to: email,
-    title: '「知了」登录验证码',
-    html: `Hi, 「${
-      user.nickname
-    }」,<br><br>你刚刚尝试登录, 本次登录验证码是「<code>${code}</code>」, ${
+    title: `「${BRAND_NAME}」登录验证码`,
+    html: `
+      Hi, 「${encode(user.nickname)}」,
+      <br />
+      <br />
+      你刚刚尝试登录, 本次登录验证码是「<code>${code}</code>」, ${
       LOGIN_CODE_TTL / 1000 / 60
-    } 分钟内有效.`,
+    } 分钟内有效.
+      <br />
+      <br />
+      ${BRAND_NAME}
+      <br />
+      ${day().format('YYYY-MM-DD HH:mm:ss')}
+    `,
   });
 
   await saveLoginCode({ userId: user.id, code });

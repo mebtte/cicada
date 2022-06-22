@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "description": "知了, 一个自托管的音乐服务.",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -37,14 +37,18 @@
     "npm": ">=8"
   },
   "dependencies": {
+    "@expo/spawn-async": "^1.6.0",
     "@koa/cors": "^3.3.0",
+    "archiver": "^5.3.1",
     "ffmpeg-static": "^5.0.0",
     "file-type": "^16.5.3",
+    "html-entities": "^2.3.3",
     "koa": "^2.13.4",
     "md5": "^2.3.0",
     "multiparty": "^4.2.3",
     "node-schedule": "^2.1.0",
     "nodemailer": "^6.7.5",
+    "sanitize-filename": "^1.6.3",
     "sqlite3": "^5.0.8",
     "svg-captcha": "^1.4.0",
     "ts-node": "^10.7.0"
@@ -61,6 +65,7 @@
     "@mui/material": "^5.8.1",
     "@mui/styled-engine-sc": "^5.8.0",
     "@tippyjs/react": "^4.2.5",
+    "@types/archiver": "^5.3.1",
     "@types/d3-ease": "^2.0.0",
     "@types/dompurify": "^2.2.2",
     "@types/ffmpeg-static": "^3.0.1",

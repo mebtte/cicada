@@ -12,7 +12,8 @@ import asset from './asset';
 import pwa from './pwa';
 import schedule from './schedule';
 import env from './env';
-import { ASSET_PREFIX } from './constants';
+import { ASSET_PREFIX, DOWNLOAD_PREFIX } from './constants';
+import download from './download';
 
 async function start() {
   if (cluster.isPrimary) {
@@ -54,6 +55,7 @@ async function start() {
       }),
     );
     server.use(mount(`/${ASSET_PREFIX}`, asset));
+    server.use(mount(`/${DOWNLOAD_PREFIX}`, download));
     server.use(mount('/api', api));
     server.use(mount('/blob', blob));
     server.use(mount('/', pwa));

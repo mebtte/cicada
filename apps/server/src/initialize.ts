@@ -22,7 +22,8 @@ import {
   DB_SNAPSHOT_DIR,
   LOG_DIR,
   TRASH_DIR,
-  MUSICBILL_EXPORT_DIR,
+  ROOT_DOWNLOAD_DIR,
+  DOWNLOAD_DIR,
 } from './constants/directory';
 import argv from './argv';
 
@@ -42,10 +43,12 @@ if (cluster.isPrimary) {
     DB_SNAPSHOT_DIR,
     TRASH_DIR,
     LOG_DIR,
-    MUSICBILL_EXPORT_DIR,
 
     ROOT_ASSET_DIR,
     ...Object.values(ASSET_DIR),
+
+    ROOT_DOWNLOAD_DIR,
+    ...Object.values(DOWNLOAD_DIR),
   ];
   for (const directory of directories) {
     mkdirIfNotExist(directory);

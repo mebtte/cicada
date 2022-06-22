@@ -4,9 +4,10 @@ import { EMAIL } from '#/constants/regexp';
 import * as db from '@/db';
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
-import { sendMail } from '@/platform/email';
+import { sendEmail } from '@/platform/email';
 import argv from '@/argv';
 import { Property, getUserByEmail } from '@/db/user';
+import { BRAND_NAME } from '#/constants';
 import { Context } from '../constants';
 
 const generateEmailHtml = () => `Hi,
@@ -47,9 +48,9 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.EMAIL_EXISTED);
   }
 
-  await sendMail({
+  await sendEmail({
     to: email,
-    title: '欢迎使用知了',
+    title: `欢迎使用${BRAND_NAME}`,
     html: generateEmailHtml(),
   });
 

@@ -1,5 +1,7 @@
+import path from 'path';
 import { AssetType } from '#/constants';
 import argv from '@/argv';
+import { DownloadType } from '.';
 
 export const ROOT_ASSET_DIR = `${argv.base}/assets`;
 export const ASSET_DIR: Record<AssetType, string> = {
@@ -18,4 +20,7 @@ export const TRASH_DIR = `${argv.base}/trash`;
 
 export const LOG_DIR = `${argv.base}/logs`;
 
-export const MUSICBILL_EXPORT_DIR = `${argv.base}/musicbill_exports`;
+export const ROOT_DOWNLOAD_DIR = path.join(__dirname, '../../../../downloads');
+export const DOWNLOAD_DIR: Record<DownloadType, string> = {
+  [DownloadType.MUSICBILL_EXPORT]: `${ROOT_DOWNLOAD_DIR}/${DownloadType.MUSICBILL_EXPORT}`,
+};

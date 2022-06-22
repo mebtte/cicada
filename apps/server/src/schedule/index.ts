@@ -8,6 +8,7 @@ import createDBSnapshot from './jobs/create_db_snapshot';
 import removeOutdatedLoginCode from './jobs/remove_outdated_login_code';
 import cleanOutdatedFile from './jobs/clean_outdated_file';
 import moveOutdatedFileToTrash from './jobs/move_outdated_file_to_trash';
+import exportMusicbill from './jobs/export_musicbill';
 
 const getTimeString = () => {
   const now = day();
@@ -30,19 +31,19 @@ const onError = ({ job, error }: { job: string; error: Error }) => {
     `[${timeString.time}] ${job}\n${error.stack}\n\n`,
   );
 };
+const onFinish = (job: string) => {
+  const timeString = getTimeString();
+  appendFileAysnc(
+    `${LOG_DIR}/schedule_emit_${timeString.date}.log`,
+    `[${timeString.time}] ${job} done\n`,
+  );
+};
 
-/**
- * 每日任务
- * 注意顺序
- */
-const DAILY_JOBS: {
+interface Job {
   name: string;
   job: schedule.JobCallback;
-}[] = [
-  {
-    name: 'clean_outdated_file',
-    job: cleanOutdatedFile,
-  },
+}
+const DAILY_JOBS: Job[] = [
   {
     name: 'move_outdated_file_to_trash',
     job: moveOutdatedFileToTrash,
@@ -60,6 +61,12 @@ const DAILY_JOBS: {
     job: createDBSnapshot,
   },
 ];
+const HOURLY_JOBS: Job[] = [
+  {
+    name: 'clean_oudated_file',
+    job: cleanOutdatedFile,
+  },
+];
 
 export default {
   start: () => {
@@ -75,7 +82,8 @@ export default {
             job: dailyJob.name,
             error,
           }),
-        );
+        )
+        .addListener('success', () => onFinish(dailyJob.name));
 
       minute += 5;
       if (minute >= 60) {
@@ -83,5 +91,32 @@ export default {
         hour += 1;
       }
     }
+
+    /** hourly */
+    minute = 0;
+    for (const hourlyJob of HOURLY_JOBS) {
+      schedule
+        .scheduleJob(`0 ${minute} * * * *`, hourlyJob.job)
+        .addListener('run', () => onRun(hourlyJob.name))
+        .addListener('error', (error) =>
+          onError({
+            job: hourlyJob.name,
+            error,
+          }),
+        );
+
+      minute = (minute + 7) % 60;
+    }
+
+    /** custom */
+    schedule
+      .scheduleJob('0 */5 * * * *', exportMusicbill)
+      .addListener('run', () => onRun('export_musicbill'))
+      .addListener('error', (error) =>
+        onError({
+          job: 'export_musicbill',
+          error,
+        }),
+      );
   },
 };

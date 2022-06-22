@@ -1,6 +1,6 @@
 import fs from 'fs';
 import os from 'os';
-import cp from 'child_process';
+import spawnAsync from '@expo/spawn-async';
 import util from 'util';
 import { AssetType, ASSET_TYPES, ASSET_TYPE_MAP } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
@@ -18,7 +18,6 @@ import { Context } from '../constants';
 const appendFileAsync = util.promisify(fs.appendFile);
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
-const execAsync = util.promisify(cp.exec);
 const ASSET_TYPE_MAP_OPTION: Record<
   AssetType,
   {
@@ -60,9 +59,14 @@ const ASSET_TYPE_MAP_OPTION: Record<
         10,
         false,
       )}.m4a`;
-      await execAsync(
-        `${ffmpeg} -y -i ${file.path} -metadata title="" -metadata artist="" -metadata album="" -metadata copyright="" ${targetPath}`,
-      );
+      await spawnAsync(ffmpeg, [
+        '-y',
+        '-i',
+        file.path,
+        '-map_metadata',
+        '-1',
+        targetPath,
+      ]);
       return readFileAsync(targetPath);
     },
     generateId: (buffer) => {
@@ -76,9 +80,14 @@ const ASSET_TYPE_MAP_OPTION: Record<
         10,
         false,
       )}.m4a`;
-      await execAsync(
-        `${ffmpeg} -y -i ${file.path} -metadata title="" -metadata artist="" -metadata album="" -metadata copyright="" ${targetPath}`,
-      );
+      await spawnAsync(ffmpeg, [
+        '-y',
+        '-i',
+        file.path,
+        '-map_metadata',
+        '-1',
+        targetPath,
+      ]);
       return readFileAsync(targetPath);
     },
     generateId: (buffer) => {
@@ -92,9 +101,14 @@ const ASSET_TYPE_MAP_OPTION: Record<
         10,
         false,
       )}.flac`;
-      await execAsync(
-        `${ffmpeg} -y -i ${file.path} -metadata title="" -metadata artist="" -metadata album="" -metadata copyright="" ${targetPath}`,
-      );
+      await spawnAsync(ffmpeg, [
+        '-y',
+        '-i',
+        file.path,
+        '-map_metadata',
+        '-1',
+        targetPath,
+      ]);
       return readFileAsync(targetPath);
     },
     generateId: (buffer) => {

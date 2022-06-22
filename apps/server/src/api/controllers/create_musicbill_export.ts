@@ -21,6 +21,19 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
 
+  const musicListTotal = await db.get<{
+    value: number;
+  }>(
+    `
+      select count(*) as value from musicbill_music
+        where musicbillId = ?
+    `,
+    [id],
+  );
+  if (!musicListTotal?.value) {
+    return ctx.except(ExceptionCode.FORBID_EXPORT_EMPTY_MUSICBILL);
+  }
+
   const now = day();
   const todayExportTimes = await db.get<{ value: number }>(
     `
