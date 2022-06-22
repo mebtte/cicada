@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
-import p from '@/global_states/profile';
+import p, { Profile as ProfileType } from '@/global_states/profile';
 import getRandomCover from '@/utils/get_random_cover';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
@@ -35,39 +35,42 @@ const Style = styled(Paper)`
   }
 `;
 
-function UserPanel({ visible }: { visible: boolean }) {
+function Profile({ profile }: { profile: ProfileType }) {
   const history = useHistory();
   const location = useLocation();
-  const profile = p.useState();
 
   useEffect(() => {
-    if (profile) {
-      const timer = window.setTimeout(() => {
-        const query = parseSearch<LoginQuery>(location.search);
-        const redirect = query.redirect || '/';
-        history.push(redirect);
-      }, 5000);
-      return () => window.clearTimeout(timer);
-    }
-  }, [history, location.search, profile]);
+    const timer = window.setTimeout(() => {
+      const query = parseSearch<LoginQuery>(location.search);
+      const redirect = query.redirect || '/';
+      history.push(redirect);
+    }, 5000);
+    return () => window.clearTimeout(timer);
+  }, [history, location.search]);
+
+  return (
+    <Stack spacing={4}>
+      <Logo />
+      <div className="avatar-box">
+        <Avatar className="avatar" src={profile.avatar || DEFAULT_AVATAR} />
+      </div>
+      <Typography className="text">
+        🎉 欢迎回来,{' '}
+        {profile.nickname.length > NICKNAME_MAX_LENGTH
+          ? `${profile.nickname.slice(0, NICKNAME_MAX_LENGTH)}...`
+          : profile.nickname}
+      </Typography>
+      <LinearProgress />
+    </Stack>
+  );
+}
+
+function UserPanel({ visible }: { visible: boolean }) {
+  const profile = p.useState();
 
   let content: ReactNode = null;
   if (profile) {
-    content = (
-      <Stack spacing={4}>
-        <Logo />
-        <div className="avatar-box">
-          <Avatar className="avatar" src={profile.avatar || DEFAULT_AVATAR} />
-        </div>
-        <Typography className="text">
-          🎉 欢迎回来,{' '}
-          {profile.nickname.length > NICKNAME_MAX_LENGTH
-            ? `${profile.nickname.slice(0, NICKNAME_MAX_LENGTH)}...`
-            : profile.nickname}
-        </Typography>
-        <LinearProgress />
-      </Stack>
-    );
+    content = <Profile profile={profile} />;
   }
 
   return <Style visible={visible ? 1 : 0}>{content}</Style>;

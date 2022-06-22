@@ -13,7 +13,11 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.TEXT_COLOR_SECONDARY]: 'rgb(155 155 155)',
 };
 
-export default createGlobalStyle`
+export function getCSSVariable(v: CSSVariable) {
+  return `var(${v})`;
+}
+
+export const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
