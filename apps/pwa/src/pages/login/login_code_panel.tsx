@@ -11,7 +11,7 @@ import {
 } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
-import notice from '@/platform/notice';
+import notice from '@/utils/notice';
 import loginRequest from '@/server_new/login';
 import t from '@/global_states/token';
 import p from '@/global_states/profile';
@@ -29,12 +29,10 @@ function LoginCodePanel({
   visible,
   email,
   toPrevious,
-  toNext,
 }: {
   visible: boolean;
   email: string;
   toPrevious: () => void;
-  toNext: () => void;
 }) {
   const loginCodeRef = useRef<HTMLInputElement>(null);
 
@@ -60,8 +58,6 @@ function LoginCodePanel({
         ...profile,
         super: !!profile.super,
       });
-
-      sleep(0).then(() => toNext());
 
       storage.setItem({ key: Key.LAST_SIGNIN_EMAIL, value: email });
     } catch (error) {

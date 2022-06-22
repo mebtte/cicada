@@ -18,7 +18,7 @@ import { CAPTCHA_TTL } from '#/constants';
 import getCaptchaRequest from '@/server_new/get_captcha';
 import getLoginCodeRequest from '@/server_new/get_login_code';
 import { ExceptionCode } from '#/constants/exception';
-import notice from '@/platform/notice';
+import notice from '@/utils/notice';
 import sleep from '#/utils/sleep';
 import ErrorWithCode from '@/utils/error_with_code';
 

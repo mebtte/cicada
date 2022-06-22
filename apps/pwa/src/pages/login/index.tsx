@@ -69,7 +69,6 @@ function Login() {
             visible={step === Step.SECOND}
             email={email}
             toPrevious={() => setStep(Step.FIRST)}
-            toNext={() => setStep(Step.THIRD)}
           />
           <UserPanel visible={step === Step.THIRD} />
         </div>

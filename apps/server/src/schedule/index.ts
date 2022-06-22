@@ -103,7 +103,8 @@ export default {
             job: hourlyJob.name,
             error,
           }),
-        );
+        )
+        .addListener('success', () => onFinish(hourlyJob.name));
 
       minute = (minute + 7) % 60;
     }
@@ -117,6 +118,7 @@ export default {
           job: 'export_musicbill',
           error,
         }),
-      );
+      )
+      .addListener('success', () => onFinish('export_musicbill'));
   },
 };
