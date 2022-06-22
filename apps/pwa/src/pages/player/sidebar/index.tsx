@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import u from '@/global_states/user';
+import p from '@/global_states/profile';
 import User from './user';
 import MusicbillList from './musicbill_list';
 import Menu from './menu';
@@ -16,10 +16,10 @@ const Style = styled.div`
 `;
 
 function Sidebar() {
-  const user = u.useState();
+  const profile = p.useState();
   return (
     <Style>
-      <User user={user!} />
+      <User profile={profile!} />
       <Menu />
       <MusicbillList />
     </Style>

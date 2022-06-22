@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
-import u from '@/global_states/user';
+import p from '@/global_states/profile';
 import getRandomCover from '@/utils/get_random_cover';
 import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
@@ -38,10 +38,10 @@ const Style = styled(Paper)`
 function UserPanel({ visible }: { visible: boolean }) {
   const history = useHistory();
   const location = useLocation();
-  const user = u.useState();
+  const profile = p.useState();
 
   useEffect(() => {
-    if (user) {
+    if (profile) {
       const timer = window.setTimeout(() => {
         const query = parseSearch<LoginQuery>(location.search);
         const redirect = query.redirect || '/';
@@ -49,21 +49,21 @@ function UserPanel({ visible }: { visible: boolean }) {
       }, 5000);
       return () => window.clearTimeout(timer);
     }
-  }, [history, location.search, user]);
+  }, [history, location.search, profile]);
 
   let content: ReactNode = null;
-  if (user) {
+  if (profile) {
     content = (
       <Stack spacing={4}>
         <Logo />
         <div className="avatar-box">
-          <Avatar className="avatar" src={user.avatar || DEFAULT_AVATAR} />
+          <Avatar className="avatar" src={profile.avatar || DEFAULT_AVATAR} />
         </div>
         <Typography className="text">
           🎉 欢迎回来,{' '}
-          {user.nickname.length > NICKNAME_MAX_LENGTH
-            ? `${user.nickname.slice(0, NICKNAME_MAX_LENGTH)}...`
-            : user.nickname}
+          {profile.nickname.length > NICKNAME_MAX_LENGTH
+            ? `${profile.nickname.slice(0, NICKNAME_MAX_LENGTH)}...`
+            : profile.nickname}
         </Typography>
         <LinearProgress />
       </Stack>

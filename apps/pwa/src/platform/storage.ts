@@ -1,7 +1,7 @@
 export enum Key {
   SETTING = 'setting',
   TOKEN = 'token',
-  USER = 'user',
+  PROFILE = 'profile',
   LAST_SIGNIN_EMAIL = 'last_signin_email',
 
   PLAYER_VOLUME = 'player_volume',

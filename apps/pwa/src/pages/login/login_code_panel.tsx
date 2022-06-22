@@ -14,7 +14,7 @@ import Button from '@mui/material/Button';
 import notice from '@/platform/notice';
 import loginRequest from '@/server_new/login';
 import t from '@/global_states/token';
-import u from '@/global_states/user';
+import p from '@/global_states/profile';
 import getProfile from '@/server_new/get_profile';
 import sleep from '#/utils/sleep';
 import storage, { Key } from '@/platform/storage';
@@ -55,10 +55,10 @@ function LoginCodePanel({
 
       await sleep(0);
 
-      const user = await getProfile();
-      u.set({
-        ...user,
-        super: !!user.super,
+      const profile = await getProfile();
+      p.set({
+        ...profile,
+        super: !!profile.super,
       });
 
       sleep(0).then(() => toNext());

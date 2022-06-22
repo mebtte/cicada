@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { useEffect, useState } from 'react';
 import storage, { Key } from '@/platform/storage';
-import u from '@/global_states/user';
+import p from '@/global_states/profile';
 import EmailPanel from './email_panel';
 import LoginCodePanel from './login_code_panel';
 import UserPanel from './user_panel';
@@ -42,18 +42,18 @@ const Style = styled.div<{ step: Step }>`
 const getInitialEmail = () => storage.getItem(Key.LAST_SIGNIN_EMAIL) || '';
 
 function Login() {
-  const user = u.useState();
+  const profile = p.useState();
 
   const [step, setStep] = useState(Step.FIRST);
   const [email, setEmail] = useState(getInitialEmail);
 
   useEffect(() => {
-    if (user) {
+    if (profile) {
       setStep(Step.THIRD);
     } else {
       setStep(Step.FIRST);
     }
-  }, [user]);
+  }, [profile]);
 
   return (
     <Style step={step}>
