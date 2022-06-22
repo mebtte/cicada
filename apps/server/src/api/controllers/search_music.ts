@@ -52,13 +52,20 @@ export default async (ctx: Context) => {
         s.name LIKE ?
         OR s.aliases LIKE ?
   `;
-  const count = await db.get<{ value: number }>(
+  const total = await db.get<{ value: number }>(
     `
       SELECT count(*) as value FROM music 
         WHERE id IN ( ${musicPatternSQL} ) OR id IN ( ${sinegrPatternSQL} )
     `,
     [pattern, pattern, pattern, pattern],
   );
+  if (!total!.value) {
+    return ctx.success({
+      total: 0,
+      musicList: [],
+    });
+  }
+
   const musicList = await db.all<
     Pick<
       Music,
@@ -98,6 +105,13 @@ export default async (ctx: Context) => {
       pageSizeNumber * (pageNumber - 1),
     ],
   );
+  if (!musicList.length) {
+    return ctx.success({
+      total: total!.value,
+      musicList: [],
+    });
+  }
+
   const [userList, singerList] = await Promise.all([
     getUserListByIds(
       Array.from(new Set(musicList.map((m) => m.createUserId))),
@@ -144,7 +158,7 @@ export default async (ctx: Context) => {
   });
 
   return ctx.success({
-    total: count!.value,
+    total: total!.value,
     musicList: musicList.map((m) => ({
       ...excludeProperty(m, [MusicProperty.CREATE_USER_ID]),
       cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
