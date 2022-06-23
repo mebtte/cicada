@@ -9,3 +9,9 @@ export enum MusicType {
   SONG = 1, // 歌曲
   INSTRUMENT = 2, // 乐曲
 }
+
+export const MUSIC_TYPES = Object.values(MusicType).filter(
+  (mt) => typeof mt === 'number',
+) as MusicType[];
+
+export const NAME_MAX_LENGTH = 32;

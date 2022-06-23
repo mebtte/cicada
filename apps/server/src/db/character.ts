@@ -40,3 +40,16 @@ export function getSingerListInMusicIds<P extends Property>(
     musicIds,
   );
 }
+
+export function getCharacterListByIds<P extends Property>(
+  ids: string[],
+  properties: P[],
+) {
+  return db.all<Pick<Character, P>>(
+    `
+      select ${properties.join(',')} from character
+        where id in ( ${ids.map(() => '?')} )
+    `,
+    [ids],
+  );
+}
