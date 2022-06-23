@@ -31,6 +31,11 @@ const result = {
     Number(
       argv.userExportMusicbillMaxTimesPerDay ||
         fromFile.userExportMusicbillMaxTimesPerDay,
+    ) || 3,
+  userUploadMusicMaxTimesPerDay:
+    Number(
+      argv.userUploadMusicMaxTimesPerDay ||
+        fromFile.userUploadMusicMaxTimesPerDay,
     ) || 5,
 } as {
   base: string;
@@ -41,8 +46,8 @@ const result = {
   emailUser: string;
   emailPass: string;
   port: number;
-  initialSuperUserEmail?: string;
   userExportMusicbillMaxTimesPerDay: number;
+  userUploadMusicMaxTimesPerDay: number;
 };
 
 if (!result.emailHost || !result.emailUser || !result.emailPass) {

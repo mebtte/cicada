@@ -39,8 +39,8 @@ npm start -- --emailHost=email.com --emailUser=mebtte@email.com --emailPass=secr
 | publicAddress                     | string | 否       | http://localhost:{{serverPort}} | **实际**暴露服务的地址, 比如通过 https://cicada.mebtte.com 暴露服务 |
 | clusterCount                      | number | 否       | {{os.cups().length}}            | 服务进程数量                                                        |
 | base                              | string | 否       | {{project}}/resources           | 数据存放目录                                                        |
-| initialSuperUserEmail             | string | 否       | -                               | 初始超级账号邮箱, 如果未指定, 将在首次运行提示输入                  |
-| userExportMusicbillMaxTimesPerDay | number | 否       | 5                               | 用户每天导出乐单最大次数                                            |
+| userExportMusicbillMaxTimesPerDay | number | 否       | 3                               | 用户每天导出乐单最大次数                                            |
+| userUploadMusicMaxTimesPerDay     | number | 否       | 5                               | 用户每天上传音乐最大次数                                            |
 
 除 CLI 参数外, 配置还支持文件方式, 在根目录创建 `argv.json`, 将同名配置写入文件中. 如果 CLI 参数和配置文件同时存在, 则按照 `CLI` > `argv.json` > `default` 的优先级.
 

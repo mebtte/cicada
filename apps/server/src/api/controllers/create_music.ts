@@ -9,21 +9,22 @@ import {
 } from '@/db/character';
 import { getAssetPath } from '@/platform/asset';
 import * as db from '@/db';
+import day from '#/utils/day';
+import { Music, Property as MusicProperty } from '@/db/music';
+import argv from '@/argv';
 import { Context } from '../constants';
 
 const ID_LENGTH = 8;
 
 export default async (ctx: Context) => {
-  const { name, singerIdList, type, sq } = ctx.request.body;
+  const { name, singerIds, type, sq } = ctx.request.body;
 
   if (
     typeof name !== 'string' ||
     !name.length ||
     name.length > NAME_MAX_LENGTH ||
-    !(singerIdList instanceof Array) ||
-    !singerIdList.length ||
-    singerIdList.filter((sId) => typeof sId !== 'string' || !sId.length)
-      .length ||
+    typeof singerIds !== 'string' ||
+    !singerIds.length ||
     !MUSIC_TYPES.includes(type) ||
     typeof sq !== 'string'
   ) {
@@ -35,11 +36,24 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
   }
 
+  const singerIdList = singerIds.split(',');
   const singerList = await getCharacterListByIds(singerIdList, [
     CharacterProperty.ID,
   ]);
   if (singerList.length !== singerIdList.length) {
     return ctx.except(ExceptionCode.CHARACTER_NOT_EXIST);
+  }
+
+  const todayUploadMusicList = await db.all<Pick<Music, MusicProperty.ID>>(
+    `
+      select id from music
+        where createUserId = ?
+          and createTimestamp > ? and createTimestamp < ?
+    `,
+    [ctx.user.id, day().startOf('day'), day().endOf('day')],
+  );
+  if (todayUploadMusicList.length > argv.userUploadMusicMaxTimesPerDay) {
+    return ctx.except(ExceptionCode.OVER_UPLOAD_MUSIC_TIMES_PER_DAY);
   }
 
   const id = generateRandomString(ID_LENGTH, false);

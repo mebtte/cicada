@@ -265,7 +265,7 @@ if (cluster.isPrimary) {
       );
     const superUser = await dbGet('select * from user where super = 1');
     if (!superUser) {
-      let superUserEmail = argv.initialSuperUserEmail || '';
+      let superUserEmail = '';
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
