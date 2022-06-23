@@ -48,7 +48,7 @@ router.delete('/musicbill_music', authorize, removeMusicFromMusicbill); // 从�
 router.post('/musicbill_order', authorize, parseBody, updateMusicbillOrder); // 更新乐单顺序
 router.post('/musicbill_export', authorize, parseBody, createMusicbillExport); // 创建乐单导出
 
-router.get('/music', authorize, parseBody, createMusic); // 创建音乐
+router.post('/music', authorize, parseBody, createMusic); // 创建音乐
 router.get('/music/search', authorize, searchMusic); // 搜索音乐
 
 router.get('/lyric', authorize, getLyric); // 获取音乐歌词
