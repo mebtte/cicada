@@ -75,7 +75,7 @@ export default {
     let minute = 0;
     for (const dailyJob of DAILY_JOBS) {
       schedule
-        .scheduleJob(`0 ${minute} ${hour} * * *`, dailyJob.job)
+        .scheduleJob(`${minute} ${hour} * * *`, dailyJob.job)
         .addListener('run', () => onRun(dailyJob.name))
         .addListener('error', (error) =>
           onError({
@@ -96,7 +96,7 @@ export default {
     minute = 0;
     for (const hourlyJob of HOURLY_JOBS) {
       schedule
-        .scheduleJob(`0 ${minute} * * * *`, hourlyJob.job)
+        .scheduleJob(`${minute} * * * *`, hourlyJob.job)
         .addListener('run', () => onRun(hourlyJob.name))
         .addListener('error', (error) =>
           onError({
@@ -111,7 +111,7 @@ export default {
 
     /** custom */
     schedule
-      .scheduleJob('0 */5 * * * *', exportMusicbill)
+      .scheduleJob('*/5 * * * *', exportMusicbill)
       .addListener('run', () => onRun('export_musicbill'))
       .addListener('error', (error) =>
         onError({
