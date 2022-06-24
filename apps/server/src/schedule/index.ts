@@ -13,7 +13,7 @@ import exportMusicbill from './jobs/export_musicbill';
 const getTimeString = () => {
   const now = day();
   const date = now.format('YYYYMMDD');
-  const time = now.format('HH:mm:ss');
+  const time = now.format('HH:mm:ss.SSS');
   return { date, time };
 };
 const appendFileAysnc = util.promisify(fs.appendFile);
