@@ -1,12 +1,11 @@
-import { useState } from 'react';
-import * as React from 'react';
+import { memo, useState, ChangeEvent, KeyboardEvent, FocusEvent } from 'react';
 import styled from 'styled-components';
 import IconButton, { Name } from '@/components/icon_button';
-import useHistory from '@/utils/use_history';
-import { PLAYER_PATH } from '@/constants/route';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import toast from '@/platform/toast';
 import Input from '@/components/input';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
+import useNavigate from '#/utils/use_navigate';
 import useKeyboard from './use_keyboard';
 import { Query } from '../../pages/search/constants';
 import eventemitter, { EventType } from '../../eventemitter';
@@ -23,10 +22,10 @@ const Style = styled.div`
 `;
 
 function Wrapper() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [keyword, setKeyword] = useState('');
-  const onKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+  const onKeywordChange = (event: ChangeEvent<HTMLInputElement>) =>
     setKeyword(event.target.value);
 
   const onSearch = () => {
@@ -34,20 +33,20 @@ function Wrapper() {
     if (!trimKeyword) {
       return toast.error('请输入关键字');
     }
-    return history.push({
-      pathname: PLAYER_PATH.SEARCH,
+    return navigate({
+      path: ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH,
       query: {
         [Query.SEARCH_VALUE]: trimKeyword,
-        [Query.PAGE]: '1',
+        [Query.PAGE]: 1,
       },
     });
   };
-  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       onSearch();
     }
   };
-  const onFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+  const onFocus = (event: FocusEvent<HTMLInputElement>) => {
     eventemitter.emit(EventType.CLOSE_LYRIC);
     return event.target.select();
   };
@@ -71,4 +70,4 @@ function Wrapper() {
   );
 }
 
-export default React.memo(Wrapper);
+export default memo(Wrapper);

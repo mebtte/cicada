@@ -1,4 +1,4 @@
-import useHistory from '@/utils/use_history';
+import useNavigate from '#/utils/use_navigate';
 import Pagination from '@/components/pagination';
 import { MusicWithIndex } from '@/pages/player/constants';
 import ScrollablePage from './scrollable_page';
@@ -9,7 +9,7 @@ const paginationStyle = {
   padding: '10px 0',
 };
 
-const MusicList = ({
+function MusicList({
   page,
   musicList,
   total,
@@ -17,8 +17,8 @@ const MusicList = ({
   page: number;
   musicList: MusicWithIndex[];
   total: number;
-}) => {
-  const history = useHistory();
+}) {
+  const navigate = useNavigate();
 
   return (
     <ScrollablePage>
@@ -31,7 +31,7 @@ const MusicList = ({
         currentPage={page}
         pageCount={Math.ceil(total / PAGE_SIZE)}
         onPageChange={(p) =>
-          history.push({
+          navigate({
             query: {
               [Query.PAGE]: p.toString(),
             },
@@ -41,6 +41,6 @@ const MusicList = ({
       />
     </ScrollablePage>
   );
-};
+}
 
 export default MusicList;

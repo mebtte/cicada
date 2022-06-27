@@ -1,5 +1,4 @@
 import { ThemeProvider } from '@mui/material';
-import CssBaseline from '@mui/material/CssBaseline';
 import ErrorBoundary from '@/components/error_boundary';
 import theme from '@/style/theme';
 import { GlobalStyle } from '#/global_style';
@@ -15,7 +14,6 @@ function Wrapper() {
   return (
     <ErrorBoundary fallback={fallback}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
         <GlobalStyle />
         <App />
       </ThemeProvider>

@@ -1,4 +1,4 @@
-import { Redirect, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import p from '@/global_states/profile';
 import { ROOT_PATH } from '@/constants/route';
 import { ComponentType } from 'react';
@@ -11,10 +11,11 @@ function withLogin<Props = {}>(Component: ComponentType<Props>) {
     return profile ? (
       <Component {...props} />
     ) : (
-      <Redirect
+      <Navigate
         to={`${ROOT_PATH.LOGIN}?${LoginQuery.REDIRECT}=${encodeURIComponent(
           pathname,
         )}`}
+        replace
       />
     );
   };

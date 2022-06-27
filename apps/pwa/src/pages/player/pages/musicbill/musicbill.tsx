@@ -24,7 +24,7 @@ const Style = styled.div`
   }
 `;
 
-const Musicbill = ({ musicbill }: { musicbill: MusicbillType }) => {
+function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
   useEffect(() => {
     if (musicbill.status === RequestStatus.NOT_START) {
       playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, {
@@ -44,6 +44,6 @@ const Musicbill = ({ musicbill }: { musicbill: MusicbillType }) => {
       <CoverEditDialog musicbill={musicbill} />
     </Style>
   );
-};
+}
 
 export default Musicbill;

@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import day from '#/utils/day';
 import { RequestStatus } from '@/constants';
 import Avatar from '@/components/avatar';
+import { CSSVariable } from '#/global_style';
 import { Musicbill } from '../../../constants';
 
 const Style = styled(animated.div)`
@@ -25,9 +26,13 @@ const Style = styled(animated.div)`
     flex-direction: column;
     gap: 5px;
     > .name {
-      font-size: 16px;
-      font-weight: bold;
-      color: var(--text-color-primary);
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    }
+
+    > .description {
+      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     }
   }
 `;

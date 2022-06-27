@@ -1,9 +1,8 @@
 import { memo } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-
 import Avatar from '@/components/avatar';
-import { PLAYER_PATH } from '@/constants/route';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import Search from './search';
 import Title from './title';
 
@@ -23,11 +22,11 @@ function Header() {
   let title = '';
   // eslint-disable-next-line default-case
   switch (pathname) {
-    case PLAYER_PATH.SEARCH: {
+    case ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH: {
       title = '搜索';
       break;
     }
-    case PLAYER_PATH.SETTING: {
+    case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {
       title = '设置';
       break;
     }

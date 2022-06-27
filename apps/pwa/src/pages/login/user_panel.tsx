@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { ReactNode, useEffect } from 'react';
 import parseSearch from '@/utils/parse_search';
 import { LoginQuery } from '@/constants/query';
+import useNavigate from '#/utils/use_navigate';
 import Logo from './logo';
 import { panelCSS } from './constants';
 
@@ -36,17 +37,17 @@ const Style = styled(Paper)`
 `;
 
 function Profile({ profile }: { profile: ProfileType }) {
-  const history = useHistory();
+  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const query = parseSearch<LoginQuery>(location.search);
       const redirect = query.redirect || '/';
-      history.push(redirect);
+      navigate({ path: redirect });
     }, 5000);
     return () => window.clearTimeout(timer);
-  }, [history, location.search]);
+  }, [location.search, navigate]);
 
   return (
     <Stack spacing={4}>

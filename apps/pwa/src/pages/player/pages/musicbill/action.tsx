@@ -6,8 +6,8 @@ import logger from '@/platform/logger';
 import deleteMusicbill from '@/server_new/delete_musicbill';
 import Tooltip, { Placement } from '@/components/tooltip';
 import IconButton, { Name } from '@/components/icon_button';
-import { useHistory } from 'react-router-dom';
-import { PLAYER_PATH } from '@/constants/route';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import useNavigate from '#/utils/use_navigate';
 import eventemitter, { EventType } from './eventemitter';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -31,7 +31,7 @@ const onSearch = () =>
 const openTextEditDialog = () => eventemitter.emit(EventType.OPEN_EDIT_DIALOG);
 
 function Action({ musicbill }: { musicbill: Musicbill }) {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onAddToPlaylist = () => {
     const { musicList } = musicbill;
@@ -63,7 +63,7 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
             try {
               await deleteMusicbill(musicbill.id);
               playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST);
-              history.replace(PLAYER_PATH.HOME);
+              navigate({ path: ROOT_PATH.PLAYER + PLAYER_PATH.HOME });
             } catch (error) {
               logger.error(error, {
                 description: '删除乐单失败',

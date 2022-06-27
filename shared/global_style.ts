@@ -1,21 +1,24 @@
 import { createGlobalStyle } from 'styled-components';
 
 export enum CSSVariable {
-  COLOR_PRIMARY = '--color-primary',
+  COLOR_PRIMARY = 'var(--color-primary)',
 
-  TEXT_COLOR_PRIMARY = '--text-color-primary',
-  TEXT_COLOR_SECONDARY = '--text-color-secondary',
+  TEXT_SIZE_NORMAL = 'var(--text-size-normal)',
+  TEXT_SIZE_SMALL = 'var(--text-size-small)',
+
+  TEXT_COLOR_PRIMARY = 'var(--text-color-primary)',
+  TEXT_COLOR_SECONDARY = 'var(--text-color-secondary)',
 }
 
 const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.COLOR_PRIMARY]: 'rgb(49 194 124)',
+
+  [CSSVariable.TEXT_SIZE_NORMAL]: '16px',
+  [CSSVariable.TEXT_SIZE_SMALL]: '12px',
+
   [CSSVariable.TEXT_COLOR_PRIMARY]: 'rgb(88 88 88)',
   [CSSVariable.TEXT_COLOR_SECONDARY]: 'rgb(155 155 155)',
 };
-
-export function getCSSVariableExpression(v: CSSVariable) {
-  return `var(${v})`;
-}
 
 export const GlobalStyle = createGlobalStyle`
   * {
@@ -24,15 +27,22 @@ export const GlobalStyle = createGlobalStyle`
 
   html {
     ${Object.keys(CSS_VARIABLE_MAP_VALUE)
-      .map((variable) => `${variable}: ${CSS_VARIABLE_MAP_VALUE[variable]};`)
+      .map(
+        (variable) =>
+          `${variable.match(/^var\((.+)\)$/)![1]}: ${
+            CSS_VARIABLE_MAP_VALUE[variable]
+          };`,
+      )
       .join('\n')}
 
-    font-family: Helvetica, Tahoma, Arial, STXihei, '华文细黑', 'Microsoft YaHei', '微软雅黑', SimSun, '宋体', Heiti, '黑体', sans-serif;
-    accent-color: ${getCSSVariableExpression(CSSVariable.COLOR_PRIMARY)};
+    accent-color: ${CSSVariable.COLOR_PRIMARY};
   }
 
   body {
     overscroll-behavior-y: contain;
     overflow: hidden;
+
+    margin: 0;
+    padding: 0;
   }
 `;

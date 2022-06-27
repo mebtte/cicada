@@ -6,9 +6,9 @@ export const ROOT_PATH = {
 };
 
 export const PLAYER_PATH = {
-  HOME: ROOT_PATH.PLAYER,
-  MUSICBILL: `${ROOT_PATH.PLAYER}/musicbill/:id`,
-  PUBLIC_MUSICBILL: `${ROOT_PATH.PLAYER}/public_musicbill`,
-  SETTING: `${ROOT_PATH.PLAYER}/setting`,
-  SEARCH: `${ROOT_PATH.PLAYER}/search`,
+  HOME: '/',
+  MUSICBILL: '/musicbill/:id',
+  PUBLIC_MUSICBILL: '/public_musicbill',
+  SETTING: '/setting',
+  SEARCH: '/search',
 };

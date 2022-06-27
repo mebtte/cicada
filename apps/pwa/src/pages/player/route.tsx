@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Switch, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useTransition, animated } from 'react-spring';
 import { PLAYER_PATH } from '@/constants/route';
 import Home from './pages/home';
@@ -31,18 +31,18 @@ function Wrapper() {
   });
   return (
     <Style>
-      {transitions((style, l) => (
+      {transitions((style) => (
         <AnimatedDiv style={style}>
-          <Switch location={l}>
-            <Route path={PLAYER_PATH.SEARCH} component={Search} />
-            <Route path={PLAYER_PATH.MUSICBILL} component={Musicbill} />
+          <Routes>
+            <Route path={PLAYER_PATH.SEARCH} element={<Search />} />
+            <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
             <Route
               path={PLAYER_PATH.PUBLIC_MUSICBILL}
-              component={PublicMusicbill}
+              element={<PublicMusicbill />}
             />
-            <Route path={PLAYER_PATH.SETTING} component={Setting} />
-            <Route path="*" component={Home} />
-          </Switch>
+            <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
+            <Route path="*" element={<Home />} />
+          </Routes>
         </AnimatedDiv>
       ))}
     </Style>

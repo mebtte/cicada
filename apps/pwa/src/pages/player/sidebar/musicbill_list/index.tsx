@@ -2,8 +2,7 @@ import { memo, useContext } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { useTransition } from 'react-spring';
-
-import { PLAYER_PATH } from '@/constants/route';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { RequestStatus } from '@/constants';
 import ErrorCard from '@/components/error_card';
 import Empty from '@/components/empty';
@@ -55,7 +54,8 @@ function Wrapper() {
           <MusicbillList style={style}>
             {musicbillList.map((mb) => {
               const { id } = mb;
-              const to = PLAYER_PATH.MUSICBILL.replace(':id', id);
+              const to =
+                ROOT_PATH.PLAYER + PLAYER_PATH.MUSICBILL.replace(':id', id);
               return (
                 <Musicbill
                   key={id}

@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useHistory } from 'react-router';
-
+import usePathnameChange from '#/utils/use_pathname_change';
 import eventemitter, { EventType } from '../eventemitter';
 
 export default () => {
-  const history = useHistory();
-
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
 
@@ -20,10 +17,7 @@ export default () => {
     };
   }, []);
 
-  useEffect(() => {
-    const unlisten = history.listen(() => setOpen(false));
-    return unlisten;
-  }, [history]);
+  usePathnameChange(() => setOpen(false));
 
   useEffect(() => {
     if (open) {
