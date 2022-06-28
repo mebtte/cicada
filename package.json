@@ -1,6 +1,6 @@
 {
   "name": "cicada",
-  "description": "知了, 一个自托管的音乐服务.",
+  "description": "知了, 一个自主托管的音乐服务.",
   "version": "0.17.0",
   "private": true,
   "repository": {
