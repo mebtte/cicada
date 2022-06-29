@@ -7,8 +7,8 @@ import {
 import { Music, Property as MusicProperty } from '@/db/music';
 import {
   getSingerListInMusicIds,
-  Property as CharacterProperty,
-} from '@/db/character';
+  Property as SingerProperty,
+} from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetUrl } from '@/platform/asset';
 import * as db from '@/db';
@@ -71,10 +71,10 @@ export default async (ctx: Context) => {
   const allSingerList = await getSingerListInMusicIds(
     musicList.map((m) => m.id),
     [
-      CharacterProperty.ID,
-      CharacterProperty.AVATAR,
-      CharacterProperty.NAME,
-      CharacterProperty.ALIASES,
+      SingerProperty.ID,
+      SingerProperty.AVATAR,
+      SingerProperty.NAME,
+      SingerProperty.ALIASES,
     ],
   );
   const musicIdMapSingers: {
@@ -91,7 +91,7 @@ export default async (ctx: Context) => {
     }
     musicIdMapSingers[singer.musicId].push({
       ...excludeProperty(singer, ['musicId']),
-      avatar: getAssetUrl(singer.avatar, AssetType.CHARACTER_AVATAR),
+      avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),
     });
   }
 

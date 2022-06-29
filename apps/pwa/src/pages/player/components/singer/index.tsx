@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react';
 import styled from 'styled-components';
-import { Character } from '@/constants/character';
+import { Singer as SingerType } from '@/constants/singer';
 import eventemitter, { EventType } from '../../eventemitter';
 
 const Style = styled.span`
@@ -27,7 +27,7 @@ const Style = styled.span`
   }
 `;
 
-function Singer({ singer }: { singer?: Character }) {
+function Singer({ singer }: { singer?: SingerType }) {
   const onViewSinger = useCallback(
     () =>
       singer

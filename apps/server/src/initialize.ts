@@ -103,8 +103,8 @@ if (cluster.isPrimary) {
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id )
         );
       `;
-      const TABLE_CHARACTER = `
-        CREATE TABLE character (
+      const TABLE_SINGER = `
+        CREATE TABLE singer (
           id TEXT PRIMARY KEY NOT NULL,
           avatar TEXT NOT NULL DEFAULT '',
           name TEXT NOT NULL,
@@ -114,14 +114,14 @@ if (cluster.isPrimary) {
           CONSTRAINT fkUser FOREIGN KEY ( createUserId ) REFERENCES user ( id )
         );
       `;
-      const TABLE_CHARACTER_MODIFY_RECORD = `
-        CREATE TABLE character_modify_record (
+      const TABLE_SINGER_MODIFY_RECORD = `
+        CREATE TABLE singer_modify_record (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
-          characterId TEXT NOT NULL,
+          singerId TEXT NOT NULL,
           modifyUserId TEXT NOT NULL,
           value TEXT NOT NULL,
           modifyTimestamp INTEGER NOT NULL,
-          CONSTRAINT fkCharacter FOREIGN KEY ( characterId ) REFERENCES character ( id ),
+          CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
           CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
         );
       `;
@@ -185,7 +185,7 @@ if (cluster.isPrimary) {
           musicId TEXT NOT NULL,
           singerId TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
-          CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES character ( id ) 
+          CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ) 
         );
       `;
       const TABLE_MUSICBILL = `
@@ -233,8 +233,8 @@ if (cluster.isPrimary) {
         TABLE_USER,
         TABLE_CAPTCHA,
         TABLE_LOGIN_CODE,
-        TABLE_CHARACTER,
-        TABLE_CHARACTER_MODIFY_RECORD,
+        TABLE_SINGER,
+        TABLE_SINGER_MODIFY_RECORD,
         TABLE_MUSIC,
         TABLE_MUSIC_MODIGY_RECORD,
         TABLE_MUSIC_FORK,

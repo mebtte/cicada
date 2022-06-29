@@ -19,7 +19,7 @@ export enum ExceptionCode {
   MUSICBILL_DO_NOT_NEED_TO_UPDATE,
   FORBID_EXPORT_EMPTY_MUSICBILL,
   OVER_EXPORT_MUSICBILL_TIMES_PER_DAY,
-  CHARACTER_NOT_EXIST,
+  SINGER_NOT_EXIST,
   OVER_UPLOAD_MUSIC_TIMES_PER_DAY,
 }
 
@@ -89,8 +89,8 @@ export const EXCEPTION_CODE_MAP: Record<
   [ExceptionCode.OVER_EXPORT_MUSICBILL_TIMES_PER_DAY]: {
     description: '超出每天导出乐单最大次数',
   },
-  [ExceptionCode.CHARACTER_NOT_EXIST]: {
-    description: '角色不存在',
+  [ExceptionCode.SINGER_NOT_EXIST]: {
+    description: '歌手不存在',
   },
   [ExceptionCode.OVER_UPLOAD_MUSIC_TIMES_PER_DAY]: {
     description: '超出每天上传音乐最大次数',

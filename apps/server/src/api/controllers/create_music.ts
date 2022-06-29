@@ -3,10 +3,7 @@ import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH, MUSIC_TYPES } from '#/constants/music';
 import exist from '#/utils/exist';
 import generateRandomString from '#/utils/generate_random_string';
-import {
-  getCharacterListByIds,
-  Property as CharacterProperty,
-} from '@/db/character';
+import { getSingerListByIds, Property as SingerProperty } from '@/db/singer';
 import { getAssetPath } from '@/platform/asset';
 import * as db from '@/db';
 import day from '#/utils/day';
@@ -37,11 +34,11 @@ export default async (ctx: Context) => {
   }
 
   const singerIdList = singerIds.split(',');
-  const singerList = await getCharacterListByIds(singerIdList, [
-    CharacterProperty.ID,
+  const singerList = await getSingerListByIds(singerIdList, [
+    SingerProperty.ID,
   ]);
   if (singerList.length !== singerIdList.length) {
-    return ctx.except(ExceptionCode.CHARACTER_NOT_EXIST);
+    return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
   }
 
   const todayUploadMusicList = await db.all<Pick<Music, MusicProperty.ID>>(

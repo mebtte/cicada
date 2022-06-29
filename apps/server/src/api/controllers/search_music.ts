@@ -4,10 +4,10 @@ import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import * as db from '@/db';
 import { Music, Property as MusicProperty } from '@/db/music';
 import {
-  Character,
+  Singer,
   getSingerListInMusicIds,
-  Property as CharacterProperty,
-} from '@/db/character';
+  Property as SingerProperty,
+} from '@/db/singer';
 import { getUserListByIds, Property as UserProperty } from '@/db/user';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetUrl } from '@/platform/asset';
@@ -47,7 +47,7 @@ export default async (ctx: Context) => {
   `;
   const sinegrPatternSQL = `
     SELECT msr.musicId FROM music_singer_relation AS msr
-      LEFT JOIN character AS s ON msr.singerId = s.id 
+      LEFT JOIN singer AS s ON msr.singerId = s.id 
       WHERE
         s.name LIKE ?
         OR s.aliases LIKE ?
@@ -120,10 +120,10 @@ export default async (ctx: Context) => {
     getSingerListInMusicIds(
       musicList.map((m) => m.id),
       [
-        CharacterProperty.ID,
-        CharacterProperty.AVATAR,
-        CharacterProperty.NAME,
-        CharacterProperty.ALIASES,
+        SingerProperty.ID,
+        SingerProperty.AVATAR,
+        SingerProperty.NAME,
+        SingerProperty.ALIASES,
       ],
     ),
   ]);
@@ -140,11 +140,11 @@ export default async (ctx: Context) => {
 
   const musicIdMapSinger: {
     [key: string]: Pick<
-      Character,
-      | CharacterProperty.ID
-      | CharacterProperty.AVATAR
-      | CharacterProperty.NAME
-      | CharacterProperty.ALIASES
+      Singer,
+      | SingerProperty.ID
+      | SingerProperty.AVATAR
+      | SingerProperty.NAME
+      | SingerProperty.ALIASES
     >[];
   } = {};
   singerList.forEach((s) => {
@@ -153,7 +153,7 @@ export default async (ctx: Context) => {
     }
     musicIdMapSinger[s.musicId].push({
       ...excludeProperty(s, ['musicId']),
-      avatar: getAssetUrl(s.avatar, AssetType.CHARACTER_AVATAR),
+      avatar: getAssetUrl(s.avatar, AssetType.SINGER_AVATAR),
     });
   });
 

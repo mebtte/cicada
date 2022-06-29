@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import ellipsis from '@/style/ellipsis';
 import IconButton, { Name, Type } from '@/components/icon_button';
-import { Character } from '@/constants/character';
+import { Singer as SingerType } from '@/constants/singer';
 import useMusicOperate from '../../use_music_operate';
 import eventemitter, { EventType } from '../../eventemitter';
 import Singer from '../../components/singer';
@@ -58,7 +58,7 @@ const Style = styled.div<{ active: boolean }>`
   `}
 `;
 
-const renderSinger = (s: Character) => <Singer key={s.id} singer={s} />;
+const renderSinger = (s: SingerType) => <Singer key={s.id} singer={s} />;
 
 function Music({
   activeIndex,

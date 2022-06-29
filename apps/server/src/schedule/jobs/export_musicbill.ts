@@ -13,9 +13,9 @@ import { AssetType, BRAND_NAME, MUSICBILL_EXPORT_TTL } from '#/constants';
 import { getDownloadPath, getDownloadUrl } from '@/platform/download';
 import {
   getSingerListInMusicIds,
-  Character,
-  Property as CharacterProperty,
-} from '@/db/character';
+  Singer,
+  Property as SingerProperty,
+} from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetPath } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
@@ -105,10 +105,10 @@ async function exportMusicbill(
 
   const singerList = await getSingerListInMusicIds(
     musicList.map((m) => m.id),
-    [CharacterProperty.NAME],
+    [SingerProperty.NAME],
   );
   const musicIdMapSingerList: {
-    [key: string]: Pick<Character, CharacterProperty.NAME>[];
+    [key: string]: Pick<Singer, SingerProperty.NAME>[];
   } = {};
   singerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {

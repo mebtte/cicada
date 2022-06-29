@@ -1,5 +1,5 @@
 import IconButton, { Name } from '@/components/icon_button';
-import { Character } from '@/constants/character';
+import { Singer as SingerType } from '@/constants/singer';
 import { CSSProperties } from 'react';
 import { MusicWithIndex } from '../../constants';
 import useMusicOperate from '../../use_music_operate';
@@ -8,7 +8,7 @@ import Singer from '../singer';
 import MusicTagList from '../music_tag_list';
 
 const ACTION_SIZE = 22;
-const renderSinger = (s: Character) => <Singer key={s.id} singer={s} />;
+const renderSinger = (s: SingerType) => <Singer key={s.id} singer={s} />;
 
 function Music({
   musicWithIndex,

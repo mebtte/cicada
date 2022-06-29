@@ -6,7 +6,7 @@ import { DownloadType } from '.';
 export const ROOT_ASSET_DIR = `${argv.base}/assets`;
 export const ASSET_DIR: Record<AssetType, string> = {
   [AssetType.USER_AVATAR]: `${ROOT_ASSET_DIR}/${AssetType.USER_AVATAR}`,
-  [AssetType.CHARACTER_AVATAR]: `${ROOT_ASSET_DIR}/${AssetType.CHARACTER_AVATAR}`,
+  [AssetType.SINGER_AVATAR]: `${ROOT_ASSET_DIR}/${AssetType.SINGER_AVATAR}`,
   [AssetType.MUSIC_COVER]: `${ROOT_ASSET_DIR}/${AssetType.MUSIC_COVER}`,
   [AssetType.MUSIC_SQ]: `${ROOT_ASSET_DIR}/${AssetType.MUSIC_SQ}`,
   [AssetType.MUSIC_HQ]: `${ROOT_ASSET_DIR}/${AssetType.MUSIC_HQ}`,

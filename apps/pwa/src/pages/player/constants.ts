@@ -1,5 +1,5 @@
 import { RequestStatus } from '@/constants';
-import { Character } from '@/constants/character';
+import { Singer } from '@/constants/singer';
 import { MusicType } from '#/constants/music';
 import { Type as TagType } from '@/components/tag';
 
@@ -43,7 +43,7 @@ export interface Music {
   ac: string;
   hq: string;
   sq: string;
-  singers: Character[];
+  singers: Singer[];
 }
 
 export interface MusicWithIndex {

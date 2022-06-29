@@ -24,6 +24,7 @@ import updateMusicbill from './controllers/update_musicbill';
 import searchMusic from './controllers/search_music';
 import createMusicbillExport from './controllers/create_musicbill_export';
 import createMusic from './controllers/create_music';
+import searchSinger from './controllers/search_singer';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -52,6 +53,8 @@ router.post('/music', authorize, parseBody, createMusic); // 创建音乐
 router.get('/music/search', authorize, searchMusic); // 搜索音乐
 
 router.get('/lyric', authorize, getLyric); // 获取音乐歌词
+
+router.get('/singer/search', authorize, searchSinger); // 搜索歌手
 
 /**
  * super authorize

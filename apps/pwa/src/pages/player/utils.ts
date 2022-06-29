@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import getRandomCover from '@/utils/get_random_cover';
 import { MusicType } from '#/constants/music';
-import { Character } from '@/constants/character';
+import { Singer } from '@/constants/singer';
 import { Music } from './constants';
 
 export const transformMusic = (originalMusic: {
@@ -10,7 +10,7 @@ export const transformMusic = (originalMusic: {
   name: string;
   type: MusicType;
   aliases: string;
-  singers: Character[];
+  singers: Singer[];
   sq: string;
   hq: string;
   ac: string;

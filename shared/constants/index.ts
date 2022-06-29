@@ -12,7 +12,7 @@ export const JWT_TTL = 1000 * 60 * 60 * 24 * 180;
 export enum AssetType {
   USER_AVATAR = 'user_avatar',
   MUSICBILL_COVER = 'musicbill_cover',
-  CHARACTER_AVATAR = 'character_avatar',
+  SINGER_AVATAR = 'singer_avatar',
   MUSIC_COVER = 'music_cover',
   MUSIC_SQ = 'music_sq',
   MUSIC_HQ = 'music_hq',
@@ -26,7 +26,7 @@ export const ASSET_TYPE_MAP: Record<
     maxSize: number;
   }
 > = {
-  [AssetType.CHARACTER_AVATAR]: {
+  [AssetType.SINGER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
     maxSize: 1024 * 1024 * 0.3,
   },

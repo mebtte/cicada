@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import styled from 'styled-components';
-import { Character } from '@/constants/character';
+import { Singer as SingerType } from '@/constants/singer';
 import ellipsis from '@/style/ellipsis';
 import IconButton, { Name, Type } from '@/components/icon_button';
 import useMusicOperate from '../../use_music_operate';
@@ -51,7 +51,7 @@ const Style = styled.div`
   }
 `;
 
-const renderSinger = (s: Character) => <Singer key={s.id} singer={s} />;
+const renderSinger = (s: SingerType) => <Singer key={s.id} singer={s} />;
 
 function Music({ listMusic }: { listMusic: MusicWithIndex }) {
   const { onPlay, onView, onOperate, onAddToPlayqueue } = useMusicOperate(

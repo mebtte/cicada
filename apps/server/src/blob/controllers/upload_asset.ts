@@ -25,7 +25,7 @@ const ASSET_TYPE_MAP_OPTION: Record<
     generateId: (buffer: Buffer) => string;
   }
 > = {
-  [AssetType.CHARACTER_AVATAR]: {
+  [AssetType.SINGER_AVATAR]: {
     handleAsset: (file) => readFileAsync(file.path),
     generateId: (buffer) => {
       const hash = md5(buffer);
