@@ -5,7 +5,7 @@ import exist from '#/utils/exist';
 import generateRandomString from '#/utils/generate_random_string';
 import { getSingerListByIds, Property as SingerProperty } from '@/db/singer';
 import { getAssetPath } from '@/platform/asset';
-import * as db from '@/db';
+import db from '@/db';
 import day from '#/utils/day';
 import { Music, Property as MusicProperty } from '@/db/music';
 import argv from '@/argv';

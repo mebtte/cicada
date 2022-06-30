@@ -11,7 +11,7 @@ import {
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetUrl } from '@/platform/asset';
-import * as db from '@/db';
+import db from '@/db';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

@@ -1,5 +1,5 @@
 import path from 'path';
-import { AssetType } from '#/constants';
+import { AssetType, TRASH_FILENAME } from '#/constants';
 import argv from '@/argv';
 import { DownloadType } from '.';
 
@@ -16,7 +16,7 @@ export const ASSET_DIR: Record<AssetType, string> = {
 
 export const DB_SNAPSHOT_DIR = `${argv.base}/db_snapshots`;
 
-export const TRASH_DIR = `${argv.base}/trash`;
+export const TRASH_DIR = `${argv.base}/${TRASH_FILENAME}`;
 
 export const LOG_DIR = `${argv.base}/logs`;
 

@@ -1,7 +1,7 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
-import * as db from '@/db';
+import db from '@/db';
 import { Music, Property as MusicProperty } from '@/db/music';
 import {
   Singer,

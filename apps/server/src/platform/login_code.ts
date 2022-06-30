@@ -2,7 +2,7 @@ import fs from 'fs';
 import md5 from 'md5';
 import env from '@/env';
 import { GET_LOGIN_CODE_INTERVAL } from '#/constants';
-import * as db from '@/db';
+import db from '@/db';
 import { LOGIN_CODE_SALT_FILE_PATH, LOGIN_CODE_TTL } from '../constants';
 
 const LOGIN_CODE_SALT = fs.readFileSync(LOGIN_CODE_SALT_FILE_PATH).toString();

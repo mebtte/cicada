@@ -1,5 +1,5 @@
 import { CAPTCHA_TTL } from '#/constants';
-import * as db from '@/db';
+import db from '@/db';
 
 export function saveCaptcha({ id, value }: { id: string; value: string }) {
   return db.run(

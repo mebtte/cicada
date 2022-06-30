@@ -1,5 +1,5 @@
 import { MusicType } from '#/constants/music';
-import * as db from '.';
+import db from '.';
 
 export enum Property {
   ID = 'id',

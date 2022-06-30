@@ -1,4 +1,4 @@
-import * as db from '@/db';
+import db from '@/db';
 
 export enum Property {
   ID = 'id',

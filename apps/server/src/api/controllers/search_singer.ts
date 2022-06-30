@@ -1,7 +1,7 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { ExceptionCode } from '#/constants/exception';
-import * as db from '@/db';
+import db from '@/db';
 import { Singer, Property as SingerProperty } from '@/db/singer';
 import { getUserListByIds, Property as UserProperty, User } from '@/db/user';
 import excludeProperty from '#/utils/exclude_property';

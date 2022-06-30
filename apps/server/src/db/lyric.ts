@@ -1,4 +1,4 @@
-import * as db from '.';
+import db from '.';
 
 export enum Property {
   MUSIC_ID = 'musicId',

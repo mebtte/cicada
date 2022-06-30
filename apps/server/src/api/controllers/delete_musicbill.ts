@@ -6,7 +6,7 @@ import {
   Property as MusicbillMusicProperty,
 } from '@/db/musicbill_music';
 import { TRASH_DIR } from '@/constants/directory';
-import * as db from '@/db';
+import db from '@/db';
 import { getAssetPath } from '@/platform/asset';
 import { AssetType } from '#/constants';
 import { Context } from '../constants';

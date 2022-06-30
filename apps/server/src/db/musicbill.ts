@@ -1,5 +1,5 @@
 import generateRandomString from '#/utils/generate_random_string';
-import * as db from '.';
+import db from '.';
 
 export enum Property {
   ID = 'id',

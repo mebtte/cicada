@@ -1,7 +1,7 @@
 import { encode } from 'html-entities';
 import { EMAIL } from '#/constants/regexp';
 import { ExceptionCode } from '#/constants/exception';
-import * as db from '@/db';
+import db from '@/db';
 import { verifyCaptcha } from '@/platform/captcha';
 import {
   hasLoginCodeInGetInterval,

@@ -1,7 +1,7 @@
 import day from '#/utils/day';
 import { ExceptionCode } from '#/constants/exception';
 import { EMAIL } from '#/constants/regexp';
-import * as db from '@/db';
+import db from '@/db';
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
 import { sendEmail } from '@/platform/email';

@@ -1,6 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
 import { getMusicbillById, Property } from '@/db/musicbill';
-import * as db from '@/db';
+import db from '@/db';
 import day from '#/utils/day';
 import argv from '@/argv';
 import { Context } from '../constants';

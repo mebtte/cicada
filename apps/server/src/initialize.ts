@@ -6,11 +6,11 @@
  * @author mebtte<hi@mebtte.com>
  */
 import cluster from 'cluster';
-import * as sqlite3 from 'sqlite3';
 import fs from 'fs';
-import readline from 'readline';
 import { EMAIL } from '#/constants/regexp';
 import generateRandomString from '#/utils/generate_random_string';
+import DB from '#/utils/db';
+import question from '#/utils/question';
 import {
   LOGIN_CODE_SALT_FILE_PATH,
   JWT_SECRET_FILE_PATH,
@@ -69,11 +69,7 @@ if (cluster.isPrimary) {
   /** 数据库 */
   setTimeout(async () => {
     if (!fs.existsSync(DB_FILE_PATH) || !fs.readFileSync(DB_FILE_PATH).length) {
-      const db = new sqlite3.Database(DB_FILE_PATH);
-      const dbRun = (sql: string, params?: unknown) =>
-        new Promise<void>((resolve, reject) =>
-          db.run(sql, params, (error) => (error ? reject(error) : resolve())),
-        );
+      const db = new DB(DB_FILE_PATH);
       const TABLE_USER = `
         CREATE TABLE user (
           id TEXT PRIMARY KEY NOT NULL,
@@ -247,42 +243,24 @@ if (cluster.isPrimary) {
         TABLE_MUSICBILL_EXPORT,
       ];
       for (const table of TABLES) {
-        await dbRun(table);
+        await db.run(table);
       }
     }
 
     /** 插入超级用户 */
-    const db = new sqlite3.Database(DB_FILE_PATH);
-    const dbRun = (sql: string, params?: unknown) =>
-      new Promise<void>((resolve, reject) =>
-        db.run(sql, params, (error) => (error ? reject(error) : resolve())),
-      );
-    const dbGet = <Row = unknown>(sql: string, params?: unknown) =>
-      new Promise<Row | null>((resolve, reject) =>
-        db.get(sql, params, (error: Error | null, row?: Row) =>
-          error ? reject(error) : resolve(row || null),
-        ),
-      );
-    const superUser = await dbGet('select * from user where super = 1');
+    const db = new DB(DB_FILE_PATH);
+    const superUser = await db.get('select * from user where super = 1');
     if (!superUser) {
       let superUserEmail = '';
-      const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-        terminal: false,
-      });
       while (!superUserEmail) {
-        superUserEmail = await new Promise((resolve) =>
-          rl.question('❓ 请输入超级用户邮箱: ', (input) => resolve(input)),
-        );
+        superUserEmail = await question('❓ 请输入超级用户邮箱: ');
         if (superUserEmail && !EMAIL.test(superUserEmail)) {
           // eslint-disable-next-line no-console
           console.log(`⚠️ 「${superUserEmail}」不是合法的邮箱`);
           superUserEmail = '';
         }
       }
-      rl.close();
-      await dbRun(
+      await db.run(
         `
           insert into user(id, email, nickname, joinTimestamp, super)
             values(?, ?, ?, ?, 1)

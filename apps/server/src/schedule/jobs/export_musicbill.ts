@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import sanitize from 'sanitize-filename';
 import withTimeout from '#/utils/with_timeout';
-import * as db from '@/db';
+import db from '@/db';
 import { getUserById, User, Property as UserProperty } from '@/db/user';
 import { Music, Property as MusicProperty } from '@/db/music';
 import { sendEmail } from '@/platform/email';
