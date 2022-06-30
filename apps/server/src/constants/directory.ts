@@ -1,7 +1,7 @@
 import path from 'path';
 import { AssetType, TRASH_FILENAME } from '#/constants';
 import argv from '@/argv';
-import { DownloadType } from '.';
+import { TemporaryType } from '.';
 
 export const ROOT_ASSET_DIR = `${argv.base}/assets`;
 export const ASSET_DIR: Record<AssetType, string> = {
@@ -20,7 +20,7 @@ export const TRASH_DIR = `${argv.base}/${TRASH_FILENAME}`;
 
 export const LOG_DIR = `${argv.base}/logs`;
 
-export const ROOT_DOWNLOAD_DIR = path.join(__dirname, '../../../../downloads');
-export const DOWNLOAD_DIR: Record<DownloadType, string> = {
-  [DownloadType.MUSICBILL_EXPORT]: `${ROOT_DOWNLOAD_DIR}/${DownloadType.MUSICBILL_EXPORT}`,
+export const ROOT_TEMPORARY_DIR = path.join(__dirname, '../../../../temporary');
+export const TEMPORARY_DIR: Record<TemporaryType, string> = {
+  [TemporaryType.MUSICBILL_EXPORT]: `${ROOT_TEMPORARY_DIR}/${TemporaryType.MUSICBILL_EXPORT}`,
 };

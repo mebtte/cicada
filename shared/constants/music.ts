@@ -5,6 +5,12 @@ export enum MusicSearchType {
   LYRIC = 'lyric',
 }
 
+export enum MusicDownloadType {
+  SQ = 'sq',
+  HQ = 'hq',
+  AC = 'ac',
+}
+
 export enum MusicType {
   SONG = 1, // 歌曲
   INSTRUMENT = 2, // 乐曲

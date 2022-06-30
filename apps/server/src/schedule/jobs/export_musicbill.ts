@@ -10,7 +10,7 @@ import { Music, Property as MusicProperty } from '@/db/music';
 import { sendEmail } from '@/platform/email';
 import day from '#/utils/day';
 import { AssetType, BRAND_NAME, MUSICBILL_EXPORT_TTL } from '#/constants';
-import { getDownloadPath, getDownloadUrl } from '@/platform/download';
+import { getTemporaryPath, getTemporaryUrl } from '@/platform/temporary';
 import {
   getSingerListInMusicIds,
   Singer,
@@ -19,7 +19,7 @@ import {
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetPath } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
-import { DownloadType } from '../../constants';
+import { TemporaryType } from '../../constants';
 
 interface MusicbillExport {
   id: number;
@@ -123,17 +123,22 @@ async function exportMusicbill(
 
   await zipFileList(
     musicList.map((m) => {
-      const sinegrs = musicIdMapSingerList[m.id];
+      const singers = musicIdMapSingerList[m.id];
       return {
         path: getAssetPath(m.sq, AssetType.MUSIC_SQ),
         name: sanitize(
           `${
-            sinegrs.length > 3 ? '群星' : sinegrs.map((s) => s.name).join(',')
+            // eslint-disable-next-line no-nested-ternary
+            singers.length === 0
+              ? '未知歌手'
+              : singers.length > 3
+              ? '群星'
+              : singers.map((s) => s.name).join(',')
           } - ${m.name}${path.parse(m.sq).ext}`,
         ),
       };
     }),
-    getDownloadPath(exportFilename, DownloadType.MUSICBILL_EXPORT),
+    getTemporaryPath(exportFilename, TemporaryType.MUSICBILL_EXPORT),
   );
 
   await Promise.all([
@@ -147,9 +152,9 @@ async function exportMusicbill(
         <br />
         乐单「${encode(
           musicbillExport.musicbillName,
-        )}」已导出, 你可以<a href="${getDownloadUrl(
+        )}」已导出, 你可以<a href="${getTemporaryUrl(
         exportFilename,
-        DownloadType.MUSICBILL_EXPORT,
+        TemporaryType.MUSICBILL_EXPORT,
       )}">点击这里进行下载</a>,
         链接将在 ${day(Date.now() + MUSICBILL_EXPORT_TTL).format(
           'YYYY-MM-DD HH:mm:ss',

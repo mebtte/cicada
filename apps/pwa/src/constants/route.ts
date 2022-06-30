@@ -8,7 +8,6 @@ export const ROOT_PATH = {
 export const PLAYER_PATH = {
   HOME: '/',
   MUSICBILL: '/musicbill/:id',
-  PUBLIC_MUSICBILL: '/public_musicbill',
   SETTING: '/setting',
   SEARCH: '/search',
 };

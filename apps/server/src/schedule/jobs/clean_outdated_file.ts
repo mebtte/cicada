@@ -1,9 +1,9 @@
 import fs from 'fs';
 import util from 'util';
-import { TRASH_DIR, LOG_DIR, DOWNLOAD_DIR } from '@/constants/directory';
+import { TRASH_DIR, LOG_DIR, TEMPORARY_DIR } from '@/constants/directory';
 import withTimeout from '#/utils/with_timeout';
 import { MUSICBILL_EXPORT_TTL } from '#/constants';
-import { DownloadType } from '../../constants';
+import { TemporaryType } from '../../constants';
 
 const readdirAsync = util.promisify(fs.readdir);
 const rmAsync = util.promisify(fs.rm);
@@ -21,7 +21,7 @@ const DIRECTORIES: {
     ttl: 1000 * 60 * 60 * 24 * 30,
   },
   {
-    directory: DOWNLOAD_DIR[DownloadType.MUSICBILL_EXPORT],
+    directory: TEMPORARY_DIR[TemporaryType.MUSICBILL_EXPORT],
     ttl: MUSICBILL_EXPORT_TTL,
   },
 ];
