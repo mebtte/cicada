@@ -5,16 +5,23 @@ enum EventType {
   UPDATED = 'updated',
 }
 
-class XState<State> extends Eventemitter<
-  EventType,
-  {
-    [EventType.UPDATED]: State;
-  }
-> {
+class XState<State> {
+  private eventemitter: Eventemitter<
+    EventType,
+    {
+      [EventType.UPDATED]: State;
+    }
+  >;
+
   private state: State;
 
   constructor(initialState: State) {
-    super();
+    this.eventemitter = new Eventemitter<
+      EventType,
+      {
+        [EventType.UPDATED]: State;
+      }
+    >();
     this.state = initialState;
   }
 
@@ -24,12 +31,11 @@ class XState<State> extends Eventemitter<
 
   set(state: State) {
     this.state = state;
-    super.emit(EventType.UPDATED, state);
+    this.eventemitter.emit(EventType.UPDATED, state);
   }
 
   onChange(listener: (state: State) => void) {
-    super.on(EventType.UPDATED, listener);
-    return () => super.off(EventType.UPDATED, listener);
+    return this.eventemitter.listen(EventType.UPDATED, listener);
   }
 
   useState() {

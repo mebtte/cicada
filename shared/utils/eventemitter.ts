@@ -33,7 +33,7 @@ class Eventemitter<
       listeners.forEach(({ once, listener }) => {
         listener(data);
         if (once) {
-          this.off(eventType, listener, {
+          this.unlisten(eventType, listener, {
             once: true,
             eventTypeReplace,
           });
@@ -47,7 +47,7 @@ class Eventemitter<
     }
   }
 
-  on<E extends EventType>(
+  listen<E extends EventType>(
     eventType: E,
     listener: (data: EventTypeMapData[E]) => void,
     {
@@ -67,9 +67,14 @@ class Eventemitter<
       },
     ];
     this.eventTypeMapListeners.set(et, listeners);
+    return () =>
+      this.unlisten(eventType, listener, {
+        once,
+        eventTypeReplace,
+      });
   }
 
-  off<E extends EventType>(
+  unlisten<E extends EventType>(
     eventType: E,
     listener: (data: EventTypeMapData[E]) => void,
     {

@@ -28,8 +28,7 @@ function NoticeApp() {
   useEffect(() => {
     const onNotice = (data: EventTypeMapData[EventType.NOTICE]) =>
       enqueueSnackbar(data.message, data.options);
-    eventemitter.on(EventType.NOTICE, onNotice);
-    return () => eventemitter.on(EventType.NOTICE, onNotice);
+    return eventemitter.listen(EventType.NOTICE, onNotice);
   }, [enqueueSnackbar]);
   return null;
 }
