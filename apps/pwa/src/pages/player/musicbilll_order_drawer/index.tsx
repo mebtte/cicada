@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 
 import Drawer, { Title } from '@/components/drawer';
 import updateMusicbillOrder from '@/server_new/update_musicbill_order';
-import logger from '@/platform/logger';
+import logger from '#/utils/logger';
 import dialog from '@/platform/dialog';
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
 import eventemitter, { EventType } from '../eventemitter';
@@ -59,9 +59,7 @@ function MusicbillOrderDrawer() {
     return updateMusicbillOrder(orderedMusicbillIdList)
       .then(() => eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST))
       .catch((error) => {
-        logger.error(error, {
-          description: '更新乐单顺序失败',
-        });
+        logger.error(error, '更新乐单顺序失败');
         dialog.alert({
           title: '更新乐单顺序失败',
           content: error.message,

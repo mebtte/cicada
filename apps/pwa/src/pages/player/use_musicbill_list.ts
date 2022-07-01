@@ -4,7 +4,7 @@ import { RequestStatus } from '@/constants';
 import getSelfMusicbillList from '@/server_new/get_self_musicbill_list';
 import addMusicToMusicbill from '@/server_new/add_music_to_musicbill';
 import removeMusicFromMusicbill from '@/server_new/remove_music_from_musicbill';
-import logger from '@/platform/logger';
+import logger from '#/utils/logger';
 import dialog from '@/platform/dialog';
 import getSelfMusicbill from '@/server_new/get_self_musicbill';
 import eventemitter, { EventType } from './eventemitter';
@@ -33,9 +33,7 @@ export default () => {
       );
       setStatus(RequestStatus.SUCCESS);
     } catch (error) {
-      logger.error(error, {
-        description: '获取乐单列表失败',
-      });
+      logger.error(error, '获取乐单列表失败');
       dialog.alert({
         title: '获取乐单列表失败',
         content: error.message,
@@ -88,9 +86,7 @@ export default () => {
           }),
         );
       } catch (error) {
-        logger.error(error, {
-          description: '获取自己的歌单详情失败',
-        });
+        logger.error(error, '获取自己的歌单详情失败');
         setMusicbillList((mbl) =>
           mbl.map((mb) => {
             if (mb.id === id) {
@@ -133,9 +129,7 @@ export default () => {
       try {
         await addMusicToMusicbill(musicbillId, musicId);
       } catch (error) {
-        logger.error(error, {
-          description: '添加音乐到乐单失败',
-        });
+        logger.error(error, '添加音乐到乐单失败');
         dialog.alert({
           title: '添加音乐到乐单失败',
           content: error.message,
@@ -190,9 +184,7 @@ export default () => {
       try {
         await removeMusicFromMusicbill(musicbillId, musicId);
       } catch (error) {
-        logger.error(error, {
-          description: '从乐单移除音乐失败',
-        });
+        logger.error(error, '从乐单移除音乐失败');
         dialog.alert({
           title: '从乐单移除音乐失败',
           content: error.message,

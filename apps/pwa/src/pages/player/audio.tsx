@@ -3,9 +3,9 @@ import * as React from 'react';
 import throttle from 'lodash/throttle';
 import keyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';
 import uploadMusicPlayRecord from '@/server_new/upload_music_play_record';
+import logger from '#/utils/logger';
 import volumeState from './share_states/volume';
 import eventemitter, { EventType } from './eventemitter';
-import logger from '../../platform/logger';
 import dialog from '../../platform/dialog';
 import { QueueMusic, PlayMode, Music } from './constants';
 
@@ -22,7 +22,7 @@ const onPlay = () => eventemitter.emit(EventType.AUDIO_PLAY);
 const onPause = () => eventemitter.emit(EventType.AUDIO_PAUSE);
 const onEnded = () => eventemitter.emit(EventType.ACTION_NEXT);
 const onError = (e) => {
-  logger.error(e, { description: '播放发生错误' });
+  logger.error(e, '播放发生错误');
   dialog.alert({
     title: '播放发生错误',
     content: e.message,
@@ -75,7 +75,7 @@ class Audio extends React.PureComponent<Props, {}> {
       this.audioRef.current!.currentTime = 0;
       this.audioRef
         .current!.play()
-        .catch((error) => logger.error(error, { description: '音频播放失败' }));
+        .catch((error) => logger.error(error, '音频播放失败'));
       eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: 0,
       });
@@ -100,7 +100,7 @@ class Audio extends React.PureComponent<Props, {}> {
       this.audioRef.current!.currentTime = second;
       this.audioRef
         .current!.play()
-        .catch((error) => logger.error(error, { description: '音频播放失败' }));
+        .catch((error) => logger.error(error, '音频播放失败'));
       eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: second * 1000,
       });
@@ -131,15 +131,13 @@ class Audio extends React.PureComponent<Props, {}> {
     this.audioRef.current!.paused
       ? this.audioRef
           .current!.play()
-          .catch((error) =>
-            logger.error(error, { description: '音频播放失败' }),
-          )
+          .catch((error) => logger.error(error, '音频播放失败'))
       : this.audioRef.current!.pause();
 
   onActionPlay = () =>
     this.audioRef
       .current!.play()
-      .catch((error) => logger.error(error, { description: '音频播放失败' }));
+      .catch((error) => logger.error(error, '音频播放失败'));
 
   onActionPause = () => this.audioRef.current!.pause();
 

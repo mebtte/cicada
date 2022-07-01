@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import * as React from 'react';
-import logger from '@/platform/logger';
+import logger from '#/utils/logger';
 
 /**
  * 错误边界
@@ -18,10 +18,7 @@ class ErrorBoundary extends React.PureComponent<
   }
 > {
   static defaultProps = {
-    onError: (error: Error) =>
-      logger.error(error, {
-        description: '渲染发生错误',
-      }),
+    onError: (error: Error) => logger.error(error, '渲染发生错误'),
   };
 
   constructor(props) {

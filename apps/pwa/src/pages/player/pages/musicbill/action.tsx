@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import toast from '@/platform/toast';
 import { RequestStatus } from '@/constants';
 import dialog from '@/platform/dialog';
-import logger from '@/platform/logger';
+import logger from '#/utils/logger';
 import deleteMusicbill from '@/server_new/delete_musicbill';
 import Tooltip, { Placement } from '@/components/tooltip';
 import IconButton, { Name } from '@/components/icon_button';
@@ -65,9 +65,7 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
               playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST);
               navigate({ path: ROOT_PATH.PLAYER + PLAYER_PATH.HOME });
             } catch (error) {
-              logger.error(error, {
-                description: '删除乐单失败',
-              });
+              logger.error(error, '删除乐单失败');
               dialog.alert({
                 title: '删除乐单失败',
                 content: error.message,

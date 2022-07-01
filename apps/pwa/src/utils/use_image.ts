@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-
+import logger from '#/utils/logger';
 import loadImage from './load_image';
-import logger from '../platform/logger';
 
 export default (src: string, defaultImage: string) => {
   const [currentSrc, setCurrentSrc] = useState(defaultImage);
@@ -20,9 +19,7 @@ export default (src: string, defaultImage: string) => {
           if (canceled) {
             return;
           }
-          logger.error(error, {
-            description: '加载图片失败',
-          });
+          logger.error(error, '加载图片失败');
           return setCurrentSrc(defaultImage);
         });
       return () => {

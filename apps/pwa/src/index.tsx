@@ -2,7 +2,7 @@ import './polyfill';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import 'cropperjs/dist/cropper.min.css';
-import logger from './platform/logger';
+import logger from '#/utils/logger';
 import App from './app';
 
 // eslint-disable-next-line no-empty-function
@@ -18,7 +18,7 @@ initialize()
     );
   })
   .catch((error: Error) => {
-    logger.error(error, { description: '初始化失败' });
+    logger.error(error, '初始化失败');
     const root = document.querySelector('#root')!;
     root.textContent = error.message;
   });

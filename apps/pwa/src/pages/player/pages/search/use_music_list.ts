@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import searchMusic from '@/server_new/search_music';
-import logger from '@/platform/logger';
+import logger from '#/utils/logger';
 import { MusicWithIndex } from '../../constants';
 import { PAGE_SIZE } from './constants';
 
@@ -35,7 +35,7 @@ export default ({
         })),
       );
     } catch (e) {
-      logger.error(e, { description: '搜索音乐失败' });
+      logger.error(e, '搜索音乐失败');
       setError(e);
     }
     setLoading(false);

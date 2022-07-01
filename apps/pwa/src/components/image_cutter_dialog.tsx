@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import Cropper from 'cropperjs';
-
+import logger from '#/utils/logger';
 import selectFile from '../utils/select_file';
 import loadImage from '../utils/load_image';
-import logger from '../platform/logger';
 import dialog from '../platform/dialog';
 import Dialog, { Content, Action } from './dialog';
 import Button, { Type } from './button';
@@ -82,9 +81,7 @@ function ImageCutterDialog({
       await onUpdate(blob as File);
       onClose();
     } catch (error) {
-      logger.error(error, {
-        description: '更新失败',
-      });
+      logger.error(error, '更新失败');
       dialog.alert({
         title: '更新失败',
         content: error.message,

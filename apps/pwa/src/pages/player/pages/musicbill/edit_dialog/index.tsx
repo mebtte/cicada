@@ -7,7 +7,7 @@ import IconButton, { Name } from '@/components/icon_button';
 import Avatar from '@/components/avatar';
 import updateMusicbillRequest from '@/server_new/update_musicbill';
 import toast from '@/platform/toast';
-import logger from '@/platform/logger';
+import logger from '#/utils/logger';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/platform/dialog';
 import Dialog, { Content, Action } from '@/components/dialog';
@@ -77,7 +77,7 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
 
       onClose();
     } catch (error) {
-      logger.error(error, { description: '更新乐单信息失败' });
+      logger.error(error, '更新乐单信息失败');
       dialog.alert({ title: '更新乐单信息失败', content: error.message });
     }
     setSaving(false);

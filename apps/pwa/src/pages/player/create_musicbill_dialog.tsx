@@ -3,7 +3,7 @@ import { easeCubicInOut } from 'd3-ease';
 import createMusicbill from '@/server_new/create_musicbill';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import toast from '@/platform/toast';
-import logger from '@/platform/logger';
+import logger from '#/utils/logger';
 import dialog from '@/platform/dialog';
 import Dialog, { Title, Content, Action } from '@/components/dialog';
 import Button, { Type } from '@/components/button';
@@ -44,7 +44,7 @@ function CreateMusicbillDialog() {
       eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, {});
       onClose();
     } catch (error) {
-      logger.error(error, { description: '创建乐单失败' });
+      logger.error(error, '创建乐单失败');
       dialog.alert({
         title: '创建乐单失败',
         content: error.message,
