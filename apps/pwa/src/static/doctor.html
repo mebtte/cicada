@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>知了医生</title>
+  </head>
+  <body>
+    <button id="clear" type="button">清空所有缓存</button>
+
+    <script>
+      document.querySelector('#clear').addEventListener('click', async () => {
+        // 移除所有的 service worker
+        const registrations =
+          await window.navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+        }
+
+        // 移除所有缓存
+        const cacheKeys = await caches.keys();
+        for (const key of cacheKeys) {
+          await caches.delete(key);
+        }
+
+        window.alert('已清除所有缓存');
+      });
+    </script>
+  </body>
+</html>

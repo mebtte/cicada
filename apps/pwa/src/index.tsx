@@ -24,9 +24,13 @@ initialize()
   });
 
 if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/service-worker.js')
-      .catch((error) => console.error(error));
-  });
+  window.addEventListener(
+    'load',
+    () => {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .catch((error) => console.error(error));
+    },
+    { once: true },
+  );
 }
