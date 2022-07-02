@@ -47,3 +47,21 @@ export function getUserListByIds<P extends Property>(
     [ids],
   );
 }
+
+export function updateUser<P extends Property.AVATAR | Property.NICKNAME>({
+  id,
+  property,
+  value,
+}: {
+  id: string;
+  property: P;
+  value: User[P];
+}) {
+  return db.run(
+    `
+      update user set ${property} = ?
+        where id = ?
+    `,
+    [value, id],
+  );
+}

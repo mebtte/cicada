@@ -27,6 +27,7 @@ import createMusic from './controllers/create_music';
 import searchSinger from './controllers/search_singer';
 import createSinger from './controllers/create_singer';
 import updateSinger from './controllers/update_singer';
+import updateProfile from './controllers/update_profile';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -40,6 +41,7 @@ router.post('/login', parseBody, login); // 登录
  * authorize
  */
 router.get('/profile', authorize, getProfile); // 获取个人资料
+router.put('/profile', authorize, parseBody, updateProfile); // 更新个人资料
 
 router.get('/self_musicbill_list', authorize, getSelfMusicbillList); // 获取个人乐单列表
 router.get('/self_musicbill', authorize, getSelfMusicbill); // 获取个人乐单

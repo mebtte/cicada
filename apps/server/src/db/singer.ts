@@ -64,15 +64,9 @@ export function getSingerById<P extends Property>(id: string, properties: P[]) {
   );
 }
 
-export function updateSinger<P extends Property>({
-  id,
-  property,
-  value,
-}: {
-  id: string;
-  property: P;
-  value: Singer[P];
-}) {
+export function updateSinger<
+  P extends Property.ALIASES | Property.AVATAR | Property.NAME,
+>({ id, property, value }: { id: string; property: P; value: Singer[P] }) {
   return db.run(
     `
       update singer set ${property} = ? where id = ?
