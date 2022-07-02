@@ -13,6 +13,7 @@ export default async (ctx: Context) => {
     typeof name !== 'string' ||
     !name.length ||
     name.length > NAME_MAX_LENGTH ||
+    name.trim() !== name ||
     typeof force !== 'boolean'
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);

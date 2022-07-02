@@ -38,7 +38,8 @@ const KEY_MAP_HANDLER: Record<
     if (
       typeof name !== 'string' ||
       !name.length ||
-      name.length > NAME_MAX_LENGTH
+      name.length > NAME_MAX_LENGTH ||
+      name.trim() !== name
     ) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
@@ -71,6 +72,9 @@ const KEY_MAP_HANDLER: Record<
     }
 
     for (const alias of aliasList) {
+      if (alias.trim() !== alias) {
+        return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      }
       if (alias.length > ALIAS_MAX_LENGTH) {
         return ctx.except(ExceptionCode.ALIAS_OVER_MAX_LENGTH);
       }

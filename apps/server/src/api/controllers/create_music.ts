@@ -26,6 +26,7 @@ export default async (ctx: Context) => {
     typeof name !== 'string' ||
     !name.length ||
     name.length > NAME_MAX_LENGTH ||
+    name.trim() !== name ||
     typeof singerIds !== 'string' ||
     !singerIds.length ||
     // @ts-expect-error

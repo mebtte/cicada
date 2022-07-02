@@ -16,7 +16,6 @@ export enum ExceptionCode {
   WRONG_ASSET_ACCEPT_TYPES,
   LYRIC_NOT_EXIST,
   ASSET_NOT_EXIST,
-  MUSICBILL_DO_NOT_NEED_TO_UPDATE,
   FORBID_EXPORT_EMPTY_MUSICBILL,
   OVER_EXPORT_MUSICBILL_TIMES_PER_DAY,
   SINGER_NOT_EXIST,
@@ -84,9 +83,6 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.ASSET_NOT_EXIST]: {
     description: '资源不存在',
-  },
-  [ExceptionCode.MUSICBILL_DO_NOT_NEED_TO_UPDATE]: {
-    description: '乐单无需更新',
   },
   [ExceptionCode.FORBID_EXPORT_EMPTY_MUSICBILL]: {
     description: '无法导出空的乐单',
