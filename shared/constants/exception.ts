@@ -22,6 +22,7 @@ export enum ExceptionCode {
   SINGER_NOT_EXIST,
   OVER_UPLOAD_MUSIC_TIMES_PER_DAY,
   INSTRUMENT_NO_LYRIC,
+  SINGER_EXIST,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -98,5 +99,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.INSTRUMENT_NO_LYRIC]: {
     description: '乐曲没有歌词',
+  },
+  [ExceptionCode.SINGER_EXIST]: {
+    description: '歌手已存在',
   },
 };
