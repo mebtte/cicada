@@ -23,6 +23,9 @@ export enum ExceptionCode {
   OVER_UPLOAD_MUSIC_TIMES_PER_DAY,
   INSTRUMENT_NO_LYRIC,
   SINGER_EXIST,
+  NO_NEED_TO_UPDATE,
+  ALIAS_OVER_MAX_LENGTH,
+  REPEATED_ALIAS,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -102,5 +105,14 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.SINGER_EXIST]: {
     description: '歌手已存在',
+  },
+  [ExceptionCode.NO_NEED_TO_UPDATE]: {
+    description: '无需更新',
+  },
+  [ExceptionCode.ALIAS_OVER_MAX_LENGTH]: {
+    description: '别名超过最大长度',
+  },
+  [ExceptionCode.REPEATED_ALIAS]: {
+    description: '重复的别名',
   },
 };

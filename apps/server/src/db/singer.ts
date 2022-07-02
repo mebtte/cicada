@@ -53,3 +53,30 @@ export function getSingerListByIds<P extends Property>(
     [ids],
   );
 }
+
+export function getSingerById<P extends Property>(id: string, properties: P[]) {
+  return db.get<Pick<Singer, P>>(
+    `
+      select ${properties.join(',')} from singer
+        where id = ?
+    `,
+    [id],
+  );
+}
+
+export function updateSinger<P extends Property>({
+  id,
+  property,
+  value,
+}: {
+  id: string;
+  property: P;
+  value: Singer[P];
+}) {
+  return db.run(
+    `
+      update singer set ${property} = ? where id = ?
+    `,
+    [value, id],
+  );
+}
