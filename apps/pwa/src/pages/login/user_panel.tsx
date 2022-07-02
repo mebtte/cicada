@@ -1,6 +1,5 @@
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import p, { Profile as ProfileType } from '@/global_states/profile';
@@ -11,6 +10,7 @@ import { ReactNode, useEffect } from 'react';
 import parseSearch from '@/utils/parse_search';
 import { LoginQuery } from '@/constants/query';
 import useNavigate from '#/utils/use_navigate';
+import Paper from './paper';
 import Logo from './logo';
 import { panelCSS } from './constants';
 

@@ -1,12 +1,14 @@
 import { memo } from 'react';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { ROOT_PATH } from '@/constants/route';
 
 const Style = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
 
-  > .logo {
+  .logo {
     height: 48px;
   }
 `;
@@ -14,7 +16,9 @@ const Style = styled.div`
 function Logo() {
   return (
     <Style>
-      <img className="logo" src="/text_logo.png" alt="logo" />
+      <Link to={ROOT_PATH.HOME}>
+        <img className="logo" src="/text_logo.png" alt="logo" />
+      </Link>
     </Style>
   );
 }

@@ -1,4 +1,3 @@
-import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import styled from 'styled-components';
@@ -18,6 +17,7 @@ import p from '@/global_states/profile';
 import getProfile from '@/server_new/get_profile';
 import sleep from '#/utils/sleep';
 import storage, { Key } from '@/platform/storage';
+import Paper from './paper';
 import Logo from './logo';
 import { panelCSS } from './constants';
 
