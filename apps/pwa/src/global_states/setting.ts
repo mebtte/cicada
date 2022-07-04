@@ -6,7 +6,7 @@ interface Setting {
 }
 
 const DEFAULT_SETTING: Setting = {
-  serverAddress: '',
+  serverAddress: window.location.origin,
 };
 let initialSetting: Setting | null = null;
 const settingString = storage.getItem(Key.SETTING);
@@ -18,7 +18,10 @@ if (settingString) {
   }
 }
 
-const setting = new XState<Setting>(initialSetting || DEFAULT_SETTING);
+const setting = new XState<Setting>({
+  ...DEFAULT_SETTING,
+  ...initialSetting,
+});
 
 setting.onChange((s) =>
   storage.setItem({ key: Key.SETTING, value: JSON.stringify(s) }),

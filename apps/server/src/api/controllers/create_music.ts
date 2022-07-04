@@ -14,16 +14,25 @@ import { Context } from '../constants';
 const ID_LENGTH = 8;
 
 export default async (ctx: Context) => {
-  const { name, singerIds, type, sq } = ctx.request.body;
+  const { name, singerIds, type, sq, force } = ctx.request.body as {
+    name?: unknown;
+    singerIds?: unknown;
+    type?: unknown;
+    sq?: unknown;
+    force?: unknown;
+  };
 
   if (
     typeof name !== 'string' ||
     !name.length ||
     name.length > NAME_MAX_LENGTH ||
+    name.trim() !== name ||
     typeof singerIds !== 'string' ||
     !singerIds.length ||
+    // @ts-expect-error
     !MUSIC_TYPES.includes(type) ||
-    typeof sq !== 'string'
+    typeof sq !== 'string' ||
+    typeof force !== 'boolean'
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
@@ -51,6 +60,10 @@ export default async (ctx: Context) => {
   );
   if (todayUploadMusicList.length > argv.userUploadMusicMaxTimesPerDay) {
     return ctx.except(ExceptionCode.OVER_UPLOAD_MUSIC_TIMES_PER_DAY);
+  }
+
+  if (!force && !ctx.user.super) {
+    // @todo(mebtte<hi@mebtte.com>)[重复音乐判断]
   }
 
   const id = generateRandomString(ID_LENGTH, false);

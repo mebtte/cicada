@@ -1,7 +1,5 @@
-import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
 import {
   ChangeEventHandler,
   KeyboardEventHandler,
@@ -12,9 +10,11 @@ import {
 import { EMAIL } from '#/constants/regexp';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
+import Input from '#/components/input';
 import { panelCSS } from '../constants';
 import CaptchaDialog from './captcha_dialog';
 import Logo from '../logo';
+import Paper from '../paper';
 
 const Style = styled(Paper)`
   ${panelCSS}
@@ -31,9 +31,11 @@ function EmailPanel({
   updateEmail: (email: string) => void;
   toNext: () => void;
 }) {
-  const emailRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(
+    null,
+  );
 
-  const [email, setEmail] = useState(initialEmail);
+  const [email, setEmail] = useState(initialEmail || 'hi@mebtte.com');
   const onEmailChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setEmail(event.target.value);
 
@@ -62,7 +64,7 @@ function EmailPanel({
 
   useLayoutEffect(() => {
     if (visible) {
-      emailRef.current?.focus();
+      emailRef.current?.input.focus();
     }
   }, [visible]);
 
@@ -71,13 +73,15 @@ function EmailPanel({
       <Style visible={visible ? 1 : 0}>
         <Stack spacing={3}>
           <Logo />
-          <TextField
-            type="email"
+          <Input
+            ref={emailRef}
             label="邮箱"
-            value={email}
-            onChange={onEmailChange}
-            onKeyDown={onKeyDown}
-            inputRef={emailRef}
+            inputProps={{
+              type: 'email',
+              value: email,
+              onChange: onEmailChange,
+              onKeyDown,
+            }}
           />
           <LoadingButton
             variant="contained"
