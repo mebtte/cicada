@@ -28,6 +28,7 @@ import searchSinger from './controllers/search_singer';
 import createSinger from './controllers/create_singer';
 import updateSinger from './controllers/update_singer';
 import updateProfile from './controllers/update_profile';
+import getSingerDetail from './controllers/get_singer_detail';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -61,6 +62,7 @@ router.get('/lyric', authorize, getLyric); // 获取音乐歌词
 router.post('/singer', authorize, parseBody, createSinger); // 创建歌手
 router.put('/singer', authorize, parseBody, updateSinger); // 更新歌手
 router.get('/singer/search', authorize, searchSinger); // 搜索歌手
+router.get('/singer_detail', authorize, getSingerDetail); // 获取歌手详情
 
 /**
  * super authorize

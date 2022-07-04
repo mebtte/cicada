@@ -12,6 +12,7 @@ import {
   Property as SingerProperty,
   updateSinger,
 } from '@/db/singer';
+import { saveSingerModifyRecord } from '@/db/singer_modify_record';
 import { getAssetPath } from '@/platform/asset';
 import { Context } from '../constants';
 
@@ -48,11 +49,19 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
     }
 
-    await updateSinger({
-      id: singer.id,
-      property: SingerProperty.NAME,
-      value: name,
-    });
+    await Promise.all([
+      updateSinger({
+        id: singer.id,
+        property: SingerProperty.NAME,
+        value: name,
+      }),
+      saveSingerModifyRecord({
+        singerId: singer.id,
+        key: 'name',
+        value: name,
+        modifyUserId: ctx.user.id,
+      }),
+    ]);
 
     return ctx.success();
   },
@@ -80,11 +89,19 @@ const KEY_MAP_HANDLER: Record<
       }
     }
 
-    await updateSinger({
-      id: singer.id,
-      property: SingerProperty.ALIASES,
-      value: aliases,
-    });
+    await Promise.all([
+      updateSinger({
+        id: singer.id,
+        property: SingerProperty.ALIASES,
+        value: aliases,
+      }),
+      saveSingerModifyRecord({
+        singerId: singer.id,
+        key: 'aliases',
+        value: aliases,
+        modifyUserId: ctx.user.id,
+      }),
+    ]);
 
     return ctx.success();
   },
@@ -103,11 +120,19 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
     }
 
-    await updateSinger({
-      id: singer.id,
-      property: SingerProperty.AVATAR,
-      value: avatar,
-    });
+    await Promise.all([
+      updateSinger({
+        id: singer.id,
+        property: SingerProperty.AVATAR,
+        value: avatar,
+      }),
+      saveSingerModifyRecord({
+        singerId: singer.id,
+        key: 'avatar',
+        value: avatar,
+        modifyUserId: ctx.user.id,
+      }),
+    ]);
 
     return ctx.success();
   },

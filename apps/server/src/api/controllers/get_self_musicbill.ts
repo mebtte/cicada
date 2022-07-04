@@ -48,7 +48,7 @@ export default async (ctx: Context) => {
     >
   >(
     `
-      SELECT
+      select
         m.id,
         m.type,
         m.name,
@@ -57,26 +57,17 @@ export default async (ctx: Context) => {
         m.sq,
         m.hq,
         m.ac
-      FROM
-        musicbill_music AS mm
-        LEFT JOIN music AS m ON mm.musicId = m.id 
-      WHERE
+      from
+        musicbill_music as mm
+        left join music as m on mm.musicId = m.id 
+      where
         mm.musicbillId = ? 
-      ORDER BY
-        mm.addTimestamp DESC;
+      order by
+        mm.addTimestamp desc;
     `,
     [id],
   );
 
-  const allSingerList = await getSingerListInMusicIds(
-    musicList.map((m) => m.id),
-    [
-      SingerProperty.ID,
-      SingerProperty.AVATAR,
-      SingerProperty.NAME,
-      SingerProperty.ALIASES,
-    ],
-  );
   const musicIdMapSingers: {
     [key: string]: {
       id: string;
@@ -85,14 +76,25 @@ export default async (ctx: Context) => {
       avatar: string;
     }[];
   } = {};
-  for (const singer of allSingerList) {
-    if (!musicIdMapSingers[singer.musicId]) {
-      musicIdMapSingers[singer.musicId] = [];
+  if (musicList.length) {
+    const allSingerList = await getSingerListInMusicIds(
+      Array.from(new Set(musicList.map((m) => m.id))),
+      [
+        SingerProperty.ID,
+        SingerProperty.AVATAR,
+        SingerProperty.NAME,
+        SingerProperty.ALIASES,
+      ],
+    );
+    for (const singer of allSingerList) {
+      if (!musicIdMapSingers[singer.musicId]) {
+        musicIdMapSingers[singer.musicId] = [];
+      }
+      musicIdMapSingers[singer.musicId].push({
+        ...excludeProperty(singer, ['musicId']),
+        avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),
+      });
     }
-    musicIdMapSingers[singer.musicId].push({
-      ...excludeProperty(singer, ['musicId']),
-      avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),
-    });
   }
 
   return ctx.success({

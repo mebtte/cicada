@@ -115,7 +115,7 @@ if (cluster.isPrimary) {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           singerId TEXT NOT NULL,
           modifyUserId TEXT NOT NULL,
-          value TEXT NOT NULL,
+          content TEXT NOT NULL,
           modifyTimestamp INTEGER NOT NULL,
           CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
           CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
@@ -142,7 +142,7 @@ if (cluster.isPrimary) {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           musicId TEXT NOT NULL,
           modifyUserId TEXT NOT NULL,
-          value TEXT NOT NULL,
+          content TEXT NOT NULL,
           modifyTimestamp INTEGER NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
           CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
@@ -181,7 +181,8 @@ if (cluster.isPrimary) {
           musicId TEXT NOT NULL,
           singerId TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
-          CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ) 
+          CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
+          CONSTRAINT "uMusicSinger" UNIQUE ("musicId", "singerId")
         );
       `;
       const TABLE_MUSICBILL = `
