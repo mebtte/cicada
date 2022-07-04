@@ -1,3 +1,4 @@
+import { MusicType } from '#/constants/music';
 import { request } from '.';
 
 function getSelfMusicbill(id: string) {
@@ -9,7 +10,7 @@ function getSelfMusicbill(id: string) {
     createTimestamp: number;
     musicList: {
       id: string;
-      type: 1 | 2;
+      type: MusicType;
       name: string;
       aliases: string;
       cover: string;

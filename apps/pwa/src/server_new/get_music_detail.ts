@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { MusicType } from '#/constants/music';
-import server from '.';
+import { request } from '.';
 
 interface Singer {
   id: string;
@@ -20,8 +20,6 @@ interface Music {
   mv_link: string;
   sq: string;
   singers: Singer[];
-  fork: string[];
-  fork_from: string[];
 }
 
 /**
@@ -29,15 +27,17 @@ interface Music {
  * @author mebtte<hi@mebtte.com>
  */
 function getMusicDetail(id: string) {
-  return server.get<
-    Omit<Music, 'fork' | 'fork_from'> & {
-      fork: Music[];
-      fork_from: Music[];
-      lrc: string;
+  return request<
+    Music & {
+      createUser: { id: string; avatar: string; nickname: string };
+      lyric?: string;
+      forkList: Music[];
+      forkFromList: Music[];
     }
-  >('/api/get_music_detail', {
-    withToken: true,
+  >({
+    path: '/api/music_detail',
     params: { id },
+    withToken: true,
   });
 }
 

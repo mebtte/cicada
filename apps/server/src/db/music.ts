@@ -34,3 +34,18 @@ export function getMusicById<P extends Property>(id: string, properties: P[]) {
     [key in P]: Music[key];
   }>(`select ${properties.join(',')} from music where id = ?`, [id]);
 }
+
+export function getMusicListByIds<P extends Property>(
+  ids: string[],
+  properties: P[],
+) {
+  return db.all<{
+    [key in P]: Music[key];
+  }>(
+    `
+      select ${properties.join(',')} from music
+        where id in ( ${ids.map(() => '?')} )
+    `,
+    ids,
+  );
+}
