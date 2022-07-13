@@ -4,7 +4,7 @@ import { SECRET_DIR } from '../constants/directory';
 import generateRandomString from './generate_random_string';
 
 const JWT_TTL = 1000 * 60 * 60 * 24 * 180;
-const JWT_SECRET_FILE_PATH = `${SECRET_DIR}/jwt`;
+const JWT_SECRET_FILE_PATH = `${SECRET_DIR}/jwt_secret`;
 
 let secret: string;
 if (fs.existsSync(JWT_SECRET_FILE_PATH)) {

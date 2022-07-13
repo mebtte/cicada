@@ -8,10 +8,9 @@
 import cluster from 'cluster';
 import fs from 'fs';
 import { EMAIL } from '#/constants/regexp';
-import generateRandomString from '#/utils/generate_random_string';
 import DB from '#/utils/db';
 import question from '#/utils/question';
-import { LOGIN_CODE_SALT_FILE_PATH, DB_FILE_PATH } from './constants';
+import { DB_FILE_PATH } from './constants';
 import {
   SECRET_DIR,
   ROOT_ASSET_DIR,
@@ -50,12 +49,6 @@ if (cluster.isPrimary) {
   ];
   for (const directory of directories) {
     mkdirIfNotExist(directory);
-  }
-
-  /** 登录验证码盐 */
-  if (!fs.existsSync(LOGIN_CODE_SALT_FILE_PATH)) {
-    const salt = generateRandomString();
-    fs.writeFileSync(LOGIN_CODE_SALT_FILE_PATH, salt);
   }
 
   /** 数据库 */
