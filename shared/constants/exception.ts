@@ -26,6 +26,7 @@ export enum ExceptionCode {
   ALIAS_OVER_MAX_LENGTH,
   REPEATED_ALIAS,
   NICKNAME_EXIST,
+  USER_NOT_EXIST,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -114,5 +115,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.NICKNAME_EXIST]: {
     description: '昵称已被占用',
+  },
+  [ExceptionCode.USER_NOT_EXIST]: {
+    description: '用户不存在',
   },
 };
