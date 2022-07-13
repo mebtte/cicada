@@ -54,7 +54,7 @@ export default async (ctx: Context) => {
     getMusicForkFromList(id),
   ]);
 
-  const [allSingerList, musicList] = await Promise.all([
+  const [allSingerList, musicList = []] = await Promise.all([
     getSingerListInMusicIds(Array.from([id, ...forkList, ...forkFromList]), [
       SingerProperty.ALIASES,
       SingerProperty.ID,
@@ -72,7 +72,7 @@ export default async (ctx: Context) => {
           MusicProperty.HQ,
           MusicProperty.AC,
         ])
-      : [],
+      : undefined,
   ]);
   const musicIdMapSingerList: {
     [key: string]: Pick<
