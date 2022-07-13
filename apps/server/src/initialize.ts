@@ -11,12 +11,9 @@ import { EMAIL } from '#/constants/regexp';
 import generateRandomString from '#/utils/generate_random_string';
 import DB from '#/utils/db';
 import question from '#/utils/question';
+import { LOGIN_CODE_SALT_FILE_PATH, DB_FILE_PATH } from './constants';
 import {
-  LOGIN_CODE_SALT_FILE_PATH,
-  JWT_SECRET_FILE_PATH,
-  DB_FILE_PATH,
-} from './constants';
-import {
+  SECRET_DIR,
   ROOT_ASSET_DIR,
   ASSET_DIR,
   DB_SNAPSHOT_DIR,
@@ -40,6 +37,7 @@ if (cluster.isPrimary) {
    */
   const directories = [
     argv.base,
+    SECRET_DIR,
     DB_SNAPSHOT_DIR,
     TRASH_DIR,
     LOG_DIR,
@@ -58,12 +56,6 @@ if (cluster.isPrimary) {
   if (!fs.existsSync(LOGIN_CODE_SALT_FILE_PATH)) {
     const salt = generateRandomString();
     fs.writeFileSync(LOGIN_CODE_SALT_FILE_PATH, salt);
-  }
-
-  /** JWT secret */
-  if (!fs.existsSync(JWT_SECRET_FILE_PATH)) {
-    const secret = generateRandomString(64);
-    fs.writeFileSync(JWT_SECRET_FILE_PATH, secret);
   }
 
   /** 数据库 */

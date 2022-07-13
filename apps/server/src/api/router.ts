@@ -30,7 +30,7 @@ import updateSinger from './controllers/update_singer';
 import updateProfile from './controllers/update_profile';
 import getSingerDetail from './controllers/get_singer_detail';
 import getMusicDetail from './controllers/get_music_detail';
-import getUser from './controllers/get_user';
+import getUserDetail from './controllers/get_user_detail';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -45,7 +45,7 @@ router.post('/login', parseBody, login); // 登录
  */
 router.get('/profile', authorize, getProfile); // 获取个人资料
 router.put('/profile', authorize, parseBody, updateProfile); // 更新个人资料
-router.get('/user', authorize, getUser); // 获取用户信息
+router.get('/user_detail', authorize, getUserDetail); // 获取用户信息
 
 router.get('/self_musicbill_list', authorize, getSelfMusicbillList); // 获取个人乐单列表
 router.get('/self_musicbill', authorize, getSelfMusicbill); // 获取个人乐单

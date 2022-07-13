@@ -13,5 +13,6 @@ dist/
 build/
 
 argv.json
+secrets/
 resources/
 temporary/
