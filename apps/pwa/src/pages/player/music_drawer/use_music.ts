@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-
-import getMusicDetail from '@/server/get_music_detail';
+import getMusicDetail from '@/server_new/get_music_detail';
 import { Data } from './constants';
 import { transformMusic } from '../utils';
 
@@ -23,9 +22,9 @@ export default (id: string) => {
         loading: false,
         music: {
           ...transformMusic(music),
-          fork: music.fork.map(transformMusic),
-          forkFrom: music.fork_from.map(transformMusic),
-          lrc: music.lrc,
+          fork: music.forkList.map(transformMusic),
+          forkFrom: music.forkFromList.map(transformMusic),
+          lrc: music.lyric || '',
         },
       });
     } catch (error) {
