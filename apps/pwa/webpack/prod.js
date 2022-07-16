@@ -15,6 +15,7 @@ module.exports = {
     ...base.plugins,
     new WorkboxPlugin.GenerateSW({
       mode: 'production',
+      skipWaiting: true,
       clientsClaim: true,
       cleanupOutdatedCaches: true,
       disableDevLogs: true,
