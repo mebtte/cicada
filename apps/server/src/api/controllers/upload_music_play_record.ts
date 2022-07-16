@@ -3,7 +3,7 @@ import { ExceptionCode } from '#/constants/exception';
 import db from '@/db';
 import { getMusicById, Property as MusicProperty } from '@/db/music';
 import { addMusicPlayRecord } from '@/db/music_play_record';
-import { verify } from '@/platform/jwt';
+import { verify } from '#/utils/jwt';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

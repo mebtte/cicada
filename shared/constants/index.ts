@@ -9,9 +9,6 @@ export const GET_LOGIN_CODE_INTERVAL = 1000 * 60 * 2;
 export const DB_FILENAME = 'db';
 export const TRASH_FILENAME = 'trash';
 
-export const JWT_SECRET_FILENAME = 'jwt_secret';
-export const JWT_TTL = 1000 * 60 * 60 * 24 * 180;
-
 export enum AssetType {
   USER_AVATAR = 'user_avatar',
   MUSICBILL_COVER = 'musicbill_cover',

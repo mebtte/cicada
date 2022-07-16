@@ -3,6 +3,8 @@ import { AssetType, TRASH_FILENAME } from '#/constants';
 import argv from '@/argv';
 import { TemporaryType } from '.';
 
+export * from '#/constants/directory';
+
 export const ROOT_ASSET_DIR = `${argv.base}/assets`;
 export const ASSET_DIR: Record<AssetType, string> = {
   [AssetType.USER_AVATAR]: `${ROOT_ASSET_DIR}/${AssetType.USER_AVATAR}`,
