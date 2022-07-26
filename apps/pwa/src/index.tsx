@@ -23,14 +23,23 @@ initialize()
     root.textContent = error.message;
   });
 
-if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
-  window.addEventListener(
-    'load',
-    () => {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .catch((error) => console.error(error));
-    },
-    { once: true },
+if ('serviceWorker' in navigator) {
+  window.requestIdleCallback(() =>
+    import('workbox-window').then(({ Workbox }) => {
+      const wb = new Workbox('/service_worker.js');
+      wb.addEventListener('waiting', () => {
+        /**
+         * @todo 更新提示
+         * @author mebtte<hi@mebtte.com>
+         */
+        const yes = window.confirm('已更新到最新版本, 是否立即刷新使用?');
+        if (yes) {
+          wb.addEventListener('controlling', () => window.location.reload());
+          wb.messageSkipWaiting();
+        }
+      });
+
+      wb.register();
+    }),
   );
 }

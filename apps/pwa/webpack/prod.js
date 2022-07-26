@@ -1,24 +1,15 @@
 const path = require('path');
 const WorkboxPlugin = require('workbox-webpack-plugin');
-const base = require('./base');
+const { mainConfig } = require('./base');
 
 module.exports = {
-  ...base,
-  mode: 'production',
-  output: {
-    path: path.join(__dirname, '../build'),
-    filename: '[name]_[contenthash].js',
-    chunkFilename: '[name]_[contenthash].js',
-    publicPath: '/',
-  },
+  ...mainConfig,
   plugins: [
-    ...base.plugins,
-    new WorkboxPlugin.GenerateSW({
-      mode: 'production',
-      skipWaiting: true,
-      clientsClaim: true,
-      cleanupOutdatedCaches: true,
-      disableDevLogs: true,
+    ...mainConfig.plugins,
+    new WorkboxPlugin.InjectManifest({
+      compileSrc: true,
+      swSrc: path.join(__dirname, '../src/service_worker.ts'),
+      swDest: path.join(__dirname, '../build/service_worker.js'),
     }),
   ],
   devtool: 'nosources-source-map',
