@@ -8,8 +8,19 @@ const pkg = require('../../../package.json');
 const INVALID_FILES = ['.DS_Store'];
 const STATIC_DIR = path.join(__dirname, '../src/static');
 
-module.exports = {
+const mainConfig = {
+  mode: process.env.NODE_ENV,
   entry: path.join(__dirname, '../src/index.tsx'),
+  output: {
+    path: path.join(__dirname, '../build'),
+    filename:
+      process.env.NODE_ENV === 'production' ? '[contenthash].js' : '[name].js',
+    chunkFilename:
+      process.env.NODE_ENV === 'production'
+        ? 'chunk_[contenthash].js'
+        : 'chunk_[name].js',
+    publicPath: '/',
+  },
   module: {
     rules: [
       {
@@ -35,7 +46,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, '../src'),
       '#': path.resolve(__dirname, '../../../shared'),
@@ -75,4 +86,45 @@ module.exports = {
       template: path.join(__dirname, '../src/index.html'),
     }),
   ],
+};
+
+const serviceWorkerConfig = {
+  mode: process.env.NODE_ENV,
+  target: 'webworker',
+  entry: path.join(__dirname, '../src/service_worker.ts'),
+  output: {
+    path: path.join(__dirname, '../build'),
+    filename: 'service_worker.js',
+    publicPath: '/',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(j|t)s?$/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              rootMode: 'upward',
+            },
+          },
+        ],
+        exclude: [/node_modules/],
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+    alias: {
+      '@': path.resolve(__dirname, '../src'),
+      '#': path.resolve(__dirname, '../../../shared'),
+    },
+    symlinks: false,
+  },
+  plugins: [],
+};
+
+module.exports = {
+  mainConfig,
+  serviceWorkerConfig,
 };

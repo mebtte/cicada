@@ -51,7 +51,10 @@
     "sanitize-filename": "^1.6.3",
     "sqlite3": "^5.0.8",
     "svg-captcha": "^1.4.0",
-    "ts-node": "^10.7.0"
+    "ts-node": "^10.7.0",
+    "workbox-core": "^6.5.3",
+    "workbox-precaching": "^6.5.3",
+    "workbox-window": "^6.5.3"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",

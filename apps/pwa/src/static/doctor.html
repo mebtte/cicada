@@ -18,10 +18,22 @@
           await registration.unregister();
         }
 
-        // 移除所有缓存
-        const cacheKeys = await caches.keys();
+        // 移除 cache
+        const cacheKeys = await window.caches.keys();
         for (const key of cacheKeys) {
-          await caches.delete(key);
+          await window.caches.delete(key);
+        }
+
+        // localStorage
+        window.localStorage.clear();
+
+        // sessionStorage
+        window.sessionStorage.clear();
+
+        // indexedDB
+        const databases = await window.indexedDB.databases();
+        for (const database of databases) {
+          window.indexedDB.deleteDatabase(database.name);
         }
 
         window.alert('已清除所有缓存');

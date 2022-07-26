@@ -1,24 +1,25 @@
-const path = require('path');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const { mainConfig, serviceWorkerConfig } = require('./base');
 
-const base = require('./base');
-
-module.exports = {
-  ...base,
-  mode: 'development',
-  output: {
-    path: path.join(__dirname, '../build'),
-    filename: '[name].js',
-    chunkFilename: '[name].js',
-    publicPath: '/',
-  },
-  cache: {
-    type: 'filesystem',
-  },
-  devtool: 'eval-cheap-module-source-map',
-  plugins: [...base.plugins, new ForkTsCheckerWebpackPlugin()],
-  devServer: {
-    port: 8001,
-    hot: true,
-  },
+const cache = {
+  type: 'filesystem',
 };
+
+module.exports = [
+  {
+    ...serviceWorkerConfig,
+    cache,
+    devtool: 'eval-cheap-module-source-map',
+    plugins: [...serviceWorkerConfig.plugins, new ForkTsCheckerWebpackPlugin()],
+  },
+  {
+    ...mainConfig,
+    cache,
+    devtool: 'eval-cheap-module-source-map',
+    plugins: [...mainConfig.plugins, new ForkTsCheckerWebpackPlugin()],
+    devServer: {
+      port: 8001,
+      hot: true,
+    },
+  },
+];
