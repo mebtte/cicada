@@ -1,25 +1,12 @@
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const { mainConfig, serviceWorkerConfig } = require('./base');
+const webpack = require('webpack');
+const { devMainConfig } = require('./base');
 
-const cache = {
-  type: 'filesystem',
+module.exports = {
+  ...devMainConfig,
+  plugins: [
+    ...devMainConfig.plugins,
+    new webpack.DefinePlugin({
+      __WITH_SW__: JSON.stringify(false),
+    }),
+  ],
 };
-
-module.exports = [
-  {
-    ...serviceWorkerConfig,
-    cache,
-    devtool: 'eval-cheap-module-source-map',
-    plugins: [...serviceWorkerConfig.plugins, new ForkTsCheckerWebpackPlugin()],
-  },
-  {
-    ...mainConfig,
-    cache,
-    devtool: 'eval-cheap-module-source-map',
-    plugins: [...mainConfig.plugins, new ForkTsCheckerWebpackPlugin()],
-    devServer: {
-      port: 8001,
-      hot: true,
-    },
-  },
-];

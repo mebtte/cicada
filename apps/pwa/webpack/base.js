@@ -3,6 +3,7 @@ const fs = require('fs');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const pkg = require('../../../package.json');
 
 const INVALID_FILES = ['.DS_Store'];
@@ -124,7 +125,21 @@ const serviceWorkerConfig = {
   plugins: [],
 };
 
+const devMainConfig = {
+  ...mainConfig,
+  cache: {
+    type: 'filesystem',
+  },
+  devtool: 'eval-cheap-module-source-map',
+  plugins: [...mainConfig.plugins, new ForkTsCheckerWebpackPlugin()],
+  devServer: {
+    port: 8001,
+    hot: true,
+  },
+};
+
 module.exports = {
   mainConfig,
+  devMainConfig,
   serviceWorkerConfig,
 };

@@ -18,6 +18,7 @@
     "test": "jest",
     "tslint": "ts-node scripts/tslint.ts",
     "dev:pwa": "npm run dev -w apps/pwa",
+    "dev:pwa_with_sw": "npm run dev_with_sw -w apps/pwa",
     "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev -w apps/server",
     "start": "npm run start -w apps/server --"

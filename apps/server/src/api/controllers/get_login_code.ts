@@ -11,6 +11,7 @@ import generateRandomInteger from '#/utils/generate_random_integer';
 import { sendEmail } from '@/platform/email';
 import { BRAND_NAME } from '#/constants';
 import day from '#/utils/day';
+import env from '@/env';
 import { LOGIN_CODE_TTL } from '../../constants';
 import { Context } from '../constants';
 
@@ -54,24 +55,41 @@ export default async (ctx: Context) => {
 
   const code = generateRandomInteger(100000, 1000000).toString();
 
-  await sendEmail({
-    to: email,
-    title: `「${BRAND_NAME}」登录验证码`,
-    html: `
+  /**
+   * 开发环境下直接在控制台输出
+   * @author mebtte<hi@mebtte.com>
+   */
+  if (env.RUN_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.log(code);
+  } else {
+    await sendEmail({
+      to: email,
+      title: `「${BRAND_NAME}」登录验证码`,
+      html: `
       Hi, 「${encode(user.nickname)}」,
       <br />
       <br />
       你刚刚尝试登录, 本次登录验证码是「<code>${code}</code>」, ${
-      LOGIN_CODE_TTL / 1000 / 60
-    } 分钟内有效.
+        LOGIN_CODE_TTL / 1000 / 60
+      } 分钟内有效.
       <br />
       <br />
       ${BRAND_NAME}
       <br />
       ${day().format('YYYY-MM-DD HH:mm:ss')}
     `,
-  });
+    });
+  }
 
+  /**
+   * 如果 Promise.all 发送邮件和写入数据库
+   * 邮件服务不一定稳定
+   * 可能会出现写入数据成功 但是发送邮件失败
+   * 因为获取登录验证有时间间隔
+   * 导致用户需要等待一段时候后才能重试
+   * @author mebtte<hi@mebtte.com>
+   */
   await saveLoginCode({ userId: user.id, code });
 
   ctx.success();
