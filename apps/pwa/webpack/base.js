@@ -14,10 +14,7 @@ const mainConfig = {
   entry: path.join(__dirname, '../src/index.tsx'),
   output: {
     path: path.join(__dirname, '../build'),
-    filename:
-      process.env.NODE_ENV === 'production'
-        ? '[fullhash].js'
-        : '[contenthash].js',
+    filename: '[contenthash].js',
     chunkFilename:
       process.env.NODE_ENV === 'production'
         ? 'chunk_[fullhash].js'
