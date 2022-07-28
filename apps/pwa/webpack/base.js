@@ -14,8 +14,8 @@ const mainConfig = {
   entry: path.join(__dirname, '../src/index.tsx'),
   output: {
     path: path.join(__dirname, '../build'),
-    filename: '[contenthash].js',
-    chunkFilename: 'chunk_[contenthash].js',
+    filename: '[name]_[contenthash].js',
+    chunkFilename: 'chunk_[name]_[contenthash].js',
     publicPath: '/',
   },
   module: {
