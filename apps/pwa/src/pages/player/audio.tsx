@@ -2,7 +2,7 @@
 import * as React from 'react';
 import throttle from 'lodash/throttle';
 import keyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';
-import uploadMusicPlayRecord from '@/server_new/upload_music_play_record';
+import uploadMusicPlayRecord from '@/server/upload_music_play_record';
 import logger from '#/utils/logger';
 import volumeState from './share_states/volume';
 import eventemitter, { EventType } from './eventemitter';

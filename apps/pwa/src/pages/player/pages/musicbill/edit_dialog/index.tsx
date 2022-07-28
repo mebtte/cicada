@@ -5,7 +5,7 @@ import Switch from '@/components/switch';
 import Label from '@/components/label';
 import IconButton, { Name } from '@/components/icon_button';
 import Avatar from '@/components/avatar';
-import updateMusicbillRequest from '@/server_new/update_musicbill';
+import updateMusicbillRequest from '@/server/update_musicbill';
 import toast from '@/platform/toast';
 import logger from '#/utils/logger';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';

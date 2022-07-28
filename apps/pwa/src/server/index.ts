@@ -3,7 +3,6 @@ import token from '@/global_states/token';
 import setting from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
-import env from '@/env';
 
 export enum Method {
   GET = 'get',
@@ -37,13 +36,11 @@ export async function request<Data = void>({
   const { serverAddress } = setting.get();
   let url = `${serverAddress}${path}`;
 
-  const combineParams = {
-    ...params,
-    version: env.VERSION,
-  };
-  url += `?${Object.keys(combineParams)
-    .map((key) => `${key}=${combineParams[key]}`)
-    .join('&')}`;
+  if (params) {
+    url += `?${Object.keys(params)
+      .map((key) => `${key}=${params[key]}`)
+      .join('&')}`;
+  }
 
   if (withToken) {
     // eslint-disable-next-line no-param-reassign
@@ -61,14 +58,19 @@ export async function request<Data = void>({
     }
   }
 
-  const [response] = await Promise.all([
-    window.fetch(url, {
-      method,
-      headers,
-      body: processedBody,
-    }),
-    sleep(minDuration),
-  ]);
+  let response: Response;
+  try {
+    [response] = await Promise.all([
+      window.fetch(url, {
+        method,
+        headers,
+        body: processedBody,
+      }),
+      sleep(minDuration),
+    ]);
+  } catch (error) {
+    throw new Error('网络错误');
+  }
 
   const { status, statusText } = response;
   if (status !== 200) {

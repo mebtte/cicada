@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { COVER_MAX_SIZE } from '@/constants/musicbill';
 import ImageCutterDialog from '@/components/image_cutter_dialog';
-import updateMusicbill from '@/server_new/update_musicbill';
+import updateMusicbill from '@/server/update_musicbill';
 import { AllowUpdateKey } from '#/constants/musicbill';
-import uploadAsset from '@/server_new/upload_asset';
+import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
 import playerEventemitter, {
   EventType as PlayerEventType,

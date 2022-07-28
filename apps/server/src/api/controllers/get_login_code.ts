@@ -61,7 +61,7 @@ export default async (ctx: Context) => {
    */
   if (env.RUN_ENV === 'development') {
     // eslint-disable-next-line no-console
-    console.log(code);
+    console.log(`--- login code: ${code}---`);
   } else {
     await sendEmail({
       to: email,

@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import getRandomCover from '@/utils/get_random_cover';
 import { RequestStatus } from '@/constants';
-import getSelfMusicbillList from '@/server_new/get_self_musicbill_list';
-import addMusicToMusicbill from '@/server_new/add_music_to_musicbill';
-import removeMusicFromMusicbill from '@/server_new/remove_music_from_musicbill';
+import getSelfMusicbillList from '@/server/get_self_musicbill_list';
+import addMusicToMusicbill from '@/server/add_music_to_musicbill';
+import removeMusicFromMusicbill from '@/server/remove_music_from_musicbill';
 import logger from '#/utils/logger';
 import dialog from '@/platform/dialog';
-import getSelfMusicbill from '@/server_new/get_self_musicbill';
+import getSelfMusicbill from '@/server/get_self_musicbill';
 import eventemitter, { EventType } from './eventemitter';
 import { Music, Musicbill } from './constants';
 

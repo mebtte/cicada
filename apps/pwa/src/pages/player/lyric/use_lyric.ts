@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MusicType } from '#/constants/music';
 import { ExceptionCode } from '#/constants/exception';
-import getLyric from '@/server_new/get_lyric';
+import getLyric from '@/server/get_lyric';
 import { Music } from '../constants';
 import { Status } from './constants';
 

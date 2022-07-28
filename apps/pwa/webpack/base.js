@@ -15,11 +15,13 @@ const mainConfig = {
   output: {
     path: path.join(__dirname, '../build'),
     filename:
-      process.env.NODE_ENV === 'production' ? '[contenthash].js' : '[name].js',
+      process.env.NODE_ENV === 'production'
+        ? '[fullhash].js'
+        : '[contenthash].js',
     chunkFilename:
       process.env.NODE_ENV === 'production'
-        ? 'chunk_[contenthash].js'
-        : 'chunk_[name].js',
+        ? 'chunk_[fullhash].js'
+        : 'chunk_[contenthash].js',
     publicPath: '/',
   },
   module: {

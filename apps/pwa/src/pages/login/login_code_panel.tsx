@@ -11,10 +11,10 @@ import {
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
 import notice from '@/utils/notice';
-import loginRequest from '@/server_new/login';
+import loginRequest from '@/server/login';
 import t from '@/global_states/token';
 import p from '@/global_states/profile';
-import getProfile from '@/server_new/get_profile';
+import getProfile from '@/server/get_profile';
 import sleep from '#/utils/sleep';
 import storage, { Key } from '@/platform/storage';
 import Paper from './paper';

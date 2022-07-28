@@ -1,6 +1,6 @@
 import { memo, useState, useEffect, useCallback, useRef } from 'react';
 import { easeCubicInOut } from 'd3-ease';
-import createMusicbill from '@/server_new/create_musicbill';
+import createMusicbill from '@/server/create_musicbill';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import toast from '@/platform/toast';
 import logger from '#/utils/logger';

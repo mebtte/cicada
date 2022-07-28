@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import getMusicDetail from '@/server_new/get_music_detail';
+import getMusicDetail from '@/server/get_music_detail';
 import { Data } from './constants';
 import { transformMusic } from '../utils';
 

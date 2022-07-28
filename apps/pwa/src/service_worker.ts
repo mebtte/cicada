@@ -15,7 +15,7 @@ declare const self: ServiceWorkerGlobalScope & {
 
 /**
  * 生产模式下缓存构建资源以及收到指令才升级
- * 开发模式下默认自动升级
+ * 开发模式下默认自动升级并托管所有 client
  * @author mebtte<hi@mebtte.com>
  */
 if (process.env.NODE_ENV === 'production') {
@@ -32,27 +32,29 @@ if (process.env.NODE_ENV === 'production') {
     }
   });
 } else {
-  self.addEventListener('install', () => {
-    self.skipWaiting();
-    clientsClaim();
-  });
+  self.skipWaiting();
+  clientsClaim();
 }
 
 /**
- * 通用 网络优先
+ * 媒体类型, 需要额外处理 range
+ * https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
  * @author mebtte<hi@mebtte.com>
  */
-const PREVNET_CACHE_PATHS: string[] = ['/api/captcha', '/api/login_code'];
 registerRoute(
-  new Route(
-    ({ request }) => {
-      const url = new URL(request.url);
-      return !PREVNET_CACHE_PATHS.includes(url.pathname);
-    },
-    new NetworkFirst({
-      cacheName: 'common',
-    }),
-  ),
+  ({ request }) => {
+    const { destination } = request;
+    return destination === 'video' || destination === 'audio';
+  },
+  new CacheFirst({
+    cacheName: 'media',
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [200],
+      }),
+      new RangeRequestsPlugin(),
+    ],
+  }),
 );
 
 /**
@@ -75,22 +77,18 @@ registerRoute(
 );
 
 /**
- * 媒体类型, 需要额外处理 range
- * https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
+ * 剩余 网络优先
  * @author mebtte<hi@mebtte.com>
  */
+const PREVNET_CACHE_PATHS: string[] = ['/api/captcha', '/api/login_code'];
 registerRoute(
-  ({ request }) => {
-    const { destination } = request;
-    return destination === 'video' || destination === 'audio';
-  },
-  new CacheFirst({
-    cacheName: 'media',
-    plugins: [
-      new CacheableResponsePlugin({
-        statuses: [200],
-      }),
-      new RangeRequestsPlugin(),
-    ],
-  }),
+  new Route(
+    ({ request }) => {
+      const url = new URL(request.url);
+      return !PREVNET_CACHE_PATHS.includes(url.pathname);
+    },
+    new NetworkFirst({
+      cacheName: 'common',
+    }),
+  ),
 );

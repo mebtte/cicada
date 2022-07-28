@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import searchMusic from '@/server_new/search_music';
+import searchMusic from '@/server/search_music';
 import logger from '#/utils/logger';
 import { MusicWithIndex } from '../../constants';
 import { PAGE_SIZE } from './constants';

@@ -5,7 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import styled, { css } from 'styled-components';
 
 import Drawer, { Title } from '@/components/drawer';
-import updateMusicbillOrder from '@/server_new/update_musicbill_order';
+import updateMusicbillOrder from '@/server/update_musicbill_order';
 import logger from '#/utils/logger';
 import dialog from '@/platform/dialog';
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
