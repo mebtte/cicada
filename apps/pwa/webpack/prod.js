@@ -8,6 +8,7 @@ module.exports = {
   plugins: [
     ...mainConfig.plugins,
     new WorkboxPlugin.InjectManifest({
+      exclude: [/\.html$/],
       compileSrc: true,
       swSrc: path.join(__dirname, '../src/service_worker.ts'),
       swDest: path.join(__dirname, '../build/service_worker.js'),

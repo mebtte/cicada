@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "description": "知了, 一个自主托管的音乐服务, 更是一个播放器.",
-  "version": "0.21.1",
+  "version": "0.22.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -52,12 +52,16 @@
     "sanitize-filename": "^1.6.3",
     "sqlite3": "^5.0.8",
     "svg-captcha": "^1.4.0",
-    "ts-node": "^10.7.0",
-    "workbox-core": "^6.5.3",
-    "workbox-precaching": "^6.5.3",
-    "workbox-window": "^6.5.3"
+    "ts-node": "^10.7.0"
   },
   "devDependencies": {
+    "workbox-cacheable-response": "^6.5.4",
+    "workbox-core": "^6.5.3",
+    "workbox-precaching": "^6.5.3",
+    "workbox-range-requests": "^6.5.4",
+    "workbox-routing": "^6.5.4",
+    "workbox-strategies": "^6.5.4",
+    "workbox-window": "^6.5.3",
     "@babel/core": "^7.17.10",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-transform-runtime": "^7.17.10",

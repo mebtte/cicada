@@ -35,7 +35,7 @@ function EmailPanel({
     null,
   );
 
-  const [email, setEmail] = useState(initialEmail || 'hi@mebtte.com');
+  const [email, setEmail] = useState(initialEmail || '');
   const onEmailChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setEmail(event.target.value);
 
