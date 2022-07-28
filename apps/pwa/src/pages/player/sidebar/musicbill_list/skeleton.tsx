@@ -32,7 +32,6 @@ function SkeletonWrapper({ style }: { style: unknown }) {
     [],
   );
   return (
-    // @ts-expect-error
     <Style style={style}>
       {array.map(({ key, nameWidth }) => (
         <Item key={key}>

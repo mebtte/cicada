@@ -17,7 +17,6 @@ const Style = styled(animated.div)`
 
 function Wrapper({ keyword, style }: { keyword: string; style: unknown }) {
   return (
-    // @ts-expect-error
     <Style style={style}>
       <Empty description={keyword ? '未匹配到音乐' : '空的乐单'} />
     </Style>

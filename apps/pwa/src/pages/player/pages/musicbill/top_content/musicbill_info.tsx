@@ -50,7 +50,6 @@ function MusicbillInfo({
   style: unknown;
 }) {
   return (
-    // @ts-expect-error
     <Style style={style}>
       <Cover
         animated
