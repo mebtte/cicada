@@ -28,6 +28,7 @@ function ErrorDisplay({
   style: unknown;
 }) {
   return (
+    // @ts-expect-error
     <Style style={style}>
       <ErrorCard
         errorMessage={error.message}

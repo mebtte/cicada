@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
-
 import scrollbarNever from '@/style/scrollbar_never';
 import getRandomInteger from '#/utils/generate_random_integer';
 import Skeleton from '@/components/skeleton';
@@ -32,6 +31,7 @@ function SkeletonWrapper({ style }: { style: unknown }) {
     [],
   );
   return (
+    // @ts-expect-error
     <Style style={style}>
       {array.map(({ key, nameWidth }) => (
         <Item key={key}>

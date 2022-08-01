@@ -31,6 +31,7 @@ function Lyric({
   toggleTurntable: () => void;
 }) {
   return (
+    // @ts-expect-error
     <Style style={style}>
       <Background cover={music.cover} />
       <Content

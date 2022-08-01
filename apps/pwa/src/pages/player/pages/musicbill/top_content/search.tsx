@@ -68,6 +68,7 @@ function Search({ cover, style }: { cover: string; style: unknown }) {
   }, []);
 
   return (
+    // @ts-expect-error
     <Style style={style}>
       <Avatar animated src={cover} />
       <div className="input-box">
