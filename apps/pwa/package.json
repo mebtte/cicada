@@ -2,7 +2,7 @@
   "name": "pwa",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack/dev.js --progress",
-    "dev_with_sw": "cross-env NODE_ENV=development webpack serve --config webpack/dev_with_sw.js --progress",
+    "dev-with-sw": "cross-env NODE_ENV=development webpack serve --config webpack/dev_with_sw.js --progress",
     "build": "cross-env NODE_ENV=production webpack --config webpack/prod.js --progress"
   }
 }

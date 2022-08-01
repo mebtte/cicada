@@ -1,6 +1,5 @@
 /// <reference lib="WebWorker" />
 /* global ServiceWorkerGlobalScope, RequestDestination */
-
 import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute, PrecacheEntry } from 'workbox-precaching';
 import { registerRoute, Route } from 'workbox-routing';
@@ -42,12 +41,13 @@ if (process.env.NODE_ENV === 'production') {
  * @author mebtte<hi@mebtte.com>
  */
 registerRoute(
-  ({ request }) => {
-    const { destination } = request;
-    return destination === 'video' || destination === 'audio';
-  },
+  ({ request }) => ['video', 'audio'].includes(request.destination),
   new CacheFirst({
     cacheName: 'media',
+    matchOptions: {
+      ignoreVary: true,
+      ignoreSearch: true,
+    },
     plugins: [
       new CacheableResponsePlugin({
         statuses: [200],

@@ -205,7 +205,7 @@ class Audio extends React.PureComponent<Props, {}> {
         onCanPlayThrough={onCanPlayThrough}
         onTimeUpdate={this.onTimeUpdate}
         onError={onError}
-        preload="auto"
+        crossOrigin="anonymous"
       />
     );
   }
