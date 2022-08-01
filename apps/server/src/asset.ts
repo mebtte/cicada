@@ -5,6 +5,10 @@ import { ROOT_ASSET_DIR } from '@/constants/directory';
 
 const app = new Koa();
 app.use(range);
-app.use(serve(ROOT_ASSET_DIR));
+app.use(
+  serve(ROOT_ASSET_DIR, {
+    immutable: true,
+  }),
+);
 
 export default app;

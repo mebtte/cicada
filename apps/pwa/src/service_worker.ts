@@ -12,6 +12,12 @@ declare const self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: PrecacheEntry[];
 };
 
+enum CacheName {
+  COMMON = 'common',
+  MEDIA = 'media',
+  STATIC = 'static',
+}
+
 /**
  * 生产模式下缓存构建资源以及收到指令才升级
  * 开发模式下默认自动升级并托管所有 client
@@ -40,10 +46,21 @@ if (process.env.NODE_ENV === 'production') {
  * https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
  * @author mebtte<hi@mebtte.com>
  */
+self.addEventListener('fetch', (event) => {
+  if (['video', 'audio'].includes(event.request.destination)) {
+    fetch(event.request.url).then((response) => {
+      if (response.ok) {
+        caches
+          .open(CacheName.MEDIA)
+          .then((cache) => cache.put(event.request.url, response));
+      }
+    });
+  }
+});
 registerRoute(
   ({ request }) => ['video', 'audio'].includes(request.destination),
   new CacheFirst({
-    cacheName: 'media',
+    cacheName: CacheName.MEDIA,
     matchOptions: {
       ignoreVary: true,
       ignoreSearch: true,
@@ -71,7 +88,7 @@ registerRoute(
   new Route(
     ({ request }) => CACHE_FIRST_DESTINATIONS.includes(request.destination),
     new CacheFirst({
-      cacheName: 'static',
+      cacheName: CacheName.STATIC,
     }),
   ),
 );
@@ -88,7 +105,7 @@ registerRoute(
       return !PREVNET_CACHE_PATHS.includes(url.pathname);
     },
     new NetworkFirst({
-      cacheName: 'common',
+      cacheName: CacheName.COMMON,
     }),
   ),
 );
