@@ -4,6 +4,7 @@ import throttle from 'lodash/throttle';
 import keyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';
 import uploadMusicPlayRecord from '@/server/upload_music_play_record';
 import logger from '#/utils/logger';
+import { CacheName } from '@/constants/cache';
 import volumeState from './share_states/volume';
 import eventemitter, { EventType } from './eventemitter';
 import dialog from '../../platform/dialog';
@@ -28,9 +29,6 @@ const onError = (e) => {
     content: e.message,
   });
   return eventemitter.emit(EventType.AUDIO_ERROR);
-};
-const cacheMusic = async (url: string) => {
-  caches.open('media').then((cache) => cache.add(url));
 };
 
 interface Props {
@@ -63,7 +61,7 @@ class Audio extends React.PureComponent<Props, {}> {
     const { queueMusic } = this.props;
     if (prevProps.queueMusic.pid !== queueMusic.pid) {
       this.uploadPlayRecord(prevProps.queueMusic.music);
-      cacheMusic(prevProps.queueMusic.music.sq);
+      this.createCache(prevProps.queueMusic.music);
     }
     return null;
   }
@@ -150,9 +148,8 @@ class Audio extends React.PureComponent<Props, {}> {
     });
   }, 300);
 
-  getAudioSrc = () => {
-    const { queueMusic, playMode } = this.props;
-    const { music } = queueMusic;
+  getAudioSrc = (music: Music) => {
+    const { playMode } = this.props;
 
     switch (playMode) {
       case PlayMode.HQ: {
@@ -189,9 +186,35 @@ class Audio extends React.PureComponent<Props, {}> {
 
   beforeUnload = () => this.uploadPlayRecord(this.props.queueMusic.music);
 
+  /**
+   * workbox 不支持缓存媒体
+   * 需要手动进行缓存
+   * 详情查看 https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
+   * @author mebtte<hi@mebtte.com>
+   */
+  createCache(music: Music) {
+    const { duration } = this.audioRef.current!;
+    const playedSeconds = this.getPlayedSeconeds();
+    const percent = duration ? playedSeconds / duration : 0;
+
+    /**
+     * 播放超过 80% 才进行缓存
+     * @author mebtte<hi@mebtte.com>
+     */
+    if (percent > 0.8) {
+      window.caches.open(CacheName.MEDIA).then(async (cache) => {
+        const url = this.getAudioSrc(music);
+        const exist = await cache.match(url);
+        if (!exist) {
+          cache.add(url);
+        }
+      });
+    }
+  }
+
   render() {
-    const { pid } = this.props.queueMusic;
-    const audioSrc = this.getAudioSrc();
+    const { pid, music } = this.props.queueMusic;
+    const audioSrc = this.getAudioSrc(music);
     return (
       // eslint-disable-next-line jsx-a11y/media-has-caption
       <audio
