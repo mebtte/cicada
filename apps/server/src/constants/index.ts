@@ -2,7 +2,6 @@ import argv from '@/argv';
 import { DB_FILENAME } from '#/constants';
 
 export const ASSET_PREFIX = 'asset';
-export const TEMPORARY_PREFIX = 'temporary';
 
 export const DB_FILE_PATH = `${argv.base}/${DB_FILENAME}`;
 

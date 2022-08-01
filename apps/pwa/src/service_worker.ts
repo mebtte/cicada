@@ -7,6 +7,7 @@ import { CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
 import { CacheName } from '@/constants/cache';
+import { TEMPORARY_PREFIX } from '#/constants';
 
 export type {};
 declare const self: ServiceWorkerGlobalScope & {
@@ -41,8 +42,9 @@ if (process.env.NODE_ENV === 'production') {
  * 详情查看 https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
  * @author mebtte<hi@mebtte.com>
  */
+const MEDIA_DETINATIONS: RequestDestination[] = ['audio', 'video'];
 registerRoute(
-  ({ request }) => ['video', 'audio'].includes(request.destination),
+  ({ request }) => MEDIA_DETINATIONS.includes(request.destination),
   new CacheFirst({
     cacheName: CacheName.MEDIA,
     matchOptions: {
@@ -81,7 +83,11 @@ registerRoute(
  * 剩余 网络优先
  * @author mebtte<hi@mebtte.com>
  */
-const PREVNET_CACHE_PATHS: string[] = ['/api/captcha', '/api/login_code'];
+const PREVNET_CACHE_PATHS: string[] = [
+  `/${TEMPORARY_PREFIX}/`,
+  '/api/captcha',
+  '/api/login_code',
+];
 registerRoute(
   new Route(
     ({ request }) => {

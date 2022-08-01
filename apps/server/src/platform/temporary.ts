@@ -1,6 +1,7 @@
 import argv from '@/argv';
 import { TEMPORARY_DIR } from '@/constants/directory';
-import { TemporaryType, TEMPORARY_PREFIX } from '../constants';
+import { TEMPORARY_PREFIX } from '#/constants';
+import { TemporaryType } from '../constants';
 
 export function getTemporaryPath(
   resource: string,

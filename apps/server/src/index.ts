@@ -5,6 +5,7 @@ import Koa from 'koa';
 import log from 'koa-logger';
 import cors from '@koa/cors';
 import mount from 'koa-mount';
+import { TEMPORARY_PREFIX } from '#/constants';
 import argv from './argv';
 import api from './api';
 import blob from './blob';
@@ -12,7 +13,7 @@ import asset from './asset';
 import pwa from './pwa';
 import schedule from './schedule';
 import env from './env';
-import { ASSET_PREFIX, TEMPORARY_PREFIX } from './constants';
+import { ASSET_PREFIX } from './constants';
 import temporary from './temporary';
 
 async function start() {
