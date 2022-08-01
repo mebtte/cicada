@@ -29,6 +29,9 @@ const onError = (e) => {
   });
   return eventemitter.emit(EventType.AUDIO_ERROR);
 };
+const cacheMusic = async (url: string) => {
+  caches.open('media').then((cache) => cache.add(url));
+};
 
 interface Props {
   playMode: PlayMode;
@@ -60,6 +63,7 @@ class Audio extends React.PureComponent<Props, {}> {
     const { queueMusic } = this.props;
     if (prevProps.queueMusic.pid !== queueMusic.pid) {
       this.uploadPlayRecord(prevProps.queueMusic.music);
+      cacheMusic(prevProps.queueMusic.music.sq);
     }
     return null;
   }
@@ -73,9 +77,7 @@ class Audio extends React.PureComponent<Props, {}> {
 
     if (prevProps.queueMusic.pid !== queueMusic.pid) {
       this.audioRef.current!.currentTime = 0;
-      this.audioRef
-        .current!.play()
-        .catch((error) => logger.error(error, '音频播放失败'));
+      this.audioRef.current!.play();
       eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: 0,
       });

@@ -46,17 +46,6 @@ if (process.env.NODE_ENV === 'production') {
  * https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
  * @author mebtte<hi@mebtte.com>
  */
-self.addEventListener('fetch', (event) => {
-  if (['video', 'audio'].includes(event.request.destination)) {
-    fetch(event.request.url).then((response) => {
-      if (response.ok) {
-        caches
-          .open(CacheName.MEDIA)
-          .then((cache) => cache.put(event.request.url, response));
-      }
-    });
-  }
-});
 registerRoute(
   ({ request }) => ['video', 'audio'].includes(request.destination),
   new CacheFirst({
