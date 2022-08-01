@@ -5,10 +5,6 @@ import { ROOT_ASSET_DIR } from '@/constants/directory';
 
 const app = new Koa();
 app.use(range);
-app.use(
-  serve(ROOT_ASSET_DIR, {
-    maxage: 365 * 24 * 60 * 3600,
-  }),
-);
+app.use(serve(ROOT_ASSET_DIR));
 
 export default app;
