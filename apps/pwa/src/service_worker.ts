@@ -6,17 +6,12 @@ import { registerRoute, Route } from 'workbox-routing';
 import { CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
+import { CacheName } from '@/constants/cache';
 
 export type {};
 declare const self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: PrecacheEntry[];
 };
-
-enum CacheName {
-  COMMON = 'common',
-  MEDIA = 'media',
-  STATIC = 'static',
-}
 
 /**
  * 生产模式下缓存构建资源以及收到指令才升级
@@ -42,21 +37,10 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 /**
- * 媒体类型, 需要额外处理 range
- * https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
+ * 媒体类型需要额外处理
+ * 详情查看 https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
  * @author mebtte<hi@mebtte.com>
  */
-self.addEventListener('fetch', (event) => {
-  if (['video', 'audio'].includes(event.request.destination)) {
-    fetch(event.request.url).then((response) => {
-      if (response.ok) {
-        caches
-          .open(CacheName.MEDIA)
-          .then((cache) => cache.put(event.request.url, response));
-      }
-    });
-  }
-});
 registerRoute(
   ({ request }) => ['video', 'audio'].includes(request.destination),
   new CacheFirst({
