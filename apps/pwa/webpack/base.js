@@ -9,6 +9,26 @@ const pkg = require('../../../package.json');
 const INVALID_FILES = ['.DS_Store'];
 const STATIC_DIR = path.join(__dirname, '../src/static');
 
+const envDefinePlugin = new webpack.DefinePlugin({
+  __ENV__: JSON.stringify({
+    VERSION: pkg.version,
+
+    BUILD_TIME: new Date(),
+    EMPTY_IMAGE_LIST: fs
+      .readdirSync(`${STATIC_DIR}/empty_image`)
+      .filter((f) => !INVALID_FILES.includes(f))
+      .map((f) => `/empty_image/${f}`),
+    ERROR_IMAGE_LIST: fs
+      .readdirSync(`${STATIC_DIR}/error_image`)
+      .filter((f) => !INVALID_FILES.includes(f))
+      .map((f) => `/error_image/${f}`),
+    COVER_LIST: fs
+      .readdirSync(`${STATIC_DIR}/cover`)
+      .filter((f) => !INVALID_FILES.includes(f))
+      .map((f) => `/cover/${f}`),
+  }),
+});
+
 const mainConfig = {
   mode: process.env.NODE_ENV,
   entry: path.join(__dirname, '../src/index.tsx'),
@@ -52,25 +72,7 @@ const mainConfig = {
     symlinks: false,
   },
   plugins: [
-    new webpack.DefinePlugin({
-      __ENV__: JSON.stringify({
-        VERSION: pkg.version,
-
-        BUILD_TIME: new Date(),
-        EMPTY_IMAGE_LIST: fs
-          .readdirSync(`${STATIC_DIR}/empty_image`)
-          .filter((f) => !INVALID_FILES.includes(f))
-          .map((f) => `/empty_image/${f}`),
-        ERROR_IMAGE_LIST: fs
-          .readdirSync(`${STATIC_DIR}/error_image`)
-          .filter((f) => !INVALID_FILES.includes(f))
-          .map((f) => `/error_image/${f}`),
-        COVER_LIST: fs
-          .readdirSync(`${STATIC_DIR}/cover`)
-          .filter((f) => !INVALID_FILES.includes(f))
-          .map((f) => `/cover/${f}`),
-      }),
-    }),
+    envDefinePlugin,
     new CopyPlugin({
       patterns: [
         {
@@ -118,7 +120,7 @@ const serviceWorkerConfig = {
     },
     symlinks: false,
   },
-  plugins: [],
+  plugins: [envDefinePlugin],
 };
 
 const devMainConfig = {

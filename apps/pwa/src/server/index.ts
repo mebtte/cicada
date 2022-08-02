@@ -4,6 +4,7 @@ import setting from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import env from '@/env';
+import { Query as CacheQuery } from '@/constants/cache';
 
 export enum Method {
   GET = 'get',
@@ -39,7 +40,7 @@ export async function request<Data = void>({
 
   const combineParams = {
     ...params,
-    __version: env.VERSION,
+    [CacheQuery.VERSION]: env.VERSION,
   };
   url += `?${Object.keys(combineParams)
     .map((key) => `${key}=${combineParams[key]}`)

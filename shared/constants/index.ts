@@ -9,7 +9,12 @@ export const GET_LOGIN_CODE_INTERVAL = 1000 * 60 * 2;
 export const DB_FILENAME = 'db';
 export const TRASH_FILENAME = 'trash';
 
-export const TEMPORARY_PREFIX = 'temporary';
+export enum PathPrefix {
+  BLOB = 'blob',
+  TEMPORARY = 'temporary',
+  ASSET = 'asset',
+  API = 'api',
+}
 
 export enum AssetType {
   USER_AVATAR = 'user_avatar',

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { animated, useTransition } from 'react-spring';
-
 import useImage from '@/utils/use_image';
 import JpegDefaultBackground from './default_background.jpeg';
 
@@ -20,8 +19,7 @@ const Style = styled.div`
     height: 100%;
   }
   > .cover {
-    background-size: cover;
-    background-position: center;
+    user-select: none;
   }
   > .mask {
     backdrop-filter: blur(30px);
@@ -38,11 +36,12 @@ function Background({ cover }: { cover: string }) {
   return (
     <Style>
       {transitions(({ opacity }, s) => (
-        <animated.div
+        <animated.img
           className="child cover"
+          src={s}
+          crossOrigin="anonymous"
           style={{
             opacity,
-            backgroundImage: `url(${s})`,
           }}
         />
       ))}

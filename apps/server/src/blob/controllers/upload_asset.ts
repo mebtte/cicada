@@ -2,7 +2,12 @@ import fs from 'fs';
 import os from 'os';
 import spawnAsync from '@expo/spawn-async';
 import util from 'util';
-import { AssetType, ASSET_TYPES, ASSET_TYPE_MAP } from '#/constants';
+import {
+  AssetType,
+  ASSET_TYPES,
+  ASSET_TYPE_MAP,
+  PathPrefix,
+} from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import parseFormdata, { File } from '@/utils/parse_formdata';
 import ffmpeg from 'ffmpeg-static';
@@ -12,7 +17,6 @@ import md5 from 'md5';
 import { getAssetUrl } from '@/platform/asset';
 import { ASSET_DIR, LOG_DIR } from '@/constants/directory';
 import day from '#/utils/day';
-import { ASSET_PREFIX } from '../../constants';
 import { Context } from '../constants';
 
 const appendFileAsync = util.promisify(fs.appendFile);
@@ -143,7 +147,7 @@ export default async (ctx: Context) => {
   const id = generateId(data);
 
   await writeFileAsync(`${ASSET_DIR[assetType]}/${id}`, data);
-  const assetPath = `${ASSET_PREFIX}/${assetType}/${id}`;
+  const assetPath = `${PathPrefix.ASSET}/${assetType}/${id}`;
 
   const now = day();
   const dateString = now.format('YYYYMMDD');

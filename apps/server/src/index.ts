@@ -5,7 +5,7 @@ import Koa from 'koa';
 import log from 'koa-logger';
 import cors from '@koa/cors';
 import mount from 'koa-mount';
-import { TEMPORARY_PREFIX } from '#/constants';
+import { PathPrefix } from '#/constants';
 import argv from './argv';
 import api from './api';
 import blob from './blob';
@@ -13,7 +13,6 @@ import asset from './asset';
 import pwa from './pwa';
 import schedule from './schedule';
 import env from './env';
-import { ASSET_PREFIX } from './constants';
 import temporary from './temporary';
 
 async function start() {
@@ -55,10 +54,10 @@ async function start() {
         credentials: true,
       }),
     );
-    server.use(mount(`/${ASSET_PREFIX}`, asset));
-    server.use(mount(`/${TEMPORARY_PREFIX}`, temporary));
-    server.use(mount('/api', api));
-    server.use(mount('/blob', blob));
+    server.use(mount(`/${PathPrefix.ASSET}`, asset));
+    server.use(mount(`/${PathPrefix.TEMPORARY}`, temporary));
+    server.use(mount(`/${PathPrefix.API}`, api));
+    server.use(mount(`/${PathPrefix.BLOB}`, blob));
     server.use(mount('/', pwa));
 
     http.createServer(server.callback()).listen(argv.port);

@@ -7,7 +7,11 @@ const app = new Koa();
 app.use(range);
 app.use(
   serve(ROOT_ASSET_DIR, {
-    immutable: true,
+    /**
+     * maxAge 标准单位秒 koa-static 毫秒
+     * @author mebtte<hi@mebtte.com>
+     */
+    maxAge: 1000 * 60 * 60 * 24 * 365, // 一年
   }),
 );
 

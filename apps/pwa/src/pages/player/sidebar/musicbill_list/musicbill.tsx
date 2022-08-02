@@ -6,7 +6,7 @@ import { CONTAINETR_STYLE, NAME_STYLE } from './constants';
 import { Musicbill as MusicbillType } from '../../constants';
 import Cover from './cover';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
 const Style = styled(({ active, ...props }: any) => <Link {...props} />)<{
   active: boolean;
 }>`
@@ -55,7 +55,7 @@ const Style = styled(({ active, ...props }: any) => <Link {...props} />)<{
   `}
 `;
 
-const Musicbill = ({
+function Musicbill({
   musicbill,
   to,
   active,
@@ -63,7 +63,7 @@ const Musicbill = ({
   musicbill: MusicbillType;
   to: string;
   active: boolean;
-}) => {
+}) {
   const { name, cover, public: publiz } = musicbill;
   return (
     <Style to={to} active={active}>
@@ -79,6 +79,6 @@ const Musicbill = ({
       </div>
     </Style>
   );
-};
+}
 
 export default Musicbill;

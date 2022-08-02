@@ -1,13 +1,11 @@
-import { forwardRef } from 'react';
 import styled, { css } from 'styled-components';
-
 import { BORDER_RADIUS, Shape, CommonProps } from './constants';
 
-const Style = styled.div<{
+const Style = styled.img<{
   shape: Shape;
 }>`
-  box-sizing: border-box;
-  background-size: cover;
+  user-select: none;
+
   ${({ shape }) => css`
     border-radius: ${shape === Shape.CIRCLE ? '50%' : `${BORDER_RADIUS}px`};
   `}
@@ -17,20 +15,20 @@ const Style = styled.div<{
  * 头像
  * @author mebtte<hi@mebtte.com>
  */
-const Avatar = forwardRef<HTMLDivElement, CommonProps>(
-  ({ src, size, shape, style, ...props }: CommonProps, ref) => (
+function Avatar({ src, size, shape, style, ...props }: CommonProps) {
+  return (
     <Style
       {...props}
+      src={src}
+      crossOrigin="anonymous"
       shape={shape}
       style={{
         ...style,
         width: size,
         height: size,
-        backgroundImage: `url("${src}")`,
       }}
-      ref={ref}
     />
-  ),
-);
+  );
+}
 
 export default Avatar;

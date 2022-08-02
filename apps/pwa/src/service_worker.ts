@@ -1,13 +1,15 @@
 /// <reference lib="WebWorker" />
-/* global ServiceWorkerGlobalScope, RequestDestination */
+/* global ServiceWorkerGlobalScope */
 import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute, PrecacheEntry } from 'workbox-precaching';
-import { registerRoute, Route } from 'workbox-routing';
+import { registerRoute } from 'workbox-routing';
 import { CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
-import { CacheName } from '@/constants/cache';
-import { TEMPORARY_PREFIX } from '#/constants';
+import { CacheName, Query as CacheQuery } from '@/constants/cache';
+import { AssetType, PathPrefix } from '#/constants';
+import parseSearch from './utils/parse_search';
+import env from './env';
 
 export type {};
 declare const self: ServiceWorkerGlobalScope & {
@@ -37,19 +39,69 @@ if (process.env.NODE_ENV === 'production') {
   clientsClaim();
 }
 
+self.addEventListener('activate', () => {
+  /**
+   * 移除已废弃的 cache
+   * @author mebtte<hi@mebtte.com>
+   */
+  self.caches.keys().then((cacheKeys) => {
+    const usingCacheKeys = Object.values(CacheName) as string[];
+    for (const key of cacheKeys) {
+      if (!usingCacheKeys.includes(key)) {
+        self.caches.delete(key);
+      }
+    }
+  });
+
+  /**
+   * 移除过期的 API cache
+   * @author mebtte<hi@mebtte.com>
+   */
+  self.caches.open(CacheName.API).then(async (cache) => {
+    const keys = await cache.keys();
+    for (const key of keys) {
+      const url = new URL(key.url);
+      const query = parseSearch<CacheQuery.VERSION>(url.search);
+      if (
+        !query[CacheQuery.VERSION] ||
+        query[CacheQuery.VERSION] !== env.VERSION
+      ) {
+        cache.delete(key);
+      }
+    }
+  });
+});
+
 /**
- * 媒体类型需要额外处理
+ * 媒体类型, 缓存优先
+ * 需要额外处理 range
  * 详情查看 https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
  * @author mebtte<hi@mebtte.com>
  */
-const MEDIA_DETINATIONS: RequestDestination[] = ['audio', 'video'];
+const MEDIA_ASSET_TYPES = [
+  AssetType.MUSIC_SQ,
+  AssetType.MUSIC_AC,
+  AssetType.MUSIC_HQ,
+];
+function isMediaAsset(url: URL) {
+  for (const mediaAssetType of MEDIA_ASSET_TYPES) {
+    if (url.pathname.includes(`/${mediaAssetType}/`)) {
+      return true;
+    }
+  }
+  return false;
+}
 registerRoute(
-  ({ request }) => MEDIA_DETINATIONS.includes(request.destination),
+  ({ request }) => {
+    const url = new URL(request.url);
+    return url.pathname.startsWith(`/${PathPrefix.ASSET}`) && isMediaAsset(url);
+  },
   new CacheFirst({
-    cacheName: CacheName.MEDIA,
+    cacheName: CacheName.ASSET_MEDIA,
     matchOptions: {
       ignoreVary: true,
       ignoreSearch: true,
+      ignoreMethod: true,
     },
     plugins: [
       new CacheableResponsePlugin({
@@ -61,41 +113,34 @@ registerRoute(
 );
 
 /**
- * 静态资源 缓存优先
+ * Asset, 缓存优先
+ * 媒体类型已额外处理, 需要排除
  * @author mebtte<hi@mebtte.com>
  */
-const CACHE_FIRST_DESTINATIONS: RequestDestination[] = [
-  'image',
-  'style',
-  'script',
-  'font',
-];
 registerRoute(
-  new Route(
-    ({ request }) => CACHE_FIRST_DESTINATIONS.includes(request.destination),
-    new CacheFirst({
-      cacheName: CacheName.STATIC,
-    }),
-  ),
+  ({ request }) => {
+    const url = new URL(request.url);
+    return url.pathname.startsWith(`/${PathPrefix.ASSET}`);
+  },
+  new CacheFirst({
+    cacheName: CacheName.ASSET,
+  }),
 );
 
 /**
- * 剩余 网络优先
+ * API 网络优先
  * @author mebtte<hi@mebtte.com>
  */
-const PREVNET_CACHE_PATHS: string[] = [
-  `/${TEMPORARY_PREFIX}/`,
-  '/api/captcha',
-  '/api/login_code',
-];
+const PREVNET_CACHE_PATHS: string[] = ['/api/captcha', '/api/login_code'];
 registerRoute(
-  new Route(
-    ({ request }) => {
-      const url = new URL(request.url);
-      return !PREVNET_CACHE_PATHS.includes(url.pathname);
-    },
-    new NetworkFirst({
-      cacheName: CacheName.COMMON,
-    }),
-  ),
+  ({ request }) => {
+    const url = new URL(request.url);
+    return (
+      url.pathname.startsWith(`/${PathPrefix.API}`) &&
+      !PREVNET_CACHE_PATHS.includes(url.pathname)
+    );
+  },
+  new NetworkFirst({
+    cacheName: CacheName.API,
+  }),
 );

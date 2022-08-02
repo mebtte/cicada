@@ -1,5 +1,9 @@
 export enum CacheName {
-  COMMON = 'common',
-  STATIC = 'static',
-  MEDIA = 'media',
+  API = 'api',
+  ASSET = 'asset',
+  ASSET_MEDIA = 'asset_media',
+}
+
+export enum Query {
+  VERSION = '__v',
 }

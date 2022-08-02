@@ -201,8 +201,8 @@ class Audio extends React.PureComponent<Props, {}> {
      * 播放超过 80% 才进行缓存
      * @author mebtte<hi@mebtte.com>
      */
-    if (percent > 0.8) {
-      window.caches.open(CacheName.MEDIA).then(async (cache) => {
+    if (process.env.NODE_ENV === 'development' || percent > 0.75) {
+      window.caches.open(CacheName.ASSET_MEDIA).then(async (cache) => {
         const url = this.getAudioSrc(music);
         const exist = await cache.match(url);
         if (!exist) {
