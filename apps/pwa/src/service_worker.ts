@@ -41,19 +41,6 @@ if (process.env.NODE_ENV === 'production') {
 
 self.addEventListener('activate', () => {
   /**
-   * 移除已废弃的 cache
-   * @author mebtte<hi@mebtte.com>
-   */
-  self.caches.keys().then((cacheKeys) => {
-    const usingCacheKeys = Object.values(CacheName) as string[];
-    for (const key of cacheKeys) {
-      if (!usingCacheKeys.includes(key) || key.includes('workbox-precache')) {
-        self.caches.delete(key);
-      }
-    }
-  });
-
-  /**
    * 移除过期的 API cache
    * @author mebtte<hi@mebtte.com>
    */
