@@ -47,7 +47,7 @@ self.addEventListener('activate', () => {
   self.caches.keys().then((cacheKeys) => {
     const usingCacheKeys = Object.values(CacheName) as string[];
     for (const key of cacheKeys) {
-      if (!usingCacheKeys.includes(key)) {
+      if (!usingCacheKeys.includes(key) || key.includes('workbox-precache')) {
         self.caches.delete(key);
       }
     }
