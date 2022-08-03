@@ -1,6 +1,5 @@
-import { useCallback } from 'react';
+import { HtmlHTMLAttributes, useCallback } from 'react';
 import styled from 'styled-components';
-
 import ellipsis from '@/style/ellipsis';
 import Avatar from '@/components/avatar';
 import eventemitter, { EventType } from '../eventemitter';
@@ -42,13 +41,12 @@ const COVER_STYLE = {
   cursor: 'pointer',
 };
 
-const MusicInfo = ({
+function MusicInfo({
   music,
   ...props
 }: {
   music: MusicType;
-  [key: string]: any;
-}) => {
+} & HtmlHTMLAttributes<HTMLDivElement>) {
   const onViewMusic = useCallback(
     () => eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, music),
     [music],
@@ -80,6 +78,6 @@ const MusicInfo = ({
       </div>
     </Style>
   );
-};
+}
 
 export default MusicInfo;

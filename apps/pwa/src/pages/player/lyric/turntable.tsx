@@ -32,7 +32,7 @@ const Style = styled.div<{
   `}
 `;
 
-const Turntable = ({
+function Turntable({
   paused,
   cover,
   toggleTurntable,
@@ -40,17 +40,19 @@ const Turntable = ({
   paused: boolean;
   cover: string;
   toggleTurntable: () => void;
-}) => (
-  <Style paused={paused}>
-    <Avatar
-      className="cover"
-      animated
-      src={cover}
-      size={COVER_SIZE}
-      shape={Shape.CIRCLE}
-      onClick={toggleTurntable}
-    />
-  </Style>
-);
+}) {
+  return (
+    <Style paused={paused}>
+      <Avatar
+        className="cover"
+        animated
+        src={cover}
+        size={COVER_SIZE}
+        shape={Shape.CIRCLE}
+        onClick={toggleTurntable}
+      />
+    </Style>
+  );
+}
 
 export default Turntable;

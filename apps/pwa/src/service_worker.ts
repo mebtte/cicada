@@ -107,7 +107,9 @@ registerRoute(
 registerRoute(
   ({ request }) => {
     const url = new URL(request.url);
-    return url.pathname.startsWith(`/${PathPrefix.ASSET}`);
+    return (
+      url.pathname.startsWith(`/${PathPrefix.ASSET}`) && !isMediaAsset(url)
+    );
   },
   new CacheFirst({
     cacheName: CacheName.ASSET,

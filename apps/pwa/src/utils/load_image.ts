@@ -19,6 +19,7 @@ export default (
     }, timeout);
     const image = document.createElement('img');
     image.src = url;
+    image.crossOrigin = 'anonymous';
     image.onload = () => resolve(image);
     image.onerror = () => reject(new Error(`加载图片失败"${url}"`));
   });

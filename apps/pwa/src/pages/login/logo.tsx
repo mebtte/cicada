@@ -17,7 +17,12 @@ function Logo() {
   return (
     <Style>
       <Link to={ROOT_PATH.HOME}>
-        <img className="logo" src="/text_logo.png" alt="logo" />
+        <img
+          className="logo"
+          src="/text_logo.png"
+          alt="logo"
+          crossOrigin="anonymous"
+        />
       </Link>
     </Style>
   );

@@ -32,7 +32,7 @@ interface DragItem {
   type: string;
 }
 
-const Musicbill = ({
+function Musicbill({
   index,
   musicbill,
   move,
@@ -40,7 +40,7 @@ const Musicbill = ({
   index: number;
   musicbill: MusicbillType;
   move: (dragIndex: number, hoverIndex: number) => void;
-}) => {
+}) {
   const { id, name, cover } = musicbill;
   const ref = useRef<HTMLDivElement>(null);
   const [, drop] = useDrop({
@@ -72,6 +72,7 @@ const Musicbill = ({
   });
   const [{ isDragging }, drag] = useDrag({
     item: { type: TYPE, id, index },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     collect: (monitor: any) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -89,6 +90,6 @@ const Musicbill = ({
       <div className="name">{name}</div>
     </Style>
   );
-};
+}
 
 export default Musicbill;
