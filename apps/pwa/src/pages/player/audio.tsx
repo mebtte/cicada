@@ -5,7 +5,7 @@ import keyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';
 import uploadMusicPlayRecord from '@/server/upload_music_play_record';
 import logger from '#/utils/logger';
 import { CacheName } from '@/constants/cache';
-import volumeState from './share_states/volume';
+import playerVolume from '@/global_states/player_volume';
 import eventemitter, { EventType } from './eventemitter';
 import dialog from '../../platform/dialog';
 import { QueueMusic, PlayMode, Music } from './constants';
@@ -236,4 +236,4 @@ class Audio extends React.PureComponent<Props, {}> {
   }
 }
 
-export default volumeState.withState('volume', Audio);
+export default playerVolume.withState('volume', Audio);

@@ -1,33 +1,21 @@
 import XState from '#/utils/x_state';
 import storage, { Key } from '@/platform/storage';
+import { Profile } from '@/constants/user';
+import logger from '#/utils/logger';
 import token from './token';
 
-export interface Profile {
-  id: string;
-  email: string;
-  avatar: string;
-  nickname: string;
-  joinTimestamp: number;
-  super: boolean;
-}
-
-let initialProfile: Profile | null = null;
-const profileString = storage.getItem(Key.PROFILE);
-if (profileString) {
-  try {
-    initialProfile = JSON.parse(profileString);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
+const initialProfile: Profile | null = await storage.getItem(Key.PROFILE);
 const user = new XState<Profile | null>(token.get() ? initialProfile : null);
 
 user.onChange((u) => {
   if (u) {
-    storage.setItem({ key: Key.PROFILE, value: JSON.stringify(u) });
+    storage
+      .setItem(Key.PROFILE, u)
+      .catch((error) => logger.error(error, '保存个人资料失败'));
   } else {
-    storage.removeItem(Key.PROFILE);
+    storage
+      .removeItem(Key.PROFILE)
+      .catch((error) => logger.error(error, '移除个人资料失败'));
   }
 });
 token.onChange((t) => (t ? null : user.set(null)));

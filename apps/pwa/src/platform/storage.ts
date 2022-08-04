@@ -1,20 +1,27 @@
+import Storage from '#/utils/storage';
+import { Setting } from '@/constants/setting';
+import { Profile } from '@/constants/user';
+
 export enum Key {
-  SETTING = 'setting',
+  LAST_LOGIN_EMAIL = 'last_login_email',
   TOKEN = 'token',
   PROFILE = 'profile',
-  LAST_SIGNIN_EMAIL = 'last_signin_email',
-
+  SETTING = 'setting',
   PLAYER_VOLUME = 'player_volume',
 }
 
-export default {
-  getItem(key: Key) {
-    return window.localStorage.getItem(key);
-  },
-  setItem({ key, value }: { key: Key; value: string }) {
-    return window.localStorage.setItem(key, value);
-  },
-  removeItem(key: Key) {
-    return window.localStorage.removeItem(key);
-  },
-};
+const storage = new Storage<
+  Key,
+  {
+    [Key.LAST_LOGIN_EMAIL]: string;
+    [Key.TOKEN]: string;
+    [Key.PROFILE]: Profile;
+    [Key.SETTING]: Setting;
+    [Key.PLAYER_VOLUME]: number;
+  }
+>('app');
+
+// @ts-expect-error
+window.appStorage = storage;
+
+export default storage;

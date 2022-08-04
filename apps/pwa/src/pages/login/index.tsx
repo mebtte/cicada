@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 import { useEffect, useState } from 'react';
 import storage, { Key } from '@/platform/storage';
 import p from '@/global_states/profile';
+import logger from '#/utils/logger';
 import EmailPanel from './email_panel';
 import LoginCodePanel from './login_code_panel';
 import UserPanel from './user_panel';
@@ -39,13 +40,23 @@ const Style = styled.div<{ step: Step }>`
     }
   `}
 `;
-const getInitialEmail = () => storage.getItem(Key.LAST_SIGNIN_EMAIL) || '';
 
 function Login() {
   const profile = p.useState();
 
   const [step, setStep] = useState(Step.FIRST);
-  const [email, setEmail] = useState(getInitialEmail);
+  const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    storage
+      .getItem(Key.LAST_LOGIN_EMAIL)
+      .then((lastLoginEmail) => {
+        if (lastLoginEmail) {
+          setEmail(lastLoginEmail);
+        }
+      })
+      .catch((error) => logger.error(error, '查找上次登录邮箱失败'));
+  }, []);
 
   useEffect(() => {
     if (profile) {

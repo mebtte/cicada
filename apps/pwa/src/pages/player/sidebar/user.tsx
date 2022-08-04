@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Profile as ProfileType } from '@/global_states/profile';
+import { Profile as ProfileType } from '@/constants/user';
 import Avatar, { Shape } from '@/components/avatar';
 import globalEventemitter, {
   EventType as GlobalEventType,

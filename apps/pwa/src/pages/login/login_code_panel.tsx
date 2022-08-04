@@ -17,6 +17,7 @@ import p from '@/global_states/profile';
 import getProfile from '@/server/get_profile';
 import sleep from '#/utils/sleep';
 import storage, { Key } from '@/platform/storage';
+import logger from '#/utils/logger';
 import Paper from './paper';
 import Logo from './logo';
 import { panelCSS } from './constants';
@@ -59,8 +60,11 @@ function LoginCodePanel({
         super: !!profile.super,
       });
 
-      storage.setItem({ key: Key.LAST_SIGNIN_EMAIL, value: email });
+      storage
+        .setItem(Key.LAST_LOGIN_EMAIL, email)
+        .catch((error) => logger.error(error, '保存登录邮箱失败'));
     } catch (error) {
+      logger.error(error, '登录失败');
       notice.error(error.message);
     }
     setLogining(false);

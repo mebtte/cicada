@@ -8,6 +8,9 @@ const pkg = require('../../../package.json');
 
 const INVALID_FILES = ['.DS_Store'];
 const STATIC_DIR = path.join(__dirname, '../src/static');
+const experiments = {
+  topLevelAwait: true,
+};
 
 const envDefinePlugin = new webpack.DefinePlugin({
   __ENV__: JSON.stringify({
@@ -31,6 +34,7 @@ const envDefinePlugin = new webpack.DefinePlugin({
 
 const mainConfig = {
   mode: process.env.NODE_ENV,
+  experiments,
   entry: path.join(__dirname, '../src/index.tsx'),
   output: {
     path: path.join(__dirname, '../build'),
@@ -89,6 +93,7 @@ const mainConfig = {
 
 const serviceWorkerConfig = {
   mode: process.env.NODE_ENV,
+  experiments,
   target: 'webworker',
   entry: path.join(__dirname, '../src/service_worker.ts'),
   output: {

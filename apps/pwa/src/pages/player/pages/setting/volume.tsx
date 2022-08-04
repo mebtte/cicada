@@ -1,16 +1,16 @@
 import { memo } from 'react';
 import Slider from '@/components/slider';
-import volumeState from '../../share_states/volume';
+import playerVolume from '@/global_states/player_volume';
 import Item from './item';
 
 const sliderStyle = {
   width: 200,
   padding: '15px 0',
 };
-const onVolumnChange = (v: number) => volumeState.set(v);
+const onVolumnChange = (v: number) => playerVolume.set(v);
 
 function Volume() {
-  const volume = volumeState.useState();
+  const volume = playerVolume.useState();
   return (
     <Item>
       <div className="label">相对系统音量</div>
