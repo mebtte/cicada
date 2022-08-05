@@ -1,6 +1,6 @@
 import logger from '#/utils/logger';
 import XState from '#/utils/x_state';
-import storage, { Key } from '@/platform/storage';
+import storage, { Key } from '@/storage';
 import debounce from 'lodash/debounce';
 
 const initialPlayerVolume = await storage.getItem(Key.PLAYER_VOLUME);

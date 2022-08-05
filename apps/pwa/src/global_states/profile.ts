@@ -1,5 +1,5 @@
 import XState from '#/utils/x_state';
-import storage, { Key } from '@/platform/storage';
+import storage, { Key } from '@/storage';
 import { Profile } from '@/constants/user';
 import logger from '#/utils/logger';
 import token from './token';

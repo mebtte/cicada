@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { useEffect, useState } from 'react';
-import storage, { Key } from '@/platform/storage';
+import storage, { Key } from '@/storage';
 import p from '@/global_states/profile';
 import logger from '#/utils/logger';
 import EmailPanel from './email_panel';

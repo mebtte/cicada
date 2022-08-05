@@ -1,33 +1,30 @@
 import localforage from 'localforage';
 
-localforage.setDriver(localforage.INDEXEDDB);
-
 class Storage<
   Key extends string,
   KeyMapData extends {
     [key in Key]: unknown;
   },
 > {
-  name: string;
+  store: ReturnType<typeof localforage.createInstance>;
 
   constructor(name: string) {
-    this.name = name;
-  }
-
-  private getKey<K extends Key>(key: K) {
-    return `${this.name}_${key}`;
+    this.store = localforage.createInstance({
+      driver: localforage.INDEXEDDB,
+      name,
+    });
   }
 
   getItem<K extends Key>(key: K) {
-    return localforage.getItem<KeyMapData[K]>(this.getKey(key));
+    return this.store.getItem<KeyMapData[K]>(key);
   }
 
   setItem<K extends Key>(key: K, value: KeyMapData[K]) {
-    return localforage.setItem(this.getKey(key), value);
+    return this.store.setItem(key, value);
   }
 
   removeItem<K extends Key>(key: K) {
-    return localforage.removeItem(this.getKey(key));
+    return this.store.removeItem(key);
   }
 }
 

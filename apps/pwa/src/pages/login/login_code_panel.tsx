@@ -16,7 +16,7 @@ import t from '@/global_states/token';
 import p from '@/global_states/profile';
 import getProfile from '@/server/get_profile';
 import sleep from '#/utils/sleep';
-import storage, { Key } from '@/platform/storage';
+import storage, { Key } from '@/storage';
 import logger from '#/utils/logger';
 import Paper from './paper';
 import Logo from './logo';

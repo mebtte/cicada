@@ -1,6 +1,6 @@
 import logger from '#/utils/logger';
 import XState from '#/utils/x_state';
-import storage, { Key } from '@/platform/storage';
+import storage, { Key } from '@/storage';
 
 const initialToken = await storage.getItem(Key.TOKEN);
 const token = new XState(initialToken || '');
