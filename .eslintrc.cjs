@@ -3,6 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
     node: true,
+    'jest/globals': true,
   },
   globals: {
     AsyncReturnType: 'readonly',
@@ -21,7 +22,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['import', 'react', '@typescript-eslint'],
+  plugins: ['import', 'react', '@typescript-eslint', 'jest'],
   settings: {
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx'],

@@ -1,7 +1,6 @@
 interface Listener {
   once: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  listener: (data: any) => void;
+  listener: (data: unknown) => void;
 }
 
 class Eventemitter<
