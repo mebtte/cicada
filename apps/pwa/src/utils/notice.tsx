@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@mui/material';
 import { SnackbarProvider, OptionsObject, useSnackbar } from 'notistack';
-import Eventemitter from '#/utils/eventemitter';
+import Eventin from 'eventin';
 import { createRoot } from 'react-dom/client';
 import { useEffect } from 'react';
 import theme from '@/style/theme';
@@ -17,7 +17,7 @@ type EventTypeMapData = {
   [EventType.NOTICE]: { message: string; options?: OptionsObject };
   [EventType.CLOSE]: string;
 };
-const eventemitter = new Eventemitter<EventType, EventTypeMapData>();
+const eventemitter = new Eventin<EventType, EventTypeMapData>();
 
 const node = document.createElement('div');
 node.className = 'notice';

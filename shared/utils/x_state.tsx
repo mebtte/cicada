@@ -1,12 +1,12 @@
 import { useState, useEffect, ComponentType } from 'react';
-import Eventemitter from './eventemitter';
+import Eventin from 'eventin';
 
 enum EventType {
   UPDATED = 'updated',
 }
 
 class XState<State> {
-  private eventemitter: Eventemitter<
+  private eventemitter: Eventin<
     EventType,
     {
       [EventType.UPDATED]: State;
@@ -16,7 +16,7 @@ class XState<State> {
   private state: State;
 
   constructor(initialState: State) {
-    this.eventemitter = new Eventemitter<
+    this.eventemitter = new Eventin<
       EventType,
       {
         [EventType.UPDATED]: State;
