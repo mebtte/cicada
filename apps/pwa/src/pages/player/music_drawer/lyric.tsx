@@ -1,5 +1,5 @@
-import { memo } from 'react';
-import { Lrc, LyricLine } from 'react-lrc';
+import { memo, useCallback } from 'react';
+import { Lrc, LrcLine } from 'react-lrc';
 import styled from 'styled-components';
 
 const Style = styled.div`
@@ -12,16 +12,17 @@ const Line = styled.div`
   color: rgb(155 155 155);
 `;
 
-const LyricList = ({ lrc }: { lrc: string }) => (
-  <Style>
-    <Lrc
-      lrc={lrc}
-      lineRenderer={({ line }: { line: LyricLine }) => (
-        <Line>{line.content}</Line>
-      )}
-      autoScroll={false}
-    />
-  </Style>
-);
+function LyricList({ lrc }: { lrc: string }) {
+  const lineRenderer = useCallback(
+    // eslint-disable-next-line react/no-unused-prop-types
+    ({ line }: { line: LrcLine }) => <Line>{line.content}</Line>,
+    [],
+  );
+  return (
+    <Style>
+      <Lrc lrc={lrc} lineRenderer={lineRenderer} />
+    </Style>
+  );
+}
 
 export default memo(LyricList);

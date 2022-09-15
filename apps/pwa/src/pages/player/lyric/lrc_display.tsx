@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { LrcInstance, Lrc, LyricLine as LyricLineType } from 'react-lrc';
-
+import { Lrc, LrcLine, useRecoverAutoScrollImmediately } from 'react-lrc';
 import scrollbarNever from '@/style/scrollbar_never';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import eventemitter, { EventType } from './eventemitter';
@@ -39,7 +38,7 @@ const lrcLineRenderer = ({
   line,
 }: {
   active: boolean;
-  line: LyricLineType;
+  line: LrcLine;
 }) => (
   <LyricLine active={active}>
     <div className="content">{line.content}</div>
@@ -47,27 +46,29 @@ const lrcLineRenderer = ({
 );
 
 function LrcDisplay({ lrc }: { lrc: string }) {
-  const lrcRef = useRef<LrcInstance>(null);
   const currentMillisecond = useAudioCurrentMillisecond();
+  const { signal, recoverAutoScrollImmediately } =
+    useRecoverAutoScrollImmediately();
 
   useEffect(() => {
-    const onScrollToCurrentLine = () => lrcRef.current?.scrollToCurrentLine();
-    eventemitter.on(EventType.SCROLL_TO_CURRENT_LINE, onScrollToCurrentLine);
+    eventemitter.on(
+      EventType.SCROLL_TO_CURRENT_LINE,
+      recoverAutoScrollImmediately,
+    );
     return () =>
       void eventemitter.off(
         EventType.SCROLL_TO_CURRENT_LINE,
-        onScrollToCurrentLine,
+        recoverAutoScrollImmediately,
       );
-  }, []);
+  }, [recoverAutoScrollImmediately]);
 
   return (
     <StyledLrc
-      ref={lrcRef}
       lrc={lrc}
       lineRenderer={lrcLineRenderer}
       currentMillisecond={currentMillisecond}
-      topBlank
-      bottomBlank
+      verticalSpace
+      recoverAutoScrollSingal={signal}
     />
   );
 }
