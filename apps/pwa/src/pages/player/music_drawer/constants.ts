@@ -3,10 +3,15 @@ import { Music as BaseMusic } from '../constants';
 export const COVER_SIZE = 320;
 export const PADDING = 20;
 
+export interface Lyric {
+  id: number;
+  content: string;
+}
+
 export type Music = Omit<BaseMusic, 'fork' | 'forkFrom'> & {
   fork: BaseMusic[];
   forkFrom: BaseMusic[];
-  lrc: string;
+  lyrics: Lyric[] | null;
 };
 
 export type Data =

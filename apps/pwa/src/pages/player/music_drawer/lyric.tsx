@@ -1,6 +1,7 @@
-import { memo, useCallback } from 'react';
-import { Lrc, LrcLine } from 'react-lrc';
+import { memo, useCallback, useMemo } from 'react';
+import { MultipleLrc, MultipleLrcLine } from 'react-lrc';
 import styled from 'styled-components';
+import { Lyric } from './constants';
 
 const Style = styled.div`
   overflow: hidden;
@@ -12,15 +13,24 @@ const Line = styled.div`
   color: rgb(155 155 155);
 `;
 
-function LyricList({ lrc }: { lrc: string }) {
+function LyricList({ lyrics }: { lyrics: Lyric[] }) {
   const lineRenderer = useCallback(
     // eslint-disable-next-line react/no-unused-prop-types
-    ({ line }: { line: LrcLine }) => <Line>{line.content}</Line>,
+    ({ line }: { line: MultipleLrcLine }) => (
+      <Line>
+        {line.children.map((l, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <div key={index}>{l.content}</div>
+        ))}
+      </Line>
+    ),
     [],
   );
+  const lrcs = useMemo(() => lyrics.map((l) => l.content), [lyrics]);
+
   return (
     <Style>
-      <Lrc lrc={lrc} lineRenderer={lineRenderer} />
+      <MultipleLrc lrcs={lrcs} lineRenderer={lineRenderer} />
     </Style>
   );
 }

@@ -1,11 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import styled, { css } from 'styled-components';
-import { Lrc, LrcLine, useRecoverAutoScrollImmediately } from 'react-lrc';
+import {
+  MultipleLrc,
+  MultipleLrcLine,
+  useRecoverAutoScrollImmediately,
+} from 'react-lrc';
 import scrollbarNever from '@/style/scrollbar_never';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import eventemitter, { EventType } from './eventemitter';
+import { Lyric } from './constants';
 
-const StyledLrc = styled(Lrc)`
+const StyledLrc = styled(MultipleLrc)`
   position: absolute;
   top: 0;
   left: 0;
@@ -38,14 +43,19 @@ const lrcLineRenderer = ({
   line,
 }: {
   active: boolean;
-  line: LrcLine;
+  line: MultipleLrcLine;
 }) => (
   <LyricLine active={active}>
-    <div className="content">{line.content}</div>
+    {line.children.map((child, index) => (
+      // eslint-disable-next-line react/no-array-index-key
+      <div className="content" key={index}>
+        {child.content}
+      </div>
+    ))}
   </LyricLine>
 );
 
-function LrcDisplay({ lrc }: { lrc: string }) {
+function LrcDisplay({ lyrics }: { lyrics: Lyric[] }) {
   const currentMillisecond = useAudioCurrentMillisecond();
   const { signal, recoverAutoScrollImmediately } =
     useRecoverAutoScrollImmediately();
@@ -62,9 +72,10 @@ function LrcDisplay({ lrc }: { lrc: string }) {
       );
   }, [recoverAutoScrollImmediately]);
 
+  const lrcs = useMemo(() => lyrics.map((l) => l.content), [lyrics]);
   return (
     <StyledLrc
-      lrc={lrc}
+      lrcs={lrcs}
       lineRenderer={lrcLineRenderer}
       currentMillisecond={currentMillisecond}
       verticalSpace

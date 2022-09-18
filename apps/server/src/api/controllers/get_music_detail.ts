@@ -1,8 +1,6 @@
 import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import { MusicType } from '#/constants/music';
 import excludeProperty from '#/utils/exclude_property';
-import { getLyricByMusicId, Property as LyricProperty } from '@/db/lyric';
 import {
   getMusicById,
   getMusicListByIds,
@@ -41,10 +39,7 @@ export default async (ctx: Context) => {
   if (!music) {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
   }
-  const [lyric, createUser, forkList, forkFromList] = await Promise.all([
-    music.type === MusicType.SONG
-      ? getLyricByMusicId(id, [LyricProperty.CONTENT])
-      : null,
+  const [createUser, forkList, forkFromList] = await Promise.all([
     getUserById(music.createUserId, [
       UserProperty.ID,
       UserProperty.AVATAR,
@@ -132,7 +127,6 @@ export default async (ctx: Context) => {
     hq: getAssetUrl(music.hq, AssetType.MUSIC_HQ),
     ac: getAssetUrl(music.ac, AssetType.MUSIC_AC),
     singers: allSingerList[id] || [],
-    lyric: lyric ? lyric.content : null,
     createUser: {
       ...createUser,
       avatar: getAssetUrl(createUser!.avatar, AssetType.USER_AVATAR),

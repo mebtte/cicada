@@ -1,6 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
 import { getMusicById, Property as MusicProperty } from '@/db/music';
-import { getLyricByMusicId, Property as LyricProperty } from '@/db/lyric';
+import { getLyricListByMusicId, Property as LyricProperty } from '@/db/lyric';
 import { MusicType } from '#/constants/music';
 import { Context } from '../constants';
 
@@ -22,9 +22,10 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.INSTRUMENT_NO_LYRIC);
   }
 
-  const lyric = await getLyricByMusicId(musicId, [LyricProperty.CONTENT]);
-  if (!lyric) {
-    return ctx.except(ExceptionCode.LYRIC_NOT_EXIST);
-  }
-  return ctx.success(lyric.content);
+  const lyrics = await getLyricListByMusicId(musicId, [
+    LyricProperty.ID,
+    LyricProperty.CONTENT,
+  ]);
+
+  return ctx.success(lyrics);
 };

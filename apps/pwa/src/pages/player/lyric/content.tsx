@@ -1,7 +1,6 @@
 import { ReactNode, useContext } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
-
 import { CONTROLLER_HEIGHT, Music } from '../constants';
 import PlayerContext from '../context';
 import LrcDisplay from './lrc_display';
@@ -68,7 +67,7 @@ const Content = ({
         />
       );
     } else if (s.status === Status.LRC_SUCCESS) {
-      content = <LrcDisplay lrc={s.lrc} />;
+      content = <LrcDisplay lyrics={s.lyrics} />;
     } else if (s.status === Status.LRC_EMPTY) {
       content = <Text onClick={toggleTurntable}>暂未收录歌词</Text>;
     } else if (s.status === Status.LRC_ERROR) {

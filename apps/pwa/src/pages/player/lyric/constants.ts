@@ -5,3 +5,8 @@ export enum Status {
   LRC_SUCCESS = 'lrc_success',
   LRC_EMPTY = 'lrc_empty',
 }
+
+export interface Lyric {
+  id: number;
+  content: string;
+}

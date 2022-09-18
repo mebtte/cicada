@@ -1,6 +1,5 @@
 import { useTransition, animated } from 'react-spring';
 import styled from 'styled-components';
-import { MusicType } from '#/constants/music';
 import Skeleton from '@/components/skeleton';
 import Avatar from '@/components/avatar';
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
@@ -161,8 +160,8 @@ function MusicDrawer({
               ) : null}
               <Action music={music} />
               <Fork music={music} />
-              {music.lrc && music.type === MusicType.SONG ? (
-                <Lyric lrc={music.lrc} />
+              {music.lyrics && music.lyrics.length ? (
+                <Lyric lyrics={music.lyrics} />
               ) : null}
             </div>
           </Content>

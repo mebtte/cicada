@@ -14,7 +14,6 @@ export enum ExceptionCode {
   MUSIC_NOT_IN_MUSICBILL,
   ASSET_OVER_MAX_SIZE,
   WRONG_ASSET_ACCEPT_TYPES,
-  LYRIC_NOT_EXIST,
   ASSET_NOT_EXIST,
   FORBID_EXPORT_EMPTY_MUSICBILL,
   OVER_EXPORT_MUSICBILL_TIMES_PER_DAY,
@@ -79,9 +78,6 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.WRONG_ASSET_ACCEPT_TYPES]: {
     description: '错误的资源类型',
-  },
-  [ExceptionCode.LYRIC_NOT_EXIST]: {
-    description: '音乐未收录歌词',
   },
   [ExceptionCode.ASSET_NOT_EXIST]: {
     description: '资源不存在',
