@@ -37,7 +37,7 @@ const mainConfig = {
   experiments,
   entry: path.join(__dirname, '../src/index.tsx'),
   output: {
-    path: path.join(__dirname, '../build'),
+    path: path.join(__dirname, '../../../pwa'),
     filename: '[name]_[contenthash].js',
     chunkFilename: 'chunk_[name]_[contenthash].js',
     publicPath: '/',
@@ -78,12 +78,7 @@ const mainConfig = {
   plugins: [
     envDefinePlugin,
     new CopyPlugin({
-      patterns: [
-        {
-          from: STATIC_DIR,
-          to: path.join(__dirname, '../build'),
-        },
-      ],
+      patterns: [STATIC_DIR],
     }),
     new HtmlPlugin({
       template: path.join(__dirname, '../src/index.html'),
@@ -97,7 +92,7 @@ const serviceWorkerConfig = {
   target: 'webworker',
   entry: path.join(__dirname, '../src/service_worker.ts'),
   output: {
-    path: path.join(__dirname, '../build'),
+    path: path.join(__dirname, '../../../pwa'),
     filename: 'service_worker.js',
     publicPath: '/',
   },

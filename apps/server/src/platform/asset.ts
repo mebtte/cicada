@@ -1,5 +1,5 @@
 import { AssetType, PathPrefix } from '#/constants';
-import argv from '@/argv';
+import config from '@/config';
 import { ASSET_DIR } from '@/constants/directory';
 
 export function getAssetPath(asset: string, assetType: AssetType) {
@@ -13,5 +13,5 @@ export function getAssetUrl(asset: string, assetType: AssetType) {
   if (!asset.length) {
     return '';
   }
-  return `${argv.publicAddress}/${PathPrefix.ASSET}/${assetType}/${asset}`;
+  return `${config.publicAddress}/${PathPrefix.ASSET}/${assetType}/${asset}`;
 }

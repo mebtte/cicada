@@ -1,8 +1,8 @@
 import { AssetType, TRASH_FILENAME } from '#/constants';
-import argv from '@/argv';
+import config from '@/config';
 import { TemporaryType } from '.';
 
-export const ROOT_ASSET_DIR = `${argv.base}/assets`;
+export const ROOT_ASSET_DIR = `${config.base}/assets`;
 export const ASSET_DIR: Record<AssetType, string> = {
   [AssetType.USER_AVATAR]: `${ROOT_ASSET_DIR}/${AssetType.USER_AVATAR}`,
   [AssetType.SINGER_AVATAR]: `${ROOT_ASSET_DIR}/${AssetType.SINGER_AVATAR}`,
@@ -13,15 +13,15 @@ export const ASSET_DIR: Record<AssetType, string> = {
   [AssetType.MUSICBILL_COVER]: `${ROOT_ASSET_DIR}/${AssetType.MUSICBILL_COVER}`,
 };
 
-export const DB_SNAPSHOT_DIR = `${argv.base}/db_snapshots`;
+export const DB_SNAPSHOT_DIR = `${config.base}/db_snapshots`;
 
-export const TRASH_DIR = `${argv.base}/${TRASH_FILENAME}`;
+export const TRASH_DIR = `${config.base}/${TRASH_FILENAME}`;
 
-export const LOG_DIR = `${argv.base}/logs`;
+export const LOG_DIR = `${config.base}/logs`;
 
-export const ROOT_TEMPORARY_DIR = `${argv.base}/temporary`;
+export const ROOT_TEMPORARY_DIR = `${config.base}/temporary`;
 export const TEMPORARY_DIR: Record<TemporaryType, string> = {
   [TemporaryType.MUSICBILL_EXPORT]: `${ROOT_TEMPORARY_DIR}/${TemporaryType.MUSICBILL_EXPORT}`,
 };
 
-export const SECRET_DIR = `${argv.base}/secrets`;
+export const SECRET_DIR = `${config.base}/secrets`;

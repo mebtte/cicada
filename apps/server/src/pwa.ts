@@ -5,6 +5,13 @@ import etag from 'koa-etag';
 
 const app = new Koa();
 app.use(etag());
-app.use(serve(path.join(__dirname, '../../pwa/build')));
+app.use(
+  serve(
+    path.join(
+      __dirname,
+      process.env.NODE_ENV === 'production' ? './pwa' : '../../pwa/build',
+    ),
+  ),
+);
 
 export default app;

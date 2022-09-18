@@ -2,6 +2,6 @@
   "name": "server",
   "scripts": {
     "dev": "cross-env RUN_ENV=development nodemon",
-    "start": "ts-node -r tsconfig-paths/register src/index.ts"
+    "build": "cross-env NODE_ENV=production webpack --config webpack.config.js --progress"
   }
 }
