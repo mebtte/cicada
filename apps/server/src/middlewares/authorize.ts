@@ -1,6 +1,6 @@
 import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import { verify } from '#/utils/jwt';
+import { verify } from '@/platform/jwt';
 import { Next } from 'koa';
 import { getAssetUrl } from '@/platform/asset';
 import { getUserById, Property } from '@/db/user';

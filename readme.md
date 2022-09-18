@@ -51,7 +51,7 @@ npm start -- --emailHost=email.com --emailUser=mebtte@email.com --emailPass=secr
 | port                              | number | 否       | 8000                            | 提供服务的端口                                                      |
 | publicAddress                     | string | 否       | http://localhost:{{serverPort}} | **实际**暴露服务的地址, 比如通过 https://cicada.mebtte.com 暴露服务 |
 | clusterCount                      | number | 否       | {{os.cups().length}}            | 服务进程数量                                                        |
-| base                              | string | 否       | {{project}}/resources           | 数据存放目录                                                        |
+| base                              | string | 否       | {{homedir}}/cicada              | 数据存放目录                                                        |
 | userExportMusicbillMaxTimesPerDay | number | 否       | 3                               | 用户每天导出乐单最大次数                                            |
 | userUploadMusicMaxTimesPerDay     | number | 否       | 5                               | 用户每天上传音乐最大次数                                            |
 

@@ -1,9 +1,6 @@
-import path from 'path';
 import { AssetType, TRASH_FILENAME } from '#/constants';
 import argv from '@/argv';
 import { TemporaryType } from '.';
-
-export * from '#/constants/directory';
 
 export const ROOT_ASSET_DIR = `${argv.base}/assets`;
 export const ASSET_DIR: Record<AssetType, string> = {
@@ -22,7 +19,9 @@ export const TRASH_DIR = `${argv.base}/${TRASH_FILENAME}`;
 
 export const LOG_DIR = `${argv.base}/logs`;
 
-export const ROOT_TEMPORARY_DIR = path.join(__dirname, '../../../../temporary');
+export const ROOT_TEMPORARY_DIR = `${argv.base}/temporary`;
 export const TEMPORARY_DIR: Record<TemporaryType, string> = {
   [TemporaryType.MUSICBILL_EXPORT]: `${ROOT_TEMPORARY_DIR}/${TemporaryType.MUSICBILL_EXPORT}`,
 };
+
+export const SECRET_DIR = `${argv.base}/secrets`;

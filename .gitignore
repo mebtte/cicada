@@ -13,7 +13,5 @@ package-lock.json
 dist/
 build/
 
+# cicada
 argv.json
-secrets/
-resources/
-temporary/

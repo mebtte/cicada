@@ -17,7 +17,7 @@ const argv = yargs.parse(process.argv) as any;
 const port = Number(argv.port || fromFile.port) || 8000;
 const result = {
   /** default */
-  base: path.join(__dirname, '../../../resources'),
+  base: `${os.homedir()}/cicada`,
   publicAddress: `http://localhost:${port}`,
 
   ...fromFile,

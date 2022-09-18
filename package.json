@@ -28,8 +28,6 @@
   },
   "homepage": "https://cicada.mebtte.com",
   "workspaces": [
-    "apps/desktop",
-    "apps/desktop_setting",
     "apps/pwa",
     "apps/server"
   ],
