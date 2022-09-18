@@ -5,7 +5,7 @@ import db from '@/db';
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
 import { sendEmail } from '@/platform/email';
-import argv from '@/argv';
+import config from '@/config';
 import { Property, getUserByEmail } from '@/db/user';
 import { BRAND_NAME } from '#/constants';
 import { Context } from '../constants';
@@ -14,7 +14,7 @@ const generateEmailHtml = () => `Hi,
 <br>
 <br>
 已成功为您创建账号, 现在可以使用当前邮箱登录到「<a href="${
-  argv.publicAddress
+  config.publicAddress
 }">知了</a>」.
 <br>
 如果使用中有任何问题或者建议, 可以通过 <a href="https://github.com/mebtte/cicada">Issue</a> 进行反馈.

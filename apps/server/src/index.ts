@@ -6,7 +6,6 @@ import log from 'koa-logger';
 import cors from '@koa/cors';
 import mount from 'koa-mount';
 import { PathPrefix } from '#/constants';
-import argv from './argv';
 import api from './api';
 import blob from './blob';
 import asset from './asset';
@@ -14,6 +13,7 @@ import pwa from './pwa';
 import schedule from './schedule';
 import env from './env';
 import temporary from './temporary';
+import config from './config';
 
 async function start() {
   if (cluster.isPrimary) {
@@ -25,19 +25,19 @@ async function start() {
       console.log(`--- env | ${key} = ${env[key]} ---`);
     }
 
-    const PRINT_ARGV_KEYS: (keyof typeof argv)[] = [
+    const PRINT_CONFIG_KEYS: (keyof typeof config)[] = [
       'base',
       'port',
       'publicAddress',
       'clusterCount',
     ];
-    for (const key of PRINT_ARGV_KEYS) {
+    for (const key of PRINT_CONFIG_KEYS) {
       // eslint-disable-next-line no-console
-      console.log(`--- argv | ${key} = ${argv[key]} ---`);
+      console.log(`--- argv | ${key} = ${config[key]} ---`);
     }
 
     schedule.start();
-    for (let i = 0; i < argv.clusterCount; i += 1) {
+    for (let i = 0; i < config.clusterCount; i += 1) {
       cluster.fork();
     }
   } else {
@@ -60,7 +60,7 @@ async function start() {
     server.use(mount(`/${PathPrefix.BLOB}`, blob));
     server.use(mount('/', pwa));
 
-    http.createServer(server.callback()).listen(argv.port);
+    http.createServer(server.callback()).listen(config.port);
   }
 }
 

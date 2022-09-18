@@ -21,7 +21,7 @@ import {
   ROOT_TEMPORARY_DIR,
   TEMPORARY_DIR,
 } from './constants/directory';
-import argv from './argv';
+import config from './config';
 
 function mkdirIfNotExist(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -35,7 +35,7 @@ if (cluster.isPrimary) {
    * 注意顺序
    */
   const directories = [
-    argv.base,
+    config.base,
     SECRET_DIR,
     DB_SNAPSHOT_DIR,
     TRASH_DIR,

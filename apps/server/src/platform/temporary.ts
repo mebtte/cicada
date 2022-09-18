@@ -1,4 +1,4 @@
-import argv from '@/argv';
+import config from '@/config';
 import { TEMPORARY_DIR } from '@/constants/directory';
 import { PathPrefix } from '#/constants';
 import { TemporaryType } from '../constants';
@@ -14,5 +14,5 @@ export function getTemporaryUrl(
   resource: string,
   temporaryType: TemporaryType,
 ) {
-  return `${argv.publicAddress}/${PathPrefix.TEMPORARY}/${temporaryType}/${resource}`;
+  return `${config.publicAddress}/${PathPrefix.TEMPORARY}/${temporaryType}/${resource}`;
 }
