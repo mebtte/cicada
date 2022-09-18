@@ -14,15 +14,22 @@ import schedule from './schedule';
 import env from './env';
 import temporary from './temporary';
 import config from './config';
+import pkg from '../../../package.json';
+
+function printInfo(info: string) {
+  // eslint-disable-next-line no-console
+  console.log(`--- ${info} ---`);
+}
 
 async function start() {
   if (cluster.isPrimary) {
     process.title = 'cicada_primary';
 
+    printInfo(`primary | version = ${pkg.version}`);
+
     const PRINT_ENV_KEYS: (keyof typeof env)[] = ['RUN_ENV'];
     for (const key of PRINT_ENV_KEYS) {
-      // eslint-disable-next-line no-console
-      console.log(`--- env | ${key} = ${env[key]} ---`);
+      printInfo(`env | ${key} = ${env[key]}`);
     }
 
     const PRINT_CONFIG_KEYS: (keyof typeof config)[] = [
@@ -32,8 +39,7 @@ async function start() {
       'clusterCount',
     ];
     for (const key of PRINT_CONFIG_KEYS) {
-      // eslint-disable-next-line no-console
-      console.log(`--- argv | ${key} = ${config[key]} ---`);
+      printInfo(`config | ${key} = ${config[key]}`);
     }
 
     schedule.start();

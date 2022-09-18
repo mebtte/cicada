@@ -23,7 +23,7 @@
     "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev -w apps/server",
     "build:server": "npm run build -w apps/server",
-    "build": "npm run build:pwa && npm run build:server && pkg ."
+    "build": "rimraf build && npm run build:pwa && npm run build:server && pkg ."
   },
   "bugs": {
     "url": "https://github.com/mebtte/cicada/issues"
@@ -149,6 +149,7 @@
     "react-router-dom": "^6.3.0",
     "react-slider": "^1.1.4",
     "react-spring": "^9.4.5",
+    "rimraf": "^3.0.2",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.5",
     "ts-jest": "^28.0.7",
@@ -172,9 +173,15 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0"
   },
-  "license": "MIT",
+  "license": "GPL",
   "pkg": {
     "assets": "pwa/**/*",
-    "outputPath": "build"
+    "outputPath": "build",
+    "targets": [
+      "node16-macos-x64",
+      "node16-macos-arm64",
+      "node16-win-x64",
+      "node16-linux-arm64"
+    ]
   }
 }
