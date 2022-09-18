@@ -19,7 +19,7 @@ jobs:
       - env:
           TOKEN: ${{secrets.TOKEN}}
         run: |
-          cd apps/pwa/build
+          cd pwa
 
           echo 'cicada.mebtte.com' > CNAME
 
