@@ -1,10 +1,10 @@
 const path = require('path');
 const fs = require('fs');
+const cp = require('child_process');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const pkg = require('../../../package.json');
 
 const INVALID_FILES = ['.DS_Store'];
 const STATIC_DIR = path.join(__dirname, '../src/static');
@@ -14,7 +14,12 @@ const experiments = {
 
 const envDefinePlugin = new webpack.DefinePlugin({
   __ENV__: JSON.stringify({
-    VERSION: pkg.version,
+    VERSION: JSON.stringify(
+      cp
+        .execSync('git describe --abbrev=0 --tags')
+        .toString()
+        .replace('\n', ''),
+    ),
 
     BUILD_TIME: new Date(),
     EMPTY_IMAGE_LIST: fs

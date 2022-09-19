@@ -1,5 +1,7 @@
 const path = require('path');
+const webpack = require('webpack');
 const nodeExternals = require('webpack-node-externals');
+const cp = require('child_process');
 
 module.exports = {
   mode: 'production',
@@ -29,6 +31,16 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      __TAG__: JSON.stringify(
+        cp
+          .execSync('git describe --abbrev=0 --tags')
+          .toString()
+          .replace('\n', ''),
+      ),
+    }),
+  ],
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {

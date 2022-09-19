@@ -14,7 +14,6 @@ import schedule from './schedule';
 import env from './env';
 import temporary from './temporary';
 import config from './config';
-import pkg from '../../../package.json';
 
 function printInfo(info: string) {
   // eslint-disable-next-line no-console
@@ -25,9 +24,7 @@ async function start() {
   if (cluster.isPrimary) {
     process.title = 'cicada_primary';
 
-    printInfo(`primary | version = ${pkg.version}`);
-
-    const PRINT_ENV_KEYS: (keyof typeof env)[] = ['RUN_ENV'];
+    const PRINT_ENV_KEYS: (keyof typeof env)[] = ['VERSION', 'RUN_ENV'];
     for (const key of PRINT_ENV_KEYS) {
       printInfo(`env | ${key} = ${env[key]}`);
     }

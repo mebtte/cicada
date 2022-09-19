@@ -1,8 +1,7 @@
-import pkg from '../../../../../package.json';
+import env from '@/env';
 import { Context } from '../constants';
 
 export default async (ctx: Context) =>
   ctx.success({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    version: (pkg as any).version,
+    version: env.VERSION,
   });
