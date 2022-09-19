@@ -29,18 +29,18 @@
 
 配置文件使用 json, 支持以下配置:
 
-| 参数                              | 类型   | 是否必须 | 默认值                          | 描述                                                                               |
-| --------------------------------- | ------ | -------- | ------------------------------- | ---------------------------------------------------------------------------------- |
-| emailHost                         | string | 是       | -                               | 发信邮箱域名                                                                       |
-| emailPort                         | number | 否       | 465                             | 发信邮箱端口                                                                       |
-| emailUser                         | string | 是       | -                               | 发信邮箱账号                                                                       |
-| eamilPass                         | string | 是       | -                               | 发信邮箱密码                                                                       |
-| port                              | number | 否       | 8000                            | 提供服务的端口                                                                     |
-| publicAddress                     | string | 否       | http://localhost:{{serverPort}} | **实际**暴露服务的地址, 比如 nginx 反向代理通过 https://cicada.mebtte.com 暴露服务 |
-| clusterCount                      | number | 否       | {{os.cups().length}}            | 服务进程数量                                                                       |
-| base                              | string | 否       | {{homedir}}/cicada              | 数据存放目录                                                                       |
-| userExportMusicbillMaxTimesPerDay | number | 否       | 3                               | 用户每天导出乐单最大次数                                                           |
-| userUploadMusicMaxTimesPerDay     | number | 否       | 5                               | 用户每天上传音乐最大次数                                                           |
+| 参数                              | 类型   | 是否必须 | 默认值                    | 描述                                                                               |
+| --------------------------------- | ------ | -------- | ------------------------- | ---------------------------------------------------------------------------------- |
+| emailHost                         | string | 是       | -                         | 发信邮箱域名                                                                       |
+| emailPort                         | number | 否       | 465                       | 发信邮箱端口                                                                       |
+| emailUser                         | string | 是       | -                         | 发信邮箱账号                                                                       |
+| eamilPass                         | string | 是       | -                         | 发信邮箱密码                                                                       |
+| port                              | number | 否       | 8000                      | 提供服务的端口                                                                     |
+| publicAddress                     | string | 否       | http://localhost:{{port}} | **实际**暴露服务的地址, 比如 nginx 反向代理通过 https://cicada.mebtte.com 暴露服务 |
+| clusterCount                      | number | 否       | {{os.cups().length}}      | 服务进程数量                                                                       |
+| base                              | string | 否       | {{homedir}}/cicada        | 数据存放目录                                                                       |
+| userExportMusicbillMaxTimesPerDay | number | 否       | 3                         | 用户每天导出乐单最大次数                                                           |
+| userUploadMusicMaxTimesPerDay     | number | 否       | 5                         | 用户每天上传音乐最大次数                                                           |
 
 ## 常见问题
 
@@ -62,7 +62,7 @@
 
 ### 数据库
 
-知了使用 `sqlite3` 作为数据库, 路径为 `${base}/db`. 通常情况下主版本发生变化的同时数据库定义也会跟着变化, 当升级知了到最新版本时需要手动对数据库进行调整, 具体调整可以参考[数据库变更记录](./docs/db.md).
+知了使用 `sqlite3` 作为数据库, 路径为 `{{base}}/db`. 通常情况下主版本发生变化的同时数据库定义也会跟着变化, 当升级知了到最新版本时需要手动对数据库进行调整, 具体调整可以参考[数据库变更记录](./docs/db.md).
 
 ## 开源协议
 
