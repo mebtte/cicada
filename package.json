@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "description": "知了, 一个自主托管的音乐服务, 更是一个播放器.",
-  "version": "0.25.3",
+  "version": "0.26.0",
   "private": true,
   "bin": "index.js",
   "repository": {
@@ -23,7 +23,9 @@
     "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev -w apps/server",
     "build:server": "npm run build -w apps/server",
-    "build": "rimraf build && npm run build:pwa && npm run build:server && pkg ."
+    "pkg": "pkg .",
+    "build": "./build.sh",
+    "build:current": "rimraf build && npm run build:pwa && npm run build:server && npm run pkg"
   },
   "bugs": {
     "url": "https://github.com/mebtte/cicada/issues"
@@ -53,7 +55,7 @@
     "node-schedule": "^2.1.0",
     "nodemailer": "^6.7.5",
     "sanitize-filename": "^1.6.3",
-    "sqlite3": "^5.0.8",
+    "sqlite3": "^5.1.1",
     "svg-captcha": "^1.4.0",
     "ts-node": "^10.7.0"
   },
@@ -179,13 +181,6 @@
       "pwa/**/*",
       "node_modules/**/*.node"
     ],
-    "outputPath": "build",
-    "targets": [
-      "node16-macos-x64",
-      "node16-macos-arm64",
-      "node16-win-x64",
-      "node16-linux-x64",
-      "node16-linux-arm64"
-    ]
+    "outputPath": "build"
   }
 }

@@ -19,11 +19,13 @@
 
 ## 部署
 
-在 [Releases](https://github.com/mebtte/cicada/releases) 下载对应系统的二进制包, 通过下面命令启动(以 Apple silicon macOS 为例):
+在 [Releases](https://github.com/mebtte/cicada/releases) 下载并解压对应平台的二进制包, 通过下面命令启动(以 Apple silicon macOS 为例):
 
 ```sh
 ./cicada-macos-arm64 --config config.json
 ```
+
+> 目前只提供了几种主流平台的构建包, 其他平台可以参考[文档](./docs/build.md)自行构建
 
 配置文件使用 json, 支持以下配置:
 
@@ -60,7 +62,7 @@
 
 ### 数据库
 
-知了使用 `sqlite3` 作为数据库, 路径为 `${base}/db`. 通常情况下主版本发生变化的同时数据库定义也会跟着变化, 当升级知了到最新版本时需要手动对数据库进行调整, 具体调整可以参考[数据库变更记录](./db_changelog.md).
+知了使用 `sqlite3` 作为数据库, 路径为 `${base}/db`. 通常情况下主版本发生变化的同时数据库定义也会跟着变化, 当升级知了到最新版本时需要手动对数据库进行调整, 具体调整可以参考[数据库变更记录](./docs/db.md).
 
 ## 开源协议
 
