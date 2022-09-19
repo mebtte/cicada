@@ -1,0 +1,21 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@main
+        with:
+          node-version: 16
+        run: npm run build
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/*.tar.gz"
+          token: ${{ secrets.TOKEN }}
