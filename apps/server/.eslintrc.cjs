@@ -1,7 +1,7 @@
 module.exports = {
   extends: '../../.eslintrc.cjs',
   globals: {
-    VERSION: 'readonly',
+    __VERSION__: 'readonly',
   },
   rules: {},
 };

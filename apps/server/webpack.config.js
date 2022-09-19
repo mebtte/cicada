@@ -33,7 +33,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __TAG__: JSON.stringify(
+      __VERSION__: JSON.stringify(
         cp
           .execSync('git describe --abbrev=0 --tags')
           .toString()
