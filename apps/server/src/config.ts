@@ -2,6 +2,7 @@ import * as yargs from 'yargs';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import exitWithMessage from './utils/exit_with_message';
 
 interface Config {
   base: string;
@@ -22,14 +23,14 @@ if (process.env.NODE_ENV === 'production') {
     config?: string;
   };
   if (!argv.config) {
-    throw new Error('请通过 [--config] 指定配置文件');
+    exitWithMessage('请通过 [--config] 指定配置文件');
   }
-  configFilePath = path.resolve(process.cwd(), argv.config);
+  configFilePath = path.resolve(process.cwd(), argv.config!);
 } else {
   configFilePath = path.join(__dirname, '../../../config.json');
 }
 if (!fs.existsSync(configFilePath)) {
-  throw new Error(`配置文件 [${configFilePath}] 不存在`);
+  exitWithMessage(`配置文件 [${configFilePath}] 不存在`);
 }
 
 let configFromFile: Config;
@@ -37,7 +38,7 @@ try {
   configFromFile = JSON.parse(fs.readFileSync(configFilePath).toString());
 } catch (error) {
   console.error(error);
-  throw new Error('解析配置文件错误');
+  exitWithMessage(`配置文件 [${configFilePath}] 解析错误`);
 }
 
 const DEFAULT_CONFIG: Omit<
@@ -54,6 +55,7 @@ const DEFAULT_CONFIG: Omit<
 
 const config: Config = {
   ...DEFAULT_CONFIG,
+  // @ts-expect-error
   ...configFromFile,
 };
 if (!config.publicAddress) {
@@ -67,7 +69,7 @@ const REQUIRED_CONFIG_KEYS: (keyof Config)[] = [
 ];
 for (const key of REQUIRED_CONFIG_KEYS) {
   if (!config[key]) {
-    throw new Error(`配置项 [${key}] 不能为空`);
+    exitWithMessage(`配置项 [${key}] 不能为空`);
   }
 }
 
