@@ -4,7 +4,6 @@ import Avatar, { Shape } from '@/components/avatar';
 import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';
-import eventemitter, { EventType } from '../eventemitter';
 
 const AVATAR_SIZE = 100;
 const Style = styled.div`
@@ -27,7 +26,7 @@ const Style = styled.div`
   }
 `;
 const openProfileDialog = () =>
-  globalEventemitter.emit(GlobalEventType.OPEN_PROFILE_DIALOG);
+  globalEventemitter.emit(GlobalEventType.OPEN_PROFILE_DIALOG, null);
 
 function User({ profile }: { profile: ProfileType }) {
   return (
@@ -40,14 +39,7 @@ function User({ profile }: { profile: ProfileType }) {
         shape={Shape.CIRCLE}
         onClick={openProfileDialog}
       />
-      <div
-        className="nickname"
-        onClick={() =>
-          eventemitter.emit(EventType.OPEN_USER_DRAWER, { id: profile.id })
-        }
-      >
-        {profile.nickname}
-      </div>
+      <div className="nickname">{profile.nickname}</div>
     </Style>
   );
 }

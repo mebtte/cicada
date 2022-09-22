@@ -3,7 +3,6 @@ import * as React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import styled, { css } from 'styled-components';
-
 import Drawer, { Title } from '@/components/drawer';
 import updateMusicbillOrder from '@/server/update_musicbill_order';
 import logger from '#/utils/logger';
@@ -57,7 +56,7 @@ function MusicbillOrderDrawer() {
     }
 
     return updateMusicbillOrder(orderedMusicbillIdList)
-      .then(() => eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST))
+      .then(() => eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, null))
       .catch((error) => {
         logger.error(error, '更新乐单顺序失败');
         dialog.alert({
@@ -82,22 +81,20 @@ function MusicbillOrderDrawer() {
   };
 
   useEffect(() => {
-    const openListener = () => {
-      setLocalMusicbillList(
-        musicbillList.map((m) => ({
-          id: m.id,
-          cover: m.cover,
-          name: m.name,
-        })),
-      );
-      return setOpen(true);
-    };
-    eventemitter.on(EventType.OPEN_MUSICBILL_ORDER_DRAWER, openListener);
-    return () =>
-      void eventemitter.off(
-        EventType.OPEN_MUSICBILL_ORDER_DRAWER,
-        openListener,
-      );
+    const unlistenOpenMusicbillOrderDrawer = eventemitter.listen(
+      EventType.OPEN_MUSICBILL_ORDER_DRAWER,
+      () => {
+        setLocalMusicbillList(
+          musicbillList.map((m) => ({
+            id: m.id,
+            cover: m.cover,
+            name: m.name,
+          })),
+        );
+        return setOpen(true);
+      },
+    );
+    return unlistenOpenMusicbillOrderDrawer;
   }, [musicbillList]);
 
   return (

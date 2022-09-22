@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-
 import eventemitter, { EventType } from '../eventemitter';
 
 export default () => {
@@ -7,10 +6,11 @@ export default () => {
   const onClose = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
-    const openListener = () => setOpen(true);
-    eventemitter.on(EventType.OPEN_COVER_EDIT_DIALOG, openListener);
-    return () =>
-      void eventemitter.off(EventType.OPEN_COVER_EDIT_DIALOG, openListener);
+    const unlistenOpenCoverEditDialog = eventemitter.listen(
+      EventType.OPEN_COVER_EDIT_DIALOG,
+      () => setOpen(true),
+    );
+    return unlistenOpenCoverEditDialog;
   }, []);
 
   return { open, onClose };

@@ -1,5 +1,5 @@
 node_modules/
 dist/
 build/
-pwa/
-index.js
+/pwa/
+/index.js

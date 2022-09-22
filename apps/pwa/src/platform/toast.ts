@@ -1,7 +1,7 @@
-import Eventemitter from 'eventemitter3';
+import Eventin from 'eventemitter3';
 
 const DEFAULT_DURATION = 8 * 1000;
-const eventemitter = new Eventemitter();
+const eventemitter = new Eventin();
 const EVENT_TYPE = 'toast';
 
 enum TOAST_TYPE {

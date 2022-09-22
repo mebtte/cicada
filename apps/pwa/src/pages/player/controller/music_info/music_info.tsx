@@ -4,14 +4,15 @@ import MusicTagList from '../../components/music_tag_list';
 import { Music as MusicType } from '../../constants';
 import eventemitter, { EventType } from '../../eventemitter';
 
-const MusicInfo = ({
+function MusicInfo({
   music,
   ...props
 }: {
   music: MusicType;
-  [key: string]: any;
-}) => {
-  const onView = () => eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, music);
+  [key: string]: unknown;
+}) {
+  const onView = () =>
+    eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id });
   const { name, singers } = music;
   return (
     <Container {...props}>
@@ -30,6 +31,6 @@ const MusicInfo = ({
       <MusicTagList music={music} />
     </Container>
   );
-};
+}
 
 export default MusicInfo;

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Eventemitter from 'eventemitter3';
+import Eventin from 'eventin';
 
-const eventemitter = new Eventemitter();
+const eventemitter = new Eventin();
 const EVENT_TYPE = 'dialog';
 enum DIALOG_TYPE {
   ALERT = 'alert',

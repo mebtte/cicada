@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-import eventemitter, { EventType } from './eventemitter';
+import e, { EventType } from './eventemitter';
 
 export default () => {
   const [loading, setLoading] = useState(false);
@@ -8,35 +7,34 @@ export default () => {
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
-    const waitingListener = () => setLoading(true);
-    const canPlayThroughListener = ({ duration: d }: { duration: number }) => {
-      setLoading(false);
-      setDuration(d);
-    };
-    const playListener = () => {
+    const unlistenAudioWaiting = e.listen(EventType.AUDIO_WAITING, () =>
+      setLoading(true),
+    );
+    const unlistenAudioCanPlayThrough = e.listen(
+      EventType.AUDIO_CAN_PLAY_THROUGH,
+      ({ duration: d }: { duration: number }) => {
+        setLoading(false);
+        setDuration(d);
+      },
+    );
+    const unlistenAudioPlay = e.listen(EventType.AUDIO_PLAY, () => {
       setLoading(false);
       setPaused(false);
-    };
-    const pauseListener = () => setPaused(true);
-    const errorListener = () => {
+    });
+    const unlistenAudioPause = e.listen(EventType.AUDIO_PAUSE, () =>
+      setPaused(true),
+    );
+    const unlistenAudioError = e.listen(EventType.AUDIO_ERROR, () => {
       setLoading(false);
       setPaused(true);
       setDuration(0);
-    };
-    eventemitter.on(EventType.AUDIO_WAITING, waitingListener);
-    eventemitter.on(EventType.AUDIO_CAN_PLAY_THROUGH, canPlayThroughListener);
-    eventemitter.on(EventType.AUDIO_PLAY, playListener);
-    eventemitter.on(EventType.AUDIO_PAUSE, pauseListener);
-    eventemitter.on(EventType.AUDIO_ERROR, errorListener);
+    });
     return () => {
-      eventemitter.off(EventType.AUDIO_WAITING, waitingListener);
-      eventemitter.off(
-        EventType.AUDIO_CAN_PLAY_THROUGH,
-        canPlayThroughListener,
-      );
-      eventemitter.off(EventType.AUDIO_PLAY, playListener);
-      eventemitter.off(EventType.AUDIO_PAUSE, pauseListener);
-      eventemitter.off(EventType.AUDIO_ERROR, errorListener);
+      unlistenAudioWaiting();
+      unlistenAudioCanPlayThrough();
+      unlistenAudioPlay();
+      unlistenAudioPause();
+      unlistenAudioError();
     };
   }, []);
 

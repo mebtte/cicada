@@ -61,15 +61,11 @@ function LrcDisplay({ lyrics }: { lyrics: Lyric[] }) {
     useRecoverAutoScrollImmediately();
 
   useEffect(() => {
-    eventemitter.on(
+    const unlistenScrollToCurrentLine = eventemitter.listen(
       EventType.SCROLL_TO_CURRENT_LINE,
       recoverAutoScrollImmediately,
     );
-    return () =>
-      void eventemitter.off(
-        EventType.SCROLL_TO_CURRENT_LINE,
-        recoverAutoScrollImmediately,
-      );
+    return unlistenScrollToCurrentLine;
   }, [recoverAutoScrollImmediately]);
 
   const lrcs = useMemo(() => lyrics.map((l) => l.content), [lyrics]);

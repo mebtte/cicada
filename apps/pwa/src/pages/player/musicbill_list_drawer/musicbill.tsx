@@ -47,7 +47,7 @@ function Musicbill({
     }
     return playerEventemitter.emit(PlayerEventType.ADD_MUSIC_TO_MUSICBILL, {
       musicbill,
-      music,
+      music: music!,
     });
   }, [musicbill, music]);
   const { cover, name, musicList, status } = musicbill;

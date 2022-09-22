@@ -14,21 +14,21 @@ const JUMP_STEP = 5;
 const style = {
   display: 'none',
 };
-const onWaiting = () => eventemitter.emit(EventType.AUDIO_WAITING);
+const onWaiting = () => eventemitter.emit(EventType.AUDIO_WAITING, null);
 const onCanPlayThrough = (event) => {
   const { duration } = event.target;
   return eventemitter.emit(EventType.AUDIO_CAN_PLAY_THROUGH, { duration });
 };
-const onPlay = () => eventemitter.emit(EventType.AUDIO_PLAY);
-const onPause = () => eventemitter.emit(EventType.AUDIO_PAUSE);
-const onEnded = () => eventemitter.emit(EventType.ACTION_NEXT);
+const onPlay = () => eventemitter.emit(EventType.AUDIO_PLAY, null);
+const onPause = () => eventemitter.emit(EventType.AUDIO_PAUSE, null);
+const onEnded = () => eventemitter.emit(EventType.ACTION_NEXT, null);
 const onError = (e) => {
   logger.error(e, '播放发生错误');
   dialog.alert({
     title: '播放发生错误',
     content: e.message,
   });
-  return eventemitter.emit(EventType.AUDIO_ERROR);
+  return eventemitter.emit(EventType.AUDIO_ERROR, null);
 };
 
 interface Props {
@@ -48,10 +48,10 @@ class Audio extends React.PureComponent<Props, {}> {
   componentDidMount() {
     this.audioRef.current!.volume = this.props.volume;
 
-    eventemitter.on(EventType.ACTION_SET_TIME, this.onActionSetTime);
-    eventemitter.on(EventType.ACTION_TOGGLE_PLAY, this.onActionTogglePlay);
-    eventemitter.on(EventType.ACTION_PLAY, this.onActionPlay);
-    eventemitter.on(EventType.ACTION_PAUSE, this.onActionPause);
+    eventemitter.listen(EventType.ACTION_SET_TIME, this.onActionSetTime);
+    eventemitter.listen(EventType.ACTION_TOGGLE_PLAY, this.onActionTogglePlay);
+    eventemitter.listen(EventType.ACTION_PLAY, this.onActionPlay);
+    eventemitter.listen(EventType.ACTION_PAUSE, this.onActionPause);
 
     document.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('beforeunload', this.beforeUnload);
@@ -83,10 +83,13 @@ class Audio extends React.PureComponent<Props, {}> {
   }
 
   componentWillUnmount() {
-    eventemitter.off(EventType.ACTION_SET_TIME, this.onActionSetTime);
-    eventemitter.off(EventType.ACTION_TOGGLE_PLAY, this.onActionTogglePlay);
-    eventemitter.off(EventType.ACTION_PLAY, this.onActionPlay);
-    eventemitter.off(EventType.ACTION_PAUSE, this.onActionPause);
+    eventemitter.unlisten(EventType.ACTION_SET_TIME, this.onActionSetTime);
+    eventemitter.unlisten(
+      EventType.ACTION_TOGGLE_PLAY,
+      this.onActionTogglePlay,
+    );
+    eventemitter.unlisten(EventType.ACTION_PLAY, this.onActionPlay);
+    eventemitter.unlisten(EventType.ACTION_PAUSE, this.onActionPause);
 
     document.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('beforeunload', this.beforeUnload);

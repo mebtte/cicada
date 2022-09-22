@@ -23,7 +23,7 @@ function CoverEditDialog({ musicbill }: { musicbill: Musicbill }) {
     async (image: File) => {
       const asset = await uploadAsset(image, AssetType.MUSICBILL_COVER);
       await updateMusicbill(musicbill.id, AllowUpdateKey.COVER, asset.id);
-      playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, {});
+      playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, null);
     },
     [musicbill],
   );

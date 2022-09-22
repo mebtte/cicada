@@ -47,7 +47,7 @@ function Wrapper() {
     }
   };
   const onFocus = (event: FocusEvent<HTMLInputElement>) => {
-    eventemitter.emit(EventType.CLOSE_LYRIC);
+    eventemitter.emit(EventType.CLOSE_LYRIC, null);
     return event.target.select();
   };
   const inputRef = useKeyboard();

@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 import styled from 'styled-components';
-
 import getRandomCover from '@/utils/get_random_cover';
 import Avatar from '@/components/avatar';
 import Context from '../context';
@@ -44,7 +43,7 @@ const Style = styled.div`
     }
   }
 `;
-const openLyric = () => eventemitter.emit(EventType.TOGGEL_LYRIC);
+const openLyric = () => eventemitter.emit(EventType.TOGGEL_LYRIC, null);
 
 function Controller() {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);

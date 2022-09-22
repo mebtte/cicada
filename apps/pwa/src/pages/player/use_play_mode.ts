@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import { PlayMode, PLAY_MODES } from './constants';
 import { PLAY_MODE } from '../../constants/storage_key';
 import eventemitter, { EventType } from './eventemitter';
@@ -11,10 +10,11 @@ export default () => {
   });
 
   useEffect(() => {
-    const playModeChangeListener = (pm: PlayMode) => setPlayMode(pm);
-    eventemitter.on(EventType.CHANGE_PLAY_MODE, playModeChangeListener);
-    return () =>
-      void eventemitter.off(EventType.CHANGE_PLAY_MODE, playModeChangeListener);
+    const unlistenChangePlayMode = eventemitter.listen(
+      EventType.CHANGE_PLAY_MODE,
+      ({ playMode: pm }) => setPlayMode(pm),
+    );
+    return unlistenChangePlayMode;
   }, []);
 
   return playMode;

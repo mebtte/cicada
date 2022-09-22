@@ -58,7 +58,8 @@ function Music({ listMusic }: { listMusic: MusicWithIndex }) {
     listMusic.music,
   );
   const onRemove = useCallback(
-    () => eventemitter.emit(EventType.ACTION_REMOVE_PLAYLIST_MUSIC, listMusic),
+    () =>
+      eventemitter.emit(EventType.ACTION_REMOVE_PLAYLIST_MUSIC, { listMusic }),
     [listMusic],
   );
   const {

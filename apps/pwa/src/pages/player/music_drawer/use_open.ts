@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-
 import eventemitter, { EventType } from '../eventemitter';
 
 export default () => {
@@ -9,20 +8,31 @@ export default () => {
   const [id, setId] = useState('');
 
   useEffect(() => {
-    const openListener = (data: { id: string }) => {
-      setId(data.id);
-      return setOpen(true);
-    };
     const closeListener = () => setOpen(false);
-    eventemitter.on(EventType.OPEN_MUSIC_DRAWER, openListener);
-    eventemitter.on(EventType.OPEN_SINGER_DRAWER, closeListener);
-    eventemitter.on(EventType.OPEN_MUSICBILL_LIST_DRAWER, closeListener);
-    eventemitter.on(EventType.OPEN_MUSIC_OPERATE_POPUP, closeListener);
+    const unlistenOpenMusicDrawer = eventemitter.listen(
+      EventType.OPEN_MUSIC_DRAWER,
+      (data) => {
+        setId(data.id);
+        return setOpen(true);
+      },
+    );
+    const unlistenOpenSingerDrawer = eventemitter.listen(
+      EventType.OPEN_SINGER_DRAWER,
+      closeListener,
+    );
+    const unlistenOpenMusicbillListDrawer = eventemitter.listen(
+      EventType.OPEN_MUSICBILL_LIST_DRAWER,
+      closeListener,
+    );
+    const unlistenOpenMusicOperatePopup = eventemitter.listen(
+      EventType.OPEN_MUSIC_OPERATE_POPUP,
+      closeListener,
+    );
     return () => {
-      eventemitter.off(EventType.OPEN_MUSIC_DRAWER, openListener);
-      eventemitter.off(EventType.OPEN_SINGER_DRAWER, closeListener);
-      eventemitter.off(EventType.OPEN_MUSICBILL_LIST_DRAWER, closeListener);
-      eventemitter.off(EventType.OPEN_MUSIC_OPERATE_POPUP, closeListener);
+      unlistenOpenMusicDrawer();
+      unlistenOpenSingerDrawer();
+      unlistenOpenMusicbillListDrawer();
+      unlistenOpenMusicOperatePopup();
     };
   }, []);
 

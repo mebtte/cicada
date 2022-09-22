@@ -1,7 +1,13 @@
-import { memo, ReactNode, useState, useCallback, useEffect, useContext } from 'react';
+import {
+  memo,
+  ReactNode,
+  useState,
+  useCallback,
+  useEffect,
+  useContext,
+} from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
-
 import dialog from '@/platform/dialog';
 import Drawer from '@/components/drawer';
 import eventemitter, { EventType } from '../eventemitter';
@@ -31,7 +37,7 @@ const bodyProps = {
   },
 };
 
-const MusicDrawer = () => {
+function MusicDrawer() {
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
   const { playlist } = useContext(Context);
@@ -40,22 +46,23 @@ const MusicDrawer = () => {
       dialog.confirm({
         title: '确定清空播放列表吗?',
         onConfirm: () =>
-          void eventemitter.emit(EventType.ACTION_CLEAR_PLAYLIST),
+          void eventemitter.emit(EventType.ACTION_CLEAR_PLAYLIST, null),
       }),
     [],
   );
 
   useEffect(() => {
-    const openListener = () => setOpen(true);
-    const toggleListener = () => setOpen((o) => !o);
-    eventemitter.on(EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER, openListener);
-    eventemitter.on(EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER, toggleListener);
+    const unlistenOpenPlaylistPlayqueueDrawer = eventemitter.listen(
+      EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER,
+      () => setOpen(true),
+    );
+    const unlistenTogglePlaylistPlayqueueDrawer = eventemitter.listen(
+      EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER,
+      () => setOpen((o) => !o),
+    );
     return () => {
-      eventemitter.off(EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER, openListener);
-      eventemitter.off(
-        EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER,
-        toggleListener,
-      );
+      unlistenOpenPlaylistPlayqueueDrawer();
+      unlistenTogglePlaylistPlayqueueDrawer();
     };
   }, []);
 
@@ -91,6 +98,6 @@ const MusicDrawer = () => {
       </Container>
     </Drawer>
   );
-};
+}
 
 export default memo(MusicDrawer);

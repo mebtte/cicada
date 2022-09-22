@@ -75,27 +75,29 @@ function Music({
     if (index === activeIndex) {
       return;
     }
-    return eventemitter.emit(EventType.ACTION_PLAY_PLAYQUEUE_INDEX, index - 1);
+    return eventemitter.emit(EventType.ACTION_PLAY_PLAYQUEUE_INDEX, {
+      index: index - 1,
+    });
   }, [index, activeIndex]);
   const onRemove = useCallback(
     () =>
-      eventemitter.emit(EventType.ACTION_REMOVE_PLAYQUEUE_MUSIC, queueMusic),
+      eventemitter.emit(EventType.ACTION_REMOVE_PLAYQUEUE_MUSIC, {
+        queueMusic,
+      }),
     [queueMusic],
   );
   const onMoveLater = useCallback(
     () =>
-      eventemitter.emit(
-        EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER,
+      eventemitter.emit(EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER, {
         queueMusic,
-      ),
+      }),
     [queueMusic],
   );
   const onMoveEarly = useCallback(
     () =>
-      eventemitter.emit(
-        EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY,
+      eventemitter.emit(EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY, {
         queueMusic,
-      ),
+      }),
     [queueMusic],
   );
 

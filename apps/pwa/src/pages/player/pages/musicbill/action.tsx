@@ -28,7 +28,8 @@ const onSearch = () =>
   eventemitter.emit(EventType.TOP_CONTENT_CHANGE, {
     topContent: TopContent.SEARCH,
   });
-const openTextEditDialog = () => eventemitter.emit(EventType.OPEN_EDIT_DIALOG);
+const openTextEditDialog = () =>
+  eventemitter.emit(EventType.OPEN_EDIT_DIALOG, null);
 
 function Action({ musicbill }: { musicbill: Musicbill }) {
   const navigate = useNavigate();
@@ -62,7 +63,10 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
           onConfirm: async () => {
             try {
               await deleteMusicbill(musicbill.id);
-              playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST);
+              playerEventemitter.emit(
+                PlayerEventType.RELOAD_MUSICBILL_LIST,
+                null,
+              );
               navigate({ path: ROOT_PATH.PLAYER + PLAYER_PATH.HOME });
             } catch (error) {
               logger.error(error, '删除乐单失败');

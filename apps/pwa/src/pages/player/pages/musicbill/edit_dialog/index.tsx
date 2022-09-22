@@ -21,7 +21,7 @@ import useOpen from './use_open';
 import eventemitter, { EventType } from '../eventemitter';
 
 const openCoverEditDialog = () =>
-  eventemitter.emit(EventType.OPEN_COVER_EDIT_DIALOG);
+  eventemitter.emit(EventType.OPEN_COVER_EDIT_DIALOG, null);
 const StyledContent = styled(Content)`
   display: flex;
   flex-direction: column;
@@ -72,7 +72,7 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
       }
 
       if (updated) {
-        playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST);
+        playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, null);
       }
 
       onClose();

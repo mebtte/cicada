@@ -25,7 +25,7 @@ const Style = styled.div`
   }
 `;
 const scrollToCurrentLine = () =>
-  eventemitter.emit(EventType.SCROLL_TO_CURRENT_LINE);
+  eventemitter.emit(EventType.SCROLL_TO_CURRENT_LINE, null);
 
 function Action({
   music,

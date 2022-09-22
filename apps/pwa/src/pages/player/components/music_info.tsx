@@ -48,7 +48,7 @@ function MusicInfo({
   music: MusicType;
 } & HtmlHTMLAttributes<HTMLDivElement>) {
   const onViewMusic = useCallback(
-    () => eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, music),
+    () => eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id }),
     [music],
   );
   const { cover, name, singers } = music;

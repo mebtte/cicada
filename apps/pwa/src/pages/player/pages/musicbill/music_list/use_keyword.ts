@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react';
-
 import eventemitter, { EventType } from '../eventemitter';
 
 export default () => {
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
-    const onTopContentChange = () => setKeyword('');
-    const onKeywordChange = ({ keyword: k }: { keyword: string }) =>
-      setKeyword(k);
-
-    eventemitter.on(EventType.TOP_CONTENT_CHANGE, onTopContentChange);
-    eventemitter.on(EventType.KEYWORD_CHANGE, onKeywordChange);
+    const unlistenTopContentChange = eventemitter.listen(
+      EventType.TOP_CONTENT_CHANGE,
+      () => setKeyword(''),
+    );
+    const unlistenKeywordChange = eventemitter.listen(
+      EventType.KEYWORD_CHANGE,
+      ({ keyword: k }) => setKeyword(k),
+    );
     return () => {
-      eventemitter.off(EventType.TOP_CONTENT_CHANGE, onTopContentChange);
-      eventemitter.off(EventType.KEYWORD_CHANGE, onKeywordChange);
+      unlistenTopContentChange();
+      unlistenKeywordChange();
     };
   }, []);
 

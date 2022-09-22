@@ -25,7 +25,7 @@ const cardStyle = {
   flex: 1,
 };
 const reloadMusicbillList = () =>
-  eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST);
+  eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, null);
 
 function MusicbillListDrawer({
   open,

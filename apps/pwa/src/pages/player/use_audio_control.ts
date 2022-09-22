@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
-
 import eventemitter, { EventType } from './eventemitter';
 
-const onPlay = () => eventemitter.emit(EventType.ACTION_PLAY);
-const onPause = () => eventemitter.emit(EventType.ACTION_PAUSE);
-const onPrevious = () => eventemitter.emit(EventType.ACTION_PREVIOUS);
-const onNext = () => eventemitter.emit(EventType.ACTION_NEXT);
+const onPlay = () => eventemitter.emit(EventType.ACTION_PLAY, null);
+const onPause = () => eventemitter.emit(EventType.ACTION_PAUSE, null);
+const onPrevious = () => eventemitter.emit(EventType.ACTION_PREVIOUS, null);
+const onNext = () => eventemitter.emit(EventType.ACTION_NEXT, null);
 
 export default (loading = false) => {
   const onTogglePlay = useCallback(() => {

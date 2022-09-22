@@ -25,11 +25,11 @@ const Style = styled.div`
 `;
 
 const onCreateMusicbill = () =>
-  eventemitter.emit(EventType.OPEN_CREATE_MUSICBILL_DIALOG);
+  eventemitter.emit(EventType.OPEN_CREATE_MUSICBILL_DIALOG, null);
 const onOrderMusicbillList = () =>
-  eventemitter.emit(EventType.OPEN_MUSICBILL_ORDER_DRAWER);
+  eventemitter.emit(EventType.OPEN_MUSICBILL_ORDER_DRAWER, null);
 const onReloadMusicbillList = () =>
-  eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST);
+  eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, null);
 
 function Action({
   status,
@@ -38,33 +38,35 @@ function Action({
   status: RequestStatus;
   musicbillList: Musicbill[];
 }) {
-  return <Style>
-    <div className="label">我的乐单</div>
-    <Tooltip title="创建乐单">
-      <IconButton
-        name={IconButtonName.PLUS_OUTLINE}
-        size={ACTION_SIZE}
-        onClick={onCreateMusicbill}
-        disabled={status !== RequestStatus.SUCCESS}
-      />
-    </Tooltip>
-    <Tooltip title="排序乐单">
-      <IconButton
-        name={IconButtonName.EXCHANGE_OUTLINE}
-        size={ACTION_SIZE}
-        onClick={onOrderMusicbillList}
-        disabled={status !== RequestStatus.SUCCESS || !musicbillList.length}
-      />
-    </Tooltip>
-    <Tooltip title="重新获取乐单">
-      <IconButton
-        name={IconButtonName.REFRESH_OUTLINE}
-        size={ACTION_SIZE}
-        loading={status === RequestStatus.LOADING}
-        onClick={onReloadMusicbillList}
-      />
-    </Tooltip>
-  </Style>
+  return (
+    <Style>
+      <div className="label">我的乐单</div>
+      <Tooltip title="创建乐单">
+        <IconButton
+          name={IconButtonName.PLUS_OUTLINE}
+          size={ACTION_SIZE}
+          onClick={onCreateMusicbill}
+          disabled={status !== RequestStatus.SUCCESS}
+        />
+      </Tooltip>
+      <Tooltip title="排序乐单">
+        <IconButton
+          name={IconButtonName.EXCHANGE_OUTLINE}
+          size={ACTION_SIZE}
+          onClick={onOrderMusicbillList}
+          disabled={status !== RequestStatus.SUCCESS || !musicbillList.length}
+        />
+      </Tooltip>
+      <Tooltip title="重新获取乐单">
+        <IconButton
+          name={IconButtonName.REFRESH_OUTLINE}
+          size={ACTION_SIZE}
+          loading={status === RequestStatus.LOADING}
+          onClick={onReloadMusicbillList}
+        />
+      </Tooltip>
+    </Style>
+  );
 }
 
 export default Action;

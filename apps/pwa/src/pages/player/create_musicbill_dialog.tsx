@@ -41,7 +41,7 @@ function CreateMusicbillDialog() {
     setCreating(true);
     try {
       await createMusicbill(name);
-      eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, {});
+      eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, null);
       onClose();
     } catch (error) {
       logger.error(error, '创建乐单失败');
@@ -54,16 +54,17 @@ function CreateMusicbillDialog() {
   };
 
   useEffect(() => {
-    const listener = () => {
-      setOpen(true);
-      setTimeout(
-        () => inputRef.current && inputRef.current.focus(),
-        DIALOG_TRANSITION_DURATION,
-      );
-    };
-    eventemitter.on(EventType.OPEN_CREATE_MUSICBILL_DIALOG, listener);
-    return () =>
-      void eventemitter.off(EventType.OPEN_CREATE_MUSICBILL_DIALOG, listener);
+    const unlistenOpenCreateMusicbillDialog = eventemitter.listen(
+      EventType.OPEN_CREATE_MUSICBILL_DIALOG,
+      () => {
+        setOpen(true);
+        setTimeout(
+          () => inputRef.current && inputRef.current.focus(),
+          DIALOG_TRANSITION_DURATION,
+        );
+      },
+    );
+    return unlistenOpenCreateMusicbillDialog;
   }, []);
 
   return (

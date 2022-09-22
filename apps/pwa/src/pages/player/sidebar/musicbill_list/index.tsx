@@ -32,7 +32,7 @@ const CenterBox = styled(MusicbillListContainer)`
   justify-content: center;
 `;
 const onReloadMusicbillList = () =>
-  eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST);
+  eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, null);
 
 function Wrapper() {
   const location = useLocation();

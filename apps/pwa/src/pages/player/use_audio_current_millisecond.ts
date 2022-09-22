@@ -5,14 +5,12 @@ function useAudioCurrentMillisecond() {
   const [currentMillisecond, setCurrentMillisecond] = useState(0);
 
   useEffect(() => {
-    const onAudioTimeUpdated = ({
-      currentMillisecond: cm,
-    }: {
-      currentMillisecond: number;
-    }) => setCurrentMillisecond(cm);
-    eventemitter.on(EventType.AUDIO_TIME_UPDATED, onAudioTimeUpdated);
-    return () =>
-      void eventemitter.off(EventType.AUDIO_TIME_UPDATED, onAudioTimeUpdated);
+    const unlistAudioTimeUpdated = eventemitter.listen(
+      EventType.AUDIO_TIME_UPDATED,
+      ({ currentMillisecond: cm }: { currentMillisecond: number }) =>
+        setCurrentMillisecond(cm),
+    );
+    return unlistAudioTimeUpdated;
   }, []);
 
   return currentMillisecond;

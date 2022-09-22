@@ -7,13 +7,16 @@ export default () => {
   const onClose = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
-    const closeListener = () => setOpen(false);
-    const toggleListener = () => setOpen((o) => !o);
-    eventemitter.on(EventType.CLOSE_LYRIC, closeListener);
-    eventemitter.on(EventType.TOGGEL_LYRIC, toggleListener);
+    const unlistenCloseLyric = eventemitter.listen(EventType.CLOSE_LYRIC, () =>
+      setOpen(false),
+    );
+    const unlistenToggleLyric = eventemitter.listen(
+      EventType.TOGGEL_LYRIC,
+      () => setOpen((o) => !o),
+    );
     return () => {
-      eventemitter.off(EventType.CLOSE_LYRIC, closeListener);
-      eventemitter.off(EventType.TOGGEL_LYRIC, toggleListener);
+      unlistenCloseLyric();
+      unlistenToggleLyric();
     };
   }, []);
 

@@ -1,5 +1,4 @@
 import { memo, useCallback, useState } from 'react';
-
 import getRandomCover from '@/utils/get_random_cover';
 import Avatar from '@/components/avatar';
 import Icon, { Name } from '@/components/icon';
