@@ -1,19 +1,38 @@
 import { createRoot } from 'react-dom/client';
+import { ReactNode } from 'react';
 import { NoticeType } from './constants';
 import NoticeApp from './notice_app';
 import e, { EventType } from './eventemitter';
+import generateRandomString from '../generate_random_string';
 
 const root = document.createElement('div');
 root.className = 'notice-root';
 document.body.appendChild(root);
 createRoot(root).render(<NoticeApp />);
 
+function generateType(type: NoticeType) {
+  return (
+    content: ReactNode,
+    {
+      duration = 5000,
+      closable = true,
+    }: {
+      duration?: number;
+      closable?: boolean;
+    } = {},
+  ) => {
+    const id = generateRandomString();
+
+    e.emit(EventType.OPEN, { id, type, duration, content, closable });
+
+    return id;
+  };
+}
+
 export { NoticeType };
 export default {
-  info: (content: string, { duration = 6000 }: { duration?: number } = {}) =>
-    e.emit(EventType.OPEN, { type: NoticeType.INFO, content, duration }),
-  success: (content: string, { duration = 6000 }: { duration?: number } = {}) =>
-    e.emit(EventType.OPEN, { type: NoticeType.SUCCESS, content, duration }),
-  error: (content: string, { duration = 6000 }: { duration?: number } = {}) =>
-    e.emit(EventType.OPEN, { type: NoticeType.ERROR, content, duration }),
+  info: generateType(NoticeType.INFO),
+  success: generateType(NoticeType.SUCCESS),
+  error: generateType(NoticeType.ERROR),
+  close: (id: string) => e.emit(EventType.CLOSE, { id }),
 };

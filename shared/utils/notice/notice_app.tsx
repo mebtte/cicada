@@ -7,7 +7,6 @@ import {
 } from './constants';
 import NoticeItem from './notice_item';
 import e, { EventType } from './eventemitter';
-import generateRandomString from '../generate_random_string';
 
 function handleNoticeListTop(noticeList: Notice[]) {
   let nextTop = BASE_TOP;
@@ -38,11 +37,12 @@ function NoticeApp() {
         return [
           ...nl,
           {
-            id: generateRandomString(),
+            id: data.id,
             type: data.type,
             duration: data.duration,
             content: data.content,
             visible: true,
+            closable: data.closable,
 
             height: 0,
             top,

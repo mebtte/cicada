@@ -1,31 +1,28 @@
-import { memo, ReactNode, useEffect, useLayoutEffect, useRef } from 'react';
+import { memo, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
+import { MdClose } from 'react-icons/md';
 import { Notice, TRANSITION_DURATION, NoticeType } from './constants';
 import e, { EventType } from './eventemitter';
-import { Prompt, Success, Warning } from '../../components/icon';
 import { CSSVariable } from '../../global_style';
+import IconButton from '../../components/icon_button';
 
 const NOTICE_TYPE_MAP: Record<
   NoticeType,
   {
-    icon: ReactNode;
     css: ReturnType<typeof css>;
   }
 > = {
   [NoticeType.INFO]: {
-    icon: <Prompt className="icon" />,
     css: css`
-      background-color: #8bd3dd;
+      background-color: #3da9fc;
     `,
   },
   [NoticeType.SUCCESS]: {
-    icon: <Success className="icon" />,
     css: css`
       background-color: ${CSSVariable.COLOR_PRIMARY};
     `,
   },
   [NoticeType.ERROR]: {
-    icon: <Warning className="icon" />,
     css: css`
       background-color: ${CSSVariable.COLOR_DANGEROUS};
     `,
@@ -48,9 +45,11 @@ const countdown = keyframes`
   }
 `;
 const Style = styled.div<{ type: NoticeType }>`
+  z-index: 99999;
+
   position: fixed;
   right: 20px;
-  width: 300px;
+  max-width: 300px;
 
   animation: ${slideIn} ${TRANSITION_DURATION}ms ease-in-out;
   transition: all ${TRANSITION_DURATION}ms;
@@ -60,21 +59,20 @@ const Style = styled.div<{ type: NoticeType }>`
   > .top {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px;
+    gap: 5px;
+    padding: 10px 15px;
 
     color: #fff;
-
-    > .icon {
-      width: 24px;
-      height: 24px;
-    }
 
     > .content {
       flex: 1;
       min-width: 0;
 
       font-size: 14px;
+    }
+
+    > .close {
+      margin-right: -10px;
     }
   }
 
@@ -92,11 +90,14 @@ const Style = styled.div<{ type: NoticeType }>`
 
 function NoticeItem({ notice }: { notice: Notice }) {
   const ref = useRef<HTMLDivElement>(null);
-  const { id, type, duration, content, visible, top } = notice;
+  const { id, type, duration, content, visible, top, closable } = notice;
+  const onClose = useCallback(() => e.emit(EventType.CLOSE, { id }), [id]);
 
   useEffect(() => {
-    window.setTimeout(() => e.emit(EventType.CLOSE, { id }), duration);
-  }, [duration, id]);
+    if (duration !== 0) {
+      window.setTimeout(onClose, duration);
+    }
+  }, [duration, onClose]);
 
   useLayoutEffect(() => {
     e.emit(EventType.UPDATE_HEIGHT, { id, height: ref.current!.clientHeight });
@@ -113,13 +114,19 @@ function NoticeItem({ notice }: { notice: Notice }) {
       type={type}
     >
       <div className="top">
-        {NOTICE_TYPE_MAP[type].icon}
         <div className="content">{content}</div>
+        {closable ? (
+          <IconButton className="close" onClick={onClose}>
+            <MdClose />
+          </IconButton>
+        ) : null}
       </div>
-      <div
-        className="progress"
-        style={{ animationDuration: `${duration}ms` }}
-      />
+      {duration === 0 ? null : (
+        <div
+          className="progress"
+          style={{ animationDuration: `${duration}ms` }}
+        />
+      )}
     </Style>
   );
 }

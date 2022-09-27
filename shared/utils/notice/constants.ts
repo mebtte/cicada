@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export enum NoticeType {
   INFO,
   SUCCESS,
@@ -9,7 +11,8 @@ export interface Notice {
   type: NoticeType;
   duration: number;
   visible: boolean;
-  content: string;
+  content: ReactNode;
+  closable: boolean;
 
   height: number;
   top: number;
@@ -17,4 +20,4 @@ export interface Notice {
 
 export const BASE_TOP = 20;
 export const NOTICE_ITEM_SPACE = 15;
-export const TRANSITION_DURATION = 500;
+export const TRANSITION_DURATION = 350;

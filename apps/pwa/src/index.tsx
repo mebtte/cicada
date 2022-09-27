@@ -2,6 +2,10 @@ import './polyfill';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import 'cropperjs/dist/cropper.min.css';
+import notice from '#/utils/notice';
+import styled from 'styled-components';
+import IconButton from '#/components/icon_button';
+import { MdCheck, MdClose } from 'react-icons/md';
 import App from './app';
 
 createRoot(document.querySelector('#root')!).render(
@@ -10,6 +14,16 @@ createRoot(document.querySelector('#root')!).render(
   </HashRouter>,
 );
 
+const VersionUpdater = styled.div`
+  > .action {
+    margin-top: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+  }
+`;
 if ('serviceWorker' in navigator) {
   // @ts-expect-error
   // eslint-disable-next-line no-undef
@@ -25,17 +39,27 @@ if ('serviceWorker' in navigator) {
          */
         if (process.env.NODE_ENV === 'production') {
           wb.addEventListener('waiting', () => {
-            /**
-             * @todo 更新提示
-             * @author mebtte<hi@mebtte.com>
-             */
-            const yes = window.confirm('已更新到最新版本, 是否立即刷新使用?');
-            if (yes) {
-              wb.addEventListener('controlling', () =>
-                window.location.reload(),
-              );
-              wb.messageSkipWaiting();
-            }
+            const id = notice.info(
+              <VersionUpdater>
+                <div>检测到新版本, 是否刷新马上使用?</div>
+                <div className="action">
+                  <IconButton
+                    onClick={() => {
+                      wb.addEventListener('controlling', () =>
+                        window.location.reload(),
+                      );
+                      wb.messageSkipWaiting();
+                    }}
+                  >
+                    <MdCheck />
+                  </IconButton>
+                  <IconButton onClick={() => notice.close(id)}>
+                    <MdClose />
+                  </IconButton>
+                </div>
+              </VersionUpdater>,
+              { duration: 0, closable: false },
+            );
           });
         }
 

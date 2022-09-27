@@ -1,4 +1,5 @@
 import Eventin from 'eventin';
+import { ReactNode } from 'react';
 import { NoticeType } from './constants';
 
 export enum EventType {
@@ -8,7 +9,13 @@ export enum EventType {
 }
 
 type EventTypeMapData = {
-  [EventType.OPEN]: { type: NoticeType; duration: number; content: string };
+  [EventType.OPEN]: {
+    id: string;
+    type: NoticeType;
+    duration: number;
+    content: ReactNode;
+    closable: boolean;
+  };
   [EventType.CLOSE]: { id: string };
   [EventType.UPDATE_HEIGHT]: { id: string; height: number };
 };
