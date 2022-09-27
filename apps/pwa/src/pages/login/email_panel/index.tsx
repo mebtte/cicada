@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { EMAIL } from '#/constants/regexp';
 import styled from 'styled-components';
-import notice from '@/utils/notice';
+import notice from '#/utils/notice';
 import Input from '#/components/input';
 import { panelCSS } from '../constants';
 import CaptchaDialog from './captcha_dialog';

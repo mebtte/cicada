@@ -2,6 +2,7 @@ import { createGlobalStyle } from 'styled-components';
 
 export enum CSSVariable {
   COLOR_PRIMARY = 'var(--color-primary)',
+  COLOR_DANGEROUS = 'var(--color-dangerous)',
 
   TEXT_SIZE_NORMAL = 'var(--text-size-normal)',
   TEXT_SIZE_MEDIUM = 'var(--text-size-medium)',
@@ -15,7 +16,8 @@ export enum CSSVariable {
 }
 
 const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
-  [CSSVariable.COLOR_PRIMARY]: 'rgb(49 194 124)',
+  [CSSVariable.COLOR_PRIMARY]: '#2cb67d',
+  [CSSVariable.COLOR_DANGEROUS]: '#f25042',
 
   [CSSVariable.TEXT_SIZE_NORMAL]: '16px',
   [CSSVariable.TEXT_SIZE_MEDIUM]: '14px',

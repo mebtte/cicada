@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import dialog from '@/platform/dialog';
-import toast from '@/platform/toast';
+import notice from '#/utils/notice';
 import { Music as MusicType } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 
@@ -45,7 +45,7 @@ export default (
   const onCopyID = useCallback(() => {
     window.navigator.clipboard
       .writeText(music.id)
-      .then(() => toast.success(`已复制「${music.id}」`))
+      .then(() => notice.success(`已复制「${music.id}」`))
       .catch((error) =>
         dialog.alert({
           title: '复制失败',

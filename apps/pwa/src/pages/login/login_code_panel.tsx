@@ -10,7 +10,7 @@ import {
 } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button from '@mui/material/Button';
-import notice from '@/utils/notice';
+import notice from '#/utils/notice';
 import loginRequest from '@/server/login';
 import t from '@/global_states/token';
 import p from '@/global_states/profile';

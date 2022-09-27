@@ -6,7 +6,7 @@ import Label from '@/components/label';
 import IconButton, { Name } from '@/components/icon_button';
 import Avatar from '@/components/avatar';
 import updateMusicbillRequest from '@/server/update_musicbill';
-import toast from '@/platform/toast';
+import notice from '#/utils/notice';
 import logger from '#/utils/logger';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/platform/dialog';
@@ -48,10 +48,10 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
   const [saving, setSaving] = useState(false);
   const onSave = async () => {
     if (!name.length) {
-      return toast.error('请输入乐单名');
+      return notice.error('请输入乐单名');
     }
     if (name.length > NAME_MAX_LENGTH) {
-      return toast.error(`乐单名长度应小于等于${NAME_MAX_LENGTH}`);
+      return notice.error(`乐单名长度应小于等于${NAME_MAX_LENGTH}`);
     }
     setSaving(true);
     try {

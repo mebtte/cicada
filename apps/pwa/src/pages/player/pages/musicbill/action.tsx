@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import toast from '@/platform/toast';
+import notice from '#/utils/notice';
 import { RequestStatus } from '@/constants';
 import dialog from '@/platform/dialog';
 import logger from '#/utils/logger';
@@ -44,7 +44,7 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
   const onCopyID = () =>
     window.navigator.clipboard
       .writeText(musicbill.id)
-      .then(() => toast.success(`已复制「${musicbill.id}」`))
+      .then(() => notice.success(`已复制「${musicbill.id}」`))
       .catch((error) =>
         dialog.alert({
           title: '复制失败',

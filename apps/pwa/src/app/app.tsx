@@ -2,7 +2,6 @@ import { lazy, Suspense } from 'react';
 import { Navigate, useRoutes, RouteObject } from 'react-router-dom';
 import { ROOT_PATH } from '@/constants/route';
 import ErrorBoundary from '@/components/error_boundary';
-import Toast from './toast';
 import Dialog from './dialog';
 import RouteLoader from './route_loader';
 
@@ -39,7 +38,6 @@ function App() {
   const routes = useRoutes(ROUTES);
   return (
     <>
-      <Toast />
       <Dialog />
 
       <ErrorBoundary fallback={onErrorFallback}>

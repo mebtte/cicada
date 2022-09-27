@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-import toast from '@/platform/toast';
+import notice from '#/utils/notice';
 import getRandomInteger from '#/utils/generate_random_integer';
 import getRandomString from '#/utils/generate_random_string';
 import eventemitter, { EventType } from './eventemitter';
@@ -16,7 +15,7 @@ export default (playlist: MusicWithIndex[]) => {
       () =>
         setCurrentPosition((i) => {
           if (i <= 0) {
-            toast.error('已经是播放队列的第一首');
+            notice.error('已经是播放队列的第一首');
             return i;
           }
           return i - 1;
@@ -126,7 +125,7 @@ export default (playlist: MusicWithIndex[]) => {
       () => {
         if (currentPosition === playqueue.length - 1) {
           if (!playlist.length) {
-            return toast.error('空的播放列表');
+            return notice.error('空的播放列表');
           }
           const music = playlist[getRandomInteger(0, playlist.length)];
           setPlayqueue(
@@ -164,7 +163,7 @@ export default (playlist: MusicWithIndex[]) => {
           setCurrentPosition(0);
           return;
         }
-        toast.info(`下一首将播放"${music.name}"`);
+        notice.info(`下一首将播放"${music.name}"`);
         setPlayqueue(
           [
             ...playqueue.slice(0, currentPosition + 1),

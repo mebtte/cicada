@@ -2,7 +2,7 @@ import { memo, useState, useEffect, useCallback, useRef } from 'react';
 import { easeCubicInOut } from 'd3-ease';
 import createMusicbill from '@/server/create_musicbill';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
-import toast from '@/platform/toast';
+import notice from '#/utils/notice';
 import logger from '#/utils/logger';
 import dialog from '@/platform/dialog';
 import Dialog, { Title, Content, Action } from '@/components/dialog';
@@ -33,10 +33,10 @@ function CreateMusicbillDialog() {
   const onCreate = async () => {
     const name = inputRef.current!.value;
     if (!name.length) {
-      return toast.error('请输入乐单名');
+      return notice.error('请输入乐单名');
     }
     if (name.length > NAME_MAX_LENGTH) {
-      return toast.error(`乐单名长度应小于等于${NAME_MAX_LENGTH}`);
+      return notice.error(`乐单名长度应小于等于${NAME_MAX_LENGTH}`);
     }
     setCreating(true);
     try {

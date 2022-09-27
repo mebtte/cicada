@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
+import notice from '#/utils/notice';
 import { MusicWithIndex } from './constants';
 import eventemitter, { EventType } from './eventemitter';
-import toast from '../../platform/toast';
 
 export default () => {
   const [playlist, setPlaylist] = useState<MusicWithIndex[]>([]);
@@ -32,7 +32,7 @@ export default () => {
             (m) => !currentMusicIdList.includes(m.id),
           );
           if (!newMusicList.length) {
-            toast.info('播放列表已包含这些音乐');
+            notice.info('播放列表已包含这些音乐');
             return pl;
           }
           const newPlaylist = [
@@ -40,7 +40,7 @@ export default () => {
             ...newMusicList.map((m) => ({ index: 0, music: m })),
           ];
           const { length } = newPlaylist;
-          toast.success(`已添加${newMusicList.length}首音乐到播放列表`);
+          notice.success(`已添加${newMusicList.length}首音乐到播放列表`);
           return newPlaylist.map((m, index) => ({
             music: m.music,
             index: length - index,

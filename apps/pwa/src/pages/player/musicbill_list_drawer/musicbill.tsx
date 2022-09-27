@@ -1,8 +1,7 @@
 import { ReactNode, useCallback } from 'react';
 import styled, { css } from 'styled-components';
-
+import notice from '#/utils/notice';
 import { RequestStatus } from '@/constants';
-import toast from '@/platform/toast';
 import Avatar from '@/components/avatar';
 import Checkbox from '@/components/checkbox';
 import CircularLoader from '@/components/circular_loader';
@@ -29,7 +28,7 @@ function Musicbill({
   const onToggleMusicbill = useCallback(() => {
     const { status } = musicbill;
     if (status === RequestStatus.LOADING) {
-      return toast.info('请等待乐单加载完毕...');
+      return notice.info('请等待乐单加载完毕...');
     }
     if (status === RequestStatus.NOT_START || status === RequestStatus.ERROR) {
       return playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, {

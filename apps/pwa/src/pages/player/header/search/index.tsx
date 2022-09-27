@@ -2,7 +2,7 @@ import { memo, useState, ChangeEvent, KeyboardEvent, FocusEvent } from 'react';
 import styled from 'styled-components';
 import IconButton, { Name } from '@/components/icon_button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import toast from '@/platform/toast';
+import notice from '#/utils/notice';
 import Input from '@/components/input';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import useNavigate from '#/utils/use_navigate';
@@ -31,7 +31,7 @@ function Wrapper() {
   const onSearch = () => {
     const trimKeyword = keyword.trim();
     if (!trimKeyword) {
-      return toast.error('请输入关键字');
+      return notice.error('请输入关键字');
     }
     return navigate({
       path: ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH,

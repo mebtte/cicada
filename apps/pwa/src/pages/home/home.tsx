@@ -1,18 +1,8 @@
 import { ROOT_PATH } from '@/constants/route';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-
-const Style = styled.div``;
+import { Navigate } from 'react-router-dom';
 
 function Home() {
-  return (
-    <Style>
-      <div>home</div>
-      <Link to={ROOT_PATH.LOGIN}>login</Link>
-      <br />
-      <Link to={ROOT_PATH.PLAYER}>player</Link>
-    </Style>
-  );
+  return <Navigate replace to={ROOT_PATH.PLAYER} />;
 }
 
 export default Home;
