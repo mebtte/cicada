@@ -1,9 +1,8 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
-
 import Input from '@/components/input';
 import Tooltip, { Placement } from '@/components/tooltip';
-import CircularLoader from '@/components/circular_loader';
+import CircularLoader from '#/components/spinner';
 import IconButton, { Name } from '@/components/icon_button';
 import Container from '../container';
 import Playlist from './playlist';
@@ -44,7 +43,7 @@ function Wrapper({
   onClear,
 }: {
   playlist: MusicWithIndex[];
-  onClear: Function;
+  onClear: () => void;
 }) {
   const [loading, setLoading] = useState(false);
   const [keyword, setKeyword] = useState('');

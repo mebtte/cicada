@@ -5,6 +5,7 @@ import { Notice, TRANSITION_DURATION, NoticeType } from './constants';
 import e, { EventType } from './eventemitter';
 import { CSSVariable } from '../../global_style';
 import IconButton from '../../components/icon_button';
+import { ZIndex } from '../../constants/style';
 
 const NOTICE_TYPE_MAP: Record<
   NoticeType,
@@ -45,7 +46,7 @@ const countdown = keyframes`
   }
 `;
 const Style = styled.div<{ type: NoticeType }>`
-  z-index: 99999;
+  z-index: ${ZIndex.NOTICE};
 
   position: fixed;
   right: 20px;

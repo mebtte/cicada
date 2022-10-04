@@ -4,7 +4,7 @@ import notice from '#/utils/notice';
 import { RequestStatus } from '@/constants';
 import Avatar from '@/components/avatar';
 import Checkbox from '@/components/checkbox';
-import CircularLoader from '@/components/circular_loader';
+import CircularLoader from '#/components/spinner';
 import Icon, { Name } from '@/components/icon';
 import playerEventemitter, {
   EventType as PlayerEventType,

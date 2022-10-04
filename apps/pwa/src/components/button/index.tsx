@@ -1,8 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-
+import CircularLoader from '#/components/spinner';
 import { Type } from './constants';
-import CircularLoader from '../circular_loader';
 
 const TYPE_MAP = {
   [Type.NORMAL]: {
@@ -76,7 +75,7 @@ const Style = styled.button<{
   }}
 `;
 
-interface Props {
+type Props = {
   /** 标签 */
   label: string;
   /** 尺寸 */
@@ -90,13 +89,13 @@ interface Props {
   /** 块级按钮 */
   block?: boolean;
   style?: React.CSSProperties;
-  [key: string]: any;
-}
+} & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'>;
 
 /**
  * 按钮
  * @author mebtte<hi@mebtte.com>
  */
+// eslint-disable-next-line react/display-name
 const Button = React.forwardRef<HTMLButtonElement, Props>(
   (
     {

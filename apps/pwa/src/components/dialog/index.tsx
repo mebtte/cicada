@@ -3,8 +3,7 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated, SpringConfig } from 'react-spring';
-
-import { ZIndex } from '@/constants/style';
+import { ZIndex } from '#/constants/style';
 import scrollbarNever from '@/style/scrollbar_never';
 
 const TRANSITION = {

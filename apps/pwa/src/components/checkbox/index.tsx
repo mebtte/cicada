@@ -1,7 +1,6 @@
-import { memo, useCallback } from 'react';
+import { HtmlHTMLAttributes, memo, useCallback } from 'react';
 import styled, { css } from 'styled-components';
-
-import { ComponentSize } from '@/constants/style';
+import { ComponentSize } from '#/constants/style';
 import Icon, { Name } from '../icon';
 
 const Container = styled.div<{
@@ -38,7 +37,7 @@ const Container = styled.div<{
  * 勾选框
  * @author mebtte<hi@mebtte.com>
  */
-const Checkbox = ({
+function Checkbox({
   checked,
   onChange,
   disabled = false,
@@ -53,8 +52,7 @@ const Checkbox = ({
   disabled?: boolean;
   /** 尺寸, 数字单位 px 或字符串 */
   size?: number | string;
-  [key: string]: any;
-}) => {
+} & HtmlHTMLAttributes<HTMLDivElement>) {
   const onClickWrapper = useCallback(() => {
     if (!onChange || disabled) {
       return;
@@ -72,6 +70,6 @@ const Checkbox = ({
       <Icon className="checked" name={Name.CHECKBOX_FILL} size={size} />
     </Container>
   );
-};
+}
 
 export default memo(Checkbox);

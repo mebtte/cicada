@@ -2,9 +2,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import { animated } from 'react-spring';
 import styled from 'styled-components';
-
 import Avatar from '@/components/avatar';
-import CircularLoader from '@/components/circular_loader';
+import CircularLoader from '#/components/spinner';
 import Input from '@/components/input';
 import IconButton, { Name } from '@/components/icon_button';
 import eventemitter, { EventType } from '../eventemitter';

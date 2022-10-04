@@ -1,6 +1,6 @@
 import { HtmlHTMLAttributes, memo } from 'react';
 import styled from 'styled-components';
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularLoader from '#/components/spinner';
 
 const Style = styled.div`
   display: flex;
@@ -22,7 +22,7 @@ function LoadingDisplay({
 } & HtmlHTMLAttributes<HTMLDivElement>) {
   return (
     <Style {...props}>
-      <CircularProgress />
+      <CircularLoader />
       {message ? <div className="message">{message}</div> : null}
     </Style>
   );

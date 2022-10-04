@@ -57,8 +57,7 @@ function Pagination({
   pageCount: number;
   /** 切换页面回调 */
   onPageChange?: (page: number) => void;
-  [key: string]: any;
-}) {
+} & React.HtmlHTMLAttributes<HTMLDivElement>) {
   const [customPage, setCustomPage] = useState('');
   const onCustomPageChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setCustomPage(event.target.value);
@@ -104,7 +103,7 @@ function Pagination({
       {currentPage - 1 >= 1 && (
         <Button
           className="page"
-          label={currentPage - 1}
+          label={(currentPage - 1).toString()}
           size={ACTION_SIZE}
           onClick={
             onPageChange ? () => onPageChange(currentPage - 1) : undefined
@@ -113,14 +112,14 @@ function Pagination({
       )}
       <Button
         className="page"
-        label={currentPage}
+        label={currentPage.toString()}
         type={Type.PRIMARY}
         size={ACTION_SIZE}
       />
       {currentPage + 1 <= pageCount && (
         <Button
           className="page"
-          label={currentPage + 1}
+          label={(currentPage + 1).toString()}
           size={ACTION_SIZE}
           onClick={
             onPageChange ? () => onPageChange(currentPage + 1) : undefined
@@ -131,7 +130,7 @@ function Pagination({
         pageCount - currentPage === 3 ? (
           <Button
             className="page"
-            label={pageCount - 1}
+            label={(pageCount - 1).toString()}
             size={ACTION_SIZE}
             onClick={
               onPageChange ? () => onPageChange(pageCount - 1) : undefined
@@ -144,7 +143,7 @@ function Pagination({
       {pageCount > currentPage + 1 && (
         <Button
           className="page"
-          label={pageCount}
+          label={pageCount.toString()}
           size={ACTION_SIZE}
           onClick={onPageChange ? () => onPageChange(pageCount) : undefined}
         />

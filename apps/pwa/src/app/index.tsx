@@ -1,6 +1,4 @@
-import { ThemeProvider } from '@mui/material';
 import ErrorBoundary from '@/components/error_boundary';
-import theme from '@/style/theme';
 import { GlobalStyle } from '#/global_style';
 import App from './app';
 import UncaughtError from './uncaught_error';
@@ -13,10 +11,8 @@ function Wrapper() {
 
   return (
     <ErrorBoundary fallback={fallback}>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <App />
-      </ThemeProvider>
+      <GlobalStyle />
+      <App />
     </ErrorBoundary>
   );
 }

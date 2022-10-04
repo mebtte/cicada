@@ -3,7 +3,7 @@ export enum ZIndex {
   POPUP = 1000,
   DRAWER = 1000,
   MESSAGE = 1001,
-  TOAST = 1002,
+  NOTICE = 1002,
 }
 
 export enum ComponentSize {

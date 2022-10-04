@@ -1,7 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-
-import { ComponentSize } from '@/constants/style';
+import { ComponentSize } from '#/constants/style';
 
 const WIDTH = 2;
 const SPACE = 0.15;
