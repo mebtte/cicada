@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
+import CircularLoader from '#/components/spinner';
 import Input from '../input';
-import CircularLoader from '../circular_loader';
 import Icon, { Name } from '../icon';
 
 const ANIMATION_DURATION = 350;
@@ -105,8 +104,7 @@ function Select<Item>({
   loading?: boolean;
   placeholder?: string;
   disabled?: boolean;
-  [key: string]: any;
-}) {
+} & React.HtmlHTMLAttributes<HTMLDivElement>) {
   const [customInput, setCustomInput] = useState('');
   const onCustomInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setCustomInput(event.target.value);

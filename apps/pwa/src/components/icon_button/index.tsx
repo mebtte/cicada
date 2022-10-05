@@ -1,9 +1,8 @@
-import * as React from 'react';
+import { ButtonHTMLAttributes, CSSProperties, forwardRef, memo } from 'react';
 import styled, { css } from 'styled-components';
-
-import { ComponentSize } from '@/constants/style';
+import { ComponentSize } from '#/constants/style';
+import CircularLoader from '#/components/spinner';
 import Icon, { Name } from '../icon';
-import CircularLoader from '../circular_loader';
 import { Type } from './constants';
 
 const TYPE_MAP = {
@@ -51,7 +50,7 @@ const Style = styled.button<{
   }}
 `;
 
-interface Props {
+type Props = {
   /** icon name */
   name: Name;
   /** 类型 */
@@ -62,15 +61,15 @@ interface Props {
   disabled?: boolean;
   /** 加载中 */
   loading?: boolean;
-  style?: React.CSSProperties;
-  [key: string]: any;
-}
+  style?: CSSProperties;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>;
 
 /**
  * 图标按钮
  * @author mebtte<hi@mebtte.com>
  */
-const IconButton = React.forwardRef<HTMLButtonElement, Props>(
+// eslint-disable-next-line react/display-name
+const IconButton = forwardRef<HTMLButtonElement, Props>(
   (
     {
       name,
@@ -108,4 +107,4 @@ const IconButton = React.forwardRef<HTMLButtonElement, Props>(
 );
 
 export { Name, Type };
-export default React.memo(IconButton);
+export default memo(IconButton);

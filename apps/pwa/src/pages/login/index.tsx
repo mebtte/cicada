@@ -1,8 +1,6 @@
 import styled, { css } from 'styled-components';
 import { useEffect, useState } from 'react';
-import storage, { Key } from '@/storage';
 import p from '@/global_states/profile';
-import logger from '#/utils/logger';
 import EmailPanel from './email_panel';
 import LoginCodePanel from './login_code_panel';
 import UserPanel from './user_panel';
@@ -48,17 +46,6 @@ function Login() {
   const [email, setEmail] = useState('');
 
   useEffect(() => {
-    storage
-      .getItem(Key.LAST_LOGIN_EMAIL)
-      .then((lastLoginEmail) => {
-        if (lastLoginEmail) {
-          setEmail(lastLoginEmail);
-        }
-      })
-      .catch((error) => logger.error(error, '查找上次登录邮箱失败'));
-  }, []);
-
-  useEffect(() => {
     if (profile) {
       setStep(Step.THIRD);
     } else {
@@ -72,7 +59,6 @@ function Login() {
         <div className="content">
           <EmailPanel
             visible={step === Step.FIRST}
-            initialEmail={email}
             updateEmail={setEmail}
             toNext={() => setStep(Step.SECOND)}
           />

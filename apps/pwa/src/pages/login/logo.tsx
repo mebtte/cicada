@@ -9,7 +9,7 @@ const Style = styled.div`
   justify-content: center;
 
   .logo {
-    height: 48px;
+    height: 64px;
   }
 `;
 
@@ -19,7 +19,7 @@ function Logo() {
       <Link to={ROOT_PATH.HOME}>
         <img
           className="logo"
-          src="/text_logo.png"
+          src="/logo.png"
           alt="logo"
           crossOrigin="anonymous"
         />

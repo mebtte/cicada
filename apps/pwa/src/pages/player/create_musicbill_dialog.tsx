@@ -5,7 +5,7 @@ import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import notice from '#/utils/notice';
 import logger from '#/utils/logger';
 import dialog from '@/platform/dialog';
-import Dialog, { Title, Content, Action } from '@/components/dialog';
+import Dialog, { Title, Content, Action } from '#/components/dialog';
 import Button, { Type } from '@/components/button';
 import Input from '@/components/input';
 import eventemitter, { EventType } from './eventemitter';

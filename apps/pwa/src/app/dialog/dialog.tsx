@@ -1,19 +1,18 @@
 import { useState } from 'react';
-
 import { DIALOG_TYPE } from '@/platform/dialog';
-import Dialog, { Title, Content, Action } from '@/components/dialog';
+import Dialog, { Title, Content, Action } from '#/components/dialog';
 import Button from '@/components/button';
 import { Dialog as DialogType } from './type';
 
 const ACTION_SIZE = 32;
 
-const DialogWrapper = ({
+function DialogWrapper({
   dialog,
   onClose,
 }: {
   dialog: DialogType;
   onClose: (id: string) => void;
-}) => {
+}) {
   const [confirming, setConfirming] = useState(false);
   const [canceling, setCanceling] = useState(false);
 
@@ -25,7 +24,7 @@ const DialogWrapper = ({
     content,
     confirmText,
     onConfirm,
-    cancelText,
+    cancelText = '取消',
     onCancel,
   } = dialog;
   const onComfirmWrapper = async () => {
@@ -74,6 +73,6 @@ const DialogWrapper = ({
       </Action>
     </Dialog>
   );
-};
+}
 
 export default DialogWrapper;

@@ -1,5 +1,5 @@
 import Empty from '@/components/empty';
-import CircularLoader from '@/components/circular_loader';
+import CircularLoader from '#/components/spinner';
 import ErrorCard from '@/components/error_card';
 import useQuery from '@/utils/use_query';
 import { Query } from './constants';

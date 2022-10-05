@@ -15,9 +15,9 @@ const experiments = {
 const envDefinePlugin = new webpack.DefinePlugin({
   __ENV__: JSON.stringify({
     VERSION: cp
-        .execSync('git describe --abbrev=0 --tags')
-        .toString()
-        .replace('\n', ''),
+      .execSync('git describe --abbrev=0 --tags')
+      .toString()
+      .replace('\n', ''),
 
     BUILD_TIME: new Date(),
     EMPTY_IMAGE_LIST: fs
@@ -74,7 +74,6 @@ const mainConfig = {
     alias: {
       '@': path.resolve(__dirname, '../src'),
       '#': path.resolve(__dirname, '../../../shared'),
-      '@mui/styled-engine': '@mui/styled-engine-sc',
     },
     symlinks: false,
   },

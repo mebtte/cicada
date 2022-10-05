@@ -15,6 +15,10 @@ createRoot(document.querySelector('#root')!).render(
 );
 
 const VersionUpdater = styled.div`
+  > .text {
+    padding-top: 10px;
+  }
+
   > .action {
     margin-top: 5px;
 
@@ -41,7 +45,7 @@ if ('serviceWorker' in navigator) {
           wb.addEventListener('waiting', () => {
             const id = notice.info(
               <VersionUpdater>
-                <div>检测到新版本, 是否刷新马上使用?</div>
+                <div className="text">检测到新版本, 是否刷新马上使用?</div>
                 <div className="action">
                   <IconButton
                     onClick={() => {

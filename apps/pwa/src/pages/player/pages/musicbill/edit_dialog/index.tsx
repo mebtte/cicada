@@ -10,7 +10,7 @@ import notice from '#/utils/notice';
 import logger from '#/utils/logger';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/platform/dialog';
-import Dialog, { Content, Action } from '@/components/dialog';
+import Dialog, { Content, Action } from '#/components/dialog';
 import Button, { Type } from '@/components/button';
 import Input from '@/components/input';
 import playerEventemitter, {

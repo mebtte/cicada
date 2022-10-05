@@ -3,9 +3,7 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated, SpringConfig } from 'react-spring';
-
-import { ZIndex } from '@/constants/style';
-import scrollbarNever from '@/style/scrollbar_never';
+import { ZIndex } from '../constants/style';
 
 const TRANSITION = {
   from: {
@@ -29,9 +27,12 @@ const Mask = styled(animated.div)`
   height: 100%;
   top: 0;
   left: 0;
+
   background-color: rgb(0 0 0 / 0.5);
-  overflow: auto;
-  ${scrollbarNever}
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 const Body = styled(animated.div)`
   width: 450px;

@@ -1,8 +1,7 @@
-import LoadingButton from '@mui/lab/LoadingButton';
-import Stack from '@mui/material/Stack';
 import {
   ChangeEventHandler,
   KeyboardEventHandler,
+  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -11,6 +10,9 @@ import { EMAIL } from '#/constants/regexp';
 import styled from 'styled-components';
 import notice from '#/utils/notice';
 import Input from '#/components/input';
+import logger from '#/utils/logger';
+import storage, { Key } from '@/storage';
+import Button, { Variant } from '#/components/button';
 import { panelCSS } from '../constants';
 import CaptchaDialog from './captcha_dialog';
 import Logo from '../logo';
@@ -18,16 +20,18 @@ import Paper from '../paper';
 
 const Style = styled(Paper)`
   ${panelCSS}
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 function EmailPanel({
   visible,
-  initialEmail,
   updateEmail,
   toNext,
 }: {
   visible: boolean;
-  initialEmail: string;
   updateEmail: (email: string) => void;
   toNext: () => void;
 }) {
@@ -35,7 +39,7 @@ function EmailPanel({
     null,
   );
 
-  const [email, setEmail] = useState(initialEmail || '');
+  const [email, setEmail] = useState('');
   const onEmailChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setEmail(event.target.value);
 
@@ -68,38 +72,47 @@ function EmailPanel({
     }
   }, [visible]);
 
+  useEffect(() => {
+    storage
+      .getItem(Key.LAST_LOGIN_EMAIL)
+      .then((lastLoginEmail) => {
+        if (lastLoginEmail) {
+          setEmail(lastLoginEmail);
+        }
+      })
+      .catch((error) => logger.error(error, '查找上次登录邮箱失败'));
+  }, []);
+
   return (
     <>
       <Style visible={visible ? 1 : 0}>
-        <Stack spacing={3}>
-          <Logo />
-          <Input
-            ref={emailRef}
-            label="邮箱"
-            inputProps={{
-              type: 'email',
-              value: email,
-              onChange: onEmailChange,
-              onKeyDown,
-            }}
-          />
-          <LoadingButton
-            variant="contained"
-            onClick={openCaptchaDialog}
-            disabled={!email.length}
-          >
-            继续
-          </LoadingButton>
-        </Stack>
-      </Style>
-      {captchaDialogOpen ? (
-        <CaptchaDialog
-          email={email}
-          updateEmail={updateEmail}
-          toNext={toNextWrapper}
-          onClose={closeCaptchaDialog}
+        <Logo />
+        <Input
+          ref={emailRef}
+          label="邮箱"
+          inputProps={{
+            type: 'email',
+            value: email,
+            onChange: onEmailChange,
+            onKeyDown,
+          }}
         />
-      ) : null}
+        <Button
+          variant={Variant.PRIMARY}
+          onClick={openCaptchaDialog}
+          disabled={!email.length}
+        >
+          继续
+        </Button>
+        <Button>设置</Button>
+      </Style>
+      <CaptchaDialog
+        open={captchaDialogOpen}
+        email={email}
+        updateEmail={updateEmail}
+        toNext={toNextWrapper}
+        onClose={closeCaptchaDialog}
+      />
     </>
   );
 }

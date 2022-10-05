@@ -1,35 +1,28 @@
-import Dialog from '@mui/material/Dialog';
-import Stack from '@mui/material/Stack';
-import CircularProgress from '@mui/material/CircularProgress';
-import LoadingButton from '@mui/lab/LoadingButton';
-import TextField from '@mui/material/TextField';
 import {
   ChangeEventHandler,
   ReactNode,
-  useCallback,
-  useEffect,
   useState,
   KeyboardEventHandler,
+  useCallback,
 } from 'react';
 import styled, { CSSProperties } from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
-import { CAPTCHA_TTL } from '#/constants';
-import getCaptchaRequest from '@/server/get_captcha';
 import getLoginCodeRequest from '@/server/get_login_code';
 import { ExceptionCode } from '#/constants/exception';
 import notice from '#/utils/notice';
 import sleep from '#/utils/sleep';
 import ErrorWithCode from '@/utils/error_with_code';
+import Dialog from '#/components/dialog';
+import Spinner from '#/components/spinner';
+import Input from '#/components/input';
+import Button, { Variant } from '#/components/button';
+import useCaptchaData from './use_captcha_data';
 
-type CaptchaData = AsyncReturnType<typeof getCaptchaRequest>;
-const loadingCaptchaData = {
-  error: null,
-  loading: true,
-  value: null,
-} as const;
-const Content = styled(Stack)`
-  padding: 30px;
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 
   > .graph {
     cursor: pointer;
@@ -50,11 +43,13 @@ const errorCardStyle: CSSProperties = {
 };
 
 function CaptchaDialog({
+  open,
   email,
   updateEmail,
   toNext,
   onClose,
 }: {
+  open: boolean;
   email: string;
   onClose: () => void;
   updateEmail: (email: string) => void;
@@ -63,58 +58,13 @@ function CaptchaDialog({
   const [captchaCode, setCaptchaCode] = useState('');
   const onCaptchaCodeChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setCaptchaCode(event.target.value);
-
-  const [captchaData, setCaptchaData] = useState<
-    | {
-        error: null;
-        loading: true;
-        value: null;
-      }
-    | {
-        error: Error;
-        loading: false;
-        value: null;
-      }
-    | {
-        error: null;
-        loading: false;
-        value: CaptchaData;
-      }
-  >(loadingCaptchaData);
-  const [lastGetCaptchaTimestamp, setLastGetCaptchaTimestamp] = useState(0);
+  const resetCaptchaCode = useCallback(() => setCaptchaCode(''), []);
 
   const [gettingLoginCode, setGettingLoginCode] = useState(false);
-
-  const getCaptcha = useCallback(async () => {
-    if (gettingLoginCode) {
-      return;
-    }
-
-    setCaptchaCode('');
-    setCaptchaData(loadingCaptchaData);
-    try {
-      const data = await getCaptchaRequest();
-      setCaptchaData({
-        error: null,
-        loading: false,
-        value: data,
-      });
-      setLastGetCaptchaTimestamp(Date.now());
-    } catch (error) {
-      console.error(error);
-      setCaptchaData({
-        error,
-        loading: false,
-        value: null,
-      });
-    }
-  }, [gettingLoginCode]);
-
-  useEffect(() => {
-    const interval = lastGetCaptchaTimestamp + CAPTCHA_TTL - Date.now();
-    const timer = window.setTimeout(getCaptcha, interval < 0 ? 0 : interval);
-    return () => window.clearTimeout(timer);
-  }, [getCaptcha, lastGetCaptchaTimestamp]);
+  const { captchaData, getCaptcha } = useCaptchaData({
+    open,
+    resetCaptchaCode,
+  });
 
   const toNextWrapper = () => {
     updateEmail(email);
@@ -175,12 +125,12 @@ function CaptchaDialog({
   } else if (captchaData.loading) {
     content = (
       <LoadingBox>
-        <CircularProgress />
+        <Spinner />
       </LoadingBox>
     );
   } else {
     content = (
-      <Content spacing={3}>
+      <Content>
         <div
           className="graph"
           // eslint-disable-next-line react/no-danger
@@ -189,27 +139,26 @@ function CaptchaDialog({
           }}
           onClick={getCaptcha}
         />
-        <TextField
+        <Input
           label="验证码"
-          value={captchaCode}
+          inputProps={{ value: captchaCode, autoFocus: true }}
           onChange={onCaptchaCodeChange}
           onKeyDown={onKeyDown}
           disabled={gettingLoginCode}
-          autoFocus
         />
-        <LoadingButton
-          variant="contained"
+        <Button
+          variant={Variant.PRIMARY}
           disabled={!captchaCode.length}
           loading={gettingLoginCode}
           onClick={getLoginCode}
         >
           确定
-        </LoadingButton>
+        </Button>
       </Content>
     );
   }
   return (
-    <Dialog open fullWidth maxWidth="xs" onClose={onClose} closeAfterTransition>
+    <Dialog open={open} onClose={onClose}>
       {content}
     </Dialog>
   );
