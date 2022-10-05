@@ -106,14 +106,13 @@ function EmailPanel({
         </Button>
         <Button>设置</Button>
       </Style>
-      {captchaDialogOpen ? (
-        <CaptchaDialog
-          email={email}
-          updateEmail={updateEmail}
-          toNext={toNextWrapper}
-          onClose={closeCaptchaDialog}
-        />
-      ) : null}
+      <CaptchaDialog
+        open={captchaDialogOpen}
+        email={email}
+        updateEmail={updateEmail}
+        toNext={toNextWrapper}
+        onClose={closeCaptchaDialog}
+      />
     </>
   );
 }

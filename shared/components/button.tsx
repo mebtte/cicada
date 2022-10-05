@@ -50,7 +50,7 @@ const VARIANT_MAP: Record<
       }
 
       &:disabled {
-        background-color: #7bd5b0;
+        background-color: ${CSSVariable.COLOR_PRIMARY_DISABLED};
       }
     `,
   },
@@ -78,11 +78,21 @@ const Style = styled.button<{ variant: Variant }>`
 
 function Button({
   variant = Variant.NORMAL,
+  loading = false,
+  disabled = false,
   children,
   ...props
-}: { variant?: Variant } & ButtonHTMLAttributes<HTMLButtonElement>) {
+}: {
+  variant?: Variant;
+  loading?: boolean;
+} & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <Style type="button" {...props} variant={variant}>
+    <Style
+      type="button"
+      {...props}
+      variant={variant}
+      disabled={loading || disabled}
+    >
       {children}
     </Style>
   );

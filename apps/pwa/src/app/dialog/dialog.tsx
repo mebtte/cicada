@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { DIALOG_TYPE } from '@/platform/dialog';
-import Dialog, { Title, Content, Action } from '@/components/dialog';
+import Dialog, { Title, Content, Action } from '#/components/dialog';
 import Button from '@/components/button';
 import { Dialog as DialogType } from './type';
 

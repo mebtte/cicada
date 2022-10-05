@@ -1,15 +1,16 @@
 import {
+  ForwardedRef,
   forwardRef,
   HtmlHTMLAttributes,
   InputHTMLAttributes,
   useImperativeHandle,
   useRef,
 } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { ComponentSize } from '../constants/style';
 import { CSSVariable } from '../global_style';
 
-const Style = styled.div`
+const Style = styled.div<{ disabled: boolean }>`
   --transiton-duration: 300ms ease-in-out;
 
   display: flex;
@@ -45,9 +46,16 @@ const Style = styled.div`
 
   > .label {
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     transition: color var(--transiton-duration);
   }
+
+  ${({ disabled }) => css`
+    > .label {
+      color: ${disabled
+        ? CSSVariable.TEXT_COLOR_DISABLED
+        : CSSVariable.TEXT_COLOR_PRIMARY};
+    }
+  `}
 `;
 
 type Ref = {
@@ -57,10 +65,13 @@ type Ref = {
 type Props = {
   label: string;
   inputProps: InputHTMLAttributes<HTMLInputElement>;
+  disabled?: boolean;
 } & HtmlHTMLAttributes<HTMLDivElement>;
 
-// eslint-disable-next-line react/display-name
-const Input = forwardRef<Ref, Props>(({ label, inputProps, ...props }, ref) => {
+function Input(
+  { label, inputProps, disabled = false, ...props }: Props,
+  ref: ForwardedRef<Ref>,
+) {
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -70,11 +81,11 @@ const Input = forwardRef<Ref, Props>(({ label, inputProps, ...props }, ref) => {
   }));
 
   return (
-    <Style {...props} ref={rootRef}>
-      <input {...inputProps} ref={inputRef} />
+    <Style {...props} ref={rootRef} disabled={disabled}>
+      <input {...inputProps} disabled={disabled} ref={inputRef} />
       {label ? <div className="label">{label}</div> : null}
     </Style>
   );
-});
+}
 
-export default Input;
+export default forwardRef<Ref, Props>(Input);
