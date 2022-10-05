@@ -6,6 +6,7 @@ import {
   useRef,
 } from 'react';
 import styled from 'styled-components';
+import { ComponentSize } from '../constants/style';
 import { CSSVariable } from '../global_style';
 
 const Style = styled.div`
@@ -16,10 +17,11 @@ const Style = styled.div`
   gap: 5px;
 
   > input {
-    padding: 10px;
+    padding: 0 10px;
+    height: ${ComponentSize.NORMAL}px;
 
     border-radius: 4px;
-    border: 1px solid ${CSSVariable.TEXT_COLOR_SECONDARY};
+    border: 1px solid rgb(222 222 222);
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     outline: none;
@@ -43,7 +45,7 @@ const Style = styled.div`
 
   > .label {
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     transition: color var(--transiton-duration);
   }
 `;

@@ -1,5 +1,3 @@
-import LoadingButton from '@mui/lab/LoadingButton';
-import Stack from '@mui/material/Stack';
 import {
   ChangeEventHandler,
   KeyboardEventHandler,
@@ -14,6 +12,7 @@ import notice from '#/utils/notice';
 import Input from '#/components/input';
 import logger from '#/utils/logger';
 import storage, { Key } from '@/storage';
+import Button, { Variant } from '#/components/button';
 import { panelCSS } from '../constants';
 import CaptchaDialog from './captcha_dialog';
 import Logo from '../logo';
@@ -21,6 +20,10 @@ import Paper from '../paper';
 
 const Style = styled(Paper)`
   ${panelCSS}
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 function EmailPanel({
@@ -83,26 +86,25 @@ function EmailPanel({
   return (
     <>
       <Style visible={visible ? 1 : 0}>
-        <Stack spacing={3}>
-          <Logo />
-          <Input
-            ref={emailRef}
-            label="邮箱"
-            inputProps={{
-              type: 'email',
-              value: email,
-              onChange: onEmailChange,
-              onKeyDown,
-            }}
-          />
-          <LoadingButton
-            variant="contained"
-            onClick={openCaptchaDialog}
-            disabled={!email.length}
-          >
-            继续
-          </LoadingButton>
-        </Stack>
+        <Logo />
+        <Input
+          ref={emailRef}
+          label="邮箱"
+          inputProps={{
+            type: 'email',
+            value: email,
+            onChange: onEmailChange,
+            onKeyDown,
+          }}
+        />
+        <Button
+          variant={Variant.PRIMARY}
+          onClick={openCaptchaDialog}
+          disabled={!email.length}
+        >
+          继续
+        </Button>
+        <Button>设置</Button>
       </Style>
       {captchaDialogOpen ? (
         <CaptchaDialog

@@ -13,11 +13,13 @@ const wavy = keyframes`
   }
 `;
 const Style = styled.div`
-  display: inline-grid;
-  grid-template-columns: repeat(5, 1fr);
+  display: inline-flex;
   gap: 12.5%;
 
   > .item {
+    flex: 1;
+    min-width: 0;
+
     background-color: ${CSSVariable.COLOR_PRIMARY};
     animation-name: ${wavy};
     animation-duration: 1.25s;

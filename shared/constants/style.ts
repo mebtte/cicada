@@ -9,5 +9,5 @@ export enum ZIndex {
 export enum ComponentSize {
   MINI = 18,
   SMALL = 24,
-  NORMAL = 30,
+  NORMAL = 32,
 }

@@ -52,6 +52,7 @@ const Style = styled.div<{ type: NoticeType }>`
   right: 20px;
   max-width: 300px;
 
+  border-radius: 2px;
   animation: ${slideIn} ${TRANSITION_DURATION}ms ease-in-out;
   transition: all ${TRANSITION_DURATION}ms;
   box-shadow: rgb(0 0 0 / 20%) 0px 3px 5px -1px,
@@ -61,7 +62,7 @@ const Style = styled.div<{ type: NoticeType }>`
     display: flex;
     align-items: center;
     gap: 5px;
-    padding: 10px 15px;
+    padding: 5px 15px 3px 15px;
 
     color: #fff;
 
@@ -69,7 +70,8 @@ const Style = styled.div<{ type: NoticeType }>`
       flex: 1;
       min-width: 0;
 
-      font-size: 14px;
+      font-size: 12px;
+      line-height: 1.5;
     }
 
     > .close {
