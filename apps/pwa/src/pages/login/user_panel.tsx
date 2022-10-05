@@ -1,39 +1,64 @@
 import { useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
+import styled, { keyframes } from 'styled-components';
 import p from '@/global_states/profile';
 import { Profile as ProfileType } from '@/constants/user';
 import getRandomCover from '@/utils/get_random_cover';
-import LinearProgress from '@mui/material/LinearProgress';
-import Typography from '@mui/material/Typography';
 import { ReactNode, useEffect } from 'react';
 import parseSearch from '@/utils/parse_search';
 import { LoginQuery } from '@/constants/query';
 import useNavigate from '#/utils/use_navigate';
+import Cover, { Shape } from '#/components/cover';
+import { CSSVariable } from '#/global_style';
 import Paper from './paper';
 import Logo from './logo';
 import { panelCSS } from './constants';
 
+const REDIRECT_DURATION = 5000;
 const NICKNAME_MAX_LENGTH = 10;
 const DEFAULT_AVATAR = getRandomCover();
+const progress = keyframes`
+  0% {
+    transform: scaleX(0%);
+  } 100% {
+    transform: scaleX(100%);
+  }
+`;
 const Style = styled(Paper)`
   ${panelCSS}
 
-  .avatar-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 
-    > .avatar {
-      width: 100px;
-      height: 100px;
-    }
+  > .avatar {
+    align-self: center;
   }
 
-  .text {
+  > .text {
     text-align: center;
     font-size: 18px;
+  }
+
+  > .progress {
+    position: relative;
+
+    height: 5px;
+
+    background-color: ${CSSVariable.COLOR_PRIMARY_DISABLED};
+    border-radius: 2px;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+
+      position: absolute;
+      width: 100%;
+      height: 100%;
+
+      background-color: ${CSSVariable.COLOR_PRIMARY};
+      transform-origin: left;
+      animation: ${progress} ${REDIRECT_DURATION}ms linear;
+    }
   }
 `;
 
@@ -46,24 +71,27 @@ function Profile({ profile }: { profile: ProfileType }) {
       const query = parseSearch<LoginQuery>(location.search);
       const redirect = query.redirect || '/';
       navigate({ path: redirect });
-    }, 5000);
+    }, REDIRECT_DURATION);
     return () => window.clearTimeout(timer);
   }, [location.search, navigate]);
 
   return (
-    <Stack spacing={4}>
+    <>
       <Logo />
-      <div className="avatar-box">
-        <Avatar className="avatar" src={profile.avatar || DEFAULT_AVATAR} />
-      </div>
-      <Typography className="text">
+      <Cover
+        className="avatar"
+        src={profile.avatar || DEFAULT_AVATAR}
+        size={100}
+        shape={Shape.CIRCLE}
+      />
+      <div className="text">
         🎉 欢迎回来,{' '}
         {profile.nickname.length > NICKNAME_MAX_LENGTH
           ? `${profile.nickname.slice(0, NICKNAME_MAX_LENGTH)}...`
           : profile.nickname}
-      </Typography>
-      <LinearProgress />
-    </Stack>
+      </div>
+      <div className="progress" />
+    </>
   );
 }
 

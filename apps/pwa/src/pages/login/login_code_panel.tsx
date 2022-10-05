@@ -1,5 +1,3 @@
-import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
 import styled from 'styled-components';
 import {
   ChangeEventHandler,
@@ -8,8 +6,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import LoadingButton from '@mui/lab/LoadingButton';
-import Button from '@mui/material/Button';
 import notice from '#/utils/notice';
 import loginRequest from '@/server/login';
 import t from '@/global_states/token';
@@ -18,12 +14,18 @@ import getProfile from '@/server/get_profile';
 import sleep from '#/utils/sleep';
 import storage, { Key } from '@/storage';
 import logger from '#/utils/logger';
+import Input from '#/components/input';
+import Button, { Variant } from '#/components/button';
 import Paper from './paper';
 import Logo from './logo';
 import { panelCSS } from './constants';
 
 const StyledPaper = styled(Paper)`
   ${panelCSS}
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 `;
 
 function LoginCodePanel({
@@ -35,7 +37,9 @@ function LoginCodePanel({
   email: string;
   toPrevious: () => void;
 }) {
-  const loginCodeRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(
+    null,
+  );
 
   const [loginCode, setLoginCode] = useState('');
   const onLoginCodeChange: ChangeEventHandler<HTMLInputElement> = (event) =>
@@ -78,7 +82,7 @@ function LoginCodePanel({
 
   useLayoutEffect(() => {
     if (visible) {
-      loginCodeRef.current?.focus();
+      inputRef.current?.input.focus();
     } else {
       setLoginCode('');
     }
@@ -86,29 +90,29 @@ function LoginCodePanel({
 
   return (
     <StyledPaper visible={visible ? 1 : 0}>
-      <Stack spacing={3}>
-        <Logo />
-        <TextField label="邮箱" value={email} disabled />
-        <TextField
-          label="登录验证码"
-          value={loginCode}
-          onChange={onLoginCodeChange}
-          inputRef={loginCodeRef}
-          onKeyDown={onKeyDown}
-          disabled={logining}
-        />
-        <LoadingButton
-          variant="contained"
-          disabled={!loginCode.length}
-          loading={logining}
-          onClick={login}
-        >
-          继续
-        </LoadingButton>
-        <Button variant="outlined" onClick={toPrevious} disabled={logining}>
-          上一步
-        </Button>
-      </Stack>
+      <Logo />
+      <Input label="邮箱" inputProps={{ value: email }} disabled />
+      <Input
+        label="登录验证码"
+        inputProps={{
+          value: loginCode,
+          onChange: onLoginCodeChange,
+          onKeyDown,
+        }}
+        ref={inputRef}
+        disabled={logining}
+      />
+      <Button
+        variant={Variant.PRIMARY}
+        disabled={!loginCode.length}
+        loading={logining}
+        onClick={login}
+      >
+        继续
+      </Button>
+      <Button onClick={toPrevious} disabled={logining}>
+        上一步
+      </Button>
     </StyledPaper>
   );
 }
