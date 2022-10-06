@@ -6,6 +6,7 @@ import notice from '#/utils/notice';
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
 import { MdCheck, MdClose } from 'react-icons/md';
+import sleep from '#/utils/sleep';
 import App from './app';
 
 createRoot(document.querySelector('#root')!).render(
@@ -49,10 +50,13 @@ if ('serviceWorker' in navigator) {
                 <div className="action">
                   <IconButton
                     onClick={() => {
-                      wb.addEventListener('controlling', () =>
-                        window.location.reload(),
-                      );
                       wb.messageSkipWaiting();
+                      return Promise.race([
+                        new Promise((resolve) =>
+                          wb.addEventListener('controlling', resolve),
+                        ),
+                        sleep(5000),
+                      ]).then(() => window.location.reload());
                     }}
                   >
                     <MdCheck />
