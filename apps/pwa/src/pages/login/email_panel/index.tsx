@@ -13,10 +13,12 @@ import Input from '#/components/input';
 import logger from '#/utils/logger';
 import storage, { Key } from '@/storage';
 import Button, { Variant } from '#/components/button';
+import useEvent from '#/utils/use_event';
 import { panelCSS } from '../constants';
 import CaptchaDialog from './captcha_dialog';
 import Logo from '../logo';
 import Paper from '../paper';
+import SettingDialog from './setting_dialog';
 
 const Style = styled(Paper)`
   ${panelCSS}
@@ -42,6 +44,10 @@ function EmailPanel({
   const [email, setEmail] = useState('');
   const onEmailChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setEmail(event.target.value);
+
+  const [settingDialogOpen, setSettingDialogOpen] = useState(false);
+  const openSettingDialog = useEvent(() => setSettingDialogOpen(true));
+  const closeSettingDialog = useEvent(() => setSettingDialogOpen(false));
 
   const [captchaDialogOpen, setCaptchaDialogOpen] = useState(false);
   const openCaptchaDialog = () => {
@@ -104,7 +110,7 @@ function EmailPanel({
         >
           继续
         </Button>
-        <Button>设置</Button>
+        <Button onClick={openSettingDialog}>设置</Button>
       </Style>
       <CaptchaDialog
         open={captchaDialogOpen}
@@ -113,6 +119,7 @@ function EmailPanel({
         toNext={toNextWrapper}
         onClose={closeCaptchaDialog}
       />
+      <SettingDialog open={settingDialogOpen} onClose={closeSettingDialog} />
     </>
   );
 }

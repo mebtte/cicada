@@ -18,7 +18,7 @@ const VARIANT_MAP: Record<
     css: css`
       border: 1px solid rgb(188 188 188);
       background-color: transparent;
-      background-clip: content-box;
+      background-clip: padding-box;
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
       &:hover {
@@ -60,7 +60,7 @@ const Style = styled.button<{ variant: Variant; isLoading: boolean }>`
   position: relative;
 
   height: ${ComponentSize.NORMAL}px;
-  padding: 0;
+  padding: 0 15px;
 
   border-radius: 4px;
   font-size: 14px;
