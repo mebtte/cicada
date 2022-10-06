@@ -12,8 +12,6 @@ import DB from '#/utils/db';
 import question from '#/utils/question';
 import { DB_FILE_PATH } from './constants';
 import {
-  SECRET_DIR,
-  ROOT_ASSET_DIR,
   ASSET_DIR,
   DB_SNAPSHOT_DIR,
   LOG_DIR,
@@ -29,18 +27,12 @@ function mkdirIfNotExist(dir: string) {
 }
 
 if (cluster.isPrimary) {
-  /**
-   * 目录
-   * 注意顺序
-   */
   const directories = [
     config.base,
-    SECRET_DIR,
     DB_SNAPSHOT_DIR,
     TRASH_DIR,
     LOG_DIR,
 
-    ROOT_ASSET_DIR,
     ...Object.values(ASSET_DIR),
 
     DOWNLOAD_DIR,

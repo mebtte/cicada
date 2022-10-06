@@ -1,10 +1,10 @@
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import generateRandomString from '#/utils/generate_random_string';
-import { SECRET_DIR } from '../constants/directory';
+import config from '@/config';
 
 const JWT_TTL = 1000 * 60 * 60 * 24 * 180;
-const JWT_SECRET_FILE_PATH = `${SECRET_DIR}/jwt_secret`;
+const JWT_SECRET_FILE_PATH = `${config.base}/jwt_secret`;
 
 let secret: string;
 if (fs.existsSync(JWT_SECRET_FILE_PATH)) {

@@ -19,5 +19,3 @@ export const TRASH_DIR = `${config.base}/trash`;
 export const LOG_DIR = `${config.base}/logs`;
 
 export const DOWNLOAD_DIR = `${config.base}/downloads`;
-
-export const SECRET_DIR = `${config.base}/secrets`;

@@ -4,10 +4,10 @@ import env from '@/env';
 import { GET_LOGIN_CODE_INTERVAL } from '#/constants';
 import db from '@/db';
 import generateRandomString from '#/utils/generate_random_string';
-import { SECRET_DIR } from '@/constants/directory';
+import config from '@/config';
 import { LOGIN_CODE_TTL } from '../constants';
 
-const LOGIN_CODE_SALT_FILE_PATH = `${SECRET_DIR}/login_code_salt`;
+const LOGIN_CODE_SALT_FILE_PATH = `${config.base}/login_code_salt`;
 
 let salt: string;
 if (fs.existsSync(LOGIN_CODE_SALT_FILE_PATH)) {
