@@ -16,10 +16,7 @@ const Style = styled(Page)<{ topBoxShadow: number }>`
   `}
 `;
 
-const ScrollablePage = ({
-  children,
-  ...props
-}: React.PropsWithChildren<{}>) => {
+function ScrollablePage({ children, ...props }: React.PropsWithChildren<{}>) {
   const [topBoxShadow, setTopBoxShadow] = useState(0);
   const onScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
     const { scrollTop } = event.target as HTMLDivElement;
@@ -30,6 +27,6 @@ const ScrollablePage = ({
       {children}
     </Style>
   );
-};
+}
 
 export default ScrollablePage;

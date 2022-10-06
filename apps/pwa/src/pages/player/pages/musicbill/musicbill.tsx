@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-
 import { RequestStatus } from '@/constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -11,12 +10,12 @@ import CoverEditDialog from './cover_edit_dialog';
 import { Musicbill as MusicbillType } from '../../constants';
 import TopContent from './top_content';
 import MusicList from './music_list';
+import Page from '../page';
 
-const Style = styled.div`
-  width: 100%;
-  height: 100%;
+const Style = styled(Page)`
   display: flex;
   flex-direction: column;
+
   > .content {
     flex: 1;
     min-width: 0;

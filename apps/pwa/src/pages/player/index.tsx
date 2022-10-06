@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
-import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
 import withLogin from '@/platform/with_login';
 import PageContainer from '../page_container';
 import Sidebar from './sidebar';
@@ -24,18 +23,11 @@ import CreateMusicbillDialog from './create_musicbill_dialog';
 import { QueueMusic } from './constants';
 import Lyric from './lyric';
 
-const Scrollable = styled(PageContainer)`
-  overflow: auto;
-  ${scrollbarAsNeeded};
-`;
-const Style = styled.div`
-  min-width: 900px;
-  position: absolute;
-  width: 100%;
-  height: 100%;
+const Style = styled(PageContainer)`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
   > .container {
     flex: 1;
     min-height: 0;
@@ -84,20 +76,18 @@ function Wrapper() {
       <Helmet>
         <title>知了</title>
       </Helmet>
-      <Scrollable>
-        <Style>
-          <div className="container">
-            <Sidebar />
-            <div className="content">
-              <Header />
-              <Route />
-            </div>
+      <Style>
+        <div className="container">
+          <Sidebar />
+          <div className="content">
+            <Header />
+            <Route />
           </div>
-          <Controller />
+        </div>
+        <Controller />
 
-          <Lyric music={queueMusic ? queueMusic.music : undefined} />
-        </Style>
-      </Scrollable>
+        <Lyric music={queueMusic ? queueMusic.music : undefined} />
+      </Style>
 
       <MusicDrawer />
       <ListDrawer />
