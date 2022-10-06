@@ -29,9 +29,18 @@ class XState<State> {
     return this.state;
   }
 
-  set(state: State) {
-    this.state = state;
-    this.eventemitter.emit(EventType.UPDATED, state);
+  set(updater: Partial<State> | ((state: State) => Partial<State>)) {
+    this.state =
+      typeof updater === 'function'
+        ? {
+            ...this.state,
+            ...updater(this.state),
+          }
+        : {
+            ...this.state,
+            ...updater,
+          };
+    this.eventemitter.emit(EventType.UPDATED, this.state);
   }
 
   onChange(listener: (state: State) => void) {
