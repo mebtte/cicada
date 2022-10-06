@@ -6,9 +6,10 @@ import logger from '#/utils/logger';
 
 export default () => {
   const profile = p.useState();
+  const hasProfile = !!profile;
 
   useEffect(() => {
-    if (profile) {
+    if (hasProfile) {
       const updateProfile = () =>
         getProfile()
           .then((newProfile) =>
@@ -21,8 +22,9 @@ export default () => {
             logger.error(error, '更新个人资料失败');
             notice.error('更新个人资料失败');
           });
+      updateProfile();
       const timer = window.setInterval(updateProfile, 1000 * 60 * 30);
       return window.clearInterval(timer);
     }
-  }, [profile]);
+  }, [hasProfile]);
 };

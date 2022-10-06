@@ -1,21 +1,25 @@
 import { memo } from 'react';
 import Slider from '@/components/slider';
-import playerVolume from '@/global_states/player_volume';
+import setting from '@/global_states/setting';
 import Item from './item';
 
 const sliderStyle = {
   width: 200,
   padding: '15px 0',
 };
-const onVolumnChange = (v: number) => playerVolume.set(v);
+const onVolumnChange = (v: number) =>
+  setting.set((s) => ({
+    ...s,
+    playerVolume: v,
+  }));
 
 function Volume() {
-  const volume = playerVolume.useState();
+  const { playerVolume } = setting.useState();
   return (
     <Item>
       <div className="label">相对系统音量</div>
       <Slider
-        value={volume}
+        value={playerVolume}
         onChange={onVolumnChange}
         step={0.01}
         min={0}

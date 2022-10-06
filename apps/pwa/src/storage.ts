@@ -6,7 +6,7 @@ export enum Key {
   LAST_LOGIN_EMAIL = 'last_login_email',
   TOKEN = 'token',
   PROFILE = 'profile',
-  SETTING = 'setting',
+  SETTING = 'setting_v2',
   PLAYER_VOLUME = 'player_volume',
 }
 

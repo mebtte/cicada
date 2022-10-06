@@ -12,7 +12,7 @@ import asset from './asset';
 import pwa from './pwa';
 import schedule from './schedule';
 import env from './env';
-import temporary from './temporary';
+import download from './download';
 import config from './config';
 
 function printInfo(info: string) {
@@ -58,7 +58,7 @@ async function start() {
       }),
     );
     server.use(mount(`/${PathPrefix.ASSET}`, asset));
-    server.use(mount(`/${PathPrefix.TEMPORARY}`, temporary));
+    server.use(mount(`/${PathPrefix.DOWNLOAD}`, download));
     server.use(mount(`/${PathPrefix.API}`, api));
     server.use(mount(`/${PathPrefix.BLOB}`, blob));
     server.use(mount('/', pwa));

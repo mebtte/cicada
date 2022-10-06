@@ -141,8 +141,11 @@ function CaptchaDialog({
         />
         <Input
           label="验证码"
-          inputProps={{ value: captchaCode, autoFocus: true }}
-          onChange={onCaptchaCodeChange}
+          inputProps={{
+            value: captchaCode,
+            autoFocus: true,
+            onChange: onCaptchaCodeChange,
+          }}
           onKeyDown={onKeyDown}
           disabled={gettingLoginCode}
         />

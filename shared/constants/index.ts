@@ -6,12 +6,9 @@ export const CAPTCHA_TTL = 1000 * 60 * 1;
 /** 获取登录验证码间隔 */
 export const GET_LOGIN_CODE_INTERVAL = 1000 * 60 * 2;
 
-export const DB_FILENAME = 'db';
-export const TRASH_FILENAME = 'trash';
-
 export enum PathPrefix {
   BLOB = 'blob',
-  TEMPORARY = 'temporary',
+  DOWNLOAD = 'download',
   ASSET = 'asset',
   API = 'api',
 }
@@ -67,4 +64,4 @@ export const EFFECTIVE_PLAY_PERCENT = 0.75;
 
 export const ALIAS_DIVIDER = '|';
 
-export const MUSICBILL_EXPORT_TTL = 1000 * 60 * 60 * 24;
+export const DOWNLOAD_TTL = 1000 * 60 * 60 * 24 * 3;

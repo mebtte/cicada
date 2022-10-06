@@ -1,6 +1,5 @@
-import { AssetType, TRASH_FILENAME } from '#/constants';
+import { AssetType } from '#/constants';
 import config from '@/config';
-import { TemporaryType } from '.';
 
 export const ROOT_ASSET_DIR = `${config.base}/assets`;
 export const ASSET_DIR: Record<AssetType, string> = {
@@ -15,13 +14,10 @@ export const ASSET_DIR: Record<AssetType, string> = {
 
 export const DB_SNAPSHOT_DIR = `${config.base}/db_snapshots`;
 
-export const TRASH_DIR = `${config.base}/${TRASH_FILENAME}`;
+export const TRASH_DIR = `${config.base}/trash`;
 
 export const LOG_DIR = `${config.base}/logs`;
 
-export const ROOT_TEMPORARY_DIR = `${config.base}/temporary`;
-export const TEMPORARY_DIR: Record<TemporaryType, string> = {
-  [TemporaryType.MUSICBILL_EXPORT]: `${ROOT_TEMPORARY_DIR}/${TemporaryType.MUSICBILL_EXPORT}`,
-};
+export const DOWNLOAD_DIR = `${config.base}/downloads`;
 
 export const SECRET_DIR = `${config.base}/secrets`;

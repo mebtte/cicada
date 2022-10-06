@@ -21,7 +21,7 @@ function SettingDialog({
     if (!URL.test(serverAddress)) {
       return notice.error('服务器地址不是一个合法的 URL');
     }
-    setting.set({ serverAddress });
+    setting.set((s) => ({ ...s, serverAddress }));
 
     return onClose();
   });

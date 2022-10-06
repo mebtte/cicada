@@ -5,7 +5,8 @@ import keyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';
 import uploadMusicPlayRecord from '@/server/upload_music_play_record';
 import logger from '#/utils/logger';
 import { CacheName } from '@/constants/cache';
-import playerVolume from '@/global_states/player_volume';
+import settingState from '@/global_states/setting';
+import { Setting } from '@/constants/setting';
 import eventemitter, { EventType } from './eventemitter';
 import dialog from '../../platform/dialog';
 import { QueueMusic, PlayMode, Music } from './constants';
@@ -34,7 +35,7 @@ const onError = (e) => {
 interface Props {
   playMode: PlayMode;
   queueMusic: QueueMusic;
-  volume: number;
+  setting: Setting;
 }
 
 class Audio extends React.PureComponent<Props, {}> {
@@ -46,7 +47,7 @@ class Audio extends React.PureComponent<Props, {}> {
   }
 
   componentDidMount() {
-    this.audioRef.current!.volume = this.props.volume;
+    this.audioRef.current!.volume = this.props.setting.playerVolume;
 
     eventemitter.listen(EventType.ACTION_SET_TIME, this.onActionSetTime);
     eventemitter.listen(EventType.ACTION_TOGGLE_PLAY, this.onActionTogglePlay);
@@ -67,10 +68,10 @@ class Audio extends React.PureComponent<Props, {}> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { volume, queueMusic } = this.props;
+    const { setting, queueMusic } = this.props;
 
-    if (prevProps.volume !== volume) {
-      this.audioRef.current!.volume = volume;
+    if (prevProps.setting.playerVolume !== setting.playerVolume) {
+      this.audioRef.current!.volume = setting.playerVolume;
     }
 
     if (prevProps.queueMusic.pid !== queueMusic.pid) {
@@ -239,4 +240,4 @@ class Audio extends React.PureComponent<Props, {}> {
   }
 }
 
-export default playerVolume.withState('volume', Audio);
+export default settingState.withState('setting', Audio);

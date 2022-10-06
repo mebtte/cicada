@@ -18,14 +18,13 @@ import {
   DB_SNAPSHOT_DIR,
   LOG_DIR,
   TRASH_DIR,
-  ROOT_TEMPORARY_DIR,
-  TEMPORARY_DIR,
+  DOWNLOAD_DIR,
 } from './constants/directory';
 import config from './config';
 
 function mkdirIfNotExist(dir: string) {
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
+    fs.mkdirSync(dir, { recursive: true });
   }
 }
 
@@ -44,8 +43,7 @@ if (cluster.isPrimary) {
     ROOT_ASSET_DIR,
     ...Object.values(ASSET_DIR),
 
-    ROOT_TEMPORARY_DIR,
-    ...Object.values(TEMPORARY_DIR),
+    DOWNLOAD_DIR,
   ];
   for (const directory of directories) {
     mkdirIfNotExist(directory);

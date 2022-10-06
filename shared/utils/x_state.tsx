@@ -29,17 +29,9 @@ class XState<State> {
     return this.state;
   }
 
-  set(updater: Partial<State> | ((state: State) => Partial<State>)) {
-    this.state =
-      typeof updater === 'function'
-        ? {
-            ...this.state,
-            ...updater(this.state),
-          }
-        : {
-            ...this.state,
-            ...updater,
-          };
+  set(updater: State | ((state: State) => State)) {
+    // @ts-expect-error
+    this.state = typeof updater === 'function' ? updater(this.state) : updater;
     this.eventemitter.emit(EventType.UPDATED, this.state);
   }
 

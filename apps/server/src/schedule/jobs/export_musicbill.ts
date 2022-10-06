@@ -9,8 +9,7 @@ import { getUserById, User, Property as UserProperty } from '@/db/user';
 import { Music, Property as MusicProperty } from '@/db/music';
 import { sendEmail } from '@/platform/email';
 import day from '#/utils/day';
-import { AssetType, BRAND_NAME, MUSICBILL_EXPORT_TTL } from '#/constants';
-import { getTemporaryPath, getTemporaryUrl } from '@/platform/temporary';
+import { AssetType, BRAND_NAME, DOWNLOAD_TTL, PathPrefix } from '#/constants';
 import {
   getSingerListInMusicIds,
   Singer,
@@ -19,7 +18,8 @@ import {
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetPath } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
-import { TemporaryType } from '../../constants';
+import { DOWNLOAD_DIR } from '@/constants/directory';
+import config from '@/config';
 
 interface MusicbillExport {
   id: number;
@@ -138,7 +138,7 @@ async function exportMusicbill(
         ),
       };
     }),
-    getTemporaryPath(exportFilename, TemporaryType.MUSICBILL_EXPORT),
+    `${DOWNLOAD_DIR}/${exportFilename}`,
   );
 
   await Promise.all([
@@ -152,11 +152,10 @@ async function exportMusicbill(
         <br />
         乐单「${encode(
           musicbillExport.musicbillName,
-        )}」已导出, 你可以<a href="${getTemporaryUrl(
-        exportFilename,
-        TemporaryType.MUSICBILL_EXPORT,
-      )}">点击这里进行下载</a>,
-        链接将在 ${day(Date.now() + MUSICBILL_EXPORT_TTL).format(
+        )}」已导出, 你可以<a href="${config.publicAddress}/${
+        PathPrefix.DOWNLOAD
+      }/${exportFilename}">点击这里进行下载</a>,
+        链接将在 ${day(Date.now() + DOWNLOAD_TTL).format(
           'YYYY-MM-DD HH:mm:ss',
         )} 后失效.
         <br />

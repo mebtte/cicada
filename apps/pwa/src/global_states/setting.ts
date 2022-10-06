@@ -5,6 +5,7 @@ import logger from '#/utils/logger';
 
 const DEFAULT_SETTING: Setting = {
   serverAddress: window.location.origin,
+  playerVolume: 1,
 };
 const initialSetting = await storage.getItem(Key.SETTING);
 const setting = new XState<Setting>({
