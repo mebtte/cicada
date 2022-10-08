@@ -7,6 +7,7 @@ import Spinner from './spinner';
 export enum Variant {
   NORMAL = 'normal',
   PRIMARY = 'primary',
+  DANGER = 'danger',
 }
 const VARIANT_MAP: Record<
   Variant,
@@ -47,7 +48,7 @@ const VARIANT_MAP: Record<
       }
 
       &:active {
-        background-color: #1d8b5e;
+        background-color: ${CSSVariable.COLOR_PRIMARY_ACTIVE};
       }
 
       &:disabled {
@@ -55,8 +56,30 @@ const VARIANT_MAP: Record<
       }
     `,
   },
+  [Variant.DANGER]: {
+    css: css`
+      border: none;
+      background-color: ${CSSVariable.COLOR_DANGEROUS};
+      color: #fff;
+
+      &:hover {
+        background-color: #d34437;
+      }
+
+      &:active {
+        background-color: #bd3c30;
+      }
+
+      &:disabled {
+        background-color: #ef7d73;
+      }
+    `,
+  },
 };
-const Style = styled.button<{ variant: Variant; isLoading: boolean }>`
+const Style = styled.button<{
+  variant: Variant;
+  isLoading: boolean;
+}>`
   position: relative;
 
   height: ${ComponentSize.NORMAL}px;

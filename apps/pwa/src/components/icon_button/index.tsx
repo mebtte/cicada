@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, CSSProperties, forwardRef, memo } from 'react';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '#/constants/style';
-import CircularLoader from '#/components/spinner';
+import Spinner from '#/components/spinner';
 import Icon, { Name } from '../icon';
 import { Type } from './constants';
 
@@ -97,7 +97,7 @@ const IconButton = forwardRef<HTMLButtonElement, Props>(
         ref={ref}
       >
         {loading ? (
-          <CircularLoader size={iconSize} />
+          <Spinner size={iconSize} />
         ) : (
           <Icon name={name} size={iconSize} />
         )}

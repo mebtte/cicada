@@ -5,6 +5,7 @@ import Page from '../page';
 import Context from '../../context';
 import PlayMode from './play_mode';
 import Volume from './volume';
+import Logout from './logout';
 
 const Style = styled(Page)`
   overflow: auto;
@@ -17,6 +18,7 @@ function Setting() {
     <Style>
       <PlayMode playMode={playMode} />
       <Volume />
+      <Logout />
     </Style>
   );
 }

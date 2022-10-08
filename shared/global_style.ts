@@ -3,6 +3,7 @@ import { createGlobalStyle } from 'styled-components';
 export enum CSSVariable {
   COLOR_PRIMARY = 'var(--color-primary)',
   COLOR_PRIMARY_DISABLED = 'var(--color-primary-disabled)',
+  COLOR_PRIMARY_ACTIVE = 'var(--color-primary-active)',
   COLOR_DANGEROUS = 'var(--color-dangerous)',
 
   TEXT_SIZE_NORMAL = 'var(--text-size-normal)',
@@ -19,6 +20,7 @@ export enum CSSVariable {
 const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.COLOR_PRIMARY]: '#2cb67d',
   [CSSVariable.COLOR_PRIMARY_DISABLED]: '#7bd5b0',
+  [CSSVariable.COLOR_PRIMARY_ACTIVE]: '#1d8b5e',
   [CSSVariable.COLOR_DANGEROUS]: '#f25042',
 
   [CSSVariable.TEXT_SIZE_NORMAL]: '16px',
