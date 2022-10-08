@@ -4,7 +4,7 @@ import createMusicbill from '@/server/create_musicbill';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import notice from '#/utils/notice';
 import logger from '#/utils/logger';
-import dialog from '@/platform/dialog';
+import dialog from '#/utils/dialog';
 import Dialog, { Title, Content, Action } from '#/components/dialog';
 import Button, { Type } from '@/components/button';
 import Input from '@/components/input';

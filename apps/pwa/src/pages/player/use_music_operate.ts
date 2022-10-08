@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import dialog from '@/platform/dialog';
+import dialog from '#/utils/dialog';
 import notice from '#/utils/notice';
 import { Music as MusicType } from './constants';
 import eventemitter, { EventType } from './eventemitter';

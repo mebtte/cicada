@@ -1,7 +1,7 @@
 import Button, { Variant } from '#/components/button';
 import useEvent from '#/utils/use_event';
 import { CSSProperties, memo } from 'react';
-import dialog from '@/platform/dialog';
+import dialog from '#/utils/dialog';
 import token from '@/global_states/token';
 import { CacheName } from '@/constants/cache';
 import logger from '#/utils/logger';

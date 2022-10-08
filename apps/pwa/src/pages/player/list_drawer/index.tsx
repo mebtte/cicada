@@ -8,7 +8,7 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
-import dialog from '@/platform/dialog';
+import dialog from '#/utils/dialog';
 import Drawer from '@/components/drawer';
 import eventemitter, { EventType } from '../eventemitter';
 import { Tab as TabType } from './constant';

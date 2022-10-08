@@ -5,7 +5,7 @@ import getSelfMusicbillList from '@/server/get_self_musicbill_list';
 import addMusicToMusicbill from '@/server/add_music_to_musicbill';
 import removeMusicFromMusicbill from '@/server/remove_music_from_musicbill';
 import logger from '#/utils/logger';
-import dialog from '@/platform/dialog';
+import dialog from '#/utils/dialog';
 import getSelfMusicbill from '@/server/get_self_musicbill';
 import eventemitter, { EventType } from './eventemitter';
 import { Musicbill } from './constants';

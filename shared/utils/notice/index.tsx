@@ -6,7 +6,7 @@ import e, { EventType } from './eventemitter';
 import generateRandomString from '../generate_random_string';
 
 const root = document.createElement('div');
-root.className = 'notice-root';
+root.className = 'notice-app';
 document.body.appendChild(root);
 createRoot(root).render(<NoticeApp />);
 

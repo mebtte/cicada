@@ -7,8 +7,8 @@ import logger from '#/utils/logger';
 import { CacheName } from '@/constants/cache';
 import settingState from '@/global_states/setting';
 import { Setting } from '@/constants/setting';
+import dialog from '#/utils/dialog';
 import eventemitter, { EventType } from './eventemitter';
-import dialog from '../../platform/dialog';
 import { QueueMusic, PlayMode, Music } from './constants';
 
 const JUMP_STEP = 5;

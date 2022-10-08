@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import notice from '#/utils/notice';
 import { RequestStatus } from '@/constants';
-import dialog from '@/platform/dialog';
+import dialog from '#/utils/dialog';
 import logger from '#/utils/logger';
 import deleteMusicbill from '@/server/delete_musicbill';
 import Tooltip, { Placement } from '@/components/tooltip';

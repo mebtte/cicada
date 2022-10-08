@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 import Drawer, { Title } from '@/components/drawer';
 import updateMusicbillOrder from '@/server/update_musicbill_order';
 import logger from '#/utils/logger';
-import dialog from '@/platform/dialog';
+import dialog from '#/utils/dialog';
 import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
 import eventemitter, { EventType } from '../eventemitter';
 import { Musicbill as MusicbillType } from './constant';
