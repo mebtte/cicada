@@ -74,7 +74,7 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
                 title: '删除乐单失败',
                 content: error.message,
               });
-              return true;
+              return false;
             }
           },
         }),
