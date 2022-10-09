@@ -4,11 +4,13 @@ import Home from './pages/home';
 import Search from './pages/search';
 import Musicbill from './pages/musicbill';
 import Setting from './pages/setting';
+import MyMusic from './pages/my_music';
 
 function Wrapper() {
   return (
     <Routes>
       <Route path={PLAYER_PATH.SEARCH} element={<Search />} />
+      <Route path={PLAYER_PATH.MY_MUSIC} element={<MyMusic />} />
       <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
       <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
       <Route path="*" element={<Home />} />
