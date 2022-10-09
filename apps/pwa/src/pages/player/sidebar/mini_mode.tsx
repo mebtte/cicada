@@ -10,6 +10,7 @@ const bodyProps: {
 } = {
   style: {
     width: WIDTH,
+    overflow: 'auto',
   },
 };
 

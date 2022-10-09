@@ -41,6 +41,7 @@ function Cover({
   return (
     <Style
       loading="lazy"
+      crossOrigin="anonymous"
       {...props}
       src={currentSrc}
       onError={onError}

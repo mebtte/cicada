@@ -8,6 +8,7 @@ const Placeholder = styled.div`
   width: ${WIDTH}px;
 
   background-color: rgb(0 0 0 / 0.01);
+  overflow: auto;
 `;
 
 function Sidebar() {

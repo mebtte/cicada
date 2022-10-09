@@ -1,10 +1,11 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
-
+import IconButton from '#/components/icon_button';
 import env from '@/env';
 import getRandomInteger from '#/utils/generate_random_integer';
+import { MdRefresh } from 'react-icons/md';
+import { CSSVariable } from '#/global_style';
 import Avatar from '../avatar';
-import IconButton, { Name } from '../icon_button';
 
 const PLACEHOLDER_SIZE = 150;
 const Style = styled.div`
@@ -13,13 +14,16 @@ const Style = styled.div`
   align-items: center;
   justify-content: center;
   gap: 10px;
+
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+
   > .error-message {
     max-width: 400px;
+
     white-space: pre-wrap;
     font-size: 12px;
     line-height: 1.5;
     text-align: center;
-    color: rgb(150 150 150);
   }
 `;
 
@@ -47,7 +51,9 @@ function ErrorCard({
     <Style {...props}>
       <Avatar animated src={errorImage} size={PLACEHOLDER_SIZE} />
       <div className="error-message">{errorMessage}</div>
-      <IconButton name={Name.REFRESH_OUTLINE} onClick={retry} size={24} />
+      <IconButton onClick={retry}>
+        <MdRefresh />
+      </IconButton>
     </Style>
   );
 }
