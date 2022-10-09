@@ -3,7 +3,6 @@ import * as React from 'react';
 import styled, { css } from 'styled-components';
 import Tippy from '@tippyjs/react/headless';
 import { useSpring, animated } from 'react-spring';
-
 import { Placement } from './constant';
 
 const BACKGROUND_COLOR = 'rgb(0 0 0 / 0.75)';
@@ -78,7 +77,7 @@ const Message = styled(animated.div)<{
   `}
 `;
 
-const Tooltip = ({
+function Tooltip({
   title,
   placement = Placement.TOP,
   children,
@@ -87,8 +86,8 @@ const Tooltip = ({
   title: string;
   /** 位置 */
   placement?: Placement;
-  children: React.ReactElement<any>;
-}) => {
+  children: React.ReactElement<unknown>;
+}) {
   const option = PLACEMENT_MAP_OPTION[placement];
   const [spring, setSpring] = useSpring(() => option.spring);
   const onShow = useCallback(
@@ -123,7 +122,6 @@ const Tooltip = ({
       {children}
     </Tippy>
   );
-};
+}
 
-export { Placement };
 export default Tooltip;

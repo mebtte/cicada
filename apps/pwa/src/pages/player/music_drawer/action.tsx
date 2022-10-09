@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
 
-import Tooltip from '@/components/tooltip';
+import Tooltip from '#/components/tooltip';
 import IconButton, { Name } from '@/components/icon_button';
 import { Music as BaseMusic } from '../constants';
 import { Music } from './constants';

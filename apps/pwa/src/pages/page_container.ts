@@ -5,7 +5,7 @@ import styled from 'styled-components';
  * @author mebtte<hi@mebtte.com>
  */
 const RouteContainer = styled.div`
-  min-height: 100vh;
+  height: 100vh;
 `;
 
 export default RouteContainer;

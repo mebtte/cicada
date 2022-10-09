@@ -5,8 +5,9 @@ import EmailPanel from './email_panel';
 import LoginCodePanel from './login_code_panel';
 import UserPanel from './user_panel';
 import { Step, STEPS } from './constants';
+import PageContainer from '../page_container';
 
-const Style = styled.div<{ step: Step }>`
+const Style = styled(PageContainer)<{ step: Step }>`
   min-height: 100vh;
 
   display: flex;

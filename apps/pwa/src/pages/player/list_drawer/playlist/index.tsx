@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Input from '@/components/input';
-import Tooltip, { Placement } from '@/components/tooltip';
+import Tooltip, { Placement } from '#/components/tooltip';
 import CircularLoader from '#/components/spinner';
 import IconButton, { Name } from '@/components/icon_button';
 import Container from '../container';

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Profile from './profile';
+import MusicbillList from './musicbill_list';
 
 const Style = styled.div`
   padding: 30px 0;
@@ -13,6 +14,7 @@ function Content() {
   return (
     <Style>
       <Profile />
+      <MusicbillList />
     </Style>
   );
 }

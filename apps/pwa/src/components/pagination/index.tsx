@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import Button, { Type } from '../button';
 import Input from '../input';
 import IconButton, { Name } from '../icon_button';
-import Tooltip from '../tooltip';
+import Tooltip from '../../../../../shared/components/tooltip';
 
 const ACTION_SIZE = 20;
 const Style = styled.div`

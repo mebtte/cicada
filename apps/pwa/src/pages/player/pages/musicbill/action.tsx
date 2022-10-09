@@ -4,7 +4,7 @@ import { RequestStatus } from '@/constants';
 import dialog from '#/utils/dialog';
 import logger from '#/utils/logger';
 import deleteMusicbill from '@/server/delete_musicbill';
-import Tooltip, { Placement } from '@/components/tooltip';
+import Tooltip, { Placement } from '#/components/tooltip';
 import IconButton, { Name } from '@/components/icon_button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '#/utils/use_navigate';

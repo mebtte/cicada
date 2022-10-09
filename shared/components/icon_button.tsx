@@ -1,9 +1,10 @@
-import { HTMLAttributes } from 'react';
-import styled from 'styled-components';
+import { ButtonHTMLAttributes, CSSProperties } from 'react';
+import styled, { css } from 'styled-components';
+import { ComponentSize } from '../constants/style';
+import Spinner from './spinner';
 
-const Style = styled.button`
-  width: 28px;
-  height: 28px;
+const Style = styled.button<{ size: ComponentSize }>`
+  position: relative;
 
   padding: 0;
 
@@ -20,8 +21,8 @@ const Style = styled.button`
   transition: all 250ms;
 
   > svg {
-    width: 20px;
-    height: 20px;
+    width: 75%;
+    height: 75%;
   }
 
   &:hover {
@@ -31,10 +32,39 @@ const Style = styled.button`
   &:active {
     background-color: rgba(0, 0, 0, 0.15);
   }
-`;
 
-function IconButton(props: HTMLAttributes<HTMLButtonElement>) {
-  return <Style {...props} />;
+  &:disabled {
+    cursor: not-allowed;
+    background-color: rgb(0 0 0 / 0.15);
+  }
+
+  ${({ size = ComponentSize.NORMAL }) => css`
+    width: ${size}px;
+    height: ${size}px;
+  `}
+`;
+const spinnerStyle: CSSProperties = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+};
+
+function IconButton({
+  size = ComponentSize.NORMAL,
+  loading = false,
+  disabled = false,
+  children,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  size?: ComponentSize;
+  loading?: boolean;
+}) {
+  return (
+    <Style {...props} size={size} disabled={disabled || loading}>
+      {loading ? <Spinner style={spinnerStyle} size={size * 0.6} /> : children}
+    </Style>
+  );
 }
 
 export default IconButton;

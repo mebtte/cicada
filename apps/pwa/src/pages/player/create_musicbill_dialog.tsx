@@ -1,5 +1,4 @@
 import { memo, useState, useEffect, useCallback, useRef } from 'react';
-import { easeCubicInOut } from 'd3-ease';
 import createMusicbill from '@/server/create_musicbill';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import notice from '#/utils/notice';
@@ -10,12 +9,6 @@ import Button, { Type } from '@/components/button';
 import Input from '@/components/input';
 import eventemitter, { EventType } from './eventemitter';
 
-const DIALOG_TRANSITION_DURATION = 650;
-
-const springConfig = {
-  duration: DIALOG_TRANSITION_DURATION,
-  easing: easeCubicInOut,
-};
 const inputStyle = {
   display: 'block',
   width: '100%',
@@ -58,17 +51,14 @@ function CreateMusicbillDialog() {
       EventType.OPEN_CREATE_MUSICBILL_DIALOG,
       () => {
         setOpen(true);
-        setTimeout(
-          () => inputRef.current && inputRef.current.focus(),
-          DIALOG_TRANSITION_DURATION,
-        );
+        return window.setTimeout(() => inputRef.current?.focus(), 0);
       },
     );
     return unlistenOpenCreateMusicbillDialog;
   }, []);
 
   return (
-    <Dialog open={open} springConfig={springConfig}>
+    <Dialog open={open}>
       <Title>创建乐单</Title>
       <Content>
         <Input

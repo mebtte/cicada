@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import styled from 'styled-components';
 
-import Tooltip from '@/components/tooltip';
+import Tooltip from '#/components/tooltip';
 import IconButton, { Name as IconButtonName } from '@/components/icon_button';
 import useAudioControl from '../use_audio_control';
 import eventemitter, { EventType } from '../eventemitter';

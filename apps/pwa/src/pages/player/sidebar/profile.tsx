@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import p from '@/global_states/profile';
-import Cover from '#/components/cover';
+import Cover, { Shape } from '#/components/cover';
 import ellipsis from '@/style/ellipsis';
 import { CSSVariable } from '#/global_style';
 
@@ -8,7 +8,7 @@ const Style = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 
   > .avatar {
     cursor: pointer;
@@ -33,7 +33,12 @@ function Profile() {
   const profile = p.useState()!;
   return (
     <Style>
-      <Cover className="avatar" src={profile.avatar} size={100} />
+      <Cover
+        className="avatar"
+        src={profile.avatar}
+        size={100}
+        shape={Shape.CIRCLE}
+      />
       <div className="nickname" title={profile.nickname}>
         {profile.nickname}
       </div>

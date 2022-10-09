@@ -2,7 +2,7 @@ import { HTMLAttributes, useRef } from 'react';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
-import { useTransition, animated, SpringConfig } from 'react-spring';
+import { useTransition, animated } from 'react-spring';
 import { ZIndex } from '../constants/style';
 
 const TRANSITION = {
@@ -58,7 +58,6 @@ const Dialog = ({
   maskProps = {},
   bodyProps = {},
 
-  springConfig,
   children,
 }: React.PropsWithChildren<{
   /** 开启状态 */
@@ -70,9 +69,6 @@ const Dialog = ({
   maskProps?: HTMLAttributes<HTMLDivElement>;
   /** 内容属性 */
   bodyProps?: HTMLAttributes<HTMLDivElement>;
-
-  /** react-spring 配置 */
-  springConfig?: SpringConfig;
 }>) => {
   const bodyRef = useRef<HTMLDivElement | null>(null);
   const onRequestClose = (event) => {
@@ -84,10 +80,7 @@ const Dialog = ({
     }
   };
 
-  const transitions = useTransition(open, {
-    ...TRANSITION,
-    config: springConfig,
-  });
+  const transitions = useTransition(open, TRANSITION);
   return ReactDOM.createPortal(
     transitions(({ opacity, transform }, o) =>
       o ? (
