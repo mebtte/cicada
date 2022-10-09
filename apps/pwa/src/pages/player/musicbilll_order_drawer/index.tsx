@@ -3,7 +3,7 @@ import * as React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import styled, { css } from 'styled-components';
-import Drawer, { Title } from '@/components/drawer';
+import Drawer, { Title } from '#/components/drawer';
 import updateMusicbillOrder from '@/server/update_musicbill_order';
 import logger from '#/utils/logger';
 import dialog from '#/utils/dialog';

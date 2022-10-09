@@ -8,6 +8,9 @@ import {
 } from './constants';
 
 export enum EventType {
+  MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
+  MINI_MODE_CLOSE_SIDEBAR = 'mini_mode_close_sidebar',
+
   AUDIO_WAITING = 'audio_waiting',
   AUDIO_CAN_PLAY_THROUGH = 'audio_can_play_through',
   AUDIO_PLAY = 'audio_play',
@@ -55,6 +58,9 @@ export enum EventType {
 export default new Eventin<
   EventType,
   {
+    [EventType.MINI_MODE_OPEN_SIDEBAR]: null;
+    [EventType.MINI_MODE_CLOSE_SIDEBAR]: null;
+
     [EventType.AUDIO_WAITING]: null;
     [EventType.AUDIO_CAN_PLAY_THROUGH]: { duration: number };
     [EventType.AUDIO_PLAY]: null;

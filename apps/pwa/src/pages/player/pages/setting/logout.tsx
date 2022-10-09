@@ -5,6 +5,7 @@ import dialog from '#/utils/dialog';
 import token from '@/global_states/token';
 import { CacheName } from '@/constants/cache';
 import logger from '#/utils/logger';
+import setting from '@/global_states/setting';
 
 const style: CSSProperties = {
   display: 'block',
@@ -21,11 +22,16 @@ function Logout() {
 
         /**
          * 退出登录需要移除相关缓存
+         * 以及重置部分设置
          * @author mebtte<hi@mebtte.com>
          */
         window.caches
           .delete(CacheName.API)
           .catch((error) => logger.error(error, '退出登录移除 API cache 失败'));
+        setting.set((s) => ({
+          ...s,
+          playerVolume: 1,
+        }));
       },
     }),
   );
