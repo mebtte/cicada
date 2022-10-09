@@ -24,7 +24,7 @@ const Style = styled.div<{ disabled: boolean }>`
     border-radius: 4px;
     border: 1px solid rgb(222 222 222);
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+    font-size: 14px;
     outline: none;
     transition: border-color var(--transiton-duration);
 
@@ -63,7 +63,7 @@ type Ref = {
   input: HTMLInputElement;
 };
 type Props = {
-  label: string;
+  label?: string;
   inputProps: InputHTMLAttributes<HTMLInputElement>;
   disabled?: boolean;
 } & HtmlHTMLAttributes<HTMLDivElement>;

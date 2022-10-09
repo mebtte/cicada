@@ -1,10 +1,11 @@
 import { useRef, useEffect } from 'react';
-
 import { IS_MAC_OS, IS_WINDOWS } from '@/constants';
 import KeyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';
 
 export default () => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(
+    null,
+  );
 
   useEffect(() => {
     const listener = KeyboardHandlerWrapper((event: KeyboardEvent) => {
@@ -16,7 +17,7 @@ export default () => {
         return;
       }
       event.preventDefault();
-      return inputRef.current?.focus();
+      return inputRef.current?.input.focus();
     });
     document.addEventListener('keydown', listener);
     return () => document.removeEventListener('keydown', listener);

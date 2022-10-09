@@ -35,7 +35,10 @@ function MiniMode() {
       open={open}
       onClose={onClose}
       direction={Direction.LEFT}
-      bodyProps={bodyProps}
+      bodyProps={{
+        ...bodyProps,
+        onClick: onClose,
+      }}
     >
       <Content />
     </Drawer>

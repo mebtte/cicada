@@ -1,40 +1,42 @@
 import { memo } from 'react';
-import { useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-import Avatar from '@/components/avatar';
-import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import styled, { css } from 'styled-components';
+import Cover from '#/components/cover';
+import mm from '@/global_states/mini_mode';
+import IconButton from '#/components/icon_button';
+import { MdMenu } from 'react-icons/md';
 import Search from './search';
 import Title from './title';
+import useTitle from './use_title';
+import e, { EventType } from '../eventemitter';
 
+const openSidebar = () => e.emit(EventType.MINI_MODE_OPEN_SIDEBAR, null);
 const Style = styled.div`
-  z-index: 2;
-  height: 60px;
+  height: 55px;
+
   display: flex;
-  align-items: flex-end;
-  padding: 0 20px 10px 20px;
+  align-items: center;
+  gap: 10px;
+
   box-sizing: border-box;
   -webkit-app-region: drag;
+
+  ${({ theme: { miniMode } }) => css`
+    padding: 0 ${miniMode ? 15 : 20}px;
+  `}
 `;
 
 function Header() {
-  const { pathname } = useLocation();
-
-  let title = '';
-  // eslint-disable-next-line default-case
-  switch (pathname) {
-    case ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH: {
-      title = '搜索';
-      break;
-    }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {
-      title = '设置';
-      break;
-    }
-  }
-  title = title || '知了';
+  const miniMode = mm.useState();
+  const title = useTitle();
   return (
     <Style>
-      <Avatar animated src="/logo.png" size={32} />
+      {miniMode ? (
+        <IconButton onClick={openSidebar}>
+          <MdMenu />
+        </IconButton>
+      ) : (
+        <Cover src="/logo.png" size={24} />
+      )}
       <Title title={title} />
       <Search />
     </Style>

@@ -1,11 +1,13 @@
 import { memo, useState, ChangeEvent, KeyboardEvent, FocusEvent } from 'react';
 import styled from 'styled-components';
-import IconButton, { Name } from '@/components/icon_button';
+import { MdSearch } from 'react-icons/md';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import notice from '#/utils/notice';
-import Input from '@/components/input';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import useNavigate from '#/utils/use_navigate';
+import Input from '#/components/input';
+import IconButton from '#/components/icon_button';
+import mm from '@/global_states/mini_mode';
 import useKeyboard from './use_keyboard';
 import { Query } from '../../pages/search/constants';
 import eventemitter, { EventType } from '../../eventemitter';
@@ -23,12 +25,18 @@ const Style = styled.div`
 
 function Wrapper() {
   const navigate = useNavigate();
+  const miniMode = mm.useState();
 
   const [keyword, setKeyword] = useState('');
   const onKeywordChange = (event: ChangeEvent<HTMLInputElement>) =>
     setKeyword(event.target.value);
 
   const onSearch = () => {
+    if (miniMode) {
+      return navigate({
+        path: ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH,
+      });
+    }
     const trimKeyword = keyword.trim();
     if (!trimKeyword) {
       return notice.error('请输入关键字');
@@ -54,18 +62,23 @@ function Wrapper() {
 
   return (
     <Style>
-      <Input
-        type="text"
-        className="keyword"
-        value={keyword}
-        onChange={onKeywordChange}
-        placeholder="搜索"
-        onKeyDown={onKeyDown}
-        onFocus={onFocus}
-        ref={inputRef}
-        maxLength={SEARCH_KEYWORD_MAX_LENGTH}
-      />
-      <IconButton name={Name.SEARCH_OUTLINE} onClick={onSearch} />
+      {miniMode ? null : (
+        <Input
+          className="keyword"
+          inputProps={{
+            value: keyword,
+            onChange: onKeywordChange,
+            onKeyDown,
+            placeholder: '搜索',
+            maxLength: SEARCH_KEYWORD_MAX_LENGTH,
+            onFocus,
+          }}
+          ref={inputRef}
+        />
+      )}
+      <IconButton onClick={onSearch}>
+        <MdSearch />
+      </IconButton>
     </Style>
   );
 }

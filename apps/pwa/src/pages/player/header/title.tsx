@@ -1,31 +1,31 @@
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
-
 import ellipsis from '@/style/ellipsis';
+import { CSSVariable } from '#/global_style';
 
 const Style = styled.div`
   flex: 1;
   min-width: 0;
   position: relative;
-  margin: 0 20px;
 `;
 const AnimatedDiv = styled(animated.div)`
   position: absolute;
   width: 100%;
   top: 0;
   left: 0;
-  font-size: 20px;
+
+  font-size: 18px;
   font-weight: 550;
   user-select: none;
-  color: rgb(55 55 55);
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   ${ellipsis}
 `;
 
-const Title = ({ title }: { title: string }) => {
+function Title({ title }: { title: string }) {
   const transitions = useTransition(title, {
-    from: { opacity: 0, transform: 'translate(0, -215%)' },
-    enter: { opacity: 1, transform: 'translate(0, -115%)' },
-    leave: { opacity: 0, transform: 'translate(0, -15%)' },
+    from: { opacity: 0, transform: 'translate(0, -150%)' },
+    enter: { opacity: 1, transform: 'translate(0, -50%)' },
+    leave: { opacity: 0, transform: 'translate(0, 50%)' },
   });
   return (
     <Style>
@@ -34,6 +34,6 @@ const Title = ({ title }: { title: string }) => {
       ))}
     </Style>
   );
-};
+}
 
 export default Title;

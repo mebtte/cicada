@@ -1,18 +1,24 @@
 import ErrorBoundary from '@/components/error_boundary';
 import { GlobalStyle } from '#/global_style';
+import { ThemeProvider } from 'styled-components';
 import App from './app';
 import UncaughtError from './uncaught_error';
 import useProfileUpdate from './use_profile_update';
+import mm from '../global_states/mini_mode';
 
 const fallback = (error: Error) => <UncaughtError error={error} />;
 
 function Wrapper() {
+  const miniMode = mm.useState();
+
   useProfileUpdate();
 
   return (
     <ErrorBoundary fallback={fallback}>
-      <GlobalStyle />
-      <App />
+      <ThemeProvider theme={{ miniMode }}>
+        <GlobalStyle />
+        <App />
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
