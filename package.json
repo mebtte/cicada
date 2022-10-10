@@ -173,7 +173,7 @@
     "assets": [
       "pwa/**/*",
       "node_modules/**/*.node",
-      "node_modules/**/ffmpeg"
+      "node_modules/ffmpeg-static/**/*"
     ],
     "outputPath": "build"
   }
