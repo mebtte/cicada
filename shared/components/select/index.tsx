@@ -7,20 +7,20 @@ import Label from '../label';
 import ellipsis from '../../style/ellipsis';
 import Options from './options';
 import { Item } from './constants';
+import useEvent from '../../utils/use_event';
 
 const Style = styled.div`
   position: relative;
 
   transition: inherit;
 `;
-const Selected = styled.div<{ active: boolean }>`
+const Selected = styled.div<{ active: boolean; disabled: boolean }>`
   height: ${ComponentSize.NORMAL}px;
   padding: 0 10px;
 
   display: flex;
   align-items: center;
 
-  cursor: pointer;
   border-radius: 4px;
   border-radius: 4px;
   border-width: 1px;
@@ -37,10 +37,19 @@ const Selected = styled.div<{ active: boolean }>`
     ${ellipsis}
   }
 
-  ${({ active }) => css`
-    border-color: ${active
+  ${({ active, disabled }) => css`
+    border-color: ${disabled
+      ? CSSVariable.TEXT_COLOR_DISABLED
+      : active
       ? CSSVariable.COLOR_PRIMARY
       : CSSVariable.COLOR_BORDER};
+    cursor: ${disabled ? 'not-allowed' : 'poiter'};
+    color: ${disabled
+      ? CSSVariable.TEXT_COLOR_SECONDARY
+      : CSSVariable.TEXT_COLOR_PRIMARY};
+    background-color: ${disabled
+      ? CSSVariable.BACKGROUND_DISABLED
+      : 'transparent'};
   `}
 `;
 
@@ -60,6 +69,12 @@ function Select<ID extends number | string>({
   disabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const onOpen = useEvent(() => {
+    if (disabled) {
+      return;
+    }
+    return setOpen(true);
+  });
 
   useEffect(() => {
     if (open) {
@@ -74,7 +89,7 @@ function Select<ID extends number | string>({
   return (
     <Label disabled={disabled} label={label} active={open}>
       <Style>
-        <Selected active={open} onClick={() => setOpen(true)}>
+        <Selected active={open} disabled={disabled} onClick={onOpen}>
           <div className="label">{selected ? selected.label : placeholder}</div>
           {open ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
         </Selected>

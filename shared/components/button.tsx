@@ -31,7 +31,7 @@ const VARIANT_MAP: Record<
       }
 
       &:disabled {
-        background-color: rgb(0 0 0 / 0.15);
+        background-color: ${CSSVariable.BACKGROUND_DISABLED};
         border-color: rgb(0 0 0 / 0.15);
         color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       }

@@ -21,8 +21,9 @@ import useEvent from '../../utils/use_event';
 const onGetDataErrorDefault = (error: Error) => notice.error(error.message);
 const Style = styled.div`
   position: relative;
+  transition: inherit;
 `;
-const Input = styled.div<{ active: boolean }>`
+const Input = styled.div<{ active: boolean; disabled: boolean }>`
   padding: 5px 10px;
 
   display: flex;
@@ -42,25 +43,32 @@ const Input = styled.div<{ active: boolean }>`
     border: none;
     outline: none;
     font-size: 14px;
+
+    &:disabled {
+      background-color: transparent;
+    }
   }
 
-  ${({ active }) => css`
-    border-color: ${active
+  ${({ active, disabled }) => css`
+    border-color: ${disabled
+      ? CSSVariable.TEXT_COLOR_DISABLED
+      : active
       ? CSSVariable.COLOR_PRIMARY
       : CSSVariable.COLOR_BORDER};
+    background: ${disabled ? CSSVariable.BACKGROUND_DISABLED : 'transparent'};
+    cursor: ${disabled ? 'not-allowed' : 'pointer'};
 
     > .input {
       color: ${active ? CSSVariable.TEXT_COLOR_PRIMARY : 'transparent'};
     }
   `}
 `;
-const Item = styled.div`
+const Item = styled.div<{ disabled: boolean }>`
   max-width: 100%;
   padding: 3px 3px 3px 7px;
 
   border-radius: 2px;
   border: 1px solid ${CSSVariable.COLOR_BORDER};
-  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   cursor: default;
 
   display: flex;
@@ -70,15 +78,23 @@ const Item = styled.div`
   > .label {
     font-size: 12px;
     line-height: 1;
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     ${ellipsis}
   }
 
   > svg {
     width: 16px;
     flex-shrink: 0;
-
-    cursor: pointer;
   }
+
+  ${({ disabled }) => css`
+    > svg {
+      cursor: ${disabled ? 'not-allowed' : 'pointer'};
+      color: ${disabled
+        ? CSSVariable.TEXT_COLOR_DISABLED
+        : CSSVariable.TEXT_COLOR_PRIMARY};
+    }
+  `}
 `;
 
 function MultipleSelect<ID extends number | string>({
@@ -88,6 +104,7 @@ function MultipleSelect<ID extends number | string>({
   dataGetter,
   onGetDataError = onGetDataErrorDefault,
   emptyMesssage = '暂无数据',
+  disabled = false,
 }: {
   label: string;
   value: ItemType<ID>[];
@@ -95,6 +112,7 @@ function MultipleSelect<ID extends number | string>({
   dataGetter: (search: string) => ItemType<ID>[] | Promise<ItemType<ID>[]>;
   onGetDataError?: (error: Error) => void;
   emptyMesssage?: string;
+  disabled?: boolean;
 }) {
   const id = useId();
 
@@ -111,8 +129,13 @@ function MultipleSelect<ID extends number | string>({
     timerRef.current = window.setTimeout(() => setOpen(false), 200);
   });
   const onRemove = useCallback(
-    (item: ItemType<ID>) => onChange(value.filter((i) => i.id !== item.id)),
-    [onChange, value],
+    (item: ItemType<ID>) => {
+      if (disabled) {
+        return;
+      }
+      return onChange(value.filter((i) => i.id !== item.id));
+    },
+    [disabled, onChange, value],
   );
 
   const { loading, options } = useOptions({
@@ -141,11 +164,11 @@ function MultipleSelect<ID extends number | string>({
 
   const selectedIds = value.map((i) => i.id);
   return (
-    <Label label={label} active={open}>
+    <Label label={label} active={open} disabled={disabled}>
       <Style>
-        <Input active={open}>
+        <Input active={open} disabled={disabled}>
           {value.map((item) => (
-            <Item key={item.id}>
+            <Item key={item.id} disabled={disabled}>
               <div className="label">{item.label}</div>
               <MdClose onClick={() => onRemove(item)} />
             </Item>
@@ -156,6 +179,7 @@ function MultipleSelect<ID extends number | string>({
             onChange={(event) => setKeyword(event.target.value)}
             onFocus={onFocus}
             onBlur={onBlur}
+            disabled={disabled}
           />
         </Input>
         <Options

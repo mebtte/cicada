@@ -15,7 +15,7 @@ function createMusic({
   return request<string>({
     method: Method.POST,
     path: '/api/music',
-    body: { name, singerIds, type, sq },
+    body: { name, singerIds: singerIds.join(','), type, sq },
     withToken: true,
   });
 }
