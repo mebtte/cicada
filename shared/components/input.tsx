@@ -20,7 +20,7 @@ const Input = styled.input`
   height: ${ComponentSize.NORMAL}px;
 
   border-radius: 4px;
-  border: 1px solid rgb(222 222 222);
+  border: 1px solid ${CSSVariable.COLOR_BORDER};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   font-size: 14px;
   outline: none;

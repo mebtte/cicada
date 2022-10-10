@@ -4,7 +4,7 @@ import Cropper from 'cropperjs';
 import logger from '#/utils/logger';
 import Dialog, { Content, Action } from '#/components/dialog';
 import dialog from '#/utils/dialog';
-import selectFile from '../utils/select_file';
+import selectFile from '#/utils/select_file';
 import loadImage from '../utils/load_image';
 import Button, { Type } from './button';
 
@@ -40,7 +40,7 @@ function ImageCutterDialog({
     () =>
       selectFile({
         acceptTypes: ['image/png', 'image/jpeg'],
-        onSelect: (file) => setImageUrl(URL.createObjectURL(file)),
+        onSelect: (file) => setImageUrl(file ? URL.createObjectURL(file) : ''),
       }),
     [],
   );

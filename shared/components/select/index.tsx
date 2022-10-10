@@ -38,7 +38,9 @@ const Selected = styled.div<{ active: boolean }>`
   }
 
   ${({ active }) => css`
-    border-color: ${active ? CSSVariable.COLOR_PRIMARY : 'rgb(222 222 222)'};
+    border-color: ${active
+      ? CSSVariable.COLOR_PRIMARY
+      : CSSVariable.COLOR_BORDER};
   `}
 `;
 
@@ -50,10 +52,10 @@ function Select<ID extends number | string>({
   placeholder = '',
   disabled = false,
 }: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
-  label?: string;
+  label: string;
   data: Item<ID>[];
-  value?: ID;
-  onChange?: (id: ID) => void;
+  value: ID;
+  onChange: (id: ID) => void;
   placeholder?: string;
   disabled?: boolean;
 }) {

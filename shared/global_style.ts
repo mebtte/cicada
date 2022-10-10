@@ -5,6 +5,7 @@ export enum CSSVariable {
   COLOR_PRIMARY_DISABLED = 'var(--color-primary-disabled)',
   COLOR_PRIMARY_ACTIVE = 'var(--color-primary-active)',
   COLOR_DANGEROUS = 'var(--color-dangerous)',
+  COLOR_BORDER = 'var(--color-border)',
 
   TEXT_SIZE_NORMAL = 'var(--text-size-normal)',
   TEXT_SIZE_MEDIUM = 'var(--text-size-medium)',
@@ -22,6 +23,7 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.COLOR_PRIMARY_DISABLED]: '#7bd5b0',
   [CSSVariable.COLOR_PRIMARY_ACTIVE]: '#1d8b5e',
   [CSSVariable.COLOR_DANGEROUS]: '#f25042',
+  [CSSVariable.COLOR_BORDER]: 'rgb(222 222 222)',
 
   [CSSVariable.TEXT_SIZE_NORMAL]: '16px',
   [CSSVariable.TEXT_SIZE_MEDIUM]: '14px',

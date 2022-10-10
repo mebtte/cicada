@@ -49,7 +49,7 @@ function SelectList<ID extends number | string>({
   open: boolean;
   data: ItemType<ID>[];
   selected?: ItemType<ID>;
-  onChange?: (id: ID) => void;
+  onChange: (id: ID) => void;
 }) {
   const transitions = useTransition(open, {
     from: {
@@ -72,7 +72,7 @@ function SelectList<ID extends number | string>({
           <Item
             key={item.id}
             active={item === selected}
-            onClick={onChange ? () => onChange(item.id) : undefined}
+            onClick={() => onChange(item.id)}
           >
             {item.label}
           </Item>

@@ -1,20 +1,19 @@
-export default ({
+function selectFile({
   acceptTypes = [],
   onSelect,
 }: {
   acceptTypes?: string[];
-  onSelect: (file: File) => void;
-}) => {
+  onSelect: (file: File | null) => void;
+}) {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = acceptTypes.join(',') || '*';
   input.onchange = () => {
-    const [file] = Array.from(input.files || []);
-    if (!file) {
-      return;
-    }
     setTimeout(() => input.remove(), 0);
-    return onSelect(file);
+    const [file] = Array.from(input.files || []);
+    return onSelect(file || null);
   };
   input.click();
-};
+}
+
+export default selectFile;

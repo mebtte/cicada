@@ -5,6 +5,7 @@ import { ChangeEventHandler, useState } from 'react';
 import Select from '#/components/select';
 import styled from 'styled-components';
 import { MusicType, MUSIC_TYPES, MUSIC_TYPE_MAP } from '#/constants/music';
+import FileSelect from '#/components/file_select';
 import useOpen from './use_open';
 
 const TYPES = MUSIC_TYPES.map((t) => ({
@@ -27,6 +28,9 @@ function CreateMusicDialog() {
   const [musicType, setMusicType] = useState(MusicType.SONG);
   const onMusicTypeChange = (t: MusicType) => setMusicType(t);
 
+  const [sq, setSq] = useState<File | null>(null);
+  const onSqChange = (s) => setSq(s);
+
   return (
     <Dialog open={open}>
       <Title>创建音乐</Title>
@@ -35,12 +39,13 @@ function CreateMusicDialog() {
           label="名字"
           inputProps={{ value: name, onChange: onNameChange, autoFocus: true }}
         />
-        <Select<MusicType>
+        <Select
           label="类型"
           data={TYPES}
           value={musicType}
           onChange={onMusicTypeChange}
         />
+        <FileSelect label="标准音质文件" value={sq} onChange={onSqChange} />
       </StyledContent>
       <Action>
         <Button onClick={onClose}>取消</Button>
