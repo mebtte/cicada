@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import e, { EventType } from '../eventemitter';
 
 export default () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import {
 } from 'react';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '../constants/style';
+import { CSSVariable } from '../global_style';
 import Spinner from './spinner';
 
 const Style = styled.button<{ size: ComponentSize }>`
@@ -19,7 +20,7 @@ const Style = styled.button<{ size: ComponentSize }>`
 
   outline: none;
   border-radius: 50%;
-  color: inherit;
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   border: none;
   background-color: transparent;
   cursor: pointer;

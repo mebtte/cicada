@@ -1,13 +1,14 @@
 import Dialog, { Title, Content, Action } from '#/components/dialog';
 import Button, { Variant } from '#/components/button';
 import Input from '#/components/input';
-import { ChangeEventHandler, useEffect, useState } from 'react';
+import { ChangeEventHandler, useCallback, useEffect, useState } from 'react';
 import Select from '#/components/select';
 import styled from 'styled-components';
 import { MusicType, MUSIC_TYPES, MUSIC_TYPE_MAP } from '#/constants/music';
 import FileSelect from '#/components/file_select';
 import MultipleSelect from '#/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
+import { ALIAS_DIVIDER } from '#/constants';
 import useOpen from './use_open';
 
 const TYPES = MUSIC_TYPES.map((t) => ({
@@ -19,7 +20,9 @@ const searchSinger = (search: string) => {
   return searchSingerRequest({ keyword, page: 1, pageSize: 50 }).then((data) =>
     data.singerList.map((s) => ({
       id: s.id,
-      label: s.name,
+      label: `${s.name}${
+        s.aliases ? `(${s.aliases.split(ALIAS_DIVIDER)[0]})` : ''
+      }`,
     })),
   );
 };
@@ -38,22 +41,12 @@ function CreateMusicDialog() {
     setName(e.target.value);
 
   const [singerList, setSingerList] = useState<{ id: string; label: string }[]>(
-    [
-      { id: Math.random().toString(), label: '歌手歌手' },
-      { id: Math.random().toString(), label: '歌手歌手' },
-      { id: Math.random().toString(), label: '歌手歌手' },
-      { id: Math.random().toString(), label: '歌手歌手' },
-      { id: Math.random().toString(), label: '歌手歌手' },
-      { id: Math.random().toString(), label: '歌手歌手' },
-      {
-        id: Math.random().toString(),
-        label:
-          '歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手歌手',
-      },
-    ],
+    [],
   );
-  const onSingerListChange = (sl: { id: string; label: string }[]) =>
-    setSingerList(sl);
+  const onSingerListChange = useCallback(
+    (sl: { id: string; label: string }[]) => setSingerList(sl),
+    [],
+  );
 
   const [musicType, setMusicType] = useState(MusicType.SONG);
   const onMusicTypeChange = (t: MusicType) => setMusicType(t);
@@ -74,15 +67,15 @@ function CreateMusicDialog() {
     <Dialog open={open}>
       <Title>创建音乐</Title>
       <StyledContent>
-        <Input
-          label="名字"
-          inputProps={{ value: name, onChange: onNameChange, autoFocus: true }}
-        />
         <MultipleSelect<string>
           label="歌手"
           value={singerList}
           onChange={onSingerListChange}
           dataGetter={searchSinger}
+        />
+        <Input
+          label="名字"
+          inputProps={{ value: name, onChange: onNameChange }}
         />
         <Select
           label="类型"

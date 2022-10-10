@@ -1,4 +1,4 @@
-export type Item<ID extends string | number> = {
+export interface Item<ID extends string | number> {
   id: ID;
   label: string;
-};
+}

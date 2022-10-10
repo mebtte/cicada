@@ -1,4 +1,11 @@
-import { FocusEventHandler, useEffect, useRef, useState } from 'react';
+import {
+  FocusEventHandler,
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import styled, { css } from 'styled-components';
 import { MdClose } from 'react-icons/md';
 import { CSSVariable } from '../../global_style';
@@ -7,7 +14,11 @@ import { Item as ItemType } from './constants';
 import ellipsis from '../../style/ellipsis';
 import Options from './options';
 import notice from '../../utils/notice';
+import e, { EventType } from './eventemitter';
+import useOptions from './use_options';
+import useEvent from '../../utils/use_event';
 
+const onGetDataErrorDefault = (error: Error) => notice.error(error.message);
 const Style = styled.div`
   position: relative;
 `;
@@ -19,6 +30,7 @@ const Input = styled.div<{ active: boolean }>`
   flex-wrap: wrap;
   gap: 5px;
 
+  cursor: pointer;
   border: 1px solid;
   border-radius: 4px;
   transition: inherit;
@@ -30,13 +42,16 @@ const Input = styled.div<{ active: boolean }>`
     border: none;
     outline: none;
     font-size: 14px;
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   }
 
   ${({ active }) => css`
     border-color: ${active
       ? CSSVariable.COLOR_PRIMARY
       : CSSVariable.COLOR_BORDER};
+
+    > .input {
+      color: ${active ? CSSVariable.TEXT_COLOR_PRIMARY : 'transparent'};
+    }
   `}
 `;
 const Item = styled.div`
@@ -46,6 +61,7 @@ const Item = styled.div`
   border-radius: 2px;
   border: 1px solid ${CSSVariable.COLOR_BORDER};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  cursor: default;
 
   display: flex;
   align-items: center;
@@ -70,44 +86,64 @@ function MultipleSelect<ID extends number | string>({
   value,
   onChange,
   dataGetter,
-  onGetDataError = (error) => notice.error(error.message),
+  onGetDataError = onGetDataErrorDefault,
+  emptyMesssage = '暂无数据',
 }: {
   label: string;
   value: ItemType<ID>[];
   onChange: (value: ItemType<ID>[]) => void;
   dataGetter: (search: string) => ItemType<ID>[] | Promise<ItemType<ID>[]>;
   onGetDataError?: (error: Error) => void;
+  emptyMesssage?: string;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const makeFocus = () => inputRef.current?.focus();
-
-  const [open, setOpen] = useState(false);
-  const onFocus: FocusEventHandler<HTMLInputElement> = () =>
-    window.setTimeout(() => setOpen(true), 0);
-  const onBlur: FocusEventHandler<HTMLInputElement> = () => setOpen(false);
-  const onRemove = (item: ItemType<ID>) =>
-    onChange(value.filter((i) => i.id !== item.id));
+  const id = useId();
 
   const [keyword, setKeyword] = useState('');
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => {}, 1000);
-    return () => window.clearTimeout(timer);
-  }, [keyword, dataGetter]);
+  const [open, setOpen] = useState(false);
+
+  const timerRef = useRef(0);
+  const onFocus: FocusEventHandler<HTMLInputElement> = useEvent(() => {
+    window.clearTimeout(timerRef.current);
+    return setOpen(true);
+  });
+  const onBlur: FocusEventHandler<HTMLInputElement> = useEvent(() => {
+    timerRef.current = window.setTimeout(() => setOpen(false), 200);
+  });
+  const onRemove = useCallback(
+    (item: ItemType<ID>) => onChange(value.filter((i) => i.id !== item.id)),
+    [onChange, value],
+  );
+
+  const { loading, options } = useOptions({
+    keyword,
+    dataGetter,
+    onGetDataError,
+  });
 
   useEffect(() => {
-    if (open) {
-      const onClose = () => setOpen(false);
-      document.addEventListener('click', onClose, { capture: true });
-      return () =>
-        document.removeEventListener('click', onClose, { capture: true });
-    }
-  }, [open]);
+    const unlistenOnChange = e.listen(
+      EventType.ON_CHANGE,
+      ({ id: emitId, item }) => {
+        if (id !== emitId) {
+          return;
+        }
+        const included = value.some((i) => i.id === item.id);
+        return onChange(
+          included
+            ? value.filter((i) => i.id !== item.id)
+            : [...value, item as ItemType<ID>],
+        );
+      },
+    );
+    return unlistenOnChange;
+  }, [id, onChange, value]);
 
+  const selectedIds = value.map((i) => i.id);
   return (
     <Label label={label} active={open}>
       <Style>
-        <Input onClick={makeFocus} active={open}>
+        <Input active={open}>
           {value.map((item) => (
             <Item key={item.id}>
               <div className="label">{item.label}</div>
@@ -116,18 +152,19 @@ function MultipleSelect<ID extends number | string>({
           ))}
           <input
             className="input"
-            ref={inputRef}
             value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
+            onChange={(event) => setKeyword(event.target.value)}
             onFocus={onFocus}
             onBlur={onBlur}
           />
         </Input>
         <Options
+          id={id}
           open={open}
-          keyword={keyword}
-          dataGetter={dataGetter}
-          onGetDataError={onGetDataError}
+          loading={loading}
+          options={options}
+          selectedIds={selectedIds}
+          emptyMesssage={emptyMesssage}
         />
       </Style>
     </Label>

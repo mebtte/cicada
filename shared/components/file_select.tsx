@@ -14,6 +14,7 @@ const Style = styled.div`
   text-align: center;
   font-size: 12px;
   transition: inherit;
+  user-select: none;
 
   &:active {
     border-color: ${CSSVariable.COLOR_PRIMARY};

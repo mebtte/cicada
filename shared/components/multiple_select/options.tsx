@@ -1,11 +1,15 @@
-import { memo, useEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { MdDone } from 'react-icons/md';
+import { animated, useTransition } from 'react-spring';
 import { ComponentSize } from '../../constants/style';
 import { Item as ItemType } from './constants';
+import Spinner from '../spinner';
+import { flexCenter } from '../../style/flexbox';
+import { CSSVariable } from '../../global_style';
+import e, { EventType } from './eventemitter';
+import ellipsis from '../../style/ellipsis';
 
-const Style = styled.div<{
-  open: boolean;
-}>`
+const Style = styled(animated.div)`
   z-index: 1;
 
   position: absolute;
@@ -13,64 +17,125 @@ const Style = styled.div<{
   left: 0;
   width: 100%;
 
-  transition: 300ms;
+  overflow: hidden;
   background-color: #fff;
   border-radius: 4px;
   box-shadow: rgb(0 0 0 / 20%) 0px 5px 5px -3px,
     rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px;
 
-  ${({ open }) => css`
-    pointer-events: ${open ? 'auto' : 'none'};
-    opacity: ${open ? 1 : 0};
-    transform: translateY(${open ? 0 : ComponentSize.NORMAL}px);
+  > .list {
+    max-height: 250px;
+    overflow: auto;
+  }
+`;
+const Item = styled.div<{ selected: boolean }>`
+  padding: 5px 10px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  cursor: pointer;
+  transition: 300ms;
+  border-bottom: 1px solid transparent;
+  background-clip: padding-box;
+
+  > .label {
+    flex: 1;
+    min-width: 0;
+
+    ${ellipsis}
+  }
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, 0.15);
+  }
+
+  ${({ selected }) => css`
+    color: ${selected ? '#fff !important' : CSSVariable.TEXT_COLOR_PRIMARY};
+    background-color: ${selected
+      ? `${CSSVariable.COLOR_PRIMARY} !important`
+      : 'transparent'};
   `}
+`;
+const Loader = styled.div`
+  padding: 10px 0;
+  ${flexCenter}
+`;
+const Empty = styled.div`
+  padding: 20px 0;
+  line-height: 1;
+  font-size: 12px;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  text-align: center;
 `;
 
 function Options<ID extends string | number>({
+  id,
   open,
-  keyword,
-  dataGetter,
-  onGetDataError,
+  loading,
+  options,
+  selectedIds,
+  emptyMesssage,
 }: {
+  id: string;
   open: boolean;
-  keyword: string;
-  dataGetter: (search: string) => ItemType<ID>[] | Promise<ItemType<ID>[]>;
-  onGetDataError: (error: Error) => void;
+  loading: boolean;
+  options: ItemType<ID>[];
+  selectedIds: ID[];
+  emptyMesssage: string;
 }) {
-  const requestIdRef = useRef<number>(0);
+  const transitions = useTransition(open, {
+    from: {
+      opacity: 0,
+      transform: `translateY(${ComponentSize.NORMAL}px)`,
+    },
+    enter: {
+      opacity: 1,
+      transform: 'translateY(0px)',
+    },
+    leave: {
+      opacity: 0,
+      transform: `translateY(${ComponentSize.NORMAL}px)`,
+    },
+  });
 
-  const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState<ItemType<ID>[]>([]);
-
-  useEffect(() => {
-    if (open) {
-      setLoading(true);
-      const timer = window.setTimeout(async () => {
-        const requestId = Math.random();
-        requestIdRef.current = requestId;
-        try {
-          const data = await dataGetter(keyword);
-          if (requestId === requestIdRef.current) {
-            setOptions(data);
-          }
-        } catch (error) {
-          if (requestId === requestIdRef.current) {
-            onGetDataError(error);
-          }
-        }
-
-        return setLoading(false);
-      }, 1000);
-      return () => window.clearTimeout(timer);
-    }
-  }, [keyword, dataGetter, onGetDataError, open]);
-
-  return <Style open={open}>{keyword}</Style>;
+  return transitions((style, o) =>
+    o ? (
+      <Style style={style}>
+        {options.length ? (
+          <div className="list">
+            {options.map((item) => {
+              const selected = selectedIds.includes(item.id);
+              return (
+                <Item
+                  key={item.id}
+                  selected={selected}
+                  onClickCapture={() =>
+                    e.emit(EventType.ON_CHANGE, { id, item })
+                  }
+                >
+                  <div className="label">{item.label}</div>
+                  {selected ? <MdDone /> : null}
+                </Item>
+              );
+            })}
+          </div>
+        ) : loading ? null : (
+          <Empty>{emptyMesssage}</Empty>
+        )}
+        {loading ? (
+          <Loader>
+            <Spinner size={ComponentSize.MINI} />
+          </Loader>
+        ) : null}
+      </Style>
+    ) : null,
+  );
 }
 
-export default memo(Options, (prevProps, props) => {
-  if (!prevProps.open && !props.open) {
-    return true;
-  }
-  return false;
-});
+export default Options;
