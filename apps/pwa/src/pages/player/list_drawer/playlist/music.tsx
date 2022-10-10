@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import styled from 'styled-components';
 import { Singer as SingerType } from '@/constants/singer';
-import ellipsis from '@/style/ellipsis';
+import ellipsis from '#/style/ellipsis';
 import IconButton, { Name, Type } from '@/components/icon_button';
 import useMusicOperate from '../../use_music_operate';
 import eventemitter, { EventType } from '../../eventemitter';

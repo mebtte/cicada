@@ -5,7 +5,7 @@ import {
   MultipleLrcLine,
   useRecoverAutoScrollImmediately,
 } from 'react-lrc';
-import scrollbarNever from '@/style/scrollbar_never';
+import scrollbarNever from '#/style/scrollbar_never';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import eventemitter, { EventType } from './eventemitter';
 import { Lyric } from './constants';

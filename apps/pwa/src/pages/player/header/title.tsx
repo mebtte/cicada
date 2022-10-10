@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
-import ellipsis from '@/style/ellipsis';
+import ellipsis from '#/style/ellipsis';
 import { CSSVariable } from '#/global_style';
 
 const Style = styled.div`

@@ -6,10 +6,9 @@ function useEvent<Callback extends (...args: unknown[]) => unknown>(
   const callbackRef = useRef<Callback>();
   callbackRef.current = callback;
 
-  const memoCallback = useCallback(
-    (...args: Parameters<Callback>): ReturnType<Callback> =>
-      // @ts-expect-error
-      callbackRef.current!(...args),
+  const memoCallback: Callback = useCallback(
+    // @ts-expect-error
+    (...args) => callbackRef.current!(...args),
     [],
   );
 

@@ -119,7 +119,7 @@ function NoticeItem({ notice }: { notice: Notice }) {
       <div className="top">
         <div className="content">{content}</div>
         {closable ? (
-          <IconButton className="close" onClick={onClose}>
+          <IconButton className="close" onClick={onClose} size={24}>
             <MdClose />
           </IconButton>
         ) : null}

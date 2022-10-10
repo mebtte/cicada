@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import List from 'react-list';
 
 import { MUSICBILL_SCROLL_TOP } from '@/constants/storage_key';
-import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
+import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 import { MusicWithIndex } from '../../../constants';
 import Music from '../../../components/music';
 

@@ -2,7 +2,7 @@ import { useTransition, animated } from 'react-spring';
 import styled from 'styled-components';
 import Skeleton from '@/components/skeleton';
 import Avatar from '@/components/avatar';
-import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
+import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 import ErrorCard from '@/components/error_card';
 import Drawer from '#/components/drawer';
 import { COVER_SIZE, PADDING } from './constants';

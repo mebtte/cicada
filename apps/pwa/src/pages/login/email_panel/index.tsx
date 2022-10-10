@@ -37,7 +37,7 @@ function EmailPanel({
   updateEmail: (email: string) => void;
   toNext: () => void;
 }) {
-  const emailRef = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(
+  const emailRef = useRef<{ root: HTMLLabelElement; input: HTMLInputElement }>(
     null,
   );
 

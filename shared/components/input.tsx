@@ -1,79 +1,69 @@
 import {
+  FocusEventHandler,
   ForwardedRef,
   forwardRef,
   HtmlHTMLAttributes,
   InputHTMLAttributes,
   useImperativeHandle,
   useRef,
+  useState,
 } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { ComponentSize } from '../constants/style';
 import { CSSVariable } from '../global_style';
+import useEvent from '../utils/use_event';
+import Label from './label';
 
-const Style = styled.div<{ disabled: boolean }>`
-  --transiton-duration: 300ms ease-in-out;
+const Input = styled.input`
+  padding: 0 10px;
+  width: 100%;
+  height: ${ComponentSize.NORMAL}px;
 
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 5px;
+  border-radius: 4px;
+  border: 1px solid rgb(222 222 222);
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  font-size: 14px;
+  outline: none;
+  transition: inherit;
 
-  > input {
-    padding: 0 10px;
-    height: ${ComponentSize.NORMAL}px;
-
-    border-radius: 4px;
-    border: 1px solid rgb(222 222 222);
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    font-size: 14px;
-    outline: none;
-    transition: border-color var(--transiton-duration);
-
-    &:focus {
-      border-color: ${CSSVariable.COLOR_PRIMARY};
-
-      + .label {
-        color: ${CSSVariable.COLOR_PRIMARY};
-      }
-    }
-
-    &:disabled {
-      border-color: ${CSSVariable.TEXT_COLOR_DISABLED};
-      background: ${CSSVariable.BACKGROUND_DISABLED};
-      cursor: not-allowed;
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    }
+  &:focus {
+    border-color: ${CSSVariable.COLOR_PRIMARY};
   }
 
-  > .label {
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-    transition: color var(--transiton-duration);
+  &:disabled {
+    border-color: ${CSSVariable.TEXT_COLOR_DISABLED};
+    background: ${CSSVariable.BACKGROUND_DISABLED};
+    cursor: not-allowed;
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   }
-
-  ${({ disabled }) => css`
-    > .label {
-      color: ${disabled
-        ? CSSVariable.TEXT_COLOR_DISABLED
-        : CSSVariable.TEXT_COLOR_PRIMARY};
-    }
-  `}
 `;
 
 type Ref = {
-  root: HTMLDivElement;
+  root: HTMLLabelElement;
   input: HTMLInputElement;
 };
 type Props = {
   label?: string;
   inputProps: InputHTMLAttributes<HTMLInputElement>;
   disabled?: boolean;
-} & HtmlHTMLAttributes<HTMLDivElement>;
+} & HtmlHTMLAttributes<HTMLLabelElement>;
 
-function Input(
+function Wrapper(
   { label, inputProps, disabled = false, ...props }: Props,
   ref: ForwardedRef<Ref>,
 ) {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLLabelElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const [active, setActive] = useState(false);
+  const onFocus: FocusEventHandler<HTMLInputElement> = useEvent((e) => {
+    setActive(true);
+    return inputProps.onFocus && inputProps.onFocus(e);
+  });
+  const onBlur: FocusEventHandler<HTMLInputElement> = useEvent((e) => {
+    setActive(false);
+    return inputProps.onBlur && inputProps.onBlur(e);
+  });
 
   useImperativeHandle(ref, () => ({
     root: rootRef.current!,
@@ -81,11 +71,22 @@ function Input(
   }));
 
   return (
-    <Style {...props} ref={rootRef} disabled={disabled}>
-      <input {...inputProps} disabled={disabled} ref={inputRef} />
-      {label ? <div className="label">{label}</div> : null}
-    </Style>
+    <Label
+      {...props}
+      ref={rootRef}
+      active={active}
+      disabled={disabled}
+      label={label}
+    >
+      <Input
+        {...inputProps}
+        disabled={disabled}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        ref={inputRef}
+      />
+    </Label>
   );
 }
 
-export default forwardRef<Ref, Props>(Input);
+export default forwardRef<Ref, Props>(Wrapper);

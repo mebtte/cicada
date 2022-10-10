@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import styled, { css } from 'styled-components';
-import ellipsis from '@/style/ellipsis';
+import ellipsis from '#/style/ellipsis';
 import IconButton, { Name, Type } from '@/components/icon_button';
 import { Singer as SingerType } from '@/constants/singer';
 import useMusicOperate from '../../use_music_operate';

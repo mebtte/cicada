@@ -3,7 +3,7 @@ import Cover from '#/components/cover';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { NavLink } from 'react-router-dom';
 import { CSSVariable } from '#/global_style';
-import ellipsis from '@/style/ellipsis';
+import ellipsis from '#/style/ellipsis';
 import { Musicbill as MusicbillType } from '../../constants';
 
 const Style = styled(NavLink)`

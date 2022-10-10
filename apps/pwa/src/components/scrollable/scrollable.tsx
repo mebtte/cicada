@@ -1,10 +1,16 @@
-import { HTMLAttributes, useCallback, useLayoutEffect, useRef, useState } from 'react';
+import {
+  HTMLAttributes,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import scrollbarAlways from '@/style/scrollbar_always';
-import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
-import scrollbarNever from '@/style/scrollbar_never';
+import scrollbarAlways from '#/style/scrollbar_always';
+import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
+import scrollbarNever from '#/style/scrollbar_never';
 import { ScrollbarType } from './constants';
 
 const SCROLLBAR_TYPE_MAP: Record<

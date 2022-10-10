@@ -6,7 +6,7 @@ import {
   useCallback,
 } from 'react';
 import styled, { CSSProperties } from 'styled-components';
-import { flexCenter } from '@/style/flexbox';
+import { flexCenter } from '#/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import getLoginCodeRequest from '@/server/get_login_code';
 import { ExceptionCode } from '#/constants/exception';
@@ -145,8 +145,8 @@ function CaptchaDialog({
             value: captchaCode,
             autoFocus: true,
             onChange: onCaptchaCodeChange,
+            onKeyDown,
           }}
-          onKeyDown={onKeyDown}
           disabled={gettingLoginCode}
         />
         <Button

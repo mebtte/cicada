@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { animated } from 'react-spring';
 
-import ellipsis from '@/style/ellipsis';
+import ellipsis from '#/style/ellipsis';
 import { MUSIC_NAME_SIZE } from './constant';
 
 export default styled(animated.div)`

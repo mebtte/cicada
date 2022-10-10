@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useDrag, useDrop, DropTargetMonitor } from 'react-dnd';
 import { XYCoord } from 'dnd-core';
 
-import ellipsis from '@/style/ellipsis';
+import ellipsis from '#/style/ellipsis';
 import Avatar from '@/components/avatar';
 import { Musicbill as MusicbillType } from './constant';
 

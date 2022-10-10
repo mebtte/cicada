@@ -1,6 +1,6 @@
 import { HtmlHTMLAttributes, useCallback } from 'react';
 import styled from 'styled-components';
-import ellipsis from '@/style/ellipsis';
+import ellipsis from '#/style/ellipsis';
 import Avatar from '@/components/avatar';
 import eventemitter, { EventType } from '../eventemitter';
 import Singer from './singer';

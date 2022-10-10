@@ -15,6 +15,7 @@
   "include": [
     "src/**/*",
     "../../global.d.ts",
-    "../../shared/components/tooltip"
+    "../../shared/components/tooltip",
+    "../../shared/style"
   ]
 }

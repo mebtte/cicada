@@ -1,4 +1,10 @@
-import { memo, useState, useEffect, useCallback, useRef } from 'react';
+import {
+  memo,
+  useState,
+  useEffect,
+  useCallback,
+  ChangeEventHandler,
+} from 'react';
 import createMusicbill from '@/server/create_musicbill';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import notice from '#/utils/notice';
@@ -6,25 +12,21 @@ import logger from '#/utils/logger';
 import dialog from '#/utils/dialog';
 import Dialog, { Title, Content, Action } from '#/components/dialog';
 import Button, { Type } from '@/components/button';
-import Input from '@/components/input';
+import Input from '#/components/input';
 import eventemitter, { EventType } from './eventemitter';
 
-const inputStyle = {
-  display: 'block',
-  width: '100%',
-};
-
 function CreateMusicbillDialog() {
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
   const [creating, setCreating] = useState(false);
+  const [name, setName] = useState('');
+  const onNameChange: ChangeEventHandler<HTMLInputElement> = (e) =>
+    setName(e.target.value);
+
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => {
-    inputRef.current!.value = '';
+    setName('');
     setOpen(false);
   }, []);
   const onCreate = async () => {
-    const name = inputRef.current!.value;
     if (!name.length) {
       return notice.error('请输入乐单名');
     }
@@ -49,10 +51,7 @@ function CreateMusicbillDialog() {
   useEffect(() => {
     const unlistenOpenCreateMusicbillDialog = eventemitter.listen(
       EventType.OPEN_CREATE_MUSICBILL_DIALOG,
-      () => {
-        setOpen(true);
-        return window.setTimeout(() => inputRef.current?.focus(), 0);
-      },
+      () => setOpen(true),
     );
     return unlistenOpenCreateMusicbillDialog;
   }, []);
@@ -62,10 +61,8 @@ function CreateMusicbillDialog() {
       <Title>创建乐单</Title>
       <Content>
         <Input
-          ref={inputRef}
-          type="text"
-          style={inputStyle}
-          placeholder="乐单名字"
+          label="名字"
+          inputProps={{ value: name, onChange: onNameChange, autoFocus: true }}
           disabled={creating}
         />
       </Content>

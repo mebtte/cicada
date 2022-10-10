@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
+import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 import CircularLoader from '#/components/spinner';
 import Input from '../input';
 import Icon, { Name } from '../icon';

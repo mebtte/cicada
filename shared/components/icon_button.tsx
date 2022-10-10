@@ -1,4 +1,9 @@
-import { ButtonHTMLAttributes, CSSProperties } from 'react';
+import {
+  ButtonHTMLAttributes,
+  CSSProperties,
+  ForwardedRef,
+  forwardRef,
+} from 'react';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '../constants/style';
 import Spinner from './spinner';
@@ -50,21 +55,26 @@ const spinnerStyle: CSSProperties = {
   transform: 'translate(-50%, -50%)',
 };
 
-function IconButton({
-  size = ComponentSize.NORMAL,
-  loading = false,
-  disabled = false,
-  children,
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & {
-  size?: ComponentSize;
+type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
+  size?: number;
   loading?: boolean;
-}) {
+};
+
+function IconButton(
+  {
+    size = ComponentSize.NORMAL,
+    loading = false,
+    disabled = false,
+    children,
+    ...props
+  }: Props,
+  ref: ForwardedRef<HTMLButtonElement>,
+) {
   return (
-    <Style {...props} size={size} disabled={disabled || loading}>
+    <Style {...props} size={size} disabled={disabled || loading} ref={ref}>
       {loading ? <Spinner style={spinnerStyle} size={size * 0.6} /> : children}
     </Style>
   );
 }
 
-export default IconButton;
+export default forwardRef<HTMLButtonElement, Props>(IconButton);

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import List from 'react-list';
 
-import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
+import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 import { MusicWithIndex } from '../../constants';
 import Music from './music';
 

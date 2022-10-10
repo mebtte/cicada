@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import ellipsis from '@/style/ellipsis';
+import ellipsis from '#/style/ellipsis';
 
 export default styled.div`
   display: flex;

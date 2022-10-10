@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import scrollbarAsNeeded from '@/style/scrollbar_as_needed';
+import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 import { Musicbill as MusicbillType, Music as MusicType } from '../constants';
 import Musicbill from './musicbill';
 import CreateMusicbill from './create_musicbill';
