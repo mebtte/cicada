@@ -9,6 +9,14 @@ import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 50;
+type LocalSinger = Pick<
+  Singer,
+  | SingerProperty.ID
+  | SingerProperty.AVATAR
+  | SingerProperty.NAME
+  | SingerProperty.ALIASES
+  | SingerProperty.CREATE_USER_ID
+>;
 
 export default async (ctx: Context) => {
   const { keyword, page, pageSize } = ctx.request.query as {
@@ -20,7 +28,6 @@ export default async (ctx: Context) => {
   const pageSizeNumber = pageSize ? Number(pageSize) : undefined;
   if (
     typeof keyword !== 'string' ||
-    !keyword.length ||
     keyword.includes(ALIAS_DIVIDER) ||
     keyword.length > SEARCH_KEYWORD_MAX_LENGTH ||
     typeof pageNumber !== 'number' ||
@@ -34,51 +41,67 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const pattern = `%${keyword}%`;
-  const [total, singerList] = await Promise.all([
-    db.get<{ value: number }>(
-      `
-        select count(*) from singer
-          where name like ? or aliases like ?
-      `,
-      [pattern, pattern],
-    ),
-    db.all<
-      Pick<
-        Singer,
-        | SingerProperty.ID
-        | SingerProperty.AVATAR
-        | SingerProperty.NAME
-        | SingerProperty.ALIASES
-        | SingerProperty.CREATE_USER_ID
-      >
-    >(
-      `
-        select id, avatar, name, aliases, createUserId from singer
-          where name like ? or aliases like ?
-          limit ?
-          offset ?
-      `,
-      [pattern, pattern, pageSizeNumber, pageSizeNumber * (pageNumber - 1)],
-    ),
-  ]);
+  let total: { value: number } = { value: 0 };
+  let singerList: LocalSinger[] = [];
+  if (keyword.length) {
+    const pattern = `%${keyword}%`;
+    // @ts-expect-error
+    [total, singerList] = await Promise.all([
+      db.get<{ value: number }>(
+        `
+          select count(*) from singer
+            where name like ? or aliases like ?
+        `,
+        [pattern, pattern],
+      ),
+      db.all<LocalSinger>(
+        `
+          select id, avatar, name, aliases, createUserId from singer
+            where name like ? or aliases like ?
+            limit ?
+            offset ?
+        `,
+        [pattern, pattern, pageSizeNumber, pageSizeNumber * (pageNumber - 1)],
+      ),
+    ]);
+  } else {
+    // @ts-expect-error
+    [total, singerList] = await Promise.all([
+      db.get<{ value: number }>(
+        `
+          select count(*) from singer
+        `,
+        [],
+      ),
+      db.all<LocalSinger>(
+        `
+      select id, avatar, name, aliases, createUserId from singer
+        limit ?
+        offset ?
+    `,
+        [pageSizeNumber, pageSizeNumber * (pageNumber - 1)],
+      ),
+    ]);
+  }
 
-  const userList = await getUserListByIds(
-    Array.from(new Set(singerList.map((s) => s.createUserId))),
-    [UserProperty.ID, UserProperty.AVATAR, UserProperty.NICKNAME],
-  );
   const userIdMapUser: {
     [key: string]: Pick<
       User,
       UserProperty.ID | UserProperty.AVATAR | UserProperty.NICKNAME
     >;
   } = {};
-  userList.forEach((user) => {
-    userIdMapUser[user.id] = {
-      ...user,
-      avatar: getAssetUrl(user.avatar, AssetType.USER_AVATAR),
-    };
-  });
+  if (singerList.length) {
+    const userList = await getUserListByIds(
+      Array.from(new Set(singerList.map((s) => s.createUserId))),
+      [UserProperty.ID, UserProperty.AVATAR, UserProperty.NICKNAME],
+    );
+    userList.forEach((user) => {
+      userIdMapUser[user.id] = {
+        ...user,
+        avatar: getAssetUrl(user.avatar, AssetType.USER_AVATAR),
+      };
+    });
+  }
 
   return ctx.success({
     total: total!.value,

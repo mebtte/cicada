@@ -5,7 +5,7 @@ import { ComponentSize } from '../../constants/style';
 import { CSSVariable } from '../../global_style';
 import Label from '../label';
 import ellipsis from '../../style/ellipsis';
-import SelectList from './select_list';
+import Options from './options';
 import { Item } from './constants';
 
 const Style = styled.div`
@@ -78,7 +78,7 @@ function Select<ID extends number | string>({
           <div className="label">{selected ? selected.label : placeholder}</div>
           {open ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
         </Selected>
-        <SelectList<ID>
+        <Options<ID>
           open={open}
           data={data}
           selected={selected}
