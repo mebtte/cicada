@@ -172,7 +172,8 @@
   "pkg": {
     "assets": [
       "pwa/**/*",
-      "node_modules/**/*.node"
+      "node_modules/**/*.node",
+      "node_modules/**/ffmpeg"
     ],
     "outputPath": "build"
   }
