@@ -22,7 +22,7 @@ export default async (ctx: Context) => {
   if (!force) {
     const existSinger = await db.get<{ id?: string }>(
       `
-        select id from singer where name = ?
+        select id from singer where name = ? collate nocase
       `,
       [name],
     );

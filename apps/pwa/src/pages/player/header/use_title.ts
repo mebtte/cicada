@@ -15,6 +15,10 @@ export default () => {
       title = '我的音乐';
       break;
     }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.MY_SINGER: {
+      title = '我的歌手';
+      break;
+    }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {
       title = '设置';
       break;

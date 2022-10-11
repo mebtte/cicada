@@ -5,7 +5,7 @@ import { Profile as ProfileType } from '@/constants/user';
 import getRandomCover from '@/utils/get_random_cover';
 import { ReactNode, useEffect } from 'react';
 import parseSearch from '@/utils/parse_search';
-import { LoginQuery } from '@/constants/query';
+import { Query } from '@/constants';
 import useNavigate from '#/utils/use_navigate';
 import Cover, { Shape } from '#/components/cover';
 import { CSSVariable } from '#/global_style';
@@ -68,7 +68,7 @@ function Profile({ profile }: { profile: ProfileType }) {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const query = parseSearch<LoginQuery>(location.search);
+      const query = parseSearch<Query>(location.search);
       const redirect = query.redirect || '/';
       navigate({ path: redirect });
     }, REDIRECT_DURATION);

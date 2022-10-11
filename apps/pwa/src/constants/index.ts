@@ -13,3 +13,9 @@ export enum RequestStatus {
 }
 
 export const ORIGINAL_SCROLLBAR_WIDTH = getOriginalScrollbarWidth(); // 浏览器默认滚动条宽度
+
+export enum Query {
+  REDIRECT = 'redirect',
+  CREATE_MUSIC_DIALOG_OPEN = 'create_music_dialog_open',
+  CREATE_SINGER_DIALOG_OPEN = 'create_singer_dialog_open',
+}

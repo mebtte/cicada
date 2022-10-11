@@ -6,16 +6,16 @@ import useNavigate from '#/utils/use_navigate';
 export default () => {
   const navigate = useNavigate();
 
-  const query = useQuery<Query.CREATE_MUSIC_DIALOG_OPEN>();
+  const query = useQuery<Query.CREATE_SINGER_DIALOG_OPEN>();
   const onClose = useCallback(
     () =>
       navigate({
         query: {
-          [Query.CREATE_MUSIC_DIALOG_OPEN]: undefined,
+          [Query.CREATE_SINGER_DIALOG_OPEN]: undefined,
         },
       }),
     [navigate],
   );
 
-  return { open: !!query[Query.CREATE_MUSIC_DIALOG_OPEN], onClose };
+  return { open: !!query[Query.CREATE_SINGER_DIALOG_OPEN], onClose };
 };

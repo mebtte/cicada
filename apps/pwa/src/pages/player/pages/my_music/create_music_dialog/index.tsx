@@ -15,6 +15,7 @@ import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
+import ToCreateSinger from './to_create_singer';
 
 const TYPES = MUSIC_TYPES.map((t) => ({
   id: t,
@@ -111,6 +112,7 @@ function CreateMusicDialog() {
           onChange={onSingerListChange}
           dataGetter={searchSinger}
           disabled={loading}
+          addon={<ToCreateSinger />}
         />
         <Input
           label="名字"

@@ -107,6 +107,11 @@ function Options<ID extends string | number>({
   return transitions((style, o) =>
     o ? (
       <Style style={style}>
+        {loading ? (
+          <Loader>
+            <Spinner size={16} />
+          </Loader>
+        ) : null}
         {options.length ? (
           <div className="list">
             {options.map((item) => {
@@ -128,11 +133,6 @@ function Options<ID extends string | number>({
         ) : loading ? null : (
           <Empty>{emptyMesssage}</Empty>
         )}
-        {loading ? (
-          <Loader>
-            <Spinner size={ComponentSize.MINI} />
-          </Loader>
-        ) : null}
       </Style>
     ) : null,
   );

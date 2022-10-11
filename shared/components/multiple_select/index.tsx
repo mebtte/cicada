@@ -1,5 +1,6 @@
 import {
   FocusEventHandler,
+  ReactNode,
   useCallback,
   useEffect,
   useId,
@@ -105,6 +106,7 @@ function MultipleSelect<ID extends number | string>({
   onGetDataError = onGetDataErrorDefault,
   emptyMesssage = '暂无数据',
   disabled = false,
+  addon,
 }: {
   label: string;
   value: ItemType<ID>[];
@@ -113,6 +115,7 @@ function MultipleSelect<ID extends number | string>({
   onGetDataError?: (error: Error) => void;
   emptyMesssage?: string;
   disabled?: boolean;
+  addon?: ReactNode;
 }) {
   const id = useId();
 
@@ -164,7 +167,7 @@ function MultipleSelect<ID extends number | string>({
 
   const selectedIds = value.map((i) => i.id);
   return (
-    <Label label={label} active={open} disabled={disabled}>
+    <Label label={label} active={open} disabled={disabled} addon={addon}>
       <Style>
         <Input active={open} disabled={disabled}>
           {value.map((item) => (

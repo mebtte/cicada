@@ -21,16 +21,16 @@ const Style = styled.div`
 
 function Toolbar() {
   const navigate = useNavigate();
-  const openCreateMusicDialog = () =>
+  const openCreateSingerDialog = () =>
     navigate({
       query: {
-        [Query.CREATE_MUSIC_DIALOG_OPEN]: 1,
+        [Query.CREATE_SINGER_DIALOG_OPEN]: 1,
       },
     });
   return (
     <Style>
-      <Tooltip title="创建音乐">
-        <IconButton onClick={openCreateMusicDialog}>
+      <Tooltip title="创建歌手">
+        <IconButton onClick={openCreateSingerDialog}>
           <MdAdd />
         </IconButton>
       </Tooltip>

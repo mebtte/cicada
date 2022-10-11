@@ -26,6 +26,10 @@ function useNavigate() {
       };
       return originalNavigate(
         `${path}?${Object.keys(combineQuery)
+          .filter(
+            (key) =>
+              combineQuery[key] !== undefined && combineQuery[key] !== null,
+          )
           .map((key) => `${key}=${combineQuery[key]}`)
           .join('&')}`,
         { replace },

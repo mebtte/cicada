@@ -5,8 +5,8 @@ const Style = styled.div`
   min-height: 0;
 `;
 
-function MusicList() {
-  return <Style>music list</Style>;
+function SingerList() {
+  return <Style>singer list</Style>;
 }
 
-export default MusicList;
+export default SingerList;
