@@ -20,13 +20,17 @@ const VersionUpdater = styled.div`
     padding-top: 10px;
   }
 
-  > .action {
+  > .action-box {
     margin-top: 5px;
 
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 5px;
+
+    > .action {
+      color: #fff;
+    }
   }
 `;
 if ('serviceWorker' in navigator) {
@@ -47,8 +51,9 @@ if ('serviceWorker' in navigator) {
             const id = notice.info(
               <VersionUpdater>
                 <div className="text">检测到新版本, 是否刷新马上使用?</div>
-                <div className="action">
+                <div className="action-box">
                   <IconButton
+                    className="action"
                     onClick={() => {
                       wb.messageSkipWaiting();
                       return Promise.race([
@@ -61,7 +66,10 @@ if ('serviceWorker' in navigator) {
                   >
                     <MdCheck />
                   </IconButton>
-                  <IconButton onClick={() => notice.close(id)}>
+                  <IconButton
+                    className="action"
+                    onClick={() => notice.close(id)}
+                  >
                     <MdClose />
                   </IconButton>
                 </div>
