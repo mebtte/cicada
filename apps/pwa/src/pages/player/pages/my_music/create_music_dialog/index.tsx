@@ -4,7 +4,12 @@ import Input from '#/components/input';
 import { ChangeEventHandler, useCallback, useEffect, useState } from 'react';
 import Select from '#/components/select';
 import styled from 'styled-components';
-import { MusicType, MUSIC_TYPES, MUSIC_TYPE_MAP } from '#/constants/music';
+import {
+  MusicType,
+  MUSIC_TYPES,
+  MUSIC_TYPE_MAP,
+  NAME_MAX_LENGTH,
+} from '#/constants/music';
 import FileSelect from '#/components/file_select';
 import MultipleSelect from '#/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
@@ -44,7 +49,7 @@ function CreateMusicDialog() {
 
   const [name, setName] = useState('');
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
-    setName(event.target.value.trim());
+    setName(event.target.value);
 
   const [singerList, setSingerList] = useState<{ id: string; label: string }[]>(
     [],
@@ -66,7 +71,8 @@ function CreateMusicDialog() {
       return notice.error('请选择歌手');
     }
 
-    if (!name) {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
       return notice.error('请输入名字');
     }
 
@@ -78,7 +84,7 @@ function CreateMusicDialog() {
     try {
       const asset = await uploadAsset(sq, AssetType.MUSIC_SQ);
       await createMusic({
-        name,
+        name: trimmedName,
         singerIds: singerList.map((s) => s.id),
         type: musicType,
         sq: asset.id,
@@ -116,7 +122,11 @@ function CreateMusicDialog() {
         />
         <Input
           label="名字"
-          inputProps={{ value: name, onChange: onNameChange }}
+          inputProps={{
+            value: name,
+            onChange: onNameChange,
+            maxLength: NAME_MAX_LENGTH,
+          }}
           disabled={loading}
         />
         <Select

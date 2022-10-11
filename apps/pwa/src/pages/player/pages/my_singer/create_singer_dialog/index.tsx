@@ -7,6 +7,7 @@ import notice from '#/utils/notice';
 import createSinger from '@/server/create_singer';
 import { ExceptionCode } from '#/constants/exception';
 import dialog from '#/utils/dialog';
+import { NAME_MAX_LENGTH } from '#/constants/singer';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
 
@@ -15,17 +16,18 @@ function CreateSingerDialog() {
 
   const [name, setName] = useState('');
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
-    setName(event.target.value.trim());
+    setName(event.target.value);
 
   const [loading, setLoading] = useState(false);
   const onCreate = useEvent(async (force: boolean) => {
-    if (!name) {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
       return void notice.error('请输入名字');
     }
 
     setLoading(true);
     try {
-      await createSinger({ name, force });
+      await createSinger({ name: trimmedName, force });
 
       notice.success('已创建歌手');
       e.emit(EventType.RELOAD_SINGER_LIST, null);
@@ -57,7 +59,12 @@ function CreateSingerDialog() {
       <Content>
         <Input
           label="名字"
-          inputProps={{ value: name, onChange: onNameChange, autoFocus: true }}
+          inputProps={{
+            value: name,
+            onChange: onNameChange,
+            maxLength: NAME_MAX_LENGTH,
+            autoFocus: true,
+          }}
           disabled={loading}
         />
       </Content>
