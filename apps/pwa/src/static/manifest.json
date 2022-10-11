@@ -16,5 +16,6 @@
   "start_url": "/#/player",
   "background_color": "#ffffff",
   "display": "standalone",
+  "display_override": ["window-controls-overlay"],
   "theme_color": "#ffffff"
 }
