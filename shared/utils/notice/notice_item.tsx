@@ -62,9 +62,7 @@ const Style = styled.div<{ type: NoticeType }>`
     display: flex;
     align-items: center;
     gap: 5px;
-    padding: 5px 15px 3px 15px;
-
-    color: #fff;
+    padding: 5px 5px 3px 15px;
 
     > .content {
       flex: 1;
@@ -72,10 +70,11 @@ const Style = styled.div<{ type: NoticeType }>`
 
       font-size: 12px;
       line-height: 1.5;
+      color: #fff;
     }
 
     > .close {
-      margin-right: -10px;
+      color: #fff;
     }
   }
 
