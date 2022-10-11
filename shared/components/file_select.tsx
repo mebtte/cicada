@@ -8,7 +8,7 @@ import { MUSIC_SQ } from '../constants/music';
 const Style = styled.div<{ disabled: boolean }>`
   padding: 20px;
 
-  border: 1px dashed ${CSSVariable.COLOR_BORDER};
+  border: 1px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 4px;
   cursor: pointer;
   text-align: center;
@@ -25,7 +25,6 @@ const Style = styled.div<{ disabled: boolean }>`
     border-color: ${disabled
       ? `${CSSVariable.TEXT_COLOR_DISABLED} !important`
       : CSSVariable.COLOR_BORDER};
-    border-style: dashed !important;
     cursor: ${disabled ? 'not-allowed' : 'poiter'};
     color: ${disabled
       ? CSSVariable.TEXT_COLOR_SECONDARY

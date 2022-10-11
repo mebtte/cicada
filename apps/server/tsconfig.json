@@ -11,7 +11,7 @@
     "paths": {
       "#/*": ["../../shared/*"],
       "@/*": ["src/*"],
-      "$/*": ["src/api/*"]
+      "$/*": ["src/api_app/*"]
     }
   },
   "include": ["src/**/*", "../../global.d.ts"]

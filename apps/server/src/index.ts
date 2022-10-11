@@ -6,14 +6,15 @@ import log from 'koa-logger';
 import cors from '@koa/cors';
 import mount from 'koa-mount';
 import { PathPrefix } from '#/constants';
-import api from './api';
-import blob from './blob';
-import asset from './asset';
-import pwa from './pwa';
+import apiApp from './api_app';
+import blobApp from './blob_app';
+import assetApp from './asset_app';
+import pwaApp from './pwa_app';
 import schedule from './schedule';
 import env from './env';
-import download from './download';
+import downloadApp from './download_app';
 import config from './config';
+import requirementCheck from './requirement_check';
 
 function printInfo(info: string) {
   // eslint-disable-next-line no-console
@@ -22,7 +23,7 @@ function printInfo(info: string) {
 
 async function start() {
   if (cluster.isPrimary) {
-    process.title = 'cicada_primary';
+    requirementCheck();
 
     const PRINT_ENV_KEYS: (keyof typeof env)[] = ['VERSION', 'RUN_ENV'];
     for (const key of PRINT_ENV_KEYS) {
@@ -44,8 +45,6 @@ async function start() {
       cluster.fork();
     }
   } else {
-    process.title = 'cicada_worker';
-
     const server = new Koa();
 
     if (env.RUN_ENV === 'development') {
@@ -57,11 +56,11 @@ async function start() {
         credentials: true,
       }),
     );
-    server.use(mount(`/${PathPrefix.ASSET}`, asset));
-    server.use(mount(`/${PathPrefix.DOWNLOAD}`, download));
-    server.use(mount(`/${PathPrefix.API}`, api));
-    server.use(mount(`/${PathPrefix.BLOB}`, blob));
-    server.use(mount('/', pwa));
+    server.use(mount(`/${PathPrefix.ASSET}`, assetApp));
+    server.use(mount(`/${PathPrefix.DOWNLOAD}`, downloadApp));
+    server.use(mount(`/${PathPrefix.API}`, apiApp));
+    server.use(mount(`/${PathPrefix.BLOB}`, blobApp));
+    server.use(mount('/', pwaApp));
 
     http.createServer(server.callback()).listen(config.port);
   }

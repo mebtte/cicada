@@ -20,22 +20,27 @@ export default <ID extends number | string>({
     requestIdRef.current = requestId;
 
     setLoading(true);
-    Promise.resolve(dataGetter(keyword))
-      .then((data) => {
-        if (requestId === requestIdRef.current) {
-          setOptions(data);
-        }
-      })
-      .catch((error) => {
-        if (requestId === requestIdRef.current) {
-          onGetDataError(error);
-        }
-      })
-      .finally(() => {
-        if (requestId === requestIdRef.current) {
-          setLoading(false);
-        }
-      });
+    const timer = window.setTimeout(
+      () =>
+        Promise.resolve(dataGetter(keyword))
+          .then((data) => {
+            if (requestId === requestIdRef.current) {
+              setOptions(data);
+            }
+          })
+          .catch((error) => {
+            if (requestId === requestIdRef.current) {
+              onGetDataError(error);
+            }
+          })
+          .finally(() => {
+            if (requestId === requestIdRef.current) {
+              setLoading(false);
+            }
+          }),
+      300,
+    );
+    return () => window.clearTimeout(timer);
   }, [dataGetter, keyword, onGetDataError]);
 
   return { options, loading };

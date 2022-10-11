@@ -10,7 +10,7 @@ import {
 } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import parseFormdata, { File } from '@/utils/parse_formdata';
-import ffmpeg from 'ffmpeg-static';
+import which from 'which';
 import generateRandomString from '#/utils/generate_random_string';
 import fileType from 'file-type';
 import md5 from 'md5';
@@ -59,19 +59,28 @@ const ASSET_TYPE_MAP_OPTION: Record<
   },
   [AssetType.MUSIC_AC]: {
     handleAsset: async (file) => {
-      const targetPath = `${os.tmpdir()}/${generateRandomString(
-        10,
-        false,
-      )}.m4a`;
-      await spawnAsync(ffmpeg, [
-        '-y',
-        '-i',
-        file.path,
-        '-map_metadata',
-        '-1',
-        targetPath,
-      ]);
-      return readFileAsync(targetPath);
+      let ffmpegPath: string;
+      try {
+        ffmpegPath = await which('ffmpeg');
+      } catch (error) {
+        ffmpegPath = '';
+      }
+      if (ffmpegPath) {
+        const targetPath = `${os.tmpdir()}/${generateRandomString(
+          10,
+          false,
+        )}.m4a`;
+        await spawnAsync(ffmpegPath, [
+          '-y',
+          '-i',
+          file.path,
+          '-map_metadata',
+          '-1',
+          targetPath,
+        ]);
+        return readFileAsync(targetPath);
+      }
+      return readFileAsync(file.path);
     },
     generateId: (buffer) => {
       const hash = md5(buffer);
@@ -80,19 +89,28 @@ const ASSET_TYPE_MAP_OPTION: Record<
   },
   [AssetType.MUSIC_SQ]: {
     handleAsset: async (file) => {
-      const targetPath = `${os.tmpdir()}/${generateRandomString(
-        10,
-        false,
-      )}.m4a`;
-      await spawnAsync(ffmpeg, [
-        '-y',
-        '-i',
-        file.path,
-        '-map_metadata',
-        '-1',
-        targetPath,
-      ]);
-      return readFileAsync(targetPath);
+      let ffmpegPath: string;
+      try {
+        ffmpegPath = await which('ffmpeg');
+      } catch (error) {
+        ffmpegPath = '';
+      }
+      if (ffmpegPath) {
+        const targetPath = `${os.tmpdir()}/${generateRandomString(
+          10,
+          false,
+        )}.m4a`;
+        await spawnAsync(ffmpegPath, [
+          '-y',
+          '-i',
+          file.path,
+          '-map_metadata',
+          '-1',
+          targetPath,
+        ]);
+        return readFileAsync(targetPath);
+      }
+      return readFileAsync(file.path);
     },
     generateId: (buffer) => {
       const hash = md5(buffer);
@@ -101,19 +119,28 @@ const ASSET_TYPE_MAP_OPTION: Record<
   },
   [AssetType.MUSIC_HQ]: {
     handleAsset: async (file) => {
-      const targetPath = `${os.tmpdir()}/${generateRandomString(
-        10,
-        false,
-      )}.flac`;
-      await spawnAsync(ffmpeg, [
-        '-y',
-        '-i',
-        file.path,
-        '-map_metadata',
-        '-1',
-        targetPath,
-      ]);
-      return readFileAsync(targetPath);
+      let ffmpegPath: string;
+      try {
+        ffmpegPath = await which('ffmpeg');
+      } catch (error) {
+        ffmpegPath = '';
+      }
+      if (ffmpegPath) {
+        const targetPath = `${os.tmpdir()}/${generateRandomString(
+          10,
+          false,
+        )}.flac`;
+        await spawnAsync(ffmpegPath, [
+          '-y',
+          '-i',
+          file.path,
+          '-map_metadata',
+          '-1',
+          targetPath,
+        ]);
+        return readFileAsync(targetPath);
+      }
+      return readFileAsync(file.path);
     },
     generateId: (buffer) => {
       const hash = md5(buffer);
