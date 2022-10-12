@@ -3,7 +3,22 @@
   "short_name": "知了",
   "icons": [
     {
-      "src": "/app_icon.png",
+      "src": "/app_icon_180.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "/app_icon_192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/app_icon_270.png",
+      "type": "image/png",
+      "sizes": "270x270"
+    },
+    {
+      "src": "/app_icon_512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
