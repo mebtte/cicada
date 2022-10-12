@@ -6,30 +6,9 @@ import {
   useState,
 } from 'react';
 import * as React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-import scrollbarAlways from '#/style/scrollbar_always';
-import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
-import scrollbarNever from '#/style/scrollbar_never';
-import { ScrollbarType } from './constants';
-
-const SCROLLBAR_TYPE_MAP: Record<
-  ScrollbarType,
-  {
-    scrollbarStyle: ReturnType<typeof css> | null;
-  }
-> = {
-  [ScrollbarType.ALWAYS]: {
-    scrollbarStyle: scrollbarAlways,
-  },
-  [ScrollbarType.AS_NEEDED]: {
-    scrollbarStyle: scrollbarAsNeeded,
-  },
-  [ScrollbarType.NEVER]: {
-    scrollbarStyle: scrollbarNever,
-  },
-};
-const Style = styled.div<{ scrollbarType: ScrollbarType }>`
+const Style = styled.div`
   overflow: hidden;
   position: relative;
   > .content {
@@ -65,36 +44,27 @@ const Style = styled.div<{ scrollbarType: ScrollbarType }>`
     left: 0;
     width: 100%;
   }
-  ${({ scrollbarType }) => {
-    const { scrollbarStyle } = SCROLLBAR_TYPE_MAP[scrollbarType];
-    return css`
-      > .content {
-        ${scrollbarStyle}
-      }
-    `;
-  }}
 `;
 
 type Props = React.PropsWithChildren<{
   r?: number;
   g?: number;
   b?: number;
-  scrollbarType?: ScrollbarType;
   maskProps?: {
     style?: React.CSSProperties;
     size?: number;
   };
   contentProps?: HTMLAttributes<HTMLDivElement>;
-  [key: string]: any;
+  [key: string]: unknown;
 }>;
 
+// eslint-disable-next-line react/display-name
 const Scollable = React.forwardRef<HTMLDivElement, Props>(
   (
     {
       r = 255,
       g = 255,
       b = 255,
-      scrollbarType = ScrollbarType.ALWAYS,
       maskProps = {},
       contentProps = {},
       children,
@@ -134,7 +104,7 @@ const Scollable = React.forwardRef<HTMLDivElement, Props>(
 
     const { size = 40, style } = maskProps;
     return (
-      <Style {...props} scrollbarType={scrollbarType} ref={ref}>
+      <Style {...props} ref={ref}>
         <div
           {...contentProps}
           ref={innerRef}

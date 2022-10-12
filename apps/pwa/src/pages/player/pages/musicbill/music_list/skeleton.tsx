@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
 import { animated } from 'react-spring';
 import styled from 'styled-components';
-
-import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 import getRandomInteger from '#/utils/generate_random_integer';
 import { Skeleton } from '../../../components/music';
 
@@ -13,7 +11,6 @@ const Style = styled(animated.div)`
   width: 100%;
   height: 100%;
   overflow: auto;
-  ${scrollbarAsNeeded}
 `;
 
 function Wrapper({ style }: { style: unknown }) {

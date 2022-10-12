@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 import { ZIndex } from '#/constants/style';
-import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 
 const Mask = styled(animated.div)`
   z-index: ${ZIndex.POPUP};
@@ -27,7 +26,6 @@ const Body = styled(animated.div)`
   max-height: 75%;
 
   overflow: auto;
-  ${scrollbarAsNeeded}
 
   box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2),
     0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);

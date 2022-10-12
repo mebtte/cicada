@@ -5,7 +5,6 @@ import {
   MultipleLrcLine,
   useRecoverAutoScrollImmediately,
 } from 'react-lrc';
-import scrollbarNever from '#/style/scrollbar_never';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import eventemitter, { EventType } from './eventemitter';
 import { Lyric } from './constants';
@@ -16,7 +15,6 @@ const StyledLrc = styled(MultipleLrc)`
   left: 0;
   width: 100%;
   height: 100%;
-  ${scrollbarNever}
 `;
 const LyricLine = styled.div<{ active: boolean }>`
   text-align: center;

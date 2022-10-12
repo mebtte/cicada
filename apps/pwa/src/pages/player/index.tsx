@@ -22,6 +22,7 @@ import MusicbillOrderDrawer from './musicbilll_order_drawer';
 import CreateMusicbillDialog from './create_musicbill_dialog';
 import { QueueMusic } from './constants';
 import Lyric from './lyric';
+import useKeyboard from './use_keyboard';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -53,6 +54,8 @@ function Wrapper() {
   const { playqueue, currentPosition: currentPlayqueuePosition } =
     usePlayqueue(playlist);
   const queueMusic = playqueue[currentPlayqueuePosition] as QueueMusic | null;
+
+  useKeyboard();
 
   return (
     <Context.Provider

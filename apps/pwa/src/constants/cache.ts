@@ -3,7 +3,3 @@ export enum CacheName {
   ASSET = 'asset',
   ASSET_MEDIA = 'asset_media',
 }
-
-export enum Query {
-  VERSION = '__v',
-}

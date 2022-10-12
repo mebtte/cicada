@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-
-import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 import { Musicbill as MusicbillType, Music as MusicType } from '../constants';
 import Musicbill from './musicbill';
 import CreateMusicbill from './create_musicbill';
@@ -14,7 +12,6 @@ const Style = styled.div<{ topBoxShadow: number }>`
   padding: 0 20px;
 
   overflow: auto;
-  ${scrollbarAsNeeded}
 
   ${({ topBoxShadow }) => css`
     box-shadow: ${topBoxShadow
@@ -23,13 +20,13 @@ const Style = styled.div<{ topBoxShadow: number }>`
   `}
 `;
 
-const MusicbillList = ({
+function MusicbillList({
   musicbillList,
   music,
 }: {
   musicbillList: MusicbillType[];
   music?: MusicType;
-}) => {
+}) {
   const [topBoxShadow, setTopBoxShadow] = useState(0);
   const onScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
     const { scrollTop } = event.target as HTMLDivElement;
@@ -43,6 +40,6 @@ const MusicbillList = ({
       <CreateMusicbill />
     </Style>
   );
-};
+}
 
 export default MusicbillList;

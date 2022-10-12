@@ -1,9 +1,10 @@
 import useNavigate from '#/utils/use_navigate';
 import Pagination from '@/components/pagination';
 import { MusicWithIndex } from '@/pages/player/constants';
+import { Query } from '@/constants';
 import ScrollablePage from './scrollable_page';
 import Music from '../../components/music';
-import { Query, PAGE_SIZE } from './constants';
+import { PAGE_SIZE } from './constants';
 
 const paginationStyle = {
   padding: '10px 0',

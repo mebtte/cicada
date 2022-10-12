@@ -1,13 +1,16 @@
 import { memo } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Cover from '#/components/cover';
 import mm from '@/global_states/mini_mode';
 import IconButton from '#/components/icon_button';
-import { MdMenu } from 'react-icons/md';
+import { MdMenu, MdSearch } from 'react-icons/md';
+import useNavigate from '#/utils/use_navigate';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import Search from './search';
 import Title from './title';
 import useTitle from './use_title';
 import e, { EventType } from '../eventemitter';
+import useTitleBar from './use_title_bar';
 
 const openSidebar = () => e.emit(EventType.MINI_MODE_OPEN_SIDEBAR, null);
 const Style = styled.div`
@@ -19,26 +22,34 @@ const Style = styled.div`
 
   box-sizing: border-box;
   -webkit-app-region: drag;
-
-  ${({ theme: { miniMode } }) => css`
-    padding: 0 ${miniMode ? 15 : 20}px;
-  `}
 `;
 
 function Header() {
+  const navigate = useNavigate();
   const miniMode = mm.useState();
   const title = useTitle();
+  const { left, right } = useTitleBar();
+
   return (
-    <Style>
+    <Style style={{ paddingLeft: left, paddingRight: right }}>
       {miniMode ? (
-        <IconButton onClick={openSidebar}>
-          <MdMenu />
-        </IconButton>
+        <>
+          <IconButton onClick={openSidebar}>
+            <MdMenu />
+          </IconButton>
+          <IconButton
+            onClick={() =>
+              navigate({ path: `${ROOT_PATH.PLAYER}${PLAYER_PATH.SEARCH}` })
+            }
+          >
+            <MdSearch />
+          </IconButton>
+        </>
       ) : (
         <Cover src="/logo.png" size={24} />
       )}
       <Title title={title} />
-      <Search />
+      {miniMode ? null : <Search />}
     </Style>
   );
 }

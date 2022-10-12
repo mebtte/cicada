@@ -11,6 +11,7 @@ import Spinner from './spinner';
 
 const Style = styled.button<{ size: ComponentSize }>`
   position: relative;
+  -webkit-app-region: no-drag;
 
   padding: 0;
 

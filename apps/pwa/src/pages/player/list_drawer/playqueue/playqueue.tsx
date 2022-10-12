@@ -1,25 +1,22 @@
 import { useMemo } from 'react';
 import styled from 'styled-components';
 import List from 'react-list';
-
-import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 import { QueueMusic } from '../../constants';
 import Container from '../container';
 import Music from './music';
 
 const Style = styled(Container)`
-  ${scrollbarAsNeeded}
   overflow: auto;
   padding: 0 20px;
 `;
 
-const Playqueue = ({
+function Playqueue({
   playqueue,
   currentPlayqueuePosition,
 }: {
   playqueue: QueueMusic[];
   currentPlayqueuePosition: number;
-}) => {
+}) {
   const reversedPlayqueue = useMemo(
     () => [...playqueue].reverse(),
     [playqueue],
@@ -42,6 +39,6 @@ const Playqueue = ({
       <List length={length} type="uniform" itemRenderer={itemRenderer} />
     </Style>
   );
-};
+}
 
 export default Playqueue;

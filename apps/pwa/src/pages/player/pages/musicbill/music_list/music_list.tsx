@@ -2,9 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { animated } from 'react-spring';
 import styled from 'styled-components';
 import List from 'react-list';
-
 import { MUSICBILL_SCROLL_TOP } from '@/constants/storage_key';
-import scrollbarAsNeeded from '#/style/scrollbar_as_needed';
 import { MusicWithIndex } from '../../../constants';
 import Music from '../../../components/music';
 
@@ -16,7 +14,6 @@ const Style = styled(animated.div)`
   height: 100%;
 
   overflow: auto;
-  ${scrollbarAsNeeded}
 `;
 
 function MusicList({
