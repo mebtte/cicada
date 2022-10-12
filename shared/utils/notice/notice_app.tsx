@@ -1,38 +1,39 @@
-import { useEffect, useState } from 'react';
-import {
-  BASE_TOP,
-  Notice,
-  NOTICE_ITEM_SPACE,
-  TRANSITION_DURATION,
-} from './constants';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Notice, NOTICE_ITEM_SPACE, TRANSITION_DURATION } from './constants';
 import NoticeItem from './notice_item';
 import e, { EventType } from './eventemitter';
-
-function handleNoticeListTop(noticeList: Notice[]) {
-  let nextTop = BASE_TOP;
-  return noticeList.map((n) => {
-    const notice = {
-      ...n,
-      top: nextTop,
-    };
-
-    if (notice.visible) {
-      nextTop += n.height + NOTICE_ITEM_SPACE;
-    }
-
-    return notice;
-  });
-}
+import useTitlebarAreaRect from '../use_titlebar_area_rect';
 
 function NoticeApp() {
+  const rect = useTitlebarAreaRect();
+  const baseTop = useMemo(() => (rect.height ? 15 : 55), [rect.height]);
+
   const [noticeList, setNoticeList] = useState<Notice[]>([]);
+  const handleNoticeListTop = useCallback(
+    (nl: Notice[]) => {
+      let nextTop = baseTop + rect.height;
+      return nl.map((n) => {
+        const notice = {
+          ...n,
+          top: nextTop,
+        };
+
+        if (notice.visible) {
+          nextTop += n.height + NOTICE_ITEM_SPACE;
+        }
+
+        return notice;
+      });
+    },
+    [baseTop, rect.height],
+  );
 
   useEffect(() => {
     const unlistenOpen = e.listen(EventType.OPEN, (data) =>
       setNoticeList((nl) => {
         const top = nl.reduce(
           (t, n) => t + n.height + NOTICE_ITEM_SPACE,
-          BASE_TOP,
+          baseTop + rect.height,
         );
         return [
           ...nl,
@@ -89,7 +90,7 @@ function NoticeApp() {
       unlistenClose();
       unlistenUpdateHeight();
     };
-  }, []);
+  }, [baseTop, handleNoticeListTop, rect.height]);
 
   return (
     <>

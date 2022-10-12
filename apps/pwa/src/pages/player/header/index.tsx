@@ -10,7 +10,7 @@ import Search from './search';
 import Title from './title';
 import useTitle from './use_title';
 import e, { EventType } from '../eventemitter';
-import useTitleBar from './use_title_bar';
+import useTitlebar from './use_titlebar';
 
 const openSidebar = () => e.emit(EventType.MINI_MODE_OPEN_SIDEBAR, null);
 const Style = styled.div`
@@ -28,7 +28,7 @@ function Header() {
   const navigate = useNavigate();
   const miniMode = mm.useState();
   const title = useTitle();
-  const { left, right } = useTitleBar();
+  const { left, right } = useTitlebar();
 
   return (
     <Style style={{ paddingLeft: left, paddingRight: right }}>
