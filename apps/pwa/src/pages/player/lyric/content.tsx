@@ -13,7 +13,7 @@ const Container = styled(animated.div)`
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - ${CONTROLLER_HEIGHT}px);
+  height: calc(100% - ${CONTROLLER_HEIGHT}px - env(safe-area-inset-bottom, 0));
 `;
 const Text = styled.div`
   position: absolute;

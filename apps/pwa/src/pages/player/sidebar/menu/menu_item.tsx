@@ -13,6 +13,7 @@ const Style = styled(NavLink)`
   text-decoration: none;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   transition: 300ms;
+  user-select: none;
 
   > svg {
     width: 32px;

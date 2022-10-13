@@ -1,7 +1,6 @@
 import { memo, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
-
 import useOpen from './use_open';
 import { Music } from '../constants';
 import Action from './action';

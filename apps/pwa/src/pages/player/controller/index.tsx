@@ -22,10 +22,12 @@ const Style = styled.div`
   padding: 4px 20px;
   background: rgb(255 255 255 / 0.7);
   transition: 300ms;
+  box-shadow: 0 -5px 5px rgb(0 0 0 / 5%);
+
   &:hover {
     background: rgb(255 255 255 / 1);
   }
-  box-shadow: 0 0 5px rgb(0 0 0 / 0.1);
+
   > .cover {
     cursor: pointer;
     border: 1px solid var(--color-primary);
