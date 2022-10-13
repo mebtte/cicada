@@ -1,6 +1,6 @@
+import formatMusicFilename from '#/utils/format_music_filename';
 import { useCallback } from 'react';
-import dialog from '#/utils/dialog';
-import notice from '#/utils/notice';
+import { saveAs } from 'file-saver';
 import { Music as MusicType } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 
@@ -38,24 +38,22 @@ export default (
       afterOperate();
     }
   }, [music, afterOperate]);
+  const onDownloadSq = useCallback(() => {
+    const parts = music.sq.split('.');
+    saveAs(
+      music.sq,
+      formatMusicFilename({
+        name: music.name,
+        singerNames: music.singers.map((s) => s.name),
+        ext: `.${parts[parts.length - 1]}`,
+      }),
+    );
+    return afterOperate && afterOperate();
+  }, [afterOperate, music]);
   const onOperate = useCallback(
     () => eventemitter.emit(EventType.OPEN_MUSIC_OPERATE_POPUP, { music }),
     [music],
   );
-  const onCopyID = useCallback(() => {
-    window.navigator.clipboard
-      .writeText(music.id)
-      .then(() => notice.success(`已复制「${music.id}」`))
-      .catch((error) =>
-        dialog.alert({
-          title: '复制失败',
-          content: error.message,
-        }),
-      );
-    if (afterOperate) {
-      afterOperate();
-    }
-  }, [music, afterOperate]);
 
   return {
     onView,
@@ -63,7 +61,7 @@ export default (
     onAddToPlayqueue,
     onAddToMusicbill,
     onAddToPlaylist,
+    onDownloadSq,
     onOperate,
-    onCopyID,
   };
 };

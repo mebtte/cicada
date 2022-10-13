@@ -2,7 +2,6 @@ import { encode } from 'html-entities';
 import archiver from 'archiver';
 import fs from 'fs';
 import path from 'path';
-import sanitize from 'sanitize-filename';
 import withTimeout from '#/utils/with_timeout';
 import db from '@/db';
 import { getUserById, User, Property as UserProperty } from '@/db/user';
@@ -20,6 +19,7 @@ import { getAssetPath } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
 import { DOWNLOAD_DIR } from '@/constants/directory';
 import config from '@/config';
+import formatMusicFilename from '#/utils/format_music_filename';
 
 interface MusicbillExport {
   id: number;
@@ -126,16 +126,11 @@ async function exportMusicbill(
       const singers = musicIdMapSingerList[m.id];
       return {
         path: getAssetPath(m.sq, AssetType.MUSIC_SQ),
-        name: sanitize(
-          `${
-            // eslint-disable-next-line no-nested-ternary
-            singers.length === 0
-              ? '未知歌手'
-              : singers.length > 3
-              ? '群星'
-              : singers.map((s) => s.name).join(',')
-          } - ${m.name}${path.parse(m.sq).ext}`,
-        ),
+        name: formatMusicFilename({
+          name: m.name,
+          singerNames: singers.map((s) => s.name),
+          ext: path.parse(m.sq).ext,
+        }),
       };
     }),
     `${DOWNLOAD_DIR}/${exportFilename}`,

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-
+import { MdDownload } from 'react-icons/md';
 import VerticalDrawer from '@/components/vertical_drawer';
 import { Name } from '@/components/icon';
 import { Music as MusicType } from '../constants';
@@ -31,7 +31,7 @@ function MusicOperateDrawer({
     onAddToPlayqueue,
     onAddToMusicbill,
     onAddToPlaylist,
-    onCopyID,
+    onDownloadSq,
   } = useMusicOperate(music, onClose);
 
   return (
@@ -57,7 +57,7 @@ function MusicOperateDrawer({
         label="添加到播放列表"
         onClick={onAddToPlaylist}
       />
-      <MenuItem icon={Name.COPY_OUTLINE} label="复制 ID" onClick={onCopyID} />
+      <MenuItem icon={<MdDownload />} label="下载" onClick={onDownloadSq} />
     </VerticalDrawer>
   );
 }
