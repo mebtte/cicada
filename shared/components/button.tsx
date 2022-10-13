@@ -17,7 +17,7 @@ const VARIANT_MAP: Record<
 > = {
   [Variant.NORMAL]: {
     css: css`
-      border: 1px solid rgb(188 188 188);
+      border: 1px solid ${CSSVariable.COLOR_BORDER};
       background-color: transparent;
       background-clip: padding-box;
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};

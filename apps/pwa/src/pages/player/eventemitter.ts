@@ -53,6 +53,7 @@ export enum EventType {
   OPEN_MUSICBILL_ORDER_DRAWER = 'open_musicbill_order_drawer',
   OPEN_PLAYLIST_PLAYQUEUE_DRAWER = 'open_playlist_playqueue_drawer',
   TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER = 'toggle_playlist_playqueue_drawer',
+  OPEN_MUSIC_DOWNLOAD_DIALOG = 'open_music_download_dialog',
 }
 
 export default new Eventin<
@@ -106,5 +107,6 @@ export default new Eventin<
     [EventType.OPEN_MUSICBILL_ORDER_DRAWER]: null;
     [EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER]: null;
+    [EventType.OPEN_MUSIC_DOWNLOAD_DIALOG]: { music: Music };
   }
 >();

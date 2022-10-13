@@ -86,7 +86,7 @@ export const EXCEPTION_CODE_MAP: Record<
     description: '无法导出空的乐单',
   },
   [ExceptionCode.OVER_EXPORT_MUSICBILL_TIMES_PER_DAY]: {
-    description: '超出每天导出乐单最大次数',
+    description: '已超出每天导出乐单最大次数, 请明天再试',
   },
   [ExceptionCode.SINGER_NOT_EXIST]: {
     description: '歌手不存在',

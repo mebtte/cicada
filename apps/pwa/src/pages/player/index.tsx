@@ -23,6 +23,7 @@ import CreateMusicbillDialog from './create_musicbill_dialog';
 import { QueueMusic } from './constants';
 import Lyric from './lyric';
 import useKeyboard from './use_keyboard';
+import MusicDownloadDialog from './music_download_dialog';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -101,6 +102,7 @@ function Wrapper() {
       <MusicbillOrderDrawer />
 
       <CreateMusicbillDialog />
+      <MusicDownloadDialog />
 
       <MusicOperatePopup />
 

@@ -1,6 +1,4 @@
-import formatMusicFilename from '#/utils/format_music_filename';
 import { useCallback } from 'react';
-import { saveAs } from 'file-saver';
 import { Music as MusicType } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 
@@ -38,16 +36,8 @@ export default (
       afterOperate();
     }
   }, [music, afterOperate]);
-  const onDownloadSq = useCallback(() => {
-    const parts = music.sq.split('.');
-    saveAs(
-      music.sq,
-      formatMusicFilename({
-        name: music.name,
-        singerNames: music.singers.map((s) => s.name),
-        ext: `.${parts[parts.length - 1]}`,
-      }),
-    );
+  const onOpenDownloadDialog = useCallback(() => {
+    eventemitter.emit(EventType.OPEN_MUSIC_DOWNLOAD_DIALOG, { music });
     return afterOperate && afterOperate();
   }, [afterOperate, music]);
   const onOperate = useCallback(
@@ -61,7 +51,7 @@ export default (
     onAddToPlayqueue,
     onAddToMusicbill,
     onAddToPlaylist,
-    onDownloadSq,
+    onOpenDownloadDialog,
     onOperate,
   };
 };

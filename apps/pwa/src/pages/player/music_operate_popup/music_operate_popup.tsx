@@ -31,7 +31,7 @@ function MusicOperateDrawer({
     onAddToPlayqueue,
     onAddToMusicbill,
     onAddToPlaylist,
-    onDownloadSq,
+    onOpenDownloadDialog,
   } = useMusicOperate(music, onClose);
 
   return (
@@ -57,7 +57,11 @@ function MusicOperateDrawer({
         label="添加到播放列表"
         onClick={onAddToPlaylist}
       />
-      <MenuItem icon={<MdDownload />} label="下载" onClick={onDownloadSq} />
+      <MenuItem
+        icon={<MdDownload />}
+        label="下载"
+        onClick={onOpenDownloadDialog}
+      />
     </VerticalDrawer>
   );
 }
