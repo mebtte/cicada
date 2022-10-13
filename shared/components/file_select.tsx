@@ -15,6 +15,7 @@ const Style = styled.div<{ disabled: boolean }>`
   font-size: 12px;
   transition: inherit;
   user-select: none;
+  word-break: break-all;
 
   &:active {
     border-color: ${CSSVariable.COLOR_PRIMARY};

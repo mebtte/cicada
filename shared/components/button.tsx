@@ -89,6 +89,7 @@ const Style = styled.button<{
   font-size: 14px;
   cursor: pointer;
   transition: all 300ms;
+  user-select: none;
 
   &:disabled {
     cursor: not-allowed;
