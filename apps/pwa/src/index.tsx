@@ -50,7 +50,7 @@ if ('serviceWorker' in navigator) {
           wb.addEventListener('waiting', () => {
             const id = notice.info(
               <VersionUpdater>
-                <div className="text">检测到新版本, 是否刷新马上使用?</div>
+                <div className="text">检测到新版本, 是否马上重新加载?</div>
                 <div className="action-box">
                   <IconButton
                     className="action"

@@ -5,6 +5,8 @@ import {
   KeyboardEvent,
   FocusEvent,
   CSSProperties,
+  useRef,
+  useEffect,
 } from 'react';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import notice from '#/utils/notice';
@@ -24,6 +26,8 @@ const style: CSSProperties = {
 function Wrapper() {
   const navigate = useNavigate();
   const miniMode = mm.useState();
+
+  const ref = useRef<{ root: HTMLLabelElement; input: HTMLInputElement }>(null);
 
   const [keyword, setKeyword] = useState('');
   const onKeywordChange = (event: ChangeEvent<HTMLInputElement>) =>
@@ -57,8 +61,17 @@ function Wrapper() {
     return event.target.select();
   };
 
+  useEffect(() => {
+    const unlistenFocus = eventemitter.listen(
+      EventType.FOCUS_SEARCH_INPUT,
+      () => ref.current?.input.focus(),
+    );
+    return unlistenFocus;
+  }, []);
+
   return (
     <Input
+      ref={ref}
       style={style}
       inputProps={{
         value: keyword,

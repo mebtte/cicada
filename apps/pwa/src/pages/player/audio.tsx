@@ -1,7 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 import * as React from 'react';
 import throttle from 'lodash/throttle';
-import keyboardHandlerWrapper from '@/utils/keyboard_handler_wrapper';
 import uploadMusicPlayRecord from '@/server/upload_music_play_record';
 import logger from '#/utils/logger';
 import { CacheName } from '@/constants/cache';
@@ -11,7 +10,6 @@ import dialog from '#/utils/dialog';
 import eventemitter, { EventType } from './eventemitter';
 import { QueueMusic, PlayMode, Music } from './constants';
 
-const JUMP_STEP = 5;
 const style = {
   display: 'none',
 };
@@ -54,7 +52,6 @@ class Audio extends React.PureComponent<Props, {}> {
     eventemitter.listen(EventType.ACTION_PLAY, this.onActionPlay);
     eventemitter.listen(EventType.ACTION_PAUSE, this.onActionPause);
 
-    document.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('beforeunload', this.beforeUnload);
   }
 
@@ -92,7 +89,6 @@ class Audio extends React.PureComponent<Props, {}> {
     eventemitter.unlisten(EventType.ACTION_PLAY, this.onActionPlay);
     eventemitter.unlisten(EventType.ACTION_PAUSE, this.onActionPause);
 
-    document.removeEventListener('keydown', this.onKeyDown);
     window.removeEventListener('beforeunload', this.beforeUnload);
 
     this.uploadPlayRecord(this.props.queueMusic.music);
@@ -110,26 +106,6 @@ class Audio extends React.PureComponent<Props, {}> {
       });
     }, 0);
   };
-
-  onKeyDown = keyboardHandlerWrapper((event: KeyboardEvent) => {
-    const { key } = event;
-    // eslint-disable-next-line default-case
-    switch (key) {
-      case ' ': {
-        event.preventDefault();
-        this.onActionTogglePlay();
-        break;
-      }
-      case 'ArrowLeft': {
-        this.audioRef.current!.currentTime -= JUMP_STEP;
-        break;
-      }
-      case 'ArrowRight': {
-        this.audioRef.current!.currentTime += JUMP_STEP;
-        break;
-      }
-    }
-  });
 
   onActionTogglePlay = () =>
     this.audioRef.current!.paused
