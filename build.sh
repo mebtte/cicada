@@ -3,11 +3,11 @@ set -e
 
 npm install
 
-# # get sqlite3 version
+# get sqlite3 version
 sqlite3_pkg=$(cat node_modules/sqlite3/package.json)
 sqlite3_version=$(node -e "console.log(JSON.parse(\`$sqlite3_pkg\`).version)")
 
-# # download sqlite3 binary that need to pkg
+# download sqlite3 binary that need to pkg
 targets=("napi-v6-darwin-unknown-x64" "napi-v6-win32-unknown-x64" "napi-v6-linux-glibc-x64")
 for target in ${targets[@]}; do
   wget https://github.com/TryGhost/node-sqlite3/releases/download/v$sqlite3_version/$target.tar.gz
@@ -20,8 +20,11 @@ done
 npm run build:pwa
 npm run build:server
 
+# backup package.json
+cp package.json package.json.bak
+
 # write pkg targets to package.json
-pkg=$(cat package.json)
+pkg="$(cat package.json)"
 node -e "const pkg = JSON.parse(\`$pkg\`); pkg.pkg.targets = [\"node16-macos-x64\",\"node16-win-x64\",\"node16-linux-x64\"]; console.log(JSON.stringify(pkg))" >package.json
 
 if [ -d "build" ]; then
@@ -30,10 +33,12 @@ fi
 npm run pkg
 
 # recover package.json
-echo $pkg >package.json
+rm package.json
+mv package.json.bak package.json
 
 cd build
+tag=$(git describe --abbrev=0 --tags)
 for binary in ./*; do
-  tar zcvf $binary.tar.gz $binary
+  tar zcvf $(echo $binary | sed -e 's/.exe//g')-$tag-x64.tar.gz $binary
   rm $binary
 done
