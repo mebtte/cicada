@@ -5,7 +5,7 @@ function filterMusic(keyword: string) {
     const { name, aliases, singers } = listMusic.music;
     if (
       name.toLowerCase().indexOf(keyword) > -1 ||
-      aliases.toLowerCase().indexOf(keyword) > -1
+      aliases.find((alias) => alias.toLowerCase().includes(keyword))
     ) {
       return true;
     }

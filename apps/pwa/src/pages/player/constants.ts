@@ -39,7 +39,7 @@ export interface Music {
   cover: string;
   name: string;
   type: MusicType;
-  aliases: string;
+  aliases: string[];
   ac: string;
   hq: string;
   sq: string;

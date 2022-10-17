@@ -9,7 +9,7 @@ export const transformMusic = (originalMusic: {
   cover: string;
   name: string;
   type: MusicType;
-  aliases: string;
+  aliases: string[];
   singers: Singer[];
   sq: string;
   hq: string;

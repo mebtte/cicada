@@ -1,4 +1,4 @@
-import { AssetType } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import excludeProperty from '#/utils/exclude_property';
 import {
@@ -122,6 +122,7 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...excludeProperty(music, [MusicProperty.CREATE_USER_ID]),
+    aliases: music.aliases.split(ALIAS_DIVIDER),
     cover: getAssetUrl(music.cover, AssetType.MUSIC_COVER),
     sq: getAssetUrl(music.sq, AssetType.MUSIC_SQ),
     hq: getAssetUrl(music.hq, AssetType.MUSIC_HQ),

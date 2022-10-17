@@ -12,7 +12,7 @@ function getSelfMusicbill(id: string) {
       id: string;
       type: MusicType;
       name: string;
-      aliases: string;
+      aliases: string[];
       cover: string;
       sq: string;
       hq: string;

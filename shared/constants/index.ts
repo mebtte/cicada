@@ -62,6 +62,11 @@ export const ASSET_TYPE_MAP: Record<
 
 export const EFFECTIVE_PLAY_PERCENT = 0.75;
 
-export const ALIAS_DIVIDER = '|';
+/**
+ * 禁止修改分隔符
+ * 否则数据库数据将异常
+ * @author mebtte<hi@mebtte.com>
+ */
+export const ALIAS_DIVIDER = '♫';
 
 export const DOWNLOAD_TTL = 1000 * 60 * 60 * 24 * 3;

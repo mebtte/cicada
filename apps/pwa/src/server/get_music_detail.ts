@@ -14,7 +14,7 @@ interface Music {
   cover: string;
   name: string;
   type: MusicType;
-  aliases: string;
+  aliases: string[];
   ac: string;
   hq: string;
   mv_link: string;

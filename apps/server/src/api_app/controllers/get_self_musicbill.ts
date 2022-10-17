@@ -1,4 +1,4 @@
-import { AssetType } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import {
   getMusicbillById,
@@ -102,6 +102,7 @@ export default async (ctx: Context) => {
     cover: getAssetUrl(musicbill.cover, AssetType.MUSICBILL_COVER),
     musicList: musicList.map((m) => ({
       ...m,
+      aliases: m.aliases.split(ALIAS_DIVIDER),
       cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
       sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
       hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
