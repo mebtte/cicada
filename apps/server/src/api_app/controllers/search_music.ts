@@ -161,7 +161,7 @@ export default async (ctx: Context) => {
     total: total!.value,
     musicList: musicList.map((m) => ({
       ...excludeProperty(m, [MusicProperty.CREATE_USER_ID]),
-      aliases: m.aliases.split(ALIAS_DIVIDER),
+      aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
       sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
       hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),

@@ -39,8 +39,8 @@ function MusicInfo({ music }: { music: Music }) {
       <div className="top">
         <Scrollable className="text">
           <span className="name">{music.name}</span>
-          {music.aliases ? (
-            <span className="alias">{music.aliases}</span>
+          {music.aliases.length ? (
+            <span className="alias">{music.aliases[0]}</span>
           ) : null}
         </Scrollable>
         <MusicTagList className="tag" music={music} />

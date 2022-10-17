@@ -30,7 +30,9 @@ function Music({
             <span className="name" onClick={onView}>
               {name}
             </span>
-            {aliases ? <span className="alias">{aliases}</span> : null}
+            {aliases.length ? (
+              <span className="alias">{aliases[0]}</span>
+            ) : null}
           </div>
           <MusicTagList music={music} />
         </div>

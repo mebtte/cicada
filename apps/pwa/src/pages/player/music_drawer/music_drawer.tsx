@@ -136,8 +136,8 @@ function MusicDrawer({
                 size={COVER_SIZE}
               />
               <div className="name">{music.name}</div>
-              {music.aliases ? (
-                <div className="alias">{music.aliases}</div>
+              {music.aliases.length ? (
+                <div className="alias">{music.aliases[0]}</div>
               ) : null}
               {music.singers.length ? (
                 <div className="singers">
