@@ -4,10 +4,13 @@ import {
   MdOutlineSettings,
   MdOutlineMusicNote,
   MdPersonOutline,
+  MdOutlineAdminPanelSettings,
 } from 'react-icons/md';
+import p from '@/global_states/profile';
 import MenuItem from './menu_item';
 
 function Menu() {
+  const profile = p.useState()!;
   return (
     <div>
       <MenuItem
@@ -25,6 +28,13 @@ function Menu() {
         label="我的歌手"
         icon={<MdPersonOutline />}
       />
+      {profile.super ? (
+        <MenuItem
+          to={`${ROOT_PATH.PLAYER}${PLAYER_PATH.SUPER}`}
+          label="超级管理员"
+          icon={<MdOutlineAdminPanelSettings />}
+        />
+      ) : null}
       <MenuItem
         to={`${ROOT_PATH.PLAYER}${PLAYER_PATH.SETTING}`}
         label="设置"
