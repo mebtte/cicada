@@ -70,13 +70,12 @@ export default async (ctx: Context) => {
       : undefined,
   ]);
   const musicIdMapSingerList: {
-    [key: string]: Pick<
+    [key: string]: (Pick<
       Singer,
-      | SingerProperty.ID
-      | SingerProperty.NAME
-      | SingerProperty.ALIASES
-      | SingerProperty.AVATAR
-    >[];
+      SingerProperty.ID | SingerProperty.NAME | SingerProperty.AVATAR
+    > & {
+      aliases: string[];
+    })[];
   } = {};
   allSingerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
@@ -85,6 +84,7 @@ export default async (ctx: Context) => {
     musicIdMapSingerList[s.musicId].push({
       ...excludeProperty(s, ['musicId']),
       avatar: getAssetUrl(s.avatar, AssetType.SINGER_AVATAR),
+      aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     });
   });
 
@@ -100,13 +100,12 @@ export default async (ctx: Context) => {
       | MusicProperty.HQ
       | MusicProperty.AC
     > & {
-      singers: Pick<
+      singers: (Pick<
         Singer,
-        | SingerProperty.ID
-        | SingerProperty.NAME
-        | SingerProperty.ALIASES
-        | SingerProperty.AVATAR
-      >[];
+        SingerProperty.ID | SingerProperty.NAME | SingerProperty.AVATAR
+      > & {
+        aliases: string[];
+      })[];
     };
   } = {};
   musicList.forEach((m) => {
@@ -127,7 +126,7 @@ export default async (ctx: Context) => {
     sq: getAssetUrl(music.sq, AssetType.MUSIC_SQ),
     hq: getAssetUrl(music.hq, AssetType.MUSIC_HQ),
     ac: getAssetUrl(music.ac, AssetType.MUSIC_AC),
-    singers: allSingerList[id] || [],
+    singers: musicIdMapSingerList[id] || [],
     createUser: {
       ...createUser,
       avatar: getAssetUrl(createUser!.avatar, AssetType.USER_AVATAR),

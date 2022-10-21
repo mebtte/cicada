@@ -1,5 +1,4 @@
 import { RequestStatus } from '@/constants';
-import { Singer } from '@/constants/singer';
 import { MusicType } from '#/constants/music';
 import { Type as TagType } from '@/components/tag';
 
@@ -33,6 +32,13 @@ export const PLAY_MODE_MAP: Record<
 };
 
 export const PLAY_MODES = Object.keys(PLAY_MODE_MAP) as PlayMode[];
+
+export interface Singer {
+  id: string;
+  avatar: string;
+  name: string;
+  aliases: string[];
+}
 
 export interface Music {
   id: string;

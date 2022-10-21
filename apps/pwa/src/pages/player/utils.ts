@@ -1,8 +1,7 @@
 /* eslint-disable camelcase */
 import getRandomCover from '@/utils/get_random_cover';
 import { MusicType } from '#/constants/music';
-import { Singer } from '@/constants/singer';
-import { Music } from './constants';
+import { Singer, Music } from './constants';
 
 export const transformMusic = (originalMusic: {
   id: string;

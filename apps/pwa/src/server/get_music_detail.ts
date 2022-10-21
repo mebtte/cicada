@@ -6,7 +6,7 @@ interface Singer {
   id: string;
   name: string;
   avatar: string;
-  aliases: string;
+  aliases: string[];
 }
 
 interface Music {

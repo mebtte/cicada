@@ -20,7 +20,7 @@ function getSelfMusicbill(id: string) {
       singers: {
         id: string;
         name: string;
-        aliases: string;
+        aliases: string[];
         avatar: string;
       }[];
     }[];

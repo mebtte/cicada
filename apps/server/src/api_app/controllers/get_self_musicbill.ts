@@ -72,7 +72,7 @@ export default async (ctx: Context) => {
     [key: string]: {
       id: string;
       name: string;
-      aliases: string;
+      aliases: string[];
       avatar: string;
     }[];
   } = {};
@@ -93,6 +93,7 @@ export default async (ctx: Context) => {
       musicIdMapSingers[singer.musicId].push({
         ...excludeProperty(singer, ['musicId']),
         avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),
+        aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
       });
     }
   }

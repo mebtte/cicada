@@ -13,7 +13,7 @@ function filterMusic(keyword: string) {
       const { name: singerName, aliases: singerAliases } = singer;
       if (
         singerName.toLowerCase().indexOf(keyword) > -1 ||
-        singerAliases.toLowerCase().indexOf(keyword) > -1
+        singerAliases.find((alias) => alias.toLowerCase().includes(keyword))
       ) {
         return true;
       }

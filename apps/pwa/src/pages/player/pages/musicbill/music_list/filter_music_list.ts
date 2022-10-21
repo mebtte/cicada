@@ -10,10 +10,10 @@ function filterMusic(keyword: string) {
       return true;
     }
     for (const singer of singers) {
-      const { name: singerName, aliases: singerAlias } = singer;
+      const { name: singerName, aliases: singerAliases } = singer;
       if (
         singerName.toLowerCase().indexOf(keyword) > -1 ||
-        singerAlias.toLowerCase().indexOf(keyword) > -1
+        singerAliases.find((alias) => alias.toLowerCase().includes(keyword))
       ) {
         return true;
       }

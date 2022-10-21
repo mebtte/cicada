@@ -1,6 +1,6 @@
 import { memo, useCallback } from 'react';
 import styled from 'styled-components';
-import { Singer as SingerType } from '@/constants/singer';
+import { Singer as SingerType } from '../../constants';
 import eventemitter, { EventType } from '../../eventemitter';
 
 const Style = styled.span`

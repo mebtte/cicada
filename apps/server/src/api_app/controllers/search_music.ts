@@ -133,13 +133,12 @@ export default async (ctx: Context) => {
   });
 
   const musicIdMapSingerList: {
-    [key: string]: Pick<
+    [key: string]: (Pick<
       Singer,
-      | SingerProperty.ID
-      | SingerProperty.AVATAR
-      | SingerProperty.NAME
-      | SingerProperty.ALIASES
-    >[];
+      SingerProperty.ID | SingerProperty.AVATAR | SingerProperty.NAME
+    > & {
+      aliases: string[];
+    })[];
   } = {};
   singerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
@@ -148,6 +147,7 @@ export default async (ctx: Context) => {
     musicIdMapSingerList[s.musicId].push({
       ...excludeProperty(s, ['musicId']),
       avatar: getAssetUrl(s.avatar, AssetType.SINGER_AVATAR),
+      aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     });
   });
 

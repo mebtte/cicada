@@ -1,7 +1,6 @@
 import IconButton, { Name } from '@/components/icon_button';
-import { Singer as SingerType } from '@/constants/singer';
 import { CSSProperties } from 'react';
-import { MusicWithIndex } from '../../constants';
+import { Singer as SingerType, MusicWithIndex } from '../../constants';
 import useMusicOperate from '../../use_music_operate';
 import Container from './container';
 import Singer from '../singer';

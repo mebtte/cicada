@@ -25,7 +25,7 @@ function searchMusic({
         id: string;
         avatar: string;
         name: string;
-        aliases: string;
+        aliases: string[];
       }[];
       createUser: {
         id: string;
