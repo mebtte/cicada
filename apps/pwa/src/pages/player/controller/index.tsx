@@ -64,7 +64,9 @@ function Controller() {
         className="cover"
         animated
         size={70}
-        src={queueMusic ? queueMusic.music.cover : INITIAL_COVER}
+        src={
+          queueMusic ? queueMusic.music.cover || INITIAL_COVER : INITIAL_COVER
+        }
         onClick={openLyric}
       />
     </Style>
