@@ -5,7 +5,6 @@ export default () => {
   const { pathname } = useLocation();
 
   let title = '知了';
-  // eslint-disable-next-line default-case
   switch (pathname) {
     case ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH: {
       title = '搜索';
@@ -17,6 +16,10 @@ export default () => {
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.MY_SINGER: {
       title = '我的歌手';
+      break;
+    }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.SUPER: {
+      title = '超级管理员';
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {

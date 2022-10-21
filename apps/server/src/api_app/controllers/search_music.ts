@@ -16,11 +16,7 @@ import { Context } from '../constants';
 const MAX_PAGE_SIZE = 50;
 
 export default async (ctx: Context) => {
-  const { keyword, page, pageSize } = ctx.request.query as {
-    keyword?: unknown;
-    page?: unknown;
-    pageSize?: unknown;
-  };
+  const { keyword, page, pageSize } = ctx.request.query;
   const pageNumber = page ? Number(page) : undefined;
   const pageSizeNumber = pageSize ? Number(pageSize) : undefined;
   if (
@@ -28,10 +24,8 @@ export default async (ctx: Context) => {
     !keyword.length ||
     keyword.includes(ALIAS_DIVIDER) ||
     keyword.length > SEARCH_KEYWORD_MAX_LENGTH ||
-    typeof pageNumber !== 'number' ||
     !pageNumber ||
     pageNumber < 0 ||
-    typeof pageSizeNumber !== 'number' ||
     !pageSizeNumber ||
     pageSizeNumber < 0 ||
     pageSizeNumber > MAX_PAGE_SIZE
@@ -45,7 +39,7 @@ export default async (ctx: Context) => {
       WHERE name LIKE ? 
         OR aliases LIKE ?
   `;
-  const sinegrPatternSQL = `
+  const singerPatternSQL = `
     SELECT msr.musicId FROM music_singer_relation AS msr
       LEFT JOIN singer AS s ON msr.singerId = s.id 
       WHERE
@@ -55,7 +49,7 @@ export default async (ctx: Context) => {
   const total = await db.get<{ value: number }>(
     `
       SELECT count(*) as value FROM music 
-        WHERE id IN ( ${musicPatternSQL} ) OR id IN ( ${sinegrPatternSQL} )
+        WHERE id IN (${musicPatternSQL}) OR id IN (${singerPatternSQL})
     `,
     [pattern, pattern, pattern, pattern],
   );
@@ -81,21 +75,21 @@ export default async (ctx: Context) => {
     >
   >(
     `
-    select
-      id,
-      type,
-      name,
-      aliases,
-      cover,
-      sq,
-      hq,
-      ac,
-      createUserId
-    from music
-      where id in ( ${musicPatternSQL} ) or id in ( ${sinegrPatternSQL} )
-      order by effectivePlayTimes desc
-      limit ? offset ?
-  `,
+      select
+        id,
+        type,
+        name,
+        aliases,
+        cover,
+        sq,
+        hq,
+        ac,
+        createUserId
+      from music
+        where id in ( ${musicPatternSQL} ) or id in ( ${singerPatternSQL} )
+        order by effectivePlayTimes desc
+        limit ? offset ?
+    `,
     [
       pattern,
       pattern,
@@ -138,7 +132,7 @@ export default async (ctx: Context) => {
     };
   });
 
-  const musicIdMapSinger: {
+  const musicIdMapSingerList: {
     [key: string]: Pick<
       Singer,
       | SingerProperty.ID
@@ -148,10 +142,10 @@ export default async (ctx: Context) => {
     >[];
   } = {};
   singerList.forEach((s) => {
-    if (!musicIdMapSinger[s.musicId]) {
-      musicIdMapSinger[s.musicId] = [];
+    if (!musicIdMapSingerList[s.musicId]) {
+      musicIdMapSingerList[s.musicId] = [];
     }
-    musicIdMapSinger[s.musicId].push({
+    musicIdMapSingerList[s.musicId].push({
       ...excludeProperty(s, ['musicId']),
       avatar: getAssetUrl(s.avatar, AssetType.SINGER_AVATAR),
     });
@@ -166,7 +160,7 @@ export default async (ctx: Context) => {
       sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
       hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
       ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
-      singers: musicIdMapSinger[m.id] || [],
+      singers: musicIdMapSingerList[m.id] || [],
       createUser: userMap[m.createUserId],
     })),
   });

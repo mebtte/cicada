@@ -31,6 +31,7 @@ import updateProfile from './controllers/update_profile';
 import getSingerDetail from './controllers/get_singer_detail';
 import getMusicDetail from './controllers/get_music_detail';
 import getUserDetail from './controllers/get_user_detail';
+import getSelfMusicList from './controllers/get_self_music_list';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -60,6 +61,7 @@ router.post('/musicbill_export', authorize, parseBody, createMusicbillExport); /
 router.post('/music', authorize, parseBody, createMusic); // 创建音乐
 router.get('/music_detail', authorize, getMusicDetail); // 获取音乐详情
 router.get('/music/search', authorize, searchMusic); // 搜索音乐
+router.get('/self_music_list', authorize, getSelfMusicList); // 获取自己的音乐列表
 
 router.get('/lyric', authorize, getLyric); // 获取音乐歌词
 
