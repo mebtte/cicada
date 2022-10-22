@@ -48,14 +48,14 @@ export default async (ctx: Context) => {
     const pattern = `%${keyword}%`;
     const musicPatternSQL = `
       SELECT id FROM music
-        WHRER createUserId = ? and
-          (name LIKE ? OR aliases LIKE ?)
+        WHERE createUserId = ?
+          AND (name LIKE ? OR aliases LIKE ?)
     `;
     const singerPatternSQL = `
       SELECT msr.musicId FROM music_singer_relation AS msr
         LEFT JOIN singer as s ON msr.singerId = s.id
         LEFT JOIN music as m ON msr.musicId = m.id
-        WHERE m.createUserId = ?
+        WHERE (m.createUserId = ?)
           AND (s.name LIKE ? OR s.aliases LIKE ?)
     `;
     const [totalObject, localMusicList] = await Promise.all([
@@ -146,13 +146,12 @@ export default async (ctx: Context) => {
     ],
   );
   const musicIdMapSingerList: {
-    [key: string]: Pick<
+    [key: string]: (Pick<
       Singer,
-      | SingerProperty.ID
-      | SingerProperty.AVATAR
-      | SingerProperty.NAME
-      | SingerProperty.ALIASES
-    >[];
+      SingerProperty.ID | SingerProperty.AVATAR | SingerProperty.NAME
+    > & {
+      aliases: string[];
+    })[];
   } = {};
   singerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
@@ -161,17 +160,19 @@ export default async (ctx: Context) => {
     musicIdMapSingerList[s.musicId].push({
       ...excludeProperty(s, ['musicId']),
       avatar: getAssetUrl(s.avatar, AssetType.SINGER_AVATAR),
+      aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     });
   });
 
   return ctx.success({
     total,
     musicList: musicList.map((m) => ({
+      ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
       sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetUrl(m.sq, AssetType.MUSIC_HQ),
-      ac: getAssetUrl(m.sq, AssetType.MUSIC_AC),
+      hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
+      ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingerList[m.id] || [],
     })),
   });

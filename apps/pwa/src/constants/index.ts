@@ -18,4 +18,5 @@ export enum Query {
   CREATE_SINGER_DIALOG_OPEN = 'create_singer_dialog_open',
   SEARCH_VALUE = 'search_value',
   PAGE = 'page',
+  KEYWORD = 'keyword',
 }

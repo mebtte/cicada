@@ -29,12 +29,14 @@ const Style = styled.label<{ active: boolean; disabled: boolean }>`
   }
 
   ${({ active, disabled }) => css`
-    > .label {
-      color: ${disabled
-        ? CSSVariable.TEXT_COLOR_DISABLED
-        : active
-        ? CSSVariable.COLOR_PRIMARY
-        : CSSVariable.TEXT_COLOR_PRIMARY};
+    > .top {
+      > .label {
+        color: ${disabled
+          ? CSSVariable.TEXT_COLOR_DISABLED
+          : active
+          ? CSSVariable.COLOR_PRIMARY
+          : CSSVariable.TEXT_COLOR_PRIMARY};
+      }
     }
   `}
 `;

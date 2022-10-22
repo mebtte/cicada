@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import { MdDownload } from 'react-icons/md';
-import VerticalDrawer from '@/components/vertical_drawer';
+import VerticalDrawer from '#/components/vertical_drawer';
 import { Name } from '@/components/icon';
 import { Music as MusicType } from '../constants';
 import useMusicOperate from '../use_music_operate';
