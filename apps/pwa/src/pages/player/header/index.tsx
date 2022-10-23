@@ -6,7 +6,6 @@ import IconButton from '#/components/icon_button';
 import { MdMenu, MdSearch } from 'react-icons/md';
 import useNavigate from '#/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import { CSSVariable } from '#/global_style';
 import Search from './search';
 import Title from './title';
 import useTitle from './use_title';
@@ -21,7 +20,7 @@ const Style = styled.div`
   align-items: center;
   gap: 10px;
 
-  border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
+  border-bottom: 1px solid rgb(0 0 0 / 0.05);
   box-sizing: border-box;
   -webkit-app-region: drag;
 `;
