@@ -12,12 +12,10 @@ const style: CSSProperties = {
 
 function Filter() {
   const location = useLocation();
-
-  const [keyword, setKeyword] = useState(() => {
-    const query = parseSearch<Query.KEYWORD>(location.search);
-    return query.keyword || '';
-  });
   const navigate = useNavigate();
+  const [keyword, setKeyword] = useState(
+    () => parseSearch<Query.KEYWORD>(location.search).keyword || '',
+  );
 
   useEffect(() => {
     const timer = window.setTimeout(
@@ -25,7 +23,6 @@ function Filter() {
         navigate({
           query: {
             [Query.KEYWORD]: keyword.trim(),
-            [Query.PAGE]: 1,
           },
         }),
       500,
@@ -36,7 +33,9 @@ function Filter() {
   return (
     <Input
       style={style}
+      className="filter"
       inputProps={{
+        autoFocus: true,
         placeholder: '查找',
         value: keyword,
         onChange: (event) =>

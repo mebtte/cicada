@@ -1,22 +1,24 @@
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
 import { MdAdd } from 'react-icons/md';
-import Tooltip from '#/components/tooltip';
-import Input from '#/components/input';
 import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
+import Filter from './filter';
+import { TOOLBAR_HEIGHT } from '../constants';
 
 const Style = styled.div`
+  position: absolute;
+  width: 100%;
+  height: ${TOOLBAR_HEIGHT}px;
+  left: 0;
+  bottom: 0;
+
   display: flex;
   align-items: center;
   gap: 10px;
+  padding: 0 20px;
 
-  padding: 10px 20px;
-
-  > .filter {
-    flex: 1;
-    min-width: 0;
-  }
+  backdrop-filter: blur(5px);
 `;
 
 function Toolbar() {
@@ -29,17 +31,10 @@ function Toolbar() {
     });
   return (
     <Style>
-      <Tooltip title="创建歌手">
-        <IconButton onClick={openCreateSingerDialog}>
-          <MdAdd />
-        </IconButton>
-      </Tooltip>
-      <Input
-        className="filter"
-        inputProps={{
-          placeholder: '查找',
-        }}
-      />
+      <IconButton onClick={openCreateSingerDialog}>
+        <MdAdd />
+      </IconButton>
+      <Filter />
     </Style>
   );
 }

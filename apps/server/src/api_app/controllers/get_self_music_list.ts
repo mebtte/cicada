@@ -12,7 +12,7 @@ import {
 import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
-const MAX_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 type LocalMusic = Pick<
   Music,
   | MusicProperty.ID
@@ -118,9 +118,9 @@ export default async (ctx: Context) => {
             hq,
             ac
           FROM music
-            WHERE createUserId = ?
-            ORDER BY createTimestamp DESC
-            LIMIT ? OFFSET ?
+          WHERE createUserId = ?
+          ORDER BY createTimestamp DESC
+          LIMIT ? OFFSET ?
         `,
         [ctx.user.id, pageSizeNumber, (pageNumber - 1) * pageSizeNumber],
       ),

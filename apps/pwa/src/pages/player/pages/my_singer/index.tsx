@@ -5,6 +5,8 @@ import Toolbar from './toolbar';
 import CreateSingerDialog from './create_singer_dialog';
 
 const Style = styled(Page)`
+  position: relative;
+
   display: flex;
   flex-direction: column;
 `;

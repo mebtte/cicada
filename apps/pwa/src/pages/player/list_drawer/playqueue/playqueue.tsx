@@ -23,7 +23,7 @@ function Playqueue({
   );
   const { length } = reversedPlayqueue;
   const activeIndex = currentPlayqueuePosition + 1;
-  const itemRenderer = (index, key) => {
+  const itemRenderer = (index: number, key: string) => {
     const music = reversedPlayqueue[index];
     return (
       <Music

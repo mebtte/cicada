@@ -32,6 +32,7 @@ import getSingerDetail from './controllers/get_singer_detail';
 import getMusicDetail from './controllers/get_music_detail';
 import getUserDetail from './controllers/get_user_detail';
 import getSelfMusicList from './controllers/get_self_music_list';
+import getSelfSingerList from './controllers/get_self_singer_list';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -69,6 +70,7 @@ router.post('/singer', authorize, parseBody, createSinger); // 创建歌手
 router.put('/singer', authorize, parseBody, updateSinger); // 更新歌手
 router.get('/singer/search', authorize, searchSinger); // 搜索歌手
 router.get('/singer_detail', authorize, getSingerDetail); // 获取歌手详情
+router.get('/self_singer_list', authorize, getSelfSingerList); // 获取自己的歌手列表
 
 /**
  * super authorize
