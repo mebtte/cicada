@@ -5,6 +5,7 @@ import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';
+import Question from './question';
 
 const Style = styled.div`
   position: absolute;
@@ -34,6 +35,7 @@ function Toolbar() {
       <IconButton onClick={openCreateSingerDialog}>
         <MdAdd />
       </IconButton>
+      <Question />
       <Filter />
     </Style>
   );

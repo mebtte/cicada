@@ -7,7 +7,7 @@ import { CSSProperties, useLayoutEffect, useRef } from 'react';
 import ErrorCard from '@/components/error_card';
 import useMusicList from './use_music_list';
 import Music from '../../../components/music';
-import { PAGE_SIZE } from '../constants';
+import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 
 const Style = styled.div`
   position: relative;
@@ -24,6 +24,8 @@ const Style = styled.div`
 
     &.list {
       overflow: auto;
+
+      padding-bottom: ${TOOLBAR_HEIGHT}px;
     }
 
     &.empty,

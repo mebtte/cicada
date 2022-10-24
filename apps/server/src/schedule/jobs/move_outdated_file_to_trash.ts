@@ -26,4 +26,4 @@ async function moveOutdatedFileToTrash() {
   }
 }
 
-export default withTimeout(moveOutdatedFileToTrash, 60 * 3000);
+export default withTimeout(moveOutdatedFileToTrash, 60 * 1000);

@@ -5,6 +5,8 @@ import MusicList from './music_list';
 import CreateMusicDialog from './create_music_dialog';
 
 const Style = styled(Page)`
+  position: relative;
+
   display: flex;
   flex-direction: column;
 `;

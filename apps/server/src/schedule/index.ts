@@ -9,6 +9,7 @@ import removeOutdatedLoginCode from './jobs/remove_outdated_login_code';
 import cleanOutdatedFile from './jobs/clean_outdated_file';
 import moveOutdatedFileToTrash from './jobs/move_outdated_file_to_trash';
 import exportMusicbill from './jobs/export_musicbill';
+import removeNoMusicSinger from './jobs/remove_no_music_singer';
 
 const getTimeString = () => {
   const now = day();
@@ -59,6 +60,10 @@ const DAILY_JOBS: Job[] = [
   {
     name: 'create_db_snapshot',
     job: createDBSnapshot,
+  },
+  {
+    name: 'remove_no_music_singer',
+    job: removeNoMusicSinger,
   },
 ];
 const HOURLY_JOBS: Job[] = [
