@@ -42,7 +42,7 @@ export default () => {
       setOriginalSingerList(
         singerList.map((s, index) => ({
           ...excludeProperty(s, ['createTimestamp']),
-          createTime: day(s.createTimestamp).format('YYYY-MM-DD HH:mm'),
+          createTime: day(s.createTimestamp).format('YYYY-MM-DD'),
 
           index: singerList.length - index,
         })),

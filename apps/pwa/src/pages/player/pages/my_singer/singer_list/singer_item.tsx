@@ -2,6 +2,7 @@ import { CSSVariable } from '#/global_style';
 import ellipsis from '#/style/ellipsis';
 import styled from 'styled-components';
 import { Singer } from '../constants';
+import e, { EventType } from '../../../eventemitter';
 
 const Style = styled.div`
   height: 40px;
@@ -11,6 +12,7 @@ const Style = styled.div`
   align-items: center;
   gap: 10px;
 
+  cursor: pointer;
   background-color: transparent;
   transition: 300ms;
 
@@ -53,7 +55,9 @@ const Style = styled.div`
 
 function SingerItem({ singer }: { singer: Singer }) {
   return (
-    <Style>
+    <Style
+      onClick={() => e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })}
+    >
       <div className="index">{singer.index}</div>
       <div className="info">
         <span className="name">{singer.name}</span>
