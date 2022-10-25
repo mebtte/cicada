@@ -28,8 +28,8 @@ async function removeNoMusicSinger() {
     await Promise.all([
       db.run(
         `
-          DELETE FROM singer
-          WHERE id in ( ${noMusicSingerList.map(() => '?').join(',')} );
+          DELETE FROM singer_modify_record
+            WHERE singerId in ( ${noMusicSingerList.map(() => '?').join(',')} )
         `,
         noMusicSingerList.map((s) => s.id),
       ),
@@ -38,6 +38,13 @@ async function removeNoMusicSinger() {
         JSON.stringify(noMusicSingerList),
       ),
     ]);
+    await db.run(
+      `
+        DELETE FROM singer
+        WHERE id in ( ${noMusicSingerList.map(() => '?').join(',')} )
+      `,
+      noMusicSingerList.map((s) => s.id),
+    );
   }
 }
 
