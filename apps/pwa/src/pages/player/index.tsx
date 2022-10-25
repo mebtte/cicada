@@ -24,6 +24,7 @@ import { QueueMusic } from './constants';
 import Lyric from './lyric';
 import useKeyboard from './use_keyboard';
 import MusicDownloadDialog from './music_download_dialog';
+import SingerDrawer from './singer_drawer';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -96,6 +97,7 @@ function Wrapper() {
         <Lyric music={queueMusic ? queueMusic.music : undefined} />
       </Style>
 
+      <SingerDrawer />
       <MusicDrawer />
       <ListDrawer />
       <MusicbillListDrawer />
