@@ -35,7 +35,7 @@ function MiniIfno({ singer }: { singer: SingerDetail }) {
   const { right } = useTitlebarArea();
 
   useEffect(() => {
-    setPaddingRight(window.innerWidth - right);
+    setPaddingRight(right ? window.innerWidth - right : 0);
   }, [right]);
 
   return (
