@@ -13,7 +13,7 @@ const initialRect: Rect = {
   height: 0,
 };
 
-export default () => {
+function useTitlebarArea() {
   const [rect, setRect] = useState<Rect>(initialRect);
 
   useEffect(() => {
@@ -42,4 +42,6 @@ export default () => {
   }, []);
 
   return rect;
-};
+}
+
+export default useTitlebarArea;

@@ -10,7 +10,8 @@ function getSingerDetail(id: string) {
     id: string;
     avatar: string;
     name: string;
-    aliases: string;
+    aliases: string[];
+    createTimestamp: number;
     createUser: {
       id: string;
       nickname: string;
@@ -20,7 +21,7 @@ function getSingerDetail(id: string) {
       id: string;
       type: MusicType;
       name: string;
-      aliases: string;
+      aliases: string[];
       cover: string;
       sq: string;
       hq: string;
@@ -28,7 +29,7 @@ function getSingerDetail(id: string) {
       singers: {
         id: string;
         name: string;
-        aliases: string;
+        aliases: string[];
         avatar: string;
       }[];
     }[];

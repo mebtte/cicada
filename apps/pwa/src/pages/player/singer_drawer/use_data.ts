@@ -1,12 +1,15 @@
+import day from '#/utils/day';
+import excludeProperty from '#/utils/exclude_property';
 import logger from '#/utils/logger';
 import getSingerDetail from '@/server/get_singer_detail';
+import getRandomCover from '@/utils/get_random_cover';
 import { useCallback, useEffect, useState } from 'react';
-import { Singer } from './constants';
+import { SingerDetail } from './constants';
 
 type Data = {
   error: Error | null;
   loading: boolean;
-  singer: Singer | null;
+  singer: SingerDetail | null;
 };
 const dataLoading: Data = {
   error: null,
@@ -23,7 +26,19 @@ export default (singerId: string) => {
       setData({
         error: null,
         loading: false,
-        singer,
+        singer: {
+          ...excludeProperty(singer, ['createTimestamp']),
+          avatar: singer.avatar || getRandomCover(),
+          musicList: singer.musicList.map((music, index) => ({
+            index: singer.musicList.length - index,
+            music,
+          })),
+          createUser: {
+            ...singer.createUser,
+            avatar: singer.createUser.avatar || getRandomCover(),
+          },
+          createTime: day(singer.createTimestamp).format('YYYY-MM-DD HH:mm'),
+        },
       });
     } catch (error) {
       logger.error(error, '获取歌手详情失败');

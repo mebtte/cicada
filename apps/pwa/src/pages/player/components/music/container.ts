@@ -17,9 +17,10 @@ export default styled.div`
   > .info {
     flex: 1;
     min-width: 0;
+
     display: flex;
     flex-direction: column;
-    gap: 3px;
+
     > .top {
       display: flex;
       align-items: center;

@@ -1,3 +1,15 @@
-import getSingerDetail from '@/server/get_singer_detail';
+import { MusicWithIndex, Singer } from '../constants';
 
-export type Singer = AsyncReturnType<typeof getSingerDetail>;
+export interface CreataUser {
+  id: string;
+  nickname: string;
+  avatar: string;
+}
+
+export interface SingerDetail extends Singer {
+  musicList: MusicWithIndex[];
+  createUser: CreataUser;
+  createTime: string;
+}
+
+export const MINI_INFO_HEIGHT = 50;

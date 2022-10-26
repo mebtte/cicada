@@ -6,7 +6,7 @@ import useTitlebarAreaRect from '../use_titlebar_area_rect';
 
 function NoticeApp() {
   const rect = useTitlebarAreaRect();
-  const baseTop = useMemo(() => (rect.height ? 15 : 60), [rect.height]);
+  const baseTop = useMemo(() => (rect.height ? 30 : 65), [rect.height]);
 
   const [noticeList, setNoticeList] = useState<Notice[]>([]);
   const handleNoticeListTop = useCallback(
