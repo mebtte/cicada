@@ -3,6 +3,7 @@ import getMusicDetail from '@/server/get_music_detail';
 import { MusicType } from '#/constants/music';
 import getLyric from '@/server/get_lyric';
 import getRandomCover from '@/utils/get_random_cover';
+import day from '#/utils/day';
 import { MusicDetail, Lyric } from './constants';
 
 interface Data {
@@ -35,6 +36,11 @@ export default (id: string) => {
           ...music,
           cover: music.cover || getRandomCover(),
           lyrics,
+          createTime: day(music.createTimestamp).format('YYYY-MM-DD HH:mm'),
+          singers: music.singers.map((s) => ({
+            ...s,
+            avatar: s.avatar || getRandomCover(),
+          })),
         },
       });
     } catch (error) {

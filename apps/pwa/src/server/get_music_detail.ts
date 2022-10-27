@@ -29,8 +29,8 @@ interface Music {
 function getMusicDetail(id: string) {
   return request<
     Music & {
+      createTimestamp: number;
       createUser: { id: string; avatar: string; nickname: string };
-      lyric?: string;
       forkList: Music[];
       forkFromList: Music[];
     }

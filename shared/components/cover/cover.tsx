@@ -18,6 +18,8 @@ const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> }> = {
   },
 };
 const Style = styled.img<{ shape: Shape }>`
+  object-fit: cover;
+
   ${({ shape }) => {
     const { css: shapeCss } = SHAPE_MAP[shape];
     return shapeCss;

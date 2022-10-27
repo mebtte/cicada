@@ -1,7 +1,7 @@
 import { CSSVariable } from '#/global_style';
 import absoluteFullSize from '#/style/absolute_full_size';
 import styled from 'styled-components';
-import { SingerDetail } from './constants';
+import { MusicDetail } from './constants';
 
 const Style = styled.div`
   position: relative;
@@ -15,11 +15,6 @@ const Style = styled.div`
       ${absoluteFullSize}
 
       object-fit: cover;
-      /* mask-image: linear-gradient(
-        180deg,
-        rgb(0 0 0 / 1) 80%,
-        rgb(0 0 0 / 0) 100%
-      ); */
     }
   }
 
@@ -46,22 +41,21 @@ const Style = styled.div`
   }
 `;
 
-function Info({ singer }: { singer: SingerDetail }) {
+function Info({ music }: { music: MusicDetail }) {
   return (
     <Style>
       <div className="cover-box">
         <img
           className="cover"
-          src={singer.avatar}
-          alt="singer avatar"
+          src={music.cover}
+          alt="music cover"
           crossOrigin="anonymous"
         />
       </div>
-
       <div className="info">
-        <div className="name">{singer.name}</div>
-        {singer.aliases.length ? (
-          <div className="aliases">{singer.aliases.join('; ')}</div>
+        <div className="name">{music.name}</div>
+        {music.aliases.length ? (
+          <div className="aliases">{music.aliases.join('; ')}</div>
         ) : null}
       </div>
     </Style>

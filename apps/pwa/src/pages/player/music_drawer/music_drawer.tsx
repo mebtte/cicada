@@ -2,13 +2,18 @@ import { useTransition, animated } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Drawer from '#/components/drawer';
-import { CSSProperties } from 'react';
+import { CSSProperties, UIEventHandler, useState } from 'react';
 import absoluteFullSize from '#/style/absolute_full_size';
 import { flexCenter } from '#/style/flexbox';
 import Spinner from '#/components/spinner';
-import eventemitter, { EventType } from '../eventemitter';
-import useMusic from './use_music';
-import { MusicDetail } from './constants';
+import Info from './info';
+import useData from './use_data';
+import { MINI_INFO_HEIGHT, MusicDetail } from './constants';
+import CreateUser from './create_user';
+import SingerList from './singer_list';
+import Toolbar from './toolbar';
+import Lyric from './lyric';
+import MiniInfo from './mini_info';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
@@ -22,11 +27,41 @@ const Container = styled(animated.div)`
 const StatusBox = styled(Container)`
   ${flexCenter}
 `;
-const DetailBox = styled(Container)``;
+const DetailBox = styled(Container)`
+  > .scrollable {
+    ${absoluteFullSize}
+
+    overflow: auto;
+
+    > .first-screen {
+      min-height: 100vh;
+    }
+  }
+`;
 
 function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
-  // @ts-expect-error
-  return <DetailBox style={style}>music</DetailBox>;
+  const [toolbarSticky, setToolbarSticky] = useState(false);
+
+  const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
+    const { scrollTop, clientWidth } = event.target as HTMLDivElement;
+    setToolbarSticky(scrollTop >= clientWidth - MINI_INFO_HEIGHT);
+  };
+  return (
+    // @ts-expect-error
+    <DetailBox style={style}>
+      <div className="scrollable" onScroll={onScroll}>
+        <div className="first-screen">
+          <Info music={music} />
+          <Toolbar music={music} sticky={toolbarSticky} />
+          <SingerList singerList={music.singers} />
+          <Lyric music={music} />
+        </div>
+        <CreateUser user={music.createUser} createTime={music.createTime} />
+      </div>
+
+      {toolbarSticky ? <MiniInfo music={music} /> : null}
+    </DetailBox>
+  );
 }
 
 function MusicDrawer({
@@ -40,7 +75,7 @@ function MusicDrawer({
   open: boolean;
   onClose: () => void;
 }) {
-  const { data, reload } = useMusic(id);
+  const { data, reload } = useData(id);
   const transitions = useTransition(data, {
     from: { opacity: 0 },
     enter: { opacity: 1 },

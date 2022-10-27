@@ -20,7 +20,6 @@ const Style = styled.div`
   align-items: center;
   gap: 10px;
 
-  border-bottom: 1px solid rgb(0 0 0 / 0.05);
   box-sizing: border-box;
   -webkit-app-region: drag;
 `;
