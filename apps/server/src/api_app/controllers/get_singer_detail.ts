@@ -50,7 +50,7 @@ export default async (ctx: Context) => {
       >
     >(
       `
-        select
+        SELECT
           m.id,
           m.type,
           m.name,
@@ -59,10 +59,11 @@ export default async (ctx: Context) => {
           m.sq,
           m.hq,
           m.ac
-        from music as m
-        left join music_singer_relation as msr
-          on m.id = msr.musicId
-        where msr.singerId = ?
+        FROM music AS m
+        LEFT JOIN music_singer_relation AS msr
+          ON m.id = msr.musicId
+        WHERE msr.singerId = ?
+        ORDER BY m.effectivePlayTimes DESC
       `,
       [id],
     ),
