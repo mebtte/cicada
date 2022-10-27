@@ -51,7 +51,7 @@ export default (music: Music, turntable: boolean) => {
 
       setState(LRC_LOADING_STATE);
       try {
-        const lyrics = await getLyric(music.id);
+        const lyrics = await getLyric({ musicId: music.id });
 
         if (canceled) {
           return;

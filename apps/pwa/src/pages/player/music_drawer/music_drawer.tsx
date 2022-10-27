@@ -1,91 +1,41 @@
 import { useTransition, animated } from 'react-spring';
 import styled from 'styled-components';
-import Skeleton from '@/components/skeleton';
-import Avatar from '@/components/avatar';
 import ErrorCard from '@/components/error_card';
 import Drawer from '#/components/drawer';
-import { COVER_SIZE, PADDING } from './constants';
-import useMusic from './use_music';
+import { CSSProperties } from 'react';
+import absoluteFullSize from '#/style/absolute_full_size';
+import { flexCenter } from '#/style/flexbox';
+import Spinner from '#/components/spinner';
 import eventemitter, { EventType } from '../eventemitter';
-import Fork from './fork';
-import Action from './action';
-import Lyric from './lyric';
+import useMusic from './use_music';
+import { MusicDetail } from './constants';
 
-const bodyProps = {
+const bodyProps: { style: CSSProperties } = {
   style: {
-    width: COVER_SIZE + PADDING * 2,
+    width: '100%',
+    maxWidth: 350,
   },
 };
 const Container = styled(animated.div)`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+  ${absoluteFullSize}
 `;
-const CardContainer = styled(Container)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const StatusBox = styled(Container)`
+  ${flexCenter}
 `;
-const Content = styled(Container)`
-  overflow: auto;
+const DetailBox = styled(Container)``;
 
-  > .content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-
-    padding: ${PADDING}px;
-
-    > .cover {
-      align-self: center;
-    }
-
-    > .name {
-      font-size: 24px;
-      font-weight: bold;
-      line-height: 1.3;
-      color: var(--text-color-primary);
-    }
-
-    > .alias {
-      font-size: 14px;
-      color: var(--text-color-secondary);
-      line-height: 1.3;
-    }
-
-    > .singers {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 5px;
-
-      font-size: 14px;
-
-      > .singer {
-        cursor: pointer;
-        color: var(--text-color-primary);
-        &:hover {
-          color: var(--color-primary);
-        }
-        &:not(:last-child)::after {
-          content: '/';
-
-          display: inline-block;
-          color: var(--text-color-secondary);
-          margin-left: 5px;
-        }
-      }
-    }
-  }
-`;
+function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
+  // @ts-expect-error
+  return <DetailBox style={style}>music</DetailBox>;
+}
 
 function MusicDrawer({
+  zIndex,
   id,
   open,
   onClose,
 }: {
+  zIndex: number;
   id: string;
   open: boolean;
   onClose: () => void;
@@ -97,73 +47,30 @@ function MusicDrawer({
     leave: { opacity: 0 },
   });
   return (
-    <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
+    <Drawer
+      open={open}
+      onClose={onClose}
+      maskProps={{ style: { zIndex } }}
+      bodyProps={bodyProps}
+    >
       {transitions((style, d) => {
-        const { error, loading, music } = d;
-        if (error) {
+        if (d.error) {
           return (
-            <CardContainer style={style}>
-              <ErrorCard errorMessage={error.message} retry={reload} />
-            </CardContainer>
+            <StatusBox style={style}>
+              <ErrorCard errorMessage={d.error.message} retry={reload} />
+            </StatusBox>
           );
         }
-        if (loading) {
+
+        if (d.loading) {
           return (
-            <Content style={style}>
-              <div className="content">
-                <Skeleton
-                  className="cover"
-                  width={COVER_SIZE}
-                  height={COVER_SIZE}
-                />
-                <div className="name">
-                  <Skeleton width={150} />
-                </div>
-                <div className="singers">
-                  <Skeleton width={100} />
-                </div>
-              </div>
-            </Content>
+            <StatusBox style={style}>
+              <Spinner />
+            </StatusBox>
           );
         }
-        return (
-          <Content style={style}>
-            <div className="content">
-              <Avatar
-                className="cover"
-                animated
-                src={music.cover}
-                size={COVER_SIZE}
-              />
-              <div className="name">{music.name}</div>
-              {music.aliases.length ? (
-                <div className="alias">{music.aliases[0]}</div>
-              ) : null}
-              {music.singers.length ? (
-                <div className="singers">
-                  {music.singers.map((s) => (
-                    <div
-                      key={s.id}
-                      className="singer"
-                      onClick={() =>
-                        eventemitter.emit(EventType.OPEN_SINGER_DRAWER, {
-                          id: s.id,
-                        })
-                      }
-                    >
-                      {s.name}
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-              <Action music={music} />
-              <Fork music={music} />
-              {music.lyrics && music.lyrics.length ? (
-                <Lyric lyrics={music.lyrics} />
-              ) : null}
-            </div>
-          </Content>
-        );
+
+        return <Detail style={style} music={d.music!} />;
       })}
     </Drawer>
   );

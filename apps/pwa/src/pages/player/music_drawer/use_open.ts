@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import eventemitter, { EventType } from '../eventemitter';
+import useDynamicZIndex from '../use_dynamic_z_index';
 
 export default () => {
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
-
+  const zIndex = useDynamicZIndex(EventType.OPEN_MUSIC_DRAWER);
   const [id, setId] = useState('');
 
   useEffect(() => {
-    const closeListener = () => setOpen(false);
     const unlistenOpenMusicDrawer = eventemitter.listen(
       EventType.OPEN_MUSIC_DRAWER,
       (data) => {
@@ -16,29 +16,13 @@ export default () => {
         return setOpen(true);
       },
     );
-    const unlistenOpenSingerDrawer = eventemitter.listen(
-      EventType.OPEN_SINGER_DRAWER,
-      closeListener,
-    );
-    const unlistenOpenMusicbillListDrawer = eventemitter.listen(
-      EventType.OPEN_MUSICBILL_LIST_DRAWER,
-      closeListener,
-    );
-    const unlistenOpenMusicOperatePopup = eventemitter.listen(
-      EventType.OPEN_MUSIC_OPERATE_POPUP,
-      closeListener,
-    );
-    return () => {
-      unlistenOpenMusicDrawer();
-      unlistenOpenSingerDrawer();
-      unlistenOpenMusicbillListDrawer();
-      unlistenOpenMusicOperatePopup();
-    };
+    return unlistenOpenMusicDrawer;
   }, []);
 
   return {
     open,
     onClose,
     id,
+    zIndex,
   };
 };

@@ -17,7 +17,7 @@ import MiniIfno from './mini_info';
 const bodyProps: { style: CSSProperties } = {
   style: {
     width: '90%',
-    maxWidth: 450,
+    maxWidth: 400,
   },
 };
 const Container = styled(animated.div)`
@@ -31,6 +31,10 @@ const DetailContainer = styled(Container)`
     ${absoluteFullSize}
 
     overflow: auto;
+
+    > .first-screen {
+      min-height: 100vh;
+    }
   }
 `;
 
@@ -53,9 +57,11 @@ function Detail({
     // @ts-expect-error
     <DetailContainer style={style}>
       <div className="scrollable" onScroll={onScroll}>
-        <Info singer={singer} />
-        <Toolbar sticky={toolbarSticky} reload={reload} singer={singer} />
-        <MusicList musicList={singer.musicList} />
+        <div className="first-screen">
+          <Info singer={singer} />
+          <Toolbar sticky={toolbarSticky} reload={reload} singer={singer} />
+          <MusicList musicList={singer.musicList} />
+        </div>
         <CreateUser user={singer.createUser} createTime={singer.createTime} />
       </div>
 

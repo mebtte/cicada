@@ -33,10 +33,6 @@ export default (singerId: string) => {
             index: singer.musicList.length - index,
             music,
           })),
-          createUser: {
-            ...singer.createUser,
-            avatar: singer.createUser.avatar || getRandomCover(),
-          },
           createTime: day(singer.createTimestamp).format('YYYY-MM-DD HH:mm'),
         },
       });

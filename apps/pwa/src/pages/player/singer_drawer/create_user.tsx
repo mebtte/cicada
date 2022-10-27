@@ -1,17 +1,17 @@
 import styled from 'styled-components';
-import Cover from '#/components/cover';
-import { flexCenter } from '#/style/flexbox';
 import { CSSVariable } from '#/global_style';
 import { CreataUser } from './constants';
 
 const Style = styled.div`
-  ${flexCenter}
+  padding: 30px 0;
 
-  padding: 50px 0;
+  text-align: center;
+  font-size: 12px;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
-  > .text {
-    font-size: 12px;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  > .nickname {
+    text-decoration: underline;
+    cursor: pointer;
   }
 `;
 
@@ -28,10 +28,8 @@ function CreateUser({
    */
   return (
     <Style>
-      <Cover size={18} src={user.avatar} alt="avatar" />
-      <div className="text">
-        「{user.nickname}」创建于「{createTime}」
-      </div>
+      由「<span className="nickname">{user.nickname}</span>」于「{createTime}
+      」创建
     </Style>
   );
 }
