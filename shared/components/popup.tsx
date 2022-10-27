@@ -31,10 +31,10 @@ const Body = styled(animated.div)`
 `;
 
 /**
- * 垂直抽屉
+ * 弹出框
  * @author mebtte<hi@mebtte.com>
  */
-const VerticalDrawer = ({
+const Popup = ({
   open,
   onClose,
   maskProps = {},
@@ -97,7 +97,7 @@ const VerticalDrawer = ({
   );
 };
 
-export default React.memo(VerticalDrawer, (prev, next) => {
+export default React.memo(Popup, (prev, next) => {
   if (!prev.open && !next.open) {
     return true;
   }

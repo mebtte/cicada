@@ -1,6 +1,11 @@
 import styled, { css } from 'styled-components';
 import IconButton from '#/components/icon_button';
-import { MdPlaylistAdd, MdRefresh, MdOutlineEditNote } from 'react-icons/md';
+import {
+  MdPlaylistAdd,
+  MdRefresh,
+  MdOutlineEditNote,
+  MdHistory,
+} from 'react-icons/md';
 import p from '@/global_states/profile';
 import e, { EventType } from '../eventemitter';
 import { MINI_INFO_HEIGHT, SingerDetail } from './constants';
@@ -44,14 +49,19 @@ function Toolbar({
       >
         <MdPlaylistAdd />
       </IconButton>
+      {profile.super || profile.id === singer.createUser.id ? (
+        <>
+          <IconButton>
+            <MdOutlineEditNote />
+          </IconButton>
+          <IconButton>
+            <MdHistory />
+          </IconButton>
+        </>
+      ) : null}
       <IconButton onClick={reload}>
         <MdRefresh />
       </IconButton>
-      {profile.super || profile.id === singer.createUser.id ? (
-        <IconButton>
-          <MdOutlineEditNote />
-        </IconButton>
-      ) : null}
     </Style>
   );
 }

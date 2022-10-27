@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import VerticalDrawer from '../vertical_drawer';
+import Popup from '../popup';
 import e, { EventType } from './eventemitter';
 import Input from '../input';
 
@@ -72,7 +72,7 @@ function CustomPage({
   }, [open]);
 
   return (
-    <VerticalDrawer open={open} onClose={onClose} bodyProps={bodyProps}>
+    <Popup open={open} onClose={onClose} bodyProps={bodyProps}>
       <Input
         ref={inputRef}
         label="跳转到指定页面"
@@ -82,7 +82,7 @@ function CustomPage({
           onKeyDown,
         }}
       />
-    </VerticalDrawer>
+    </Popup>
   );
 }
 

@@ -1,4 +1,4 @@
-import { memo, ReactNode, useContext } from 'react';
+import { CSSProperties, memo, ReactNode, useContext } from 'react';
 import { RequestStatus } from '@/constants';
 import LoadingCard from '@/components/loading_card';
 import ErrorCard from '@/components/error_card';
@@ -9,11 +9,11 @@ import Context from '../context';
 import MusicInfo from '../components/music_info';
 import { Music as MusicType } from '../constants';
 
-const bodyProps = {
+const bodyProps: { style: CSSProperties } = {
   style: {
     width: 300,
     display: 'flex',
-    flexDirection: 'column' as 'column',
+    flexDirection: 'column',
   },
 };
 const musicInfoStyle = {
@@ -27,10 +27,12 @@ const reloadMusicbillList = () =>
   eventemitter.emit(EventType.RELOAD_MUSICBILL_LIST, null);
 
 function MusicbillListDrawer({
+  zIndex,
   open,
   onClose,
   music,
 }: {
+  zIndex: number;
   open: boolean;
   onClose: () => void;
   music: MusicType;
@@ -52,7 +54,12 @@ function MusicbillListDrawer({
     );
   }
   return (
-    <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
+    <Drawer
+      open={open}
+      onClose={onClose}
+      maskProps={{ style: { zIndex } }}
+      bodyProps={bodyProps}
+    >
       <Title>添加到乐单</Title>
       <MusicInfo music={music} style={musicInfoStyle} />
       {content}

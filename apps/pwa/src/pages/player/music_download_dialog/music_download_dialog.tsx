@@ -21,10 +21,12 @@ const Style = styled.div`
 `;
 
 function MusicDownloadDialog({
+  zIndex,
   open,
   onClose,
   music,
 }: {
+  zIndex: number;
   open: boolean;
   onClose: () => void;
   music: Music;
@@ -44,7 +46,12 @@ function MusicDownloadDialog({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} bodyProps={bodyProps}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maskProps={{ style: { zIndex } }}
+      bodyProps={bodyProps}
+    >
       <MusicInfo music={music} />
       <Style>
         <Button onClick={() => onDownload(sq)}>标准音质</Button>

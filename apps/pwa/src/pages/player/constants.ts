@@ -1,6 +1,7 @@
 import { RequestStatus } from '@/constants';
 import { MusicType } from '#/constants/music';
 import { Type as TagType } from '@/components/tag';
+import { UtilZIndex } from '#/constants';
 
 export const CONTROLLER_HEIGHT = 60;
 
@@ -74,14 +75,18 @@ export interface Musicbill {
   error: Error | null;
 }
 
-export enum ZIndex {
-  LYRIC_PANEL = 2,
-  CONTROLLER = 3,
+export const ZIndex = {
+  LYRIC_PANEL: 2,
+  CONTROLLER: 3,
+
   /**
-   * drawer 和 dialog 之前需要大数字间隔
-   * drawer 的 z-index 会随着时间的增加而增加
+   * 与下一级需要大数字间隔
+   * 会随着时间的增加而增加
    * @author mebtte<hi@mebtte.com>
    */
-  DRAWER = 4,
-  DIALOG = 9999999,
-}
+  DYNAMIC_START: 4,
+
+  DRAWER: UtilZIndex.DIALOG - 1,
+  POPUP: UtilZIndex.DIALOG - 1,
+  DIALOG: UtilZIndex.DIALOG - 1,
+};
