@@ -41,6 +41,14 @@ export default (id: string) => {
             ...s,
             avatar: s.avatar || getRandomCover(),
           })),
+          forkFromList: music.forkFromList.map((m) => ({
+            ...m,
+            cover: m.cover || getRandomCover(),
+          })),
+          forkList: music.forkList.map((m) => ({
+            ...m,
+            cover: m.cover || getRandomCover(),
+          })),
         },
       });
     } catch (error) {

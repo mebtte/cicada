@@ -14,6 +14,8 @@ export interface MusicDetail extends Music {
   lyrics: Lyric[];
   createUser: CreateUser;
   createTime: string;
+  forkFromList: Music[];
+  forkList: Music[];
 }
 
 export const MINI_INFO_HEIGHT = 50;

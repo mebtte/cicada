@@ -14,6 +14,7 @@ import SingerList from './singer_list';
 import Toolbar from './toolbar';
 import Lyric from './lyric';
 import MiniInfo from './mini_info';
+import SubMusicList from './sub_music_list';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
@@ -54,6 +55,15 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
           <Info music={music} />
           <Toolbar music={music} sticky={toolbarSticky} />
           <SingerList singerList={music.singers} />
+          {music.forkFromList.length ? (
+            <SubMusicList
+              label="翻唱自以下音乐"
+              musicList={music.forkFromList}
+            />
+          ) : null}
+          {music.forkList.length ? (
+            <SubMusicList label="被以下音乐翻唱" musicList={music.forkList} />
+          ) : null}
           <Lyric music={music} />
         </div>
         <CreateUser user={music.createUser} createTime={music.createTime} />

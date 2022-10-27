@@ -1,11 +1,6 @@
 import styled, { css } from 'styled-components';
 import IconButton from '#/components/icon_button';
-import {
-  MdPlaylistAdd,
-  MdRefresh,
-  MdOutlineEditNote,
-  MdHistory,
-} from 'react-icons/md';
+import { MdPlaylistAdd, MdOutlineEditNote, MdHistory } from 'react-icons/md';
 import p from '@/global_states/profile';
 import e, { EventType } from '../eventemitter';
 import { MINI_INFO_HEIGHT, SingerDetail } from './constants';
@@ -30,11 +25,9 @@ const Style = styled.div<{ sticky: boolean }>`
 
 function Toolbar({
   sticky,
-  reload,
   singer,
 }: {
   sticky: boolean;
-  reload: () => void;
   singer: SingerDetail;
 }) {
   const profile = p.useState()!;
@@ -59,9 +52,6 @@ function Toolbar({
           </IconButton>
         </>
       ) : null}
-      <IconButton onClick={reload}>
-        <MdRefresh />
-      </IconButton>
     </Style>
   );
 }

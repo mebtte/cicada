@@ -7,7 +7,7 @@ import MiniMode from './mini_mode';
 const Placeholder = styled.div`
   width: ${WIDTH}px;
 
-  background-color: rgb(0 0 0 / 0.01);
+  background-color: rgb(0 0 0 / 0.02);
   overflow: auto;
 `;
 

@@ -1,13 +1,9 @@
 import { MusicType } from '#/constants/music';
 import { CSSVariable } from '#/global_style';
-import { CSSProperties } from 'react';
 import { MultipleLrc } from 'react-lrc';
 import styled from 'styled-components';
 import { MusicDetail } from './constants';
 
-const style: CSSProperties = {
-  margin: '10px 0',
-};
 const Line = styled.div`
   margin: 10px 20px;
 
@@ -20,7 +16,6 @@ function Lyric({ music }: { music: MusicDetail }) {
   return music.type === MusicType.SONG ? (
     music.lyrics.length ? (
       <MultipleLrc
-        style={style}
         lrcs={music.lyrics.map((l) => l.content)}
         // eslint-disable-next-line react/no-unstable-nested-components
         lineRenderer={({ line }) => (

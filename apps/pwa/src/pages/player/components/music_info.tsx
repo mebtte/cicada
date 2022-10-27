@@ -1,7 +1,7 @@
-import { HtmlHTMLAttributes, useCallback } from 'react';
+import { CSSProperties, HtmlHTMLAttributes, useCallback } from 'react';
 import styled from 'styled-components';
 import ellipsis from '#/style/ellipsis';
-import Avatar from '@/components/avatar';
+import Cover from '#/components/cover';
 import eventemitter, { EventType } from '../eventemitter';
 import Singer from './singer';
 import MusicTagList from './music_tag_list';
@@ -36,8 +36,7 @@ const Style = styled.div`
     }
   }
 `;
-const COVER_SIZE = 40;
-const COVER_STYLE = {
+const coverStyle: CSSProperties = {
   cursor: 'pointer',
 };
 
@@ -54,13 +53,7 @@ function MusicInfo({
   const { cover, name, singers } = music;
   return (
     <Style {...props}>
-      <Avatar
-        style={COVER_STYLE}
-        animated
-        src={cover}
-        size={COVER_SIZE}
-        onClick={onViewMusic}
-      />
+      <Cover style={coverStyle} src={cover} size={40} onClick={onViewMusic} />
       <div className="info">
         <div className="top">
           <div className="name" onClick={onViewMusic}>

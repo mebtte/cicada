@@ -38,15 +38,7 @@ const DetailContainer = styled(Container)`
   }
 `;
 
-function Detail({
-  style,
-  singer,
-  reload,
-}: {
-  style: unknown;
-  singer: SingerDetail;
-  reload: () => void;
-}) {
+function Detail({ style, singer }: { style: unknown; singer: SingerDetail }) {
   const [toolbarSticky, setToolbarSticky] = useState(false);
 
   const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
@@ -59,7 +51,7 @@ function Detail({
       <div className="scrollable" onScroll={onScroll}>
         <div className="first-screen">
           <Info singer={singer} />
-          <Toolbar sticky={toolbarSticky} reload={reload} singer={singer} />
+          <Toolbar sticky={toolbarSticky} singer={singer} />
           <MusicList musicList={singer.musicList} />
         </div>
         <CreateUser user={singer.createUser} createTime={singer.createTime} />
@@ -110,7 +102,7 @@ function SingerDrawer({
             </CardContainer>
           );
         }
-        return <Detail style={style} singer={d.singer!} reload={reload} />;
+        return <Detail style={style} singer={d.singer!} />;
       })}
     </Drawer>
   );
