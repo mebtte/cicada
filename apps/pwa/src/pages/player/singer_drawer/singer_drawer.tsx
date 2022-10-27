@@ -93,7 +93,7 @@ function SingerDrawer({
         if (d.error) {
           return (
             <CardContainer style={style}>
-              <ErrorCard errorMessage="xxx" retry={reload} />
+              <ErrorCard errorMessage={d.error.message} retry={reload} />
             </CardContainer>
           );
         }
