@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useContext,
+  CSSProperties,
 } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
@@ -16,6 +17,7 @@ import Context from '../context';
 import Tab from './tab';
 import Playlist from './playlist';
 import Playqueue from './playqueue';
+import { ZIndex } from '../constants';
 
 const Container = styled.div`
   flex: 1;
@@ -29,6 +31,9 @@ const AnimatedDiv = styled(animated.div)`
   top: 0;
   left: 0;
 `;
+const maskProps: { style: CSSProperties } = {
+  style: { zIndex: ZIndex.DRAWER },
+};
 const bodyProps = {
   style: {
     width: 450,
@@ -74,7 +79,12 @@ function MusicDrawer() {
     leave: { opacity: 0, transform: 'translate(-100%)' },
   });
   return (
-    <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
+    <Drawer
+      open={open}
+      onClose={onClose}
+      maskProps={maskProps}
+      bodyProps={bodyProps}
+    >
       <Tab tab={tab} onChange={setTab} />
       <Container>
         {transtions((style, t) => {

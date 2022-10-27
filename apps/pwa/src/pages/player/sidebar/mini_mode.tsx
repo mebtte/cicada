@@ -3,8 +3,12 @@ import { CSSProperties, useEffect, useState } from 'react';
 import Content from './content';
 import e, { EventType } from '../eventemitter';
 import { WIDTH } from './constants';
+import { ZIndex } from '../constants';
 
 const onClose = () => e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
+const maskProps: { style: CSSProperties } = {
+  style: { zIndex: ZIndex.DRAWER },
+};
 const bodyProps: {
   style: CSSProperties;
 } = {
@@ -35,6 +39,7 @@ function MiniMode() {
       open={open}
       onClose={onClose}
       direction={Direction.LEFT}
+      maskProps={maskProps}
       bodyProps={{
         ...bodyProps,
         onClick: onClose,
