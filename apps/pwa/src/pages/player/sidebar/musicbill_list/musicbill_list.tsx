@@ -22,7 +22,7 @@ const StyledMusicbillList = styled(TransitionBox)`
   padding-bottom: 10px;
 `;
 const StatusBox = styled(TransitionBox)`
-  padding: 0 20px;
+  padding: 5px 20px;
 `;
 
 function MusicbillList() {
