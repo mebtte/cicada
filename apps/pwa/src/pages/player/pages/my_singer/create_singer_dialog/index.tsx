@@ -1,15 +1,20 @@
 import Dialog, { Title, Content, Action } from '#/components/dialog';
 import Button, { Variant } from '#/components/button';
 import Input from '#/components/input';
-import { ChangeEventHandler, useEffect, useState } from 'react';
+import { ChangeEventHandler, CSSProperties, useEffect, useState } from 'react';
 import useEvent from '#/utils/use_event';
 import notice from '#/utils/notice';
 import createSinger from '@/server/create_singer';
 import { ExceptionCode } from '#/constants/exception';
 import dialog from '#/utils/dialog';
 import { NAME_MAX_LENGTH } from '#/constants/singer';
+import { ZIndex } from '@/pages/player/constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
+
+const maskProps: { style: CSSProperties } = {
+  style: { zIndex: ZIndex.DIALOG },
+};
 
 function CreateSingerDialog() {
   const { open, onClose } = useOpen();
@@ -54,7 +59,7 @@ function CreateSingerDialog() {
   }, [open]);
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} maskProps={maskProps}>
       <Title>创建歌手</Title>
       <Content>
         <Input

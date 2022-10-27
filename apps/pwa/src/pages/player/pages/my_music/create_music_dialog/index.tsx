@@ -1,7 +1,13 @@
 import Dialog, { Title, Content, Action } from '#/components/dialog';
 import Button, { Variant } from '#/components/button';
 import Input from '#/components/input';
-import { ChangeEventHandler, useCallback, useEffect, useState } from 'react';
+import {
+  ChangeEventHandler,
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import Select from '#/components/select';
 import styled from 'styled-components';
 import {
@@ -18,10 +24,14 @@ import useEvent from '#/utils/use_event';
 import notice from '#/utils/notice';
 import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
+import { ZIndex } from '@/pages/player/constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
 import ToCreateSinger from './to_create_singer';
 
+const maskProps: { style: CSSProperties } = {
+  style: { zIndex: ZIndex.DIALOG },
+};
 const TYPES = MUSIC_TYPES.map((t) => ({
   id: t,
   label: MUSIC_TYPE_MAP[t].label,
@@ -109,7 +119,7 @@ function CreateMusicDialog() {
   }, [open]);
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} maskProps={maskProps}>
       <Title>创建音乐</Title>
       <StyledContent>
         <MultipleSelect

@@ -4,7 +4,7 @@ import MusicbillList from './musicbill_list';
 import Menu from './menu';
 
 const Style = styled.div`
-  padding: 30px 0 10px 0;
+  padding-top: 30px;
 
   display: flex;
   flex-direction: column;

@@ -6,12 +6,12 @@ import Context from '../context';
 import Progress from './progress';
 import MusicInfo from './music_info';
 import Action from './action';
-import { CONTROLLER_HEIGHT } from '../constants';
+import { CONTROLLER_HEIGHT, ZIndex } from '../constants';
 import eventemitter, { EventType } from '../eventemitter';
 
 const INITIAL_COVER = getRandomCover();
 const Style = styled.div`
-  z-index: 3;
+  z-index: ${ZIndex.CONTROLLER};
 
   box-sizing: border-box;
   display: flex;

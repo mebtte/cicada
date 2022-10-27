@@ -3,7 +3,6 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
-import { ZIndex } from '../constants/style';
 
 const TRANSITION = {
   from: {
@@ -21,7 +20,6 @@ const TRANSITION = {
 };
 
 const Mask = styled(animated.div)`
-  z-index: ${ZIndex.DIALOG};
   position: fixed;
   width: 100%;
   height: 100%;

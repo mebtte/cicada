@@ -26,23 +26,23 @@ const Style = styled.div`
 
   > .info {
     position: absolute;
-    left: 40px;
+    left: 0;
     bottom: 10px;
-    width: calc(100% - 80px);
+    max-width: 90%;
 
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 10px 40px 10px 20px;
+    border-radius: 0 4px 4px 0;
     background-color: rgb(255 255 255 / 0.75);
 
     > .name {
-      font-size: 24px;
+      font-size: 28px;
       font-weight: bold;
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
       ${ellipsis}
     }
 
     > .aliases {
-      font-size: 12px;
+      font-size: 14px;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       ${ellipsis}
     }

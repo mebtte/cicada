@@ -2,13 +2,13 @@ import { memo, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 import useOpen from './use_open';
-import { Music } from '../constants';
+import { Music, ZIndex } from '../constants';
 import Action from './action';
 import Background from './background';
 import Content from './content';
 
 const Style = styled(animated.div)`
-  z-index: 2;
+  z-index: ${ZIndex.LYRIC_PANEL};
   position: absolute;
   top: 0;
   left: 0;

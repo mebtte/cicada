@@ -65,10 +65,12 @@ function Detail({
 }
 
 function SingerDrawer({
+  zIndex,
   open,
   onClose,
   singerId,
 }: {
+  zIndex: number;
   open: boolean;
   onClose: () => void;
   singerId: string;
@@ -81,7 +83,12 @@ function SingerDrawer({
     leave: { opacity: 0 },
   });
   return (
-    <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
+    <Drawer
+      open={open}
+      onClose={onClose}
+      maskProps={{ style: { zIndex } }}
+      bodyProps={bodyProps}
+    >
       {transitions((style, d) => {
         if (d.error) {
           return (

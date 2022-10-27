@@ -3,7 +3,6 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import styled, { css } from 'styled-components';
 import { useTransition, animated, UseTransitionProps } from 'react-spring';
-import { ZIndex } from '../../constants/style';
 import { Direction } from './constants';
 
 const DIRECTION_MAP: Record<
@@ -47,7 +46,6 @@ const DIRECTION_MAP: Record<
   },
 };
 const Mask = styled(animated.div)`
-  z-index: ${ZIndex.DRAWER};
   position: fixed;
   width: 100%;
   height: 100%;

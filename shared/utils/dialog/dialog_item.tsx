@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 import { Confirm, Dialog as DialogShape, DialogType } from './constants';
 import Dialog, { Content, Title, Action } from '../../components/dialog';
 import Button, { Variant } from '../../components/button';
 import useEvent from '../use_event';
+import { UtilZIndex } from '../../constants';
+
+const maskProps: { style: CSSProperties } = {
+  style: { zIndex: UtilZIndex.DIALOG },
+};
 
 function DialogItem({
   dialog,
@@ -52,7 +57,7 @@ function DialogItem({
   }, [dialog.id, onDestroy, open]);
   //
   return (
-    <Dialog open={open}>
+    <Dialog open={open} maskProps={maskProps}>
       {dialog.title ? <Title>{dialog.title}</Title> : null}
       {dialog.content ? <Content>{dialog.content}</Content> : null}
       <Action>

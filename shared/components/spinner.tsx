@@ -42,7 +42,7 @@ const Style = styled.div`
  * @author mebtte<hi@mebtte.com>
  */
 function Spinner({
-  size = ComponentSize.NORMAL,
+  size = ComponentSize.SMALL,
   style,
   ...props
 }: {

@@ -70,3 +70,8 @@ export const EFFECTIVE_PLAY_PERCENT = 0.75;
 export const ALIAS_DIVIDER = '♫';
 
 export const DOWNLOAD_TTL = 1000 * 60 * 60 * 24 * 3;
+
+export enum UtilZIndex {
+  DIALOG = 99999998,
+  NOTICE = 99999999,
+}

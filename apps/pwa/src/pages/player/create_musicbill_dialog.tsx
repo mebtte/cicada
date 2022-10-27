@@ -4,6 +4,7 @@ import {
   useEffect,
   useCallback,
   ChangeEventHandler,
+  CSSProperties,
 } from 'react';
 import createMusicbill from '@/server/create_musicbill';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
@@ -14,6 +15,13 @@ import Dialog, { Title, Content, Action } from '#/components/dialog';
 import Button, { Type } from '@/components/button';
 import Input from '#/components/input';
 import eventemitter, { EventType } from './eventemitter';
+import { ZIndex } from './constants';
+
+const maskProps: { style: CSSProperties } = {
+  style: {
+    zIndex: ZIndex.DIALOG,
+  },
+};
 
 function CreateMusicbillDialog() {
   const [creating, setCreating] = useState(false);
@@ -57,7 +65,7 @@ function CreateMusicbillDialog() {
   }, []);
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} maskProps={maskProps}>
       <Title>创建乐单</Title>
       <Content>
         <Input

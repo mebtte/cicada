@@ -73,3 +73,15 @@ export interface Musicbill {
   status: RequestStatus;
   error: Error | null;
 }
+
+export enum ZIndex {
+  LYRIC_PANEL = 2,
+  CONTROLLER = 3,
+  /**
+   * drawer 和 dialog 之前需要大数字间隔
+   * drawer 的 z-index 会随着时间的增加而增加
+   * @author mebtte<hi@mebtte.com>
+   */
+  DRAWER = 4,
+  DIALOG = 9999999,
+}

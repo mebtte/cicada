@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, CSSProperties } from 'react';
 import * as React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -11,8 +11,14 @@ import eventemitter, { EventType } from '../eventemitter';
 import { Musicbill as MusicbillType } from './constant';
 import Context from '../context';
 import Musicbill from './musicbill';
+import { ZIndex } from '../constants';
 
-const bodyProps = {
+const maskProps: { style: React.CSSProperties } = {
+  style: { zIndex: ZIndex.DRAWER },
+};
+const bodyProps: {
+  style: CSSProperties;
+} = {
   style: {
     width: 350,
     display: 'flex',
@@ -96,7 +102,12 @@ function MusicbillOrderDrawer() {
   }, [musicbillList]);
 
   return (
-    <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
+    <Drawer
+      open={open}
+      onClose={onClose}
+      maskProps={maskProps}
+      bodyProps={bodyProps}
+    >
       <Title>排序乐单</Title>
       {/* @ts-expect-error */}
       <DndProvider backend={HTML5Backend}>
