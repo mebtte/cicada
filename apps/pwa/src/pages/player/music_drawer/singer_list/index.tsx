@@ -3,11 +3,7 @@ import { Singer as SingerType } from '../../constants';
 import Singer from './singer';
 
 const Style = styled.div`
-  margin: 0 20px;
-
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  margin: 0 0 10px 0;
 `;
 
 function SingerList({ singerList }: { singerList: SingerType[] }) {

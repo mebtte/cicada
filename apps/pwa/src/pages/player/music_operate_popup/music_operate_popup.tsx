@@ -1,8 +1,13 @@
 import { CSSProperties, memo } from 'react';
 import styled from 'styled-components';
-import { MdDownload } from 'react-icons/md';
+import {
+  MdDownload,
+  MdPlaylistAdd,
+  MdPlayArrow,
+  MdReadMore,
+  MdOutlinePostAdd,
+} from 'react-icons/md';
 import Popup from '#/components/popup';
-import { Name } from '@/components/icon';
 import { Music as MusicType } from '../constants';
 import useMusicOperate from '../use_music_operate';
 import MusicInfo from '../components/music_info';
@@ -48,21 +53,21 @@ function MusicOperateDrawer({
           <MusicInfo music={music} />
         </MusicInfoWrapper>
       ) : null}
-      <MenuItem icon={Name.PLAY_OUTLINE} label="播放" onClick={onPlay} />
+      <MenuItem icon={<MdPlayArrow />} label="播放" onClick={onPlay} />
       <MenuItem
-        icon={Name.INSERT_OUTLINE}
+        icon={<MdReadMore />}
         label="下一首播放"
         onClick={onAddToPlayqueue}
       />
       <MenuItem
-        icon={Name.ADD_TO_OUTLINE}
-        label="添加到乐单"
-        onClick={onAddToMusicbill}
-      />
-      <MenuItem
-        icon={Name.PLUS_OUTLINE}
+        icon={<MdPlaylistAdd />}
         label="添加到播放列表"
         onClick={onAddToPlaylist}
+      />
+      <MenuItem
+        icon={<MdOutlinePostAdd />}
+        label="添加到乐单"
+        onClick={onAddToMusicbill}
       />
       <MenuItem
         icon={<MdDownload />}

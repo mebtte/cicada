@@ -142,7 +142,7 @@
     "react-helmet": "^6.1.0",
     "react-json-view": "^1.21.3",
     "react-list": "^0.8.17",
-    "react-lrc": "^3.0.0",
+    "react-lrc": "^3.0.2",
     "react-router-dom": "^6.3.0",
     "react-slider": "^1.1.4",
     "react-spring": "^9.4.5",

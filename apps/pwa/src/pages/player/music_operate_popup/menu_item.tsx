@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import Icon, { Name } from '@/components/icon';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
+import { CSSVariable } from '#/global_style';
 
 const Style = styled.div`
   padding: 10px 20px;
@@ -8,18 +8,19 @@ const Style = styled.div`
   display: flex;
   align-items: center;
 
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   user-select: none;
   cursor: pointer;
   transition: all 300ms;
 
   > .label {
     margin-left: 20px;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   > svg {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
   }
 
   &:hover {
@@ -36,16 +37,12 @@ function MenuItem({
   label,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
-  icon: Name | ReactNode;
+  icon: ReactNode;
   label: string;
 }) {
   return (
     <Style {...props}>
-      {typeof icon === 'string' ? (
-        <Icon className="icon" name={icon} size={14} />
-      ) : (
-        icon
-      )}
+      {icon}
       <div className="label">{label}</div>
     </Style>
   );
