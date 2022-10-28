@@ -3,7 +3,7 @@ import { Confirm, Dialog as DialogShape, DialogType } from './constants';
 import Dialog, { Content, Title, Action } from '../../components/dialog';
 import Button, { Variant } from '../../components/button';
 import useEvent from '../use_event';
-import { UtilZIndex } from '../../constants';
+import { UtilZIndex } from '../../constants/style';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: UtilZIndex.DIALOG },

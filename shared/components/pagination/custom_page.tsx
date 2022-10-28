@@ -9,7 +9,11 @@ import {
 import Popup from '../popup';
 import e, { EventType } from './eventemitter';
 import Input from '../input';
+import { UtilZIndex } from '../../constants/style';
 
+const maskProps: { style: CSSProperties } = {
+  style: { zIndex: UtilZIndex.PAGINATION },
+};
 const bodyProps: {
   style: CSSProperties;
 } = {
@@ -72,7 +76,12 @@ function CustomPage({
   }, [open]);
 
   return (
-    <Popup open={open} onClose={onClose} bodyProps={bodyProps}>
+    <Popup
+      open={open}
+      onClose={onClose}
+      maskProps={maskProps}
+      bodyProps={bodyProps}
+    >
       <Input
         ref={inputRef}
         label="跳转到指定页面"

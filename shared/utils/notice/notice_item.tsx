@@ -5,7 +5,7 @@ import { Notice, TRANSITION_DURATION, NoticeType } from './constants';
 import e, { EventType } from './eventemitter';
 import { CSSVariable } from '../../global_style';
 import IconButton from '../../components/icon_button';
-import { UtilZIndex } from '../../constants';
+import { UtilZIndex } from '../../constants/style';
 
 const NOTICE_TYPE_MAP: Record<
   NoticeType,

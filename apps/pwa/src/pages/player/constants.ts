@@ -1,7 +1,7 @@
 import { RequestStatus } from '@/constants';
 import { MusicType } from '#/constants/music';
 import { Type as TagType } from '@/components/tag';
-import { UtilZIndex } from '#/constants';
+import { UtilZIndex } from '#/constants/style';
 
 export const CONTROLLER_HEIGHT = 60;
 
@@ -86,7 +86,7 @@ export const ZIndex = {
    */
   DYNAMIC_START: 4,
 
-  DRAWER: UtilZIndex.DIALOG - 1,
-  POPUP: UtilZIndex.DIALOG - 1,
-  DIALOG: UtilZIndex.DIALOG - 1,
+  DRAWER: UtilZIndex.PAGINATION - 1,
+  POPUP: UtilZIndex.PAGINATION - 1,
+  DIALOG: UtilZIndex.PAGINATION - 1,
 };
