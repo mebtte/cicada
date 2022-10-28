@@ -17,7 +17,7 @@ import Context from '../context';
 import Tab from './tab';
 import Playlist from './playlist';
 import Playqueue from './playqueue';
-import { ZIndex } from '../constants';
+import useDynamicZIndex from '../use_dynamic_z_index';
 
 const Container = styled.div`
   flex: 1;
@@ -31,10 +31,7 @@ const AnimatedDiv = styled(animated.div)`
   top: 0;
   left: 0;
 `;
-const maskProps: { style: CSSProperties } = {
-  style: { zIndex: ZIndex.DRAWER },
-};
-const bodyProps = {
+const bodyProps: { style: CSSProperties } = {
   style: {
     width: 450,
     display: 'flex',
@@ -43,6 +40,7 @@ const bodyProps = {
 };
 
 function MusicDrawer() {
+  const zIndex = useDynamicZIndex(EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER);
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
   const { playlist } = useContext(Context);
@@ -82,7 +80,7 @@ function MusicDrawer() {
     <Drawer
       open={open}
       onClose={onClose}
-      maskProps={maskProps}
+      maskProps={{ style: { zIndex } }}
       bodyProps={bodyProps}
     >
       <Tab tab={tab} onChange={setTab} />
