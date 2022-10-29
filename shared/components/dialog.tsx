@@ -106,7 +106,6 @@ const Dialog = ({
 };
 
 export const Title = styled.div`
-  padding-top: 10px;
   font-size: 20px;
   font-weight: 600;
   color: rgb(55 55 55);

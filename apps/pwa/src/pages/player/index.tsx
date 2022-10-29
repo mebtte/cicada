@@ -19,7 +19,6 @@ import MusicDrawer from './music_drawer';
 import ListDrawer from './list_drawer';
 import MusicbillListDrawer from './musicbill_list_drawer';
 import MusicbillOrderDrawer from './musicbilll_order_drawer';
-import CreateMusicbillDialog from './create_musicbill_dialog';
 import { QueueMusic } from './constants';
 import Lyric from './lyric';
 import useKeyboard from './use_keyboard';
@@ -107,7 +106,6 @@ function Wrapper() {
       <MusicDownloadDialog />
 
       {/* fixed z-index */}
-      <CreateMusicbillDialog />
       <MusicOperatePopup />
       <EditDialog />
 

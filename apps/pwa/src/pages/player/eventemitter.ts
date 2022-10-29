@@ -15,6 +15,8 @@ export enum EditDialogType {
 export interface EditDialogData {
   title: string;
   type: EditDialogType;
+  onSubmit: (input: unknown | undefined) => void | Promise<void>;
+  label?: string;
 }
 
 export enum EventType {
@@ -54,7 +56,6 @@ export enum EventType {
   TOGGEL_LYRIC = 'toggle_lyric',
   CLOSE_LYRIC = 'close_lyric',
 
-  OPEN_CREATE_MUSICBILL_DIALOG = 'open_create_musicbill_dialog',
   OPEN_MUSIC_OPERATE_POPUP = 'open_music_operate_popup',
   OPEN_MUSICBILL_LIST_DRAWER = 'open_musicbill_list_drawer',
   OPEN_SINGER_DRAWER = 'open_singer_drawer',
@@ -111,7 +112,6 @@ export default new Eventin<
     [EventType.TOGGEL_LYRIC]: null;
     [EventType.CLOSE_LYRIC]: null;
 
-    [EventType.OPEN_CREATE_MUSICBILL_DIALOG]: null;
     [EventType.OPEN_MUSIC_OPERATE_POPUP]: { music: Music };
     [EventType.OPEN_MUSICBILL_LIST_DRAWER]: { music: Music };
     [EventType.OPEN_SINGER_DRAWER]: { id: string };

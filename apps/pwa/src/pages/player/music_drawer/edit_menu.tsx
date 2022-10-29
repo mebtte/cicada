@@ -49,6 +49,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
               title: '编辑封面',
               type: EditDialogType.IMAGE,
+              onSubmit: () => {},
             })
           }
         />
@@ -60,6 +61,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
                 title: '编辑歌词',
                 type: EditDialogType.TEXTAREA_LIST,
+                onSubmit: () => {},
               })
             }
           />
