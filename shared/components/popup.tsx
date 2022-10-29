@@ -63,13 +63,13 @@ const Popup = ({
     },
   });
   const bodyRef = useRef<HTMLDivElement>(null);
-  const onRequestClose = (event) => {
+  const onClickWrapper = (event) => {
+    if (!bodyRef.current || !bodyRef.current.contains(event.target)) {
+      onClose();
+    }
+
     // eslint-disable-next-line no-unused-expressions
     maskProps.onClick && maskProps.onClick(event);
-    if (bodyRef.current && bodyRef.current.contains(event.target)) {
-      return;
-    }
-    return onClose();
   };
 
   return ReactDOM.createPortal(
@@ -78,7 +78,7 @@ const Popup = ({
         <Mask
           {...maskProps}
           style={{ ...maskProps.style, opacity }}
-          onClick={onRequestClose}
+          onClick={onClickWrapper}
         >
           <Body
             {...bodyProps}

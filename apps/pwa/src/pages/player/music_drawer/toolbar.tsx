@@ -3,15 +3,17 @@ import IconButton from '#/components/icon_button';
 import {
   MdPlayArrow,
   MdOutlineEditNote,
-  MdHistory,
   MdReadMore,
   MdMoreVert,
   MdOutlinePostAdd,
   MdPlaylistAdd,
 } from 'react-icons/md';
 import p from '@/global_states/profile';
-import e, { EventType } from '../eventemitter';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 import { MINI_INFO_HEIGHT, MusicDetail } from './constants';
+import e, { EventType } from './eventemitter';
 
 const Style = styled.div<{ sticky: boolean }>`
   position: sticky;
@@ -36,40 +38,50 @@ function Toolbar({ sticky, music }: { sticky: boolean; music: MusicDetail }) {
   return (
     <Style sticky={sticky}>
       <IconButton
-        onClick={() => e.emit(EventType.ACTION_PLAY_MUSIC, { music })}
+        onClick={() =>
+          playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, { music })
+        }
       >
         <MdPlayArrow />
       </IconButton>
       <IconButton
         onClick={() =>
-          e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, { music })
+          playerEventemitter.emit(
+            PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+            {
+              music,
+            },
+          )
         }
       >
         <MdReadMore />
       </IconButton>
       <IconButton
-        onClick={() => e.emit(EventType.OPEN_MUSICBILL_LIST_DRAWER, { music })}
+        onClick={() =>
+          playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_LIST_DRAWER, {
+            music,
+          })
+        }
       >
         <MdPlaylistAdd />
       </IconButton>
       <IconButton
-        onClick={() => e.emit(EventType.OPEN_MUSICBILL_LIST_DRAWER, { music })}
+        onClick={() =>
+          playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_LIST_DRAWER, {
+            music,
+          })
+        }
       >
         <MdOutlinePostAdd />
       </IconButton>
       {profile.super || profile.id === music.createUser.id ? (
-        <>
-          <IconButton>
-            <MdOutlineEditNote />
-          </IconButton>
-          <IconButton>
-            <MdHistory />
-          </IconButton>
-        </>
+        <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
+          <MdOutlineEditNote />
+        </IconButton>
       ) : null}
       <IconButton
         onClick={() =>
-          e.emit(EventType.OPEN_MUSIC_OPERATE_POPUP, {
+          playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_OPERATE_POPUP, {
             music,
           })
         }

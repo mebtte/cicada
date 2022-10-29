@@ -25,6 +25,7 @@ import Lyric from './lyric';
 import useKeyboard from './use_keyboard';
 import MusicDownloadDialog from './music_download_dialog';
 import SingerDrawer from './singer_drawer';
+import EditDialog from './edit_dialog';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -97,16 +98,18 @@ function Wrapper() {
         <Lyric music={queueMusic ? queueMusic.music : undefined} />
       </Style>
 
+      {/* dynamic z-index */}
       <SingerDrawer />
       <MusicDrawer />
       <ListDrawer />
       <MusicbillListDrawer />
       <MusicbillOrderDrawer />
-
-      <CreateMusicbillDialog />
       <MusicDownloadDialog />
 
+      {/* fixed z-index */}
+      <CreateMusicbillDialog />
       <MusicOperatePopup />
+      <EditDialog />
 
       {queueMusic ? (
         <>

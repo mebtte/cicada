@@ -15,6 +15,7 @@ import Toolbar from './toolbar';
 import Lyric from './lyric';
 import MiniInfo from './mini_info';
 import SubMusicList from './sub_music_list';
+import EditMenu from './edit_menu';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
@@ -70,6 +71,8 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
       </div>
 
       {toolbarSticky ? <MiniInfo music={music} /> : null}
+
+      <EditMenu music={music} />
     </DetailBox>
   );
 }

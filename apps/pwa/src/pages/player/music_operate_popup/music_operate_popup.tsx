@@ -8,10 +8,10 @@ import {
   MdOutlinePostAdd,
 } from 'react-icons/md';
 import Popup from '#/components/popup';
+import MenuItem from '#/components/menu_item';
 import { Music as MusicType } from '../constants';
 import useMusicOperate from '../use_music_operate';
 import MusicInfo from '../components/music_info';
-import MenuItem from './menu_item';
 
 const MusicInfoWrapper = styled.div`
   padding: 10px 20px;

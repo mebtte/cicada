@@ -1,20 +1,19 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '../global_style';
 
-const Style = styled.div`
-  padding: 10px 20px;
+const Style = styled.div<{ active: boolean }>`
+  padding: 8px 20px;
 
   display: flex;
   align-items: center;
+  gap: 10px;
 
-  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   user-select: none;
   cursor: pointer;
   transition: all 300ms;
 
   > .label {
-    margin-left: 20px;
     font-size: 14px;
   }
 
@@ -30,18 +29,27 @@ const Style = styled.div`
   &:active {
     background-color: rgb(0 0 0 / 0.1);
   }
+
+  ${({ active }) => css`
+    color: ${active ? '#fff !important' : CSSVariable.TEXT_COLOR_PRIMARY};
+    background-color: ${active
+      ? `${CSSVariable.COLOR_PRIMARY} !important`
+      : 'transparent'};
+  `}
 `;
 
 function MenuItem({
+  active = false,
   icon,
   label,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
+  active?: boolean;
   icon: ReactNode;
   label: string;
 }) {
   return (
-    <Style {...props}>
+    <Style {...props} active={active}>
       {icon}
       <div className="label">{label}</div>
     </Style>

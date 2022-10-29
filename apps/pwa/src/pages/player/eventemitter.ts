@@ -7,6 +7,16 @@ import {
   QueueMusic,
 } from './constants';
 
+export enum EditDialogType {
+  INPUT,
+  IMAGE,
+  TEXTAREA_LIST,
+}
+export interface EditDialogData {
+  title: string;
+  type: EditDialogType;
+}
+
 export enum EventType {
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
   MINI_MODE_CLOSE_SIDEBAR = 'mini_mode_close_sidebar',
@@ -54,6 +64,7 @@ export enum EventType {
   OPEN_PLAYLIST_PLAYQUEUE_DRAWER = 'open_playlist_playqueue_drawer',
   TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER = 'toggle_playlist_playqueue_drawer',
   OPEN_MUSIC_DOWNLOAD_DIALOG = 'open_music_download_dialog',
+  OPEN_EDIT_DIALOG = 'open_music_edit_dialog',
 
   FOCUS_SEARCH_INPUT = 'focus_search_input',
 }
@@ -110,6 +121,7 @@ export default new Eventin<
     [EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.OPEN_MUSIC_DOWNLOAD_DIALOG]: { music: Music };
+    [EventType.OPEN_EDIT_DIALOG]: EditDialogData;
 
     [EventType.FOCUS_SEARCH_INPUT]: null;
   }

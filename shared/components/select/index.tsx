@@ -1,4 +1,4 @@
-import { HtmlHTMLAttributes, useEffect, useState } from 'react';
+import { HtmlHTMLAttributes, ReactNode, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import { ComponentSize } from '../../constants/style';
@@ -54,6 +54,7 @@ const Selected = styled.div<{ active: boolean; disabled: boolean }>`
 `;
 
 function Select<ID extends number | string>({
+  addon,
   label,
   data,
   value,
@@ -61,6 +62,7 @@ function Select<ID extends number | string>({
   placeholder = '',
   disabled = false,
 }: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
+  addon?: ReactNode;
   label: string;
   data: Item<ID>[];
   value: ID;
@@ -87,7 +89,7 @@ function Select<ID extends number | string>({
 
   const selected = value ? data.find((item) => item.id === value) : undefined;
   return (
-    <Label disabled={disabled} label={label} active={open}>
+    <Label disabled={disabled} label={label} active={open} addon={addon}>
       <Style>
         <Selected active={open} disabled={disabled} onClick={onOpen}>
           <div className="label">{selected ? selected.label : placeholder}</div>
