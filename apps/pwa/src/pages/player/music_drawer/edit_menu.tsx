@@ -5,7 +5,10 @@ import { MdDelete, MdEdit } from 'react-icons/md';
 import { CSSVariable } from '#/global_style';
 import styled from 'styled-components';
 import notice from '#/utils/notice';
-import { MusicType } from '#/constants/music';
+import { AllowUpdateKey, MusicType } from '#/constants/music';
+import uploadAsset from '@/server/upload_asset';
+import { AssetType } from '#/constants';
+import updateMusic from '@/server/update_music';
 import { ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -28,8 +31,14 @@ const dangerousIconStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
 
-function EditMenu({ music }: { music: MusicDetail }) {
-  const [open, setOpen] = useState(true);
+function EditMenu({
+  music,
+  reload,
+}: {
+  music: MusicDetail;
+  reload: () => void;
+}) {
+  const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
 
   useEffect(() => {
@@ -48,8 +57,22 @@ function EditMenu({ music }: { music: MusicDetail }) {
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
               title: '编辑封面',
-              type: EditDialogType.IMAGE,
-              onSubmit: () => {},
+              type: EditDialogType.COVER,
+              onSubmit: async (cover: Blob | undefined) => {
+                if (typeof cover === 'undefined') {
+                  throw new Error('请选择封面');
+                }
+                const { id: assetId } = await uploadAsset(
+                  cover,
+                  AssetType.MUSIC_COVER,
+                );
+                await updateMusic({
+                  id: music.id,
+                  key: AllowUpdateKey.COVER,
+                  value: assetId,
+                });
+                reload();
+              },
             })
           }
         />

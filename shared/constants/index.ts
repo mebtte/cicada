@@ -32,19 +32,19 @@ export const ASSET_TYPE_MAP: Record<
 > = {
   [AssetType.SINGER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 0.3,
+    maxSize: 1024 * 1024 * 0.5,
   },
   [AssetType.MUSICBILL_COVER]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 0.3,
+    maxSize: 1024 * 1024 * 0.5,
   },
   [AssetType.MUSIC_COVER]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 0.3,
+    maxSize: 1024 * 1024 * 0.5,
   },
   [AssetType.USER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 0.3,
+    maxSize: 1024 * 1024 * 0.5,
   },
   [AssetType.MUSIC_SQ]: {
     acceptTypes: ['audio/mpeg', 'audio/x-m4a', 'audio/mp4', 'video/mp4'],

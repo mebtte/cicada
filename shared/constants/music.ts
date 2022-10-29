@@ -31,3 +31,7 @@ export const MUSIC_SQ = {
   ACCEPT_MIMES: ['audio/mpeg', 'audio/x-m4a', 'video/mp4'],
   MAX_SIZE: 1024 * 1024 * 10,
 };
+
+export enum AllowUpdateKey {
+  COVER = 'cover',
+}

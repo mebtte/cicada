@@ -3,7 +3,6 @@ import { CSSVariable } from '../global_style';
 import useEvent from '../utils/use_event';
 import Label from './label';
 import selectFile from '../utils/select_file';
-import { MUSIC_SQ } from '../constants/music';
 
 const Style = styled.div<{ disabled: boolean }>`
   padding: 20px;
@@ -42,19 +41,21 @@ function FileSelect({
   value,
   onChange,
   disabled = false,
+  acceptTypes,
 }: {
-  label: string;
+  label?: string;
   placeholder?: string;
   value: File | null;
   onChange: (file: File | null) => void;
   disabled?: boolean;
+  acceptTypes?: string[];
 }) {
   const onSelectFile = useEvent(() => {
     if (disabled) {
       return;
     }
     return selectFile({
-      acceptTypes: MUSIC_SQ.ACCEPT_MIMES,
+      acceptTypes,
       onSelect: onChange,
     });
   });

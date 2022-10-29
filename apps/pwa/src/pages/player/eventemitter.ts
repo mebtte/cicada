@@ -9,7 +9,7 @@ import {
 
 export enum EditDialogType {
   INPUT,
-  IMAGE,
+  COVER,
   TEXTAREA_LIST,
 }
 export interface EditDialogData {

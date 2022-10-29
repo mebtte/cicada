@@ -1,13 +1,23 @@
 import Input from '#/components/input';
-import { RenderProps } from './constants';
+import { ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react';
+import { Ref, RenderProps } from './constants';
 
-function Wrapper({ loading, value, onChange, data: { label } }: RenderProps) {
+function Wrapper(
+  { loading, data: { label } }: RenderProps,
+  ref: ForwardedRef<Ref>,
+) {
+  const [name, setName] = useState('');
+
+  useImperativeHandle(ref, () => ({
+    getValue: () => name,
+  }));
+
   return (
     <Input
       label={label}
       inputProps={{
-        value: (value as string) || '',
-        onChange: (e) => onChange(e.target.value),
+        value: name,
+        onChange: (e) => setName(e.target.value),
         autoFocus: true,
       }}
       disabled={loading}
@@ -15,4 +25,4 @@ function Wrapper({ loading, value, onChange, data: { label } }: RenderProps) {
   );
 }
 
-export default Wrapper;
+export default forwardRef<Ref, RenderProps>(Wrapper);

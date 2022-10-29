@@ -41,7 +41,15 @@ const DetailBox = styled(Container)`
   }
 `;
 
-function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
+function Detail({
+  style,
+  music,
+  reload,
+}: {
+  style: unknown;
+  music: MusicDetail;
+  reload: () => void;
+}) {
   const [toolbarSticky, setToolbarSticky] = useState(false);
 
   const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
@@ -72,7 +80,7 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
 
       {toolbarSticky ? <MiniInfo music={music} /> : null}
 
-      <EditMenu music={music} />
+      <EditMenu music={music} reload={reload} />
     </DetailBox>
   );
 }
@@ -118,7 +126,7 @@ function MusicDrawer({
           );
         }
 
-        return <Detail style={style} music={d.music!} />;
+        return <Detail style={style} music={d.music!} reload={reload} />;
       })}
     </Drawer>
   );

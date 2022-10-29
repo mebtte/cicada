@@ -12,6 +12,7 @@ import Select from '#/components/select';
 import styled from 'styled-components';
 import {
   MusicType,
+  MUSIC_SQ,
   MUSIC_TYPES,
   MUSIC_TYPE_MAP,
   NAME_MAX_LENGTH,
@@ -157,6 +158,7 @@ function CreateMusicDialog() {
           value={sq}
           onChange={onSqChange}
           disabled={loading}
+          acceptTypes={MUSIC_SQ.ACCEPT_MIMES}
         />
       </StyledContent>
       <Action>

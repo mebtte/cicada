@@ -32,7 +32,7 @@ export type Music = {
 export function getMusicById<P extends Property>(id: string, properties: P[]) {
   return db.get<{
     [key in P]: Music[key];
-  }>(`select ${properties.join(',')} from music where id = ?`, [id]);
+  }>(`SELECT ${properties.join(',')} FROM music WHERE id = ?`, [id]);
 }
 
 export function getMusicListByIds<P extends Property>(
@@ -43,9 +43,27 @@ export function getMusicListByIds<P extends Property>(
     [key in P]: Music[key];
   }>(
     `
-      select ${properties.join(',')} from music
-        where id in ( ${ids.map(() => '?')} )
+      SELECT ${properties.join(',')} FROM music
+      WHERE id IN ( ${ids.map(() => '?')} )
     `,
     ids,
+  );
+}
+
+export function updateMusic<P extends Property.COVER>({
+  id,
+  property,
+  value,
+}: {
+  id: string;
+  property: P;
+  value: Music[P];
+}) {
+  return db.run(
+    `
+      UPDATE music SET ${property} = ?
+      WHERE id = ?
+    `,
+    [value, id],
   );
 }
