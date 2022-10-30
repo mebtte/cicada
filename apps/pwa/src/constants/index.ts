@@ -15,7 +15,6 @@ export enum Query {
 
   REDIRECT = 'redirect',
   CREATE_MUSIC_DIALOG_OPEN = 'create_music_dialog_open',
-  CREATE_SINGER_DIALOG_OPEN = 'create_singer_dialog_open',
   SEARCH_VALUE = 'search_value',
   PAGE = 'page',
   KEYWORD = 'keyword',
