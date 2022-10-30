@@ -50,7 +50,7 @@ export function getSingerListByIds<P extends Property>(
       select ${properties.join(',')} from singer
         where id in ( ${ids.map(() => '?')} )
     `,
-    [ids],
+    ids,
   );
 }
 
