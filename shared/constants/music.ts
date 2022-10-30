@@ -34,4 +34,9 @@ export const MUSIC_SQ = {
 
 export enum AllowUpdateKey {
   COVER = 'cover',
+  LYRIC = 'lyric',
 }
+
+export const MUSIC_MAX_LRYIC_AMOUNT = 5;
+
+export const LYRIC_MAX_LENGTH = 16384;

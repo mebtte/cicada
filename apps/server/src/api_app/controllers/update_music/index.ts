@@ -4,10 +4,12 @@ import { getMusicById, Property as MusicProperty } from '@/db/music';
 import { Context } from '../../constants';
 import { Music, Parameter } from './constants';
 import updateCover from './update_cover';
+import updateLyric from './update_lyric';
 
 const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
   {
     [AllowUpdateKey.COVER]: updateCover,
+    [AllowUpdateKey.LYRIC]: updateLyric,
   };
 
 export default async (ctx: Context) => {
@@ -29,8 +31,9 @@ export default async (ctx: Context) => {
   const music: Music | null = await getMusicById(id, [
     MusicProperty.ID,
     MusicProperty.COVER,
+    MusicProperty.CREATE_USER_ID,
   ]);
-  if (!music) {
+  if (!music || (!ctx.user.super && music.createUserId !== ctx.user.id)) {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
   }
 

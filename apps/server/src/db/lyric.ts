@@ -18,5 +18,26 @@ export function getLyricListByMusicId<P extends Property>(
 ) {
   return db.all<{
     [key in P]: Lyric[key];
-  }>(`select ${properties.join(',')} from lyric where musicId = ?`, [musicId]);
+  }>(
+    `
+      SELECT ${properties.join(',')} FROM lyric WHERE musicId = ?
+    `,
+    [musicId],
+  );
+}
+
+export function createLyric({
+  musicId,
+  content,
+}: {
+  musicId: string;
+  content: string;
+}) {
+  return db.run(
+    `
+      INSERT INTO lyric ( musicId, content )
+      VALUES ( ?, ? )
+    `,
+    [musicId, content],
+  );
 }

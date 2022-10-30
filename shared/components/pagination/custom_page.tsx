@@ -32,7 +32,7 @@ function CustomPage({
   onChange: (page: number) => void;
 }) {
   const inputRef = useRef<{
-    root: HTMLLabelElement;
+    root: HTMLDivElement;
     input: HTMLInputElement;
   }>(null);
 

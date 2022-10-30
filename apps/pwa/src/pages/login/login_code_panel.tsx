@@ -37,7 +37,7 @@ function LoginCodePanel({
   email: string;
   toPrevious: () => void;
 }) {
-  const inputRef = useRef<{ root: HTMLLabelElement; input: HTMLInputElement }>(
+  const inputRef = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(
     null,
   );
 
