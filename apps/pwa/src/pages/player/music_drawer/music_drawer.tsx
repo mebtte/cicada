@@ -62,7 +62,7 @@ function Detail({
       <div className="scrollable" onScroll={onScroll}>
         <div className="first-screen">
           <Info music={music} />
-          <Toolbar music={music} sticky={toolbarSticky} />
+          <Toolbar music={music} />
           <SingerList singerList={music.singers} />
           {music.forkFromList.length ? (
             <SubMusicList

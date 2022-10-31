@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
 import { MdPlaylistAdd, MdOutlineEditNote } from 'react-icons/md';
 import p from '@/global_states/profile';
@@ -9,7 +9,7 @@ import { MINI_INFO_HEIGHT, SingerDetail } from './constants';
 import e, { EventType } from './eventemitter';
 
 const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, null);
-const Style = styled.div<{ sticky: boolean }>`
+const Style = styled.div`
   position: sticky;
   top: ${MINI_INFO_HEIGHT}px;
   height: 45px;
@@ -19,24 +19,13 @@ const Style = styled.div<{ sticky: boolean }>`
   align-items: center;
   gap: 10px;
 
-  background-color: #fff;
-  border-bottom: 1px solid;
-
-  ${({ sticky }) => css`
-    border-color: ${sticky ? 'rgb(0 0 0 / 0.05)' : 'transparent'};
-  `}
+  backdrop-filter: blur(5px);
 `;
 
-function Toolbar({
-  sticky,
-  singer,
-}: {
-  sticky: boolean;
-  singer: SingerDetail;
-}) {
+function Toolbar({ singer }: { singer: SingerDetail }) {
   const profile = p.useState()!;
   return (
-    <Style sticky={sticky}>
+    <Style>
       <IconButton
         onClick={() =>
           playerEventemitter.emit(

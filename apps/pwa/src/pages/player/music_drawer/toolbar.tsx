@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
 import {
   MdPlayArrow,
@@ -15,7 +15,7 @@ import playerEventemitter, {
 import { MINI_INFO_HEIGHT, MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
 
-const Style = styled.div<{ sticky: boolean }>`
+const Style = styled.div`
   position: sticky;
   top: ${MINI_INFO_HEIGHT}px;
   height: 45px;
@@ -25,18 +25,13 @@ const Style = styled.div<{ sticky: boolean }>`
   align-items: center;
   gap: 5px;
 
-  background-color: #fff;
-  border-bottom: 1px solid;
-
-  ${({ sticky }) => css`
-    border-color: ${sticky ? 'rgb(0 0 0 / 0.05)' : 'transparent'};
-  `}
+  backdrop-filter: blur(5px);
 `;
 
-function Toolbar({ sticky, music }: { sticky: boolean; music: MusicDetail }) {
+function Toolbar({ music }: { music: MusicDetail }) {
   const profile = p.useState()!;
   return (
-    <Style sticky={sticky}>
+    <Style>
       <IconButton
         onClick={() =>
           playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, { music })
