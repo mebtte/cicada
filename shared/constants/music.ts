@@ -34,6 +34,7 @@ export const MUSIC_SQ = {
 
 export enum AllowUpdateKey {
   COVER = 'cover',
+  NAME = 'name',
   LYRIC = 'lyric',
 }
 

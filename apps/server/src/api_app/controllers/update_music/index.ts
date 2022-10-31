@@ -4,11 +4,13 @@ import { getMusicById, Property as MusicProperty } from '@/db/music';
 import { Context } from '../../constants';
 import { Music, Parameter } from './constants';
 import updateCover from './update_cover';
+import updateName from './update_name';
 import updateLyric from './update_lyric';
 
 const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
   {
     [AllowUpdateKey.COVER]: updateCover,
+    [AllowUpdateKey.NAME]: updateName,
     [AllowUpdateKey.LYRIC]: updateLyric,
   };
 
@@ -31,6 +33,7 @@ export default async (ctx: Context) => {
   const music: Music | null = await getMusicById(id, [
     MusicProperty.ID,
     MusicProperty.COVER,
+    MusicProperty.NAME,
     MusicProperty.CREATE_USER_ID,
   ]);
   if (!music || (!ctx.user.super && music.createUserId !== ctx.user.id)) {

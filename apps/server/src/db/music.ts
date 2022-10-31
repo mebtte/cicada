@@ -50,7 +50,7 @@ export function getMusicListByIds<P extends Property>(
   );
 }
 
-export function updateMusic<P extends Property.COVER>({
+export function updateMusic<P extends Property.COVER | Property.NAME>({
   id,
   property,
   value,
