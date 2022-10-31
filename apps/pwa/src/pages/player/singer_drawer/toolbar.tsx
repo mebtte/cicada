@@ -1,10 +1,14 @@
 import styled, { css } from 'styled-components';
 import IconButton from '#/components/icon_button';
-import { MdPlaylistAdd, MdOutlineEditNote, MdHistory } from 'react-icons/md';
+import { MdPlaylistAdd, MdOutlineEditNote } from 'react-icons/md';
 import p from '@/global_states/profile';
-import e, { EventType } from '../eventemitter';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 import { MINI_INFO_HEIGHT, SingerDetail } from './constants';
+import e, { EventType } from './eventemitter';
 
+const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, null);
 const Style = styled.div<{ sticky: boolean }>`
   position: sticky;
   top: ${MINI_INFO_HEIGHT}px;
@@ -35,22 +39,20 @@ function Toolbar({
     <Style sticky={sticky}>
       <IconButton
         onClick={() =>
-          e.emit(EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST, {
-            musicList: singer.musicList.map((m) => m.music),
-          })
+          playerEventemitter.emit(
+            PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
+            {
+              musicList: singer.musicList.map((m) => m.music),
+            },
+          )
         }
       >
         <MdPlaylistAdd />
       </IconButton>
       {profile.super || profile.id === singer.createUser.id ? (
-        <>
-          <IconButton>
-            <MdOutlineEditNote />
-          </IconButton>
-          <IconButton>
-            <MdHistory />
-          </IconButton>
-        </>
+        <IconButton onClick={openEditMenu}>
+          <MdOutlineEditNote />
+        </IconButton>
       ) : null}
     </Style>
   );

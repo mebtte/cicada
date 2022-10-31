@@ -55,12 +55,12 @@ const KEY_MAP_HANDLER: Record<
         property: SingerProperty.NAME,
         value: name,
       }),
-      saveSingerModifyRecord({
-        singerId: singer.id,
-        key: 'name',
-        value: name,
-        modifyUserId: ctx.user.id,
-      }),
+      // saveSingerModifyRecord({
+      //   singerId: singer.id,
+      //   key: 'name',
+      //   value: name,
+      //   modifyUserId: ctx.user.id,
+      // }),
     ]);
 
     return ctx.success();
@@ -95,12 +95,12 @@ const KEY_MAP_HANDLER: Record<
         property: SingerProperty.ALIASES,
         value: aliases,
       }),
-      saveSingerModifyRecord({
-        singerId: singer.id,
-        key: 'aliases',
-        value: aliases,
-        modifyUserId: ctx.user.id,
-      }),
+      // saveSingerModifyRecord({
+      //   singerId: singer.id,
+      //   key: 'aliases',
+      //   value: aliases,
+      //   modifyUserId: ctx.user.id,
+      // }),
     ]);
 
     return ctx.success();
@@ -126,12 +126,12 @@ const KEY_MAP_HANDLER: Record<
         property: SingerProperty.AVATAR,
         value: avatar,
       }),
-      saveSingerModifyRecord({
-        singerId: singer.id,
-        key: 'avatar',
-        value: avatar,
-        modifyUserId: ctx.user.id,
-      }),
+      // saveSingerModifyRecord({
+      //   singerId: singer.id,
+      //   key: 'avatar',
+      //   value: avatar,
+      //   modifyUserId: ctx.user.id,
+      // }),
     ]);
 
     return ctx.success();

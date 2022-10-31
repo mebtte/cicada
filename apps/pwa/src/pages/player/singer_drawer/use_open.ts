@@ -4,8 +4,10 @@ import e, { EventType } from '../eventemitter';
 
 export default () => {
   const zIndex = useDynamicZIndex(EventType.OPEN_SINGER_DRAWER);
+  // const [open, setOpen] = useState(true);
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
+  // const [singerId, setSingerId] = useState('vaffchhj');
   const [singerId, setSingerId] = useState('');
 
   useEffect(() => {

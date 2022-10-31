@@ -14,6 +14,11 @@ import { Ref, RenderProps } from './constants';
 
 const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
 const MAX_SIZE = 1000;
+const Style = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
 const ImgBox = styled.div`
   img {
     display: block;
@@ -41,6 +46,9 @@ function Cover({ loading }: RenderProps, ref: ForwardedRef<Ref>) {
 
         const imgNode = document.createElement('img');
         imgNode.src = url;
+        await new Promise((resolve) =>
+          imgNode.addEventListener('load', resolve),
+        );
 
         context.drawImage(imgNode, x, y, width, width, 0, 0, size, size);
         return new Promise<Blob>((resolve, reject) =>
@@ -87,19 +95,22 @@ function Cover({ loading }: RenderProps, ref: ForwardedRef<Ref>) {
     }
   }, [loading]);
 
-  return url ? (
-    <ImgBox>
-      {/* eslint-disable-next-line jsx-a11y/alt-text */}
-      <img src={url} ref={imageRef} />
-    </ImgBox>
-  ) : (
-    <FileSelect
-      placeholder="选择图片"
-      value={file}
-      onChange={(f) => setFile(f)}
-      acceptTypes={ACCEPT_TYPES}
-      disabled={loading}
-    />
+  return (
+    <Style>
+      {url ? (
+        <ImgBox>
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
+          <img src={url} ref={imageRef} />
+        </ImgBox>
+      ) : null}
+      <FileSelect
+        placeholder="选择图片"
+        value={file}
+        onChange={(f) => setFile(f)}
+        acceptTypes={ACCEPT_TYPES}
+        disabled={loading}
+      />
+    </Style>
   );
 }
 

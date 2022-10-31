@@ -17,6 +17,7 @@ export interface EditDialogData {
   type: EditDialogType;
   onSubmit: (input: unknown | undefined) => void | Promise<void>;
   label?: string;
+  initialValue?: unknown;
 }
 
 export enum EventType {

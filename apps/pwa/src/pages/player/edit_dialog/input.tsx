@@ -3,10 +3,10 @@ import { ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react';
 import { Ref, RenderProps } from './constants';
 
 function Wrapper(
-  { loading, data: { label } }: RenderProps,
+  { loading, data: { label, initialValue } }: RenderProps,
   ref: ForwardedRef<Ref>,
 ) {
-  const [name, setName] = useState('');
+  const [name, setName] = useState((initialValue as string) || '');
 
   useImperativeHandle(ref, () => ({
     getValue: () => name,

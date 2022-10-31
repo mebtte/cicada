@@ -20,6 +20,7 @@ export default async (ctx: Context) => {
   }
 
   const singer = await getSingerById(id, [
+    SingerProperty.ID,
     SingerProperty.NAME,
     SingerProperty.ALIASES,
     SingerProperty.AVATAR,

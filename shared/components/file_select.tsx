@@ -5,7 +5,7 @@ import Label from './label';
 import selectFile from '../utils/select_file';
 
 const Style = styled.div<{ disabled: boolean }>`
-  padding: 20px;
+  padding: 10px 20px;
 
   border: 1px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 4px;

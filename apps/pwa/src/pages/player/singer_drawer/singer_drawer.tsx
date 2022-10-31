@@ -13,6 +13,7 @@ import Toolbar from './toolbar';
 import MusicList from './music_list';
 import CreateUser from './create_user';
 import MiniIfno from './mini_info';
+import EditMenu from './edit_menu';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
@@ -38,7 +39,15 @@ const DetailContainer = styled(Container)`
   }
 `;
 
-function Detail({ style, singer }: { style: unknown; singer: SingerDetail }) {
+function Detail({
+  style,
+  singer,
+  reload,
+}: {
+  style: unknown;
+  singer: SingerDetail;
+  reload: () => void;
+}) {
   const [toolbarSticky, setToolbarSticky] = useState(false);
 
   const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
@@ -58,6 +67,7 @@ function Detail({ style, singer }: { style: unknown; singer: SingerDetail }) {
       </div>
 
       {toolbarSticky ? <MiniIfno singer={singer} /> : null}
+      <EditMenu singer={singer} reload={reload} />
     </DetailContainer>
   );
 }
@@ -102,7 +112,7 @@ function SingerDrawer({
             </CardContainer>
           );
         }
-        return <Detail style={style} singer={d.singer!} />;
+        return <Detail style={style} singer={d.singer!} reload={reload} />;
       })}
     </Drawer>
   );
