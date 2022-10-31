@@ -3,6 +3,8 @@ import { Method, request } from '.';
 
 type KeyMapValue = {
   [AllowUpdateKey.COVER]: string;
+  [AllowUpdateKey.NAME]: string;
+  [AllowUpdateKey.LYRIC]: string[];
 };
 
 function updateMusic<Key extends AllowUpdateKey>({

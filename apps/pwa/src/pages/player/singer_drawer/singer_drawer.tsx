@@ -60,7 +60,7 @@ function Detail({
       <div className="scrollable" onScroll={onScroll}>
         <div className="first-screen">
           <Info singer={singer} />
-          <Toolbar sticky={toolbarSticky} singer={singer} />
+          <Toolbar singer={singer} />
           <MusicList musicList={singer.musicList} />
         </div>
         <CreateUser user={singer.createUser} createTime={singer.createTime} />

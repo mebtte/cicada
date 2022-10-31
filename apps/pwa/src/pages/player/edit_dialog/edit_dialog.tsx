@@ -9,21 +9,30 @@ import Button from '#/components/button';
 import notice from '#/utils/notice';
 import { ZIndex } from '../constants';
 import { EditDialogData, EditDialogType } from '../eventemitter';
-import TextareaList from './textarea_list';
 import { Ref, RenderProps } from './constants';
 import Input from './input';
 import Cover from './cover';
+import TextareaList from './textarea_list';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
 };
 const TYPE_MAP_RENDER: Record<
   EditDialogType,
-  ForwardRefExoticComponent<RenderProps>
+  {
+    Component: ForwardRefExoticComponent<RenderProps>;
+    bodyStyle?: CSSProperties;
+  }
 > = {
-  [EditDialogType.COVER]: Cover,
-  [EditDialogType.INPUT]: Input,
-  [EditDialogType.TEXTAREA_LIST]: TextareaList,
+  [EditDialogType.COVER]: { Component: Cover },
+  [EditDialogType.INPUT]: { Component: Input },
+  [EditDialogType.TEXTAREA_LIST]: {
+    Component: TextareaList,
+    bodyStyle: {
+      width: 550,
+      maxWidth: '90%',
+    },
+  },
 };
 
 function EditDialog({
@@ -53,9 +62,9 @@ function EditDialog({
     setLoading(false);
   };
 
-  const Component = TYPE_MAP_RENDER[type];
+  const { Component, bodyStyle } = TYPE_MAP_RENDER[type];
   return (
-    <Dialog open={open} maskProps={maskProps}>
+    <Dialog open={open} maskProps={maskProps} bodyProps={{ style: bodyStyle }}>
       <Title>{title}</Title>
       <Content>
         {/* @ts-expect-error */}

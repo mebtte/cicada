@@ -27,7 +27,7 @@ function Wrapper() {
   const navigate = useNavigate();
   const miniMode = mm.useState();
 
-  const ref = useRef<{ root: HTMLLabelElement; input: HTMLInputElement }>(null);
+  const ref = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(null);
 
   const [keyword, setKeyword] = useState('');
   const onKeywordChange = (event: ChangeEvent<HTMLInputElement>) =>

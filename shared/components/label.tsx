@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { CSSVariable } from '../global_style';
 import ellipsis from '../style/ellipsis';
 
-const Style = styled.label<{ active: boolean; disabled: boolean }>`
+const Style = styled.div<{ active: boolean; disabled: boolean }>`
   transition: 300ms ease-in-out;
 
   > .top {
@@ -40,7 +40,7 @@ const Style = styled.label<{ active: boolean; disabled: boolean }>`
     }
   `}
 `;
-type Props = HtmlHTMLAttributes<HTMLLabelElement> & {
+type Props = HtmlHTMLAttributes<HTMLDivElement> & {
   label?: string;
   disabled?: boolean;
   active?: boolean;
@@ -49,7 +49,7 @@ type Props = HtmlHTMLAttributes<HTMLLabelElement> & {
 
 function Label(
   { label, active = false, disabled = false, addon, children, ...props }: Props,
-  ref: ForwardedRef<HTMLLabelElement>,
+  ref: ForwardedRef<HTMLDivElement>,
 ) {
   return (
     <Style {...props} active={active} disabled={disabled} ref={ref}>
@@ -62,4 +62,4 @@ function Label(
   );
 }
 
-export default forwardRef<HTMLLabelElement, Props>(Label);
+export default forwardRef<HTMLDivElement, Props>(Label);

@@ -5,7 +5,13 @@ import { MdDelete, MdEdit } from 'react-icons/md';
 import { CSSVariable } from '#/global_style';
 import styled from 'styled-components';
 import notice from '#/utils/notice';
-import { AllowUpdateKey, MusicType } from '#/constants/music';
+import {
+  AllowUpdateKey,
+  LYRIC_MAX_LENGTH,
+  MusicType,
+  MUSIC_MAX_LRYIC_AMOUNT,
+  NAME_MAX_LENGTH,
+} from '#/constants/music';
 import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
 import updateMusic from '@/server/update_music';
@@ -30,6 +36,19 @@ const maskProps: {
 const dangerousIconStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
+const stringArrayEqual = (a: string[], b: string[]) => {
+  if (a.length !== b.length) {
+    return false;
+  }
+
+  for (let i = 0, { length } = a; i < length; i += 1) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+
+  return true;
+};
 
 function EditMenu({
   music,
@@ -39,6 +58,7 @@ function EditMenu({
   reload: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
 
   useEffect(() => {
@@ -76,15 +96,70 @@ function EditMenu({
             })
           }
         />
+        <MenuItem
+          icon={<MdEdit />}
+          label="编辑名字"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              title: '编辑名字',
+              type: EditDialogType.INPUT,
+              initialValue: music.name,
+              onSubmit: async (name: string) => {
+                const trimmedName = name.replace(/\s+/g, ' ').trim();
+
+                if (!trimmedName.length) {
+                  throw new Error('请输入名字');
+                }
+                if (trimmedName.length > NAME_MAX_LENGTH) {
+                  throw new Error('名字过长');
+                }
+
+                if (trimmedName !== music.name) {
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.NAME,
+                    value: trimmedName,
+                  });
+                  reload();
+                }
+              },
+            })
+          }
+        />
         {music.type === MusicType.SONG ? (
           <MenuItem
             icon={<MdEdit />}
             label="编辑歌词"
             onClick={() =>
               playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-                title: '编辑歌词',
                 type: EditDialogType.TEXTAREA_LIST,
-                onSubmit: () => {},
+                title: '编辑歌词',
+                label: '歌词',
+                initialValue: music.lyrics.map((l) => l.content),
+                max: MUSIC_MAX_LRYIC_AMOUNT,
+                onSubmit: async (lyrics: string[]) => {
+                  const trimmedLyrics = lyrics
+                    .filter((l) => l.length > 0)
+                    .map((l) => l.trim());
+
+                  if (trimmedLyrics.find((l) => l.length > LYRIC_MAX_LENGTH)) {
+                    throw new Error('歌词过长');
+                  }
+
+                  if (
+                    !stringArrayEqual(
+                      trimmedLyrics,
+                      music.lyrics.map((l) => l.content),
+                    )
+                  ) {
+                    await updateMusic({
+                      id: music.id,
+                      key: AllowUpdateKey.LYRIC,
+                      value: trimmedLyrics,
+                    });
+                    reload();
+                  }
+                },
               })
             }
           />

@@ -3,21 +3,21 @@ import {
   ForwardedRef,
   forwardRef,
   HtmlHTMLAttributes,
-  InputHTMLAttributes,
+  ReactNode,
+  TextareaHTMLAttributes,
   useImperativeHandle,
   useRef,
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { ComponentSize } from '../constants/style';
 import { CSSVariable } from '../global_style';
 import useEvent from '../utils/use_event';
 import Label from './label';
 
-const Input = styled.input`
-  padding: 0 10px;
+const Textarea = styled.textarea`
+  display: block;
+  padding: 10px;
   width: 100%;
-  height: ${ComponentSize.NORMAL}px;
 
   border-radius: 4px;
   border: 1px solid ${CSSVariable.COLOR_BORDER};
@@ -40,34 +40,35 @@ const Input = styled.input`
 
 type Ref = {
   root: HTMLDivElement;
-  input: HTMLInputElement;
+  textarea: HTMLTextAreaElement;
 };
 type Props = {
   label?: string;
-  inputProps: InputHTMLAttributes<HTMLInputElement>;
+  textareaProps: TextareaHTMLAttributes<HTMLTextAreaElement>;
   disabled?: boolean;
+  addon?: ReactNode;
 } & HtmlHTMLAttributes<HTMLDivElement>;
 
 function Wrapper(
-  { label, inputProps, disabled = false, ...props }: Props,
+  { label, textareaProps, disabled = false, addon, ...props }: Props,
   ref: ForwardedRef<Ref>,
 ) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [active, setActive] = useState(false);
-  const onFocus: FocusEventHandler<HTMLInputElement> = useEvent((e) => {
+  const onFocus: FocusEventHandler<HTMLTextAreaElement> = useEvent((e) => {
     setActive(true);
-    return inputProps.onFocus && inputProps.onFocus(e);
+    return textareaProps.onFocus && textareaProps.onFocus(e);
   });
-  const onBlur: FocusEventHandler<HTMLInputElement> = useEvent((e) => {
+  const onBlur: FocusEventHandler<HTMLTextAreaElement> = useEvent((e) => {
     setActive(false);
-    return inputProps.onBlur && inputProps.onBlur(e);
+    return textareaProps.onBlur && textareaProps.onBlur(e);
   });
 
   useImperativeHandle(ref, () => ({
     root: rootRef.current!,
-    input: inputRef.current!,
+    textarea: textareaRef.current!,
   }));
 
   return (
@@ -77,13 +78,14 @@ function Wrapper(
       active={active}
       disabled={disabled}
       label={label}
+      addon={addon}
     >
-      <Input
-        {...inputProps}
+      <Textarea
+        {...textareaProps}
         disabled={disabled}
         onFocus={onFocus}
         onBlur={onBlur}
-        ref={inputRef}
+        ref={textareaRef}
       />
     </Label>
   );

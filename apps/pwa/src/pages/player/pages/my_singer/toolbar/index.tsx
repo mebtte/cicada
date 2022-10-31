@@ -1,11 +1,15 @@
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
 import { MdAdd } from 'react-icons/md';
-import useNavigate from '#/utils/use_navigate';
-import { Query } from '@/constants';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';
 import Question from './question';
+import playerEventemitter, {
+  EditDialogType,
+  EventType as PlayerEventType,
+} from '../../../eventemitter';
+import { createSinger } from '../../../utils';
+import e, { EventType } from '../eventemitter';
 
 const Style = styled.div`
   position: absolute;
@@ -23,16 +27,20 @@ const Style = styled.div`
 `;
 
 function Toolbar() {
-  const navigate = useNavigate();
-  const openCreateSingerDialog = () =>
-    navigate({
-      query: {
-        [Query.CREATE_SINGER_DIALOG_OPEN]: 1,
-      },
+  const onCreateSinger = () =>
+    playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+      title: '创建歌手',
+      label: '名字',
+      type: EditDialogType.INPUT,
+      onSubmit: async (name: string) =>
+        createSinger({
+          name,
+          callback: () => e.emit(EventType.RELOAD_SINGER_LIST, null),
+        }),
     });
   return (
     <Style>
-      <IconButton onClick={openCreateSingerDialog}>
+      <IconButton onClick={onCreateSinger}>
         <MdAdd />
       </IconButton>
       <Question />

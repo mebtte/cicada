@@ -1,8 +1,9 @@
-import { HTMLAttributes, useRef } from 'react';
+import { HtmlHTMLAttributes, useRef } from 'react';
 import * as React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
+import { CSSVariable } from '../global_style';
 
 const TRANSITION = {
   from: {
@@ -35,12 +36,13 @@ const Mask = styled(animated.div)`
 const Body = styled(animated.div)`
   width: 100%;
   max-width: 350px;
+  max-height: 80%;
 
   background-color: white;
   border-radius: 4px;
   transform-origin: bottom;
 
-  padding: 20px;
+  padding: 20px 0;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -65,9 +67,9 @@ const Dialog = ({
   onClose?: () => void;
 
   /** 遮罩属性 */
-  maskProps?: HTMLAttributes<HTMLDivElement>;
+  maskProps?: HtmlHTMLAttributes<HTMLDivElement>;
   /** 内容属性 */
-  bodyProps?: HTMLAttributes<HTMLDivElement>;
+  bodyProps?: HtmlHTMLAttributes<HTMLDivElement>;
 }>) => {
   const bodyRef = useRef<HTMLDivElement | null>(null);
   const onRequestClose = (event) => {
@@ -109,12 +111,20 @@ export const Title = styled.div`
   font-size: 20px;
   font-weight: 600;
   color: rgb(55 55 55);
+
+  padding: 0 20px;
 `;
 
 export const Content = styled.div`
+  flex: 1;
+  min-height: 0;
+
   font-size: 14px;
-  color: rgb(155 155 155);
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   line-height: 1.5;
+  overflow: auto;
+
+  padding: 0 20px;
 `;
 
 export const Action = styled.div`
@@ -122,6 +132,9 @@ export const Action = styled.div`
   align-items: center;
   justify-content: flex-end;
   gap: 20px;
+
+  padding: 0 20px;
+
   > .left {
     flex: 1;
     display: flex;

@@ -29,7 +29,10 @@ import { ZIndex } from '@/pages/player/constants';
 import { CSSVariable } from '#/global_style';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
-import ToCreateSinger from './to_create_singer';
+import CreateSinger from './create_singer';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../../../eventemitter';
 
 const TypeTips = styled.div`
   font-size: 12px;
@@ -99,15 +102,16 @@ function CreateMusicDialog() {
     setLoading(true);
     try {
       const asset = await uploadAsset(sq, AssetType.MUSIC_SQ);
-      await createMusic({
+      const id = await createMusic({
         name: trimmedName,
         singerIds: singerList.map((s) => s.id),
         type: musicType,
         sq: asset.id,
       });
 
-      notice.success('已创建音乐');
       e.emit(EventType.RELOAD_MUSIC_LIST, null);
+      playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, { id });
+
       onClose();
     } catch (error) {
       notice.error(error.message);
@@ -134,7 +138,7 @@ function CreateMusicDialog() {
           onChange={onSingerListChange}
           dataGetter={searchSinger}
           disabled={loading}
-          addon={<ToCreateSinger />}
+          addon={<CreateSinger />}
         />
         <Input
           label="名字"
