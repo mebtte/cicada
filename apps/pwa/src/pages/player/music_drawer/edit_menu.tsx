@@ -160,7 +160,7 @@ function EditMenu({
                 placeholder: 'LRC 格式的文本',
                 onSubmit: async (lyrics: string[]) => {
                   const trimmedLyrics = lyrics
-                    .map((l) => l.replace(/\s+/g, ' ').trim())
+                    .map((l) => l.trim())
                     .filter((l) => l.length > 0);
 
                   if (
