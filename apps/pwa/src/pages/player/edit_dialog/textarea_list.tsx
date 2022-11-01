@@ -82,12 +82,14 @@ function Wrapper(
               <IconButton
                 size={ComponentSize.SMALL}
                 onClick={() => onOpenFile(value.id)}
+                disabled={loading}
               >
                 <MdUploadFile />
               </IconButton>
               <IconButton
                 size={ComponentSize.SMALL}
                 onClick={() => onDelete(value.id)}
+                disabled={loading}
               >
                 <MdDelete />
               </IconButton>
@@ -113,6 +115,7 @@ function Wrapper(
               },
             ])
           }
+          disabled={loading}
         >
           新增{label}
         </Button>

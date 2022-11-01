@@ -21,7 +21,7 @@ export async function request<Data = void>({
   body,
   headers = {},
   withToken = false,
-  minDuration = 1000,
+  minDuration = 500,
 }: {
   path: string;
   method?: Method;
