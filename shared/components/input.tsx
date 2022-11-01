@@ -4,6 +4,7 @@ import {
   forwardRef,
   HtmlHTMLAttributes,
   InputHTMLAttributes,
+  ReactNode,
   useImperativeHandle,
   useRef,
   useState,
@@ -46,10 +47,11 @@ type Props = {
   label?: string;
   inputProps: InputHTMLAttributes<HTMLInputElement>;
   disabled?: boolean;
+  addon?: ReactNode;
 } & HtmlHTMLAttributes<HTMLDivElement>;
 
 function Wrapper(
-  { label, inputProps, disabled = false, ...props }: Props,
+  { label, inputProps, disabled = false, addon, ...props }: Props,
   ref: ForwardedRef<Ref>,
 ) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -77,6 +79,7 @@ function Wrapper(
       active={active}
       disabled={disabled}
       label={label}
+      addon={addon}
     >
       <Input
         {...inputProps}

@@ -87,6 +87,7 @@ function EditMenu({
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
               type: EditDialogType.INPUT,
               title: '编辑名字',
+              label: '名字',
               onSubmit: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName) {

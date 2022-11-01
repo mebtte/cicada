@@ -11,6 +11,8 @@ import {
   MusicType,
   MUSIC_MAX_LRYIC_AMOUNT,
   NAME_MAX_LENGTH,
+  ALIAS_MAX_LENGTH,
+  MUSIC_MAX_ALIAS_COUNT,
 } from '#/constants/music';
 import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
@@ -57,8 +59,8 @@ function EditMenu({
   music: MusicDetail;
   reload: () => void;
 }) {
-  const [open, setOpen] = useState(false);
-  // const [open, setOpen] = useState(true);
+  // const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
 
   useEffect(() => {
@@ -103,6 +105,7 @@ function EditMenu({
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
               title: '编辑名字',
               type: EditDialogType.INPUT,
+              label: '名字',
               initialValue: music.name,
               onSubmit: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
@@ -126,6 +129,34 @@ function EditMenu({
             })
           }
         />
+        <MenuItem
+          icon={<MdEdit />}
+          label="编辑别名"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              title: '编辑别名',
+              type: EditDialogType.INPUT_LIST,
+              label: '别名',
+              initialValue: music.aliases,
+              max: MUSIC_MAX_ALIAS_COUNT,
+              maxLength: ALIAS_MAX_LENGTH,
+              onSubmit: async (aliases: string[]) => {
+                const trimmedAliases = aliases
+                  .map((a) => a.replace(/\s+/g, ' ').trim())
+                  .filter((a) => a.length > 0);
+
+                if (!stringArrayEqual(trimmedAliases, music.aliases)) {
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.ALIASES,
+                    value: trimmedAliases,
+                  });
+                  reload();
+                }
+              },
+            })
+          }
+        />
         {music.type === MusicType.SONG ? (
           <MenuItem
             icon={<MdEdit />}
@@ -137,14 +168,12 @@ function EditMenu({
                 label: '歌词',
                 initialValue: music.lyrics.map((l) => l.content),
                 max: MUSIC_MAX_LRYIC_AMOUNT,
+                maxLength: LYRIC_MAX_LENGTH,
+                placeholder: 'LRC 格式的文本',
                 onSubmit: async (lyrics: string[]) => {
                   const trimmedLyrics = lyrics
-                    .filter((l) => l.length > 0)
-                    .map((l) => l.trim());
-
-                  if (trimmedLyrics.find((l) => l.length > LYRIC_MAX_LENGTH)) {
-                    throw new Error('歌词过长');
-                  }
+                    .map((l) => l.replace(/\s+/g, ' ').trim())
+                    .filter((l) => l.length > 0);
 
                   if (
                     !stringArrayEqual(

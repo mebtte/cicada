@@ -10,16 +10,37 @@ import {
 export enum EditDialogType {
   INPUT,
   COVER,
+  INPUT_LIST,
   TEXTAREA_LIST,
 }
-export interface EditDialogData {
+export type EditDialogData = {
   title: string;
-  type: EditDialogType;
   onSubmit: (input: unknown | undefined) => void | Promise<void>;
-  label?: string;
-  initialValue?: unknown;
-  max?: number;
-}
+} & (
+  | {
+      type: EditDialogType.INPUT;
+      label: string;
+      initialValue?: string;
+    }
+  | {
+      type: EditDialogType.COVER;
+    }
+  | {
+      type: EditDialogType.TEXTAREA_LIST;
+      label: string;
+      initialValue?: string[];
+      max?: number;
+      maxLength?: number;
+      placeholder?: string;
+    }
+  | {
+      type: EditDialogType.INPUT_LIST;
+      label: string;
+      initialValue?: string[];
+      max?: number;
+      maxLength?: number;
+    }
+);
 
 export enum EventType {
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',

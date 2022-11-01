@@ -1,6 +1,5 @@
 import { ExceptionCode } from '#/constants/exception';
 import { LYRIC_MAX_LENGTH, MUSIC_MAX_LRYIC_AMOUNT } from '#/constants/music';
-import { createLyric } from '@/db/lyric';
 import db from '@/db';
 import { Parameter } from './constants';
 
@@ -20,9 +19,16 @@ export default async ({ ctx, music, value }: Parameter) => {
     `,
     [music.id],
   );
-  await Promise.all(
-    value.map((content) => createLyric({ musicId: music.id, content })),
-  );
+
+  if (value.length) {
+    await db.run(
+      `
+        INSERT INTO lyric ( musicId, content )
+        VALUES ${value.map(() => `( ?, ? )`).join(', ')}
+      `,
+      value.map((v) => [music.id, v]).flat(),
+    );
+  }
 
   return ctx.success();
 };

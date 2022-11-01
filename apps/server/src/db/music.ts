@@ -50,15 +50,9 @@ export function getMusicListByIds<P extends Property>(
   );
 }
 
-export function updateMusic<P extends Property.COVER | Property.NAME>({
-  id,
-  property,
-  value,
-}: {
-  id: string;
-  property: P;
-  value: Music[P];
-}) {
+export function updateMusic<
+  P extends Property.COVER | Property.NAME | Property.ALIASES,
+>({ id, property, value }: { id: string; property: P; value: Music[P] }) {
   return db.run(
     `
       UPDATE music SET ${property} = ?

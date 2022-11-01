@@ -1,7 +1,7 @@
-import { EditDialogData } from '../eventemitter';
+import { EditDialogData, EditDialogType } from '../eventemitter';
 
-export interface RenderProps {
-  data: EditDialogData;
+export interface RenderProps<Type extends EditDialogType> {
+  data: EditDialogData & { type: Type };
   loading: boolean;
 }
 

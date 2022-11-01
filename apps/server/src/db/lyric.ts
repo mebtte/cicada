@@ -25,19 +25,3 @@ export function getLyricListByMusicId<P extends Property>(
     [musicId],
   );
 }
-
-export function createLyric({
-  musicId,
-  content,
-}: {
-  musicId: string;
-  content: string;
-}) {
-  return db.run(
-    `
-      INSERT INTO lyric ( musicId, content )
-      VALUES ( ?, ? )
-    `,
-    [musicId, content],
-  );
-}

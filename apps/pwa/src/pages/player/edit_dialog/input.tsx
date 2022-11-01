@@ -1,12 +1,13 @@
 import Input from '#/components/input';
 import { ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react';
+import { EditDialogType } from '../eventemitter';
 import { Ref, RenderProps } from './constants';
 
 function Wrapper(
-  { loading, data: { label, initialValue } }: RenderProps,
+  { loading, data: { label, initialValue } }: RenderProps<EditDialogType.INPUT>,
   ref: ForwardedRef<Ref>,
 ) {
-  const [name, setName] = useState((initialValue as string) || '');
+  const [name, setName] = useState(initialValue || '');
 
   useImperativeHandle(ref, () => ({
     getValue: () => name,
@@ -25,4 +26,4 @@ function Wrapper(
   );
 }
 
-export default forwardRef<Ref, RenderProps>(Wrapper);
+export default forwardRef<Ref, RenderProps<EditDialogType.INPUT>>(Wrapper);

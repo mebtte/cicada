@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import FileSelect from '#/components/file_select';
 import Cropper from 'cropperjs';
 import { Ref, RenderProps } from './constants';
+import { EditDialogType } from '../eventemitter';
 
 const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
 const MAX_SIZE = 1000;
@@ -27,7 +28,10 @@ const ImgBox = styled.div`
   }
 `;
 
-function Cover({ loading }: RenderProps, ref: ForwardedRef<Ref>) {
+function Cover(
+  { loading }: RenderProps<EditDialogType.COVER>,
+  ref: ForwardedRef<Ref>,
+) {
   const imageRef = useRef<HTMLImageElement>(null);
   const cropperRef = useRef<Cropper | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -114,4 +118,4 @@ function Cover({ loading }: RenderProps, ref: ForwardedRef<Ref>) {
   );
 }
 
-export default forwardRef<Ref, RenderProps>(Cover);
+export default forwardRef<Ref, RenderProps<EditDialogType.COVER>>(Cover);
