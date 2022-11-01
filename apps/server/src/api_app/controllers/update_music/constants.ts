@@ -8,6 +8,7 @@ export type Music = Pick<
   | Property.CREATE_USER_ID
   | Property.NAME
   | Property.ALIASES
+  | Property.TYPE
 >;
 
 export interface Parameter {

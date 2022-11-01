@@ -1,10 +1,15 @@
 import { ExceptionCode } from '#/constants/exception';
-import { LYRIC_MAX_LENGTH, MUSIC_MAX_LRYIC_AMOUNT } from '#/constants/music';
+import {
+  LYRIC_MAX_LENGTH,
+  MusicType,
+  MUSIC_MAX_LRYIC_AMOUNT,
+} from '#/constants/music';
 import db from '@/db';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {
   if (
+    music.type !== MusicType.SONG ||
     !Array.isArray(value) ||
     value.length > MUSIC_MAX_LRYIC_AMOUNT ||
     value.find((v) => typeof v !== 'string' || v.length > LYRIC_MAX_LENGTH)

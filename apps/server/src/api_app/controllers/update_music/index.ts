@@ -38,6 +38,7 @@ export default async (ctx: Context) => {
     MusicProperty.NAME,
     MusicProperty.CREATE_USER_ID,
     MusicProperty.ALIASES,
+    MusicProperty.TYPE,
   ]);
   if (!music || (!ctx.user.super && music.createUserId !== ctx.user.id)) {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
