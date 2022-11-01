@@ -1,4 +1,4 @@
-import Dialog from '#/components/dialog';
+import Dialog, { Content } from '#/components/dialog';
 import { CSSProperties } from 'react';
 import Button from '#/components/button';
 import styled from 'styled-components';
@@ -14,7 +14,7 @@ const bodyProps: {
     width: 250,
   },
 };
-const Style = styled.div`
+const StyledContent = styled(Content)`
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -52,12 +52,13 @@ function MusicDownloadDialog({
       maskProps={{ style: { zIndex } }}
       bodyProps={bodyProps}
     >
-      <MusicInfo music={music} />
-      <Style>
+      <StyledContent>
+        <MusicInfo music={music} />
+
         <Button onClick={() => onDownload(sq)}>标准音质</Button>
         {hq ? <Button onClick={() => onDownload(hq)}>无损音质</Button> : null}
         {ac ? <Button onClick={() => onDownload(ac)}>伴奏</Button> : null}
-      </Style>
+      </StyledContent>
     </Dialog>
   );
 }
