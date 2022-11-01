@@ -4,6 +4,7 @@ import {
   ALIAS_MAX_LENGTH,
   AllowUpdateKey,
   NAME_MAX_LENGTH,
+  SINGER_ALIAS_MAX_COUNT,
 } from '#/constants/singer';
 import exist from '#/utils/exist';
 import {
@@ -16,6 +17,14 @@ import { saveSingerModifyRecord } from '@/db/singer_modify_record';
 import { getAssetPath } from '@/platform/asset';
 import { Context } from '../constants';
 
+type LocalSinger = Pick<
+  Singer,
+  | SingerProperty.ID
+  | SingerProperty.AVATAR
+  | SingerProperty.NAME
+  | SingerProperty.ALIASES
+  | SingerProperty.CREATE_USER_ID
+>;
 const ALLOW_UPDATE_KEYS = Object.values(AllowUpdateKey);
 const KEY_MAP_HANDLER: Record<
   AllowUpdateKey,
@@ -25,13 +34,7 @@ const KEY_MAP_HANDLER: Record<
     value,
   }: {
     ctx: Context;
-    singer: Pick<
-      Singer,
-      | SingerProperty.ID
-      | SingerProperty.AVATAR
-      | SingerProperty.NAME
-      | SingerProperty.ALIASES
-    >;
+    singer: LocalSinger;
     value: unknown;
   }) => Promise<void>
 > = {
@@ -65,28 +68,25 @@ const KEY_MAP_HANDLER: Record<
 
     return ctx.success();
   },
-  [AllowUpdateKey.ALIASES]: async ({ ctx, singer, value: aliases }) => {
-    if (typeof aliases !== 'string') {
+  [AllowUpdateKey.ALIASES]: async ({ ctx, singer, value }) => {
+    if (
+      !Array.isArray(value) ||
+      value.length > SINGER_ALIAS_MAX_COUNT ||
+      value.find((a) => typeof a !== 'string' || a.length > ALIAS_MAX_LENGTH)
+    ) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
 
+    const trimmedAliases: string[] = value.map((v) =>
+      v.replace(/\s+/g, ' ').trim(),
+    );
+    if (trimmedAliases.find((a) => a.length === 0)) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+
+    const aliases = value.join(ALIAS_DIVIDER);
     if (singer.aliases === aliases) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
-    }
-
-    const aliasList = aliases.length ? aliases.split(ALIAS_DIVIDER) : [];
-
-    if (aliasList.length !== Array.from(new Set(aliasList)).length) {
-      return ctx.except(ExceptionCode.REPEATED_ALIAS);
-    }
-
-    for (const alias of aliasList) {
-      if (alias.trim() !== alias) {
-        return ctx.except(ExceptionCode.PARAMETER_ERROR);
-      }
-      if (alias.length > ALIAS_MAX_LENGTH) {
-        return ctx.except(ExceptionCode.ALIAS_OVER_MAX_LENGTH);
-      }
     }
 
     await Promise.all([
@@ -152,7 +152,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const singer = await getSingerById(id, [
+  const singer: LocalSinger | null = await getSingerById(id, [
     SingerProperty.ID,
     SingerProperty.AVATAR,
     SingerProperty.NAME,

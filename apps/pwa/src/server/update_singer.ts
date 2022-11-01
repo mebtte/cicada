@@ -3,7 +3,7 @@ import { request, Method } from '.';
 
 type KeyMapData = {
   [AllowUpdateKey.NAME]: string;
-  [AllowUpdateKey.ALIASES]: string;
+  [AllowUpdateKey.ALIASES]: string[];
   [AllowUpdateKey.AVATAR]: string;
 };
 

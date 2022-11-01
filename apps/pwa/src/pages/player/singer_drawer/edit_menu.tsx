@@ -7,6 +7,7 @@ import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
 import updateSinger from '@/server/update_singer';
 import { AllowUpdateKey } from '#/constants/singer';
+import stringArrayEqual from '#/utils/string_array_equal';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {
@@ -106,7 +107,32 @@ function EditMenu({
             })
           }
         />
-        <MenuItem icon={<MdEdit />} label="编辑别名" />
+        <MenuItem
+          icon={<MdEdit />}
+          label="编辑别名"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.INPUT_LIST,
+              title: '编辑别名',
+              label: '别名',
+              onSubmit: async (aliases: string[]) => {
+                const trimmedAliases = aliases
+                  .map((a) => a.replace(/\s+/g, ' ').trim())
+                  .filter((a) => a.length > 0);
+
+                if (!stringArrayEqual(trimmedAliases, singer.aliases)) {
+                  await updateSinger({
+                    id: singer.id,
+                    key: AllowUpdateKey.ALIASES,
+                    value: trimmedAliases,
+                  });
+                  reload();
+                }
+              },
+              initialValue: singer.aliases,
+            })
+          }
+        />
       </Style>
     </Popup>
   );

@@ -14,6 +14,13 @@ export default async ({ ctx, music, value }: Parameter) => {
     return ctx.error(ExceptionCode.PARAMETER_ERROR);
   }
 
+  const trimmedAliases: string[] = value.map((v) =>
+    v.replace(/\s+/g, ' ').trim(),
+  );
+  if (trimmedAliases.find((a) => a.length === 0)) {
+    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+  }
+
   const aliases = value.join(ALIAS_DIVIDER);
   if (music.aliases === aliases) {
     return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);

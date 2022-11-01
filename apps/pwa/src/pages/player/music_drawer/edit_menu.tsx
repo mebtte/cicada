@@ -17,6 +17,7 @@ import {
 import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
 import updateMusic from '@/server/update_music';
+import stringArrayEqual from '#/utils/string_array_equal';
 import { ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -38,19 +39,6 @@ const maskProps: {
 const dangerousIconStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
-const stringArrayEqual = (a: string[], b: string[]) => {
-  if (a.length !== b.length) {
-    return false;
-  }
-
-  for (let i = 0, { length } = a; i < length; i += 1) {
-    if (a[i] !== b[i]) {
-      return false;
-    }
-  }
-
-  return true;
-};
 
 function EditMenu({
   music,
@@ -59,8 +47,8 @@ function EditMenu({
   music: MusicDetail;
   reload: () => void;
 }) {
-  // const [open, setOpen] = useState(false);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
 
   useEffect(() => {
