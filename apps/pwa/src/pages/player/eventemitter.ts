@@ -91,6 +91,7 @@ export enum EventType {
   OPEN_EDIT_DIALOG = 'open_music_edit_dialog',
 
   FOCUS_SEARCH_INPUT = 'focus_search_input',
+  MUSIC_DELETED = 'music_deleted',
 }
 
 export default new Eventin<
@@ -147,5 +148,6 @@ export default new Eventin<
     [EventType.OPEN_EDIT_DIALOG]: EditDialogData;
 
     [EventType.FOCUS_SEARCH_INPUT]: null;
+    [EventType.MUSIC_DELETED]: { id: string };
   }
 >();

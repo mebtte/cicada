@@ -18,8 +18,20 @@ export default () => {
         return setOpen(true);
       },
     );
-    return unlistenOpenMusicDrawer;
-  }, []);
+    const unlistenMusicDeleted = eventemitter.listen(
+      EventType.MUSIC_DELETED,
+      (data) => {
+        if (data.id === id) {
+          setOpen(false);
+          window.setTimeout(() => setId(''), 1000);
+        }
+      },
+    );
+    return () => {
+      unlistenOpenMusicDrawer();
+      unlistenMusicDeleted();
+    };
+  }, [id]);
 
   return {
     open,

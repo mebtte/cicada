@@ -33,3 +33,18 @@ export function addMusicPlayRecord({
     [userId, musicId, percent, Date.now()],
   );
 }
+
+export function getMusicPlayRecordList<P extends Property>(
+  musicId: string,
+  properties: P[],
+) {
+  return db.all<{
+    [key in P]: MusicPlayRecord[key];
+  }>(
+    `
+      SELECT ${properties.join(', ')} FROM music_play_record
+      WHERE musicId = ?
+    `,
+    [musicId],
+  );
+}

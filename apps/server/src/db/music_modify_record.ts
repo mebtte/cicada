@@ -34,3 +34,18 @@ export function saveMusicModifyRecord({
     [musicId, key, modifyUserId, Date.now()],
   );
 }
+
+export function getMusicModifyRecordList<P extends Property>(
+  musicId: string,
+  properties: P[],
+) {
+  return db.all<{
+    [key in P]: MusicModifyRecord[key];
+  }>(
+    `
+      SELECT ${properties.join(', ')} FROM music_modify_record
+      WHERE musicId = ?
+    `,
+    [musicId],
+  );
+}

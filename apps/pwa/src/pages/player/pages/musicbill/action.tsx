@@ -53,13 +53,12 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
       );
   const onDelete = () =>
     dialog.confirm({
-      title: `确定删除乐单"${musicbill.name}"?`,
-      content: '注意, 乐单删除后无法恢复.',
+      title: `确定删除乐单?`,
+      content: '注意, 乐单删除后无法恢复',
       onConfirm: () =>
         dialog.confirm({
-          title: `确定删除乐单"${musicbill.name}"?`,
-          content:
-            '注意, 乐单删除后无法恢复. 现在是第二次确认, 也是最后一次确认.',
+          title: '确定删除乐单?',
+          content: '现在是第二次确认, 也是最后一次',
           onConfirm: async () => {
             try {
               await deleteMusicbill(musicbill.id);
@@ -74,7 +73,6 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
                 title: '删除乐单失败',
                 content: error.message,
               });
-              return false;
             }
           },
         }),

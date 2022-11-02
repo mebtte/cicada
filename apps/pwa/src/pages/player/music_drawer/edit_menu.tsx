@@ -18,6 +18,9 @@ import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
 import updateMusic from '@/server/update_music';
 import stringArrayEqual from '#/utils/string_array_equal';
+import dialog from '#/utils/dialog';
+import deleteMusic from '@/server/delete_music';
+import logger from '#/utils/logger';
 import { ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -184,7 +187,32 @@ function EditMenu({
         <MenuItem
           icon={<MdDelete style={dangerousIconStyle} />}
           label="删除"
-          onClick={() => notice.info('todo')}
+          onClick={() => {
+            if (music.forkList.length) {
+              return notice.error('被翻唱音乐无法被删除');
+            }
+            return dialog.confirm({
+              title: '确定删除音乐吗?',
+              content: '注意, 音乐删除后无法恢复',
+              onConfirm: () =>
+                dialog.confirm({
+                  title: '确定删除音乐吗?',
+                  content: '这是第二次确认, 也是最后一次',
+                  onConfirm: async () => {
+                    try {
+                      await deleteMusic(music.id);
+                      playerEventemitter.emit(PlayerEventType.MUSIC_DELETED, {
+                        id: music.id,
+                      });
+                      notice.info('已删除');
+                    } catch (error) {
+                      logger.error(error, '删除音乐失败');
+                      notice.error(error.message);
+                    }
+                  },
+                }),
+            });
+          }}
         />
       </Style>
     </Popup>
