@@ -15,11 +15,6 @@ const Style = styled.div`
       ${absoluteFullSize}
 
       object-fit: cover;
-      /* mask-image: linear-gradient(
-        180deg,
-        rgb(0 0 0 / 1) 80%,
-        rgb(0 0 0 / 0) 100%
-      ); */
     }
   }
 
@@ -30,7 +25,6 @@ const Style = styled.div`
     max-width: 90%;
 
     padding: 10px 20px;
-    border-radius: 0 4px 4px 0;
     background-color: rgb(255 255 255 / 0.75);
 
     > .name {

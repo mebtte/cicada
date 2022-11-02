@@ -3,6 +3,7 @@ import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '#/utils/dialog';
 import createMusicbillRequest from '@/server/create_musicbill';
 import createSingerRequest from '@/server/create_singer';
+import getMusicDetail from '@/server/get_music_detail';
 import e, { EventType } from './eventemitter';
 
 export async function createMusicbill(name: string) {
@@ -49,4 +50,22 @@ export async function createSinger({
       throw error;
     }
   }
+}
+
+export function emitMusicUpdated(id: string) {
+  getMusicDetail(id).then((music) =>
+    e.emit(EventType.MUSIC_UPDATED, {
+      music: {
+        id: music.id,
+        cover: music.cover,
+        name: music.name,
+        type: music.type,
+        aliases: music.aliases,
+        sq: music.sq,
+        hq: music.hq,
+        ac: music.ac,
+        singers: music.singers,
+      },
+    }),
+  );
 }

@@ -47,9 +47,9 @@ export interface Music {
   name: string;
   type: MusicType;
   aliases: string[];
-  ac: string;
-  hq: string;
   sq: string;
+  hq: string;
+  ac: string;
   singers: Singer[];
 }
 

@@ -17,7 +17,7 @@ const bodyProps: {
 const StyledContent = styled(Content)`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
 `;
 
 function MusicDownloadDialog({

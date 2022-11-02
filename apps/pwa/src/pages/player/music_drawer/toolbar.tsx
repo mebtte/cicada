@@ -26,63 +26,78 @@ const Style = styled.div`
   gap: 5px;
 
   backdrop-filter: blur(5px);
+
+  > .left {
+    flex: 1;
+    min-width: 0;
+  }
 `;
 
 function Toolbar({ music }: { music: MusicDetail }) {
   const profile = p.useState()!;
   return (
     <Style>
-      <IconButton
-        onClick={() =>
-          playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, { music })
-        }
-      >
-        <MdPlayArrow />
-      </IconButton>
-      <IconButton
-        onClick={() =>
-          playerEventemitter.emit(
-            PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-            {
+      <div className="left">
+        <IconButton
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, {
               music,
-            },
-          )
-        }
-      >
-        <MdReadMore />
-      </IconButton>
-      <IconButton
-        onClick={() =>
-          playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_LIST_DRAWER, {
-            music,
-          })
-        }
-      >
-        <MdPlaylistAdd />
-      </IconButton>
-      <IconButton
-        onClick={() =>
-          playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_LIST_DRAWER, {
-            music,
-          })
-        }
-      >
-        <MdOutlinePostAdd />
-      </IconButton>
+            })
+          }
+        >
+          <MdPlayArrow />
+        </IconButton>
+        <IconButton
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+              {
+                music,
+              },
+            )
+          }
+        >
+          <MdReadMore />
+        </IconButton>
+        <IconButton
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.OPEN_MUSICBILL_LIST_DRAWER,
+              {
+                music,
+              },
+            )
+          }
+        >
+          <MdPlaylistAdd />
+        </IconButton>
+        <IconButton
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.OPEN_MUSICBILL_LIST_DRAWER,
+              {
+                music,
+              },
+            )
+          }
+        >
+          <MdOutlinePostAdd />
+        </IconButton>
+        <IconButton
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_OPERATE_POPUP, {
+              music,
+            })
+          }
+        >
+          <MdMoreVert />
+        </IconButton>
+      </div>
       {profile.super || profile.id === music.createUser.id ? (
         <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
           <MdOutlineEditNote />
         </IconButton>
       ) : null}
-      <IconButton
-        onClick={() =>
-          playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_OPERATE_POPUP, {
-            music,
-          })
-        }
-      >
-        <MdMoreVert />
-      </IconButton>
     </Style>
   );
 }

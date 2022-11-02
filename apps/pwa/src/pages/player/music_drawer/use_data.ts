@@ -5,6 +5,9 @@ import getLyric from '@/server/get_lyric';
 import getRandomCover from '@/utils/get_random_cover';
 import day from '#/utils/day';
 import { MusicDetail, Lyric } from './constants';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 
 interface Data {
   error: Error | null;
@@ -63,6 +66,18 @@ export default (id: string) => {
   useEffect(() => {
     getMusic();
   }, [getMusic]);
+
+  useEffect(() => {
+    const unlistenMusicUpdated = playerEventemitter.listen(
+      PlayerEventType.MUSIC_UPDATED,
+      ({ music }) => {
+        if (music.id === id) {
+          getMusic();
+        }
+      },
+    );
+    return unlistenMusicUpdated;
+  }, [getMusic, id]);
 
   return { data, reload: getMusic };
 };

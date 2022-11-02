@@ -81,12 +81,27 @@ export default () => {
         });
       },
     );
+    const unlistenMusicUpdated = eventemitter.listen(
+      EventType.MUSIC_UPDATED,
+      ({ music }) =>
+        setPlaylist((pl) =>
+          pl.map((m) =>
+            m.music.id === music.id
+              ? {
+                  ...m,
+                  music,
+                }
+              : m,
+          ),
+        ),
+    );
     return () => {
       unlistenActionPlayMusic();
       unlistenActionAddMusicListToPlaylist();
       unlistenActionInsertMusicToPlayqueue();
       unlistenActionClearPlaylist();
       unlistenActionRemovePlaylistMusic();
+      unlistenMusicUpdated();
     };
   }, []);
 

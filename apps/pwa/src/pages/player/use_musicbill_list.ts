@@ -206,10 +206,28 @@ export default () => {
         }
       },
     );
+    const unlistenMusicUpdated = eventemitter.listen(
+      EventType.MUSIC_UPDATED,
+      ({ music }) =>
+        setMusicbillList((mbl) =>
+          mbl.map((mb) => ({
+            ...mb,
+            musicList: mb.musicList.map((m) =>
+              m.music.id === music.id
+                ? {
+                    ...m,
+                    music,
+                  }
+                : m,
+            ),
+          })),
+        ),
+    );
     return () => {
       unlistenFetchMusicbill();
       unlistenAddMusicToMusicbill();
       unlistenRemoveMusicFromMusicbill();
+      unlistenMusicUpdated();
     };
   }, []);
 

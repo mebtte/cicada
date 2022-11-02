@@ -12,9 +12,7 @@ const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> }> = {
     `,
   },
   [Shape.SQUARE]: {
-    css: css`
-      border-radius: 4px;
-    `,
+    css: css``,
   },
 };
 const Style = styled.img<{ shape: Shape }>`

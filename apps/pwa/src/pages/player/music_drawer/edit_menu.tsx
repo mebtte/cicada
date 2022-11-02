@@ -28,6 +28,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
   EditDialogType,
 } from '../eventemitter';
+import { emitMusicUpdated } from '../utils';
 
 const Style = styled.div`
   padding: 5px 0;
@@ -39,17 +40,14 @@ const maskProps: {
   style: { zIndex: ZIndex.POPUP },
   onClick: (event) => event.stopPropagation(),
 };
+const bodyProps: { style: CSSProperties } = {
+  style: { width: 300 },
+};
 const dangerousIconStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
 
-function EditMenu({
-  music,
-  reload,
-}: {
-  music: MusicDetail;
-  reload: () => void;
-}) {
+function EditMenu({ music }: { music: MusicDetail }) {
   const [open, setOpen] = useState(false);
   // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
@@ -62,7 +60,12 @@ function EditMenu({
   }, []);
 
   return (
-    <Popup open={open} onClose={onClose} maskProps={maskProps}>
+    <Popup
+      open={open}
+      onClose={onClose}
+      maskProps={maskProps}
+      bodyProps={bodyProps}
+    >
       <Style onClick={onClose}>
         <MenuItem
           icon={<MdEdit />}
@@ -84,7 +87,7 @@ function EditMenu({
                   key: AllowUpdateKey.COVER,
                   value: assetId,
                 });
-                reload();
+                emitMusicUpdated(music.id);
               },
             })
           }
@@ -114,7 +117,7 @@ function EditMenu({
                     key: AllowUpdateKey.NAME,
                     value: trimmedName,
                   });
-                  reload();
+                  emitMusicUpdated(music.id);
                 }
               },
             })
@@ -142,7 +145,7 @@ function EditMenu({
                     key: AllowUpdateKey.ALIASES,
                     value: trimmedAliases,
                   });
-                  reload();
+                  emitMusicUpdated(music.id);
                 }
               },
             })
@@ -177,7 +180,7 @@ function EditMenu({
                       key: AllowUpdateKey.LYRIC,
                       value: trimmedLyrics,
                     });
-                    reload();
+                    emitMusicUpdated(music.id);
                   }
                 },
               })
@@ -201,10 +204,10 @@ function EditMenu({
                   onConfirm: async () => {
                     try {
                       await deleteMusic(music.id);
+                      notice.info('已删除');
                       playerEventemitter.emit(PlayerEventType.MUSIC_DELETED, {
                         id: music.id,
                       });
-                      notice.info('已删除');
                     } catch (error) {
                       logger.error(error, '删除音乐失败');
                       notice.error(error.message);

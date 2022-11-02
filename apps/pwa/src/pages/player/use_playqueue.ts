@@ -179,6 +179,24 @@ export default (playlist: MusicWithIndex[]) => {
     return unlistenActionInsertMusicToPlayqueue;
   }, [playqueue, currentPosition]);
 
+  useEffect(() => {
+    const unlistenMusicUpdated = eventemitter.listen(
+      EventType.MUSIC_UPDATED,
+      ({ music }) =>
+        setPlayqueue((pq) =>
+          pq.map((m) =>
+            m.music.id === music.id
+              ? {
+                  ...m,
+                  music,
+                }
+              : m,
+          ),
+        ),
+    );
+    return unlistenMusicUpdated;
+  }, []);
+
   return {
     playqueue,
     currentPosition,
