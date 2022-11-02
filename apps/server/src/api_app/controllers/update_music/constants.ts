@@ -9,6 +9,9 @@ export type Music = Pick<
   | Property.NAME
   | Property.ALIASES
   | Property.TYPE
+  | Property.SQ
+  | Property.HQ
+  | Property.AC
 >;
 
 export interface Parameter {

@@ -30,6 +30,9 @@ const Style = styled.div`
   > .left {
     flex: 1;
     min-width: 0;
+
+    display: flex;
+    align-items: center;
   }
 `;
 

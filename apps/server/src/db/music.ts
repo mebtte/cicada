@@ -51,7 +51,13 @@ export function getMusicListByIds<P extends Property>(
 }
 
 export function updateMusic<
-  P extends Property.COVER | Property.NAME | Property.ALIASES,
+  P extends
+    | Property.COVER
+    | Property.NAME
+    | Property.ALIASES
+    | Property.SQ
+    | Property.HQ
+    | Property.AC,
 >({ id, property, value }: { id: string; property: P; value: Music[P] }) {
   return db.run(
     `

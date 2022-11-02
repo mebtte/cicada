@@ -7,6 +7,9 @@ import updateCover from './update_cover';
 import updateName from './update_name';
 import updateLyric from './update_lyric';
 import updateAliases from './update_aliases';
+import updateSq from './update_sq';
+import updateHq from './update_hq';
+import updateAc from './update_ac';
 
 const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
   {
@@ -14,6 +17,9 @@ const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
     [AllowUpdateKey.NAME]: updateName,
     [AllowUpdateKey.LYRIC]: updateLyric,
     [AllowUpdateKey.ALIASES]: updateAliases,
+    [AllowUpdateKey.SQ]: updateSq,
+    [AllowUpdateKey.HQ]: updateHq,
+    [AllowUpdateKey.AC]: updateAc,
   };
 
 export default async (ctx: Context) => {
@@ -39,6 +45,9 @@ export default async (ctx: Context) => {
     MusicProperty.CREATE_USER_ID,
     MusicProperty.ALIASES,
     MusicProperty.TYPE,
+    MusicProperty.SQ,
+    MusicProperty.HQ,
+    MusicProperty.AC,
   ]);
   if (!music || (!ctx.user.super && music.createUserId !== ctx.user.id)) {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);

@@ -21,7 +21,7 @@ const Style = styled.div`
   > .info {
     position: absolute;
     left: 0;
-    bottom: 10px;
+    bottom: 0;
     max-width: 90%;
 
     padding: 10px 20px;

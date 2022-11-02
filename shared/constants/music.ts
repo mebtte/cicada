@@ -30,16 +30,14 @@ export const NAME_MAX_LENGTH = 32;
 export const MUSIC_MAX_ALIAS_COUNT = 5;
 export const ALIAS_MAX_LENGTH = 32;
 
-export const MUSIC_SQ = {
-  ACCEPT_MIMES: ['audio/mpeg', 'audio/x-m4a', 'video/mp4'],
-  MAX_SIZE: 1024 * 1024 * 10,
-};
-
 export enum AllowUpdateKey {
   COVER = 'cover',
   NAME = 'name',
   LYRIC = 'lyric',
   ALIASES = 'aliases',
+  SQ = 'sq',
+  HQ = 'hq',
+  AC = 'ac',
 }
 
 export const MUSIC_MAX_LRYIC_AMOUNT = 5;

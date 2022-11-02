@@ -14,6 +14,7 @@ import Input from './input';
 import Cover from './cover';
 import TextareaList from './textarea_list';
 import InputList from './input_list';
+import File from './file';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
@@ -35,6 +36,7 @@ const TYPE_MAP_RENDER: Record<
       maxWidth: '90%',
     },
   },
+  [EditDialogType.FILE]: { Component: File },
 };
 
 function EditDialog({

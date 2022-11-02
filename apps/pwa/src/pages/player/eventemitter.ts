@@ -12,10 +12,11 @@ export enum EditDialogType {
   COVER,
   INPUT_LIST,
   TEXTAREA_LIST,
+  FILE,
 }
 export type EditDialogData = {
   title: string;
-  onSubmit: (input: unknown | undefined) => void | Promise<void>;
+  onSubmit: (value: unknown | undefined) => void | Promise<void>;
 } & (
   | {
       type: EditDialogType.INPUT;
@@ -39,6 +40,12 @@ export type EditDialogData = {
       initialValue?: string[];
       max?: number;
       maxLength?: number;
+    }
+  | {
+      type: EditDialogType.FILE;
+      label: string;
+      acceptTypes: string[];
+      placeholder: string;
     }
 );
 

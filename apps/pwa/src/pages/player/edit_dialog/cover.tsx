@@ -108,7 +108,7 @@ function Cover(
         </ImgBox>
       ) : null}
       <FileSelect
-        placeholder="选择图片"
+        placeholder="选择图片, 支持 JPEG/PNG 类型"
         value={file}
         onChange={(f) => setFile(f)}
         acceptTypes={ACCEPT_TYPES}

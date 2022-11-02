@@ -15,7 +15,7 @@ import {
   MUSIC_MAX_ALIAS_COUNT,
 } from '#/constants/music';
 import uploadAsset from '@/server/upload_asset';
-import { AssetType } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import updateMusic from '@/server/update_music';
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '#/utils/dialog';
@@ -187,6 +187,87 @@ function EditMenu({ music }: { music: MusicDetail }) {
             }
           />
         ) : null}
+        <MenuItem
+          icon={<MdEdit />}
+          label="编辑标准音质文件"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.FILE,
+              label: '标准音质文件',
+              title: '编辑标准音质文件',
+              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_SQ].acceptTypes,
+              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
+                AssetType.MUSIC_SQ
+              ].acceptTypes.join(',')}`,
+              onSubmit: async (file: File | null) => {
+                if (!file) {
+                  throw new Error('请选择文件');
+                }
+                const { id } = await uploadAsset(file, AssetType.MUSIC_SQ);
+                await updateMusic({
+                  id: music.id,
+                  key: AllowUpdateKey.SQ,
+                  value: id,
+                });
+                emitMusicUpdated(music.id);
+              },
+            })
+          }
+        />
+        <MenuItem
+          icon={<MdEdit />}
+          label="编辑无损音质文件"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.FILE,
+              label: '无损音质文件',
+              title: '编辑无损音质文件',
+              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_HQ].acceptTypes,
+              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
+                AssetType.MUSIC_HQ
+              ].acceptTypes.join(',')}`,
+              onSubmit: async (file: File | null) => {
+                if (!file) {
+                  throw new Error('请选择文件');
+                }
+                const { id } = await uploadAsset(file, AssetType.MUSIC_HQ);
+                await updateMusic({
+                  id: music.id,
+                  key: AllowUpdateKey.HQ,
+                  value: id,
+                });
+                emitMusicUpdated(music.id);
+              },
+            })
+          }
+        />
+        <MenuItem
+          icon={<MdEdit />}
+          label="编辑伴奏文件"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.FILE,
+              label: '伴奏文件',
+              title: '编辑伴奏文件',
+              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_AC].acceptTypes,
+              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
+                AssetType.MUSIC_AC
+              ].acceptTypes.join(',')}`,
+              onSubmit: async (file: File | null) => {
+                if (!file) {
+                  throw new Error('请选择文件');
+                }
+                const { id } = await uploadAsset(file, AssetType.MUSIC_AC);
+                await updateMusic({
+                  id: music.id,
+                  key: AllowUpdateKey.AC,
+                  value: id,
+                });
+                emitMusicUpdated(music.id);
+              },
+            })
+          }
+        />
         <MenuItem
           icon={<MdDelete style={dangerousIconStyle} />}
           label="删除"

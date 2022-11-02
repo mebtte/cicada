@@ -12,7 +12,6 @@ import Select from '#/components/select';
 import styled from 'styled-components';
 import {
   MusicType,
-  MUSIC_SQ,
   MUSIC_TYPES,
   MUSIC_TYPE_MAP,
   NAME_MAX_LENGTH,
@@ -20,7 +19,7 @@ import {
 import FileSelect from '#/components/file_select';
 import MultipleSelect from '#/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { ALIAS_DIVIDER, AssetType, ASSET_TYPE_MAP } from '#/constants';
 import useEvent from '#/utils/use_event';
 import notice from '#/utils/notice';
 import uploadAsset from '@/server/upload_asset';
@@ -162,7 +161,10 @@ function CreateMusicDialog() {
           value={sq}
           onChange={onSqChange}
           disabled={loading}
-          acceptTypes={MUSIC_SQ.ACCEPT_MIMES}
+          acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC_SQ].acceptTypes}
+          placeholder={`选择文件, 支持以下格式 ${ASSET_TYPE_MAP[
+            AssetType.MUSIC_SQ
+          ].acceptTypes.join(', ')}`}
         />
       </StyledContent>
       <Action>

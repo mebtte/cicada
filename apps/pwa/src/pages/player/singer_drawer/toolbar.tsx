@@ -20,24 +20,34 @@ const Style = styled.div`
   gap: 10px;
 
   backdrop-filter: blur(5px);
+
+  > .left {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+  }
 `;
 
 function Toolbar({ singer }: { singer: SingerDetail }) {
   const profile = p.useState()!;
   return (
     <Style>
-      <IconButton
-        onClick={() =>
-          playerEventemitter.emit(
-            PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-            {
-              musicList: singer.musicList.map((m) => m.music),
-            },
-          )
-        }
-      >
-        <MdPlaylistAdd />
-      </IconButton>
+      <div className="left">
+        <IconButton
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
+              {
+                musicList: singer.musicList.map((m) => m.music),
+              },
+            )
+          }
+        >
+          <MdPlaylistAdd />
+        </IconButton>
+      </div>
       {profile.super || profile.id === singer.createUser.id ? (
         <IconButton onClick={openEditMenu}>
           <MdOutlineEditNote />
