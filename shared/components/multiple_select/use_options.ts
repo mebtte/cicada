@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { Item } from './constants';
+import { Option } from './constants';
 
-export default <ID extends number | string>({
+export default <Value>({
   keyword,
   dataGetter,
   onGetDataError,
 }: {
   keyword: string;
-  dataGetter: (search: string) => Item<ID>[] | Promise<Item<ID>[]>;
+  dataGetter: (search: string) => Option<Value>[] | Promise<Option<Value>[]>;
   onGetDataError: (error: Error) => void;
 }) => {
   const requestIdRef = useRef(0);
 
   const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState<Item<ID>[]>([]);
+  const [options, setOptions] = useState<Option<Value>[]>([]);
 
   useEffect(() => {
     const requestId = Math.random();

@@ -17,15 +17,15 @@ import {
   NAME_MAX_LENGTH,
 } from '#/constants/music';
 import FileSelect from '#/components/file_select';
-import MultipleSelect from '#/components/multiple_select';
+import MultipleSelect, { Option } from '#/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
-import { ALIAS_DIVIDER, AssetType, ASSET_TYPE_MAP } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import useEvent from '#/utils/use_event';
 import notice from '#/utils/notice';
 import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
-import { ZIndex } from '@/pages/player/constants';
 import { CSSVariable } from '#/global_style';
+import { Singer, ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
 import CreateSinger from './create_singer';
@@ -44,15 +44,19 @@ const TYPES = MUSIC_TYPES.map((t) => ({
   id: t,
   label: MUSIC_TYPE_MAP[t].label,
 }));
-const searchSinger = (search: string) => {
+const formatSingerToMultipleSelectOption = (
+  singer: Singer,
+): Option<Singer> => ({
+  key: singer.id,
+  label: `${singer.name}${
+    singer.aliases.length ? `(${singer.aliases[0]})` : ''
+  }`,
+  value: singer,
+});
+const searchSinger = (search: string): Promise<Option<Singer>[]> => {
   const keyword = search.trim();
   return searchSingerRequest({ keyword, page: 1, pageSize: 50 }).then((data) =>
-    data.singerList.map((s) => ({
-      id: s.id,
-      label: `${s.name}${
-        s.aliases ? `(${s.aliases.split(ALIAS_DIVIDER)[0]})` : ''
-      }`,
-    })),
+    data.singerList.map(formatSingerToMultipleSelectOption),
   );
 };
 
@@ -69,11 +73,9 @@ function CreateMusicDialog() {
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setName(event.target.value);
 
-  const [singerList, setSingerList] = useState<{ id: string; label: string }[]>(
-    [],
-  );
+  const [singerList, setSingerList] = useState<Singer[]>([]);
   const onSingerListChange = useCallback(
-    (sl: { id: string; label: string }[]) => setSingerList(sl),
+    (sl: Option<Singer>[]) => setSingerList(sl.map((s) => s.value)),
     [],
   );
 
@@ -131,9 +133,9 @@ function CreateMusicDialog() {
     <Dialog open={open} maskProps={maskProps}>
       <Title>创建音乐</Title>
       <StyledContent>
-        <MultipleSelect
+        <MultipleSelect<Singer>
           label="歌手"
-          value={singerList}
+          value={singerList.map(formatSingerToMultipleSelectOption)}
           onChange={onSingerListChange}
           dataGetter={searchSinger}
           disabled={loading}

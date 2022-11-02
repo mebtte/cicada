@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import { MdDone } from 'react-icons/md';
 import { animated, useTransition } from 'react-spring';
 import { ComponentSize } from '../../constants/style';
-import { Item as ItemType } from './constants';
+import { Option as OptionType } from './constants';
 import Spinner from '../spinner';
 import { flexCenter } from '../../style/flexbox';
 import { CSSVariable } from '../../global_style';
@@ -24,11 +24,11 @@ const Style = styled(animated.div)`
     rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px;
 
   > .list {
-    max-height: 250px;
+    max-height: 200px;
     overflow: auto;
   }
 `;
-const Item = styled.div<{ selected: boolean }>`
+const Option = styled.div<{ selected: boolean }>`
   padding: 5px 10px;
 
   display: flex;
@@ -74,19 +74,19 @@ const Empty = styled.div`
   text-align: center;
 `;
 
-function Options<ID extends string | number>({
+function Options<Value>({
   id,
   open,
   loading,
   options,
-  selectedIds,
+  selectedKeys,
   emptyMesssage,
 }: {
   id: string;
   open: boolean;
   loading: boolean;
-  options: ItemType<ID>[];
-  selectedIds: ID[];
+  options: OptionType<Value>[];
+  selectedKeys: string[];
   emptyMesssage: string;
 }) {
   const transitions = useTransition(open, {
@@ -114,19 +114,19 @@ function Options<ID extends string | number>({
         ) : null}
         {options.length ? (
           <div className="list">
-            {options.map((item) => {
-              const selected = selectedIds.includes(item.id);
+            {options.map((option) => {
+              const selected = selectedKeys.includes(option.key);
               return (
-                <Item
-                  key={item.id}
+                <Option
+                  key={option.key}
                   selected={selected}
                   onClickCapture={() =>
-                    e.emit(EventType.ON_CHANGE, { id, item })
+                    e.emit(EventType.ON_CHANGE, { id, option })
                   }
                 >
-                  <div className="label">{item.label}</div>
+                  <div className="label">{option.label}</div>
                   {selected ? <MdDone /> : null}
-                </Item>
+                </Option>
               );
             })}
           </div>

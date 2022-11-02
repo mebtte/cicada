@@ -48,8 +48,8 @@ const dangerousIconStyle: CSSProperties = {
 };
 
 function EditMenu({ music }: { music: MusicDetail }) {
-  const [open, setOpen] = useState(false);
-  // const [open, setOpen] = useState(true);
+  // const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
 
   useEffect(() => {
@@ -187,6 +187,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
             }
           />
         ) : null}
+        <MenuItem icon={<MdEdit />} label="编辑歌手" />
         <MenuItem
           icon={<MdEdit />}
           label="编辑标准音质文件"
