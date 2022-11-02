@@ -203,7 +203,7 @@ function MultipleSelect<Value>({
         </Input>
         <Options
           id={id}
-          open={open}
+          open
           loading={loading}
           options={options}
           selectedKeys={selectedKeys}

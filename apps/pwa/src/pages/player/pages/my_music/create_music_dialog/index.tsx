@@ -134,7 +134,7 @@ function CreateMusicDialog() {
       <Title>创建音乐</Title>
       <StyledContent>
         <MultipleSelect<Singer>
-          label="歌手"
+          label="歌手列表"
           value={singerList.map(formatSingerToMultipleSelectOption)}
           onChange={onSingerListChange}
           dataGetter={searchSinger}
