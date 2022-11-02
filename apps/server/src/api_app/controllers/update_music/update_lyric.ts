@@ -1,10 +1,12 @@
 import { ExceptionCode } from '#/constants/exception';
 import {
+  AllowUpdateKey,
   LYRIC_MAX_LENGTH,
   MusicType,
   MUSIC_MAX_LRYIC_AMOUNT,
 } from '#/constants/music';
 import db from '@/db';
+import { saveMusicModifyRecord } from '@/db/music_modify_record';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {
@@ -22,13 +24,20 @@ export default async ({ ctx, music, value }: Parameter) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  await db.run(
-    `
+  await Promise.all([
+    db.run(
+      `
       DELETE FROM lyric
       WHERE musicId = ?
     `,
-    [music.id],
-  );
+      [music.id],
+    ),
+    saveMusicModifyRecord({
+      musicId: music.id,
+      key: AllowUpdateKey.LYRIC,
+      modifyUserId: ctx.user.id,
+    }),
+  ]);
 
   if (value.length) {
     await db.run(

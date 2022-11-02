@@ -1,36 +1,36 @@
-import { AllowUpdateKey } from '#/constants/singer';
+import { AllowUpdateKey } from '#/constants/music';
 import db from '@/db';
 
 export enum Property {
   ID = 'id',
-  SINGER_ID = 'singerId',
+  MUSIC_ID = 'musicId',
   KEY = 'key',
   MODIFY_USER_ID = 'modifyUserId',
   MODIFY_TIMESTAMP = 'modifyTimestamp',
 }
 
-export type SingerModifyRecord = {
+export type MusicModifyRecord = {
   [Property.ID]: number;
-  [Property.SINGER_ID]: string;
+  [Property.MUSIC_ID]: string;
   [Property.KEY]: string;
   [Property.MODIFY_USER_ID]: string;
   [Property.MODIFY_TIMESTAMP]: number;
 };
 
-export function saveSingerModifyRecord({
-  singerId,
+export function saveMusicModifyRecord({
+  musicId,
   key,
   modifyUserId,
 }: {
-  singerId: string;
+  musicId: string;
   key: AllowUpdateKey;
   modifyUserId: string;
 }) {
   return db.run(
     `
-      insert into singer_modify_record(singerId, key, modifyUserId, modifyTimestamp)
+      insert into music_modify_record(musicId, key, modifyUserId, modifyTimestamp)
         values( ?, ?, ?, ? )
     `,
-    [singerId, key, modifyUserId, Date.now()],
+    [musicId, key, modifyUserId, Date.now()],
   );
 }

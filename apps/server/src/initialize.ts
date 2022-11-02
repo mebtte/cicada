@@ -90,7 +90,7 @@ if (cluster.isPrimary) {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           singerId TEXT NOT NULL,
           modifyUserId TEXT NOT NULL,
-          content TEXT NOT NULL,
+          key TEXT NOT NULL,
           modifyTimestamp INTEGER NOT NULL,
           CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
           CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
@@ -117,7 +117,7 @@ if (cluster.isPrimary) {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           musicId TEXT NOT NULL,
           modifyUserId TEXT NOT NULL,
-          content TEXT NOT NULL,
+          key TEXT NOT NULL,
           modifyTimestamp INTEGER NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
           CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
