@@ -34,7 +34,6 @@ export async function createSinger({
 
   try {
     const id = await createSingerRequest({ name: trimmedName, force });
-    e.emit(EventType.OPEN_SINGER_DRAWER, { id });
 
     // eslint-disable-next-line no-unused-expressions
     callback && callback(id);
