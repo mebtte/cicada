@@ -58,12 +58,15 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
           <SingerList singerList={music.singers} />
           {music.forkFromList.length ? (
             <SubMusicList
-              label="翻唱自以下音乐"
+              label="二次创作自以下音乐"
               musicList={music.forkFromList}
             />
           ) : null}
           {music.forkList.length ? (
-            <SubMusicList label="被以下音乐翻唱" musicList={music.forkList} />
+            <SubMusicList
+              label="被以下音乐二次创作"
+              musicList={music.forkList}
+            />
           ) : null}
           <Lyric music={music} />
         </div>

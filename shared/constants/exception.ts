@@ -117,6 +117,6 @@ export const EXCEPTION_CODE_MAP: Record<
     description: '用户不存在',
   },
   [ExceptionCode.MUSIC_HAS_FORK_AND_CAN_NOT_BE_DELETED]: {
-    description: '音乐被翻唱无法被删除',
+    description: '音乐被二次创作无法被删除',
   },
 };

@@ -324,7 +324,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           label="删除"
           onClick={() => {
             if (music.forkList.length) {
-              return notice.error('被翻唱音乐无法被删除');
+              return notice.error('被二次创作音乐无法被删除');
             }
             return dialog.confirm({
               title: '确定删除音乐吗?',
