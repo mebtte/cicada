@@ -39,7 +39,6 @@ const Body = styled(animated.div)`
   max-height: 80%;
 
   background-color: white;
-  border-radius: 4px;
   transform-origin: bottom;
 
   padding: 20px 0;

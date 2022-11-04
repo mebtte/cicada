@@ -1,5 +1,5 @@
 import Select from './select';
-import { Option } from './constants';
+import type { Option } from './constants';
 
 export { Option };
 export default Select;

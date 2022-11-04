@@ -8,7 +8,6 @@ const Style = styled.div<{ disabled: boolean }>`
   padding: 10px 20px;
 
   border: 1px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 4px;
   cursor: pointer;
   text-align: center;
   font-size: 12px;

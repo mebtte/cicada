@@ -21,8 +21,6 @@ const Selected = styled.div<{ active: boolean; disabled: boolean }>`
   display: flex;
   align-items: center;
 
-  border-radius: 4px;
-  border-radius: 4px;
   border-width: 1px;
   border-style: solid;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};

@@ -21,10 +21,6 @@ import useOptions from './use_options';
 import useEvent from '../../utils/use_event';
 
 const onGetDataErrorDefault = (error: Error) => notice.error(error.message);
-const Style = styled.div`
-  position: relative;
-  transition: inherit;
-`;
 const Input = styled.div<{ active: boolean; disabled: boolean }>`
   padding: 5px 10px;
 
@@ -35,7 +31,6 @@ const Input = styled.div<{ active: boolean; disabled: boolean }>`
 
   cursor: pointer;
   border: 1px solid;
-  border-radius: 4px;
   transition: inherit;
 
   > .input {
@@ -69,7 +64,6 @@ const Item = styled.div<{ disabled: boolean }>`
   max-width: 100%;
   padding: 3px 3px 3px 7px;
 
-  border-radius: 2px;
   border: 1px solid ${CSSVariable.COLOR_BORDER};
   cursor: default;
 
@@ -121,19 +115,21 @@ function MultipleSelect<Value>({
   addon?: ReactNode;
 }) {
   const id = useId();
+
+  const inputBoxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [keyword, setKeyword] = useState('');
 
-  const [open, setOpen] = useState(false);
+  const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
 
   const timerRef = useRef(0);
   const onFocus: FocusEventHandler<HTMLInputElement> = useEvent(() => {
     window.clearTimeout(timerRef.current);
-    return setOpen(true);
+    return setAnchor(inputBoxRef.current);
   });
   const onBlur: FocusEventHandler<HTMLInputElement> = useEvent(() => {
-    timerRef.current = window.setTimeout(() => setOpen(false), 200);
+    timerRef.current = window.setTimeout(() => setAnchor(null), 200);
   });
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useEvent(
     (event) => {
@@ -181,9 +177,9 @@ function MultipleSelect<Value>({
 
   const selectedKeys = value.map((i) => i.key);
   return (
-    <Label label={label} active={open} disabled={disabled} addon={addon}>
-      <Style>
-        <Input active={open} disabled={disabled}>
+    <>
+      <Label label={label} active={!!anchor} disabled={disabled} addon={addon}>
+        <Input active={!!anchor} disabled={disabled} ref={inputBoxRef}>
           {value.map((option) => (
             <Item key={option.key} disabled={disabled}>
               <div className="label">{option.label}</div>
@@ -201,16 +197,16 @@ function MultipleSelect<Value>({
             ref={inputRef}
           />
         </Input>
-        <Options
-          id={id}
-          open
-          loading={loading}
-          options={options}
-          selectedKeys={selectedKeys}
-          emptyMesssage={emptyMesssage}
-        />
-      </Style>
-    </Label>
+      </Label>
+      <Options
+        id={id}
+        loading={loading}
+        options={options}
+        selectedKeys={selectedKeys}
+        emptyMesssage={emptyMesssage}
+        anchor={anchor}
+      />
+    </>
   );
 }
 

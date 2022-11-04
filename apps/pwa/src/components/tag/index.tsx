@@ -1,4 +1,4 @@
-import { forwardRef, memo } from 'react';
+import { ForwardedRef, forwardRef, HtmlHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 
 export enum Type {
@@ -48,7 +48,6 @@ const Style = styled.div`
   font-size: 12px;
   line-height: 12px;
   border-width: 1px;
-  border-radius: 2px;
   border-style: solid;
   padding: 1px 3px;
   ${({ color }) => css`
@@ -57,21 +56,21 @@ const Style = styled.div`
   `}
 `;
 
-interface Props {
+type Props = HtmlHTMLAttributes<HTMLDivElement> & {
   type: Type;
   gray?: boolean;
-  [key: string]: any;
+};
+
+function Tag(
+  { type, gray = false, ...props }: Props,
+  ref: ForwardedRef<HTMLDivElement>,
+) {
+  const { label, color } = TYPE_MAP[type];
+  return (
+    <Style {...props} ref={ref} color={gray ? 'rgb(188 188 188)' : color}>
+      {label}
+    </Style>
+  );
 }
 
-const Tag = forwardRef<HTMLDivElement, Props>(
-  ({ type, gray = false, ...props }: Props, ref) => {
-    const { label, color } = TYPE_MAP[type];
-    return (
-      <Style {...props} ref={ref} color={gray ? 'rgb(188 188 188)' : color}>
-        {label}
-      </Style>
-    );
-  },
-);
-
-export default memo(Tag);
+export default forwardRef<HTMLDivElement, Props>(Tag);
