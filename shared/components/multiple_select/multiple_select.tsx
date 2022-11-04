@@ -66,6 +66,7 @@ const Item = styled.div<{ disabled: boolean }>`
 
   border: 1px solid ${CSSVariable.COLOR_BORDER};
   cursor: default;
+  user-select: none;
 
   display: flex;
   align-items: center;

@@ -14,7 +14,8 @@ export default async ({ ctx, music, value }: Parameter) => {
   if (
     !Array.isArray(value) ||
     value.length > 100 ||
-    value.find((v) => typeof v !== 'string')
+    value.find((v) => typeof v !== 'string') ||
+    value.find((v) => v === music.id)
   ) {
     return ctx.error(ExceptionCode.PARAMETER_ERROR);
   }

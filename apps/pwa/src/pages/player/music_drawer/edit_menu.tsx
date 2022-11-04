@@ -1,5 +1,11 @@
 import Popup from '#/components/popup';
-import { CSSProperties, MouseEventHandler, useEffect, useState } from 'react';
+import {
+  CSSProperties,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import MenuItem from '#/components/menu_item';
 import {
   MdDelete,
@@ -62,12 +68,6 @@ const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
   label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
   value: music,
 });
-const searchMusic = (search: string): Promise<Option<Music>[]> => {
-  const keyword = search.trim();
-  return searchMusicRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
-    data.musicList.map(formatMusicTouMultipleSelectOtion),
-  );
-};
 
 const Style = styled.div`
   padding: 5px 0;
@@ -90,6 +90,18 @@ function EditMenu({ music }: { music: MusicDetail }) {
   const [open, setOpen] = useState(false);
   // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
+  const searchMusic = useCallback(
+    (search: string): Promise<Option<Music>[]> => {
+      const keyword = search.trim();
+      return searchMusicRequest({ keyword, page: 1, pageSize: 100 }).then(
+        (data) =>
+          data.musicList
+            .filter((m) => m.id !== music.id)
+            .map(formatMusicTouMultipleSelectOtion),
+      );
+    },
+    [music.id],
+  );
 
   useEffect(() => {
     const unlistenOpen = e.listen(EventType.OPEN_EDIT_MENU, () =>
