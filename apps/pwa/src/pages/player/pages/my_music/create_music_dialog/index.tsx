@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import Select from '#/components/select';
+import Select, { Option as SelectOption } from '#/components/select';
 import styled from 'styled-components';
 import {
   MusicType,
@@ -17,7 +17,9 @@ import {
   NAME_MAX_LENGTH,
 } from '#/constants/music';
 import FileSelect from '#/components/file_select';
-import MultipleSelect, { Option } from '#/components/multiple_select';
+import MultipleSelect, {
+  Option as MultipleSelectOption,
+} from '#/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import useEvent from '#/utils/use_event';
@@ -40,20 +42,23 @@ const TypeTips = styled.div`
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
 };
-const TYPES = MUSIC_TYPES.map((t) => ({
-  id: t,
+const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((t) => ({
+  key: t,
   label: MUSIC_TYPE_MAP[t].label,
+  value: t,
 }));
 const formatSingerToMultipleSelectOption = (
   singer: Singer,
-): Option<Singer> => ({
+): MultipleSelectOption<Singer> => ({
   key: singer.id,
   label: `${singer.name}${
     singer.aliases.length ? `(${singer.aliases[0]})` : ''
   }`,
   value: singer,
 });
-const searchSinger = (search: string): Promise<Option<Singer>[]> => {
+const searchSinger = (
+  search: string,
+): Promise<MultipleSelectOption<Singer>[]> => {
   const keyword = search.trim();
   return searchSingerRequest({ keyword, page: 1, pageSize: 50 }).then((data) =>
     data.singerList.map(formatSingerToMultipleSelectOption),
@@ -75,12 +80,14 @@ function CreateMusicDialog() {
 
   const [singerList, setSingerList] = useState<Singer[]>([]);
   const onSingerListChange = useCallback(
-    (sl: Option<Singer>[]) => setSingerList(sl.map((s) => s.value)),
+    (sl: MultipleSelectOption<Singer>[]) =>
+      setSingerList(sl.map((s) => s.value)),
     [],
   );
 
   const [musicType, setMusicType] = useState(MusicType.SONG);
-  const onMusicTypeChange = (t: MusicType) => setMusicType(t);
+  const onMusicTypeChange = (option: SelectOption<MusicType>) =>
+    setMusicType(option.value);
 
   const [sq, setSq] = useState<File | null>(null);
   const onSqChange = (s) => setSq(s);
@@ -150,10 +157,14 @@ function CreateMusicDialog() {
           }}
           disabled={loading}
         />
-        <Select
+        <Select<MusicType>
           label="类型"
-          data={TYPES}
-          value={musicType}
+          data={MUSIC_TYPE_OPTIONS}
+          value={{
+            key: musicType,
+            label: MUSIC_TYPE_MAP[musicType].label,
+            value: musicType,
+          }}
           onChange={onMusicTypeChange}
           disabled={loading}
           addon={<TypeTips>创建后无法更换类型</TypeTips>}

@@ -6,7 +6,7 @@ import { CSSVariable } from '../../global_style';
 import Label from '../label';
 import ellipsis from '../../style/ellipsis';
 import Options from './options';
-import { Item } from './constants';
+import { Option } from './constants';
 import useEvent from '../../utils/use_event';
 
 const Style = styled.div`
@@ -53,7 +53,7 @@ const Selected = styled.div<{ active: boolean; disabled: boolean }>`
   `}
 `;
 
-function Select<ID extends number | string>({
+function Select<Value>({
   addon,
   label,
   data,
@@ -64,9 +64,9 @@ function Select<ID extends number | string>({
 }: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
   addon?: ReactNode;
   label: string;
-  data: Item<ID>[];
-  value: ID;
-  onChange: (id: ID) => void;
+  data: Option<Value>[];
+  value: Option<Value>;
+  onChange: (option: Option<Value>) => void;
   placeholder?: string;
   disabled?: boolean;
 }) {
@@ -87,7 +87,9 @@ function Select<ID extends number | string>({
     }
   }, [open]);
 
-  const selected = value ? data.find((item) => item.id === value) : undefined;
+  const selected = value
+    ? data.find((option) => option.key === value.key)
+    : undefined;
   return (
     <Label disabled={disabled} label={label} active={open} addon={addon}>
       <Style>
@@ -95,7 +97,7 @@ function Select<ID extends number | string>({
           <div className="label">{selected ? selected.label : placeholder}</div>
           {open ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
         </Selected>
-        <Options<ID>
+        <Options<Value>
           open={open}
           data={data}
           selected={selected}

@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { COVER_MAX_SIZE } from '@/constants/musicbill';
 import ImageCutterDialog from '@/components/image_cutter_dialog';
 import updateMusicbill from '@/server/update_musicbill';
 import { AllowUpdateKey } from '#/constants/musicbill';
@@ -12,8 +11,8 @@ import { Musicbill } from '../../../constants';
 import useOpen from './use_open';
 
 const COVER_SIZE = {
-  width: COVER_MAX_SIZE,
-  height: COVER_MAX_SIZE,
+  width: 1000,
+  height: 1000,
 };
 
 function CoverEditDialog({ musicbill }: { musicbill: Musicbill }) {

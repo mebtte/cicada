@@ -1,4 +1,5 @@
-export interface Item<ID extends number | string> {
-  id: ID;
+export interface Option<Value> {
+  key: string | number;
   label: string;
+  value: Value;
 }
