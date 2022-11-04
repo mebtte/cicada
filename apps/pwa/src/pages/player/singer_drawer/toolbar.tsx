@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
-import { MdPlaylistAdd, MdOutlineEditNote } from 'react-icons/md';
+import { MdPlaylistAdd, MdEdit } from 'react-icons/md';
 import p from '@/global_states/profile';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -27,6 +27,7 @@ const Style = styled.div`
 
     display: flex;
     align-items: center;
+    gap: 5px;
   }
 `;
 
@@ -50,7 +51,7 @@ function Toolbar({ singer }: { singer: SingerDetail }) {
       </div>
       {profile.super || profile.id === singer.createUser.id ? (
         <IconButton onClick={openEditMenu}>
-          <MdOutlineEditNote />
+          <MdEdit />
         </IconButton>
       ) : null}
     </Style>

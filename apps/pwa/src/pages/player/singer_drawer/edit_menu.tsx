@@ -1,7 +1,7 @@
 import Popup from '#/components/popup';
 import { CSSProperties, MouseEventHandler, useEffect, useState } from 'react';
 import MenuItem from '#/components/menu_item';
-import { MdEdit } from 'react-icons/md';
+import { MdImage, MdTitle, MdTextFields } from 'react-icons/md';
 import styled from 'styled-components';
 import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
@@ -57,7 +57,7 @@ function EditMenu({
     >
       <Style onClick={onClose}>
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdImage />}
           label="编辑头像"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
@@ -82,7 +82,7 @@ function EditMenu({
           }
         />
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdTitle />}
           label="编辑名字"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
@@ -108,7 +108,7 @@ function EditMenu({
           }
         />
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdTextFields />}
           label="编辑别名"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {

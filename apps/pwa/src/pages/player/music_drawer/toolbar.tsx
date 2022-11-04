@@ -2,11 +2,11 @@ import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
 import {
   MdPlayArrow,
-  MdOutlineEditNote,
   MdReadMore,
   MdMoreVert,
   MdOutlinePostAdd,
   MdPlaylistAdd,
+  MdEdit,
 } from 'react-icons/md';
 import p from '@/global_states/profile';
 import playerEventemitter, {
@@ -33,6 +33,7 @@ const Style = styled.div`
 
     display: flex;
     align-items: center;
+    gap: 5px;
   }
 `;
 
@@ -98,7 +99,7 @@ function Toolbar({ music }: { music: MusicDetail }) {
       </div>
       {profile.super || profile.id === music.createUser.id ? (
         <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
-          <MdOutlineEditNote />
+          <MdEdit />
         </IconButton>
       ) : null}
     </Style>

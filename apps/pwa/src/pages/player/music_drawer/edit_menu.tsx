@@ -1,7 +1,14 @@
 import Popup from '#/components/popup';
 import { CSSProperties, MouseEventHandler, useEffect, useState } from 'react';
 import MenuItem from '#/components/menu_item';
-import { MdDelete, MdEdit } from 'react-icons/md';
+import {
+  MdDelete,
+  MdOutlineFilePresent,
+  MdTitle,
+  MdGroup,
+  MdTextFields,
+  MdImage,
+} from 'react-icons/md';
 import { CSSVariable } from '#/global_style';
 import styled from 'styled-components';
 import notice from '#/utils/notice';
@@ -85,7 +92,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
     >
       <Style onClick={onClose}>
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdImage />}
           label="编辑封面"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
@@ -110,7 +117,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdTitle />}
           label="编辑名字"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
@@ -141,7 +148,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdTextFields />}
           label="编辑别名"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
@@ -170,7 +177,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
         />
         {music.type === MusicType.SONG ? (
           <MenuItem
-            icon={<MdEdit />}
+            icon={<MdTextFields />}
             label="编辑歌词"
             onClick={() =>
               playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
@@ -205,7 +212,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           />
         ) : null}
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdGroup />}
           label="编辑歌手列表"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
@@ -239,7 +246,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdOutlineFilePresent />}
           label="编辑标准音质文件"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
@@ -266,7 +273,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdOutlineFilePresent />}
           label="编辑无损音质文件"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
@@ -293,7 +300,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
-          icon={<MdEdit />}
+          icon={<MdOutlineFilePresent />}
           label="编辑伴奏文件"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
