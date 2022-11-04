@@ -21,7 +21,9 @@ import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '#/utils/dialog';
 import deleteMusic from '@/server/delete_music';
 import logger from '#/utils/logger';
-import { ZIndex } from '../constants';
+import { Option } from '#/components/multiple_select';
+import searchSingerRequest from '@/server/search_singer';
+import { Singer, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {
@@ -30,6 +32,21 @@ import playerEventemitter, {
 } from '../eventemitter';
 import { emitMusicUpdated } from '../utils';
 
+const formatSingerToMultipleSelectOption = (
+  singer: Singer,
+): Option<Singer> => ({
+  key: singer.id,
+  label: `${singer.name}${
+    singer.aliases.length ? `(${singer.aliases[0]})` : ''
+  }`,
+  value: singer,
+});
+const searchSinger = (search: string): Promise<Option<Singer>[]> => {
+  const keyword = search.trim();
+  return searchSingerRequest({ keyword, page: 1, pageSize: 50 }).then((data) =>
+    data.singerList.map(formatSingerToMultipleSelectOption),
+  );
+};
 const Style = styled.div`
   padding: 5px 0;
 `;
@@ -187,6 +204,40 @@ function EditMenu({ music }: { music: MusicDetail }) {
             }
           />
         ) : null}
+        <MenuItem
+          icon={<MdEdit />}
+          label="编辑歌手列表"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.MULTIPLE_SELECT,
+              label: '歌手列表',
+              title: '编辑歌手列表',
+              dataGetter: searchSinger,
+              initialValue: music.singers.map(
+                formatSingerToMultipleSelectOption,
+              ),
+              onSubmit: async (singers: Option<Singer>[]) => {
+                if (!singers.length) {
+                  throw new Error('请选择歌手');
+                }
+
+                if (
+                  !stringArrayEqual(
+                    music.singers.map((s) => s.id).sort(),
+                    singers.map((s) => s.value.id).sort(),
+                  )
+                ) {
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.SINGER,
+                    value: singers.map((s) => s.value.id),
+                  });
+                  emitMusicUpdated(music.id);
+                }
+              },
+            })
+          }
+        />
         <MenuItem
           icon={<MdEdit />}
           label="编辑标准音质文件"

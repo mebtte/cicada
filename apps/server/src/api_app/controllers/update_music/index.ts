@@ -10,6 +10,7 @@ import updateAliases from './update_aliases';
 import updateSq from './update_sq';
 import updateHq from './update_hq';
 import updateAc from './update_ac';
+import updateSinger from './update_singer';
 
 const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
   {
@@ -20,6 +21,7 @@ const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
     [AllowUpdateKey.SQ]: updateSq,
     [AllowUpdateKey.HQ]: updateHq,
     [AllowUpdateKey.AC]: updateAc,
+    [AllowUpdateKey.SINGER]: updateSinger,
   };
 
 export default async (ctx: Context) => {

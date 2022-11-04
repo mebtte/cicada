@@ -1,34 +1,41 @@
 import styled, { css } from 'styled-components';
+import ResizeObserver from 'resize-observer-polyfill';
 import { MdDone } from 'react-icons/md';
 import { animated, useTransition } from 'react-spring';
-import { ComponentSize } from '../../constants/style';
-import { Item as ItemType } from './constants';
+import { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { ComponentSize, UtilZIndex } from '../../constants/style';
+import { Option as OptionType } from './constants';
 import Spinner from '../spinner';
 import { flexCenter } from '../../style/flexbox';
 import { CSSVariable } from '../../global_style';
 import e, { EventType } from './eventemitter';
 import ellipsis from '../../style/ellipsis';
 
-const Style = styled(animated.div)`
-  z-index: 1;
+const Mask = styled.div`
+  z-index: ${UtilZIndex.MULTIPLE_SELECT};
 
-  position: absolute;
-  top: calc(100% + 2px);
-  left: 0;
+  position: fixed;
   width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+`;
+const Style = styled(animated.div)`
+  position: absolute;
 
-  overflow: hidden;
+  padding: 5px 0;
+
   background-color: #fff;
-  border-radius: 4px;
   box-shadow: rgb(0 0 0 / 20%) 0px 5px 5px -3px,
     rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px;
 
   > .list {
-    max-height: 250px;
+    max-height: 300px;
     overflow: auto;
   }
 `;
-const Item = styled.div<{ selected: boolean }>`
+const Option = styled.div<{ selected: boolean }>`
   padding: 5px 10px;
 
   display: flex;
@@ -44,6 +51,7 @@ const Item = styled.div<{ selected: boolean }>`
     flex: 1;
     min-width: 0;
 
+    font-size: 14px;
     ${ellipsis}
   }
 
@@ -73,23 +81,83 @@ const Empty = styled.div`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   text-align: center;
 `;
+interface BaseProps<Value> {
+  id: string;
+  loading: boolean;
+  options: OptionType<Value>[];
+  selectedKeys: (number | string)[];
+  emptyMesssage: string;
+}
 
-function Options<ID extends string | number>({
-  id,
-  open,
+function Options<Value>({
+  style,
   loading,
   options,
-  selectedIds,
+  selectedKeys,
+  id,
   emptyMesssage,
-}: {
-  id: string;
-  open: boolean;
-  loading: boolean;
-  options: ItemType<ID>[];
-  selectedIds: ID[];
-  emptyMesssage: string;
+  anchor,
+}: BaseProps<Value> & { style: unknown; anchor: HTMLDivElement }) {
+  const [rect, setRect] = useState(() => anchor.getBoundingClientRect());
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() =>
+      setRect(anchor.getBoundingClientRect()),
+    );
+    resizeObserver.observe(anchor);
+    return () => resizeObserver.disconnect();
+  }, [anchor]);
+
+  return ReactDOM.createPortal(
+    <Mask>
+      <Style
+        style={{
+          // @ts-expect-error
+          ...style,
+          top: rect.top + rect.height + 5,
+          left: rect.left,
+          width: rect.width,
+        }}
+      >
+        {loading ? (
+          <Loader>
+            <Spinner size={16} />
+          </Loader>
+        ) : null}
+        {options.length ? (
+          <div className="list">
+            {options.map((option) => {
+              const selected = selectedKeys.includes(option.key);
+              return (
+                <Option
+                  key={option.key}
+                  selected={selected}
+                  onClickCapture={() =>
+                    e.emit(EventType.ON_CHANGE, { id, option })
+                  }
+                >
+                  <div className="label">{option.label}</div>
+                  {selected ? <MdDone /> : null}
+                </Option>
+              );
+            })}
+          </div>
+        ) : loading ? null : (
+          <Empty>{emptyMesssage}</Empty>
+        )}
+      </Style>
+    </Mask>,
+    document.body,
+  );
+}
+
+function Wrapper<Value>({
+  anchor,
+  ...props
+}: BaseProps<Value> & {
+  anchor: HTMLDivElement | null;
 }) {
-  const transitions = useTransition(open, {
+  const transitions = useTransition(anchor, {
     from: {
       opacity: 0,
       transform: `translateY(${ComponentSize.NORMAL}px)`,
@@ -104,38 +172,9 @@ function Options<ID extends string | number>({
     },
   });
 
-  return transitions((style, o) =>
-    o ? (
-      <Style style={style}>
-        {loading ? (
-          <Loader>
-            <Spinner size={16} />
-          </Loader>
-        ) : null}
-        {options.length ? (
-          <div className="list">
-            {options.map((item) => {
-              const selected = selectedIds.includes(item.id);
-              return (
-                <Item
-                  key={item.id}
-                  selected={selected}
-                  onClickCapture={() =>
-                    e.emit(EventType.ON_CHANGE, { id, item })
-                  }
-                >
-                  <div className="label">{item.label}</div>
-                  {selected ? <MdDone /> : null}
-                </Item>
-              );
-            })}
-          </div>
-        ) : loading ? null : (
-          <Empty>{emptyMesssage}</Empty>
-        )}
-      </Style>
-    ) : null,
+  return transitions((style, a) =>
+    a ? <Options style={style} anchor={a} {...props} /> : null,
   );
 }
 
-export default Options;
+export default Wrapper;

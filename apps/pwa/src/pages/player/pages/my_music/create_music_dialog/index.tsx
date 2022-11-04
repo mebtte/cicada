@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import Select from '#/components/select';
+import Select, { Option as SelectOption } from '#/components/select';
 import styled from 'styled-components';
 import {
   MusicType,
@@ -17,15 +17,17 @@ import {
   NAME_MAX_LENGTH,
 } from '#/constants/music';
 import FileSelect from '#/components/file_select';
-import MultipleSelect from '#/components/multiple_select';
+import MultipleSelect, {
+  Option as MultipleSelectOption,
+} from '#/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
-import { ALIAS_DIVIDER, AssetType, ASSET_TYPE_MAP } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import useEvent from '#/utils/use_event';
 import notice from '#/utils/notice';
 import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
-import { ZIndex } from '@/pages/player/constants';
 import { CSSVariable } from '#/global_style';
+import { Singer, ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
 import CreateSinger from './create_singer';
@@ -40,19 +42,26 @@ const TypeTips = styled.div`
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
 };
-const TYPES = MUSIC_TYPES.map((t) => ({
-  id: t,
+const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((t) => ({
+  key: t,
   label: MUSIC_TYPE_MAP[t].label,
+  value: t,
 }));
-const searchSinger = (search: string) => {
+const formatSingerToMultipleSelectOption = (
+  singer: Singer,
+): MultipleSelectOption<Singer> => ({
+  key: singer.id,
+  label: `${singer.name}${
+    singer.aliases.length ? `(${singer.aliases[0]})` : ''
+  }`,
+  value: singer,
+});
+const searchSinger = (
+  search: string,
+): Promise<MultipleSelectOption<Singer>[]> => {
   const keyword = search.trim();
   return searchSingerRequest({ keyword, page: 1, pageSize: 50 }).then((data) =>
-    data.singerList.map((s) => ({
-      id: s.id,
-      label: `${s.name}${
-        s.aliases ? `(${s.aliases.split(ALIAS_DIVIDER)[0]})` : ''
-      }`,
-    })),
+    data.singerList.map(formatSingerToMultipleSelectOption),
   );
 };
 
@@ -69,16 +78,16 @@ function CreateMusicDialog() {
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setName(event.target.value);
 
-  const [singerList, setSingerList] = useState<{ id: string; label: string }[]>(
-    [],
-  );
+  const [singerList, setSingerList] = useState<Singer[]>([]);
   const onSingerListChange = useCallback(
-    (sl: { id: string; label: string }[]) => setSingerList(sl),
+    (sl: MultipleSelectOption<Singer>[]) =>
+      setSingerList(sl.map((s) => s.value)),
     [],
   );
 
   const [musicType, setMusicType] = useState(MusicType.SONG);
-  const onMusicTypeChange = (t: MusicType) => setMusicType(t);
+  const onMusicTypeChange = (option: SelectOption<MusicType>) =>
+    setMusicType(option.value);
 
   const [sq, setSq] = useState<File | null>(null);
   const onSqChange = (s) => setSq(s);
@@ -131,9 +140,9 @@ function CreateMusicDialog() {
     <Dialog open={open} maskProps={maskProps}>
       <Title>创建音乐</Title>
       <StyledContent>
-        <MultipleSelect
-          label="歌手"
-          value={singerList}
+        <MultipleSelect<Singer>
+          label="歌手列表"
+          value={singerList.map(formatSingerToMultipleSelectOption)}
           onChange={onSingerListChange}
           dataGetter={searchSinger}
           disabled={loading}
@@ -148,10 +157,14 @@ function CreateMusicDialog() {
           }}
           disabled={loading}
         />
-        <Select
+        <Select<MusicType>
           label="类型"
-          data={TYPES}
-          value={musicType}
+          data={MUSIC_TYPE_OPTIONS}
+          value={{
+            key: musicType,
+            label: MUSIC_TYPE_MAP[musicType].label,
+            value: musicType,
+          }}
           onChange={onMusicTypeChange}
           disabled={loading}
           addon={<TypeTips>创建后无法更换类型</TypeTips>}

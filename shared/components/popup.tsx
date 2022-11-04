@@ -18,7 +18,6 @@ const Mask = styled(animated.div)`
   justify-content: center;
 `;
 const Body = styled(animated.div)`
-  border-radius: 4px 4px 0 0;
   width: 100%;
   max-width: 500px;
   max-height: 75%;

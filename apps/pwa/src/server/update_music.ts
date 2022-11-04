@@ -9,6 +9,7 @@ type KeyMapValue = {
   [AllowUpdateKey.SQ]: string;
   [AllowUpdateKey.HQ]: string;
   [AllowUpdateKey.AC]: string;
+  [AllowUpdateKey.SINGER]: string[];
 };
 
 function updateMusic<Key extends AllowUpdateKey>({

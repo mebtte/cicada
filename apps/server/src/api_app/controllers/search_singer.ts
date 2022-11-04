@@ -109,6 +109,7 @@ export default async (ctx: Context) => {
       ...excludeProperty(singer, [SingerProperty.CREATE_USER_ID]),
       avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),
       createUser: userIdMapUser[singer.createUserId],
+      aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
     })),
   });
 };

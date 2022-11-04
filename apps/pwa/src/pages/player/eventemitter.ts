@@ -1,3 +1,4 @@
+import { Option } from '#/components/multiple_select';
 import Eventin from 'eventin';
 import {
   Music,
@@ -13,6 +14,7 @@ export enum EditDialogType {
   INPUT_LIST,
   TEXTAREA_LIST,
   FILE,
+  MULTIPLE_SELECT,
 }
 export type EditDialogData = {
   title: string;
@@ -46,6 +48,14 @@ export type EditDialogData = {
       label: string;
       acceptTypes: string[];
       placeholder: string;
+    }
+  | {
+      type: EditDialogType.MULTIPLE_SELECT;
+      initialValue: Option<unknown>[];
+      label: string;
+      dataGetter: (
+        keyword: string,
+      ) => Option<unknown>[] | Promise<Option<unknown>[]>;
     }
 );
 

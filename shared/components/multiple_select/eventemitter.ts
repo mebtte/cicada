@@ -1,5 +1,5 @@
 import Eventin from 'eventin';
-import { Item } from './constants';
+import { Option } from './constants';
 
 export enum EventType {
   ON_CHANGE = 'on_change',
@@ -10,7 +10,7 @@ export default new Eventin<
   {
     [EventType.ON_CHANGE]: {
       id: string;
-      item: Item<string | number>;
+      option: Option<unknown>;
     };
   }
 >();
