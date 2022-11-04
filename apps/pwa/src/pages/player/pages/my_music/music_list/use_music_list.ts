@@ -7,6 +7,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { MusicWithIndex } from '../../../constants';
 import { PAGE_SIZE } from '../constants';
 import em, { EventType } from '../eventemitter';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../../../eventemitter';
 
 export default () => {
   const requestIdRef = useRef(0);
@@ -74,7 +77,19 @@ export default () => {
 
   useEffect(() => {
     const unlistenReload = em.listen(EventType.RELOAD_MUSIC_LIST, reload);
-    return unlistenReload;
+    const unlistenMusicUpdated = playerEventemitter.listen(
+      PlayerEventType.MUSIC_UPDATED,
+      reload,
+    );
+    const unlistenMusicDeleted = playerEventemitter.listen(
+      PlayerEventType.MUSIC_DELETED,
+      reload,
+    );
+    return () => {
+      unlistenReload();
+      unlistenMusicUpdated();
+      unlistenMusicDeleted();
+    };
   }, [reload]);
 
   return {

@@ -4,6 +4,7 @@ import dialog from '#/utils/dialog';
 import createMusicbillRequest from '@/server/create_musicbill';
 import createSingerRequest from '@/server/create_singer';
 import getMusicDetail from '@/server/get_music_detail';
+import getSingerDetail from '@/server/get_singer_detail';
 import e, { EventType } from './eventemitter';
 
 export async function createMusicbill(name: string) {
@@ -64,6 +65,19 @@ export function emitMusicUpdated(id: string) {
         hq: music.hq,
         ac: music.ac,
         singers: music.singers,
+      },
+    }),
+  );
+}
+
+export function emitSingerUpdated(id: string) {
+  getSingerDetail(id).then((singer) =>
+    e.emit(EventType.SINGER_UPDATED, {
+      singer: {
+        id: singer.id,
+        avatar: singer.avatar,
+        name: singer.name,
+        aliases: singer.aliases,
       },
     }),
   );

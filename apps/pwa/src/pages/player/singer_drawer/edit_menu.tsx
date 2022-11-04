@@ -15,6 +15,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import { SingerDetail } from './constants';
+import { emitSingerUpdated } from '../utils';
 
 const maskProps: {
   style: CSSProperties;
@@ -30,13 +31,7 @@ const Style = styled.div`
   padding: 5px 0;
 `;
 
-function EditMenu({
-  singer,
-  reload,
-}: {
-  singer: SingerDetail;
-  reload: () => void;
-}) {
+function EditMenu({ singer }: { singer: SingerDetail }) {
   const [open, setOpen] = useState(false);
   // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
@@ -76,7 +71,7 @@ function EditMenu({
                   key: AllowUpdateKey.AVATAR,
                   value: assetId,
                 });
-                reload();
+                emitSingerUpdated(singer.id);
               },
             })
           }
@@ -100,7 +95,7 @@ function EditMenu({
                     key: AllowUpdateKey.NAME,
                     value: trimmedName,
                   });
-                  reload();
+                  emitSingerUpdated(singer.id);
                 }
               },
               initialValue: singer.name,
@@ -126,7 +121,7 @@ function EditMenu({
                     key: AllowUpdateKey.ALIASES,
                     value: trimmedAliases,
                   });
-                  reload();
+                  emitSingerUpdated(singer.id);
                 }
               },
               initialValue: singer.aliases,

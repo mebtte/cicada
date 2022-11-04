@@ -39,15 +39,7 @@ const DetailContainer = styled(Container)`
   }
 `;
 
-function Detail({
-  style,
-  singer,
-  reload,
-}: {
-  style: unknown;
-  singer: SingerDetail;
-  reload: () => void;
-}) {
+function Detail({ style, singer }: { style: unknown; singer: SingerDetail }) {
   const [toolbarSticky, setToolbarSticky] = useState(false);
 
   const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
@@ -67,7 +59,7 @@ function Detail({
       </div>
 
       {toolbarSticky ? <MiniIfno singer={singer} /> : null}
-      <EditMenu singer={singer} reload={reload} />
+      <EditMenu singer={singer} />
     </DetailContainer>
   );
 }
@@ -112,7 +104,7 @@ function SingerDrawer({
             </CardContainer>
           );
         }
-        return <Detail style={style} singer={d.singer!} reload={reload} />;
+        return <Detail style={style} singer={d.singer!} />;
       })}
     </Drawer>
   );

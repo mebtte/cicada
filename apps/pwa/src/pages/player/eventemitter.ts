@@ -6,6 +6,7 @@ import {
   MusicWithIndex,
   PlayMode,
   QueueMusic,
+  Singer,
 } from './constants';
 
 export enum EditDialogType {
@@ -111,6 +112,8 @@ export enum EventType {
 
   MUSIC_UPDATED = 'music_updated',
   MUSIC_DELETED = 'music_deleted',
+
+  SINGER_UPDATED = 'singer_updated',
 }
 
 export default new Eventin<
@@ -170,5 +173,7 @@ export default new Eventin<
 
     [EventType.MUSIC_UPDATED]: { music: Music };
     [EventType.MUSIC_DELETED]: { id: string };
+
+    [EventType.SINGER_UPDATED]: { singer: Singer };
   }
 >();

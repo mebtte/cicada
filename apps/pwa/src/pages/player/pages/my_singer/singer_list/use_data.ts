@@ -6,6 +6,9 @@ import excludeProperty from '#/utils/exclude_property';
 import day from '#/utils/day';
 import { Singer } from '../constants';
 import e, { EventType } from '../eventemitter';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../../../eventemitter';
 
 type Status = {
   error: Error | null;
@@ -62,7 +65,14 @@ export default () => {
       EventType.RELOAD_SINGER_LIST,
       getSingerList,
     );
-    return unlistenReload;
+    const unlistenSingerUpdated = playerEventemitter.listen(
+      PlayerEventType.SINGER_UPDATED,
+      getSingerList,
+    );
+    return () => {
+      unlistenReload();
+      unlistenSingerUpdated();
+    };
   }, [getSingerList]);
 
   useEffect(() => {
