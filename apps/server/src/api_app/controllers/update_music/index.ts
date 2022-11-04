@@ -11,6 +11,7 @@ import updateSq from './update_sq';
 import updateHq from './update_hq';
 import updateAc from './update_ac';
 import updateSinger from './update_singer';
+import updateForkFrom from './update_fork_from';
 
 const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
   {
@@ -22,6 +23,7 @@ const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
     [AllowUpdateKey.HQ]: updateHq,
     [AllowUpdateKey.AC]: updateAc,
     [AllowUpdateKey.SINGER]: updateSinger,
+    [AllowUpdateKey.FORK_FROM]: updateForkFrom,
   };
 
 export default async (ctx: Context) => {

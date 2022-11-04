@@ -7,7 +7,11 @@ import {
   Music,
   Property as MusicProperty,
 } from '@/db/music';
-import { getMusicForkFromList, getMusicForkList } from '@/db/music_fork';
+import {
+  getMusicForkFromList,
+  getMusicForkList,
+  Property as MusicForkProperty,
+} from '@/db/music_fork';
 import {
   getSingerListInMusicIds,
   Property as SingerProperty,
@@ -45,28 +49,43 @@ export default async (ctx: Context) => {
       UserProperty.AVATAR,
       UserProperty.NICKNAME,
     ]),
-    getMusicForkList(id),
-    getMusicForkFromList(id),
+    getMusicForkList(id, [MusicForkProperty.MUSIC_ID]),
+    getMusicForkFromList(id, [MusicForkProperty.FORK_FROM]),
   ]);
 
   const [allSingerList, musicList = []] = await Promise.all([
-    getSingerListInMusicIds(Array.from([id, ...forkList, ...forkFromList]), [
-      SingerProperty.ALIASES,
-      SingerProperty.ID,
-      SingerProperty.AVATAR,
-      SingerProperty.NAME,
-    ]),
+    getSingerListInMusicIds(
+      Array.from([
+        id,
+        ...forkList.map((f) => f.musicId),
+        ...forkFromList.map((f) => f.forkFrom),
+      ]),
+      [
+        SingerProperty.ALIASES,
+        SingerProperty.ID,
+        SingerProperty.AVATAR,
+        SingerProperty.NAME,
+      ],
+    ),
     forkList.length || forkFromList.length
-      ? getMusicListByIds(Array.from(new Set([...forkList, ...forkFromList])), [
-          MusicProperty.ID,
-          MusicProperty.TYPE,
-          MusicProperty.NAME,
-          MusicProperty.ALIASES,
-          MusicProperty.COVER,
-          MusicProperty.SQ,
-          MusicProperty.HQ,
-          MusicProperty.AC,
-        ])
+      ? getMusicListByIds(
+          Array.from(
+            new Set([
+              ...forkList.map((f) => f.musicId),
+              ...forkFromList.map((f) => f.forkFrom),
+            ]),
+          ),
+          [
+            MusicProperty.ID,
+            MusicProperty.TYPE,
+            MusicProperty.NAME,
+            MusicProperty.ALIASES,
+            MusicProperty.COVER,
+            MusicProperty.SQ,
+            MusicProperty.HQ,
+            MusicProperty.AC,
+          ],
+        )
       : undefined,
   ]);
   const musicIdMapSingerList: {
@@ -131,7 +150,7 @@ export default async (ctx: Context) => {
       ...createUser,
       avatar: getAssetUrl(createUser!.avatar, AssetType.USER_AVATAR),
     },
-    forkList: forkList.map((f) => musicIdMapMusic[f]),
-    forkFromList: forkFromList.map((f) => musicIdMapMusic[f]),
+    forkList: forkList.map((f) => musicIdMapMusic[f.musicId]),
+    forkFromList: forkFromList.map((f) => musicIdMapMusic[f.forkFrom]),
   });
 };

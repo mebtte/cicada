@@ -39,6 +39,7 @@ export enum AllowUpdateKey {
   HQ = 'hq',
   AC = 'ac',
   SINGER = 'singer',
+  FORK_FROM = 'fork_from',
 }
 
 export const MUSIC_MAX_LRYIC_AMOUNT = 5;

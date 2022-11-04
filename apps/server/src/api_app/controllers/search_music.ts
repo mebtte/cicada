@@ -13,7 +13,19 @@ import excludeProperty from '#/utils/exclude_property';
 import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
-const MAX_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
+type LocalMusic = Pick<
+  Music,
+  | MusicProperty.ID
+  | MusicProperty.TYPE
+  | MusicProperty.NAME
+  | MusicProperty.ALIASES
+  | MusicProperty.COVER
+  | MusicProperty.SQ
+  | MusicProperty.HQ
+  | MusicProperty.AC
+  | MusicProperty.CREATE_USER_ID
+>;
 
 export default async (ctx: Context) => {
   const { keyword, page, pageSize } = ctx.request.query;
@@ -21,7 +33,6 @@ export default async (ctx: Context) => {
   const pageSizeNumber = pageSize ? Number(pageSize) : undefined;
   if (
     typeof keyword !== 'string' ||
-    !keyword.length ||
     keyword.includes(ALIAS_DIVIDER) ||
     keyword.length > SEARCH_KEYWORD_MAX_LENGTH ||
     !pageNumber ||
@@ -33,75 +44,95 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const pattern = `%${keyword}%`;
-  const musicPatternSQL = `
-    SELECT id FROM  music 
-      WHERE name LIKE ? 
-        OR aliases LIKE ?
-  `;
-  const singerPatternSQL = `
-    SELECT msr.musicId FROM music_singer_relation AS msr
-      LEFT JOIN singer AS s ON msr.singerId = s.id 
-      WHERE
-        s.name LIKE ?
-        OR s.aliases LIKE ?
-  `;
-  const total = await db.get<{ value: number }>(
-    `
-      SELECT count(*) as value FROM music 
-        WHERE id IN (${musicPatternSQL}) OR id IN (${singerPatternSQL})
-    `,
-    [pattern, pattern, pattern, pattern],
-  );
-  if (!total!.value) {
-    return ctx.success({
-      total: 0,
-      musicList: [],
-    });
+  let musicList: LocalMusic[] = [];
+  let total: number = 0;
+  if (keyword.length) {
+    const pattern = `%${keyword}%`;
+    const musicPatternSQL = `
+      SELECT id FROM  music 
+        WHERE name LIKE ? 
+          OR aliases LIKE ?
+    `;
+    const singerPatternSQL = `
+      SELECT msr.musicId FROM music_singer_relation AS msr
+        LEFT JOIN singer AS s ON msr.singerId = s.id 
+        WHERE
+          s.name LIKE ?
+          OR s.aliases LIKE ?
+    `;
+    const results = await Promise.all([
+      db.get<{ value: number }>(
+        `
+          SELECT count(*) as value FROM music 
+            WHERE id IN (${musicPatternSQL}) OR id IN (${singerPatternSQL})
+        `,
+        [pattern, pattern, pattern, pattern],
+      ),
+      await db.all<LocalMusic>(
+        `
+          SELECT
+            id,
+            type,
+            name,
+            aliases,
+            cover,
+            sq,
+            hq,
+            ac,
+            createUserId
+          FROM music
+            WHERE id IN ( ${musicPatternSQL} ) OR id IN ( ${singerPatternSQL} )
+            ORDER BY effectivePlayTimes DESC
+            LIMIT ? OFFSET ?
+        `,
+        [
+          pattern,
+          pattern,
+          pattern,
+          pattern,
+          pageSizeNumber,
+          pageSizeNumber * (pageNumber - 1),
+        ],
+      ),
+    ]);
+
+    total = results[0]!.value;
+    [, musicList] = results;
+  } else {
+    const results = await Promise.all([
+      db.get<{ value: number }>(
+        `
+          SELECT count(*) as value FROM music
+        `,
+        [],
+      ),
+      db.all<LocalMusic>(
+        `
+          SELECT
+            id,
+            type,
+            name,
+            aliases,
+            cover,
+            sq,
+            hq,
+            ac,
+            createUserId
+          FROM music
+            ORDER BY effectivePlayTimes DESC
+            LIMIT ? OFFSET ?
+        `,
+        [pageSizeNumber, (pageNumber - 1) * pageSizeNumber],
+      ),
+    ]);
+
+    total = results[0]!.value;
+    [, musicList] = results;
   }
 
-  const musicList = await db.all<
-    Pick<
-      Music,
-      | MusicProperty.ID
-      | MusicProperty.TYPE
-      | MusicProperty.NAME
-      | MusicProperty.ALIASES
-      | MusicProperty.COVER
-      | MusicProperty.SQ
-      | MusicProperty.HQ
-      | MusicProperty.AC
-      | MusicProperty.CREATE_USER_ID
-    >
-  >(
-    `
-      select
-        id,
-        type,
-        name,
-        aliases,
-        cover,
-        sq,
-        hq,
-        ac,
-        createUserId
-      from music
-        where id in ( ${musicPatternSQL} ) or id in ( ${singerPatternSQL} )
-        order by effectivePlayTimes desc
-        limit ? offset ?
-    `,
-    [
-      pattern,
-      pattern,
-      pattern,
-      pattern,
-      pageSizeNumber,
-      pageSizeNumber * (pageNumber - 1),
-    ],
-  );
   if (!musicList.length) {
     return ctx.success({
-      total: total!.value,
+      total,
       musicList: [],
     });
   }
@@ -152,7 +183,7 @@ export default async (ctx: Context) => {
   });
 
   return ctx.success({
-    total: total!.value,
+    total,
     musicList: musicList.map((m) => ({
       ...excludeProperty(m, [MusicProperty.CREATE_USER_ID]),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],

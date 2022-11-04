@@ -88,7 +88,7 @@ const Item = styled.div<{ disabled: boolean }>`
       cursor: ${disabled ? 'not-allowed' : 'pointer'};
       color: ${disabled
         ? CSSVariable.TEXT_COLOR_DISABLED
-        : CSSVariable.TEXT_COLOR_PRIMARY};
+        : CSSVariable.TEXT_COLOR_SECONDARY};
     }
   `}
 `;

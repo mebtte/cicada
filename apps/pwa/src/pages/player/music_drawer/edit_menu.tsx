@@ -8,6 +8,7 @@ import {
   MdGroup,
   MdTextFields,
   MdImage,
+  MdCallSplit,
 } from 'react-icons/md';
 import { CSSVariable } from '#/global_style';
 import styled from 'styled-components';
@@ -30,7 +31,8 @@ import deleteMusic from '@/server/delete_music';
 import logger from '#/utils/logger';
 import { Option } from '#/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
-import { Singer, ZIndex } from '../constants';
+import searchMusicRequest from '@/server/search_music';
+import { Music, Singer, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {
@@ -50,10 +52,23 @@ const formatSingerToMultipleSelectOption = (
 });
 const searchSinger = (search: string): Promise<Option<Singer>[]> => {
   const keyword = search.trim();
-  return searchSingerRequest({ keyword, page: 1, pageSize: 50 }).then((data) =>
+  return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
     data.singerList.map(formatSingerToMultipleSelectOption),
   );
 };
+
+const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
+  key: music.id,
+  label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
+  value: music,
+});
+const searchMusic = (search: string): Promise<Option<Music>[]> => {
+  const keyword = search.trim();
+  return searchMusicRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
+    data.musicList.map(formatMusicTouMultipleSelectOtion),
+  );
+};
+
 const Style = styled.div`
   padding: 5px 0;
 `;
@@ -223,21 +238,21 @@ function EditMenu({ music }: { music: MusicDetail }) {
               initialValue: music.singers.map(
                 formatSingerToMultipleSelectOption,
               ),
-              onSubmit: async (singers: Option<Singer>[]) => {
-                if (!singers.length) {
+              onSubmit: async (options: Option<Singer>[]) => {
+                if (!options.length) {
                   throw new Error('请选择歌手');
                 }
 
                 if (
                   !stringArrayEqual(
                     music.singers.map((s) => s.id).sort(),
-                    singers.map((s) => s.value.id).sort(),
+                    options.map((o) => o.value.id).sort(),
                   )
                 ) {
                   await updateMusic({
                     id: music.id,
                     key: AllowUpdateKey.SINGER,
-                    value: singers.map((s) => s.value.id),
+                    value: options.map((o) => o.value.id),
                   });
                   emitMusicUpdated(music.id);
                 }
@@ -322,6 +337,36 @@ function EditMenu({ music }: { music: MusicDetail }) {
                   value: id,
                 });
                 emitMusicUpdated(music.id);
+              },
+            })
+          }
+        />
+        <MenuItem
+          icon={<MdCallSplit />}
+          label="编辑二次创作来源"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.MULTIPLE_SELECT,
+              title: '二次创作来源',
+              label: '创作来源自以下音乐',
+              dataGetter: searchMusic,
+              initialValue: music.forkFromList.map(
+                formatMusicTouMultipleSelectOtion,
+              ),
+              onSubmit: async (options: Option<Music>[]) => {
+                if (
+                  !stringArrayEqual(
+                    music.forkFromList.map((m) => m.id).sort(),
+                    options.map((o) => o.value.id).sort(),
+                  )
+                ) {
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.FORK_FROM,
+                    value: options.map((o) => o.value.id),
+                  });
+                  emitMusicUpdated(music.id);
+                }
               },
             })
           }

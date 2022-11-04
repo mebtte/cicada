@@ -8,7 +8,7 @@ import excludeProperty from '#/utils/exclude_property';
 import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
-const MAX_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
 type LocalSinger = Pick<
   Singer,
   | SingerProperty.ID

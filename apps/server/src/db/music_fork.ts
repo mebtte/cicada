@@ -12,24 +12,32 @@ export type MusicFork = {
   [Property.FORK_FROM]: string;
 };
 
-export async function getMusicForkFromList(musicId: string) {
-  const forkFromList = await db.all<Pick<MusicFork, Property.FORK_FROM>>(
+export async function getMusicForkFromList<P extends Property>(
+  musicId: string,
+  properties: P[],
+) {
+  return db.all<{
+    [key in P]: MusicFork[key];
+  }>(
     `
-      select forkFrom from music_fork
-        where musicId = ?
+      SELECT ${properties.join(', ')} FROM music_fork
+        WHERE musicId = ?
     `,
     [musicId],
   );
-  return forkFromList.map((f) => f.forkFrom);
 }
 
-export async function getMusicForkList(musicId: string) {
-  const forkList = await db.all<Pick<MusicFork, Property.MUSIC_ID>>(
+export async function getMusicForkList<P extends Property>(
+  musicId: string,
+  properties: P[],
+) {
+  return db.all<{
+    [key in P]: MusicFork[key];
+  }>(
     `
-      select musicId from music_fork
-        where forkFrom = ?
+      SELECT ${properties.join(', ')} FROM music_fork
+        WHERE forkFrom = ?
     `,
     [musicId],
   );
-  return forkList.map((f) => f.musicId);
 }

@@ -6,7 +6,11 @@ import {
   getMusicModifyRecordList,
   Property as MusicModifyRecordProperty,
 } from '@/db/music_modify_record';
-import { getMusicForkFromList, getMusicForkList } from '@/db/music_fork';
+import {
+  getMusicForkFromList,
+  getMusicForkList,
+  Property as MusicForkProperty,
+} from '@/db/music_fork';
 import {
   getMusicPlayRecordList,
   Property as MusicPlayRecordProperty,
@@ -27,7 +31,10 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
   }
 
-  const forkList = await getMusicForkList(id);
+  const forkList = await getMusicForkList(id, [
+    MusicForkProperty.ID,
+    MusicForkProperty.MUSIC_ID,
+  ]);
   if (forkList.length) {
     return ctx.except(ExceptionCode.MUSIC_HAS_FORK_AND_CAN_NOT_BE_DELETED);
   }
@@ -43,7 +50,10 @@ export default async (ctx: Context) => {
     music.type === MusicType.SONG
       ? getLyricListByMusicId(id, [LyricProperty.ID, LyricProperty.CONTENT])
       : [],
-    getMusicForkFromList(id),
+    getMusicForkFromList(id, [
+      MusicForkProperty.ID,
+      MusicForkProperty.FORK_FROM,
+    ]),
     getMusicModifyRecordList(id, [
       MusicModifyRecordProperty.ID,
       MusicModifyRecordProperty.KEY,
