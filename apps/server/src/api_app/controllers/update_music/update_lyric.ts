@@ -19,8 +19,8 @@ export default async ({ ctx, music, value }: Parameter) => {
     return ctx.error(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const trimmedAliases: string[] = value.map((v) => v.trim());
-  if (trimmedAliases.find((a) => a.length === 0)) {
+  const trimmedLyrics: string[] = value.map((v) => v.trim());
+  if (trimmedLyrics.find((a) => a.length === 0)) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 

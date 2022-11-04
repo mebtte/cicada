@@ -65,8 +65,8 @@ const dangerousIconStyle: CSSProperties = {
 };
 
 function EditMenu({ music }: { music: MusicDetail }) {
-  // const [open, setOpen] = useState(false);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
 
   useEffect(() => {
@@ -217,7 +217,23 @@ function EditMenu({ music }: { music: MusicDetail }) {
                 formatSingerToMultipleSelectOption,
               ),
               onSubmit: async (singers: Option<Singer>[]) => {
-                console.log(singers);
+                if (!singers.length) {
+                  throw new Error('请选择歌手');
+                }
+
+                if (
+                  !stringArrayEqual(
+                    music.singers.map((s) => s.id).sort(),
+                    singers.map((s) => s.value.id).sort(),
+                  )
+                ) {
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.SINGER,
+                    value: singers.map((s) => s.value.id),
+                  });
+                  emitMusicUpdated(music.id);
+                }
               },
             })
           }
