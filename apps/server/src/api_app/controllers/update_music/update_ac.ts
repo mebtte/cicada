@@ -4,11 +4,15 @@ import exist from '#/utils/exist';
 import { getAssetPath } from '@/platform/asset';
 import { updateMusic, Property as MusicProperty } from '@/db/music';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
-import { AllowUpdateKey } from '#/constants/music';
+import { AllowUpdateKey, MusicType } from '#/constants/music';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {
-  if (typeof value !== 'string' || !value.length) {
+  if (
+    music.type !== MusicType.SONG ||
+    typeof value !== 'string' ||
+    !value.length
+  ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
   if (music.ac === value) {

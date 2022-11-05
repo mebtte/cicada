@@ -5,6 +5,9 @@ import getSingerDetail from '@/server/get_singer_detail';
 import getRandomCover from '@/utils/get_random_cover';
 import { useCallback, useEffect, useState } from 'react';
 import { SingerDetail } from './constants';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 
 type Data = {
   error: Error | null;
@@ -49,6 +52,18 @@ export default (singerId: string) => {
   useEffect(() => {
     getData();
   }, [getData]);
+
+  useEffect(() => {
+    const unlistenSingerUpdated = playerEventemitter.listen(
+      PlayerEventType.SINGER_UPDATED,
+      ({ singer }) => {
+        if (singer.id === singerId) {
+          getData();
+        }
+      },
+    );
+    return unlistenSingerUpdated;
+  }, [getData, singerId]);
 
   return { data, reload: getData };
 };

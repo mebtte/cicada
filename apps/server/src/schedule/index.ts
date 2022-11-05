@@ -10,6 +10,7 @@ import cleanOutdatedFile from './jobs/clean_outdated_file';
 import moveOutdatedFileToTrash from './jobs/move_outdated_file_to_trash';
 import exportMusicbill from './jobs/export_musicbill';
 import removeNoMusicSinger from './jobs/remove_no_music_singer';
+import moveUnlinkedAssetToTrash from './jobs/move_unlinked_asset_to_trash';
 
 const getTimeString = () => {
   const now = day();
@@ -64,6 +65,10 @@ const DAILY_JOBS: Job[] = [
   {
     name: 'remove_no_music_singer',
     job: removeNoMusicSinger,
+  },
+  {
+    name: 'move_unlinked_asset_to_trash',
+    job: moveUnlinkedAssetToTrash,
   },
 ];
 const HOURLY_JOBS: Job[] = [

@@ -326,33 +326,35 @@ function EditMenu({ music }: { music: MusicDetail }) {
             })
           }
         />
-        <MenuItem
-          icon={<MdOutlineFilePresent />}
-          label="编辑伴奏文件"
-          onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.FILE,
-              label: '伴奏文件',
-              title: '编辑伴奏文件',
-              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_AC].acceptTypes,
-              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
-                AssetType.MUSIC_AC
-              ].acceptTypes.join(',')}`,
-              onSubmit: async (file: File | null) => {
-                if (!file) {
-                  throw new Error('请选择文件');
-                }
-                const { id } = await uploadAsset(file, AssetType.MUSIC_AC);
-                await updateMusic({
-                  id: music.id,
-                  key: AllowUpdateKey.AC,
-                  value: id,
-                });
-                emitMusicUpdated(music.id);
-              },
-            })
-          }
-        />
+        {music.type === MusicType.SONG ? (
+          <MenuItem
+            icon={<MdOutlineFilePresent />}
+            label="编辑伴奏文件"
+            onClick={() =>
+              playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+                type: EditDialogType.FILE,
+                label: '伴奏文件',
+                title: '编辑伴奏文件',
+                acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_AC].acceptTypes,
+                placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
+                  AssetType.MUSIC_AC
+                ].acceptTypes.join(',')}`,
+                onSubmit: async (file: File | null) => {
+                  if (!file) {
+                    throw new Error('请选择文件');
+                  }
+                  const { id } = await uploadAsset(file, AssetType.MUSIC_AC);
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.AC,
+                    value: id,
+                  });
+                  emitMusicUpdated(music.id);
+                },
+              })
+            }
+          />
+        ) : null}
         <MenuItem
           icon={<MdCallSplit />}
           label="编辑二次创作来源"

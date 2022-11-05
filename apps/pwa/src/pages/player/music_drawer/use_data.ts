@@ -76,8 +76,21 @@ export default (id: string) => {
         }
       },
     );
+
     return unlistenMusicUpdated;
   }, [getMusic, id]);
+
+  useEffect(() => {
+    const unlistenSingerUpdated = playerEventemitter.listen(
+      PlayerEventType.SINGER_UPDATED,
+      ({ singer }) => {
+        if (data.music && data.music.singers.find((s) => s.id === singer.id)) {
+          getMusic();
+        }
+      },
+    );
+    return unlistenSingerUpdated;
+  }, [data.music, getMusic]);
 
   return { data, reload: getMusic };
 };
