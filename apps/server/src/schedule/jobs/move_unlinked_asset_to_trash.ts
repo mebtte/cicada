@@ -4,9 +4,19 @@ import { AssetType } from '#/constants';
 import db from '@/db';
 import { ASSET_DIR, TRASH_DIR } from '@/constants/directory';
 import day from '#/utils/day';
+import mv from '#/utils/mv';
+import { getAssetPath } from '@/platform/asset';
 
 const findUnlinkedList = (linkedList: string[], all: string[]) =>
   all.filter((item) => !linkedList.includes(item));
+const moveAssetListToTrash = async (
+  assetList: string[],
+  assetType: AssetType,
+) => {
+  for (const asset of assetList) {
+    await mv(getAssetPath(asset, assetType), `${TRASH_DIR}/${asset}`);
+  }
+};
 const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
   [AssetType.USER_AVATAR]: async () => {
     const userList = await db.all<{ avatar: string }>(
@@ -21,12 +31,18 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       userList.map((u) => u.avatar),
       avatarAssetList,
     );
-    await fs.writeFile(
-      `${TRASH_DIR}/unlinked_user_avatar_asset_${day().format(
-        'YYYYMMDD',
-      )}.json`,
-      JSON.stringify(unlinkedList),
-    );
+
+    if (unlinkedList.length) {
+      await Promise.all([
+        moveAssetListToTrash(unlinkedList, AssetType.USER_AVATAR),
+        fs.writeFile(
+          `${TRASH_DIR}/unlinked_user_avatar_asset_${day().format(
+            'YYYYMMDD',
+          )}.json`,
+          JSON.stringify(unlinkedList),
+        ),
+      ]);
+    }
   },
   [AssetType.MUSICBILL_COVER]: async () => {
     const musicbillList = await db.all<{ cover: string }>(
@@ -43,12 +59,18 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       musicbillList.map((m) => m.cover),
       coverAssetList,
     );
-    await fs.writeFile(
-      `${TRASH_DIR}/unlinked_musicbill_cover_asset_${day().format(
-        'YYYYMMDD',
-      )}.json`,
-      JSON.stringify(unlinkedList),
-    );
+
+    if (unlinkedList.length) {
+      await Promise.all([
+        moveAssetListToTrash(unlinkedList, AssetType.MUSICBILL_COVER),
+        fs.writeFile(
+          `${TRASH_DIR}/unlinked_musicbill_cover_asset_${day().format(
+            'YYYYMMDD',
+          )}.json`,
+          JSON.stringify(unlinkedList),
+        ),
+      ]);
+    }
   },
   [AssetType.SINGER_AVATAR]: async () => {
     const singerList = await db.all<{ avatar: string }>(
@@ -65,12 +87,18 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       singerList.map((s) => s.avatar),
       avatarAssetList,
     );
-    await fs.writeFile(
-      `${TRASH_DIR}/unlinked_singer_avatar_asset_${day().format(
-        'YYYYMMDD',
-      )}.jsion`,
-      JSON.stringify(unlinkedList),
-    );
+
+    if (unlinkedList.length) {
+      await Promise.all([
+        moveAssetListToTrash(unlinkedList, AssetType.SINGER_AVATAR),
+        fs.writeFile(
+          `${TRASH_DIR}/unlinked_singer_avatar_asset_${day().format(
+            'YYYYMMDD',
+          )}.json`,
+          JSON.stringify(unlinkedList),
+        ),
+      ]);
+    }
   },
 
   [AssetType.MUSIC_COVER]: async () => {
@@ -86,12 +114,18 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       musicList.map((m) => m.cover),
       coverAssetList,
     );
-    await fs.writeFile(
-      `${TRASH_DIR}/unlinked_music_cover_asset_${day().format(
-        'YYYYMMDD',
-      )}.json`,
-      JSON.stringify(unlinkedList),
-    );
+
+    if (unlinkedList.length) {
+      await Promise.all([
+        moveAssetListToTrash(unlinkedList, AssetType.MUSIC_COVER),
+        fs.writeFile(
+          `${TRASH_DIR}/unlinked_music_cover_asset_${day().format(
+            'YYYYMMDD',
+          )}.json`,
+          JSON.stringify(unlinkedList),
+        ),
+      ]);
+    }
   },
   [AssetType.MUSIC_SQ]: async () => {
     const musicList = await db.all<{ sq: string }>(
@@ -105,10 +139,18 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       musicList.map((m) => m.sq),
       sqAssetList,
     );
-    await fs.writeFile(
-      `${TRASH_DIR}/unlinked_music_sq_asset_${day().format('YYYYMMDD')}.json`,
-      JSON.stringify(unlinkedList),
-    );
+
+    if (unlinkedList.length) {
+      await Promise.all([
+        moveAssetListToTrash(unlinkedList, AssetType.MUSIC_SQ),
+        fs.writeFile(
+          `${TRASH_DIR}/unlinked_music_sq_asset_${day().format(
+            'YYYYMMDD',
+          )}.json`,
+          JSON.stringify(unlinkedList),
+        ),
+      ]);
+    }
   },
   [AssetType.MUSIC_HQ]: async () => {
     const musicList = await db.all<{ hq: string }>(
@@ -123,10 +165,18 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       musicList.map((m) => m.hq),
       hqAssetList,
     );
-    await fs.writeFile(
-      `${TRASH_DIR}/unlinked_music_hq_asset_${day().format('YYYYMMDD')}.json`,
-      JSON.stringify(unlinkedList),
-    );
+
+    if (unlinkedList.length) {
+      await Promise.all([
+        moveAssetListToTrash(unlinkedList, AssetType.MUSIC_HQ),
+        fs.writeFile(
+          `${TRASH_DIR}/unlinked_music_hq_asset_${day().format(
+            'YYYYMMDD',
+          )}.json`,
+          JSON.stringify(unlinkedList),
+        ),
+      ]);
+    }
   },
   [AssetType.MUSIC_AC]: async () => {
     const musicList = await db.all<{ ac: string }>(
@@ -141,10 +191,18 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       musicList.map((m) => m.ac),
       acAssetList,
     );
-    await fs.writeFile(
-      `${TRASH_DIR}/unlinked_music_ac_asset_${day().format('YYYYMMDD')}.json`,
-      JSON.stringify(unlinkedList),
-    );
+
+    if (unlinkedList.length) {
+      await Promise.all([
+        moveAssetListToTrash(unlinkedList, AssetType.MUSIC_AC),
+        fs.writeFile(
+          `${TRASH_DIR}/unlinked_music_ac_asset_${day().format(
+            'YYYYMMDD',
+          )}.json`,
+          JSON.stringify(unlinkedList),
+        ),
+      ]);
+    }
   },
 };
 
