@@ -7,12 +7,14 @@ import playerEventemitter, {
 import Action from './action';
 import EditDialog from './edit_dialog';
 import CoverEditDialog from './cover_edit_dialog';
-import { Musicbill as MusicbillType } from '../../constants';
+import { HEADER_HEIGHT, Musicbill as MusicbillType } from '../../constants';
 import TopContent from './top_content';
 import MusicList from './music_list';
 import Page from '../page';
 
 const Style = styled(Page)`
+  padding-top: ${HEADER_HEIGHT}px;
+
   display: flex;
   flex-direction: column;
 

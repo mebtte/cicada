@@ -37,10 +37,15 @@ const Style = styled(PageContainer)`
   > .container {
     flex: 1;
     min-height: 0;
+
     display: flex;
+
     > .content {
+      position: relative;
+
       flex: 1;
       min-width: 0;
+
       display: flex;
       flex-direction: column;
     }

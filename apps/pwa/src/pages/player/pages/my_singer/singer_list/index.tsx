@@ -1,14 +1,17 @@
 import { flexCenter } from '#/style/flexbox';
 import { animated, useTransition } from 'react-spring';
-import styled, { css } from 'styled-components';
+import styled, { CSSProperties } from 'styled-components';
 import Spinner from '#/components/spinner';
 import ErrorCard from '@/components/error_card';
 import absoluteFullSize from '#/style/absolute_full_size';
 import { useEffect, useRef } from 'react';
 import List from 'react-list';
+import { HEADER_HEIGHT } from '@/pages/player/constants';
+import { CSSVariable } from '#/global_style';
 import useData from './use_data';
 import SingerItem from './singer_item';
 import { TOOLBAR_HEIGHT } from '../constants';
+import Row from './row';
 
 const Style = styled.div`
   flex: 1;
@@ -23,29 +26,25 @@ const StatusBox = styled(Box)`
   ${flexCenter}
 `;
 const SingerListBox = styled(Box)`
-  > .list {
-    height: 100%;
-    padding-bottom: ${TOOLBAR_HEIGHT}px;
+  padding-top: ${HEADER_HEIGHT}px;
+  padding-bottom: ${TOOLBAR_HEIGHT}px;
 
-    overflow: auto;
-  }
+  overflow: auto;
 `;
-const Searching = styled.div<{ active: boolean }>`
-  ${absoluteFullSize}
-  ${flexCenter}
-
-  background-color: rgb(255 255 255 / 0.5);
-  transition: 300ms;
-
-  ${({ active }) => css`
-    opacity: ${active ? 1 : 0};
-    pointer-events: ${active ? 'auto' : 'none'};
-  `}
+const headStyle: CSSProperties = {
+  zIndex: 1,
+  position: 'sticky',
+  top: 0,
+  backdropFilter: 'blur(5px)',
+};
+const RowHead = styled.div`
+  font-size: 12px;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 `;
 
 function SingerList() {
   const listRef = useRef<HTMLDivElement>(null);
-  const { status, reload, singerList, searching, keyword } = useData();
+  const { status, reload, singerList, keyword } = useData();
 
   useEffect(() => {
     listRef.current?.scrollTo({
@@ -77,20 +76,23 @@ function SingerList() {
           );
         }
         return (
-          <SingerListBox>
-            <div className="list" ref={listRef}>
-              <List
-                length={singerList.length}
-                type="uniform"
-                // eslint-disable-next-line react/no-unstable-nested-components
-                itemRenderer={(index, key) => (
-                  <SingerItem key={key} singer={singerList[index]} />
-                )}
-              />
-            </div>
-            <Searching active={searching}>
-              <Spinner />
-            </Searching>
+          <SingerListBox style={style}>
+            <Row
+              style={headStyle}
+              one={null}
+              two={<RowHead>名字</RowHead>}
+              three={<RowHead>别名</RowHead>}
+              four={<RowHead>音乐数</RowHead>}
+              five={<RowHead>创建时间</RowHead>}
+            />
+            <List
+              length={singerList.length}
+              type="uniform"
+              // eslint-disable-next-line react/no-unstable-nested-components
+              itemRenderer={(index, key) => (
+                <SingerItem key={key} singer={singerList[index]} />
+              )}
+            />
           </SingerListBox>
         );
       })}

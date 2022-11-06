@@ -3,100 +3,103 @@ import Spinner from '#/components/spinner';
 import { flexCenter } from '#/style/flexbox';
 import Empty from '@/components/empty';
 import Pagination from '#/components/pagination';
-import { CSSProperties, useLayoutEffect, useRef } from 'react';
+import { CSSProperties, useCallback } from 'react';
 import ErrorCard from '@/components/error_card';
+import { HEADER_HEIGHT } from '@/pages/player/constants';
+import useNavigate from '#/utils/use_navigate';
+import { Query } from '@/constants';
+import { animated, useTransition } from 'react-spring';
+import absoluteFullSize from '#/style/absolute_full_size';
 import useMusicList from './use_music_list';
-import Music from '../../../components/music';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
+import Music from './music';
 
 const Style = styled.div`
-  position: relative;
-
   flex: 1;
   min-height: 0;
 
-  > .content {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
+  position: relative;
+`;
+const Container = styled(animated.div)`
+  ${absoluteFullSize}
+`;
+const CardContainer = styled(Container)`
+  ${flexCenter}
+`;
+const MusicListContainer = styled(Container)`
+  padding-top: ${HEADER_HEIGHT}px;
+  padding-bottom: ${TOOLBAR_HEIGHT}px;
 
-    &.list {
-      overflow: auto;
-
-      padding-bottom: ${TOOLBAR_HEIGHT}px;
-    }
-
-    &.empty,
-    &.error {
-      ${flexCenter}
-    }
-
-    &.loading {
-      ${flexCenter}
-
-      cursor: not-allowed;
-      background-color: rgb(255 255 255 / 0.5);
-    }
-  }
+  overflow: auto;
 `;
 const paginationStyle: CSSProperties = {
   margin: '10px 0',
 };
+const emptyStyle: CSSProperties = {
+  padding: '50px 0',
+};
 
 function MusicList() {
-  const listRef = useRef<HTMLDivElement>(null);
-  const {
-    error,
-    loading,
-    keyword,
-    page,
-    total,
-    musicList,
-    onPageChange,
-    reload,
-  } = useMusicList();
+  const navigate = useNavigate();
+  const onPageChange = useCallback(
+    (p: number) =>
+      navigate({
+        query: {
+          [Query.PAGE]: p,
+        },
+      }),
+    [navigate],
+  );
 
-  useLayoutEffect(() => {
-    listRef.current?.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  }, [keyword, page]);
+  const { page, data, reload } = useMusicList();
 
+  const transitions = useTransition(data, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
   return (
     <Style>
-      {error ? (
-        <div className="content error">
-          <ErrorCard errorMessage={error.message} retry={reload} />
-        </div>
-      ) : !loading && !total ? (
-        <div className="content empty">
-          <Empty description="没有找到合适的音乐" />
-        </div>
-      ) : (
-        <div className="content list" ref={listRef}>
-          {musicList.map((music, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <Music key={index} musicWithIndex={music} />
-          ))}
-          {total ? (
-            <Pagination
-              style={paginationStyle}
-              total={total}
-              pageSize={PAGE_SIZE}
-              page={page}
-              onChange={onPageChange}
-            />
-          ) : null}
-        </div>
-      )}
-      {loading ? (
-        <div className="content loading">
-          <Spinner />
-        </div>
-      ) : null}
+      {transitions((style, d) => {
+        const { error, loading, value } = d;
+        if (error) {
+          return (
+            <CardContainer style={style}>
+              <ErrorCard errorMessage={error.message} retry={reload} />
+            </CardContainer>
+          );
+        }
+        if (loading) {
+          return (
+            <CardContainer style={style}>
+              <Spinner />
+            </CardContainer>
+          );
+        }
+
+        return (
+          <MusicListContainer style={style}>
+            {value!.musicList.length ? (
+              <div className="list">
+                {value!.musicList.map((music) => (
+                  <Music key={music.id} music={music} />
+                ))}
+              </div>
+            ) : (
+              <Empty description="未找到相关数据" style={emptyStyle} />
+            )}
+            {value!.total ? (
+              <Pagination
+                style={paginationStyle}
+                total={value!.total}
+                pageSize={PAGE_SIZE}
+                page={page}
+                onChange={onPageChange}
+              />
+            ) : null}
+          </MusicListContainer>
+        );
+      })}
     </Style>
   );
 }

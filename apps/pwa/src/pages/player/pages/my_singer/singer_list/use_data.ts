@@ -30,7 +30,6 @@ const filterSinger = (singer: Singer, keyword: string) => {
 
 export default () => {
   const { keyword = '' } = useQuery<Query.KEYWORD>();
-  const [searching, setSearching] = useState(false);
   const [originalSingerList, setOriginalSingerList] = useState<Singer[]>([]);
 
   const [status, setStatus] = useState<Status>(loadingStatus);
@@ -75,19 +74,12 @@ export default () => {
     };
   }, [getSingerList]);
 
-  useEffect(() => {
-    setSearching(true);
-    const timer = window.setTimeout(() => setSearching(false), 1000);
-    return () => window.clearTimeout(timer);
-  }, [keyword, originalSingerList]);
-
   return {
     status,
     reload: getSingerList,
     singerList: originalSingerList.filter((singer) =>
       filterSinger(singer, keyword.toLowerCase()),
     ),
-    searching,
     keyword,
   };
 };

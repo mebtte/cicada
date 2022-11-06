@@ -1,68 +1,55 @@
 import logger from '#/utils/logger';
-import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import getSelfMusicList from '@/server/get_self_music_list';
 import useQuery from '@/utils/use_query';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { MusicWithIndex } from '../../../constants';
+import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE } from '../constants';
 import em, { EventType } from '../eventemitter';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
 
-export default () => {
-  const requestIdRef = useRef(0);
-  const navigate = useNavigate();
+interface Data {
+  error: Error | null;
+  loading: boolean;
+  value: AsyncReturnType<typeof getSelfMusicList> | null;
+}
+const dataLoading: Data = {
+  error: null,
+  loading: true,
+  value: null,
+};
 
+export default () => {
   const { keyword = '', page: pageString } = useQuery<
     Query.KEYWORD | Query.PAGE
   >();
   const page = pageString ? Number(pageString) || 1 : 1;
-  const onPageChange = useCallback(
-    (p: number) =>
-      navigate({
-        query: {
-          [Query.PAGE]: p,
-        },
-      }),
-    [navigate],
-  );
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-  const [total, setTotal] = useState(0);
-  const [musicList, setMusicList] = useState<MusicWithIndex[]>([]);
+  const [data, setData] = useState<Data>(dataLoading);
   const getPageMusicList = useCallback(
     async ({ keyword: k, page: p }: { keyword: string; page: number }) => {
-      const requestId = Math.random();
-      requestIdRef.current = requestId;
-
-      setError(null);
-      setLoading(true);
+      setData(dataLoading);
       try {
-        const { total: t, musicList: ml } = await getSelfMusicList({
+        const d = await getSelfMusicList({
           keyword: k,
           page: p,
           pageSize: PAGE_SIZE,
         });
 
-        if (requestId === requestIdRef.current) {
-          setTotal(t);
-          setMusicList(
-            ml.map((m, index) => ({
-              index: index + 1,
-              music: m,
-            })),
-          );
-        }
+        setData({
+          error: null,
+          loading: false,
+          value: d,
+        });
       } catch (e) {
-        if (requestId === requestIdRef.current) {
-          logger.error(e, '获取我的音乐列表失败');
-          setError(e);
-        }
+        logger.error(e, '获取我的音乐列表失败');
+        setData({
+          error: e,
+          loading: false,
+          value: null,
+        });
       }
-      setLoading(false);
     },
     [],
   );
@@ -93,13 +80,8 @@ export default () => {
   }, [reload]);
 
   return {
-    loading,
-    error,
-    keyword,
     page,
-    onPageChange,
-    total,
-    musicList,
+    data,
     reload,
   };
 };

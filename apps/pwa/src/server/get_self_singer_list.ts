@@ -6,8 +6,8 @@ function getSelfSingerList() {
       id: string;
       name: string;
       aliases: string[];
-      avatar: string;
       createTimestamp: number;
+      musicCount: number;
     }[]
   >({ path: '/api/self_singer_list', withToken: true });
 }

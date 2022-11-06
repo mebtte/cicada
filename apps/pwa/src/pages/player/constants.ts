@@ -3,6 +3,7 @@ import { MusicType } from '#/constants/music';
 import { Type as TagType } from '@/components/tag';
 import { UtilZIndex } from '#/constants/style';
 
+export const HEADER_HEIGHT = 55;
 export const CONTROLLER_HEIGHT = 60;
 
 export enum PlayMode {

@@ -1,70 +1,43 @@
 import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
 import styled from 'styled-components';
+import ellipsis from '#/style/ellipsis';
 import { Singer } from '../constants';
 import e, { EventType } from '../../../eventemitter';
+import Row from './row';
 
-const Style = styled.div`
-  height: 40px;
-  padding: 20px;
-
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
+const StyledRow = styled(Row)`
   cursor: pointer;
-  background-color: transparent;
   transition: 300ms;
-
-  > .index {
-    width: 40px;
-
-    font-size: 12px;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  }
-
-  > .info {
-    flex: 1;
-    min-width: 0;
-
-    ${ellipsis}
-
-    >.name {
-      font-size: 14px;
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    }
-
-    > .aliases {
-      margin-left: 5px;
-
-      font-size: 12px;
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    }
-  }
-
-  > .time {
-    font-family: monospace;
-    font-size: 12px;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  }
 
   &:hover {
     background-color: rgb(0 0 0 / 0.05);
   }
+
+  &:active {
+    background-color: rgb(0 0 0 / 0.1);
+  }
+`;
+const Primary = styled.div`
+  font-size: 14px;
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  ${ellipsis}
+`;
+const Secondary = styled.div`
+  font-size: 12px;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  ${ellipsis}
 `;
 
 function SingerItem({ singer }: { singer: Singer }) {
   return (
-    <Style
+    <StyledRow
       onClick={() => e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })}
-    >
-      <div className="index">{singer.index}</div>
-      <div className="info">
-        <span className="name">{singer.name}</span>
-        <span className="aliases">{singer.aliases.join(';')}</span>
-      </div>
-      <div className="time">{singer.createTime}</div>
-    </Style>
+      one={<Secondary>{singer.index}</Secondary>}
+      two={<Primary>{singer.name}</Primary>}
+      three={<Secondary>{singer.aliases.join('; ') || '-'}</Secondary>}
+      four={<Primary>{singer.musicCount}</Primary>}
+      five={<Secondary>{singer.createTime}</Secondary>}
+    />
   );
 }
 

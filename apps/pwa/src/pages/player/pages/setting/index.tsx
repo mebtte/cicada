@@ -7,8 +7,11 @@ import PlayMode from './play_mode';
 import Volume from './volume';
 import Logout from './logout';
 import Admin from './admin';
+import { HEADER_HEIGHT } from '../../constants';
 
 const Style = styled(Page)`
+  padding-top: ${HEADER_HEIGHT}px;
+
   overflow: auto;
 `;
 

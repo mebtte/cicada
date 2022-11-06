@@ -2,8 +2,8 @@ export interface Singer {
   id: string;
   name: string;
   aliases: string[];
-  avatar: string;
   createTime: string;
+  musicCount: number;
 
   index: number;
 }
