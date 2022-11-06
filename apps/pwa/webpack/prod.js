@@ -13,7 +13,7 @@ module.exports = {
       swDest: 'service_worker.js',
     }),
     new webpack.DefinePlugin({
-      __WITH_SW__: JSON.stringify(true),
+      'process.env.WITH_SW': JSON.stringify(true),
     }),
   ],
   devtool: 'nosources-source-map',

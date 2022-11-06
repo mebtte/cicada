@@ -2,13 +2,13 @@
 import * as React from 'react';
 import throttle from 'lodash/throttle';
 import uploadMusicPlayRecord from '@/server/upload_music_play_record';
-import logger from '#/utils/logger';
 import { CacheName } from '@/constants/cache';
 import settingState from '@/global_states/setting';
 import { Setting } from '@/constants/setting';
-import dialog from '#/utils/dialog';
-import eventemitter, { EventType } from './eventemitter';
-import { QueueMusic, PlayMode, Music } from './constants';
+import env from '@/env';
+import eventemitter, { EventType } from '../eventemitter';
+import { QueueMusic, PlayMode, Music } from '../constants';
+import onError from './on_error';
 
 const style = {
   display: 'none',
@@ -21,14 +21,6 @@ const onCanPlayThrough = (event) => {
 const onPlay = () => eventemitter.emit(EventType.AUDIO_PLAY, null);
 const onPause = () => eventemitter.emit(EventType.AUDIO_PAUSE, null);
 const onEnded = () => eventemitter.emit(EventType.ACTION_NEXT, null);
-const onError = (e) => {
-  logger.error(e, '播放发生错误');
-  dialog.alert({
-    title: '播放发生错误',
-    content: e.message,
-  });
-  return eventemitter.emit(EventType.AUDIO_ERROR, null);
-};
 
 interface Props {
   playMode: PlayMode;
@@ -37,15 +29,16 @@ interface Props {
 }
 
 class Audio extends React.PureComponent<Props, {}> {
-  audioRef: React.RefObject<HTMLAudioElement>;
+  audio: HTMLAudioElement | null;
 
   constructor(props: Props) {
     super(props);
-    this.audioRef = React.createRef<HTMLAudioElement>();
+
+    this.audio = null;
   }
 
   componentDidMount() {
-    this.audioRef.current!.volume = this.props.setting.playerVolume;
+    this.audio!.volume = this.props.setting.playerVolume;
 
     eventemitter.listen(EventType.ACTION_SET_TIME, this.onActionSetTime);
     eventemitter.listen(EventType.ACTION_TOGGLE_PLAY, this.onActionTogglePlay);
@@ -68,12 +61,12 @@ class Audio extends React.PureComponent<Props, {}> {
     const { setting, queueMusic } = this.props;
 
     if (prevProps.setting.playerVolume !== setting.playerVolume) {
-      this.audioRef.current!.volume = setting.playerVolume;
+      this.audio!.volume = setting.playerVolume;
     }
 
     if (prevProps.queueMusic.pid !== queueMusic.pid) {
-      this.audioRef.current!.currentTime = 0;
-      this.audioRef.current!.play();
+      this.audio!.currentTime = 0;
+      this.audio!.play();
       eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: 0,
       });
@@ -97,10 +90,8 @@ class Audio extends React.PureComponent<Props, {}> {
   onActionSetTime = ({ second }: { second: number }) => {
     onWaiting();
     return window.setTimeout(() => {
-      this.audioRef.current!.currentTime = second;
-      this.audioRef
-        .current!.play()
-        .catch((error) => logger.error(error, '音频播放失败'));
+      this.audio!.currentTime = second;
+      this.audio!.play();
       eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: second * 1000,
       });
@@ -108,25 +99,26 @@ class Audio extends React.PureComponent<Props, {}> {
   };
 
   onActionTogglePlay = () =>
-    this.audioRef.current!.paused
-      ? this.audioRef
-          .current!.play()
-          .catch((error) => logger.error(error, '音频播放失败'))
-      : this.audioRef.current!.pause();
+    this.audio!.paused ? this.audio!.play() : this.audio!.pause();
 
-  onActionPlay = () =>
-    this.audioRef
-      .current!.play()
-      .catch((error) => logger.error(error, '音频播放失败'));
+  onActionPlay = () => this.audio!.play();
 
-  onActionPause = () => this.audioRef.current!.pause();
+  onActionPause = () => this.audio!.pause();
 
   onTimeUpdate = throttle(() => {
-    const { currentTime } = this.audioRef.current!;
+    const { currentTime } = this.audio!;
     return eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
       currentMillisecond: currentTime * 1000,
     });
   }, 300);
+
+  setAudio = (audio: HTMLAudioElement | null) => {
+    if (audio) {
+      // eslint-disable-next-line no-param-reassign
+      audio.volume = this.props.setting.playerVolume;
+    }
+    this.audio = audio;
+  };
 
   getAudioSrc = (music: Music) => {
     const { playMode } = this.props;
@@ -145,7 +137,7 @@ class Audio extends React.PureComponent<Props, {}> {
   };
 
   getPlayedSeconeds = () => {
-    const { played } = this.audioRef.current!;
+    const { played } = this.audio!;
     let playedSeconeds = 0;
     for (let i = 0, { length } = played; i < length; i += 1) {
       const start = played.start(i);
@@ -156,7 +148,7 @@ class Audio extends React.PureComponent<Props, {}> {
   };
 
   uploadPlayRecord = (music: Music) => {
-    const { duration } = this.audioRef.current!;
+    const { duration } = this.audio!;
     const playedSeconds = this.getPlayedSeconeds();
     return uploadMusicPlayRecord({
       musicId: music.id,
@@ -173,15 +165,11 @@ class Audio extends React.PureComponent<Props, {}> {
    * @author mebtte<hi@mebtte.com>
    */
   createCache(music: Music) {
-    const { duration } = this.audioRef.current!;
+    const { duration } = this.audio!;
     const playedSeconds = this.getPlayedSeconeds();
     const percent = duration ? playedSeconds / duration : 0;
 
-    /**
-     * 播放超过 80% 才进行缓存
-     * @author mebtte<hi@mebtte.com>
-     */
-    if (process.env.NODE_ENV === 'development' || percent > 0.75) {
+    if (env.WITH_SW && percent > 0.75) {
       window.caches.open(CacheName.ASSET_MEDIA).then(async (cache) => {
         const url = this.getAudioSrc(music);
         const exist = await cache.match(url);
@@ -196,10 +184,9 @@ class Audio extends React.PureComponent<Props, {}> {
     const { pid, music } = this.props.queueMusic;
     const audioSrc = this.getAudioSrc(music);
     return (
-      // eslint-disable-next-line jsx-a11y/media-has-caption
       <audio
         key={pid}
-        ref={this.audioRef}
+        ref={this.setAudio}
         style={style}
         src={audioSrc}
         autoPlay

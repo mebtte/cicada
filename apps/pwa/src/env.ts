@@ -14,6 +14,7 @@ declare global {
 const env = {
   ...__ENV__,
   BUILD_TIME: new Date(__ENV__.BUILD_TIME),
+  WITH_SW: process.env.WITH_SW,
 };
 
 export default env;

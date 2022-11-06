@@ -6,7 +6,7 @@ module.exports = {
   plugins: [
     ...devMainConfig.plugins,
     new webpack.DefinePlugin({
-      __WITH_SW__: JSON.stringify(false),
+      'process.env.WITH_SW': JSON.stringify(false),
     }),
   ],
 };

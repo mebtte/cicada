@@ -8,6 +8,7 @@ import IconButton from '#/components/icon_button';
 import { MdCheck, MdClose } from 'react-icons/md';
 import sleep from '#/utils/sleep';
 import App from './app';
+import env from './env';
 
 createRoot(document.querySelector('#root')!).render(
   <HashRouter>
@@ -34,9 +35,7 @@ const VersionUpdater = styled.div`
   }
 `;
 if ('serviceWorker' in navigator) {
-  // @ts-expect-error
-  // eslint-disable-next-line no-undef
-  if (__WITH_SW__) {
+  if (env.WITH_SW) {
     window.requestIdleCallback(() =>
       import('workbox-window').then(({ Workbox }) => {
         const wb = new Workbox('/service_worker.js');

@@ -4,6 +4,7 @@ import Dialog, { Content, Title, Action } from '../../components/dialog';
 import Button, { Variant } from '../../components/button';
 import useEvent from '../use_event';
 import { UtilZIndex } from '../../constants/style';
+import e, { EventType } from './eventemitter';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: UtilZIndex.DIALOG },
@@ -50,12 +51,21 @@ function DialogItem({
   }, []);
 
   useEffect(() => {
+    const unlistenClose = e.listen(EventType.CLOSE, ({ id }) => {
+      if (dialog.id === id) {
+        setOpen(false);
+      }
+    });
+    return unlistenClose;
+  }, [dialog.id]);
+
+  useEffect(() => {
     if (!open) {
-      const timer = window.setTimeout(() => onDestroy(dialog.id), 5000);
+      const timer = window.setTimeout(() => onDestroy(dialog.id), 1000);
       return () => window.clearTimeout(timer);
     }
   }, [dialog.id, onDestroy, open]);
-  //
+
   return (
     <Dialog open={open} maskProps={maskProps}>
       {dialog.title ? <Title>{dialog.title}</Title> : null}

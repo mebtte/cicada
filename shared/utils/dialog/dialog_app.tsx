@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import generateRandomString from '../generate_random_string';
 import { Dialog, DialogType } from './constants';
 import DialogItem from './dialog_item';
 import e, { EventType } from './eventemitter';
@@ -17,7 +16,6 @@ function DialogApp() {
         ...dl,
         {
           ...alert,
-          id: generateRandomString(6, false),
           type: DialogType.ALERT,
         },
       ]),
@@ -27,7 +25,6 @@ function DialogApp() {
         ...dl,
         {
           ...confirm,
-          id: generateRandomString(6, false),
           type: DialogType.CONFIRM,
         },
       ]),

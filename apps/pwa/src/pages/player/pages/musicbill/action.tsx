@@ -56,7 +56,7 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
       title: `确定删除乐单?`,
       content: '注意, 乐单删除后无法恢复',
       onConfirm: () =>
-        dialog.confirm({
+        void dialog.confirm({
           title: '确定删除乐单?',
           content: '现在是第二次确认, 也是最后一次',
           onConfirm: async () => {
