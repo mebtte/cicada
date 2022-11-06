@@ -6,7 +6,7 @@ export enum ExceptionCode {
   HAS_LOGIN_CODE_ALREADY,
   WRONG_LOGIN_CODE,
   NOT_AUTHORIZE,
-  NOT_AUTHORIZE_SUPER,
+  NOT_AUTHORIZE_ADMIN,
   EMAIL_EXISTED,
   MUSICBILL_NOT_EXIST,
   MUSIC_NOT_EXIST,
@@ -56,8 +56,8 @@ export const EXCEPTION_CODE_MAP: Record<
   [ExceptionCode.NOT_AUTHORIZE]: {
     description: '未验证权限',
   },
-  [ExceptionCode.NOT_AUTHORIZE_SUPER]: {
-    description: '未验证超级权限',
+  [ExceptionCode.NOT_AUTHORIZE_ADMIN]: {
+    description: '未验证管理员权限',
   },
   [ExceptionCode.EMAIL_EXISTED]: {
     description: '邮箱已注册',

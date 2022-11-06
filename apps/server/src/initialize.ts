@@ -52,7 +52,7 @@ if (cluster.isPrimary) {
           avatar TEXT NOT NULL DEFAULT '',
           nickname TEXT NOT NULL,
           joinTimestamp INTEGER NOT NULL,
-          super INTEGER NOT NULL DEFAULT 0,
+          admin INTEGER NOT NULL DEFAULT 0,
           remark TEXT NOT NULL DEFAULT ''
         );
       `;
@@ -226,27 +226,27 @@ if (cluster.isPrimary) {
 
     /** 插入超级用户 */
     const db = new DB(DB_FILE_PATH);
-    const superUser = await db.get('select * from user where super = 1');
-    if (!superUser) {
-      let superUserEmail = '';
-      while (!superUserEmail) {
-        superUserEmail = await question('❓ 请输入超级用户邮箱: ');
-        if (superUserEmail && !EMAIL.test(superUserEmail)) {
+    const adminUser = await db.get('select * from user where admin = 1');
+    if (!adminUser) {
+      let adminUserEmail = '';
+      while (!adminUserEmail) {
+        adminUserEmail = await question('❓ 请输入管理员邮箱: ');
+        if (adminUserEmail && !EMAIL.test(adminUserEmail)) {
           // eslint-disable-next-line no-console
-          console.log(`⚠️ 「${superUserEmail}」不是合法的邮箱`);
-          superUserEmail = '';
+          console.log(`⚠️ 「${adminUserEmail}」不是合法的邮箱`);
+          adminUserEmail = '';
         }
       }
       await db.run(
         `
-          insert into user(id, email, nickname, joinTimestamp, super)
+          insert into user(id, email, nickname, joinTimestamp,  admin)
             values(?, ?, ?, ?, 1)
         `,
-        ['pangu', superUserEmail, 'pangu', Date.now()],
+        ['pangu', adminUserEmail, 'pangu', Date.now()],
       );
 
       // eslint-disable-next-line no-console
-      console.log(`🎉 现在你可以使用「${superUserEmail}」登录了`);
+      console.log(`🎉 现在你可以使用「${adminUserEmail}」登录了`);
     }
   }, 0);
 }

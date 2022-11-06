@@ -2,7 +2,7 @@ import Router from 'koa-router';
 import { DefaultState } from 'koa';
 import bodyParser from 'koa-bodyparser';
 import authorize from '@/middlewares/authorize';
-import superAuthorize from '@/middlewares/super_authorize';
+import adminAuthorize from '@/middlewares/admin_authorize';
 import { Context } from './constants';
 
 import getMetadata from './controllers/get_metadata';
@@ -77,9 +77,9 @@ router.get('/singer_detail', authorize, getSingerDetail); // 获取歌手详情
 router.get('/self_singer_list', authorize, getSelfSingerList); // 获取自己的歌手列表
 
 /**
- * super authorize
+ * admin authorize
  */
-router.post('/user', authorize, superAuthorize, parseBody, createUser); // 创建用户
+router.post('/user', authorize, adminAuthorize, parseBody, createUser); // 创建用户
 
 /**
  * 上传音乐播放记录使用的是 navigator.sendBeacon

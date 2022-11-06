@@ -61,7 +61,7 @@ function LoginCodePanel({
       const profile = await getProfile();
       p.set({
         ...profile,
-        super: !!profile.super,
+        admin: !!profile.admin,
       });
 
       storage

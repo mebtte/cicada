@@ -125,10 +125,10 @@ class Audio extends React.PureComponent<Props, {}> {
 
     switch (playMode) {
       case PlayMode.HQ: {
-        return music.hq;
+        return music.hq || music.sq;
       }
       case PlayMode.AC: {
-        return music.ac;
+        return music.ac || music.sq;
       }
       default: {
         return music.sq;

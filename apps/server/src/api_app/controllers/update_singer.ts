@@ -156,7 +156,7 @@ export default async (ctx: Context) => {
     SingerProperty.ALIASES,
     SingerProperty.CREATE_USER_ID,
   ]);
-  if (!singer || singer.createUserId !== ctx.user.id || !ctx.user.super) {
+  if (!singer || singer.createUserId !== ctx.user.id || !ctx.user.admin) {
     return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
   }
 

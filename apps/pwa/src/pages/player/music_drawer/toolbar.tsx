@@ -97,7 +97,7 @@ function Toolbar({ music }: { music: MusicDetail }) {
           <MdMoreVert />
         </IconButton>
       </div>
-      {profile.super || profile.id === music.createUser.id ? (
+      {profile.admin || profile.id === music.createUser.id ? (
         <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
           <MdEdit />
         </IconButton>

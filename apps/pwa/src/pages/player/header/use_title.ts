@@ -18,8 +18,8 @@ export default () => {
       title = '我的歌手';
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.SUPER: {
-      title = '超级管理员';
+    case ROOT_PATH.PLAYER + PLAYER_PATH.ADMIN: {
+      title = '管理员';
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {

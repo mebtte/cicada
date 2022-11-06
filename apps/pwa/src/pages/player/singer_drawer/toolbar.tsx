@@ -49,7 +49,7 @@ function Toolbar({ singer }: { singer: SingerDetail }) {
           <MdPlaylistAdd />
         </IconButton>
       </div>
-      {profile.super || profile.id === singer.createUser.id ? (
+      {profile.admin || profile.id === singer.createUser.id ? (
         <IconButton onClick={openEditMenu}>
           <MdEdit />
         </IconButton>

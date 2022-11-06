@@ -15,7 +15,7 @@ export default () => {
           .then((newProfile) =>
             p.set({
               ...newProfile,
-              super: !!newProfile.super,
+              admin: !!newProfile.admin,
             }),
           )
           .catch((error) => {

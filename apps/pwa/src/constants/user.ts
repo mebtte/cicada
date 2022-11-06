@@ -10,5 +10,5 @@ export interface Profile {
   avatar: string;
   nickname: string;
   joinTimestamp: number;
-  super: boolean;
+  admin: boolean;
 }

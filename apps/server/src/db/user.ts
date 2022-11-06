@@ -6,7 +6,7 @@ export enum Property {
   AVATAR = 'avatar',
   NICKNAME = 'nickname',
   JOIN_TIMESTAMP = 'joinTimestamp',
-  SUPER = 'super',
+  ADMIN = 'admin',
   REMARK = 'remark',
 }
 
@@ -16,7 +16,7 @@ export type User = {
   [Property.AVATAR]: string;
   [Property.NICKNAME]: string;
   [Property.JOIN_TIMESTAMP]: number;
-  [Property.SUPER]: number;
+  [Property.ADMIN]: 0 | 1;
   [Property.REMARK]: string;
 };
 

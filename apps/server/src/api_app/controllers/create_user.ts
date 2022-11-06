@@ -26,11 +26,11 @@ export default async (ctx: Context) => {
   const {
     email,
     remark = '',
-    super: isSuper,
+    admin,
   } = ctx.request.body as {
-    email?: string;
-    remark?: string;
-    super?: 0 | 1;
+    email?: unknown;
+    remark?: unknown;
+    admin?: unknown;
   };
 
   if (
@@ -38,7 +38,7 @@ export default async (ctx: Context) => {
     !EMAIL.test(email) ||
     typeof remark !== 'string' ||
     remark.length > REMARK_MAX_LENGTH ||
-    (isSuper !== 0 && isSuper !== 1)
+    (admin !== 0 && admin !== 1)
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
@@ -57,10 +57,10 @@ export default async (ctx: Context) => {
   const id = generateRandomInteger(1_0000_0000, 10_0000_0000).toString();
   await db.run(
     `
-      insert into user(id, email, nickname, joinTimestamp, remark, super)
-        values(?, ?, ?, ?, ?, ?)
+      INSERT INTO user ( id, email, nickname, joinTimestamp, remark, admin )
+      VALUES ( ?, ?, ?, ?, ?, ? )
     `,
-    [id, email, id, Date.now(), remark, isSuper],
+    [id, email, id, Date.now(), remark, admin],
   );
 
   return ctx.success();

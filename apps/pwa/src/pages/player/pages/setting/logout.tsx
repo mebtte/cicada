@@ -9,7 +9,7 @@ import setting from '@/global_states/setting';
 
 const style: CSSProperties = {
   display: 'block',
-  margin: '0 20px',
+  margin: 20,
   width: 'calc(100% - 40px)',
 };
 
