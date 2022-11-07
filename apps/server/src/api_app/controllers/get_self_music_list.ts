@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import excludeProperty from '#/utils/exclude_property';
@@ -9,17 +9,22 @@ import {
   Singer,
   Property as SingerProperty,
 } from '@/db/singer';
+import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
 type LocalMusic = Pick<
   Music,
   | MusicProperty.ID
+  | MusicProperty.COVER
   | MusicProperty.TYPE
   | MusicProperty.NAME
   | MusicProperty.ALIASES
   | MusicProperty.HEAT
   | MusicProperty.CREATE_TIMESTAMP
+  | MusicProperty.SQ
+  | MusicProperty.HQ
+  | MusicProperty.AC
 >;
 
 export default async (ctx: Context) => {
@@ -67,11 +72,15 @@ export default async (ctx: Context) => {
         `
           SELECT
             id,
+            cover,
             type,
             name,
             aliases,
             heat,
-            createTimestamp
+            createTimestamp,
+            sq,
+            hq,
+            ac
           FROM music
             WHERE id IN (${musicPatternSQL}) OR id IN (${singerPatternSQL})
             ORDER BY createTimestamp DESC
@@ -105,11 +114,15 @@ export default async (ctx: Context) => {
         `
           SELECT
             id,
+            cover,
             type,
             name,
             aliases,
             heat,
-            createTimestamp
+            createTimestamp,
+            sq,
+            hq,
+            ac
           FROM music
           WHERE createUserId = ?
           ORDER BY createTimestamp DESC
@@ -131,22 +144,40 @@ export default async (ctx: Context) => {
 
   const singerList = await getSingerListInMusicIds(
     musicList.map((m) => m.id),
-    [SingerProperty.ID, SingerProperty.NAME],
+    [
+      SingerProperty.ID,
+      SingerProperty.NAME,
+      SingerProperty.ALIASES,
+      SingerProperty.AVATAR,
+    ],
   );
   const musicIdMapSingerList: {
-    [key: string]: Pick<Singer, SingerProperty.ID>[];
+    [key: string]: (Pick<
+      Singer,
+      SingerProperty.ID | SingerProperty.AVATAR | SingerProperty.NAME
+    > & {
+      aliases: string[];
+    })[];
   } = {};
   singerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
       musicIdMapSingerList[s.musicId] = [];
     }
-    musicIdMapSingerList[s.musicId].push(excludeProperty(s, ['musicId']));
+    musicIdMapSingerList[s.musicId].push({
+      ...excludeProperty(s, ['musicId']),
+      aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
+      avatar: getAssetUrl(s.avatar, AssetType.SINGER_AVATAR),
+    });
   });
 
   return ctx.success({
     total,
     musicList: musicList.map((m) => ({
       ...m,
+      cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
+      sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
+      hq: getAssetUrl(m.sq, AssetType.MUSIC_HQ),
+      ac: getAssetUrl(m.sq, AssetType.MUSIC_AC),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingerList[m.id] || [],
     })),

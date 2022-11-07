@@ -7,6 +7,7 @@ import playerEventemitter, {
 } from '../../../eventemitter';
 import { Music as MusicType } from '../constants';
 import Row from './row';
+import Singer from './singer';
 
 const Style = styled(Row)`
   cursor: pointer;
@@ -49,6 +50,13 @@ function Music({ music }: { music: MusicType }) {
           id: music.id,
         })
       }
+      onContextMenu={(e) => {
+        e.preventDefault();
+        return playerEventemitter.emit(
+          PlayerEventType.OPEN_MUSIC_OPERATE_POPUP,
+          { music },
+        );
+      }}
       one={<Secondary>{music.index}</Secondary>}
       two={
         <div>
@@ -63,8 +71,9 @@ function Music({ music }: { music: MusicType }) {
       }
       three={
         <Secondary>
-          {music.singers[0].name}
-          {music.singers.length > 1 ? '...' : ''}
+          {music.singers.map((singer) => (
+            <Singer key={singer.id} singer={singer} />
+          ))}
         </Secondary>
       }
       four={<Primary className="heat">{music.heat}</Primary>}

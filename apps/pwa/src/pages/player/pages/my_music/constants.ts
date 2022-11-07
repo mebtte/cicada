@@ -1,19 +1,11 @@
-import { MusicType } from '#/constants/music';
+import { Music as BaseMusic } from '../../constants';
 
 export const PAGE_SIZE = 50;
 
 export const TOOLBAR_HEIGHT = 50;
 
-export interface Music {
-  id: string;
-  type: MusicType;
-  name: string;
-  aliases: string[];
+export interface Music extends BaseMusic {
   heat: number;
-  singers: {
-    id: string;
-    name: string;
-  }[];
   createTimestamp: number;
   index: number;
 }

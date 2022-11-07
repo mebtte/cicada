@@ -14,13 +14,19 @@ function getSelfMusicList({
     total: number;
     musicList: {
       id: string;
+      cover: string;
       type: MusicType;
       name: string;
       aliases: string[];
       heat: number;
+      sq: string;
+      hq: string;
+      ac: string;
       singers: {
         id: string;
+        avatar: string;
         name: string;
+        aliases: string[];
       }[];
       createTimestamp: number;
     }[];
