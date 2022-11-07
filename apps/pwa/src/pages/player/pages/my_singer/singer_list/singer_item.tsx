@@ -21,11 +21,19 @@ const Primary = styled.div`
   font-size: 14px;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   ${ellipsis}
+
+  &.music-count {
+    font-family: monospace;
+  }
 `;
 const Secondary = styled.div`
   font-size: 12px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   ${ellipsis}
+
+  &.time {
+    font-family: monospace;
+  }
 `;
 
 function SingerItem({ singer }: { singer: Singer }) {
@@ -33,16 +41,18 @@ function SingerItem({ singer }: { singer: Singer }) {
     <StyledRow
       onClick={() => e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })}
       one={<Secondary>{singer.index}</Secondary>}
-      two={<Primary>{singer.name}</Primary>}
-      three={
-        <Secondary>
-          {singer.aliases.length
-            ? `${singer.aliases[0]}${singer.aliases.length > 1 ? '...' : ''}`
-            : '-'}
-        </Secondary>
+      two={
+        <div>
+          <Primary>{singer.name}</Primary>
+          {singer.aliases.length ? (
+            <Secondary>
+              {`${singer.aliases[0]}${singer.aliases.length > 1 ? '...' : ''}`}
+            </Secondary>
+          ) : null}
+        </div>
       }
-      four={<Primary>{singer.musicCount}</Primary>}
-      five={<Secondary>{singer.createTime}</Secondary>}
+      three={<Primary className="music-count">{singer.musicCount}</Primary>}
+      four={<Secondary className="time">{singer.createTime}</Secondary>}
     />
   );
 }

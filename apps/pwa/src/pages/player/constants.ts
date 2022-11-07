@@ -1,6 +1,6 @@
 import { RequestStatus } from '@/constants';
 import { MusicType } from '#/constants/music';
-import { Type as TagType } from '@/components/tag';
+import { Type as TagType } from '#/components/tag';
 import { UtilZIndex } from '#/constants/style';
 
 export const HEADER_HEIGHT = 55;

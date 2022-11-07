@@ -1,6 +1,7 @@
 import { CSSVariable } from '#/global_style';
 import absoluteFullSize from '#/style/absolute_full_size';
 import styled from 'styled-components';
+import Tag, { Type } from '#/components/tag';
 import { MusicDetail } from './constants';
 
 const Style = styled.div`
@@ -27,6 +28,12 @@ const Style = styled.div`
     padding: 10px 20px;
     background-color: rgb(255 255 255 / 0.75);
 
+    > .tag-box {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
     > .name {
       font-size: 28px;
       font-weight: bold;
@@ -52,9 +59,22 @@ function Info({ music }: { music: MusicDetail }) {
         />
       </div>
       <div className="info">
+        {music.hq || music.ac ? (
+          <div className="tag-box">
+            {music.hq ? <Tag type={Type.HQ} /> : null}
+            {music.ac ? <Tag type={Type.AC} /> : null}
+          </div>
+        ) : null}
         <div className="name">{music.name}</div>
         {music.aliases.length ? (
-          <div className="aliases">{music.aliases.join('; ')}</div>
+          <div className="aliases">
+            {music.aliases.map((alias, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <div className="alias" key={index}>
+                {alias}
+              </div>
+            ))}
+          </div>
         ) : null}
       </div>
     </Style>

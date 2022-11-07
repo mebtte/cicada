@@ -82,7 +82,7 @@ export default async (ctx: Context) => {
             createUserId
           FROM music
             WHERE id IN ( ${musicPatternSQL} ) OR id IN ( ${singerPatternSQL} )
-            ORDER BY effectivePlayTimes DESC
+            ORDER BY heat DESC
             LIMIT ? OFFSET ?
         `,
         [
@@ -119,7 +119,7 @@ export default async (ctx: Context) => {
             ac,
             createUserId
           FROM music
-            ORDER BY effectivePlayTimes DESC
+            ORDER BY heat DESC
             LIMIT ? OFFSET ?
         `,
         [pageSizeNumber, (pageNumber - 1) * pageSizeNumber],

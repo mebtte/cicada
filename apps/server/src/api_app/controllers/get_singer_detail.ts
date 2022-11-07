@@ -64,7 +64,7 @@ export default async (ctx: Context) => {
         LEFT JOIN music_singer_relation AS msr
           ON m.id = msr.musicId
         WHERE msr.singerId = ?
-        ORDER BY m.effectivePlayTimes DESC
+        ORDER BY m.heat DESC
       `,
       [id],
     ),

@@ -55,7 +55,14 @@ function Info({ singer }: { singer: SingerDetail }) {
       <div className="info">
         <div className="name">{singer.name}</div>
         {singer.aliases.length ? (
-          <div className="aliases">{singer.aliases.join('; ')}</div>
+          <div className="aliases">
+            {singer.aliases.map((alias, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <div className="alias" key={index}>
+                {alias}
+              </div>
+            ))}
+          </div>
         ) : null}
       </div>
     </Style>

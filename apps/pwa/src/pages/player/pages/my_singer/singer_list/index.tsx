@@ -32,6 +32,7 @@ const SingerListBox = styled(Box)`
 const headStyle: CSSProperties = {
   zIndex: 1,
   position: 'sticky',
+  height: 30,
   top: 0,
   backdropFilter: 'blur(5px)',
 };
@@ -78,10 +79,9 @@ function SingerList() {
             <Row
               style={headStyle}
               one={null}
-              two={<RowHead>名字</RowHead>}
-              three={<RowHead>别名</RowHead>}
-              four={<RowHead>音乐数</RowHead>}
-              five={<RowHead>创建时间</RowHead>}
+              two={<RowHead>名字/别名</RowHead>}
+              three={<RowHead>音乐数</RowHead>}
+              four={<RowHead>创建时间</RowHead>}
             />
             <List
               length={singerList.length}

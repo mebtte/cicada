@@ -106,7 +106,7 @@ if (cluster.isPrimary) {
           sq TEXT NOT NULL,
           hq TEXT NOT NULL DEFAULT '',
           ac TEXT NOT NULL DEFAULT '',
-          effectivePlayTimes INTEGER NOT NULL DEFAULT 0,
+          heat INTEGER NOT NULL DEFAULT 0,
           createUserId TEXT NOT NULL,
           createTimestamp INTEGER NOT NULL,
           CONSTRAINT fkUser FOREIGN KEY ( createUserId ) REFERENCES user ( id )

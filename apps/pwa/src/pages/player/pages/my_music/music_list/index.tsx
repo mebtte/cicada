@@ -5,14 +5,15 @@ import Empty from '@/components/empty';
 import Pagination from '#/components/pagination';
 import { CSSProperties, useCallback } from 'react';
 import ErrorCard from '@/components/error_card';
-import { HEADER_HEIGHT } from '@/pages/player/constants';
 import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '#/style/absolute_full_size';
+import { CSSVariable } from '#/global_style';
 import useMusicList from './use_music_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import Music from './music';
+import Row from './row';
 
 const Style = styled.div`
   flex: 1;
@@ -27,7 +28,6 @@ const CardContainer = styled(Container)`
   ${flexCenter}
 `;
 const MusicListContainer = styled(Container)`
-  padding-top: ${HEADER_HEIGHT}px;
   padding-bottom: ${TOOLBAR_HEIGHT}px;
 
   overflow: auto;
@@ -38,6 +38,17 @@ const paginationStyle: CSSProperties = {
 const emptyStyle: CSSProperties = {
   padding: '50px 0',
 };
+const headStyle: CSSProperties = {
+  zIndex: 1,
+  position: 'sticky',
+  height: 30,
+  top: 0,
+  backdropFilter: 'blur(5px)',
+};
+const RowHead = styled.div`
+  font-size: 12px;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+`;
 
 function MusicList() {
   const navigate = useNavigate();
@@ -80,11 +91,21 @@ function MusicList() {
         return (
           <MusicListContainer style={style}>
             {value!.musicList.length ? (
-              <div className="list">
-                {value!.musicList.map((music) => (
-                  <Music key={music.id} music={music} />
-                ))}
-              </div>
+              <>
+                <Row
+                  style={headStyle}
+                  one={null}
+                  two={<RowHead>名字/别名</RowHead>}
+                  three={<RowHead>歌手</RowHead>}
+                  four={<RowHead>热度</RowHead>}
+                  five={<RowHead>创建时间</RowHead>}
+                />
+                <div className="list">
+                  {value!.musicList.map((music) => (
+                    <Music key={music.id} music={music} />
+                  ))}
+                </div>
+              </>
             ) : (
               <Empty description="未找到相关数据" style={emptyStyle} />
             )}

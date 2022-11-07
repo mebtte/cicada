@@ -1,5 +1,5 @@
 import Tooltip from '#/components/tooltip';
-import Tag from '@/components/tag';
+import Tag from '#/components/tag';
 import {
   PlayMode as PlayModeType,
   PLAY_MODE_MAP,

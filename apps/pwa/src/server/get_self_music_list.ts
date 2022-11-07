@@ -17,16 +17,12 @@ function getSelfMusicList({
       type: MusicType;
       name: string;
       aliases: string[];
-      cover: string;
-      sq: string;
-      hq: string;
-      ac: string;
+      heat: number;
       singers: {
         id: string;
-        avatar: string;
         name: string;
-        aliases: string[];
       }[];
+      createTimestamp: number;
     }[];
   }>({
     path: '/api/self_music_list',

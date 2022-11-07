@@ -10,7 +10,7 @@ export enum Property {
   SQ = 'sq',
   HQ = 'hq',
   AC = 'ac',
-  EFFECTIVE_PLAY_TIMES = 'effectivePlayTimes',
+  HEAT = 'heat',
   CREATE_USER_ID = 'createUserId',
   CREATE_TIMESTAMP = 'createTimestamp',
 }
@@ -24,7 +24,7 @@ export type Music = {
   [Property.SQ]: string;
   [Property.HQ]: string;
   [Property.AC]: string;
-  [Property.EFFECTIVE_PLAY_TIMES]: number;
+  [Property.HEAT]: number;
   [Property.CREATE_USER_ID]: string;
   [Property.CREATE_TIMESTAMP]: number;
 };

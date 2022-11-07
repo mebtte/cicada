@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-
-import Tag, { Type } from '@/components/tag';
+import Tag, { Type } from '#/components/tag';
 import { HtmlHTMLAttributes } from 'react';
 import { Music } from '../constants';
 

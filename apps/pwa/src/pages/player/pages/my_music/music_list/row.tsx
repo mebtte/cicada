@@ -1,5 +1,6 @@
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import styled from 'styled-components';
+import mm from '@/global_states/mini_mode';
 
 const Style = styled.div`
   height: 45px;
@@ -7,7 +8,6 @@ const Style = styled.div`
 
   display: flex;
   align-items: center;
-  gap: 10px;
 
   > .one {
     width: 40px;
@@ -19,12 +19,17 @@ const Style = styled.div`
   }
 
   > .three {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > .four {
     width: 40px;
 
     text-align: right;
   }
 
-  > .four {
+  > .five {
     flex: 1;
     min-width: 0;
 
@@ -37,19 +42,23 @@ function Row({
   two,
   three,
   four,
+  five,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   one: ReactNode;
   two: ReactNode;
   three: ReactNode;
   four: ReactNode;
+  five: ReactNode;
 }) {
+  const miniMode = mm.useState();
   return (
     <Style {...props}>
       <div className="one">{one}</div>
       <div className="two">{two}</div>
       <div className="three">{three}</div>
       <div className="four">{four}</div>
+      {miniMode ? null : <div className="five">{five}</div>}
     </Style>
   );
 }

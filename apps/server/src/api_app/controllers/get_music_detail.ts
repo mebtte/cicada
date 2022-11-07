@@ -38,7 +38,7 @@ export default async (ctx: Context) => {
     MusicProperty.SQ,
     MusicProperty.HQ,
     MusicProperty.AC,
-    MusicProperty.EFFECTIVE_PLAY_TIMES,
+    MusicProperty.HEAT,
   ]);
   if (!music) {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);

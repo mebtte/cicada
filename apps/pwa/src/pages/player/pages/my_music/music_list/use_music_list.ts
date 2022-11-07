@@ -3,7 +3,7 @@ import { Query } from '@/constants';
 import getSelfMusicList from '@/server/get_self_music_list';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
-import { PAGE_SIZE } from '../constants';
+import { PAGE_SIZE, Music } from '../constants';
 import em, { EventType } from '../eventemitter';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -12,7 +12,10 @@ import playerEventemitter, {
 interface Data {
   error: Error | null;
   loading: boolean;
-  value: AsyncReturnType<typeof getSelfMusicList> | null;
+  value: {
+    musicList: Music[];
+    total: number;
+  } | null;
 }
 const dataLoading: Data = {
   error: null,
@@ -40,7 +43,13 @@ export default () => {
         setData({
           error: null,
           loading: false,
-          value: d,
+          value: {
+            total: d.total,
+            musicList: d.musicList.map((music, index) => ({
+              ...music,
+              index: d.total - index - (p - 1) * PAGE_SIZE,
+            })),
+          },
         });
       } catch (e) {
         logger.error(e, '获取我的音乐列表失败');

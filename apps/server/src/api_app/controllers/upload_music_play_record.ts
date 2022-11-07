@@ -42,7 +42,7 @@ export default async (ctx: Context) => {
   if (percent >= EFFECTIVE_PLAY_PERCENT) {
     db.run(
       `
-        update music set effectivePlayTimes = effectivePlayTimes + 1
+        update music set heat = heat + 1
           where id = ?;
       `,
       [musicId],
