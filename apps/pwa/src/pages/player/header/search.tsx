@@ -9,7 +9,6 @@ import {
   useEffect,
 } from 'react';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import notice from '#/utils/notice';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import useNavigate from '#/utils/use_navigate';
 import Input from '#/components/input';
@@ -40,9 +39,6 @@ function Wrapper() {
       });
     }
     const trimKeyword = keyword.trim();
-    if (!trimKeyword) {
-      return notice.error('请输入关键字');
-    }
     return navigate({
       path: ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH,
       query: {
@@ -74,6 +70,7 @@ function Wrapper() {
       ref={ref}
       style={style}
       inputProps={{
+        type: 'search',
         value: keyword,
         onChange: onKeywordChange,
         onKeyDown,

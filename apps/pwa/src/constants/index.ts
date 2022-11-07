@@ -18,4 +18,5 @@ export enum Query {
   SEARCH_VALUE = 'search_value',
   PAGE = 'page',
   KEYWORD = 'keyword',
+  SEARCH_TAB = 'search_tab',
 }

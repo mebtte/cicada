@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
 import { MdAdd } from 'react-icons/md';
-import Tooltip from '#/components/tooltip';
 import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import Filter from './filter';
@@ -33,11 +32,9 @@ function Toolbar() {
     });
   return (
     <Style>
-      <Tooltip title="创建音乐">
-        <IconButton onClick={openCreateMusicDialog}>
-          <MdAdd />
-        </IconButton>
-      </Tooltip>
+      <IconButton onClick={openCreateMusicDialog}>
+        <MdAdd />
+      </IconButton>
       <Filter />
     </Style>
   );
