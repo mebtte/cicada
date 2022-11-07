@@ -4,7 +4,10 @@ import { EditDialogType } from '../eventemitter';
 import { Ref, RenderProps } from './constants';
 
 function Wrapper(
-  { loading, data: { label, initialValue } }: RenderProps<EditDialogType.INPUT>,
+  {
+    loading,
+    data: { label, initialValue, maxLength },
+  }: RenderProps<EditDialogType.INPUT>,
   ref: ForwardedRef<Ref>,
 ) {
   const [name, setName] = useState(initialValue || '');
@@ -20,6 +23,7 @@ function Wrapper(
         value: name,
         onChange: (e) => setName(e.target.value),
         autoFocus: true,
+        maxLength,
       }}
       disabled={loading}
     />

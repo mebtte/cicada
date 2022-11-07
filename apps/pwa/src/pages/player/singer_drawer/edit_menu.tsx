@@ -6,7 +6,11 @@ import styled from 'styled-components';
 import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
 import updateSinger from '@/server/update_singer';
-import { AllowUpdateKey } from '#/constants/singer';
+import {
+  ALIAS_MAX_LENGTH,
+  AllowUpdateKey,
+  NAME_MAX_LENGTH,
+} from '#/constants/singer';
 import stringArrayEqual from '#/utils/string_array_equal';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
@@ -84,6 +88,8 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
               type: EditDialogType.INPUT,
               title: '编辑名字',
               label: '名字',
+              initialValue: singer.name,
+              maxLength: NAME_MAX_LENGTH,
               onSubmit: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName) {
@@ -98,7 +104,6 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                   emitSingerUpdated(singer.id);
                 }
               },
-              initialValue: singer.name,
             })
           }
         />
@@ -110,6 +115,8 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
               type: EditDialogType.INPUT_LIST,
               title: '编辑别名',
               label: '别名',
+              initialValue: singer.aliases,
+              maxLength: ALIAS_MAX_LENGTH,
               onSubmit: async (aliases: string[]) => {
                 const trimmedAliases = aliases
                   .map((a) => a.replace(/\s+/g, ' ').trim())
@@ -124,7 +131,6 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                   emitSingerUpdated(singer.id);
                 }
               },
-              initialValue: singer.aliases,
             })
           }
         />

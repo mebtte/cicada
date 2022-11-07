@@ -13,7 +13,7 @@ const Style = styled.div`
   width: 100%;
   height: ${MINI_INFO_HEIGHT}px;
 
-  backdrop-filter: blur(5px);
+  background-color: #fff;
 
   display: flex;
   align-items: center;

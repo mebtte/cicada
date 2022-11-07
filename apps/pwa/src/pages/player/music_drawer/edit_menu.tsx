@@ -152,14 +152,12 @@ function EditMenu({ music }: { music: MusicDetail }) {
               type: EditDialogType.INPUT,
               label: '名字',
               initialValue: music.name,
+              maxLength: NAME_MAX_LENGTH,
               onSubmit: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
 
                 if (!trimmedName.length) {
                   throw new Error('请输入名字');
-                }
-                if (trimmedName.length > NAME_MAX_LENGTH) {
-                  throw new Error('名字过长');
                 }
 
                 if (trimmedName !== music.name) {

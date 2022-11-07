@@ -6,7 +6,6 @@ import ErrorCard from '@/components/error_card';
 import absoluteFullSize from '#/style/absolute_full_size';
 import { useEffect, useRef } from 'react';
 import List from 'react-list';
-import { HEADER_HEIGHT } from '@/pages/player/constants';
 import { CSSVariable } from '#/global_style';
 import useData from './use_data';
 import SingerItem from './singer_item';
@@ -26,7 +25,6 @@ const StatusBox = styled(Box)`
   ${flexCenter}
 `;
 const SingerListBox = styled(Box)`
-  padding-top: ${HEADER_HEIGHT}px;
   padding-bottom: ${TOOLBAR_HEIGHT}px;
 
   overflow: auto;

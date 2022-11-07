@@ -34,7 +34,13 @@ function SingerItem({ singer }: { singer: Singer }) {
       onClick={() => e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })}
       one={<Secondary>{singer.index}</Secondary>}
       two={<Primary>{singer.name}</Primary>}
-      three={<Secondary>{singer.aliases.join('; ') || '-'}</Secondary>}
+      three={
+        <Secondary>
+          {singer.aliases.length
+            ? `${singer.aliases[0]}${singer.aliases.length > 1 ? '...' : ''}`
+            : '-'}
+        </Secondary>
+      }
       four={<Primary>{singer.musicCount}</Primary>}
       five={<Secondary>{singer.createTime}</Secondary>}
     />
