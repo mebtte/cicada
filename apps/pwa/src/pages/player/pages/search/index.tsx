@@ -1,6 +1,6 @@
 import { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import TabList from '#/components/tab_list';
 import useNavigate from '#/utils/use_navigate';
 import mm from '@/global_states/mini_mode';
@@ -8,6 +8,7 @@ import Input from './input';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
 import { Tab, TABS, TOOLBAR_HEIGHT } from './constants';
+import Guide from './guide';
 
 const TAB_MAP_LABEL: Record<Tab, string> = {
   [Tab.MUSIC]: '音乐',
@@ -37,7 +38,22 @@ const Style = styled(Page)`
     gap: 30px;
 
     backdrop-filter: blur(5px);
+
+    > .guide-box {
+      min-width: 0;
+      padding-bottom: 4px;
+
+      text-align: right;
+    }
   }
+
+  ${({ theme: { miniMode } }) => css`
+    > .toolbar {
+      > .guide-box {
+        flex: ${miniMode ? 'unset' : 1};
+      }
+    }
+  `}
 `;
 
 function Search() {
@@ -65,6 +81,9 @@ function Search() {
             })
           }
         />
+        <div className="guide-box">
+          <Guide />
+        </div>
       </div>
     </Style>
   );
