@@ -35,9 +35,7 @@ function Music({
           </div>
           <MusicTagList music={music} />
         </div>
-        <div className="singers">
-          {singers.length ? singers.map(renderSinger) : <Singer />}
-        </div>
+        <div className="singers">{singers.map(renderSinger)}</div>
       </div>
       <div className="actions">
         <IconButton

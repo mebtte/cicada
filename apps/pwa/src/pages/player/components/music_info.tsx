@@ -2,9 +2,9 @@ import { CSSProperties, HtmlHTMLAttributes, useCallback } from 'react';
 import styled from 'styled-components';
 import ellipsis from '#/style/ellipsis';
 import Cover from '#/components/cover';
-import eventemitter, { EventType } from '../../eventemitter';
+import eventemitter, { EventType } from '../eventemitter';
 import Singer from './singer';
-import { Music as MusicType } from '../../constants';
+import { Music as MusicType } from '../constants';
 
 const Style = styled.div`
   display: flex;

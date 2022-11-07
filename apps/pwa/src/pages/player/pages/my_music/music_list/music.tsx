@@ -7,7 +7,7 @@ import playerEventemitter, {
 } from '../../../eventemitter';
 import { Music as MusicType } from '../constants';
 import Row from './row';
-import Singer from './singer';
+import Singer from '../../../components/singer';
 
 const Style = styled(Row)`
   cursor: pointer;

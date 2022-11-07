@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import styled from 'styled-components';
 import ellipsis from '#/style/ellipsis';
 import IconButton, { Name, Type } from '@/components/icon_button';
-import { Singer as SingerType , MusicWithIndex } from '../../constants';
+import { Singer as SingerType, MusicWithIndex } from '../../constants';
 import useMusicOperate from '../../use_music_operate';
 import eventemitter, { EventType } from '../../eventemitter';
 import Singer from '../../components/singer';
@@ -72,9 +72,7 @@ function Music({ listMusic }: { listMusic: MusicWithIndex }) {
         <button type="button" className="name" onClick={onView}>
           {name}
         </button>
-        <span className="singers">
-          {singers.length ? singers.map(renderSinger) : <Singer />}
-        </span>
+        <span className="singers">{singers.map(renderSinger)}</span>
       </div>
       <div className="actions">
         <IconButton

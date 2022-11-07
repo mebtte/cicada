@@ -21,11 +21,9 @@ function MusicInfo({
           {name}
         </span>
         <span className="singers">
-          {singers.length ? (
-            singers.map((s) => <Singer key={s.id} singer={s} />)
-          ) : (
-            <Singer />
-          )}
+          {singers.map((s) => (
+            <Singer key={s.id} singer={s} />
+          ))}
         </span>
       </div>
       <MusicTagList music={music} />

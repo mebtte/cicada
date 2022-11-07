@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { Singer as SingerType } from '../../../constants';
+import { Singer as SingerType } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '../../../eventemitter';
+} from '../eventemitter';
 
 const Style = styled.span`
   > .name {
