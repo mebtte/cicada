@@ -37,9 +37,15 @@ const Secondary = styled.div`
 `;
 
 function SingerItem({ singer }: { singer: Singer }) {
+  const openSingerDrawer = () =>
+    e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id });
   return (
     <StyledRow
-      onClick={() => e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })}
+      onClick={openSingerDrawer}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        return openSingerDrawer();
+      }}
       one={<Secondary>{singer.index}</Secondary>}
       two={
         <div>

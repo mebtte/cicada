@@ -48,11 +48,9 @@ function MusicOperateDrawer({
       maskProps={{ style: { zIndex } }}
       bodyProps={bodyProps}
     >
-      {music ? (
-        <MusicInfoWrapper>
-          <MusicInfo music={music} />
-        </MusicInfoWrapper>
-      ) : null}
+      <MusicInfoWrapper>
+        <MusicInfo music={music} />
+      </MusicInfoWrapper>
       <MenuItem icon={<MdPlayArrow />} label="播放" onClick={onPlay} />
       <MenuItem
         icon={<MdReadMore />}

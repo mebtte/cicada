@@ -9,6 +9,8 @@ const Style = styled.div`
   align-items: center;
   gap: 10px;
 
+  user-select: none;
+
   > .one {
     width: 40px;
   }

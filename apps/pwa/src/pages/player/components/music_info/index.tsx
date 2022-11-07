@@ -2,10 +2,9 @@ import { CSSProperties, HtmlHTMLAttributes, useCallback } from 'react';
 import styled from 'styled-components';
 import ellipsis from '#/style/ellipsis';
 import Cover from '#/components/cover';
-import eventemitter, { EventType } from '../eventemitter';
+import eventemitter, { EventType } from '../../eventemitter';
 import Singer from './singer';
-import MusicTagList from './music_tag_list';
-import { Music as MusicType } from '../constants';
+import { Music as MusicType } from '../../constants';
 
 const Style = styled.div`
   display: flex;
@@ -14,19 +13,15 @@ const Style = styled.div`
     margin-left: 10px;
     flex: 1;
     min-width: 0;
-    > .top {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      margin-bottom: 3px;
-      > .name {
-        ${ellipsis}
-        font-size: 14px;
-        cursor: pointer;
-        color: rgb(55 55 55);
-        &:hover {
-          color: rgb(0 0 0);
-        }
+    > .name {
+      ${ellipsis}
+      font-size: 14px;
+      cursor: pointer;
+      color: rgb(55 55 55);
+      line-height: 1.5;
+
+      &:hover {
+        color: rgb(0 0 0);
       }
     }
     > .singers {
@@ -46,27 +41,27 @@ function MusicInfo({
 }: {
   music: MusicType;
 } & HtmlHTMLAttributes<HTMLDivElement>) {
-  const onViewMusic = useCallback(
+  const openMusicDrawer = useCallback(
     () => eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id }),
     [music],
   );
   const { cover, name, singers } = music;
   return (
     <Style {...props}>
-      <Cover style={coverStyle} src={cover} size={40} onClick={onViewMusic} />
+      <Cover
+        style={coverStyle}
+        src={cover}
+        size={40}
+        onClick={openMusicDrawer}
+      />
       <div className="info">
-        <div className="top">
-          <div className="name" onClick={onViewMusic}>
-            {name}
-          </div>
-          <MusicTagList music={music} />
+        <div className="name" onClick={openMusicDrawer}>
+          {name}
         </div>
         <div className="singers ">
-          {singers.length ? (
-            singers.map((s) => <Singer key={s.id} singer={s} />)
-          ) : (
-            <Singer />
-          )}
+          {singers.map((s) => (
+            <Singer key={s.id} singer={s} />
+          ))}
         </div>
       </div>
     </Style>
