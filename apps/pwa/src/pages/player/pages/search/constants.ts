@@ -7,3 +7,5 @@ export enum Tab {
 export const TABS = Object.values(Tab);
 
 export const TOOLBAR_HEIGHT = 40;
+
+export const PAGE_SIZE = 50;

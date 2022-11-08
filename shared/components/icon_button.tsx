@@ -25,6 +25,7 @@ const Style = styled.button<{ size: ComponentSize }>`
   background-color: transparent;
   cursor: pointer;
   transition: all 250ms;
+  user-select: none;
 
   > svg {
     width: 75%;

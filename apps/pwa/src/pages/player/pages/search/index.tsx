@@ -9,6 +9,7 @@ import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
 import { Tab, TABS, TOOLBAR_HEIGHT } from './constants';
 import Guide from './guide';
+import Content from './content';
 
 const TAB_MAP_LABEL: Record<Tab, string> = {
   [Tab.MUSIC]: '音乐',
@@ -31,7 +32,7 @@ const Style = styled(Page)`
     width: 100%;
     height: ${TOOLBAR_HEIGHT}px;
 
-    padding: 0 20px;
+    padding: 0 20px 5px 20px;
 
     display: flex;
     align-items: flex-end;
@@ -57,10 +58,7 @@ const Style = styled(Page)`
 `;
 
 function Search() {
-  // eslint-disable-next-line prefer-const
-  let { search_tab: tab, keyword = '' } = useQuery<
-    Query.SEARCH_TAB | Query.KEYWORD
-  >();
+  let { search_tab: tab } = useQuery<Query.SEARCH_TAB | Query.KEYWORD>();
   // @ts-expect-error
   tab = TABS.includes(tab) ? tab : Tab.MUSIC;
   const navigate = useNavigate();
@@ -68,8 +66,9 @@ function Search() {
 
   return (
     <Style>
+      <Content tab={tab as Tab} />
       <div className="toolbar">
-        {miniMode ? <Input initialKeyword={keyword} /> : null}
+        {miniMode ? <Input /> : null}
         <TabList<Tab>
           current={tab as Tab}
           tabList={tabList}
@@ -77,6 +76,7 @@ function Search() {
             navigate({
               query: {
                 [Query.SEARCH_TAB]: t,
+                [Query.PAGE]: 1,
               },
             })
           }
