@@ -26,7 +26,6 @@ import useEvent from '#/utils/use_event';
 import notice from '#/utils/notice';
 import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
-import { CSSVariable } from '#/global_style';
 import { Singer, ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
@@ -35,10 +34,6 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
 
-const TypeTips = styled.div`
-  font-size: 12px;
-  color: ${CSSVariable.COLOR_DANGEROUS};
-`;
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
 };
@@ -167,7 +162,6 @@ function CreateMusicDialog() {
           }}
           onChange={onMusicTypeChange}
           disabled={loading}
-          addon={<TypeTips>创建后无法更换类型</TypeTips>}
         />
         <FileSelect
           label="标准音质文件"
