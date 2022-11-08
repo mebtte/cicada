@@ -4,9 +4,11 @@ import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
 import { animated, useTransition } from 'react-spring';
+import Button, { Variant } from '#/components/button';
 import Context from '../../context';
 import e, { EventType } from '../../eventemitter';
 import Musicbill from './musicbill';
+import { openCreateMusicbillDialog } from './utils';
 
 const reloadMusicbillList = () => e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
 const Style = styled.div`
@@ -38,12 +40,24 @@ function MusicbillList() {
     <Style>
       {transitions((style, status) => {
         if (status === RequestStatus.SUCCESS) {
+          if (musicbillList.length) {
+            return (
+              <StyledMusicbillList style={style}>
+                {musicbillList.map((m) => (
+                  <Musicbill key={m.id} musicbill={m} />
+                ))}
+              </StyledMusicbillList>
+            );
+          }
           return (
-            <StyledMusicbillList style={style}>
-              {musicbillList.map((m) => (
-                <Musicbill key={m.id} musicbill={m} />
-              ))}
-            </StyledMusicbillList>
+            <StatusBox style={style}>
+              <Button
+                variant={Variant.PRIMARY}
+                onClick={openCreateMusicbillDialog}
+              >
+                创建乐单
+              </Button>
+            </StatusBox>
           );
         }
         if (status === RequestStatus.LOADING) {

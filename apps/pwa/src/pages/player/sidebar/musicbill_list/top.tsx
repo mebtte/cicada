@@ -5,18 +5,11 @@ import { MdAdd, MdSort, MdRefresh } from 'react-icons/md';
 import { ComponentSize } from '#/constants/style';
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
-import e, { EditDialogType, EventType } from '../../eventemitter';
+import e, { EventType } from '../../eventemitter';
 import Context from '../../context';
-import { createMusicbill } from '../../utils';
+import { openCreateMusicbillDialog } from './utils';
 
 const reloadMusicbillList = () => e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
-const openCreateMusicbillDialog = () =>
-  e.emit(EventType.OPEN_EDIT_DIALOG, {
-    type: EditDialogType.INPUT,
-    title: '创建乐单',
-    onSubmit: createMusicbill,
-    label: '名字',
-  });
 const openMusicbillOrderDrawer = () =>
   e.emit(EventType.OPEN_MUSICBILL_ORDER_DRAWER, null);
 const Style = styled.div`
