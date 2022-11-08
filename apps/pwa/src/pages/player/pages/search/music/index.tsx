@@ -9,6 +9,8 @@ import Pagination from '#/components/pagination';
 import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
+import Button, { Variant } from '#/components/button';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import useData from './use_data';
 import Music from '../../../components/music';
@@ -18,6 +20,9 @@ const Container = styled(animated.div)`
 `;
 const CardContainer = styled(Container)`
   ${flexCenter}
+
+  flex-direction: column;
+  gap: 20px;
 `;
 const MusicContainer = styled(Container)`
   padding-top: ${TOOLBAR_HEIGHT}px;
@@ -55,7 +60,20 @@ function Wrapper() {
     if (!d.value!.total) {
       return (
         <CardContainer style={style}>
-          <Empty description="暂无数据" />
+          <Empty description="未找到相关音乐" />
+          <Button
+            variant={Variant.PRIMARY}
+            onClick={() =>
+              navigate({
+                path: ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC,
+                query: {
+                  [Query.CREATE_MUSIC_DIALOG_OPEN]: 1,
+                },
+              })
+            }
+          >
+            自己上传一首
+          </Button>
         </CardContainer>
       );
     }
