@@ -3,6 +3,8 @@ import p from '@/global_states/profile';
 import Cover, { Shape } from '#/components/cover';
 import ellipsis from '#/style/ellipsis';
 import { CSSVariable } from '#/global_style';
+import getRandomCover from '@/utils/get_random_cover';
+import { memo } from 'react';
 
 const Style = styled.div`
   display: flex;
@@ -35,7 +37,7 @@ function Profile() {
     <Style>
       <Cover
         className="avatar"
-        src={profile.avatar}
+        src={profile.avatar || getRandomCover()}
         size={100}
         shape={Shape.CIRCLE}
       />
@@ -46,4 +48,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default memo(Profile);

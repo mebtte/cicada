@@ -30,7 +30,11 @@ function Cover({
   src,
   style,
   ...props
-}: { size?: number; shape?: Shape } & ImgHTMLAttributes<HTMLImageElement>) {
+}: {
+  src: string;
+  size?: number;
+  shape?: Shape;
+} & ImgHTMLAttributes<HTMLImageElement>) {
   const [currentSrc, setCurrentSrc] = useState(src);
   const onError = useEvent(() => setCurrentSrc(JpegDefaultCover));
 

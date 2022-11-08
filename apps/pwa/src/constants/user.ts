@@ -7,7 +7,7 @@ export const REMARK_MAX_LENGTH = 255;
 export interface Profile {
   id: string;
   email: string;
-  avatar: string;
+  avatar?: string;
   nickname: string;
   joinTimestamp: number;
   admin: boolean;
