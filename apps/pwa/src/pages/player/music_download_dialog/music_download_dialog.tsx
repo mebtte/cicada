@@ -17,7 +17,11 @@ const bodyProps: {
 const StyledContent = styled(Content)`
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
+
+  > .music-info {
+    margin-bottom: 10px;
+  }
 `;
 
 function MusicDownloadDialog({
@@ -53,7 +57,7 @@ function MusicDownloadDialog({
       bodyProps={bodyProps}
     >
       <StyledContent>
-        <MusicInfo music={music} />
+        <MusicInfo className="music-info" music={music} />
 
         <Button onClick={() => onDownload(sq)}>标准音质</Button>
         {hq ? <Button onClick={() => onDownload(hq)}>无损音质</Button> : null}

@@ -8,15 +8,16 @@ const Style = styled.div`
 
   display: flex;
   align-items: center;
+  gap: 10px;
 
   user-select: none;
 
   > .one {
-    width: 40px;
+    width: 35px;
   }
 
   > .two {
-    flex: 1;
+    flex: 2;
     min-width: 0;
   }
 
@@ -32,6 +33,12 @@ const Style = styled.div`
   }
 
   > .five {
+    width: 100px;
+
+    text-align: right;
+  }
+
+  > .six {
     flex: 1;
     min-width: 0;
 
@@ -45,6 +52,7 @@ function Row({
   three,
   four,
   five,
+  six,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   one: ReactNode;
@@ -52,6 +60,7 @@ function Row({
   three: ReactNode;
   four: ReactNode;
   five: ReactNode;
+  six: ReactNode;
 }) {
   const miniMode = mm.useState();
   return (
@@ -61,6 +70,7 @@ function Row({
       <div className="three">{three}</div>
       <div className="four">{four}</div>
       {miniMode ? null : <div className="five">{five}</div>}
+      <div className="six">{six}</div>
     </Style>
   );
 }

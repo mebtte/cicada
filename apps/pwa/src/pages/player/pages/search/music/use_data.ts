@@ -25,16 +25,6 @@ export default () => {
   const pageNumber = (page ? Number(page) : 1) || 1;
   const [data, setData] = useState(dataLoading);
   const getData = useCallback(async () => {
-    if (!keyword) {
-      return setData({
-        error: null,
-        loading: false,
-        value: {
-          total: 0,
-          musicList: [],
-        },
-      });
-    }
     setData(dataLoading);
     try {
       const d = await searchMusic({

@@ -27,11 +27,6 @@ function searchMusic({
         name: string;
         aliases: string[];
       }[];
-      createUser: {
-        id: string;
-        nickname: string;
-        avatar: string;
-      };
     }[];
   }>({
     path: '/api/music/search',

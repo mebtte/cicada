@@ -27,8 +27,7 @@ const Style = styled.div`
   }
 
   > .four {
-    flex: 1;
-    min-width: 0;
+    width: 100px;
 
     text-align: right;
   }

@@ -2,6 +2,10 @@ import { CSSVariable } from '#/global_style';
 import ellipsis from '#/style/ellipsis';
 import day from '#/utils/day';
 import styled from 'styled-components';
+import IconButton from '#/components/icon_button';
+import { MdPlayArrow, MdMoreHoriz } from 'react-icons/md';
+import { ComponentSize } from '#/constants/style';
+import mm from '@/global_states/mini_mode';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
@@ -41,8 +45,15 @@ const Secondary = styled.div`
     font-family: monospace;
   }
 `;
+const Operation = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+`;
 
 function Music({ music }: { music: MusicType }) {
+  const miniMode = mm.useState();
   return (
     <Style
       onClick={() =>
@@ -81,6 +92,36 @@ function Music({ music }: { music: MusicType }) {
         <Secondary className="time">
           {day(music.createTimestamp).format('YYYY-MM-DD')}
         </Secondary>
+      }
+      six={
+        <Operation>
+          {miniMode ? null : (
+            <IconButton
+              size={ComponentSize.SMALL}
+              onClick={(event) => {
+                event.stopPropagation();
+                return playerEventemitter.emit(
+                  PlayerEventType.ACTION_PLAY_MUSIC,
+                  { music },
+                );
+              }}
+            >
+              <MdPlayArrow />
+            </IconButton>
+          )}
+          <IconButton
+            size={ComponentSize.SMALL}
+            onClick={(event) => {
+              event.stopPropagation();
+              return playerEventemitter.emit(
+                PlayerEventType.OPEN_MUSIC_OPERATE_POPUP,
+                { music },
+              );
+            }}
+          >
+            <MdMoreHoriz />
+          </IconButton>
+        </Operation>
       }
     />
   );

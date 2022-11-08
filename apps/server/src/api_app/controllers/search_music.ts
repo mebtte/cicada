@@ -8,11 +8,11 @@ import {
   getSingerListInMusicIds,
   Property as SingerProperty,
 } from '@/db/singer';
-import { getUserListByIds, Property as UserProperty } from '@/db/user';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
+const NO_KEYWORD_MAX_PAGE = 2;
 const MAX_PAGE_SIZE = 100;
 type LocalMusic = Pick<
   Music,
@@ -78,8 +78,7 @@ export default async (ctx: Context) => {
             cover,
             sq,
             hq,
-            ac,
-            createUserId
+            ac
           FROM music
             WHERE id IN ( ${musicPatternSQL} ) OR id IN ( ${singerPatternSQL} )
             ORDER BY heat DESC
@@ -99,6 +98,10 @@ export default async (ctx: Context) => {
     total = results[0]!.value;
     [, musicList] = results;
   } else {
+    if (pageNumber > NO_KEYWORD_MAX_PAGE) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+
     const results = await Promise.all([
       db.get<{ value: number }>(
         `
@@ -116,8 +119,7 @@ export default async (ctx: Context) => {
             cover,
             sq,
             hq,
-            ac,
-            createUserId
+            ac
           FROM music
             ORDER BY heat DESC
             LIMIT ? OFFSET ?
@@ -126,7 +128,7 @@ export default async (ctx: Context) => {
       ),
     ]);
 
-    total = results[0]!.value;
+    total = Math.min(results[0]!.value, pageSizeNumber * NO_KEYWORD_MAX_PAGE);
     [, musicList] = results;
   }
 
@@ -137,32 +139,15 @@ export default async (ctx: Context) => {
     });
   }
 
-  const [userList, singerList] = await Promise.all([
-    getUserListByIds(
-      Array.from(new Set(musicList.map((m) => m.createUserId))),
-      [UserProperty.ID, UserProperty.NICKNAME, UserProperty.AVATAR],
-    ),
-    getSingerListInMusicIds(
-      musicList.map((m) => m.id),
-      [
-        SingerProperty.ID,
-        SingerProperty.AVATAR,
-        SingerProperty.NAME,
-        SingerProperty.ALIASES,
-      ],
-    ),
-  ]);
-
-  const userMap: {
-    [key: string]: typeof userList[0];
-  } = {};
-  userList.forEach((user) => {
-    userMap[user.id] = {
-      ...user,
-      avatar: getAssetUrl(user.avatar, AssetType.USER_AVATAR),
-    };
-  });
-
+  const singerList = await getSingerListInMusicIds(
+    musicList.map((m) => m.id),
+    [
+      SingerProperty.ID,
+      SingerProperty.AVATAR,
+      SingerProperty.NAME,
+      SingerProperty.ALIASES,
+    ],
+  );
   const musicIdMapSingerList: {
     [key: string]: (Pick<
       Singer,
@@ -192,7 +177,6 @@ export default async (ctx: Context) => {
       hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
       ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingerList[m.id] || [],
-      createUser: userMap[m.createUserId],
     })),
   });
 };

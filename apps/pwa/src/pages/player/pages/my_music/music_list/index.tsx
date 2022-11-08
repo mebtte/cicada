@@ -99,6 +99,7 @@ function MusicList() {
                   three={<RowHead>歌手</RowHead>}
                   four={<RowHead>热度</RowHead>}
                   five={<RowHead>创建时间</RowHead>}
+                  six={<RowHead>操作</RowHead>}
                 />
                 <div className="list">
                   {value!.musicList.map((music) => (
