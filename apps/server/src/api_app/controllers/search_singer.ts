@@ -41,12 +41,11 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  let total: { value: number } = { value: 0 };
-  let singerList: LocalSinger[] = [];
+  let total: number;
+  let singerList: LocalSinger[];
   if (keyword.length) {
     const pattern = `%${keyword}%`;
-    // @ts-expect-error
-    [total, singerList] = await Promise.all([
+    const results = await Promise.all([
       db.get<{ value: number }>(
         `
           select count(*) from singer
@@ -64,24 +63,33 @@ export default async (ctx: Context) => {
         [pattern, pattern, pageSizeNumber, pageSizeNumber * (pageNumber - 1)],
       ),
     ]);
+    total = results[0]!.value;
+    [, singerList] = results;
   } else {
-    // @ts-expect-error
-    [total, singerList] = await Promise.all([
+    const results = await Promise.all([
       db.get<{ value: number }>(
         `
-          select count(*) from singer
+          SELECT count(*) FROM singer
         `,
         [],
       ),
       db.all<LocalSinger>(
         `
-      select id, avatar, name, aliases, createUserId from singer
-        limit ?
-        offset ?
-    `,
-        [pageSizeNumber, pageSizeNumber * (pageNumber - 1)],
+          SELECT
+            id,
+            avatar,
+            name,
+            aliases,
+            createUserId
+          FROM singer
+          ORDER BY random()
+          LIMIT ?
+        `,
+        [pageSizeNumber],
       ),
     ]);
+    total = Math.min(results[0]!.value, pageSizeNumber);
+    [, singerList] = results;
   }
 
   const userIdMapUser: {
@@ -104,7 +112,7 @@ export default async (ctx: Context) => {
   }
 
   return ctx.success({
-    total: total!.value,
+    total,
     singerList: singerList.map((singer) => ({
       ...excludeProperty(singer, [SingerProperty.CREATE_USER_ID]),
       avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),

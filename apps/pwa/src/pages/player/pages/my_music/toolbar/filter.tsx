@@ -24,7 +24,7 @@ function Filter() {
       () =>
         navigate({
           query: {
-            [Query.KEYWORD]: keyword.trim(),
+            [Query.KEYWORD]: keyword.replace(/\s+/g, ' ').trim(),
             [Query.PAGE]: 1,
           },
         }),
@@ -39,8 +39,7 @@ function Filter() {
       inputProps={{
         placeholder: '查找',
         value: keyword,
-        onChange: (event) =>
-          setKeyword(event.target.value.replace(/\s+/g, ' ')),
+        onChange: (event) => setKeyword(event.target.value),
       }}
     />
   );

@@ -60,7 +60,7 @@ const searchSinger = (
   search: string,
 ): Promise<MultipleSelectOption<Singer>[]> => {
   const keyword = search.trim();
-  return searchSingerRequest({ keyword, page: 1, pageSize: 50 }).then((data) =>
+  return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
     data.singerList.map(formatSingerToMultipleSelectOption),
   );
 };

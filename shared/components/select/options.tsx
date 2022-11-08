@@ -1,6 +1,5 @@
 import { animated, useTransition } from 'react-spring';
 import styled, { css } from 'styled-components';
-import { ComponentSize } from '../../constants/style';
 import { CSSVariable } from '../../global_style';
 import { Option as OptionType } from './constants';
 
@@ -12,6 +11,7 @@ const Style = styled(animated.div)`
   left: 0;
   width: 100%;
 
+  transform-origin: top;
   background-color: #fff;
   box-shadow: rgb(0 0 0 / 20%) 0px 5px 5px -3px,
     rgb(0 0 0 / 14%) 0px 8px 10px 1px, rgb(0 0 0 / 12%) 0px 3px 14px 2px;
@@ -52,15 +52,15 @@ function Options<Value>({
   const transitions = useTransition(open, {
     from: {
       opacity: 0,
-      transform: `translateY(${ComponentSize.NORMAL}px)`,
+      transform: 'scaleY(0)',
     },
     enter: {
       opacity: 1,
-      transform: 'translateY(0px)',
+      transform: 'scaleY(1)',
     },
     leave: {
       opacity: 0,
-      transform: `translateY(${ComponentSize.NORMAL}px)`,
+      transform: 'scaleY(0)',
     },
   });
   return transitions((style, o) =>

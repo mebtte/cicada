@@ -22,7 +22,7 @@ function Filter() {
       () =>
         navigate({
           query: {
-            [Query.KEYWORD]: keyword.trim(),
+            [Query.KEYWORD]: keyword.replace(/\s+/g, ' ').trim(),
           },
         }),
       500,
@@ -38,8 +38,7 @@ function Filter() {
         autoFocus: true,
         placeholder: '查找',
         value: keyword,
-        onChange: (event) =>
-          setKeyword(event.target.value.replace(/\s+/g, ' ')),
+        onChange: (event) => setKeyword(event.target.value),
       }}
     />
   );
