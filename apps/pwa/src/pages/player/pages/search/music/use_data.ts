@@ -48,8 +48,8 @@ export default () => {
         value: {
           total: d.total,
           musicList: d.musicList.map((music, index) => ({
+            ...music,
             index: d.total - index - (pageNumber - 1) * PAGE_SIZE,
-            music,
           })),
         },
       });

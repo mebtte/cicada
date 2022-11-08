@@ -66,7 +66,7 @@ export default (playlist: MusicWithIndex[]) => {
           setTimeout(() => setCurrentPosition(0), 0);
           return [
             {
-              music,
+              ...music,
               index: 1,
               pid: getRandomString(),
             },
@@ -106,7 +106,7 @@ export default (playlist: MusicWithIndex[]) => {
         setPlayqueue((pq) =>
           [
             ...pq.slice(0, currentPosition + 1),
-            { music, pid: getRandomString() },
+            { ...music, pid: getRandomString() },
             ...pq.slice(currentPosition + 1),
           ].map((m, index) => ({
             ...m,
@@ -155,7 +155,7 @@ export default (playlist: MusicWithIndex[]) => {
         if (!playqueue.length) {
           setPlayqueue([
             {
-              music,
+              ...music,
               index: 1,
               pid: getRandomString(),
             },
@@ -167,7 +167,7 @@ export default (playlist: MusicWithIndex[]) => {
         setPlayqueue(
           [
             ...playqueue.slice(0, currentPosition + 1),
-            { music, pid: getRandomString() },
+            { ...music, pid: getRandomString() },
             ...playqueue.slice(currentPosition + 1),
           ].map((m, index) => ({
             ...m,
@@ -185,7 +185,7 @@ export default (playlist: MusicWithIndex[]) => {
       ({ music }) =>
         setPlayqueue((pq) =>
           pq.map((m) =>
-            m.music.id === music.id
+            m.id === music.id
               ? {
                   ...m,
                   music,

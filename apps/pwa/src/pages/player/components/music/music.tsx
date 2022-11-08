@@ -16,10 +16,10 @@ function Music({
   musicWithIndex: MusicWithIndex;
   style?: CSSProperties;
 }) {
-  const { index, music } = musicWithIndex;
+  const { index, name, aliases, singers } = musicWithIndex;
   const { onPlay, onAddToMusicbill, onAddToPlayqueue, onOperate, onView } =
-    useMusicOperate(music);
-  const { name, aliases, singers } = music;
+    useMusicOperate(musicWithIndex);
+
   return (
     <Container style={style}>
       <div className="index">{index}</div>
@@ -33,7 +33,7 @@ function Music({
               <span className="alias">{aliases[0]}</span>
             ) : null}
           </div>
-          <MusicTagList music={music} />
+          <MusicTagList music={musicWithIndex} />
         </div>
         <div className="singers">{singers.map(renderSinger)}</div>
       </div>

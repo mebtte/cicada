@@ -27,7 +27,7 @@ const Style = styled.div`
 const onOpenList = () =>
   eventemitter.emit(EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER, null);
 
-function Action({ music }: { music: Music | null }) {
+function Action({ music }: { music?: Music }) {
   const { audioLoading, audioPaused } = useContext(Context);
   const { onTogglePlay, onPrevious, onNext } = useAudioControl(audioLoading);
 

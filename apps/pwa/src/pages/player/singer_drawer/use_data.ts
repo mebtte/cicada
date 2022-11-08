@@ -33,8 +33,8 @@ export default (singerId: string) => {
           ...excludeProperty(singer, ['createTimestamp']),
           avatar: singer.avatar || getRandomCover(),
           musicList: singer.musicList.map((music, index) => ({
+            ...music,
             index: singer.musicList.length - index,
-            music,
           })),
           createTime: day(singer.createTimestamp).format('YYYY-MM-DD HH:mm'),
         },

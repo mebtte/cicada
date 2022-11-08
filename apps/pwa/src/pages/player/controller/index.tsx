@@ -6,7 +6,7 @@ import Context from '../context';
 import Progress from './progress';
 import MusicInfo from './music_info';
 import Action from './action';
-import { CONTROLLER_HEIGHT, ZIndex } from '../constants';
+import { CONTROLLER_HEIGHT, QueueMusic, ZIndex } from '../constants';
 import eventemitter, { EventType } from '../eventemitter';
 
 const INITIAL_COVER = getRandomCover();
@@ -49,24 +49,24 @@ const openLyric = () => eventemitter.emit(EventType.TOGGEL_LYRIC, null);
 
 function Controller() {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
-  const queueMusic = playqueue[currentPlayqueuePosition];
+  const queueMusic = playqueue[currentPlayqueuePosition] as
+    | QueueMusic
+    | undefined;
 
   return (
     <Style>
       <div className="right">
         <Progress />
         <div className="right-bottom">
-          <MusicInfo music={queueMusic ? queueMusic.music : undefined} />
-          <Action music={queueMusic ? queueMusic.music : null} />
+          <MusicInfo music={queueMusic} />
+          <Action music={queueMusic} />
         </div>
       </div>
       <Avatar
         className="cover"
         animated
         size={70}
-        src={
-          queueMusic ? queueMusic.music.cover || INITIAL_COVER : INITIAL_COVER
-        }
+        src={queueMusic ? queueMusic.cover || INITIAL_COVER : INITIAL_COVER}
         onClick={openLyric}
       />
     </Style>

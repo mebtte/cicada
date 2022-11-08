@@ -53,18 +53,14 @@ const Style = styled.div`
 const renderSinger = (s: SingerType) => <Singer key={s.id} singer={s} />;
 
 function Music({ listMusic }: { listMusic: MusicWithIndex }) {
-  const { onPlay, onView, onOperate, onAddToPlayqueue } = useMusicOperate(
-    listMusic.music,
-  );
+  const { onPlay, onView, onOperate, onAddToPlayqueue } =
+    useMusicOperate(listMusic);
   const onRemove = useCallback(
     () =>
       eventemitter.emit(EventType.ACTION_REMOVE_PLAYLIST_MUSIC, { listMusic }),
     [listMusic],
   );
-  const {
-    index,
-    music: { name, singers },
-  } = listMusic;
+  const { index, name, singers } = listMusic;
   return (
     <Style>
       <div className="index">{index}.</div>

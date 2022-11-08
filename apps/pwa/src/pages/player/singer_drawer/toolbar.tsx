@@ -41,7 +41,7 @@ function Toolbar({ singer }: { singer: SingerDetail }) {
             playerEventemitter.emit(
               PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
               {
-                musicList: singer.musicList.map((m) => m.music),
+                musicList: singer.musicList,
               },
             )
           }

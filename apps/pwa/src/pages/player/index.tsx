@@ -63,7 +63,9 @@ function Wrapper() {
   const playlist = usePlaylist();
   const { playqueue, currentPosition: currentPlayqueuePosition } =
     usePlayqueue(playlist);
-  const queueMusic = playqueue[currentPlayqueuePosition] as QueueMusic | null;
+  const queueMusic = playqueue[currentPlayqueuePosition] as
+    | QueueMusic
+    | undefined;
 
   useKeyboard();
 
@@ -99,7 +101,7 @@ function Wrapper() {
         </div>
         <Controller />
 
-        <Lyric music={queueMusic ? queueMusic.music : undefined} />
+        <Lyric music={queueMusic} />
       </Style>
 
       {/* dynamic z-index */}
@@ -117,7 +119,7 @@ function Wrapper() {
       {queueMusic ? (
         <>
           <Audio playMode={playMode} queueMusic={queueMusic} />
-          <MediaSession music={queueMusic.music} />
+          <MediaSession music={queueMusic} />
         </>
       ) : null}
     </Context.Provider>

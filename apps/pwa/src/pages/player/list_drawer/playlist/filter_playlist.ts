@@ -2,7 +2,7 @@ import { MusicWithIndex } from '../../constants';
 
 function filterMusic(keyword: string) {
   return (listMusic: MusicWithIndex) => {
-    const { name, aliases, singers } = listMusic.music;
+    const { name, aliases, singers } = listMusic;
     if (
       name.toLowerCase().indexOf(keyword) > -1 ||
       aliases.find((alias) => alias.toLowerCase().includes(keyword))

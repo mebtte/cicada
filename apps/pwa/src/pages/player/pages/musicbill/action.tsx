@@ -38,7 +38,7 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
     const { musicList } = musicbill;
     return playerEventemitter.emit(
       PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-      { musicList: musicList.map((m) => m.music) },
+      { musicList },
     );
   };
   const onCopyID = () =>

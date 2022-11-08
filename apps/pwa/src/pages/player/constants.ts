@@ -54,9 +54,8 @@ export interface Music {
   singers: Singer[];
 }
 
-export interface MusicWithIndex {
+export interface MusicWithIndex extends Music {
   index: number;
-  music: Music;
 }
 
 export interface QueueMusic extends MusicWithIndex {

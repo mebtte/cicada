@@ -11,14 +11,14 @@ export default () => {
       EventType.ACTION_PLAY_MUSIC,
       ({ music }) =>
         setPlaylist((pl) => {
-          const musicIdList = pl.map((m) => m.music.id);
+          const musicIdList = pl.map((m) => m.id);
           if (musicIdList.includes(music.id)) {
             return pl;
           }
-          const newPlaylist = [{ index: 0, music }, ...pl];
+          const newPlaylist: MusicWithIndex[] = [{ ...music, index: 0 }, ...pl];
           const { length } = newPlaylist;
           return newPlaylist.map((m, index) => ({
-            music: m.music,
+            ...m,
             index: length - index,
           }));
         }),
@@ -27,7 +27,7 @@ export default () => {
       EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
       ({ musicList }) =>
         setPlaylist((pl) => {
-          const currentMusicIdList = pl.map((m) => m.music.id);
+          const currentMusicIdList = pl.map((m) => m.id);
           const newMusicList = musicList.filter(
             (m) => !currentMusicIdList.includes(m.id),
           );
@@ -37,12 +37,12 @@ export default () => {
           }
           const newPlaylist = [
             ...pl,
-            ...newMusicList.map((m) => ({ index: 0, music: m })),
+            ...newMusicList.map((m) => ({ ...m, index: 0 })),
           ];
           const { length } = newPlaylist;
           notice.success(`已添加${newMusicList.length}首音乐到播放列表`);
           return newPlaylist.map((m, index) => ({
-            music: m.music,
+            ...m,
             index: length - index,
           }));
         }),
@@ -51,14 +51,14 @@ export default () => {
       EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
       ({ music }) =>
         setPlaylist((pl) => {
-          const musicIdList = pl.map((m) => m.music.id);
+          const musicIdList = pl.map((m) => m.id);
           if (musicIdList.includes(music.id)) {
             return pl;
           }
-          const newPlaylist = [{ index: 0, music }, ...pl];
+          const newPlaylist: MusicWithIndex[] = [{ ...music, index: 0 }, ...pl];
           const { length } = newPlaylist;
           return newPlaylist.map((m, index) => ({
-            music: m.music,
+            ...m,
             index: length - index,
           }));
         }),
@@ -70,9 +70,9 @@ export default () => {
     const unlistenActionRemovePlaylistMusic = eventemitter.listen(
       EventType.ACTION_REMOVE_PLAYLIST_MUSIC,
       ({ listMusic }) => {
-        const { id } = listMusic.music;
+        const { id } = listMusic;
         return setPlaylist((pl) => {
-          const newPlaylist = pl.filter((m) => m.music.id !== id);
+          const newPlaylist = pl.filter((m) => m.id !== id);
           const { length } = newPlaylist;
           return newPlaylist.map((m, index) => ({
             ...m,
@@ -86,10 +86,10 @@ export default () => {
       ({ music }) =>
         setPlaylist((pl) =>
           pl.map((m) =>
-            m.music.id === music.id
+            m.id === music.id
               ? {
                   ...m,
-                  music,
+                  ...music,
                 }
               : m,
           ),

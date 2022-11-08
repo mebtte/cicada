@@ -51,8 +51,8 @@ class Audio extends React.PureComponent<Props, {}> {
   getSnapshotBeforeUpdate(prevProps: Props) {
     const { queueMusic } = this.props;
     if (prevProps.queueMusic.pid !== queueMusic.pid) {
-      this.uploadPlayRecord(prevProps.queueMusic.music);
-      this.createCache(prevProps.queueMusic.music);
+      this.uploadPlayRecord(prevProps.queueMusic);
+      this.createCache(prevProps.queueMusic);
     }
     return null;
   }
@@ -84,7 +84,7 @@ class Audio extends React.PureComponent<Props, {}> {
 
     window.removeEventListener('beforeunload', this.beforeUnload);
 
-    this.uploadPlayRecord(this.props.queueMusic.music);
+    this.uploadPlayRecord(this.props.queueMusic);
   }
 
   onActionSetTime = ({ second }: { second: number }) => {
@@ -156,7 +156,7 @@ class Audio extends React.PureComponent<Props, {}> {
     });
   };
 
-  beforeUnload = () => this.uploadPlayRecord(this.props.queueMusic.music);
+  beforeUnload = () => this.uploadPlayRecord(this.props.queueMusic);
 
   /**
    * workbox 不支持缓存媒体
@@ -181,8 +181,9 @@ class Audio extends React.PureComponent<Props, {}> {
   }
 
   render() {
-    const { pid, music } = this.props.queueMusic;
-    const audioSrc = this.getAudioSrc(music);
+    const { queueMusic } = this.props;
+    const { pid } = queueMusic;
+    const audioSrc = this.getAudioSrc(queueMusic);
     return (
       <audio
         key={pid}

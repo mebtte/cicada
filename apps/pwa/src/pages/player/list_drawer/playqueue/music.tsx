@@ -69,7 +69,7 @@ function Music({
   queueMusic: QueueMusic;
 }) {
   const { index } = queueMusic;
-  const { onView, onOperate } = useMusicOperate(queueMusic.music);
+  const { onView, onOperate } = useMusicOperate(queueMusic);
   const onJump = useCallback(() => {
     if (index === activeIndex) {
       return;
@@ -100,7 +100,7 @@ function Music({
     [queueMusic],
   );
 
-  const { name, singers } = queueMusic.music;
+  const { name, singers } = queueMusic;
   const active = index === activeIndex;
   return (
     <Style active={active}>

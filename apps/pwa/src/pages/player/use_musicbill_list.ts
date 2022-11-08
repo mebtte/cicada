@@ -78,7 +78,7 @@ export default () => {
                   name: data.name,
                   cover: data.cover || mb.cover || getRandomCover(),
                   musicList: data.musicList.map((m, index) => ({
-                    music: m,
+                    ...m,
                     index: data.musicList.length - index,
                   })),
                   public: !!data.public,
@@ -114,12 +114,12 @@ export default () => {
         setMusicbillList((mbl) =>
           mbl.map((mb) => {
             if (mb.id === musicbillId) {
-              const musicList = [{ index: 0, music }, ...mb.musicList];
+              const musicList = [{ ...music, index: 0 }, ...mb.musicList];
               const { length } = musicList;
               return {
                 ...mb,
                 musicList: musicList.map((m, index) => ({
-                  music: m.music,
+                  ...m,
                   index: length - index,
                 })),
               };
@@ -138,9 +138,7 @@ export default () => {
           setMusicbillList((mbl) =>
             mbl.map((mb) => {
               if (mb.id === musicbillId) {
-                const musicList = mb.musicList.filter(
-                  (m) => m.music.id !== musicId,
-                );
+                const musicList = mb.musicList.filter((m) => m.id !== musicId);
                 const { length } = musicList;
                 return {
                   ...mb,
@@ -164,9 +162,7 @@ export default () => {
         setMusicbillList((mbl) =>
           mbl.map((mb) => {
             if (mb.id === musicbillId) {
-              const musicList = mb.musicList.filter(
-                (m) => m.music.id !== musicId,
-              );
+              const musicList = mb.musicList.filter((m) => m.id !== musicId);
               const { length } = musicList;
               return {
                 ...mb,
@@ -190,12 +186,12 @@ export default () => {
           setMusicbillList((mbl) =>
             mbl.map((mb) => {
               if (mb.id === musicbillId) {
-                const musicList = [{ index: 0, music }, ...mb.musicList];
+                const musicList = [{ ...music, index: 0 }, ...mb.musicList];
                 const { length } = musicList;
                 return {
                   ...mb,
                   musicList: musicList.map((m, index) => ({
-                    music: m.music,
+                    ...m,
                     index: length - index,
                   })),
                 };
@@ -213,10 +209,10 @@ export default () => {
           mbl.map((mb) => ({
             ...mb,
             musicList: mb.musicList.map((m) =>
-              m.music.id === music.id
+              m.id === music.id
                 ? {
                     ...m,
-                    music,
+                    ...music,
                   }
                 : m,
             ),
