@@ -10,6 +10,7 @@ import { Query } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '#/style/absolute_full_size';
 import { CSSVariable } from '#/global_style';
+import Button, { Variant } from '#/components/button';
 import useMusicList from './use_music_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import Music from './music';
@@ -26,6 +27,9 @@ const Container = styled(animated.div)`
 `;
 const CardContainer = styled(Container)`
   ${flexCenter}
+
+  flex-direction: column;
+  gap: 20px;
 `;
 const MusicListContainer = styled(Container)`
   padding-bottom: ${TOOLBAR_HEIGHT}px;
@@ -88,6 +92,26 @@ function MusicList() {
           );
         }
 
+        if (!value!.total && !value!.musicList.length) {
+          return (
+            <CardContainer style={style}>
+              <Empty description="暂无相关音乐" />
+              <Button
+                variant={Variant.PRIMARY}
+                onClick={() =>
+                  navigate({
+                    query: {
+                      [Query.CREATE_MUSIC_DIALOG_OPEN]: 1,
+                    },
+                  })
+                }
+              >
+                创建音乐
+              </Button>
+            </CardContainer>
+          );
+        }
+
         return (
           <MusicListContainer style={style}>
             {value!.musicList.length ? (
@@ -108,7 +132,7 @@ function MusicList() {
                 </div>
               </>
             ) : (
-              <Empty description="未找到相关数据" style={emptyStyle} />
+              <Empty description="暂无相关音乐" style={emptyStyle} />
             )}
             {value!.total ? (
               <Pagination
