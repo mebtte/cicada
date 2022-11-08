@@ -5,13 +5,12 @@ import { MdAdd, MdSort, MdRefresh } from 'react-icons/md';
 import { ComponentSize } from '#/constants/style';
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
+import notice from '#/utils/notice';
 import e, { EventType } from '../../eventemitter';
 import Context from '../../context';
 import { openCreateMusicbillDialog } from './utils';
 
 const reloadMusicbillList = () => e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
-const openMusicbillOrderDrawer = () =>
-  e.emit(EventType.OPEN_MUSICBILL_ORDER_DRAWER, null);
 const Style = styled.div`
   margin: 0 20px;
 
@@ -30,7 +29,7 @@ const Style = styled.div`
 `;
 
 function Top() {
-  const { getMusicbillListStatus } = useContext(Context);
+  const { getMusicbillListStatus, musicbillList } = useContext(Context);
   return (
     <Style>
       <div className="label">我的乐单</div>
@@ -47,7 +46,15 @@ function Top() {
       >
         <MdAdd />
       </IconButton>
-      <IconButton size={ComponentSize.SMALL} onClick={openMusicbillOrderDrawer}>
+      <IconButton
+        size={ComponentSize.SMALL}
+        onClick={() => {
+          if (musicbillList.length) {
+            return e.emit(EventType.OPEN_MUSICBILL_ORDER_DRAWER, null);
+          }
+          return notice.info('暂无歌单可以排序');
+        }}
+      >
         <MdSort />
       </IconButton>
     </Style>
