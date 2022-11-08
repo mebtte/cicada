@@ -21,6 +21,7 @@ const Button = styled.button<{ active?: boolean }>`
   border: none;
   cursor: pointer;
   transition: 300ms;
+  user-select: none;
 
   > svg {
     width: 24px;
