@@ -66,7 +66,7 @@ function Action({ musicbill }: { musicbill: Musicbill }) {
                 PlayerEventType.RELOAD_MUSICBILL_LIST,
                 null,
               );
-              navigate({ path: ROOT_PATH.PLAYER + PLAYER_PATH.HOME });
+              navigate({ path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORE });
             } catch (error) {
               logger.error(error, '删除乐单失败');
               dialog.alert({

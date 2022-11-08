@@ -12,6 +12,7 @@ import excludeProperty from '#/utils/exclude_property';
 import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
+const NO_KEYWORD_MAX_PAGE = 3;
 const MAX_PAGE_SIZE = 100;
 type LocalMusic = Pick<
   Music,
@@ -97,7 +98,7 @@ export default async (ctx: Context) => {
     total = results[0]!.value;
     [, musicList] = results;
   } else {
-    if (pageNumber !== 1) {
+    if (pageNumber > NO_KEYWORD_MAX_PAGE) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
 
@@ -127,7 +128,7 @@ export default async (ctx: Context) => {
       ),
     ]);
 
-    total = Math.min(results[0]!.value, pageSizeNumber);
+    total = Math.min(results[0]!.value, pageSizeNumber * NO_KEYWORD_MAX_PAGE);
     [, musicList] = results;
   }
 

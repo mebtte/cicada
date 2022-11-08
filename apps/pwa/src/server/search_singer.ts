@@ -13,14 +13,10 @@ function searchSinger({
     total: number;
     singerList: {
       id: string;
-      avatar: string;
+      avatar?: string;
       name: string;
       aliases: string[];
-      createUser: {
-        id: string;
-        avatar: string;
-        nickname: string;
-      };
+      musicCount: number;
     }[];
   }>({
     path: '/api/singer/search',

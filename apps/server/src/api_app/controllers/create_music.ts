@@ -56,8 +56,8 @@ export default async (ctx: Context) => {
     `,
     [ctx.user.id, day().startOf('day'), day().endOf('day')],
   );
-  if (todayUploadMusicList.length > config.userUploadMusicMaxTimesPerDay) {
-    return ctx.except(ExceptionCode.OVER_UPLOAD_MUSIC_TIMES_PER_DAY);
+  if (todayUploadMusicList.length > config.userCreateMusicMaxTimesPerDay) {
+    return ctx.except(ExceptionCode.OVER_CREATE_MUSIC_TIMES_PER_DAY);
   }
 
   const id = generateRandomString(ID_LENGTH, false);

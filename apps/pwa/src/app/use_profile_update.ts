@@ -3,6 +3,7 @@ import getProfile from '@/server/get_profile';
 import { useEffect } from 'react';
 import notice from '#/utils/notice';
 import logger from '#/utils/logger';
+import getRandomCover from '@/utils/get_random_cover';
 
 export default () => {
   const profile = p.useState();
@@ -15,6 +16,7 @@ export default () => {
           .then((newProfile) =>
             p.set({
               ...newProfile,
+              avatar: getRandomCover(),
               admin: !!newProfile.admin,
             }),
           )

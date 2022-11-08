@@ -3,11 +3,10 @@ import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { ExceptionCode } from '#/constants/exception';
 import db from '@/db';
 import { Singer, Property as SingerProperty } from '@/db/singer';
-import { getUserListByIds, Property as UserProperty, User } from '@/db/user';
-import excludeProperty from '#/utils/exclude_property';
 import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
+const NO_KEYWORD_MAX_PAGE = 3;
 const MAX_PAGE_SIZE = 100;
 type LocalSinger = Pick<
   Singer,
@@ -15,8 +14,7 @@ type LocalSinger = Pick<
   | SingerProperty.AVATAR
   | SingerProperty.NAME
   | SingerProperty.ALIASES
-  | SingerProperty.CREATE_USER_ID
->;
+> & { musicCount: number };
 
 export default async (ctx: Context) => {
   const { keyword, page, pageSize } = ctx.request.query as {
@@ -48,17 +46,27 @@ export default async (ctx: Context) => {
     const results = await Promise.all([
       db.get<{ value: number }>(
         `
-          select count(*) from singer
-            where name like ? or aliases like ?
+          SELECT count(*) AS value FROM singer
+          WHERE name LIKE ? OR aliases LIKE ?
         `,
         [pattern, pattern],
       ),
       db.all<LocalSinger>(
         `
-          select id, avatar, name, aliases, createUserId from singer
-            where name like ? or aliases like ?
-            limit ?
-            offset ?
+          SELECT
+            s.id,
+            s.avatar,
+            s.name,
+            s.aliases,
+            count(msr.id) AS musicCount
+          FROM singer AS s
+          LEFT JOIN music_singer_relation AS msr
+            ON s.id = msr.singerId
+          WHERE name LIKE ? or aliases LIKE ?
+          GROUP BY s.id
+          ORDER BY musicCount DESC
+          LIMIT ?
+          OFFSET ?
         `,
         [pattern, pattern, pageSizeNumber, pageSizeNumber * (pageNumber - 1)],
       ),
@@ -66,57 +74,44 @@ export default async (ctx: Context) => {
     total = results[0]!.value;
     [, singerList] = results;
   } else {
+    if (pageNumber > NO_KEYWORD_MAX_PAGE) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+
     const results = await Promise.all([
       db.get<{ value: number }>(
         `
-          SELECT count(*) FROM singer
+          SELECT count(*) as value FROM singer
         `,
         [],
       ),
       db.all<LocalSinger>(
         `
           SELECT
-            id,
-            avatar,
-            name,
-            aliases,
-            createUserId
-          FROM singer
+            s.id,
+            s.avatar,
+            s.name,
+            s.aliases,
+            count(msr.id) AS musicCount
+          FROM singer AS s
+          LEFT JOIN music_singer_relation AS msr
+            ON s.id = msr.singerId
+          GROUP BY s.id
           ORDER BY random()
           LIMIT ?
         `,
         [pageSizeNumber],
       ),
     ]);
-    total = Math.min(results[0]!.value, pageSizeNumber);
+    total = Math.min(results[0]!.value, pageSizeNumber * NO_KEYWORD_MAX_PAGE);
     [, singerList] = results;
-  }
-
-  const userIdMapUser: {
-    [key: string]: Pick<
-      User,
-      UserProperty.ID | UserProperty.AVATAR | UserProperty.NICKNAME
-    >;
-  } = {};
-  if (singerList.length) {
-    const userList = await getUserListByIds(
-      Array.from(new Set(singerList.map((s) => s.createUserId))),
-      [UserProperty.ID, UserProperty.AVATAR, UserProperty.NICKNAME],
-    );
-    userList.forEach((user) => {
-      userIdMapUser[user.id] = {
-        ...user,
-        avatar: getAssetUrl(user.avatar, AssetType.USER_AVATAR),
-      };
-    });
   }
 
   return ctx.success({
     total,
     singerList: singerList.map((singer) => ({
-      ...excludeProperty(singer, [SingerProperty.CREATE_USER_ID]),
+      ...singer,
       avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),
-      createUser: userIdMapUser[singer.createUserId],
       aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
     })),
   });

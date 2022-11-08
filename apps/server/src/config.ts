@@ -14,7 +14,7 @@ interface Config {
   emailPass: string;
   clusterCount: number;
   userExportMusicbillMaxTimesPerDay: number;
-  userUploadMusicMaxTimesPerDay: number;
+  userCreateMusicMaxTimesPerDay: number;
 }
 
 let configFilePath: string;
@@ -50,7 +50,7 @@ const DEFAULT_CONFIG: Omit<
   emailPort: 465,
   clusterCount: 1,
   userExportMusicbillMaxTimesPerDay: 3,
-  userUploadMusicMaxTimesPerDay: 5,
+  userCreateMusicMaxTimesPerDay: 5,
 };
 
 const config: Config = {

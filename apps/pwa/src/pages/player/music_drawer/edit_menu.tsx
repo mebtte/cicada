@@ -38,7 +38,7 @@ import logger from '#/utils/logger';
 import { Option } from '#/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
 import searchMusicRequest from '@/server/search_music';
-import { Music, Singer, ZIndex } from '../constants';
+import { Music, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {
@@ -47,6 +47,11 @@ import playerEventemitter, {
 } from '../eventemitter';
 import { emitMusicUpdated } from '../utils';
 
+interface Singer {
+  id: string;
+  name: string;
+  aliases: string[];
+}
 const formatSingerToMultipleSelectOption = (
   singer: Singer,
 ): Option<Singer> => ({

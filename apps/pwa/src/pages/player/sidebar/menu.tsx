@@ -15,8 +15,8 @@ function Menu() {
   return (
     <div>
       <MenuItem
-        active={pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.HOME}`}
-        onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.HOME}`)}
+        active={pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORE}`}
+        onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORE}`)}
         label="发现"
         icon={<MdLooks />}
       />

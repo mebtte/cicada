@@ -26,7 +26,7 @@ import useEvent from '#/utils/use_event';
 import notice from '#/utils/notice';
 import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
-import { Singer, ZIndex } from '../../../constants';
+import { ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
 import CreateSinger from './create_singer';
@@ -42,6 +42,11 @@ const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((t) => ({
   label: MUSIC_TYPE_MAP[t].label,
   value: t,
 }));
+interface Singer {
+  id: string;
+  name: string;
+  aliases: string[];
+}
 const formatSingerToMultipleSelectOption = (
   singer: Singer,
 ): MultipleSelectOption<Singer> => ({

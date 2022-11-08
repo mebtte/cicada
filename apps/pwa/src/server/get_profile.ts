@@ -4,7 +4,7 @@ function getProfile() {
   return request<{
     id: string;
     email: string;
-    avatar: string;
+    avatar?: string;
     nickname: string;
     joinTimestamp: number;
     admin: 0 | 1;

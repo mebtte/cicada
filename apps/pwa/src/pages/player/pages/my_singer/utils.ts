@@ -1,3 +1,4 @@
+import { NAME_MAX_LENGTH } from '#/constants/singer';
 import playerEventemitter, {
   EditDialogType,
   EventType as PlayerEventType,
@@ -10,6 +11,7 @@ export const openCreateSingerDialog = () =>
     title: '创建歌手',
     label: '名字',
     type: EditDialogType.INPUT,
+    maxLength: NAME_MAX_LENGTH,
     onSubmit: async (name: string) =>
       createSinger({
         name,

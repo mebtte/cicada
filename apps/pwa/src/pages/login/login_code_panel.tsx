@@ -16,6 +16,7 @@ import storage, { Key } from '@/storage';
 import logger from '#/utils/logger';
 import Input from '#/components/input';
 import Button, { Variant } from '#/components/button';
+import getRandomCover from '@/utils/get_random_cover';
 import Paper from './paper';
 import Logo from './logo';
 import { panelCSS } from './constants';
@@ -61,6 +62,7 @@ function LoginCodePanel({
       const profile = await getProfile();
       p.set({
         ...profile,
+        avatar: getRandomCover(),
         admin: !!profile.admin,
       });
 

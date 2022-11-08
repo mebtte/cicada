@@ -15,7 +15,7 @@ function Guide() {
       onClick={() =>
         dialog.confirm({
           content: '找不到想要的音乐?',
-          confirmText: '自己上传一首',
+          confirmText: '自己创建一首',
           onConfirm: () =>
             navigate({
               path: ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC,

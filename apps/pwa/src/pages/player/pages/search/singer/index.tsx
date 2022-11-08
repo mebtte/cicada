@@ -10,11 +10,15 @@ import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
 import Button, { Variant } from '#/components/button';
-import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import mm from '@/global_states/mini_mode';
+import { NAME_MAX_LENGTH } from '#/constants/singer';
+import playerEventemitter, {
+  EditDialogType,
+  EventType as PlayerEventType,
+} from '../../../eventemitter';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import useData from './use_data';
-import Music from '../../../components/music';
+import { createSinger } from '../../../utils';
+import Singer from './singer';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -35,7 +39,6 @@ const paginationStyle: CSSProperties = {
 };
 
 function Wrapper() {
-  const miniMode = mm.useState();
   const navigate = useNavigate();
   const { data, reload, page } = useData();
 
@@ -62,28 +65,38 @@ function Wrapper() {
     if (!d.value!.total) {
       return (
         <CardContainer style={style}>
-          <Empty description="未找到相关音乐" />
+          <Empty description="未找到相关歌手" />
           <Button
             variant={Variant.PRIMARY}
             onClick={() =>
-              navigate({
-                path: ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC,
-                query: {
-                  [Query.CREATE_MUSIC_DIALOG_OPEN]: 1,
-                },
+              playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+                title: '创建歌手',
+                label: '名字',
+                type: EditDialogType.INPUT,
+                maxLength: NAME_MAX_LENGTH,
+                onSubmit: async (name: string) =>
+                  createSinger({
+                    name,
+                    callback: (id) => {
+                      playerEventemitter.emit(
+                        PlayerEventType.OPEN_SINGER_DRAWER,
+                        { id },
+                      );
+                    },
+                  }),
               })
             }
           >
-            创建音乐
+            创建歌手
           </Button>
         </CardContainer>
       );
     }
     return (
       <MusicContainer style={style}>
-        <div className="list">
-          {d.value!.musicList.map((music) => (
-            <Music key={music.id} music={music} miniMode={miniMode} />
+        <div>
+          {d.value!.singerList.map((singer) => (
+            <Singer key={singer.id} singer={singer} />
           ))}
         </div>
         {d.value!.total ? (

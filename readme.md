@@ -40,7 +40,7 @@
 | clusterCount                      | number | 否       | {{os.cups().length}}      | 服务进程数量                                                                       |
 | base                              | string | 否       | {{homedir}}/cicada        | 数据存放目录                                                                       |
 | userExportMusicbillMaxTimesPerDay | number | 否       | 3                         | 用户每天导出乐单最大次数                                                           |
-| userUploadMusicMaxTimesPerDay     | number | 否       | 5                         | 用户每天上传音乐最大次数                                                           |
+| userCreateMusicMaxTimesPerDay     | number | 否       | 5                         | 用户每天创建音乐最大次数                                                           |
 
 ## 常见问题
 

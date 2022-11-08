@@ -28,7 +28,7 @@ export async function createSinger({
   force?: boolean;
   callback?: (id: string) => void;
 }) {
-  const trimmedName = name.trim();
+  const trimmedName = name.replace(/\s+/g, ' ').trim();
   if (!trimmedName) {
     throw new Error('请输入名字');
   }

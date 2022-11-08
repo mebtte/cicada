@@ -30,7 +30,7 @@ const Style = styled.div`
   }
 `;
 
-function MiniIfno({ singer }: { singer: SingerDetail }) {
+function MiniInfo({ singer }: { singer: SingerDetail }) {
   const [paddingRight, setPaddingRight] = useState(0);
   const { right } = useTitlebarArea();
 
@@ -50,4 +50,4 @@ function MiniIfno({ singer }: { singer: SingerDetail }) {
   );
 }
 
-export default MiniIfno;
+export default MiniInfo;

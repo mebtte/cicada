@@ -39,9 +39,6 @@ const MusicListContainer = styled(Container)`
 const paginationStyle: CSSProperties = {
   margin: '10px 0',
 };
-const emptyStyle: CSSProperties = {
-  padding: '50px 0',
-};
 const headStyle: CSSProperties = {
   zIndex: 1,
   position: 'sticky',
@@ -114,26 +111,20 @@ function MusicList() {
 
         return (
           <MusicListContainer style={style}>
-            {value!.musicList.length ? (
-              <>
-                <Row
-                  style={headStyle}
-                  one={null}
-                  two={<RowHead>名字/别名</RowHead>}
-                  three={<RowHead>歌手</RowHead>}
-                  four={<RowHead>热度</RowHead>}
-                  five={<RowHead>创建时间</RowHead>}
-                  six={<RowHead>操作</RowHead>}
-                />
-                <div className="list">
-                  {value!.musicList.map((music) => (
-                    <Music key={music.id} music={music} />
-                  ))}
-                </div>
-              </>
-            ) : (
-              <Empty description="暂无相关音乐" style={emptyStyle} />
-            )}
+            <Row
+              style={headStyle}
+              one={null}
+              two={<RowHead>名字/别名</RowHead>}
+              three={<RowHead>歌手</RowHead>}
+              four={<RowHead>热度</RowHead>}
+              five={<RowHead>创建时间</RowHead>}
+              six={<RowHead>操作</RowHead>}
+            />
+            <div className="list">
+              {value!.musicList.map((music) => (
+                <Music key={music.id} music={music} />
+              ))}
+            </div>
             {value!.total ? (
               <Pagination
                 style={paginationStyle}
