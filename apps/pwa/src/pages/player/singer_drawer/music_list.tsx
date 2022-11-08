@@ -10,12 +10,8 @@ const emptyStyle: CSSProperties = {
 function MusicList({ musicList }: { musicList: MusicWithIndex[] }) {
   return musicList.length ? (
     <div>
-      {musicList.map((music, index) => (
-        <Music
-          // eslint-disable-next-line react/no-array-index-key
-          key={index}
-          musicWithIndex={music}
-        />
+      {musicList.map((music) => (
+        <Music key={music.id} music={music} miniMode />
       ))}
     </div>
   ) : (

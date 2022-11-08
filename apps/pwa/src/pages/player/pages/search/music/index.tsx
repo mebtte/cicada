@@ -11,6 +11,7 @@ import { Query } from '@/constants';
 import { CSSProperties } from 'react';
 import Button, { Variant } from '#/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import mm from '@/global_states/mini_mode';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import useData from './use_data';
 import Music from '../../../components/music';
@@ -34,6 +35,7 @@ const paginationStyle: CSSProperties = {
 };
 
 function Wrapper() {
+  const miniMode = mm.useState();
   const navigate = useNavigate();
   const { data, reload, page } = useData();
 
@@ -80,9 +82,8 @@ function Wrapper() {
     return (
       <MusicContainer style={style}>
         <div className="list">
-          {d.value!.musicList.map((music, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <Music key={index} musicWithIndex={music} />
+          {d.value!.musicList.map((music) => (
+            <Music key={music.id} music={music} miniMode={miniMode} />
           ))}
         </div>
         {d.value!.total ? (

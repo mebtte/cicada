@@ -3,7 +3,7 @@ import IconButton from '#/components/icon_button';
 import {
   MdPlayArrow,
   MdReadMore,
-  MdMoreVert,
+  MdMoreHoriz,
   MdOutlinePostAdd,
   MdPlaylistAdd,
   MdEdit,
@@ -94,7 +94,7 @@ function Toolbar({ music }: { music: MusicDetail }) {
             })
           }
         >
-          <MdMoreVert />
+          <MdMoreHoriz />
         </IconButton>
       </div>
       {profile.admin || profile.id === music.createUser.id ? (

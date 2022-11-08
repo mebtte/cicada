@@ -3,6 +3,7 @@ import { animated } from 'react-spring';
 import styled from 'styled-components';
 import List from 'react-list';
 import { MUSICBILL_SCROLL_TOP } from '@/constants/storage_key';
+import mm from '@/global_states/mini_mode';
 import { MusicWithIndex } from '../../../constants';
 import Music from '../../../components/music';
 
@@ -25,6 +26,7 @@ function MusicList({
   musicList: MusicWithIndex[];
   style: unknown;
 }) {
+  const miniMode = mm.useState();
   const ref = useRef<HTMLDivElement>(null);
   const [topBoxShadow, setTopBoxShadow] = useState(0);
   const timer = useRef<number>(0);
@@ -54,7 +56,7 @@ function MusicList({
   }, [id]);
 
   const musicItemRenderer = (index: number, key: string) => (
-    <Music key={key} musicWithIndex={musicList[index]} />
+    <Music key={key} music={musicList[index]} miniMode={miniMode} />
   );
   return (
     <Style

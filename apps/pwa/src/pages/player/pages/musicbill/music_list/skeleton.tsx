@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { animated } from 'react-spring';
 import styled from 'styled-components';
 import getRandomInteger from '#/utils/generate_random_integer';
-import { Skeleton } from '../../../components/music';
 
 const Style = styled(animated.div)`
   position: absolute;
@@ -20,12 +19,7 @@ function Wrapper({ style }: { style: unknown }) {
   );
   return (
     // @ts-expect-error
-    <Style style={style}>
-      {musicList.map((_, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <Skeleton key={index} />
-      ))}
-    </Style>
+    <Style style={style}>{musicList.map(() => null)}</Style>
   );
 }
 
