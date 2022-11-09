@@ -7,7 +7,6 @@ import Input from './input';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
 import { Tab, TOOLBAR_HEIGHT } from './constants';
-import Guide from './guide';
 import Content from './content';
 import useTab from './use_tab';
 
@@ -27,16 +26,9 @@ const Style = styled(Page)`
 
     display: flex;
     align-items: flex-end;
-    gap: 30px;
+    gap: 20px;
 
     backdrop-filter: blur(5px);
-
-    > .guide-box {
-      min-width: 0;
-      padding-bottom: 4px;
-
-      text-align: right;
-    }
   }
 
   ${({ theme: { miniMode } }) => css`
@@ -55,7 +47,7 @@ function Search({ exploration }: { exploration: boolean }) {
 
   return (
     <Style>
-      <Content tab={tab} />
+      <Content tab={tab} exploration={exploration} />
       <div className="toolbar">
         {miniMode && !exploration ? <Input /> : null}
         <TabList<Tab>
@@ -70,11 +62,6 @@ function Search({ exploration }: { exploration: boolean }) {
             })
           }
         />
-        {exploration ? null : (
-          <div className="guide-box">
-            <Guide />
-          </div>
-        )}
       </div>
     </Style>
   );

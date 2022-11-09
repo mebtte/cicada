@@ -15,7 +15,7 @@ function MusicList({ musicList }: { musicList: MusicWithIndex[] }) {
       ))}
     </div>
   ) : (
-    <Empty description="当前歌手没有收录音乐" style={emptyStyle} />
+    <Empty description="暂未收录音乐" style={emptyStyle} />
   );
 }
 

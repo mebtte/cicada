@@ -19,6 +19,7 @@ import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import useData from './use_data';
 import { createSinger } from '../../../utils';
 import Singer from './singer';
+import Guide from './guide';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -38,7 +39,7 @@ const paginationStyle: CSSProperties = {
   margin: '20px 0',
 };
 
-function Wrapper() {
+function Wrapper({ exploration }: { exploration: boolean }) {
   const navigate = useNavigate();
   const { data, reload, page } = useData();
 
@@ -87,7 +88,7 @@ function Wrapper() {
               })
             }
           >
-            创建歌手
+            自己创建一个
           </Button>
         </CardContainer>
       );
@@ -114,6 +115,10 @@ function Wrapper() {
             }
           />
         ) : null}
+        {exploration ||
+        page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
+          <Guide />
+        )}
       </MusicContainer>
     );
   });

@@ -5,7 +5,7 @@ import createMusicbillRequest from '@/server/create_musicbill';
 import createSingerRequest from '@/server/create_singer';
 import getMusicDetail from '@/server/get_music_detail';
 import getSingerDetail from '@/server/get_singer_detail';
-import e, { EventType } from './eventemitter';
+import e, { EditDialogType, EventType } from './eventemitter';
 
 export async function createMusicbill(name: string) {
   const trimmedName = name.replace(/\s+/, ' ').trim();
@@ -82,3 +82,16 @@ export function emitSingerUpdated(id: string) {
     }),
   );
 }
+
+export const openCreateSingerDialog = (callback: (id: string) => void) =>
+  e.emit(EventType.OPEN_EDIT_DIALOG, {
+    title: '创建歌手',
+    label: '名字',
+    type: EditDialogType.INPUT,
+    maxLength: NAME_MAX_LENGTH,
+    onSubmit: async (name: string) =>
+      createSinger({
+        name,
+        callback,
+      }),
+  });

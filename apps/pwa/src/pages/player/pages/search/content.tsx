@@ -11,7 +11,7 @@ const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
 
-function Content({ tab }: { tab: Tab }) {
+function Content({ exploration, tab }: { exploration: boolean; tab: Tab }) {
   const transitions = useTransition(tab, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
@@ -21,11 +21,11 @@ function Content({ tab }: { tab: Tab }) {
     let content: ReactNode = null;
     switch (t) {
       case Tab.MUSIC: {
-        content = <Music />;
+        content = <Music exploration={exploration} />;
         break;
       }
       case Tab.SINGER: {
-        content = <Singer />;
+        content = <Singer exploration={exploration} />;
         break;
       }
       case Tab.LYRIC: {
