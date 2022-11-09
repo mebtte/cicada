@@ -7,10 +7,10 @@ import removeOutdatedCaptcha from './jobs/remove_outdated_captcha';
 import createDBSnapshot from './jobs/create_db_snapshot';
 import removeOutdatedLoginCode from './jobs/remove_outdated_login_code';
 import cleanOutdatedFile from './jobs/clean_outdated_file';
-import moveOutdatedFileToTrash from './jobs/move_outdated_file_to_trash';
 import exportMusicbill from './jobs/export_musicbill';
 import removeNoMusicSinger from './jobs/remove_no_music_singer';
 import moveUnlinkedAssetToTrash from './jobs/move_unlinked_asset_to_trash';
+import updateLyricLrcContent from './jobs/update_lyric_lrc_content';
 
 const getTimeString = () => {
   const now = day();
@@ -47,10 +47,6 @@ interface Job {
 }
 const DAILY_JOBS: Job[] = [
   {
-    name: 'move_outdated_file_to_trash',
-    job: moveOutdatedFileToTrash,
-  },
-  {
     name: 'remove_outdated_captcha',
     job: removeOutdatedCaptcha,
   },
@@ -69,6 +65,10 @@ const DAILY_JOBS: Job[] = [
   {
     name: 'move_unlinked_asset_to_trash',
     job: moveUnlinkedAssetToTrash,
+  },
+  {
+    name: 'update_lyric_lrc_content',
+    job: updateLyricLrcContent,
   },
 ];
 const HOURLY_JOBS: Job[] = [

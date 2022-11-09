@@ -1,6 +1,11 @@
 import fs from 'fs';
 import util from 'util';
-import { TRASH_DIR, LOG_DIR, DOWNLOAD_DIR } from '@/constants/directory';
+import {
+  TRASH_DIR,
+  LOG_DIR,
+  DOWNLOAD_DIR,
+  DB_SNAPSHOT_DIR,
+} from '@/constants/directory';
 import withTimeout from '#/utils/with_timeout';
 import { DOWNLOAD_TTL } from '#/constants';
 
@@ -13,7 +18,7 @@ const DIRECTORIES: {
 }[] = [
   {
     directory: TRASH_DIR,
-    ttl: 1000 * 60 * 60 * 24 * 90,
+    ttl: 1000 * 60 * 60 * 24 * 30,
   },
   {
     directory: LOG_DIR,
@@ -22,6 +27,10 @@ const DIRECTORIES: {
   {
     directory: DOWNLOAD_DIR,
     ttl: DOWNLOAD_TTL,
+  },
+  {
+    directory: DB_SNAPSHOT_DIR,
+    ttl: 1000 * 60 * 60 * 24 * 60,
   },
 ];
 
