@@ -62,7 +62,7 @@ function LoginCodePanel({
       const profile = await getProfile();
       p.set({
         ...profile,
-        avatar: getRandomCover(),
+        avatar: profile.avatar || getRandomCover(),
         admin: !!profile.admin,
       });
 

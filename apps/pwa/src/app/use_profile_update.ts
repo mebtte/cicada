@@ -16,7 +16,7 @@ export default () => {
           .then((newProfile) =>
             p.set({
               ...newProfile,
-              avatar: getRandomCover(),
+              avatar: newProfile.avatar || getRandomCover(),
               admin: !!newProfile.admin,
             }),
           )
