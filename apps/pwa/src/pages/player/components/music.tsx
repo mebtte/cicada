@@ -58,6 +58,13 @@ const Style = styled.div`
     }
   }
 
+  > .tags,
+  > .actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
   &:hover {
     background-color: rgb(0 0 0 / 0.05);
   }
@@ -98,52 +105,56 @@ function Music({
           ))}
         </div>
       </div>
-      {music.hq ? <Tag type={Type.HQ} /> : null}
-      {music.ac ? <Tag type={Type.AC} /> : null}
-      <IconButton
-        size={ComponentSize.SMALL}
-        onClick={(event) => {
-          event.stopPropagation();
-          return e.emit(EventType.ACTION_PLAY_MUSIC, { music });
-        }}
-      >
-        <MdPlayArrow />
-      </IconButton>
-      {miniMode ? null : (
-        <>
-          <IconButton
-            size={ComponentSize.SMALL}
-            onClick={(event) => {
-              event.stopPropagation();
-              return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
-                music,
-              });
-            }}
-          >
-            <MdReadMore />
-          </IconButton>
-          <IconButton
-            size={ComponentSize.SMALL}
-            onClick={(event) => {
-              event.stopPropagation();
-              return e.emit(EventType.OPEN_MUSICBILL_LIST_DRAWER, {
-                music,
-              });
-            }}
-          >
-            <MdOutlinePostAdd />
-          </IconButton>
-        </>
-      )}
-      <IconButton
-        size={ComponentSize.SMALL}
-        onClick={(event) => {
-          event.stopPropagation();
-          return openMusicOperatePopup();
-        }}
-      >
-        <MdMoreHoriz />
-      </IconButton>
+      <div className="tags">
+        {music.hq ? <Tag type={Type.HQ} /> : null}
+        {music.ac ? <Tag type={Type.AC} /> : null}
+      </div>
+      <div className="actions">
+        <IconButton
+          size={ComponentSize.SMALL}
+          onClick={(event) => {
+            event.stopPropagation();
+            return e.emit(EventType.ACTION_PLAY_MUSIC, { music });
+          }}
+        >
+          <MdPlayArrow />
+        </IconButton>
+        {miniMode ? null : (
+          <>
+            <IconButton
+              size={ComponentSize.SMALL}
+              onClick={(event) => {
+                event.stopPropagation();
+                return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
+                  music,
+                });
+              }}
+            >
+              <MdReadMore />
+            </IconButton>
+            <IconButton
+              size={ComponentSize.SMALL}
+              onClick={(event) => {
+                event.stopPropagation();
+                return e.emit(EventType.OPEN_MUSICBILL_LIST_DRAWER, {
+                  music,
+                });
+              }}
+            >
+              <MdOutlinePostAdd />
+            </IconButton>
+          </>
+        )}
+        <IconButton
+          size={ComponentSize.SMALL}
+          onClick={(event) => {
+            event.stopPropagation();
+            return openMusicOperatePopup();
+          }}
+        >
+          <MdMoreHoriz />
+        </IconButton>
+      </div>
     </Style>
   );
 }

@@ -8,7 +8,6 @@ import {
   useEffect,
 } from 'react';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import useNavigate from '#/utils/use_navigate';
 import Input from '#/components/input';
 import mm from '@/global_states/mini_mode';
@@ -75,7 +74,6 @@ function Wrapper() {
         onChange: onKeywordChange,
         onKeyDown,
         placeholder: '搜索',
-        maxLength: SEARCH_KEYWORD_MAX_LENGTH,
       }}
     />
   );

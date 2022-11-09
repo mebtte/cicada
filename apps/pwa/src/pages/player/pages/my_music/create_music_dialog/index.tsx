@@ -26,6 +26,7 @@ import useEvent from '#/utils/use_event';
 import notice from '#/utils/notice';
 import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
+import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
@@ -59,7 +60,7 @@ const formatSingerToMultipleSelectOption = (
 const searchSinger = (
   search: string,
 ): Promise<MultipleSelectOption<Singer>[]> => {
-  const keyword = search.trim();
+  const keyword = search.trim().substring(0, SEARCH_KEYWORD_MAX_LENGTH);
   return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
     data.singerList.map(formatSingerToMultipleSelectOption),
   );

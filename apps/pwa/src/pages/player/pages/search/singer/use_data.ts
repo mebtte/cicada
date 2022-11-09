@@ -1,3 +1,4 @@
+import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import logger from '#/utils/logger';
 import { Query } from '@/constants';
 import searchSinger from '@/server/search_singer';
@@ -29,7 +30,10 @@ export default () => {
     setData(dataLoading);
     try {
       const d = await searchSinger({
-        keyword,
+        keyword: keyword
+          .replace(/\s+/g, ' ')
+          .trim()
+          .substring(0, SEARCH_KEYWORD_MAX_LENGTH),
         page: pageNumber,
         pageSize: PAGE_SIZE,
       });

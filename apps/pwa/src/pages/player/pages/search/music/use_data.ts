@@ -1,3 +1,4 @@
+import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import logger from '#/utils/logger';
 import { Query } from '@/constants';
 import searchMusic from '@/server/search_music';
@@ -28,7 +29,10 @@ export default () => {
     setData(dataLoading);
     try {
       const d = await searchMusic({
-        keyword,
+        keyword: keyword
+          .replace(/\s+/g, ' ')
+          .trim()
+          .substring(0, SEARCH_KEYWORD_MAX_LENGTH),
         page: pageNumber,
         pageSize: PAGE_SIZE,
       });

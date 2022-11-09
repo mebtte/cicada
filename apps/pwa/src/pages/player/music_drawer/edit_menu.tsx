@@ -27,6 +27,7 @@ import {
   NAME_MAX_LENGTH,
   ALIAS_MAX_LENGTH,
   MUSIC_MAX_ALIAS_COUNT,
+  SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
 } from '#/constants/music';
 import uploadAsset from '@/server/upload_asset';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
@@ -38,6 +39,7 @@ import logger from '#/utils/logger';
 import { Option } from '#/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
 import searchMusicRequest from '@/server/search_music';
+import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { Music, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -62,7 +64,7 @@ const formatSingerToMultipleSelectOption = (
   value: singer,
 });
 const searchSinger = (search: string): Promise<Option<Singer>[]> => {
-  const keyword = search.trim();
+  const keyword = search.trim().substring(0, SINGER_SEARCH_KEYWORD_MAX_LENGTH);
   return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
     data.singerList.map(formatSingerToMultipleSelectOption),
   );
@@ -97,7 +99,9 @@ function EditMenu({ music }: { music: MusicDetail }) {
   const onClose = () => setOpen(false);
   const searchMusic = useCallback(
     (search: string): Promise<Option<Music>[]> => {
-      const keyword = search.trim();
+      const keyword = search
+        .trim()
+        .substring(0, MUSIC_SEARCH_KEYWORD_MAX_LENGTH);
       return searchMusicRequest({ keyword, page: 1, pageSize: 100 }).then(
         (data) =>
           data.musicList

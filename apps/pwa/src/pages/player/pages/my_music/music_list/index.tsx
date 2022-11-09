@@ -114,11 +114,9 @@ function MusicList() {
             <Row
               style={headStyle}
               one={null}
-              two={<RowHead>名字/别名</RowHead>}
-              three={<RowHead>歌手</RowHead>}
-              four={<RowHead>热度</RowHead>}
-              five={<RowHead>创建时间</RowHead>}
-              six={<RowHead>操作</RowHead>}
+              two={<RowHead>音乐</RowHead>}
+              three={<RowHead>热度</RowHead>}
+              four={<RowHead>操作</RowHead>}
             />
             <div className="list">
               {value!.musicList.map((music) => (
