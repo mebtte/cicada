@@ -4,7 +4,7 @@ import Context from '../../context';
 import Empty from './empty';
 import Playqueue from './playqueue';
 
-const Wrapper = () => {
+function Wrapper() {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return playqueue.length ? (
     <Playqueue
@@ -14,6 +14,6 @@ const Wrapper = () => {
   ) : (
     <Empty />
   );
-};
+}
 
 export default memo(Wrapper);

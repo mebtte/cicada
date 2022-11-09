@@ -164,16 +164,14 @@ export default (playlist: MusicWithIndex[]) => {
           return;
         }
         notice.info(`下一首将播放"${music.name}"`);
-        setPlayqueue(
-          [
-            ...playqueue.slice(0, currentPosition + 1),
-            { ...music, pid: getRandomString() },
-            ...playqueue.slice(currentPosition + 1),
-          ].map((m, index) => ({
+        setPlayqueue([
+          ...playqueue.slice(0, currentPosition + 1),
+          { ...music, pid: getRandomString(), index: currentPosition + 2 },
+          ...playqueue.slice(currentPosition + 1).map((m) => ({
             ...m,
-            index: index + 1,
+            index: m.index + 1,
           })),
-        );
+        ]);
       },
     );
     return unlistenActionInsertMusicToPlayqueue;
