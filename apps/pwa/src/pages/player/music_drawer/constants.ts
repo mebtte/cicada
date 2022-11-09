@@ -2,7 +2,7 @@ import { Music } from '../constants';
 
 export interface Lyric {
   id: number;
-  content: string;
+  lrc: string;
 }
 
 export interface CreateUser {

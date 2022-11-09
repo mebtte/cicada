@@ -8,5 +8,5 @@ export enum Status {
 
 export interface Lyric {
   id: number;
-  content: string;
+  lrc: string;
 }

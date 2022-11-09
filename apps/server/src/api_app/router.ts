@@ -35,6 +35,7 @@ import getUserDetail from './controllers/get_user_detail';
 import getSelfMusicList from './controllers/get_self_music_list';
 import getSelfSingerList from './controllers/get_self_singer_list';
 import deleteMusic from './controllers/delete_music';
+import searchMusicByLyric from './controllers/search_music_by_lyric';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -66,6 +67,7 @@ router.put('/music', authorize, parseBody, updateMusic); // 更新音乐
 router.delete('/music', authorize, deleteMusic); // 删除音乐
 router.get('/music_detail', authorize, getMusicDetail); // 获取音乐详情
 router.get('/music/search', authorize, searchMusic); // 搜索音乐
+router.get('/music/search_by_lyric', authorize, searchMusicByLyric); // 通过歌词搜索音乐
 router.get('/self_music_list', authorize, getSelfMusicList); // 获取自己的音乐列表
 
 router.get('/lyric', authorize, getLyric); // 获取音乐歌词

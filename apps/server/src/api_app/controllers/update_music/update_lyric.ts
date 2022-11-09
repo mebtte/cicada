@@ -7,6 +7,7 @@ import {
 } from '#/constants/music';
 import db from '@/db';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
+import { parse, LineType, LyricLine } from 'clrc';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {
@@ -42,10 +43,21 @@ export default async ({ ctx, music, value }: Parameter) => {
   if (value.length) {
     await db.run(
       `
-        INSERT INTO lyric ( musicId, content )
-        VALUES ${value.map(() => `( ?, ? )`).join(', ')}
+        INSERT INTO lyric ( musicId, lrc, lrcContent )
+        VALUES ${value.map(() => `( ?, ?, ? )`).join(', ')}
       `,
-      value.map((v) => [music.id, v]).flat(),
+      value
+        .map((v) => [
+          music.id,
+          v,
+          parse(v)
+            .filter((line) => line.type === LineType.LYRIC)
+            .map((line) =>
+              (line as LyricLine).content.replace(/\s+/g, ' ').trim(),
+            )
+            .join('\n'),
+        ])
+        .flat(),
     );
   }
 

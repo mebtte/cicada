@@ -3,13 +3,15 @@ import db from '.';
 export enum Property {
   ID = 'id',
   MUSIC_ID = 'musicId',
-  CONTENT = 'content',
+  LRC = 'lrc',
+  LRC_CONTENT = 'lrcContent',
 }
 
 export type Lyric = {
   [Property.ID]: number;
   [Property.MUSIC_ID]: string;
-  [Property.CONTENT]: string;
+  [Property.LRC]: string;
+  [Property.LRC_CONTENT]: string;
 };
 
 export function getLyricListByMusicId<P extends Property>(

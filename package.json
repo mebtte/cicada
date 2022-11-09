@@ -42,6 +42,7 @@
     "@expo/spawn-async": "^1.6.0",
     "@koa/cors": "^3.3.0",
     "archiver": "^5.3.1",
+    "clrc": "^3.0.1",
     "eventin": "^1.2.0",
     "file-type": "^16.5.3",
     "html-entities": "^2.3.3",

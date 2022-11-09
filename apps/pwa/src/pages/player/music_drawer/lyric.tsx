@@ -16,7 +16,7 @@ function Lyric({ music }: { music: MusicDetail }) {
   return music.type === MusicType.SONG ? (
     music.lyrics.length ? (
       <MultipleLrc
-        lrcs={music.lyrics.map((l) => l.content)}
+        lrcs={music.lyrics.map((l) => l.lrc)}
         // eslint-disable-next-line react/no-unstable-nested-components
         lineRenderer={({ line }) => (
           <Line key={line.id}>

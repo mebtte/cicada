@@ -24,7 +24,7 @@ export default async (ctx: Context) => {
 
   const lyrics = await getLyricListByMusicId(musicId, [
     LyricProperty.ID,
-    LyricProperty.CONTENT,
+    LyricProperty.LRC,
   ]);
 
   return ctx.success(lyrics);

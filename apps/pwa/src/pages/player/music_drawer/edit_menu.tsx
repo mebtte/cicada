@@ -218,7 +218,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                 type: EditDialogType.TEXTAREA_LIST,
                 title: '编辑歌词',
                 label: '歌词',
-                initialValue: music.lyrics.map((l) => l.content),
+                initialValue: music.lyrics.map((l) => l.lrc),
                 max: MUSIC_MAX_LRYIC_AMOUNT,
                 maxLength: LYRIC_MAX_LENGTH,
                 placeholder: 'LRC 格式的文本',
@@ -230,7 +230,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                   if (
                     !stringArrayEqual(
                       trimmedLyrics,
-                      music.lyrics.map((l) => l.content),
+                      music.lyrics.map((l) => l.lrc),
                     )
                   ) {
                     await updateMusic({

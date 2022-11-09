@@ -48,7 +48,7 @@ export default async (ctx: Context) => {
     musicbillMusicList,
   ] = await Promise.all([
     music.type === MusicType.SONG
-      ? getLyricListByMusicId(id, [LyricProperty.ID, LyricProperty.CONTENT])
+      ? getLyricListByMusicId(id, [LyricProperty.ID, LyricProperty.LRC])
       : [],
     getMusicForkFromList(id, [
       MusicForkProperty.ID,

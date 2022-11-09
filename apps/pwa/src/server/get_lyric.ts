@@ -10,7 +10,7 @@ function getLyric({
   return request<
     {
       id: number;
-      content: string;
+      lrc: string;
     }[]
   >({
     path: '/api/lyric',

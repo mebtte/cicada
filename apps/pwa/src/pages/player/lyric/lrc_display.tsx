@@ -66,7 +66,7 @@ function LrcDisplay({ lyrics }: { lyrics: Lyric[] }) {
     return unlistenScrollToCurrentLine;
   }, [recoverAutoScrollImmediately]);
 
-  const lrcs = useMemo(() => lyrics.map((l) => l.content), [lyrics]);
+  const lrcs = useMemo(() => lyrics.map((l) => l.lrc), [lyrics]);
   return (
     <StyledLrc
       lrcs={lrcs}

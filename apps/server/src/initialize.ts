@@ -136,7 +136,8 @@ if (cluster.isPrimary) {
         CREATE TABLE lyric (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           musicId TEXT NOT NULL,
-          content TEXT NOT NULL,
+          lrc TEXT NOT NULL,
+          lrcContent TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
         );
       `;
