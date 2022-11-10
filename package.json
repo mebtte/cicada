@@ -1,6 +1,6 @@
 {
   "name": "cicada",
-  "description": "知了, 一个自主托管的音乐服务, 更是一个播放器.",
+  "description": "知了, 一个支持多用户的自主托管音乐管理服务, 更是一个播放器.",
   "private": true,
   "bin": "index.js",
   "repository": {
@@ -166,6 +166,7 @@
     "workbox-strategies": "^6.5.4",
     "workbox-webpack-plugin": "^6.5.4",
     "workbox-window": "^6.5.4",
+    "xss": "^1.0.14",
     "yargs": "^17.5.1"
   },
   "overrides": {

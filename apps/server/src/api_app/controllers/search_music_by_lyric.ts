@@ -147,12 +147,13 @@ export default async (ctx: Context) => {
     total: totalObject!.value,
     musicList: musicList.map((m) => ({
       ...m,
+      aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
       sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
       hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
       ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
-      lyrics: musicIdMapLyricList[m.id] || [],
       singers: musicIdMapSingerList[m.id] || [],
+      lyrics: musicIdMapLyricList[m.id] || [],
     })),
   });
 };

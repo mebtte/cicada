@@ -11,11 +11,10 @@ import { Query } from '@/constants';
 import { CSSProperties } from 'react';
 import Button, { Variant } from '#/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import mm from '@/global_states/mini_mode';
 import { TOOLBAR_HEIGHT } from '../constants';
 import { PAGE_SIZE } from './constants';
 import useData from './use_data';
-import Music from '../../../components/music';
+import MusicWithLyric from './music_with_lyric';
 import CreateMusicGuide from '../create_music_guide';
 
 const Container = styled(animated.div)`
@@ -37,7 +36,6 @@ const paginationStyle: CSSProperties = {
 };
 
 function Wrapper() {
-  const miniMode = mm.useState();
   const navigate = useNavigate();
   const { data, reload, page } = useData();
 
@@ -85,7 +83,11 @@ function Wrapper() {
       <MusicContainer style={style}>
         <div className="list">
           {d.value!.musicList.map((music) => (
-            <Music key={music.id} music={music} miniMode={miniMode} />
+            <MusicWithLyric
+              key={music.id}
+              music={music}
+              keyword={d.value!.keyword}
+            />
           ))}
         </div>
         {d.value!.total ? (
