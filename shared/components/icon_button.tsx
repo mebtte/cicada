@@ -33,11 +33,11 @@ const Style = styled.button<{ size: ComponentSize }>`
   }
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   }
 
   &:active {
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   }
 
   &:disabled {

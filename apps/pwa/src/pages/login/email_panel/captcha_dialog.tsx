@@ -13,17 +13,13 @@ import { ExceptionCode } from '#/constants/exception';
 import notice from '#/utils/notice';
 import sleep from '#/utils/sleep';
 import ErrorWithCode from '@/utils/error_with_code';
-import Dialog, { Content } from '#/components/dialog';
+import Dialog, { Container } from '#/components/dialog';
 import Spinner from '#/components/spinner';
 import Input from '#/components/input';
 import Button, { Variant } from '#/components/button';
 import useCaptchaData from './use_captcha_data';
 
-const StyledContent = styled(Content)`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-
+const StyledContainer = styled(Container)`
   > .graph {
     cursor: pointer;
 
@@ -130,7 +126,7 @@ function CaptchaDialog({
     );
   } else {
     content = (
-      <StyledContent>
+      <StyledContainer>
         <div
           className="graph"
           // eslint-disable-next-line react/no-danger
@@ -157,7 +153,7 @@ function CaptchaDialog({
         >
           确定
         </Button>
-      </StyledContent>
+      </StyledContainer>
     );
   }
   return (

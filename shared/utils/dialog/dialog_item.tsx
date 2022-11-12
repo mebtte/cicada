@@ -1,6 +1,11 @@
 import { CSSProperties, useEffect, useState } from 'react';
 import { Confirm, Dialog as DialogShape, DialogType } from './constants';
-import Dialog, { Content, Title, Action } from '../../components/dialog';
+import Dialog, {
+  Container,
+  Content,
+  Title,
+  Action,
+} from '../../components/dialog';
 import Button, { Variant } from '../../components/button';
 import useEvent from '../use_event';
 import { UtilZIndex } from '../../constants/style';
@@ -68,23 +73,29 @@ function DialogItem({
 
   return (
     <Dialog open={open} maskProps={maskProps}>
-      {dialog.title ? <Title>{dialog.title}</Title> : null}
-      {dialog.content ? <Content>{dialog.content}</Content> : null}
-      <Action>
-        {dialog.type === DialogType.CONFIRM ? (
-          <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-            {(dialog as Confirm).cancelText || '取消'}
+      <Container>
+        {dialog.title ? <Title>{dialog.title}</Title> : null}
+        {dialog.content ? <Content>{dialog.content}</Content> : null}
+        <Action>
+          {dialog.type === DialogType.CONFIRM ? (
+            <Button
+              onClick={onCancel}
+              loading={canceling}
+              disabled={confirming}
+            >
+              {(dialog as Confirm).cancelText || '取消'}
+            </Button>
+          ) : null}
+          <Button
+            variant={Variant.PRIMARY}
+            onClick={onConfirm}
+            loading={confirming}
+            disabled={canceling}
+          >
+            {dialog.confirmText || '确定'}
           </Button>
-        ) : null}
-        <Button
-          variant={Variant.PRIMARY}
-          onClick={onConfirm}
-          loading={confirming}
-          disabled={canceling}
-        >
-          {dialog.confirmText || '确定'}
-        </Button>
-      </Action>
+        </Action>
+      </Container>
     </Dialog>
   );
 }

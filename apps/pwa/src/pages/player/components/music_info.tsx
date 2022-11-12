@@ -2,6 +2,8 @@ import { CSSProperties, HtmlHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import ellipsis from '#/style/ellipsis';
 import Cover from '#/components/cover';
+import { CSSVariable } from '#/global_style';
+import Tag, { Type } from '#/components/tag';
 import eventemitter, { EventType } from '../eventemitter';
 import Singer from './singer';
 import { Music as MusicType } from '../constants';
@@ -10,6 +12,7 @@ const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  padding: 10px 20px;
 
   > .info {
     flex: 1;
@@ -21,10 +24,6 @@ const Style = styled.div`
       cursor: pointer;
       color: rgb(55 55 55);
       line-height: 1.5;
-
-      &:hover {
-        color: rgb(0 0 0);
-      }
     }
 
     > .singers {
@@ -32,6 +31,20 @@ const Style = styled.div`
       font-size: 12px;
       color: rgb(155 155 155);
     }
+  }
+
+  > .tags {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &:hover {
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  }
+
+  &:active {
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   }
 `;
 const coverStyle: CSSProperties = {
@@ -60,6 +73,10 @@ function MusicInfo({
             <Singer key={s.id} singer={s} />
           ))}
         </div>
+      </div>
+      <div className="tags">
+        {music.hq ? <Tag type={Type.HQ} /> : null}
+        {music.ac ? <Tag type={Type.AC} /> : null}
       </div>
     </Style>
   );

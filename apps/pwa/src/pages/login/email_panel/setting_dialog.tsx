@@ -1,4 +1,4 @@
-import Dialog, { Title, Content, Action } from '#/components/dialog';
+import Dialog, { Container, Title, Content, Action } from '#/components/dialog';
 import Button, { Variant } from '#/components/button';
 import Input from '#/components/input';
 import setting from '@/global_states/setting';
@@ -28,22 +28,24 @@ function SettingDialog({
 
   return (
     <Dialog open={open}>
-      <Title>设置</Title>
-      <Content>
-        <Input
-          label="服务器地址"
-          inputProps={{
-            value: serverAddress,
-            onChange: (event) => setServerAddress(event.target.value),
-          }}
-        />
-      </Content>
-      <Action>
-        <Button onClick={onClose}>取消</Button>
-        <Button variant={Variant.PRIMARY} onClick={onSave}>
-          确定
-        </Button>
-      </Action>
+      <Container>
+        <Title>设置</Title>
+        <Content>
+          <Input
+            label="服务器地址"
+            inputProps={{
+              value: serverAddress,
+              onChange: (event) => setServerAddress(event.target.value),
+            }}
+          />
+        </Content>
+        <Action>
+          <Button onClick={onClose}>取消</Button>
+          <Button variant={Variant.PRIMARY} onClick={onSave}>
+            确定
+          </Button>
+        </Action>
+      </Container>
     </Dialog>
   );
 }

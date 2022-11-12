@@ -1,6 +1,5 @@
 import Container from './container';
 import Singer from '../../components/singer';
-import MusicTagList from '../../components/music_tag_list';
 import { Music as MusicType } from '../../constants';
 import eventemitter, { EventType } from '../../eventemitter';
 
@@ -26,7 +25,6 @@ function MusicInfo({
           ))}
         </span>
       </div>
-      <MusicTagList music={music} />
     </Container>
   );
 }

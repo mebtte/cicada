@@ -1,4 +1,4 @@
-import Dialog, { Title, Content, Action } from '#/components/dialog';
+import Dialog, { Container, Title, Content, Action } from '#/components/dialog';
 import Button, { Variant } from '#/components/button';
 import Input from '#/components/input';
 import {
@@ -139,55 +139,61 @@ function CreateMusicDialog() {
 
   return (
     <Dialog open={open} maskProps={maskProps}>
-      <Title>创建音乐</Title>
-      <StyledContent>
-        <MultipleSelect<Singer>
-          label="歌手列表"
-          value={singerList.map(formatSingerToMultipleSelectOption)}
-          onChange={onSingerListChange}
-          dataGetter={searchSinger}
-          disabled={loading}
-          addon={<CreateSinger />}
-        />
-        <Input
-          label="名字"
-          inputProps={{
-            value: name,
-            onChange: onNameChange,
-            maxLength: NAME_MAX_LENGTH,
-          }}
-          disabled={loading}
-        />
-        <Select<MusicType>
-          label="类型"
-          data={MUSIC_TYPE_OPTIONS}
-          value={{
-            key: musicType,
-            label: MUSIC_TYPE_MAP[musicType].label,
-            value: musicType,
-          }}
-          onChange={onMusicTypeChange}
-          disabled={loading}
-        />
-        <FileSelect
-          label="标准音质文件"
-          value={sq}
-          onChange={onSqChange}
-          disabled={loading}
-          acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC_SQ].acceptTypes}
-          placeholder={`选择文件, 支持以下格式 ${ASSET_TYPE_MAP[
-            AssetType.MUSIC_SQ
-          ].acceptTypes.join(', ')}`}
-        />
-      </StyledContent>
-      <Action>
-        <Button onClick={onClose} disabled={loading}>
-          取消
-        </Button>
-        <Button variant={Variant.PRIMARY} onClick={onCreate} loading={loading}>
-          创建
-        </Button>
-      </Action>
+      <Container>
+        <Title>创建音乐</Title>
+        <StyledContent>
+          <MultipleSelect<Singer>
+            label="歌手列表"
+            value={singerList.map(formatSingerToMultipleSelectOption)}
+            onChange={onSingerListChange}
+            dataGetter={searchSinger}
+            disabled={loading}
+            addon={<CreateSinger />}
+          />
+          <Input
+            label="名字"
+            inputProps={{
+              value: name,
+              onChange: onNameChange,
+              maxLength: NAME_MAX_LENGTH,
+            }}
+            disabled={loading}
+          />
+          <Select<MusicType>
+            label="类型"
+            data={MUSIC_TYPE_OPTIONS}
+            value={{
+              key: musicType,
+              label: MUSIC_TYPE_MAP[musicType].label,
+              value: musicType,
+            }}
+            onChange={onMusicTypeChange}
+            disabled={loading}
+          />
+          <FileSelect
+            label="标准音质文件"
+            value={sq}
+            onChange={onSqChange}
+            disabled={loading}
+            acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC_SQ].acceptTypes}
+            placeholder={`选择文件, 支持以下格式 ${ASSET_TYPE_MAP[
+              AssetType.MUSIC_SQ
+            ].acceptTypes.join(', ')}`}
+          />
+        </StyledContent>
+        <Action>
+          <Button onClick={onClose} disabled={loading}>
+            取消
+          </Button>
+          <Button
+            variant={Variant.PRIMARY}
+            onClick={onCreate}
+            loading={loading}
+          >
+            创建
+          </Button>
+        </Action>
+      </Container>
     </Dialog>
   );
 }

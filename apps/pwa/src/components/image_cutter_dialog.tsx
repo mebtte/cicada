@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import Cropper from 'cropperjs';
 import logger from '#/utils/logger';
-import Dialog, { Content, Action } from '#/components/dialog';
+import Dialog, { Container, Content, Action } from '#/components/dialog';
 import dialog from '#/utils/dialog';
 import selectFile from '#/utils/select_file';
 import loadImage from '../utils/load_image';
@@ -113,33 +113,35 @@ function ImageCutterDialog({
 
   return (
     <Dialog open={open}>
-      <Content>
-        {imageUrl ? (
-          <ImgBox>
-            <img src={imageUrl} ref={imageRef} alt="selected" />
-          </ImgBox>
-        ) : (
-          <Empty>请选取一张图片</Empty>
-        )}
-      </Content>
-      <Action>
-        <div className="left">
+      <Container>
+        <Content>
+          {imageUrl ? (
+            <ImgBox>
+              <img src={imageUrl} ref={imageRef} alt="selected" />
+            </ImgBox>
+          ) : (
+            <Empty>请选取一张图片</Empty>
+          )}
+        </Content>
+        <Action>
+          <div className="left">
+            <Button
+              label="选取图片"
+              type={Type.PRIMARY}
+              onClick={onSelectImage}
+              disabled={saving}
+            />
+          </div>
+          <Button label="取消" onClick={onClose} disabled={saving} />
           <Button
-            label="选取图片"
+            label="更新"
             type={Type.PRIMARY}
-            onClick={onSelectImage}
-            disabled={saving}
+            disabled={!imageUrl}
+            loading={saving}
+            onClick={onUpdateWrapper}
           />
-        </div>
-        <Button label="取消" onClick={onClose} disabled={saving} />
-        <Button
-          label="更新"
-          type={Type.PRIMARY}
-          disabled={!imageUrl}
-          loading={saving}
-          onClick={onUpdateWrapper}
-        />
-      </Action>
+        </Action>
+      </Container>
     </Dialog>
   );
 }

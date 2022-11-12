@@ -28,7 +28,7 @@ const Style = styled(NavLink)`
   }
 
   &:hover {
-    background-color: rgb(0 0 0 / 0.05);
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   }
 
   &.active {

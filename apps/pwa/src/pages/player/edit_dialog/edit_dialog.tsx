@@ -1,4 +1,4 @@
-import Dialog, { Title, Content, Action } from '#/components/dialog';
+import Dialog, { Container, Title, Content, Action } from '#/components/dialog';
 import {
   ForwardRefExoticComponent,
   CSSProperties,
@@ -71,19 +71,21 @@ function EditDialog({
   const { Component, bodyStyle } = TYPE_MAP_RENDER[type];
   return (
     <Dialog open={open} maskProps={maskProps} bodyProps={{ style: bodyStyle }}>
-      <Title>{title}</Title>
-      <Content>
-        {/* @ts-expect-error */}
-        <Component data={data} loading={loading} ref={ref} />
-      </Content>
-      <Action>
-        <Button onClick={onClose} disabled={loading}>
-          取消
-        </Button>
-        <Button onClick={onSubmitWrapper} loading={loading}>
-          确认
-        </Button>
-      </Action>
+      <Container>
+        <Title>{title}</Title>
+        <Content>
+          {/* @ts-expect-error */}
+          <Component data={data} loading={loading} ref={ref} />
+        </Content>
+        <Action>
+          <Button onClick={onClose} disabled={loading}>
+            取消
+          </Button>
+          <Button onClick={onSubmitWrapper} loading={loading}>
+            确认
+          </Button>
+        </Action>
+      </Container>
     </Dialog>
   );
 }

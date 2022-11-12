@@ -10,7 +10,7 @@ import notice from '#/utils/notice';
 import logger from '#/utils/logger';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '#/utils/dialog';
-import Dialog, { Content, Action } from '#/components/dialog';
+import Dialog, { Container, Content, Action } from '#/components/dialog';
 import Button, { Type } from '@/components/button';
 import Input from '@/components/input';
 import playerEventemitter, {
@@ -91,40 +91,42 @@ function EditDialog({ musicbill }: { musicbill: Musicbill }) {
   }, [open, musicbill]);
   return (
     <Dialog open={open}>
-      <StyledContent>
-        <Label label="封面">
-          <CoverBox>
-            <Avatar animated src={musicbill.cover} size={80} />
-            <IconButton
-              name={Name.EDIT_OUTLINE}
-              onClick={openCoverEditDialog}
+      <Container>
+        <StyledContent>
+          <Label label="封面">
+            <CoverBox>
+              <Avatar animated src={musicbill.cover} size={80} />
+              <IconButton
+                name={Name.EDIT_OUTLINE}
+                onClick={openCoverEditDialog}
+                disabled={saving}
+              />
+            </CoverBox>
+          </Label>
+          <Label label="名字">
+            <Input
+              value={name}
+              onChange={onNameChange}
+              style={inputStyle}
+              maxLength={NAME_MAX_LENGTH}
               disabled={saving}
+              type="text"
             />
-          </CoverBox>
-        </Label>
-        <Label label="名字">
-          <Input
-            value={name}
-            onChange={onNameChange}
-            style={inputStyle}
-            maxLength={NAME_MAX_LENGTH}
-            disabled={saving}
-            type="text"
+          </Label>
+          <Label label="公开">
+            <Switch open={publiz} onChange={setPubliz} disabled={saving} />
+          </Label>
+        </StyledContent>
+        <Action>
+          <Button label="取消" onClick={onClose} disabled={saving} />
+          <Button
+            label="更新"
+            loading={saving}
+            onClick={onSave}
+            type={Type.PRIMARY}
           />
-        </Label>
-        <Label label="公开">
-          <Switch open={publiz} onChange={setPubliz} disabled={saving} />
-        </Label>
-      </StyledContent>
-      <Action>
-        <Button label="取消" onClick={onClose} disabled={saving} />
-        <Button
-          label="更新"
-          loading={saving}
-          onClick={onSave}
-          type={Type.PRIMARY}
-        />
-      </Action>
+        </Action>
+      </Container>
     </Dialog>
   );
 }

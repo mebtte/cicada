@@ -23,11 +23,11 @@ const Style = styled.div<{ active: boolean }>`
   }
 
   &:hover {
-    background-color: rgb(0 0 0 / 0.05);
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   }
 
   &:active {
-    background-color: rgb(0 0 0 / 0.1);
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   }
 
   ${({ active }) => css`

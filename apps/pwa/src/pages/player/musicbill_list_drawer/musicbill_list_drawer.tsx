@@ -17,7 +17,6 @@ const bodyProps: { style: CSSProperties } = {
   },
 };
 const musicInfoStyle = {
-  padding: '0 20px',
   marginBottom: 20,
 };
 const cardStyle = {

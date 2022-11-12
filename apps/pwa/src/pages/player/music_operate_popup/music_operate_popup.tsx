@@ -1,5 +1,4 @@
 import { CSSProperties, memo } from 'react';
-import styled from 'styled-components';
 import {
   MdDownload,
   MdPlaylistAdd,
@@ -13,13 +12,10 @@ import { Music as MusicType } from '../constants';
 import useMusicOperate from '../use_music_operate';
 import MusicInfo from '../components/music_info';
 
-const MusicInfoWrapper = styled.div`
-  padding: 10px 20px;
-`;
 const bodyProps: { style: CSSProperties } = {
   style: {
-    padding: '10px 0 5px 0',
     maxWidth: 350,
+    padding: '10px 0',
   },
 };
 
@@ -49,9 +45,7 @@ function MusicOperateDrawer({
       maskProps={{ style: { zIndex } }}
       bodyProps={bodyProps}
     >
-      <MusicInfoWrapper>
-        <MusicInfo music={music} />
-      </MusicInfoWrapper>
+      <MusicInfo music={music} />
       <MenuItem icon={<MdPlayArrow />} label="播放" onClick={onPlay} />
       <MenuItem
         icon={<MdReadMore />}
