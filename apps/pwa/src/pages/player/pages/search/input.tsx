@@ -30,7 +30,9 @@ function Wrapper() {
           if (e.key === 'Enter') {
             navigate({
               query: {
-                [Query.KEYWORD]: keyword.replace(/\s+/g, ' ').trim(),
+                [Query.KEYWORD]: window.encodeURIComponent(
+                  keyword.replace(/\s+/g, ' ').trim(),
+                ),
               },
             });
           }

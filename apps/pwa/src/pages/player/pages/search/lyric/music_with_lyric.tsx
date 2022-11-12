@@ -7,6 +7,7 @@ import xss from 'xss';
 import Music from '../../../components/music';
 import { MusicWithLyric as MusicWithLyricType } from './constants';
 
+const escapeRegex = (s: string) => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 const StyledMusic = styled(Music)`
   > .lrc {
     margin: 0 20px 0 65px;
@@ -32,7 +33,7 @@ function MusicWithLyric({
   keyword: string;
 }) {
   const miniMode = mm.useState();
-  const replacement = new RegExp(keyword.toLowerCase(), 'i');
+  const replacement = new RegExp(escapeRegex(keyword), 'i');
   return (
     <StyledMusic
       music={music}

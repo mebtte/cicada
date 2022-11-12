@@ -41,11 +41,13 @@ function Wrapper() {
         path: ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH,
       });
     }
-    const trimKeyword = keyword.trim();
+
     return navigate({
       path: ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH,
       query: {
-        [Query.KEYWORD]: trimKeyword,
+        [Query.KEYWORD]: window.encodeURIComponent(
+          keyword.replace(/\s+/g, ' ').trim(),
+        ),
         [Query.PAGE]: 1,
       },
     });
