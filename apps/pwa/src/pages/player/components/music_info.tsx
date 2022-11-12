@@ -1,4 +1,4 @@
-import { CSSProperties, HtmlHTMLAttributes } from 'react';
+import { HtmlHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import ellipsis from '#/style/ellipsis';
 import Cover from '#/components/cover';
@@ -14,6 +14,8 @@ const Style = styled.div`
   gap: 10px;
   padding: 10px 20px;
 
+  cursor: pointer;
+
   > .info {
     flex: 1;
     min-width: 0;
@@ -21,7 +23,6 @@ const Style = styled.div`
     > .name {
       ${ellipsis}
       font-size: 14px;
-      cursor: pointer;
       color: rgb(55 55 55);
       line-height: 1.5;
     }
@@ -47,9 +48,6 @@ const Style = styled.div`
     background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   }
 `;
-const coverStyle: CSSProperties = {
-  cursor: 'pointer',
-};
 
 function MusicInfo({
   music,
@@ -65,7 +63,7 @@ function MusicInfo({
         eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id })
       }
     >
-      <Cover style={coverStyle} src={cover} size={40} />
+      <Cover src={cover} size={40} />
       <div className="info">
         <div className="name">{name}</div>
         <div className="singers ">
