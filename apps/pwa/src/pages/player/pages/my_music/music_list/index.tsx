@@ -9,12 +9,12 @@ import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '#/style/absolute_full_size';
-import { CSSVariable } from '#/global_style';
 import Button, { Variant } from '#/components/button';
+import mm from '@/global_states/mini_mode';
+import { HEADER_HEIGHT } from '@/pages/player/constants';
 import useMusicList from './use_music_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import Music from './music';
-import Row from './row';
 
 const Style = styled.div`
   flex: 1;
@@ -24,6 +24,8 @@ const Style = styled.div`
 `;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
+
+  padding-top: ${HEADER_HEIGHT}px;
 `;
 const CardContainer = styled(Container)`
   ${flexCenter}
@@ -39,20 +41,10 @@ const MusicListContainer = styled(Container)`
 const paginationStyle: CSSProperties = {
   margin: '10px 0',
 };
-const headStyle: CSSProperties = {
-  zIndex: 1,
-  position: 'sticky',
-  height: 30,
-  top: 0,
-  backdropFilter: 'blur(5px)',
-};
-const RowHead = styled.div`
-  font-size: 12px;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-`;
 
 function MusicList() {
   const navigate = useNavigate();
+  const miniMode = mm.useState();
   const onPageChange = useCallback(
     (p: number) =>
       navigate({
@@ -111,16 +103,9 @@ function MusicList() {
 
         return (
           <MusicListContainer style={style}>
-            <Row
-              style={headStyle}
-              one={null}
-              two={<RowHead>音乐</RowHead>}
-              three={<RowHead>热度</RowHead>}
-              four={<RowHead>操作</RowHead>}
-            />
             <div className="list">
               {value!.musicList.map((music) => (
-                <Music key={music.id} music={music} />
+                <Music key={music.id} music={music} miniMode={miniMode} />
               ))}
             </div>
             {value!.total ? (

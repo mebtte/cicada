@@ -18,6 +18,7 @@ import Singer from './singer';
 const Style = styled.div`
   cursor: pointer;
   transition: 300ms;
+  user-select: none;
 
   > .content {
     height: 50px;
@@ -69,11 +70,11 @@ const Style = styled.div`
   }
 
   &:hover {
-    background-color: rgb(0 0 0 / 0.05) !important;
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE} !important;
   }
 
   &:active {
-    background-color: rgb(0 0 0 / 0.1) !important;
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO} !important;
   }
 `;
 

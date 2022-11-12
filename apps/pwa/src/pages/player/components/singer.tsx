@@ -5,6 +5,8 @@ import playerEventemitter, {
 } from '../eventemitter';
 
 const Style = styled.span`
+  user-select: none;
+
   > .name {
     cursor: pointer;
 

@@ -12,11 +12,7 @@ const StyledMusic = styled(Music)`
     margin: 0 20px 0 65px;
     padding: 5px 0 10px 0;
 
-    border-top: 1px solid rgb(0 0 0 / 0.05);
-  }
-
-  &:nth-child(odd) {
-    background-color: rgb(0 0 0 / 0.02);
+    border-top: 1px solid ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   }
 `;
 const Line = styled.div`

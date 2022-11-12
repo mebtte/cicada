@@ -28,7 +28,7 @@ function CreateUser({
    */
   return (
     <Style>
-      由「<span className="nickname">{user.nickname}</span>」于「{createTime}
+      「<span className="nickname">{user.nickname}</span>」于「{createTime}
       」创建
     </Style>
   );

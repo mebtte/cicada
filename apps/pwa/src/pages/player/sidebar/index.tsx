@@ -1,3 +1,4 @@
+import { CSSVariable } from '#/global_style';
 import mm from '@/global_states/mini_mode';
 import styled from 'styled-components';
 import { WIDTH } from './constants';
@@ -7,7 +8,7 @@ import MiniMode from './mini_mode';
 const Placeholder = styled.div`
   width: ${WIDTH}px;
 
-  background-color: rgb(0 0 0 / 0.02);
+  background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   overflow: auto;
 `;
 

@@ -16,6 +16,9 @@ export enum CSSVariable {
   TEXT_COLOR_DISABLED = 'var(--text-color-disabled)',
 
   BACKGROUND_DISABLED = 'var(--background-disabled)',
+  BACKGROUND_COLOR_LEVEL_ONE = 'var(--background-color-level-one)',
+  BACKGROUND_COLOR_LEVEL_TWO = 'var(--background-color-level-two)',
+  BACKGROUND_COLOR_LEVEL_THREE = 'var(--background-color-level-three)',
 }
 
 const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
@@ -34,6 +37,9 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.TEXT_COLOR_DISABLED]: 'rgb(222 222 222)',
 
   [CSSVariable.BACKGROUND_DISABLED]: 'rgb(244 244 244)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_ONE]: 'rgb(0 0 0 / 0.02)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_TWO]: 'rgb(0 0 0 / 0.04)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_THREE]: 'rgb(0 0 0 / 0.06)',
 };
 
 export const GlobalStyle = createGlobalStyle`
