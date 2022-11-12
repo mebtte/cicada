@@ -13,7 +13,7 @@ import usePlayqueue from './use_playqueue';
 import usePlayMode from './use_play_mode';
 import Context from './context';
 import Audio from './audio';
-import MediaSession from './media_session';
+import useMediaSession from './use_media_session';
 import MusicOperatePopup from './music_operate_popup';
 import MusicDrawer from './music_drawer';
 import ListDrawer from './list_drawer';
@@ -68,6 +68,7 @@ function Wrapper() {
     | undefined;
 
   useKeyboard();
+  useMediaSession({ music: queueMusic });
 
   return (
     <Context.Provider
@@ -117,10 +118,7 @@ function Wrapper() {
       <EditDialog />
 
       {queueMusic ? (
-        <>
-          <Audio playMode={playMode} queueMusic={queueMusic} />
-          <MediaSession music={queueMusic} />
-        </>
+        <Audio playMode={playMode} queueMusic={queueMusic} />
       ) : null}
     </Context.Provider>
   );
