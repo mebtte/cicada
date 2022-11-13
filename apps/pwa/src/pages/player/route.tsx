@@ -1,13 +1,15 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { PLAYER_PATH } from '@/constants/route';
+import p from '@/global_states/profile';
 import Search from './pages/search';
 import Musicbill from './pages/musicbill';
 import Setting from './pages/setting';
 import MyMusic from './pages/my_music';
 import MySinger from './pages/my_singer';
-import Admin from './pages/admin';
+import UserManage from './pages/user_manage';
 
 function Wrapper() {
+  const profile = p.useState();
   return (
     <Routes>
       <Route
@@ -18,8 +20,12 @@ function Wrapper() {
       <Route path={PLAYER_PATH.MY_MUSIC} element={<MyMusic />} />
       <Route path={PLAYER_PATH.MY_SINGER} element={<MySinger />} />
       <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
-      <Route path={PLAYER_PATH.ADMIN} element={<Admin />} />
       <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
+
+      {profile?.admin ? (
+        <Route path={PLAYER_PATH.USER_MANAGE} element={<UserManage />} />
+      ) : null}
+
       <Route path="*" element={<Navigate to={PLAYER_PATH.EXPLORE} replace />} />
     </Routes>
   );

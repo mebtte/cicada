@@ -9,17 +9,17 @@ const style: CSSProperties = {
   width: 'calc(100% - 40px)',
 };
 
-function Admin() {
+function UserManage() {
   const navigate = useNavigate();
   return (
     <Button
       variant={Variant.PRIMARY}
       style={style}
-      onClick={() => navigate(ROOT_PATH.PLAYER + PLAYER_PATH.ADMIN)}
+      onClick={() => navigate(ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE)}
     >
-      管理员菜单
+      用户管理
     </Button>
   );
 }
 
-export default Admin;
+export default UserManage;

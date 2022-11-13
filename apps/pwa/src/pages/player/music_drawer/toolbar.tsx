@@ -16,6 +16,8 @@ import { MINI_INFO_HEIGHT, MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
 
 const Style = styled.div`
+  z-index: 1;
+
   position: sticky;
   top: ${MINI_INFO_HEIGHT}px;
   height: 45px;

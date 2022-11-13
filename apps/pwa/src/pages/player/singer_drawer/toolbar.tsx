@@ -10,6 +10,8 @@ import e, { EventType } from './eventemitter';
 
 const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, null);
 const Style = styled.div`
+  z-index: 1;
+
   position: sticky;
   top: ${MINI_INFO_HEIGHT}px;
   height: 45px;

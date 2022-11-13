@@ -10,7 +10,6 @@ import getCaptcha from './controllers/get_captcha';
 import getLoginCode from './controllers/get_login_code';
 import login from './controllers/login';
 import getProfile from './controllers/get_profile';
-import createUser from './controllers/create_user';
 import getSelfMusicbillList from './controllers/get_self_musicbill_list';
 import getSelfMusicbill from './controllers/get_self_musicbill';
 import addMusicToMusicbill from './controllers/add_music_to_musicbill';
@@ -36,6 +35,8 @@ import getSelfMusicList from './controllers/get_self_music_list';
 import getSelfSingerList from './controllers/get_self_singer_list';
 import deleteMusic from './controllers/delete_music';
 import searchMusicByLyric from './controllers/search_music_by_lyric';
+
+import adminCreateUser from './controllers/admin_create_user';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -79,9 +80,16 @@ router.get('/singer_detail', authorize, getSingerDetail); // 获取歌手详情
 router.get('/self_singer_list', authorize, getSelfSingerList); // 获取自己的歌手列表
 
 /**
- * admin authorize
+ * 管理员
+ * @author mebtte<hi@mebtte.com>
  */
-router.post('/user', authorize, adminAuthorize, parseBody, createUser); // 创建用户
+router.post(
+  '/admin/user',
+  authorize,
+  adminAuthorize,
+  parseBody,
+  adminCreateUser,
+); // 创建用户
 
 /**
  * 上传音乐播放记录使用的是 navigator.sendBeacon

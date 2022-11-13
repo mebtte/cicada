@@ -20,25 +20,21 @@ const generateEmailHtml = () => `Hi,
 如果使用中有任何问题或者建议, 可以通过 <a href="https://github.com/mebtte/cicada">Issue</a> 进行反馈.
 <br>
 <br>
-知了 ${day(new Date()).format('YYYY-MM-DD HH:mm')}`;
+知了
+<br>
+${day(new Date()).format('YYYY-MM-DD HH:mm')}`;
 
 export default async (ctx: Context) => {
-  const {
-    email,
-    remark = '',
-    admin,
-  } = ctx.request.body as {
+  const { email, remark = '' } = ctx.request.body as {
     email?: unknown;
     remark?: unknown;
-    admin?: unknown;
   };
 
   if (
     typeof email !== 'string' ||
     !EMAIL.test(email) ||
     typeof remark !== 'string' ||
-    remark.length > REMARK_MAX_LENGTH ||
-    (admin !== 0 && admin !== 1)
+    remark.length > REMARK_MAX_LENGTH
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
@@ -57,10 +53,10 @@ export default async (ctx: Context) => {
   const id = generateRandomInteger(1_0000_0000, 10_0000_0000).toString();
   await db.run(
     `
-      INSERT INTO user ( id, email, nickname, joinTimestamp, remark, admin )
-      VALUES ( ?, ?, ?, ?, ?, ? )
+      INSERT INTO user ( id, email, nickname, joinTimestamp, remark )
+      VALUES ( ?, ?, ?, ?, ? )
     `,
-    [id, email, id, Date.now(), remark, admin],
+    [id, email, id, Date.now(), remark],
   );
 
   return ctx.success();

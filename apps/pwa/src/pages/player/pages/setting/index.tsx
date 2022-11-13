@@ -6,7 +6,7 @@ import Context from '../../context';
 import PlayMode from './play_mode';
 import Volume from './volume';
 import Logout from './logout';
-import Admin from './admin';
+import UserManage from './user_manage';
 import { HEADER_HEIGHT } from '../../constants';
 
 const Style = styled(Page)`
@@ -22,7 +22,7 @@ function Setting() {
     <Style>
       <PlayMode playMode={playMode} />
       <Volume />
-      {profile.admin ? <Admin /> : null}
+      {profile.admin ? <UserManage /> : null}
       <Logout />
     </Style>
   );
