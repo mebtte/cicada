@@ -13,13 +13,17 @@ import { ExceptionCode } from '#/constants/exception';
 import notice from '#/utils/notice';
 import sleep from '#/utils/sleep';
 import ErrorWithCode from '@/utils/error_with_code';
-import Dialog, { Container } from '#/components/dialog';
+import Dialog, { Container, Content } from '#/components/dialog';
 import Spinner from '#/components/spinner';
 import Input from '#/components/input';
 import Button, { Variant } from '#/components/button';
 import useCaptchaData from './use_captcha_data';
 
-const StyledContainer = styled(Container)`
+const StyledContent = styled(Content)`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
   > .graph {
     cursor: pointer;
 
@@ -126,34 +130,36 @@ function CaptchaDialog({
     );
   } else {
     content = (
-      <StyledContainer>
-        <div
-          className="graph"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{
-            __html: captchaData.value.svg,
-          }}
-          onClick={getCaptcha}
-        />
-        <Input
-          label="验证码"
-          inputProps={{
-            value: captchaCode,
-            autoFocus: true,
-            onChange: onCaptchaCodeChange,
-            onKeyDown,
-          }}
-          disabled={gettingLoginCode}
-        />
-        <Button
-          variant={Variant.PRIMARY}
-          disabled={!captchaCode.length}
-          loading={gettingLoginCode}
-          onClick={getLoginCode}
-        >
-          确定
-        </Button>
-      </StyledContainer>
+      <Container>
+        <StyledContent>
+          <div
+            className="graph"
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: captchaData.value.svg,
+            }}
+            onClick={getCaptcha}
+          />
+          <Input
+            label="验证码"
+            inputProps={{
+              value: captchaCode,
+              autoFocus: true,
+              onChange: onCaptchaCodeChange,
+              onKeyDown,
+            }}
+            disabled={gettingLoginCode}
+          />
+          <Button
+            variant={Variant.PRIMARY}
+            disabled={!captchaCode.length}
+            loading={gettingLoginCode}
+            onClick={getLoginCode}
+          >
+            确定
+          </Button>
+        </StyledContent>
+      </Container>
     );
   }
   return (
