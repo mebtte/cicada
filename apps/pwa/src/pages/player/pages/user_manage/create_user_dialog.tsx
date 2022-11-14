@@ -49,6 +49,7 @@ function CreateUserDialog() {
 
       notice.success('已创建用户');
       onClose();
+      e.emit(EventType.RELOAD_DATA, null);
     } catch (error) {
       logger.error(error, '创建用户失败');
       notice.error(error.message);

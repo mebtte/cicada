@@ -13,12 +13,14 @@ function Filter() {
   const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
-    const timer = window.setTimeout(() =>
-      navigate({
-        query: {
-          [Query.KEYWORD]: keyword.replace(/\s+/g, ' ').trim(),
-        },
-      }),
+    const timer = window.setTimeout(
+      () =>
+        navigate({
+          query: {
+            [Query.KEYWORD]: keyword.replace(/\s+/g, ' ').trim(),
+          },
+        }),
+      300,
     );
     return () => window.clearTimeout(timer);
   }, [keyword, navigate]);

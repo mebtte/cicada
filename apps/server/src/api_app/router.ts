@@ -37,6 +37,7 @@ import deleteMusic from './controllers/delete_music';
 import searchMusicByLyric from './controllers/search_music_by_lyric';
 
 import adminCreateUser from './controllers/admin_create_user';
+import adminGetUserList from './controllers/admin_get_user_list';
 
 const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
@@ -80,6 +81,13 @@ router.get('/singer_detail', authorize, getSingerDetail); // 获取歌手详情
 router.get('/self_singer_list', authorize, getSelfSingerList); // 获取自己的歌手列表
 
 /**
+ * 上传音乐播放记录使用的是 navigator.sendBeacon
+ * 无法设置 http header
+ * 需要特殊处理鉴权
+ */
+router.post('/music_play_record', parseBody, uploadMusicPlayRecord); // 上传音乐播放记录
+
+/**
  * 管理员
  * @author mebtte<hi@mebtte.com>
  */
@@ -90,12 +98,6 @@ router.post(
   parseBody,
   adminCreateUser,
 ); // 创建用户
-
-/**
- * 上传音乐播放记录使用的是 navigator.sendBeacon
- * 无法设置 http header
- * 需要特殊处理鉴权
- */
-router.post('/music_play_record', parseBody, uploadMusicPlayRecord); // 上传音乐播放记录
+router.get('/admin/user_list', authorize, adminAuthorize, adminGetUserList); // 创建用户
 
 export default router;

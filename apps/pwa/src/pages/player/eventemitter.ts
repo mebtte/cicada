@@ -108,6 +108,7 @@ export enum EventType {
   TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER = 'toggle_playlist_playqueue_drawer',
   OPEN_MUSIC_DOWNLOAD_DIALOG = 'open_music_download_dialog',
   OPEN_EDIT_DIALOG = 'open_music_edit_dialog',
+  OPEN_USER_DIALOG = 'open_user_dialog',
 
   FOCUS_SEARCH_INPUT = 'focus_search_input',
 
@@ -169,6 +170,7 @@ export default new Eventin<
     [EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.OPEN_MUSIC_DOWNLOAD_DIALOG]: { music: Music };
     [EventType.OPEN_EDIT_DIALOG]: EditDialogData;
+    [EventType.OPEN_USER_DIALOG]: { id: string };
 
     [EventType.FOCUS_SEARCH_INPUT]: null;
 

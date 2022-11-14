@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Page from '../page';
 import Toolbar from './toolbar';
 import CreateUserDialog from './create_user_dialog';
+import UserList from './user_list';
 
 const Style = styled(Page)`
   position: relative;
@@ -10,6 +11,7 @@ const Style = styled(Page)`
 function UserManage() {
   return (
     <Style>
+      <UserList />
       <Toolbar />
 
       <CreateUserDialog />
