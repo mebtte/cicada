@@ -37,6 +37,7 @@ import deleteMusic from './controllers/delete_music';
 import searchMusicByLyric from './controllers/search_music_by_lyric';
 
 import adminCreateUser from './controllers/admin_create_user';
+import adminUpdateUser from './controllers/admin_update_user';
 import adminGetUserList from './controllers/admin_get_user_list';
 
 const router = new Router<DefaultState, Context>();
@@ -98,6 +99,13 @@ router.post(
   parseBody,
   adminCreateUser,
 ); // 创建用户
-router.get('/admin/user_list', authorize, adminAuthorize, adminGetUserList); // 创建用户
+router.put(
+  '/admin/user',
+  authorize,
+  adminAuthorize,
+  parseBody,
+  adminUpdateUser,
+); // 更新用户
+router.get('/admin/user_list', authorize, adminAuthorize, adminGetUserList); // 获取用户列表
 
 export default router;

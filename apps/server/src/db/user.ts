@@ -48,15 +48,13 @@ export function getUserListByIds<P extends Property>(
   );
 }
 
-export function updateUser<P extends Property.AVATAR | Property.NICKNAME>({
-  id,
-  property,
-  value,
-}: {
-  id: string;
-  property: P;
-  value: User[P];
-}) {
+export function updateUser<
+  P extends
+    | Property.AVATAR
+    | Property.NICKNAME
+    | Property.REMARK
+    | Property.ADMIN,
+>({ id, property, value }: { id: string; property: P; value: User[P] }) {
   return db.run(
     `
       update user set ${property} = ?

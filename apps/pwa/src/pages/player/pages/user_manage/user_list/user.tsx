@@ -23,6 +23,26 @@ const Style = styled.div`
   transition: 300ms;
   cursor: pointer;
 
+  > .cover-box {
+    position: relative;
+
+    > img {
+      display: block;
+    }
+
+    > .admin {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+
+      padding: 0 5px;
+
+      font-size: 12px;
+      color: white;
+      background-color: ${CSSVariable.COLOR_PRIMARY};
+    }
+  }
+
   > .info {
     flex: 1;
     min-width: 0;
@@ -70,20 +90,28 @@ const Style = styled.div`
 `;
 
 function User({ user }: { user: UserType }) {
+  const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, { user });
   return (
     <Style
+      onContextMenu={(event) => {
+        event.preventDefault();
+        return openEditMenu();
+      }}
       onClick={() =>
         playerEventemitter.emit(PlayerEventType.OPEN_USER_DIALOG, {
           id: user.id,
         })
       }
     >
-      <Cover src={user.avatar} size={64} />
+      <div className="cover-box">
+        <Cover src={user.avatar} size={64} />
+        {user.admin ? <div className="admin">管理员</div> : null}
+      </div>
       <div className="info">
         <div className="secondary"> ID: {user.id}</div>
         <div className="name">
           <span className="nickname">{user.nickname}</span>
-          <span className="email">({user.email})</span>
+          <span className="email">「{user.email}」</span>
         </div>
         <div className="divider" />
         <div className="secondary">
@@ -96,8 +124,8 @@ function User({ user }: { user: UserType }) {
       <IconButton
         size={ComponentSize.SMALL}
         onClick={(event) => {
-          event.preventDefault();
-          return e.emit(EventType.OPEN_EDIT_MENU, { user });
+          event.stopPropagation();
+          return openEditMenu();
         }}
       >
         <MdMoreVert />

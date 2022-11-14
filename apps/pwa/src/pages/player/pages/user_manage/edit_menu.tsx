@@ -1,0 +1,105 @@
+import Popup from '#/components/popup';
+import { CSSProperties, useEffect, useState } from 'react';
+import MenuItem from '#/components/menu_item';
+import { MdTitle, MdPersonOutline } from 'react-icons/md';
+import styled from 'styled-components';
+import adminUpdateUser from '@/server/admin_update_user';
+import { AdminAllowUpdateKey } from '#/constants/user';
+import dialog from '#/utils/dialog';
+import notice from '#/utils/notice';
+import { ZIndex } from '../../constants';
+import { User } from './constants';
+import e, { EventType } from './eventemitter';
+import playerEventemitter, {
+  EditDialogType,
+  EventType as PlayerEventType,
+} from '../../eventemitter';
+
+const maskProps: { style: CSSProperties } = {
+  style: {
+    zIndex: ZIndex.POPUP,
+  },
+};
+const bodyProps: {
+  style: CSSProperties;
+} = {
+  style: { width: 250 },
+};
+const Style = styled.div`
+  padding: 10px 0;
+`;
+
+function EditMenu() {
+  const [user, setUser] = useState<User | null>(null);
+  const onClose = () => setUser(null);
+
+  useEffect(() => {
+    const unlistenOpen = e.listen(EventType.OPEN_EDIT_MENU, (data) =>
+      setUser(data.user),
+    );
+    return unlistenOpen;
+  }, []);
+
+  return (
+    <Popup
+      open={!!user}
+      onClose={onClose}
+      maskProps={maskProps}
+      bodyProps={bodyProps}
+    >
+      <Style onClick={onClose}>
+        <MenuItem
+          icon={<MdTitle />}
+          label="修改备注"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.INPUT,
+              label: '备注',
+              title: '修改备注',
+              initialValue: user?.remark,
+              onSubmit: async (remark: string) => {
+                if (remark !== user?.remark) {
+                  await adminUpdateUser({
+                    id: user!.id,
+                    key: AdminAllowUpdateKey.REMARK,
+                    value: remark,
+                  });
+                  e.emit(EventType.RELOAD_DATA, null);
+                }
+              },
+            })
+          }
+        />
+        {user?.admin ? null : (
+          <MenuItem
+            icon={<MdPersonOutline />}
+            label="设为管理员"
+            onClick={() =>
+              dialog.confirm({
+                title: '确定将用户设为管理员吗?',
+                content:
+                  '用户成为管理员后将拥有和你一样的权限, 且无法被撤销管理员身份',
+                confirmText: '继续',
+                onConfirm: () =>
+                  void dialog.confirm({
+                    title: '确定将用户设为管理员吗?',
+                    content: '这是第二次确认, 也是最后一次确认',
+                    onConfirm: () =>
+                      adminUpdateUser({
+                        id: user!.id,
+                        key: AdminAllowUpdateKey.ADMIN,
+                        value: null,
+                      })
+                        .then(() => e.emit(EventType.RELOAD_DATA, null))
+                        .catch((error) => void notice.error(error.message)),
+                  }),
+              })
+            }
+          />
+        )}
+      </Style>
+    </Popup>
+  );
+}
+
+export default EditMenu;

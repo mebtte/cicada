@@ -4,7 +4,6 @@ import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '#/components/spinner';
-import List from 'react-list';
 import useQuery from '@/utils/use_query';
 import { Query } from '@/constants';
 import useData from './use_data';
@@ -63,13 +62,9 @@ function UserList() {
     );
     return (
       <UserListContainer style={style}>
-        <List
-          length={filteredUserList.length}
-          type="uniform"
-          itemRenderer={(index, key) => (
-            <User key={key} user={filteredUserList[index]} />
-          )}
-        />
+        {filteredUserList.map((user) => (
+          <User key={user.id} user={user} />
+        ))}
       </UserListContainer>
     );
   });

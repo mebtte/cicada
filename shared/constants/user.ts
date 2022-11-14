@@ -5,3 +5,8 @@ export enum AllowUpdateKey {
   AVATAR = 'avatar',
   NICKNAME = 'nickname',
 }
+
+export enum AdminAllowUpdateKey {
+  REMARK = 'remark',
+  ADMIN = 'admin',
+}
