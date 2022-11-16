@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import { CSSVariable } from '#/global_style';
 import { CreateUser as CreateUserType } from './constants';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 
 const Style = styled.div`
   padding: 30px 0;
@@ -22,13 +25,20 @@ function CreateUser({
   user: CreateUserType;
   createTime: string;
 }) {
-  /**
-   * @todo 跳转用户页面
-   * @author mebtte<hi@mebtte.com>
-   */
   return (
     <Style>
-      「<span className="nickname">{user.nickname}</span>」于「{createTime}
+      「
+      <span
+        className="nickname"
+        onClick={() =>
+          playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
+            id: user.id,
+          })
+        }
+      >
+        {user.nickname}
+      </span>
+      」于「{createTime}
       」创建
     </Style>
   );
