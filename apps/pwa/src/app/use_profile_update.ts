@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import notice from '#/utils/notice';
 import logger from '#/utils/logger';
 import getRandomCover from '@/utils/get_random_cover';
+import e, { EventType } from '../platform/global_eventemitter';
 
 export default () => {
   const profile = p.useState();
@@ -25,8 +26,16 @@ export default () => {
             notice.error('更新个人资料失败');
           });
       updateProfile();
+
       const timer = window.setInterval(updateProfile, 1000 * 60 * 30);
-      return window.clearInterval(timer);
+      const unlistenProfileUpdate = e.listen(
+        EventType.UPDATE_PROFILE,
+        updateProfile,
+      );
+      return () => {
+        window.clearInterval(timer);
+        unlistenProfileUpdate();
+      };
     }
   }, [hasProfile]);
 };

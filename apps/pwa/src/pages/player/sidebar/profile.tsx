@@ -4,6 +4,7 @@ import Cover, { Shape } from '#/components/cover';
 import ellipsis from '#/style/ellipsis';
 import { CSSVariable } from '#/global_style';
 import { memo } from 'react';
+import e, { EventType } from '../eventemitter';
 
 const Style = styled.div`
   display: flex;
@@ -29,6 +30,8 @@ const Style = styled.div`
     ${ellipsis}
   }
 `;
+const openProfileEditPopup = () =>
+  e.emit(EventType.OPEN_PROFILE_EDIT_POPUP, null);
 
 function Profile() {
   const profile = p.useState()!;
@@ -39,6 +42,7 @@ function Profile() {
         src={profile.avatar}
         size={100}
         shape={Shape.CIRCLE}
+        onClick={openProfileEditPopup}
       />
       <div className="nickname" title={profile.nickname}>
         {profile.nickname}

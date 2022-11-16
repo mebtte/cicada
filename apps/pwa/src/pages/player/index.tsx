@@ -25,6 +25,7 @@ import useKeyboard from './use_keyboard';
 import MusicDownloadDialog from './music_download_dialog';
 import SingerDrawer from './singer_drawer';
 import EditDialog from './edit_dialog';
+import ProfileEditPopup from './profile_edit_popup';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -112,9 +113,10 @@ function Wrapper() {
       <MusicbillListDrawer />
       <MusicbillOrderDrawer />
       <MusicDownloadDialog />
+      <MusicOperatePopup />
 
       {/* fixed z-index */}
-      <MusicOperatePopup />
+      <ProfileEditPopup />
       <EditDialog />
 
       {queueMusic ? (

@@ -98,7 +98,7 @@ function User({ user }: { user: UserType }) {
         return openEditMenu();
       }}
       onClick={() =>
-        playerEventemitter.emit(PlayerEventType.OPEN_USER_DIALOG, {
+        playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
           id: user.id,
         })
       }

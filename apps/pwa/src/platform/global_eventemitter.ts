@@ -1,12 +1,12 @@
 import Eventin from 'eventin';
 
 export enum EventType {
-  OPEN_PROFILE_DIALOG = 'open_profile_dialog',
+  UPDATE_PROFILE = 'update_profile',
 }
 
 export default new Eventin<
   EventType,
   {
-    [EventType.OPEN_PROFILE_DIALOG]: null;
+    [EventType.UPDATE_PROFILE]: null;
   }
 >();
