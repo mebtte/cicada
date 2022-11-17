@@ -1,6 +1,5 @@
 import { useContext, useMemo } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
-import { ROOT_PATH } from '@/constants/route';
+import { useParams } from 'react-router-dom';
 import Context from '../../context';
 import Musicbill from './musicbill';
 
@@ -15,7 +14,7 @@ function Wrapper() {
   if (musicbill) {
     return <Musicbill musicbill={musicbill} />;
   }
-  return <Navigate to={ROOT_PATH.PLAYER} replace />;
+  return null;
 }
 
 export default Wrapper;

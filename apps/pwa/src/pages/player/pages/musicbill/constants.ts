@@ -1,4 +1,1 @@
-export enum TopContent {
-  INFO = 'info',
-  SEARCH = 'search',
-}
+export const INFO_HEIGHT = 100;

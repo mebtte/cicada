@@ -19,3 +19,9 @@ export enum Query {
   KEYWORD = 'keyword',
   SEARCH_TAB = 'search_tab',
 }
+
+export enum PlayMode {
+  SQ = 'sq',
+  HQ = 'hq',
+  AC = 'ac',
+}

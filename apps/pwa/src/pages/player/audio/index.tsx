@@ -3,11 +3,12 @@ import * as React from 'react';
 import throttle from 'lodash/throttle';
 import uploadMusicPlayRecord from '@/server/upload_music_play_record';
 import { CacheName } from '@/constants/cache';
+import { PlayMode } from '@/constants';
 import settingState from '@/global_states/setting';
 import { Setting } from '@/constants/setting';
 import env from '@/env';
 import eventemitter, { EventType } from '../eventemitter';
-import { QueueMusic, PlayMode, Music } from '../constants';
+import { QueueMusic, Music } from '../constants';
 import onError from './on_error';
 
 const style = {

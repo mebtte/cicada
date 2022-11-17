@@ -7,11 +7,15 @@ type AllowUpdateKeyMapValue = {
   [AllowUpdateKey.PUBLIC]: boolean;
 };
 
-function updateMusicbill<K extends AllowUpdateKey>(
-  id: string,
-  key: K,
-  value: AllowUpdateKeyMapValue[K],
-) {
+function updateMusicbill<K extends AllowUpdateKey>({
+  id,
+  key,
+  value,
+}: {
+  id: string;
+  key: K;
+  value: AllowUpdateKeyMapValue[K];
+}) {
   return request({
     method: Method.PUT,
     path: '/api/musicbill',

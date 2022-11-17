@@ -1,16 +1,10 @@
-import { RequestStatus } from '@/constants';
+import { RequestStatus, PlayMode } from '@/constants';
 import { MusicType } from '#/constants/music';
 import { Type as TagType } from '#/components/tag';
 import { UtilZIndex } from '#/constants/style';
 
 export const HEADER_HEIGHT = 55;
 export const CONTROLLER_HEIGHT = 60;
-
-export enum PlayMode {
-  SQ = 'sq',
-  HQ = 'hq',
-  AC = 'ac',
-}
 
 export const PLAY_MODE_MAP: Record<
   PlayMode,
@@ -32,8 +26,6 @@ export const PLAY_MODE_MAP: Record<
     tagType: TagType.AC,
   },
 };
-
-export const PLAY_MODES = Object.keys(PLAY_MODE_MAP) as PlayMode[];
 
 export interface Singer {
   id: string;

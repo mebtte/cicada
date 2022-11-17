@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
-import { PlayMode, PLAY_MODES } from './constants';
-import { PLAY_MODE } from '../../constants/storage_key';
+import { PlayMode } from '@/constants';
+import storage, { Key } from '@/storage';
 import eventemitter, { EventType } from './eventemitter';
 
 export default () => {
-  const [playMode, setPlayMode] = useState<PlayMode>(() => {
-    const pm = localStorage.getItem(PLAY_MODE) as PlayMode;
-    return pm && PLAY_MODES.includes(pm) ? pm : PlayMode.SQ;
-  });
+  const [playMode, setPlayMode] = useState(PlayMode.SQ);
+
+  useEffect(() => {
+    storage.getItem(Key.PLAY_MODE).then((pm) => {
+      if (pm) {
+        setPlayMode(pm);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     const unlistenChangePlayMode = eventemitter.listen(

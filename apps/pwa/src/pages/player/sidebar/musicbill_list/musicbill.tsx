@@ -31,21 +31,36 @@ const Style = styled(NavLink)`
     background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   }
 
+  &:active {
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
+  }
+
+  &.public {
+    > .cover {
+      outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
+    }
+  }
+
   &.active {
     color: #fff;
     background-color: ${CSSVariable.COLOR_PRIMARY} !important;
+
+    > .cover {
+      outline-color: #fff;
+    }
   }
 `;
 
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
   return (
     <Style
+      className={musicbill.public ? 'public' : ''}
       to={`${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL.replace(
         ':id',
         musicbill.id,
       )}`}
     >
-      <Cover size={28} src={musicbill.cover} />
+      <Cover size={28} src={musicbill.cover} className="cover" />
       <div className="name">{musicbill.name}</div>
     </Style>
   );
