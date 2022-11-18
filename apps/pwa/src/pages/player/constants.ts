@@ -29,7 +29,6 @@ export const PLAY_MODE_MAP: Record<
 
 export interface Singer {
   id: string;
-  avatar: string;
   name: string;
   aliases: string[];
 }

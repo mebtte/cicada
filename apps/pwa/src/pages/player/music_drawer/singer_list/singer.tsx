@@ -2,7 +2,7 @@ import Cover, { Shape } from '#/components/cover';
 import { CSSVariable } from '#/global_style';
 import ellipsis from '#/style/ellipsis';
 import styled from 'styled-components';
-import { Singer as SingerType } from '../../constants';
+import { SingerDetail } from '../constants';
 import e, { EventType } from '../../eventemitter';
 
 const Style = styled.div`
@@ -36,7 +36,7 @@ const Style = styled.div`
   }
 `;
 
-function Singer({ singer }: { singer: SingerType }) {
+function Singer({ singer }: { singer: SingerDetail }) {
   return (
     <Style
       onClick={() => e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })}

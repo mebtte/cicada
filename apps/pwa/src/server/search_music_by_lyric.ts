@@ -23,7 +23,6 @@ function searchMusicByLyric({
       ac: string;
       singers: {
         id: string;
-        avatar: string;
         name: string;
         aliases: string[];
       }[];

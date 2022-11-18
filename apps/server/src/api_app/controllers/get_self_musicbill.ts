@@ -48,7 +48,7 @@ export default async (ctx: Context) => {
     >
   >(
     `
-      select
+      SELECT
         m.id,
         m.type,
         m.name,
@@ -57,12 +57,12 @@ export default async (ctx: Context) => {
         m.sq,
         m.hq,
         m.ac
-      from
-        musicbill_music as mm
-        left join music as m on mm.musicId = m.id 
-      where
+      FROM
+        musicbill_music AS mm
+        LEFT JOIN music AS m ON mm.musicId = m.id 
+      WHERE
         mm.musicbillId = ? 
-      order by
+      ORDER BY
         mm.addTimestamp desc;
     `,
     [id],
@@ -73,18 +73,12 @@ export default async (ctx: Context) => {
       id: string;
       name: string;
       aliases: string[];
-      avatar: string;
     }[];
   } = {};
   if (musicList.length) {
     const allSingerList = await getSingerListInMusicIds(
       Array.from(new Set(musicList.map((m) => m.id))),
-      [
-        SingerProperty.ID,
-        SingerProperty.AVATAR,
-        SingerProperty.NAME,
-        SingerProperty.ALIASES,
-      ],
+      [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
     );
     for (const singer of allSingerList) {
       if (!musicIdMapSingers[singer.musicId]) {
@@ -92,7 +86,6 @@ export default async (ctx: Context) => {
       }
       musicIdMapSingers[singer.musicId].push({
         ...excludeProperty(singer, ['musicId']),
-        avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),
         aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
       });
     }

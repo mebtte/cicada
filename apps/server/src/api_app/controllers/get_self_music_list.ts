@@ -144,18 +144,10 @@ export default async (ctx: Context) => {
 
   const singerList = await getSingerListInMusicIds(
     musicList.map((m) => m.id),
-    [
-      SingerProperty.ID,
-      SingerProperty.NAME,
-      SingerProperty.ALIASES,
-      SingerProperty.AVATAR,
-    ],
+    [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
   );
   const musicIdMapSingerList: {
-    [key: string]: (Pick<
-      Singer,
-      SingerProperty.ID | SingerProperty.AVATAR | SingerProperty.NAME
-    > & {
+    [key: string]: (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
       aliases: string[];
     })[];
   } = {};
@@ -166,7 +158,6 @@ export default async (ctx: Context) => {
     musicIdMapSingerList[s.musicId].push({
       ...excludeProperty(s, ['musicId']),
       aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
-      avatar: getAssetUrl(s.avatar, AssetType.SINGER_AVATAR),
     });
   });
 

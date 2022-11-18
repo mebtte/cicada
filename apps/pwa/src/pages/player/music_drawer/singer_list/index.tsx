@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import { Singer as SingerType } from '../../constants';
+import { SingerDetail } from '../constants';
 import Singer from './singer';
 
 const Style = styled.div`
   margin: 0 0 10px 0;
 `;
 
-function SingerList({ singerList }: { singerList: SingerType[] }) {
+function SingerList({ singerList }: { singerList: SingerDetail[] }) {
   return (
     <Style>
       {singerList.map((singer) => (

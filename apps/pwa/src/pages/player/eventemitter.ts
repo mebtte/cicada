@@ -179,6 +179,10 @@ export default new Eventin<
     [EventType.MUSIC_UPDATED]: { music: Music };
     [EventType.MUSIC_DELETED]: { id: string };
 
-    [EventType.SINGER_UPDATED]: { singer: Singer };
+    [EventType.SINGER_UPDATED]: {
+      singer: Singer & {
+        avatar: string;
+      };
+    };
   }
 >();

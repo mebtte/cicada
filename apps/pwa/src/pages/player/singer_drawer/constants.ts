@@ -6,6 +6,7 @@ export interface CreateUser {
 }
 
 export interface SingerDetail extends Singer {
+  avatar: string;
   musicList: MusicWithIndex[];
   createUser: CreateUser;
   createTime: string;

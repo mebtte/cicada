@@ -12,8 +12,9 @@ import playerEventemitter, {
 } from '../../../eventemitter';
 import e, { EventType } from '../eventemitter';
 
+const AVATAR_SIZE = 76;
 const Style = styled.div`
-  height: 80px;
+  height: ${AVATAR_SIZE + 20}px;
 
   display: flex;
   align-items: center;
@@ -47,18 +48,10 @@ const Style = styled.div`
     flex: 1;
     min-width: 0;
 
-    > .name {
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    > .nickname {
+      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+      font-size: 14px;
       ${ellipsis}
-
-      > .nickname {
-        font-size: 14px;
-        color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-      }
-
-      > .email {
-        font-size: 12px;
-      }
     }
 
     > .secondary {
@@ -104,18 +97,16 @@ function User({ user }: { user: UserType }) {
       }
     >
       <div className="cover-box">
-        <Cover src={user.avatar} size={64} />
+        <Cover src={user.avatar} size={AVATAR_SIZE} />
         {user.admin ? <div className="admin">管理员</div> : null}
       </div>
       <div className="info">
+        <div className="nickname">{user.nickname}</div>
         <div className="secondary"> ID: {user.id}</div>
-        <div className="name">
-          <span className="nickname">{user.nickname}</span>
-          <span className="email">「{user.email}」</span>
-        </div>
+        <div className="secondary"> 邮箱: {user.email}</div>
         <div className="divider" />
         <div className="secondary">
-          {day(user.joinTimestamp).format('YYYY-MM-DD HH:mm')}
+          {day(user.joinTimestamp).format('YYYY-MM-DD')}
           {user.remark ? (
             <span className="remark">备注: {user.remark}</span>
           ) : null}
