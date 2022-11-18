@@ -33,19 +33,23 @@ export default async (ctx: Context) => {
       Pick<
         Musicbill,
         MusicbillProperty.ID | MusicbillProperty.COVER | MusicbillProperty.NAME
-      >
+      > & {
+        musicCount: number;
+      }
     >(
       `
         SELECT
-          ${[
-            MusicbillProperty.ID,
-            MusicbillProperty.COVER,
-            MusicbillProperty.NAME,
-          ].join(',')}
-        FROM musicbill
-        WHERE ${MusicbillProperty.USER_ID} = ?
-          AND ${MusicbillProperty.PUBLIC} = 1
-        ORDER BY ${MusicbillProperty.CREATE_TIMESTAMP} DESC
+          m.id,
+          m.cover,
+          m.name,
+          count(mm.id) as musicCount
+        FROM musicbill AS m
+        LEFT JOIN musicbill_music AS mm
+          ON mm.musicbillId = m.id
+        WHERE m.userId = ?
+          AND m.public = 1
+        GROUP BY m.id
+        ORDER BY m.createTimestamp DESC
         LIMIT 100
       `,
       [id],

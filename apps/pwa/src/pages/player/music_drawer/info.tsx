@@ -1,23 +1,11 @@
 import { CSSVariable } from '#/global_style';
-import absoluteFullSize from '#/style/absolute_full_size';
 import styled from 'styled-components';
 import Tag, { Type } from '#/components/tag';
+import Cover from '#/components/cover';
 import { MusicDetail } from './constants';
 
 const Style = styled.div`
   position: relative;
-
-  > .cover-box {
-    position: relative;
-
-    padding-bottom: 100%;
-
-    > .cover {
-      ${absoluteFullSize}
-
-      object-fit: cover;
-    }
-  }
 
   > .info {
     position: absolute;
@@ -50,14 +38,7 @@ const Style = styled.div`
 function Info({ music }: { music: MusicDetail }) {
   return (
     <Style>
-      <div className="cover-box">
-        <img
-          className="cover"
-          src={music.cover}
-          alt="music cover"
-          crossOrigin="anonymous"
-        />
-      </div>
+      <Cover src={music.cover} size="100%" />
       <div className="info">
         {music.hq || music.ac ? (
           <div className="tag-box">

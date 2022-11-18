@@ -17,6 +17,7 @@ const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> }> = {
 };
 const Style = styled.img<{ shape: Shape }>`
   object-fit: cover;
+  aspect-ratio: 1;
 
   ${({ shape }) => {
     const { css: shapeCss } = SHAPE_MAP[shape];
@@ -32,7 +33,7 @@ function Cover({
   ...props
 }: {
   src: string;
-  size?: number;
+  size?: number | string;
   shape?: Shape;
 } & ImgHTMLAttributes<HTMLImageElement>) {
   const [currentSrc, setCurrentSrc] = useState(src);
@@ -52,7 +53,6 @@ function Cover({
       style={{
         ...style,
         width: size,
-        height: size,
       }}
       shape={shape}
     />

@@ -27,6 +27,7 @@ import SingerDrawer from './singer_drawer';
 import EditDialog from './edit_dialog';
 import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
+import MusicbillDrawer from './musicbill_drawer';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -116,6 +117,7 @@ function Wrapper() {
       <MusicDownloadDialog />
       <MusicOperatePopup />
       <UserDrawer />
+      <MusicbillDrawer />
 
       {/* fixed z-index */}
       <ProfileEditPopup />

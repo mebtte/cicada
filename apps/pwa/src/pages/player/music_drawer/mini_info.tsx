@@ -17,7 +17,7 @@ const Style = styled.div`
 
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
 
   > .name {
     flex: 1;

@@ -4,7 +4,7 @@ import Cover from '#/components/cover';
 import { CSSVariable } from '#/global_style';
 import ellipsis from '#/style/ellipsis';
 import { useEffect, useState } from 'react';
-import { MINI_INFO_HEIGHT, SingerDetail } from './constants';
+import { MINI_INFO_HEIGHT, Musicbill } from './constants';
 
 const Style = styled.div`
   position: absolute;
@@ -30,7 +30,7 @@ const Style = styled.div`
   }
 `;
 
-function MiniInfo({ singer }: { singer: SingerDetail }) {
+function MiniInfo({ musicbill }: { musicbill: Musicbill }) {
   const [paddingRight, setPaddingRight] = useState(0);
   const { right } = useTitlebarArea();
 
@@ -44,8 +44,8 @@ function MiniInfo({ singer }: { singer: SingerDetail }) {
         padding: `0 ${paddingRight + 20}px 0 20px`,
       }}
     >
-      <Cover src={singer.avatar} alt="singer avatar" />
-      <div className="name">{singer.name}</div>
+      <Cover src={musicbill.cover} alt="musicbill cover" />
+      <div className="name">{musicbill.name}</div>
     </Style>
   );
 }

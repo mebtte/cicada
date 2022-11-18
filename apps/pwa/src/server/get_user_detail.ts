@@ -11,7 +11,7 @@ function getUserDetail(id: string) {
       id: string;
       cover: string;
       name: string;
-      createTimestamp: number;
+      musicCount: number;
     }[];
     musicList: {
       id: string;

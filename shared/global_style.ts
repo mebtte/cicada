@@ -37,9 +37,9 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.TEXT_COLOR_DISABLED]: 'rgb(222 222 222)',
 
   [CSSVariable.BACKGROUND_DISABLED]: 'rgb(244 244 244)',
-  [CSSVariable.BACKGROUND_COLOR_LEVEL_ONE]: 'rgb(44 182 145 / 0.04)',
-  [CSSVariable.BACKGROUND_COLOR_LEVEL_TWO]: 'rgb(44 182 145 / 0.07)',
-  [CSSVariable.BACKGROUND_COLOR_LEVEL_THREE]: 'rgb(44 182 145 / 0.1)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_ONE]: 'rgb(44 182 145 / 0.06)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_TWO]: 'rgb(44 182 145 / 0.09)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_THREE]: 'rgb(44 182 145 / 0.12)',
 };
 
 export const GlobalStyle = createGlobalStyle`
