@@ -38,8 +38,8 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
 
   [CSSVariable.BACKGROUND_DISABLED]: 'rgb(244 244 244)',
   [CSSVariable.BACKGROUND_COLOR_LEVEL_ONE]: 'rgb(44 182 145 / 0.06)',
-  [CSSVariable.BACKGROUND_COLOR_LEVEL_TWO]: 'rgb(44 182 145 / 0.09)',
-  [CSSVariable.BACKGROUND_COLOR_LEVEL_THREE]: 'rgb(44 182 145 / 0.12)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_TWO]: 'rgb(44 182 145 / 0.1)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_THREE]: 'rgb(44 182 145 / 0.14)',
 };
 
 export const GlobalStyle = createGlobalStyle`

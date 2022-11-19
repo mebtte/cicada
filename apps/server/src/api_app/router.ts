@@ -35,6 +35,7 @@ import getSelfMusicList from './controllers/get_self_music_list';
 import getSelfSingerList from './controllers/get_self_singer_list';
 import deleteMusic from './controllers/delete_music';
 import searchMusicByLyric from './controllers/search_music_by_lyric';
+import getPublicMusicbill from './controllers/get_public_musicbill';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -64,6 +65,7 @@ router.post('/musicbill_music', authorize, parseBody, addMusicToMusicbill); // �
 router.delete('/musicbill_music', authorize, removeMusicFromMusicbill); // 从乐单移除音乐
 router.post('/musicbill_order', authorize, parseBody, updateMusicbillOrder); // 更新乐单顺序
 router.post('/musicbill_export', authorize, parseBody, createMusicbillExport); // 创建乐单导出
+router.get('/public_musicbill', authorize, getPublicMusicbill); // 获取公开歌单
 
 router.post('/music', authorize, parseBody, createMusic); // 创建音乐
 router.put('/music', authorize, parseBody, updateMusic); // 更新音乐
@@ -72,7 +74,6 @@ router.get('/music_detail', authorize, getMusicDetail); // 获取音乐详情
 router.get('/music/search', authorize, searchMusic); // 搜索音乐
 router.get('/music/search_by_lyric', authorize, searchMusicByLyric); // 通过歌词搜索音乐
 router.get('/self_music_list', authorize, getSelfMusicList); // 获取自己的音乐列表
-
 router.get('/lyric', authorize, getLyric); // 获取音乐歌词
 
 router.post('/singer', authorize, parseBody, createSinger); // 创建歌手

@@ -27,6 +27,14 @@ export default (id: string) => {
         musicbill: {
           ...musicbill,
           cover: musicbill.cover || getRandomCover(),
+          user: {
+            ...musicbill.user,
+            avatar: musicbill.user.avatar || getRandomCover(),
+          },
+          musicList: musicbill.musicList.map((m, index) => ({
+            ...m,
+            index: musicbill.musicList.length - index,
+          })),
         },
       });
     } catch (error) {

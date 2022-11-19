@@ -18,7 +18,7 @@ const Style = styled.div`
     background-color: rgb(255 255 255 / 0.75);
 
     > .nickname {
-      font-size: 18px;
+      font-size: 24px;
       font-weight: bold;
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
       ${ellipsis}

@@ -7,8 +7,6 @@ import playerEventemitter, {
 function Wrapper() {
   const [open, setOpen] = useState(false);
   const [id, setId] = useState('');
-  // const [open, setOpen] = useState(true);
-  // const [id, setId] = useState('333333');
 
   useEffect(() => {
     const unlistenOpen = playerEventemitter.listen(

@@ -16,8 +16,7 @@ const Style = styled.div`
 
   position: sticky;
   top: ${MINI_INFO_HEIGHT}px;
-  height: 45px;
-  padding: 0 20px;
+  padding: 5px 20px;
 
   display: flex;
   align-items: center;
@@ -42,12 +41,14 @@ function Toolbar({ singer }: { singer: SingerDetail }) {
       <div className="left">
         <IconButton
           onClick={() =>
-            playerEventemitter.emit(
-              PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-              {
-                musicList: singer.musicList,
-              },
-            )
+            singer.musicList.length
+              ? playerEventemitter.emit(
+                  PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
+                  {
+                    musicList: singer.musicList,
+                  },
+                )
+              : notice.error('歌手暂未收录音乐')
           }
         >
           <MdPlaylistAdd />

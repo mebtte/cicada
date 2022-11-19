@@ -12,6 +12,8 @@ import useData from './use_data';
 import { MINI_INFO_HEIGHT, Musicbill as MusicbillType } from './constants';
 import Info from './info';
 import MiniInfo from './mini_info';
+import MusicList from './music_list';
+import Toolbar from './toolbar';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
@@ -49,6 +51,8 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     <Style>
       <div className="scrollable" onScroll={onScroll}>
         <Info musicbill={musicbill} />
+        <Toolbar musicbill={musicbill} />
+        <MusicList musicList={musicbill.musicList} />
       </div>
       {miniInfoVisible ? <MiniInfo musicbill={musicbill} /> : null}
     </Style>

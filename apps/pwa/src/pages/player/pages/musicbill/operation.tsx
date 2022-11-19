@@ -7,6 +7,7 @@ import deleteMusicbill from '@/server/delete_musicbill';
 import useNavigate from '#/utils/use_navigate';
 import logger from '#/utils/logger';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import notice from '#/utils/notice';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -27,12 +28,14 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
       <IconButton
         disabled={status !== RequestStatus.SUCCESS}
         onClick={() =>
-          playerEventemitter.emit(
-            PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-            {
-              musicList,
-            },
-          )
+          musicList.length
+            ? playerEventemitter.emit(
+                PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
+                {
+                  musicList,
+                },
+              )
+            : notice.error('乐单暂无音乐')
         }
       >
         <MdPlaylistAdd />
