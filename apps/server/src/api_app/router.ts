@@ -36,6 +36,7 @@ import getSelfSingerList from './controllers/get_self_singer_list';
 import deleteMusic from './controllers/delete_music';
 import searchMusicByLyric from './controllers/search_music_by_lyric';
 import getPublicMusicbill from './controllers/get_public_musicbill';
+import searchPublicMusicbill from './controllers/search_public_musicbill';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -66,6 +67,7 @@ router.delete('/musicbill_music', authorize, removeMusicFromMusicbill); // 从�
 router.post('/musicbill_order', authorize, parseBody, updateMusicbillOrder); // 更新乐单顺序
 router.post('/musicbill_export', authorize, parseBody, createMusicbillExport); // 创建乐单导出
 router.get('/public_musicbill', authorize, getPublicMusicbill); // 获取公开歌单
+router.get('/public_musicbill/search', authorize, searchPublicMusicbill); // 搜索公开乐单
 
 router.post('/music', authorize, parseBody, createMusic); // 创建音乐
 router.put('/music', authorize, parseBody, updateMusic); // 更新音乐

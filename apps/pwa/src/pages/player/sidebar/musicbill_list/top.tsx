@@ -8,7 +8,7 @@ import { RequestStatus } from '@/constants';
 import notice from '#/utils/notice';
 import e, { EventType } from '../../eventemitter';
 import Context from '../../context';
-import { openCreateMusicbillDialog } from './utils';
+import { openCreateMusicbillDialog } from '../../utils';
 
 const reloadMusicbillList = () => e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
 const Style = styled.div`

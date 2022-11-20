@@ -6,12 +6,13 @@ import { Tab } from './constants';
 import Music from './music';
 import Singer from './singer';
 import Lyric from './lyric';
+import Musicbill from './musicbill';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
 
-function Content({ exploration, tab }: { exploration: boolean; tab: Tab }) {
+function Content({ tab, exploration }: { tab: Tab; exploration: boolean }) {
   const transitions = useTransition(tab, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
@@ -26,6 +27,10 @@ function Content({ exploration, tab }: { exploration: boolean; tab: Tab }) {
       }
       case Tab.SINGER: {
         content = <Singer exploration={exploration} />;
+        break;
+      }
+      case Tab.MUSICBILL: {
+        content = <Musicbill exploration={exploration} />;
         break;
       }
       case Tab.LYRIC: {

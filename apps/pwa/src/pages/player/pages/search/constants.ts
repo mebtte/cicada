@@ -2,6 +2,7 @@ export enum Tab {
   MUSIC = 'music',
   SINGER = 'singer',
   LYRIC = 'lyric',
+  MUSICBILL = 'musicbill',
 }
 
 export const TABS = Object.values(Tab);

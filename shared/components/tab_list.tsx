@@ -5,7 +5,7 @@ import { CSSVariable } from '../global_style';
 const Style = styled.div`
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 `;
 const Tab = styled.div<{ active: boolean }>`
   transition: 300ms;

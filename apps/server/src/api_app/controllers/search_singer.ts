@@ -6,7 +6,6 @@ import { Singer, Property as SingerProperty } from '@/db/singer';
 import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
-const NO_KEYWORD_MAX_PAGE = 3;
 const MAX_PAGE_SIZE = 100;
 type LocalSinger = Pick<
   Singer,
@@ -74,10 +73,6 @@ export default async (ctx: Context) => {
     total = results[0]!.value;
     [, singerList] = results;
   } else {
-    if (pageNumber > NO_KEYWORD_MAX_PAGE) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
-    }
-
     const results = await Promise.all([
       db.get<{ value: number }>(
         `
@@ -103,7 +98,7 @@ export default async (ctx: Context) => {
         [pageSizeNumber],
       ),
     ]);
-    total = Math.min(results[0]!.value, pageSizeNumber * NO_KEYWORD_MAX_PAGE);
+    total = Math.min(results[0]!.value, pageSizeNumber);
     [, singerList] = results;
   }
 

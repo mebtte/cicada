@@ -183,6 +183,16 @@ if (cluster.isPrimary) {
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
         );
       `;
+      const TABLE_MUSICBILL_COLLECTION = `
+        CREATE TABLE musicbill_collection (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          musicbillId TEXT NOT NULL,
+          userId TEXT NOT NULL,
+          collectTimestamp INTEGER NOT NULL,
+          CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ),
+          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
+        );
+      `;
       const TABLE_USER_MUSICBILL_ORDER = `
         CREATE TABLE user_musicbill_order (
           userId TEXT PRIMARY KEY NOT NULL,
@@ -217,6 +227,7 @@ if (cluster.isPrimary) {
         TABLE_MUSIC_SINGER_RELATION,
         TABLE_MUSICBILL,
         TABLE_MUSICBILL_MUSIC,
+        TABLE_MUSICBILL_COLLECTION,
         TABLE_USER_MUSICBILL_ORDER,
         TABLE_MUSICBILL_EXPORT,
       ];

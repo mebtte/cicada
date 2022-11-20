@@ -7,6 +7,7 @@ const TAB_MAP_LABEL: Record<Tab, string> = {
   [Tab.MUSIC]: '音乐',
   [Tab.SINGER]: '歌手',
   [Tab.LYRIC]: '歌词',
+  [Tab.MUSICBILL]: '乐单',
 };
 
 const EXPLORATION_TABS = TABS.filter((t) => t !== Tab.LYRIC);

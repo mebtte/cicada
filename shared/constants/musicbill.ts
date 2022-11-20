@@ -5,3 +5,5 @@ export enum AllowUpdateKey {
   NAME = 'name',
   PUBLIC = 'public',
 }
+
+export const SEARCH_KEYWORD_MAX_LENGTH = 32;

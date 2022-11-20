@@ -7,16 +7,23 @@ import getMusicDetail from '@/server/get_music_detail';
 import getSingerDetail from '@/server/get_singer_detail';
 import e, { EditDialogType, EventType } from './eventemitter';
 
-export async function createMusicbill(name: string) {
-  const trimmedName = name.replace(/\s+/, ' ').trim();
-  if (!trimmedName.length) {
-    throw new Error('请输入名字');
-  }
-  if (trimmedName.length > NAME_MAX_LENGTH) {
-    throw new Error(`名字长度应小于等于 ${NAME_MAX_LENGTH}`);
-  }
-  await createMusicbillRequest(trimmedName);
-  e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
+export function openCreateMusicbillDialog() {
+  return e.emit(EventType.OPEN_EDIT_DIALOG, {
+    type: EditDialogType.INPUT,
+    title: '创建乐单',
+    label: '名字',
+    onSubmit: async (name: string) => {
+      const trimmedName = name.replace(/\s+/, ' ').trim();
+      if (!trimmedName.length) {
+        throw new Error('请输入名字');
+      }
+      if (trimmedName.length > NAME_MAX_LENGTH) {
+        throw new Error(`名字长度应小于等于 ${NAME_MAX_LENGTH}`);
+      }
+      await createMusicbillRequest(trimmedName);
+      e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
+    },
+  });
 }
 
 export async function createSinger({

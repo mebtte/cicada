@@ -8,7 +8,7 @@ import Button, { Variant } from '#/components/button';
 import Context from '../../context';
 import e, { EventType } from '../../eventemitter';
 import Musicbill from './musicbill';
-import { openCreateMusicbillDialog } from './utils';
+import { openCreateMusicbillDialog } from '../../utils';
 
 const reloadMusicbillList = () => e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
 const Style = styled.div`
