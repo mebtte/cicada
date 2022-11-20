@@ -129,7 +129,8 @@ if (cluster.isPrimary) {
           musicId TEXT NOT NULL,
           forkFrom TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
-          CONSTRAINT fkForkFrom FOREIGN KEY ( forkFrom ) REFERENCES music ( id )
+          CONSTRAINT fkForkFrom FOREIGN KEY ( forkFrom ) REFERENCES music ( id ),
+          UNIQUE( musicId, forkFrom ) ON CONFLICT REPLACE
         )
       `;
       const TABLE_LYRIC = `
@@ -159,7 +160,7 @@ if (cluster.isPrimary) {
           singerId TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
           CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
-          CONSTRAINT "uMusicSinger" UNIQUE ("musicId", "singerId")
+          UNIQUE( musicId, singerId ) ON CONFLICT REPLACE
         )
       `;
       const TABLE_MUSICBILL = `
@@ -199,7 +200,7 @@ if (cluster.isPrimary) {
         CREATE TABLE user_musicbill_order (
           userId TEXT PRIMARY KEY NOT NULL,
           ordersJSON TEXT NOT NULL,
-          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
+          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id )
         )
       `;
       const TABLE_MUSICBILL_EXPORT = `
