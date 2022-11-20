@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '#/global_style';
-import { openCreateMusicbillDialog } from '../../../utils';
 
 const Style = styled.div`
   margin: 20px;
@@ -16,15 +15,23 @@ const Style = styled.div`
   }
 `;
 
-function Guide() {
+function TextGuide({
+  text1,
+  text2,
+  onGuide,
+}: {
+  text1: string;
+  text2: string;
+  onGuide: () => void;
+}) {
   return (
     <Style>
-      找不到想要的歌单? &nbsp;
-      <span className="create" onClick={openCreateMusicbillDialog}>
-        自己创建一个
+      {text1} &nbsp;
+      <span className="create" onClick={onGuide}>
+        {text2}
       </span>
     </Style>
   );
 }
 
-export default memo(Guide);
+export default memo(TextGuide);

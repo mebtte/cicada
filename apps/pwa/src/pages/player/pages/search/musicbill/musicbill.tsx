@@ -30,7 +30,7 @@ const Style = styled.div`
 
       > .name {
         line-height: 1.5;
-        font-size: 14px;
+        font-size: 16px;
         color: ${CSSVariable.TEXT_COLOR_PRIMARY};
         ${ellipsis};
       }

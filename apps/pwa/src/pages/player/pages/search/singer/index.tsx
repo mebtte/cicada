@@ -10,16 +10,14 @@ import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
 import Button, { Variant } from '#/components/button';
-import { NAME_MAX_LENGTH } from '#/constants/singer';
 import playerEventemitter, {
-  EditDialogType,
   EventType as PlayerEventType,
 } from '../../../eventemitter';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import useData from './use_data';
-import { createSinger } from '../../../utils';
+import { openCreateSingerDialog } from '../../../utils';
 import Singer from './singer';
-import Guide from './guide';
+import TextGuide from '../text_guide';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -70,22 +68,11 @@ function Wrapper({ exploration }: { exploration: boolean }) {
           <Button
             variant={Variant.PRIMARY}
             onClick={() =>
-              playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-                title: '创建歌手',
-                label: '名字',
-                type: EditDialogType.INPUT,
-                maxLength: NAME_MAX_LENGTH,
-                onSubmit: async (name: string) =>
-                  createSinger({
-                    name,
-                    callback: (id) => {
-                      playerEventemitter.emit(
-                        PlayerEventType.OPEN_SINGER_DRAWER,
-                        { id },
-                      );
-                    },
-                  }),
-              })
+              openCreateSingerDialog((id) =>
+                playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
+                  id,
+                }),
+              )
             }
           >
             自己创建一个
@@ -117,7 +104,17 @@ function Wrapper({ exploration }: { exploration: boolean }) {
         ) : null}
         {exploration ||
         page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
-          <Guide />
+          <TextGuide
+            text1="找不到想要的歌手?"
+            text2="自己创建一个"
+            onGuide={() =>
+              openCreateSingerDialog((id) =>
+                playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
+                  id,
+                }),
+              )
+            }
+          />
         )}
       </MusicContainer>
     );

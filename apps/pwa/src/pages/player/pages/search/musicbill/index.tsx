@@ -10,16 +10,11 @@ import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
 import Button, { Variant } from '#/components/button';
-import { NAME_MAX_LENGTH } from '#/constants/singer';
-import playerEventemitter, {
-  EditDialogType,
-  EventType as PlayerEventType,
-} from '../../../eventemitter';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import useData from './use_data';
-import { createSinger } from '../../../utils';
+import { openCreateMusicbillDialog } from '../../../utils';
 import Musicbill from './musicbill';
-import Guide from './guide';
+import TextGuide from '../text_guide';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -66,28 +61,8 @@ function Wrapper({ exploration }: { exploration: boolean }) {
     if (!d.value!.total) {
       return (
         <CardContainer style={style}>
-          <Empty description="未找到相关歌手" />
-          <Button
-            variant={Variant.PRIMARY}
-            onClick={() =>
-              playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-                title: '创建歌手',
-                label: '名字',
-                type: EditDialogType.INPUT,
-                maxLength: NAME_MAX_LENGTH,
-                onSubmit: async (name: string) =>
-                  createSinger({
-                    name,
-                    callback: (id) => {
-                      playerEventemitter.emit(
-                        PlayerEventType.OPEN_SINGER_DRAWER,
-                        { id },
-                      );
-                    },
-                  }),
-              })
-            }
-          >
+          <Empty description="未找到相关乐单" />
+          <Button variant={Variant.PRIMARY} onClick={openCreateMusicbillDialog}>
             自己创建一个
           </Button>
         </CardContainer>
@@ -117,7 +92,11 @@ function Wrapper({ exploration }: { exploration: boolean }) {
         ) : null}
         {exploration ||
         page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
-          <Guide />
+          <TextGuide
+            text1="找不到想要的乐单?"
+            text2="创建一个"
+            onGuide={openCreateMusicbillDialog}
+          />
         )}
       </MusicContainer>
     );

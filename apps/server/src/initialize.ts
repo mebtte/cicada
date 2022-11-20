@@ -54,7 +54,7 @@ if (cluster.isPrimary) {
           joinTimestamp INTEGER NOT NULL,
           admin INTEGER NOT NULL DEFAULT 0,
           remark TEXT NOT NULL DEFAULT ''
-        );
+        )
       `;
       const TABLE_CAPTCHA = `
         CREATE TABLE captcha (
@@ -62,7 +62,7 @@ if (cluster.isPrimary) {
           value TEXT NOT NULL,
           createTimestamp INTEGER NOT NULL,
           used INTEGER NOT NULL DEFAULT 0
-        );
+        )
       `;
       const TABLE_LOGIN_CODE = `
         CREATE TABLE login_code (
@@ -72,7 +72,7 @@ if (cluster.isPrimary) {
           createTimestamp INTEGER NOT NULL,
           used INTEGER NOT NULL DEFAULT 0,
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id )
-        );
+        )
       `;
       const TABLE_SINGER = `
         CREATE TABLE singer (
@@ -83,7 +83,7 @@ if (cluster.isPrimary) {
           createUserId TEXT NOT NULL,
           createTimestamp INTEGER NOT NULL,
           CONSTRAINT fkUser FOREIGN KEY ( createUserId ) REFERENCES user ( id )
-        );
+        )
       `;
       const TABLE_SINGER_MODIFY_RECORD = `
         CREATE TABLE singer_modify_record (
@@ -94,7 +94,7 @@ if (cluster.isPrimary) {
           modifyTimestamp INTEGER NOT NULL,
           CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
           CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
-        );
+        )
       `;
       const TABLE_MUSIC = `
         CREATE TABLE music (
@@ -110,7 +110,7 @@ if (cluster.isPrimary) {
           createUserId TEXT NOT NULL,
           createTimestamp INTEGER NOT NULL,
           CONSTRAINT fkUser FOREIGN KEY ( createUserId ) REFERENCES user ( id )
-        );
+        )
       `;
       const TABLE_MUSIC_MODIGY_RECORD = `
         CREATE TABLE music_modify_record (
@@ -121,7 +121,7 @@ if (cluster.isPrimary) {
           modifyTimestamp INTEGER NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
           CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
-        );
+        )
       `;
       const TABLE_MUSIC_FORK = `
         CREATE TABLE music_fork (
@@ -130,7 +130,7 @@ if (cluster.isPrimary) {
           forkFrom TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
           CONSTRAINT fkForkFrom FOREIGN KEY ( forkFrom ) REFERENCES music ( id )
-        );
+        )
       `;
       const TABLE_LYRIC = `
         CREATE TABLE lyric (
@@ -139,7 +139,7 @@ if (cluster.isPrimary) {
           lrc TEXT NOT NULL,
           lrcContent TEXT NOT NULL,
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
-        );
+        )
       `;
       const TABLE_MUSIC_PLAY_RECORD = `
         CREATE TABLE music_play_record (
@@ -150,7 +150,7 @@ if (cluster.isPrimary) {
           timestamp INTEGER NOT NULL,
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ),
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
-        );
+        )
       `;
       const TABLE_MUSIC_SINGER_RELATION = `
         CREATE TABLE music_singer_relation (
@@ -160,7 +160,7 @@ if (cluster.isPrimary) {
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
           CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
           CONSTRAINT "uMusicSinger" UNIQUE ("musicId", "singerId")
-        );
+        )
       `;
       const TABLE_MUSICBILL = `
         CREATE TABLE musicbill (
@@ -171,7 +171,7 @@ if (cluster.isPrimary) {
           public INTEGER NOT NULL DEFAULT 0,
           createTimestamp INTEGER NOT NULL,
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
-        );
+        )
       `;
       const TABLE_MUSICBILL_MUSIC = `
         CREATE TABLE musicbill_music (
@@ -181,7 +181,7 @@ if (cluster.isPrimary) {
           addTimestamp INTEGER NOT NULL,
           CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ),
           CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
-        );
+        )
       `;
       const TABLE_MUSICBILL_COLLECTION = `
         CREATE TABLE musicbill_collection (
@@ -191,14 +191,14 @@ if (cluster.isPrimary) {
           collectTimestamp INTEGER NOT NULL,
           CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ),
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
-        );
+        )
       `;
       const TABLE_USER_MUSICBILL_ORDER = `
         CREATE TABLE user_musicbill_order (
           userId TEXT PRIMARY KEY NOT NULL,
           ordersJSON TEXT NOT NULL,
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
-        );
+        )
       `;
       const TABLE_MUSICBILL_EXPORT = `
         CREATE TABLE musicbill_export (
@@ -209,7 +209,7 @@ if (cluster.isPrimary) {
           exportedTimestamp INTEGER DEFAULT NULL,
           CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ),
           CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ) 
-        );
+        )
       `;
 
       /** 注意表创建顺序 */
