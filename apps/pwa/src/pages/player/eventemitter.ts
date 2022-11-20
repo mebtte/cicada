@@ -118,6 +118,8 @@ export enum EventType {
   MUSIC_DELETED = 'music_deleted',
 
   SINGER_UPDATED = 'singer_updated',
+
+  MUSICBILL_COLLECTION_CHANGE = 'musicbill_collection_change',
 }
 
 export default new Eventin<
@@ -186,5 +188,7 @@ export default new Eventin<
         avatar: string;
       };
     };
+
+    [EventType.MUSICBILL_COLLECTION_CHANGE]: null;
   }
 >();

@@ -27,6 +27,8 @@ async function getPublicMusicbill(id: string) {
         aliases: string[];
       }[];
     }[];
+
+    collected: boolean;
   }>({
     path: '/api/public_musicbill',
     params: { id },

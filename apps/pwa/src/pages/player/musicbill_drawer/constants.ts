@@ -1,7 +1,10 @@
 import getPublicMusicbill from '@/server/get_public_musicbill';
 import { MusicWithIndex } from '../constants';
 
-export type Musicbill = AsyncReturnType<typeof getPublicMusicbill> & {
+export type Musicbill = Omit<
+  AsyncReturnType<typeof getPublicMusicbill>,
+  'collected'
+> & {
   musicList: MusicWithIndex[];
 };
 

@@ -117,7 +117,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
               return dialog.confirm({
                 title: '是否将乐单设为隐藏?',
                 content:
-                  '设为隐藏将会从个人主页移除该乐单, 且会从用户的收藏列表中移除',
+                  '设为隐藏将会从个人主页移除该乐单, 其他用户无法搜索和收藏, 且会从用户的收藏列表中移除',
                 onConfirm: async () =>
                   updateMusicbill({
                     id: musicbill.id,
@@ -137,7 +137,8 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
             }
             return dialog.confirm({
               title: '是否将乐单设为公开?',
-              content: '公开的乐单将会出现在个人主页上, 且用户可以收藏',
+              content:
+                '公开的乐单将会出现在个人主页上, 且其他用户可以进行搜索和收藏',
               onConfirm: async () =>
                 updateMusicbill({
                   id: musicbill.id,

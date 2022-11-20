@@ -40,7 +40,13 @@ const Style = styled.div`
   }
 `;
 
-function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
+function Musicbill({
+  musicbill,
+  collected,
+}: {
+  musicbill: MusicbillType;
+  collected: boolean;
+}) {
   const [miniInfoVisible, setMiniInfoVisible] = useState(false);
   const onScroll: UIEventHandler<HTMLDivElement> = (e) => {
     const { clientWidth, scrollTop } = e.target as HTMLDivElement;
@@ -51,7 +57,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     <Style>
       <div className="scrollable" onScroll={onScroll}>
         <Info musicbill={musicbill} />
-        <Toolbar musicbill={musicbill} />
+        <Toolbar musicbill={musicbill} collected={collected} />
         <MusicList musicList={musicbill.musicList} />
       </div>
       {miniInfoVisible ? <MiniInfo musicbill={musicbill} /> : null}
@@ -69,7 +75,7 @@ function Wrapper({
   id: string;
 }) {
   const zIndex = useDynamicZIndex(EventType.OPEN_MUSICBILL_DRAWER);
-  const { data, reload } = useData(id);
+  const { data, reload, collected } = useData(id);
 
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -103,7 +109,7 @@ function Wrapper({
         }
         return (
           <Container style={style}>
-            <Musicbill musicbill={musicbill!} />
+            <Musicbill musicbill={musicbill!} collected={collected} />
           </Container>
         );
       })}

@@ -180,7 +180,8 @@ if (cluster.isPrimary) {
           musicId TEXT NOT NULL,
           addTimestamp INTEGER NOT NULL,
           CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ),
-          CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
+          CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
+          UNIQUE( musicbillId, musicId ) ON CONFLICT REPLACE
         )
       `;
       const TABLE_MUSICBILL_COLLECTION = `
@@ -190,7 +191,8 @@ if (cluster.isPrimary) {
           userId TEXT NOT NULL,
           collectTimestamp INTEGER NOT NULL,
           CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ),
-          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
+          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ),
+          UNIQUE( musicbillId, userId ) ON CONFLICT REPLACE
         )
       `;
       const TABLE_USER_MUSICBILL_ORDER = `

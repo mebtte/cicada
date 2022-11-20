@@ -8,6 +8,10 @@ import {
   Property as MusicbillProperty,
 } from '@/db/musicbill';
 import {
+  getMusicbillCollection,
+  Property as MusicbillCollectionProperty,
+} from '@/db/musicbill_collection';
+import {
   getSingerListInMusicIds,
   Property as SingerProperty,
 } from '@/db/singer';
@@ -33,7 +37,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
 
-  const [user, musicList] = await Promise.all([
+  const [user, musicList, musicbillCollection] = await Promise.all([
     getUserById(musicbill.userId, [
       UserProperty.ID,
       UserProperty.NICKNAME,
@@ -70,6 +74,11 @@ export default async (ctx: Context) => {
       `,
       [id],
     ),
+    getMusicbillCollection({
+      musicbillId: id,
+      userId: ctx.user.id,
+      properties: [MusicbillCollectionProperty.ID],
+    }),
   ]);
 
   const musicIdMapSingers: {
@@ -114,5 +123,7 @@ export default async (ctx: Context) => {
       ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingers[m.id] || [],
     })),
+
+    collected: !!musicbillCollection,
   });
 };

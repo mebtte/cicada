@@ -27,6 +27,8 @@ export enum ExceptionCode {
   NICKNAME_EXIST,
   USER_NOT_EXIST,
   MUSIC_HAS_FORK_AND_CAN_NOT_BE_DELETED,
+  COLLECT_MUSICBILL_REPEATLY,
+  NOT_COLLECT_MUSICBILL_YET,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -118,5 +120,11 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.MUSIC_HAS_FORK_AND_CAN_NOT_BE_DELETED]: {
     description: '音乐被二次创作无法被删除',
+  },
+  [ExceptionCode.COLLECT_MUSICBILL_REPEATLY]: {
+    description: '重复收藏乐单',
+  },
+  [ExceptionCode.NOT_COLLECT_MUSICBILL_YET]: {
+    description: '未收藏该乐单',
   },
 };

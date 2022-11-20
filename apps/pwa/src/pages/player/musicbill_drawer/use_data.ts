@@ -3,6 +3,7 @@ import getPublicMusicbill from '@/server/get_public_musicbill';
 import getRandomCover from '@/utils/get_random_cover';
 import { useCallback, useEffect, useState } from 'react';
 import { Musicbill } from './constants';
+import e, { EventType } from './eventemitter';
 
 interface Data {
   error: Error | null;
@@ -16,11 +17,13 @@ const dataLoading: Data = {
 };
 
 export default (id: string) => {
+  const [collected, setCollected] = useState(false);
   const [data, setData] = useState(dataLoading);
   const getData = useCallback(async () => {
     setData(dataLoading);
     try {
       const musicbill = await getPublicMusicbill(id);
+      setCollected(musicbill.collected);
       setData({
         error: null,
         loading: false,
@@ -51,5 +54,28 @@ export default (id: string) => {
     getData();
   }, [getData]);
 
-  return { data, reload: getData };
+  useEffect(() => {
+    const unlistenCollectMusicbill = e.listen(
+      EventType.COLLECT_MUSICBILL,
+      (payload) => {
+        if (data.musicbill && data.musicbill.id === payload.id) {
+          setCollected(true);
+        }
+      },
+    );
+    const unlistenUncollectMusicbill = e.listen(
+      EventType.UNCOLLECT_MUSICBILL,
+      (payload) => {
+        if (data.musicbill && data.musicbill.id === payload.id) {
+          setCollected(false);
+        }
+      },
+    );
+    return () => {
+      unlistenCollectMusicbill();
+      unlistenUncollectMusicbill();
+    };
+  }, [data]);
+
+  return { data, collected, reload: getData };
 };
