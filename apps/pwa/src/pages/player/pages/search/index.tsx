@@ -4,9 +4,9 @@ import TabList from '#/components/tab_list';
 import useNavigate from '#/utils/use_navigate';
 import mm from '@/global_states/mini_mode';
 import Input from './input';
-import { HEADER_HEIGHT } from '../../constants';
+import { HEADER_HEIGHT, SearchTab } from '../../constants';
 import Page from '../page';
-import { Tab, TOOLBAR_HEIGHT } from './constants';
+import { TOOLBAR_HEIGHT } from './constants';
 import Content from './content';
 import useTab from './use_tab';
 
@@ -50,7 +50,7 @@ function Search({ exploration }: { exploration: boolean }) {
       <Content tab={tab} exploration={exploration} />
       <div className="toolbar">
         {miniMode && !exploration ? <Input /> : null}
-        <TabList<Tab>
+        <TabList<SearchTab>
           current={tab}
           tabList={tabList}
           onChange={(t) =>

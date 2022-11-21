@@ -32,7 +32,6 @@ function generateType(type: NoticeType) {
 export { NoticeType };
 export default {
   info: generateType(NoticeType.INFO),
-  success: generateType(NoticeType.SUCCESS),
   error: generateType(NoticeType.ERROR),
   close: (id: string) => e.emit(EventType.CLOSE, { id }),
 };

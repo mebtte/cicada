@@ -1,11 +1,6 @@
-export enum Tab {
-  MUSIC = 'music',
-  SINGER = 'singer',
-  LYRIC = 'lyric',
-  MUSICBILL = 'musicbill',
-}
+import { SearchTab } from '../../constants';
 
-export const TABS = Object.values(Tab);
+export const TABS = Object.values(SearchTab);
 
 export const TOOLBAR_HEIGHT = 40;
 

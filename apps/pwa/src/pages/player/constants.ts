@@ -81,3 +81,10 @@ export const ZIndex = {
   POPUP: UtilZIndex.PAGINATION - 1,
   DIALOG: UtilZIndex.PAGINATION - 1,
 };
+
+export enum SearchTab {
+  MUSIC = 'music',
+  SINGER = 'singer',
+  LYRIC = 'lyric',
+  MUSICBILL = 'musicbill',
+}

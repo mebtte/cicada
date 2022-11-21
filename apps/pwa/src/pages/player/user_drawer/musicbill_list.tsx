@@ -34,8 +34,8 @@ const Style = styled.div`
 
     > .music-count {
       position: absolute;
-      right: 0;
-      top: 0;
+      left: 0;
+      bottom: 0;
 
       padding: 3px 8px;
 

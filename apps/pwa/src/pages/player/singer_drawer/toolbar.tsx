@@ -57,7 +57,7 @@ function Toolbar({ singer }: { singer: SingerDetail }) {
           onClick={() =>
             window.navigator.clipboard
               .writeText(singer.name)
-              .then(() => notice.success('已复制歌手名字'))
+              .then(() => notice.info('已复制歌手名字'))
               .catch((error) => {
                 logger.error(error, '复制歌手名字失败');
                 return notice.error(error.message);

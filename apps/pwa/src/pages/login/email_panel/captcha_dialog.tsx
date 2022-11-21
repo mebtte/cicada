@@ -86,7 +86,7 @@ function CaptchaDialog({
       });
       toNextWrapper();
 
-      notice.success('登录验证码已发送到邮箱');
+      notice.info('登录验证码已发送到邮箱');
       sleep(1000).then(() =>
         notice.info('登录验证码邮件可能会被归类到垃圾邮件'),
       );

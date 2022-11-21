@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 
 export enum NoticeType {
   INFO,
-  SUCCESS,
   ERROR,
 }
 

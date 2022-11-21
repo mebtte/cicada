@@ -1,13 +1,22 @@
 import styled from 'styled-components';
-import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
+import Toolbar from './toolbar';
+import MusicbillList from './musicbill_list';
 
 const Style = styled(Page)`
-  padding-top: ${HEADER_HEIGHT}px;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
 `;
 
 function MusicbillCollection() {
-  return <Style>musicbill collection</Style>;
+  return (
+    <Style>
+      <MusicbillList />
+      <Toolbar />
+    </Style>
+  );
 }
 
 export default MusicbillCollection;

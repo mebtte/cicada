@@ -1,11 +1,11 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Cover, { Shape } from '#/components/cover';
 import { CSSVariable } from '#/global_style';
 import ellipsis from '#/style/ellipsis';
-import { Musicbill as MusicbillType } from './constants';
+import { HtmlHTMLAttributes, ReactNode } from 'react';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '../../../eventemitter';
+} from '../eventemitter';
 
 const Style = styled.div`
   display: inline-flex;
@@ -73,39 +73,56 @@ const Style = styled.div`
   &:active {
     background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   }
-
-  ${({ theme: { miniMode } }) => css`
-    width: ${miniMode ? '100%' : '50%'};
-  `}
 `;
 
-function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
+function Musicbill({
+  id,
+  cover,
+  name,
+  musicCount,
+  user,
+  addon,
+  ...props
+}: HtmlHTMLAttributes<HTMLDivElement> & {
+  id: string;
+  cover: string;
+  name: string;
+  musicCount: number;
+  user: {
+    id: string;
+    nickname: string;
+    avatar: string;
+  };
+  addon?: ReactNode;
+}) {
   return (
     <Style
       onClick={() =>
         playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_DRAWER, {
-          id: musicbill.id,
+          id,
         })
       }
+      {...props}
     >
-      <Cover src={musicbill.cover} size={72} />
+      <Cover src={cover} size={90} />
       <div className="info">
         <div className="top">
-          <div className="name">{musicbill.name}</div>
-          <div className="music-count">{musicbill.musicCount}首音乐</div>
+          <div className="name">{name}</div>
+          <div className="music-count">{musicCount}首音乐</div>
         </div>
         <div
           className="user"
           onClick={(event) => {
             event.stopPropagation();
             return playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
-              id: musicbill.user.id,
+              id: user.id,
             });
           }}
         >
-          <Cover src={musicbill.user.avatar} size={18} shape={Shape.CIRCLE} />
-          <div className="nickname">{musicbill.user.nickname}</div>
+          <Cover src={user.avatar} size={18} shape={Shape.CIRCLE} />
+          <div className="nickname">{user.nickname}</div>
         </div>
+        {addon}
       </div>
     </Style>
   );

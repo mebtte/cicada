@@ -10,10 +10,11 @@ import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
 import Button, { Variant } from '#/components/button';
+import mm from '@/global_states/mini_mode';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import useData from './use_data';
 import { openCreateMusicbillDialog } from '../../../utils';
-import Musicbill from './musicbill';
+import Musicbill from '../../../components/musicbill';
 import TextGuide from '../text_guide';
 
 const Container = styled(animated.div)`
@@ -36,6 +37,7 @@ const paginationStyle: CSSProperties = {
 
 function Wrapper({ exploration }: { exploration: boolean }) {
   const navigate = useNavigate();
+  const miniMode = mm.useState();
   const { data, reload, page } = useData();
 
   const transitions = useTransition(data, {
@@ -68,11 +70,23 @@ function Wrapper({ exploration }: { exploration: boolean }) {
         </CardContainer>
       );
     }
+
+    const musicbillStyle: CSSProperties = {
+      width: miniMode ? '100%' : '50%',
+    };
     return (
       <MusicContainer style={style}>
         <div>
           {d.value!.musicbillList.map((musicbill) => (
-            <Musicbill key={musicbill.id} musicbill={musicbill} />
+            <Musicbill
+              key={musicbill.id}
+              id={musicbill.id}
+              cover={musicbill.cover}
+              name={musicbill.name}
+              musicCount={musicbill.musicCount}
+              user={musicbill.user}
+              style={musicbillStyle}
+            />
           ))}
         </div>
         {d.value!.total ? (

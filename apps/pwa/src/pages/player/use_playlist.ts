@@ -40,7 +40,7 @@ export default () => {
             ...newMusicList.map((m) => ({ ...m, index: 0 })),
           ];
           const { length } = newPlaylist;
-          notice.success(`已添加${newMusicList.length}首音乐到播放列表`);
+          notice.info(`已添加${newMusicList.length}首音乐到播放列表`);
           return newPlaylist.map((m, index) => ({
             ...m,
             index: length - index,

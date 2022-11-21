@@ -47,7 +47,7 @@ function CreateUserDialog() {
         remark: remark.replace(/\s+/g, ' ').trim(),
       });
 
-      notice.success('已创建用户');
+      notice.info('已创建用户');
       onClose();
       e.emit(EventType.RELOAD_DATA, null);
     } catch (error) {

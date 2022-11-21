@@ -15,11 +15,6 @@ const NOTICE_TYPE_MAP: Record<
 > = {
   [NoticeType.INFO]: {
     css: css`
-      background-color: #3da9fc;
-    `,
-  },
-  [NoticeType.SUCCESS]: {
-    css: css`
       background-color: ${CSSVariable.COLOR_PRIMARY};
     `,
   },

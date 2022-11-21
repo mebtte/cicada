@@ -39,6 +39,7 @@ import getPublicMusicbill from './controllers/get_public_musicbill';
 import searchPublicMusicbill from './controllers/search_public_musicbill';
 import collectPublicMusicbill from './controllers/collect_public_musicbill';
 import uncollectPublicMusicbill from './controllers/uncollect_public_musicbill';
+import getSelfMusicbillCollectionList from './controllers/get_self_musicbill_collection_list';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -81,6 +82,11 @@ router.delete(
   uncollectPublicMusicbill,
 ); // 取消收藏公开乐单
 router.get('/public_musicbill/search', authorize, searchPublicMusicbill); // 搜索公开乐单
+router.get(
+  '/self_musicbill_collection_list',
+  authorize,
+  getSelfMusicbillCollectionList,
+); // 获取乐单收藏列表
 
 router.post('/music', authorize, parseBody, createMusic); // 创建音乐
 router.put('/music', authorize, parseBody, updateMusic); // 更新音乐
