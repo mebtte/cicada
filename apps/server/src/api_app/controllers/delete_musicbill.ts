@@ -7,8 +7,6 @@ import {
 } from '@/db/musicbill_music';
 import { TRASH_DIR } from '@/constants/directory';
 import db from '@/db';
-import { getAssetPath } from '@/platform/asset';
-import { AssetType } from '#/constants';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -22,14 +20,6 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
 
-  /** 备份 */
-  if (musicbill.cover) {
-    const data = await await fs.readFile(
-      getAssetPath(musicbill.cover, AssetType.MUSICBILL_COVER),
-      'base64',
-    );
-    musicbill.cover = data.toString();
-  }
   const musicList = await getMusicbillMusicList(id, [
     MusicbillMusicProperty.MUSIC_ID,
     MusicbillMusicProperty.ADD_TIMESTAMP,
@@ -45,17 +35,26 @@ export default async (ctx: Context) => {
   /**
    * 从数据库移除
    */
+  await Promise.all([
+    db.run(
+      `
+        DELETE FROM musicbill_music
+        WHERE musicbillId = ?
+      `,
+      [id],
+    ),
+    db.run(
+      `
+        DELETE FROM musicbill_export
+        WHERE musicbillId = ?
+      `,
+      [id],
+    ),
+  ]);
   await db.run(
     `
-      delete from musicbill_music
-        where musicbillId = ?
-    `,
-    [id],
-  ); // musicbill_music
-  await db.run(
-    `
-      delete from musicbill
-        where id = ?
+      DELETE FROM musicbill
+      WHERE id = ?
     `,
     [id],
   ); // musicbill

@@ -4,7 +4,6 @@ import {
   MdOutlineSettings,
   MdOutlineMusicNote,
   MdPersonOutline,
-  MdStarOutline,
 } from 'react-icons/md';
 import MenuItem from '#/components/menu_item';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -23,16 +22,6 @@ function Menu() {
         onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORE}`)}
         label="发现"
         icon={<MdLooks />}
-      />
-      <MenuItem
-        active={
-          pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL_COLLECTION}`
-        }
-        onClick={() =>
-          navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL_COLLECTION}`)
-        }
-        label="乐单收藏"
-        icon={<MdStarOutline />}
       />
       <MenuItem
         active={pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.MY_MUSIC}`}

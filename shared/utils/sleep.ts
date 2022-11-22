@@ -6,7 +6,7 @@ function sleep(ms: number): Promise<void>;
 function sleep<T>(ms: number, data: T): Promise<T>;
 function sleep<T>(ms: number, data?: T) {
   return new Promise<T | void>((resolve) =>
-    window.setTimeout(() => resolve(data), ms),
+    global.setTimeout(() => resolve(data), ms),
   );
 }
 

@@ -3,9 +3,8 @@ import fs from 'fs';
 import util from 'util';
 import day from '#/utils/day';
 import { LOG_DIR } from '@/constants/directory';
-import removeOutdatedCaptcha from './jobs/remove_outdated_captcha';
+import removeOutdatedDB from './jobs/remove_outdated_db';
 import createDBSnapshot from './jobs/create_db_snapshot';
-import removeOutdatedLoginCode from './jobs/remove_outdated_login_code';
 import cleanOutdatedFile from './jobs/clean_outdated_file';
 import exportMusicbill from './jobs/export_musicbill';
 import removeNoMusicSinger from './jobs/remove_no_music_singer';
@@ -47,12 +46,8 @@ interface Job {
 }
 const DAILY_JOBS: Job[] = [
   {
-    name: 'remove_outdated_captcha',
-    job: removeOutdatedCaptcha,
-  },
-  {
-    name: 'remove_outdated_login_code',
-    job: removeOutdatedLoginCode,
+    name: 'remove_outdated_db',
+    job: removeOutdatedDB,
   },
   {
     name: 'create_db_snapshot',

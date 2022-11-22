@@ -30,6 +30,10 @@ export default () => {
       title = '设置';
       break;
     }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.MUSICBILL_COLLECTION: {
+      title = '乐单收藏';
+      break;
+    }
   }
 
   return title;

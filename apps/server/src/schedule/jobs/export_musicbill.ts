@@ -51,9 +51,9 @@ function zipFileList(
 function setMusicbillExported(id: number) {
   return db.run(
     `
-      update musicbill_export
-        set exportedTimestamp = ?
-        where id = ?
+      UPDATE musicbill_export
+      SET exportedTimestamp = ?
+      WHERE id = ?
     `,
     [Date.now(), id],
   );
@@ -166,10 +166,15 @@ async function exportMusicbill(
 async function exportMusicbillWrapper() {
   const musicbillExport = await db.get<MusicbillExport>(
     `
-      select me.id, me.userId, me.musicbillId, m.name as musicbillName from musicbill_export as me
-        left join musicbill as m on me.musicbillId = m.id
-        where me.exportedTimestamp is null
-        order by me.createTimestamp
+      SELECT
+        me.id,
+        me.userId,
+        me.musicbillId,
+        m.name AS musicbillName
+      FROM musicbill_export AS me
+      LEFT JOIN musicbill AS m ON me.musicbillId = m.id
+      WHERE me.exportedTimestamp IS NULL
+      ORDER BY me.createTimestamp
     `,
     [],
   );
