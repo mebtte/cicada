@@ -109,7 +109,7 @@ function MusicbillList() {
                   })
                 }
               >
-                探索乐单
+                发现乐单
               </Button>
             </CardContainer>
           );

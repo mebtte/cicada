@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
-import { MdRefresh, MdPlaylistAdd, MdDelete, MdEdit } from 'react-icons/md';
+import {
+  MdRefresh,
+  MdPlaylistAdd,
+  MdDelete,
+  MdEdit,
+  MdDownload,
+} from 'react-icons/md';
 import { RequestStatus } from '@/constants';
 import dialog from '#/utils/dialog';
 import deleteMusicbill from '@/server/delete_musicbill';
@@ -13,6 +19,7 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
+import { exportMusicbill } from '../../utils';
 
 const Style = styled.div`
   display: flex;
@@ -39,6 +46,9 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         }
       >
         <MdPlaylistAdd />
+      </IconButton>
+      <IconButton onClick={() => exportMusicbill(musicbill.id)}>
+        <MdDownload />
       </IconButton>
       <IconButton
         loading={status === RequestStatus.LOADING}

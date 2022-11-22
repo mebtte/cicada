@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
-import { MdPlaylistAdd, MdStar, MdStarOutline } from 'react-icons/md';
+import {
+  MdDownload,
+  MdPlaylistAdd,
+  MdStar,
+  MdStarOutline,
+} from 'react-icons/md';
 import notice from '#/utils/notice';
 import collectPublicMusicbill from '@/server/collect_public_musicbill';
 import logger from '#/utils/logger';
@@ -10,6 +15,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import e, { EventType } from './eventemitter';
+import { exportMusicbill } from '../utils';
 
 const Style = styled.div`
   z-index: 1;
@@ -45,6 +51,9 @@ function Toolbar({
         }
       >
         <MdPlaylistAdd />
+      </IconButton>
+      <IconButton onClick={() => exportMusicbill(musicbill.id)}>
+        <MdDownload />
       </IconButton>
       <IconButton
         onClick={() => {

@@ -25,8 +25,10 @@ export default async (ctx: Context) => {
     value: number;
   }>(
     `
-      select count(*) as value from musicbill_music
-        where musicbillId = ?
+      SELECT
+        count(*) AS value
+      FROM musicbill_music
+      WHERE musicbillId = ?
     `,
     [id],
   );
@@ -37,9 +39,12 @@ export default async (ctx: Context) => {
   const now = day();
   const todayExportTimes = await db.get<{ value: number }>(
     `
-      select count(*) as value from musicbill_export
-        where userId = ?
-          and createTimestamp >= ? and createTimestamp < ?
+      SELECT
+        count(*) AS value
+      FROM musicbill_export
+      WHERE userId = ?
+        AND createTimestamp >= ?
+        AND createTimestamp < ?
     `,
     [ctx.user.id, now.startOf('day'), now.endOf('day')],
   );
@@ -49,9 +54,9 @@ export default async (ctx: Context) => {
 
   await db.run(
     `
-    insert into musicbill_export(userId, musicbillId, createTimestamp)
-      values(?, ?, ?)
-  `,
+      INSERT INTO musicbill_export ( userId, musicbillId, createTimestamp )
+      VALUES ( ?, ?, ? )
+    `,
     [ctx.user.id, id, Date.now()],
   );
 
