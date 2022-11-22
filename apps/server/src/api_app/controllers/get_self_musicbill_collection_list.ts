@@ -55,8 +55,9 @@ export default async (ctx: Context) => {
             ON mc.musicbillId = m.id
           WHERE m.public = 1
             AND m.name LIKE ?
+            AND mc.userId = ?
         `,
-        [pattern],
+        [pattern, ctx.user.id],
       ),
       db.all<LocalMusicbill>(
         `
@@ -74,12 +75,18 @@ export default async (ctx: Context) => {
             ON mm.musicbillId = mc.musicbillId
           WHERE m.public = 1
             AND m.name LIKE ?
+            AND mc.userId = ?
           GROUP BY mc.musicbillId
           ORDER BY mc.collectTimestamp DESC
           LIMIT ?
           OFFSET ?
         `,
-        [pattern, pageSizeNumber, pageSizeNumber * (pageNumber - 1)],
+        [
+          pattern,
+          ctx.user.id,
+          pageSizeNumber,
+          pageSizeNumber * (pageNumber - 1),
+        ],
       ),
     ]);
 
@@ -95,8 +102,9 @@ export default async (ctx: Context) => {
           LEFT JOIN musicbill AS m
             ON mc.musicbillId = m.id
           WHERE m.public = 1
+            AND mc.userId = ?
         `,
-        [],
+        [ctx.user.id],
       ),
       db.all<LocalMusicbill>(
         `
@@ -113,12 +121,13 @@ export default async (ctx: Context) => {
           LEFT JOIN musicbill_music AS mm
             ON mm.musicbillId = mc.musicbillId
           WHERE m.public = 1
+            AND mc.userId = ?
           GROUP BY mc.musicbillId
           ORDER BY mc.collectTimestamp DESC
           LIMIT ?
           OFFSET ?
         `,
-        [pageSizeNumber, pageSizeNumber * (pageNumber - 1)],
+        [ctx.user.id, pageSizeNumber, pageSizeNumber * (pageNumber - 1)],
       ),
     ]);
 
