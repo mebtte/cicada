@@ -1,6 +1,8 @@
 import db from '@/db';
 import withTimeout from '#/utils/with_timeout';
-import sleep from '#/utils/sleep';
+import fs from 'fs/promises';
+import { TRASH_DIR } from '@/constants/directory';
+import day from '#/utils/day';
 
 const TABLES: {
   table: string;
@@ -22,20 +24,47 @@ const TABLES: {
     timestampColumn: 'createTimestmap',
     ttl: 1000 * 60 * 60 * 24 * 30,
   },
+  {
+    table: 'music_modify_record',
+    timestampColumn: 'modifyTimestamp',
+    ttl: 1000 * 60 * 60 * 24 * 180,
+  },
+  {
+    table: 'singer_modify_record',
+    timestampColumn: 'modifyTimestamp',
+    ttl: 1000 * 60 * 60 * 24 * 180,
+  },
 ];
 
 async function removeOutdatedDB() {
+  const now = Date.now();
   for (const { table, timestampColumn, ttl } of TABLES) {
-    await Promise.all([
-      db.run(
-        `
-        DELETE FROM ${table}
+    const rows = await db.all(
+      `
+        SELECT
+          *
+        FROM ${table}
         WHERE ${timestampColumn} <= ?
       `,
-        [Date.now() - ttl],
-      ),
-      sleep(1000),
-    ]);
+      [now - ttl],
+    );
+    if (rows.length) {
+      await Promise.all([
+        fs.writeFile(
+          `${TRASH_DIR}/outdated_table_${table}_${day(now).format(
+            'YYYYMMDD',
+          )}.json`,
+          JSON.stringify(rows),
+        ),
+        db.run(
+          `
+          DELETE FROM ${table}
+          WHERE ${timestampColumn} <= ?
+        `,
+          [now - ttl],
+        ),
+      ]);
+    }
   }
 }
 

@@ -10,7 +10,7 @@ async function removeNoMusicSinger() {
   const noMusicSingerList = await db.all<Singer>(
     `
       SELECT
-        ${Object.values(Property).join(',')}
+        ${Object.values(Property).join(', ')}
       FROM
         singer
       WHERE
@@ -29,7 +29,7 @@ async function removeNoMusicSinger() {
       db.run(
         `
           DELETE FROM singer_modify_record
-            WHERE singerId in ( ${noMusicSingerList.map(() => '?').join(',')} )
+          WHERE singerId in ( ${noMusicSingerList.map(() => '?').join(', ')} )
         `,
         noMusicSingerList.map((s) => s.id),
       ),
@@ -41,7 +41,7 @@ async function removeNoMusicSinger() {
     await db.run(
       `
         DELETE FROM singer
-        WHERE id in ( ${noMusicSingerList.map(() => '?').join(',')} )
+        WHERE id IN ( ${noMusicSingerList.map(() => '?').join(',')} )
       `,
       noMusicSingerList.map((s) => s.id),
     );
