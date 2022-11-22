@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import List from 'react-list';
 import mm from '@/global_states/mini_mode';
+import Empty from '@/components/empty';
 import { Musicbill } from '../../constants';
 import { INFO_HEIGHT } from './constants';
 import playerEventemitter, {
@@ -15,6 +16,7 @@ import Music from '../../components/music';
 
 const Style = styled.div`
   position: relative;
+  min-height: calc(100% - ${INFO_HEIGHT}px);
 `;
 const Container = styled(animated.div)`
   position: absolute;
@@ -23,8 +25,7 @@ const Container = styled(animated.div)`
   width: 100%;
 `;
 const StatusContainer = styled(Container)`
-  height: calc(100% - ${INFO_HEIGHT}px);
-  padding: 50px 0;
+  height: 100%;
 
   ${flexCenter}
 `;
@@ -54,21 +55,28 @@ function Wrapper({ musicbill }: { musicbill: Musicbill }) {
         }
 
         if (s === RequestStatus.SUCCESS) {
+          if (musicList.length) {
+            return (
+              <Container style={style}>
+                <List
+                  type="uniform"
+                  length={musicList.length}
+                  // eslint-disable-next-line react/no-unstable-nested-components
+                  itemRenderer={(index, key) => (
+                    <Music
+                      key={key}
+                      music={musicList[index]}
+                      miniMode={miniMode}
+                    />
+                  )}
+                />
+              </Container>
+            );
+          }
           return (
-            <Container style={style}>
-              <List
-                type="uniform"
-                length={musicList.length}
-                // eslint-disable-next-line react/no-unstable-nested-components
-                itemRenderer={(index, key) => (
-                  <Music
-                    key={key}
-                    music={musicList[index]}
-                    miniMode={miniMode}
-                  />
-                )}
-              />
-            </Container>
+            <StatusContainer style={style}>
+              <Empty description="乐单暂未收录音乐" />
+            </StatusContainer>
           );
         }
 

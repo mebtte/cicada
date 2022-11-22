@@ -97,7 +97,7 @@ function MusicbillList() {
         if (!value!.total && !value!.musicbillList.length) {
           return (
             <CardContainer style={style}>
-              <Empty description="暂未收藏乐单" />
+              <Empty description="暂无相关乐单" />
               <Button
                 variant={Variant.PRIMARY}
                 onClick={() =>

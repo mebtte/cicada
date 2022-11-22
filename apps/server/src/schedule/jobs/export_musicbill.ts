@@ -73,7 +73,7 @@ async function exportMusicbill(
         m.sq
       FROM
         musicbill_music AS mm
-        LEFT JOIN music AS m ON mm.musicId = m.id 
+      LEFT JOIN music AS m ON mm.musicId = m.id 
       WHERE
         mm.musicbillId = ?
     `,
@@ -147,12 +147,11 @@ async function exportMusicbill(
         <br />
         乐单「${encode(
           musicbillExport.musicbillName,
-        )}」已导出, 你可以<a href="${config.publicAddress}/${
+        )}」已导出, 你可以点击<a href="${config.publicAddress}/${
         PathPrefix.DOWNLOAD
-      }/${exportFilename}">点击这里进行下载</a>,
-        链接将在 ${day(Date.now() + DOWNLOAD_TTL).format(
-          'YYYY-MM-DD HH:mm:ss',
-        )} 后失效.
+      }/${exportFilename}">这里</a>进行下载, 链接将在 ${day(
+        Date.now() + DOWNLOAD_TTL,
+      ).format('YYYY-MM-DD HH:mm:ss')} 后失效.
         <br />
         <br />
         ${BRAND_NAME}
