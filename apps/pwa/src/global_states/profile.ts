@@ -5,12 +5,12 @@ import logger from '#/utils/logger';
 import token from './token';
 
 const initialProfile: Profile | null = await storage.getItem(Key.PROFILE);
-const user = new XState<Profile | null>(token.get() ? initialProfile : null);
+const profile = new XState<Profile | null>(token.get() ? initialProfile : null);
 
-user.onChange((u) => {
-  if (u) {
+profile.onChange((p) => {
+  if (p) {
     storage
-      .setItem(Key.PROFILE, u)
+      .setItem(Key.PROFILE, p)
       .catch((error) => logger.error(error, '保存个人资料失败'));
   } else {
     storage
@@ -18,6 +18,6 @@ user.onChange((u) => {
       .catch((error) => logger.error(error, '移除个人资料失败'));
   }
 });
-token.onChange((t) => (t ? null : user.set(null)));
+token.onChange((t) => (t ? null : profile.set(null)));
 
-export default user;
+export default profile;
