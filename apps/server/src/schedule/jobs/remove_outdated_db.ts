@@ -21,7 +21,7 @@ const TABLES: {
   },
   {
     table: 'musicbill_export',
-    timestampColumn: 'createTimestmap',
+    timestampColumn: 'createTimestamp',
     ttl: 1000 * 60 * 60 * 24 * 30,
   },
   {
