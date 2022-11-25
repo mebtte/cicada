@@ -35,7 +35,7 @@ const KEY_MAP_HANDLER: Record<
       typeof name !== 'string' ||
       !name.length ||
       name.length > NAME_MAX_LENGTH ||
-      name.replace(/\s/g, '') !== name
+      name.replace(/\s+/g, ' ').trim() !== name
     ) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
