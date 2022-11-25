@@ -43,7 +43,12 @@ export async function request<Data = void>({
     [Query.VERSION]: env.VERSION,
   };
   url += `?${Object.keys(combineParams)
-    .map((key) => `${key}=${combineParams[key]}`)
+    .map(
+      (key) =>
+        `${window.encodeURIComponent(key)}=${window.encodeURIComponent(
+          combineParams[key],
+        )}`,
+    )
     .join('&')}`;
 
   if (withToken) {
