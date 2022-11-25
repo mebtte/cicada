@@ -53,7 +53,7 @@ async function start() {
 
     server.use(
       cors({
-        credentials: true,
+        maxAge: 86400,
       }),
     );
     server.use(mount(`/${PathPrefix.ASSET}`, assetApp));
