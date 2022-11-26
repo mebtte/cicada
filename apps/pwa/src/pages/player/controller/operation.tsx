@@ -3,12 +3,15 @@ import IconButton from '#/components/icon_button';
 import {
   MdOutlineQueueMusic,
   MdPause,
-  MdOutlinePlayArrow,
-  MdOutlineSkipPrevious,
-  MdOutlineSkipNext,
+  MdPlayArrow,
+  MdSkipPrevious,
+  MdSkipNext,
   MdMoreHoriz,
+  MdReadMore,
+  MdOutlinePostAdd,
 } from 'react-icons/md';
 import mm from '@/global_states/mini_mode';
+import { CSSVariable } from '#/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -27,6 +30,15 @@ const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+
+  > .divider {
+    height: 24px;
+    width: 1px;
+
+    margin: 0 5px;
+
+    background-color: ${CSSVariable.COLOR_BORDER};
+  }
 `;
 
 function Operation({
@@ -42,27 +54,53 @@ function Operation({
   return (
     <Style>
       {miniMode ? null : (
-        <IconButton
-          onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_OPERATE_POPUP, {
-              music: queueMusic,
-            })
-          }
-        >
-          <MdMoreHoriz />
-        </IconButton>
+        <>
+          <IconButton
+            onClick={() =>
+              playerEventemitter.emit(
+                PlayerEventType.OPEN_MUSIC_OPERATE_POPUP,
+                {
+                  music: queueMusic,
+                },
+              )
+            }
+          >
+            <MdMoreHoriz />
+          </IconButton>
+          <IconButton
+            onClick={() =>
+              playerEventemitter.emit(
+                PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                { music: queueMusic },
+              )
+            }
+          >
+            <MdReadMore />
+          </IconButton>
+          <IconButton
+            onClick={() =>
+              playerEventemitter.emit(
+                PlayerEventType.OPEN_MUSICBILL_LIST_DRAWER,
+                { music: queueMusic },
+              )
+            }
+          >
+            <MdOutlinePostAdd />
+          </IconButton>
+          <div className="divider" />
+        </>
       )}
       <IconButton onClick={openPlaylistPlayqueueDrawer}>
         <MdOutlineQueueMusic />
       </IconButton>
       <IconButton onClick={onPrevious}>
-        <MdOutlineSkipPrevious />
+        <MdSkipPrevious />
       </IconButton>
       <IconButton onClick={paused ? onPlay : onPause} loading={loading}>
-        {paused ? <MdOutlinePlayArrow /> : <MdPause />}
+        {paused ? <MdPlayArrow /> : <MdPause />}
       </IconButton>
       <IconButton onClick={onNext}>
-        <MdOutlineSkipNext />
+        <MdSkipNext />
       </IconButton>
     </Style>
   );
