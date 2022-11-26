@@ -53,14 +53,14 @@ function MusicOperateDrawer({
         onClick={onAddToPlayqueue}
       />
       <MenuItem
-        icon={<MdPlaylistAdd />}
-        label="添加到播放列表"
-        onClick={onAddToPlaylist}
-      />
-      <MenuItem
         icon={<MdOutlinePostAdd />}
         label="添加到乐单"
         onClick={onAddToMusicbill}
+      />
+      <MenuItem
+        icon={<MdPlaylistAdd />}
+        label="添加到播放列表"
+        onClick={onAddToPlaylist}
       />
       <MenuItem
         icon={<MdDownload />}

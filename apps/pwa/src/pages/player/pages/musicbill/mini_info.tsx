@@ -32,7 +32,15 @@ const Style = styled.div`
 function MiniInfo({ musicbill }: { musicbill: Musicbill }) {
   return (
     <Style>
-      <Cover src={musicbill.cover} size={32} />
+      <Cover
+        src={musicbill.cover}
+        size={32}
+        style={{
+          outline: musicbill.public
+            ? `2px solid ${CSSVariable.COLOR_PRIMARY}`
+            : 'none',
+        }}
+      />
       <div className="name">{musicbill.name}</div>
       <Operation musicbill={musicbill} />
     </Style>

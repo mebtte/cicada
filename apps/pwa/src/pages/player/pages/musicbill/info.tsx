@@ -18,6 +18,10 @@ const Style = styled.div`
   > .cover-box {
     position: relative;
 
+    > .cover {
+      display: block;
+    }
+
     > .public {
       font-size: 12px;
       color: #fff;
@@ -26,7 +30,7 @@ const Style = styled.div`
 
       position: absolute;
       top: 0;
-      right: 0;
+      left: 0;
     }
   }
 
@@ -55,8 +59,19 @@ const Style = styled.div`
 function Info({ musicbill }: { musicbill: Musicbill }) {
   return (
     <Style>
-      <div className="cover-box">
-        <Cover src={musicbill.cover} size={INFO_HEIGHT - GAP * 2} />
+      <div
+        className="cover-box"
+        style={{
+          outline: musicbill.public
+            ? `2px solid ${CSSVariable.COLOR_PRIMARY}`
+            : 'none',
+        }}
+      >
+        <Cover
+          className="cover"
+          src={musicbill.cover}
+          size={INFO_HEIGHT - GAP * 2}
+        />
         {musicbill.public ? <div className="public">公开</div> : null}
       </div>
       <div className="info">

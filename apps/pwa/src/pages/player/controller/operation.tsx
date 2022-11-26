@@ -6,10 +6,13 @@ import {
   MdOutlinePlayArrow,
   MdOutlineSkipPrevious,
   MdOutlineSkipNext,
+  MdMoreHoriz,
 } from 'react-icons/md';
+import mm from '@/global_states/mini_mode';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { QueueMusic } from '../constants';
 
 const openPlaylistPlayqueueDrawer = () =>
   playerEventemitter.emit(PlayerEventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER, null);
@@ -23,12 +26,32 @@ const onNext = () => playerEventemitter.emit(PlayerEventType.ACTION_NEXT, null);
 const Style = styled.div`
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
 `;
 
-function Operation({ paused, loading }: { paused: boolean; loading: boolean }) {
+function Operation({
+  queueMusic,
+  paused,
+  loading,
+}: {
+  queueMusic: QueueMusic;
+  paused: boolean;
+  loading: boolean;
+}) {
+  const miniMode = mm.useState();
   return (
     <Style>
+      {miniMode ? null : (
+        <IconButton
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_OPERATE_POPUP, {
+              music: queueMusic,
+            })
+          }
+        >
+          <MdMoreHoriz />
+        </IconButton>
+      )}
       <IconButton onClick={openPlaylistPlayqueueDrawer}>
         <MdOutlineQueueMusic />
       </IconButton>

@@ -1,5 +1,11 @@
-import { HTMLAttributes, useRef } from 'react';
-import * as React from 'react';
+/* eslint-disable no-unused-expressions */
+import {
+  HTMLAttributes,
+  useRef,
+  MouseEventHandler,
+  PropsWithChildren,
+  memo,
+} from 'react';
 import ReactDOM from 'react-dom';
 import styled, { css } from 'styled-components';
 import { useTransition, animated, UseTransitionProps } from 'react-spring';
@@ -77,7 +83,7 @@ const Drawer = ({
   bodyProps = {},
 
   children,
-}: React.PropsWithChildren<{
+}: PropsWithChildren<{
   open: boolean;
   onClose: () => void;
 
@@ -87,11 +93,10 @@ const Drawer = ({
   bodyProps?: HTMLAttributes<HTMLDivElement>;
 }>) => {
   const bodyRef = useRef<HTMLDivElement>(null);
-  const onRequestClose = (event) => {
-    // eslint-disable-next-line no-unused-expressions
+  const onClickWrapper: MouseEventHandler<HTMLDivElement> = (event) => {
     maskProps.onClick && maskProps.onClick(event);
 
-    if (onClose && !bodyRef.current!.contains(event.target)) {
+    if (onClose && !bodyRef.current!.contains(event.target as HTMLElement)) {
       onClose();
     }
   };
@@ -106,7 +111,7 @@ const Drawer = ({
             opacity,
             ...maskProps.style,
           }}
-          onClick={onRequestClose}
+          onClick={onClickWrapper}
         >
           <Body
             {...bodyProps}
@@ -126,7 +131,7 @@ const Drawer = ({
   );
 };
 
-export default React.memo(Drawer, (prevProps, props) => {
+export default memo(Drawer, (prevProps, props) => {
   if (prevProps.open || props.open) {
     return false;
   }

@@ -24,23 +24,28 @@ const Style = styled(animated.div)`
   width: 100%;
   height: 100%;
 
-  padding-left: 20px;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
 
-  > .name {
-    font-size: 14px;
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  > .top {
+    line-height: 1.5;
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     ${ellipsis}
 
-    >.content {
+    >.name {
       cursor: pointer;
+      font-size: 14px;
+      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
       &:hover {
         color: #000;
       }
+    }
+
+    > .alias {
+      font-size: 12px;
+      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     }
   }
 
@@ -62,9 +67,9 @@ function Info({ queueMusic }: { queueMusic: QueueMusic }) {
     <Root>
       {transitions((style, qm) => (
         <Style style={style}>
-          <div className="name">
+          <div className="top">
             <span
-              className="content"
+              className="name"
               onClick={() =>
                 playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, {
                   id: qm.id,
@@ -73,6 +78,9 @@ function Info({ queueMusic }: { queueMusic: QueueMusic }) {
             >
               {qm.name}
             </span>
+            {qm.aliases.length ? (
+              <span className="alias">&nbsp;{qm.aliases[0]}</span>
+            ) : null}
           </div>
           <div className="singers">
             {qm.singers.map((singer) => (

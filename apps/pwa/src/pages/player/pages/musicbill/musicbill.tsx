@@ -1,7 +1,15 @@
-import { UIEventHandler, useEffect, useMemo, useState } from 'react';
+import {
+  UIEventHandler,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import { RequestStatus } from '@/constants';
 import throttle from 'lodash/throttle';
+import SessionStorageKey from '@/constants/session_storage_key';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -26,28 +34,55 @@ const Style = styled(Page)`
 `;
 
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
+  const { id, status } = musicbill;
+
+  const scrollableRef = useRef<HTMLDivElement>(null);
   const [miniInfoVisible, setMiniInfoVisible] = useState(false);
 
-  const onScroll: UIEventHandler<HTMLDivElement> = useMemo(
+  const saveScrollTop = useMemo(
     () =>
-      throttle((e) => {
-        const { scrollTop } = e.target as HTMLDivElement;
-        return setMiniInfoVisible(scrollTop >= INFO_HEIGHT);
-      }),
-    [],
+      throttle(
+        (scrollTop: number) =>
+          window.sessionStorage.setItem(
+            SessionStorageKey.MUSICBILL_PAGE_SCROLL_TOP.replace('{{id}}', id),
+            scrollTop.toString(),
+          ),
+        1000,
+      ),
+    [id],
   );
 
+  const onScroll: UIEventHandler<HTMLDivElement> = (e) => {
+    const { scrollTop } = e.target as HTMLDivElement;
+    setMiniInfoVisible(scrollTop >= INFO_HEIGHT);
+
+    return saveScrollTop(scrollTop);
+  };
+
   useEffect(() => {
-    if (musicbill.status === RequestStatus.NOT_START) {
+    if (status === RequestStatus.NOT_START) {
       playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, {
-        id: musicbill.id,
+        id,
       });
     }
-  }, [musicbill]);
+  }, [id, status]);
+
+  useLayoutEffect(() => {
+    if (status === RequestStatus.SUCCESS) {
+      const lastScrollTopString = window.sessionStorage.getItem(
+        SessionStorageKey.MUSICBILL_PAGE_SCROLL_TOP.replace('{{id}}', id),
+      );
+      if (lastScrollTopString) {
+        scrollableRef.current?.scrollTo({
+          top: Number(lastScrollTopString),
+        });
+      }
+    }
+  }, [id, status]);
 
   return (
     <Style>
-      <div className="scrollable" onScroll={onScroll}>
+      <div className="scrollable" ref={scrollableRef} onScroll={onScroll}>
         <Info musicbill={musicbill} />
         <MusicList musicbill={musicbill} />
       </div>

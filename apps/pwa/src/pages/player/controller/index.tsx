@@ -28,6 +28,7 @@ const Style = styled.div`
   ${({ theme: { miniMode } }) => css`
     > .content {
       gap: ${miniMode ? 10 : 20}px;
+      padding-right: ${miniMode ? 10 : 20}px;
     }
   `}
 `;
@@ -48,10 +49,10 @@ function Controller({
     <Style>
       <Progress duration={duration} />
       <div className="content">
+        <Cover cover={queueMusic.cover} />
         <Info queueMusic={queueMusic} />
         {miniMode ? null : <Time duration={duration} />}
-        <Operation paused={paused} loading={loading} />
-        <Cover cover={queueMusic.cover} />
+        <Operation queueMusic={queueMusic} paused={paused} loading={loading} />
       </div>
     </Style>
   );
