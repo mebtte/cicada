@@ -2,8 +2,6 @@ import {
   ChangeEventHandler,
   KeyboardEventHandler,
   useEffect,
-  useLayoutEffect,
-  useRef,
   useState,
 } from 'react';
 import { EMAIL } from '#/constants/regexp';
@@ -14,33 +12,24 @@ import logger from '#/utils/logger';
 import storage, { Key } from '@/storage';
 import Button, { Variant } from '#/components/button';
 import useEvent from '#/utils/use_event';
-import { panelCSS } from '../constants';
 import CaptchaDialog from './captcha_dialog';
 import Logo from '../logo';
 import Paper from '../paper';
 import SettingDialog from './setting_dialog';
 
 const Style = styled(Paper)`
-  ${panelCSS}
-
   display: flex;
   flex-direction: column;
   gap: 20px;
 `;
 
 function EmailPanel({
-  visible,
   updateEmail,
   toNext,
 }: {
-  visible: boolean;
   updateEmail: (email: string) => void;
   toNext: () => void;
 }) {
-  const emailRef = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(
-    null,
-  );
-
   const [email, setEmail] = useState('');
   const onEmailChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setEmail(event.target.value);
@@ -72,12 +61,6 @@ function EmailPanel({
     return toNext();
   };
 
-  useLayoutEffect(() => {
-    if (visible) {
-      emailRef.current?.input.focus();
-    }
-  }, [visible]);
-
   useEffect(() => {
     storage
       .getItem(Key.LAST_LOGIN_EMAIL)
@@ -91,16 +74,16 @@ function EmailPanel({
 
   return (
     <>
-      <Style visible={visible ? 1 : 0}>
+      <Style>
         <Logo />
         <Input
-          ref={emailRef}
           label="邮箱"
           inputProps={{
             type: 'email',
             value: email,
             onChange: onEmailChange,
             onKeyDown,
+            autoFocus: true,
           }}
         />
         <Button

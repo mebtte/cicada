@@ -1,43 +1,15 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import p from '@/global_states/profile';
+import { animated, useTransition } from 'react-spring';
 import EmailPanel from './email_panel';
 import LoginCodePanel from './login_code_panel';
 import UserPanel from './user_panel';
-import { Step, STEPS } from './constants';
+import { Step } from './constants';
 import PageContainer from '../page_container';
 
-const Style = styled(PageContainer)<{ step: Step }>`
-  min-height: 100vh;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  > .container {
-    width: 90%;
-    max-width: 350px;
-
-    overflow: visible;
-    touch-action: none;
-
-    > .content {
-      width: ${100 * STEPS.length}%;
-
-      display: flex;
-      align-items: center;
-
-      transition: transform ease-in-out 300ms;
-    }
-  }
-
-  ${({ step }) => css`
-    > .container {
-      > .content {
-        transform: translateX(-${STEPS.indexOf(step) * (100 / STEPS.length)}%);
-      }
-    }
-  `}
+const Style = styled(PageContainer)`
+  position: relative;
 `;
 
 function Login() {
@@ -54,23 +26,47 @@ function Login() {
     }
   }, [profile]);
 
+  const transitions = useTransition(step, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
   return (
-    <Style step={step}>
-      <div className="container">
-        <div className="content">
-          <EmailPanel
-            visible={step === Step.FIRST}
-            updateEmail={setEmail}
-            toNext={() => setStep(Step.SECOND)}
-          />
-          <LoginCodePanel
-            visible={step === Step.SECOND}
-            email={email}
-            toPrevious={() => setStep(Step.FIRST)}
-          />
-          <UserPanel visible={step === Step.THIRD} />
-        </div>
-      </div>
+    <Style>
+      {transitions((style, s) => {
+        switch (s) {
+          case Step.FIRST: {
+            return (
+              <animated.div style={style}>
+                <EmailPanel
+                  updateEmail={setEmail}
+                  toNext={() => setStep(Step.SECOND)}
+                />
+              </animated.div>
+            );
+          }
+          case Step.SECOND: {
+            return (
+              <animated.div style={style}>
+                <LoginCodePanel
+                  email={email}
+                  toPrevious={() => setStep(Step.FIRST)}
+                />
+              </animated.div>
+            );
+          }
+          case Step.THIRD: {
+            return (
+              <animated.div style={style}>
+                <UserPanel />
+              </animated.div>
+            );
+          }
+          default: {
+            return null;
+          }
+        }
+      })}
     </Style>
   );
 }

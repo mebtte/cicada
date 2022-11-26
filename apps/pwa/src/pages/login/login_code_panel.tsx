@@ -1,11 +1,5 @@
 import styled from 'styled-components';
-import {
-  ChangeEventHandler,
-  KeyboardEventHandler,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
 import notice from '#/utils/notice';
 import loginRequest from '@/server/login';
 import t from '@/global_states/token';
@@ -19,29 +13,20 @@ import Button, { Variant } from '#/components/button';
 import getRandomCover from '@/utils/get_random_cover';
 import Paper from './paper';
 import Logo from './logo';
-import { panelCSS } from './constants';
 
 const StyledPaper = styled(Paper)`
-  ${panelCSS}
-
   display: flex;
   flex-direction: column;
   gap: 20px;
 `;
 
 function LoginCodePanel({
-  visible,
   email,
   toPrevious,
 }: {
-  visible: boolean;
   email: string;
   toPrevious: () => void;
 }) {
-  const inputRef = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(
-    null,
-  );
-
   const [loginCode, setLoginCode] = useState('');
   const onLoginCodeChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setLoginCode(event.target.value);
@@ -82,16 +67,8 @@ function LoginCodePanel({
     }
   };
 
-  useLayoutEffect(() => {
-    if (visible) {
-      inputRef.current?.input.focus();
-    } else {
-      setLoginCode('');
-    }
-  }, [visible]);
-
   return (
-    <StyledPaper visible={visible ? 1 : 0}>
+    <StyledPaper>
       <Logo />
       <Input label="邮箱" inputProps={{ value: email }} disabled />
       <Input
@@ -100,8 +77,8 @@ function LoginCodePanel({
           value: loginCode,
           onChange: onLoginCodeChange,
           onKeyDown,
+          autoFocus: true,
         }}
-        ref={inputRef}
         disabled={logining}
       />
       <Button

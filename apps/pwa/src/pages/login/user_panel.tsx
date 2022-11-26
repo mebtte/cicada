@@ -11,7 +11,6 @@ import Cover, { Shape } from '#/components/cover';
 import { CSSVariable } from '#/global_style';
 import Paper from './paper';
 import Logo from './logo';
-import { panelCSS } from './constants';
 
 const REDIRECT_DURATION = 5000;
 const NICKNAME_MAX_LENGTH = 10;
@@ -24,8 +23,6 @@ const progress = keyframes`
   }
 `;
 const Style = styled(Paper)`
-  ${panelCSS}
-
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -95,7 +92,7 @@ function Profile({ profile }: { profile: ProfileType }) {
   );
 }
 
-function UserPanel({ visible }: { visible: boolean }) {
+function UserPanel() {
   const profile = p.useState();
 
   let content: ReactNode = null;
@@ -103,7 +100,7 @@ function UserPanel({ visible }: { visible: boolean }) {
     content = <Profile profile={profile} />;
   }
 
-  return <Style visible={visible ? 1 : 0}>{content}</Style>;
+  return <Style>{content}</Style>;
 }
 
 export default UserPanel;
