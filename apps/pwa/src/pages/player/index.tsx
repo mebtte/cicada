@@ -71,7 +71,7 @@ function Wrapper() {
     | undefined;
 
   useKeyboard();
-  useMediaSession({ music: queueMusic });
+  useMediaSession(queueMusic);
 
   return (
     <Context.Provider

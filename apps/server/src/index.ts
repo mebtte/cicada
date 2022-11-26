@@ -54,6 +54,12 @@ async function start() {
     server.use(
       cors({
         maxAge: 86400,
+
+        /**
+         * 当 sendBeacon 格式是 json 时必须
+         * @author mebtte<hi@mebtte.com>
+         */
+        credentials: true,
       }),
     );
     server.use(mount(`/${PathPrefix.ASSET}`, assetApp));

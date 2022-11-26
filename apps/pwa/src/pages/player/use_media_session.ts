@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import e, { EventType } from './eventemitter';
-import { Music as MusicType } from './constants';
+import { QueueMusic } from './constants';
 
-function useMediaSession({ music }: { music?: MusicType }) {
+function useMediaSession(music?: QueueMusic) {
   useEffect(() => {
     if (music && 'mediaSession' in window.navigator) {
       window.navigator.mediaSession.metadata = new MediaMetadata({
