@@ -88,16 +88,14 @@ class Audio extends React.PureComponent<Props, {}> {
     this.uploadPlayRecord(this.props.queueMusic);
   }
 
-  onActionSetTime = ({ second }: { second: number }) => {
-    onWaiting();
-    return window.setTimeout(() => {
+  onActionSetTime = ({ second }: { second: number }) =>
+    window.setTimeout(() => {
       this.audio!.currentTime = second;
       this.audio!.play();
       eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: second * 1000,
       });
     }, 0);
-  };
 
   onActionTogglePlay = () =>
     this.audio!.paused ? this.audio!.play() : this.audio!.pause();

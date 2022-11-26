@@ -48,9 +48,6 @@ function Progress({ duration }: { duration: number }) {
     playerEventemitter.emit(PlayerEventType.ACTION_SET_TIME, {
       second: duration * percent,
     });
-    playerEventemitter.emit(PlayerEventType.AUDIO_TIME_UPDATED, {
-      currentMillisecond: duration * percent * 1000,
-    });
 
     window.setTimeout(() => setInnerPercent(0), 0);
   };

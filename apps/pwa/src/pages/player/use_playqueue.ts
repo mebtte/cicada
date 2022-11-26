@@ -27,17 +27,19 @@ export default (playlist: MusicWithIndex[]) => {
     );
     const unlistenActionRemovePlayqueueMusic = eventemitter.listen(
       EventType.ACTION_REMOVE_PLAYQUEUE_MUSIC,
-      ({ queueMusic }) => {
-        const { pid } = queueMusic;
+      ({ queueMusic }) =>
         setPlayqueue((pq) =>
           pq
-            .filter((m) => m.pid !== pid)
-            .map((m, index) => ({
-              ...m,
-              index: index + 1,
-            })),
-        );
-      },
+            .filter((m) => m.pid !== queueMusic.pid)
+            .map((m, index) =>
+              m.index > queueMusic.index
+                ? {
+                    ...m,
+                    index: index + 1,
+                  }
+                : m,
+            ),
+        ),
     );
     const unlistenActionMovePlayqueueMusicLater = eventemitter.listen(
       EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER,
@@ -49,10 +51,14 @@ export default (playlist: MusicWithIndex[]) => {
             pq[index],
             pq[index - 1],
             ...pq.slice(index + 1, pq.length),
-          ].map((m, i) => ({
-            ...m,
-            index: i + 1,
-          }));
+          ].map((m, i) =>
+            i + 1 >= queueMusic.index
+              ? {
+                  ...m,
+                  index: i + 1,
+                }
+              : m,
+          );
         }),
     );
     const unlistenActionAddMusicListToPlaylist = eventemitter.listen(
@@ -63,7 +69,7 @@ export default (playlist: MusicWithIndex[]) => {
             return pq;
           }
           const music = musicList[getRandomInteger(0, musicList.length)];
-          setTimeout(() => setCurrentPosition(0), 0);
+          window.setTimeout(() => setCurrentPosition(0), 0);
           return [
             {
               ...music,
@@ -83,10 +89,14 @@ export default (playlist: MusicWithIndex[]) => {
             pq[index - 1],
             pq[index - 2],
             ...pq.slice(index, pq.length),
-          ].map((m, i) => ({
-            ...m,
-            index: i + 1,
-          }));
+          ].map((m, i) =>
+            i + 1 >= queueMusic.index - 1
+              ? {
+                  ...m,
+                  index: i + 1,
+                }
+              : m,
+          );
         }),
     );
     return () => {
