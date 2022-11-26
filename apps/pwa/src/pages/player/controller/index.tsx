@@ -1,74 +1,58 @@
-import { useContext } from 'react';
-import styled from 'styled-components';
-import getRandomCover from '@/utils/get_random_cover';
-import Avatar from '@/components/avatar';
-import Context from '../context';
-import Progress from './progress';
-import MusicInfo from './music_info';
-import Action from './action';
+import styled, { css } from 'styled-components';
+import mm from '@/global_states/mini_mode';
 import { CONTROLLER_HEIGHT, QueueMusic, ZIndex } from '../constants';
-import eventemitter, { EventType } from '../eventemitter';
+import Cover from './cover';
+import Operation from './operation';
+import Info from './info';
+import Progress from './progress';
+import Time from './time';
 
-const INITIAL_COVER = getRandomCover();
 const Style = styled.div`
   z-index: ${ZIndex.CONTROLLER};
 
-  box-sizing: border-box;
-  display: flex;
-  align-items: flex-end;
-  gap: 20px;
-
   height: ${CONTROLLER_HEIGHT}px;
-  padding: 4px 20px;
-  background: rgb(255 255 255 / 0.7);
-  transition: 300ms;
-  box-shadow: 0 -5px 5px rgb(0 0 0 / 5%);
 
-  &:hover {
-    background: rgb(255 255 255 / 1);
-  }
+  display: flex;
+  flex-direction: column;
 
-  > .cover {
-    cursor: pointer;
-    border: 1px solid var(--color-primary);
-  }
-  > .right {
+  background-color: rgb(255 255 255 / 0.75);
+
+  > .content {
     flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    > .right-bottom {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin: 2px 0 0 0;
-      overflow: visible;
-    }
+    min-height: 0;
+
+    display: flex;
+    align-items: center;
   }
+
+  ${({ theme: { miniMode } }) => css`
+    > .content {
+      gap: ${miniMode ? 10 : 20}px;
+    }
+  `}
 `;
-const openLyric = () => eventemitter.emit(EventType.TOGGEL_LYRIC, null);
 
-function Controller() {
-  const { playqueue, currentPlayqueuePosition } = useContext(Context);
-  const queueMusic = playqueue[currentPlayqueuePosition] as
-    | QueueMusic
-    | undefined;
-
+function Controller({
+  queueMusic,
+  paused,
+  loading,
+  duration,
+}: {
+  queueMusic: QueueMusic;
+  paused: boolean;
+  loading: boolean;
+  duration: number;
+}) {
+  const miniMode = mm.useState();
   return (
     <Style>
-      <div className="right">
-        <Progress />
-        <div className="right-bottom">
-          <MusicInfo music={queueMusic} />
-          <Action music={queueMusic} />
-        </div>
+      <Progress duration={duration} />
+      <div className="content">
+        <Info queueMusic={queueMusic} />
+        {miniMode ? null : <Time duration={duration} />}
+        <Operation paused={paused} loading={loading} />
+        <Cover cover={queueMusic.cover} />
       </div>
-      <Avatar
-        className="cover"
-        animated
-        size={70}
-        src={queueMusic ? queueMusic.cover || INITIAL_COVER : INITIAL_COVER}
-        onClick={openLyric}
-      />
     </Style>
   );
 }

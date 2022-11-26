@@ -103,9 +103,17 @@ function Wrapper() {
             <Route />
           </div>
         </div>
-        <Controller />
-
-        <Lyric music={queueMusic} />
+        {queueMusic ? (
+          <>
+            <Controller
+              queueMusic={queueMusic}
+              paused={audioPaused}
+              loading={audioLoading}
+              duration={audioDuration}
+            />
+            <Lyric music={queueMusic} />
+          </>
+        ) : null}
       </Style>
 
       {/* dynamic z-index */}

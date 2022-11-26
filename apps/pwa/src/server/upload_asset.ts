@@ -14,6 +14,7 @@ function uploadAsset(asset: Blob, assetType: AssetType) {
     path: '/blob/asset',
     body: form,
     withToken: true,
+    timeout: 60 * 1000,
   });
 }
 

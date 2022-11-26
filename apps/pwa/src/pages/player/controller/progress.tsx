@@ -1,75 +1,82 @@
-import { memo, useContext, useMemo } from 'react';
+import { CSSVariable } from '#/global_style';
+import { PointerEventHandler, useRef, useState } from 'react';
 import styled from 'styled-components';
-
-import Slider from '@/components/slider';
-import formatSecond from '@/utils/format_second';
-import eventemitter, { EventType } from '../eventemitter';
-import Context from '../context';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 
 const Style = styled.div`
-  display: flex;
-  align-items: center;
-  > .time {
-    line-height: 1;
-    font-size: 12px;
-    width: 80px;
-    text-align: right;
-    transform-origin: right;
-    transform: scale(0.9);
-    color: rgb(155 155 155);
-    > span {
-      vertical-align: middle;
-    }
-    > .symbol {
-      display: inline-block;
-      margin: 0 5px;
-      width: 1px;
-      height: 14px;
-      background-color: var(--text-color-secondary);
-    }
+  position: relative;
+
+  height: 5px;
+
+  cursor: pointer;
+  background-color: rgb(44 182 145 / 0.3);
+  transform-origin: bottom;
+  transition: 100ms;
+  user-select: none;
+
+  > .current {
+    height: 100%;
+
+    background-color: ${CSSVariable.COLOR_PRIMARY};
+    transform-origin: left;
+  }
+
+  &:hover {
+    transform: scaleY(3);
   }
 `;
-const sliderStyle = {
-  flex: 1,
-  minWidth: 0,
-};
 
-const Progress = () => {
-  const { audioDuration } = useContext(Context);
-  const durationString = useMemo(
-    () => formatSecond(audioDuration),
-    [audioDuration],
-  );
+function Progress({ duration }: { duration: number }) {
+  const [innerPercent, setInnerPercent] = useState(0);
+  const pointerDownRef = useRef(false);
 
-  const currentMillisecond = useAudioCurrentMillisecond();
-  const setTime = (p: number) => {
-    if (!audioDuration) {
-      return eventemitter.emit(EventType.ACTION_SET_TIME, { second: 0 });
-    }
-    return eventemitter.emit(EventType.ACTION_SET_TIME, {
-      second: audioDuration * p,
+  const onPointerDown: PointerEventHandler<HTMLDivElement> = (e) => {
+    (e.target as HTMLDivElement).setPointerCapture(e.pointerId);
+
+    pointerDownRef.current = true;
+
+    const percent = e.pageX / window.innerWidth;
+    setInnerPercent(percent);
+  };
+  const onPointerUp: PointerEventHandler<HTMLDivElement> = (e) => {
+    pointerDownRef.current = false;
+
+    const percent = e.pageX / window.innerWidth;
+    playerEventemitter.emit(PlayerEventType.ACTION_SET_TIME, {
+      second: duration * percent,
     });
+    playerEventemitter.emit(PlayerEventType.AUDIO_TIME_UPDATED, {
+      currentMillisecond: duration * percent * 1000,
+    });
+
+    window.setTimeout(() => setInnerPercent(0), 0);
+  };
+  const onPointerMove: PointerEventHandler<HTMLDivElement> = (e) => {
+    if (pointerDownRef.current) {
+      const percent = e.pageX / window.innerWidth;
+      setInnerPercent(percent);
+    }
   };
 
-  const percent = audioDuration ? currentMillisecond / 1000 / audioDuration : 0;
+  const currentMillisecond = useAudioCurrentMillisecond();
+  const percent = duration ? currentMillisecond / 1000 / duration : 0;
   return (
-    <Style>
-      <Slider
-        style={sliderStyle}
-        value={percent}
-        onChange={setTime}
-        min={0}
-        max={1}
-        step={0.005}
+    <Style
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
+      onPointerMove={onPointerMove}
+    >
+      <div
+        className="current"
+        style={{
+          transform: `scaleX(${innerPercent || percent})`,
+        }}
       />
-      <div className="time">
-        <span>{formatSecond(currentMillisecond / 1000)}</span>
-        <span className="symbol" />
-        <span>{durationString}</span>
-      </div>
     </Style>
   );
-};
+}
 
-export default memo(Progress);
+export default Progress;

@@ -5,6 +5,7 @@ import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import env from '@/env';
 import { Query } from '@/constants';
+import timeoutFn from '#/utils/timeout';
 
 export enum Method {
   GET = 'get',
@@ -22,6 +23,7 @@ export async function request<Data = void>({
   headers = {},
   withToken = false,
   minDuration = 500,
+  timeout = 10 * 1000,
 }: {
   path: string;
   method?: Method;
@@ -34,6 +36,7 @@ export async function request<Data = void>({
   };
   withToken?: boolean;
   minDuration?: number;
+  timeout?: number;
 }) {
   const { serverAddress } = setting.get();
   let url = `${serverAddress}${path}`;
@@ -69,13 +72,16 @@ export async function request<Data = void>({
 
   let response: Response;
   try {
-    [response] = await Promise.all([
-      window.fetch(url, {
-        method,
-        headers,
-        body: processedBody,
-      }),
-      sleep(minDuration),
+    [response] = await Promise.race([
+      Promise.all([
+        window.fetch(url, {
+          method,
+          headers,
+          body: processedBody,
+        }),
+        sleep(minDuration),
+      ]),
+      timeoutFn(timeout),
     ]);
   } catch (error) {
     throw new Error('网络错误');

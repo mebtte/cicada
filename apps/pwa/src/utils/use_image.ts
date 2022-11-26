@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import logger from '#/utils/logger';
-import loadImage from './load_image';
+import loadImage from '#/utils/load_image';
 
 export default (src: string, defaultImage: string) => {
   const [currentSrc, setCurrentSrc] = useState(defaultImage);
