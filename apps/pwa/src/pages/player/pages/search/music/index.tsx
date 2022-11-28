@@ -87,7 +87,7 @@ function Wrapper({ exploration }: { exploration: boolean }) {
             <Music key={music.id} music={music} miniMode={miniMode} />
           ))}
         </div>
-        {d.value!.total ? (
+        {d.value!.total && !exploration ? (
           <Pagination
             style={paginationStyle}
             page={page}

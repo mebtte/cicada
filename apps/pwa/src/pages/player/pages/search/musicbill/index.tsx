@@ -89,7 +89,7 @@ function Wrapper({ exploration }: { exploration: boolean }) {
             />
           ))}
         </div>
-        {d.value!.total ? (
+        {d.value!.total && !exploration ? (
           <Pagination
             style={paginationStyle}
             page={page}

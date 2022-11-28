@@ -6,6 +6,7 @@ export default () => {
 
   let title = '知了';
   switch (pathname) {
+    case ROOT_PATH.PLAYER:
     case ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORE: {
       title = '发现';
       break;

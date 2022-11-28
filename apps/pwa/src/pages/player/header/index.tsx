@@ -25,7 +25,7 @@ const Style = styled.div`
 
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 
   backdrop-filter: blur(5px);
   -webkit-app-region: drag;
