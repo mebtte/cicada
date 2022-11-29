@@ -1,100 +1,148 @@
-import { useCallback, useRef, useState, useEffect } from 'react';
+import {
+  CSSProperties,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import styled from 'styled-components';
-import Input from '@/components/input';
-import Tooltip, { Placement } from '#/components/tooltip';
-import CircularLoader from '#/components/spinner';
-import IconButton, { Name } from '@/components/icon_button';
-import Container from '../container';
-import Playlist from './playlist';
-import Empty from './empty';
-import filterPlaylist from './filter_playlist';
-import { MusicWithIndex } from '../../constants';
+import absoluteFullSize from '#/style/absolute_full_size';
+import List from 'react-list';
+import IconButton from '#/components/icon_button';
+import { MdPlayArrow, MdReadMore, MdOutlineClose } from 'react-icons/md';
+import { ComponentSize } from '#/constants/style';
+import { CSSVariable } from '#/global_style';
+import Empty from '@/components/empty';
+import { flexCenter } from '#/style/flexbox';
+import { TAB_LIST_HEIGHT } from '../constants';
+import Context from '../../context';
+import TabContent from '../tab_content';
+import MusicBase from '../../components/music_base';
+import { QueueMusic } from '../../constants';
+import Filter from './filter';
+import { FILTER_HEIGHT } from './constants';
+import { filterMusic } from '../../utils';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../../eventemitter';
 
-const Style = styled(Container)`
-  display: flex;
-  flex-direction: column;
-  > .action {
-    display: flex;
-    align-items: center;
-    padding: 0 20px 10px 20px;
-    > .search {
-      flex: 1;
-      min-width: 0;
-      position: relative;
-      > .input {
-        width: 100%;
-      }
-      > .loader {
-        position: absolute;
-        top: 50%;
-        right: 10px;
-        transform: translate(0, -50%);
-      }
+const Style = styled(TabContent)`
+  > .content {
+    ${absoluteFullSize}
+
+    padding-top: ${TAB_LIST_HEIGHT}px;
+    padding-bottom: ${FILTER_HEIGHT}px;
+
+    &.list {
+      overflow: auto;
     }
-    > .clear {
-      cursor: pointer;
-      margin-left: 15px;
+
+    &.empty {
+      ${flexCenter}
     }
   }
 `;
+const Operation = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`;
+const removeStyle: CSSProperties = {
+  color: CSSVariable.COLOR_DANGEROUS,
+};
 
-function Wrapper({
-  playlist,
-  onClear,
-}: {
-  playlist: MusicWithIndex[];
-  onClear: () => void;
-}) {
-  const [loading, setLoading] = useState(false);
+function Playlist({ style }: { style: unknown }) {
+  const listRef = useRef<HTMLDivElement>(null);
+
   const [keyword, setKeyword] = useState('');
-  const timerRef = useRef<ReturnType<typeof window.setTimeout>>();
-  const onKeywordChange = useCallback((event) => {
-    clearTimeout(timerRef.current!);
-    const { value } = event.target;
-    setLoading(true);
-    timerRef.current = setTimeout(() => {
-      setKeyword(value ? value.toLowerCase() : value);
-      setLoading(false);
-    }, 1000);
-  }, []);
+  const onKeywordChange = useCallback((k) => setKeyword(k), []);
 
-  // auto focus
-  const inputRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    const timer = setTimeout(() => inputRef.current?.focus(), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const { playlist, playqueue, currentPlayqueuePosition } = useContext(Context);
+  const currentMusic = playqueue[currentPlayqueuePosition] as
+    | QueueMusic
+    | undefined;
 
-  const filteredPlaylist = filterPlaylist(playlist, keyword);
+  useLayoutEffect(() => {
+    window.setTimeout(
+      () => listRef.current?.scrollTo({ top: 0, behavior: 'smooth' }),
+      0,
+    );
+  }, [keyword]);
+
+  const filteredPlaylist = playlist.filter((music) =>
+    filterMusic(music, keyword),
+  );
   return (
-    <Style>
-      <div className="action">
-        <div className="search">
-          <Input
-            ref={inputRef}
-            className="input"
-            defaultValue={keyword}
-            onChange={onKeywordChange}
-            placeholder="搜索播放列表"
-            type="text"
-          />
-          {loading && <CircularLoader size={14} className="loader" />}
-        </div>
-        <Tooltip title="清空播放列表" placement={Placement.LEFT}>
-          <IconButton
-            className="clear"
-            name={Name.GARBAGE_OUTLINE}
-            onClick={onClear}
-          />
-        </Tooltip>
-      </div>
+    // @ts-expect-error
+    <Style style={style}>
       {filteredPlaylist.length ? (
-        <Playlist playlist={filteredPlaylist} />
+        <div className="content list" ref={listRef}>
+          <List
+            length={filteredPlaylist.length}
+            type="uniform"
+            // eslint-disable-next-line react/no-unstable-nested-components
+            itemRenderer={(index, key) => {
+              const music = filteredPlaylist[index];
+              return (
+                <MusicBase
+                  key={key}
+                  music={music}
+                  active={music.id === currentMusic?.id}
+                  lineAfter={
+                    <Operation>
+                      <IconButton
+                        size={ComponentSize.SMALL}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          return playerEventemitter.emit(
+                            PlayerEventType.ACTION_PLAY_MUSIC,
+                            { music },
+                          );
+                        }}
+                      >
+                        <MdPlayArrow />
+                      </IconButton>
+                      <IconButton
+                        size={ComponentSize.SMALL}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          return playerEventemitter.emit(
+                            PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                            { music },
+                          );
+                        }}
+                      >
+                        <MdReadMore />
+                      </IconButton>
+                      <IconButton
+                        size={ComponentSize.SMALL}
+                        style={removeStyle}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          return playerEventemitter.emit(
+                            PlayerEventType.ACTION_REMOVE_PLAYLIST_MUSIC,
+                            { music },
+                          );
+                        }}
+                      >
+                        <MdOutlineClose />
+                      </IconButton>
+                    </Operation>
+                  }
+                />
+              );
+            }}
+          />
+        </div>
       ) : (
-        <Empty keyword={keyword} />
+        <div className="content empty">
+          <Empty description={keyword ? '未找到合适的音乐' : '空的播放列表'} />
+        </div>
       )}
+      <Filter onChange={onKeywordChange} />
     </Style>
   );
 }
 
-export default Wrapper;
+export default Playlist;

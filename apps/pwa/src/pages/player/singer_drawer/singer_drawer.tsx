@@ -17,7 +17,7 @@ import EditMenu from './edit_menu';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
-    width: '90%',
+    width: '85%',
     maxWidth: 400,
   },
 };

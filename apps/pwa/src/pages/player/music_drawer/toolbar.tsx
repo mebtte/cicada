@@ -67,18 +67,6 @@ function Toolbar({ music }: { music: MusicDetail }) {
         <IconButton
           onClick={() =>
             playerEventemitter.emit(
-              PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-              {
-                musicList: [music],
-              },
-            )
-          }
-        >
-          <MdPlaylistAdd />
-        </IconButton>
-        <IconButton
-          onClick={() =>
-            playerEventemitter.emit(
               PlayerEventType.OPEN_MUSICBILL_LIST_DRAWER,
               {
                 music,
@@ -87,6 +75,18 @@ function Toolbar({ music }: { music: MusicDetail }) {
           }
         >
           <MdOutlinePostAdd />
+        </IconButton>
+        <IconButton
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
+              {
+                musicList: [music],
+              },
+            )
+          }
+        >
+          <MdPlaylistAdd />
         </IconButton>
         <IconButton
           onClick={() =>

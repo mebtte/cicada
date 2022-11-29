@@ -8,7 +8,7 @@ import Empty from '@/components/empty';
 import Pagination from '#/components/pagination';
 import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
-import { CSSProperties } from 'react';
+import { CSSProperties, useContext } from 'react';
 import Button, { Variant } from '#/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import mm from '@/global_states/mini_mode';
@@ -16,6 +16,7 @@ import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import useData from './use_data';
 import Music from '../../../components/music';
 import CreateMusicGuide from '../create_music_guide';
+import Context from '../../../context';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -38,6 +39,8 @@ const paginationStyle: CSSProperties = {
 function Wrapper({ exploration }: { exploration: boolean }) {
   const miniMode = mm.useState();
   const navigate = useNavigate();
+
+  const { playqueue, currentPlayqueuePosition } = useContext(Context);
   const { data, reload, page } = useData();
 
   const transitions = useTransition(data, {
@@ -84,7 +87,12 @@ function Wrapper({ exploration }: { exploration: boolean }) {
       <MusicContainer style={style}>
         <div className="list">
           {d.value!.musicList.map((music) => (
-            <Music key={music.id} music={music} miniMode={miniMode} />
+            <Music
+              key={music.id}
+              music={music}
+              miniMode={miniMode}
+              active={playqueue[currentPlayqueuePosition]?.id === music.id}
+            />
           ))}
         </div>
         {d.value!.total && !exploration ? (

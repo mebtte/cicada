@@ -69,8 +69,8 @@ export default () => {
     );
     const unlistenActionRemovePlaylistMusic = eventemitter.listen(
       EventType.ACTION_REMOVE_PLAYLIST_MUSIC,
-      ({ listMusic }) => {
-        const { id } = listMusic;
+      ({ music }) => {
+        const { id } = music;
         return setPlaylist((pl) => {
           const newPlaylist = pl.filter((m) => m.id !== id);
           const { length } = newPlaylist;

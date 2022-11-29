@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 import useOpen from './use_open';
 import { Music, ZIndex } from '../constants';
-import Action from './action';
 import Background from './background';
 import Content from './content';
 
@@ -18,13 +17,11 @@ const Style = styled(animated.div)`
 
 function Lyric({
   music,
-  onClose,
   style,
   turntable,
   toggleTurntable,
 }: {
   music: Music;
-  onClose: () => void;
   style: unknown;
   turntable: boolean;
   toggleTurntable: () => void;
@@ -38,18 +35,12 @@ function Lyric({
         turntable={turntable}
         toggleTurntable={toggleTurntable}
       />
-      <Action
-        music={music}
-        onClose={onClose}
-        turntable={turntable}
-        toggleTurntable={toggleTurntable}
-      />
     </Style>
   );
 }
 
 const Wrapper = ({ music }: { music?: Music }) => {
-  const { open, onClose } = useOpen();
+  const { open } = useOpen();
 
   const [turntable, setTurntable] = useState(false);
   const toggleTurntable = useCallback(() => setTurntable((t) => !t), []);
@@ -64,7 +55,6 @@ const Wrapper = ({ music }: { music?: Music }) => {
     o ? (
       <Lyric
         music={music!}
-        onClose={onClose}
         style={style}
         turntable={turntable}
         toggleTurntable={toggleTurntable}

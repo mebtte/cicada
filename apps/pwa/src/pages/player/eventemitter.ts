@@ -146,7 +146,7 @@ export default new Eventin<
     [EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE]: { music: Music };
     [EventType.ACTION_PLAY_PLAYQUEUE_INDEX]: { index: number };
     [EventType.ACTION_CLEAR_PLAYLIST]: null;
-    [EventType.ACTION_REMOVE_PLAYLIST_MUSIC]: { listMusic: MusicWithIndex };
+    [EventType.ACTION_REMOVE_PLAYLIST_MUSIC]: { music: MusicWithIndex };
     [EventType.ACTION_REMOVE_PLAYQUEUE_MUSIC]: { queueMusic: QueueMusic };
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER]: { queueMusic: QueueMusic };
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY]: { queueMusic: QueueMusic };
