@@ -11,6 +11,7 @@ import { Query } from '@/constants';
 import { CSSProperties, useContext } from 'react';
 import Button, { Variant } from '#/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import mm from '@/global_states/mini_mode';
 import { TOOLBAR_HEIGHT } from '../constants';
 import { PAGE_SIZE } from './constants';
 import useData from './use_data';
@@ -38,6 +39,8 @@ const paginationStyle: CSSProperties = {
 
 function Wrapper() {
   const navigate = useNavigate();
+  const miniMode = mm.useState();
+
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   const { data, reload, page } = useData();
 
@@ -90,6 +93,7 @@ function Wrapper() {
               active={playqueue[currentPlayqueuePosition]?.id === music.id}
               music={music}
               keyword={d.value!.keyword}
+              miniMode={miniMode}
             />
           ))}
         </div>

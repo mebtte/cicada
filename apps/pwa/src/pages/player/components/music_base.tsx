@@ -1,11 +1,17 @@
 import { CSSVariable } from '#/global_style';
 import ellipsis from '#/style/ellipsis';
 import styled, { css } from 'styled-components';
-import { HtmlHTMLAttributes, ReactNode } from 'react';
+import {
+  HtmlHTMLAttributes,
+  PointerEventHandler,
+  ReactNode,
+  useRef,
+} from 'react';
 import { MusicWithIndex } from '../constants';
 import e, { EventType } from '../eventemitter';
 import Singer from './singer';
 
+const LONG_PRESS_DURATION = 500;
 const Style = styled.div<{ active: boolean }>`
   cursor: pointer;
   user-select: none;
@@ -93,14 +99,42 @@ function MusicBase({
 }) {
   const openMusicOperatePopup = () =>
     e.emit(EventType.OPEN_MUSIC_OPERATE_POPUP, { music });
+
+  const contextMenuEventRef = useRef(false);
+
+  const openMusicOperatePopupTimerRef = useRef(0);
+  const pointerDownTimestamp = useRef(0);
+  const onPointerDown: PointerEventHandler<HTMLDivElement> = () => {
+    openMusicOperatePopupTimerRef.current = window.setTimeout(
+      openMusicOperatePopup,
+      LONG_PRESS_DURATION,
+    );
+    pointerDownTimestamp.current = Date.now();
+  };
+  const onPointerUp: PointerEventHandler<HTMLDivElement> = () => {
+    window.clearTimeout(openMusicOperatePopupTimerRef.current);
+    if (
+      !contextMenuEventRef.current &&
+      Date.now() - pointerDownTimestamp.current < LONG_PRESS_DURATION
+    ) {
+      e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id });
+    }
+  };
+
   return (
     <Style
       {...props}
       active={active}
-      onClick={() => e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id })}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
       onContextMenu={(event) => {
         event.preventDefault();
-        return openMusicOperatePopup();
+        openMusicOperatePopup();
+
+        contextMenuEventRef.current = true;
+        window.setTimeout(() => {
+          contextMenuEventRef.current = false;
+        }, 1000);
       }}
     >
       <div className="content">

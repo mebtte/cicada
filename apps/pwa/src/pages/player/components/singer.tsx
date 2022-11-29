@@ -27,7 +27,8 @@ function Singer({ singer }: { singer: SingerType }) {
     <Style>
       <span
         className="name"
-        onClick={(e) => {
+        onPointerDown={(e) => e.stopPropagation()}
+        onPointerUp={(e) => {
           e.stopPropagation();
           return playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
             id: singer.id,

@@ -20,17 +20,17 @@ const LineAfterPart = styled.div`
 `;
 
 function Music({
+  miniMode,
   active,
   music,
   addon,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
+  miniMode: boolean;
   active: boolean;
   music: MusicWithIndex;
   addon?: ReactNode;
 }) {
-  const openMusicOperatePopup = () =>
-    e.emit(EventType.OPEN_MUSIC_OPERATE_POPUP, { music });
   return (
     <MusicBase
       {...props}
@@ -45,7 +45,8 @@ function Music({
           <LineAfterPart>
             <IconButton
               size={ComponentSize.SMALL}
-              onClick={(event) => {
+              onPointerDown={(event) => event.stopPropagation()}
+              onPointerUp={(event) => {
                 event.stopPropagation();
                 return e.emit(EventType.ACTION_PLAY_MUSIC, { music });
               }}
@@ -54,7 +55,8 @@ function Music({
             </IconButton>
             <IconButton
               size={ComponentSize.SMALL}
-              onClick={(event) => {
+              onPointerDown={(event) => event.stopPropagation()}
+              onPointerUp={(event) => {
                 event.stopPropagation();
                 return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
                   music,
@@ -65,7 +67,8 @@ function Music({
             </IconButton>
             <IconButton
               size={ComponentSize.SMALL}
-              onClick={(event) => {
+              onPointerDown={(event) => event.stopPropagation()}
+              onPointerUp={(event) => {
                 event.stopPropagation();
                 return e.emit(EventType.OPEN_MUSICBILL_LIST_DRAWER, {
                   music,
@@ -74,15 +77,18 @@ function Music({
             >
               <MdOutlinePostAdd />
             </IconButton>
-            <IconButton
-              size={ComponentSize.SMALL}
-              onClick={(event) => {
-                event.stopPropagation();
-                return openMusicOperatePopup();
-              }}
-            >
-              <MdMoreHoriz />
-            </IconButton>
+            {miniMode ? null : (
+              <IconButton
+                size={ComponentSize.SMALL}
+                onPointerDown={(event) => event.stopPropagation()}
+                onPointerUp={(event) => {
+                  event.stopPropagation();
+                  return e.emit(EventType.OPEN_MUSIC_OPERATE_POPUP, { music });
+                }}
+              >
+                <MdMoreHoriz />
+              </IconButton>
+            )}
           </LineAfterPart>
         </>
       }

@@ -31,11 +31,18 @@ const StyledMusic = styled(Music)`
   }
 `;
 
-function MusicWithExternalInfo({ music }: { music: MusicType }) {
+function MusicWithExternalInfo({
+  miniMode,
+  music,
+}: {
+  miniMode: boolean;
+  music: MusicType;
+}) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return (
     <StyledMusic
       music={music}
+      miniMode={miniMode}
       active={playqueue[currentPlayqueuePosition]?.id === music.id}
       addon={
         <div className="addon">

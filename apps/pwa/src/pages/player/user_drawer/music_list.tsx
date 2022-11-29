@@ -1,6 +1,7 @@
 import Empty from '@/components/empty';
 import { CSSProperties, useContext } from 'react';
 import styled from 'styled-components';
+import mm from '@/global_states/mini_mode';
 import Music from '../components/music';
 import { MusicWithIndex } from '../constants';
 import Context from '../context';
@@ -13,6 +14,7 @@ const style: CSSProperties = {
 };
 
 function MusicList({ musicList }: { musicList: MusicWithIndex[] }) {
+  const miniMode = mm.useState();
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
 
   if (musicList.length) {
@@ -23,6 +25,7 @@ function MusicList({ musicList }: { musicList: MusicWithIndex[] }) {
             key={music.id}
             music={music}
             active={playqueue[currentPlayqueuePosition]?.id === music.id}
+            miniMode={miniMode}
           />
         ))}
       </Root>

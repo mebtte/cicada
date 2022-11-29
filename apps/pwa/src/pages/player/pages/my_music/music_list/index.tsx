@@ -11,6 +11,7 @@ import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '#/style/absolute_full_size';
 import Button, { Variant } from '#/components/button';
 import { HEADER_HEIGHT } from '@/pages/player/constants';
+import mm from '@/global_states/mini_mode';
 import useMusicList from './use_music_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import Music from './music';
@@ -43,6 +44,8 @@ const paginationStyle: CSSProperties = {
 
 function MusicList() {
   const navigate = useNavigate();
+  const miniMode = mm.useState();
+
   const onPageChange = useCallback(
     (p: number) =>
       navigate({
@@ -103,7 +106,7 @@ function MusicList() {
           <MusicListContainer style={style}>
             <div className="list">
               {value!.musicList.map((music) => (
-                <Music key={music.id} music={music} />
+                <Music key={music.id} music={music} miniMode={miniMode} />
               ))}
             </div>
             {value!.total ? (
