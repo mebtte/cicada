@@ -100,7 +100,13 @@ function MusicBase({
   const openMusicOperatePopup = () =>
     e.emit(EventType.OPEN_MUSIC_OPERATE_POPUP, { music });
 
-  const contextMenuEventRef = useRef(false);
+  const cancelPointerUpRef = useRef(false);
+  const cancelPointerUp = () => {
+    cancelPointerUpRef.current = true;
+    window.setTimeout(() => {
+      cancelPointerUpRef.current = false;
+    }, 500);
+  };
 
   const openMusicOperatePopupTimerRef = useRef(0);
   const pointerDownTimestamp = useRef(0);
@@ -114,7 +120,7 @@ function MusicBase({
   const onPointerUp: PointerEventHandler<HTMLDivElement> = () => {
     window.clearTimeout(openMusicOperatePopupTimerRef.current);
     if (
-      !contextMenuEventRef.current &&
+      !cancelPointerUpRef.current &&
       Date.now() - pointerDownTimestamp.current < LONG_PRESS_DURATION
     ) {
       e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id });
@@ -126,15 +132,13 @@ function MusicBase({
       {...props}
       active={active}
       onPointerDown={onPointerDown}
+      onPointerMove={cancelPointerUp}
       onPointerUp={onPointerUp}
       onContextMenu={(event) => {
         event.preventDefault();
         openMusicOperatePopup();
 
-        contextMenuEventRef.current = true;
-        window.setTimeout(() => {
-          contextMenuEventRef.current = false;
-        }, 1000);
+        cancelPointerUp();
       }}
     >
       <div className="content">
