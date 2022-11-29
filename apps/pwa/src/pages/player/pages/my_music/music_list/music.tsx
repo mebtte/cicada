@@ -2,8 +2,10 @@ import { CSSVariable } from '#/global_style';
 import day from '#/utils/day';
 import styled from 'styled-components';
 import { MdOutlineLocalFireDepartment } from 'react-icons/md';
+import { useContext } from 'react';
 import Music from '../../../components/music';
 import { Music as MusicType } from '../constants';
+import Context from '../../../context';
 
 const StyledMusic = styled(Music)`
   > .addon {
@@ -36,10 +38,12 @@ function MusicWithExternalInfo({
   miniMode: boolean;
   music: MusicType;
 }) {
+  const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return (
     <StyledMusic
       music={music}
       miniMode={miniMode}
+      active={playqueue[currentPlayqueuePosition]?.id === music.id}
       addon={
         <div className="addon">
           <MdOutlineLocalFireDepartment />

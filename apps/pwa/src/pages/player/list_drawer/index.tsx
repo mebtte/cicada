@@ -3,6 +3,7 @@ import { CSSProperties } from 'react';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import useOpen from './use_open';
 import { EventType as PlayerEventType } from '../eventemitter';
+import Content from './content';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
@@ -24,7 +25,7 @@ function PlaylistPlayqueueDrawer() {
       maskProps={{ style: { zIndex } }}
       bodyProps={bodyProps}
     >
-      playlist playqueue
+      <Content />
     </Drawer>
   );
 }

@@ -26,9 +26,11 @@ const Line = styled.div`
 `;
 
 function MusicWithLyric({
+  active,
   music,
   keyword,
 }: {
+  active: boolean;
   music: MusicWithLyricType;
   keyword: string;
 }) {
@@ -36,6 +38,7 @@ function MusicWithLyric({
   const replacement = new RegExp(escapeRegex(keyword), 'i');
   return (
     <StyledMusic
+      active={active}
       music={music}
       miniMode={miniMode}
       addon={

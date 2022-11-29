@@ -1,8 +1,9 @@
 import Empty from '@/components/empty';
-import { CSSProperties } from 'react';
+import { CSSProperties, useContext } from 'react';
 import styled from 'styled-components';
 import Music from '../components/music';
 import { MusicWithIndex } from '../constants';
+import Context from '../context';
 
 const Root = styled.div`
   min-height: 100vh;
@@ -12,11 +13,18 @@ const style: CSSProperties = {
 };
 
 function MusicList({ musicList }: { musicList: MusicWithIndex[] }) {
+  const { playqueue, currentPlayqueuePosition } = useContext(Context);
+
   if (musicList.length) {
     return (
       <Root>
         {musicList.map((music) => (
-          <Music key={music.id} music={music} miniMode />
+          <Music
+            key={music.id}
+            music={music}
+            active={playqueue[currentPlayqueuePosition]?.id === music.id}
+            miniMode
+          />
         ))}
       </Root>
     );

@@ -8,7 +8,7 @@ import Empty from '@/components/empty';
 import Pagination from '#/components/pagination';
 import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
-import { CSSProperties } from 'react';
+import { CSSProperties, useContext } from 'react';
 import Button, { Variant } from '#/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { TOOLBAR_HEIGHT } from '../constants';
@@ -16,6 +16,7 @@ import { PAGE_SIZE } from './constants';
 import useData from './use_data';
 import MusicWithLyric from './music_with_lyric';
 import CreateMusicGuide from '../create_music_guide';
+import Context from '../../../context';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -37,6 +38,7 @@ const paginationStyle: CSSProperties = {
 
 function Wrapper() {
   const navigate = useNavigate();
+  const { playqueue, currentPlayqueuePosition } = useContext(Context);
   const { data, reload, page } = useData();
 
   const transitions = useTransition(data, {
@@ -85,6 +87,7 @@ function Wrapper() {
           {d.value!.musicList.map((music) => (
             <MusicWithLyric
               key={music.id}
+              active={playqueue[currentPlayqueuePosition]?.id === music.id}
               music={music}
               keyword={d.value!.keyword}
             />

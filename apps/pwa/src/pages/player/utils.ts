@@ -8,6 +8,7 @@ import createMusicbillExport from '@/server/create_musicbill_export';
 import createSingerRequest from '@/server/create_singer';
 import getMusicDetail from '@/server/get_music_detail';
 import getSingerDetail from '@/server/get_singer_detail';
+import { Music } from './constants';
 import e, { EditDialogType, EventType } from './eventemitter';
 
 export function exportMusicbill(id: string) {
@@ -120,3 +121,21 @@ export const openCreateSingerDialog = (callback: (id: string) => void) =>
         callback,
       }),
   });
+
+export const filterMusic = (music: Music, keyword: string) => {
+  if (keyword) {
+    const lowerCaseKeyword = keyword.toLowerCase();
+    return (
+      music.name.toLowerCase().includes(lowerCaseKeyword) ||
+      music.aliases.find((a) => a.toLowerCase().includes(lowerCaseKeyword)) ||
+      music.singers.find(
+        (singer) =>
+          singer.name.toLowerCase().includes(lowerCaseKeyword) ||
+          singer.aliases.find((alias) =>
+            alias.toLowerCase().includes(lowerCaseKeyword),
+          ),
+      )
+    );
+  }
+  return true;
+};

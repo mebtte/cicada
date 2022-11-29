@@ -15,6 +15,7 @@ const Tab = styled.div<{ active: boolean }>`
   > .label {
     padding: 8px 0 5px 0;
 
+    font-weight: bold;
     font-size: 14px;
     transition: inherit;
   }
