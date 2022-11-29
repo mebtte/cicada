@@ -5,16 +5,17 @@ import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import List from 'react-list';
-import mm from '@/global_states/mini_mode';
 import Empty from '@/components/empty';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Musicbill } from '../../constants';
-import { INFO_HEIGHT } from './constants';
+import { FILTER_HEIGHT, INFO_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import Music from '../../components/music';
 import Context from '../../context';
+import e, { EventType } from './eventemitter';
+import { filterMusic } from '../../utils';
 
 const Style = styled.div`
   position: relative;
@@ -31,12 +32,26 @@ const StatusContainer = styled(Container)`
 
   ${flexCenter}
 `;
+const ListContainer = styled(Container)`
+  padding-bottom: ${FILTER_HEIGHT}px;
+`;
 
 function Wrapper({ musicbill }: { musicbill: Musicbill }) {
-  const miniMode = mm.useState();
+  const { id, status, error, musicList } = musicbill;
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
 
-  const { id, status, error, musicList } = musicbill;
+  const [keyword, setKeyword] = useState('');
+
+  useEffect(() => {
+    setKeyword('');
+  }, [id]);
+
+  useEffect(() => {
+    const unlistenKeywordChange = e.listen(EventType.KEYWORD_CHANGE, (data) =>
+      setKeyword(data.keyword),
+    );
+    return unlistenKeywordChange;
+  }, []);
 
   const transitions = useTransition(status, {
     from: { opacity: 0 },
@@ -59,27 +74,36 @@ function Wrapper({ musicbill }: { musicbill: Musicbill }) {
 
         if (s === RequestStatus.SUCCESS) {
           if (musicList.length) {
+            const filteredMusicList = musicList.filter((music) =>
+              filterMusic(music, keyword),
+            );
+            if (filteredMusicList.length) {
+              return (
+                <ListContainer style={style}>
+                  <List
+                    type="uniform"
+                    length={filteredMusicList.length}
+                    // eslint-disable-next-line react/no-unstable-nested-components
+                    itemRenderer={(index, key) => {
+                      const music = filteredMusicList[index];
+                      return (
+                        <Music
+                          key={key}
+                          music={music}
+                          active={
+                            playqueue[currentPlayqueuePosition]?.id === music.id
+                          }
+                        />
+                      );
+                    }}
+                  />
+                </ListContainer>
+              );
+            }
             return (
-              <Container style={style}>
-                <List
-                  type="uniform"
-                  length={musicList.length}
-                  // eslint-disable-next-line react/no-unstable-nested-components
-                  itemRenderer={(index, key) => {
-                    const music = musicList[index];
-                    return (
-                      <Music
-                        key={key}
-                        music={music}
-                        miniMode={miniMode}
-                        active={
-                          playqueue[currentPlayqueuePosition]?.id === music.id
-                        }
-                      />
-                    );
-                  }}
-                />
-              </Container>
+              <StatusContainer style={style}>
+                <Empty description="未找到相关音乐" />
+              </StatusContainer>
             );
           }
           return (

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import mm from '@/global_states/mini_mode';
 import { Lrc } from 'react-lrc';
 import { memo } from 'react';
 import { CSSVariable } from '#/global_style';
@@ -34,13 +33,11 @@ function MusicWithLyric({
   music: MusicWithLyricType;
   keyword: string;
 }) {
-  const miniMode = mm.useState();
   const replacement = new RegExp(escapeRegex(keyword), 'i');
   return (
     <StyledMusic
       active={active}
       music={music}
-      miniMode={miniMode}
       addon={
         <Lrc
           className="lrc"

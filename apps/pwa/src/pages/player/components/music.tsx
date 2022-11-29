@@ -22,13 +22,11 @@ const LineAfterPart = styled.div`
 function Music({
   active,
   music,
-  miniMode,
   addon,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   active: boolean;
   music: MusicWithIndex;
-  miniMode: boolean;
   addon?: ReactNode;
 }) {
   const openMusicOperatePopup = () =>
@@ -54,32 +52,28 @@ function Music({
             >
               <MdPlayArrow />
             </IconButton>
-            {miniMode ? null : (
-              <>
-                <IconButton
-                  size={ComponentSize.SMALL}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
-                      music,
-                    });
-                  }}
-                >
-                  <MdReadMore />
-                </IconButton>
-                <IconButton
-                  size={ComponentSize.SMALL}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    return e.emit(EventType.OPEN_MUSICBILL_LIST_DRAWER, {
-                      music,
-                    });
-                  }}
-                >
-                  <MdOutlinePostAdd />
-                </IconButton>
-              </>
-            )}
+            <IconButton
+              size={ComponentSize.SMALL}
+              onClick={(event) => {
+                event.stopPropagation();
+                return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
+                  music,
+                });
+              }}
+            >
+              <MdReadMore />
+            </IconButton>
+            <IconButton
+              size={ComponentSize.SMALL}
+              onClick={(event) => {
+                event.stopPropagation();
+                return e.emit(EventType.OPEN_MUSICBILL_LIST_DRAWER, {
+                  music,
+                });
+              }}
+            >
+              <MdOutlinePostAdd />
+            </IconButton>
             <IconButton
               size={ComponentSize.SMALL}
               onClick={(event) => {

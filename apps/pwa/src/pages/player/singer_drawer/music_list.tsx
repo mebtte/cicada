@@ -16,7 +16,6 @@ function MusicList({ musicList }: { musicList: MusicWithIndex[] }) {
         <Music
           key={music.id}
           music={music}
-          miniMode
           active={playqueue[currentPlayqueuePosition]?.id === music.id}
         />
       ))}

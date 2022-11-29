@@ -1,5 +1,6 @@
 import {
   UIEventHandler,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -20,6 +21,7 @@ import MusicList from './music_list';
 import { INFO_HEIGHT } from './constants';
 import MiniInfo from './mini_info';
 import EditMenu from './edit_menu';
+import Filter from './filter';
 
 const Style = styled(Page)`
   position: relative;
@@ -34,9 +36,17 @@ const Style = styled(Page)`
 `;
 
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
-  const { id, status } = musicbill;
+  const { id, status, musicList } = musicbill;
 
   const scrollableRef = useRef<HTMLDivElement>(null);
+  const scrollToTop = useCallback(
+    () =>
+      scrollableRef.current?.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      }),
+    [],
+  );
   const [miniInfoVisible, setMiniInfoVisible] = useState(false);
 
   const saveScrollTop = useMemo(
@@ -88,6 +98,9 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
       </div>
 
       {miniInfoVisible ? <MiniInfo musicbill={musicbill} /> : null}
+      {status === RequestStatus.SUCCESS && musicList.length ? (
+        <Filter musicbillId={id} scrollToTop={scrollToTop} />
+      ) : null}
       <EditMenu musicbill={musicbill} />
     </Style>
   );
