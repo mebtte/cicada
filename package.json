@@ -100,6 +100,7 @@
     "@typescript-eslint/parser": "^5.21.0",
     "axios": "^0.21.1",
     "babel-loader": "^8.2.5",
+    "classnames": "^2.3.2",
     "copy-webpack-plugin": "^10.2.4",
     "cropperjs": "^1.5.12",
     "cross-env": "^7.0.3",
