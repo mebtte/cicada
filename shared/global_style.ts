@@ -61,11 +61,10 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    overscroll-behavior-y: contain;
+    overscroll-behavior: contain;
     overflow: hidden;
 
     margin: 0;
     padding: 0;
-
   }
 `;
