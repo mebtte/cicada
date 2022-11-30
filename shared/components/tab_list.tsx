@@ -5,16 +5,18 @@ import { CSSVariable } from '../global_style';
 const Style = styled.div`
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 `;
 const Tab = styled.div<{ active: boolean }>`
   transition: 300ms;
   cursor: pointer;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   > .label {
     padding: 8px 0 5px 0;
 
+    letter-spacing: 2px;
     font-weight: bold;
     font-size: 14px;
     transition: inherit;

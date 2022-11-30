@@ -6,7 +6,7 @@ import mm from '@/global_states/mini_mode';
 import Input from './input';
 import { HEADER_HEIGHT, SearchTab } from '../../constants';
 import Page from '../page';
-import { TOOLBAR_HEIGHT } from './constants';
+import { MINI_MODE_TOOLBAR_HEIGHT, TOOLBAR_HEIGHT } from './constants';
 import Content from './content';
 import useTab from './use_tab';
 
@@ -20,19 +20,21 @@ const Style = styled(Page)`
     top: 0;
     left: 0;
     width: 100%;
-    height: ${TOOLBAR_HEIGHT}px;
 
     padding: 0 20px 5px 20px;
 
     display: flex;
-    align-items: flex-end;
-    gap: 20px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
 
     backdrop-filter: blur(5px);
   }
 
   ${({ theme: { miniMode } }) => css`
     > .toolbar {
+      height: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
+
       > .guide-box {
         flex: ${miniMode ? 'unset' : 1};
       }

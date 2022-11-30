@@ -1,7 +1,7 @@
 import absoluteFullSize from '#/style/absolute_full_size';
 import { flexCenter } from '#/style/flexbox';
 import { animated, useTransition } from 'react-spring';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '#/components/spinner';
 import Empty from '@/components/empty';
@@ -12,7 +12,7 @@ import { CSSProperties, useContext } from 'react';
 import Button, { Variant } from '#/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import mm from '@/global_states/mini_mode';
-import { TOOLBAR_HEIGHT } from '../constants';
+import { TOOLBAR_HEIGHT, MINI_MODE_TOOLBAR_HEIGHT } from '../constants';
 import { PAGE_SIZE } from './constants';
 import useData from './use_data';
 import MusicWithLyric from './music_with_lyric';
@@ -29,9 +29,11 @@ const CardContainer = styled(Container)`
   gap: 20px;
 `;
 const MusicContainer = styled(Container)`
-  padding-top: ${TOOLBAR_HEIGHT}px;
-
   overflow: auto;
+
+  ${({ theme: { miniMode } }) => css`
+    padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
+  `}
 `;
 const paginationStyle: CSSProperties = {
   margin: '20px 0',

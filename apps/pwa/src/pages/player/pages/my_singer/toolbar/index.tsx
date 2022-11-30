@@ -19,15 +19,23 @@ const Style = styled.div`
   padding: 0 20px;
 
   backdrop-filter: blur(5px);
+
+  > .operation {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
 `;
 
 function Toolbar() {
   return (
     <Style>
-      <IconButton onClick={openCreateSingerDialog}>
-        <MdAdd />
-      </IconButton>
-      <Question />
+      <div className="operation">
+        <IconButton onClick={openCreateSingerDialog}>
+          <MdAdd />
+        </IconButton>
+        <Question />
+      </div>
       <Filter />
     </Style>
   );

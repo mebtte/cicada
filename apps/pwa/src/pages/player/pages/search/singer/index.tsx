@@ -1,7 +1,7 @@
 import absoluteFullSize from '#/style/absolute_full_size';
 import { flexCenter } from '#/style/flexbox';
 import { animated, useTransition } from 'react-spring';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '#/components/spinner';
 import Empty from '@/components/empty';
@@ -13,7 +13,11 @@ import Button, { Variant } from '#/components/button';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
-import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
+import {
+  PAGE_SIZE,
+  TOOLBAR_HEIGHT,
+  MINI_MODE_TOOLBAR_HEIGHT,
+} from '../constants';
 import useData from './use_data';
 import { openCreateSingerDialog } from '../../../utils';
 import Singer from './singer';
@@ -29,9 +33,11 @@ const CardContainer = styled(Container)`
   gap: 20px;
 `;
 const MusicContainer = styled(Container)`
-  padding-top: ${TOOLBAR_HEIGHT}px;
-
   overflow: auto;
+
+  ${({ theme: { miniMode } }) => css`
+    padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
+  `}
 `;
 const paginationStyle: CSSProperties = {
   margin: '20px 0',

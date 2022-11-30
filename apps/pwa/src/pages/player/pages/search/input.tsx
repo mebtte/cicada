@@ -2,13 +2,8 @@ import Input from '#/components/input';
 import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import parseSearch from '@/utils/parse_search';
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-
-const style: CSSProperties = {
-  flex: 1,
-  minWidth: 0,
-};
 
 function Wrapper() {
   const navigate = useNavigate();
@@ -38,7 +33,6 @@ function Wrapper() {
           }
         },
       }}
-      style={style}
     />
   );
 }
