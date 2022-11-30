@@ -46,6 +46,7 @@ class Audio extends React.PureComponent<Props, {}> {
     eventemitter.listen(EventType.ACTION_PLAY, this.onActionPlay);
     eventemitter.listen(EventType.ACTION_PAUSE, this.onActionPause);
 
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
     window.addEventListener('beforeunload', this.beforeUnload);
   }
 
@@ -83,6 +84,7 @@ class Audio extends React.PureComponent<Props, {}> {
     eventemitter.unlisten(EventType.ACTION_PLAY, this.onActionPlay);
     eventemitter.unlisten(EventType.ACTION_PAUSE, this.onActionPause);
 
+    document.removeEventListener('visibilitychange', this.onVisibilityChange);
     window.removeEventListener('beforeunload', this.beforeUnload);
 
     this.uploadPlayRecord(this.props.queueMusic);
@@ -103,6 +105,15 @@ class Audio extends React.PureComponent<Props, {}> {
   onActionPlay = () => this.audio!.play();
 
   onActionPause = () => this.audio!.pause();
+
+  onVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      eventemitter.emit(
+        this.audio!.paused ? EventType.AUDIO_PAUSE : EventType.AUDIO_PLAY,
+        null,
+      );
+    }
+  };
 
   onTimeUpdate = throttle(() => {
     const { currentTime } = this.audio!;
