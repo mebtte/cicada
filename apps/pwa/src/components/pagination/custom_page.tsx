@@ -9,7 +9,7 @@ import Popup from '#/components/popup';
 import { UtilZIndex } from '#/constants/style';
 import Input from '#/components/input';
 import e, { EventType } from './eventemitter';
-import { IS_TOUCHABLE } from '../../constants';
+import { IS_TOUCHABLE } from '../../constants/browser';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: UtilZIndex.PAGINATION },
