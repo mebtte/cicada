@@ -8,6 +8,7 @@ import {
 } from 'react-icons/md';
 import Popup from '#/components/popup';
 import MenuItem from '#/components/menu_item';
+import { IS_IPAD, IS_IPHONE } from '@/constants';
 import { Music as MusicType } from '../constants';
 import useMusicOperate from '../use_music_operate';
 import MusicInfo from '../components/music_info';
@@ -62,11 +63,13 @@ function MusicOperateDrawer({
         label="添加到播放列表"
         onClick={onAddToPlaylist}
       />
-      <MenuItem
-        icon={<MdDownload />}
-        label="下载"
-        onClick={onOpenDownloadDialog}
-      />
+      {IS_IPHONE || IS_IPAD ? null : (
+        <MenuItem
+          icon={<MdDownload />}
+          label="下载"
+          onClick={onOpenDownloadDialog}
+        />
+      )}
     </Popup>
   );
 }

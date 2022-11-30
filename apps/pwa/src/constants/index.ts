@@ -1,7 +1,14 @@
 export const CICADA_START_YEAR = 2016;
 
-export const IS_MAC_OS = navigator.userAgent.toUpperCase().includes('MAC OS');
-export const IS_WINDOWS = navigator.userAgent.toUpperCase().includes('WINDOWS');
+export const IS_TOUCHABLE =
+  'ontouchstart' in window || window.navigator.maxTouchPoints > 0;
+
+export const IS_MAC_OS =
+  navigator.userAgent.toLowerCase().includes('mac os') && !IS_TOUCHABLE;
+export const IS_WINDOWS = navigator.userAgent.toLowerCase().includes('windows');
+export const IS_IPAD =
+  navigator.userAgent.toLowerCase().includes('mac os') && IS_TOUCHABLE;
+export const IS_IPHONE = navigator.userAgent.toLowerCase().includes('iphone');
 
 export enum RequestStatus {
   NOT_START = 'not_start',
@@ -25,6 +32,3 @@ export enum PlayMode {
   HQ = 'hq',
   AC = 'ac',
 }
-
-export const IS_TOUCHABLE =
-  'ontouchstart' in window || window.navigator.maxTouchPoints > 0;
