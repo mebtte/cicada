@@ -26,6 +26,7 @@ const Style = styled.button<{ size: ComponentSize }>`
   cursor: pointer;
   transition: all 250ms;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   > svg {
     width: 75%;

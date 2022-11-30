@@ -1,1 +1,1 @@
-export const FILTER_HEIGHT = 50;
+export const FILTER_HEIGHT = 60;

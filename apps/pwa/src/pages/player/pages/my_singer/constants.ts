@@ -8,4 +8,4 @@ export interface Singer {
   index: number;
 }
 
-export const TOOLBAR_HEIGHT = 50;
+export const TOOLBAR_HEIGHT = 60;

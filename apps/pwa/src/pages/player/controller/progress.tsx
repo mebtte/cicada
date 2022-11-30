@@ -1,12 +1,18 @@
 import { CSSVariable } from '#/global_style';
 import { PointerEventHandler, useRef, useState } from 'react';
 import styled from 'styled-components';
+import classnames from 'classnames';
+import { IS_TOUCHABLE } from '@/constants';
+import { flexCenter } from '#/style/flexbox';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 
+const THUMB_SIZE = 24;
 const Style = styled.div`
+  z-index: 1;
+
   position: relative;
 
   height: 5px;
@@ -24,8 +30,27 @@ const Style = styled.div`
     transform-origin: left;
   }
 
-  &:hover {
-    transform: scaleY(3);
+  > .thumb {
+    position: absolute;
+    top: calc(50% - ${THUMB_SIZE / 2}px);
+    width: ${THUMB_SIZE}px;
+    height: ${THUMB_SIZE}px;
+
+    transform: translateX(-50%);
+
+    ${flexCenter}
+
+    >.inner {
+      width: 50%;
+      height: 50%;
+      background-color: ${CSSVariable.COLOR_PRIMARY};
+    }
+  }
+
+  &.untouchable {
+    &:hover {
+      transform: scaleY(3);
+    }
   }
 `;
 
@@ -60,8 +85,14 @@ function Progress({ duration }: { duration: number }) {
 
   const currentMillisecond = useAudioCurrentMillisecond();
   const percent = duration ? currentMillisecond / 1000 / duration : 0;
+
+  const actualPercent = innerPercent || percent;
   return (
     <Style
+      className={classnames({
+        touchable: IS_TOUCHABLE,
+        untouchable: !IS_TOUCHABLE,
+      })}
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerMove={onPointerMove}
@@ -69,9 +100,19 @@ function Progress({ duration }: { duration: number }) {
       <div
         className="current"
         style={{
-          transform: `scaleX(${innerPercent || percent})`,
+          transform: `scaleX(${actualPercent})`,
         }}
       />
+      {IS_TOUCHABLE ? (
+        <div
+          className="thumb"
+          style={{
+            left: `${actualPercent * 100}%`,
+          }}
+        >
+          <div className="inner" />
+        </div>
+      ) : null}
     </Style>
   );
 }

@@ -9,6 +9,17 @@ import Logout from './logout';
 import UserManage from './user_manage';
 import { HEADER_HEIGHT } from '../../constants';
 
+const AUDIO_VOLUME_SETABLE = await (() =>
+  Promise.race([
+    new Promise<boolean>((resolve) => {
+      const audio = document.createElement('audio');
+      audio.addEventListener('volumechange', () => resolve(true));
+      audio.volume = 0.5;
+    }),
+    new Promise<boolean>((resolve) =>
+      window.setTimeout(() => resolve(false), 500),
+    ),
+  ]))();
 const Style = styled(Page)`
   padding-top: ${HEADER_HEIGHT}px;
 
@@ -21,7 +32,7 @@ function Setting() {
   return (
     <Style>
       <PlayMode playMode={playMode} />
-      <Volume />
+      {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
       {profile.admin ? <UserManage /> : null}
       <Logout />
     </Style>

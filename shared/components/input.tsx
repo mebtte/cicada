@@ -27,6 +27,7 @@ const Input = styled.input`
   font-size: 14px;
   outline: none;
   transition: inherit;
+  -webkit-tap-highlight-color: transparent;
 
   &:focus {
     border-color: ${CSSVariable.COLOR_PRIMARY};

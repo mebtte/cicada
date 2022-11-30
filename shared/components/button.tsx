@@ -89,6 +89,7 @@ const Style = styled.button<{
   cursor: pointer;
   transition: all 300ms;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   &:disabled {
     cursor: not-allowed;
