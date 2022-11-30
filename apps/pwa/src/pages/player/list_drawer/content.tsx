@@ -1,6 +1,7 @@
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
 import TabList from '#/components/tab_list';
 import { useTransition } from 'react-spring';
+import styled from 'styled-components';
 import Playqueue from './playqueue';
 import Playlist from './playlist';
 import { Tab, TAB_LIST_HEIGHT } from './constants';
@@ -13,17 +14,17 @@ const TAB_LIST = Object.values(Tab).map((t) => ({
   tab: t,
   label: TAB_MAP_LABEL[t],
 }));
-const tabStyle: CSSProperties = {
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: TAB_LIST_HEIGHT,
+const StyledTabList = styled(TabList)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: ${TAB_LIST_HEIGHT}px;
 
-  padding: '0 20px',
+  padding: 0 20px;
 
-  backdropFilter: 'blur(5px)',
-};
+  backdrop-filter: blur(5px);
+`;
 
 function Content() {
   const [tab, setTab] = useState(Tab.PLAYQUEUE);
@@ -50,11 +51,10 @@ function Content() {
           }
         }
       })}
-      <TabList
+      <StyledTabList
         current={tab}
         onChange={(t) => setTab(t)}
         tabList={TAB_LIST}
-        style={tabStyle}
       />
     </>
   );

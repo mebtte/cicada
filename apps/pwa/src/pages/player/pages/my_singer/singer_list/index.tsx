@@ -1,6 +1,6 @@
 import { flexCenter } from '#/style/flexbox';
 import { animated, useTransition } from 'react-spring';
-import styled, { CSSProperties } from 'styled-components';
+import styled from 'styled-components';
 import Spinner from '#/components/spinner';
 import ErrorCard from '@/components/error_card';
 import absoluteFullSize from '#/style/absolute_full_size';
@@ -35,13 +35,15 @@ const SingerListBox = styled(Box)`
 
   overflow: auto;
 `;
-const headStyle: CSSProperties = {
-  zIndex: 1,
-  position: 'sticky',
-  height: 30,
-  top: 0,
-  backdropFilter: 'blur(5px)',
-};
+const Head = styled(Row)`
+  z-index: 1;
+
+  position: sticky;
+  height: 30;
+  top: 0;
+
+  backdrop-filter: blur(5px);
+`;
 const RowHead = styled.div`
   font-size: 12px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
@@ -83,8 +85,7 @@ function SingerList() {
         if (singerList.length) {
           return (
             <SingerListBox style={style}>
-              <Row
-                style={headStyle}
+              <Head
                 one={null}
                 two={<RowHead>名字/别名</RowHead>}
                 three={<RowHead>音乐数</RowHead>}

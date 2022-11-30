@@ -62,14 +62,17 @@ const Style = styled.div`
     }
   }
 `;
-const tabListStyle: CSSProperties = {
-  zIndex: 1,
-  position: 'sticky',
-  top: MINI_INFO_HEIGHT,
-  padding: ' 5px 20px 5px 20px',
-  backdropFilter: 'blur(5px)',
-  backgroundColor: 'rgb(255 255 255 / 0.75)',
-};
+const StyledTabList = styled(TabList)`
+  z-index: 1;
+
+  position: sticky;
+  top: ${MINI_INFO_HEIGHT}px;
+
+  padding: 5px 20px;
+
+  backdrop-filter: blur(5px);
+  background-color: rgb(255 255 255 / 0.5);
+`;
 const TabContent = styled(animated.div)`
   position: absolute;
   top: 0;
@@ -103,11 +106,10 @@ function UserDetail({ user }: { user: UserDetailType }) {
     <Style>
       <div className="scrollable" onScroll={onScroll} ref={scrollableRef}>
         <Info user={user} />
-        <TabList
+        <StyledTabList
           current={tab}
           tabList={TAB_LIST}
           onChange={(t) => setTab(t)}
-          style={tabListStyle}
         />
         <div className="tab-content">
           {transitions((style, t) => {

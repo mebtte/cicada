@@ -25,3 +25,6 @@ export enum PlayMode {
   HQ = 'hq',
   AC = 'ac',
 }
+
+export const IS_TOUCHABLE =
+  'ontouchstart' in window || window.navigator.maxTouchPoints > 0;

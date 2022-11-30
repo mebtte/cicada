@@ -1,6 +1,6 @@
 import Input from '#/components/input';
 import useNavigate from '#/utils/use_navigate';
-import { Query } from '@/constants';
+import { IS_TOUCHABLE, Query } from '@/constants';
 import parseSearch from '@/utils/parse_search';
 import { CSSProperties, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -37,6 +37,7 @@ function Filter() {
     <Input
       style={style}
       inputProps={{
+        autoFocus: !IS_TOUCHABLE,
         placeholder: '查找',
         value: keyword,
         onChange: (event) => setKeyword(event.target.value),
