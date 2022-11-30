@@ -1,6 +1,7 @@
 import Input from '#/components/input';
 import useNavigate from '#/utils/use_navigate';
-import { IS_TOUCHABLE, Query } from '@/constants';
+import { Query } from '@/constants';
+import { IS_TOUCHABLE } from '#/constants';
 import parseSearch from '@/utils/parse_search';
 import { CSSProperties, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';

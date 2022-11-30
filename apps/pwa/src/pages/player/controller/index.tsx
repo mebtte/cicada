@@ -10,7 +10,8 @@ import Time from './time';
 const Style = styled.div`
   z-index: ${ZIndex.CONTROLLER};
 
-  height: ${CONTROLLER_HEIGHT}px;
+  height: calc(env(safe-area-inset-bottom, 0) + ${CONTROLLER_HEIGHT}px);
+  padding-bottom: env(safe-area-inset-bottom, 0);
 
   display: flex;
   flex-direction: column;

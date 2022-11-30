@@ -2,7 +2,13 @@ import styled from 'styled-components';
 import Popup from '#/components/popup';
 import { CSSProperties, useEffect, useState } from 'react';
 import MenuItem from '#/components/menu_item';
-import { MdImage, MdTitle, MdPublic, MdPublicOff } from 'react-icons/md';
+import {
+  MdImage,
+  MdTitle,
+  MdPublic,
+  MdPublicOff,
+  MdDelete,
+} from 'react-icons/md';
 import updateMusicbill from '@/server/update_musicbill';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import uploadAsset from '@/server/upload_asset';
@@ -10,12 +16,16 @@ import { AssetType } from '#/constants';
 import dialog from '#/utils/dialog';
 import logger from '#/utils/logger';
 import notice from '#/utils/notice';
+import { CSSVariable } from '#/global_style';
+import deleteMusicbill from '@/server/delete_musicbill';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import useNavigate from '#/utils/use_navigate';
+import e, { EventType } from './eventemitter';
+import { Musicbill, ZIndex } from '../../constants';
 import playerEventemitter, {
   EditDialogType,
   EventType as PlayerEventType,
 } from '../../eventemitter';
-import { Musicbill, ZIndex } from '../../constants';
-import e, { EventType } from './eventemitter';
 
 const maskProps: { style: CSSProperties } = {
   style: {
@@ -28,10 +38,15 @@ const bodyProps: { style: CSSProperties } = {
   },
 };
 const Style = styled.div`
-  padding: 10px 0;
+  padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 `;
+const deleteStyle: CSSProperties = {
+  color: CSSVariable.COLOR_DANGEROUS,
+};
 
 function EditMenu({ musicbill }: { musicbill: Musicbill }) {
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
 
@@ -156,6 +171,39 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   }),
             });
           }}
+        />
+        <MenuItem
+          label="删除乐单"
+          icon={<MdDelete style={deleteStyle} />}
+          onClick={() =>
+            dialog.confirm({
+              title: `确定删除乐单?`,
+              content: '注意, 乐单删除后无法恢复',
+              onConfirm: () =>
+                void dialog.confirm({
+                  title: '确定删除乐单?',
+                  content: '现在是第二次确认, 也是最后一次',
+                  onConfirm: async () => {
+                    try {
+                      await deleteMusicbill(musicbill.id);
+                      playerEventemitter.emit(
+                        PlayerEventType.RELOAD_MUSICBILL_LIST,
+                        null,
+                      );
+                      navigate({
+                        path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORE,
+                      });
+                    } catch (error) {
+                      logger.error(error, '删除乐单失败');
+                      dialog.alert({
+                        title: '删除乐单失败',
+                        content: error.message,
+                      });
+                    }
+                  },
+                }),
+            })
+          }
         />
       </Style>
     </Popup>

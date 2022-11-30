@@ -32,7 +32,7 @@ const bodyProps: { style: CSSProperties } = {
   style: { width: 300 },
 };
 const Style = styled.div`
-  padding: 5px 0;
+  padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 `;
 
 function EditMenu({ singer }: { singer: SingerDetail }) {

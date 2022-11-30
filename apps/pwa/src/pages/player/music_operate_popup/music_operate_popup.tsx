@@ -8,7 +8,7 @@ import {
 } from 'react-icons/md';
 import Popup from '#/components/popup';
 import MenuItem from '#/components/menu_item';
-import { IS_IPAD, IS_IPHONE } from '@/constants';
+import { IS_IPAD, IS_IPHONE } from '#/constants';
 import { Music as MusicType } from '../constants';
 import useMusicOperate from '../use_music_operate';
 import MusicInfo from '../components/music_info';
@@ -16,7 +16,7 @@ import MusicInfo from '../components/music_info';
 const bodyProps: { style: CSSProperties } = {
   style: {
     maxWidth: 350,
-    padding: '10px 0',
+    padding: '10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0',
   },
 };
 

@@ -70,3 +70,13 @@ export const EFFECTIVE_PLAY_PERCENT = 0.75;
 export const ALIAS_DIVIDER = '♫';
 
 export const DOWNLOAD_TTL = 1000 * 60 * 60 * 24 * 3;
+
+export const IS_TOUCHABLE =
+  'ontouchstart' in window || window.navigator.maxTouchPoints > 0;
+
+export const IS_MAC_OS =
+  navigator.userAgent.toLowerCase().includes('mac os') && !IS_TOUCHABLE;
+export const IS_WINDOWS = navigator.userAgent.toLowerCase().includes('windows');
+export const IS_IPAD =
+  navigator.userAgent.toLowerCase().includes('mac os') && IS_TOUCHABLE;
+export const IS_IPHONE = navigator.userAgent.toLowerCase().includes('iphone');

@@ -10,7 +10,7 @@ import { Status } from './constants';
 
 const Container = styled(animated.div)`
   position: absolute;
-  top: 0;
+  top: env(safe-area-inset-top, 0);
   left: 0;
   width: 100%;
   height: calc(100% - ${CONTROLLER_HEIGHT}px - env(safe-area-inset-bottom, 0));

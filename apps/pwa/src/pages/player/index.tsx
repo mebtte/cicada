@@ -33,8 +33,6 @@ const Style = styled(PageContainer)`
   display: flex;
   flex-direction: column;
 
-  padding-bottom: env(safe-area-inset-bottom, 0);
-
   overflow: hidden;
 
   > .container {

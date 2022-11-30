@@ -10,7 +10,7 @@ import { MINI_MODE_TOOLBAR_HEIGHT, TOOLBAR_HEIGHT } from './constants';
 import Content from './content';
 import useTab from './use_tab';
 
-const Style = styled(Page)`
+const Style = styled(Page)<{ exploration: boolean }>`
   position: relative;
 
   margin-top: ${HEADER_HEIGHT}px;
@@ -31,9 +31,11 @@ const Style = styled(Page)`
     backdrop-filter: blur(5px);
   }
 
-  ${({ theme: { miniMode } }) => css`
+  ${({ exploration, theme: { miniMode } }) => css`
     > .toolbar {
-      height: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
+      height: ${miniMode && !exploration
+        ? MINI_MODE_TOOLBAR_HEIGHT
+        : TOOLBAR_HEIGHT}px;
 
       > .guide-box {
         flex: ${miniMode ? 'unset' : 1};
@@ -48,7 +50,7 @@ function Search({ exploration }: { exploration: boolean }) {
   const { tab, tabList } = useTab(exploration);
 
   return (
-    <Style>
+    <Style exploration={exploration}>
       <Content tab={tab} exploration={exploration} />
       <div className="toolbar">
         {miniMode && !exploration ? <Input /> : null}

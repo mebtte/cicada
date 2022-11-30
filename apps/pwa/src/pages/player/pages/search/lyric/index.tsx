@@ -28,18 +28,20 @@ const CardContainer = styled(Container)`
   flex-direction: column;
   gap: 20px;
 `;
-const MusicContainer = styled(Container)`
+const MusicContainer = styled(Container)<{ exploration: boolean }>`
   overflow: auto;
 
-  ${({ theme: { miniMode } }) => css`
-    padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
+  ${({ exploration, theme: { miniMode } }) => css`
+    padding-top: ${miniMode && !exploration
+      ? MINI_MODE_TOOLBAR_HEIGHT
+      : TOOLBAR_HEIGHT}px;
   `}
 `;
 const paginationStyle: CSSProperties = {
   margin: '20px 0',
 };
 
-function Wrapper() {
+function Wrapper({ exploration }: { exploration: boolean }) {
   const navigate = useNavigate();
   const miniMode = mm.useState();
 
@@ -87,7 +89,7 @@ function Wrapper() {
       );
     }
     return (
-      <MusicContainer style={style}>
+      <MusicContainer style={style} exploration={exploration}>
         <div className="list">
           {d.value!.musicList.map((music) => (
             <MusicWithLyric

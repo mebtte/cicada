@@ -30,11 +30,13 @@ const CardContainer = styled(Container)`
   flex-direction: column;
   gap: 20px;
 `;
-const MusicContainer = styled(Container)`
+const MusicContainer = styled(Container)<{ exploration: boolean }>`
   overflow: auto;
 
-  ${({ theme: { miniMode } }) => css`
-    padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
+  ${({ exploration, theme: { miniMode } }) => css`
+    padding-top: ${miniMode && !exploration
+      ? MINI_MODE_TOOLBAR_HEIGHT
+      : TOOLBAR_HEIGHT}px;
   `}
 `;
 const paginationStyle: CSSProperties = {
@@ -81,7 +83,7 @@ function Wrapper({ exploration }: { exploration: boolean }) {
       width: miniMode ? '100%' : '50%',
     };
     return (
-      <MusicContainer style={style}>
+      <MusicContainer style={style} exploration={exploration}>
         <div>
           {d.value!.musicbillList.map((musicbill) => (
             <Musicbill

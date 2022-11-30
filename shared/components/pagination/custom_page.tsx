@@ -3,13 +3,13 @@ import {
   CSSProperties,
   KeyboardEventHandler,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 import Popup from '../popup';
 import e, { EventType } from './eventemitter';
 import Input from '../input';
 import { UtilZIndex } from '../../constants/style';
+import { IS_TOUCHABLE } from '../../constants';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: UtilZIndex.PAGINATION },
@@ -18,7 +18,8 @@ const bodyProps: {
   style: CSSProperties;
 } = {
   style: {
-    padding: 20,
+    width: 250,
+    padding: '20px 20px max(env(safe-area-inset-bottom, 20px), 20px) 20px',
   },
 };
 
@@ -31,11 +32,6 @@ function CustomPage({
   totalPage: number;
   onChange: (page: number) => void;
 }) {
-  const inputRef = useRef<{
-    root: HTMLDivElement;
-    input: HTMLInputElement;
-  }>(null);
-
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
 
@@ -69,12 +65,6 @@ function CustomPage({
     return unlistenOpen;
   }, [id]);
 
-  useEffect(() => {
-    if (open) {
-      inputRef.current?.input.focus();
-    }
-  }, [open]);
-
   return (
     <Popup
       open={open}
@@ -83,12 +73,12 @@ function CustomPage({
       bodyProps={bodyProps}
     >
       <Input
-        ref={inputRef}
         label="跳转到指定页面"
         inputProps={{
           value: page,
           onChange: onPageChange,
           onKeyDown,
+          autoFocus: !IS_TOUCHABLE,
         }}
       />
     </Popup>

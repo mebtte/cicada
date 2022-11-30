@@ -40,7 +40,7 @@ function Content({
         break;
       }
       case SearchTab.LYRIC: {
-        content = <Lyric />;
+        content = <Lyric exploration={exploration} />;
         break;
       }
     }

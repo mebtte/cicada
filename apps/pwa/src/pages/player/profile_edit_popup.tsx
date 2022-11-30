@@ -32,7 +32,7 @@ const bodyProps: {
   },
 };
 const Style = styled.div`
-  padding: 10px 0;
+  padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 
   > .profile {
     padding: 10px 20px;

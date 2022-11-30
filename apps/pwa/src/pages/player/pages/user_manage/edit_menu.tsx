@@ -26,7 +26,7 @@ const bodyProps: {
   style: { width: 250 },
 };
 const Style = styled.div`
-  padding: 10px 0;
+  padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 `;
 
 function EditMenu() {

@@ -77,7 +77,7 @@ const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
 });
 
 const Style = styled.div`
-  padding: 5px 0;
+  padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 `;
 const maskProps: {
   style: CSSProperties;
