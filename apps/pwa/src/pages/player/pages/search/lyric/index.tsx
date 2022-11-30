@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '#/components/spinner';
 import Empty from '@/components/empty';
-import Pagination from '#/components/pagination';
+import Pagination from '@/components/pagination';
 import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties, useContext } from 'react';

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Spinner from '#/components/spinner';
 import { flexCenter } from '#/style/flexbox';
 import Empty from '@/components/empty';
-import Pagination from '#/components/pagination';
+import Pagination from '@/components/pagination';
 import { CSSProperties, useCallback } from 'react';
 import ErrorCard from '@/components/error_card';
 import useNavigate from '#/utils/use_navigate';

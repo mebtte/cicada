@@ -1,8 +1,8 @@
 import { ForwardedRef, forwardRef, HtmlHTMLAttributes, useId } from 'react';
 import styled, { css } from 'styled-components';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
-import { flexCenter } from '../../style/flexbox';
-import { CSSVariable } from '../../global_style';
+import { flexCenter } from '#/style/flexbox';
+import { CSSVariable } from '#/global_style';
 import usePages from './use_pages';
 import CustomPage from './custom_page';
 

@@ -2,7 +2,7 @@ import { CSSVariable } from '#/global_style';
 import { PointerEventHandler, useRef, useState } from 'react';
 import styled from 'styled-components';
 import classnames from 'classnames';
-import { IS_TOUCHABLE } from '#/constants';
+import { IS_TOUCHABLE } from '@/constants';
 import { flexCenter } from '#/style/flexbox';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import playerEventemitter, {

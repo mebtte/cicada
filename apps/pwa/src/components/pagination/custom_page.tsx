@@ -5,10 +5,10 @@ import {
   useEffect,
   useState,
 } from 'react';
-import Popup from '../popup';
+import Popup from '#/components/popup';
+import { UtilZIndex } from '#/constants/style';
+import Input from '#/components/input';
 import e, { EventType } from './eventemitter';
-import Input from '../input';
-import { UtilZIndex } from '../../constants/style';
 import { IS_TOUCHABLE } from '../../constants';
 
 const maskProps: { style: CSSProperties } = {
