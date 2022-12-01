@@ -11,7 +11,6 @@ const Style = styled.div`
   z-index: ${ZIndex.CONTROLLER};
 
   height: calc(env(safe-area-inset-bottom, 0) + ${CONTROLLER_HEIGHT}px);
-  padding-bottom: env(safe-area-inset-bottom, 0);
 
   display: flex;
   flex-direction: column;
@@ -24,6 +23,8 @@ const Style = styled.div`
 
     display: flex;
     align-items: center;
+
+    padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
   ${({ theme: { miniMode } }) => css`
