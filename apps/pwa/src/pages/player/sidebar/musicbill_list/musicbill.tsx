@@ -13,6 +13,7 @@ const Style = styled(NavLink)`
   align-items: center;
   gap: 10px;
 
+  -webkit-tap-highlight-color: transparent;
   user-select: none;
   text-decoration: none;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};

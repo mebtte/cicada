@@ -28,6 +28,14 @@ export default () => {
           }
           break;
         }
+
+        case 'l': {
+          if (event.metaKey || event.ctrlKey) {
+            event.preventDefault();
+            e.emit(EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER, null);
+          }
+          break;
+        }
       }
     };
     window.addEventListener('keydown', onKeyDown);

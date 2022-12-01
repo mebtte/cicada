@@ -15,7 +15,7 @@ const LONG_PRESS_DURATION = 500;
 const Style = styled.div<{ active: boolean }>`
   cursor: pointer;
   user-select: none;
-  border-bottom: 1px solid transparent;
+  border-bottom: 2px solid transparent;
   background-clip: content-box;
   border-left-color: ${CSSVariable.COLOR_PRIMARY};
   border-left-style: solid;

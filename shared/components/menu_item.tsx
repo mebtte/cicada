@@ -9,6 +9,7 @@ const Style = styled.div<{ active: boolean }>`
   align-items: center;
   gap: 10px;
 
+  -webkit-tap-highlight-color: transparent;
   user-select: none;
   cursor: pointer;
   transition: all 300ms;

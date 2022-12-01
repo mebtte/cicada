@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import IconButton from '#/components/icon_button';
 import {
   MdOutlineQueueMusic,
@@ -39,6 +39,10 @@ const Style = styled.div`
 
     background-color: ${CSSVariable.COLOR_BORDER};
   }
+
+  ${({ theme: { miniMode } }) => css`
+    gap: ${miniMode ? 5 : 10}px;
+  `}
 `;
 
 function Operation({
