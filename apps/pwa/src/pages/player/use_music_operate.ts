@@ -23,7 +23,7 @@ export default (
     }
   }, [music, afterOperate]);
   const onAddToMusicbill = useCallback(() => {
-    eventemitter.emit(EventType.OPEN_MUSICBILL_LIST_DRAWER, { music });
+    eventemitter.emit(EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER, { music });
     if (afterOperate) {
       afterOperate();
     }

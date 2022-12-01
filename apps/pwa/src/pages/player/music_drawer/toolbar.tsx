@@ -67,7 +67,7 @@ function Toolbar({ music }: { music: MusicDetail }) {
         <IconButton
           onClick={() =>
             playerEventemitter.emit(
-              PlayerEventType.OPEN_MUSICBILL_LIST_DRAWER,
+              PlayerEventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER,
               {
                 music,
               },

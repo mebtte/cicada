@@ -6,7 +6,6 @@ import {
   MdReadMore,
   MdOutlinePostAdd,
 } from 'react-icons/md';
-import { ComponentSize } from '#/constants/style';
 import Tag, { Type } from '#/components/tag';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import { MusicWithIndex } from '../constants';
@@ -44,7 +43,7 @@ function Music({
           </LineAfterPart>
           <LineAfterPart>
             <IconButton
-              size={ComponentSize.SMALL}
+              size={28}
               onPointerDown={(event) => event.stopPropagation()}
               onPointerUp={(event) => {
                 event.stopPropagation();
@@ -54,7 +53,7 @@ function Music({
               <MdPlayArrow />
             </IconButton>
             <IconButton
-              size={ComponentSize.SMALL}
+              size={28}
               onPointerDown={(event) => event.stopPropagation()}
               onPointerUp={(event) => {
                 event.stopPropagation();
@@ -66,11 +65,11 @@ function Music({
               <MdReadMore />
             </IconButton>
             <IconButton
-              size={ComponentSize.SMALL}
+              size={28}
               onPointerDown={(event) => event.stopPropagation()}
               onPointerUp={(event) => {
                 event.stopPropagation();
-                return e.emit(EventType.OPEN_MUSICBILL_LIST_DRAWER, {
+                return e.emit(EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER, {
                   music,
                 });
               }}
@@ -79,7 +78,7 @@ function Music({
             </IconButton>
             {miniMode ? null : (
               <IconButton
-                size={ComponentSize.SMALL}
+                size={28}
                 onPointerDown={(event) => event.stopPropagation()}
                 onPointerUp={(event) => {
                   event.stopPropagation();

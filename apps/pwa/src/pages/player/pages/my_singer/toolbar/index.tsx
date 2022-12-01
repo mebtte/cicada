@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
-import { MdAdd } from 'react-icons/md';
+import { MdOutlineAddBox } from 'react-icons/md';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';
 import Question from './question';
@@ -32,7 +32,7 @@ function Toolbar() {
     <Style>
       <div className="operation">
         <IconButton onClick={openCreateSingerDialog}>
-          <MdAdd />
+          <MdOutlineAddBox />
         </IconButton>
         <Question />
       </div>

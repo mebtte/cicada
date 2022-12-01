@@ -14,11 +14,13 @@ const wavy = keyframes`
 `;
 const Style = styled.div`
   display: inline-flex;
-  gap: 12.5%;
+  align-items: center;
+  justify-content: center;
+  gap: 8%;
 
   > .item {
-    flex: 1;
-    min-width: 0;
+    width: 8%;
+    height: 75%;
 
     background-color: ${CSSVariable.COLOR_PRIMARY};
     animation-name: ${wavy};

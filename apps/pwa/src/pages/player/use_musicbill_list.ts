@@ -54,7 +54,7 @@ export default () => {
 
   useEffect(() => {
     const unlistenFetchMusicbill = eventemitter.listen(
-      EventType.FETCH_MUSICBILL,
+      EventType.FETCH_MUSICBILL_DETAIL,
       async ({ id }) => {
         setMusicbillList((mbl) =>
           mbl.map((mb) => {

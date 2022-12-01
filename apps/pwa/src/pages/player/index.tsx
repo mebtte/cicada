@@ -16,8 +16,8 @@ import Audio from './audio';
 import useMediaSession from './use_media_session';
 import MusicOperatePopup from './music_operate_popup';
 import MusicDrawer from './music_drawer';
-import ListDrawer from './list_drawer';
-import MusicbillListDrawer from './musicbill_list_drawer';
+import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
+import AddMusicToMusicbillDrawer from './add_music_to_musicbill_drawer';
 import MusicbillOrderDrawer from './musicbilll_order_drawer';
 import { QueueMusic } from './constants';
 import Lyric from './lyric';
@@ -117,8 +117,8 @@ function Wrapper() {
       {/* dynamic z-index */}
       <SingerDrawer />
       <MusicDrawer />
-      <ListDrawer />
-      <MusicbillListDrawer />
+      <PlaylistPlayqueueDrawer />
+      <AddMusicToMusicbillDrawer />
       <MusicbillOrderDrawer />
       <MusicDownloadDialog />
       <MusicOperatePopup />

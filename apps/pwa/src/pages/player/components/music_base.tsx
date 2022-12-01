@@ -43,6 +43,7 @@ const Style = styled.div<{ active: boolean }>`
         color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
         > .name {
+          line-height: 1.5;
           font-size: 14px;
           color: ${CSSVariable.TEXT_COLOR_PRIMARY};
         }

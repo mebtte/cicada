@@ -87,9 +87,12 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   value: id,
                 });
 
-                playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, {
-                  id: musicbill.id,
-                });
+                playerEventemitter.emit(
+                  PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                  {
+                    id: musicbill.id,
+                  },
+                );
               },
             })
           }
@@ -116,9 +119,12 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     value: trimmedName,
                   });
 
-                  playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, {
-                    id: musicbill.id,
-                  });
+                  playerEventemitter.emit(
+                    PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                    {
+                      id: musicbill.id,
+                    },
+                  );
                 }
               },
             })
@@ -140,9 +146,12 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     value: false,
                   })
                     .then(() =>
-                      playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, {
-                        id: musicbill.id,
-                      }),
+                      playerEventemitter.emit(
+                        PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                        {
+                          id: musicbill.id,
+                        },
+                      ),
                     )
                     .catch((error) => {
                       logger.error(error, '更新乐单失败');
@@ -161,9 +170,12 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   value: true,
                 })
                   .then(() =>
-                    playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, {
-                      id: musicbill.id,
-                    }),
+                    playerEventemitter.emit(
+                      PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                      {
+                        id: musicbill.id,
+                      },
+                    ),
                   )
                   .catch((error) => {
                     logger.error(error, '更新乐单失败');

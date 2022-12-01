@@ -89,7 +89,7 @@ export enum EventType {
   ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY = 'action_move_playqueue_music_EARLY',
 
   RELOAD_MUSICBILL_LIST = 'reload_musicbill_list',
-  FETCH_MUSICBILL = 'fetch_musicbill',
+  FETCH_MUSICBILL_DETAIL = 'fetch_musicbill_detail',
   ADD_MUSIC_TO_MUSICBILL = 'add_music_to_musicbill',
   REMOVE_MUSIC_FROM_MUSICBILL = 'remove_music_from_musicbill',
 
@@ -99,7 +99,7 @@ export enum EventType {
   CLOSE_LYRIC = 'close_lyric',
 
   OPEN_MUSIC_OPERATE_POPUP = 'open_music_operate_popup',
-  OPEN_MUSICBILL_LIST_DRAWER = 'open_musicbill_list_drawer',
+  OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER = 'open_add_music_to_musicbill_drawer',
   OPEN_SINGER_DRAWER = 'open_singer_drawer',
   OPEN_MUSIC_DRAWER = 'open_music_drawer',
   OPEN_ORIGINAL_MUSIC_DIALOG = 'open_original_music_dialog',
@@ -152,7 +152,7 @@ export default new Eventin<
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY]: { queueMusic: QueueMusic };
 
     [EventType.RELOAD_MUSICBILL_LIST]: null;
-    [EventType.FETCH_MUSICBILL]: { id: string };
+    [EventType.FETCH_MUSICBILL_DETAIL]: { id: string };
     [EventType.ADD_MUSIC_TO_MUSICBILL]: { musicbill: Musicbill; music: Music };
     [EventType.REMOVE_MUSIC_FROM_MUSICBILL]: {
       musicbill: Musicbill;
@@ -165,7 +165,7 @@ export default new Eventin<
     [EventType.CLOSE_LYRIC]: null;
 
     [EventType.OPEN_MUSIC_OPERATE_POPUP]: { music: Music };
-    [EventType.OPEN_MUSICBILL_LIST_DRAWER]: { music: Music };
+    [EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER]: { music: Music };
     [EventType.OPEN_SINGER_DRAWER]: { id: string };
     [EventType.OPEN_MUSIC_DRAWER]: { id: string };
     [EventType.OPEN_ORIGINAL_MUSIC_DIALOG]: null;

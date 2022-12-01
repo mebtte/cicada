@@ -71,7 +71,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
 
   useEffect(() => {
     if (status === RequestStatus.NOT_START) {
-      playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, {
+      playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
         id,
       });
     }

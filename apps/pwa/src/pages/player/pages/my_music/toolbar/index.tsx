@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
-import { MdAdd } from 'react-icons/md';
+import { MdOutlineAddBox } from 'react-icons/md';
 import useNavigate from '#/utils/use_navigate';
 import { Query } from '@/constants';
 import Filter from './filter';
@@ -33,7 +33,7 @@ function Toolbar() {
   return (
     <Style>
       <IconButton onClick={openCreateMusicDialog}>
-        <MdAdd />
+        <MdOutlineAddBox />
       </IconButton>
       <Filter />
     </Style>

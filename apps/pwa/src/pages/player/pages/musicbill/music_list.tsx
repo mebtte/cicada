@@ -69,7 +69,10 @@ function Wrapper({ musicbill }: { musicbill: Musicbill }) {
             <ErrorCard
               errorMessage={error!.message}
               retry={() =>
-                playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL, { id })
+                playerEventemitter.emit(
+                  PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                  { id },
+                )
               }
             />
           </StatusContainer>;

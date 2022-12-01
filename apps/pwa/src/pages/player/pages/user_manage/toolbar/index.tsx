@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
-import { MdAdd } from 'react-icons/md';
+import { MdOutlineAddBox } from 'react-icons/md';
 import { TOOLBAR_HEIGHT } from '../constants';
 import Filter from './filter';
 import e, { EventType } from '../eventemitter';
@@ -28,7 +28,7 @@ function Toolbar() {
   return (
     <Style>
       <IconButton onClick={openCreateUserDialog}>
-        <MdAdd />
+        <MdOutlineAddBox />
       </IconButton>
       <Filter />
     </Style>

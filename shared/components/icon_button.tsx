@@ -9,6 +9,7 @@ import { ComponentSize } from '../constants/style';
 import { CSSVariable } from '../global_style';
 import Spinner from './spinner';
 
+const SVG_PERCENTAGE = 0.75;
 const Style = styled.button<{ size: ComponentSize }>`
   position: relative;
   -webkit-app-region: no-drag;
@@ -29,8 +30,8 @@ const Style = styled.button<{ size: ComponentSize }>`
   -webkit-tap-highlight-color: transparent;
 
   > svg {
-    width: 75%;
-    height: 75%;
+    width: ${SVG_PERCENTAGE * 100}%;
+    height: ${SVG_PERCENTAGE * 100}%;
   }
 
   &:hover {
@@ -75,7 +76,11 @@ function IconButton(
 ) {
   return (
     <Style {...props} size={size} disabled={disabled || loading} ref={ref}>
-      {loading ? <Spinner style={spinnerStyle} size={size * 0.6} /> : children}
+      {loading ? (
+        <Spinner style={spinnerStyle} size={size * SVG_PERCENTAGE} />
+      ) : (
+        children
+      )}
     </Style>
   );
 }

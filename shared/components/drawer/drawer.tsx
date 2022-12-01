@@ -24,7 +24,10 @@ const DIRECTION_MAP: Record<
         opacity: 0,
         transform: 'translate(-120%)',
       },
-      enter: { opacity: 1, transform: 'translate(0%)' },
+      enter: {
+        opacity: 1,
+        transform: 'translate(0%)',
+      },
       leave: {
         opacity: 0,
         transform: 'translate(-120%)',
@@ -40,7 +43,10 @@ const DIRECTION_MAP: Record<
         opacity: 0,
         transform: 'translate(120%)',
       },
-      enter: { opacity: 1, transform: 'translate(0%)' },
+      enter: {
+        opacity: 1,
+        transform: 'translate(0%)',
+      },
       leave: {
         opacity: 0,
         transform: 'translate(120%)',

@@ -18,12 +18,14 @@ const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> }> = {
 const Style = styled.img<{ shape: Shape }>`
   object-fit: cover;
   aspect-ratio: 1;
+  user-select: none;
 
   ${({ shape }) => {
     const { css: shapeCss } = SHAPE_MAP[shape];
     return shapeCss;
   }}
 `;
+const preventDefault = (e) => e.preventDefault();
 
 function Cover({
   size = ComponentSize.NORMAL,
@@ -55,6 +57,7 @@ function Cover({
         width: size,
       }}
       shape={shape}
+      onDragStart={preventDefault}
     />
   );
 }

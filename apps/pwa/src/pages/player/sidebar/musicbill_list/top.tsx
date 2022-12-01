@@ -1,7 +1,12 @@
 import { CSSVariable } from '#/global_style';
 import styled from 'styled-components';
 import IconButton from '#/components/icon_button';
-import { MdAdd, MdSort, MdRefresh, MdStarOutline } from 'react-icons/md';
+import {
+  MdOutlineAddBox,
+  MdSort,
+  MdRefresh,
+  MdStarOutline,
+} from 'react-icons/md';
 import { ComponentSize } from '#/constants/style';
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
@@ -47,7 +52,7 @@ function Top() {
         size={ComponentSize.SMALL}
         onClick={openCreateMusicbillDialog}
       >
-        <MdAdd />
+        <MdOutlineAddBox />
       </IconButton>
       <IconButton
         size={ComponentSize.SMALL}
