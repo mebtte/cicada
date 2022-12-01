@@ -57,6 +57,7 @@ const Style = styled.div`
     ${absoluteFullSize}
 
     overflow: auto;
+
     > .tab-content {
       position: relative;
     }
@@ -78,6 +79,8 @@ const TabContent = styled(animated.div)`
   top: 0;
   left: 0;
   width: 100%;
+
+  padding-bottom: env(safe-area-inset-bottom, 0);
 `;
 
 function UserDetail({ user }: { user: UserDetailType }) {

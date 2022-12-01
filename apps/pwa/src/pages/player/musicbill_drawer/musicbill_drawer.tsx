@@ -33,7 +33,10 @@ const Style = styled.div`
   >.scrollable {
     ${absoluteFullSize}
 
+    padding-bottom: env(safe-area-inset-bottom, 0);
+
     overflow: auto;
+
     > .tab-content {
       position: relative;
     }

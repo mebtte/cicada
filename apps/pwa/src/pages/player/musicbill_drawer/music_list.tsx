@@ -6,7 +6,7 @@ import Music from '../components/music';
 import { MusicWithIndex } from '../constants';
 import Context from '../context';
 
-const style: CSSProperties = {
+const emptyStyle: CSSProperties = {
   padding: '50px 0',
 };
 
@@ -31,7 +31,7 @@ function MusicList({ musicList }: { musicList: MusicWithIndex[] }) {
       }}
     />
   ) : (
-    <Empty description="暂无音乐" style={style} />
+    <Empty description="暂无音乐" style={emptyStyle} />
   );
 }
 

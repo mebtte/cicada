@@ -21,7 +21,7 @@ const TransitionBox = styled(animated.div)`
   left: 0;
 `;
 const StyledMusicbillList = styled(TransitionBox)`
-  padding-bottom: 10px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0) + 10px);
 `;
 const StatusBox = styled(TransitionBox)`
   padding: 5px 20px;
