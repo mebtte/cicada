@@ -26,6 +26,7 @@ const Style = styled(TabContent)`
     ${absoluteFullSize}
 
     padding-top: ${TAB_LIST_HEIGHT}px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
 
     &.list {
       overflow: auto;

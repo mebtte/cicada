@@ -20,7 +20,7 @@ import Context from '../../context';
 import TabContent from '../tab_content';
 import MusicBase from '../../components/music_base';
 import { QueueMusic } from '../../constants';
-import Filter from './filter';
+import Toolbar from './toolbar';
 import { FILTER_HEIGHT } from './constants';
 import { filterMusic } from '../../utils';
 import playerEventemitter, {
@@ -32,7 +32,7 @@ const Style = styled(TabContent)`
     ${absoluteFullSize}
 
     padding-top: ${TAB_LIST_HEIGHT}px;
-    padding-bottom: ${FILTER_HEIGHT}px;
+    padding-bottom: calc(${FILTER_HEIGHT}px + env(safe-area-inset-bottom, 0));
 
     &.list {
       overflow: auto;
@@ -143,7 +143,7 @@ function Playlist({ style }: { style: unknown }) {
           <Empty description={keyword ? '未找到合适的音乐' : '空的播放列表'} />
         </div>
       )}
-      <Filter onChange={onKeywordChange} />
+      <Toolbar onKeywordChange={onKeywordChange} />
     </Style>
   );
 }
