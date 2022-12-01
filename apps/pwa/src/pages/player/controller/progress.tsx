@@ -8,6 +8,7 @@ import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { PROGRESS_HEIGHT } from './constants';
 
 const THUMB_SIZE = 24;
 const Style = styled.div`
@@ -15,7 +16,7 @@ const Style = styled.div`
 
   position: relative;
 
-  height: 5px;
+  height: ${PROGRESS_HEIGHT}px;
 
   cursor: pointer;
   background-color: rgb(44 182 145 / 0.3);

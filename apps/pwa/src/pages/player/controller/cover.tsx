@@ -9,13 +9,14 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import { CONTROLLER_HEIGHT } from '../constants';
+import { PROGRESS_HEIGHT } from './constants';
 
 const toggleLyric = () =>
   playerEventemitter.emit(PlayerEventType.TOGGEL_LYRIC, null);
 const Style = styled.div`
   position: relative;
 
-  width: ${CONTROLLER_HEIGHT}px;
+  width: ${CONTROLLER_HEIGHT - PROGRESS_HEIGHT}px;
   height: 100%;
 
   cursor: pointer;
@@ -29,6 +30,7 @@ const Cover = styled(animated.img)`
   left: 0;
 
   object-fit: cover;
+  object-position: center;
 `;
 
 function Wrapper({ cover }: { cover?: string }) {

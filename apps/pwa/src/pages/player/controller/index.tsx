@@ -22,9 +22,16 @@ const Style = styled.div`
     min-height: 0;
 
     display: flex;
-    align-items: center;
 
-    padding-bottom: env(safe-area-inset-bottom, 0);
+    > .rest {
+      flex: 1;
+      min-width: 0;
+
+      display: flex;
+      align-items: center;
+
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
   }
 
   ${({ theme: { miniMode } }) => css`
@@ -52,9 +59,15 @@ function Controller({
       <Progress duration={duration} />
       <div className="content">
         <Cover cover={queueMusic.cover} />
-        <Info queueMusic={queueMusic} />
-        {miniMode ? null : <Time duration={duration} />}
-        <Operation queueMusic={queueMusic} paused={paused} loading={loading} />
+        <div className="rest">
+          <Info queueMusic={queueMusic} />
+          {miniMode ? null : <Time duration={duration} />}
+          <Operation
+            queueMusic={queueMusic}
+            paused={paused}
+            loading={loading}
+          />
+        </div>
       </div>
     </Style>
   );
