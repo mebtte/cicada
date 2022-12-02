@@ -21,13 +21,15 @@ const Style = styled.span`
     }
   }
 `;
+const stopPropagation = (e) => e.stopPropagation();
 
 function Singer({ singer }: { singer: SingerType }) {
   return (
     <Style>
       <span
         className="name"
-        onPointerDown={(e) => e.stopPropagation()}
+        onClick={stopPropagation}
+        onPointerDown={stopPropagation}
         onPointerUp={(e) => {
           e.stopPropagation();
           return playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
