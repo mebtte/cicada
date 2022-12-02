@@ -68,7 +68,7 @@ function Musicbill({ selfIndex, musicbill }: Props) {
           : 'transparent',
       }}
     >
-      <img className="cover" src={musicbill.cover} alt="cover" />
+      <img className="cover" src={musicbill.cover} alt="cover" loading="lazy" />
       <div className="name">{musicbill.name}</div>
       <MdDragHandle className="handle" />
     </Style>

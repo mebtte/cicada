@@ -56,6 +56,7 @@ function ErrorCard({
         src={errorImage}
         alt="error"
         crossOrigin="anonymous"
+        loading="lazy"
       />
       <div className="error-message">{errorMessage}</div>
       <IconButton onClick={retry}>

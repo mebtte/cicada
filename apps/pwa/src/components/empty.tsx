@@ -43,8 +43,9 @@ function Empty({
       <img
         className="placeholder"
         src={emptyImage}
-        crossOrigin="anonymous"
         alt="empty"
+        crossOrigin="anonymous"
+        loading="lazy"
       />
       <div className="description">{description}</div>
     </Style>
