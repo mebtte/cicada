@@ -68,7 +68,17 @@ function Musicbill({ selfIndex, musicbill }: Props) {
           : 'transparent',
       }}
     >
-      <img className="cover" src={musicbill.cover} alt="cover" loading="lazy" />
+      <img
+        className="cover"
+        src={musicbill.cover}
+        alt="cover"
+        loading="lazy"
+        style={{
+          outline: musicbill.public
+            ? `2px solid ${CSSVariable.COLOR_PRIMARY}`
+            : 'none',
+        }}
+      />
       <div className="name">{musicbill.name}</div>
       <MdDragHandle className="handle" />
     </Style>
