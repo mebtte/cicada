@@ -1,21 +1,23 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
-
 import env from '@/env';
 import getRandomInteger from '#/utils/generate_random_integer';
-import Avatar from '../avatar';
+import { CSSVariable } from '#/global_style';
 
 const Style = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 15px;
+
   > .placeholder {
-    margin-bottom: 15px;
+    width: 180px;
   }
+
   > .description {
     font-size: 12px;
-    color: rgb(155 155 155);
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   }
 `;
 
@@ -38,7 +40,12 @@ function Empty({
   );
   return (
     <Style {...props}>
-      <Avatar className="placeholder" animated src={emptyImage} size={180} />
+      <img
+        className="placeholder"
+        src={emptyImage}
+        crossOrigin="anonymous"
+        alt="empty"
+      />
       <div className="description">{description}</div>
     </Style>
   );

@@ -1,24 +1,26 @@
-import { CSSProperties } from 'react';
+import styled from 'styled-components';
+import absoluteFullSize from '#/style/absolute_full_size';
+import { flexCenter } from '#/style/flexbox';
+import Spinner from '#/components/spinner';
 import ErrorCard from '../components/error_card';
-import LoadingCard from '../components/loading_card';
 
-const style: CSSProperties = {
-  position: 'absolute',
-  width: '100%',
-  height: '100%',
-  top: 0,
-  left: 0,
-};
+const Container = styled.div`
+  ${absoluteFullSize}
+  ${flexCenter}
+`;
 
 function RouteLoader({ error }: { error?: Error }) {
   return error ? (
-    <ErrorCard
-      errorMessage={error.message}
-      retry={() => window.location.reload()}
-      style={style}
-    />
+    <Container>
+      <ErrorCard
+        errorMessage={error.message}
+        retry={() => window.location.reload()}
+      />
+    </Container>
   ) : (
-    <LoadingCard style={style} />
+    <Container>
+      <Spinner />
+    </Container>
   );
 }
 

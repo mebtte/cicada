@@ -5,17 +5,19 @@ import env from '@/env';
 import getRandomInteger from '#/utils/generate_random_integer';
 import { MdRefresh } from 'react-icons/md';
 import { CSSVariable } from '#/global_style';
-import Avatar from '../avatar';
 
-const PLACEHOLDER_SIZE = 150;
 const Style = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 15px;
 
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+
+  > .placeholder {
+    width: 150px;
+  }
 
   > .error-message {
     max-width: 400px;
@@ -49,7 +51,12 @@ function ErrorCard({
   );
   return (
     <Style {...props}>
-      <Avatar animated src={errorImage} size={PLACEHOLDER_SIZE} />
+      <img
+        className="placeholder"
+        src={errorImage}
+        alt="error"
+        crossOrigin="anonymous"
+      />
       <div className="error-message">{errorMessage}</div>
       <IconButton onClick={retry}>
         <MdRefresh />

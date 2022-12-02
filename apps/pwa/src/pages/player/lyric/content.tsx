@@ -1,10 +1,8 @@
-import { ReactNode, useContext } from 'react';
+import { ReactNode } from 'react';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 import { CONTROLLER_HEIGHT, Music } from '../constants';
-import PlayerContext from '../context';
 import LrcDisplay from './lrc_display';
-import TurnTable from './turntable';
 import useLyric from './use_lyric';
 import { Status } from './constants';
 
@@ -42,7 +40,6 @@ const Content = ({
   toggleTurntable: () => void;
   music: Music;
 }) => {
-  const { audioPaused } = useContext(PlayerContext);
   const state = useLyric(music, turntable);
 
   const transitions = useTransition(state, {
@@ -59,13 +56,7 @@ const Content = ({
   return transitions((style, s) => {
     let content: ReactNode = null;
     if (s.status === Status.TURNTABLE) {
-      content = (
-        <TurnTable
-          paused={audioPaused}
-          cover={music.cover}
-          toggleTurntable={toggleTurntable}
-        />
-      );
+      content = null;
     } else if (s.status === Status.LRC_SUCCESS) {
       content = <LrcDisplay lyrics={s.lyrics} />;
     } else if (s.status === Status.LRC_EMPTY) {
