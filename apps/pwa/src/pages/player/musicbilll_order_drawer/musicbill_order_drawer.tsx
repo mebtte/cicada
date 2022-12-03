@@ -5,6 +5,7 @@ import { arrayMoveImmutable } from 'array-move';
 import updateMusicbillOrder from '@/server/update_musicbill_order';
 import logger from '#/utils/logger';
 import dialog from '#/utils/dialog';
+import { IS_TOUCHABLE } from '@/constants/browser';
 import { Musicbill as MusicbillType, ZIndex } from '../constants';
 import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
@@ -111,6 +112,7 @@ function MusicbillOrderDrawer({
           e.emit(EventType.BEFORE_DRAG_START, { index: s.index })
         }
         onSortEnd={onSortEnd}
+        pressDelay={IS_TOUCHABLE ? 250 : 0}
       />
     </Drawer>
   );

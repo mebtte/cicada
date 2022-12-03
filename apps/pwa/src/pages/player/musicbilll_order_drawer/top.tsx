@@ -19,7 +19,7 @@ function Top() {
   return (
     <Style
       style={{
-        padding: `${height + 10}px 20px 10px 20px`,
+        padding: `${height + 15}px 20px 15px 20px`,
       }}
     >
       排序乐单

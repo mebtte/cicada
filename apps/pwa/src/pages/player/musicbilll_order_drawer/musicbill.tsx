@@ -3,7 +3,7 @@ import { SortableElement } from 'react-sortable-hoc';
 import { CSSVariable } from '#/global_style';
 import ellipsis from '#/style/ellipsis';
 import { useEffect, useState } from 'react';
-import { MdDragHandle } from 'react-icons/md';
+import classnames from 'classnames';
 import { LocalMusicbill } from './constant';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
@@ -37,8 +37,16 @@ const Style = styled.div`
     ${ellipsis}
   }
 
-  > .handle {
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  &:nth-child(odd) {
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  }
+
+  &.active {
+    background-color: ${CSSVariable.COLOR_PRIMARY};
+
+    > .name {
+      color: #fff;
+    }
   }
 `;
 type Props = { selfIndex: number; musicbill: LocalMusicbill };
@@ -61,13 +69,7 @@ function Musicbill({ selfIndex, musicbill }: Props) {
   }, [selfIndex]);
 
   return (
-    <Style
-      style={{
-        backgroundColor: active
-          ? CSSVariable.BACKGROUND_COLOR_LEVEL_THREE
-          : 'transparent',
-      }}
-    >
+    <Style className={classnames({ active })}>
       <img
         className="cover"
         src={musicbill.cover}
@@ -80,7 +82,6 @@ function Musicbill({ selfIndex, musicbill }: Props) {
         }}
       />
       <div className="name">{musicbill.name}</div>
-      <MdDragHandle className="handle" />
     </Style>
   );
 }
