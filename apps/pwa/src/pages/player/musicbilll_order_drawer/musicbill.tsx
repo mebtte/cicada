@@ -19,6 +19,7 @@ const Style = styled.div`
 
   cursor: grab;
   background-color: #fff;
+  user-select: none;
 
   > .cover {
     width: 28px;
@@ -50,6 +51,7 @@ const Style = styled.div`
   }
 `;
 type Props = { selfIndex: number; musicbill: LocalMusicbill };
+const preventDefault = (event) => event.preventDefault();
 
 function Musicbill({ selfIndex, musicbill }: Props) {
   const [active, setActive] = useState(false);
@@ -80,6 +82,7 @@ function Musicbill({ selfIndex, musicbill }: Props) {
             ? `2px solid ${CSSVariable.COLOR_PRIMARY}`
             : 'none',
         }}
+        onDragStart={preventDefault}
       />
       <div className="name">{musicbill.name}</div>
     </Style>

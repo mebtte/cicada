@@ -3,6 +3,10 @@ import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
 import exist from '#/utils/exist';
 import db from '@/db';
+import {
+  getMusicbillListByIds,
+  Property as MusicbillProperty,
+} from '@/db/musicbill';
 import { updateUser, Property as UserProperty, User } from '@/db/user';
 import { getAssetPath } from '@/platform/asset';
 import { Context } from '../constants';
@@ -59,6 +63,37 @@ const KEY_MAP_HANDLER: Record<
       id: ctx.user.id,
       property: UserProperty.NICKNAME,
       value: nickname,
+    });
+
+    return ctx.success();
+  },
+  [AllowUpdateKey.MUSICBILL_ORDERS]: async ({ ctx, value: orders }) => {
+    if (
+      !orders ||
+      !(orders instanceof Array) ||
+      !orders.length ||
+      orders.find((o) => typeof o !== 'string')
+    ) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+
+    const musicbillList = await getMusicbillListByIds(orders, [
+      MusicbillProperty.USER_ID,
+    ]);
+    if (musicbillList.length !== orders.length) {
+      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    }
+    const notUserMusicbill = musicbillList.find(
+      (m) => m.userId !== ctx.user.id,
+    );
+    if (notUserMusicbill) {
+      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    }
+
+    await updateUser({
+      id: ctx.user.id,
+      property: UserProperty.MUSICBILL_ORDERS_JSON,
+      value: JSON.stringify(orders),
     });
 
     return ctx.success();

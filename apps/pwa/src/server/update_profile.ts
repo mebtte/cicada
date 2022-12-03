@@ -4,6 +4,7 @@ import { request, Method } from '.';
 type KeyMapData = {
   [AllowUpdateKey.NICKNAME]: string;
   [AllowUpdateKey.AVATAR]: string;
+  [AllowUpdateKey.MUSICBILL_ORDERS]: string[];
 };
 
 function updateProfile<K extends AllowUpdateKey>({

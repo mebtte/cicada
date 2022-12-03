@@ -8,6 +8,7 @@ export enum Property {
   JOIN_TIMESTAMP = 'joinTimestamp',
   ADMIN = 'admin',
   REMARK = 'remark',
+  MUSICBILL_ORDERS_JSON = 'musicbillOrdersJSON',
 }
 
 export type User = {
@@ -18,6 +19,7 @@ export type User = {
   [Property.JOIN_TIMESTAMP]: number;
   [Property.ADMIN]: 0 | 1;
   [Property.REMARK]: string;
+  [Property.MUSICBILL_ORDERS_JSON]: string | null;
 };
 
 export function getUserByEmail<P extends Property>(
@@ -53,7 +55,8 @@ export function updateUser<
     | Property.AVATAR
     | Property.NICKNAME
     | Property.REMARK
-    | Property.ADMIN,
+    | Property.ADMIN
+    | Property.MUSICBILL_ORDERS_JSON,
 >({ id, property, value }: { id: string; property: P; value: User[P] }) {
   return db.run(
     `

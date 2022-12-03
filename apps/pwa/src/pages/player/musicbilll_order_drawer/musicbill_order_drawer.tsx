@@ -2,10 +2,11 @@ import Drawer from '#/components/drawer';
 import { CSSProperties, useCallback, useEffect, useState } from 'react';
 import { SortableContainer } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
-import updateMusicbillOrder from '@/server/update_musicbill_order';
+import updateProfile from '@/server/update_profile';
 import logger from '#/utils/logger';
 import dialog from '#/utils/dialog';
 import { IS_TOUCHABLE } from '@/constants/browser';
+import { AllowUpdateKey } from '#/constants/user';
 import { Musicbill as MusicbillType, ZIndex } from '../constants';
 import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
@@ -81,7 +82,10 @@ function MusicbillOrderDrawer({
       return;
     }
 
-    return updateMusicbillOrder(orderedMusicbillIdList)
+    return updateProfile({
+      key: AllowUpdateKey.MUSICBILL_ORDERS,
+      value: orderedMusicbillIdList,
+    })
       .then(() =>
         playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, null),
       )

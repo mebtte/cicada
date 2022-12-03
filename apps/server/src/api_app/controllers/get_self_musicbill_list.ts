@@ -1,20 +1,21 @@
 import { AssetType } from '#/constants';
 import { getUserMusicbillList, Property } from '@/db/musicbill';
-import { getUserMusicbillOrders } from '@/db/user_musicbill_order';
 import { getAssetUrl } from '@/platform/asset';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const [musicbillList, orders] = await Promise.all([
-    getUserMusicbillList(ctx.user.id, [
-      Property.ID,
-      Property.COVER,
-      Property.NAME,
-      Property.PUBLIC,
-      Property.CREATE_TIMESTAMP,
-    ]),
-    getUserMusicbillOrders(ctx.user.id),
+  const musicbillList = await getUserMusicbillList(ctx.user.id, [
+    Property.ID,
+    Property.COVER,
+    Property.NAME,
+    Property.PUBLIC,
+    Property.CREATE_TIMESTAMP,
   ]);
+
+  const orders: string[] = ctx.user.musicbillOrdersJSON
+    ? JSON.parse(ctx.user.musicbillOrdersJSON)
+    : [];
+
   return ctx.success(
     musicbillList
       .map((mb) => ({

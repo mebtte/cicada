@@ -4,6 +4,7 @@ export const NICKNAME_MAX_LENGTH = 32;
 export enum AllowUpdateKey {
   AVATAR = 'avatar',
   NICKNAME = 'nickname',
+  MUSICBILL_ORDERS = 'musicbill_orders',
 }
 
 export enum AdminAllowUpdateKey {

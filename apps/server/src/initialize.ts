@@ -53,7 +53,8 @@ if (cluster.isPrimary) {
           nickname TEXT NOT NULL,
           joinTimestamp INTEGER NOT NULL,
           admin INTEGER NOT NULL DEFAULT 0,
-          remark TEXT NOT NULL DEFAULT ''
+          remark TEXT NOT NULL DEFAULT '',
+          musicbillOrdersJSON TEXT DEFAULT NULL
         )
       `;
       const TABLE_CAPTCHA = `
@@ -196,13 +197,6 @@ if (cluster.isPrimary) {
           UNIQUE( musicbillId, userId ) ON CONFLICT REPLACE
         )
       `;
-      const TABLE_USER_MUSICBILL_ORDER = `
-        CREATE TABLE user_musicbill_order (
-          userId TEXT PRIMARY KEY NOT NULL,
-          ordersJSON TEXT NOT NULL,
-          CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id )
-        )
-      `;
       const TABLE_MUSICBILL_EXPORT = `
         CREATE TABLE musicbill_export (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -231,7 +225,6 @@ if (cluster.isPrimary) {
         TABLE_MUSICBILL,
         TABLE_MUSICBILL_MUSIC,
         TABLE_MUSICBILL_COLLECTION,
-        TABLE_USER_MUSICBILL_ORDER,
         TABLE_MUSICBILL_EXPORT,
       ];
       for (const table of TABLES) {
