@@ -55,7 +55,7 @@ const Style = styled.div`
 const getPointerEventRelativePercent = (
   event: PointerEvent<HTMLDivElement>,
 ) => {
-  const target = event.target as HTMLDivElement;
+  const target = event.currentTarget as HTMLDivElement;
   const rect = target.getBoundingClientRect();
   const x = event.clientX - rect.left;
   const percent = x / target.clientWidth;
@@ -80,7 +80,7 @@ function Slider({
   );
 
   const onPointerDown: PointerEventHandler<HTMLDivElement> = (e) => {
-    (e.target as HTMLDivElement).setPointerCapture(e.pointerId);
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
 
     pointerDownRef.current = true;
 
