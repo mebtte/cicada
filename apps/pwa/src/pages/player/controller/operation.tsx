@@ -97,9 +97,11 @@ function Operation({
       <IconButton onClick={openPlaylistPlayqueueDrawer}>
         <MdOutlineQueueMusic />
       </IconButton>
-      <IconButton onClick={onPrevious}>
-        <MdSkipPrevious />
-      </IconButton>
+      {miniMode ? null : (
+        <IconButton onClick={onPrevious}>
+          <MdSkipPrevious />
+        </IconButton>
+      )}
       <IconButton onClick={paused ? onPlay : onPause} loading={loading}>
         {paused ? <MdPlayArrow /> : <MdPause />}
       </IconButton>

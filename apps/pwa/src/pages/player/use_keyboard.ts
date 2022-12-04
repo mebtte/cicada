@@ -8,14 +8,14 @@ export default () => {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      const { activeElement } = document;
-      if (
-        !activeElement ||
-        activeElement.tagName === 'INPUT' ||
-        activeElement.tagName === 'TEXTAREA'
-      ) {
-        return;
-      }
+      // const { activeElement } = document;
+      // if (
+      //   !activeElement ||
+      //   activeElement.tagName === 'INPUT' ||
+      //   activeElement.tagName === 'TEXTAREA'
+      // ) {
+      //   return;
+      // }
 
       switch (event.key) {
         case 'f': {

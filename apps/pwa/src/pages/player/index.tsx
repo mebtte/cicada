@@ -20,7 +20,7 @@ import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
 import AddMusicToMusicbillDrawer from './add_music_to_musicbill_drawer';
 import MusicbillOrderDrawer from './musicbilll_order_drawer';
 import { QueueMusic } from './constants';
-import Lyric from './lyric';
+import LyricPanel from './lyric_panel';
 import useKeyboard from './use_keyboard';
 import MusicDownloadDialog from './music_download_dialog';
 import SingerDrawer from './singer_drawer';
@@ -109,7 +109,7 @@ function Wrapper() {
               loading={audioLoading}
               duration={audioDuration}
             />
-            <Lyric music={queueMusic} />
+            <LyricPanel />
           </>
         ) : null}
       </Style>

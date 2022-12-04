@@ -15,6 +15,10 @@ const Style = styled.span`
     }
   }
 
+  > .divider {
+    opacity: 0.5;
+  }
+
   &:last-child {
     > .divider {
       display: none;

@@ -95,8 +95,7 @@ export enum EventType {
 
   CHANGE_PLAY_MODE = 'change_play_mode',
 
-  TOGGEL_LYRIC = 'toggle_lyric',
-  CLOSE_LYRIC = 'close_lyric',
+  TOGGLE_LYRIC_PANEL = 'toggle_lyric_panel',
 
   OPEN_MUSIC_OPERATE_POPUP = 'open_music_operate_popup',
   OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER = 'open_add_music_to_musicbill_drawer',
@@ -161,8 +160,7 @@ export default new Eventin<
 
     [EventType.CHANGE_PLAY_MODE]: { playMode: PlayMode };
 
-    [EventType.TOGGEL_LYRIC]: null;
-    [EventType.CLOSE_LYRIC]: null;
+    [EventType.TOGGLE_LYRIC_PANEL]: { open: boolean } | null;
 
     [EventType.OPEN_MUSIC_OPERATE_POPUP]: { music: Music };
     [EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER]: { music: Music };

@@ -42,7 +42,6 @@ const Style = styled(Paper)`
     height: 5px;
 
     background-color: ${CSSVariable.COLOR_PRIMARY_DISABLED};
-    border-radius: 2px;
     overflow: hidden;
 
     &::after {

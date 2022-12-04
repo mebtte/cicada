@@ -4,7 +4,6 @@ import { Type as TagComponentType } from '@/components/tag';
 import { UtilZIndex } from '@/constants/style';
 
 export const HEADER_HEIGHT = 55;
-export const CONTROLLER_HEIGHT = 60;
 
 export const PLAY_MODE_MAP: Record<
   PlayMode,
@@ -67,8 +66,8 @@ export interface Musicbill {
 }
 
 export const ZIndex = {
-  LYRIC_PANEL: 2,
-  CONTROLLER: 3,
+  CONTROLLER: 2,
+  LYRIC_PANEL: 3,
 
   /**
    * 与下一级需要大数字间隔

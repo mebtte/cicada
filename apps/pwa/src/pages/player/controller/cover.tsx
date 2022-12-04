@@ -4,13 +4,16 @@ import getRandomCover from '@/utils/get_random_cover';
 import { useEffect, useState } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
+import { MdUnfoldMore } from 'react-icons/md';
+import absoluteFullSize from '@/style/absolute_full_size';
+import { flexCenter } from '@/style/flexbox';
 import PngDefaultCover from './default_cover.jpeg';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 
 const toggleLyric = () =>
-  playerEventemitter.emit(PlayerEventType.TOGGEL_LYRIC, null);
+  playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: true });
 const Style = styled.div`
   position: relative;
 
@@ -19,13 +22,30 @@ const Style = styled.div`
   aspect-ratio: 1;
   cursor: pointer;
   overflow: hidden;
+
+  > .expand {
+    ${absoluteFullSize}
+    ${flexCenter}
+    
+    opacity: 0;
+    transition: 100ms;
+    background-color: rgb(0 0 0 / 0.5);
+    color: #fff;
+
+    > svg {
+      width: 33%;
+      height: 33%;
+    }
+  }
+
+  &:hover {
+    > .expand {
+      opacity: 1;
+    }
+  }
 `;
 const Cover = styled(animated.img)`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+  ${absoluteFullSize}
 
   object-fit: cover;
   object-position: center;
@@ -66,6 +86,10 @@ function Wrapper({ cover }: { cover?: string }) {
       {transitions((style, s) => (
         <Cover style={style} src={s} crossOrigin="anonymous" />
       ))}
+
+      <div className="expand">
+        <MdUnfoldMore />
+      </div>
     </Style>
   );
 }

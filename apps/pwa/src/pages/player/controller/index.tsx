@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import mm from '@/global_states/mini_mode';
-import { CONTROLLER_HEIGHT, QueueMusic, ZIndex } from '../constants';
+import { QueueMusic, ZIndex } from '../constants';
 import Cover from './cover';
 import Operation from './operation';
 import Info from './info';
@@ -10,7 +10,7 @@ import Time from './time';
 const Style = styled.div`
   z-index: ${ZIndex.CONTROLLER};
 
-  height: calc(env(safe-area-inset-bottom, 0) + ${CONTROLLER_HEIGHT}px);
+  height: calc(env(safe-area-inset-bottom, 0) + 60px);
 
   display: flex;
   flex-direction: column;
