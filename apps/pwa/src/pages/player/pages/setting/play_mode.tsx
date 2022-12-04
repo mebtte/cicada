@@ -1,7 +1,6 @@
 import Tag from '#/components/tag';
 import { PlayMode as PlayModeType } from '@/constants';
 import { useContext } from 'react';
-import Button, { Variant } from '#/components/button';
 import styled from 'styled-components';
 import { PLAY_MODE_MAP } from '../../constants';
 import eventemitter, { EventType } from '../../eventemitter';
@@ -11,14 +10,11 @@ import { itemStyle } from './constants';
 
 const Style = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 5px;
+  align-items: center;
+  gap: 10px;
 
   > .item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    cursor: pointer;
   }
 `;
 const changePlayMode = (playMode: PlayModeType) =>
@@ -33,12 +29,14 @@ function PlayMode() {
           const { label, tagComponentType } = PLAY_MODE_MAP[pm];
           const active = playMode === pm;
           return (
-            <div key={pm} className="item" onClick={() => changePlayMode(pm)}>
-              <Tag type={tagComponentType} gray={!active} />
-              <Button variant={active ? Variant.PRIMARY : Variant.NORMAL}>
-                {label}
-              </Button>
-            </div>
+            <Tag
+              key={pm}
+              title={label}
+              type={tagComponentType}
+              gray={!active}
+              onClick={() => changePlayMode(pm)}
+              className="item"
+            />
           );
         })}
       </Style>

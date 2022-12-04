@@ -29,12 +29,16 @@ const TYPE_MAP: Record<
 };
 
 const Style = styled.div`
+  padding: 1px 3px;
+
   display: inline-block;
+
   font-size: 12px;
   line-height: 12px;
   border-width: 1px;
   border-style: solid;
-  padding: 1px 3px;
+  user-select: none;
+
   ${({ color }) => css`
     color: ${color};
     border-color: ${color};
