@@ -2,10 +2,11 @@ import Button, { Variant } from '#/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { useNavigate } from 'react-router-dom';
 import { CSSProperties } from 'styled-components';
+import { itemStyle } from './constants';
 
 const style: CSSProperties = {
+  ...itemStyle,
   display: 'block',
-  margin: 20,
   width: 'calc(100% - 40px)',
 };
 

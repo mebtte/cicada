@@ -1,6 +1,6 @@
 import { RequestStatus, PlayMode } from '@/constants';
 import { MusicType } from '#/constants/music';
-import { Type as TagType } from '#/components/tag';
+import { Type as TagComponentType } from '#/components/tag';
 import { UtilZIndex } from '#/constants/style';
 
 export const HEADER_HEIGHT = 55;
@@ -10,20 +10,20 @@ export const PLAY_MODE_MAP: Record<
   PlayMode,
   {
     label: string;
-    tagType: TagType;
+    tagComponentType: TagComponentType;
   }
 > = {
   [PlayMode.SQ]: {
     label: '标准音质',
-    tagType: TagType.SQ,
+    tagComponentType: TagComponentType.SQ,
   },
   [PlayMode.HQ]: {
     label: '无损音质',
-    tagType: TagType.HQ,
+    tagComponentType: TagComponentType.HQ,
   },
   [PlayMode.AC]: {
     label: '伴奏',
-    tagType: TagType.AC,
+    tagComponentType: TagComponentType.AC,
   },
 };
 

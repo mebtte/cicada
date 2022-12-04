@@ -39,7 +39,7 @@ const VARIANT_MAP: Record<
   },
   [Variant.PRIMARY]: {
     css: css`
-      border: none;
+      border: 1px solid transparent;
       background-color: ${CSSVariable.COLOR_PRIMARY};
       color: #fff;
 
@@ -58,7 +58,7 @@ const VARIANT_MAP: Record<
   },
   [Variant.DANGER]: {
     css: css`
-      border: none;
+      border: 1px solid transparent;
       background-color: ${CSSVariable.COLOR_DANGEROUS};
       color: #fff;
 

@@ -8,6 +8,7 @@ const Style = styled.div`
   position: sticky;
   top: 0;
 
+  user-select: none;
   font-size: 18px;
   font-weight: bold;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};

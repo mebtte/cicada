@@ -1,13 +1,11 @@
-import { memo, useContext } from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import p from '@/global_states/profile';
 import Page from '../page';
-import Context from '../../context';
-import PlayMode from './play_mode';
-import Volume from './volume';
 import Logout from './logout';
 import UserManage from './user_manage';
 import { HEADER_HEIGHT } from '../../constants';
+import PlayMode from './play_mode';
 
 const AUDIO_VOLUME_SETABLE = await (() =>
   Promise.race([
@@ -28,11 +26,10 @@ const Style = styled(Page)`
 
 function Setting() {
   const profile = p.useState()!;
-  const { playMode } = useContext(Context);
   return (
     <Style>
-      <PlayMode playMode={playMode} />
-      {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
+      <PlayMode />
+      {/* {AUDIO_VOLUME_SETABLE ? <Volume /> : null} */}
       {profile.admin ? <UserManage /> : null}
       <Logout />
     </Style>
