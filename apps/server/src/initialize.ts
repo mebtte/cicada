@@ -236,13 +236,13 @@ if (cluster.isPrimary) {
     const db = new DB(DB_FILE_PATH);
     const adminUser = await db.get('select * from user where admin = 1');
     if (!adminUser) {
-      let adminUserEmail = '';
-      while (!adminUserEmail) {
-        adminUserEmail = await question('❓ 请输入管理员邮箱: ');
-        if (adminUserEmail && !EMAIL.test(adminUserEmail)) {
+      let adminEmail = config.initialAdminEmail;
+      while (!adminEmail) {
+        adminEmail = await question('❓ 请输入管理员邮箱: ');
+        if (adminEmail && !EMAIL.test(adminEmail)) {
           // eslint-disable-next-line no-console
-          console.log(`⚠️ 「${adminUserEmail}」不是合法的邮箱`);
-          adminUserEmail = '';
+          console.log(`⚠️ 「${adminEmail}」不是合法的邮箱`);
+          adminEmail = '';
         }
       }
       await db.run(
@@ -250,11 +250,11 @@ if (cluster.isPrimary) {
           insert into user(id, email, nickname, joinTimestamp,  admin)
             values(?, ?, ?, ?, 1)
         `,
-        ['pangu', adminUserEmail, 'pangu', Date.now()],
+        ['pangu', adminEmail, 'pangu', Date.now()],
       );
 
       // eslint-disable-next-line no-console
-      console.log(`🎉 现在你可以使用「${adminUserEmail}」登录了`);
+      console.log(`🎉 现在你可以使用「${adminEmail}」登录了`);
     }
   }, 0);
 }

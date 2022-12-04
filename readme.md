@@ -38,8 +38,10 @@
 | publicAddress                     | string | 否       | http://localhost:{{port}} | **实际**暴露服务的地址, 比如 nginx 反向代理通过 https://cicada.mebtte.com 暴露服务 |
 | clusterCount                      | number | 否       | {{os.cups().length}}      | 服务进程数量                                                                       |
 | base                              | string | 否       | {{homedir}}/cicada        | 数据存放目录                                                                       |
-| userExportMusicbillMaxTimesPerDay | number | 否       | 3                         | 用户每天导出乐单最大次数                                                           |
-| userCreateMusicMaxTimesPerDay     | number | 否       | 5                         | 用户每天创建音乐最大次数                                                           |
+| userMusicbillMaxAmount            | number | 否       | 100                       | 每个用户最大乐单数量                                                               |
+| userExportMusicbillMaxTimesPerDay | number | 否       | 3                         | 每个用户每天导出乐单最大次数                                                       |
+| userCreateMusicMaxTimesPerDay     | number | 否       | 5                         | 每个用户每天创建音乐最大次数                                                       |
+| initialAdminEmail                 | string | 否       |                           | 初始管理员邮箱, 如果已有管理员则忽略改配置项                                       |
 
 ## 常见问题
 

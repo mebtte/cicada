@@ -2,6 +2,7 @@ import * as yargs from 'yargs';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import { EMAIL } from '#/constants/regexp';
 import exitWithMessage from './utils/exit_with_message';
 
 interface Config {
@@ -13,8 +14,10 @@ interface Config {
   emailUser: string;
   emailPass: string;
   clusterCount: number;
+  userMusicbillMaxAmount: number;
   userExportMusicbillMaxTimesPerDay: number;
   userCreateMusicMaxTimesPerDay: number;
+  initialAdminEmail: string;
 }
 
 let configFilePath: string;
@@ -49,8 +52,10 @@ const DEFAULT_CONFIG: Omit<
   port: 8000,
   emailPort: 465,
   clusterCount: 1,
+  userMusicbillMaxAmount: 100,
   userExportMusicbillMaxTimesPerDay: 3,
   userCreateMusicMaxTimesPerDay: 5,
+  initialAdminEmail: '',
 };
 
 const config: Config = {
@@ -62,6 +67,10 @@ if (!config.publicAddress) {
   config.publicAddress = `http://localhost:${config.port}`;
 }
 
+if (config.initialAdminEmail && !EMAIL.test(config.initialAdminEmail)) {
+  exitWithMessage('「initialAdminEmail」格式错误');
+}
+
 const REQUIRED_CONFIG_KEYS: (keyof Config)[] = [
   'emailHost',
   'emailUser',
@@ -69,7 +78,7 @@ const REQUIRED_CONFIG_KEYS: (keyof Config)[] = [
 ];
 for (const key of REQUIRED_CONFIG_KEYS) {
   if (!config[key]) {
-    exitWithMessage(`配置项 [${key}] 不能为空`);
+    exitWithMessage(`配置项「${key}」不能为空`);
   }
 }
 

@@ -29,6 +29,7 @@ export enum ExceptionCode {
   MUSIC_HAS_FORK_AND_CAN_NOT_BE_DELETED,
   COLLECT_MUSICBILL_REPEATLY,
   NOT_COLLECT_MUSICBILL_YET,
+  OVER_USER_MUSICBILL_MAX_AMOUNT,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -126,5 +127,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.NOT_COLLECT_MUSICBILL_YET]: {
     description: '未收藏该乐单',
+  },
+  [ExceptionCode.OVER_USER_MUSICBILL_MAX_AMOUNT]: {
+    description: '超过用户乐单数量最大限制',
   },
 };
