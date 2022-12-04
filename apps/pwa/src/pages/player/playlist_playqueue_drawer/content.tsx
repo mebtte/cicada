@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import TabList from '#/components/tab_list';
+import TabList from '@/components/tab_list';
 import { useTransition } from 'react-spring';
 import styled from 'styled-components';
 import Playqueue from './playqueue';

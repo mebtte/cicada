@@ -1,6 +1,6 @@
-import Popup from '#/components/popup';
+import Popup from '@/components/popup';
 import { CSSProperties, MouseEventHandler, useEffect, useState } from 'react';
-import MenuItem from '#/components/menu_item';
+import MenuItem from '@/components/menu_item';
 import { MdImage, MdTitle, MdTextFields } from 'react-icons/md';
 import styled from 'styled-components';
 import uploadAsset from '@/server/upload_asset';

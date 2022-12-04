@@ -1,5 +1,5 @@
-import Spinner from '#/components/spinner';
-import { flexCenter } from '#/style/flexbox';
+import Spinner from '@/components/spinner';
+import { flexCenter } from '@/style/flexbox';
 import { RequestStatus } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';

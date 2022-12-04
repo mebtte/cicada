@@ -1,15 +1,15 @@
-import absoluteFullSize from '#/style/absolute_full_size';
-import { flexCenter } from '#/style/flexbox';
+import absoluteFullSize from '@/style/absolute_full_size';
+import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
 import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
-import Spinner from '#/components/spinner';
+import Spinner from '@/components/spinner';
 import Empty from '@/components/empty';
 import Pagination from '@/components/pagination';
-import useNavigate from '#/utils/use_navigate';
+import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
-import Button, { Variant } from '#/components/button';
+import Button, { Variant } from '@/components/button';
 import mm from '@/global_states/mini_mode';
 import {
   PAGE_SIZE,

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import Popup from '#/components/popup';
+import Popup from '@/components/popup';
 import { CSSProperties, useEffect, useState } from 'react';
-import MenuItem from '#/components/menu_item';
+import MenuItem from '@/components/menu_item';
 import {
   MdImage,
   MdTitle,
@@ -13,13 +13,13 @@ import updateMusicbill from '@/server/update_musicbill';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
-import dialog from '#/utils/dialog';
+import dialog from '@/utils/dialog';
 import logger from '#/utils/logger';
-import notice from '#/utils/notice';
-import { CSSVariable } from '#/global_style';
+import notice from '@/utils/notice';
+import { CSSVariable } from '@/global_style';
 import deleteMusicbill from '@/server/delete_musicbill';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import useNavigate from '#/utils/use_navigate';
+import useNavigate from '@/utils/use_navigate';
 import e, { EventType } from './eventemitter';
 import { Musicbill, ZIndex } from '../../constants';
 import playerEventemitter, {

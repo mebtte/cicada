@@ -1,12 +1,12 @@
-import Dialog, { Container, Title, Content, Action } from '#/components/dialog';
+import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import {
   ForwardRefExoticComponent,
   CSSProperties,
   useRef,
   useState,
 } from 'react';
-import Button from '#/components/button';
-import notice from '#/utils/notice';
+import Button from '@/components/button';
+import notice from '@/utils/notice';
 import { ZIndex } from '../constants';
 import { EditDialogData, EditDialogType } from '../eventemitter';
 import { Ref, RenderProps } from './constants';

@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import FileSelect from '#/components/file_select';
+import FileSelect from '@/components/file_select';
 import Cropper from 'cropperjs';
 import { Ref, RenderProps } from './constants';
 import { EditDialogType } from '../eventemitter';

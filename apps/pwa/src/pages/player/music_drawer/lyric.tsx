@@ -1,5 +1,5 @@
 import { MusicType } from '#/constants/music';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import { MultipleLrc } from 'react-lrc';
 import styled from 'styled-components';
 import { MusicDetail } from './constants';

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import { MdOutlineAddBox } from 'react-icons/md';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';

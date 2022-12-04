@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import absoluteFullSize from '#/style/absolute_full_size';
-import { flexCenter } from '#/style/flexbox';
-import Spinner from '#/components/spinner';
+import { flexCenter } from '@/style/flexbox';
+import Spinner from '@/components/spinner';
+import absoluteFullSize from '@/style/absolute_full_size';
 import ErrorCard from '../components/error_card';
 
 const Container = styled.div`

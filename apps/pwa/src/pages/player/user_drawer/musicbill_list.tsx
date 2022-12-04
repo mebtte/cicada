@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import Cover from '#/components/cover';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import Cover from '@/components/cover';
+import { CSSVariable } from '@/global_style';
+import ellipsis from '@/style/ellipsis';
 import { MdOutlineMusicNote } from 'react-icons/md';
 import Empty from '@/components/empty';
 import { CSSProperties } from 'react';

@@ -1,11 +1,11 @@
-import Textarea from '#/components/textarea';
+import Textarea from '@/components/textarea';
 import { ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react';
 import styled from 'styled-components';
-import Button from '#/components/button';
-import IconButton from '#/components/icon_button';
+import Button from '@/components/button';
+import IconButton from '@/components/icon_button';
 import { MdDelete, MdUploadFile } from 'react-icons/md';
-import { ComponentSize } from '#/constants/style';
-import selectFile from '#/utils/select_file';
+import { ComponentSize } from '@/constants/style';
+import selectFile from '@/utils/select_file';
 import { Ref, RenderProps } from './constants';
 import { EditDialogType } from '../eventemitter';
 

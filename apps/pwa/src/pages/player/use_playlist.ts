@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 import { MusicWithIndex } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 

@@ -1,4 +1,4 @@
-import Drawer, { Direction } from '#/components/drawer';
+import Drawer, { Direction } from '@/components/drawer';
 import { CSSProperties, useEffect, useState } from 'react';
 import Content from './content';
 import e, { EventType } from '../eventemitter';

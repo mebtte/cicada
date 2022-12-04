@@ -5,7 +5,7 @@ import {
   MdOutlineMusicNote,
   MdPersonOutline,
 } from 'react-icons/md';
-import MenuItem from '#/components/menu_item';
+import MenuItem from '@/components/menu_item';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 function Menu() {

@@ -1,9 +1,9 @@
 import { HtmlHTMLAttributes } from 'react';
 import styled from 'styled-components';
-import ellipsis from '#/style/ellipsis';
-import Cover from '#/components/cover';
-import { CSSVariable } from '#/global_style';
-import Tag, { Type } from '#/components/tag';
+import Cover from '@/components/cover';
+import { CSSVariable } from '@/global_style';
+import Tag, { Type } from '@/components/tag';
+import ellipsis from '@/style/ellipsis';
 import eventemitter, { EventType } from '../eventemitter';
 import Singer from './singer';
 import { Music as MusicType } from '../constants';

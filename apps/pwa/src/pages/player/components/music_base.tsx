@@ -1,5 +1,4 @@
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import { CSSVariable } from '@/global_style';
 import styled, { css } from 'styled-components';
 import {
   HtmlHTMLAttributes,
@@ -7,6 +6,7 @@ import {
   ReactNode,
   useRef,
 } from 'react';
+import ellipsis from '@/style/ellipsis';
 import { MusicWithIndex } from '../constants';
 import e, { EventType } from '../eventemitter';
 import Singer from './singer';

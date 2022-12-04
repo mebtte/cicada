@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import {
   MdMoreHoriz,
   MdPlayArrow,
   MdReadMore,
   MdOutlinePostAdd,
 } from 'react-icons/md';
-import Tag, { Type } from '#/components/tag';
+import Tag, { Type } from '@/components/tag';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import { MusicWithIndex } from '../constants';
 import e, { EventType } from '../eventemitter';

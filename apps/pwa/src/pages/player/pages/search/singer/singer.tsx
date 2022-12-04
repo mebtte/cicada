@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
-import Cover from '#/components/cover';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import Cover from '@/components/cover';
+import { CSSVariable } from '@/global_style';
+import ellipsis from '@/style/ellipsis';
 import { Singer as SingerType } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,

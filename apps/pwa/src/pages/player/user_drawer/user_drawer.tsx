@@ -1,4 +1,4 @@
-import Drawer from '#/components/drawer';
+import Drawer from '@/components/drawer';
 import {
   CSSProperties,
   UIEventHandler,
@@ -8,11 +8,11 @@ import {
 } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
-import { flexCenter } from '#/style/flexbox';
+import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
-import Spinner from '#/components/spinner';
-import TabList from '#/components/tab_list';
-import absoluteFullSize from '#/style/absolute_full_size';
+import Spinner from '@/components/spinner';
+import TabList from '@/components/tab_list';
+import absoluteFullSize from '@/style/absolute_full_size';
 import { EventType } from '../eventemitter';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import useData from './use_data';

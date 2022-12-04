@@ -1,9 +1,9 @@
-import useTitlebarArea from '#/utils/use_titlebar_area_rect';
 import styled from 'styled-components';
-import Cover from '#/components/cover';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import Cover from '@/components/cover';
+import { CSSVariable } from '@/global_style';
 import { useEffect, useState } from 'react';
+import ellipsis from '@/style/ellipsis';
+import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { MINI_INFO_HEIGHT, MusicDetail } from './constants';
 
 const Style = styled.div`

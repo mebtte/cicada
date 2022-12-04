@@ -1,9 +1,9 @@
-import Input from '#/components/input';
+import Input from '@/components/input';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import { MdDelete } from 'react-icons/md';
-import dialog from '#/utils/dialog';
+import dialog from '@/utils/dialog';
 import { FILTER_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,

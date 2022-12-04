@@ -1,9 +1,9 @@
-import absoluteFullSize from '#/style/absolute_full_size';
-import { flexCenter } from '#/style/flexbox';
+import absoluteFullSize from '@/style/absolute_full_size';
+import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
-import Spinner from '#/components/spinner';
+import Spinner from '@/components/spinner';
 import useQuery from '@/utils/use_query';
 import { Query } from '@/constants';
 import useData from './use_data';

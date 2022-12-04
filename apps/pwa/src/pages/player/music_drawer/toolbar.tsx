@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import {
   MdPlayArrow,
   MdReadMore,

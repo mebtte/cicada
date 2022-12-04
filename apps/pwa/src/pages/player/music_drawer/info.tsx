@@ -1,7 +1,7 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import Tag, { Type } from '#/components/tag';
-import Cover from '#/components/cover';
+import Tag, { Type } from '@/components/tag';
+import Cover from '@/components/cover';
 import { MusicDetail } from './constants';
 
 const Style = styled.div`

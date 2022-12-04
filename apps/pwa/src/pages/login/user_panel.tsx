@@ -6,9 +6,9 @@ import getRandomCover from '@/utils/get_random_cover';
 import { ReactNode, useEffect } from 'react';
 import parseSearch from '@/utils/parse_search';
 import { Query } from '@/constants';
-import useNavigate from '#/utils/use_navigate';
-import Cover, { Shape } from '#/components/cover';
-import { CSSVariable } from '#/global_style';
+import useNavigate from '@/utils/use_navigate';
+import Cover, { Shape } from '@/components/cover';
+import { CSSVariable } from '@/global_style';
 import Paper from './paper';
 import Logo from './logo';
 

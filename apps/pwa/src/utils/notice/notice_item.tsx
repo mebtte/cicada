@@ -1,11 +1,11 @@
 import { memo, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { MdClose } from 'react-icons/md';
+import { CSSVariable } from '@/global_style';
+import { UtilZIndex } from '@/constants/style';
 import { Notice, TRANSITION_DURATION, NoticeType } from './constants';
 import e, { EventType } from './eventemitter';
-import { CSSVariable } from '../../global_style';
 import IconButton from '../../components/icon_button';
-import { UtilZIndex } from '../../constants/style';
 
 const NOTICE_TYPE_MAP: Record<
   NoticeType,

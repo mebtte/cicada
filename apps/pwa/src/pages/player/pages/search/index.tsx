@@ -1,7 +1,7 @@
 import { Query } from '@/constants';
 import styled, { css } from 'styled-components';
-import TabList from '#/components/tab_list';
-import useNavigate from '#/utils/use_navigate';
+import TabList from '@/components/tab_list';
+import useNavigate from '@/utils/use_navigate';
 import mm from '@/global_states/mini_mode';
 import Input from './input';
 import { HEADER_HEIGHT, SearchTab } from '../../constants';

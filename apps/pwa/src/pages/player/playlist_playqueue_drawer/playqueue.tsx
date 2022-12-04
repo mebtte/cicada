@@ -1,18 +1,18 @@
 import { CSSProperties, useContext } from 'react';
 import styled from 'styled-components';
 import List from 'react-list';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import {
   MdOutlineLocationOn,
   MdOutlineClose,
   MdArrowUpward,
   MdArrowDownward,
 } from 'react-icons/md';
-import { ComponentSize } from '#/constants/style';
-import { flexCenter } from '#/style/flexbox';
+import { ComponentSize } from '@/constants/style';
+import { flexCenter } from '@/style/flexbox';
 import Empty from '@/components/empty';
-import absoluteFullSize from '#/style/absolute_full_size';
-import { CSSVariable } from '#/global_style';
+import absoluteFullSize from '@/style/absolute_full_size';
+import { CSSVariable } from '@/global_style';
 import Context from '../context';
 import TabContent from './tab_content';
 import MusicBase from '../components/music_base';

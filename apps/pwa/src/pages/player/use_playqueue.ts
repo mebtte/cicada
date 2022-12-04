@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 import getRandomInteger from '#/utils/generate_random_integer';
 import getRandomString from '#/utils/generate_random_string';
 import eventemitter, { EventType } from './eventemitter';

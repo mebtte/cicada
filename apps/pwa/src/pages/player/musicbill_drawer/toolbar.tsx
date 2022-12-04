@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import {
   MdDownload,
   MdPlaylistAdd,
   MdStar,
   MdStarOutline,
 } from 'react-icons/md';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 import collectPublicMusicbill from '@/server/collect_public_musicbill';
 import logger from '#/utils/logger';
 import uncollectPublicMusicbill from '@/server/uncollect_public_musicbill';

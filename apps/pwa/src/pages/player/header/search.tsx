@@ -8,8 +8,8 @@ import {
   useEffect,
 } from 'react';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import useNavigate from '#/utils/use_navigate';
-import Input from '#/components/input';
+import useNavigate from '@/utils/use_navigate';
+import Input from '@/components/input';
 import mm from '@/global_states/mini_mode';
 import { Query } from '@/constants';
 import { useLocation } from 'react-router-dom';

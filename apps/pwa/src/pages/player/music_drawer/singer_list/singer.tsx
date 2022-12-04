@@ -1,7 +1,7 @@
-import Cover, { Shape } from '#/components/cover';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import Cover, { Shape } from '@/components/cover';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
+import ellipsis from '@/style/ellipsis';
 import { SingerDetail } from '../constants';
 import e, { EventType } from '../../eventemitter';
 

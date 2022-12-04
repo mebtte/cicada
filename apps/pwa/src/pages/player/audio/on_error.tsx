@@ -1,4 +1,4 @@
-import dialog from '#/utils/dialog';
+import dialog from '@/utils/dialog';
 import { useEffect, useMemo, useState } from 'react';
 import eventemitter, { EventType } from '../eventemitter';
 

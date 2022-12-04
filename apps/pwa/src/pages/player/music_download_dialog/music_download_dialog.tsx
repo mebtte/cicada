@@ -1,6 +1,6 @@
-import Dialog from '#/components/dialog';
+import Dialog from '@/components/dialog';
 import { CSSProperties } from 'react';
-import Button from '#/components/button';
+import Button from '@/components/button';
 import styled from 'styled-components';
 import formatMusicFilename from '#/utils/format_music_filename';
 import { saveAs } from 'file-saver';

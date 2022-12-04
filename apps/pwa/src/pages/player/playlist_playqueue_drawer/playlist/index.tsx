@@ -7,14 +7,14 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import absoluteFullSize from '#/style/absolute_full_size';
+import absoluteFullSize from '@/style/absolute_full_size';
 import List from 'react-list';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import { MdPlayArrow, MdReadMore, MdOutlineClose } from 'react-icons/md';
-import { ComponentSize } from '#/constants/style';
-import { CSSVariable } from '#/global_style';
+import { ComponentSize } from '@/constants/style';
+import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
-import { flexCenter } from '#/style/flexbox';
+import { flexCenter } from '@/style/flexbox';
 import { TAB_LIST_HEIGHT } from '../constants';
 import Context from '../../context';
 import TabContent from '../tab_content';

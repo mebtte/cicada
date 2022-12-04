@@ -1,4 +1,4 @@
-import XState from '#/utils/x_state';
+import XState from '@/utils/x_state';
 import throttle from 'lodash/throttle';
 
 const MINI_MODE_MAX_WIDTH = 720;

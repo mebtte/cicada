@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import Cover, { Shape } from '#/components/cover';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import Cover, { Shape } from '@/components/cover';
+import { CSSVariable } from '@/global_style';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
+import ellipsis from '@/style/ellipsis';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';

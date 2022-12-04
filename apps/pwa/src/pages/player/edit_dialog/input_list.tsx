@@ -1,10 +1,10 @@
-import Input from '#/components/input';
+import Input from '@/components/input';
 import { ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react';
 import styled from 'styled-components';
-import Button from '#/components/button';
-import IconButton from '#/components/icon_button';
+import Button from '@/components/button';
+import IconButton from '@/components/icon_button';
 import { MdDelete } from 'react-icons/md';
-import { ComponentSize } from '#/constants/style';
+import { ComponentSize } from '@/constants/style';
 import { Ref, RenderProps } from './constants';
 import { EditDialogType } from '../eventemitter';
 

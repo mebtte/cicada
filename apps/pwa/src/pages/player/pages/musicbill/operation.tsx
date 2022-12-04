@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import { MdRefresh, MdPlaylistAdd, MdEdit, MdDownload } from 'react-icons/md';
 import { RequestStatus } from '@/constants';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';

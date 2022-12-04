@@ -1,11 +1,11 @@
-import Cover from '#/components/cover';
-import { CSSVariable } from '#/global_style';
+import Cover from '@/components/cover';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import day from '#/utils/day';
-import ellipsis from '#/style/ellipsis';
-import IconButton from '#/components/icon_button';
+import ellipsis from '@/style/ellipsis';
+import IconButton from '@/components/icon_button';
 import { MdMoreVert } from 'react-icons/md';
-import { ComponentSize } from '#/constants/style';
+import { ComponentSize } from '@/constants/style';
 import { User as UserType } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,

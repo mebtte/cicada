@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import { CSSVariable } from '@/global_style';
 import { animated, useTransition } from 'react-spring';
+import ellipsis from '@/style/ellipsis';
 import { QueueMusic } from '../constants';
 import Singer from '../components/singer';
 import playerEventemitter, {

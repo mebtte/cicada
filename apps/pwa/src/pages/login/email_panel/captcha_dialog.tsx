@@ -6,17 +6,17 @@ import {
   useCallback,
 } from 'react';
 import styled, { CSSProperties } from 'styled-components';
-import { flexCenter } from '#/style/flexbox';
+import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import getLoginCodeRequest from '@/server/get_login_code';
 import { ExceptionCode } from '#/constants/exception';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 import sleep from '#/utils/sleep';
 import ErrorWithCode from '@/utils/error_with_code';
-import Dialog, { Container, Content } from '#/components/dialog';
-import Spinner from '#/components/spinner';
-import Input from '#/components/input';
-import Button, { Variant } from '#/components/button';
+import Dialog, { Container, Content } from '@/components/dialog';
+import Spinner from '@/components/spinner';
+import Input from '@/components/input';
+import Button, { Variant } from '@/components/button';
 import useCaptchaData from './use_captcha_data';
 
 const StyledContent = styled(Content)`

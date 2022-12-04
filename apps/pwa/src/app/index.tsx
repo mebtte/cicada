@@ -1,5 +1,5 @@
 import ErrorBoundary from '@/components/error_boundary';
-import { GlobalStyle } from '#/global_style';
+import { GlobalStyle } from '@/global_style';
 import { ThemeProvider } from 'styled-components';
 import App from './app';
 import UncaughtError from './uncaught_error';

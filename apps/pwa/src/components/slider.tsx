@@ -1,4 +1,4 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import {
   HtmlHTMLAttributes,
   PointerEvent,
@@ -9,7 +9,7 @@ import {
 import styled from 'styled-components';
 import classnames from 'classnames';
 import { IS_TOUCHABLE } from '@/constants/browser';
-import { flexCenter } from '#/style/flexbox';
+import { flexCenter } from '@/style/flexbox';
 
 const THUMB_SIZE = 24;
 const Style = styled.div`

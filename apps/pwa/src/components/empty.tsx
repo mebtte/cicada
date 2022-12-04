@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 import env from '@/env';
 import getRandomInteger from '#/utils/generate_random_integer';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 
 const Style = styled.div`
   display: flex;

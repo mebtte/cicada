@@ -1,6 +1,6 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import Cover from '#/components/cover';
+import Cover from '@/components/cover';
 import { SingerDetail } from './constants';
 
 const Style = styled.div`

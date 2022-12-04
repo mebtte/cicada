@@ -1,6 +1,6 @@
-import { CSSVariable } from '#/global_style';
-import useTitlebarArea from '#/utils/use_titlebar_area_rect';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
+import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 
 const Style = styled.div`
   z-index: 1;

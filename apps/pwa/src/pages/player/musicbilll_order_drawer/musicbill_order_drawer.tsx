@@ -1,10 +1,10 @@
-import Drawer from '#/components/drawer';
+import Drawer from '@/components/drawer';
 import { CSSProperties, useCallback, useEffect, useState } from 'react';
 import { SortableContainer } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
 import updateProfile from '@/server/update_profile';
 import logger from '#/utils/logger';
-import dialog from '#/utils/dialog';
+import dialog from '@/utils/dialog';
 import { IS_TOUCHABLE } from '@/constants/browser';
 import { AllowUpdateKey } from '#/constants/user';
 import { Musicbill as MusicbillType, ZIndex } from '../constants';

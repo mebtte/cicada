@@ -1,11 +1,11 @@
-import Dialog, { Container, Title, Content, Action } from '#/components/dialog';
-import Button, { Variant } from '#/components/button';
-import Input from '#/components/input';
+import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
+import Button, { Variant } from '@/components/button';
+import Input from '@/components/input';
 import setting from '@/global_states/setting';
 import { useState } from 'react';
-import useEvent from '#/utils/use_event';
+import useEvent from '@/utils/use_event';
 import { URL } from '#/constants/regexp';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 
 function SettingDialog({
   open,

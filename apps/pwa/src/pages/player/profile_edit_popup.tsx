@@ -1,12 +1,12 @@
-import Popup from '#/components/popup';
+import Popup from '@/components/popup';
 import { CSSProperties, memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import MenuItem from '#/components/menu_item';
+import MenuItem from '@/components/menu_item';
 import { MdImage, MdTitle, MdRemoveRedEye } from 'react-icons/md';
 import p from '@/global_states/profile';
-import Cover from '#/components/cover';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import Cover from '@/components/cover';
+import { CSSVariable } from '@/global_style';
+import ellipsis from '@/style/ellipsis';
 import uploadAsset from '@/server/upload_asset';
 import { AssetType } from '#/constants';
 import updateProfile from '@/server/update_profile';

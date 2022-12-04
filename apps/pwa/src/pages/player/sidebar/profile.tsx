@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import p from '@/global_states/profile';
-import Cover, { Shape } from '#/components/cover';
-import ellipsis from '#/style/ellipsis';
-import { CSSVariable } from '#/global_style';
+import Cover, { Shape } from '@/components/cover';
+import ellipsis from '@/style/ellipsis';
+import { CSSVariable } from '@/global_style';
 import { memo } from 'react';
 import e, { EventType } from '../eventemitter';
 

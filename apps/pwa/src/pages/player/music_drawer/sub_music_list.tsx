@@ -1,4 +1,4 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import { Music } from '../constants';
 import MusicInfo from '../components/music_info';

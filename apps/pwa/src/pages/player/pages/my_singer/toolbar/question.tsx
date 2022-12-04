@@ -1,7 +1,7 @@
 import { MdHelpOutline } from 'react-icons/md';
-import IconButton from '#/components/icon_button';
-import dialog from '#/utils/dialog';
+import IconButton from '@/components/icon_button';
 import { NO_MUSIC_EXIST_DURATION } from '#/constants/singer';
+import dialog from '@/utils/dialog';
 
 function Question() {
   return (

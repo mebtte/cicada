@@ -1,4 +1,4 @@
-import Input from '#/components/input';
+import Input from '@/components/input';
 import { ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react';
 import { EditDialogType } from '../eventemitter';
 import { Ref, RenderProps } from './constants';

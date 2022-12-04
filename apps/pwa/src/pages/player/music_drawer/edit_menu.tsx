@@ -1,4 +1,4 @@
-import Popup from '#/components/popup';
+import Popup from '@/components/popup';
 import {
   CSSProperties,
   MouseEventHandler,
@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import MenuItem from '#/components/menu_item';
+import MenuItem from '@/components/menu_item';
 import {
   MdDelete,
   MdOutlineFilePresent,
@@ -16,9 +16,9 @@ import {
   MdImage,
   MdCallSplit,
 } from 'react-icons/md';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 import {
   AllowUpdateKey,
   LYRIC_MAX_LENGTH,
@@ -33,10 +33,10 @@ import uploadAsset from '@/server/upload_asset';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import updateMusic from '@/server/update_music';
 import stringArrayEqual from '#/utils/string_array_equal';
-import dialog from '#/utils/dialog';
+import dialog from '@/utils/dialog';
 import deleteMusic from '@/server/delete_music';
 import logger from '#/utils/logger';
-import { Option } from '#/components/multiple_select';
+import { Option } from '@/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
 import searchMusicRequest from '@/server/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';

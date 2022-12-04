@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Lrc } from 'react-lrc';
 import { memo } from 'react';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import xss from 'xss';
 import Music from '../../../components/music';
 import { MusicWithLyric as MusicWithLyricType } from './constants';

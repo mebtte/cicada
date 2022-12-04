@@ -1,4 +1,4 @@
-import FileSelect from '#/components/file_select';
+import FileSelect from '@/components/file_select';
 import { ForwardedRef, forwardRef, useImperativeHandle, useState } from 'react';
 import { EditDialogType } from '../eventemitter';
 import { Ref, RenderProps } from './constants';

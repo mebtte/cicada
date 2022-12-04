@@ -1,11 +1,11 @@
 import { useTransition, animated } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
-import Drawer from '#/components/drawer';
+import Drawer from '@/components/drawer';
 import { CSSProperties, UIEventHandler, useState } from 'react';
-import absoluteFullSize from '#/style/absolute_full_size';
-import { flexCenter } from '#/style/flexbox';
-import Spinner from '#/components/spinner';
+import absoluteFullSize from '@/style/absolute_full_size';
+import { flexCenter } from '@/style/flexbox';
+import Spinner from '@/components/spinner';
 import Info from './info';
 import useData from './use_data';
 import { MINI_INFO_HEIGHT, MusicDetail } from './constants';

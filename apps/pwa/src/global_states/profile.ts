@@ -1,4 +1,4 @@
-import XState from '#/utils/x_state';
+import XState from '@/utils/x_state';
 import storage, { Key } from '@/storage';
 import { Profile } from '@/constants/user';
 import logger from '#/utils/logger';

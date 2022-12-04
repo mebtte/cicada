@@ -1,4 +1,4 @@
-import MultipleSelect, { Option } from '#/components/multiple_select';
+import MultipleSelect, { Option } from '@/components/multiple_select';
 import {
   ForwardedRef,
   forwardRef,

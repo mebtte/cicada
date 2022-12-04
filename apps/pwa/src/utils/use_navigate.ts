@@ -2,7 +2,7 @@ import {
   useLocation,
   useNavigate as useOriginalNavigate,
 } from 'react-router-dom';
-import parseSearch from '../../apps/pwa/src/utils/parse_search';
+import parseSearch from '@/utils/parse_search';
 import useEvent from './use_event';
 
 function useNavigate() {

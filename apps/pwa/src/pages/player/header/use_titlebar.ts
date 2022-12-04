@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import mm from '@/global_states/mini_mode';
-import useTitlebarAreaRect from '#/utils/use_titlebar_area_rect';
+import useTitlebarAreaRect from '@/utils/use_titlebar_area_rect';
 
 const INITIAL_LEFT = 20;
 const INITIAL_RIGHT = 20;

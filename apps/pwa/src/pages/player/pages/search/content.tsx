@@ -1,4 +1,4 @@
-import absoluteFullSize from '#/style/absolute_full_size';
+import absoluteFullSize from '@/style/absolute_full_size';
 import { ReactNode } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';

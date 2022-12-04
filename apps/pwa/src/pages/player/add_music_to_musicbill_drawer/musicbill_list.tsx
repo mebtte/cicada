@@ -1,5 +1,5 @@
-import Spinner from '#/components/spinner';
-import { flexCenter } from '#/style/flexbox';
+import Spinner from '@/components/spinner';
+import { flexCenter } from '@/style/flexbox';
 import { memo, useContext } from 'react';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';

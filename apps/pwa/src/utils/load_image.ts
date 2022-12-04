@@ -1,4 +1,4 @@
-import timeoutFn from './timeout';
+import timeoutFn from '#/utils/timeout';
 
 function loadImage(
   url: string,

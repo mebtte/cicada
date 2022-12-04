@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import Cover from '#/components/cover';
+import Cover from '@/components/cover';
 import day from '#/utils/day';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import { CSSVariable } from '@/global_style';
+import ellipsis from '@/style/ellipsis';
 import { UserDetail } from './constants';
 
 const Style = styled.div`

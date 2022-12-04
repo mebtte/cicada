@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { SortableElement } from 'react-sortable-hoc';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import { CSSVariable } from '@/global_style';
 import { useEffect, useState } from 'react';
 import classnames from 'classnames';
+import ellipsis from '@/style/ellipsis';
 import { LocalMusicbill } from './constant';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';

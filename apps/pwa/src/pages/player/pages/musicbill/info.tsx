@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import Cover from '#/components/cover';
+import Cover from '@/components/cover';
 import day from '#/utils/day';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import { Musicbill } from '../../constants';
 import { INFO_HEIGHT } from './constants';
 import Operation from './operation';

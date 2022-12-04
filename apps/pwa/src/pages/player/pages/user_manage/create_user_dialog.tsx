@@ -1,9 +1,9 @@
-import Dialog, { Container, Title, Content, Action } from '#/components/dialog';
+import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import { ChangeEventHandler, CSSProperties, useEffect, useState } from 'react';
-import Button, { Variant } from '#/components/button';
-import Input from '#/components/input';
+import Button, { Variant } from '@/components/button';
+import Input from '@/components/input';
 import styled from 'styled-components';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 import { EMAIL } from '#/constants/regexp';
 import logger from '#/utils/logger';
 import adminCreateUser from '@/server/admin_create_user';

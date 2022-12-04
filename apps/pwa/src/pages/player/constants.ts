@@ -1,7 +1,7 @@
 import { RequestStatus, PlayMode } from '@/constants';
 import { MusicType } from '#/constants/music';
-import { Type as TagComponentType } from '#/components/tag';
-import { UtilZIndex } from '#/constants/style';
+import { Type as TagComponentType } from '@/components/tag';
+import { UtilZIndex } from '@/constants/style';
 
 export const HEADER_HEIGHT = 55;
 export const CONTROLLER_HEIGHT = 60;

@@ -1,10 +1,10 @@
-import Spinner from '#/components/spinner';
+import Spinner from '@/components/spinner';
 import { useContext } from 'react';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
 import { animated, useTransition } from 'react-spring';
-import Button, { Variant } from '#/components/button';
+import Button, { Variant } from '@/components/button';
 import Context from '../../context';
 import e, { EventType } from '../../eventemitter';
 import Musicbill from './musicbill';

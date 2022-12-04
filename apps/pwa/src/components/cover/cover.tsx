@@ -1,7 +1,7 @@
 import { ImgHTMLAttributes, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { ComponentSize } from '../../constants/style';
-import useEvent from '../../utils/use_event';
+import { ComponentSize } from '@/constants/style';
+import useEvent from '@/utils/use_event';
 import JpegDefaultCover from './default_cover.jpeg';
 import { Shape } from './constants';
 

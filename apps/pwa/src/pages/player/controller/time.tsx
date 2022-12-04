@@ -1,4 +1,4 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 

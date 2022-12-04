@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
-import ellipsis from '#/style/ellipsis';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
+import ellipsis from '@/style/ellipsis';
 
 const Style = styled.div`
   flex: 1;

@@ -1,4 +1,4 @@
-import loadImage from '#/utils/load_image';
+import loadImage from '@/utils/load_image';
 import logger from '#/utils/logger';
 import getRandomCover from '@/utils/get_random_cover';
 import { useEffect, useState } from 'react';

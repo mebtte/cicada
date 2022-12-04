@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import { MdOutlineAddBox } from 'react-icons/md';
-import useNavigate from '#/utils/use_navigate';
+import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';

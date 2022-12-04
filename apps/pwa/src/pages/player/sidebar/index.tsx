@@ -1,4 +1,4 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import mm from '@/global_states/mini_mode';
 import styled from 'styled-components';
 import { WIDTH } from './constants';

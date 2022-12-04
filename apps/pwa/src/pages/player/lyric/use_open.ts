@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import usePathnameChange from '#/utils/use_pathname_change';
+import usePathnameChange from '@/utils/use_pathname_change';
 import eventemitter, { EventType } from '../eventemitter';
 
 export default () => {

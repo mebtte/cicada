@@ -1,10 +1,10 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import Cover from '#/components/cover';
+import Cover from '@/components/cover';
 import mm from '@/global_states/mini_mode';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import { MdMenu, MdSearch } from 'react-icons/md';
-import useNavigate from '#/utils/use_navigate';
+import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import Search from './search';
 import Title from './title';

@@ -5,9 +5,9 @@ import {
   useEffect,
   useState,
 } from 'react';
-import Popup from '#/components/popup';
-import { UtilZIndex } from '#/constants/style';
-import Input from '#/components/input';
+import Popup from '@/components/popup';
+import { UtilZIndex } from '@/constants/style';
+import Input from '@/components/input';
 import e, { EventType } from './eventemitter';
 import { IS_TOUCHABLE } from '../../constants/browser';
 

@@ -1,5 +1,5 @@
-import Input from '#/components/input';
-import useNavigate from '#/utils/use_navigate';
+import Input from '@/components/input';
+import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { IS_TOUCHABLE } from '@/constants/browser';
 import parseSearch from '@/utils/parse_search';

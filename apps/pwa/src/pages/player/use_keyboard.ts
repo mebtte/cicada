@@ -1,4 +1,4 @@
-import useNavigate from '#/utils/use_navigate';
+import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { useEffect } from 'react';
 import e, { EventType } from './eventemitter';

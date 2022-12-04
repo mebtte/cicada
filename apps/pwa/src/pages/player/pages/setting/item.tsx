@@ -1,4 +1,4 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import { HtmlHTMLAttributes } from 'react';
 import styled from 'styled-components';
 

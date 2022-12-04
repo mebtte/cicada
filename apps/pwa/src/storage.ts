@@ -1,4 +1,4 @@
-import Storage from '#/utils/storage';
+import Storage from '@/utils/storage';
 import { Setting } from '@/constants/setting';
 import { Profile } from '@/constants/user';
 import { PlayMode } from '@/constants';

@@ -1,4 +1,4 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import { createSinger } from '@/pages/player/utils';
 import e, { EditDialogType, EventType } from '../../../eventemitter';

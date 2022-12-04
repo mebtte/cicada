@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 import loginRequest from '@/server/login';
 import t from '@/global_states/token';
 import p from '@/global_states/profile';
@@ -8,8 +8,8 @@ import getProfile from '@/server/get_profile';
 import sleep from '#/utils/sleep';
 import storage, { Key } from '@/storage';
 import logger from '#/utils/logger';
-import Input from '#/components/input';
-import Button, { Variant } from '#/components/button';
+import Input from '@/components/input';
+import Button, { Variant } from '@/components/button';
 import getRandomCover from '@/utils/get_random_cover';
 import Paper from './paper';
 import Logo from './logo';

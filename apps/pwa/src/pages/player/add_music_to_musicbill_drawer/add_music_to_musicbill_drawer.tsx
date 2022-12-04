@@ -1,5 +1,5 @@
 import { CSSProperties, memo } from 'react';
-import Drawer from '#/components/drawer';
+import Drawer from '@/components/drawer';
 import { EventType } from '../eventemitter';
 import { Music as MusicType } from '../constants';
 import useDynamicZIndex from '../use_dynamic_z_index';

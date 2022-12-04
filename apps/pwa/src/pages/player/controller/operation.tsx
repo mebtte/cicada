@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import {
   MdOutlineQueueMusic,
   MdPause,
@@ -11,7 +11,7 @@ import {
   MdOutlinePostAdd,
 } from 'react-icons/md';
 import mm from '@/global_states/mini_mode';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';

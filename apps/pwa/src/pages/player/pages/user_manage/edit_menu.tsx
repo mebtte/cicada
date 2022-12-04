@@ -1,12 +1,12 @@
-import Popup from '#/components/popup';
+import Popup from '@/components/popup';
 import { CSSProperties, useEffect, useState } from 'react';
-import MenuItem from '#/components/menu_item';
+import MenuItem from '@/components/menu_item';
 import { MdTitle, MdPersonOutline } from 'react-icons/md';
 import styled from 'styled-components';
 import adminUpdateUser from '@/server/admin_update_user';
 import { AdminAllowUpdateKey } from '#/constants/user';
-import dialog from '#/utils/dialog';
-import notice from '#/utils/notice';
+import dialog from '@/utils/dialog';
+import notice from '@/utils/notice';
 import { ZIndex } from '../../constants';
 import { User } from './constants';
 import e, { EventType } from './eventemitter';

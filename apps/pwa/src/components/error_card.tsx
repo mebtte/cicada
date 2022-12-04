@@ -1,10 +1,10 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import env from '@/env';
 import getRandomInteger from '#/utils/generate_random_integer';
 import { MdRefresh } from 'react-icons/md';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 
 const Style = styled.div`
   display: flex;

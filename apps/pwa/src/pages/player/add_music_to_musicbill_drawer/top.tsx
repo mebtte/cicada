@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import useTitlebarArea from '#/utils/use_titlebar_area_rect';
-import { CSSVariable } from '#/global_style';
-import IconButton from '#/components/icon_button';
+import useTitlebarArea from '@/utils/use_titlebar_area_rect';
+import { CSSVariable } from '@/global_style';
+import IconButton from '@/components/icon_button';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { Music } from '../constants';
 import MusicInfo from '../components/music_info';

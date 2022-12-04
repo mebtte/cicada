@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import { CreateUser as CreateUserType } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,

@@ -1,6 +1,6 @@
-import Cover from '#/components/cover';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import Cover from '@/components/cover';
+import { CSSVariable } from '@/global_style';
+import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
 import { HEADER_HEIGHT, Musicbill } from '../../constants';
 import Operation from './operation';

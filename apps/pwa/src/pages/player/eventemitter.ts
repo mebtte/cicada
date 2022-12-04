@@ -1,4 +1,4 @@
-import { Option } from '#/components/multiple_select';
+import { Option } from '@/components/multiple_select';
 import Eventin from 'eventin';
 import { PlayMode } from '@/constants';
 import {

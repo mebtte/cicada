@@ -6,12 +6,12 @@ import {
 } from 'react';
 import { EMAIL } from '#/constants/regexp';
 import styled from 'styled-components';
-import notice from '#/utils/notice';
-import Input from '#/components/input';
+import notice from '@/utils/notice';
+import Input from '@/components/input';
 import logger from '#/utils/logger';
 import storage, { Key } from '@/storage';
-import Button, { Variant } from '#/components/button';
-import useEvent from '#/utils/use_event';
+import Button, { Variant } from '@/components/button';
+import useEvent from '@/utils/use_event';
 import CaptchaDialog from './captcha_dialog';
 import Logo from '../logo';
 import Paper from '../paper';

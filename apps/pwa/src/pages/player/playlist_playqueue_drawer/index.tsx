@@ -1,4 +1,4 @@
-import Drawer from '#/components/drawer';
+import Drawer from '@/components/drawer';
 import { CSSProperties } from 'react';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import useOpen from './use_open';

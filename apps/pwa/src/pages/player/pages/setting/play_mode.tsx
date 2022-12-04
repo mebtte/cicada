@@ -1,4 +1,4 @@
-import Tag from '#/components/tag';
+import Tag from '@/components/tag';
 import { PlayMode as PlayModeType } from '@/constants';
 import { useContext } from 'react';
 import styled from 'styled-components';

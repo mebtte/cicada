@@ -1,16 +1,16 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import IconButton from '#/components/icon_button';
+import IconButton from '@/components/icon_button';
 import {
   MdOutlineAddBox,
   MdSort,
   MdRefresh,
   MdStarOutline,
 } from 'react-icons/md';
-import { ComponentSize } from '#/constants/style';
+import { ComponentSize } from '@/constants/style';
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
-import notice from '#/utils/notice';
+import notice from '@/utils/notice';
 import { useNavigate } from 'react-router-dom';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import e, { EventType } from '../../eventemitter';

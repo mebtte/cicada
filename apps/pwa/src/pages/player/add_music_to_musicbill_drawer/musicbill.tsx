@@ -1,16 +1,16 @@
-import Cover from '#/components/cover';
+import Cover from '@/components/cover';
 import { CSSProperties, memo } from 'react';
 import styled from 'styled-components';
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import {
   MdCheckBox,
   MdCheckBoxOutlineBlank,
   MdOutlineHelpCenter,
 } from 'react-icons/md';
 import { RequestStatus } from '@/constants';
-import ellipsis from '#/style/ellipsis';
-import Spinner from '#/components/spinner';
-import notice from '#/utils/notice';
+import Spinner from '@/components/spinner';
+import ellipsis from '@/style/ellipsis';
+import notice from '@/utils/notice';
 import { Music, Musicbill as MusicbillType } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,

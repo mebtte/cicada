@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Input from '#/components/input';
+import Input from '@/components/input';
 import { useEffect, useState } from 'react';
 import { FILTER_HEIGHT } from './constants';
 import e, { EventType } from './eventemitter';

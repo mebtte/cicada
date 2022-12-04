@@ -1,4 +1,4 @@
-import { CSSVariable } from '#/global_style';
+import { CSSVariable } from '@/global_style';
 import day from '#/utils/day';
 import styled from 'styled-components';
 import { MdOutlineLocalFireDepartment } from 'react-icons/md';

@@ -1,6 +1,6 @@
-import Dialog, { Container, Title, Content, Action } from '#/components/dialog';
-import Button, { Variant } from '#/components/button';
-import Input from '#/components/input';
+import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
+import Button, { Variant } from '@/components/button';
+import Input from '@/components/input';
 import {
   ChangeEventHandler,
   CSSProperties,
@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import Select, { Option as SelectOption } from '#/components/select';
+import Select, { Option as SelectOption } from '@/components/select';
 import styled from 'styled-components';
 import {
   MusicType,
@@ -16,14 +16,14 @@ import {
   MUSIC_TYPE_MAP,
   NAME_MAX_LENGTH,
 } from '#/constants/music';
-import FileSelect from '#/components/file_select';
+import FileSelect from '@/components/file_select';
 import MultipleSelect, {
   Option as MultipleSelectOption,
-} from '#/components/multiple_select';
+} from '@/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
-import useEvent from '#/utils/use_event';
-import notice from '#/utils/notice';
+import useEvent from '@/utils/use_event';
+import notice from '@/utils/notice';
 import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';

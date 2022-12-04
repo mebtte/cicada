@@ -1,8 +1,8 @@
 import { createRoot } from 'react-dom/client';
+import generateRandomString from '#/utils/generate_random_string';
 import { Alert, Confirm } from './constants';
 import e, { EventType } from './eventemitter';
 import DialogApp from './dialog_app';
-import generateRandomString from '../generate_random_string';
 
 const root = document.createElement('div');
 root.className = 'dialog-app';

@@ -1,8 +1,8 @@
-import useTitlebarArea from '#/utils/use_titlebar_area_rect';
+import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import styled from 'styled-components';
-import Cover from '#/components/cover';
-import { CSSVariable } from '#/global_style';
-import ellipsis from '#/style/ellipsis';
+import Cover from '@/components/cover';
+import { CSSVariable } from '@/global_style';
+import ellipsis from '@/style/ellipsis';
 import { useEffect, useState } from 'react';
 import { MINI_INFO_HEIGHT, UserDetail } from './constants';
 
