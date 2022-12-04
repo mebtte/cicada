@@ -28,6 +28,7 @@ import EditDialog from './edit_dialog';
 import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
 import MusicbillDrawer from './musicbill_drawer';
+import useLyricPanelOpen from './use_lyric_panel_open';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -67,6 +68,7 @@ function Wrapper() {
   const queueMusic = playqueue[currentPlayqueuePosition] as
     | QueueMusic
     | undefined;
+  const lyricPanelOpen = useLyricPanelOpen();
 
   useKeyboard();
   useMediaSession(queueMusic);
@@ -88,6 +90,8 @@ function Wrapper() {
         currentPlayqueuePosition,
 
         playMode,
+
+        lyricPanelOpen,
       }}
     >
       <Helmet>
@@ -103,13 +107,8 @@ function Wrapper() {
         </div>
         {queueMusic ? (
           <>
-            <Controller
-              queueMusic={queueMusic}
-              paused={audioPaused}
-              loading={audioLoading}
-              duration={audioDuration}
-            />
-            <LyricPanel />
+            <Controller lyricPanelOpen={lyricPanelOpen} />
+            <LyricPanel open={lyricPanelOpen} />
           </>
         ) : null}
       </Style>

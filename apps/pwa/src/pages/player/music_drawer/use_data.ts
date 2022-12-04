@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import getMusicDetail from '@/server/get_music_detail';
 import { MusicType } from '#/constants/music';
-import getLyric from '@/server/get_lyric';
+import getLyricList from '@/server/get_lyric_list';
 import getRandomCover from '@/utils/get_random_cover';
 import day from '#/utils/day';
 import { MusicDetail, Lyric } from './constants';
@@ -29,7 +29,7 @@ export default (id: string) => {
       const music = await getMusicDetail(id);
       let lyrics: Lyric[] = [];
       if (music.type === MusicType.SONG) {
-        lyrics = await getLyric({ musicId: music.id, minDuration: 0 });
+        lyrics = await getLyricList({ musicId: music.id, minDuration: 0 });
       }
 
       setData({

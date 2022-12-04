@@ -38,9 +38,9 @@ function Cover({ cover }: { cover: string }) {
   }, [cover]);
 
   const transitions = useTransition(currentCover, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
+    from: { transform: 'translateX(-100%)' },
+    enter: { transform: 'translateX(0%)' },
+    leave: { transform: 'translateX(100%)' },
   });
   return transitions((style, c) =>
     c ? <Style style={{ ...style, backgroundImage: `url(${c})` }} /> : null,

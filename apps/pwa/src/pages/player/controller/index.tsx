@@ -1,81 +1,18 @@
-import styled, { css } from 'styled-components';
-import mm from '@/global_states/mini_mode';
-import { QueueMusic, ZIndex } from '../constants';
-import Cover from './cover';
-import Operation from './operation';
-import Info from './info';
-import Progress from './progress';
-import Time from './time';
+import { useEffect, useState } from 'react';
+import Controller from './controller';
 
-const Style = styled.div`
-  z-index: ${ZIndex.CONTROLLER};
+function Wrapper({ lyricPanelOpen }: { lyricPanelOpen: boolean }) {
+  const [visible, setVisible] = useState(true);
 
-  height: calc(env(safe-area-inset-bottom, 0) + 60px);
-
-  display: flex;
-  flex-direction: column;
-
-  background-color: rgb(255 255 255 / 0.75);
-
-  > .content {
-    flex: 1;
-    min-height: 0;
-
-    display: flex;
-
-    > .rest {
-      flex: 1;
-      min-width: 0;
-
-      display: flex;
-      align-items: center;
-
-      padding-bottom: env(safe-area-inset-bottom, 0);
+  useEffect(() => {
+    if (lyricPanelOpen) {
+      const timer = window.setTimeout(() => setVisible(false), 1000);
+      return () => window.clearTimeout(timer);
     }
-  }
+    setVisible(true);
+  }, [lyricPanelOpen]);
 
-  ${({ theme: { miniMode } }) => css`
-    > .content {
-      gap: ${miniMode ? 10 : 20}px;
-
-      padding-right: ${miniMode ? 10 : 20}px;
-
-      > .rest {
-        gap: ${miniMode ? 10 : 20}px;
-      }
-    }
-  `}
-`;
-
-function Controller({
-  queueMusic,
-  paused,
-  loading,
-  duration,
-}: {
-  queueMusic: QueueMusic;
-  paused: boolean;
-  loading: boolean;
-  duration: number;
-}) {
-  const miniMode = mm.useState();
-  return (
-    <Style>
-      <Progress duration={duration} />
-      <div className="content">
-        <Cover cover={queueMusic.cover} />
-        <div className="rest">
-          <Info queueMusic={queueMusic} />
-          {miniMode ? null : <Time duration={duration} />}
-          <Operation
-            queueMusic={queueMusic}
-            paused={paused}
-            loading={loading}
-          />
-        </div>
-      </div>
-    </Style>
-  );
+  return visible ? <Controller /> : null;
 }
 
-export default Controller;
+export default Wrapper;

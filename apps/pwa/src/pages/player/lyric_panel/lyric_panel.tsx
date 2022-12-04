@@ -6,6 +6,7 @@ import { ZIndex } from '../constants';
 import Context from '../context';
 import Backdrop from './backdrop';
 import Controller from './controller';
+import Lyric from './lyric';
 
 const Style = styled(animated.div)`
   z-index: ${ZIndex.LYRIC_PANEL};
@@ -13,6 +14,7 @@ const Style = styled(animated.div)`
   ${absoluteFullSize}
 
   background-color: #fff;
+  overflow: hidden;
 `;
 
 function LyricPanel({ style }: { style: unknown }) {
@@ -24,6 +26,7 @@ function LyricPanel({ style }: { style: unknown }) {
     // @ts-expect-error
     <Style style={style}>
       <Backdrop cover={queueMusic.cover} />
+      <Lyric queueMusic={queueMusic} />
       <Controller
         queueMusic={queueMusic}
         paused={audioPaused}

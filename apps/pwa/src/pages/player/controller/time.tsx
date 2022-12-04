@@ -7,6 +7,7 @@ const Style = styled.div`
   font-size: 12px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   transform: scale(0.9);
+  user-select: none;
 
   > .duration {
     border-top: 1px solid ${CSSVariable.COLOR_BORDER};

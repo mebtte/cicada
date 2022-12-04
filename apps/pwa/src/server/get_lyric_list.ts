@@ -1,6 +1,6 @@
 import { request } from '.';
 
-function getLyric({
+function getLyricList({
   musicId,
   minDuration = 1000,
 }: {
@@ -13,11 +13,11 @@ function getLyric({
       lrc: string;
     }[]
   >({
-    path: '/api/lyric',
+    path: '/api/lyric_list',
     params: { musicId },
     withToken: true,
     minDuration,
   });
 }
 
-export default getLyric;
+export default getLyricList;

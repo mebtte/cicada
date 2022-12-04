@@ -66,15 +66,15 @@ export interface Musicbill {
 }
 
 export const ZIndex = {
-  CONTROLLER: 2,
-  LYRIC_PANEL: 3,
+  CONTROLLER: 10,
+  LYRIC_PANEL: 11,
 
   /**
    * 与下一级需要大数字间隔
    * 会随着时间的增加而增加
    * @author mebtte<hi@mebtte.com>
    */
-  DYNAMIC_START: 4,
+  DYNAMIC_START: 12,
 
   DRAWER: UtilZIndex.PAGINATION - 1,
   POPUP: UtilZIndex.PAGINATION - 1,

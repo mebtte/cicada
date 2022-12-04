@@ -18,6 +18,7 @@ const Style = styled.div`
   height: 5px;
   background-color: rgb(145 222 202);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 
   transform-origin: bottom;
   transition: 100ms;

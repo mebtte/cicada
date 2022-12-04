@@ -22,6 +22,8 @@ import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import Singer from '../components/singer';
 
 const Style = styled.div`
+  z-index: 2;
+
   position: absolute;
   bottom: 0;
   left: 0;
@@ -37,6 +39,10 @@ const Style = styled.div`
   flex-direction: column;
   gap: 10px;
 
+  > .slider {
+    margin: 0 20px;
+  }
+
   > .info {
     margin: 0 20px;
 
@@ -46,7 +52,7 @@ const Style = styled.div`
     > .name {
       font-size: 20px;
       font-weight: bold;
-      line-height: 1.5;
+      line-height: 1.8;
       ${ellipsis}
 
       >.content {
@@ -114,7 +120,7 @@ function Controller({
           ))}
         </div>
       </div>
-      <Slider current={percent} onChange={onTimeChange} />
+      <Slider current={percent} onChange={onTimeChange} className="slider" />
       <div className="operation">
         <IconButton onClick={closeLyricPanel}>
           <MdUnfoldLess />

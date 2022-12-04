@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../eventemitter';
+import eventemitter, { EventType } from './eventemitter';
 
 export default () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const unlistenToggleLyricPanel = playerEventemitter.listen(
-      PlayerEventType.TOGGLE_LYRIC_PANEL,
+    const unlistenToggleLyricPanel = eventemitter.listen(
+      EventType.TOGGLE_LYRIC_PANEL,
       (data) => (data ? setOpen(data.open) : setOpen((o) => !o)),
     );
 
