@@ -21,6 +21,8 @@
 }
 ```
 
+> 完整配置可以参看[配置文档](./docs/config/index.md)
+
 在 [Releases](https://github.com/mebtte/cicada/releases) 下载并解压对应平台的二进制包, 通过下面命令指定配置文件并启动(以 x64 Linux 为例):
 
 ```sh
@@ -28,8 +30,6 @@
 ```
 
 > 目前只提供了几种主流平台的构建包, 其他平台可以参考[文档](./docs/build/index.md)自行构建
-
-完整配置可以参看[文档](./docs/config/index.md).
 
 ## 更多
 
