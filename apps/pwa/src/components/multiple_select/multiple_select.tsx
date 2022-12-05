@@ -170,7 +170,7 @@ function MultipleSelect<Value>({
             : [...value, option as OptionType<Value>],
         );
 
-        inputRef.current?.focus();
+        window.setTimeout(() => setKeyword(''), 1000);
       },
     );
     return unlistenOnChange;
