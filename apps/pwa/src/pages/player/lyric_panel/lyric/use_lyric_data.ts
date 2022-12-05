@@ -29,5 +29,5 @@ export default (queueMusic: QueueMusic) => {
     getData();
   }, [getData]);
 
-  return data;
+  return { data, retry: getData };
 };

@@ -25,7 +25,7 @@ const Line = styled.div<{ active?: boolean }>`
     border-style: solid;
 
     &:empty {
-      opacity: 0;
+      visibility: hidden;
     }
   }
 

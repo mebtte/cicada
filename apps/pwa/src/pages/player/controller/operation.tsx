@@ -35,7 +35,7 @@ const Style = styled.div`
     height: 24px;
     width: 1px;
 
-    margin: 0 5px;
+    margin: 0 10px;
 
     background-color: ${CSSVariable.COLOR_BORDER};
   }
@@ -62,18 +62,6 @@ function Operation({
           <IconButton
             onClick={() =>
               playerEventemitter.emit(
-                PlayerEventType.OPEN_MUSIC_OPERATE_POPUP,
-                {
-                  music: queueMusic,
-                },
-              )
-            }
-          >
-            <MdMoreHoriz />
-          </IconButton>
-          <IconButton
-            onClick={() =>
-              playerEventemitter.emit(
                 PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
                 { music: queueMusic },
               )
@@ -91,9 +79,24 @@ function Operation({
           >
             <MdOutlinePostAdd />
           </IconButton>
+          <IconButton
+            onClick={() =>
+              playerEventemitter.emit(
+                PlayerEventType.OPEN_MUSIC_OPERATE_POPUP,
+                {
+                  music: queueMusic,
+                },
+              )
+            }
+          >
+            <MdMoreHoriz />
+          </IconButton>
           <div className="divider" />
         </>
       )}
+      <IconButton onClick={openPlaylistPlayqueueDrawer}>
+        <MdOutlineQueueMusic />
+      </IconButton>
       {miniMode ? null : (
         <IconButton onClick={onPrevious}>
           <MdSkipPrevious />
@@ -104,9 +107,6 @@ function Operation({
       </IconButton>
       <IconButton onClick={onNext}>
         <MdSkipNext />
-      </IconButton>
-      <IconButton onClick={openPlaylistPlayqueueDrawer}>
-        <MdOutlineQueueMusic />
       </IconButton>
     </Style>
   );

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import eventemitter, { EventType } from './eventemitter';
 
 export default () => {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -22,6 +24,10 @@ export default () => {
       document.removeEventListener('keydown', onKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location]);
 
   return open;
 };

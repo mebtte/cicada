@@ -38,7 +38,7 @@ const Style = styled.div`
 
   ${({ theme: { miniMode } }) => css`
     > .content {
-      gap: ${miniMode ? 10 : 20}px;
+      gap: ${miniMode ? 10 : 15}px;
 
       padding-right: ${miniMode ? 10 : 20}px;
 
