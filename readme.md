@@ -3,7 +3,6 @@
 知了, 一个支持多用户的自主托管音乐服务.
 
 ![](./docs/thumbnail_1.png)
-
 ![](./docs/thumbnail_2.png)
 
 ## 准备
@@ -30,10 +29,12 @@
 
 > 目前只提供了几种主流平台的构建包, 其他平台可以参考[文档](./docs/build/index.md)自行构建
 
-- ## [完整配置说明](./docs/config/index.md)
-- ## [PWA 使用教程](./docs//pwa_usage/index.md)
-- ## [更新版本](./docs/migration/index.md)
-- ## [常见问题](./docs/qa/index.md)
+## 更多
+
+- [完整配置说明](./docs/config/index.md)
+- [PWA 使用教程](./docs//pwa_usage/index.md)
+- [更新版本](./docs/migration/index.md)
+- [常见问题](./docs/qa/index.md)
 
 ## 开源协议
 
