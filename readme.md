@@ -29,10 +29,11 @@
 
 > 目前只提供了几种主流平台的构建包, 其他平台可以参考[文档](./docs/build/index.md)自行构建
 
+完整配置可以参看[文档](./docs/config/index.md).
+
 ## 更多
 
-- [完整配置说明](./docs/config/index.md)
-- [PWA 使用教程](./docs//pwa_usage/index.md)
+- [使用说明](./docs//pwa_usage/index.md)
 - [更新版本](./docs/migration/index.md)
 - [常见问题](./docs/qa/index.md)
 
