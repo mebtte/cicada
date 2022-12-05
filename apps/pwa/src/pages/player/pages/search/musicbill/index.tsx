@@ -30,7 +30,7 @@ const CardContainer = styled(Container)`
   flex-direction: column;
   gap: 20px;
 `;
-const MusicContainer = styled(Container)<{ exploration: boolean }>`
+const MusicContainer = styled(Container)<{ exploration: 0 | 1 }>`
   overflow: auto;
 
   ${({ exploration, theme: { miniMode } }) => css`
@@ -83,7 +83,7 @@ function Wrapper({ exploration }: { exploration: boolean }) {
       width: miniMode ? '100%' : '50%',
     };
     return (
-      <MusicContainer style={style} exploration={exploration}>
+      <MusicContainer style={style} exploration={exploration ? 1 : 0}>
         <div>
           {d.value!.musicbillList.map((musicbill) => (
             <Musicbill

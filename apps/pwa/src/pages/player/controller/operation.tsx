@@ -94,9 +94,6 @@ function Operation({
           <div className="divider" />
         </>
       )}
-      <IconButton onClick={openPlaylistPlayqueueDrawer}>
-        <MdOutlineQueueMusic />
-      </IconButton>
       {miniMode ? null : (
         <IconButton onClick={onPrevious}>
           <MdSkipPrevious />
@@ -107,6 +104,9 @@ function Operation({
       </IconButton>
       <IconButton onClick={onNext}>
         <MdSkipNext />
+      </IconButton>
+      <IconButton onClick={openPlaylistPlayqueueDrawer}>
+        <MdOutlineQueueMusic />
       </IconButton>
     </Style>
   );

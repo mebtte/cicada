@@ -1,6 +1,7 @@
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
+import { formatSecond } from '../utils';
 
 const Style = styled.div`
   font-family: monospace;
@@ -13,13 +14,6 @@ const Style = styled.div`
     border-top: 1px solid ${CSSVariable.COLOR_BORDER};
   }
 `;
-const formatSecond = (s: number) => {
-  const minute = Math.floor(s / 60);
-  const second = Math.floor(s % 60);
-  return `${minute < 10 ? '0' : ''}${minute}:${
-    second < 10 ? '0' : ''
-  }${second}`;
-};
 
 function Time({ duration }: { duration: number }) {
   const currentMillisecond = useAudioCurrentMillisecond();
