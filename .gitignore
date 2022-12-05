@@ -11,7 +11,7 @@ package-lock.json
 
 # build & dist
 dist/
-build/
+/build
 /pwa/
 /index.js
 /coverage/
