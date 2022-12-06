@@ -1,6 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey } from '#/constants/music';
-import db from '@/db';
+import { getDB } from '@/db';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
 import stringArrayEqual from '#/utils/string_array_equal';
 import {
@@ -39,14 +39,14 @@ export default async ({ ctx, music, value }: Parameter) => {
   }
 
   await Promise.all([
-    db.run(
+    getDB().run(
       `
         DELETE FROM music_fork
         WHERE id IN ( ${oldForkFromList.map(() => '?').join(', ')} )
       `,
       oldForkFromList.map((f) => f.id),
     ),
-    db.run(
+    getDB().run(
       `
         INSERT INTO music_fork ( musicId, forkFrom )
         VALUES ${value.map(() => '( ?, ? )').join(', ')}

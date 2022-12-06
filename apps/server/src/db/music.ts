@@ -1,5 +1,5 @@
 import { MusicType } from '#/constants/music';
-import db from '.';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -30,7 +30,7 @@ export type Music = {
 };
 
 export function getMusicById<P extends Property>(id: string, properties: P[]) {
-  return db.get<{
+  return getDB().get<{
     [key in P]: Music[key];
   }>(`SELECT ${properties.join(',')} FROM music WHERE id = ?`, [id]);
 }
@@ -39,7 +39,7 @@ export function getMusicListByIds<P extends Property>(
   ids: string[],
   properties: P[],
 ) {
-  return db.all<{
+  return getDB().all<{
     [key in P]: Music[key];
   }>(
     `
@@ -59,7 +59,7 @@ export function updateMusic<
     | Property.HQ
     | Property.AC,
 >({ id, property, value }: { id: string; property: P; value: Music[P] }) {
-  return db.run(
+  return getDB().run(
     `
       UPDATE music SET ${property} = ?
       WHERE id = ?

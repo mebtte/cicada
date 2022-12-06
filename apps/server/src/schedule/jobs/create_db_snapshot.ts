@@ -5,7 +5,7 @@ import stream from 'stream';
 import { DB_SNAPSHOT_DIR } from '@/constants/directory';
 import day from '#/utils/day';
 import withTimeout from '#/utils/with_timeout';
-import { DB_FILE_PATH } from '../../constants';
+import config from '@/config';
 
 const pipelineAsync = util.promisify(stream.pipeline);
 
@@ -13,7 +13,7 @@ async function createDBSnapshot() {
   const dateString = day().format('YYYYMMDD');
   const gzip = zlib.createGzip();
   await pipelineAsync(
-    fs.createReadStream(DB_FILE_PATH),
+    fs.createReadStream(`${config.get().base}/db`),
     gzip,
     fs.createWriteStream(`${DB_SNAPSHOT_DIR}/db_${dateString}.gz`),
   );

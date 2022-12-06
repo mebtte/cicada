@@ -1,75 +1,24 @@
-import './initialize';
-import cluster from 'cluster';
-import http from 'http';
-import Koa from 'koa';
-import log from 'koa-logger';
-import cors from '@koa/cors';
-import mount from 'koa-mount';
-import { PathPrefix } from '#/constants';
-import apiApp from './api_app';
-import blobApp from './blob_app';
-import assetApp from './asset_app';
-import pwaApp from './pwa_app';
-import schedule from './schedule';
+import { Command } from 'commander';
+import { Config } from './config';
 import env from './env';
-import downloadApp from './download_app';
-import config from './config';
-import requirementCheck from './requirement_check';
+import server from './server';
 
-function printInfo(info: string) {
-  // eslint-disable-next-line no-console
-  console.log(`--- ${info} ---`);
+function parseConfig(configPath?: string): Partial<Config> {
+  return {};
 }
 
-async function start() {
-  if (cluster.isPrimary) {
-    requirementCheck();
+const program = new Command()
+  .name('cicada')
+  .description('知了, 一个支持多用户的自主托管音乐服务')
+  .version(env.VERSION || '');
 
-    const PRINT_ENV_KEYS: (keyof typeof env)[] = ['VERSION', 'RUN_ENV'];
-    for (const key of PRINT_ENV_KEYS) {
-      printInfo(`env | ${key} = ${env[key]}`);
-    }
+program
+  .command('start')
+  .description('start cicada server')
+  .option('-c, --config <config>', 'specify config file')
+  .action(async ({ config: configPath }: { config?: string }) => {
+    const configJSON = parseConfig(configPath);
+    server.start(configJSON);
+  });
 
-    const PRINT_CONFIG_KEYS: (keyof typeof config)[] = [
-      'base',
-      'port',
-      'publicAddress',
-      'clusterCount',
-    ];
-    for (const key of PRINT_CONFIG_KEYS) {
-      printInfo(`config | ${key} = ${config[key]}`);
-    }
-
-    schedule.start();
-    for (let i = 0; i < config.clusterCount; i += 1) {
-      cluster.fork();
-    }
-  } else {
-    const server = new Koa();
-
-    if (env.RUN_ENV === 'development') {
-      server.use(log());
-    }
-
-    server.use(
-      cors({
-        maxAge: 86400,
-
-        /**
-         * 当 navigator.sendBeacon 格式是 json 时必须
-         * @author mebtte<hi@mebtte.com>
-         */
-        credentials: true,
-      }),
-    );
-    server.use(mount(`/${PathPrefix.ASSET}`, assetApp));
-    server.use(mount(`/${PathPrefix.DOWNLOAD}`, downloadApp));
-    server.use(mount(`/${PathPrefix.API}`, apiApp));
-    server.use(mount(`/${PathPrefix.BLOB}`, blobApp));
-    server.use(mount('/', pwaApp));
-
-    http.createServer(server.callback()).listen(config.port);
-  }
-}
-
-start();
+program.parse();

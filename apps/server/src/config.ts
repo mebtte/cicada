@@ -1,85 +1,40 @@
-import * as yargs from 'yargs';
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import { EMAIL } from '#/constants/regexp';
-import exitWithMessage from './utils/exit_with_message';
-
-interface Config {
+export interface Config {
   base: string;
-  publicAddress: string;
   port: number;
   emailHost: string;
   emailPort: number;
   emailUser: string;
   emailPass: string;
-  clusterCount: number;
   userMusicbillMaxAmount: number;
   userExportMusicbillMaxTimesPerDay: number;
   userCreateMusicMaxTimesPerDay: number;
+  publicOrigin: string;
   initialAdminEmail: string;
 }
 
-let configFilePath: string;
-if (process.env.NODE_ENV === 'production') {
-  const argv = yargs.parse(process.argv) as {
-    config?: string;
-  };
-  if (!argv.config) {
-    exitWithMessage('请通过 [--config] 指定配置文件');
-  }
-  configFilePath = path.resolve(process.cwd(), argv.config!);
-} else {
-  configFilePath = path.join(__dirname, '../../../config.json');
-}
-if (!fs.existsSync(configFilePath)) {
-  exitWithMessage(`配置文件 [${configFilePath}] 不存在`);
-}
-
-let configFromFile: Config;
-try {
-  configFromFile = JSON.parse(fs.readFileSync(configFilePath).toString());
-} catch (error) {
-  console.error(error);
-  exitWithMessage(`配置文件 [${configFilePath}] 解析错误`);
-}
-
-const DEFAULT_CONFIG: Omit<
-  Config,
-  'publicAddress' | 'emailHost' | 'emailUser' | 'emailPass'
-> = {
-  base: `${os.homedir()}/cicada`,
-  port: 8000,
+let config: Config = {
+  emailHost: '',
   emailPort: 465,
-  clusterCount: 1,
+  emailUser: '',
+  emailPass: '',
+
+  base: `${process.cwd()}/cicada`,
+  port: 8000,
   userMusicbillMaxAmount: 100,
   userExportMusicbillMaxTimesPerDay: 3,
   userCreateMusicMaxTimesPerDay: 5,
+  publicOrigin: '',
   initialAdminEmail: '',
 };
 
-const config: Config = {
-  ...DEFAULT_CONFIG,
-  // @ts-expect-error
-  ...configFromFile,
+export default {
+  get(): Config {
+    return config;
+  },
+  set(c: Partial<Config>) {
+    config = {
+      ...config,
+      ...c,
+    };
+  },
 };
-if (!config.publicAddress) {
-  config.publicAddress = `http://localhost:${config.port}`;
-}
-
-if (config.initialAdminEmail && !EMAIL.test(config.initialAdminEmail)) {
-  exitWithMessage('「initialAdminEmail」格式错误');
-}
-
-const REQUIRED_CONFIG_KEYS: (keyof Config)[] = [
-  'emailHost',
-  'emailUser',
-  'emailPass',
-];
-for (const key of REQUIRED_CONFIG_KEYS) {
-  if (!config[key]) {
-    exitWithMessage(`配置项「${key}」不能为空`);
-  }
-}
-
-export default config;

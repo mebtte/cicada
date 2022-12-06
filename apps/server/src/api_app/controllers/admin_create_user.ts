@@ -1,7 +1,7 @@
 import day from '#/utils/day';
 import { ExceptionCode } from '#/constants/exception';
 import { EMAIL } from '#/constants/regexp';
-import db from '@/db';
+import { getDB } from '@/db';
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
 import { sendEmail } from '@/platform/email';
@@ -11,18 +11,19 @@ import { BRAND_NAME } from '#/constants';
 import { Context } from '../constants';
 
 const generateEmailHtml = () => `Hi,
-<br>
-<br>
-已成功为您创建账号, 现在可以使用当前邮箱登录到「<a href="${
-  config.publicAddress
-}">知了</a>」.
-<br>
-如果使用中有任何问题或者建议, 可以通过 <a href="https://github.com/mebtte/cicada">Issue</a> 进行反馈.
-<br>
-<br>
-知了
-<br>
-${day(new Date()).format('YYYY-MM-DD HH:mm')}`;
+  <br>
+  <br>
+  已成功为您创建账号, 现在可以使用当前邮箱登录到「<a href="${
+    config.get().publicOrigin
+  }
+  ">知了</a>」.
+  <br>
+  如果使用中有任何问题或者建议, 可以通过 <a href="https://github.com/mebtte/cicada">Issue</a> 进行反馈.
+  <br>
+  <br>
+  知了
+  <br>
+  ${day(new Date()).format('YYYY-MM-DD HH:mm')}`;
 
 export default async (ctx: Context) => {
   const { email, remark = '' } = ctx.request.body as {
@@ -51,7 +52,7 @@ export default async (ctx: Context) => {
   });
 
   const id = generateRandomInteger(1_0000_0000, 10_0000_0000).toString();
-  await db.run(
+  await getDB().run(
     `
       INSERT INTO user ( id, email, nickname, joinTimestamp, remark )
       VALUES ( ?, ?, ?, ?, ? )

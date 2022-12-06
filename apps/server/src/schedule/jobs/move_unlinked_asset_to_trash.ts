@@ -1,11 +1,11 @@
 import fs from 'fs/promises';
 import withTimeout from '#/utils/with_timeout';
 import { AssetType } from '#/constants';
-import db from '@/db';
+import { getDB } from '@/db';
 import { ASSET_DIR, TRASH_DIR } from '@/constants/directory';
 import day from '#/utils/day';
 import mv from '#/utils/mv';
-import { getAssetPath } from '@/platform/asset';
+import { getAssetFilePath } from '@/platform/asset';
 
 const findUnlinkedList = (linkedList: string[], all: string[]) =>
   all.filter((item) => !linkedList.includes(item));
@@ -14,12 +14,12 @@ const moveAssetListToTrash = async (
   assetType: AssetType,
 ) => {
   for (const asset of assetList) {
-    await mv(getAssetPath(asset, assetType), `${TRASH_DIR}/${asset}`);
+    await mv(getAssetFilePath(asset, assetType), `${TRASH_DIR}/${asset}`);
   }
 };
 const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
   [AssetType.USER_AVATAR]: async () => {
-    const userList = await db.all<{ avatar: string }>(
+    const userList = await getDB().all<{ avatar: string }>(
       `
         SELECT DISTINCT avatar FROM user
         WHERE avatar != ''
@@ -45,7 +45,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
     }
   },
   [AssetType.MUSICBILL_COVER]: async () => {
-    const musicbillList = await db.all<{ cover: string }>(
+    const musicbillList = await getDB().all<{ cover: string }>(
       `
         SELECT DISTINCT cover FROM musicbill
         WHERE cover != ''
@@ -73,7 +73,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
     }
   },
   [AssetType.SINGER_AVATAR]: async () => {
-    const singerList = await db.all<{ avatar: string }>(
+    const singerList = await getDB().all<{ avatar: string }>(
       `
         SELECT DISTINCT avatar FROM singer
         WHERE avatar != '';
@@ -102,7 +102,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
   },
 
   [AssetType.MUSIC_COVER]: async () => {
-    const musicList = await db.all<{ cover: string }>(
+    const musicList = await getDB().all<{ cover: string }>(
       `
         SELECT DISTINCT cover FROM music
         WHERE cover != '';
@@ -128,7 +128,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
     }
   },
   [AssetType.MUSIC_SQ]: async () => {
-    const musicList = await db.all<{ sq: string }>(
+    const musicList = await getDB().all<{ sq: string }>(
       `
         SELECT DISTINCT sq FROM music
       `,
@@ -153,7 +153,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
     }
   },
   [AssetType.MUSIC_HQ]: async () => {
-    const musicList = await db.all<{ hq: string }>(
+    const musicList = await getDB().all<{ hq: string }>(
       `
         SELECT DISTINCT hq FROM music
         WHERE hq != ''
@@ -179,7 +179,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
     }
   },
   [AssetType.MUSIC_AC]: async () => {
-    const musicList = await db.all<{ ac: string }>(
+    const musicList = await getDB().all<{ ac: string }>(
       `
         SELECT DISTINCT ac FROM music
         WHERE ac != ''

@@ -1,4 +1,4 @@
-import db from '.';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -25,7 +25,7 @@ export function addMusicPlayRecord({
   musicId: string;
   percent: number;
 }) {
-  return db.run(
+  return getDB().run(
     `
       insert into music_play_record(userId, musicId, percent, timestamp)
         values(?, ?, ?, ?)
@@ -38,7 +38,7 @@ export function getMusicPlayRecordList<P extends Property>(
   musicId: string,
   properties: P[],
 ) {
-  return db.all<{
+  return getDB().all<{
     [key in P]: MusicPlayRecord[key];
   }>(
     `

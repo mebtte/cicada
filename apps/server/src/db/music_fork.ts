@@ -1,4 +1,4 @@
-import db from '@/db';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -16,7 +16,7 @@ export async function getMusicForkFromList<P extends Property>(
   musicId: string,
   properties: P[],
 ) {
-  return db.all<{
+  return getDB().all<{
     [key in P]: MusicFork[key];
   }>(
     `
@@ -31,7 +31,7 @@ export async function getMusicForkList<P extends Property>(
   musicId: string,
   properties: P[],
 ) {
-  return db.all<{
+  return getDB().all<{
     [key in P]: MusicFork[key];
   }>(
     `

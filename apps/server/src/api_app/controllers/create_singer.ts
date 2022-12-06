@@ -1,7 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH } from '#/constants/singer';
 import generateRandomString from '#/utils/generate_random_string';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -20,7 +20,7 @@ export default async (ctx: Context) => {
   }
 
   if (!force) {
-    const existSinger = await db.get<{ id?: string }>(
+    const existSinger = await getDB().get<{ id?: string }>(
       `
         select id from singer where name = ? collate nocase
       `,
@@ -32,7 +32,7 @@ export default async (ctx: Context) => {
   }
 
   const id = generateRandomString(6, false);
-  await db.run(
+  await getDB().run(
     `
       insert into singer(id, name, createUserId, createTimestamp)
         values( ?, ?, ?, ? )

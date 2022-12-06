@@ -18,7 +18,7 @@ import {
   Singer,
 } from '@/db/singer';
 import { getUserById, Property as UserProperty } from '@/db/user';
-import { getAssetUrl } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -102,7 +102,7 @@ export default async (ctx: Context) => {
     }
     musicIdMapSingerList[s.musicId].push({
       ...excludeProperty(s, ['musicId']),
-      avatar: getAssetUrl(s.avatar, AssetType.SINGER_AVATAR),
+      avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
       aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     });
   });
@@ -130,10 +130,10 @@ export default async (ctx: Context) => {
   musicList.forEach((m) => {
     musicIdMapMusic[m.id] = {
       ...m,
-      cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
+      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
+      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingerList[m.id] || [],
     };
   });
@@ -141,14 +141,14 @@ export default async (ctx: Context) => {
   return ctx.success({
     ...excludeProperty(music, [MusicProperty.CREATE_USER_ID]),
     aliases: music.aliases ? music.aliases.split(ALIAS_DIVIDER) : [],
-    cover: getAssetUrl(music.cover, AssetType.MUSIC_COVER),
-    sq: getAssetUrl(music.sq, AssetType.MUSIC_SQ),
-    hq: getAssetUrl(music.hq, AssetType.MUSIC_HQ),
-    ac: getAssetUrl(music.ac, AssetType.MUSIC_AC),
+    cover: getAssetPublicPath(music.cover, AssetType.MUSIC_COVER),
+    sq: getAssetPublicPath(music.sq, AssetType.MUSIC_SQ),
+    hq: getAssetPublicPath(music.hq, AssetType.MUSIC_HQ),
+    ac: getAssetPublicPath(music.ac, AssetType.MUSIC_AC),
     singers: musicIdMapSingerList[id] || [],
     createUser: {
       ...createUser,
-      avatar: getAssetUrl(createUser!.avatar, AssetType.USER_AVATAR),
+      avatar: getAssetPublicPath(createUser!.avatar, AssetType.USER_AVATAR),
     },
     forkList: forkList.map((f) => musicIdMapMusic[f.musicId]),
     forkFromList: forkFromList.map((f) => musicIdMapMusic[f.forkFrom]),

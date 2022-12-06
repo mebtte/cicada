@@ -1,5 +1,5 @@
 import withTimeout from '#/utils/with_timeout';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Lyric, Property } from '@/db/lyric';
 import { parse, LineType, LyricLine } from 'clrc';
 
@@ -12,7 +12,7 @@ async function updateLyricLrcContent() {
   let lyricList: LocalLyric[] = [];
   let lastMaxId = 0;
   do {
-    lyricList = await db.all<LocalLyric>(
+    lyricList = await getDB().all<LocalLyric>(
       `
         SELECT
           id,
@@ -37,7 +37,7 @@ async function updateLyricLrcContent() {
           )
           .join('\n');
         if (lyric.lrcContent !== lrcContent) {
-          await db.run(
+          await getDB().run(
             `
               UPDATE lyric
               SET lrcContent = ?

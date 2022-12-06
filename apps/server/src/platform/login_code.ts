@@ -2,27 +2,30 @@ import fs from 'fs';
 import md5 from 'md5';
 import env from '@/env';
 import { GET_LOGIN_CODE_INTERVAL } from '#/constants';
-import db from '@/db';
+import { getDB } from '@/db';
 import generateRandomString from '#/utils/generate_random_string';
 import config from '@/config';
 import { LOGIN_CODE_TTL } from '../constants';
 
-const LOGIN_CODE_SALT_FILE_PATH = `${config.base}/login_code_salt`;
-
-let salt: string;
-if (fs.existsSync(LOGIN_CODE_SALT_FILE_PATH)) {
-  fs.readFileSync(LOGIN_CODE_SALT_FILE_PATH).toString();
-} else {
-  salt = generateRandomString();
-  fs.writeFileSync(LOGIN_CODE_SALT_FILE_PATH, salt);
-}
+let loginCodeSalt: string;
+const getLoginCodeSalt = () => {
+  if (!loginCodeSalt) {
+    if (fs.existsSync(`${config.get().base}/login_code_salt`)) {
+      fs.readFileSync(`${config.get().base}/login_code_salt`).toString();
+    } else {
+      loginCodeSalt = generateRandomString();
+      fs.writeFileSync(`${config.get().base}/login_code_salt`, loginCodeSalt);
+    }
+  }
+  return loginCodeSalt;
+};
 
 export async function hasLoginCodeInGetInterval({
   userId,
 }: {
   userId: string;
 }) {
-  const row = await db.get<{ id: string }>(
+  const row = await getDB().get<{ id: string }>(
     `
       select id from login_code
         where userId = ?
@@ -41,8 +44,9 @@ export function saveLoginCode({
   userId: string;
   code: string;
 }) {
-  const encodedCode = env.RUN_ENV === 'development' ? code : md5(code + salt);
-  return db.run(
+  const encodedCode =
+    env.RUN_ENV === 'development' ? code : md5(code + getLoginCodeSalt());
+  return getDB().run(
     'insert into login_code(userId, code, createTimestamp) values(?, ?, ?)',
     [userId, encodedCode, Date.now()],
   );
@@ -55,7 +59,7 @@ export async function verifyLoginCode({
   userId: string;
   code: string;
 }): Promise<boolean> {
-  const loginCode = await db.get<{ id: string; code: string }>(
+  const loginCode = await getDB().get<{ id: string; code: string }>(
     `
       select id, code from login_code
         where userId = ?
@@ -71,13 +75,14 @@ export async function verifyLoginCode({
   }
 
   if (
-    loginCode.code !== (env.RUN_ENV === 'development' ? code : md5(code + salt))
+    loginCode.code !==
+    (env.RUN_ENV === 'development' ? code : md5(code + getLoginCodeSalt()))
   ) {
     return false;
   }
 
-  db.run('update login_code set used = 1 where id = ?', [loginCode.id]).catch(
-    (error) => console.error(error),
-  );
+  getDB()
+    .run('update login_code set used = 1 where id = ?', [loginCode.id])
+    .catch((error) => console.error(error));
   return true;
 }

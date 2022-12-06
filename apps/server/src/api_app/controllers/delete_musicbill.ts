@@ -6,7 +6,7 @@ import {
   Property as MusicbillMusicProperty,
 } from '@/db/musicbill_music';
 import { TRASH_DIR } from '@/constants/directory';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -36,14 +36,14 @@ export default async (ctx: Context) => {
    * 从数据库移除
    */
   await Promise.all([
-    db.run(
+    getDB().run(
       `
         DELETE FROM musicbill_music
         WHERE musicbillId = ?
       `,
       [id],
     ),
-    db.run(
+    getDB().run(
       `
         DELETE FROM musicbill_export
         WHERE musicbillId = ?
@@ -51,7 +51,7 @@ export default async (ctx: Context) => {
       [id],
     ),
   ]);
-  await db.run(
+  await getDB().run(
     `
       DELETE FROM musicbill
       WHERE id = ?

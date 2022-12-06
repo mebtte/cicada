@@ -1,7 +1,0 @@
-{
-  "name": "cli",
-  "scripts": {
-    "dev": "cross-env RUN_ENV=development ts-node src/index.ts",
-    "build": "cross-env NODE_ENV=production webpack --config webpack.config.js --progress"
-  }
-}

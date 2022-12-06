@@ -1,8 +1,8 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getUserById, Property as UserProperty } from '@/db/user';
-import { getAssetUrl } from '@/platform/asset';
-import db from '@/db';
+import { getAssetPublicPath } from '@/platform/asset';
+import { getDB } from '@/db';
 import { Music, Property as MusicProperty } from '@/db/music';
 import { Musicbill, Property as MusicbillProperty } from '@/db/musicbill';
 import {
@@ -29,7 +29,7 @@ export default async (ctx: Context) => {
   }
 
   const [musicbillList, musicList] = await Promise.all([
-    db.all<
+    getDB().all<
       Pick<
         Musicbill,
         MusicbillProperty.ID | MusicbillProperty.COVER | MusicbillProperty.NAME
@@ -54,7 +54,7 @@ export default async (ctx: Context) => {
       `,
       [id],
     ),
-    db.all<
+    getDB().all<
       Pick<
         Music,
         | MusicProperty.ID
@@ -113,18 +113,18 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...user,
-    avatar: getAssetUrl(user.avatar, AssetType.USER_AVATAR),
+    avatar: getAssetPublicPath(user.avatar, AssetType.USER_AVATAR),
     musicbillList: musicbillList.map((m) => ({
       ...m,
-      cover: getAssetUrl(m.cover, AssetType.MUSICBILL_COVER),
+      cover: getAssetPublicPath(m.cover, AssetType.MUSICBILL_COVER),
     })),
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
+      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
+      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingers[m.id] || [],
     })),
   });

@@ -15,7 +15,7 @@ import {
   getMusicPlayRecordList,
   Property as MusicPlayRecordProperty,
 } from '@/db/music_play_record';
-import db from '@/db';
+import { getDB } from '@/db';
 import { TRASH_DIR } from '@/constants/directory';
 import { MusicType } from '#/constants/music';
 import { Context } from '../constants';
@@ -66,7 +66,7 @@ export default async (ctx: Context) => {
       MusicPlayRecordProperty.TIMESTAMP,
       MusicPlayRecordProperty.USER_ID,
     ]),
-    db.all<{ id: string; name: string }>(
+    getDB().all<{ id: string; name: string }>(
       `
         SELECT s.id, s.name FROM music_singer_relation as msr
         LEFT JOIN singer as s
@@ -75,7 +75,7 @@ export default async (ctx: Context) => {
       `,
       [id],
     ),
-    db.all<{
+    getDB().all<{
       id: number;
       musicbillId: string;
       addTimestamp: number;
@@ -102,7 +102,7 @@ export default async (ctx: Context) => {
       }),
     ),
     music.type === MusicType.SONG
-      ? db.run(
+      ? getDB().run(
           `
         DELETE FROM lyric
         WHERE musicId = ?
@@ -110,35 +110,35 @@ export default async (ctx: Context) => {
           [id],
         )
       : null,
-    db.run(
+    getDB().run(
       `
         DELETE FROM music_fork
         WHERE musicId = ?
       `,
       [id],
     ),
-    db.run(
+    getDB().run(
       `
         DELETE FROM music_modify_record
         WHERE musicId = ?
       `,
       [id],
     ),
-    db.run(
+    getDB().run(
       `
         DELETE FROM music_play_record
         WHERE musicId = ?
       `,
       [id],
     ),
-    db.run(
+    getDB().run(
       `
         DELETE FROM music_singer_relation
         WHERE musicId = ?
       `,
       [id],
     ),
-    db.run(
+    getDB().run(
       `
         DELETE FROM musicbill_music
         WHERE musicId = ?
@@ -146,7 +146,7 @@ export default async (ctx: Context) => {
       [id],
     ),
   ]);
-  await db.run(
+  await getDB().run(
     `
       DELETE FROM music
       WHERE id = ?

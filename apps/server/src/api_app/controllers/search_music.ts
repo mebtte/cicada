@@ -1,7 +1,7 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Music, Property as MusicProperty } from '@/db/music';
 import {
   Singer,
@@ -9,7 +9,7 @@ import {
   Property as SingerProperty,
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
-import { getAssetUrl } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -60,14 +60,14 @@ export default async (ctx: Context) => {
           OR s.aliases LIKE ?
     `;
     const results = await Promise.all([
-      db.get<{ value: number }>(
+      getDB().get<{ value: number }>(
         `
           SELECT count(*) as value FROM music 
             WHERE id IN (${musicPatternSQL}) OR id IN (${singerPatternSQL})
         `,
         [pattern, pattern, pattern, pattern],
       ),
-      await db.all<LocalMusic>(
+      await getDB().all<LocalMusic>(
         `
           SELECT
             id,
@@ -102,13 +102,13 @@ export default async (ctx: Context) => {
     }
 
     const results = await Promise.all([
-      db.get<{ value: number }>(
+      getDB().get<{ value: number }>(
         `
           SELECT count(*) as value FROM music
         `,
         [],
       ),
-      db.all<LocalMusic>(
+      getDB().all<LocalMusic>(
         `
           SELECT
             id,
@@ -162,10 +162,10 @@ export default async (ctx: Context) => {
     musicList: musicList.map((m) => ({
       ...excludeProperty(m, [MusicProperty.CREATE_USER_ID]),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
+      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
+      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingerList[m.id] || [],
     })),
   });

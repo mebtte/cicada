@@ -1,8 +1,8 @@
 import { CAPTCHA_TTL } from '#/constants';
-import db from '@/db';
+import { getDB } from '@/db';
 
 export function saveCaptcha({ id, value }: { id: string; value: string }) {
-  return db.run(
+  return getDB().run(
     'insert into captcha(id, value, createTimestamp) values(?, ?, ?)',
     [id, value, Date.now()],
   );
@@ -15,7 +15,7 @@ export async function verifyCaptcha({
   id: string;
   value: string;
 }): Promise<boolean> {
-  const captcha = await db.get<{
+  const captcha = await getDB().get<{
     id: string;
     value: string;
   }>(
@@ -39,9 +39,9 @@ export async function verifyCaptcha({
    * 无论验证成功与否
    * 都需要记录已使用
    */
-  db.run('update captcha set used = 1 where id = ?', [id]).catch((error) =>
-    console.error(error),
-  );
+  getDB()
+    .run('update captcha set used = 1 where id = ?', [id])
+    .catch((error) => console.error(error));
 
   if (value.toLowerCase() !== captcha.value.toLowerCase()) {
     return false;

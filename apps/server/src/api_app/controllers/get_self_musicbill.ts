@@ -10,8 +10,8 @@ import {
   Property as SingerProperty,
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
-import { getAssetUrl } from '@/platform/asset';
-import db from '@/db';
+import { getAssetPublicPath } from '@/platform/asset';
+import { getDB } from '@/db';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -34,7 +34,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
 
-  const musicList = await db.all<
+  const musicList = await getDB().all<
     Pick<
       Music,
       | MusicProperty.ID
@@ -93,14 +93,14 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...excludeProperty(musicbill, [MusicbillProperty.USER_ID]),
-    cover: getAssetUrl(musicbill.cover, AssetType.MUSICBILL_COVER),
+    cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
+      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
+      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingers[m.id] || [],
     })),
   });

@@ -2,10 +2,10 @@ import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
 import excludeProperty from '#/utils/exclude_property';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Musicbill, Property as MusicbillProperty } from '@/db/musicbill';
 import { User, Property as UserProperty, getUserListByIds } from '@/db/user';
-import { getAssetUrl } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -46,7 +46,7 @@ export default async (ctx: Context) => {
   if (keyword.length) {
     const pattern = `%${keyword}%`;
     const results = await Promise.all([
-      db.get<{ value: number }>(
+      getDB().get<{ value: number }>(
         `
           SELECT
             count(mc.id) AS value
@@ -59,7 +59,7 @@ export default async (ctx: Context) => {
         `,
         [pattern, ctx.user.id],
       ),
-      db.all<LocalMusicbill>(
+      getDB().all<LocalMusicbill>(
         `
           SELECT
             m.id,
@@ -94,7 +94,7 @@ export default async (ctx: Context) => {
     [, musicbillList] = results;
   } else {
     const results = await Promise.all([
-      db.get<{ value: number }>(
+      getDB().get<{ value: number }>(
         `
           SELECT
             count(mc.id) AS value
@@ -106,7 +106,7 @@ export default async (ctx: Context) => {
         `,
         [ctx.user.id],
       ),
-      db.all<LocalMusicbill>(
+      getDB().all<LocalMusicbill>(
         `
           SELECT
             m.id,
@@ -143,7 +143,7 @@ export default async (ctx: Context) => {
     );
     userList = userList.map((u) => ({
       ...u,
-      avatar: getAssetUrl(u.avatar, AssetType.USER_AVATAR),
+      avatar: getAssetPublicPath(u.avatar, AssetType.USER_AVATAR),
     }));
   }
 
@@ -151,7 +151,7 @@ export default async (ctx: Context) => {
     total,
     musicbillList: musicbillList.map((mb) => ({
       ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
-      cover: getAssetUrl(mb.cover, AssetType.MUSICBILL_COVER),
+      cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
       user: userList.find((u) => u.id === mb.userId),
     })),
   });

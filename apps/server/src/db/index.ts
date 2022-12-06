@@ -6,22 +6,28 @@ import util from 'util';
 import day from '#/utils/day';
 import { LOG_DIR } from '@/constants/directory';
 import DB, { EventType } from '#/utils/db';
-import { DB_FILE_PATH } from '../constants';
+import config from '@/config';
 
+let db: DB;
 const appendFileAsync = util.promisify(fs.appendFile);
-const db = new DB(DB_FILE_PATH);
 
-db.listen(EventType.PROFILE, (sql, ms) => {
-  const now = day();
-  const dateString = now.format('YYYYMMDD');
-  const timeString = now.format('HH:mm:ss');
+export function getDB() {
+  if (!db) {
+    db = new DB(`${config.get().base}/db`);
 
-  const trimedSQL = sql.replace(/\s+/g, ' ').trim();
+    db.listen(EventType.PROFILE, (sql, ms) => {
+      const now = day();
+      const dateString = now.format('YYYYMMDD');
+      const timeString = now.format('HH:mm:ss');
 
-  appendFileAsync(
-    `${LOG_DIR}/db_${dateString}.log`,
-    `[${timeString}] ${ms}ms\n${trimedSQL}\n\n`,
-  ).catch((error) => console.error(error));
-});
+      const trimedSQL = sql.replace(/\s+/g, ' ').trim();
 
-export default db;
+      appendFileAsync(
+        `${LOG_DIR}/db_${dateString}.log`,
+        `[${timeString}] ${ms}ms\n${trimedSQL}\n\n`,
+      ).catch((error) => console.error(error));
+    });
+  }
+
+  return db;
+}

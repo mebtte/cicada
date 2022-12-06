@@ -2,14 +2,21 @@ import nodemailer from 'nodemailer';
 import config from '@/config';
 import { BRAND_NAME } from '#/constants';
 
-const transporter = nodemailer.createTransport({
-  host: config.emailHost,
-  port: config.emailPort,
-  auth: {
-    user: config.emailUser,
-    pass: config.emailPass,
-  },
-});
+let transporter: nodemailer.Transporter;
+const getTransporter = () => {
+  if (!transporter) {
+    const c = config.get();
+    transporter = nodemailer.createTransport({
+      host: c.emailHost,
+      port: c.emailPort,
+      auth: {
+        user: c.emailUser,
+        pass: c.emailPass,
+      },
+    });
+  }
+  return transporter;
+};
 
 /**
  * 发送邮件
@@ -25,9 +32,9 @@ export function sendEmail({
   html: string;
 }) {
   return new Promise((resolve, reject) => {
-    transporter.sendMail(
+    getTransporter().sendMail(
       {
-        from: `${BRAND_NAME} <${config.emailUser}>`,
+        from: `${BRAND_NAME} <${config.get().emailUser}>`,
         to,
         subject: title,
         html,

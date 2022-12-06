@@ -14,7 +14,7 @@ import {
   updateSinger,
 } from '@/db/singer';
 import { saveSingerModifyRecord } from '@/db/singer_modify_record';
-import { getAssetPath } from '@/platform/asset';
+import { getAssetFilePath } from '@/platform/asset';
 import { Context } from '../constants';
 
 type LocalSinger = Pick<
@@ -112,7 +112,7 @@ const KEY_MAP_HANDLER: Record<
     }
 
     const avatarExist = await exist(
-      getAssetPath(avatar, AssetType.SINGER_AVATAR),
+      getAssetFilePath(avatar, AssetType.SINGER_AVATAR),
     );
     if (!avatarExist) {
       return ctx.except(ExceptionCode.ASSET_NOT_EXIST);

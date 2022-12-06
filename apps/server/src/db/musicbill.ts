@@ -1,5 +1,5 @@
 import generateRandomString from '#/utils/generate_random_string';
-import db from '.';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -23,7 +23,7 @@ export function getMusicbillById<P extends Property>(
   id: string,
   properties: P[],
 ) {
-  return db.get<{
+  return getDB().get<{
     [key in P]: Musicbill[key];
   }>(
     `
@@ -38,7 +38,7 @@ export function getUserMusicbillList<P extends Property>(
   userId: string,
   properties: P[],
 ) {
-  return db.all<{
+  return getDB().all<{
     [key in P]: Musicbill[key];
   }>(
     `
@@ -53,7 +53,7 @@ export function getMusicbillListByIds<P extends Property>(
   ids: string[],
   properties: P[],
 ) {
-  return db.all<{
+  return getDB().all<{
     [key in P]: Musicbill[key];
   }>(
     `
@@ -72,7 +72,7 @@ export async function createMusicbill({
   name: string;
 }) {
   const id = generateRandomString(8, false);
-  await db.run(
+  await getDB().run(
     `
       insert into musicbill(id, userId, name, createTimestamp)
         values(?, ?, ?, ?)
@@ -85,7 +85,7 @@ export async function createMusicbill({
 export function updateMusicbill<
   P extends Property.COVER | Property.NAME | Property.PUBLIC,
 >(id: string, property: P, value: Musicbill[P]) {
-  return db.run(
+  return getDB().run(
     `
       update musicbill set ${property} = ?
         where id = ?

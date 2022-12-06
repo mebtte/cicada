@@ -22,7 +22,7 @@ export default async (ctx: Context) => {
   const musicbillList = await getUserMusicbillList(ctx.user.id, [
     MusicbillProperty.ID,
   ]);
-  if (musicbillList.length > config.userMusicbillMaxAmount) {
+  if (musicbillList.length > config.get().userMusicbillMaxAmount) {
     return ctx.except(ExceptionCode.OVER_USER_MUSICBILL_MAX_AMOUNT);
   }
 

@@ -1,7 +1,7 @@
 import { encode } from 'html-entities';
 import { EMAIL } from '#/constants/regexp';
 import { ExceptionCode } from '#/constants/exception';
-import db from '@/db';
+import { getDB } from '@/db';
 import { verifyCaptcha } from '@/platform/captcha';
 import {
   hasLoginCodeInGetInterval,
@@ -38,7 +38,7 @@ export default async (ctx: Context) => {
    * 用户不存在返回参数错误
    * 避免暴露注册用户邮箱
    */
-  const user = await db.get<{ id: string; nickname: string }>(
+  const user = await getDB().get<{ id: string; nickname: string }>(
     'select id, nickname from user where email = ?',
     [email],
   );

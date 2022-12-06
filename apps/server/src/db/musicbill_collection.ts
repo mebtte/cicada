@@ -1,4 +1,4 @@
-import db from '@/db';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -23,7 +23,7 @@ export function getMusicbillCollection<P extends Property>({
   userId: string;
   properties: P[];
 }) {
-  return db.get<{
+  return getDB().get<{
     [key in P]: MusicbillCollection[P];
   }>(
     `
@@ -44,7 +44,7 @@ export function createMusicbillCollection({
   musicbillId: string;
   userId: string;
 }) {
-  return db.run(
+  return getDB().run(
     `
       INSERT INTO musicbill_collection ( musicbillId, userId, collectTimestamp )
       VALUES ( ?, ?, ? )
