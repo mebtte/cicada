@@ -9,8 +9,9 @@ package-lock.json
 # build & dist
 dist/
 /build
-/pwa/
-/index.js
+/pwa
+/server.js
+/cli.js
 /coverage/
 
 # cicada

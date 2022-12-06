@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "private": true,
-  "bin": "index.js",
+  "bin": "cli.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mebtte/cicada.git"
@@ -21,6 +21,8 @@
     "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev -w apps/server",
     "build:server": "npm run build -w apps/server",
+    "dev:cli": "npm run dev -w apps/cli",
+    "build:cli": "npm run build -w apps/cli",
     "pkg": "pkg .",
     "build": "./build.sh",
     "build:current": "rimraf build && npm run build:pwa && npm run build:server && npm run pkg"
@@ -30,6 +32,7 @@
   },
   "homepage": "https://cicada.mebtte.com",
   "workspaces": [
+    "apps/cli",
     "apps/pwa",
     "apps/server"
   ],
@@ -42,6 +45,7 @@
     "@koa/cors": "^3.3.0",
     "archiver": "^5.3.1",
     "clrc": "^3.0.1",
+    "commander": "^9.4.1",
     "eventin": "^1.2.0",
     "file-type": "^16.5.3",
     "html-entities": "^2.3.3",

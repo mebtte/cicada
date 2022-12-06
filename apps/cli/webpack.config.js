@@ -12,7 +12,7 @@ module.exports = {
   entry: path.join(__dirname, './src/index.ts'),
   output: {
     path: path.join(__dirname, '../..'),
-    filename: 'server.js',
+    filename: 'cli.js',
   },
   module: {
     rules: [

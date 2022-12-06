@@ -56,7 +56,7 @@ async function start() {
         maxAge: 86400,
 
         /**
-         * 当 sendBeacon 格式是 json 时必须
+         * 当 navigator.sendBeacon 格式是 json 时必须
          * @author mebtte<hi@mebtte.com>
          */
         credentials: true,
