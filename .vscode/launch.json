@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug server",
+      "request": "launch",
+      "type": "node",
+      "runtimeArgs": [
+        "-r",
+        "${workspaceFolder}/node_modules/ts-node/register",
+        "-r",
+        "${workspaceFolder}/node_modules/tsconfig-paths/register"
+      ],
+      "args": ["${workspaceFolder}/apps/server/src/index.ts"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "RUN_ENV": "development",
+        "TS_NODE_PROJECT": "${workspaceFolder}/apps/server/tsconfig.json"
+      }
+    }
+  ]
+}
