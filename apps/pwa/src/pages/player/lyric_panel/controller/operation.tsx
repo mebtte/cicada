@@ -34,9 +34,11 @@ const onNext = () => playerEventemitter.emit(PlayerEventType.ACTION_NEXT, null);
 function Operation({
   queueMusic,
   paused,
+  loading,
 }: {
   queueMusic: QueueMusic;
   paused: boolean;
+  loading: boolean;
 }) {
   return (
     <Style>
@@ -63,7 +65,11 @@ function Operation({
       <IconButton onClick={onPrevious}>
         <MdSkipPrevious />
       </IconButton>
-      <IconButton onClick={paused ? onPlay : onPause} size={56}>
+      <IconButton
+        onClick={paused ? onPlay : onPause}
+        size={56}
+        loading={loading}
+      >
         {paused ? <MdPlayArrow /> : <MdPause />}
       </IconButton>
       <IconButton onClick={onNext}>

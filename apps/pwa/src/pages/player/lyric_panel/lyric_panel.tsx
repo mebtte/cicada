@@ -18,8 +18,13 @@ const Style = styled(animated.div)`
 `;
 
 function LyricPanel({ style }: { style: unknown }) {
-  const { audioPaused, audioDuration, playqueue, currentPlayqueuePosition } =
-    useContext(Context);
+  const {
+    audioPaused,
+    audioDuration,
+    audioLoading,
+    playqueue,
+    currentPlayqueuePosition,
+  } = useContext(Context);
   const queueMusic = playqueue[currentPlayqueuePosition];
 
   return (
@@ -31,6 +36,7 @@ function LyricPanel({ style }: { style: unknown }) {
         queueMusic={queueMusic}
         paused={audioPaused}
         duration={audioDuration}
+        loading={audioLoading}
       />
     </Style>
   );

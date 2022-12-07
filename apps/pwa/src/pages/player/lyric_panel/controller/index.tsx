@@ -27,16 +27,18 @@ function Controller({
   queueMusic,
   paused,
   duration,
+  loading,
 }: {
   queueMusic: QueueMusic;
   paused: boolean;
   duration: number;
+  loading: boolean;
 }) {
   return (
     <Style>
       <Info queueMusic={queueMusic} />
       <Slider duration={duration} />
-      <Operation queueMusic={queueMusic} paused={paused} />
+      <Operation queueMusic={queueMusic} paused={paused} loading={loading} />
     </Style>
   );
 }
