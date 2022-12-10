@@ -1,13 +1,13 @@
 import fs from 'fs';
 import util from 'util';
-import {
-  TRASH_DIR,
-  LOG_DIR,
-  DOWNLOAD_DIR,
-  DB_SNAPSHOT_DIR,
-} from '@/constants/directory';
 import withTimeout from '#/utils/with_timeout';
 import { DOWNLOAD_TTL } from '#/constants';
+import {
+  getDBSnapshotDirectory,
+  getDownloadDirectory,
+  getLogDirectory,
+  getTrashDirectory,
+} from '@/config';
 
 const readdirAsync = util.promisify(fs.readdir);
 const rmAsync = util.promisify(fs.rm);
@@ -17,19 +17,19 @@ const DIRECTORIES: {
   ttl: number;
 }[] = [
   {
-    directory: TRASH_DIR,
+    directory: getTrashDirectory(),
     ttl: 1000 * 60 * 60 * 24 * 30,
   },
   {
-    directory: LOG_DIR,
+    directory: getLogDirectory(),
     ttl: 1000 * 60 * 60 * 24 * 30,
   },
   {
-    directory: DOWNLOAD_DIR,
+    directory: getDownloadDirectory(),
     ttl: DOWNLOAD_TTL,
   },
   {
-    directory: DB_SNAPSHOT_DIR,
+    directory: getDBSnapshotDirectory(),
     ttl: 1000 * 60 * 60 * 24 * 60,
   },
 ];

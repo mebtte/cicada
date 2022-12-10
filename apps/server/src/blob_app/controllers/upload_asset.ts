@@ -14,9 +14,9 @@ import which from 'which';
 import generateRandomString from '#/utils/generate_random_string';
 import fileType from 'file-type';
 import md5 from 'md5';
-import { getAssetUrl } from '@/platform/asset';
-import { ASSET_DIR, LOG_DIR } from '@/constants/directory';
+import { getAssetPublicPath } from '@/platform/asset';
 import day from '#/utils/day';
+import { getAssetDirectory, getLogDirectory } from '@/config';
 import { Context } from '../constants';
 
 const appendFileAsync = util.promisify(fs.appendFile);
@@ -173,20 +173,20 @@ export default async (ctx: Context) => {
   const data = await handleAsset(asset);
   const id = generateId(data);
 
-  await writeFileAsync(`${ASSET_DIR[assetType]}/${id}`, data);
+  await writeFileAsync(`${getAssetDirectory(assetType)}/${id}`, data);
   const assetPath = `${PathPrefix.ASSET}/${assetType}/${id}`;
 
   const now = day();
   const dateString = now.format('YYYYMMDD');
   const timeString = now.format('HH:mm:ss');
   appendFileAsync(
-    `${LOG_DIR}/asset_upload_${dateString}.log`,
+    `${getLogDirectory()}/asset_upload_${dateString}.log`,
     `[${timeString}] ${ctx.user.id} ${assetPath}\n`,
   ).catch((e) => console.error(e));
 
   return ctx.success({
     id,
     path: assetPath,
-    url: getAssetUrl(id, assetType),
+    url: getAssetPublicPath(id, assetType),
   });
 };

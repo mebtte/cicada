@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "private": true,
-  "bin": "index.js",
+  "bin": "server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mebtte/cicada.git"
@@ -20,6 +20,7 @@
     "dev:pwa-with-sw": "npm run dev-with-sw -w apps/pwa",
     "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev -w apps/server",
+    "watch:server": "npm run watch -w apps/server",
     "build:server": "npm run build -w apps/server",
     "pkg": "pkg .",
     "build": "./build.sh",
@@ -42,9 +43,11 @@
     "@koa/cors": "^3.3.0",
     "archiver": "^5.3.1",
     "clrc": "^3.0.1",
+    "commander": "^9.4.1",
     "eventin": "^1.2.0",
     "file-type": "^16.5.3",
     "html-entities": "^2.3.3",
+    "joi": "^17.7.0",
     "koa": "^2.13.4",
     "koa-etag": "^4.0.0",
     "localforage": "^1.10.0",

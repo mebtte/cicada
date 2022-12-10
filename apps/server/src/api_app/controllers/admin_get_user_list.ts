@@ -1,11 +1,11 @@
-import db from '@/db';
+import { getDB } from '@/db';
 import { User } from '@/db/user';
-import { getAssetUrl } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { AssetType } from '#/constants';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const userList = await db.all<User>(
+  const userList = await getDB().all<User>(
     `
       SELECT
         id,
@@ -23,7 +23,7 @@ export default async (ctx: Context) => {
   return ctx.success(
     userList.map((user) => ({
       ...user,
-      avatar: getAssetUrl(user.avatar, AssetType.USER_AVATAR),
+      avatar: getAssetPublicPath(user.avatar, AssetType.USER_AVATAR),
     })),
   );
 };

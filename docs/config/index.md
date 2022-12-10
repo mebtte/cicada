@@ -8,7 +8,6 @@
 | eamilPass                         | string | 是       | -                         | 发信邮箱密码                                                                       |
 | port                              | number | 否       | 8000                      | 提供服务的端口                                                                     |
 | publicAddress                     | string | 否       | http://localhost:{{port}} | **实际**暴露服务的地址, 比如 nginx 反向代理通过 https://cicada.mebtte.com 暴露服务 |
-| clusterCount                      | number | 否       | {{os.cups().length}}      | 服务进程数量                                                                       |
 | base                              | string | 否       | {{homedir}}/cicada        | 数据存放目录                                                                       |
 | userMusicbillMaxAmount            | number | 否       | 100                       | 每个用户最大乐单数量                                                               |
 | userExportMusicbillMaxTimesPerDay | number | 否       | 3                         | 每个用户每天导出乐单最大次数                                                       |

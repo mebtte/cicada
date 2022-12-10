@@ -1,4 +1,4 @@
-import db from '.';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -19,7 +19,7 @@ export function getMusicbillMusic<P extends Property>(
   musicId: string,
   properties: P[],
 ) {
-  return db.get<{
+  return getDB().get<{
     [key in P]: Music[key];
   }>(
     `
@@ -34,7 +34,7 @@ export function getMusicbillMusicList<P extends Property>(
   musicbillId: string,
   properties: P[],
 ) {
-  return db.all<{
+  return getDB().all<{
     [key in P]: Music[key];
   }>(
     `
@@ -46,7 +46,7 @@ export function getMusicbillMusicList<P extends Property>(
 }
 
 export function addMusicbillMusic(musicbillId: string, musicId: string) {
-  return db.run(
+  return getDB().run(
     `
       insert into musicbill_music(musicbillId, musicId, addTimestamp)
         values(?, ?, ?)
@@ -56,7 +56,7 @@ export function addMusicbillMusic(musicbillId: string, musicId: string) {
 }
 
 export function removeMusicbillMusicById(id: number) {
-  return db.run(
+  return getDB().run(
     `
       delete from musicbill_music
         where id = ?

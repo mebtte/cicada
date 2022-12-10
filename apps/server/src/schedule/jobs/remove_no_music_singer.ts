@@ -1,13 +1,13 @@
 import fs from 'fs/promises';
 import withTimeout from '#/utils/with_timeout';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Singer, Property } from '@/db/singer';
-import { TRASH_DIR } from '@/constants/directory';
 import day from '#/utils/day';
 import { NO_MUSIC_EXIST_DURATION } from '#/constants/singer';
+import { getTrashDirectory } from '@/config';
 
 async function removeNoMusicSinger() {
-  const noMusicSingerList = await db.all<Singer>(
+  const noMusicSingerList = await getDB().all<Singer>(
     `
       SELECT
         ${Object.values(Property).join(', ')}
@@ -26,7 +26,7 @@ async function removeNoMusicSinger() {
   );
   if (noMusicSingerList.length) {
     await Promise.all([
-      db.run(
+      getDB().run(
         `
           DELETE FROM singer_modify_record
           WHERE singerId in ( ${noMusicSingerList.map(() => '?').join(', ')} )
@@ -34,11 +34,13 @@ async function removeNoMusicSinger() {
         noMusicSingerList.map((s) => s.id),
       ),
       fs.writeFile(
-        `${TRASH_DIR}/deleted_singer_${day().format('YYYYMMDDHHmmss')}.json`,
+        `${getTrashDirectory()}/deleted_singer_${day().format(
+          'YYYYMMDDHHmmss',
+        )}.json`,
         JSON.stringify(noMusicSingerList),
       ),
     ]);
-    await db.run(
+    await getDB().run(
       `
         DELETE FROM singer
         WHERE id IN ( ${noMusicSingerList.map(() => '?').join(',')} )

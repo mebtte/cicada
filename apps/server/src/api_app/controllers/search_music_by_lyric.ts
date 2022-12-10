@@ -2,7 +2,7 @@ import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import excludeProperty from '#/utils/exclude_property';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Lyric, Property as LyricProperty } from '@/db/lyric';
 import { Music, Property as MusicProperty } from '@/db/music';
 import {
@@ -10,7 +10,7 @@ import {
   Property as SingerProperty,
   Singer,
 } from '@/db/singer';
-import { getAssetUrl } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 50;
@@ -38,14 +38,14 @@ export default async (ctx: Context) => {
 
   const pattern = `%${keyword}%`;
   const [totalObject, musicList] = await Promise.all([
-    db.get<{ value: number }>(
+    getDB().get<{ value: number }>(
       `
         SELECT count(distinct musicId) AS value FROM lyric
         WHERE lrcContent LIKE ?
       `,
       [pattern],
     ),
-    db.all<
+    getDB().all<
       Pick<
         Music,
         | MusicProperty.ID
@@ -88,7 +88,7 @@ export default async (ctx: Context) => {
   }
 
   const [lyricList, singerList] = await Promise.all([
-    db.all<
+    getDB().all<
       Pick<Lyric, LyricProperty.ID | LyricProperty.LRC | LyricProperty.MUSIC_ID>
     >(
       `
@@ -139,10 +139,10 @@ export default async (ctx: Context) => {
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
+      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
+      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingerList[m.id] || [],
       lyrics: musicIdMapLyricList[m.id] || [],
     })),

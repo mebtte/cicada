@@ -1,5 +1,5 @@
 import { ExceptionCode } from '#/constants/exception';
-import db from '@/db';
+import { getDB } from '@/db';
 import {
   getMusicbillCollection,
   Property as MusicbillCollectionProperty,
@@ -21,7 +21,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.NOT_COLLECT_MUSICBILL_YET);
   }
 
-  await db.run(
+  await getDB().run(
     `
       DELETE FROM musicbill_collection
       WHERE id = ?

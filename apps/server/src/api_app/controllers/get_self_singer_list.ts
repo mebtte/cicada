@@ -1,10 +1,10 @@
 import { ALIAS_DIVIDER } from '#/constants';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Singer, Property } from '@/db/singer';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const singerList = await db.all<
+  const singerList = await getDB().all<
     Pick<
       Singer,
       Property.ID | Property.ALIASES | Property.CREATE_TIMESTAMP | Property.NAME

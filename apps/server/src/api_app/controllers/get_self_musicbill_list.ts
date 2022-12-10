@@ -1,6 +1,6 @@
 import { AssetType } from '#/constants';
 import { getUserMusicbillList, Property } from '@/db/musicbill';
-import { getAssetUrl } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -20,7 +20,7 @@ export default async (ctx: Context) => {
     musicbillList
       .map((mb) => ({
         ...mb,
-        cover: getAssetUrl(mb.cover, AssetType.MUSICBILL_COVER),
+        cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
       }))
       .sort((a, b) => {
         const aOrder = orders.indexOf(a.id);

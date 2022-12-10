@@ -1,27 +1,32 @@
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import generateRandomString from '#/utils/generate_random_string';
-import config from '@/config';
+import { getJWTSecretFilePath } from '@/config';
 
 const JWT_TTL = 1000 * 60 * 60 * 24 * 180;
-const JWT_SECRET_FILE_PATH = `${config.base}/jwt_secret`;
 
-let secret: string;
-if (fs.existsSync(JWT_SECRET_FILE_PATH)) {
-  secret = fs.readFileSync(JWT_SECRET_FILE_PATH).toString();
-} else {
-  secret = generateRandomString(64);
-  fs.writeFileSync(JWT_SECRET_FILE_PATH, secret);
-}
+let secret: string = '';
+const getSecret = () => {
+  if (!secret) {
+    if (fs.existsSync(getJWTSecretFilePath())) {
+      secret = fs.readFileSync(getJWTSecretFilePath()).toString();
+    } else {
+      secret = generateRandomString(64);
+      fs.writeFileSync(getJWTSecretFilePath(), secret);
+    }
+  }
+
+  return secret;
+};
 
 export function sign(userId: string) {
-  return jwt.sign({ userId }, secret, {
+  return jwt.sign({ userId }, getSecret(), {
     expiresIn: JWT_TTL / 1000,
   });
 }
 
 export function verify(token: string): string {
-  const payload = jwt.verify(token, secret);
+  const payload = jwt.verify(token, getSecret());
   // @ts-expect-error
   return payload.userId;
 }

@@ -2,7 +2,7 @@ import * as schedule from 'node-schedule';
 import fs from 'fs';
 import util from 'util';
 import day from '#/utils/day';
-import { LOG_DIR } from '@/constants/directory';
+import { getLogDirectory } from '@/config';
 import removeOutdatedDB from './jobs/remove_outdated_db';
 import createDBSnapshot from './jobs/create_db_snapshot';
 import cleanOutdatedFile from './jobs/clean_outdated_file';
@@ -21,21 +21,21 @@ const appendFileAysnc = util.promisify(fs.appendFile);
 const onRun = (job: string) => {
   const timeString = getTimeString();
   appendFileAysnc(
-    `${LOG_DIR}/schedule_emit_${timeString.date}.log`,
+    `${getLogDirectory()}/schedule_emit_${timeString.date}.log`,
     `[${timeString.time}] ${job}\n`,
   );
 };
 const onError = ({ job, error }: { job: string; error: Error }) => {
   const timeString = getTimeString();
   appendFileAysnc(
-    `${LOG_DIR}/schedule_error_${timeString.date}.log`,
+    `${getLogDirectory()}/schedule_error_${timeString.date}.log`,
     `[${timeString.time}] ${job}\n${error.stack}\n\n`,
   );
 };
 const onFinish = (job: string) => {
   const timeString = getTimeString();
   appendFileAysnc(
-    `${LOG_DIR}/schedule_emit_${timeString.date}.log`,
+    `${getLogDirectory()}/schedule_emit_${timeString.date}.log`,
     `[${timeString.time}] ${job} done\n`,
   );
 };

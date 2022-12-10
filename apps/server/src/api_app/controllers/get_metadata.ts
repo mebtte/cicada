@@ -1,7 +1,7 @@
-import env from '@/env';
+import definition from '@/definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) =>
   ctx.success({
-    version: env.VERSION,
+    version: definition.VERSION,
   });

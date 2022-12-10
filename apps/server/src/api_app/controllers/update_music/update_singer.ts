@@ -1,6 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey } from '#/constants/music';
-import db from '@/db';
+import { getDB } from '@/db';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
 import { getSingerListByIds, Property as SingerProperty } from '@/db/singer';
 import stringArrayEqual from '#/utils/string_array_equal';
@@ -16,7 +16,7 @@ export default async ({ ctx, music, value }: Parameter) => {
     return ctx.error(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const oldSingerList = await db.all<{ id: number; singerId: string }>(
+  const oldSingerList = await getDB().all<{ id: number; singerId: string }>(
     `
       SELECT id, singerId FROM music_singer_relation
       WHERE musicId = ?
@@ -35,14 +35,14 @@ export default async ({ ctx, music, value }: Parameter) => {
   }
 
   await Promise.all([
-    db.run(
+    getDB().run(
       `
         DELETE FROM music_singer_relation
         WHERE id IN ( ${oldSingerList.map(() => '?').join(', ')} )
       `,
       oldSingerList.map((s) => s.id),
     ),
-    db.run(
+    getDB().run(
       `
         INSERT INTO music_singer_relation ( musicId, singerId )
         VALUES ${value.map(() => '( ?, ? )').join(', ')}

@@ -1,4 +1,4 @@
-import db from '.';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -26,13 +26,13 @@ export function getUserByEmail<P extends Property>(
   email: string,
   properties: P[],
 ) {
-  return db.get<{
+  return getDB().get<{
     [key in P]: User[key];
   }>(`select ${properties.join(',')} from user where email = ?`, [email]);
 }
 
 export function getUserById<P extends Property>(id: string, properties: P[]) {
-  return db.get<{
+  return getDB().get<{
     [key in P]: User[key];
   }>(`select ${properties.join(',')} from user where id = ?`, [id]);
 }
@@ -41,7 +41,7 @@ export function getUserListByIds<P extends Property>(
   ids: string[],
   properties: P[],
 ) {
-  return db.all<Pick<User, P>>(
+  return getDB().all<Pick<User, P>>(
     `
       select ${properties.map((p) => `\`${p}\``).join(',')} from user
         where id in ( ${ids.map(() => '?')} )
@@ -58,7 +58,7 @@ export function updateUser<
     | Property.ADMIN
     | Property.MUSICBILL_ORDERS_JSON,
 >({ id, property, value }: { id: string; property: P; value: User[P] }) {
-  return db.run(
+  return getDB().run(
     `
       update user set ${property} = ?
         where id = ?

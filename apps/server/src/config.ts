@@ -1,85 +1,121 @@
-import * as yargs from 'yargs';
+import { AssetType } from '#/constants';
 import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import { EMAIL } from '#/constants/regexp';
+import Joi from 'joi';
 import exitWithMessage from './utils/exit_with_message';
 
-interface Config {
-  base: string;
-  publicAddress: string;
-  port: number;
+export interface Config {
+  mode: 'development' | 'production';
+
   emailHost: string;
   emailPort: number;
   emailUser: string;
   emailPass: string;
-  clusterCount: number;
+
+  base: string;
+  port: number;
   userMusicbillMaxAmount: number;
   userExportMusicbillMaxTimesPerDay: number;
   userCreateMusicMaxTimesPerDay: number;
+  publicOrigin: string;
   initialAdminEmail: string;
 }
 
-let configFilePath: string;
-if (process.env.NODE_ENV === 'production') {
-  const argv = yargs.parse(process.argv) as {
-    config?: string;
-  };
-  if (!argv.config) {
-    exitWithMessage('请通过 [--config] 指定配置文件');
-  }
-  configFilePath = path.resolve(process.cwd(), argv.config!);
-} else {
-  configFilePath = path.join(__dirname, '../../../config.json');
-}
-if (!fs.existsSync(configFilePath)) {
-  exitWithMessage(`配置文件 [${configFilePath}] 不存在`);
-}
+const schema = Joi.object<Config>({
+  mode: Joi.string()
+    .pattern(/development|production/)
+    .optional(),
 
-let configFromFile: Config;
-try {
-  configFromFile = JSON.parse(fs.readFileSync(configFilePath).toString());
-} catch (error) {
-  console.error(error);
-  exitWithMessage(`配置文件 [${configFilePath}] 解析错误`);
-}
+  emailHost: Joi.string().hostname().required(),
+  emailPort: Joi.number().port().optional(),
+  emailUser: Joi.string().required(),
+  emailPass: Joi.string().required(),
 
-const DEFAULT_CONFIG: Omit<
-  Config,
-  'publicAddress' | 'emailHost' | 'emailUser' | 'emailPass'
-> = {
-  base: `${os.homedir()}/cicada`,
-  port: 8000,
+  base: Joi.string().optional(),
+  port: Joi.number().port().optional(),
+  userMusicbillMaxAmount: Joi.number().greater(0).optional(),
+  userExportMusicbillMaxTimesPerDay: Joi.number().greater(0).optional(),
+  userCreateMusicMaxTimesPerDay: Joi.number().greater(0).optional(),
+  publicOrigin: Joi.string().optional(),
+  initialAdminEmail: Joi.string().email().allow(''),
+});
+let config: Config = {
+  mode: 'production',
+
+  emailHost: '',
   emailPort: 465,
-  clusterCount: 1,
+  emailUser: '',
+  emailPass: '',
+
+  base: `${process.cwd()}/cicada`,
+  port: 8000,
   userMusicbillMaxAmount: 100,
   userExportMusicbillMaxTimesPerDay: 3,
   userCreateMusicMaxTimesPerDay: 5,
+  publicOrigin: '',
   initialAdminEmail: '',
 };
 
-const config: Config = {
-  ...DEFAULT_CONFIG,
-  // @ts-expect-error
-  ...configFromFile,
-};
-if (!config.publicAddress) {
-  config.publicAddress = `http://localhost:${config.port}`;
+export function getConfig() {
+  return config;
 }
 
-if (config.initialAdminEmail && !EMAIL.test(config.initialAdminEmail)) {
-  exitWithMessage('「initialAdminEmail」格式错误');
+export function getDBFilePath() {
+  return `${config.base}/db`;
 }
 
-const REQUIRED_CONFIG_KEYS: (keyof Config)[] = [
-  'emailHost',
-  'emailUser',
-  'emailPass',
-];
-for (const key of REQUIRED_CONFIG_KEYS) {
-  if (!config[key]) {
-    exitWithMessage(`配置项「${key}」不能为空`);
+export function getJWTSecretFilePath() {
+  return `${config.base}/jwt_secret`;
+}
+
+export function getLoginCodeSaltFilePath() {
+  return `${config.base}/login_code_salt`;
+}
+
+export function getDBSnapshotDirectory() {
+  return `${config.base}/db_snapshots`;
+}
+
+export function getTrashDirectory() {
+  return `${config.base}/trash`;
+}
+
+export function getLogDirectory() {
+  return `${config.base}/logs`;
+}
+
+export function getDownloadDirectory() {
+  return `${config.base}/downloads`;
+}
+
+export function getAssetDirectory(assetType?: AssetType) {
+  if (assetType) {
+    return `${config.base}/assets/${assetType}`;
+  }
+  return `${config.base}/assets`;
+}
+
+export function updateConfigFromFile(filePath: string) {
+  if (!fs.existsSync(filePath)) {
+    return exitWithMessage(`配置文件「${filePath}」不存在`);
+  }
+
+  let configFromFile: Partial<Config> = {};
+  try {
+    const dataString = fs.readFileSync(filePath).toString();
+    configFromFile = JSON.parse(dataString);
+  } catch (error) {
+    console.error(error);
+    exitWithMessage(`解析配置文件「${filePath}」失败`);
+  }
+
+  config = {
+    ...config,
+    ...configFromFile,
+  };
+
+  const { error } = schema.validate(config);
+  if (error) {
+    console.error(error);
+    exitWithMessage(`配置文件「${filePath}」错误`);
   }
 }
-
-export default config;

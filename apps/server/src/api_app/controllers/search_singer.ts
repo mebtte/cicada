@@ -1,9 +1,9 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { ExceptionCode } from '#/constants/exception';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Singer, Property as SingerProperty } from '@/db/singer';
-import { getAssetUrl } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -43,14 +43,14 @@ export default async (ctx: Context) => {
   if (keyword.length) {
     const pattern = `%${keyword}%`;
     const results = await Promise.all([
-      db.get<{ value: number }>(
+      getDB().get<{ value: number }>(
         `
           SELECT count(*) AS value FROM singer
           WHERE name LIKE ? OR aliases LIKE ?
         `,
         [pattern, pattern],
       ),
-      db.all<LocalSinger>(
+      getDB().all<LocalSinger>(
         `
           SELECT
             s.id,
@@ -74,13 +74,13 @@ export default async (ctx: Context) => {
     [, singerList] = results;
   } else {
     const results = await Promise.all([
-      db.get<{ value: number }>(
+      getDB().get<{ value: number }>(
         `
           SELECT count(*) as value FROM singer
         `,
         [],
       ),
-      db.all<LocalSinger>(
+      getDB().all<LocalSinger>(
         `
           SELECT
             s.id,
@@ -106,7 +106,7 @@ export default async (ctx: Context) => {
     total,
     singerList: singerList.map((singer) => ({
       ...singer,
-      avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),
+      avatar: getAssetPublicPath(singer.avatar, AssetType.SINGER_AVATAR),
       aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
     })),
   });

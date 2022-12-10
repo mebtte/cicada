@@ -1,7 +1,7 @@
 import { encode } from 'html-entities';
 import { EMAIL } from '#/constants/regexp';
 import { ExceptionCode } from '#/constants/exception';
-import db from '@/db';
+import { getDB } from '@/db';
 import { verifyCaptcha } from '@/platform/captcha';
 import {
   hasLoginCodeInGetInterval,
@@ -11,7 +11,7 @@ import generateRandomInteger from '#/utils/generate_random_integer';
 import { sendEmail } from '@/platform/email';
 import { BRAND_NAME } from '#/constants';
 import day from '#/utils/day';
-import env from '@/env';
+import { getConfig } from '@/config';
 import { LOGIN_CODE_TTL } from '../../constants';
 import { Context } from '../constants';
 
@@ -38,7 +38,7 @@ export default async (ctx: Context) => {
    * 用户不存在返回参数错误
    * 避免暴露注册用户邮箱
    */
-  const user = await db.get<{ id: string; nickname: string }>(
+  const user = await getDB().get<{ id: string; nickname: string }>(
     'select id, nickname from user where email = ?',
     [email],
   );
@@ -59,7 +59,7 @@ export default async (ctx: Context) => {
    * 开发环境下直接在控制台输出
    * @author mebtte<hi@mebtte.com>
    */
-  if (env.RUN_ENV === 'development') {
+  if (getConfig().mode === 'development') {
     // eslint-disable-next-line no-console
     console.log(`--- login code: ${code} ---`);
   } else {

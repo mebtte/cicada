@@ -1,4 +1,4 @@
-import db from '@/db';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -22,7 +22,7 @@ export function getSingerListInMusicIds<P extends Property>(
   musicIds: string[],
   properties: P[],
 ) {
-  return db.all<
+  return getDB().all<
     {
       musicId: string;
     } & Pick<Singer, P>
@@ -45,7 +45,7 @@ export function getSingerListByIds<P extends Property>(
   ids: string[],
   properties: P[],
 ) {
-  return db.all<Pick<Singer, P>>(
+  return getDB().all<Pick<Singer, P>>(
     `
       select ${properties.join(',')} from singer
         where id in ( ${ids.map(() => '?')} )
@@ -55,7 +55,7 @@ export function getSingerListByIds<P extends Property>(
 }
 
 export function getSingerById<P extends Property>(id: string, properties: P[]) {
-  return db.get<Pick<Singer, P>>(
+  return getDB().get<Pick<Singer, P>>(
     `
       select ${properties.join(',')} from singer
         where id = ?
@@ -67,7 +67,7 @@ export function getSingerById<P extends Property>(id: string, properties: P[]) {
 export function updateSinger<
   P extends Property.ALIASES | Property.AVATAR | Property.NAME,
 >({ id, property, value }: { id: string; property: P; value: Singer[P] }) {
-  return db.run(
+  return getDB().run(
     `
       update singer set ${property} = ? where id = ?
     `,

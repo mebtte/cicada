@@ -2,13 +2,13 @@ import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
 import exist from '#/utils/exist';
-import db from '@/db';
+import { getDB } from '@/db';
 import {
   getMusicbillListByIds,
   Property as MusicbillProperty,
 } from '@/db/musicbill';
 import { updateUser, Property as UserProperty, User } from '@/db/user';
-import { getAssetPath } from '@/platform/asset';
+import { getAssetFilePath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const ALLOW_UPDATE_KEYS = Object.values(AllowUpdateKey);
@@ -24,7 +24,7 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
     }
     const avatarExist = await exist(
-      getAssetPath(avatar, AssetType.USER_AVATAR),
+      getAssetFilePath(avatar, AssetType.USER_AVATAR),
     );
     if (!avatarExist) {
       return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
@@ -49,7 +49,7 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
     }
 
-    const nicknameUser = await db.get<Pick<User, UserProperty.ID>>(
+    const nicknameUser = await getDB().get<Pick<User, UserProperty.ID>>(
       `
         select id from user where nickname = ?
       `,

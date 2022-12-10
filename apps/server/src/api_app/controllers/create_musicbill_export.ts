@@ -1,8 +1,8 @@
 import { ExceptionCode } from '#/constants/exception';
 import { getMusicbillById, Property } from '@/db/musicbill';
-import db from '@/db';
+import { getDB } from '@/db';
 import day from '#/utils/day';
-import config from '@/config';
+import { getConfig } from '@/config';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -21,7 +21,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
 
-  const musicListTotal = await db.get<{
+  const musicListTotal = await getDB().get<{
     value: number;
   }>(
     `
@@ -37,7 +37,7 @@ export default async (ctx: Context) => {
   }
 
   const now = day();
-  const todayExportTimes = await db.get<{ value: number }>(
+  const todayExportTimes = await getDB().get<{ value: number }>(
     `
       SELECT
         count(*) AS value
@@ -48,11 +48,13 @@ export default async (ctx: Context) => {
     `,
     [ctx.user.id, now.startOf('day'), now.endOf('day')],
   );
-  if (todayExportTimes!.value >= config.userExportMusicbillMaxTimesPerDay) {
+  if (
+    todayExportTimes!.value >= getConfig().userExportMusicbillMaxTimesPerDay
+  ) {
     return ctx.except(ExceptionCode.OVER_EXPORT_MUSICBILL_TIMES_PER_DAY);
   }
 
-  await db.run(
+  await getDB().run(
     `
       INSERT INTO musicbill_export ( userId, musicbillId, createTimestamp )
       VALUES ( ?, ?, ? )

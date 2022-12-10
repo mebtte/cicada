@@ -3,7 +3,7 @@ import archiver from 'archiver';
 import fs from 'fs';
 import path from 'path';
 import withTimeout from '#/utils/with_timeout';
-import db from '@/db';
+import { getDB } from '@/db';
 import { getUserById, User, Property as UserProperty } from '@/db/user';
 import { Music, Property as MusicProperty } from '@/db/music';
 import { sendEmail } from '@/platform/email';
@@ -15,10 +15,9 @@ import {
   Property as SingerProperty,
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
-import { getAssetPath } from '@/platform/asset';
+import { getAssetFilePath } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
-import { DOWNLOAD_DIR } from '@/constants/directory';
-import config from '@/config';
+import { getConfig, getDownloadDirectory } from '@/config';
 import formatMusicFilename from '#/utils/format_music_filename';
 
 interface MusicbillExport {
@@ -49,7 +48,7 @@ function zipFileList(
 }
 
 function setMusicbillExported(id: number) {
-  return db.run(
+  return getDB().run(
     `
       UPDATE musicbill_export
       SET exportedTimestamp = ?
@@ -63,7 +62,7 @@ async function exportMusicbill(
   musicbillExport: MusicbillExport,
   user: LocalUser,
 ) {
-  const musicList = await db.all<
+  const musicList = await getDB().all<
     Pick<Music, MusicProperty.ID | MusicProperty.NAME | MusicProperty.SQ>
   >(
     `
@@ -125,7 +124,7 @@ async function exportMusicbill(
     musicList.map((m) => {
       const singers = musicIdMapSingerList[m.id];
       return {
-        path: getAssetPath(m.sq, AssetType.MUSIC_SQ),
+        path: getAssetFilePath(m.sq, AssetType.MUSIC_SQ),
         name: formatMusicFilename({
           name: m.name,
           singerNames: singers.map((s) => s.name),
@@ -133,7 +132,7 @@ async function exportMusicbill(
         }),
       };
     }),
-    `${DOWNLOAD_DIR}/${exportFilename}`,
+    `${getDownloadDirectory()}/${exportFilename}`,
   );
 
   await Promise.all([
@@ -147,7 +146,7 @@ async function exportMusicbill(
         <br />
         乐单「${encode(
           musicbillExport.musicbillName,
-        )}」已导出, 你可以点击<a href="${config.publicAddress}/${
+        )}」已导出, 你可以点击<a href="${getConfig().publicOrigin}/${
         PathPrefix.DOWNLOAD
       }/${exportFilename}">这里</a>进行下载, 链接将在 ${day(
         Date.now() + DOWNLOAD_TTL,
@@ -163,7 +162,7 @@ async function exportMusicbill(
 }
 
 async function exportMusicbillWrapper() {
-  const musicbillExport = await db.get<MusicbillExport>(
+  const musicbillExport = await getDB().get<MusicbillExport>(
     `
       SELECT
         me.id,

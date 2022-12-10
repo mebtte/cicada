@@ -1,5 +1,5 @@
 import { AllowUpdateKey } from '#/constants/music';
-import db from '@/db';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -26,7 +26,7 @@ export function saveMusicModifyRecord({
   key: AllowUpdateKey;
   modifyUserId: string;
 }) {
-  return db.run(
+  return getDB().run(
     `
       insert into music_modify_record(musicId, key, modifyUserId, modifyTimestamp)
         values( ?, ?, ?, ? )
@@ -39,7 +39,7 @@ export function getMusicModifyRecordList<P extends Property>(
   musicId: string,
   properties: P[],
 ) {
-  return db.all<{
+  return getDB().all<{
     [key in P]: MusicModifyRecord[key];
   }>(
     `

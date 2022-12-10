@@ -1,7 +1,7 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import excludeProperty from '#/utils/exclude_property';
-import db from '@/db';
+import { getDB } from '@/db';
 import { Music, Property as MusicProperty } from '@/db/music';
 import {
   getSingerById,
@@ -10,7 +10,7 @@ import {
   Singer,
 } from '@/db/singer';
 import { getUserById, Property as UserProperty } from '@/db/user';
-import { getAssetUrl } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -37,7 +37,7 @@ export default async (ctx: Context) => {
       UserProperty.AVATAR,
       UserProperty.NICKNAME,
     ]),
-    db.all<
+    getDB().all<
       Pick<
         Music,
         | MusicProperty.ID
@@ -94,7 +94,7 @@ export default async (ctx: Context) => {
       }
       musicIdMapSingers[s.musicId].push({
         ...excludeProperty(s, ['musicId']),
-        avatar: getAssetUrl(s.avatar, AssetType.SINGER_AVATAR),
+        avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
         aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
       });
     });
@@ -103,18 +103,18 @@ export default async (ctx: Context) => {
   return ctx.success({
     ...excludeProperty(singer, [SingerProperty.CREATE_USER_ID]),
     aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
-    avatar: getAssetUrl(singer.avatar, AssetType.SINGER_AVATAR),
+    avatar: getAssetPublicPath(singer.avatar, AssetType.SINGER_AVATAR),
     createUser: {
       ...createUser,
-      avatar: getAssetUrl(createUser!.avatar, AssetType.USER_AVATAR),
+      avatar: getAssetPublicPath(createUser!.avatar, AssetType.USER_AVATAR),
     },
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      cover: getAssetUrl(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetUrl(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetUrl(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetUrl(m.ac, AssetType.MUSIC_AC),
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
+      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
+      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingers[m.id] || [],
     })),
   });

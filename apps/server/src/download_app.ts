@@ -1,12 +1,12 @@
 import Koa from 'koa';
 import range from 'koa-range';
 import serve from 'koa-static';
-import { DOWNLOAD_DIR } from '@/constants/directory';
+import { getDownloadDirectory } from './config';
 
 const app = new Koa();
 app.use(range);
 app.use(
-  serve(DOWNLOAD_DIR, {
+  serve(getDownloadDirectory(), {
     /**
      * maxAge 标准单位秒 koa-static 毫秒
      * @author mebtte<hi@mebtte.com>

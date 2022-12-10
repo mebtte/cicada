@@ -12,8 +12,7 @@ module.exports = {
   entry: path.join(__dirname, './src/index.ts'),
   output: {
     path: path.join(__dirname, '../..'),
-    filename: 'index.js',
-    // chunkFilename: 'chunk_[name]_[contenthash].js',
+    filename: 'server.js',
   },
   module: {
     rules: [
@@ -33,7 +32,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __VERSION__: JSON.stringify(
+      'globalThis.CICADA_VERSION': JSON.stringify(
         cp
           .execSync('git describe --abbrev=0 --tags')
           .toString()

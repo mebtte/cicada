@@ -5,7 +5,7 @@ import {
   MusicType,
   MUSIC_MAX_LRYIC_AMOUNT,
 } from '#/constants/music';
-import db from '@/db';
+import { getDB } from '@/db';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
 import { parse, LineType, LyricLine } from 'clrc';
 import { Parameter } from './constants';
@@ -26,7 +26,7 @@ export default async ({ ctx, music, value }: Parameter) => {
   }
 
   await Promise.all([
-    db.run(
+    getDB().run(
       `
       DELETE FROM lyric
       WHERE musicId = ?
@@ -41,7 +41,7 @@ export default async ({ ctx, music, value }: Parameter) => {
   ]);
 
   if (value.length) {
-    await db.run(
+    await getDB().run(
       `
         INSERT INTO lyric ( musicId, lrc, lrcContent )
         VALUES ${value.map(() => `( ?, ?, ? )`).join(', ')}

@@ -1,6 +1,6 @@
 import { EFFECTIVE_PLAY_PERCENT } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import db from '@/db';
+import { getDB } from '@/db';
 import { getMusicById, Property as MusicProperty } from '@/db/music';
 import { addMusicPlayRecord } from '@/db/music_play_record';
 import { verify } from '@/platform/jwt';
@@ -40,7 +40,7 @@ export default async (ctx: Context) => {
 
   /** 有效播放次数 */
   if (percent >= EFFECTIVE_PLAY_PERCENT) {
-    db.run(
+    getDB().run(
       `
         update music set heat = heat + 1
           where id = ?;

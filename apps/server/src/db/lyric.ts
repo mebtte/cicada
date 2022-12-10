@@ -1,4 +1,4 @@
-import db from '.';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -18,7 +18,7 @@ export function getLyricListByMusicId<P extends Property>(
   musicId: string,
   properties: P[],
 ) {
-  return db.all<{
+  return getDB().all<{
     [key in P]: Lyric[key];
   }>(
     `

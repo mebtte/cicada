@@ -1,7 +1,8 @@
 {
   "name": "server",
   "scripts": {
-    "dev": "cross-env RUN_ENV=development nodemon",
+    "dev": "cross-env nodemon",
+    "watch": "cross-env NODE_ENV=production webpack --config webpack.config.js --progress --watch",
     "build": "cross-env NODE_ENV=production webpack --config webpack.config.js --progress"
   }
 }

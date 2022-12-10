@@ -1,5 +1,5 @@
 import { AllowUpdateKey } from '#/constants/singer';
-import db from '@/db';
+import { getDB } from '.';
 
 export enum Property {
   ID = 'id',
@@ -26,7 +26,7 @@ export function saveSingerModifyRecord({
   key: AllowUpdateKey;
   modifyUserId: string;
 }) {
-  return db.run(
+  return getDB().run(
     `
       insert into singer_modify_record(singerId, key, modifyUserId, modifyTimestamp)
         values( ?, ?, ?, ? )
