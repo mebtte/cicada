@@ -10,9 +10,8 @@ import blobApp from './blob_app';
 import assetApp from './asset_app';
 import pwaApp from './pwa_app';
 import schedule from './schedule';
-import env from './env';
 import downloadApp from './download_app';
-import config, { Config } from './config';
+import { updateConfigFromFile, getConfig, Config } from './config';
 import requirementCheck from './requirement_check';
 
 function printInfo(info: string) {
@@ -20,25 +19,20 @@ function printInfo(info: string) {
   console.log(`--- ${info} ---`);
 }
 
-async function start(c: Partial<Config>) {
-  config.set(c);
+async function start(configFilePath: string) {
+  updateConfigFromFile(configFilePath);
+  const config = getConfig();
 
   await initialize();
-
   requirementCheck();
 
-  for (const key of Object.keys(env)) {
-    printInfo(`env | ${key} = ${env[key]}`);
-  }
-
-  const newConfig = config.get();
   const SECRET_CONFIG_KEYS: (keyof Config)[] = ['emailPass'];
-  for (const key of Object.keys(newConfig) as (keyof Config)[]) {
+  for (const key of Object.keys(config) as (keyof Config)[]) {
     printInfo(
       `config | ${key} = ${
         SECRET_CONFIG_KEYS.includes(key)
-          ? '*'.repeat(String(newConfig[key]).length)
-          : newConfig[key]
+          ? '*'.repeat(String(config[key]).length)
+          : config[key]
       }`,
     );
   }
@@ -46,7 +40,7 @@ async function start(c: Partial<Config>) {
   schedule.start();
 
   const server = new Koa();
-  if (env.RUN_ENV === 'development') {
+  if (config.mode === 'development') {
     server.use(log());
   }
   server.use(
@@ -65,7 +59,7 @@ async function start(c: Partial<Config>) {
   server.use(mount(`/${PathPrefix.API}`, apiApp));
   server.use(mount(`/${PathPrefix.BLOB}`, blobApp));
   server.use(mount('/', pwaApp));
-  http.createServer(server.callback()).listen(newConfig.port);
+  http.createServer(server.callback()).listen(config.port);
 }
 
 export default {

@@ -16,8 +16,8 @@ import {
   Property as MusicPlayRecordProperty,
 } from '@/db/music_play_record';
 import { getDB } from '@/db';
-import { TRASH_DIR } from '@/constants/directory';
 import { MusicType } from '#/constants/music';
+import { getTrashDirectory } from '@/config';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -90,7 +90,7 @@ export default async (ctx: Context) => {
 
   await Promise.all([
     fs.writeFile(
-      `${TRASH_DIR}/deleted_music_${id}.json`,
+      `${getTrashDirectory()}/deleted_music_${id}.json`,
       JSON.stringify({
         ...music,
         lyricList,

@@ -4,16 +4,15 @@
 import fs from 'fs';
 import util from 'util';
 import day from '#/utils/day';
-import { LOG_DIR } from '@/constants/directory';
 import DB, { EventType } from '#/utils/db';
-import config from '@/config';
+import { getDBFilePath, getLogDirectory } from '@/config';
 
 let db: DB;
 const appendFileAsync = util.promisify(fs.appendFile);
 
 export function getDB() {
   if (!db) {
-    db = new DB(`${config.get().base}/db`);
+    db = new DB(getDBFilePath());
 
     db.listen(EventType.PROFILE, (sql, ms) => {
       const now = day();
@@ -23,7 +22,7 @@ export function getDB() {
       const trimedSQL = sql.replace(/\s+/g, ' ').trim();
 
       appendFileAsync(
-        `${LOG_DIR}/db_${dateString}.log`,
+        `${getLogDirectory()}/db_${dateString}.log`,
         `[${timeString}] ${ms}ms\n${trimedSQL}\n\n`,
       ).catch((error) => console.error(error));
     });

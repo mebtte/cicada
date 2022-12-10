@@ -1,18 +1,18 @@
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import generateRandomString from '#/utils/generate_random_string';
-import config from '@/config';
+import { getJWTSecretFilePath } from '@/config';
 
 const JWT_TTL = 1000 * 60 * 60 * 24 * 180;
 
 let secret: string = '';
 const getSecret = () => {
   if (!secret) {
-    if (fs.existsSync(`${config.get().base}/jwt_secret`)) {
-      secret = fs.readFileSync(`${config.get().base}/jwt_secret`).toString();
+    if (fs.existsSync(getJWTSecretFilePath())) {
+      secret = fs.readFileSync(getJWTSecretFilePath()).toString();
     } else {
       secret = generateRandomString(64);
-      fs.writeFileSync(`${config.get().base}/jwt_secret`, secret);
+      fs.writeFileSync(getJWTSecretFilePath(), secret);
     }
   }
 

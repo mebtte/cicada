@@ -2,14 +2,16 @@ import fs from 'fs';
 import { EMAIL } from '#/constants/regexp';
 import DB from '#/utils/db';
 import question from '#/utils/question';
+import { AssetType } from '#/constants';
 import {
-  ASSET_DIR,
-  DB_SNAPSHOT_DIR,
-  LOG_DIR,
-  TRASH_DIR,
-  DOWNLOAD_DIR,
-} from './constants/directory';
-import config from './config';
+  getAssetDirectory,
+  getConfig,
+  getDBFilePath,
+  getDBSnapshotDirectory,
+  getDownloadDirectory,
+  getLogDirectory,
+  getTrashDirectory,
+} from './config';
 
 function mkdirIfNotExist(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -23,27 +25,28 @@ export default async () => {
    * @author mebtte<hi@mebtte.com>
    */
   const directories = [
-    config.get().base,
-    DB_SNAPSHOT_DIR,
-    TRASH_DIR,
-    LOG_DIR,
+    getConfig().base,
+    getDBSnapshotDirectory(),
+    getTrashDirectory(),
+    getLogDirectory(),
+    getDownloadDirectory(),
 
-    ...Object.values(ASSET_DIR),
-
-    DOWNLOAD_DIR,
+    getAssetDirectory(),
+    ...Object.values(AssetType).map((at) => getAssetDirectory(at)),
   ];
   for (const directory of directories) {
     mkdirIfNotExist(directory);
   }
 
-  const dbFilePath = `${config.get().base}/db`;
-
   /**
    * initialize database
    * @author mebtte<hi@mebtte.com>
    */
-  if (!fs.existsSync(dbFilePath) || !fs.readFileSync(dbFilePath).length) {
-    const db = new DB(dbFilePath);
+  if (
+    !fs.existsSync(getDBFilePath()) ||
+    !fs.readFileSync(getDBFilePath()).length
+  ) {
+    const db = new DB(getDBFilePath());
     const TABLE_USER = `
       CREATE TABLE user (
         id TEXT PRIMARY KEY NOT NULL,
@@ -235,10 +238,10 @@ export default async () => {
    * 插入超级用户
    * @author mebtte<hi@mebtte.com>
    */
-  const db = new DB(dbFilePath);
+  const db = new DB(getDBFilePath());
   const adminUser = await db.get('select * from user where admin = 1');
   if (!adminUser) {
-    let adminEmail = config.get().initialAdminEmail;
+    let adminEmail = getConfig().initialAdminEmail;
     while (!adminEmail) {
       adminEmail = await question('❓ 请输入管理员邮箱: ');
       if (adminEmail && !EMAIL.test(adminEmail)) {

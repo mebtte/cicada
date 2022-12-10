@@ -5,7 +5,7 @@ import { getDB } from '@/db';
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
 import { sendEmail } from '@/platform/email';
-import config from '@/config';
+import { getConfig } from '@/config';
 import { Property, getUserByEmail } from '@/db/user';
 import { BRAND_NAME } from '#/constants';
 import { Context } from '../constants';
@@ -14,7 +14,7 @@ const generateEmailHtml = () => `Hi,
   <br>
   <br>
   已成功为您创建账号, 现在可以使用当前邮箱登录到「<a href="${
-    config.get().publicOrigin
+    getConfig().publicOrigin
   }
   ">知了</a>」.
   <br>

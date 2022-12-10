@@ -2,9 +2,9 @@ import fs from 'fs/promises';
 import withTimeout from '#/utils/with_timeout';
 import { getDB } from '@/db';
 import { Singer, Property } from '@/db/singer';
-import { TRASH_DIR } from '@/constants/directory';
 import day from '#/utils/day';
 import { NO_MUSIC_EXIST_DURATION } from '#/constants/singer';
+import { getTrashDirectory } from '@/config';
 
 async function removeNoMusicSinger() {
   const noMusicSingerList = await getDB().all<Singer>(
@@ -34,7 +34,9 @@ async function removeNoMusicSinger() {
         noMusicSingerList.map((s) => s.id),
       ),
       fs.writeFile(
-        `${TRASH_DIR}/deleted_singer_${day().format('YYYYMMDDHHmmss')}.json`,
+        `${getTrashDirectory()}/deleted_singer_${day().format(
+          'YYYYMMDDHHmmss',
+        )}.json`,
         JSON.stringify(noMusicSingerList),
       ),
     ]);

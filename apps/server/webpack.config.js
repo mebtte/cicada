@@ -32,7 +32,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __VERSION__: JSON.stringify(
+      'globalThis.CICADA_VERSION': JSON.stringify(
         cp
           .execSync('git describe --abbrev=0 --tags')
           .toString()

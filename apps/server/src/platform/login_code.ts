@@ -1,20 +1,19 @@
 import fs from 'fs';
 import md5 from 'md5';
-import env from '@/env';
 import { GET_LOGIN_CODE_INTERVAL } from '#/constants';
 import { getDB } from '@/db';
 import generateRandomString from '#/utils/generate_random_string';
-import config from '@/config';
+import { getConfig, getLoginCodeSaltFilePath } from '@/config';
 import { LOGIN_CODE_TTL } from '../constants';
 
 let loginCodeSalt: string;
 const getLoginCodeSalt = () => {
   if (!loginCodeSalt) {
-    if (fs.existsSync(`${config.get().base}/login_code_salt`)) {
-      fs.readFileSync(`${config.get().base}/login_code_salt`).toString();
+    if (fs.existsSync(getLoginCodeSaltFilePath())) {
+      fs.readFileSync(getLoginCodeSaltFilePath()).toString();
     } else {
       loginCodeSalt = generateRandomString();
-      fs.writeFileSync(`${config.get().base}/login_code_salt`, loginCodeSalt);
+      fs.writeFileSync(getLoginCodeSaltFilePath(), loginCodeSalt);
     }
   }
   return loginCodeSalt;
@@ -45,7 +44,7 @@ export function saveLoginCode({
   code: string;
 }) {
   const encodedCode =
-    env.RUN_ENV === 'development' ? code : md5(code + getLoginCodeSalt());
+    getConfig().mode === 'development' ? code : md5(code + getLoginCodeSalt());
   return getDB().run(
     'insert into login_code(userId, code, createTimestamp) values(?, ?, ?)',
     [userId, encodedCode, Date.now()],
@@ -76,7 +75,7 @@ export async function verifyLoginCode({
 
   if (
     loginCode.code !==
-    (env.RUN_ENV === 'development' ? code : md5(code + getLoginCodeSalt()))
+    (getConfig().mode === 'development' ? code : md5(code + getLoginCodeSalt()))
   ) {
     return false;
   }

@@ -1,17 +1,17 @@
 import nodemailer from 'nodemailer';
-import config from '@/config';
+import { getConfig } from '@/config';
 import { BRAND_NAME } from '#/constants';
 
 let transporter: nodemailer.Transporter;
 const getTransporter = () => {
   if (!transporter) {
-    const c = config.get();
+    const config = getConfig();
     transporter = nodemailer.createTransport({
-      host: c.emailHost,
-      port: c.emailPort,
+      host: config.emailHost,
+      port: config.emailPort,
       auth: {
-        user: c.emailUser,
-        pass: c.emailPass,
+        user: config.emailUser,
+        pass: config.emailPass,
       },
     });
   }
@@ -32,9 +32,10 @@ export function sendEmail({
   html: string;
 }) {
   return new Promise((resolve, reject) => {
+    const config = getConfig();
     getTransporter().sendMail(
       {
-        from: `${BRAND_NAME} <${config.get().emailUser}>`,
+        from: `${BRAND_NAME} <${config.emailUser}>`,
         to,
         subject: title,
         html,

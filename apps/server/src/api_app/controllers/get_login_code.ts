@@ -11,7 +11,7 @@ import generateRandomInteger from '#/utils/generate_random_integer';
 import { sendEmail } from '@/platform/email';
 import { BRAND_NAME } from '#/constants';
 import day from '#/utils/day';
-import env from '@/env';
+import { getConfig } from '@/config';
 import { LOGIN_CODE_TTL } from '../../constants';
 import { Context } from '../constants';
 
@@ -59,7 +59,7 @@ export default async (ctx: Context) => {
    * 开发环境下直接在控制台输出
    * @author mebtte<hi@mebtte.com>
    */
-  if (env.RUN_ENV === 'development') {
+  if (getConfig().mode === 'development') {
     // eslint-disable-next-line no-console
     console.log(`--- login code: ${code} ---`);
   } else {

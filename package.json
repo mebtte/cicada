@@ -47,6 +47,7 @@
     "eventin": "^1.2.0",
     "file-type": "^16.5.3",
     "html-entities": "^2.3.3",
+    "joi": "^17.7.0",
     "koa": "^2.13.4",
     "koa-etag": "^4.0.0",
     "localforage": "^1.10.0",

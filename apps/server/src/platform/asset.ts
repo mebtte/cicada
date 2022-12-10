@@ -1,18 +1,17 @@
 import { AssetType, PathPrefix } from '#/constants';
-import config from '@/config';
-import { ASSET_DIR } from '@/constants/directory';
+import { getAssetDirectory, getConfig } from '@/config';
 
 export function getAssetFilePath(asset: string, assetType: AssetType) {
   if (!asset.length) {
     return '';
   }
-  return `${ASSET_DIR[assetType]}/${asset}`;
+  return `${getAssetDirectory(assetType)}/${asset}`;
 }
 
 export function getAssetPublicPath(asset: string, assetType: AssetType) {
   if (!asset.length) {
     return '';
   }
-  const c = config.get();
-  return `${c.publicOrigin}/${PathPrefix.ASSET}/${assetType}/${asset}`;
+  const config = getConfig();
+  return `${config.publicOrigin}/${PathPrefix.ASSET}/${assetType}/${asset}`;
 }
