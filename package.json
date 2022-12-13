@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "private": true,
-  "bin": "server/server.js",
+  "bin": "server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mebtte/cicada.git"
@@ -177,7 +177,6 @@
   "pkg": {
     "assets": [
       "pwa/**/*",
-      "server/**/*",
       "node_modules/**/*.node"
     ],
     "outputPath": "build"

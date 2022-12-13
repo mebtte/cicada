@@ -2,16 +2,18 @@ import path from 'path';
 import Koa from 'koa';
 import serve from 'koa-static';
 import etag from 'koa-etag';
+import { getConfig } from './config';
 
-const app = new Koa();
-app.use(etag());
-app.use(
-  serve(
-    path.join(
-      __dirname,
-      process.env.NODE_ENV === 'production' ? './pwa' : '../../pwa/build',
+export function getPwaApp() {
+  const app = new Koa();
+  app.use(etag());
+  app.use(
+    serve(
+      path.join(
+        __dirname,
+        getConfig().mode === 'development' ? '../../pwa/build' : './pwa',
+      ),
     ),
-  ),
-);
-
-export default app;
+  );
+  return app;
+}

@@ -6,6 +6,13 @@ import mount from 'koa-mount';
 import { PathPrefix } from '#/constants';
 import { updateConfigFromFile, getConfig, Config } from './config';
 import requirementCheck from './requirement_check';
+import initialize from './initialize';
+import schedule from './schedule';
+import { getAssetApp } from './asset_app';
+import { getDownloadApp } from './download_app';
+import { getApiApp } from './api_app';
+import { getBlobApp } from './blob_app';
+import { getPwaApp } from './pwa_app';
 
 function printInfo(info: string) {
   // eslint-disable-next-line no-console
@@ -15,7 +22,6 @@ function printInfo(info: string) {
 async function start(configFilePath: string) {
   updateConfigFromFile(configFilePath);
 
-  const { default: initialize } = await import('./initialize');
   await initialize();
 
   requirementCheck();
@@ -32,7 +38,6 @@ async function start(configFilePath: string) {
     );
   }
 
-  const { default: schedule } = await import('./schedule');
   schedule.start();
 
   const server = new Koa();
@@ -51,20 +56,11 @@ async function start(configFilePath: string) {
     }),
   );
 
-  const { default: assetApp } = await import('./asset_app');
-  server.use(mount(`/${PathPrefix.ASSET}`, assetApp));
-
-  const { default: downloadApp } = await import('./download_app');
-  server.use(mount(`/${PathPrefix.DOWNLOAD}`, downloadApp));
-
-  const { default: apiApp } = await import('./api_app');
-  server.use(mount(`/${PathPrefix.API}`, apiApp));
-
-  const { default: blobApp } = await import('./blob_app');
-  server.use(mount(`/${PathPrefix.BLOB}`, blobApp));
-
-  const { default: pwaApp } = await import('./pwa_app');
-  server.use(mount('/', pwaApp));
+  server.use(mount(`/${PathPrefix.ASSET}`, getAssetApp()));
+  server.use(mount(`/${PathPrefix.DOWNLOAD}`, getDownloadApp()));
+  server.use(mount(`/${PathPrefix.API}`, getApiApp()));
+  server.use(mount(`/${PathPrefix.BLOB}`, getBlobApp()));
+  server.use(mount('/', getPwaApp()));
 
   http.createServer(server.callback()).listen(config.port);
 }
