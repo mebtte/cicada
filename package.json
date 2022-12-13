@@ -177,6 +177,7 @@
   "pkg": {
     "assets": [
       "pwa/**/*",
+      "server/**/*",
       "node_modules/**/*.node"
     ],
     "outputPath": "build"
