@@ -1,6 +1,7 @@
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '.';
 
-function getSelfMusicbillCollectionList({
+async function getSelfMusicbillCollectionList({
   keyword,
   page,
   pageSize,
@@ -9,7 +10,7 @@ function getSelfMusicbillCollectionList({
   page: number;
   pageSize: number;
 }) {
-  return request<{
+  const data = await request<{
     total: number;
     musicbillList: {
       id: string;
@@ -24,6 +25,17 @@ function getSelfMusicbillCollectionList({
     params: { keyword, page, pageSize },
     withToken: true,
   });
+  return {
+    ...data,
+    musicbillList: data.musicbillList.map((mb) => ({
+      ...mb,
+      cover: prefixServerOrigin(mb.cover),
+      user: {
+        ...mb.user,
+        avatar: prefixServerOrigin(mb.user.avatar),
+      },
+    })),
+  };
 }
 
 export default getSelfMusicbillCollectionList;

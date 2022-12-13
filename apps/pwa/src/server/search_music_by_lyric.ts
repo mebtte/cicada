@@ -1,7 +1,8 @@
 import { MusicType } from '#/constants/music';
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '.';
 
-function searchMusicByLyric({
+async function searchMusicByLyric({
   keyword,
   page,
   pageSize,
@@ -10,7 +11,7 @@ function searchMusicByLyric({
   page: number;
   pageSize: number;
 }) {
-  return request<{
+  const data = await request<{
     total: number;
     musicList: {
       id: string;
@@ -36,6 +37,16 @@ function searchMusicByLyric({
     params: { keyword, page, pageSize },
     withToken: true,
   });
+  return {
+    ...data,
+    musicList: data.musicList.map((m) => ({
+      ...m,
+      cover: prefixServerOrigin(m.cover),
+      sq: prefixServerOrigin(m.sq),
+      hq: prefixServerOrigin(m.hq),
+      ac: prefixServerOrigin(m.ac),
+    })),
+  };
 }
 
 export default searchMusicByLyric;

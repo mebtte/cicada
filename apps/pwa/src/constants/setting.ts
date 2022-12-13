@@ -1,4 +1,4 @@
 export interface Setting {
-  serverAddress: string;
+  serverOrigin: string;
   playerVolume: number;
 }

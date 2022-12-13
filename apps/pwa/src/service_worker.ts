@@ -9,7 +9,7 @@ import { RangeRequestsPlugin } from 'workbox-range-requests';
 import { CacheName } from '@/constants/cache';
 import { AssetType, PathPrefix } from '#/constants';
 import parseSearch from './utils/parse_search';
-import env from './env';
+import definition from './definition';
 import { Query } from './constants';
 
 export type {};
@@ -50,7 +50,10 @@ self.addEventListener('activate', () => {
     for (const key of keys) {
       const url = new URL(key.url);
       const query = parseSearch<Query.VERSION>(url.search);
-      if (!query[Query.VERSION] || query[Query.VERSION] !== env.VERSION) {
+      if (
+        !query[Query.VERSION] ||
+        query[Query.VERSION] !== definition.VERSION
+      ) {
         cache.delete(key);
       }
     }

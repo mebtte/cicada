@@ -60,6 +60,7 @@ function UserList() {
         u.email.toLowerCase().includes(lowerCaseKeyword) ||
         u.remark.toLowerCase().includes(lowerCaseKeyword),
     );
+
     return (
       <UserListContainer style={style}>
         {filteredUserList.map((user) => (

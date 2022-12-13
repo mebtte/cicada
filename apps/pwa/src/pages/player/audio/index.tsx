@@ -6,7 +6,7 @@ import { CacheName } from '@/constants/cache';
 import { PlayMode } from '@/constants';
 import settingState from '@/global_states/setting';
 import { Setting } from '@/constants/setting';
-import env from '@/env';
+import definition from '@/definition';
 import eventemitter, { EventType } from '../eventemitter';
 import { QueueMusic, Music } from '../constants';
 import onError from './on_error';
@@ -179,7 +179,7 @@ class Audio extends React.PureComponent<Props, {}> {
     const playedSeconds = this.getPlayedSeconeds();
     const percent = duration ? playedSeconds / duration : 0;
 
-    if (env.WITH_SW && percent > 0.75) {
+    if (definition.WITH_SW && percent > 0.75) {
       window.caches.open(CacheName.ASSET_MEDIA).then(async (cache) => {
         const url = this.getAudioSrc(music);
         const exist = await cache.match(url);

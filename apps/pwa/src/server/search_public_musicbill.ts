@@ -1,6 +1,7 @@
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '.';
 
-function searchPublicMusicbill({
+async function searchPublicMusicbill({
   keyword,
   page,
   pageSize,
@@ -9,7 +10,7 @@ function searchPublicMusicbill({
   page: number;
   pageSize: number;
 }) {
-  return request<{
+  const data = await request<{
     total: number;
     musicbillList: {
       id: string;
@@ -27,6 +28,17 @@ function searchPublicMusicbill({
     params: { keyword, page, pageSize },
     withToken: true,
   });
+  return {
+    ...data,
+    musicbillList: data.musicbillList.map((mb) => ({
+      ...mb,
+      cover: prefixServerOrigin(mb.cover),
+      user: {
+        ...mb.user,
+        avatar: prefixServerOrigin(mb.user.avatar),
+      },
+    })),
+  };
 }
 
 export default searchPublicMusicbill;

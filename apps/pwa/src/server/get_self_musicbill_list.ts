@@ -1,7 +1,8 @@
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '.';
 
-function getSelfMusicbillList() {
-  return request<
+async function getSelfMusicbillList() {
+  const musicbillList = await request<
     {
       id: string;
       cover: string;
@@ -13,6 +14,10 @@ function getSelfMusicbillList() {
     path: '/api/self_musicbill_list',
     withToken: true,
   });
+  return musicbillList.map((mb) => ({
+    ...mb,
+    cover: prefixServerOrigin(mb.cover),
+  }));
 }
 
 export default getSelfMusicbillList;

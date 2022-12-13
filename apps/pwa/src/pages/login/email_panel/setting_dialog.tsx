@@ -14,14 +14,14 @@ function SettingDialog({
   open: boolean;
   onClose: () => void;
 }) {
-  const [serverAddress, setServerAddress] = useState(
-    () => setting.get().serverAddress,
+  const [serverOrigin, setServerOrigin] = useState(
+    () => setting.get().serverOrigin,
   );
   const onSave = useEvent(() => {
-    if (!URL.test(serverAddress)) {
+    if (!URL.test(serverOrigin)) {
       return notice.error('服务器地址不是一个合法的 URL');
     }
-    setting.set((s) => ({ ...s, serverAddress }));
+    setting.set((s) => ({ ...s, serverOrigin }));
 
     return onClose();
   });
@@ -32,10 +32,10 @@ function SettingDialog({
         <Title>设置</Title>
         <Content>
           <Input
-            label="服务器地址"
+            label="服务器源地址"
             inputProps={{
-              value: serverAddress,
-              onChange: (event) => setServerAddress(event.target.value),
+              value: serverOrigin,
+              onChange: (event) => setServerOrigin(event.target.value),
             }}
           />
         </Content>

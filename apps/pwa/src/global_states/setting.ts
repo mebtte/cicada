@@ -4,7 +4,7 @@ import { Setting } from '@/constants/setting';
 import logger from '#/utils/logger';
 
 const DEFAULT_SETTING: Setting = {
-  serverAddress: window.location.origin,
+  serverOrigin: '',
   playerVolume: 1,
 };
 const initialSetting = await storage.getItem(Key.SETTING);
@@ -18,5 +18,12 @@ setting.onChange((s) =>
     .setItem(Key.SETTING, s)
     .catch((error) => logger.error(error, '保存设置失败')),
 );
+
+export function prefixServerOrigin(path: string) {
+  if (path) {
+    return `${setting.get().serverOrigin}${path}`;
+  }
+  return path;
+}
 
 export default setting;

@@ -21,7 +21,7 @@ function uploadMusicPlayRecord({
     },
   );
   return window.navigator.sendBeacon(
-    `${setting.get().serverAddress}/api/music_play_record`,
+    `${setting.get().serverOrigin}/api/music_play_record`,
     blob,
   );
 }

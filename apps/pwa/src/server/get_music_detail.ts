@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { MusicType } from '#/constants/music';
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '.';
 
 interface Singer {
@@ -15,10 +16,9 @@ interface Music {
   name: string;
   type: MusicType;
   aliases: string[];
-  ac: string;
-  hq: string;
-  mv_link: string;
   sq: string;
+  hq: string;
+  ac: string;
   singers: Singer[];
 }
 
@@ -26,8 +26,8 @@ interface Music {
  * 获取音乐详情
  * @author mebtte<hi@mebtte.com>
  */
-function getMusicDetail(id: string) {
-  return request<
+async function getMusicDetail(id: string) {
+  const music = await request<
     Music & {
       createTimestamp: number;
       createUser: { id: string; avatar: string; nickname: string };
@@ -39,6 +39,17 @@ function getMusicDetail(id: string) {
     params: { id },
     withToken: true,
   });
+  return {
+    ...music,
+    singers: music.singers.map((s) => ({
+      ...s,
+      avatar: prefixServerOrigin(s.avatar),
+    })),
+    cover: prefixServerOrigin(music.cover),
+    sq: prefixServerOrigin(music.sq),
+    hq: prefixServerOrigin(music.hq),
+    ac: prefixServerOrigin(music.ac),
+  };
 }
 
 export default getMusicDetail;

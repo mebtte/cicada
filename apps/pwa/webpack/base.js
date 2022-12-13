@@ -13,7 +13,7 @@ const experiments = {
 };
 
 const envDefinePlugin = new webpack.DefinePlugin({
-  __ENV__: JSON.stringify({
+  __DEFINE__: JSON.stringify({
     VERSION: cp
       .execSync('git describe --abbrev=0 --tags')
       .toString()

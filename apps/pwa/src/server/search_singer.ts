@@ -1,6 +1,7 @@
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '.';
 
-function searchSinger({
+async function searchSinger({
   keyword,
   page,
   pageSize,
@@ -9,11 +10,11 @@ function searchSinger({
   page: number;
   pageSize: number;
 }) {
-  return request<{
+  const data = await request<{
     total: number;
     singerList: {
       id: string;
-      avatar?: string;
+      avatar: string;
       name: string;
       aliases: string[];
       musicCount: number;
@@ -23,6 +24,13 @@ function searchSinger({
     params: { keyword, page, pageSize },
     withToken: true,
   });
+  return {
+    ...data,
+    singerList: data.singerList.map((s) => ({
+      ...s,
+      avatar: prefixServerOrigin(s.avatar),
+    })),
+  };
 }
 
 export default searchSinger;

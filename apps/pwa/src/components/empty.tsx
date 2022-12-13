@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
-import env from '@/env';
+import definition from '@/definition';
 import getRandomInteger from '#/utils/generate_random_integer';
 import { CSSVariable } from '@/global_style';
 
@@ -35,7 +35,9 @@ function Empty({
 }) {
   const emptyImage = useMemo(
     () =>
-      env.EMPTY_IMAGE_LIST[getRandomInteger(0, env.EMPTY_IMAGE_LIST.length)],
+      definition.EMPTY_IMAGE_LIST[
+        getRandomInteger(0, definition.EMPTY_IMAGE_LIST.length)
+      ],
     [],
   );
   return (

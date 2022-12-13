@@ -1,7 +1,9 @@
-import env from '@/env';
+import definition from '@/definition';
 
 function getRandomCover() {
-  return env.COVER_LIST[Math.floor(Math.random() * env.COVER_LIST.length)];
+  return definition.COVER_LIST[
+    Math.floor(Math.random() * definition.COVER_LIST.length)
+  ];
 }
 
 export default getRandomCover;

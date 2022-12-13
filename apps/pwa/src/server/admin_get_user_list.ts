@@ -1,11 +1,12 @@
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '.';
 
-function adminGetUserList() {
-  return request<
+async function adminGetUserList() {
+  const userList = await request<
     {
       id: string;
       nickname: string;
-      avatar?: string;
+      avatar: string;
       admin: 0 | 1;
       email: string;
       remark: string;
@@ -15,6 +16,10 @@ function adminGetUserList() {
     path: '/api/admin/user_list',
     withToken: true,
   });
+  return userList.map((u) => ({
+    ...u,
+    avatar: prefixServerOrigin(u.avatar),
+  }));
 }
 
 export default adminGetUserList;

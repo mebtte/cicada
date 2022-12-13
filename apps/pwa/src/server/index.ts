@@ -3,7 +3,7 @@ import token from '@/global_states/token';
 import setting from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
-import env from '@/env';
+import definition from '@/definition';
 import { Query } from '@/constants';
 import timeoutFn from '#/utils/timeout';
 
@@ -38,12 +38,12 @@ export async function request<Data = void>({
   minDuration?: number;
   timeout?: number;
 }) {
-  const { serverAddress } = setting.get();
-  let url = `${serverAddress}${path}`;
+  const { serverOrigin } = setting.get();
+  let url = `${serverOrigin}${path}`;
 
   const combineParams = {
     ...params,
-    [Query.VERSION]: env.VERSION,
+    [Query.VERSION]: definition.VERSION,
   };
   url += `?${Object.keys(combineParams)
     .map(

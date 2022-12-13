@@ -8,7 +8,7 @@ import IconButton from '@/components/icon_button';
 import { MdCheck, MdClose } from 'react-icons/md';
 import sleep from '#/utils/sleep';
 import App from './app';
-import env from './env';
+import definition from './definition';
 
 createRoot(document.querySelector('#root')!).render(
   <HashRouter>
@@ -35,7 +35,7 @@ const VersionUpdater = styled.div`
   }
 `;
 if ('serviceWorker' in navigator) {
-  if (env.WITH_SW) {
+  if (definition.WITH_SW) {
     window.requestIdleCallback(() =>
       import('workbox-window').then(({ Workbox }) => {
         const wb = new Workbox('/service_worker.js');
