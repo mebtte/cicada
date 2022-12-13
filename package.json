@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "private": true,
-  "bin": "server.js",
+  "bin": "server/server.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mebtte/cicada.git"

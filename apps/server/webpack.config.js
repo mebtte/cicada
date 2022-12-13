@@ -11,7 +11,7 @@ module.exports = {
   target: 'node',
   entry: path.join(__dirname, './src/index.ts'),
   output: {
-    path: path.join(__dirname, '../..'),
+    path: path.join(__dirname, '../../server'),
     filename: 'server.js',
   },
   module: {

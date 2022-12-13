@@ -10,7 +10,7 @@ package-lock.json
 dist/
 /build
 /pwa
-/server.js
+/server
 /coverage/
 
 # cicada
