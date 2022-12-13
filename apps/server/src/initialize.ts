@@ -204,6 +204,7 @@ export default async () => {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userId TEXT NOT NULL,
         musicbillId TEXT NOT NULL,
+        accessOrigin TEXT NOT NULL,
         createTimestamp INTEGER NOT NULL,
         exportedTimestamp INTEGER DEFAULT NULL,
         CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ),

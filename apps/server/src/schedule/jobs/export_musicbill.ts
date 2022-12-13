@@ -17,7 +17,7 @@ import {
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetFilePath } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
-import { getConfig, getDownloadDirectory } from '@/config';
+import { getDownloadDirectory } from '@/config';
 import formatMusicFilename from '#/utils/format_music_filename';
 
 interface MusicbillExport {
@@ -25,6 +25,7 @@ interface MusicbillExport {
   userId: string;
   musicbillId: string;
   musicbillName: string;
+  accessOrigin: string;
 }
 type LocalUser = Pick<User, UserProperty.NICKNAME | UserProperty.EMAIL>;
 
@@ -146,7 +147,7 @@ async function exportMusicbill(
         <br />
         乐单「${encode(
           musicbillExport.musicbillName,
-        )}」已导出, 你可以点击<a href="${getConfig().publicOrigin}/${
+        )}」已导出, 你可以点击<a href="${musicbillExport.accessOrigin}/${
         PathPrefix.DOWNLOAD
       }/${exportFilename}">这里</a>进行下载, 链接将在 ${day(
         Date.now() + DOWNLOAD_TTL,
@@ -168,6 +169,7 @@ async function exportMusicbillWrapper() {
         me.id,
         me.userId,
         me.musicbillId,
+        me.accessOrigin,
         m.name AS musicbillName
       FROM musicbill_export AS me
       LEFT JOIN musicbill AS m ON me.musicbillId = m.id

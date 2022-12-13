@@ -1,5 +1,5 @@
 import { AssetType, PathPrefix } from '#/constants';
-import { getAssetDirectory, getConfig } from '@/config';
+import { getAssetDirectory } from '@/config';
 
 export function getAssetFilePath(asset: string, assetType: AssetType) {
   if (!asset.length) {
@@ -12,6 +12,5 @@ export function getAssetPublicPath(asset: string, assetType: AssetType) {
   if (!asset.length) {
     return '';
   }
-  const config = getConfig();
-  return `${config.publicOrigin}/${PathPrefix.ASSET}/${assetType}/${asset}`;
+  return `/${PathPrefix.ASSET}/${assetType}/${asset}`;
 }

@@ -7,6 +7,7 @@ function adminCreateUser({ email, remark }: { email: string; remark: string }) {
     body: {
       email,
       remark,
+      accessOrigin: window.location.origin,
     },
     withToken: true,
   });

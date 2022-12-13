@@ -16,7 +16,6 @@ export interface Config {
   userMusicbillMaxAmount: number;
   userExportMusicbillMaxTimesPerDay: number;
   userCreateMusicMaxTimesPerDay: number;
-  publicOrigin: string;
   initialAdminEmail: string;
 }
 
@@ -35,7 +34,6 @@ const schema = Joi.object<Config>({
   userMusicbillMaxAmount: Joi.number().greater(0).optional(),
   userExportMusicbillMaxTimesPerDay: Joi.number().greater(0).optional(),
   userCreateMusicMaxTimesPerDay: Joi.number().greater(0).optional(),
-  publicOrigin: Joi.string().optional(),
   initialAdminEmail: Joi.string().email().allow(''),
 });
 let config: Config = {
@@ -51,7 +49,6 @@ let config: Config = {
   userMusicbillMaxAmount: 100,
   userExportMusicbillMaxTimesPerDay: 3,
   userCreateMusicMaxTimesPerDay: 5,
-  publicOrigin: '',
   initialAdminEmail: '',
 };
 

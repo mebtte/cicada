@@ -4,7 +4,7 @@ function createMusicbillExport(id: string) {
   return request({
     path: '/api/musicbill_export',
     method: Method.POST,
-    body: { id },
+    body: { id, accessOrigin: window.location.origin },
     withToken: true,
   });
 }

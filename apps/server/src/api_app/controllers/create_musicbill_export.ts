@@ -6,10 +6,15 @@ import { getConfig } from '@/config';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const { id } = ctx.request.body as {
+  const { id, accessOrigin } = ctx.request.body as {
     id?: unknown;
+    accessOrigin?: string;
   };
-  if (typeof id !== 'string' || !id.length) {
+  if (
+    typeof id !== 'string' ||
+    !id.length ||
+    typeof accessOrigin !== 'string'
+  ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
@@ -56,10 +61,10 @@ export default async (ctx: Context) => {
 
   await getDB().run(
     `
-      INSERT INTO musicbill_export ( userId, musicbillId, createTimestamp )
-      VALUES ( ?, ?, ? )
+      INSERT INTO musicbill_export ( userId, musicbillId, createTimestamp, accessOrigin )
+      VALUES ( ?, ?, ?, ? )
     `,
-    [ctx.user.id, id, Date.now()],
+    [ctx.user.id, id, Date.now(), accessOrigin],
   );
 
   return ctx.success();
