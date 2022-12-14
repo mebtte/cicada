@@ -2,7 +2,6 @@ import { ExceptionCode } from '#/constants/exception';
 import { getMusicbillById, Property } from '@/db/musicbill';
 import { getDB } from '@/db';
 import day from '#/utils/day';
-import { getConfig } from '@/config';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -53,9 +52,7 @@ export default async (ctx: Context) => {
     `,
     [ctx.user.id, now.startOf('day'), now.endOf('day')],
   );
-  if (
-    todayExportTimes!.value >= getConfig().userExportMusicbillMaxTimesPerDay
-  ) {
+  if (todayExportTimes!.value >= ctx.user.exportMusicbillMaxTimePerDay) {
     return ctx.except(ExceptionCode.OVER_EXPORT_MUSICBILL_TIMES_PER_DAY);
   }
 

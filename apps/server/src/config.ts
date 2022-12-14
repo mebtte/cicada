@@ -5,16 +5,15 @@ import exitWithMessage from './utils/exit_with_message';
 
 export interface Config {
   mode: 'development' | 'production';
+  initialAdminEmail: string;
+
+  data: string;
+  port: number;
 
   emailHost: string;
   emailPort: number;
   emailUser: string;
   emailPass: string;
-
-  data: string;
-  port: number;
-  userExportMusicbillMaxTimesPerDay: number;
-  initialAdminEmail: string;
 }
 
 const schema = Joi.object<Config>({
@@ -30,21 +29,18 @@ const schema = Joi.object<Config>({
   emailPort: Joi.number().port().optional(),
   emailUser: Joi.string().required(),
   emailPass: Joi.string().required(),
-
-  userExportMusicbillMaxTimesPerDay: Joi.number().greater(0).optional(),
 });
 let config: Config = {
   mode: 'production',
+  initialAdminEmail: '',
+
+  data: `${process.cwd()}/cicada`,
+  port: 8000,
 
   emailHost: '',
   emailPort: 465,
   emailUser: '',
   emailPass: '',
-
-  data: `${process.cwd()}/cicada`,
-  port: 8000,
-  userExportMusicbillMaxTimesPerDay: 3,
-  initialAdminEmail: '',
 };
 
 export function getConfig() {
