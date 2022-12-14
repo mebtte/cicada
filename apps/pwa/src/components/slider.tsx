@@ -71,7 +71,7 @@ function Slider({
   ...props
 }: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
   current: number;
-  onChange: (v: number) => void;
+  onChange?: (v: number) => void;
   max?: number;
 }) {
   const pointerDownRef = useRef(false);
@@ -98,7 +98,8 @@ function Slider({
     pointerDownRef.current = false;
 
     const percent = getPointerEventRelativePercent(e);
-    onChange(max * percent);
+    // eslint-disable-next-line no-unused-expressions
+    onChange && onChange(max * percent);
 
     window.setTimeout(() => setInnerPercent(undefined), 0);
   };

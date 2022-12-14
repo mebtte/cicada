@@ -1,27 +1,20 @@
 import { useLocation } from 'react-router-dom';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import p from '@/global_states/profile';
 import { Profile as ProfileType } from '@/constants/user';
 import getRandomCover from '@/utils/get_random_cover';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import parseSearch from '@/utils/parse_search';
 import { Query } from '@/constants';
 import useNavigate from '@/utils/use_navigate';
 import Cover, { Shape } from '@/components/cover';
-import { CSSVariable } from '@/global_style';
+import Slider from '@/components/slider';
 import Paper from './paper';
 import Logo from './logo';
 
 const REDIRECT_DURATION = 5000;
 const NICKNAME_MAX_LENGTH = 10;
 const DEFAULT_AVATAR = getRandomCover();
-const progress = keyframes`
-  0% {
-    transform: scaleX(0%);
-  } 100% {
-    transform: scaleX(100%);
-  }
-`;
 const Style = styled(Paper)`
   display: flex;
   flex-direction: column;
@@ -34,27 +27,6 @@ const Style = styled(Paper)`
   > .text {
     text-align: center;
     font-size: 18px;
-  }
-
-  > .progress {
-    position: relative;
-
-    height: 5px;
-
-    background-color: ${CSSVariable.COLOR_PRIMARY_DISABLED};
-    overflow: hidden;
-
-    &::after {
-      content: '';
-
-      position: absolute;
-      width: 100%;
-      height: 100%;
-
-      background-color: ${CSSVariable.COLOR_PRIMARY};
-      transform-origin: left;
-      animation: ${progress} ${REDIRECT_DURATION}ms linear;
-    }
   }
 `;
 
@@ -71,6 +43,26 @@ function Profile({ profile }: { profile: ProfileType }) {
     return () => window.clearTimeout(timer);
   }, [location.search, navigate]);
 
+  const startTimestampRef = useRef(Date.now());
+  const [current, setCurrent] = useState(0);
+  useEffect(() => {
+    let timer: number;
+    const countdown = () => {
+      const c = Math.min(
+        (Date.now() - startTimestampRef.current) / REDIRECT_DURATION,
+        1,
+      );
+      setCurrent(c);
+
+      if (c < 1) {
+        timer = window.requestAnimationFrame(countdown);
+      }
+    };
+
+    countdown();
+    return () => window.cancelAnimationFrame(timer);
+  }, []);
+
   return (
     <>
       <Logo />
@@ -86,7 +78,7 @@ function Profile({ profile }: { profile: ProfileType }) {
           ? `${profile.nickname.slice(0, NICKNAME_MAX_LENGTH)}...`
           : profile.nickname}
       </div>
-      <div className="progress" />
+      <Slider current={current} />
     </>
   );
 }
