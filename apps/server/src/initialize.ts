@@ -25,7 +25,7 @@ export default async () => {
    * @author mebtte<hi@mebtte.com>
    */
   const directories = [
-    getConfig().base,
+    getConfig().data,
     getDBSnapshotDirectory(),
     getTrashDirectory(),
     getLogDirectory(),
@@ -56,7 +56,8 @@ export default async () => {
         joinTimestamp INTEGER NOT NULL,
         admin INTEGER NOT NULL DEFAULT 0,
         remark TEXT NOT NULL DEFAULT '',
-        musicbillOrdersJSON TEXT DEFAULT NULL
+        musicbillOrdersJSON TEXT DEFAULT NULL,
+        musicbillMaxAmount INTEGER NOT NULL DEFAULT 100
       )
     `;
     const TABLE_CAPTCHA = `

@@ -5,7 +5,6 @@ import {
   getUserMusicbillList,
   Property as MusicbillProperty,
 } from '@/db/musicbill';
-import { getConfig } from '@/config';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -22,7 +21,7 @@ export default async (ctx: Context) => {
   const musicbillList = await getUserMusicbillList(ctx.user.id, [
     MusicbillProperty.ID,
   ]);
-  if (musicbillList.length > getConfig().userMusicbillMaxAmount) {
+  if (musicbillList.length > ctx.user.musicbillMaxAmount) {
     return ctx.except(ExceptionCode.OVER_USER_MUSICBILL_MAX_AMOUNT);
   }
 

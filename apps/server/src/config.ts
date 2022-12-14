@@ -11,9 +11,8 @@ export interface Config {
   emailUser: string;
   emailPass: string;
 
-  base: string;
+  data: string;
   port: number;
-  userMusicbillMaxAmount: number;
   userExportMusicbillMaxTimesPerDay: number;
   userCreateMusicMaxTimesPerDay: number;
   initialAdminEmail: string;
@@ -23,18 +22,18 @@ const schema = Joi.object<Config>({
   mode: Joi.string()
     .pattern(/development|production/)
     .optional(),
+  initialAdminEmail: Joi.string().email().allow(''),
+
+  data: Joi.string().optional(),
+  port: Joi.number().port().optional(),
 
   emailHost: Joi.string().hostname().required(),
   emailPort: Joi.number().port().optional(),
   emailUser: Joi.string().required(),
   emailPass: Joi.string().required(),
 
-  base: Joi.string().optional(),
-  port: Joi.number().port().optional(),
-  userMusicbillMaxAmount: Joi.number().greater(0).optional(),
   userExportMusicbillMaxTimesPerDay: Joi.number().greater(0).optional(),
   userCreateMusicMaxTimesPerDay: Joi.number().greater(0).optional(),
-  initialAdminEmail: Joi.string().email().allow(''),
 });
 let config: Config = {
   mode: 'production',
@@ -44,9 +43,8 @@ let config: Config = {
   emailUser: '',
   emailPass: '',
 
-  base: `${process.cwd()}/cicada`,
+  data: `${process.cwd()}/cicada`,
   port: 8000,
-  userMusicbillMaxAmount: 100,
   userExportMusicbillMaxTimesPerDay: 3,
   userCreateMusicMaxTimesPerDay: 5,
   initialAdminEmail: '',
@@ -57,38 +55,38 @@ export function getConfig() {
 }
 
 export function getDBFilePath() {
-  return `${config.base}/db`;
+  return `${config.data}/db`;
 }
 
 export function getJWTSecretFilePath() {
-  return `${config.base}/jwt_secret`;
+  return `${config.data}/jwt_secret`;
 }
 
 export function getLoginCodeSaltFilePath() {
-  return `${config.base}/login_code_salt`;
+  return `${config.data}/login_code_salt`;
 }
 
 export function getDBSnapshotDirectory() {
-  return `${config.base}/db_snapshots`;
+  return `${config.data}/db_snapshots`;
 }
 
 export function getTrashDirectory() {
-  return `${config.base}/trash`;
+  return `${config.data}/trash`;
 }
 
 export function getLogDirectory() {
-  return `${config.base}/logs`;
+  return `${config.data}/logs`;
 }
 
 export function getDownloadDirectory() {
-  return `${config.base}/downloads`;
+  return `${config.data}/downloads`;
 }
 
 export function getAssetDirectory(assetType?: AssetType) {
   if (assetType) {
-    return `${config.base}/assets/${assetType}`;
+    return `${config.data}/assets/${assetType}`;
   }
-  return `${config.base}/assets`;
+  return `${config.data}/assets`;
 }
 
 export function updateConfigFromFile(filePath: string) {
