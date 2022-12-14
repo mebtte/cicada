@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import getRandomCover from '@/utils/get_random_cover';
 import { RequestStatus } from '@/constants';
 import getSelfMusicbillList from '@/server/get_self_musicbill_list';
@@ -7,6 +7,7 @@ import removeMusicFromMusicbill from '@/server/remove_music_from_musicbill';
 import logger from '#/utils/logger';
 import dialog from '@/utils/dialog';
 import getSelfMusicbill from '@/server/get_self_musicbill';
+import p from '@/global_states/profile';
 import eventemitter, { EventType } from './eventemitter';
 import { Musicbill } from './constants';
 
@@ -227,8 +228,21 @@ export default () => {
     };
   }, []);
 
+  const profile = p.useState()!;
+  const sortedMusicbillList = useMemo(() => {
+    const orders = profile.musicbillOrders;
+    return musicbillList.sort((a, b) => {
+      const aOrder = orders.indexOf(a.id);
+      const bOrder = orders.indexOf(b.id);
+      return (
+        (aOrder === -1 ? Infinity : aOrder) -
+        (bOrder === -1 ? Infinity : bOrder)
+      );
+    });
+  }, [musicbillList, profile.musicbillOrders]);
+
   return {
     status,
-    musicbillList,
+    musicbillList: sortedMusicbillList,
   };
 };

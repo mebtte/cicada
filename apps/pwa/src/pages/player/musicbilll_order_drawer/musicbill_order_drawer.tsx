@@ -7,14 +7,14 @@ import logger from '#/utils/logger';
 import dialog from '@/utils/dialog';
 import { IS_TOUCHABLE } from '@/constants/browser';
 import { AllowUpdateKey } from '#/constants/user';
+import globalEventemitter, {
+  EventType as GlobalEventType,
+} from '@/platform/global_eventemitter';
 import { Musicbill as MusicbillType, ZIndex } from '../constants';
 import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
 import e, { EventType } from './eventemitter';
 import Top from './top';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../eventemitter';
 
 const maskProps: { style: CSSProperties } = {
   style: {
@@ -86,9 +86,7 @@ function MusicbillOrderDrawer({
       key: AllowUpdateKey.MUSICBILL_ORDERS,
       value: orderedMusicbillIdList,
     })
-      .then(() =>
-        playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, null),
-      )
+      .then(() => globalEventemitter.emit(GlobalEventType.RELOAD_PROFILE, null))
       .catch((error) => {
         logger.error(error, '更新乐单顺序失败');
         dialog.alert({

@@ -122,7 +122,7 @@ function ProfileEditPopup() {
                 const { id } = await uploadAsset(avatar, AssetType.USER_AVATAR);
                 await updateProfile({ key: AllowUpdateKey.AVATAR, value: id });
 
-                globalEventemitter.emit(GlobalEventType.UPDATE_PROFILE, null);
+                globalEventemitter.emit(GlobalEventType.RELOAD_PROFILE, null);
               },
             })
           }
@@ -148,7 +148,7 @@ function ProfileEditPopup() {
                     value: trimmedNickname,
                   });
 
-                  globalEventemitter.emit(GlobalEventType.UPDATE_PROFILE, null);
+                  globalEventemitter.emit(GlobalEventType.RELOAD_PROFILE, null);
                 }
               },
             })

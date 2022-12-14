@@ -5,4 +5,8 @@ export interface Profile {
   nickname: string;
   joinTimestamp: number;
   admin: boolean;
+  musicbillOrders: string[];
+  musicbillMaxAmount: number;
+  createMusicMaxAmountPerDay: number;
+  exportMusicbillMaxTimePerDay: number;
 }
