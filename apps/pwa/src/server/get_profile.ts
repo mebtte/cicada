@@ -9,7 +9,10 @@ async function getProfile() {
     nickname: string;
     joinTimestamp: number;
     admin: 0 | 1;
-    remark: string;
+    musicbillOrdersJSON?: string;
+    musicbillMaxAmount: number;
+    createMusicMaxAmountPerDay: number;
+    exportMusicbillMaxTimePerDay: number;
   }>({
     path: '/api/profile',
     withToken: true,
