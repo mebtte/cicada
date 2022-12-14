@@ -14,7 +14,6 @@ export interface Config {
   data: string;
   port: number;
   userExportMusicbillMaxTimesPerDay: number;
-  userCreateMusicMaxTimesPerDay: number;
   initialAdminEmail: string;
 }
 
@@ -33,7 +32,6 @@ const schema = Joi.object<Config>({
   emailPass: Joi.string().required(),
 
   userExportMusicbillMaxTimesPerDay: Joi.number().greater(0).optional(),
-  userCreateMusicMaxTimesPerDay: Joi.number().greater(0).optional(),
 });
 let config: Config = {
   mode: 'production',
@@ -46,7 +44,6 @@ let config: Config = {
   data: `${process.cwd()}/cicada`,
   port: 8000,
   userExportMusicbillMaxTimesPerDay: 3,
-  userCreateMusicMaxTimesPerDay: 5,
   initialAdminEmail: '',
 };
 

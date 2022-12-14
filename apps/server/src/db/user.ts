@@ -10,6 +10,7 @@ export enum Property {
   REMARK = 'remark',
   MUSICBILL_ORDERS_JSON = 'musicbillOrdersJSON',
   MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
+  CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
 }
 
 export type User = {
@@ -22,6 +23,7 @@ export type User = {
   [Property.REMARK]: string;
   [Property.MUSICBILL_ORDERS_JSON]: string | null;
   [Property.MUSICBILL_MAX_AMOUNT]: number;
+  [Property.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: number;
 };
 
 export function getUserByEmail<P extends Property>(

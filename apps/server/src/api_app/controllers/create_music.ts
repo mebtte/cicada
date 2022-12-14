@@ -8,7 +8,6 @@ import { getAssetFilePath } from '@/platform/asset';
 import { getDB } from '@/db';
 import day from '#/utils/day';
 import { Music, Property as MusicProperty } from '@/db/music';
-import { getConfig } from '@/config';
 import { Context } from '../constants';
 
 const ID_LENGTH = 8;
@@ -56,7 +55,7 @@ export default async (ctx: Context) => {
     `,
     [ctx.user.id, day().startOf('day'), day().endOf('day')],
   );
-  if (todayUploadMusicList.length > getConfig().userCreateMusicMaxTimesPerDay) {
+  if (todayUploadMusicList.length > ctx.user.createMusicMaxAmountPerDay) {
     return ctx.except(ExceptionCode.OVER_CREATE_MUSIC_TIMES_PER_DAY);
   }
 

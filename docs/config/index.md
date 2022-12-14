@@ -3,7 +3,6 @@
 | 参数                              | 类型   | 是否必须 | 默认值 | 描述                         |
 | --------------------------------- | ------ | -------- | ------ | ---------------------------- |
 | userExportMusicbillMaxTimesPerDay | number | 否       | 3      | 每个用户每天导出乐单最大次数 |
-| userCreateMusicMaxTimesPerDay     | number | 否       | 5      | 每个用户每天创建音乐最大次数 |
 
 ## data
 
