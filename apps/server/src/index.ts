@@ -6,7 +6,7 @@ import definition from './definition';
 
 const program = new Command()
   .name('cicada')
-  .description('知了, 一个支持多用户的自主托管音乐服务')
+  .description('知了, 支持多用户的开源音乐服务.')
   .version(definition.VERSION);
 
 program

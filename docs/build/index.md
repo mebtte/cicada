@@ -1,31 +1,38 @@
-# 自行构建特定平台二进制包
+# 构建当前平台二进制包
 
 ## 准备
 
-- Node.js >= 16
+- [Node.js](https://nodejs.org) >= 16
 
 ## 构建
 
-安装依赖:
+拉取项目:
+
+```sh
+git clone https://github.com/mebtte/cicada.git
+```
+
+进入项目目录:
+```sh
+cd cicada
+```
+
+安装相关依赖:
 
 ```sh
 npm install
+# npm 是 node.js 包管理器, 附在 node.js 已一起安装
 ```
 
-在 [package.json](../package.json) 中 `pkg` 添加 `targets` 字段, 以 Apple silicon macOS 为例, 其中 `node16` 是固定值, 操作系统是 `macOS`, CPU 架构是 `arm64`, 所以 `target` 是 `node16-macos-arm64`, 将值填入 `targets` 中:
+构建:
 
-```json
-{
-  "pkg": {
-    "assets": ["pwa/**/*", "node_modules/**/*.node"],
-    "outputPath": "build",
-    "targets": ["node16-macos-arm64"]
-  }
-}
+```sh
+npm run build:current
 ```
+> 构建过程中需要下载对应的资源包, 在代理情况下可以提高下载速度
 
-其他 `target` 可以参考 `pkg` [文档](https://github.com/vercel/pkg#targets).
+构建成功后二进制包位于项目的 `build` 目录下, 一般情况下会有多个操作系统的包, 其中当前系统的包才是可运行的.
+以 Apple silicon macOS 为例, 构建后会生成 `linux`/`win`/`macos` 三个包, 其中 `macos` 的包才是可运行的.
 
-执行命令 `npm run build:current`, 构建后的包位于 `build` 目录下.
+![](./build.png)
 
-注意, 由于 `pkg` 和 `sqlite3` 的限制, 构建后的二进制包只能在当前平台(同样的操作系统和 CPU 架构)运行, 且无法为其他平台构建, 比如无法为其他操作系统构建, 也无法为其他 CPU 架构构建.

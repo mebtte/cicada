@@ -1,6 +1,6 @@
 # 知了
 
-知了, 一个支持多用户的自主托管音乐服务.
+知了, 支持多用户的开源音乐服务.
 
 ![](./docs/thumbnail_1.png)
 ![](./docs/thumbnail_2.png)
@@ -31,7 +31,7 @@
 ./cicada-linux-x64 start -c config.json
 ```
 
-通过 `localhost:8000` 或者 `ip:8000` 访问知了服务.
+通过 `localhost:8000` 或者 `{{ip}}:8000` 访问知了服务.
 
 目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
 
