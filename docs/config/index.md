@@ -2,6 +2,7 @@
 
 ## data
 
+- type: `string`
 - optional
 - default: `{{pwd}}/cicada`
 
@@ -9,6 +10,7 @@
 
 ## port
 
+- type: `number`
 - optional
 - default: `8000`
 
@@ -16,12 +18,14 @@
 
 ## emailHost
 
+- type: `string`
 - required
 
 邮件服务器主机.
 
 ## emailPort
 
+- type: `number`
 - optional
 - default: `465`
 
@@ -29,18 +33,21 @@
 
 ## emailUser
 
+- type: `string`
 - required
 
 邮件服务器用户.
 
 ## emailPass
 
+- type: `string`
 - required
 
 邮件服务器用户密码.
 
 ## initialAdminEmail
 
+- type: `string`
 - optional
 
 初始管理员邮箱, 用于创建管理员账号, 如果未设置, 将会在首次运行服务时要求在 CLI 输入.
@@ -48,6 +55,7 @@
 
 ## mode
 
+- type: `enum`
 - optional
 - default: `production`
 
