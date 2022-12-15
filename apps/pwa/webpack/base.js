@@ -44,6 +44,7 @@ const mainConfig = {
     filename: '[name]_[contenthash].js',
     chunkFilename: 'chunk_[name]_[contenthash].js',
     publicPath: '/',
+    clean: true,
   },
   module: {
     rules: [
