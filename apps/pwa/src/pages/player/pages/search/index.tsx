@@ -6,11 +6,15 @@ import mm from '@/global_states/mini_mode';
 import Input from './input';
 import { HEADER_HEIGHT, SearchTab } from '../../constants';
 import Page from '../page';
-import { MINI_MODE_TOOLBAR_HEIGHT, TOOLBAR_HEIGHT } from './constants';
+import {
+  MINI_MODE_TOOLBAR_HEIGHT,
+  TAB_LIST,
+  TOOLBAR_HEIGHT,
+} from './constants';
 import Content from './content';
 import useTab from './use_tab';
 
-const Style = styled(Page)<{ exploration: boolean }>`
+const Style = styled(Page)`
   position: relative;
 
   margin-top: ${HEADER_HEIGHT}px;
@@ -31,11 +35,9 @@ const Style = styled(Page)<{ exploration: boolean }>`
     backdrop-filter: blur(5px);
   }
 
-  ${({ exploration, theme: { miniMode } }) => css`
+  ${({ theme: { miniMode } }) => css`
     > .toolbar {
-      height: ${miniMode && !exploration
-        ? MINI_MODE_TOOLBAR_HEIGHT
-        : TOOLBAR_HEIGHT}px;
+      height: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
 
       > .guide-box {
         flex: ${miniMode ? 'unset' : 1};
@@ -44,19 +46,19 @@ const Style = styled(Page)<{ exploration: boolean }>`
   `}
 `;
 
-function Search({ exploration }: { exploration: boolean }) {
+function Search() {
   const navigate = useNavigate();
   const miniMode = mm.useState();
-  const { tab, tabList } = useTab(exploration);
+  const tab = useTab();
 
   return (
-    <Style exploration={exploration}>
-      <Content tab={tab} exploration={exploration} />
+    <Style>
+      <Content tab={tab} />
       <div className="toolbar">
-        {miniMode && !exploration ? <Input /> : null}
+        {miniMode ? <Input /> : null}
         <TabList<SearchTab>
           current={tab}
-          tabList={tabList}
+          tabList={TAB_LIST}
           onChange={(t) =>
             navigate({
               query: {

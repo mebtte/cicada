@@ -203,7 +203,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                         null,
                       );
                       navigate({
-                        path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORE,
+                        path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
                       });
                     } catch (error) {
                       logger.error(error, '删除乐单失败');

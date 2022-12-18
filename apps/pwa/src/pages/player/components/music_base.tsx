@@ -100,7 +100,10 @@ function MusicBase({
       {...props}
       active={active}
       onClick={openMusicDrawer}
-      onContextMenu={openMusicDrawer}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        return openMusicDrawer();
+      }}
     >
       <div className="content">
         <div className="index">{music.index}</div>

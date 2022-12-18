@@ -11,22 +11,21 @@ import styled from 'styled-components';
 import { RequestStatus } from '@/constants';
 import throttle from 'lodash/throttle';
 import SessionStorageKey from '@/constants/session_storage_key';
+import absoluteFullSize from '@/style/absolute_full_size';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
-import { HEADER_HEIGHT, Musicbill as MusicbillType } from '../../constants';
+import { Musicbill as MusicbillType } from '../../constants';
 import Page from '../page';
 import Info from './info';
 import MusicList from './music_list';
-import { INFO_HEIGHT } from './constants';
+import { INFO_HEIGHT, MINI_INFO_HEIGHT } from './constants';
 import MiniInfo from './mini_info';
 import EditMenu from './edit_menu';
 import Filter from './filter';
 
 const Style = styled(Page)`
-  position: relative;
-
-  padding-top: ${HEADER_HEIGHT}px;
+  ${absoluteFullSize}
 
   > .scrollable {
     height: 100%;
@@ -64,7 +63,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
 
   const onScroll: UIEventHandler<HTMLDivElement> = (e) => {
     const { scrollTop } = e.target as HTMLDivElement;
-    setMiniInfoVisible(scrollTop >= INFO_HEIGHT);
+    setMiniInfoVisible(scrollTop >= INFO_HEIGHT - MINI_INFO_HEIGHT);
 
     return saveScrollTop(scrollTop);
   };

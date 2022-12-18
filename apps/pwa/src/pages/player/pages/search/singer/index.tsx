@@ -32,20 +32,18 @@ const CardContainer = styled(Container)`
   flex-direction: column;
   gap: 20px;
 `;
-const MusicContainer = styled(Container)<{ exploration: 0 | 1 }>`
+const MusicContainer = styled(Container)`
   overflow: auto;
 
-  ${({ exploration, theme: { miniMode } }) => css`
-    padding-top: ${miniMode && !exploration
-      ? MINI_MODE_TOOLBAR_HEIGHT
-      : TOOLBAR_HEIGHT}px;
+  ${({ theme: { miniMode } }) => css`
+    padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
   `}
 `;
 const paginationStyle: CSSProperties = {
   margin: '20px 0',
 };
 
-function Wrapper({ exploration }: { exploration: boolean }) {
+function Wrapper() {
   const navigate = useNavigate();
   const { data, reload, page } = useData();
 
@@ -89,13 +87,13 @@ function Wrapper({ exploration }: { exploration: boolean }) {
       );
     }
     return (
-      <MusicContainer style={style} exploration={exploration ? 1 : 0}>
+      <MusicContainer style={style}>
         <div>
           {d.value!.singerList.map((singer) => (
             <Singer key={singer.id} singer={singer} />
           ))}
         </div>
-        {d.value!.total && !exploration ? (
+        {d.value!.total ? (
           <Pagination
             style={paginationStyle}
             page={page}
@@ -110,8 +108,7 @@ function Wrapper({ exploration }: { exploration: boolean }) {
             }
           />
         ) : null}
-        {exploration ||
-        page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
+        {page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
           <TextGuide
             text1="找不到想要的歌手?"
             text2="自己创建一个"

@@ -2,15 +2,17 @@ import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
-import { HEADER_HEIGHT, Musicbill } from '../../constants';
+import { Musicbill } from '../../constants';
+import { MINI_INFO_HEIGHT } from './constants';
 import Operation from './operation';
 
 const Style = styled.div`
   position: absolute;
-  top: ${HEADER_HEIGHT}px;
+  top: 0;
   left: 0;
   width: 100%;
-  padding: 10px 20px;
+  height: ${MINI_INFO_HEIGHT}px;
+  padding: 0 20px;
 
   backdrop-filter: blur(5px);
 

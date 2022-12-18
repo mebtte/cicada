@@ -12,13 +12,7 @@ const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
 
-function Content({
-  tab,
-  exploration,
-}: {
-  tab: SearchTab;
-  exploration: boolean;
-}) {
+function Content({ tab }: { tab: SearchTab }) {
   const transitions = useTransition(tab, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
@@ -28,19 +22,19 @@ function Content({
     let content: ReactNode = null;
     switch (t) {
       case SearchTab.MUSIC: {
-        content = <Music exploration={exploration} />;
+        content = <Music />;
         break;
       }
       case SearchTab.SINGER: {
-        content = <Singer exploration={exploration} />;
+        content = <Singer />;
         break;
       }
       case SearchTab.MUSICBILL: {
-        content = <Musicbill exploration={exploration} />;
+        content = <Musicbill />;
         break;
       }
       case SearchTab.LYRIC: {
-        content = <Lyric exploration={exploration} />;
+        content = <Lyric />;
         break;
       }
     }

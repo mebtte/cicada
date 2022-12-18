@@ -16,10 +16,12 @@ function Menu() {
     <div>
       <MenuItem
         active={
-          pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORE}` ||
+          pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORATION}` ||
           pathname === ROOT_PATH.PLAYER
         }
-        onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORE}`)}
+        onClick={() =>
+          navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORATION}`)
+        }
         label="发现"
         icon={<MdLooks />}
       />

@@ -39,6 +39,7 @@ import searchPublicMusicbill from './controllers/search_public_musicbill';
 import collectPublicMusicbill from './controllers/collect_public_musicbill';
 import uncollectPublicMusicbill from './controllers/uncollect_public_musicbill';
 import getSelfMusicbillCollectionList from './controllers/get_self_musicbill_collection_list';
+import getExploration from './controllers/get_exploration';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -55,6 +56,8 @@ router.post('/login', parseBody, login); // 登录
 /**
  * authorize
  */
+router.get('/exploration', authorize, getExploration); // 获取推荐内容
+
 router.get('/profile', authorize, getProfile); // 获取个人资料
 router.put('/profile', authorize, parseBody, updateProfile); // 更新个人资料
 router.get('/user_detail', authorize, getUserDetail); // 获取用户信息

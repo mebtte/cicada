@@ -102,7 +102,7 @@ function MusicbillList() {
                 variant={Variant.PRIMARY}
                 onClick={() =>
                   navigate({
-                    path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORE,
+                    path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
                     query: {
                       [Query.SEARCH_TAB]: SearchTab.MUSICBILL,
                     },
