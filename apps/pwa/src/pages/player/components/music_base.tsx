@@ -13,7 +13,7 @@ const Style = styled.div<{ active: boolean }>`
   background-clip: content-box;
   border-left-color: ${CSSVariable.COLOR_PRIMARY};
   border-left-style: solid;
-  -webkit-tap-highlight-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  -webkit-tap-highlight-color: transparent;
 
   > .content {
     height: 50px;
