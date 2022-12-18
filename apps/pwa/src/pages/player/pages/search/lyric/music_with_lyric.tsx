@@ -28,18 +28,15 @@ function MusicWithLyric({
   active,
   music,
   keyword,
-  miniMode,
 }: {
   active: boolean;
   music: MusicWithLyricType;
   keyword: string;
-  miniMode: boolean;
 }) {
   const replacement = new RegExp(escapeRegex(keyword), 'i');
   return (
     <StyledMusic
       active={active}
-      miniMode={miniMode}
       music={music}
       addon={
         <Lrc

@@ -1,17 +1,11 @@
 import { CSSVariable } from '@/global_style';
 import styled, { css } from 'styled-components';
-import {
-  HtmlHTMLAttributes,
-  PointerEventHandler,
-  ReactNode,
-  useRef,
-} from 'react';
+import { HtmlHTMLAttributes, ReactNode } from 'react';
 import ellipsis from '@/style/ellipsis';
 import { MusicWithIndex } from '../constants';
 import e, { EventType } from '../eventemitter';
 import Singer from './singer';
 
-const LONG_PRESS_DURATION = 500;
 const Style = styled.div<{ active: boolean }>`
   cursor: pointer;
   user-select: none;
@@ -19,6 +13,7 @@ const Style = styled.div<{ active: boolean }>`
   background-clip: content-box;
   border-left-color: ${CSSVariable.COLOR_PRIMARY};
   border-left-style: solid;
+  -webkit-tap-highlight-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
 
   > .content {
     height: 50px;
@@ -98,58 +93,14 @@ function MusicBase({
   lineAfter: ReactNode;
   addon?: ReactNode;
 }) {
-  const openMusicOperatePopup = () =>
-    e.emit(EventType.OPEN_MUSIC_OPERATE_POPUP, { music });
-
-  const openMusicOperatePopupTimerRef = useRef(0);
-  const pointerDownTimestamp = useRef(0);
-  const cancelPointerUpRef = useRef(false);
-
-  const cancelPointerDownAndUp = () => {
-    window.clearTimeout(openMusicOperatePopupTimerRef.current);
-
-    cancelPointerUpRef.current = true;
-    window.setTimeout(() => {
-      cancelPointerUpRef.current = false;
-    }, 500);
-  };
-  const onPointerDown: PointerEventHandler<HTMLDivElement> = () => {
-    openMusicOperatePopupTimerRef.current = window.setTimeout(
-      openMusicOperatePopup,
-      LONG_PRESS_DURATION,
-    );
-    pointerDownTimestamp.current = Date.now();
-  };
-  const onPointerMove: PointerEventHandler<HTMLDivElement> = () => {
-    if (pointerDownTimestamp.current) {
-      cancelPointerDownAndUp();
-    }
-  };
-  const onPointerUp: PointerEventHandler<HTMLDivElement> = () => {
-    window.clearTimeout(openMusicOperatePopupTimerRef.current);
-    if (
-      !cancelPointerUpRef.current &&
-      Date.now() - pointerDownTimestamp.current < LONG_PRESS_DURATION
-    ) {
-      e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id });
-    }
-
-    pointerDownTimestamp.current = 0;
-  };
-
+  const openMusicDrawer = () =>
+    e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id });
   return (
     <Style
       {...props}
       active={active}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onContextMenu={(event) => {
-        event.preventDefault();
-        openMusicOperatePopup();
-
-        cancelPointerDownAndUp();
-      }}
+      onClick={openMusicDrawer}
+      onContextMenu={openMusicDrawer}
     >
       <div className="content">
         <div className="index">{music.index}</div>

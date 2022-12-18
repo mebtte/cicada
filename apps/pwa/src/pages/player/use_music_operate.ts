@@ -41,7 +41,7 @@ export default (
     return afterOperate && afterOperate();
   }, [afterOperate, music]);
   const onOperate = useCallback(
-    () => eventemitter.emit(EventType.OPEN_MUSIC_OPERATE_POPUP, { music }),
+    () => eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id }),
     [music],
   );
 

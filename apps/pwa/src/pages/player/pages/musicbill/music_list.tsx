@@ -7,7 +7,6 @@ import ErrorCard from '@/components/error_card';
 import List from 'react-list';
 import Empty from '@/components/empty';
 import { useContext, useEffect, useState } from 'react';
-import mm from '@/global_states/mini_mode';
 import { Musicbill } from '../../constants';
 import { FILTER_HEIGHT, INFO_HEIGHT } from './constants';
 import playerEventemitter, {
@@ -38,8 +37,6 @@ const ListContainer = styled(Container)`
 `;
 
 function Wrapper({ musicbill }: { musicbill: Musicbill }) {
-  const miniMode = mm.useState();
-
   const { id, status, error, musicList } = musicbill;
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
 
@@ -99,7 +96,6 @@ function Wrapper({ musicbill }: { musicbill: Musicbill }) {
                           active={
                             playqueue[currentPlayqueuePosition]?.id === music.id
                           }
-                          miniMode={miniMode}
                         />
                       );
                     }}

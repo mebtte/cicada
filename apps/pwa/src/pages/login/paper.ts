@@ -11,6 +11,4 @@ export default styled.div`
   padding: 30px 20px;
 
   transform: translateY(-50%);
-  box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 12%),
-    0px 1px 3px 0px rgb(0 0 0 / 12%);
 `;

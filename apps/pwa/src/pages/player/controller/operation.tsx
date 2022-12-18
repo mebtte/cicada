@@ -81,12 +81,9 @@ function Operation({
           </IconButton>
           <IconButton
             onClick={() =>
-              playerEventemitter.emit(
-                PlayerEventType.OPEN_MUSIC_OPERATE_POPUP,
-                {
-                  music: queueMusic,
-                },
-              )
+              playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, {
+                id: queueMusic.id,
+              })
             }
           >
             <MdMoreHoriz />

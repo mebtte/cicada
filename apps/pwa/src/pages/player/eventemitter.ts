@@ -97,7 +97,6 @@ export enum EventType {
 
   TOGGLE_LYRIC_PANEL = 'toggle_lyric_panel',
 
-  OPEN_MUSIC_OPERATE_POPUP = 'open_music_operate_popup',
   OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER = 'open_add_music_to_musicbill_drawer',
   OPEN_SINGER_DRAWER = 'open_singer_drawer',
   OPEN_MUSIC_DRAWER = 'open_music_drawer',
@@ -162,7 +161,6 @@ export default new Eventin<
 
     [EventType.TOGGLE_LYRIC_PANEL]: { open: boolean } | null;
 
-    [EventType.OPEN_MUSIC_OPERATE_POPUP]: { music: Music };
     [EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER]: { music: Music };
     [EventType.OPEN_SINGER_DRAWER]: { id: string };
     [EventType.OPEN_MUSIC_DRAWER]: { id: string };

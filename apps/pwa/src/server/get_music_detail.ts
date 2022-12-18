@@ -49,6 +49,20 @@ async function getMusicDetail(id: string) {
     sq: prefixServerOrigin(music.sq),
     hq: prefixServerOrigin(music.hq),
     ac: prefixServerOrigin(music.ac),
+    forkList: music.forkList.map((m) => ({
+      ...m,
+      cover: prefixServerOrigin(m.cover),
+      sq: prefixServerOrigin(m.sq),
+      hq: prefixServerOrigin(m.hq),
+      ac: prefixServerOrigin(m.ac),
+    })),
+    forkFromList: music.forkFromList.map((m) => ({
+      ...m,
+      cover: prefixServerOrigin(m.cover),
+      sq: prefixServerOrigin(m.sq),
+      hq: prefixServerOrigin(m.hq),
+      ac: prefixServerOrigin(m.ac),
+    })),
   };
 }
 

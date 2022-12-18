@@ -15,6 +15,7 @@ const Style = styled.div`
   padding: 10px 20px;
 
   cursor: pointer;
+  user-select: none;
 
   > .info {
     flex: 1;

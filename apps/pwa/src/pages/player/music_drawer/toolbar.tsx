@@ -3,12 +3,13 @@ import IconButton from '@/components/icon_button';
 import {
   MdPlayArrow,
   MdReadMore,
-  MdMoreHoriz,
   MdOutlinePostAdd,
   MdPlaylistAdd,
   MdEdit,
+  MdDownload,
 } from 'react-icons/md';
 import p from '@/global_states/profile';
+import { IS_IPAD, IS_IPHONE } from '@/constants/browser';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -88,15 +89,20 @@ function Toolbar({ music }: { music: MusicDetail }) {
         >
           <MdPlaylistAdd />
         </IconButton>
-        <IconButton
-          onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_OPERATE_POPUP, {
-              music,
-            })
-          }
-        >
-          <MdMoreHoriz />
-        </IconButton>
+        {IS_IPAD || IS_IPHONE ? null : (
+          <IconButton
+            onClick={() =>
+              playerEventemitter.emit(
+                PlayerEventType.OPEN_MUSIC_DOWNLOAD_DIALOG,
+                {
+                  music,
+                },
+              )
+            }
+          >
+            <MdDownload />
+          </IconButton>
+        )}
       </div>
       {profile.admin || profile.id === music.createUser.id ? (
         <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
