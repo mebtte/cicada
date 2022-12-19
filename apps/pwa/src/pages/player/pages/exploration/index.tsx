@@ -6,7 +6,7 @@ import ErrorCard from '@/components/error_card';
 import { memo } from 'react';
 import getRandomCover from '@/utils/get_random_cover';
 import useNavigate from '@/utils/use_navigate';
-import { PLAYER_PATH } from '@/constants/route';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { Query } from '@/constants';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
@@ -69,7 +69,7 @@ const Exploration = memo(
           onItemClick={openMusicDrawer}
           onCreate={() =>
             navigate({
-              path: PLAYER_PATH.MY_MUSIC,
+              path: ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC,
               query: {
                 [Query.CREATE_MUSIC_DIALOG_OPEN]: 1,
               },
