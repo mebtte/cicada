@@ -16,7 +16,7 @@ const Style = styled.div`
 function Logo() {
   return (
     <Style>
-      <Link to={ROOT_PATH.HOME}>
+      <Link to={ROOT_PATH.PLAYER}>
         <img
           className="logo"
           src="/logo.png"

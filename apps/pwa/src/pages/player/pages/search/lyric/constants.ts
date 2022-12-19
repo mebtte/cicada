@@ -1,4 +1,4 @@
-import { MusicWithIndex } from '@/pages/player/constants';
+import { MusicWithIndex } from '../../../constants';
 
 export interface MusicWithLyric extends MusicWithIndex {
   lrc: string;

@@ -4,9 +4,6 @@ import { ROOT_PATH } from '@/constants/route';
 import ErrorBoundary from '@/components/error_boundary';
 import RouteLoader from './route_loader';
 
-const Home = lazy(
-  () => import(/* webpackChunkName: "page_home" */ '../pages/home'),
-);
 const Login = lazy(
   () => import(/* webpackChunkName: "page_login" */ '../pages/login'),
 );
@@ -15,20 +12,16 @@ const Player = lazy(
 );
 const ROUTES: RouteObject[] = [
   {
-    path: ROOT_PATH.HOME,
-    element: <Home />,
+    path: `${ROOT_PATH.PLAYER}/*`,
+    element: <Player />,
   },
   {
     path: ROOT_PATH.LOGIN,
     element: <Login />,
   },
   {
-    path: `${ROOT_PATH.PLAYER}/*`,
-    element: <Player />,
-  },
-  {
     path: '*',
-    element: <Navigate to={ROOT_PATH.HOME} replace />,
+    element: <Navigate to={ROOT_PATH.PLAYER} replace />,
   },
 ];
 const onErrorFallback = (error: Error) => <RouteLoader error={error} />;
