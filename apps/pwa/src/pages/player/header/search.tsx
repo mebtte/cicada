@@ -75,7 +75,7 @@ function Wrapper() {
         value: keyword,
         onChange: onKeywordChange,
         onKeyDown,
-        placeholder: '搜索音乐/歌手/歌词',
+        placeholder: '搜索',
       }}
     />
   );

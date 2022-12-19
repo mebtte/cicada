@@ -23,7 +23,7 @@
 
 > 因为知了依赖邮箱验证码进行登录, 以及部分功能需要依赖邮箱实现, 所以需要邮箱服务进行邮件发送.
 
-> 完整配置可以参看[配置项](./docs/config/index.md), 支持 JSON/JSON5 语法.
+> 完整配置可以参看[配置项](./docs/config/index.md), 支持 JSON/[JSON5](https://json5.org) 语法.
 
 在 [Releases](https://github.com/mebtte/cicada/releases) 下载并解压对应平台的二进制包, 通过下面命令指定配置文件并启动(以 x64 Linux 为例):
 

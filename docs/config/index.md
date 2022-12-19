@@ -1,5 +1,7 @@
 # 配置项
 
+配置文件支持 JSON 或 [JSON5](https://json5.org) 格式.
+
 ## data
 
 - type: `string`

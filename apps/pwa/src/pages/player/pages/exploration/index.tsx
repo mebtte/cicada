@@ -35,6 +35,8 @@ const StatusContainer = styled(Container)`
 `;
 const ContentContainer = styled(Container)`
   overflow: auto;
+
+  padding-bottom: env(safe-area-inset-bottom, 0);
 `;
 
 const openMusicDrawer = (id: string) =>
