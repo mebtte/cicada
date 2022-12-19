@@ -11,7 +11,7 @@ function loadImage(
   } = {},
 ) {
   return Promise.race([
-    window.fetch(url),
+    window.fetch(url, { credentials: 'omit' }),
     timeoutFn(timeout, timeoutErrorGenerator),
   ]);
 }

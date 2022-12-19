@@ -93,8 +93,7 @@ function Playlist({ style }: { style: unknown }) {
                     <Operation>
                       <IconButton
                         size={ComponentSize.SMALL}
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onPointerUp={(e) => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           return playerEventemitter.emit(
                             PlayerEventType.ACTION_PLAY_MUSIC,
@@ -106,8 +105,7 @@ function Playlist({ style }: { style: unknown }) {
                       </IconButton>
                       <IconButton
                         size={ComponentSize.SMALL}
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onPointerUp={(e) => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           return playerEventemitter.emit(
                             PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
@@ -120,8 +118,7 @@ function Playlist({ style }: { style: unknown }) {
                       <IconButton
                         size={ComponentSize.SMALL}
                         style={removeStyle}
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onPointerUp={(e) => {
+                        onClick={(e) => {
                           e.stopPropagation();
                           return playerEventemitter.emit(
                             PlayerEventType.ACTION_REMOVE_PLAYLIST_MUSIC,

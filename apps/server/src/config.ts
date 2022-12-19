@@ -1,6 +1,7 @@
 import { AssetType } from '#/constants';
 import fs from 'fs';
 import Joi from 'joi';
+import json5 from 'json5';
 import exitWithMessage from './utils/exit_with_message';
 
 export interface Config {
@@ -90,7 +91,7 @@ export function updateConfigFromFile(filePath: string) {
   let configFromFile: Partial<Config> = {};
   try {
     const dataString = fs.readFileSync(filePath).toString();
-    configFromFile = JSON.parse(dataString);
+    configFromFile = json5.parse(dataString);
   } catch (error) {
     console.error(error);
     exitWithMessage(`解析配置文件「${filePath}」失败`);

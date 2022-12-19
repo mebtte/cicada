@@ -19,6 +19,7 @@ const Style = styled.img<{ shape: Shape }>`
   object-fit: cover;
   aspect-ratio: 1;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   ${({ shape }) => {
     const { css: shapeCss } = SHAPE_MAP[shape];

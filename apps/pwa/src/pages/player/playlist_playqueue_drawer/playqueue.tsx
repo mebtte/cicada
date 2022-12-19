@@ -72,8 +72,7 @@ function Playqueue({ style }: { style: unknown }) {
                       {actualIndex === currentPlayqueuePosition ? null : (
                         <IconButton
                           size={ComponentSize.SMALL}
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onPointerUp={(e) => {
+                          onClick={(e) => {
                             e.stopPropagation();
                             return playerEventemitter.emit(
                               PlayerEventType.ACTION_PLAY_PLAYQUEUE_INDEX,
@@ -90,8 +89,7 @@ function Playqueue({ style }: { style: unknown }) {
                       actualIndex > currentPlayqueuePosition ? (
                         <IconButton
                           size={ComponentSize.SMALL}
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onPointerUp={(e) => {
+                          onClick={(e) => {
                             e.stopPropagation();
                             return playerEventemitter.emit(
                               PlayerEventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER,
@@ -107,8 +105,7 @@ function Playqueue({ style }: { style: unknown }) {
                       {actualIndex > currentPlayqueuePosition + 1 ? (
                         <IconButton
                           size={ComponentSize.SMALL}
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onPointerUp={(e) => {
+                          onClick={(e) => {
                             e.stopPropagation();
                             return playerEventemitter.emit(
                               PlayerEventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY,
@@ -125,8 +122,7 @@ function Playqueue({ style }: { style: unknown }) {
                         <IconButton
                           size={ComponentSize.SMALL}
                           style={removeStyle}
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onPointerUp={(e) => {
+                          onClick={(e) => {
                             e.stopPropagation();
                             return playerEventemitter.emit(
                               PlayerEventType.ACTION_REMOVE_PLAYQUEUE_MUSIC,
