@@ -1,6 +1,6 @@
 export const ROOT_PATH = {
   LOGIN: '/login',
-  PLAYER: '/',
+  PLAYER: '/player',
 };
 
 export const PLAYER_PATH = {
