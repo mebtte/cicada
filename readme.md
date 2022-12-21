@@ -1,6 +1,6 @@
 # 知了
 
-知了, 支持多用户的开源音乐服务.
+知了, 支持多用户的开源音乐服务. 更多请看[详细介绍](https://mebtte.com/introducing_cicada).
 
 ![](./docs/thumbnail_1.png)
 ![](./docs/thumbnail_2.png)
@@ -46,7 +46,7 @@
 <details>
   <summary>如何安装 PWA ?</summary>
 
-[PWA](https://web.dev/progressive-web-apps) 仅支持 `HTTPS` 或者 `localhost`, `HTTPS` 环境请使用反向代理.
+[PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps) 仅支持 `HTTPS` 或者 `localhost`, 知了目前暂不支持配置 `HTTPS`, 请使用 `nginx` 之类的工具进行 `HTTPS` 反向代理.
 
 </details>
 

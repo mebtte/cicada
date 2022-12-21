@@ -1,9 +1,11 @@
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { useEffect } from 'react';
+import dialog from '@/utils/dialog';
 import e, { EventType } from './eventemitter';
+import { QueueMusic } from './constants';
 
-export default () => {
+export default ({ queueMusic }: { queueMusic?: QueueMusic }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,9 +38,19 @@ export default () => {
           }
           break;
         }
+
+        case 'w': {
+          if (queueMusic && (event.metaKey || event.ctrlKey)) {
+            event.preventDefault();
+            dialog.confirm({
+              title: '确定要退出知了吗?',
+              onConfirm: () => window.close(),
+            });
+          }
+        }
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [navigate]);
+  }, [navigate, queueMusic]);
 };
