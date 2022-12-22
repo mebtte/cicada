@@ -33,9 +33,11 @@ export default ({ queueMusic }: { queueMusic?: QueueMusic }) => {
         case 'w': {
           if (queueMusic && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
-            dialog.alert({
-              title: '正在播放中, 请先暂停音乐后再使用快捷键关闭知了',
+            const id = dialog.alert({
+              content: '正在播放中, 请先暂停音乐后再使用快捷键关闭知了',
+              confirmText: '知道了',
             });
+            window.setTimeout(() => dialog.close(id), 6000);
           }
         }
       }
