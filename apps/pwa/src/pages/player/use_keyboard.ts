@@ -5,7 +5,13 @@ import dialog from '@/utils/dialog';
 import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
 
-export default ({ queueMusic }: { queueMusic?: QueueMusic }) => {
+export default ({
+  paused,
+  queueMusic,
+}: {
+  paused: boolean;
+  queueMusic?: QueueMusic;
+}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,18 +37,18 @@ export default ({ queueMusic }: { queueMusic?: QueueMusic }) => {
         }
 
         case 'w': {
-          if (queueMusic && (event.metaKey || event.ctrlKey)) {
+          if (!paused && queueMusic && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
             const id = dialog.alert({
               content: '正在播放中, 请先暂停音乐后再使用快捷键关闭知了',
               confirmText: '知道了',
             });
-            window.setTimeout(() => dialog.close(id), 6000);
+            window.setTimeout(() => dialog.close(id), 15000);
           }
         }
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [navigate, queueMusic]);
+  }, [navigate, paused, queueMusic]);
 };

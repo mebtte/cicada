@@ -69,7 +69,7 @@ function Wrapper() {
     | undefined;
   const lyricPanelOpen = useLyricPanelOpen();
 
-  useKeyboard({ queueMusic });
+  useKeyboard({ paused: audioPaused, queueMusic });
   useMediaSession(queueMusic);
 
   return (
