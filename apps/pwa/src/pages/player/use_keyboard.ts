@@ -10,15 +10,6 @@ export default ({ queueMusic }: { queueMusic?: QueueMusic }) => {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      // const { activeElement } = document;
-      // if (
-      //   !activeElement ||
-      //   activeElement.tagName === 'INPUT' ||
-      //   activeElement.tagName === 'TEXTAREA'
-      // ) {
-      //   return;
-      // }
-
       switch (event.key) {
         case 'f': {
           if (event.metaKey || event.ctrlKey) {
@@ -42,9 +33,8 @@ export default ({ queueMusic }: { queueMusic?: QueueMusic }) => {
         case 'w': {
           if (queueMusic && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
-            dialog.confirm({
-              title: '确定要退出知了吗?',
-              onConfirm: () => window.close(),
+            dialog.alert({
+              title: '正在播放中, 请先暂停音乐后再使用快捷键关闭知了',
             });
           }
         }
