@@ -41,9 +41,8 @@ async function start(configFilePath: string) {
   schedule.start();
 
   const server = new Koa();
-  if (config.mode === 'development') {
-    server.use(log());
-  }
+
+  server.use(log());
   server.use(
     cors({
       maxAge: 86400,
