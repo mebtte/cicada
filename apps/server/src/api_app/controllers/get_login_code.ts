@@ -34,16 +34,18 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.CAPTCHA_ERROR);
   }
 
-  /**
-   * 用户不存在返回参数错误
-   * 避免暴露注册用户邮箱
-   */
   const user = await getDB().get<{ id: string; nickname: string }>(
-    'select id, nickname from user where email = ?',
+    `
+      SELECT
+        id,
+        nickname
+      FROM user
+      WHERE email = ?
+    `,
     [email],
   );
   if (!user) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.USER_NOT_EXIST);
   }
 
   const hasLoginCodeAlready = await hasLoginCodeInGetInterval({
@@ -67,18 +69,18 @@ export default async (ctx: Context) => {
       to: email,
       title: `「${BRAND_NAME}」登录验证码`,
       html: `
-      Hi, 「${encode(user.nickname)}」,
-      <br />
-      <br />
-      你刚刚尝试登录, 本次登录验证码是「<code>${code}</code>」, ${
+        Hi, 「${encode(user.nickname)}」,
+        <br />
+        <br />
+        你刚刚尝试登录, 本次登录验证码是「<code>${code}</code>」, ${
         LOGIN_CODE_TTL / 1000 / 60
       } 分钟内有效.
-      <br />
-      <br />
-      ${BRAND_NAME}
-      <br />
-      ${day().format('YYYY-MM-DD HH:mm:ss')}
-    `,
+        <br />
+        <br />
+        ${BRAND_NAME}
+        <br />
+        ${day().format('YYYY-MM-DD HH:mm:ss')}
+      `,
     });
   }
 

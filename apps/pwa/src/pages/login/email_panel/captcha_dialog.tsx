@@ -87,12 +87,10 @@ function CaptchaDialog({
       toNextWrapper();
 
       notice.info('登录验证码已发送到邮箱');
-      sleep(1000).then(() =>
-        notice.info('登录验证码邮件可能会被归类到垃圾邮件'),
-      );
     } catch (error) {
       const { code, message } = error as ErrorWithCode<ExceptionCode>;
       switch (code) {
+        case ExceptionCode.USER_NOT_EXIST:
         case ExceptionCode.CAPTCHA_ERROR: {
           getCaptcha();
           break;

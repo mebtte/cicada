@@ -19,7 +19,7 @@ function SettingDialog({
   );
   const onSave = useEvent(() => {
     if (!URL.test(serverOrigin)) {
-      return notice.error('服务器地址不是一个合法的 URL');
+      return notice.error('服务器源地址非法');
     }
     setting.set((s) => ({ ...s, serverOrigin }));
 
@@ -36,6 +36,7 @@ function SettingDialog({
             inputProps={{
               value: serverOrigin,
               onChange: (event) => setServerOrigin(event.target.value),
+              placeholder: window.location.origin,
             }}
           />
         </Content>

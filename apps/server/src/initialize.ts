@@ -256,10 +256,10 @@ export default async () => {
     }
     await db.run(
       `
-      insert into user(id, email, nickname, joinTimestamp,  admin)
-        values(?, ?, ?, ?, 1)
-    `,
-      ['pangu', adminEmail, 'pangu', Date.now()],
+        INSERT INTO user( id, email, nickname, joinTimestamp, admin )
+          VALUES ( ?, ?, ?, ?, 1 )
+      `,
+      ['PanGu', adminEmail, 'PanGu', Date.now()],
     );
 
     // eslint-disable-next-line no-console
