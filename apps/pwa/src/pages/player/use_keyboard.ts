@@ -1,7 +1,7 @@
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { useEffect } from 'react';
-import dialog from '@/utils/dialog';
+import notice from '@/utils/notice';
 import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
 
@@ -39,11 +39,7 @@ export default ({
         case 'w': {
           if (!paused && queueMusic && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
-            const id = dialog.alert({
-              content: '正在播放中, 请先暂停音乐后再使用快捷键关闭知了',
-              confirmText: '知道了',
-            });
-            window.setTimeout(() => dialog.close(id), 15000);
+            notice.error('正在播放中, 请先暂停音乐后再使用快捷键关闭知了');
           }
         }
       }
