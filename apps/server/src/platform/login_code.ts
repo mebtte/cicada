@@ -3,7 +3,7 @@ import md5 from 'md5';
 import { GET_LOGIN_CODE_INTERVAL } from '#/constants';
 import { getDB } from '@/db';
 import generateRandomString from '#/utils/generate_random_string';
-import { getConfig, getLoginCodeSaltFilePath } from '@/config';
+import { getLoginCodeSaltFilePath } from '@/config';
 import { LOGIN_CODE_TTL } from '../constants';
 
 let loginCodeSalt: string;
@@ -43,8 +43,7 @@ export function saveLoginCode({
   userId: string;
   code: string;
 }) {
-  const encodedCode =
-    getConfig().mode === 'development' ? code : md5(code + getLoginCodeSalt());
+  const encodedCode = md5(code + getLoginCodeSalt());
   return getDB().run(
     'insert into login_code(userId, code, createTimestamp) values(?, ?, ?)',
     [userId, encodedCode, Date.now()],
@@ -73,10 +72,7 @@ export async function verifyLoginCode({
     return false;
   }
 
-  if (
-    loginCode.code !==
-    (getConfig().mode === 'development' ? code : md5(code + getLoginCodeSalt()))
-  ) {
+  if (loginCode.code !== md5(code + getLoginCodeSalt())) {
     return false;
   }
 

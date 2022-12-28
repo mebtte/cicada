@@ -3,7 +3,7 @@ import util from 'util';
 import { Next } from 'koa';
 import { ExceptionCode } from '#/constants/exception';
 import day from '#/utils/day';
-import { getConfig, getLogDirectory } from '@/config';
+import { getLogDirectory } from '@/config';
 import { Context } from '../constants/koa';
 
 const appendFileAsync = util.promisify(fs.appendFile);
@@ -12,9 +12,7 @@ export default async (ctx: Context, next: Next) => {
   try {
     await next();
   } catch (error) {
-    if (getConfig().mode === 'development') {
-      console.error(error);
-    }
+    console.error(error);
     ctx.except(ExceptionCode.SERVER_ERROR);
 
     const now = day();
