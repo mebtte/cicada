@@ -61,5 +61,5 @@
 - optional
 - default: `production`
 
-运行模式, `development` 表示开发模式, `production` 表示生产模式.
-该配置项主要用于开发, 普通用户无需关注.
+运行模式, `production` 表示生产模式, `development` 表示开发模式.
+该配置项主要用于开发, 普通用户无需关注, 设置成 `development` 可能会导致知了无法正常工作.
