@@ -259,7 +259,7 @@ export default async () => {
         INSERT INTO user( id, email, nickname, joinTimestamp, admin )
           VALUES ( ?, ?, ?, ?, 1 )
       `,
-      ['PanGu', adminEmail, 'PanGu', Date.now()],
+      ['1', adminEmail, 'Admin', Date.now()],
     );
 
     // eslint-disable-next-line no-console

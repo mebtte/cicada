@@ -39,7 +39,7 @@ export default ({
         case 'w': {
           if (!paused && queueMusic && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
-            notice.error('正在播放中, 请先暂停音乐后再使用快捷键关闭知了');
+            notice.error('请先暂停音乐后再使用快捷键退出');
           }
         }
       }
