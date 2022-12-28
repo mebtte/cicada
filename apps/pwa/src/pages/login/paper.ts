@@ -11,4 +11,5 @@ export default styled.div`
   padding: 30px 20px;
 
   transform: translateY(-50%);
+  -webkit-app-region: no-drag;
 `;

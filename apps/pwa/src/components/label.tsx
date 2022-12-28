@@ -13,6 +13,7 @@ const Style = styled.div<{ active: boolean; disabled: boolean }>`
     align-items: center;
 
     transition: inherit;
+    user-select: none;
 
     &:empty {
       display: none;

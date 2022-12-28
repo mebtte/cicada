@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import p from '@/global_states/profile';
 import { animated, useTransition } from 'react-spring';
+import styled from 'styled-components';
 import EmailPanel from './email_panel';
 import LoginCodePanel from './login_code_panel';
 import UserPanel from './user_panel';
 import { Step } from './constants';
 import PageContainer from '../page_container';
+
+const Style = styled(PageContainer)`
+  -webkit-app-region: drag;
+`;
 
 function Login() {
   const profile = p.useState();
@@ -27,7 +32,7 @@ function Login() {
     leave: { opacity: 0 },
   });
   return (
-    <PageContainer>
+    <Style>
       {transitions((style, s) => {
         switch (s) {
           case Step.FIRST: {
@@ -62,7 +67,7 @@ function Login() {
           }
         }
       })}
-    </PageContainer>
+    </Style>
   );
 }
 
