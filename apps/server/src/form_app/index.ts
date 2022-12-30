@@ -4,7 +4,7 @@ import catcher from '@/middlewares/catcher';
 import { Context } from './constants';
 import router from './router';
 
-export function getBlobApp() {
+export function getFormApp() {
   const app = new Koa<DefaultState, Context>();
   app.use(parasite);
   app.use(catcher);

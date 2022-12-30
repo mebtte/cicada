@@ -80,6 +80,10 @@ export function getDownloadDirectory() {
   return `${config.data}/downloads`;
 }
 
+export function getCacheDirectory() {
+  return `${config.data}/cache`;
+}
+
 export function getAssetDirectory(assetType?: AssetType) {
   if (assetType) {
     return `${config.data}/assets/${assetType}`;

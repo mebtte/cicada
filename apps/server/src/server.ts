@@ -11,7 +11,7 @@ import schedule from './schedule';
 import { getAssetApp } from './asset_app';
 import { getDownloadApp } from './download_app';
 import { getApiApp } from './api_app';
-import { getBlobApp } from './blob_app';
+import { getFormApp } from './form_app';
 import { getPwaApp } from './pwa_app';
 
 function printInfo(info: string) {
@@ -58,7 +58,7 @@ async function start(configFilePath: string) {
   server.use(mount(`/${PathPrefix.ASSET}`, getAssetApp()));
   server.use(mount(`/${PathPrefix.DOWNLOAD}`, getDownloadApp()));
   server.use(mount(`/${PathPrefix.API}`, getApiApp()));
-  server.use(mount(`/${PathPrefix.BLOB}`, getBlobApp()));
+  server.use(mount(`/${PathPrefix.BLOB}`, getFormApp()));
   server.use(mount('/', getPwaApp()));
 
   http.createServer(server.callback()).listen(config.port);

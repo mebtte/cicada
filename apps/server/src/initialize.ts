@@ -12,6 +12,7 @@ import {
   getDownloadDirectory,
   getLogDirectory,
   getTrashDirectory,
+  getCacheDirectory,
 } from './config';
 import exitWithMessage from './utils/exit_with_message';
 
@@ -32,6 +33,7 @@ export default async () => {
     getTrashDirectory(),
     getLogDirectory(),
     getDownloadDirectory(),
+    getCacheDirectory(),
 
     getAssetDirectory(),
     ...Object.values(AssetType).map((at) => getAssetDirectory(at)),

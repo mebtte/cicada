@@ -7,7 +7,7 @@ export const CAPTCHA_TTL = 1000 * 60 * 1;
 export const GET_LOGIN_CODE_INTERVAL = 1000 * 60 * 2;
 
 export enum PathPrefix {
-  BLOB = 'blob',
+  BLOB = 'form',
   DOWNLOAD = 'download',
   ASSET = 'asset',
   API = 'api',

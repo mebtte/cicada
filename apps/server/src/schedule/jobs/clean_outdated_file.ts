@@ -3,6 +3,7 @@ import util from 'util';
 import withTimeout from '#/utils/with_timeout';
 import { DOWNLOAD_TTL } from '#/constants';
 import {
+  getCacheDirectory,
   getDBSnapshotDirectory,
   getDownloadDirectory,
   getLogDirectory,
@@ -31,6 +32,10 @@ const DIRECTORIES: {
   {
     directory: getDBSnapshotDirectory(),
     ttl: 1000 * 60 * 60 * 24 * 60,
+  },
+  {
+    directory: getCacheDirectory(),
+    ttl: 1000 * 60 * 60 * 24 * 7,
   },
 ];
 

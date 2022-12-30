@@ -11,7 +11,7 @@ function uploadAsset(asset: Blob, assetType: AssetType) {
     url: string;
   }>({
     method: Method.POST,
-    path: '/blob/asset',
+    path: '/form/asset',
     body: form,
     withToken: true,
     timeout: 60 * 1000,
