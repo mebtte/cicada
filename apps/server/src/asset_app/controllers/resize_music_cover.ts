@@ -24,21 +24,20 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
+  const music = await getMusicById(id, [MusicProperty.COVER]);
+  if (!music) {
+    return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
+  }
+  if (!music.cover) {
+    return ctx.except(ExceptionCode.MUSIC_COVER_NOT_EXIST);
+  }
+
   const cachePath = path.join(
     getCacheDirectory(),
-    `resized_cover_${id}_${sizeNumber}.jpeg`,
+    `resized_music_cover_${sizeNumber}_${music.cover}`,
   );
   const cacheExist = await exist(cachePath);
-
   if (!cacheExist) {
-    const music = await getMusicById(id, [MusicProperty.COVER]);
-    if (!music) {
-      return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
-    }
-    if (!music.cover) {
-      return ctx.except(ExceptionCode.MUSIC_COVER_NOT_EXIST);
-    }
-
     const cover = await jimp.read(
       getAssetFilePath(music.cover, AssetType.MUSIC_COVER),
     );
