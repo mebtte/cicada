@@ -48,6 +48,10 @@ export function getConfig() {
   return config;
 }
 
+export function getDataVersionPath() {
+  return `${config.data}/v`;
+}
+
 export function getDBFilePath() {
   return `${config.data}/db`;
 }
