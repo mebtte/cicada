@@ -14,7 +14,7 @@ import { Ref, RenderProps } from './constants';
 import { EditDialogType } from '../eventemitter';
 
 const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
-const MAX_SIZE = 1000;
+const MAX_SIZE = 1024;
 const Style = styled.div`
   display: flex;
   flex-direction: column;

@@ -32,10 +32,7 @@ export default async (ctx: Context) => {
   const cacheExist = await exist(cachePath);
 
   if (!cacheExist) {
-    const music = await getMusicById(id, [
-      MusicProperty.COVER,
-      MusicProperty.NAME,
-    ]);
+    const music = await getMusicById(id, [MusicProperty.COVER]);
     if (!music) {
       return ctx.except(ExceptionCode.MUSIC_NOT_EXIST, 404);
     }
