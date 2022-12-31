@@ -8,8 +8,9 @@ import { ExceptionCode } from '#/constants/exception';
 import jimp from 'jimp';
 import { getCacheDirectory } from '@/config';
 import exist from '#/utils/exist';
+import definition from '@/definition';
 
-const SIZES = [96, 128, 192, 256, 384, 512];
+const MAX_SIZE = 1024;
 
 export default async (ctx: Context) => {
   const { id, size } = ctx.query as { id?: unknown; size?: unknown };
@@ -19,27 +20,34 @@ export default async (ctx: Context) => {
     typeof id !== 'string' ||
     !id.length ||
     typeof sizeNumber !== 'number' ||
-    !SIZES.includes(sizeNumber)
+    sizeNumber > MAX_SIZE
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const music = await getMusicById(id, [MusicProperty.COVER]);
-  if (!music) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
-  }
-  if (!music.cover) {
-    return ctx.except(ExceptionCode.MUSIC_COVER_NOT_EXIST);
-  }
-
   const cachePath = path.join(
     getCacheDirectory(),
-    `resized_music_cover_${sizeNumber}_${music.cover}`,
+    `resized_music_cover_${id}_${sizeNumber}.jpeg`,
   );
   const cacheExist = await exist(cachePath);
+
   if (!cacheExist) {
+    const music = await getMusicById(id, [
+      MusicProperty.COVER,
+      MusicProperty.NAME,
+    ]);
+    if (!music) {
+      return ctx.except(ExceptionCode.MUSIC_NOT_EXIST, 404);
+    }
     const cover = await jimp.read(
-      getAssetFilePath(music.cover, AssetType.MUSIC_COVER),
+      music.cover
+        ? getAssetFilePath(music.cover, AssetType.MUSIC_COVER)
+        : path.join(
+            __dirname,
+            definition.BUILD
+              ? './runtime/default_cover.jpeg'
+              : '../../../../../runtime/default_cover.jpeg',
+          ),
     );
     await new Promise<void>((resolve, reject) =>
       cover

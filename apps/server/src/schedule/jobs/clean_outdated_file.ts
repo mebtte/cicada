@@ -31,11 +31,11 @@ const DIRECTORIES: {
   },
   {
     directory: getDBSnapshotDirectory(),
-    ttl: 1000 * 60 * 60 * 24 * 60,
+    ttl: 1000 * 60 * 60 * 24 * 30,
   },
   {
     directory: getCacheDirectory(),
-    ttl: 1000 * 60 * 60 * 24 * 7,
+    ttl: 1000 * 60 * 60 * 24 * 30,
   },
 ];
 
