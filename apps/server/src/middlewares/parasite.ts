@@ -4,6 +4,7 @@ import { Context } from '../constants/koa';
 
 export default (ctx: Context, next: Next) => {
   ctx.success = (data) => {
+    ctx.status = 200;
     ctx.body = {
       code: ExceptionCode.SUCCESS,
       data,
@@ -11,7 +12,7 @@ export default (ctx: Context, next: Next) => {
   };
   ctx.except = (
     exceptionCode: ExceptionCode,
-    statusCode: 200 | 400 | 404 | 400 = 200,
+    statusCode: 200 | 400 | 404 | 500 = 400,
   ) => {
     ctx.status = statusCode;
     ctx.body = {
