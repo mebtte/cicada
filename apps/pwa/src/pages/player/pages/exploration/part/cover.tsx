@@ -8,9 +8,11 @@ const Style = styled.img`
   aspect-ratio: 1 / 1.5;
   object-fit: cover;
   object-position: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 `;
 
-function Cover({ cover }: { cover: string }) {
+function Cover({ cover, onClick }: { cover: string; onClick: () => void }) {
   const [currentCover, setCurrentCover] = useState(cover);
 
   useEffect(() => {
@@ -24,6 +26,7 @@ function Cover({ cover }: { cover: string }) {
       crossOrigin="anonymous"
       loading="lazy"
       onError={() => setCurrentCover(JpgDefaultCover)}
+      onClick={onClick}
     />
   );
 }

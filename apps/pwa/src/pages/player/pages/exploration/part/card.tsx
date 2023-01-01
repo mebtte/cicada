@@ -6,45 +6,47 @@ import { CardItem } from '../constants';
 
 const Style = styled.div`
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 
   width: 150px;
 
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-
   > .title {
+    max-width: 100%;
     margin-top: 5px;
 
     font-size: 14px;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     text-align: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 
     ${ellipsis}
-  }
 
-  > .sub-title {
-    font-size: 12px;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    text-align: center;
-
-    ${ellipsis}
+    &:hover {
+      color: ${CSSVariable.COLOR_PRIMARY};
+    }
   }
 `;
 
 function Card({
   id,
   title,
-  subTitle,
+  subTitleRenderer,
   cover,
   onItemClick,
 }: CardItem & {
   onItemClick: (id: string) => void;
 }) {
+  const onItemClickWrapper = () => onItemClick(id);
   return (
-    <Style onClick={() => onItemClick(id)}>
-      <Cover cover={cover} />
-      <div className="title">{title}</div>
-      {subTitle ? <div className="sub-title">{subTitle}</div> : null}
+    <Style>
+      <Cover cover={cover} onClick={onItemClickWrapper} />
+      <div className="title" onClick={onItemClickWrapper}>
+        {title}
+      </div>
+      {subTitleRenderer ? subTitleRenderer() : null}
     </Style>
   );
 }

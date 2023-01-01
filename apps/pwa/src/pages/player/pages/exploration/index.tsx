@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import Spinner from '@/components/spinner';
 import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
@@ -8,6 +9,8 @@ import getRandomCover from '@/utils/get_random_cover';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { Query } from '@/constants';
+import { CSSVariable } from '@/global_style';
+import ellipsis from '@/style/ellipsis';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
 import useData from './use_data';
@@ -17,6 +20,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { openCreateSingerDialog } from '../../utils';
+import Singer from '../../components/singer';
 
 const Root = styled(Page)`
   position: relative;
@@ -37,6 +41,22 @@ const ContentContainer = styled(Container)`
   overflow: auto;
 
   padding-bottom: env(safe-area-inset-bottom, 0);
+`;
+const SubTitle = styled.div`
+  max-width: 100%;
+
+  ${ellipsis}
+  font-size: 12px;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+`;
+const MusicbillSubTitle = styled(SubTitle)`
+  > span {
+    cursor: pointer;
+
+    &:hover {
+      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    }
+  }
 `;
 
 const openMusicDrawer = (id: string) =>
@@ -63,7 +83,13 @@ const Exploration = memo(
           list={exploration.musicList.map((m) => ({
             id: m.id,
             title: m.name,
-            subTitle: m.singers.map((s) => s.name).join(', '),
+            subTitleRenderer: () => (
+              <SubTitle>
+                {m.singers.map((s) => (
+                  <Singer key={s.id} singer={s} />
+                ))}
+              </SubTitle>
+            ),
             cover: m.cover || getRandomCover(),
           }))}
           onItemClick={openMusicDrawer}
@@ -81,7 +107,8 @@ const Exploration = memo(
           list={exploration.singerList.map((s) => ({
             id: s.id,
             title: s.name,
-            subTitle: s.aliases.length ? s.aliases[0] : '',
+            subTitleRenderer: () =>
+              s.aliases.length ? <SubTitle>{s.aliases[0]}</SubTitle> : null,
             cover: s.avatar || getRandomCover(),
           }))}
           onItemClick={openSingerDrawer}
@@ -98,7 +125,20 @@ const Exploration = memo(
             list={exploration.musicbillList.map((mb) => ({
               id: mb.id,
               title: mb.name,
-              subTitle: mb.user.nickname,
+              subTitleRenderer: () => (
+                <MusicbillSubTitle>
+                  <span
+                    onClick={() =>
+                      playerEventemitter.emit(
+                        PlayerEventType.OPEN_USER_DRAWER,
+                        { id: mb.user.id },
+                      )
+                    }
+                  >
+                    {mb.user.nickname}
+                  </span>
+                </MusicbillSubTitle>
+              ),
               cover: mb.cover || getRandomCover(),
             }))}
             onItemClick={openMusicbillDrawer}
