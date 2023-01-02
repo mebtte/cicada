@@ -34,6 +34,10 @@
 
 目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
 
+## 版本升级
+
+[从 0.x.x 升级到 1.x.x](./docs/version_update/index.md)
+
 ## 常见问题
 
 <details>
