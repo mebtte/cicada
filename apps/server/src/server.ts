@@ -58,7 +58,7 @@ async function start(configFilePath: string) {
   server.use(mount(`/${PathPrefix.ASSET}`, getAssetApp()));
   server.use(mount(`/${PathPrefix.DOWNLOAD}`, getDownloadApp()));
   server.use(mount(`/${PathPrefix.API}`, getApiApp()));
-  server.use(mount(`/${PathPrefix.BLOB}`, getFormApp()));
+  server.use(mount(`/${PathPrefix.FORM}`, getFormApp()));
   server.use(mount('/', getPwaApp()));
 
   http.createServer(server.callback()).listen(config.port);

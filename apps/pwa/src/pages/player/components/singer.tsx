@@ -26,7 +26,7 @@ const Style = styled.span`
   }
 `;
 
-function Singer({ singer }: { singer: SingerType }) {
+function Singer({ singer }: { singer: Omit<SingerType, 'aliases'> }) {
   return (
     <Style>
       <span
