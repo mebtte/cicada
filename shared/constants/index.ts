@@ -51,6 +51,7 @@ export const ASSET_TYPE_MAP: Record<
       'audio/wav',
       'audio/ogg',
       'audio/flac',
+      'audio/x-flac',
       'audio/mpeg',
       'audio/m4a',
       'audio/x-m4a',
@@ -64,6 +65,7 @@ export const ASSET_TYPE_MAP: Record<
       'audio/wav',
       'audio/ogg',
       'audio/flac',
+      'audio/x-flac',
       'audio/mpeg',
       'audio/m4a',
       'audio/x-m4a',
@@ -73,7 +75,7 @@ export const ASSET_TYPE_MAP: Record<
     maxSize: 1024 * 1024 * 50,
   },
   [AssetType.MUSIC_HQ]: {
-    acceptTypes: ['audio/flac'],
+    acceptTypes: ['audio/flac', 'audio/x-flac'],
     maxSize: 1024 * 1024 * 50,
   },
 };
