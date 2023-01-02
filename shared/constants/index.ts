@@ -47,15 +47,33 @@ export const ASSET_TYPE_MAP: Record<
     maxSize: 1024 * 1024 * 0.5,
   },
   [AssetType.MUSIC_SQ]: {
-    acceptTypes: ['audio/mpeg', 'audio/x-m4a', 'audio/mp4', 'video/mp4'],
-    maxSize: 1024 * 1024 * 10,
+    acceptTypes: [
+      'audio/wav',
+      'audio/ogg',
+      'audio/flac',
+      'audio/mpeg',
+      'audio/m4a',
+      'audio/x-m4a',
+      'audio/mp4',
+      'video/mp4',
+    ],
+    maxSize: 1024 * 1024 * 50,
   },
   [AssetType.MUSIC_AC]: {
-    acceptTypes: ['audio/mpeg', 'audio/x-m4a', 'audio/mp4', 'video/mp4'],
-    maxSize: 1024 * 1024 * 10,
+    acceptTypes: [
+      'audio/wav',
+      'audio/ogg',
+      'audio/flac',
+      'audio/mpeg',
+      'audio/m4a',
+      'audio/x-m4a',
+      'audio/mp4',
+      'video/mp4',
+    ],
+    maxSize: 1024 * 1024 * 50,
   },
   [AssetType.MUSIC_HQ]: {
-    acceptTypes: ['audio/x-flac'],
+    acceptTypes: ['audio/flac'],
     maxSize: 1024 * 1024 * 50,
   },
 };
