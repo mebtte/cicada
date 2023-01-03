@@ -39,6 +39,6 @@ mv package.json.bak package.json
 cd build
 tag=$(git describe --abbrev=0 --tags)
 for binary in ./*; do
-  tar zcvf $(echo $binary | sed -e 's/.exe//g')-$tag-x64.tar.gz $binary
+  tar zcvf $(echo $binary | sed -e 's/.exe//g')-$tag.tar.gz $binary
   rm $binary
 done
