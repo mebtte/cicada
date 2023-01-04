@@ -3,7 +3,6 @@ import path from 'path';
 import server from './server';
 import exitWithMessage from './utils/exit_with_message';
 import definition from './definition';
-import { DEFAULT_PORT } from './constants';
 
 const program = new Command()
   .name('cicada')
@@ -15,7 +14,7 @@ program
   .description('start cicada server')
   .option('-c, --config <config>', 'specify config file')
   .option('--data <data>', "override config's data")
-  .option('--port <port>', "override config's port", DEFAULT_PORT.toString())
+  .option('--port <port>', "override config's port")
   .action(
     async ({
       config,

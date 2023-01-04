@@ -2,7 +2,6 @@ import { AssetType } from '#/constants';
 import fs from 'fs';
 import Joi from 'joi';
 import json5 from 'json5';
-import { DEFAULT_PORT } from './constants';
 import exitWithMessage from './utils/exit_with_message';
 
 export interface Config {
@@ -37,7 +36,7 @@ let config: Config = {
   initialAdminEmail: '',
 
   data: `${process.cwd()}/cicada`,
-  port: DEFAULT_PORT,
+  port: 8000,
 
   emailHost: '',
   emailPort: 465,
