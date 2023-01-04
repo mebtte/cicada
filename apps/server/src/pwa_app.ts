@@ -8,7 +8,7 @@ export function getPwaApp() {
   const app = new Koa();
   app.use(etag());
   app.use(
-    serve(path.join(__dirname, definition.BUILD ? './pwa' : '../../../pwa')),
+    serve(path.join(__dirname, definition.BUILT ? './pwa' : '../../../pwa')),
   );
   return app;
 }

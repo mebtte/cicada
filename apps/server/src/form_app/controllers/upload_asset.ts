@@ -74,8 +74,20 @@ const ASSET_TYPE_MAP_OPTION: Record<
           '-y',
           '-i',
           file.path,
+
+          // 移除封面和其他元数据
           '-map_metadata',
           '-1',
+          '-q',
+          '1',
+
+          '-map',
+          'a',
+
+          // 码率
+          '-ab',
+          '192000',
+
           targetPath,
         ]);
         return readFileAsync(targetPath);
@@ -104,8 +116,20 @@ const ASSET_TYPE_MAP_OPTION: Record<
           '-y',
           '-i',
           file.path,
+
+          // 移除封面和其他元数据
           '-map_metadata',
           '-1',
+          '-q',
+          '1',
+
+          '-map',
+          'a',
+
+          // 码率
+          '-ab',
+          '192000',
+
           targetPath,
         ]);
         return readFileAsync(targetPath);
@@ -118,30 +142,7 @@ const ASSET_TYPE_MAP_OPTION: Record<
     },
   },
   [AssetType.MUSIC_HQ]: {
-    handleAsset: async (file) => {
-      let ffmpegPath: string;
-      try {
-        ffmpegPath = await which('ffmpeg');
-      } catch (error) {
-        ffmpegPath = '';
-      }
-      if (ffmpegPath) {
-        const targetPath = `${os.tmpdir()}/${generateRandomString(
-          10,
-          false,
-        )}.flac`;
-        await spawnAsync(ffmpegPath, [
-          '-y',
-          '-i',
-          file.path,
-          '-map_metadata',
-          '-1',
-          targetPath,
-        ]);
-        return readFileAsync(targetPath);
-      }
-      return readFileAsync(file.path);
-    },
+    handleAsset: async (file) => readFileAsync(file.path),
     generateId: (buffer) => {
       const hash = md5(buffer);
       return `${hash}.flac`;

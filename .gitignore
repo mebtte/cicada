@@ -16,3 +16,4 @@ dist/
 # cicada
 /config.json
 /config.json5
+/cache

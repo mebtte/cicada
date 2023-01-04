@@ -116,3 +116,10 @@ export function updateConfigFromFile(filePath: string) {
     exitWithMessage(`配置文件「${filePath}」错误`);
   }
 }
+
+export function updateConfig(partial: Partial<Config>) {
+  config = {
+    ...config,
+    ...partial,
+  };
+}

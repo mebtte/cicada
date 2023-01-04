@@ -13,33 +13,33 @@ import {
 const readdirAsync = util.promisify(fs.readdir);
 const rmAsync = util.promisify(fs.rm);
 const statAsync = util.promisify(fs.stat);
-const DIRECTORIES: {
-  directory: string;
-  ttl: number;
-}[] = [
-  {
-    directory: getTrashDirectory(),
-    ttl: 1000 * 60 * 60 * 24 * 30,
-  },
-  {
-    directory: getLogDirectory(),
-    ttl: 1000 * 60 * 60 * 24 * 30,
-  },
-  {
-    directory: getDownloadDirectory(),
-    ttl: DOWNLOAD_TTL,
-  },
-  {
-    directory: getDBSnapshotDirectory(),
-    ttl: 1000 * 60 * 60 * 24 * 30,
-  },
-  {
-    directory: getCacheDirectory(),
-    ttl: 1000 * 60 * 60 * 24 * 30,
-  },
-];
 
 async function cleanOutdatedFile() {
+  const DIRECTORIES: {
+    directory: string;
+    ttl: number;
+  }[] = [
+    {
+      directory: getTrashDirectory(),
+      ttl: 1000 * 60 * 60 * 24 * 30,
+    },
+    {
+      directory: getLogDirectory(),
+      ttl: 1000 * 60 * 60 * 24 * 30,
+    },
+    {
+      directory: getDownloadDirectory(),
+      ttl: DOWNLOAD_TTL,
+    },
+    {
+      directory: getDBSnapshotDirectory(),
+      ttl: 1000 * 60 * 60 * 24 * 30,
+    },
+    {
+      directory: getCacheDirectory(),
+      ttl: 1000 * 60 * 60 * 24 * 30,
+    },
+  ];
   for (const { directory, ttl } of DIRECTORIES) {
     const files = await readdirAsync(directory);
     for (const file of files) {

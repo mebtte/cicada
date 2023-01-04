@@ -34,6 +34,16 @@
 
 目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
 
+### Docker
+
+知了支持 Docker 镜像部署:
+
+```sh
+docker run -d --restart=always -p 8000:80 -v $HOME/cicada:/data -v $HOME/config.json:/config.json --name cicada mebtte/cicada
+```
+
+Docker 镜像配置文件位于 `/config.json`, 数据目录位于 `/data`. 需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外在 Docker 镜像下 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项不会生效.
+
 ## 版本升级
 
 [从 0.x.x 升级到 1.x.x](./docs/version_update/index.md)
@@ -54,10 +64,19 @@
 
 </details>
 
-## 已知缺陷
+<details>
+  <summary>在 iOS/iPadOS 上处于后台无法自动播放下一首 ?</summary>
 
-- 在 iOS/iPadOS 上处于后台无法自动播放下一首, 这是因为 Safari 会暂停处于后台页面的 JavaScript.
-- 在 Windows 下安装 PWA 后图标比其他应用图标要小, 这是因为 Windows 和 macOS 的图标占用空间不一致, PWA 无法同时兼容, 知了使用的是 macOS 图标尺寸.
+这是因为 Safari 会暂停处于后台页面的 JavaScript, 知了现在无法解决这个问题, 需要等待 Safari 对 PWA 的支持.
+
+</details>
+
+<details>
+  <summary>Windows 下安装 PWA 后的图标偏小 ?</summary>
+
+这是因为 Windows 和 macOS 的图标占用空间不一致, PWA 无法同时兼容, 知了使用的是 macOS 图标尺寸.
+
+</details>
 
 ## 开源协议
 

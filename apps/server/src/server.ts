@@ -4,7 +4,12 @@ import log from 'koa-logger';
 import cors from '@koa/cors';
 import mount from 'koa-mount';
 import { PathPrefix } from '#/constants';
-import { updateConfigFromFile, getConfig, Config } from './config';
+import {
+  updateConfigFromFile,
+  getConfig,
+  Config,
+  updateConfig,
+} from './config';
 import requirementCheck from './requirement_check';
 import initialize from './initialize';
 import schedule from './schedule';
@@ -19,8 +24,22 @@ function printInfo(info: string) {
   console.log(`--- ${info} ---`);
 }
 
-async function start(configFilePath: string) {
+async function start({
+  configFilePath,
+  data,
+  port,
+}: {
+  configFilePath: string;
+  data?: string;
+  port?: number;
+}) {
   updateConfigFromFile(configFilePath);
+  if (data) {
+    updateConfig({ data });
+  }
+  if (port) {
+    updateConfig({ port });
+  }
 
   await initialize();
 

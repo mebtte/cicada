@@ -38,7 +38,7 @@ module.exports = {
           .toString()
           .replace('\n', ''),
       ),
-      'globalThis.BUILD': JSON.stringify(true),
+      'globalThis.BUILT': JSON.stringify(true),
     }),
   ],
   resolve: {
