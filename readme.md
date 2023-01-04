@@ -34,6 +34,16 @@
 
 目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
 
+### Docker
+
+知了支持 Docker 镜像部署:
+
+```sh
+docker run -d -p 8000:80 -v $HOME/cicada:/data -v $HOME/config.json:/config.json --name cicada mebtte/cicada
+```
+
+Docker 镜像配置文件位于 `/config.json`, 数据目录位于 `/data`. 需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项使用 Docker 镜像不再生效.
+
 ## 常见问题
 
 <details>
