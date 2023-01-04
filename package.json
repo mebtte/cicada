@@ -181,12 +181,6 @@
       "pwa/**/*",
       "node_modules/**/*.node"
     ],
-    "outputPath": "build",
-    "targets": [
-      "node16-macos-x64",
-      "node16-win-x64",
-      "node16-linux-x64",
-      "node16-linux-arm64"
-    ]
+    "outputPath": "build"
   }
 }
