@@ -7,3 +7,5 @@ export enum PathPrefix {
   ASSET = 'asset',
   API = 'api',
 }
+
+export const DEFAULT_PORT = 8000;

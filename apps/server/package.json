@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "cross-env nodemon",
     "watch": "cross-env NODE_ENV=production webpack --config webpack.config.js --progress --watch",
-    "build": "cross-env NODE_ENV=production webpack --config webpack.config.js --progress"
+    "build": "cross-env NODE_ENV=production webpack --config webpack.config.js --progress",
+    "start": "ts-node -r tsconfig-paths/register src/index.ts"
   }
 }

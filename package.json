@@ -22,6 +22,7 @@
     "dev:server": "npm run dev -w apps/server",
     "watch:server": "npm run watch -w apps/server",
     "build:server": "npm run build -w apps/server",
+    "start:server": "npm run start -w apps/server",
     "pkg": "pkg .",
     "build": "./build.sh",
     "build:current": "rimraf build && npm run build:pwa && npm run build:server && npm run pkg"

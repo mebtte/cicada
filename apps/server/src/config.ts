@@ -2,6 +2,7 @@ import { AssetType } from '#/constants';
 import fs from 'fs';
 import Joi from 'joi';
 import json5 from 'json5';
+import { DEFAULT_PORT } from './constants';
 import exitWithMessage from './utils/exit_with_message';
 
 export interface Config {
@@ -36,7 +37,7 @@ let config: Config = {
   initialAdminEmail: '',
 
   data: `${process.cwd()}/cicada`,
-  port: 8000,
+  port: DEFAULT_PORT,
 
   emailHost: '',
   emailPort: 465,
@@ -111,4 +112,11 @@ export function updateConfigFromFile(filePath: string) {
     console.error(error);
     exitWithMessage(`配置文件「${filePath}」错误`);
   }
+}
+
+export function updateConfig(partial: Partial<Config>) {
+  config = {
+    ...config,
+    ...partial,
+  };
 }
