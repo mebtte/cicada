@@ -1,0 +1,6 @@
+FROM ubuntu
+
+COPY build/cicada-linux-arm64 /
+VOLUME [ "/data", "/config.json" ]
+CMD /cicada-linux-arm64 start -c /config.json --data /data --port 80
+EXPOSE 80

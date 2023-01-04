@@ -1,15 +1,6 @@
-FROM node:18.12.1
+FROM ubuntu
 
-WORKDIR /app
-
-COPY ["./build/cicada-linux","package.json","package-lock.json*","config.json","./"]
-
-RUN npm install
-
-EXPOSE 8000
-
-CMD ["./cicada-linux","start","-c","config.json"]
-
-
-
-
+COPY build/cicada-linux-x64 /
+VOLUME [ "/data", "/config.json" ]
+CMD /cicada-linux-x64 start -c /config.json --data /data --port 80
+EXPOSE 80
