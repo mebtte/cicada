@@ -9,6 +9,7 @@ function withLogin<Props = {}>(Component: ComponentType<Props>) {
     const profile = p.useState();
     const { pathname } = useLocation();
     return profile ? (
+      // @ts-expect-error
       <Component {...props} />
     ) : (
       <Navigate
