@@ -1,8 +1,8 @@
 FROM ubuntu
 
-RUN apt update -y \
-  && apt install -y git ffmpeg \
-  && apt autoclearn \
+RUN apt-get update -y \
+  && apt-get install -y git ffmpeg \
+  && apt-get autoclean \
   && rm -rf /var/lib/apt/lists/*
 
 COPY build/cicada-x64 /

@@ -30,9 +30,7 @@
 ./cicada-linux-x64 start -c config.json
 ```
 
-通过 `localhost:8000` 或者 `{{ip}}:8000` 访问知了服务.
-
-目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
+通过 `localhost:8000` 或者 `{{ip}}:8000` 访问知了服务. 目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
 
 ### Docker
 
