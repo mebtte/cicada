@@ -30,19 +30,24 @@
 ./cicada-linux-x64 start -c config.json
 ```
 
-通过 `localhost:8000` 或者 `{{ip}}:8000` 访问知了服务.
-
-目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
+通过 `localhost:8000` 或者 `{{ip}}:8000` 访问知了服务. 目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
 
 ### Docker
 
 知了支持 Docker 镜像部署:
 
 ```sh
-docker run -d --restart=always -p 8000:80 -v $HOME/cicada:/data -v $HOME/config.json:/config.json --name cicada mebtte/cicada
+docker run \
+  -d \
+  --restart=always \
+  -p 8000:80 \
+  -v $HOME/cicada-data:/data \
+  -v $HOME/cicada-config.json:/config.json \
+  --name cicada \
+  mebtte/cicada
 ```
 
-Docker 镜像配置文件位于 `/config.json`, 数据目录位于 `/data`. 需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外在 Docker 镜像下 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项不会生效.
+需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外在 Docker 镜像下 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项不会生效.
 
 ## 版本升级
 
