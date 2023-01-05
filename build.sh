@@ -57,7 +57,7 @@ else
   cd build
   tag=$(git describe --abbrev=0 --tags)
   for binary in ./*; do
-    tar zcvf $(echo $binary | sed -e 's/.exe//g')-$tag.tar.gz $binary
+    tar zcvf $(echo $binary | sed -e 's/.exe//g')-x64-$tag.tar.gz $binary
     rm $binary
   done
 fi
