@@ -1,7 +1,7 @@
 FROM ubuntu
 
 RUN apt-get update -y \
-  && apt-get install -y git ffmpeg \
+  && apt-get install -y ffmpeg \
   && apt-get autoclean \
   && rm -rf /var/lib/apt/lists/*
 
