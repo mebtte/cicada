@@ -4,13 +4,16 @@ import { useEffect } from 'react';
 import notice from '@/utils/notice';
 import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
+import { LocalMusicbill } from './musicbilll_order_drawer/constant';
 
 export default ({
   paused,
   queueMusic,
+  musicbillList,
 }: {
   paused: boolean;
   queueMusic?: QueueMusic;
+  musicbillList: LocalMusicbill[];
 }) => {
   const navigate = useNavigate();
 
@@ -41,10 +44,37 @@ export default ({
             event.preventDefault();
             notice.error('请先暂停音乐后再使用快捷键退出');
           }
+          break;
+        }
+
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9': {
+          if (event.metaKey || event.ctrlKey) {
+            const index = Number(event.key);
+            const musicbill = musicbillList[index - 1] as
+              | LocalMusicbill
+              | undefined;
+            if (musicbill) {
+              event.preventDefault();
+
+              navigate({
+                path:
+                  ROOT_PATH.PLAYER +
+                  PLAYER_PATH.MUSICBILL.replace(':id', musicbill.id),
+              });
+            }
+          }
         }
       }
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [navigate, paused, queueMusic]);
+  }, [navigate, paused, queueMusic, musicbillList]);
 };

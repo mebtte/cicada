@@ -21,8 +21,6 @@ const Line = styled.div<{ active?: boolean }>`
     font-size: 16px;
     line-height: 1.5;
     font-weight: bold;
-    border-width: 1px;
-    border-style: solid;
 
     &:empty {
       visibility: hidden;
@@ -37,7 +35,6 @@ const Line = styled.div<{ active?: boolean }>`
       color: ${active
         ? CSSVariable.COLOR_PRIMARY
         : CSSVariable.TEXT_COLOR_PRIMARY};
-      border-color: ${active ? CSSVariable.COLOR_PRIMARY : 'transparent'};
     }
   `}
 `;

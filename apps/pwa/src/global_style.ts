@@ -22,7 +22,7 @@ export enum CSSVariable {
 }
 
 const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
-  [CSSVariable.COLOR_PRIMARY]: '#2cb67d',
+  [CSSVariable.COLOR_PRIMARY]: 'rgb(44 182 125)',
   [CSSVariable.COLOR_PRIMARY_DISABLED]: '#7bd5b0',
   [CSSVariable.COLOR_PRIMARY_ACTIVE]: '#1d8b5e',
   [CSSVariable.COLOR_DANGEROUS]: '#f25042',
@@ -37,9 +37,9 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.TEXT_COLOR_DISABLED]: 'rgb(222 222 222)',
 
   [CSSVariable.BACKGROUND_DISABLED]: 'rgb(244 244 244)',
-  [CSSVariable.BACKGROUND_COLOR_LEVEL_ONE]: 'rgb(44 182 145 / 0.06)',
-  [CSSVariable.BACKGROUND_COLOR_LEVEL_TWO]: 'rgb(44 182 145 / 0.1)',
-  [CSSVariable.BACKGROUND_COLOR_LEVEL_THREE]: 'rgb(44 182 145 / 0.14)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_ONE]: 'rgb(44 182 125 / 0.06)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_TWO]: 'rgb(44 182 125 / 0.1)',
+  [CSSVariable.BACKGROUND_COLOR_LEVEL_THREE]: 'rgb(44 182 125 / 0.14)',
 };
 
 export const GlobalStyle = createGlobalStyle`
