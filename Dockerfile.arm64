@@ -5,7 +5,7 @@ RUN apt update -y \
   && apt autoclearn \
   && rm -rf /var/lib/apt/lists/*
 
-COPY build/cicada-linux-arm64 /
+COPY build/cicada-arm64 /
 VOLUME [ "/data", "/config.json" ]
-CMD /cicada-linux-arm64 start -c /config.json --data /data --port 80
+CMD /cicada-arm64 start -c /config.json --data /data --port 80
 EXPOSE 80
