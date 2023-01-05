@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# npm install
+npm ci
 
 mkdir -p cache
 
