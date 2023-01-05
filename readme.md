@@ -39,10 +39,16 @@
 知了支持 Docker 镜像部署:
 
 ```sh
-docker run -d --restart=always -p 8000:80 -v $HOME/cicada:/data -v $HOME/config.json:/config.json --name cicada mebtte/cicada
+docker run -d \
+  --restart=always \
+  -p 8000:80 \
+  -v $HOME/cicada-data:/data \
+  -v $HOME/cicada-config.json:/config.json \
+  --name cicada \
+  mebtte/cicada
 ```
 
-Docker 镜像配置文件位于 `/config.json`, 数据目录位于 `/data`. 需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项使用 Docker 镜像不再生效.
+需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外 Docker 镜像下会忽略 config 文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项.
 
 ## 常见问题
 

@@ -1,7 +1,9 @@
 FROM ubuntu
 
 RUN apt update -y \
-  && apt install -y git ffmpeg
+  && apt install -y git ffmpeg \
+  && apt autoclearn \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY build/cicada-linux-x64 /
 VOLUME [ "/data", "/config.json" ]
