@@ -9,3 +9,7 @@ COPY build/cicada-arm64 /
 VOLUME [ "/data", "/config.json" ]
 CMD /cicada-arm64 start -c /config.json --data /data --port 80
 EXPOSE 80
+
+LABEL org.opencontainers.image.title="cicada"
+LABEL org.opencontainers.image.authors="mebtte<hi@mebtte.com>"
+LABEL org.opencontainers.image.url="https://github.com/mebtte/cicada"
