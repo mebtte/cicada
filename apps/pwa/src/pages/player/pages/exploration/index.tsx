@@ -163,7 +163,7 @@ function Wrapper() {
         if (d.error) {
           return (
             <StatusContainer style={style}>
-              <ErrorCard errorMessage="xxxx" retry={reload} />
+              <ErrorCard errorMessage={d.error.message} retry={reload} />
             </StatusContainer>
           );
         }
