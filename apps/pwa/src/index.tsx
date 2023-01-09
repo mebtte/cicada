@@ -39,6 +39,7 @@ if ('serviceWorker' in navigator) {
     window.requestIdleCallback(() =>
       import('workbox-window').then(({ Workbox }) => {
         const wb = new Workbox('/service_worker.js');
+        wb.register();
 
         /**
          * 生产模式下询问是否升级
@@ -78,7 +79,11 @@ if ('serviceWorker' in navigator) {
           });
         }
 
-        wb.register();
+        /**
+         * 检查更新
+         * @author mebtte<hi@mebtte.com>
+         */
+        window.setInterval(() => wb.update(), 1000 * 60 * 60);
       }),
     );
   } else {

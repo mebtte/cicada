@@ -63,7 +63,7 @@ export default async (ctx: Context) => {
    */
   if (getConfig().mode === 'development') {
     // eslint-disable-next-line no-console
-    console.log(`--- login code: ${code} ---`);
+    console.log(`\n--- login code: ${code} ---\n`);
   }
   await sendEmail({
     to: email,

@@ -39,6 +39,7 @@ export default ({
           break;
         }
 
+        case 'q':
         case 'w': {
           if (!paused && queueMusic && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
