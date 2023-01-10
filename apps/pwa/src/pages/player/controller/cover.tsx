@@ -47,6 +47,8 @@ const Style = styled.div`
 const Cover = styled(animated.img)`
   ${absoluteFullSize}
 
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   object-fit: cover;
   object-position: center;
 `;
