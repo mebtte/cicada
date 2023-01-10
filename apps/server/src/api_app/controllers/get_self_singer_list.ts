@@ -23,7 +23,7 @@ export default async (ctx: Context) => {
       LEFT JOIN music_singer_relation as msr
         ON s.id = msr.singerId
       WHERE s.createUserId = ?
-      GROUP BY msr.singerId
+      GROUP BY s.id
       ORDER BY createTimestamp DESC
     `,
     [ctx.user.id],
