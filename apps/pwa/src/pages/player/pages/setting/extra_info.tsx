@@ -2,6 +2,10 @@ import definition from '@/definition';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import sm from '@/global_states/server_metadata';
+import { useEffect } from 'react';
+import globalEventemitter, {
+  EventType as GlobalEventType,
+} from '@/platform/global_eventemitter';
 
 const Style = styled.div`
   font-size: 12px;
@@ -21,6 +25,11 @@ const Style = styled.div`
 
 function ExtraInfo() {
   const serverMetadata = sm.useState();
+
+  useEffect(() => {
+    globalEventemitter.emit(GlobalEventType.RELOAD_SERVER_METADATA, null);
+  }, []);
+
   return (
     <Style>
       PWA Version:{' '}
