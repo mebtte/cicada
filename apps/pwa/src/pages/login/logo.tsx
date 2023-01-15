@@ -8,6 +8,8 @@ const Style = styled.div`
   align-items: center;
   justify-content: center;
 
+  user-select: none;
+
   .logo {
     height: 64px;
   }

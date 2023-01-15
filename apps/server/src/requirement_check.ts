@@ -2,7 +2,7 @@ import which from 'which';
 
 function print(message: string) {
   // eslint-disable-next-line no-console
-  console.log(`--- warning ---\n${message}\n`);
+  console.log(`\n--- warning ---\n${message}\n--- warning ---\n`);
 }
 
 async function requirementCheck() {
@@ -10,7 +10,10 @@ async function requirementCheck() {
     await which('ffmpeg');
   } catch (error) {
     print(
-      '未找到 ffmpeg 命令, 请手动安装\nffmpeg 用于压缩音频, 更好的利用存储空间\n当 ffmpeg 不存在时将不进行压缩保存',
+      `未在 PATH 下找到 ffmpeg 命令, 请手动安装
+ffmpeg 用于压缩音频(无损音质不会进行压缩)
+从而更好地节省存储空间和进行网络传输
+当 ffmpeg 不存在时将不进行压缩保存`,
     );
   }
 }

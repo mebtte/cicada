@@ -39,6 +39,7 @@ if ('serviceWorker' in navigator) {
     window.requestIdleCallback(() =>
       import('workbox-window').then(({ Workbox }) => {
         const wb = new Workbox('/service_worker.js');
+        wb.register();
 
         /**
          * 生产模式下询问是否升级
@@ -46,8 +47,9 @@ if ('serviceWorker' in navigator) {
          * @author mebtte<hi@mebtte.com>
          */
         if (process.env.NODE_ENV === 'production') {
+          let updateNoticeId: string = '';
           wb.addEventListener('waiting', () => {
-            const id = notice.info(
+            updateNoticeId = notice.info(
               <VersionUpdater>
                 <div className="text">检测到新版本, 是否马上加载?</div>
                 <div className="action-box">
@@ -67,7 +69,7 @@ if ('serviceWorker' in navigator) {
                   </IconButton>
                   <IconButton
                     className="action"
-                    onClick={() => notice.close(id)}
+                    onClick={() => notice.close(updateNoticeId)}
                   >
                     <MdClose />
                   </IconButton>
@@ -76,9 +78,16 @@ if ('serviceWorker' in navigator) {
               { duration: 0, closable: false },
             );
           });
-        }
 
-        wb.register();
+          /**
+           * 检查更新
+           * @author mebtte<hi@mebtte.com>
+           */
+          window.setInterval(() => {
+            notice.close(updateNoticeId);
+            return wb.update();
+          }, 1000 * 60 * 60);
+        }
       }),
     );
   } else {

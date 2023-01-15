@@ -6,8 +6,10 @@ import { Property, getUserByEmail } from '@/db/user';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const { email, loginCode }: { email?: string; loginCode?: string } =
-    ctx.request.body;
+  const { email, loginCode } = ctx.request.body as {
+    email?: unknown;
+    loginCode?: unknown;
+  };
 
   if (
     typeof email !== 'string' ||

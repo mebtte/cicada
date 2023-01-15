@@ -41,6 +41,12 @@ const LoadingBox = styled.div`
 const errorCardStyle: CSSProperties = {
   padding: 30,
 };
+const maskProps: { style: CSSProperties } = {
+  style: {
+    // @ts-expect-error
+    WebkitAppRegion: 'no-drag',
+  },
+};
 
 function CaptchaDialog({
   open,
@@ -161,7 +167,7 @@ function CaptchaDialog({
     );
   }
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} maskProps={maskProps} onClose={onClose}>
       {content}
     </Dialog>
   );

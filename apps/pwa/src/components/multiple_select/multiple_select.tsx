@@ -134,7 +134,7 @@ function MultipleSelect<Value>({
   });
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useEvent(
     (event) => {
-      const v = event.target.value;
+      const v = (event.target as HTMLInputElement).value;
       if (event.key === 'Backspace' && !v) {
         onChange(value.slice(0, v.length - 1));
       }

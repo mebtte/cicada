@@ -29,6 +29,7 @@ const Style = styled(animated.div)`
   justify-content: center;
 
   > .top {
+    user-select: none;
     line-height: 1.5;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     ${ellipsis}

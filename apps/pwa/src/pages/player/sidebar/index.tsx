@@ -8,6 +8,7 @@ import MiniMode from './mini_mode';
 const Placeholder = styled.div`
   width: ${WIDTH}px;
 
+  border-right: 1px solid transparent;
   background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   overflow: auto;
 `;

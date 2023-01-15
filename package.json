@@ -45,7 +45,6 @@
     "archiver": "^5.3.1",
     "clrc": "^3.0.1",
     "commander": "^9.4.1",
-    "eventin": "^1.2.0",
     "file-type": "^16.5.3",
     "html-entities": "^2.3.3",
     "jimp": "^0.16.2",
@@ -53,7 +52,6 @@
     "json5": "^2.2.2",
     "koa": "^2.13.4",
     "koa-etag": "^4.0.0",
-    "localforage": "^1.10.0",
     "md5": "^2.3.0",
     "multiparty": "^4.2.3",
     "node-schedule": "^2.1.0",
@@ -66,6 +64,8 @@
     "which": "^2.0.2"
   },
   "devDependencies": {
+    "eventin": "^1.2.0",
+    "localforage": "^1.10.0",
     "@babel/core": "^7.17.10",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-transform-runtime": "^7.17.10",
@@ -103,7 +103,6 @@
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
     "array-move": "^4.0.0",
-    "axios": "^0.21.1",
     "babel-loader": "^8.2.5",
     "classnames": "^2.3.2",
     "copy-webpack-plugin": "^10.2.4",

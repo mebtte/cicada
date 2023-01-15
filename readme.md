@@ -1,14 +1,27 @@
 # 知了
 
-知了, 支持多用户的开源音乐服务. 更多请看[详细介绍](https://mebtte.com/introducing_cicada).
+知了, 支持多用户的开源音乐服务.
 
 ![](./docs/thumbnail_1.png)
 ![](./docs/thumbnail_2.png)
 ![](./docs/thumbnail_3.png)
 
+## 特色
+
+- 支持多用户
+- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps)
+- UI 支持桌面端和移动端
+- 系统媒体和快捷键支持
+- 音乐支持标准音质/超高音质/伴奏以及多份歌词
+- 回收站支持, 恢复误删数据
+- 乐单/播放列表/播放队列音乐数量无限制
+
 ## 准备
 
-- 邮箱账号, 因为知了依赖邮箱验证码进行登录, 以及部分功能需要依赖邮箱实现, 所以需要邮箱服务进行邮件发送
+- **[邮件发送服务](https://zh.wikipedia.org/wiki/%E7%AE%80%E5%8D%95%E9%82%AE%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE)**, 知了使用邮箱验证码进行登录以及部分功能依赖邮箱实现, 第三方邮件发送服务可以参考 [网易邮箱](https://note.youdao.com/ynoteshare/index.html?id=f9fef46114fb922b45460f4f55d96853) / [QQ 邮箱](https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256) / [Outlook 邮箱](https://support.microsoft.com/zh-cn/office/pop-imap-%E5%92%8C-smtp-%E8%AE%BE%E7%BD%AE-8361e398-8af4-4e97-b147-6c6c4ac95353)
+- **[FFmpeg](https://ffmpeg.org)**[可选], 知了会自动检测 `PATH` 下是否有 ffmpeg, 有的话会调用 ffmpeg 进行音频压缩(无损音质不会进行压缩), 没有的话将不会进行音频压缩
+
+> 使用邮箱验证码登录可以极大地提高安全性, 相比账号密码的登录方式, 邮箱验证码登录可以避免被暴力破解
 
 ## 部署
 

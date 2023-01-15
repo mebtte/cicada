@@ -7,6 +7,7 @@ import UserManage from './user_manage';
 import { HEADER_HEIGHT } from '../../constants';
 import PlayMode from './play_mode';
 import Volume from './volume';
+import ExtraInfo from './extra_info';
 
 const AUDIO_VOLUME_SETABLE = await (() =>
   Promise.race([
@@ -33,6 +34,7 @@ function Setting() {
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
       {profile.admin ? <UserManage /> : null}
       <Logout />
+      <ExtraInfo />
     </Style>
   );
 }
