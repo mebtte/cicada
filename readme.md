@@ -1,6 +1,6 @@
 # 知了
 
-知了, 支持多用户的开源音乐服务. 更多请看[详细介绍](https://mebtte.com/introducing_cicada).
+知了, 支持多用户的开源音乐服务.
 
 ![](./docs/thumbnail_1.png)
 ![](./docs/thumbnail_2.png)
@@ -50,7 +50,8 @@
 知了支持 Docker 镜像部署:
 
 ```sh
-docker run -d \
+docker run \
+  -d \
   --restart=always \
   -p 8000:80 \
   -v $HOME/cicada-data:/data \
