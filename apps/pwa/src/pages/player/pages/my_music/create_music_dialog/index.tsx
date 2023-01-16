@@ -1,6 +1,3 @@
-import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
-import Button, { Variant } from '@/components/button';
-import Input from '@/components/input';
 import {
   ChangeEventHandler,
   CSSProperties,
@@ -8,9 +5,13 @@ import {
   useEffect,
   useState,
 } from 'react';
-import Select, { Option as SelectOption } from '@/components/select';
 import styled from 'styled-components';
+import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
+import Button, { Variant } from '@/components/button';
+import Input from '@/components/input';
+import Select, { Option as SelectOption } from '@/components/select';
 import {
+  AllowUpdateKey,
   MusicType,
   MUSIC_TYPES,
   MUSIC_TYPE_MAP,
@@ -27,6 +28,8 @@ import notice from '@/utils/notice';
 import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
+import updateMusic from '@/server/update_music';
+import { extraMetaDataFromFile } from '@/pages/player/utils';
 import { ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
@@ -74,7 +77,6 @@ const StyledContent = styled(Content)`
 
 function CreateMusicDialog() {
   const { open, onClose } = useOpen();
-
   const [name, setName] = useState('');
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setName(event.target.value);
@@ -117,6 +119,29 @@ function CreateMusicDialog() {
         type: musicType,
         sq: asset.id,
       });
+
+      const { lyric, picture } = await extraMetaDataFromFile(sq);
+
+      if (lyric) {
+        // 更新歌词
+        await updateMusic({
+          id,
+          key: AllowUpdateKey.LYRIC,
+          value: [lyric],
+        });
+      }
+      if (picture) {
+        // 更新封面图
+        const { id: assetId } = await uploadAsset(
+          picture,
+          AssetType.MUSIC_COVER,
+        );
+        await updateMusic({
+          id,
+          key: AllowUpdateKey.COVER,
+          value: assetId,
+        });
+      }
 
       e.emit(EventType.RELOAD_MUSIC_LIST, null);
       playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, { id });
