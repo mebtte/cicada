@@ -148,6 +148,13 @@ export const formatSecond = (s: number) => {
   }${second}`;
 };
 
+export interface IMusicMetaInfo {
+  lyric?: string;
+  title?: string;
+  artist?: string;
+  picture?: Blob;
+}
+
 export const extraMetaDataFromFile = (file: File) => {
   const getImgBase64 = (picture: { data: number[]; format: string }) => {
     let base64String = '';
@@ -157,13 +164,15 @@ export const extraMetaDataFromFile = (file: File) => {
     return `data:${picture?.format};base64,${window.btoa(base64String)}`;
   };
 
-  return new Promise<{ lyric?: string; picture?: Blob }>((resolve) => {
+  return new Promise<IMusicMetaInfo>((resolve) => {
     const handleTags = (metaData) => {
       const { tags = {} } = metaData;
-      const { lyrics, picture } = tags;
-      const result: { lyric?: string; picture?: Blob } = {};
+      const { lyrics, picture, title, artist } = tags;
+      const result: IMusicMetaInfo = {};
       if (lyrics?.lyrics) {
         result.lyric = lyrics.lyrics;
+        result.title = title;
+        result.artist = artist;
       }
 
       if (picture) {

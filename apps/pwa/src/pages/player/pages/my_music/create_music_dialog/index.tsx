@@ -3,6 +3,7 @@ import {
   CSSProperties,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import styled from 'styled-components';
@@ -29,7 +30,7 @@ import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import updateMusic from '@/server/update_music';
-import { extraMetaDataFromFile } from '@/pages/player/utils';
+import { extraMetaDataFromFile, IMusicMetaInfo } from '@/pages/player/utils';
 import { ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
@@ -78,6 +79,7 @@ const StyledContent = styled(Content)`
 function CreateMusicDialog() {
   const { open, onClose } = useOpen();
   const [name, setName] = useState('');
+  const musicMetaInfoRef = useRef<IMusicMetaInfo>({});
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setName(event.target.value);
 
@@ -93,7 +95,24 @@ function CreateMusicDialog() {
     setMusicType(option.value);
 
   const [sq, setSq] = useState<File | null>(null);
-  const onSqChange = (s) => setSq(s);
+  const onSqChange = async (s) => {
+    setSq(s);
+
+    const metaInfo = await extraMetaDataFromFile(s);
+    musicMetaInfoRef.current = metaInfo;
+    if (!name && metaInfo.title) {
+      setName(metaInfo.title);
+    }
+
+    if (!singerList.length && metaInfo.artist) {
+      const singer = await searchSingerRequest({
+        keyword: metaInfo.artist,
+        page: 1,
+        pageSize: 100,
+      });
+      setSingerList(singer?.singerList || []);
+    }
+  };
 
   const [loading, setLoading] = useState(false);
   const onCreate = useEvent(async () => {
@@ -120,7 +139,7 @@ function CreateMusicDialog() {
         sq: asset.id,
       });
 
-      const { lyric, picture } = await extraMetaDataFromFile(sq);
+      const { lyric, picture } = musicMetaInfoRef.current;
 
       if (lyric) {
         // 更新歌词
