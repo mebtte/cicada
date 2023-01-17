@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
 import withLogin from '@/platform/with_login';
+import { useEffect } from 'react';
 import PageContainer from '../page_container';
 import Sidebar from './sidebar';
 import Header from './header';
@@ -28,6 +29,7 @@ import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
 import MusicbillDrawer from './musicbill_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
+import e, { EventType } from './eventemitter';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -71,6 +73,10 @@ function Wrapper() {
 
   useKeyboard({ paused: audioPaused, queueMusic, musicbillList });
   useMediaSession(queueMusic);
+
+  useEffect(() => {
+    e.emit(EventType.CURRENT_MUSIC_CHANGE, { queueMusic });
+  }, [queueMusic]);
 
   return (
     <Context.Provider

@@ -118,6 +118,7 @@ export enum EventType {
   SINGER_UPDATED = 'singer_updated',
 
   MUSICBILL_COLLECTION_CHANGE = 'musicbill_collection_change',
+  CURRENT_MUSIC_CHANGE = 'current_music_change',
 }
 
 export default new Eventin<
@@ -186,5 +187,6 @@ export default new Eventin<
     };
 
     [EventType.MUSICBILL_COLLECTION_CHANGE]: null;
+    [EventType.CURRENT_MUSIC_CHANGE]: { queueMusic?: QueueMusic };
   }
 >();

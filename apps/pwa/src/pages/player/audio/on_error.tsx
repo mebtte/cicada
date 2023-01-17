@@ -17,10 +17,17 @@ function CoundDown({ getId }: { getId: () => string }) {
 
   useEffect(() => {
     if (countdown <= 0) {
-      dialog.close(getId());
       next();
     }
   }, [countdown, getId]);
+
+  useEffect(() => {
+    const unlistenCurrentMusicChange = eventemitter.listen(
+      EventType.CURRENT_MUSIC_CHANGE,
+      () => dialog.close(getId()),
+    );
+    return unlistenCurrentMusicChange;
+  }, [getId]);
 
   return (
     <>{countdown >= 0 ? Math.round(countdown / 1000) : 0} 秒后自动播放下一首</>
