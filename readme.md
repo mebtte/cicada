@@ -9,8 +9,7 @@
 ## 特色
 
 - 支持多用户
-- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps)
-- UI 支持桌面端和移动端
+- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), UI 同时支持桌面端和移动端
 - 系统媒体和快捷键支持
 - 音乐支持标准音质/超高音质/伴奏以及多份歌词
 - 回收站支持, 恢复误删数据

@@ -70,6 +70,13 @@ const mainConfig = {
       },
     ],
   },
+
+  /**
+   * https://github.com/aadsm/jsmediatags/issues/116
+   * @author mebtte<hi@mebtte.com>
+   */
+  externals: { fs: true, 'react-native-fs': true },
+
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {

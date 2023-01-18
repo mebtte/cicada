@@ -10,8 +10,15 @@ function loadImage(
     timeoutErrorGenerator?: (ms: number) => Error;
   } = {},
 ) {
+  const imgNode = document.createElement('img');
+  imgNode.src = url;
+  imgNode.crossOrigin = 'anonymous';
+
   return Promise.race([
-    window.fetch(url, { credentials: 'omit' }),
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      imgNode.onload = () => resolve(imgNode);
+      imgNode.onerror = () => reject(new Error(`无法加载图片: ${url}`));
+    }),
     timeoutFn(timeout, timeoutErrorGenerator),
   ]);
 }

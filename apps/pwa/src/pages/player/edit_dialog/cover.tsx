@@ -10,11 +10,12 @@ import {
 import styled from 'styled-components';
 import FileSelect from '@/components/file_select';
 import Cropper from 'cropperjs';
+import loadImage from '@/utils/load_image';
+import { COVER_MAX_SIZE } from '#/constants';
 import { Ref, RenderProps } from './constants';
 import { EditDialogType } from '../eventemitter';
 
 const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
-const MAX_SIZE = 1024;
 const Style = styled.div`
   display: flex;
   flex-direction: column;
@@ -41,19 +42,14 @@ function Cover(
     getValue: async () => {
       if (cropperRef.current) {
         const { width, x, y } = cropperRef.current.getData();
-        const size = Math.min(MAX_SIZE, width);
+        const size = Math.min(COVER_MAX_SIZE, width);
 
         const canvas = document.createElement('canvas');
         canvas.width = size;
         canvas.height = size;
         const context = canvas.getContext('2d')!;
 
-        const imgNode = document.createElement('img');
-        imgNode.src = url;
-        await new Promise((resolve) =>
-          imgNode.addEventListener('load', resolve),
-        );
-
+        const imgNode = await loadImage(url);
         context.drawImage(imgNode, x, y, width, width, 0, 0, size, size);
         return new Promise<Blob>((resolve, reject) =>
           canvas.toBlob(

@@ -1,6 +1,3 @@
-import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
-import Button, { Variant } from '@/components/button';
-import Input from '@/components/input';
 import {
   ChangeEventHandler,
   CSSProperties,
@@ -8,9 +5,13 @@ import {
   useEffect,
   useState,
 } from 'react';
-import Select, { Option as SelectOption } from '@/components/select';
 import styled from 'styled-components';
+import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
+import Button, { Variant } from '@/components/button';
+import Input from '@/components/input';
+import Select, { Option as SelectOption } from '@/components/select';
 import {
+  AllowUpdateKey,
   MusicType,
   MUSIC_TYPES,
   MUSIC_TYPE_MAP,
@@ -27,6 +28,11 @@ import notice from '@/utils/notice';
 import uploadAsset from '@/server/upload_asset';
 import createMusic from '@/server/create_music';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
+import updateMusic from '@/server/update_music';
+import getMusicFileMetadata, {
+  base64ToCover,
+} from '@/utils/get_music_file_metadata';
+import logger from '#/utils/logger';
 import { ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
@@ -74,7 +80,6 @@ const StyledContent = styled(Content)`
 
 function CreateMusicDialog() {
   const { open, onClose } = useOpen();
-
   const [name, setName] = useState('');
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setName(event.target.value);
@@ -91,7 +96,32 @@ function CreateMusicDialog() {
     setMusicType(option.value);
 
   const [sq, setSq] = useState<File | null>(null);
-  const onSqChange = (s) => setSq(s);
+  const onSqChange = (s) => {
+    setSq(s);
+
+    getMusicFileMetadata(s)
+      .then((metadata) => {
+        const { title, artist } = metadata;
+        if (!name && title) {
+          setName(title);
+        }
+        if (!singerList.length && artist) {
+          searchSingerRequest({
+            keyword: artist,
+            page: 1,
+            pageSize: 10,
+            minDuration: 0,
+          })
+            .then((data) => {
+              if (!singerList.length) {
+                setSingerList(data.singerList);
+              }
+            })
+            .catch((error) => logger.error(error, '搜索歌手列表失败'));
+        }
+      })
+      .catch((error) => logger.error(error, '解析音乐文件 metadata 失败'));
+  };
 
   const [loading, setLoading] = useState(false);
   const onCreate = useEvent(async () => {
@@ -118,11 +148,41 @@ function CreateMusicDialog() {
         sq: asset.id,
       });
 
+      try {
+        const { lyric, pictureBase64 } = await getMusicFileMetadata(sq);
+        const updateCover = async (pb: string) => {
+          const coverBlob = await base64ToCover(pb);
+          const { id: assetId } = await uploadAsset(
+            coverBlob,
+            AssetType.MUSIC_COVER,
+          );
+          await updateMusic({
+            id,
+            key: AllowUpdateKey.COVER,
+            value: assetId,
+          });
+        };
+
+        await Promise.all([
+          musicType === MusicType.SONG && lyric
+            ? await updateMusic({
+                id,
+                key: AllowUpdateKey.LYRIC,
+                value: [lyric],
+              })
+            : null,
+          pictureBase64 ? updateCover(pictureBase64) : null,
+        ]);
+      } catch (error) {
+        logger.error(error, '从音乐文件解析 metadata 失败');
+      }
+
       e.emit(EventType.RELOAD_MUSIC_LIST, null);
       playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, { id });
 
       onClose();
     } catch (error) {
+      logger.error(error, '创建音乐失败');
       notice.error(error.message);
     }
     setLoading(false);
@@ -142,23 +202,6 @@ function CreateMusicDialog() {
       <Container>
         <Title>创建音乐</Title>
         <StyledContent>
-          <MultipleSelect<Singer>
-            label="歌手列表"
-            value={singerList.map(formatSingerToMultipleSelectOption)}
-            onChange={onSingerListChange}
-            dataGetter={searchSinger}
-            disabled={loading}
-            addon={<CreateSinger />}
-          />
-          <Input
-            label="名字"
-            inputProps={{
-              value: name,
-              onChange: onNameChange,
-              maxLength: NAME_MAX_LENGTH,
-            }}
-            disabled={loading}
-          />
           <Select<MusicType>
             label="类型"
             data={MUSIC_TYPE_OPTIONS}
@@ -179,6 +222,23 @@ function CreateMusicDialog() {
             placeholder={`选择文件, 支持以下格式 ${ASSET_TYPE_MAP[
               AssetType.MUSIC_SQ
             ].acceptTypes.join(', ')}`}
+          />
+          <MultipleSelect<Singer>
+            label="歌手列表"
+            value={singerList.map(formatSingerToMultipleSelectOption)}
+            onChange={onSingerListChange}
+            dataGetter={searchSinger}
+            disabled={loading}
+            addon={<CreateSinger />}
+          />
+          <Input
+            label="音乐名字"
+            inputProps={{
+              value: name,
+              onChange: onNameChange,
+              maxLength: NAME_MAX_LENGTH,
+            }}
+            disabled={loading}
           />
         </StyledContent>
         <Action>
