@@ -155,11 +155,13 @@ function CreateMusicDialog() {
           const { id: assetId } = await uploadAsset(
             coverBlob,
             AssetType.MUSIC_COVER,
+            0,
           );
           await updateMusic({
             id,
             key: AllowUpdateKey.COVER,
             value: assetId,
+            minDuration: 0,
           });
         };
 
@@ -169,6 +171,7 @@ function CreateMusicDialog() {
                 id,
                 key: AllowUpdateKey.LYRIC,
                 value: [lyric],
+                minDuration: 0,
               })
             : null,
           pictureBase64 ? updateCover(pictureBase64) : null,
