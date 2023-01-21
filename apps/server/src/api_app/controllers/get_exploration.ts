@@ -33,6 +33,7 @@ export default async (ctx: Context) => {
           name,
           cover
         FROM music
+        WHERE cover != ''
         ORDER BY random()
         LIMIT ?
       `,
@@ -54,6 +55,7 @@ export default async (ctx: Context) => {
           aliases,
           avatar
         FROM singer
+        WHERE avatar != ''
         ORDER BY random()
         LIMIT ?
       `,
@@ -76,6 +78,7 @@ export default async (ctx: Context) => {
           userId
         FROM musicbill
         WHERE public = 1
+          AND cover != ''
         ORDER BY random()
         LIMIT ? 
       `,
