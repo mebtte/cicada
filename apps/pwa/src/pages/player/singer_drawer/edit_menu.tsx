@@ -12,6 +12,8 @@ import {
   NAME_MAX_LENGTH,
 } from '#/constants/singer';
 import stringArrayEqual from '#/utils/string_array_equal';
+import dialog from '@/utils/dialog';
+import logger from '#/utils/logger';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {
@@ -76,6 +78,29 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                   value: assetId,
                 });
                 emitSingerUpdated(singer.id);
+              },
+            })
+          }
+        />
+        <MenuItem
+          icon={<MdImage />}
+          label="清除头像"
+          onClick={() =>
+            dialog.confirm({
+              title: '确定清除头像吗?',
+              content: '清除头像后歌手将使用默认头像',
+              onConfirm: async () => {
+                try {
+                  await updateSinger({
+                    id: singer.id,
+                    key: AllowUpdateKey.AVATAR,
+                    value: '',
+                  });
+                  emitSingerUpdated(singer.id);
+                } catch (error) {
+                  logger.error(error, '清除头像失败');
+                  return false;
+                }
               },
             })
           }

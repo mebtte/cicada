@@ -104,18 +104,20 @@ const KEY_MAP_HANDLER: Record<
     return ctx.success();
   },
   [AllowUpdateKey.AVATAR]: async ({ ctx, singer, value: avatar }) => {
-    if (typeof avatar !== 'string' || !avatar.length) {
+    if (typeof avatar !== 'string') {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
     if (singer.avatar === avatar) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
     }
 
-    const avatarExist = await exist(
-      getAssetFilePath(avatar, AssetType.SINGER_AVATAR),
-    );
-    if (!avatarExist) {
-      return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+    if (avatar.length) {
+      const avatarExist = await exist(
+        getAssetFilePath(avatar, AssetType.SINGER_AVATAR),
+      );
+      if (!avatarExist) {
+        return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+      }
     }
 
     await Promise.all([
