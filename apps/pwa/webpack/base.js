@@ -28,10 +28,6 @@ const envDefinePlugin = new webpack.DefinePlugin({
       .readdirSync(`${STATIC_DIR}/error_image`)
       .filter((f) => !INVALID_FILES.includes(f))
       .map((f) => `/error_image/${f}`),
-    COVER_LIST: fs
-      .readdirSync(`${STATIC_DIR}/cover`)
-      .filter((f) => !INVALID_FILES.includes(f))
-      .map((f) => `/cover/${f}`),
   }),
 });
 

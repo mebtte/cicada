@@ -82,29 +82,31 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
             })
           }
         />
-        <MenuItem
-          icon={<MdImage />}
-          label="清除头像"
-          onClick={() =>
-            dialog.confirm({
-              title: '确定清除头像吗?',
-              content: '清除头像后歌手将使用默认头像',
-              onConfirm: async () => {
-                try {
-                  await updateSinger({
-                    id: singer.id,
-                    key: AllowUpdateKey.AVATAR,
-                    value: '',
-                  });
-                  emitSingerUpdated(singer.id);
-                } catch (error) {
-                  logger.error(error, '清除头像失败');
-                  return false;
-                }
-              },
-            })
-          }
-        />
+        {singer.avatar.length ? (
+          <MenuItem
+            icon={<MdImage />}
+            label="重置头像"
+            onClick={() =>
+              dialog.confirm({
+                title: '确定重置头像吗?',
+                content: '重置后歌手将使用默认头像',
+                onConfirm: async () => {
+                  try {
+                    await updateSinger({
+                      id: singer.id,
+                      key: AllowUpdateKey.AVATAR,
+                      value: '',
+                    });
+                    emitSingerUpdated(singer.id);
+                  } catch (error) {
+                    logger.error(error, '清除头像失败');
+                    return false;
+                  }
+                },
+              })
+            }
+          />
+        ) : null}
         <MenuItem
           icon={<MdTitle />}
           label="编辑名字"
