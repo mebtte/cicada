@@ -8,18 +8,22 @@ import { AllowUpdateKey } from '#/constants/music';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {
-  if (typeof value !== 'string' || !value.length) {
+  if (typeof value !== 'string') {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
   if (music.cover === value) {
     return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
   }
-  const assetExist = await exist(
-    getAssetFilePath(value, AssetType.MUSIC_COVER),
-  );
-  if (!assetExist) {
-    return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+
+  if (value.length) {
+    const assetExist = await exist(
+      getAssetFilePath(value, AssetType.MUSIC_COVER),
+    );
+    if (!assetExist) {
+      return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+    }
   }
+
   await Promise.all([
     updateMusic({ id: music.id, property: MusicProperty.COVER, value }),
     saveMusicModifyRecord({
