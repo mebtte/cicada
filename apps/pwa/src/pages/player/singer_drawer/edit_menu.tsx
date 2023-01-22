@@ -99,7 +99,10 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                     });
                     emitSingerUpdated(singer.id);
                   } catch (error) {
-                    logger.error(error, '清除头像失败');
+                    logger.error(error, '重置歌手头像失败');
+                    dialog.alert({
+                      content: error.message,
+                    });
                     return false;
                   }
                 },

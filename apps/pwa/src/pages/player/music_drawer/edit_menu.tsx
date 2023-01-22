@@ -159,7 +159,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
             onClick={() =>
               dialog.confirm({
                 title: '确定重置封面吗?',
-                content: '重置后将使用默认封面',
+                content: '重置后音乐将使用默认封面',
                 onConfirm: async () => {
                   try {
                     await updateMusic({
@@ -169,7 +169,10 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {
-                    logger.error(error, '重置封面失败');
+                    logger.error(error, '重置音乐封面失败');
+                    dialog.alert({
+                      content: error.message,
+                    });
                     return false;
                   }
                 },
