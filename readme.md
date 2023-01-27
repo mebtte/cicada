@@ -8,6 +8,7 @@
 
 ## 特色
 
+- **尊重隐私, 不进行任何数据收集**
 - 支持多用户
 - 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), UI 同时支持桌面端和移动端
 - 系统媒体和快捷键支持
