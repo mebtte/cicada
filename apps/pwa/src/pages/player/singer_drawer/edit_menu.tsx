@@ -12,6 +12,8 @@ import {
   NAME_MAX_LENGTH,
 } from '#/constants/singer';
 import stringArrayEqual from '#/utils/string_array_equal';
+import dialog from '@/utils/dialog';
+import logger from '#/utils/logger';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {
@@ -80,6 +82,34 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
             })
           }
         />
+        {singer.avatar.length ? (
+          <MenuItem
+            icon={<MdImage />}
+            label="重置头像"
+            onClick={() =>
+              dialog.confirm({
+                title: '确定重置头像吗?',
+                content: '重置后歌手将使用默认头像',
+                onConfirm: async () => {
+                  try {
+                    await updateSinger({
+                      id: singer.id,
+                      key: AllowUpdateKey.AVATAR,
+                      value: '',
+                    });
+                    emitSingerUpdated(singer.id);
+                  } catch (error) {
+                    logger.error(error, '重置歌手头像失败');
+                    dialog.alert({
+                      content: error.message,
+                    });
+                    return false;
+                  }
+                },
+              })
+            }
+          />
+        ) : null}
         <MenuItem
           icon={<MdTitle />}
           label="编辑名字"

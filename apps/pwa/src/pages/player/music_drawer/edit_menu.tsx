@@ -152,6 +152,34 @@ function EditMenu({ music }: { music: MusicDetail }) {
             })
           }
         />
+        {music.cover.length ? (
+          <MenuItem
+            icon={<MdImage />}
+            label="重置封面"
+            onClick={() =>
+              dialog.confirm({
+                title: '确定重置封面吗?',
+                content: '重置后音乐将使用默认封面',
+                onConfirm: async () => {
+                  try {
+                    await updateMusic({
+                      id: music.id,
+                      key: AllowUpdateKey.COVER,
+                      value: '',
+                    });
+                    emitMusicUpdated(music.id);
+                  } catch (error) {
+                    logger.error(error, '重置音乐封面失败');
+                    dialog.alert({
+                      content: error.message,
+                    });
+                    return false;
+                  }
+                },
+              })
+            }
+          />
+        ) : null}
         <MenuItem
           icon={<MdTitle />}
           label="编辑名字"
