@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
-import absoluteFullSize from '@/style/absolute_full_size';
+import PageContainer from '@/components/page_container';
 import ErrorCard from '../components/error_card';
 
-const Container = styled.div`
-  ${absoluteFullSize}
+const Container = styled(PageContainer)`
   ${flexCenter}
 `;
 

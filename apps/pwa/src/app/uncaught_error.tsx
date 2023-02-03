@@ -1,19 +1,19 @@
+import { CSSProperties } from 'react';
 import ErrorCard from '../components/error_card';
 
-const style = {
+const style: CSSProperties = {
   position: 'absolute',
-  width: '100%',
-  height: '100%',
-  top: '0',
-  left: '0',
+  inset: 0,
 };
 
-const UncaughtError = ({ error }: { error: Error }) => (
-  <ErrorCard
-    errorMessage={`未知错误: ${error.message}`}
-    retry={() => window.location.reload()}
-    style={style}
-  />
-);
+function UncaughtError({ error }: { error: Error }) {
+  return (
+    <ErrorCard
+      errorMessage={`未知错误: ${error.message}`}
+      retry={() => window.location.reload()}
+      style={style}
+    />
+  );
+}
 
 export default UncaughtError;

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
 import withLogin from '@/platform/with_login';
 import { useEffect } from 'react';
-import PageContainer from '../page_container';
+import PageContainer from '@/components/page_container';
 import Sidebar from './sidebar';
 import Header from './header';
 import Controller from './controller';
