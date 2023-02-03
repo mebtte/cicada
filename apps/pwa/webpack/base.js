@@ -139,6 +139,9 @@ const devMainConfig = {
   devServer: {
     port: 8001,
     hot: true,
+    devMiddleware: {
+      writeToDisk: true,
+    },
   },
 };
 
