@@ -43,6 +43,7 @@ import getExploration from './controllers/get_exploration';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
+import adminDeleteUser from './controllers/admin_delete_user';
 import adminGetUserList from './controllers/admin_get_user_list';
 
 const router = new Router<DefaultState, Context>();
@@ -129,6 +130,7 @@ router.put(
   parseBody,
   adminUpdateUser,
 ); // 更新用户
+router.delete('/admin/user', authorize, adminAuthorize, adminDeleteUser); // 删除用户
 router.get('/admin/user_list', authorize, adminAuthorize, adminGetUserList); // 获取用户列表
 
 export default router;
