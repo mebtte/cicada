@@ -4,6 +4,7 @@ import { Method, request } from '.';
 type KeyMapValue = {
   [AdminAllowUpdateKey.REMARK]: string;
   [AdminAllowUpdateKey.ADMIN]: null;
+  [AdminAllowUpdateKey.EMAIL]: string;
 };
 
 function adminUpdateUser<Key extends AdminAllowUpdateKey>({

@@ -8,6 +8,7 @@ export enum AllowUpdateKey {
 }
 
 export enum AdminAllowUpdateKey {
+  EMAIL = 'email',
   REMARK = 'remark',
   ADMIN = 'admin',
 }
