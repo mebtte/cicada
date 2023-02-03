@@ -7,6 +7,7 @@ import adminUpdateUser from '@/server/admin_update_user';
 import { AdminAllowUpdateKey } from '#/constants/user';
 import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
+import { EMAIL } from '#/constants/regexp';
 import { ZIndex } from '../../constants';
 import { User } from './constants';
 import e, { EventType } from './eventemitter';
@@ -48,6 +49,32 @@ function EditMenu() {
       bodyProps={bodyProps}
     >
       <Style onClick={onClose}>
+        <MenuItem
+          icon={<MdTitle />}
+          label="修改邮箱"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.INPUT,
+              label: '备注',
+              title: '修改邮箱',
+              initialValue: user?.email,
+              onSubmit: async (email: string) => {
+                if (email !== user?.email) {
+                  if (!email || !EMAIL.test(email)) {
+                    throw new Error('邮箱格式错误');
+                  }
+
+                  await adminUpdateUser({
+                    id: user!.id,
+                    key: AdminAllowUpdateKey.EMAIL,
+                    value: email,
+                  });
+                  e.emit(EventType.RELOAD_DATA, null);
+                }
+              },
+            })
+          }
+        />
         <MenuItem
           icon={<MdTitle />}
           label="修改备注"

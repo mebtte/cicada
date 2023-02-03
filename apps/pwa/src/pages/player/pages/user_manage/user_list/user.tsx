@@ -12,7 +12,7 @@ import playerEventemitter, {
 } from '../../../eventemitter';
 import e, { EventType } from '../eventemitter';
 
-const AVATAR_SIZE = 76;
+const AVATAR_SIZE = 88;
 const Style = styled.div`
   height: ${AVATAR_SIZE + 20}px;
 
@@ -59,17 +59,6 @@ const Style = styled.div`
       font-size: 12px;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       ${ellipsis}
-
-      > .remark {
-        margin-left: 10px;
-      }
-    }
-
-    > .divider {
-      margin: 5px 0;
-
-      height: 1px;
-      background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
     }
   }
 
@@ -102,15 +91,12 @@ function User({ user }: { user: UserType }) {
       </div>
       <div className="info">
         <div className="nickname">{user.nickname}</div>
-        <div className="secondary"> ID: {user.id}</div>
-        <div className="secondary"> 邮箱: {user.email}</div>
-        <div className="divider" />
+        <div className="secondary">ID: {user.id}</div>
+        <div className="secondary">邮箱: {user.email}</div>
         <div className="secondary">
-          {day(user.joinTimestamp).format('YYYY-MM-DD')}
-          {user.remark ? (
-            <span className="remark">备注: {user.remark}</span>
-          ) : null}
+          创建时间: {day(user.joinTimestamp).format('YYYY-MM-DD')}
         </div>
+        <div className="secondary">备注: {user.remark}</div>
       </div>
       <IconButton
         size={ComponentSize.SMALL}
