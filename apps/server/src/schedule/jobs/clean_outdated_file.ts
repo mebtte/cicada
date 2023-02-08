@@ -24,7 +24,7 @@ async function cleanOutdatedFile() {
     },
     {
       directory: getLogDirectory(),
-      ttl: 1000 * 60 * 60 * 24 * 30,
+      ttl: 1000 * 60 * 60 * 24 * 7,
     },
     {
       directory: getDownloadDirectory(),
@@ -32,7 +32,7 @@ async function cleanOutdatedFile() {
     },
     {
       directory: getDBSnapshotDirectory(),
-      ttl: 1000 * 60 * 60 * 24 * 60,
+      ttl: 1000 * 60 * 60 * 24 * 15,
     },
   ];
   for (const { directory, ttl } of DIRECTORIES) {

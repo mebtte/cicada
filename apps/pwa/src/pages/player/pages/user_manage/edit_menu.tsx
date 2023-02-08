@@ -111,7 +111,7 @@ function EditMenu() {
               dialog.confirm({
                 title: '确定将用户设为管理员吗?',
                 content:
-                  '用户成为管理员后将无法被删除, 以及将拥有和你一样的权限且无法被撤销管理员身份',
+                  '用户成为管理员后将无法被删除, 以及拥有和你一样的权限且无法被撤销管理员身份',
                 confirmText: '继续',
                 onConfirm: () =>
                   void dialog.confirm({

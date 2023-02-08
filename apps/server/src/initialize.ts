@@ -251,7 +251,9 @@ export default async () => {
       .toString()
       .replace(/\s/gm, '');
     if (dataVersion !== SUPPORT_VERSION) {
-      exitWithMessage('不支持的数据版本, 请通过「cicada data-update」升级数据');
+      exitWithMessage(
+        '不支持的数据版本, 请通过「cicada data-upgrade」升级数据',
+      );
     }
   } else {
     fs.writeFileSync(getDataVersionPath(), SUPPORT_VERSION);

@@ -22,13 +22,13 @@ class DB {
     return () => this.db.removeListener(eventType, listener);
   }
 
-  run(sql: string, params?: unknown) {
+  run(sql: string, params?: unknown[]) {
     return new Promise<void>((resolve, reject) =>
       this.db.run(sql, params, (error) => (error ? reject(error) : resolve())),
     );
   }
 
-  get<Row = unknown>(sql: string, params?: unknown) {
+  get<Row = unknown>(sql: string, params?: unknown[]) {
     return new Promise<Row | null>((resolve, reject) =>
       this.db.get(sql, params, (error: Error | null, row?: Row) =>
         error ? reject(error) : resolve(row || null),
@@ -36,7 +36,7 @@ class DB {
     );
   }
 
-  all<Row = unknown>(sql: string, params?: unknown) {
+  all<Row = unknown>(sql: string, params?: unknown[]) {
     return new Promise<Row[]>((resolve, reject) =>
       this.db.all(sql, params, (error, rows) =>
         error ? reject(error) : resolve(rows),
