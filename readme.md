@@ -10,11 +10,10 @@
 
 - **尊重隐私, 不进行任何数据收集**
 - 支持多用户
-- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), UI 同时支持桌面端和移动端
-- 系统媒体和快捷键支持
+- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), UI 同时支持桌面端和移动
 - 音乐支持标准音质/超高音质/伴奏以及多份歌词
-- 回收站支持, 恢复误删数据
 - 乐单/播放列表/播放队列音乐数量无限制
+- 系统媒体和快捷键支持
 
 ## 准备
 

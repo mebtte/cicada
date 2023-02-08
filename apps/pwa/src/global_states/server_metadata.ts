@@ -5,24 +5,39 @@ import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';
 
-type Metadata = AsyncReturnType<typeof getMetadata>;
+const serverMetadata = new XState<{
+  version: string;
+  lastUpdateError: Error | null;
+}>({
+  lastUpdateError: null,
 
-const serverMetadata = new XState<Metadata>({
   version: '',
 });
 
 function updateMetadata() {
   getMetadata()
-    .then((data) => serverMetadata.set(data))
-    .catch((error) => logger.error(error, '更新 metadata 失败'));
+    .then((data) =>
+      serverMetadata.set({
+        lastUpdateError: null,
+        version: data.version,
+      }),
+    )
+    .catch((error) => {
+      logger.error(error, '更新 server metadata 失败');
+      return serverMetadata.set((d) => ({
+        ...d,
+        lastUpdateError: error,
+      }));
+    });
 }
-
-window.setInterval(updateMetadata, 1000 * 60 * 60);
+updateMetadata();
+window.setInterval(updateMetadata, 1000 * 15);
 globalEventemitter.listen(
   GlobalEventType.RELOAD_SERVER_METADATA,
   updateMetadata,
 );
-
-updateMetadata();
+window.addEventListener('online', () =>
+  window.setTimeout(updateMetadata, 1000),
+);
 
 export default serverMetadata;

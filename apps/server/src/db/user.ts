@@ -62,7 +62,8 @@ export function updateUser<
     | Property.NICKNAME
     | Property.REMARK
     | Property.ADMIN
-    | Property.MUSICBILL_ORDERS_JSON,
+    | Property.MUSICBILL_ORDERS_JSON
+    | Property.EMAIL,
 >({ id, property, value }: { id: string; property: P; value: User[P] }) {
   return getDB().run(
     `
