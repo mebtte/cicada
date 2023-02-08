@@ -15,6 +15,7 @@
 - 音乐支持标准音质/超高音质/伴奏以及多份歌词
 - 乐单/播放列表/播放队列音乐数量无限制
 - 支持标注音乐创作来源(翻唱)
+- 暴露 HTTP API 支持第三方接入或进行二次开发
 
 ## 准备
 
@@ -60,7 +61,11 @@ docker run \
   mebtte/cicada
 ```
 
-需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外 Docker 镜像下会忽略 config 文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项.
+其中, `/data` 存放知了数据, `/config.json` 存放知了配置文件. 需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外 Docker 镜像下会忽略配置文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项.
+
+## HTTP API
+
+知了暴露了一系列 HTTP API, 在此基础上可以进行二次开发或者第三方接入, 比如导入当前已有音乐资源. HTTP API 文档请在[这里](./docs//api/index.md)查看.
 
 ## 常见问题
 
@@ -78,10 +83,12 @@ docker run \
 
 </details>
 
-## 已知缺陷
+<details>
+  <summary>iOS/iPadOS 处于后台无法自动播放下一首</summary>
 
-- 在 iOS/iPadOS 上处于后台无法自动播放下一首, 这是因为 Safari 会暂停处于后台页面的 JavaScript.
-- 在 Windows 下安装 PWA 后图标比其他应用图标要小, 这是因为 Windows 和 macOS 的图标占用空间不一致, PWA 无法同时兼容, 知了使用的是 macOS 图标尺寸.
+这是因为 Safari 会暂停处于后台页面的 JavaScript, 需要等 Safari 对 PWA 进一步支持.
+
+</details>
 
 ## 开源协议
 
