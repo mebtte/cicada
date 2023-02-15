@@ -55,12 +55,32 @@ docker run \
   --restart=always \
   -p 8000:80 \
   -v $HOME/cicada-data:/data \
-  -v $HOME/cicada-config.json:/config.json \
+  -v $HOME/cicada-config.json:/config.json:ro \
   --name cicada \
   mebtte/cicada
 ```
 
 需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外 Docker 镜像下会忽略 config 文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项.
+
+### Docker compose
+
+```yml
+version: '3'
+services:
+  cicada:
+    restart: always
+    container_name: cicada
+
+    # specify user
+    # user: 1000:1000
+
+    image: mebtte/cicada
+    ports:
+      - 80:80
+    volumes:
+      - /path/config.json:/config.json:ro
+      - /path/data:/data
+```
 
 ## 常见问题
 
