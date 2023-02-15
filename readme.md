@@ -14,6 +14,7 @@
 - 音乐支持标准音质/超高音质/伴奏以及多份歌词
 - 乐单/播放列表/播放队列音乐数量无限制
 - 系统媒体和快捷键支持
+- 支持标注音乐创作来源(翻唱)
 
 ## 准备
 
@@ -54,12 +55,32 @@ docker run \
   --restart=always \
   -p 8000:80 \
   -v $HOME/cicada-data:/data \
-  -v $HOME/cicada-config.json:/config.json \
+  -v $HOME/cicada-config.json:/config.json:ro \
   --name cicada \
   mebtte/cicada
 ```
 
 需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外在 Docker 镜像下 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项不会生效.
+
+### Docker compose
+
+```yml
+version: '3'
+services:
+  cicada:
+    restart: always
+    container_name: cicada
+
+    # specify user
+    # user: 1000:1000
+
+    image: mebtte/cicada
+    ports:
+      - 80:80
+    volumes:
+      - /path/config.json:/config.json:ro
+      - /path/data:/data
+```
 
 ## 版本升级
 

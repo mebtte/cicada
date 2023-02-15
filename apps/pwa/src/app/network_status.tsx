@@ -39,7 +39,7 @@ function NetworkStatus() {
         style={{
           height: height || 30,
           paddingLeft: left,
-          paddingRight: windowWidth - right,
+          paddingRight: right ? windowWidth - right : 0,
         }}
       >
         暂时无法连接到服务, 部分功能受限
