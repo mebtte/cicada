@@ -6,6 +6,7 @@ type KeyMapValue = {
   [AdminAllowUpdateKey.ADMIN]: null;
   [AdminAllowUpdateKey.EMAIL]: string;
   [AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT]: number;
+  [AdminAllowUpdateKey.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: number;
 };
 
 function adminUpdateUser<Key extends AdminAllowUpdateKey>({

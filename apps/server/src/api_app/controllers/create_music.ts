@@ -47,16 +47,20 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
   }
 
-  const todayUploadMusicList = await getDB().all<Pick<Music, MusicProperty.ID>>(
-    `
-      select id from music
-        where createUserId = ?
-          and createTimestamp > ? and createTimestamp < ?
-    `,
-    [ctx.user.id, day().startOf('day'), day().endOf('day')],
-  );
-  if (todayUploadMusicList.length > ctx.user.createMusicMaxAmountPerDay) {
-    return ctx.except(ExceptionCode.OVER_CREATE_MUSIC_TIMES_PER_DAY);
+  if (ctx.user.createMusicMaxAmountPerDay !== 0) {
+    const todayCreateMusicList = await getDB().all<
+      Pick<Music, MusicProperty.ID>
+    >(
+      `
+        select id from music
+          where createUserId = ?
+            and createTimestamp > ? and createTimestamp < ?
+      `,
+      [ctx.user.id, day().startOf('day'), day().endOf('day')],
+    );
+    if (todayCreateMusicList.length > ctx.user.createMusicMaxAmountPerDay) {
+      return ctx.except(ExceptionCode.OVER_CREATE_MUSIC_TIMES_PER_DAY);
+    }
   }
 
   const id = generateRandomString(ID_LENGTH, false);

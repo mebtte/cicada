@@ -125,6 +125,39 @@ function EditMenu() {
             })
           }
         />
+        <MenuItem
+          icon={<MdTitle />}
+          label="修改每天创建音乐最大数量"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.INPUT,
+              label: '每天创建音乐最大数量',
+              title: '修改每天创建音乐最大数量',
+              initialValue: user?.createMusicMaxAmountPerDay.toString(),
+              inputType: 'number',
+              placeholder: '0 表示无限制',
+              onSubmit: async (createMusicMaxAmountPerDay: string) => {
+                const createMusicMaxAmountPerDayNumber = Number(
+                  createMusicMaxAmountPerDay,
+                );
+                if (createMusicMaxAmountPerDayNumber < 0) {
+                  throw new Error('值请大于 0');
+                }
+                if (
+                  user?.createMusicMaxAmountPerDay !==
+                  createMusicMaxAmountPerDayNumber
+                ) {
+                  await adminUpdateUser({
+                    id: user!.id,
+                    key: AdminAllowUpdateKey.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,
+                    value: createMusicMaxAmountPerDayNumber,
+                  });
+                  e.emit(EventType.RELOAD_DATA, null);
+                }
+              },
+            })
+          }
+        />
         {user?.admin ? null : (
           <MenuItem
             icon={<MdPersonOutline />}

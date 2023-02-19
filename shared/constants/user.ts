@@ -12,4 +12,5 @@ export enum AdminAllowUpdateKey {
   REMARK = 'remark',
   ADMIN = 'admin',
   MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
+  CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
 }
