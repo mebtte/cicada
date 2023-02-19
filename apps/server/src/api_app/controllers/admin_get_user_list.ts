@@ -14,7 +14,10 @@ export default async (ctx: Context) => {
         avatar,
         joinTimestamp,
         admin,
-        remark
+        remark,
+        musicbillMaxAmount,
+        createMusicMaxAmountPerDay,
+        exportMusicbillMaxTimePerDay
       FROM user
       ORDER BY joinTimestamp DESC
     `,

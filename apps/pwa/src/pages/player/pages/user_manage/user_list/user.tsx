@@ -1,7 +1,6 @@
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import day from '#/utils/day';
 import ellipsis from '@/style/ellipsis';
 import IconButton from '@/components/icon_button';
 import { MdMoreVert } from 'react-icons/md';
@@ -12,7 +11,7 @@ import playerEventemitter, {
 } from '../../../eventemitter';
 import e, { EventType } from '../eventemitter';
 
-const AVATAR_SIZE = 88;
+const AVATAR_SIZE = 110;
 const Style = styled.div`
   height: ${AVATAR_SIZE + 20}px;
 
@@ -48,10 +47,24 @@ const Style = styled.div`
     flex: 1;
     min-width: 0;
 
-    > .nickname {
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-      font-size: 14px;
-      ${ellipsis}
+    > .nickname-id {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      > .nickname {
+        color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+        font-size: 14px;
+        ${ellipsis}
+      }
+
+      > .id {
+        flex-shrink: 0;
+
+        font-family: monospace;
+        font-size: 12px;
+        color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+      }
     }
 
     > .secondary {
@@ -59,6 +72,10 @@ const Style = styled.div`
       font-size: 12px;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       ${ellipsis}
+
+      >.value {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -90,13 +107,27 @@ function User({ user }: { user: UserType }) {
         {user.admin ? <div className="admin">管理员</div> : null}
       </div>
       <div className="info">
-        <div className="nickname">{user.nickname}</div>
-        <div className="secondary">ID: {user.id}</div>
-        <div className="secondary">邮箱: {user.email}</div>
-        <div className="secondary">
-          创建时间: {day(user.joinTimestamp).format('YYYY-MM-DD')}
+        <div className="nickname-id">
+          <div className="nickname">{user.nickname}</div>
+          <div className="id">#{user.id}</div>
         </div>
-        <div className="secondary">备注: {user.remark}</div>
+        <div className="secondary">
+          邮箱: <span className="value">{user.email}</span>
+        </div>
+        <div className="secondary">
+          备注: <span className="value">{user.remark}</span>
+        </div>
+        <div className="secondary">
+          乐单最大数量: <span className="value">{user.musicbillMaxAmount}</span>
+        </div>
+        <div className="secondary">
+          每天创建音乐最大数量:{' '}
+          <span className="value">{user.createMusicMaxAmountPerDay}</span>
+        </div>
+        <div className="secondary">
+          每天导出乐单最大数量:{' '}
+          <span className="value">{user.exportMusicbillMaxTimePerDay}</span>
+        </div>
       </div>
       <IconButton
         size={ComponentSize.SMALL}
