@@ -99,10 +99,12 @@ services:
 
 </details>
 
-## 已知缺陷
+<details>
+  <summary>为什么 iOS/iPadOS 上处于后台时无法自动播放下一首 ?</summary>
 
-- 在 iOS/iPadOS 上处于后台无法自动播放下一首, 这是因为 Safari 会暂停处于后台页面的 JavaScript.
-- 在 Windows 下安装 PWA 后图标比其他应用图标要小, 这是因为 Windows 和 macOS 的图标占用空间不一致, PWA 无法同时兼容, 知了使用的是 macOS 图标尺寸.
+目前 Safari 对 PWA 支持度较低, 当页面处于后台时会暂停 JavaScript 的执行导致无法自动下一首, 需要等待 Safari 提高对 PWA 的支持才能解决相关问题.
+
+</details>
 
 ## 开源协议
 
