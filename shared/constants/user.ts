@@ -13,4 +13,5 @@ export enum AdminAllowUpdateKey {
   ADMIN = 'admin',
   MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
   CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
+  EXPORT_MUSICBILL_MAX_TIME_PER_DAY = 'exportMusicbillMaxTimePerDay',
 }

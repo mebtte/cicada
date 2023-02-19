@@ -47,7 +47,12 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
   }
 
+  /**
+   * 0 表示无限制
+   * @author mebtte<hi@mebtte.com>
+   */
   if (ctx.user.createMusicMaxAmountPerDay !== 0) {
+    const now = day();
     const todayCreateMusicList = await getDB().all<
       Pick<Music, MusicProperty.ID>
     >(
@@ -56,7 +61,7 @@ export default async (ctx: Context) => {
           where createUserId = ?
             and createTimestamp > ? and createTimestamp < ?
       `,
-      [ctx.user.id, day().startOf('day'), day().endOf('day')],
+      [ctx.user.id, now.startOf('day'), now.endOf('day')],
     );
     if (todayCreateMusicList.length > ctx.user.createMusicMaxAmountPerDay) {
       return ctx.except(ExceptionCode.OVER_CREATE_MUSIC_TIMES_PER_DAY);

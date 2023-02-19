@@ -17,6 +17,7 @@ type LocalUser = Pick<
   | UserProperty.EMAIL
   | UserProperty.MUSICBILL_MAX_AMOUNT
   | UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
+  | UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY
 >;
 
 const KEY_MAP_HANDLER: Record<
@@ -98,6 +99,26 @@ const KEY_MAP_HANDLER: Record<
 
     return ctx.success();
   },
+  [AdminAllowUpdateKey.EXPORT_MUSICBILL_MAX_TIME_PER_DAY]: async ({
+    ctx,
+    user,
+    value,
+  }) => {
+    if (typeof value !== 'number' || value < 0) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+    if (user.exportMusicbillMaxTimePerDay === value) {
+      return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
+    }
+
+    await updateUser({
+      id: user.id,
+      property: UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
+      value,
+    });
+
+    return ctx.success();
+  },
 };
 
 export default async (ctx: Context) => {
@@ -123,6 +144,7 @@ export default async (ctx: Context) => {
     UserProperty.EMAIL,
     UserProperty.MUSICBILL_MAX_AMOUNT,
     UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,
+    UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
   ]);
   if (!user) {
     return ctx.except(ExceptionCode.USER_NOT_EXIST);

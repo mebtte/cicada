@@ -109,9 +109,13 @@ function EditMenu() {
               inputType: 'number',
               placeholder: '0 表示无限制',
               onSubmit: async (musicbillMaxAmount: string) => {
+                if (!musicbillMaxAmount.length) {
+                  throw new Error('值请大于或等于 0');
+                }
+
                 const musicbillMaxAmountNumber = Number(musicbillMaxAmount);
                 if (musicbillMaxAmountNumber < 0) {
-                  throw new Error('值请大于 0');
+                  throw new Error('值请大于或等于 0');
                 }
                 if (user?.musicbillMaxAmount !== musicbillMaxAmountNumber) {
                   await adminUpdateUser({
@@ -137,11 +141,15 @@ function EditMenu() {
               inputType: 'number',
               placeholder: '0 表示无限制',
               onSubmit: async (createMusicMaxAmountPerDay: string) => {
+                if (!createMusicMaxAmountPerDay.length) {
+                  throw new Error('值请大于或等于 0');
+                }
+
                 const createMusicMaxAmountPerDayNumber = Number(
                   createMusicMaxAmountPerDay,
                 );
                 if (createMusicMaxAmountPerDayNumber < 0) {
-                  throw new Error('值请大于 0');
+                  throw new Error('值请大于或等于 0');
                 }
                 if (
                   user?.createMusicMaxAmountPerDay !==
@@ -151,6 +159,43 @@ function EditMenu() {
                     id: user!.id,
                     key: AdminAllowUpdateKey.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,
                     value: createMusicMaxAmountPerDayNumber,
+                  });
+                  e.emit(EventType.RELOAD_DATA, null);
+                }
+              },
+            })
+          }
+        />
+        <MenuItem
+          icon={<MdTitle />}
+          label="修改每天导出乐单最大数量"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.INPUT,
+              label: '每天导出乐单最大数量',
+              title: '修改每天导出乐单最大数量',
+              initialValue: user?.exportMusicbillMaxTimePerDay.toString(),
+              inputType: 'number',
+              placeholder: '0 表示无限制',
+              onSubmit: async (exportMusicbillMaxTimePerDay: string) => {
+                if (!exportMusicbillMaxTimePerDay.length) {
+                  throw new Error('值请大于或等于 0');
+                }
+
+                const exportMusicbillMaxTimePerDayNumber = Number(
+                  exportMusicbillMaxTimePerDay,
+                );
+                if (exportMusicbillMaxTimePerDayNumber < 0) {
+                  throw new Error('值请大于或等于 0');
+                }
+                if (
+                  user?.exportMusicbillMaxTimePerDay !==
+                  exportMusicbillMaxTimePerDayNumber
+                ) {
+                  await adminUpdateUser({
+                    id: user!.id,
+                    key: AdminAllowUpdateKey.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
+                    value: exportMusicbillMaxTimePerDayNumber,
                   });
                   e.emit(EventType.RELOAD_DATA, null);
                 }
