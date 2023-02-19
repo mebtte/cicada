@@ -97,6 +97,34 @@ function EditMenu() {
             })
           }
         />
+        <MenuItem
+          icon={<MdTitle />}
+          label="修改乐单最大数量"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              type: EditDialogType.INPUT,
+              label: '乐单最大数量',
+              title: '修改乐单最大数量',
+              initialValue: user?.musicbillMaxAmount.toString(),
+              inputType: 'number',
+              placeholder: '0 表示无限制',
+              onSubmit: async (musicbillMaxAmount: string) => {
+                const musicbillMaxAmountNumber = Number(musicbillMaxAmount);
+                if (musicbillMaxAmountNumber < 0) {
+                  throw new Error('值请大于 0');
+                }
+                if (user?.musicbillMaxAmount !== musicbillMaxAmountNumber) {
+                  await adminUpdateUser({
+                    id: user!.id,
+                    key: AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT,
+                    value: musicbillMaxAmountNumber,
+                  });
+                  e.emit(EventType.RELOAD_DATA, null);
+                }
+              },
+            })
+          }
+        />
         {user?.admin ? null : (
           <MenuItem
             icon={<MdPersonOutline />}

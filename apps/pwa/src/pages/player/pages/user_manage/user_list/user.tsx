@@ -118,15 +118,26 @@ function User({ user }: { user: UserType }) {
           备注: <span className="value">{user.remark}</span>
         </div>
         <div className="secondary">
-          乐单最大数量: <span className="value">{user.musicbillMaxAmount}</span>
+          乐单最大数量:{' '}
+          <span className="value">
+            {user.musicbillMaxAmount === 0 ? '无限制' : user.musicbillMaxAmount}
+          </span>
         </div>
         <div className="secondary">
           每天创建音乐最大数量:{' '}
-          <span className="value">{user.createMusicMaxAmountPerDay}</span>
+          <span className="value">
+            {user.createMusicMaxAmountPerDay === 0
+              ? '无限制'
+              : user.createMusicMaxAmountPerDay}
+          </span>
         </div>
         <div className="secondary">
           每天导出乐单最大数量:{' '}
-          <span className="value">{user.exportMusicbillMaxTimePerDay}</span>
+          <span className="value">
+            {user.exportMusicbillMaxTimePerDay === 0
+              ? '无限制'
+              : user.createMusicMaxAmountPerDay}
+          </span>
         </div>
       </div>
       <IconButton

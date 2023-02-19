@@ -63,7 +63,8 @@ export function updateUser<
     | Property.REMARK
     | Property.ADMIN
     | Property.MUSICBILL_ORDERS_JSON
-    | Property.EMAIL,
+    | Property.EMAIL
+    | Property.MUSICBILL_MAX_AMOUNT,
 >({ id, property, value }: { id: string; property: P; value: User[P] }) {
   return getDB().run(
     `

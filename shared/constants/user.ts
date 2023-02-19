@@ -11,4 +11,5 @@ export enum AdminAllowUpdateKey {
   EMAIL = 'email',
   REMARK = 'remark',
   ADMIN = 'admin',
+  MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
 }
