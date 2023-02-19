@@ -15,6 +15,9 @@ type LocalUser = Pick<
   | UserProperty.REMARK
   | UserProperty.ADMIN
   | UserProperty.EMAIL
+  | UserProperty.MUSICBILL_MAX_AMOUNT
+  | UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
+  | UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY
 >;
 
 const KEY_MAP_HANDLER: Record<
@@ -60,6 +63,62 @@ const KEY_MAP_HANDLER: Record<
     await updateUser({ id: user.id, property: UserProperty.ADMIN, value: 1 });
     return ctx.success();
   },
+  [AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT]: async ({ ctx, user, value }) => {
+    if (typeof value !== 'number' || value < 0) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+    if (user.musicbillMaxAmount === value) {
+      return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
+    }
+
+    await updateUser({
+      id: user.id,
+      property: UserProperty.MUSICBILL_MAX_AMOUNT,
+      value,
+    });
+
+    return ctx.success();
+  },
+  [AdminAllowUpdateKey.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: async ({
+    ctx,
+    user,
+    value,
+  }) => {
+    if (typeof value !== 'number' || value < 0) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+    if (user.createMusicMaxAmountPerDay === value) {
+      return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
+    }
+
+    await updateUser({
+      id: user.id,
+      property: UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,
+      value,
+    });
+
+    return ctx.success();
+  },
+  [AdminAllowUpdateKey.EXPORT_MUSICBILL_MAX_TIME_PER_DAY]: async ({
+    ctx,
+    user,
+    value,
+  }) => {
+    if (typeof value !== 'number' || value < 0) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+    if (user.exportMusicbillMaxTimePerDay === value) {
+      return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
+    }
+
+    await updateUser({
+      id: user.id,
+      property: UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
+      value,
+    });
+
+    return ctx.success();
+  },
 };
 
 export default async (ctx: Context) => {
@@ -83,6 +142,9 @@ export default async (ctx: Context) => {
     UserProperty.REMARK,
     UserProperty.ADMIN,
     UserProperty.EMAIL,
+    UserProperty.MUSICBILL_MAX_AMOUNT,
+    UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,
+    UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
   ]);
   if (!user) {
     return ctx.except(ExceptionCode.USER_NOT_EXIST);

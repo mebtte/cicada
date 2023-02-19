@@ -11,6 +11,9 @@ async function adminGetUserList() {
       email: string;
       remark: string;
       joinTimestamp: number;
+      musicbillMaxAmount: number;
+      createMusicMaxAmountPerDay: number;
+      exportMusicbillMaxTimePerDay: number;
     }[]
   >({
     path: '/api/admin/user_list',

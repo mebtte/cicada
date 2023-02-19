@@ -18,7 +18,7 @@ function SettingDialog({
     () => setting.get().serverOrigin,
   );
   const onSave = useEvent(() => {
-    if (!URL.test(serverOrigin)) {
+    if (serverOrigin.length && !URL.test(serverOrigin)) {
       return notice.error('服务器源地址非法');
     }
     setting.set((s) => ({ ...s, serverOrigin }));

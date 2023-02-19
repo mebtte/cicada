@@ -40,9 +40,14 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.FORBID_EXPORT_EMPTY_MUSICBILL);
   }
 
-  const now = day();
-  const todayExportTimes = await getDB().get<{ value: number }>(
-    `
+  /**
+   * 0 表示无限制
+   * @author mebtte<hi@mebtte.com>
+   */
+  if (ctx.user.exportMusicbillMaxTimePerDay !== 0) {
+    const now = day();
+    const todayExportTimes = await getDB().get<{ value: number }>(
+      `
       SELECT
         count(*) AS value
       FROM musicbill_export
@@ -50,10 +55,11 @@ export default async (ctx: Context) => {
         AND createTimestamp >= ?
         AND createTimestamp < ?
     `,
-    [ctx.user.id, now.startOf('day'), now.endOf('day')],
-  );
-  if (todayExportTimes!.value >= ctx.user.exportMusicbillMaxTimePerDay) {
-    return ctx.except(ExceptionCode.OVER_EXPORT_MUSICBILL_TIMES_PER_DAY);
+      [ctx.user.id, now.startOf('day'), now.endOf('day')],
+    );
+    if (todayExportTimes!.value >= ctx.user.exportMusicbillMaxTimePerDay) {
+      return ctx.except(ExceptionCode.OVER_EXPORT_MUSICBILL_TIMES_PER_DAY);
+    }
   }
 
   await getDB().run(
