@@ -47,6 +47,7 @@
     "commander": "^9.4.1",
     "file-type": "^16.5.3",
     "html-entities": "^2.3.3",
+    "jimp": "^0.16.2",
     "joi": "^17.7.0",
     "json5": "^2.2.2",
     "koa": "^2.13.4",
@@ -180,6 +181,7 @@
   "pkg": {
     "assets": [
       "pwa/**/*",
+      "runtime/**/*",
       "node_modules/**/*.node"
     ],
     "outputPath": "build"

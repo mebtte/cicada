@@ -13,7 +13,7 @@ export default async (ctx: Context, next: Next) => {
     await next();
   } catch (error) {
     console.error(error);
-    ctx.except(ExceptionCode.SERVER_ERROR);
+    ctx.except(ExceptionCode.SERVER_ERROR, 500);
 
     const now = day();
     const dateString = now.format('YYYYMMDD');

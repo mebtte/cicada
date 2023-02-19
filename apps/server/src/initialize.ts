@@ -6,12 +6,13 @@ import { AssetType } from '#/constants';
 import {
   getAssetDirectory,
   getConfig,
-  getDataVersionPath,
   getDBFilePath,
   getDBSnapshotDirectory,
   getDownloadDirectory,
   getLogDirectory,
   getTrashDirectory,
+  getCacheDirectory,
+  getDataVersionPath,
 } from './config';
 import exitWithMessage from './utils/exit_with_message';
 
@@ -32,6 +33,7 @@ export default async () => {
     getTrashDirectory(),
     getLogDirectory(),
     getDownloadDirectory(),
+    getCacheDirectory(),
 
     getAssetDirectory(),
     ...Object.values(AssetType).map((at) => getAssetDirectory(at)),
@@ -244,14 +246,16 @@ export default async () => {
    * initialize or verify data version
    * @author mebtte<hi@mebtte.com>
    */
-  const SUPPORT_VERSION = '0';
+  const SUPPORT_VERSION = '1';
   if (fs.existsSync(getDataVersionPath())) {
     const dataVersion = fs
       .readFileSync(getDataVersionPath())
       .toString()
       .replace(/\s/gm, '');
     if (dataVersion !== SUPPORT_VERSION) {
-      exitWithMessage('不支持的数据版本, 请通过「cicada data-update」升级数据');
+      exitWithMessage(
+        '不支持的数据版本, 请通过「cicada data-upgrade」升级数据',
+      );
     }
   } else {
     fs.writeFileSync(getDataVersionPath(), SUPPORT_VERSION);

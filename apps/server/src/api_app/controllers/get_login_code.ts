@@ -58,7 +58,7 @@ export default async (ctx: Context) => {
   const code = generateRandomInteger(100000, 1000000).toString();
 
   /**
-   * 开发环境下直接在控制台输出
+   * 开发模式下在控制台输出
    * @author mebtte<hi@mebtte.com>
    */
   if (getConfig().mode === 'development') {
@@ -93,5 +93,5 @@ export default async (ctx: Context) => {
    */
   await saveLoginCode({ userId: user.id, code });
 
-  ctx.success();
+  return ctx.success();
 };

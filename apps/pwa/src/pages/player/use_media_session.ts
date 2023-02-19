@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getResizedMusicCover } from '@/server/asset';
 import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
 
@@ -10,7 +11,32 @@ function useMediaSession(music?: QueueMusic) {
         artist: music.singers.map((s) => s.name).join(',') || '未知歌手',
         artwork: [
           {
-            src: music.cover,
+            src: getResizedMusicCover({ id: music.id, size: 96 }),
+            sizes: '96x96',
+            type: 'image/jpeg',
+          },
+          {
+            src: getResizedMusicCover({ id: music.id, size: 128 }),
+            sizes: '128x128',
+            type: 'image/jpeg',
+          },
+          {
+            src: getResizedMusicCover({ id: music.id, size: 192 }),
+            sizes: '192x192',
+            type: 'image/jpeg',
+          },
+          {
+            src: getResizedMusicCover({ id: music.id, size: 256 }),
+            sizes: '256x256',
+            type: 'image/jpeg',
+          },
+          {
+            src: getResizedMusicCover({ id: music.id, size: 384 }),
+            sizes: '384x384',
+            type: 'image/jpeg',
+          },
+          {
+            src: getResizedMusicCover({ id: music.id, size: 512 }),
             sizes: '512x512',
             type: 'image/jpeg',
           },

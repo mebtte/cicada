@@ -6,7 +6,7 @@ import { Ref, RenderProps } from './constants';
 function Wrapper(
   {
     loading,
-    data: { label, initialValue, maxLength },
+    data: { label, initialValue, maxLength, inputType = 'text', placeholder },
   }: RenderProps<EditDialogType.INPUT>,
   ref: ForwardedRef<Ref>,
 ) {
@@ -20,10 +20,12 @@ function Wrapper(
     <Input
       label={label}
       inputProps={{
+        type: inputType,
         value: name,
         onChange: (e) => setName(e.target.value),
         autoFocus: true,
         maxLength,
+        placeholder,
       }}
       disabled={loading}
     />

@@ -10,11 +10,12 @@
 
 - **尊重隐私, 不进行任何数据收集**
 - 支持多用户
-- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), UI 同时支持桌面端和移动端
-- 系统媒体和快捷键支持
+- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), UI 同时支持桌面端和移动
 - 音乐支持标准音质/超高音质/伴奏以及多份歌词
 - 乐单/播放列表/播放队列音乐数量无限制
+- 系统媒体和快捷键支持
 - 支持标注音乐创作来源(翻唱)
+- 支持歌词/歌名/歌手/乐单搜索
 - 暴露 HTTP API 支持第三方接入或进行二次开发
 
 ## 准备
@@ -56,23 +57,43 @@ docker run \
   --restart=always \
   -p 8000:80 \
   -v $HOME/cicada-data:/data \
-  -v $HOME/cicada-config.json:/config.json \
+  -v $HOME/cicada-config.json:/config.json:ro \
   --name cicada \
   mebtte/cicada
 ```
 
-其中, `/data` 存放知了数据, `/config.json` 存放知了配置文件. 需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外 Docker 镜像下会忽略配置文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项.
+需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外在 Docker 镜像下 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项不会生效.
 
-## HTTP API
+### Docker compose
 
-知了暴露了一系列 HTTP API, 在此基础上可以进行二次开发或者第三方接入, 比如导入当前已有音乐资源. HTTP API 文档请在[这里](./docs//api/index.md)查看.
+```yml
+version: '3'
+services:
+  cicada:
+    restart: always
+    container_name: cicada
+
+    # specify user
+    # user: 1000:1000
+
+    image: mebtte/cicada
+    ports:
+      - 80:80
+    volumes:
+      - /path/config.json:/config.json:ro
+      - /path/data:/data
+```
+
+## 版本升级
+
+[从 0.x.x 升级到 1.x.x](./docs/version_update/index.md)
 
 ## 常见问题
 
 <details>
   <summary>如何迁移数据 ?</summary>
 
-知了所有数据都位于 `{{base}}` 目录下, 将 `{{base}}` 目录复制或者移动即可完成迁移.
+知了所有数据都位于 `{{data}}` 目录下, 将 `{{data}}` 目录复制或者移动即可完成迁移.
 
 </details>
 
@@ -84,11 +105,30 @@ docker run \
 </details>
 
 <details>
-  <summary>iOS/iPadOS 处于后台无法自动播放下一首</summary>
+  <summary>为什么 iOS/iPadOS 上处于后台时无法自动播放下一首 ?</summary>
 
-这是因为 Safari 会暂停处于后台页面的 JavaScript, 需要等 Safari 对 PWA 进一步支持.
+目前 Safari 对 PWA 支持度较低, 当页面处于后台时会暂停 JavaScript 的执行导致无法自动下一首, 需要等待 Safari 提高对 PWA 的支持才能解决相关问题.
 
 </details>
+
+## Roadmap
+
+### 当前版本
+
+- [ ] 多语言支持
+- [ ] 悬浮歌词面板(类似于网易云网页版歌词)
+- [ ] 播放记录的展示和删除
+- [ ] 电台功能(随机从曲库中拉取音乐并连续播放)
+
+### 下一版本
+
+- [ ] 第三方接入指引(数据库 ER 图/ API 文档)
+- [ ] 图片(用户头像/歌手头像/音乐封面/乐单封面)访问优化
+- [ ] 删除用户
+- [ ] 用户最后活动时间记录和展示
+- [ ] 音乐年份记录和展示
+- [ ] 共享乐单
+- [ ] 消息中心(删除歌手消息/乐单内包含被删除音乐消息)
 
 ## 开源协议
 

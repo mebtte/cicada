@@ -26,6 +26,8 @@ export type EditDialogData = {
       label: string;
       initialValue?: string;
       maxLength?: number;
+      inputType?: string;
+      placeholder?: string;
     }
   | {
       type: EditDialogType.COVER;

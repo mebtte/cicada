@@ -4,6 +4,7 @@ import logger from '#/utils/logger';
 import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';
+import setting from './setting';
 
 const serverMetadata = new XState<{
   version: string;
@@ -39,5 +40,6 @@ globalEventemitter.listen(
 window.addEventListener('online', () =>
   window.setTimeout(updateMetadata, 1000),
 );
+setting.onChange(updateMetadata);
 
 export default serverMetadata;

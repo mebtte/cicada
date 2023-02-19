@@ -3,6 +3,7 @@ import util from 'util';
 import withTimeout from '#/utils/with_timeout';
 import { DOWNLOAD_TTL } from '#/constants';
 import {
+  getCacheDirectory,
   getDBSnapshotDirectory,
   getDownloadDirectory,
   getLogDirectory,
@@ -24,7 +25,7 @@ async function cleanOutdatedFile() {
     },
     {
       directory: getLogDirectory(),
-      ttl: 1000 * 60 * 60 * 24 * 30,
+      ttl: 1000 * 60 * 60 * 24 * 7,
     },
     {
       directory: getDownloadDirectory(),
@@ -32,7 +33,11 @@ async function cleanOutdatedFile() {
     },
     {
       directory: getDBSnapshotDirectory(),
-      ttl: 1000 * 60 * 60 * 24 * 60,
+      ttl: 1000 * 60 * 60 * 24 * 15,
+    },
+    {
+      directory: getCacheDirectory(),
+      ttl: 1000 * 60 * 60 * 24 * 30,
     },
   ];
   for (const { directory, ttl } of DIRECTORIES) {
