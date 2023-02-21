@@ -39,7 +39,7 @@ export async function request<Data = void>({
   timeout?: number;
 }) {
   const { serverOrigin } = setting.get();
-  let url = `${serverOrigin}${path}`;
+  let url = `${serverOrigin || ''}${path}`;
 
   const combineParams = {
     ...params,
