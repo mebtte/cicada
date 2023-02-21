@@ -1,4 +1,4 @@
-import Popup from '@/components/popup';
+import Drawer from '@/components/drawer';
 import {
   CSSProperties,
   MouseEventHandler,
@@ -40,6 +40,7 @@ import { Option } from '@/components/multiple_select';
 import searchSingerRequest from '@/server/search_singer';
 import searchMusicRequest from '@/server/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
+import absoluteFullSize from '@/style/absolute_full_size';
 import { Music, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -48,6 +49,8 @@ import playerEventemitter, {
   EditDialogType,
 } from '../eventemitter';
 import { emitMusicUpdated } from '../utils';
+import MusicInfo from '../components/music_info';
+import CreateUser from './create_user';
 
 interface Singer {
   id: string;
@@ -69,6 +72,9 @@ const searchSinger = (search: string): Promise<Option<Singer>[]> => {
     data.singerList.map(formatSingerToMultipleSelectOption),
   );
 };
+const createUserStyle: CSSProperties = {
+  padding: '15px 20px',
+};
 
 const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
   key: music.id,
@@ -77,13 +83,18 @@ const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
 });
 
 const Style = styled.div`
-  padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
+  ${absoluteFullSize}
+
+  padding: max(env(safe-area-inset-bottom, 10px), 10px) 0
+    max(env(safe-area-inset-bottom, 10px), 10px) 0;
+
+  overflow: auto;
 `;
 const maskProps: {
   style: CSSProperties;
   onClick: MouseEventHandler<HTMLDivElement>;
 } = {
-  style: { zIndex: ZIndex.POPUP },
+  style: { zIndex: ZIndex.DRAWER },
   onClick: (event) => event.stopPropagation(),
 };
 const bodyProps: { style: CSSProperties } = {
@@ -120,13 +131,19 @@ function EditMenu({ music }: { music: MusicDetail }) {
   }, []);
 
   return (
-    <Popup
+    <Drawer
       open={open}
       onClose={onClose}
       maskProps={maskProps}
       bodyProps={bodyProps}
     >
       <Style onClick={onClose}>
+        <MusicInfo music={music} />
+        <CreateUser
+          user={music.createUser}
+          createTime={music.createTime}
+          style={createUserStyle}
+        />
         <MenuItem
           icon={<MdImage />}
           label="编辑封面"
@@ -451,7 +468,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }}
         />
       </Style>
-    </Popup>
+    </Drawer>
   );
 }
 

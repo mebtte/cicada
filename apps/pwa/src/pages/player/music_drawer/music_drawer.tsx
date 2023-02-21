@@ -40,6 +40,9 @@ const DetailBox = styled(Container)`
     }
   }
 `;
+const createUserStyle: CSSProperties = {
+  padding: '30px 20px',
+};
 
 function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
   const [toolbarSticky, setToolbarSticky] = useState(false);
@@ -70,7 +73,11 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
           ) : null}
           <Lyric music={music} />
         </div>
-        <CreateUser user={music.createUser} createTime={music.createTime} />
+        <CreateUser
+          user={music.createUser}
+          createTime={music.createTime}
+          style={createUserStyle}
+        />
       </div>
 
       {toolbarSticky ? <MiniInfo music={music} /> : null}

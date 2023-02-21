@@ -39,7 +39,7 @@ export default (id: string) => {
           ...music,
           cover: music.cover || getRandomCover(),
           lyrics,
-          createTime: day(music.createTimestamp).format('YYYY-MM-DD HH:mm'),
+          createTime: day(music.createTimestamp).format('YYYY-MM-DD'),
           singers: music.singers.map((s) => ({
             ...s,
             avatar: s.avatar || getRandomCover(),

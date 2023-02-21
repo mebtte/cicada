@@ -36,7 +36,7 @@ export default (singerId: string) => {
             ...music,
             index: singer.musicList.length - index,
           })),
-          createTime: day(singer.createTimestamp).format('YYYY-MM-DD HH:mm'),
+          createTime: day(singer.createTimestamp).format('YYYY-MM-DD'),
         },
       });
     } catch (error) {
