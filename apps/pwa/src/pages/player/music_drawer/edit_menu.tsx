@@ -41,6 +41,7 @@ import searchSingerRequest from '@/server/search_singer';
 import searchMusicRequest from '@/server/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import absoluteFullSize from '@/style/absolute_full_size';
+import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { Music, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -85,9 +86,6 @@ const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
 const Style = styled.div`
   ${absoluteFullSize}
 
-  padding: max(env(safe-area-inset-bottom, 10px), 10px) 0
-    max(env(safe-area-inset-bottom, 10px), 10px) 0;
-
   overflow: auto;
 `;
 const maskProps: {
@@ -105,6 +103,7 @@ const dangerousIconStyle: CSSProperties = {
 };
 
 function EditMenu({ music }: { music: MusicDetail }) {
+  const { height: titleBarHeight } = useTitlebarArea();
   const [open, setOpen] = useState(false);
   // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
@@ -137,7 +136,14 @@ function EditMenu({ music }: { music: MusicDetail }) {
       maskProps={maskProps}
       bodyProps={bodyProps}
     >
-      <Style onClick={onClose}>
+      <Style
+        style={{
+          padding: `max(env(safe-area-inset-bottom, 10px), ${
+            titleBarHeight + 10
+          }px) 0 max(env(safe-area-inset-bottom, 10px), 10px) 0`,
+        }}
+        onClick={onClose}
+      >
         <MusicInfo music={music} />
         <CreateUser
           user={music.createUser}
