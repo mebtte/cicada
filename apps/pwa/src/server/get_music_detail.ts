@@ -29,6 +29,7 @@ interface Music {
 async function getMusicDetail(id: string) {
   const music = await request<
     Music & {
+      heat: number;
       createTimestamp: number;
       createUser: { id: string; avatar: string; nickname: string };
       forkList: Music[];

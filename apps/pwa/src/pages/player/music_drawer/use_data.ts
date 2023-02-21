@@ -52,6 +52,7 @@ export default (id: string) => {
             ...m,
             cover: m.cover || getRandomCover(),
           })),
+          heat: music.heat,
         },
       });
     } catch (error) {
