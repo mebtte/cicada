@@ -9,7 +9,7 @@
 ## 特色
 
 - **尊重隐私, 不进行任何数据收集**
-- 支持多用户
+- 支持多用户以及导入现有音乐目录/文件
 - 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), UI 同时支持桌面端和移动端
 - 系统媒体和快捷键支持
 - 音乐支持标准音质/超高音质/伴奏以及多份歌词
@@ -38,10 +38,10 @@
 
 > 完整配置可以参看[配置项](./docs/config/index.md), 支持 JSON/[JSON5](https://json5.org) 语法.
 
-在 [Releases](https://github.com/mebtte/cicada/releases) 下载并解压对应平台的二进制包, 通过下面命令指定配置文件并启动(以 x64 Linux 为例):
+在 [Releases](https://github.com/mebtte/cicada/releases) 下载并解压对应平台的二进制包, 通过下面命令指定配置文件并启动服务:
 
 ```sh
-./cicada-linux-x64 start -c config.json
+./cicada start -c config.json
 ```
 
 通过 `localhost:8000` 或者 `{{ip}}:8000` 访问知了服务. 目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
@@ -83,6 +83,26 @@ services:
       - /path/data:/data
 ```
 
+## 导入音乐
+
+知了支持导入现有音乐, 通过 `cicada import` 命令可以导入音乐目录或者音乐文件, 需要注意的是音乐文件命名必须要满足以下格式(多个空格会被合并成一个):
+
+```txt
+singer1[,singer2][,singer3] - name.format
+```
+
+比如 `周杰伦 - 晴天.mp3` / `Jarryd James,BROODS - 1000x.flac` 是支持的命名, `孙燕姿 逆光.mp3` / `漠河舞厅.m4a` 是不支持的命名.
+
+```sh
+# 导入音乐目录
+cicada import --data /path_to/cicada_data --recursive music_dir
+
+# 导入音乐文件
+cicada import --data /path_to/cicada_data music
+```
+
+当遇到命名不支持或者格式不支持的文件, 知了将会忽略. 可以通过 `cicada help import` 查看更多选项.
+
 ## 常见问题
 
 <details>
@@ -110,7 +130,6 @@ services:
 
 ### 当前版本
 
-- [ ] 通过子命令导入音乐/音乐目录
 - [ ] 多语言支持
 - [ ] 悬浮歌词面板(类似于网易云网页版歌词)
 - [ ] 播放记录的展示和删除
