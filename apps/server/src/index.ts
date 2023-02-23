@@ -55,7 +55,8 @@ program
   .description('import music(s) to cicada')
   .option('--data <data>', 'cicada data directory')
   .option('--uid <user_id>', "specify music creator's id", '1')
-  .option('-r, --recursive', 'scan sub directories', false)
+  .option('-r, --recursive', 'import music from sub directories', false)
+  .option('--skip-check-exist', 'scan sub directories', false)
   .argument('[source]', 'source directory or file')
   .action(
     (
@@ -65,6 +66,7 @@ program
         uid: string;
         r: boolean;
         recursive: boolean;
+        skipCheckExist: boolean;
       },
     ) => {
       if (!source) {
@@ -92,6 +94,7 @@ program
         data: absoluteData,
         uid: options.uid,
         recursive: options.r || options.recursive,
+        skipCheckExist: options.skipCheckExist,
       });
     },
   );

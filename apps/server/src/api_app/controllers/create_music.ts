@@ -1,16 +1,13 @@
 import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import { NAME_MAX_LENGTH, MUSIC_TYPES } from '#/constants/music';
+import { NAME_MAX_LENGTH, MUSIC_TYPES, MusicType } from '#/constants/music';
 import exist from '#/utils/exist';
-import generateRandomString from '#/utils/generate_random_string';
 import { getSingerListByIds, Property as SingerProperty } from '@/db/singer';
 import { getAssetFilePath } from '@/platform/asset';
 import { getDB } from '@/db';
 import day from '#/utils/day';
-import { Music, Property as MusicProperty } from '@/db/music';
+import { createMusic, Music, Property as MusicProperty } from '@/db/music';
 import { Context } from '../constants';
-
-const ID_LENGTH = 8;
 
 export default async (ctx: Context) => {
   const { name, singerIds, type, sq } = ctx.request.body as {
@@ -57,9 +54,11 @@ export default async (ctx: Context) => {
       Pick<Music, MusicProperty.ID>
     >(
       `
-        select id from music
-          where createUserId = ?
-            and createTimestamp > ? and createTimestamp < ?
+        SELECT
+          id
+        FROM music
+        WHERE createUserId = ?
+          AND createTimestamp > ? AND createTimestamp < ?
       `,
       [ctx.user.id, now.startOf('day'), now.endOf('day')],
     );
@@ -68,18 +67,17 @@ export default async (ctx: Context) => {
     }
   }
 
-  const id = generateRandomString(ID_LENGTH, false);
+  const id = await createMusic({
+    name,
+    type: type as MusicType,
+    createUserId: ctx.user.id,
+    sq,
+  });
   await getDB().run(
     `
-      insert into music ( id, type, name, sq, createUserId, createTimestamp )
-        values( ?, ?, ?, ?, ?, ? )
-    `,
-    [id, type, name, sq, ctx.user.id, Date.now()],
-  );
-  await getDB().run(
-    `
-      insert into music_singer_relation ( musicId, singerId )
-        values ${singerIdList.map(() => '( ?, ? )').join(', ')}
+      INSERT INTO
+      music_singer_relation ( musicId, singerId )
+      VALUES ${singerIdList.map(() => '( ?, ? )').join(', ')}
     `,
     singerIdList.map((singerId) => [id, singerId]).flat(Infinity),
   );
