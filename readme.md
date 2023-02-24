@@ -1,5 +1,10 @@
 # 知了
 
+![version](https://img.shields.io/github/v/release/mebtte/cicada?style=for-the-badge)
+![release build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/build_and_release.yaml?label=release%20build&style=for-the-badge)
+![docker build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/docker_build_and_push.yaml?label=docker%20build&style=for-the-badge)
+![license](https://img.shields.io/github/license/mebtte/cicada?style=for-the-badge)
+
 知了, 支持多用户的开源音乐服务.
 
 ![](./docs/thumbnail_1.png)
@@ -144,6 +149,10 @@ cicada import --data /path_to/cicada_data music
 目前 Safari 对 PWA 支持度较低, 当页面处于后台时会暂停 JavaScript 的执行导致无法自动下一首, 需要等待 Safari 提高对 PWA 的支持才能解决相关问题.
 
 </details>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=mebtte/cicada&type=Timeline)](https://star-history.com/#mebtte/cicada&Timeline)
 
 ## 开源协议
 
