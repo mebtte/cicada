@@ -20,6 +20,6 @@ jobs:
 
       - uses: actions/checkout@main
         with:
-          fetch-depth: 100
+          fetch-depth: 0
 
       - run: ./docker_build_and_push.sh beta
