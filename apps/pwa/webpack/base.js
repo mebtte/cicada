@@ -45,6 +45,16 @@ const mainConfig = {
   module: {
     rules: [
       {
+        /**
+         * https://github.com/pmndrs/react-spring/issues/2097
+         * @author mebtte<hi@mebtte.com>
+         */
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
         test: /\.(j|t)sx?$/,
         use: [
           {
