@@ -5,9 +5,9 @@ RUN apt-get update -y \
   && apt-get autoclean \
   && rm -rf /var/lib/apt/lists/*
 
-COPY build/cicada /
+COPY build/cicada /usr/bin/
 VOLUME [ "/data", "/config.json" ]
-CMD /cicada start -c /config.json --data /data --port 80
+CMD cicada start -c /config.json --data /data --port 80
 EXPOSE 80
 
 LABEL org.opencontainers.image.title="cicada" \
