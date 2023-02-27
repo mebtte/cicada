@@ -5,7 +5,7 @@ function print(message: string) {
   console.log(`\n--- warning ---\n${message}\n--- warning ---\n`);
 }
 
-async function requirementCheck() {
+async function ffmpegCheck() {
   try {
     await which('ffmpeg');
   } catch (error) {
@@ -13,9 +13,13 @@ async function requirementCheck() {
       `未在 PATH 下找到 ffmpeg 命令, 请手动安装
 ffmpeg 用于压缩音频(无损音质不会进行压缩)
 从而更好地节省存储空间和进行网络传输
-当 ffmpeg 不存在时将不进行压缩保存`,
+当 ffmpeg 未安装时将不进行压缩保存`,
     );
   }
+}
+
+async function requirementCheck() {
+  await ffmpegCheck();
 }
 
 export default requirementCheck;

@@ -1,4 +1,4 @@
-import './polyfill';
+import './polyfill'; // 需要保证 polyfill 在第一个
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import 'cropperjs/dist/cropper.min.css';
@@ -10,11 +10,18 @@ import sleep from '#/utils/sleep';
 import App from './app';
 import definition from './definition';
 
-createRoot(document.querySelector('#root')!).render(
-  <HashRouter>
-    <App />
-  </HashRouter>,
-);
+function checkCompatibility() {
+  return true;
+}
+
+if (checkCompatibility()) {
+  createRoot(document.querySelector('#root')!).render(
+    <HashRouter>
+      <App />
+    </HashRouter>,
+  );
+} else {
+}
 
 const VersionUpdater = styled.div`
   > .text {
