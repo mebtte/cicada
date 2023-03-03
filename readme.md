@@ -36,7 +36,7 @@
 ```json
 {
   "emailHost": "smtp.example.com",
-  "emailUser": "example",
+  "emailUser": "example@example.com",
   "emailPass": "example-password"
 }
 ```
