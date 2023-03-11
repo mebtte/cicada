@@ -26,9 +26,13 @@ function Logout() {
          * 以及重置部分设置
          * @author mebtte<hi@mebtte.com>
          */
-        window.caches
-          .delete(CacheName.API)
-          .catch((error) => logger.error(error, '退出登录移除 API cache 失败'));
+        if (window.caches) {
+          window.caches
+            .delete(CacheName.API)
+            .catch((error) =>
+              logger.error(error, '退出登录移除 API cache 失败'),
+            );
+        }
         setting.set((s) => ({
           ...s,
           playerVolume: 1,
