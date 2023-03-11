@@ -10,33 +10,43 @@
     <button id="clear" type="button">清空所有缓存</button>
 
     <script>
-      document.querySelector('#clear').addEventListener('click', async () => {
-        // 移除所有的 service worker
-        const registrations =
-          await window.navigator.serviceWorker.getRegistrations();
-        for (const registration of registrations) {
-          await registration.unregister();
-        }
-
-        // 移除 cache
-        const cacheKeys = await window.caches.keys();
-        for (const key of cacheKeys) {
-          await window.caches.delete(key);
-        }
-
+      document.querySelector('#clear').addEventListener('click', () => {
         // localStorage
         window.localStorage.clear();
 
         // sessionStorage
         window.sessionStorage.clear();
 
-        // indexedDB
-        const databases = await window.indexedDB.databases();
-        for (const database of databases) {
-          window.indexedDB.deleteDatabase(database.name);
+        // 移除所有的 service worker
+        if (window.navigator.serviceWorker) {
+          window.navigator.serviceWorker
+            .getRegistrations()
+            .then((registrations) =>
+              registrations.forEach((registration) =>
+                registration.unregister(),
+              ),
+            );
         }
 
-        window.alert('已清除所有缓存');
+        // 移除 cache
+        if (window.caches) {
+          window.caches
+            .keys()
+            .then((cacheKeys) =>
+              cacheKeys.forEach((key) => window.caches.delete(key)),
+            );
+        }
+
+        // indexedDB
+        if (window.indexedDB) {
+          window.indexedDB
+            .databases()
+            .then((databases) =>
+              databases.forEach((database) =>
+                window.indexedDB.deleteDatabase(database.name),
+              ),
+            );
+        }
       });
     </script>
   </body>
