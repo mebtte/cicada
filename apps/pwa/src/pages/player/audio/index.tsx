@@ -54,7 +54,9 @@ class Audio extends React.PureComponent<Props, {}> {
     const { queueMusic } = this.props;
     if (prevProps.queueMusic.pid !== queueMusic.pid) {
       this.uploadPlayRecord(prevProps.queueMusic);
-      this.createCache(prevProps.queueMusic);
+      if (window.caches) {
+        this.createCache(prevProps.queueMusic);
+      }
     }
     return null;
   }
