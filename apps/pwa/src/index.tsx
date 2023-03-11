@@ -9,18 +9,22 @@ import { MdCheck, MdClose } from 'react-icons/md';
 import sleep from '#/utils/sleep';
 import App from './app';
 import definition from './definition';
+import Unsupported from './unsupported';
 
-function checkCompatibility() {
-  return true;
+function findUnsupportedList(): string[] {
+  return [];
 }
 
-if (checkCompatibility()) {
-  createRoot(document.querySelector('#root')!).render(
+const unsupportedList = findUnsupportedList();
+const root = createRoot(document.querySelector('#root')!);
+if (unsupportedList.length) {
+  root.render(<Unsupported unsupportedList={unsupportedList} />);
+} else {
+  root.render(
     <HashRouter>
       <App />
     </HashRouter>,
   );
-} else {
 }
 
 const VersionUpdater = styled.div`
