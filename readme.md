@@ -88,10 +88,6 @@ services:
       - /path/data:/data
 ```
 
-## 版本升级
-
-# [从 0.x.x 升级到 1.x.x](./docs/version_update/index.md)
-
 ## 导入音乐
 
 知了支持导入现有音乐, 通过 `cicada import` 命令可以导入音乐目录或者音乐文件, 需要注意的是音乐文件命名必须要满足以下格式(多个空格会被合并成一个):
@@ -165,6 +161,6 @@ cicada import --data /path_to/cicada_data music
   <img src="https://contrib.rocks/image?repo=mebtte/cicada" />
 </a>
 
-## Star History
+## 其他
 
-[![Star History Chart](https://api.star-history.com/svg?repos=mebtte/cicada&type=Timeline)](https://star-history.com/#mebtte/cicada&Timeline)
+- [版本升级说明](./docs/version_update/index.md)
