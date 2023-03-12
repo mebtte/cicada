@@ -1,7 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
 import * as React from 'react';
 import throttle from 'lodash/throttle';
-import uploadMusicPlayRecord from '@/server/upload_music_play_record';
+import uploadMusicPlayRecord from '@/server/base/upload_music_play_record';
 import { CacheName } from '@/constants/cache';
 import { PlayMode } from '@/constants';
 import settingState from '@/global_states/setting';

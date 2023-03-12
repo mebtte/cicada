@@ -7,9 +7,9 @@ import p from '@/global_states/profile';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import uploadAsset from '@/server/upload_asset';
+import uploadAsset from '@/server/form/upload_asset';
 import { AssetType } from '#/constants';
-import updateProfile from '@/server/update_profile';
+import updateProfile from '@/server/api/update_profile';
 import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
 import globalEventemitter, {
   EventType as GlobalEventType,

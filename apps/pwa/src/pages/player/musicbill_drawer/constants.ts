@@ -1,4 +1,4 @@
-import getPublicMusicbill from '@/server/get_public_musicbill';
+import getPublicMusicbill from '@/server/api/get_public_musicbill';
 import { MusicWithIndex } from '../constants';
 
 export type Musicbill = Omit<

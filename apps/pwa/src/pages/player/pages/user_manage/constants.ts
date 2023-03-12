@@ -1,4 +1,4 @@
-import adminGetUserList from '@/server/admin_get_user_list';
+import adminGetUserList from '@/server/api/admin_get_user_list';
 
 export type User = Required<AsyncReturnType<typeof adminGetUserList>[0]> & {
   avatar: string;

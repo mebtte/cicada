@@ -1,5 +1,5 @@
 import p from '@/global_states/profile';
-import getProfile from '@/server/get_profile';
+import getProfile from '@/server/api/get_profile';
 import { useEffect } from 'react';
 import notice from '@/utils/notice';
 import logger from '#/utils/logger';

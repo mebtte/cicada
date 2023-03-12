@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import getMusicDetail from '@/server/get_music_detail';
+import getMusicDetail from '@/server/api/get_music_detail';
 import { MusicType } from '#/constants/music';
-import getLyricList from '@/server/get_lyric_list';
+import getLyricList from '@/server/api/get_lyric_list';
 import getRandomCover from '@/utils/get_random_cover';
 import day from '#/utils/day';
 import { MusicDetail, Lyric } from './constants';

@@ -21,14 +21,14 @@ import FileSelect from '@/components/file_select';
 import MultipleSelect, {
   Option as MultipleSelectOption,
 } from '@/components/multiple_select';
-import searchSingerRequest from '@/server/search_singer';
+import searchSingerRequest from '@/server/api/search_singer';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import useEvent from '@/utils/use_event';
 import notice from '@/utils/notice';
-import uploadAsset from '@/server/upload_asset';
-import createMusic from '@/server/create_music';
+import uploadAsset from '@/server/form/upload_asset';
+import createMusic from '@/server/api/create_music';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
-import updateMusic from '@/server/update_music';
+import updateMusic from '@/server/api/update_music';
 import getMusicFileMetadata, {
   base64ToCover,
 } from '@/utils/get_music_file_metadata';

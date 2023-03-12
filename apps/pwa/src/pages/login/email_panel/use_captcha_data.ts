@@ -1,4 +1,4 @@
-import getCaptchaRequest from '@/server/get_captcha';
+import getCaptchaRequest from '@/server/base/get_captcha';
 import { useState, useCallback, useEffect } from 'react';
 import { CAPTCHA_TTL } from '#/constants';
 

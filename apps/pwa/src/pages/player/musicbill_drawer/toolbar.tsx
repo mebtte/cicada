@@ -7,9 +7,9 @@ import {
   MdStarOutline,
 } from 'react-icons/md';
 import notice from '@/utils/notice';
-import collectPublicMusicbill from '@/server/collect_public_musicbill';
+import collectPublicMusicbill from '@/server/api/collect_public_musicbill';
 import logger from '#/utils/logger';
-import uncollectPublicMusicbill from '@/server/uncollect_public_musicbill';
+import uncollectPublicMusicbill from '@/server/api/uncollect_public_musicbill';
 import { MINI_INFO_HEIGHT, Musicbill } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,

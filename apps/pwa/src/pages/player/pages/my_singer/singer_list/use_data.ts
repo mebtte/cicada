@@ -1,5 +1,5 @@
 import { Query } from '@/constants';
-import getSelfSingerList from '@/server/get_self_singer_list';
+import getSelfSingerList from '@/server/api/get_self_singer_list';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import excludeProperty from '#/utils/exclude_property';

@@ -2,7 +2,7 @@ import logger from '#/utils/logger';
 import { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
-import getSelfMusicbillCollectionList from '@/server/get_self_musicbill_collection_list';
+import getSelfMusicbillCollectionList from '@/server/api/get_self_musicbill_collection_list';
 import getRandomCover from '@/utils/get_random_cover';
 import { PAGE_SIZE, Musicbill } from '../constants';
 import playerEventemitter, {

@@ -41,7 +41,7 @@ export default async (ctx: Context) => {
         ? getAssetFilePath(music.cover, AssetType.MUSIC_COVER)
         : path.join(
             __dirname,
-            definition.BUILD
+            definition.BUILT
               ? './runtime/default_cover.jpeg'
               : '../../../../../runtime/default_cover.jpeg',
           ),

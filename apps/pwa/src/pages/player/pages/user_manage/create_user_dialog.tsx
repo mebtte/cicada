@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import notice from '@/utils/notice';
 import { EMAIL } from '#/constants/regexp';
 import logger from '#/utils/logger';
-import adminCreateUser from '@/server/admin_create_user';
+import adminCreateUser from '@/server/api/admin_create_user';
 import e, { EventType } from './eventemitter';
 import { ZIndex } from '../../constants';
 

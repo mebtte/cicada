@@ -16,6 +16,12 @@ import {
 } from './config';
 import exitWithMessage from './utils/exit_with_message';
 
+const CURRENT_DATA_VERSION = '1';
+
+async function v0Tov1() {
+  fs.writeFileSync(getDataVersionPath(), CURRENT_DATA_VERSION);
+}
+
 function mkdirIfNotExist(dir: string) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -246,19 +252,20 @@ export default async () => {
    * initialize or verify data version
    * @author mebtte<hi@mebtte.com>
    */
-  const SUPPORT_VERSION = '1';
   if (fs.existsSync(getDataVersionPath())) {
     const dataVersion = fs
       .readFileSync(getDataVersionPath())
       .toString()
       .replace(/\s/gm, '');
-    if (dataVersion !== SUPPORT_VERSION) {
-      exitWithMessage(
-        '不支持的数据版本, 请通过「cicada data-upgrade」升级数据',
-      );
+    if (dataVersion !== CURRENT_DATA_VERSION) {
+      if (dataVersion === '0') {
+        await v0Tov1();
+        exitWithMessage('数据版本已从 0 升级到 1, 请重新启动知了');
+      }
+      exitWithMessage('未知的数据版本, 无法自动进行数据升级');
     }
   } else {
-    fs.writeFileSync(getDataVersionPath(), SUPPORT_VERSION);
+    fs.writeFileSync(getDataVersionPath(), CURRENT_DATA_VERSION);
   }
 
   /**
