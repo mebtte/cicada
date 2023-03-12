@@ -11,6 +11,7 @@ export enum PathPrefix {
   DOWNLOAD = 'download',
   ASSET = 'asset',
   API = 'api',
+  BASE = 'base',
 }
 
 export enum AssetType {

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
 import notice from '@/utils/notice';
-import loginRequest from '@/server/login';
+import loginRequest from '@/server/base/login';
 import t from '@/global_states/token';
 import p from '@/global_states/profile';
 import getProfile from '@/server/get_profile';

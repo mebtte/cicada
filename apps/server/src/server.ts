@@ -18,6 +18,7 @@ import { getDownloadApp } from './download_app';
 import { getApiApp } from './api_app';
 import { getFormApp } from './form_app';
 import { getPwaApp } from './pwa_app';
+import { getBaseApp } from './base_app';
 
 function printInfo(info: string) {
   // eslint-disable-next-line no-console
@@ -76,8 +77,9 @@ async function start({
 
   server.use(mount(`/${PathPrefix.ASSET}`, getAssetApp()));
   server.use(mount(`/${PathPrefix.DOWNLOAD}`, getDownloadApp()));
-  server.use(mount(`/${PathPrefix.API}`, getApiApp()));
   server.use(mount(`/${PathPrefix.FORM}`, getFormApp()));
+  server.use(mount(`/${PathPrefix.API}`, getApiApp()));
+  server.use(mount(`/${PathPrefix.BASE}`, getBaseApp()));
   server.use(mount('/', getPwaApp()));
 
   http.createServer(server.callback()).listen(config.port);

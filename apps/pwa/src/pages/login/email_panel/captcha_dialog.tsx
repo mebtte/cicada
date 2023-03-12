@@ -8,7 +8,7 @@ import {
 import styled, { CSSProperties } from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
-import getLoginCodeRequest from '@/server/get_login_code';
+import getLoginCodeRequest from '@/server/base/get_login_code';
 import { ExceptionCode } from '#/constants/exception';
 import notice from '@/utils/notice';
 import sleep from '#/utils/sleep';

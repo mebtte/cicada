@@ -1,4 +1,4 @@
-import { request } from '.';
+import { request } from '..';
 
 function getLoginCode(params: {
   email: string;
@@ -6,7 +6,7 @@ function getLoginCode(params: {
   captchaValue: string;
 }) {
   return request({
-    path: '/api/login_code',
+    path: '/base/login_code',
     params,
   });
 }
