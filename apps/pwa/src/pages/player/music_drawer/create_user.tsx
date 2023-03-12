@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import { HtmlHTMLAttributes } from 'react';
 import { CreateUser as CreateUserType } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 
 const Style = styled.div`
-  padding: 30px 0;
-
   text-align: center;
   font-size: 12px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
@@ -21,12 +20,13 @@ const Style = styled.div`
 function CreateUser({
   user,
   createTime,
+  ...props
 }: {
   user: CreateUserType;
   createTime: string;
-}) {
+} & HtmlHTMLAttributes<HTMLDivElement>) {
   return (
-    <Style>
+    <Style {...props}>
       「
       <span
         className="nickname"

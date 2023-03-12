@@ -1,3 +1,4 @@
+import setting from '@/global_states/setting';
 import { Method, request } from '.';
 
 function adminCreateUser({ email, remark }: { email: string; remark: string }) {
@@ -7,7 +8,7 @@ function adminCreateUser({ email, remark }: { email: string; remark: string }) {
     body: {
       email,
       remark,
-      accessOrigin: window.location.origin,
+      accessOrigin: setting.get().serverOrigin || window.location.origin,
     },
     withToken: true,
   });

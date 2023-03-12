@@ -1,4 +1,4 @@
-import './polyfill';
+import './polyfill'; // 需要保证 polyfill 在第一个
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import 'cropperjs/dist/cropper.min.css';
@@ -9,12 +9,23 @@ import { MdCheck, MdClose } from 'react-icons/md';
 import sleep from '#/utils/sleep';
 import App from './app';
 import definition from './definition';
+import Unsupported from './unsupported';
 
-createRoot(document.querySelector('#root')!).render(
-  <HashRouter>
-    <App />
-  </HashRouter>,
-);
+function findUnsupportedList(): string[] {
+  return [];
+}
+
+const unsupportedList = findUnsupportedList();
+const root = createRoot(document.querySelector('#root')!);
+if (unsupportedList.length) {
+  root.render(<Unsupported unsupportedList={unsupportedList} />);
+} else {
+  root.render(
+    <HashRouter>
+      <App />
+    </HashRouter>,
+  );
+}
 
 const VersionUpdater = styled.div`
   > .text {

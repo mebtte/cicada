@@ -1,5 +1,10 @@
 # 知了
 
+![version](https://img.shields.io/github/v/release/mebtte/cicada?style=for-the-badge)
+![release build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/build_and_release.yaml?label=release%20build&style=for-the-badge)
+![docker build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/docker_build_and_push.yaml?label=docker%20build&style=for-the-badge)
+![license](https://img.shields.io/github/license/mebtte/cicada?style=for-the-badge)
+
 知了, 支持多用户的开源音乐服务.
 
 ![](./docs/thumbnail_1.png)
@@ -9,11 +14,11 @@
 ## 特色
 
 - **尊重隐私, 不进行任何数据收集**
-- 支持多用户
-- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), UI 同时支持桌面端和移动
+- 支持多用户以及导入现有音乐目录/文件
+- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), UI 同时支持桌面端和移动端
+- 系统媒体和快捷键支持
 - 音乐支持标准音质/超高音质/伴奏以及多份歌词
 - 乐单/播放列表/播放队列音乐数量无限制
-- 系统媒体和快捷键支持
 - 支持标注音乐创作来源(翻唱)
 - 支持歌词/歌名/歌手/乐单搜索
 - 暴露 HTTP API 支持第三方接入或进行二次开发
@@ -32,17 +37,17 @@
 ```json
 {
   "emailHost": "smtp.example.com",
-  "emailUser": "example",
+  "emailUser": "example@example.com",
   "emailPass": "example-password"
 }
 ```
 
 > 完整配置可以参看[配置项](./docs/config/index.md), 支持 JSON/[JSON5](https://json5.org) 语法.
 
-在 [Releases](https://github.com/mebtte/cicada/releases) 下载并解压对应平台的二进制包, 通过下面命令指定配置文件并启动(以 x64 Linux 为例):
+在 [Releases](https://github.com/mebtte/cicada/releases) 下载并解压对应平台的二进制包, 通过下面命令指定配置文件并启动服务:
 
 ```sh
-./cicada-linux-x64 start -c config.json
+./cicada start -c config.json
 ```
 
 通过 `localhost:8000` 或者 `{{ip}}:8000` 访问知了服务. 目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
@@ -84,9 +89,45 @@ services:
       - /path/data:/data
 ```
 
-## 版本升级
+## 导入音乐
 
-[从 0.x.x 升级到 1.x.x](./docs/version_update/index.md)
+知了支持导入现有音乐, 通过 `cicada import` 命令可以导入音乐目录或者音乐文件, 需要注意的是音乐文件命名必须要满足以下格式(多个空格会被合并成一个):
+
+```txt
+singer1[,singer2][,singer3] - name.format
+```
+
+比如 `周杰伦 - 晴天.mp3` / `Jarryd James,BROODS - 1000x.flac` 是支持的命名, `孙燕姿 逆光.mp3` / `漠河舞厅.m4a` 是不支持的命名.
+
+```sh
+# 导入音乐目录
+cicada import --data /path_to/cicada_data --recursive music_dir
+
+# 导入音乐文件
+cicada import --data /path_to/cicada_data music
+```
+
+当遇到命名不支持或者格式不支持的文件, 知了将会忽略. 可以通过 `cicada help import` 查看更多选项.
+
+## Roadmap
+
+### v0
+
+- [ ] 多语言支持
+- [ ] 悬浮歌词面板(类似于网易云网页版歌词)
+- [ ] 播放记录的展示和删除
+- [ ] 电台功能(随机从曲库中拉取音乐并连续播放)
+
+### v1
+
+- [ ] 第三方接入指引(数据库 ER 图/ API 文档)
+- [ ] 图片(用户头像/歌手头像/音乐封面/乐单封面)访问优化
+- [ ] 删除用户
+- [ ] 用户最后活动时间记录和展示
+- [ ] 音乐年份记录和展示
+- [ ] 共享乐单
+- [ ] 消息中心(删除歌手消息/乐单内包含被删除音乐消息)
+  > > > > > > > origin/master
 
 ## 常见问题
 
@@ -111,25 +152,16 @@ services:
 
 </details>
 
-## Roadmap
-
-### 当前版本
-
-- [ ] 多语言支持
-- [ ] 悬浮歌词面板(类似于网易云网页版歌词)
-- [ ] 播放记录的展示和删除
-- [ ] 电台功能(随机从曲库中拉取音乐并连续播放)
-
-### 下一版本
-
-- [ ] 第三方接入指引(数据库 ER 图/ API 文档)
-- [ ] 图片(用户头像/歌手头像/音乐封面/乐单封面)访问优化
-- [ ] 删除用户
-- [ ] 用户最后活动时间记录和展示
-- [ ] 音乐年份记录和展示
-- [ ] 共享乐单
-- [ ] 消息中心(删除歌手消息/乐单内包含被删除音乐消息)
-
 ## 开源协议
 
 [GPL](./license)
+
+## Contributors
+
+<a href="https://github.com/mebtte/cicada/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mebtte/cicada" />
+</a>
+
+## 其他
+
+- [版本升级说明](./docs/version_update/index.md)

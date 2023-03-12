@@ -1,7 +1,10 @@
 import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH } from '#/constants/singer';
-import generateRandomString from '#/utils/generate_random_string';
-import { getDB } from '@/db';
+import {
+  getSingerByName,
+  createSinger,
+  Property as SingerProperty,
+} from '@/db/singer';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -20,24 +23,12 @@ export default async (ctx: Context) => {
   }
 
   if (!force) {
-    const existSinger = await getDB().get<{ id?: string }>(
-      `
-        select id from singer where name = ? collate nocase
-      `,
-      [name],
-    );
+    const existSinger = await getSingerByName(name, [SingerProperty.ID]);
     if (existSinger) {
       return ctx.except(ExceptionCode.SINGER_EXIST);
     }
   }
 
-  const id = generateRandomString(6, false);
-  await getDB().run(
-    `
-      insert into singer(id, name, createUserId, createTimestamp)
-        values( ?, ?, ?, ? )
-    `,
-    [id, name, ctx.user.id, Date.now()],
-  );
+  const id = await createSinger({ name, createUserId: ctx.user.id });
   return ctx.success(id);
 };

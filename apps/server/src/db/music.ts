@@ -1,4 +1,5 @@
 import { MusicType } from '#/constants/music';
+import generateRandomString from '#/utils/generate_random_string';
 import { getDB } from '.';
 
 export enum Property {
@@ -48,6 +49,29 @@ export function getMusicListByIds<P extends Property>(
     `,
     ids,
   );
+}
+
+export async function createMusic({
+  type,
+  name,
+  sq,
+  createUserId,
+}: {
+  type: MusicType;
+  name: string;
+  sq: string;
+  createUserId: string;
+}) {
+  const id = generateRandomString(8, false);
+  await getDB().run(
+    `
+      INSERT INTO
+      music ( id, type, name, sq, createUserId, createTimestamp )
+      VALUES( ?, ?, ?, ?, ?, ? )
+    `,
+    [id, type, name, sq, createUserId, Date.now()],
+  );
+  return id;
 }
 
 export function updateMusic<
