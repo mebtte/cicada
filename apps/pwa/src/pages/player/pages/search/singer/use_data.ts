@@ -1,7 +1,7 @@
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import logger from '#/utils/logger';
 import { Query } from '@/constants';
-import searchSinger from '@/server/search_singer';
+import searchSinger from '@/server/api/search_singer';
 import getRandomCover from '@/utils/get_random_cover';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';

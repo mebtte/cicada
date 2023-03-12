@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getResizedMusicCover } from '@/server/asset';
+import getResizedMusicCover from '@/server/asset/get_resized_music_cover';
 import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
 

@@ -2,7 +2,7 @@ import Drawer from '@/components/drawer';
 import { CSSProperties, useCallback, useEffect, useState } from 'react';
 import { SortableContainer } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
-import updateProfile from '@/server/update_profile';
+import updateProfile from '@/server/api/update_profile';
 import logger from '#/utils/logger';
 import dialog from '@/utils/dialog';
 import { IS_TOUCHABLE } from '@/constants/browser';

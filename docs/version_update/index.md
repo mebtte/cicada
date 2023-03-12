@@ -7,3 +7,7 @@
 ```sql
 
 ```
+
+### HTTP API 变更
+
+请查看 [HTTP API 文档](../api/index.md)

@@ -1,7 +1,7 @@
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import logger from '#/utils/logger';
 import { Query } from '@/constants';
-import searchMusic from '@/server/search_music';
+import searchMusic from '@/server/api/search_music';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { MusicWithIndex } from '../../../constants';

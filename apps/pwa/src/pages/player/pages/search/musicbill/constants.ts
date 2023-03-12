@@ -1,4 +1,4 @@
-import searchPublicMusicbill from '@/server/search_public_musicbill';
+import searchPublicMusicbill from '@/server/api/search_public_musicbill';
 
 export type Musicbill = AsyncReturnType<
   typeof searchPublicMusicbill

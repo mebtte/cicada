@@ -1,4 +1,4 @@
-import adminGetUserList from '@/server/admin_get_user_list';
+import adminGetUserList from '@/server/api/admin_get_user_list';
 import { useCallback, useEffect, useState } from 'react';
 import getRandomCover from '@/utils/get_random_cover';
 import { User } from '../constants';

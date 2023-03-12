@@ -29,16 +29,16 @@ import {
   MUSIC_MAX_ALIAS_COUNT,
   SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
 } from '#/constants/music';
-import uploadAsset from '@/server/upload_asset';
+import uploadAsset from '@/server/form/upload_asset';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
-import updateMusic from '@/server/update_music';
+import updateMusic from '@/server/api/update_music';
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
-import deleteMusic from '@/server/delete_music';
+import deleteMusic from '@/server/api/delete_music';
 import logger from '#/utils/logger';
 import { Option } from '@/components/multiple_select';
-import searchSingerRequest from '@/server/search_singer';
-import searchMusicRequest from '@/server/search_music';
+import searchSingerRequest from '@/server/api/search_singer';
+import searchMusicRequest from '@/server/api/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import absoluteFullSize from '@/style/absolute_full_size';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';

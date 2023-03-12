@@ -9,7 +9,6 @@ import getSelfMusicbillList from './controllers/get_self_musicbill_list';
 import getSelfMusicbill from './controllers/get_self_musicbill';
 import addMusicToMusicbill from './controllers/add_music_to_musicbill';
 import removeMusicFromMusicbill from './controllers/remove_music_from_musicbill';
-import uploadMusicPlayRecord from './controllers/upload_music_play_record';
 import getLyricList from './controllers/get_lyric_list';
 import createMusicbill from './controllers/create_musicbill';
 import deleteMusicbill from './controllers/delete_musicbill';
@@ -78,13 +77,6 @@ router.put('/singer', parseBody, updateSinger); // 更新歌手
 router.get('/singer/search', searchSinger); // 搜索歌手
 router.get('/singer_detail', getSingerDetail); // 获取歌手详情
 router.get('/self_singer_list', getSelfSingerList); // 获取自己的歌手列表
-
-/**
- * 上传音乐播放记录使用的是 navigator.sendBeacon
- * 无法设置 http header
- * 需要特殊处理鉴权
- */
-router.post('/music_play_record', parseBody, uploadMusicPlayRecord); // 上传音乐播放记录
 
 /**
  * 管理员
