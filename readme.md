@@ -120,7 +120,6 @@ cicada import --data /path_to/cicada_data music
 
 ### v1
 
-- [ ] 第三方接入指引(数据库 ER 图/ API 文档)
 - [ ] 图片(用户头像/歌手头像/音乐封面/乐单封面)访问优化
 - [ ] 删除用户
 - [ ] 用户最后活动时间记录和展示
