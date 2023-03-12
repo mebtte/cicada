@@ -15,7 +15,7 @@ function SettingDialog({
   onClose: () => void;
 }) {
   const [serverOrigin, setServerOrigin] = useState(
-    () => setting.get().serverOrigin,
+    () => setting.get().serverOrigin || '',
   );
   const onSave = useEvent(() => {
     if (serverOrigin.length && !URL.test(serverOrigin)) {

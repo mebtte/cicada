@@ -2,6 +2,7 @@ import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import Tag, { Type } from '@/components/tag';
 import Cover from '@/components/cover';
+import { MdOutlineLocalFireDepartment } from 'react-icons/md';
 import { MusicDetail } from './constants';
 
 const Style = styled.div`
@@ -11,7 +12,7 @@ const Style = styled.div`
     position: absolute;
     left: 0;
     bottom: 0;
-    max-width: 90%;
+    max-width: 80%;
 
     padding: 10px 20px;
     background-color: rgb(255 255 255 / 0.75);
@@ -32,6 +33,22 @@ const Style = styled.div`
       font-size: 14px;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     }
+  }
+
+  > .heat {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+
+    padding: 3px 5px 7px 5px;
+
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    font-size: 12px;
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    background-color: rgb(255 255 255 / 0.75);
   }
 `;
 
@@ -57,6 +74,10 @@ function Info({ music }: { music: MusicDetail }) {
             ))}
           </div>
         ) : null}
+      </div>
+      <div className="heat" title="热度">
+        <MdOutlineLocalFireDepartment />
+        {music.heat}
       </div>
     </Style>
   );

@@ -1,6 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
 import token from '@/global_states/token';
-import setting from '@/global_states/setting';
+import { prefixServerOrigin } from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import definition from '@/definition';
@@ -38,8 +38,7 @@ export async function request<Data = void>({
   minDuration?: number;
   timeout?: number;
 }) {
-  const { serverOrigin } = setting.get();
-  let url = `${serverOrigin}${path}`;
+  let url = prefixServerOrigin(path);
 
   const combineParams = {
     ...params,

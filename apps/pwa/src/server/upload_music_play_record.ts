@@ -1,4 +1,4 @@
-import setting from '@/global_states/setting';
+import { prefixServerOrigin } from '@/global_states/setting';
 import token from '@/global_states/token';
 
 function uploadMusicPlayRecord({
@@ -21,7 +21,7 @@ function uploadMusicPlayRecord({
     },
   );
   return window.navigator.sendBeacon(
-    `${setting.get().serverOrigin}/api/music_play_record`,
+    prefixServerOrigin('/api/music_play_record'),
     blob,
   );
 }

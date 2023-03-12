@@ -1,4 +1,4 @@
 export interface Setting {
-  serverOrigin: string;
+  serverOrigin?: string;
   playerVolume: number;
 }

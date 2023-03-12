@@ -1,3 +1,4 @@
+import generateRandomString from '#/utils/generate_random_string';
 import { getDB } from '.';
 
 export enum Property {
@@ -57,11 +58,47 @@ export function getSingerListByIds<P extends Property>(
 export function getSingerById<P extends Property>(id: string, properties: P[]) {
   return getDB().get<Pick<Singer, P>>(
     `
-      select ${properties.join(',')} from singer
-        where id = ?
+      SELECT
+        ${properties.join(',')}
+      FROM singer
+      WHERE id = ?
     `,
     [id],
   );
+}
+
+export function getSingerByName<P extends Property>(
+  name: string,
+  properties: P[],
+) {
+  return getDB().get<Pick<Singer, P>>(
+    `
+      SELECT
+        ${properties.join(',')}
+      FROM singer
+      WHERE name = ?
+    `,
+    [name],
+  );
+}
+
+export async function createSinger({
+  name,
+  createUserId,
+}: {
+  name: string;
+  createUserId: string;
+}) {
+  const id = generateRandomString(6, false);
+  await getDB().run(
+    `
+      INSERT INTO
+      singer( id, name, createUserId, createTimestamp )
+      VALUES( ?, ?, ?, ? )
+    `,
+    [id, name, createUserId, Date.now()],
+  );
+  return id;
 }
 
 export function updateSinger<

@@ -15,6 +15,7 @@ export interface SingerDetail extends Singer {
 }
 
 export interface MusicDetail extends Music {
+  heat: number;
   lyrics: Lyric[];
   createUser: CreateUser;
   createTime: string;
