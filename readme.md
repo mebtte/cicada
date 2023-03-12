@@ -127,7 +127,6 @@ cicada import --data /path_to/cicada_data music
 - [ ] 音乐年份记录和展示
 - [ ] 共享乐单
 - [ ] 消息中心(删除歌手消息/乐单内包含被删除音乐消息)
-  > > > > > > > origin/master
 
 ## 常见问题
 
