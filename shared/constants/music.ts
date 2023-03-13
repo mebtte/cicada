@@ -25,10 +25,10 @@ export const MUSIC_TYPE_MAP: Record<MusicType, { label: string }> = {
   [MusicType.INSTRUMENT]: { label: '乐曲' },
 };
 
-export const NAME_MAX_LENGTH = 32;
+export const NAME_MAX_LENGTH = 128;
 
 export const MUSIC_MAX_ALIAS_COUNT = 5;
-export const ALIAS_MAX_LENGTH = 32;
+export const ALIAS_MAX_LENGTH = 64;
 
 export enum AllowUpdateKey {
   COVER = 'cover',
