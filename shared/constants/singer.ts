@@ -1,9 +1,9 @@
 export const SEARCH_KEYWORD_MAX_LENGTH = 32;
 
-export const NAME_MAX_LENGTH = 32;
+export const NAME_MAX_LENGTH = 64;
 
 export const SINGER_ALIAS_MAX_COUNT = 5;
-export const ALIAS_MAX_LENGTH = 32;
+export const ALIAS_MAX_LENGTH = 64;
 
 export enum AllowUpdateKey {
   AVATAR = 'avatar',
