@@ -49,7 +49,7 @@ export default () => {
         data: exploration,
       });
     } catch (error) {
-      logger.error(error, '获取探索数据失败');
+      logger.error(error, '获取发现数据失败');
       setData({
         error,
         loading: false,
@@ -61,14 +61,22 @@ export default () => {
   useEffect(() => {
     getData();
 
+    const onMusicUpdatedOrDeleted = () => {
+      cache.remove(CacheKey.EXPLORATION);
+      return getData();
+    };
+    const unlistenMusicUpdated = playerEventemitter.listen(
+      PlayerEventType.MUSIC_UPDATED,
+      onMusicUpdatedOrDeleted,
+    );
     const unlistenMusicDeleted = playerEventemitter.listen(
       PlayerEventType.MUSIC_DELETED,
-      () => {
-        cache.remove(CacheKey.EXPLORATION);
-        return getData();
-      },
+      onMusicUpdatedOrDeleted,
     );
-    return unlistenMusicDeleted;
+    return () => {
+      unlistenMusicUpdated();
+      unlistenMusicDeleted();
+    };
   }, [getData]);
 
   return { data, reload: getData };
