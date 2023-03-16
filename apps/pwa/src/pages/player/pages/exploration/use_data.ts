@@ -61,21 +61,26 @@ export default () => {
   useEffect(() => {
     getData();
 
-    const onMusicUpdatedOrDeleted = () => {
+    const destroyCacheAndReloadData = () => {
       cache.remove(CacheKey.EXPLORATION);
       return getData();
     };
     const unlistenMusicUpdated = playerEventemitter.listen(
       PlayerEventType.MUSIC_UPDATED,
-      onMusicUpdatedOrDeleted,
+      destroyCacheAndReloadData,
     );
     const unlistenMusicDeleted = playerEventemitter.listen(
       PlayerEventType.MUSIC_DELETED,
-      onMusicUpdatedOrDeleted,
+      destroyCacheAndReloadData,
+    );
+    const unlistenSingerUpdated = playerEventemitter.listen(
+      PlayerEventType.SINGER_UPDATED,
+      destroyCacheAndReloadData,
     );
     return () => {
       unlistenMusicUpdated();
       unlistenMusicDeleted();
+      unlistenSingerUpdated();
     };
   }, [getData]);
 
