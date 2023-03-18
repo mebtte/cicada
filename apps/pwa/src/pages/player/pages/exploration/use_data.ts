@@ -2,6 +2,10 @@ import logger from '#/utils/logger';
 import getExploration from '@/server/get_exploration';
 import { useCallback, useEffect, useState } from 'react';
 import { Exploration } from './constants';
+import cache, { CacheKey } from './cache';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../../eventemitter';
 
 type Data =
   | {
@@ -30,14 +34,22 @@ export default () => {
   const getData = useCallback(async () => {
     setData(dataLoading);
     try {
-      const d = await getExploration();
+      let exploration = cache.get(CacheKey.EXPLORATION);
+      if (!exploration) {
+        exploration = await getExploration();
+        cache.set({
+          key: CacheKey.EXPLORATION,
+          value: exploration,
+          ttl: 1000 * 60,
+        });
+      }
       setData({
         error: null,
         loading: false,
-        data: d,
+        data: exploration,
       });
     } catch (error) {
-      logger.error(error, '获取探索数据失败');
+      logger.error(error, '获取发现数据失败');
       setData({
         error,
         loading: false,
@@ -48,6 +60,28 @@ export default () => {
 
   useEffect(() => {
     getData();
+
+    const destroyCacheAndReloadData = () => {
+      cache.remove(CacheKey.EXPLORATION);
+      return getData();
+    };
+    const unlistenMusicUpdated = playerEventemitter.listen(
+      PlayerEventType.MUSIC_UPDATED,
+      destroyCacheAndReloadData,
+    );
+    const unlistenMusicDeleted = playerEventemitter.listen(
+      PlayerEventType.MUSIC_DELETED,
+      destroyCacheAndReloadData,
+    );
+    const unlistenSingerUpdated = playerEventemitter.listen(
+      PlayerEventType.SINGER_UPDATED,
+      destroyCacheAndReloadData,
+    );
+    return () => {
+      unlistenMusicUpdated();
+      unlistenMusicDeleted();
+      unlistenSingerUpdated();
+    };
   }, [getData]);
 
   return { data, reload: getData };
