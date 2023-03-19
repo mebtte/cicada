@@ -9,6 +9,7 @@ import MySinger from './pages/my_singer';
 import UserManage from './pages/user_manage';
 import MusicbillCollection from './pages/musicbill_collection';
 import Exploration from './pages/exploration';
+import PlayRecord from './pages/play_record';
 
 function Wrapper() {
   const profile = p.useState();
@@ -24,6 +25,7 @@ function Wrapper() {
         path={PLAYER_PATH.MUSICBILL_COLLECTION}
         element={<MusicbillCollection />}
       />
+      <Route path={PLAYER_PATH.PLAY_RECORD} element={<PlayRecord />} />
 
       {profile?.admin ? (
         <Route path={PLAYER_PATH.USER_MANAGE} element={<UserManage />} />
