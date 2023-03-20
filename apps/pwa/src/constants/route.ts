@@ -12,5 +12,5 @@ export const PLAYER_PATH = {
   SEARCH: '/search',
   USER_MANAGE: '/user_manage',
   MUSICBILL_COLLECTION: '/musicbill_collection',
-  PLAY_RECORD: '/play_record',
+  MUSIC_PLAY_RECORD: '/music_play_record',
 };

@@ -39,9 +39,11 @@ function Menu() {
         icon={<MdPersonOutline />}
       />
       <MenuItem
-        active={pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.PLAY_RECORD}`}
+        active={
+          pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSIC_PLAY_RECORD}`
+        }
         onClick={() =>
-          navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.PLAY_RECORD}`)
+          navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSIC_PLAY_RECORD}`)
         }
         label="播放记录"
         icon={<MdHistory />}
