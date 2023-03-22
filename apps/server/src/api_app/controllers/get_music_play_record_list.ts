@@ -50,10 +50,83 @@ export default async (ctx: Context) => {
   let total: number;
   let musicPlayRecordList: LocalMusicPlayRecord[];
   if (keyword.length) {
-    total = 0;
-    musicPlayRecordList = [];
+    const pattern = `%${keyword}%`;
+    const musicPatternSQL = `
+      SELECT
+        id
+      FROM music
+      WHERE name LIKE ?
+        OR aliases LIKE ?
+    `;
+    const singerPatternSQL = `
+      SELECT
+        msr.musicId
+      FROM music_singer_relation AS msr
+      LEFT JOIN singer as s
+        ON msr.singerId = s.id
+      LEFT JOIN music as m
+        ON msr.musicId = m.id
+      WHERE s.name LIKE ?
+        OR s.aliases LIKE ?
+    `;
+    const [totalObject, localMusicPlayRecordList] = await Promise.all([
+      getDB().get<{ value: number }>(
+        `
+          SELECT
+            count(*) AS value
+          FROM music_play_record AS mpr
+          LEFT JOIN music AS m
+            ON mpr.musicId = m.id
+          WHERE mpr.userId = ?
+            AND (
+              m.id IN (${musicPatternSQL})
+              OR m.id IN (${singerPatternSQL})
+            )
+        `,
+        [ctx.user.id, pattern, pattern, pattern, pattern],
+      ),
+      getDB().all<LocalMusicPlayRecord>(
+        `
+          SELECT
+            mpr.id as recordId,
+            mpr.percent,
+            mpr.timestamp,
+            
+            m.id,
+            m.cover,
+            m.type,
+            m.name,
+            m.aliases,
+            m.sq,
+            m.hq,
+            m.ac
+          FROM music_play_record AS mpr
+          LEFT JOIN music AS m
+            ON mpr.musicId = m.id
+          WHERE mpr.userId = ?
+            AND (
+              m.id IN (${musicPatternSQL})
+              OR m.id IN (${singerPatternSQL})
+            )
+          ORDER BY mpr.timestamp DESC
+          LIMIT ?
+          OFFSET ?
+        `,
+        [
+          ctx.user.id,
+          pattern,
+          pattern,
+          pattern,
+          pattern,
+          pageSizeNumber,
+          (pageNumber - 1) * pageSizeNumber,
+        ],
+      ),
+    ]);
+    total = totalObject!.value;
+    musicPlayRecordList = localMusicPlayRecordList;
   } else {
-    const [totolObject, localMusicPlayRecord] = await Promise.all([
+    const [totolObject, localMusicPlayRecordList] = await Promise.all([
       getDB().get<{ value: number }>(
         `
           SELECT
@@ -90,7 +163,7 @@ export default async (ctx: Context) => {
       ),
     ]);
     total = totolObject!.value;
-    musicPlayRecordList = localMusicPlayRecord;
+    musicPlayRecordList = localMusicPlayRecordList;
   }
 
   if (!musicPlayRecordList.length) {

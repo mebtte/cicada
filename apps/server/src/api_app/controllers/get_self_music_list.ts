@@ -49,16 +49,20 @@ export default async (ctx: Context) => {
   if (keyword.length) {
     const pattern = `%${keyword}%`;
     const musicPatternSQL = `
-      SELECT id FROM music
-        WHERE createUserId = ?
-          AND (name LIKE ? OR aliases LIKE ?)
+      SELECT
+        id
+      FROM music
+      WHERE createUserId = ?
+        AND (name LIKE ? OR aliases LIKE ?)
     `;
     const singerPatternSQL = `
-      SELECT msr.musicId FROM music_singer_relation AS msr
-        LEFT JOIN singer as s ON msr.singerId = s.id
-        LEFT JOIN music as m ON msr.musicId = m.id
-        WHERE (m.createUserId = ?)
-          AND (s.name LIKE ? OR s.aliases LIKE ?)
+      SELECT
+        msr.musicId
+      FROM music_singer_relation AS msr
+      LEFT JOIN singer as s ON msr.singerId = s.id
+      LEFT JOIN music as m ON msr.musicId = m.id
+      WHERE (m.createUserId = ?)
+        AND (s.name LIKE ? OR s.aliases LIKE ?)
     `;
     const [totalObject, localMusicList] = await Promise.all([
       getDB().get<{ value: number }>(
@@ -83,8 +87,9 @@ export default async (ctx: Context) => {
             ac
           FROM music
             WHERE id IN (${musicPatternSQL}) OR id IN (${singerPatternSQL})
-            ORDER BY createTimestamp DESC
-            LIMIT ? OFFSET ?
+          ORDER BY createTimestamp DESC
+          LIMIT ?
+          OFFSET ?
         `,
         [
           ctx.user.id,

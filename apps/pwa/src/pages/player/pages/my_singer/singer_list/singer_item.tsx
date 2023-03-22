@@ -31,7 +31,7 @@ const Secondary = styled.div`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   ${ellipsis}
 
-  &.time {
+  &.index, &.time {
     font-family: monospace;
   }
 `;
@@ -46,7 +46,7 @@ function SingerItem({ singer }: { singer: Singer }) {
         event.preventDefault();
         return openSingerDrawer();
       }}
-      one={<Secondary>{singer.index}</Secondary>}
+      one={<Secondary className="index">{singer.index}</Secondary>}
       two={
         <div>
           <Primary>{singer.name}</Primary>

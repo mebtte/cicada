@@ -82,7 +82,7 @@ function MusicList() {
         if (!value!.total && !value!.musicPlayRecordList.length) {
           return (
             <CardContainer style={style}>
-              <Empty description="暂无音乐播放记录" />
+              <Empty description="暂无相关音乐播放记录" />
             </CardContainer>
           );
         }
