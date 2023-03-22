@@ -7,20 +7,17 @@ import Music from '../../../components/music';
 import { MusicPlayRecord } from '../constants';
 import Context from '../../../context';
 
-const StyledMusic = styled(Music)`
-  > .addon {
-    margin: 0 20px;
-    padding: 5px 0 10px 0;
+const Addon = styled.div`
+  padding: 5px 0 10px 0;
 
-    border-top: 1px solid ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    font-size: 12px;
-    font-family: monospace;
+  border-top: 1px solid ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  font-size: 12px;
+  font-family: monospace;
 
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
+  display: flex;
+  align-items: center;
+  gap: 5px;
 `;
 
 function MusicWithExternalInfo({
@@ -30,16 +27,16 @@ function MusicWithExternalInfo({
 }) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return (
-    <StyledMusic
+    <Music
       music={musicPlayRecord}
       active={playqueue[currentPlayqueuePosition]?.id === musicPlayRecord.id}
       addon={
-        <div className="addon">
+        <Addon>
           <div>{day(musicPlayRecord.timestamp).format('YYYY-MM-DD HH:mm')}</div>
           <div>|</div>
           <MdAvTimer />
           <div>{Number((musicPlayRecord.percent * 100).toFixed(2))}%</div>
-        </div>
+        </Addon>
       }
     />
   );

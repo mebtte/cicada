@@ -9,51 +9,60 @@ import Singer from './singer';
 const Style = styled.div<{ active: boolean }>`
   cursor: pointer;
   user-select: none;
+  background-clip: padding-box;
   border-bottom: 2px solid transparent;
-  background-clip: content-box;
   border-left-color: ${CSSVariable.COLOR_PRIMARY};
   border-left-style: solid;
   -webkit-tap-highlight-color: transparent;
 
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 20px;
+
+  > .index {
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    font-size: 12px;
+    writing-mode: vertical-lr;
+    font-family: monospace;
+  }
+
   > .content {
-    height: 50px;
-    padding: 0 20px;
+    flex: 1;
+    min-width: 0;
 
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    > .music {
+      height: 50px;
 
-    > .index {
-      width: 50px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
-      font-size: 12px;
-      text-align: right;
-    }
+      > .info {
+        flex: 1;
+        min-width: 0;
 
-    > .info {
-      flex: 1;
-      min-width: 0;
+        > .top {
+          ${ellipsis}
+          color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
-      > .top {
-        ${ellipsis}
-        color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+          > .name {
+            line-height: 1.5;
+            font-size: 14px;
+            color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+          }
 
-        > .name {
-          line-height: 1.5;
-          font-size: 14px;
-          color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+          > .alias {
+            font-size: 12px;
+          }
         }
 
-        > .alias {
+        > .singers {
+          ${ellipsis}
+
           font-size: 12px;
+          color: ${CSSVariable.TEXT_COLOR_SECONDARY};
         }
-      }
-
-      > .singers {
-        ${ellipsis}
-
-        font-size: 12px;
-        color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       }
     }
   }
@@ -72,12 +81,10 @@ const Style = styled.div<{ active: boolean }>`
       : 'transparent'};
     border-left-width: ${active ? 5 : 0}px;
 
-    > .content {
-      > .index {
-        color: ${active
-          ? CSSVariable.COLOR_PRIMARY
-          : CSSVariable.TEXT_COLOR_SECONDARY};
-      }
+    > .index {
+      color: ${active
+        ? CSSVariable.COLOR_PRIMARY
+        : CSSVariable.TEXT_COLOR_SECONDARY};
     }
   `}
 `;
@@ -106,24 +113,26 @@ function MusicBase({
         return openMusicDrawer();
       }}
     >
+      <div className="index">{music.index}</div>
       <div className="content">
-        <div className="info">
-          <div className="top">
-            <span className="name">{music.name}</span>
-            {music.aliases.length ? (
-              <span className="alias">&nbsp;{music.aliases[0]}</span>
-            ) : null}
+        <div className="music">
+          <div className="info">
+            <div className="top">
+              <span className="name">{music.name}</span>
+              {music.aliases.length ? (
+                <span className="alias">&nbsp;{music.aliases[0]}</span>
+              ) : null}
+            </div>
+            <div className="singers">
+              {music.singers.map((singer) => (
+                <Singer key={singer.id} singer={singer} />
+              ))}
+            </div>
           </div>
-          <div className="singers">
-            {music.singers.map((singer) => (
-              <Singer key={singer.id} singer={singer} />
-            ))}
-          </div>
+          {lineAfter}
         </div>
-        {lineAfter}
-        <div className="index">{music.index}</div>
+        {addon}
       </div>
-      {addon}
     </Style>
   );
 }
