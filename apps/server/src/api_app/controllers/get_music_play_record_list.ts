@@ -20,12 +20,15 @@ type LocalMusic = Pick<
   | MusicProperty.TYPE
   | MusicProperty.NAME
   | MusicProperty.ALIASES
-  | MusicProperty.HEAT
-  | MusicProperty.CREATE_TIMESTAMP
   | MusicProperty.SQ
   | MusicProperty.HQ
   | MusicProperty.AC
 >;
+type LocalMusicPlayRecord = LocalMusic & {
+  recordId: number;
+  percent: number;
+  timestamp: number;
+};
 
 export default async (ctx: Context) => {
   const { keyword, page, pageSize } = ctx.query;
@@ -45,49 +48,67 @@ export default async (ctx: Context) => {
   }
 
   let total: number;
-  let musicList: LocalMusic[];
+  let musicPlayRecordList: LocalMusicPlayRecord[];
   if (keyword.length) {
     const pattern = `%${keyword}%`;
     const musicPatternSQL = `
       SELECT
         id
       FROM music
-      WHERE createUserId = ?
-        AND (name LIKE ? OR aliases LIKE ?)
+      WHERE name LIKE ?
+        OR aliases LIKE ?
     `;
     const singerPatternSQL = `
       SELECT
         msr.musicId
       FROM music_singer_relation AS msr
-      LEFT JOIN singer as s ON msr.singerId = s.id
-      LEFT JOIN music as m ON msr.musicId = m.id
-      WHERE (m.createUserId = ?)
-        AND (s.name LIKE ? OR s.aliases LIKE ?)
+      LEFT JOIN singer as s
+        ON msr.singerId = s.id
+      LEFT JOIN music as m
+        ON msr.musicId = m.id
+      WHERE s.name LIKE ?
+        OR s.aliases LIKE ?
     `;
-    const [totalObject, localMusicList] = await Promise.all([
+    const [totalObject, localMusicPlayRecordList] = await Promise.all([
       getDB().get<{ value: number }>(
         `
-          SELECT count(*) as value FROM music
-            WHERE id IN (${musicPatternSQL}) OR id IN (${singerPatternSQL})
+          SELECT
+            count(*) AS value
+          FROM music_play_record AS mpr
+          LEFT JOIN music AS m
+            ON mpr.musicId = m.id
+          WHERE mpr.userId = ?
+            AND (
+              m.id IN (${musicPatternSQL})
+              OR m.id IN (${singerPatternSQL})
+            )
         `,
-        [ctx.user.id, pattern, pattern, ctx.user.id, pattern, pattern],
+        [ctx.user.id, pattern, pattern, pattern, pattern],
       ),
-      getDB().all<LocalMusic>(
+      getDB().all<LocalMusicPlayRecord>(
         `
           SELECT
-            id,
-            cover,
-            type,
-            name,
-            aliases,
-            heat,
-            createTimestamp,
-            sq,
-            hq,
-            ac
-          FROM music
-            WHERE id IN (${musicPatternSQL}) OR id IN (${singerPatternSQL})
-          ORDER BY createTimestamp DESC
+            mpr.id as recordId,
+            mpr.percent,
+            mpr.timestamp,
+            
+            m.id,
+            m.cover,
+            m.type,
+            m.name,
+            m.aliases,
+            m.sq,
+            m.hq,
+            m.ac
+          FROM music_play_record AS mpr
+          LEFT JOIN music AS m
+            ON mpr.musicId = m.id
+          WHERE mpr.userId = ?
+            AND (
+              m.id IN (${musicPatternSQL})
+              OR m.id IN (${singerPatternSQL})
+            )
+          ORDER BY mpr.timestamp DESC
           LIMIT ?
           OFFSET ?
         `,
@@ -95,7 +116,6 @@ export default async (ctx: Context) => {
           ctx.user.id,
           pattern,
           pattern,
-          ctx.user.id,
           pattern,
           pattern,
           pageSizeNumber,
@@ -103,52 +123,58 @@ export default async (ctx: Context) => {
         ],
       ),
     ]);
-
     total = totalObject!.value;
-    musicList = localMusicList;
+    musicPlayRecordList = localMusicPlayRecordList;
   } else {
-    const [totalObject, localMusicList] = await Promise.all([
+    const [totolObject, localMusicPlayRecordList] = await Promise.all([
       getDB().get<{ value: number }>(
         `
-          SELECT count(*) AS value FROM music
-            WHERE createUserId = ?
+          SELECT
+            count(*) AS value
+          FROM music_play_record
+          WHERE userId = ?
         `,
         [ctx.user.id],
       ),
-      getDB().all<LocalMusic>(
+      getDB().all<LocalMusicPlayRecord>(
         `
           SELECT
-            id,
-            cover,
-            type,
-            name,
-            aliases,
-            heat,
-            createTimestamp,
-            sq,
-            hq,
-            ac
-          FROM music
-          WHERE createUserId = ?
-          ORDER BY createTimestamp DESC
-          LIMIT ? OFFSET ?
+            mpr.id as recordId,
+            mpr.percent,
+            mpr.timestamp,
+            
+            m.id,
+            m.cover,
+            m.type,
+            m.name,
+            m.aliases,
+            m.sq,
+            m.hq,
+            m.ac
+          FROM music_play_record AS mpr
+          LEFT JOIN music AS m
+            ON mpr.musicId = m.id
+          WHERE mpr.userId = ?
+          ORDER BY mpr.timestamp DESC
+          LIMIT ?
+          OFFSET ?
         `,
         [ctx.user.id, pageSizeNumber, (pageNumber - 1) * pageSizeNumber],
       ),
     ]);
-    total = totalObject!.value;
-    musicList = localMusicList;
+    total = totolObject!.value;
+    musicPlayRecordList = localMusicPlayRecordList;
   }
 
-  if (!musicList.length) {
+  if (!musicPlayRecordList.length) {
     return ctx.success({
       total,
-      musicList: [],
+      musicPlayRecordList: [],
     });
   }
 
   const singerList = await getSingerListInMusicIds(
-    musicList.map((m) => m.id),
+    musicPlayRecordList.map((m) => m.id),
     [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
   );
   const musicIdMapSingerList: {
@@ -168,7 +194,7 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     total,
-    musicList: musicList.map((m) => ({
+    musicPlayRecordList: musicPlayRecordList.map((m) => ({
       ...m,
       cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),

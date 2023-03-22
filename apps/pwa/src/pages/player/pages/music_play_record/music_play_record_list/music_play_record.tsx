@@ -1,10 +1,10 @@
 import { CSSVariable } from '@/global_style';
 import day from '#/utils/day';
 import styled from 'styled-components';
-import { MdOutlineLocalFireDepartment } from 'react-icons/md';
+import { MdAvTimer } from 'react-icons/md';
 import { useContext } from 'react';
 import Music from '../../../components/music';
-import { Music as MusicType } from '../constants';
+import { MusicPlayRecord } from '../constants';
 import Context from '../../../context';
 
 const Addon = styled.div`
@@ -20,18 +20,22 @@ const Addon = styled.div`
   gap: 5px;
 `;
 
-function MusicWithExternalInfo({ music }: { music: MusicType }) {
+function MusicWithExternalInfo({
+  musicPlayRecord,
+}: {
+  musicPlayRecord: MusicPlayRecord;
+}) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return (
     <Music
-      music={music}
-      active={playqueue[currentPlayqueuePosition]?.id === music.id}
+      music={musicPlayRecord}
+      active={playqueue[currentPlayqueuePosition]?.id === musicPlayRecord.id}
       addon={
         <Addon>
-          <MdOutlineLocalFireDepartment />
-          <div>{music.heat}</div>
+          <div>{day(musicPlayRecord.timestamp).format('YYYY-MM-DD HH:mm')}</div>
           <div>|</div>
-          <div>{day(music.createTimestamp).format('YYYY-MM-DD')}</div>
+          <MdAvTimer />
+          <div>{Number((musicPlayRecord.percent * 100).toFixed(2))}%</div>
         </Addon>
       }
     />

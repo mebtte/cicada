@@ -14,7 +14,7 @@ function uploadAsset(asset: Blob, assetType: AssetType, minDuration?: number) {
     path: '/form/asset',
     body: form,
     withToken: true,
-    timeout: 60 * 1000,
+    timeout: 5 * 60 * 1000,
     minDuration,
   });
 }

@@ -40,6 +40,7 @@ import collectPublicMusicbill from './controllers/collect_public_musicbill';
 import uncollectPublicMusicbill from './controllers/uncollect_public_musicbill';
 import getSelfMusicbillCollectionList from './controllers/get_self_musicbill_collection_list';
 import getExploration from './controllers/get_exploration';
+import getMusicPlayRecordList from './controllers/get_music_play_record_list';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -103,6 +104,8 @@ router.put('/singer', authorize, parseBody, updateSinger); // 更新歌手
 router.get('/singer/search', authorize, searchSinger); // 搜索歌手
 router.get('/singer_detail', authorize, getSingerDetail); // 获取歌手详情
 router.get('/self_singer_list', authorize, getSelfSingerList); // 获取自己的歌手列表
+
+router.get('/music_play_record_list', authorize, getMusicPlayRecordList); // 获取音乐播放记录列表
 
 /**
  * 上传音乐播放记录使用的是 navigator.sendBeacon

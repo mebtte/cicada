@@ -83,7 +83,7 @@ export async function request<Data = void>({
       timeoutFn(timeout),
     ]);
   } catch (error) {
-    throw new Error('无法连接到服务器');
+    throw new Error('暂时无法连接到服务器');
   }
 
   const { status, statusText } = response;
