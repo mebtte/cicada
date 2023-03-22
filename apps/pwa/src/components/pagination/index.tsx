@@ -11,20 +11,18 @@ const Style = styled.div`
   gap: 10px;
 `;
 const Button = styled.button<{ active?: boolean }>`
-  width: 24px;
   height: 24px;
+  padding: 0 8px;
 
   ${flexCenter}
 
   font-size: 12px;
-  border-radius: 50%;
   border: none;
   cursor: pointer;
   transition: 300ms;
   user-select: none;
 
   > svg {
-    width: 24px;
     height: 24px;
   }
 
