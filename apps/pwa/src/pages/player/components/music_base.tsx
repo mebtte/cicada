@@ -24,9 +24,10 @@ const Style = styled.div<{ active: boolean }>`
     gap: 10px;
 
     > .index {
-      width: 35px;
+      width: 50px;
 
       font-size: 12px;
+      text-align: right;
     }
 
     > .info {
@@ -106,7 +107,6 @@ function MusicBase({
       }}
     >
       <div className="content">
-        <div className="index">{music.index}</div>
         <div className="info">
           <div className="top">
             <span className="name">{music.name}</span>
@@ -121,6 +121,7 @@ function MusicBase({
           </div>
         </div>
         {lineAfter}
+        <div className="index">{music.index}</div>
       </div>
       {addon}
     </Style>

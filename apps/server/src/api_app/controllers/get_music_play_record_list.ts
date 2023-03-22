@@ -13,6 +13,22 @@ import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
+type LocalMusic = Pick<
+  Music,
+  | MusicProperty.ID
+  | MusicProperty.COVER
+  | MusicProperty.TYPE
+  | MusicProperty.NAME
+  | MusicProperty.ALIASES
+  | MusicProperty.SQ
+  | MusicProperty.HQ
+  | MusicProperty.AC
+>;
+type LocalMusicPlayRecord = LocalMusic & {
+  recordId: number;
+  percent: number;
+  timestamp: number;
+};
 
 export default async (ctx: Context) => {
   const { keyword, page, pageSize } = ctx.query;
@@ -32,35 +48,49 @@ export default async (ctx: Context) => {
   }
 
   let total: number;
-  let musicPlayRecordList: LocalMusic[];
+  let musicPlayRecordList: LocalMusicPlayRecord[];
   if (keyword.length) {
+    total = 0;
+    musicPlayRecordList = [];
   } else {
-    const [] = Promise.all([
-      getDB().all(
+    const [totolObject, localMusicPlayRecord] = await Promise.all([
+      getDB().get<{ value: number }>(
         `
-        SELECT
-          mpr.id as recordId,
-          mpr.percent,
-          mpr.timestamp,
-          
-          m.id,
-          m.cover,
-          m.type,
-          m.name,
-          m.aliases,
-          m.sq,
-          m.hq,
-          m.ac
-        FROM music_play_record AS mpr
-        LEFT JOIN music AS m
-          ON mpr.musicId = m.id
-        WHERE mpr.userId = '333333'
-        ORDER BY mpr.timestamp DESC
-        LIMIT 50
-      `,
-        [],
+          SELECT
+            count(*) AS value
+          FROM music_play_record
+          WHERE userId = ?
+        `,
+        [ctx.user.id],
+      ),
+      getDB().all<LocalMusicPlayRecord>(
+        `
+          SELECT
+            mpr.id as recordId,
+            mpr.percent,
+            mpr.timestamp,
+            
+            m.id,
+            m.cover,
+            m.type,
+            m.name,
+            m.aliases,
+            m.sq,
+            m.hq,
+            m.ac
+          FROM music_play_record AS mpr
+          LEFT JOIN music AS m
+            ON mpr.musicId = m.id
+          WHERE mpr.userId = ?
+          ORDER BY mpr.timestamp DESC
+          LIMIT ?
+          OFFSET ?
+        `,
+        [ctx.user.id, pageSizeNumber, (pageNumber - 1) * pageSizeNumber],
       ),
     ]);
+    total = totolObject!.value;
+    musicPlayRecordList = localMusicPlayRecord;
   }
 
   if (!musicPlayRecordList.length) {

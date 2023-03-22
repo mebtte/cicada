@@ -9,7 +9,7 @@ import Context from '../../../context';
 
 const StyledMusic = styled(Music)`
   > .addon {
-    margin: 0 20px 0 65px;
+    margin: 0 20px;
     padding: 5px 0 10px 0;
 
     border-top: 1px solid ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
@@ -17,17 +17,9 @@ const StyledMusic = styled(Music)`
     font-size: 12px;
     font-family: monospace;
 
-    > * {
-      vertical-align: middle;
-    }
-
-    > .heat {
-      margin-left: 2px;
-    }
-
-    > .divider {
-      margin: 0 6px;
-    }
+    display: flex;
+    align-items: center;
+    gap: 5px;
   }
 `;
 
@@ -40,11 +32,9 @@ function MusicWithExternalInfo({ music }: { music: MusicType }) {
       addon={
         <div className="addon">
           <MdOutlineLocalFireDepartment />
-          <span className="heat">{music.heat}</span>
-          <span className="divider">|</span>
-          <span className="create-time">
-            {day(music.createTimestamp).format('YYYY-MM-DD')}
-          </span>
+          <div>{music.heat}</div>
+          <div>|</div>
+          <div>{day(music.createTimestamp).format('YYYY-MM-DD')}</div>
         </div>
       }
     />

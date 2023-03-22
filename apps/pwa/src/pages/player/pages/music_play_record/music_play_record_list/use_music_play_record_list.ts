@@ -43,7 +43,7 @@ export default () => {
             total: d.total,
             musicPlayRecordList: d.musicPlayRecordList.map((mpr, i) => ({
               ...mpr,
-              index: d.musicPlayRecordList.length - i,
+              index: d.total - i,
             })),
           },
         });
