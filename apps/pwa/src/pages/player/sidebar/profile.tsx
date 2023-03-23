@@ -14,11 +14,11 @@ const Style = styled.div`
 
   > .avatar {
     cursor: pointer;
-    border: 2px solid transparent;
+    outline: 1px solid ${CSSVariable.COLOR_PRIMARY};
     transition: 300ms;
 
     &:hover {
-      border-color: ${CSSVariable.COLOR_PRIMARY};
+      outline-width: 3px;
     }
   }
 
