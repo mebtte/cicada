@@ -2,10 +2,8 @@ import { CSSVariable } from '@/global_style';
 import day from '#/utils/day';
 import styled from 'styled-components';
 import { MdAvTimer } from 'react-icons/md';
-import { useContext } from 'react';
 import Music from '../../../components/music';
 import { MusicPlayRecord } from '../constants';
-import Context from '../../../context';
 
 const Addon = styled.div`
   padding: 5px 0 10px 0;
@@ -25,11 +23,10 @@ function MusicWithExternalInfo({
 }: {
   musicPlayRecord: MusicPlayRecord;
 }) {
-  const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return (
     <Music
+      active={false}
       music={musicPlayRecord}
-      active={playqueue[currentPlayqueuePosition]?.id === musicPlayRecord.id}
       addon={
         <Addon>
           <div>{day(musicPlayRecord.timestamp).format('YYYY-MM-DD HH:mm')}</div>
