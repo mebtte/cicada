@@ -2,12 +2,11 @@ import logger from '#/utils/logger';
 import { Query } from '@/constants';
 import getMusicPlayRecordList from '@/server/get_music_play_record_list';
 import useQuery from '@/utils/use_query';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE, MusicPlayRecord } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
-import Context from '../../../context';
 
 interface Data {
   error: Error | null;
@@ -24,9 +23,6 @@ const dataLoading: Data = {
 };
 
 export default () => {
-  const { playqueue, currentPlayqueuePosition } = useContext(Context);
-  const currentMusic = playqueue[currentPlayqueuePosition];
-
   const { keyword = '', page: pageString } = useQuery<
     Query.KEYWORD | Query.PAGE
   >();
@@ -72,7 +68,7 @@ export default () => {
 
   useEffect(() => {
     getPageMusicPlayRecordList({ keyword, page });
-  }, [getPageMusicPlayRecordList, keyword, page, currentMusic]);
+  }, [getPageMusicPlayRecordList, keyword, page]);
 
   useEffect(() => {
     const unlistenMusicDeleted = playerEventemitter.listen(
