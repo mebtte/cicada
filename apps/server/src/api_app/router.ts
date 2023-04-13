@@ -34,6 +34,7 @@ import collectPublicMusicbill from './controllers/collect_public_musicbill';
 import uncollectPublicMusicbill from './controllers/uncollect_public_musicbill';
 import getSelfMusicbillCollectionList from './controllers/get_self_musicbill_collection_list';
 import getExploration from './controllers/get_exploration';
+import getMusicPlayRecordList from './controllers/get_music_play_record_list';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -77,6 +78,8 @@ router.put('/singer', parseBody, updateSinger); // 更新歌手
 router.get('/singer/search', searchSinger); // 搜索歌手
 router.get('/singer_detail', getSingerDetail); // 获取歌手详情
 router.get('/self_singer_list', getSelfSingerList); // 获取自己的歌手列表
+
+router.get('/music_play_record_list', getMusicPlayRecordList); // 获取音乐播放记录列表
 
 /**
  * 管理员

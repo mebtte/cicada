@@ -7,13 +7,10 @@ import Music from '../../../components/music';
 import { MusicWithLyric as MusicWithLyricType } from './constants';
 
 const escapeRegex = (s: string) => s.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-const StyledMusic = styled(Music)`
-  > .lrc {
-    margin: 0 20px 0 65px;
-    padding: 5px 0 10px 0;
+const StyledLrc = styled(Lrc)`
+  padding: 5px 0 10px 0;
 
-    border-top: 1px solid ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
-  }
+  border-top: 1px solid ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
 `;
 const Line = styled.div`
   font-size: 12px;
@@ -35,11 +32,11 @@ function MusicWithLyric({
 }) {
   const replacement = new RegExp(escapeRegex(keyword), 'i');
   return (
-    <StyledMusic
+    <Music
       active={active}
       music={music}
       addon={
-        <Lrc
+        <StyledLrc
           className="lrc"
           lrc={music.lrc}
           // eslint-disable-next-line react/no-unstable-nested-components
