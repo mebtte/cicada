@@ -5,6 +5,7 @@ import server from './server';
 import exitWithMessage from './utils/exit_with_message';
 import definition from './definition';
 import importMusic from './commands/import_music';
+import dataUpgrade from './commands/data_upgrade';
 
 const program = new Command()
   .name('cicada')
@@ -45,6 +46,21 @@ program
       });
     },
   );
+
+/**
+ * 数据升级
+ * @author mebtte<hi@mebtte.com>
+ */
+program
+  .command('data-upgrade')
+  .description('upgrade data from v0 to v1')
+  .argument('[data]', 'cicada data directory')
+  .action((data: string) => {
+    if (!data) {
+      return exitWithMessage('请指定数据目录');
+    }
+    return dataUpgrade();
+  });
 
 /**
  * 导入音乐
