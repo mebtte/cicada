@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import List from 'react-list';
 import Empty from '@/components/empty';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { Musicbill } from '../../constants';
 import { FILTER_HEIGHT, INFO_HEIGHT } from './constants';
 import playerEventemitter, {
@@ -14,7 +14,6 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import Music from '../../components/music';
 import Context from '../../context';
-import e, { EventType } from './eventemitter';
 import { filterMusic } from '../../utils';
 
 const Style = styled.div`
@@ -36,22 +35,15 @@ const ListContainer = styled(Container)`
   padding-bottom: ${FILTER_HEIGHT}px;
 `;
 
-function Wrapper({ musicbill }: { musicbill: Musicbill }) {
+function Wrapper({
+  keyword,
+  musicbill,
+}: {
+  keyword: string;
+  musicbill: Musicbill;
+}) {
   const { id, status, error, musicList } = musicbill;
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
-
-  const [keyword, setKeyword] = useState('');
-
-  useEffect(() => {
-    setKeyword('');
-  }, [id]);
-
-  useEffect(() => {
-    const unlistenKeywordChange = e.listen(EventType.KEYWORD_CHANGE, (data) =>
-      setKeyword(data.keyword),
-    );
-    return unlistenKeywordChange;
-  }, []);
 
   const transitions = useTransition(status, {
     from: { opacity: 0 },
