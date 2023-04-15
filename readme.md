@@ -151,12 +151,12 @@ cicada import --data /path_to/cicada_data music
 
 [GPL](./license)
 
-## Contributors
+## 贡献者
 
 <a href="https://github.com/mebtte/cicada/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=mebtte/cicada" />
 </a>
 
-## 其他
+## 星标历史
 
-- [版本升级说明](./docs/version_update/index.md)
+[![Star History Chart](https://api.star-history.com/svg?repos=mebtte/cicada&type=Timeline)](https://star-history.com/#mebtte/cicada&Timeline)
