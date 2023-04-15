@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { ALIAS_DIVIDER } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import excludeProperty from '#/utils/exclude_property';
@@ -10,7 +10,6 @@ import {
   Property as SingerProperty,
   Singer,
 } from '@/db/singer';
-import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 50;
@@ -53,21 +52,15 @@ export default async (ctx: Context) => {
         | MusicProperty.TYPE
         | MusicProperty.ALIASES
         | MusicProperty.COVER
-        | MusicProperty.SQ
-        | MusicProperty.HQ
-        | MusicProperty.AC
       >
     >(
       `
         SELECT
-          DISTINCT m.id,
-          m.name,
-          m.type,
-          m.aliases,
-          m.cover,
-          m.sq,
-          m.hq,
-          m.ac
+          DISTINCT m.${MusicProperty.ID},
+          m.${MusicProperty.NAME},
+          m.${MusicProperty.TYPE},
+          m.${MusicProperty.ALIASES},
+          m.${MusicProperty.COVER}
         FROM lyric AS l
         LEFT JOIN music AS m
           ON l.musicId = m.id
@@ -139,10 +132,6 @@ export default async (ctx: Context) => {
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingerList[m.id] || [],
       lyrics: musicIdMapLyricList[m.id] || [],
     })),

@@ -59,7 +59,13 @@ program
     if (!data) {
       return exitWithMessage('请指定数据目录');
     }
-    return dataUpgrade();
+    const absoluteData = path.isAbsolute(data)
+      ? data
+      : path.resolve(process.cwd(), data);
+    if (!fs.existsSync(absoluteData)) {
+      return exitWithMessage(`数据目录 [ ${absoluteData} ] 不存在`);
+    }
+    return dataUpgrade({ data: absoluteData });
   });
 
 /**

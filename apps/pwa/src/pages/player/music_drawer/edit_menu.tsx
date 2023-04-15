@@ -30,7 +30,7 @@ import {
   SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
 } from '#/constants/music';
 import uploadAsset from '@/server/form/upload_asset';
-import { AssetType, ASSET_TYPE_MAP } from '#/constants';
+import { AssetTypeV1, ASSET_TYPE_MAP_V1 } from '#/constants';
 import updateMusic from '@/server/api/update_music';
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
@@ -163,7 +163,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                 }
                 const { id: assetId } = await uploadAsset(
                   cover,
-                  AssetType.MUSIC_COVER,
+                  AssetTypeV1.MUSIC_COVER,
                 );
                 await updateMusic({
                   id: music.id,
@@ -332,24 +332,24 @@ function EditMenu({ music }: { music: MusicDetail }) {
         />
         <MenuItem
           icon={<MdOutlineFilePresent />}
-          label="编辑标准音质文件"
+          label="编辑音乐文件"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
               type: EditDialogType.FILE,
-              label: '标准音质文件',
-              title: '编辑标准音质文件',
-              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_SQ].acceptTypes,
-              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
-                AssetType.MUSIC_SQ
+              label: '音乐文件',
+              title: '编辑音乐文件',
+              acceptTypes: ASSET_TYPE_MAP_V1[AssetTypeV1.MUSIC].acceptTypes,
+              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP_V1[
+                AssetTypeV1.MUSIC
               ].acceptTypes.join(',')}`,
               onSubmit: async (file: File | null) => {
                 if (!file) {
                   throw new Error('请选择文件');
                 }
-                const { id } = await uploadAsset(file, AssetType.MUSIC_SQ);
+                const { id } = await uploadAsset(file, AssetTypeV1.MUSIC);
                 await updateMusic({
                   id: music.id,
-                  key: AllowUpdateKey.SQ,
+                  key: AllowUpdateKey.ASSET,
                   value: id,
                 });
                 emitMusicUpdated(music.id);
@@ -357,62 +357,6 @@ function EditMenu({ music }: { music: MusicDetail }) {
             })
           }
         />
-        <MenuItem
-          icon={<MdOutlineFilePresent />}
-          label="编辑无损音质文件"
-          onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.FILE,
-              label: '无损音质文件',
-              title: '编辑无损音质文件',
-              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_HQ].acceptTypes,
-              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
-                AssetType.MUSIC_HQ
-              ].acceptTypes.join(',')}`,
-              onSubmit: async (file: File | null) => {
-                if (!file) {
-                  throw new Error('请选择文件');
-                }
-                const { id } = await uploadAsset(file, AssetType.MUSIC_HQ);
-                await updateMusic({
-                  id: music.id,
-                  key: AllowUpdateKey.HQ,
-                  value: id,
-                });
-                emitMusicUpdated(music.id);
-              },
-            })
-          }
-        />
-        {music.type === MusicType.SONG ? (
-          <MenuItem
-            icon={<MdOutlineFilePresent />}
-            label="编辑伴奏文件"
-            onClick={() =>
-              playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-                type: EditDialogType.FILE,
-                label: '伴奏文件',
-                title: '编辑伴奏文件',
-                acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_AC].acceptTypes,
-                placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
-                  AssetType.MUSIC_AC
-                ].acceptTypes.join(',')}`,
-                onSubmit: async (file: File | null) => {
-                  if (!file) {
-                    throw new Error('请选择文件');
-                  }
-                  const { id } = await uploadAsset(file, AssetType.MUSIC_AC);
-                  await updateMusic({
-                    id: music.id,
-                    key: AllowUpdateKey.AC,
-                    value: id,
-                  });
-                  emitMusicUpdated(music.id);
-                },
-              })
-            }
-          />
-        ) : null}
         <MenuItem
           icon={<MdCallSplit />}
           label="编辑二次创作来源"

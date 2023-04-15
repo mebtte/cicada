@@ -1,7 +1,6 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { ALIAS_DIVIDER } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getUserById, Property as UserProperty } from '@/db/user';
-import { getAssetPublicPath } from '@/platform/asset';
 import { getDB } from '@/db';
 import { Music, Property as MusicProperty } from '@/db/music';
 import { Musicbill, Property as MusicbillProperty } from '@/db/musicbill';
@@ -62,9 +61,6 @@ export default async (ctx: Context) => {
         | MusicProperty.NAME
         | MusicProperty.ALIASES
         | MusicProperty.COVER
-        | MusicProperty.SQ
-        | MusicProperty.HQ
-        | MusicProperty.AC
       >
     >(
       `
@@ -75,9 +71,6 @@ export default async (ctx: Context) => {
             MusicProperty.NAME,
             MusicProperty.ALIASES,
             MusicProperty.COVER,
-            MusicProperty.SQ,
-            MusicProperty.HQ,
-            MusicProperty.AC,
           ].join(',')}
         FROM music
         WHERE createUserId = ?
@@ -113,18 +106,10 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...user,
-    avatar: getAssetPublicPath(user.avatar, AssetType.USER_AVATAR),
-    musicbillList: musicbillList.map((m) => ({
-      ...m,
-      cover: getAssetPublicPath(m.cover, AssetType.MUSICBILL_COVER),
-    })),
+    musicbillList,
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingers[m.id] || [],
     })),
   });

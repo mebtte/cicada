@@ -1,14 +1,14 @@
-import { AssetType, PathPrefix } from '#/constants';
+import { AssetTypeV1, PathPrefix } from '#/constants';
 import { getAssetDirectory } from '@/config';
 
-export function getAssetFilePath(asset: string, assetType: AssetType) {
+export function getAssetFilePathV1(asset: string, assetType: AssetTypeV1) {
   if (!asset.length) {
     return '';
   }
   return `${getAssetDirectory(assetType)}/${asset}`;
 }
 
-export function getAssetPublicPath(asset: string, assetType: AssetType) {
+export function getAssetPublicPathV1(asset: string, assetType: AssetTypeV1) {
   if (!asset.length) {
     return '';
   }

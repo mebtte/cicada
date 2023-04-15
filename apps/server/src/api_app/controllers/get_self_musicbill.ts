@@ -1,16 +1,17 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { ALIAS_DIVIDER, AssetTypeV1 } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import {
   getMusicbillById,
   Property as MusicbillProperty,
 } from '@/db/musicbill';
 import { Music, Property as MusicProperty } from '@/db/music';
+import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
 import {
   getSingerListInMusicIds,
   Property as SingerProperty,
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
-import { getAssetPublicPath } from '@/platform/asset';
+import { getAssetPublicPathV1 } from '@/platform/asset';
 import { getDB } from '@/db';
 import { Context } from '../constants';
 
@@ -41,27 +42,19 @@ export default async (ctx: Context) => {
       | MusicProperty.TYPE
       | MusicProperty.NAME
       | MusicProperty.ALIASES
-      | MusicProperty.COVER
-      | MusicProperty.SQ
-      | MusicProperty.HQ
-      | MusicProperty.AC
     >
   >(
     `
       SELECT
-        m.id,
-        m.type,
-        m.name,
-        m.aliases,
-        m.cover,
-        m.sq,
-        m.hq,
-        m.ac
+        m.${MusicProperty.ID},
+        m.${MusicProperty.TYPE},
+        m.${MusicProperty.NAME},
+        m.${MusicProperty.ALIASES}
       FROM
         musicbill_music AS mm
-        LEFT JOIN music AS m ON mm.musicId = m.id 
+        LEFT JOIN music AS m ON mm.${MusicbillMusicProperty.MUSIC_ID} = m.${MusicProperty.ID}
       WHERE
-        mm.musicbillId = ? 
+        mm.${MusicbillMusicProperty.MUSICBILL_ID} = ? 
       ORDER BY
         mm.addTimestamp DESC;
     `,
@@ -93,14 +86,10 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...excludeProperty(musicbill, [MusicbillProperty.USER_ID]),
-    cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
+    cover: getAssetPublicPathV1(musicbill.cover, AssetTypeV1.MUSICBILL_COVER),
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       singers: musicIdMapSingers[m.id] || [],
     })),
   });

@@ -14,7 +14,7 @@ export enum PathPrefix {
   BASE = 'base',
 }
 
-export enum AssetType {
+export enum AssetTypeV0 {
   USER_AVATAR = 'user_avatar',
   MUSICBILL_COVER = 'musicbill_cover',
   SINGER_AVATAR = 'singer_avatar',
@@ -23,31 +23,31 @@ export enum AssetType {
   MUSIC_HQ = 'music_hq',
   MUSIC_AC = 'music_ac',
 }
-export const ASSET_TYPES = Object.values(AssetType);
-export const ASSET_TYPE_MAP: Record<
-  AssetType,
+export const ASSET_TYPES_V0 = Object.values(AssetTypeV0);
+export const ASSET_TYPE_MAP_V0: Record<
+  AssetTypeV0,
   {
     acceptTypes: string[];
     maxSize: number;
   }
 > = {
-  [AssetType.SINGER_AVATAR]: {
+  [AssetTypeV0.SINGER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
     maxSize: 1024 * 1024 * 0.5,
   },
-  [AssetType.MUSICBILL_COVER]: {
+  [AssetTypeV0.MUSICBILL_COVER]: {
     acceptTypes: ['image/jpeg'],
     maxSize: 1024 * 1024 * 0.5,
   },
-  [AssetType.MUSIC_COVER]: {
+  [AssetTypeV0.MUSIC_COVER]: {
     acceptTypes: ['image/jpeg'],
     maxSize: 1024 * 1024 * 0.5,
   },
-  [AssetType.USER_AVATAR]: {
+  [AssetTypeV0.USER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
     maxSize: 1024 * 1024 * 0.5,
   },
-  [AssetType.MUSIC_SQ]: {
+  [AssetTypeV0.MUSIC_SQ]: {
     acceptTypes: [
       'audio/wav',
       'audio/ogg',
@@ -61,7 +61,7 @@ export const ASSET_TYPE_MAP: Record<
     ],
     maxSize: 1024 * 1024 * 50,
   },
-  [AssetType.MUSIC_AC]: {
+  [AssetTypeV0.MUSIC_AC]: {
     acceptTypes: [
       'audio/wav',
       'audio/ogg',
@@ -75,8 +75,55 @@ export const ASSET_TYPE_MAP: Record<
     ],
     maxSize: 1024 * 1024 * 50,
   },
-  [AssetType.MUSIC_HQ]: {
+  [AssetTypeV0.MUSIC_HQ]: {
     acceptTypes: ['audio/flac', 'audio/x-flac'],
+    maxSize: 1024 * 1024 * 50,
+  },
+};
+
+export enum AssetTypeV1 {
+  USER_AVATAR = 'user_avatar',
+  MUSICBILL_COVER = 'musicbill_cover',
+  SINGER_AVATAR = 'singer_avatar',
+  MUSIC_COVER = 'music_cover',
+  MUSIC = 'music',
+}
+export const ASSET_TYPES_V1 = Object.values(AssetTypeV1);
+export const ASSET_TYPE_MAP_V1: Record<
+  AssetTypeV1,
+  {
+    acceptTypes: string[];
+    maxSize: number;
+  }
+> = {
+  [AssetTypeV1.SINGER_AVATAR]: {
+    acceptTypes: ['image/jpeg'],
+    maxSize: 1024 * 1024 * 1,
+  },
+  [AssetTypeV1.MUSICBILL_COVER]: {
+    acceptTypes: ['image/jpeg'],
+    maxSize: 1024 * 1024 * 1,
+  },
+  [AssetTypeV1.MUSIC_COVER]: {
+    acceptTypes: ['image/jpeg'],
+    maxSize: 1024 * 1024 * 1,
+  },
+  [AssetTypeV1.USER_AVATAR]: {
+    acceptTypes: ['image/jpeg'],
+    maxSize: 1024 * 1024 * 1,
+  },
+  [AssetTypeV1.MUSIC]: {
+    acceptTypes: [
+      'audio/wav',
+      'audio/ogg',
+      'audio/flac',
+      'audio/x-flac',
+      'audio/mpeg',
+      'audio/m4a',
+      'audio/x-m4a',
+      'audio/mp4',
+      'video/mp4',
+    ],
     maxSize: 1024 * 1024 * 50,
   },
 };

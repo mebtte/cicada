@@ -7,3 +7,5 @@ export enum PathPrefix {
   ASSET = 'asset',
   API = 'api',
 }
+
+export const DATA_VERSION = 1;

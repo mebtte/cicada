@@ -2,7 +2,7 @@ import fs from 'fs';
 import { EMAIL } from '#/constants/regexp';
 import DB from '#/utils/db';
 import question from '#/utils/question';
-import { AssetType } from '#/constants';
+import { AssetTypeV1 } from '#/constants';
 import {
   getAssetDirectory,
   getConfig,
@@ -15,12 +15,7 @@ import {
   getDataVersionPath,
 } from './config';
 import exitWithMessage from './utils/exit_with_message';
-
-const CURRENT_DATA_VERSION = '1';
-
-async function v0Tov1() {
-  fs.writeFileSync(getDataVersionPath(), CURRENT_DATA_VERSION);
-}
+import { DATA_VERSION } from './constants';
 
 function mkdirIfNotExist(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -42,10 +37,29 @@ export default async () => {
     getCacheDirectory(),
 
     getAssetDirectory(),
-    ...Object.values(AssetType).map((at) => getAssetDirectory(at)),
+    ...Object.values(AssetTypeV1).map((at) => getAssetDirectory(at)),
   ];
   for (const directory of directories) {
     mkdirIfNotExist(directory);
+  }
+
+  /**
+   * initialize or verify data version
+   * @author mebtte<hi@mebtte.com>
+   */
+  if (fs.existsSync(getDataVersionPath())) {
+    const dataVersion = Number(
+      fs.readFileSync(getDataVersionPath()).toString().replace(/\s/gm, ''),
+    );
+    if (dataVersion !== DATA_VERSION) {
+      return exitWithMessage(
+        `当前数据版本为 v${dataVersion}, 请使用 v${
+          dataVersion + 1
+        } 版本的知了通过 [cicada data-upgrade <data>] 升级数据后再启动服务`,
+      );
+    }
+  } else {
+    fs.writeFileSync(getDataVersionPath(), DATA_VERSION.toString());
   }
 
   /**
@@ -246,26 +260,6 @@ export default async () => {
     for (const table of TABLES) {
       await db.run(table);
     }
-  }
-
-  /**
-   * initialize or verify data version
-   * @author mebtte<hi@mebtte.com>
-   */
-  if (fs.existsSync(getDataVersionPath())) {
-    const dataVersion = fs
-      .readFileSync(getDataVersionPath())
-      .toString()
-      .replace(/\s/gm, '');
-    if (dataVersion !== CURRENT_DATA_VERSION) {
-      if (dataVersion === '0') {
-        await v0Tov1();
-        exitWithMessage('数据版本已从 0 升级到 1, 请重新启动知了');
-      }
-      exitWithMessage('未知的数据版本, 无法自动进行数据升级');
-    }
-  } else {
-    fs.writeFileSync(getDataVersionPath(), CURRENT_DATA_VERSION);
   }
 
   /**

@@ -1,27 +1,28 @@
 import fs from 'fs/promises';
 import withTimeout from '#/utils/with_timeout';
-import { AssetType } from '#/constants';
+import { AssetTypeV1 } from '#/constants';
 import { getDB } from '@/db';
+import { Music, Property as MusicProperty } from '@/db/music';
 import day from '#/utils/day';
 import mv from '#/utils/mv';
-import { getAssetFilePath } from '@/platform/asset';
+import { getAssetFilePathV1 } from '@/platform/asset';
 import { getAssetDirectory, getTrashDirectory } from '@/config';
 
 const findUnlinkedList = (linkedList: string[], all: string[]) =>
   all.filter((item) => !linkedList.includes(item));
 const moveAssetListToTrash = async (
   assetList: string[],
-  assetType: AssetType,
+  assetType: AssetTypeV1,
 ) => {
   for (const asset of assetList) {
     await mv(
-      getAssetFilePath(asset, assetType),
+      getAssetFilePathV1(asset, assetType),
       `${getTrashDirectory()}/${asset}`,
     );
   }
 };
-const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
-  [AssetType.USER_AVATAR]: async () => {
+const ASSET_TYPE_MAP_HANDLER: Record<AssetTypeV1, () => Promise<void>> = {
+  [AssetTypeV1.USER_AVATAR]: async () => {
     const userList = await getDB().all<{ avatar: string }>(
       `
         SELECT DISTINCT avatar FROM user
@@ -30,7 +31,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       [],
     );
     const avatarAssetList = await fs.readdir(
-      getAssetDirectory(AssetType.USER_AVATAR),
+      getAssetDirectory(AssetTypeV1.USER_AVATAR),
     );
     const unlinkedList = findUnlinkedList(
       userList.map((u) => u.avatar),
@@ -39,7 +40,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
 
     if (unlinkedList.length) {
       await Promise.all([
-        moveAssetListToTrash(unlinkedList, AssetType.USER_AVATAR),
+        moveAssetListToTrash(unlinkedList, AssetTypeV1.USER_AVATAR),
         fs.writeFile(
           `${getTrashDirectory()}/unlinked_user_avatar_asset_${day().format(
             'YYYYMMDD',
@@ -49,7 +50,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       ]);
     }
   },
-  [AssetType.MUSICBILL_COVER]: async () => {
+  [AssetTypeV1.MUSICBILL_COVER]: async () => {
     const musicbillList = await getDB().all<{ cover: string }>(
       `
         SELECT DISTINCT cover FROM musicbill
@@ -58,7 +59,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       [],
     );
     const coverAssetList = await fs.readdir(
-      getAssetDirectory(AssetType.MUSICBILL_COVER),
+      getAssetDirectory(AssetTypeV1.MUSICBILL_COVER),
     );
     const unlinkedList = findUnlinkedList(
       musicbillList.map((m) => m.cover),
@@ -67,7 +68,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
 
     if (unlinkedList.length) {
       await Promise.all([
-        moveAssetListToTrash(unlinkedList, AssetType.MUSICBILL_COVER),
+        moveAssetListToTrash(unlinkedList, AssetTypeV1.MUSICBILL_COVER),
         fs.writeFile(
           `${getTrashDirectory()}/unlinked_musicbill_cover_asset_${day().format(
             'YYYYMMDD',
@@ -77,7 +78,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       ]);
     }
   },
-  [AssetType.SINGER_AVATAR]: async () => {
+  [AssetTypeV1.SINGER_AVATAR]: async () => {
     const singerList = await getDB().all<{ avatar: string }>(
       `
         SELECT DISTINCT avatar FROM singer
@@ -86,7 +87,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       [],
     );
     const avatarAssetList = await fs.readdir(
-      getAssetDirectory(AssetType.SINGER_AVATAR),
+      getAssetDirectory(AssetTypeV1.SINGER_AVATAR),
     );
     const unlinkedList = findUnlinkedList(
       singerList.map((s) => s.avatar),
@@ -95,7 +96,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
 
     if (unlinkedList.length) {
       await Promise.all([
-        moveAssetListToTrash(unlinkedList, AssetType.SINGER_AVATAR),
+        moveAssetListToTrash(unlinkedList, AssetTypeV1.SINGER_AVATAR),
         fs.writeFile(
           `${getTrashDirectory()}/unlinked_singer_avatar_asset_${day().format(
             'YYYYMMDD',
@@ -106,7 +107,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
     }
   },
 
-  [AssetType.MUSIC_COVER]: async () => {
+  [AssetTypeV1.MUSIC_COVER]: async () => {
     const musicList = await getDB().all<{ cover: string }>(
       `
         SELECT DISTINCT cover FROM music
@@ -115,7 +116,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       [],
     );
     const coverAssetList = await fs.readdir(
-      getAssetDirectory(AssetType.MUSIC_COVER),
+      getAssetDirectory(AssetTypeV1.MUSIC_COVER),
     );
     const unlinkedList = findUnlinkedList(
       musicList.map((m) => m.cover),
@@ -124,7 +125,7 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
 
     if (unlinkedList.length) {
       await Promise.all([
-        moveAssetListToTrash(unlinkedList, AssetType.MUSIC_COVER),
+        moveAssetListToTrash(unlinkedList, AssetTypeV1.MUSIC_COVER),
         fs.writeFile(
           `${getTrashDirectory()}/unlinked_music_cover_asset_${day().format(
             'YYYYMMDD',
@@ -134,76 +135,28 @@ const ASSET_TYPE_MAP_HANDLER: Record<AssetType, () => Promise<void>> = {
       ]);
     }
   },
-  [AssetType.MUSIC_SQ]: async () => {
-    const musicList = await getDB().all<{ sq: string }>(
+  [AssetTypeV1.MUSIC]: async () => {
+    const musicList = await getDB().all<Pick<Music, MusicProperty.ASSET>>(
       `
-        SELECT DISTINCT sq FROM music
+        SELECT
+          DISTINCT ${MusicProperty.ASSET}
+        FROM music
       `,
       [],
     );
-    const sqAssetList = await fs.readdir(getAssetDirectory(AssetType.MUSIC_SQ));
+    const musicAssetList = await fs.readdir(
+      getAssetDirectory(AssetTypeV1.MUSIC),
+    );
     const unlinkedList = findUnlinkedList(
-      musicList.map((m) => m.sq),
-      sqAssetList,
+      musicList.map((m) => m.asset),
+      musicAssetList,
     );
 
     if (unlinkedList.length) {
       await Promise.all([
-        moveAssetListToTrash(unlinkedList, AssetType.MUSIC_SQ),
+        moveAssetListToTrash(unlinkedList, AssetTypeV1.MUSIC),
         fs.writeFile(
-          `${getTrashDirectory()}/unlinked_music_sq_asset_${day().format(
-            'YYYYMMDD',
-          )}.json`,
-          JSON.stringify(unlinkedList),
-        ),
-      ]);
-    }
-  },
-  [AssetType.MUSIC_HQ]: async () => {
-    const musicList = await getDB().all<{ hq: string }>(
-      `
-        SELECT DISTINCT hq FROM music
-        WHERE hq != ''
-      `,
-      [],
-    );
-    const hqAssetList = await fs.readdir(getAssetDirectory(AssetType.MUSIC_HQ));
-    const unlinkedList = findUnlinkedList(
-      musicList.map((m) => m.hq),
-      hqAssetList,
-    );
-
-    if (unlinkedList.length) {
-      await Promise.all([
-        moveAssetListToTrash(unlinkedList, AssetType.MUSIC_HQ),
-        fs.writeFile(
-          `${getTrashDirectory()}/unlinked_music_hq_asset_${day().format(
-            'YYYYMMDD',
-          )}.json`,
-          JSON.stringify(unlinkedList),
-        ),
-      ]);
-    }
-  },
-  [AssetType.MUSIC_AC]: async () => {
-    const musicList = await getDB().all<{ ac: string }>(
-      `
-        SELECT DISTINCT ac FROM music
-        WHERE ac != ''
-      `,
-      [],
-    );
-    const acAssetList = await fs.readdir(getAssetDirectory(AssetType.MUSIC_AC));
-    const unlinkedList = findUnlinkedList(
-      musicList.map((m) => m.ac),
-      acAssetList,
-    );
-
-    if (unlinkedList.length) {
-      await Promise.all([
-        moveAssetListToTrash(unlinkedList, AssetType.MUSIC_AC),
-        fs.writeFile(
-          `${getTrashDirectory()}/unlinked_music_ac_asset_${day().format(
+          `${getTrashDirectory()}/unlinked_music_asset_${day().format(
             'YYYYMMDD',
           )}.json`,
           JSON.stringify(unlinkedList),

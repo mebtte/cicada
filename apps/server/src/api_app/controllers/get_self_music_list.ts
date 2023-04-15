@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { ALIAS_DIVIDER } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import excludeProperty from '#/utils/exclude_property';
@@ -9,22 +9,17 @@ import {
   Singer,
   Property as SingerProperty,
 } from '@/db/singer';
-import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
 type LocalMusic = Pick<
   Music,
   | MusicProperty.ID
-  | MusicProperty.COVER
   | MusicProperty.TYPE
   | MusicProperty.NAME
   | MusicProperty.ALIASES
   | MusicProperty.HEAT
   | MusicProperty.CREATE_TIMESTAMP
-  | MusicProperty.SQ
-  | MusicProperty.HQ
-  | MusicProperty.AC
 >;
 
 export default async (ctx: Context) => {
@@ -170,10 +165,6 @@ export default async (ctx: Context) => {
     total,
     musicList: musicList.map((m) => ({
       ...m,
-      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
-      sq: getAssetPublicPath(m.sq, AssetType.MUSIC_SQ),
-      hq: getAssetPublicPath(m.hq, AssetType.MUSIC_HQ),
-      ac: getAssetPublicPath(m.ac, AssetType.MUSIC_AC),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingerList[m.id] || [],
     })),

@@ -6,16 +6,17 @@ import withTimeout from '#/utils/with_timeout';
 import { getDB } from '@/db';
 import { getUserById, User, Property as UserProperty } from '@/db/user';
 import { Music, Property as MusicProperty } from '@/db/music';
+import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
 import { sendEmail } from '@/platform/email';
 import day from '#/utils/day';
-import { AssetType, BRAND_NAME, DOWNLOAD_TTL, PathPrefix } from '#/constants';
+import { AssetTypeV1, BRAND_NAME, DOWNLOAD_TTL, PathPrefix } from '#/constants';
 import {
   getSingerListInMusicIds,
   Singer,
   Property as SingerProperty,
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
-import { getAssetFilePath } from '@/platform/asset';
+import { getAssetFilePathV1 } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
 import { getDownloadDirectory } from '@/config';
 import formatMusicFilename from '#/utils/format_music_filename';
@@ -64,18 +65,19 @@ async function exportMusicbill(
   user: LocalUser,
 ) {
   const musicList = await getDB().all<
-    Pick<Music, MusicProperty.ID | MusicProperty.NAME | MusicProperty.SQ>
+    Pick<Music, MusicProperty.ID | MusicProperty.NAME | MusicProperty.ASSET>
   >(
     `
       SELECT
-        m.id,
-        m.name,
-        m.sq
+        m.${MusicProperty.ID},
+        m.${MusicProperty.NAME},
+        m.${MusicProperty.ASSET}
       FROM
         musicbill_music AS mm
-      LEFT JOIN music AS m ON mm.musicId = m.id 
+      LEFT JOIN music AS m
+        ON mm.${MusicbillMusicProperty.MUSIC_ID} = m.${MusicProperty.ID} 
       WHERE
-        mm.musicbillId = ?
+        mm.${MusicbillMusicProperty.MUSICBILL_ID} = ?
     `,
     [musicbillExport.musicbillId],
   );
@@ -125,11 +127,11 @@ async function exportMusicbill(
     musicList.map((m) => {
       const singers = musicIdMapSingerList[m.id];
       return {
-        path: getAssetFilePath(m.sq, AssetType.MUSIC_SQ),
+        path: getAssetFilePathV1(m.asset, AssetTypeV1.MUSIC),
         name: formatMusicFilename({
           name: m.name,
           singerNames: singers.map((s) => s.name),
-          ext: path.parse(m.sq).ext,
+          ext: path.parse(m.asset).ext,
         }),
       };
     }),

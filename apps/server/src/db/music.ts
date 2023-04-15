@@ -8,9 +8,7 @@ export enum Property {
   NAME = 'name',
   ALIASES = 'aliases',
   COVER = 'cover',
-  SQ = 'sq',
-  HQ = 'hq',
-  AC = 'ac',
+  ASSET = 'asset',
   HEAT = 'heat',
   CREATE_USER_ID = 'createUserId',
   CREATE_TIMESTAMP = 'createTimestamp',
@@ -22,9 +20,7 @@ export type Music = {
   [Property.NAME]: string;
   [Property.ALIASES]: string;
   [Property.COVER]: string;
-  [Property.SQ]: string;
-  [Property.HQ]: string;
-  [Property.AC]: string;
+  [Property.ASSET]: string;
   [Property.HEAT]: number;
   [Property.CREATE_USER_ID]: string;
   [Property.CREATE_TIMESTAMP]: number;
@@ -75,13 +71,7 @@ export async function createMusic({
 }
 
 export function updateMusic<
-  P extends
-    | Property.COVER
-    | Property.NAME
-    | Property.ALIASES
-    | Property.SQ
-    | Property.HQ
-    | Property.AC,
+  P extends Property.COVER | Property.NAME | Property.ALIASES | Property.ASSET,
 >({ id, property, value }: { id: string; property: P; value: Music[P] }) {
   return getDB().run(
     `

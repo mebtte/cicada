@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { getAssetFilePath } from '@/platform/asset';
-import { AssetType } from '#/constants';
+import { getAssetFilePathV1 } from '@/platform/asset';
+import { AssetTypeV1 } from '#/constants';
 import { getMusicById, Property as MusicProperty } from '@/db/music';
 import { Context } from '@/constants/koa';
 import { ExceptionCode } from '#/constants/exception';
@@ -38,7 +38,7 @@ export default async (ctx: Context) => {
     }
     const cover = await jimp.read(
       music.cover
-        ? getAssetFilePath(music.cover, AssetType.MUSIC_COVER)
+        ? getAssetFilePathV1(music.cover, AssetTypeV1.MUSIC_COVER)
         : path.join(
             __dirname,
             definition.BUILT

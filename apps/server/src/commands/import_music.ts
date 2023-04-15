@@ -9,7 +9,7 @@ import exitWithMessage from '@/utils/exit_with_message';
 import fs from 'fs/promises';
 import { createSpinner } from 'nanospinner';
 import fileType from 'file-type';
-import { AssetType, ASSET_TYPE_MAP } from '#/constants';
+import { AssetTypeV1, ASSET_TYPE_MAP_V1 } from '#/constants';
 import path from 'path';
 import { getDB } from '@/db';
 import { createMusic, Music, Property as MusicProperty } from '@/db/music';
@@ -108,7 +108,7 @@ async function importFile(
    * @author mebtte<hi@mebtte.com>
    */
   const ft = await fileType.fromFile(file);
-  const { acceptTypes } = ASSET_TYPE_MAP[AssetType.MUSIC_SQ];
+  const { acceptTypes } = ASSET_TYPE_MAP_V1[AssetTypeV1.MUSIC];
   if (ft && acceptTypes.includes(ft.mime)) {
     const [singerString, originalName] = path.parse(file).name.split(' - ');
     const name = handleSpace(originalName);
@@ -127,14 +127,10 @@ async function importFile(
       }
     }
 
-    /**
-     * @todo 压缩
-     * @author mebtte<hi@mebtte.com>
-     */
     const fileData = await fs.readFile(file);
     const assetName = md5(fileData) + path.parse(file).ext;
     await fs.writeFile(
-      `${getAssetDirectory(AssetType.MUSIC_SQ)}/${assetName}`,
+      `${getAssetDirectory(AssetTypeV1.MUSIC)}/${assetName}`,
       fileData,
     );
 

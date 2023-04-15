@@ -35,9 +35,7 @@ export enum AllowUpdateKey {
   NAME = 'name',
   LYRIC = 'lyric',
   ALIASES = 'aliases',
-  SQ = 'sq',
-  HQ = 'hq',
-  AC = 'ac',
+  ASSET = 'asset',
   SINGER = 'singer',
   FORK_FROM = 'fork_from',
 }
