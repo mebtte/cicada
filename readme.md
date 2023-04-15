@@ -7,6 +7,8 @@
 
 知了, 支持多用户的开源音乐服务.
 
+> 知了已升级到 v1 版本, 如果从 v0 升级到 v1, 请通过 `cicada data-upgrade <data>` 升级数据后再启动服务, 详细变化可以查看[这里](./apps/server/src/commands/data_upgrade.ts)
+
 ![](./docs/thumbnail_1.png)
 ![](./docs/thumbnail_2.png)
 ![](./docs/thumbnail_3.png)
