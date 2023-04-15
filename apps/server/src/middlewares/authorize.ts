@@ -2,7 +2,7 @@ import { AssetTypeV1 } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { verify } from '@/platform/jwt';
 import { Next } from 'koa';
-import { getAssetPublicPathV1 } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { getUserById, Property } from '@/db/user';
 import { Context } from '@/constants/koa';
 
@@ -28,7 +28,7 @@ export default async (ctx: Context, next: Next) => {
 
   ctx.user = {
     ...user,
-    avatar: getAssetPublicPathV1(user.avatar, AssetTypeV1.USER_AVATAR),
+    avatar: getAssetPublicPath(user.avatar, AssetTypeV1.USER_AVATAR),
   };
   return next();
 };

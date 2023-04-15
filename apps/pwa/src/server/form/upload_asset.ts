@@ -1,7 +1,11 @@
-import { AssetType } from '#/constants';
+import { AssetTypeV1 } from '#/constants';
 import { request, Method } from '..';
 
-function uploadAsset(asset: Blob, assetType: AssetType, minDuration?: number) {
+function uploadAsset(
+  asset: Blob,
+  assetType: AssetTypeV1,
+  minDuration?: number,
+) {
   const form = new FormData();
   form.append('asset', asset);
   form.append('assetType', assetType);

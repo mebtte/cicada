@@ -1,4 +1,4 @@
-import { AssetTypeV1 } from '#/constants';
+import { AssetTypeV0, AssetTypeV1 } from '#/constants';
 import fs from 'fs';
 import Joi from 'joi';
 import json5 from 'json5';
@@ -84,7 +84,7 @@ export function getCacheDirectory() {
   return `${config.data}/cache`;
 }
 
-export function getAssetDirectory(assetType?: AssetTypeV1) {
+export function getAssetDirectory(assetType?: AssetTypeV0 | AssetTypeV1) {
   if (assetType) {
     return `${config.data}/assets/${assetType}`;
   }

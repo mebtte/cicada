@@ -3,7 +3,7 @@ import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH, MUSIC_TYPES, MusicType } from '#/constants/music';
 import exist from '#/utils/exist';
 import { getSingerListByIds, Property as SingerProperty } from '@/db/singer';
-import { getAssetFilePathV1 } from '@/platform/asset';
+import { getAssetFilePath } from '@/platform/asset';
 import { getDB } from '@/db';
 import day from '#/utils/day';
 import { createMusic, Music, Property as MusicProperty } from '@/db/music';
@@ -31,7 +31,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const sqExist = await exist(getAssetFilePathV1(sq, AssetTypeV1.MUSIC));
+  const sqExist = await exist(getAssetFilePath(sq, AssetTypeV1.MUSIC));
   if (!sqExist) {
     return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
   }

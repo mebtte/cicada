@@ -1,11 +1,9 @@
-import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
 import excludeProperty from '#/utils/exclude_property';
 import { getDB } from '@/db';
 import { Musicbill, Property as MusicbillProperty } from '@/db/musicbill';
 import { User, Property as UserProperty, getUserListByIds } from '@/db/user';
-import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -134,11 +132,7 @@ export default async (ctx: Context) => {
       const user = userList.find((u) => u.id === mb.userId);
       return {
         ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
-        cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
-        user: {
-          ...user,
-          avatar: getAssetPublicPath(user!.avatar, AssetType.USER_AVATAR),
-        },
+        user,
       };
     }),
   });

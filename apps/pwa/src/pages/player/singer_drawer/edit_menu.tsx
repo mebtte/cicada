@@ -4,7 +4,7 @@ import MenuItem from '@/components/menu_item';
 import { MdImage, MdTitle, MdTextFields } from 'react-icons/md';
 import styled from 'styled-components';
 import uploadAsset from '@/server/form/upload_asset';
-import { AssetType } from '#/constants';
+import { AssetTypeV1 } from '#/constants';
 import updateSinger from '@/server/api/update_singer';
 import {
   ALIAS_MAX_LENGTH,
@@ -70,7 +70,7 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                 }
                 const { id: assetId } = await uploadAsset(
                   blob,
-                  AssetType.SINGER_AVATAR,
+                  AssetTypeV1.SINGER_AVATAR,
                 );
                 await updateSinger({
                   id: singer.id,

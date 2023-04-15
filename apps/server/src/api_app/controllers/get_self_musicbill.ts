@@ -11,7 +11,7 @@ import {
   Property as SingerProperty,
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
-import { getAssetPublicPathV1 } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import { getDB } from '@/db';
 import { Context } from '../constants';
 
@@ -86,7 +86,7 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...excludeProperty(musicbill, [MusicbillProperty.USER_ID]),
-    cover: getAssetPublicPathV1(musicbill.cover, AssetTypeV1.MUSICBILL_COVER),
+    cover: getAssetPublicPath(musicbill.cover, AssetTypeV1.MUSICBILL_COVER),
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],

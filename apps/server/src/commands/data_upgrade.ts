@@ -28,7 +28,7 @@ export default async ({ data }: { data: string }) => {
     );
   }
 
-  const answers = await inquirer.prompt([
+  const answer: { confirmed: boolean } = await inquirer.prompt([
     {
       type: 'confirm',
       name: 'confirmed',
@@ -36,10 +36,12 @@ export default async ({ data }: { data: string }) => {
       default: false,
     },
   ]);
-  console.log(answers);
+  if (!answer.confirmed) {
+    return;
+  }
 
   const spinner = createSpinner('数据正在从 v0 升级到 v1');
   spinner.start();
   await Promise.all([upgradeAsset(), upgradeDB()]);
-  spinner.success();
+  spinner.success({ text: '数据已从 v0 升级到 v1' });
 };

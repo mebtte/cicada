@@ -1,4 +1,4 @@
-import { AssetType } from '#/constants';
+import { AssetTypeV1 } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
 import exist from '#/utils/exist';
@@ -24,7 +24,7 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
     }
     const avatarExist = await exist(
-      getAssetFilePath(avatar, AssetType.USER_AVATAR),
+      getAssetFilePath(avatar, AssetTypeV1.USER_AVATAR),
     );
     if (!avatarExist) {
       return ctx.except(ExceptionCode.ASSET_NOT_EXIST);

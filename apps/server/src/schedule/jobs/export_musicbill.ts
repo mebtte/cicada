@@ -16,7 +16,7 @@ import {
   Property as SingerProperty,
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
-import { getAssetFilePathV1 } from '@/platform/asset';
+import { getAssetFilePath } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
 import { getDownloadDirectory } from '@/config';
 import formatMusicFilename from '#/utils/format_music_filename';
@@ -127,7 +127,7 @@ async function exportMusicbill(
     musicList.map((m) => {
       const singers = musicIdMapSingerList[m.id];
       return {
-        path: getAssetFilePathV1(m.asset, AssetTypeV1.MUSIC),
+        path: getAssetFilePath(m.asset, AssetTypeV1.MUSIC),
         name: formatMusicFilename({
           name: m.name,
           singerNames: singers.map((s) => s.name),

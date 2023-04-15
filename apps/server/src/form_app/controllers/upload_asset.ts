@@ -14,7 +14,7 @@ import which from 'which';
 import generateRandomString from '#/utils/generate_random_string';
 import fileType from 'file-type';
 import md5 from 'md5';
-import { getAssetPublicPathV1 } from '@/platform/asset';
+import { getAssetPublicPath } from '@/platform/asset';
 import day from '#/utils/day';
 import { getAssetDirectory, getLogDirectory } from '@/config';
 import { Context } from '../constants';
@@ -139,6 +139,6 @@ export default async (ctx: Context) => {
   return ctx.success({
     id,
     path: assetPath,
-    url: getAssetPublicPathV1(id, assetType),
+    url: getAssetPublicPath(id, assetType),
   });
 };

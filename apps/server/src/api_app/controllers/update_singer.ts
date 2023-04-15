@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { ALIAS_DIVIDER, AssetTypeV1 } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import {
   ALIAS_MAX_LENGTH,
@@ -113,7 +113,7 @@ const KEY_MAP_HANDLER: Record<
 
     if (avatar.length) {
       const avatarExist = await exist(
-        getAssetFilePath(avatar, AssetType.SINGER_AVATAR),
+        getAssetFilePath(avatar, AssetTypeV1.SINGER_AVATAR),
       );
       if (!avatarExist) {
         return ctx.except(ExceptionCode.ASSET_NOT_EXIST);

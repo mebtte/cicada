@@ -1,9 +1,8 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { ALIAS_DIVIDER } from '#/constants';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';
 import { Singer, Property as SingerProperty } from '@/db/singer';
-import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -106,7 +105,6 @@ export default async (ctx: Context) => {
     total,
     singerList: singerList.map((singer) => ({
       ...singer,
-      avatar: getAssetPublicPath(singer.avatar, AssetType.SINGER_AVATAR),
       aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
     })),
   });

@@ -5,7 +5,7 @@ import { getDB } from '@/db';
 import { Music, Property as MusicProperty } from '@/db/music';
 import day from '#/utils/day';
 import mv from '#/utils/mv';
-import { getAssetFilePathV1 } from '@/platform/asset';
+import { getAssetFilePath } from '@/platform/asset';
 import { getAssetDirectory, getTrashDirectory } from '@/config';
 
 const findUnlinkedList = (linkedList: string[], all: string[]) =>
@@ -16,7 +16,7 @@ const moveAssetListToTrash = async (
 ) => {
   for (const asset of assetList) {
     await mv(
-      getAssetFilePathV1(asset, assetType),
+      getAssetFilePath(asset, assetType),
       `${getTrashDirectory()}/${asset}`,
     );
   }

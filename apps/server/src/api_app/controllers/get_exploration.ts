@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { ALIAS_DIVIDER } from '#/constants';
 import { getDB } from '@/db';
 import { Music, Property as MusicProperty } from '@/db/music';
 import { User, Property as UserProperty } from '@/db/user';
@@ -8,7 +8,6 @@ import {
   Property as SingerProperty,
   getSingerListInMusicIds,
 } from '@/db/singer';
-import { getAssetPublicPath } from '@/platform/asset';
 import excludeProperty from '#/utils/exclude_property';
 import { Context } from '../constants';
 
@@ -113,19 +112,16 @@ export default async (ctx: Context) => {
   return ctx.success({
     musicList: musicList.map((m) => ({
       ...m,
-      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       singers: musicSingerList
         .filter((s) => s.musicId === m.id)
         .map((s) => excludeProperty(s, ['musicId'])),
     })),
     singerList: singerList.map((s) => ({
       ...s,
-      avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
       aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     })),
     musicbillList: musicbillList.map((mb) => ({
       ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
-      cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
       user: musicbillCreateUserList.find((u) => mb.userId === u.id)!,
     })),
   });
