@@ -30,15 +30,14 @@ async function combineMusicAsset() {
     );
   }
 
-  await fsPromises.rename(
-    musicSqDirectory,
-    getAssetDirectory(AssetTypeV1.MUSIC),
-  );
   await Promise.all([
+    fsPromises.rename(musicSqDirectory, getAssetDirectory(AssetTypeV1.MUSIC)),
     fsPromises.rm(musicAcDirectory, { force: true, recursive: true }),
     fsPromises.rm(musicHqDirectory, { force: true, recursive: true }),
   ]);
 }
+
+async function separateMusicAc() {}
 
 export default async ({ data }: { data: string }) => {
   updateConfig({ data });
@@ -69,8 +68,13 @@ export default async ({ data }: { data: string }) => {
     return;
   }
 
-  const spinner = createSpinner();
+  let spinner = createSpinner();
   spinner.start({ text: '正在合并音乐资源...' });
   await combineMusicAsset();
   spinner.success({ text: '音乐资源已合并' });
+
+  spinner = createSpinner();
+  spinner.start({ text: '正在分离伴奏...' });
+  await separateMusicAc();
+  spinner.success({ text: '伴奏已分离' });
 };

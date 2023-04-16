@@ -16,10 +16,8 @@ export interface Music {
   name: string;
   type: MusicType;
   aliases: string[];
-  sq: string;
-  hq: string;
-  ac: string;
   singers: Singer[];
+  asset: string;
 }
 
 export interface MusicWithIndex extends Music {

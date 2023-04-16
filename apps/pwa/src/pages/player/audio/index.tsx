@@ -3,7 +3,6 @@ import * as React from 'react';
 import throttle from 'lodash/throttle';
 import uploadMusicPlayRecord from '@/server/base/upload_music_play_record';
 import { CacheName } from '@/constants/cache';
-import { PlayMode } from '@/constants';
 import settingState from '@/global_states/setting';
 import { Setting } from '@/constants/setting';
 import definition from '@/definition';
@@ -24,7 +23,6 @@ const onPause = () => eventemitter.emit(EventType.AUDIO_PAUSE, null);
 const onEnded = () => eventemitter.emit(EventType.ACTION_NEXT, null);
 
 interface Props {
-  playMode: PlayMode;
   queueMusic: QueueMusic;
   setting: Setting;
 }
@@ -132,22 +130,6 @@ class Audio extends React.PureComponent<Props, {}> {
     this.audio = audio;
   };
 
-  getAudioSrc = (music: Music) => {
-    const { playMode } = this.props;
-
-    switch (playMode) {
-      case PlayMode.HQ: {
-        return music.hq || music.sq;
-      }
-      case PlayMode.AC: {
-        return music.ac || music.sq;
-      }
-      default: {
-        return music.sq;
-      }
-    }
-  };
-
   getPlayedSeconeds = () => {
     const { played } = this.audio!;
     let playedSeconeds = 0;
@@ -183,10 +165,9 @@ class Audio extends React.PureComponent<Props, {}> {
 
     if (definition.WITH_SW && percent > 0.75) {
       window.caches.open(CacheName.ASSET_MEDIA).then(async (cache) => {
-        const url = this.getAudioSrc(music);
-        const exist = await cache.match(url);
+        const exist = await cache.match(music.asset);
         if (!exist) {
-          cache.add(url);
+          cache.add(music.asset);
         }
       });
     }
@@ -194,14 +175,13 @@ class Audio extends React.PureComponent<Props, {}> {
 
   render() {
     const { queueMusic } = this.props;
-    const { pid } = queueMusic;
-    const audioSrc = this.getAudioSrc(queueMusic);
+    const { pid, asset } = queueMusic;
     return (
       <audio
         key={pid}
         ref={this.setAudio}
         style={style}
-        src={audioSrc}
+        src={asset}
         autoPlay
         onPlay={onPlay}
         onPause={onPause}

@@ -1,6 +1,5 @@
 import { Option } from '@/components/multiple_select';
 import Eventin from 'eventin';
-import { PlayMode } from '@/constants';
 import {
   Music,
   Musicbill,
@@ -95,8 +94,6 @@ export enum EventType {
   ADD_MUSIC_TO_MUSICBILL = 'add_music_to_musicbill',
   REMOVE_MUSIC_FROM_MUSICBILL = 'remove_music_from_musicbill',
 
-  CHANGE_PLAY_MODE = 'change_play_mode',
-
   TOGGLE_LYRIC_PANEL = 'toggle_lyric_panel',
 
   OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER = 'open_add_music_to_musicbill_drawer',
@@ -159,8 +156,6 @@ export default new Eventin<
       musicbill: Musicbill;
       music: Music;
     };
-
-    [EventType.CHANGE_PLAY_MODE]: { playMode: PlayMode };
 
     [EventType.TOGGLE_LYRIC_PANEL]: { open: boolean } | null;
 
