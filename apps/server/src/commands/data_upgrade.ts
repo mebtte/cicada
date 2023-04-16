@@ -1,22 +1,51 @@
 import inquirer from 'inquirer';
-import {
-  getAssetDirectory,
-  getDataVersionPath,
-  getConfig,
-  updateConfig,
-} from '@/config';
+import { getAssetDirectory, getDataVersionPath, updateConfig } from '@/config';
 import { createSpinner } from 'nanospinner';
 import fs from 'fs';
+import fsPromises from 'fs/promises';
 import exitWithMessage from '@/utils/exit_with_message';
+import { AssetTypeV0, AssetTypeV1 } from '#/constants';
 import { DATA_VERSION } from '../constants';
 
-async function upgradeAsset() {}
+async function combineMusicAsset() {
+  const musicSqDirectory = getAssetDirectory(AssetTypeV0.MUSIC_SQ);
 
-async function upgradeDB() {}
+  const musicAcDirectory = getAssetDirectory(AssetTypeV0.MUSIC_AC);
+  const acs = await fsPromises.readdir(musicAcDirectory);
+  for (const ac of acs) {
+    await fsPromises.cp(
+      `${musicAcDirectory}/${ac}`,
+      `${musicSqDirectory}/${ac}`,
+      { force: true },
+    );
+  }
+
+  const musicHqDirectory = getAssetDirectory(AssetTypeV0.MUSIC_HQ);
+  const hqs = await fsPromises.readdir(musicHqDirectory);
+  for (const hq of hqs) {
+    await fsPromises.cp(
+      `${musicHqDirectory}/${hq}`,
+      `${musicSqDirectory}/${hq}`,
+      { force: true },
+    );
+  }
+
+  await fsPromises.rename(
+    musicSqDirectory,
+    getAssetDirectory(AssetTypeV1.MUSIC),
+  );
+  await Promise.all([
+    fsPromises.rm(musicAcDirectory, { force: true, recursive: true }),
+    fsPromises.rm(musicHqDirectory, { force: true, recursive: true }),
+  ]);
+}
 
 export default async ({ data }: { data: string }) => {
   updateConfig({ data });
 
+  if (!fs.existsSync(getDataVersionPath())) {
+    return exitWithMessage(`[ ${data} ] 不是合法的数据目录`);
+  }
   const dataVersion = Number(
     fs.readFileSync(getDataVersionPath()).toString().replace(/\s/gm, ''),
   );
@@ -40,8 +69,8 @@ export default async ({ data }: { data: string }) => {
     return;
   }
 
-  const spinner = createSpinner('数据正在从 v0 升级到 v1');
-  spinner.start();
-  await Promise.all([upgradeAsset(), upgradeDB()]);
-  spinner.success({ text: '数据已从 v0 升级到 v1' });
+  const spinner = createSpinner();
+  spinner.start({ text: '正在合并音乐资源...' });
+  await combineMusicAsset();
+  spinner.success({ text: '音乐资源已合并' });
 };
