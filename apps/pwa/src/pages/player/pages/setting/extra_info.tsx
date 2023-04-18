@@ -7,6 +7,7 @@ import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';
 
+const BETA_VERSION_START = 'beta.';
 const Style = styled.div`
   font-size: 12px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
@@ -32,9 +33,13 @@ function ExtraInfo() {
 
   return (
     <Style>
-      PWA Version:{' '}
+      PWA Version:&nbsp;
       <a
-        href={`https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`}
+        href={
+          definition.VERSION.startsWith(BETA_VERSION_START)
+            ? 'https://github.com/mebtte/cicada/tree/beta'
+            : `https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`
+        }
         target="_blank"
         rel="noreferrer"
       >
@@ -42,9 +47,13 @@ function ExtraInfo() {
       </a>
       {serverMetadata.version ? (
         <>
-          , Server Version:{' '}
+          , Server Version:&nbsp;
           <a
-            href={`https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`}
+            href={
+              serverMetadata.version.startsWith(BETA_VERSION_START)
+                ? 'https://github.com/mebtte/cicada/tree/beta'
+                : `https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`
+            }
             target="_blank"
             rel="noreferrer"
           >
