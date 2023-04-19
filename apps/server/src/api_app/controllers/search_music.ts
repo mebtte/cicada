@@ -2,13 +2,13 @@ import { ALIAS_DIVIDER } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import { getDB } from '@/db';
-import { Music, Property as MusicProperty } from '@/db/music';
 import {
   Singer,
   getSingerListInMusicIds,
   Property as SingerProperty,
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
+import { Music, MusicProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;

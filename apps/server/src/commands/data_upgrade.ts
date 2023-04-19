@@ -1,10 +1,16 @@
 import inquirer from 'inquirer';
 import { getAssetDirectory, getDataVersionPath, updateConfig } from '@/config';
-import { createSpinner } from 'nanospinner';
+import { createSpinner, Spinner } from 'nanospinner';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import exitWithMessage from '@/utils/exit_with_message';
 import { AssetTypeV0, AssetTypeV1 } from '#/constants';
+import { getDB } from '@/db';
+import {
+  Music,
+  MusicPropertyV0,
+  MUSIC_TABLE_NAME,
+} from '@/constants/db_definition';
 import { DATA_VERSION } from '../constants';
 
 async function combineMusicAsset() {
@@ -37,7 +43,18 @@ async function combineMusicAsset() {
   ]);
 }
 
-async function separateMusicAc() {}
+async function separateMusicAc() {
+  const acMusicList = await getDB().all<Music>(
+    `
+      SELECT
+        *
+      FROM ${MUSIC_TABLE_NAME}
+      WHERE ${MusicPropertyV0.AC} != ''
+    `,
+    [],
+  );
+  console.log(acMusicList.length);
+}
 
 export default async ({ data }: { data: string }) => {
   updateConfig({ data });
@@ -68,10 +85,12 @@ export default async ({ data }: { data: string }) => {
     return;
   }
 
-  let spinner = createSpinner();
-  spinner.start({ text: '正在合并音乐资源...' });
-  await combineMusicAsset();
-  spinner.success({ text: '音乐资源已合并' });
+  let spinner: Spinner;
+
+  // spinner = createSpinner();
+  // spinner.start({ text: '正在合并音乐资源...' });
+  // await combineMusicAsset();
+  // spinner.success({ text: '音乐资源已合并' });
 
   spinner = createSpinner();
   spinner.start({ text: '正在分离伴奏...' });

@@ -7,7 +7,8 @@ import {
   getMusicForkFromList,
   Property as MusicForkProperty,
 } from '@/db/music_fork';
-import { getMusicListByIds, Property as MusicProperty } from '@/db/music';
+import { getMusicListByIds } from '@/db/music';
+import { MusicProperty } from '@/constants/db_definition';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {

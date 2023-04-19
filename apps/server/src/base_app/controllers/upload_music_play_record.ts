@@ -1,7 +1,8 @@
 import { EFFECTIVE_PLAY_PERCENT } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
+import { MusicProperty } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { getMusicById, Property as MusicProperty } from '@/db/music';
+import { getMusicById } from '@/db/music';
 import { addMusicPlayRecord } from '@/db/music_play_record';
 import { verify } from '@/platform/jwt';
 import { Context } from '../constants';

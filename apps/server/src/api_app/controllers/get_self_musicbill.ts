@@ -4,7 +4,6 @@ import {
   getMusicbillById,
   Property as MusicbillProperty,
 } from '@/db/musicbill';
-import { Music, Property as MusicProperty } from '@/db/music';
 import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
 import {
   getSingerListInMusicIds,
@@ -13,6 +12,7 @@ import {
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetPublicPath } from '@/platform/asset';
 import { getDB } from '@/db';
+import { Music, MusicProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

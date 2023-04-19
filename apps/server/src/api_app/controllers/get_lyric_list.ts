@@ -1,7 +1,8 @@
 import { ExceptionCode } from '#/constants/exception';
-import { getMusicById, Property as MusicProperty } from '@/db/music';
+import { getMusicById } from '@/db/music';
 import { getLyricListByMusicId, Property as LyricProperty } from '@/db/lyric';
 import { MusicType } from '#/constants/music';
+import { MusicProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

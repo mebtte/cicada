@@ -2,9 +2,10 @@ import { AssetTypeV1 } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import exist from '#/utils/exist';
 import { getAssetFilePath } from '@/platform/asset';
-import { updateMusic, Property as MusicProperty } from '@/db/music';
+import { updateMusic } from '@/db/music';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
 import { AllowUpdateKey } from '#/constants/music';
+import { MusicProperty } from '@/constants/db_definition';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {

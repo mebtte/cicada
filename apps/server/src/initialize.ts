@@ -1,8 +1,8 @@
 import fs from 'fs';
 import { EMAIL } from '#/constants/regexp';
-import DB from '#/utils/db';
 import question from '#/utils/question';
 import { AssetTypeV1 } from '#/constants';
+import DB from './utils/db';
 import {
   getAssetDirectory,
   getConfig,
@@ -16,6 +16,12 @@ import {
 } from './config';
 import exitWithMessage from './utils/exit_with_message';
 import { DATA_VERSION } from './constants';
+import {
+  MusicProperty,
+  MUSIC_TABLE_NAME,
+  UserProperty,
+  USER_TABLE_NAME,
+} from './constants/db_definition';
 
 function mkdirIfNotExist(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -72,18 +78,18 @@ export default async () => {
   ) {
     const db = new DB(getDBFilePath());
     const TABLE_USER = `
-      CREATE TABLE user (
-        id TEXT PRIMARY KEY NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        avatar TEXT NOT NULL DEFAULT '',
-        nickname TEXT NOT NULL,
-        joinTimestamp INTEGER NOT NULL,
-        admin INTEGER NOT NULL DEFAULT 0,
-        remark TEXT NOT NULL DEFAULT '',
-        musicbillOrdersJSON TEXT DEFAULT NULL,
-        musicbillMaxAmount INTEGER NOT NULL DEFAULT 100,
-        createMusicMaxAmountPerDay INTEGER NOT NULL DEFAULT 10,
-        exportMusicbillMaxTimePerDay INTEGER NOT NULL DEFAULT 3
+      CREATE TABLE ${USER_TABLE_NAME} (
+        ${UserProperty.ID} TEXT PRIMARY KEY NOT NULL,
+        ${UserProperty.EMAIL} TEXT UNIQUE NOT NULL,
+        ${UserProperty.AVATAR} TEXT NOT NULL DEFAULT '',
+        ${UserProperty.NICKNAME} TEXT NOT NULL,
+        ${UserProperty.JOIN_TIMESTAMP} INTEGER NOT NULL,
+        ${UserProperty.ADMIN} INTEGER NOT NULL DEFAULT 0,
+        ${UserProperty.REMARK} TEXT NOT NULL DEFAULT '',
+        ${UserProperty.MUSICBILL_ORDERS_JSON} TEXT DEFAULT NULL,
+        ${UserProperty.MUSICBILL_MAX_AMOUNT} INTEGER NOT NULL DEFAULT 100,
+        ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY} INTEGER NOT NULL DEFAULT 10,
+        ${UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY} INTEGER NOT NULL DEFAULT 3
       )
     `;
     const TABLE_CAPTCHA = `
@@ -122,24 +128,24 @@ export default async () => {
         modifyUserId TEXT NOT NULL,
         key TEXT NOT NULL,
         modifyTimestamp INTEGER NOT NULL,
+
         CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
         CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
       )
     `;
     const TABLE_MUSIC = `
-      CREATE TABLE music (
-        id TEXT PRIMARY KEY NOT NULL,
-        type INTEGER NOT NULL,
-        name TEXT NOT NULL,
-        aliases TEXT NOT NULL DEFAULT '',
-        cover TEXT NOT NULL DEFAULT '',
-        sq TEXT NOT NULL,
-        hq TEXT NOT NULL DEFAULT '',
-        ac TEXT NOT NULL DEFAULT '',
-        heat INTEGER NOT NULL DEFAULT 0,
-        createUserId TEXT NOT NULL,
-        createTimestamp INTEGER NOT NULL,
-        CONSTRAINT fkUser FOREIGN KEY ( createUserId ) REFERENCES user ( id )
+      CREATE TABLE ${MUSIC_TABLE_NAME} (
+        ${MusicProperty.ID} TEXT PRIMARY KEY NOT NULL,
+        ${MusicProperty.TYPE} INTEGER NOT NULL,
+        ${MusicProperty.NAME} TEXT NOT NULL,
+        ${MusicProperty.ALIASES} TEXT NOT NULL DEFAULT '',
+        ${MusicProperty.COVER} TEXT NOT NULL DEFAULT '',
+        ${MusicProperty.ASSET} TEXT NOT NULL,
+        ${MusicProperty.HEAT} INTEGER NOT NULL DEFAULT 0,
+        ${MusicProperty.CREATE_USER_ID} TEXT NOT NULL,
+        ${MusicProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
+
+        CONSTRAINT fk_${TABLE_USER} FOREIGN KEY ( ${MusicProperty.CREATE_USER_ID} ) REFERENCES ${TABLE_USER} ( ${UserProperty.ID} )
       )
     `;
     const TABLE_MUSIC_MODIGY_RECORD = `

@@ -1,56 +1,50 @@
+import { UserProperty, User, USER_TABLE_NAME } from '@/constants/db_definition';
 import { getDB } from '.';
 
-export enum Property {
-  ID = 'id',
-  EMAIL = 'email',
-  AVATAR = 'avatar',
-  NICKNAME = 'nickname',
-  JOIN_TIMESTAMP = 'joinTimestamp',
-  ADMIN = 'admin',
-  REMARK = 'remark',
-  MUSICBILL_ORDERS_JSON = 'musicbillOrdersJSON',
-  MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
-  CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
-  EXPORT_MUSICBILL_MAX_TIME_PER_DAY = 'exportMusicbillMaxTimePerDay',
-}
-
-export type User = {
-  [Property.ID]: string;
-  [Property.EMAIL]: string;
-  [Property.AVATAR]: string;
-  [Property.NICKNAME]: string;
-  [Property.JOIN_TIMESTAMP]: number;
-  [Property.ADMIN]: 0 | 1;
-  [Property.REMARK]: string;
-  [Property.MUSICBILL_ORDERS_JSON]: string | null;
-  [Property.MUSICBILL_MAX_AMOUNT]: number;
-  [Property.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: number;
-  [Property.EXPORT_MUSICBILL_MAX_TIME_PER_DAY]: number;
-};
-
-export function getUserByEmail<P extends Property>(
+export function getUserByEmail<P extends UserProperty>(
   email: string,
   properties: P[],
 ) {
   return getDB().get<{
     [key in P]: User[key];
-  }>(`select ${properties.join(',')} from user where email = ?`, [email]);
+  }>(
+    `
+      SELECT
+        ${properties.join(',')}
+      FROM ${USER_TABLE_NAME}
+      WHERE ${UserProperty.EMAIL} = ?
+    `,
+    [email],
+  );
 }
 
-export function getUserById<P extends Property>(id: string, properties: P[]) {
+export function getUserById<P extends UserProperty>(
+  id: string,
+  properties: P[],
+) {
   return getDB().get<{
     [key in P]: User[key];
-  }>(`select ${properties.join(',')} from user where id = ?`, [id]);
+  }>(
+    `
+      SELECT
+        ${properties.join(',')}
+      FROM ${USER_TABLE_NAME}
+      WHERE ${UserProperty.ID} = ?
+    `,
+    [id],
+  );
 }
 
-export function getUserListByIds<P extends Property>(
+export function getUserListByIds<P extends UserProperty>(
   ids: string[],
   properties: P[],
 ) {
   return getDB().all<Pick<User, P>>(
     `
-      select ${properties.map((p) => `\`${p}\``).join(',')} from user
-        where id in ( ${ids.map(() => '?')} )
+      SELECT
+        ${properties.map((p) => `\`${p}\``).join(',')}
+      FROM ${USER_TABLE_NAME}
+      WHERE ${UserProperty.ID} IN ( ${ids.map(() => '?')} )
     `,
     [ids],
   );
@@ -58,20 +52,20 @@ export function getUserListByIds<P extends Property>(
 
 export function updateUser<
   P extends
-    | Property.AVATAR
-    | Property.NICKNAME
-    | Property.REMARK
-    | Property.ADMIN
-    | Property.MUSICBILL_ORDERS_JSON
-    | Property.EMAIL
-    | Property.MUSICBILL_MAX_AMOUNT
-    | Property.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
-    | Property.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
+    | UserProperty.AVATAR
+    | UserProperty.NICKNAME
+    | UserProperty.REMARK
+    | UserProperty.ADMIN
+    | UserProperty.MUSICBILL_ORDERS_JSON
+    | UserProperty.EMAIL
+    | UserProperty.MUSICBILL_MAX_AMOUNT
+    | UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
+    | UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
 >({ id, property, value }: { id: string; property: P; value: User[P] }) {
   return getDB().run(
     `
-      update user set ${property} = ?
-        where id = ?
+      UPDATE ${USER_TABLE_NAME} SET ${property} = ?
+      WHERE ${UserProperty.ID} = ?
     `,
     [value, id],
   );

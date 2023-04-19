@@ -1,12 +1,8 @@
 import { ExceptionCode } from '#/constants/exception';
 import { EMAIL } from '#/constants/regexp';
 import { AdminAllowUpdateKey, REMARK_MAX_LENGTH } from '#/constants/user';
-import {
-  User,
-  Property as UserProperty,
-  getUserById,
-  updateUser,
-} from '@/db/user';
+import { User, UserProperty } from '@/constants/db_definition';
+import { getUserById, updateUser } from '@/db/user';
 import { Context } from '../constants';
 
 type LocalUser = Pick<

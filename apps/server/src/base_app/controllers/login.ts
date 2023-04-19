@@ -2,7 +2,8 @@ import { EMAIL } from '#/constants/regexp';
 import { ExceptionCode } from '#/constants/exception';
 import { verifyLoginCode } from '@/platform/login_code';
 import { sign } from '@/platform/jwt';
-import { Property, getUserByEmail } from '@/db/user';
+import { getUserByEmail } from '@/db/user';
+import { UserProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -20,7 +21,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const user = await getUserByEmail(email, [Property.ID]);
+  const user = await getUserByEmail(email, [UserProperty.ID]);
 
   /**
    * 用户不存在报参数错误

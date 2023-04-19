@@ -1,4 +1,4 @@
-import { getUserById, Property as UserProperty } from '@/db/user';
+import { getUserById } from '@/db/user';
 import {
   createSinger,
   getSingerByName,
@@ -12,9 +12,10 @@ import fileType from 'file-type';
 import { AssetTypeV1, ASSET_TYPE_MAP_V1 } from '#/constants';
 import path from 'path';
 import { getDB } from '@/db';
-import { createMusic, Music, Property as MusicProperty } from '@/db/music';
+import { createMusic } from '@/db/music';
 import md5 from 'md5';
 import { MusicType } from '#/constants/music';
+import { Music, MusicProperty, UserProperty } from '@/constants/db_definition';
 import { getAssetDirectory, updateConfig } from '../config';
 
 /**

@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import { ExceptionCode } from '#/constants/exception';
 import { getLyricListByMusicId, Property as LyricProperty } from '@/db/lyric';
-import { getMusicById, Property as MusicProperty } from '@/db/music';
+import { getMusicById } from '@/db/music';
 import {
   getMusicModifyRecordList,
   Property as MusicModifyRecordProperty,
@@ -18,6 +18,7 @@ import {
 import { getDB } from '@/db';
 import { MusicType } from '#/constants/music';
 import { getTrashDirectory } from '@/config';
+import { MusicProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

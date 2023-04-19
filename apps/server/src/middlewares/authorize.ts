@@ -3,8 +3,9 @@ import { ExceptionCode } from '#/constants/exception';
 import { verify } from '@/platform/jwt';
 import { Next } from 'koa';
 import { getAssetPublicPath } from '@/platform/asset';
-import { getUserById, Property } from '@/db/user';
+import { getUserById } from '@/db/user';
 import { Context } from '@/constants/koa';
+import { UserProperty } from '@/constants/db_definition';
 
 export default async (ctx: Context, next: Next) => {
   const token = ctx.get('authorization');
@@ -20,7 +21,7 @@ export default async (ctx: Context, next: Next) => {
     return ctx.except(ExceptionCode.NOT_AUTHORIZE);
   }
 
-  const user = await getUserById(userId, Object.values(Property));
+  const user = await getUserById(userId, Object.values(UserProperty));
 
   if (!user) {
     return ctx.except(ExceptionCode.NOT_AUTHORIZE);

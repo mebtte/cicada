@@ -1,5 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
-import { getMusicById, Property as MusicProperty } from '@/db/music';
+import { MusicProperty } from '@/constants/db_definition';
+import { getMusicById } from '@/db/music';
 import {
   getMusicbillById,
   Property as MusicbillProperty,

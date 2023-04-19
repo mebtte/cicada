@@ -5,8 +5,9 @@ import { getDB } from '@/db';
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
 import { sendEmail } from '@/platform/email';
-import { Property, getUserByEmail } from '@/db/user';
+import { getUserByEmail } from '@/db/user';
 import { BRAND_NAME } from '#/constants';
+import { UserProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 const generateEmailHtml = ({ accessOrigin }: { accessOrigin: string }) => `Hi,
@@ -42,7 +43,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const user = await getUserByEmail(email, [Property.ID]);
+  const user = await getUserByEmail(email, [UserProperty.ID]);
   if (user) {
     return ctx.except(ExceptionCode.EMAIL_EXISTED);
   }

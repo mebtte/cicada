@@ -2,12 +2,13 @@ import { AssetTypeV1 } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
 import exist from '#/utils/exist';
+import { User, UserProperty } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import {
   getMusicbillListByIds,
   Property as MusicbillProperty,
 } from '@/db/musicbill';
-import { updateUser, Property as UserProperty, User } from '@/db/user';
+import { updateUser } from '@/db/user';
 import { getAssetFilePath } from '@/platform/asset';
 import { Context } from '../constants';
 

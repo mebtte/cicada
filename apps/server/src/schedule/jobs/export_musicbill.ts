@@ -4,8 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import withTimeout from '#/utils/with_timeout';
 import { getDB } from '@/db';
-import { getUserById, User, Property as UserProperty } from '@/db/user';
-import { Music, Property as MusicProperty } from '@/db/music';
+import { getUserById } from '@/db/user';
 import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
 import { sendEmail } from '@/platform/email';
 import day from '#/utils/day';
@@ -20,6 +19,12 @@ import { getAssetFilePath } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
 import { getDownloadDirectory } from '@/config';
 import formatMusicFilename from '#/utils/format_music_filename';
+import {
+  User,
+  UserProperty,
+  Music,
+  MusicProperty,
+} from '@/constants/db_definition';
 
 interface MusicbillExport {
   id: number;

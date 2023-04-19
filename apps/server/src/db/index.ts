@@ -4,8 +4,8 @@
 import fs from 'fs';
 import util from 'util';
 import day from '#/utils/day';
-import DB, { EventType } from '#/utils/db';
 import { getDBFilePath, getLogDirectory } from '@/config';
+import DB, { EventType } from '../utils/db';
 
 let db: DB;
 const appendFileAsync = util.promisify(fs.appendFile);

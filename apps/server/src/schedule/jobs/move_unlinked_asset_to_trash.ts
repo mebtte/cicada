@@ -2,11 +2,11 @@ import fs from 'fs/promises';
 import withTimeout from '#/utils/with_timeout';
 import { AssetTypeV1 } from '#/constants';
 import { getDB } from '@/db';
-import { Music, Property as MusicProperty } from '@/db/music';
 import day from '#/utils/day';
 import mv from '#/utils/mv';
 import { getAssetFilePath } from '@/platform/asset';
 import { getAssetDirectory, getTrashDirectory } from '@/config';
+import { Music, MusicProperty } from '@/constants/db_definition';
 
 const findUnlinkedList = (linkedList: string[], all: string[]) =>
   all.filter((item) => !linkedList.includes(item));

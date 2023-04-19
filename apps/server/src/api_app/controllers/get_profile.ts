@@ -1,5 +1,5 @@
-import { Property as UserProperty } from '@/db/user';
 import excludeProperty from '#/utils/exclude_property';
+import { UserProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 const PROFILE_PROPERTIES = [

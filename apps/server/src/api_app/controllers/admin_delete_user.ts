@@ -1,6 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
-import { getUserById, Property as UserProperty } from '@/db/user';
+import { getUserById } from '@/db/user';
 import { getDB } from '@/db';
+import { UserProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

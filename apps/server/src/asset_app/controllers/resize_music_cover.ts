@@ -2,13 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import { getAssetFilePath } from '@/platform/asset';
 import { AssetTypeV1 } from '#/constants';
-import { getMusicById, Property as MusicProperty } from '@/db/music';
+import { getMusicById } from '@/db/music';
 import { Context } from '@/constants/koa';
 import { ExceptionCode } from '#/constants/exception';
 import jimp from 'jimp';
 import { getCacheDirectory } from '@/config';
 import exist from '#/utils/exist';
 import definition from '@/definition';
+import { MusicProperty } from '@/constants/db_definition';
 
 const MAX_SIZE = 1024;
 

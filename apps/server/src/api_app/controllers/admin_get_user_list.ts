@@ -1,7 +1,7 @@
 import { getDB } from '@/db';
-import { User } from '@/db/user';
 import { getAssetPublicPath } from '@/platform/asset';
 import { AssetTypeV1 } from '#/constants';
+import { User } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

@@ -1,7 +1,8 @@
 import { ExceptionCode } from '#/constants/exception';
-import { updateMusic, Property as MusicProperty } from '@/db/music';
+import { updateMusic } from '@/db/music';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/music';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
+import { MusicProperty } from '@/constants/db_definition';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {

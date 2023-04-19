@@ -2,7 +2,8 @@ import { ALIAS_DIVIDER } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey, MUSIC_MAX_ALIAS_COUNT } from '#/constants/music';
 import { ALIAS_MAX_LENGTH } from '#/constants/singer';
-import { updateMusic, Property } from '@/db/music';
+import { MusicProperty } from '@/constants/db_definition';
+import { updateMusic } from '@/db/music';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
 import { Parameter } from './constants';
 
@@ -30,7 +31,7 @@ export default async ({ ctx, music, value }: Parameter) => {
   await Promise.all([
     updateMusic({
       id: music.id,
-      property: Property.ALIASES,
+      property: MusicProperty.ALIASES,
       value: aliases,
     }),
     saveMusicModifyRecord({

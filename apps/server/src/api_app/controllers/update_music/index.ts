@@ -1,6 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey } from '#/constants/music';
-import { getMusicById, Property as MusicProperty } from '@/db/music';
+import { getMusicById } from '@/db/music';
+import { MusicProperty } from '@/constants/db_definition';
 import { Context } from '../../constants';
 import { Music, Parameter } from './constants';
 import updateCover from './update_cover';

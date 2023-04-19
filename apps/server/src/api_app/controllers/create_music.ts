@@ -6,7 +6,8 @@ import { getSingerListByIds, Property as SingerProperty } from '@/db/singer';
 import { getAssetFilePath } from '@/platform/asset';
 import { getDB } from '@/db';
 import day from '#/utils/day';
-import { createMusic, Music, Property as MusicProperty } from '@/db/music';
+import { createMusic } from '@/db/music';
+import { Music, MusicProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
