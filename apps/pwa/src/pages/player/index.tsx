@@ -21,7 +21,6 @@ import MusicbillOrderDrawer from './musicbilll_order_drawer';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
 import useKeyboard from './use_keyboard';
-import MusicDownloadDialog from './music_download_dialog';
 import SingerDrawer from './singer_drawer';
 import EditDialog from './edit_dialog';
 import ProfileEditPopup from './profile_edit_popup';
@@ -120,7 +119,6 @@ function Wrapper() {
       <PlaylistPlayqueueDrawer />
       <AddMusicToMusicbillDrawer />
       <MusicbillOrderDrawer />
-      <MusicDownloadDialog />
       <UserDrawer />
       <MusicbillDrawer />
 

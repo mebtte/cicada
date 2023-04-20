@@ -1,13 +1,12 @@
 import { MusicType } from '#/constants/music';
-import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
 /**
  * 获取歌手详情
  * @author mebtte<hi@mebtte.com>
  */
-async function getSingerDetail(id: string) {
-  const singer = await request<{
+function getSingerDetail(id: string) {
+  return request<{
     id: string;
     avatar: string;
     name: string;
@@ -24,9 +23,7 @@ async function getSingerDetail(id: string) {
       name: string;
       aliases: string[];
       cover: string;
-      sq: string;
-      hq: string;
-      ac: string;
+      asset: string;
       singers: {
         id: string;
         name: string;
@@ -38,22 +35,6 @@ async function getSingerDetail(id: string) {
     params: { id },
     withToken: true,
   });
-
-  return {
-    ...singer,
-    avatar: prefixServerOrigin(singer.avatar),
-    createUser: {
-      ...singer.createUser,
-      avatar: prefixServerOrigin(singer.createUser.avatar),
-    },
-    musicList: singer.musicList.map((m) => ({
-      ...m,
-      cover: prefixServerOrigin(m.cover),
-      sq: prefixServerOrigin(m.sq),
-      hq: prefixServerOrigin(m.hq),
-      ac: prefixServerOrigin(m.ac),
-    })),
-  };
 }
 
 export default getSingerDetail;

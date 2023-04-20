@@ -1,9 +1,8 @@
 import { MusicType } from '#/constants/music';
-import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
-async function getUserDetail(id: string) {
-  const user = await request<{
+function getUserDetail(id: string) {
+  return request<{
     id: string;
     avatar: string;
     joinTimestamp: number;
@@ -20,9 +19,7 @@ async function getUserDetail(id: string) {
       name: string;
       aliases: string[];
       cover: string;
-      sq: string;
-      hq: string;
-      ac: string;
+      asset: string;
       singers: {
         id: string;
         name: string;
@@ -34,21 +31,6 @@ async function getUserDetail(id: string) {
     params: { id },
     withToken: true,
   });
-  return {
-    ...user,
-    avatar: prefixServerOrigin(user.avatar),
-    musicbillList: user.musicbillList.map((mb) => ({
-      ...mb,
-      cover: prefixServerOrigin(mb.cover),
-    })),
-    musicList: user.musicList.map((m) => ({
-      ...m,
-      cover: prefixServerOrigin(m.cover),
-      sq: prefixServerOrigin(m.sq),
-      hq: prefixServerOrigin(m.hq),
-      ac: prefixServerOrigin(m.ac),
-    })),
-  };
 }
 
 export default getUserDetail;

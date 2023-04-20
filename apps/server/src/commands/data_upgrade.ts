@@ -7,8 +7,8 @@ import exitWithMessage from '@/utils/exit_with_message';
 import { AssetTypeV0, AssetTypeV1 } from '#/constants';
 import { getDB } from '@/db';
 import {
-  Music,
   MusicPropertyV0,
+  MusicV0,
   MUSIC_TABLE_NAME,
 } from '@/constants/db_definition';
 import { DATA_VERSION } from '../constants';
@@ -44,7 +44,7 @@ async function combineMusicAsset() {
 }
 
 async function separateMusicAc() {
-  const acMusicList = await getDB().all<Music>(
+  const acMusicList = await getDB().all<MusicV0>(
     `
       SELECT
         *
@@ -53,7 +53,6 @@ async function separateMusicAc() {
     `,
     [],
   );
-  console.log(acMusicList.length);
 }
 
 export default async ({ data }: { data: string }) => {

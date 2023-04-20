@@ -1,9 +1,12 @@
 import { MusicType } from '#/constants/music';
-import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
-async function getSelfMusicbill(id: string) {
-  const musicbill = await request<{
+/**
+ * 获取自己的歌单详情
+ * @author mebtte<hi@mebtte.com>
+ */
+function getSelfMusicbill(id: string) {
+  return request<{
     id: string;
     cover: string;
     name: string;
@@ -15,9 +18,7 @@ async function getSelfMusicbill(id: string) {
       name: string;
       aliases: string[];
       cover: string;
-      sq: string;
-      hq: string;
-      ac: string;
+      asset: string;
       singers: {
         id: string;
         name: string;
@@ -29,17 +30,6 @@ async function getSelfMusicbill(id: string) {
     params: { id },
     withToken: true,
   });
-  return {
-    ...musicbill,
-    cover: prefixServerOrigin(musicbill.cover),
-    musicList: musicbill.musicList.map((m) => ({
-      ...m,
-      cover: prefixServerOrigin(m.cover),
-      sq: prefixServerOrigin(m.sq),
-      hq: prefixServerOrigin(m.hq),
-      ac: prefixServerOrigin(m.ac),
-    })),
-  };
 }
 
 export default getSelfMusicbill;

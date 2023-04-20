@@ -1,8 +1,7 @@
 import { MusicType } from '#/constants/music';
-import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
-async function searchMusicByLyric({
+function searchMusicByLyric({
   keyword,
   page,
   pageSize,
@@ -11,7 +10,7 @@ async function searchMusicByLyric({
   page: number;
   pageSize: number;
 }) {
-  const data = await request<{
+  return request<{
     total: number;
     musicList: {
       id: string;
@@ -19,9 +18,7 @@ async function searchMusicByLyric({
       name: string;
       aliases: string[];
       cover: string;
-      sq: string;
-      hq: string;
-      ac: string;
+      asset: string;
       singers: {
         id: string;
         name: string;
@@ -37,16 +34,6 @@ async function searchMusicByLyric({
     params: { keyword, page, pageSize },
     withToken: true,
   });
-  return {
-    ...data,
-    musicList: data.musicList.map((m) => ({
-      ...m,
-      cover: prefixServerOrigin(m.cover),
-      sq: prefixServerOrigin(m.sq),
-      hq: prefixServerOrigin(m.hq),
-      ac: prefixServerOrigin(m.ac),
-    })),
-  };
 }
 
 export default searchMusicByLyric;

@@ -61,7 +61,7 @@ export default async () => {
       return exitWithMessage(
         `当前数据版本为 v${dataVersion}, 请使用 v${
           dataVersion + 1
-        } 版本的知了通过 [cicada data-upgrade <data>] 升级数据后再启动服务`,
+        } 版本的知了通过 [ cicada data-upgrade <data> ] 升级数据后再启动服务`,
       );
     }
   } else {

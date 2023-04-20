@@ -1,6 +1,5 @@
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import Tag, { Type } from '@/components/tag';
 import Cover from '@/components/cover';
 import { MdOutlineLocalFireDepartment } from 'react-icons/md';
 import { MusicDetail } from './constants';
@@ -57,12 +56,6 @@ function Info({ music }: { music: MusicDetail }) {
     <Style>
       <Cover src={music.cover} size="100%" />
       <div className="info">
-        {music.hq || music.ac ? (
-          <div className="tag-box">
-            {music.hq ? <Tag type={Type.HQ} /> : null}
-            {music.ac ? <Tag type={Type.AC} /> : null}
-          </div>
-        ) : null}
         <div className="name">{music.name}</div>
         {music.aliases.length ? (
           <div className="aliases">
