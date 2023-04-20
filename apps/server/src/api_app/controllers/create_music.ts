@@ -76,8 +76,7 @@ export default async (ctx: Context) => {
   });
   await getDB().run(
     `
-      INSERT INTO
-      music_singer_relation ( musicId, singerId )
+      INSERT INTO music_singer_relation( musicId, singerId )
       VALUES ${singerIdList.map(() => '( ?, ? )').join(', ')}
     `,
     singerIdList.map((singerId) => [id, singerId]).flat(Infinity),

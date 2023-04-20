@@ -1,14 +1,10 @@
 export const SEARCH_KEYWORD_MAX_LENGTH = 32;
 
+export const ID_LENGTH = 8;
+
 export enum MusicSearchType {
   COMPOSITE = 'composite',
   LYRIC = 'lyric',
-}
-
-export enum MusicDownloadType {
-  SQ = 'sq',
-  HQ = 'hq',
-  AC = 'ac',
 }
 
 export enum MusicType {

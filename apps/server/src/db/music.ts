@@ -1,4 +1,4 @@
-import { MusicType } from '#/constants/music';
+import { ID_LENGTH, MusicType } from '#/constants/music';
 import generateRandomString from '#/utils/generate_random_string';
 import { getDB } from '.';
 import { MusicProperty, Music } from '../constants/db_definition';
@@ -46,11 +46,10 @@ export async function createMusic({
   sq: string;
   createUserId: string;
 }) {
-  const id = generateRandomString(8, false);
+  const id = generateRandomString(ID_LENGTH, false);
   await getDB().run(
     `
-      INSERT INTO
-      music ( id, type, name, sq, createUserId, createTimestamp )
+      INSERT INTO music( id, type, name, sq, createUserId, createTimestamp )
       VALUES( ?, ?, ?, ?, ?, ? )
     `,
     [id, type, name, sq, createUserId, Date.now()],
