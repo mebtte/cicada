@@ -54,20 +54,26 @@
 
 ### Docker
 
-知了支持 Docker 镜像部署:
+知了支持 Docker 部署, **启动容器之前请先参考上面准备知了的配置文件**, 下面例子中配置文件位于 `$HOME/cicada/config.json`, 需要注意的是首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外在 Docker 中知了会忽略配置文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项.
+
+> [0.76.0](https://github.com/mebtte/cicada/releases/tag/0.76.0) 版本以及之后的版本 Docker 镜像中配置文件从 `/config.json` 移至 `/config/cicada.json`, 为了兼容旧版本, 当 `/config/cicada.json` 不存在时会自动查找 `/config.json`. 此兼容将会在 v1 版本移除.
 
 ```sh
 docker run \
   -d \
   --restart=always \
   -p 8000:80 \
-  -v $HOME/cicada-data:/data \
-  -v $HOME/cicada-config.json:/config.json:ro \
+  -v $HOME/cicada/data:/data \
+  -v $HOME/cicada/config.json:/config/cicada.json:ro \
   --name cicada \
   mebtte/cicada
 ```
 
-需要注意的是, 使用 Docker 镜像首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外 Docker 镜像下会忽略 config 文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项.
+- `-p 8000:80` 表示宿主的 `8000` 端口映射容器的 `80` 端口, 知了容器使用 `80` 端口提供服务, 可以使用 `-p {port}:80` 映射其他端口
+- `-v $HOME/cicada/data:/data` 表示宿主的 `$HOME/cicada/data` 目录映射容器的 `/data` 目录, 知了容器使用 `/data` 目录保存数据
+- `-v $HOME/cicada/config.json:/config/cicada.json:ro` 表示宿主的 `$HOME/cicada/config.json` 文件映射容器的 `/config/cicada.json` 文件, 知了容器配置文件位于 `/config/cicada.json`, `ro` 表示只读. 如果你的环境不支持文件映射, 当前例子可以使用目录映射 `-v $HOME/cicada:/config:ro`
+
+如果希望知了容器不以 `root` 用户运行, 可以使用 `-u {uid}:{gid}` 进行用户映射.
 
 ### Docker compose
 
@@ -83,9 +89,9 @@ services:
 
     image: mebtte/cicada
     ports:
-      - 80:80
+      - 8000:80
     volumes:
-      - /path/config.json:/config.json:ro
+      - /path/config.json:/config/cicada.json:ro
       - /path/data:/data
 ```
 
