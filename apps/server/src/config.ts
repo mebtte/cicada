@@ -89,7 +89,16 @@ export function getAssetDirectory(assetType?: AssetType) {
 
 export function updateConfigFromFile(filePath: string) {
   if (!fs.existsSync(filePath)) {
-    return exitWithMessage(`配置文件「${filePath}」不存在`);
+    /**
+     * 兼容旧版本中 docker 配置文件位于 /config.json
+     * v1 版本可移除此兼容
+     * @author mebtte<hi@mebtte.com>
+     */
+    if (!fs.existsSync('/config.json')) {
+      return exitWithMessage(`配置文件「${filePath}」不存在`);
+    }
+    // eslint-disable-next-line no-param-reassign
+    filePath = '/config.json';
   }
 
   let configFromFile: Partial<Config> = {};
