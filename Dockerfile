@@ -6,7 +6,7 @@ RUN apt-get update -y \
   && rm -rf /var/lib/apt/lists/*
 
 COPY build/cicada /usr/bin/
-VOLUME [ "/data", "/config.json" ]
+VOLUME [ "/data", "/config" ]
 CMD cicada start -c /config/cicada.json --data /data --port 80
 EXPOSE 80
 
