@@ -30,7 +30,7 @@ import {
   SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
 } from '#/constants/music';
 import uploadAsset from '@/server/form/upload_asset';
-import { AssetTypeV1, ASSET_TYPE_MAP_V1 } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP_V1 } from '#/constants';
 import updateMusic from '@/server/api/update_music';
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
@@ -163,7 +163,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                 }
                 const { id: assetId } = await uploadAsset(
                   cover,
-                  AssetTypeV1.MUSIC_COVER,
+                  AssetType.MUSIC_COVER,
                 );
                 await updateMusic({
                   id: music.id,
@@ -338,15 +338,15 @@ function EditMenu({ music }: { music: MusicDetail }) {
               type: EditDialogType.FILE,
               label: '音乐文件',
               title: '编辑音乐文件',
-              acceptTypes: ASSET_TYPE_MAP_V1[AssetTypeV1.MUSIC].acceptTypes,
+              acceptTypes: ASSET_TYPE_MAP_V1[AssetType.MUSIC].acceptTypes,
               placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP_V1[
-                AssetTypeV1.MUSIC
+                AssetType.MUSIC
               ].acceptTypes.join(',')}`,
               onSubmit: async (file: File | null) => {
                 if (!file) {
                   throw new Error('请选择文件');
                 }
-                const { id } = await uploadAsset(file, AssetTypeV1.MUSIC);
+                const { id } = await uploadAsset(file, AssetType.MUSIC);
                 await updateMusic({
                   id: music.id,
                   key: AllowUpdateKey.ASSET,

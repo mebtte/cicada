@@ -54,6 +54,7 @@
     "koa": "^2.13.4",
     "koa-etag": "^4.0.0",
     "md5": "^2.3.0",
+    "mediainfo.js": "^0.1.9",
     "multiparty": "^4.2.3",
     "nanospinner": "^1.1.0",
     "node-schedule": "^2.1.0",

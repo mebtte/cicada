@@ -3,7 +3,7 @@ import os from 'os';
 import spawnAsync from '@expo/spawn-async';
 import util from 'util';
 import {
-  AssetTypeV1,
+  AssetType,
   ASSET_TYPES_V1,
   ASSET_TYPE_MAP_V1,
   PathPrefix,
@@ -23,41 +23,41 @@ const appendFileAsync = util.promisify(fs.appendFile);
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 const ASSET_TYPE_MAP_OPTION: Record<
-  AssetTypeV1,
+  AssetType,
   {
     handleAsset: (file: File) => Promise<Buffer>;
     generateId: (buffer: Buffer) => string;
   }
 > = {
-  [AssetTypeV1.SINGER_AVATAR]: {
+  [AssetType.SINGER_AVATAR]: {
     handleAsset: (file) => readFileAsync(file.path),
     generateId: (buffer) => {
       const hash = md5(buffer);
       return `${hash}.jpeg`;
     },
   },
-  [AssetTypeV1.MUSICBILL_COVER]: {
+  [AssetType.MUSICBILL_COVER]: {
     handleAsset: (file) => readFileAsync(file.path),
     generateId: (buffer) => {
       const hash = md5(buffer);
       return `${hash}.jpeg`;
     },
   },
-  [AssetTypeV1.MUSIC_COVER]: {
+  [AssetType.MUSIC_COVER]: {
     handleAsset: (file) => readFileAsync(file.path),
     generateId: (buffer) => {
       const hash = md5(buffer);
       return `${hash}.jpeg`;
     },
   },
-  [AssetTypeV1.USER_AVATAR]: {
+  [AssetType.USER_AVATAR]: {
     handleAsset: (file) => readFileAsync(file.path),
     generateId: (buffer) => {
       const hash = md5(buffer);
       return `${hash}.jpeg`;
     },
   },
-  [AssetTypeV1.MUSIC]: {
+  [AssetType.MUSIC]: {
     handleAsset: async (file) => {
       let ffmpegPath: string;
       try {
@@ -104,7 +104,7 @@ const ASSET_TYPE_MAP_OPTION: Record<
 export default async (ctx: Context) => {
   const { field, file } = await parseFormdata<'assetType', 'asset'>(ctx.req);
   // @ts-expect-error
-  const assetType: AssetTypeV1 | undefined = field.assetType
+  const assetType: AssetType | undefined = field.assetType
     ? field.assetType[0]
     : undefined;
   const asset = file.asset ? file.asset[0] : undefined;

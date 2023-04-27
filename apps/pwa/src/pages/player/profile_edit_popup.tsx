@@ -8,7 +8,7 @@ import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import uploadAsset from '@/server/form/upload_asset';
-import { AssetTypeV1 } from '#/constants';
+import { AssetType } from '#/constants';
 import updateProfile from '@/server/api/update_profile';
 import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
 import globalEventemitter, {
@@ -119,10 +119,7 @@ function ProfileEditPopup() {
                   throw new Error('请选择头像');
                 }
 
-                const { id } = await uploadAsset(
-                  avatar,
-                  AssetTypeV1.USER_AVATAR,
-                );
+                const { id } = await uploadAsset(avatar, AssetType.USER_AVATAR);
                 await updateProfile({ key: AllowUpdateKey.AVATAR, value: id });
 
                 globalEventemitter.emit(GlobalEventType.RELOAD_PROFILE, null);

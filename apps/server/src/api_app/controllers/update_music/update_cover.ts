@@ -1,4 +1,4 @@
-import { AssetTypeV1 } from '#/constants';
+import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import exist from '#/utils/exist';
 import { getAssetFilePath } from '@/platform/asset';
@@ -18,7 +18,7 @@ export default async ({ ctx, music, value }: Parameter) => {
 
   if (value.length) {
     const assetExist = await exist(
-      getAssetFilePath(value, AssetTypeV1.MUSIC_COVER),
+      getAssetFilePath(value, AssetType.MUSIC_COVER),
     );
     if (!assetExist) {
       return ctx.except(ExceptionCode.ASSET_NOT_EXIST);

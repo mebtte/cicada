@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER, AssetTypeV1 } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import {
   getMusicbillById,
@@ -86,7 +86,7 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...excludeProperty(musicbill, [MusicbillProperty.USER_ID]),
-    cover: getAssetPublicPath(musicbill.cover, AssetTypeV1.MUSICBILL_COVER),
+    cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],

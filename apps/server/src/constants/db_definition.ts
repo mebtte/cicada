@@ -69,6 +69,7 @@ export enum MusicProperty {
   HEAT = 'heat',
   CREATE_USER_ID = 'createUserId',
   CREATE_TIMESTAMP = 'createTimestamp',
+  DURATION = 'duration',
 }
 export type Music = {
   [MusicProperty.ID]: string;
@@ -80,4 +81,5 @@ export type Music = {
   [MusicProperty.HEAT]: number;
   [MusicProperty.CREATE_USER_ID]: string;
   [MusicProperty.CREATE_TIMESTAMP]: number;
+  [MusicProperty.DURATION]: number;
 };

@@ -14,6 +14,10 @@ export enum PathPrefix {
   BASE = 'base',
 }
 
+/**
+ * v2 可以删除
+ * @author mebtte<hi@mebtte.com>
+ */
 export enum AssetTypeV0 {
   USER_AVATAR = 'user_avatar',
   MUSICBILL_COVER = 'musicbill_cover',
@@ -81,38 +85,38 @@ export const ASSET_TYPE_MAP_V0: Record<
   },
 };
 
-export enum AssetTypeV1 {
+export enum AssetType {
   USER_AVATAR = 'user_avatar',
   MUSICBILL_COVER = 'musicbill_cover',
   SINGER_AVATAR = 'singer_avatar',
   MUSIC_COVER = 'music_cover',
   MUSIC = 'music',
 }
-export const ASSET_TYPES_V1 = Object.values(AssetTypeV1);
+export const ASSET_TYPES_V1 = Object.values(AssetType);
 export const ASSET_TYPE_MAP_V1: Record<
-  AssetTypeV1,
+  AssetType,
   {
     acceptTypes: string[];
     maxSize: number;
   }
 > = {
-  [AssetTypeV1.SINGER_AVATAR]: {
+  [AssetType.SINGER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
     maxSize: 1024 * 1024 * 1,
   },
-  [AssetTypeV1.MUSICBILL_COVER]: {
+  [AssetType.MUSICBILL_COVER]: {
     acceptTypes: ['image/jpeg'],
     maxSize: 1024 * 1024 * 1,
   },
-  [AssetTypeV1.MUSIC_COVER]: {
+  [AssetType.MUSIC_COVER]: {
     acceptTypes: ['image/jpeg'],
     maxSize: 1024 * 1024 * 1,
   },
-  [AssetTypeV1.USER_AVATAR]: {
+  [AssetType.USER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
     maxSize: 1024 * 1024 * 1,
   },
-  [AssetTypeV1.MUSIC]: {
+  [AssetType.MUSIC]: {
     acceptTypes: [
       'audio/wav',
       'audio/ogg',

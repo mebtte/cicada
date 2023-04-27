@@ -1,4 +1,4 @@
-import { AssetTypeV1 } from '#/constants';
+import { AssetType } from '#/constants';
 import { getUserMusicbillList, Property } from '@/db/musicbill';
 import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
@@ -15,7 +15,7 @@ export default async (ctx: Context) => {
   return ctx.success(
     musicbillList.map((mb) => ({
       ...mb,
-      cover: getAssetPublicPath(mb.cover, AssetTypeV1.MUSICBILL_COVER),
+      cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
     })),
   );
 };

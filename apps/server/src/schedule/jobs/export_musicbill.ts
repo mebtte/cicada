@@ -8,7 +8,7 @@ import { getUserById } from '@/db/user';
 import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
 import { sendEmail } from '@/platform/email';
 import day from '#/utils/day';
-import { AssetTypeV1, BRAND_NAME, DOWNLOAD_TTL, PathPrefix } from '#/constants';
+import { AssetType, BRAND_NAME, DOWNLOAD_TTL, PathPrefix } from '#/constants';
 import {
   getSingerListInMusicIds,
   Singer,
@@ -132,7 +132,7 @@ async function exportMusicbill(
     musicList.map((m) => {
       const singers = musicIdMapSingerList[m.id];
       return {
-        path: getAssetFilePath(m.asset, AssetTypeV1.MUSIC),
+        path: getAssetFilePath(m.asset, AssetType.MUSIC),
         name: formatMusicFilename({
           name: m.name,
           singerNames: singers.map((s) => s.name),

@@ -1,6 +1,6 @@
 import { getDB } from '@/db';
 import { getAssetPublicPath } from '@/platform/asset';
-import { AssetTypeV1 } from '#/constants';
+import { AssetType } from '#/constants';
 import { User } from '@/constants/db_definition';
 import { Context } from '../constants';
 
@@ -26,7 +26,7 @@ export default async (ctx: Context) => {
   return ctx.success(
     userList.map((user) => ({
       ...user,
-      avatar: getAssetPublicPath(user.avatar, AssetTypeV1.USER_AVATAR),
+      avatar: getAssetPublicPath(user.avatar, AssetType.USER_AVATAR),
     })),
   );
 };

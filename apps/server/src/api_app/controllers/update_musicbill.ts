@@ -6,7 +6,7 @@ import {
   updateMusicbill,
 } from '@/db/musicbill';
 import { getAssetFilePath } from '@/platform/asset';
-import { AssetTypeV1 } from '#/constants';
+import { AssetType } from '#/constants';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import exist from '#/utils/exist';
 import { Context } from '../constants';
@@ -53,7 +53,7 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
     }
     const assetExist = await exist(
-      getAssetFilePath(cover, AssetTypeV1.MUSICBILL_COVER),
+      getAssetFilePath(cover, AssetType.MUSICBILL_COVER),
     );
     if (!assetExist) {
       return ctx.except(ExceptionCode.ASSET_NOT_EXIST);

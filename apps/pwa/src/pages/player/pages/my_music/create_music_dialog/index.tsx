@@ -22,7 +22,7 @@ import MultipleSelect, {
   Option as MultipleSelectOption,
 } from '@/components/multiple_select';
 import searchSingerRequest from '@/server/api/search_singer';
-import { AssetTypeV1, ASSET_TYPE_MAP_V1 } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP_V1 } from '#/constants';
 import useEvent from '@/utils/use_event';
 import notice from '@/utils/notice';
 import uploadAsset from '@/server/form/upload_asset';
@@ -140,7 +140,7 @@ function CreateMusicDialog() {
 
     setLoading(true);
     try {
-      const asset = await uploadAsset(sq, AssetTypeV1.MUSIC);
+      const asset = await uploadAsset(sq, AssetType.MUSIC);
       const id = await createMusic({
         name: trimmedName,
         singerIds: singerList.map((s) => s.id),
@@ -154,7 +154,7 @@ function CreateMusicDialog() {
           const coverBlob = await base64ToCover(pb);
           const { id: assetId } = await uploadAsset(
             coverBlob,
-            AssetTypeV1.MUSIC_COVER,
+            AssetType.MUSIC_COVER,
             0,
           );
           await updateMusic({
@@ -221,9 +221,9 @@ function CreateMusicDialog() {
             value={sq}
             onChange={onSqChange}
             disabled={loading}
-            acceptTypes={ASSET_TYPE_MAP_V1[AssetTypeV1.MUSIC].acceptTypes}
+            acceptTypes={ASSET_TYPE_MAP_V1[AssetType.MUSIC].acceptTypes}
             placeholder={`选择文件, 支持以下格式 ${ASSET_TYPE_MAP_V1[
-              AssetTypeV1.MUSIC
+              AssetType.MUSIC
             ].acceptTypes.join(', ')}`}
           />
           <MultipleSelect<Singer>

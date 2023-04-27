@@ -1,4 +1,4 @@
-import { AssetTypeV1 } from '#/constants';
+import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH, MUSIC_TYPES, MusicType } from '#/constants/music';
 import exist from '#/utils/exist';
@@ -32,7 +32,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const sqExist = await exist(getAssetFilePath(sq, AssetTypeV1.MUSIC));
+  const sqExist = await exist(getAssetFilePath(sq, AssetType.MUSIC));
   if (!sqExist) {
     return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
   }

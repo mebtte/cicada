@@ -12,7 +12,7 @@ import {
 import updateMusicbill from '@/server/api/update_musicbill';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import uploadAsset from '@/server/form/upload_asset';
-import { AssetTypeV1 } from '#/constants';
+import { AssetType } from '#/constants';
 import dialog from '@/utils/dialog';
 import logger from '#/utils/logger';
 import notice from '@/utils/notice';
@@ -79,7 +79,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
 
                 const { id } = await uploadAsset(
                   cover,
-                  AssetTypeV1.MUSICBILL_COVER,
+                  AssetType.MUSICBILL_COVER,
                 );
                 await updateMusicbill({
                   id: musicbill.id,

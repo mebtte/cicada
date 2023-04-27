@@ -1,9 +1,9 @@
-import { AssetTypeV0, AssetTypeV1, PathPrefix } from '#/constants';
+import { AssetTypeV0, AssetType, PathPrefix } from '#/constants';
 import { getAssetDirectory } from '@/config';
 
 export function getAssetFilePath(
   asset: string,
-  assetType: AssetTypeV0 | AssetTypeV1,
+  assetType: AssetTypeV0 | AssetType,
 ) {
   if (!asset.length) {
     return '';
@@ -13,7 +13,7 @@ export function getAssetFilePath(
 
 export function getAssetPublicPath(
   asset: string,
-  assetType: AssetTypeV0 | AssetTypeV1,
+  assetType: AssetTypeV0 | AssetType,
 ) {
   if (!asset.length) {
     return '';

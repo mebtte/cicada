@@ -7,7 +7,7 @@ import { CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
 import { CacheName } from '@/constants/cache';
-import { AssetTypeV1, PathPrefix } from '#/constants';
+import { AssetType, PathPrefix } from '#/constants';
 import parseSearch from './utils/parse_search';
 import definition from './definition';
 import { Query } from './constants';
@@ -66,7 +66,7 @@ self.addEventListener('activate', () => {
  * 详情查看 https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
  * @author mebtte<hi@mebtte.com>
  */
-const MEDIA_ASSET_TYPES = [AssetTypeV1.MUSIC];
+const MEDIA_ASSET_TYPES = [AssetType.MUSIC];
 function isMediaAsset(url: URL) {
   for (const mediaAssetType of MEDIA_ASSET_TYPES) {
     if (url.pathname.includes(`/${mediaAssetType}/`)) {

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { EMAIL } from '#/constants/regexp';
 import question from '#/utils/question';
-import { AssetTypeV1 } from '#/constants';
+import { AssetType } from '#/constants';
 import DB from './utils/db';
 import {
   getAssetDirectory,
@@ -15,13 +15,14 @@ import {
   getDataVersionPath,
 } from './config';
 import exitWithMessage from './utils/exit_with_message';
-import { DATA_VERSION } from './constants';
 import {
   MusicProperty,
   MUSIC_TABLE_NAME,
   UserProperty,
   USER_TABLE_NAME,
 } from './constants/db_definition';
+
+const DATA_VERSION = 1;
 
 function mkdirIfNotExist(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -43,7 +44,7 @@ export default async () => {
     getCacheDirectory(),
 
     getAssetDirectory(),
-    ...Object.values(AssetTypeV1).map((at) => getAssetDirectory(at)),
+    ...Object.values(AssetType).map((at) => getAssetDirectory(at)),
   ];
   for (const directory of directories) {
     mkdirIfNotExist(directory);
@@ -58,10 +59,15 @@ export default async () => {
       fs.readFileSync(getDataVersionPath()).toString().replace(/\s/gm, ''),
     );
     if (dataVersion !== DATA_VERSION) {
+      if (dataVersion < DATA_VERSION) {
+        return exitWithMessage(
+          `当前数据版本为 v${dataVersion}, 请使用 v${
+            dataVersion + 1
+          } 版本的知了通过 [ cicada data-upgrade <data> ] 升级数据后再启动服务`,
+        );
+      }
       return exitWithMessage(
-        `当前数据版本为 v${dataVersion}, 请使用 v${
-          dataVersion + 1
-        } 版本的知了通过 [ cicada data-upgrade <data> ] 升级数据后再启动服务`,
+        `数据版本大于 v${DATA_VERSION}, 请使用对应版本的知了提供服务`,
       );
     }
   } else {
@@ -144,6 +150,7 @@ export default async () => {
         ${MusicProperty.HEAT} INTEGER NOT NULL DEFAULT 0,
         ${MusicProperty.CREATE_USER_ID} TEXT NOT NULL,
         ${MusicProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
+        ${MusicProperty.DURATION} INTEGER NOT NULL,
 
         CONSTRAINT fk_${TABLE_USER} FOREIGN KEY ( ${MusicProperty.CREATE_USER_ID} ) REFERENCES ${TABLE_USER} ( ${UserProperty.ID} )
       )
