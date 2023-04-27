@@ -10,13 +10,9 @@ import {
   MusicPropertyV0,
   MusicV0,
   MUSIC_TABLE_NAME,
-  Music,
-  MusicProperty,
 } from '@/constants/db_definition';
 import generateRandomString from '#/utils/generate_random_string';
 import { ID_LENGTH } from '#/constants/music';
-import getAudioInfo from '@/utils/get_audio_info';
-import { getAssetFilePath } from '@/platform/asset';
 
 async function combineMusicAsset() {
   const musicSqDirectory = getAssetDirectory(AssetTypeV0.MUSIC_SQ);
@@ -140,75 +136,6 @@ async function renameSq() {
   );
 }
 
-async function addMusicDuration() {
-  await getDB().run(
-    `
-      ALTER TABLE music ADD COLUMN duration INTEGER DEFAULT 0
-    `,
-  );
-  const musicList = await getDB().all<
-    Pick<Music, MusicProperty.ID | MusicProperty.ASSET>
-  >(
-    `
-      SELECT
-        id,
-        asset
-      FROM music
-    `,
-    [],
-  );
-  for (const music of musicList) {
-    try {
-      const info = await getAudioInfo(
-        getAssetFilePath(music.asset, AssetType.MUSIC),
-      );
-      await getDB().run(
-        `
-        UPDATE music SET duration = ?
-        WHERE id = ?
-      `,
-        [info.duration, music.id],
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  await getDB().run(
-    `
-      CREATE TABLE music_tmp (
-        id TEXT PRIMARY KEY NOT NULL,
-        type INTEGER NOT NULL,
-        name TEXT NOT NULL,
-        aliases TEXT NOT NULL DEFAULT '',
-        cover TEXT NOT NULL DEFAULT '',
-        asset TEXT NOT NULL,
-        heat INTEGER NOT NULL DEFAULT 0,
-        createUserId TEXT NOT NULL,
-        createTimestamp INTEGER NOT NULL,
-        duration INTEGER NOT NULL,
-
-        CONSTRAINT fk_user FOREIGN KEY ( createUserId ) REFERENCES user ( id )
-      )
-    `,
-  );
-  await getDB().run(
-    `
-      INSERT INTO music_tmp SELECT * FROM music
-    `,
-  );
-  await getDB().run(
-    `
-      DROP TABLE music
-    `,
-  );
-  await getDB().run(
-    `
-      ALTER TABLE music_tmp RENAME TO music
-    `,
-  );
-}
-
 async function writeNewVersion() {
   await fsPromises.writeFile(getDataVersionPath(), '1');
 }
@@ -268,11 +195,6 @@ export default async ({ data }: { data: string }) => {
   spinner.start({ text: '正在重命名 sq 为 asset...' });
   await renameSq();
   spinner.success({ text: 'sq 已重命名为 asset' });
-
-  spinner = createSpinner();
-  spinner.start({ text: '正在添加 music.duration...' });
-  await addMusicDuration();
-  spinner.success({ text: 'music.duration 已添加' });
 
   spinner = createSpinner();
   spinner.start({ text: '正在写入新的版本号...' });
