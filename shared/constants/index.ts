@@ -128,7 +128,7 @@ export const ASSET_TYPE_MAP_V1: Record<
       'audio/mp4',
       'video/mp4',
     ],
-    maxSize: 1024 * 1024 * 50,
+    maxSize: 1024 * 1024 * 200,
   },
 };
 

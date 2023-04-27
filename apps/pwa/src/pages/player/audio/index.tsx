@@ -52,9 +52,7 @@ class Audio extends React.PureComponent<Props, {}> {
     const { queueMusic } = this.props;
     if (prevProps.queueMusic.pid !== queueMusic.pid) {
       this.uploadPlayRecord(prevProps.queueMusic);
-      if (window.caches) {
-        this.createCache(prevProps.queueMusic);
-      }
+      this.createCache(prevProps.queueMusic);
     }
     return null;
   }
@@ -163,7 +161,7 @@ class Audio extends React.PureComponent<Props, {}> {
     const playedSeconds = this.getPlayedSeconeds();
     const percent = duration ? playedSeconds / duration : 0;
 
-    if (definition.WITH_SW && percent > 0.75) {
+    if (definition.WITH_SW && window.caches && percent > 0.75) {
       window.caches.open(CacheName.ASSET_MEDIA).then(async (cache) => {
         const exist = await cache.match(music.asset);
         if (!exist) {
