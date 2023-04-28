@@ -1,5 +1,7 @@
 import excludeProperty from '#/utils/exclude_property';
 import { UserProperty } from '@/constants/db_definition';
+import { updateUser } from '@/db/user';
+import logger from '@/utils/logger';
 import { Context } from '../constants';
 
 const PROFILE_PROPERTIES = [
@@ -18,5 +20,17 @@ const NOT_PROFILE_PROPERTIES = Object.values(UserProperty).filter(
   (p) => !PROFILE_PROPERTIES.includes(p),
 );
 
-export default (ctx: Context) =>
-  ctx.success(excludeProperty(ctx.user, NOT_PROFILE_PROPERTIES));
+export default async (ctx: Context) => {
+  updateUser({
+    id: ctx.user.id,
+    property: UserProperty.LAST_ACTIVE_TIMESTAMP,
+    value: Date.now(),
+  }).catch((error) =>
+    logger.error({
+      label: 'api',
+      title: 'update user last_active_timestamp',
+      error,
+    }),
+  );
+  return ctx.success(excludeProperty(ctx.user, NOT_PROFILE_PROPERTIES));
+};

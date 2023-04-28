@@ -4,7 +4,7 @@ import { CSSProperties, memo } from 'react';
 import dialog from '@/utils/dialog';
 import token from '@/global_states/token';
 import { CacheName } from '@/constants/cache';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import setting from '@/global_states/setting';
 import { itemStyle } from './constants';
 

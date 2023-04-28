@@ -1,4 +1,4 @@
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import getSelfMusicList from '@/server/api/get_self_music_list';
 import useQuery from '@/utils/use_query';

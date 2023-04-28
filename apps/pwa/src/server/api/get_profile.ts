@@ -13,6 +13,7 @@ async function getProfile() {
     musicbillMaxAmount: number;
     createMusicMaxAmountPerDay: number;
     exportMusicbillMaxTimePerDay: number;
+    lastActiveTimestamp: number;
   }>({
     path: '/api/profile',
     withToken: true,

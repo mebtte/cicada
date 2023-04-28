@@ -1,4 +1,4 @@
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import getMusicPlayRecordList from '@/server/get_music_play_record_list';
 import useQuery from '@/utils/use_query';

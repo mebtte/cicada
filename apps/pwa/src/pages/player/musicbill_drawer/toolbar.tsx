@@ -8,7 +8,7 @@ import {
 } from 'react-icons/md';
 import notice from '@/utils/notice';
 import collectPublicMusicbill from '@/server/api/collect_public_musicbill';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import uncollectPublicMusicbill from '@/server/api/uncollect_public_musicbill';
 import { MINI_INFO_HEIGHT, Musicbill } from './constants';
 import playerEventemitter, {

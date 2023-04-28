@@ -144,6 +144,14 @@ async function renameSq() {
   );
 }
 
+async function addUserLastActiveTimestamp() {
+  await getDB().run(
+    `
+      ALTER TABLE user ADD lastActiveTimestamp INTEGER NOT NULL DEFAULT 0
+    `,
+  );
+}
+
 async function writeNewVersion() {
   await fsPromises.writeFile(getDataVersionPath(), '1');
 }
@@ -200,6 +208,11 @@ export default async ({ data }: { data: string }) => {
   spinner.start({ text: '正在重命名 sq 为 asset...' });
   await renameSq();
   spinner.success({ text: 'sq 已重命名为 asset' });
+
+  spinner = createSpinner();
+  spinner.start({ text: '正在添加 user.lastActiveTimestamp...' });
+  await addUserLastActiveTimestamp();
+  spinner.success({ text: 'user.lastActiveTimestamp 已添加' });
 
   spinner = createSpinner();
   spinner.start({ text: '正在写入新的版本号...' });

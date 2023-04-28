@@ -14,7 +14,7 @@ import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import uploadAsset from '@/server/form/upload_asset';
 import { AssetType } from '#/constants';
 import dialog from '@/utils/dialog';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import { CSSVariable } from '@/global_style';
 import deleteMusicbill from '@/server/api/delete_musicbill';

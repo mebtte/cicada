@@ -2,7 +2,7 @@ import p from '@/global_states/profile';
 import getProfile from '@/server/api/get_profile';
 import { useEffect } from 'react';
 import notice from '@/utils/notice';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import getRandomCover from '@/utils/get_random_cover';
 import excludeProperty from '#/utils/exclude_property';
 import e, { EventType } from '../platform/global_eventemitter';

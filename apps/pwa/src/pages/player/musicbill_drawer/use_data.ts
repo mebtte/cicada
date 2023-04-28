@@ -1,4 +1,4 @@
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import getPublicMusicbill from '@/server/api/get_public_musicbill';
 import getRandomCover from '@/utils/get_random_cover';
 import { useCallback, useEffect, useState } from 'react';

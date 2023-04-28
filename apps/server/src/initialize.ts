@@ -95,7 +95,8 @@ export default async () => {
         ${UserProperty.MUSICBILL_ORDERS_JSON} TEXT DEFAULT NULL,
         ${UserProperty.MUSICBILL_MAX_AMOUNT} INTEGER NOT NULL DEFAULT 100,
         ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY} INTEGER NOT NULL DEFAULT 10,
-        ${UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY} INTEGER NOT NULL DEFAULT 3
+        ${UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY} INTEGER NOT NULL DEFAULT 3,
+        ${UserProperty.LAST_ACTIVE_TIMESTAMP} INTEGER NOT NULL DEFAULT 0
       )
     `;
     const TABLE_CAPTCHA = `
@@ -149,8 +150,7 @@ export default async () => {
         ${MusicProperty.ASSET} TEXT NOT NULL,
         ${MusicProperty.HEAT} INTEGER NOT NULL DEFAULT 0,
         ${MusicProperty.CREATE_USER_ID} TEXT NOT NULL,
-        ${MusicProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
-        ${MusicProperty.DURATION} INTEGER NOT NULL,
+        ${MusicProperty.CREATE_TIMESTAMP} INTEGER NOT NULL
 
         CONSTRAINT fk_${TABLE_USER} FOREIGN KEY ( ${MusicProperty.CREATE_USER_ID} ) REFERENCES ${TABLE_USER} ( ${UserProperty.ID} )
       )

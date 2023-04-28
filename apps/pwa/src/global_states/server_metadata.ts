@@ -1,6 +1,6 @@
 import XState from '@/utils/x_state';
 import getMetadata from '@/server/base/get_metadata';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';

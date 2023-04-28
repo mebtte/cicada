@@ -1,7 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/utils/dialog';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import createMusicbillRequest from '@/server/api/create_musicbill';
 import createMusicbillExport from '@/server/api/create_musicbill_export';

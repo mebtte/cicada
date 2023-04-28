@@ -1,25 +1,41 @@
 import { getDB } from '@/db';
 import { getAssetPublicPath } from '@/platform/asset';
 import { AssetType } from '#/constants';
-import { User } from '@/constants/db_definition';
+import { USER_TABLE_NAME, User, UserProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const userList = await getDB().all<User>(
+  const userList = await getDB().all<
+    Pick<
+      User,
+      | UserProperty.ID
+      | UserProperty.EMAIL
+      | UserProperty.NICKNAME
+      | UserProperty.AVATAR
+      | UserProperty.JOIN_TIMESTAMP
+      | UserProperty.ADMIN
+      | UserProperty.REMARK
+      | UserProperty.MUSICBILL_MAX_AMOUNT
+      | UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
+      | UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY
+      | UserProperty.LAST_ACTIVE_TIMESTAMP
+    >
+  >(
     `
       SELECT
-        id,
-        email,
-        nickname,
-        avatar,
-        joinTimestamp,
-        admin,
-        remark,
-        musicbillMaxAmount,
-        createMusicMaxAmountPerDay,
-        exportMusicbillMaxTimePerDay
-      FROM user
-      ORDER BY joinTimestamp DESC
+        ${UserProperty.ID},
+        ${UserProperty.EMAIL},
+        ${UserProperty.NICKNAME},
+        ${UserProperty.AVATAR},
+        ${UserProperty.JOIN_TIMESTAMP},
+        ${UserProperty.ADMIN},
+        ${UserProperty.REMARK},
+        ${UserProperty.MUSICBILL_MAX_AMOUNT},
+        ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY},
+        ${UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY},
+        ${UserProperty.LAST_ACTIVE_TIMESTAMP}
+      FROM ${USER_TABLE_NAME}
+      ORDER BY ${UserProperty.JOIN_TIMESTAMP} DESC
     `,
     [],
   );

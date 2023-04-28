@@ -7,7 +7,7 @@ import p from '@/global_states/profile';
 import getProfile from '@/server/api/get_profile';
 import sleep from '#/utils/sleep';
 import storage, { Key } from '@/storage';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import Input from '@/components/input';
 import Button, { Variant } from '@/components/button';
 import getRandomCover from '@/utils/get_random_cover';

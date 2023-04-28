@@ -1,4 +1,4 @@
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import getUserDetail from '@/server/api/get_user_detail';
 import getRandomCover from '@/utils/get_random_cover';
 import { useCallback, useEffect, useState } from 'react';

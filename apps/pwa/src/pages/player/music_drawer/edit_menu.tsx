@@ -35,7 +35,7 @@ import updateMusic from '@/server/api/update_music';
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
 import deleteMusic from '@/server/api/delete_music';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { Option } from '@/components/multiple_select';
 import searchSingerRequest from '@/server/api/search_singer';
 import searchMusicRequest from '@/server/api/search_music';

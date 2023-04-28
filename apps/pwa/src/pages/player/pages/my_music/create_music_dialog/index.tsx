@@ -32,7 +32,7 @@ import updateMusic from '@/server/api/update_music';
 import getMusicFileMetadata, {
   base64ToCover,
 } from '@/utils/get_music_file_metadata';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';

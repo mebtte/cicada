@@ -9,7 +9,7 @@ import { AdminAllowUpdateKey } from '#/constants/user';
 import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import { EMAIL } from '#/constants/regexp';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { CSSVariable } from '@/global_style';
 import { ZIndex } from '../../constants';
 import { User } from './constants';

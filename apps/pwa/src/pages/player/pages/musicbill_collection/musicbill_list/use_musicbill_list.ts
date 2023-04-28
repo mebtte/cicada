@@ -1,4 +1,4 @@
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';

@@ -13,7 +13,7 @@ import {
 } from '#/constants/singer';
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {

@@ -1,8 +1,5 @@
 import * as schedule from 'node-schedule';
-import fs from 'fs';
-import util from 'util';
-import day from '#/utils/day';
-import { getLogDirectory } from '@/config';
+import logger from '@/utils/logger';
 import removeOutdatedDB from './jobs/remove_outdated_db';
 import createDBSnapshot from './jobs/create_db_snapshot';
 import cleanOutdatedFile from './jobs/clean_outdated_file';
@@ -11,34 +8,12 @@ import removeNoMusicSinger from './jobs/remove_no_music_singer';
 import moveUnlinkedAssetToTrash from './jobs/move_unlinked_asset_to_trash';
 import updateLyricLrcContent from './jobs/update_lyric_lrc_content';
 
-const getTimeString = () => {
-  const now = day();
-  const date = now.format('YYYYMMDD');
-  const time = now.format('HH:mm:ss.SSS');
-  return { date, time };
-};
-const appendFileAysnc = util.promisify(fs.appendFile);
-const onRun = (job: string) => {
-  const timeString = getTimeString();
-  appendFileAysnc(
-    `${getLogDirectory()}/schedule_emit_${timeString.date}.log`,
-    `[${timeString.time}] ${job}\n`,
-  );
-};
-const onError = ({ job, error }: { job: string; error: Error }) => {
-  const timeString = getTimeString();
-  appendFileAysnc(
-    `${getLogDirectory()}/schedule_error_${timeString.date}.log`,
-    `[${timeString.time}] ${job}\n${error.stack}\n\n`,
-  );
-};
-const onFinish = (job: string) => {
-  const timeString = getTimeString();
-  appendFileAysnc(
-    `${getLogDirectory()}/schedule_emit_${timeString.date}.log`,
-    `[${timeString.time}] ${job} done\n`,
-  );
-};
+const onRun = (job: string) =>
+  logger.info({ label: 'schedule', title: job, message: 'start' });
+const onError = ({ job, error }: { job: string; error: Error }) =>
+  logger.error({ label: 'schedule', title: job, error });
+const onFinish = (job: string) =>
+  logger.info({ label: 'schedule', title: job, message: 'finish' });
 
 interface Job {
   name: string;

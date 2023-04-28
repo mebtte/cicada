@@ -1,5 +1,5 @@
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import searchMusic from '@/server/api/search_music';
 import useQuery from '@/utils/use_query';

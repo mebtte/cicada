@@ -1,6 +1,6 @@
 import day from '#/utils/day';
 import excludeProperty from '#/utils/exclude_property';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import getSingerDetail from '@/server/api/get_singer_detail';
 import getRandomCover from '@/utils/get_random_cover';
 import { useCallback, useEffect, useState } from 'react';
