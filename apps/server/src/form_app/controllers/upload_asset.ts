@@ -1,6 +1,4 @@
 import fs from 'fs';
-import os from 'os';
-import spawnAsync from '@expo/spawn-async';
 import util from 'util';
 import {
   AssetType,
@@ -10,8 +8,6 @@ import {
 } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import parseFormdata, { File } from '@/utils/parse_formdata';
-import which from 'which';
-import generateRandomString from '#/utils/generate_random_string';
 import fileType from 'file-type';
 import md5 from 'md5';
 import { getAssetPublicPath } from '@/platform/asset';
@@ -58,42 +54,7 @@ const ASSET_TYPE_MAP_OPTION: Record<
     },
   },
   [AssetType.MUSIC]: {
-    handleAsset: async (file) => {
-      let ffmpegPath: string;
-      try {
-        ffmpegPath = await which('ffmpeg');
-      } catch (error) {
-        ffmpegPath = '';
-      }
-      if (ffmpegPath) {
-        const targetPath = `${os.tmpdir()}/${generateRandomString(
-          10,
-          false,
-        )}.m4a`;
-        await spawnAsync(ffmpegPath, [
-          '-y',
-          '-i',
-          file.path,
-
-          // 移除封面和其他元数据
-          '-map_metadata',
-          '-1',
-          '-q',
-          '1',
-
-          '-map',
-          'a',
-
-          // 码率
-          '-ab',
-          '192000',
-
-          targetPath,
-        ]);
-        return readFileAsync(targetPath);
-      }
-      return readFileAsync(file.path);
-    },
+    handleAsset: async (file) => readFileAsync(file.path),
     generateId: (buffer) => {
       const hash = md5(buffer);
       return `${hash}.m4a`;

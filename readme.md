@@ -7,7 +7,7 @@
 
 知了, 支持多用户的开源音乐服务.
 
-> 知了已升级到 v1 版本, 如果从 v0 升级到 v1, 请通过 `cicada data-upgrade <data>` 升级数据后再启动服务, 详细变化可以查看[这里](./apps/server/src/commands/data_upgrade.ts)
+> 知了已升级到 v1 版本, v0 版本请通过 `cicada data-upgrade <data>` 升级数据后再启动服务, 详细变化可以查看[这里](./apps/server/src/commands/data_upgrade.ts). Docker 镜像也同步升级到 v1, 如果想继续使用 v0 版本的镜像请使用 `mebtte/cicada:v0`.
 
 ![](./docs/thumbnail_1.png)
 ![](./docs/thumbnail_2.png)

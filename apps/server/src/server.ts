@@ -10,7 +10,6 @@ import {
   Config,
   updateConfig,
 } from './config';
-import requirementCheck from './requirement_check';
 import initialize from './initialize';
 import schedule from './schedule';
 import { getAssetApp } from './asset_app';
@@ -43,8 +42,6 @@ async function start({
   }
 
   await initialize();
-
-  requirementCheck();
 
   const config = getConfig();
   const SECRET_CONFIG_KEYS: (keyof Config)[] = ['emailPass'];

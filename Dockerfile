@@ -1,10 +1,5 @@
 FROM ubuntu
 
-RUN apt-get update -y \
-  && apt-get install -y ffmpeg \
-  && apt-get autoclean \
-  && rm -rf /var/lib/apt/lists/*
-
 COPY build/cicada /usr/bin/
 VOLUME [ "/data", "/config" ]
 CMD cicada start -c /config/cicada.json --data /data --port 80

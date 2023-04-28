@@ -4,20 +4,15 @@ import { createSpinner, Spinner } from 'nanospinner';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
 import exitWithMessage from '@/utils/exit_with_message';
-import { AssetTypeV0, AssetType } from '#/constants';
+import { AssetType } from '#/constants';
 import { getDB } from '@/db';
-import {
-  MusicPropertyV0,
-  MusicV0,
-  MUSIC_TABLE_NAME,
-} from '@/constants/db_definition';
 import generateRandomString from '#/utils/generate_random_string';
-import { ID_LENGTH } from '#/constants/music';
+import { ID_LENGTH, MusicType } from '#/constants/music';
 
 async function combineMusicAsset() {
-  const musicSqDirectory = getAssetDirectory(AssetTypeV0.MUSIC_SQ);
+  const musicSqDirectory = `${getAssetDirectory()}/music_sq`;
 
-  const musicAcDirectory = getAssetDirectory(AssetTypeV0.MUSIC_AC);
+  const musicAcDirectory = `${getAssetDirectory()}/music_ac`;
   const acs = await fsPromises.readdir(musicAcDirectory);
   for (const ac of acs) {
     await fsPromises.cp(
@@ -27,7 +22,7 @@ async function combineMusicAsset() {
     );
   }
 
-  const musicHqDirectory = getAssetDirectory(AssetTypeV0.MUSIC_HQ);
+  const musicHqDirectory = `${getAssetDirectory()}/music_hq`;
   const hqs = await fsPromises.readdir(musicHqDirectory);
   for (const hq of hqs) {
     await fsPromises.cp(
@@ -45,12 +40,21 @@ async function combineMusicAsset() {
 }
 
 async function separateMusicAc() {
-  const acMusicList = await getDB().all<MusicV0>(
+  const acMusicList = await getDB().all<{
+    id: string;
+    type: MusicType;
+    name: string;
+    ac: string;
+    createUserId: string;
+    createTimestamp: number;
+    aliases: string;
+    cover: string;
+  }>(
     `
       SELECT
         *
-      FROM ${MUSIC_TABLE_NAME}
-      WHERE ${MusicPropertyV0.AC} != ''
+      FROM music
+      WHERE ac != ''
     `,
     [],
   );
@@ -93,10 +97,14 @@ async function separateMusicAc() {
 }
 
 async function migrateHqToSq() {
-  const hqMusicList = await getDB().all<MusicV0>(
+  const hqMusicList = await getDB().all<{
+    id: string;
+    hq: string;
+  }>(
     `
       SELECT
-        *
+        id,
+        hq
       FROM music
       WHERE hq != ''
     `,
@@ -150,9 +158,6 @@ export default async ({ data }: { data: string }) => {
     fs.readFileSync(getDataVersionPath()).toString().replace(/\s/gm, ''),
   );
   if (dataVersion !== 0) {
-    if (dataVersion === 1) {
-      return exitWithMessage('数据已经是 v1 版本, 无需升级');
-    }
     return exitWithMessage('当前版本的知了只支持升级 v0 版本的数据');
   }
 

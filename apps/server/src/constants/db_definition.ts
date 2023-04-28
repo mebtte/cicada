@@ -13,6 +13,7 @@ export enum UserProperty {
   MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
   CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
   EXPORT_MUSICBILL_MAX_TIME_PER_DAY = 'exportMusicbillMaxTimePerDay',
+  LAST_ACTIVE_TIMESTAMP = 'lastActiveTimestamp',
 }
 export type User = {
   [UserProperty.ID]: string;
@@ -26,39 +27,10 @@ export type User = {
   [UserProperty.MUSICBILL_MAX_AMOUNT]: number;
   [UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: number;
   [UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY]: number;
+  [UserProperty.LAST_ACTIVE_TIMESTAMP]: number;
 };
 
 export const MUSIC_TABLE_NAME = 'music';
-/**
- * v2 可移除
- * @author mebtte<hi@mebtte.com>
- */
-export enum MusicPropertyV0 {
-  ID = 'id',
-  TYPE = 'type',
-  NAME = 'name',
-  ALIASES = 'aliases',
-  COVER = 'cover',
-  SQ = 'sq',
-  HQ = 'hq',
-  AC = 'ac',
-  HEAT = 'heat',
-  CREATE_USER_ID = 'createUserId',
-  CREATE_TIMESTAMP = 'createTimestamp',
-}
-export type MusicV0 = {
-  [MusicPropertyV0.ID]: string;
-  [MusicPropertyV0.TYPE]: MusicType;
-  [MusicPropertyV0.NAME]: string;
-  [MusicPropertyV0.ALIASES]: string;
-  [MusicPropertyV0.COVER]: string;
-  [MusicPropertyV0.SQ]: string;
-  [MusicPropertyV0.HQ]: string;
-  [MusicPropertyV0.AC]: string;
-  [MusicPropertyV0.HEAT]: number;
-  [MusicPropertyV0.CREATE_USER_ID]: string;
-  [MusicPropertyV0.CREATE_TIMESTAMP]: number;
-};
 export enum MusicProperty {
   ID = 'id',
   TYPE = 'type',
