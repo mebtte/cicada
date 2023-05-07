@@ -7,7 +7,7 @@ import router from './router';
 export function getBaseApp() {
   const app = new Koa<DefaultState, Context>();
   app.use(parasite);
-  app.use(catcher);
+  app.use(catcher({ label: 'base_app' }));
   app.use(router.routes()).use(router.allowedMethods());
   return app;
 }

@@ -9,7 +9,7 @@ import router from './router';
 export function getAssetApp() {
   const app = new Koa();
   app.use(parasite);
-  app.use(catcher);
+  app.use(catcher({ label: 'asset_app' }));
   app.use(range);
   app.use(
     serve(getAssetDirectory(), {
