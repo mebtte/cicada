@@ -10,7 +10,7 @@ import storage, { Key } from '@/storage';
 import logger from '@/utils/logger';
 import Input from '@/components/input';
 import Button, { Variant } from '@/components/button';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import excludeProperty from '#/utils/exclude_property';
 import Paper from './paper';
 import Logo from './logo';
@@ -50,7 +50,7 @@ function LoginCodePanel({
         excludeProperty(
           {
             ...profile,
-            avatar: profile.avatar || getRandomCover(),
+            avatar: profile.avatar || DefaultCover,
             admin: !!profile.admin,
             musicbillOrders: profile.musicbillOrdersJSON
               ? JSON.parse(profile.musicbillOrdersJSON)

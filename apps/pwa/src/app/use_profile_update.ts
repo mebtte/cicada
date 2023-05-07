@@ -3,7 +3,7 @@ import getProfile from '@/server/api/get_profile';
 import { useEffect } from 'react';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import excludeProperty from '#/utils/exclude_property';
 import e, { EventType } from '../platform/global_eventemitter';
 
@@ -20,7 +20,7 @@ export default () => {
               excludeProperty(
                 {
                   ...newProfile,
-                  avatar: newProfile.avatar || getRandomCover(),
+                  avatar: newProfile.avatar || DefaultCover,
                   admin: !!newProfile.admin,
                   musicbillOrders: newProfile.musicbillOrdersJSON
                     ? JSON.parse(newProfile.musicbillOrdersJSON)

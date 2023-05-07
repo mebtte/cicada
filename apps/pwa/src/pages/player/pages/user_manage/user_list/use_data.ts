@@ -1,6 +1,6 @@
 import adminGetUserList from '@/server/api/admin_get_user_list';
 import { useCallback, useEffect, useState } from 'react';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import { User } from '../constants';
 import e, { EventType } from '../eventemitter';
 
@@ -26,7 +26,7 @@ export default () => {
         loading: false,
         userList: userList.map((user) => ({
           ...user,
-          avatar: user.avatar || getRandomCover(),
+          avatar: user.avatar || DefaultCover,
         })),
       });
     } catch (error) {

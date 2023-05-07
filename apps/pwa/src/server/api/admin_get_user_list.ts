@@ -5,15 +5,16 @@ async function adminGetUserList() {
   const userList = await request<
     {
       id: string;
+      email: string;
       nickname: string;
       avatar: string;
       admin: 0 | 1;
-      email: string;
       remark: string;
       joinTimestamp: number;
       musicbillMaxAmount: number;
       createMusicMaxAmountPerDay: number;
       exportMusicbillMaxTimePerDay: number;
+      lastActiveTimestamp: number;
     }[]
   >({
     path: '/api/admin/user_list',

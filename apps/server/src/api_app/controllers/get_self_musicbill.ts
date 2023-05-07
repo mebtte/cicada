@@ -12,7 +12,11 @@ import {
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetPublicPath } from '@/platform/asset';
 import { getDB } from '@/db';
-import { Music, MusicProperty } from '@/constants/db_definition';
+import {
+  Music,
+  MusicProperty,
+  MUSIC_TABLE_NAME,
+} from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -52,7 +56,7 @@ export default async (ctx: Context) => {
         m.${MusicProperty.ALIASES}
       FROM
         musicbill_music AS mm
-        LEFT JOIN music AS m ON mm.${MusicbillMusicProperty.MUSIC_ID} = m.${MusicProperty.ID}
+        LEFT JOIN ${MUSIC_TABLE_NAME} AS m ON mm.${MusicbillMusicProperty.MUSIC_ID} = m.${MusicProperty.ID}
       WHERE
         mm.${MusicbillMusicProperty.MUSICBILL_ID} = ? 
       ORDER BY

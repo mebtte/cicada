@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import getMusicDetail from '@/server/api/get_music_detail';
 import { MusicType } from '#/constants/music';
 import getLyricList from '@/server/api/get_lyric_list';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import day from '#/utils/day';
 import { MusicDetail, Lyric } from './constants';
 import playerEventemitter, {
@@ -37,20 +37,20 @@ export default (id: string) => {
         loading: false,
         music: {
           ...music,
-          cover: music.cover || getRandomCover(),
+          cover: music.cover || DefaultCover,
           lyrics,
           createTime: day(music.createTimestamp).format('YYYY-MM-DD'),
           singers: music.singers.map((s) => ({
             ...s,
-            avatar: s.avatar || getRandomCover(),
+            avatar: s.avatar || DefaultCover,
           })),
           forkFromList: music.forkFromList.map((m) => ({
             ...m,
-            cover: m.cover || getRandomCover(),
+            cover: m.cover || DefaultCover,
           })),
           forkList: music.forkList.map((m) => ({
             ...m,
-            cover: m.cover || getRandomCover(),
+            cover: m.cover || DefaultCover,
           })),
           heat: music.heat,
         },

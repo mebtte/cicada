@@ -2,7 +2,7 @@ import day from '#/utils/day';
 import excludeProperty from '#/utils/exclude_property';
 import logger from '@/utils/logger';
 import getSingerDetail from '@/server/api/get_singer_detail';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import { useCallback, useEffect, useState } from 'react';
 import { SingerDetail } from './constants';
 import playerEventemitter, {
@@ -31,7 +31,7 @@ export default (singerId: string) => {
         loading: false,
         singer: {
           ...excludeProperty(singer, ['createTimestamp']),
-          avatar: singer.avatar || getRandomCover(),
+          avatar: singer.avatar || DefaultCover,
           musicList: singer.musicList.map((music, index) => ({
             ...music,
             index: singer.musicList.length - index,

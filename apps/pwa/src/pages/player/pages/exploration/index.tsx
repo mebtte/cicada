@@ -5,7 +5,7 @@ import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import { memo } from 'react';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { Query } from '@/constants';
@@ -90,7 +90,7 @@ const Exploration = memo(
                 ))}
               </SubTitle>
             ),
-            cover: m.cover || getRandomCover(),
+            cover: m.cover || DefaultCover,
           }))}
           onItemClick={openMusicDrawer}
           onCreate={() =>
@@ -109,7 +109,7 @@ const Exploration = memo(
             title: s.name,
             subTitleRenderer: () =>
               s.aliases.length ? <SubTitle>{s.aliases[0]}</SubTitle> : null,
-            cover: s.avatar || getRandomCover(),
+            cover: s.avatar || DefaultCover,
           }))}
           onItemClick={openSingerDrawer}
           onCreate={() =>
@@ -139,7 +139,7 @@ const Exploration = memo(
                   </span>
                 </MusicbillSubTitle>
               ),
-              cover: mb.cover || getRandomCover(),
+              cover: mb.cover || DefaultCover,
             }))}
             onItemClick={openMusicbillDrawer}
           />

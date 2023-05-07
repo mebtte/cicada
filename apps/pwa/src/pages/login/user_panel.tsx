@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import p from '@/global_states/profile';
 import { Profile as ProfileType } from '@/constants/user';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import parseSearch from '@/utils/parse_search';
 import { Query } from '@/constants';
@@ -14,7 +14,7 @@ import Logo from './logo';
 
 const REDIRECT_DURATION = 5000;
 const NICKNAME_MAX_LENGTH = 10;
-const DEFAULT_AVATAR = getRandomCover();
+const DEFAULT_AVATAR = DefaultCover;
 const Style = styled(Paper)`
   display: flex;
   flex-direction: column;

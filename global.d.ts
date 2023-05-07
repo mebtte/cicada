@@ -13,8 +13,5 @@ declare module '*.png' {
   export default value;
 }
 
-type AsyncReturnType<T extends (...args: any[]) => Promise<any>> = T extends (
-  ...args: any[]
-) => infer P
-  ? Awaited<P>
-  : any;
+type AsyncReturnType<T extends (...args: unknown[]) => Promise<unknown>> =
+  T extends (...args: unknown[]) => infer P ? Awaited<P> : unknown;

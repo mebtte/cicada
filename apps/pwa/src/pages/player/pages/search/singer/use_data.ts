@@ -2,7 +2,7 @@ import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import searchSinger from '@/server/api/search_singer';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE } from '../constants';
@@ -44,7 +44,7 @@ export default () => {
           total: d.total,
           singerList: d.singerList.map((s) => ({
             ...s,
-            avatar: s.avatar || getRandomCover(),
+            avatar: s.avatar || DefaultCover,
           })),
         },
       });

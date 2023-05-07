@@ -1,12 +1,13 @@
 import { MusicType } from '#/constants/music';
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
 /**
  * 获取自己的歌单详情
  * @author mebtte<hi@mebtte.com>
  */
-function getSelfMusicbill(id: string) {
-  return request<{
+async function getSelfMusicbill(id: string) {
+  const musicbill = await request<{
     id: string;
     cover: string;
     name: string;
@@ -30,6 +31,10 @@ function getSelfMusicbill(id: string) {
     params: { id },
     withToken: true,
   });
+  return {
+    ...musicbill,
+    cover: prefixServerOrigin(musicbill.cover),
+  };
 }
 
 export default getSelfMusicbill;
