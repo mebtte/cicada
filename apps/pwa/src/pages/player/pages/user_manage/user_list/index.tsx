@@ -29,6 +29,8 @@ const UserListContainer = styled(Container)`
   font-size: 0;
 `;
 const headStyle: CSSProperties = {
+  zIndex: 1,
+
   position: 'sticky',
   top: 0,
 

@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getUserById } from '@/db/user';
 import { getDB } from '@/db';
@@ -8,7 +8,13 @@ import {
   Property as SingerProperty,
 } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
-import { Music, MusicProperty, UserProperty } from '@/constants/db_definition';
+import {
+  Music,
+  MusicProperty,
+  MUSIC_TABLE_NAME,
+  UserProperty,
+} from '@/constants/db_definition';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -61,6 +67,7 @@ export default async (ctx: Context) => {
         | MusicProperty.NAME
         | MusicProperty.ALIASES
         | MusicProperty.COVER
+        | MusicProperty.ASSET
       >
     >(
       `
@@ -71,10 +78,11 @@ export default async (ctx: Context) => {
             MusicProperty.NAME,
             MusicProperty.ALIASES,
             MusicProperty.COVER,
+            MusicProperty.ASSET,
           ].join(',')}
-        FROM music
-        WHERE createUserId = ?
-        ORDER BY heat DESC
+        FROM ${MUSIC_TABLE_NAME}
+        WHERE ${MusicProperty.CREATE_USER_ID} = ?
+        ORDER BY ${MusicProperty.HEAT} DESC
         LIMIT 100
       `,
       [id],
@@ -106,9 +114,15 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...user,
-    musicbillList,
+    avatar: getAssetPublicPath(user.avatar, AssetType.USER_AVATAR),
+    musicbillList: musicbillList.map((mb) => ({
+      ...mb,
+      cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
+    })),
     musicList: musicList.map((m) => ({
       ...m,
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingers[m.id] || [],
     })),
