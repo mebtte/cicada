@@ -7,8 +7,9 @@ import globalEventemitter, {
 import setting from './setting';
 
 const serverMetadata = new XState<{
-  version: string;
   lastUpdateError: Error | null;
+
+  version: string;
 }>({
   lastUpdateError: null,
 

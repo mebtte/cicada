@@ -54,7 +54,7 @@ export default async (ctx: Context) => {
     html: generateEmailHtml({ accessOrigin }),
   });
 
-  const id = generateRandomInteger(1_0000_0000, 10_0000_0000).toString();
+  const id = generateRandomInteger(1_0000, 1000_0000).toString();
   await getDB().run(
     `
       INSERT INTO user ( id, email, nickname, joinTimestamp, remark )

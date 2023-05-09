@@ -26,6 +26,7 @@ const StatusContainer = styled(Container)`
 `;
 const UserListContainer = styled(Container)`
   overflow: auto;
+  font-size: 0;
 `;
 const headStyle: CSSProperties = {
   position: 'sticky',
@@ -86,6 +87,11 @@ function UserList() {
           joinTime={<HeadText>加入时间</HeadText>}
           musicbillMaxAmount={<HeadText>乐单最大数量</HeadText>}
           remark={<HeadText>备注</HeadText>}
+          createMusicMaxAmountPerDay={<HeadText>每天音乐创建最大数量</HeadText>}
+          exportMusicbillMaxTimePerDay={
+            <HeadText>每天乐单导出最大次数</HeadText>
+          }
+          more={<HeadText>操作</HeadText>}
           style={headStyle}
         />
         {filteredUserList.map((user) => (

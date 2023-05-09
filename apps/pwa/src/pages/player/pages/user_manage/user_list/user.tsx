@@ -1,12 +1,14 @@
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import day from '#/utils/day';
-import { CSSProperties } from 'react';
+import IconButton from '@/components/icon_button';
+import { MdMoreVert } from 'react-icons/md';
 import { User as UserType } from '../constants';
 import Row from './row';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
+import e, { EventType } from '../eventemitter';
 
 const StyledRow = styled(Row)`
   cursor: pointer;
@@ -29,9 +31,6 @@ const Primary = styled.div`
     font-family: monospace;
   }
 `;
-const remarkStyle: CSSProperties = {
-  paddingRight: 20,
-};
 
 function User({ user }: { user: UserType }) {
   const lastActiveTime = day(user.lastActiveTimestamp);
@@ -39,7 +38,7 @@ function User({ user }: { user: UserType }) {
   const yesterday = today.subtract(1, 'D');
   return (
     <StyledRow
-      avatar={<Avatar src={user.avatar} />}
+      avatar={<Avatar src={user.avatar} crossOrigin="anonymous" />}
       nickname={<Primary>{user.nickname}</Primary>}
       id={<Primary className="monospace">{user.id}</Primary>}
       email={<Primary className="monospace">{user.email}</Primary>}
@@ -62,12 +61,32 @@ function User({ user }: { user: UserType }) {
       musicbillMaxAmount={
         <Primary>{user.musicbillMaxAmount || '无限制'}</Primary>
       }
-      remark={<Primary style={remarkStyle}>{user.remark}</Primary>}
+      createMusicMaxAmountPerDay={
+        <Primary>{user.createMusicMaxAmountPerDay || '无限制'}</Primary>
+      }
+      exportMusicbillMaxTimePerDay={
+        <Primary>{user.exportMusicbillMaxTimePerDay || '无限制'}</Primary>
+      }
+      remark={<Primary>{user.remark}</Primary>}
+      more={
+        <IconButton
+          onClick={(event) => {
+            event.stopPropagation();
+            return e.emit(EventType.OPEN_EDIT_MENU, { user });
+          }}
+        >
+          <MdMoreVert />
+        </IconButton>
+      }
       onClick={() =>
         playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
           id: user.id,
         })
       }
+      onContextMenu={(event) => {
+        event.preventDefault();
+        return e.emit(EventType.OPEN_EDIT_MENU, { user });
+      }}
     />
   );
 }

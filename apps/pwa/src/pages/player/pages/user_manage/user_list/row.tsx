@@ -3,11 +3,13 @@ import styled from 'styled-components';
 import { AVATAR_SIZE } from './constants';
 
 const Style = styled.div`
-  padding: 5px 0 5px 20px;
+  padding: 5px 20px;
 
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 15px;
+
+  user-select: none;
 
   > * {
     flex-shrink: 0;
@@ -41,8 +43,19 @@ const Style = styled.div`
     width: 80px;
   }
 
+  > .create-music-max-amount-per-day {
+    width: 130px;
+  }
+
+  > .export-musicbill-max-time-per-day {
+    width: 130px;
+  }
+
   > .remark {
     width: 150px;
+  }
+
+  > .more {
   }
 `;
 
@@ -54,7 +67,10 @@ function Row({
   lastActiveTime,
   joinTime,
   musicbillMaxAmount,
+  createMusicMaxAmountPerDay,
+  exportMusicbillMaxTimePerDay,
   remark,
+  more,
   ...props
 }: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'id'> & {
   id: ReactNode;
@@ -64,18 +80,28 @@ function Row({
   lastActiveTime: ReactNode;
   joinTime: ReactNode;
   musicbillMaxAmount: ReactNode;
+  createMusicMaxAmountPerDay: ReactNode;
+  exportMusicbillMaxTimePerDay: ReactNode;
   remark: ReactNode;
+  more: ReactNode;
 }) {
   return (
     <Style {...props}>
+      <div className="id">{id}</div>
       <div className="avatar">{avatar}</div>
       <div className="nickname">{nickname}</div>
-      <div className="id">{id}</div>
-      <div className="email">{email}</div>
       <div className="last-active-time">{lastActiveTime}</div>
+      <div className="email">{email}</div>
       <div className="join-time">{joinTime}</div>
       <div className="musicbill-max-amount">{musicbillMaxAmount}</div>
+      <div className="create-music-max-amount-per-day">
+        {createMusicMaxAmountPerDay}
+      </div>
+      <div className="export-musicbill-max-time-per-day">
+        {exportMusicbillMaxTimePerDay}
+      </div>
       <div className="remark">{remark}</div>
+      <div className="more">{more}</div>
     </Style>
   );
 }
