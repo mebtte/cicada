@@ -2,12 +2,16 @@ import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH, MUSIC_TYPES, MusicType } from '#/constants/music';
 import exist from '#/utils/exist';
-import { getSingerListByIds, Property as SingerProperty } from '@/db/singer';
+import { getSingerListByIds } from '@/db/singer';
 import { getAssetFilePath } from '@/platform/asset';
 import { getDB } from '@/db';
 import day from '#/utils/day';
 import { createMusic } from '@/db/music';
-import { Music, MusicProperty } from '@/constants/db_definition';
+import {
+  Music,
+  MusicProperty,
+  SingerProperty,
+} from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

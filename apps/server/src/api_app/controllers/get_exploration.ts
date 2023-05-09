@@ -1,17 +1,15 @@
 import { ALIAS_DIVIDER } from '#/constants';
 import { getDB } from '@/db';
 import { Musicbill, Property as MusicbillProperty } from '@/db/musicbill';
-import {
-  Singer,
-  Property as SingerProperty,
-  getSingerListInMusicIds,
-} from '@/db/singer';
+import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
 import {
   Music,
   MusicProperty,
   User,
   UserProperty,
+  Singer,
+  SingerProperty,
 } from '@/constants/db_definition';
 import { Context } from '../constants';
 

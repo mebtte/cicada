@@ -1,10 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH } from '#/constants/singer';
-import {
-  getSingerByName,
-  createSinger,
-  Property as SingerProperty,
-} from '@/db/singer';
+import { SingerProperty } from '@/constants/db_definition';
+import { getSingerByName, createSinger } from '@/db/singer';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

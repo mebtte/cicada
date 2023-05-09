@@ -2,8 +2,9 @@ import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey } from '#/constants/music';
 import { getDB } from '@/db';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
-import { getSingerListByIds, Property as SingerProperty } from '@/db/singer';
+import { getSingerListByIds } from '@/db/singer';
 import stringArrayEqual from '#/utils/string_array_equal';
+import { SingerProperty } from '@/constants/db_definition';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {

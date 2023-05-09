@@ -18,6 +18,8 @@ import exitWithMessage from './utils/exit_with_message';
 import {
   MusicProperty,
   MUSIC_TABLE_NAME,
+  SingerProperty,
+  SINGER_TABLE_NAME,
   UserProperty,
   USER_TABLE_NAME,
 } from './constants/db_definition';
@@ -114,18 +116,18 @@ export default async () => {
         code TEXT NOT NULL,
         createTimestamp INTEGER NOT NULL,
         used INTEGER NOT NULL DEFAULT 0,
-        CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id )
+        CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
       )
     `;
     const TABLE_SINGER = `
-      CREATE TABLE singer (
-        id TEXT PRIMARY KEY NOT NULL,
-        avatar TEXT NOT NULL DEFAULT '',
-        name TEXT NOT NULL,
-        aliases TEXT NOT NULL DEFAULT '',
-        createUserId TEXT NOT NULL,
-        createTimestamp INTEGER NOT NULL,
-        CONSTRAINT fkUser FOREIGN KEY ( createUserId ) REFERENCES user ( id )
+      CREATE TABLE ${SINGER_TABLE_NAME} (
+        ${SingerProperty.ID} TEXT PRIMARY KEY NOT NULL,
+        ${SingerProperty.AVATAR} TEXT NOT NULL DEFAULT '',
+        ${SingerProperty.NAME} TEXT NOT NULL,
+        ${SingerProperty.ALIASES} TEXT NOT NULL DEFAULT '',
+        ${SingerProperty.CREATE_USER_ID} TEXT NOT NULL,
+        ${SingerProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
+        CONSTRAINT fkUser FOREIGN KEY ( ${SingerProperty.CREATE_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
       )
     `;
     const TABLE_SINGER_MODIFY_RECORD = `

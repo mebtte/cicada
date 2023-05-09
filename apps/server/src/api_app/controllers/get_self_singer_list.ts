@@ -1,13 +1,16 @@
 import { ALIAS_DIVIDER } from '#/constants';
+import { Singer, SingerProperty } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { Singer, Property } from '@/db/singer';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
   const singerList = await getDB().all<
     Pick<
       Singer,
-      Property.ID | Property.ALIASES | Property.CREATE_TIMESTAMP | Property.NAME
+      | SingerProperty.ID
+      | SingerProperty.ALIASES
+      | SingerProperty.CREATE_TIMESTAMP
+      | SingerProperty.NAME
     > & {
       musicCount: number;
     }

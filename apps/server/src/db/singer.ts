@@ -1,25 +1,8 @@
 import generateRandomString from '#/utils/generate_random_string';
+import { SingerProperty, Singer } from '@/constants/db_definition';
 import { getDB } from '.';
 
-export enum Property {
-  ID = 'id',
-  AVATAR = 'avatar',
-  NAME = 'name',
-  ALIASES = 'aliases',
-  CREATE_USER_ID = 'createUserId',
-  CREATE_TIMESTAMP = 'createTimestamp',
-}
-
-export type Singer = {
-  [Property.ID]: string;
-  [Property.AVATAR]: string;
-  [Property.NAME]: string;
-  [Property.ALIASES]: string;
-  [Property.CREATE_USER_ID]: string;
-  [Property.CREATE_TIMESTAMP]: number;
-};
-
-export function getSingerListInMusicIds<P extends Property>(
+export function getSingerListInMusicIds<P extends SingerProperty>(
   musicIds: string[],
   properties: P[],
 ) {
@@ -42,7 +25,7 @@ export function getSingerListInMusicIds<P extends Property>(
   );
 }
 
-export function getSingerListByIds<P extends Property>(
+export function getSingerListByIds<P extends SingerProperty>(
   ids: string[],
   properties: P[],
 ) {
@@ -55,7 +38,10 @@ export function getSingerListByIds<P extends Property>(
   );
 }
 
-export function getSingerById<P extends Property>(id: string, properties: P[]) {
+export function getSingerById<P extends SingerProperty>(
+  id: string,
+  properties: P[],
+) {
   return getDB().get<Pick<Singer, P>>(
     `
       SELECT
@@ -67,7 +53,7 @@ export function getSingerById<P extends Property>(id: string, properties: P[]) {
   );
 }
 
-export function getSingerByName<P extends Property>(
+export function getSingerByName<P extends SingerProperty>(
   name: string,
   properties: P[],
 ) {
@@ -102,7 +88,10 @@ export async function createSinger({
 }
 
 export function updateSinger<
-  P extends Property.ALIASES | Property.AVATAR | Property.NAME,
+  P extends
+    | SingerProperty.ALIASES
+    | SingerProperty.AVATAR
+    | SingerProperty.NAME,
 >({ id, property, value }: { id: string; property: P; value: Singer[P] }) {
   return getDB().run(
     `

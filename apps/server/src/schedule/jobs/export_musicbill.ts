@@ -9,11 +9,7 @@ import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
 import { sendEmail } from '@/platform/email';
 import day from '#/utils/day';
 import { AssetType, BRAND_NAME, DOWNLOAD_TTL, PathPrefix } from '#/constants';
-import {
-  getSingerListInMusicIds,
-  Singer,
-  Property as SingerProperty,
-} from '@/db/singer';
+import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetFilePath } from '@/platform/asset';
 import generateRandomString from '#/utils/generate_random_string';
@@ -24,6 +20,8 @@ import {
   UserProperty,
   Music,
   MusicProperty,
+  SingerProperty,
+  Singer,
 } from '@/constants/db_definition';
 
 interface MusicbillExport {

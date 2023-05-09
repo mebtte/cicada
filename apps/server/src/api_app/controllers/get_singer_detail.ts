@@ -1,14 +1,15 @@
 import { ALIAS_DIVIDER } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import excludeProperty from '#/utils/exclude_property';
-import { Music, MusicProperty, UserProperty } from '@/constants/db_definition';
-import { getDB } from '@/db';
 import {
-  getSingerById,
-  getSingerListInMusicIds,
-  Property as SingerProperty,
+  Music,
+  MusicProperty,
   Singer,
-} from '@/db/singer';
+  SingerProperty,
+  UserProperty,
+} from '@/constants/db_definition';
+import { getDB } from '@/db';
+import { getSingerById, getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
 import { Context } from '../constants';
 

@@ -53,3 +53,21 @@ export type Music = {
   [MusicProperty.CREATE_USER_ID]: string;
   [MusicProperty.CREATE_TIMESTAMP]: number;
 };
+
+export const SINGER_TABLE_NAME = 'singer';
+export enum SingerProperty {
+  ID = 'id',
+  AVATAR = 'avatar',
+  NAME = 'name',
+  ALIASES = 'aliases',
+  CREATE_USER_ID = 'createUserId',
+  CREATE_TIMESTAMP = 'createTimestamp',
+}
+export type Singer = {
+  [SingerProperty.ID]: string;
+  [SingerProperty.AVATAR]: string;
+  [SingerProperty.NAME]: string;
+  [SingerProperty.ALIASES]: string;
+  [SingerProperty.CREATE_USER_ID]: string;
+  [SingerProperty.CREATE_TIMESTAMP]: number;
+};

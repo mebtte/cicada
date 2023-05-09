@@ -1,14 +1,17 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import { getDB } from '@/db';
-import {
-  Singer,
-  getSingerListInMusicIds,
-  Property as SingerProperty,
-} from '@/db/singer';
+import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
-import { Music, MusicProperty } from '@/constants/db_definition';
+import {
+  Music,
+  MusicProperty,
+  MUSIC_TABLE_NAME,
+  SingerProperty,
+  Singer,
+} from '@/constants/db_definition';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -19,6 +22,8 @@ type LocalMusic = Pick<
   | MusicProperty.NAME
   | MusicProperty.ALIASES
   | MusicProperty.CREATE_USER_ID
+  | MusicProperty.COVER
+  | MusicProperty.ASSET
 >;
 
 export default async (ctx: Context) => {
@@ -43,9 +48,9 @@ export default async (ctx: Context) => {
   if (keyword.length) {
     const pattern = `%${keyword}%`;
     const musicPatternSQL = `
-      SELECT id FROM  music 
-        WHERE name LIKE ? 
-          OR aliases LIKE ?
+      SELECT ${MusicProperty.ID} FROM ${MUSIC_TABLE_NAME} 
+        WHERE ${MusicProperty.NAME} LIKE ? 
+          OR ${MusicProperty.ALIASES} LIKE ?
     `;
     const singerPatternSQL = `
       SELECT msr.musicId FROM music_singer_relation AS msr
@@ -70,9 +75,7 @@ export default async (ctx: Context) => {
             name,
             aliases,
             cover,
-            sq,
-            hq,
-            ac
+            asset
           FROM music
             WHERE id IN ( ${musicPatternSQL} ) OR id IN ( ${singerPatternSQL} )
             ORDER BY heat DESC
@@ -111,9 +114,7 @@ export default async (ctx: Context) => {
             name,
             aliases,
             cover,
-            sq,
-            hq,
-            ac
+            asset
           FROM music
           ORDER BY random()
           LIMIT ?
@@ -156,6 +157,8 @@ export default async (ctx: Context) => {
     total,
     musicList: musicList.map((m) => ({
       ...excludeProperty(m, [MusicProperty.CREATE_USER_ID]),
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingerList[m.id] || [],
     })),

@@ -1,19 +1,22 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import excludeProperty from '#/utils/exclude_property';
-import { Music, MusicProperty, UserProperty } from '@/constants/db_definition';
+import {
+  Music,
+  MusicProperty,
+  SingerProperty,
+  Singer,
+  UserProperty,
+} from '@/constants/db_definition';
 import { getMusicById, getMusicListByIds } from '@/db/music';
 import {
   getMusicForkFromList,
   getMusicForkList,
   Property as MusicForkProperty,
 } from '@/db/music_fork';
-import {
-  getSingerListInMusicIds,
-  Property as SingerProperty,
-  Singer,
-} from '@/db/singer';
+import { getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -30,6 +33,8 @@ export default async (ctx: Context) => {
     MusicProperty.CREATE_USER_ID,
     MusicProperty.TYPE,
     MusicProperty.HEAT,
+    MusicProperty.COVER,
+    MusicProperty.ASSET,
   ]);
   if (!music) {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
@@ -71,6 +76,7 @@ export default async (ctx: Context) => {
             MusicProperty.TYPE,
             MusicProperty.NAME,
             MusicProperty.ALIASES,
+            MusicProperty.COVER,
           ],
         )
       : undefined,
@@ -100,6 +106,7 @@ export default async (ctx: Context) => {
       | MusicProperty.TYPE
       | MusicProperty.NAME
       | MusicProperty.ALIASES
+      | MusicProperty.COVER
     > & {
       singers: (Pick<
         Singer,
@@ -118,10 +125,25 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...excludeProperty(music, [MusicProperty.CREATE_USER_ID]),
+    cover: getAssetPublicPath(music.cover, AssetType.MUSIC_COVER),
+    asset: getAssetPublicPath(music.asset, AssetType.MUSIC),
     aliases: music.aliases ? music.aliases.split(ALIAS_DIVIDER) : [],
-    singers: musicIdMapSingerList[id] || [],
+    singers: (musicIdMapSingerList[id] || []).map((s) => ({
+      ...s,
+      avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
+    })),
     createUser,
-    forkList: forkList.map((f) => musicIdMapMusic[f.musicId]),
-    forkFromList: forkFromList.map((f) => musicIdMapMusic[f.forkFrom]),
+    forkList: forkList
+      .map((f) => musicIdMapMusic[f.musicId])
+      .map((m) => ({
+        ...m,
+        cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      })),
+    forkFromList: forkFromList
+      .map((f) => musicIdMapMusic[f.forkFrom])
+      .map((m) => ({
+        ...m,
+        cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      })),
   });
 };

@@ -2,7 +2,7 @@ import { ALIAS_DIVIDER } from '#/constants';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';
-import { Singer, Property as SingerProperty } from '@/db/singer';
+import { Singer, SingerProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;

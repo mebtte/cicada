@@ -7,12 +7,8 @@ import {
   SINGER_ALIAS_MAX_COUNT,
 } from '#/constants/singer';
 import exist from '#/utils/exist';
-import {
-  getSingerById,
-  Singer,
-  Property as SingerProperty,
-  updateSinger,
-} from '@/db/singer';
+import { Singer, SingerProperty } from '@/constants/db_definition';
+import { getSingerById, updateSinger } from '@/db/singer';
 import { saveSingerModifyRecord } from '@/db/singer_modify_record';
 import { getAssetFilePath } from '@/platform/asset';
 import { Context } from '../constants';

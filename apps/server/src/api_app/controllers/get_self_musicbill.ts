@@ -5,10 +5,7 @@ import {
   Property as MusicbillProperty,
 } from '@/db/musicbill';
 import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
-import {
-  getSingerListInMusicIds,
-  Property as SingerProperty,
-} from '@/db/singer';
+import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetPublicPath } from '@/platform/asset';
 import { getDB } from '@/db';
@@ -16,6 +13,7 @@ import {
   Music,
   MusicProperty,
   MUSIC_TABLE_NAME,
+  SingerProperty,
 } from '@/constants/db_definition';
 import { Context } from '../constants';
 

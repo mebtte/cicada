@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 import withTimeout from '#/utils/with_timeout';
 import { getDB } from '@/db';
-import { Singer, Property } from '@/db/singer';
+import { Singer, SingerProperty } from '@/constants/db_definition';
 import day from '#/utils/day';
 import { NO_MUSIC_EXIST_DURATION } from '#/constants/singer';
 import { getTrashDirectory } from '@/config';
@@ -10,7 +10,7 @@ async function removeNoMusicSinger() {
   const noMusicSingerList = await getDB().all<Singer>(
     `
       SELECT
-        ${Object.values(Property).join(', ')}
+        ${Object.values(SingerProperty).join(', ')}
       FROM
         singer
       WHERE
