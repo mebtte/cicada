@@ -75,6 +75,7 @@ export default (playlist: MusicWithIndex[]) => {
               ...music,
               index: 1,
               pid: getRandomString(),
+              shuffle: true,
             },
           ];
         }),
@@ -116,7 +117,7 @@ export default (playlist: MusicWithIndex[]) => {
         setPlayqueue((pq) =>
           [
             ...pq.slice(0, currentPosition + 1),
-            { ...music, pid: getRandomString() },
+            { ...music, pid: getRandomString(), shuffle: false },
             ...pq.slice(currentPosition + 1),
           ].map((m, index) => ({
             ...m,
@@ -145,6 +146,7 @@ export default (playlist: MusicWithIndex[]) => {
                 ...music,
                 index: playqueue.length,
                 pid: getRandomString(),
+                shuffle: true,
               },
             ].map((m, index) => ({
               ...m,
@@ -168,15 +170,20 @@ export default (playlist: MusicWithIndex[]) => {
               ...music,
               index: 1,
               pid: getRandomString(),
+              shuffle: false,
             },
           ]);
-          setCurrentPosition(0);
-          return;
+          return setCurrentPosition(0);
         }
         notice.info(`下一首将播放"${music.name}"`);
         setPlayqueue([
           ...playqueue.slice(0, currentPosition + 1),
-          { ...music, pid: getRandomString(), index: currentPosition + 2 },
+          {
+            ...music,
+            pid: getRandomString(),
+            shuffle: false,
+            index: currentPosition + 2,
+          },
           ...playqueue.slice(currentPosition + 1).map((m) => ({
             ...m,
             index: m.index + 1,
