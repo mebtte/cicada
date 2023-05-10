@@ -22,6 +22,8 @@ import {
   SINGER_TABLE_NAME,
   UserProperty,
   USER_TABLE_NAME,
+  CAPTCHA_TABLE_NAME,
+  CaptchaProperty,
 } from './constants/db_definition';
 
 const DATA_VERSION = 1;
@@ -98,15 +100,16 @@ export default async () => {
         ${UserProperty.MUSICBILL_MAX_AMOUNT} INTEGER NOT NULL DEFAULT 100,
         ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY} INTEGER NOT NULL DEFAULT 10,
         ${UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY} INTEGER NOT NULL DEFAULT 3,
-        ${UserProperty.LAST_ACTIVE_TIMESTAMP} INTEGER NOT NULL DEFAULT 0
+        ${UserProperty.LAST_ACTIVE_TIMESTAMP} INTEGER NOT NULL DEFAULT 0,
+        ${UserProperty.MUSIC_PLAY_RECORD_INDATE} INTEGER NOT NULL DEFAULT 0
       )
     `;
     const TABLE_CAPTCHA = `
-      CREATE TABLE captcha (
-        id TEXT PRIMARY KEY NOT NULL,
-        value TEXT NOT NULL,
-        createTimestamp INTEGER NOT NULL,
-        used INTEGER NOT NULL DEFAULT 0
+      CREATE TABLE ${CAPTCHA_TABLE_NAME} (
+        ${CaptchaProperty.ID} TEXT PRIMARY KEY NOT NULL,
+        ${CaptchaProperty.VALUE} TEXT NOT NULL,
+        ${CaptchaProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
+        ${CaptchaProperty.USED} INTEGER NOT NULL DEFAULT 0
       )
     `;
     const TABLE_LOGIN_CODE = `

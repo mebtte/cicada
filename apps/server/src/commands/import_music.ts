@@ -3,7 +3,6 @@ import {
   createSinger,
   getSingerByName,
   getSingerListInMusicIds,
-  Property as SingerProperty,
 } from '@/db/singer';
 import exitWithMessage from '@/utils/exit_with_message';
 import fs from 'fs/promises';
@@ -15,7 +14,12 @@ import { getDB } from '@/db';
 import { createMusic } from '@/db/music';
 import md5 from 'md5';
 import { MusicType } from '#/constants/music';
-import { Music, MusicProperty, UserProperty } from '@/constants/db_definition';
+import {
+  Music,
+  MusicProperty,
+  UserProperty,
+  SingerProperty,
+} from '@/constants/db_definition';
 import { getAssetDirectory, updateConfig } from '../config';
 
 /**

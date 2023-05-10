@@ -15,6 +15,7 @@ async function adminGetUserList() {
       createMusicMaxAmountPerDay: number;
       exportMusicbillMaxTimePerDay: number;
       lastActiveTimestamp: number;
+      musicPlayRecordIndate: number;
     }[]
   >({
     path: '/api/admin/user_list',

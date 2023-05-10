@@ -15,6 +15,7 @@ const PROFILE_PROPERTIES = [
   UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
   UserProperty.MUSICBILL_MAX_AMOUNT,
   UserProperty.MUSICBILL_ORDERS_JSON,
+  UserProperty.MUSIC_PLAY_RECORD_INDATE,
 ];
 const NOT_PROFILE_PROPERTIES = Object.values(UserProperty).filter(
   (p) => !PROFILE_PROPERTIES.includes(p),

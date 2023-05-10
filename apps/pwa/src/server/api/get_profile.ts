@@ -14,6 +14,7 @@ async function getProfile() {
     createMusicMaxAmountPerDay: number;
     exportMusicbillMaxTimePerDay: number;
     lastActiveTimestamp: number;
+    musicPlayRecordIndate: number;
   }>({
     path: '/api/profile',
     withToken: true,

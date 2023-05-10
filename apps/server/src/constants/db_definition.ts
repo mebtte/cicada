@@ -1,5 +1,19 @@
 import { MusicType } from '#/constants/music';
 
+export const CAPTCHA_TABLE_NAME = 'captcha';
+export enum CaptchaProperty {
+  ID = 'id',
+  VALUE = 'value',
+  CREATE_TIMESTAMP = 'createTimestamp',
+  USED = 'used',
+}
+export type Captcha = {
+  [CaptchaProperty.ID]: string;
+  [CaptchaProperty.VALUE]: string;
+  [CaptchaProperty.CREATE_TIMESTAMP]: number;
+  [CaptchaProperty.USED]: 0 | 1;
+};
+
 export const USER_TABLE_NAME = 'user';
 export enum UserProperty {
   ID = 'id',
@@ -14,6 +28,7 @@ export enum UserProperty {
   CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
   EXPORT_MUSICBILL_MAX_TIME_PER_DAY = 'exportMusicbillMaxTimePerDay',
   LAST_ACTIVE_TIMESTAMP = 'lastActiveTimestamp',
+  MUSIC_PLAY_RECORD_INDATE = 'musicPlayRecordIndate',
 }
 export type User = {
   [UserProperty.ID]: string;
@@ -28,6 +43,7 @@ export type User = {
   [UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: number;
   [UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY]: number;
   [UserProperty.LAST_ACTIVE_TIMESTAMP]: number;
+  [UserProperty.MUSIC_PLAY_RECORD_INDATE]: number;
 };
 
 export const MUSIC_TABLE_NAME = 'music';
