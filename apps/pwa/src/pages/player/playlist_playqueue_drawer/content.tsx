@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import TabList from '@/components/tab_list';
 import { useTransition } from 'react-spring';
 import styled from 'styled-components';
 import Playqueue from './playqueue';
 import Playlist from './playlist';
 import { Tab, TAB_LIST_HEIGHT } from './constants';
+import cache, { CacheKey } from './cache';
 
 const TAB_MAP_LABEL: Record<Tab, string> = {
   [Tab.PLAYLIST]: '播放列表',
@@ -27,7 +28,13 @@ const StyledTabList = styled(TabList)`
 `;
 
 function Content() {
-  const [tab, setTab] = useState(Tab.PLAYQUEUE);
+  const [tab, setTab] = useState(
+    () => cache.get(CacheKey.TAB) || Tab.PLAYQUEUE,
+  );
+
+  useEffect(() => {
+    cache.set({ key: CacheKey.TAB, value: tab, ttl: Infinity });
+  }, [tab]);
 
   const transitions = useTransition(tab, {
     from: { opacity: 0 },
