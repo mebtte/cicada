@@ -7,6 +7,7 @@ import {
   MdOutlineClose,
   MdArrowUpward,
   MdArrowDownward,
+  MdShuffle,
 } from 'react-icons/md';
 import { ComponentSize } from '@/constants/style';
 import { flexCenter } from '@/style/flexbox';
@@ -21,6 +22,10 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 
+const shuffleStyle: CSSProperties = {
+  width: ComponentSize.SMALL,
+  color: CSSVariable.COLOR_PRIMARY,
+};
 const Style = styled(TabContent)`
   > .content {
     ${absoluteFullSize}
@@ -69,8 +74,15 @@ function Playqueue({ style }: { style: unknown }) {
                   active={actualIndex === currentPlayqueuePosition}
                   lineAfter={
                     <Operation>
+                      {queueMusic.shuffle ? (
+                        <MdShuffle
+                          style={shuffleStyle}
+                          title="随机选取自播放列表"
+                        />
+                      ) : null}
                       {actualIndex === currentPlayqueuePosition ? null : (
                         <IconButton
+                          title="定位到该位置"
                           size={ComponentSize.SMALL}
                           onClick={(e) => {
                             e.stopPropagation();

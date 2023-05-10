@@ -26,6 +26,7 @@ export interface MusicWithIndex extends Music {
 
 export interface QueueMusic extends MusicWithIndex {
   pid: string;
+  shuffle: boolean;
 }
 
 export interface Musicbill {
