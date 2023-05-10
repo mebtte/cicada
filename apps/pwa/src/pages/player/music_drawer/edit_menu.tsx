@@ -51,7 +51,6 @@ import playerEventemitter, {
 } from '../eventemitter';
 import { emitMusicUpdated } from '../utils';
 import MusicInfo from '../components/music_info';
-import CreateUser from './create_user';
 
 interface Singer {
   id: string;
@@ -72,9 +71,6 @@ const searchSinger = (search: string): Promise<Option<Singer>[]> => {
   return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
     data.singerList.map(formatSingerToMultipleSelectOption),
   );
-};
-const createUserStyle: CSSProperties = {
-  padding: '15px 20px',
 };
 
 const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
@@ -145,11 +141,6 @@ function EditMenu({ music }: { music: MusicDetail }) {
         onClick={onClose}
       >
         <MusicInfo music={music} />
-        <CreateUser
-          user={music.createUser}
-          createTime={music.createTime}
-          style={createUserStyle}
-        />
         <MenuItem
           icon={<MdImage />}
           label="编辑封面"
