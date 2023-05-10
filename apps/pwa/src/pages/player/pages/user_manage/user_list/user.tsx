@@ -1,93 +1,94 @@
-import { CSSVariable } from '@/global_style';
-import styled from 'styled-components';
 import day from '#/utils/day';
-import IconButton from '@/components/icon_button';
-import { MdMoreVert } from 'react-icons/md';
+import { MINI_MODE_MAX_WIDTH } from '@/constants';
+import { CSSVariable } from '@/global_style';
+import ellipsis from '@/style/ellipsis';
+import styled from 'styled-components';
 import { User as UserType } from '../constants';
-import Row from './row';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../../../eventemitter';
-import e, { EventType } from '../eventemitter';
+import { GAP } from './constants';
 
-const StyledRow = styled(Row)`
-  cursor: pointer;
+const SIZE = 160;
+const Style = styled.div`
+  > .content {
+    padding-bottom: 100%;
+    position: relative;
 
-  &:hover {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+    cursor: pointer;
+
+    > .avatar {
+      position: absolute;
+      top: ${GAP / 2}px;
+      left: ${GAP / 2}px;
+      width: calc(100% - ${GAP}px);
+      height: calc(100% - ${GAP}px);
+
+      object-fit: cover;
+    }
+
+    > .info {
+      position: absolute;
+      bottom: ${GAP / 2}px;
+      left: ${GAP / 2}px;
+      width: calc(100% - ${GAP}px);
+
+      padding: 5px 10px;
+      background-color: rgba(255, 255, 255, 0.75);
+
+      > .nickname {
+        font-size: 14px;
+        color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+        ${ellipsis}
+      }
+
+      > .last-active-time {
+        font-size: 12px;
+        color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+        font-family: monospace;
+      }
+    }
   }
-`;
-const Avatar = styled.img`
-  width: 36px;
-  height: 36px;
-  object-fix: cover;
-`;
-const Primary = styled.div`
-  font-size: 14px;
-  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-  word-break: break-word;
 
-  &.monospace {
-    font-family: monospace;
-  }
+  width: ${SIZE}px;
+
+  ${new Array(Math.floor(MINI_MODE_MAX_WIDTH / SIZE))
+    .fill(0)
+    .map(
+      (_, index) => `
+        @media (min-width: ${SIZE * index + 1}px) and (max-width: ${
+        SIZE * (index + 1)
+      }px) {
+          width: ${100 / (1 + index)}%;
+        }
+      `,
+    )
+    .join('\n')}
 `;
 
 function User({ user }: { user: UserType }) {
-  const lastActiveTime = day(user.lastActiveTimestamp);
   const today = day();
-  const yesterday = today.subtract(1, 'D');
+  const yesterday = day().subtract(1, 'D');
+  const lastActiveTime = day(user.lastActiveTimestamp);
   return (
-    <StyledRow
-      avatar={<Avatar src={user.avatar} crossOrigin="anonymous" />}
-      nickname={<Primary>{user.nickname}</Primary>}
-      id={<Primary className="monospace">{user.id}</Primary>}
-      email={<Primary className="monospace">{user.email}</Primary>}
-      lastActiveTime={
-        user.lastActiveTimestamp ? (
-          <Primary className="monospace">
-            {lastActiveTime.isSame(today, 'D')
-              ? '今天'
-              : lastActiveTime.isSame(yesterday, 'D')
-              ? '昨天'
-              : lastActiveTime.format('YYYY-MM-DD')}
-          </Primary>
-        ) : null
-      }
-      joinTime={
-        <Primary className="monospace">
-          {day(user.joinTimestamp).format('YYYY-MM-DD')}
-        </Primary>
-      }
-      musicbillMaxAmount={
-        <Primary>{user.musicbillMaxAmount || '无限制'}</Primary>
-      }
-      createMusicMaxAmountPerDay={
-        <Primary>{user.createMusicMaxAmountPerDay || '无限制'}</Primary>
-      }
-      exportMusicbillMaxTimePerDay={
-        <Primary>{user.exportMusicbillMaxTimePerDay || '无限制'}</Primary>
-      }
-      remark={<Primary>{user.remark}</Primary>}
-      more={
-        <IconButton
-          onClick={(event) => {
-            event.stopPropagation();
-            return e.emit(EventType.OPEN_EDIT_MENU, { user });
-          }}
-        >
-          <MdMoreVert />
-        </IconButton>
-      }
-      onClick={() =>
-        playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
-          id: user.id,
-        })
-      }
-      onContextMenu={(event) => {
-        event.preventDefault();
-        return e.emit(EventType.OPEN_EDIT_MENU, { user });
-      }}
-    />
+    <Style>
+      <div className="content">
+        <img className="avatar" src={user.avatar} alt={user.nickname} />
+        <div className="info">
+          <div className="nickname" title={user.nickname}>
+            {user.nickname}
+          </div>
+          <div className="last-active-time">
+            上次活动于
+            <br />
+            {user.lastActiveTimestamp
+              ? lastActiveTime.isSame(today, 'D')
+                ? '今天'
+                : lastActiveTime.isSame(yesterday, 'D')
+                ? '昨天'
+                : lastActiveTime.format('YYYY-MM-DD')
+              : '未知'}
+          </div>
+        </div>
+      </div>
+    </Style>
   );
 }
 

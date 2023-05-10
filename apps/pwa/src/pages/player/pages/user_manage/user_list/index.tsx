@@ -6,13 +6,11 @@ import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import useQuery from '@/utils/use_query';
 import { Query } from '@/constants';
-import { CSSProperties } from 'react';
-import { CSSVariable } from '@/global_style';
 import useData from './use_data';
 import User from './user';
 import { HEADER_HEIGHT } from '../../../constants';
 import { TOOLBAR_HEIGHT } from '../constants';
-import Row from './row';
+import { GAP } from './constants';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -26,19 +24,11 @@ const StatusContainer = styled(Container)`
 `;
 const UserListContainer = styled(Container)`
   overflow: auto;
-  font-size: 0;
-`;
-const headStyle: CSSProperties = {
-  zIndex: 1,
 
-  position: 'sticky',
-  top: 0,
+  display: flex;
+  flex-wrap: wrap;
 
-  backdropFilter: 'blur(5px)',
-};
-const HeadText = styled.div`
-  font-size: 12px;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  padding: ${GAP / 2}px ${GAP / 2}px ${GAP / 2 + TOOLBAR_HEIGHT}px ${GAP / 2}px;
 `;
 
 function UserList() {
@@ -80,22 +70,6 @@ function UserList() {
 
     return (
       <UserListContainer style={style}>
-        <Row
-          avatar={<HeadText>头像</HeadText>}
-          nickname={<HeadText>昵称</HeadText>}
-          id={<HeadText>ID</HeadText>}
-          email={<HeadText>邮箱</HeadText>}
-          lastActiveTime={<HeadText>上次活动时间</HeadText>}
-          joinTime={<HeadText>加入时间</HeadText>}
-          musicbillMaxAmount={<HeadText>乐单最大数量</HeadText>}
-          remark={<HeadText>备注</HeadText>}
-          createMusicMaxAmountPerDay={<HeadText>每天音乐创建最大数量</HeadText>}
-          exportMusicbillMaxTimePerDay={
-            <HeadText>每天乐单导出最大次数</HeadText>
-          }
-          more={<HeadText>操作</HeadText>}
-          style={headStyle}
-        />
         {filteredUserList.map((user) => (
           <User key={user.id} user={user} />
         ))}

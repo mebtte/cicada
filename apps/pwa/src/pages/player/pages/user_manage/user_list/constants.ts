@@ -1,1 +1,1 @@
-export const AVATAR_SIZE = 36;
+export const GAP = 20;

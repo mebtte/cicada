@@ -24,6 +24,8 @@ import {
   USER_TABLE_NAME,
   CAPTCHA_TABLE_NAME,
   CaptchaProperty,
+  LOGIN_CODE_TABLE_NAME,
+  LoginCodeProperty,
 } from './constants/db_definition';
 
 const DATA_VERSION = 1;
@@ -113,13 +115,13 @@ export default async () => {
       )
     `;
     const TABLE_LOGIN_CODE = `
-      CREATE TABLE login_code (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT NOT NULL,
-        code TEXT NOT NULL,
-        createTimestamp INTEGER NOT NULL,
-        used INTEGER NOT NULL DEFAULT 0,
-        CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+      CREATE TABLE ${LOGIN_CODE_TABLE_NAME} (
+        ${LoginCodeProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${LoginCodeProperty.USER_ID} TEXT NOT NULL,
+        ${LoginCodeProperty.CODE} TEXT NOT NULL,
+        ${LoginCodeProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
+        ${LoginCodeProperty.USED} INTEGER NOT NULL DEFAULT 0,
+        CONSTRAINT fkUser FOREIGN KEY ( ${LoginCodeProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
       )
     `;
     const TABLE_SINGER = `

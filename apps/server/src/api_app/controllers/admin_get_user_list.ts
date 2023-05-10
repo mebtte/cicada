@@ -34,7 +34,7 @@ export default async (ctx: Context) => {
         ${UserProperty.MUSICBILL_MAX_AMOUNT},
         ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY},
         ${UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY},
-        ${UserProperty.LAST_ACTIVE_TIMESTAMP}
+        ${UserProperty.LAST_ACTIVE_TIMESTAMP},
         ${UserProperty.MUSIC_PLAY_RECORD_INDATE}
       FROM ${USER_TABLE_NAME}
       ORDER BY ${UserProperty.JOIN_TIMESTAMP} DESC

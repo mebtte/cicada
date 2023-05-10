@@ -46,6 +46,22 @@ export type User = {
   [UserProperty.MUSIC_PLAY_RECORD_INDATE]: number;
 };
 
+export const LOGIN_CODE_TABLE_NAME = 'login_code';
+export enum LoginCodeProperty {
+  ID = 'id',
+  USER_ID = 'userId',
+  CODE = 'code',
+  CREATE_TIMESTAMP = 'createTimestamp',
+  USED = 'used',
+}
+export type LoginCode = {
+  [LoginCodeProperty.ID]: number;
+  [LoginCodeProperty.USER_ID]: string;
+  [LoginCodeProperty.CODE]: string;
+  [LoginCodeProperty.CREATE_TIMESTAMP]: number;
+  [LoginCodeProperty.USED]: 0 | 1;
+};
+
 export const MUSIC_TABLE_NAME = 'music';
 export enum MusicProperty {
   ID = 'id',

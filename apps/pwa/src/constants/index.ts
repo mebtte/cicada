@@ -14,3 +14,5 @@ export enum Query {
   KEYWORD = 'keyword',
   SEARCH_TAB = 'search_tab',
 }
+
+export const MINI_MODE_MAX_WIDTH = 720;
