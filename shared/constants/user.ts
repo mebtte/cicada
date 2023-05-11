@@ -1,4 +1,4 @@
-export const REMARK_MAX_LENGTH = 64;
+export const REMARK_MAX_LENGTH = 256;
 export const NICKNAME_MAX_LENGTH = 64;
 
 export enum AllowUpdateKey {

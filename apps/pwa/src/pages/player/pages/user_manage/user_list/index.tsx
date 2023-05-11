@@ -25,10 +25,13 @@ const StatusContainer = styled(Container)`
 const UserListContainer = styled(Container)`
   overflow: auto;
 
-  display: flex;
-  flex-wrap: wrap;
+  > .content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 
-  padding: ${GAP / 2}px ${GAP / 2}px ${GAP / 2 + TOOLBAR_HEIGHT}px ${GAP / 2}px;
+    padding: ${GAP / 2}px;
+  }
 `;
 
 function UserList() {
@@ -70,9 +73,11 @@ function UserList() {
 
     return (
       <UserListContainer style={style}>
-        {filteredUserList.map((user) => (
-          <User key={user.id} user={user} />
-        ))}
+        <div className="content">
+          {filteredUserList.map((user) => (
+            <User key={user.id} user={user} />
+          ))}
+        </div>
       </UserListContainer>
     );
   });
