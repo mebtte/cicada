@@ -14,8 +14,10 @@ import { Musicbill } from './constants';
 export default () => {
   const [status, setStatus] = useState(RequestStatus.LOADING);
   const [musicbillList, setMusicbillList] = useState<Musicbill[]>([]);
-  const getMusicbillList = useCallback(async () => {
-    setStatus(RequestStatus.LOADING);
+  const getMusicbillList = useCallback(async (silence) => {
+    if (!silence) {
+      setStatus(RequestStatus.LOADING);
+    }
     try {
       const mbl = await getSelfMusicbillList();
       setMusicbillList(
@@ -42,16 +44,6 @@ export default () => {
       setStatus(RequestStatus.ERROR);
     }
   }, []);
-
-  useEffect(() => {
-    getMusicbillList();
-
-    const unlistenReloadMusicbillList = eventemitter.listen(
-      EventType.RELOAD_MUSICBILL_LIST,
-      getMusicbillList,
-    );
-    return unlistenReloadMusicbillList;
-  }, [getMusicbillList]);
 
   useEffect(() => {
     const unlistenFetchMusicbill = eventemitter.listen(
@@ -240,6 +232,46 @@ export default () => {
       );
     });
   }, [musicbillList, profile.musicbillOrders]);
+
+  useEffect(() => {
+    const reloadMusicbillList = () => getMusicbillList(false);
+    const reloadMusicbillListSilently = () => getMusicbillList(true);
+
+    reloadMusicbillList();
+
+    const unlistenReloadMusicbillList = eventemitter.listen(
+      EventType.RELOAD_MUSICBILL_LIST,
+      reloadMusicbillList,
+    );
+    const unlistenMusicUpdated = eventemitter.listen(
+      EventType.MUSIC_UPDATED,
+      reloadMusicbillListSilently,
+    );
+    const unlistenMusicDeleted = eventemitter.listen(
+      EventType.MUSIC_DELETED,
+      reloadMusicbillListSilently,
+    );
+    const unlistenSingerUpdated = eventemitter.listen(
+      EventType.SINGER_UPDATED,
+      reloadMusicbillListSilently,
+    );
+    const unlistenMusicbillCreated = eventemitter.listen(
+      EventType.MUSICBILL_CREATED,
+      reloadMusicbillList,
+    );
+    const unlistenMusicbillDeleted = eventemitter.listen(
+      EventType.MUSICBILL_DELETED,
+      reloadMusicbillList,
+    );
+    return () => {
+      unlistenReloadMusicbillList();
+      unlistenMusicUpdated();
+      unlistenMusicDeleted();
+      unlistenSingerUpdated();
+      unlistenMusicbillCreated();
+      unlistenMusicbillDeleted();
+    };
+  }, [getMusicbillList]);
 
   return {
     status,

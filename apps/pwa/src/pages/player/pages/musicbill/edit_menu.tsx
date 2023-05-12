@@ -199,7 +199,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     try {
                       await deleteMusicbill(musicbill.id);
                       playerEventemitter.emit(
-                        PlayerEventType.RELOAD_MUSICBILL_LIST,
+                        PlayerEventType.MUSICBILL_DELETED,
                         null,
                       );
                       navigate({
