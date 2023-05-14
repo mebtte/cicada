@@ -19,8 +19,8 @@ export interface MusicDetail extends Music {
   lyrics: Lyric[];
   createUser: CreateUser;
   createTime: string;
-  forkFromList: Music[];
-  forkList: Music[];
+  forkFromList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
+  forkList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
   singers: SingerDetail[];
 }
 

@@ -5,12 +5,12 @@ import MusicInfo from '../components/music_info';
 
 const Style = styled.div`
   margin: 10px 0;
-  padding: 10px 0;
 
   background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
 
   > .label {
-    margin: 0 20px 5px 20px;
+    margin: 0 20px;
+    padding: 20px 0 10px 0;
 
     font-size: 12px;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
@@ -21,7 +21,7 @@ function SubMusicList({
   musicList,
   label,
 }: {
-  musicList: Music[];
+  musicList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
   label: string;
 }) {
   return (

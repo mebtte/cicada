@@ -6,8 +6,8 @@ export type UserDetail = AsyncReturnType<typeof getUserDetail> & {
 };
 
 export enum Tab {
-  MUSICBILL = 'musicbill',
   MUSIC = 'music',
+  MUSICBILL = 'musicbill',
 }
 
 export const TAB_MAP_LABEL: Record<Tab, string> = {

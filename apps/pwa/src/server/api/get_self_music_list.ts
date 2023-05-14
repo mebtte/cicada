@@ -1,11 +1,12 @@
 import { MusicType } from '#/constants/music';
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
 /**
  * 获取自己的音乐列表
  * @author mebtte<hi@mebtte.com>
  */
-function getSelfMusicList({
+async function getSelfMusicList({
   keyword,
   page,
   pageSize,
@@ -14,7 +15,7 @@ function getSelfMusicList({
   page: number;
   pageSize: number;
 }) {
-  return request<{
+  const data = await request<{
     total: number;
     musicList: {
       id: string;
@@ -36,6 +37,14 @@ function getSelfMusicList({
     params: { keyword, page, pageSize },
     withToken: true,
   });
+  return {
+    ...data,
+    musicList: data.musicList.map((m) => ({
+      ...m,
+      cover: prefixServerOrigin(m.cover),
+      asset: prefixServerOrigin(m.asset),
+    })),
+  };
 }
 
 export default getSelfMusicList;

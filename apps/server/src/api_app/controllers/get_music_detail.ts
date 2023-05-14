@@ -35,6 +35,7 @@ export default async (ctx: Context) => {
     MusicProperty.HEAT,
     MusicProperty.COVER,
     MusicProperty.ASSET,
+    MusicProperty.YEAR,
   ]);
   if (!music) {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
@@ -71,13 +72,7 @@ export default async (ctx: Context) => {
               ...forkFromList.map((f) => f.forkFrom),
             ]),
           ),
-          [
-            MusicProperty.ID,
-            MusicProperty.TYPE,
-            MusicProperty.NAME,
-            MusicProperty.ALIASES,
-            MusicProperty.COVER,
-          ],
+          [MusicProperty.ID, MusicProperty.NAME, MusicProperty.COVER],
         )
       : undefined,
   ]);
@@ -102,11 +97,7 @@ export default async (ctx: Context) => {
   const musicIdMapMusic: {
     [key: string]: Pick<
       Music,
-      | MusicProperty.ID
-      | MusicProperty.TYPE
-      | MusicProperty.NAME
-      | MusicProperty.ALIASES
-      | MusicProperty.COVER
+      MusicProperty.ID | MusicProperty.NAME | MusicProperty.COVER
     > & {
       singers: (Pick<
         Singer,

@@ -26,6 +26,8 @@ import {
   CaptchaProperty,
   LOGIN_CODE_TABLE_NAME,
   LoginCodeProperty,
+  SINGER_MODIFY_RECORD_TABLE_NAME,
+  SingerModifyRecordProperty,
 } from './constants/db_definition';
 
 const DATA_VERSION = 1;
@@ -121,6 +123,7 @@ export default async () => {
         ${LoginCodeProperty.CODE} TEXT NOT NULL,
         ${LoginCodeProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
         ${LoginCodeProperty.USED} INTEGER NOT NULL DEFAULT 0,
+
         CONSTRAINT fkUser FOREIGN KEY ( ${LoginCodeProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
       )
     `;
@@ -132,19 +135,20 @@ export default async () => {
         ${SingerProperty.ALIASES} TEXT NOT NULL DEFAULT '',
         ${SingerProperty.CREATE_USER_ID} TEXT NOT NULL,
         ${SingerProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
+
         CONSTRAINT fkUser FOREIGN KEY ( ${SingerProperty.CREATE_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
       )
     `;
     const TABLE_SINGER_MODIFY_RECORD = `
-      CREATE TABLE singer_modify_record (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        singerId TEXT NOT NULL,
-        modifyUserId TEXT NOT NULL,
-        key TEXT NOT NULL,
-        modifyTimestamp INTEGER NOT NULL,
+      CREATE TABLE ${SINGER_MODIFY_RECORD_TABLE_NAME} (
+        ${SingerModifyRecordProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${SingerModifyRecordProperty.SINGER_ID} TEXT NOT NULL,
+        ${SingerModifyRecordProperty.MODIFY_USER_ID} TEXT NOT NULL,
+        ${SingerModifyRecordProperty.KEY} TEXT NOT NULL,
+        ${SingerModifyRecordProperty.MODIFY_TIMESTAMP} INTEGER NOT NULL,
 
-        CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
-        CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
+        CONSTRAINT fkSinger FOREIGN KEY ( ${SingerModifyRecordProperty.SINGER_ID} ) REFERENCES singer ( ${SingerProperty.ID} ),
+        CONSTRAINT fkUser FOREIGN KEY ( ${SingerModifyRecordProperty.MODIFY_USER_ID} ) REFERENCES user ( ${UserProperty.ID} )
       )
     `;
     const TABLE_MUSIC = `

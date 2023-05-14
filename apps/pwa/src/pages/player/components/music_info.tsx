@@ -5,7 +5,6 @@ import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import eventemitter, { EventType } from '../eventemitter';
 import Singer from './singer';
-import { Music as MusicType } from '../constants';
 
 const Style = styled.div`
   display: flex;
@@ -53,7 +52,12 @@ function MusicInfo({
   music,
   ...props
 }: {
-  music: MusicType;
+  music: {
+    id: string;
+    cover: string;
+    name: string;
+    singers: { id: string; name: string }[];
+  };
 } & HtmlHTMLAttributes<HTMLDivElement>) {
   const { cover, name, singers } = music;
   return (

@@ -14,9 +14,6 @@ interface Music {
   id: string;
   cover: string;
   name: string;
-  type: MusicType;
-  aliases: string[];
-  asset: string;
   singers: Singer[];
 }
 
@@ -27,11 +24,15 @@ interface Music {
 async function getMusicDetail(id: string) {
   const music = await request<
     Music & {
+      type: MusicType;
+      aliases: string[];
       heat: number;
       createTimestamp: number;
       createUser: { id: string; avatar: string; nickname: string };
       forkList: Music[];
       forkFromList: Music[];
+      year: number | null;
+      asset: string;
     }
   >({
     path: '/api/music_detail',

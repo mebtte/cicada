@@ -86,7 +86,7 @@ const TabContent = styled(animated.div)`
 function UserDetail({ user }: { user: UserDetailType }) {
   const mountedRef = useRef(false);
   const scrollableRef = useRef<HTMLDivElement>(null);
-  const [tab, setTab] = useState(Tab.MUSICBILL);
+  const [tab, setTab] = useState(Tab.MUSIC);
 
   const [miniInfoVisible, setMiniInfoVisible] = useState(false);
   const onScroll: UIEventHandler<HTMLDivElement> = (e) => {

@@ -96,7 +96,7 @@ async function separateMusicAc() {
   }
 }
 
-async function migrateHqToSq() {
+async function migrateMusicHqToSq() {
   const hqMusicList = await getDB().all<{
     id: string;
     hq: string;
@@ -121,25 +121,33 @@ async function migrateHqToSq() {
   }
 }
 
-async function dropAcAndHq() {
+async function dropMusicAcAndHq() {
   await Promise.all([
     getDB().run(
       `
-        ALTER TABLE music DROP COLUMN ac;
+        ALTER TABLE music DROP COLUMN ac
       `,
     ),
     getDB().run(
       `
-        ALTER TABLE music DROP COLUMN hq;
+        ALTER TABLE music DROP COLUMN hq
       `,
     ),
   ]);
 }
 
-async function renameSq() {
+async function renameMusicSq() {
   await getDB().run(
     `
-      ALTER TABLE music RENAME COLUMN sq TO asset;
+      ALTER TABLE music RENAME COLUMN sq TO asset
+    `,
+  );
+}
+
+async function addMusicYear() {
+  await getDB().run(
+    `
+      ALTER TABLE music ADD year INTEGER
     `,
   );
 }
@@ -203,19 +211,24 @@ export default async ({ data }: { data: string }) => {
   spinner.success({ text: '伴奏已分离' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在迁移无损音质到标准音质...' });
-  await migrateHqToSq();
-  spinner.success({ text: '无损音质已迁移到标准音质' });
+  spinner.start({ text: '正在迁移 music.hq 到 music.sq...' });
+  await migrateMusicHqToSq();
+  spinner.success({ text: 'music.hq 已迁移到 music.sq' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在删除 ac 和 hq...' });
-  await dropAcAndHq();
-  spinner.success({ text: '已删除 ac 和 hq' });
+  spinner.start({ text: '正在删除 music.ac 和 music.hq...' });
+  await dropMusicAcAndHq();
+  spinner.success({ text: '已删除 music.ac 和 music.hq' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在重命名 sq 为 asset...' });
-  await renameSq();
-  spinner.success({ text: 'sq 已重命名为 asset' });
+  spinner.start({ text: '正在重命名 music.sq 为 music.asset...' });
+  await renameMusicSq();
+  spinner.success({ text: 'music.sq 已重命名为 music.asset' });
+
+  spinner = createSpinner();
+  spinner.start({ text: '正在添加 music.year...' });
+  await addMusicYear();
+  spinner.success({ text: '已添加 music.year' });
 
   spinner = createSpinner();
   spinner.start({ text: '正在添加 user.lastActiveTimestamp...' });

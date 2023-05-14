@@ -73,6 +73,7 @@ export enum MusicProperty {
   HEAT = 'heat',
   CREATE_USER_ID = 'createUserId',
   CREATE_TIMESTAMP = 'createTimestamp',
+  YEAR = 'year',
 }
 export type Music = {
   [MusicProperty.ID]: string;
@@ -84,6 +85,7 @@ export type Music = {
   [MusicProperty.HEAT]: number;
   [MusicProperty.CREATE_USER_ID]: string;
   [MusicProperty.CREATE_TIMESTAMP]: number;
+  [MusicProperty.YEAR]: number | null;
 };
 
 export const SINGER_TABLE_NAME = 'singer';
@@ -102,4 +104,20 @@ export type Singer = {
   [SingerProperty.ALIASES]: string;
   [SingerProperty.CREATE_USER_ID]: string;
   [SingerProperty.CREATE_TIMESTAMP]: number;
+};
+
+export const SINGER_MODIFY_RECORD_TABLE_NAME = 'singer_modify_record';
+export enum SingerModifyRecordProperty {
+  ID = 'id',
+  SINGER_ID = 'singerId',
+  KEY = 'key',
+  MODIFY_USER_ID = 'modifyUserId',
+  MODIFY_TIMESTAMP = 'modifyTimestamp',
+}
+export type SingerModifyRecord = {
+  [SingerModifyRecordProperty.ID]: number;
+  [SingerModifyRecordProperty.SINGER_ID]: string;
+  [SingerModifyRecordProperty.KEY]: string;
+  [SingerModifyRecordProperty.MODIFY_USER_ID]: string;
+  [SingerModifyRecordProperty.MODIFY_TIMESTAMP]: number;
 };

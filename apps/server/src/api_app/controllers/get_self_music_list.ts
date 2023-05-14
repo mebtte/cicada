@@ -1,15 +1,17 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import excludeProperty from '#/utils/exclude_property';
 import {
   Music,
   MusicProperty,
+  MUSIC_TABLE_NAME,
   Singer,
   SingerProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getSingerListInMusicIds } from '@/db/singer';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -21,6 +23,8 @@ type LocalMusic = Pick<
   | MusicProperty.ALIASES
   | MusicProperty.HEAT
   | MusicProperty.CREATE_TIMESTAMP
+  | MusicProperty.ASSET
+  | MusicProperty.COVER
 >;
 
 export default async (ctx: Context) => {
@@ -46,10 +50,10 @@ export default async (ctx: Context) => {
     const pattern = `%${keyword}%`;
     const musicPatternSQL = `
       SELECT
-        id
-      FROM music
-      WHERE createUserId = ?
-        AND (name LIKE ? OR aliases LIKE ?)
+        ${MusicProperty.ID}
+      FROM ${MUSIC_TABLE_NAME}
+      WHERE ${MusicProperty.CREATE_USER_ID} = ?
+        AND ( ${MusicProperty.NAME} LIKE ? OR ${MusicProperty.ALIASES} LIKE ? )
     `;
     const singerPatternSQL = `
       SELECT
@@ -71,19 +75,18 @@ export default async (ctx: Context) => {
       getDB().all<LocalMusic>(
         `
           SELECT
-            id,
-            cover,
-            type,
-            name,
-            aliases,
-            heat,
-            createTimestamp,
-            sq,
-            hq,
-            ac
-          FROM music
-            WHERE id IN (${musicPatternSQL}) OR id IN (${singerPatternSQL})
-          ORDER BY createTimestamp DESC
+            ${MusicProperty.ID},
+            ${MusicProperty.COVER},
+            ${MusicProperty.TYPE},
+            ${MusicProperty.NAME},
+            ${MusicProperty.ALIASES},
+            ${MusicProperty.HEAT},
+            ${MusicProperty.CREATE_TIMESTAMP},
+            ${MusicProperty.ASSET},
+            ${MusicProperty.COVER}
+          FROM ${MUSIC_TABLE_NAME}
+            WHERE ${MusicProperty.ID} IN (${musicPatternSQL}) OR ${MusicProperty.ID} IN (${singerPatternSQL})
+          ORDER BY ${MusicProperty.CREATE_TIMESTAMP} DESC
           LIMIT ?
           OFFSET ?
         `,
@@ -107,27 +110,27 @@ export default async (ctx: Context) => {
       getDB().get<{ value: number }>(
         `
           SELECT count(*) AS value FROM music
-            WHERE createUserId = ?
+          WHERE createUserId = ?
         `,
         [ctx.user.id],
       ),
       getDB().all<LocalMusic>(
         `
           SELECT
-            id,
-            cover,
-            type,
-            name,
-            aliases,
-            heat,
-            createTimestamp,
-            sq,
-            hq,
-            ac
-          FROM music
-          WHERE createUserId = ?
-          ORDER BY createTimestamp DESC
-          LIMIT ? OFFSET ?
+            ${MusicProperty.ID},
+            ${MusicProperty.COVER},
+            ${MusicProperty.TYPE},
+            ${MusicProperty.NAME},
+            ${MusicProperty.ALIASES},
+            ${MusicProperty.HEAT},
+            ${MusicProperty.CREATE_TIMESTAMP},
+            ${MusicProperty.ASSET},
+            ${MusicProperty.COVER}
+          FROM ${MUSIC_TABLE_NAME}
+          WHERE ${MusicProperty.CREATE_USER_ID} = ?
+          ORDER BY ${MusicProperty.CREATE_TIMESTAMP} DESC
+          LIMIT ?
+          OFFSET ?
         `,
         [ctx.user.id, pageSizeNumber, (pageNumber - 1) * pageSizeNumber],
       ),
@@ -168,6 +171,8 @@ export default async (ctx: Context) => {
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingerList[m.id] || [],
+      asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
     })),
   });
 };
