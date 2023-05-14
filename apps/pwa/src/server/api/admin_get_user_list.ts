@@ -11,10 +11,10 @@ async function adminGetUserList() {
       admin: 0 | 1;
       remark: string;
       joinTimestamp: number;
+      lastActiveTimestamp: number;
       musicbillMaxAmount: number;
       createMusicMaxAmountPerDay: number;
       exportMusicbillMaxTimePerDay: number;
-      lastActiveTimestamp: number;
       musicPlayRecordIndate: number;
     }[]
   >({

@@ -8,6 +8,7 @@ type KeyMapValue = {
   [AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT]: number;
   [AdminAllowUpdateKey.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: number;
   [AdminAllowUpdateKey.EXPORT_MUSICBILL_MAX_TIME_PER_DAY]: number;
+  [AdminAllowUpdateKey.MUSIC_PLAY_RECORD_INDATE]: number;
 };
 
 function adminUpdateUser<Key extends AdminAllowUpdateKey>({

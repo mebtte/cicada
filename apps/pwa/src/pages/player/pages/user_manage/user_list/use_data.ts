@@ -45,6 +45,23 @@ export default () => {
     return unlistenReload;
   }, [getData]);
 
+  useEffect(() => {
+    const unlistenUserUpdated = e.listen(EventType.USER_UPDATED, (payload) =>
+      setData((d) => ({
+        ...d,
+        userList: d.userList.map((u) =>
+          u.id === payload.id
+            ? {
+                ...u,
+                ...payload,
+              }
+            : u,
+        ),
+      })),
+    );
+    return unlistenUserUpdated;
+  }, []);
+
   return {
     data,
     reload: getData,
