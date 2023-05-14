@@ -1,12 +1,13 @@
 import { MusicType } from '#/constants/music';
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
 /**
  * 获取公开乐单详情
  * @author mebtte<hi@mebtte.com>
  */
-function getPublicMusicbill(id: string) {
-  return request<{
+async function getPublicMusicbill(id: string) {
+  const musicbill = await request<{
     id: string;
     cover: string;
     name: string;
@@ -36,6 +37,19 @@ function getPublicMusicbill(id: string) {
     params: { id },
     withToken: true,
   });
+  return {
+    ...musicbill,
+    cover: prefixServerOrigin(musicbill.cover),
+    musicList: musicbill.musicList.map((m) => ({
+      ...m,
+      cover: prefixServerOrigin(m.cover),
+      asset: prefixServerOrigin(m.asset),
+    })),
+    user: {
+      ...musicbill.user,
+      avatar: prefixServerOrigin(musicbill.user.avatar),
+    },
+  };
 }
 
 export default getPublicMusicbill;

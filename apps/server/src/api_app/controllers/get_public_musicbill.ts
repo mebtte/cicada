@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import excludeProperty from '#/utils/exclude_property';
 import {
@@ -18,6 +18,7 @@ import {
 } from '@/db/musicbill_collection';
 import { getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -51,14 +52,18 @@ export default async (ctx: Context) => {
         | MusicProperty.TYPE
         | MusicProperty.NAME
         | MusicProperty.ALIASES
+        | MusicProperty.COVER
+        | MusicProperty.ASSET
       >
     >(
       `
         SELECT
-          m.id,
-          m.type,
-          m.name,
-          m.aliases
+          m.${MusicProperty.ID},
+          m.${MusicProperty.TYPE},
+          m.${MusicProperty.NAME},
+          m.${MusicProperty.ALIASES},
+          m.${MusicProperty.COVER},
+          m.${MusicProperty.ASSET}
         FROM musicbill_music AS mm
         LEFT JOIN music AS m
           ON mm.musicId = m.id
@@ -102,11 +107,17 @@ export default async (ctx: Context) => {
       MusicbillProperty.PUBLIC,
       MusicbillProperty.USER_ID,
     ]),
-    user,
+    cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
+    user: {
+      ...user,
+      avatar: getAssetPublicPath(user!.avatar, AssetType.USER_AVATAR),
+    },
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingers[m.id] || [],
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
     })),
 
     collected: !!musicbillCollection,
