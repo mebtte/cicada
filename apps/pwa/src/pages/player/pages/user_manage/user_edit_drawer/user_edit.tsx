@@ -187,6 +187,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         <Input
           className="part"
           label="歌单最大数量(0 表示无限制)"
+          disabled={loading}
           inputProps={{
             value: musicbillMaxAmount,
             onChange: onMusicbillMacAmountChange,
@@ -195,6 +196,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         <Input
           className="part"
           label="每天创建音乐最大数量(0 表示无限制)"
+          disabled={loading}
           inputProps={{
             value: createMusicMaxAmountPerDay,
             onChange: onCreateMusicMaxAmountPerDayChange,
@@ -203,6 +205,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         <Input
           className="part"
           label="每天导出乐单最大数量(0 表示无限制)"
+          disabled={loading}
           inputProps={{
             value: exportMusicbillMaxTimePerDay,
             onChange: onExportMusicbillMaxTimePerDayChange,
@@ -211,6 +214,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         <Input
           className="part"
           label="音乐播放记录保留天数(0 表示无限制)"
+          disabled={loading}
           inputProps={{
             value: musicPlayRecordIndate,
             onChange: onMusicPlayRecordIndateChange,
@@ -219,6 +223,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         <Textarea
           className="part"
           label="备注"
+          disabled={loading}
           textareaProps={{ value: remark, onChange: onRemarkChange, rows: 5 }}
         />
         <Button
