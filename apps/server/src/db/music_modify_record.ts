@@ -1,21 +1,9 @@
 import { AllowUpdateKey } from '#/constants/music';
+import {
+  MusicModifyRecord,
+  MusicModifyRecordProperty,
+} from '@/constants/db_definition';
 import { getDB } from '.';
-
-export enum Property {
-  ID = 'id',
-  MUSIC_ID = 'musicId',
-  KEY = 'key',
-  MODIFY_USER_ID = 'modifyUserId',
-  MODIFY_TIMESTAMP = 'modifyTimestamp',
-}
-
-export type MusicModifyRecord = {
-  [Property.ID]: number;
-  [Property.MUSIC_ID]: string;
-  [Property.KEY]: string;
-  [Property.MODIFY_USER_ID]: string;
-  [Property.MODIFY_TIMESTAMP]: number;
-};
 
 export function saveMusicModifyRecord({
   musicId,
@@ -35,7 +23,7 @@ export function saveMusicModifyRecord({
   );
 }
 
-export function getMusicModifyRecordList<P extends Property>(
+export function getMusicModifyRecordList<P extends MusicModifyRecordProperty>(
   musicId: string,
   properties: P[],
 ) {

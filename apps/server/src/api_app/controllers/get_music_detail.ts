@@ -7,13 +7,10 @@ import {
   SingerProperty,
   Singer,
   UserProperty,
+  MusicForkProperty,
 } from '@/constants/db_definition';
 import { getMusicById, getMusicListByIds } from '@/db/music';
-import {
-  getMusicForkFromList,
-  getMusicForkList,
-  Property as MusicForkProperty,
-} from '@/db/music_fork';
+import { getMusicForkFromList, getMusicForkList } from '@/db/music_fork';
 import { getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
 import { getAssetPublicPath } from '@/platform/asset';

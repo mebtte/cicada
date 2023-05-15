@@ -28,6 +28,18 @@ import {
   LoginCodeProperty,
   SINGER_MODIFY_RECORD_TABLE_NAME,
   SingerModifyRecordProperty,
+  MUSIC_MODIFY_RECORD_TABLE_NAME,
+  MusicModifyRecordProperty,
+  MUSIC_FORK_TABLE_NAME,
+  MusicForkProperty,
+  LYRIC_TABLE_NAME,
+  LyricProperty,
+  MUSIC_PLAY_RECORD_TABLE_NAME,
+  MusicPlayRecordProperty,
+  MUSIC_SINGER_RELATION_TABLE_NAME,
+  MusicSingerRelationProperty,
+  MUSICBILL_TABLE_NAME,
+  MusicbillProperty,
 } from './constants/db_definition';
 
 const DATA_VERSION = 1;
@@ -167,65 +179,65 @@ export default async () => {
       )
     `;
     const TABLE_MUSIC_MODIGY_RECORD = `
-      CREATE TABLE music_modify_record (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        musicId TEXT NOT NULL,
-        modifyUserId TEXT NOT NULL,
-        key TEXT NOT NULL,
-        modifyTimestamp INTEGER NOT NULL,
-        CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
-        CONSTRAINT fkUser FOREIGN KEY ( modifyUserId ) REFERENCES user ( id )
+      CREATE TABLE ${MUSIC_MODIFY_RECORD_TABLE_NAME} (
+        ${MusicModifyRecordProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${MusicModifyRecordProperty.MUSIC_ID} TEXT NOT NULL,
+        ${MusicModifyRecordProperty.MODIFY_USER_ID} TEXT NOT NULL,
+        ${MusicModifyRecordProperty.KEY} TEXT NOT NULL,
+        ${MusicModifyRecordProperty.MODIFY_TIMESTAMP} INTEGER NOT NULL,
+        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicModifyRecordProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
+        CONSTRAINT fkUser FOREIGN KEY ( ${MusicModifyRecordProperty.MODIFY_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
       )
     `;
     const TABLE_MUSIC_FORK = `
-      CREATE TABLE music_fork (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        musicId TEXT NOT NULL,
-        forkFrom TEXT NOT NULL,
-        CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
-        CONSTRAINT fkForkFrom FOREIGN KEY ( forkFrom ) REFERENCES music ( id ),
-        UNIQUE( musicId, forkFrom ) ON CONFLICT REPLACE
+      CREATE TABLE ${MUSIC_FORK_TABLE_NAME} (
+        ${MusicForkProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${MusicForkProperty.MUSIC_ID} TEXT NOT NULL,
+        ${MusicForkProperty.FORK_FROM} TEXT NOT NULL,
+        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicForkProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
+        CONSTRAINT fkForkFrom FOREIGN KEY ( ${MusicForkProperty.FORK_FROM} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
+        UNIQUE( ${MusicForkProperty.MUSIC_ID}, ${MusicForkProperty.FORK_FROM} ) ON CONFLICT REPLACE
       )
     `;
     const TABLE_LYRIC = `
-      CREATE TABLE lyric (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        musicId TEXT NOT NULL,
-        lrc TEXT NOT NULL,
-        lrcContent TEXT NOT NULL,
-        CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
+      CREATE TABLE ${LYRIC_TABLE_NAME} (
+        ${LyricProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${LyricProperty.MUSIC_ID} TEXT NOT NULL,
+        ${LyricProperty.LRC} TEXT NOT NULL,
+        ${LyricProperty.LRC_CONTENT} TEXT NOT NULL,
+        CONSTRAINT fkMusic FOREIGN KEY ( ${LyricProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ) 
       )
     `;
     const TABLE_MUSIC_PLAY_RECORD = `
-      CREATE TABLE music_play_record (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT NOT NULL,
-        musicId TEXT NOT NULL,
-        percent REAL NOT NULL,
-        timestamp INTEGER NOT NULL,
-        CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ),
-        CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ) 
+      CREATE TABLE ${MUSIC_PLAY_RECORD_TABLE_NAME} (
+        ${MusicPlayRecordProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${MusicPlayRecordProperty.USER_ID} TEXT NOT NULL,
+        ${MusicPlayRecordProperty.MUSIC_ID} TEXT NOT NULL,
+        ${MusicPlayRecordProperty.PERCENT} REAL NOT NULL,
+        ${MusicPlayRecordProperty.TIMESTAMP} INTEGER NOT NULL,
+        CONSTRAINT fkUser FOREIGN KEY ( ${MusicPlayRecordProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicPlayRecordProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ) 
       )
     `;
     const TABLE_MUSIC_SINGER_RELATION = `
-      CREATE TABLE music_singer_relation (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        musicId TEXT NOT NULL,
-        singerId TEXT NOT NULL,
-        CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
-        CONSTRAINT fkSinger FOREIGN KEY ( singerId ) REFERENCES singer ( id ),
-        UNIQUE( musicId, singerId ) ON CONFLICT REPLACE
+      CREATE TABLE ${MUSIC_SINGER_RELATION_TABLE_NAME} (
+        ${MusicSingerRelationProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${MusicSingerRelationProperty.MUSIC_ID} TEXT NOT NULL,
+        ${MusicSingerRelationProperty.SINGER_ID} TEXT NOT NULL,
+        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicSingerRelationProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
+        CONSTRAINT fkSinger FOREIGN KEY ( ${MusicSingerRelationProperty.SINGER_ID} ) REFERENCES ${SINGER_TABLE_NAME} ( ${SingerProperty.ID} ),
+        UNIQUE( ${MusicSingerRelationProperty.MUSIC_ID}, ${MusicSingerRelationProperty.SINGER_ID} ) ON CONFLICT REPLACE
       )
     `;
     const TABLE_MUSICBILL = `
-      CREATE TABLE musicbill (
-        id TEXT PRIMARY KEY NOT NULL,
-        userId TEXT NOT NULL,
-        cover TEXT NOT NULL DEFAULT '',
-        name TEXT NOT NULL,
-        public INTEGER NOT NULL DEFAULT 0,
-        createTimestamp INTEGER NOT NULL,
-        CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ) 
+      CREATE TABLE ${MUSICBILL_TABLE_NAME} (
+        ${MusicbillProperty.ID} TEXT PRIMARY KEY NOT NULL,
+        ${MusicbillProperty.USER_ID} TEXT NOT NULL,
+        ${MusicbillProperty.COVER} TEXT NOT NULL DEFAULT '',
+        ${MusicbillProperty.NAME} TEXT NOT NULL,
+        ${MusicbillProperty.PUBLIC} INTEGER NOT NULL DEFAULT 0,
+        ${MusicbillProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
+        CONSTRAINT fkUser FOREIGN KEY ( ${MusicbillProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ) 
       )
     `;
     const TABLE_MUSICBILL_MUSIC = `

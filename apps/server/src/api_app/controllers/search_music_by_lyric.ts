@@ -3,13 +3,15 @@ import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import excludeProperty from '#/utils/exclude_property';
 import {
+  LYRIC_TABLE_NAME,
+  Lyric,
+  LyricProperty,
   Music,
   MusicProperty,
   Singer,
   SingerProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { Lyric, Property as LyricProperty } from '@/db/lyric';
 import { getSingerListInMusicIds } from '@/db/singer';
 import { Context } from '../constants';
 
@@ -87,11 +89,13 @@ export default async (ctx: Context) => {
     >(
       `
         SELECT
-          id,
-          lrc,
-          musicId
-        FROM lyric
-        WHERE musicId IN ( ${musicList.map(() => '?').join(', ')} )
+          ${LyricProperty.ID},
+          ${LyricProperty.LRC},
+          ${LyricProperty.MUSIC_ID}
+        FROM ${LYRIC_TABLE_NAME}
+        WHERE ${LyricProperty.MUSIC_ID} IN ( ${musicList
+        .map(() => '?')
+        .join(', ')} )
       `,
       musicList.map((m) => m.id),
     ),

@@ -1,15 +1,16 @@
 import { AssetType } from '#/constants';
-import { getUserMusicbillList, Property } from '@/db/musicbill';
+import { getUserMusicbillList } from '@/db/musicbill';
 import { getAssetPublicPath } from '@/platform/asset';
+import { MusicbillProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
   const musicbillList = await getUserMusicbillList(ctx.user.id, [
-    Property.ID,
-    Property.COVER,
-    Property.NAME,
-    Property.PUBLIC,
-    Property.CREATE_TIMESTAMP,
+    MusicbillProperty.ID,
+    MusicbillProperty.COVER,
+    MusicbillProperty.NAME,
+    MusicbillProperty.PUBLIC,
+    MusicbillProperty.CREATE_TIMESTAMP,
   ]);
 
   return ctx.success(

@@ -1,11 +1,11 @@
 import withTimeout from '#/utils/with_timeout';
+import { Lyric, LyricProperty } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { Lyric, Property } from '@/db/lyric';
 import { parse, LineType, LyricLine } from 'clrc';
 
 type LocalLyric = Pick<
   Lyric,
-  Property.ID | Property.LRC | Property.LRC_CONTENT
+  LyricProperty.ID | LyricProperty.LRC | LyricProperty.LRC_CONTENT
 >;
 
 async function updateLyricLrcContent() {

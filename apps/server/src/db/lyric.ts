@@ -1,20 +1,7 @@
+import { Lyric, LyricProperty } from '@/constants/db_definition';
 import { getDB } from '.';
 
-export enum Property {
-  ID = 'id',
-  MUSIC_ID = 'musicId',
-  LRC = 'lrc',
-  LRC_CONTENT = 'lrcContent',
-}
-
-export type Lyric = {
-  [Property.ID]: number;
-  [Property.MUSIC_ID]: string;
-  [Property.LRC]: string;
-  [Property.LRC_CONTENT]: string;
-};
-
-export function getLyricListByMusicId<P extends Property>(
+export function getLyricListByMusicId<P extends LyricProperty>(
   musicId: string,
   properties: P[],
 ) {

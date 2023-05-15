@@ -1,24 +1,20 @@
 import fs from 'fs/promises';
 import { ExceptionCode } from '#/constants/exception';
-import { getLyricListByMusicId, Property as LyricProperty } from '@/db/lyric';
+import { getLyricListByMusicId } from '@/db/lyric';
 import { getMusicById } from '@/db/music';
-import {
-  getMusicModifyRecordList,
-  Property as MusicModifyRecordProperty,
-} from '@/db/music_modify_record';
-import {
-  getMusicForkFromList,
-  getMusicForkList,
-  Property as MusicForkProperty,
-} from '@/db/music_fork';
-import {
-  getMusicPlayRecordList,
-  Property as MusicPlayRecordProperty,
-} from '@/db/music_play_record';
+import { getMusicModifyRecordList } from '@/db/music_modify_record';
+import { getMusicForkFromList, getMusicForkList } from '@/db/music_fork';
+import getMusicPlayRecordList from '@/db/get_music_play_record_list';
 import { getDB } from '@/db';
 import { MusicType } from '#/constants/music';
 import { getTrashDirectory } from '@/config';
-import { MusicProperty } from '@/constants/db_definition';
+import {
+  LyricProperty,
+  MusicForkProperty,
+  MusicModifyRecordProperty,
+  MusicPlayRecordProperty,
+  MusicProperty,
+} from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

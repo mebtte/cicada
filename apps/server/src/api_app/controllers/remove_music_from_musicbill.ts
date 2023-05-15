@@ -1,13 +1,11 @@
 import { ExceptionCode } from '#/constants/exception';
-import {
-  getMusicbillById,
-  Property as MusicbillProperty,
-} from '@/db/musicbill';
+import { getMusicbillById } from '@/db/musicbill';
 import {
   getMusicbillMusic,
   removeMusicbillMusicById,
   Property as MusicbillMusicProperty,
 } from '@/db/musicbill_music';
+import { MusicbillProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

@@ -1,14 +1,10 @@
 import { ExceptionCode } from '#/constants/exception';
-import {
-  getMusicbillById,
-  Musicbill,
-  Property as MusicbillProperty,
-  updateMusicbill,
-} from '@/db/musicbill';
+import { getMusicbillById, updateMusicbill } from '@/db/musicbill';
 import { getAssetFilePath } from '@/platform/asset';
 import { AssetType } from '#/constants';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import exist from '#/utils/exist';
+import { Musicbill, MusicbillProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 const ALLOW_UPDATE_KEYS = Object.values(AllowUpdateKey);

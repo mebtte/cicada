@@ -1,9 +1,6 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import {
-  getMusicbillById,
-  Property as MusicbillProperty,
-} from '@/db/musicbill';
+import { getMusicbillById } from '@/db/musicbill';
 import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
 import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
@@ -14,6 +11,7 @@ import {
   MusicProperty,
   MUSIC_TABLE_NAME,
   SingerProperty,
+  MusicbillProperty,
 } from '@/constants/db_definition';
 import { Context } from '../constants';
 

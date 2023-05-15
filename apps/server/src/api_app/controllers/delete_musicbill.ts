@@ -1,12 +1,13 @@
 import fs from 'fs/promises';
 import { ExceptionCode } from '#/constants/exception';
-import { getMusicbillById, Property } from '@/db/musicbill';
+import { getMusicbillById } from '@/db/musicbill';
 import {
   getMusicbillMusicList,
   Property as MusicbillMusicProperty,
 } from '@/db/musicbill_music';
 import { getDB } from '@/db';
 import { getTrashDirectory } from '@/config';
+import { MusicbillProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -15,7 +16,10 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const musicbill = await getMusicbillById(id, Object.values(Property));
+  const musicbill = await getMusicbillById(
+    id,
+    Object.values(MusicbillProperty),
+  );
   if (!musicbill || musicbill.userId !== ctx.user.id) {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }

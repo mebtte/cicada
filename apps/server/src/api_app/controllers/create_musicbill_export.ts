@@ -1,7 +1,8 @@
 import { ExceptionCode } from '#/constants/exception';
-import { getMusicbillById, Property } from '@/db/musicbill';
+import { getMusicbillById } from '@/db/musicbill';
 import { getDB } from '@/db';
 import day from '#/utils/day';
+import { MusicbillProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -18,8 +19,8 @@ export default async (ctx: Context) => {
   }
 
   const musicbill = await getMusicbillById(id, [
-    Property.USER_ID,
-    Property.PUBLIC,
+    MusicbillProperty.USER_ID,
+    MusicbillProperty.PUBLIC,
   ]);
   if (!musicbill || (!musicbill.public && musicbill.userId !== ctx.user.id)) {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);

@@ -1,10 +1,7 @@
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import { ExceptionCode } from '#/constants/exception';
-import {
-  createMusicbill,
-  getUserMusicbillList,
-  Property as MusicbillProperty,
-} from '@/db/musicbill';
+import { createMusicbill, getUserMusicbillList } from '@/db/musicbill';
+import { MusicbillProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

@@ -1,25 +1,8 @@
 import generateRandomString from '#/utils/generate_random_string';
+import { Musicbill, MusicbillProperty } from '@/constants/db_definition';
 import { getDB } from '.';
 
-export enum Property {
-  ID = 'id',
-  USER_ID = 'userId',
-  COVER = 'cover',
-  NAME = 'name',
-  PUBLIC = 'public',
-  CREATE_TIMESTAMP = 'createTimestamp',
-}
-
-export interface Musicbill {
-  [Property.ID]: string;
-  [Property.USER_ID]: string;
-  [Property.COVER]: string;
-  [Property.NAME]: string;
-  [Property.PUBLIC]: 0 | 1;
-  [Property.CREATE_TIMESTAMP]: number;
-}
-
-export function getMusicbillById<P extends Property>(
+export function getMusicbillById<P extends MusicbillProperty>(
   id: string,
   properties: P[],
 ) {
@@ -34,7 +17,7 @@ export function getMusicbillById<P extends Property>(
   );
 }
 
-export function getUserMusicbillList<P extends Property>(
+export function getUserMusicbillList<P extends MusicbillProperty>(
   userId: string,
   properties: P[],
 ) {
@@ -49,7 +32,7 @@ export function getUserMusicbillList<P extends Property>(
   );
 }
 
-export function getMusicbillListByIds<P extends Property>(
+export function getMusicbillListByIds<P extends MusicbillProperty>(
   ids: string[],
   properties: P[],
 ) {
@@ -83,7 +66,10 @@ export async function createMusicbill({
 }
 
 export function updateMusicbill<
-  P extends Property.COVER | Property.NAME | Property.PUBLIC,
+  P extends
+    | MusicbillProperty.COVER
+    | MusicbillProperty.NAME
+    | MusicbillProperty.PUBLIC,
 >(id: string, property: P, value: Musicbill[P]) {
   return getDB().run(
     `

@@ -1,18 +1,7 @@
+import { MusicFork, MusicForkProperty } from '@/constants/db_definition';
 import { getDB } from '.';
 
-export enum Property {
-  ID = 'id',
-  MUSIC_ID = 'musicId',
-  FORK_FROM = 'forkFrom',
-}
-
-export type MusicFork = {
-  [Property.ID]: number;
-  [Property.MUSIC_ID]: string;
-  [Property.FORK_FROM]: string;
-};
-
-export async function getMusicForkFromList<P extends Property>(
+export async function getMusicForkFromList<P extends MusicForkProperty>(
   musicId: string,
   properties: P[],
 ) {
@@ -27,7 +16,7 @@ export async function getMusicForkFromList<P extends Property>(
   );
 }
 
-export async function getMusicForkList<P extends Property>(
+export async function getMusicForkList<P extends MusicForkProperty>(
   musicId: string,
   properties: P[],
 ) {

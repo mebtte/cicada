@@ -88,6 +88,50 @@ export type Music = {
   [MusicProperty.YEAR]: number | null;
 };
 
+export const MUSIC_MODIFY_RECORD_TABLE_NAME = 'music_modify_record';
+export enum MusicModifyRecordProperty {
+  ID = 'id',
+  MUSIC_ID = 'musicId',
+  KEY = 'key',
+  MODIFY_USER_ID = 'modifyUserId',
+  MODIFY_TIMESTAMP = 'modifyTimestamp',
+}
+export type MusicModifyRecord = {
+  [MusicModifyRecordProperty.ID]: number;
+  [MusicModifyRecordProperty.MUSIC_ID]: string;
+  [MusicModifyRecordProperty.KEY]: string;
+  [MusicModifyRecordProperty.MODIFY_USER_ID]: string;
+  [MusicModifyRecordProperty.MODIFY_TIMESTAMP]: number;
+};
+
+export const MUSIC_FORK_TABLE_NAME = 'music_fork';
+export enum MusicForkProperty {
+  ID = 'id',
+  MUSIC_ID = 'musicId',
+  FORK_FROM = 'forkFrom',
+}
+export type MusicFork = {
+  [MusicForkProperty.ID]: number;
+  [MusicForkProperty.MUSIC_ID]: string;
+  [MusicForkProperty.FORK_FROM]: string;
+};
+
+export const MUSIC_PLAY_RECORD_TABLE_NAME = 'music_play_record';
+export enum MusicPlayRecordProperty {
+  ID = 'id',
+  USER_ID = 'userId',
+  MUSIC_ID = 'musicId',
+  PERCENT = 'percent',
+  TIMESTAMP = 'timestamp',
+}
+export interface MusicPlayRecord {
+  [MusicPlayRecordProperty.ID]: string;
+  [MusicPlayRecordProperty.USER_ID]: string;
+  [MusicPlayRecordProperty.MUSIC_ID]: string;
+  [MusicPlayRecordProperty.PERCENT]: number;
+  [MusicPlayRecordProperty.TIMESTAMP]: number;
+}
+
 export const SINGER_TABLE_NAME = 'singer';
 export enum SingerProperty {
   ID = 'id',
@@ -121,3 +165,47 @@ export type SingerModifyRecord = {
   [SingerModifyRecordProperty.MODIFY_USER_ID]: string;
   [SingerModifyRecordProperty.MODIFY_TIMESTAMP]: number;
 };
+
+export const MUSIC_SINGER_RELATION_TABLE_NAME = 'music_singer_relation';
+export enum MusicSingerRelationProperty {
+  ID = 'id',
+  MUSIC_ID = 'musicId',
+  SINGER_ID = 'singerId',
+}
+export type MusicSingerRelation = {
+  [MusicSingerRelationProperty.ID]: number;
+  [MusicSingerRelationProperty.MUSIC_ID]: string;
+  [MusicSingerRelationProperty.SINGER_ID]: string;
+};
+
+export const LYRIC_TABLE_NAME = 'lyric';
+export enum LyricProperty {
+  ID = 'id',
+  MUSIC_ID = 'musicId',
+  LRC = 'lrc',
+  LRC_CONTENT = 'lrcContent',
+}
+export type Lyric = {
+  [LyricProperty.ID]: number;
+  [LyricProperty.MUSIC_ID]: string;
+  [LyricProperty.LRC]: string;
+  [LyricProperty.LRC_CONTENT]: string;
+};
+
+export const MUSICBILL_TABLE_NAME = 'musicbill';
+export enum MusicbillProperty {
+  ID = 'id',
+  USER_ID = 'userId',
+  COVER = 'cover',
+  NAME = 'name',
+  PUBLIC = 'public',
+  CREATE_TIMESTAMP = 'createTimestamp',
+}
+export interface Musicbill {
+  [MusicbillProperty.ID]: string;
+  [MusicbillProperty.USER_ID]: string;
+  [MusicbillProperty.COVER]: string;
+  [MusicbillProperty.NAME]: string;
+  [MusicbillProperty.PUBLIC]: 0 | 1;
+  [MusicbillProperty.CREATE_TIMESTAMP]: number;
+}

@@ -1,9 +1,13 @@
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
 import excludeProperty from '#/utils/exclude_property';
-import { User, UserProperty } from '@/constants/db_definition';
+import {
+  Musicbill,
+  MusicbillProperty,
+  User,
+  UserProperty,
+} from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { Musicbill, Property as MusicbillProperty } from '@/db/musicbill';
 import { getUserListByIds } from '@/db/user';
 import { Context } from '../constants';
 

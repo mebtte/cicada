@@ -6,12 +6,10 @@ import {
   MusicProperty,
   UserProperty,
   SingerProperty,
+  MusicbillProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import {
-  getMusicbillById,
-  Property as MusicbillProperty,
-} from '@/db/musicbill';
+import { getMusicbillById } from '@/db/musicbill';
 import {
   getMusicbillCollection,
   Property as MusicbillCollectionProperty,
