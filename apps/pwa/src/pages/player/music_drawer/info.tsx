@@ -1,7 +1,10 @@
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
-import { MdOutlineLocalFireDepartment } from 'react-icons/md';
+import {
+  MdOutlineDateRange,
+  MdOutlineLocalFireDepartment,
+} from 'react-icons/md';
 import { MusicDetail } from './constants';
 
 const Style = styled.div`
@@ -16,10 +19,9 @@ const Style = styled.div`
     padding: 10px 20px;
     background-color: rgb(255 255 255 / 0.75);
 
-    > .tag-box {
-      display: flex;
-      align-items: center;
-      gap: 5px;
+    > .aliases {
+      font-size: 14px;
+      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     }
 
     > .name {
@@ -28,26 +30,20 @@ const Style = styled.div`
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     }
 
-    > .aliases {
-      font-size: 14px;
+    > .extra {
+      font-size: 12px;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+
+      display: flex;
+      align-items: center;
+      gap: 15px;
+
+      > .part {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
     }
-  }
-
-  > .heat {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-
-    padding: 3px 5px 7px 5px;
-
-    display: flex;
-    align-items: center;
-    gap: 3px;
-
-    font-size: 12px;
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    background-color: rgb(255 255 255 / 0.75);
   }
 `;
 
@@ -56,7 +52,6 @@ function Info({ music }: { music: MusicDetail }) {
     <Style>
       <Cover src={music.cover} size="100%" />
       <div className="info">
-        <div className="name">{music.name}</div>
         {music.aliases.length ? (
           <div className="aliases">
             {music.aliases.map((alias, index) => (
@@ -67,10 +62,17 @@ function Info({ music }: { music: MusicDetail }) {
             ))}
           </div>
         ) : null}
-      </div>
-      <div className="heat" title="热度">
-        <MdOutlineLocalFireDepartment />
-        {music.heat}
+        <div className="name">{music.name}</div>
+        <div className="extra">
+          <div className="part" title="发行年份">
+            <MdOutlineDateRange className="icon" />
+            <div className="value">2023</div>
+          </div>
+          <div className="part" title="热度">
+            <MdOutlineLocalFireDepartment className="icon" />
+            <div className="value">{music.heat}</div>
+          </div>
+        </div>
       </div>
     </Style>
   );

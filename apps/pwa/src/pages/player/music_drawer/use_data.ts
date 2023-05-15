@@ -6,21 +6,25 @@ import DefaultCover from '@/asset/default_cover.jpeg';
 import day from '#/utils/day';
 import { CacheName } from '@/constants/cache';
 import logger from '@/utils/logger';
+import timeout from '#/utils/timeout';
 import { MusicDetail, Lyric } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 
 function getAudioDuration(url: string) {
-  return new Promise<number>((resolve, reject) => {
-    const audio = document.createElement('audio');
-    audio.preload = 'metadata';
-    audio.src = url;
-    audio.addEventListener('canplaythrough', () => resolve(audio.duration));
-    audio.addEventListener('error', () =>
-      reject(new Error(`Can not load audio from ${url}`)),
-    );
-  });
+  return Promise.race([
+    new Promise<number>((resolve, reject) => {
+      const audio = document.createElement('audio');
+      audio.preload = 'metadata';
+      audio.src = url;
+      audio.addEventListener('loadedmetadata', () => resolve(audio.duration));
+      audio.addEventListener('error', () =>
+        reject(new Error(`Can not load audio from ${url}`)),
+      );
+    }),
+    timeout(5000),
+  ]);
 }
 
 interface Data {
@@ -49,6 +53,12 @@ export default (id: string) => {
         });
       }
 
+      /**
+       * 获取音乐文件大小和时长
+       * 如果有缓存从缓存读取
+       * 没有缓存从网络加载
+       * @author mebtte<hi@mebtte.com>
+       */
       let size = 0;
       let duration = 0;
       try {
@@ -65,7 +75,21 @@ export default (id: string) => {
           }
         }
       } catch (error) {
-        logger.error(error, '解析本地音乐缓存失败');
+        logger.error(error, '解析本地音乐资源缓存失败');
+      }
+      if (!size || !duration) {
+        try {
+          const [assetHeadResponse, d] = await Promise.all([
+            window.fetch(music.asset, {
+              method: 'head',
+            }),
+            getAudioDuration(music.asset),
+          ]);
+          size = Number(assetHeadResponse.headers.get('content-length')) || 0;
+          duration = d;
+        } catch (error) {
+          logger.error(error, '从网络加载音乐资源失败');
+        }
       }
 
       setData({
