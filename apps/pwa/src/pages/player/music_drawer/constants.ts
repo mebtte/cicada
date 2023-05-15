@@ -22,6 +22,9 @@ export interface MusicDetail extends Music {
   forkFromList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
   forkList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
   singers: SingerDetail[];
+
+  size: number;
+  duration: number;
 }
 
 export const MINI_INFO_HEIGHT = 50;

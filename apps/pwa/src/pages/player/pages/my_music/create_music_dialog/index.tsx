@@ -110,7 +110,7 @@ function CreateMusicDialog() {
             keyword: artist,
             page: 1,
             pageSize: 10,
-            minDuration: 0,
+            minRequestDuration: 0,
           })
             .then((data) => {
               if (!singerList.length) {
@@ -161,7 +161,7 @@ function CreateMusicDialog() {
             id,
             key: AllowUpdateKey.COVER,
             value: assetId,
-            minDuration: 0,
+            minRequestDuration: 0,
           });
         };
 
@@ -171,7 +171,7 @@ function CreateMusicDialog() {
                 id,
                 key: AllowUpdateKey.LYRIC,
                 value: [lyric],
-                minDuration: 0,
+                minRequestDuration: 0,
               })
             : null,
           pictureBase64 ? updateCover(pictureBase64) : null,

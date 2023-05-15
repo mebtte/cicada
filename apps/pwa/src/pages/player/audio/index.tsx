@@ -161,7 +161,10 @@ class Audio extends React.PureComponent<Props, {}> {
     const playedSeconds = this.getPlayedSeconeds();
     const percent = duration ? playedSeconds / duration : 0;
 
-    if (definition.WITH_SW && window.caches && percent > 0.75) {
+    if (
+      window.caches &&
+      ((definition.WITH_SW && percent > 0.75) || definition.DEVELOPMENT)
+    ) {
       window.caches.open(CacheName.ASSET_MEDIA).then(async (cache) => {
         const exist = await cache.match(music.asset);
         if (!exist) {

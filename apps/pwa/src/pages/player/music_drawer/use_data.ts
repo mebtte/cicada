@@ -4,10 +4,24 @@ import { MusicType } from '#/constants/music';
 import getLyricList from '@/server/api/get_lyric_list';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import day from '#/utils/day';
+import { CacheName } from '@/constants/cache';
+import logger from '@/utils/logger';
 import { MusicDetail, Lyric } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+
+function getAudioDuration(url: string) {
+  return new Promise<number>((resolve, reject) => {
+    const audio = document.createElement('audio');
+    audio.preload = 'metadata';
+    audio.src = url;
+    audio.addEventListener('canplaythrough', () => resolve(audio.duration));
+    audio.addEventListener('error', () =>
+      reject(new Error(`Can not load audio from ${url}`)),
+    );
+  });
+}
 
 interface Data {
   error: Error | null;
@@ -29,7 +43,29 @@ export default (id: string) => {
       const music = await getMusicDetail(id);
       let lyrics: Lyric[] = [];
       if (music.type === MusicType.SONG) {
-        lyrics = await getLyricList({ musicId: music.id, minDuration: 0 });
+        lyrics = await getLyricList({
+          musicId: music.id,
+          minRequestDuration: 0,
+        });
+      }
+
+      let size = 0;
+      let duration = 0;
+      try {
+        if (window.caches) {
+          const cache = await window.caches.open(CacheName.ASSET_MEDIA);
+          const musicAsset = await cache.match(music.asset);
+          if (musicAsset) {
+            const blob = await musicAsset.blob();
+            const url = URL.createObjectURL(blob);
+            duration = await getAudioDuration(url).finally(() =>
+              URL.revokeObjectURL(url),
+            );
+            size = blob.size;
+          }
+        }
+      } catch (error) {
+        logger.error(error, '解析本地音乐缓存失败');
       }
 
       setData({
@@ -53,6 +89,9 @@ export default (id: string) => {
             cover: m.cover || DefaultCover,
           })),
           heat: music.heat,
+
+          size,
+          duration,
         },
       });
     } catch (error) {

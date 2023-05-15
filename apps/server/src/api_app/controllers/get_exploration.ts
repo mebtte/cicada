@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { getDB } from '@/db';
 import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
@@ -11,16 +11,17 @@ import {
   SingerProperty,
   Musicbill,
   MusicbillProperty,
+  MUSIC_TABLE_NAME,
+  SINGER_TABLE_NAME,
+  MUSICBILL_TABLE_NAME,
 } from '@/constants/db_definition';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const QUALITY = 20;
 
 type MusicbillCreateUser = Pick<User, UserProperty.ID | UserProperty.NICKNAME>;
-type MusicSinger = Pick<
-  Singer,
-  SingerProperty.ID | SingerProperty.NAME | SingerProperty.ALIASES
-> & {
+type MusicSinger = Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
   musicId: string;
 };
 
@@ -31,11 +32,11 @@ export default async (ctx: Context) => {
     >(
       `
         SELECT
-          id,
-          name,
-          cover
-        FROM music
-        WHERE cover != ''
+          ${MusicProperty.ID},
+          ${MusicProperty.NAME},
+          ${MusicProperty.COVER}
+        FROM ${MUSIC_TABLE_NAME}
+        WHERE ${MusicProperty.COVER} != ''
         ORDER BY random()
         LIMIT ?
       `,
@@ -52,12 +53,12 @@ export default async (ctx: Context) => {
     >(
       `
         SELECT
-          id,
-          name,
-          aliases,
-          avatar
-        FROM singer
-        WHERE avatar != ''
+          ${SingerProperty.ID},
+          ${SingerProperty.NAME},
+          ${SingerProperty.ALIASES},
+          ${SingerProperty.AVATAR}
+        FROM ${SINGER_TABLE_NAME}
+        WHERE ${SingerProperty.AVATAR} != ''
         ORDER BY random()
         LIMIT ?
       `,
@@ -74,13 +75,13 @@ export default async (ctx: Context) => {
     >(
       `
         SELECT
-          id,
-          cover,
-          name,
-          userId
-        FROM musicbill
-        WHERE public = 1
-          AND cover != ''
+          ${MusicbillProperty.ID},
+          ${MusicbillProperty.COVER},
+          ${MusicbillProperty.NAME},
+          ${MusicbillProperty.USER_ID}
+        FROM ${MUSICBILL_TABLE_NAME}
+        WHERE ${MusicbillProperty.PUBLIC} = 1
+          AND ${MusicbillProperty.COVER} != ''
         ORDER BY random()
         LIMIT ? 
       `,
@@ -95,7 +96,7 @@ export default async (ctx: Context) => {
     musicList.length
       ? getSingerListInMusicIds(
           musicList.map((m) => m.id),
-          [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
+          [SingerProperty.ID, SingerProperty.NAME],
         )
       : [],
     musicbillList.length
@@ -115,16 +116,19 @@ export default async (ctx: Context) => {
   return ctx.success({
     musicList: musicList.map((m) => ({
       ...m,
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       singers: musicSingerList
         .filter((s) => s.musicId === m.id)
         .map((s) => excludeProperty(s, ['musicId'])),
     })),
     singerList: singerList.map((s) => ({
       ...s,
+      avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
       aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     })),
     musicbillList: musicbillList.map((mb) => ({
       ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
+      cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
       user: musicbillCreateUserList.find((u) => mb.userId === u.id)!,
     })),
   });

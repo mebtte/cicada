@@ -42,6 +42,8 @@ export default async (ctx: Context) => {
       | MusicProperty.TYPE
       | MusicProperty.NAME
       | MusicProperty.ALIASES
+      | MusicProperty.COVER
+      | MusicProperty.ASSET
     >
   >(
     `
@@ -49,7 +51,9 @@ export default async (ctx: Context) => {
         m.${MusicProperty.ID},
         m.${MusicProperty.TYPE},
         m.${MusicProperty.NAME},
-        m.${MusicProperty.ALIASES}
+        m.${MusicProperty.ALIASES},
+        m.${MusicProperty.COVER},
+        m.${MusicProperty.ASSET}
       FROM
         musicbill_music AS mm
         LEFT JOIN ${MUSIC_TABLE_NAME} AS m ON mm.${MusicbillMusicProperty.MUSIC_ID} = m.${MusicProperty.ID}
@@ -91,6 +95,8 @@ export default async (ctx: Context) => {
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingers[m.id] || [],
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
     })),
   });
 };

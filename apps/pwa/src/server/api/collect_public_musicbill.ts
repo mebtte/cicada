@@ -6,7 +6,7 @@ function collectPublicMusicbill(id: string) {
     method: Method.POST,
     body: { id },
     withToken: true,
-    minDuration: 0,
+    minRequestDuration: 0,
   });
 }
 

@@ -1,6 +1,10 @@
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
+/**
+ * 获取发现内容
+ * @author mebtte<hi@mebtte.com>
+ */
 async function getExploration() {
   const data = await request<{
     musicList: {

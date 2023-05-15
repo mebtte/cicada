@@ -22,7 +22,7 @@ export async function request<Data = void>({
   body,
   headers = {},
   withToken = false,
-  minDuration = 500,
+  minRequestDuration = 500,
   timeout = 10 * 1000,
 }: {
   path: string;
@@ -35,7 +35,7 @@ export async function request<Data = void>({
     [key: string]: string;
   };
   withToken?: boolean;
-  minDuration?: number;
+  minRequestDuration?: number;
   timeout?: number;
 }) {
   let url = prefixServerOrigin(path);
@@ -78,7 +78,7 @@ export async function request<Data = void>({
           headers,
           body: processedBody,
         }),
-        sleep(minDuration),
+        sleep(minRequestDuration),
       ]),
       timeoutFn(timeout),
     ]);

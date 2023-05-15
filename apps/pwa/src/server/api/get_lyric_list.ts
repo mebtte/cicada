@@ -2,10 +2,10 @@ import { request } from '..';
 
 function getLyricList({
   musicId,
-  minDuration = 1000,
+  minRequestDuration = 1000,
 }: {
   musicId: string;
-  minDuration?: number;
+  minRequestDuration?: number;
 }) {
   return request<
     {
@@ -16,7 +16,7 @@ function getLyricList({
     path: '/api/lyric_list',
     params: { musicId },
     withToken: true,
-    minDuration,
+    minRequestDuration,
   });
 }
 

@@ -11,7 +11,7 @@ interface Task {
 }
 
 class AsyncQueue {
-  taskMinDuration: number;
+  taskminRequestDuration: number;
 
   taskTimeout: number;
 
@@ -26,19 +26,19 @@ class AsyncQueue {
   taskQueue: Task[];
 
   constructor({
-    taskMinDuration = 0,
+    taskminRequestDuration = 0,
     taskTimeout = 0,
     taskInterval = 0,
     abortErrorGenerator,
     timeoutErrorGenerator,
   }: {
-    taskMinDuration?: number;
+    taskminRequestDuration?: number;
     taskTimeout?: number;
     taskInterval?: number;
     abortErrorGenerator?: () => Error;
     timeoutErrorGenerator?: (ms: number) => Error;
   }) {
-    this.taskMinDuration = taskMinDuration;
+    this.taskminRequestDuration = taskminRequestDuration;
     this.taskTimeout = taskTimeout;
     this.taskInterval = taskInterval;
     this.abortErrorGenerator = abortErrorGenerator;
@@ -91,7 +91,7 @@ class AsyncQueue {
     const [{ task, resolve, reject }] = this.taskQueue.splice(0, 1);
     try {
       const [a] = await Promise.race([
-        Promise.all([task(), sleep(this.taskMinDuration)]),
+        Promise.all([task(), sleep(this.taskminRequestDuration)]),
         timeout(this.taskTimeout, this.timeoutErrorGenerator),
       ]);
       resolve(a as Result);

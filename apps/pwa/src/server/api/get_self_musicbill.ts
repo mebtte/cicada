@@ -34,6 +34,11 @@ async function getSelfMusicbill(id: string) {
   return {
     ...musicbill,
     cover: prefixServerOrigin(musicbill.cover),
+    musicList: musicbill.musicList.map((m) => ({
+      ...m,
+      cover: prefixServerOrigin(m.cover),
+      asset: prefixServerOrigin(m.asset),
+    })),
   };
 }
 

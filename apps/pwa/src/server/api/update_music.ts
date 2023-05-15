@@ -15,12 +15,12 @@ function updateMusic<Key extends AllowUpdateKey>({
   id,
   key,
   value,
-  minDuration,
+  minRequestDuration,
 }: {
   id: string;
   key: Key;
   value: KeyMapValue[Key];
-  minDuration?: number;
+  minRequestDuration?: number;
 }) {
   return request({
     path: '/api/music',
@@ -31,7 +31,7 @@ function updateMusic<Key extends AllowUpdateKey>({
       value,
     },
     withToken: true,
-    minDuration,
+    minRequestDuration,
   });
 }
 
