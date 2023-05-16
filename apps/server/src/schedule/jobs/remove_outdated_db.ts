@@ -1,8 +1,18 @@
 import { getDB } from '@/db';
 import withTimeout from '#/utils/with_timeout';
-import fs from 'fs/promises';
-import day from '#/utils/day';
-import { getTrashDirectory } from '@/config';
+import {
+  CAPTCHA_TABLE_NAME,
+  CaptchaProperty,
+  LOGIN_CODE_TABLE_NAME,
+  LoginCodeProperty,
+  MUSICBILL_EXPORT_TABLE_NAME,
+  MUSIC_MODIFY_RECORD_TABLE_NAME,
+  MusicModifyRecordProperty,
+  MusicbillExportProperty,
+  SINGER_MODIFY_RECORD_TABLE_NAME,
+  SingerModifyRecordProperty,
+} from '@/constants/db_definition';
+import logger from '@/utils/logger';
 
 const TABLES: {
   table: string;
@@ -10,28 +20,28 @@ const TABLES: {
   ttl: number;
 }[] = [
   {
-    table: 'captcha',
-    timestampColumn: 'createTimestamp',
+    table: CAPTCHA_TABLE_NAME,
+    timestampColumn: CaptchaProperty.CREATE_TIMESTAMP,
     ttl: 1000 * 60 * 60 * 24 * 3,
   },
   {
-    table: 'login_code',
-    timestampColumn: 'createTimestamp',
+    table: LOGIN_CODE_TABLE_NAME,
+    timestampColumn: LoginCodeProperty.CREATE_TIMESTAMP,
     ttl: 1000 * 60 * 60 * 24 * 7,
   },
   {
-    table: 'musicbill_export',
-    timestampColumn: 'createTimestamp',
+    table: MUSICBILL_EXPORT_TABLE_NAME,
+    timestampColumn: MusicbillExportProperty.CREATE_TIMESTAMP,
     ttl: 1000 * 60 * 60 * 24 * 30,
   },
   {
-    table: 'music_modify_record',
-    timestampColumn: 'modifyTimestamp',
+    table: MUSIC_MODIFY_RECORD_TABLE_NAME,
+    timestampColumn: MusicModifyRecordProperty.MODIFY_TIMESTAMP,
     ttl: 1000 * 60 * 60 * 24 * 180,
   },
   {
-    table: 'singer_modify_record',
-    timestampColumn: 'modifyTimestamp',
+    table: SINGER_MODIFY_RECORD_TABLE_NAME,
+    timestampColumn: SingerModifyRecordProperty.MODIFY_TIMESTAMP,
     ttl: 1000 * 60 * 60 * 24 * 180,
   },
 ];
@@ -49,21 +59,18 @@ async function removeOutdatedDB() {
       [now - ttl],
     );
     if (rows.length) {
-      await Promise.all([
-        fs.writeFile(
-          `${getTrashDirectory()}/outdated_table_${table}_${day(now).format(
-            'YYYYMMDD',
-          )}.json`,
-          JSON.stringify(rows),
-        ),
-        getDB().run(
-          `
-          DELETE FROM ${table}
-          WHERE ${timestampColumn} <= ?
-        `,
-          [now - ttl],
-        ),
-      ]);
+      await getDB().run(
+        `
+        DELETE FROM ${table}
+        WHERE ${timestampColumn} <= ?
+      `,
+        [now - ttl],
+      );
+      logger.info({
+        label: 'remove_outdated_db',
+        title: table,
+        message: JSON.stringify(rows),
+      });
     }
   }
 }

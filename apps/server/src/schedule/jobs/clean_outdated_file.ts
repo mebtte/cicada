@@ -25,7 +25,7 @@ async function cleanOutdatedFile() {
     },
     {
       directory: getLogDirectory(),
-      ttl: 1000 * 60 * 60 * 24 * 7,
+      ttl: 1000 * 60 * 60 * 24 * 30,
     },
     {
       directory: getDownloadDirectory(),
