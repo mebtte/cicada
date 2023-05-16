@@ -179,9 +179,9 @@ export default async () => {
         ${MusicProperty.ASSET} TEXT NOT NULL,
         ${MusicProperty.HEAT} INTEGER NOT NULL DEFAULT 0,
         ${MusicProperty.CREATE_USER_ID} TEXT NOT NULL,
-        ${MusicProperty.CREATE_TIMESTAMP} INTEGER NOT NULL
+        ${MusicProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
 
-        CONSTRAINT fk_${TABLE_USER} FOREIGN KEY ( ${MusicProperty.CREATE_USER_ID} ) REFERENCES ${TABLE_USER} ( ${UserProperty.ID} )
+        CONSTRAINT fkUser FOREIGN KEY ( ${MusicProperty.CREATE_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
       )
     `;
     const TABLE_MUSIC_MODIGY_RECORD = `
@@ -256,7 +256,7 @@ export default async () => {
       CREATE TABLE ${MUSICBILL_MUSIC_TABLE_NAME} (
         ${MusicbillMusicProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${MusicbillMusicProperty.MUSICBILL_ID} TEXT NOT NULL,
-        mus${MusicbillMusicProperty.MUSIC_ID}icId TEXT NOT NULL,
+        ${MusicbillMusicProperty.MUSIC_ID} TEXT NOT NULL,
         ${MusicbillMusicProperty.ADD_TIMESTAMP} INTEGER NOT NULL,
 
         CONSTRAINT fkMusicbill FOREIGN KEY ( ${MusicbillMusicProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
@@ -325,7 +325,7 @@ export default async () => {
       adminEmail = await question('❓ 请输入管理员邮箱: ');
       if (adminEmail && !EMAIL.test(adminEmail)) {
         // eslint-disable-next-line no-console
-        console.log(`⚠️ 「${adminEmail}」不是合法的邮箱`);
+        console.log(`❌ [ ${adminEmail} ] 不是合法的邮箱`);
         adminEmail = '';
       }
     }
@@ -338,6 +338,6 @@ export default async () => {
     );
 
     // eslint-disable-next-line no-console
-    console.log(`🎉 现在你可以使用「${adminEmail}」登录了`);
+    console.log(`🎉 现在你可以使用 [ ${adminEmail} ] 登录了`);
   }
 };
