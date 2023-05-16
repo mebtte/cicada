@@ -1,42 +1,57 @@
 import { useState, useEffect, useCallback } from 'react';
-import eventemitter, { EventType } from '../eventemitter';
+import useNavigate from '@/utils/use_navigate';
+import { Query } from '@/constants';
+import useQuery from '@/utils/use_query';
 import useDynamicZIndex from '../use_dynamic_z_index';
+import eventemitter, { EventType } from '../eventemitter';
 
 export default () => {
-  const [open, setOpen] = useState(false);
-  // const [open, setOpen] = useState(true);
-  const onClose = useCallback(() => setOpen(false), []);
-  const zIndex = useDynamicZIndex(EventType.OPEN_MUSIC_DRAWER);
-  // const [id, setId] = useState('PHbhlA1N');
-  const [id, setId] = useState('');
+  const navigate = useNavigate();
+  const onClose = useCallback(
+    () =>
+      navigate({
+        query: {
+          [Query.MUSIC_DRAWER_ID]: '',
+        },
+      }),
+    [navigate],
+  );
+  const { music_drawer_id: urlId } = useQuery<Query.MUSIC_DRAWER_ID>();
+  const [id, setId] = useState(urlId);
+
+  useEffect(() => {
+    setId((i) => urlId || i);
+  }, [urlId]);
 
   useEffect(() => {
     const unlistenOpenMusicDrawer = eventemitter.listen(
       EventType.OPEN_MUSIC_DRAWER,
-      (data) => {
-        setId(data.id);
-        return setOpen(true);
-      },
+      (data) =>
+        navigate({
+          query: {
+            [Query.MUSIC_DRAWER_ID]: data.id,
+          },
+        }),
     );
+    return unlistenOpenMusicDrawer;
+  }, [navigate]);
+
+  useEffect(() => {
     const unlistenMusicDeleted = eventemitter.listen(
       EventType.MUSIC_DELETED,
       (data) => {
         if (data.id === id) {
-          setOpen(false);
-          window.setTimeout(() => setId(''), 1000);
+          onClose();
         }
       },
     );
-    return () => {
-      unlistenOpenMusicDrawer();
-      unlistenMusicDeleted();
-    };
-  }, [id]);
+    return unlistenMusicDeleted;
+  }, [id, onClose]);
 
   return {
-    open,
+    open: !!urlId,
     onClose,
     id,
-    zIndex,
+    zIndex: useDynamicZIndex(EventType.OPEN_MUSIC_DRAWER),
   };
 };

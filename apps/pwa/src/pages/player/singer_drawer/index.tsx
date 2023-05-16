@@ -2,19 +2,12 @@ import SingerDrawer from './singer_drawer';
 import useOpen from './use_open';
 
 function Wrapper() {
-  const { zIndex, singerId, open, onClose } = useOpen();
+  const { zIndex, id, open, onClose } = useOpen();
 
-  if (!singerId) {
+  if (!id) {
     return null;
   }
-  return (
-    <SingerDrawer
-      open={open}
-      onClose={onClose}
-      singerId={singerId}
-      zIndex={zIndex}
-    />
-  );
+  return <SingerDrawer open={open} onClose={onClose} id={id} zIndex={zIndex} />;
 }
 
 export default Wrapper;

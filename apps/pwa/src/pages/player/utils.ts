@@ -39,8 +39,8 @@ export function openCreateMusicbillDialog() {
       if (trimmedName.length > NAME_MAX_LENGTH) {
         throw new Error(`名字长度应小于等于 ${NAME_MAX_LENGTH}`);
       }
-      await createMusicbillRequest(trimmedName);
-      e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
+      const id = await createMusicbillRequest(trimmedName);
+      e.emit(EventType.MUSICBILL_CREATED, { id });
     },
   });
 }

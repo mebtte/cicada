@@ -95,6 +95,31 @@ export default () => {
           ),
         ),
     );
+    const unlistenMusicDeleted = eventemitter.listen(
+      EventType.MUSIC_DELETED,
+      (data) => setPlaylist((pl) => pl.filter((m) => m.id !== data.id)),
+    );
+    const unlistenSingerUpdated = eventemitter.listen(
+      EventType.SINGER_UPDATED,
+      (data) =>
+        setPlaylist((pl) =>
+          pl.map((m) => {
+            const singer = m.singers.find((s) => s.id === data.singer.id);
+            if (singer) {
+              return {
+                ...m,
+                singers: m.singers.map((s) => {
+                  if (s.id === data.singer.id) {
+                    return data.singer;
+                  }
+                  return s;
+                }),
+              };
+            }
+            return m;
+          }),
+        ),
+    );
     return () => {
       unlistenActionPlayMusic();
       unlistenActionAddMusicListToPlaylist();
@@ -102,6 +127,8 @@ export default () => {
       unlistenActionClearPlaylist();
       unlistenActionRemovePlaylistMusic();
       unlistenMusicUpdated();
+      unlistenMusicDeleted();
+      unlistenSingerUpdated();
     };
   }, []);
 

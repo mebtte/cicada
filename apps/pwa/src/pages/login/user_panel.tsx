@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import p from '@/global_states/profile';
 import { Profile as ProfileType } from '@/constants/user';
@@ -6,7 +6,6 @@ import DefaultCover from '@/asset/default_cover.jpeg';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import parseSearch from '@/utils/parse_search';
 import { Query } from '@/constants';
-import useNavigate from '@/utils/use_navigate';
 import Cover, { Shape } from '@/components/cover';
 import Slider from '@/components/slider';
 import Paper from './paper';
@@ -37,8 +36,7 @@ function Profile({ profile }: { profile: ProfileType }) {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const query = parseSearch<Query>(location.search);
-      const redirect = query.redirect || '/';
-      navigate({ path: redirect });
+      return navigate(query.redirect || '/');
     }, REDIRECT_DURATION);
     return () => window.clearTimeout(timer);
   }, [location.search, navigate]);

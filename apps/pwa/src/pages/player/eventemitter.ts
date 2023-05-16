@@ -111,6 +111,9 @@ export enum EventType {
 
   FOCUS_SEARCH_INPUT = 'focus_search_input',
 
+  MUSICBILL_CREATED = 'musicbill_created',
+  MUSICBILL_DELETED = 'musicbill_deleted',
+
   MUSIC_UPDATED = 'music_updated',
   MUSIC_DELETED = 'music_deleted',
 
@@ -173,6 +176,9 @@ export default new Eventin<
     [EventType.OPEN_PROFILE_EDIT_POPUP]: null;
 
     [EventType.FOCUS_SEARCH_INPUT]: null;
+
+    [EventType.MUSICBILL_CREATED]: { id: string };
+    [EventType.MUSICBILL_DELETED]: null;
 
     [EventType.MUSIC_UPDATED]: { music: Music };
     [EventType.MUSIC_DELETED]: { id: string };
