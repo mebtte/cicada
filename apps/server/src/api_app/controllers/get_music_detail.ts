@@ -49,11 +49,13 @@ export default async (ctx: Context) => {
 
   const [allSingerList, musicList = []] = await Promise.all([
     getSingerListInMusicIds(
-      Array.from([
-        id,
-        ...forkList.map((f) => f.musicId),
-        ...forkFromList.map((f) => f.forkFrom),
-      ]),
+      Array.from(
+        new Set([
+          id,
+          ...forkList.map((f) => f.musicId),
+          ...forkFromList.map((f) => f.forkFrom),
+        ]),
+      ),
       [
         SingerProperty.ALIASES,
         SingerProperty.ID,
@@ -74,21 +76,16 @@ export default async (ctx: Context) => {
       : undefined,
   ]);
   const musicIdMapSingerList: {
-    [key: string]: (Pick<
+    [key: string]: Pick<
       Singer,
       SingerProperty.ID | SingerProperty.NAME | SingerProperty.AVATAR
-    > & {
-      aliases: string[];
-    })[];
+    >[];
   } = {};
   allSingerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
       musicIdMapSingerList[s.musicId] = [];
     }
-    musicIdMapSingerList[s.musicId].push({
-      ...excludeProperty(s, ['musicId']),
-      aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
-    });
+    musicIdMapSingerList[s.musicId].push(excludeProperty(s, ['musicId']));
   });
 
   const musicIdMapMusic: {
@@ -96,12 +93,10 @@ export default async (ctx: Context) => {
       Music,
       MusicProperty.ID | MusicProperty.NAME | MusicProperty.COVER
     > & {
-      singers: (Pick<
+      singers: Pick<
         Singer,
         SingerProperty.ID | SingerProperty.NAME | SingerProperty.AVATAR
-      > & {
-        aliases: string[];
-      })[];
+      >[];
     };
   } = {};
   musicList.forEach((m) => {

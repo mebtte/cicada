@@ -91,8 +91,34 @@ async function separateMusicAc() {
         INSERT INTO music_singer_relation( musicId, singerId )
         VALUES ${singers.map(() => '( ?, ? )').join(', ')}
       `,
-      singers.map((singerId) => [id, singerId]).flat(Infinity),
+      singers.map((s) => [id, s.singerId]).flat(Infinity),
     );
+    if (acMusic.type === MusicType.SONG) {
+      const lyrics = await getDB().all<{
+        id: string;
+        lrc: string;
+        lrcContent: string;
+      }>(
+        `
+          SELECT 
+            id,
+            lrc,
+            lrcContent
+          FROM lyric
+          WHERE musicId = ?
+        `,
+        [acMusic.id],
+      );
+      if (lyrics.length) {
+        await getDB().run(
+          `
+            INSERT INTO lyric( musicId, lrc, lrcContent )
+            VALUES ${lyrics.map(() => '( ?, ?, ? )').join(', ')}
+          `,
+          lyrics.map((l) => [id, l.lrc, l.lrcContent]).flat(Infinity),
+        );
+      }
+    }
   }
 }
 

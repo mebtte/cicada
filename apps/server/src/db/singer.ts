@@ -1,5 +1,11 @@
 import generateRandomString from '#/utils/generate_random_string';
-import { SingerProperty, Singer } from '@/constants/db_definition';
+import {
+  SingerProperty,
+  Singer,
+  MusicSingerRelationProperty,
+  MUSIC_SINGER_RELATION_TABLE_NAME,
+  SINGER_TABLE_NAME,
+} from '@/constants/db_definition';
 import { getDB } from '.';
 
 export function getSingerListInMusicIds<P extends SingerProperty>(
@@ -12,15 +18,19 @@ export function getSingerListInMusicIds<P extends SingerProperty>(
     } & Pick<Singer, P>
   >(
     `
-    SELECT
-      ${properties.map((p) => `c.${p}`).join(',')},
-      msr.musicId
-    FROM
-      music_singer_relation AS msr
-      LEFT JOIN singer AS c ON msr.singerId = c.id 
-    WHERE
-      msr.musicId IN ( ${musicIds.map(() => '?').join(',')} );
-  `,
+      SELECT
+        ${properties.map((p) => `s.${p}`).join(',')},
+        msr.${MusicSingerRelationProperty.MUSIC_ID}
+      FROM
+        ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
+        JOIN ${SINGER_TABLE_NAME} AS s ON msr.${
+      MusicSingerRelationProperty.SINGER_ID
+    } = s.${SingerProperty.ID}
+      WHERE
+        msr.${MusicSingerRelationProperty.MUSIC_ID} IN ( ${musicIds
+      .map(() => '?')
+      .join(',')} );
+    `,
     musicIds,
   );
 }

@@ -322,10 +322,10 @@ export default async () => {
   if (!adminUser) {
     let adminEmail = getConfig().initialAdminEmail;
     while (!adminEmail) {
-      adminEmail = await question('❓ 请输入管理员邮箱: ');
+      adminEmail = await question('🙋 请输入管理员邮箱: ');
       if (adminEmail && !EMAIL.test(adminEmail)) {
         // eslint-disable-next-line no-console
-        console.log(`❌ [ ${adminEmail} ] 不是合法的邮箱`);
+        console.log(`🚨 [ ${adminEmail} ] 不是合法的邮箱`);
         adminEmail = '';
       }
     }
