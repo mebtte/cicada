@@ -1,9 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';
-import {
-  getMusicbillCollection,
-  Property as MusicbillCollectionProperty,
-} from '@/db/musicbill_collection';
+import { getMusicbillCollection } from '@/db/musicbill_collection';
+import { MusicbillCollectionProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

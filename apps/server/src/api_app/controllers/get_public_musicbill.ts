@@ -7,13 +7,11 @@ import {
   UserProperty,
   SingerProperty,
   MusicbillProperty,
+  MusicbillCollectionProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getMusicbillById } from '@/db/musicbill';
-import {
-  getMusicbillCollection,
-  Property as MusicbillCollectionProperty,
-} from '@/db/musicbill_collection';
+import { getMusicbillCollection } from '@/db/musicbill_collection';
 import { getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
 import { getAssetPublicPath } from '@/platform/asset';

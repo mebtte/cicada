@@ -5,7 +5,6 @@ import path from 'path';
 import withTimeout from '#/utils/with_timeout';
 import { getDB } from '@/db';
 import { getUserById } from '@/db/user';
-import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
 import { sendEmail } from '@/platform/email';
 import day from '#/utils/day';
 import { AssetType, BRAND_NAME, DOWNLOAD_TTL, PathPrefix } from '#/constants';
@@ -22,6 +21,9 @@ import {
   MusicProperty,
   SingerProperty,
   Singer,
+  MusicbillMusicProperty,
+  MUSICBILL_MUSIC_TABLE_NAME,
+  MUSIC_TABLE_NAME,
 } from '@/constants/db_definition';
 
 interface MusicbillExport {
@@ -76,8 +78,8 @@ async function exportMusicbill(
         m.${MusicProperty.NAME},
         m.${MusicProperty.ASSET}
       FROM
-        musicbill_music AS mm
-      LEFT JOIN music AS m
+        ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
+      LEFT JOIN ${MUSIC_TABLE_NAME} AS m
         ON mm.${MusicbillMusicProperty.MUSIC_ID} = m.${MusicProperty.ID} 
       WHERE
         mm.${MusicbillMusicProperty.MUSICBILL_ID} = ?

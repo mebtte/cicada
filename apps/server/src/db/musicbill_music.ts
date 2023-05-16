@@ -1,26 +1,16 @@
+import {
+  MusicbillMusic,
+  MusicbillMusicProperty,
+} from '@/constants/db_definition';
 import { getDB } from '.';
 
-export enum Property {
-  ID = 'id',
-  MUSICBILL_ID = 'musicbillId',
-  MUSIC_ID = 'musicId',
-  ADD_TIMESTAMP = 'addTimestamp',
-}
-
-export type Music = {
-  [Property.ID]: number;
-  [Property.MUSICBILL_ID]: string;
-  [Property.MUSIC_ID]: string;
-  [Property.ADD_TIMESTAMP]: number;
-};
-
-export function getMusicbillMusic<P extends Property>(
+export function getMusicbillMusic<P extends MusicbillMusicProperty>(
   musicbillId: string,
   musicId: string,
   properties: P[],
 ) {
   return getDB().get<{
-    [key in P]: Music[key];
+    [key in P]: MusicbillMusic[key];
   }>(
     `
       select ${properties.join(',')} from musicbill_music
@@ -30,12 +20,12 @@ export function getMusicbillMusic<P extends Property>(
   );
 }
 
-export function getMusicbillMusicList<P extends Property>(
+export function getMusicbillMusicList<P extends MusicbillMusicProperty>(
   musicbillId: string,
   properties: P[],
 ) {
   return getDB().all<{
-    [key in P]: Music[key];
+    [key in P]: MusicbillMusic[key];
   }>(
     `
       select ${properties.join(',')} from musicbill_music

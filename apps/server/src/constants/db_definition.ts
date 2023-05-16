@@ -56,7 +56,7 @@ export enum LoginCodeProperty {
 }
 export type LoginCode = {
   [LoginCodeProperty.ID]: number;
-  [LoginCodeProperty.USER_ID]: string;
+  [LoginCodeProperty.USER_ID]: User[UserProperty.ID];
   [LoginCodeProperty.CODE]: string;
   [LoginCodeProperty.CREATE_TIMESTAMP]: number;
   [LoginCodeProperty.USED]: 0 | 1;
@@ -83,7 +83,7 @@ export type Music = {
   [MusicProperty.COVER]: string;
   [MusicProperty.ASSET]: string;
   [MusicProperty.HEAT]: number;
-  [MusicProperty.CREATE_USER_ID]: string;
+  [MusicProperty.CREATE_USER_ID]: User[UserProperty.ID];
   [MusicProperty.CREATE_TIMESTAMP]: number;
   [MusicProperty.YEAR]: number | null;
 };
@@ -98,9 +98,9 @@ export enum MusicModifyRecordProperty {
 }
 export type MusicModifyRecord = {
   [MusicModifyRecordProperty.ID]: number;
-  [MusicModifyRecordProperty.MUSIC_ID]: string;
+  [MusicModifyRecordProperty.MUSIC_ID]: Music[MusicProperty.ID];
   [MusicModifyRecordProperty.KEY]: string;
-  [MusicModifyRecordProperty.MODIFY_USER_ID]: string;
+  [MusicModifyRecordProperty.MODIFY_USER_ID]: User[UserProperty.ID];
   [MusicModifyRecordProperty.MODIFY_TIMESTAMP]: number;
 };
 
@@ -112,8 +112,8 @@ export enum MusicForkProperty {
 }
 export type MusicFork = {
   [MusicForkProperty.ID]: number;
-  [MusicForkProperty.MUSIC_ID]: string;
-  [MusicForkProperty.FORK_FROM]: string;
+  [MusicForkProperty.MUSIC_ID]: Music[MusicProperty.ID];
+  [MusicForkProperty.FORK_FROM]: Music[MusicProperty.ID];
 };
 
 export const MUSIC_PLAY_RECORD_TABLE_NAME = 'music_play_record';
@@ -126,8 +126,8 @@ export enum MusicPlayRecordProperty {
 }
 export interface MusicPlayRecord {
   [MusicPlayRecordProperty.ID]: string;
-  [MusicPlayRecordProperty.USER_ID]: string;
-  [MusicPlayRecordProperty.MUSIC_ID]: string;
+  [MusicPlayRecordProperty.USER_ID]: User[UserProperty.ID];
+  [MusicPlayRecordProperty.MUSIC_ID]: Music[MusicProperty.ID];
   [MusicPlayRecordProperty.PERCENT]: number;
   [MusicPlayRecordProperty.TIMESTAMP]: number;
 }
@@ -146,7 +146,7 @@ export type Singer = {
   [SingerProperty.AVATAR]: string;
   [SingerProperty.NAME]: string;
   [SingerProperty.ALIASES]: string;
-  [SingerProperty.CREATE_USER_ID]: string;
+  [SingerProperty.CREATE_USER_ID]: User[UserProperty.ID];
   [SingerProperty.CREATE_TIMESTAMP]: number;
 };
 
@@ -160,9 +160,9 @@ export enum SingerModifyRecordProperty {
 }
 export type SingerModifyRecord = {
   [SingerModifyRecordProperty.ID]: number;
-  [SingerModifyRecordProperty.SINGER_ID]: string;
+  [SingerModifyRecordProperty.SINGER_ID]: Singer[SingerProperty.ID];
   [SingerModifyRecordProperty.KEY]: string;
-  [SingerModifyRecordProperty.MODIFY_USER_ID]: string;
+  [SingerModifyRecordProperty.MODIFY_USER_ID]: User[UserProperty.ID];
   [SingerModifyRecordProperty.MODIFY_TIMESTAMP]: number;
 };
 
@@ -174,8 +174,8 @@ export enum MusicSingerRelationProperty {
 }
 export type MusicSingerRelation = {
   [MusicSingerRelationProperty.ID]: number;
-  [MusicSingerRelationProperty.MUSIC_ID]: string;
-  [MusicSingerRelationProperty.SINGER_ID]: string;
+  [MusicSingerRelationProperty.MUSIC_ID]: Music[MusicProperty.ID];
+  [MusicSingerRelationProperty.SINGER_ID]: Singer[SingerProperty.ID];
 };
 
 export const LYRIC_TABLE_NAME = 'lyric';
@@ -187,7 +187,7 @@ export enum LyricProperty {
 }
 export type Lyric = {
   [LyricProperty.ID]: number;
-  [LyricProperty.MUSIC_ID]: string;
+  [LyricProperty.MUSIC_ID]: Music[MusicProperty.ID];
   [LyricProperty.LRC]: string;
   [LyricProperty.LRC_CONTENT]: string;
 };
@@ -203,9 +203,55 @@ export enum MusicbillProperty {
 }
 export interface Musicbill {
   [MusicbillProperty.ID]: string;
-  [MusicbillProperty.USER_ID]: string;
+  [MusicbillProperty.USER_ID]: User[UserProperty.ID];
   [MusicbillProperty.COVER]: string;
   [MusicbillProperty.NAME]: string;
   [MusicbillProperty.PUBLIC]: 0 | 1;
   [MusicbillProperty.CREATE_TIMESTAMP]: number;
 }
+
+export const MUSICBILL_MUSIC_TABLE_NAME = 'musicbill_music';
+export enum MusicbillMusicProperty {
+  ID = 'id',
+  MUSICBILL_ID = 'musicbillId',
+  MUSIC_ID = 'musicId',
+  ADD_TIMESTAMP = 'addTimestamp',
+}
+export type MusicbillMusic = {
+  [MusicbillMusicProperty.ID]: number;
+  [MusicbillMusicProperty.MUSICBILL_ID]: Musicbill[MusicbillProperty.ID];
+  [MusicbillMusicProperty.MUSIC_ID]: Music[MusicProperty.ID];
+  [MusicbillMusicProperty.ADD_TIMESTAMP]: number;
+};
+
+export const MUSICBILL_COLLECTION_TABLE_NAME = 'musicbill_collection';
+export enum MusicbillCollectionProperty {
+  ID = 'id',
+  MUSICBILL_ID = 'musicbillId',
+  USER_ID = 'userId',
+  COLLECT_TIMESTAMP = 'collectTimestamp',
+}
+export type MusicbillCollection = {
+  [MusicbillCollectionProperty.ID]: number;
+  [MusicbillCollectionProperty.MUSICBILL_ID]: Musicbill[MusicbillProperty.ID];
+  [MusicbillCollectionProperty.USER_ID]: User[UserProperty.ID];
+  [MusicbillCollectionProperty.COLLECT_TIMESTAMP]: number;
+};
+
+export const MUSICBILL_EXPORT_TABLE_NAME = 'musicbill_export';
+export enum MusicbillExportProperty {
+  ID = 'id',
+  USER_ID = 'userId',
+  MUSICBILL_ID = 'musicbillId',
+  ACCESS_ORIGIN = 'accessOrigin',
+  CREATE_TIMESTAMP = 'createTimestamp',
+  EXPORTED_TIMESTAMP = 'exportedTimestamp',
+}
+export type MusicbillExport = {
+  [MusicbillExportProperty.ID]: number;
+  [MusicbillExportProperty.USER_ID]: User[UserProperty.ID];
+  [MusicbillExportProperty.MUSICBILL_ID]: Musicbill[MusicProperty.ID];
+  [MusicbillExportProperty.ACCESS_ORIGIN]: string;
+  [MusicbillExportProperty.CREATE_TIMESTAMP]: number;
+  [MusicbillExportProperty.EXPORTED_TIMESTAMP]: number;
+};

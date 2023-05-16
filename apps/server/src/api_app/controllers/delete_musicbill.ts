@@ -1,13 +1,13 @@
 import fs from 'fs/promises';
 import { ExceptionCode } from '#/constants/exception';
 import { getMusicbillById } from '@/db/musicbill';
-import {
-  getMusicbillMusicList,
-  Property as MusicbillMusicProperty,
-} from '@/db/musicbill_music';
+import { getMusicbillMusicList } from '@/db/musicbill_music';
 import { getDB } from '@/db';
 import { getTrashDirectory } from '@/config';
-import { MusicbillProperty } from '@/constants/db_definition';
+import {
+  MusicbillMusicProperty,
+  MusicbillProperty,
+} from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

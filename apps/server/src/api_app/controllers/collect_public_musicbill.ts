@@ -3,9 +3,11 @@ import { getMusicbillById } from '@/db/musicbill';
 import {
   createMusicbillCollection,
   getMusicbillCollection,
-  Property as MusicbillCollectionProperty,
 } from '@/db/musicbill_collection';
-import { MusicbillProperty } from '@/constants/db_definition';
+import {
+  MusicbillCollectionProperty,
+  MusicbillProperty,
+} from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

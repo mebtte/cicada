@@ -1,20 +1,10 @@
+import {
+  MusicbillCollection,
+  MusicbillCollectionProperty,
+} from '@/constants/db_definition';
 import { getDB } from '.';
 
-export enum Property {
-  ID = 'id',
-  MUSICBILL_ID = 'musicbillId',
-  USER_ID = 'userId',
-  COLLECT_TIMESTAMP = 'collectTimestamp',
-}
-
-export type MusicbillCollection = {
-  [Property.ID]: number;
-  [Property.MUSICBILL_ID]: string;
-  [Property.USER_ID]: string;
-  [Property.COLLECT_TIMESTAMP]: number;
-};
-
-export function getMusicbillCollection<P extends Property>({
+export function getMusicbillCollection<P extends MusicbillCollectionProperty>({
   musicbillId,
   userId,
   properties,

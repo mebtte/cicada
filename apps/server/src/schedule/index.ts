@@ -6,7 +6,7 @@ import cleanOutdatedFile from './jobs/clean_outdated_file';
 import exportMusicbill from './jobs/export_musicbill';
 import removeNoMusicSinger from './jobs/remove_no_music_singer';
 import moveUnlinkedAssetToTrash from './jobs/move_unlinked_asset_to_trash';
-import updateLyricLrcContent from './jobs/update_lyric_lrc_content';
+import removeOutdatedMusicPlayRecord from './jobs/remove_outdated_music_play_record';
 
 const onRun = (job: string) =>
   logger.info({ label: 'schedule', title: job, message: 'start' });
@@ -37,8 +37,8 @@ const DAILY_JOBS: Job[] = [
     job: moveUnlinkedAssetToTrash,
   },
   {
-    name: 'update_lyric_lrc_content',
-    job: updateLyricLrcContent,
+    name: 'remove_outdated_music_play_record',
+    job: removeOutdatedMusicPlayRecord,
   },
 ];
 const HOURLY_JOBS: Job[] = [

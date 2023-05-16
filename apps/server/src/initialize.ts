@@ -40,6 +40,12 @@ import {
   MusicSingerRelationProperty,
   MUSICBILL_TABLE_NAME,
   MusicbillProperty,
+  MUSICBILL_MUSIC_TABLE_NAME,
+  MusicbillMusicProperty,
+  MUSICBILL_COLLECTION_TABLE_NAME,
+  MusicbillCollectionProperty,
+  MUSICBILL_EXPORT_TABLE_NAME,
+  MusicbillExportProperty,
 } from './constants/db_definition';
 
 const DATA_VERSION = 1;
@@ -185,6 +191,7 @@ export default async () => {
         ${MusicModifyRecordProperty.MODIFY_USER_ID} TEXT NOT NULL,
         ${MusicModifyRecordProperty.KEY} TEXT NOT NULL,
         ${MusicModifyRecordProperty.MODIFY_TIMESTAMP} INTEGER NOT NULL,
+
         CONSTRAINT fkMusic FOREIGN KEY ( ${MusicModifyRecordProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
         CONSTRAINT fkUser FOREIGN KEY ( ${MusicModifyRecordProperty.MODIFY_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
       )
@@ -194,6 +201,7 @@ export default async () => {
         ${MusicForkProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${MusicForkProperty.MUSIC_ID} TEXT NOT NULL,
         ${MusicForkProperty.FORK_FROM} TEXT NOT NULL,
+
         CONSTRAINT fkMusic FOREIGN KEY ( ${MusicForkProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
         CONSTRAINT fkForkFrom FOREIGN KEY ( ${MusicForkProperty.FORK_FROM} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
         UNIQUE( ${MusicForkProperty.MUSIC_ID}, ${MusicForkProperty.FORK_FROM} ) ON CONFLICT REPLACE
@@ -205,6 +213,7 @@ export default async () => {
         ${LyricProperty.MUSIC_ID} TEXT NOT NULL,
         ${LyricProperty.LRC} TEXT NOT NULL,
         ${LyricProperty.LRC_CONTENT} TEXT NOT NULL,
+
         CONSTRAINT fkMusic FOREIGN KEY ( ${LyricProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ) 
       )
     `;
@@ -215,6 +224,7 @@ export default async () => {
         ${MusicPlayRecordProperty.MUSIC_ID} TEXT NOT NULL,
         ${MusicPlayRecordProperty.PERCENT} REAL NOT NULL,
         ${MusicPlayRecordProperty.TIMESTAMP} INTEGER NOT NULL,
+
         CONSTRAINT fkUser FOREIGN KEY ( ${MusicPlayRecordProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         CONSTRAINT fkMusic FOREIGN KEY ( ${MusicPlayRecordProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ) 
       )
@@ -224,6 +234,7 @@ export default async () => {
         ${MusicSingerRelationProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${MusicSingerRelationProperty.MUSIC_ID} TEXT NOT NULL,
         ${MusicSingerRelationProperty.SINGER_ID} TEXT NOT NULL,
+
         CONSTRAINT fkMusic FOREIGN KEY ( ${MusicSingerRelationProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
         CONSTRAINT fkSinger FOREIGN KEY ( ${MusicSingerRelationProperty.SINGER_ID} ) REFERENCES ${SINGER_TABLE_NAME} ( ${SingerProperty.ID} ),
         UNIQUE( ${MusicSingerRelationProperty.MUSIC_ID}, ${MusicSingerRelationProperty.SINGER_ID} ) ON CONFLICT REPLACE
@@ -237,41 +248,45 @@ export default async () => {
         ${MusicbillProperty.NAME} TEXT NOT NULL,
         ${MusicbillProperty.PUBLIC} INTEGER NOT NULL DEFAULT 0,
         ${MusicbillProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
+
         CONSTRAINT fkUser FOREIGN KEY ( ${MusicbillProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ) 
       )
     `;
     const TABLE_MUSICBILL_MUSIC = `
-      CREATE TABLE musicbill_music (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        musicbillId TEXT NOT NULL,
-        musicId TEXT NOT NULL,
-        addTimestamp INTEGER NOT NULL,
-        CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ),
-        CONSTRAINT fkMusic FOREIGN KEY ( musicId ) REFERENCES music ( id ),
-        UNIQUE( musicbillId, musicId ) ON CONFLICT REPLACE
+      CREATE TABLE ${MUSICBILL_MUSIC_TABLE_NAME} (
+        ${MusicbillMusicProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${MusicbillMusicProperty.MUSICBILL_ID} TEXT NOT NULL,
+        mus${MusicbillMusicProperty.MUSIC_ID}icId TEXT NOT NULL,
+        ${MusicbillMusicProperty.ADD_TIMESTAMP} INTEGER NOT NULL,
+
+        CONSTRAINT fkMusicbill FOREIGN KEY ( ${MusicbillMusicProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
+        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicbillMusicProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
+        UNIQUE( ${MusicbillMusicProperty.MUSICBILL_ID}, ${MusicbillMusicProperty.MUSIC_ID} ) ON CONFLICT REPLACE
       )
     `;
     const TABLE_MUSICBILL_COLLECTION = `
-      CREATE TABLE musicbill_collection (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        musicbillId TEXT NOT NULL,
-        userId TEXT NOT NULL,
-        collectTimestamp INTEGER NOT NULL,
-        CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ),
-        CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ),
-        UNIQUE( musicbillId, userId ) ON CONFLICT REPLACE
+      CREATE TABLE ${MUSICBILL_COLLECTION_TABLE_NAME} (
+        ${MusicbillCollectionProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${MusicbillCollectionProperty.MUSICBILL_ID} TEXT NOT NULL,
+        ${MusicbillCollectionProperty.USER_ID} TEXT NOT NULL,
+        ${MusicbillCollectionProperty.COLLECT_TIMESTAMP} INTEGER NOT NULL,
+
+        CONSTRAINT fkMusicbill FOREIGN KEY ( ${MusicbillCollectionProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
+        CONSTRAINT fkUser FOREIGN KEY ( ${MusicbillCollectionProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        UNIQUE( ${MusicbillCollectionProperty.MUSICBILL_ID}, ${MusicbillCollectionProperty.USER_ID} ) ON CONFLICT REPLACE
       )
     `;
     const TABLE_MUSICBILL_EXPORT = `
-      CREATE TABLE musicbill_export (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userId TEXT NOT NULL,
-        musicbillId TEXT NOT NULL,
-        accessOrigin TEXT NOT NULL,
-        createTimestamp INTEGER NOT NULL,
-        exportedTimestamp INTEGER DEFAULT NULL,
-        CONSTRAINT fkUser FOREIGN KEY ( userId ) REFERENCES user ( id ),
-        CONSTRAINT fkMusicbill FOREIGN KEY ( musicbillId ) REFERENCES musicbill ( id ) 
+      CREATE TABLE ${MUSICBILL_EXPORT_TABLE_NAME} (
+        ${MusicbillExportProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${MusicbillExportProperty.USER_ID} TEXT NOT NULL,
+        ${MusicbillExportProperty.MUSICBILL_ID} TEXT NOT NULL,
+        ${MusicbillExportProperty.ACCESS_ORIGIN} TEXT NOT NULL,
+        ${MusicbillExportProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
+        ${MusicbillExportProperty.EXPORTED_TIMESTAMP} INTEGER DEFAULT NULL,
+
+        CONSTRAINT fkUser FOREIGN KEY ( ${MusicbillExportProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        CONSTRAINT fkMusicbill FOREIGN KEY ( ${MusicbillExportProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ) 
       )
     `;
 

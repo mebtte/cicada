@@ -270,7 +270,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           </Button>
         )}
         {user.admin ? null : (
-          <Button className="part" variant={Variant.DANGER} loading={loading}>
+          <Button className="part" variant={Variant.DANGER} disabled={loading}>
             删除用户
           </Button>
         )}

@@ -1,7 +1,6 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getMusicbillById } from '@/db/musicbill';
-import { Property as MusicbillMusicProperty } from '@/db/musicbill_music';
 import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetPublicPath } from '@/platform/asset';
@@ -12,6 +11,8 @@ import {
   MUSIC_TABLE_NAME,
   SingerProperty,
   MusicbillProperty,
+  MusicbillMusicProperty,
+  MUSICBILL_MUSIC_TABLE_NAME,
 } from '@/constants/db_definition';
 import { Context } from '../constants';
 
@@ -55,12 +56,12 @@ export default async (ctx: Context) => {
         m.${MusicProperty.COVER},
         m.${MusicProperty.ASSET}
       FROM
-        musicbill_music AS mm
+        ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
         LEFT JOIN ${MUSIC_TABLE_NAME} AS m ON mm.${MusicbillMusicProperty.MUSIC_ID} = m.${MusicProperty.ID}
       WHERE
         mm.${MusicbillMusicProperty.MUSICBILL_ID} = ? 
       ORDER BY
-        mm.addTimestamp DESC;
+        mm.${MusicbillMusicProperty.ADD_TIMESTAMP} DESC;
     `,
     [id],
   );
