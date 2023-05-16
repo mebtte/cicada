@@ -15,6 +15,7 @@ import {
   MdTextFields,
   MdImage,
   MdCallSplit,
+  MdOutlineCalendarToday,
 } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
@@ -28,6 +29,8 @@ import {
   ALIAS_MAX_LENGTH,
   MUSIC_MAX_ALIAS_COUNT,
   SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
+  YEAR_MIN,
+  YEAR_MAX,
 } from '#/constants/music';
 import uploadAsset from '@/server/form/upload_asset';
 import { AssetType, ASSET_TYPE_MAP_V1 } from '#/constants';
@@ -371,6 +374,39 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     id: music.id,
                     key: AllowUpdateKey.FORK_FROM,
                     value: options.map((o) => o.value.id),
+                  });
+                  emitMusicUpdated(music.id);
+                }
+              },
+            })
+          }
+        />
+        <MenuItem
+          icon={<MdOutlineCalendarToday />}
+          label="编辑发行年份"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              title: '编辑发行年份',
+              type: EditDialogType.INPUT,
+              label: '发行年份',
+              initialValue: music.year ? music.year.toString() : '',
+              inputType: 'number',
+              onSubmit: async (year: string) => {
+                const yearNumber = Number(year);
+                if (
+                  !yearNumber ||
+                  !Number.isInteger(yearNumber) ||
+                  yearNumber < YEAR_MIN ||
+                  yearNumber > YEAR_MAX
+                ) {
+                  throw new Error('发行年份应在 0-9999 范围内');
+                }
+
+                if (yearNumber !== music.year) {
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.YEAR,
+                    value: yearNumber,
                   });
                   emitMusicUpdated(music.id);
                 }

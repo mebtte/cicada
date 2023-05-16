@@ -9,6 +9,7 @@ type KeyMapValue = {
   [AllowUpdateKey.ASSET]: string;
   [AllowUpdateKey.SINGER]: string[];
   [AllowUpdateKey.FORK_FROM]: string[];
+  [AllowUpdateKey.YEAR]: number;
 };
 
 function updateMusic<Key extends AllowUpdateKey>({

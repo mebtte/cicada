@@ -11,6 +11,7 @@ import updateAliases from './update_aliases';
 import updateAsset from './update_asset';
 import updateSinger from './update_singer';
 import updateForkFrom from './update_fork_from';
+import updateYear from './update_year';
 
 const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
   {
@@ -21,6 +22,7 @@ const KEY_MAP_HANDLER: Record<AllowUpdateKey, (p: Parameter) => Promise<void>> =
     [AllowUpdateKey.ASSET]: updateAsset,
     [AllowUpdateKey.SINGER]: updateSinger,
     [AllowUpdateKey.FORK_FROM]: updateForkFrom,
+    [AllowUpdateKey.YEAR]: updateYear,
   };
 
 export default async (ctx: Context) => {
@@ -47,6 +49,7 @@ export default async (ctx: Context) => {
     MusicProperty.ALIASES,
     MusicProperty.TYPE,
     MusicProperty.ASSET,
+    MusicProperty.YEAR,
   ]);
   if (!music || (!ctx.user.admin && music.createUserId !== ctx.user.id)) {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);

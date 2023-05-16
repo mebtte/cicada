@@ -62,7 +62,8 @@ export function updateMusic<
     | MusicProperty.COVER
     | MusicProperty.NAME
     | MusicProperty.ALIASES
-    | MusicProperty.ASSET,
+    | MusicProperty.ASSET
+    | MusicProperty.YEAR,
 >({ id, property, value }: { id: string; property: P; value: Music[P] }) {
   return getDB().run(
     `

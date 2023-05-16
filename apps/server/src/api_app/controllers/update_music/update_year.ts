@@ -1,31 +1,36 @@
-import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import exist from '#/utils/exist';
-import { getAssetFilePath } from '@/platform/asset';
 import { updateMusic } from '@/db/music';
+import { AllowUpdateKey, YEAR_MAX, YEAR_MIN } from '#/constants/music';
 import { saveMusicModifyRecord } from '@/db/music_modify_record';
-import { AllowUpdateKey } from '#/constants/music';
 import { MusicProperty } from '@/constants/db_definition';
 import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {
-  if (typeof value !== 'string' || !value.length) {
+  if (
+    typeof value !== 'number' ||
+    !Number.isInteger(value) ||
+    value < YEAR_MIN ||
+    value > YEAR_MAX
+  ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
-  if (music.asset === value) {
+
+  if (music.year === value) {
     return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
   }
-  const assetExist = await exist(getAssetFilePath(value, AssetType.MUSIC));
-  if (!assetExist) {
-    return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
-  }
+
   await Promise.all([
-    updateMusic({ id: music.id, property: MusicProperty.ASSET, value }),
+    updateMusic({
+      id: music.id,
+      property: MusicProperty.YEAR,
+      value,
+    }),
     saveMusicModifyRecord({
-      modifyUserId: ctx.user.id,
       musicId: music.id,
-      key: AllowUpdateKey.ASSET,
+      modifyUserId: ctx.user.id,
+      key: AllowUpdateKey.YEAR,
     }),
   ]);
+
   return ctx.success();
 };

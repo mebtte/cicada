@@ -2,7 +2,7 @@ import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
 import {
-  MdOutlineDateRange,
+  MdOutlineCalendarToday,
   MdOutlineLocalFireDepartment,
   MdFilePresent,
   MdAccessTime,
@@ -89,20 +89,26 @@ function Info({ music }: { music: MusicDetail }) {
           </div>
         ) : null}
         <div className="extra">
-          <div className="part" title="发行年份">
-            <MdOutlineDateRange className="icon" />
-            <div className="value">2023</div>
-          </div>
-          <div className="part" title="时长">
-            <MdAccessTime className="icon" />
-            <div className="value">{formatDuration(music.duration)}</div>
-          </div>
-          <div className="part" title="文件大小">
-            <MdFilePresent className="icon" />
-            <div className="value">
-              {(music.size / 1024 / 1024).toFixed(2)}MB
+          {music.year ? (
+            <div className="part" title="发行年份">
+              <MdOutlineCalendarToday className="icon" />
+              <div className="value">{music.year}</div>
             </div>
-          </div>
+          ) : null}
+          {music.duration ? (
+            <div className="part" title="时长">
+              <MdAccessTime className="icon" />
+              <div className="value">{formatDuration(music.duration)}</div>
+            </div>
+          ) : null}
+          {music.size ? (
+            <div className="part" title="文件大小">
+              <MdFilePresent className="icon" />
+              <div className="value">
+                {(music.size / 1024 / 1024).toFixed(2)}MB
+              </div>
+            </div>
+          ) : null}
           <div className="part" title="热度">
             <MdOutlineLocalFireDepartment className="icon" />
             <div className="value">{music.heat}</div>

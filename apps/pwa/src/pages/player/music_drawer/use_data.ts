@@ -17,6 +17,7 @@ function getAudioDuration(url: string) {
     new Promise<number>((resolve, reject) => {
       const audio = document.createElement('audio');
       audio.preload = 'metadata';
+      audio.crossOrigin = 'anonymous';
       audio.src = url;
       audio.addEventListener('loadedmetadata', () => resolve(audio.duration));
       audio.addEventListener('error', () =>
@@ -75,12 +76,16 @@ export default (id: string) => {
           }
         }
       } catch (error) {
-        logger.error(error, '解析本地音乐资源缓存失败');
+        logger.error(error, '从缓存获取音乐文件大小和时长失败');
       }
       if (!size || !duration) {
         try {
           const [assetHeadResponse, d] = await Promise.all([
             window.fetch(music.asset, {
+              /**
+               * 只获取 http header
+               * @author mebtte<hi@mebtte.com>
+               */
               method: 'head',
             }),
             getAudioDuration(music.asset),
@@ -88,7 +93,7 @@ export default (id: string) => {
           size = Number(assetHeadResponse.headers.get('content-length')) || 0;
           duration = d;
         } catch (error) {
-          logger.error(error, '从网络加载音乐资源失败');
+          logger.error(error, '从网络获取音乐文件大小和时长失败');
         }
       }
 

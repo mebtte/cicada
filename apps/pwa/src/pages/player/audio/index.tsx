@@ -1,11 +1,12 @@
 /* eslint-disable react/destructuring-assignment */
-import * as React from 'react';
+import { ReactEventHandler, PureComponent } from 'react';
 import throttle from 'lodash/throttle';
 import uploadMusicPlayRecord from '@/server/base/upload_music_play_record';
 import { CacheName } from '@/constants/cache';
 import settingState from '@/global_states/setting';
 import { Setting } from '@/constants/setting';
 import definition from '@/definition';
+import { EFFECTIVE_PLAY_PERCENT } from '#/constants';
 import eventemitter, { EventType } from '../eventemitter';
 import { QueueMusic, Music } from '../constants';
 import onError from './on_error';
@@ -14,8 +15,8 @@ const style = {
   display: 'none',
 };
 const onWaiting = () => eventemitter.emit(EventType.AUDIO_WAITING, null);
-const onCanPlayThrough = (event) => {
-  const { duration } = event.target;
+const onCanPlayThrough: ReactEventHandler<HTMLAudioElement> = (event) => {
+  const { duration } = event.target as HTMLAudioElement;
   return eventemitter.emit(EventType.AUDIO_CAN_PLAY_THROUGH, { duration });
 };
 const onPlay = () => eventemitter.emit(EventType.AUDIO_PLAY, null);
@@ -27,7 +28,7 @@ interface Props {
   setting: Setting;
 }
 
-class Audio extends React.PureComponent<Props, {}> {
+class Audio extends PureComponent<Props, {}> {
   audio: HTMLAudioElement | null;
 
   constructor(props: Props) {
@@ -163,7 +164,8 @@ class Audio extends React.PureComponent<Props, {}> {
 
     if (
       window.caches &&
-      ((definition.WITH_SW && percent > 0.75) || definition.DEVELOPMENT)
+      ((definition.WITH_SW && percent > EFFECTIVE_PLAY_PERCENT) ||
+        definition.DEVELOPMENT)
     ) {
       window.caches.open(CacheName.ASSET_MEDIA).then(async (cache) => {
         const exist = await cache.match(music.asset);

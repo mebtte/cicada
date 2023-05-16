@@ -34,8 +34,12 @@ export enum AllowUpdateKey {
   ASSET = 'asset',
   SINGER = 'singer',
   FORK_FROM = 'fork_from',
+  YEAR = 'year',
 }
 
 export const MUSIC_MAX_LRYIC_AMOUNT = 5;
 
 export const LYRIC_MAX_LENGTH = 16384;
+
+export const YEAR_MIN = 0;
+export const YEAR_MAX = 9999;
