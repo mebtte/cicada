@@ -7,14 +7,14 @@ import { Query } from '@/constants';
 function withLogin<Props = {}>(Component: ComponentType<Props>) {
   return function ComponentWithUser(props: Props) {
     const profile = p.useState();
-    const { pathname } = useLocation();
+    const { pathname, search } = useLocation();
     return profile ? (
       // @ts-expect-error
       <Component {...props} />
     ) : (
       <Navigate
         to={`${ROOT_PATH.LOGIN}?${Query.REDIRECT}=${encodeURIComponent(
-          pathname,
+          pathname + search,
         )}`}
         replace
       />

@@ -13,6 +13,8 @@ export enum Query {
   PAGE = 'page',
   KEYWORD = 'keyword',
   SEARCH_TAB = 'search_tab',
+  MUSIC_DRAWER_ID = 'music_drawer_id',
+  SINGER_DRAWER_ID = 'singer_drawer_id',
 }
 
 export enum PlayMode {

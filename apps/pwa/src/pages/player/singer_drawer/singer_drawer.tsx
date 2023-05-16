@@ -68,14 +68,14 @@ function SingerDrawer({
   zIndex,
   open,
   onClose,
-  singerId,
+  id,
 }: {
   zIndex: number;
   open: boolean;
   onClose: () => void;
-  singerId: string;
+  id: string;
 }) {
-  const { data, reload } = useData(singerId);
+  const { data, reload } = useData(id);
 
   const transitions = useTransition(data, {
     from: { opacity: 0 },
