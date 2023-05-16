@@ -17,12 +17,19 @@ import { Context } from '../constants';
 
 export default async (ctx: Context) => {
   const { email, captchaId, captchaValue } = ctx.query as {
-    email?: string;
-    captchaId?: string;
-    captchaValue?: string;
+    email?: unknown;
+    captchaId?: unknown;
+    captchaValue?: unknown;
   };
 
-  if (!email || !EMAIL.test(email) || !captchaId || !captchaValue) {
+  if (
+    typeof email !== 'string' ||
+    !EMAIL.test(email) ||
+    typeof captchaId !== 'string' ||
+    !captchaId.length ||
+    typeof captchaValue !== 'string' ||
+    !captchaValue.length
+  ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 

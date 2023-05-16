@@ -1,11 +1,24 @@
+import captcha from 'svg-captcha';
 import { CAPTCHA_TTL } from '#/constants';
+import generateRandomString from '#/utils/generate_random_string';
 import { getDB } from '@/db';
+import { CaptchaProperty, CAPTCHA_TABLE_NAME } from '@/constants/db_definition';
 
-export function saveCaptcha({ id, value }: { id: string; value: string }) {
-  return getDB().run(
-    'insert into captcha(id, value, createTimestamp) values(?, ?, ?)',
-    [id, value, Date.now()],
+export async function createCaptcha() {
+  const id = generateRandomString(8, false);
+  const captchaData = captcha.create({
+    size: 5,
+    ignoreChars: '0oO1IlL2zZ',
+    noise: 4,
+  });
+  await getDB().run(
+    `
+      INSERT INTO ${CAPTCHA_TABLE_NAME} (id, value, createTimestamp)
+      VALUES (?, ?, ?)
+    `,
+    [id, captchaData.text, Date.now()],
   );
+  return { id, svg: captchaData.data };
 }
 
 export async function verifyCaptcha({
@@ -15,37 +28,44 @@ export async function verifyCaptcha({
   id: string;
   value: string;
 }): Promise<boolean> {
-  const captcha = await getDB().get<{
+  const captchaData = await getDB().get<{
     id: string;
     value: string;
   }>(
     `
-    select
-      id,
-      value
-    from captcha
-      where id = ?
-        and createTimestamp >= ?
-        and used = 0;
-  `,
+      SELECT
+        ${CaptchaProperty.ID},
+        ${CaptchaProperty.VALUE}
+      FROM ${CAPTCHA_TABLE_NAME}
+      WHERE ${CaptchaProperty.ID} = ?
+        AND ${CaptchaProperty.CREATE_TIMESTAMP} >= ?
+        AND ${CaptchaProperty.USED} = 0;
+    `,
     [id, Date.now() - CAPTCHA_TTL],
   );
 
-  if (!captcha) {
+  if (!captchaData) {
     return false;
   }
 
   /**
    * 无论验证成功与否
    * 都需要记录已使用
+   * @author mebtte<hi@mebtte.com>
    */
   getDB()
-    .run('update captcha set used = 1 where id = ?', [id])
+    .run(
+      `
+        UPDATE ${CAPTCHA_TABLE_NAME} SET ${CaptchaProperty.USED} = 1
+        WHERE ${CaptchaProperty.ID} = ?
+      `,
+      [id],
+    )
     .catch((error) => console.error(error));
 
-  if (value.toLowerCase() !== captcha.value.toLowerCase()) {
-    return false;
+  if (value.toLowerCase() === captchaData.value.toLowerCase()) {
+    return true;
   }
 
-  return true;
+  return false;
 }

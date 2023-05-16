@@ -5,7 +5,11 @@ import { UserProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const { id } = ctx.query as { id?: unknown };
+  const { id, captchaId, captchaValue } = ctx.query as {
+    id?: unknown;
+    captchaId?: unknown;
+    captchaValue?: string;
+  };
   if (typeof id !== 'string' || !id.length) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
