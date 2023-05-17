@@ -31,6 +31,7 @@ export enum ExceptionCode {
   NOT_COLLECT_MUSICBILL_YET,
   OVER_USER_MUSICBILL_MAX_AMOUNT,
   MUSIC_COVER_NOT_EXIST,
+  ADMIN_USER_CAN_NOT_BE_DELETED,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -134,5 +135,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.MUSIC_COVER_NOT_EXIST]: {
     description: '音乐封面不存在',
+  },
+  [ExceptionCode.ADMIN_USER_CAN_NOT_BE_DELETED]: {
+    description: '管理员用户无法被删除',
   },
 };

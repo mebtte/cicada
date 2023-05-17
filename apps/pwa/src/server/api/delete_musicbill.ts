@@ -1,10 +1,22 @@
 import { request, Method } from '..';
 
-function deleteMusicbill(id: string) {
+/**
+ * 删除乐单
+ * @author mebtte<hi@mebtte.com>
+ */
+function deleteMusicbill({
+  id,
+  captchaId,
+  captchaValue,
+}: {
+  id: string;
+  captchaId: string;
+  captchaValue: string;
+}) {
   return request({
     method: Method.DELETE,
     path: '/api/musicbill',
-    params: { id },
+    params: { id, captchaId, captchaValue },
     withToken: true,
   });
 }

@@ -1,67 +1,70 @@
-import fs from 'fs/promises';
 import { ExceptionCode } from '#/constants/exception';
 import { getMusicbillById } from '@/db/musicbill';
-import { getMusicbillMusicList } from '@/db/musicbill_music';
 import { getDB } from '@/db';
-import { getTrashDirectory } from '@/config';
 import {
+  MUSICBILL_EXPORT_TABLE_NAME,
+  MUSICBILL_MUSIC_TABLE_NAME,
+  MUSICBILL_TABLE_NAME,
+  MusicbillExportProperty,
   MusicbillMusicProperty,
   MusicbillProperty,
 } from '@/constants/db_definition';
+import { verifyCaptcha } from '@/platform/captcha';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const { id } = ctx.query as { id?: string };
-  if (typeof id !== 'string' || !id.length) {
+  const { id, captchaId, captchaValue } = ctx.query as {
+    id?: unknown;
+    captchaId?: unknown;
+    captchaValue?: unknown;
+  };
+  if (
+    typeof id !== 'string' ||
+    !id.length ||
+    typeof captchaId !== 'string' ||
+    !captchaId.length ||
+    typeof captchaValue !== 'string' ||
+    !captchaValue.length
+  ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const musicbill = await getMusicbillById(
-    id,
-    Object.values(MusicbillProperty),
-  );
+  const captcahVerified = await verifyCaptcha({
+    id: captchaId,
+    value: captchaValue,
+  });
+  if (!captcahVerified) {
+    return ctx.except(ExceptionCode.CAPTCHA_ERROR);
+  }
+
+  const musicbill = await getMusicbillById(id, [MusicbillProperty.USER_ID]);
   if (!musicbill || musicbill.userId !== ctx.user.id) {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
 
-  const musicList = await getMusicbillMusicList(id, [
-    MusicbillMusicProperty.MUSIC_ID,
-    MusicbillMusicProperty.ADD_TIMESTAMP,
-  ]);
-  await fs.writeFile(
-    `${getTrashDirectory()}/deleted_musicbill_${id}.json`,
-    JSON.stringify({
-      ...musicbill,
-      musicList,
-    }),
-  );
-
-  /**
-   * 从数据库移除
-   */
   await Promise.all([
     getDB().run(
       `
-        DELETE FROM musicbill_music
-        WHERE musicbillId = ?
+        DELETE FROM ${MUSICBILL_MUSIC_TABLE_NAME}
+        WHERE ${MusicbillMusicProperty.MUSICBILL_ID} = ?
       `,
       [id],
     ),
     getDB().run(
       `
-        DELETE FROM musicbill_export
-        WHERE musicbillId = ?
+        DELETE FROM ${MUSICBILL_EXPORT_TABLE_NAME}
+        WHERE ${MusicbillExportProperty.MUSICBILL_ID} = ?
       `,
       [id],
     ),
   ]);
   await getDB().run(
     `
-      DELETE FROM musicbill
-      WHERE id = ?
+      DELETE FROM ${MUSICBILL_TABLE_NAME}
+      WHERE ${MusicbillExportProperty.ID} = ?
     `,
     [id],
-  ); // musicbill
+  );
 
   return ctx.success();
 };
