@@ -1,9 +1,12 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import excludeProperty from '#/utils/exclude_property';
 import {
+  MUSIC_SINGER_RELATION_TABLE_NAME,
+  MUSIC_TABLE_NAME,
   Music,
   MusicProperty,
+  MusicSingerRelationProperty,
   Singer,
   SingerProperty,
   UserProperty,
@@ -11,6 +14,7 @@ import {
 import { getDB } from '@/db';
 import { getSingerById, getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -44,23 +48,23 @@ export default async (ctx: Context) => {
         | MusicProperty.TYPE
         | MusicProperty.NAME
         | MusicProperty.ALIASES
+        | MusicProperty.COVER
+        | MusicProperty.ASSET
       >
     >(
       `
         SELECT
-          m.id,
-          m.type,
-          m.name,
-          m.aliases,
-          m.cover,
-          m.sq,
-          m.hq,
-          m.ac
-        FROM music AS m
-        LEFT JOIN music_singer_relation AS msr
-          ON m.id = msr.musicId
-        WHERE msr.singerId = ?
-        ORDER BY m.heat DESC
+          m.${MusicProperty.ID},
+          m.${MusicProperty.TYPE},
+          m.${MusicProperty.NAME},
+          m.${MusicProperty.ALIASES},
+          m.${MusicProperty.COVER},
+          m.${MusicProperty.ASSET}
+        FROM ${MUSIC_TABLE_NAME} AS m
+        LEFT JOIN ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
+          ON m.${MusicProperty.ID} = msr.${MusicSingerRelationProperty.MUSIC_ID}
+        WHERE msr.${MusicSingerRelationProperty.SINGER_ID} = ?
+        ORDER BY m.${MusicProperty.HEAT} DESC
       `,
       [id],
     ),
@@ -89,10 +93,13 @@ export default async (ctx: Context) => {
 
   return ctx.success({
     ...excludeProperty(singer, [SingerProperty.CREATE_USER_ID]),
+    avatar: getAssetPublicPath(singer.avatar, AssetType.SINGER_AVATAR),
     aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
     createUser,
     musicList: musicList.map((m) => ({
       ...m,
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingers[m.id] || [],
     })),

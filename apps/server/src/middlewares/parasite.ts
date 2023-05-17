@@ -10,11 +10,7 @@ export default (ctx: Context, next: Next) => {
       data,
     };
   };
-  ctx.except = (
-    exceptionCode: ExceptionCode,
-    statusCode: 200 | 400 | 404 | 500 = 400,
-  ) => {
-    ctx.status = statusCode;
+  ctx.except = (exceptionCode: ExceptionCode) => {
     ctx.body = {
       code: exceptionCode,
       message: EXCEPTION_CODE_MAP[exceptionCode].description,

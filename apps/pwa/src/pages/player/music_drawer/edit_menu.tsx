@@ -421,26 +421,20 @@ function EditMenu({ music }: { music: MusicDetail }) {
             if (music.forkList.length) {
               return notice.error('被二次创作音乐无法被删除');
             }
-            return dialog.confirm({
-              title: '确定删除音乐吗?',
-              content: '注意, 音乐删除后无法恢复',
-              onConfirm: () =>
-                void dialog.confirm({
-                  title: '确定删除音乐吗?',
-                  content: '这是第二次确认, 也是最后一次',
-                  onConfirm: async () => {
-                    try {
-                      await deleteMusic(music.id);
-                      notice.info('已删除');
-                      playerEventemitter.emit(PlayerEventType.MUSIC_DELETED, {
-                        id: music.id,
-                      });
-                    } catch (error) {
-                      logger.error(error, '删除音乐失败');
-                      notice.error(error.message);
-                    }
-                  },
-                }),
+            return dialog.captcha({
+              title: '确定删除音乐吗? 注意, 音乐删除后无法恢复',
+              onConfirm: async ({ captchaId, captchaValue }) => {
+                try {
+                  await deleteMusic({ id: music.id, captchaId, captchaValue });
+                  notice.info('已删除');
+                  playerEventemitter.emit(PlayerEventType.MUSIC_DELETED, {
+                    id: music.id,
+                  });
+                } catch (error) {
+                  logger.error(error, '删除音乐失败');
+                  notice.error(error.message);
+                }
+              },
             });
           }}
         />

@@ -1,46 +1,25 @@
 import {
   ChangeEventHandler,
-  ReactNode,
   useState,
   KeyboardEventHandler,
-  useCallback,
+  useEffect,
 } from 'react';
 import styled, { CSSProperties } from 'styled-components';
-import { flexCenter } from '@/style/flexbox';
-import ErrorCard from '@/components/error_card';
 import getLoginCodeRequest from '@/server/base/get_login_code';
 import { ExceptionCode } from '#/constants/exception';
 import notice from '@/utils/notice';
 import sleep from '#/utils/sleep';
 import ErrorWithCode from '@/utils/error_with_code';
 import Dialog, { Container, Content } from '@/components/dialog';
-import Spinner from '@/components/spinner';
 import Input from '@/components/input';
 import Button, { Variant } from '@/components/button';
-import useCaptchaData from './use_captcha_data';
+import Captcha, { useCaptcha } from '@/components/captcha';
 
 const StyledContent = styled(Content)`
   display: flex;
   flex-direction: column;
   gap: 10px;
-
-  > .graph {
-    cursor: pointer;
-
-    > svg {
-      width: 100%;
-      height: auto;
-    }
-  }
 `;
-const LoadingBox = styled.div`
-  padding: 30px;
-
-  ${flexCenter}
-`;
-const errorCardStyle: CSSProperties = {
-  padding: 30,
-};
 const maskProps: { style: CSSProperties } = {
   style: {
     // @ts-expect-error
@@ -64,13 +43,13 @@ function CaptchaDialog({
   const [captchaCode, setCaptchaCode] = useState('');
   const onCaptchaCodeChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setCaptchaCode(event.target.value);
-  const resetCaptchaCode = useCallback(() => setCaptchaCode(''), []);
 
   const [gettingLoginCode, setGettingLoginCode] = useState(false);
-  const { captchaData, getCaptcha } = useCaptchaData({
-    open,
-    resetCaptchaCode,
-  });
+  const { captchaData, reload: reloadCaptchaData } = useCaptcha();
+
+  useEffect(() => {
+    setCaptchaCode('');
+  }, [captchaData]);
 
   const toNextWrapper = () => {
     updateEmail(email);
@@ -79,6 +58,10 @@ function CaptchaDialog({
   };
 
   const getLoginCode = async () => {
+    if (!captchaData.data) {
+      return notice.error('请等待验证码加载完毕');
+    }
+
     if (!captchaCode.length) {
       return notice.error('请输入验证码');
     }
@@ -87,7 +70,7 @@ function CaptchaDialog({
     try {
       await getLoginCodeRequest({
         email,
-        captchaId: captchaData.value!.id,
+        captchaId: captchaData.data.id,
         captchaValue: captchaCode,
       });
       toNextWrapper();
@@ -98,7 +81,7 @@ function CaptchaDialog({
       switch (code) {
         case ExceptionCode.USER_NOT_EXIST:
         case ExceptionCode.CAPTCHA_ERROR: {
-          getCaptcha();
+          reloadCaptchaData();
           break;
         }
         case ExceptionCode.HAS_LOGIN_CODE_ALREADY: {
@@ -117,33 +100,11 @@ function CaptchaDialog({
     }
   };
 
-  let content: ReactNode = null;
-  if (captchaData.error) {
-    content = (
-      <ErrorCard
-        errorMessage={captchaData.error.message}
-        retry={getCaptcha}
-        style={errorCardStyle}
-      />
-    );
-  } else if (captchaData.loading) {
-    content = (
-      <LoadingBox>
-        <Spinner />
-      </LoadingBox>
-    );
-  } else {
-    content = (
+  return (
+    <Dialog open={open} maskProps={maskProps} onClose={onClose}>
       <Container>
         <StyledContent>
-          <div
-            className="graph"
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{
-              __html: captchaData.value.svg,
-            }}
-            onClick={getCaptcha}
-          />
+          <Captcha captchaData={captchaData} reload={reloadCaptchaData} />
           <Input
             label="验证码"
             inputProps={{
@@ -164,11 +125,6 @@ function CaptchaDialog({
           </Button>
         </StyledContent>
       </Container>
-    );
-  }
-  return (
-    <Dialog open={open} maskProps={maskProps} onClose={onClose}>
-      {content}
     </Dialog>
   );
 }
