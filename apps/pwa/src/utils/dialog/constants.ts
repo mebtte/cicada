@@ -1,3 +1,4 @@
+import { Variant } from '@/components/button';
 import { ReactNode } from 'react';
 
 export enum DialogType {
@@ -21,19 +22,18 @@ export interface Alert extends Dialog {
   onConfirm?: () => void | boolean | Promise<void | boolean>;
 }
 
-export interface Confirm extends Dialog {
+export interface Confirm extends Omit<Alert, 'type'> {
   type: DialogType.CONFIRM;
 
-  content?: ReactNode;
   cancelText?: string;
   onCancel?: () => void | boolean | Promise<void | boolean>;
-  confirmText?: string;
-  onConfirm?: () => void | boolean | Promise<void | boolean>;
 }
 
 export interface Captcha extends Dialog {
   type: DialogType.CAPTCHA;
 
+  confirmVariant?: Variant;
+  confirmText?: string;
   onConfirm: ({
     captchaId,
     captchaValue,
@@ -41,4 +41,6 @@ export interface Captcha extends Dialog {
     captchaId: string;
     captchaValue: string;
   }) => void | boolean | Promise<void | boolean>;
+  cancelText?: string;
+  onCancel?: () => void | boolean | Promise<void | boolean>;
 }

@@ -45,6 +45,7 @@ import searchMusicRequest from '@/server/api/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import absoluteFullSize from '@/style/absolute_full_size';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
+import { Variant } from '@/components/button';
 import { Music, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -419,20 +420,22 @@ function EditMenu({ music }: { music: MusicDetail }) {
           label="删除"
           onClick={() => {
             if (music.forkList.length) {
-              return notice.error('被二次创作音乐无法被删除');
+              return notice.error('被二次创作的音乐无法被删除');
             }
             return dialog.captcha({
-              title: '确定删除音乐吗? 注意, 音乐删除后无法恢复',
+              confirmText: '删除音乐',
+              confirmVariant: Variant.DANGER,
               onConfirm: async ({ captchaId, captchaValue }) => {
                 try {
                   await deleteMusic({ id: music.id, captchaId, captchaValue });
-                  notice.info('已删除');
                   playerEventemitter.emit(PlayerEventType.MUSIC_DELETED, {
                     id: music.id,
                   });
                 } catch (error) {
                   logger.error(error, '删除音乐失败');
                   notice.error(error.message);
+
+                  return false;
                 }
               },
             });

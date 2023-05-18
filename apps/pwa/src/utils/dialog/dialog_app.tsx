@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   Alert as AlertShape,
+  Captcha as CaptchaShape,
   Confirm as ConfirmShape,
   Dialog,
   DialogType,
@@ -8,6 +9,7 @@ import {
 import e, { EventType } from './eventemitter';
 import Alert from './alert';
 import Confirm from './confirm';
+import Captcha from './captcha';
 
 function DialogApp() {
   const [dialogList, setDialogList] = useState<Dialog[]>([]);
@@ -42,7 +44,13 @@ function DialogApp() {
             );
           }
           case DialogType.CAPTCHA: {
-            return null;
+            return (
+              <Captcha
+                key={d.id}
+                captcha={d as CaptchaShape}
+                onDestroy={onDestroy}
+              />
+            );
           }
           default: {
             return null;

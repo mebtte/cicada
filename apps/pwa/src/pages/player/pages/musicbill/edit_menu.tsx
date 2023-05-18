@@ -20,6 +20,7 @@ import { CSSVariable } from '@/global_style';
 import deleteMusicbill from '@/server/api/delete_musicbill';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
+import { Variant } from '@/components/button';
 import e, { EventType } from './eventemitter';
 import { Musicbill, ZIndex } from '../../constants';
 import playerEventemitter, {
@@ -189,7 +190,8 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
           icon={<MdDelete style={deleteStyle} />}
           onClick={() =>
             dialog.captcha({
-              title: '确定删除乐单? 注意, 乐单删除后无法恢复!',
+              confirmText: '删除乐单',
+              confirmVariant: Variant.DANGER,
               onConfirm: async ({ captchaId, captchaValue }) => {
                 try {
                   await deleteMusicbill({
@@ -206,10 +208,9 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   });
                 } catch (error) {
                   logger.error(error, '删除乐单失败');
-                  dialog.alert({
-                    title: '删除乐单失败',
-                    content: error.message,
-                  });
+                  notice.error(error.message);
+
+                  return false;
                 }
               },
             })
