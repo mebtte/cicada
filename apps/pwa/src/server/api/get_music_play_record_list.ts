@@ -1,12 +1,10 @@
-import { MusicType } from '#/constants/music';
-import { prefixServerOrigin } from '@/global_states/setting';
-import { request } from '.';
+import { request } from '..';
 
 /**
  * 获取音乐播放记录列表
  * @author mebtte<hi@mebtte.com>
  */
-async function getMusicPlayRecordList({
+function getMusicPlayRecordList({
   page,
   pageSize,
   keyword,
@@ -15,7 +13,7 @@ async function getMusicPlayRecordList({
   pageSize: number;
   keyword: string;
 }) {
-  const data = await request<{
+  return request<{
     total: number;
     musicPlayRecordList: {
       recordId: number;
@@ -23,15 +21,12 @@ async function getMusicPlayRecordList({
       timestamp: number;
 
       id: string;
-      cover: string;
-      type: MusicType;
+
       name: string;
       aliases: string[];
-      asset: string;
       singers: {
         id: string;
         name: string;
-        aliases: string[];
       }[];
     }[];
   }>({
@@ -43,14 +38,6 @@ async function getMusicPlayRecordList({
     },
     withToken: true,
   });
-  return {
-    ...data,
-    musicPlayRecordList: data.musicPlayRecordList.map((m) => ({
-      ...m,
-      cover: prefixServerOrigin(m.cover),
-      asset: prefixServerOrigin(m.asset),
-    })),
-  };
 }
 
 export default getMusicPlayRecordList;

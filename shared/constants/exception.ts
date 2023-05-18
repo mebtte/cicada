@@ -33,6 +33,7 @@ export enum ExceptionCode {
   MUSIC_COVER_NOT_EXIST,
   ADMIN_USER_CAN_NOT_BE_DELETED,
   USER_IS_ADMIN_ALREADY,
+  MUSIC_PLAY_RECORD_NOT_EXIST,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -142,5 +143,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.USER_IS_ADMIN_ALREADY]: {
     description: '用户已经是管理员',
+  },
+  [ExceptionCode.MUSIC_PLAY_RECORD_NOT_EXIST]: {
+    description: '音乐播放记录不存在',
   },
 };

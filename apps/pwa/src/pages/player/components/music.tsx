@@ -2,9 +2,11 @@ import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
 import { MdPlayArrow, MdReadMore, MdOutlinePostAdd } from 'react-icons/md';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
-import { MusicWithIndex } from '../constants';
+import { MusicWithSingerAliases, Index } from '../constants';
 import e, { EventType } from '../eventemitter';
 import MusicBase from './music_base';
+
+const ICON_BUTTON_SIZE = 28;
 
 const LineAfterPart = styled.div`
   display: flex;
@@ -19,7 +21,7 @@ function Music({
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   active: boolean;
-  music: MusicWithIndex;
+  music: MusicWithSingerAliases & Index;
   addon?: ReactNode;
 }) {
   return (
@@ -30,7 +32,7 @@ function Music({
       lineAfter={
         <LineAfterPart>
           <IconButton
-            size={28}
+            size={ICON_BUTTON_SIZE}
             onClick={(event) => {
               event.stopPropagation();
               return e.emit(EventType.ACTION_PLAY_MUSIC, { music });
@@ -39,7 +41,7 @@ function Music({
             <MdPlayArrow />
           </IconButton>
           <IconButton
-            size={28}
+            size={ICON_BUTTON_SIZE}
             onClick={(event) => {
               event.stopPropagation();
               return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
@@ -50,7 +52,7 @@ function Music({
             <MdReadMore />
           </IconButton>
           <IconButton
-            size={28}
+            size={ICON_BUTTON_SIZE}
             onClick={(event) => {
               event.stopPropagation();
               return e.emit(EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER, {

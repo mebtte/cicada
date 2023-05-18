@@ -3,9 +3,9 @@ import notice from '@/utils/notice';
 import getRandomInteger from '#/utils/generate_random_integer';
 import getRandomString from '#/utils/generate_random_string';
 import eventemitter, { EventType } from './eventemitter';
-import { MusicWithIndex, QueueMusic } from './constants';
+import { MusicWithSingerAliases, QueueMusic } from './constants';
 
-export default (playlist: MusicWithIndex[]) => {
+export default (playlist: MusicWithSingerAliases[]) => {
   const [playqueue, setPlayqueue] = useState<QueueMusic[]>([]);
   const [currentPosition, setCurrentPosition] = useState(-1);
 

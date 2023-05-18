@@ -4,7 +4,7 @@ import { Query } from '@/constants';
 import searchMusic from '@/server/api/search_music';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
-import { MusicWithIndex } from '../../../constants';
+import { MusicWithSingerAliases, Index } from '../../../constants';
 import { PAGE_SIZE } from '../constants';
 
 type Data = {
@@ -12,7 +12,7 @@ type Data = {
   loading: boolean;
   value: {
     total: number;
-    musicList: MusicWithIndex[];
+    musicList: (MusicWithSingerAliases & Index)[];
   } | null;
 };
 const dataLoading: Data = {

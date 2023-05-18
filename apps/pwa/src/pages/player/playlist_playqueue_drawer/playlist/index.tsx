@@ -122,7 +122,7 @@ function Playlist({ style }: { style: unknown }) {
                           e.stopPropagation();
                           return playerEventemitter.emit(
                             PlayerEventType.ACTION_REMOVE_PLAYLIST_MUSIC,
-                            { music },
+                            { id: music.id },
                           );
                         }}
                       >

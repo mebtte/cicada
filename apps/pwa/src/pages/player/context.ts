@@ -1,6 +1,11 @@
 import { createContext } from 'react';
 import { RequestStatus } from '@/constants';
-import { MusicWithIndex, QueueMusic, Musicbill } from './constants';
+import {
+  MusicWithSingerAliases,
+  Index,
+  QueueMusic,
+  Musicbill,
+} from './constants';
 
 interface Context {
   getMusicbillListStatus: RequestStatus;
@@ -10,7 +15,7 @@ interface Context {
   audioPaused: boolean;
   audioDuration: number;
 
-  playlist: MusicWithIndex[];
+  playlist: (MusicWithSingerAliases & Index)[];
 
   playqueue: QueueMusic[];
   currentPlayqueuePosition: number;

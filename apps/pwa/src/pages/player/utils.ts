@@ -8,7 +8,7 @@ import createMusicbillExport from '@/server/api/create_musicbill_export';
 import createSingerRequest from '@/server/api/create_singer';
 import getMusicDetail from '@/server/api/get_music_detail';
 import getSingerDetail from '@/server/api/get_singer_detail';
-import { Music } from './constants';
+import { Music, SingerWithAliases } from './constants';
 import e, { EditDialogType, EventType } from './eventemitter';
 
 export function exportMusicbill(id: string) {
@@ -120,7 +120,12 @@ export const openCreateSingerDialog = (callback: (id: string) => void) =>
       }),
   });
 
-export const filterMusic = (music: Music, keyword: string) => {
+export const filterMusic = (
+  music: Omit<Music, 'singers'> & {
+    singers: SingerWithAliases[];
+  },
+  keyword: string,
+) => {
   if (keyword) {
     const lowerCaseKeyword = keyword.toLowerCase();
     return (

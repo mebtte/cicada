@@ -1,11 +1,11 @@
 import { memo, useState, useCallback, useEffect } from 'react';
 import eventemitter, { EventType } from '../eventemitter';
-import { Music as MusicType } from '../constants';
+import { MusicWithSingerAliases } from '../constants';
 import AddMusicToMusicbillDrawer from './add_music_to_musicbill_drawer';
 
 function Wrapper() {
   const [open, setOpen] = useState(false);
-  const [music, setMusic] = useState<MusicType | null>(null);
+  const [music, setMusic] = useState<MusicWithSingerAliases | null>(null);
   const onClose = useCallback(() => setOpen(false), []);
 
   useEffect(() => {

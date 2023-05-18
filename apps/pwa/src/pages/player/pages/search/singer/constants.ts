@@ -1,6 +1,6 @@
-import { Singer as BaseSinger } from '../../../constants';
+import { SingerWithAliases } from '../../../constants';
 
-export interface Singer extends BaseSinger {
+export interface Singer extends SingerWithAliases {
   avatar: string;
   musicCount: number;
 }

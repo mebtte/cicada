@@ -4,9 +4,16 @@ import { UtilZIndex } from '@/constants/style';
 
 export const HEADER_HEIGHT = 55;
 
+export interface Index {
+  index: number;
+}
+
 export interface Singer {
   id: string;
   name: string;
+}
+
+export interface SingerWithAliases extends Singer {
   aliases: string[];
 }
 
@@ -20,11 +27,11 @@ export interface Music {
   asset: string;
 }
 
-export interface MusicWithIndex extends Music {
-  index: number;
+export interface MusicWithSingerAliases extends Omit<Music, 'singers'> {
+  singers: SingerWithAliases[];
 }
 
-export interface QueueMusic extends MusicWithIndex {
+export interface QueueMusic extends MusicWithSingerAliases, Index {
   pid: string;
   shuffle: boolean;
 }
@@ -36,7 +43,7 @@ export interface Musicbill {
   createTimestamp: number;
   public: boolean;
 
-  musicList: MusicWithIndex[];
+  musicList: (MusicWithSingerAliases & Index)[];
 
   status: RequestStatus;
   error: Error | null;

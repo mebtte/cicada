@@ -1,4 +1,4 @@
-import { Music, Singer } from '../constants';
+import { Music, SingerWithAliases } from '../constants';
 
 export interface Lyric {
   id: number;
@@ -10,7 +10,7 @@ export interface CreateUser {
   nickname: string;
 }
 
-export interface SingerDetail extends Singer {
+export interface SingerDetail extends SingerWithAliases {
   avatar: string;
 }
 

@@ -1,7 +1,13 @@
 export const BRAND_NAME = '知了';
 
-/** 图形验证码有效期 */
+/**
+ * 图形验证码有效期
+ * 前端有效期要比后端有效期短 10 秒
+ * 减少接口处理时验证码已经过期的概率
+ * @author mebtte<hi@mebtte.com>
+ */
 export const CAPTCHA_TTL = 1000 * 60 * 2;
+export const CAPTCHA_TTL_FRONTEND = CAPTCHA_TTL - 100 * 10;
 
 /** 获取登录验证码间隔 */
 export const GET_LOGIN_CODE_INTERVAL = 1000 * 60 * 2;

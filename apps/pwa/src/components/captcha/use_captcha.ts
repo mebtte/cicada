@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CAPTCHA_TTL } from '#/constants';
+import { CAPTCHA_TTL_FRONTEND } from '#/constants';
 import logger from '@/utils/logger';
 import getCaptcha from '@/server/base/get_captcha';
 import { CaptchaData } from './constants';
@@ -38,7 +38,7 @@ export default () => {
 
   useEffect(() => {
     if (captchaData.data) {
-      const timer = window.setTimeout(getCaptchaData, CAPTCHA_TTL - 10 * 1000);
+      const timer = window.setTimeout(getCaptchaData, CAPTCHA_TTL_FRONTEND);
       return () => window.clearTimeout(timer);
     }
   }, [captchaData, getCaptchaData]);

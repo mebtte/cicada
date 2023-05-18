@@ -1,7 +1,7 @@
 import { CSSProperties, memo } from 'react';
 import Drawer from '@/components/drawer';
 import { EventType } from '../eventemitter';
-import { Music as MusicType } from '../constants';
+import { MusicWithSingerAliases } from '../constants';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import Top from './top';
 import MusicbillList from './musicbill_list';
@@ -20,7 +20,7 @@ function MusicbillListDrawer({
 }: {
   open: boolean;
   onClose: () => void;
-  music: MusicType;
+  music: MusicWithSingerAliases;
 }) {
   const zIndex = useDynamicZIndex(EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER);
 
