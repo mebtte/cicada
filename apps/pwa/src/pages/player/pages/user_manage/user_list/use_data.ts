@@ -59,7 +59,16 @@ export default () => {
         ),
       })),
     );
-    return unlistenUserUpdated;
+    const unlistenUserDeleted = e.listen(EventType.USER_DELETED, (payload) =>
+      setData((d) => ({
+        ...d,
+        userList: d.userList.filter((u) => u.id !== payload.id),
+      })),
+    );
+    return () => {
+      unlistenUserUpdated();
+      unlistenUserDeleted();
+    };
   }, []);
 
   return {

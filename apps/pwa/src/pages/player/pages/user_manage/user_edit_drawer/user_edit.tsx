@@ -10,6 +10,7 @@ import dialog from '@/utils/dialog';
 import adminUpdateUser from '@/server/api/admin_update_user';
 import adminUpdateUserAdmin from '@/server/api/admin_update_user_admin';
 import { AdminAllowUpdateKey, REMARK_MAX_LENGTH } from '#/constants/user';
+import adminDeleteUser from '@/server/api/admin_delete_user';
 import { User } from '../constants';
 import e, { EventType } from '../eventemitter';
 
@@ -275,7 +276,38 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           </Button>
         )}
         {user.admin ? null : (
-          <Button className="part" variant={Variant.DANGER} disabled={loading}>
+          <Button
+            className="part"
+            variant={Variant.DANGER}
+            disabled={loading}
+            onClick={() =>
+              dialog.confirm({
+                title: '确定删除用户吗?',
+                content: '用户删除后, 其创建的音乐/歌手将会转移到你的账号',
+                confirmText: '继续',
+                onConfirm: () =>
+                  void dialog.captcha({
+                    confirmText: '删除用户',
+                    confirmVariant: Variant.DANGER,
+                    onConfirm: async ({ captchaId, captchaValue }) => {
+                      try {
+                        await adminDeleteUser({
+                          id: user.id,
+                          captchaId,
+                          captchaValue,
+                        });
+                        onClose();
+                        e.emit(EventType.USER_DELETED, { id: user.id });
+                      } catch (error) {
+                        logger.error(error, '删除用户失败');
+                        notice.error(error.message);
+                        return false;
+                      }
+                    },
+                  }),
+              })
+            }
+          >
             删除用户
           </Button>
         )}

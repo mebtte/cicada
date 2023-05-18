@@ -6,6 +6,7 @@ export enum EventType {
   OPEN_CREATE_USER_DIALOG = 'open_create_user_dialog',
   OPEN_USER_EDIT_DRAWER = 'open_user_edit_drawer',
   USER_UPDATED = 'user_updated',
+  USER_DELETED = 'user_deleted',
 }
 
 export default new Eventin<
@@ -17,5 +18,6 @@ export default new Eventin<
     [EventType.USER_UPDATED]: NonNullable<Partial<User>> & {
       id: string;
     };
+    [EventType.USER_DELETED]: { id: string };
   }
 >();
