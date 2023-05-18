@@ -1,6 +1,6 @@
 import excludeProperty from '#/utils/exclude_property';
 import { UserProperty } from '@/constants/db_definition';
-import { updateUser } from '@/db/user';
+import updateUser from '@/db/update_user';
 import logger from '@/utils/logger';
 import { Context } from '../constants';
 

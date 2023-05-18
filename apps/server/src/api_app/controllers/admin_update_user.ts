@@ -2,14 +2,14 @@ import { ExceptionCode } from '#/constants/exception';
 import { EMAIL } from '#/constants/regexp';
 import { AdminAllowUpdateKey, REMARK_MAX_LENGTH } from '#/constants/user';
 import { User, UserProperty } from '@/constants/db_definition';
-import { getUserById, updateUser } from '@/db/user';
+import { getUserById } from '@/db/user';
+import updateUser from '@/db/update_user';
 import { Context } from '../constants';
 
 type LocalUser = Pick<
   User,
   | UserProperty.ID
   | UserProperty.REMARK
-  | UserProperty.ADMIN
   | UserProperty.EMAIL
   | UserProperty.MUSICBILL_MAX_AMOUNT
   | UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
@@ -51,13 +51,6 @@ const KEY_MAP_HANDLER: Record<
       value,
     });
 
-    return ctx.success();
-  },
-  [AdminAllowUpdateKey.ADMIN]: async ({ ctx, user }) => {
-    if (user.admin === 1) {
-      return ctx.success(ExceptionCode.NO_NEED_TO_UPDATE);
-    }
-    await updateUser({ id: user.id, property: UserProperty.ADMIN, value: 1 });
     return ctx.success();
   },
   [AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT]: async ({ ctx, user, value }) => {
@@ -157,7 +150,6 @@ export default async (ctx: Context) => {
   const user: LocalUser | null = await getUserById(id, [
     UserProperty.ID,
     UserProperty.REMARK,
-    UserProperty.ADMIN,
     UserProperty.EMAIL,
     UserProperty.MUSICBILL_MAX_AMOUNT,
     UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,

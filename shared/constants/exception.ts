@@ -32,6 +32,7 @@ export enum ExceptionCode {
   OVER_USER_MUSICBILL_MAX_AMOUNT,
   MUSIC_COVER_NOT_EXIST,
   ADMIN_USER_CAN_NOT_BE_DELETED,
+  USER_IS_ADMIN_ALREADY,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -138,5 +139,8 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.ADMIN_USER_CAN_NOT_BE_DELETED]: {
     description: '管理员用户无法被删除',
+  },
+  [ExceptionCode.USER_IS_ADMIN_ALREADY]: {
+    description: '用户已经是管理员',
   },
 };

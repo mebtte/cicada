@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import generateRandomString from '#/utils/generate_random_string';
+import { StrictMode } from 'react';
 import { Alert, Captcha, Confirm, DialogType } from './constants';
 import e, { EventType } from './eventemitter';
 import DialogApp from './dialog_app';
@@ -7,7 +8,11 @@ import DialogApp from './dialog_app';
 const root = document.createElement('div');
 root.className = 'dialog-app';
 document.body.appendChild(root);
-createRoot(root).render(<DialogApp />);
+createRoot(root).render(
+  <StrictMode>
+    <DialogApp />
+  </StrictMode>,
+);
 
 export default {
   alert: (a: Omit<Alert, 'id' | 'type'>) => {

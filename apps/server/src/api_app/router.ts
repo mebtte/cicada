@@ -38,6 +38,7 @@ import getMusicPlayRecordList from './controllers/get_music_play_record_list';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
+import adminUpdateUserAdmin from './controllers/admin_update_user_admin';
 import adminDeleteUser from './controllers/admin_delete_user';
 import adminGetUserList from './controllers/admin_get_user_list';
 
@@ -87,6 +88,12 @@ router.get('/music_play_record_list', getMusicPlayRecordList); // 获取音乐�
  */
 router.post('/admin/user', adminAuthorize, parseBody, adminCreateUser); // 创建用户
 router.put('/admin/user', adminAuthorize, parseBody, adminUpdateUser); // 更新用户
+router.put(
+  '/admin/user_admin',
+  adminAuthorize,
+  parseBody,
+  adminUpdateUserAdmin,
+); // 设用户为管理员
 router.delete('/admin/user', adminAuthorize, adminDeleteUser); // 删除用户
 router.get('/admin/user_list', adminAuthorize, adminGetUserList); // 获取用户列表
 

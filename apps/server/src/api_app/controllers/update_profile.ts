@@ -9,8 +9,8 @@ import {
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getMusicbillListByIds } from '@/db/musicbill';
-import { updateUser } from '@/db/user';
 import { getAssetFilePath } from '@/platform/asset';
+import updateUser from '@/db/update_user';
 import { Context } from '../constants';
 
 const ALLOW_UPDATE_KEYS = Object.values(AllowUpdateKey);
