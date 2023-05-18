@@ -33,6 +33,7 @@ async function getMusicDetail(id: string) {
       forkFromList: Music[];
       year: number | null;
       asset: string;
+      musicbillCount: number;
     }
   >({
     path: '/api/music_detail',

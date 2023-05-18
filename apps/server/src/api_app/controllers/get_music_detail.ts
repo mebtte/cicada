@@ -8,12 +8,15 @@ import {
   Singer,
   UserProperty,
   MusicForkProperty,
+  MUSICBILL_MUSIC_TABLE_NAME,
+  MusicbillMusicProperty,
 } from '@/constants/db_definition';
 import { getMusicById, getMusicListByIds } from '@/db/music';
 import { getMusicForkFromList, getMusicForkList } from '@/db/music_fork';
 import { getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
 import { getAssetPublicPath } from '@/platform/asset';
+import { getDB } from '@/db';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -37,15 +40,25 @@ export default async (ctx: Context) => {
   if (!music) {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
   }
-  const [createUser, forkList, forkFromList] = await Promise.all([
-    getUserById(music.createUserId, [
-      UserProperty.ID,
-      UserProperty.AVATAR,
-      UserProperty.NICKNAME,
-    ]),
-    getMusicForkList(id, [MusicForkProperty.MUSIC_ID]),
-    getMusicForkFromList(id, [MusicForkProperty.FORK_FROM]),
-  ]);
+  const [createUser, forkList, forkFromList, musicbillCount] =
+    await Promise.all([
+      getUserById(music.createUserId, [
+        UserProperty.ID,
+        UserProperty.AVATAR,
+        UserProperty.NICKNAME,
+      ]),
+      getMusicForkList(id, [MusicForkProperty.MUSIC_ID]),
+      getMusicForkFromList(id, [MusicForkProperty.FORK_FROM]),
+      getDB().get<{ value: number }>(
+        `
+          SELECT
+            count(*) AS value
+          FROM ${MUSICBILL_MUSIC_TABLE_NAME}
+          WHERE ${MusicbillMusicProperty.MUSIC_ID} = ?
+        `,
+        [id],
+      ),
+    ]);
 
   const [allSingerList, musicList = []] = await Promise.all([
     getSingerListInMusicIds(
@@ -128,5 +141,6 @@ export default async (ctx: Context) => {
         ...m,
         cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       })),
+    musicbillCount: musicbillCount!.value,
   });
 };

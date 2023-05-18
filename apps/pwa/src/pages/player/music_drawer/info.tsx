@@ -6,6 +6,7 @@ import {
   MdOutlineLocalFireDepartment,
   MdFilePresent,
   MdAccessTime,
+  MdOutlinePostAdd,
 } from 'react-icons/md';
 import { MusicDetail } from './constants';
 
@@ -39,6 +40,7 @@ const Style = styled.div`
 
       font-size: 12px;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+      user-select: none;
 
       display: flex;
       align-items: center;
@@ -58,7 +60,7 @@ const Style = styled.div`
 
         &:not(:last-child)::after {
           content: ' · ';
-          padding: 0 5px;
+          padding: 0 3px;
         }
       }
     }
@@ -109,6 +111,10 @@ function Info({ music }: { music: MusicDetail }) {
               </div>
             </div>
           ) : null}
+          <div className="part" title="加入乐单数量">
+            <MdOutlinePostAdd className="icon" />
+            <div className="value">{music.musicbillCount}</div>
+          </div>
           <div className="part" title="热度">
             <MdOutlineLocalFireDepartment className="icon" />
             <div className="value">{music.heat}</div>
