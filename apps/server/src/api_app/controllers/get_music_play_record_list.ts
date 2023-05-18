@@ -176,16 +176,21 @@ export default async (ctx: Context) => {
 
   const singerList = await getSingerListInMusicIds(
     musicPlayRecordList.map((m) => m.id),
-    [SingerProperty.ID, SingerProperty.NAME],
+    [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
   );
   const musicIdMapSingerList: {
-    [key: string]: Pick<Singer, SingerProperty.ID | SingerProperty.NAME>[];
+    [key: string]: (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
+      aliases: string[];
+    })[];
   } = {};
   singerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
       musicIdMapSingerList[s.musicId] = [];
     }
-    musicIdMapSingerList[s.musicId].push(excludeProperty(s, ['musicId']));
+    musicIdMapSingerList[s.musicId].push({
+      ...excludeProperty(s, ['musicId']),
+      aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
+    });
   });
 
   return ctx.success({
