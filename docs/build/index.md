@@ -20,7 +20,7 @@ cd cicada
 安装相关依赖:
 
 ```sh
-npm install
+npm ci
 # npm 是 node.js 包管理器, 附在 node.js 已一起安装
 ```
 

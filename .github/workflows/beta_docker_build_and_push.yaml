@@ -22,5 +22,5 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: git tag beta.$(date +\%Y\%m\%d)
+      - run: git tag beta.$(date +\%y\%m\%d\%H\%M)
       - run: ./docker_build_and_push.sh beta
