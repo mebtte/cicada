@@ -49,10 +49,12 @@ export function getUserListByIds<P extends Property>(
 ) {
   return getDB().all<Pick<User, P>>(
     `
-      select ${properties.map((p) => `\`${p}\``).join(',')} from user
-        where id in ( ${ids.map(() => '?')} )
+      SELECT
+        ${properties.join(', ')}
+      FROM user
+      WHERE id IN ( ${ids.map(() => '?').join(', ')} )
     `,
-    [ids],
+    ids,
   );
 }
 
