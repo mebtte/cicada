@@ -28,7 +28,7 @@ class DB {
     );
   }
 
-  get<Row = unknown>(sql: string, params?: unknown[]) {
+  get<Row>(sql: string, params?: unknown[]) {
     return new Promise<Row | null>((resolve, reject) =>
       this.db.get(sql, params, (error: Error | null, row?: Row) =>
         error ? reject(error) : resolve(row || null),
@@ -36,10 +36,10 @@ class DB {
     );
   }
 
-  all<Row = unknown>(sql: string, params?: unknown[]) {
+  all<Row>(sql: string, params?: unknown[]) {
     return new Promise<Row[]>((resolve, reject) =>
       this.db.all(sql, params, (error, rows) =>
-        error ? reject(error) : resolve(rows),
+        error ? reject(error) : resolve(rows as Row[]),
       ),
     );
   }

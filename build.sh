@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-npm i
+npm ci
 
 mkdir -p cache
 

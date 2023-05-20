@@ -71,24 +71,25 @@ export default async (ctx: Context) => {
   if (getConfig().mode === 'development') {
     // eslint-disable-next-line no-console
     console.log(`\n--- login code: ${code} ---\n`);
-  }
-  await sendEmail({
-    to: email,
-    title: `「${BRAND_NAME}」登录验证码`,
-    html: `
+  } else {
+    await sendEmail({
+      to: email,
+      title: `「${BRAND_NAME}」登录验证码`,
+      html: `
         Hi, 「${encode(user.nickname)}」,
         <br />
         <br />
         你刚刚尝试登录, 本次登录验证码是「<code>${code}</code>」, ${
-      LOGIN_CODE_TTL / 1000 / 60
-    } 分钟内有效.
+        LOGIN_CODE_TTL / 1000 / 60
+      } 分钟内有效.
         <br />
         <br />
         ${BRAND_NAME}
         <br />
         ${day().format('YYYY-MM-DD HH:mm:ss')}
       `,
-  });
+    });
+  }
 
   /**
    * 如果 Promise.all 发送邮件和写入数据库
