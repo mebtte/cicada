@@ -28,9 +28,7 @@
 
 ## 准备
 
-- **[邮件发送服务](https://zh.wikipedia.org/wiki/%E7%AE%80%E5%8D%95%E9%82%AE%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE)**, 知了使用邮箱验证码进行登录以及部分功能依赖邮箱实现, 第三方邮件发送服务可以参考 [网易邮箱](https://note.youdao.com/ynoteshare/index.html?id=f9fef46114fb922b45460f4f55d96853) / [QQ 邮箱](https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256) / [Outlook 邮箱](https://support.microsoft.com/zh-cn/office/pop-imap-%E5%92%8C-smtp-%E8%AE%BE%E7%BD%AE-8361e398-8af4-4e97-b147-6c6c4ac95353)
-
-> 使用邮箱验证码登录可以极大地提高安全性, 相比账号密码的登录方式, 邮箱验证码登录可以避免被暴力破解
+- **[邮件发送服务](https://zh.wikipedia.org/wiki/%E7%AE%80%E5%8D%95%E9%82%AE%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE)**, 知了使用邮箱验证码进行登录以及部分功能依赖邮箱实现, 第三方邮件发送服务可以参考 [网易邮箱](https://note.youdao.com/ynoteshare/index.html?id=f9fef46114fb922b45460f4f55d96853) / [QQ 邮箱](https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256) / [Outlook 邮箱](https://support.microsoft.com/zh-cn/office/pop-imap-%E5%92%8C-smtp-%E8%AE%BE%E7%BD%AE-8361e398-8af4-4e97-b147-6c6c4ac95353). 使用邮箱验证码登录可以极大地提高安全性, 相比账号密码的登录方式, 邮箱验证码登录可以避免被暴力破解.
 
 ## 部署
 
@@ -57,8 +55,6 @@
 ### Docker
 
 知了支持 Docker 部署, **启动容器之前请先参考上面准备知了的配置文件**, 下面例子中配置文件位于 `$HOME/cicada/config.json`, 需要注意的是首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外在 Docker 中知了会忽略配置文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项.
-
-> [0.76.0](https://github.com/mebtte/cicada/releases/tag/0.76.0) 版本以及之后的版本 Docker 镜像中配置文件从 `/config.json` 移至 `/config/cicada.json`, 为了兼容旧版本, 当 `/config/cicada.json` 不存在时会自动查找 `/config.json`. 此兼容将会在 v1 版本移除.
 
 ```sh
 docker run \
@@ -117,20 +113,6 @@ cicada import --data /path_to/cicada_data music
 
 当遇到命名不支持或者格式不支持的文件, 知了将会忽略. 可以通过 `cicada help import` 查看更多选项.
 
-## Roadmap
-
-### v1
-
-- [ ] 共享乐单
-- [ ] 消息中心(删除歌手消息/乐单内包含被删除音乐消息)
-
-### v2
-
-### 待定
-
-- [ ] 悬浮歌词面板(类似于网易云网页版歌词)
-- [ ] 电台功能(随机从曲库中拉取音乐并连续播放)
-
 ## 常见问题
 
 <details>
@@ -153,6 +135,15 @@ cicada import --data /path_to/cicada_data music
 目前 Safari 对 PWA 支持度较低, 当页面处于后台时会暂停 JavaScript 的执行导致无法自动下一首, 需要等待 Safari 提高对 PWA 的支持才能解决相关问题.
 
 </details>
+
+## 后续开发灵感
+
+- [ ] 共享乐单
+- [ ] 消息中心(删除歌手消息/乐单内包含被删除音乐消息)
+- [ ] 悬浮歌词面板(类似于网易云网页版歌词)
+- [ ] 电台功能(随机从曲库中拉取音乐并连续播放)
+- [ ] 音乐分享(独立页面, 独立资源链接)
+- [ ] 音乐标签
 
 ## 开源协议
 
