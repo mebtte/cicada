@@ -1,9 +1,9 @@
 import { Command } from 'commander';
 import path from 'path';
 import fs from 'fs';
-import startServer from './start_server';
 import exitWithMessage from './utils/exit_with_message';
 import definition from './definition';
+import startServer from './commands/start_server';
 import importMusic from './commands/import_music';
 import dataUpgrade from './commands/data_upgrade';
 

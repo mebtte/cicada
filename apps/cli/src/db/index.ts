@@ -1,6 +1,3 @@
-/**
- * API referrence: https://github.com/TryGhost/node-sqlite3/wiki/API
- */
 import fs from 'fs';
 import util from 'util';
 import day from '#/utils/day';

@@ -1,6 +1,6 @@
 import Koa, { DefaultState } from 'koa';
-import parasite from '@/middlewares/parasite';
-import catcher from '@/middlewares/catcher';
+import parasite from '@/commands/start_server/middlewares/parasite';
+import catcher from '@/commands/start_server/middlewares/catcher';
 import { Context } from './constants';
 import router from './router';
 

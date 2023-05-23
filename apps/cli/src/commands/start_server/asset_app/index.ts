@@ -1,9 +1,9 @@
 import Koa from 'koa';
 import range from 'koa-range';
 import serve from 'koa-static';
-import catcher from '@/middlewares/catcher';
-import parasite from '@/middlewares/parasite';
-import { getAssetDirectory } from '../config';
+import catcher from '@/commands/start_server/middlewares/catcher';
+import parasite from '@/commands/start_server/middlewares/parasite';
+import { getAssetDirectory } from '../../../config';
 import router from './router';
 
 export function getAssetApp() {

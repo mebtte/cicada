@@ -9,7 +9,8 @@ import {
   getConfig,
   Config,
   updateConfig,
-} from './config';
+} from '@/config';
+import definition from '@/definition';
 import initialize from './initialize';
 import schedule from './schedule';
 import { getAssetApp } from './asset_app';
@@ -77,7 +78,14 @@ async function startServer({
   server.use(mount(`/${PathPrefix.FORM}`, getFormApp()));
   server.use(mount(`/${PathPrefix.API}`, getApiApp()));
   server.use(mount(`/${PathPrefix.BASE}`, getBaseApp()));
-  server.use(mount('/', getPwaApp()));
+
+  /**
+   * 非构建模式下不用托管 pwa
+   * @author mebtte<hi@mebtte.com>
+   */
+  if (definition.BUILT) {
+    server.use(mount('/', getPwaApp()));
+  }
 
   http.createServer(server.callback()).listen(config.port);
 }

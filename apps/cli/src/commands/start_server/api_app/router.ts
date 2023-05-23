@@ -1,7 +1,7 @@
 import Router from 'koa-router';
 import { DefaultState } from 'koa';
 import bodyParser from 'koa-bodyparser';
-import adminAuthorize from '@/middlewares/admin_authorize';
+import adminAuthorize from '@/commands/start_server/middlewares/admin_authorize';
 import { Context } from './constants';
 
 import getProfile from './controllers/get_profile';

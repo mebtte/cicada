@@ -2,19 +2,6 @@ import fs from 'fs';
 import { EMAIL } from '#/constants/regexp';
 import question from '#/utils/question';
 import { AssetType } from '#/constants';
-import DB from './utils/db';
-import {
-  getAssetDirectory,
-  getConfig,
-  getDBFilePath,
-  getDBSnapshotDirectory,
-  getDownloadDirectory,
-  getLogDirectory,
-  getTrashDirectory,
-  getCacheDirectory,
-  getDataVersionPath,
-} from './config';
-import exitWithMessage from './utils/exit_with_message';
 import {
   MusicProperty,
   MUSIC_TABLE_NAME,
@@ -46,7 +33,20 @@ import {
   MusicbillCollectionProperty,
   MUSICBILL_EXPORT_TABLE_NAME,
   MusicbillExportProperty,
-} from './constants/db_definition';
+} from '@/constants/db_definition';
+import DB from '@/utils/db';
+import {
+  getAssetDirectory,
+  getConfig,
+  getDBFilePath,
+  getDBSnapshotDirectory,
+  getDownloadDirectory,
+  getLogDirectory,
+  getTrashDirectory,
+  getCacheDirectory,
+  getDataVersionPath,
+} from '@/config';
+import exitWithMessage from '@/utils/exit_with_message';
 
 const DATA_VERSION = 1;
 

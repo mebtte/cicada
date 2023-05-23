@@ -12,7 +12,7 @@ import { sendEmail } from '@/platform/email';
 import { BRAND_NAME } from '#/constants';
 import day from '#/utils/day';
 import { getConfig } from '@/config';
-import { LOGIN_CODE_TTL } from '../../constants';
+import { LOGIN_CODE_TTL } from '../../../../constants';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

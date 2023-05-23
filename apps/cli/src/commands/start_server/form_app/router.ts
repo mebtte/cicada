@@ -1,6 +1,6 @@
 import Router from 'koa-router';
 import { DefaultState } from 'koa';
-import authorize from '@/middlewares/authorize';
+import authorize from '@/commands/start_server/middlewares/authorize';
 import { Context } from './constants';
 
 import uploadAsset from './controllers/upload_asset';

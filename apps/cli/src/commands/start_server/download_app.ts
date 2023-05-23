@@ -1,7 +1,7 @@
 import Koa from 'koa';
 import range from 'koa-range';
 import serve from 'koa-static';
-import { getDownloadDirectory } from './config';
+import { getDownloadDirectory } from '@/config';
 
 export function getDownloadApp() {
   const app = new Koa();

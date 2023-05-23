@@ -1,8 +1,8 @@
 import { Next } from 'koa';
 import { ExceptionCode } from '#/constants/exception';
 import { getConfig } from '@/config';
-import { Context } from '../constants/koa';
-import logger from '../utils/logger';
+import { Context } from '../../../constants/koa';
+import logger from '../../../utils/logger';
 
 export default ({ label }: { label: string }) =>
   async (ctx: Context, next: Next) => {

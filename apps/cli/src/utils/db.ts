@@ -1,3 +1,7 @@
+/**
+ * API referrence: https://github.com/TryGhost/node-sqlite3/wiki/API
+ * @author mebtte<hi@mebtte.com>
+ */
 import * as sqlite3 from 'sqlite3';
 
 export enum EventType {

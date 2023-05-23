@@ -1,6 +1,6 @@
 import { Next } from 'koa';
 import { ExceptionCode, EXCEPTION_CODE_MAP } from '#/constants/exception';
-import { Context } from '../constants/koa';
+import { Context } from '../../../constants/koa';
 
 export default (ctx: Context, next: Next) => {
   ctx.success = (data) => {
