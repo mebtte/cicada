@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "private": true,
-  "bin": "server.js",
+  "bin": "dist/cli.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mebtte/cicada.git"
@@ -19,13 +19,12 @@
     "dev:pwa": "npm run dev -w apps/pwa",
     "dev:pwa-with-sw": "npm run dev-with-sw -w apps/pwa",
     "build:pwa": "npm run build -w apps/pwa",
-    "dev:server": "npm run dev -w apps/server",
-    "watch:server": "npm run watch -w apps/server",
-    "build:server": "npm run build -w apps/server",
-    "start:server": "npm run start -w apps/server",
+    "dev:server": "npm run dev -w apps/cli",
+    "build:cli": "npm run build -w apps/cli",
+    "dev:cli": "npm run start -w apps/cli",
     "pkg": "pkg .",
     "build": "./build.sh",
-    "build:current": "rimraf build && npm run build:pwa && npm run build:server && npm run pkg"
+    "build:current": "rimraf build && npm run build:pwa && npm run build:cli && npm run pkg"
   },
   "bugs": {
     "url": "https://github.com/mebtte/cicada/issues"
@@ -33,7 +32,7 @@
   "homepage": "https://cicada.mebtte.com",
   "workspaces": [
     "apps/pwa",
-    "apps/server"
+    "apps/cli"
   ],
   "engines": {
     "node": ">=16",
@@ -181,8 +180,7 @@
   "license": "GPL",
   "pkg": {
     "assets": [
-      "pwa/**/*",
-      "runtime/**/*",
+      "dist/**/*",
       "node_modules/**/*.node"
     ],
     "outputPath": "build"

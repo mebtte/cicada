@@ -29,7 +29,7 @@ for target in ${targets[@]}; do
 done
 
 npm run build:pwa
-npm run build:server
+npm run build:cli
 
 # backup package.json
 cp package.json package.json.bak

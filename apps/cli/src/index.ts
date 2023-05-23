@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import path from 'path';
 import fs from 'fs';
-import server from './server';
+import startServer from './start_server';
 import exitWithMessage from './utils/exit_with_message';
 import definition from './definition';
 import importMusic from './commands/import_music';
@@ -37,7 +37,7 @@ program
       }
 
       const portNumber = port ? Number(port) : undefined;
-      return server.start({
+      return startServer({
         configFilePath: path.isAbsolute(config)
           ? config
           : path.resolve(process.cwd(), config),

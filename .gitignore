@@ -6,10 +6,8 @@ node_modules/
 
 # build & dist
 dist/
-/build
-/pwa
-/server.js
-/coverage/
+build/
+coverage/
 
 # cicada
 /config.json

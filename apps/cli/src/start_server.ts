@@ -24,7 +24,7 @@ function printInfo(info: string) {
   console.log(`--- ${info} ---`);
 }
 
-async function start({
+async function startServer({
   configFilePath,
   data,
   port,
@@ -82,6 +82,4 @@ async function start({
   http.createServer(server.callback()).listen(config.port);
 }
 
-export default {
-  start,
-};
+export default startServer;
