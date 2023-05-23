@@ -1,9 +1,9 @@
 import { Context } from '@/constants/koa';
 import { DefaultState } from 'koa';
 import Router from 'koa-router';
-import resizeMusicCover from './controllers/resize_music_cover';
+import getMusicCover from './controllers/get_music_cover';
 
 const router = new Router<DefaultState, Context>();
-router.get('/resized_music_cover', resizeMusicCover);
+router.get('/music_cover/:asset', getMusicCover);
 
 export default router;

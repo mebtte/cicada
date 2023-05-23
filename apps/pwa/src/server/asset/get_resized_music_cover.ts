@@ -1,13 +1,11 @@
-import { prefixServerOrigin } from '@/global_states/setting';
-
 function getResizedMusicCover({
-  id,
+  cover,
   size,
 }: {
-  id: string;
+  cover: string;
   size: 96 | 128 | 192 | 256 | 384 | 512;
 }) {
-  return prefixServerOrigin(`/asset/resized_music_cover?id=${id}&size=${size}`);
+  return `${cover}?size=${size}`;
 }
 
 export default getResizedMusicCover;

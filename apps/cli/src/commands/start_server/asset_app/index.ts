@@ -11,6 +11,7 @@ export function getAssetApp() {
   app.use(parasite);
   app.use(catcher({ label: 'asset_app' }));
   app.use(range);
+  app.use(router.routes()).use(router.allowedMethods());
   app.use(
     serve(getAssetDirectory(), {
       /**
@@ -20,6 +21,5 @@ export function getAssetApp() {
       maxAge: 1000 * 60 * 60 * 24 * 365, // 一年
     }),
   );
-  app.use(router.routes()).use(router.allowedMethods());
   return app;
 }
