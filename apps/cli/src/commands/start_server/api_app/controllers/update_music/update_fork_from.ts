@@ -58,5 +58,5 @@ export default async ({ ctx, music, value }: Parameter) => {
     }),
   ]);
 
-  return ctx.success();
+  return ctx.success(null);
 };

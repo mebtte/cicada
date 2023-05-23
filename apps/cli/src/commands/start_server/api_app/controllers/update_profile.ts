@@ -36,7 +36,7 @@ const KEY_MAP_HANDLER: Record<
       property: UserProperty.AVATAR,
       value: avatar,
     });
-    return ctx.success();
+    return ctx.success(null);
   },
   [AllowUpdateKey.NICKNAME]: async ({ ctx, value: nickname }) => {
     if (
@@ -67,7 +67,7 @@ const KEY_MAP_HANDLER: Record<
       value: nickname,
     });
 
-    return ctx.success();
+    return ctx.success(null);
   },
   [AllowUpdateKey.MUSICBILL_ORDERS]: async ({ ctx, value: orders }) => {
     if (
@@ -98,7 +98,7 @@ const KEY_MAP_HANDLER: Record<
       value: JSON.stringify(orders),
     });
 
-    return ctx.success();
+    return ctx.success(null);
   },
 };
 

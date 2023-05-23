@@ -39,5 +39,5 @@ export default async (ctx: Context) => {
   }
 
   await removeMusicbillMusicById(musicbillMusic.id);
-  return ctx.success();
+  return ctx.success(null);
 };

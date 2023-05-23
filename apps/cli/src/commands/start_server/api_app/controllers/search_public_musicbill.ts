@@ -1,14 +1,22 @@
 import { ExceptionCode } from '#/constants/exception';
+import SearchPublicMusicbill from '#/response_data/api/search_public_musicbill';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
 import excludeProperty from '#/utils/exclude_property';
 import {
+  MUSICBILL_COLLECTION_TABLE_NAME,
+  MUSICBILL_MUSIC_TABLE_NAME,
+  MUSICBILL_TABLE_NAME,
   Musicbill,
+  MusicbillCollectionProperty,
+  MusicbillMusicProperty,
   MusicbillProperty,
   User,
   UserProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getUserListByIds } from '@/db/user';
+import { getAssetPublicPath } from '@/platform/asset';
+import { AssetType } from '#/constants';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -18,7 +26,10 @@ type LocalMusicbill = Pick<
   | MusicbillProperty.COVER
   | MusicbillProperty.NAME
   | MusicbillProperty.USER_ID
->;
+> & {
+  musicCount: number;
+  collectionCount: number;
+};
 type LocalUser = Pick<
   User,
   UserProperty.ID | UserProperty.AVATAR | UserProperty.NICKNAME
@@ -55,29 +66,30 @@ export default async (ctx: Context) => {
         `
           SELECT
             count(*) AS value
-          FROM musicbill
-          WHERE public = 1
-            AND name LIKE ?
+          FROM ${MUSICBILL_TABLE_NAME}
+          WHERE ${MusicbillProperty.PUBLIC} = 1
+            AND ${MusicbillProperty.NAME} LIKE ?
         `,
         [pattern],
       ),
       getDB().all<LocalMusicbill>(
         `
           SELECT
-            m.id,
-            m.cover,
-            m.name,
-            m.userId,
-            count(mm.id) AS musicCount
-          FROM musicbill AS m
-          LEFT JOIN musicbill_music AS mm
-            ON m.id = mm.musicbillId
-          LEFT JOIN musicbill_collection AS mc
-            ON mc.musicbillId = m.id
-          WHERE m.public = 1
-            AND m.name LIKE ?
-          GROUP BY m.id
-          ORDER BY count(mc.id) DESC
+            m.${MusicbillProperty.ID},
+            m.${MusicbillProperty.COVER},
+            m.${MusicbillProperty.NAME},
+            m.${MusicbillProperty.USER_ID},
+            count(DISTINCT mm.${MusicbillMusicProperty.ID}) AS musicCount,
+            count(DISTINCT mc.${MusicbillCollectionProperty.ID}) AS collectionCount
+          FROM ${MUSICBILL_TABLE_NAME} AS m
+          LEFT JOIN ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
+            ON m.${MusicbillProperty.ID} = mm.${MusicbillMusicProperty.MUSICBILL_ID}
+          LEFT JOIN ${MUSICBILL_COLLECTION_TABLE_NAME} AS mc
+            ON mc.${MusicbillCollectionProperty.MUSICBILL_ID} = m.${MusicbillProperty.ID}
+          WHERE m.${MusicbillProperty.PUBLIC} = 1
+            AND m.${MusicbillProperty.NAME} LIKE ?
+          GROUP BY m.${MusicbillProperty.ID}
+          ORDER BY collectionCount DESC
           LIMIT ?
         `,
         [pattern, pageSizeNumber],
@@ -94,24 +106,27 @@ export default async (ctx: Context) => {
         `
           SELECT
             count(*) AS value
-          FROM musicbill
-          WHERE public = 1
+          FROM ${MUSICBILL_TABLE_NAME}
+          WHERE ${MusicbillProperty.PUBLIC} = 1
         `,
         [],
       ),
       getDB().all<LocalMusicbill>(
         `
           SELECT
-            m.id,
-            m.cover,
-            m.name,
-            m.userId,
-            count(mm.id) AS musicCount
-          FROM musicbill AS m
-          LEFT JOIN musicbill_music AS mm
-            ON m.id = mm.musicbillId
-          WHERE m.public = 1
-          GROUP BY m.id
+            m.${MusicbillProperty.ID},
+            m.${MusicbillProperty.COVER},
+            m.${MusicbillProperty.NAME},
+            m.${MusicbillProperty.USER_ID},
+            count(DISTINCT mm.${MusicbillMusicProperty.ID}) AS musicCount,
+            count(DISTINCT mc.${MusicbillCollectionProperty.ID}) AS collectionCount
+          FROM ${MUSICBILL_TABLE_NAME} AS m
+          LEFT JOIN ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
+            ON m.${MusicbillProperty.ID} = mm.${MusicbillMusicProperty.MUSICBILL_ID}
+          LEFT JOIN ${MUSICBILL_COLLECTION_TABLE_NAME} AS mc
+            ON mc.${MusicbillCollectionProperty.MUSICBILL_ID} = m.${MusicbillProperty.ID}
+          WHERE m.${MusicbillProperty.PUBLIC} = 1
+          GROUP BY m.${MusicbillProperty.ID}
           ORDER BY random()
           LIMIT ?
         `,
@@ -129,14 +144,19 @@ export default async (ctx: Context) => {
       Array.from(new Set(musicbillList.map((mb) => mb.userId))),
       [UserProperty.ID, UserProperty.AVATAR, UserProperty.NICKNAME],
     );
+    userList = userList.map((u) => ({
+      ...u,
+      avatar: getAssetPublicPath(u.avatar, AssetType.USER_AVATAR),
+    }));
   }
 
-  return ctx.success({
+  return ctx.success<SearchPublicMusicbill>({
     total,
     musicbillList: musicbillList.map((mb) => {
-      const user = userList.find((u) => u.id === mb.userId);
+      const user = userList.find((u) => u.id === mb.userId)!;
       return {
         ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
+        cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
         user,
       };
     }),

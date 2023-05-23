@@ -50,5 +50,5 @@ export default async (ctx: Context) => {
     );
   }
 
-  return ctx.success();
+  return ctx.success(null);
 };

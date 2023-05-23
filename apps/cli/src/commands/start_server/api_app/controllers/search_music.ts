@@ -1,4 +1,5 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import SearchMusic from '#/response_data/api/search_music';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import { getDB } from '@/db';
@@ -153,7 +154,7 @@ export default async (ctx: Context) => {
     });
   });
 
-  return ctx.success({
+  return ctx.success<SearchMusic>({
     total,
     musicList: musicList.map((m) => ({
       ...excludeProperty(m, [MusicProperty.CREATE_USER_ID]),

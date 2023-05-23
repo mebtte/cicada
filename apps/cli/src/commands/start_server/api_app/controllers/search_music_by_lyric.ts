@@ -1,4 +1,5 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import SearchMusicByLyric from '#/response_data/api/search_music_by_lyric';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import excludeProperty from '#/utils/exclude_property';
@@ -6,6 +7,7 @@ import {
   LYRIC_TABLE_NAME,
   Lyric,
   LyricProperty,
+  MUSIC_TABLE_NAME,
   Music,
   MusicProperty,
   Singer,
@@ -13,6 +15,7 @@ import {
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getSingerListInMusicIds } from '@/db/singer';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 50;
@@ -42,8 +45,10 @@ export default async (ctx: Context) => {
   const [totalObject, musicList] = await Promise.all([
     getDB().get<{ value: number }>(
       `
-        SELECT count(distinct musicId) AS value FROM lyric
-        WHERE lrcContent LIKE ?
+        SELECT
+          count(DISTINCT ${LyricProperty.MUSIC_ID}) AS value
+        FROM ${LYRIC_TABLE_NAME}
+        WHERE ${LyricProperty.LRC_CONTENT} LIKE ?
       `,
       [pattern],
     ),
@@ -55,6 +60,7 @@ export default async (ctx: Context) => {
         | MusicProperty.TYPE
         | MusicProperty.ALIASES
         | MusicProperty.COVER
+        | MusicProperty.ASSET
       >
     >(
       `
@@ -63,12 +69,13 @@ export default async (ctx: Context) => {
           m.${MusicProperty.NAME},
           m.${MusicProperty.TYPE},
           m.${MusicProperty.ALIASES},
-          m.${MusicProperty.COVER}
-        FROM lyric AS l
-        LEFT JOIN music AS m
-          ON l.musicId = m.id
-        WHERE l.lrcContent like ?
-        ORDER BY m.heat DESC
+          m.${MusicProperty.COVER},
+          m.${MusicProperty.ASSET}
+        FROM ${LYRIC_TABLE_NAME} AS l
+        LEFT JOIN ${MUSIC_TABLE_NAME} AS m
+          ON l.${LyricProperty.MUSIC_ID} = m.${MusicProperty.ID}
+        WHERE l.${LyricProperty.LRC_CONTENT} like ?
+        ORDER BY m.${MusicProperty.HEAT} DESC
         LIMIT ?
         OFFSET ?
       `,
@@ -132,10 +139,12 @@ export default async (ctx: Context) => {
     });
   });
 
-  return ctx.success({
+  return ctx.success<SearchMusicByLyric>({
     total: totalObject!.value,
     musicList: musicList.map((m) => ({
       ...m,
+      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
+      asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingerList[m.id] || [],
       lyrics: musicIdMapLyricList[m.id] || [],

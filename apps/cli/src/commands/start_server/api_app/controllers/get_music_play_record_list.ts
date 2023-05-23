@@ -1,4 +1,4 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { ALIAS_DIVIDER } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import excludeProperty from '#/utils/exclude_property';
@@ -16,18 +16,12 @@ import {
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getSingerListInMusicIds } from '@/db/singer';
-import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
 type LocalMusic = Pick<
   Music,
-  | MusicProperty.ID
-  | MusicProperty.TYPE
-  | MusicProperty.NAME
-  | MusicProperty.ALIASES
-  | MusicProperty.COVER
-  | MusicProperty.ASSET
+  MusicProperty.ID | MusicProperty.NAME | MusicProperty.ALIASES
 >;
 type LocalMusicPlayRecord = LocalMusic & {
   recordId: number;
@@ -98,11 +92,8 @@ export default async (ctx: Context) => {
             mpr.${MusicPlayRecordProperty.TIMESTAMP},
             
             m.${MusicProperty.ID},
-            m.${MusicProperty.COVER},
-            m.${MusicProperty.TYPE},
             m.${MusicProperty.NAME},
-            m.${MusicProperty.ALIASES},
-            m.${MusicProperty.ASSET}
+            m.${MusicProperty.ALIASES}
           FROM ${MUSIC_PLAY_RECORD_TABLE_NAME} AS mpr
           LEFT JOIN ${MUSIC_TABLE_NAME} AS m
             ON mpr.${MusicPlayRecordProperty.MUSIC_ID} = m.${MusicProperty.ID}
@@ -147,11 +138,8 @@ export default async (ctx: Context) => {
             mpr.${MusicPlayRecordProperty.TIMESTAMP},
             
             m.${MusicProperty.ID},
-            m.${MusicProperty.COVER},
-            m.${MusicProperty.TYPE},
             m.${MusicProperty.NAME},
-            m.${MusicProperty.ALIASES},
-            m.${MusicProperty.ASSET}
+            m.${MusicProperty.ALIASES}
           FROM ${MUSIC_PLAY_RECORD_TABLE_NAME} AS mpr
           LEFT JOIN ${MUSIC_TABLE_NAME} AS m
             ON mpr.${MusicPlayRecordProperty.MUSIC_ID} = m.${MusicProperty.ID}
@@ -176,29 +164,22 @@ export default async (ctx: Context) => {
 
   const singerList = await getSingerListInMusicIds(
     musicPlayRecordList.map((m) => m.id),
-    [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
+    [SingerProperty.ID, SingerProperty.NAME],
   );
   const musicIdMapSingerList: {
-    [key: string]: (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
-      aliases: string[];
-    })[];
+    [key: string]: Pick<Singer, SingerProperty.ID | SingerProperty.NAME>[];
   } = {};
   singerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
       musicIdMapSingerList[s.musicId] = [];
     }
-    musicIdMapSingerList[s.musicId].push({
-      ...excludeProperty(s, ['musicId']),
-      aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
-    });
+    musicIdMapSingerList[s.musicId].push(excludeProperty(s, ['musicId']));
   });
 
   return ctx.success({
     total,
     musicPlayRecordList: musicPlayRecordList.map((m) => ({
       ...m,
-      cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
-      asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingerList[m.id] || [],
     })),

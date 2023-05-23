@@ -1,8 +1,16 @@
-import { ALIAS_DIVIDER } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import SearchSinger from '#/response_data/api/search_singer';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';
-import { Singer, SingerProperty } from '@/constants/db_definition';
+import {
+  MUSIC_SINGER_RELATION_TABLE_NAME,
+  MusicSingerRelationProperty,
+  SINGER_TABLE_NAME,
+  Singer,
+  SingerProperty,
+} from '@/constants/db_definition';
+import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -44,24 +52,27 @@ export default async (ctx: Context) => {
     const results = await Promise.all([
       getDB().get<{ value: number }>(
         `
-          SELECT count(*) AS value FROM singer
-          WHERE name LIKE ? OR aliases LIKE ?
+          SELECT
+            count(*) AS value
+          FROM ${SINGER_TABLE_NAME}
+          WHERE ${SingerProperty.NAME} LIKE ?
+            OR ${SingerProperty.ALIASES} LIKE ?
         `,
         [pattern, pattern],
       ),
       getDB().all<LocalSinger>(
         `
           SELECT
-            s.id,
-            s.avatar,
-            s.name,
-            s.aliases,
-            count(msr.id) AS musicCount
-          FROM singer AS s
-          LEFT JOIN music_singer_relation AS msr
-            ON s.id = msr.singerId
-          WHERE name LIKE ? or aliases LIKE ?
-          GROUP BY s.id
+            s.${SingerProperty.ID},
+            s.${SingerProperty.AVATAR},
+            s.${SingerProperty.NAME},
+            s.${SingerProperty.ID},
+            count(msr.${MusicSingerRelationProperty.ID}) AS musicCount
+          FROM ${SINGER_TABLE_NAME} AS s
+          LEFT JOIN ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
+            ON s.${SingerProperty.ID} = msr.${MusicSingerRelationProperty.SINGER_ID}
+          WHERE s.${SingerProperty.NAME} LIKE ? or s.${SingerProperty.ALIASES} LIKE ?
+          GROUP BY s.${SingerProperty.ID}
           ORDER BY musicCount DESC
           LIMIT ?
           OFFSET ?
@@ -75,22 +86,22 @@ export default async (ctx: Context) => {
     const results = await Promise.all([
       getDB().get<{ value: number }>(
         `
-          SELECT count(*) as value FROM singer
+          SELECT count(*) as value FROM ${SINGER_TABLE_NAME}
         `,
         [],
       ),
       getDB().all<LocalSinger>(
         `
           SELECT
-            s.id,
-            s.avatar,
-            s.name,
-            s.aliases,
+            s.${SingerProperty.ID},
+            s.${SingerProperty.AVATAR},
+            s.${SingerProperty.NAME},
+            s.${SingerProperty.ALIASES},
             count(msr.id) AS musicCount
-          FROM singer AS s
-          LEFT JOIN music_singer_relation AS msr
-            ON s.id = msr.singerId
-          GROUP BY s.id
+          FROM ${SINGER_TABLE_NAME} AS s
+          LEFT JOIN ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
+            ON s.${SingerProperty.ID} = msr.${MusicSingerRelationProperty.SINGER_ID}
+          GROUP BY s.${SingerProperty.ID}
           ORDER BY random()
           LIMIT ?
         `,
@@ -101,11 +112,12 @@ export default async (ctx: Context) => {
     [, singerList] = results;
   }
 
-  return ctx.success({
+  return ctx.success<SearchSinger>({
     total,
     singerList: singerList.map((singer) => ({
       ...singer,
       aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
+      avatar: getAssetPublicPath(singer.avatar, AssetType.SINGER_AVATAR),
     })),
   });
 };

@@ -44,5 +44,5 @@ export default async (ctx: Context) => {
   }
   await addMusicbillMusic(musicbillId, musicId);
 
-  return ctx.success();
+  return ctx.success(null);
 };

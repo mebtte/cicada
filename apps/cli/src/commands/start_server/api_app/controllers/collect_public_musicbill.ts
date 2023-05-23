@@ -35,5 +35,5 @@ export default async (ctx: Context) => {
 
   await createMusicbillCollection({ musicbillId: id, userId: ctx.user.id });
 
-  return ctx.success();
+  return ctx.success(null);
 };

@@ -101,5 +101,5 @@ export default async (ctx: Context) => {
    */
   await saveLoginCode({ userId: user.id, code });
 
-  return ctx.success();
+  return ctx.success(null);
 };

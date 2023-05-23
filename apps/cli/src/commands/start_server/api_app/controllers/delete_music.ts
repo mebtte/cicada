@@ -114,5 +114,5 @@ export default async (ctx: Context) => {
     [id],
   );
 
-  return ctx.success();
+  return ctx.success(null);
 };

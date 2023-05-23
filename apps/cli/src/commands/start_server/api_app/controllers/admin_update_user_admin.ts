@@ -40,5 +40,5 @@ export default async (ctx: Context) => {
   }
 
   await updateUser({ id, property: UserProperty.ADMIN, value: 1 });
-  return ctx.success();
+  return ctx.success(null);
 };

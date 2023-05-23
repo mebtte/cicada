@@ -27,5 +27,5 @@ export default async (ctx: Context) => {
     [musicbillCollection.id],
   );
 
-  return ctx.success();
+  return ctx.success(null);
 };

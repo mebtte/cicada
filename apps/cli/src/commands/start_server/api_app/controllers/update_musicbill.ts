@@ -39,7 +39,7 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
     }
     await updateMusicbill(musicbill.id, MusicbillProperty.NAME, name);
-    return ctx.success();
+    return ctx.success(null);
   },
   [AllowUpdateKey.COVER]: async ({ ctx, musicbill, value: cover }) => {
     if (typeof cover !== 'string' || !cover.length) {
@@ -55,7 +55,7 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
     }
     await updateMusicbill(musicbill.id, MusicbillProperty.COVER, cover);
-    return ctx.success();
+    return ctx.success(null);
   },
   [AllowUpdateKey.PUBLIC]: async ({ ctx, musicbill, value: publiz }) => {
     if (typeof publiz !== 'boolean') {
@@ -69,7 +69,7 @@ const KEY_MAP_HANDLER: Record<
       MusicbillProperty.PUBLIC,
       publiz ? 1 : 0,
     );
-    return ctx.success();
+    return ctx.success(null);
   },
 };
 

@@ -1,3 +1,4 @@
+import SearchPublicMusicbill from '#/response_data/api/search_public_musicbill';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
@@ -10,20 +11,7 @@ async function searchPublicMusicbill({
   page: number;
   pageSize: number;
 }) {
-  const data = await request<{
-    total: number;
-    musicbillList: {
-      id: string;
-      name: string;
-      cover: string;
-      musicCount: number;
-      user: {
-        id: string;
-        nickname: string;
-        avatar: string;
-      };
-    }[];
-  }>({
+  const data = await request<SearchPublicMusicbill>({
     path: '/api/public_musicbill/search',
     params: { keyword, page, pageSize },
     withToken: true,

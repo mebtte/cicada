@@ -71,5 +71,5 @@ export default async (ctx: Context) => {
     [ctx.user.id, id, Date.now(), accessOrigin],
   );
 
-  return ctx.success();
+  return ctx.success(null);
 };

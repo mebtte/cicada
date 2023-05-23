@@ -1,5 +1,5 @@
 import logger from '@/utils/logger';
-import { Query } from '@/constants';
+import type { Query } from '@/constants';
 import getMusicPlayRecordList from '@/server/api/get_music_play_record_list';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';

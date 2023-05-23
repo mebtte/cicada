@@ -1,4 +1,4 @@
-import { MusicType } from '#/constants/music';
+import GetUserDetail from '#/response_data/api/get_user_detail';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
@@ -7,31 +7,7 @@ import { request } from '..';
  * @author mebtte<hi@mebtte.com>
  */
 async function getUserDetail(id: string) {
-  const user = await request<{
-    id: string;
-    avatar: string;
-    joinTimestamp: number;
-    nickname: string;
-    musicbillList: {
-      id: string;
-      cover: string;
-      name: string;
-      musicCount: number;
-    }[];
-    musicList: {
-      id: string;
-      type: MusicType;
-      name: string;
-      aliases: string[];
-      cover: string;
-      asset: string;
-      singers: {
-        id: string;
-        name: string;
-        aliases: string[];
-      }[];
-    }[];
-  }>({
+  const user = await request<GetUserDetail>({
     path: '/api/user_detail',
     params: { id },
     withToken: true,

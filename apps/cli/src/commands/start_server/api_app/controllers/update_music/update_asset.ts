@@ -27,5 +27,5 @@ export default async ({ ctx, music, value }: Parameter) => {
       key: AllowUpdateKey.ASSET,
     }),
   ]);
-  return ctx.success();
+  return ctx.success(null);
 };

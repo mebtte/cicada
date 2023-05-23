@@ -1,4 +1,4 @@
-import { MusicType } from '#/constants/music';
+import SearchMusic from '#/response_data/api/search_music';
 import { request } from '..';
 
 function searchMusic({
@@ -10,22 +10,7 @@ function searchMusic({
   page: number;
   pageSize: number;
 }) {
-  return request<{
-    total: number;
-    musicList: {
-      id: string;
-      type: MusicType;
-      name: string;
-      aliases: string[];
-      cover: string;
-      asset: string;
-      singers: {
-        id: string;
-        name: string;
-        aliases: string[];
-      }[];
-    }[];
-  }>({
+  return request<SearchMusic>({
     path: '/api/music/search',
     params: { keyword, page, pageSize },
     withToken: true,

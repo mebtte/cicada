@@ -35,7 +35,7 @@ const KEY_MAP_HANDLER: Record<
       value,
     });
 
-    return ctx.success();
+    return ctx.success(null);
   },
   [AdminAllowUpdateKey.REMARK]: async ({ ctx, user, value }) => {
     if (typeof value !== 'string' || value.length > REMARK_MAX_LENGTH) {
@@ -51,7 +51,7 @@ const KEY_MAP_HANDLER: Record<
       value,
     });
 
-    return ctx.success();
+    return ctx.success(null);
   },
   [AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT]: async ({ ctx, user, value }) => {
     if (typeof value !== 'number' || value < 0) {
@@ -67,7 +67,7 @@ const KEY_MAP_HANDLER: Record<
       value,
     });
 
-    return ctx.success();
+    return ctx.success(null);
   },
   [AdminAllowUpdateKey.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: async ({
     ctx,
@@ -87,7 +87,7 @@ const KEY_MAP_HANDLER: Record<
       value,
     });
 
-    return ctx.success();
+    return ctx.success(null);
   },
   [AdminAllowUpdateKey.EXPORT_MUSICBILL_MAX_TIME_PER_DAY]: async ({
     ctx,
@@ -107,7 +107,7 @@ const KEY_MAP_HANDLER: Record<
       value,
     });
 
-    return ctx.success();
+    return ctx.success(null);
   },
   [AdminAllowUpdateKey.MUSIC_PLAY_RECORD_INDATE]: async ({
     ctx,
@@ -127,7 +127,7 @@ const KEY_MAP_HANDLER: Record<
       value,
     });
 
-    return ctx.success();
+    return ctx.success(null);
   },
 };
 

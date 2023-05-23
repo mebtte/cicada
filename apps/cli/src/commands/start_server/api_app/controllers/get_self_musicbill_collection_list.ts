@@ -9,6 +9,8 @@ import {
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getUserListByIds } from '@/db/user';
+import { getAssetPublicPath } from '@/platform/asset';
+import { AssetType } from '#/constants';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
@@ -144,6 +146,10 @@ export default async (ctx: Context) => {
       Array.from(new Set(musicbillList.map((mb) => mb.userId))),
       [UserProperty.ID, UserProperty.AVATAR, UserProperty.NICKNAME],
     );
+    userList = userList.map((u) => ({
+      ...u,
+      avatar: getAssetPublicPath(u.avatar, AssetType.USER_AVATAR),
+    }));
   }
 
   return ctx.success({
@@ -151,6 +157,7 @@ export default async (ctx: Context) => {
     musicbillList: musicbillList.map((mb) => ({
       ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
       user: userList.find((u) => u.id === mb.userId),
+      cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
     })),
   });
 };

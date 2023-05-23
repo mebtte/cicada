@@ -33,5 +33,5 @@ export default async ({ ctx, music, value }: Parameter) => {
       key: AllowUpdateKey.COVER,
     }),
   ]);
-  return ctx.success();
+  return ctx.success(null);
 };

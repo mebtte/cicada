@@ -63,5 +63,5 @@ export default async (ctx: Context) => {
     [id, email, id, Date.now(), remark],
   );
 
-  return ctx.success();
+  return ctx.success(null);
 };

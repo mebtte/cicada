@@ -61,7 +61,7 @@ const KEY_MAP_HANDLER: Record<
       }),
     ]);
 
-    return ctx.success();
+    return ctx.success(null);
   },
   [AllowUpdateKey.ALIASES]: async ({ ctx, singer, value }) => {
     if (
@@ -97,7 +97,7 @@ const KEY_MAP_HANDLER: Record<
       }),
     ]);
 
-    return ctx.success();
+    return ctx.success(null);
   },
   [AllowUpdateKey.AVATAR]: async ({ ctx, singer, value: avatar }) => {
     if (typeof avatar !== 'string') {
@@ -129,7 +129,7 @@ const KEY_MAP_HANDLER: Record<
       }),
     ]);
 
-    return ctx.success();
+    return ctx.success(null);
   },
 };
 
