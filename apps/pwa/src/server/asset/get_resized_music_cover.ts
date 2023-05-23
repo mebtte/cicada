@@ -3,7 +3,7 @@ function getResizedMusicCover({
   size,
 }: {
   cover: string;
-  size: 96 | 128 | 192 | 256 | 384 | 512;
+  size: number;
 }) {
   return `${cover}?size=${size}`;
 }

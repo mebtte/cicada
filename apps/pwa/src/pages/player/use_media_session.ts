@@ -3,6 +3,8 @@ import getResizedMusicCover from '@/server/asset/get_resized_music_cover';
 import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
 
+const COVER_SIZES = [96, 128, 192, 256, 384, 512];
+
 function useMediaSession(music?: QueueMusic) {
   useEffect(() => {
     if (music && 'mediaSession' in window.navigator) {
@@ -10,38 +12,11 @@ function useMediaSession(music?: QueueMusic) {
         title: music.name,
         artist: music.singers.map((s) => s.name).join(',') || '未知歌手',
         artwork: music.cover
-          ? [
-              {
-                src: getResizedMusicCover({ cover: music.cover, size: 96 }),
-                sizes: '96x96',
-                type: 'image/jpeg',
-              },
-              {
-                src: getResizedMusicCover({ cover: music.cover, size: 128 }),
-                sizes: '128x128',
-                type: 'image/jpeg',
-              },
-              {
-                src: getResizedMusicCover({ cover: music.cover, size: 192 }),
-                sizes: '192x192',
-                type: 'image/jpeg',
-              },
-              {
-                src: getResizedMusicCover({ cover: music.cover, size: 256 }),
-                sizes: '256x256',
-                type: 'image/jpeg',
-              },
-              {
-                src: getResizedMusicCover({ cover: music.cover, size: 384 }),
-                sizes: '384x384',
-                type: 'image/jpeg',
-              },
-              {
-                src: getResizedMusicCover({ cover: music.cover, size: 512 }),
-                sizes: '512x512',
-                type: 'image/jpeg',
-              },
-            ]
+          ? COVER_SIZES.map((size) => ({
+              src: getResizedMusicCover({ cover: music.cover, size }),
+              sizes: `${size}x${size}`,
+              type: 'image/jpeg',
+            }))
           : [],
       });
       window.navigator.mediaSession.setActionHandler('play', () =>
