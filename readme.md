@@ -10,6 +10,7 @@
 ![](./docs/thumbnail_1.png)
 ![](./docs/thumbnail_2.png)
 ![](./docs/thumbnail_3.png)
+![](./docs/thumbnail_4.png)
 
 ## 特色
 
