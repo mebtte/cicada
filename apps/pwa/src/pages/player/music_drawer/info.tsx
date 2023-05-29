@@ -13,11 +13,13 @@ import { MusicDetail } from './constants';
 const Style = styled.div`
   position: relative;
 
+  font-size: 0;
+
   > .info {
     position: absolute;
     left: 0;
     bottom: 0;
-    max-width: 85%;
+    max-width: 80%;
 
     padding: 10px 20px;
     background-color: rgb(255 255 255 / 0.75);
@@ -44,6 +46,8 @@ const Style = styled.div`
 
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 5px 10px;
 
       > .part {
         display: flex;
@@ -56,11 +60,6 @@ const Style = styled.div`
 
         > .value {
           font-family: monospace;
-        }
-
-        &:not(:last-child)::after {
-          content: ' · ';
-          padding: 0 3px;
         }
       }
     }
