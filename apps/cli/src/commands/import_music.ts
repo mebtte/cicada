@@ -8,7 +8,7 @@ import exitWithMessage from '@/utils/exit_with_message';
 import fs from 'fs/promises';
 import { createSpinner } from 'nanospinner';
 import fileType from 'file-type';
-import { AssetType, ASSET_TYPE_MAP_V1 } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import path from 'path';
 import { getDB } from '@/db';
 import { createMusic } from '@/db/music';
@@ -113,7 +113,7 @@ async function importFile(
    * @author mebtte<hi@mebtte.com>
    */
   const ft = await fileType.fromFile(file);
-  const { acceptTypes } = ASSET_TYPE_MAP_V1[AssetType.MUSIC];
+  const { acceptTypes } = ASSET_TYPE_MAP[AssetType.MUSIC];
   if (ft && acceptTypes.includes(ft.mime)) {
     const [singerString, originalName] = path.parse(file).name.split(' - ');
     const name = handleSpace(originalName);
