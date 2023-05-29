@@ -12,7 +12,6 @@ import {
   SINGER_MODIFY_RECORD_TABLE_NAME,
   SingerModifyRecordProperty,
 } from '@/constants/db_definition';
-import logger from '@/utils/logger';
 
 const TABLES: {
   table: string;
@@ -49,29 +48,13 @@ const TABLES: {
 async function removeOutdatedDB() {
   const now = Date.now();
   for (const { table, timestampColumn, ttl } of TABLES) {
-    const rows = await getDB().all(
+    await getDB().run(
       `
-        SELECT
-          *
-        FROM ${table}
+        DELETE FROM ${table}
         WHERE ${timestampColumn} <= ?
       `,
       [now - ttl],
     );
-    if (rows.length) {
-      await getDB().run(
-        `
-        DELETE FROM ${table}
-        WHERE ${timestampColumn} <= ?
-      `,
-        [now - ttl],
-      );
-      logger.info({
-        label: 'remove_outdated_db',
-        title: table,
-        message: JSON.stringify(rows),
-      });
-    }
   }
 }
 

@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import FileSelect from '@/components/file_select';
 import Cropper from 'cropperjs';
 import loadImage from '@/utils/load_image';
-import { COVER_MAX_SIZE } from '#/constants';
+import { IMAGE_MAX_SIZE } from '#/constants';
 import { Ref, RenderProps } from './constants';
 import { EditDialogType } from '../eventemitter';
 
@@ -42,7 +42,7 @@ function Cover(
     getValue: async () => {
       if (cropperRef.current) {
         const { width, x, y } = cropperRef.current.getData();
-        const size = Math.min(COVER_MAX_SIZE, width);
+        const size = Math.min(IMAGE_MAX_SIZE, width);
 
         const canvas = document.createElement('canvas');
         canvas.width = size;

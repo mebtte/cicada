@@ -1,3 +1,8 @@
+/**
+ * v0 --> v1
+ * v1 --> v2 应删除重写
+ * @author mebtte<hi@mebtte.com>
+ */
 import inquirer from 'inquirer';
 import { getAssetDirectory, getDataVersionPath, updateConfig } from '@/config';
 import { createSpinner, Spinner } from 'nanospinner';
@@ -8,6 +13,14 @@ import { AssetType } from '#/constants';
 import { getDB } from '@/db';
 import generateRandomString from '#/utils/generate_random_string';
 import { ID_LENGTH, MusicType } from '#/constants/music';
+import {
+  MUSICBILL_TABLE_NAME,
+  MusicbillProperty,
+  SHARED_MUSICBILL_TABLE_NAME,
+  SharedMusicbillProperty,
+  USER_TABLE_NAME,
+  UserProperty,
+} from '@/constants/db_definition';
 
 async function combineMusicAsset() {
   const musicSqDirectory = `${getAssetDirectory()}/music_sq`;
@@ -186,6 +199,23 @@ async function addUserLastActiveTimestamp() {
   );
 }
 
+async function createSharedMusicbill() {
+  await getDB().run(
+    `
+      CREATE TABLE ${SHARED_MUSICBILL_TABLE_NAME} (
+        ${SharedMusicbillProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${SharedMusicbillProperty.MUSICBILL_ID} TEXT NOT NULL,
+        ${SharedMusicbillProperty.SHARED_USER_ID} TEXT NOT NULL,
+        ${SharedMusicbillProperty.SHARE_TIMESTAMP} INTEGER NOT NULL,
+        ${SharedMusicbillProperty.ACCEPTED} INTEGER NOT NULL DEFAULT 0,
+
+        CONSTRAINT fkMusicbill FOREIGN KEY ( ${SharedMusicbillProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
+        CONSTRAINT fkUser FOREIGN KEY ( ${SharedMusicbillProperty.SHARED_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+      )
+    `,
+  );
+}
+
 async function addUserMusicPlayRecordIndate() {
   await getDB().run(
     `
@@ -265,6 +295,11 @@ export default async ({ data }: { data: string }) => {
   spinner.start({ text: '正在添加 user.musicPlayRecordIndate...' });
   await addUserMusicPlayRecordIndate();
   spinner.success({ text: 'user.musicPlayRecordIndate 已添加' });
+
+  spinner = createSpinner();
+  spinner.start({ text: '正在创建 shared_musicbill...' });
+  await createSharedMusicbill();
+  spinner.success({ text: 'shared_musicbill 已创建' });
 
   spinner = createSpinner();
   spinner.start({ text: '正在写入新的版本号...' });

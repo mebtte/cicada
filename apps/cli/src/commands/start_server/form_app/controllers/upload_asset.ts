@@ -2,8 +2,8 @@ import fs from 'fs';
 import util from 'util';
 import {
   AssetType,
-  ASSET_TYPES_V1,
-  ASSET_TYPE_MAP_V1,
+  ASSET_TYPES,
+  ASSET_TYPE_MAP,
   PathPrefix,
 } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
@@ -69,11 +69,11 @@ export default async (ctx: Context) => {
     ? field.assetType[0]
     : undefined;
   const asset = file.asset ? file.asset[0] : undefined;
-  if (!assetType || !ASSET_TYPES_V1.includes(assetType) || !asset) {
+  if (!assetType || !ASSET_TYPES.includes(assetType) || !asset) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const { maxSize, acceptTypes } = ASSET_TYPE_MAP_V1[assetType];
+  const { maxSize, acceptTypes } = ASSET_TYPE_MAP[assetType];
   if (asset.size > maxSize) {
     return ctx.except(ExceptionCode.ASSET_OVER_MAX_SIZE);
   }

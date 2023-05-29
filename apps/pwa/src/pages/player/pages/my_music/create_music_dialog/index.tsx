@@ -22,7 +22,7 @@ import MultipleSelect, {
   Option as MultipleSelectOption,
 } from '@/components/multiple_select';
 import searchSingerRequest from '@/server/api/search_singer';
-import { AssetType, ASSET_TYPE_MAP_V1 } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import useEvent from '@/utils/use_event';
 import notice from '@/utils/notice';
 import uploadAsset from '@/server/form/upload_asset';
@@ -221,8 +221,8 @@ function CreateMusicDialog() {
             value={sq}
             onChange={onSqChange}
             disabled={loading}
-            acceptTypes={ASSET_TYPE_MAP_V1[AssetType.MUSIC].acceptTypes}
-            placeholder={`选择文件, 支持以下格式 ${ASSET_TYPE_MAP_V1[
+            acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
+            placeholder={`选择文件, 支持以下格式 ${ASSET_TYPE_MAP[
               AssetType.MUSIC
             ].acceptTypes.join(', ')}`}
           />

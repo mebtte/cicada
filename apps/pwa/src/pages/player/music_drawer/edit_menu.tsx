@@ -33,7 +33,7 @@ import {
   YEAR_MAX,
 } from '#/constants/music';
 import uploadAsset from '@/server/form/upload_asset';
-import { AssetType, ASSET_TYPE_MAP_V1 } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import updateMusic from '@/server/api/update_music';
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
@@ -333,8 +333,8 @@ function EditMenu({ music }: { music: MusicDetail }) {
               type: EditDialogType.FILE,
               label: '音乐文件',
               title: '编辑音乐文件',
-              acceptTypes: ASSET_TYPE_MAP_V1[AssetType.MUSIC].acceptTypes,
-              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP_V1[
+              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes,
+              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
                 AssetType.MUSIC
               ].acceptTypes.join(',')}`,
               onSubmit: async (file: File | null) => {

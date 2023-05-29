@@ -33,6 +33,8 @@ import {
   MusicbillCollectionProperty,
   MUSICBILL_EXPORT_TABLE_NAME,
   MusicbillExportProperty,
+  SHARED_MUSICBILL_TABLE_NAME,
+  SharedMusicbillProperty,
 } from '@/constants/db_definition';
 import DB from '@/utils/db';
 import {
@@ -289,6 +291,18 @@ export default async () => {
         CONSTRAINT fkMusicbill FOREIGN KEY ( ${MusicbillExportProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ) 
       )
     `;
+    const TABLE_SHARED_MUSICBILL = `
+      CREATE TABLE ${SHARED_MUSICBILL_TABLE_NAME} (
+        ${SharedMusicbillProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${SharedMusicbillProperty.MUSICBILL_ID} TEXT NOT NULL,
+        ${SharedMusicbillProperty.SHARED_USER_ID} TEXT NOT NULL,
+        ${SharedMusicbillProperty.SHARE_TIMESTAMP} INTEGER NOT NULL,
+        ${SharedMusicbillProperty.ACCEPTED} INTEGER NOT NULL DEFAULT 0,
+
+        CONSTRAINT fkMusicbill FOREIGN KEY ( ${SharedMusicbillProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
+        CONSTRAINT fkUser FOREIGN KEY ( ${SharedMusicbillProperty.SHARED_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+      )
+    `;
 
     /** 注意表创建顺序 */
     const TABLES = [
@@ -307,6 +321,7 @@ export default async () => {
       TABLE_MUSICBILL_MUSIC,
       TABLE_MUSICBILL_COLLECTION,
       TABLE_MUSICBILL_EXPORT,
+      TABLE_SHARED_MUSICBILL,
     ];
     for (const table of TABLES) {
       await db.run(table);

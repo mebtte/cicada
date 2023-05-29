@@ -2,7 +2,12 @@ import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
 import excludeProperty from '#/utils/exclude_property';
 import {
+  MUSICBILL_COLLECTION_TABLE_NAME,
+  MUSICBILL_MUSIC_TABLE_NAME,
+  MUSICBILL_TABLE_NAME,
   Musicbill,
+  MusicbillCollectionProperty,
+  MusicbillMusicProperty,
   MusicbillProperty,
   User,
   UserProperty,
@@ -54,35 +59,35 @@ export default async (ctx: Context) => {
       getDB().get<{ value: number }>(
         `
           SELECT
-            count(mc.id) AS value
-          FROM musicbill_collection AS mc
-          LEFT JOIN musicbill AS m
-            ON mc.musicbillId = m.id
-          WHERE m.public = 1
-            AND m.name LIKE ?
-            AND mc.userId = ?
+            count(mc.${MusicbillCollectionProperty.ID}) AS value
+          FROM ${MUSICBILL_COLLECTION_TABLE_NAME} AS mc
+          LEFT JOIN ${MUSICBILL_TABLE_NAME} AS m
+            ON mc.${MusicbillCollectionProperty.MUSICBILL_ID} = m.${MusicbillProperty.ID}
+          WHERE m.${MusicbillProperty.PUBLIC} = 1
+            AND m.${MusicbillProperty.NAME} LIKE ?
+            AND mc.${MusicbillProperty.USER_ID} = ?
         `,
         [pattern, ctx.user.id],
       ),
       getDB().all<LocalMusicbill>(
         `
           SELECT
-            m.id,
-            m.name,
-            m.cover,
-            m.userId,
-            count(mm.id) AS musicCount,
-            mc.collectTimestamp
-          FROM musicbill_collection AS mc
-          LEFT JOIN musicbill AS m
-            ON m.id = mc.musicbillId
-          LEFT JOIN musicbill_music AS mm
-            ON mm.musicbillId = mc.musicbillId
-          WHERE m.public = 1
-            AND m.name LIKE ?
-            AND mc.userId = ?
-          GROUP BY mc.musicbillId
-          ORDER BY mc.collectTimestamp DESC
+            m.${MusicbillProperty.ID},
+            m.${MusicbillProperty.NAME},
+            m.${MusicbillProperty.COVER},
+            m.${MusicbillProperty.USER_ID},
+            count(mm.${MusicbillMusicProperty.ID}) AS musicCount,
+            mc.${MusicbillCollectionProperty.COLLECT_TIMESTAMP}
+          FROM ${MUSICBILL_COLLECTION_TABLE_NAME} AS mc
+          LEFT JOIN ${MUSICBILL_TABLE_NAME} AS m
+            ON m.${MusicbillProperty.ID} = mc.${MusicbillCollectionProperty.MUSICBILL_ID}
+          LEFT JOIN ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
+            ON mm.${MusicbillMusicProperty.MUSICBILL_ID} = mc.${MusicbillCollectionProperty.MUSICBILL_ID}
+          WHERE m.${MusicbillProperty.PUBLIC} = 1
+            AND m.${MusicbillProperty.NAME} LIKE ?
+            AND mc.${MusicbillCollectionProperty.USER_ID} = ?
+          GROUP BY mc.${MusicbillCollectionProperty.MUSICBILL_ID}
+          ORDER BY mc.${MusicbillCollectionProperty.COLLECT_TIMESTAMP} DESC
           LIMIT ?
           OFFSET ?
         `,
@@ -102,33 +107,33 @@ export default async (ctx: Context) => {
       getDB().get<{ value: number }>(
         `
           SELECT
-            count(mc.id) AS value
-          FROM musicbill_collection AS mc
-          LEFT JOIN musicbill AS m
-            ON mc.musicbillId = m.id
-          WHERE m.public = 1
-            AND mc.userId = ?
+            count(mc.${MusicbillCollectionProperty.ID}) AS value
+          FROM ${MUSICBILL_COLLECTION_TABLE_NAME} AS mc
+          LEFT JOIN ${MUSICBILL_TABLE_NAME} AS m
+            ON mc.${MusicbillCollectionProperty.MUSICBILL_ID} = m.${MusicbillProperty.ID}
+          WHERE m.${MusicbillProperty.PUBLIC} = 1
+            AND mc.${MusicbillProperty.USER_ID} = ?
         `,
         [ctx.user.id],
       ),
       getDB().all<LocalMusicbill>(
         `
           SELECT
-            m.id,
-            m.name,
-            m.cover,
-            m.userId,
-            count(mm.id) AS musicCount,
-            mc.collectTimestamp
-          FROM musicbill_collection AS mc
-          LEFT JOIN musicbill AS m
-            ON m.id = mc.musicbillId
-          LEFT JOIN musicbill_music AS mm
-            ON mm.musicbillId = mc.musicbillId
-          WHERE m.public = 1
-            AND mc.userId = ?
-          GROUP BY mc.musicbillId
-          ORDER BY mc.collectTimestamp DESC
+            m.${MusicbillProperty.ID},
+            m.${MusicbillProperty.NAME},
+            m.${MusicbillProperty.COVER},
+            m.${MusicbillProperty.USER_ID},
+            count(mm.${MusicbillMusicProperty.ID}) AS musicCount,
+            mc.${MusicbillCollectionProperty.COLLECT_TIMESTAMP}
+          FROM ${MUSICBILL_COLLECTION_TABLE_NAME} AS mc
+          LEFT JOIN ${MUSICBILL_TABLE_NAME} AS m
+            ON m.${MusicbillProperty.ID} = mc.${MusicbillCollectionProperty.MUSICBILL_ID}
+          LEFT JOIN ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
+            ON mm.${MusicbillMusicProperty.MUSICBILL_ID} = mc.${MusicbillCollectionProperty.MUSICBILL_ID}
+          WHERE m.${MusicbillProperty.PUBLIC} = 1
+            AND mc.${MusicbillCollectionProperty.USER_ID} = ?
+          GROUP BY mc.${MusicbillCollectionProperty.MUSICBILL_ID}
+          ORDER BY mc.${MusicbillCollectionProperty.COLLECT_TIMESTAMP} DESC
           LIMIT ?
           OFFSET ?
         `,

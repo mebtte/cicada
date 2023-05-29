@@ -1,19 +1,17 @@
 import { getAssetFilePath } from '@/platform/asset';
-import { AssetType } from '#/constants';
+import { AssetType, IMAGE_MAX_SIZE } from '#/constants';
 import jimp from 'jimp';
 import { getAssetDirectory, getCacheDirectory } from '@/config';
 import exist from '#/utils/exist';
 import send from 'koa-send';
 import { Context } from 'koa';
 
-const MAX_SIZE = 1024;
-
 export default async (ctx: Context) => {
   const { asset } = ctx.params as { asset: string };
   const { size } = ctx.query as { size?: unknown };
   const sizeNumber = size ? Number(size) : undefined;
 
-  if (sizeNumber && sizeNumber <= MAX_SIZE) {
+  if (sizeNumber && sizeNumber <= IMAGE_MAX_SIZE) {
     const cacheName = `${sizeNumber}_${asset}`;
     const cachePath = `${getCacheDirectory()}/${cacheName}`;
     const cacheExist = await exist(cachePath);

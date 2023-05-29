@@ -7,6 +7,7 @@ import exportMusicbill from './jobs/export_musicbill';
 import removeNoMusicSinger from './jobs/remove_no_music_singer';
 import moveUnlinkedAssetToTrash from './jobs/move_unlinked_asset_to_trash';
 import removeOutdatedMusicPlayRecord from './jobs/remove_outdated_music_play_record';
+import removeOutdatedSharedMusicbillInvitation from './jobs/remove_outdated_shared_musicbill_invitation';
 
 const onRun = (job: string) =>
   logger.info({ label: 'schedule', title: job, message: 'start' });
@@ -39,6 +40,10 @@ const DAILY_JOBS: Job[] = [
   {
     name: 'remove_outdated_music_play_record',
     job: removeOutdatedMusicPlayRecord,
+  },
+  {
+    name: 'remove_outdated_shared_musicbill_invitation',
+    job: removeOutdatedSharedMusicbillInvitation,
   },
 ];
 const HOURLY_JOBS: Job[] = [

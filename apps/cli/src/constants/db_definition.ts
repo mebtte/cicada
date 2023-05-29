@@ -255,3 +255,19 @@ export type MusicbillExport = {
   [MusicbillExportProperty.CREATE_TIMESTAMP]: number;
   [MusicbillExportProperty.EXPORTED_TIMESTAMP]: number;
 };
+
+export const SHARED_MUSICBILL_TABLE_NAME = 'shared_musicbill';
+export enum SharedMusicbillProperty {
+  ID = 'id',
+  MUSICBILL_ID = 'musicbillId',
+  SHARED_USER_ID = 'sharedUserId',
+  SHARE_TIMESTAMP = 'shareTimestamp',
+  ACCEPTED = 'accepted',
+}
+export type SharedMusicbill = {
+  [SharedMusicbillProperty.ID]: number;
+  [SharedMusicbillProperty.MUSICBILL_ID]: string;
+  [SharedMusicbillProperty.SHARED_USER_ID]: string;
+  [SharedMusicbillProperty.SHARE_TIMESTAMP]: number;
+  [SharedMusicbillProperty.ACCEPTED]: 0 | 1;
+};

@@ -27,8 +27,8 @@ export enum AssetType {
   MUSIC_COVER = 'music_cover',
   MUSIC = 'music',
 }
-export const ASSET_TYPES_V1 = Object.values(AssetType);
-export const ASSET_TYPE_MAP_V1: Record<
+export const ASSET_TYPES = Object.values(AssetType);
+export const ASSET_TYPE_MAP: Record<
   AssetType,
   {
     acceptTypes: string[];
@@ -67,6 +67,10 @@ export const ASSET_TYPE_MAP_V1: Record<
   },
 };
 
+/**
+ * 有效播放百分比
+ * @author mebtte<hi@mebtte.com>
+ */
 export const EFFECTIVE_PLAY_PERCENT = 0.75;
 
 /**
@@ -76,6 +80,20 @@ export const EFFECTIVE_PLAY_PERCENT = 0.75;
  */
 export const ALIAS_DIVIDER = '♫';
 
+/**
+ * 下载资源存活时间
+ * @author mebtte<hi@mebtte.com>
+ */
 export const DOWNLOAD_TTL = 1000 * 60 * 60 * 24 * 3;
 
-export const COVER_MAX_SIZE = 1024;
+/**
+ * 图片最大尺寸
+ * @author mebtte<hi@mebtte.com>
+ */
+export const IMAGE_MAX_SIZE = 1024;
+
+/**
+ * 共享乐单邀请存活时间
+ * @author mebtte<hi@mebtte.com>
+ */
+export const SHARED_MUSICBILL_INVITATION_TTL = 1000 * 60 * 60 * 24 * 3;
