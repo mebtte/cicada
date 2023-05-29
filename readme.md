@@ -1,13 +1,11 @@
 # 知了
 
+知了, 支持多用户的开源音乐服务.
+
 ![version](https://img.shields.io/github/v/release/mebtte/cicada?style=for-the-badge)
 ![release build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/build_and_release.yaml?label=release%20build&style=for-the-badge)
 ![docker build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/docker_build_and_push.yaml?label=docker%20build&style=for-the-badge)
 ![license](https://img.shields.io/github/license/mebtte/cicada?style=for-the-badge)
-
-知了, 支持多用户的开源音乐服务.
-
-> 知了已升级到 v1 版本, v0 版本请通过 `cicada data-upgrade <data>` 升级数据后再启动服务, 详细变化可以查看[这里](./apps/server/src/commands/data_upgrade.ts). Docker 镜像也同步升级到 v1, 如果想继续使用 v0 版本的镜像请使用 `mebtte/cicada:v0`.
 
 ![](./docs/thumbnail_1.png)
 ![](./docs/thumbnail_2.png)
@@ -16,19 +14,20 @@
 ## 特色
 
 - **尊重隐私, 不进行任何数据收集**
-- 支持多用户以及导入现有音乐目录/文件
-- 同时支持桌面端和移动端的 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps)
-- 乐单/播放列表/播放队列音乐数量无限制
+- 支持多用户
+- 支持导入现有音乐目录/文件
+- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), 同时适配桌面端和移动端
+- 播放列表/播放队列分离, 可定制播放队列
 - 支持标注音乐创作来源(翻唱)
 - 支持歌词/歌名/歌手/乐单搜索
-- 暴露 [HTTP API](./apps/pwa/src/server) 支持第三方接入或进行二次开发
-- 系统媒体和快捷键支持
+- 支持系统媒体和系统快捷键
 - 支持乐单导出
 - 支持音乐播放记录
+- 暴露 [HTTP API](./apps/pwa/src/server) 支持第三方接入或进行二次开发
 
 ## 准备
 
-- **[邮件发送服务](https://zh.wikipedia.org/wiki/%E7%AE%80%E5%8D%95%E9%82%AE%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE)**, 知了使用邮箱验证码进行登录以及部分功能依赖邮箱实现, 第三方邮件发送服务可以参考 [网易邮箱](https://note.youdao.com/ynoteshare/index.html?id=f9fef46114fb922b45460f4f55d96853) / [QQ 邮箱](https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256) / [Outlook 邮箱](https://support.microsoft.com/zh-cn/office/pop-imap-%E5%92%8C-smtp-%E8%AE%BE%E7%BD%AE-8361e398-8af4-4e97-b147-6c6c4ac95353). 使用邮箱验证码登录可以极大地提高安全性, 相比账号密码的登录方式, 邮箱验证码登录可以避免被暴力破解.
+- **[邮件发送服务](https://zh.wikipedia.org/wiki/%E7%AE%80%E5%8D%95%E9%82%AE%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE)**, 知了使用邮箱验证码进行登录以及部分功能依赖邮箱实现. 使用邮箱验证码登录可以极大地提高安全性, 相比账号密码的登录方式, 邮箱验证码登录可以避免被暴力破解. 第三方邮件发送服务可以参考 [网易邮箱](https://note.youdao.com/ynoteshare/index.html?id=f9fef46114fb922b45460f4f55d96853) / [QQ 邮箱](https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256) / [Outlook 邮箱](https://support.microsoft.com/zh-cn/office/pop-imap-%E5%92%8C-smtp-%E8%AE%BE%E7%BD%AE-8361e398-8af4-4e97-b147-6c6c4ac95353).
 
 ## 部署
 
@@ -54,7 +53,9 @@
 
 ### Docker
 
-知了支持 Docker 部署, **启动容器之前请先参考上面准备知了的配置文件**, 下面例子中配置文件位于 `$HOME/cicada/config.json`, 需要注意的是首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化. 此外在 Docker 中知了会忽略配置文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port) 配置项.
+知了支持 Docker 部署, **启动容器之前请先参考上面准备知了的配置文件**, 需要注意的是首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化.
+
+> 通过 Docker 运行知了会忽略配置文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port)
 
 ```sh
 docker run \
@@ -62,16 +63,16 @@ docker run \
   --restart=always \
   -p 8000:80 \
   -v $HOME/cicada/data:/data \
-  -v $HOME/cicada/config.json:/config/cicada.json:ro \
+  -v $HOME/cicada/config.json:/config/cicada.json \
   --name cicada \
   mebtte/cicada
 ```
 
-- `-p 8000:80` 表示宿主的 `8000` 端口映射容器的 `80` 端口, 知了容器使用 `80` 端口提供服务, 可以使用 `-p {port}:80` 映射其他端口
-- `-v $HOME/cicada/data:/data` 表示宿主的 `$HOME/cicada/data` 目录映射容器的 `/data` 目录, 知了容器使用 `/data` 目录保存数据
-- `-v $HOME/cicada/config.json:/config/cicada.json:ro` 表示宿主的 `$HOME/cicada/config.json` 文件映射容器的 `/config/cicada.json` 文件, 知了容器配置文件位于 `/config/cicada.json`, `ro` 表示只读. 如果你的环境不支持文件映射, 当前例子可以使用目录映射 `-v $HOME/cicada:/config:ro`
+- 知了容器使用 `80` 端口提供服务, `-p 8000:80` 表示映射到宿主的 `8000` 端口
+- 知了容器数据保存在 `/data`, `-v $HOME/cicada/data:/data` 表示映射到宿主的 `$HOME/cicada/data`
+- 知了容器配置文件位于 `/config/cicada.json`, `-v $HOME/cicada/config.json:/config/cicada.json` 表示映射到宿主的 `$HOME/cicada/config.json`
 
-如果希望知了容器不以 `root` 用户运行, 可以使用 `-u {uid}:{gid}` 进行用户映射.
+如果不希望知了容器以 `root` 运行, 可以通过 `--user {uid}:{gid}` 指定.
 
 ### Docker compose
 
@@ -82,7 +83,7 @@ services:
     restart: always
     container_name: cicada
 
-    # specify user
+    # 默认使用 root, 也可以通过 user 指定
     # user: 1000:1000
 
     image: mebtte/cicada
@@ -113,6 +114,24 @@ cicada import --data /path_to/cicada_data music
 
 当遇到命名不支持或者格式不支持的文件, 知了将会忽略. 可以通过 `cicada help import` 查看更多选项.
 
+## 从 v0 升级到 v1
+
+如果是从 v0 升级到 v1 的, 那么需要对数据进行升级后才能提供服务:
+
+```bash
+# 进行数据升级前请先备份
+cicada data-upgrade <data>
+```
+
+也可以通过 Docker 执行:
+
+```bash
+# 默认使用 root 用户, 也可以使用 --user {uid}:{gid} 指定
+docker run -it --rm -v <data>:/data mebtte/cicada cicada data-upgrade /data
+```
+
+如果 Docker 镜像不想升级到 v1, 请使用标签 `mebtte/cicada:v0`.
+
 ## 常见问题
 
 <details>
@@ -136,13 +155,12 @@ cicada import --data /path_to/cicada_data music
 
 </details>
 
-## 后续开发灵感
+## 后续开发
 
 - [ ] 消息中心
-- [ ] 悬浮歌词面板(类似于网易云网页版歌词)
-- [ ] 电台功能(随机从曲库中拉取音乐并连续播放)
+- [ ] 悬浮歌词面板(类似于网易云音乐网页版歌词)
+- [ ] 电台
 - [ ] 音乐分享(独立页面, 独立资源链接)
-- [ ] 音乐标签
 
 ## 开源协议
 
