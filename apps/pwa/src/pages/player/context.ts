@@ -1,18 +1,21 @@
 import { createContext } from 'react';
-import { PlayMode, RequestStatus } from '@/constants';
-import { MusicWithIndex, QueueMusic, Musicbill } from './constants';
+import { RequestStatus } from '@/constants';
+import {
+  MusicWithSingerAliases,
+  Index,
+  QueueMusic,
+  Musicbill,
+} from './constants';
 
 interface Context {
   getMusicbillListStatus: RequestStatus;
   musicbillList: Musicbill[];
 
-  playMode: PlayMode;
-
   audioLoading: boolean;
   audioPaused: boolean;
   audioDuration: number;
 
-  playlist: MusicWithIndex[];
+  playlist: (MusicWithSingerAliases & Index)[];
 
   playqueue: QueueMusic[];
   currentPlayqueuePosition: number;
@@ -23,8 +26,6 @@ interface Context {
 const context = createContext<Context>({
   getMusicbillListStatus: RequestStatus.LOADING,
   musicbillList: [],
-
-  playMode: PlayMode.SQ,
 
   audioLoading: false,
   audioPaused: true,

@@ -1,14 +1,15 @@
 import XState from '@/utils/x_state';
-import getMetadata from '@/server/get_metadata';
-import logger from '#/utils/logger';
+import getMetadata from '@/server/base/get_metadata';
+import logger from '@/utils/logger';
 import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';
 import setting from './setting';
 
 const serverMetadata = new XState<{
-  version: string;
   lastUpdateError: Error | null;
+
+  version: string;
 }>({
   lastUpdateError: null,
 

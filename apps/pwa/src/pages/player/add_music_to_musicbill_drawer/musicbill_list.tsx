@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
 import Empty from '@/components/empty';
-import { Music } from '../constants';
+import { MusicWithSingerAliases } from '../constants';
 import Context from '../context';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -22,7 +22,7 @@ const StatusContainer = styled.div`
   padding: 30px 0;
 `;
 
-function MusicbillList({ music }: { music: Music }) {
+function MusicbillList({ music }: { music: MusicWithSingerAliases }) {
   const { getMusicbillListStatus, musicbillList } = useContext(Context);
   if (getMusicbillListStatus === RequestStatus.SUCCESS) {
     if (musicbillList.length) {

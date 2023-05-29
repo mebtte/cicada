@@ -1,9 +1,9 @@
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
-import getSelfMusicbillCollectionList from '@/server/get_self_musicbill_collection_list';
-import getRandomCover from '@/utils/get_random_cover';
+import getSelfMusicbillCollectionList from '@/server/api/get_self_musicbill_collection_list';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import { PAGE_SIZE, Musicbill } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -47,10 +47,10 @@ export default () => {
             total: d.total,
             musicbillList: d.musicbillList.map((mb) => ({
               ...mb,
-              cover: mb.cover || getRandomCover(),
+              cover: mb.cover || DefaultCover,
               user: {
                 ...mb.user,
-                avatar: mb.user.avatar || getRandomCover(),
+                avatar: mb.user.avatar || DefaultCover,
               },
             })),
           },

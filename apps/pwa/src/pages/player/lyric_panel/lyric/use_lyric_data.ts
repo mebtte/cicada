@@ -1,6 +1,6 @@
 import { MusicType } from '#/constants/music';
-import logger from '#/utils/logger';
-import getLyricList from '@/server/get_lyric_list';
+import logger from '@/utils/logger';
+import getLyricList from '@/server/api/get_lyric_list';
 import { useCallback, useEffect, useState } from 'react';
 import { QueueMusic } from '../../constants';
 import { LyricData, Status } from './constants';

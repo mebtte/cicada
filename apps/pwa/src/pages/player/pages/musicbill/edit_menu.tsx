@@ -9,17 +9,18 @@ import {
   MdPublicOff,
   MdDelete,
 } from 'react-icons/md';
-import updateMusicbill from '@/server/update_musicbill';
+import updateMusicbill from '@/server/api/update_musicbill';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
-import uploadAsset from '@/server/upload_asset';
+import uploadAsset from '@/server/form/upload_asset';
 import { AssetType } from '#/constants';
 import dialog from '@/utils/dialog';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import { CSSVariable } from '@/global_style';
-import deleteMusicbill from '@/server/delete_musicbill';
+import deleteMusicbill from '@/server/api/delete_musicbill';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
+import { Variant } from '@/components/button';
 import e, { EventType } from './eventemitter';
 import { Musicbill, ZIndex } from '../../constants';
 import playerEventemitter, {
@@ -188,32 +189,30 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
           label="删除乐单"
           icon={<MdDelete style={deleteStyle} />}
           onClick={() =>
-            dialog.confirm({
-              title: `确定删除乐单?`,
-              content: '注意, 乐单删除后无法恢复',
-              onConfirm: () =>
-                void dialog.confirm({
-                  title: '确定删除乐单?',
-                  content: '现在是第二次确认, 也是最后一次',
-                  onConfirm: async () => {
-                    try {
-                      await deleteMusicbill(musicbill.id);
-                      playerEventemitter.emit(
-                        PlayerEventType.MUSICBILL_DELETED,
-                        null,
-                      );
-                      navigate({
-                        path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
-                      });
-                    } catch (error) {
-                      logger.error(error, '删除乐单失败');
-                      dialog.alert({
-                        title: '删除乐单失败',
-                        content: error.message,
-                      });
-                    }
-                  },
-                }),
+            dialog.captcha({
+              confirmText: '删除乐单',
+              confirmVariant: Variant.DANGER,
+              onConfirm: async ({ captchaId, captchaValue }) => {
+                try {
+                  await deleteMusicbill({
+                    id: musicbill.id,
+                    captchaId,
+                    captchaValue,
+                  });
+                  playerEventemitter.emit(
+                    PlayerEventType.MUSICBILL_DELETED,
+                    null,
+                  );
+                  navigate({
+                    path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
+                  });
+                } catch (error) {
+                  logger.error(error, '删除乐单失败');
+                  notice.error(error.message);
+
+                  return false;
+                }
+              },
             })
           }
         />

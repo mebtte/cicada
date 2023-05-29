@@ -1,11 +1,11 @@
-import getPublicMusicbill from '@/server/get_public_musicbill';
-import { MusicWithIndex } from '../constants';
+import getPublicMusicbill from '@/server/api/get_public_musicbill';
+import { MusicWithSingerAliases, Index } from '../constants';
 
 export type Musicbill = Omit<
   AsyncReturnType<typeof getPublicMusicbill>,
   'collected'
 > & {
-  musicList: MusicWithIndex[];
+  musicList: (MusicWithSingerAliases & Index)[];
 };
 
 export const MINI_INFO_HEIGHT = 50;

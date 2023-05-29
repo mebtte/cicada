@@ -3,9 +3,9 @@ import { CSSProperties, MouseEventHandler, useEffect, useState } from 'react';
 import MenuItem from '@/components/menu_item';
 import { MdImage, MdTitle, MdTextFields } from 'react-icons/md';
 import styled from 'styled-components';
-import uploadAsset from '@/server/upload_asset';
+import uploadAsset from '@/server/form/upload_asset';
 import { AssetType } from '#/constants';
-import updateSinger from '@/server/update_singer';
+import updateSinger from '@/server/api/update_singer';
 import {
   ALIAS_MAX_LENGTH,
   AllowUpdateKey,
@@ -13,7 +13,7 @@ import {
 } from '#/constants/singer';
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {

@@ -1,4 +1,4 @@
-import getExploration from '@/server/get_exploration';
+import getExploration from '@/server/api/get_exploration';
 import { ReactNode } from 'react';
 
 export type Exploration = AsyncReturnType<typeof getExploration>;

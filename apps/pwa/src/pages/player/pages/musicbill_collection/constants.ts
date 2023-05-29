@@ -1,4 +1,4 @@
-import getSelfMusicbillCollectionList from '@/server/get_self_musicbill_collection_list';
+import getSelfMusicbillCollectionList from '@/server/api/get_self_musicbill_collection_list';
 
 export type Musicbill = AsyncReturnType<
   typeof getSelfMusicbillCollectionList

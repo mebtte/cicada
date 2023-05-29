@@ -11,7 +11,10 @@ import { RequestStatus } from '@/constants';
 import Spinner from '@/components/spinner';
 import ellipsis from '@/style/ellipsis';
 import notice from '@/utils/notice';
-import { Music, Musicbill as MusicbillType } from '../constants';
+import {
+  MusicWithSingerAliases,
+  Musicbill as MusicbillType,
+} from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -60,7 +63,7 @@ function Musicbill({
   music,
 }: {
   musicbill: MusicbillType;
-  music: Music;
+  music: MusicWithSingerAliases;
 }) {
   const { id, status, musicList } = musicbill;
   return (

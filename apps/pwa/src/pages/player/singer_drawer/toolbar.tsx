@@ -3,7 +3,7 @@ import IconButton from '@/components/icon_button';
 import { MdPlaylistAdd, MdEdit, MdCopyAll } from 'react-icons/md';
 import p from '@/global_states/profile';
 import notice from '@/utils/notice';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';

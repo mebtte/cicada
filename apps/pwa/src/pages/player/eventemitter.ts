@@ -1,12 +1,11 @@
 import { Option } from '@/components/multiple_select';
 import Eventin from 'eventin';
-import { PlayMode } from '@/constants';
 import {
   Music,
   Musicbill,
-  MusicWithIndex,
+  MusicWithSingerAliases,
   QueueMusic,
-  Singer,
+  SingerWithAliases,
 } from './constants';
 
 export enum EditDialogType {
@@ -95,8 +94,6 @@ export enum EventType {
   ADD_MUSIC_TO_MUSICBILL = 'add_music_to_musicbill',
   REMOVE_MUSIC_FROM_MUSICBILL = 'remove_music_from_musicbill',
 
-  CHANGE_PLAY_MODE = 'change_play_mode',
-
   TOGGLE_LYRIC_PANEL = 'toggle_lyric_panel',
 
   OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER = 'open_add_music_to_musicbill_drawer',
@@ -145,29 +142,36 @@ export default new Eventin<
     [EventType.ACTION_SET_TIME]: { second: number };
     [EventType.ACTION_PREVIOUS]: null;
     [EventType.ACTION_NEXT]: null;
-    [EventType.ACTION_PLAY_MUSIC]: { music: Music };
-    [EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST]: { musicList: Music[] };
-    [EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE]: { music: Music };
+    [EventType.ACTION_PLAY_MUSIC]: { music: MusicWithSingerAliases };
+    [EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST]: {
+      musicList: MusicWithSingerAliases[];
+    };
+    [EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE]: {
+      music: MusicWithSingerAliases;
+    };
     [EventType.ACTION_PLAY_PLAYQUEUE_INDEX]: { index: number };
     [EventType.ACTION_CLEAR_PLAYLIST]: null;
-    [EventType.ACTION_REMOVE_PLAYLIST_MUSIC]: { music: MusicWithIndex };
+    [EventType.ACTION_REMOVE_PLAYLIST_MUSIC]: { id: string };
     [EventType.ACTION_REMOVE_PLAYQUEUE_MUSIC]: { queueMusic: QueueMusic };
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER]: { queueMusic: QueueMusic };
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY]: { queueMusic: QueueMusic };
 
     [EventType.RELOAD_MUSICBILL_LIST]: null;
     [EventType.FETCH_MUSICBILL_DETAIL]: { id: string };
-    [EventType.ADD_MUSIC_TO_MUSICBILL]: { musicbill: Musicbill; music: Music };
+    [EventType.ADD_MUSIC_TO_MUSICBILL]: {
+      musicbill: Musicbill;
+      music: MusicWithSingerAliases;
+    };
     [EventType.REMOVE_MUSIC_FROM_MUSICBILL]: {
       musicbill: Musicbill;
-      music: Music;
+      music: MusicWithSingerAliases;
     };
-
-    [EventType.CHANGE_PLAY_MODE]: { playMode: PlayMode };
 
     [EventType.TOGGLE_LYRIC_PANEL]: { open: boolean } | null;
 
-    [EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER]: { music: Music };
+    [EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER]: {
+      music: MusicWithSingerAliases;
+    };
     [EventType.OPEN_SINGER_DRAWER]: { id: string };
     [EventType.OPEN_MUSIC_DRAWER]: { id: string };
     [EventType.OPEN_ORIGINAL_MUSIC_DIALOG]: null;
@@ -185,11 +189,11 @@ export default new Eventin<
     [EventType.MUSICBILL_CREATED]: { id: string };
     [EventType.MUSICBILL_DELETED]: null;
 
-    [EventType.MUSIC_UPDATED]: { music: Music };
+    [EventType.MUSIC_UPDATED]: { music: MusicWithSingerAliases };
     [EventType.MUSIC_DELETED]: { id: string };
 
     [EventType.SINGER_UPDATED]: {
-      singer: Singer & {
+      singer: SingerWithAliases & {
         avatar: string;
       };
     };

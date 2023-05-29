@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import * as React from 'react';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 
 /**
  * 错误边界

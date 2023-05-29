@@ -1,5 +1,5 @@
-import logger from '#/utils/logger';
-import getExploration from '@/server/get_exploration';
+import logger from '@/utils/logger';
+import getExploration from '@/server/api/get_exploration';
 import { useCallback, useEffect, useState } from 'react';
 import { Exploration } from './constants';
 import cache, { CacheKey } from './cache';

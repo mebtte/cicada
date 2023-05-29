@@ -2,14 +2,18 @@ import Empty from '@/components/empty';
 import { CSSProperties, useContext } from 'react';
 import List from 'react-list';
 import Music from '../components/music';
-import { MusicWithIndex } from '../constants';
+import { MusicWithSingerAliases, Index } from '../constants';
 import Context from '../context';
 
 const emptyStyle: CSSProperties = {
   padding: '50px 0',
 };
 
-function MusicList({ musicList }: { musicList: MusicWithIndex[] }) {
+function MusicList({
+  musicList,
+}: {
+  musicList: (MusicWithSingerAliases & Index)[];
+}) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return musicList.length ? (
     <List

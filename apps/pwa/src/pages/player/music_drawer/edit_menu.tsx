@@ -15,6 +15,7 @@ import {
   MdTextFields,
   MdImage,
   MdCallSplit,
+  MdOutlineCalendarToday,
 } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
@@ -28,20 +29,23 @@ import {
   ALIAS_MAX_LENGTH,
   MUSIC_MAX_ALIAS_COUNT,
   SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
+  YEAR_MIN,
+  YEAR_MAX,
 } from '#/constants/music';
-import uploadAsset from '@/server/upload_asset';
+import uploadAsset from '@/server/form/upload_asset';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
-import updateMusic from '@/server/update_music';
+import updateMusic from '@/server/api/update_music';
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
-import deleteMusic from '@/server/delete_music';
-import logger from '#/utils/logger';
+import deleteMusic from '@/server/api/delete_music';
+import logger from '@/utils/logger';
 import { Option } from '@/components/multiple_select';
-import searchSingerRequest from '@/server/search_singer';
-import searchMusicRequest from '@/server/search_music';
+import searchSingerRequest from '@/server/api/search_singer';
+import searchMusicRequest from '@/server/api/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import absoluteFullSize from '@/style/absolute_full_size';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
+import { Variant } from '@/components/button';
 import { Music, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -51,7 +55,6 @@ import playerEventemitter, {
 } from '../eventemitter';
 import { emitMusicUpdated } from '../utils';
 import MusicInfo from '../components/music_info';
-import CreateUser from './create_user';
 
 interface Singer {
   id: string;
@@ -72,9 +75,6 @@ const searchSinger = (search: string): Promise<Option<Singer>[]> => {
   return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
     data.singerList.map(formatSingerToMultipleSelectOption),
   );
-};
-const createUserStyle: CSSProperties = {
-  padding: '15px 20px',
 };
 
 const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
@@ -145,11 +145,6 @@ function EditMenu({ music }: { music: MusicDetail }) {
         onClick={onClose}
       >
         <MusicInfo music={music} />
-        <CreateUser
-          user={music.createUser}
-          createTime={music.createTime}
-          style={createUserStyle}
-        />
         <MenuItem
           icon={<MdImage />}
           label="编辑封面"
@@ -332,24 +327,24 @@ function EditMenu({ music }: { music: MusicDetail }) {
         />
         <MenuItem
           icon={<MdOutlineFilePresent />}
-          label="编辑标准音质文件"
+          label="编辑音乐文件"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
               type: EditDialogType.FILE,
-              label: '标准音质文件',
-              title: '编辑标准音质文件',
-              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_SQ].acceptTypes,
+              label: '音乐文件',
+              title: '编辑音乐文件',
+              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes,
               placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
-                AssetType.MUSIC_SQ
+                AssetType.MUSIC
               ].acceptTypes.join(',')}`,
               onSubmit: async (file: File | null) => {
                 if (!file) {
                   throw new Error('请选择文件');
                 }
-                const { id } = await uploadAsset(file, AssetType.MUSIC_SQ);
+                const { id } = await uploadAsset(file, AssetType.MUSIC);
                 await updateMusic({
                   id: music.id,
-                  key: AllowUpdateKey.SQ,
+                  key: AllowUpdateKey.ASSET,
                   value: id,
                 });
                 emitMusicUpdated(music.id);
@@ -357,62 +352,6 @@ function EditMenu({ music }: { music: MusicDetail }) {
             })
           }
         />
-        <MenuItem
-          icon={<MdOutlineFilePresent />}
-          label="编辑无损音质文件"
-          onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.FILE,
-              label: '无损音质文件',
-              title: '编辑无损音质文件',
-              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_HQ].acceptTypes,
-              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
-                AssetType.MUSIC_HQ
-              ].acceptTypes.join(',')}`,
-              onSubmit: async (file: File | null) => {
-                if (!file) {
-                  throw new Error('请选择文件');
-                }
-                const { id } = await uploadAsset(file, AssetType.MUSIC_HQ);
-                await updateMusic({
-                  id: music.id,
-                  key: AllowUpdateKey.HQ,
-                  value: id,
-                });
-                emitMusicUpdated(music.id);
-              },
-            })
-          }
-        />
-        {music.type === MusicType.SONG ? (
-          <MenuItem
-            icon={<MdOutlineFilePresent />}
-            label="编辑伴奏文件"
-            onClick={() =>
-              playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-                type: EditDialogType.FILE,
-                label: '伴奏文件',
-                title: '编辑伴奏文件',
-                acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC_AC].acceptTypes,
-                placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
-                  AssetType.MUSIC_AC
-                ].acceptTypes.join(',')}`,
-                onSubmit: async (file: File | null) => {
-                  if (!file) {
-                    throw new Error('请选择文件');
-                  }
-                  const { id } = await uploadAsset(file, AssetType.MUSIC_AC);
-                  await updateMusic({
-                    id: music.id,
-                    key: AllowUpdateKey.AC,
-                    value: id,
-                  });
-                  emitMusicUpdated(music.id);
-                },
-              })
-            }
-          />
-        ) : null}
         <MenuItem
           icon={<MdCallSplit />}
           label="编辑二次创作来源"
@@ -444,32 +383,61 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
+          icon={<MdOutlineCalendarToday />}
+          label="编辑发行年份"
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+              title: '编辑发行年份',
+              type: EditDialogType.INPUT,
+              label: '发行年份',
+              initialValue: music.year ? music.year.toString() : '',
+              inputType: 'number',
+              onSubmit: async (year: string) => {
+                const yearNumber = Number(year);
+                if (
+                  !yearNumber ||
+                  !Number.isInteger(yearNumber) ||
+                  yearNumber < YEAR_MIN ||
+                  yearNumber > YEAR_MAX
+                ) {
+                  throw new Error('发行年份应在 0-9999 范围内');
+                }
+
+                if (yearNumber !== music.year) {
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.YEAR,
+                    value: yearNumber,
+                  });
+                  emitMusicUpdated(music.id);
+                }
+              },
+            })
+          }
+        />
+        <MenuItem
           icon={<MdDelete style={dangerousIconStyle} />}
           label="删除"
           onClick={() => {
             if (music.forkList.length) {
-              return notice.error('被二次创作音乐无法被删除');
+              return notice.error('被二次创作的音乐无法被删除');
             }
-            return dialog.confirm({
-              title: '确定删除音乐吗?',
-              content: '注意, 音乐删除后无法恢复',
-              onConfirm: () =>
-                void dialog.confirm({
-                  title: '确定删除音乐吗?',
-                  content: '这是第二次确认, 也是最后一次',
-                  onConfirm: async () => {
-                    try {
-                      await deleteMusic(music.id);
-                      notice.info('已删除');
-                      playerEventemitter.emit(PlayerEventType.MUSIC_DELETED, {
-                        id: music.id,
-                      });
-                    } catch (error) {
-                      logger.error(error, '删除音乐失败');
-                      notice.error(error.message);
-                    }
-                  },
-                }),
+            return dialog.captcha({
+              confirmText: '删除音乐',
+              confirmVariant: Variant.DANGER,
+              onConfirm: async ({ captchaId, captchaValue }) => {
+                try {
+                  await deleteMusic({ id: music.id, captchaId, captchaValue });
+                  playerEventemitter.emit(PlayerEventType.MUSIC_DELETED, {
+                    id: music.id,
+                  });
+                } catch (error) {
+                  logger.error(error, '删除音乐失败');
+                  notice.error(error.message);
+
+                  return false;
+                }
+              },
             });
           }}
         />

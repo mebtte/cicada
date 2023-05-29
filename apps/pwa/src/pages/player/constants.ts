@@ -1,34 +1,19 @@
-import { RequestStatus, PlayMode } from '@/constants';
+import { RequestStatus } from '@/constants';
 import { MusicType } from '#/constants/music';
-import { Type as TagComponentType } from '@/components/tag';
 import { UtilZIndex } from '@/constants/style';
 
 export const HEADER_HEIGHT = 55;
 
-export const PLAY_MODE_MAP: Record<
-  PlayMode,
-  {
-    label: string;
-    tagComponentType: TagComponentType;
-  }
-> = {
-  [PlayMode.SQ]: {
-    label: '标准音质',
-    tagComponentType: TagComponentType.SQ,
-  },
-  [PlayMode.HQ]: {
-    label: '无损音质',
-    tagComponentType: TagComponentType.HQ,
-  },
-  [PlayMode.AC]: {
-    label: '伴奏',
-    tagComponentType: TagComponentType.AC,
-  },
-};
+export interface Index {
+  index: number;
+}
 
 export interface Singer {
   id: string;
   name: string;
+}
+
+export interface SingerWithAliases extends Singer {
   aliases: string[];
 }
 
@@ -38,17 +23,15 @@ export interface Music {
   name: string;
   type: MusicType;
   aliases: string[];
-  sq: string;
-  hq: string;
-  ac: string;
   singers: Singer[];
+  asset: string;
 }
 
-export interface MusicWithIndex extends Music {
-  index: number;
+export interface MusicWithSingerAliases extends Omit<Music, 'singers'> {
+  singers: SingerWithAliases[];
 }
 
-export interface QueueMusic extends MusicWithIndex {
+export interface QueueMusic extends MusicWithSingerAliases, Index {
   pid: string;
   shuffle: boolean;
 }
@@ -60,7 +43,7 @@ export interface Musicbill {
   createTimestamp: number;
   public: boolean;
 
-  musicList: MusicWithIndex[];
+  musicList: (MusicWithSingerAliases & Index)[];
 
   status: RequestStatus;
   error: Error | null;

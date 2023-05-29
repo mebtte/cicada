@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Singer as SingerType } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -26,7 +25,7 @@ const Style = styled.span`
   }
 `;
 
-function Singer({ singer }: { singer: Omit<SingerType, 'aliases'> }) {
+function Singer({ singer }: { singer: { id: string; name: string } }) {
   return (
     <Style>
       <span

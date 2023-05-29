@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import { RequestStatus } from '@/constants';
-import getSelfMusicbillList from '@/server/get_self_musicbill_list';
-import addMusicToMusicbill from '@/server/add_music_to_musicbill';
-import removeMusicFromMusicbill from '@/server/remove_music_from_musicbill';
-import logger from '#/utils/logger';
+import getSelfMusicbillList from '@/server/api/get_self_musicbill_list';
+import addMusicToMusicbill from '@/server/api/add_music_to_musicbill';
+import removeMusicFromMusicbill from '@/server/api/remove_music_from_musicbill';
+import logger from '@/utils/logger';
 import dialog from '@/utils/dialog';
-import getSelfMusicbill from '@/server/get_self_musicbill';
+import getSelfMusicbill from '@/server/api/get_self_musicbill';
 import p from '@/global_states/profile';
 import eventemitter, { EventType } from './eventemitter';
 import { Musicbill } from './constants';
@@ -24,7 +24,7 @@ export default () => {
         mbl.map((mb) => ({
           id: mb.id,
           name: mb.name,
-          cover: mb.cover || getRandomCover(),
+          cover: mb.cover || DefaultCover,
           createTimestamp: mb.createTimestamp,
           public: !!mb.public,
 
@@ -69,7 +69,7 @@ export default () => {
                 return {
                   ...mb,
                   name: data.name,
-                  cover: data.cover || mb.cover || getRandomCover(),
+                  cover: data.cover || mb.cover || DefaultCover,
                   musicList: data.musicList.map((m, index) => ({
                     ...m,
                     index: data.musicList.length - index,

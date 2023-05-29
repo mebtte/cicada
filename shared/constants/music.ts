@@ -1,14 +1,10 @@
 export const SEARCH_KEYWORD_MAX_LENGTH = 32;
 
+export const ID_LENGTH = 8;
+
 export enum MusicSearchType {
   COMPOSITE = 'composite',
   LYRIC = 'lyric',
-}
-
-export enum MusicDownloadType {
-  SQ = 'sq',
-  HQ = 'hq',
-  AC = 'ac',
 }
 
 export enum MusicType {
@@ -35,13 +31,15 @@ export enum AllowUpdateKey {
   NAME = 'name',
   LYRIC = 'lyric',
   ALIASES = 'aliases',
-  SQ = 'sq',
-  HQ = 'hq',
-  AC = 'ac',
+  ASSET = 'asset',
   SINGER = 'singer',
   FORK_FROM = 'fork_from',
+  YEAR = 'year',
 }
 
 export const MUSIC_MAX_LRYIC_AMOUNT = 5;
 
 export const LYRIC_MAX_LENGTH = 16384;
+
+export const YEAR_MIN = 0;
+export const YEAR_MAX = 9999;

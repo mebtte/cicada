@@ -1,12 +1,13 @@
-import logger from '#/utils/logger';
-import { Query } from '@/constants';
-import getMusicPlayRecordList from '@/server/get_music_play_record_list';
+import logger from '@/utils/logger';
+import type { Query } from '@/constants';
+import getMusicPlayRecordList from '@/server/api/get_music_play_record_list';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE, MusicPlayRecord } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
+import e, { EventType } from '../eventemitter';
 
 interface Data {
   error: Error | null;
@@ -50,10 +51,10 @@ export default () => {
             })),
           },
         });
-      } catch (e) {
-        logger.error(e, '获取我的音乐列表失败');
+      } catch (error) {
+        logger.error(error, '获取我的音乐列表失败');
         setData({
-          error: e,
+          error,
           loading: false,
           value: null,
         });
@@ -75,7 +76,14 @@ export default () => {
       PlayerEventType.MUSIC_DELETED,
       reload,
     );
-    return unlistenMusicDeleted;
+    const unlistenMusicPlayRecordDeleted = e.listen(
+      EventType.MUSIC_PLAY_RECORD_DELETED,
+      reload,
+    );
+    return () => {
+      unlistenMusicDeleted();
+      unlistenMusicPlayRecordDeleted();
+    };
   }, [reload]);
 
   return {

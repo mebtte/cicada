@@ -1,13 +1,13 @@
-import { MusicWithIndex, Singer } from '../constants';
+import { MusicWithSingerAliases, Index, SingerWithAliases } from '../constants';
 
 export interface CreateUser {
   id: string;
   nickname: string;
 }
 
-export interface SingerDetail extends Singer {
+export interface SingerDetail extends SingerWithAliases {
   avatar: string;
-  musicList: MusicWithIndex[];
+  musicList: (MusicWithSingerAliases & Index)[];
   createUser: CreateUser;
   createTime: string;
 }

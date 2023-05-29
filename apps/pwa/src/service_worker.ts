@@ -66,11 +66,7 @@ self.addEventListener('activate', () => {
  * 详情查看 https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
  * @author mebtte<hi@mebtte.com>
  */
-const MEDIA_ASSET_TYPES = [
-  AssetType.MUSIC_SQ,
-  AssetType.MUSIC_AC,
-  AssetType.MUSIC_HQ,
-];
+const MEDIA_ASSET_TYPES = [AssetType.MUSIC];
 function isMediaAsset(url: URL) {
   for (const mediaAssetType of MEDIA_ASSET_TYPES) {
     if (url.pathname.includes(`/${mediaAssetType}/`)) {

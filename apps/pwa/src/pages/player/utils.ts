@@ -1,14 +1,14 @@
 import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/utils/dialog';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import notice from '@/utils/notice';
-import createMusicbillRequest from '@/server/create_musicbill';
-import createMusicbillExport from '@/server/create_musicbill_export';
-import createSingerRequest from '@/server/create_singer';
-import getMusicDetail from '@/server/get_music_detail';
-import getSingerDetail from '@/server/get_singer_detail';
-import { Music } from './constants';
+import createMusicbillRequest from '@/server/api/create_musicbill';
+import createMusicbillExport from '@/server/api/create_musicbill_export';
+import createSingerRequest from '@/server/api/create_singer';
+import getMusicDetail from '@/server/api/get_music_detail';
+import getSingerDetail from '@/server/api/get_singer_detail';
+import { Music, SingerWithAliases } from './constants';
 import e, { EditDialogType, EventType } from './eventemitter';
 
 export function exportMusicbill(id: string) {
@@ -87,9 +87,7 @@ export function emitMusicUpdated(id: string) {
         name: music.name,
         type: music.type,
         aliases: music.aliases,
-        sq: music.sq,
-        hq: music.hq,
-        ac: music.ac,
+        asset: music.asset,
         singers: music.singers,
       },
     }),
@@ -122,7 +120,12 @@ export const openCreateSingerDialog = (callback: (id: string) => void) =>
       }),
   });
 
-export const filterMusic = (music: Music, keyword: string) => {
+export const filterMusic = (
+  music: Omit<Music, 'singers'> & {
+    singers: SingerWithAliases[];
+  },
+  keyword: string,
+) => {
   if (keyword) {
     const lowerCaseKeyword = keyword.toLowerCase();
     return (

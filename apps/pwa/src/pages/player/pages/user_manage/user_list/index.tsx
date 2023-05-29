@@ -10,18 +10,28 @@ import useData from './use_data';
 import User from './user';
 import { HEADER_HEIGHT } from '../../../constants';
 import { TOOLBAR_HEIGHT } from '../constants';
+import { GAP } from './constants';
 
 const Container = styled(animated.div)`
-  padding-top: ${HEADER_HEIGHT}px;
-  padding-bottom: ${TOOLBAR_HEIGHT}px;
-
   ${absoluteFullSize}
+  top: ${HEADER_HEIGHT}px;
+  height: calc(100% - ${HEADER_HEIGHT}px);
+
+  padding-bottom: ${TOOLBAR_HEIGHT}px;
 `;
 const StatusContainer = styled(Container)`
   ${flexCenter}
 `;
 const UserListContainer = styled(Container)`
   overflow: auto;
+
+  > .content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    padding: ${GAP / 2}px;
+  }
 `;
 
 function UserList() {
@@ -63,9 +73,11 @@ function UserList() {
 
     return (
       <UserListContainer style={style}>
-        {filteredUserList.map((user) => (
-          <User key={user.id} user={user} />
-        ))}
+        <div className="content">
+          {filteredUserList.map((user) => (
+            <User key={user.id} user={user} />
+          ))}
+        </div>
       </UserListContainer>
     );
   });

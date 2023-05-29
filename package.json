@@ -1,7 +1,7 @@
 {
   "name": "cicada",
   "private": true,
-  "bin": "server.js",
+  "bin": "dist/cli.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mebtte/cicada.git"
@@ -19,13 +19,12 @@
     "dev:pwa": "npm run dev -w apps/pwa",
     "dev:pwa-with-sw": "npm run dev-with-sw -w apps/pwa",
     "build:pwa": "npm run build -w apps/pwa",
-    "dev:server": "npm run dev -w apps/server",
-    "watch:server": "npm run watch -w apps/server",
-    "build:server": "npm run build -w apps/server",
-    "start:server": "npm run start -w apps/server",
+    "dev:server": "npm run dev:server -w apps/cli",
+    "dev:cli": "npm run dev -w apps/cli",
+    "build:cli": "npm run build -w apps/cli",
     "pkg": "pkg .",
     "build": "./build.sh",
-    "build:current": "rimraf build && npm run build:pwa && npm run build:server && npm run pkg"
+    "build:current": "rimraf build && npm run build:pwa && npm run build:cli && npm run pkg"
   },
   "bugs": {
     "url": "https://github.com/mebtte/cicada/issues"
@@ -33,7 +32,7 @@
   "homepage": "https://cicada.mebtte.com",
   "workspaces": [
     "apps/pwa",
-    "apps/server"
+    "apps/cli"
   ],
   "engines": {
     "node": ">=16",
@@ -47,21 +46,23 @@
     "commander": "^9.4.1",
     "file-type": "^16.5.3",
     "html-entities": "^2.3.3",
+    "inquirer": "^8.2.5",
+    "jimp": "^0.22.8",
     "joi": "^17.7.0",
     "json5": "^2.2.2",
     "koa": "^2.13.4",
     "koa-etag": "^4.0.0",
+    "koa-send": "^5.0.1",
     "md5": "^2.3.0",
     "multiparty": "^4.2.3",
     "nanospinner": "^1.1.0",
     "node-schedule": "^2.1.0",
     "nodemailer": "^6.7.5",
-    "react-icons": "^4.4.0",
+    "react-icons": "^4.8.0",
     "sanitize-filename": "^1.6.3",
     "sqlite3": "^5.1.1",
     "svg-captcha": "^1.4.0",
-    "ts-node": "^10.7.0",
-    "which": "^2.0.2"
+    "ts-node": "^10.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",
@@ -73,6 +74,7 @@
     "@types/archiver": "^5.3.1",
     "@types/dompurify": "^2.2.2",
     "@types/file-saver": "^2.0.5",
+    "@types/inquirer": "^8.2.6",
     "@types/jest": "^28.1.6",
     "@types/jsmediatags": "^3.9.3",
     "@types/jsonwebtoken": "^8.5.8",
@@ -82,6 +84,7 @@
     "@types/koa-mount": "^4.0.1",
     "@types/koa-range": "^0.3.2",
     "@types/koa-router": "^7.4.4",
+    "@types/koa-send": "^4.1.3",
     "@types/koa-static": "^4.0.2",
     "@types/lodash": "^4.14.170",
     "@types/md5": "^2.3.2",
@@ -97,7 +100,6 @@
     "@types/resize-observer-browser": "^0.1.5",
     "@types/sqlite3": "^3.1.8",
     "@types/styled-components": "^5.1.25",
-    "@types/which": "^2.0.1",
     "@types/yargs": "^17.0.10",
     "@typescript-eslint/eslint-plugin": "^5.21.0",
     "@typescript-eslint/parser": "^5.21.0",
@@ -180,7 +182,7 @@
   "license": "GPL",
   "pkg": {
     "assets": [
-      "pwa/**/*",
+      "dist/**/*",
       "node_modules/**/*.node"
     ],
     "outputPath": "build"

@@ -30,6 +30,10 @@ export enum ExceptionCode {
   COLLECT_MUSICBILL_REPEATLY,
   NOT_COLLECT_MUSICBILL_YET,
   OVER_USER_MUSICBILL_MAX_AMOUNT,
+  MUSIC_COVER_NOT_EXIST,
+  ADMIN_USER_CAN_NOT_BE_DELETED,
+  USER_IS_ADMIN_ALREADY,
+  MUSIC_PLAY_RECORD_NOT_EXIST,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -130,5 +134,17 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.OVER_USER_MUSICBILL_MAX_AMOUNT]: {
     description: '超过用户乐单数量最大限制',
+  },
+  [ExceptionCode.MUSIC_COVER_NOT_EXIST]: {
+    description: '音乐封面不存在',
+  },
+  [ExceptionCode.ADMIN_USER_CAN_NOT_BE_DELETED]: {
+    description: '管理员用户无法被删除',
+  },
+  [ExceptionCode.USER_IS_ADMIN_ALREADY]: {
+    description: '用户已经是管理员',
+  },
+  [ExceptionCode.MUSIC_PLAY_RECORD_NOT_EXIST]: {
+    description: '音乐播放记录不存在',
   },
 };

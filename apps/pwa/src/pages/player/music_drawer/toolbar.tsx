@@ -12,7 +12,7 @@ import {
 import p from '@/global_states/profile';
 import { IS_IPAD, IS_IPHONE } from '@/constants/browser';
 import notice from '@/utils/notice';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { ROOT_PATH } from '@/constants/route';
 import { Query } from '@/constants';
 import e, { EventType } from './eventemitter';
