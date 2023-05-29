@@ -56,14 +56,16 @@ export default (id: string) => {
 
       /**
        * 获取音乐文件大小和时长
-       * 如果有缓存从缓存读取
-       * 没有缓存从网络加载
+       * 1. 判断音乐文件是否有缓存
+       * 2. 存在缓存从缓存获取[大小]和[时长]信息
+       * 3. 不存在缓存通过 head 方法请求文件获取 content-length 作为大小
+       * 4. 不要通过网络加载的方法获取时长, service worker 会下载完整文件大小
        * @author mebtte<hi@mebtte.com>
        */
       let size = 0;
       let duration = 0;
-      try {
-        if (window.caches) {
+      if (window.caches) {
+        try {
           const cache = await window.caches.open(CacheName.ASSET_MEDIA);
           const musicAsset = await cache.match(music.asset);
           if (musicAsset) {
@@ -74,26 +76,22 @@ export default (id: string) => {
             );
             size = blob.size;
           }
-        }
-      } catch (error) {
-        logger.error(error, '从缓存获取音乐文件大小和时长失败');
-      }
-      if (!size || !duration) {
-        try {
-          const [assetHeadResponse, d] = await Promise.all([
-            window.fetch(music.asset, {
-              /**
-               * 只获取 http header
-               * @author mebtte<hi@mebtte.com>
-               */
-              method: 'head',
-            }),
-            getAudioDuration(music.asset),
-          ]);
-          size = Number(assetHeadResponse.headers.get('content-length')) || 0;
-          duration = d;
         } catch (error) {
-          logger.error(error, '从网络获取音乐文件大小和时长失败');
+          logger.error(error, '从缓存获取音乐文件大小和时长失败');
+        }
+      }
+      if (!size) {
+        try {
+          const assetHeadResponse = await window.fetch(music.asset, {
+            /**
+             * 只获取 http header
+             * @author mebtte<hi@mebtte.com>
+             */
+            method: 'head',
+          });
+          size = Number(assetHeadResponse.headers.get('content-length')) || 0;
+        } catch (error) {
+          logger.error(error, '从网络获取音乐文件大小失败');
         }
       }
 
