@@ -1,12 +1,12 @@
-name: docker build and push
+name: v0 docker build and push
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - v0
 
 jobs:
-  build_and_push:
+  v0_build_and_push:
     runs-on: ubuntu-latest
     steps:
       - uses: docker/setup-qemu-action@v2
@@ -19,5 +19,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - uses: actions/checkout@main
+        with:
+          fetch-depth: 0
 
-      - run: ./docker_build_and_push.sh
+      - run: git tag v0.$(date +\%y\%m\%d\%H\%M)
+      - run: ./docker_build_and_push.sh v0
