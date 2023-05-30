@@ -1,4 +1,4 @@
-import AdminGetUserList from '#/response_data/api/admin_get_user_list';
+import AdminGetUserList from '#/server/api/admin_get_user_list';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 

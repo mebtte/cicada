@@ -1,4 +1,4 @@
-import SearchSinger from '#/response_data/api/search_singer';
+import SearchSinger from '#/server/api/search_singer';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 

@@ -1,4 +1,4 @@
-import SearchMusic from '#/response_data/api/search_music';
+import SearchMusic from '#/server/api/search_music';
 import { request } from '..';
 
 function searchMusic({

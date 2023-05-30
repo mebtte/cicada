@@ -1,4 +1,4 @@
-import SearchPublicMusicbill from '#/response_data/api/search_public_musicbill';
+import SearchPublicMusicbill from '#/server/api/search_public_musicbill';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 

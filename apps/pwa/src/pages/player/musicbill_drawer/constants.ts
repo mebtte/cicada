@@ -6,6 +6,7 @@ export type Musicbill = Omit<
   'collected'
 > & {
   musicList: (MusicWithSingerAliases & Index)[];
+  collectionCount: number;
 };
 
 export const MINI_INFO_HEIGHT = 50;

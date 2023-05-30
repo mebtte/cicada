@@ -1,5 +1,5 @@
 import { ExceptionCode } from '#/constants/exception';
-import SearchPublicMusicbill from '#/response_data/api/search_public_musicbill';
+import SearchPublicMusicbill from '#/server/api/search_public_musicbill';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
 import excludeProperty from '#/utils/exclude_property';
 import {

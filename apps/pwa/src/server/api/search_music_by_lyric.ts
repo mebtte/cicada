@@ -1,4 +1,4 @@
-import SearchMusicByLyric from '#/response_data/api/search_music_by_lyric';
+import SearchMusicByLyric from '#/server/api/search_music_by_lyric';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 

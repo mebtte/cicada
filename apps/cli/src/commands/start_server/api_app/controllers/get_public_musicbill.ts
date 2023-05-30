@@ -1,3 +1,4 @@
+import GetPublicMusicbill from '#/server/api/get_public_musicbill';
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import excludeProperty from '#/utils/exclude_property';
@@ -8,6 +9,10 @@ import {
   SingerProperty,
   MusicbillProperty,
   MusicbillCollectionProperty,
+  MusicbillMusicProperty,
+  MUSICBILL_MUSIC_TABLE_NAME,
+  MUSIC_TABLE_NAME,
+  MUSICBILL_COLLECTION_TABLE_NAME,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getMusicbillById } from '@/db/musicbill';
@@ -35,24 +40,25 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
 
-  const [user, musicList, musicbillCollection] = await Promise.all([
-    getUserById(musicbill.userId, [
-      UserProperty.ID,
-      UserProperty.NICKNAME,
-      UserProperty.AVATAR,
-    ]),
-    getDB().all<
-      Pick<
-        Music,
-        | MusicProperty.ID
-        | MusicProperty.TYPE
-        | MusicProperty.NAME
-        | MusicProperty.ALIASES
-        | MusicProperty.COVER
-        | MusicProperty.ASSET
-      >
-    >(
-      `
+  const [user, musicList, collectionCount, musicbillCollection] =
+    await Promise.all([
+      getUserById(musicbill.userId, [
+        UserProperty.ID,
+        UserProperty.NICKNAME,
+        UserProperty.AVATAR,
+      ]),
+      getDB().all<
+        Pick<
+          Music,
+          | MusicProperty.ID
+          | MusicProperty.TYPE
+          | MusicProperty.NAME
+          | MusicProperty.ALIASES
+          | MusicProperty.COVER
+          | MusicProperty.ASSET
+        >
+      >(
+        `
         SELECT
           m.${MusicProperty.ID},
           m.${MusicProperty.TYPE},
@@ -60,20 +66,29 @@ export default async (ctx: Context) => {
           m.${MusicProperty.ALIASES},
           m.${MusicProperty.COVER},
           m.${MusicProperty.ASSET}
-        FROM musicbill_music AS mm
-        LEFT JOIN music AS m
-          ON mm.musicId = m.id
-        WHERE mm.musicbillId = ?
-        ORDER BY mm.addTimestamp DESC
+        FROM ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
+        LEFT JOIN ${MUSIC_TABLE_NAME} AS m
+          ON mm.${MusicbillMusicProperty.MUSIC_ID} = m.${MusicProperty.ID}
+        WHERE mm.${MusicbillMusicProperty.MUSICBILL_ID} = ?
+        ORDER BY mm.${MusicbillMusicProperty.ADD_TIMESTAMP} DESC
       `,
-      [id],
-    ),
-    getMusicbillCollection({
-      musicbillId: id,
-      userId: ctx.user.id,
-      properties: [MusicbillCollectionProperty.ID],
-    }),
-  ]);
+        [id],
+      ),
+      getDB().get<{ value: number }>(
+        `
+          SELECT
+            count(*) AS value
+          FROM ${MUSICBILL_COLLECTION_TABLE_NAME}
+          WHERE ${MusicbillCollectionProperty.MUSICBILL_ID} = ?
+        `,
+        [id],
+      ),
+      getMusicbillCollection({
+        musicbillId: id,
+        userId: ctx.user.id,
+        properties: [MusicbillCollectionProperty.ID],
+      }),
+    ]);
 
   const musicIdMapSingers: {
     [key: string]: {
@@ -98,14 +113,14 @@ export default async (ctx: Context) => {
     }
   }
 
-  return ctx.success({
+  return ctx.success<GetPublicMusicbill>({
     ...excludeProperty(musicbill, [
       MusicbillProperty.PUBLIC,
       MusicbillProperty.USER_ID,
     ]),
     cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
     user: {
-      ...user,
+      ...user!,
       avatar: getAssetPublicPath(user!.avatar, AssetType.USER_AVATAR),
     },
     musicList: musicList.map((m) => ({
@@ -115,6 +130,7 @@ export default async (ctx: Context) => {
       cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
     })),
+    collectionCount: collectionCount!.value,
 
     collected: !!musicbillCollection,
   });

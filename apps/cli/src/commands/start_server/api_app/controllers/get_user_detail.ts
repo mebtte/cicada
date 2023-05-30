@@ -1,4 +1,4 @@
-import GetUserDetail from '#/response_data/api/get_user_detail';
+import GetUserDetail from '#/server/api/get_user_detail';
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getUserById } from '@/db/user';

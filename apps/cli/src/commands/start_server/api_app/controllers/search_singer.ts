@@ -1,5 +1,5 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
-import SearchSinger from '#/response_data/api/search_singer';
+import SearchSinger from '#/server/api/search_singer';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';

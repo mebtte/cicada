@@ -1,5 +1,5 @@
 import { getDB } from '@/db';
-import AdminGetUserList from '#/response_data/api/admin_get_user_list';
+import AdminGetUserList from '#/server/api/admin_get_user_list';
 import { getAssetPublicPath } from '@/platform/asset';
 import { AssetType } from '#/constants';
 import { USER_TABLE_NAME, User, UserProperty } from '@/constants/db_definition';

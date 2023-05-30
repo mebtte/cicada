@@ -1,4 +1,4 @@
-import { MusicType } from '#/constants/music';
+import GetPublicMusicbill from '#/server/api/get_public_musicbill';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
@@ -7,32 +7,7 @@ import { request } from '..';
  * @author mebtte<hi@mebtte.com>
  */
 async function getPublicMusicbill(id: string) {
-  const musicbill = await request<{
-    id: string;
-    cover: string;
-    name: string;
-    createTimestamp: number;
-    user: {
-      id: string;
-      nickname: string;
-      avatar: string;
-    };
-    musicList: {
-      id: string;
-      type: MusicType;
-      name: string;
-      aliases: string[];
-      cover: string;
-      asset: string;
-      singers: {
-        id: string;
-        name: string;
-        aliases: string[];
-      }[];
-    }[];
-
-    collected: boolean;
-  }>({
+  const musicbill = await request<GetPublicMusicbill>({
     path: '/api/public_musicbill',
     params: { id },
     withToken: true,

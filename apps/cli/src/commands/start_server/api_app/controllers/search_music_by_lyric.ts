@@ -1,4 +1,4 @@
-import SearchMusicByLyric from '#/response_data/api/search_music_by_lyric';
+import SearchMusicByLyric from '#/server/api/search_music_by_lyric';
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';

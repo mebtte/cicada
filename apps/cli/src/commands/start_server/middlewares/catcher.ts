@@ -15,7 +15,7 @@ export default () => async (ctx: Context, next: Next) => {
     ctx.except(ExceptionCode.SERVER_ERROR, 500);
 
     logger.error({
-      label: 'server_error',
+      label: 'server',
       title: 'catch error by catcher',
       error,
     });

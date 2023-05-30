@@ -1,4 +1,4 @@
-import GetUserDetail from '#/response_data/api/get_user_detail';
+import GetUserDetail from '#/server/api/get_user_detail';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
