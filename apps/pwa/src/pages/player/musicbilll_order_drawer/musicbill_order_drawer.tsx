@@ -32,6 +32,7 @@ const toLocalMusicbill = (musicbill: MusicbillType): LocalMusicbill => ({
   cover: musicbill.cover,
   name: musicbill.name,
   public: musicbill.public,
+  shareStatus: musicbill.shareStatus,
 });
 type MusicbillListProps = { musicbillList: LocalMusicbill[] };
 

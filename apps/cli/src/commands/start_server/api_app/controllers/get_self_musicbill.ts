@@ -1,6 +1,6 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { Response } from '#/server/api/get_self_musicbill';
+import { ALIAS_DIVIDER, AssetType, MusicbillShareStatus } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import { getMusicbillById } from '@/db/musicbill';
 import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
 import { getAssetPublicPath } from '@/platform/asset';
@@ -13,7 +13,11 @@ import {
   MusicbillProperty,
   MusicbillMusicProperty,
   MUSICBILL_MUSIC_TABLE_NAME,
+  SHARED_MUSICBILL_TABLE_NAME,
+  SharedMusicbillProperty,
+  SharedMusicbill,
 } from '@/constants/db_definition';
+import { getMusicbillById } from '@/db/musicbill';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -23,16 +27,38 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
+  /**
+   * 1. 乐单是否存在
+   * 2. 是否乐单创建者
+   * 3. 是否拥有共享乐单
+   * @author mebtte<hi@mebtte.com>
+   */
   const musicbill = await getMusicbillById(id, [
     MusicbillProperty.ID,
-    MusicbillProperty.USER_ID,
     MusicbillProperty.COVER,
     MusicbillProperty.NAME,
     MusicbillProperty.PUBLIC,
     MusicbillProperty.CREATE_TIMESTAMP,
+    MusicbillProperty.USER_ID,
   ]);
-
-  if (!musicbill || musicbill.userId !== ctx.user.id) {
+  if (!musicbill) {
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+  }
+  const shareToUsers = await getDB().all<
+    Pick<SharedMusicbill, SharedMusicbillProperty.SHARED_USER_ID>
+  >(
+    `
+      SELECT
+        ${SharedMusicbillProperty.SHARED_USER_ID}
+      FROM ${SHARED_MUSICBILL_TABLE_NAME}
+      WHERE ${SharedMusicbillProperty.MUSICBILL_ID} = ?
+    `,
+    [id],
+  );
+  if (
+    musicbill.userId !== ctx.user.id &&
+    !shareToUsers.find((u) => u.sharedUserId === ctx.user.id)
+  ) {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
 
@@ -59,7 +85,7 @@ export default async (ctx: Context) => {
         ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
         LEFT JOIN ${MUSIC_TABLE_NAME} AS m ON mm.${MusicbillMusicProperty.MUSIC_ID} = m.${MusicProperty.ID}
       WHERE
-        mm.${MusicbillMusicProperty.MUSICBILL_ID} = ? 
+        mm.${MusicbillMusicProperty.MUSICBILL_ID} = ?
       ORDER BY
         mm.${MusicbillMusicProperty.ADD_TIMESTAMP} DESC;
     `,
@@ -89,9 +115,15 @@ export default async (ctx: Context) => {
     }
   }
 
-  return ctx.success({
+  return ctx.success<Response>({
     ...excludeProperty(musicbill, [MusicbillProperty.USER_ID]),
     cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
+    shareStatus:
+      musicbill.userId === ctx.user.id
+        ? shareToUsers.length
+          ? MusicbillShareStatus.SHARE_TO_OTHERS
+          : MusicbillShareStatus.NOT_SHARE
+        : MusicbillShareStatus.SHARE_TO_ME,
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],

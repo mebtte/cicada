@@ -66,10 +66,6 @@ const Style = styled(NavLink)`
   &.active {
     color: #fff;
     background-color: ${CSSVariable.COLOR_PRIMARY} !important;
-
-    > .cover {
-      outline-color: #fff;
-    }
   }
 `;
 
@@ -86,7 +82,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
       )}`}
     >
       <div className="cover-box">
-        <Cover size={28} src={musicbill.cover} className="cover" />
+        <Cover size={28} src={musicbill.cover} />
       </div>
       <div className="name">{musicbill.name}</div>
     </Style>

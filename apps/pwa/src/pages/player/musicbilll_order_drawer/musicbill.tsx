@@ -4,6 +4,9 @@ import { CSSVariable } from '@/global_style';
 import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import ellipsis from '@/style/ellipsis';
+import { MusicbillShareStatus } from '#/constants';
+import Cover from '@/components/cover';
+import absoluteFullSize from '@/style/absolute_full_size';
 import { LocalMusicbill } from './constant';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
@@ -21,12 +24,8 @@ const Style = styled.div`
   background-color: #fff;
   user-select: none;
 
-  > .cover {
-    width: 28px;
-    height: 28px;
-
-    object-fit: cover;
-    object-position: center;
+  > .cover-box {
+    font-size: 0;
   }
 
   > .name {
@@ -38,15 +37,31 @@ const Style = styled.div`
     ${ellipsis}
   }
 
-  &:nth-child(odd) {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
-  }
-
   &.active {
     background-color: ${CSSVariable.COLOR_PRIMARY};
 
     > .name {
       color: #fff;
+    }
+  }
+
+  &.public {
+    > .cover-box {
+      outline: 2px solid #63d1fa;
+    }
+  }
+
+  &.shared {
+    > .cover-box {
+      position: relative;
+
+      &::after {
+        content: '';
+
+        box-shadow: inset 0 0 0 2px #eabec8;
+
+        ${absoluteFullSize}
+      }
     }
   }
 `;
@@ -71,19 +86,16 @@ function Musicbill({ selfIndex, musicbill }: Props) {
   }, [selfIndex]);
 
   return (
-    <Style className={classnames({ active })}>
-      <img
-        className="cover"
-        src={musicbill.cover}
-        alt="cover"
-        loading="lazy"
-        style={{
-          outline: musicbill.public
-            ? `2px solid ${CSSVariable.COLOR_PRIMARY}`
-            : 'none',
-        }}
-        onDragStart={preventDefault}
-      />
+    <Style
+      className={classnames({
+        active,
+        public: musicbill.public,
+        shared: musicbill.shareStatus !== MusicbillShareStatus.NOT_SHARE,
+      })}
+    >
+      <div className="cover-box">
+        <Cover size={28} src={musicbill.cover} onDragStart={preventDefault} />
+      </div>
       <div className="name">{musicbill.name}</div>
     </Style>
   );
