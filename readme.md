@@ -63,15 +63,15 @@ docker run \
   -d \
   --restart=always \
   -p 8000:80 \
-  -v $HOME/cicada/data:/data \
   -v $HOME/cicada/config.json:/config/cicada.json \
+  -v $HOME/cicada/data:/data \
   --name cicada \
   mebtte/cicada
 ```
 
 - 知了容器使用 `80` 端口提供服务, `-p 8000:80` 表示映射到宿主的 `8000` 端口
-- 知了容器数据保存在 `/data`, `-v $HOME/cicada/data:/data` 表示映射到宿主的 `$HOME/cicada/data`
 - 知了容器配置文件位于 `/config/cicada.json`, `-v $HOME/cicada/config.json:/config/cicada.json` 表示映射到宿主的 `$HOME/cicada/config.json`
+- 知了容器数据保存在 `/data`, `-v $HOME/cicada/data:/data` 表示映射到宿主的 `$HOME/cicada/data`
 
 如果不希望知了容器以 `root` 运行, 可以通过 `--user {uid}:{gid}` 指定.
 
@@ -91,7 +91,7 @@ services:
     ports:
       - 8000:80
     volumes:
-      - /path/config.json:/config/cicada.json:ro
+      - /path/config.json:/config/cicada.json
       - /path/data:/data
 ```
 
