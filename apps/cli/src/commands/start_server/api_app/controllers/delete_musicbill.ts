@@ -8,6 +8,8 @@ import {
   MusicbillExportProperty,
   MusicbillMusicProperty,
   MusicbillProperty,
+  SHARED_MUSICBILL_TABLE_NAME,
+  SharedMusicbillProperty,
 } from '@/constants/db_definition';
 import { verifyCaptcha } from '@/platform/captcha';
 import { Context } from '../constants';
@@ -54,6 +56,13 @@ export default async (ctx: Context) => {
       `
         DELETE FROM ${MUSICBILL_EXPORT_TABLE_NAME}
         WHERE ${MusicbillExportProperty.MUSICBILL_ID} = ?
+      `,
+      [id],
+    ),
+    getDB().run(
+      `
+        DELETE FROM ${SHARED_MUSICBILL_TABLE_NAME}
+        WHERE ${SharedMusicbillProperty.MUSICBILL_ID} = ?
       `,
       [id],
     ),

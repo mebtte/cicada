@@ -18,8 +18,10 @@ import {
   MusicbillExportProperty,
   MusicbillMusicProperty,
   MusicbillProperty,
+  SHARED_MUSICBILL_TABLE_NAME,
   SINGER_MODIFY_RECORD_TABLE_NAME,
   SINGER_TABLE_NAME,
+  SharedMusicbillProperty,
   SingerModifyRecordProperty,
   SingerProperty,
   USER_TABLE_NAME,
@@ -62,21 +64,38 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.ADMIN_USER_CAN_NOT_BE_DELETED);
   }
 
+  /**
+   * 1. 删除数据库相关记录, 注意外键依赖顺序
+   * 2. 转移所有权
+   * @author mebtte<hi@mebtte.com>
+   */
   const musicbillList = await getUserMusicbillList(id, [MusicbillProperty.ID]);
-  if (musicbillList.length) {
-    await getDB().run(
-      `
-        DELETE FROM ${MUSICBILL_MUSIC_TABLE_NAME}
-        WHERE ${MusicbillMusicProperty.MUSICBILL_ID} IN ( ${musicbillList
-        .map(() => '?')
-        .join(', ')} )
-      `,
-      musicbillList.map((mb) => mb.id),
-    );
-  }
-
   await Promise.all([
-    // 删除
+    musicbillList.length
+      ? getDB().run(
+          `
+            DELETE FROM ${MUSICBILL_MUSIC_TABLE_NAME}
+            WHERE ${MusicbillMusicProperty.MUSICBILL_ID} IN ( ${musicbillList
+            .map(() => '?')
+            .join(', ')} )
+          `,
+          musicbillList.map((mb) => mb.id),
+        )
+      : null,
+    getDB().run(
+      `
+        DELETE FROM ${SHARED_MUSICBILL_TABLE_NAME}
+        WHERE ${SharedMusicbillProperty.SHARED_USER_ID} = ?
+      `,
+      [id],
+    ),
+    getDB().run(
+      `
+        DELETE FROM ${LOGIN_CODE_TABLE_NAME}
+        WHERE ${LoginCodeProperty.USER_ID} = ?
+      `,
+      [id],
+    ),
     getDB().run(
       `
         DELETE FROM ${LOGIN_CODE_TABLE_NAME}
@@ -93,13 +112,6 @@ export default async (ctx: Context) => {
     ),
     getDB().run(
       `
-        DELETE FROM ${MUSICBILL_TABLE_NAME}
-        WHERE ${MusicPlayRecordProperty.USER_ID} = ?
-      `,
-      [id],
-    ),
-    getDB().run(
-      `
         DELETE FROM ${MUSICBILL_COLLECTION_TABLE_NAME}
         WHERE ${MusicbillCollectionProperty.USER_ID} = ?
       `,
@@ -109,6 +121,15 @@ export default async (ctx: Context) => {
       `
         DELETE FROM ${MUSICBILL_EXPORT_TABLE_NAME}
         WHERE ${MusicbillExportProperty.USER_ID} = ?
+      `,
+      [id],
+    ),
+  ]);
+  await Promise.all([
+    getDB().run(
+      `
+        DELETE FROM ${MUSICBILL_TABLE_NAME}
+        WHERE ${MusicPlayRecordProperty.USER_ID} = ?
       `,
       [id],
     ),
