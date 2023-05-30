@@ -1,4 +1,4 @@
-import GetPublicMusicbill from '#/server/api/get_public_musicbill';
+import { Response } from '#/server/api/get_public_musicbill';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
@@ -7,7 +7,7 @@ import { request } from '..';
  * @author mebtte<hi@mebtte.com>
  */
 async function getPublicMusicbill(id: string) {
-  const musicbill = await request<GetPublicMusicbill>({
+  const musicbill = await request<Response>({
     path: '/api/public_musicbill',
     params: { id },
     withToken: true,

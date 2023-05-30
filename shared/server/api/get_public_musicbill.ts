@@ -1,6 +1,6 @@
 import { MusicType } from '../../constants/music';
 
-type GetPublicMusicbill = {
+export type Response = {
   id: string;
   cover: string;
   name: string;
@@ -27,5 +27,3 @@ type GetPublicMusicbill = {
   collectionCount: number;
   collected: boolean;
 };
-
-export default GetPublicMusicbill;

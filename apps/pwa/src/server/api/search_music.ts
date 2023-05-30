@@ -1,4 +1,4 @@
-import SearchMusic from '#/server/api/search_music';
+import { Response } from '#/server/api/search_music';
 import { request } from '..';
 
 function searchMusic({
@@ -10,7 +10,7 @@ function searchMusic({
   page: number;
   pageSize: number;
 }) {
-  return request<SearchMusic>({
+  return request<Response>({
     path: '/api/music/search',
     params: { keyword, page, pageSize },
     withToken: true,

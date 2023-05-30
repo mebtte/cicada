@@ -1,4 +1,4 @@
-import SearchSinger from '#/server/api/search_singer';
+import { Response } from '#/server/api/search_singer';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
@@ -13,7 +13,7 @@ async function searchSinger({
   pageSize: number;
   minRequestDuration?: number;
 }) {
-  const data = await request<SearchSinger>({
+  const data = await request<Response>({
     path: '/api/singer/search',
     params: { keyword, page, pageSize },
     withToken: true,

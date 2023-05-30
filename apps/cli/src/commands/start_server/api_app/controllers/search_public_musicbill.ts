@@ -1,5 +1,5 @@
 import { ExceptionCode } from '#/constants/exception';
-import SearchPublicMusicbill from '#/server/api/search_public_musicbill';
+import { Response } from '#/server/api/search_public_musicbill';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
 import excludeProperty from '#/utils/exclude_property';
 import {
@@ -150,7 +150,7 @@ export default async (ctx: Context) => {
     }));
   }
 
-  return ctx.success<SearchPublicMusicbill>({
+  return ctx.success<Response>({
     total,
     musicbillList: musicbillList.map((mb) => {
       const user = userList.find((u) => u.id === mb.userId)!;

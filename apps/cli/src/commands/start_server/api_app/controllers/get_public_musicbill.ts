@@ -1,4 +1,4 @@
-import GetPublicMusicbill from '#/server/api/get_public_musicbill';
+import { Response } from '#/server/api/get_public_musicbill';
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import excludeProperty from '#/utils/exclude_property';
@@ -113,7 +113,7 @@ export default async (ctx: Context) => {
     }
   }
 
-  return ctx.success<GetPublicMusicbill>({
+  return ctx.success<Response>({
     ...excludeProperty(musicbill, [
       MusicbillProperty.PUBLIC,
       MusicbillProperty.USER_ID,

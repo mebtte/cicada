@@ -1,4 +1,4 @@
-type SearchPublicMusicbill = {
+export type Response = {
   total: number;
   musicbillList: {
     id: string;
@@ -13,5 +13,3 @@ type SearchPublicMusicbill = {
     };
   }[];
 };
-
-export default SearchPublicMusicbill;

@@ -1,4 +1,4 @@
-type AdminGetUserList = {
+export type Response = {
   id: string;
   email: string;
   nickname: string;
@@ -12,5 +12,3 @@ type AdminGetUserList = {
   exportMusicbillMaxTimePerDay: number;
   musicPlayRecordIndate: number;
 }[];
-
-export default AdminGetUserList;

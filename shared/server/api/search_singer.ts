@@ -1,4 +1,4 @@
-type SearchSinger = {
+export type Response = {
   total: number;
   singerList: {
     id: string;
@@ -8,5 +8,3 @@ type SearchSinger = {
     musicCount: number;
   }[];
 };
-
-export default SearchSinger;

@@ -4,6 +4,9 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { NavLink } from 'react-router-dom';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
+import classnames from 'classnames';
+import { MusicbillShareStatus } from '#/constants';
+import absoluteFullSize from '@/style/absolute_full_size';
 import { Musicbill as MusicbillType } from '../../constants';
 
 const Style = styled(NavLink)`
@@ -19,6 +22,10 @@ const Style = styled(NavLink)`
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   background-color: transparent;
   transition: 300ms;
+
+  > .cover-box {
+    font-size: 0;
+  }
 
   > .name {
     flex: 1;
@@ -37,8 +44,22 @@ const Style = styled(NavLink)`
   }
 
   &.public {
-    > .cover {
-      outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
+    > .cover-box {
+      outline: 2px solid #63d1fa;
+    }
+  }
+
+  &.shared {
+    > .cover-box {
+      position: relative;
+
+      &::after {
+        content: '';
+
+        box-shadow: inset 0 0 0 2px #eabec8;
+
+        ${absoluteFullSize}
+      }
     }
   }
 
@@ -55,13 +76,18 @@ const Style = styled(NavLink)`
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
   return (
     <Style
-      className={musicbill.public ? 'public' : ''}
+      className={classnames({
+        public: musicbill.public,
+        shared: musicbill.shareStatus !== MusicbillShareStatus.NOT_SHARE,
+      })}
       to={`${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL.replace(
         ':id',
         musicbill.id,
       )}`}
     >
-      <Cover size={28} src={musicbill.cover} className="cover" />
+      <div className="cover-box">
+        <Cover size={28} src={musicbill.cover} className="cover" />
+      </div>
       <div className="name">{musicbill.name}</div>
     </Style>
   );

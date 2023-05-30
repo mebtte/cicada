@@ -27,6 +27,7 @@ export default () => {
           cover: mb.cover || DefaultCover,
           createTimestamp: mb.createTimestamp,
           public: !!mb.public,
+          shareStatus: mb.shareStatus,
 
           musicList: [],
 

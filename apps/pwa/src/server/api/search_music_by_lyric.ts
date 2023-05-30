@@ -1,4 +1,4 @@
-import SearchMusicByLyric from '#/server/api/search_music_by_lyric';
+import { Response } from '#/server/api/search_music_by_lyric';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
@@ -15,7 +15,7 @@ async function searchMusicByLyric({
   page: number;
   pageSize: number;
 }) {
-  const data = await request<SearchMusicByLyric>({
+  const data = await request<Response>({
     path: '/api/music/search_by_lyric',
     params: { keyword, page, pageSize },
     withToken: true,

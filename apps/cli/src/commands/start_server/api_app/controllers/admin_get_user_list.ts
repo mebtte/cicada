@@ -1,5 +1,5 @@
 import { getDB } from '@/db';
-import AdminGetUserList from '#/server/api/admin_get_user_list';
+import { Response } from '#/server/api/admin_get_user_list';
 import { getAssetPublicPath } from '@/platform/asset';
 import { AssetType } from '#/constants';
 import { USER_TABLE_NAME, User, UserProperty } from '@/constants/db_definition';
@@ -42,7 +42,7 @@ export default async (ctx: Context) => {
     `,
     [],
   );
-  return ctx.success<AdminGetUserList>(
+  return ctx.success<Response>(
     userList.map((user) => ({
       ...user,
       avatar: getAssetPublicPath(user.avatar, AssetType.USER_AVATAR),

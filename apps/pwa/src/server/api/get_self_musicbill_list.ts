@@ -1,16 +1,9 @@
+import { Response } from '#/server/api/get_self_musicbill_list';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
 async function getSelfMusicbillList() {
-  const musicbillList = await request<
-    {
-      id: string;
-      cover: string;
-      name: string;
-      public: 0 | 1;
-      createTimestamp: number;
-    }[]
-  >({
+  const musicbillList = await request<Response>({
     path: '/api/self_musicbill_list',
     withToken: true,
   });

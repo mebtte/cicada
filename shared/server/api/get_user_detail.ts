@@ -1,6 +1,6 @@
 import { MusicType } from '../../constants/music';
 
-type GetUserDetail = {
+export type Response = {
   id: string;
   avatar: string;
   joinTimestamp: number;
@@ -25,5 +25,3 @@ type GetUserDetail = {
     }[];
   }[];
 };
-
-export default GetUserDetail;

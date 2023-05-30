@@ -32,21 +32,6 @@ export function getUserMusicbillList<P extends MusicbillProperty>(
   );
 }
 
-export function getMusicbillListByIds<P extends MusicbillProperty>(
-  ids: string[],
-  properties: P[],
-) {
-  return getDB().all<{
-    [key in P]: Musicbill[key];
-  }>(
-    `
-      select ${properties.map((p) => `\`${p}\``).join(',')} from musicbill
-        where id in ( ${ids.map(() => '?').join(',')} )
-    `,
-    [...ids],
-  );
-}
-
 export async function createMusicbill({
   userId,
   name,

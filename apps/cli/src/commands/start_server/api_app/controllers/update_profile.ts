@@ -3,12 +3,14 @@ import { ExceptionCode } from '#/constants/exception';
 import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
 import exist from '#/utils/exist';
 import {
+  MUSICBILL_TABLE_NAME,
+  Musicbill,
   MusicbillProperty,
+  USER_TABLE_NAME,
   User,
   UserProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { getMusicbillListByIds } from '@/db/musicbill';
 import { getAssetFilePath } from '@/platform/asset';
 import updateUser from '@/db/update_user';
 import { Context } from '../constants';
@@ -53,7 +55,10 @@ const KEY_MAP_HANDLER: Record<
 
     const nicknameUser = await getDB().get<Pick<User, UserProperty.ID>>(
       `
-        select id from user where nickname = ?
+        SELECT
+          ${UserProperty.ID}
+        FROM ${USER_TABLE_NAME}
+        WHERE ${UserProperty.NICKNAME} = ?
       `,
       [nickname],
     );
@@ -79,16 +84,18 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
 
-    const musicbillList = await getMusicbillListByIds(orders, [
-      MusicbillProperty.USER_ID,
-    ]);
-    if (musicbillList.length !== orders.length) {
-      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
-    }
-    const notUserMusicbill = musicbillList.find(
-      (m) => m.userId !== ctx.user.id,
+    const existMusicbillList = await getDB().all<
+      Pick<Musicbill, MusicbillProperty.ID>
+    >(
+      `
+        SELECT
+          ${MusicbillProperty.ID}
+        FROM ${MUSICBILL_TABLE_NAME}
+        WHERE ${MusicbillProperty.ID} IN ( ${orders.map(() => '?').join(', ')} )
+      `,
+      orders,
     );
-    if (notUserMusicbill) {
+    if (orders.length > existMusicbillList.length) {
       return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
     }
 

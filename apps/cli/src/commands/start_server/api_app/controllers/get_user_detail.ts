@@ -1,4 +1,4 @@
-import GetUserDetail from '#/server/api/get_user_detail';
+import { Response } from '#/server/api/get_user_detail';
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getUserById } from '@/db/user';
@@ -112,7 +112,7 @@ export default async (ctx: Context) => {
     }
   }
 
-  return ctx.success<GetUserDetail>({
+  return ctx.success<Response>({
     ...user,
     avatar: getAssetPublicPath(user.avatar, AssetType.USER_AVATAR),
     musicbillList: musicbillList.map((mb) => ({

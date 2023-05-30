@@ -1,5 +1,5 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
-import SearchSinger from '#/server/api/search_singer';
+import { Response } from '#/server/api/search_singer';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';
@@ -112,7 +112,7 @@ export default async (ctx: Context) => {
     [, singerList] = results;
   }
 
-  return ctx.success<SearchSinger>({
+  return ctx.success<Response>({
     total,
     singerList: singerList.map((singer) => ({
       ...singer,

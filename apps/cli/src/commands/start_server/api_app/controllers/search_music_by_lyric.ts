@@ -1,4 +1,4 @@
-import SearchMusicByLyric from '#/server/api/search_music_by_lyric';
+import { Response } from '#/server/api/search_music_by_lyric';
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
@@ -139,7 +139,7 @@ export default async (ctx: Context) => {
     });
   });
 
-  return ctx.success<SearchMusicByLyric>({
+  return ctx.success<Response>({
     total: totalObject!.value,
     musicList: musicList.map((m) => ({
       ...m,

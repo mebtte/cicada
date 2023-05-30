@@ -1,6 +1,6 @@
 import { MusicType } from '../../constants/music';
 
-type SearchMusic = {
+export type Response = {
   total: number;
   musicList: {
     id: string;
@@ -16,5 +16,3 @@ type SearchMusic = {
     }[];
   }[];
 };
-
-export default SearchMusic;

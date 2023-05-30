@@ -1,4 +1,4 @@
-import GetUserDetail from '#/server/api/get_user_detail';
+import { Response } from '#/server/api/get_user_detail';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
@@ -7,7 +7,7 @@ import { request } from '..';
  * @author mebtte<hi@mebtte.com>
  */
 async function getUserDetail(id: string) {
-  const user = await request<GetUserDetail>({
+  const user = await request<Response>({
     path: '/api/user_detail',
     params: { id },
     withToken: true,
