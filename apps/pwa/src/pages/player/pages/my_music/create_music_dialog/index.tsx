@@ -145,7 +145,7 @@ function CreateMusicDialog() {
         name: trimmedName,
         singerIds: singerList.map((s) => s.id),
         type: musicType,
-        sq: asset.id,
+        asset: asset.id,
       });
 
       try {
