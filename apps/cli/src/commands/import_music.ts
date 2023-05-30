@@ -11,7 +11,7 @@ import fileType from 'file-type';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import path from 'path';
 import { getDB } from '@/db';
-import { createMusic } from '@/db/music';
+import createMusic from '@/db/create_music';
 import md5 from 'md5';
 import { MusicType } from '#/constants/music';
 import {
@@ -143,7 +143,7 @@ async function importFile(
       name,
       type: MusicType.SONG,
       createUserId: uid,
-      sq: assetName,
+      asset: assetName,
     });
 
     for (const singer of singers) {

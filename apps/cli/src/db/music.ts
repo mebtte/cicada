@@ -1,7 +1,9 @@
-import { ID_LENGTH, MusicType } from '#/constants/music';
-import generateRandomString from '#/utils/generate_random_string';
 import { getDB } from '.';
-import { MusicProperty, Music } from '../constants/db_definition';
+import {
+  MusicProperty,
+  Music,
+  MUSIC_TABLE_NAME,
+} from '../constants/db_definition';
 
 export function getMusicById<P extends MusicProperty>(
   id: string,
@@ -13,8 +15,8 @@ export function getMusicById<P extends MusicProperty>(
     `
       SELECT
         ${properties.join(',')}
-      FROM music
-      WHERE id = ?
+      FROM ${MUSIC_TABLE_NAME}
+      WHERE ${MusicProperty.ID} = ?
     `,
     [id],
   );
@@ -28,33 +30,11 @@ export function getMusicListByIds<P extends MusicProperty>(
     [key in P]: Music[key];
   }>(
     `
-      SELECT ${properties.join(',')} FROM music
-      WHERE id IN ( ${ids.map(() => '?')} )
+      SELECT ${properties.join(',')} FROM ${MUSIC_TABLE_NAME}
+      WHERE ${MusicProperty.ID} IN ( ${ids.map(() => '?')} )
     `,
     ids,
   );
-}
-
-export async function createMusic({
-  type,
-  name,
-  sq,
-  createUserId,
-}: {
-  type: MusicType;
-  name: string;
-  sq: string;
-  createUserId: string;
-}) {
-  const id = generateRandomString(ID_LENGTH, false);
-  await getDB().run(
-    `
-      INSERT INTO music( id, type, name, sq, createUserId, createTimestamp )
-      VALUES( ?, ?, ?, ?, ?, ? )
-    `,
-    [id, type, name, sq, createUserId, Date.now()],
-  );
-  return id;
 }
 
 export function updateMusic<
@@ -67,8 +47,8 @@ export function updateMusic<
 >({ id, property, value }: { id: string; property: P; value: Music[P] }) {
   return getDB().run(
     `
-      UPDATE music SET ${property} = ?
-      WHERE id = ?
+      UPDATE ${MUSIC_TABLE_NAME} SET ${property} = ?
+      WHERE ${MusicProperty.ID} = ?
     `,
     [value, id],
   );

@@ -6,20 +6,23 @@ import { getSingerListByIds } from '@/db/singer';
 import { getAssetFilePath } from '@/platform/asset';
 import { getDB } from '@/db';
 import day from '#/utils/day';
-import { createMusic } from '@/db/music';
+import createMusic from '@/db/create_music';
 import {
+  MUSIC_SINGER_RELATION_TABLE_NAME,
+  MUSIC_TABLE_NAME,
   Music,
   MusicProperty,
+  MusicSingerRelationProperty,
   SingerProperty,
 } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const { name, singerIds, type, sq } = ctx.request.body as {
+  const { name, singerIds, type, asset } = ctx.request.body as {
     name?: unknown;
     singerIds?: unknown;
     type?: unknown;
-    sq?: unknown;
+    asset?: unknown;
   };
 
   if (
@@ -31,13 +34,13 @@ export default async (ctx: Context) => {
     !singerIds.length ||
     // @ts-expect-error
     !MUSIC_TYPES.includes(type) ||
-    typeof sq !== 'string'
+    typeof asset !== 'string'
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const sqExist = await exist(getAssetFilePath(sq, AssetType.MUSIC));
-  if (!sqExist) {
+  const assetExist = await exist(getAssetFilePath(asset, AssetType.MUSIC));
+  if (!assetExist) {
     return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
   }
 
@@ -60,12 +63,12 @@ export default async (ctx: Context) => {
     >(
       `
         SELECT
-          id
-        FROM music
-        WHERE createUserId = ?
-          AND createTimestamp > ? AND createTimestamp < ?
+          ${MusicProperty.ID}
+        FROM ${MUSIC_TABLE_NAME}
+        WHERE ${MusicProperty.CREATE_USER_ID} = ?
+          AND ${MusicProperty.CREATE_TIMESTAMP} > ?
       `,
-      [ctx.user.id, now.startOf('day'), now.endOf('day')],
+      [ctx.user.id, now.startOf('day')],
     );
     if (todayCreateMusicList.length > ctx.user.createMusicMaxAmountPerDay) {
       return ctx.except(ExceptionCode.OVER_CREATE_MUSIC_TIMES_PER_DAY);
@@ -76,11 +79,13 @@ export default async (ctx: Context) => {
     name,
     type: type as MusicType,
     createUserId: ctx.user.id,
-    sq,
+    asset,
   });
   await getDB().run(
     `
-      INSERT INTO music_singer_relation( musicId, singerId )
+      INSERT INTO ${MUSIC_SINGER_RELATION_TABLE_NAME} ( ${
+      MusicSingerRelationProperty.MUSIC_ID
+    }, ${MusicSingerRelationProperty.SINGER_ID} )
       VALUES ${singerIdList.map(() => '( ?, ? )').join(', ')}
     `,
     singerIdList.map((singerId) => [id, singerId]).flat(Infinity),
