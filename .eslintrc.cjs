@@ -24,9 +24,6 @@ module.exports = {
   },
   plugins: ['import', 'react', '@typescript-eslint', 'jest'],
   settings: {
-    'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx'],
-    },
     'import/resolver': {
       typescript: {
         project: ['tsconfig.json', 'apps/*/tsconfig.json'],

@@ -11,7 +11,7 @@ export default () => {
     () =>
       navigate({
         query: {
-          [Query.CREATE_MUSIC_DIALOG_OPEN]: undefined,
+          [Query.CREATE_MUSIC_DIALOG_OPEN]: '',
         },
       }),
     [navigate],
