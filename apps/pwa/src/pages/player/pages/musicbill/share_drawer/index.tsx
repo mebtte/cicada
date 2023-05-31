@@ -13,10 +13,17 @@ import { EMAIL } from '#/constants/regexp';
 import notice from '@/utils/notice';
 import addMusicbillSharedUser from '@/server/api/add_musicbill_shared_user';
 import logger from '@/utils/logger';
+import deleteMusicbillSharedUser from '@/server/api/delete_musicbill_shared_user';
+import profile from '@/global_states/profile';
+import useNavigate from '@/utils/use_navigate';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useSharedUserList from './use_shared_user_list';
 import useOpen from './use_open';
 import { Musicbill, ZIndex } from '../../../constants';
 import User from './user';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../../../eventemitter';
 
 const maskProps: { style: CSSProperties } = {
   style: {
@@ -49,12 +56,14 @@ const Content = styled(BaseContent)`
 
   > .action {
     display: block;
-    margin: 10px;
-    width: calc(100% - 20px);
+    margin: 20px;
+    width: calc(100% - 40px);
   }
 `;
 
 function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
+  const navigate = useNavigate();
+
   const { open, onClose } = useOpen();
   const { data, reload } = useSharedUserList({ open, id: musicbill.id });
 
@@ -91,7 +100,7 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
             <Content style={style}>
               <div className="user-list">
                 {d.value.map((u) => (
-                  <User key={u.id} user={u} />
+                  <User key={u.id} user={u} onClose={onClose} />
                 ))}
               </div>
               <Button
@@ -114,6 +123,11 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
                           email,
                         });
                         notice.info('已发出邀请');
+                        playerEventemitter.emit(
+                          PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                          { id: musicbill.id, silence: true },
+                        );
+                        onClose();
                       } catch (error) {
                         logger.error(error, '乐单邀请共享用户失败');
                         notice.error(error.message);
@@ -126,7 +140,34 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
                 邀请用户
               </Button>
               {musicbill.shareStatus === MusicbillSharedStatus.SHARE_TO_ME ? (
-                <Button className="action" variant={Variant.DANGER}>
+                <Button
+                  className="action"
+                  variant={Variant.DANGER}
+                  onClick={() =>
+                    dialog.confirm({
+                      title: '确定退出共享乐单吗?',
+                      onConfirm: async () => {
+                        try {
+                          await deleteMusicbillSharedUser({
+                            musicbillId: musicbill.id,
+                            userId: profile.get()!.id,
+                          });
+                          playerEventemitter.emit(
+                            PlayerEventType.RELOAD_MUSICBILL_LIST,
+                            null,
+                          );
+                          navigate({
+                            path: ROOT_PATH + PLAYER_PATH.EXPLORATION,
+                          });
+                        } catch (error) {
+                          logger.error(error, '退出共享乐单失败');
+                          notice.error(error.message);
+                          return false;
+                        }
+                      },
+                    })
+                  }
+                >
                   退出共享
                 </Button>
               ) : null}

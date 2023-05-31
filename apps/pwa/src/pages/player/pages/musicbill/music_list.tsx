@@ -61,7 +61,7 @@ function Wrapper({
                 retry={() =>
                   playerEventemitter.emit(
                     PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                    { id },
+                    { id, silence: false },
                   )
                 }
               />

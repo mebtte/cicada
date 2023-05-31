@@ -89,6 +89,7 @@ function Musicbill({
         }
         return playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
           id,
+          silence: false,
         });
       }}
     >

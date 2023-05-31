@@ -157,7 +157,7 @@ export default new Eventin<
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY]: { queueMusic: QueueMusic };
 
     [EventType.RELOAD_MUSICBILL_LIST]: null;
-    [EventType.FETCH_MUSICBILL_DETAIL]: { id: string };
+    [EventType.FETCH_MUSICBILL_DETAIL]: { id: string; silence: boolean };
     [EventType.ADD_MUSIC_TO_MUSICBILL]: {
       musicbill: Musicbill;
       music: MusicWithSingerAliases;

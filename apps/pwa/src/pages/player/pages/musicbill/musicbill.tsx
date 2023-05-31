@@ -66,6 +66,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     if (status === RequestStatus.NOT_START) {
       playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
         id,
+        silence: false,
       });
     }
   }, [id, status]);
@@ -85,7 +86,6 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
         () =>
           scrollableRef.current?.scrollTo({
             top: scrollTop,
-            behavior: 'smooth',
           }),
         0,
       );

@@ -92,6 +92,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   PlayerEventType.FETCH_MUSICBILL_DETAIL,
                   {
                     id: musicbill.id,
+                    silence: false,
                   },
                 );
               },
@@ -124,6 +125,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     PlayerEventType.FETCH_MUSICBILL_DETAIL,
                     {
                       id: musicbill.id,
+                      silence: false,
                     },
                   );
                 }
@@ -151,6 +153,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                         PlayerEventType.FETCH_MUSICBILL_DETAIL,
                         {
                           id: musicbill.id,
+                          silence: false,
                         },
                       ),
                     )
@@ -175,6 +178,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                       PlayerEventType.FETCH_MUSICBILL_DETAIL,
                       {
                         id: musicbill.id,
+                        silence: false,
                       },
                     ),
                   )

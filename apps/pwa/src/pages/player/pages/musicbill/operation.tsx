@@ -51,6 +51,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         onClick={() =>
           playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
             id: musicbill.id,
+            silence: false,
           })
         }
       >

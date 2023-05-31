@@ -51,19 +51,21 @@ export default () => {
   useEffect(() => {
     const unlistenFetchMusicbill = eventemitter.listen(
       EventType.FETCH_MUSICBILL_DETAIL,
-      async ({ id }) => {
-        setMusicbillList((mbl) =>
-          mbl.map((mb) => {
-            if (mb.id === id) {
-              return {
-                ...mb,
-                status: RequestStatus.LOADING,
-                error: null,
-              };
-            }
-            return mb;
-          }),
-        );
+      async ({ id, silence }) => {
+        if (!silence) {
+          setMusicbillList((mbl) =>
+            mbl.map((mb) => {
+              if (mb.id === id) {
+                return {
+                  ...mb,
+                  status: RequestStatus.LOADING,
+                  error: null,
+                };
+              }
+              return mb;
+            }),
+          );
+        }
         try {
           const data = await getSelfMusicbill(id);
           setMusicbillList((mbl) =>
@@ -78,6 +80,7 @@ export default () => {
                     index: data.musicList.length - index,
                   })),
                   public: !!data.public,
+                  shareStatus: data.shareStatus,
 
                   status: RequestStatus.SUCCESS,
                 };

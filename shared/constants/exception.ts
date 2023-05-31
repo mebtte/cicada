@@ -36,6 +36,7 @@ export enum ExceptionCode {
   MUSIC_PLAY_RECORD_NOT_EXIST,
   SHARED_MUSICBILL_CAN_NOT_INVITE_OWNER,
   SHARED_MUSICBILL_CAN_NOT_INVITE_REPEATLY,
+  NO_PERMISSION_TO_DELETE_MUSICBILL_SHARED_USER,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -153,6 +154,9 @@ export const EXCEPTION_CODE_MAP: Record<
     description: '无法邀请乐单拥有者',
   },
   [ExceptionCode.SHARED_MUSICBILL_CAN_NOT_INVITE_REPEATLY]: {
-    description: '重复邀请',
+    description: '重复的乐单共享邀请',
+  },
+  [ExceptionCode.NO_PERMISSION_TO_DELETE_MUSICBILL_SHARED_USER]: {
+    description: '没有权限删除乐单共享用户',
   },
 };

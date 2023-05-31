@@ -1,22 +1,22 @@
 import { Method, request } from '..';
 
 /**
- * 乐单添加共享用户
+ * 删除乐单共享用户
  * @author mebtte<hi@mebtte.com>
  */
-function addMusicbillSharedUser({
+function deleteMusicbillSharedUser({
   musicbillId,
-  email,
+  userId,
 }: {
   musicbillId: string;
-  email: string;
+  userId: string;
 }) {
   return request<void>({
     path: '/api/musicbill/shared_user',
-    method: Method.POST,
     withToken: true,
-    body: { musicbillId, email },
+    params: { musicbillId, userId },
+    method: Method.DELETE,
   });
 }
 
-export default addMusicbillSharedUser;
+export default deleteMusicbillSharedUser;
