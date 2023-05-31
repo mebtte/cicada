@@ -1,5 +1,5 @@
 import { Response } from '#/server/api/get_self_musicbill_list';
-import { AssetType, MusicbillShareStatus } from '#/constants';
+import { AssetType, MusicbillSharedStatus } from '#/constants';
 import { getAssetPublicPath } from '@/platform/asset';
 import {
   MUSICBILL_TABLE_NAME,
@@ -71,12 +71,12 @@ export default async (ctx: Context) => {
         ...excludeProperty(mb, ['shareToUsers']),
         shareStatus:
           mb.shareToUsers > 0
-            ? MusicbillShareStatus.SHARE_TO_OTHERS
-            : MusicbillShareStatus.NOT_SHARE,
+            ? MusicbillSharedStatus.SHARE_TO_OTHERS
+            : MusicbillSharedStatus.NOT_SHARE,
       })),
       ...sharedToMeMusicbillList.map((mb) => ({
         ...mb,
-        shareStatus: MusicbillShareStatus.SHARE_TO_ME,
+        shareStatus: MusicbillSharedStatus.SHARE_TO_ME,
       })),
     ].map((mb) => ({
       ...mb,

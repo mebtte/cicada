@@ -1,5 +1,5 @@
 import { Response } from '#/server/api/get_self_musicbill';
-import { ALIAS_DIVIDER, AssetType, MusicbillShareStatus } from '#/constants';
+import { ALIAS_DIVIDER, AssetType, MusicbillSharedStatus } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
@@ -121,9 +121,9 @@ export default async (ctx: Context) => {
     shareStatus:
       musicbill.userId === ctx.user.id
         ? shareToUsers.length
-          ? MusicbillShareStatus.SHARE_TO_OTHERS
-          : MusicbillShareStatus.NOT_SHARE
-        : MusicbillShareStatus.SHARE_TO_ME,
+          ? MusicbillSharedStatus.SHARE_TO_OTHERS
+          : MusicbillSharedStatus.NOT_SHARE
+        : MusicbillSharedStatus.SHARE_TO_ME,
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],

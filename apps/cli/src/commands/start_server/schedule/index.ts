@@ -1,13 +1,13 @@
 import * as schedule from 'node-schedule';
 import logger from '@/utils/logger';
-import removeOutdatedDB from './jobs/remove_outdated_db';
-import createDBSnapshot from './jobs/create_db_snapshot';
-import cleanOutdatedFile from './jobs/clean_outdated_file';
-import exportMusicbill from './jobs/export_musicbill';
-import removeNoMusicSinger from './jobs/remove_no_music_singer';
-import moveUnlinkedAssetToTrash from './jobs/move_unlinked_asset_to_trash';
-import removeOutdatedMusicPlayRecord from './jobs/remove_outdated_music_play_record';
-import removeOutdatedSharedMusicbillInvitation from './jobs/remove_outdated_shared_musicbill_invitation';
+import removeOutdatedDB from './remove_outdated_db';
+import createDBSnapshot from './create_db_snapshot';
+import cleanOutdatedFile from './clean_outdated_file';
+import exportMusicbill from './export_musicbill';
+import removeNoMusicSinger from './remove_no_music_singer';
+import moveUnlinkedAssetToTrash from './move_unlinked_asset_to_trash';
+import removeOutdatedMusicPlayRecord from './remove_outdated_music_play_record';
+import removeOutdatedSharedMusicbillInvitation from './remove_outdated_shared_musicbill_invitation';
 
 const onRun = (job: string) =>
   logger.info({ label: 'schedule', title: job, message: 'start' });

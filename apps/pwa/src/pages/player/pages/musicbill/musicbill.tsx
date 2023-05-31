@@ -21,7 +21,6 @@ import Info from './info';
 import MusicList from './music_list';
 import { INFO_HEIGHT, MINI_INFO_HEIGHT } from './constants';
 import MiniInfo from './mini_info';
-import EditMenu from './edit_menu';
 import Filter from './filter';
 
 const Style = styled(Page)`
@@ -102,7 +101,6 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
 
       {miniInfoVisible ? <MiniInfo musicbill={musicbill} /> : null}
       {status === RequestStatus.SUCCESS && musicList.length ? <Filter /> : null}
-      <EditMenu musicbill={musicbill} />
     </Style>
   );
 }

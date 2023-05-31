@@ -8,6 +8,8 @@ import logger from '@/utils/logger';
 import dialog from '@/utils/dialog';
 import getSelfMusicbill from '@/server/api/get_self_musicbill';
 import p from '@/global_states/profile';
+import notice from '@/utils/notice';
+import { ExceptionCode } from '#/constants/exception';
 import eventemitter, { EventType } from './eventemitter';
 import { Musicbill } from './constants';
 
@@ -125,26 +127,27 @@ export default () => {
           await addMusicToMusicbill(musicbillId, musicId);
         } catch (error) {
           logger.error(error, '添加音乐到乐单失败');
-          dialog.alert({
-            title: '添加音乐到乐单失败',
-            content: error.message,
-          });
-          setMusicbillList((mbl) =>
-            mbl.map((mb) => {
-              if (mb.id === musicbillId) {
-                const musicList = mb.musicList.filter((m) => m.id !== musicId);
-                const { length } = musicList;
-                return {
-                  ...mb,
-                  musicList: musicList.map((m, index) => ({
-                    ...m,
-                    index: length - index,
-                  })),
-                };
-              }
-              return mb;
-            }),
-          );
+          if (error.code !== ExceptionCode.MUSIC_IN_MUSICBILL_ALREADY) {
+            notice.error(error.message);
+            setMusicbillList((mbl) =>
+              mbl.map((mb) => {
+                if (mb.id === musicbillId) {
+                  const musicList = mb.musicList.filter(
+                    (m) => m.id !== musicId,
+                  );
+                  const { length } = musicList;
+                  return {
+                    ...mb,
+                    musicList: musicList.map((m, index) => ({
+                      ...m,
+                      index: length - index,
+                    })),
+                  };
+                }
+                return mb;
+              }),
+            );
+          }
         }
       },
     );
@@ -173,26 +176,25 @@ export default () => {
           await removeMusicFromMusicbill(musicbillId, musicId);
         } catch (error) {
           logger.error(error, '从乐单移除音乐失败');
-          dialog.alert({
-            title: '从乐单移除音乐失败',
-            content: error.message,
-          });
-          setMusicbillList((mbl) =>
-            mbl.map((mb) => {
-              if (mb.id === musicbillId) {
-                const musicList = [{ ...music, index: 0 }, ...mb.musicList];
-                const { length } = musicList;
-                return {
-                  ...mb,
-                  musicList: musicList.map((m, index) => ({
-                    ...m,
-                    index: length - index,
-                  })),
-                };
-              }
-              return mb;
-            }),
-          );
+          if (error.code !== ExceptionCode.MUSIC_NOT_IN_MUSICBILL) {
+            notice.error(error.message);
+            setMusicbillList((mbl) =>
+              mbl.map((mb) => {
+                if (mb.id === musicbillId) {
+                  const musicList = [{ ...music, index: 0 }, ...mb.musicList];
+                  const { length } = musicList;
+                  return {
+                    ...mb,
+                    musicList: musicList.map((m, index) => ({
+                      ...m,
+                      index: length - index,
+                    })),
+                  };
+                }
+                return mb;
+              }),
+            );
+          }
         }
       },
     );

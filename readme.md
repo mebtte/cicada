@@ -158,7 +158,6 @@ docker run -it --rm -v <data>:/data mebtte/cicada cicada data-upgrade /data
 
 ## 后续开发
 
-- [ ] 消息中心
 - [ ] 悬浮歌词面板(类似于网易云音乐网页版歌词)
 - [ ] 电台
 - [ ] 音乐分享(独立页面, 独立资源链接)

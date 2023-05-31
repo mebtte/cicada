@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
-import { MdRefresh, MdPlaylistAdd, MdEdit, MdDownload } from 'react-icons/md';
+import {
+  MdRefresh,
+  MdPlaylistAdd,
+  MdOutlineEdit,
+  MdOutlineDownload,
+  MdOutlinePeopleAlt,
+} from 'react-icons/md';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import playerEventemitter, {
@@ -15,6 +21,7 @@ const Style = styled.div`
   align-items: center;
   gap: 5px;
 `;
+const openShareDialog = () => e.emit(EventType.OPEN_SHARE_DRAWER, null);
 
 function Operation({ musicbill }: { musicbill: Musicbill }) {
   const { status, musicList } = musicbill;
@@ -36,7 +43,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         <MdPlaylistAdd />
       </IconButton>
       <IconButton onClick={() => exportMusicbill(musicbill.id)}>
-        <MdDownload />
+        <MdOutlineDownload />
       </IconButton>
       <IconButton
         loading={status === RequestStatus.LOADING}
@@ -50,7 +57,10 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         <MdRefresh />
       </IconButton>
       <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
-        <MdEdit />
+        <MdOutlineEdit />
+      </IconButton>
+      <IconButton onClick={openShareDialog}>
+        <MdOutlinePeopleAlt />
       </IconButton>
     </Style>
   );

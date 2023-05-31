@@ -1,10 +1,11 @@
 import styled from 'styled-components';
-import Cover from '@/components/cover';
 import day from '#/utils/day';
 import { CSSVariable } from '@/global_style';
+import { MusicbillSharedStatus } from '#/constants';
 import { Musicbill } from '../../constants';
 import { INFO_HEIGHT } from './constants';
 import Operation from './operation';
+import MusicbillCover from '../../components/musicbill_cover';
 
 const GAP = 10;
 const Style = styled.div`
@@ -14,25 +15,6 @@ const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-
-  > .cover-box {
-    position: relative;
-
-    > .cover {
-      display: block;
-    }
-
-    > .public {
-      font-size: 12px;
-      color: #fff;
-      background-color: ${CSSVariable.COLOR_PRIMARY};
-      padding: 0 5px;
-
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-  }
 
   > .info {
     flex: 1;
@@ -59,21 +41,12 @@ const Style = styled.div`
 function Info({ musicbill }: { musicbill: Musicbill }) {
   return (
     <Style>
-      <div
-        className="cover-box"
-        style={{
-          outline: musicbill.public
-            ? `2px solid ${CSSVariable.COLOR_PRIMARY}`
-            : 'none',
-        }}
-      >
-        <Cover
-          className="cover"
-          src={musicbill.cover}
-          size={INFO_HEIGHT - GAP * 2}
-        />
-        {musicbill.public ? <div className="public">公开</div> : null}
-      </div>
+      <MusicbillCover
+        src={musicbill.cover}
+        size={INFO_HEIGHT - GAP * 2}
+        publiz={musicbill.public}
+        shared={musicbill.shareStatus !== MusicbillSharedStatus.NOT_SHARE}
+      />
       <div className="info">
         <div className="name">{musicbill.name}</div>
         <div className="create-time">

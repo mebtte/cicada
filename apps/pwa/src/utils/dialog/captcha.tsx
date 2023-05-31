@@ -1,4 +1,4 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import { Container, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import Captcha, { useCaptcha } from '@/components/captcha';
@@ -69,7 +69,6 @@ function CaptchaContent({
 
   return (
     <Container>
-      {captcha.title ? <Title>{captcha.title}</Title> : null}
       <Content style={contentStyle}>
         <Captcha
           captchaData={captchaData}
@@ -81,6 +80,7 @@ function CaptchaContent({
           inputProps={{
             value: captchaValue,
             onChange: onCaptchaValueChange,
+            autoFocus: true,
           }}
         />
       </Content>

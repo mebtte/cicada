@@ -1,4 +1,4 @@
-import { MusicbillShareStatus } from '../../constants';
+import { MusicbillSharedStatus } from '../../constants';
 
 export type Response = {
   id: string;
@@ -6,5 +6,5 @@ export type Response = {
   name: string;
   public: 0 | 1;
   createTimestamp: number;
-  shareStatus: MusicbillShareStatus;
+  shareStatus: MusicbillSharedStatus;
 }[];

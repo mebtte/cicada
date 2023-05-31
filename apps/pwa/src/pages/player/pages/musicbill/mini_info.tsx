@@ -1,7 +1,8 @@
-import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
+import { MusicbillSharedStatus } from '#/constants';
+import MusicbillCover from '../../components/musicbill_cover';
 import { Musicbill } from '../../constants';
 import { MINI_INFO_HEIGHT } from './constants';
 import Operation from './operation';
@@ -34,14 +35,11 @@ const Style = styled.div`
 function MiniInfo({ musicbill }: { musicbill: Musicbill }) {
   return (
     <Style>
-      <Cover
+      <MusicbillCover
         src={musicbill.cover}
         size={32}
-        style={{
-          outline: musicbill.public
-            ? `2px solid ${CSSVariable.COLOR_PRIMARY}`
-            : 'none',
-        }}
+        publiz={musicbill.public}
+        shared={musicbill.shareStatus !== MusicbillSharedStatus.NOT_SHARE}
       />
       <div className="name">{musicbill.name}</div>
       <Operation musicbill={musicbill} />

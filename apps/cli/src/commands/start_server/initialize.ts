@@ -297,10 +297,12 @@ export default async () => {
         ${SharedMusicbillProperty.MUSICBILL_ID} TEXT NOT NULL,
         ${SharedMusicbillProperty.SHARED_USER_ID} TEXT NOT NULL,
         ${SharedMusicbillProperty.SHARE_TIMESTAMP} INTEGER NOT NULL,
+        ${SharedMusicbillProperty.INVITE_USER_ID} TEXT NOT NULL,
         ${SharedMusicbillProperty.ACCEPTED} INTEGER NOT NULL DEFAULT 0,
 
         CONSTRAINT fkMusicbill FOREIGN KEY ( ${SharedMusicbillProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
-        CONSTRAINT fkUser FOREIGN KEY ( ${SharedMusicbillProperty.SHARED_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+        CONSTRAINT fkSharedUser FOREIGN KEY ( ${SharedMusicbillProperty.SHARED_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        CONSTRAINT fkInviteUser FOREIGN KEY ( ${SharedMusicbillProperty.INVITE_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
       )
     `;
 

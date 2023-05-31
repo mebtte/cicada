@@ -5,11 +5,13 @@ import {
   Confirm as ConfirmShape,
   Dialog,
   DialogType,
+  TextInput as TextInputShape,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import Alert from './alert';
 import Confirm from './confirm';
 import Captcha from './captcha';
+import TextInput from './text_input';
 
 function DialogApp() {
   const [dialogList, setDialogList] = useState<Dialog[]>([]);
@@ -48,6 +50,15 @@ function DialogApp() {
               <Captcha
                 key={d.id}
                 captcha={d as CaptchaShape}
+                onDestroy={onDestroy}
+              />
+            );
+          }
+          case DialogType.TEXT_INPUT: {
+            return (
+              <TextInput
+                key={d.id}
+                textInput={d as TextInputShape}
                 onDestroy={onDestroy}
               />
             );

@@ -5,8 +5,8 @@ import {
   MdReadMore,
   MdOutlinePostAdd,
   MdPlaylistAdd,
-  MdEdit,
-  MdDownload,
+  MdOutlineEdit,
+  MdOutlineDownload,
   MdShare,
 } from 'react-icons/md';
 import p from '@/global_states/profile';
@@ -105,7 +105,7 @@ function Toolbar({ music }: { music: MusicDetail }) {
               )
             }
           >
-            <MdDownload />
+            <MdOutlineDownload />
           </IconButton>
         )}
         <IconButton
@@ -126,7 +126,7 @@ function Toolbar({ music }: { music: MusicDetail }) {
       </div>
       {profile.admin || profile.id === music.createUser.id ? (
         <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
-          <MdEdit />
+          <MdOutlineEdit />
         </IconButton>
       ) : null}
     </Style>

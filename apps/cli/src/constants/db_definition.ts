@@ -262,6 +262,7 @@ export enum SharedMusicbillProperty {
   MUSICBILL_ID = 'musicbillId',
   SHARED_USER_ID = 'sharedUserId',
   SHARE_TIMESTAMP = 'shareTimestamp',
+  INVITE_USER_ID = 'inviteUserId',
   ACCEPTED = 'accepted',
 }
 export type SharedMusicbill = {
@@ -269,5 +270,6 @@ export type SharedMusicbill = {
   [SharedMusicbillProperty.MUSICBILL_ID]: string;
   [SharedMusicbillProperty.SHARED_USER_ID]: string;
   [SharedMusicbillProperty.SHARE_TIMESTAMP]: number;
+  [SharedMusicbillProperty.INVITE_USER_ID]: string;
   [SharedMusicbillProperty.ACCEPTED]: 0 | 1;
 };

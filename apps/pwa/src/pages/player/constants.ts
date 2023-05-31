@@ -1,7 +1,7 @@
 import { RequestStatus } from '@/constants';
 import { MusicType } from '#/constants/music';
 import { UtilZIndex } from '@/constants/style';
-import { MusicbillShareStatus } from '#/constants';
+import { MusicbillSharedStatus } from '#/constants';
 
 export const HEADER_HEIGHT = 55;
 
@@ -43,7 +43,7 @@ export interface Musicbill {
   cover: string;
   createTimestamp: number;
   public: boolean;
-  shareStatus: MusicbillShareStatus;
+  shareStatus: MusicbillSharedStatus;
 
   musicList: (MusicWithSingerAliases & Index)[];
 
