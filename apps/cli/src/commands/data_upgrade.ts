@@ -204,15 +204,13 @@ async function createSharedMusicbill() {
     `
       CREATE TABLE ${SHARED_MUSICBILL_TABLE_NAME} (
         ${SharedMusicbillProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${SharedMusicbillProperty.MUSICBILL_ID} TEXT NOT NULL,
-        ${SharedMusicbillProperty.SHARED_USER_ID} TEXT NOT NULL,
+        ${SharedMusicbillProperty.MUSICBILL_ID} TEXT NOT NULL REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
+        ${SharedMusicbillProperty.SHARED_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         ${SharedMusicbillProperty.SHARE_TIMESTAMP} INTEGER NOT NULL,
-        ${SharedMusicbillProperty.INVITE_USER_ID} TEXT NOT NULL,
+        ${SharedMusicbillProperty.INVITE_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         ${SharedMusicbillProperty.ACCEPTED} INTEGER NOT NULL DEFAULT 0,
 
-        CONSTRAINT fkMusicbill FOREIGN KEY ( ${SharedMusicbillProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
-        CONSTRAINT fkSharedUser FOREIGN KEY ( ${SharedMusicbillProperty.SHARED_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
-        CONSTRAINT fkInviteUser FOREIGN KEY ( ${SharedMusicbillProperty.INVITE_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+        UNIQUE( ${SharedMusicbillProperty.MUSICBILL_ID}, ${SharedMusicbillProperty.SHARED_USER_ID} ) ON CONFLICT REPLACE
       )
     `,
   );

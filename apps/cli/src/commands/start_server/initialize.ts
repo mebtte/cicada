@@ -139,12 +139,10 @@ export default async () => {
     const TABLE_LOGIN_CODE = `
       CREATE TABLE ${LOGIN_CODE_TABLE_NAME} (
         ${LoginCodeProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${LoginCodeProperty.USER_ID} TEXT NOT NULL,
+        ${LoginCodeProperty.USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         ${LoginCodeProperty.CODE} TEXT NOT NULL,
         ${LoginCodeProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
-        ${LoginCodeProperty.USED} INTEGER NOT NULL DEFAULT 0,
-
-        CONSTRAINT fkUser FOREIGN KEY ( ${LoginCodeProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+        ${LoginCodeProperty.USED} INTEGER NOT NULL DEFAULT 0
       )
     `;
     const TABLE_SINGER = `
@@ -153,22 +151,17 @@ export default async () => {
         ${SingerProperty.AVATAR} TEXT NOT NULL DEFAULT '',
         ${SingerProperty.NAME} TEXT NOT NULL,
         ${SingerProperty.ALIASES} TEXT NOT NULL DEFAULT '',
-        ${SingerProperty.CREATE_USER_ID} TEXT NOT NULL,
-        ${SingerProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
-
-        CONSTRAINT fkUser FOREIGN KEY ( ${SingerProperty.CREATE_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+        ${SingerProperty.CREATE_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        ${SingerProperty.CREATE_TIMESTAMP} INTEGER NOT NULL
       )
     `;
     const TABLE_SINGER_MODIFY_RECORD = `
       CREATE TABLE ${SINGER_MODIFY_RECORD_TABLE_NAME} (
         ${SingerModifyRecordProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${SingerModifyRecordProperty.SINGER_ID} TEXT NOT NULL,
-        ${SingerModifyRecordProperty.MODIFY_USER_ID} TEXT NOT NULL,
+        ${SingerModifyRecordProperty.SINGER_ID} TEXT NOT NULL REFERENCES ${SINGER_TABLE_NAME} ( ${SingerProperty.ID} ),
+        ${SingerModifyRecordProperty.MODIFY_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         ${SingerModifyRecordProperty.KEY} TEXT NOT NULL,
-        ${SingerModifyRecordProperty.MODIFY_TIMESTAMP} INTEGER NOT NULL,
-
-        CONSTRAINT fkSinger FOREIGN KEY ( ${SingerModifyRecordProperty.SINGER_ID} ) REFERENCES singer ( ${SingerProperty.ID} ),
-        CONSTRAINT fkUser FOREIGN KEY ( ${SingerModifyRecordProperty.MODIFY_USER_ID} ) REFERENCES user ( ${UserProperty.ID} )
+        ${SingerModifyRecordProperty.MODIFY_TIMESTAMP} INTEGER NOT NULL
       )
     `;
     const TABLE_MUSIC = `
@@ -180,129 +173,104 @@ export default async () => {
         ${MusicProperty.COVER} TEXT NOT NULL DEFAULT '',
         ${MusicProperty.ASSET} TEXT NOT NULL,
         ${MusicProperty.HEAT} INTEGER NOT NULL DEFAULT 0,
-        ${MusicProperty.CREATE_USER_ID} TEXT NOT NULL,
-        ${MusicProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
-
-        CONSTRAINT fkUser FOREIGN KEY ( ${MusicProperty.CREATE_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+        ${MusicProperty.CREATE_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        ${MusicProperty.CREATE_TIMESTAMP} INTEGER NOT NULL
       )
     `;
     const TABLE_MUSIC_MODIGY_RECORD = `
       CREATE TABLE ${MUSIC_MODIFY_RECORD_TABLE_NAME} (
         ${MusicModifyRecordProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${MusicModifyRecordProperty.MUSIC_ID} TEXT NOT NULL,
-        ${MusicModifyRecordProperty.MODIFY_USER_ID} TEXT NOT NULL,
+        ${MusicModifyRecordProperty.MUSIC_ID} TEXT NOT NULL REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
+        ${MusicModifyRecordProperty.MODIFY_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         ${MusicModifyRecordProperty.KEY} TEXT NOT NULL,
-        ${MusicModifyRecordProperty.MODIFY_TIMESTAMP} INTEGER NOT NULL,
-
-        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicModifyRecordProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
-        CONSTRAINT fkUser FOREIGN KEY ( ${MusicModifyRecordProperty.MODIFY_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+        ${MusicModifyRecordProperty.MODIFY_TIMESTAMP} INTEGER NOT NULL
       )
     `;
     const TABLE_MUSIC_FORK = `
       CREATE TABLE ${MUSIC_FORK_TABLE_NAME} (
         ${MusicForkProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${MusicForkProperty.MUSIC_ID} TEXT NOT NULL,
-        ${MusicForkProperty.FORK_FROM} TEXT NOT NULL,
+        ${MusicForkProperty.MUSIC_ID} TEXT NOT NULL REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
+        ${MusicForkProperty.FORK_FROM} TEXT NOT NULL REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
 
-        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicForkProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
-        CONSTRAINT fkForkFrom FOREIGN KEY ( ${MusicForkProperty.FORK_FROM} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
         UNIQUE( ${MusicForkProperty.MUSIC_ID}, ${MusicForkProperty.FORK_FROM} ) ON CONFLICT REPLACE
       )
     `;
     const TABLE_LYRIC = `
       CREATE TABLE ${LYRIC_TABLE_NAME} (
         ${LyricProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${LyricProperty.MUSIC_ID} TEXT NOT NULL,
+        ${LyricProperty.MUSIC_ID} TEXT NOT NULL REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
         ${LyricProperty.LRC} TEXT NOT NULL,
-        ${LyricProperty.LRC_CONTENT} TEXT NOT NULL,
-
-        CONSTRAINT fkMusic FOREIGN KEY ( ${LyricProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ) 
+        ${LyricProperty.LRC_CONTENT} TEXT NOT NULL 
       )
     `;
     const TABLE_MUSIC_PLAY_RECORD = `
       CREATE TABLE ${MUSIC_PLAY_RECORD_TABLE_NAME} (
         ${MusicPlayRecordProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${MusicPlayRecordProperty.USER_ID} TEXT NOT NULL,
-        ${MusicPlayRecordProperty.MUSIC_ID} TEXT NOT NULL,
+        ${MusicPlayRecordProperty.USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        ${MusicPlayRecordProperty.MUSIC_ID} TEXT NOT NULL REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
         ${MusicPlayRecordProperty.PERCENT} REAL NOT NULL,
-        ${MusicPlayRecordProperty.TIMESTAMP} INTEGER NOT NULL,
-
-        CONSTRAINT fkUser FOREIGN KEY ( ${MusicPlayRecordProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
-        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicPlayRecordProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ) 
+        ${MusicPlayRecordProperty.TIMESTAMP} INTEGER NOT NULL 
       )
     `;
     const TABLE_MUSIC_SINGER_RELATION = `
       CREATE TABLE ${MUSIC_SINGER_RELATION_TABLE_NAME} (
         ${MusicSingerRelationProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${MusicSingerRelationProperty.MUSIC_ID} TEXT NOT NULL,
-        ${MusicSingerRelationProperty.SINGER_ID} TEXT NOT NULL,
+        ${MusicSingerRelationProperty.MUSIC_ID} TEXT NOT NULL REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
+        ${MusicSingerRelationProperty.SINGER_ID} TEXT NOT NULL REFERENCES ${SINGER_TABLE_NAME} ( ${SingerProperty.ID} ),
 
-        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicSingerRelationProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
-        CONSTRAINT fkSinger FOREIGN KEY ( ${MusicSingerRelationProperty.SINGER_ID} ) REFERENCES ${SINGER_TABLE_NAME} ( ${SingerProperty.ID} ),
         UNIQUE( ${MusicSingerRelationProperty.MUSIC_ID}, ${MusicSingerRelationProperty.SINGER_ID} ) ON CONFLICT REPLACE
       )
     `;
     const TABLE_MUSICBILL = `
       CREATE TABLE ${MUSICBILL_TABLE_NAME} (
         ${MusicbillProperty.ID} TEXT PRIMARY KEY NOT NULL,
-        ${MusicbillProperty.USER_ID} TEXT NOT NULL,
+        ${MusicbillProperty.USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         ${MusicbillProperty.COVER} TEXT NOT NULL DEFAULT '',
         ${MusicbillProperty.NAME} TEXT NOT NULL,
         ${MusicbillProperty.PUBLIC} INTEGER NOT NULL DEFAULT 0,
-        ${MusicbillProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
-
-        CONSTRAINT fkUser FOREIGN KEY ( ${MusicbillProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ) 
+        ${MusicbillProperty.CREATE_TIMESTAMP} INTEGER NOT NULL 
       )
     `;
     const TABLE_MUSICBILL_MUSIC = `
       CREATE TABLE ${MUSICBILL_MUSIC_TABLE_NAME} (
         ${MusicbillMusicProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${MusicbillMusicProperty.MUSICBILL_ID} TEXT NOT NULL,
-        ${MusicbillMusicProperty.MUSIC_ID} TEXT NOT NULL,
+        ${MusicbillMusicProperty.MUSICBILL_ID} TEXT NOT NULL REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
+        ${MusicbillMusicProperty.MUSIC_ID} TEXT NOT NULL REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
         ${MusicbillMusicProperty.ADD_TIMESTAMP} INTEGER NOT NULL,
 
-        CONSTRAINT fkMusicbill FOREIGN KEY ( ${MusicbillMusicProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
-        CONSTRAINT fkMusic FOREIGN KEY ( ${MusicbillMusicProperty.MUSIC_ID} ) REFERENCES ${MUSIC_TABLE_NAME} ( ${MusicProperty.ID} ),
         UNIQUE( ${MusicbillMusicProperty.MUSICBILL_ID}, ${MusicbillMusicProperty.MUSIC_ID} ) ON CONFLICT REPLACE
       )
     `;
     const TABLE_MUSICBILL_COLLECTION = `
       CREATE TABLE ${MUSICBILL_COLLECTION_TABLE_NAME} (
         ${MusicbillCollectionProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${MusicbillCollectionProperty.MUSICBILL_ID} TEXT NOT NULL,
-        ${MusicbillCollectionProperty.USER_ID} TEXT NOT NULL,
+        ${MusicbillCollectionProperty.MUSICBILL_ID} TEXT NOT NULL REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
+        ${MusicbillCollectionProperty.USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         ${MusicbillCollectionProperty.COLLECT_TIMESTAMP} INTEGER NOT NULL,
 
-        CONSTRAINT fkMusicbill FOREIGN KEY ( ${MusicbillCollectionProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
-        CONSTRAINT fkUser FOREIGN KEY ( ${MusicbillCollectionProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         UNIQUE( ${MusicbillCollectionProperty.MUSICBILL_ID}, ${MusicbillCollectionProperty.USER_ID} ) ON CONFLICT REPLACE
       )
     `;
     const TABLE_MUSICBILL_EXPORT = `
       CREATE TABLE ${MUSICBILL_EXPORT_TABLE_NAME} (
         ${MusicbillExportProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${MusicbillExportProperty.USER_ID} TEXT NOT NULL,
-        ${MusicbillExportProperty.MUSICBILL_ID} TEXT NOT NULL,
+        ${MusicbillExportProperty.USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        ${MusicbillExportProperty.MUSICBILL_ID} TEXT NOT NULL REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
         ${MusicbillExportProperty.ACCESS_ORIGIN} TEXT NOT NULL,
         ${MusicbillExportProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
-        ${MusicbillExportProperty.EXPORTED_TIMESTAMP} INTEGER DEFAULT NULL,
-
-        CONSTRAINT fkUser FOREIGN KEY ( ${MusicbillExportProperty.USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
-        CONSTRAINT fkMusicbill FOREIGN KEY ( ${MusicbillExportProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ) 
+        ${MusicbillExportProperty.EXPORTED_TIMESTAMP} INTEGER DEFAULT NULL 
       )
     `;
     const TABLE_SHARED_MUSICBILL = `
       CREATE TABLE ${SHARED_MUSICBILL_TABLE_NAME} (
         ${SharedMusicbillProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${SharedMusicbillProperty.MUSICBILL_ID} TEXT NOT NULL,
-        ${SharedMusicbillProperty.SHARED_USER_ID} TEXT NOT NULL,
+        ${SharedMusicbillProperty.MUSICBILL_ID} TEXT NOT NULL REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
+        ${SharedMusicbillProperty.SHARED_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         ${SharedMusicbillProperty.SHARE_TIMESTAMP} INTEGER NOT NULL,
-        ${SharedMusicbillProperty.INVITE_USER_ID} TEXT NOT NULL,
+        ${SharedMusicbillProperty.INVITE_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
         ${SharedMusicbillProperty.ACCEPTED} INTEGER NOT NULL DEFAULT 0,
 
-        CONSTRAINT fkMusicbill FOREIGN KEY ( ${SharedMusicbillProperty.MUSICBILL_ID} ) REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
-        CONSTRAINT fkSharedUser FOREIGN KEY ( ${SharedMusicbillProperty.SHARED_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
-        CONSTRAINT fkInviteUser FOREIGN KEY ( ${SharedMusicbillProperty.INVITE_USER_ID} ) REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} )
+        UNIQUE( ${SharedMusicbillProperty.MUSICBILL_ID}, ${SharedMusicbillProperty.SHARED_USER_ID} ) ON CONFLICT REPLACE
       )
     `;
 
