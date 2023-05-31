@@ -32,7 +32,7 @@ const maskProps: { style: CSSProperties } = {
 };
 const bodyProps: { style: CSSProperties } = {
   style: {
-    width: 250,
+    width: 300,
     display: 'flex',
     flexDirection: 'column',
   },
@@ -100,7 +100,16 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
             <Content style={style}>
               <div className="user-list">
                 {d.value.map((u) => (
-                  <User key={u.id} user={u} onClose={onClose} />
+                  <User
+                    key={u.id}
+                    user={u}
+                    onClose={onClose}
+                    owner={
+                      musicbill.shareStatus !==
+                      MusicbillSharedStatus.SHARE_TO_ME
+                    }
+                    musicbillId={musicbill.id}
+                  />
                 ))}
               </div>
               <Button

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import getMusicbillSharedUserListRequest from '@/server/api/get_musicbill_shared_user_list';
 import logger from '@/utils/logger';
 import { User } from './constants';
+import e, { EventType } from '../eventemitter';
 
 type Data =
   | {
@@ -53,6 +54,14 @@ export default ({ open, id }: { open: boolean; id: string }) => {
       setData(dataLoading);
     }
   }, [getMusicbillSharedUserList, open]);
+
+  useEffect(() => {
+    const unlistenReload = e.listen(
+      EventType.RELOAD_SHARED_USERS,
+      getMusicbillSharedUserList,
+    );
+    return unlistenReload;
+  }, [getMusicbillSharedUserList]);
 
   return { data, reload: getMusicbillSharedUserList };
 };
