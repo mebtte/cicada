@@ -24,7 +24,7 @@ import updateProfile from './controllers/update_profile';
 import getSingerDetail from './controllers/get_singer_detail';
 import getMusicDetail from './controllers/get_music_detail';
 import getUserDetail from './controllers/get_user_detail';
-import getSelfMusicList from './controllers/get_self_music_list';
+import getMusicList from './controllers/get_music_list';
 import getSelfSingerList from './controllers/get_self_singer_list';
 import deleteMusic from './controllers/delete_music';
 import searchMusicByLyric from './controllers/search_music_by_lyric';
@@ -50,11 +50,9 @@ const router = new Router<DefaultState, Context>();
 const parseBody = bodyParser();
 
 router.get('/exploration', getExploration); // 获取推荐内容
-
 router.get('/profile', getProfile); // 获取个人资料
 router.put('/profile', parseBody, updateProfile); // 更新个人资料
 router.get('/user_detail', getUserDetail); // 获取用户信息
-
 router.get('/self_musicbill_list', getSelfMusicbillList); // 获取个人乐单列表
 router.get('/self_musicbill', getSelfMusicbill); // 获取个人乐单
 router.post('/musicbill', parseBody, createMusicbill); // 创建乐单
@@ -71,14 +69,13 @@ router.get('/self_musicbill_collection_list', getSelfMusicbillCollectionList); /
 router.get('/musicbill/shared_user_list', getMusicbillSharedUserList); // 获取乐单共享用户列表
 router.post('/musicbill/shared_user', parseBody, addMusicbillSharedUser); // 乐单添加共享用户
 router.delete('/musicbill/shared_user', deleteMusicbillSharedUser); // 乐单移除共享用户
-
 router.post('/music', parseBody, createMusic); // 创建音乐
 router.put('/music', parseBody, updateMusic); // 更新音乐
 router.delete('/music', deleteMusic); // 删除音乐
 router.get('/music_detail', getMusicDetail); // 获取音乐详情
 router.get('/music/search', searchMusic); // 搜索音乐
 router.get('/music/search_by_lyric', searchMusicByLyric); // 通过歌词搜索音乐
-router.get('/self_music_list', getSelfMusicList); // 获取自己的音乐列表
+router.get('/music_list', getMusicList); // 获取音乐列表
 router.get('/lyric_list', getLyricList); // 获取音乐歌词列表
 
 router.post('/singer', parseBody, createSinger); // 创建歌手

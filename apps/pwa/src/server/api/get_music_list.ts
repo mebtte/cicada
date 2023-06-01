@@ -3,10 +3,10 @@ import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
 /**
- * 获取自己的音乐列表
+ * 获取音乐列表
  * @author mebtte<hi@mebtte.com>
  */
-async function getSelfMusicList({
+async function getMusicList({
   keyword,
   page,
   pageSize,
@@ -33,7 +33,7 @@ async function getSelfMusicList({
       createTimestamp: number;
     }[];
   }>({
-    path: '/api/self_music_list',
+    path: '/api/music_list',
     params: { keyword, page, pageSize },
     withToken: true,
   });
@@ -47,4 +47,4 @@ async function getSelfMusicList({
   };
 }
 
-export default getSelfMusicList;
+export default getMusicList;
