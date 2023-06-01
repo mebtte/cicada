@@ -20,7 +20,7 @@ import searchSinger from './controllers/search_singer';
 import createSinger from './controllers/create_singer';
 import updateSinger from './controllers/update_singer';
 import updateProfile from './controllers/update_profile';
-import getSingerDetail from './controllers/get_singer_detail';
+import getSinger from './controllers/get_singer';
 import getMusic from './controllers/get_music';
 import getUserDetail from './controllers/get_user_detail';
 import getMusicList from './controllers/get_music_list';
@@ -75,11 +75,10 @@ router.get('/music/search', searchMusic); // 搜索音乐
 router.get('/music/search_by_lyric', searchMusicByLyric); // 通过歌词搜索音乐
 router.get('/music_list', getMusicList); // 获取音乐列表
 router.get('/lyric_list', getLyricList); // 获取音乐歌词列表
-
 router.post('/singer', parseBody, createSinger); // 创建歌手
 router.put('/singer', parseBody, updateSinger); // 更新歌手
 router.get('/singer/search', searchSinger); // 搜索歌手
-router.get('/singer_detail', getSingerDetail); // 获取歌手详情
+router.get('/singer', getSinger); // 获取歌手
 router.get('/self_singer_list', getSelfSingerList); // 获取自己的歌手列表
 router.delete('/music_play_record', deleteMusicPlayRecord); // 删除音乐播放记录
 router.get('/music_play_record_list', getMusicPlayRecordList); // 获取音乐播放记录列表

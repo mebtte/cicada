@@ -4,7 +4,7 @@ import dialog from '@/utils/dialog';
 import createMusicbillRequest from '@/server/api/create_musicbill';
 import createSingerRequest from '@/server/api/create_singer';
 import getMusic from '@/server/api/get_music';
-import getSingerDetail from '@/server/api/get_singer_detail';
+import getSinger from '@/server/api/get_singer';
 import { Music, SingerWithAliases } from './constants';
 import e, { EditDialogType, EventType } from './eventemitter';
 
@@ -77,7 +77,7 @@ export function emitMusicUpdated(id: string) {
 }
 
 export function emitSingerUpdated(id: string) {
-  getSingerDetail(id).then((singer) =>
+  getSinger(id).then((singer) =>
     e.emit(EventType.SINGER_UPDATED, {
       singer: {
         id: singer.id,

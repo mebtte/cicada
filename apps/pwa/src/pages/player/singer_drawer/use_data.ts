@@ -1,7 +1,7 @@
 import day from '#/utils/day';
 import excludeProperty from '#/utils/exclude_property';
 import logger from '@/utils/logger';
-import getSingerDetail from '@/server/api/get_singer_detail';
+import getSinger from '@/server/api/get_singer';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import { useCallback, useEffect, useState } from 'react';
 import { SingerDetail } from './constants';
@@ -25,7 +25,7 @@ export default (singerId: string) => {
   const getData = useCallback(async () => {
     setData(dataLoading);
     try {
-      const singer = await getSingerDetail(singerId);
+      const singer = await getSinger(singerId);
       setData({
         error: null,
         loading: false,
