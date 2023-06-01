@@ -5,10 +5,8 @@ import {
   CaptchaProperty,
   LOGIN_CODE_TABLE_NAME,
   LoginCodeProperty,
-  MUSICBILL_EXPORT_TABLE_NAME,
   MUSIC_MODIFY_RECORD_TABLE_NAME,
   MusicModifyRecordProperty,
-  MusicbillExportProperty,
   SINGER_MODIFY_RECORD_TABLE_NAME,
   SingerModifyRecordProperty,
 } from '@/constants/db_definition';
@@ -27,11 +25,6 @@ const TABLES: {
     table: LOGIN_CODE_TABLE_NAME,
     timestampColumn: LoginCodeProperty.CREATE_TIMESTAMP,
     ttl: 1000 * 60 * 60 * 24 * 7,
-  },
-  {
-    table: MUSICBILL_EXPORT_TABLE_NAME,
-    timestampColumn: MusicbillExportProperty.CREATE_TIMESTAMP,
-    ttl: 1000 * 60 * 60 * 24 * 30,
   },
   {
     table: MUSIC_MODIFY_RECORD_TABLE_NAME,

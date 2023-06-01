@@ -2,10 +2,8 @@ import { ExceptionCode } from '#/constants/exception';
 import { getMusicbillById } from '@/db/musicbill';
 import { getDB } from '@/db';
 import {
-  MUSICBILL_EXPORT_TABLE_NAME,
   MUSICBILL_MUSIC_TABLE_NAME,
   MUSICBILL_TABLE_NAME,
-  MusicbillExportProperty,
   MusicbillMusicProperty,
   MusicbillProperty,
   SHARED_MUSICBILL_TABLE_NAME,
@@ -54,13 +52,6 @@ export default async (ctx: Context) => {
     ),
     getDB().run(
       `
-        DELETE FROM ${MUSICBILL_EXPORT_TABLE_NAME}
-        WHERE ${MusicbillExportProperty.MUSICBILL_ID} = ?
-      `,
-      [id],
-    ),
-    getDB().run(
-      `
         DELETE FROM ${SHARED_MUSICBILL_TABLE_NAME}
         WHERE ${SharedMusicbillProperty.MUSICBILL_ID} = ?
       `,
@@ -70,7 +61,7 @@ export default async (ctx: Context) => {
   await getDB().run(
     `
       DELETE FROM ${MUSICBILL_TABLE_NAME}
-      WHERE ${MusicbillExportProperty.ID} = ?
+      WHERE ${MusicbillProperty.ID} = ?
     `,
     [id],
   );

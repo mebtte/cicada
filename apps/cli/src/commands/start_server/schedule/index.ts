@@ -3,7 +3,6 @@ import logger from '@/utils/logger';
 import removeOutdatedDB from './remove_outdated_db';
 import createDBSnapshot from './create_db_snapshot';
 import cleanOutdatedFile from './clean_outdated_file';
-import exportMusicbill from './export_musicbill';
 import removeNoMusicSinger from './remove_no_music_singer';
 import moveUnlinkedAssetToTrash from './move_unlinked_asset_to_trash';
 import removeOutdatedMusicPlayRecord from './remove_outdated_music_play_record';
@@ -93,17 +92,5 @@ export default {
 
       minute = (minute + 7) % 60;
     }
-
-    /** custom */
-    schedule
-      .scheduleJob('*/5 * * * *', exportMusicbill)
-      .addListener('run', () => onRun('export_musicbill'))
-      .addListener('error', (error) =>
-        onError({
-          job: 'export_musicbill',
-          error,
-        }),
-      )
-      .addListener('success', () => onFinish('export_musicbill'));
   },
 };

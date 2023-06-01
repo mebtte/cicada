@@ -1,25 +1,8 @@
-import excludeProperty from '#/utils/exclude_property';
 import { UserProperty } from '@/constants/db_definition';
 import updateUser from '@/db/update_user';
 import logger from '@/utils/logger';
+import { Response } from '#/server/api/get_profile';
 import { Context } from '../constants';
-
-const PROFILE_PROPERTIES = [
-  UserProperty.ID,
-  UserProperty.EMAIL,
-  UserProperty.AVATAR,
-  UserProperty.NICKNAME,
-  UserProperty.JOIN_TIMESTAMP,
-  UserProperty.ADMIN,
-  UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,
-  UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
-  UserProperty.MUSICBILL_MAX_AMOUNT,
-  UserProperty.MUSICBILL_ORDERS_JSON,
-  UserProperty.MUSIC_PLAY_RECORD_INDATE,
-];
-const NOT_PROFILE_PROPERTIES = Object.values(UserProperty).filter(
-  (p) => !PROFILE_PROPERTIES.includes(p),
-);
 
 export default async (ctx: Context) => {
   updateUser({
@@ -33,5 +16,17 @@ export default async (ctx: Context) => {
       error,
     }),
   );
-  return ctx.success(excludeProperty(ctx.user, NOT_PROFILE_PROPERTIES));
+  return ctx.success<Response>({
+    id: ctx.user.id,
+    email: ctx.user.email,
+    avatar: ctx.user.avatar,
+    nickname: ctx.user.nickname,
+    joinTimestamp: ctx.user.joinTimestamp,
+    admin: ctx.user.admin,
+    musicbillOrdersJSON: ctx.user.musicbillOrdersJSON,
+    musicbillMaxAmount: ctx.user.musicbillMaxAmount,
+    createMusicMaxAmountPerDay: ctx.user.createMusicMaxAmountPerDay,
+    lastActiveTimestamp: ctx.user.lastActiveTimestamp,
+    musicPlayRecordIndate: ctx.user.musicPlayRecordIndate,
+  });
 };

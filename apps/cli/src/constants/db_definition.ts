@@ -26,7 +26,6 @@ export enum UserProperty {
   MUSICBILL_ORDERS_JSON = 'musicbillOrdersJSON',
   MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
   CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
-  EXPORT_MUSICBILL_MAX_TIME_PER_DAY = 'exportMusicbillMaxTimePerDay',
   LAST_ACTIVE_TIMESTAMP = 'lastActiveTimestamp',
   MUSIC_PLAY_RECORD_INDATE = 'musicPlayRecordIndate',
 }
@@ -41,7 +40,6 @@ export type User = {
   [UserProperty.MUSICBILL_ORDERS_JSON]: string | null;
   [UserProperty.MUSICBILL_MAX_AMOUNT]: number;
   [UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: number;
-  [UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY]: number;
   [UserProperty.LAST_ACTIVE_TIMESTAMP]: number;
   [UserProperty.MUSIC_PLAY_RECORD_INDATE]: number;
 };
@@ -236,24 +234,6 @@ export type MusicbillCollection = {
   [MusicbillCollectionProperty.MUSICBILL_ID]: Musicbill[MusicbillProperty.ID];
   [MusicbillCollectionProperty.USER_ID]: User[UserProperty.ID];
   [MusicbillCollectionProperty.COLLECT_TIMESTAMP]: number;
-};
-
-export const MUSICBILL_EXPORT_TABLE_NAME = 'musicbill_export';
-export enum MusicbillExportProperty {
-  ID = 'id',
-  USER_ID = 'userId',
-  MUSICBILL_ID = 'musicbillId',
-  ACCESS_ORIGIN = 'accessOrigin',
-  CREATE_TIMESTAMP = 'createTimestamp',
-  EXPORTED_TIMESTAMP = 'exportedTimestamp',
-}
-export type MusicbillExport = {
-  [MusicbillExportProperty.ID]: number;
-  [MusicbillExportProperty.USER_ID]: User[UserProperty.ID];
-  [MusicbillExportProperty.MUSICBILL_ID]: Musicbill[MusicProperty.ID];
-  [MusicbillExportProperty.ACCESS_ORIGIN]: string;
-  [MusicbillExportProperty.CREATE_TIMESTAMP]: number;
-  [MusicbillExportProperty.EXPORTED_TIMESTAMP]: number;
 };
 
 export const SHARED_MUSICBILL_TABLE_NAME = 'shared_musicbill';

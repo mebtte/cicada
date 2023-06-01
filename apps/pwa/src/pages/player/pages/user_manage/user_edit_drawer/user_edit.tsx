@@ -38,13 +38,6 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
   > = (event) =>
     setCreateMusicMaxAmountPerDay(event.target.value.replace(/[\D.]/, ''));
 
-  const [exportMusicbillMaxTimePerDay, setExportMusicbillMaxTimePerDay] =
-    useState(() => user.exportMusicbillMaxTimePerDay.toString());
-  const onExportMusicbillMaxTimePerDayChange: ChangeEventHandler<
-    HTMLInputElement
-  > = (event) =>
-    setExportMusicbillMaxTimePerDay(event.target.value.replace(/[\D.]/, ''));
-
   const [musicPlayRecordIndate, setMusicPlayRecordIndate] = useState(() =>
     user.musicPlayRecordIndate.toString(),
   );
@@ -94,26 +87,6 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         e.emit(EventType.USER_UPDATED, {
           id: user.id,
           createMusicMaxAmountPerDay: createMusicMaxAmountPerDayNumber,
-        });
-      }
-
-      const exportMusicbillMaxTimePerDayNumber = Number(
-        exportMusicbillMaxTimePerDay,
-      );
-      if (
-        user.exportMusicbillMaxTimePerDay !== exportMusicbillMaxTimePerDayNumber
-      ) {
-        if (exportMusicbillMaxTimePerDayNumber < 0) {
-          throw new Error('每天导出乐单最大数量应大于等于 0');
-        }
-        await adminUpdateUser({
-          id: user.id,
-          key: AdminAllowUpdateKey.EXPORT_MUSICBILL_MAX_TIME_PER_DAY,
-          value: exportMusicbillMaxTimePerDayNumber,
-        });
-        e.emit(EventType.USER_UPDATED, {
-          id: user.id,
-          exportMusicbillMaxTimePerDay: exportMusicbillMaxTimePerDayNumber,
         });
       }
 
@@ -202,15 +175,6 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           inputProps={{
             value: createMusicMaxAmountPerDay,
             onChange: onCreateMusicMaxAmountPerDayChange,
-          }}
-        />
-        <Input
-          className="part"
-          label="每天导出乐单最大数量(0 表示无限制)"
-          disabled={loading}
-          inputProps={{
-            value: exportMusicbillMaxTimePerDay,
-            onChange: onExportMusicbillMaxTimePerDayChange,
           }}
         />
         <Input

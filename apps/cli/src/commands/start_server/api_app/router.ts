@@ -14,7 +14,6 @@ import createMusicbill from './controllers/create_musicbill';
 import deleteMusicbill from './controllers/delete_musicbill';
 import updateMusicbill from './controllers/update_musicbill';
 import searchMusic from './controllers/search_music';
-import createMusicbillExport from './controllers/create_musicbill_export';
 import createMusic from './controllers/create_music';
 import updateMusic from './controllers/update_music';
 import searchSinger from './controllers/search_singer';
@@ -60,7 +59,6 @@ router.delete('/musicbill', deleteMusicbill); // 删除乐单
 router.put('/musicbill', parseBody, updateMusicbill); // 更新乐单
 router.post('/musicbill_music', parseBody, addMusicToMusicbill); // 添加音乐到乐单
 router.delete('/musicbill_music', removeMusicFromMusicbill); // 从乐单移除音乐
-router.post('/musicbill_export', parseBody, createMusicbillExport); // 创建乐单导出
 router.get('/public_musicbill', getPublicMusicbill); // 获取公开歌单
 router.post('/public_musicbill/collection', parseBody, collectPublicMusicbill); // 收藏公开乐单
 router.delete('/public_musicbill/collection', uncollectPublicMusicbill); // 取消收藏公开乐单

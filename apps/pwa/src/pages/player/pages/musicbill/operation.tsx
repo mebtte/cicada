@@ -4,7 +4,6 @@ import {
   MdRefresh,
   MdPlaylistAdd,
   MdOutlineEdit,
-  MdOutlineDownload,
   MdOutlinePeopleAlt,
 } from 'react-icons/md';
 import { RequestStatus } from '@/constants';
@@ -14,7 +13,6 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
-import { exportMusicbill } from '../../utils';
 
 const Style = styled.div`
   display: flex;
@@ -41,9 +39,6 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         }
       >
         <MdPlaylistAdd />
-      </IconButton>
-      <IconButton onClick={() => exportMusicbill(musicbill.id)}>
-        <MdOutlineDownload />
       </IconButton>
       <IconButton
         loading={status === RequestStatus.LOADING}

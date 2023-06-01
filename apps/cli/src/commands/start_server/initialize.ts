@@ -31,8 +31,6 @@ import {
   MusicbillMusicProperty,
   MUSICBILL_COLLECTION_TABLE_NAME,
   MusicbillCollectionProperty,
-  MUSICBILL_EXPORT_TABLE_NAME,
-  MusicbillExportProperty,
   SHARED_MUSICBILL_TABLE_NAME,
   SharedMusicbillProperty,
 } from '@/constants/db_definition';
@@ -123,7 +121,6 @@ export default async () => {
         ${UserProperty.MUSICBILL_ORDERS_JSON} TEXT DEFAULT NULL,
         ${UserProperty.MUSICBILL_MAX_AMOUNT} INTEGER NOT NULL DEFAULT 100,
         ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY} INTEGER NOT NULL DEFAULT 10,
-        ${UserProperty.EXPORT_MUSICBILL_MAX_TIME_PER_DAY} INTEGER NOT NULL DEFAULT 3,
         ${UserProperty.LAST_ACTIVE_TIMESTAMP} INTEGER NOT NULL DEFAULT 0,
         ${UserProperty.MUSIC_PLAY_RECORD_INDATE} INTEGER NOT NULL DEFAULT 0
       )
@@ -251,16 +248,6 @@ export default async () => {
         UNIQUE( ${MusicbillCollectionProperty.MUSICBILL_ID}, ${MusicbillCollectionProperty.USER_ID} ) ON CONFLICT REPLACE
       )
     `;
-    const TABLE_MUSICBILL_EXPORT = `
-      CREATE TABLE ${MUSICBILL_EXPORT_TABLE_NAME} (
-        ${MusicbillExportProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${MusicbillExportProperty.USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
-        ${MusicbillExportProperty.MUSICBILL_ID} TEXT NOT NULL REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
-        ${MusicbillExportProperty.ACCESS_ORIGIN} TEXT NOT NULL,
-        ${MusicbillExportProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
-        ${MusicbillExportProperty.EXPORTED_TIMESTAMP} INTEGER DEFAULT NULL 
-      )
-    `;
     const TABLE_SHARED_MUSICBILL = `
       CREATE TABLE ${SHARED_MUSICBILL_TABLE_NAME} (
         ${SharedMusicbillProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -290,7 +277,6 @@ export default async () => {
       TABLE_MUSICBILL,
       TABLE_MUSICBILL_MUSIC,
       TABLE_MUSICBILL_COLLECTION,
-      TABLE_MUSICBILL_EXPORT,
       TABLE_SHARED_MUSICBILL,
     ];
     for (const table of TABLES) {

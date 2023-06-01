@@ -1,13 +1,13 @@
 export type Response = {
   id: string;
   email: string;
-  nickname: string;
   avatar: string;
-  admin: 0 | 1;
-  remark: string;
+  nickname: string;
   joinTimestamp: number;
-  lastActiveTimestamp: number;
+  admin: 0 | 1;
+  musicbillOrdersJSON?: string | null;
   musicbillMaxAmount: number;
   createMusicMaxAmountPerDay: number;
+  lastActiveTimestamp: number;
   musicPlayRecordIndate: number;
-}[];
+};

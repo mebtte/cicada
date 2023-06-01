@@ -199,8 +199,8 @@ async function addUserLastActiveTimestamp() {
   );
 }
 
-async function createSharedMusicbill() {
-  await getDB().run(
+function createSharedMusicbill() {
+  return getDB().run(
     `
       CREATE TABLE ${SHARED_MUSICBILL_TABLE_NAME} (
         ${SharedMusicbillProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -216,10 +216,23 @@ async function createSharedMusicbill() {
   );
 }
 
-async function addUserMusicPlayRecordIndate() {
-  await getDB().run(
+function addUserMusicPlayRecordIndate() {
+  return getDB().run(
     `
       ALTER TABLE user ADD musicPlayRecordIndate INTEGER NOT NULL DEFAULT 0
+    `,
+  );
+}
+
+async function dropMusicbillExport() {
+  await getDB().run(
+    `
+      ALTER TABLE user DROP COLUMN exportMusicbillMaxTimePerDay
+    `,
+  );
+  await getDB().run(
+    `
+      DROP TABLE musicbill_export
     `,
   );
 }
@@ -300,6 +313,11 @@ export default async ({ data }: { data: string }) => {
   spinner.start({ text: '正在创建 shared_musicbill...' });
   await createSharedMusicbill();
   spinner.success({ text: 'shared_musicbill 已创建' });
+
+  spinner = createSpinner();
+  spinner.start({ text: '正在移除 musicbill_export...' });
+  await dropMusicbillExport();
+  spinner.success({ text: 'musicbill_export 已移除' });
 
   spinner = createSpinner();
   spinner.start({ text: '正在写入新的版本号...' });

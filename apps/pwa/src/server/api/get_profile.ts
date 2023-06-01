@@ -1,21 +1,9 @@
 import { prefixServerOrigin } from '@/global_states/setting';
+import { Response } from '#/server/api/get_profile';
 import { request } from '..';
 
 async function getProfile() {
-  const profile = await request<{
-    id: string;
-    email: string;
-    avatar: string;
-    nickname: string;
-    joinTimestamp: number;
-    admin: 0 | 1;
-    musicbillOrdersJSON?: string;
-    musicbillMaxAmount: number;
-    createMusicMaxAmountPerDay: number;
-    exportMusicbillMaxTimePerDay: number;
-    lastActiveTimestamp: number;
-    musicPlayRecordIndate: number;
-  }>({
+  const profile = await request<Response>({
     path: '/api/profile',
     withToken: true,
   });

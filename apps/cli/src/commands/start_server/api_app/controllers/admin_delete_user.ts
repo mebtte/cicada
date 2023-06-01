@@ -5,7 +5,6 @@ import {
   LOGIN_CODE_TABLE_NAME,
   LoginCodeProperty,
   MUSICBILL_COLLECTION_TABLE_NAME,
-  MUSICBILL_EXPORT_TABLE_NAME,
   MUSICBILL_MUSIC_TABLE_NAME,
   MUSICBILL_TABLE_NAME,
   MUSIC_MODIFY_RECORD_TABLE_NAME,
@@ -15,7 +14,6 @@ import {
   MusicPlayRecordProperty,
   MusicProperty,
   MusicbillCollectionProperty,
-  MusicbillExportProperty,
   MusicbillMusicProperty,
   MusicbillProperty,
   SHARED_MUSICBILL_TABLE_NAME,
@@ -114,13 +112,6 @@ export default async (ctx: Context) => {
       `
         DELETE FROM ${MUSICBILL_COLLECTION_TABLE_NAME}
         WHERE ${MusicbillCollectionProperty.USER_ID} = ?
-      `,
-      [id],
-    ),
-    getDB().run(
-      `
-        DELETE FROM ${MUSICBILL_EXPORT_TABLE_NAME}
-        WHERE ${MusicbillExportProperty.USER_ID} = ?
       `,
       [id],
     ),

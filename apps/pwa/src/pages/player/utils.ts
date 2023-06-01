@@ -1,30 +1,12 @@
 import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/utils/dialog';
-import logger from '@/utils/logger';
-import notice from '@/utils/notice';
 import createMusicbillRequest from '@/server/api/create_musicbill';
-import createMusicbillExport from '@/server/api/create_musicbill_export';
 import createSingerRequest from '@/server/api/create_singer';
 import getMusicDetail from '@/server/api/get_music_detail';
 import getSingerDetail from '@/server/api/get_singer_detail';
 import { Music, SingerWithAliases } from './constants';
 import e, { EditDialogType, EventType } from './eventemitter';
-
-export function exportMusicbill(id: string) {
-  return dialog.confirm({
-    title: '确定要导出乐单吗?',
-    content:
-      '导出乐单将会歌单内的音乐全部打包后发送到你的邮箱, 请注意导出乐单每天有次数限制',
-    onConfirm: () =>
-      createMusicbillExport(id)
-        .then(() => void notice.info('乐单导出后将会发送到邮箱, 请注意查收'))
-        .catch((error) => {
-          logger.error(error, '创建歌单导出失败');
-          return void notice.error(error.message);
-        }),
-  });
-}
 
 export function openCreateMusicbillDialog() {
   return e.emit(EventType.OPEN_EDIT_DIALOG, {
