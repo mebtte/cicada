@@ -165,8 +165,8 @@ async function migrateMusicHqToSq() {
   }
 }
 
-async function dropMusicAcAndHq() {
-  await Promise.all([
+function dropMusicAcAndHq() {
+  return Promise.all([
     getDB().run(
       `
         ALTER TABLE music DROP COLUMN ac
@@ -180,24 +180,24 @@ async function dropMusicAcAndHq() {
   ]);
 }
 
-async function renameMusicSq() {
-  await getDB().run(
+function renameMusicSq() {
+  return getDB().run(
     `
       ALTER TABLE music RENAME COLUMN sq TO asset
     `,
   );
 }
 
-async function addMusicYear() {
-  await getDB().run(
+function addMusicYear() {
+  return getDB().run(
     `
       ALTER TABLE music ADD year INTEGER
     `,
   );
 }
 
-async function addUserLastActiveTimestamp() {
-  await getDB().run(
+function addUserLastActiveTimestamp() {
+  return getDB().run(
     `
       ALTER TABLE user ADD lastActiveTimestamp INTEGER NOT NULL DEFAULT 0
     `,
@@ -248,8 +248,8 @@ function dropMusicbillExport() {
   ]);
 }
 
-async function writeNewVersion() {
-  await fsPromises.writeFile(getDataVersionPath(), '1');
+function writeNewVersion() {
+  return fsPromises.writeFile(getDataVersionPath(), '1');
 }
 
 export default async ({ data }: { data: string }) => {
