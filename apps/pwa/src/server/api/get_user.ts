@@ -1,14 +1,14 @@
-import { Response } from '#/server/api/get_user_detail';
 import { prefixServerOrigin } from '@/global_states/setting';
+import { Response } from '#/server/api/get_user';
 import { request } from '..';
 
 /**
  * 获取用户详情
  * @author mebtte<hi@mebtte.com>
  */
-async function getUserDetail(id: string) {
+async function getUser(id: string) {
   const user = await request<Response>({
-    path: '/api/user_detail',
+    path: '/api/user',
     params: { id },
     withToken: true,
   });
@@ -27,4 +27,4 @@ async function getUserDetail(id: string) {
   };
 }
 
-export default getUserDetail;
+export default getUser;

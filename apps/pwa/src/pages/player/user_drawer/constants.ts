@@ -1,7 +1,7 @@
-import getUserDetail from '@/server/api/get_user_detail';
+import getUser from '@/server/api/get_user';
 import { MusicWithSingerAliases, Index } from '../constants';
 
-export type UserDetail = AsyncReturnType<typeof getUserDetail> & {
+export type UserDetail = AsyncReturnType<typeof getUser> & {
   musicList: (MusicWithSingerAliases & Index)[];
 };
 

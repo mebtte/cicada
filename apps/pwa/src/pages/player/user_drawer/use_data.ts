@@ -1,5 +1,5 @@
 import logger from '@/utils/logger';
-import getUserDetail from '@/server/api/get_user_detail';
+import getUser from '@/server/api/get_user';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import { useCallback, useEffect, useState } from 'react';
 import { UserDetail } from './constants';
@@ -20,7 +20,7 @@ export default (id: string) => {
   const getData = useCallback(async () => {
     setData(dataLoading);
     try {
-      const userDetail = await getUserDetail(id);
+      const userDetail = await getUser(id);
       setData({
         error: null,
         loading: false,

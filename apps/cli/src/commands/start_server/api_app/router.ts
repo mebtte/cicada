@@ -22,7 +22,7 @@ import updateSinger from './controllers/update_singer';
 import updateProfile from './controllers/update_profile';
 import getSinger from './controllers/get_singer';
 import getMusic from './controllers/get_music';
-import getUserDetail from './controllers/get_user_detail';
+import getUser from './controllers/get_user';
 import getMusicList from './controllers/get_music_list';
 import getSelfSingerList from './controllers/get_self_singer_list';
 import deleteMusic from './controllers/delete_music';
@@ -51,7 +51,7 @@ const parseBody = bodyParser();
 router.get('/exploration', getExploration); // 获取推荐内容
 router.get('/profile', getProfile); // 获取个人资料
 router.put('/profile', parseBody, updateProfile); // 更新个人资料
-router.get('/user_detail', getUserDetail); // 获取用户信息
+router.get('/user', getUser); // 获取用户
 router.get('/self_musicbill_list', getSelfMusicbillList); // 获取个人乐单列表
 router.get('/self_musicbill', getSelfMusicbill); // 获取个人乐单
 router.post('/musicbill', parseBody, createMusicbill); // 创建乐单
