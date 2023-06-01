@@ -76,10 +76,6 @@ export function getLogDirectory() {
   return `${config.data}/logs`;
 }
 
-export function getDownloadDirectory() {
-  return `${config.data}/downloads`;
-}
-
 export function getCacheDirectory() {
   return `${config.data}/cache`;
 }

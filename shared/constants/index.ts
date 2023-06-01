@@ -14,7 +14,6 @@ export const GET_LOGIN_CODE_INTERVAL = 1000 * 60 * 2;
 
 export enum PathPrefix {
   FORM = 'form',
-  DOWNLOAD = 'download',
   ASSET = 'asset',
   API = 'api',
   BASE = 'base',
@@ -79,12 +78,6 @@ export const EFFECTIVE_PLAY_PERCENT = 0.75;
  * @author mebtte<hi@mebtte.com>
  */
 export const ALIAS_DIVIDER = '♫';
-
-/**
- * 下载资源存活时间
- * @author mebtte<hi@mebtte.com>
- */
-export const DOWNLOAD_TTL = 1000 * 60 * 60 * 24 * 3;
 
 /**
  * 图片最大尺寸

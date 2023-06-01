@@ -40,7 +40,6 @@ import {
   getConfig,
   getDBFilePath,
   getDBSnapshotDirectory,
-  getDownloadDirectory,
   getLogDirectory,
   getTrashDirectory,
   getCacheDirectory,
@@ -66,7 +65,6 @@ export default async () => {
     getDBSnapshotDirectory(),
     getTrashDirectory(),
     getLogDirectory(),
-    getDownloadDirectory(),
     getCacheDirectory(),
 
     getAssetDirectory(),

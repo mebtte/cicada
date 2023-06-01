@@ -4,7 +4,12 @@
  * @author mebtte<hi@mebtte.com>
  */
 import inquirer from 'inquirer';
-import { getAssetDirectory, getDataVersionPath, updateConfig } from '@/config';
+import {
+  getAssetDirectory,
+  getConfig,
+  getDataVersionPath,
+  updateConfig,
+} from '@/config';
 import { createSpinner, Spinner } from 'nanospinner';
 import fs from 'fs';
 import fsPromises from 'fs/promises';
@@ -224,17 +229,23 @@ function addUserMusicPlayRecordIndate() {
   );
 }
 
-async function dropMusicbillExport() {
-  await getDB().run(
-    `
-      ALTER TABLE user DROP COLUMN exportMusicbillMaxTimePerDay
-    `,
-  );
-  await getDB().run(
-    `
-      DROP TABLE musicbill_export
-    `,
-  );
+function dropMusicbillExport() {
+  return Promise.all([
+    getDB().run(
+      `
+        ALTER TABLE user DROP COLUMN exportMusicbillMaxTimePerDay
+      `,
+    ),
+    getDB().run(
+      `
+        DROP TABLE musicbill_export
+      `,
+    ),
+    fsPromises.rm(`${getConfig().data}/downloads`, {
+      recursive: true,
+      force: true,
+    }),
+  ]);
 }
 
 async function writeNewVersion() {
