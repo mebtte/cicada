@@ -70,6 +70,6 @@ export const ZIndex = {
 export enum SearchTab {
   MUSIC = 'music',
   SINGER = 'singer',
-  MUSICBILL = 'musicbill',
+  PUBLIC_MUSICBILL = 'public_musicbill',
   LYRIC = 'lyric',
 }

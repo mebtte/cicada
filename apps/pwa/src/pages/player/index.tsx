@@ -25,7 +25,7 @@ import SingerDrawer from './singer_drawer';
 import EditDialog from './edit_dialog';
 import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
-import MusicbillDrawer from './musicbill_drawer';
+import PublicMusicbillDrawer from './public_musicbill_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
 
@@ -120,7 +120,7 @@ function Wrapper() {
       <AddMusicToMusicbillDrawer />
       <MusicbillOrderDrawer />
       <UserDrawer />
-      <MusicbillDrawer />
+      <PublicMusicbillDrawer />
 
       {/* fixed z-index */}
       <ProfileEditPopup />

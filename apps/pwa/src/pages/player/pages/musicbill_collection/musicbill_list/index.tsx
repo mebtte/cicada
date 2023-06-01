@@ -17,7 +17,7 @@ import day from '#/utils/day';
 import { HEADER_HEIGHT, SearchTab } from '../../../constants';
 import useMusicbillList from './use_musicbill_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
-import Musicbill from '../../../components/musicbill';
+import PublicMusicbill from '../../../components/public_musicbill';
 
 const Style = styled.div`
   flex: 1;
@@ -104,7 +104,7 @@ function MusicbillList() {
                   navigate({
                     path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
                     query: {
-                      [Query.SEARCH_TAB]: SearchTab.MUSICBILL,
+                      [Query.SEARCH_TAB]: SearchTab.PUBLIC_MUSICBILL,
                     },
                   })
                 }
@@ -122,7 +122,7 @@ function MusicbillList() {
           <MusicListContainer style={style}>
             <div className="list">
               {value!.musicbillList.map((mb) => (
-                <Musicbill
+                <PublicMusicbill
                   key={mb.id}
                   id={mb.id}
                   name={mb.name}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import MusicbillDrawer from './musicbill_drawer';
+import PublicMusicbillDrawer from './public_musicbill_drawer';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -10,7 +10,7 @@ function Wrapper() {
 
   useEffect(() => {
     const unlistenOpen = playerEventemitter.listen(
-      PlayerEventType.OPEN_MUSICBILL_DRAWER,
+      PlayerEventType.OPEN_PUBLIC_MUSICBILL_DRAWER,
       (data) => {
         setId(data.id);
         return setOpen(true);
@@ -24,7 +24,7 @@ function Wrapper() {
   }
 
   const onClose = () => setOpen(false);
-  return <MusicbillDrawer open={open} onClose={onClose} id={id} />;
+  return <PublicMusicbillDrawer open={open} onClose={onClose} id={id} />;
 }
 
 export default Wrapper;

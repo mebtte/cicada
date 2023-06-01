@@ -18,7 +18,7 @@ import {
 } from '../constants';
 import useData from './use_data';
 import { openCreateMusicbillDialog } from '../../../utils';
-import Musicbill from '../../../components/musicbill';
+import PublicMusicbill from '../../../components/public_musicbill';
 import TextGuide from '../text_guide';
 
 const Container = styled(animated.div)`
@@ -84,7 +84,7 @@ function Wrapper() {
       <MusicContainer style={style}>
         <div>
           {d.value!.musicbillList.map((musicbill) => (
-            <Musicbill
+            <PublicMusicbill
               key={musicbill.id}
               id={musicbill.id}
               cover={musicbill.cover}

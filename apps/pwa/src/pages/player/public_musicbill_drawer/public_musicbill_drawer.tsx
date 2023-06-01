@@ -77,7 +77,7 @@ function Wrapper({
   onClose: () => void;
   id: string;
 }) {
-  const zIndex = useDynamicZIndex(EventType.OPEN_MUSICBILL_DRAWER);
+  const zIndex = useDynamicZIndex(EventType.OPEN_PUBLIC_MUSICBILL_DRAWER);
   const { data, reload, collected } = useData(id);
 
   const transitions = useTransition(data, {

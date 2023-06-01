@@ -106,7 +106,7 @@ export enum EventType {
   OPEN_MUSIC_DOWNLOAD_DIALOG = 'open_music_download_dialog',
   OPEN_EDIT_DIALOG = 'open_music_edit_dialog',
   OPEN_USER_DRAWER = 'open_user_drawer',
-  OPEN_MUSICBILL_DRAWER = 'open_musicbill_drawer',
+  OPEN_PUBLIC_MUSICBILL_DRAWER = 'open_public_musicbill_drawer',
   OPEN_PROFILE_EDIT_POPUP = 'open_profile_edit_popup',
 
   FOCUS_SEARCH_INPUT = 'focus_search_input',
@@ -181,7 +181,7 @@ export default new Eventin<
     [EventType.OPEN_MUSIC_DOWNLOAD_DIALOG]: { music: Music };
     [EventType.OPEN_EDIT_DIALOG]: EditDialogData;
     [EventType.OPEN_USER_DRAWER]: { id: string };
-    [EventType.OPEN_MUSICBILL_DRAWER]: { id: string };
+    [EventType.OPEN_PUBLIC_MUSICBILL_DRAWER]: { id: string };
     [EventType.OPEN_PROFILE_EDIT_POPUP]: null;
 
     [EventType.FOCUS_SEARCH_INPUT]: null;

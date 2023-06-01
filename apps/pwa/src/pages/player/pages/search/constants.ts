@@ -5,7 +5,7 @@ const TAB_MAP_LABEL: Record<SearchTab, string> = {
   [SearchTab.MUSIC]: '音乐',
   [SearchTab.SINGER]: '歌手',
   [SearchTab.LYRIC]: '歌词',
-  [SearchTab.MUSICBILL]: '乐单',
+  [SearchTab.PUBLIC_MUSICBILL]: '公开乐单',
 };
 export const TAB_LIST: { tab: SearchTab; label: string }[] = TABS.map(
   (tab) => ({
