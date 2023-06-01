@@ -1,7 +1,6 @@
 import { Option } from '@/components/multiple_select';
 import Eventin from 'eventin';
 import {
-  Music,
   Musicbill,
   MusicWithSingerAliases,
   QueueMusic,
@@ -103,7 +102,6 @@ export enum EventType {
   OPEN_MUSICBILL_ORDER_DRAWER = 'open_musicbill_order_drawer',
   OPEN_PLAYLIST_PLAYQUEUE_DRAWER = 'open_playlist_playqueue_drawer',
   TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER = 'toggle_playlist_playqueue_drawer',
-  OPEN_MUSIC_DOWNLOAD_DIALOG = 'open_music_download_dialog',
   OPEN_EDIT_DIALOG = 'open_music_edit_dialog',
   OPEN_USER_DRAWER = 'open_user_drawer',
   OPEN_PUBLIC_MUSICBILL_DRAWER = 'open_public_musicbill_drawer',
@@ -178,7 +176,6 @@ export default new Eventin<
     [EventType.OPEN_MUSICBILL_ORDER_DRAWER]: null;
     [EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER]: null;
-    [EventType.OPEN_MUSIC_DOWNLOAD_DIALOG]: { music: Music };
     [EventType.OPEN_EDIT_DIALOG]: EditDialogData;
     [EventType.OPEN_USER_DRAWER]: { id: string };
     [EventType.OPEN_PUBLIC_MUSICBILL_DRAWER]: { id: string };

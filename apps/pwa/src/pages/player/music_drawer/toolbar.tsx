@@ -15,6 +15,8 @@ import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { ROOT_PATH } from '@/constants/route';
 import { Query } from '@/constants';
+import { saveAs } from 'file-saver';
+import formatMusicFilename from '#/utils/format_music_filename';
 import e, { EventType } from './eventemitter';
 import { MINI_INFO_HEIGHT, MusicDetail } from './constants';
 import playerEventemitter, {
@@ -96,14 +98,17 @@ function Toolbar({ music }: { music: MusicDetail }) {
         </IconButton>
         {IS_IPAD || IS_IPHONE ? null : (
           <IconButton
-            onClick={() =>
-              playerEventemitter.emit(
-                PlayerEventType.OPEN_MUSIC_DOWNLOAD_DIALOG,
-                {
-                  music,
-                },
-              )
-            }
+            onClick={() => {
+              const parts = music.asset.split('.');
+              return saveAs(
+                music.asset,
+                formatMusicFilename({
+                  name: music.name,
+                  singerNames: music.singers.map((s) => s.name),
+                  ext: `.${parts[parts.length - 1]}`,
+                }),
+              );
+            }}
           >
             <MdOutlineDownload />
           </IconButton>
