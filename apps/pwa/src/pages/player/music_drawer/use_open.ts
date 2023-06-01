@@ -27,11 +27,15 @@ export default () => {
     const unlistenOpenMusicDrawer = eventemitter.listen(
       EventType.OPEN_MUSIC_DRAWER,
       (data) =>
-        navigate({
-          query: {
-            [Query.MUSIC_DRAWER_ID]: data.id,
-          },
-        }),
+        window.setTimeout(
+          () =>
+            navigate({
+              query: {
+                [Query.MUSIC_DRAWER_ID]: data.id,
+              },
+            }),
+          0,
+        ),
     );
     return unlistenOpenMusicDrawer;
   }, [navigate]);
