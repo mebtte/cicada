@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import getMusicDetail from '@/server/api/get_music_detail';
+import getMusicRequest from '@/server/api/get_music';
 import { MusicType } from '#/constants/music';
 import getLyricList from '@/server/api/get_lyric_list';
 import DefaultCover from '@/asset/default_cover.jpeg';
@@ -45,7 +45,7 @@ export default (id: string) => {
   const getMusic = useCallback(async () => {
     setData(dataLoading);
     try {
-      const music = await getMusicDetail(id);
+      const music = await getMusicRequest(id);
       let lyrics: Lyric[] = [];
       if (music.type === MusicType.SONG) {
         lyrics = await getLyricList({

@@ -1,4 +1,5 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { Response } from '#/server/api/get_music';
 import { ExceptionCode } from '#/constants/exception';
 import excludeProperty from '#/utils/exclude_property';
 import {
@@ -89,16 +90,21 @@ export default async (ctx: Context) => {
       : undefined,
   ]);
   const musicIdMapSingerList: {
-    [key: string]: Pick<
+    [key: string]: (Pick<
       Singer,
       SingerProperty.ID | SingerProperty.NAME | SingerProperty.AVATAR
-    >[];
+    > & {
+      aliases: string[];
+    })[];
   } = {};
   allSingerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
       musicIdMapSingerList[s.musicId] = [];
     }
-    musicIdMapSingerList[s.musicId].push(excludeProperty(s, ['musicId']));
+    musicIdMapSingerList[s.musicId].push({
+      ...excludeProperty(s, ['musicId']),
+      aliases: s.aliases.split(ALIAS_DIVIDER),
+    });
   });
 
   const musicIdMapMusic: {
@@ -115,11 +121,13 @@ export default async (ctx: Context) => {
   musicList.forEach((m) => {
     musicIdMapMusic[m.id] = {
       ...m,
-      singers: musicIdMapSingerList[m.id] || [],
+      singers: (musicIdMapSingerList[m.id] || []).map((s) =>
+        excludeProperty(s, ['aliases']),
+      ),
     };
   });
 
-  return ctx.success({
+  return ctx.success<Response>({
     ...excludeProperty(music, [MusicProperty.CREATE_USER_ID]),
     cover: getAssetPublicPath(music.cover, AssetType.MUSIC_COVER),
     asset: getAssetPublicPath(music.asset, AssetType.MUSIC),
@@ -128,7 +136,7 @@ export default async (ctx: Context) => {
       ...s,
       avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
     })),
-    createUser,
+    createUser: createUser!,
     forkList: forkList
       .map((f) => musicIdMapMusic[f.musicId])
       .map((m) => ({

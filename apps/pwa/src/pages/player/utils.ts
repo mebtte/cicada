@@ -3,7 +3,7 @@ import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/utils/dialog';
 import createMusicbillRequest from '@/server/api/create_musicbill';
 import createSingerRequest from '@/server/api/create_singer';
-import getMusicDetail from '@/server/api/get_music_detail';
+import getMusic from '@/server/api/get_music';
 import getSingerDetail from '@/server/api/get_singer_detail';
 import { Music, SingerWithAliases } from './constants';
 import e, { EditDialogType, EventType } from './eventemitter';
@@ -61,7 +61,7 @@ export async function createSinger({
 }
 
 export function emitMusicUpdated(id: string) {
-  getMusicDetail(id).then((music) =>
+  getMusic(id).then((music) =>
     e.emit(EventType.MUSIC_UPDATED, {
       music: {
         id: music.id,

@@ -21,7 +21,7 @@ import createSinger from './controllers/create_singer';
 import updateSinger from './controllers/update_singer';
 import updateProfile from './controllers/update_profile';
 import getSingerDetail from './controllers/get_singer_detail';
-import getMusicDetail from './controllers/get_music_detail';
+import getMusic from './controllers/get_music';
 import getUserDetail from './controllers/get_user_detail';
 import getMusicList from './controllers/get_music_list';
 import getSelfSingerList from './controllers/get_self_singer_list';
@@ -70,7 +70,7 @@ router.delete('/musicbill/shared_user', deleteMusicbillSharedUser); // 乐单移
 router.post('/music', parseBody, createMusic); // 创建音乐
 router.put('/music', parseBody, updateMusic); // 更新音乐
 router.delete('/music', deleteMusic); // 删除音乐
-router.get('/music_detail', getMusicDetail); // 获取音乐详情
+router.get('/music', getMusic); // 获取音乐
 router.get('/music/search', searchMusic); // 搜索音乐
 router.get('/music/search_by_lyric', searchMusicByLyric); // 通过歌词搜索音乐
 router.get('/music_list', getMusicList); // 获取音乐列表
