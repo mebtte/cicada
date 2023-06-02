@@ -19,10 +19,6 @@ export default () => {
       title = '我的音乐';
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.MY_SINGER: {
-      title = '我的歌手';
-      break;
-    }
     case ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE: {
       title = '用户管理';
       break;

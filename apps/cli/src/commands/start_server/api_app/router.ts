@@ -5,8 +5,8 @@ import adminAuthorize from '@/commands/start_server/middlewares/admin_authorize'
 import { Context } from './constants';
 
 import getProfile from './controllers/get_profile';
-import getSelfMusicbillList from './controllers/get_self_musicbill_list';
-import getSelfMusicbill from './controllers/get_self_musicbill';
+import getMusicbillList from './controllers/get_musicbill_list';
+import getMusicbill from './controllers/get_musicbill';
 import addMusicToMusicbill from './controllers/add_music_to_musicbill';
 import removeMusicFromMusicbill from './controllers/remove_music_from_musicbill';
 import getLyricList from './controllers/get_lyric_list';
@@ -24,14 +24,13 @@ import getSinger from './controllers/get_singer';
 import getMusic from './controllers/get_music';
 import getUser from './controllers/get_user';
 import getMusicList from './controllers/get_music_list';
-import getSelfSingerList from './controllers/get_self_singer_list';
 import deleteMusic from './controllers/delete_music';
 import searchMusicByLyric from './controllers/search_music_by_lyric';
 import getPublicMusicbill from './controllers/get_public_musicbill';
 import searchPublicMusicbill from './controllers/search_public_musicbill';
 import collectPublicMusicbill from './controllers/collect_public_musicbill';
 import uncollectPublicMusicbill from './controllers/uncollect_public_musicbill';
-import getSelfMusicbillCollectionList from './controllers/get_self_musicbill_collection_list';
+import getPublicMusicbillCollectionList from './controllers/get_public_musicbill_collection_list';
 import getExploration from './controllers/get_exploration';
 import getMusicPlayRecordList from './controllers/get_music_play_record_list';
 import deleteMusicPlayRecord from './controllers/delete_music_play_record';
@@ -52,8 +51,8 @@ router.get('/exploration', getExploration); // 获取推荐内容
 router.get('/profile', getProfile); // 获取个人资料
 router.put('/profile', parseBody, updateProfile); // 更新个人资料
 router.get('/user', getUser); // 获取用户
-router.get('/self_musicbill_list', getSelfMusicbillList); // 获取个人乐单列表
-router.get('/self_musicbill', getSelfMusicbill); // 获取个人乐单
+router.get('/musicbill_list', getMusicbillList); // 获取乐单列表
+router.get('/musicbill', getMusicbill); // 获取乐单
 router.post('/musicbill', parseBody, createMusicbill); // 创建乐单
 router.delete('/musicbill', deleteMusicbill); // 删除乐单
 router.put('/musicbill', parseBody, updateMusicbill); // 更新乐单
@@ -63,7 +62,10 @@ router.get('/public_musicbill', getPublicMusicbill); // 获取公开歌单
 router.post('/public_musicbill/collection', parseBody, collectPublicMusicbill); // 收藏公开乐单
 router.delete('/public_musicbill/collection', uncollectPublicMusicbill); // 取消收藏公开乐单
 router.get('/public_musicbill/search', searchPublicMusicbill); // 搜索公开乐单
-router.get('/self_musicbill_collection_list', getSelfMusicbillCollectionList); // 获取乐单收藏列表
+router.get(
+  '/public_musicbill_collection_list',
+  getPublicMusicbillCollectionList,
+); // 获取公开乐单收藏列表
 router.get('/musicbill/shared_user_list', getMusicbillSharedUserList); // 获取乐单共享用户列表
 router.post('/musicbill/shared_user', parseBody, addMusicbillSharedUser); // 乐单添加共享用户
 router.delete('/musicbill/shared_user', deleteMusicbillSharedUser); // 乐单移除共享用户
@@ -79,7 +81,6 @@ router.post('/singer', parseBody, createSinger); // 创建歌手
 router.put('/singer', parseBody, updateSinger); // 更新歌手
 router.get('/singer/search', searchSinger); // 搜索歌手
 router.get('/singer', getSinger); // 获取歌手
-router.get('/self_singer_list', getSelfSingerList); // 获取自己的歌手列表
 router.delete('/music_play_record', deleteMusicPlayRecord); // 删除音乐播放记录
 router.get('/music_play_record_list', getMusicPlayRecordList); // 获取音乐播放记录列表
 

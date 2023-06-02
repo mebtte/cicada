@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import { RequestStatus } from '@/constants';
-import getSelfMusicbillList from '@/server/api/get_self_musicbill_list';
+import getMusicbillListRequest from '@/server/api/get_musicbill_list';
 import addMusicToMusicbill from '@/server/api/add_music_to_musicbill';
 import removeMusicFromMusicbill from '@/server/api/remove_music_from_musicbill';
 import logger from '@/utils/logger';
 import dialog from '@/utils/dialog';
-import getSelfMusicbill from '@/server/api/get_self_musicbill';
+import getMusicbill from '@/server/api/get_musicbill';
 import p from '@/global_states/profile';
 import notice from '@/utils/notice';
 import { ExceptionCode } from '#/constants/exception';
@@ -21,7 +21,7 @@ export default () => {
       setStatus(RequestStatus.LOADING);
     }
     try {
-      const mbl = await getSelfMusicbillList();
+      const mbl = await getMusicbillListRequest();
       setMusicbillList(
         mbl.map((mb) => ({
           id: mb.id,
@@ -67,7 +67,7 @@ export default () => {
           );
         }
         try {
-          const data = await getSelfMusicbill(id);
+          const data = await getMusicbill(id);
           setMusicbillList((mbl) =>
             mbl.map((mb) => {
               if (mb.id === id) {

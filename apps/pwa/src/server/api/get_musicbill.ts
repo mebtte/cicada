@@ -1,14 +1,14 @@
-import { Response } from '#/server/api/get_self_musicbill';
+import { Response } from '#/server/api/get_musicbill';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
 /**
- * 获取自己的歌单详情
+ * 获取乐单
  * @author mebtte<hi@mebtte.com>
  */
-async function getSelfMusicbill(id: string) {
+async function getMusicbill(id: string) {
   const musicbill = await request<Response>({
-    path: '/api/self_musicbill',
+    path: '/api/musicbill',
     params: { id },
     withToken: true,
   });
@@ -23,4 +23,4 @@ async function getSelfMusicbill(id: string) {
   };
 }
 
-export default getSelfMusicbill;
+export default getMusicbill;

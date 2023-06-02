@@ -3,11 +3,11 @@ import { Response } from '#/server/api/search_public_musicbill';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
 import excludeProperty from '#/utils/exclude_property';
 import {
-  MUSICBILL_COLLECTION_TABLE_NAME,
+  PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
   MUSICBILL_MUSIC_TABLE_NAME,
   MUSICBILL_TABLE_NAME,
   Musicbill,
-  MusicbillCollectionProperty,
+  PublicMusicbillCollectionProperty,
   MusicbillMusicProperty,
   MusicbillProperty,
   User,
@@ -80,12 +80,12 @@ export default async (ctx: Context) => {
             m.${MusicbillProperty.NAME},
             m.${MusicbillProperty.USER_ID},
             count(DISTINCT mm.${MusicbillMusicProperty.ID}) AS musicCount,
-            count(DISTINCT mc.${MusicbillCollectionProperty.ID}) AS collectionCount
+            count(DISTINCT mc.${PublicMusicbillCollectionProperty.ID}) AS collectionCount
           FROM ${MUSICBILL_TABLE_NAME} AS m
           LEFT JOIN ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
             ON m.${MusicbillProperty.ID} = mm.${MusicbillMusicProperty.MUSICBILL_ID}
-          LEFT JOIN ${MUSICBILL_COLLECTION_TABLE_NAME} AS mc
-            ON mc.${MusicbillCollectionProperty.MUSICBILL_ID} = m.${MusicbillProperty.ID}
+          LEFT JOIN ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME} AS mc
+            ON mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID} = m.${MusicbillProperty.ID}
           WHERE m.${MusicbillProperty.PUBLIC} = 1
             AND m.${MusicbillProperty.NAME} LIKE ?
           GROUP BY m.${MusicbillProperty.ID}
@@ -119,12 +119,12 @@ export default async (ctx: Context) => {
             m.${MusicbillProperty.NAME},
             m.${MusicbillProperty.USER_ID},
             count(DISTINCT mm.${MusicbillMusicProperty.ID}) AS musicCount,
-            count(DISTINCT mc.${MusicbillCollectionProperty.ID}) AS collectionCount
+            count(DISTINCT mc.${PublicMusicbillCollectionProperty.ID}) AS collectionCount
           FROM ${MUSICBILL_TABLE_NAME} AS m
           LEFT JOIN ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
             ON m.${MusicbillProperty.ID} = mm.${MusicbillMusicProperty.MUSICBILL_ID}
-          LEFT JOIN ${MUSICBILL_COLLECTION_TABLE_NAME} AS mc
-            ON mc.${MusicbillCollectionProperty.MUSICBILL_ID} = m.${MusicbillProperty.ID}
+          LEFT JOIN ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME} AS mc
+            ON mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID} = m.${MusicbillProperty.ID}
           WHERE m.${MusicbillProperty.PUBLIC} = 1
           GROUP BY m.${MusicbillProperty.ID}
           ORDER BY random()

@@ -4,7 +4,7 @@ import { getDB } from '@/db';
 import {
   LOGIN_CODE_TABLE_NAME,
   LoginCodeProperty,
-  MUSICBILL_COLLECTION_TABLE_NAME,
+  PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
   MUSICBILL_MUSIC_TABLE_NAME,
   MUSICBILL_TABLE_NAME,
   MUSIC_MODIFY_RECORD_TABLE_NAME,
@@ -13,7 +13,7 @@ import {
   MusicModifyRecordProperty,
   MusicPlayRecordProperty,
   MusicProperty,
-  MusicbillCollectionProperty,
+  PublicMusicbillCollectionProperty,
   MusicbillMusicProperty,
   MusicbillProperty,
   SHARED_MUSICBILL_TABLE_NAME,
@@ -110,8 +110,8 @@ export default async (ctx: Context) => {
     ),
     getDB().run(
       `
-        DELETE FROM ${MUSICBILL_COLLECTION_TABLE_NAME}
-        WHERE ${MusicbillCollectionProperty.USER_ID} = ?
+        DELETE FROM ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME}
+        WHERE ${PublicMusicbillCollectionProperty.USER_ID} = ?
       `,
       [id],
     ),

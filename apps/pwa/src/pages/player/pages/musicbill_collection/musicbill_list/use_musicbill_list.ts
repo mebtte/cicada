@@ -2,7 +2,7 @@ import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
-import getSelfMusicbillCollectionList from '@/server/api/get_self_musicbill_collection_list';
+import getPublicMusicbillCollectionList from '@/server/api/get_public_musicbill_collection_list';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import { PAGE_SIZE, Musicbill } from '../constants';
 import playerEventemitter, {
@@ -34,7 +34,7 @@ export default () => {
     async ({ keyword: k, page: p }: { keyword: string; page: number }) => {
       setData(dataLoading);
       try {
-        const d = await getSelfMusicbillCollectionList({
+        const d = await getPublicMusicbillCollectionList({
           keyword: k,
           page: p,
           pageSize: PAGE_SIZE,

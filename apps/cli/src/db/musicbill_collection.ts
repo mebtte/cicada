@@ -1,10 +1,12 @@
 import {
-  MusicbillCollection,
-  MusicbillCollectionProperty,
+  PublicMusicbillCollection,
+  PublicMusicbillCollectionProperty,
 } from '@/constants/db_definition';
 import { getDB } from '.';
 
-export function getMusicbillCollection<P extends MusicbillCollectionProperty>({
+export function getMusicbillCollection<
+  P extends PublicMusicbillCollectionProperty,
+>({
   musicbillId,
   userId,
   properties,
@@ -14,7 +16,7 @@ export function getMusicbillCollection<P extends MusicbillCollectionProperty>({
   properties: P[];
 }) {
   return getDB().get<{
-    [key in P]: MusicbillCollection[P];
+    [key in P]: PublicMusicbillCollection[P];
   }>(
     `
       SELECT

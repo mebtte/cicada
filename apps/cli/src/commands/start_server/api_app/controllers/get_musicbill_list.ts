@@ -1,4 +1,4 @@
-import { Response } from '#/server/api/get_self_musicbill_list';
+import { Response } from '#/server/api/get_musicbill_list';
 import { AssetType, MusicbillSharedStatus } from '#/constants';
 import { getAssetPublicPath } from '@/platform/asset';
 import {

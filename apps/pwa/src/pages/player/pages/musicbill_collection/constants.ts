@@ -1,7 +1,7 @@
-import getSelfMusicbillCollectionList from '@/server/api/get_self_musicbill_collection_list';
+import getPublicMusicbillCollectionList from '@/server/api/get_public_musicbill_collection_list';
 
 export type Musicbill = AsyncReturnType<
-  typeof getSelfMusicbillCollectionList
+  typeof getPublicMusicbillCollectionList
 >['musicbillList'][0];
 
 export const PAGE_SIZE = 50;

@@ -29,8 +29,8 @@ import {
   MusicbillProperty,
   MUSICBILL_MUSIC_TABLE_NAME,
   MusicbillMusicProperty,
-  MUSICBILL_COLLECTION_TABLE_NAME,
-  MusicbillCollectionProperty,
+  PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
+  PublicMusicbillCollectionProperty,
   SHARED_MUSICBILL_TABLE_NAME,
   SharedMusicbillProperty,
 } from '@/constants/db_definition';
@@ -237,13 +237,13 @@ export default async () => {
       )
     `;
     const TABLE_MUSICBILL_COLLECTION = `
-      CREATE TABLE ${MUSICBILL_COLLECTION_TABLE_NAME} (
-        ${MusicbillCollectionProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${MusicbillCollectionProperty.MUSICBILL_ID} TEXT NOT NULL REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
-        ${MusicbillCollectionProperty.USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
-        ${MusicbillCollectionProperty.COLLECT_TIMESTAMP} INTEGER NOT NULL,
+      CREATE TABLE ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME} (
+        ${PublicMusicbillCollectionProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${PublicMusicbillCollectionProperty.MUSICBILL_ID} TEXT NOT NULL REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
+        ${PublicMusicbillCollectionProperty.USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        ${PublicMusicbillCollectionProperty.COLLECT_TIMESTAMP} INTEGER NOT NULL,
 
-        UNIQUE( ${MusicbillCollectionProperty.MUSICBILL_ID}, ${MusicbillCollectionProperty.USER_ID} ) ON CONFLICT REPLACE
+        UNIQUE( ${PublicMusicbillCollectionProperty.MUSICBILL_ID}, ${PublicMusicbillCollectionProperty.USER_ID} ) ON CONFLICT REPLACE
       )
     `;
     const TABLE_SHARED_MUSICBILL = `

@@ -248,6 +248,14 @@ function dropMusicbillExport() {
   ]);
 }
 
+function renameMusicbillCollection() {
+  return getDB().run(
+    `
+      ALTER TABLE musicbill_collection RENAME TO public_musicbill_collection
+    `,
+  );
+}
+
 function writeNewVersion() {
   return fsPromises.writeFile(getDataVersionPath(), '1');
 }
@@ -329,6 +337,15 @@ export default async ({ data }: { data: string }) => {
   spinner.start({ text: '正在移除 musicbill_export...' });
   await dropMusicbillExport();
   spinner.success({ text: 'musicbill_export 已移除' });
+
+  spinner = createSpinner();
+  spinner.start({
+    text: '正在重命名 musicbill_collection 为 public_musicbill_collection...',
+  });
+  await renameMusicbillCollection();
+  spinner.success({
+    text: 'musicbill_collection 已重命名为 public_musicbill_collection',
+  });
 
   spinner = createSpinner();
   spinner.start({ text: '正在写入新的版本号...' });

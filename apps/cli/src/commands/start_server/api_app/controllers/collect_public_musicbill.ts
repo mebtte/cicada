@@ -5,7 +5,7 @@ import {
   getMusicbillCollection,
 } from '@/db/musicbill_collection';
 import {
-  MusicbillCollectionProperty,
+  PublicMusicbillCollectionProperty,
   MusicbillProperty,
 } from '@/constants/db_definition';
 import { Context } from '../constants';
@@ -23,7 +23,7 @@ export default async (ctx: Context) => {
     getMusicbillCollection({
       musicbillId: id,
       userId: ctx.user.id,
-      properties: [MusicbillCollectionProperty.ID],
+      properties: [PublicMusicbillCollectionProperty.ID],
     }),
   ]);
   if (!musicbill || !musicbill.public) {

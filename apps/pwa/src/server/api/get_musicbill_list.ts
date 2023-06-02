@@ -1,10 +1,10 @@
-import { Response } from '#/server/api/get_self_musicbill_list';
+import { Response } from '#/server/api/get_musicbill_list';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
-async function getSelfMusicbillList() {
+async function getMusicbillList() {
   const musicbillList = await request<Response>({
-    path: '/api/self_musicbill_list',
+    path: '/api/musicbill_list',
     withToken: true,
   });
   return musicbillList.map((mb) => ({
@@ -13,4 +13,4 @@ async function getSelfMusicbillList() {
   }));
 }
 
-export default getSelfMusicbillList;
+export default getMusicbillList;

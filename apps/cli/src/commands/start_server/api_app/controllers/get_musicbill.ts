@@ -1,4 +1,4 @@
-import { Response } from '#/server/api/get_self_musicbill';
+import { Response } from '#/server/api/get_musicbill';
 import { ALIAS_DIVIDER, AssetType, MusicbillSharedStatus } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getSingerListInMusicIds } from '@/db/singer';

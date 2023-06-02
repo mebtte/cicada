@@ -1,7 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';
 import { getMusicbillCollection } from '@/db/musicbill_collection';
-import { MusicbillCollectionProperty } from '@/constants/db_definition';
+import { PublicMusicbillCollectionProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -13,7 +13,7 @@ export default async (ctx: Context) => {
   const musicbillCollection = await getMusicbillCollection({
     musicbillId: id,
     userId: ctx.user.id,
-    properties: [MusicbillCollectionProperty.ID],
+    properties: [PublicMusicbillCollectionProperty.ID],
   });
   if (!musicbillCollection) {
     return ctx.except(ExceptionCode.NOT_COLLECT_MUSICBILL_YET);

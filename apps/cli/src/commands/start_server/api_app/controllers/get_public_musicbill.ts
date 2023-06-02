@@ -8,11 +8,11 @@ import {
   UserProperty,
   SingerProperty,
   MusicbillProperty,
-  MusicbillCollectionProperty,
+  PublicMusicbillCollectionProperty,
   MusicbillMusicProperty,
   MUSICBILL_MUSIC_TABLE_NAME,
   MUSIC_TABLE_NAME,
-  MUSICBILL_COLLECTION_TABLE_NAME,
+  PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getMusicbillById } from '@/db/musicbill';
@@ -78,15 +78,15 @@ export default async (ctx: Context) => {
         `
           SELECT
             count(*) AS value
-          FROM ${MUSICBILL_COLLECTION_TABLE_NAME}
-          WHERE ${MusicbillCollectionProperty.MUSICBILL_ID} = ?
+          FROM ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME}
+          WHERE ${PublicMusicbillCollectionProperty.MUSICBILL_ID} = ?
         `,
         [id],
       ),
       getMusicbillCollection({
         musicbillId: id,
         userId: ctx.user.id,
-        properties: [MusicbillCollectionProperty.ID],
+        properties: [PublicMusicbillCollectionProperty.ID],
       }),
     ]);
 

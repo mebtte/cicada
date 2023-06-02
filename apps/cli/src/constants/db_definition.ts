@@ -222,18 +222,19 @@ export type MusicbillMusic = {
   [MusicbillMusicProperty.ADD_TIMESTAMP]: number;
 };
 
-export const MUSICBILL_COLLECTION_TABLE_NAME = 'musicbill_collection';
-export enum MusicbillCollectionProperty {
+export const PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME =
+  'public_musicbill_collection';
+export enum PublicMusicbillCollectionProperty {
   ID = 'id',
   MUSICBILL_ID = 'musicbillId',
   USER_ID = 'userId',
   COLLECT_TIMESTAMP = 'collectTimestamp',
 }
-export type MusicbillCollection = {
-  [MusicbillCollectionProperty.ID]: number;
-  [MusicbillCollectionProperty.MUSICBILL_ID]: Musicbill[MusicbillProperty.ID];
-  [MusicbillCollectionProperty.USER_ID]: User[UserProperty.ID];
-  [MusicbillCollectionProperty.COLLECT_TIMESTAMP]: number;
+export type PublicMusicbillCollection = {
+  [PublicMusicbillCollectionProperty.ID]: number;
+  [PublicMusicbillCollectionProperty.MUSICBILL_ID]: Musicbill[MusicbillProperty.ID];
+  [PublicMusicbillCollectionProperty.USER_ID]: User[UserProperty.ID];
+  [PublicMusicbillCollectionProperty.COLLECT_TIMESTAMP]: number;
 };
 
 export const SHARED_MUSICBILL_TABLE_NAME = 'shared_musicbill';

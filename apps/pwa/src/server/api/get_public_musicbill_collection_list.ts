@@ -1,4 +1,5 @@
 import { prefixServerOrigin } from '@/global_states/setting';
+import { Response } from '#/server/api/get_public_musicbill_collection_list';
 import { request } from '..';
 
 async function getSelfMusicbillCollectionList({
@@ -10,18 +11,8 @@ async function getSelfMusicbillCollectionList({
   page: number;
   pageSize: number;
 }) {
-  const data = await request<{
-    total: number;
-    musicbillList: {
-      id: string;
-      name: string;
-      cover: string;
-      musicCount: number;
-      user: { id: string; nickname: string; avatar: string };
-      collectTimestamp: number;
-    }[];
-  }>({
-    path: '/api/self_musicbill_collection_list',
+  const data = await request<Response>({
+    path: '/api/public_musicbill_collection_list',
     params: { keyword, page, pageSize },
     withToken: true,
   });
