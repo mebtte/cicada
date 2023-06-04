@@ -16,8 +16,11 @@ import {
   SHARED_MUSICBILL_TABLE_NAME,
   SharedMusicbillProperty,
   SharedMusicbill,
+  MUSICBILL_TABLE_NAME,
+  USER_TABLE_NAME,
+  UserProperty,
+  Musicbill,
 } from '@/constants/db_definition';
-import { getMusicbillById } from '@/db/musicbill';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -33,31 +36,66 @@ export default async (ctx: Context) => {
    * 3. 是否拥有共享乐单
    * @author mebtte<hi@mebtte.com>
    */
-  const musicbill = await getMusicbillById(id, [
-    MusicbillProperty.ID,
-    MusicbillProperty.COVER,
-    MusicbillProperty.NAME,
-    MusicbillProperty.PUBLIC,
-    MusicbillProperty.CREATE_TIMESTAMP,
-    MusicbillProperty.USER_ID,
-  ]);
-  if (!musicbill) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
-  }
-  const shareToUsers = await getDB().all<
-    Pick<SharedMusicbill, SharedMusicbillProperty.SHARED_USER_ID>
+  const musicbill = await getDB().get<
+    Pick<
+      Musicbill,
+      | MusicbillProperty.ID
+      | MusicbillProperty.NAME
+      | MusicbillProperty.COVER
+      | MusicbillProperty.CREATE_TIMESTAMP
+      | MusicbillProperty.PUBLIC
+      | MusicbillProperty.USER_ID
+    > & {
+      userAvatar: string;
+      userNickname: string;
+    }
   >(
     `
       SELECT
-        ${SharedMusicbillProperty.SHARED_USER_ID}
-      FROM ${SHARED_MUSICBILL_TABLE_NAME}
+        mb.${MusicbillProperty.ID},
+        mb.${MusicbillProperty.NAME},
+        mb.${MusicbillProperty.COVER},
+        mb.${MusicbillProperty.CREATE_TIMESTAMP},
+        mb.${MusicbillProperty.PUBLIC},
+        mb.${MusicbillProperty.USER_ID},
+        u.${UserProperty.NICKNAME} AS userNickname,
+        u.${UserProperty.AVATAR} AS userAvatar
+      FROM ${MUSICBILL_TABLE_NAME} AS mb
+      JOIN ${USER_TABLE_NAME} AS u
+        ON mb.${MusicbillProperty.USER_ID} = u.${UserProperty.ID}
+      WHERE mb.${MusicbillProperty.ID} = ?
+    `,
+    [id],
+  );
+  if (!musicbill) {
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+  }
+  const sharedUserList = await getDB().all<
+    Pick<
+      SharedMusicbill,
+      SharedMusicbillProperty.ACCEPTED | SharedMusicbillProperty.SHARED_USER_ID
+    > & {
+      userNickname: string;
+      userAvatar: string;
+    }
+  >(
+    `
+      SELECT
+        smb.${SharedMusicbillProperty.ACCEPTED},
+        smb.${SharedMusicbillProperty.SHARED_USER_ID},
+        u.${UserProperty.NICKNAME} AS userNickname,
+        u.${UserProperty.AVATAR} AS userAvatar
+      FROM ${SHARED_MUSICBILL_TABLE_NAME} AS smb
+      JOIN ${USER_TABLE_NAME} AS u
+        ON smb.${SharedMusicbillProperty.SHARED_USER_ID} = u.${UserProperty.ID}
       WHERE ${SharedMusicbillProperty.MUSICBILL_ID} = ?
     `,
     [id],
   );
+  const sharedUser = sharedUserList.find((u) => u.sharedUserId === ctx.user.id);
   if (
     musicbill.userId !== ctx.user.id &&
-    !shareToUsers.find((u) => u.sharedUserId === ctx.user.id)
+    (!sharedUser || sharedUser.accepted !== 1)
   ) {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
   }
@@ -115,10 +153,23 @@ export default async (ctx: Context) => {
     }
   }
 
-  // @ts-expect-error
   return ctx.success<Response>({
-    ...excludeProperty(musicbill, [MusicbillProperty.USER_ID]),
+    id: musicbill.id,
+    name: musicbill.name,
+    createTimestamp: musicbill.createTimestamp,
+    public: !!musicbill.public,
     cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
+    owner: {
+      id: musicbill.userId,
+      nickname: musicbill.userNickname,
+      avatar: getAssetPublicPath(musicbill.userAvatar, AssetType.USER_AVATAR),
+    },
+    sharedUserList: sharedUserList.map((u) => ({
+      id: u.sharedUserId,
+      nickname: u.userNickname,
+      avatar: getAssetPublicPath(u.userAvatar, AssetType.USER_AVATAR),
+      accepted: !!u.accepted,
+    })),
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
