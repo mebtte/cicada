@@ -10,6 +10,14 @@ async function getMusicbillList() {
   return musicbillList.map((mb) => ({
     ...mb,
     cover: prefixServerOrigin(mb.cover),
+    owner: {
+      ...mb.owner,
+      avatar: prefixServerOrigin(mb.owner.avatar),
+    },
+    sharedUserList: mb.sharedUserList.map((u) => ({
+      ...u,
+      avatar: prefixServerOrigin(u.avatar),
+    })),
   }));
 }
 

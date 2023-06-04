@@ -15,6 +15,14 @@ async function getMusicbill(id: string) {
   return {
     ...musicbill,
     cover: prefixServerOrigin(musicbill.cover),
+    owner: {
+      ...musicbill.owner,
+      avatar: prefixServerOrigin(musicbill.owner.avatar),
+    },
+    sharedUserList: musicbill.sharedUserList.map((u) => ({
+      ...u,
+      avatar: prefixServerOrigin(u.avatar),
+    })),
     musicList: musicbill.musicList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),

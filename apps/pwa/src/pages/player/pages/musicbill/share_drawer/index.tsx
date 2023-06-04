@@ -2,8 +2,22 @@ import Drawer from '@/components/drawer';
 import { CSSProperties } from 'react';
 import styled from 'styled-components';
 import useNavigate from '@/utils/use_navigate';
-import useOpen from './use_open';
+import p from '@/global_states/profile';
+import Button, { Variant } from '@/components/button';
+import dialog from '@/utils/dialog';
+import notice from '@/utils/notice';
+import addMusicbillSharedUser from '@/server/api/add_musicbill_shared_user';
+import logger from '@/utils/logger';
+import deleteMusicbillSharedUser from '@/server/api/delete_musicbill_shared_user';
+import { EMAIL } from '#/constants/regexp';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { CSSVariable } from '@/global_style';
+import User from './user';
 import { Musicbill, ZIndex } from '../../../constants';
+import useOpen from './use_open';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../../../eventemitter';
 
 const maskProps: { style: CSSProperties } = {
   style: {
@@ -13,15 +27,29 @@ const maskProps: { style: CSSProperties } = {
 const bodyProps: { style: CSSProperties } = {
   style: {
     width: 300,
-    display: 'flex',
-    flexDirection: 'column',
+    overflow: 'auto',
   },
 };
-const Title = styled.div``;
+const actionStyle: CSSProperties = {
+  display: 'block',
+  margin: '10px 20px',
+  width: 'calc(100% - 40px)',
+};
+const Title = styled.div`
+  margin: 40px 20px 20px 20px;
+
+  font-weight: bold;
+  font-size: 16px;
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+`;
+const UserList = styled.div``;
 
 function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
   const navigate = useNavigate();
+  const profile = p.useState()!;
   const { open, onClose } = useOpen();
+
+  const owned = musicbill.owner.id === profile.id;
   return (
     <Drawer
       maskProps={maskProps}
@@ -29,8 +57,93 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
       open={open}
       onClose={onClose}
     >
-      <Title>共享用户列表</Title>
-      shared user list
+      <Title>共享用户</Title>
+      <UserList>
+        <User
+          user={musicbill.owner}
+          owner
+          accepted
+          musicbillId={musicbill.id}
+          onClose={onClose}
+        />
+        {musicbill.sharedUserList.map((u) => (
+          <User
+            key={u.id}
+            user={u}
+            accepted={u.accepted}
+            deletable={owned}
+            musicbillId={musicbill.id}
+            onClose={onClose}
+          />
+        ))}
+      </UserList>
+      <Button
+        variant={Variant.PRIMARY}
+        style={actionStyle}
+        onClick={() =>
+          dialog.textInput({
+            label: '邮箱',
+            confirmVariant: Variant.PRIMARY,
+            confirmText: '邀请',
+            onConfirm: async (email) => {
+              if (!email || !EMAIL.test(email)) {
+                notice.error('请输入合法的邮箱');
+                return false;
+              }
+
+              try {
+                await addMusicbillSharedUser({
+                  musicbillId: musicbill.id,
+                  email,
+                });
+                notice.info('已发出邀请');
+                playerEventemitter.emit(
+                  PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                  { id: musicbill.id, silence: true },
+                );
+              } catch (error) {
+                logger.error(error, '乐单邀请共享用户失败');
+                notice.error(error.message);
+                return false;
+              }
+            },
+          })
+        }
+      >
+        邀请用户
+      </Button>
+      {owned ? null : (
+        <Button
+          variant={Variant.DANGER}
+          style={actionStyle}
+          onClick={() =>
+            dialog.confirm({
+              title: '确定退出共享乐单吗?',
+              onConfirm: async () => {
+                try {
+                  await deleteMusicbillSharedUser({
+                    musicbillId: musicbill.id,
+                    userId: profile.id,
+                  });
+                  navigate({
+                    path: ROOT_PATH + PLAYER_PATH.EXPLORATION,
+                  });
+                  playerEventemitter.emit(
+                    PlayerEventType.RELOAD_MUSICBILL_LIST,
+                    null,
+                  );
+                } catch (error) {
+                  logger.error(error, '退出共享乐单失败');
+                  notice.error(error.message);
+                  return false;
+                }
+              },
+            })
+          }
+        >
+          退出共享
+        </Button>
+      )}
     </Drawer>
   );
 }
