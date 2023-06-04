@@ -27,7 +27,7 @@ export default () => {
 
   useEffect(() => {
     setOpen(false);
-  }, [location]);
+  }, [location.pathname]);
 
   return open;
 };

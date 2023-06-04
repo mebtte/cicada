@@ -1,7 +1,6 @@
 import { RequestStatus } from '@/constants';
 import { MusicType } from '#/constants/music';
 import { UtilZIndex } from '@/constants/style';
-import { MusicbillSharedStatus } from '#/constants';
 
 export const HEADER_HEIGHT = 55;
 
@@ -37,14 +36,22 @@ export interface QueueMusic extends MusicWithSingerAliases, Index {
   shuffle: boolean;
 }
 
+type MusicbillUser = {
+  id: string;
+  avatar: string;
+  nickname: string;
+};
+
 export interface Musicbill {
   id: string;
   name: string;
   cover: string;
   createTimestamp: number;
   public: boolean;
-  shareStatus: MusicbillSharedStatus;
-
+  owner: MusicbillUser;
+  sharedUserList: (MusicbillUser & {
+    accepted: boolean;
+  })[];
   musicList: (MusicWithSingerAliases & Index)[];
 
   status: RequestStatus;

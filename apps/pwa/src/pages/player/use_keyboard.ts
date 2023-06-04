@@ -3,8 +3,7 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { useEffect } from 'react';
 import notice from '@/utils/notice';
 import e, { EventType } from './eventemitter';
-import { QueueMusic } from './constants';
-import { LocalMusicbill } from './musicbilll_order_drawer/constant';
+import { QueueMusic, Musicbill } from './constants';
 
 export default ({
   paused,
@@ -13,7 +12,7 @@ export default ({
 }: {
   paused: boolean;
   queueMusic?: QueueMusic;
-  musicbillList: LocalMusicbill[];
+  musicbillList: Musicbill[];
 }) => {
   const navigate = useNavigate();
 
@@ -59,9 +58,7 @@ export default ({
         case '9': {
           if (event.metaKey || event.ctrlKey) {
             const index = Number(event.key);
-            const musicbill = musicbillList[index - 1] as
-              | LocalMusicbill
-              | undefined;
+            const musicbill = musicbillList[index - 1] as Musicbill | undefined;
             if (musicbill) {
               event.preventDefault();
 

@@ -4,7 +4,6 @@ import { CSSVariable } from '@/global_style';
 import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import ellipsis from '@/style/ellipsis';
-import { MusicbillSharedStatus } from '#/constants';
 import MusicbillCover from '../components/musicbill_cover';
 import { LocalMusicbill } from './constant';
 import { ZIndex } from '../constants';
@@ -65,7 +64,7 @@ function Musicbill({ selfIndex, musicbill }: Props) {
         size={28}
         src={musicbill.cover}
         publiz={musicbill.public}
-        shared={musicbill.shareStatus !== MusicbillSharedStatus.NOT_SHARE}
+        shared={musicbill.shared}
       />
       <div className="name">{musicbill.name}</div>
     </Style>

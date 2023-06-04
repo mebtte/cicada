@@ -1,7 +1,6 @@
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
-import { MusicbillSharedStatus } from '#/constants';
 import MusicbillCover from '../../components/musicbill_cover';
 import { Musicbill } from '../../constants';
 import { MINI_INFO_HEIGHT } from './constants';
@@ -39,7 +38,7 @@ function MiniInfo({ musicbill }: { musicbill: Musicbill }) {
         src={musicbill.cover}
         size={32}
         publiz={musicbill.public}
-        shared={musicbill.shareStatus !== MusicbillSharedStatus.NOT_SHARE}
+        shared={musicbill.sharedUserList.length > 0}
       />
       <div className="name">{musicbill.name}</div>
       <Operation musicbill={musicbill} />

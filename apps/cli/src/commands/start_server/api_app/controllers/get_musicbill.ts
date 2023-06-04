@@ -1,5 +1,5 @@
 import { Response } from '#/server/api/get_musicbill';
-import { ALIAS_DIVIDER, AssetType, MusicbillSharedStatus } from '#/constants';
+import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
@@ -115,15 +115,10 @@ export default async (ctx: Context) => {
     }
   }
 
+  // @ts-expect-error
   return ctx.success<Response>({
     ...excludeProperty(musicbill, [MusicbillProperty.USER_ID]),
     cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
-    shareStatus:
-      musicbill.userId === ctx.user.id
-        ? shareToUsers.length
-          ? MusicbillSharedStatus.SHARE_TO_OTHERS
-          : MusicbillSharedStatus.NOT_SHARE
-        : MusicbillSharedStatus.SHARE_TO_ME,
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],

@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import day from '#/utils/day';
 import { CSSVariable } from '@/global_style';
-import { MusicbillSharedStatus } from '#/constants';
 import { Musicbill } from '../../constants';
 import { INFO_HEIGHT } from './constants';
 import Operation from './operation';
@@ -45,7 +44,7 @@ function Info({ musicbill }: { musicbill: Musicbill }) {
         src={musicbill.cover}
         size={INFO_HEIGHT - GAP * 2}
         publiz={musicbill.public}
-        shared={musicbill.shareStatus !== MusicbillSharedStatus.NOT_SHARE}
+        shared={musicbill.sharedUserList.length > 0}
       />
       <div className="info">
         <div className="name">{musicbill.name}</div>

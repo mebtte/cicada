@@ -90,14 +90,3 @@ export const IMAGE_MAX_SIZE = 2048;
  * @author mebtte<hi@mebtte.com>
  */
 export const SHARED_MUSICBILL_INVITATION_TTL = 1000 * 60 * 60 * 24 * 3;
-
-export enum MusicbillSharedStatus {
-  NOT_SHARE = 0, // 未共享
-  SHARE_TO_OTHERS = 1, // 共享给别人
-  SHARE_TO_ME = 2, // 共享给我
-}
-export enum MusicbillSharedUserStatus {
-  OWNER = 0,
-  ACCEPTED = 1,
-  INVITED = 2,
-}

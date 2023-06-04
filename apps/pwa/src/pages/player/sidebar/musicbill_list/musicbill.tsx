@@ -3,7 +3,6 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { NavLink } from 'react-router-dom';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import { MusicbillSharedStatus } from '#/constants';
 import { Musicbill as MusicbillType } from '../../constants';
 import MusicbillCover from '../../components/musicbill_cover';
 
@@ -55,7 +54,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
         size={28}
         src={musicbill.cover}
         publiz={musicbill.public}
-        shared={musicbill.shareStatus !== MusicbillSharedStatus.NOT_SHARE}
+        shared={musicbill.sharedUserList.length > 0}
       />
       <div className="name">{musicbill.name}</div>
     </Style>

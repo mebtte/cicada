@@ -29,7 +29,8 @@ export default () => {
           cover: mb.cover || DefaultCover,
           createTimestamp: mb.createTimestamp,
           public: !!mb.public,
-          shareStatus: mb.shareStatus,
+          owner: mb.owner,
+          sharedUserList: mb.sharedUserList,
 
           musicList: [],
 
@@ -75,12 +76,13 @@ export default () => {
                   ...mb,
                   name: data.name,
                   cover: data.cover || mb.cover || DefaultCover,
+                  public: data.public,
+                  owner: data.owner,
+                  sharedUserList: data.sharedUserList,
                   musicList: data.musicList.map((m, index) => ({
                     ...m,
                     index: data.musicList.length - index,
                   })),
-                  public: !!data.public,
-                  shareStatus: data.shareStatus,
 
                   status: RequestStatus.SUCCESS,
                 };

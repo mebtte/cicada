@@ -1,10 +1,13 @@
-import { MusicbillSharedStatus } from '../../constants';
+type User = { id: string; nickname: string; avatar: string };
 
 export type Response = {
   id: string;
   cover: string;
   name: string;
-  public: 0 | 1;
+  public: boolean;
   createTimestamp: number;
-  shareStatus: MusicbillSharedStatus;
+  owner: User;
+  sharedUserList: (User & {
+    accepted: boolean;
+  })[];
 }[];
