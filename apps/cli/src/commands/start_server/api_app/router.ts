@@ -37,6 +37,7 @@ import deleteMusicPlayRecord from './controllers/delete_music_play_record';
 import addMusicbillSharedUser from './controllers/add_musicbill_shared_user';
 import deleteMusicbillSharedUser from './controllers/delete_musicbill_shared_user';
 import getSharedMusicbillInvitationList from './controllers/get_shared_musicbill_invitation_list';
+import acceptSharedMusicbillInvitation from './controllers/accept_shared_musicbill_invitation';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -72,6 +73,11 @@ router.get(
   '/shared_musicbill_invitation_list',
   getSharedMusicbillInvitationList,
 ); // 获取共享乐单邀请列表
+router.put(
+  '/shared_musicbill_invitation',
+  parseBody,
+  acceptSharedMusicbillInvitation,
+); // 接受共享乐单邀请
 router.post('/music', parseBody, createMusic); // 创建音乐
 router.put('/music', parseBody, updateMusic); // 更新音乐
 router.delete('/music', deleteMusic); // 删除音乐
