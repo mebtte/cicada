@@ -1,13 +1,20 @@
 import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { verify } from '@/platform/jwt';
-import { Next } from 'koa';
+import { Context, Next } from 'koa';
 import { getAssetPublicPath } from '@/platform/asset';
 import { getUserById } from '@/db/user';
-import { Context } from '@/constants/koa';
-import { UserProperty } from '@/constants/db_definition';
+import { User, UserProperty } from '@/constants/db_definition';
+import { ParasiteMiddleware } from './parasite';
 
-export default async (ctx: Context, next: Next) => {
+export interface AuthorizeMiddleware {
+  user: User;
+}
+
+export default async (
+  ctx: Context & ParasiteMiddleware & AuthorizeMiddleware,
+  next: Next,
+) => {
   const token = ctx.get('authorization');
 
   if (!token) {

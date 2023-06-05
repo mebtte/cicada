@@ -1,6 +1,5 @@
-import { User } from '@/constants/db_definition';
-import { Context as BaseContext } from '@/constants/koa';
+import { Context as BaseContext } from 'koa';
+import { ParasiteMiddleware } from '../../middlewares/parasite';
+import { AuthorizeMiddleware } from '../../middlewares/authorize';
 
-export interface Context extends BaseContext {
-  user: User;
-}
+export type Context = BaseContext & ParasiteMiddleware & AuthorizeMiddleware;

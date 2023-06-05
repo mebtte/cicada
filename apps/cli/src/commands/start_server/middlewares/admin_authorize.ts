@@ -1,8 +1,8 @@
 import { ExceptionCode } from '#/constants/exception';
-import { Next } from 'koa';
-import { Context } from '@/constants/koa';
+import { Context, Next } from 'koa';
+import { ParasiteMiddleware } from './parasite';
 
-export default async (ctx: Context, next: Next) => {
+export default async (ctx: Context & ParasiteMiddleware, next: Next) => {
   if (ctx.user.admin) {
     return next();
   }

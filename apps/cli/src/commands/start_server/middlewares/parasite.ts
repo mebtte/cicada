@@ -1,8 +1,12 @@
-import { Next } from 'koa';
+import { Next, Context } from 'koa';
 import { ExceptionCode, EXCEPTION_CODE_MAP } from '#/constants/exception';
-import { Context } from '../../../constants/koa';
 
-export default (ctx: Context, next: Next) => {
+export interface ParasiteMiddleware {
+  success: <Data>(data: Data) => void;
+  except: (exceptionCode: ExceptionCode) => void;
+}
+
+export default (ctx: Context & ParasiteMiddleware, next: Next) => {
   ctx.success = (data) => {
     ctx.status = 200;
     ctx.body = {
@@ -10,7 +14,7 @@ export default (ctx: Context, next: Next) => {
       data,
     };
   };
-  ctx.except = (exceptionCode: ExceptionCode) => {
+  ctx.except = (exceptionCode) => {
     ctx.body = {
       code: exceptionCode,
       message: EXCEPTION_CODE_MAP[exceptionCode].description,
