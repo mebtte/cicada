@@ -8,7 +8,6 @@ import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import addMusicbillSharedUser from '@/server/api/add_musicbill_shared_user';
 import logger from '@/utils/logger';
-import deleteMusicbillSharedUser from '@/server/api/delete_musicbill_shared_user';
 import { EMAIL } from '#/constants/regexp';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { CSSVariable } from '@/global_style';
@@ -18,6 +17,7 @@ import useOpen from './use_open';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
+import { quitSharedMusicbill } from '../utils';
 
 const maskProps: { style: CSSProperties } = {
   style: {
@@ -117,27 +117,12 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
           variant={Variant.DANGER}
           style={actionStyle}
           onClick={() =>
-            dialog.confirm({
-              title: '确定退出共享乐单吗?',
-              onConfirm: async () => {
-                try {
-                  await deleteMusicbillSharedUser({
-                    musicbillId: musicbill.id,
-                    userId: profile.id,
-                  });
-                  navigate({
-                    path: ROOT_PATH + PLAYER_PATH.EXPLORATION,
-                  });
-                  playerEventemitter.emit(
-                    PlayerEventType.RELOAD_MUSICBILL_LIST,
-                    null,
-                  );
-                } catch (error) {
-                  logger.error(error, '退出共享乐单失败');
-                  notice.error(error.message);
-                  return false;
-                }
-              },
+            quitSharedMusicbill({
+              musicbillId: musicbill.id,
+              afterQuitted: () =>
+                navigate({
+                  path: ROOT_PATH + PLAYER_PATH.EXPLORATION,
+                }),
             })
           }
         >

@@ -4,7 +4,13 @@ import { getAssetFilePath } from '@/platform/asset';
 import { AssetType } from '#/constants';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
 import exist from '#/utils/exist';
-import { Musicbill, MusicbillProperty } from '@/constants/db_definition';
+import {
+  Musicbill,
+  MusicbillProperty,
+  SHARED_MUSICBILL_TABLE_NAME,
+  SharedMusicbillProperty,
+} from '@/constants/db_definition';
+import { getDB } from '@/db';
 import { Context } from '../constants';
 
 const ALLOW_UPDATE_KEYS = Object.values(AllowUpdateKey);
@@ -96,8 +102,24 @@ export default async (ctx: Context) => {
     MusicbillProperty.NAME,
     MusicbillProperty.PUBLIC,
   ]);
-  if (!musicbill || musicbill.userId !== ctx.user.id) {
+  if (!musicbill) {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+  }
+  if (musicbill.userId !== ctx.user.id) {
+    const sharedUser = await getDB().get(
+      `
+        SELECT
+          ${SharedMusicbillProperty.ID}
+        FROM ${SHARED_MUSICBILL_TABLE_NAME}
+        WHERE ${SharedMusicbillProperty.MUSICBILL_ID} = ?
+          AND ${SharedMusicbillProperty.SHARED_USER_ID} = ?
+          AND ${SharedMusicbillProperty.ACCEPTED} = 1
+      `,
+      [id, ctx.user.id],
+    );
+    if (!sharedUser) {
+      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    }
   }
 
   return KEY_MAP_HANDLER[key]({ ctx, musicbill, value });
