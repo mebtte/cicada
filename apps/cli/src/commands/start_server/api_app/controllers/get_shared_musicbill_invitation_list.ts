@@ -27,11 +27,11 @@ export default async (ctx: Context) => {
   >(
     `
       SELECT
-        ${SharedMusicbillProperty.ID},
-        ${SharedMusicbillProperty.SHARE_TIMESTAMP},
-        ${SharedMusicbillProperty.INVITE_USER_ID},
-        ${UserProperty.NICKNAME} AS inviteUserNickname,
-        ${MusicbillProperty.NAME} AS musicbillName
+        smb.${SharedMusicbillProperty.ID},
+        smb.${SharedMusicbillProperty.SHARE_TIMESTAMP},
+        smb.${SharedMusicbillProperty.INVITE_USER_ID},
+        u.${UserProperty.NICKNAME} AS inviteUserNickname,
+        mb.${MusicbillProperty.NAME} AS musicbillName
       FROM ${SHARED_MUSICBILL_TABLE_NAME} AS smb
       JOIN ${USER_TABLE_NAME} AS u
         ON smb.${SharedMusicbillProperty.INVITE_USER_ID} = u.${UserProperty.ID}

@@ -27,8 +27,8 @@ export default () => {
       title = '设置';
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.MESSAGE: {
-      title = '消息';
+    case ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION: {
+      title = '共享乐单邀请';
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION: {

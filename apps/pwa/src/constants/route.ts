@@ -8,7 +8,7 @@ export const PLAYER_PATH = {
   MY_MUSIC: '/my_music',
   MUSICBILL: '/musicbill/:id',
   SETTING: '/setting',
-  MESSAGE: '/message',
+  SHARED_MUSICBILL_INVITATION: '/shared_musicbill_invitation',
   SEARCH: '/search',
   USER_MANAGE: '/user_manage',
   PUBLIC_MUSICBILL_COLLECTION: '/public_musicbill_collection',

@@ -6,6 +6,7 @@ import {
   MdSort,
   MdRefresh,
   MdStarOutline,
+  MdOutlinePeopleAlt,
 } from 'react-icons/md';
 import { ComponentSize } from '@/constants/style';
 import { useContext } from 'react';
@@ -73,6 +74,14 @@ function Top() {
         }
       >
         <MdStarOutline />
+      </IconButton>
+      <IconButton
+        size={ComponentSize.SMALL}
+        onClick={() =>
+          navigate(ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION)
+        }
+      >
+        <MdOutlinePeopleAlt />
       </IconButton>
     </Style>
   );
