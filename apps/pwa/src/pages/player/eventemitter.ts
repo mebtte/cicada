@@ -154,7 +154,7 @@ export default new Eventin<
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER]: { queueMusic: QueueMusic };
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY]: { queueMusic: QueueMusic };
 
-    [EventType.RELOAD_MUSICBILL_LIST]: null;
+    [EventType.RELOAD_MUSICBILL_LIST]: { silence: boolean };
     [EventType.FETCH_MUSICBILL_DETAIL]: { id: string; silence: boolean };
     [EventType.ADD_MUSIC_TO_MUSICBILL]: {
       musicbill: Musicbill;

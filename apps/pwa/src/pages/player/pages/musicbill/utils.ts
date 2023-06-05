@@ -22,7 +22,9 @@ export function quitSharedMusicbill({
           musicbillId,
           userId: profile.get()!.id,
         });
-        playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, null);
+        playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, {
+          silence: true,
+        });
         afterQuitted();
       } catch (error) {
         logger.error(error, '退出共享乐单失败');

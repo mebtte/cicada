@@ -13,7 +13,8 @@ import { Invitation as InvitationType } from './constants';
 import e, { EventType } from './eventemitter';
 
 const Style = styled.div`
-  padding: 10px 20px;
+  margin: 0 20px;
+  padding: 10px 0;
 
   > .time {
     font-size: 12px;
@@ -21,7 +22,7 @@ const Style = styled.div`
   }
 
   > .description {
-    margin: 5px 0;
+    margin: 5px 0 10px 0;
 
     font-size: 14px;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
@@ -36,8 +37,8 @@ const Style = styled.div`
     }
   }
 
-  &:hover {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  &:not(:last-child) {
+    border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
   }
 `;
 
@@ -55,7 +56,9 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
     setLoading(true);
     try {
       await acceptSharedMusicbillInvitation(id);
-      playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, null);
+      playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, {
+        silence: true,
+      });
       window.setTimeout(() => e.emit(EventType.INVITATION_ACCEPTED, { id }));
     } catch (error) {
       logger.error(error, '接受共享乐单邀请失败');

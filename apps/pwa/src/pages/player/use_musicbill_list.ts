@@ -231,7 +231,8 @@ export default () => {
 
     const unlistenReloadMusicbillList = eventemitter.listen(
       EventType.RELOAD_MUSICBILL_LIST,
-      reloadMusicbillList,
+      (payload) =>
+        payload.silence ? reloadMusicbillListSilently() : reloadMusicbillList(),
     );
     const unlistenMusicUpdated = eventemitter.listen(
       EventType.MUSIC_UPDATED,

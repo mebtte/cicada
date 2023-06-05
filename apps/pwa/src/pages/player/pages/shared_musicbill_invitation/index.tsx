@@ -29,7 +29,7 @@ const Content = styled(Container)`
   overflow: auto;
 
   > .description {
-    margin: 0 20px;
+    margin: 10px 20px;
 
     font-size: 12px;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};

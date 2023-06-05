@@ -13,7 +13,9 @@ import playerEventemitter, {
 import Musicbill from './musicbill';
 
 const reloadMusicbillList = () =>
-  playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, null);
+  playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, {
+    silence: false,
+  });
 const Style = styled.div`
   padding: 10px 0 max(env(safe-area-inset-bottom, 0) + 10px) 0;
 `;
