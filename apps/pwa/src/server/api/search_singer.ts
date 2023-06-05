@@ -6,18 +6,18 @@ async function searchSinger({
   keyword,
   page,
   pageSize,
-  minRequestDuration,
+  requestMinimalDuration,
 }: {
   keyword: string;
   page: number;
   pageSize: number;
-  minRequestDuration?: number;
+  requestMinimalDuration?: number;
 }) {
   const data = await request<Response>({
     path: '/api/singer/search',
     params: { keyword, page, pageSize },
     withToken: true,
-    minRequestDuration,
+    requestMinimalDuration,
   });
   return {
     ...data,

@@ -110,7 +110,7 @@ function CreateMusicDialog() {
             keyword: artist,
             page: 1,
             pageSize: 10,
-            minRequestDuration: 0,
+            requestMinimalDuration: 0,
           })
             .then((data) => {
               if (!singerList.length) {
@@ -155,13 +155,12 @@ function CreateMusicDialog() {
           const { id: assetId } = await uploadAsset(
             coverBlob,
             AssetType.MUSIC_COVER,
-            0,
           );
           await updateMusic({
             id,
             key: AllowUpdateKey.COVER,
             value: assetId,
-            minRequestDuration: 0,
+            requestMinimalDuration: 0,
           });
         };
 
@@ -171,7 +170,7 @@ function CreateMusicDialog() {
                 id,
                 key: AllowUpdateKey.LYRIC,
                 value: [lyric],
-                minRequestDuration: 0,
+                requestMinimalDuration: 0,
               })
             : null,
           pictureBase64 ? updateCover(pictureBase64) : null,

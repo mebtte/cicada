@@ -6,7 +6,7 @@ function uncollectPublicMusicbill(id: string) {
     method: Method.DELETE,
     params: { id },
     withToken: true,
-    minRequestDuration: 0,
+    requestMinimalDuration: 0,
   });
 }
 

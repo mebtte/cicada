@@ -2,10 +2,15 @@ import { Response } from '#/server/api/get_musicbill_list';
 import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
-async function getMusicbillList() {
+async function getMusicbillList({
+  requestMinimalDuration,
+}: {
+  requestMinimalDuration: number;
+}) {
   const musicbillList = await request<Response>({
     path: '/api/musicbill_list',
     withToken: true,
+    requestMinimalDuration,
   });
   return musicbillList.map((mb) => ({
     ...mb,

@@ -1,11 +1,7 @@
 import { AssetType } from '#/constants';
 import { request, Method } from '..';
 
-function uploadAsset(
-  asset: Blob,
-  assetType: AssetType,
-  minRequestDuration?: number,
-) {
+function uploadAsset(asset: Blob, assetType: AssetType) {
   const form = new FormData();
   form.append('asset', asset);
   form.append('assetType', assetType);
@@ -19,7 +15,6 @@ function uploadAsset(
     body: form,
     withToken: true,
     timeout: 5 * 60 * 1000,
-    minRequestDuration,
   });
 }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import DefaultCover from '@/asset/default_cover.jpeg';
-import { RequestStatus } from '@/constants';
+import { NORMAL_REQUEST_MINIMAL_DURATION, RequestStatus } from '@/constants';
 import getMusicbillListRequest from '@/server/api/get_musicbill_list';
 import addMusicToMusicbill from '@/server/api/add_music_to_musicbill';
 import removeMusicFromMusicbill from '@/server/api/remove_music_from_musicbill';
@@ -16,12 +16,14 @@ import { Musicbill } from './constants';
 export default () => {
   const [status, setStatus] = useState(RequestStatus.LOADING);
   const [musicbillList, setMusicbillList] = useState<Musicbill[]>([]);
-  const getMusicbillList = useCallback(async (silence) => {
+  const getMusicbillList = useCallback(async (silence: boolean) => {
     if (!silence) {
       setStatus(RequestStatus.LOADING);
     }
     try {
-      const mbl = await getMusicbillListRequest();
+      const mbl = await getMusicbillListRequest({
+        requestMinimalDuration: silence ? 0 : NORMAL_REQUEST_MINIMAL_DURATION,
+      });
       setMusicbillList(
         mbl.map((mb) => ({
           id: mb.id,

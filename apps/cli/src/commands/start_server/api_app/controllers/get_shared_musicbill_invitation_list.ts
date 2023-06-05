@@ -22,6 +22,7 @@ export default async (ctx: Context) => {
       | SharedMusicbillProperty.INVITE_USER_ID
     > & {
       inviteUserNickname: User[UserProperty.NICKNAME];
+      musicbillId: Musicbill[MusicbillProperty.ID];
       musicbillName: Musicbill[MusicbillProperty.NAME];
     }
   >(
@@ -31,6 +32,7 @@ export default async (ctx: Context) => {
         smb.${SharedMusicbillProperty.SHARE_TIMESTAMP},
         smb.${SharedMusicbillProperty.INVITE_USER_ID},
         u.${UserProperty.NICKNAME} AS inviteUserNickname,
+        mb.${MusicbillProperty.ID} AS musicbillId,
         mb.${MusicbillProperty.NAME} AS musicbillName
       FROM ${SHARED_MUSICBILL_TABLE_NAME} AS smb
       JOIN ${USER_TABLE_NAME} AS u

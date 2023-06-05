@@ -6,11 +6,12 @@ import { useState } from 'react';
 import acceptSharedMusicbillInvitation from '@/server/api/accept_shared_musicbill_invitation';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
+import useNavigate from '@/utils/use_navigate';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { Invitation as InvitationType } from './constants';
-import e, { EventType } from './eventemitter';
 
 const Style = styled.div`
   margin: 0 20px;
@@ -43,11 +44,13 @@ const Style = styled.div`
 `;
 
 function Invitation({ invitation }: { invitation: InvitationType }) {
+  const navigate = useNavigate();
   const {
     id,
     inviteUserId,
     inviteUserNickname,
     shareTimestamp,
+    musicbillId,
     musicbillName,
   } = invitation;
 
@@ -59,7 +62,15 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
       playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, {
         silence: true,
       });
-      window.setTimeout(() => e.emit(EventType.INVITATION_ACCEPTED, { id }));
+      window.setTimeout(
+        () =>
+          navigate({
+            path:
+              ROOT_PATH.PLAYER +
+              PLAYER_PATH.MUSICBILL.replace(':id', musicbillId),
+          }),
+        0,
+      );
     } catch (error) {
       logger.error(error, '接受共享乐单邀请失败');
       notice.error(error.message);

@@ -18,3 +18,5 @@ export enum Query {
 }
 
 export const MINI_MODE_MAX_WIDTH = 720;
+
+export const NORMAL_REQUEST_MINIMAL_DURATION = 500;

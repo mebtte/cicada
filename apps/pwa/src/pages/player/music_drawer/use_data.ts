@@ -50,7 +50,7 @@ export default (id: string) => {
       if (music.type === MusicType.SONG) {
         lyrics = await getLyricList({
           musicId: music.id,
-          minRequestDuration: 0,
+          requestMinimalDuration: 0,
         });
       }
 
