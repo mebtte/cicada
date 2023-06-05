@@ -74,6 +74,8 @@ const formatDuration = (duration: number) => {
 };
 
 function Info({ music }: { music: MusicDetail }) {
+  const assetParts = music.asset.split('.');
+  const assetFormat = assetParts[assetParts.length - 1];
   return (
     <Style>
       <Cover src={music.cover} size="100%" />
@@ -110,6 +112,10 @@ function Info({ music }: { music: MusicDetail }) {
               </div>
             </div>
           ) : null}
+          <div className="part" title="文件类型">
+            <MdFilePresent className="icon" />
+            <div className="value">{assetFormat.toUpperCase()}</div>
+          </div>
           <div className="part" title="加入乐单数量">
             <MdOutlinePostAdd className="icon" />
             <div className="value">{music.musicbillCount}</div>
