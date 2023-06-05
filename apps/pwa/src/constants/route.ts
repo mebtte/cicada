@@ -8,8 +8,9 @@ export const PLAYER_PATH = {
   MY_MUSIC: '/my_music',
   MUSICBILL: '/musicbill/:id',
   SETTING: '/setting',
+  MESSAGE: '/message',
   SEARCH: '/search',
   USER_MANAGE: '/user_manage',
-  MUSICBILL_COLLECTION: '/musicbill_collection',
+  PUBLIC_MUSICBILL_COLLECTION: '/public_musicbill_collection',
   MUSIC_PLAY_RECORD: '/music_play_record',
 };

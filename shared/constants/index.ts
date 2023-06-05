@@ -86,7 +86,7 @@ export const ALIAS_DIVIDER = '♫';
 export const IMAGE_MAX_SIZE = 2048;
 
 /**
- * 共享乐单邀请存活时间
+ * 共享乐单邀请最小存活时间
  * @author mebtte<hi@mebtte.com>
  */
-export const SHARED_MUSICBILL_INVITATION_TTL = 1000 * 60 * 60 * 24 * 3;
+export const SHARED_MUSICBILL_INVITATION_MINIMAL_TTL = 1000 * 60 * 60 * 24 * 3;

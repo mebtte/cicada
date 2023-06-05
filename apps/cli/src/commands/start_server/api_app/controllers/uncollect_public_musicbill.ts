@@ -1,7 +1,10 @@
 import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';
-import { getMusicbillCollection } from '@/db/musicbill_collection';
-import { PublicMusicbillCollectionProperty } from '@/constants/db_definition';
+import getPublicMusicbillCollection from '@/db/get_public_musicbill_collection';
+import {
+  PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
+  PublicMusicbillCollectionProperty,
+} from '@/constants/db_definition';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -10,7 +13,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  const musicbillCollection = await getMusicbillCollection({
+  const musicbillCollection = await getPublicMusicbillCollection({
     musicbillId: id,
     userId: ctx.user.id,
     properties: [PublicMusicbillCollectionProperty.ID],
@@ -21,11 +24,10 @@ export default async (ctx: Context) => {
 
   await getDB().run(
     `
-      DELETE FROM musicbill_collection
-      WHERE id = ?
+      DELETE FROM ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME}
+      WHERE ${PublicMusicbillCollectionProperty.ID} = ?
     `,
     [musicbillCollection.id],
   );
-
   return ctx.success(null);
 };

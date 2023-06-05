@@ -186,7 +186,7 @@ export default new Eventin<
     [EventType.MUSICBILL_CREATED]: { id: string };
     [EventType.MUSICBILL_DELETED]: null;
 
-    [EventType.MUSIC_UPDATED]: { music: MusicWithSingerAliases };
+    [EventType.MUSIC_UPDATED]: { id: string };
     [EventType.MUSIC_DELETED]: { id: string };
 
     [EventType.SINGER_UPDATED]: {

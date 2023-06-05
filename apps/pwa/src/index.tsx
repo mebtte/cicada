@@ -91,7 +91,7 @@ if ('serviceWorker' in navigator) {
           });
 
           /**
-           * 检查更新
+           * 定时检查更新
            * @author mebtte<hi@mebtte.com>
            */
           window.setInterval(() => {

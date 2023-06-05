@@ -16,7 +16,7 @@ import {
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getMusicbillById } from '@/db/musicbill';
-import { getMusicbillCollection } from '@/db/musicbill_collection';
+import getPublicMusicbillCollection from '@/db/get_public_musicbill_collection';
 import { getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
 import { getAssetPublicPath } from '@/platform/asset';
@@ -83,7 +83,7 @@ export default async (ctx: Context) => {
         `,
         [id],
       ),
-      getMusicbillCollection({
+      getPublicMusicbillCollection({
         musicbillId: id,
         userId: ctx.user.id,
         properties: [PublicMusicbillCollectionProperty.ID],

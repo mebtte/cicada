@@ -10,7 +10,7 @@ const Style = styled(Page)`
   flex-direction: column;
 `;
 
-function MusicbillCollection() {
+function PublicMusicbillCollection() {
   return (
     <Style>
       <MusicbillList />
@@ -19,4 +19,4 @@ function MusicbillCollection() {
   );
 }
 
-export default MusicbillCollection;
+export default PublicMusicbillCollection;

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import notice from '@/utils/notice';
+import getMusic from '@/server/api/get_music';
+import logger from '@/utils/logger';
 import { MusicWithSingerAliases, Index } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 
@@ -83,17 +85,21 @@ export default () => {
     );
     const unlistenMusicUpdated = eventemitter.listen(
       EventType.MUSIC_UPDATED,
-      ({ music }) =>
-        setPlaylist((pl) =>
-          pl.map((m) =>
-            m.id === music.id
-              ? {
-                  ...m,
-                  ...music,
-                }
-              : m,
-          ),
-        ),
+      ({ id }) =>
+        getMusic(id)
+          .then((music) =>
+            setPlaylist((pl) =>
+              pl.map((m) =>
+                m.id === music.id
+                  ? {
+                      ...m,
+                      ...music,
+                    }
+                  : m,
+              ),
+            ),
+          )
+          .catch((error) => logger.error(error, '获取音乐数据失败')),
     );
     const unlistenMusicDeleted = eventemitter.listen(
       EventType.MUSIC_DELETED,

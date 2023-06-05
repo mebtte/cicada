@@ -6,9 +6,10 @@ import Musicbill from './pages/musicbill';
 import Setting from './pages/setting';
 import MyMusic from './pages/my_music';
 import UserManage from './pages/user_manage';
-import MusicbillCollection from './pages/musicbill_collection';
+import PublicMusicbillCollection from './pages/public_musicbill_collection';
 import Exploration from './pages/exploration';
 import MusicPlayRecord from './pages/music_play_record';
+import Message from './pages/message';
 
 function Wrapper() {
   const profile = p.useState();
@@ -19,9 +20,10 @@ function Wrapper() {
       <Route path={PLAYER_PATH.MY_MUSIC} element={<MyMusic />} />
       <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
       <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
+      <Route path={PLAYER_PATH.MESSAGE} element={<Message />} />
       <Route
-        path={PLAYER_PATH.MUSICBILL_COLLECTION}
-        element={<MusicbillCollection />}
+        path={PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION}
+        element={<PublicMusicbillCollection />}
       />
       <Route
         path={PLAYER_PATH.MUSIC_PLAY_RECORD}

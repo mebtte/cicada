@@ -4,7 +4,7 @@ import {
   SHARED_MUSICBILL_TABLE_NAME,
   SharedMusicbillProperty,
 } from '@/constants/db_definition';
-import { SHARED_MUSICBILL_INVITATION_TTL } from '#/constants';
+import { SHARED_MUSICBILL_INVITATION_MINIMAL_TTL } from '#/constants';
 
 async function removeOutdatedSharedMusicbillInvitation() {
   await getDB().run(
@@ -13,7 +13,7 @@ async function removeOutdatedSharedMusicbillInvitation() {
         WHERE ${SharedMusicbillProperty.SHARE_TIMESTAMP} <= ?
           AND ${SharedMusicbillProperty.ACCEPTED} = 0
       `,
-    [Date.now() - SHARED_MUSICBILL_INVITATION_TTL],
+    [Date.now() - SHARED_MUSICBILL_INVITATION_MINIMAL_TTL],
   );
 }
 

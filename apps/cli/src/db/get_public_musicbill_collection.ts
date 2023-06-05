@@ -1,10 +1,11 @@
 import {
+  PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
   PublicMusicbillCollection,
   PublicMusicbillCollectionProperty,
 } from '@/constants/db_definition';
 import { getDB } from '.';
 
-export function getMusicbillCollection<
+function getPublicMusicbillCollection<
   P extends PublicMusicbillCollectionProperty,
 >({
   musicbillId,
@@ -21,26 +22,12 @@ export function getMusicbillCollection<
     `
       SELECT
         ${properties.join(', ')}
-      FROM musicbill_collection
-      WHERE musicbillId = ?
-        AND userId = ?
+      FROM ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME}
+      WHERE ${PublicMusicbillCollectionProperty.MUSICBILL_ID} = ?
+        AND ${PublicMusicbillCollectionProperty.USER_ID} = ?
     `,
     [musicbillId, userId],
   );
 }
 
-export function createMusicbillCollection({
-  musicbillId,
-  userId,
-}: {
-  musicbillId: string;
-  userId: string;
-}) {
-  return getDB().run(
-    `
-      INSERT INTO musicbill_collection ( musicbillId, userId, collectTimestamp )
-      VALUES ( ?, ?, ? )
-    `,
-    [musicbillId, userId, Date.now()],
-  );
-}
+export default getPublicMusicbillCollection;

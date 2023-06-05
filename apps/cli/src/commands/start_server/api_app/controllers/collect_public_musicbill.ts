@@ -1,13 +1,12 @@
 import { ExceptionCode } from '#/constants/exception';
 import { getMusicbillById } from '@/db/musicbill';
-import {
-  createMusicbillCollection,
-  getMusicbillCollection,
-} from '@/db/musicbill_collection';
+import getPublicMusicbillCollection from '@/db/get_public_musicbill_collection';
 import {
   PublicMusicbillCollectionProperty,
   MusicbillProperty,
+  PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
 } from '@/constants/db_definition';
+import { getDB } from '@/db';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -20,7 +19,7 @@ export default async (ctx: Context) => {
 
   const [musicbill, musicbillCollection] = await Promise.all([
     getMusicbillById(id, [MusicbillProperty.PUBLIC]),
-    getMusicbillCollection({
+    getPublicMusicbillCollection({
       musicbillId: id,
       userId: ctx.user.id,
       properties: [PublicMusicbillCollectionProperty.ID],
@@ -33,7 +32,12 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.COLLECT_MUSICBILL_REPEATLY);
   }
 
-  await createMusicbillCollection({ musicbillId: id, userId: ctx.user.id });
-
+  await getDB().run(
+    `
+      INSERT INTO ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME} ( ${PublicMusicbillCollectionProperty.MUSICBILL_ID}, ${PublicMusicbillCollectionProperty.USER_ID}, ${PublicMusicbillCollectionProperty.COLLECT_TIMESTAMP} )
+      VALUES ( ?, ?, ? )
+    `,
+    [id, ctx.user.id, Date.now()],
+  );
   return ctx.success(null);
 };

@@ -27,8 +27,12 @@ export default () => {
       title = '设置';
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.MUSICBILL_COLLECTION: {
-      title = '乐单收藏';
+    case ROOT_PATH.PLAYER + PLAYER_PATH.MESSAGE: {
+      title = '消息';
+      break;
+    }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION: {
+      title = '收藏的公开乐单';
       break;
     }
   }

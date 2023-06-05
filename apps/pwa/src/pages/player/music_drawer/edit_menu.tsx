@@ -53,7 +53,6 @@ import playerEventemitter, {
   EventType as PlayerEventType,
   EditDialogType,
 } from '../eventemitter';
-import { emitMusicUpdated } from '../utils';
 import MusicInfo from '../components/music_info';
 
 interface Singer {
@@ -76,7 +75,8 @@ const searchSinger = (search: string): Promise<Option<Singer>[]> => {
     data.singerList.map(formatSingerToMultipleSelectOption),
   );
 };
-
+const emitMusicUpdated = (id: string) =>
+  playerEventemitter.emit(PlayerEventType.MUSIC_UPDATED, { id });
 const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
   key: music.id,
   label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,

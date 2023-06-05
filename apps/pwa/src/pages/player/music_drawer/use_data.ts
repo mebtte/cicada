@@ -137,8 +137,8 @@ export default (id: string) => {
   useEffect(() => {
     const unlistenMusicUpdated = playerEventemitter.listen(
       PlayerEventType.MUSIC_UPDATED,
-      ({ music }) => {
-        if (music.id === id) {
+      (payload) => {
+        if (payload.id === id) {
           getMusic();
         }
       },

@@ -69,7 +69,7 @@ function Top() {
       <IconButton
         size={ComponentSize.SMALL}
         onClick={() =>
-          navigate(ROOT_PATH.PLAYER + PLAYER_PATH.MUSICBILL_COLLECTION)
+          navigate(ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION)
         }
       >
         <MdStarOutline />

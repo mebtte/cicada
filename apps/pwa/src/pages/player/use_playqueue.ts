@@ -194,24 +194,6 @@ export default (playlist: MusicWithSingerAliases[]) => {
     return unlistenActionInsertMusicToPlayqueue;
   }, [playqueue, currentPosition]);
 
-  useEffect(() => {
-    const unlistenMusicUpdated = eventemitter.listen(
-      EventType.MUSIC_UPDATED,
-      ({ music }) =>
-        setPlayqueue((pq) =>
-          pq.map((m) =>
-            m.id === music.id
-              ? {
-                  ...m,
-                  music,
-                }
-              : m,
-          ),
-        ),
-    );
-    return unlistenMusicUpdated;
-  }, []);
-
   return {
     playqueue,
     currentPosition,
