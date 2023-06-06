@@ -10,7 +10,8 @@ import e, { EventType } from '../../eventemitter';
 import Musicbill from './musicbill';
 import { openCreateMusicbillDialog } from '../../utils';
 
-const reloadMusicbillList = () => e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
+const reloadMusicbillList = () =>
+  e.emit(EventType.RELOAD_MUSICBILL_LIST, { silence: false });
 const Style = styled.div`
   position: relative;
 `;

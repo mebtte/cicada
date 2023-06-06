@@ -1,4 +1,4 @@
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import XState from '@/utils/x_state';
 import storage, { Key } from '@/storage';
 

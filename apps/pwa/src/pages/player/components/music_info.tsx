@@ -2,11 +2,9 @@ import { HtmlHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
-import Tag, { Type } from '@/components/tag';
 import ellipsis from '@/style/ellipsis';
 import eventemitter, { EventType } from '../eventemitter';
 import Singer from './singer';
-import { Music as MusicType } from '../constants';
 
 const Style = styled.div`
   display: flex;
@@ -54,7 +52,12 @@ function MusicInfo({
   music,
   ...props
 }: {
-  music: MusicType;
+  music: {
+    id: string;
+    cover: string;
+    name: string;
+    singers: { id: string; name: string }[];
+  };
 } & HtmlHTMLAttributes<HTMLDivElement>) {
   const { cover, name, singers } = music;
   return (
@@ -72,10 +75,6 @@ function MusicInfo({
             <Singer key={s.id} singer={s} />
           ))}
         </div>
-      </div>
-      <div className="tags">
-        {music.hq ? <Tag type={Type.HQ} /> : null}
-        {music.ac ? <Tag type={Type.AC} /> : null}
       </div>
     </Style>
   );

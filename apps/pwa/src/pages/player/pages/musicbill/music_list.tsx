@@ -54,17 +54,19 @@ function Wrapper({
     <Style>
       {transitions((style, s) => {
         if (s === RequestStatus.ERROR) {
-          <StatusContainer style={style}>
-            <ErrorCard
-              errorMessage={error!.message}
-              retry={() =>
-                playerEventemitter.emit(
-                  PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                  { id },
-                )
-              }
-            />
-          </StatusContainer>;
+          return (
+            <StatusContainer style={style}>
+              <ErrorCard
+                errorMessage={error!.message}
+                retry={() =>
+                  playerEventemitter.emit(
+                    PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                    { id, silence: false },
+                  )
+                }
+              />
+            </StatusContainer>
+          );
         }
 
         if (s === RequestStatus.SUCCESS) {

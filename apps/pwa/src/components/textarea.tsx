@@ -25,6 +25,7 @@ const Textarea = styled.textarea`
   font-size: 14px;
   outline: none;
   transition: inherit;
+  resize: none;
 
   &:focus {
     border-color: ${CSSVariable.COLOR_PRIMARY};

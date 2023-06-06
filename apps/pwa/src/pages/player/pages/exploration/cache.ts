@@ -1,5 +1,5 @@
 import Cache from '#/utils/cache';
-import { Exploration } from './constants';
+import { ExplorationItem } from './constants';
 
 export enum CacheKey {
   EXPLORATION = 'exploration',
@@ -8,7 +8,7 @@ export enum CacheKey {
 const cache = new Cache<
   CacheKey,
   {
-    [CacheKey.EXPLORATION]: Exploration;
+    [CacheKey.EXPLORATION]: ExplorationItem[];
   }
 >();
 

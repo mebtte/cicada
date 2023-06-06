@@ -39,8 +39,10 @@ function Login() {
             return (
               <animated.div style={style}>
                 <EmailPanel
-                  updateEmail={setEmail}
-                  toNext={() => setStep(Step.SECOND)}
+                  toNext={(e) => {
+                    setEmail(e);
+                    return setStep(Step.SECOND);
+                  }}
                 />
               </animated.div>
             );

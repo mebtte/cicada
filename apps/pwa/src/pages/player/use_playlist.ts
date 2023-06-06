@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import notice from '@/utils/notice';
-import { MusicWithIndex } from './constants';
+import getMusic from '@/server/api/get_music';
+import logger from '@/utils/logger';
+import { MusicWithSingerAliases, Index } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 
+type PlaylistMusic = MusicWithSingerAliases & Index;
+
 export default () => {
-  const [playlist, setPlaylist] = useState<MusicWithIndex[]>([]);
+  const [playlist, setPlaylist] = useState<PlaylistMusic[]>([]);
 
   useEffect(() => {
     const unlistenActionPlayMusic = eventemitter.listen(
@@ -15,7 +19,7 @@ export default () => {
           if (musicIdList.includes(music.id)) {
             return pl;
           }
-          const newPlaylist: MusicWithIndex[] = [{ ...music, index: 0 }, ...pl];
+          const newPlaylist: PlaylistMusic[] = [{ ...music, index: 0 }, ...pl];
           const { length } = newPlaylist;
           return newPlaylist.map((m, index) => ({
             ...m,
@@ -55,7 +59,7 @@ export default () => {
           if (musicIdList.includes(music.id)) {
             return pl;
           }
-          const newPlaylist: MusicWithIndex[] = [{ ...music, index: 0 }, ...pl];
+          const newPlaylist: PlaylistMusic[] = [{ ...music, index: 0 }, ...pl];
           const { length } = newPlaylist;
           return newPlaylist.map((m, index) => ({
             ...m,
@@ -69,31 +73,33 @@ export default () => {
     );
     const unlistenActionRemovePlaylistMusic = eventemitter.listen(
       EventType.ACTION_REMOVE_PLAYLIST_MUSIC,
-      ({ music }) => {
-        const { id } = music;
-        return setPlaylist((pl) => {
-          const newPlaylist = pl.filter((m) => m.id !== id);
+      (payload) =>
+        setPlaylist((pl) => {
+          const newPlaylist = pl.filter((m) => m.id !== payload.id);
           const { length } = newPlaylist;
           return newPlaylist.map((m, index) => ({
             ...m,
             index: length - index,
           }));
-        });
-      },
+        }),
     );
     const unlistenMusicUpdated = eventemitter.listen(
       EventType.MUSIC_UPDATED,
-      ({ music }) =>
-        setPlaylist((pl) =>
-          pl.map((m) =>
-            m.id === music.id
-              ? {
-                  ...m,
-                  ...music,
-                }
-              : m,
-          ),
-        ),
+      ({ id }) =>
+        getMusic(id)
+          .then((music) =>
+            setPlaylist((pl) =>
+              pl.map((m) =>
+                m.id === music.id
+                  ? {
+                      ...m,
+                      ...music,
+                    }
+                  : m,
+              ),
+            ),
+          )
+          .catch((error) => logger.error(error, '获取音乐数据失败')),
     );
     const unlistenMusicDeleted = eventemitter.listen(
       EventType.MUSIC_DELETED,

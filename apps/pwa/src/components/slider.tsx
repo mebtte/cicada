@@ -49,7 +49,7 @@ const Style = styled.div`
 
   &.untouchable {
     &:hover {
-      transform: scaleY(3);
+      transform: scaleY(2);
     }
   }
 `;

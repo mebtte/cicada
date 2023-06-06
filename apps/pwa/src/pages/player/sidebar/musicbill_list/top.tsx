@@ -6,6 +6,7 @@ import {
   MdSort,
   MdRefresh,
   MdStarOutline,
+  MdOutlinePeopleAlt,
 } from 'react-icons/md';
 import { ComponentSize } from '@/constants/style';
 import { useContext } from 'react';
@@ -17,7 +18,8 @@ import e, { EventType } from '../../eventemitter';
 import Context from '../../context';
 import { openCreateMusicbillDialog } from '../../utils';
 
-const reloadMusicbillList = () => e.emit(EventType.RELOAD_MUSICBILL_LIST, null);
+const reloadMusicbillList = () =>
+  e.emit(EventType.RELOAD_MUSICBILL_LIST, { silence: false });
 const Style = styled.div`
   margin: 0 20px;
 
@@ -69,10 +71,18 @@ function Top() {
       <IconButton
         size={ComponentSize.SMALL}
         onClick={() =>
-          navigate(ROOT_PATH.PLAYER + PLAYER_PATH.MUSICBILL_COLLECTION)
+          navigate(ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION)
         }
       >
         <MdStarOutline />
+      </IconButton>
+      <IconButton
+        size={ComponentSize.SMALL}
+        onClick={() =>
+          navigate(ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION)
+        }
+      >
+        <MdOutlinePeopleAlt />
       </IconButton>
     </Style>
   );

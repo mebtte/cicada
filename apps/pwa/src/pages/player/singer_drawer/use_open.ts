@@ -25,11 +25,15 @@ export default () => {
 
   useEffect(() => {
     const unlistenOpen = e.listen(EventType.OPEN_SINGER_DRAWER, (data) =>
-      navigate({
-        query: {
-          [Query.SINGER_DRAWER_ID]: data.id,
-        },
-      }),
+      window.setTimeout(
+        () =>
+          navigate({
+            query: {
+              [Query.SINGER_DRAWER_ID]: data.id,
+            },
+          }),
+        0,
+      ),
     );
     return unlistenOpen;
   }, [navigate]);

@@ -11,38 +11,28 @@ interface Task {
 }
 
 class AsyncQueue {
-  taskMinDuration: number;
+  minimalTaskDuration: number;
 
   taskTimeout: number;
 
-  taskInterval: number;
-
-  abortErrorGenerator?: () => Error;
-
-  timeoutErrorGenerator?: (ms: number) => Error;
+  taskTimeoutErrorGenerator?: (ms: number) => Error;
 
   running: boolean;
 
   taskQueue: Task[];
 
   constructor({
-    taskMinDuration = 0,
-    taskTimeout = 0,
-    taskInterval = 0,
-    abortErrorGenerator,
-    timeoutErrorGenerator,
+    minimalTaskDuration = 500,
+    taskTimeout = 10 * 1000,
+    taskTimeoutErrorGenerator,
   }: {
-    taskMinDuration?: number;
+    minimalTaskDuration?: number;
     taskTimeout?: number;
-    taskInterval?: number;
-    abortErrorGenerator?: () => Error;
-    timeoutErrorGenerator?: (ms: number) => Error;
+    taskTimeoutErrorGenerator?: (ms: number) => Error;
   }) {
-    this.taskMinDuration = taskMinDuration;
+    this.minimalTaskDuration = minimalTaskDuration;
     this.taskTimeout = taskTimeout;
-    this.taskInterval = taskInterval;
-    this.abortErrorGenerator = abortErrorGenerator;
-    this.timeoutErrorGenerator = timeoutErrorGenerator;
+    this.taskTimeoutErrorGenerator = taskTimeoutErrorGenerator;
 
     this.running = false;
     this.taskQueue = [];
@@ -50,38 +40,22 @@ class AsyncQueue {
 
   run<Result>(task: () => Promise<Result>) {
     const id = generateRandomString();
-
-    let abort: () => void;
-    let finished = false;
-    const promise = new Promise<Result>((resolve, reject) => {
-      abort = () => {
-        if (finished) {
-          throw new Error(`The task is finished and can not be aborted.`);
-        }
-        this.taskQueue = this.taskQueue.filter((t) => t.id !== id);
-        return reject(
-          this.abortErrorGenerator
-            ? this.abortErrorGenerator()
-            : new Error('Task aborted.'),
-        );
-      };
-
+    return new Promise<Result>((resolve, reject) => {
       this.taskQueue.push({
         id,
         task,
         resolve,
         reject,
       });
-
       return this.nextTask<Result>();
-    }).finally(() => {
-      finished = true;
     });
-    // @ts-expect-error
-    return { promise, finished: () => finished, abort };
   }
 
-  async nextTask<Result>() {
+  clear() {
+    this.taskQueue = [];
+  }
+
+  private async nextTask<Result>() {
     if (this.running || !this.taskQueue.length) {
       return;
     }
@@ -90,17 +64,18 @@ class AsyncQueue {
 
     const [{ task, resolve, reject }] = this.taskQueue.splice(0, 1);
     try {
-      const [a] = await Promise.race([
-        Promise.all([task(), sleep(this.taskMinDuration)]),
-        timeout(this.taskTimeout, this.timeoutErrorGenerator),
+      const [result] = await Promise.race([
+        Promise.all([task(), sleep(this.minimalTaskDuration)]),
+        timeout(this.taskTimeout, this.taskTimeoutErrorGenerator),
       ]);
-      resolve(a as Result);
+      resolve(result as Result);
     } catch (error) {
       reject(error);
     }
+
     this.running = false;
 
-    setTimeout(this.nextTask.bind(this), this.taskInterval);
+    globalThis.setTimeout(this.nextTask.bind(this), 0);
   }
 }
 

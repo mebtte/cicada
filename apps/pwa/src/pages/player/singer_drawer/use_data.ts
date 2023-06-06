@@ -1,8 +1,8 @@
 import day from '#/utils/day';
 import excludeProperty from '#/utils/exclude_property';
-import logger from '#/utils/logger';
-import getSingerDetail from '@/server/get_singer_detail';
-import getRandomCover from '@/utils/get_random_cover';
+import logger from '@/utils/logger';
+import getSinger from '@/server/api/get_singer';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import { useCallback, useEffect, useState } from 'react';
 import { SingerDetail } from './constants';
 import playerEventemitter, {
@@ -25,13 +25,13 @@ export default (singerId: string) => {
   const getData = useCallback(async () => {
     setData(dataLoading);
     try {
-      const singer = await getSingerDetail(singerId);
+      const singer = await getSinger(singerId);
       setData({
         error: null,
         loading: false,
         singer: {
           ...excludeProperty(singer, ['createTimestamp']),
-          avatar: singer.avatar || getRandomCover(),
+          avatar: singer.avatar || DefaultCover,
           musicList: singer.musicList.map((music, index) => ({
             ...music,
             index: singer.musicList.length - index,
@@ -64,6 +64,26 @@ export default (singerId: string) => {
     );
     return unlistenSingerUpdated;
   }, [getData, singerId]);
+
+  useEffect(() => {
+    const musicUpdatedOrDeleted = ({ id }: { id: string }) => {
+      if (data.singer?.musicList.find((m) => m.id === id)) {
+        getData();
+      }
+    };
+    const unlistenMusicUpdated = playerEventemitter.listen(
+      PlayerEventType.MUSIC_UPDATED,
+      musicUpdatedOrDeleted,
+    );
+    const unlistenMusicDeleted = playerEventemitter.listen(
+      PlayerEventType.MUSIC_DELETED,
+      musicUpdatedOrDeleted,
+    );
+    return () => {
+      unlistenMusicUpdated();
+      unlistenMusicDeleted();
+    };
+  }, [data.singer?.musicList, getData]);
 
   return { data, reload: getData };
 };

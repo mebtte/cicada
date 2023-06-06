@@ -11,7 +11,6 @@ import useMusicbillList from './use_musicbill_list';
 import useAudioState from './use_audio_state';
 import usePlaylist from './use_playlist';
 import usePlayqueue from './use_playqueue';
-import usePlayMode from './use_play_mode';
 import Context from './context';
 import Audio from './audio';
 import useMediaSession from './use_media_session';
@@ -22,12 +21,11 @@ import MusicbillOrderDrawer from './musicbilll_order_drawer';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
 import useKeyboard from './use_keyboard';
-import MusicDownloadDialog from './music_download_dialog';
 import SingerDrawer from './singer_drawer';
 import EditDialog from './edit_dialog';
 import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
-import MusicbillDrawer from './musicbill_drawer';
+import PublicMusicbillDrawer from './public_musicbill_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
 
@@ -57,7 +55,6 @@ const Style = styled(PageContainer)`
 
 function Wrapper() {
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
-  const playMode = usePlayMode();
   const {
     loading: audioLoading,
     paused: audioPaused,
@@ -94,8 +91,6 @@ function Wrapper() {
         playqueue,
         currentPlayqueuePosition,
 
-        playMode,
-
         lyricPanelOpen,
       }}
     >
@@ -124,17 +119,14 @@ function Wrapper() {
       <PlaylistPlayqueueDrawer />
       <AddMusicToMusicbillDrawer />
       <MusicbillOrderDrawer />
-      <MusicDownloadDialog />
       <UserDrawer />
-      <MusicbillDrawer />
+      <PublicMusicbillDrawer />
 
       {/* fixed z-index */}
       <ProfileEditPopup />
       <EditDialog />
 
-      {queueMusic ? (
-        <Audio playMode={playMode} queueMusic={queueMusic} />
-      ) : null}
+      {queueMusic ? <Audio queueMusic={queueMusic} /> : null}
     </Context.Provider>
   );
 }

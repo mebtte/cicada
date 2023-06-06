@@ -73,7 +73,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
   return (
     <Style
       onClick={() =>
-        playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_DRAWER, {
+        playerEventemitter.emit(PlayerEventType.OPEN_PUBLIC_MUSICBILL_DRAWER, {
           id: musicbill.id,
         })
       }

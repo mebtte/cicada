@@ -1,7 +1,13 @@
-import logger from '#/utils/logger';
-import getExploration from '@/server/get_exploration';
+import logger from '@/utils/logger';
+import getExploration from '@/server/api/get_exploration';
 import { useCallback, useEffect, useState } from 'react';
-import { Exploration } from './constants';
+import {
+  ExplorationItem,
+  ExplorationItemType,
+  ExplorationMusic,
+  ExplorationPublicMusicbill,
+  ExplorationSinger,
+} from './constants';
 import cache, { CacheKey } from './cache';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -11,22 +17,22 @@ type Data =
   | {
       error: Error;
       loading: false;
-      data: null;
+      value: ExplorationItem[];
     }
   | {
       error: null;
       loading: true;
-      data: null;
+      value: ExplorationItem[];
     }
   | {
       error: null;
       loading: false;
-      data: Exploration;
+      value: ExplorationItem[];
     };
 const dataLoading: Data = {
   error: null,
   loading: true,
-  data: null,
+  value: [],
 };
 
 export default () => {
@@ -34,26 +40,49 @@ export default () => {
   const getData = useCallback(async () => {
     setData(dataLoading);
     try {
-      let exploration = cache.get(CacheKey.EXPLORATION);
-      if (!exploration) {
-        exploration = await getExploration();
+      let explorationData = cache.get(CacheKey.EXPLORATION);
+      if (!explorationData) {
+        const result = await getExploration();
+        explorationData = [
+          ...result.musicList.map(
+            (m) =>
+              ({
+                type: ExplorationItemType.MUSIC,
+                value: m,
+              } as ExplorationMusic),
+          ),
+          ...result.singerList.map(
+            (s) =>
+              ({
+                type: ExplorationItemType.SINGER,
+                value: s,
+              } as ExplorationSinger),
+          ),
+          ...result.publicMusicbillList.map(
+            (mb) =>
+              ({
+                type: ExplorationItemType.PUBLIC_MUSICBILL,
+                value: mb,
+              } as ExplorationPublicMusicbill),
+          ),
+        ].sort(() => Math.random() * 2 - 1);
         cache.set({
           key: CacheKey.EXPLORATION,
-          value: exploration,
-          ttl: 1000 * 60,
+          value: explorationData,
+          ttl: 1000 * 60 * 5,
         });
       }
       setData({
         error: null,
         loading: false,
-        data: exploration,
+        value: explorationData,
       });
     } catch (error) {
       logger.error(error, '获取发现数据失败');
       setData({
         error,
         loading: false,
-        data: null,
+        value: [],
       });
     }
   }, []);

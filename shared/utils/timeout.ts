@@ -3,7 +3,7 @@ function timeout(ms: number, errorGenerator?: (ms: number) => Error) {
     global.setTimeout(
       () =>
         reject(
-          errorGenerator ? errorGenerator(ms) : new Error(`任务超时 ${ms}ms.`),
+          errorGenerator ? errorGenerator(ms) : new Error(`${ms}ms timeouted.`),
         ),
       ms,
     ),

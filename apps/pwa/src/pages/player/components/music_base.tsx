@@ -2,9 +2,9 @@ import { CSSVariable } from '@/global_style';
 import styled, { css } from 'styled-components';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import ellipsis from '@/style/ellipsis';
-import { MusicWithIndex } from '../constants';
 import e, { EventType } from '../eventemitter';
 import Singer from './singer';
+import { Singer as SingerType } from '../constants';
 
 const Style = styled.div<{ active: boolean }>`
   cursor: pointer;
@@ -97,7 +97,13 @@ function MusicBase({
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   active: boolean;
-  music: MusicWithIndex;
+  music: {
+    id: string;
+    name: string;
+    singers: SingerType[];
+    aliases: string[];
+    index: number;
+  };
   lineAfter: ReactNode;
   addon?: ReactNode;
 }) {

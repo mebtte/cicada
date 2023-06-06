@@ -1,6 +1,6 @@
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { Query } from '@/constants';
-import getSelfMusicList from '@/server/get_self_music_list';
+import getMusicList from '@/server/api/get_music_list';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE, Music } from '../constants';
@@ -34,7 +34,7 @@ export default () => {
     async ({ keyword: k, page: p }: { keyword: string; page: number }) => {
       setData(dataLoading);
       try {
-        const d = await getSelfMusicList({
+        const d = await getMusicList({
           keyword: k,
           page: p,
           pageSize: PAGE_SIZE,

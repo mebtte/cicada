@@ -30,6 +30,14 @@ export enum ExceptionCode {
   COLLECT_MUSICBILL_REPEATLY,
   NOT_COLLECT_MUSICBILL_YET,
   OVER_USER_MUSICBILL_MAX_AMOUNT,
+  MUSIC_COVER_NOT_EXIST,
+  ADMIN_USER_CAN_NOT_BE_DELETED,
+  USER_IS_ADMIN_ALREADY,
+  MUSIC_PLAY_RECORD_NOT_EXIST,
+  SHARED_MUSICBILL_CAN_NOT_INVITE_OWNER,
+  SHARED_MUSICBILL_CAN_NOT_INVITE_REPEATLY,
+  NO_PERMISSION_TO_DELETE_MUSICBILL_SHARED_USER,
+  SHARED_MUSICBILL_INVITATION_NOT_EXIST,
 }
 
 export const EXCEPTION_CODE_MAP: Record<
@@ -130,5 +138,29 @@ export const EXCEPTION_CODE_MAP: Record<
   },
   [ExceptionCode.OVER_USER_MUSICBILL_MAX_AMOUNT]: {
     description: '超过用户乐单数量最大限制',
+  },
+  [ExceptionCode.MUSIC_COVER_NOT_EXIST]: {
+    description: '音乐封面不存在',
+  },
+  [ExceptionCode.ADMIN_USER_CAN_NOT_BE_DELETED]: {
+    description: '管理员用户无法被删除',
+  },
+  [ExceptionCode.USER_IS_ADMIN_ALREADY]: {
+    description: '用户已经是管理员',
+  },
+  [ExceptionCode.MUSIC_PLAY_RECORD_NOT_EXIST]: {
+    description: '音乐播放记录不存在',
+  },
+  [ExceptionCode.SHARED_MUSICBILL_CAN_NOT_INVITE_OWNER]: {
+    description: '无法邀请乐单拥有者',
+  },
+  [ExceptionCode.SHARED_MUSICBILL_CAN_NOT_INVITE_REPEATLY]: {
+    description: '重复的乐单共享邀请',
+  },
+  [ExceptionCode.NO_PERMISSION_TO_DELETE_MUSICBILL_SHARED_USER]: {
+    description: '没有权限删除乐单共享用户',
+  },
+  [ExceptionCode.SHARED_MUSICBILL_INVITATION_NOT_EXIST]: {
+    description: '共享乐单邀请不存在',
   },
 };

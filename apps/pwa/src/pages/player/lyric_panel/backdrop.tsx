@@ -1,4 +1,4 @@
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import absoluteFullSize from '@/style/absolute_full_size';
 import loadImage from '@/utils/load_image';
 import { useEffect, useState } from 'react';

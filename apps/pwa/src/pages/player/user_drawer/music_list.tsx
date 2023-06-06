@@ -2,7 +2,7 @@ import Empty from '@/components/empty';
 import { CSSProperties, useContext } from 'react';
 import styled from 'styled-components';
 import Music from '../components/music';
-import { MusicWithIndex } from '../constants';
+import { Index, MusicWithSingerAliases } from '../constants';
 import Context from '../context';
 
 const Root = styled.div`
@@ -12,7 +12,11 @@ const style: CSSProperties = {
   padding: '50px 0',
 };
 
-function MusicList({ musicList }: { musicList: MusicWithIndex[] }) {
+function MusicList({
+  musicList,
+}: {
+  musicList: (MusicWithSingerAliases & Index)[];
+}) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
 
   if (musicList.length) {

@@ -1,17 +1,15 @@
 import Eventin from 'eventin';
-import { Alert, Confirm } from './constants';
+import { Dialog } from './constants';
 
 export enum EventType {
-  OPEN_ALERT = 'open_alert',
-  OPEN_CONFIRM = 'open_confirm',
+  OPEN = 'open',
   CLOSE = 'close',
 }
 
 export default new Eventin<
   EventType,
   {
-    [EventType.OPEN_ALERT]: Omit<Alert, 'type'>;
-    [EventType.OPEN_CONFIRM]: Omit<Confirm, 'type'>;
+    [EventType.OPEN]: Dialog;
     [EventType.CLOSE]: { id: string };
   }
 >();

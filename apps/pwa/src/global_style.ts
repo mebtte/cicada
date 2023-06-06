@@ -26,7 +26,7 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.COLOR_PRIMARY_DISABLED]: '#7bd5b0',
   [CSSVariable.COLOR_PRIMARY_ACTIVE]: '#1d8b5e',
   [CSSVariable.COLOR_DANGEROUS]: '#f25042',
-  [CSSVariable.COLOR_BORDER]: 'rgb(222 222 222)',
+  [CSSVariable.COLOR_BORDER]: 'rgb(232 232 232)',
 
   [CSSVariable.TEXT_SIZE_NORMAL]: '16px',
   [CSSVariable.TEXT_SIZE_MEDIUM]: '14px',

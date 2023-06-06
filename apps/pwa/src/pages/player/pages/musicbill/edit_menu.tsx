@@ -7,25 +7,29 @@ import {
   MdTitle,
   MdPublic,
   MdPublicOff,
-  MdDelete,
+  MdDeleteOutline,
+  MdExitToApp,
 } from 'react-icons/md';
-import updateMusicbill from '@/server/update_musicbill';
+import updateMusicbill from '@/server/api/update_musicbill';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
-import uploadAsset from '@/server/upload_asset';
+import uploadAsset from '@/server/form/upload_asset';
 import { AssetType } from '#/constants';
 import dialog from '@/utils/dialog';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import { CSSVariable } from '@/global_style';
-import deleteMusicbill from '@/server/delete_musicbill';
+import deleteMusicbill from '@/server/api/delete_musicbill';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
+import { Variant } from '@/components/button';
+import p from '@/global_states/profile';
 import e, { EventType } from './eventemitter';
 import { Musicbill, ZIndex } from '../../constants';
 import playerEventemitter, {
   EditDialogType,
   EventType as PlayerEventType,
 } from '../../eventemitter';
+import { quitSharedMusicbill } from './utils';
 
 const maskProps: { style: CSSProperties } = {
   style: {
@@ -40,12 +44,13 @@ const bodyProps: { style: CSSProperties } = {
 const Style = styled.div`
   padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 `;
-const deleteStyle: CSSProperties = {
+const dangerStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
 
 function EditMenu({ musicbill }: { musicbill: Musicbill }) {
   const navigate = useNavigate();
+  const profile = p.useState()!;
 
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
@@ -91,6 +96,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   PlayerEventType.FETCH_MUSICBILL_DETAIL,
                   {
                     id: musicbill.id,
+                    silence: false,
                   },
                 );
               },
@@ -123,6 +129,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     PlayerEventType.FETCH_MUSICBILL_DETAIL,
                     {
                       id: musicbill.id,
+                      silence: false,
                     },
                   );
                 }
@@ -150,6 +157,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                         PlayerEventType.FETCH_MUSICBILL_DETAIL,
                         {
                           id: musicbill.id,
+                          silence: false,
                         },
                       ),
                     )
@@ -174,6 +182,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                       PlayerEventType.FETCH_MUSICBILL_DETAIL,
                       {
                         id: musicbill.id,
+                        silence: false,
                       },
                     ),
                   )
@@ -184,39 +193,53 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
             });
           }}
         />
-        <MenuItem
-          label="删除乐单"
-          icon={<MdDelete style={deleteStyle} />}
-          onClick={() =>
-            dialog.confirm({
-              title: `确定删除乐单?`,
-              content: '注意, 乐单删除后无法恢复',
-              onConfirm: () =>
-                void dialog.confirm({
-                  title: '确定删除乐单?',
-                  content: '现在是第二次确认, 也是最后一次',
-                  onConfirm: async () => {
-                    try {
-                      await deleteMusicbill(musicbill.id);
-                      playerEventemitter.emit(
-                        PlayerEventType.MUSICBILL_DELETED,
-                        null,
-                      );
-                      navigate({
-                        path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
-                      });
-                    } catch (error) {
-                      logger.error(error, '删除乐单失败');
-                      dialog.alert({
-                        title: '删除乐单失败',
-                        content: error.message,
-                      });
-                    }
-                  },
-                }),
-            })
-          }
-        />
+        {musicbill.owner.id === profile?.id ? (
+          <MenuItem
+            label="删除乐单"
+            icon={<MdDeleteOutline style={dangerStyle} />}
+            onClick={() =>
+              dialog.captcha({
+                confirmText: '删除乐单',
+                confirmVariant: Variant.DANGER,
+                onConfirm: async ({ captchaId, captchaValue }) => {
+                  try {
+                    await deleteMusicbill({
+                      id: musicbill.id,
+                      captchaId,
+                      captchaValue,
+                    });
+                    playerEventemitter.emit(
+                      PlayerEventType.MUSICBILL_DELETED,
+                      null,
+                    );
+                    navigate({
+                      path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
+                    });
+                  } catch (error) {
+                    logger.error(error, '删除乐单失败');
+                    notice.error(error.message);
+
+                    return false;
+                  }
+                },
+              })
+            }
+          />
+        ) : (
+          <MenuItem
+            label="退出共享乐单"
+            icon={<MdExitToApp style={dangerStyle} />}
+            onClick={() =>
+              quitSharedMusicbill({
+                musicbillId: musicbill.id,
+                afterQuitted: () =>
+                  navigate({
+                    path: ROOT_PATH + PLAYER_PATH.EXPLORATION,
+                  }),
+              })
+            }
+          />
+        )}
       </Style>
     </Popup>
   );

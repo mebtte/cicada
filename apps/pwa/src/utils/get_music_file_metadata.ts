@@ -1,4 +1,4 @@
-import { COVER_MAX_SIZE } from '#/constants';
+import { IMAGE_MAX_SIZE } from '#/constants';
 import jsmediatags from 'jsmediatags';
 import loadImage from './load_image';
 
@@ -21,7 +21,7 @@ async function base64ToCover(base64: string) {
   const imgNode = await loadImage(base64);
 
   const size = Math.min(
-    COVER_MAX_SIZE,
+    IMAGE_MAX_SIZE,
     imgNode.naturalWidth,
     imgNode.naturalHeight,
   );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import loadImage from '@/utils/load_image';
 
 export default (src: string, defaultImage: string) => {

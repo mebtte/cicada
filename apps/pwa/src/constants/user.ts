@@ -8,5 +8,5 @@ export interface Profile {
   musicbillOrders: string[];
   musicbillMaxAmount: number;
   createMusicMaxAmountPerDay: number;
-  exportMusicbillMaxTimePerDay: number;
+  musicPlayRecordIndate: number;
 }

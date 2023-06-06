@@ -21,18 +21,18 @@ import FileSelect from '@/components/file_select';
 import MultipleSelect, {
   Option as MultipleSelectOption,
 } from '@/components/multiple_select';
-import searchSingerRequest from '@/server/search_singer';
+import searchSingerRequest from '@/server/api/search_singer';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import useEvent from '@/utils/use_event';
 import notice from '@/utils/notice';
-import uploadAsset from '@/server/upload_asset';
-import createMusic from '@/server/create_music';
+import uploadAsset from '@/server/form/upload_asset';
+import createMusic from '@/server/api/create_music';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
-import updateMusic from '@/server/update_music';
+import updateMusic from '@/server/api/update_music';
 import getMusicFileMetadata, {
   base64ToCover,
 } from '@/utils/get_music_file_metadata';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import { ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
@@ -110,7 +110,7 @@ function CreateMusicDialog() {
             keyword: artist,
             page: 1,
             pageSize: 10,
-            minDuration: 0,
+            requestMinimalDuration: 0,
           })
             .then((data) => {
               if (!singerList.length) {
@@ -140,12 +140,12 @@ function CreateMusicDialog() {
 
     setLoading(true);
     try {
-      const asset = await uploadAsset(sq, AssetType.MUSIC_SQ);
+      const asset = await uploadAsset(sq, AssetType.MUSIC);
       const id = await createMusic({
         name: trimmedName,
         singerIds: singerList.map((s) => s.id),
         type: musicType,
-        sq: asset.id,
+        asset: asset.id,
       });
 
       try {
@@ -155,13 +155,12 @@ function CreateMusicDialog() {
           const { id: assetId } = await uploadAsset(
             coverBlob,
             AssetType.MUSIC_COVER,
-            0,
           );
           await updateMusic({
             id,
             key: AllowUpdateKey.COVER,
             value: assetId,
-            minDuration: 0,
+            requestMinimalDuration: 0,
           });
         };
 
@@ -171,7 +170,7 @@ function CreateMusicDialog() {
                 id,
                 key: AllowUpdateKey.LYRIC,
                 value: [lyric],
-                minDuration: 0,
+                requestMinimalDuration: 0,
               })
             : null,
           pictureBase64 ? updateCover(pictureBase64) : null,
@@ -221,9 +220,9 @@ function CreateMusicDialog() {
             value={sq}
             onChange={onSqChange}
             disabled={loading}
-            acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC_SQ].acceptTypes}
+            acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
             placeholder={`选择文件, 支持以下格式 ${ASSET_TYPE_MAP[
-              AssetType.MUSIC_SQ
+              AssetType.MUSIC
             ].acceptTypes.join(', ')}`}
           />
           <MultipleSelect<Singer>

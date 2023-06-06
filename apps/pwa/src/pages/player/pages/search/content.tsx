@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Music from './music';
 import Singer from './singer';
 import Lyric from './lyric';
-import Musicbill from './musicbill';
+import PublicMusicbill from './public_musicbill';
 import { SearchTab } from '../../constants';
 
 const Container = styled(animated.div)`
@@ -29,8 +29,8 @@ function Content({ tab }: { tab: SearchTab }) {
         content = <Singer />;
         break;
       }
-      case SearchTab.MUSICBILL: {
-        content = <Musicbill />;
+      case SearchTab.PUBLIC_MUSICBILL: {
+        content = <PublicMusicbill />;
         break;
       }
       case SearchTab.LYRIC: {

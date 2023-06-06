@@ -4,23 +4,20 @@ import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
-import { memo } from 'react';
-import getRandomCover from '@/utils/get_random_cover';
-import useNavigate from '@/utils/use_navigate';
-import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import { Query } from '@/constants';
-import { CSSVariable } from '@/global_style';
-import ellipsis from '@/style/ellipsis';
+import WidthObserver from '@/components/width_observer';
+import Empty from '@/components/empty';
+import absoluteFullSize from '@/style/absolute_full_size';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
 import useData from './use_data';
-import Part from './part';
-import { Exploration as ExplorationType } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
-import { openCreateSingerDialog } from '../../utils';
-import Singer from '../../components/singer';
+import Cover from './cover';
+import { ExplorationItemType } from './constants';
+import MusicInfo from './music_info';
+import SingerInfo from './singer_info';
+import PublicMusicbillInfo from './public_musicbill_info';
 
 const Root = styled(Page)`
   position: relative;
@@ -41,21 +38,21 @@ const ContentContainer = styled(Container)`
   overflow: auto;
 
   padding-bottom: env(safe-area-inset-bottom, 0);
-`;
-const SubTitle = styled.div`
-  max-width: 100%;
 
-  ${ellipsis}
-  font-size: 12px;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-`;
-const MusicbillSubTitle = styled(SubTitle)`
-  > span {
-    cursor: pointer;
+  > .content {
+    font-size: 0;
 
-    &:hover {
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    &:empty + .empty {
+      visibility: visible;
     }
+  }
+
+  > .empty {
+    visibility: hidden;
+
+    padding-top: ${HEADER_HEIGHT}px;
+
+    ${absoluteFullSize}
   }
 `;
 
@@ -64,90 +61,7 @@ const openMusicDrawer = (id: string) =>
 const openSingerDrawer = (id: string) =>
   playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, { id });
 const openMusicbillDrawer = (id: string) =>
-  playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_DRAWER, { id });
-
-// eslint-disable-next-line react/display-name
-const Exploration = memo(
-  ({
-    exploration,
-    reload,
-  }: {
-    exploration: ExplorationType;
-    reload: () => void;
-  }) => {
-    const navigate = useNavigate();
-    return (
-      <>
-        <Part
-          title="音乐"
-          list={exploration.musicList.map((m) => ({
-            id: m.id,
-            title: m.name,
-            subTitleRenderer: () => (
-              <SubTitle>
-                {m.singers.map((s) => (
-                  <Singer key={s.id} singer={s} />
-                ))}
-              </SubTitle>
-            ),
-            cover: m.cover || getRandomCover(),
-          }))}
-          onItemClick={openMusicDrawer}
-          onCreate={() =>
-            navigate({
-              path: ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC,
-              query: {
-                [Query.CREATE_MUSIC_DIALOG_OPEN]: 1,
-              },
-            })
-          }
-        />
-        <Part
-          title="歌手"
-          list={exploration.singerList.map((s) => ({
-            id: s.id,
-            title: s.name,
-            subTitleRenderer: () =>
-              s.aliases.length ? <SubTitle>{s.aliases[0]}</SubTitle> : null,
-            cover: s.avatar || getRandomCover(),
-          }))}
-          onItemClick={openSingerDrawer}
-          onCreate={() =>
-            openCreateSingerDialog((id) => {
-              openSingerDrawer(id);
-              return reload();
-            })
-          }
-        />
-        {exploration.musicbillList.length ? (
-          <Part
-            title="乐单"
-            list={exploration.musicbillList.map((mb) => ({
-              id: mb.id,
-              title: mb.name,
-              subTitleRenderer: () => (
-                <MusicbillSubTitle>
-                  <span
-                    onClick={() =>
-                      playerEventemitter.emit(
-                        PlayerEventType.OPEN_USER_DRAWER,
-                        { id: mb.user.id },
-                      )
-                    }
-                  >
-                    {mb.user.nickname}
-                  </span>
-                </MusicbillSubTitle>
-              ),
-              cover: mb.cover || getRandomCover(),
-            }))}
-            onItemClick={openMusicbillDrawer}
-          />
-        ) : null}
-      </>
-    );
-  },
-);
+  playerEventemitter.emit(PlayerEventType.OPEN_PUBLIC_MUSICBILL_DRAWER, { id });
 
 function Wrapper() {
   const { data, reload } = useData();
@@ -176,7 +90,61 @@ function Wrapper() {
         }
         return (
           <ContentContainer style={style}>
-            <Exploration exploration={d.data} reload={reload} />
+            <WidthObserver
+              className="content"
+              render={(width) => {
+                const itemWidth = `${100 / Math.floor(width / 180)}%`;
+                return (
+                  <>
+                    {d.value.map((item) => {
+                      switch (item.type) {
+                        case ExplorationItemType.MUSIC: {
+                          return (
+                            <Cover
+                              key={item.value.id}
+                              src={item.value.cover}
+                              style={{ width: itemWidth }}
+                              onClick={() => openMusicDrawer(item.value.id)}
+                              info={<MusicInfo music={item.value} />}
+                            />
+                          );
+                        }
+                        case ExplorationItemType.SINGER: {
+                          return (
+                            <Cover
+                              key={item.value.id}
+                              src={item.value.avatar}
+                              style={{ width: itemWidth }}
+                              onClick={() => openSingerDrawer(item.value.id)}
+                              info={<SingerInfo singer={item.value} />}
+                            />
+                          );
+                        }
+                        case ExplorationItemType.PUBLIC_MUSICBILL: {
+                          return (
+                            <Cover
+                              key={item.value.id}
+                              src={item.value.cover}
+                              style={{ width: itemWidth }}
+                              onClick={() => openMusicbillDrawer(item.value.id)}
+                              info={
+                                <PublicMusicbillInfo
+                                  publicMusicbill={item.value}
+                                />
+                              }
+                            />
+                          );
+                        }
+                        default: {
+                          return null;
+                        }
+                      }
+                    })}
+                  </>
+                );
+              }}
+            />
+            <Empty className="empty" description="暂无数据" />
           </ContentContainer>
         );
       })}

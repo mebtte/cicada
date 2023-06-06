@@ -3,7 +3,7 @@ import Page from '../page';
 import Toolbar from './toolbar';
 import CreateUserDialog from './create_user_dialog';
 import UserList from './user_list';
-import EditMenu from './edit_menu';
+import UserEditDrawer from './user_edit_drawer';
 
 const Style = styled(Page)`
   position: relative;
@@ -15,8 +15,8 @@ function UserManage() {
       <UserList />
       <Toolbar />
 
-      <EditMenu />
       <CreateUserDialog />
+      <UserEditDrawer />
     </Style>
   );
 }

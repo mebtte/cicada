@@ -1,30 +1,11 @@
 import { ExceptionCode } from '#/constants/exception';
 import { NAME_MAX_LENGTH } from '#/constants/musicbill';
 import dialog from '@/utils/dialog';
-import logger from '#/utils/logger';
-import notice from '@/utils/notice';
-import createMusicbillRequest from '@/server/create_musicbill';
-import createMusicbillExport from '@/server/create_musicbill_export';
-import createSingerRequest from '@/server/create_singer';
-import getMusicDetail from '@/server/get_music_detail';
-import getSingerDetail from '@/server/get_singer_detail';
-import { Music } from './constants';
+import createMusicbillRequest from '@/server/api/create_musicbill';
+import createSingerRequest from '@/server/api/create_singer';
+import getSinger from '@/server/api/get_singer';
+import { Music, SingerWithAliases } from './constants';
 import e, { EditDialogType, EventType } from './eventemitter';
-
-export function exportMusicbill(id: string) {
-  return dialog.confirm({
-    title: '确定要导出乐单吗?',
-    content:
-      '导出乐单将会歌单内的音乐全部打包后发送到你的邮箱, 请注意导出乐单每天有次数限制',
-    onConfirm: () =>
-      createMusicbillExport(id)
-        .then(() => void notice.info('乐单导出后将会发送到邮箱, 请注意查收'))
-        .catch((error) => {
-          logger.error(error, '创建歌单导出失败');
-          return void notice.error(error.message);
-        }),
-  });
-}
 
 export function openCreateMusicbillDialog() {
   return e.emit(EventType.OPEN_EDIT_DIALOG, {
@@ -78,26 +59,8 @@ export async function createSinger({
   }
 }
 
-export function emitMusicUpdated(id: string) {
-  getMusicDetail(id).then((music) =>
-    e.emit(EventType.MUSIC_UPDATED, {
-      music: {
-        id: music.id,
-        cover: music.cover,
-        name: music.name,
-        type: music.type,
-        aliases: music.aliases,
-        sq: music.sq,
-        hq: music.hq,
-        ac: music.ac,
-        singers: music.singers,
-      },
-    }),
-  );
-}
-
 export function emitSingerUpdated(id: string) {
-  getSingerDetail(id).then((singer) =>
+  getSinger(id).then((singer) =>
     e.emit(EventType.SINGER_UPDATED, {
       singer: {
         id: singer.id,
@@ -122,7 +85,12 @@ export const openCreateSingerDialog = (callback: (id: string) => void) =>
       }),
   });
 
-export const filterMusic = (music: Music, keyword: string) => {
+export const filterMusic = (
+  music: Omit<Music, 'singers'> & {
+    singers: SingerWithAliases[];
+  },
+  keyword: string,
+) => {
   if (keyword) {
     const lowerCaseKeyword = keyword.toLowerCase();
     return (

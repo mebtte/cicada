@@ -2,7 +2,7 @@ import { ImgHTMLAttributes, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '@/constants/style';
 import useEvent from '@/utils/use_event';
-import JpegDefaultCover from './default_cover.jpeg';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import { Shape } from './constants';
 
 const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> }> = {
@@ -40,7 +40,7 @@ function Cover({
   shape?: Shape;
 } & ImgHTMLAttributes<HTMLImageElement>) {
   const [currentSrc, setCurrentSrc] = useState(src);
-  const onError = useEvent(() => setCurrentSrc(JpegDefaultCover));
+  const onError = useEvent(() => setCurrentSrc(DefaultCover));
 
   useEffect(() => {
     setCurrentSrc(src);

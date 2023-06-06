@@ -2,8 +2,8 @@ import Drawer from '@/components/drawer';
 import { CSSProperties, useCallback, useEffect, useState } from 'react';
 import { SortableContainer } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
-import updateProfile from '@/server/update_profile';
-import logger from '#/utils/logger';
+import updateProfile from '@/server/api/update_profile';
+import logger from '@/utils/logger';
 import dialog from '@/utils/dialog';
 import { IS_TOUCHABLE } from '@/constants/browser';
 import { AllowUpdateKey } from '#/constants/user';
@@ -32,6 +32,7 @@ const toLocalMusicbill = (musicbill: MusicbillType): LocalMusicbill => ({
   cover: musicbill.cover,
   name: musicbill.name,
   public: musicbill.public,
+  shared: musicbill.sharedUserList.length > 0,
 });
 type MusicbillListProps = { musicbillList: LocalMusicbill[] };
 

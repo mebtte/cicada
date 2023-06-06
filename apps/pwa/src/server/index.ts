@@ -4,7 +4,7 @@ import { prefixServerOrigin } from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import definition from '@/definition';
-import { Query } from '@/constants';
+import { NORMAL_REQUEST_MINIMAL_DURATION, Query } from '@/constants';
 import timeoutFn from '#/utils/timeout';
 
 export enum Method {
@@ -22,7 +22,7 @@ export async function request<Data = void>({
   body,
   headers = {},
   withToken = false,
-  minDuration = 500,
+  requestMinimalDuration = NORMAL_REQUEST_MINIMAL_DURATION,
   timeout = 10 * 1000,
 }: {
   path: string;
@@ -35,7 +35,7 @@ export async function request<Data = void>({
     [key: string]: string;
   };
   withToken?: boolean;
-  minDuration?: number;
+  requestMinimalDuration?: number;
   timeout?: number;
 }) {
   let url = prefixServerOrigin(path);
@@ -78,7 +78,7 @@ export async function request<Data = void>({
           headers,
           body: processedBody,
         }),
-        sleep(minDuration),
+        sleep(requestMinimalDuration),
       ]),
       timeoutFn(timeout),
     ]);

@@ -3,7 +3,6 @@ import {
   MdLooks,
   MdOutlineSettings,
   MdOutlineMusicNote,
-  MdPersonOutline,
   MdHistory,
 } from 'react-icons/md';
 import MenuItem from '@/components/menu_item';
@@ -31,12 +30,6 @@ function Menu() {
         onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.MY_MUSIC}`)}
         label="我的音乐"
         icon={<MdOutlineMusicNote />}
-      />
-      <MenuItem
-        active={pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.MY_SINGER}`}
-        onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.MY_SINGER}`)}
-        label="我的歌手"
-        icon={<MdPersonOutline />}
       />
       <MenuItem
         active={

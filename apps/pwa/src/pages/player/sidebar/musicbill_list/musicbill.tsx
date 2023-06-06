@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-import Cover from '@/components/cover';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { NavLink } from 'react-router-dom';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { Musicbill as MusicbillType } from '../../constants';
+import MusicbillCover from '../../components/musicbill_cover';
 
 const Style = styled(NavLink)`
   padding: 5px 20px;
@@ -36,32 +36,26 @@ const Style = styled(NavLink)`
     background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   }
 
-  &.public {
-    > .cover {
-      outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
-    }
-  }
-
   &.active {
     color: #fff;
     background-color: ${CSSVariable.COLOR_PRIMARY} !important;
-
-    > .cover {
-      outline-color: #fff;
-    }
   }
 `;
 
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
   return (
     <Style
-      className={musicbill.public ? 'public' : ''}
       to={`${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL.replace(
         ':id',
         musicbill.id,
       )}`}
     >
-      <Cover size={28} src={musicbill.cover} className="cover" />
+      <MusicbillCover
+        size={28}
+        src={musicbill.cover}
+        publiz={musicbill.public}
+        shared={musicbill.sharedUserList.length > 0}
+      />
       <div className="name">{musicbill.name}</div>
     </Style>
   );

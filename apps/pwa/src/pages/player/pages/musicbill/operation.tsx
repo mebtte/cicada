@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
-import { MdRefresh, MdPlaylistAdd, MdEdit, MdDownload } from 'react-icons/md';
+import {
+  MdRefresh,
+  MdPlaylistAdd,
+  MdOutlineEdit,
+  MdOutlinePeopleAlt,
+} from 'react-icons/md';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import playerEventemitter, {
@@ -8,13 +13,13 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
-import { exportMusicbill } from '../../utils';
 
 const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
 `;
+const openShareDialog = () => e.emit(EventType.OPEN_SHARE_DRAWER, null);
 
 function Operation({ musicbill }: { musicbill: Musicbill }) {
   const { status, musicList } = musicbill;
@@ -35,22 +40,23 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
       >
         <MdPlaylistAdd />
       </IconButton>
-      <IconButton onClick={() => exportMusicbill(musicbill.id)}>
-        <MdDownload />
-      </IconButton>
       <IconButton
         loading={status === RequestStatus.LOADING}
         disabled={status !== RequestStatus.SUCCESS}
         onClick={() =>
           playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
             id: musicbill.id,
+            silence: false,
           })
         }
       >
         <MdRefresh />
       </IconButton>
       <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
-        <MdEdit />
+        <MdOutlineEdit />
+      </IconButton>
+      <IconButton onClick={openShareDialog}>
+        <MdOutlinePeopleAlt />
       </IconButton>
     </Style>
   );

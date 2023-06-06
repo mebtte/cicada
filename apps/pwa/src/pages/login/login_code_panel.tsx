@@ -1,16 +1,16 @@
 import styled from 'styled-components';
 import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
 import notice from '@/utils/notice';
-import loginRequest from '@/server/login';
+import loginRequest from '@/server/base/login';
 import t from '@/global_states/token';
 import p from '@/global_states/profile';
-import getProfile from '@/server/get_profile';
+import getProfile from '@/server/api/get_profile';
 import sleep from '#/utils/sleep';
 import storage, { Key } from '@/storage';
-import logger from '#/utils/logger';
+import logger from '@/utils/logger';
 import Input from '@/components/input';
 import Button, { Variant } from '@/components/button';
-import getRandomCover from '@/utils/get_random_cover';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import excludeProperty from '#/utils/exclude_property';
 import Paper from './paper';
 import Logo from './logo';
@@ -50,7 +50,7 @@ function LoginCodePanel({
         excludeProperty(
           {
             ...profile,
-            avatar: profile.avatar || getRandomCover(),
+            avatar: profile.avatar || DefaultCover,
             admin: !!profile.admin,
             musicbillOrders: profile.musicbillOrdersJSON
               ? JSON.parse(profile.musicbillOrdersJSON)

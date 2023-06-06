@@ -1,4 +1,0 @@
-{
-  "ext": "ts,js,json",
-  "exec": "ts-node -r tsconfig-paths/register dev.ts"
-}

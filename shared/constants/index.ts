@@ -1,16 +1,22 @@
 export const BRAND_NAME = '知了';
 
-/** 图形验证码有效期 */
-export const CAPTCHA_TTL = 1000 * 60 * 1;
+/**
+ * 图形验证码有效期
+ * 前端有效期要比后端有效期短 10 秒
+ * 减少接口处理时验证码已经过期的概率
+ * @author mebtte<hi@mebtte.com>
+ */
+export const CAPTCHA_TTL = 1000 * 60 * 2;
+export const CAPTCHA_TTL_FRONTEND = CAPTCHA_TTL - 100 * 10;
 
 /** 获取登录验证码间隔 */
 export const GET_LOGIN_CODE_INTERVAL = 1000 * 60 * 2;
 
 export enum PathPrefix {
   FORM = 'form',
-  DOWNLOAD = 'download',
   ASSET = 'asset',
   API = 'api',
+  BASE = 'base',
 }
 
 export enum AssetType {
@@ -18,9 +24,7 @@ export enum AssetType {
   MUSICBILL_COVER = 'musicbill_cover',
   SINGER_AVATAR = 'singer_avatar',
   MUSIC_COVER = 'music_cover',
-  MUSIC_SQ = 'music_sq',
-  MUSIC_HQ = 'music_hq',
-  MUSIC_AC = 'music_ac',
+  MUSIC = 'music',
 }
 export const ASSET_TYPES = Object.values(AssetType);
 export const ASSET_TYPE_MAP: Record<
@@ -32,21 +36,21 @@ export const ASSET_TYPE_MAP: Record<
 > = {
   [AssetType.SINGER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 0.5,
+    maxSize: 1024 * 1024 * 1,
   },
   [AssetType.MUSICBILL_COVER]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 0.5,
+    maxSize: 1024 * 1024 * 1,
   },
   [AssetType.MUSIC_COVER]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 0.5,
+    maxSize: 1024 * 1024 * 1,
   },
   [AssetType.USER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 0.5,
+    maxSize: 1024 * 1024 * 1,
   },
-  [AssetType.MUSIC_SQ]: {
+  [AssetType.MUSIC]: {
     acceptTypes: [
       'audio/wav',
       'audio/ogg',
@@ -58,28 +62,14 @@ export const ASSET_TYPE_MAP: Record<
       'audio/mp4',
       'video/mp4',
     ],
-    maxSize: 1024 * 1024 * 50,
-  },
-  [AssetType.MUSIC_AC]: {
-    acceptTypes: [
-      'audio/wav',
-      'audio/ogg',
-      'audio/flac',
-      'audio/x-flac',
-      'audio/mpeg',
-      'audio/m4a',
-      'audio/x-m4a',
-      'audio/mp4',
-      'video/mp4',
-    ],
-    maxSize: 1024 * 1024 * 50,
-  },
-  [AssetType.MUSIC_HQ]: {
-    acceptTypes: ['audio/flac', 'audio/x-flac'],
-    maxSize: 1024 * 1024 * 50,
+    maxSize: 1024 * 1024 * 200,
   },
 };
 
+/**
+ * 有效播放百分比
+ * @author mebtte<hi@mebtte.com>
+ */
 export const EFFECTIVE_PLAY_PERCENT = 0.75;
 
 /**
@@ -89,6 +79,14 @@ export const EFFECTIVE_PLAY_PERCENT = 0.75;
  */
 export const ALIAS_DIVIDER = '♫';
 
-export const DOWNLOAD_TTL = 1000 * 60 * 60 * 24 * 3;
+/**
+ * 图片最大尺寸
+ * @author mebtte<hi@mebtte.com>
+ */
+export const IMAGE_MAX_SIZE = 2048;
 
-export const COVER_MAX_SIZE = 1000;
+/**
+ * 共享乐单邀请最小存活时间
+ * @author mebtte<hi@mebtte.com>
+ */
+export const SHARED_MUSICBILL_INVITATION_MINIMAL_TTL = 1000 * 60 * 60 * 24 * 3;

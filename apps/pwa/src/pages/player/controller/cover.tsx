@@ -1,6 +1,6 @@
 import loadImage from '@/utils/load_image';
-import logger from '#/utils/logger';
-import getRandomCover from '@/utils/get_random_cover';
+import logger from '@/utils/logger';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import { useEffect, useState } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
@@ -75,7 +75,7 @@ function Wrapper({ cover }: { cover?: string }) {
         canceled = true;
       };
     }
-    setSrc(getRandomCover());
+    setSrc(DefaultCover);
   }, [cover]);
 
   const transitions = useTransition(src, {

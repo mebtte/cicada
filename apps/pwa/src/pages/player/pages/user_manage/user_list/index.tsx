@@ -6,22 +6,29 @@ import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import useQuery from '@/utils/use_query';
 import { Query } from '@/constants';
+import WidthObserver from '@/components/width_observer';
 import useData from './use_data';
 import User from './user';
 import { HEADER_HEIGHT } from '../../../constants';
 import { TOOLBAR_HEIGHT } from '../constants';
+import { GAP } from './constants';
 
 const Container = styled(animated.div)`
+  ${absoluteFullSize}
+
   padding-top: ${HEADER_HEIGHT}px;
   padding-bottom: ${TOOLBAR_HEIGHT}px;
-
-  ${absoluteFullSize}
 `;
 const StatusContainer = styled(Container)`
   ${flexCenter}
 `;
 const UserListContainer = styled(Container)`
   overflow: auto;
+
+  > .content {
+    font-size: 0;
+    padding: 0 ${GAP / 2}px;
+  }
 `;
 
 function UserList() {
@@ -63,9 +70,15 @@ function UserList() {
 
     return (
       <UserListContainer style={style}>
-        {filteredUserList.map((user) => (
-          <User key={user.id} user={user} />
-        ))}
+        <WidthObserver
+          className="content"
+          render={(width) => {
+            const itemWidth = `${100 / Math.floor(width / 200)}%`;
+            return filteredUserList.map((user) => (
+              <User key={user.id} user={user} width={itemWidth} />
+            ));
+          }}
+        />
       </UserListContainer>
     );
   });

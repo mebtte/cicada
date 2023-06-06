@@ -19,10 +19,6 @@ export default () => {
       title = '我的音乐';
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.MY_SINGER: {
-      title = '我的歌手';
-      break;
-    }
     case ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE: {
       title = '用户管理';
       break;
@@ -31,8 +27,12 @@ export default () => {
       title = '设置';
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.MUSICBILL_COLLECTION: {
-      title = '乐单收藏';
+    case ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION: {
+      title = '共享乐单邀请';
+      break;
+    }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION: {
+      title = '收藏的公开乐单';
       break;
     }
   }
