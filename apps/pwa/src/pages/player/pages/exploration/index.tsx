@@ -14,6 +14,10 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import Cover from './cover';
+import { ExplorationItemType } from './constants';
+import MusicInfo from './music_info';
+import SingerInfo from './singer_info';
+import PublicMusicbillInfo from './public_musicbill_info';
 
 const Root = styled(Page)`
   position: relative;
@@ -38,13 +42,13 @@ const ContentContainer = styled(Container)`
   > .content {
     font-size: 0;
 
-    &:emtpy + .emtpy {
-      display: flex;
+    &:empty + .empty {
+      visibility: visible;
     }
   }
 
   > .empty {
-    display: none;
+    visibility: hidden;
 
     padding-top: ${HEADER_HEIGHT}px;
 
@@ -92,13 +96,50 @@ function Wrapper() {
                 const itemWidth = `${100 / Math.floor(width / 180)}%`;
                 return (
                   <>
-                    {d.data.musicList.map((m) => (
-                      <Cover
-                        key={m.id}
-                        src={m.cover}
-                        style={{ width: itemWidth }}
-                      />
-                    ))}
+                    {d.value.map((item) => {
+                      switch (item.type) {
+                        case ExplorationItemType.MUSIC: {
+                          return (
+                            <Cover
+                              key={item.value.id}
+                              src={item.value.cover}
+                              style={{ width: itemWidth }}
+                              onClick={() => openMusicDrawer(item.value.id)}
+                              info={<MusicInfo music={item.value} />}
+                            />
+                          );
+                        }
+                        case ExplorationItemType.SINGER: {
+                          return (
+                            <Cover
+                              key={item.value.id}
+                              src={item.value.avatar}
+                              style={{ width: itemWidth }}
+                              onClick={() => openSingerDrawer(item.value.id)}
+                              info={<SingerInfo singer={item.value} />}
+                            />
+                          );
+                        }
+                        case ExplorationItemType.PUBLIC_MUSICBILL: {
+                          return (
+                            <Cover
+                              key={item.value.id}
+                              src={item.value.cover}
+                              style={{ width: itemWidth }}
+                              onClick={() => openMusicbillDrawer(item.value.id)}
+                              info={
+                                <PublicMusicbillInfo
+                                  publicMusicbill={item.value}
+                                />
+                              }
+                            />
+                          );
+                        }
+                        default: {
+                          return null;
+                        }
+                      }
+                    })}
                   </>
                 );
               }}

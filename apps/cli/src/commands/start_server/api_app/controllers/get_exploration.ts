@@ -1,4 +1,5 @@
-import { ALIAS_DIVIDER, AssetType } from '#/constants';
+import { AssetType } from '#/constants';
+import { Response } from '#/server/api/get_exploration';
 import { getDB } from '@/db';
 import { getSingerListInMusicIds } from '@/db/singer';
 import excludeProperty from '#/utils/exclude_property';
@@ -18,7 +19,7 @@ import {
 import { getAssetPublicPath } from '@/platform/asset';
 import { Context } from '../constants';
 
-const QUALITY = 20;
+const QUALITY = 30;
 
 type MusicbillCreateUser = Pick<User, UserProperty.ID | UserProperty.NICKNAME>;
 type MusicSinger = Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
@@ -26,7 +27,7 @@ type MusicSinger = Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
 };
 
 export default async (ctx: Context) => {
-  const [musicList, singerList, musicbillList] = await Promise.all([
+  const [musicList, singerList, publicMusicbillList] = await Promise.all([
     getDB().all<
       Pick<Music, MusicProperty.ID | MusicProperty.NAME | MusicProperty.COVER>
     >(
@@ -45,17 +46,13 @@ export default async (ctx: Context) => {
     getDB().all<
       Pick<
         Singer,
-        | SingerProperty.ID
-        | SingerProperty.NAME
-        | SingerProperty.ALIASES
-        | SingerProperty.AVATAR
+        SingerProperty.ID | SingerProperty.NAME | SingerProperty.AVATAR
       >
     >(
       `
         SELECT
           ${SingerProperty.ID},
           ${SingerProperty.NAME},
-          ${SingerProperty.ALIASES},
           ${SingerProperty.AVATAR}
         FROM ${SINGER_TABLE_NAME}
         WHERE ${SingerProperty.AVATAR} != ''
@@ -99,21 +96,21 @@ export default async (ctx: Context) => {
           [SingerProperty.ID, SingerProperty.NAME],
         )
       : [],
-    musicbillList.length
+    publicMusicbillList.length
       ? getDB().all<MusicbillCreateUser>(
           `
             SELECT
               id,
               nickname
             FROM user
-            WHERE id IN ( ${musicbillList.map(() => '?').join(', ')} )
+            WHERE id IN ( ${publicMusicbillList.map(() => '?').join(', ')} )
           `,
-          musicbillList.map((mb) => mb.userId),
+          publicMusicbillList.map((mb) => mb.userId),
         )
       : [],
   ]);
 
-  return ctx.success({
+  return ctx.success<Response>({
     musicList: musicList.map((m) => ({
       ...m,
       cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
@@ -124,9 +121,8 @@ export default async (ctx: Context) => {
     singerList: singerList.map((s) => ({
       ...s,
       avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
-      aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     })),
-    musicbillList: musicbillList.map((mb) => ({
+    publicMusicbillList: publicMusicbillList.map((mb) => ({
       ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
       cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
       user: musicbillCreateUserList.find((u) => mb.userId === u.id)!,
