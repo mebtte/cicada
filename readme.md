@@ -47,6 +47,7 @@
 在 [Releases](https://github.com/mebtte/cicada/releases) 下载并解压对应平台的二进制包, 通过下面命令指定配置文件并启动服务:
 
 ```sh
+# 首次运行将会提示输入首位用户邮箱
 ./cicada start -c config.json
 ```
 
@@ -117,7 +118,7 @@ cicada import --data /path_to/cicada_data music
 
 ## 从 v0 升级到 v1
 
-如果是从 v0 升级到 v1 的, 那么需要对数据进行升级后才能提供服务:
+v0 升级到 v1 需要对数据进行升级后才能启动服务:
 
 ```bash
 # 进行数据升级前请先备份
@@ -131,7 +132,7 @@ cicada data-upgrade <data>
 docker run -it --rm -v <data>:/data mebtte/cicada cicada data-upgrade /data
 ```
 
-如果 Docker 镜像不想升级到 v1, 请使用标签 `mebtte/cicada:v0`.
+如果不想升级到 v1, 请继续使用 [v0](https://github.com/mebtte/cicada/releases/tag/0.78.1) 版本的包或 Docker 镜像使用标签 `mebtte/cicada:v0`.
 
 ## 常见问题
 
