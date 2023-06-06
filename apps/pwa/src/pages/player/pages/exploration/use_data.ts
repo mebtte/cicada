@@ -40,13 +40,16 @@ export default () => {
         cache.set({
           key: CacheKey.EXPLORATION,
           value: exploration,
-          ttl: 1000 * 60,
+          ttl: 1000 * 60 * 5,
         });
       }
       setData({
         error: null,
         loading: false,
-        data: exploration,
+        data: {
+          ...exploration,
+          musicList: [],
+        },
       });
     } catch (error) {
       logger.error(error, '获取发现数据失败');
