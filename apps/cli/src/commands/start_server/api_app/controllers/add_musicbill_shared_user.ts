@@ -71,7 +71,7 @@ export default async (ctx: Context) => {
 
   await getDB().run(
     `
-      INSERT INTO ${SHARED_MUSICBILL_TABLE_NAME} ( ${SharedMusicbillProperty.MUSICBILL_ID}, ${SharedMusicbillProperty.SHARED_USER_ID}, ${SharedMusicbillProperty.SHARE_TIMESTAMP}, ${SharedMusicbillProperty.INVITE_USER_ID} )
+      INSERT INTO ${SHARED_MUSICBILL_TABLE_NAME} ( ${SharedMusicbillProperty.MUSICBILL_ID}, ${SharedMusicbillProperty.SHARED_USER_ID}, ${SharedMusicbillProperty.INVITE_TIMESTAMP}, ${SharedMusicbillProperty.INVITE_USER_ID} )
       VALUES ( ?, ?, ?, ? )
     `,
     [musicbillId, user.id, Date.now(), ctx.user.id],

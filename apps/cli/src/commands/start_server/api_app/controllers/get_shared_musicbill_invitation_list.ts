@@ -18,7 +18,7 @@ export default async (ctx: Context) => {
     Pick<
       SharedMusicbill,
       | SharedMusicbillProperty.ID
-      | SharedMusicbillProperty.SHARE_TIMESTAMP
+      | SharedMusicbillProperty.INVITE_TIMESTAMP
       | SharedMusicbillProperty.INVITE_USER_ID
     > & {
       inviteUserNickname: User[UserProperty.NICKNAME];
@@ -29,7 +29,7 @@ export default async (ctx: Context) => {
     `
       SELECT
         smb.${SharedMusicbillProperty.ID},
-        smb.${SharedMusicbillProperty.SHARE_TIMESTAMP},
+        smb.${SharedMusicbillProperty.INVITE_TIMESTAMP},
         smb.${SharedMusicbillProperty.INVITE_USER_ID},
         u.${UserProperty.NICKNAME} AS inviteUserNickname,
         mb.${MusicbillProperty.ID} AS musicbillId,
@@ -41,7 +41,7 @@ export default async (ctx: Context) => {
         ON smb.${SharedMusicbillProperty.MUSICBILL_ID} = mb.${MusicbillProperty.ID}
       WHERE smb.${SharedMusicbillProperty.ACCEPTED} = 0
         AND smb.${SharedMusicbillProperty.SHARED_USER_ID} = ?
-      ORDER BY smb.${SharedMusicbillProperty.SHARE_TIMESTAMP} DESC
+      ORDER BY smb.${SharedMusicbillProperty.INVITE_TIMESTAMP} DESC
     `,
     [ctx.user.id],
   );

@@ -49,7 +49,7 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
     id,
     inviteUserId,
     inviteUserNickname,
-    shareTimestamp,
+    inviteTimestamp,
     musicbillId,
     musicbillName,
   } = invitation;
@@ -80,7 +80,7 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
 
   return (
     <Style>
-      <div className="time">{day(shareTimestamp).format('MM-DD HH:mm')}</div>
+      <div className="time">{day(inviteTimestamp).format('MM-DD HH:mm')}</div>
       <div className="description">
         <span
           className="user"

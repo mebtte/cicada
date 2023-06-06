@@ -10,7 +10,7 @@ async function removeOutdatedSharedMusicbillInvitation() {
   await getDB().run(
     `
         DELETE FROM ${SHARED_MUSICBILL_TABLE_NAME}
-        WHERE ${SharedMusicbillProperty.SHARE_TIMESTAMP} <= ?
+        WHERE ${SharedMusicbillProperty.INVITE_TIMESTAMP} <= ?
           AND ${SharedMusicbillProperty.ACCEPTED} = 0
       `,
     [Date.now() - SHARED_MUSICBILL_INVITATION_MINIMAL_TTL],

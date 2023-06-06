@@ -251,8 +251,8 @@ export default async () => {
         ${SharedMusicbillProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${SharedMusicbillProperty.MUSICBILL_ID} TEXT NOT NULL REFERENCES ${MUSICBILL_TABLE_NAME} ( ${MusicbillProperty.ID} ),
         ${SharedMusicbillProperty.SHARED_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
-        ${SharedMusicbillProperty.SHARE_TIMESTAMP} INTEGER NOT NULL,
         ${SharedMusicbillProperty.INVITE_USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
+        ${SharedMusicbillProperty.INVITE_TIMESTAMP} INTEGER NOT NULL,
         ${SharedMusicbillProperty.ACCEPTED} INTEGER NOT NULL DEFAULT 0,
 
         UNIQUE( ${SharedMusicbillProperty.MUSICBILL_ID}, ${SharedMusicbillProperty.SHARED_USER_ID} ) ON CONFLICT REPLACE

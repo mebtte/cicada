@@ -1,6 +1,6 @@
 export type Response = {
   id: number;
-  shareTimestamp: number;
+  inviteTimestamp: number;
   inviteUserId: string;
   inviteUserNickname: string;
   musicbillId: string;
