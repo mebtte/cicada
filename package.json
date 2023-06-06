@@ -153,7 +153,6 @@
     "react-slider": "^1.1.4",
     "react-sortable-hoc": "^2.0.0",
     "react-spring": "^9.4.5",
-    "resize-observer-polyfill": "^1.5.1",
     "rimraf": "^3.0.2",
     "style-loader": "^3.3.1",
     "styled-components": "^5.3.5",

@@ -1,5 +1,4 @@
 import day from '#/utils/day';
-import { MINI_MODE_MAX_WIDTH } from '@/constants';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
@@ -8,14 +7,15 @@ import IconButton from '@/components/icon_button';
 import { MdMoreVert } from 'react-icons/md';
 import { ComponentSize } from '@/constants/style';
 import { User as UserType } from '../constants';
-import { GAP } from './constants';
 import e, { EventType } from '../eventemitter';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
+import { GAP } from './constants';
 
-const SIZE = 190;
 const Style = styled.div`
+  display: inline-block;
+
   > .content {
     padding-bottom: 100%;
     position: relative;
@@ -73,29 +73,15 @@ const Style = styled.div`
       padding: 2px 5px;
     }
   }
-
-  width: ${SIZE}px;
-
-  ${new Array(Math.ceil(MINI_MODE_MAX_WIDTH / SIZE / 2))
-    .fill(0)
-    .map(
-      (_, index) => `
-        @media (min-width: ${SIZE * (index + 1) + 1}px) and (max-width: ${
-        SIZE * (index + 2)
-      }px) {
-          width: ${100 / (1 + index)}%;
-        }
-      `,
-    )
-    .join('\n')}
 `;
 
-function User({ user }: { user: UserType }) {
+function User({ user, width }: { user: UserType; width: string }) {
   const today = day();
   const yesterday = day().subtract(1, 'D');
   const lastActiveTime = day(user.lastActiveTimestamp);
   return (
     <Style
+      style={{ width }}
       onClick={() =>
         playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
           id: user.id,

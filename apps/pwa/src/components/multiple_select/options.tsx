@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import ResizeObserver from 'resize-observer-polyfill';
 import { MdDone } from 'react-icons/md';
 import { animated, useTransition } from 'react-spring';
 import { useEffect, useState } from 'react';
