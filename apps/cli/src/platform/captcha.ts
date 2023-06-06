@@ -13,7 +13,7 @@ export async function createCaptcha() {
   });
   await getDB().run(
     `
-      INSERT INTO ${CAPTCHA_TABLE_NAME} (id, value, createTimestamp)
+      INSERT INTO ${CAPTCHA_TABLE_NAME} (${CaptchaProperty.ID}, ${CaptchaProperty.VALUE}, ${CaptchaProperty.CREATE_TIMESTAMP})
       VALUES (?, ?, ?)
     `,
     [id, captchaData.text, Date.now()],

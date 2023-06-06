@@ -6,6 +6,7 @@ import definition from './definition';
 import startServer from './commands/start_server';
 import importMusic from './commands/import_music';
 import dataUpgrade from './commands/data_upgrade';
+import { FIRST_USER_ID } from './constants';
 
 const program = new Command()
   .name('cicada')
@@ -76,9 +77,9 @@ program
   .command('import')
   .description('import music(s) to cicada')
   .option('--data <data>', 'cicada data directory')
-  .option('--uid <user_id>', "specify music creator's id", '1')
-  .option('-r, --recursive', 'import music from sub directories', false)
-  .option('--skip-check-exist', 'scan sub directories', false)
+  .option('--uid <uid>', "specify music creator's id", FIRST_USER_ID)
+  .option('-r, --recursive', 'scan sub directories recursively', false)
+  .option('--skip-existence-check', 'skip existence check', false)
   .argument('[source]', 'source directory or file')
   .action(
     (
@@ -88,7 +89,7 @@ program
         uid: string;
         r: boolean;
         recursive: boolean;
-        skipCheckExist: boolean;
+        skipExistenceCheck: boolean;
       },
     ) => {
       if (!source) {
@@ -116,7 +117,7 @@ program
         data: absoluteData,
         uid: options.uid,
         recursive: options.r || options.recursive,
-        skipCheckExist: options.skipCheckExist,
+        skipExistenceCheck: options.skipExistenceCheck,
       });
     },
   );

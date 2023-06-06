@@ -33,6 +33,7 @@ import {
   PublicMusicbillCollectionProperty,
   SHARED_MUSICBILL_TABLE_NAME,
   SharedMusicbillProperty,
+  User,
 } from '@/constants/db_definition';
 import DB from '@/utils/db';
 import {
@@ -46,6 +47,7 @@ import {
   getDataVersionPath,
 } from '@/config';
 import exitWithMessage from '@/utils/exit_with_message';
+import { FIRST_USER_ID } from '@/constants';
 
 const DATA_VERSION = 1;
 
@@ -85,14 +87,12 @@ export default async () => {
     if (dataVersion !== DATA_VERSION) {
       if (dataVersion < DATA_VERSION) {
         return exitWithMessage(
-          `当前数据版本为 v${dataVersion}, 请使用 v${
+          `Current version of data is v${dataVersion}, Please start server after using v${
             dataVersion + 1
-          } 版本的知了通过 [ cicada data-upgrade <data> ] 升级数据后再启动服务`,
+          }'s cicada to upgrade data by [ cicada data-upgrade <data> ]`,
         );
       }
-      return exitWithMessage(
-        `数据版本大于 v${DATA_VERSION}, 请使用对应版本的知了提供服务`,
-      );
+      return exitWithMessage('Please upgrade cicada to latest');
     }
   } else {
     fs.writeFileSync(getDataVersionPath(), DATA_VERSION.toString());
@@ -283,30 +283,34 @@ export default async () => {
   }
 
   /**
-   * 插入超级用户
+   * 插入首个用户
    * @author mebtte<hi@mebtte.com>
    */
   const db = new DB(getDBFilePath());
-  const adminUser = await db.get('select * from user where admin = 1');
-  if (!adminUser) {
-    let adminEmail = getConfig().initialAdminEmail;
-    while (!adminEmail) {
-      adminEmail = await question('🙋 请输入管理员邮箱: ');
-      if (adminEmail && !EMAIL.test(adminEmail)) {
+  const firstUser = await db.get<Pick<User, UserProperty.ID>>(
+    `
+      SELECT ${UserProperty.ID} FROM ${USER_TABLE_NAME}
+    `,
+  );
+  if (!firstUser) {
+    let { firstUserEmail } = getConfig();
+    while (!firstUserEmail) {
+      firstUserEmail = await question('🙋 Please enter the first user email: ');
+      if (firstUserEmail && !EMAIL.test(firstUserEmail)) {
         // eslint-disable-next-line no-console
-        console.log(`🚨 [ ${adminEmail} ] 不是合法的邮箱`);
-        adminEmail = '';
+        console.log(`🚨 [ ${firstUserEmail} ] isn't a valid email`);
+        firstUserEmail = '';
       }
     }
     await db.run(
       `
-        INSERT INTO user( id, email, nickname, joinTimestamp, admin )
-          VALUES ( ?, ?, ?, ?, 1 )
+        INSERT INTO ${USER_TABLE_NAME} ( ${UserProperty.ID}, ${UserProperty.EMAIL}, ${UserProperty.NICKNAME}, ${UserProperty.JOIN_TIMESTAMP}, ${UserProperty.ADMIN} )
+        VALUES ( ?, ?, ?, ?, 1 )
       `,
-      ['1', adminEmail, 'Admin', Date.now()],
+      [FIRST_USER_ID, firstUserEmail, 'Admin', Date.now()],
     );
 
     // eslint-disable-next-line no-console
-    console.log(`🎉 现在你可以使用 [ ${adminEmail} ] 登录了`);
+    console.log(`🎉 You can use [ ${firstUserEmail} ] to login now`);
   }
 };

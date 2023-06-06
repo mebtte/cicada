@@ -264,13 +264,15 @@ export default async ({ data }: { data: string }) => {
   updateConfig({ data });
 
   if (!fs.existsSync(getDataVersionPath())) {
-    return exitWithMessage(`[ ${data} ] 不是合法的数据目录`);
+    return exitWithMessage(`[ ${data} ] isn't a valid datadirectory`);
   }
   const dataVersion = Number(
     fs.readFileSync(getDataVersionPath()).toString().replace(/\s/gm, ''),
   );
   if (dataVersion !== 0) {
-    return exitWithMessage('当前版本的知了只支持升级 v0 版本的数据');
+    return exitWithMessage(
+      `This version of cicada can upgrade data only v0, your data version is v${dataVersion}`,
+    );
   }
 
   const answer: { confirmed: boolean } = await inquirer.prompt([
@@ -278,7 +280,7 @@ export default async ({ data }: { data: string }) => {
       type: 'confirm',
       name: 'confirmed',
       message:
-        '升级数据将会对数据目录进行修改, 升级过程中断将会导致数据异常, 请先备份数据, 是否继续?',
+        "It's important to backup your data before upgrading. Continue ?",
       default: false,
     },
   ]);
@@ -289,69 +291,69 @@ export default async ({ data }: { data: string }) => {
   let spinner: Spinner;
 
   spinner = createSpinner();
-  spinner.start({ text: '正在合并音乐资源...' });
+  spinner.start({ text: "Combining music's asset..." });
   await combineMusicAsset();
-  spinner.success({ text: '音乐资源已合并' });
+  spinner.success({ text: "Music's asset combined" });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在分离伴奏...' });
+  spinner.start({ text: 'Separating music.ac...' });
   await separateMusicAc();
-  spinner.success({ text: '伴奏已分离' });
+  spinner.success({ text: 'Music.ac separated' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在迁移 music.hq 到 music.sq...' });
+  spinner.start({ text: 'Migrating music.hq to music.sq...' });
   await migrateMusicHqToSq();
-  spinner.success({ text: 'music.hq 已迁移到 music.sq' });
+  spinner.success({ text: 'music.hq has migrated to music.sq' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在删除 music.ac 和 music.hq...' });
+  spinner.start({ text: 'Deleting music.ac and music.hq...' });
   await dropMusicAcAndHq();
-  spinner.success({ text: '已删除 music.ac 和 music.hq' });
+  spinner.success({ text: 'music.ac and music.hq deleted' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在重命名 music.sq 为 music.asset...' });
+  spinner.start({ text: 'Renaming music.sq to music.asset...' });
   await renameMusicSq();
-  spinner.success({ text: 'music.sq 已重命名为 music.asset' });
+  spinner.success({ text: 'music.sq has renamed to music.asset' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在添加 music.year...' });
+  spinner.start({ text: 'Adding music.year...' });
   await addMusicYear();
-  spinner.success({ text: '已添加 music.year' });
+  spinner.success({ text: 'music.year added' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在添加 user.lastActiveTimestamp...' });
+  spinner.start({ text: 'Adding user.lastActiveTimestamp...' });
   await addUserLastActiveTimestamp();
-  spinner.success({ text: 'user.lastActiveTimestamp 已添加' });
+  spinner.success({ text: 'user.lastActiveTimestamp added' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在添加 user.musicPlayRecordIndate...' });
+  spinner.start({ text: 'Adding user.musicPlayRecordIndate...' });
   await addUserMusicPlayRecordIndate();
-  spinner.success({ text: 'user.musicPlayRecordIndate 已添加' });
+  spinner.success({ text: 'user.musicPlayRecordIndate added' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在创建 shared_musicbill...' });
+  spinner.start({ text: 'Creating shared_musicbill...' });
   await createSharedMusicbill();
-  spinner.success({ text: 'shared_musicbill 已创建' });
+  spinner.success({ text: 'shared_musicbill created' });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在移除 musicbill_export...' });
+  spinner.start({ text: 'Dropping musicbill_export...' });
   await dropMusicbillExport();
-  spinner.success({ text: 'musicbill_export 已移除' });
+  spinner.success({ text: 'musicbill_export dropped' });
 
   spinner = createSpinner();
   spinner.start({
-    text: '正在重命名 musicbill_collection 为 public_musicbill_collection...',
+    text: 'Renaming musicbill_collection to public_musicbill_collection...',
   });
   await renameMusicbillCollection();
   spinner.success({
-    text: 'musicbill_collection 已重命名为 public_musicbill_collection',
+    text: 'musicbill_collection has renamed to public_musicbill_collection',
   });
 
   spinner = createSpinner();
-  spinner.start({ text: '正在写入新的版本号...' });
+  spinner.start({ text: 'Writting new version of data...' });
   await writeNewVersion();
-  spinner.success({ text: '已写入新的版本号' });
+  spinner.success({ text: 'New version of data wrote' });
 
-  createSpinner().success({ text: '数据已从 v0 升级到 v1' });
+  createSpinner().success({ text: 'Data upgrade to v1 from v0 successfully' });
   return process.exit();
 };

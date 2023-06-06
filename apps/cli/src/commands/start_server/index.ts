@@ -58,7 +58,6 @@ async function startServer({
   schedule.start();
 
   const server = new Koa();
-
   server.use(log());
   server.use(
     cors({

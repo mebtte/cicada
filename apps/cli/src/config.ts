@@ -6,7 +6,7 @@ import exitWithMessage from './utils/exit_with_message';
 
 export interface Config {
   mode: 'development' | 'production';
-  initialAdminEmail: string;
+  firstUserEmail: string;
 
   data: string;
   port: number;
@@ -21,7 +21,7 @@ const schema = Joi.object<Config>({
   mode: Joi.string()
     .pattern(/development|production/)
     .optional(),
-  initialAdminEmail: Joi.string().email().allow(''),
+  firstUserEmail: Joi.string().email().allow(''),
 
   data: Joi.string().optional(),
   port: Joi.number().port().optional(),
@@ -33,7 +33,7 @@ const schema = Joi.object<Config>({
 });
 let config: Config = {
   mode: 'production',
-  initialAdminEmail: '',
+  firstUserEmail: '',
 
   data: `${process.cwd()}/cicada`,
   port: 8000,
@@ -89,16 +89,7 @@ export function getAssetDirectory(assetType?: AssetType) {
 
 export function updateConfigFromFile(filePath: string) {
   if (!fs.existsSync(filePath)) {
-    /**
-     * 兼容旧版本中 docker 配置文件位于 /config.json
-     * v1 版本可移除此兼容
-     * @author mebtte<hi@mebtte.com>
-     */
-    if (!fs.existsSync('/config.json')) {
-      return exitWithMessage(`配置文件「${filePath}」不存在`);
-    }
-    // eslint-disable-next-line no-param-reassign
-    filePath = '/config.json';
+    return exitWithMessage(`Config file [ ${filePath} ] not exist`);
   }
 
   let configFromFile: Partial<Config> = {};
@@ -107,7 +98,7 @@ export function updateConfigFromFile(filePath: string) {
     configFromFile = json5.parse(dataString);
   } catch (error) {
     console.error(error);
-    exitWithMessage(`解析配置文件「${filePath}」失败`);
+    return exitWithMessage(`Can not parse config file [ ${filePath} ]`);
   }
 
   config = {
@@ -118,7 +109,7 @@ export function updateConfigFromFile(filePath: string) {
   const { error } = schema.validate(config);
   if (error) {
     console.error(error);
-    exitWithMessage(`配置文件「${filePath}」错误`);
+    return exitWithMessage(`Can not validate config file [ ${filePath} ]`);
   }
 }
 

@@ -53,7 +53,7 @@
 
 ### Docker
 
-知了支持 Docker 部署, **启动容器之前请先参考上面准备知了的配置文件**, 需要注意的是首次运行必须配置 [initialAdminEmail](./docs/config/index.md#initialadminemail), 否则无法完成初始化.
+知了支持 Docker 部署, **启动容器之前请先参考上面准备知了的配置文件**, 需要注意的是首次运行必须配置 [firstUserEmail](./docs/config/index.md#firstUserEmail), 否则无法完成初始化.
 
 > 通过 Docker 运行知了会忽略配置文件中的 [data](./docs/config/index.md#data) 和 [port](./docs/config/index.md#port)
 

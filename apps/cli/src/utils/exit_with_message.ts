@@ -1,7 +1,7 @@
 function exitWithMessage(message: string) {
   // eslint-disable-next-line no-console
   console.log(message);
-  process.exit();
+  return process.exit();
 }
 
 export default exitWithMessage;

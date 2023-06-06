@@ -87,10 +87,10 @@ async function checkMusicExist({
 async function importFile(
   file: string,
   {
-    skipCheckExist,
+    skipExistenceCheck,
     uid,
   }: {
-    skipCheckExist: boolean;
+    skipExistenceCheck: boolean;
     uid: string;
   },
 ) {
@@ -104,7 +104,7 @@ async function importFile(
   if (!MATCH_FILENAME.test(path.parse(file).base)) {
     ignored += 1;
     return spinner.warn({
-      text: `[ ${file} ] 文件命名不匹配, 已忽略`,
+      text: `[ ${file} ] isn't a valid filename, ignored`,
     });
   }
 
@@ -122,12 +122,12 @@ async function importFile(
       .map((s) => handleSpace(s))
       .filter((s) => s.length > 0);
 
-    if (!skipCheckExist) {
+    if (!skipExistenceCheck) {
       const exist = await checkMusicExist({ singers, name });
       if (exist) {
         ignored += 1;
         return spinner.warn({
-          text: `[ ${file} ] 已存在于数据库, 跳过导入, 使用参数 [ --skip-check-exist ] 可以禁止重复性检查`,
+          text: `[ ${file} ] has been database already and ignored, using [ --skip-existence-check ] will skip existence check`,
         });
       }
     }
@@ -168,12 +168,12 @@ async function importFile(
     }
 
     spinner.success({
-      text: `[ ${file} ] 已导入`,
+      text: `[ ${file} ] imported`,
     });
 
     successed += 1;
   } else {
-    spinner.warn({ text: `[ ${file} ] 文件类型不匹配, 已忽略` });
+    spinner.warn({ text: `[ ${file} ] isn't a valid format, ignored` });
     ignored += 1;
   }
 }
@@ -182,11 +182,11 @@ async function importDirectory(
   directory: string,
   {
     recursive,
-    skipCheckExist,
+    skipExistenceCheck,
     uid,
   }: {
     recursive: boolean;
-    skipCheckExist: boolean;
+    skipExistenceCheck: boolean;
     uid: string;
   },
 ) {
@@ -199,12 +199,16 @@ async function importDirectory(
     const absolutePath = `${directory}/${file}`;
     const stat = await fs.stat(absolutePath);
     if (stat.isFile()) {
-      await importFile(absolutePath, { skipCheckExist, uid });
+      await importFile(absolutePath, { skipExistenceCheck, uid });
     } else if (recursive) {
-      await importDirectory(absolutePath, { recursive, skipCheckExist, uid });
+      await importDirectory(absolutePath, {
+        recursive,
+        skipExistenceCheck,
+        uid,
+      });
     } else {
       createSpinner().warn({
-        text: `已忽略目录 [ ${absolutePath} ], 如需递归导入请使用 [ -r/--recursive ] 参数`,
+        text: `[ ${absolutePath} ] is a directory and ignored, using [ -r/--recursive ] will scan sub directories recursively`,
       });
       ignored += 1;
     }
@@ -216,13 +220,13 @@ export default async ({
   data,
   uid,
   recursive,
-  skipCheckExist,
+  skipExistenceCheck,
 }: {
   source: string;
   data: string;
   uid: string;
   recursive: boolean;
-  skipCheckExist: boolean;
+  skipExistenceCheck: boolean;
 }) => {
   updateConfig({ data });
 
@@ -237,9 +241,9 @@ export default async ({
 
   const sourceStat = await fs.stat(source);
   if (sourceStat.isDirectory()) {
-    await importDirectory(source, { recursive, skipCheckExist, uid });
+    await importDirectory(source, { recursive, skipExistenceCheck, uid });
   } else {
-    await importFile(source, { skipCheckExist, uid });
+    await importFile(source, { skipExistenceCheck, uid });
   }
 
   createSpinner().success({

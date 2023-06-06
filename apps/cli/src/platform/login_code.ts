@@ -4,6 +4,11 @@ import { GET_LOGIN_CODE_INTERVAL } from '#/constants';
 import { getDB } from '@/db';
 import generateRandomString from '#/utils/generate_random_string';
 import { getLoginCodeSaltFilePath } from '@/config';
+import {
+  LOGIN_CODE_TABLE_NAME,
+  LoginCodeProperty,
+  LoginCode,
+} from '@/constants/db_definition';
 import { LOGIN_CODE_TTL } from '../constants';
 
 let loginCodeSalt: string;
@@ -26,10 +31,12 @@ export async function hasLoginCodeInGetInterval({
 }) {
   const row = await getDB().get<{ id: string }>(
     `
-      select id from login_code
-        where userId = ?
-          and createTimestamp >= ?
-          and used = 0
+      SELECT
+        ${LoginCodeProperty.ID}
+      FROM ${LOGIN_CODE_TABLE_NAME}
+      WHERE ${LoginCodeProperty.USER_ID} = ?
+        AND ${LoginCodeProperty.CREATE_TIMESTAMP} >= ?
+        AND ${LoginCodeProperty.USED} = 0
     `,
     [userId, Date.now() - GET_LOGIN_CODE_INTERVAL],
   );
@@ -45,7 +52,10 @@ export function saveLoginCode({
 }) {
   const encodedCode = md5(code + getLoginCodeSalt());
   return getDB().run(
-    'insert into login_code(userId, code, createTimestamp) values(?, ?, ?)',
+    `
+      INSERT INTO ${LOGIN_CODE_TABLE_NAME} ( ${LoginCodeProperty.USER_ID}, ${LoginCodeProperty.CODE}, ${LoginCodeProperty.CREATE_TIMESTAMP} )
+      VALUES ( ?, ?, ? )
+    `,
     [userId, encodedCode, Date.now()],
   );
 }
@@ -57,13 +67,18 @@ export async function verifyLoginCode({
   userId: string;
   code: string;
 }): Promise<boolean> {
-  const loginCode = await getDB().get<{ id: string; code: string }>(
+  const loginCode = await getDB().get<
+    Pick<LoginCode, LoginCodeProperty.ID | LoginCodeProperty.CODE>
+  >(
     `
-      select id, code from login_code
-        where userId = ?
-          and createTimestamp >= ?
-          and used = 0
-        order by createTimestamp DESC
+      SELECT
+        ${LoginCodeProperty.ID},
+        ${LoginCodeProperty.CODE}
+      FROM ${LOGIN_CODE_TABLE_NAME}
+      WHERE ${LoginCodeProperty.USER_ID} = ?
+        AND ${LoginCodeProperty.CREATE_TIMESTAMP} >= ?
+        AND ${LoginCodeProperty.USED} = 0
+      ORDER BY ${LoginCodeProperty.CREATE_TIMESTAMP} DESC
     `,
     [userId, Date.now() - LOGIN_CODE_TTL],
   );
@@ -77,7 +92,13 @@ export async function verifyLoginCode({
   }
 
   getDB()
-    .run('update login_code set used = 1 where id = ?', [loginCode.id])
+    .run(
+      `
+        UPDATE ${LOGIN_CODE_TABLE_NAME} SET ${LoginCodeProperty.USED} = 1
+        WHERE ${LoginCodeProperty.ID} = ?
+      `,
+      [loginCode.id],
+    )
     .catch((error) => console.error(error));
   return true;
 }
