@@ -56,6 +56,7 @@ export interface Musicbill {
 
   status: RequestStatus;
   error: Error | null;
+  lastUpdateTimestamp: number;
 }
 
 export const ZIndex = {

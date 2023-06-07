@@ -41,7 +41,7 @@ export default (id: string) => {
         },
       });
     } catch (error) {
-      logger.error(error, '获取公开歌单失败');
+      logger.error(error, '获取公开乐单失败');
       setData({
         error,
         loading: false,

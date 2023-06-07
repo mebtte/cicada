@@ -100,7 +100,7 @@ function MusicbillList({ musicbillList }: { musicbillList: MusicbillType[] }) {
       </Root>
     );
   }
-  return <Empty style={emptyStyle} description="暂无公开歌单" />;
+  return <Empty style={emptyStyle} description="暂无公开乐单" />;
 }
 
 export default MusicbillList;
