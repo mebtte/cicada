@@ -1,6 +1,6 @@
 import fs from 'fs';
+import inquirer from 'inquirer';
 import { EMAIL } from '#/constants/regexp';
-import question from '#/utils/question';
 import { AssetType } from '#/constants';
 import {
   MusicProperty,
@@ -48,6 +48,7 @@ import {
 } from '@/config';
 import exitWithMessage from '@/utils/exit_with_message';
 import { FIRST_USER_ID } from '@/constants';
+import { createSpinner } from 'nanospinner';
 
 const DATA_VERSION = 1;
 
@@ -295,10 +296,18 @@ export default async () => {
   if (!firstUser) {
     let { firstUserEmail } = getConfig();
     while (!firstUserEmail) {
-      firstUserEmail = await question('🙋 Please enter the first user email: ');
+      const answer = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'firstUserEmail',
+          message: 'Please enter the first user email:',
+        },
+      ]);
+      firstUserEmail = answer.firstUserEmail;
       if (firstUserEmail && !EMAIL.test(firstUserEmail)) {
-        // eslint-disable-next-line no-console
-        console.log(`🚨 [ ${firstUserEmail} ] isn't a valid email`);
+        createSpinner().error({
+          text: `[ ${firstUserEmail} ] isn't a valid email`,
+        });
         firstUserEmail = '';
       }
     }
@@ -310,7 +319,8 @@ export default async () => {
       [FIRST_USER_ID, firstUserEmail, 'Admin', Date.now()],
     );
 
-    // eslint-disable-next-line no-console
-    console.log(`🎉 You can use [ ${firstUserEmail} ] to login now`);
+    createSpinner().success({
+      text: `You can use [ ${firstUserEmail} ] to login now`,
+    });
   }
 };
