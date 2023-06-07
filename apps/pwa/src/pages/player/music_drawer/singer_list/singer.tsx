@@ -2,9 +2,11 @@ import Cover, { Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import ellipsis from '@/style/ellipsis';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { SingerDetail } from '../constants';
 import e, { EventType } from '../../eventemitter';
 
+const COVER_SIZE = 32;
 const Style = styled.div`
   display: flex;
   align-items: center;
@@ -42,9 +44,9 @@ function Singer({ singer }: { singer: SingerDetail }) {
       onClick={() => e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })}
     >
       <Cover
-        size={32}
+        size={COVER_SIZE}
         shape={Shape.CIRCLE}
-        src={singer.avatar}
+        src={getResizedImage({ url: singer.avatar, size: COVER_SIZE * 2 })}
         alt="singer cover"
       />
       <div className="name">{singer.name}</div>

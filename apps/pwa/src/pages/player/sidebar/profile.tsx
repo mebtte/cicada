@@ -4,8 +4,10 @@ import Cover, { Shape } from '@/components/cover';
 import ellipsis from '@/style/ellipsis';
 import { CSSVariable } from '@/global_style';
 import { memo } from 'react';
+import getResizedImage from '@/server/asset/get_resized_image';
 import e, { EventType } from '../eventemitter';
 
+const AVATAR_SIZE = 100;
 const Style = styled.div`
   display: flex;
   flex-direction: column;
@@ -39,8 +41,8 @@ function Profile() {
     <Style>
       <Cover
         className="avatar"
-        src={profile.avatar}
-        size={100}
+        src={getResizedImage({ url: profile.avatar, size: AVATAR_SIZE * 2 })}
+        size={AVATAR_SIZE}
         shape={Shape.CIRCLE}
         onClick={openProfileEditPopup}
       />

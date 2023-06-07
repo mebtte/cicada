@@ -2,7 +2,7 @@ import os from 'os';
 import { IncomingMessage } from 'http';
 import multiparty from 'multiparty';
 
-export interface File {
+interface File {
   originalFilename: string;
   path: string;
   headers: {

@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
 import mm from '@/global_states/mini_mode';
 import { useContext } from 'react';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { ZIndex } from '../constants';
 import Cover from './cover';
 import Operation from './operation';
@@ -64,7 +65,7 @@ function Controller() {
     <Style>
       <Progress duration={audioDuration} />
       <div className="content">
-        <Cover cover={queueMusic.cover} />
+        <Cover cover={getResizedImage({ url: queueMusic.cover, size: 200 })} />
         <div className="rest">
           <Info queueMusic={queueMusic} />
           {miniMode ? null : <Time duration={audioDuration} />}

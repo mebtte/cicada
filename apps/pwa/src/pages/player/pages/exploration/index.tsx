@@ -7,6 +7,7 @@ import ErrorCard from '@/components/error_card';
 import WidthObserver from '@/components/width_observer';
 import Empty from '@/components/empty';
 import absoluteFullSize from '@/style/absolute_full_size';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
 import useData from './use_data';
@@ -19,6 +20,7 @@ import MusicInfo from './music_info';
 import SingerInfo from './singer_info';
 import PublicMusicbillInfo from './public_musicbill_info';
 
+const ITEM_MIN_WIDTH = 180;
 const Root = styled(Page)`
   position: relative;
 `;
@@ -93,7 +95,9 @@ function Wrapper() {
             <WidthObserver
               className="content"
               render={(width) => {
-                const itemWidth = `${100 / Math.floor(width / 180)}%`;
+                const itemWidth = `${
+                  100 / Math.floor(width / ITEM_MIN_WIDTH)
+                }%`;
                 return (
                   <>
                     {d.value.map((item) => {
@@ -102,7 +106,10 @@ function Wrapper() {
                           return (
                             <Cover
                               key={item.value.id}
-                              src={item.value.cover}
+                              src={getResizedImage({
+                                url: item.value.cover,
+                                size: ITEM_MIN_WIDTH * 2,
+                              })}
                               style={{ width: itemWidth }}
                               onClick={() => openMusicDrawer(item.value.id)}
                               info={<MusicInfo music={item.value} />}
@@ -113,7 +120,10 @@ function Wrapper() {
                           return (
                             <Cover
                               key={item.value.id}
-                              src={item.value.avatar}
+                              src={getResizedImage({
+                                url: item.value.avatar,
+                                size: ITEM_MIN_WIDTH * 2,
+                              })}
                               style={{ width: itemWidth }}
                               onClick={() => openSingerDrawer(item.value.id)}
                               info={<SingerInfo singer={item.value} />}
@@ -124,7 +134,10 @@ function Wrapper() {
                           return (
                             <Cover
                               key={item.value.id}
-                              src={item.value.cover}
+                              src={getResizedImage({
+                                url: item.value.cover,
+                                size: ITEM_MIN_WIDTH * 2,
+                              })}
                               style={{ width: itemWidth }}
                               onClick={() => openMusicbillDrawer(item.value.id)}
                               info={

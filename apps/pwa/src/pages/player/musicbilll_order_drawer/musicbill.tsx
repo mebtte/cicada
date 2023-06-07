@@ -4,11 +4,13 @@ import { CSSVariable } from '@/global_style';
 import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import ellipsis from '@/style/ellipsis';
+import getResizedImage from '@/server/asset/get_resized_image';
 import MusicbillCover from '../components/musicbill_cover';
 import { LocalMusicbill } from './constant';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
 
+const COVER_SIZE = 28;
 const Style = styled.div`
   z-index: ${ZIndex.DRAWER + 1};
 
@@ -61,8 +63,8 @@ function Musicbill({ selfIndex, musicbill }: Props) {
   return (
     <Style className={classnames({ active })}>
       <MusicbillCover
-        size={28}
-        src={musicbill.cover}
+        size={COVER_SIZE}
+        src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         publiz={musicbill.public}
         shared={musicbill.shared}
       />

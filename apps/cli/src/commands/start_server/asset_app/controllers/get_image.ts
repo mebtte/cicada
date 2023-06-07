@@ -1,12 +1,23 @@
-import { getAssetFilePath } from '@/platform/asset';
 import { AssetType, IMAGE_MAX_SIZE } from '#/constants';
-import jimp from 'jimp';
 import { getAssetDirectory, getCacheDirectory } from '@/config';
 import exist from '#/utils/exist';
+import jimp from 'jimp';
+import { getAssetFilePath } from '@/platform/asset';
 import send from 'koa-send';
-import { Context } from 'koa';
+import { Context } from '../constants';
 
-export default async (ctx: Context) => {
+async function getCover(
+  ctx: Context,
+  {
+    type,
+  }: {
+    type:
+      | AssetType.MUSICBILL_COVER
+      | AssetType.MUSIC_COVER
+      | AssetType.SINGER_AVATAR
+      | AssetType.USER_AVATAR;
+  },
+) {
   const { asset } = ctx.params as { asset: string };
   const { size } = ctx.query as { size?: unknown };
   const sizeNumber = size ? Number(size) : undefined;
@@ -16,9 +27,7 @@ export default async (ctx: Context) => {
     const cachePath = `${getCacheDirectory()}/${cacheName}`;
     const cacheExist = await exist(cachePath);
     if (!cacheExist) {
-      const cover = await jimp.read(
-        getAssetFilePath(asset, AssetType.MUSIC_COVER),
-      );
+      const cover = await jimp.read(getAssetFilePath(asset, type));
       await new Promise<void>((resolve, reject) =>
         cover
           .resize(sizeNumber, sizeNumber)
@@ -34,6 +43,8 @@ export default async (ctx: Context) => {
 
   return send(ctx, asset, {
     immutable: true,
-    root: getAssetDirectory(AssetType.MUSIC_COVER),
+    root: getAssetDirectory(type),
   });
-};
+}
+
+export default getCover;
