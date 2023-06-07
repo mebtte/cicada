@@ -55,11 +55,8 @@ program
 program
   .command('data-upgrade')
   .description('upgrade data from v0 to v1')
-  .argument('[data]', 'cicada data directory')
+  .argument('<data>', 'cicada data directory')
   .action((data: string) => {
-    if (!data) {
-      return exitWithMessage('请指定数据目录');
-    }
     const absoluteData = path.isAbsolute(data)
       ? data
       : path.resolve(process.cwd(), data);
@@ -80,7 +77,7 @@ program
   .option('--uid <uid>', "specify music creator's id", FIRST_USER_ID)
   .option('-r, --recursive', 'scan sub directories recursively', false)
   .option('--skip-existence-check', 'skip existence check', false)
-  .argument('[source]', 'source directory or file')
+  .argument('<source>', 'source directory or file')
   .action(
     (
       source: string,
@@ -92,9 +89,6 @@ program
         skipExistenceCheck: boolean;
       },
     ) => {
-      if (!source) {
-        return exitWithMessage('请指定源数据');
-      }
       const absoluteSource = path.isAbsolute(source)
         ? source
         : path.resolve(process.cwd(), source);
