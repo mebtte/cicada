@@ -24,6 +24,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: mebtte/cicada
-          readme-filepath: './readme.md'
+          short-description: "A multi-user music service for self-host."
+          readme-filepath: "./docker.md"
 
       - run: ./docker_build_and_push.sh
