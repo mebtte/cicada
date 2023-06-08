@@ -3,9 +3,11 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { NavLink } from 'react-router-dom';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { Musicbill as MusicbillType } from '../../constants';
 import MusicbillCover from '../../components/musicbill_cover';
 
+const COVER_SIZE = 28;
 const Style = styled(NavLink)`
   padding: 5px 20px;
 
@@ -51,8 +53,8 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
       )}`}
     >
       <MusicbillCover
-        size={28}
-        src={musicbill.cover}
+        size={COVER_SIZE}
+        src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         publiz={musicbill.public}
         shared={musicbill.sharedUserList.length > 0}
       />

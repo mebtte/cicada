@@ -1,4 +1,3 @@
-import Cover from '@/components/cover';
 import { CSSProperties, memo } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
@@ -11,6 +10,7 @@ import { RequestStatus } from '@/constants';
 import Spinner from '@/components/spinner';
 import ellipsis from '@/style/ellipsis';
 import notice from '@/utils/notice';
+import getResizedImage from '@/server/asset/get_resized_image';
 import {
   MusicWithSingerAliases,
   Musicbill as MusicbillType,
@@ -18,6 +18,7 @@ import {
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import MusicbillCover from '../components/musicbill_cover';
 
 const ICON_SIZE = 24;
 const Style = styled.div`
@@ -104,15 +105,15 @@ function Musicbill({
       ) : (
         <MdOutlineHelpCenter className="icon" />
       )}
-      <Cover
+      <MusicbillCover
         className="cover"
-        src={musicbill.cover}
-        size={24}
-        style={{
-          outline: musicbill.public
-            ? `2px solid ${CSSVariable.COLOR_PRIMARY}`
-            : 'none',
-        }}
+        size={ICON_SIZE}
+        src={getResizedImage({
+          url: musicbill.cover,
+          size: ICON_SIZE * 2,
+        })}
+        publiz={musicbill.public}
+        shared={musicbill.sharedUserList.length > 0}
       />
       <div className="name">{musicbill.name}</div>
     </Style>

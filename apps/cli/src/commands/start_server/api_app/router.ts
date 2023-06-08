@@ -59,7 +59,7 @@ router.delete('/musicbill', deleteMusicbill); // 删除乐单
 router.put('/musicbill', parseBody, updateMusicbill); // 更新乐单
 router.post('/musicbill_music', parseBody, addMusicToMusicbill); // 添加音乐到乐单
 router.delete('/musicbill_music', removeMusicFromMusicbill); // 从乐单移除音乐
-router.get('/public_musicbill', getPublicMusicbill); // 获取公开歌单
+router.get('/public_musicbill', getPublicMusicbill); // 获取公开乐单
 router.post('/public_musicbill/collection', parseBody, collectPublicMusicbill); // 收藏公开乐单
 router.delete('/public_musicbill/collection', uncollectPublicMusicbill); // 取消收藏公开乐单
 router.get('/public_musicbill/search', searchPublicMusicbill); // 搜索公开乐单

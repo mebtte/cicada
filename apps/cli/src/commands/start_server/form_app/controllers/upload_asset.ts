@@ -1,63 +1,65 @@
 import fs from 'fs';
 import util from 'util';
-import {
-  AssetType,
-  ASSET_TYPES,
-  ASSET_TYPE_MAP,
-  PathPrefix,
-} from '#/constants';
+import { AssetType, ASSET_TYPES, ASSET_TYPE_MAP } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import parseFormdata, { File } from '@/utils/parse_formdata';
+import parseFormdata from '@/utils/parse_formdata';
 import fileType from 'file-type';
 import md5 from 'md5';
 import { getAssetPublicPath } from '@/platform/asset';
-import day from '#/utils/day';
-import { getAssetDirectory, getLogDirectory } from '@/config';
+import { getAssetDirectory } from '@/config';
+import logger from '@/utils/logger';
+import jimp from 'jimp';
 import { Context } from '../constants';
 
-const appendFileAsync = util.promisify(fs.appendFile);
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
+const isSquare = async (buffer: Buffer) => {
+  const image = await jimp.read(buffer);
+  /**
+   * 允许一定的误差
+   * @author mebtte<hi@mebtte.com>
+   */
+  return Math.abs(image.bitmap.width - image.bitmap.height) < 5;
+};
 const ASSET_TYPE_MAP_OPTION: Record<
   AssetType,
   {
-    handleAsset: (file: File) => Promise<Buffer>;
-    generateId: (buffer: Buffer) => string;
+    generateId: (buffer: Buffer, ext: string) => Promise<string>;
+    validate?: (buffer: Buffer) => Promise<boolean>;
   }
 > = {
   [AssetType.SINGER_AVATAR]: {
-    handleAsset: (file) => readFileAsync(file.path),
-    generateId: (buffer) => {
+    validate: isSquare,
+    generateId: async (buffer, ext) => {
       const hash = md5(buffer);
-      return `${hash}.jpeg`;
+      return `${hash}.${ext}`;
     },
   },
   [AssetType.MUSICBILL_COVER]: {
-    handleAsset: (file) => readFileAsync(file.path),
-    generateId: (buffer) => {
+    validate: isSquare,
+    generateId: async (buffer, ext) => {
       const hash = md5(buffer);
-      return `${hash}.jpeg`;
+      return `${hash}.${ext}`;
     },
   },
   [AssetType.MUSIC_COVER]: {
-    handleAsset: (file) => readFileAsync(file.path),
-    generateId: (buffer) => {
+    validate: isSquare,
+    generateId: async (buffer, ext) => {
       const hash = md5(buffer);
-      return `${hash}.jpeg`;
+      return `${hash}.${ext}`;
     },
   },
   [AssetType.USER_AVATAR]: {
-    handleAsset: (file) => readFileAsync(file.path),
-    generateId: (buffer) => {
+    validate: isSquare,
+    generateId: async (buffer, ext) => {
       const hash = md5(buffer);
-      return `${hash}.jpeg`;
+      return `${hash}.${ext}`;
     },
   },
   [AssetType.MUSIC]: {
-    handleAsset: async (file) => readFileAsync(file.path),
-    generateId: (buffer) => {
+    generateId: async (buffer, ext) => {
       const hash = md5(buffer);
-      return `${hash}.m4a`;
+      return `${hash}.${ext}`;
     },
   },
 };
@@ -82,24 +84,27 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.WRONG_ASSET_ACCEPT_TYPES);
   }
 
-  const { handleAsset, generateId } = ASSET_TYPE_MAP_OPTION[assetType];
-  const data = await handleAsset(asset);
-  const id = generateId(data);
+  const { generateId, validate } = ASSET_TYPE_MAP_OPTION[assetType];
+  const data = await readFileAsync(asset.path);
+  if (validate) {
+    const valid = await validate(data);
+    if (!valid) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+  }
+  const id = await generateId(data, ft.ext);
 
   await writeFileAsync(`${getAssetDirectory(assetType)}/${id}`, data);
-  const assetPath = `${PathPrefix.ASSET}/${assetType}/${id}`;
+  const assetPath = getAssetPublicPath(id, assetType);
 
-  const now = day();
-  const dateString = now.format('YYYYMMDD');
-  const timeString = now.format('HH:mm:ss');
-  appendFileAsync(
-    `${getLogDirectory()}/asset_upload_${dateString}.log`,
-    `[${timeString}] ${ctx.user.id} ${assetPath}\n`,
-  ).catch((e) => console.error(e));
+  logger.info({
+    label: 'asset_upload',
+    title: assetType,
+    message: `${ctx.user.id}: ${assetPath}`,
+  });
 
   return ctx.success({
     id,
     path: assetPath,
-    url: getAssetPublicPath(id, assetType),
   });
 };

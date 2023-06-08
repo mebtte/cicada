@@ -36,6 +36,7 @@ export default () => {
 
           musicList: [],
 
+          lastUpdateTimestamp: 0,
           status: RequestStatus.NOT_START,
           error: null,
         })),
@@ -61,6 +62,7 @@ export default () => {
               if (mb.id === id) {
                 return {
                   ...mb,
+                  lastUpdateTimestamp: Date.now(),
                   status: RequestStatus.LOADING,
                   error: null,
                 };
@@ -86,6 +88,7 @@ export default () => {
                     index: data.musicList.length - index,
                   })),
 
+                  lastUpdateTimestamp: Date.now(),
                   status: RequestStatus.SUCCESS,
                 };
               }
@@ -93,12 +96,14 @@ export default () => {
             }),
           );
         } catch (error) {
-          logger.error(error, '获取自己的歌单详情失败');
+          logger.error(error, '获取乐单失败');
           setMusicbillList((mbl) =>
             mbl.map((mb) => {
               if (mb.id === id) {
                 return {
                   ...mb,
+
+                  lastUpdateTimestamp: Date.now(),
                   status: RequestStatus.ERROR,
                   error,
                 };

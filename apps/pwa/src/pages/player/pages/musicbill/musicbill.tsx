@@ -23,6 +23,7 @@ import { INFO_HEIGHT, MINI_INFO_HEIGHT } from './constants';
 import MiniInfo from './mini_info';
 import Filter from './filter';
 
+const RELOAD_INTERVAL = 1000 * 60 * 15;
 const Style = styled(Page)`
   ${absoluteFullSize}
 
@@ -34,7 +35,7 @@ const Style = styled(Page)`
 `;
 
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
-  const { id, status, musicList } = musicbill;
+  const { id, status, musicList, lastUpdateTimestamp } = musicbill;
   const { keyword = '' } = useQuery<Query.KEYWORD>();
 
   const scrollableRef = useRef<HTMLDivElement>(null);
@@ -63,13 +64,13 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
   };
 
   useEffect(() => {
-    if (status === RequestStatus.NOT_START) {
+    if (Date.now() - lastUpdateTimestamp > RELOAD_INTERVAL) {
       playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
         id,
         silence: false,
       });
     }
-  }, [id, status]);
+  }, [id, lastUpdateTimestamp]);
 
   useLayoutEffect(() => {
     if (status === RequestStatus.SUCCESS) {

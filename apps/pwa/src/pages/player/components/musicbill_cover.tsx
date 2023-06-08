@@ -33,7 +33,7 @@ function MusicbillCover({
   ...props
 }: {
   src: string;
-  size: string | number;
+  size: number;
   publiz: boolean;
   shared: boolean;
 } & HtmlHTMLAttributes<HTMLDivElement>) {

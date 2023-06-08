@@ -57,7 +57,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
       const musicbillMaxAmountNumber = Number(musicbillMaxAmount);
       if (user.musicbillMaxAmount !== musicbillMaxAmountNumber) {
         if (musicbillMaxAmountNumber < 0) {
-          throw new Error('歌单最大数量应大于等于 0');
+          throw new Error('乐单最大数量应大于等于 0');
         }
         await adminUpdateUser({
           id: user.id,
@@ -161,7 +161,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         />
         <Input
           className="part"
-          label="歌单最大数量(0 表示无限制)"
+          label="乐单最大数量(0 表示无限制)"
           disabled={loading}
           inputProps={{
             value: musicbillMaxAmount,
