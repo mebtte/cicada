@@ -29,6 +29,7 @@ const Style = styled.div`
 
   cursor: pointer;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  user-select: none;
 
   &:hover {
     background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
