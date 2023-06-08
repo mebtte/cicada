@@ -10,7 +10,7 @@ import { FIRST_USER_ID } from './constants';
 
 const program = new Command()
   .name('cicada')
-  .description('知了, 支持多用户的开源音乐服务.')
+  .description('A multi-user music service for self-host.')
   .version(definition.VERSION);
 
 /**
@@ -34,7 +34,7 @@ program
       port?: string;
     }) => {
       if (!config) {
-        return exitWithMessage('请通过 [ -c/--config ] 指定配置文件');
+        return exitWithMessage('Using [ -c/--config ] to specify config file');
       }
 
       const portNumber = port ? Number(port) : undefined;
@@ -61,7 +61,7 @@ program
       ? data
       : path.resolve(process.cwd(), data);
     if (!fs.existsSync(absoluteData)) {
-      return exitWithMessage(`数据目录 [ ${absoluteData} ] 不存在`);
+      return exitWithMessage(`[ ${absoluteData} ] not exist`);
     }
     return dataUpgrade({ data: absoluteData });
   });
@@ -93,17 +93,17 @@ program
         ? source
         : path.resolve(process.cwd(), source);
       if (!fs.existsSync(absoluteSource)) {
-        return exitWithMessage(`源数据 [ ${absoluteSource} ] 不存在`);
+        return exitWithMessage(`[ ${absoluteSource} ] not exist`);
       }
 
       if (!options.data) {
-        return exitWithMessage('请通过 [ --data ] 指定数据目录');
+        return exitWithMessage('Using [ --data ] to set data directory');
       }
       const absoluteData = path.isAbsolute(options.data)
         ? options.data
         : path.resolve(process.cwd(), options.data);
       if (!fs.existsSync(absoluteData)) {
-        return exitWithMessage(`数据目录 [ ${absoluteData} ] 不存在`);
+        return exitWithMessage(`[ ${absoluteData} ] not exist`);
       }
 
       return importMusic({
