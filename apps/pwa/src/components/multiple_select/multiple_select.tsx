@@ -1,5 +1,4 @@
 import {
-  KeyboardEventHandler,
   FocusEventHandler,
   ReactNode,
   useCallback,
@@ -21,6 +20,21 @@ import useOptions from './use_options';
 import useEvent from '../../utils/use_event';
 
 const onGetDataErrorDefault = (error: Error) => notice.error(error.message);
+const StyledLabel = styled(Label)`
+  > .options {
+    /* visibility: hidden; */
+    opacity: 0;
+
+    transition: none;
+  }
+
+  &:focus-within {
+    > .options {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+`;
 const Input = styled.div<{ active: boolean; disabled: boolean }>`
   padding: 5px 10px;
 
@@ -116,30 +130,18 @@ function MultipleSelect<Value>({
   addon?: ReactNode;
 }) {
   const id = useId();
-
-  const inputBoxRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [keyword, setKeyword] = useState('');
+  const [active, setActive] = useState(false);
 
-  const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
-
-  const timerRef = useRef(0);
-  const onFocus: FocusEventHandler<HTMLInputElement> = useEvent(() => {
-    window.clearTimeout(timerRef.current);
-    return setAnchor(inputBoxRef.current);
-  });
-  const onBlur: FocusEventHandler<HTMLInputElement> = useEvent(() => {
-    timerRef.current = window.setTimeout(() => setAnchor(null), 200);
-  });
-  const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useEvent(
-    (event) => {
-      const v = (event.target as HTMLInputElement).value;
-      if (event.key === 'Backspace' && !v) {
-        onChange(value.slice(0, v.length - 1));
-      }
-    },
+  const onFocus: FocusEventHandler<HTMLInputElement> = useEvent(() =>
+    setActive(true),
   );
+  const onBlur: FocusEventHandler<HTMLInputElement> = useEvent(() =>
+    setActive(false),
+  );
+
   const onRemove = useCallback(
     (option: OptionType<Value>) => {
       if (disabled) {
@@ -169,8 +171,6 @@ function MultipleSelect<Value>({
             ? value.filter((i) => i.key !== option.key)
             : [...value, option as OptionType<Value>],
         );
-
-        window.setTimeout(() => setKeyword(''), 1000);
       },
     );
     return unlistenOnChange;
@@ -178,36 +178,39 @@ function MultipleSelect<Value>({
 
   const selectedKeys = value.map((i) => i.key);
   return (
-    <>
-      <Label label={label} active={!!anchor} disabled={disabled} addon={addon}>
-        <Input active={!!anchor} disabled={disabled} ref={inputBoxRef}>
-          {value.map((option) => (
-            <Item key={option.key} disabled={disabled}>
-              <div className="label">{option.label}</div>
-              <MdClose onClick={() => onRemove(option)} />
-            </Item>
-          ))}
-          <input
-            className="input"
-            value={keyword}
-            onChange={(event) => setKeyword(event.target.value)}
-            onFocus={onFocus}
-            onKeyDown={onKeyDown}
-            onBlur={onBlur}
-            disabled={disabled}
-            ref={inputRef}
-          />
-        </Input>
-      </Label>
+    <StyledLabel
+      label={label}
+      active={active}
+      disabled={disabled}
+      addon={addon}
+    >
+      <Input active={active} disabled={disabled}>
+        {value.map((option) => (
+          <Item key={option.key} disabled={disabled}>
+            <div className="label">{option.label}</div>
+            <MdClose onClick={() => onRemove(option)} />
+          </Item>
+        ))}
+        <input
+          id={id}
+          className="input"
+          value={keyword}
+          onChange={(event) => setKeyword(event.target.value)}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          disabled={disabled}
+          ref={inputRef}
+        />
+      </Input>
       <Options
+        className="options"
         id={id}
         loading={loading}
         options={options}
         selectedKeys={selectedKeys}
         emptyMesssage={emptyMesssage}
-        anchor={anchor}
       />
-    </>
+    </StyledLabel>
   );
 }
 
