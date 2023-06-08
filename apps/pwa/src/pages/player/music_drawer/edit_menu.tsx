@@ -54,6 +54,7 @@ import playerEventemitter, {
   EditDialogType,
 } from '../eventemitter';
 import MusicInfo from '../components/music_info';
+import MissingSinger from '../components/missing_singer';
 
 interface Singer {
   id: string;
@@ -300,17 +301,18 @@ function EditMenu({ music }: { music: MusicDetail }) {
           icon={<MdGroup />}
           label="编辑歌手列表"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.MULTIPLE_SELECT,
+            dialog.multipleSelect<Singer>({
               label: '歌手列表',
+              labelAddon: <MissingSinger />,
               title: '编辑歌手列表',
               dataGetter: searchSinger,
               initialValue: music.singers.map(
                 formatSingerToMultipleSelectOption,
               ),
-              onSubmit: async (options: Option<Singer>[]) => {
+              onConfirm: async (options) => {
                 if (!options.length) {
-                  throw new Error('请选择歌手');
+                  notice.error('请选择歌手');
+                  return false;
                 }
 
                 if (
@@ -319,12 +321,18 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     options.map((o) => o.value.id).sort(),
                   )
                 ) {
-                  await updateMusic({
-                    id: music.id,
-                    key: AllowUpdateKey.SINGER,
-                    value: options.map((o) => o.value.id),
-                  });
-                  emitMusicUpdated(music.id);
+                  try {
+                    await updateMusic({
+                      id: music.id,
+                      key: AllowUpdateKey.SINGER,
+                      value: options.map((o) => o.value.id),
+                    });
+                    emitMusicUpdated(music.id);
+                  } catch (error) {
+                    logger.error(error, '更新歌手列表失败');
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })
@@ -361,27 +369,32 @@ function EditMenu({ music }: { music: MusicDetail }) {
           icon={<MdCallSplit />}
           label="编辑二次创作来源"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.MULTIPLE_SELECT,
+            dialog.multipleSelect<Music>({
               title: '二次创作来源',
               label: '创作来源自以下音乐',
               dataGetter: searchMusic,
               initialValue: music.forkFromList.map(
                 formatMusicTouMultipleSelectOtion,
               ),
-              onSubmit: async (options: Option<Music>[]) => {
+              onConfirm: async (options) => {
                 if (
                   !stringArrayEqual(
                     music.forkFromList.map((m) => m.id).sort(),
                     options.map((o) => o.value.id).sort(),
                   )
                 ) {
-                  await updateMusic({
-                    id: music.id,
-                    key: AllowUpdateKey.FORK_FROM,
-                    value: options.map((o) => o.value.id),
-                  });
-                  emitMusicUpdated(music.id);
+                  try {
+                    await updateMusic({
+                      id: music.id,
+                      key: AllowUpdateKey.FORK_FROM,
+                      value: options.map((o) => o.value.id),
+                    });
+                    emitMusicUpdated(music.id);
+                  } catch (error) {
+                    logger.error(error, '更新二次创作来源失败');
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })

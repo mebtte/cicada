@@ -1,4 +1,5 @@
 import { Variant } from '@/components/button';
+import { Option } from '@/components/multiple_select';
 import { ReactNode } from 'react';
 
 export const ID_LENGTH = 6;
@@ -8,6 +9,7 @@ export enum DialogType {
   CONFIRM,
   CAPTCHA,
   TEXT_INPUT,
+  MULTIPLE_SELECT,
 }
 
 export interface Dialog {
@@ -59,6 +61,23 @@ export interface TextInput extends Dialog {
   confirmVariant?: Variant;
   confirmText?: string;
   onConfirm: (text: string) => void | boolean | Promise<void | boolean>;
+  cancelText?: string;
+  onCancel?: () => void | boolean | Promise<void | boolean>;
+}
+
+export interface MultipleSelect<Value> extends Dialog {
+  type: DialogType.MULTIPLE_SELECT;
+
+  title?: string;
+  initialValue: Option<Value>[];
+  label: string;
+  labelAddon?: ReactNode;
+  dataGetter: (keyword: string) => Option<Value>[] | Promise<Option<Value>[]>;
+  confirmVariant?: Variant;
+  confirmText?: string;
+  onConfirm: (
+    options: Option<Value>[],
+  ) => void | boolean | Promise<void | boolean>;
   cancelText?: string;
   onCancel?: () => void | boolean | Promise<void | boolean>;
 }

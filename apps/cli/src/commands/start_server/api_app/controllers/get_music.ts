@@ -103,7 +103,7 @@ export default async (ctx: Context) => {
     }
     musicIdMapSingerList[s.musicId].push({
       ...excludeProperty(s, ['musicId']),
-      aliases: s.aliases.split(ALIAS_DIVIDER),
+      aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     });
   });
 

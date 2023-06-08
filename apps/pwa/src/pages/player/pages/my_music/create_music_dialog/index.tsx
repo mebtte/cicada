@@ -36,7 +36,7 @@ import logger from '@/utils/logger';
 import { ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
-import CreateSinger from './create_singer';
+import MissingSinger from '../../../components/missing_singer';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
@@ -231,7 +231,7 @@ function CreateMusicDialog() {
             onChange={onSingerListChange}
             dataGetter={searchSinger}
             disabled={loading}
-            addon={<CreateSinger />}
+            addon={<MissingSinger />}
           />
           <Input
             label="音乐名字"

@@ -1,17 +1,19 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Alert as AlertShape,
-  Captcha as CaptchaShape,
-  Confirm as ConfirmShape,
   Dialog,
   DialogType,
   TextInput as TextInputShape,
+  Alert as AlertShape,
+  Captcha as CaptchaShape,
+  Confirm as ConfirmShape,
+  MultipleSelect as MultipleSelectShape,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import Alert from './alert';
 import Confirm from './confirm';
 import Captcha from './captcha';
 import TextInput from './text_input';
+import MultipleSelect from './multiple_select';
 
 function DialogApp() {
   const [dialogList, setDialogList] = useState<Dialog[]>([]);
@@ -59,6 +61,15 @@ function DialogApp() {
               <TextInput
                 key={d.id}
                 textInput={d as TextInputShape}
+                onDestroy={onDestroy}
+              />
+            );
+          }
+          case DialogType.MULTIPLE_SELECT: {
+            return (
+              <MultipleSelect
+                key={d.id}
+                multipleSelect={d as MultipleSelectShape<unknown>}
                 onDestroy={onDestroy}
               />
             );

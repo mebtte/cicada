@@ -229,7 +229,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                 musicbillId: musicbill.id,
                 afterQuitted: () =>
                   navigate({
-                    path: ROOT_PATH + PLAYER_PATH.EXPLORATION,
+                    path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
                   }),
               })
             }

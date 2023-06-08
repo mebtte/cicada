@@ -1,7 +1,7 @@
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
-import { openCreateSingerDialog } from '../../../utils';
+import { openCreateSingerDialog } from '../utils';
 
 const Style = styled.div`
   font-size: 12px;
@@ -10,7 +10,7 @@ const Style = styled.div`
   cursor: pointer;
 `;
 
-function ToCreateSinger() {
+function MissingSinger() {
   return (
     <Style onClick={() => openCreateSingerDialog(() => notice.info('已创建'))}>
       找不到歌手?
@@ -18,4 +18,4 @@ function ToCreateSinger() {
   );
 }
 
-export default ToCreateSinger;
+export default MissingSinger;
