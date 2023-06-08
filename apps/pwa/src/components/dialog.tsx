@@ -35,7 +35,7 @@ const Mask = styled(animated.div)`
 `;
 const Body = styled(animated.div)`
   width: 100%;
-  max-width: 350px;
+  max-width: min(350px, 80%);
   max-height: 80%;
 
   background-color: white;

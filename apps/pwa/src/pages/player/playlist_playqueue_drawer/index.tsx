@@ -7,8 +7,7 @@ import Content from './content';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
-    width: '85%',
-    maxWidth: 400,
+    width: 'min(400px, 85%)',
   },
 };
 

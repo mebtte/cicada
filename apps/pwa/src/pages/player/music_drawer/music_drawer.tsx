@@ -19,8 +19,7 @@ import EditMenu from './edit_menu';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
-    width: '85%',
-    maxWidth: 350,
+    width: 'min(350px, 85%)',
   },
 };
 const Container = styled(animated.div)`

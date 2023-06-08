@@ -33,8 +33,7 @@ const TYPE_MAP_RENDER: Record<
   [EditDialogType.TEXTAREA_LIST]: {
     Component: TextareaList,
     bodyStyle: {
-      width: 550,
-      maxWidth: '90%',
+      width: 'min(550px, 80%)',
     },
   },
   [EditDialogType.FILE]: { Component: File },

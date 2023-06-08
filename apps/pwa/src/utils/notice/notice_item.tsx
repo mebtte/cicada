@@ -45,7 +45,7 @@ const Style = styled.div<{ type: NoticeType }>`
 
   position: fixed;
   right: 20px;
-  max-width: 300px;
+  max-width: min(300px, 75%);
 
   animation: ${slideIn} ${TRANSITION_DURATION}ms ease-in-out;
   transition: all ${TRANSITION_DURATION}ms;

@@ -19,7 +19,7 @@ const Mask = styled(animated.div)`
 `;
 const Body = styled(animated.div)`
   width: 100%;
-  max-width: 500px;
+  max-width: min(300px, 100%);
   max-height: 75%;
 
   overflow: auto;

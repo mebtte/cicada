@@ -17,8 +17,7 @@ import Toolbar from './toolbar';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
-    width: '90%',
-    maxWidth: 400,
+    width: 'min(85%, 400px)',
   },
 };
 const Container = styled(animated.div)`

@@ -24,13 +24,6 @@ const maskProps: {
     zIndex: ZIndex.POPUP,
   },
 };
-const bodyProps: {
-  style: CSSProperties;
-} = {
-  style: {
-    maxWidth: 350,
-  },
-};
 const Style = styled.div`
   padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 
@@ -87,12 +80,7 @@ function ProfileEditPopup() {
   const openUserDrawer = () =>
     e.emit(EventType.OPEN_USER_DRAWER, { id: profile.id });
   return (
-    <Popup
-      open={open}
-      onClose={onClose}
-      maskProps={maskProps}
-      bodyProps={bodyProps}
-    >
+    <Popup open={open} onClose={onClose} maskProps={maskProps}>
       <Style onClick={onClose}>
         <div className="profile" onClick={openUserDrawer}>
           <Cover src={profile.avatar} size={56} />

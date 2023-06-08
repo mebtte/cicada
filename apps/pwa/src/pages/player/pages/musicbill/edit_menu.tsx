@@ -36,11 +36,6 @@ const maskProps: { style: CSSProperties } = {
     zIndex: ZIndex.POPUP,
   },
 };
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    maxWidth: 300,
-  },
-};
 const Style = styled.div`
   padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 `;
@@ -63,12 +58,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
   }, []);
 
   return (
-    <Popup
-      open={open}
-      onClose={onClose}
-      maskProps={maskProps}
-      bodyProps={bodyProps}
-    >
+    <Popup open={open} onClose={onClose} maskProps={maskProps}>
       <Style onClick={onClose}>
         <MenuItem
           label="修改封面"

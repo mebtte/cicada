@@ -40,8 +40,7 @@ const TAB_LIST: { label: string; tab: Tab }[] = Object.values(Tab).map(
 );
 const bodyProps: { style: CSSProperties } = {
   style: {
-    width: '90%',
-    maxWidth: 400,
+    width: 'min(85%, 400px)',
   },
 };
 const Container = styled(animated.div)`
