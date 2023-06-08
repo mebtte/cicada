@@ -14,6 +14,7 @@ import {
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
+import notice from '@/utils/notice';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {
@@ -114,24 +115,30 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
           icon={<MdTitle />}
           label="编辑名字"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.INPUT,
+            dialog.textInput({
               title: '编辑名字',
               label: '名字',
               initialValue: singer.name,
               maxLength: NAME_MAX_LENGTH,
-              onSubmit: async (name: string) => {
+              onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName) {
-                  throw new Error('请输入名字');
+                  notice.error('请输入名字');
+                  return false;
                 }
                 if (singer.name !== trimmedName) {
-                  await updateSinger({
-                    id: singer.id,
-                    key: AllowUpdateKey.NAME,
-                    value: trimmedName,
-                  });
-                  emitSingerUpdated(singer.id);
+                  try {
+                    await updateSinger({
+                      id: singer.id,
+                      key: AllowUpdateKey.NAME,
+                      value: trimmedName,
+                    });
+                    emitSingerUpdated(singer.id);
+                  } catch (error) {
+                    logger.error(error, '更新歌手名字失败');
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })

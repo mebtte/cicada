@@ -51,8 +51,11 @@ export interface Captcha extends Dialog {
 export interface TextInput extends Dialog {
   type: DialogType.TEXT_INPUT;
 
+  title?: string;
   label: string;
   initialValue?: string;
+  maxLength?: number;
+  inputType?: 'number';
   confirmVariant?: Variant;
   confirmText?: string;
   onConfirm: (text: string) => void | boolean | Promise<void | boolean>;

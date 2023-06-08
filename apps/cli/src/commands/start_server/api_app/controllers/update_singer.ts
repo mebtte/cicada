@@ -7,10 +7,15 @@ import {
   SINGER_ALIAS_MAX_COUNT,
 } from '#/constants/singer';
 import exist from '#/utils/exist';
-import { Singer, SingerProperty } from '@/constants/db_definition';
+import {
+  SINGER_TABLE_NAME,
+  Singer,
+  SingerProperty,
+} from '@/constants/db_definition';
 import { getSingerById, updateSinger } from '@/db/singer';
 import { saveSingerModifyRecord } from '@/db/singer_modify_record';
 import { getAssetFilePath } from '@/platform/asset';
+import { getDB } from '@/db';
 import { Context } from '../constants';
 
 type LocalSinger = Pick<
@@ -46,6 +51,19 @@ const KEY_MAP_HANDLER: Record<
 
     if (singer.name === name) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
+    }
+
+    const sameNameSinger = await getDB().get<Pick<Singer, SingerProperty.ID>>(
+      `
+        SELECT
+          ${SingerProperty.ID}
+        FROM ${SINGER_TABLE_NAME}
+        WHERE ${SingerProperty.NAME} = ?
+      `,
+      [name],
+    );
+    if (sameNameSinger) {
+      return ctx.except(ExceptionCode.SINGER_EXIST);
     }
 
     await Promise.all([

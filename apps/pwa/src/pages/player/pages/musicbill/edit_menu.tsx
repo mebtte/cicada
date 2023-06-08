@@ -97,31 +97,36 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
           label="修改名字"
           icon={<MdTitle />}
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.INPUT,
+            dialog.textInput({
               title: '修改名字',
               label: '名字',
               initialValue: musicbill.name,
               maxLength: NAME_MAX_LENGTH,
-              onSubmit: async (name: string) => {
+              onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName) {
-                  throw new Error('请输入名字');
+                  notice.error('请输入名字');
+                  return false;
                 }
                 if (trimmedName !== musicbill.name) {
-                  await updateMusicbill({
-                    id: musicbill.id,
-                    key: AllowUpdateKey.NAME,
-                    value: trimmedName,
-                  });
-
-                  playerEventemitter.emit(
-                    PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                    {
+                  try {
+                    await updateMusicbill({
                       id: musicbill.id,
-                      silence: false,
-                    },
-                  );
+                      key: AllowUpdateKey.NAME,
+                      value: trimmedName,
+                    });
+                    playerEventemitter.emit(
+                      PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                      {
+                        id: musicbill.id,
+                        silence: false,
+                      },
+                    );
+                  } catch (error) {
+                    logger.error(error, '更新乐单名字失败');
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })

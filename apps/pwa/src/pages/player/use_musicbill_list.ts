@@ -10,10 +10,14 @@ import getMusicbill from '@/server/api/get_musicbill';
 import p from '@/global_states/profile';
 import notice from '@/utils/notice';
 import { ExceptionCode } from '#/constants/exception';
+import useNavigate from '@/utils/use_navigate';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import eventemitter, { EventType } from './eventemitter';
 import { Musicbill } from './constants';
 
 export default () => {
+  const navigate = useNavigate();
+
   const [status, setStatus] = useState(RequestStatus.LOADING);
   const [musicbillList, setMusicbillList] = useState<Musicbill[]>([]);
   const getMusicbillList = useCallback(async (silence: boolean) => {
@@ -253,10 +257,6 @@ export default () => {
       EventType.SINGER_UPDATED,
       reloadMusicbillListSilently,
     );
-    const unlistenMusicbillCreated = eventemitter.listen(
-      EventType.MUSICBILL_CREATED,
-      reloadMusicbillList,
-    );
     const unlistenMusicbillDeleted = eventemitter.listen(
       EventType.MUSICBILL_DELETED,
       reloadMusicbillList,
@@ -266,10 +266,28 @@ export default () => {
       unlistenMusicUpdated();
       unlistenMusicDeleted();
       unlistenSingerUpdated();
-      unlistenMusicbillCreated();
       unlistenMusicbillDeleted();
     };
   }, [getMusicbillList]);
+
+  useEffect(() => {
+    const unlistenMusicbillCreated = eventemitter.listen(
+      EventType.MUSICBILL_CREATED,
+      (payload) =>
+        getMusicbillList(true).then(() =>
+          window.setTimeout(
+            () =>
+              navigate({
+                path:
+                  ROOT_PATH.PLAYER +
+                  PLAYER_PATH.MUSICBILL.replace(':id', payload.id),
+              }),
+            0,
+          ),
+        ),
+    );
+    return unlistenMusicbillCreated;
+  }, [getMusicbillList, navigate]);
 
   return {
     status,

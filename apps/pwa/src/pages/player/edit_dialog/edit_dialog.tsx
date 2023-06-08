@@ -10,7 +10,6 @@ import notice from '@/utils/notice';
 import { ZIndex } from '../constants';
 import { EditDialogData, EditDialogType } from '../eventemitter';
 import { Ref, RenderProps } from './constants';
-import Input from './input';
 import Cover from './cover';
 import TextareaList from './textarea_list';
 import InputList from './input_list';
@@ -28,7 +27,6 @@ const TYPE_MAP_RENDER: Record<
   }
 > = {
   [EditDialogType.COVER]: { Component: Cover },
-  [EditDialogType.INPUT]: { Component: Input },
   [EditDialogType.INPUT_LIST]: { Component: InputList },
   [EditDialogType.TEXTAREA_LIST]: {
     Component: TextareaList,

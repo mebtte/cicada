@@ -1,4 +1,4 @@
-import { Container, Content, Action } from '@/components/dialog';
+import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import { CSSProperties, ChangeEventHandler, useState } from 'react';
@@ -49,6 +49,7 @@ function TextInputContent({
 
   return (
     <Container>
+      {textInput.title ? <Title>{textInput.title}</Title> : null}
       <Content style={contentStyle}>
         <Input
           label={textInput.label}
@@ -57,6 +58,7 @@ function TextInputContent({
             value: text,
             onChange: onTextChange,
             autoFocus: true,
+            maxLength: textInput.maxLength,
           }}
         />
       </Content>

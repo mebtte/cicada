@@ -8,7 +8,6 @@ import {
 } from './constants';
 
 export enum EditDialogType {
-  INPUT,
   COVER,
   INPUT_LIST,
   TEXTAREA_LIST,
@@ -19,14 +18,6 @@ export type EditDialogData = {
   title: string;
   onSubmit: (value: unknown | undefined) => void | Promise<void>;
 } & (
-  | {
-      type: EditDialogType.INPUT;
-      label: string;
-      initialValue?: string;
-      maxLength?: number;
-      inputType?: string;
-      placeholder?: string;
-    }
   | {
       type: EditDialogType.COVER;
     }

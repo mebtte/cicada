@@ -14,8 +14,11 @@ import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
 import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';
-import e, { EditDialogType, EventType } from './eventemitter';
+import dialog from '@/utils/dialog';
+import notice from '@/utils/notice';
+import logger from '@/utils/logger';
 import { ZIndex } from './constants';
+import e, { EditDialogType, EventType } from './eventemitter';
 
 const maskProps: {
   style: CSSProperties;
@@ -119,24 +122,32 @@ function ProfileEditPopup() {
           label="修改昵称"
           icon={<MdTitle />}
           onClick={() =>
-            e.emit(EventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.INPUT,
+            dialog.textInput({
               title: '修改昵称',
               label: '昵称',
               initialValue: profile.nickname,
               maxLength: NICKNAME_MAX_LENGTH,
-              onSubmit: async (nickname: string) => {
+              onConfirm: async (nickname: string) => {
                 const trimmedNickname = nickname.replace(/\s+/g, ' ').trim();
                 if (!trimmedNickname) {
-                  throw new Error('请输入昵称');
+                  notice.error('请输入昵称');
+                  return false;
                 }
                 if (profile.nickname !== trimmedNickname) {
-                  await updateProfile({
-                    key: AllowUpdateKey.NICKNAME,
-                    value: trimmedNickname,
-                  });
-
-                  globalEventemitter.emit(GlobalEventType.RELOAD_PROFILE, null);
+                  try {
+                    await updateProfile({
+                      key: AllowUpdateKey.NICKNAME,
+                      value: trimmedNickname,
+                    });
+                    globalEventemitter.emit(
+                      GlobalEventType.RELOAD_PROFILE,
+                      null,
+                    );
+                  } catch (error) {
+                    logger.error(error, '更新昵称失败');
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })

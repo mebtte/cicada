@@ -202,26 +202,31 @@ function EditMenu({ music }: { music: MusicDetail }) {
           icon={<MdTitle />}
           label="编辑名字"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+            dialog.textInput({
               title: '编辑名字',
-              type: EditDialogType.INPUT,
               label: '名字',
               initialValue: music.name,
               maxLength: NAME_MAX_LENGTH,
-              onSubmit: async (name: string) => {
+              onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
-
                 if (!trimmedName.length) {
-                  throw new Error('请输入名字');
+                  notice.error('请输入名字');
+                  return false;
                 }
 
                 if (trimmedName !== music.name) {
-                  await updateMusic({
-                    id: music.id,
-                    key: AllowUpdateKey.NAME,
-                    value: trimmedName,
-                  });
-                  emitMusicUpdated(music.id);
+                  try {
+                    await updateMusic({
+                      id: music.id,
+                      key: AllowUpdateKey.NAME,
+                      value: trimmedName,
+                    });
+                    emitMusicUpdated(music.id);
+                  } catch (error) {
+                    logger.error(error, '更新音乐名字失败');
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })
@@ -386,13 +391,12 @@ function EditMenu({ music }: { music: MusicDetail }) {
           icon={<MdOutlineCalendarToday />}
           label="编辑发行年份"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+            dialog.textInput({
               title: '编辑发行年份',
-              type: EditDialogType.INPUT,
               label: '发行年份',
               initialValue: music.year ? music.year.toString() : '',
               inputType: 'number',
-              onSubmit: async (year: string) => {
+              onConfirm: async (year: string) => {
                 const yearNumber = Number(year);
                 if (
                   !yearNumber ||
@@ -400,16 +404,23 @@ function EditMenu({ music }: { music: MusicDetail }) {
                   yearNumber < YEAR_MIN ||
                   yearNumber > YEAR_MAX
                 ) {
-                  throw new Error('发行年份应在 0-9999 范围内');
+                  notice.error(`发行年份应在 ${YEAR_MIN}-${YEAR_MAX} 范围内`);
+                  return false;
                 }
 
                 if (yearNumber !== music.year) {
-                  await updateMusic({
-                    id: music.id,
-                    key: AllowUpdateKey.YEAR,
-                    value: yearNumber,
-                  });
-                  emitMusicUpdated(music.id);
+                  try {
+                    await updateMusic({
+                      id: music.id,
+                      key: AllowUpdateKey.YEAR,
+                      value: yearNumber,
+                    });
+                    emitMusicUpdated(music.id);
+                  } catch (error) {
+                    logger.error(error, '更新音乐发行年份失败');
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })
