@@ -13,6 +13,7 @@ export enum DialogType {
   MULTIPLE_SELECT,
   FILE_SELECT,
   TEXTAREA_LIST,
+  IMAGE_CUT,
 }
 
 interface Confirmable<Payload = void> {
@@ -45,23 +46,17 @@ export interface Confirm extends Dialog, Confirmable, Cancelable {
   content?: ReactNode;
 }
 
-export interface Captcha extends Dialog {
+export interface Captcha
+  extends Dialog,
+    Confirmable<{
+      captchaId: string;
+      captchaValue: string;
+    }>,
+    Cancelable {
   type: DialogType.CAPTCHA;
-
-  confirmVariant?: Variant;
-  confirmText?: string;
-  onConfirm: ({
-    captchaId,
-    captchaValue,
-  }: {
-    captchaId: string;
-    captchaValue: string;
-  }) => void | boolean | Promise<void | boolean>;
-  cancelText?: string;
-  onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
-export interface Input extends Dialog {
+export interface Input extends Dialog, Confirmable<string>, Cancelable {
   type: DialogType.INPUT;
 
   title?: string;
@@ -69,14 +64,9 @@ export interface Input extends Dialog {
   initialValue?: string;
   maxLength?: number;
   inputType?: 'text' | 'number';
-  confirmVariant?: Variant;
-  confirmText?: string;
-  onConfirm: (text: string) => void | boolean | Promise<void | boolean>;
-  cancelText?: string;
-  onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
-export interface InputList extends Dialog {
+export interface InputList extends Dialog, Confirmable<string[]>, Cancelable {
   type: DialogType.INPUT_LIST;
 
   title?: string;
@@ -84,14 +74,12 @@ export interface InputList extends Dialog {
   initialValue?: string[];
   max?: number;
   maxLength?: number;
-  confirmVariant?: Variant;
-  confirmText?: string;
-  onConfirm: (text: string[]) => void | boolean | Promise<void | boolean>;
-  cancelText?: string;
-  onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
-export interface MultipleSelect<Value> extends Dialog {
+export interface MultipleSelect<Value>
+  extends Dialog,
+    Confirmable<Option<Value>[]>,
+    Cancelable {
   type: DialogType.MULTIPLE_SELECT;
 
   title?: string;
@@ -101,27 +89,18 @@ export interface MultipleSelect<Value> extends Dialog {
   optionsGetter: (
     keyword: string,
   ) => Option<Value>[] | Promise<Option<Value>[]>;
-  confirmVariant?: Variant;
-  confirmText?: string;
-  onConfirm: (
-    options: Option<Value>[],
-  ) => void | boolean | Promise<void | boolean>;
-  cancelText?: string;
-  onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
-export interface FileSelect extends Dialog {
+export interface FileSelect
+  extends Dialog,
+    Confirmable<File | null>,
+    Cancelable {
   type: DialogType.FILE_SELECT;
 
   title?: string;
   label: string;
   acceptTypes: string[];
   placeholder: string;
-  confirmVariant?: Variant;
-  confirmText?: string;
-  onConfirm: (file: File | null) => void | boolean | Promise<void | boolean>;
-  cancelText?: string;
-  onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
 export interface TextareaList
@@ -136,4 +115,10 @@ export interface TextareaList
   max?: number;
   maxLength?: number;
   placeholder?: string;
+}
+
+export interface ImageCut extends Dialog, Confirmable<Blob | null>, Cancelable {
+  type: DialogType.IMAGE_CUT;
+
+  title?: string;
 }

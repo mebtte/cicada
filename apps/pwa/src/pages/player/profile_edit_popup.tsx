@@ -18,7 +18,7 @@ import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { ZIndex } from './constants';
-import e, { EditDialogType, EventType } from './eventemitter';
+import e, { EventType } from './eventemitter';
 
 const maskProps: {
   style: CSSProperties;
@@ -102,18 +102,28 @@ function ProfileEditPopup() {
           label="修改头像"
           icon={<MdImage />}
           onClick={() =>
-            e.emit(EventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.COVER,
+            dialog.imageCut({
               title: '修改头像',
-              onSubmit: async (avatar: File | null) => {
+              onConfirm: async (avatar) => {
                 if (!avatar) {
-                  throw new Error('请选择头像');
+                  notice.error('请选择头像');
+                  return false;
                 }
-
-                const { id } = await uploadAsset(avatar, AssetType.USER_AVATAR);
-                await updateProfile({ key: AllowUpdateKey.AVATAR, value: id });
-
-                globalEventemitter.emit(GlobalEventType.RELOAD_PROFILE, null);
+                try {
+                  const { id } = await uploadAsset(
+                    avatar,
+                    AssetType.USER_AVATAR,
+                  );
+                  await updateProfile({
+                    key: AllowUpdateKey.AVATAR,
+                    value: id,
+                  });
+                  globalEventemitter.emit(GlobalEventType.RELOAD_PROFILE, null);
+                } catch (error) {
+                  logger.error(error, "Updating profile's avatar fail");
+                  notice.error(error.message);
+                  return false;
+                }
               },
             })
           }

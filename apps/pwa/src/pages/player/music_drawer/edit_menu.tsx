@@ -51,7 +51,6 @@ import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
 import playerEventemitter, {
   EventType as PlayerEventType,
-  EditDialogType,
 } from '../eventemitter';
 import MusicInfo from '../components/music_info';
 import MissingSinger from '../components/missing_singer';
@@ -150,23 +149,29 @@ function EditMenu({ music }: { music: MusicDetail }) {
           icon={<MdImage />}
           label="编辑封面"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+            dialog.imageCut({
               title: '编辑封面',
-              type: EditDialogType.COVER,
-              onSubmit: async (cover: Blob | undefined) => {
-                if (typeof cover === 'undefined') {
-                  throw new Error('请选择封面');
+              onConfirm: async (cover) => {
+                if (!cover) {
+                  notice.error('请选择封面');
+                  return false;
                 }
-                const { id: assetId } = await uploadAsset(
-                  cover,
-                  AssetType.MUSIC_COVER,
-                );
-                await updateMusic({
-                  id: music.id,
-                  key: AllowUpdateKey.COVER,
-                  value: assetId,
-                });
-                emitMusicUpdated(music.id);
+                try {
+                  const { id: assetId } = await uploadAsset(
+                    cover,
+                    AssetType.MUSIC_COVER,
+                  );
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.COVER,
+                    value: assetId,
+                  });
+                  emitMusicUpdated(music.id);
+                } catch (error) {
+                  logger.error(error, "Updating music's cover fail");
+                  notice.error(error.message);
+                  return false;
+                }
               },
             })
           }

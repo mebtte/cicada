@@ -22,7 +22,6 @@ import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
 import useKeyboard from './use_keyboard';
 import SingerDrawer from './singer_drawer';
-import EditDialog from './edit_dialog';
 import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
 import PublicMusicbillDrawer from './public_musicbill_drawer';
@@ -124,7 +123,6 @@ function Wrapper() {
 
       {/* fixed z-index */}
       <ProfileEditPopup />
-      <EditDialog />
 
       {queueMusic ? <Audio queueMusic={queueMusic} /> : null}
     </Context.Provider>

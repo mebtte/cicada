@@ -17,10 +17,6 @@ import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
-import playerEventemitter, {
-  EditDialogType,
-  EventType as PlayerEventType,
-} from '../eventemitter';
 import { SingerDetail } from './constants';
 import { emitSingerUpdated } from '../utils';
 
@@ -62,23 +58,29 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
           icon={<MdImage />}
           label="编辑头像"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.COVER,
+            dialog.imageCut({
               title: '编辑头像',
-              onSubmit: async (blob: Blob | undefined) => {
+              onConfirm: async (blob) => {
                 if (!blob) {
-                  throw new Error('请选择头像');
+                  notice.error('请选择头像');
+                  return false;
                 }
-                const { id: assetId } = await uploadAsset(
-                  blob,
-                  AssetType.SINGER_AVATAR,
-                );
-                await updateSinger({
-                  id: singer.id,
-                  key: AllowUpdateKey.AVATAR,
-                  value: assetId,
-                });
-                emitSingerUpdated(singer.id);
+                try {
+                  const { id: assetId } = await uploadAsset(
+                    blob,
+                    AssetType.SINGER_AVATAR,
+                  );
+                  await updateSinger({
+                    id: singer.id,
+                    key: AllowUpdateKey.AVATAR,
+                    value: assetId,
+                  });
+                  emitSingerUpdated(singer.id);
+                } catch (error) {
+                  logger.error(error, "Updating singer's avatar fail");
+                  notice.error(error.message);
+                  return false;
+                }
               },
             })
           }

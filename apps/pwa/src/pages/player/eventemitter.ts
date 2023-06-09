@@ -6,16 +6,6 @@ import {
   SingerWithAliases,
 } from './constants';
 
-export enum EditDialogType {
-  COVER,
-}
-export type EditDialogData = {
-  title: string;
-  onSubmit: (value: unknown | undefined) => void | Promise<void>;
-} & {
-  type: EditDialogType.COVER;
-};
-
 export enum EventType {
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
   MINI_MODE_CLOSE_SIDEBAR = 'mini_mode_close_sidebar',
@@ -57,7 +47,6 @@ export enum EventType {
   OPEN_MUSICBILL_ORDER_DRAWER = 'open_musicbill_order_drawer',
   OPEN_PLAYLIST_PLAYQUEUE_DRAWER = 'open_playlist_playqueue_drawer',
   TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER = 'toggle_playlist_playqueue_drawer',
-  OPEN_EDIT_DIALOG = 'open_music_edit_dialog',
   OPEN_USER_DRAWER = 'open_user_drawer',
   OPEN_PUBLIC_MUSICBILL_DRAWER = 'open_public_musicbill_drawer',
   OPEN_PROFILE_EDIT_POPUP = 'open_profile_edit_popup',
@@ -131,7 +120,6 @@ export default new Eventin<
     [EventType.OPEN_MUSICBILL_ORDER_DRAWER]: null;
     [EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER]: null;
-    [EventType.OPEN_EDIT_DIALOG]: EditDialogData;
     [EventType.OPEN_USER_DRAWER]: { id: string };
     [EventType.OPEN_PUBLIC_MUSICBILL_DRAWER]: { id: string };
     [EventType.OPEN_PROFILE_EDIT_POPUP]: null;

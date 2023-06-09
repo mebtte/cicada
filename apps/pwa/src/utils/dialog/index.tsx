@@ -12,6 +12,7 @@ import {
   MultipleSelect,
   FileSelect,
   TextareaList,
+  ImageCut,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import DialogApp from './dialog_app';
@@ -104,6 +105,16 @@ export default {
       id,
     };
     e.emit(EventType.OPEN, textareaList);
+    return id;
+  },
+  imageCut: (ic: Omit<ImageCut, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const imageCut: ImageCut = {
+      ...ic,
+      type: DialogType.IMAGE_CUT,
+      id,
+    };
+    e.emit(EventType.OPEN, imageCut);
     return id;
   },
   close: (id: string) => e.emit(EventType.CLOSE, { id }),

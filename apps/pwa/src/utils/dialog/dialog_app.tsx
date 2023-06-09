@@ -10,6 +10,7 @@ import {
   MultipleSelect as MultipleSelectShape,
   FileSelect as FileSelectShape,
   TextareaList as TextareaListShape,
+  ImageCut as ImageCutShape,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import Alert from './alert';
@@ -20,6 +21,7 @@ import InputList from './input_list';
 import MultipleSelect from './multiple_select';
 import FileSelect from './file_select';
 import TextareaList from './textarea_list';
+import ImageCut from './image_cut';
 
 function DialogApp() {
   const [dialogList, setDialogList] = useState<Dialog[]>([]);
@@ -99,6 +101,15 @@ function DialogApp() {
               <TextareaList
                 key={d.id}
                 textareaList={d as TextareaListShape}
+                onDestroy={onDestroy}
+              />
+            );
+          }
+          case DialogType.IMAGE_CUT: {
+            return (
+              <ImageCut
+                key={d.id}
+                imageCut={d as ImageCutShape}
                 onDestroy={onDestroy}
               />
             );
