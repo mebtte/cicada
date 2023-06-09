@@ -95,64 +95,70 @@ function Wrapper() {
             <WidthObserver
               className="content"
               render={(width) => {
-                const itemWidth = `${
-                  100 / Math.floor(width / ITEM_MIN_WIDTH)
-                }%`;
+                const amountOfOneLine = Math.floor(width / ITEM_MIN_WIDTH);
+                const itemWidth = `${100 / amountOfOneLine}%`;
                 return (
                   <>
-                    {d.value.map((item) => {
-                      switch (item.type) {
-                        case ExplorationItemType.MUSIC: {
-                          return (
-                            <Cover
-                              key={item.value.id}
-                              src={getResizedImage({
-                                url: item.value.cover,
-                                size: ITEM_MIN_WIDTH * 2,
-                              })}
-                              style={{ width: itemWidth }}
-                              onClick={() => openMusicDrawer(item.value.id)}
-                              info={<MusicInfo music={item.value} />}
-                            />
-                          );
+                    {d.value
+                      .slice(
+                        0,
+                        d.value.length - (d.value.length % amountOfOneLine),
+                      )
+                      .map((item) => {
+                        switch (item.type) {
+                          case ExplorationItemType.MUSIC: {
+                            return (
+                              <Cover
+                                key={item.value.id}
+                                src={getResizedImage({
+                                  url: item.value.cover,
+                                  size: ITEM_MIN_WIDTH * 2,
+                                })}
+                                style={{ width: itemWidth }}
+                                onClick={() => openMusicDrawer(item.value.id)}
+                                info={<MusicInfo music={item.value} />}
+                              />
+                            );
+                          }
+                          case ExplorationItemType.SINGER: {
+                            return (
+                              <Cover
+                                key={item.value.id}
+                                src={getResizedImage({
+                                  url: item.value.avatar,
+                                  size: ITEM_MIN_WIDTH * 2,
+                                })}
+                                style={{ width: itemWidth }}
+                                onClick={() => openSingerDrawer(item.value.id)}
+                                info={<SingerInfo singer={item.value} />}
+                              />
+                            );
+                          }
+                          case ExplorationItemType.PUBLIC_MUSICBILL: {
+                            return (
+                              <Cover
+                                key={item.value.id}
+                                src={getResizedImage({
+                                  url: item.value.cover,
+                                  size: ITEM_MIN_WIDTH * 2,
+                                })}
+                                style={{ width: itemWidth }}
+                                onClick={() =>
+                                  openMusicbillDrawer(item.value.id)
+                                }
+                                info={
+                                  <PublicMusicbillInfo
+                                    publicMusicbill={item.value}
+                                  />
+                                }
+                              />
+                            );
+                          }
+                          default: {
+                            return null;
+                          }
                         }
-                        case ExplorationItemType.SINGER: {
-                          return (
-                            <Cover
-                              key={item.value.id}
-                              src={getResizedImage({
-                                url: item.value.avatar,
-                                size: ITEM_MIN_WIDTH * 2,
-                              })}
-                              style={{ width: itemWidth }}
-                              onClick={() => openSingerDrawer(item.value.id)}
-                              info={<SingerInfo singer={item.value} />}
-                            />
-                          );
-                        }
-                        case ExplorationItemType.PUBLIC_MUSICBILL: {
-                          return (
-                            <Cover
-                              key={item.value.id}
-                              src={getResizedImage({
-                                url: item.value.cover,
-                                size: ITEM_MIN_WIDTH * 2,
-                              })}
-                              style={{ width: itemWidth }}
-                              onClick={() => openMusicbillDrawer(item.value.id)}
-                              info={
-                                <PublicMusicbillInfo
-                                  publicMusicbill={item.value}
-                                />
-                              }
-                            />
-                          );
-                        }
-                        default: {
-                          return null;
-                        }
-                      }
-                    })}
+                      })}
                   </>
                 );
               }}
