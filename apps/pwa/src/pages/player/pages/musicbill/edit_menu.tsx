@@ -97,7 +97,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
           label="修改名字"
           icon={<MdTitle />}
           onClick={() =>
-            dialog.textInput({
+            dialog.input({
               title: '修改名字',
               label: '名字',
               initialValue: musicbill.name,

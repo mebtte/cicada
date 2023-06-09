@@ -122,7 +122,7 @@ function ProfileEditPopup() {
           label="修改昵称"
           icon={<MdTitle />}
           onClick={() =>
-            dialog.textInput({
+            dialog.input({
               title: '修改昵称',
               label: '昵称',
               initialValue: profile.nickname,

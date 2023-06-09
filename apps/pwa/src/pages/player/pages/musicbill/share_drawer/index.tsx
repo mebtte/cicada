@@ -81,7 +81,7 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
         variant={Variant.PRIMARY}
         style={actionStyle}
         onClick={() =>
-          dialog.textInput({
+          dialog.input({
             label: '邮箱',
             confirmVariant: Variant.PRIMARY,
             confirmText: '邀请',

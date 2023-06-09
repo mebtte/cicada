@@ -2,18 +2,20 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   Dialog,
   DialogType,
-  TextInput as TextInputShape,
+  Input as InputShape,
   Alert as AlertShape,
   Captcha as CaptchaShape,
   Confirm as ConfirmShape,
   MultipleSelect as MultipleSelectShape,
+  FileSelect as FileSelectShape,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import Alert from './alert';
 import Confirm from './confirm';
 import Captcha from './captcha';
-import TextInput from './text_input';
+import Input from './input';
 import MultipleSelect from './multiple_select';
+import FileSelect from './file_select';
 
 function DialogApp() {
   const [dialogList, setDialogList] = useState<Dialog[]>([]);
@@ -56,13 +58,9 @@ function DialogApp() {
               />
             );
           }
-          case DialogType.TEXT_INPUT: {
+          case DialogType.INPUT: {
             return (
-              <TextInput
-                key={d.id}
-                textInput={d as TextInputShape}
-                onDestroy={onDestroy}
-              />
+              <Input key={d.id} input={d as InputShape} onDestroy={onDestroy} />
             );
           }
           case DialogType.MULTIPLE_SELECT: {
@@ -70,6 +68,15 @@ function DialogApp() {
               <MultipleSelect
                 key={d.id}
                 multipleSelect={d as MultipleSelectShape<unknown>}
+                onDestroy={onDestroy}
+              />
+            );
+          }
+          case DialogType.FILE_SELECT: {
+            return (
+              <FileSelect
+                key={d.id}
+                fileSelect={d as FileSelectShape}
                 onDestroy={onDestroy}
               />
             );

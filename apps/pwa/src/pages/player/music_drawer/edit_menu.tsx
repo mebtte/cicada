@@ -203,7 +203,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           icon={<MdTitle />}
           label="编辑名字"
           onClick={() =>
-            dialog.textInput({
+            dialog.input({
               title: '编辑名字',
               label: '名字',
               initialValue: music.name,
@@ -342,25 +342,31 @@ function EditMenu({ music }: { music: MusicDetail }) {
           icon={<MdOutlineFilePresent />}
           label="编辑音乐文件"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.FILE,
-              label: '音乐文件',
+            dialog.fileSelect({
               title: '编辑音乐文件',
+              label: '音乐文件',
               acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes,
               placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
                 AssetType.MUSIC
               ].acceptTypes.join(',')}`,
-              onSubmit: async (file: File | null) => {
+              onConfirm: async (file) => {
                 if (!file) {
-                  throw new Error('请选择文件');
+                  notice.error('请选择文件');
+                  return false;
                 }
-                const { id } = await uploadAsset(file, AssetType.MUSIC);
-                await updateMusic({
-                  id: music.id,
-                  key: AllowUpdateKey.ASSET,
-                  value: id,
-                });
-                emitMusicUpdated(music.id);
+                try {
+                  const { id } = await uploadAsset(file, AssetType.MUSIC);
+                  await updateMusic({
+                    id: music.id,
+                    key: AllowUpdateKey.ASSET,
+                    value: id,
+                  });
+                  emitMusicUpdated(music.id);
+                } catch (error) {
+                  logger.error(error, 'Updating music asset fail');
+                  notice.error(error.message);
+                  return false;
+                }
               },
             })
           }
@@ -404,7 +410,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           icon={<MdOutlineCalendarToday />}
           label="编辑发行年份"
           onClick={() =>
-            dialog.textInput({
+            dialog.input({
               title: '编辑发行年份',
               label: '发行年份',
               initialValue: music.year ? music.year.toString() : '',

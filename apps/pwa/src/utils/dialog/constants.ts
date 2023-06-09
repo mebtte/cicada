@@ -8,8 +8,9 @@ export enum DialogType {
   ALERT,
   CONFIRM,
   CAPTCHA,
-  TEXT_INPUT,
+  INPUT,
   MULTIPLE_SELECT,
+  FILE_SELECT,
 }
 
 export interface Dialog {
@@ -50,8 +51,8 @@ export interface Captcha extends Dialog {
   onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
-export interface TextInput extends Dialog {
-  type: DialogType.TEXT_INPUT;
+export interface Input extends Dialog {
+  type: DialogType.INPUT;
 
   title?: string;
   label: string;
@@ -80,6 +81,20 @@ export interface MultipleSelect<Value> extends Dialog {
   onConfirm: (
     options: Option<Value>[],
   ) => void | boolean | Promise<void | boolean>;
+  cancelText?: string;
+  onCancel?: () => void | boolean | Promise<void | boolean>;
+}
+
+export interface FileSelect extends Dialog {
+  type: DialogType.FILE_SELECT;
+
+  title?: string;
+  label: string;
+  acceptTypes: string[];
+  placeholder: string;
+  confirmVariant?: Variant;
+  confirmText?: string;
+  onConfirm: (file: File | null) => void | boolean | Promise<void | boolean>;
   cancelText?: string;
   onCancel?: () => void | boolean | Promise<void | boolean>;
 }

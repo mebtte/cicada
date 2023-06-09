@@ -12,7 +12,7 @@ import { Music, SingerWithAliases } from './constants';
 import e, { EventType } from './eventemitter';
 
 export function openCreateMusicbillDialog() {
-  return dialog.textInput({
+  return dialog.input({
     title: '创建乐单',
     label: '名字',
     maxLength: MUSICBILL_NAME_MAX_LENGTH,
@@ -81,7 +81,7 @@ export function openCreateSingerDialog(callback: (id: string) => void) {
       }
     }
   };
-  return dialog.textInput({
+  return dialog.input({
     title: '创建歌手',
     label: '名字',
     maxLength: SINGER_NAME_MAX_LENGTH,
