@@ -9,6 +9,7 @@ import {
   Confirm as ConfirmShape,
   MultipleSelect as MultipleSelectShape,
   FileSelect as FileSelectShape,
+  TextareaList as TextareaListShape,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import Alert from './alert';
@@ -18,6 +19,7 @@ import Input from './input';
 import InputList from './input_list';
 import MultipleSelect from './multiple_select';
 import FileSelect from './file_select';
+import TextareaList from './textarea_list';
 
 function DialogApp() {
   const [dialogList, setDialogList] = useState<Dialog[]>([]);
@@ -88,6 +90,15 @@ function DialogApp() {
               <FileSelect
                 key={d.id}
                 fileSelect={d as FileSelectShape}
+                onDestroy={onDestroy}
+              />
+            );
+          }
+          case DialogType.TEXTAREA_LIST: {
+            return (
+              <TextareaList
+                key={d.id}
+                textareaList={d as TextareaListShape}
                 onDestroy={onDestroy}
               />
             );

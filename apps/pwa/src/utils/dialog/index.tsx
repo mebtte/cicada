@@ -11,6 +11,7 @@ import {
   DialogType,
   MultipleSelect,
   FileSelect,
+  TextareaList,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import DialogApp from './dialog_app';
@@ -93,6 +94,16 @@ export default {
       id,
     };
     e.emit(EventType.OPEN, fileSelect);
+    return id;
+  },
+  textareaList: (tl: Omit<TextareaList, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const textareaList: TextareaList = {
+      ...tl,
+      type: DialogType.TEXTAREA_LIST,
+      id,
+    };
+    e.emit(EventType.OPEN, textareaList);
     return id;
   },
   close: (id: string) => e.emit(EventType.CLOSE, { id }),

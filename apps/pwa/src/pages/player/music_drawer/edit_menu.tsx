@@ -271,15 +271,14 @@ function EditMenu({ music }: { music: MusicDetail }) {
             icon={<MdTextFields />}
             label="编辑歌词"
             onClick={() =>
-              playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-                type: EditDialogType.TEXTAREA_LIST,
+              dialog.textareaList({
                 title: '编辑歌词',
                 label: '歌词',
                 initialValue: music.lyrics.map((l) => l.lrc),
                 max: MUSIC_MAX_LRYIC_AMOUNT,
                 maxLength: LYRIC_MAX_LENGTH,
                 placeholder: 'LRC 格式的文本',
-                onSubmit: async (lyrics: string[]) => {
+                onConfirm: async (lyrics: string[]) => {
                   const trimmedLyrics = lyrics
                     .map((l) => l.trim())
                     .filter((l) => l.length > 0);
@@ -290,12 +289,18 @@ function EditMenu({ music }: { music: MusicDetail }) {
                       music.lyrics.map((l) => l.lrc),
                     )
                   ) {
-                    await updateMusic({
-                      id: music.id,
-                      key: AllowUpdateKey.LYRIC,
-                      value: trimmedLyrics,
-                    });
-                    emitMusicUpdated(music.id);
+                    try {
+                      await updateMusic({
+                        id: music.id,
+                        key: AllowUpdateKey.LYRIC,
+                        value: trimmedLyrics,
+                      });
+                      emitMusicUpdated(music.id);
+                    } catch (error) {
+                      logger.error(error, 'Updating lyrics fail');
+                      notice.error(error.message);
+                      return false;
+                    }
                   }
                 },
               })

@@ -8,24 +8,13 @@ import {
 
 export enum EditDialogType {
   COVER,
-  TEXTAREA_LIST,
 }
 export type EditDialogData = {
   title: string;
   onSubmit: (value: unknown | undefined) => void | Promise<void>;
-} & (
-  | {
-      type: EditDialogType.COVER;
-    }
-  | {
-      type: EditDialogType.TEXTAREA_LIST;
-      label: string;
-      initialValue?: string[];
-      max?: number;
-      maxLength?: number;
-      placeholder?: string;
-    }
-);
+} & {
+  type: EditDialogType.COVER;
+};
 
 export enum EventType {
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',

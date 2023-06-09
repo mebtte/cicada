@@ -12,6 +12,18 @@ export enum DialogType {
   INPUT_LIST,
   MULTIPLE_SELECT,
   FILE_SELECT,
+  TEXTAREA_LIST,
+}
+
+interface Confirmable<Payload = void> {
+  confirmVariant?: Variant;
+  confirmText?: string;
+  onConfirm?: (payload: Payload) => void | boolean | Promise<void | boolean>;
+}
+
+interface Cancelable {
+  cancelText?: string;
+  onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
 export interface Dialog {
@@ -19,21 +31,18 @@ export interface Dialog {
   type: DialogType;
 }
 
-export interface Alert extends Dialog {
+export interface Alert extends Dialog, Confirmable {
   type: DialogType.ALERT;
 
   title?: ReactNode;
   content?: ReactNode;
-  confirmText?: string;
-  onConfirm?: () => void | boolean | Promise<void | boolean>;
 }
 
-export interface Confirm extends Omit<Alert, 'type'> {
+export interface Confirm extends Dialog, Confirmable, Cancelable {
   type: DialogType.CONFIRM;
 
   title?: ReactNode;
-  cancelText?: string;
-  onCancel?: () => void | boolean | Promise<void | boolean>;
+  content?: ReactNode;
 }
 
 export interface Captcha extends Dialog {
@@ -113,4 +122,18 @@ export interface FileSelect extends Dialog {
   onConfirm: (file: File | null) => void | boolean | Promise<void | boolean>;
   cancelText?: string;
   onCancel?: () => void | boolean | Promise<void | boolean>;
+}
+
+export interface TextareaList
+  extends Dialog,
+    Confirmable<string[]>,
+    Cancelable {
+  type: DialogType.TEXTAREA_LIST;
+
+  title?: string;
+  label: string;
+  initialValue?: string[];
+  max?: number;
+  maxLength?: number;
+  placeholder?: string;
 }
