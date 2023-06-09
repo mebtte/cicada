@@ -1,40 +1,12 @@
-import {
-  FocusEventHandler,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import { FocusEventHandler, ReactNode, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { MdClose } from 'react-icons/md';
 import { CSSVariable } from '../../global_style';
 import Label from '../label';
 import { Option as OptionType } from './constants';
-import ellipsis from '../../style/ellipsis';
+import ValueItem from './value';
 import Options from './options';
-import notice from '../../utils/notice';
-import e, { EventType } from './eventemitter';
-import useOptions from './use_options';
 import useEvent from '../../utils/use_event';
 
-const onGetDataErrorDefault = (error: Error) => notice.error(error.message);
-const StyledLabel = styled(Label)`
-  > .options {
-    /* visibility: hidden; */
-    opacity: 0;
-
-    transition: none;
-  }
-
-  &:focus-within {
-    > .options {
-      visibility: visible;
-      opacity: 1;
-    }
-  }
-`;
 const Input = styled.div<{ active: boolean; disabled: boolean }>`
   padding: 5px 10px;
 
@@ -74,46 +46,12 @@ const Input = styled.div<{ active: boolean; disabled: boolean }>`
     }
   `}
 `;
-const Item = styled.div<{ disabled: boolean }>`
-  max-width: 100%;
-  padding: 3px 3px 3px 7px;
-
-  border: 1px solid ${CSSVariable.COLOR_BORDER};
-  cursor: default;
-  user-select: none;
-
-  display: flex;
-  align-items: center;
-  gap: 3px;
-
-  > .label {
-    font-size: 12px;
-    line-height: 1;
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    ${ellipsis}
-  }
-
-  > svg {
-    width: 16px;
-    flex-shrink: 0;
-  }
-
-  ${({ disabled }) => css`
-    > svg {
-      cursor: ${disabled ? 'not-allowed' : 'pointer'};
-      color: ${disabled
-        ? CSSVariable.TEXT_COLOR_DISABLED
-        : CSSVariable.TEXT_COLOR_SECONDARY};
-    }
-  `}
-`;
 
 function MultipleSelect<Value>({
   label,
   value,
   onChange,
-  dataGetter,
-  onGetDataError = onGetDataErrorDefault,
+  optionsGetter,
   emptyMesssage = '暂无数据',
   disabled = false,
   addon,
@@ -121,17 +59,13 @@ function MultipleSelect<Value>({
   label: string;
   value: OptionType<Value>[];
   onChange: (options: OptionType<Value>[]) => void;
-  dataGetter: (
+  optionsGetter: (
     search: string,
   ) => OptionType<Value>[] | Promise<OptionType<Value>[]>;
-  onGetDataError?: (error: Error) => void;
   emptyMesssage?: string;
   disabled?: boolean;
   addon?: ReactNode;
 }) {
-  const id = useId();
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const [keyword, setKeyword] = useState('');
   const [active, setActive] = useState(false);
 
@@ -142,75 +76,49 @@ function MultipleSelect<Value>({
     setActive(false),
   );
 
-  const onRemove = useCallback(
-    (option: OptionType<Value>) => {
-      if (disabled) {
-        return;
-      }
-      return onChange(value.filter((i) => i.key !== option.key));
-    },
-    [disabled, onChange, value],
-  );
-
-  const { loading, options } = useOptions({
-    keyword,
-    dataGetter,
-    onGetDataError,
-  });
-
-  useEffect(() => {
-    const unlistenOnChange = e.listen(
-      EventType.ON_CHANGE,
-      ({ id: emitId, option }) => {
-        if (id !== emitId) {
-          return;
-        }
-        const included = value.some((i) => i.key === option.key);
-        onChange(
-          included
-            ? value.filter((i) => i.key !== option.key)
-            : [...value, option as OptionType<Value>],
-        );
-      },
+  const onChangeWrapper = (option: OptionType<Value>) => {
+    const included = value.some((i) => i.key === option.key);
+    return onChange(
+      included
+        ? value.filter((i) => i.key !== option.key)
+        : [...value, option as OptionType<Value>],
     );
-    return unlistenOnChange;
-  }, [id, onChange, value]);
+  };
+  const onRemove = (option: OptionType<Value>) =>
+    onChange(value.filter((i) => i.key !== option.key));
 
   const selectedKeys = value.map((i) => i.key);
   return (
-    <StyledLabel
-      label={label}
-      active={active}
-      disabled={disabled}
-      addon={addon}
-    >
+    <Label label={label} active={active} disabled={disabled} addon={addon}>
       <Input active={active} disabled={disabled}>
         {value.map((option) => (
-          <Item key={option.key} disabled={disabled}>
-            <div className="label">{option.label}</div>
-            <MdClose onClick={() => onRemove(option)} />
-          </Item>
+          <ValueItem
+            key={option.key}
+            option={option}
+            disabled={disabled}
+            onRemove={() => onRemove(option)}
+          />
         ))}
         <input
-          id={id}
           className="input"
           value={keyword}
           onChange={(event) => setKeyword(event.target.value)}
           onFocus={onFocus}
           onBlur={onBlur}
           disabled={disabled}
-          ref={inputRef}
         />
       </Input>
-      <Options
-        className="options"
-        id={id}
-        loading={loading}
-        options={options}
-        selectedKeys={selectedKeys}
-        emptyMesssage={emptyMesssage}
-      />
-    </StyledLabel>
+      {active ? (
+        <Options
+          className="options"
+          keyword={keyword}
+          optionsGetter={optionsGetter}
+          selectedKeys={selectedKeys}
+          emptyMesssage={emptyMesssage}
+          onChange={onChangeWrapper}
+        />
+      ) : null}
+    </Label>
   );
 }
 

@@ -16,7 +16,7 @@ const Style = styled.div`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
   > .placeholder {
-    width: 150px;
+    width: 100px;
   }
 
   > .error-message {

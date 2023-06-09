@@ -229,7 +229,7 @@ function CreateMusicDialog() {
             label="歌手列表"
             value={singerList.map(formatSingerToMultipleSelectOption)}
             onChange={onSingerListChange}
-            dataGetter={searchSinger}
+            optionsGetter={searchSinger}
             disabled={loading}
             addon={<MissingSinger />}
           />

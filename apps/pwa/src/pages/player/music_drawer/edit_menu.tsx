@@ -305,7 +305,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               label: '歌手列表',
               labelAddon: <MissingSinger />,
               title: '编辑歌手列表',
-              dataGetter: searchSinger,
+              optionsGetter: searchSinger,
               initialValue: music.singers.map(
                 formatSingerToMultipleSelectOption,
               ),
@@ -372,7 +372,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
             dialog.multipleSelect<Music>({
               title: '二次创作来源',
               label: '创作来源自以下音乐',
-              dataGetter: searchMusic,
+              optionsGetter: searchMusic,
               initialValue: music.forkFromList.map(
                 formatMusicTouMultipleSelectOtion,
               ),

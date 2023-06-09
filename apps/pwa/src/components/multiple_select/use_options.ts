@@ -1,47 +1,64 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import logger from '@/utils/logger';
 import { Option } from './constants';
+
+function useDelayedKeyword(keyword: string) {
+  const [delayedKeyword, setDelayedKeyword] = useState(keyword);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDelayedKeyword(keyword), 500);
+    return () => window.clearTimeout(timer);
+  }, [keyword]);
+
+  return delayedKeyword;
+}
 
 export default <Value>({
   keyword,
-  dataGetter,
-  onGetDataError,
+  optionsGetter,
 }: {
   keyword: string;
-  dataGetter: (search: string) => Option<Value>[] | Promise<Option<Value>[]>;
-  onGetDataError: (error: Error) => void;
+  optionsGetter: (search: string) => Option<Value>[] | Promise<Option<Value>[]>;
 }) => {
   const requestIdRef = useRef(0);
 
+  const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState<Option<Value>[]>([]);
 
+  const delayedKeyword = useDelayedKeyword(keyword);
   useEffect(() => {
+    setLoading(true);
+  }, [keyword]);
+
+  const getOptions = useCallback(async () => {
     const requestId = Math.random();
     requestIdRef.current = requestId;
 
     setLoading(true);
-    const timer = window.setTimeout(
-      () =>
-        Promise.resolve(dataGetter(keyword))
-          .then((data) => {
-            if (requestId === requestIdRef.current) {
-              setOptions(data);
-            }
-          })
-          .catch((error) => {
-            if (requestId === requestIdRef.current) {
-              onGetDataError(error);
-            }
-          })
-          .finally(() => {
-            if (requestId === requestIdRef.current) {
-              setLoading(false);
-            }
-          }),
-      300,
-    );
-    return () => window.clearTimeout(timer);
-  }, [dataGetter, keyword, onGetDataError]);
+    setError(null);
+    try {
+      const os = await Promise.resolve(optionsGetter(delayedKeyword));
 
-  return { options, loading };
+      if (requestId === requestIdRef.current) {
+        setOptions(os);
+      }
+    } catch (e) {
+      logger.error(e, 'Multiple select options fail to get');
+
+      if (requestId === requestIdRef.current) {
+        setError(e);
+      }
+    }
+
+    if (requestId === requestIdRef.current) {
+      setLoading(false);
+    }
+  }, [delayedKeyword, optionsGetter]);
+
+  useEffect(() => {
+    getOptions();
+  }, [getOptions]);
+
+  return { error, loading, options, reload: getOptions };
 };

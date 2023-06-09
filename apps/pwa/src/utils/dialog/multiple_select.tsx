@@ -57,7 +57,7 @@ function TextInputContent({
           addon={multipleSelect.labelAddon}
           value={options}
           onChange={onOptionsChange}
-          dataGetter={multipleSelect.dataGetter}
+          optionsGetter={multipleSelect.optionsGetter}
           disabled={confirming || canceling}
         />
       </Content>

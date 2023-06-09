@@ -72,7 +72,9 @@ export interface MultipleSelect<Value> extends Dialog {
   initialValue: Option<Value>[];
   label: string;
   labelAddon?: ReactNode;
-  dataGetter: (keyword: string) => Option<Value>[] | Promise<Option<Value>[]>;
+  optionsGetter: (
+    keyword: string,
+  ) => Option<Value>[] | Promise<Option<Value>[]>;
   confirmVariant?: Variant;
   confirmText?: string;
   onConfirm: (

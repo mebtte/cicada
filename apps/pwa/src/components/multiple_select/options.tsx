@@ -1,12 +1,14 @@
 import styled, { css } from 'styled-components';
 import { MdDone } from 'react-icons/md';
-import { HtmlHTMLAttributes } from 'react';
+import { CSSProperties, HtmlHTMLAttributes } from 'react';
+import ErrorCard from '@/components/error_card';
+import preventDefault from '@/utils/prevent_default';
 import { Option as OptionType } from './constants';
 import Spinner from '../spinner';
 import { flexCenter } from '../../style/flexbox';
 import { CSSVariable } from '../../global_style';
-import e, { EventType } from './eventemitter';
 import ellipsis from '../../style/ellipsis';
+import useOptions from './use_options';
 
 const OPTION_HEIGHT = 36;
 const Style = styled.div`
@@ -21,7 +23,6 @@ const Style = styled.div`
   transform-origin: top;
 
   > .list {
-    display: block;
     max-height: ${OPTION_HEIGHT * 5}px;
     overflow: auto;
   }
@@ -73,52 +74,69 @@ const Empty = styled.div`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   text-align: center;
 `;
-interface BaseProps<Value> {
-  id: string;
-  loading: boolean;
-  options: OptionType<Value>[];
-  selectedKeys: (number | string)[];
-  emptyMesssage: string;
-}
+const errorCardStyle: CSSProperties = {
+  padding: '20px 30px',
+};
 
 function Options<Value>({
-  loading,
-  options,
+  keyword,
   selectedKeys,
-  id,
   emptyMesssage,
+  optionsGetter,
+  onChange,
   ...props
-}: HtmlHTMLAttributes<HTMLDivElement> & BaseProps<Value>) {
+}: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
+  keyword: string;
+  selectedKeys: (number | string)[];
+  emptyMesssage: string;
+  optionsGetter: (
+    search: string,
+  ) => OptionType<Value>[] | Promise<OptionType<Value>[]>;
+  onChange: (option: OptionType<Value>) => void;
+}) {
+  const { error, loading, options, reload } = useOptions({
+    keyword,
+    optionsGetter,
+  });
   return (
-    <Style {...props}>
-      {loading ? (
-        <Loader>
-          <Spinner size={16} />
-        </Loader>
-      ) : null}
-      {options.length ? (
-        <label
-          className="list"
-          // htmlFor={id}
-          // onMouseDown={(event) => event.preventDefault()}
-        >
-          {options.map((option) => {
-            const selected = selectedKeys.includes(option.key);
-            return (
-              <Option
-                key={option.key}
-                selected={selected}
-                onPointerDown={(event) => event.preventDefault()}
-                onClick={() => e.emit(EventType.ON_CHANGE, { id, option })}
-              >
-                <div className="label">{option.label}</div>
-                {selected ? <MdDone /> : null}
-              </Option>
-            );
-          })}
-        </label>
-      ) : loading ? null : (
-        <Empty>{emptyMesssage}</Empty>
+    <Style
+      {...props}
+      // prevent input from losing focus
+      onPointerDown={preventDefault}
+    >
+      {error ? (
+        <ErrorCard
+          errorMessage={error.message}
+          retry={reload}
+          style={errorCardStyle}
+        />
+      ) : (
+        <>
+          {loading ? (
+            <Loader>
+              <Spinner size={16} />
+            </Loader>
+          ) : null}
+          {options.length ? (
+            <div className="list">
+              {options.map((option) => {
+                const selected = selectedKeys.includes(option.key);
+                return (
+                  <Option
+                    key={option.key}
+                    selected={selected}
+                    onClick={() => onChange(option)}
+                  >
+                    <div className="label">{option.label}</div>
+                    {selected ? <MdDone /> : null}
+                  </Option>
+                );
+              })}
+            </div>
+          ) : loading ? null : (
+            <Empty>{emptyMesssage}</Empty>
+          )}
+        </>
       )}
     </Style>
   );
