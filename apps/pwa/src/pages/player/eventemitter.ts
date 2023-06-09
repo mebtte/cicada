@@ -8,7 +8,6 @@ import {
 
 export enum EditDialogType {
   COVER,
-  INPUT_LIST,
   TEXTAREA_LIST,
 }
 export type EditDialogData = {
@@ -25,13 +24,6 @@ export type EditDialogData = {
       max?: number;
       maxLength?: number;
       placeholder?: string;
-    }
-  | {
-      type: EditDialogType.INPUT_LIST;
-      label: string;
-      initialValue?: string[];
-      max?: number;
-      maxLength?: number;
     }
 );
 

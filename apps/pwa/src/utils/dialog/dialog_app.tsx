@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogType,
   Input as InputShape,
+  InputList as InputListShape,
   Alert as AlertShape,
   Captcha as CaptchaShape,
   Confirm as ConfirmShape,
@@ -14,6 +15,7 @@ import Alert from './alert';
 import Confirm from './confirm';
 import Captcha from './captcha';
 import Input from './input';
+import InputList from './input_list';
 import MultipleSelect from './multiple_select';
 import FileSelect from './file_select';
 
@@ -61,6 +63,15 @@ function DialogApp() {
           case DialogType.INPUT: {
             return (
               <Input key={d.id} input={d as InputShape} onDestroy={onDestroy} />
+            );
+          }
+          case DialogType.INPUT_LIST: {
+            return (
+              <InputList
+                key={d.id}
+                inputList={d as InputListShape}
+                onDestroy={onDestroy}
+              />
             );
           }
           case DialogType.MULTIPLE_SELECT: {

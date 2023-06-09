@@ -9,6 +9,7 @@ export enum DialogType {
   CONFIRM,
   CAPTCHA,
   INPUT,
+  INPUT_LIST,
   MULTIPLE_SELECT,
   FILE_SELECT,
 }
@@ -58,10 +59,25 @@ export interface Input extends Dialog {
   label: string;
   initialValue?: string;
   maxLength?: number;
-  inputType?: 'number';
+  inputType?: 'text' | 'number';
   confirmVariant?: Variant;
   confirmText?: string;
   onConfirm: (text: string) => void | boolean | Promise<void | boolean>;
+  cancelText?: string;
+  onCancel?: () => void | boolean | Promise<void | boolean>;
+}
+
+export interface InputList extends Dialog {
+  type: DialogType.INPUT_LIST;
+
+  title?: string;
+  label: string;
+  initialValue?: string[];
+  max?: number;
+  maxLength?: number;
+  confirmVariant?: Variant;
+  confirmText?: string;
+  onConfirm: (text: string[]) => void | boolean | Promise<void | boolean>;
   cancelText?: string;
   onCancel?: () => void | boolean | Promise<void | boolean>;
 }

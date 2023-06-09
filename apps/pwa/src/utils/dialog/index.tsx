@@ -7,6 +7,7 @@ import {
   Captcha,
   Confirm,
   Input,
+  InputList,
   DialogType,
   MultipleSelect,
   FileSelect,
@@ -62,6 +63,16 @@ export default {
       id,
     };
     e.emit(EventType.OPEN, input);
+    return id;
+  },
+  inputList: (tl: Omit<InputList, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const inputList: InputList = {
+      ...tl,
+      type: DialogType.INPUT_LIST,
+      id,
+    };
+    e.emit(EventType.OPEN, inputList);
     return id;
   },
   multipleSelect: <Value,>(ms: Omit<MultipleSelect<Value>, 'id' | 'type'>) => {

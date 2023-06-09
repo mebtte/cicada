@@ -237,25 +237,30 @@ function EditMenu({ music }: { music: MusicDetail }) {
           icon={<MdTextFields />}
           label="编辑别名"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
+            dialog.inputList({
               title: '编辑别名',
-              type: EditDialogType.INPUT_LIST,
               label: '别名',
               initialValue: music.aliases,
               max: MUSIC_MAX_ALIAS_COUNT,
               maxLength: ALIAS_MAX_LENGTH,
-              onSubmit: async (aliases: string[]) => {
+              onConfirm: async (aliases: string[]) => {
                 const trimmedAliases = aliases
                   .map((a) => a.replace(/\s+/g, ' ').trim())
                   .filter((a) => a.length > 0);
 
                 if (!stringArrayEqual(trimmedAliases, music.aliases)) {
-                  await updateMusic({
-                    id: music.id,
-                    key: AllowUpdateKey.ALIASES,
-                    value: trimmedAliases,
-                  });
-                  emitMusicUpdated(music.id);
+                  try {
+                    await updateMusic({
+                      id: music.id,
+                      key: AllowUpdateKey.ALIASES,
+                      value: trimmedAliases,
+                    });
+                    emitMusicUpdated(music.id);
+                  } catch (error) {
+                    logger.error(error, "Updating music's aliases fail");
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })

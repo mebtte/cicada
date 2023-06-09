@@ -12,7 +12,6 @@ import { EditDialogData, EditDialogType } from '../eventemitter';
 import { Ref, RenderProps } from './constants';
 import Cover from './cover';
 import TextareaList from './textarea_list';
-import InputList from './input_list';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
@@ -25,7 +24,6 @@ const TYPE_MAP_RENDER: Record<
   }
 > = {
   [EditDialogType.COVER]: { Component: Cover },
-  [EditDialogType.INPUT_LIST]: { Component: InputList },
   [EditDialogType.TEXTAREA_LIST]: {
     Component: TextareaList,
     bodyStyle: {
