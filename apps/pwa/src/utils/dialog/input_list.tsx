@@ -1,20 +1,24 @@
 import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import Input from '@/components/input';
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
 import IconButton from '@/components/icon_button';
 import { ComponentSize } from '@/constants/style';
 import { MdDelete } from 'react-icons/md';
+import styled from 'styled-components';
 import DialogBase from './dialog_base';
 import { InputList as InputListShape } from './constants';
 import useEvent from '../use_event';
 
-const contentStyle: CSSProperties = {
-  overflow: 'auto',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10,
-};
+const StyledContent = styled(Content)`
+  display: flex;
+  flex-direction: column;
+  gap: 10;
+
+  > .action {
+    flex-shrink: 0;
+  }
+`;
 
 function InputListContent({
   onClose,
@@ -79,7 +83,7 @@ function InputListContent({
   return (
     <Container>
       {inputList.title ? <Title>{inputList.title}</Title> : null}
-      <Content style={contentStyle}>
+      <StyledContent>
         {values.map((value, index) => (
           <Input
             key={value.id}
@@ -118,7 +122,7 @@ function InputListContent({
             新增{inputList.label}
           </Button>
         )}
-      </Content>
+      </StyledContent>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {inputList.cancelText || '取消'}

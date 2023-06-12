@@ -1,12 +1,13 @@
 import { Container, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import Input from '@/components/input';
-import Captcha, { useCaptcha } from '@/components/captcha';
 import { CSSProperties, ChangeEventHandler, useEffect, useState } from 'react';
-import DialogBase from './dialog_base';
-import { Captcha as CaptchaShape } from './constants';
-import useEvent from '../use_event';
-import notice from '../notice';
+import Captcha from './captcha';
+import useCaptcha from './use_captcha';
+import DialogBase from '../dialog_base';
+import { Captcha as CaptchaShape } from '../constants';
+import useEvent from '../../use_event';
+import notice from '../../notice';
 
 const contentStyle: CSSProperties = { overflow: 'hidden' };
 const captchaStyle: CSSProperties = {

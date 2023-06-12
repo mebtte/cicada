@@ -55,6 +55,7 @@ function InputContent({
             onChange: onTextChange,
             autoFocus: true,
             maxLength: input.maxLength,
+            type: input.inputType,
           }}
         />
       </Content>

@@ -5,6 +5,7 @@ import { CSSProperties, useState } from 'react';
 import IconButton from '@/components/icon_button';
 import { ComponentSize } from '@/constants/style';
 import { MdDelete, MdUploadFile } from 'react-icons/md';
+import styled from 'styled-components';
 import DialogBase from './dialog_base';
 import { TextareaList as TextareaListShape } from './constants';
 import useEvent from '../use_event';
@@ -13,12 +14,15 @@ import selectFile from '../select_file';
 const bodyProps: { style: CSSProperties } = {
   style: { width: 'min(750px, 80%)' },
 };
-const contentStyle: CSSProperties = {
-  overflow: 'auto',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10,
-};
+const StyledContent = styled(Content)`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  > .action {
+    flex-shrink: 0;
+  }
+`;
 
 function TextareaListContent({
   onClose,
@@ -105,7 +109,7 @@ function TextareaListContent({
   return (
     <Container>
       {textareaList.title ? <Title>{textareaList.title}</Title> : null}
-      <Content style={contentStyle}>
+      <StyledContent>
         {values.map((value, index) => (
           <Textarea
             key={value.id}
@@ -155,7 +159,7 @@ function TextareaListContent({
             新增{textareaList.label}
           </Button>
         )}
-      </Content>
+      </StyledContent>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {textareaList.cancelText || '取消'}

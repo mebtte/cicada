@@ -2,8 +2,8 @@ import { HtmlHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
-import ErrorCard from '../error_card';
-import Spinner from '../spinner';
+import ErrorCard from '@/components/error_card';
+import Spinner from '@/components/spinner';
 import { CaptchaData } from './constants';
 
 const Style = styled.div`
