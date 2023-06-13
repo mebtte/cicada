@@ -13,7 +13,7 @@ import useEvent from '../use_event';
 const StyledContent = styled(Content)`
   display: flex;
   flex-direction: column;
-  gap: 10;
+  gap: 10px;
 
   > .action {
     flex-shrink: 0;
