@@ -15,7 +15,7 @@ const setting = new XState<Setting>({
 setting.onChange((s) =>
   storage
     .setItem(Key.SETTING, s)
-    .catch((error) => logger.error(error, '保存设置失败')),
+    .catch((error) => logger.error(error, 'Fail to save setting')),
 );
 
 export function prefixServerOrigin(path: string) {

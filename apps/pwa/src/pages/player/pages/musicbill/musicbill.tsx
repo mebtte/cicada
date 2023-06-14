@@ -9,9 +9,9 @@ import {
 import styled from 'styled-components';
 import { Query, RequestStatus } from '@/constants';
 import throttle from 'lodash/throttle';
-import SessionStorageKey from '@/constants/session_storage_key';
 import absoluteFullSize from '@/style/absolute_full_size';
 import useQuery from '@/utils/use_query';
+import cache, { CacheKey } from './cache';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -45,10 +45,11 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     () =>
       throttle(
         (scrollTop: number) =>
-          window.sessionStorage.setItem(
-            SessionStorageKey.MUSICBILL_PAGE_SCROLL_TOP.replace('{{id}}', id),
-            scrollTop.toString(),
-          ),
+          cache.set({
+            key: CacheKey.MUSICBILL_PAGE_SCROLL_TOP,
+            value: scrollTop,
+            keyReplace: (k) => k.replace('{{id}}', id),
+          }),
         1000,
       ),
     [id],
@@ -76,12 +77,10 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     if (status === RequestStatus.SUCCESS) {
       let scrollTop = 0;
       if (!keyword) {
-        const lastScrollTopString = window.sessionStorage.getItem(
-          SessionStorageKey.MUSICBILL_PAGE_SCROLL_TOP.replace('{{id}}', id),
-        );
-        if (lastScrollTopString) {
-          scrollTop = Number(lastScrollTopString) || 0;
-        }
+        scrollTop =
+          cache.get(CacheKey.MUSICBILL_PAGE_SCROLL_TOP, (k) =>
+            k.replace('{{id}}', id),
+          ) || 0;
       }
       window.setTimeout(
         () =>
