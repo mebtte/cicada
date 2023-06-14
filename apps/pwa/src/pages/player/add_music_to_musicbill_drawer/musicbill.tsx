@@ -89,7 +89,7 @@ function Musicbill({
         if (status === RequestStatus.LOADING) {
           return notice.error('请等待乐单加载完毕');
         }
-        return playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
+        return playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
           id,
           silence: false,
         });

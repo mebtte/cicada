@@ -80,13 +80,10 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     key: AllowUpdateKey.COVER,
                     value: id,
                   });
-                  playerEventemitter.emit(
-                    PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                    {
-                      id: musicbill.id,
-                      silence: false,
-                    },
-                  );
+                  playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
+                    id: musicbill.id,
+                    silence: false,
+                  });
                 } catch (error) {
                   logger.error(error, "Updating musicbill's cover fail");
                   notice.error(error.message);
@@ -118,13 +115,10 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                       key: AllowUpdateKey.NAME,
                       value: trimmedName,
                     });
-                    playerEventemitter.emit(
-                      PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                      {
-                        id: musicbill.id,
-                        silence: false,
-                      },
-                    );
+                    playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
+                      id: musicbill.id,
+                      silence: false,
+                    });
                   } catch (error) {
                     logger.error(error, '更新乐单名字失败');
                     notice.error(error.message);
@@ -152,7 +146,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   })
                     .then(() =>
                       playerEventemitter.emit(
-                        PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                        PlayerEventType.RELOAD_MUSICBILL,
                         {
                           id: musicbill.id,
                           silence: false,
@@ -160,7 +154,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                       ),
                     )
                     .catch((error) => {
-                      logger.error(error, '更新乐单失败');
+                      logger.error(error, "Fail to update musicbill's public");
                       notice.error(error.message);
                     }),
               });
@@ -176,13 +170,10 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   value: true,
                 })
                   .then(() =>
-                    playerEventemitter.emit(
-                      PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                      {
-                        id: musicbill.id,
-                        silence: false,
-                      },
-                    ),
+                    playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
+                      id: musicbill.id,
+                      silence: false,
+                    }),
                   )
                   .catch((error) => {
                     logger.error(error, '更新乐单失败');

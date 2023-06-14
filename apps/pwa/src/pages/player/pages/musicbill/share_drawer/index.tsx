@@ -97,12 +97,12 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
                   email,
                 });
                 notice.info('已发出邀请');
-                playerEventemitter.emit(
-                  PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                  { id: musicbill.id, silence: true },
-                );
+                playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
+                  id: musicbill.id,
+                  silence: true,
+                });
               } catch (error) {
-                logger.error(error, '乐单邀请共享用户失败');
+                logger.error(error, 'Fail to invite shared user');
                 notice.error(error.message);
                 return false;
               }

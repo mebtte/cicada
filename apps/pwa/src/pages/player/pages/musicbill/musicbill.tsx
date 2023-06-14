@@ -9,13 +9,12 @@ import {
 import styled from 'styled-components';
 import { Query, RequestStatus } from '@/constants';
 import throttle from 'lodash/throttle';
-import absoluteFullSize from '@/style/absolute_full_size';
 import useQuery from '@/utils/use_query';
 import cache, { CacheKey } from './cache';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
-import { Musicbill as MusicbillType } from '../../constants';
+import { HEADER_HEIGHT, Musicbill as MusicbillType } from '../../constants';
 import Page from '../page';
 import Info from './info';
 import MusicList from './music_list';
@@ -25,7 +24,11 @@ import Filter from './filter';
 
 const RELOAD_INTERVAL = 1000 * 60 * 15;
 const Style = styled(Page)`
-  ${absoluteFullSize}
+  position: absolute;
+  top: ${HEADER_HEIGHT}px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - ${HEADER_HEIGHT}px);
 
   > .scrollable {
     height: 100%;
@@ -66,7 +69,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
 
   useEffect(() => {
     if (Date.now() - lastUpdateTimestamp > RELOAD_INTERVAL) {
-      playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
+      playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
         id,
         silence: false,
       });

@@ -34,7 +34,7 @@ export enum EventType {
   ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY = 'action_move_playqueue_music_EARLY',
 
   RELOAD_MUSICBILL_LIST = 'reload_musicbill_list',
-  FETCH_MUSICBILL_DETAIL = 'fetch_musicbill_detail',
+  RELOAD_MUSICBILL = 'reload_musicbill',
   ADD_MUSIC_TO_MUSICBILL = 'add_music_to_musicbill',
   REMOVE_MUSIC_FROM_MUSICBILL = 'remove_music_from_musicbill',
 
@@ -99,7 +99,7 @@ export default new Eventin<
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY]: { queueMusic: QueueMusic };
 
     [EventType.RELOAD_MUSICBILL_LIST]: { silence: boolean };
-    [EventType.FETCH_MUSICBILL_DETAIL]: { id: string; silence: boolean };
+    [EventType.RELOAD_MUSICBILL]: { id: string; silence: boolean };
     [EventType.ADD_MUSIC_TO_MUSICBILL]: {
       musicbill: Musicbill;
       music: MusicWithSingerAliases;

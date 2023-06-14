@@ -5,8 +5,7 @@ import getMusicbillListRequest from '@/server/api/get_musicbill_list';
 import addMusicToMusicbill from '@/server/api/add_music_to_musicbill';
 import removeMusicFromMusicbill from '@/server/api/remove_music_from_musicbill';
 import logger from '@/utils/logger';
-import dialog from '@/utils/dialog';
-import getMusicbill from '@/server/api/get_musicbill';
+import getMusicbillRequest from '@/server/api/get_musicbill';
 import p from '@/global_states/profile';
 import notice from '@/utils/notice';
 import { ExceptionCode } from '#/constants/exception';
@@ -47,77 +46,82 @@ export default () => {
       );
       setStatus(RequestStatus.SUCCESS);
     } catch (error) {
-      logger.error(error, '获取乐单列表失败');
-      dialog.alert({
-        title: '获取乐单列表失败',
-        content: error.message,
-      });
+      logger.error(error, 'Fail to get musicbill list');
+      notice.error(error.message);
       setStatus(RequestStatus.ERROR);
     }
   }, []);
+  const getMusicbill = useCallback(
+    async ({ id, silence }: { id: string; silence: boolean }) => {
+      if (!silence) {
+        setMusicbillList((mbl) =>
+          mbl.map((mb) => {
+            if (mb.id === id) {
+              return {
+                ...mb,
+                lastUpdateTimestamp: Date.now(),
+                status: RequestStatus.LOADING,
+                error: null,
+              };
+            }
+            return mb;
+          }),
+        );
+      }
+      try {
+        const data = await getMusicbillRequest(id);
+        setMusicbillList((mbl) =>
+          mbl.map((mb) => {
+            if (mb.id === id) {
+              return {
+                ...mb,
+                name: data.name,
+                cover: data.cover || mb.cover || DefaultCover,
+                public: data.public,
+                owner: data.owner,
+                sharedUserList: data.sharedUserList,
+                musicList: data.musicList.map((m, index) => ({
+                  ...m,
+                  index: data.musicList.length - index,
+                })),
+
+                lastUpdateTimestamp: Date.now(),
+                status: RequestStatus.SUCCESS,
+              };
+            }
+            return mb;
+          }),
+        );
+      } catch (error) {
+        logger.error(error, 'Fail to get musicbill');
+        setMusicbillList((mbl) =>
+          mbl.map((mb) => {
+            if (mb.id === id) {
+              return {
+                ...mb,
+
+                lastUpdateTimestamp: Date.now(),
+                status: RequestStatus.ERROR,
+                error,
+              };
+            }
+            return mb;
+          }),
+        );
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    const unlistenFetchMusicbill = eventemitter.listen(
-      EventType.FETCH_MUSICBILL_DETAIL,
-      async ({ id, silence }) => {
-        if (!silence) {
-          setMusicbillList((mbl) =>
-            mbl.map((mb) => {
-              if (mb.id === id) {
-                return {
-                  ...mb,
-                  lastUpdateTimestamp: Date.now(),
-                  status: RequestStatus.LOADING,
-                  error: null,
-                };
-              }
-              return mb;
-            }),
-          );
-        }
-        try {
-          const data = await getMusicbill(id);
-          setMusicbillList((mbl) =>
-            mbl.map((mb) => {
-              if (mb.id === id) {
-                return {
-                  ...mb,
-                  name: data.name,
-                  cover: data.cover || mb.cover || DefaultCover,
-                  public: data.public,
-                  owner: data.owner,
-                  sharedUserList: data.sharedUserList,
-                  musicList: data.musicList.map((m, index) => ({
-                    ...m,
-                    index: data.musicList.length - index,
-                  })),
-
-                  lastUpdateTimestamp: Date.now(),
-                  status: RequestStatus.SUCCESS,
-                };
-              }
-              return mb;
-            }),
-          );
-        } catch (error) {
-          logger.error(error, '获取乐单失败');
-          setMusicbillList((mbl) =>
-            mbl.map((mb) => {
-              if (mb.id === id) {
-                return {
-                  ...mb,
-
-                  lastUpdateTimestamp: Date.now(),
-                  status: RequestStatus.ERROR,
-                  error,
-                };
-              }
-              return mb;
-            }),
-          );
-        }
-      },
+    const unlistenReloadMusicbill = eventemitter.listen(
+      EventType.RELOAD_MUSICBILL,
+      (payload) => getMusicbill({ id: payload.id, silence: payload.silence }),
     );
+    return unlistenReloadMusicbill;
+  }, [getMusicbill]);
+
+  useEffect(() => {
     const unlistenAddMusicToMusicbill = eventemitter.listen(
       EventType.ADD_MUSIC_TO_MUSICBILL,
       async ({ musicbill, music }) => {
@@ -215,7 +219,6 @@ export default () => {
       },
     );
     return () => {
-      unlistenFetchMusicbill();
       unlistenAddMusicToMusicbill();
       unlistenRemoveMusicFromMusicbill();
     };
@@ -245,27 +248,12 @@ export default () => {
       (payload) =>
         payload.silence ? reloadMusicbillListSilently() : reloadMusicbillList(),
     );
-    const unlistenMusicUpdated = eventemitter.listen(
-      EventType.MUSIC_UPDATED,
-      reloadMusicbillListSilently,
-    );
-    const unlistenMusicDeleted = eventemitter.listen(
-      EventType.MUSIC_DELETED,
-      reloadMusicbillListSilently,
-    );
-    const unlistenSingerUpdated = eventemitter.listen(
-      EventType.SINGER_UPDATED,
-      reloadMusicbillListSilently,
-    );
     const unlistenMusicbillDeleted = eventemitter.listen(
       EventType.MUSICBILL_DELETED,
       reloadMusicbillList,
     );
     return () => {
       unlistenReloadMusicbillList();
-      unlistenMusicUpdated();
-      unlistenMusicDeleted();
-      unlistenSingerUpdated();
       unlistenMusicbillDeleted();
     };
   }, [getMusicbillList]);
@@ -288,6 +276,50 @@ export default () => {
     );
     return unlistenMusicbillCreated;
   }, [getMusicbillList, navigate]);
+
+  useEffect(() => {
+    const onMusicChange = (id: string) => {
+      for (const musicbill of musicbillList) {
+        if (musicbill.status === RequestStatus.SUCCESS) {
+          const exist = musicbill.musicList.find((m) => m.id === id);
+          if (exist) {
+            getMusicbill({ id: musicbill.id, silence: true });
+          }
+        }
+      }
+    };
+    const unlistenMusicUpdated = eventemitter.listen(
+      EventType.MUSIC_UPDATED,
+      (payload) => onMusicChange(payload.id),
+    );
+    const unlistenMusicDeleted = eventemitter.listen(
+      EventType.MUSIC_DELETED,
+      (payload) => onMusicChange(payload.id),
+    );
+    const unlistenSingerUpdated = eventemitter.listen(
+      EventType.SINGER_UPDATED,
+      (payload) => {
+        for (const musicbill of musicbillList) {
+          if (musicbill.status === RequestStatus.SUCCESS) {
+            for (const music of musicbill.musicList) {
+              const exist = music.singers.find(
+                (s) => s.id === payload.singer.id,
+              );
+              if (exist) {
+                getMusicbill({ id: musicbill.id, silence: true });
+                break;
+              }
+            }
+          }
+        }
+      },
+    );
+    return () => {
+      unlistenMusicUpdated();
+      unlistenMusicDeleted();
+      unlistenSingerUpdated();
+    };
+  }, [getMusicbill, musicbillList]);
 
   return {
     status,
