@@ -43,7 +43,7 @@ function Cover({
   const onError = useEvent(() => setCurrentSrc(DefaultCover));
 
   useEffect(() => {
-    setCurrentSrc(src);
+    setCurrentSrc(src || DefaultCover);
   }, [src]);
 
   return (
