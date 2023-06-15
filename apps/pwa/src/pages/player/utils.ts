@@ -4,7 +4,6 @@ import { NAME_MAX_LENGTH as SINGER_NAME_MAX_LENGTH } from '#/constants/singer';
 import dialog from '@/utils/dialog';
 import createMusicbillRequest from '@/server/api/create_musicbill';
 import createSingerRequest from '@/server/api/create_singer';
-import getSinger from '@/server/api/get_singer';
 import { Variant } from '@/components/button';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
@@ -34,19 +33,6 @@ export function openCreateMusicbillDialog() {
       }
     },
   });
-}
-
-export function emitSingerUpdated(id: string) {
-  getSinger(id).then((singer) =>
-    e.emit(EventType.SINGER_UPDATED, {
-      singer: {
-        id: singer.id,
-        avatar: singer.avatar,
-        name: singer.name,
-        aliases: singer.aliases,
-      },
-    }),
-  );
 }
 
 export function openCreateSingerDialog(callback: (id: string) => void) {

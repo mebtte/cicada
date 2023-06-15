@@ -18,7 +18,9 @@ import notice from '@/utils/notice';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
 import { Singer } from './constants';
-import { emitSingerUpdated } from '../utils';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 
 const maskProps: {
   style: CSSProperties;
@@ -75,7 +77,9 @@ function EditMenu({ singer }: { singer: Singer }) {
                     key: AllowUpdateKey.AVATAR,
                     value: assetId,
                   });
-                  emitSingerUpdated(singer.id);
+                  playerEventemitter.emit(PlayerEventType.SINGER_UPDATED, {
+                    id: singer.id,
+                  });
                 } catch (error) {
                   logger.error(error, "Updating singer's avatar fail");
                   notice.error(error.message);
@@ -100,7 +104,9 @@ function EditMenu({ singer }: { singer: Singer }) {
                       key: AllowUpdateKey.AVATAR,
                       value: '',
                     });
-                    emitSingerUpdated(singer.id);
+                    playerEventemitter.emit(PlayerEventType.SINGER_UPDATED, {
+                      id: singer.id,
+                    });
                   } catch (error) {
                     logger.error(error, '重置歌手头像失败');
                     dialog.alert({
@@ -135,7 +141,9 @@ function EditMenu({ singer }: { singer: Singer }) {
                       key: AllowUpdateKey.NAME,
                       value: trimmedName,
                     });
-                    emitSingerUpdated(singer.id);
+                    playerEventemitter.emit(PlayerEventType.SINGER_UPDATED, {
+                      id: singer.id,
+                    });
                   } catch (error) {
                     logger.error(error, '更新歌手名字失败');
                     notice.error(error.message);
@@ -167,7 +175,9 @@ function EditMenu({ singer }: { singer: Singer }) {
                       key: AllowUpdateKey.ALIASES,
                       value: trimmedAliases,
                     });
-                    emitSingerUpdated(singer.id);
+                    playerEventemitter.emit(PlayerEventType.SINGER_UPDATED, {
+                      id: singer.id,
+                    });
                   } catch (error) {
                     logger.error(error, "Updating singer's aliases fail");
                     notice.error(error.message);

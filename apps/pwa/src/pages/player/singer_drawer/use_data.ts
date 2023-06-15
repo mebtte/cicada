@@ -56,8 +56,8 @@ export default (singerId: string) => {
   useEffect(() => {
     const unlistenSingerUpdated = playerEventemitter.listen(
       PlayerEventType.SINGER_UPDATED,
-      ({ singer }) => {
-        if (singer.id === singerId) {
+      (payload) => {
+        if (payload.id === singerId) {
           getData();
         }
       },

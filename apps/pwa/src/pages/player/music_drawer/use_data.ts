@@ -150,8 +150,8 @@ export default (id: string) => {
   useEffect(() => {
     const unlistenSingerUpdated = playerEventemitter.listen(
       PlayerEventType.SINGER_UPDATED,
-      ({ singer }) => {
-        if (data.music && data.music.singers.find((s) => s.id === singer.id)) {
+      (payload) => {
+        if (data.music && data.music.singers.find((s) => s.id === payload.id)) {
           getMusic();
         }
       },

@@ -1,10 +1,5 @@
 import Eventin from 'eventin';
-import {
-  Musicbill,
-  MusicWithSingerAliases,
-  QueueMusic,
-  SingerWithAliases,
-} from './constants';
+import { Musicbill, MusicWithSingerAliases, QueueMusic } from './constants';
 
 export enum EventType {
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
@@ -132,11 +127,7 @@ export default new Eventin<
     [EventType.MUSIC_UPDATED]: { id: string };
     [EventType.MUSIC_DELETED]: { id: string };
 
-    [EventType.SINGER_UPDATED]: {
-      singer: SingerWithAliases & {
-        avatar: string;
-      };
-    };
+    [EventType.SINGER_UPDATED]: { id: string };
 
     [EventType.MUSICBILL_COLLECTION_CHANGE]: null;
     [EventType.CURRENT_MUSIC_CHANGE]: { queueMusic?: QueueMusic };
