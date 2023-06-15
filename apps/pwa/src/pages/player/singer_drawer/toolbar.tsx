@@ -7,7 +7,7 @@ import logger from '@/utils/logger';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
-import { MINI_INFO_HEIGHT, SingerDetail } from './constants';
+import { MINI_INFO_HEIGHT, Singer } from './constants';
 import e, { EventType } from './eventemitter';
 
 const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, null);
@@ -34,7 +34,7 @@ const Style = styled.div`
   }
 `;
 
-function Toolbar({ singer }: { singer: SingerDetail }) {
+function Toolbar({ singer }: { singer: Singer }) {
   const profile = p.useState()!;
   return (
     <Style>

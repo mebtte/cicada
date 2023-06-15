@@ -24,4 +24,6 @@ export type Response = {
       aliases: string[];
     }[];
   }[];
+
+  editable: boolean;
 };

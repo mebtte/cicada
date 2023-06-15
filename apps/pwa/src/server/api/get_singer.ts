@@ -6,7 +6,7 @@ import { request } from '..';
  * 获取歌手详情
  * @author mebtte<hi@mebtte.com>
  */
-async function getSingerDetail(id: string) {
+async function getSinger(id: string) {
   const singer = await request<Response>({
     path: '/api/singer',
     params: { id },
@@ -23,4 +23,4 @@ async function getSingerDetail(id: string) {
   };
 }
 
-export default getSingerDetail;
+export default getSinger;

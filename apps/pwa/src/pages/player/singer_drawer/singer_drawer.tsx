@@ -7,7 +7,7 @@ import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import useData from './use_data';
-import { MINI_INFO_HEIGHT, SingerDetail } from './constants';
+import { MINI_INFO_HEIGHT, Singer } from './constants';
 import Info from './info';
 import Toolbar from './toolbar';
 import MusicList from './music_list';
@@ -38,7 +38,7 @@ const DetailContainer = styled(Container)`
   }
 `;
 
-function Detail({ style, singer }: { style: unknown; singer: SingerDetail }) {
+function Detail({ style, singer }: { style: unknown; singer: Singer }) {
   const [toolbarSticky, setToolbarSticky] = useState(false);
 
   const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
@@ -52,9 +52,17 @@ function Detail({ style, singer }: { style: unknown; singer: SingerDetail }) {
         <div className="first-screen">
           <Info singer={singer} />
           <Toolbar singer={singer} />
-          <MusicList musicList={singer.musicList} />
+          <MusicList
+            musicList={singer.musicList.map((m, index) => ({
+              ...m,
+              index: singer.musicList.length - index,
+            }))}
+          />
         </div>
-        <CreateUser user={singer.createUser} createTime={singer.createTime} />
+        <CreateUser
+          user={singer.createUser}
+          createTimestamp={singer.createTimestamp}
+        />
       </div>
 
       {toolbarSticky ? <MiniIfno singer={singer} /> : null}
@@ -103,7 +111,7 @@ function SingerDrawer({
             </CardContainer>
           );
         }
-        return <Detail style={style} singer={d.singer!} />;
+        return <Detail style={style} singer={d.value} />;
       })}
     </Drawer>
   );

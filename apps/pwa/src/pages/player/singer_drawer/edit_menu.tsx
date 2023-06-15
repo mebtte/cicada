@@ -17,7 +17,7 @@ import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
-import { SingerDetail } from './constants';
+import { Singer } from './constants';
 import { emitSingerUpdated } from '../utils';
 
 const maskProps: {
@@ -34,7 +34,7 @@ const Style = styled.div`
   padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 `;
 
-function EditMenu({ singer }: { singer: SingerDetail }) {
+function EditMenu({ singer }: { singer: Singer }) {
   const [open, setOpen] = useState(false);
   // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
