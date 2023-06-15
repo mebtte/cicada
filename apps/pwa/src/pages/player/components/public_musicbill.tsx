@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Cover, { Shape } from '@/components/cover';
+import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import ellipsis from '@/style/ellipsis';
@@ -8,124 +8,80 @@ import playerEventemitter, {
 } from '../eventemitter';
 
 const Style = styled.div`
-  display: inline-flex;
-  gap: 10px;
+  font-size: 0;
 
-  padding: 8px 20px;
+  > .cover-box {
+    cursor: pointer;
+  }
 
-  cursor: pointer;
-  transition: 300ms;
-  user-select: none;
+  > .name {
+    margin-top: 5px;
 
-  > .info {
+    ${ellipsis}
+    font-size: 14px;
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    cursor: pointer;
+  }
+
+  > .nickname {
     flex: 1;
-    min-width: 0;
 
-    display: flex;
-    flex-direction: column;
+    font-size: 14px;
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    ${ellipsis}
 
-    > .top {
-      flex: 1;
-      min-height: 0;
-
-      > .name {
-        line-height: 1.5;
-        font-size: 16px;
-        color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-        ${ellipsis};
-      }
-
-      > .music-count {
-        font-size: 12px;
-        color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-      }
-    }
-
-    > .user {
-      max-width: 100%;
-      align-self: flex-start;
-
-      display: flex;
-      align-items: center;
-      gap: 5px;
-
+    > span {
       cursor: pointer;
 
-      > .nickname {
-        flex: 1;
-        min-width: 0;
-
-        font-size: 14px;
-        color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-        ${ellipsis}
-      }
-
       &:hover {
-        text-decoration: underline;
+        color: ${CSSVariable.TEXT_COLOR_PRIMARY};
       }
     }
-  }
-
-  &:hover {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
-  }
-
-  &:active {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   }
 `;
 
-function Musicbill({
+function PublicMusicbill({
   id,
   cover,
   name,
-  musicCount,
-  user,
+  userId,
+  userNickname,
   addon,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   id: string;
   cover: string;
   name: string;
-  musicCount: number;
-  user: {
-    id: string;
-    nickname: string;
-    avatar: string;
-  };
+  userId: string;
+  userNickname: string;
   addon?: ReactNode;
 }) {
+  const openPublicMusicbillDrawer = () =>
+    playerEventemitter.emit(PlayerEventType.OPEN_PUBLIC_MUSICBILL_DRAWER, {
+      id,
+    });
   return (
-    <Style
-      onClick={() =>
-        playerEventemitter.emit(PlayerEventType.OPEN_PUBLIC_MUSICBILL_DRAWER, {
-          id,
-        })
-      }
-      {...props}
-    >
-      <Cover src={cover} size={90} />
-      <div className="info">
-        <div className="top">
-          <div className="name">{name}</div>
-          <div className="music-count">{musicCount}首音乐</div>
-        </div>
-        <div
-          className="user"
-          onClick={(event) => {
-            event.stopPropagation();
-            return playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
-              id: user.id,
-            });
-          }}
-        >
-          <Cover src={user.avatar} size={18} shape={Shape.CIRCLE} />
-          <div className="nickname">{user.nickname}</div>
-        </div>
-        {addon}
+    <Style {...props}>
+      <div className="cover-box" onClick={openPublicMusicbillDrawer}>
+        <Cover src={cover} size="100%" />
       </div>
+      <div className="name" onClick={openPublicMusicbillDrawer}>
+        {name}
+      </div>
+      <div className="nickname">
+        <span
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
+              id: userId,
+            })
+          }
+        >
+          {userNickname}
+        </span>
+      </div>
+      {addon}
     </Style>
   );
 }
 
-export default Musicbill;
+export default PublicMusicbill;

@@ -1,11 +1,10 @@
 export type Response = {
   total: number;
-  musicbillList: {
+  collectionList: {
     id: string;
     name: string;
     cover: string;
-    musicCount: number;
-    user: { id: string; nickname: string; avatar: string };
+    user: { id: string; nickname: string };
     collectTimestamp: number;
   }[];
 };

@@ -10,15 +10,17 @@ import { Query } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import Button, { Variant } from '@/components/button';
-import mm from '@/global_states/mini_mode';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import WidthObserver from '@/components/width_observer';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { CSSVariable } from '@/global_style';
 import day from '#/utils/day';
 import { HEADER_HEIGHT, SearchTab } from '../../../constants';
-import useMusicbillList from './use_musicbill_list';
+import useCollectionList from './use_collection_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import PublicMusicbill from '../../../components/public_musicbill';
 
+const ITEM_MIN_WIDTH = 150;
 const Style = styled.div`
   flex: 1;
   min-height: 0;
@@ -42,22 +44,27 @@ const MusicListContainer = styled(Container)`
   overflow: auto;
 
   > .list {
-    font-size: 0;
+    margin: 0 10px;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    > .item {
+      padding: 10px;
+    }
   }
 `;
 const paginationStyle: CSSProperties = {
   margin: '10px 0',
 };
 const CollectTime = styled.div`
-  margin-top: 5px;
-
   font-size: 12px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 `;
 
-function MusicbillList() {
+function CollectionList() {
   const navigate = useNavigate();
-  const miniMode = mm.useState();
   const onPageChange = useCallback(
     (p: number) =>
       navigate({
@@ -68,7 +75,7 @@ function MusicbillList() {
     [navigate],
   );
 
-  const { page, data, reload } = useMusicbillList();
+  const { page, data, reload } = useCollectionList();
 
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -94,7 +101,7 @@ function MusicbillList() {
           );
         }
 
-        if (!value!.total && !value!.musicbillList.length) {
+        if (!value!.total && !value!.collectionList.length) {
           return (
             <CardContainer style={style}>
               <Empty description="暂无相关乐单" />
@@ -115,29 +122,35 @@ function MusicbillList() {
           );
         }
 
-        const musicbillStyle: CSSProperties = {
-          width: miniMode ? '100%' : '50%',
-        };
         return (
           <MusicListContainer style={style}>
-            <div className="list">
-              {value!.musicbillList.map((mb) => (
-                <PublicMusicbill
-                  key={mb.id}
-                  id={mb.id}
-                  name={mb.name}
-                  cover={mb.cover}
-                  musicCount={mb.musicCount}
-                  user={mb.user}
-                  style={musicbillStyle}
-                  addon={
-                    <CollectTime>
-                      收藏于 {day(mb.collectTimestamp).format('YYYY-MM-DD')}
-                    </CollectTime>
-                  }
-                />
-              ))}
-            </div>
+            <WidthObserver
+              className="list"
+              render={(width) => {
+                const itemWidth = `${
+                  100 / Math.floor(width / ITEM_MIN_WIDTH)
+                }%`;
+                return value!.collectionList.map((c) => (
+                  <div key={c.id} className="item" style={{ width: itemWidth }}>
+                    <PublicMusicbill
+                      id={c.id}
+                      cover={getResizedImage({
+                        url: c.cover,
+                        size: ITEM_MIN_WIDTH * 2,
+                      })}
+                      name={c.name}
+                      userId={c.user.id}
+                      userNickname={c.user.nickname}
+                      addon={
+                        <CollectTime>
+                          收藏于 {day(c.collectTimestamp).format('YYYY-MM-DD')}
+                        </CollectTime>
+                      }
+                    />
+                  </div>
+                ));
+              }}
+            />
             {value!.total ? (
               <Pagination
                 style={paginationStyle}
@@ -154,4 +167,4 @@ function MusicbillList() {
   );
 }
 
-export default MusicbillList;
+export default CollectionList;

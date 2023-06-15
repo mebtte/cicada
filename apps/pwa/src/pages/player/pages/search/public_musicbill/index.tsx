@@ -10,7 +10,8 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
 import Button, { Variant } from '@/components/button';
-import mm from '@/global_states/mini_mode';
+import WidthObserver from '@/components/width_observer';
+import getResizedImage from '@/server/asset/get_resized_image';
 import {
   PAGE_SIZE,
   TOOLBAR_HEIGHT,
@@ -21,6 +22,7 @@ import { openCreateMusicbillDialog } from '../../../utils';
 import PublicMusicbill from '../../../components/public_musicbill';
 import TextGuide from '../text_guide';
 
+const ITEM_MIN_WIDTH = 150;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
@@ -33,6 +35,18 @@ const CardContainer = styled(Container)`
 const MusicContainer = styled(Container)`
   overflow: auto;
 
+  > .list {
+    margin: 0 10px;
+
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    > .item {
+      padding: 10px;
+    }
+  }
+
   ${({ theme: { miniMode } }) => css`
     padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
   `}
@@ -43,7 +57,6 @@ const paginationStyle: CSSProperties = {
 
 function Wrapper() {
   const navigate = useNavigate();
-  const miniMode = mm.useState();
   const { data, reload, page } = useData();
 
   const transitions = useTransition(data, {
@@ -77,24 +90,33 @@ function Wrapper() {
       );
     }
 
-    const musicbillStyle: CSSProperties = {
-      width: miniMode ? '100%' : '50%',
-    };
     return (
       <MusicContainer style={style}>
-        <div>
-          {d.value!.musicbillList.map((musicbill) => (
-            <PublicMusicbill
-              key={musicbill.id}
-              id={musicbill.id}
-              cover={musicbill.cover}
-              name={musicbill.name}
-              musicCount={musicbill.musicCount}
-              user={musicbill.user}
-              style={musicbillStyle}
-            />
-          ))}
-        </div>
+        <WidthObserver
+          className="list"
+          render={(width) => {
+            const itemWidth = `${100 / Math.floor(width / ITEM_MIN_WIDTH)}%`;
+            return d.value!.musicbillList.map((musicbill) => (
+              <div
+                className="item"
+                key={musicbill.id}
+                style={{ width: itemWidth }}
+              >
+                <PublicMusicbill
+                  id={musicbill.id}
+                  cover={getResizedImage({
+                    url: musicbill.cover,
+                    size: ITEM_MIN_WIDTH * 2,
+                  })}
+                  name={musicbill.name}
+                  userId={musicbill.user.id}
+                  userNickname={musicbill.user.nickname}
+                />
+              </div>
+            ));
+          }}
+        />
+
         {d.value!.total ? (
           <Pagination
             style={paginationStyle}
