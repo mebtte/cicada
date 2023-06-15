@@ -104,10 +104,10 @@ function User({
                       musicbillId,
                       userId: user.id,
                     });
-                    playerEventemitter.emit(
-                      PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                      { id: musicbillId, silence: true },
-                    );
+                    playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
+                      id: musicbillId,
+                      silence: true,
+                    });
                   } catch (error) {
                     logger.error(error, '移除乐单共享用户失败');
                     notice.error(error.message);

@@ -6,8 +6,13 @@ import {
   Alert,
   Captcha,
   Confirm,
-  TextInput,
+  Input,
+  InputList,
   DialogType,
+  MultipleSelect,
+  FileSelect,
+  TextareaList,
+  ImageCut,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import DialogApp from './dialog_app';
@@ -52,14 +57,64 @@ export default {
     e.emit(EventType.OPEN, captcha);
     return id;
   },
-  textInput: (t: Omit<TextInput, 'id' | 'type'>) => {
+  input: (t: Omit<Input, 'id' | 'type'>) => {
     const id = generateRandomString(ID_LENGTH, false);
-    const textInput: TextInput = {
+    const input: Input = {
       ...t,
-      type: DialogType.TEXT_INPUT,
+      type: DialogType.INPUT,
       id,
     };
-    e.emit(EventType.OPEN, textInput);
+    e.emit(EventType.OPEN, input);
+    return id;
+  },
+  inputList: (tl: Omit<InputList, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const inputList: InputList = {
+      ...tl,
+      type: DialogType.INPUT_LIST,
+      id,
+    };
+    e.emit(EventType.OPEN, inputList);
+    return id;
+  },
+  multipleSelect: <Value,>(ms: Omit<MultipleSelect<Value>, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const multipleSelect: MultipleSelect<Value> = {
+      ...ms,
+      type: DialogType.MULTIPLE_SELECT,
+      id,
+    };
+    e.emit(EventType.OPEN, multipleSelect);
+    return id;
+  },
+  fileSelect: (f: Omit<FileSelect, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const fileSelect: FileSelect = {
+      ...f,
+      type: DialogType.FILE_SELECT,
+      id,
+    };
+    e.emit(EventType.OPEN, fileSelect);
+    return id;
+  },
+  textareaList: (tl: Omit<TextareaList, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const textareaList: TextareaList = {
+      ...tl,
+      type: DialogType.TEXTAREA_LIST,
+      id,
+    };
+    e.emit(EventType.OPEN, textareaList);
+    return id;
+  },
+  imageCut: (ic: Omit<ImageCut, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const imageCut: ImageCut = {
+      ...ic,
+      type: DialogType.IMAGE_CUT,
+      id,
+    };
+    e.emit(EventType.OPEN, imageCut);
     return id;
   },
   close: (id: string) => e.emit(EventType.CLOSE, { id }),

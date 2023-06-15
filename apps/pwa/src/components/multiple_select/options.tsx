@@ -1,27 +1,21 @@
 import styled, { css } from 'styled-components';
 import { MdDone } from 'react-icons/md';
-import { animated, useTransition } from 'react-spring';
-import { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
-import { UtilZIndex } from '../../constants/style';
+import { CSSProperties, HtmlHTMLAttributes } from 'react';
+import ErrorCard from '@/components/error_card';
+import preventDefault from '@/utils/prevent_default';
 import { Option as OptionType } from './constants';
 import Spinner from '../spinner';
 import { flexCenter } from '../../style/flexbox';
 import { CSSVariable } from '../../global_style';
-import e, { EventType } from './eventemitter';
 import ellipsis from '../../style/ellipsis';
+import useOptions from './use_options';
 
-const Mask = styled.div`
-  z-index: ${UtilZIndex.MULTIPLE_SELECT};
-
+const OPTION_HEIGHT = 36;
+const Style = styled.div`
   position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-`;
-const Style = styled(animated.div)`
-  position: absolute;
+  z-index: 1;
+
+  margin-top: 5px;
 
   background-color: #fff;
   box-shadow: rgb(0 0 0 / 20%) 0px 5px 5px -3px,
@@ -29,12 +23,13 @@ const Style = styled(animated.div)`
   transform-origin: top;
 
   > .list {
-    max-height: 200px;
+    max-height: ${OPTION_HEIGHT * 5}px;
     overflow: auto;
   }
 `;
 const Option = styled.div<{ selected: boolean }>`
-  padding: 5px 10px;
+  height: ${OPTION_HEIGHT}px;
+  padding: 0 10px;
 
   display: flex;
   align-items: center;
@@ -69,110 +64,82 @@ const Option = styled.div<{ selected: boolean }>`
   `}
 `;
 const Loader = styled.div`
-  padding: 10px 0;
+  padding: 10px 20px;
   ${flexCenter}
 `;
 const Empty = styled.div`
-  padding: 20px 0;
+  padding: 10px 20px;
   line-height: 1;
   font-size: 12px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   text-align: center;
 `;
-interface BaseProps<Value> {
-  id: string;
-  loading: boolean;
-  options: OptionType<Value>[];
-  selectedKeys: (number | string)[];
-  emptyMesssage: string;
-}
+const errorCardStyle: CSSProperties = {
+  padding: '20px 30px',
+};
 
 function Options<Value>({
-  style,
-  loading,
-  options,
+  keyword,
   selectedKeys,
-  id,
   emptyMesssage,
-  anchor,
-}: BaseProps<Value> & { style: unknown; anchor: HTMLDivElement }) {
-  const [rect, setRect] = useState(() => anchor.getBoundingClientRect());
-
-  useEffect(() => {
-    const resizeObserver = new ResizeObserver(() =>
-      setRect(anchor.getBoundingClientRect()),
-    );
-    resizeObserver.observe(anchor);
-    return () => resizeObserver.disconnect();
-  }, [anchor]);
-
-  return ReactDOM.createPortal(
-    <Mask>
-      <Style
-        style={{
-          // @ts-expect-error
-          ...style,
-          top: rect.top + rect.height + 2,
-          left: rect.left,
-          width: rect.width,
-        }}
-      >
-        {loading ? (
-          <Loader>
-            <Spinner size={16} />
-          </Loader>
-        ) : null}
-        {options.length ? (
-          <div className="list">
-            {options.map((option) => {
-              const selected = selectedKeys.includes(option.key);
-              return (
-                <Option
-                  key={option.key}
-                  selected={selected}
-                  onClickCapture={() =>
-                    e.emit(EventType.ON_CHANGE, { id, option })
-                  }
-                >
-                  <div className="label">{option.label}</div>
-                  {selected ? <MdDone /> : null}
-                </Option>
-              );
-            })}
-          </div>
-        ) : loading ? null : (
-          <Empty>{emptyMesssage}</Empty>
-        )}
-      </Style>
-    </Mask>,
-    document.body,
-  );
-}
-
-function Wrapper<Value>({
-  anchor,
+  optionsGetter,
+  onChange,
   ...props
-}: BaseProps<Value> & {
-  anchor: HTMLDivElement | null;
+}: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
+  keyword: string;
+  selectedKeys: (number | string)[];
+  emptyMesssage: string;
+  optionsGetter: (
+    search: string,
+  ) => OptionType<Value>[] | Promise<OptionType<Value>[]>;
+  onChange: (option: OptionType<Value>) => void;
 }) {
-  const transitions = useTransition(anchor, {
-    from: {
-      opacity: 0,
-      transform: `scaleY(0%)`,
-    },
-    enter: {
-      opacity: 1,
-      transform: `scaleY(100%)`,
-    },
-    leave: {
-      opacity: 0,
-      transform: `scaleY(0%)`,
-    },
+  const { error, loading, options, reload } = useOptions({
+    keyword,
+    optionsGetter,
   });
-
-  return transitions((style, a) =>
-    a ? <Options style={style} anchor={a} {...props} /> : null,
+  return (
+    <Style
+      {...props}
+      // prevent input from losing focus
+      onPointerDown={preventDefault}
+    >
+      {error ? (
+        <ErrorCard
+          errorMessage={error.message}
+          retry={reload}
+          style={errorCardStyle}
+        />
+      ) : (
+        <>
+          {loading ? (
+            <Loader>
+              <Spinner size={16} />
+            </Loader>
+          ) : null}
+          {options.length ? (
+            <div className="list">
+              {options.map((option) => {
+                const selected = selectedKeys.includes(option.key);
+                return (
+                  <Option
+                    key={option.key}
+                    selected={selected}
+                    onClick={() => onChange(option)}
+                  >
+                    <div className="label">{option.label}</div>
+                    {selected ? <MdDone /> : null}
+                  </Option>
+                );
+              })}
+            </div>
+          ) : loading ? null : (
+            <Empty>{emptyMesssage}</Empty>
+          )}
+        </>
+      )}
+    </Style>
   );
 }
 
-export default Wrapper;
+export default Options;

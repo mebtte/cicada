@@ -26,7 +26,6 @@ import p from '@/global_states/profile';
 import e, { EventType } from './eventemitter';
 import { Musicbill, ZIndex } from '../../constants';
 import playerEventemitter, {
-  EditDialogType,
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { quitSharedMusicbill } from './utils';
@@ -64,31 +63,32 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
           label="修改封面"
           icon={<MdImage />}
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.COVER,
+            dialog.imageCut({
               title: '修改封面',
-              onSubmit: async (cover: File | null) => {
+              onConfirm: async (cover) => {
                 if (!cover) {
-                  throw new Error('请选择封面');
+                  notice.error('请选择封面');
+                  return false;
                 }
-
-                const { id } = await uploadAsset(
-                  cover,
-                  AssetType.MUSICBILL_COVER,
-                );
-                await updateMusicbill({
-                  id: musicbill.id,
-                  key: AllowUpdateKey.COVER,
-                  value: id,
-                });
-
-                playerEventemitter.emit(
-                  PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                  {
+                try {
+                  const { id } = await uploadAsset(
+                    cover,
+                    AssetType.MUSICBILL_COVER,
+                  );
+                  await updateMusicbill({
+                    id: musicbill.id,
+                    key: AllowUpdateKey.COVER,
+                    value: id,
+                  });
+                  playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
                     id: musicbill.id,
                     silence: false,
-                  },
-                );
+                  });
+                } catch (error) {
+                  logger.error(error, "Updating musicbill's cover fail");
+                  notice.error(error.message);
+                  return false;
+                }
               },
             })
           }
@@ -97,31 +97,33 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
           label="修改名字"
           icon={<MdTitle />}
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.INPUT,
+            dialog.input({
               title: '修改名字',
               label: '名字',
               initialValue: musicbill.name,
               maxLength: NAME_MAX_LENGTH,
-              onSubmit: async (name: string) => {
+              onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName) {
-                  throw new Error('请输入名字');
+                  notice.error('请输入名字');
+                  return false;
                 }
                 if (trimmedName !== musicbill.name) {
-                  await updateMusicbill({
-                    id: musicbill.id,
-                    key: AllowUpdateKey.NAME,
-                    value: trimmedName,
-                  });
-
-                  playerEventemitter.emit(
-                    PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                    {
+                  try {
+                    await updateMusicbill({
+                      id: musicbill.id,
+                      key: AllowUpdateKey.NAME,
+                      value: trimmedName,
+                    });
+                    playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
                       id: musicbill.id,
                       silence: false,
-                    },
-                  );
+                    });
+                  } catch (error) {
+                    logger.error(error, '更新乐单名字失败');
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })
@@ -144,7 +146,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   })
                     .then(() =>
                       playerEventemitter.emit(
-                        PlayerEventType.FETCH_MUSICBILL_DETAIL,
+                        PlayerEventType.RELOAD_MUSICBILL,
                         {
                           id: musicbill.id,
                           silence: false,
@@ -152,7 +154,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                       ),
                     )
                     .catch((error) => {
-                      logger.error(error, '更新乐单失败');
+                      logger.error(error, "Fail to update musicbill's public");
                       notice.error(error.message);
                     }),
               });
@@ -168,13 +170,10 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   value: true,
                 })
                   .then(() =>
-                    playerEventemitter.emit(
-                      PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                      {
-                        id: musicbill.id,
-                        silence: false,
-                      },
-                    ),
+                    playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
+                      id: musicbill.id,
+                      silence: false,
+                    }),
                   )
                   .catch((error) => {
                     logger.error(error, '更新乐单失败');
@@ -224,7 +223,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                 musicbillId: musicbill.id,
                 afterQuitted: () =>
                   navigate({
-                    path: ROOT_PATH + PLAYER_PATH.EXPLORATION,
+                    path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
                   }),
               })
             }

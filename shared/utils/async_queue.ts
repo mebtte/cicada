@@ -29,7 +29,7 @@ class AsyncQueue {
     minimalTaskDuration?: number;
     taskTimeout?: number;
     taskTimeoutErrorGenerator?: (ms: number) => Error;
-  }) {
+  } = {}) {
     this.minimalTaskDuration = minimalTaskDuration;
     this.taskTimeout = taskTimeout;
     this.taskTimeoutErrorGenerator = taskTimeoutErrorGenerator;

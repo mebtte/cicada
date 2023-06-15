@@ -1,20 +1,10 @@
 import { useContext, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { animated, useTransition } from 'react-spring';
-import styled from 'styled-components';
-import { HEADER_HEIGHT } from '../../constants';
 import Context from '../../context';
 import Musicbill from './musicbill';
 import EditMenu from './edit_menu';
 import ShareDrawer from './share_drawer';
-
-const MusicbillContainer = styled(animated.div)`
-  position: absolute;
-  top: ${HEADER_HEIGHT}px;
-  left: 0;
-  width: 100%;
-  height: calc(100% - ${HEADER_HEIGHT}px);
-`;
+import RedirectLater from './redirect_later';
 
 function Wrapper() {
   const { id } = useParams<{ id: string }>();
@@ -24,29 +14,16 @@ function Wrapper() {
     [musicbillList, id],
   );
 
-  const transitions = useTransition(musicbill, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
-
-  return (
-    <>
-      {transitions((style, mb) =>
-        mb ? (
-          <MusicbillContainer style={style}>
-            <Musicbill musicbill={mb} />
-          </MusicbillContainer>
-        ) : null,
-      )}
-      {musicbill ? (
-        <>
-          <EditMenu musicbill={musicbill} />
-          <ShareDrawer musicbill={musicbill} />
-        </>
-      ) : null}
-    </>
-  );
+  if (musicbill) {
+    return (
+      <>
+        <Musicbill musicbill={musicbill} />
+        <EditMenu musicbill={musicbill} />
+        <ShareDrawer musicbill={musicbill} />
+      </>
+    );
+  }
+  return <RedirectLater />;
 }
 
 export default Wrapper;

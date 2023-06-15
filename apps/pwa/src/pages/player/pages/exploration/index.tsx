@@ -95,12 +95,17 @@ function Wrapper() {
             <WidthObserver
               className="content"
               render={(width) => {
-                const itemWidth = `${
-                  100 / Math.floor(width / ITEM_MIN_WIDTH)
-                }%`;
+                const amountOfOneLine = Math.floor(width / ITEM_MIN_WIDTH);
+                const itemWidth = `${100 / amountOfOneLine}%`;
                 return (
                   <>
-                    {d.value.map((item) => {
+                    {(d.value.length < amountOfOneLine
+                      ? d.value
+                      : d.value.slice(
+                          0,
+                          d.value.length - (d.value.length % amountOfOneLine),
+                        )
+                    ).map((item) => {
                       switch (item.type) {
                         case ExplorationItemType.MUSIC: {
                           return (

@@ -4,11 +4,9 @@ import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
 import excludeProperty from '#/utils/exclude_property';
 import {
   PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
-  MUSICBILL_MUSIC_TABLE_NAME,
   MUSICBILL_TABLE_NAME,
   Musicbill,
   PublicMusicbillCollectionProperty,
-  MusicbillMusicProperty,
   MusicbillProperty,
   User,
   UserProperty,
@@ -20,20 +18,16 @@ import { AssetType } from '#/constants';
 import { Context } from '../constants';
 
 const MAX_PAGE_SIZE = 100;
-type LocalMusicbill = Pick<
+type Collection = Pick<
   Musicbill,
   | MusicbillProperty.ID
   | MusicbillProperty.NAME
   | MusicbillProperty.COVER
   | MusicbillProperty.USER_ID
 > & {
-  musicCount: number;
   collectTimestamp: number;
 };
-type LocalUser = Pick<
-  User,
-  UserProperty.AVATAR | UserProperty.ID | UserProperty.NICKNAME
->;
+type LocalUser = Pick<User, UserProperty.ID | UserProperty.NICKNAME>;
 
 export default async (ctx: Context) => {
   const { keyword, page, pageSize } = ctx.query;
@@ -53,7 +47,7 @@ export default async (ctx: Context) => {
   }
 
   let total: number;
-  let musicbillList: LocalMusicbill[];
+  let collectionList: Collection[];
   if (keyword.length) {
     const pattern = `%${keyword}%`;
     const results = await Promise.all([
@@ -70,24 +64,20 @@ export default async (ctx: Context) => {
         `,
         [pattern, ctx.user.id],
       ),
-      getDB().all<LocalMusicbill>(
+      getDB().all<Collection>(
         `
           SELECT
             m.${MusicbillProperty.ID},
             m.${MusicbillProperty.NAME},
             m.${MusicbillProperty.COVER},
             m.${MusicbillProperty.USER_ID},
-            count(mm.${MusicbillMusicProperty.ID}) AS musicCount,
             mc.${PublicMusicbillCollectionProperty.COLLECT_TIMESTAMP}
           FROM ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME} AS mc
           LEFT JOIN ${MUSICBILL_TABLE_NAME} AS m
             ON m.${MusicbillProperty.ID} = mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID}
-          LEFT JOIN ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
-            ON mm.${MusicbillMusicProperty.MUSICBILL_ID} = mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID}
           WHERE m.${MusicbillProperty.PUBLIC} = 1
             AND m.${MusicbillProperty.NAME} LIKE ?
             AND mc.${PublicMusicbillCollectionProperty.USER_ID} = ?
-          GROUP BY mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID}
           ORDER BY mc.${PublicMusicbillCollectionProperty.COLLECT_TIMESTAMP} DESC
           LIMIT ?
           OFFSET ?
@@ -102,7 +92,7 @@ export default async (ctx: Context) => {
     ]);
 
     total = results[0]!.value;
-    [, musicbillList] = results;
+    [, collectionList] = results;
   } else {
     const results = await Promise.all([
       getDB().get<{ value: number }>(
@@ -117,23 +107,19 @@ export default async (ctx: Context) => {
         `,
         [ctx.user.id],
       ),
-      getDB().all<LocalMusicbill>(
+      getDB().all<Collection>(
         `
           SELECT
             m.${MusicbillProperty.ID},
             m.${MusicbillProperty.NAME},
             m.${MusicbillProperty.COVER},
             m.${MusicbillProperty.USER_ID},
-            count(mm.${MusicbillMusicProperty.ID}) AS musicCount,
             mc.${PublicMusicbillCollectionProperty.COLLECT_TIMESTAMP}
           FROM ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME} AS mc
           LEFT JOIN ${MUSICBILL_TABLE_NAME} AS m
             ON m.${MusicbillProperty.ID} = mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID}
-          LEFT JOIN ${MUSICBILL_MUSIC_TABLE_NAME} AS mm
-            ON mm.${MusicbillMusicProperty.MUSICBILL_ID} = mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID}
           WHERE m.${MusicbillProperty.PUBLIC} = 1
             AND mc.${PublicMusicbillCollectionProperty.USER_ID} = ?
-          GROUP BY mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID}
           ORDER BY mc.${PublicMusicbillCollectionProperty.COLLECT_TIMESTAMP} DESC
           LIMIT ?
           OFFSET ?
@@ -143,24 +129,20 @@ export default async (ctx: Context) => {
     ]);
 
     total = results[0]!.value;
-    [, musicbillList] = results;
+    [, collectionList] = results;
   }
 
   let userList: LocalUser[] = [];
-  if (musicbillList.length) {
+  if (collectionList.length) {
     userList = await getUserListByIds(
-      Array.from(new Set(musicbillList.map((mb) => mb.userId))),
-      [UserProperty.ID, UserProperty.AVATAR, UserProperty.NICKNAME],
+      Array.from(new Set(collectionList.map((mb) => mb.userId))),
+      [UserProperty.ID, UserProperty.NICKNAME],
     );
-    userList = userList.map((u) => ({
-      ...u,
-      avatar: getAssetPublicPath(u.avatar, AssetType.USER_AVATAR),
-    }));
   }
 
   return ctx.success<Response>({
     total,
-    musicbillList: musicbillList.map((mb) => ({
+    collectionList: collectionList.map((mb) => ({
       ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
       user: userList.find((u) => u.id === mb.userId)!,
       cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),

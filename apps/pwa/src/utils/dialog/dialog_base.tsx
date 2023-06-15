@@ -1,5 +1,6 @@
 import {
   CSSProperties,
+  HtmlHTMLAttributes,
   ReactNode,
   useCallback,
   useEffect,
@@ -18,10 +19,12 @@ function DialogBase({
   dialog,
   onDestroy,
   children,
+  bodyProps,
 }: {
   dialog: DialogShape;
   onDestroy: (id: string) => void;
   children: ({ onClose }: { onClose: () => void }) => ReactNode;
+  bodyProps?: HtmlHTMLAttributes<HTMLDivElement>;
 }) {
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
@@ -47,7 +50,7 @@ function DialogBase({
   }, [dialog.id, onDestroy, open]);
 
   return (
-    <Dialog open={open} maskProps={maskProps}>
+    <Dialog open={open} maskProps={maskProps} bodyProps={bodyProps}>
       {children({ onClose })}
     </Dialog>
   );

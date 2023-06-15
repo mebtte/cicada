@@ -17,7 +17,7 @@ function loadImage(
   return Promise.race([
     new Promise<HTMLImageElement>((resolve, reject) => {
       imgNode.onload = () => resolve(imgNode);
-      imgNode.onerror = () => reject(new Error(`无法加载图片: ${url}`));
+      imgNode.onerror = () => reject(new Error(`Fail to load image: ${url}`));
     }),
     timeoutFn(timeout, timeoutErrorGenerator),
   ]);

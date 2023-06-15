@@ -1,8 +1,8 @@
 import getPublicMusicbillCollectionList from '@/server/api/get_public_musicbill_collection_list';
 
-export type Musicbill = AsyncReturnType<
+export type Collection = AsyncReturnType<
   typeof getPublicMusicbillCollectionList
->['musicbillList'][0];
+>['collectionList'][0];
 
 export const PAGE_SIZE = 50;
 

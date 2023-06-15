@@ -42,36 +42,35 @@ function Wrapper({
   keyword: string;
   musicbill: Musicbill;
 }) {
-  const { id, status, error, musicList } = musicbill;
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
 
-  const transitions = useTransition(status, {
+  const transitions = useTransition(musicbill, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
     leave: { opacity: 0 },
   });
   return (
     <Style>
-      {transitions((style, s) => {
-        if (s === RequestStatus.ERROR) {
+      {transitions((style, mb) => {
+        if (mb.status === RequestStatus.ERROR) {
           return (
             <StatusContainer style={style}>
               <ErrorCard
-                errorMessage={error!.message}
+                errorMessage={mb.error!.message}
                 retry={() =>
-                  playerEventemitter.emit(
-                    PlayerEventType.FETCH_MUSICBILL_DETAIL,
-                    { id, silence: false },
-                  )
+                  playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
+                    id: mb.id,
+                    silence: false,
+                  })
                 }
               />
             </StatusContainer>
           );
         }
 
-        if (s === RequestStatus.SUCCESS) {
-          if (musicList.length) {
-            const filteredMusicList = musicList.filter((music) =>
+        if (mb.status === RequestStatus.SUCCESS) {
+          if (mb.musicList.length) {
+            const filteredMusicList = mb.musicList.filter((music) =>
               filterMusic(music, keyword),
             );
             if (filteredMusicList.length) {

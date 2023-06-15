@@ -18,13 +18,9 @@ async function getSelfMusicbillCollectionList({
   });
   return {
     ...data,
-    musicbillList: data.musicbillList.map((mb) => ({
+    collectionList: data.collectionList.map((mb) => ({
       ...mb,
       cover: prefixServerOrigin(mb.cover),
-      user: {
-        ...mb.user,
-        avatar: prefixServerOrigin(mb.user.avatar),
-      },
     })),
   };
 }

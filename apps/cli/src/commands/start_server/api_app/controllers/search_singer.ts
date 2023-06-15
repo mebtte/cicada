@@ -66,7 +66,7 @@ export default async (ctx: Context) => {
             s.${SingerProperty.ID},
             s.${SingerProperty.AVATAR},
             s.${SingerProperty.NAME},
-            s.${SingerProperty.ID},
+            s.${SingerProperty.ALIASES},
             count(msr.${MusicSingerRelationProperty.ID}) AS musicCount
           FROM ${SINGER_TABLE_NAME} AS s
           LEFT JOIN ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr

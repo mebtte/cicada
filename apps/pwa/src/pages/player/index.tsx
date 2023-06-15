@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { Helmet } from 'react-helmet';
 import withLogin from '@/platform/with_login';
 import { useEffect } from 'react';
 import PageContainer from '@/components/page_container';
+import useDocumentTitle from '@/utils/use_document_title';
 import Sidebar from './sidebar';
 import Header from './header';
 import Controller from './controller';
@@ -22,7 +22,6 @@ import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
 import useKeyboard from './use_keyboard';
 import SingerDrawer from './singer_drawer';
-import EditDialog from './edit_dialog';
 import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
 import PublicMusicbillDrawer from './public_musicbill_drawer';
@@ -54,6 +53,8 @@ const Style = styled(PageContainer)`
 `;
 
 function Wrapper() {
+  useDocumentTitle('知了');
+
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
   const {
     loading: audioLoading,
@@ -94,9 +95,6 @@ function Wrapper() {
         lyricPanelOpen,
       }}
     >
-      <Helmet>
-        <title>知了</title>
-      </Helmet>
       <Style>
         <div className="container">
           <Sidebar />
@@ -124,7 +122,6 @@ function Wrapper() {
 
       {/* fixed z-index */}
       <ProfileEditPopup />
-      <EditDialog />
 
       {queueMusic ? <Audio queueMusic={queueMusic} /> : null}
     </Context.Provider>

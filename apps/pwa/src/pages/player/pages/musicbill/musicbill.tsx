@@ -9,13 +9,12 @@ import {
 import styled from 'styled-components';
 import { Query, RequestStatus } from '@/constants';
 import throttle from 'lodash/throttle';
-import SessionStorageKey from '@/constants/session_storage_key';
-import absoluteFullSize from '@/style/absolute_full_size';
 import useQuery from '@/utils/use_query';
+import cache, { CacheKey } from './cache';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
-import { Musicbill as MusicbillType } from '../../constants';
+import { HEADER_HEIGHT, Musicbill as MusicbillType } from '../../constants';
 import Page from '../page';
 import Info from './info';
 import MusicList from './music_list';
@@ -25,7 +24,11 @@ import Filter from './filter';
 
 const RELOAD_INTERVAL = 1000 * 60 * 15;
 const Style = styled(Page)`
-  ${absoluteFullSize}
+  position: absolute;
+  top: ${HEADER_HEIGHT}px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - ${HEADER_HEIGHT}px);
 
   > .scrollable {
     height: 100%;
@@ -45,10 +48,11 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     () =>
       throttle(
         (scrollTop: number) =>
-          window.sessionStorage.setItem(
-            SessionStorageKey.MUSICBILL_PAGE_SCROLL_TOP.replace('{{id}}', id),
-            scrollTop.toString(),
-          ),
+          cache.set({
+            key: CacheKey.MUSICBILL_PAGE_SCROLL_TOP,
+            value: scrollTop,
+            keyReplace: (k) => k.replace('{{id}}', id),
+          }),
         1000,
       ),
     [id],
@@ -65,7 +69,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
 
   useEffect(() => {
     if (Date.now() - lastUpdateTimestamp > RELOAD_INTERVAL) {
-      playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
+      playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
         id,
         silence: false,
       });
@@ -76,12 +80,10 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     if (status === RequestStatus.SUCCESS) {
       let scrollTop = 0;
       if (!keyword) {
-        const lastScrollTopString = window.sessionStorage.getItem(
-          SessionStorageKey.MUSICBILL_PAGE_SCROLL_TOP.replace('{{id}}', id),
-        );
-        if (lastScrollTopString) {
-          scrollTop = Number(lastScrollTopString) || 0;
-        }
+        scrollTop =
+          cache.get(CacheKey.MUSICBILL_PAGE_SCROLL_TOP, (k) =>
+            k.replace('{{id}}', id),
+          ) || 0;
       }
       window.setTimeout(
         () =>

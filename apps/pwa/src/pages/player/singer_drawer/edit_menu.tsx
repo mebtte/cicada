@@ -14,12 +14,9 @@ import {
 import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
+import notice from '@/utils/notice';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
-import playerEventemitter, {
-  EditDialogType,
-  EventType as PlayerEventType,
-} from '../eventemitter';
 import { SingerDetail } from './constants';
 import { emitSingerUpdated } from '../utils';
 
@@ -61,23 +58,29 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
           icon={<MdImage />}
           label="编辑头像"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.COVER,
+            dialog.imageCut({
               title: '编辑头像',
-              onSubmit: async (blob: Blob | undefined) => {
+              onConfirm: async (blob) => {
                 if (!blob) {
-                  throw new Error('请选择头像');
+                  notice.error('请选择头像');
+                  return false;
                 }
-                const { id: assetId } = await uploadAsset(
-                  blob,
-                  AssetType.SINGER_AVATAR,
-                );
-                await updateSinger({
-                  id: singer.id,
-                  key: AllowUpdateKey.AVATAR,
-                  value: assetId,
-                });
-                emitSingerUpdated(singer.id);
+                try {
+                  const { id: assetId } = await uploadAsset(
+                    blob,
+                    AssetType.SINGER_AVATAR,
+                  );
+                  await updateSinger({
+                    id: singer.id,
+                    key: AllowUpdateKey.AVATAR,
+                    value: assetId,
+                  });
+                  emitSingerUpdated(singer.id);
+                } catch (error) {
+                  logger.error(error, "Updating singer's avatar fail");
+                  notice.error(error.message);
+                  return false;
+                }
               },
             })
           }
@@ -114,24 +117,30 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
           icon={<MdTitle />}
           label="编辑名字"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.INPUT,
+            dialog.input({
               title: '编辑名字',
               label: '名字',
               initialValue: singer.name,
               maxLength: NAME_MAX_LENGTH,
-              onSubmit: async (name: string) => {
+              onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName) {
-                  throw new Error('请输入名字');
+                  notice.error('请输入名字');
+                  return false;
                 }
                 if (singer.name !== trimmedName) {
-                  await updateSinger({
-                    id: singer.id,
-                    key: AllowUpdateKey.NAME,
-                    value: trimmedName,
-                  });
-                  emitSingerUpdated(singer.id);
+                  try {
+                    await updateSinger({
+                      id: singer.id,
+                      key: AllowUpdateKey.NAME,
+                      value: trimmedName,
+                    });
+                    emitSingerUpdated(singer.id);
+                  } catch (error) {
+                    logger.error(error, '更新歌手名字失败');
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })
@@ -141,24 +150,29 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
           icon={<MdTextFields />}
           label="编辑别名"
           onClick={() =>
-            playerEventemitter.emit(PlayerEventType.OPEN_EDIT_DIALOG, {
-              type: EditDialogType.INPUT_LIST,
+            dialog.inputList({
               title: '编辑别名',
               label: '别名',
               initialValue: singer.aliases,
               maxLength: ALIAS_MAX_LENGTH,
-              onSubmit: async (aliases: string[]) => {
+              onConfirm: async (aliases: string[]) => {
                 const trimmedAliases = aliases
                   .map((a) => a.replace(/\s+/g, ' ').trim())
                   .filter((a) => a.length > 0);
 
                 if (!stringArrayEqual(trimmedAliases, singer.aliases)) {
-                  await updateSinger({
-                    id: singer.id,
-                    key: AllowUpdateKey.ALIASES,
-                    value: trimmedAliases,
-                  });
-                  emitSingerUpdated(singer.id);
+                  try {
+                    await updateSinger({
+                      id: singer.id,
+                      key: AllowUpdateKey.ALIASES,
+                      value: trimmedAliases,
+                    });
+                    emitSingerUpdated(singer.id);
+                  } catch (error) {
+                    logger.error(error, "Updating singer's aliases fail");
+                    notice.error(error.message);
+                    return false;
+                  }
                 }
               },
             })

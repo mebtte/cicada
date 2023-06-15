@@ -1,4 +1,3 @@
-import { Option } from '@/components/multiple_select';
 import Eventin from 'eventin';
 import {
   Musicbill,
@@ -6,60 +5,6 @@ import {
   QueueMusic,
   SingerWithAliases,
 } from './constants';
-
-export enum EditDialogType {
-  INPUT,
-  COVER,
-  INPUT_LIST,
-  TEXTAREA_LIST,
-  FILE,
-  MULTIPLE_SELECT,
-}
-export type EditDialogData = {
-  title: string;
-  onSubmit: (value: unknown | undefined) => void | Promise<void>;
-} & (
-  | {
-      type: EditDialogType.INPUT;
-      label: string;
-      initialValue?: string;
-      maxLength?: number;
-      inputType?: string;
-      placeholder?: string;
-    }
-  | {
-      type: EditDialogType.COVER;
-    }
-  | {
-      type: EditDialogType.TEXTAREA_LIST;
-      label: string;
-      initialValue?: string[];
-      max?: number;
-      maxLength?: number;
-      placeholder?: string;
-    }
-  | {
-      type: EditDialogType.INPUT_LIST;
-      label: string;
-      initialValue?: string[];
-      max?: number;
-      maxLength?: number;
-    }
-  | {
-      type: EditDialogType.FILE;
-      label: string;
-      acceptTypes: string[];
-      placeholder: string;
-    }
-  | {
-      type: EditDialogType.MULTIPLE_SELECT;
-      initialValue: Option<unknown>[];
-      label: string;
-      dataGetter: (
-        keyword: string,
-      ) => Option<unknown>[] | Promise<Option<unknown>[]>;
-    }
-);
 
 export enum EventType {
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
@@ -89,7 +34,7 @@ export enum EventType {
   ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY = 'action_move_playqueue_music_EARLY',
 
   RELOAD_MUSICBILL_LIST = 'reload_musicbill_list',
-  FETCH_MUSICBILL_DETAIL = 'fetch_musicbill_detail',
+  RELOAD_MUSICBILL = 'reload_musicbill',
   ADD_MUSIC_TO_MUSICBILL = 'add_music_to_musicbill',
   REMOVE_MUSIC_FROM_MUSICBILL = 'remove_music_from_musicbill',
 
@@ -102,7 +47,6 @@ export enum EventType {
   OPEN_MUSICBILL_ORDER_DRAWER = 'open_musicbill_order_drawer',
   OPEN_PLAYLIST_PLAYQUEUE_DRAWER = 'open_playlist_playqueue_drawer',
   TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER = 'toggle_playlist_playqueue_drawer',
-  OPEN_EDIT_DIALOG = 'open_music_edit_dialog',
   OPEN_USER_DRAWER = 'open_user_drawer',
   OPEN_PUBLIC_MUSICBILL_DRAWER = 'open_public_musicbill_drawer',
   OPEN_PROFILE_EDIT_POPUP = 'open_profile_edit_popup',
@@ -155,7 +99,7 @@ export default new Eventin<
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY]: { queueMusic: QueueMusic };
 
     [EventType.RELOAD_MUSICBILL_LIST]: { silence: boolean };
-    [EventType.FETCH_MUSICBILL_DETAIL]: { id: string; silence: boolean };
+    [EventType.RELOAD_MUSICBILL]: { id: string; silence: boolean };
     [EventType.ADD_MUSIC_TO_MUSICBILL]: {
       musicbill: Musicbill;
       music: MusicWithSingerAliases;
@@ -176,7 +120,6 @@ export default new Eventin<
     [EventType.OPEN_MUSICBILL_ORDER_DRAWER]: null;
     [EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER]: null;
-    [EventType.OPEN_EDIT_DIALOG]: EditDialogData;
     [EventType.OPEN_USER_DRAWER]: { id: string };
     [EventType.OPEN_PUBLIC_MUSICBILL_DRAWER]: { id: string };
     [EventType.OPEN_PROFILE_EDIT_POPUP]: null;

@@ -3,7 +3,7 @@ import withTimeout from '#/utils/with_timeout';
 import { AssetType } from '#/constants';
 import { getDB } from '@/db';
 import day from '#/utils/day';
-import mv from '#/utils/mv';
+import move from '#/utils/move';
 import { getAssetFilePath } from '@/platform/asset';
 import { getAssetDirectory, getTrashDirectory } from '@/config';
 import { Music, MusicProperty } from '@/constants/db_definition';
@@ -15,7 +15,7 @@ const moveAssetListToTrash = async (
   assetType: AssetType,
 ) => {
   for (const asset of assetList) {
-    await mv(
+    await move(
       getAssetFilePath(asset, assetType),
       `${getTrashDirectory()}/${asset}`,
     );

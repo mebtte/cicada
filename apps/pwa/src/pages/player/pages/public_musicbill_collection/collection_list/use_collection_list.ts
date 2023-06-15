@@ -3,8 +3,7 @@ import { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import getPublicMusicbillCollectionList from '@/server/api/get_public_musicbill_collection_list';
-import DefaultCover from '@/asset/default_cover.jpeg';
-import { PAGE_SIZE, Musicbill } from '../constants';
+import { PAGE_SIZE, Collection } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
@@ -13,7 +12,7 @@ interface Data {
   error: Error | null;
   loading: boolean;
   value: {
-    musicbillList: Musicbill[];
+    collectionList: Collection[];
     total: number;
   } | null;
 }
@@ -45,18 +44,14 @@ export default () => {
           loading: false,
           value: {
             total: d.total,
-            musicbillList: d.musicbillList.map((mb) => ({
+            collectionList: d.collectionList.map((mb) => ({
               ...mb,
-              cover: mb.cover || DefaultCover,
-              user: {
-                ...mb.user,
-                avatar: mb.user.avatar || DefaultCover,
-              },
+              cover: mb.cover,
             })),
           },
         });
       } catch (e) {
-        logger.error(e, '获取我的音乐列表失败');
+        logger.error(e, 'Fail to get public musicbill collection list');
         setData({
           error: e,
           loading: false,

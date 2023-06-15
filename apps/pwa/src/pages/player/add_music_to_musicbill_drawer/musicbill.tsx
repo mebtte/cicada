@@ -29,6 +29,7 @@ const Style = styled.div`
 
   cursor: pointer;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  user-select: none;
 
   &:hover {
     background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
@@ -88,7 +89,7 @@ function Musicbill({
         if (status === RequestStatus.LOADING) {
           return notice.error('请等待乐单加载完毕');
         }
-        return playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
+        return playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
           id,
           silence: false,
         });

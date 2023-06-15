@@ -44,7 +44,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         loading={status === RequestStatus.LOADING}
         disabled={status !== RequestStatus.SUCCESS}
         onClick={() =>
-          playerEventemitter.emit(PlayerEventType.FETCH_MUSICBILL_DETAIL, {
+          playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
             id: musicbill.id,
             silence: false,
           })
