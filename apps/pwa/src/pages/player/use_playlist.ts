@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import notice from '@/utils/notice';
 import getMusic from '@/server/api/get_music';
 import logger from '@/utils/logger';
-import { MusicWithSingerAliases, Index } from './constants';
+import { MusicWithSingerAliases } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 
-type PlaylistMusic = MusicWithSingerAliases & Index;
+type PlaylistMusic = MusicWithSingerAliases & { index: number };
 
 export default () => {
   const [playlist, setPlaylist] = useState<PlaylistMusic[]>([]);

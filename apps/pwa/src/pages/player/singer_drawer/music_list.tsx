@@ -1,6 +1,6 @@
 import { CSSProperties, memo, useContext } from 'react';
 import Empty from '@/components/empty';
-import { MusicWithSingerAliases, Index } from '../constants';
+import { MusicWithSingerAliases } from '../constants';
 import Music from '../components/music';
 import Context from '../context';
 
@@ -8,18 +8,14 @@ const emptyStyle: CSSProperties = {
   padding: '50px 0',
 };
 
-function MusicList({
-  musicList,
-}: {
-  musicList: (MusicWithSingerAliases & Index)[];
-}) {
+function MusicList({ musicList }: { musicList: MusicWithSingerAliases[] }) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return musicList.length ? (
     <div>
-      {musicList.map((music) => (
+      {musicList.map((music, index) => (
         <Music
           key={music.id}
-          index={music.index}
+          index={musicList.length - index}
           music={music}
           active={playqueue[currentPlayqueuePosition]?.id === music.id}
         />

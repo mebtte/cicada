@@ -9,14 +9,25 @@ import playerEventemitter, {
 } from '../../../eventemitter';
 import e, { EventType } from '../eventemitter';
 
-interface Data {
-  error: Error | null;
-  loading: boolean;
-  value: {
-    musicPlayRecordList: MusicPlayRecord[];
-    total: number;
-  } | null;
-}
+type Data =
+  | {
+      error: null;
+      loading: true;
+      value: null;
+    }
+  | {
+      error: Error;
+      loading: false;
+      value: null;
+    }
+  | {
+      error: null;
+      loading: false;
+      value: {
+        musicPlayRecordList: MusicPlayRecord[];
+        total: number;
+      };
+    };
 const dataLoading: Data = {
   error: null,
   loading: true,

@@ -7,15 +7,26 @@ import { useCallback, useEffect, useState } from 'react';
 import { parse, LineType, LyricLine } from 'clrc';
 import { MusicWithLyric, PAGE_SIZE } from './constants';
 
-type Data = {
-  error: Error | null;
-  loading: boolean;
-  value: {
-    keyword;
-    total: number;
-    musicList: MusicWithLyric[];
-  } | null;
-};
+type Data =
+  | {
+      error: null;
+      loading: true;
+      value: null;
+    }
+  | {
+      error: Error;
+      loading: false;
+      value: null;
+    }
+  | {
+      error: null;
+      loading: false;
+      value: {
+        keyword;
+        total: number;
+        musicList: MusicWithLyric[];
+      };
+    };
 const dataLoading: Data = {
   error: null,
   loading: true,
@@ -35,7 +46,7 @@ const lyricLineToRaw = (line: LyricLine) => {
 export default () => {
   const { keyword = '', page } = useQuery<Query.KEYWORD | Query.PAGE>();
   const pageNumber = (page ? Number(page) : 1) || 1;
-  const [data, setData] = useState(dataLoading);
+  const [data, setData] = useState<Data>(dataLoading);
   const getData = useCallback(async () => {
     if (!keyword) {
       return setData({
