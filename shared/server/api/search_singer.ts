@@ -5,6 +5,5 @@ export type Response = {
     avatar: string;
     name: string;
     aliases: string[];
-    musicCount: number;
   }[];
 };

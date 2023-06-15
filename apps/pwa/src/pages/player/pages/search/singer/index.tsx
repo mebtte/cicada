@@ -10,6 +10,8 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
 import Button, { Variant } from '@/components/button';
+import WidthObserver from '@/components/width_observer';
+import getResizedImage from '@/server/asset/get_resized_image';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
@@ -23,6 +25,7 @@ import { openCreateSingerDialog } from '../../../utils';
 import Singer from './singer';
 import TextGuide from '../text_guide';
 
+const ITEM_MIN_WIDTH = 150;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
@@ -32,8 +35,22 @@ const CardContainer = styled(Container)`
   flex-direction: column;
   gap: 20px;
 `;
-const MusicContainer = styled(Container)`
+const SingerContainer = styled(Container)`
   overflow: auto;
+
+  > .list {
+    --gap: 10px;
+
+    margin: 0 var(--gap);
+
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    > .item {
+      padding: var(--gap);
+    }
+  }
 
   ${({ theme: { miniMode } }) => css`
     padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
@@ -87,12 +104,30 @@ function Wrapper() {
       );
     }
     return (
-      <MusicContainer style={style}>
-        <div>
-          {d.value!.singerList.map((singer) => (
-            <Singer key={singer.id} singer={singer} />
-          ))}
-        </div>
+      <SingerContainer style={style}>
+        <WidthObserver
+          className="list"
+          render={(width) => {
+            const itemWidth = `${100 / Math.floor(width / ITEM_MIN_WIDTH)}%`;
+            return d.value!.singerList.map((singer) => (
+              <div
+                key={singer.id}
+                className="item"
+                style={{ width: itemWidth }}
+              >
+                <Singer
+                  singerId={singer.id}
+                  singerName={singer.name}
+                  singerAvatar={getResizedImage({
+                    url: singer.avatar,
+                    size: ITEM_MIN_WIDTH * 2,
+                  })}
+                  singerAliases={singer.aliases}
+                />
+              </div>
+            ));
+          }}
+        />
         {d.value!.total ? (
           <Pagination
             style={paginationStyle}
@@ -121,7 +156,7 @@ function Wrapper() {
             }
           />
         )}
-      </MusicContainer>
+      </SingerContainer>
     );
   });
 }

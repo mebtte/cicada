@@ -1,85 +1,54 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import { Singer as SingerType } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
 
 const Style = styled.div`
-  display: inline-flex;
-  gap: 10px;
-
-  padding: 8px 20px;
-
+  font-size: 0;
   cursor: pointer;
-  transition: 300ms;
-  user-select: none;
 
-  > .info {
-    flex: 1;
-    min-width: 0;
+  > .name {
+    margin-top: 3px;
 
-    display: flex;
-    flex-direction: column;
-
-    > .top {
-      flex: 1;
-      min-height: 0;
-
-      > .name {
-        line-height: 1.5;
-        font-size: 14px;
-        color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-        ${ellipsis};
-      }
-
-      > .alias {
-        font-size: 12px;
-        color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-        ${ellipsis};
-      }
-    }
-
-    > .music-count {
-      font-size: 12px;
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    }
+    font-size: 14px;
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    ${ellipsis}
   }
 
-  &:hover {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  > .alias {
+    font-size: 12px;
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    ${ellipsis}
   }
-
-  &:active {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
-  }
-
-  ${({ theme: { miniMode } }) => css`
-    width: ${miniMode ? '100%' : '50%'};
-  `}
 `;
 
-function Singer({ singer }: { singer: SingerType }) {
+function Singer({
+  singerId,
+  singerName,
+  singerAvatar,
+  singerAliases,
+}: {
+  singerId: string;
+  singerName: string;
+  singerAvatar: string;
+  singerAliases?: string[];
+}) {
   return (
     <Style
       onClick={() =>
         playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
-          id: singer.id,
+          id: singerId,
         })
       }
     >
-      <Cover src={singer.avatar} size={64} />
-      <div className="info">
-        <div className="top">
-          <div className="name">{singer.name}</div>
-          {singer.aliases.length ? (
-            <div className="alias">{singer.aliases[0]}</div>
-          ) : null}
-        </div>
-        <div className="music-count">{singer.musicCount}首音乐</div>
-      </div>
+      <Cover src={singerAvatar} size="100%" />
+      <div className="name">{singerName}</div>
+      {singerAliases?.length ? (
+        <div className="alias">{singerAliases[0]}</div>
+      ) : null}
     </Style>
   );
 }
