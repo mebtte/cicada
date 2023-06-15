@@ -34,6 +34,7 @@ function MusicWithLyric({
   return (
     <Music
       active={active}
+      index={music.index}
       music={music}
       addon={
         <StyledLrc

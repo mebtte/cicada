@@ -19,6 +19,7 @@ function MusicList({
       {musicList.map((music) => (
         <Music
           key={music.id}
+          index={music.index}
           music={music}
           active={playqueue[currentPlayqueuePosition]?.id === music.id}
         />

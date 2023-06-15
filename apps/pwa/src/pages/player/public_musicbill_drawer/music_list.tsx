@@ -25,6 +25,7 @@ function MusicList({
         return (
           <Music
             key={key}
+            index={music.index}
             music={music}
             active={playqueue[currentPlayqueuePosition]?.id === music.id}
           />

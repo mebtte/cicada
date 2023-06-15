@@ -24,6 +24,7 @@ function MusicWithExternalInfo({ music }: { music: MusicType }) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return (
     <Music
+      index={music.index}
       music={music}
       active={playqueue[currentPlayqueuePosition]?.id === music.id}
       addon={
