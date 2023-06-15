@@ -39,6 +39,7 @@ function MusicWithExternalInfo({
   return (
     <MusicBase
       active={false}
+      index={musicPlayRecord.index}
       music={musicPlayRecord}
       lineAfter={
         <LineAfter>

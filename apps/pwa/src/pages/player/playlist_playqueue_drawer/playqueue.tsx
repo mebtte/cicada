@@ -70,6 +70,7 @@ function Playqueue({ style }: { style: unknown }) {
               return (
                 <MusicBase
                   key={key}
+                  index={queueMusic.index}
                   music={queueMusic}
                   active={actualIndex === currentPlayqueuePosition}
                   lineAfter={

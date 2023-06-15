@@ -28,6 +28,7 @@ function Music({
     <MusicBase
       {...props}
       active={active}
+      index={music.index}
       music={music}
       lineAfter={
         <LineAfterPart>
