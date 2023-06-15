@@ -46,6 +46,7 @@ import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#
 import absoluteFullSize from '@/style/absolute_full_size';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { Variant } from '@/components/button';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { Music, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -144,7 +145,12 @@ function EditMenu({ music }: { music: MusicDetail }) {
         }}
         onClick={onClose}
       >
-        <MusicInfo music={music} />
+        <MusicInfo
+          musicId={music.id}
+          musicName={music.name}
+          musicCover={getResizedImage({ url: music.cover, size: 80 })}
+          singers={music.singers}
+        />
         <MenuItem
           icon={<MdImage />}
           label="编辑封面"

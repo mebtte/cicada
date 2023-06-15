@@ -3,6 +3,7 @@ import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { CSSVariable } from '@/global_style';
 import IconButton from '@/components/icon_button';
 import { MdOutlineAddBox } from 'react-icons/md';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { Music } from '../constants';
 import MusicInfo from '../components/music_info';
 import { openCreateMusicbillDialog } from '../utils';
@@ -46,7 +47,12 @@ function Top({ music }: { music: Music }) {
         padding: `${height}px 0 10px 0`,
       }}
     >
-      <MusicInfo music={music} />
+      <MusicInfo
+        musicId={music.id}
+        musicName={music.name}
+        musicCover={getResizedImage({ url: music.cover, size: 80 })}
+        singers={music.singers}
+      />
       <div className="header">
         <div className="title">添加到乐单</div>
         <IconButton onClick={openCreateMusicbillDialog}>

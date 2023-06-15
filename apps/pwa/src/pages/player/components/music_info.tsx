@@ -49,27 +49,27 @@ const Style = styled.div`
 `;
 
 function MusicInfo({
-  music,
+  musicId,
+  musicCover,
+  musicName,
+  singers,
   ...props
 }: {
-  music: {
-    id: string;
-    cover: string;
-    name: string;
-    singers: { id: string; name: string }[];
-  };
+  musicId: string;
+  musicCover: string;
+  musicName: string;
+  singers: { id: string; name: string }[];
 } & HtmlHTMLAttributes<HTMLDivElement>) {
-  const { cover, name, singers } = music;
   return (
     <Style
       {...props}
       onClick={() =>
-        eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id })
+        eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, { id: musicId })
       }
     >
-      <Cover src={cover} size={40} />
+      <Cover src={musicCover} size={40} />
       <div className="info">
-        <div className="name">{name}</div>
+        <div className="name">{musicName}</div>
         <div className="singers ">
           {singers.map((s) => (
             <Singer key={s.id} singer={s} />
