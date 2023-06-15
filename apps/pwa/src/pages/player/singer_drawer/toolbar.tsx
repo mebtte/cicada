@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
 import { MdPlaylistAdd, MdOutlineEdit, MdCopyAll } from 'react-icons/md';
-import p from '@/global_states/profile';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import playerEventemitter, {
@@ -35,7 +34,6 @@ const Style = styled.div`
 `;
 
 function Toolbar({ singer }: { singer: Singer }) {
-  const profile = p.useState()!;
   return (
     <Style>
       <div className="left">
@@ -67,7 +65,7 @@ function Toolbar({ singer }: { singer: Singer }) {
           <MdCopyAll />
         </IconButton>
       </div>
-      {profile.admin || profile.id === singer.createUser.id ? (
+      {singer.editable ? (
         <IconButton onClick={openEditMenu}>
           <MdOutlineEdit />
         </IconButton>

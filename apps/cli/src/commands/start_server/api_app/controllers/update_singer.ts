@@ -8,6 +8,11 @@ import {
 } from '#/constants/singer';
 import exist from '#/utils/exist';
 import {
+  MUSIC_SINGER_RELATION_TABLE_NAME,
+  MUSIC_TABLE_NAME,
+  MusicProperty,
+  MusicSingerRelation,
+  MusicSingerRelationProperty,
   SINGER_TABLE_NAME,
   Singer,
   SingerProperty,
@@ -172,8 +177,28 @@ export default async (ctx: Context) => {
     SingerProperty.ALIASES,
     SingerProperty.CREATE_USER_ID,
   ]);
-  if (!singer || (singer.createUserId !== ctx.user.id && !ctx.user.admin)) {
+  if (!singer) {
     return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+  }
+  if (!ctx.user.admin && singer.createUserId !== ctx.user.id) {
+    const editable = await getDB().get<
+      Pick<MusicSingerRelation, MusicSingerRelationProperty.ID>
+    >(
+      `
+        SELECT
+          msr.${MusicSingerRelationProperty.ID}
+        FROM ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
+        JOIN ${MUSIC_TABLE_NAME} AS m
+          ON m.${MusicProperty.ID} = msr.${MusicSingerRelationProperty.MUSIC_ID}
+            AND m.${MusicProperty.CREATE_USER_ID} = ?
+        WHERE msr.${MusicSingerRelationProperty.SINGER_ID} = ?
+        LIMIT 1
+      `,
+      [ctx.user.id, id],
+    );
+    if (!editable) {
+      return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+    }
   }
 
   // @ts-expect-error
