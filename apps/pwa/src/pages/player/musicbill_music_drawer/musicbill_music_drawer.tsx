@@ -13,7 +13,7 @@ const bodyProps: { style: CSSProperties } = {
   },
 };
 
-function MusicbillListDrawer({
+function MusicbillMusicDrawer({
   open,
   onClose,
   music,
@@ -37,4 +37,4 @@ function MusicbillListDrawer({
   );
 }
 
-export default memo(MusicbillListDrawer);
+export default memo(MusicbillMusicDrawer);

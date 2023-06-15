@@ -16,7 +16,7 @@ import Audio from './audio';
 import useMediaSession from './use_media_session';
 import MusicDrawer from './music_drawer';
 import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
-import AddMusicToMusicbillDrawer from './add_music_to_musicbill_drawer';
+import MusicbillMusicDrawer from './musicbill_music_drawer';
 import MusicbillOrderDrawer from './musicbilll_order_drawer';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
@@ -115,7 +115,7 @@ function Wrapper() {
       <SingerDrawer />
       <MusicDrawer />
       <PlaylistPlayqueueDrawer />
-      <AddMusicToMusicbillDrawer />
+      <MusicbillMusicDrawer />
       <MusicbillOrderDrawer />
       <UserDrawer />
       <PublicMusicbillDrawer />
