@@ -13,14 +13,14 @@ import {
   MusicProperty,
   MusicSingerRelation,
   MusicSingerRelationProperty,
-  SINGER_TABLE_NAME,
   Singer,
   SingerProperty,
 } from '@/constants/db_definition';
-import { getSingerById, updateSinger } from '@/db/singer';
+import { updateSinger } from '@/db/singer';
 import { saveSingerModifyRecord } from '@/db/singer_modify_record';
 import { getAssetFilePath } from '@/platform/asset';
 import { getDB } from '@/db';
+import getSingerById from '@/db/get_singer_by_id';
 import { Context } from '../constants';
 
 type LocalSinger = Pick<
@@ -56,19 +56,6 @@ const KEY_MAP_HANDLER: Record<
 
     if (singer.name === name) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
-    }
-
-    const sameNameSinger = await getDB().get<Pick<Singer, SingerProperty.ID>>(
-      `
-        SELECT
-          ${SingerProperty.ID}
-        FROM ${SINGER_TABLE_NAME}
-        WHERE ${SingerProperty.NAME} = ?
-      `,
-      [name],
-    );
-    if (sameNameSinger) {
-      return ctx.except(ExceptionCode.SINGER_EXIST);
     }
 
     await Promise.all([
@@ -188,7 +175,7 @@ export default async (ctx: Context) => {
         SELECT
           msr.${MusicSingerRelationProperty.ID}
         FROM ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
-        JOIN ${MUSIC_TABLE_NAME} AS m
+        LEFT JOIN ${MUSIC_TABLE_NAME} AS m
           ON m.${MusicProperty.ID} = msr.${MusicSingerRelationProperty.MUSIC_ID}
             AND m.${MusicProperty.CREATE_USER_ID} = ?
         WHERE msr.${MusicSingerRelationProperty.SINGER_ID} = ?

@@ -19,6 +19,9 @@ import {
   MusicProperty,
   UserProperty,
   SingerProperty,
+  MUSIC_TABLE_NAME,
+  MUSIC_SINGER_RELATION_TABLE_NAME,
+  MusicSingerRelationProperty,
 } from '@/constants/db_definition';
 import { getAssetDirectory, updateConfig } from '../config';
 
@@ -28,7 +31,7 @@ import { getAssetDirectory, updateConfig } from '../config';
  */
 const MATCH_FILENAME = /^((([^,]+)(,?))+)(\s+)-(\s+)(.+)\.(\S+)$/;
 
-let successed = 0;
+let successful = 0;
 let ignored = 0;
 
 /**
@@ -55,10 +58,10 @@ async function checkMusicExist({
   >(
     `
       SELECT
-        id,
-        name
-      FROM music
-      WHERE name = ?
+      ${MusicProperty.ID},
+        ${MusicProperty.NAME}
+      FROM ${MUSIC_TABLE_NAME}
+      WHERE ${MusicProperty.NAME} = ?
     `,
     [name],
   );
@@ -159,8 +162,7 @@ async function importFile(
       }
       await getDB().run(
         `
-          INSERT INTO
-          music_singer_relation( musicId, singerId )
+          INSERT INTO ${MUSIC_SINGER_RELATION_TABLE_NAME} ( ${MusicSingerRelationProperty.MUSIC_ID}, ${MusicSingerRelationProperty.SINGER_ID} )
           VALUES( ?, ? )
         `,
         [id, singerId],
@@ -171,7 +173,7 @@ async function importFile(
       text: `[ ${file} ] imported`,
     });
 
-    successed += 1;
+    successful += 1;
   } else {
     spinner.warn({ text: `[ ${file} ] isn't a valid format, ignored` });
     ignored += 1;
@@ -236,7 +238,7 @@ export default async ({
    */
   const user = await getUserById(uid, [UserProperty.ID]);
   if (!user) {
-    return exitWithMessage(`用户 [ id=${uid} ] 不存在`);
+    return exitWithMessage(`User [ id=${uid} ] doesn't exist`);
   }
 
   const sourceStat = await fs.stat(source);
@@ -247,7 +249,7 @@ export default async ({
   }
 
   createSpinner().success({
-    text: `成功 ${successed}, 忽略 ${ignored}`,
+    text: `Successful ${successful}, ignored ${ignored}`,
   });
   return process.exit();
 };

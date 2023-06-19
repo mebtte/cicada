@@ -14,9 +14,10 @@ import {
   UserProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { getSingerById, getSingerListInMusicIds } from '@/db/singer';
+import { getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
 import { getAssetPublicPath } from '@/platform/asset';
+import getSingerById from '@/db/get_singer_by_id';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
