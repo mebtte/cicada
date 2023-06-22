@@ -35,7 +35,8 @@ export enum EventType {
 
   TOGGLE_LYRIC_PANEL = 'toggle_lyric_panel',
 
-  OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER = 'open_add_music_to_musicbill_drawer',
+  OPEN_MUSICBILL_MUSIC_DRAWER = 'open_musicbill_music_drawer',
+  OPEN_MUSICBILL_SHARED_USER_DRAWER = 'open_musicbill_shared_user_drawer',
   OPEN_SINGER_DRAWER = 'open_singer_drawer',
   OPEN_MUSIC_DRAWER = 'open_music_drawer',
   OPEN_ORIGINAL_MUSIC_DIALOG = 'open_original_music_dialog',
@@ -106,7 +107,8 @@ export default new Eventin<
 
     [EventType.TOGGLE_LYRIC_PANEL]: { open: boolean } | null;
 
-    [EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER]: {
+    [EventType.OPEN_MUSICBILL_SHARED_USER_DRAWER]: { id: string };
+    [EventType.OPEN_MUSICBILL_MUSIC_DRAWER]: {
       music: MusicWithSingerAliases;
     };
     [EventType.OPEN_SINGER_DRAWER]: { id: string };

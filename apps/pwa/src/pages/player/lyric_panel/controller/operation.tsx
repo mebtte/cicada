@@ -44,10 +44,9 @@ function Operation({
     <Style>
       <IconButton
         onClick={() =>
-          playerEventemitter.emit(
-            PlayerEventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER,
-            { music: queueMusic },
-          )
+          playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER, {
+            music: queueMusic,
+          })
         }
       >
         <MdOutlinePostAdd />

@@ -58,7 +58,7 @@ function Music({
             size={ICON_BUTTON_SIZE}
             onClick={(event) => {
               event.stopPropagation();
-              return e.emit(EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER, {
+              return e.emit(EventType.OPEN_MUSICBILL_MUSIC_DRAWER, {
                 music,
               });
             }}

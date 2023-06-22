@@ -1,7 +1,12 @@
 import Popup from '@/components/popup';
 import { CSSProperties, MouseEventHandler, useEffect, useState } from 'react';
 import MenuItem from '@/components/menu_item';
-import { MdImage, MdTitle, MdTextFields } from 'react-icons/md';
+import {
+  MdImage,
+  MdTitle,
+  MdTextFields,
+  MdOutlineHistory,
+} from 'react-icons/md';
 import styled from 'styled-components';
 import uploadAsset from '@/server/form/upload_asset';
 import { AssetType } from '#/constants';
@@ -188,6 +193,7 @@ function EditMenu({ singer }: { singer: Singer }) {
             })
           }
         />
+        <MenuItem icon={<MdOutlineHistory />} label="查看修改记录" />
       </Style>
     </Popup>
   );

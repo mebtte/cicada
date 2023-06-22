@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import Context from '../../context';
 import Musicbill from './musicbill';
 import EditMenu from './edit_menu';
-import ShareDrawer from './share_drawer';
 import RedirectLater from './redirect_later';
 
 function Wrapper() {
@@ -19,7 +18,6 @@ function Wrapper() {
       <>
         <Musicbill musicbill={musicbill} />
         <EditMenu musicbill={musicbill} />
-        <ShareDrawer musicbill={musicbill} />
       </>
     );
   }

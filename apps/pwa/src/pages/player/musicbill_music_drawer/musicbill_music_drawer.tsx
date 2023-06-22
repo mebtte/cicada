@@ -22,7 +22,7 @@ function MusicbillMusicDrawer({
   onClose: () => void;
   music: MusicWithSingerAliases;
 }) {
-  const zIndex = useDynamicZIndex(EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER);
+  const zIndex = useDynamicZIndex(EventType.OPEN_MUSICBILL_MUSIC_DRAWER);
 
   return (
     <Drawer

@@ -18,6 +18,7 @@ import MusicDrawer from './music_drawer';
 import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
 import MusicbillMusicDrawer from './musicbill_music_drawer';
 import MusicbillOrderDrawer from './musicbilll_order_drawer';
+import MusicbillSharedUserDrawer from './musicbill_shared_user_drawer';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
 import useKeyboard from './use_keyboard';
@@ -119,6 +120,7 @@ function Wrapper() {
       <MusicbillOrderDrawer />
       <UserDrawer />
       <PublicMusicbillDrawer />
+      <MusicbillSharedUserDrawer />
 
       {/* fixed z-index */}
       <ProfileEditPopup />

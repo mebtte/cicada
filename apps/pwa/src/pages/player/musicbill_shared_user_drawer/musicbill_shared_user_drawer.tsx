@@ -12,18 +12,11 @@ import { EMAIL } from '#/constants/regexp';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { CSSVariable } from '@/global_style';
 import User from './user';
-import { Musicbill, ZIndex } from '../../../constants';
-import useOpen from './use_open';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../../../eventemitter';
-import { quitSharedMusicbill } from '../utils';
+import { Musicbill } from '../constants';
+import e, { EventType } from '../eventemitter';
+import { quitSharedMusicbill } from '../pages/musicbill/utils';
+import useDynamicZIndex from '../use_dynamic_z_index';
 
-const maskProps: { style: CSSProperties } = {
-  style: {
-    zIndex: ZIndex.DRAWER,
-  },
-};
 const bodyProps: { style: CSSProperties } = {
   style: {
     width: 300,
@@ -44,15 +37,28 @@ const Title = styled.div`
 `;
 const UserList = styled.div``;
 
-function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
+function ShareDrawer({
+  open,
+  onClose,
+  musicbill,
+}: {
+  open: boolean;
+  onClose: () => void;
+  musicbill: Musicbill;
+}) {
+  const zIndex = useDynamicZIndex(EventType.OPEN_MUSICBILL_SHARED_USER_DRAWER);
+
   const navigate = useNavigate();
   const profile = p.useState()!;
-  const { open, onClose } = useOpen();
 
   const owned = musicbill.owner.id === profile.id;
   return (
     <Drawer
-      maskProps={maskProps}
+      maskProps={{
+        style: {
+          zIndex,
+        },
+      }}
       bodyProps={bodyProps}
       open={open}
       onClose={onClose}
@@ -64,7 +70,6 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
           owner
           accepted
           musicbillId={musicbill.id}
-          onClose={onClose}
         />
         {musicbill.sharedUserList.map((u) => (
           <User
@@ -73,7 +78,6 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
             accepted={u.accepted}
             deletable={owned}
             musicbillId={musicbill.id}
-            onClose={onClose}
           />
         ))}
       </UserList>
@@ -97,7 +101,7 @@ function ShareDrawer({ musicbill }: { musicbill: Musicbill }) {
                   email,
                 });
                 notice.info('已发出邀请');
-                playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
+                e.emit(EventType.RELOAD_MUSICBILL, {
                   id: musicbill.id,
                   silence: true,
                 });

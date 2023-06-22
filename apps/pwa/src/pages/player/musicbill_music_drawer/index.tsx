@@ -10,7 +10,7 @@ function Wrapper() {
 
   useEffect(() => {
     const unlistenOpenMusicbillListDrawer = eventemitter.listen(
-      EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER,
+      EventType.OPEN_MUSICBILL_MUSIC_DRAWER,
       ({ music: m }) => {
         setOpen(true);
         setMusic(m);

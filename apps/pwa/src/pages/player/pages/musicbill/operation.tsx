@@ -19,7 +19,6 @@ const Style = styled.div`
   align-items: center;
   gap: 5px;
 `;
-const openShareDialog = () => e.emit(EventType.OPEN_SHARE_DRAWER, null);
 
 function Operation({ musicbill }: { musicbill: Musicbill }) {
   const { status, musicList } = musicbill;
@@ -55,7 +54,14 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
       <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
         <MdOutlineEdit />
       </IconButton>
-      <IconButton onClick={openShareDialog}>
+      <IconButton
+        onClick={() =>
+          playerEventemitter.emit(
+            PlayerEventType.OPEN_MUSICBILL_SHARED_USER_DRAWER,
+            { id: musicbill.id },
+          )
+        }
+      >
         <MdOutlinePeopleAlt />
       </IconButton>
     </Style>
