@@ -28,6 +28,7 @@ import UserDrawer from './user_drawer';
 import PublicMusicbillDrawer from './public_musicbill_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
+import SingerModifyRecordDrawer from './singer_modify_record_drawer';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -121,6 +122,7 @@ function Wrapper() {
       <UserDrawer />
       <PublicMusicbillDrawer />
       <MusicbillSharedUserDrawer />
+      <SingerModifyRecordDrawer />
 
       {/* fixed z-index */}
       <ProfileEditPopup />

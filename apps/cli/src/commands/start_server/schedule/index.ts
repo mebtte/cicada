@@ -44,13 +44,12 @@ const DAILY_JOBS: Job[] = [
     name: 'remove_outdated_shared_musicbill_invitation',
     job: removeOutdatedSharedMusicbillInvitation,
   },
-];
-const HOURLY_JOBS: Job[] = [
   {
     name: 'clean_oudated_file',
     job: cleanOutdatedFile,
   },
 ];
+const HOURLY_JOBS: Job[] = [];
 
 export default {
   start: () => {

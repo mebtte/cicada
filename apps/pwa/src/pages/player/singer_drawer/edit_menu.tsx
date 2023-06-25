@@ -193,7 +193,18 @@ function EditMenu({ singer }: { singer: Singer }) {
             })
           }
         />
-        <MenuItem icon={<MdOutlineHistory />} label="查看修改记录" />
+        <MenuItem
+          icon={<MdOutlineHistory />}
+          label="查看修改记录"
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.OPEN_SINGER_MODIFY_RECORD_DRAWER,
+              {
+                singer,
+              },
+            )
+          }
+        />
       </Style>
     </Popup>
   );

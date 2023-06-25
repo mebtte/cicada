@@ -71,7 +71,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     if (Date.now() - lastUpdateTimestamp > RELOAD_INTERVAL) {
       playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
         id,
-        silence: false,
+        silence: true,
       });
     }
   }, [id, lastUpdateTimestamp]);
