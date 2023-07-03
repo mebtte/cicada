@@ -45,7 +45,7 @@ export default (id: string) => {
   const getMusic = useCallback(async () => {
     setData(dataLoading);
     try {
-      const music = await getMusicRequest(id);
+      const music = await getMusicRequest({ id, requestMinimalDuration: 0 });
       let lyrics: Lyric[] = [];
       if (music.type === MusicType.SONG) {
         lyrics = await getLyricList({

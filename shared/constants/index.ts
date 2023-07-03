@@ -90,3 +90,5 @@ export const IMAGE_MAX_SIZE = 2048;
  * @author mebtte<hi@mebtte.com>
  */
 export const SHARED_MUSICBILL_INVITATION_MINIMAL_TTL = 1000 * 60 * 60 * 24 * 3;
+
+export const SINGER_MODIFY_RECORD_TTL = 1000 * 60 * 60 * 24 * 180;

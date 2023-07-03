@@ -86,7 +86,7 @@ export default () => {
     const unlistenMusicUpdated = eventemitter.listen(
       EventType.MUSIC_UPDATED,
       ({ id }) =>
-        getMusic(id)
+        getMusic({ id, requestMinimalDuration: 0 })
           .then((music) =>
             setPlaylist((pl) =>
               pl.map((m) =>
@@ -123,7 +123,7 @@ export default () => {
         for (const music of playlist) {
           const exist = music.singers.find((s) => s.id === payload.id);
           if (exist) {
-            getMusic(music.id)
+            getMusic({ id: music.id, requestMinimalDuration: 0 })
               .then((newMusic) =>
                 setPlaylist((pl) =>
                   pl.map((m) =>

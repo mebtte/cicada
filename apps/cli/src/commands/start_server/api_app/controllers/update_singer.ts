@@ -13,15 +13,34 @@ import {
   MusicProperty,
   MusicSingerRelation,
   MusicSingerRelationProperty,
+  SINGER_MODIFY_RECORD_TABLE_NAME,
   Singer,
+  SingerModifyRecordProperty,
   SingerProperty,
 } from '@/constants/db_definition';
 import { updateSinger } from '@/db/singer';
-import { saveSingerModifyRecord } from '@/db/singer_modify_record';
 import { getAssetFilePath } from '@/platform/asset';
 import { getDB } from '@/db';
 import getSingerById from '@/db/get_singer_by_id';
 import { Context } from '../constants';
+
+function saveSingerModifyRecord({
+  singerId,
+  key,
+  modifyUserId,
+}: {
+  singerId: string;
+  key: AllowUpdateKey;
+  modifyUserId: string;
+}) {
+  return getDB().run(
+    `
+      INSERT INTO ${SINGER_MODIFY_RECORD_TABLE_NAME} ( ${SingerModifyRecordProperty.SINGER_ID}, ${SingerModifyRecordProperty.KEY}, ${SingerModifyRecordProperty.MODIFY_USER_ID}, ${SingerModifyRecordProperty.MODIFY_TIMESTAMP})
+      VALUES ( ?, ?, ?, ? )
+    `,
+    [singerId, key, modifyUserId, Date.now()],
+  );
+}
 
 type LocalSinger = Pick<
   Singer,

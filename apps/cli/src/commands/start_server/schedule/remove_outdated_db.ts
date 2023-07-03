@@ -10,6 +10,7 @@ import {
   SINGER_MODIFY_RECORD_TABLE_NAME,
   SingerModifyRecordProperty,
 } from '@/constants/db_definition';
+import { SINGER_MODIFY_RECORD_TTL } from '#/constants';
 
 const TABLES: {
   table: string;
@@ -34,7 +35,7 @@ const TABLES: {
   {
     table: SINGER_MODIFY_RECORD_TABLE_NAME,
     timestampColumn: SingerModifyRecordProperty.MODIFY_TIMESTAMP,
-    ttl: 1000 * 60 * 60 * 24 * 180,
+    ttl: SINGER_MODIFY_RECORD_TTL,
   },
 ];
 

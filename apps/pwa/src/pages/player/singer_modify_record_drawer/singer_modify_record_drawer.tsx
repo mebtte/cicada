@@ -3,10 +3,13 @@ import { CSSProperties } from 'react';
 import { Singer } from './constants';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import { EventType } from '../eventemitter';
+import Content from './content';
+import Hint from './hint';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
     width: 300,
+    overflow: 'auto',
   },
 };
 
@@ -29,7 +32,8 @@ function SingerModifyRecordDrawer({
       }}
       bodyProps={bodyProps}
     >
-      styled_function_component
+      <Content singer={singer} />
+      <Hint />
     </Drawer>
   );
 }
