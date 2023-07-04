@@ -5,7 +5,7 @@ import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { Singer } from './constants';
 import RecordList from './record_list';
 
-const COVER_SIZE = 24;
+const COVER_SIZE = 32;
 const Style = styled.div`
   min-height: 100vh;
 
@@ -15,8 +15,9 @@ const Style = styled.div`
   > .singer {
     display: flex;
     align-items: center;
+    gap: 10px;
 
-    padding: 5px 10px;
+    padding: 10px 20px;
   }
 `;
 

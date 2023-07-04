@@ -25,12 +25,15 @@ const CardContainer = styled(Root)`
 `;
 const Style = styled(Root)`
   > .record {
+    --border-width: 2px;
+
     margin: 0 20px;
-    padding: 5px 10px;
+    padding: 10px 0 10px 20px;
 
     position: relative;
 
-    border-left: 1px solid ${CSSVariable.BACKGROUND_COLOR_LEVEL_THREE};
+    border-left: var(--border-width) solid
+      ${CSSVariable.BACKGROUND_COLOR_LEVEL_THREE};
 
     > .time {
       font-size: 12px;
@@ -40,6 +43,7 @@ const Style = styled(Root)`
     > .description {
       font-size: 14px;
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+      line-height: 2;
 
       > .user {
         color: ${CSSVariable.COLOR_PRIMARY};
@@ -57,9 +61,12 @@ const Style = styled(Root)`
       --size: 8px;
       position: absolute;
       top: calc(50% - var(--size) / 2);
-      left: calc(var(--size) / 2 * -1);
+      left: calc(var(--size) / 2 * -1 - var(--border-width) / 2);
       width: var(--size);
       height: var(--size);
+      box-sizing: border-box;
+
+      background-color: #fff;
       border-radius: 50%;
       border: 1px solid ${CSSVariable.COLOR_PRIMARY};
     }
@@ -108,7 +115,7 @@ function RecordList({ singerId }: { singerId: string }) {
             >
               {record.modifyUserNickname}
             </span>
-            修改了
+            &nbsp;修改了&nbsp;
             <span className="key">
               {KEY_MAP_LABEL[record.key] || record.key}
             </span>
