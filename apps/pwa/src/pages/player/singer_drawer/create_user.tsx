@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import day from '#/utils/day';
 import { CreateUser as CreateUserType } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -20,10 +21,10 @@ const Style = styled.div`
 
 function CreateUser({
   user,
-  createTime,
+  createTimestamp,
 }: {
   user: CreateUserType;
-  createTime: string;
+  createTimestamp: number;
 }) {
   return (
     <Style>
@@ -38,7 +39,7 @@ function CreateUser({
       >
         {user.nickname}
       </span>
-      」于「{createTime}
+      」于「{day(createTimestamp).format('YYYY-MM-DD')}
       」创建
     </Style>
   );

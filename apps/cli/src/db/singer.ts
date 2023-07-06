@@ -48,21 +48,6 @@ export function getSingerListByIds<P extends SingerProperty>(
   );
 }
 
-export function getSingerById<P extends SingerProperty>(
-  id: string,
-  properties: P[],
-) {
-  return getDB().get<Pick<Singer, P>>(
-    `
-      SELECT
-        ${properties.join(',')}
-      FROM singer
-      WHERE id = ?
-    `,
-    [id],
-  );
-}
-
 export function getSingerByName<P extends SingerProperty>(
   name: string,
   properties: P[],

@@ -302,9 +302,7 @@ export default () => {
         for (const musicbill of musicbillList) {
           if (musicbill.status === RequestStatus.SUCCESS) {
             for (const music of musicbill.musicList) {
-              const exist = music.singers.find(
-                (s) => s.id === payload.singer.id,
-              );
+              const exist = music.singers.find((s) => s.id === payload.id);
               if (exist) {
                 getMusicbill({ id: musicbill.id, silence: true });
                 break;

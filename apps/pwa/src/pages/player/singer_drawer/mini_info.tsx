@@ -4,7 +4,7 @@ import { CSSVariable } from '@/global_style';
 import { useEffect, useState } from 'react';
 import ellipsis from '@/style/ellipsis';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
-import { MINI_INFO_HEIGHT, SingerDetail } from './constants';
+import { MINI_INFO_HEIGHT, Singer } from './constants';
 
 const Style = styled.div`
   position: absolute;
@@ -30,7 +30,7 @@ const Style = styled.div`
   }
 `;
 
-function MiniInfo({ singer }: { singer: SingerDetail }) {
+function MiniInfo({ singer }: { singer: Singer }) {
   const [paddingRight, setPaddingRight] = useState(0);
   const { right } = useTitlebarArea();
 

@@ -1,9 +1,6 @@
 import getUser from '@/server/api/get_user';
-import { MusicWithSingerAliases, Index } from '../constants';
 
-export type UserDetail = AsyncReturnType<typeof getUser> & {
-  musicList: (MusicWithSingerAliases & Index)[];
-};
+export type UserDetail = AsyncReturnType<typeof getUser>;
 
 export enum Tab {
   MUSIC = 'music',

@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import notice from '@/utils/notice';
 import getMusic from '@/server/api/get_music';
 import logger from '@/utils/logger';
-import { MusicWithSingerAliases, Index } from './constants';
+import { MusicWithSingerAliases } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 
-type PlaylistMusic = MusicWithSingerAliases & Index;
+type PlaylistMusic = MusicWithSingerAliases & { index: number };
 
 export default () => {
   const [playlist, setPlaylist] = useState<PlaylistMusic[]>([]);
@@ -86,7 +86,7 @@ export default () => {
     const unlistenMusicUpdated = eventemitter.listen(
       EventType.MUSIC_UPDATED,
       ({ id }) =>
-        getMusic(id)
+        getMusic({ id, requestMinimalDuration: 0 })
           .then((music) =>
             setPlaylist((pl) =>
               pl.map((m) =>
@@ -99,32 +99,11 @@ export default () => {
               ),
             ),
           )
-          .catch((error) => logger.error(error, '获取音乐数据失败')),
+          .catch((error) => logger.error(error, 'Fail to get music')),
     );
     const unlistenMusicDeleted = eventemitter.listen(
       EventType.MUSIC_DELETED,
       (data) => setPlaylist((pl) => pl.filter((m) => m.id !== data.id)),
-    );
-    const unlistenSingerUpdated = eventemitter.listen(
-      EventType.SINGER_UPDATED,
-      (data) =>
-        setPlaylist((pl) =>
-          pl.map((m) => {
-            const singer = m.singers.find((s) => s.id === data.singer.id);
-            if (singer) {
-              return {
-                ...m,
-                singers: m.singers.map((s) => {
-                  if (s.id === data.singer.id) {
-                    return data.singer;
-                  }
-                  return s;
-                }),
-              };
-            }
-            return m;
-          }),
-        ),
     );
     return () => {
       unlistenActionPlayMusic();
@@ -134,9 +113,36 @@ export default () => {
       unlistenActionRemovePlaylistMusic();
       unlistenMusicUpdated();
       unlistenMusicDeleted();
-      unlistenSingerUpdated();
     };
   }, []);
+
+  useEffect(() => {
+    const unlistenSingerUpdated = eventemitter.listen(
+      EventType.SINGER_UPDATED,
+      (payload) => {
+        for (const music of playlist) {
+          const exist = music.singers.find((s) => s.id === payload.id);
+          if (exist) {
+            getMusic({ id: music.id, requestMinimalDuration: 0 })
+              .then((newMusic) =>
+                setPlaylist((pl) =>
+                  pl.map((m) =>
+                    m.id === music.id
+                      ? {
+                          ...m,
+                          ...newMusic,
+                        }
+                      : m,
+                  ),
+                ),
+              )
+              .catch((error) => logger.error(error, 'Fail to get music'));
+          }
+        }
+      },
+    );
+    return unlistenSingerUpdated;
+  }, [playlist]);
 
   return playlist;
 };

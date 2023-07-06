@@ -90,9 +90,10 @@ function Wrapper() {
     return (
       <MusicContainer style={style}>
         <div className="list">
-          {d.value!.musicList.map((music) => (
+          {d.value.musicList.map((music, index) => (
             <Music
               key={music.id}
+              index={d.value.total - PAGE_SIZE * (page - 1) - index}
               music={music}
               active={playqueue[currentPlayqueuePosition]?.id === music.id}
             />

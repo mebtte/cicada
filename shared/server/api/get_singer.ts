@@ -9,7 +9,6 @@ export type Response = {
   createUser: {
     id: string;
     nickname: string;
-    avatar: string;
   };
   musicList: {
     id: string;
@@ -24,4 +23,6 @@ export type Response = {
       aliases: string[];
     }[];
   }[];
+
+  editable: boolean;
 };

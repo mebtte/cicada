@@ -13,10 +13,12 @@ import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import deleteMusicbillSharedUser from '@/server/api/delete_musicbill_shared_user';
+import getResizedImage from '@/server/asset/get_resized_image';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '../../../eventemitter';
+} from '../eventemitter';
 
+const AVATAR_SIZE = 24;
 const ACTION_SIZE = 24;
 const statusStyle: CSSProperties = {
   width: ACTION_SIZE,
@@ -64,26 +66,27 @@ function User({
   owner = false,
   accepted = false,
   deletable = false,
-  onClose,
   musicbillId,
 }: {
   user: { id: string; nickname: string; avatar: string };
   owner?: boolean;
   accepted?: boolean;
   deletable?: boolean;
-  onClose: () => void;
   musicbillId: string;
 }) {
   return (
     <Style
-      onClick={() => {
+      onClick={() =>
         playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
           id: user.id,
-        });
-        return onClose();
-      }}
+        })
+      }
     >
-      <Cover size={24} src={user.avatar} shape={Shape.CIRCLE} />
+      <Cover
+        size={AVATAR_SIZE}
+        src={getResizedImage({ url: user.avatar, size: AVATAR_SIZE * 2 })}
+        shape={Shape.CIRCLE}
+      />
       <div className="nickname">{user.nickname}</div>
       <div className="actions">
         {owner ? (

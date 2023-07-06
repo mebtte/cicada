@@ -20,7 +20,7 @@ type LocalSinger = Pick<
   | SingerProperty.AVATAR
   | SingerProperty.NAME
   | SingerProperty.ALIASES
-> & { musicCount: number };
+>;
 
 export default async (ctx: Context) => {
   const { keyword, page, pageSize } = ctx.request.query as {
@@ -66,14 +66,13 @@ export default async (ctx: Context) => {
             s.${SingerProperty.ID},
             s.${SingerProperty.AVATAR},
             s.${SingerProperty.NAME},
-            s.${SingerProperty.ALIASES},
-            count(msr.${MusicSingerRelationProperty.ID}) AS musicCount
+            s.${SingerProperty.ALIASES}
           FROM ${SINGER_TABLE_NAME} AS s
           LEFT JOIN ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
             ON s.${SingerProperty.ID} = msr.${MusicSingerRelationProperty.SINGER_ID}
           WHERE s.${SingerProperty.NAME} LIKE ? or s.${SingerProperty.ALIASES} LIKE ?
           GROUP BY s.${SingerProperty.ID}
-          ORDER BY musicCount DESC
+          ORDER BY count(msr.${MusicSingerRelationProperty.ID}) DESC, s.${SingerProperty.CREATE_TIMESTAMP}
           LIMIT ?
           OFFSET ?
         `,
@@ -93,15 +92,11 @@ export default async (ctx: Context) => {
       getDB().all<LocalSinger>(
         `
           SELECT
-            s.${SingerProperty.ID},
-            s.${SingerProperty.AVATAR},
-            s.${SingerProperty.NAME},
-            s.${SingerProperty.ALIASES},
-            count(msr.id) AS musicCount
-          FROM ${SINGER_TABLE_NAME} AS s
-          LEFT JOIN ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
-            ON s.${SingerProperty.ID} = msr.${MusicSingerRelationProperty.SINGER_ID}
-          GROUP BY s.${SingerProperty.ID}
+            ${SingerProperty.ID},
+            ${SingerProperty.AVATAR},
+            ${SingerProperty.NAME},
+            ${SingerProperty.ALIASES}
+          FROM ${SINGER_TABLE_NAME}
           ORDER BY random()
           LIMIT ?
         `,

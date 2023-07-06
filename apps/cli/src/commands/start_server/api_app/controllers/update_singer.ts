@@ -8,15 +8,39 @@ import {
 } from '#/constants/singer';
 import exist from '#/utils/exist';
 import {
-  SINGER_TABLE_NAME,
+  MUSIC_SINGER_RELATION_TABLE_NAME,
+  MUSIC_TABLE_NAME,
+  MusicProperty,
+  MusicSingerRelation,
+  MusicSingerRelationProperty,
+  SINGER_MODIFY_RECORD_TABLE_NAME,
   Singer,
+  SingerModifyRecordProperty,
   SingerProperty,
 } from '@/constants/db_definition';
-import { getSingerById, updateSinger } from '@/db/singer';
-import { saveSingerModifyRecord } from '@/db/singer_modify_record';
+import { updateSinger } from '@/db/singer';
 import { getAssetFilePath } from '@/platform/asset';
 import { getDB } from '@/db';
+import getSingerById from '@/db/get_singer_by_id';
 import { Context } from '../constants';
+
+function saveSingerModifyRecord({
+  singerId,
+  key,
+  modifyUserId,
+}: {
+  singerId: string;
+  key: AllowUpdateKey;
+  modifyUserId: string;
+}) {
+  return getDB().run(
+    `
+      INSERT INTO ${SINGER_MODIFY_RECORD_TABLE_NAME} ( ${SingerModifyRecordProperty.SINGER_ID}, ${SingerModifyRecordProperty.KEY}, ${SingerModifyRecordProperty.MODIFY_USER_ID}, ${SingerModifyRecordProperty.MODIFY_TIMESTAMP})
+      VALUES ( ?, ?, ?, ? )
+    `,
+    [singerId, key, modifyUserId, Date.now()],
+  );
+}
 
 type LocalSinger = Pick<
   Singer,
@@ -51,19 +75,6 @@ const KEY_MAP_HANDLER: Record<
 
     if (singer.name === name) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
-    }
-
-    const sameNameSinger = await getDB().get<Pick<Singer, SingerProperty.ID>>(
-      `
-        SELECT
-          ${SingerProperty.ID}
-        FROM ${SINGER_TABLE_NAME}
-        WHERE ${SingerProperty.NAME} = ?
-      `,
-      [name],
-    );
-    if (sameNameSinger) {
-      return ctx.except(ExceptionCode.SINGER_EXIST);
     }
 
     await Promise.all([
@@ -172,8 +183,28 @@ export default async (ctx: Context) => {
     SingerProperty.ALIASES,
     SingerProperty.CREATE_USER_ID,
   ]);
-  if (!singer || (singer.createUserId !== ctx.user.id && !ctx.user.admin)) {
+  if (!singer) {
     return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+  }
+  if (!ctx.user.admin && singer.createUserId !== ctx.user.id) {
+    const editable = await getDB().get<
+      Pick<MusicSingerRelation, MusicSingerRelationProperty.ID>
+    >(
+      `
+        SELECT
+          msr.${MusicSingerRelationProperty.ID}
+        FROM ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
+        LEFT JOIN ${MUSIC_TABLE_NAME} AS m
+          ON m.${MusicProperty.ID} = msr.${MusicSingerRelationProperty.MUSIC_ID}
+            AND m.${MusicProperty.CREATE_USER_ID} = ?
+        WHERE msr.${MusicSingerRelationProperty.SINGER_ID} = ?
+        LIMIT 1
+      `,
+      [ctx.user.id, id],
+    );
+    if (!editable) {
+      return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+    }
   }
 
   // @ts-expect-error

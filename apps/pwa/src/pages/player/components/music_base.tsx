@@ -91,18 +91,19 @@ const Style = styled.div<{ active: boolean }>`
 
 function MusicBase({
   active,
+  index,
   music,
   lineAfter,
   addon,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   active: boolean;
+  index: number;
   music: {
     id: string;
     name: string;
     singers: SingerType[];
     aliases: string[];
-    index: number;
   };
   lineAfter: ReactNode;
   addon?: ReactNode;
@@ -119,7 +120,7 @@ function MusicBase({
         return openMusicDrawer();
       }}
     >
-      <div className="index">{music.index}</div>
+      <div className="index">{index}</div>
       <div className="content">
         <div className="music">
           <div className="info">

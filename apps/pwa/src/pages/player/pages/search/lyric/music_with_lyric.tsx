@@ -23,10 +23,12 @@ const Line = styled.div`
 
 function MusicWithLyric({
   active,
+  index,
   music,
   keyword,
 }: {
   active: boolean;
+  index: number;
   music: MusicWithLyricType;
   keyword: string;
 }) {
@@ -34,6 +36,7 @@ function MusicWithLyric({
   return (
     <Music
       active={active}
+      index={index}
       music={music}
       addon={
         <StyledLrc

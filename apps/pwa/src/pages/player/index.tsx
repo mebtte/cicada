@@ -16,8 +16,9 @@ import Audio from './audio';
 import useMediaSession from './use_media_session';
 import MusicDrawer from './music_drawer';
 import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
-import AddMusicToMusicbillDrawer from './add_music_to_musicbill_drawer';
+import MusicbillMusicDrawer from './musicbill_music_drawer';
 import MusicbillOrderDrawer from './musicbilll_order_drawer';
+import MusicbillSharedUserDrawer from './musicbill_shared_user_drawer';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
 import useKeyboard from './use_keyboard';
@@ -27,6 +28,7 @@ import UserDrawer from './user_drawer';
 import PublicMusicbillDrawer from './public_musicbill_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
+import SingerModifyRecordDrawer from './singer_modify_record_drawer';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -115,10 +117,12 @@ function Wrapper() {
       <SingerDrawer />
       <MusicDrawer />
       <PlaylistPlayqueueDrawer />
-      <AddMusicToMusicbillDrawer />
+      <MusicbillMusicDrawer />
       <MusicbillOrderDrawer />
       <UserDrawer />
       <PublicMusicbillDrawer />
+      <MusicbillSharedUserDrawer />
+      <SingerModifyRecordDrawer />
 
       {/* fixed z-index */}
       <ProfileEditPopup />

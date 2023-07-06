@@ -90,8 +90,12 @@ function MusicList() {
         return (
           <MusicListContainer style={style}>
             <div className="list">
-              {value!.musicPlayRecordList.map((mpr) => (
-                <MusicPlayRecord key={mpr.recordId} musicPlayRecord={mpr} />
+              {value.musicPlayRecordList.map((mpr, index) => (
+                <MusicPlayRecord
+                  key={mpr.recordId}
+                  index={value.total - PAGE_SIZE * (page - 1) - index}
+                  musicPlayRecord={mpr}
+                />
               ))}
             </div>
             {value!.total ? (

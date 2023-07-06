@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
 import { MdPlayArrow, MdReadMore, MdOutlinePostAdd } from 'react-icons/md';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
-import { MusicWithSingerAliases, Index } from '../constants';
+import { MusicWithSingerAliases } from '../constants';
 import e, { EventType } from '../eventemitter';
 import MusicBase from './music_base';
 
@@ -16,18 +16,21 @@ const LineAfterPart = styled.div`
 
 function Music({
   active,
+  index,
   music,
   addon,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   active: boolean;
-  music: MusicWithSingerAliases & Index;
+  index: number;
+  music: MusicWithSingerAliases;
   addon?: ReactNode;
 }) {
   return (
     <MusicBase
       {...props}
       active={active}
+      index={index}
       music={music}
       lineAfter={
         <LineAfterPart>
@@ -55,7 +58,7 @@ function Music({
             size={ICON_BUTTON_SIZE}
             onClick={(event) => {
               event.stopPropagation();
-              return e.emit(EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER, {
+              return e.emit(EventType.OPEN_MUSICBILL_MUSIC_DRAWER, {
                 music,
               });
             }}

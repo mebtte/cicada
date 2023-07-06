@@ -43,11 +43,7 @@ export default async (ctx: Context) => {
   }
   const [createUser, forkList, forkFromList, musicbillCount] =
     await Promise.all([
-      getUserById(music.createUserId, [
-        UserProperty.ID,
-        UserProperty.AVATAR,
-        UserProperty.NICKNAME,
-      ]),
+      getUserById(music.createUserId, [UserProperty.ID, UserProperty.NICKNAME]),
       getMusicForkList(id, [MusicForkProperty.MUSIC_ID]),
       getMusicForkFromList(id, [MusicForkProperty.FORK_FROM]),
       getDB().get<{ value: number }>(

@@ -4,10 +4,6 @@ import { UtilZIndex } from '@/constants/style';
 
 export const HEADER_HEIGHT = 55;
 
-export interface Index {
-  index: number;
-}
-
 export interface Singer {
   id: string;
   name: string;
@@ -31,7 +27,8 @@ export interface MusicWithSingerAliases extends Omit<Music, 'singers'> {
   singers: SingerWithAliases[];
 }
 
-export interface QueueMusic extends MusicWithSingerAliases, Index {
+export interface QueueMusic extends MusicWithSingerAliases {
+  index: number;
   pid: string;
   shuffle: boolean;
 }
@@ -52,7 +49,7 @@ export interface Musicbill {
   sharedUserList: (MusicbillUser & {
     accepted: boolean;
   })[];
-  musicList: (MusicWithSingerAliases & Index)[];
+  musicList: (MusicWithSingerAliases & { index: number })[];
 
   status: RequestStatus;
   error: Error | null;

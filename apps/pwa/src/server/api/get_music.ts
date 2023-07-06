@@ -6,11 +6,18 @@ import { request } from '..';
  * 获取音乐详情
  * @author mebtte<hi@mebtte.com>
  */
-async function getMusic(id: string) {
+async function getMusic({
+  id,
+  requestMinimalDuration,
+}: {
+  id: string;
+  requestMinimalDuration?: number;
+}) {
   const music = await request<Response>({
     path: '/api/music',
     params: { id },
     withToken: true,
+    requestMinimalDuration,
   });
   return {
     ...music,

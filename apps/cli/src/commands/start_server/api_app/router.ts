@@ -38,6 +38,7 @@ import addMusicbillSharedUser from './controllers/add_musicbill_shared_user';
 import deleteMusicbillSharedUser from './controllers/delete_musicbill_shared_user';
 import getSharedMusicbillInvitationList from './controllers/get_shared_musicbill_invitation_list';
 import acceptSharedMusicbillInvitation from './controllers/accept_shared_musicbill_invitation';
+import getSingerModifyRecordList from './controllers/get_singer_modify_record_list';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -92,6 +93,7 @@ router.get('/singer/search', searchSinger); // 搜索歌手
 router.get('/singer', getSinger); // 获取歌手
 router.delete('/music_play_record', deleteMusicPlayRecord); // 删除音乐播放记录
 router.get('/music_play_record_list', getMusicPlayRecordList); // 获取音乐播放记录列表
+router.get('/singer_modify_record_list', getSingerModifyRecordList); // 获取歌手修改记录列表
 
 /**
  * 管理员

@@ -1,7 +1,12 @@
 import Popup from '@/components/popup';
 import { CSSProperties, MouseEventHandler, useEffect, useState } from 'react';
 import MenuItem from '@/components/menu_item';
-import { MdImage, MdTitle, MdTextFields } from 'react-icons/md';
+import {
+  MdImage,
+  MdTitle,
+  MdTextFields,
+  MdOutlineHistory,
+} from 'react-icons/md';
 import styled from 'styled-components';
 import uploadAsset from '@/server/form/upload_asset';
 import { AssetType } from '#/constants';
@@ -17,8 +22,10 @@ import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
-import { SingerDetail } from './constants';
-import { emitSingerUpdated } from '../utils';
+import { Singer } from './constants';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 
 const maskProps: {
   style: CSSProperties;
@@ -34,7 +41,7 @@ const Style = styled.div`
   padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 `;
 
-function EditMenu({ singer }: { singer: SingerDetail }) {
+function EditMenu({ singer }: { singer: Singer }) {
   const [open, setOpen] = useState(false);
   // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
@@ -75,7 +82,9 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                     key: AllowUpdateKey.AVATAR,
                     value: assetId,
                   });
-                  emitSingerUpdated(singer.id);
+                  playerEventemitter.emit(PlayerEventType.SINGER_UPDATED, {
+                    id: singer.id,
+                  });
                 } catch (error) {
                   logger.error(error, "Updating singer's avatar fail");
                   notice.error(error.message);
@@ -100,7 +109,9 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                       key: AllowUpdateKey.AVATAR,
                       value: '',
                     });
-                    emitSingerUpdated(singer.id);
+                    playerEventemitter.emit(PlayerEventType.SINGER_UPDATED, {
+                      id: singer.id,
+                    });
                   } catch (error) {
                     logger.error(error, '重置歌手头像失败');
                     dialog.alert({
@@ -135,7 +146,9 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                       key: AllowUpdateKey.NAME,
                       value: trimmedName,
                     });
-                    emitSingerUpdated(singer.id);
+                    playerEventemitter.emit(PlayerEventType.SINGER_UPDATED, {
+                      id: singer.id,
+                    });
                   } catch (error) {
                     logger.error(error, '更新歌手名字失败');
                     notice.error(error.message);
@@ -167,7 +180,9 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                       key: AllowUpdateKey.ALIASES,
                       value: trimmedAliases,
                     });
-                    emitSingerUpdated(singer.id);
+                    playerEventemitter.emit(PlayerEventType.SINGER_UPDATED, {
+                      id: singer.id,
+                    });
                   } catch (error) {
                     logger.error(error, "Updating singer's aliases fail");
                     notice.error(error.message);
@@ -176,6 +191,18 @@ function EditMenu({ singer }: { singer: SingerDetail }) {
                 }
               },
             })
+          }
+        />
+        <MenuItem
+          icon={<MdOutlineHistory />}
+          label="查看修改记录"
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.OPEN_SINGER_MODIFY_RECORD_DRAWER,
+              {
+                singer,
+              },
+            )
           }
         />
       </Style>

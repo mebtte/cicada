@@ -1,20 +1,23 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
+import { Response } from '#/server/api/get_singer';
 import excludeProperty from '#/utils/exclude_property';
 import {
   MUSIC_SINGER_RELATION_TABLE_NAME,
   MUSIC_TABLE_NAME,
   Music,
   MusicProperty,
+  MusicSingerRelation,
   MusicSingerRelationProperty,
   Singer,
   SingerProperty,
   UserProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { getSingerById, getSingerListInMusicIds } from '@/db/singer';
+import { getSingerListInMusicIds } from '@/db/singer';
 import { getUserById } from '@/db/user';
 import { getAssetPublicPath } from '@/platform/asset';
+import getSingerById from '@/db/get_singer_by_id';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -35,12 +38,8 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
   }
 
-  const [createUser, musicList] = await Promise.all([
-    getUserById(singer.createUserId, [
-      UserProperty.ID,
-      UserProperty.AVATAR,
-      UserProperty.NICKNAME,
-    ]),
+  const [createUser, musicList, editable] = await Promise.all([
+    getUserById(singer.createUserId, [UserProperty.ID, UserProperty.NICKNAME]),
     getDB().all<
       Pick<
         Music,
@@ -68,6 +67,21 @@ export default async (ctx: Context) => {
       `,
       [id],
     ),
+    ctx.user.admin ||
+      singer.createUserId === ctx.user.id ||
+      getDB().get<Pick<MusicSingerRelation, MusicSingerRelationProperty.ID>>(
+        `
+          SELECT
+            msr.${MusicSingerRelationProperty.ID}
+          FROM ${MUSIC_SINGER_RELATION_TABLE_NAME} AS msr
+          JOIN ${MUSIC_TABLE_NAME} AS m
+            ON m.${MusicProperty.ID} = msr.${MusicSingerRelationProperty.MUSIC_ID}
+              AND m.${MusicProperty.CREATE_USER_ID} = ?
+          WHERE msr.${MusicSingerRelationProperty.SINGER_ID} = ?
+          LIMIT 1
+        `,
+        [ctx.user.id, id],
+      ),
   ]);
 
   const musicIdMapSingers: {
@@ -91,11 +105,11 @@ export default async (ctx: Context) => {
     });
   }
 
-  return ctx.success({
+  return ctx.success<Response>({
     ...excludeProperty(singer, [SingerProperty.CREATE_USER_ID]),
     avatar: getAssetPublicPath(singer.avatar, AssetType.SINGER_AVATAR),
     aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
-    createUser,
+    createUser: createUser!,
     musicList: musicList.map((m) => ({
       ...m,
       cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
@@ -103,5 +117,7 @@ export default async (ctx: Context) => {
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
       singers: musicIdMapSingers[m.id] || [],
     })),
+
+    editable: !!editable,
   });
 };

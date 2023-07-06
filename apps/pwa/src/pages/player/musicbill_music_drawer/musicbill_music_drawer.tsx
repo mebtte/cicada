@@ -13,7 +13,7 @@ const bodyProps: { style: CSSProperties } = {
   },
 };
 
-function MusicbillListDrawer({
+function MusicbillMusicDrawer({
   open,
   onClose,
   music,
@@ -22,7 +22,7 @@ function MusicbillListDrawer({
   onClose: () => void;
   music: MusicWithSingerAliases;
 }) {
-  const zIndex = useDynamicZIndex(EventType.OPEN_ADD_MUSIC_TO_MUSICBILL_DRAWER);
+  const zIndex = useDynamicZIndex(EventType.OPEN_MUSICBILL_MUSIC_DRAWER);
 
   return (
     <Drawer
@@ -37,4 +37,4 @@ function MusicbillListDrawer({
   );
 }
 
-export default memo(MusicbillListDrawer);
+export default memo(MusicbillMusicDrawer);

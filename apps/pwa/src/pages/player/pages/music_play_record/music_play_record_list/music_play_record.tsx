@@ -32,13 +32,16 @@ const Addon = styled.div`
 `;
 
 function MusicWithExternalInfo({
+  index,
   musicPlayRecord,
 }: {
+  index: number;
   musicPlayRecord: MusicPlayRecord;
 }) {
   return (
     <MusicBase
       active={false}
+      index={index}
       music={musicPlayRecord}
       lineAfter={
         <LineAfter>

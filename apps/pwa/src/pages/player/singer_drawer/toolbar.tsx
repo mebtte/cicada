@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
 import { MdPlaylistAdd, MdOutlineEdit, MdCopyAll } from 'react-icons/md';
-import p from '@/global_states/profile';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
-import { MINI_INFO_HEIGHT, SingerDetail } from './constants';
+import { MINI_INFO_HEIGHT, Singer } from './constants';
 import e, { EventType } from './eventemitter';
 
 const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, null);
@@ -34,8 +33,7 @@ const Style = styled.div`
   }
 `;
 
-function Toolbar({ singer }: { singer: SingerDetail }) {
-  const profile = p.useState()!;
+function Toolbar({ singer }: { singer: Singer }) {
   return (
     <Style>
       <div className="left">
@@ -67,7 +65,7 @@ function Toolbar({ singer }: { singer: SingerDetail }) {
           <MdCopyAll />
         </IconButton>
       </div>
-      {profile.admin || profile.id === singer.createUser.id ? (
+      {singer.editable ? (
         <IconButton onClick={openEditMenu}>
           <MdOutlineEdit />
         </IconButton>

@@ -45,7 +45,7 @@ export default (id: string) => {
   const getMusic = useCallback(async () => {
     setData(dataLoading);
     try {
-      const music = await getMusicRequest(id);
+      const music = await getMusicRequest({ id, requestMinimalDuration: 0 });
       let lyrics: Lyric[] = [];
       if (music.type === MusicType.SONG) {
         lyrics = await getLyricList({
@@ -150,8 +150,8 @@ export default (id: string) => {
   useEffect(() => {
     const unlistenSingerUpdated = playerEventemitter.listen(
       PlayerEventType.SINGER_UPDATED,
-      ({ singer }) => {
-        if (data.music && data.music.singers.find((s) => s.id === singer.id)) {
+      (payload) => {
+        if (data.music && data.music.singers.find((s) => s.id === payload.id)) {
           getMusic();
         }
       },

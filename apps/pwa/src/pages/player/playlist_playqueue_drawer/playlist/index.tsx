@@ -87,6 +87,7 @@ function Playlist({ style }: { style: unknown }) {
               return (
                 <MusicBase
                   key={key}
+                  index={music.index}
                   music={music}
                   active={music.id === currentMusic?.id}
                   lineAfter={
