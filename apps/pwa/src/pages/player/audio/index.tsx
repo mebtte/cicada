@@ -7,6 +7,7 @@ import settingState from '@/global_states/setting';
 import { Setting } from '@/constants/setting';
 import definition from '@/definition';
 import { EFFECTIVE_PLAY_PERCENT } from '#/constants';
+import logger from '@/utils/logger';
 import eventemitter, { EventType } from '../eventemitter';
 import { QueueMusic, Music } from '../constants';
 import onError from './on_error';
@@ -170,7 +171,11 @@ class Audio extends PureComponent<Props, {}> {
       window.caches.open(CacheName.ASSET_MEDIA).then(async (cache) => {
         const exist = await cache.match(music.asset);
         if (!exist) {
-          cache.add(music.asset);
+          cache
+            .add(music.asset)
+            .catch((error) =>
+              logger.error(error, `Failed to cache music "${music.asset}"`),
+            );
         }
       });
     }
