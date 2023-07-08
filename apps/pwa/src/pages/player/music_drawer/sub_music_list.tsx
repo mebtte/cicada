@@ -6,15 +6,22 @@ import MusicInfo from '../components/music_info';
 
 const Style = styled.div`
   margin: 10px 0;
+  padding: 10px 0;
 
   background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
 
   > .label {
     margin: 0 20px;
-    padding: 20px 0 10px 0;
+    padding: 10px 0;
 
     font-size: 12px;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  }
+
+  > .list {
+    > .item {
+      margin: 0 10px;
+    }
   }
 `;
 
@@ -28,7 +35,7 @@ function SubMusicList({
   return (
     <Style>
       <div className="label">{label}</div>
-      <div>
+      <div className="list">
         {musicList.map((music) => (
           <MusicInfo
             key={music.id}

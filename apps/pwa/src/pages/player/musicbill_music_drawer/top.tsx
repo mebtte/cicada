@@ -21,6 +21,10 @@ const Style = styled.div`
   flex-direction: column;
   gap: 10px;
 
+  > .music-info {
+    margin: 0 10px;
+  }
+
   > .header {
     margin: 0 20px;
 
@@ -48,6 +52,7 @@ function Top({ music }: { music: Music }) {
       }}
     >
       <MusicInfo
+        className="music-info"
         musicId={music.id}
         musicName={music.name}
         musicCover={getResizedImage({ url: music.cover, size: 80 })}
