@@ -40,6 +40,7 @@ const bodyProps: { style: CSSProperties } = {
 const Style = styled.div`
   padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 `;
+const itemStyle: CSSProperties = { margin: '0 10px' };
 
 function EditMenu({ singer }: { singer: Singer }) {
   const [open, setOpen] = useState(false);
@@ -62,6 +63,7 @@ function EditMenu({ singer }: { singer: Singer }) {
     >
       <Style onClick={onClose}>
         <MenuItem
+          style={itemStyle}
           icon={<MdImage />}
           label="编辑头像"
           onClick={() =>
@@ -96,6 +98,7 @@ function EditMenu({ singer }: { singer: Singer }) {
         />
         {singer.avatar.length ? (
           <MenuItem
+            style={itemStyle}
             icon={<MdImage />}
             label="重置头像"
             onClick={() =>
@@ -125,6 +128,7 @@ function EditMenu({ singer }: { singer: Singer }) {
           />
         ) : null}
         <MenuItem
+          style={itemStyle}
           icon={<MdTitle />}
           label="编辑名字"
           onClick={() =>
@@ -160,6 +164,7 @@ function EditMenu({ singer }: { singer: Singer }) {
           }
         />
         <MenuItem
+          style={itemStyle}
           icon={<MdTextFields />}
           label="编辑别名"
           onClick={() =>
@@ -194,6 +199,7 @@ function EditMenu({ singer }: { singer: Singer }) {
           }
         />
         <MenuItem
+          style={itemStyle}
           icon={<MdOutlineHistory />}
           label="查看修改记录"
           onClick={() =>

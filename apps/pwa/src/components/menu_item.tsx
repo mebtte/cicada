@@ -3,7 +3,7 @@ import { HtmlHTMLAttributes, ReactNode } from 'react';
 import { CSSVariable } from '../global_style';
 
 const Style = styled.div<{ active: boolean }>`
-  padding: 8px 20px;
+  padding: 8px 10px;
 
   display: flex;
   align-items: center;
