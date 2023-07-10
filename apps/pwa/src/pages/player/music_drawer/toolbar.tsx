@@ -28,7 +28,7 @@ const Style = styled.div`
 
   position: sticky;
   top: ${MINI_INFO_HEIGHT}px;
-  padding: 5px 20px;
+  padding: 8px 20px;
 
   display: flex;
   align-items: center;

@@ -6,7 +6,7 @@ import { CSSProperties, UIEventHandler, useState } from 'react';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
-import Info from './info';
+import Cover from '@/components/cover';
 import useData from './use_data';
 import { MINI_INFO_HEIGHT, MusicDetail } from './constants';
 import CreateUser from './create_user';
@@ -16,6 +16,7 @@ import Lyric from './lyric';
 import MiniInfo from './mini_info';
 import SubMusicList from './sub_music_list';
 import EditMenu from './edit_menu';
+import Info from './info';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
@@ -55,8 +56,9 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
     <DetailBox style={style}>
       <div className="scrollable" onScroll={onScroll}>
         <div className="first-screen">
-          <Info music={music} />
+          <Cover src={music.cover} size="100%" />
           <Toolbar music={music} />
+          <Info music={music} />
           <SingerList singerList={music.singers} />
           {music.forkFromList.length ? (
             <SubMusicList

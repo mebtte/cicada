@@ -57,6 +57,7 @@ module.exports = {
     'react/static-property-placement': 'off',
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
+    'react/no-array-index-key': 'warn',
 
     'no-nested-ternary': 'off',
     'prefer-promise-reject-errors': 'error',
