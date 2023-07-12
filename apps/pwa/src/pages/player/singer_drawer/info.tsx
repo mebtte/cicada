@@ -6,6 +6,8 @@ import { Singer } from './constants';
 const Style = styled.div`
   position: relative;
 
+  font-size: 0;
+
   > .info {
     position: absolute;
     left: 0;

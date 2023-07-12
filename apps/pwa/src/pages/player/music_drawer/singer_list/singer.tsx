@@ -6,14 +6,15 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import { SingerDetail } from '../constants';
 import e, { EventType } from '../../eventemitter';
 
-const COVER_SIZE = 32;
+const COVER_SIZE = 28;
 const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
 
   height: 44px;
-  padding: 0 20px;
+  padding: 0 10px;
+  margin: 0 10px;
 
   transition: 300ms;
   cursor: pointer;

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Cover, { Shape } from '@/components/cover';
+import Cover from '@/components/cover';
 import day from '#/utils/day';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
@@ -106,7 +106,6 @@ function Info({ musicbill }: { musicbill: Musicbill }) {
             })
           }
         >
-          <Cover src={user.avatar} size={28} shape={Shape.CIRCLE} />
           <div className="nickname">{user.nickname}</div>
         </div>
         <div className="extra">

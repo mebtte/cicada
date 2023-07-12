@@ -1,6 +1,5 @@
 import logger from '@/utils/logger';
 import getPublicMusicbill from '@/server/api/get_public_musicbill';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import { useCallback, useEffect, useState } from 'react';
 import { Musicbill } from './constants';
 import e, { EventType } from './eventemitter';
@@ -29,11 +28,7 @@ export default (id: string) => {
         loading: false,
         musicbill: {
           ...musicbill,
-          cover: musicbill.cover || DefaultCover,
-          user: {
-            ...musicbill.user,
-            avatar: musicbill.user.avatar || DefaultCover,
-          },
+          cover: musicbill.cover,
           musicList: musicbill.musicList.map((m, index) => ({
             ...m,
             index: musicbill.musicList.length - index,

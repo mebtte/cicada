@@ -1,5 +1,5 @@
 import Drawer from '@/components/drawer';
-import { CSSProperties, UIEventHandler, useState } from 'react';
+import { CSSProperties } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
@@ -9,9 +9,8 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import { EventType } from '../eventemitter';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import useData from './use_data';
-import { MINI_INFO_HEIGHT, Musicbill as MusicbillType } from './constants';
+import { Musicbill as MusicbillType, TOOLBAR_HEIGHT } from './constants';
 import Info from './info';
-import MiniInfo from './mini_info';
 import MusicList from './music_list';
 import Toolbar from './toolbar';
 
@@ -32,7 +31,7 @@ const Style = styled.div`
   >.scrollable {
     ${absoluteFullSize}
 
-    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0) + ${TOOLBAR_HEIGHT}px);
 
     overflow: auto;
 
@@ -49,20 +48,13 @@ function Musicbill({
   musicbill: MusicbillType;
   collected: boolean;
 }) {
-  const [miniInfoVisible, setMiniInfoVisible] = useState(false);
-  const onScroll: UIEventHandler<HTMLDivElement> = (e) => {
-    const { clientWidth, scrollTop } = e.target as HTMLDivElement;
-    return setMiniInfoVisible(scrollTop >= clientWidth - MINI_INFO_HEIGHT);
-  };
-
   return (
     <Style>
-      <div className="scrollable" onScroll={onScroll}>
+      <div className="scrollable">
         <Info musicbill={musicbill} />
-        <Toolbar musicbill={musicbill} collected={collected} />
         <MusicList musicList={musicbill.musicList} />
       </div>
-      {miniInfoVisible ? <MiniInfo musicbill={musicbill} /> : null}
+      <Toolbar musicbill={musicbill} collected={collected} />
     </Style>
   );
 }

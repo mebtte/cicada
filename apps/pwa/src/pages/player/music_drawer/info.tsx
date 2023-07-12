@@ -11,6 +11,8 @@ import { MusicDetail } from './constants';
 import Tag from './tag';
 
 const Style = styled.div`
+  margin-top: 10px;
+
   > .name {
     margin: 0 20px;
 
@@ -20,7 +22,6 @@ const Style = styled.div`
   }
 
   > .aliases {
-    /* margin-top: 5px; */
     margin: 0 20px 5px 20px;
 
     font-size: 14px;

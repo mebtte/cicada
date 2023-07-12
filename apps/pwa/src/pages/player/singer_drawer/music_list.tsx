@@ -4,6 +4,9 @@ import { MusicWithSingerAliases } from '../constants';
 import Music from '../components/music';
 import Context from '../context';
 
+const rootStyle: CSSProperties = {
+  marginTop: 5,
+};
 const emptyStyle: CSSProperties = {
   padding: '50px 0',
 };
@@ -11,7 +14,7 @@ const emptyStyle: CSSProperties = {
 function MusicList({ musicList }: { musicList: MusicWithSingerAliases[] }) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return musicList.length ? (
-    <div>
+    <div style={rootStyle}>
       {musicList.map((music, index) => (
         <Music
           key={music.id}

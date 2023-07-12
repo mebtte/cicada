@@ -2,18 +2,17 @@ import { useTransition, animated } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Drawer from '@/components/drawer';
-import { CSSProperties, UIEventHandler, useState } from 'react';
+import { CSSProperties } from 'react';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
 import Cover from '@/components/cover';
 import useData from './use_data';
-import { MINI_INFO_HEIGHT, MusicDetail } from './constants';
+import { MusicDetail } from './constants';
 import CreateUser from './create_user';
 import SingerList from './singer_list';
 import Toolbar from './toolbar';
 import Lyric from './lyric';
-import MiniInfo from './mini_info';
 import SubMusicList from './sub_music_list';
 import EditMenu from './edit_menu';
 import Info from './info';
@@ -45,19 +44,12 @@ const createUserStyle: CSSProperties = {
 };
 
 function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
-  const [toolbarSticky, setToolbarSticky] = useState(false);
-
-  const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
-    const { scrollTop, clientWidth } = event.target as HTMLDivElement;
-    setToolbarSticky(scrollTop >= clientWidth - MINI_INFO_HEIGHT);
-  };
   return (
     // @ts-expect-error
     <DetailBox style={style}>
-      <div className="scrollable" onScroll={onScroll}>
+      <div className="scrollable">
         <div className="first-screen">
           <Cover src={music.cover} size="100%" />
-          <Toolbar music={music} />
           <Info music={music} />
           <SingerList singerList={music.singers} />
           {music.forkFromList.length ? (
@@ -79,9 +71,8 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
           createTime={music.createTime}
           style={createUserStyle}
         />
+        <Toolbar music={music} />
       </div>
-
-      {toolbarSticky ? <MiniInfo music={music} /> : null}
 
       <EditMenu music={music} />
     </DetailBox>

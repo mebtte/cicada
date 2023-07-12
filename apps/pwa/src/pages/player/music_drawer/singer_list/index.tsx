@@ -2,7 +2,9 @@ import styled from 'styled-components';
 import { SingerDetail } from '../constants';
 import Singer from './singer';
 
-const Style = styled.div``;
+const Style = styled.div`
+  margin: 10px 0;
+`;
 
 function SingerList({ singerList }: { singerList: SingerDetail[] }) {
   return (

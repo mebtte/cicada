@@ -28,5 +28,3 @@ export interface MusicDetail extends Music {
   size: number;
   duration: number;
 }
-
-export const MINI_INFO_HEIGHT = 50;

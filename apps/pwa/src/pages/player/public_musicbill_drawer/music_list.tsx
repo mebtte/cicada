@@ -5,6 +5,9 @@ import Music from '../components/music';
 import { MusicWithSingerAliases } from '../constants';
 import Context from '../context';
 
+const rootStyle: CSSProperties = {
+  marginTop: 5,
+};
 const emptyStyle: CSSProperties = {
   padding: '50px 0',
 };
@@ -12,22 +15,24 @@ const emptyStyle: CSSProperties = {
 function MusicList({ musicList }: { musicList: MusicWithSingerAliases[] }) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return musicList.length ? (
-    <List
-      length={musicList.length}
-      type="uniform"
-      // eslint-disable-next-line react/no-unstable-nested-components
-      itemRenderer={(index, key) => {
-        const music = musicList[index];
-        return (
-          <Music
-            key={key}
-            index={musicList.length - index}
-            music={music}
-            active={playqueue[currentPlayqueuePosition]?.id === music.id}
-          />
-        );
-      }}
-    />
+    <div style={rootStyle}>
+      <List
+        length={musicList.length}
+        type="uniform"
+        // eslint-disable-next-line react/no-unstable-nested-components
+        itemRenderer={(index, key) => {
+          const music = musicList[index];
+          return (
+            <Music
+              key={key}
+              index={musicList.length - index}
+              music={music}
+              active={playqueue[currentPlayqueuePosition]?.id === music.id}
+            />
+          );
+        }}
+      />
+    </div>
   ) : (
     <Empty description="暂无音乐" style={emptyStyle} />
   );
