@@ -135,7 +135,7 @@ export default async (ctx: Context) => {
     UserProperty.MUSIC_PLAY_RECORD_INDATE,
   ]);
   if (!user) {
-    return ctx.except(ExceptionCode.USER_NOT_EXIST);
+    return ctx.except(ExceptionCode.USER_NOT_EXISTED);
   }
 
   return KEY_MAP_HANDLER[key as AdminAllowUpdateKey]({ ctx, user, value });

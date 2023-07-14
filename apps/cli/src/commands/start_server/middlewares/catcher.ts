@@ -3,7 +3,7 @@ import { ExceptionCode } from '#/constants/exception';
 import { getConfig } from '@/config';
 import logger from '../../../utils/logger';
 import { Context } from '../constants';
-import { EXCEPTION_CODE_MAP_KEY } from '../constants/exception_code';
+import { EXCEPTION_CODE_MAP_KEY } from '../constants/exception';
 
 export default () => async (ctx: Context, next: Next) => {
   try {

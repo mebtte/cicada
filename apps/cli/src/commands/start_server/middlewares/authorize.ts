@@ -18,20 +18,20 @@ export default async (
   const token = ctx.get('authorization');
 
   if (!token) {
-    return ctx.except(ExceptionCode.NOT_AUTHORIZE);
+    return ctx.except(ExceptionCode.NOT_AUTHORIZED);
   }
 
   let userId: string;
   try {
     userId = verify(token);
   } catch (error) {
-    return ctx.except(ExceptionCode.NOT_AUTHORIZE);
+    return ctx.except(ExceptionCode.NOT_AUTHORIZED);
   }
 
   const user = await getUserById(userId, Object.values(UserProperty));
 
   if (!user) {
-    return ctx.except(ExceptionCode.NOT_AUTHORIZE);
+    return ctx.except(ExceptionCode.NOT_AUTHORIZED);
   }
 
   ctx.user = {

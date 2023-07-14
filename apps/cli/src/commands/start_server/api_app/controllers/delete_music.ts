@@ -57,7 +57,7 @@ export default async (ctx: Context) => {
     MusicForkProperty.MUSIC_ID,
   ]);
   if (forkList.length) {
-    return ctx.except(ExceptionCode.MUSIC_HAS_FORK_AND_CAN_NOT_BE_DELETED);
+    return ctx.except(ExceptionCode.MUSIC_FORKED_BY_OTHER_CAN_NOT_BE_DELETED);
   }
 
   await Promise.all([

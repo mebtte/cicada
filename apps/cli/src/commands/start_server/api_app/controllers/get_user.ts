@@ -30,7 +30,7 @@ export default async (ctx: Context) => {
     UserProperty.NICKNAME,
   ]);
   if (!user) {
-    return ctx.except(ExceptionCode.USER_NOT_EXIST);
+    return ctx.except(ExceptionCode.USER_NOT_EXISTED);
   }
 
   const [musicbillList, musicList] = await Promise.all([

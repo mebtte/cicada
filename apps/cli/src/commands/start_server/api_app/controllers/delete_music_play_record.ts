@@ -25,7 +25,7 @@ export default async (ctx: Context) => {
     [id],
   );
   if (!musicPlayRecord || ctx.user.id !== musicPlayRecord.userId) {
-    return ctx.except(ExceptionCode.MUSIC_PLAY_RECORD_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSIC_PLAY_RECORD_NOT_EXISTED);
   }
 
   await getDB().run(

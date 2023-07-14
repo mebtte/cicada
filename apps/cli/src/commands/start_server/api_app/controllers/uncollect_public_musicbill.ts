@@ -19,7 +19,7 @@ export default async (ctx: Context) => {
     properties: [PublicMusicbillCollectionProperty.ID],
   });
   if (!musicbillCollection) {
-    return ctx.except(ExceptionCode.NOT_COLLECT_MUSICBILL_YET);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_COLLECTED);
   }
 
   await getDB().run(

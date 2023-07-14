@@ -52,7 +52,7 @@ export default async (ctx: Context) => {
     [email],
   );
   if (!user) {
-    return ctx.except(ExceptionCode.USER_NOT_EXIST);
+    return ctx.except(ExceptionCode.USER_NOT_EXISTED);
   }
 
   const hasLoginCodeAlready = await hasLoginCodeInGetInterval({

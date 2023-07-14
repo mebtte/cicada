@@ -29,7 +29,7 @@ export default async (ctx: Context) => {
   try {
     userId = verify(token);
   } catch (error) {
-    return ctx.except(ExceptionCode.NOT_AUTHORIZE);
+    return ctx.except(ExceptionCode.NOT_AUTHORIZED);
   }
 
   const music = await getMusicById(musicId, [MusicProperty.ID]);

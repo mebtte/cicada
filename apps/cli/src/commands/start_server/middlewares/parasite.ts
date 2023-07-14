@@ -1,6 +1,7 @@
 import { Next } from 'koa';
 import { ExceptionCode } from '#/constants/exception';
-import { Context, EXCEPTION_CODE_MAP_KEY } from '../constants';
+import { Context } from '../constants';
+import { EXCEPTION_CODE_MAP_KEY } from '../constants/exception';
 
 export interface ParasiteMiddleware {
   success: <Data>(data: Data) => void;

@@ -63,7 +63,7 @@ const KEY_MAP_HANDLER: Record<
       [nickname],
     );
     if (nicknameUser) {
-      return ctx.except(ExceptionCode.NICKNAME_EXIST);
+      return ctx.except(ExceptionCode.NICKNAME_HAS_USED_BY_OTHERS);
     }
 
     await updateUser({
