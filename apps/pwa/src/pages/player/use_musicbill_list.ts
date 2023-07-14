@@ -147,7 +147,7 @@ export default () => {
           await addMusicToMusicbill(musicbillId, musicId);
         } catch (error) {
           logger.error(error, '添加音乐到乐单失败');
-          if (error.code !== ExceptionCode.MUSIC_IN_MUSICBILL_ALREADY) {
+          if (error.code !== ExceptionCode.MUSIC_ALREADY_EXISTED_IN_MUSICBILL) {
             notice.error(error.message);
             setMusicbillList((mbl) =>
               mbl.map((mb) => {
@@ -196,7 +196,7 @@ export default () => {
           await removeMusicFromMusicbill(musicbillId, musicId);
         } catch (error) {
           logger.error(error, '从乐单移除音乐失败');
-          if (error.code !== ExceptionCode.MUSIC_NOT_IN_MUSICBILL) {
+          if (error.code !== ExceptionCode.MUSIC_NOT_EXISTED_IN_MUSICBILL) {
             notice.error(error.message);
             setMusicbillList((mbl) =>
               mbl.map((mb) => {

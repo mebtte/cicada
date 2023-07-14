@@ -30,7 +30,7 @@ export default async (ctx: Context) => {
     MusicbillProperty.USER_ID,
   ]);
   if (!musicbill) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
 
   const [sharedUserList, user] = await Promise.all([
@@ -57,7 +57,7 @@ export default async (ctx: Context) => {
     musicbill.userId !== ctx.user.id &&
     !sharedUserList.find((u) => u.sharedUserId === ctx.user.id && u.accepted)
   ) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
   if (!user) {
     return ctx.except(ExceptionCode.USER_NOT_EXIST);

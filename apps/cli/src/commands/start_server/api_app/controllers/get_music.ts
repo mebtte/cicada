@@ -39,7 +39,7 @@ export default async (ctx: Context) => {
     MusicProperty.YEAR,
   ]);
   if (!music) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
   }
   const [createUser, forkList, forkFromList, musicbillCount] =
     await Promise.all([

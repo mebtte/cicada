@@ -57,7 +57,7 @@ function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
           const { code, message } = error as ErrorWithCode<ExceptionCode>;
           notice.error(message);
           switch (code) {
-            case ExceptionCode.HAS_LOGIN_CODE_ALREADY: {
+            case ExceptionCode.ALREADY_GOT_LOGIN_CODE_BEFORE: {
               toNext(email);
               break;
             }

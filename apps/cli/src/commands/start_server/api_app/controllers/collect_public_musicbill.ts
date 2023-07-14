@@ -26,7 +26,7 @@ export default async (ctx: Context) => {
     }),
   ]);
   if (!musicbill || !musicbill.public) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
   if (musicbillCollection) {
     return ctx.except(ExceptionCode.COLLECT_MUSICBILL_REPEATLY);

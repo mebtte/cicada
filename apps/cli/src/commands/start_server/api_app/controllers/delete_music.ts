@@ -49,7 +49,7 @@ export default async (ctx: Context) => {
 
   const music = await getMusicById(id, Object.values(MusicProperty));
   if (!music || (!ctx.user.admin && music.createUserId !== ctx.user.id)) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
   }
 
   const forkList = await getMusicForkList(id, [

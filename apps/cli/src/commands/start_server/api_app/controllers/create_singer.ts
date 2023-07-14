@@ -22,7 +22,7 @@ export default async (ctx: Context) => {
   if (!force) {
     const existSinger = await getSingerByName(name, [SingerProperty.ID]);
     if (existSinger) {
-      return ctx.except(ExceptionCode.SINGER_EXIST);
+      return ctx.except(ExceptionCode.SINGER_ALREADY_EXISTED);
     }
   }
 

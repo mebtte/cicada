@@ -92,3 +92,9 @@ export const IMAGE_MAX_SIZE = 2048;
 export const SHARED_MUSICBILL_INVITATION_MINIMAL_TTL = 1000 * 60 * 60 * 24 * 3;
 
 export const SINGER_MODIFY_RECORD_TTL = 1000 * 60 * 60 * 24 * 180;
+
+export enum Language {
+  EN_US = 'en-us',
+  ZH_CN = 'zh-cn',
+}
+export const DEFAULT_LANGUAGE = Language.EN_US;

@@ -103,7 +103,7 @@ export async function request<Data = void>({
 
   if (code !== ExceptionCode.SUCCESS) {
     switch (code) {
-      case ExceptionCode.NOT_AUTHORIZE: {
+      case ExceptionCode.NOT_AUTHORIZED: {
         token.set('');
         break;
       }

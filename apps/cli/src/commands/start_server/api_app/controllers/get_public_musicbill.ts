@@ -37,7 +37,7 @@ export default async (ctx: Context) => {
     MusicbillProperty.USER_ID,
   ]);
   if (!musicbill || !musicbill.public) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
 
   const [user, musicList, collectionCount, musicbillCollection] =
