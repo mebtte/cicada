@@ -98,3 +98,8 @@ export enum Language {
   ZH_CN = 'zh-cn',
 }
 export const DEFAULT_LANGUAGE = Language.EN_US;
+
+export enum CommonQuery {
+  VERSION = '__v',
+  LANGUAGE = '__lang',
+}
