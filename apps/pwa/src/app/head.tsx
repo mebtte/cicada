@@ -12,23 +12,23 @@ const MANIFEST_URL = URL.createObjectURL(
         descritpion: upperCaseFirstLetter(t('cicada_description')),
         icons: [
           {
-            src: '/app_icon_192.png',
+            src: `${window.location.origin}/app_icon_192.png`,
             type: 'image/png',
             sizes: '192x192',
           },
           {
-            src: '/app_icon_512.png',
+            src: `${window.location.origin}/app_icon_512.png`,
             type: 'image/png',
             sizes: '512x512',
           },
           {
-            src: '/app_icon_maskable_512.png',
+            src: `${window.location.origin}/app_icon_maskable_512.png`,
             type: 'image/png',
             sizes: '512x512',
             purpose: 'maskable',
           },
         ],
-        start_url: '/',
+        start_url: window.location.origin,
         background_color: '#ffffff',
         display: 'standalone',
         display_override: ['window-controls-overlay'],
