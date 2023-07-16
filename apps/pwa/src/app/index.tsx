@@ -5,6 +5,7 @@ import App from './app';
 import UncaughtError from './uncaught_error';
 import useProfileUpdate from './use_profile_update';
 import mm from '../global_states/mini_mode';
+import Head from './head';
 
 const fallback = (error: Error) => <UncaughtError error={error} />;
 
@@ -16,6 +17,7 @@ function Wrapper() {
   return (
     <ErrorBoundary fallback={fallback}>
       <ThemeProvider theme={{ miniMode }}>
+        <Head />
         <GlobalStyle />
         <App />
       </ThemeProvider>

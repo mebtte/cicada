@@ -16,6 +16,7 @@ import dialog from '@/utils/dialog';
 import getLoginCode from '@/server/base/get_login_code';
 import ErrorWithCode from '@/utils/error_with_code';
 import { ExceptionCode } from '#/constants/exception';
+import { t } from '@/i18n';
 import Logo from '../logo';
 import Paper from '../paper';
 import SettingDialog from './setting_dialog';
@@ -37,10 +38,10 @@ function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
 
   const onGetLoginCode = () => {
     if (!EMAIL.test(email)) {
-      return notice.error('请输入合法的邮箱');
+      return notice.error(t('please_enter_valid_email'));
     }
     return dialog.captcha({
-      confirmText: '获取登录验证码',
+      confirmText: t('get_login_code'),
       confirmVariant: Variant.PRIMARY,
       onConfirm: async ({ captchaId, captchaValue }) => {
         try {
@@ -49,10 +50,10 @@ function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
             captchaId,
             captchaValue,
           });
-          notice.info('登录验证码已发送到邮箱');
+          notice.info(t('login_code_has_emailed'));
           toNext(email);
         } catch (error) {
-          logger.error(error, '获取登录验证码失败');
+          logger.error(error, 'Failed to get login code');
 
           const { code, message } = error as ErrorWithCode<ExceptionCode>;
           notice.error(message);
@@ -83,7 +84,7 @@ function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
           setEmail(lastLoginEmail);
         }
       })
-      .catch((error) => logger.error(error, '查找上次登录邮箱失败'));
+      .catch((error) => logger.error(error, 'Failed to load last login email'));
   }, []);
 
   return (
@@ -91,7 +92,7 @@ function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
       <Style>
         <Logo />
         <Input
-          label="邮箱"
+          label={t('email')}
           inputProps={{
             type: 'email',
             value: email,
@@ -105,9 +106,9 @@ function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
           onClick={onGetLoginCode}
           disabled={!email.length}
         >
-          继续
+          {t('continue')}
         </Button>
-        <Button onClick={openSettingDialog}>设置</Button>
+        <Button onClick={openSettingDialog}>{t('setting')}</Button>
       </Style>
       <SettingDialog open={settingDialogOpen} onClose={closeSettingDialog} />
     </>

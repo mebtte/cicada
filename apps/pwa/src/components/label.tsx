@@ -1,3 +1,4 @@
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { ForwardedRef, forwardRef, HtmlHTMLAttributes, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '../global_style';
@@ -26,6 +27,7 @@ const Style = styled.div<{ active: boolean; disabled: boolean }>`
       font-size: 12px;
       transition: inherit;
       ${ellipsis}
+      ${upperCaseFirstLetter}
     }
   }
 

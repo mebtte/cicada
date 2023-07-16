@@ -11,9 +11,9 @@ const LANGUAGE_MAP: Record<Language, typeof enUS> = {
 export function t(key: Key, language: Language, ...args: string[]) {
   const value = LANGUAGE_MAP[language][key];
 
-  if (args) {
-    for (const arg of args) {
-      value.replace('%s', arg);
+  if (args.length) {
+    for (let i = 0; i < args.length; i += 1) {
+      value.replace(`%s${i + 1}`, args[i]);
     }
   }
 
