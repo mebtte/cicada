@@ -9,13 +9,8 @@ const MANIFEST_URL = URL.createObjectURL(
       JSON.stringify({
         name: upperCaseFirstLetter(t('cicada')),
         short_name: upperCaseFirstLetter(t('cicada')),
-        descritpion: upperCaseFirstLetter(t('cicada_description')),
+        description: upperCaseFirstLetter(t('cicada_description')),
         icons: [
-          {
-            src: `${window.location.origin}/app_icon_192.png`,
-            type: 'image/png',
-            sizes: '192x192',
-          },
           {
             src: `${window.location.origin}/app_icon_512.png`,
             type: 'image/png',
