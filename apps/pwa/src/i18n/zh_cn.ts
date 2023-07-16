@@ -18,6 +18,8 @@ const zhCN: {
   captcha: '验证码',
   get_login_code: '获取登录验证码',
   login_code_has_emailed: '登录验证码已经发送到邮箱',
+  change_language_question: '更换语言将会重新加载应用, 是否继续?',
+  relative_volume: '相对音量',
 };
 
 export default zhCN;

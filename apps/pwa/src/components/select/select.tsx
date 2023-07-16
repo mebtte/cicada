@@ -61,6 +61,7 @@ function Select<Value>({
   onChange,
   placeholder = '',
   disabled = false,
+  ...props
 }: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
   addon?: ReactNode;
   label: string;
@@ -91,7 +92,13 @@ function Select<Value>({
     ? data.find((option) => option.key === value.key)
     : undefined;
   return (
-    <Label disabled={disabled} label={label} active={open} addon={addon}>
+    <Label
+      disabled={disabled}
+      label={label}
+      active={open}
+      addon={addon}
+      {...props}
+    >
       <Style>
         <Selected active={open} disabled={disabled} onClick={onOpen}>
           <div className="label">{selected ? selected.label : placeholder}</div>

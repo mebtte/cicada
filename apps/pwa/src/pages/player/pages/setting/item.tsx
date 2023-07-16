@@ -1,4 +1,5 @@
 import { CSSVariable } from '@/global_style';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { HtmlHTMLAttributes } from 'react';
 import styled from 'styled-components';
 
@@ -17,6 +18,8 @@ const Style = styled.div`
     font-weight: bold;
     font-size: 14px;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+
+    ${upperCaseFirstLetter}
   }
 
   &:hover {

@@ -15,4 +15,7 @@ export default {
   captcha: 'captcha',
   get_login_code: 'get login code',
   login_code_has_emailed: 'login code has emailed',
+  change_language_question:
+    'changing language will reload application, continue ?',
+  relative_volume: 'relative volume',
 };

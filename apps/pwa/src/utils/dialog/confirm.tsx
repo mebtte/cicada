@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { t } from '@/i18n';
 import { Confirm as ConfirmShape } from './constants';
 import { Container, Content, Title, Action } from '../../components/dialog';
 import Button, { Variant } from '../../components/button';
@@ -41,7 +42,7 @@ function ConfirmContent({
       {confirm.content ? <Content>{confirm.content}</Content> : null}
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {confirm.cancelText || '取消'}
+          {confirm.cancelText || t('cancel')}
         </Button>
         <Button
           variant={Variant.PRIMARY}
@@ -49,7 +50,7 @@ function ConfirmContent({
           loading={confirming}
           disabled={canceling}
         >
-          {confirm.confirmText || '确定'}
+          {confirm.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>

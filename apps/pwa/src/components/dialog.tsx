@@ -135,6 +135,8 @@ export const Content = styled.div`
   overflow: auto;
 
   padding: 0 20px;
+
+  ${upperCaseFirstLetter}
 `;
 
 export const Action = styled.div`
