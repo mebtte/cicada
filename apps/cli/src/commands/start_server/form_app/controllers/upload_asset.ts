@@ -77,11 +77,11 @@ export default async (ctx: Context) => {
 
   const { maxSize, acceptTypes } = ASSET_TYPE_MAP[assetType];
   if (asset.size > maxSize) {
-    return ctx.except(ExceptionCode.ASSET_OVER_MAX_SIZE);
+    return ctx.except(ExceptionCode.ASSET_OVERSIZE);
   }
   const ft = await fileType.fromFile(asset.path);
   if (!ft || !acceptTypes.includes(ft.mime)) {
-    return ctx.except(ExceptionCode.WRONG_ASSET_ACCEPT_TYPES);
+    return ctx.except(ExceptionCode.WRONG_ASSET_TYPE);
   }
 
   const { generateId, validate } = ASSET_TYPE_MAP_OPTION[assetType];

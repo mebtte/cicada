@@ -31,7 +31,7 @@ export default async (ctx: Context) => {
     MusicbillProperty.USER_ID,
   ]);
   if (!musicbill) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
   if (musicbill.userId !== ctx.user.id) {
     const sharedUser = await getDB().get(
@@ -46,7 +46,7 @@ export default async (ctx: Context) => {
       [musicbillId, ctx.user.id],
     );
     if (!sharedUser) {
-      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
     }
   }
 
@@ -54,7 +54,7 @@ export default async (ctx: Context) => {
     MusicbillMusicProperty.ID,
   ]);
   if (!musicbillMusic) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_IN_MUSICBILL);
+    return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED_IN_MUSICBILL);
   }
 
   await removeMusicbillMusicById(musicbillMusic.id);

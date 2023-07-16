@@ -45,7 +45,7 @@ export default async (ctx: Context) => {
 
   const user = await getUserByEmail(email, [UserProperty.ID]);
   if (user) {
-    return ctx.except(ExceptionCode.EMAIL_EXISTED);
+    return ctx.except(ExceptionCode.EMAIL_ALREADY_REGISTERED);
   }
 
   await sendEmail({

@@ -68,7 +68,7 @@ export default async (ctx: Context) => {
     [id],
   );
   if (!musicbill) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
   const sharedUserList = await getDB().all<
     Pick<
@@ -97,7 +97,7 @@ export default async (ctx: Context) => {
     musicbill.userId !== ctx.user.id &&
     (!sharedUser || sharedUser.accepted !== 1)
   ) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
 
   const musicList = await getDB().all<

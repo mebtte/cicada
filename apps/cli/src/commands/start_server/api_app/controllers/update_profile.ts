@@ -31,7 +31,7 @@ const KEY_MAP_HANDLER: Record<
       getAssetFilePath(avatar, AssetType.USER_AVATAR),
     );
     if (!avatarExist) {
-      return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+      return ctx.except(ExceptionCode.ASSET_NOT_EXISTED);
     }
     await updateUser({
       id: ctx.user.id,
@@ -63,7 +63,7 @@ const KEY_MAP_HANDLER: Record<
       [nickname],
     );
     if (nicknameUser) {
-      return ctx.except(ExceptionCode.NICKNAME_EXIST);
+      return ctx.except(ExceptionCode.NICKNAME_HAS_USED_BY_OTHERS);
     }
 
     await updateUser({
@@ -96,7 +96,7 @@ const KEY_MAP_HANDLER: Record<
       orders,
     );
     if (orders.length > existMusicbillList.length) {
-      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
     }
 
     await updateUser({

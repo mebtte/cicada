@@ -54,7 +54,7 @@ export function openCreateSingerDialog(callback: (id: string) => void) {
       callback(id);
     } catch (error) {
       logger.error(error, '创建歌手失败');
-      if (error.code === ExceptionCode.SINGER_EXIST) {
+      if (error.code === ExceptionCode.SINGER_ALREADY_EXISTED) {
         dialog.confirm({
           title: '歌手已存在, 是否仍要创建?',
           content:

@@ -33,7 +33,7 @@ export default async (ctx: Context) => {
 
   const user = await getUserById(id, [UserProperty.ID, UserProperty.ADMIN]);
   if (!user) {
-    return ctx.except(ExceptionCode.USER_NOT_EXIST);
+    return ctx.except(ExceptionCode.USER_NOT_EXISTED);
   }
   if (user.admin) {
     return ctx.except(ExceptionCode.USER_IS_ADMIN_ALREADY);

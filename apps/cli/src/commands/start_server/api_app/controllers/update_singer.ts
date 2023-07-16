@@ -141,7 +141,7 @@ const KEY_MAP_HANDLER: Record<
         getAssetFilePath(avatar, AssetType.SINGER_AVATAR),
       );
       if (!avatarExist) {
-        return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+        return ctx.except(ExceptionCode.ASSET_NOT_EXISTED);
       }
     }
 
@@ -184,7 +184,7 @@ export default async (ctx: Context) => {
     SingerProperty.CREATE_USER_ID,
   ]);
   if (!singer) {
-    return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+    return ctx.except(ExceptionCode.SINGER_NOT_EXISTED);
   }
   if (!ctx.user.admin && singer.createUserId !== ctx.user.id) {
     const editable = await getDB().get<
@@ -203,7 +203,7 @@ export default async (ctx: Context) => {
       [ctx.user.id, id],
     );
     if (!editable) {
-      return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+      return ctx.except(ExceptionCode.SINGER_NOT_EXISTED);
     }
   }
 

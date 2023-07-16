@@ -21,7 +21,7 @@ export default async ({ ctx, music, value }: Parameter) => {
       getAssetFilePath(value, AssetType.MUSIC_COVER),
     );
     if (!assetExist) {
-      return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+      return ctx.except(ExceptionCode.ASSET_NOT_EXISTED);
     }
   }
 

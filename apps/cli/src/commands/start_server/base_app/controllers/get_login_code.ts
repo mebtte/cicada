@@ -52,14 +52,14 @@ export default async (ctx: Context) => {
     [email],
   );
   if (!user) {
-    return ctx.except(ExceptionCode.USER_NOT_EXIST);
+    return ctx.except(ExceptionCode.USER_NOT_EXISTED);
   }
 
   const hasLoginCodeAlready = await hasLoginCodeInGetInterval({
     userId: user.id,
   });
   if (hasLoginCodeAlready) {
-    return ctx.except(ExceptionCode.HAS_LOGIN_CODE_ALREADY);
+    return ctx.except(ExceptionCode.ALREADY_GOT_LOGIN_CODE_BEFORE);
   }
 
   const code = generateRandomInteger(100000, 1000000).toString();

@@ -1,7 +1,9 @@
-import { Context, Next } from 'koa';
-import { EXCEPTION_CODE_MAP, ExceptionCode } from '#/constants/exception';
+import { Next } from 'koa';
+import { ExceptionCode } from '#/constants/exception';
 import { getConfig } from '@/config';
 import logger from '../../../utils/logger';
+import { Context } from '../constants';
+import { EXCEPTION_CODE_MAP_KEY } from '../constants/exception';
 
 export default () => async (ctx: Context, next: Next) => {
   try {
@@ -13,7 +15,7 @@ export default () => async (ctx: Context, next: Next) => {
 
     ctx.body = {
       code: ExceptionCode.SERVER_ERROR,
-      message: EXCEPTION_CODE_MAP[ExceptionCode.SERVER_ERROR].description,
+      message: ctx.t(EXCEPTION_CODE_MAP_KEY[ExceptionCode.SERVER_ERROR]),
     };
 
     logger.error({

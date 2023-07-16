@@ -2,7 +2,7 @@ export enum Status {
   LOADING,
   SUCCESS,
   ERROR,
-  INSTRUMENT,
+  INSTRUMENTAL,
   EMPTY,
 }
 
@@ -19,7 +19,7 @@ export type LyricData =
       error: Error;
     }
   | {
-      status: Status.INSTRUMENT;
+      status: Status.INSTRUMENTAL;
     }
   | {
       status: Status.EMPTY;

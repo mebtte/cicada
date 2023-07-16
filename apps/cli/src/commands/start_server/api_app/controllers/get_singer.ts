@@ -35,7 +35,7 @@ export default async (ctx: Context) => {
     SingerProperty.CREATE_USER_ID,
   ]);
   if (!singer) {
-    return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+    return ctx.except(ExceptionCode.SINGER_NOT_EXISTED);
   }
 
   const [createUser, musicList, editable] = await Promise.all([

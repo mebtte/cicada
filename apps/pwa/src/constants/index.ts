@@ -6,8 +6,6 @@ export enum RequestStatus {
 }
 
 export enum Query {
-  VERSION = '__v',
-
   REDIRECT = 'redirect',
   CREATE_MUSIC_DIALOG_OPEN = 'create_music_dialog_open',
   PAGE = 'page',

@@ -1,11 +1,12 @@
 import { ExceptionCode } from '#/constants/exception';
 import token from '@/global_states/token';
-import { prefixServerOrigin } from '@/global_states/setting';
+import setting, { prefixServerOrigin } from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import definition from '@/definition';
-import { NORMAL_REQUEST_MINIMAL_DURATION, Query } from '@/constants';
+import { NORMAL_REQUEST_MINIMAL_DURATION } from '@/constants';
 import timeoutFn from '#/utils/timeout';
+import { CommonQuery } from '#/constants';
 
 export enum Method {
   GET = 'get',
@@ -42,7 +43,8 @@ export async function request<Data = void>({
 
   const combineParams = {
     ...params,
-    [Query.VERSION]: definition.VERSION,
+    [CommonQuery.VERSION]: definition.VERSION,
+    [CommonQuery.LANGUAGE]: setting.get().language,
   };
   url += `?${Object.keys(combineParams)
     .map(
@@ -103,7 +105,7 @@ export async function request<Data = void>({
 
   if (code !== ExceptionCode.SUCCESS) {
     switch (code) {
-      case ExceptionCode.NOT_AUTHORIZE: {
+      case ExceptionCode.NOT_AUTHORIZED: {
         token.set('');
         break;
       }

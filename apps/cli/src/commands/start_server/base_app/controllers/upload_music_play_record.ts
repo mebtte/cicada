@@ -29,12 +29,12 @@ export default async (ctx: Context) => {
   try {
     userId = verify(token);
   } catch (error) {
-    return ctx.except(ExceptionCode.NOT_AUTHORIZE);
+    return ctx.except(ExceptionCode.NOT_AUTHORIZED);
   }
 
   const music = await getMusicById(musicId, [MusicProperty.ID]);
   if (!music) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
   }
 
   await addMusicPlayRecord({ userId, musicId, percent });

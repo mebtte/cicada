@@ -7,10 +7,9 @@ import { CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
 import { CacheName } from '@/constants/cache';
-import { AssetType, PathPrefix } from '#/constants';
+import { AssetType, CommonQuery, PathPrefix } from '#/constants';
 import parseSearch from './utils/parse_search';
 import definition from './definition';
-import { Query } from './constants';
 
 export type {};
 declare const self: ServiceWorkerGlobalScope & {
@@ -49,10 +48,10 @@ self.addEventListener('activate', () => {
     const keys = await cache.keys();
     for (const key of keys) {
       const url = new URL(key.url);
-      const query = parseSearch<Query.VERSION>(url.search);
+      const query = parseSearch<CommonQuery.VERSION>(url.search);
       if (
-        !query[Query.VERSION] ||
-        query[Query.VERSION] !== definition.VERSION
+        !query[CommonQuery.VERSION] ||
+        query[CommonQuery.VERSION] !== definition.VERSION
       ) {
         cache.delete(key);
       }

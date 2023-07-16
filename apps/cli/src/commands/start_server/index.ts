@@ -18,6 +18,7 @@ import { getApiApp } from './api_app';
 import { getFormApp } from './form_app';
 import { getPwaApp } from './pwa_app';
 import { getBaseApp } from './base_app';
+import i18n from './middlewares/i18n';
 
 function printInfo(info: string) {
   // eslint-disable-next-line no-console
@@ -59,6 +60,7 @@ async function startServer({
 
   const server = new Koa();
   server.use(log());
+  server.use(i18n);
   server.use(
     cors({
       maxAge: 86400,

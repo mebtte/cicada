@@ -58,7 +58,7 @@ const KEY_MAP_HANDLER: Record<
       getAssetFilePath(cover, AssetType.MUSICBILL_COVER),
     );
     if (!assetExist) {
-      return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+      return ctx.except(ExceptionCode.ASSET_NOT_EXISTED);
     }
     await updateMusicbill(musicbill.id, MusicbillProperty.COVER, cover);
     return ctx.success(null);
@@ -103,7 +103,7 @@ export default async (ctx: Context) => {
     MusicbillProperty.PUBLIC,
   ]);
   if (!musicbill) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
   if (musicbill.userId !== ctx.user.id) {
     const sharedUser = await getDB().get(
@@ -118,7 +118,7 @@ export default async (ctx: Context) => {
       [id, ctx.user.id],
     );
     if (!sharedUser) {
-      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
     }
   }
 

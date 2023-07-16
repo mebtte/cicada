@@ -49,7 +49,7 @@ export default async (ctx: Context) => {
 
   const music = await getMusicById(id, Object.values(MusicProperty));
   if (!music || (!ctx.user.admin && music.createUserId !== ctx.user.id)) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
   }
 
   const forkList = await getMusicForkList(id, [
@@ -57,7 +57,7 @@ export default async (ctx: Context) => {
     MusicForkProperty.MUSIC_ID,
   ]);
   if (forkList.length) {
-    return ctx.except(ExceptionCode.MUSIC_HAS_FORK_AND_CAN_NOT_BE_DELETED);
+    return ctx.except(ExceptionCode.MUSIC_FORKED_BY_OTHER_CAN_NOT_BE_DELETED);
   }
 
   await Promise.all([

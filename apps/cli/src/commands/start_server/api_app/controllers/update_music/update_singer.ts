@@ -32,7 +32,7 @@ export default async ({ ctx, music, value }: Parameter) => {
 
   const singerList = await getSingerListByIds(value, [SingerProperty.ID]);
   if (singerList.length !== value.length) {
-    return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+    return ctx.except(ExceptionCode.SINGER_NOT_EXISTED);
   }
 
   await Promise.all([
