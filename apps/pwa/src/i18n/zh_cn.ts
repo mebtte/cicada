@@ -27,6 +27,9 @@ const zhCN: {
   user_management: '用户管理',
   logout: '退出登录',
   logout_question: '确定退出登录吗?',
+  search: '搜索',
+  shared_musicbill_invitation: '共享乐单邀请',
+  public_musicbill_collection: '收藏的公开乐单',
 };
 
 export default zhCN;

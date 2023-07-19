@@ -9,19 +9,19 @@ export default () => {
   switch (pathname) {
     case ROOT_PATH.PLAYER:
     case ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION: {
-      title = '发现';
+      title = t('exploration');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH: {
-      title = '搜索';
+      title = t('search');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC: {
-      title = '我的音乐';
+      title = t('my_music');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE: {
-      title = '用户管理';
+      title = t('user_management');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {
@@ -29,11 +29,11 @@ export default () => {
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION: {
-      title = '共享乐单邀请';
+      title = t('shared_musicbill_invitation');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION: {
-      title = '收藏的公开乐单';
+      title = t('public_musicbill_collection');
       break;
     }
     default: {

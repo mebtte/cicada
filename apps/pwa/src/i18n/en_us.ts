@@ -25,4 +25,7 @@ export default {
   user_management: 'user management',
   logout: 'logout',
   logout_question: 'Are you sure to logout ?',
+  search: 'search',
+  shared_musicbill_invitation: 'shared musicbill invitation',
+  public_musicbill_collection: 'public musicbill collection',
 };
