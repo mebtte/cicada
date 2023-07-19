@@ -1,4 +1,4 @@
-import { Context as BaseContext } from 'koa';
-import { Parasite } from '../../middlewares/parasite';
+import { Context as BaseContext } from '../../constants';
+import { ParasiteMiddleware } from '../../middlewares/parasite';
 
-export type Context = BaseContext & Parasite;
+export type Context = BaseContext & ParasiteMiddleware;

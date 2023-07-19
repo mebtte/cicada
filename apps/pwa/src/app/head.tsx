@@ -1,5 +1,5 @@
 import { t } from '@/i18n';
-import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { memo } from 'react';
 import { Helmet } from 'react-helmet';
 

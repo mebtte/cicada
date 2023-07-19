@@ -1,4 +1,5 @@
 export default {
+  cicada: 'cicada',
   success: 'success',
   server_error: 'server error',
   parameter_error: 'parameter error',

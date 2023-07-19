@@ -18,4 +18,11 @@ export default {
   change_language_question:
     'changing language will reload application, continue ?',
   relative_volume: 'relative volume',
+  music_play_record_short: 'play record',
+  my_music: 'my music',
+  exploration: 'exploration',
+  musicbill: 'musicbill',
+  user_management: 'user management',
+  logout: 'logout',
+  logout_question: 'Are you sure to logout ?',
 };

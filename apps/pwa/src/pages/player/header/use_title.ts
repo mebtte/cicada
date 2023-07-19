@@ -1,10 +1,11 @@
 import { useLocation } from 'react-router-dom';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { t } from '@/i18n';
 
 export default () => {
   const { pathname } = useLocation();
 
-  let title = '知了';
+  let title: string;
   switch (pathname) {
     case ROOT_PATH.PLAYER:
     case ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION: {
@@ -24,7 +25,7 @@ export default () => {
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {
-      title = '设置';
+      title = t('setting');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION: {
@@ -34,6 +35,9 @@ export default () => {
     case ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION: {
       title = '收藏的公开乐单';
       break;
+    }
+    default: {
+      title = t('cicada');
     }
   }
 

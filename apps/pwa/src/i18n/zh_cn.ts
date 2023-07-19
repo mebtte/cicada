@@ -20,6 +20,13 @@ const zhCN: {
   login_code_has_emailed: '登录验证码已经发送到邮箱',
   change_language_question: '更换语言将会重新加载应用, 是否继续?',
   relative_volume: '相对音量',
+  music_play_record_short: '播放记录',
+  my_music: '我的音乐',
+  exploration: '发现',
+  musicbill: '乐单',
+  user_management: '用户管理',
+  logout: '退出登录',
+  logout_question: '确定退出登录吗?',
 };
 
 export default zhCN;
