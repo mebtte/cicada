@@ -1,11 +1,11 @@
 import { Language } from '#/constants';
 import { Key } from './constants';
-import enUS from './en_us';
-import zhCN from './zh_cn';
+import en from './en';
+import zhHans from './zh_hans';
 
-const LANGUAGE_MAP: Record<Language, typeof enUS> = {
-  [Language.EN_US]: enUS,
-  [Language.ZH_CN]: zhCN,
+const LANGUAGE_MAP: Record<Language, typeof en> = {
+  [Language.EN]: en,
+  [Language.ZH_HANS]: zhHans,
 };
 
 export function t(key: Key, language: Language, ...args: string[]) {

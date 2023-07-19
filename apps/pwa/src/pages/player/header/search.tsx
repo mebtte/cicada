@@ -14,6 +14,7 @@ import mm from '@/global_states/mini_mode';
 import { Query } from '@/constants';
 import { useLocation } from 'react-router-dom';
 import parseSearch from '@/utils/parse_search';
+import { t } from '@/i18n';
 import eventemitter, { EventType } from '../eventemitter';
 
 const style: CSSProperties = {
@@ -75,7 +76,7 @@ function Wrapper() {
         value: keyword,
         onChange: onKeywordChange,
         onKeyDown,
-        placeholder: '搜索',
+        placeholder: t('search'),
       }}
     />
   );

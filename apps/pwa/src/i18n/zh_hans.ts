@@ -30,6 +30,10 @@ const zhCN: {
   search: '搜索',
   shared_musicbill_invitation: '共享乐单邀请',
   public_musicbill_collection: '收藏的公开乐单',
+  previous_step: '上一步',
+  login_code: '登录验证码',
+  please_enter_login_code: '请输入登录验证码',
+  welcome_back: '欢迎回来',
 };
 
 export default zhCN;

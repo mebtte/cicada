@@ -1,13 +1,12 @@
 import loadImage from '@/utils/load_image';
 import logger from '@/utils/logger';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import { useEffect, useState } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import { MdUnfoldMore } from 'react-icons/md';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
-import PngDefaultCover from './default_cover.jpeg';
+import PngDefaultCover from '@/asset/default_cover.jpeg';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -66,7 +65,7 @@ function Wrapper({ cover }: { cover?: string }) {
           }
         })
         .catch((error) => {
-          logger.error(error, '加载音乐封面失败');
+          logger.error(error, 'Failed to load music cover');
           if (!canceled) {
             setSrc(PngDefaultCover);
           }
@@ -75,7 +74,7 @@ function Wrapper({ cover }: { cover?: string }) {
         canceled = true;
       };
     }
-    setSrc(DefaultCover);
+    setSrc(PngDefaultCover);
   }, [cover]);
 
   const transitions = useTransition(src, {

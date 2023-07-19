@@ -4,12 +4,12 @@ import type { Key } from './constants';
 
 let translation: { [key in Key]: string };
 switch (setting.get().language) {
-  case Language.ZH_CN: {
-    ({ default: translation } = await import('./zh_cn'));
+  case Language.ZH_HANS: {
+    ({ default: translation } = await import('./zh_hans'));
     break;
   }
   default: {
-    ({ default: translation } = await import('./en_us'));
+    ({ default: translation } = await import('./en'));
   }
 }
 
@@ -31,8 +31,8 @@ export const LANGUAGE_MAP: Record<
     label: string;
   }
 > = {
-  [Language.EN_US]: { label: 'english(US)' },
-  [Language.ZH_CN]: { label: '中文(中国)' },
+  [Language.EN]: { label: 'english' },
+  [Language.ZH_HANS]: { label: '简体中文' },
 };
 
 export { Key };

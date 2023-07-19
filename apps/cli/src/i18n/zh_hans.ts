@@ -1,6 +1,6 @@
 import { Key } from './constants';
 
-const zhCN: {
+const zhHans: {
   [key in Key]: string;
 } = {
   cicada: '知了',
@@ -42,4 +42,4 @@ const zhCN: {
   shared_musicbill_invitation_not_existed: '共享乐单邀请不存在',
 };
 
-export default zhCN;
+export default zhHans;

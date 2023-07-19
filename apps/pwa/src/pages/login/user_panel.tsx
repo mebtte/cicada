@@ -8,6 +8,7 @@ import parseSearch from '@/utils/parse_search';
 import { Query } from '@/constants';
 import Cover, { Shape } from '@/components/cover';
 import Slider from '@/components/slider';
+import { t } from '@/i18n';
 import Paper from './paper';
 import Logo from './logo';
 
@@ -71,7 +72,7 @@ function Profile({ profile }: { profile: ProfileType }) {
         shape={Shape.CIRCLE}
       />
       <div className="text">
-        🎉 欢迎回来,{' '}
+        🎉 {t('welcome_back')},{' '}
         {profile.nickname.length > NICKNAME_MAX_LENGTH
           ? `${profile.nickname.slice(0, NICKNAME_MAX_LENGTH)}...`
           : profile.nickname}

@@ -5,13 +5,16 @@ import logger from '@/utils/logger';
 import { DEFAULT_LANGUAGE, Language } from '#/constants';
 
 function getInitialLanguage() {
-  if (
-    // @ts-expect-error
-    Object.values(Language).includes(window.navigator.language.toLowerCase())
-  ) {
-    return window.navigator.language.toLowerCase() as Language;
+  switch (window.navigator.language.toLowerCase()) {
+    case 'zh':
+    case 'zh-cn': {
+      return Language.ZH_HANS;
+    }
+
+    default: {
+      return DEFAULT_LANGUAGE;
+    }
   }
-  return DEFAULT_LANGUAGE;
 }
 
 const DEFAULT_SETTING: Setting = {

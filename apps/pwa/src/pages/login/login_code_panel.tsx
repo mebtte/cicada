@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
 import notice from '@/utils/notice';
 import loginRequest from '@/server/base/login';
-import t from '@/global_states/token';
+import tk from '@/global_states/token';
 import p from '@/global_states/profile';
 import getProfile from '@/server/api/get_profile';
 import sleep from '#/utils/sleep';
@@ -12,6 +12,7 @@ import Input from '@/components/input';
 import Button, { Variant } from '@/components/button';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import excludeProperty from '#/utils/exclude_property';
+import { t } from '@/i18n';
 import Paper from './paper';
 import Logo from './logo';
 
@@ -35,13 +36,13 @@ function LoginCodePanel({
   const [logining, setLogining] = useState(false);
   const login = async () => {
     if (!loginCode.length) {
-      return notice.error('请输入登录验证码');
+      return notice.error(t('please_enter_login_code'));
     }
 
     setLogining(true);
     try {
       const token = await loginRequest({ email, loginCode });
-      t.set(token);
+      tk.set(token);
 
       await sleep(0);
 
@@ -62,9 +63,9 @@ function LoginCodePanel({
 
       storage
         .setItem(Key.LAST_LOGIN_EMAIL, email)
-        .catch((error) => logger.error(error, '保存登录邮箱失败'));
+        .catch((error) => logger.error(error, 'Failed to save login email'));
     } catch (error) {
-      logger.error(error, '登录失败');
+      logger.error(error, 'Failed to login');
       notice.error(error.message);
     }
     setLogining(false);
@@ -79,9 +80,9 @@ function LoginCodePanel({
   return (
     <StyledPaper>
       <Logo />
-      <Input label="邮箱" inputProps={{ value: email }} disabled />
+      <Input label={t('email')} inputProps={{ value: email }} disabled />
       <Input
-        label="登录验证码"
+        label={t('login_code')}
         inputProps={{
           value: loginCode,
           onChange: onLoginCodeChange,
@@ -96,10 +97,10 @@ function LoginCodePanel({
         loading={logining}
         onClick={login}
       >
-        继续
+        {t('continue')}
       </Button>
       <Button onClick={toPrevious} disabled={logining}>
-        上一步
+        {t('previous_step')}
       </Button>
     </StyledPaper>
   );

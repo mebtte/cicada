@@ -28,4 +28,8 @@ export default {
   search: 'search',
   shared_musicbill_invitation: 'shared musicbill invitation',
   public_musicbill_collection: 'public musicbill collection',
+  previous_step: 'previous step',
+  login_code: 'login code',
+  please_enter_login_code: 'please enter login code',
+  welcome_back: 'welcome back',
 };
