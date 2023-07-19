@@ -1,7 +1,7 @@
 import { HtmlHTMLAttributes, ReactNode, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import upperCaseFirstLetter from '@/style/capitalize';
 import { ComponentSize } from '../../constants/style';
 import { CSSVariable } from '../../global_style';
 import Label from '../label';

@@ -1,4 +1,4 @@
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import upperCaseFirstLetter from '@/style/capitalize';
 import { ButtonHTMLAttributes, CSSProperties } from 'react';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '../constants/style';

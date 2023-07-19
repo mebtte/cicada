@@ -1,5 +1,5 @@
 import { CSSVariable } from '@/global_style';
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import upperCaseFirstLetter from '@/style/capitalize';
 import { HtmlHTMLAttributes } from 'react';
 import styled from 'styled-components';
 

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import upperCaseFirstLetter from '@/style/capitalize';
 
 const Style = styled.div`
   flex: 1;

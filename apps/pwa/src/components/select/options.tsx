@@ -1,4 +1,4 @@
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import upperCaseFirstLetter from '@/style/capitalize';
 import { animated, useTransition } from 'react-spring';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '../../global_style';
