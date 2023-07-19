@@ -10,7 +10,7 @@ import { FIRST_USER_ID } from './constants';
 
 const program = new Command()
   .name('cicada')
-  .description('A multi-user music service for self-host.')
+  .description('A multi-user music service for self-hosting')
   .version(definition.VERSION);
 
 /**

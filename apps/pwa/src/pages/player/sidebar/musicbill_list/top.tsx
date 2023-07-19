@@ -15,7 +15,7 @@ import notice from '@/utils/notice';
 import { useNavigate } from 'react-router-dom';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
-import upperCaseFirstLetter from '@/style/capitalize';
+import capitalize from '@/style/capitalize';
 import e, { EventType } from '../../eventemitter';
 import Context from '../../context';
 import { openCreateMusicbillDialog } from '../../utils';
@@ -36,7 +36,7 @@ const Style = styled.div`
     min-width: 0;
 
     font-size: 12px;
-    ${upperCaseFirstLetter}
+    ${capitalize}
   }
 `;
 

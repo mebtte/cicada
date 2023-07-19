@@ -1,4 +1,4 @@
-import upperCaseFirstLetter from '@/style/capitalize';
+import capitalize from '@/style/capitalize';
 import { ButtonHTMLAttributes, CSSProperties } from 'react';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '../constants/style';
@@ -96,7 +96,7 @@ const Style = styled.button<{
     cursor: not-allowed;
   }
 
-  ${upperCaseFirstLetter}
+  ${capitalize}
 
   ${({ variant, isLoading }) => {
     const variantCss = VARIANT_MAP[variant].css;

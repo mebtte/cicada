@@ -1,4 +1,4 @@
-import upperCaseFirstLetter from '@/style/capitalize';
+import capitalize from '@/style/capitalize';
 import { animated, useTransition } from 'react-spring';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '../../global_style';
@@ -31,7 +31,7 @@ const Option = styled.div<{ active: boolean }>`
     background-color: rgba(0, 0, 0, 0.15);
   }
 
-  ${upperCaseFirstLetter}
+  ${capitalize}
 
   ${({ active }) => css`
     color: ${active ? '#fff !important' : CSSVariable.TEXT_COLOR_PRIMARY};

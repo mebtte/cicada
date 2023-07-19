@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import upperCaseFirstLetter from '@/style/capitalize';
+import capitalize from '@/style/capitalize';
 
 const Style = styled.div`
   flex: 1;
@@ -20,7 +20,7 @@ const AnimatedDiv = styled(animated.div)`
   user-select: none;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   ${ellipsis}
-  ${upperCaseFirstLetter}
+  ${capitalize}
 `;
 
 function Title({ title }: { title: string }) {

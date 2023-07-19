@@ -1,5 +1,6 @@
 import { t } from '@/i18n';
-import upperCaseFirstLetter from '#/utils/capitalize';
+import capitalize from '#/utils/capitalize';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { memo } from 'react';
 import { Helmet } from 'react-helmet';
 
@@ -7,8 +8,8 @@ const MANIFEST_URL = URL.createObjectURL(
   new Blob(
     [
       JSON.stringify({
-        name: upperCaseFirstLetter(t('cicada')),
-        short_name: upperCaseFirstLetter(t('cicada')),
+        name: capitalize(t('cicada')),
+        short_name: capitalize(t('cicada')),
         description: upperCaseFirstLetter(t('cicada_description')),
         icons: [
           {

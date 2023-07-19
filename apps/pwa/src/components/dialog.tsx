@@ -3,7 +3,7 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
-import upperCaseFirstLetter from '@/style/capitalize';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { CSSVariable } from '../global_style';
 
 const TRANSITION = {

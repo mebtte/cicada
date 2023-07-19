@@ -1,6 +1,6 @@
 {
   "name": "cicada",
-  "description": "A multi-user music service for self-host.",
+  "description": "A multi-user music service for self-hosting.",
   "private": true,
   "repository": {
     "type": "git",

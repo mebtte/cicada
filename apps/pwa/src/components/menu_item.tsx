@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
-import upperCaseFirstLetter from '@/style/capitalize';
+import capitalize from '@/style/capitalize';
 import { CSSVariable } from '../global_style';
 
 const Style = styled.div<{ active: boolean }>`
@@ -17,7 +17,7 @@ const Style = styled.div<{ active: boolean }>`
 
   > .label {
     font-size: 14px;
-    ${upperCaseFirstLetter}
+    ${capitalize}
   }
 
   > svg {
