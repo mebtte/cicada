@@ -39,10 +39,6 @@ const Input = styled.input`
     cursor: not-allowed;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   }
-
-  &::placeholder {
-    text-transform: capitalize;
-  }
 `;
 
 type Ref = {
