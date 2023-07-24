@@ -1,5 +1,6 @@
 import Button, { Variant } from '@/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { t } from '@/i18n';
 import { useNavigate } from 'react-router-dom';
 import { CSSProperties } from 'styled-components';
 import { itemStyle } from './constants';
@@ -18,7 +19,7 @@ function UserManage() {
       style={style}
       onClick={() => navigate(ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE)}
     >
-      用户管理
+      {t('user_management')}
     </Button>
   );
 }

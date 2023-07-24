@@ -27,7 +27,7 @@ export default async (ctx: Context) => {
     [id, ctx.user.id],
   );
   if (!sharedMusicbillInvitation) {
-    return ctx.except(ExceptionCode.SHARED_MUSICBILL_INVITATION_NOT_EXIST);
+    return ctx.except(ExceptionCode.SHARED_MUSICBILL_INVITATION_NOT_EXISTED);
   }
 
   await getDB().run(

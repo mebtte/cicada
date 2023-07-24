@@ -26,7 +26,7 @@ export default async (ctx: Context) => {
 
   const singer = await getSingerById(id, [SingerProperty.CREATE_USER_ID]);
   if (!singer) {
-    return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+    return ctx.except(ExceptionCode.SINGER_NOT_EXISTED);
   }
   if (singer.createUserId !== ctx.user.id) {
     const editable = await getDB().get<
@@ -45,7 +45,7 @@ export default async (ctx: Context) => {
       [ctx.user.id, id],
     );
     if (!editable) {
-      return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+      return ctx.except(ExceptionCode.SINGER_NOT_EXISTED);
     }
   }
 

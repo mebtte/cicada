@@ -3,7 +3,7 @@ import { SingerDetail } from '../constants';
 import Singer from './singer';
 
 const Style = styled.div`
-  margin: 0 0 10px 0;
+  margin: 10px 0;
 `;
 
 function SingerList({ singerList }: { singerList: SingerDetail[] }) {

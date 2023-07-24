@@ -6,6 +6,7 @@ import token from '@/global_states/token';
 import { CacheName } from '@/constants/cache';
 import logger from '@/utils/logger';
 import setting from '@/global_states/setting';
+import { t } from '@/i18n';
 import { itemStyle } from './constants';
 
 const style: CSSProperties = {
@@ -17,7 +18,7 @@ const style: CSSProperties = {
 function Logout() {
   const onLogout = useEvent(() =>
     dialog.confirm({
-      title: '确定退出登录吗?',
+      title: t('logout_question'),
       onConfirm: () => {
         token.set('');
 
@@ -29,9 +30,7 @@ function Logout() {
         if (window.caches) {
           window.caches
             .delete(CacheName.API)
-            .catch((error) =>
-              logger.error(error, '退出登录移除 API cache 失败'),
-            );
+            .catch((error) => logger.error(error, 'Failed to remove cache'));
         }
         setting.set((s) => ({
           ...s,
@@ -42,7 +41,7 @@ function Logout() {
   );
   return (
     <Button variant={Variant.DANGER} style={style} onClick={onLogout}>
-      退出登录
+      {t('logout')}
     </Button>
   );
 }

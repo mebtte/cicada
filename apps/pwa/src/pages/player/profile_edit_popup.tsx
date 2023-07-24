@@ -31,7 +31,8 @@ const Style = styled.div`
   padding: 10px 0 max(env(safe-area-inset-bottom, 10px), 10px) 0;
 
   > .profile {
-    padding: 10px 20px;
+    padding: 10px;
+    margin: 0 10px;
 
     display: flex;
     align-items: center;
@@ -66,6 +67,7 @@ const Style = styled.div`
     }
   }
 `;
+const itemStyle: CSSProperties = { margin: '0 10px' };
 
 function ProfileEditPopup() {
   const profile = p.useState()!;
@@ -94,11 +96,13 @@ function ProfileEditPopup() {
           </div>
         </div>
         <MenuItem
+          style={itemStyle}
           label="查看个人主页"
           icon={<MdRemoveRedEye />}
           onClick={openUserDrawer}
         />
         <MenuItem
+          style={itemStyle}
           label="修改头像"
           icon={<MdImage />}
           onClick={() =>
@@ -129,6 +133,7 @@ function ProfileEditPopup() {
           }
         />
         <MenuItem
+          style={itemStyle}
           label="修改昵称"
           icon={<MdTitle />}
           onClick={() =>

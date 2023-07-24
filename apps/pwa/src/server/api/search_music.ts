@@ -1,7 +1,8 @@
 import { Response } from '#/server/api/search_music';
+import { prefixServerOrigin } from '@/global_states/setting';
 import { request } from '..';
 
-function searchMusic({
+async function searchMusic({
   keyword,
   page,
   pageSize,
@@ -10,11 +11,19 @@ function searchMusic({
   page: number;
   pageSize: number;
 }) {
-  return request<Response>({
+  const result = await request<Response>({
     path: '/api/music/search',
     params: { keyword, page, pageSize },
     withToken: true,
   });
+  return {
+    ...result,
+    musicList: result.musicList.map((m) => ({
+      ...m,
+      cover: prefixServerOrigin(m.cover),
+      asset: prefixServerOrigin(m.asset),
+    })),
+  };
 }
 
 export default searchMusic;

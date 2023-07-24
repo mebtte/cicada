@@ -1,18 +1,17 @@
 import styled from 'styled-components';
 import Drawer from '@/components/drawer';
-import { CSSProperties, UIEventHandler, useState } from 'react';
+import { CSSProperties } from 'react';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import useData from './use_data';
-import { MINI_INFO_HEIGHT, Singer } from './constants';
+import { Singer } from './constants';
 import Info from './info';
 import Toolbar from './toolbar';
 import MusicList from './music_list';
 import CreateUser from './create_user';
-import MiniIfno from './mini_info';
 import EditMenu from './edit_menu';
 
 const bodyProps: { style: CSSProperties } = {
@@ -39,19 +38,12 @@ const DetailContainer = styled(Container)`
 `;
 
 function Detail({ style, singer }: { style: unknown; singer: Singer }) {
-  const [toolbarSticky, setToolbarSticky] = useState(false);
-
-  const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
-    const { scrollTop, clientWidth } = event.target as HTMLDivElement;
-    setToolbarSticky(scrollTop >= clientWidth - MINI_INFO_HEIGHT);
-  };
   return (
     // @ts-expect-error
     <DetailContainer style={style}>
-      <div className="scrollable" onScroll={onScroll}>
+      <div className="scrollable">
         <div className="first-screen">
           <Info singer={singer} />
-          <Toolbar singer={singer} />
           <MusicList
             musicList={singer.musicList.map((m, index) => ({
               ...m,
@@ -63,9 +55,9 @@ function Detail({ style, singer }: { style: unknown; singer: Singer }) {
           user={singer.createUser}
           createTimestamp={singer.createTimestamp}
         />
+        <Toolbar singer={singer} />
       </div>
 
-      {toolbarSticky ? <MiniIfno singer={singer} /> : null}
       <EditMenu singer={singer} />
     </DetailContainer>
   );

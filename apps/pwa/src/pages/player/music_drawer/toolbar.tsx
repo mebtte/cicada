@@ -7,18 +7,13 @@ import {
   MdPlaylistAdd,
   MdOutlineEdit,
   MdOutlineDownload,
-  MdShare,
 } from 'react-icons/md';
 import p from '@/global_states/profile';
 import { IS_IPAD, IS_IPHONE } from '@/constants/browser';
-import notice from '@/utils/notice';
-import logger from '@/utils/logger';
-import { ROOT_PATH } from '@/constants/route';
-import { Query } from '@/constants';
 import { saveAs } from 'file-saver';
 import formatMusicFilename from '#/utils/format_music_filename';
 import e, { EventType } from './eventemitter';
-import { MINI_INFO_HEIGHT, MusicDetail } from './constants';
+import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -27,8 +22,9 @@ const Style = styled.div`
   z-index: 1;
 
   position: sticky;
-  top: ${MINI_INFO_HEIGHT}px;
-  padding: 5px 20px;
+  bottom: 0;
+  height: 50px;
+  padding: 0 20px;
 
   display: flex;
   align-items: center;
@@ -48,6 +44,7 @@ const Style = styled.div`
 
 function Toolbar({ music }: { music: MusicDetail }) {
   const profile = p.useState()!;
+
   return (
     <Style>
       <div className="left">
@@ -113,21 +110,6 @@ function Toolbar({ music }: { music: MusicDetail }) {
             <MdOutlineDownload />
           </IconButton>
         )}
-        <IconButton
-          onClick={() =>
-            window.navigator.clipboard
-              .writeText(
-                `${window.location.origin}/#${ROOT_PATH.PLAYER}?${Query.MUSIC_DRAWER_ID}=${music.id}`,
-              )
-              .then(() => notice.info('已复制音乐链接'))
-              .catch((error) => {
-                logger.error(error, '复制音乐链接失败');
-                return notice.error(error.message);
-              })
-          }
-        >
-          <MdShare />
-        </IconButton>
       </div>
       {profile.admin || profile.id === music.createUser.id ? (
         <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>

@@ -41,7 +41,7 @@ export default async (ctx: Context) => {
 
   const assetExist = await exist(getAssetFilePath(asset, AssetType.MUSIC));
   if (!assetExist) {
-    return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+    return ctx.except(ExceptionCode.ASSET_NOT_EXISTED);
   }
 
   const singerIdList = singerIds.split(',');
@@ -49,7 +49,7 @@ export default async (ctx: Context) => {
     SingerProperty.ID,
   ]);
   if (singerList.length !== singerIdList.length) {
-    return ctx.except(ExceptionCode.SINGER_NOT_EXIST);
+    return ctx.except(ExceptionCode.SINGER_NOT_EXISTED);
   }
 
   /**

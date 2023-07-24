@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { t } from './i18n';
 import absoluteFullSize from './style/absolute_full_size';
 
 const Style = styled.div`
@@ -26,7 +27,7 @@ const Style = styled.div`
 function Unsupported({ unsupportedList }: { unsupportedList: string[] }) {
   return (
     <Style>
-      <div className="tips">你的浏览器暂不支持知了, 因为缺少以下兼容性</div>
+      <div className="tips">{t('incompatible_tips')}</div>
       <div className="list">
         {unsupportedList.map((us) => (
           <a

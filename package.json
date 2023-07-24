@@ -1,6 +1,6 @@
 {
   "name": "cicada",
-  "description": "A multi-user music service for self-host.",
+  "description": "A multi-user music service for self-hosting.",
   "private": true,
   "repository": {
     "type": "git",
@@ -57,6 +57,7 @@
     "md5": "^2.3.0",
     "multiparty": "^4.2.3",
     "nanospinner": "^1.1.0",
+    "negotiator": "^0.6.3",
     "node-schedule": "^2.1.0",
     "nodemailer": "^6.7.5",
     "sanitize-filename": "^1.6.3",
@@ -93,6 +94,7 @@
     "@types/nodemailer": "^6.4.4",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
+    "@types/react-helmet": "^6.1.6",
     "@types/react-list": "^0.8.7",
     "@types/react-slider": "^1.1.2",
     "@types/resize-observer-browser": "^0.1.5",
@@ -142,6 +144,7 @@
     "react": "^18.1.0",
     "react-docgen-typescript": "^1.22.0",
     "react-dom": "^18.1.0",
+    "react-helmet": "^6.1.0",
     "react-icons": "^4.9.0",
     "react-json-view": "^1.21.3",
     "react-list": "^0.8.17",

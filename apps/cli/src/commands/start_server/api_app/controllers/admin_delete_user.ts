@@ -56,10 +56,10 @@ export default async (ctx: Context) => {
 
   const user = await getUserById(id, [UserProperty.ID, UserProperty.ADMIN]);
   if (!user) {
-    return ctx.except(ExceptionCode.USER_NOT_EXIST);
+    return ctx.except(ExceptionCode.USER_NOT_EXISTED);
   }
   if (user.admin) {
-    return ctx.except(ExceptionCode.ADMIN_USER_CAN_NOT_BE_DELETED);
+    return ctx.except(ExceptionCode.CAN_NOT_DELETE_ADMIN);
   }
 
   /**

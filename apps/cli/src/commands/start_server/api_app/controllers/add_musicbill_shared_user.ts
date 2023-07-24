@@ -30,7 +30,7 @@ export default async (ctx: Context) => {
     MusicbillProperty.USER_ID,
   ]);
   if (!musicbill) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
 
   const [sharedUserList, user] = await Promise.all([
@@ -57,16 +57,16 @@ export default async (ctx: Context) => {
     musicbill.userId !== ctx.user.id &&
     !sharedUserList.find((u) => u.sharedUserId === ctx.user.id && u.accepted)
   ) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
   if (!user) {
-    return ctx.except(ExceptionCode.USER_NOT_EXIST);
+    return ctx.except(ExceptionCode.USER_NOT_EXISTED);
   }
   if (musicbill.userId === user.id) {
-    return ctx.except(ExceptionCode.SHARED_MUSICBILL_CAN_NOT_INVITE_OWNER);
+    return ctx.except(ExceptionCode.CAN_NOT_INVITE_MUSICBILL_OWNER);
   }
   if (sharedUserList.find((u) => u.sharedUserId === musicbill.userId)) {
-    return ctx.except(ExceptionCode.SHARED_MUSICBILL_CAN_NOT_INVITE_REPEATLY);
+    return ctx.except(ExceptionCode.REPEATED_SHARED_MUSICBILL_INVITATION);
   }
 
   await getDB().run(

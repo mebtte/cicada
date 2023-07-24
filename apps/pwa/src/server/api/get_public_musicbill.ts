@@ -20,10 +20,6 @@ async function getPublicMusicbill(id: string) {
       cover: prefixServerOrigin(m.cover),
       asset: prefixServerOrigin(m.asset),
     })),
-    user: {
-      ...musicbill.user,
-      avatar: prefixServerOrigin(musicbill.user.avatar),
-    },
   };
 }
 

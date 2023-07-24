@@ -100,7 +100,6 @@ export default (id: string) => {
         loading: false,
         music: {
           ...music,
-          cover: music.cover || DefaultCover,
           lyrics,
           createTime: day(music.createTimestamp).format('YYYY-MM-DD'),
           singers: music.singers.map((s) => ({

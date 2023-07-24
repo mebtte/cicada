@@ -41,6 +41,9 @@ const Style = styled.div`
 const dangerStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
+const itemStyle: CSSProperties = {
+  margin: '0 10px',
+};
 
 function EditMenu({ musicbill }: { musicbill: Musicbill }) {
   const navigate = useNavigate();
@@ -60,6 +63,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
     <Popup open={open} onClose={onClose} maskProps={maskProps}>
       <Style onClick={onClose}>
         <MenuItem
+          style={itemStyle}
           label="修改封面"
           icon={<MdImage />}
           onClick={() =>
@@ -94,6 +98,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
           }
         />
         <MenuItem
+          style={itemStyle}
           label="修改名字"
           icon={<MdTitle />}
           onClick={() =>
@@ -130,6 +135,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
           }
         />
         <MenuItem
+          style={itemStyle}
           label={musicbill.public ? '设为隐蔽乐单' : '设为公开乐单'}
           icon={musicbill.public ? <MdPublicOff /> : <MdPublic />}
           onClick={() => {
@@ -184,6 +190,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
         />
         {musicbill.owner.id === profile?.id ? (
           <MenuItem
+            style={itemStyle}
             label="删除乐单"
             icon={<MdDeleteOutline style={dangerStyle} />}
             onClick={() =>
@@ -216,6 +223,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
           />
         ) : (
           <MenuItem
+            style={itemStyle}
             label="退出共享乐单"
             icon={<MdExitToApp style={dangerStyle} />}
             onClick={() =>

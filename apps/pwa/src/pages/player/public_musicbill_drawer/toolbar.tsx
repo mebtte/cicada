@@ -5,7 +5,7 @@ import notice from '@/utils/notice';
 import collectPublicMusicbill from '@/server/api/collect_public_musicbill';
 import logger from '@/utils/logger';
 import uncollectPublicMusicbill from '@/server/api/uncollect_public_musicbill';
-import { MINI_INFO_HEIGHT, Musicbill } from './constants';
+import { Musicbill, TOOLBAR_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -14,9 +14,12 @@ import e, { EventType } from './eventemitter';
 const Style = styled.div`
   z-index: 1;
 
-  position: sticky;
-  top: ${MINI_INFO_HEIGHT}px;
-  padding: 5px 20px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: ${TOOLBAR_HEIGHT}px;
+  padding: 0 20px;
 
   display: flex;
   align-items: center;

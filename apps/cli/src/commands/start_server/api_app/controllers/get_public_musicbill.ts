@@ -37,16 +37,12 @@ export default async (ctx: Context) => {
     MusicbillProperty.USER_ID,
   ]);
   if (!musicbill || !musicbill.public) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
 
   const [user, musicList, collectionCount, musicbillCollection] =
     await Promise.all([
-      getUserById(musicbill.userId, [
-        UserProperty.ID,
-        UserProperty.NICKNAME,
-        UserProperty.AVATAR,
-      ]),
+      getUserById(musicbill.userId, [UserProperty.ID, UserProperty.NICKNAME]),
       getDB().all<
         Pick<
           Music,
@@ -119,10 +115,7 @@ export default async (ctx: Context) => {
       MusicbillProperty.USER_ID,
     ]),
     cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
-    user: {
-      ...user!,
-      avatar: getAssetPublicPath(user!.avatar, AssetType.USER_AVATAR),
-    },
+    user: user!,
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],

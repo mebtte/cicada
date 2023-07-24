@@ -6,7 +6,7 @@ import logger from '@/utils/logger';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
-import { MINI_INFO_HEIGHT, Singer } from './constants';
+import { Singer } from './constants';
 import e, { EventType } from './eventemitter';
 
 const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, null);
@@ -14,8 +14,9 @@ const Style = styled.div`
   z-index: 1;
 
   position: sticky;
-  top: ${MINI_INFO_HEIGHT}px;
-  padding: 5px 20px;
+  bottom: 0;
+  height: 50px;
+  padding: 0 20px;
 
   display: flex;
   align-items: center;

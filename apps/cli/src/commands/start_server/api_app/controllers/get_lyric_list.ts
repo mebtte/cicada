@@ -17,10 +17,10 @@ export default async (ctx: Context) => {
     MusicProperty.TYPE,
   ]);
   if (!music) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
   }
-  if (music.type === MusicType.INSTRUMENT) {
-    return ctx.except(ExceptionCode.INSTRUMENT_NO_LYRIC);
+  if (music.type === MusicType.INSTRUMENTAL) {
+    return ctx.except(ExceptionCode.INSTRUMENTAL_HAS_NO_LYRIC);
   }
 
   const lyrics = await getLyricListByMusicId(musicId, [

@@ -1,5 +1,3 @@
-export const BRAND_NAME = '知了';
-
 /**
  * 图形验证码有效期
  * 前端有效期要比后端有效期短 10 秒
@@ -92,3 +90,14 @@ export const IMAGE_MAX_SIZE = 2048;
 export const SHARED_MUSICBILL_INVITATION_MINIMAL_TTL = 1000 * 60 * 60 * 24 * 3;
 
 export const SINGER_MODIFY_RECORD_TTL = 1000 * 60 * 60 * 24 * 180;
+
+export enum Language {
+  EN = 'en',
+  ZH_HANS = 'zh-hans',
+}
+export const DEFAULT_LANGUAGE = Language.EN;
+
+export enum CommonQuery {
+  VERSION = '__v',
+  LANGUAGE = '__lang',
+}

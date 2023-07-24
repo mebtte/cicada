@@ -11,7 +11,7 @@ import useData from './use_data';
 import User from './user';
 import { HEADER_HEIGHT } from '../../../constants';
 import { TOOLBAR_HEIGHT } from '../constants';
-import { GAP } from './constants';
+import { GAP, ITEM_MIN_WIDTH } from './constants';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -73,7 +73,7 @@ function UserList() {
         <WidthObserver
           className="content"
           render={(width) => {
-            const itemWidth = `${100 / Math.floor(width / 200)}%`;
+            const itemWidth = `${100 / Math.floor(width / ITEM_MIN_WIDTH)}%`;
             return filteredUserList.map((user) => (
               <User key={user.id} user={user} width={itemWidth} />
             ));

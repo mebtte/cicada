@@ -3,6 +3,7 @@ import * as React from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { CSSVariable } from '../global_style';
 
 const TRANSITION = {
@@ -120,6 +121,8 @@ export const Title = styled.div`
   color: rgb(55 55 55);
 
   padding: 0 20px;
+
+  ${upperCaseFirstLetter}
 `;
 
 export const Content = styled.div`
@@ -132,6 +135,8 @@ export const Content = styled.div`
   overflow: auto;
 
   padding: 0 20px;
+
+  ${upperCaseFirstLetter}
 `;
 
 export const Action = styled.div`

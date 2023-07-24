@@ -2,6 +2,7 @@ import { Container, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import { CSSProperties, ChangeEventHandler, useEffect, useState } from 'react';
+import { t } from '@/i18n';
 import Captcha from './captcha';
 import useCaptcha from './use_captcha';
 import DialogBase from '../dialog_base';
@@ -77,7 +78,7 @@ function CaptchaContent({
           style={captchaStyle}
         />
         <Input
-          label="验证码"
+          label={t('captcha')}
           inputProps={{
             value: captchaValue,
             onChange: onCaptchaValueChange,
@@ -87,7 +88,7 @@ function CaptchaContent({
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {captcha.cancelText || '取消'}
+          {captcha.cancelText || t('cancel')}
         </Button>
         <Button
           variant={captcha.confirmVariant}
@@ -95,7 +96,7 @@ function CaptchaContent({
           loading={confirming}
           disabled={canceling}
         >
-          {captcha.confirmText || '确定'}
+          {captcha.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>

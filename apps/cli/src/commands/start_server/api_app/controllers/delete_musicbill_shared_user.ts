@@ -32,7 +32,7 @@ export default async (ctx: Context) => {
     MusicbillProperty.USER_ID,
   ]);
   if (!musicbill) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
 
   if (ctx.user.id !== musicbill.userId && ctx.user.id !== userId) {
@@ -54,7 +54,7 @@ export default async (ctx: Context) => {
     [musicbillId, userId],
   );
   if (!sharedUser) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
 
   await getDB().run(

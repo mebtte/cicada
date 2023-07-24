@@ -6,5 +6,5 @@ export default async (ctx: Context & ParasiteMiddleware, next: Next) => {
   if (ctx.user.admin) {
     return next();
   }
-  return ctx.except(ExceptionCode.NOT_AUTHORIZE_ADMIN);
+  return ctx.except(ExceptionCode.NOT_AUTHORIZED_FOR_ADMIN);
 };

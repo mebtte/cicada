@@ -1,4 +1,4 @@
-import { Context as BaseContext } from 'koa';
+import { Context as BaseContext } from '../../constants';
 import { ParasiteMiddleware } from '../../middlewares/parasite';
 import { AuthorizeMiddleware } from '../../middlewares/authorize';
 

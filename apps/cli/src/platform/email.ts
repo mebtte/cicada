@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 import { getConfig } from '@/config';
-import { BRAND_NAME } from '#/constants';
 
 let transporter: nodemailer.Transporter;
 const getTransporter = () => {
@@ -26,16 +25,18 @@ export function sendEmail({
   to,
   title,
   html,
+  fromName,
 }: {
   to: string;
   title: string;
   html: string;
+  fromName: string;
 }) {
   return new Promise((resolve, reject) => {
     const config = getConfig();
     getTransporter().sendMail(
       {
-        from: `${BRAND_NAME} <${config.emailUser}>`,
+        from: `${fromName} <${config.emailUser}>`,
         to,
         subject: title,
         html,

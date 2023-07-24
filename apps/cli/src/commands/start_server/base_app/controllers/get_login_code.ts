@@ -9,7 +9,6 @@ import {
 } from '@/platform/login_code';
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { sendEmail } from '@/platform/email';
-import { BRAND_NAME } from '#/constants';
 import day from '#/utils/day';
 import { getConfig } from '@/config';
 import { LOGIN_CODE_TTL } from '../../../../constants';
@@ -52,14 +51,14 @@ export default async (ctx: Context) => {
     [email],
   );
   if (!user) {
-    return ctx.except(ExceptionCode.USER_NOT_EXIST);
+    return ctx.except(ExceptionCode.USER_NOT_EXISTED);
   }
 
   const hasLoginCodeAlready = await hasLoginCodeInGetInterval({
     userId: user.id,
   });
   if (hasLoginCodeAlready) {
-    return ctx.except(ExceptionCode.HAS_LOGIN_CODE_ALREADY);
+    return ctx.except(ExceptionCode.ALREADY_GOT_LOGIN_CODE_BEFORE);
   }
 
   const code = generateRandomInteger(100000, 1000000).toString();
@@ -74,7 +73,7 @@ export default async (ctx: Context) => {
   } else {
     await sendEmail({
       to: email,
-      title: `「${BRAND_NAME}」登录验证码`,
+      title: `「${ctx.t('cicada')}」登录验证码`,
       html: `
         Hi, 「${encode(user.nickname)}」,
         <br />
@@ -84,10 +83,11 @@ export default async (ctx: Context) => {
       } 分钟内有效.
         <br />
         <br />
-        ${BRAND_NAME}
+        ${ctx.t('cicada')}
         <br />
         ${day().format('YYYY-MM-DD HH:mm:ss')}
       `,
+      fromName: ctx.t('cicada'),
     });
   }
 

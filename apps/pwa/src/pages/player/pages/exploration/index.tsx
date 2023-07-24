@@ -20,7 +20,7 @@ import MusicInfo from './music_info';
 import SingerInfo from './singer_info';
 import PublicMusicbillInfo from './public_musicbill_info';
 
-const ITEM_MIN_WIDTH = 180;
+const ITEM_MIN_WIDTH = 150;
 const Root = styled(Page)`
   position: relative;
 `;
@@ -42,6 +42,8 @@ const ContentContainer = styled(Container)`
   padding-bottom: env(safe-area-inset-bottom, 0);
 
   > .content {
+    margin: 7px 10px;
+
     font-size: 0;
 
     &:empty + .empty {

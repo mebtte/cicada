@@ -33,7 +33,7 @@ export default async (ctx: Context) => {
   ]);
 
   if (!musicbill) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
   if (musicbill.userId !== ctx.user.id) {
     const sharedUser = await getDB().get(
@@ -48,19 +48,19 @@ export default async (ctx: Context) => {
       [musicbillId, ctx.user.id],
     );
     if (!sharedUser) {
-      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+      return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
     }
   }
 
   if (!music) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
   }
 
   const musicbillMusic = await getMusicbillMusic(musicbillId, musicId, [
     MusicbillMusicProperty.ID,
   ]);
   if (musicbillMusic) {
-    return ctx.except(ExceptionCode.MUSIC_IN_MUSICBILL_ALREADY);
+    return ctx.except(ExceptionCode.MUSIC_ALREADY_EXISTED_IN_MUSICBILL);
   }
 
   await addMusicbillMusic(musicbillId, musicId);

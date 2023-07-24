@@ -83,6 +83,7 @@ const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
   label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
   value: music,
 });
+const itemStyle: CSSProperties = { margin: '0 10px' };
 
 const Style = styled.div`
   ${absoluteFullSize}
@@ -146,12 +147,14 @@ function EditMenu({ music }: { music: MusicDetail }) {
         onClick={onClose}
       >
         <MusicInfo
+          style={itemStyle}
           musicId={music.id}
           musicName={music.name}
           musicCover={getResizedImage({ url: music.cover, size: 80 })}
           singers={music.singers}
         />
         <MenuItem
+          style={itemStyle}
           icon={<MdImage />}
           label="编辑封面"
           onClick={() =>
@@ -184,6 +187,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
         />
         {music.cover.length ? (
           <MenuItem
+            style={itemStyle}
             icon={<MdImage />}
             label="重置封面"
             onClick={() =>
@@ -211,6 +215,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           />
         ) : null}
         <MenuItem
+          style={itemStyle}
           icon={<MdTitle />}
           label="编辑名字"
           onClick={() =>
@@ -245,6 +250,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
+          style={itemStyle}
           icon={<MdTextFields />}
           label="编辑别名"
           onClick={() =>
@@ -279,6 +285,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
         />
         {music.type === MusicType.SONG ? (
           <MenuItem
+            style={itemStyle}
             icon={<MdTextFields />}
             label="编辑歌词"
             onClick={() =>
@@ -319,6 +326,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           />
         ) : null}
         <MenuItem
+          style={itemStyle}
           icon={<MdGroup />}
           label="编辑歌手列表"
           onClick={() =>
@@ -360,6 +368,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
+          style={itemStyle}
           icon={<MdOutlineFilePresent />}
           label="编辑音乐文件"
           onClick={() =>
@@ -393,6 +402,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
+          style={itemStyle}
           icon={<MdCallSplit />}
           label="编辑二次创作来源"
           onClick={() =>
@@ -428,6 +438,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
+          style={itemStyle}
           icon={<MdOutlineCalendarToday />}
           label="编辑发行年份"
           onClick={() =>
@@ -467,6 +478,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
           }
         />
         <MenuItem
+          style={itemStyle}
           icon={<MdDelete style={dangerousIconStyle} />}
           label="删除"
           onClick={() => {

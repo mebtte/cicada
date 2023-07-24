@@ -39,7 +39,7 @@ export default async (ctx: Context) => {
 
   const musicbill = await getMusicbillById(id, [MusicbillProperty.USER_ID]);
   if (!musicbill || musicbill.userId !== ctx.user.id) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
 
   await Promise.all([

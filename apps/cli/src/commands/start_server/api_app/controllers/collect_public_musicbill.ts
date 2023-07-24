@@ -26,10 +26,10 @@ export default async (ctx: Context) => {
     }),
   ]);
   if (!musicbill || !musicbill.public) {
-    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
   if (musicbillCollection) {
-    return ctx.except(ExceptionCode.COLLECT_MUSICBILL_REPEATLY);
+    return ctx.except(ExceptionCode.CAN_NOT_COLLECT_MUSICBILL_REPEATLY);
   }
 
   await getDB().run(

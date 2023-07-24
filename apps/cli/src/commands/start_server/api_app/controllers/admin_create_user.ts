@@ -6,7 +6,6 @@ import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
 import { sendEmail } from '@/platform/email';
 import { getUserByEmail } from '@/db/user';
-import { BRAND_NAME } from '#/constants';
 import { UserProperty } from '@/constants/db_definition';
 import { Context } from '../constants';
 
@@ -45,13 +44,14 @@ export default async (ctx: Context) => {
 
   const user = await getUserByEmail(email, [UserProperty.ID]);
   if (user) {
-    return ctx.except(ExceptionCode.EMAIL_EXISTED);
+    return ctx.except(ExceptionCode.EMAIL_ALREADY_REGISTERED);
   }
 
   await sendEmail({
     to: email,
-    title: `欢迎使用${BRAND_NAME}`,
+    title: `欢迎使用${ctx.t('cicada')}`,
     html: generateEmailHtml({ accessOrigin }),
+    fromName: ctx.t('cicada'),
   });
 
   const id = generateRandomInteger(1_0000, 1000_0000).toString();

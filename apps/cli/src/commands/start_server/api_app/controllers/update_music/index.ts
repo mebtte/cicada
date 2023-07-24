@@ -52,7 +52,7 @@ export default async (ctx: Context) => {
     MusicProperty.YEAR,
   ]);
   if (!music || (!ctx.user.admin && music.createUserId !== ctx.user.id)) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_EXIST);
+    return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
   }
 
   await KEY_MAP_HANDLER[key as AllowUpdateKey]({ ctx, music, value });

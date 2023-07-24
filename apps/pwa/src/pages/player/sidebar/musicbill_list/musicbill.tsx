@@ -7,9 +7,10 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import { Musicbill as MusicbillType } from '../../constants';
 import MusicbillCover from '../../components/musicbill_cover';
 
-const COVER_SIZE = 28;
+const COVER_SIZE = 26;
 const Style = styled(NavLink)`
-  padding: 5px 20px;
+  padding: 5px 10px;
+  margin: 0 10px;
 
   display: flex;
   align-items: center;

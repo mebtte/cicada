@@ -17,7 +17,7 @@ export default async ({ ctx, music, value }: Parameter) => {
   }
   const assetExist = await exist(getAssetFilePath(value, AssetType.MUSIC));
   if (!assetExist) {
-    return ctx.except(ExceptionCode.ASSET_NOT_EXIST);
+    return ctx.except(ExceptionCode.ASSET_NOT_EXISTED);
   }
   await Promise.all([
     updateMusic({ id: music.id, property: MusicProperty.ASSET, value }),
