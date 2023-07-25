@@ -1,6 +1,6 @@
-# 知了
+# Cicada
 
-知了, 支持多用户的开源音乐服务.
+A multi-user music service for self-hosting.
 
 ![version](https://img.shields.io/github/v/release/mebtte/cicada?style=for-the-badge)
 ![release build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/build_and_release.yaml?label=release%20build&style=for-the-badge)
@@ -13,26 +13,27 @@
 ![](./docs/thumbnail_4.png)
 ![](./docs/thumbnail_5.png)
 
-## 特色
+## Features
 
-- **尊重隐私, 不进行任何数据收集**
-- 支持多用户
-- 支持用户间共享乐单
-- 支持导入现有音乐目录/文件
-- 支持 [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps), 同时适配桌面端和移动端
-- 播放列表/播放队列分离, 可定制播放队列
-- 支持标注音乐创作来源(翻唱)
-- 支持歌词/歌名/歌手/乐单搜索
-- 支持系统媒体和系统快捷键
-- 暴露 [HTTP API](./apps/pwa/src/server) 支持第三方接入或进行二次开发
+- No privacy and personal data collection
+- Multiple users
+- Shared musicbill between users
+- Existing music and music directory import
+- [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps) support both desktop and mobile
+- Separation of playlist and custom playqueue
+- Music/singer/musicbill/lyric search
+- [System media shortcut](https://developer.mozilla.org/docs/Web/API/MediaSession)
+- Support of building APP from [HTTP API](./apps/pwa/src/server)
 
-## 准备
+## Preparation
 
-- **[邮件发送服务](https://zh.wikipedia.org/wiki/%E7%AE%80%E5%8D%95%E9%82%AE%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE)**, 知了使用邮箱验证码进行登录以及部分功能依赖邮箱实现. 使用邮箱验证码登录可以极大地提高安全性, 相比账号密码的登录方式, 邮箱验证码登录可以避免被暴力破解. 第三方邮件发送服务可以参考 [网易邮箱](https://note.youdao.com/ynoteshare/index.html?id=f9fef46114fb922b45460f4f55d96853) / [QQ 邮箱](https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256) / [Outlook 邮箱](https://support.microsoft.com/zh-cn/office/pop-imap-%E5%92%8C-smtp-%E8%AE%BE%E7%BD%AE-8361e398-8af4-4e97-b147-6c6c4ac95353).
+### Email service
 
-## 部署
+Cicada rely on email to send login-code to user, it can prevent password from being brute-forced. You can use free email like [Gmail](https://mail.google.com) or [Outlook](https://outlook.live.com).
 
-新建配置文件 `config.json`:
+## Deployment
+
+Create a JSON file `config.json` and enter email's `SMTP` config:
 
 ```json
 {
@@ -42,16 +43,18 @@
 }
 ```
 
-> 完整配置可以参看[配置项](./docs/config/index.md), 支持 JSON/[JSON5](https://json5.org) 语法.
+> Refer to all of configurations on [here](./docs/config/index.md)
 
-在 [Releases](https://github.com/mebtte/cicada/releases) 下载并解压对应平台的二进制包, 通过下面命令指定配置文件并启动服务:
+Download cicada from [releases](https://github.com/mebtte/cicada/releases) and start server:
+
+> If your platform isn't x64, you can [build cicada](./docs/build/index.md) by yourself
 
 ```sh
-# 首次运行将会提示输入首位用户邮箱
+# It will prompt you to enter admin's email on first run
 ./cicada start -c config.json
 ```
 
-通过 `localhost:8000` 或者 `{{ip}}:8000` 访问知了服务. 目前只提供了几种主流平台的构建包, 其他平台可以参考[构建文档](./docs/build/index.md)自行构建.
+Open `localhost:8000` or `{{ip}}:8000` and use the email that you enter on cli to login.
 
 ### Docker
 
