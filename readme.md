@@ -120,19 +120,34 @@ cicada import --data /path_to/cicada_data music
 
 v0 升级到 v1 需要对数据进行升级后才能启动服务:
 
-```bash
+```sh
 # 进行数据升级前请先备份
 cicada data-upgrade <data>
 ```
 
 也可以通过 Docker 执行:
 
-```bash
+```sh
 # 默认使用 root 用户, 也可以使用 --user {uid}:{gid} 指定
 docker run -it --rm -v <data>:/data mebtte/cicada cicada data-upgrade /data
 ```
 
 如果不想升级到 v1, 请继续使用 [v0](https://github.com/mebtte/cicada/releases/tag/0.78.1) 版本的包或 Docker 镜像使用标签 `mebtte/cicada:v0`.
+
+## 数据修复
+
+由于已知问题的存在, 旧版本的知了一定情况下会导致数据出错, 可以通过 `data-fix` 命令进行修复:
+
+```sh
+cicada data-fix <data>
+```
+
+也可以通过 Docker 执行:
+
+```sh
+# 默认使用 root 用户, 也可以使用 --user {uid}:{gid} 指定
+docker run -it --rm -v <data>:/data mebtte/cicada cicada data-fix /data
+```
 
 ## 常见问题
 
