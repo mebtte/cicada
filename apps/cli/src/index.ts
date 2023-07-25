@@ -6,6 +6,7 @@ import definition from './definition';
 import startServer from './commands/start_server';
 import importMusic from './commands/import_music';
 import dataUpgrade from './commands/data_upgrade';
+import dataFix from './commands/data_fix';
 import { FIRST_USER_ID } from './constants';
 
 const program = new Command()
@@ -64,6 +65,24 @@ program
       return exitWithMessage(`[ ${absoluteData} ] not exist`);
     }
     return dataUpgrade({ data: absoluteData });
+  });
+
+/**
+ * 数据修复
+ * @author mebtte<hi@mebtte.com>
+ */
+program
+  .command('data-fix')
+  .description('fix data')
+  .argument('<data>', 'cicada data directory')
+  .action((data: string) => {
+    const absoluteData = path.isAbsolute(data)
+      ? data
+      : path.resolve(process.cwd(), data);
+    if (!fs.existsSync(absoluteData)) {
+      return exitWithMessage(`[ ${absoluteData} ] not exist`);
+    }
+    return dataFix({ data: absoluteData });
   });
 
 /**
