@@ -10,8 +10,6 @@ A multi-user music service for self-hosting.
 ![](./docs/thumbnail_1.png)
 ![](./docs/thumbnail_2.png)
 ![](./docs/thumbnail_3.png)
-![](./docs/thumbnail_4.png)
-![](./docs/thumbnail_5.png)
 
 ## Features
 
