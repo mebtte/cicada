@@ -11,10 +11,10 @@
         "-r",
         "${workspaceFolder}/node_modules/tsconfig-paths/register"
       ],
-      "args": ["${workspaceFolder}/apps/server/dev.ts"],
+      "args": ["${workspaceFolder}/apps/cli/dev_server.ts"],
       "cwd": "${workspaceFolder}",
       "env": {
-        "TS_NODE_PROJECT": "${workspaceFolder}/apps/server/tsconfig.json"
+        "TS_NODE_PROJECT": "${workspaceFolder}/apps/cli/tsconfig.json"
       }
     }
   ]

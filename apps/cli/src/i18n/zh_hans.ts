@@ -40,6 +40,11 @@ const zhHans: {
   repeated_shared_musicbill_invitation: '重复的共享乐单邀请',
   no_permission_to_delete_musicbill_shared_user: '没有权限删除共享乐单用户',
   shared_musicbill_invitation_not_existed: '共享乐单邀请不存在',
+  login_code: '登录验证码',
+  login_code_email_content:
+    '你刚刚尝试登录, 本次登录验证码是 %s1, %s2 分钟内有效.',
+  welcome_to: '欢迎使用%s1',
+  new_user_email_content: '你可以使用当前邮箱登录%s1了.',
 };
 
 export default zhHans;

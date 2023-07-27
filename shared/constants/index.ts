@@ -34,19 +34,19 @@ export const ASSET_TYPE_MAP: Record<
 > = {
   [AssetType.SINGER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 1,
+    maxSize: 1024 * 1024 * 2,
   },
   [AssetType.MUSICBILL_COVER]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 1,
+    maxSize: 1024 * 1024 * 2,
   },
   [AssetType.MUSIC_COVER]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 1,
+    maxSize: 1024 * 1024 * 2,
   },
   [AssetType.USER_AVATAR]: {
     acceptTypes: ['image/jpeg'],
-    maxSize: 1024 * 1024 * 1,
+    maxSize: 1024 * 1024 * 2,
   },
   [AssetType.MUSIC]: {
     acceptTypes: [
@@ -94,6 +94,7 @@ export const SINGER_MODIFY_RECORD_TTL = 1000 * 60 * 60 * 24 * 180;
 export enum Language {
   EN = 'en',
   ZH_HANS = 'zh-hans',
+  JA = 'ja',
 }
 export const DEFAULT_LANGUAGE = Language.EN;
 

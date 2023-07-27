@@ -39,4 +39,9 @@ export default {
     'no permission to delete musicbill shared user',
   shared_musicbill_invitation_not_existed:
     'shared_musicbill_invitation_not_existed',
+  login_code: 'login code',
+  login_code_email_content:
+    'your login code is %s1, you can use it within %s2 minutes.',
+  welcome_to: 'welcome to %s1',
+  new_user_email_content: 'now you can use current email to login on %s1.',
 };

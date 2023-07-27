@@ -6,20 +6,10 @@ import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
 import { sendEmail } from '@/platform/email';
 import { getUserByEmail } from '@/db/user';
-import { UserProperty } from '@/constants/db_definition';
+import { USER_TABLE_NAME, UserProperty } from '@/constants/db_definition';
+import capitalize from '#/utils/capitalize';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { Context } from '../constants';
-
-const generateEmailHtml = ({ accessOrigin }: { accessOrigin: string }) => `Hi,
-  <br>
-  <br>
-  已成功为您创建账号, 现在可以使用当前邮箱登录到「<a href="${accessOrigin}">知了</a>」.
-  <br>
-  如果使用中有任何问题或者建议, 可以通过 <a href="https://github.com/mebtte/cicada">Issue</a> 进行反馈.
-  <br>
-  <br>
-  知了
-  <br>
-  ${day(new Date()).format('YYYY-MM-DD HH:mm')}`;
 
 export default async (ctx: Context) => {
   const {
@@ -49,15 +39,32 @@ export default async (ctx: Context) => {
 
   await sendEmail({
     to: email,
-    title: `欢迎使用${ctx.t('cicada')}`,
-    html: generateEmailHtml({ accessOrigin }),
-    fromName: ctx.t('cicada'),
+    title: upperCaseFirstLetter(
+      ctx.t('welcome_to', capitalize(ctx.t('cicada'))),
+    ),
+    html: `
+      Hi,
+      <br>
+      <br>
+      ${upperCaseFirstLetter(
+        ctx.t(
+          'new_user_email_content',
+          `<a href="${accessOrigin}">${ctx.t('cicada')}</a>`,
+        ),
+      )}
+      <br>
+      <br>
+      ${capitalize(ctx.t('cicada'))}
+      <br>
+      ${day(new Date()).format('YYYY-MM-DD HH:mm')}
+    `,
+    fromName: capitalize(ctx.t('cicada')),
   });
 
   const id = generateRandomInteger(1_0000, 1000_0000).toString();
   await getDB().run(
     `
-      INSERT INTO user ( id, email, nickname, joinTimestamp, remark )
+      INSERT INTO ${USER_TABLE_NAME} ( ${UserProperty.ID}, ${UserProperty.EMAIL}, ${UserProperty.NICKNAME}, ${UserProperty.JOIN_TIMESTAMP}, ${UserProperty.REMARK} )
       VALUES ( ?, ?, ?, ?, ? )
     `,
     [id, email, id, Date.now(), remark],

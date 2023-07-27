@@ -3,6 +3,8 @@ import Input from '@/components/input';
 import { useEffect, useState } from 'react';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
+import { t } from '@/i18n';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { FILTER_HEIGHT } from './constants';
 
 const Style = styled.div`
@@ -49,7 +51,7 @@ function Filter() {
         inputProps={{
           value: keyword,
           onChange: (event) => setKeyword(event.target.value),
-          placeholder: '乐单内查找',
+          placeholder: upperCaseFirstLetter(t('find_in_musicbill')),
         }}
       />
     </Style>
