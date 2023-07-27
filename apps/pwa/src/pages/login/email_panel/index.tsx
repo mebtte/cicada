@@ -50,7 +50,7 @@ function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
             captchaId,
             captchaValue,
           });
-          notice.info(t('login_code_has_emailed'));
+          notice.info(t('login_code_emailed'));
           toNext(email);
         } catch (error) {
           logger.error(error, 'Failed to get login code');

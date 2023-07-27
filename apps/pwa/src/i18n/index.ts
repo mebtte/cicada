@@ -8,17 +8,21 @@ switch (setting.get().language) {
     ({ default: translation } = await import('./zh_hans'));
     break;
   }
+  case Language.JA: {
+    ({ default: translation } = await import('./ja'));
+    break;
+  }
   default: {
     ({ default: translation } = await import('./en'));
   }
 }
 
 export function t(key: Key, ...args: string[]) {
-  const value = translation[key];
+  let value = translation[key];
 
   if (args.length) {
     for (let i = 0; i < args.length; i += 1) {
-      value.replace(`%s${i + 1}`, args[i]);
+      value = value.replace(`%s${i + 1}`, args[i]);
     }
   }
 
@@ -33,6 +37,7 @@ export const LANGUAGE_MAP: Record<
 > = {
   [Language.EN]: { label: 'english' },
   [Language.ZH_HANS]: { label: '简体中文' },
+  [Language.JA]: { label: '日本語' },
 };
 
 export { Key };

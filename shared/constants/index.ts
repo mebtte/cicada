@@ -94,6 +94,7 @@ export const SINGER_MODIFY_RECORD_TTL = 1000 * 60 * 60 * 24 * 180;
 export enum Language {
   EN = 'en',
   ZH_HANS = 'zh-hans',
+  JA = 'ja',
 }
 export const DEFAULT_LANGUAGE = Language.EN;
 

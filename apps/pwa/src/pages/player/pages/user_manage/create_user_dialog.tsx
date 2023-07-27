@@ -7,6 +7,7 @@ import notice from '@/utils/notice';
 import { EMAIL } from '#/constants/regexp';
 import logger from '@/utils/logger';
 import adminCreateUser from '@/server/api/admin_create_user';
+import { t } from '@/i18n';
 import e, { EventType } from './eventemitter';
 import { ZIndex } from '../../constants';
 
@@ -33,11 +34,8 @@ function CreateUserDialog() {
 
   const [loading, setLoading] = useState(false);
   const onCreate = async () => {
-    if (!email) {
-      return notice.error('请输入邮箱');
-    }
-    if (!EMAIL.test(email)) {
-      return notice.error('邮箱格式错误');
+    if (!email || !EMAIL.test(email)) {
+      return notice.error(t('please_enter_valid_email'));
     }
 
     setLoading(true);
@@ -47,11 +45,11 @@ function CreateUserDialog() {
         remark: remark.replace(/\s+/g, ' ').trim(),
       });
 
-      notice.info('已创建用户');
+      notice.info(t('user_created'));
       onClose();
       e.emit(EventType.RELOAD_DATA, null);
     } catch (error) {
-      logger.error(error, '创建用户失败');
+      logger.error(error, 'Failed to create user');
       notice.error(error.message);
     }
     setLoading(false);
@@ -67,10 +65,10 @@ function CreateUserDialog() {
   return (
     <Dialog open={open} maskProps={maskProps}>
       <Container>
-        <Title>创建用户</Title>
+        <Title>{t('create_user')}</Title>
         <StyledContent>
           <Input
-            label="邮箱"
+            label={t('email')}
             inputProps={{
               value: email,
               onChange: onEmailChange,
@@ -78,24 +76,23 @@ function CreateUserDialog() {
             }}
           />
           <Input
-            label="备注"
+            label={t('remark')}
             inputProps={{
               value: remark,
               onChange: onRemarkChange,
-              placeholder: '可选',
             }}
           />
         </StyledContent>
         <Action>
           <Button onClick={onClose} disabled={loading}>
-            取消
+            {t('cancel')}
           </Button>
           <Button
             variant={Variant.PRIMARY}
             loading={loading}
             onClick={onCreate}
           >
-            创建
+            {t('create')}
           </Button>
         </Action>
       </Container>

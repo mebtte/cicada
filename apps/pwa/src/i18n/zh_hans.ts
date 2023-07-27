@@ -17,7 +17,7 @@ const zhCN: {
   please_enter_valid_email: '请输入合法的邮箱',
   captcha: '验证码',
   get_login_code: '获取登录验证码',
-  login_code_has_emailed: '登录验证码已经发送到邮箱',
+  login_code_emailed: '登录验证码已发送到邮箱',
   change_language_question: '更换语言将会重新加载应用, 是否继续?',
   relative_volume: '相对音量',
   music_play_record_short: '播放记录',
@@ -37,6 +37,10 @@ const zhCN: {
   create_at: '创建于',
   no_music_in_musicbill: '乐单暂无音乐',
   find_in_musicbill: '乐单内查找',
+  user_created: '用户已创建',
+  create_user: '创建用户',
+  remark: '备注',
+  create: '创建',
 };
 
 export default zhCN;
