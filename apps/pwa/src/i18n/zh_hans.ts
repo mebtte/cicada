@@ -34,6 +34,9 @@ const zhCN: {
   login_code: '登录验证码',
   please_enter_login_code: '请输入登录验证码',
   welcome_back: '欢迎回来',
+  create_at: '创建于',
+  no_music_in_musicbill: '乐单暂无音乐',
+  find_in_musicbill: '乐单内查找',
 };
 
 export default zhCN;

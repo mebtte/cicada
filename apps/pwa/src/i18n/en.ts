@@ -32,4 +32,7 @@ export default {
   login_code: 'login code',
   please_enter_login_code: 'please enter login code',
   welcome_back: 'welcome back',
+  create_at: 'create at',
+  no_music_in_musicbill: 'no music in musicbill',
+  find_in_musicbill: 'find in musicbill',
 };

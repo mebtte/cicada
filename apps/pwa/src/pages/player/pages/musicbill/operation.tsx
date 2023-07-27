@@ -8,6 +8,8 @@ import {
 } from 'react-icons/md';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
+import { t } from '@/i18n';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -34,7 +36,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
                   musicList,
                 },
               )
-            : notice.error('乐单暂无音乐')
+            : notice.error(upperCaseFirstLetter(t('no_music_in_musicbill')))
         }
       >
         <MdPlaylistAdd />

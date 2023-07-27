@@ -11,6 +11,9 @@ import generateRandomInteger from '#/utils/generate_random_integer';
 import { sendEmail } from '@/platform/email';
 import day from '#/utils/day';
 import { getConfig } from '@/config';
+import capitalize from '#/utils/capitalize';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import { User, UserProperty, USER_TABLE_NAME } from '@/constants/db_definition';
 import { LOGIN_CODE_TTL } from '../../../../constants';
 import { Context } from '../constants';
 
@@ -40,13 +43,15 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.CAPTCHA_ERROR);
   }
 
-  const user = await getDB().get<{ id: string; nickname: string }>(
+  const user = await getDB().get<
+    Pick<User, UserProperty.ID | UserProperty.NICKNAME>
+  >(
     `
       SELECT
-        id,
-        nickname
-      FROM user
-      WHERE email = ?
+        ${UserProperty.ID},
+        ${UserProperty.NICKNAME}
+      FROM ${USER_TABLE_NAME}
+      WHERE ${UserProperty.EMAIL} = ?
     `,
     [email],
   );
@@ -70,26 +75,29 @@ export default async (ctx: Context) => {
   if (getConfig().mode === 'development') {
     // eslint-disable-next-line no-console
     console.log(`\n--- user id: ${user.id}, login code: ${code} ---\n`);
-  } else {
-    await sendEmail({
-      to: email,
-      title: `「${ctx.t('cicada')}」登录验证码`,
-      html: `
+  }
+  await sendEmail({
+    to: email,
+    title: capitalize(`${ctx.t('cicada')} ${ctx.t('login_code')}`),
+    html: `
         Hi, 「${encode(user.nickname)}」,
         <br />
         <br />
-        你刚刚尝试登录, 本次登录验证码是「<code>${code}</code>」, ${
-        LOGIN_CODE_TTL / 1000 / 60
-      } 分钟内有效.
+        ${upperCaseFirstLetter(
+          ctx.t(
+            'login_code_email_content',
+            `<code>${code}</code>`,
+            (LOGIN_CODE_TTL / 1000 / 60).toString(),
+          ),
+        )}
         <br />
         <br />
-        ${ctx.t('cicada')}
+        ${capitalize(ctx.t('cicada'))}
         <br />
         ${day().format('YYYY-MM-DD HH:mm:ss')}
       `,
-      fromName: ctx.t('cicada'),
-    });
-  }
+    fromName: capitalize(ctx.t('cicada')),
+  });
 
   /**
    * 如果 Promise.all 发送邮件和写入数据库

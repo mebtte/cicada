@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import day from '#/utils/day';
 import { CSSVariable } from '@/global_style';
 import getResizedImage from '@/server/asset/get_resized_image';
+import { t } from '@/i18n';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { Musicbill } from '../../constants';
 import { INFO_HEIGHT } from './constants';
 import Operation from './operation';
@@ -35,6 +37,7 @@ const Style = styled.div`
     > .create-time {
       font-size: 12px;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+      ${upperCaseFirstLetter}
     }
   }
 `;
@@ -51,7 +54,8 @@ function Info({ musicbill }: { musicbill: Musicbill }) {
       <div className="info">
         <div className="name">{musicbill.name}</div>
         <div className="create-time">
-          创建于 {day(musicbill.createTimestamp).format('YYYY-MM-DD HH:mm')}
+          {t('create_at')}{' '}
+          {day(musicbill.createTimestamp).format('YYYY-MM-DD HH:mm')}
         </div>
         <Operation musicbill={musicbill} />
       </div>
