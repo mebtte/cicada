@@ -7,9 +7,7 @@ A multi-user music service for self-hosting.
 ![docker build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/docker_build_and_push.yaml?label=docker%20build&style=for-the-badge)
 ![license](https://img.shields.io/github/license/mebtte/cicada?style=for-the-badge)
 
-![](./docs/thumbnail_1.png)
-![](./docs/thumbnail_2.png)
-![](./docs/thumbnail_3.png)
+![](./docs/screenshot.png)
 
 ## Features
 
