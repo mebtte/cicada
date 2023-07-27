@@ -39,7 +39,7 @@ Create a JSON file `config.json` and enter email's `SMTP` config:
 }
 ```
 
-> Refer to all of configurations on [here](./docs/config/index.md)
+> Refer to all of configurations on [here](./docs/configuration/index.md)
 
 Download cicada from [releases](https://github.com/mebtte/cicada/releases) and start server:
 
