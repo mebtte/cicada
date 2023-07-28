@@ -46,11 +46,11 @@ function CaptchaContent({
   const [confirming, setConfirming] = useState(false);
   const onConfirm = useEvent(() => {
     if (!captchaData.data) {
-      return notice.error('请等待验证码加载完毕');
+      return notice.error(t('wrong_captcha'));
     }
 
     if (!captchaValue) {
-      return notice.error('请输入验证码');
+      return notice.error(t('please_enter_captcha'));
     }
 
     setConfirming(true);

@@ -39,4 +39,27 @@ export default {
   create_user: 'create user',
   remark: 'remark',
   create: 'create',
+  please_enter_captcha: 'please enter captcha',
+  wrong_captcha: 'wrong captcha',
+  delete_user: 'delete user',
+  delete_user_question: 'are you sure to delete user ?',
+  delete_user_question_content:
+    'the music/singer current user created will transfer to your account after deleting',
+  set_as_admin: 'set as admin',
+  set_as_admin_question: 'are you sure to set this user as admin ?',
+  set_as_admin_question_content:
+    "the privilege of current user is same as your and the user can't be deleted after setting as admin",
+  save: 'save',
+  maximum_amount_of_musicbill: 'maximum amount of musicbill',
+  maximum_amount_of_creating_music_per_day:
+    'maximum amount of creating music per day',
+  music_play_record_indate: 'music play record indate',
+  should_be_greater_than: '%s1 should be greater than %s2',
+  should_be_greater_than_or_equal_to:
+    '%s1 should be greater than or equal to %s2',
+  should_be_less_than_or_equal_to: '%s1 should be less than or equal to %s2',
+  length_of: 'length of %s1',
+  nickname: 'nickname',
+  join_time: 'join time',
+  zero_means_unlimited: '0 means unlimited',
 };

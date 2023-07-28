@@ -41,6 +41,27 @@ const zhCN: {
   create_user: '创建用户',
   remark: '备注',
   create: '创建',
+  please_enter_captcha: '请输入验证码',
+  wrong_captcha: '错误的验证码',
+  delete_user: '删除用户',
+  delete_user_question: '确定删除用户吗?',
+  delete_user_question_content:
+    '删除用户后, 其创建的音乐/歌手将会转移到你的账号下',
+  set_as_admin: '设为管理员',
+  set_as_admin_question: '确定设为管理员吗?',
+  set_as_admin_question_content:
+    '成为管理员后账号将无法被删除, 以及拥有和你一样的权限且无法被撤销管理员身份',
+  save: '保存',
+  maximum_amount_of_musicbill: '乐单最大数量',
+  maximum_amount_of_creating_music_per_day: '每天创建音乐最大数量',
+  music_play_record_indate: '音乐播放记录保留天数',
+  should_be_greater_than: '%s1应该大于%s2',
+  should_be_greater_than_or_equal_to: '%s1应该大于等于%s2',
+  should_be_less_than_or_equal_to: '%s1应该小于等于%s2',
+  length_of: '%s1长度',
+  nickname: '昵称',
+  join_time: '加入时间',
+  zero_means_unlimited: '0表示无限制',
 };
 
 export default zhCN;
