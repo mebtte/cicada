@@ -2,7 +2,7 @@ import XState from '@/utils/x_state';
 import storage, { Key } from '@/storage';
 import { Setting } from '@/constants/setting';
 import logger from '@/utils/logger';
-import { DEFAULT_LANGUAGE, Language } from '#/constants';
+import { DEFAULT_LANGUAGE, LANGUAGES, Language } from '#/constants';
 
 function getInitialLanguage() {
   switch (window.navigator.language.toLowerCase()) {
@@ -26,6 +26,17 @@ const setting = new XState<Setting>({
   ...DEFAULT_SETTING,
   ...initialSetting,
 });
+
+/**
+ * correct language
+ * @author mebtte<hi@mebtte.com>
+ */
+if (!LANGUAGES.includes(setting.get().language)) {
+  setting.set((s) => ({
+    ...s,
+    language: DEFAULT_LANGUAGE,
+  }));
+}
 
 setting.onChange((s) =>
   storage

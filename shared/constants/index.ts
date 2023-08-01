@@ -96,6 +96,7 @@ export enum Language {
   ZH_HANS = 'zh-hans',
   JA = 'ja',
 }
+export const LANGUAGES = Object.values(Language);
 export const DEFAULT_LANGUAGE = Language.EN_US;
 
 export enum CommonQuery {
