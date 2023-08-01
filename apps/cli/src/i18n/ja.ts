@@ -1,10 +1,10 @@
 import { Key } from './constants';
-import en from './en';
+import enUS from './en_us';
 
 const ja: {
   [key in Key]: string;
 } = {
-  ...en,
+  ...enUS,
 };
 
 export default ja;

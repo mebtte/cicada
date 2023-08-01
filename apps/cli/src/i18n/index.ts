@@ -1,11 +1,11 @@
 import { Language } from '#/constants';
 import { Key } from './constants';
-import en from './en';
+import enUS from './en_us';
 import zhHans from './zh_hans';
 import ja from './ja';
 
-const LANGUAGE_MAP: Record<Language, typeof en> = {
-  [Language.EN]: en,
+const LANGUAGE_MAP: Record<Language, typeof enUS> = {
+  [Language.EN_US]: enUS,
   [Language.ZH_HANS]: zhHans,
   [Language.JA]: ja,
 };

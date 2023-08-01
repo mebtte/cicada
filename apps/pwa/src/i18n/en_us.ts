@@ -62,4 +62,11 @@ export default {
   nickname: 'nickname',
   join_time: 'join time',
   zero_means_unlimited: '0 means unlimited',
+  delete_music: 'delete music',
+  delete: 'delete',
+  music_forked_by_other_can_not_be_deleted:
+    'music forked by other can not be deleted',
+  year_of_issue: 'year of issue',
+  edit_year_of_issue: 'edit year of issue',
+  year_of_issue_limit: 'year of issue should be between %s1 and %s2',
 };
