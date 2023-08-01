@@ -68,6 +68,16 @@ const zhCN: {
   year_of_issue: '发行年份',
   edit_year_of_issue: '编辑发行年份',
   year_of_issue_limit: '发行年份应在 %s1 - %s2 之间',
+  edit_avatar: '编辑头像',
+  please_select_an_avatar: '请选择一个头像',
+  reset_avatar: '重置头像',
+  reset_avatar_question: '确定重置头像吗?',
+  edit_name: '编辑名字',
+  name: '名字',
+  please_enter_the_name: '请输入名字',
+  edit_alias: '编辑别名',
+  alias: '别名',
+  view_modify_record: '查看修改记录',
 };
 
 export default zhCN;

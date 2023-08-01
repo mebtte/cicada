@@ -20,6 +20,7 @@ import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
+import { t } from '@/i18n';
 import { ZIndex } from '../constants';
 import e, { EventType } from './eventemitter';
 import { Singer } from './constants';
@@ -65,13 +66,13 @@ function EditMenu({ singer }: { singer: Singer }) {
         <MenuItem
           style={itemStyle}
           icon={<MdImage />}
-          label="编辑头像"
+          label={t('edit_avatar')}
           onClick={() =>
             dialog.imageCut({
-              title: '编辑头像',
+              title: t('edit_avatar'),
               onConfirm: async (blob) => {
                 if (!blob) {
-                  notice.error('请选择头像');
+                  notice.error(t('please_select_an_avatar'));
                   return false;
                 }
                 try {
@@ -88,7 +89,7 @@ function EditMenu({ singer }: { singer: Singer }) {
                     id: singer.id,
                   });
                 } catch (error) {
-                  logger.error(error, "Updating singer's avatar fail");
+                  logger.error(error, "Failed to update singers'avatar");
                   notice.error(error.message);
                   return false;
                 }
@@ -100,11 +101,10 @@ function EditMenu({ singer }: { singer: Singer }) {
           <MenuItem
             style={itemStyle}
             icon={<MdImage />}
-            label="重置头像"
+            label={t('reset_avatar')}
             onClick={() =>
               dialog.confirm({
-                title: '确定重置头像吗?',
-                content: '重置后歌手将使用默认头像',
+                title: t('reset_avatar_question'),
                 onConfirm: async () => {
                   try {
                     await updateSinger({
@@ -116,7 +116,7 @@ function EditMenu({ singer }: { singer: Singer }) {
                       id: singer.id,
                     });
                   } catch (error) {
-                    logger.error(error, '重置歌手头像失败');
+                    logger.error(error, "Failed to reset singer's avatar");
                     dialog.alert({
                       content: error.message,
                     });
@@ -130,17 +130,17 @@ function EditMenu({ singer }: { singer: Singer }) {
         <MenuItem
           style={itemStyle}
           icon={<MdTitle />}
-          label="编辑名字"
+          label={t('edit_name')}
           onClick={() =>
             dialog.input({
-              title: '编辑名字',
-              label: '名字',
+              title: t('edit_name'),
+              label: t('name'),
               initialValue: singer.name,
               maxLength: NAME_MAX_LENGTH,
               onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName) {
-                  notice.error('请输入名字');
+                  notice.error(t('please_enter_the_name'));
                   return false;
                 }
                 if (singer.name !== trimmedName) {
@@ -154,7 +154,7 @@ function EditMenu({ singer }: { singer: Singer }) {
                       id: singer.id,
                     });
                   } catch (error) {
-                    logger.error(error, '更新歌手名字失败');
+                    logger.error(error, "Failed to update singer's name");
                     notice.error(error.message);
                     return false;
                   }
@@ -166,11 +166,11 @@ function EditMenu({ singer }: { singer: Singer }) {
         <MenuItem
           style={itemStyle}
           icon={<MdTextFields />}
-          label="编辑别名"
+          label={t('edit_alias')}
           onClick={() =>
             dialog.inputList({
-              title: '编辑别名',
-              label: '别名',
+              title: t('edit_alias'),
+              label: t('alias'),
               initialValue: singer.aliases,
               maxLength: ALIAS_MAX_LENGTH,
               onConfirm: async (aliases: string[]) => {
@@ -189,7 +189,7 @@ function EditMenu({ singer }: { singer: Singer }) {
                       id: singer.id,
                     });
                   } catch (error) {
-                    logger.error(error, "Updating singer's aliases fail");
+                    logger.error(error, "Failed to update singer's alias");
                     notice.error(error.message);
                     return false;
                   }
@@ -201,7 +201,7 @@ function EditMenu({ singer }: { singer: Singer }) {
         <MenuItem
           style={itemStyle}
           icon={<MdOutlineHistory />}
-          label="查看修改记录"
+          label={t('view_modify_record')}
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.OPEN_SINGER_MODIFY_RECORD_DRAWER,
