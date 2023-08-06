@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
-import mm from '@/global_states/mini_mode';
+import theme from '@/global_states/theme';
 import IconButton from '@/components/icon_button';
 import { MdMenu, MdSearch } from 'react-icons/md';
 import useNavigate from '@/utils/use_navigate';
@@ -33,7 +33,7 @@ const Style = styled.div`
 
 function Header() {
   const navigate = useNavigate();
-  const miniMode = mm.useState();
+  const { miniMode } = theme.useState();
   const title = useTitle();
   const { left, right } = useTitlebar();
 

@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import mm from '@/global_states/mini_mode';
+import theme from '@/global_states/theme';
 import { useContext } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { ZIndex } from '../constants';
@@ -60,7 +60,7 @@ function Controller() {
   } = useContext(Context);
   const queueMusic = playqueue[currentPlayqueuePosition];
 
-  const miniMode = mm.useState();
+  const { miniMode } = theme.useState();
   return (
     <Style>
       <Progress duration={audioDuration} />

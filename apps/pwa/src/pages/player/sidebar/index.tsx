@@ -1,5 +1,5 @@
 import { CSSVariable } from '@/global_style';
-import mm from '@/global_states/mini_mode';
+import theme from '@/global_states/theme';
 import styled from 'styled-components';
 import { WIDTH } from './constants';
 import Content from './content';
@@ -14,8 +14,7 @@ const Placeholder = styled.div`
 `;
 
 function Sidebar() {
-  const miniMode = mm.useState();
-  if (miniMode) {
+  if (theme.useState().miniMode) {
     return <MiniMode />;
   }
   return (

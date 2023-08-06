@@ -2,7 +2,7 @@ import { Query } from '@/constants';
 import styled, { css } from 'styled-components';
 import TabList from '@/components/tab_list';
 import useNavigate from '@/utils/use_navigate';
-import mm from '@/global_states/mini_mode';
+import theme from '@/global_states/theme';
 import Input from './input';
 import { HEADER_HEIGHT, SearchTab } from '../../constants';
 import Page from '../page';
@@ -48,14 +48,13 @@ const Style = styled(Page)`
 
 function Search() {
   const navigate = useNavigate();
-  const miniMode = mm.useState();
   const tab = useTab();
 
   return (
     <Style>
       <Content tab={tab} />
       <div className="toolbar">
-        {miniMode ? <Input /> : null}
+        {theme.useState().miniMode ? <Input /> : null}
         <TabList<SearchTab>
           current={tab}
           tabList={TAB_LIST}

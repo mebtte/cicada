@@ -10,7 +10,7 @@ import {
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
 import Input from '@/components/input';
-import mm from '@/global_states/mini_mode';
+import theme from '@/global_states/theme';
 import { Query } from '@/constants';
 import { useLocation } from 'react-router-dom';
 import parseSearch from '@/utils/parse_search';
@@ -27,7 +27,7 @@ const style: CSSProperties = {
 function Wrapper() {
   const navigate = useNavigate();
   const location = useLocation();
-  const miniMode = mm.useState();
+  const { miniMode } = theme.useState();
 
   const ref = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(null);
 
