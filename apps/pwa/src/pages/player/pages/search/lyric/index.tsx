@@ -11,6 +11,7 @@ import { Query } from '@/constants';
 import { CSSProperties, useContext } from 'react';
 import Button, { Variant } from '@/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { TOOLBAR_HEIGHT, MINI_MODE_TOOLBAR_HEIGHT } from '../constants';
 import { PAGE_SIZE } from './constants';
 import useData from './use_data';
@@ -29,6 +30,7 @@ const CardContainer = styled(Container)`
 `;
 const MusicContainer = styled(Container)`
   overflow: auto;
+  ${autoScrollbar}
 
   ${({ theme: { miniMode } }) => css`
     padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;

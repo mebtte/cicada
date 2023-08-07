@@ -3,6 +3,7 @@ import { MdDone } from 'react-icons/md';
 import { CSSProperties, HtmlHTMLAttributes } from 'react';
 import ErrorCard from '@/components/error_card';
 import preventDefault from '@/utils/prevent_default';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { Option as OptionType } from './constants';
 import Spinner from '../spinner';
 import { flexCenter } from '../../style/flexbox';
@@ -25,6 +26,7 @@ const Style = styled.div`
   > .list {
     max-height: ${OPTION_HEIGHT * 5}px;
     overflow: auto;
+    ${autoScrollbar}
   }
 `;
 const Option = styled.div<{ selected: boolean }>`

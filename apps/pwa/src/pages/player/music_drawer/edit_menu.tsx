@@ -48,6 +48,7 @@ import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { Variant } from '@/components/button';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { Music, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -90,6 +91,7 @@ const Style = styled.div`
   ${absoluteFullSize}
 
   overflow: auto;
+  ${autoScrollbar}
 `;
 const maskProps: {
   style: CSSProperties;

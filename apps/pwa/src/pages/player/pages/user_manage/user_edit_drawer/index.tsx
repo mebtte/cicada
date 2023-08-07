@@ -1,5 +1,7 @@
 import Drawer from '@/components/drawer';
 import { CSSProperties, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import autoScrollbar from '@/style/auto_scrollbar';
 import e, { EventType } from '../eventemitter';
 import { User } from '../constants';
 import { ZIndex } from '../../../constants';
@@ -13,8 +15,14 @@ const maskProps: { style: CSSProperties } = {
 const bodyProps: {
   style: CSSProperties;
 } = {
-  style: { width: 350, overflow: 'auto' },
+  style: { width: 350 },
 };
+const Content = styled.div`
+  height: 100%;
+
+  overflow: auto;
+  ${autoScrollbar}
+`;
 
 function UserEditDrawer() {
   const [open, setOpen] = useState(false);
@@ -39,7 +47,9 @@ function UserEditDrawer() {
       maskProps={maskProps}
       bodyProps={bodyProps}
     >
-      <UserEdit user={user} onClose={onClose} />
+      <Content>
+        <UserEdit user={user} onClose={onClose} />
+      </Content>
     </Drawer>
   );
 }

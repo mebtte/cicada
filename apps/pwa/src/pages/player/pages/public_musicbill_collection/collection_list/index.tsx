@@ -15,6 +15,7 @@ import WidthObserver from '@/components/width_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { CSSVariable } from '@/global_style';
 import day from '#/utils/day';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { HEADER_HEIGHT, SearchTab } from '../../../constants';
 import useCollectionList from './use_collection_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
@@ -42,6 +43,7 @@ const MusicListContainer = styled(Container)`
   padding-bottom: ${TOOLBAR_HEIGHT}px;
 
   overflow: auto;
+  ${autoScrollbar}
 
   > .list {
     margin: 0 10px;

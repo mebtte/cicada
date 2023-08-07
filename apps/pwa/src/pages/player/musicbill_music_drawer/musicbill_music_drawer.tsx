@@ -1,5 +1,7 @@
 import { CSSProperties, memo } from 'react';
 import Drawer from '@/components/drawer';
+import styled from 'styled-components';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { EventType } from '../eventemitter';
 import { MusicWithSingerAliases } from '../constants';
 import useDynamicZIndex from '../use_dynamic_z_index';
@@ -9,9 +11,14 @@ import MusicbillList from './musicbill_list';
 const bodyProps: { style: CSSProperties } = {
   style: {
     width: 300,
-    overflow: 'auto',
   },
 };
+const Content = styled.div`
+  height: 100%;
+
+  overflow: auto;
+  ${autoScrollbar}
+`;
 
 function MusicbillMusicDrawer({
   open,
@@ -31,8 +38,10 @@ function MusicbillMusicDrawer({
       maskProps={{ style: { zIndex } }}
       bodyProps={bodyProps}
     >
-      <Top music={music} />
-      <MusicbillList music={music} />
+      <Content>
+        <Top music={music} />
+        <MusicbillList music={music} />
+      </Content>
     </Drawer>
   );
 }

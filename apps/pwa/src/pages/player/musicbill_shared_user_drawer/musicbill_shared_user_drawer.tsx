@@ -11,6 +11,7 @@ import logger from '@/utils/logger';
 import { EMAIL } from '#/constants/regexp';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { CSSVariable } from '@/global_style';
+import autoScrollbar from '@/style/auto_scrollbar';
 import User from './user';
 import { Musicbill } from '../constants';
 import e, { EventType } from '../eventemitter';
@@ -20,9 +21,14 @@ import useDynamicZIndex from '../use_dynamic_z_index';
 const bodyProps: { style: CSSProperties } = {
   style: {
     width: 300,
-    overflow: 'auto',
   },
 };
+const Content = styled.div`
+  height: 100%;
+
+  overflow: auto;
+  ${autoScrollbar}
+`;
 const actionStyle: CSSProperties = {
   display: 'block',
   margin: '10px 20px',
@@ -63,76 +69,78 @@ function ShareDrawer({
       open={open}
       onClose={onClose}
     >
-      <Title>共享用户</Title>
-      <UserList>
-        <User
-          user={musicbill.owner}
-          owner
-          accepted
-          musicbillId={musicbill.id}
-        />
-        {musicbill.sharedUserList.map((u) => (
+      <Content>
+        <Title>共享用户</Title>
+        <UserList>
           <User
-            key={u.id}
-            user={u}
-            accepted={u.accepted}
-            deletable={owned}
+            user={musicbill.owner}
+            owner
+            accepted
             musicbillId={musicbill.id}
           />
-        ))}
-      </UserList>
-      <Button
-        variant={Variant.PRIMARY}
-        style={actionStyle}
-        onClick={() =>
-          dialog.input({
-            label: '邮箱',
-            confirmVariant: Variant.PRIMARY,
-            confirmText: '邀请',
-            onConfirm: async (email) => {
-              if (!email || !EMAIL.test(email)) {
-                notice.error('请输入合法的邮箱');
-                return false;
-              }
-
-              try {
-                await addMusicbillSharedUser({
-                  musicbillId: musicbill.id,
-                  email,
-                });
-                notice.info('已发出邀请');
-                e.emit(EventType.RELOAD_MUSICBILL, {
-                  id: musicbill.id,
-                  silence: true,
-                });
-              } catch (error) {
-                logger.error(error, 'Fail to invite shared user');
-                notice.error(error.message);
-                return false;
-              }
-            },
-          })
-        }
-      >
-        邀请用户
-      </Button>
-      {owned ? null : (
+          {musicbill.sharedUserList.map((u) => (
+            <User
+              key={u.id}
+              user={u}
+              accepted={u.accepted}
+              deletable={owned}
+              musicbillId={musicbill.id}
+            />
+          ))}
+        </UserList>
         <Button
-          variant={Variant.DANGER}
+          variant={Variant.PRIMARY}
           style={actionStyle}
           onClick={() =>
-            quitSharedMusicbill({
-              musicbillId: musicbill.id,
-              afterQuitted: () =>
-                navigate({
-                  path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
-                }),
+            dialog.input({
+              label: '邮箱',
+              confirmVariant: Variant.PRIMARY,
+              confirmText: '邀请',
+              onConfirm: async (email) => {
+                if (!email || !EMAIL.test(email)) {
+                  notice.error('请输入合法的邮箱');
+                  return false;
+                }
+
+                try {
+                  await addMusicbillSharedUser({
+                    musicbillId: musicbill.id,
+                    email,
+                  });
+                  notice.info('已发出邀请');
+                  e.emit(EventType.RELOAD_MUSICBILL, {
+                    id: musicbill.id,
+                    silence: true,
+                  });
+                } catch (error) {
+                  logger.error(error, 'Fail to invite shared user');
+                  notice.error(error.message);
+                  return false;
+                }
+              },
             })
           }
         >
-          退出共享
+          邀请用户
         </Button>
-      )}
+        {owned ? null : (
+          <Button
+            variant={Variant.DANGER}
+            style={actionStyle}
+            onClick={() =>
+              quitSharedMusicbill({
+                musicbillId: musicbill.id,
+                afterQuitted: () =>
+                  navigate({
+                    path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
+                  }),
+              })
+            }
+          >
+            退出共享
+          </Button>
+        )}
+      </Content>
     </Drawer>
   );
 }

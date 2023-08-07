@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import scrollbar from '@/style/scrollbar';
 import { CSSVariable } from '../global_style';
 
 const TRANSITION = {
@@ -133,6 +134,7 @@ export const Content = styled.div`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   line-height: 1.5;
   overflow: auto;
+  ${scrollbar}
 
   padding: 0 20px;
 

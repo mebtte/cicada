@@ -6,6 +6,7 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
+import autoScrollbar from '@/style/auto_scrollbar';
 import useData from './use_data';
 import { Singer } from './constants';
 import Info from './info';
@@ -30,6 +31,7 @@ const DetailContainer = styled(Container)`
     ${absoluteFullSize}
 
     overflow: auto;
+    ${autoScrollbar}
 
     > .first-screen {
       min-height: 100vh;

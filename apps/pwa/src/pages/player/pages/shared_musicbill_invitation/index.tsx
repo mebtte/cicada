@@ -8,6 +8,7 @@ import ErrorCard from '@/components/error_card';
 import { SHARED_MUSICBILL_INVITATION_MINIMAL_TTL } from '#/constants';
 import { CSSVariable } from '@/global_style';
 import { MdHelpOutline } from 'react-icons/md';
+import autoScrollbar from '@/style/auto_scrollbar';
 import useData from './use_data';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
@@ -27,6 +28,7 @@ const CenteredContainer = styled(Container)`
 `;
 const Content = styled(Container)`
   overflow: auto;
+  ${autoScrollbar}
 
   > .description {
     margin: 10px 20px;

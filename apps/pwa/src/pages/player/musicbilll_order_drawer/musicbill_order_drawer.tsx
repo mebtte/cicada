@@ -10,6 +10,8 @@ import { AllowUpdateKey } from '#/constants/user';
 import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';
+import styled from 'styled-components';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { Musicbill as MusicbillType, ZIndex } from '../constants';
 import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
@@ -24,9 +26,14 @@ const maskProps: { style: CSSProperties } = {
 const bodyProps: { style: CSSProperties } = {
   style: {
     width: 250,
-    overflow: 'auto',
   },
 };
+const Content = styled.div`
+  height: 100%;
+
+  overflow: auto;
+  ${autoScrollbar}
+`;
 const toLocalMusicbill = (musicbill: MusicbillType): LocalMusicbill => ({
   id: musicbill.id,
   cover: musicbill.cover,
@@ -108,15 +115,17 @@ function MusicbillOrderDrawer({
       maskProps={maskProps}
       bodyProps={bodyProps}
     >
-      <Top />
-      <MusicbillList
-        musicbillList={localMusicbillList}
-        updateBeforeSortStart={(s) =>
-          e.emit(EventType.BEFORE_DRAG_START, { index: s.index })
-        }
-        onSortEnd={onSortEnd}
-        pressDelay={IS_TOUCHABLE ? 250 : 0}
-      />
+      <Content>
+        <Top />
+        <MusicbillList
+          musicbillList={localMusicbillList}
+          updateBeforeSortStart={(s) =>
+            e.emit(EventType.BEFORE_DRAG_START, { index: s.index })
+          }
+          onSortEnd={onSortEnd}
+          pressDelay={IS_TOUCHABLE ? 250 : 0}
+        />
+      </Content>
     </Drawer>
   );
 }

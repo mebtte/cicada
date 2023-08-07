@@ -14,6 +14,7 @@ import { flexCenter } from '@/style/flexbox';
 import Empty from '@/components/empty';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { CSSVariable } from '@/global_style';
+import autoScrollbar from '@/style/auto_scrollbar';
 import Context from '../context';
 import TabContent from './tab_content';
 import MusicBase from '../components/music_base';
@@ -35,6 +36,7 @@ const Style = styled(TabContent)`
 
     &.list {
       overflow: auto;
+      ${autoScrollbar}
     }
 
     &.empty {
