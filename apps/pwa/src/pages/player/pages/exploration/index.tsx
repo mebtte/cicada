@@ -8,6 +8,7 @@ import WidthObserver from '@/components/width_observer';
 import Empty from '@/components/empty';
 import absoluteFullSize from '@/style/absolute_full_size';
 import getResizedImage from '@/server/asset/get_resized_image';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
 import useData from './use_data';
@@ -38,6 +39,7 @@ const StatusContainer = styled(Container)`
 `;
 const ContentContainer = styled(Container)`
   overflow: auto;
+  ${autoScrollbar}
 
   padding-bottom: env(safe-area-inset-bottom, 0);
 

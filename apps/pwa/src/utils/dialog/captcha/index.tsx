@@ -1,7 +1,14 @@
 import { Container, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import Input from '@/components/input';
-import { CSSProperties, ChangeEventHandler, useEffect, useState } from 'react';
+import {
+  CSSProperties,
+  ChangeEventHandler,
+  useEffect,
+  useState,
+  useCallback,
+  KeyboardEventHandler,
+} from 'react';
 import { t } from '@/i18n';
 import Captcha from './captcha';
 import useCaptcha from './use_captcha';
@@ -46,11 +53,11 @@ function CaptchaContent({
   const [confirming, setConfirming] = useState(false);
   const onConfirm = useEvent(() => {
     if (!captchaData.data) {
-      return notice.error('请等待验证码加载完毕');
+      return notice.error(t('wrong_captcha'));
     }
 
     if (!captchaValue) {
-      return notice.error('请输入验证码');
+      return notice.error(t('please_enter_captcha'));
     }
 
     setConfirming(true);
@@ -69,6 +76,15 @@ function CaptchaContent({
       .finally(() => setConfirming(false));
   });
 
+  const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      if (event.key === 'Enter') {
+        onConfirm();
+      }
+    },
+    [onConfirm],
+  );
+
   return (
     <Container>
       <Content style={contentStyle}>
@@ -83,6 +99,7 @@ function CaptchaContent({
             value: captchaValue,
             onChange: onCaptchaValueChange,
             autoFocus: true,
+            onKeyDown,
           }}
         />
       </Content>

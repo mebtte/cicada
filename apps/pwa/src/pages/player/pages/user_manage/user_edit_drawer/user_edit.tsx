@@ -11,6 +11,7 @@ import adminUpdateUser from '@/server/api/admin_update_user';
 import adminUpdateUserAdmin from '@/server/api/admin_update_user_admin';
 import { AdminAllowUpdateKey, REMARK_MAX_LENGTH } from '#/constants/user';
 import adminDeleteUser from '@/server/api/admin_delete_user';
+import { t } from '@/i18n';
 import { User } from '../constants';
 import e, { EventType } from '../eventemitter';
 
@@ -57,7 +58,9 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
       const musicbillMaxAmountNumber = Number(musicbillMaxAmount);
       if (user.musicbillMaxAmount !== musicbillMaxAmountNumber) {
         if (musicbillMaxAmountNumber < 0) {
-          throw new Error('乐单最大数量应大于等于 0');
+          throw new Error(
+            t('should_be_greater_than', t('maximum_amount_of_musicbill'), '0'),
+          );
         }
         await adminUpdateUser({
           id: user.id,
@@ -77,7 +80,13 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         user.createMusicMaxAmountPerDay !== createMusicMaxAmountPerDayNumber
       ) {
         if (createMusicMaxAmountPerDayNumber < 0) {
-          throw new Error('每天创建音乐最大数量应大于等于 0');
+          throw new Error(
+            t(
+              'should_be_greater_than_or_equal_to',
+              t('maximum_amount_of_creating_music_per_day'),
+              '0',
+            ),
+          );
         }
         await adminUpdateUser({
           id: user.id,
@@ -93,7 +102,13 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
       const musicPlayRecordIndateNumber = Number(musicPlayRecordIndate);
       if (user.musicPlayRecordIndate !== musicPlayRecordIndateNumber) {
         if (musicPlayRecordIndateNumber < 0) {
-          throw new Error('音乐播放记录保留天数应大于等于 0');
+          throw new Error(
+            t(
+              'should_be_greater_than_or_equal_to',
+              t('music_play_record_indate'),
+              '0',
+            ),
+          );
         }
         await adminUpdateUser({
           id: user.id,
@@ -108,7 +123,13 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
 
       if (user.remark !== remark) {
         if (remark.length > REMARK_MAX_LENGTH) {
-          throw new Error(`备注长度应小于等于 ${REMARK_MAX_LENGTH}`);
+          throw new Error(
+            t(
+              'should_be_less_than_or_equal_to',
+              t('length_of', t('remark')),
+              REMARK_MAX_LENGTH.toString(),
+            ),
+          );
         }
         await adminUpdateUser({
           id: user.id,
@@ -123,7 +144,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
 
       window.setTimeout(() => onClose(), 0);
     } catch (error) {
-      logger.error(error, '更新用户信息失败');
+      logger.error(error, 'Failed to update user info');
       notice.error(error.message);
     }
 
@@ -141,19 +162,19 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         />
         <Input
           className="part"
-          label="昵称"
+          label={t('nickname')}
           disabled
           inputProps={{ defaultValue: user.nickname }}
         />
         <Input
           className="part"
-          label="邮箱"
+          label={t('email')}
           disabled
           inputProps={{ defaultValue: user.email }}
         />
         <Input
           className="part"
-          label="加入时间"
+          label={t('join_time')}
           disabled
           inputProps={{
             defaultValue: day(user.joinTimestamp).format('YYYY-MM-DD'),
@@ -161,7 +182,9 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         />
         <Input
           className="part"
-          label="乐单最大数量(0 表示无限制)"
+          label={`${t('maximum_amount_of_musicbill')}(${t(
+            'zero_means_unlimited',
+          )})`}
           disabled={loading}
           inputProps={{
             value: musicbillMaxAmount,
@@ -170,7 +193,9 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         />
         <Input
           className="part"
-          label="每天创建音乐最大数量(0 表示无限制)"
+          label={`${t('maximum_amount_of_creating_music_per_day')}(${t(
+            'zero_means_unlimited',
+          )})`}
           disabled={loading}
           inputProps={{
             value: createMusicMaxAmountPerDay,
@@ -179,7 +204,9 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         />
         <Input
           className="part"
-          label="音乐播放记录保留天数(0 表示无限制)"
+          label={`${t('music_play_record_indate')}(${t(
+            'zero_means_unlimited',
+          )})`}
           disabled={loading}
           inputProps={{
             value: musicPlayRecordIndate,
@@ -188,7 +215,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         />
         <Textarea
           className="part"
-          label="备注"
+          label={t('remark')}
           disabled={loading}
           textareaProps={{ value: remark, onChange: onRemarkChange, rows: 5 }}
         />
@@ -198,7 +225,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           onClick={onSave}
           loading={loading}
         >
-          保存
+          {t('save')}
         </Button>
         {user.admin ? null : (
           <Button
@@ -206,13 +233,12 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
             disabled={loading}
             onClick={() =>
               dialog.confirm({
-                title: '确定设为管理员吗?',
-                content:
-                  '成为管理员后账号将无法被删除, 以及拥有和你一样的权限且无法被撤销管理员身份',
-                confirmText: '继续',
+                title: t('set_as_admin_question'),
+                content: t('set_as_admin_question_content'),
+                confirmText: t('continue'),
                 onConfirm: () =>
                   void dialog.captcha({
-                    confirmText: '设为管理员',
+                    confirmText: t('set_as_admin'),
                     confirmVariant: Variant.PRIMARY,
                     onConfirm: async ({ captchaId, captchaValue }) => {
                       try {
@@ -227,7 +253,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
                           admin: 1,
                         });
                       } catch (error) {
-                        logger.error(error, '设为管理员失败');
+                        logger.error(error, 'Failed to set admin');
                         notice.error(error.message);
                         return false;
                       }
@@ -236,7 +262,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
               })
             }
           >
-            设为管理员
+            {t('set_as_admin')}
           </Button>
         )}
         {user.admin ? null : (
@@ -246,12 +272,12 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
             disabled={loading}
             onClick={() =>
               dialog.confirm({
-                title: '确定删除用户吗?',
-                content: '用户删除后, 其创建的音乐/歌手将会转移到你的账号',
-                confirmText: '继续',
+                title: t('delete_user_question'),
+                content: t('delete_user_question_content'),
+                confirmText: t('continue'),
                 onConfirm: () =>
                   void dialog.captcha({
-                    confirmText: '删除用户',
+                    confirmText: t('delete_user'),
                     confirmVariant: Variant.DANGER,
                     onConfirm: async ({ captchaId, captchaValue }) => {
                       try {
@@ -263,7 +289,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
                         onClose();
                         e.emit(EventType.USER_DELETED, { id: user.id });
                       } catch (error) {
-                        logger.error(error, '删除用户失败');
+                        logger.error(error, 'Failed to delete user');
                         notice.error(error.message);
                         return false;
                       }
@@ -272,7 +298,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
               })
             }
           >
-            删除用户
+            {t('delete_user')}
           </Button>
         )}
       </Style>

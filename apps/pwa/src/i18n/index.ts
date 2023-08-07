@@ -13,7 +13,7 @@ switch (setting.get().language) {
     break;
   }
   default: {
-    ({ default: translation } = await import('./en'));
+    ({ default: translation } = await import('./en_us'));
   }
 }
 
@@ -35,7 +35,7 @@ export const LANGUAGE_MAP: Record<
     label: string;
   }
 > = {
-  [Language.EN]: { label: 'english' },
+  [Language.EN_US]: { label: 'English(US)' },
   [Language.ZH_HANS]: { label: '简体中文' },
   [Language.JA]: { label: '日本語' },
 };

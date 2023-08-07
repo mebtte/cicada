@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import p from '@/global_states/profile';
+import autoScrollbar from '@/style/auto_scrollbar';
 import Page from '../page';
 import Logout from './logout';
 import UserManage from './user_manage';
@@ -24,6 +25,7 @@ const Style = styled(Page)`
   padding-top: ${HEADER_HEIGHT}px;
 
   overflow: auto;
+  ${autoScrollbar}
 `;
 
 function Setting() {

@@ -18,7 +18,6 @@ import loadImage from '../load_image';
 
 const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
 const contentStyle: CSSProperties = {
-  overflow: 'auto',
   display: 'flex',
   flexDirection: 'column',
   gap: 10,

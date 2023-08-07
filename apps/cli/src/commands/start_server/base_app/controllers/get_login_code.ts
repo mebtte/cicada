@@ -80,7 +80,7 @@ export default async (ctx: Context) => {
     to: email,
     title: capitalize(`${ctx.t('cicada')} ${ctx.t('login_code')}`),
     html: `
-        Hi, 「${encode(user.nickname)}」,
+        Hi, ${encode(user.nickname)},
         <br />
         <br />
         ${upperCaseFirstLetter(

@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { Query, RequestStatus } from '@/constants';
 import throttle from 'lodash/throttle';
 import useQuery from '@/utils/use_query';
+import autoScrollbar from '@/style/auto_scrollbar';
 import cache, { CacheKey } from './cache';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -34,6 +35,7 @@ const Style = styled(Page)`
     height: 100%;
 
     overflow: auto;
+    ${autoScrollbar}
   }
 `;
 

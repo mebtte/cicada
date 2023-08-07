@@ -7,6 +7,7 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
 import Cover from '@/components/cover';
+import autoScrollbar from '@/style/auto_scrollbar';
 import useData from './use_data';
 import { MusicDetail } from './constants';
 import CreateUser from './create_user';
@@ -33,6 +34,7 @@ const DetailBox = styled(Container)`
     ${absoluteFullSize}
 
     overflow: auto;
+    ${autoScrollbar}
 
     > .first-screen {
       min-height: 100vh;

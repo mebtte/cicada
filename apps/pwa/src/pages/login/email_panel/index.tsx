@@ -62,9 +62,14 @@ function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
               toNext(email);
               break;
             }
+            default: {
+              /**
+               * prevent closing captcha dialog
+               * @author mebtte<hi@mebtte.com>
+               */
+              return false;
+            }
           }
-
-          return false;
         }
       },
     });

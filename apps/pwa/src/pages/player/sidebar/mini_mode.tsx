@@ -1,5 +1,7 @@
 import Drawer, { Direction } from '@/components/drawer';
 import { CSSProperties, useEffect, useState } from 'react';
+import styled from 'styled-components';
+import autoScrollbar from '@/style/auto_scrollbar';
 import Content from './content';
 import e, { EventType } from '../eventemitter';
 import { WIDTH } from './constants';
@@ -14,9 +16,14 @@ const bodyProps: {
 } = {
   style: {
     width: WIDTH,
-    overflow: 'auto',
   },
 };
+const ContentWrapper = styled.div`
+  height: 100%;
+
+  overflow: auto;
+  ${autoScrollbar}
+`;
 
 function MiniMode() {
   const [open, setOpen] = useState(false);
@@ -45,7 +52,9 @@ function MiniMode() {
         onClick: onClose,
       }}
     >
-      <Content />
+      <ContentWrapper>
+        <Content />
+      </ContentWrapper>
     </Drawer>
   );
 }

@@ -47,6 +47,8 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { Variant } from '@/components/button';
 import getResizedImage from '@/server/asset/get_resized_image';
+import { t } from '@/i18n';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { Music, ZIndex } from '../constants';
 import { MusicDetail } from './constants';
 import e, { EventType } from './eventemitter';
@@ -89,6 +91,7 @@ const Style = styled.div`
   ${absoluteFullSize}
 
   overflow: auto;
+  ${autoScrollbar}
 `;
 const maskProps: {
   style: CSSProperties;
@@ -428,7 +431,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {
-                    logger.error(error, '更新二次创作来源失败');
+                    logger.error(error, "Failed to update music's fork-from");
                     notice.error(error.message);
                     return false;
                   }
@@ -440,11 +443,11 @@ function EditMenu({ music }: { music: MusicDetail }) {
         <MenuItem
           style={itemStyle}
           icon={<MdOutlineCalendarToday />}
-          label="编辑发行年份"
+          label={t('edit_year_of_issue')}
           onClick={() =>
             dialog.input({
-              title: '编辑发行年份',
-              label: '发行年份',
+              title: t('edit_year_of_issue'),
+              label: t('year_of_issue'),
               initialValue: music.year ? music.year.toString() : '',
               inputType: 'number',
               onConfirm: async (year: string) => {
@@ -455,7 +458,13 @@ function EditMenu({ music }: { music: MusicDetail }) {
                   yearNumber < YEAR_MIN ||
                   yearNumber > YEAR_MAX
                 ) {
-                  notice.error(`发行年份应在 ${YEAR_MIN}-${YEAR_MAX} 范围内`);
+                  notice.error(
+                    t(
+                      'year_of_issue_limit',
+                      YEAR_MIN.toString(),
+                      YEAR_MAX.toString(),
+                    ),
+                  );
                   return false;
                 }
 
@@ -468,7 +477,10 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {
-                    logger.error(error, '更新音乐发行年份失败');
+                    logger.error(
+                      error,
+                      "Failed to update music's year of issue",
+                    );
                     notice.error(error.message);
                     return false;
                   }
@@ -480,13 +492,15 @@ function EditMenu({ music }: { music: MusicDetail }) {
         <MenuItem
           style={itemStyle}
           icon={<MdDelete style={dangerousIconStyle} />}
-          label="删除"
+          label={t('delete')}
           onClick={() => {
             if (music.forkList.length) {
-              return notice.error('被二次创作的音乐无法被删除');
+              return notice.error(
+                t('music_forked_by_other_can_not_be_deleted'),
+              );
             }
             return dialog.captcha({
-              confirmText: '删除音乐',
+              confirmText: t('delete_music'),
               confirmVariant: Variant.DANGER,
               onConfirm: async ({ captchaId, captchaValue }) => {
                 try {
@@ -495,7 +509,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     id: music.id,
                   });
                 } catch (error) {
-                  logger.error(error, '删除音乐失败');
+                  logger.error(error, 'Failed to delete music');
                   notice.error(error.message);
 
                   return false;

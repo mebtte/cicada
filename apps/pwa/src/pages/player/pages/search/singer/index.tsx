@@ -12,6 +12,7 @@ import { CSSProperties } from 'react';
 import Button, { Variant } from '@/components/button';
 import WidthObserver from '@/components/width_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
+import autoScrollbar from '@/style/auto_scrollbar';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
@@ -37,6 +38,7 @@ const CardContainer = styled(Container)`
 `;
 const SingerContainer = styled(Container)`
   overflow: auto;
+  ${autoScrollbar}
 
   > .list {
     --gap: 10px;

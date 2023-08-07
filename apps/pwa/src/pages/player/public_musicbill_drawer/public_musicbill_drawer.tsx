@@ -6,6 +6,7 @@ import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import absoluteFullSize from '@/style/absolute_full_size';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { EventType } from '../eventemitter';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import useData from './use_data';
@@ -34,6 +35,7 @@ const Style = styled.div`
     padding-bottom: calc(env(safe-area-inset-bottom, 0) + ${TOOLBAR_HEIGHT}px);
 
     overflow: auto;
+    ${autoScrollbar}
 
     > .tab-content {
       position: relative;

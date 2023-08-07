@@ -10,6 +10,7 @@ import { Query } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import Button, { Variant } from '@/components/button';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { HEADER_HEIGHT } from '../../../constants';
 import useMusicList from './use_music_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
@@ -36,6 +37,7 @@ const MusicListContainer = styled(Container)`
   padding-bottom: ${TOOLBAR_HEIGHT}px;
 
   overflow: auto;
+  ${autoScrollbar}
 `;
 const paginationStyle: CSSProperties = {
   margin: '10px 0',

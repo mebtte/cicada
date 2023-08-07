@@ -1,5 +1,7 @@
 import Drawer from '@/components/drawer';
 import { CSSProperties } from 'react';
+import styled from 'styled-components';
+import autoScrollbar from '@/style/auto_scrollbar';
 import { Singer } from './constants';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import { EventType } from '../eventemitter';
@@ -9,9 +11,14 @@ import Hint from './hint';
 const bodyProps: { style: CSSProperties } = {
   style: {
     width: 300,
-    overflow: 'auto',
   },
 };
+const ContentWrapper = styled.div`
+  height: 100%;
+
+  overflow: auto;
+  ${autoScrollbar}
+`;
 
 function SingerModifyRecordDrawer({
   singer,
@@ -32,8 +39,10 @@ function SingerModifyRecordDrawer({
       }}
       bodyProps={bodyProps}
     >
-      <Content singer={singer} />
-      <Hint />
+      <ContentWrapper>
+        <Content singer={singer} />
+        <Hint />
+      </ContentWrapper>
     </Drawer>
   );
 }

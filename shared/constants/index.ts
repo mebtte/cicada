@@ -92,11 +92,12 @@ export const SHARED_MUSICBILL_INVITATION_MINIMAL_TTL = 1000 * 60 * 60 * 24 * 3;
 export const SINGER_MODIFY_RECORD_TTL = 1000 * 60 * 60 * 24 * 180;
 
 export enum Language {
-  EN = 'en',
   ZH_HANS = 'zh-hans',
+  EN_US = 'en-us',
   JA = 'ja',
 }
-export const DEFAULT_LANGUAGE = Language.EN;
+export const LANGUAGES = Object.values(Language);
+export const DEFAULT_LANGUAGE = Language.EN_US;
 
 export enum CommonQuery {
   VERSION = '__v',

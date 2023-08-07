@@ -12,6 +12,7 @@ import { CSSProperties } from 'react';
 import Button, { Variant } from '@/components/button';
 import WidthObserver from '@/components/width_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
+import autoScrollbar from '@/style/auto_scrollbar';
 import {
   PAGE_SIZE,
   TOOLBAR_HEIGHT,
@@ -34,6 +35,7 @@ const CardContainer = styled(Container)`
 `;
 const MusicContainer = styled(Container)`
   overflow: auto;
+  ${autoScrollbar}
 
   > .list {
     margin: 0 10px;

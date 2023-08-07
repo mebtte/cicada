@@ -4,19 +4,17 @@ import { ThemeProvider } from 'styled-components';
 import App from './app';
 import UncaughtError from './uncaught_error';
 import useProfileUpdate from './use_profile_update';
-import mm from '../global_states/mini_mode';
+import theme from '../global_states/theme';
 import Head from './head';
 
 const fallback = (error: Error) => <UncaughtError error={error} />;
 
 function Wrapper() {
-  const miniMode = mm.useState();
-
   useProfileUpdate();
 
   return (
     <ErrorBoundary fallback={fallback}>
-      <ThemeProvider theme={{ miniMode }}>
+      <ThemeProvider theme={theme.useState()}>
         <Head />
         <GlobalStyle />
         <App />
