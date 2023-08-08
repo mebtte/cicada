@@ -24,9 +24,7 @@ type Collection = Pick<
   | MusicbillProperty.NAME
   | MusicbillProperty.COVER
   | MusicbillProperty.USER_ID
-> & {
-  collectTimestamp: number;
-};
+>;
 type LocalUser = Pick<User, UserProperty.ID | UserProperty.NICKNAME>;
 
 export default async (ctx: Context) => {
@@ -70,8 +68,7 @@ export default async (ctx: Context) => {
             m.${MusicbillProperty.ID},
             m.${MusicbillProperty.NAME},
             m.${MusicbillProperty.COVER},
-            m.${MusicbillProperty.USER_ID},
-            mc.${PublicMusicbillCollectionProperty.COLLECT_TIMESTAMP}
+            m.${MusicbillProperty.USER_ID}
           FROM ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME} AS mc
           LEFT JOIN ${MUSICBILL_TABLE_NAME} AS m
             ON m.${MusicbillProperty.ID} = mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID}
@@ -113,8 +110,7 @@ export default async (ctx: Context) => {
             m.${MusicbillProperty.ID},
             m.${MusicbillProperty.NAME},
             m.${MusicbillProperty.COVER},
-            m.${MusicbillProperty.USER_ID},
-            mc.${PublicMusicbillCollectionProperty.COLLECT_TIMESTAMP}
+            m.${MusicbillProperty.USER_ID}
           FROM ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME} AS mc
           LEFT JOIN ${MUSICBILL_TABLE_NAME} AS m
             ON m.${MusicbillProperty.ID} = mc.${PublicMusicbillCollectionProperty.MUSICBILL_ID}

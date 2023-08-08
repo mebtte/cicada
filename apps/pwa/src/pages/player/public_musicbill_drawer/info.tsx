@@ -1,9 +1,7 @@
 import styled from 'styled-components';
 import Cover from '@/components/cover';
-import day from '#/utils/day';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import { MdOutlineCalendarToday, MdStar } from 'react-icons/md';
 import { Musicbill } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -61,38 +59,11 @@ const Style = styled.div`
         ${ellipsis}
       }
     }
-
-    > .extra {
-      margin: 0 20px;
-
-      font-size: 12px;
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-      user-select: none;
-
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 5px 10px;
-
-      > .part {
-        display: flex;
-        align-items: center;
-        gap: 3px;
-
-        > .icon {
-          font-size: 14px;
-        }
-
-        > .value {
-          font-family: monospace;
-        }
-      }
-    }
   }
 `;
 
 function Info({ musicbill }: { musicbill: Musicbill }) {
-  const { name, cover, createTimestamp, user, collectionCount } = musicbill;
+  const { name, cover, user } = musicbill;
   return (
     <Style>
       <Cover src={cover} size="100%" />
@@ -107,18 +78,6 @@ function Info({ musicbill }: { musicbill: Musicbill }) {
           }
         >
           <div className="nickname">{user.nickname}</div>
-        </div>
-        <div className="extra">
-          <div className="part">
-            <MdOutlineCalendarToday className="icon" />
-            <div className="value">
-              {day(createTimestamp).format('YYYY-MM-DD')}
-            </div>
-          </div>
-          <div className="part">
-            <MdStar />
-            <div className="value">{collectionCount}</div>
-          </div>
         </div>
       </div>
     </Style>

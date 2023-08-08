@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
-import { HtmlHTMLAttributes, ReactNode } from 'react';
+import { HtmlHTMLAttributes } from 'react';
 import ellipsis from '@/style/ellipsis';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -46,7 +46,6 @@ function PublicMusicbill({
   name,
   userId,
   userNickname,
-  addon,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   id: string;
@@ -54,7 +53,6 @@ function PublicMusicbill({
   name: string;
   userId: string;
   userNickname: string;
-  addon?: ReactNode;
 }) {
   const openPublicMusicbillDrawer = () =>
     playerEventemitter.emit(PlayerEventType.OPEN_PUBLIC_MUSICBILL_DRAWER, {
@@ -79,7 +77,6 @@ function PublicMusicbill({
           {userNickname}
         </span>
       </div>
-      {addon}
     </Style>
   );
 }

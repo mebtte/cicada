@@ -13,8 +13,6 @@ import Button, { Variant } from '@/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import WidthObserver from '@/components/width_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
-import { CSSVariable } from '@/global_style';
-import day from '#/utils/day';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { HEADER_HEIGHT, SearchTab } from '../../../constants';
@@ -61,10 +59,6 @@ const MusicListContainer = styled(Container)`
 const paginationStyle: CSSProperties = {
   margin: '10px 0',
 };
-const CollectTime = styled.div`
-  font-size: 12px;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-`;
 
 function CollectionList() {
   const navigate = useNavigate();
@@ -144,11 +138,6 @@ function CollectionList() {
                       name={c.name}
                       userId={c.user.id}
                       userNickname={c.user.nickname}
-                      addon={
-                        <CollectTime>
-                          收藏于 {day(c.collectTimestamp).format('YYYY-MM-DD')}
-                        </CollectTime>
-                      }
                     />
                   </div>
                 ));
