@@ -19,7 +19,7 @@ const Style = styled.div`
     left: 0;
     max-width: 80%;
 
-    padding: 10px 0;
+    padding: 10px 0 0 0;
     background-color: rgb(255 255 255 / 0.75);
 
     > .name {
@@ -32,8 +32,8 @@ const Style = styled.div`
     }
 
     > .user {
-      margin: 5px 0;
-      padding: 5px 20px;
+      padding: 5px 10px;
+      margin: 0 10px;
 
       display: flex;
       align-items: center;
