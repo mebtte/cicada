@@ -9,6 +9,7 @@ import Empty from '@/components/empty';
 import absoluteFullSize from '@/style/absolute_full_size';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { t } from '@/i18n';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
 import useData from './use_data';
@@ -166,7 +167,7 @@ function Wrapper() {
                 );
               }}
             />
-            <Empty className="empty" description="暂无数据" />
+            <Empty className="empty" description={t('no_data')} />
           </ContentContainer>
         );
       })}

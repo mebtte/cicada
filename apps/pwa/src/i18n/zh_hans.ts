@@ -78,6 +78,18 @@ const zhCN: {
   edit_alias: '编辑别名',
   alias: '别名',
   view_modify_record: '查看修改记录',
+  no_musicbill: '暂无乐单',
+  no_data: '暂无数据',
+  no_suitable_music_play_record: '暂无相关的音乐播放记录',
+  no_suitable_music: '暂无相关音乐',
+  no_suitable_musicbill: '暂无相关乐单',
+  no_shared_musicbill_invitation: '暂无共享乐单邀请',
+  invitation_will_be_canceled_automatically_after_days:
+    '邀请将在 %s1 天后自动取消',
+  create_music: '创建音乐',
+  no_music: '暂无音乐',
+  no_modify_record: '暂无修改记录',
+  no_public_musicbill: '暂无公开乐单',
 };
 
 export default zhCN;

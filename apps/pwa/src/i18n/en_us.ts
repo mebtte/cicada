@@ -79,4 +79,16 @@ export default {
   edit_alias: 'edit alias',
   alias: 'alias',
   view_modify_record: 'view modify record',
+  no_musicbill: 'no musicbill',
+  no_data: 'no data',
+  no_suitable_music_play_record: 'no suitable music play record',
+  no_suitable_music: 'no suitable music',
+  no_suitable_musicbill: 'no suitable musicbill',
+  no_shared_musicbill_invitation: 'no shared musicbill invitation',
+  invitation_will_be_canceled_automatically_after_days:
+    'invitation will be canceled automatically after %1 days',
+  create_music: 'create music',
+  no_music: 'no music',
+  no_modify_record: 'no modify record',
+  no_public_musicbill: 'no public musicbill',
 };

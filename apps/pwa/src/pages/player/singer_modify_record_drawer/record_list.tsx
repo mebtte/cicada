@@ -6,6 +6,7 @@ import day from '#/utils/day';
 import { AllowUpdateKey } from '#/constants/singer';
 import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
+import { t } from '@/i18n';
 import useModifyRecordList from './use_modify_record_list';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -93,7 +94,7 @@ function RecordList({ singerId }: { singerId: string }) {
   if (!data.value.length) {
     return (
       <CardContainer>
-        <Empty description="暂无修改记录" />
+        <Empty description={t('no_modify_record')} />
       </CardContainer>
     );
   }

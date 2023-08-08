@@ -66,7 +66,7 @@ function Top() {
           if (musicbillList.length) {
             return e.emit(EventType.OPEN_MUSICBILL_ORDER_DRAWER, null);
           }
-          return notice.info('暂无乐单可以排序');
+          return notice.info(t('no_musicbill'));
         }}
       >
         <MdSort />

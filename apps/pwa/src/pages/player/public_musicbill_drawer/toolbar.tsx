@@ -5,6 +5,7 @@ import notice from '@/utils/notice';
 import collectPublicMusicbill from '@/server/api/collect_public_musicbill';
 import logger from '@/utils/logger';
 import uncollectPublicMusicbill from '@/server/api/uncollect_public_musicbill';
+import { t } from '@/i18n';
 import { Musicbill, TOOLBAR_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -44,7 +45,7 @@ function Toolbar({
                 PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
                 { musicList: musicbill.musicList },
               )
-            : notice.error('乐单暂无音乐')
+            : notice.error(t('no_music_in_musicbill'))
         }
       >
         <MdPlaylistAdd />

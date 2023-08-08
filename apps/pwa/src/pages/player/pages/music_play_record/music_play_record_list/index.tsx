@@ -10,6 +10,7 @@ import { Query } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { t } from '@/i18n';
 import { HEADER_HEIGHT } from '../../../constants';
 import useMusicPlayRecordList from './use_music_play_record_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
@@ -84,7 +85,7 @@ function MusicList() {
         if (!value!.total && !value!.musicPlayRecordList.length) {
           return (
             <CardContainer style={style}>
-              <Empty description="暂无相关音乐播放记录" />
+              <Empty description={t('no_suitable_music_play_record')} />
             </CardContainer>
           );
         }
