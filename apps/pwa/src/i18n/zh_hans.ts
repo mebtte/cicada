@@ -90,6 +90,22 @@ const zhCN: {
   no_music: '暂无音乐',
   no_modify_record: '暂无修改记录',
   no_public_musicbill: '暂无公开乐单',
+  edit_cover: '编辑封面',
+  please_select_a_cover: '请选择封面',
+  reset_cover: '重置封面',
+  reset_cover_question: '确定重置封面吗?',
+  edit_lyric: '编辑歌词',
+  lyric: '歌词',
+  text_of_lrc: 'LRC 格式文本',
+  modify_singer: '修改歌手',
+  singer: '歌手',
+  please_select_singers: '请选择歌手',
+  modify_file_of_music: '修改音乐文件',
+  file_of_music: '音乐文件',
+  please_select_a_file: '请选择一个文件',
+  one_of_formats: '以下格式的一种: %s1',
+  modify_fork_from: '修改二次创作来源',
+  fork_from: '二次创作来源',
 };
 
 export default zhCN;
