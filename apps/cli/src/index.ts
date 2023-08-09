@@ -22,32 +22,16 @@ program
   .command('start')
   .description('start cicada server')
   .option('-c, --config <config>', 'specify config file')
-  .option('--data <data>', "override config's data")
-  .option('--port <port>', "override config's port")
-  .action(
-    async ({
-      config,
-      data,
-      port,
-    }: {
-      config?: string;
-      data?: string;
-      port?: string;
-    }) => {
-      if (!config) {
-        return exitWithMessage('Using [ -c/--config ] to specify config file');
-      }
-
-      const portNumber = port ? Number(port) : undefined;
-      return startServer({
-        configFilePath: path.isAbsolute(config)
-          ? config
-          : path.resolve(process.cwd(), config),
-        data,
-        port: portNumber,
-      });
-    },
-  );
+  .action(async ({ config }: { config?: string }) => {
+    if (!config) {
+      return exitWithMessage('Using [ -c/--config ] to specify config file');
+    }
+    return startServer({
+      configFilePath: path.isAbsolute(config)
+        ? config
+        : path.resolve(process.cwd(), config),
+    });
+  });
 
 /**
  * 数据升级

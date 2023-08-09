@@ -1,9 +1,7 @@
-FROM ubuntu
+FROM scratch
 
-COPY build/cicada /usr/bin/
-VOLUME [ "/data", "/config" ]
-CMD cicada start -c /config/cicada.json --data /data --port 80
-EXPOSE 80
+COPY build/cicada /bin/cicada
+ENTRYPOINT ["/bin/cicada"]
 
 LABEL org.opencontainers.image.title="cicada" \
   org.opencontainers.image.authors="mebtte<hi@mebtte.com>" \
