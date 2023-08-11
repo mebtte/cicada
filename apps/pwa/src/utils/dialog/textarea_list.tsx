@@ -6,6 +6,7 @@ import IconButton from '@/components/icon_button';
 import { ComponentSize } from '@/constants/style';
 import { MdDelete, MdUploadFile } from 'react-icons/md';
 import styled from 'styled-components';
+import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { TextareaList as TextareaListShape } from './constants';
 import useEvent from '../use_event';
@@ -33,9 +34,9 @@ function TextareaListContent({
 }) {
   const [values, setValues] = useState<{ id: number; content: string }[]>(
     () => {
-      const from = (textareaList.initialValue || []).map((t) => ({
+      const from = (textareaList.initialValue || []).map((v) => ({
         id: Math.random(),
-        content: t,
+        content: v,
       }));
       return from.length ? from : [{ id: Math.random(), content: '' }];
     },
@@ -156,13 +157,13 @@ function TextareaListContent({
             }
             disabled={confirming || canceling}
           >
-            新增{textareaList.label}
+            {t('add')} {textareaList.label}
           </Button>
         )}
       </StyledContent>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {textareaList.cancelText || '取消'}
+          {textareaList.cancelText || t('cancel')}
         </Button>
         <Button
           variant={textareaList.confirmVariant}
@@ -170,7 +171,7 @@ function TextareaListContent({
           loading={confirming}
           disabled={canceling}
         >
-          {textareaList.confirmText || '确定'}
+          {textareaList.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>

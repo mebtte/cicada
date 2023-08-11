@@ -107,4 +107,6 @@ export default {
   one_of_formats: 'one of formats: %s1',
   modify_fork_from: 'modify fork-from',
   fork_from: 'fork-from',
+  add: 'add',
+  image_select_placeholder: 'select a image with jpeg/png format',
 };

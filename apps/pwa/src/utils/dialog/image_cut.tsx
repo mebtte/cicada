@@ -11,6 +11,7 @@ import Cropper from 'cropperjs';
 import styled from 'styled-components';
 import { IMAGE_MAX_SIZE } from '#/constants';
 import FileSelect from '@/components/file_select';
+import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { ImageCut as ImageCutShape } from './constants';
 import useEvent from '../use_event';
@@ -93,7 +94,7 @@ function ImageCutContent({
           canvas.toBlob(
             (b) => {
               if (!b) {
-                return reject(new Error('无法导出图片'));
+                return reject(new Error('Failed to export image from canvas'));
               }
               return resolve(b);
             },
@@ -132,7 +133,7 @@ function ImageCutContent({
           </ImgBox>
         ) : null}
         <FileSelect
-          placeholder="选择图片, 支持 JPEG/PNG 类型"
+          placeholder={t('image_select_placeholder')}
           value={file}
           onChange={(f) => setFile(f)}
           acceptTypes={ACCEPT_TYPES}
@@ -141,7 +142,7 @@ function ImageCutContent({
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {imageCut.cancelText || '取消'}
+          {imageCut.cancelText || t('cancel')}
         </Button>
         <Button
           variant={imageCut.confirmVariant}
@@ -149,7 +150,7 @@ function ImageCutContent({
           loading={confirming}
           disabled={canceling}
         >
-          {imageCut.confirmText || '确定'}
+          {imageCut.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
