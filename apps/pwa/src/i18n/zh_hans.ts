@@ -106,6 +106,9 @@ const zhCN: {
   one_of_formats: '以下格式的一种: %s1',
   modify_fork_from: '修改二次创作来源',
   fork_from: '二次创作来源',
+  add: '添加',
+  image_select_placeholder: '选择 jpeg/png 格式的图片',
+  pwa_update_question: '检查到新版本, 是否马上加载?',
 };
 
 export default zhCN;

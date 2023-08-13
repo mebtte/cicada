@@ -10,6 +10,8 @@ import sleep from '#/utils/sleep';
 import App from './app';
 import definition from './definition';
 import Unsupported from './unsupported';
+import { t } from './i18n';
+import upperCaseFirstLetter from './style/upper_case_first_letter';
 
 function findUnsupportedList(): string[] {
   return [];
@@ -30,6 +32,7 @@ if (unsupportedList.length) {
 const VersionUpdater = styled.div`
   > .text {
     padding-top: 10px;
+    ${upperCaseFirstLetter}
   }
 
   > .action-box {
@@ -62,7 +65,7 @@ if ('serviceWorker' in navigator) {
           wb.addEventListener('waiting', () => {
             updateNoticeId = notice.info(
               <VersionUpdater>
-                <div className="text">检测到新版本, 是否马上加载?</div>
+                <div className="text">{t('pwa_update_question')}</div>
                 <div className="action-box">
                   <IconButton
                     className="action"

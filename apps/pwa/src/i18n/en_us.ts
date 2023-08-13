@@ -109,4 +109,5 @@ export default {
   fork_from: 'fork-from',
   add: 'add',
   image_select_placeholder: 'select a image with jpeg/png format',
+  pwa_update_question: 'do you want to reload to switch new version of cicada?',
 };
