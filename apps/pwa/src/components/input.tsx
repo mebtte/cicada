@@ -1,5 +1,4 @@
 import {
-  FocusEventHandler,
   ForwardedRef,
   forwardRef,
   HtmlHTMLAttributes,
@@ -7,12 +6,10 @@ import {
   ReactNode,
   useImperativeHandle,
   useRef,
-  useState,
 } from 'react';
 import styled from 'styled-components';
 import { ComponentSize } from '../constants/style';
 import { CSSVariable } from '../global_style';
-import useEvent from '../utils/use_event';
 import Label from './label';
 
 const Input = styled.input`
@@ -42,7 +39,7 @@ const Input = styled.input`
 `;
 
 type Ref = {
-  root: HTMLDivElement;
+  root: HTMLLabelElement;
   input: HTMLInputElement;
 };
 type Props = {
@@ -50,24 +47,14 @@ type Props = {
   inputProps: InputHTMLAttributes<HTMLInputElement>;
   disabled?: boolean;
   addon?: ReactNode;
-} & HtmlHTMLAttributes<HTMLDivElement>;
+} & HtmlHTMLAttributes<HTMLLabelElement>;
 
 function Wrapper(
   { label, inputProps, disabled = false, addon, ...props }: Props,
   ref: ForwardedRef<Ref>,
 ) {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLLabelElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const [active, setActive] = useState(false);
-  const onFocus: FocusEventHandler<HTMLInputElement> = useEvent((e) => {
-    setActive(true);
-    return inputProps.onFocus && inputProps.onFocus(e);
-  });
-  const onBlur: FocusEventHandler<HTMLInputElement> = useEvent((e) => {
-    setActive(false);
-    return inputProps.onBlur && inputProps.onBlur(e);
-  });
 
   useImperativeHandle(ref, () => ({
     root: rootRef.current!,
@@ -75,21 +62,8 @@ function Wrapper(
   }));
 
   return (
-    <Label
-      {...props}
-      ref={rootRef}
-      active={active}
-      disabled={disabled}
-      label={label}
-      addon={addon}
-    >
-      <Input
-        {...inputProps}
-        disabled={disabled}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        ref={inputRef}
-      />
+    <Label {...props} ref={rootRef} label={label} addon={addon}>
+      <Input {...inputProps} disabled={disabled} ref={inputRef} />
     </Label>
   );
 }

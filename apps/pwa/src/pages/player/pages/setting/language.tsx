@@ -1,6 +1,6 @@
 import { memo, CSSProperties } from 'react';
 import setting from '@/global_states/setting';
-import Select from '@/components/select';
+import Select, { Option } from '@/components/select';
 import { LANGUAGE_MAP, t } from '@/i18n';
 import { Language } from '#/constants';
 import dialog from '@/utils/dialog';
@@ -11,37 +11,32 @@ const LANGUAGES = Object.values(Language);
 const style: CSSProperties = {
   width: 200,
 };
+const options: Option<Language>[] = LANGUAGES.map((l) => ({
+  label: LANGUAGE_MAP[l].label,
+  value: l,
+}));
 
 function Wrapper() {
   const { language } = setting.useState();
   return (
     <Item label={t('language')} style={itemStyle}>
       <Select<Language>
-        label=""
-        value={{
-          key: language,
-          label: LANGUAGE_MAP[language].label,
-          value: language,
-        }}
-        onChange={(v) => {
-          if (v.value !== language) {
+        value={{ value: language, label: LANGUAGE_MAP[language].label }}
+        onChange={(option) => {
+          if (option.value !== language) {
             dialog.confirm({
               content: t('change_language_question'),
               onConfirm: () => {
                 setting.set((prev) => ({
                   ...prev,
-                  language: v.value,
+                  language: option.value,
                 }));
                 window.setTimeout(() => window.location.reload(), 0);
               },
             });
           }
         }}
-        data={LANGUAGES.map((l) => ({
-          key: l,
-          label: LANGUAGE_MAP[l].label,
-          value: l,
-        }))}
+        options={options}
         style={style}
       />
     </Item>

@@ -1,5 +1,4 @@
 import {
-  FocusEventHandler,
   ForwardedRef,
   forwardRef,
   HtmlHTMLAttributes,
@@ -7,11 +6,9 @@ import {
   TextareaHTMLAttributes,
   useImperativeHandle,
   useRef,
-  useState,
 } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '../global_style';
-import useEvent from '../utils/use_event';
 import Label from './label';
 
 const Textarea = styled.textarea`
@@ -40,7 +37,7 @@ const Textarea = styled.textarea`
 `;
 
 type Ref = {
-  root: HTMLDivElement;
+  root: HTMLLabelElement;
   textarea: HTMLTextAreaElement;
 };
 type Props = {
@@ -48,24 +45,14 @@ type Props = {
   textareaProps: TextareaHTMLAttributes<HTMLTextAreaElement>;
   disabled?: boolean;
   addon?: ReactNode;
-} & HtmlHTMLAttributes<HTMLDivElement>;
+} & HtmlHTMLAttributes<HTMLLabelElement>;
 
 function Wrapper(
   { label, textareaProps, disabled = false, addon, ...props }: Props,
   ref: ForwardedRef<Ref>,
 ) {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLLabelElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  const [active, setActive] = useState(false);
-  const onFocus: FocusEventHandler<HTMLTextAreaElement> = useEvent((e) => {
-    setActive(true);
-    return textareaProps.onFocus && textareaProps.onFocus(e);
-  });
-  const onBlur: FocusEventHandler<HTMLTextAreaElement> = useEvent((e) => {
-    setActive(false);
-    return textareaProps.onBlur && textareaProps.onBlur(e);
-  });
 
   useImperativeHandle(ref, () => ({
     root: rootRef.current!,
@@ -73,21 +60,8 @@ function Wrapper(
   }));
 
   return (
-    <Label
-      {...props}
-      ref={rootRef}
-      active={active}
-      disabled={disabled}
-      label={label}
-      addon={addon}
-    >
-      <Textarea
-        {...textareaProps}
-        disabled={disabled}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        ref={textareaRef}
-      />
+    <Label {...props} ref={rootRef} label={label} addon={addon}>
+      <Textarea {...textareaProps} disabled={disabled} ref={textareaRef} />
     </Label>
   );
 }

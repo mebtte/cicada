@@ -60,7 +60,7 @@ function FileSelect({
   });
 
   return (
-    <Label label={label} disabled={disabled}>
+    <Label label={label}>
       <Style onClick={onSelectFile} disabled={disabled}>
         {value ? value.name : placeholder}
       </Style>

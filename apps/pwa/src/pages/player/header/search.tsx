@@ -29,7 +29,7 @@ function Wrapper() {
   const location = useLocation();
   const { miniMode } = theme.useState();
 
-  const ref = useRef<{ root: HTMLDivElement; input: HTMLInputElement }>(null);
+  const ref = useRef<{ root: HTMLLabelElement; input: HTMLInputElement }>(null);
 
   const [keyword, setKeyword] = useState(
     () => parseSearch<Query.KEYWORD>(location.search)[Query.KEYWORD] || '',

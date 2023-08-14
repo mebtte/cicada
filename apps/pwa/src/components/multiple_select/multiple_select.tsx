@@ -90,7 +90,7 @@ function MultipleSelect<Value>({
 
   const selectedKeys = value.map((i) => i.key);
   return (
-    <Label label={label} active={active} disabled={disabled} addon={addon}>
+    <Label label={label} addon={addon}>
       <Input active={active} disabled={disabled}>
         {value.map((option) => (
           <ValueItem

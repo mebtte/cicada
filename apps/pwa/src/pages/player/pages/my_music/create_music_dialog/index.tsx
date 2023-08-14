@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import Button, { Variant } from '@/components/button';
 import Input from '@/components/input';
+import Label from '@/components/label';
 import Select, { Option as SelectOption } from '@/components/select';
 import {
   AllowUpdateKey,
@@ -45,7 +46,6 @@ const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
 };
 const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((t) => ({
-  key: t,
   label: MUSIC_TYPE_MAP[t].label,
   value: t,
 }));
@@ -204,17 +204,17 @@ function CreateMusicDialog() {
       <Container>
         <Title>创建音乐</Title>
         <StyledContent>
-          <Select<MusicType>
-            label="类型"
-            data={MUSIC_TYPE_OPTIONS}
-            value={{
-              key: musicType,
-              label: MUSIC_TYPE_MAP[musicType].label,
-              value: musicType,
-            }}
-            onChange={onMusicTypeChange}
-            disabled={loading}
-          />
+          <Label label="类型">
+            <Select<MusicType>
+              value={{
+                label: MUSIC_TYPE_MAP[musicType].label,
+                value: musicType,
+              }}
+              onChange={onMusicTypeChange}
+              options={MUSIC_TYPE_OPTIONS}
+              disabled={loading}
+            />
+          </Label>
           <FileSelect
             label="标准音质文件"
             value={sq}
