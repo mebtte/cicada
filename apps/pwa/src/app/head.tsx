@@ -3,7 +3,7 @@ import capitalize from '#/utils/capitalize';
 import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { memo } from 'react';
 import { Helmet } from 'react-helmet';
-import { IS_MAC_OS } from '@/constants/browser';
+import { IS_IPAD, IS_IPHONE, IS_MAC_OS } from '@/constants/browser';
 
 const MANIFEST_URL = URL.createObjectURL(
   new Blob(
@@ -12,33 +12,34 @@ const MANIFEST_URL = URL.createObjectURL(
         name: capitalize(t('cicada')),
         short_name: capitalize(t('cicada')),
         description: upperCaseFirstLetter(t('cicada_description')),
-        icons: IS_MAC_OS
-          ? [
-              {
-                src: `${window.location.origin}/app_icon_macos_512.png`,
-                type: 'image/png',
-                sizes: '512x512',
-              },
-              {
-                src: `${window.location.origin}/app_icon_maskable_macos_512.png`,
-                type: 'image/png',
-                sizes: '512x512',
-                purpose: 'maskable',
-              },
-            ]
-          : [
-              {
-                src: `${window.location.origin}/app_icon_512.png`,
-                type: 'image/png',
-                sizes: '512x512',
-              },
-              {
-                src: `${window.location.origin}/app_icon_maskable_512.png`,
-                type: 'image/png',
-                sizes: '512x512',
-                purpose: 'maskable',
-              },
-            ],
+        icons:
+          IS_MAC_OS || IS_IPAD || IS_IPHONE
+            ? [
+                {
+                  src: `${window.location.origin}/app_icon_macos_512.png`,
+                  type: 'image/png',
+                  sizes: '512x512',
+                },
+                {
+                  src: `${window.location.origin}/app_icon_maskable_macos_512.png`,
+                  type: 'image/png',
+                  sizes: '512x512',
+                  purpose: 'maskable',
+                },
+              ]
+            : [
+                {
+                  src: `${window.location.origin}/app_icon_512.png`,
+                  type: 'image/png',
+                  sizes: '512x512',
+                },
+                {
+                  src: `${window.location.origin}/app_icon_maskable_512.png`,
+                  type: 'image/png',
+                  sizes: '512x512',
+                  purpose: 'maskable',
+                },
+              ],
         start_url: window.location.origin,
         background_color: '#ffffff',
         display: 'standalone',
