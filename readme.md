@@ -80,7 +80,6 @@ Also you can use `--user {uid}:{gid}` to map user.
 ### Docker compose
 
 ```yml
-version: '3'
 services:
   cicada:
     restart: always
