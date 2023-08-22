@@ -18,7 +18,7 @@ switch (setting.get().language) {
 }
 
 export function t(key: Key, ...args: string[]) {
-  let value = translation[key];
+  let value = translation[key] || key;
 
   if (args.length) {
     for (let i = 0; i < args.length; i += 1) {

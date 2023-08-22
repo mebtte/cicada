@@ -110,4 +110,6 @@ export default {
   add: 'add',
   image_select_placeholder: 'select a image with jpeg/png format',
   pwa_update_question: 'do you want to reload to switch new version now ?',
+  music: 'music',
+  public_musicbill: 'public musicbill',
 };

@@ -109,6 +109,8 @@ const zhCN: {
   add: '添加',
   image_select_placeholder: '选择 jpeg/png 格式的图片',
   pwa_update_question: '检查到新版本, 是否马上加载?',
+  music: '音乐',
+  public_musicbill: '公开乐单',
 };
 
 export default zhCN;

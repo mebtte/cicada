@@ -1,11 +1,12 @@
+import { t } from '@/i18n';
 import { SearchTab } from '../../constants';
 
 export const TABS = Object.values(SearchTab);
 const TAB_MAP_LABEL: Record<SearchTab, string> = {
-  [SearchTab.MUSIC]: '音乐',
-  [SearchTab.SINGER]: '歌手',
-  [SearchTab.LYRIC]: '歌词',
-  [SearchTab.PUBLIC_MUSICBILL]: '公开乐单',
+  [SearchTab.MUSIC]: t('music'),
+  [SearchTab.SINGER]: t('singer'),
+  [SearchTab.LYRIC]: t('lyric'),
+  [SearchTab.PUBLIC_MUSICBILL]: t('public_musicbill'),
 };
 export const TAB_LIST: { tab: SearchTab; label: string }[] = TABS.map(
   (tab) => ({
