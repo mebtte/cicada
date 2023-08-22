@@ -1,5 +1,6 @@
 import { HtmlHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
+import capitalize from '@/style/capitalize';
 import { CSSVariable } from '../global_style';
 
 const Style = styled.div`
@@ -19,6 +20,7 @@ const Tab = styled.div<{ active: boolean }>`
     font-weight: bold;
     font-size: 14px;
     transition: inherit;
+    ${capitalize}
   }
 
   > .indicator {
