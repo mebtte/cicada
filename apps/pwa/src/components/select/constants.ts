@@ -1,5 +1,4 @@
-export interface Option<Value> {
-  key: string | number;
-  label: string;
+export type Option<Value> = {
   value: Value;
-}
+  label: string;
+};

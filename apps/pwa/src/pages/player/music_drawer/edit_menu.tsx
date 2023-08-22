@@ -159,13 +159,13 @@ function EditMenu({ music }: { music: MusicDetail }) {
         <MenuItem
           style={itemStyle}
           icon={<MdImage />}
-          label="编辑封面"
+          label={t('edit_cover')}
           onClick={() =>
             dialog.imageCut({
-              title: '编辑封面',
+              title: t('edit_cover'),
               onConfirm: async (cover) => {
                 if (!cover) {
-                  notice.error('请选择封面');
+                  notice.error(t('please_select_a_cover'));
                   return false;
                 }
                 try {
@@ -180,7 +180,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                   });
                   emitMusicUpdated(music.id);
                 } catch (error) {
-                  logger.error(error, "Updating music's cover fail");
+                  logger.error(error, 'Failed to update cover of music');
                   notice.error(error.message);
                   return false;
                 }
@@ -192,11 +192,10 @@ function EditMenu({ music }: { music: MusicDetail }) {
           <MenuItem
             style={itemStyle}
             icon={<MdImage />}
-            label="重置封面"
+            label={t('reset_cover')}
             onClick={() =>
               dialog.confirm({
-                title: '确定重置封面吗?',
-                content: '重置后音乐将使用默认封面',
+                title: t('reset_cover_question'),
                 onConfirm: async () => {
                   try {
                     await updateMusic({
@@ -206,7 +205,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {
-                    logger.error(error, '重置音乐封面失败');
+                    logger.error(error, 'Failed to reset cover of music');
                     dialog.alert({
                       content: error.message,
                     });
@@ -220,17 +219,17 @@ function EditMenu({ music }: { music: MusicDetail }) {
         <MenuItem
           style={itemStyle}
           icon={<MdTitle />}
-          label="编辑名字"
+          label={t('edit_name')}
           onClick={() =>
             dialog.input({
-              title: '编辑名字',
-              label: '名字',
+              title: t('edit_name'),
+              label: t('name'),
               initialValue: music.name,
               maxLength: NAME_MAX_LENGTH,
               onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName.length) {
-                  notice.error('请输入名字');
+                  notice.error(t('please_enter_the_name'));
                   return false;
                 }
 
@@ -243,7 +242,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {
-                    logger.error(error, '更新音乐名字失败');
+                    logger.error(error, 'Failed to update name of music');
                     notice.error(error.message);
                     return false;
                   }
@@ -255,11 +254,11 @@ function EditMenu({ music }: { music: MusicDetail }) {
         <MenuItem
           style={itemStyle}
           icon={<MdTextFields />}
-          label="编辑别名"
+          label={t('edit_alias')}
           onClick={() =>
             dialog.inputList({
-              title: '编辑别名',
-              label: '别名',
+              title: t('edit_alias'),
+              label: t('alias'),
               initialValue: music.aliases,
               max: MUSIC_MAX_ALIAS_COUNT,
               maxLength: ALIAS_MAX_LENGTH,
@@ -277,7 +276,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {
-                    logger.error(error, "Updating music's aliases fail");
+                    logger.error(error, 'Failed to update aliases of music');
                     notice.error(error.message);
                     return false;
                   }
@@ -290,15 +289,15 @@ function EditMenu({ music }: { music: MusicDetail }) {
           <MenuItem
             style={itemStyle}
             icon={<MdTextFields />}
-            label="编辑歌词"
+            label={t('edit_lyric')}
             onClick={() =>
               dialog.textareaList({
-                title: '编辑歌词',
-                label: '歌词',
+                title: t('edit_lyric'),
+                label: t('lyric'),
                 initialValue: music.lyrics.map((l) => l.lrc),
                 max: MUSIC_MAX_LRYIC_AMOUNT,
                 maxLength: LYRIC_MAX_LENGTH,
-                placeholder: 'LRC 格式的文本',
+                placeholder: t('text_of_lrc'),
                 onConfirm: async (lyrics: string[]) => {
                   const trimmedLyrics = lyrics
                     .map((l) => l.trim())
@@ -318,7 +317,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                       });
                       emitMusicUpdated(music.id);
                     } catch (error) {
-                      logger.error(error, 'Updating lyrics fail');
+                      logger.error(error, 'Failed to update lyrics of music');
                       notice.error(error.message);
                       return false;
                     }
@@ -331,19 +330,19 @@ function EditMenu({ music }: { music: MusicDetail }) {
         <MenuItem
           style={itemStyle}
           icon={<MdGroup />}
-          label="编辑歌手列表"
+          label={t('modify_singer')}
           onClick={() =>
             dialog.multipleSelect<Singer>({
-              label: '歌手列表',
+              label: t('singer'),
               labelAddon: <MissingSinger />,
-              title: '编辑歌手列表',
+              title: t('modify_singer'),
               optionsGetter: searchSinger,
               initialValue: music.singers.map(
                 formatSingerToMultipleSelectOption,
               ),
               onConfirm: async (options) => {
                 if (!options.length) {
-                  notice.error('请选择歌手');
+                  notice.error(t('please_select_singers'));
                   return false;
                 }
 
@@ -361,7 +360,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {
-                    logger.error(error, '更新歌手列表失败');
+                    logger.error(error, 'Failed to modify singers of music');
                     notice.error(error.message);
                     return false;
                   }
@@ -373,18 +372,19 @@ function EditMenu({ music }: { music: MusicDetail }) {
         <MenuItem
           style={itemStyle}
           icon={<MdOutlineFilePresent />}
-          label="编辑音乐文件"
+          label={t('modify_file_of_music')}
           onClick={() =>
             dialog.fileSelect({
-              title: '编辑音乐文件',
-              label: '音乐文件',
+              title: t('modify_file_of_music'),
+              label: t('file_of_music'),
               acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes,
-              placeholder: `选择文件, 支持以下类型 ${ASSET_TYPE_MAP[
-                AssetType.MUSIC
-              ].acceptTypes.join(',')}`,
+              placeholder: t(
+                'one_of_formats',
+                ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(','),
+              ),
               onConfirm: async (file) => {
                 if (!file) {
-                  notice.error('请选择文件');
+                  notice.error(t('please_select_a_file'));
                   return false;
                 }
                 try {
@@ -396,7 +396,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
                   });
                   emitMusicUpdated(music.id);
                 } catch (error) {
-                  logger.error(error, 'Updating music asset fail');
+                  logger.error(error, 'Failed to modify file of music');
                   notice.error(error.message);
                   return false;
                 }
@@ -407,11 +407,11 @@ function EditMenu({ music }: { music: MusicDetail }) {
         <MenuItem
           style={itemStyle}
           icon={<MdCallSplit />}
-          label="编辑二次创作来源"
+          label={t('modify_fork_from')}
           onClick={() =>
             dialog.multipleSelect<Music>({
-              title: '二次创作来源',
-              label: '创作来源自以下音乐',
+              title: t('modify_fork_from'),
+              label: t('fork_from'),
               optionsGetter: searchMusic,
               initialValue: music.forkFromList.map(
                 formatMusicTouMultipleSelectOtion,

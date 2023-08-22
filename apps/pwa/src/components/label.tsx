@@ -1,12 +1,9 @@
 import upperCaseFirstLetter from '@/style/capitalize';
 import { ForwardedRef, forwardRef, HtmlHTMLAttributes, ReactNode } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { CSSVariable } from '../global_style';
-import ellipsis from '../style/ellipsis';
 
-const Style = styled.div<{ active: boolean; disabled: boolean }>`
-  transition: 300ms ease-in-out;
-
+const Style = styled.label`
   > .top {
     margin-bottom: 5px;
 
@@ -24,38 +21,40 @@ const Style = styled.div<{ active: boolean; disabled: boolean }>`
       flex: 1;
       min-width: 0;
 
+      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
       font-size: 12px;
       transition: inherit;
-      ${ellipsis}
       ${upperCaseFirstLetter}
     }
   }
 
-  ${({ active, disabled }) => css`
+  &:focus-within {
     > .top {
       > .label {
-        color: ${disabled
-          ? CSSVariable.TEXT_COLOR_DISABLED
-          : active
-          ? CSSVariable.COLOR_PRIMARY
-          : CSSVariable.TEXT_COLOR_PRIMARY};
+        color: ${CSSVariable.COLOR_PRIMARY};
       }
     }
-  `}
+  }
+
+  &:disabled {
+    > .top {
+      > .label {
+        color: ${CSSVariable.TEXT_COLOR_DISABLED} !important;
+      }
+    }
+  }
 `;
-type Props = HtmlHTMLAttributes<HTMLDivElement> & {
+type Props = HtmlHTMLAttributes<HTMLLabelElement> & {
   label?: string;
-  disabled?: boolean;
-  active?: boolean;
   addon?: ReactNode;
 };
 
 function Label(
-  { label, active = false, disabled = false, addon, children, ...props }: Props,
-  ref: ForwardedRef<HTMLDivElement>,
+  { label, addon, children, ...props }: Props,
+  ref: ForwardedRef<HTMLLabelElement>,
 ) {
   return (
-    <Style {...props} active={active} disabled={disabled} ref={ref}>
+    <Style {...props} ref={ref}>
       <div className="top">
         {label ? <div className="label">{label}</div> : null}
         {addon}
@@ -65,4 +64,4 @@ function Label(
   );
 }
 
-export default forwardRef<HTMLDivElement, Props>(Label);
+export default forwardRef<HTMLLabelElement, Props>(Label);

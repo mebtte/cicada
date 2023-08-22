@@ -2,6 +2,7 @@ import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import { CSSProperties, useState } from 'react';
 import MultipleSelect, { Option } from '@/components/multiple_select';
+import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { MultipleSelect as MultipleSelectShape } from './constants';
 import useEvent from '../use_event';
@@ -63,7 +64,7 @@ function TextInputContent({
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {multipleSelect.cancelText || '取消'}
+          {multipleSelect.cancelText || t('cancel')}
         </Button>
         <Button
           variant={multipleSelect.confirmVariant}
@@ -71,7 +72,7 @@ function TextInputContent({
           loading={confirming}
           disabled={canceling}
         >
-          {multipleSelect.confirmText || '确定'}
+          {multipleSelect.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>

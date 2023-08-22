@@ -80,7 +80,6 @@ Also you can use `--user {uid}:{gid}` to map user.
 ### Docker compose
 
 ```yml
-version: '3'
 services:
   cicada:
     restart: always
@@ -162,16 +161,12 @@ Because safari unsupport PWA on iOS/iPadOS, there is a plan to develop a App but
 
 </details>
 
-## License
-
-[GPL](./license)
-
 ## Contributor
 
 <a href="https://github.com/mebtte/cicada/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=mebtte/cicada" />
 </a>
 
-## Star
+## License
 
-[![Star History Chart](https://api.star-history.com/svg?repos=mebtte/cicada&type=Timeline)](https://star-history.com/#mebtte/cicada&Timeline)
+[GPL](./license)

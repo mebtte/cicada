@@ -5,6 +5,5 @@ export type Response = {
     name: string;
     cover: string;
     user: { id: string; nickname: string };
-    collectTimestamp: number;
   }[];
 };

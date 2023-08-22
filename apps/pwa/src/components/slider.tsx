@@ -20,7 +20,6 @@ const Style = styled.div`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 
-  transform-origin: bottom;
   transition: 100ms;
 
   > .progress {

@@ -12,7 +12,6 @@ import {
   MusicbillMusicProperty,
   MUSICBILL_MUSIC_TABLE_NAME,
   MUSIC_TABLE_NAME,
-  PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getMusicbillById } from '@/db/musicbill';
@@ -32,7 +31,6 @@ export default async (ctx: Context) => {
     MusicbillProperty.ID,
     MusicbillProperty.NAME,
     MusicbillProperty.COVER,
-    MusicbillProperty.CREATE_TIMESTAMP,
     MusicbillProperty.PUBLIC,
     MusicbillProperty.USER_ID,
   ]);
@@ -40,21 +38,20 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.MUSICBILL_NOT_EXISTED);
   }
 
-  const [user, musicList, collectionCount, musicbillCollection] =
-    await Promise.all([
-      getUserById(musicbill.userId, [UserProperty.ID, UserProperty.NICKNAME]),
-      getDB().all<
-        Pick<
-          Music,
-          | MusicProperty.ID
-          | MusicProperty.TYPE
-          | MusicProperty.NAME
-          | MusicProperty.ALIASES
-          | MusicProperty.COVER
-          | MusicProperty.ASSET
-        >
-      >(
-        `
+  const [user, musicList, musicbillCollection] = await Promise.all([
+    getUserById(musicbill.userId, [UserProperty.ID, UserProperty.NICKNAME]),
+    getDB().all<
+      Pick<
+        Music,
+        | MusicProperty.ID
+        | MusicProperty.TYPE
+        | MusicProperty.NAME
+        | MusicProperty.ALIASES
+        | MusicProperty.COVER
+        | MusicProperty.ASSET
+      >
+    >(
+      `
         SELECT
           m.${MusicProperty.ID},
           m.${MusicProperty.TYPE},
@@ -68,23 +65,14 @@ export default async (ctx: Context) => {
         WHERE mm.${MusicbillMusicProperty.MUSICBILL_ID} = ?
         ORDER BY mm.${MusicbillMusicProperty.ADD_TIMESTAMP} DESC
       `,
-        [id],
-      ),
-      getDB().get<{ value: number }>(
-        `
-          SELECT
-            count(*) AS value
-          FROM ${PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME}
-          WHERE ${PublicMusicbillCollectionProperty.MUSICBILL_ID} = ?
-        `,
-        [id],
-      ),
-      getPublicMusicbillCollection({
-        musicbillId: id,
-        userId: ctx.user.id,
-        properties: [PublicMusicbillCollectionProperty.ID],
-      }),
-    ]);
+      [id],
+    ),
+    getPublicMusicbillCollection({
+      musicbillId: id,
+      userId: ctx.user.id,
+      properties: [PublicMusicbillCollectionProperty.ID],
+    }),
+  ]);
 
   const musicIdMapSingers: {
     [key: string]: {
@@ -123,7 +111,6 @@ export default async (ctx: Context) => {
       cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
     })),
-    collectionCount: collectionCount!.value,
 
     collected: !!musicbillCollection,
   });

@@ -1,5 +1,6 @@
 import { FocusEventHandler, ReactNode, useState } from 'react';
 import styled, { css } from 'styled-components';
+import { t } from '@/i18n';
 import { CSSVariable } from '../../global_style';
 import Label from '../label';
 import { Option as OptionType } from './constants';
@@ -52,7 +53,7 @@ function MultipleSelect<Value>({
   value,
   onChange,
   optionsGetter,
-  emptyMesssage = '暂无数据',
+  emptyMesssage = t('no_data'),
   disabled = false,
   addon,
 }: {
@@ -89,7 +90,7 @@ function MultipleSelect<Value>({
 
   const selectedKeys = value.map((i) => i.key);
   return (
-    <Label label={label} active={active} disabled={disabled} addon={addon}>
+    <Label label={label} addon={addon}>
       <Input active={active} disabled={disabled}>
         {value.map((option) => (
           <ValueItem

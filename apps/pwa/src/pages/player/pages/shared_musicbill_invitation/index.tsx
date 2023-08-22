@@ -9,6 +9,7 @@ import { SHARED_MUSICBILL_INVITATION_MINIMAL_TTL } from '#/constants';
 import { CSSVariable } from '@/global_style';
 import { MdHelpOutline } from 'react-icons/md';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { t } from '@/i18n';
 import useData from './use_data';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
@@ -72,7 +73,10 @@ function SharedMusicbillInvitation() {
               <div className="description">
                 <MdHelpOutline />
                 <span>
-                  邀请将保留 {TTL_DAY}-{TTL_DAY + 1} 天后自动拒绝
+                  {t(
+                    'invitation_will_be_canceled_automatically_after_days',
+                    `${TTL_DAY}-${TTL_DAY + 1}`,
+                  )}
                 </span>
               </div>
               <div className="list">
@@ -85,7 +89,7 @@ function SharedMusicbillInvitation() {
         }
         return (
           <CenteredContainer style={style}>
-            <Empty description="暂无共享乐单邀请" />
+            <Empty description={t('no_shared_musicbill_invitation')} />
           </CenteredContainer>
         );
       })}

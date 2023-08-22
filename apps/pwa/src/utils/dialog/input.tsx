@@ -2,6 +2,7 @@ import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import { CSSProperties, ChangeEventHandler, useState } from 'react';
+import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { Input as InputShape } from './constants';
 import useEvent from '../use_event';
@@ -61,7 +62,7 @@ function InputContent({
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {input.cancelText || '取消'}
+          {input.cancelText || t('cancel')}
         </Button>
         <Button
           variant={input.confirmVariant}
@@ -69,7 +70,7 @@ function InputContent({
           loading={confirming}
           disabled={canceling}
         >
-          {input.confirmText || '确定'}
+          {input.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>

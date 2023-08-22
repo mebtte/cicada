@@ -1,7 +1,8 @@
 import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import Button, { Variant } from '@/components/button';
 import Input from '@/components/input';
-import Select from '@/components/select';
+import Label from '@/components/label';
+import Select, { Option } from '@/components/select';
 import s from '@/global_states/setting';
 import { useState } from 'react';
 import useEvent from '@/utils/use_event';
@@ -17,6 +18,11 @@ const StyledContent = styled(Content)`
   flex-direction: column;
   gap: 20px;
 `;
+const languageOptions: Option<Language>[] = LANGUAGES.map((l) => ({
+  key: l,
+  label: LANGUAGE_MAP[l].label,
+  value: l,
+}));
 
 function SettingDialog({
   open,
@@ -46,20 +52,17 @@ function SettingDialog({
       <Container>
         <Title>{t('setting')}</Title>
         <StyledContent>
-          <Select<Language>
-            label={t('language')}
-            value={{
-              key: language,
-              label: LANGUAGE_MAP[language].label,
-              value: language,
-            }}
-            onChange={(v) => setLanguage(v.value)}
-            data={LANGUAGES.map((l) => ({
-              key: l,
-              label: LANGUAGE_MAP[l].label,
-              value: l,
-            }))}
-          />
+          <Label label={t('language')}>
+            <Select<Language>
+              value={{
+                label: LANGUAGE_MAP[language].label,
+                value: language,
+              }}
+              onChange={(option) => setLanguage(option.value)}
+              options={languageOptions}
+              menuPortalTarget={document.body}
+            />
+          </Label>
           <Input
             label={t('server_origin')}
             inputProps={{

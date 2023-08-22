@@ -6,6 +6,7 @@ import IconButton from '@/components/icon_button';
 import { ComponentSize } from '@/constants/style';
 import { MdDelete } from 'react-icons/md';
 import styled from 'styled-components';
+import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { InputList as InputListShape } from './constants';
 import useEvent from '../use_event';
@@ -29,9 +30,9 @@ function InputListContent({
 }) {
   const [values, setValues] = useState<{ id: number; content: string }[]>(
     () => {
-      const from = (inputList.initialValue || []).map((t) => ({
+      const from = (inputList.initialValue || []).map((a) => ({
         id: Math.random(),
-        content: t,
+        content: a,
       }));
       return from.length ? from : [{ id: Math.random(), content: '' }];
     },
@@ -119,13 +120,13 @@ function InputListContent({
             }
             disabled={confirming || canceling}
           >
-            新增{inputList.label}
+            {t('add')} {inputList.label}
           </Button>
         )}
       </StyledContent>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {inputList.cancelText || '取消'}
+          {inputList.cancelText || t('cancel')}
         </Button>
         <Button
           variant={inputList.confirmVariant}
@@ -133,7 +134,7 @@ function InputListContent({
           loading={confirming}
           disabled={canceling}
         >
-          {inputList.confirmText || '确定'}
+          {inputList.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>

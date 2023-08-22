@@ -1,6 +1,7 @@
 import Empty from '@/components/empty';
 import { CSSProperties, useContext } from 'react';
 import List from 'react-list';
+import { t } from '@/i18n';
 import Music from '../components/music';
 import { MusicWithSingerAliases } from '../constants';
 import Context from '../context';
@@ -29,7 +30,7 @@ function MusicList({ musicList }: { musicList: MusicWithSingerAliases[] }) {
       }}
     />
   ) : (
-    <Empty description="暂无音乐" style={emptyStyle} />
+    <Empty description={t('no_music')} style={emptyStyle} />
   );
 }
 

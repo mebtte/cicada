@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { t } from '@/i18n';
 import { Alert as AlertType } from './constants';
 import { Container, Content, Title, Action } from '../../components/dialog';
 import Button, { Variant } from '../../components/button';
@@ -33,7 +34,7 @@ function AlertContent({
           onClick={onConfirm}
           loading={confirming}
         >
-          {alert.confirmText || '确定'}
+          {alert.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>

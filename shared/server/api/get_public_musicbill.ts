@@ -4,7 +4,6 @@ export type Response = {
   id: string;
   cover: string;
   name: string;
-  createTimestamp: number;
   user: {
     id: string;
     nickname: string;
@@ -23,6 +22,5 @@ export type Response = {
     }[];
   }[];
 
-  collectionCount: number;
   collected: boolean;
 };

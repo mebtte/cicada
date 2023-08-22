@@ -5,6 +5,7 @@ import ellipsis from '@/style/ellipsis';
 import { MdOutlineMusicNote } from 'react-icons/md';
 import Empty from '@/components/empty';
 import { CSSProperties } from 'react';
+import { t } from '@/i18n';
 import { UserDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -100,7 +101,7 @@ function MusicbillList({ musicbillList }: { musicbillList: MusicbillType[] }) {
       </Root>
     );
   }
-  return <Empty style={emptyStyle} description="暂无公开乐单" />;
+  return <Empty style={emptyStyle} description={t('no_public_musicbill')} />;
 }
 
 export default MusicbillList;
