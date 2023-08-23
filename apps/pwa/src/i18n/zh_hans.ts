@@ -111,6 +111,9 @@ const zhCN: {
   pwa_update_question: '检查到新版本, 是否马上加载?',
   music: '音乐',
   public_musicbill: '公开乐单',
+  pick_from_playlist_randomly: '随机从播放列表选取',
+  relocate_to_here: '重定位到此处',
+  empty_playqueue: '空的播放队列',
 };
 
 export default zhCN;

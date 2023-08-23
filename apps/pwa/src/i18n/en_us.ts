@@ -112,4 +112,7 @@ export default {
   pwa_update_question: 'do you want to reload to switch new version now ?',
   music: 'music',
   public_musicbill: 'public musicbill',
+  pick_from_playlist_randomly: 'pick from playlist randomly',
+  relocate_to_here: 'relocate to here',
+  empty_playqueue: 'empty playqueue',
 };
