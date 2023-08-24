@@ -19,7 +19,7 @@ const Style = styled.div`
   background-color: rgb(145 222 202);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-
+  touch-action: none;
   transition: 100ms;
 
   > .progress {
