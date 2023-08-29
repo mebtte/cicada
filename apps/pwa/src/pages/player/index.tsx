@@ -14,7 +14,7 @@ import useAudioState from './use_audio_state';
 import usePlaylist from './use_playlist';
 import usePlayqueue from './use_playqueue';
 import Context from './context';
-import Audio from './audio';
+import useAudio from './use_audio';
 import useMediaSession from './use_media_session';
 import MusicDrawer from './music_drawer';
 import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
@@ -80,6 +80,8 @@ function Wrapper() {
     e.emit(EventType.CURRENT_MUSIC_CHANGE, { queueMusic });
   }, [queueMusic]);
 
+  useAudio({ queueMusic });
+
   return (
     <Context.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -128,8 +130,6 @@ function Wrapper() {
 
       {/* fixed z-index */}
       <ProfileEditPopup />
-
-      {queueMusic ? <Audio queueMusic={queueMusic} /> : null}
     </Context.Provider>
   );
 }

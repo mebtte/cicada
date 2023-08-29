@@ -115,4 +115,7 @@ export default {
   pick_from_playlist_randomly: 'pick from playlist randomly',
   relocate_to_here: 'relocate to here',
   empty_playqueue: 'empty playqueue',
+  next_music: 'next music',
+  failed_to_play: 'failed to play',
+  auto_play_next_after_seconds: 'audo play next after %s1 seconds',
 };
