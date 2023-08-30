@@ -41,13 +41,10 @@ function Audio({ queueMusic }: { queueMusic?: QueueMusic }) {
     if (queueMusic) {
       const newAudio = new window.Audio();
       newAudio.crossOrigin = 'anonymous';
+      newAudio.preload = 'auto';
       newAudio.autoplay = true;
       newAudio.loop = false;
       newAudio.src = queueMusic.asset;
-
-      eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
-        currentMillisecond: 0,
-      });
 
       const onCanPlayThrough = () => setDuration(newAudio.duration);
       const onDurationChange = () => setDuration(newAudio.duration);
@@ -133,7 +130,7 @@ function Audio({ queueMusic }: { queueMusic?: QueueMusic }) {
         newAudio.removeEventListener('seeking', onSeeking);
         newAudio.removeEventListener('seeked', onSeeked);
 
-        newAudio.src = '';
+        newAudio.src = ''; // pause audio and let it be garbage collected
 
         setLoading(true);
         setDuration(0);
