@@ -10,7 +10,6 @@ import Header from './header';
 import Controller from './controller';
 import Route from './route';
 import useMusicbillList from './use_musicbill_list';
-import useAudioState from './use_audio_state';
 import usePlaylist from './use_playlist';
 import usePlayqueue from './use_playqueue';
 import Context from './context';
@@ -60,11 +59,6 @@ function Wrapper() {
   useDocumentTitle(capitalize(t('cicada')));
 
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
-  const {
-    loading: audioLoading,
-    paused: audioPaused,
-    duration: audioDuration,
-  } = useAudioState();
   const playlist = usePlaylist();
   const { playqueue, currentPosition: currentPlayqueuePosition } =
     usePlayqueue(playlist);
@@ -72,6 +66,11 @@ function Wrapper() {
     | QueueMusic
     | undefined;
   const lyricPanelOpen = useLyricPanelOpen();
+  const {
+    loading: audioLoading,
+    paused: audioPaused,
+    duration: audioDuration,
+  } = useAudio({ queueMusic });
 
   useKeyboard({ paused: audioPaused, queueMusic, musicbillList });
   useMediaSession(queueMusic);
@@ -79,8 +78,6 @@ function Wrapper() {
   useEffect(() => {
     e.emit(EventType.CURRENT_MUSIC_CHANGE, { queueMusic });
   }, [queueMusic]);
-
-  useAudio({ queueMusic });
 
   return (
     <Context.Provider

@@ -116,7 +116,7 @@ const zhCN: {
   empty_playqueue: '空的播放队列',
   next_music: '下一首',
   failed_to_play: '播放发生错误',
-  auto_play_next_after_seconds: '%s 秒后自动播放下一首',
+  auto_play_next_after_seconds: '%s1 秒后自动播放下一首',
 };
 
 export default zhCN;

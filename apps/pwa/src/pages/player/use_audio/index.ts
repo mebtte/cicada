@@ -30,8 +30,12 @@ function uploadPlayRecord(audio: HTMLAudioElement, musicId: string) {
 }
 
 function Audio({ queueMusic }: { queueMusic?: QueueMusic }) {
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const { playerVolume } = setting.useState();
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+
+  const [loading, setLoading] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [paused, setPaused] = useState(true);
 
   useEffect(() => {
     if (queueMusic) {
@@ -45,56 +49,47 @@ function Audio({ queueMusic }: { queueMusic?: QueueMusic }) {
         currentMillisecond: 0,
       });
 
-      newAudio.addEventListener('canplaythrough', () =>
-        eventemitter.emit(EventType.AUDIO_CAN_PLAY_THROUGH, {
-          duration: newAudio.duration,
-        }),
+      const onCanPlayThrough = () => setDuration(newAudio.duration);
+      const onDurationChange = () => setDuration(newAudio.duration);
+      const onPlay = () => setPaused(false);
+      const onPause = () => setPaused(true);
+      const onTimeUpdate = throttle(
+        () =>
+          eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
+            currentMillisecond: newAudio.currentTime * 1000,
+          }),
+        300,
       );
-      newAudio.addEventListener('play', () =>
-        eventemitter.emit(EventType.AUDIO_PLAY, null),
-      );
-      newAudio.addEventListener('pause', () =>
-        eventemitter.emit(EventType.AUDIO_PAUSE, null),
-      );
-      newAudio.addEventListener(
-        'timeupdate',
-        throttle(
-          () =>
-            eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
-              currentMillisecond: newAudio.currentTime * 1000,
-            }),
-          300,
-        ),
-      );
-      newAudio.addEventListener('ended', () =>
-        eventemitter.emit(EventType.ACTION_NEXT, null),
-      );
+      const onEnded = () => eventemitter.emit(EventType.ACTION_NEXT, null);
+      const onWaiting = () => setLoading(true);
+      const onPlaying = () => setLoading(false);
+      const onProgress = () => {};
+      const onSeeking = () => setLoading(true);
+      const onSeeked = () => setLoading(false);
+
       newAudio.addEventListener('error', onError);
-      newAudio.addEventListener('waiting', () =>
-        eventemitter.emit(EventType.AUDIO_WAITING, null),
-      );
-      newAudio.addEventListener('playing', () => {});
-      newAudio.addEventListener('progress', () => {});
-      // abort
+      newAudio.addEventListener('canplaythrough', onCanPlayThrough);
+      newAudio.addEventListener('durationchange', onDurationChange);
+      newAudio.addEventListener('play', onPlay);
+      newAudio.addEventListener('pause', onPause);
+      newAudio.addEventListener('timeupdate', onTimeUpdate);
+      newAudio.addEventListener('ended', onEnded);
+      newAudio.addEventListener('waiting', onWaiting);
+      newAudio.addEventListener('playing', onPlaying);
+      newAudio.addEventListener('progress', onProgress);
+      newAudio.addEventListener('seeking', onSeeking);
+      newAudio.addEventListener('seeked', onSeeked);
       // canplay
-      // durationchange
       // emptied
       // loaddata
       // loadstart
       // loadeddata
       // loadedmetadata
-      // ratechange
-      // seeked
-      // seeking
       // stalled
       // suspend
-      // volumechange
 
       setAudio(newAudio);
       return () => {
-        newAudio.pause();
-        uploadPlayRecord(newAudio, queueMusic.id);
-
         /**
          * workbox 不支持缓存媒体
          * 需要手动进行缓存
@@ -122,6 +117,30 @@ function Audio({ queueMusic }: { queueMusic?: QueueMusic }) {
             }
           });
         }
+
+        uploadPlayRecord(newAudio, queueMusic.id);
+
+        newAudio.removeEventListener('error', onError);
+        newAudio.removeEventListener('canplaythrough', onCanPlayThrough);
+        newAudio.removeEventListener('durationchange', onDurationChange);
+        newAudio.removeEventListener('play', onPlay);
+        newAudio.removeEventListener('pause', onPause);
+        newAudio.removeEventListener('timeupdate', onTimeUpdate);
+        newAudio.removeEventListener('ended', onEnded);
+        newAudio.removeEventListener('waiting', onWaiting);
+        newAudio.removeEventListener('playing', onPlaying);
+        newAudio.removeEventListener('progress', onProgress);
+        newAudio.removeEventListener('seeking', onSeeking);
+        newAudio.removeEventListener('seeked', onSeeked);
+
+        newAudio.src = '';
+
+        setLoading(true);
+        setDuration(0);
+        setPaused(true);
+        eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
+          currentMillisecond: 0,
+        });
       };
     }
   }, [queueMusic]);
@@ -173,6 +192,12 @@ function Audio({ queueMusic }: { queueMusic?: QueueMusic }) {
       return () => window.removeEventListener('beforeunload', onBeforeUnload);
     }
   }, [audio, queueMusic]);
+
+  return {
+    loading,
+    duration,
+    paused,
+  };
 }
 
 export default Audio;

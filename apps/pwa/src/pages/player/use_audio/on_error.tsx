@@ -47,7 +47,6 @@ function onError() {
     confirmText: t('next_music'),
     onConfirm: next,
   });
-  return eventemitter.emit(EventType.AUDIO_ERROR, null);
 }
 
 export default onError;
