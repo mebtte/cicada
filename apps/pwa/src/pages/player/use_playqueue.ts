@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import notice from '@/utils/notice';
 import getRandomInteger from '#/utils/generate_random_integer';
 import getRandomString from '#/utils/generate_random_string';
+import { t } from '@/i18n';
 import eventemitter, { EventType } from './eventemitter';
 import { MusicWithSingerAliases, QueueMusic } from './constants';
 
@@ -136,7 +137,7 @@ export default (playlist: MusicWithSingerAliases[]) => {
       () => {
         if (currentPosition === playqueue.length - 1) {
           if (!playlist.length) {
-            return notice.error('空的播放列表');
+            return notice.error(t('empty_playlist'));
           }
           const music = playlist[getRandomInteger(0, playlist.length)];
           setPlayqueue(

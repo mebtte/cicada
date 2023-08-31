@@ -114,6 +114,7 @@ const zhCN: {
   pick_from_playlist_randomly: '随机从播放列表选取',
   relocate_to_here: '重定位到此处',
   empty_playqueue: '空的播放队列',
+  empty_playlist: '空的播放列表',
   next_music: '下一首',
   failed_to_play: '播放发生错误',
   auto_play_next_after_seconds: '%s1 秒后自动播放下一首',
