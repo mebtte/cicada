@@ -130,14 +130,14 @@ function Audio({ queueMusic }: { queueMusic?: QueueMusic }) {
         newAudio.removeEventListener('seeking', onSeeking);
         newAudio.removeEventListener('seeked', onSeeked);
 
-        newAudio.src = ''; // pause audio and let it be garbage collected
-
         setLoading(true);
         setDuration(0);
         setPaused(true);
         eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
           currentMillisecond: 0,
         });
+
+        newAudio.src = ''; // pause audio and let it be garbage collected
       };
     }
   }, [queueMusic]);
