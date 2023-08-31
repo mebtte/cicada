@@ -89,7 +89,9 @@ class CustomAudio<Extra> {
 
   getBufferedPercent() {
     const { duration, buffered } = this.audio;
-    return duration ? buffered.end(buffered.length - 1) / duration : 0;
+    return duration && buffered.length
+      ? buffered.end(buffered.length - 1) / duration
+      : 0;
   }
 }
 

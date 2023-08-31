@@ -1,6 +1,7 @@
 import dialog from '@/utils/dialog';
 import { useEffect, useMemo, useState } from 'react';
 import { t } from '@/i18n';
+import debugSetting from '@/global_states/debug_setting';
 import eventemitter, { EventType } from '../eventemitter';
 
 const next = () => eventemitter.emit(EventType.ACTION_NEXT, null);
@@ -41,6 +42,11 @@ function CoundDown({ getId }: { getId: () => string }) {
 }
 
 function onError() {
+  if (debugSetting.get().audioLogEnabled) {
+    // eslint-disable-next-line no-console
+    console.log('audio error');
+  }
+
   const id = dialog.confirm({
     title: t('failed_to_play'),
     content: <CoundDown getId={() => id} />,
