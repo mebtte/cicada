@@ -6,7 +6,7 @@ import { MusicWithSingerAliases } from '../constants';
 import Context from '../context';
 
 const Root = styled.div`
-  min-height: 100vh;
+  min-height: 100dvb;
 `;
 const style: CSSProperties = {
   padding: '50px 0',

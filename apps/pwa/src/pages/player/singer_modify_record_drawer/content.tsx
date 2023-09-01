@@ -7,7 +7,7 @@ import RecordList from './record_list';
 
 const COVER_SIZE = 32;
 const Style = styled.div`
-  min-height: 100vh;
+  min-height: 100dvb;
 
   display: flex;
   flex-direction: column;
