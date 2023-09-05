@@ -7,6 +7,7 @@ import definition from '@/definition';
 import { NORMAL_REQUEST_MINIMAL_DURATION } from '@/constants';
 import timeoutFn from '#/utils/timeout';
 import { CommonQuery } from '#/constants';
+import { t } from '@/i18n';
 
 export enum Method {
   GET = 'get',
@@ -85,7 +86,7 @@ export async function request<Data = void>({
       timeoutFn(timeout),
     ]);
   } catch (error) {
-    throw new Error('暂时无法连接到服务器');
+    throw new Error(t('can_not_connect_to_server_temporarily'));
   }
 
   const { status, statusText } = response;

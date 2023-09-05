@@ -118,6 +118,7 @@ const zhCN: {
   next_music: '下一首',
   failed_to_play: '播放发生错误',
   auto_play_next_after_seconds: '%s1 秒后自动播放下一首',
+  can_not_connect_to_server_temporarily: '暂时无法连接到服务器',
 };
 
 export default zhCN;
