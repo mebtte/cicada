@@ -36,8 +36,7 @@
     "apps/cli"
   ],
   "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+    "node": ">=18"
   },
   "dependencies": {
     "@expo/spawn-async": "^1.6.0",
@@ -61,7 +60,7 @@
     "node-schedule": "^2.1.0",
     "nodemailer": "^6.7.5",
     "sanitize-filename": "^1.6.3",
-    "sqlite3": "^5.1.1",
+    "sqlite3": "^5.1.6",
     "svg-captcha": "^1.4.0"
   },
   "devDependencies": {
