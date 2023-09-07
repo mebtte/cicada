@@ -10,11 +10,10 @@ import Header from './header';
 import Controller from './controller';
 import Route from './route';
 import useMusicbillList from './use_musicbill_list';
-import useAudioState from './use_audio_state';
 import usePlaylist from './use_playlist';
 import usePlayqueue from './use_playqueue';
 import Context from './context';
-import Audio from './audio';
+import useAudio from './use_audio';
 import useMediaSession from './use_media_session';
 import MusicDrawer from './music_drawer';
 import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
@@ -60,11 +59,6 @@ function Wrapper() {
   useDocumentTitle(capitalize(t('cicada')));
 
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
-  const {
-    loading: audioLoading,
-    paused: audioPaused,
-    duration: audioDuration,
-  } = useAudioState();
   const playlist = usePlaylist();
   const { playqueue, currentPosition: currentPlayqueuePosition } =
     usePlayqueue(playlist);
@@ -72,6 +66,11 @@ function Wrapper() {
     | QueueMusic
     | undefined;
   const lyricPanelOpen = useLyricPanelOpen();
+  const {
+    loading: audioLoading,
+    paused: audioPaused,
+    duration: audioDuration,
+  } = useAudio({ queueMusic });
 
   useKeyboard({ paused: audioPaused, queueMusic, musicbillList });
   useMediaSession(queueMusic);
@@ -128,8 +127,6 @@ function Wrapper() {
 
       {/* fixed z-index */}
       <ProfileEditPopup />
-
-      {queueMusic ? <Audio queueMusic={queueMusic} /> : null}
     </Context.Provider>
   );
 }

@@ -1,15 +1,12 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
-    "target": "ES2015",
+    "target": "ESNext", // 由 babel 进一步编译
     "strictNullChecks": true,
     "skipLibCheck": true,
-    "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "jsx": "react-jsx"
+    "resolveJsonModule": true
   },
   "exclude": ["node_modules", "**/node_modules/*"]
 }

@@ -13,7 +13,7 @@ import playerEventemitter, {
 
 type MusicbillType = UserDetail['musicbillList'][0];
 const Root = styled.div`
-  min-height: 100vh;
+  min-height: 100dvb;
   padding: 0 10px 10px 10px;
 
   font-size: 0;
