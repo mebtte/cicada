@@ -108,7 +108,7 @@ function Wrapper() {
                   id={musicbill.id}
                   cover={getResizedImage({
                     url: musicbill.cover,
-                    size: ITEM_MIN_WIDTH * 2,
+                    size: ITEM_MIN_WIDTH * window.devicePixelRatio,
                   })}
                   name={musicbill.name}
                   userId={musicbill.user.id}

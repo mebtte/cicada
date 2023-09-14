@@ -133,7 +133,7 @@ function CollectionList() {
                       id={c.id}
                       cover={getResizedImage({
                         url: c.cover,
-                        size: ITEM_MIN_WIDTH * 2,
+                        size: ITEM_MIN_WIDTH * window.devicePixelRatio,
                       })}
                       name={c.name}
                       userId={c.user.id}

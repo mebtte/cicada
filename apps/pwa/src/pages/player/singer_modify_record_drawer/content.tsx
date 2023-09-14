@@ -31,7 +31,7 @@ function Content({ singer }: { singer: Singer }) {
             singer.avatar
               ? getResizedImage({
                   url: singer.avatar,
-                  size: COVER_SIZE * 2,
+                  size: COVER_SIZE * window.devicePixelRatio,
                 })
               : ''
           }

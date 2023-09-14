@@ -122,7 +122,7 @@ function Wrapper() {
                   singerName={singer.name}
                   singerAvatar={getResizedImage({
                     url: singer.avatar,
-                    size: ITEM_MIN_WIDTH * 2,
+                    size: ITEM_MIN_WIDTH * window.devicePixelRatio,
                   })}
                   singerAliases={singer.aliases}
                 />
