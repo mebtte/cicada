@@ -121,4 +121,11 @@ export default {
   auto_play_next_after_seconds: 'audo play next after %s1 seconds',
   can_not_connect_to_server_temporarily:
     'can not connect to server temporarily',
+  please_select_the_music_file: 'please select the music file',
+  music_type_short: 'type',
+  music_type_song: 'song',
+  music_type_instrument: 'instrument',
+  music_file: 'music file',
+  singer_list: 'singer list',
+  supported_formats: 'supported formats',
 };

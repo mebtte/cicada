@@ -24,6 +24,11 @@ const StyledContent = styled(Content)`
     flex-shrink: 0;
   }
 `;
+const Addon = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`;
 
 function TextareaListContent({
   onClose,
@@ -116,7 +121,7 @@ function TextareaListContent({
             key={value.id}
             label={`${textareaList.label} ${index + 1}`}
             addon={
-              <>
+              <Addon>
                 <IconButton
                   size={ComponentSize.SMALL}
                   onClick={() => onOpenFile(value.id)}
@@ -131,7 +136,7 @@ function TextareaListContent({
                 >
                   <MdDelete />
                 </IconButton>
-              </>
+              </Addon>
             }
             textareaProps={{
               value: value.content,

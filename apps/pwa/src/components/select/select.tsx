@@ -38,13 +38,14 @@ function Wrapper<Value>({
           ...baseStyles,
           ...style,
         }),
-        control: (baseStyles, { menuIsOpen, isFocused }) => ({
+        control: (baseStyles, { menuIsOpen, isFocused, isDisabled }) => ({
           ...baseStyles,
           color: CSSVariable.TEXT_COLOR_PRIMARY,
-          borderColor:
-            menuIsOpen || isFocused
-              ? `${CSSVariable.COLOR_PRIMARY} !important`
-              : `${CSSVariable.COLOR_BORDER} !important`,
+          borderColor: isDisabled
+            ? `${CSSVariable.TEXT_COLOR_DISABLED} !important`
+            : menuIsOpen || isFocused
+            ? `${CSSVariable.COLOR_PRIMARY} !important`
+            : `${CSSVariable.COLOR_BORDER} !important`,
         }),
         menu: (baseStyles) => ({
           ...baseStyles,

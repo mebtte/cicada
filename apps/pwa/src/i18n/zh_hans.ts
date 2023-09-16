@@ -119,6 +119,13 @@ const zhCN: {
   failed_to_play: '播放发生错误',
   auto_play_next_after_seconds: '%s1 秒后自动播放下一首',
   can_not_connect_to_server_temporarily: '暂时无法连接到服务器',
+  please_select_the_music_file: '请选择音乐文件',
+  music_type_short: '类型',
+  music_type_song: '歌曲',
+  music_type_instrument: '乐曲',
+  music_file: '音乐文件',
+  singer_list: '歌手列表',
+  supported_formats: '支持的格式',
 };
 
 export default zhCN;
