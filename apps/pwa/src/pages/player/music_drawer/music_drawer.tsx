@@ -37,7 +37,7 @@ const DetailBox = styled(Container)`
     ${autoScrollbar}
 
     > .first-screen {
-      min-height: 100vh;
+      min-height: 100dvb;
     }
   }
 `;

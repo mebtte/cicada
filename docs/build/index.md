@@ -2,7 +2,7 @@
 
 ## Preparation
 
-- [Node.js](https://nodejs.org) >= 16
+- [Node.js](https://nodejs.org) >= 18
 
 ## How to build
 

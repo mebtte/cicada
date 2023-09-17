@@ -3,8 +3,8 @@
 
   "compilerOptions": {
     "module": "ESNext",
-    "target": "ESNext",
-    "lib": ["DOM", "WebWorker"],
+    "jsx": "preserve", // 由 babel 进一步编译
+    "lib": ["DOM", "WebWorker", "ESNext"],
 
     "baseUrl": ".",
     "paths": {

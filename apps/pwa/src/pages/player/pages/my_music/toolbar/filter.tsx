@@ -5,6 +5,7 @@ import { IS_TOUCHABLE } from '@/constants/browser';
 import parseSearch from '@/utils/parse_search';
 import { CSSProperties, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { t } from '@/i18n';
 
 const style: CSSProperties = {
   flex: 1,
@@ -39,7 +40,7 @@ function Filter() {
       style={style}
       inputProps={{
         autoFocus: !IS_TOUCHABLE,
-        placeholder: '查找',
+        placeholder: t('search'),
         value: keyword,
         onChange: (event) => setKeyword(event.target.value),
       }}

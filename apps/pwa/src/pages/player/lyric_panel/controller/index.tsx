@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { QueueMusic } from '../../constants';
 import Operation from './operation';
 import Info from './info';
-import Slider from './slider';
+import ProgressBar from './progress_bar';
 
 const Style = styled.div`
   z-index: 2;
@@ -28,16 +28,18 @@ function Controller({
   paused,
   duration,
   loading,
+  bufferedPercent,
 }: {
   queueMusic: QueueMusic;
   paused: boolean;
   duration: number;
   loading: boolean;
+  bufferedPercent: number;
 }) {
   return (
     <Style>
       <Info queueMusic={queueMusic} />
-      <Slider duration={duration} />
+      <ProgressBar duration={duration} bufferedPercent={bufferedPercent} />
       <Operation queueMusic={queueMusic} paused={paused} loading={loading} />
     </Style>
   );

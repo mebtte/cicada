@@ -16,11 +16,6 @@ export const MUSIC_TYPES = Object.values(MusicType).filter(
   (mt) => typeof mt === 'number',
 ) as MusicType[];
 
-export const MUSIC_TYPE_MAP: Record<MusicType, { label: string }> = {
-  [MusicType.SONG]: { label: '歌曲' },
-  [MusicType.INSTRUMENTAL]: { label: '乐曲' },
-};
-
 export const NAME_MAX_LENGTH = 128;
 
 export const MUSIC_MAX_ALIAS_COUNT = 5;

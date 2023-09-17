@@ -7,7 +7,7 @@ import RecordList from './record_list';
 
 const COVER_SIZE = 32;
 const Style = styled.div`
-  min-height: 100vh;
+  min-height: 100dvb;
 
   display: flex;
   flex-direction: column;
@@ -31,7 +31,7 @@ function Content({ singer }: { singer: Singer }) {
             singer.avatar
               ? getResizedImage({
                   url: singer.avatar,
-                  size: COVER_SIZE * 2,
+                  size: COVER_SIZE * window.devicePixelRatio,
                 })
               : ''
           }

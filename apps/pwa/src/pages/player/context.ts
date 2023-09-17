@@ -9,6 +9,7 @@ interface Context {
   audioLoading: boolean;
   audioPaused: boolean;
   audioDuration: number;
+  audioBufferedPercent: number;
 
   playlist: (MusicWithSingerAliases & { index: number })[];
 
@@ -25,6 +26,7 @@ const context = createContext<Context>({
   audioLoading: false,
   audioPaused: true,
   audioDuration: 0,
+  audioBufferedPercent: 0,
 
   playlist: [],
 

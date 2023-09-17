@@ -22,6 +22,7 @@ function LyricPanel({ style }: { style: unknown }) {
     audioPaused,
     audioDuration,
     audioLoading,
+    audioBufferedPercent,
     playqueue,
     currentPlayqueuePosition,
   } = useContext(Context);
@@ -37,6 +38,7 @@ function LyricPanel({ style }: { style: unknown }) {
         paused={audioPaused}
         duration={audioDuration}
         loading={audioLoading}
+        bufferedPercent={audioBufferedPercent}
       />
     </Style>
   );

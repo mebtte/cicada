@@ -1,5 +1,6 @@
 import dialog from '@/utils/dialog';
 import { useEffect, useMemo, useState } from 'react';
+import { t } from '@/i18n';
 import eventemitter, { EventType } from '../eventemitter';
 
 const next = () => eventemitter.emit(EventType.ACTION_NEXT, null);
@@ -30,18 +31,22 @@ function CoundDown({ getId }: { getId: () => string }) {
   }, [getId]);
 
   return (
-    <>{countdown >= 0 ? Math.round(countdown / 1000) : 0} 秒后自动播放下一首</>
+    <>
+      {t(
+        'auto_play_next_after_seconds',
+        (countdown >= 0 ? Math.round(countdown / 1000) : 0).toString(),
+      )}
+    </>
   );
 }
 
 function onError() {
   const id = dialog.confirm({
-    title: '播放发生错误',
+    title: t('failed_to_play'),
     content: <CoundDown getId={() => id} />,
-    confirmText: '下一首',
+    confirmText: t('next_music'),
     onConfirm: next,
   });
-  return eventemitter.emit(EventType.AUDIO_ERROR, null);
 }
 
 export default onError;
