@@ -76,8 +76,21 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
   }, [audio]);
 
   /**
+   * sometimes progress event not trigger when percent === 1
+   * @author mebtte<hi@mebtte.com>
+   */
+  useEffect(() => {
+    if (audio && bufferedPercent !== 1) {
+      const timer = window.setInterval(() => {
+        setBufferedPercent(audio.getBufferedPercent());
+      }, 1000 * 5);
+      return () => window.clearInterval(timer);
+    }
+  }, [audio, bufferedPercent]);
+
+  /**
    * reset all data
-   * make sure this on last of hooks
+   * make sure this keep last of hooks
    * @author mebtte<hi@mebtte.com>
    */
   useEffect(() => {
