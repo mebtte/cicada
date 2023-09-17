@@ -6,7 +6,7 @@ import { ZIndex } from '../constants';
 import Cover from './cover';
 import Operation from './operation';
 import Info from './info';
-import Progress from './progress';
+import ProgressBar from './progress_bar';
 import Time from './time';
 import Context from '../context';
 
@@ -57,13 +57,17 @@ function Controller() {
     audioPaused,
     audioLoading,
     audioDuration,
+    audioBufferedPercent,
   } = useContext(Context);
   const queueMusic = playqueue[currentPlayqueuePosition];
 
   const { miniMode } = theme.useState();
   return (
     <Style>
-      <Progress duration={audioDuration} />
+      <ProgressBar
+        duration={audioDuration}
+        bufferedPercent={audioBufferedPercent}
+      />
       <div className="content">
         <Cover cover={getResizedImage({ url: queueMusic.cover, size: 200 })} />
         <div className="rest">

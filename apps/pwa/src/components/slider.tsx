@@ -3,6 +3,7 @@ import {
   HtmlHTMLAttributes,
   PointerEvent,
   PointerEventHandler,
+  ReactNode,
   useRef,
   useState,
 } from 'react';
@@ -10,20 +11,21 @@ import styled from 'styled-components';
 import classnames from 'classnames';
 import { IS_TOUCHABLE } from '@/constants/browser';
 import { flexCenter } from '@/style/flexbox';
+import absoluteFullSize from '@/style/absolute_full_size';
 
 const THUMB_SIZE = 24;
 const Style = styled.div`
   position: relative;
 
   height: 5px;
-  background-color: rgb(145 222 202);
+  background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_THREE};
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
   transition: 100ms;
 
   > .progress {
-    height: 100%;
+    ${absoluteFullSize}
 
     background-color: ${CSSVariable.COLOR_PRIMARY};
     transform-origin: left;
@@ -67,11 +69,13 @@ function Slider({
   onChange,
   max = 1,
   className,
+  secondTrack,
   ...props
 }: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
   current: number;
   onChange?: (v: number) => void;
   max?: number;
+  secondTrack?: ReactNode;
 }) {
   const pointerDownRef = useRef(false);
 
@@ -117,6 +121,7 @@ function Slider({
       onPointerUp={onPointerUp}
       onPointerMove={onPointerMove}
     >
+      {secondTrack}
       <div
         className="progress"
         style={{

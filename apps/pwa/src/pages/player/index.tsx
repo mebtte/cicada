@@ -70,6 +70,7 @@ function Wrapper() {
     loading: audioLoading,
     paused: audioPaused,
     duration: audioDuration,
+    bufferedPercent: audioBufferedPercent,
   } = useAudio({ queueMusic });
 
   useKeyboard({ paused: audioPaused, queueMusic, musicbillList });
@@ -89,6 +90,7 @@ function Wrapper() {
         audioLoading,
         audioPaused,
         audioDuration,
+        audioBufferedPercent,
 
         playlist,
 
