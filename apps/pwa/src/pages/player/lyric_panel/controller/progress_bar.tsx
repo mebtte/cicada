@@ -30,6 +30,7 @@ const SecondTrack = styled.div`
   ${absoluteFullSize}
   background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_FIVE};
   transform-origin: left;
+  transition: transform 0.3s;
 `;
 
 function Wrapper({
