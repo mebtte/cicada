@@ -118,7 +118,9 @@ function Wrapper() {
                               key={item.value.id}
                               src={getResizedImage({
                                 url: item.value.cover,
-                                size: ITEM_MIN_WIDTH * window.devicePixelRatio,
+                                size: Math.ceil(
+                                  ITEM_MIN_WIDTH * window.devicePixelRatio,
+                                ),
                               })}
                               style={{ width: itemWidth }}
                               onClick={() => openMusicDrawer(item.value.id)}
@@ -132,7 +134,9 @@ function Wrapper() {
                               key={item.value.id}
                               src={getResizedImage({
                                 url: item.value.avatar,
-                                size: ITEM_MIN_WIDTH * window.devicePixelRatio,
+                                size: Math.ceil(
+                                  ITEM_MIN_WIDTH * window.devicePixelRatio,
+                                ),
                               })}
                               style={{ width: itemWidth }}
                               onClick={() => openSingerDrawer(item.value.id)}
@@ -146,7 +150,9 @@ function Wrapper() {
                               key={item.value.id}
                               src={getResizedImage({
                                 url: item.value.cover,
-                                size: ITEM_MIN_WIDTH * window.devicePixelRatio,
+                                size: Math.ceil(
+                                  ITEM_MIN_WIDTH * window.devicePixelRatio,
+                                ),
                               })}
                               style={{ width: itemWidth }}
                               onClick={() => openMusicbillDrawer(item.value.id)}
