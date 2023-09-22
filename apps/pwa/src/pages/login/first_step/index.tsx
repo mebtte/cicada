@@ -4,22 +4,18 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { EMAIL } from '#/constants/regexp';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
 import Input from '@/components/input';
 import logger from '@/utils/logger';
 import storage, { Key } from '@/storage';
 import Button, { Variant } from '@/components/button';
-import useEvent from '@/utils/use_event';
 import dialog from '@/utils/dialog';
-import getLoginCode from '@/server/base/get_login_code';
 import ErrorWithCode from '@/utils/error_with_code';
 import { ExceptionCode } from '#/constants/exception';
 import { t } from '@/i18n';
 import Logo from '../logo';
 import Paper from '../paper';
-import SettingDialog from './setting_dialog';
 
 const Style = styled(Paper)`
   display: flex;
@@ -27,14 +23,10 @@ const Style = styled(Paper)`
   gap: 20px;
 `;
 
-function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
+function FirstStep({ toNext }: { toNext: (email: string) => void }) {
   const [email, setEmail] = useState('');
   const onEmailChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setEmail(event.target.value);
-
-  const [settingDialogOpen, setSettingDialogOpen] = useState(false);
-  const openSettingDialog = useEvent(() => setSettingDialogOpen(true));
-  const closeSettingDialog = useEvent(() => setSettingDialogOpen(false));
 
   const onGetLoginCode = () => {
     if (!EMAIL.test(email)) {
@@ -93,31 +85,28 @@ function EmailPanel({ toNext }: { toNext: (email: string) => void }) {
   }, []);
 
   return (
-    <>
-      <Style>
-        <Logo />
-        <Input
-          label={t('email')}
-          inputProps={{
-            type: 'email',
-            value: email,
-            onChange: onEmailChange,
-            onKeyDown,
-            autoFocus: true,
-          }}
-        />
-        <Button
-          variant={Variant.PRIMARY}
-          onClick={onGetLoginCode}
-          disabled={!email.length}
-        >
-          {t('continue')}
-        </Button>
-        <Button onClick={openSettingDialog}>{t('setting')}</Button>
-      </Style>
-      <SettingDialog open={settingDialogOpen} onClose={closeSettingDialog} />
-    </>
+    <Style>
+      <Logo />
+      <Input
+        label={t('email')}
+        inputProps={{
+          type: 'email',
+          value: email,
+          onChange: onEmailChange,
+          onKeyDown,
+          autoFocus: true,
+        }}
+      />
+      <Button
+        variant={Variant.PRIMARY}
+        onClick={onGetLoginCode}
+        disabled={!email.length}
+      >
+        {t('continue')}
+      </Button>
+      <Button onClick={openSettingDialog}>{t('setting')}</Button>
+    </Style>
   );
 }
 
-export default EmailPanel;
+export default FirstStep;

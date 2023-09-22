@@ -29,6 +29,10 @@ export function getDataVersionPath() {
   return `${config.data}/v`;
 }
 
+export function getServerIdPath() {
+  return `${config.data}/id`;
+}
+
 export function getDBFilePath() {
   return `${config.data}/db`;
 }

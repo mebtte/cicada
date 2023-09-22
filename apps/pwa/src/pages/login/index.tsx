@@ -3,7 +3,7 @@ import p from '@/global_states/profile';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import PageContainer from '@/components/page_container';
-import EmailPanel from './email_panel';
+import FirstStep from './first_step';
 import LoginCodePanel from './login_code_panel';
 import UserPanel from './user_panel';
 import { Step } from './constants';
@@ -38,7 +38,7 @@ function Login() {
           case Step.FIRST: {
             return (
               <animated.div style={style}>
-                <EmailPanel
+                <FirstStep
                   toNext={(e) => {
                     setEmail(e);
                     return setStep(Step.SECOND);
