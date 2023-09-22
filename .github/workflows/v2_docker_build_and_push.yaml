@@ -6,7 +6,7 @@ on:
       - v2
 
 jobs:
-  beta_build_and_push:
+  v2_build_and_push:
     runs-on: ubuntu-latest
     env:
       TZ: Asia/Shanghai
