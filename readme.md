@@ -1,3 +1,5 @@
+> `v2` is under stable, please use `v1`.
+
 # Cicada
 
 A multi-user music service for self-hosting.
@@ -50,7 +52,6 @@ Download cicada from [releases](https://github.com/mebtte/cicada/releases) and s
 ```sh
 # It will prompt you to enter admin's email on first run
 ./cicada start
-
 ```
 
 Open `localhost:8000` or `{{ip}}:8000` and use the email that you enter on cli to login. You can get more options by running `cicada -h` or `cicada start -h`.
