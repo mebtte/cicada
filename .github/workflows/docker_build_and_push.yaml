@@ -27,4 +27,4 @@ jobs:
           short-description: "A multi-user music service for self-hosting."
           readme-filepath: "./docker.md"
 
-      - run: ./docker_build_and_push.sh
+      - run: ./docker_build_and_push.sh v2

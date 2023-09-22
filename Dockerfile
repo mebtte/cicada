@@ -1,4 +1,4 @@
-FROM scratch
+FROM alpine
 
 COPY build/cicada /bin/cicada
 ENTRYPOINT ["/bin/cicada"]
