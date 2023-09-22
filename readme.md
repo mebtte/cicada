@@ -1,7 +1,5 @@
 # Cicada
 
-> The tag `latest` on docker hub is deprecated, please use tag `v1`.
-
 A multi-user music service for self-hosting.
 
 ![version](https://img.shields.io/github/v/release/mebtte/cicada?style=for-the-badge)
