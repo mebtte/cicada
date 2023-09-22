@@ -17,7 +17,7 @@ export type Captcha = {
 export const USER_TABLE_NAME = 'user';
 export enum UserProperty {
   ID = 'id',
-  EMAIL = 'email',
+  USERNAME = 'username',
   AVATAR = 'avatar',
   NICKNAME = 'nickname',
   JOIN_TIMESTAMP = 'joinTimestamp',
@@ -31,7 +31,7 @@ export enum UserProperty {
 }
 export type User = {
   [UserProperty.ID]: string;
-  [UserProperty.EMAIL]: string;
+  [UserProperty.USERNAME]: string;
   [UserProperty.AVATAR]: string;
   [UserProperty.NICKNAME]: string;
   [UserProperty.JOIN_TIMESTAMP]: number;

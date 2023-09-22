@@ -1,4 +1,3 @@
-import path from 'path';
 import startServer from './src/commands/start_server';
 
-startServer({ configFilePath: path.join(__dirname, '../../config.json5') });
+startServer({ mode: 'development', port: 8000, data: process.env.CICADA_DATA });

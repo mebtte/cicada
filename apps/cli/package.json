@@ -1,8 +1,8 @@
 {
   "name": "cli",
   "scripts": {
-    "dev:server": "cross-env nodemon",
+    "dev:server": "nodemon",
     "build": "cross-env NODE_ENV=production webpack --config webpack.config.js --progress",
-    "dev": "ts-node -r tsconfig-paths/register src/index.ts"
+    "start": "ts-node -r tsconfig-paths/register src/index.ts"
   }
 }

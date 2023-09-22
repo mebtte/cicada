@@ -51,45 +51,43 @@ const DAILY_JOBS: Job[] = [
 ];
 const HOURLY_JOBS: Job[] = [];
 
-export default {
-  start: () => {
-    /** daily */
-    let hour = 4;
-    let minute = 0;
-    for (const dailyJob of DAILY_JOBS) {
-      schedule
-        .scheduleJob(`${minute} ${hour} * * *`, dailyJob.job)
-        .addListener('run', () => onRun(dailyJob.name))
-        .addListener('error', (error) =>
-          onError({
-            job: dailyJob.name,
-            error,
-          }),
-        )
-        .addListener('success', () => onFinish(dailyJob.name));
+export default () => {
+  /** daily */
+  let hour = 4;
+  let minute = 0;
+  for (const dailyJob of DAILY_JOBS) {
+    schedule
+      .scheduleJob(`${minute} ${hour} * * *`, dailyJob.job)
+      .addListener('run', () => onRun(dailyJob.name))
+      .addListener('error', (error) =>
+        onError({
+          job: dailyJob.name,
+          error,
+        }),
+      )
+      .addListener('success', () => onFinish(dailyJob.name));
 
-      minute += 5;
-      if (minute >= 60) {
-        minute = 0;
-        hour += 1;
-      }
+    minute += 5;
+    if (minute >= 60) {
+      minute = 0;
+      hour += 1;
     }
+  }
 
-    /** hourly */
-    minute = 0;
-    for (const hourlyJob of HOURLY_JOBS) {
-      schedule
-        .scheduleJob(`${minute} * * * *`, hourlyJob.job)
-        .addListener('run', () => onRun(hourlyJob.name))
-        .addListener('error', (error) =>
-          onError({
-            job: hourlyJob.name,
-            error,
-          }),
-        )
-        .addListener('success', () => onFinish(hourlyJob.name));
+  /** hourly */
+  minute = 0;
+  for (const hourlyJob of HOURLY_JOBS) {
+    schedule
+      .scheduleJob(`${minute} * * * *`, hourlyJob.job)
+      .addListener('run', () => onRun(hourlyJob.name))
+      .addListener('error', (error) =>
+        onError({
+          job: hourlyJob.name,
+          error,
+        }),
+      )
+      .addListener('success', () => onFinish(hourlyJob.name));
 
-      minute = (minute + 7) % 60;
-    }
-  },
+    minute = (minute + 7) % 60;
+  }
 };

@@ -1,6 +1,5 @@
 import fs from 'fs';
 import inquirer from 'inquirer';
-import { EMAIL } from '#/constants/regexp';
 import { AssetType } from '#/constants';
 import {
   MusicProperty,
@@ -111,7 +110,7 @@ export default async () => {
     const TABLE_USER = `
       CREATE TABLE ${USER_TABLE_NAME} (
         ${UserProperty.ID} TEXT PRIMARY KEY NOT NULL,
-        ${UserProperty.EMAIL} TEXT UNIQUE NOT NULL,
+        ${UserProperty.USERNAME} TEXT UNIQUE NOT NULL,
         ${UserProperty.AVATAR} TEXT NOT NULL DEFAULT '',
         ${UserProperty.NICKNAME} TEXT NOT NULL,
         ${UserProperty.JOIN_TIMESTAMP} INTEGER NOT NULL,
@@ -295,33 +294,32 @@ export default async () => {
     `,
   );
   if (!firstUser) {
-    let { firstUserEmail } = getConfig();
-    while (!firstUserEmail) {
+    let adminUser = process.env.ADMIN_USER || '';
+    while (!adminUser) {
       const answer = await inquirer.prompt([
         {
           type: 'input',
-          name: 'firstUserEmail',
-          message: 'Please enter the first user email:',
+          name: 'adminUser',
+          message: 'Please enter the admin user:',
         },
       ]);
-      firstUserEmail = answer.firstUserEmail;
-      if (firstUserEmail && !EMAIL.test(firstUserEmail)) {
+      adminUser = answer.adminUser;
+      if (!adminUser) {
         createSpinner().error({
-          text: `[ ${firstUserEmail} ] isn't a valid email`,
+          text: `[ ${adminUser} ] isn't a valid username`,
         });
-        firstUserEmail = '';
       }
     }
     await db.run(
       `
-        INSERT INTO ${USER_TABLE_NAME} ( ${UserProperty.ID}, ${UserProperty.EMAIL}, ${UserProperty.NICKNAME}, ${UserProperty.JOIN_TIMESTAMP}, ${UserProperty.ADMIN} )
+        INSERT INTO ${USER_TABLE_NAME} ( ${UserProperty.ID}, ${UserProperty.USERNAME}, ${UserProperty.NICKNAME}, ${UserProperty.JOIN_TIMESTAMP}, ${UserProperty.ADMIN} )
         VALUES ( ?, ?, ?, ?, 1 )
       `,
-      [FIRST_USER_ID, firstUserEmail, 'Admin', Date.now()],
+      [FIRST_USER_ID, adminUser, 'Admin', Date.now()],
     );
 
     createSpinner().success({
-      text: `You can use [ ${firstUserEmail} ] to login now`,
+      text: `You can use [ ${adminUser} ] to login now`,
     });
   }
 };

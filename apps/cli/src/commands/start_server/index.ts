@@ -4,10 +4,10 @@ import log from 'koa-logger';
 import cors from '@koa/cors';
 import mount from 'koa-mount';
 import { PathPrefix } from '#/constants';
-import { updateConfigFromFile, getConfig, Config } from '@/config';
+import { updateConfig, getConfig } from '@/config';
 import definition from '@/definition';
 import initialize from './initialize';
-import schedule from './schedule';
+import startSchedule from './schedule';
 import { getAssetApp } from './asset_app';
 import { getApiApp } from './api_app';
 import { getFormApp } from './form_app';
@@ -15,29 +15,20 @@ import { getPwaApp } from './pwa_app';
 import { getBaseApp } from './base_app';
 import i18n from './middlewares/i18n';
 
-function printInfo(info: string) {
-  // eslint-disable-next-line no-console
-  console.log(`--- ${info} ---`);
-}
-
-async function startServer({ configFilePath }: { configFilePath: string }) {
-  updateConfigFromFile(configFilePath);
+export default async ({
+  mode,
+  port,
+  data,
+}: {
+  mode?: 'development' | 'production';
+  port?: number;
+  data?: string;
+}) => {
+  updateConfig({ mode, port, data });
 
   await initialize();
 
-  const config = getConfig();
-  const SECRET_CONFIG_KEYS: (keyof Config)[] = ['emailPass'];
-  for (const key of Object.keys(config) as (keyof Config)[]) {
-    printInfo(
-      `config | ${key} = ${
-        SECRET_CONFIG_KEYS.includes(key)
-          ? '*'.repeat(String(config[key]).length)
-          : config[key]
-      }`,
-    );
-  }
-
-  schedule.start();
+  startSchedule();
 
   const server = new Koa();
   server.use(log());
@@ -67,7 +58,5 @@ async function startServer({ configFilePath }: { configFilePath: string }) {
     server.use(mount('/', getPwaApp()));
   }
 
-  http.createServer(server.callback()).listen(config.port);
-}
-
-export default startServer;
+  http.createServer(server.callback()).listen(getConfig().port);
+};

@@ -50,11 +50,11 @@ Download cicada from [releases](https://github.com/mebtte/cicada/releases) and s
 > If your platform isn't x64, you can [build cicada](./docs/build/index.md) by yourself
 
 ```sh
-# It will prompt you to enter admin's email on first run
+ # It will prompt you to enter admin user on first run
 ./cicada start
 ```
 
-Open `localhost:8000` or `{{ip}}:8000` and use the email that you enter on cli to login. You can get more options by running `cicada -h` or `cicada start -h`.
+Open `localhost:8000` or `{{ip}}:8000` and use the admin name that you entered on cli to login. You can get more options by running `cicada -h` or `cicada start -h`.
 
 ### Docker
 
@@ -87,6 +87,9 @@ services:
 
     # user mapping
     # user: 1000:1000
+
+    environment:
+      - ADMIN_USER=admin
 
     command: start --port 8000 --data /data
     ports:
