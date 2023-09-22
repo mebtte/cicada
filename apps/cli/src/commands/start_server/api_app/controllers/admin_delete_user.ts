@@ -2,8 +2,6 @@ import { ExceptionCode } from '#/constants/exception';
 import { getUserById } from '@/db/user';
 import { getDB } from '@/db';
 import {
-  LOGIN_CODE_TABLE_NAME,
-  LoginCodeProperty,
   PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
   MUSICBILL_MUSIC_TABLE_NAME,
   MUSICBILL_TABLE_NAME,
@@ -84,20 +82,6 @@ export default async (ctx: Context) => {
       `
         DELETE FROM ${SHARED_MUSICBILL_TABLE_NAME}
         WHERE ${SharedMusicbillProperty.SHARED_USER_ID} = ?
-      `,
-      [id],
-    ),
-    getDB().run(
-      `
-        DELETE FROM ${LOGIN_CODE_TABLE_NAME}
-        WHERE ${LoginCodeProperty.USER_ID} = ?
-      `,
-      [id],
-    ),
-    getDB().run(
-      `
-        DELETE FROM ${LOGIN_CODE_TABLE_NAME}
-        WHERE ${LoginCodeProperty.USER_ID} = ?
       `,
       [id],
     ),

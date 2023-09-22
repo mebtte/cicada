@@ -8,10 +8,11 @@ import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import addMusicbillSharedUser from '@/server/api/add_musicbill_shared_user';
 import logger from '@/utils/logger';
-import { EMAIL } from '#/constants/regexp';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { t } from '@/i18n';
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '#/constants/user';
 import User from './user';
 import { Musicbill } from '../constants';
 import e, { EventType } from '../eventemitter';
@@ -70,7 +71,7 @@ function ShareDrawer({
       onClose={onClose}
     >
       <Content>
-        <Title>共享用户</Title>
+        <Title>{t('shared_user')}</Title>
         <UserList>
           <User
             user={musicbill.owner}
@@ -93,21 +94,25 @@ function ShareDrawer({
           style={actionStyle}
           onClick={() =>
             dialog.input({
-              label: '邮箱',
+              label: t('username'),
+              maxLength: USERNAME_MAX_LENGTH,
               confirmVariant: Variant.PRIMARY,
-              confirmText: '邀请',
-              onConfirm: async (email) => {
-                if (!email || !EMAIL.test(email)) {
-                  notice.error('请输入合法的邮箱');
+              confirmText: t('invite'),
+              onConfirm: async (username) => {
+                if (
+                  username.length < USERNAME_MIN_LENGTH ||
+                  username.length > USERNAME_MAX_LENGTH
+                ) {
+                  notice.error(t('username_is_invalid'));
                   return false;
                 }
 
                 try {
                   await addMusicbillSharedUser({
                     musicbillId: musicbill.id,
-                    email,
+                    username,
                   });
-                  notice.info('已发出邀请');
+                  notice.info(t('invitation_has_been_sent'));
                   e.emit(EventType.RELOAD_MUSICBILL, {
                     id: musicbill.id,
                     silence: true,

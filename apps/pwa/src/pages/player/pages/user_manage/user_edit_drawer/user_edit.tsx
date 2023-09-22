@@ -168,9 +168,9 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         />
         <Input
           className="part"
-          label={t('email')}
+          label={t('username')}
           disabled
-          inputProps={{ defaultValue: user.email }}
+          inputProps={{ defaultValue: user.username }}
         />
         <Input
           className="part"

@@ -3,8 +3,6 @@ import withTimeout from '#/utils/with_timeout';
 import {
   CAPTCHA_TABLE_NAME,
   CaptchaProperty,
-  LOGIN_CODE_TABLE_NAME,
-  LoginCodeProperty,
   MUSIC_MODIFY_RECORD_TABLE_NAME,
   MusicModifyRecordProperty,
   SINGER_MODIFY_RECORD_TABLE_NAME,
@@ -21,11 +19,6 @@ const TABLES: {
     table: CAPTCHA_TABLE_NAME,
     timestampColumn: CaptchaProperty.CREATE_TIMESTAMP,
     ttl: 1000 * 60 * 60 * 24 * 3,
-  },
-  {
-    table: LOGIN_CODE_TABLE_NAME,
-    timestampColumn: LoginCodeProperty.CREATE_TIMESTAMP,
-    ttl: 1000 * 60 * 60 * 24 * 7,
   },
   {
     table: MUSIC_MODIFY_RECORD_TABLE_NAME,

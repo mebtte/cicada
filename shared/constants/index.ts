@@ -7,9 +7,6 @@
 export const CAPTCHA_TTL = 1000 * 60 * 2;
 export const CAPTCHA_TTL_FRONTEND = CAPTCHA_TTL - 100 * 10;
 
-/** 获取登录验证码间隔 */
-export const GET_LOGIN_CODE_INTERVAL = 1000 * 60 * 2;
-
 export enum PathPrefix {
   FORM = 'form',
   ASSET = 'asset',

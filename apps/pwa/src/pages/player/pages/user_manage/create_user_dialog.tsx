@@ -4,10 +4,10 @@ import Button, { Variant } from '@/components/button';
 import Input from '@/components/input';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
-import { EMAIL } from '#/constants/regexp';
 import logger from '@/utils/logger';
 import adminCreateUser from '@/server/api/admin_create_user';
 import { t } from '@/i18n';
+import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '#/constants/user';
 import e, { EventType } from './eventemitter';
 import { ZIndex } from '../../constants';
 
@@ -24,9 +24,9 @@ function CreateUserDialog() {
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
 
-  const [email, setEmail] = useState('');
-  const onEmailChange: ChangeEventHandler<HTMLInputElement> = (event) =>
-    setEmail(event.target.value);
+  const [username, setUsername] = useState('');
+  const onUsernameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
+    setUsername(event.target.value.replace(/\s+/g, ''));
 
   const [remark, setRemark] = useState('');
   const onRemarkChange: ChangeEventHandler<HTMLInputElement> = (event) =>
@@ -34,14 +34,28 @@ function CreateUserDialog() {
 
   const [loading, setLoading] = useState(false);
   const onCreate = async () => {
-    if (!email || !EMAIL.test(email)) {
-      return notice.error(t('please_enter_valid_email'));
+    if (
+      username.length < USERNAME_MIN_LENGTH ||
+      username.length > USERNAME_MAX_LENGTH
+    ) {
+      return notice.error(
+        t(
+          'valid_username_length',
+          USERNAME_MIN_LENGTH.toString(),
+          USERNAME_MAX_LENGTH.toString(),
+        ),
+      );
     }
 
     setLoading(true);
     try {
       await adminCreateUser({
-        email,
+        username,
+        /**
+         * @todo
+         * @author mebtte<hi@mebtte.com>
+         */
+        password: '',
         remark: remark.replace(/\s+/g, ' ').trim(),
       });
 
@@ -68,11 +82,10 @@ function CreateUserDialog() {
         <Title>{t('create_user')}</Title>
         <StyledContent>
           <Input
-            label={t('email')}
+            label={t('username')}
             inputProps={{
-              value: email,
-              onChange: onEmailChange,
-              type: 'email',
+              value: username,
+              onChange: onUsernameChange,
             }}
           />
           <Input

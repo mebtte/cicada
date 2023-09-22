@@ -1,12 +1,24 @@
 import { request, Method } from '..';
 
-function login({ email, loginCode }: { email: string; loginCode: string }) {
+function login({
+  username,
+  password,
+  captchaId,
+  captchaValue,
+}: {
+  username: string;
+  password: string;
+  captchaId: string;
+  captchaValue: string;
+}) {
   return request<string>({
     path: '/base/login',
     method: Method.POST,
     body: {
-      email,
-      loginCode,
+      username,
+      password,
+      captchaId,
+      captchaValue,
     },
   });
 }

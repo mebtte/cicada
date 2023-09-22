@@ -10,8 +10,6 @@ import {
   USER_TABLE_NAME,
   CAPTCHA_TABLE_NAME,
   CaptchaProperty,
-  LOGIN_CODE_TABLE_NAME,
-  LoginCodeProperty,
   SINGER_MODIFY_RECORD_TABLE_NAME,
   SingerModifyRecordProperty,
   MUSIC_MODIFY_RECORD_TABLE_NAME,
@@ -49,7 +47,7 @@ import exitWithMessage from '@/utils/exit_with_message';
 import { FIRST_USER_ID } from '@/constants';
 import { createSpinner } from 'nanospinner';
 
-const DATA_VERSION = 1;
+const DATA_VERSION = 2;
 
 function mkdirIfNotExist(dir: string) {
   if (!fs.existsSync(dir)) {
@@ -87,12 +85,12 @@ export default async () => {
     if (dataVersion !== DATA_VERSION) {
       if (dataVersion < DATA_VERSION) {
         return exitWithMessage(
-          `Current version of data is v${dataVersion}, Please start server after using v${
+          `Current version of data is v${dataVersion}, please start server after using cicada.v${
             dataVersion + 1
-          }'s cicada to upgrade data by [ cicada data-upgrade <data> ]`,
+          } to upgrade data by [ cicada data-upgrade <data> ]`,
         );
       }
-      return exitWithMessage('Please upgrade cicada to latest');
+      return exitWithMessage('Please upgrade your cicada to latest');
     }
   } else {
     fs.writeFileSync(getDataVersionPath(), DATA_VERSION.toString());
@@ -130,15 +128,6 @@ export default async () => {
         ${CaptchaProperty.VALUE} TEXT NOT NULL,
         ${CaptchaProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
         ${CaptchaProperty.USED} INTEGER NOT NULL DEFAULT 0
-      )
-    `;
-    const TABLE_LOGIN_CODE = `
-      CREATE TABLE ${LOGIN_CODE_TABLE_NAME} (
-        ${LoginCodeProperty.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${LoginCodeProperty.USER_ID} TEXT NOT NULL REFERENCES ${USER_TABLE_NAME} ( ${UserProperty.ID} ),
-        ${LoginCodeProperty.CODE} TEXT NOT NULL,
-        ${LoginCodeProperty.CREATE_TIMESTAMP} INTEGER NOT NULL,
-        ${LoginCodeProperty.USED} INTEGER NOT NULL DEFAULT 0
       )
     `;
     const TABLE_SINGER = `
@@ -265,7 +254,6 @@ export default async () => {
     const TABLES = [
       TABLE_USER,
       TABLE_CAPTCHA,
-      TABLE_LOGIN_CODE,
       TABLE_SINGER,
       TABLE_SINGER_MODIFY_RECORD,
       TABLE_MUSIC,

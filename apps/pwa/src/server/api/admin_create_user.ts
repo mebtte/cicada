@@ -1,14 +1,21 @@
-import setting from '@/global_states/setting';
 import { Method, request } from '..';
 
-function adminCreateUser({ email, remark }: { email: string; remark: string }) {
+function adminCreateUser({
+  username,
+  password,
+  remark,
+}: {
+  username: string;
+  password: string;
+  remark: string;
+}) {
   return request({
     path: '/api/admin/user',
     method: Method.POST,
     body: {
-      email,
+      username,
+      password,
       remark,
-      accessOrigin: setting.get().serverOrigin || window.location.origin,
     },
     withToken: true,
   });

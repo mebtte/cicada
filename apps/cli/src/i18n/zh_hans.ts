@@ -8,8 +8,6 @@ const zhHans: {
   server_error: '服务器错误',
   parameter_error: '参数错误',
   captcha_error: '图形验证码错误',
-  already_got_login_code_before: '已经获取过登录验证码',
-  wrong_login_code: '错误的登录验证码',
   not_authorized: '未验证权限',
   not_authorized_for_admin: '未验证管理员权限',
   username_already_registered: '用户名已被注册',
@@ -40,11 +38,7 @@ const zhHans: {
   repeated_shared_musicbill_invitation: '重复的共享乐单邀请',
   no_permission_to_delete_musicbill_shared_user: '没有权限删除共享乐单用户',
   shared_musicbill_invitation_not_existed: '共享乐单邀请不存在',
-  login_code: '登录验证码',
-  login_code_email_content:
-    '你刚刚尝试登录, 本次登录验证码是 %s1, %s2 分钟内有效.',
   welcome_to: '欢迎使用%s1',
-  new_user_email_content: '你可以使用当前邮箱登录%s1了.',
 };
 
 export default zhHans;

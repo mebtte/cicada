@@ -64,7 +64,7 @@ function UserList() {
       (u) =>
         u.id.includes(lowerCaseKeyword) ||
         u.nickname.toLowerCase().includes(lowerCaseKeyword) ||
-        u.email.toLowerCase().includes(lowerCaseKeyword) ||
+        u.username.toLowerCase().includes(lowerCaseKeyword) ||
         u.remark.toLowerCase().includes(lowerCaseKeyword),
     );
 

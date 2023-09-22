@@ -6,9 +6,6 @@ export const EXCEPTION_CODE_MAP_KEY: Record<ExceptionCode, Key> = {
   [ExceptionCode.SERVER_ERROR]: 'server_error',
   [ExceptionCode.PARAMETER_ERROR]: 'parameter_error',
   [ExceptionCode.CAPTCHA_ERROR]: 'captcha_error',
-  [ExceptionCode.ALREADY_GOT_LOGIN_CODE_BEFORE]:
-    'already_got_login_code_before',
-  [ExceptionCode.WRONG_LOGIN_CODE]: 'wrong_login_code',
   [ExceptionCode.NOT_AUTHORIZED]: 'not_authorized',
   [ExceptionCode.NOT_AUTHORIZED_FOR_ADMIN]: 'not_authorized_for_admin',
   [ExceptionCode.USERNAME_ALREADY_REGISTERED]: 'username_already_registered',

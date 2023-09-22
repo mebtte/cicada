@@ -13,11 +13,8 @@ const zhCN: {
   cancel: '取消',
   language: '语言',
   continue: '继续',
-  email: '邮箱',
-  please_enter_valid_email: '请输入合法的邮箱',
+  username: '用户名',
   captcha: '验证码',
-  get_login_code: '获取登录验证码',
-  login_code_emailed: '登录验证码已发送到邮箱',
   change_language_question: '更换语言将会重新加载应用, 是否继续?',
   relative_volume: '相对音量',
   music_play_record_short: '播放记录',
@@ -31,8 +28,6 @@ const zhCN: {
   shared_musicbill_invitation: '共享乐单邀请',
   public_musicbill_collection: '收藏的公开乐单',
   previous_step: '上一步',
-  login_code: '登录验证码',
-  please_enter_login_code: '请输入登录验证码',
   welcome_back: '欢迎回来',
   create_at: '创建于',
   no_music_in_musicbill: '乐单暂无音乐',
@@ -126,6 +121,11 @@ const zhCN: {
   music_file: '音乐文件',
   singer_list: '歌手列表',
   supported_formats: '支持的格式',
+  valid_username_length: '用户名长度应在 %s1 ~ %s2 之间',
+  invite: '邀请',
+  shared_user: '共享用户',
+  username_is_invalid: '非法的用户名',
+  invitation_has_been_sent: '邀请已发送',
 };
 
 export default zhCN;

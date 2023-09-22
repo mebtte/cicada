@@ -46,22 +46,6 @@ export type User = {
   [UserProperty.PASSWORD]: string;
 };
 
-export const LOGIN_CODE_TABLE_NAME = 'login_code';
-export enum LoginCodeProperty {
-  ID = 'id',
-  USER_ID = 'userId',
-  CODE = 'code',
-  CREATE_TIMESTAMP = 'createTimestamp',
-  USED = 'used',
-}
-export type LoginCode = {
-  [LoginCodeProperty.ID]: number;
-  [LoginCodeProperty.USER_ID]: User[UserProperty.ID];
-  [LoginCodeProperty.CODE]: string;
-  [LoginCodeProperty.CREATE_TIMESTAMP]: number;
-  [LoginCodeProperty.USED]: 0 | 1;
-};
-
 export const MUSIC_TABLE_NAME = 'music';
 export enum MusicProperty {
   ID = 'id',

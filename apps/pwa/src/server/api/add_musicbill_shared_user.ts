@@ -6,16 +6,16 @@ import { Method, request } from '..';
  */
 function addMusicbillSharedUser({
   musicbillId,
-  email,
+  username,
 }: {
   musicbillId: string;
-  email: string;
+  username: string;
 }) {
   return request<void>({
     path: '/api/musicbill/shared_user',
     method: Method.POST,
     withToken: true,
-    body: { musicbillId, email },
+    body: { musicbillId, username },
   });
 }
 
