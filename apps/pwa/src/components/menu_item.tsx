@@ -14,6 +14,7 @@ const Style = styled.div<{ active: boolean }>`
   user-select: none;
   cursor: pointer;
   transition: all 300ms;
+  touch-action: none;
 
   > .label {
     font-size: 14px;

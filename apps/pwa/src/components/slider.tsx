@@ -4,6 +4,7 @@ import {
   PointerEvent,
   PointerEventHandler,
   ReactNode,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -79,7 +80,7 @@ function Slider({
 }) {
   const pointerDownRef = useRef(false);
 
-  const [innerPercent, setInnerPercent] = useState<number | undefined>(
+  const [shadowPercent, setShadowPercent] = useState<number | undefined>(
     undefined,
   );
 
@@ -89,12 +90,12 @@ function Slider({
     pointerDownRef.current = true;
 
     const percent = getPointerEventRelativePercent(e);
-    setInnerPercent(percent);
+    setShadowPercent(percent);
   };
   const onPointerMove: PointerEventHandler<HTMLDivElement> = (e) => {
     if (pointerDownRef.current) {
       const percent = getPointerEventRelativePercent(e);
-      setInnerPercent(percent);
+      setShadowPercent(percent);
     }
   };
   const onPointerUp: PointerEventHandler<HTMLDivElement> = (e) => {
@@ -104,10 +105,19 @@ function Slider({
     // eslint-disable-next-line no-unused-expressions
     onChange && onChange(max * percent);
 
-    window.setTimeout(() => setInnerPercent(undefined), 0);
+    window.setTimeout(() => setShadowPercent(undefined), 0);
   };
 
-  const actualPercent = innerPercent ?? current / max;
+  useEffect(() => {
+    const onLeaveDocument = () => {
+      pointerDownRef.current = false;
+      window.setTimeout(() => setShadowPercent(undefined), 0);
+    };
+    document.addEventListener('mouseleave', onLeaveDocument);
+    return () => document.removeEventListener('mouseleave', onLeaveDocument);
+  }, []);
+
+  const actualPercent = shadowPercent ?? current / max;
   return (
     <Style
       {...props}

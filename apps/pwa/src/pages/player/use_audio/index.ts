@@ -77,7 +77,7 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
 
   /**
    * reset all data
-   * make sure this on last of hooks
+   * make sure this keep last of hooks
    * @author mebtte<hi@mebtte.com>
    */
   useEffect(() => {

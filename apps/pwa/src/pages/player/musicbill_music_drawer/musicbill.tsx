@@ -111,7 +111,7 @@ function Musicbill({
         size={ICON_SIZE}
         src={getResizedImage({
           url: musicbill.cover,
-          size: ICON_SIZE * window.devicePixelRatio,
+          size: Math.ceil(ICON_SIZE * window.devicePixelRatio),
         })}
         publiz={musicbill.public}
         shared={musicbill.sharedUserList.length > 0}

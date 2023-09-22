@@ -24,7 +24,11 @@ async function getCover(
   const { size } = ctx.query as { size?: unknown };
   const sizeNumber = size ? Number(size) : undefined;
 
-  if (sizeNumber && sizeNumber <= IMAGE_MAX_SIZE) {
+  if (
+    sizeNumber &&
+    Number.isInteger(sizeNumber) &&
+    sizeNumber <= IMAGE_MAX_SIZE
+  ) {
     const cacheName = `${sizeNumber}_${asset}`;
     const cachePath = `${getCacheDirectory()}/${cacheName}`;
     const cacheExist = await exist(cachePath);
