@@ -1,6 +1,6 @@
 export type Response = {
   id: string;
-  email: string;
+  username: string;
   nickname: string;
   avatar: string;
   admin: 0 | 1;

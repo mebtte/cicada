@@ -8,7 +8,7 @@ export default {
   wrong_login_code: 'wrong login code',
   not_authorized: 'not authorized',
   not_authorized_for_admin: 'not authorized for admin',
-  email_already_registered: 'email already registered',
+  username_already_registered: 'username already registered',
   musicbill_not_existed: 'musicbill not existed',
   music_not_existed: 'music not existed',
   music_already_existed_in_musicbill: 'music already existed in musicbill',

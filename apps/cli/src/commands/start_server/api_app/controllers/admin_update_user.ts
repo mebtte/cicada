@@ -1,5 +1,4 @@
 import { ExceptionCode } from '#/constants/exception';
-import { EMAIL } from '#/constants/regexp';
 import { AdminAllowUpdateKey, REMARK_MAX_LENGTH } from '#/constants/user';
 import { User, UserProperty } from '@/constants/db_definition';
 import { getUserById } from '@/db/user';
@@ -10,7 +9,7 @@ type LocalUser = Pick<
   User,
   | UserProperty.ID
   | UserProperty.REMARK
-  | UserProperty.EMAIL
+  | UserProperty.USERNAME
   | UserProperty.MUSICBILL_MAX_AMOUNT
   | UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
   | UserProperty.MUSIC_PLAY_RECORD_INDATE
@@ -20,17 +19,22 @@ const KEY_MAP_HANDLER: Record<
   AdminAllowUpdateKey,
   (data: { ctx: Context; user: LocalUser; value: unknown }) => Promise<void>
 > = {
-  [AdminAllowUpdateKey.EMAIL]: async ({ ctx, user, value }) => {
-    if (typeof value !== 'string' || !EMAIL.test(value)) {
+  [AdminAllowUpdateKey.USERNAME]: async ({ ctx, user, value }) => {
+    if (typeof value !== 'string' || !value.length) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
-    if (user.email === value) {
+
+    /**
+     * @todo check repeated username
+     * @author mebtte<hi@mebtte.com>
+     */
+    if (user.username === value) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
     }
 
     await updateUser({
       id: user.id,
-      property: UserProperty.EMAIL,
+      property: UserProperty.USERNAME,
       value,
     });
 
@@ -129,7 +133,7 @@ export default async (ctx: Context) => {
   const user: LocalUser | null = await getUserById(id, [
     UserProperty.ID,
     UserProperty.REMARK,
-    UserProperty.EMAIL,
+    UserProperty.USERNAME,
     UserProperty.MUSICBILL_MAX_AMOUNT,
     UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,
     UserProperty.MUSIC_PLAY_RECORD_INDATE,

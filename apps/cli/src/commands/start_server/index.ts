@@ -4,7 +4,7 @@ import log from 'koa-logger';
 import cors from '@koa/cors';
 import mount from 'koa-mount';
 import { PathPrefix } from '#/constants';
-import { updateConfig, getConfig } from '@/config';
+import { updateConfig, getConfig, Mode } from '@/config';
 import definition from '@/definition';
 import initialize from './initialize';
 import startSchedule from './schedule';
@@ -20,9 +20,9 @@ export default async ({
   port,
   data,
 }: {
-  mode?: 'development' | 'production';
-  port?: number;
-  data?: string;
+  mode: Mode;
+  port: number;
+  data: string;
 }) => {
   updateConfig({ mode, port, data });
 

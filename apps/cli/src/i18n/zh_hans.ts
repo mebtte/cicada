@@ -12,7 +12,7 @@ const zhHans: {
   wrong_login_code: '错误的登录验证码',
   not_authorized: '未验证权限',
   not_authorized_for_admin: '未验证管理员权限',
-  email_already_registered: '邮箱已经注册',
+  username_already_registered: '用户名已被注册',
   musicbill_not_existed: '乐单不存在',
   music_not_existed: '音乐不存在',
   music_already_existed_in_musicbill: '乐单已经包含该音乐',

@@ -8,6 +8,7 @@ import importMusic from './commands/import_music';
 import dataUpgrade from './commands/data_upgrade';
 import dataFix from './commands/data_fix';
 import { FIRST_USER_ID } from './constants';
+import { DEFAULT_CONFIG, Mode } from './config';
 
 const program = new Command()
   .name('cicada')
@@ -21,17 +22,35 @@ const program = new Command()
 program
   .command('start')
   .description('start cicada server')
-  .option('-c, --config <config>', 'specify config file')
-  .action(async ({ config }: { config?: string }) => {
-    if (!config) {
-      return exitWithMessage('Using [ -c/--config ] to specify config file');
-    }
-    return startServer({
-      configFilePath: path.isAbsolute(config)
-        ? config
-        : path.resolve(process.cwd(), config),
-    });
-  });
+  .option('--mode [mode]', 'development or production')
+  .option('--data [data]', 'data directory location')
+  .option('--port [port]', 'port of http server')
+  .action(
+    async ({
+      mode,
+      data,
+      port,
+    }: {
+      mode?: Mode;
+      data?: string;
+      port?: string;
+    }) => {
+      if (mode && !Object.values(Mode).includes(mode)) {
+        return exitWithMessage(`[ ${mode} ] is not a valid mode`);
+      }
+
+      const absoluteData = data
+        ? path.isAbsolute(data)
+          ? data
+          : path.resolve(process.cwd(), data)
+        : DEFAULT_CONFIG.data;
+      return startServer({
+        mode: mode || DEFAULT_CONFIG.mode,
+        data: absoluteData,
+        port: port ? Number(port) : DEFAULT_CONFIG.port,
+      });
+    },
+  );
 
 /**
  * 数据升级
@@ -39,8 +58,8 @@ program
  */
 program
   .command('data-upgrade')
-  .description('upgrade data from v0 to v1')
-  .argument('<data>', 'cicada data directory')
+  .description('upgrade data from v1 to v2')
+  .argument('<data>', 'data directory')
   .action((data: string) => {
     const absoluteData = path.isAbsolute(data)
       ? data

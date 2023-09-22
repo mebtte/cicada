@@ -8,7 +8,7 @@ function updateUser<
     | UserProperty.REMARK
     | UserProperty.ADMIN
     | UserProperty.MUSICBILL_ORDERS_JSON
-    | UserProperty.EMAIL
+    | UserProperty.USERNAME
     | UserProperty.MUSICBILL_MAX_AMOUNT
     | UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
     | UserProperty.LAST_ACTIVE_TIMESTAMP

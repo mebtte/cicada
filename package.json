@@ -25,7 +25,7 @@
     "dev:pwa-with-sw": "npm run dev-with-sw -w apps/pwa",
     "build:pwa": "npm run build -w apps/pwa",
     "dev:server": "npm run dev:server -w apps/cli",
-    "start": "npm run dev -w apps/cli",
+    "start": "npm run start -w apps/cli",
     "build:cli": "npm run build -w apps/cli",
     "pkg": "pkg .",
     "build": "./build.sh",

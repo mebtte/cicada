@@ -28,6 +28,7 @@ export enum UserProperty {
   CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
   LAST_ACTIVE_TIMESTAMP = 'lastActiveTimestamp',
   MUSIC_PLAY_RECORD_INDATE = 'musicPlayRecordIndate',
+  PASSWORD = 'password',
 }
 export type User = {
   [UserProperty.ID]: string;
@@ -42,6 +43,7 @@ export type User = {
   [UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: number;
   [UserProperty.LAST_ACTIVE_TIMESTAMP]: number;
   [UserProperty.MUSIC_PLAY_RECORD_INDATE]: number;
+  [UserProperty.PASSWORD]: string;
 };
 
 export const LOGIN_CODE_TABLE_NAME = 'login_code';

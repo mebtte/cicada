@@ -1,5 +1,4 @@
 import { ExceptionCode } from '#/constants/exception';
-import { EMAIL } from '#/constants/regexp';
 import { getMusicbillById } from '@/db/musicbill';
 import {
   MusicbillProperty,
@@ -9,19 +8,19 @@ import {
   UserProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { getUserByEmail } from '@/db/user';
+import { getUserByUsername } from '@/db/user';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const { musicbillId, email } = ctx.request.body as {
+  const { musicbillId, username } = ctx.request.body as {
     musicbillId?: unknown;
-    email?: unknown;
+    username?: unknown;
   };
   if (
     typeof musicbillId !== 'string' ||
     !musicbillId.length ||
-    typeof email !== 'string' ||
-    !EMAIL.test(email)
+    typeof username !== 'string' ||
+    !username.length
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
@@ -50,7 +49,7 @@ export default async (ctx: Context) => {
       `,
       [musicbillId],
     ),
-    getUserByEmail(email, [UserProperty.ID]),
+    getUserByUsername(username, [UserProperty.ID]),
   ]);
 
   if (

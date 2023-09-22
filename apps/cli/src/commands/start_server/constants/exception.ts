@@ -11,7 +11,7 @@ export const EXCEPTION_CODE_MAP_KEY: Record<ExceptionCode, Key> = {
   [ExceptionCode.WRONG_LOGIN_CODE]: 'wrong_login_code',
   [ExceptionCode.NOT_AUTHORIZED]: 'not_authorized',
   [ExceptionCode.NOT_AUTHORIZED_FOR_ADMIN]: 'not_authorized_for_admin',
-  [ExceptionCode.EMAIL_ALREADY_REGISTERED]: 'email_already_registered',
+  [ExceptionCode.USERNAME_ALREADY_REGISTERED]: 'username_already_registered',
   [ExceptionCode.MUSICBILL_NOT_EXISTED]: 'musicbill_not_existed',
   [ExceptionCode.MUSIC_NOT_EXISTED]: 'music_not_existed',
   [ExceptionCode.MUSIC_ALREADY_EXISTED_IN_MUSICBILL]:

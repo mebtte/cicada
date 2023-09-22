@@ -18,7 +18,7 @@ export default async (ctx: Context) => {
   );
   return ctx.success<Response>({
     id: ctx.user.id,
-    email: ctx.user.email,
+    username: ctx.user.username,
     avatar: ctx.user.avatar,
     nickname: ctx.user.nickname,
     joinTimestamp: ctx.user.joinTimestamp,

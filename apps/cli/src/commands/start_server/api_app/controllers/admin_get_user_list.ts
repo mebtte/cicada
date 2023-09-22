@@ -10,7 +10,7 @@ export default async (ctx: Context) => {
     Pick<
       User,
       | UserProperty.ID
-      | UserProperty.EMAIL
+      | UserProperty.USERNAME
       | UserProperty.NICKNAME
       | UserProperty.AVATAR
       | UserProperty.JOIN_TIMESTAMP
@@ -25,7 +25,7 @@ export default async (ctx: Context) => {
     `
       SELECT
         ${UserProperty.ID},
-        ${UserProperty.EMAIL},
+        ${UserProperty.USERNAME},
         ${UserProperty.NICKNAME},
         ${UserProperty.AVATAR},
         ${UserProperty.JOIN_TIMESTAMP},

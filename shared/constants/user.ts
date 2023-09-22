@@ -8,7 +8,7 @@ export enum AllowUpdateKey {
 }
 
 export enum AdminAllowUpdateKey {
-  EMAIL = 'email',
+  USERNAME = 'username',
   REMARK = 'remark',
   MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
   CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',

@@ -1,18 +1,25 @@
 import { AssetType } from '#/constants';
 
+export enum Mode {
+  DEVELOPMENT = 'development',
+  PRODUCTION = 'production',
+}
+
 export interface Config {
-  mode: 'development' | 'production';
+  mode: Mode;
 
   data: string;
   port: number;
 }
 
-let config: Config = {
-  mode: 'production',
+export const DEFAULT_CONFIG: Config = {
+  mode: Mode.PRODUCTION,
 
   data: `${process.cwd()}/cicada`,
   port: 8000,
 };
+
+let config: Config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
 
 export function getConfig() {
   return config;
@@ -28,10 +35,6 @@ export function getDBFilePath() {
 
 export function getJWTSecretFilePath() {
   return `${config.data}/jwt_secret`;
-}
-
-export function getLoginCodeSaltFilePath() {
-  return `${config.data}/login_code_salt`;
 }
 
 export function getDBSnapshotDirectory() {

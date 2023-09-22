@@ -1,8 +1,8 @@
 import { UserProperty, User, USER_TABLE_NAME } from '@/constants/db_definition';
 import { getDB } from '.';
 
-export function getUserByEmail<P extends UserProperty>(
-  email: string,
+export function getUserByUsername<P extends UserProperty>(
+  username: string,
   properties: P[],
 ) {
   return getDB().get<{
@@ -12,9 +12,9 @@ export function getUserByEmail<P extends UserProperty>(
       SELECT
         ${properties.join(',')}
       FROM ${USER_TABLE_NAME}
-      WHERE ${UserProperty.EMAIL} = ?
+      WHERE ${UserProperty.USERNAME} = ?
     `,
-    [email],
+    [username],
   );
 }
 
