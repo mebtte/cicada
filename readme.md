@@ -1,5 +1,7 @@
 # Cicada
 
+> The tag `latest` on docker hub is deprecated, please use tag `v1`.
+
 A multi-user music service for self-hosting.
 
 ![version](https://img.shields.io/github/v/release/mebtte/cicada?style=for-the-badge)
@@ -7,7 +9,9 @@ A multi-user music service for self-hosting.
 ![docker build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/docker_build_and_push.yaml?label=docker%20build&style=for-the-badge)
 ![license](https://img.shields.io/github/license/mebtte/cicada?style=for-the-badge)
 
-![](./docs/screenshot.png)
+![img](./docs/screenshot.png)
+
+> The tag `latest` on docker hub is deprecated, please use tag `v1`.
 
 ## Feature
 
@@ -53,6 +57,8 @@ Download cicada from [releases](https://github.com/mebtte/cicada/releases) and s
 Open `localhost:8000` or `{{ip}}:8000` and use the email that you enter on cli to login.
 
 ### Docker
+
+> The tag `latest` on docker hub is deprecated, please use tag `v1`.
 
 You can use docker to deploy cicada, but you need to prepare config file first and must configure [firstUserEmail](./docs/config/index.md#firstUserEmail) on first run.
 
