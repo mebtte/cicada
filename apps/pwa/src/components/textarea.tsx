@@ -1,15 +1,12 @@
 import {
   ForwardedRef,
   forwardRef,
-  HtmlHTMLAttributes,
-  ReactNode,
   TextareaHTMLAttributes,
   useImperativeHandle,
   useRef,
 } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '../global_style';
-import Label from './label';
 
 const Textarea = styled.textarea`
   display: block;
@@ -36,34 +33,17 @@ const Textarea = styled.textarea`
   }
 `;
 
-type Ref = {
-  root: HTMLLabelElement;
-  textarea: HTMLTextAreaElement;
-};
 type Props = {
-  label?: string;
-  textareaProps: TextareaHTMLAttributes<HTMLTextAreaElement>;
   disabled?: boolean;
-  addon?: ReactNode;
-} & HtmlHTMLAttributes<HTMLLabelElement>;
+} & TextareaHTMLAttributes<HTMLTextAreaElement>;
 
 function Wrapper(
-  { label, textareaProps, disabled = false, addon, ...props }: Props,
-  ref: ForwardedRef<Ref>,
+  { disabled = false, ...props }: Props,
+  ref: ForwardedRef<HTMLTextAreaElement>,
 ) {
-  const rootRef = useRef<HTMLLabelElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useImperativeHandle(ref, () => ({
-    root: rootRef.current!,
-    textarea: textareaRef.current!,
-  }));
-
-  return (
-    <Label {...props} ref={rootRef} label={label} addon={addon}>
-      <Textarea {...textareaProps} disabled={disabled} ref={textareaRef} />
-    </Label>
-  );
+  useImperativeHandle(ref, () => textareaRef.current!);
+  return <Textarea {...props} disabled={disabled} ref={textareaRef} />;
 }
 
-export default forwardRef<Ref, Props>(Wrapper);
+export default forwardRef<HTMLTextAreaElement, Props>(Wrapper);

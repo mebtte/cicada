@@ -206,12 +206,14 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
             onChange={onMusicPlayRecordIndateChange}
           />
         </Label>
-        <Textarea
-          className="part"
-          label={t('remark')}
-          disabled={loading}
-          textareaProps={{ value: remark, onChange: onRemarkChange, rows: 5 }}
-        />
+        <Label label={t('remark')} className="part">
+          <Textarea
+            disabled={loading}
+            value={remark}
+            onChange={onRemarkChange}
+            rows={5}
+          />
+        </Label>
         <Button
           className="part"
           variant={Variant.PRIMARY}
