@@ -1,5 +1,5 @@
 import { Response } from '#/server/api/get_singer';
-import { prefixServerOrigin } from '@/global_states/setting';
+import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
 
 /**

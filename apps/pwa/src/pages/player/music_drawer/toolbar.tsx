@@ -8,10 +8,10 @@ import {
   MdOutlineEdit,
   MdOutlineDownload,
 } from 'react-icons/md';
-import p from '@/global_states/profile';
 import { IS_IPAD, IS_IPHONE } from '@/constants/browser';
 import { saveAs } from 'file-saver';
 import formatMusicFilename from '#/utils/format_music_filename';
+import { useUser } from '@/global_states/server';
 import e, { EventType } from './eventemitter';
 import { MusicDetail } from './constants';
 import playerEventemitter, {
@@ -43,7 +43,7 @@ const Style = styled.div`
 `;
 
 function Toolbar({ music }: { music: MusicDetail }) {
-  const profile = p.useState()!;
+  const user = useUser()!;
 
   return (
     <Style>
@@ -111,7 +111,7 @@ function Toolbar({ music }: { music: MusicDetail }) {
           </IconButton>
         )}
       </div>
-      {profile.admin || profile.id === music.createUser.id ? (
+      {user.admin || user.id === music.createUser.id ? (
         <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
           <MdOutlineEdit />
         </IconButton>

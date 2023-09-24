@@ -30,6 +30,7 @@ import PublicMusicbillDrawer from './public_musicbill_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
 import SingerModifyRecordDrawer from './singer_modify_record_drawer';
+import NetworkStatus from './network_status';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -101,6 +102,7 @@ function Wrapper() {
       }}
     >
       <Style>
+        <NetworkStatus />
         <div className="container">
           <Sidebar />
           <div className="content">

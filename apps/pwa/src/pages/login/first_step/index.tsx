@@ -4,107 +4,110 @@ import {
   useEffect,
   useState,
 } from 'react';
+import Label from '@/components/label';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
 import Input from '@/components/input';
 import logger from '@/utils/logger';
-import storage, { Key } from '@/storage';
 import Button, { Variant } from '@/components/button';
-import dialog from '@/utils/dialog';
-import ErrorWithCode from '@/utils/error_with_code';
-import { ExceptionCode } from '#/constants/exception';
+import { ORIGIN } from '#/constants/regexp';
 import { t } from '@/i18n';
+import getMetadata from '@/server/base/get_metadata';
+import server, { useServer } from '@/global_states/server';
+import { CSSVariable } from '@/global_style';
 import Logo from '../logo';
 import Paper from '../paper';
+import Language from './language';
+import ServerList from './server_list';
 
 const Style = styled(Paper)`
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  > .divider {
+    height: 1px;
+    background-color: ${CSSVariable.COLOR_BORDER};
+  }
 `;
 
-function FirstStep({ toNext }: { toNext: (email: string) => void }) {
-  const [email, setEmail] = useState('');
-  const onEmailChange: ChangeEventHandler<HTMLInputElement> = (event) =>
-    setEmail(event.target.value);
+function FirstStep({ toNext }: { toNext: () => void }) {
+  const [loading, setLoading] = useState(false);
+  const [origin, setOrigin] = useState(
+    () => server.get().selectedServerOrigin || window.location.origin,
+  );
+  const onOriginChange: ChangeEventHandler<HTMLInputElement> = (event) =>
+    setOrigin(event.target.value);
 
-  const onGetLoginCode = () => {
-    if (!EMAIL.test(email)) {
-      return notice.error(t('please_enter_valid_email'));
+  const onSaveOrigin = async () => {
+    if (!ORIGIN.test(origin)) {
+      return notice.error(t('invalid_origin'));
     }
-    return dialog.captcha({
-      confirmText: t('get_login_code'),
-      confirmVariant: Variant.PRIMARY,
-      onConfirm: async ({ captchaId, captchaValue }) => {
-        try {
-          await getLoginCode({
-            email,
-            captchaId,
-            captchaValue,
-          });
-          notice.info(t('login_code_emailed'));
-          toNext(email);
-        } catch (error) {
-          logger.error(error, 'Failed to get login code');
 
-          const { code, message } = error as ErrorWithCode<ExceptionCode>;
-          notice.error(message);
-          switch (code) {
-            case ExceptionCode.ALREADY_GOT_LOGIN_CODE_BEFORE: {
-              toNext(email);
-              break;
-            }
-            default: {
-              /**
-               * prevent closing captcha dialog
-               * @author mebtte<hi@mebtte.com>
-               */
-              return false;
-            }
-          }
-        }
-      },
-    });
+    setLoading(true);
+    try {
+      const existedServer = server
+        .get()
+        .serverList.find((s) => s.origin === origin);
+      if (existedServer) {
+        server.set((ss) => ({
+          ...ss,
+          selectedServerOrigin: origin,
+        }));
+      } else {
+        const metadata = await getMetadata(origin);
+        server.set((ss) => ({
+          ...ss,
+          selectedServerOrigin: origin,
+          serverList: [
+            ...ss.serverList,
+            {
+              version: metadata.version,
+              hostname: metadata.hostname,
+              origin,
+              users: [],
+              selectedUserId: undefined,
+            },
+          ],
+        }));
+      }
+      toNext();
+    } catch (error) {
+      logger.error(error, `Failed to get origin "${origin}" metadata`);
+      notice.error(t('failed_to_get_server_metadata'));
+    }
+    setLoading(false);
   };
 
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (event.key === 'Enter') {
-      onGetLoginCode();
+      onSaveOrigin();
     }
   };
-
-  useEffect(() => {
-    storage
-      .getItem(Key.LAST_LOGIN_EMAIL)
-      .then((lastLoginEmail) => {
-        if (lastLoginEmail) {
-          setEmail(lastLoginEmail);
-        }
-      })
-      .catch((error) => logger.error(error, 'Failed to load last login email'));
-  }, []);
 
   return (
     <Style>
       <Logo />
+      <Language disabled={loading} />
+      <div className="divider" />
+      <ServerList toNext={toNext} />
       <Input
-        label={t('email')}
+        disabled={loading}
+        label={t('origin')}
         inputProps={{
-          type: 'email',
-          value: email,
-          onChange: onEmailChange,
+          value: origin,
+          onChange: onOriginChange,
           onKeyDown,
           autoFocus: true,
         }}
       />
       <Button
         variant={Variant.PRIMARY}
-        onClick={onGetLoginCode}
-        disabled={!email.length}
+        onClick={onSaveOrigin}
+        disabled={loading || !origin.length}
       >
-        {t('continue')}
+        {t('add_origin')}
       </Button>
-      <Button onClick={openSettingDialog}>{t('setting')}</Button>
     </Style>
   );
 }

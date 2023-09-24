@@ -2,7 +2,6 @@ import Drawer from '@/components/drawer';
 import { CSSProperties } from 'react';
 import styled from 'styled-components';
 import useNavigate from '@/utils/use_navigate';
-import p from '@/global_states/profile';
 import Button, { Variant } from '@/components/button';
 import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
@@ -13,6 +12,7 @@ import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '#/constants/user';
+import { useUser } from '@/global_states/server';
 import User from './user';
 import { Musicbill } from '../constants';
 import e, { EventType } from '../eventemitter';
@@ -56,9 +56,9 @@ function ShareDrawer({
   const zIndex = useDynamicZIndex(EventType.OPEN_MUSICBILL_SHARED_USER_DRAWER);
 
   const navigate = useNavigate();
-  const profile = p.useState()!;
+  const user = useUser()!;
 
-  const owned = musicbill.owner.id === profile.id;
+  const owned = musicbill.owner.id === user.id;
   return (
     <Drawer
       maskProps={{

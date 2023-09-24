@@ -1,10 +1,10 @@
 import styled from 'styled-components';
-import p from '@/global_states/profile';
 import Cover, { Shape } from '@/components/cover';
 import ellipsis from '@/style/ellipsis';
 import { CSSVariable } from '@/global_style';
 import { memo } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
+import { useUser } from '@/global_states/server';
 import e, { EventType } from '../eventemitter';
 
 const AVATAR_SIZE = 100;
@@ -36,18 +36,18 @@ const openProfileEditPopup = () =>
   e.emit(EventType.OPEN_PROFILE_EDIT_POPUP, null);
 
 function Profile() {
-  const profile = p.useState()!;
+  const user = useUser()!;
   return (
     <Style>
       <Cover
         className="avatar"
-        src={getResizedImage({ url: profile.avatar, size: AVATAR_SIZE * 2 })}
+        src={getResizedImage({ url: user.avatar, size: AVATAR_SIZE * 2 })}
         size={AVATAR_SIZE}
         shape={Shape.CIRCLE}
         onClick={openProfileEditPopup}
       />
-      <div className="nickname" title={profile.nickname}>
-        {profile.nickname}
+      <div className="nickname" title={user.nickname}>
+        {user.nickname}
       </div>
     </Style>
   );

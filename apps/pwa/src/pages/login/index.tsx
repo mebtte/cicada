@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
-import p from '@/global_states/profile';
+import { useState } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import PageContainer from '@/components/page_container';
 import FirstStep from './first_step';
-import LoginCodePanel from './login_code_panel';
-import UserPanel from './user_panel';
+import SecondStep from './second_step';
 import { Step } from './constants';
 
 const Style = styled(PageContainer)`
@@ -13,18 +11,7 @@ const Style = styled(PageContainer)`
 `;
 
 function Login() {
-  const profile = p.useState();
-
   const [step, setStep] = useState(Step.FIRST);
-  const [email, setEmail] = useState('');
-
-  useEffect(() => {
-    if (profile) {
-      setStep(Step.THIRD);
-    } else {
-      setStep(Step.FIRST);
-    }
-  }, [profile]);
 
   const transitions = useTransition(step, {
     from: { opacity: 0 },
@@ -38,29 +25,14 @@ function Login() {
           case Step.FIRST: {
             return (
               <animated.div style={style}>
-                <FirstStep
-                  toNext={(e) => {
-                    setEmail(e);
-                    return setStep(Step.SECOND);
-                  }}
-                />
+                <FirstStep toNext={() => setStep(Step.SECOND)} />
               </animated.div>
             );
           }
           case Step.SECOND: {
             return (
               <animated.div style={style}>
-                <LoginCodePanel
-                  email={email}
-                  toPrevious={() => setStep(Step.FIRST)}
-                />
-              </animated.div>
-            );
-          }
-          case Step.THIRD: {
-            return (
-              <animated.div style={style}>
-                <UserPanel />
+                <SecondStep toPrevious={() => setStep(Step.FIRST)} />
               </animated.div>
             );
           }

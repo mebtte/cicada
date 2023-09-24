@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
 import http from 'http';
 import Koa from 'koa';
 import log from 'koa-logger';
 import cors from '@koa/cors';
 import mount from 'koa-mount';
 import { PathPrefix } from '#/constants';
-import { updateConfig, getConfig, Mode } from '@/config';
+import { updateConfig, getConfig, Config, Mode } from '@/config';
 import definition from '@/definition';
 import initialize from './initialize';
 import startSchedule from './schedule';
@@ -14,6 +15,16 @@ import { getFormApp } from './form_app';
 import { getPwaApp } from './pwa_app';
 import { getBaseApp } from './base_app';
 import i18n from './middlewares/i18n';
+
+function printConfig() {
+  const config = getConfig();
+  const printConfigKeys: (keyof Config)[] = ['mode', 'port', 'data'];
+  console.log('---');
+  for (const key of printConfigKeys) {
+    console.log(`${key}: ${config[key]}`);
+  }
+  console.log('---');
+}
 
 export default async ({
   mode,
@@ -25,6 +36,7 @@ export default async ({
   data: string;
 }) => {
   updateConfig({ mode, port, data });
+  printConfig();
 
   await initialize();
 

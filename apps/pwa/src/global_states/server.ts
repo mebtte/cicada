@@ -1,40 +1,82 @@
 import XState from '@/utils/x_state';
-import getMetadata from '@/server/base/get_metadata';
 import logger from '@/utils/logger';
-import setting from './setting';
+import storage, { Key } from '@/storage';
+import { Server, ServerState } from '@/constants/server';
+import globalEventemitter, { EventType } from '@/platform/global_eventemitter';
+import getMetadata from '@/server/base/get_metadata';
 
-const serverMetadata = new XState<{
-  lastUpdateError: Error | null;
-
-  version: string;
-}>({
-  lastUpdateError: null,
-
-  version: '',
-});
-
-function updateMetadata() {
-  getMetadata()
-    .then((data) =>
-      serverMetadata.set({
-        lastUpdateError: null,
-        version: data.version,
-      }),
-    )
-    .catch((error) => {
-      logger.error(error, 'Fail to update server metadata');
-      return serverMetadata.set((d) => ({
-        ...d,
-        lastUpdateError: error,
-      }));
-    });
+export function getSelectedServer(ss: ServerState) {
+  return ss.selectedServerOrigin
+    ? ss.serverList.find((s) => s.origin === ss.selectedServerOrigin)
+    : undefined;
 }
 
-updateMetadata();
-window.setInterval(updateMetadata, 1000 * 15);
-window.addEventListener('online', () =>
-  window.setTimeout(updateMetadata, 1000),
-);
-setting.onChange(updateMetadata);
+export function getSelectedUser(server: Server) {
+  return server.selectedUserId
+    ? server.users.find((u) => u.id === server.selectedUserId)
+    : undefined;
+}
 
-export default serverMetadata;
+const initialServerList = await storage.getItem(Key.SERVER);
+const server = new XState<ServerState>(
+  initialServerList || {
+    serverList: [],
+  },
+);
+
+server.onChange((ss) => {
+  storage.setItem(Key.SERVER, ss);
+});
+
+window.setInterval(() => {
+  const selectedServer = getSelectedServer(server.get());
+  if (selectedServer) {
+    getMetadata(selectedServer.origin)
+      .then((data) => {
+        server.set((ss) => ({
+          ...ss,
+          serverList: ss.serverList.map((s) =>
+            s.origin === selectedServer.origin
+              ? {
+                  ...s,
+                  version: data.version,
+                  hostname: data.hostname,
+                }
+              : s,
+          ),
+        }));
+        return globalEventemitter.emit(
+          EventType.FETCH_SERVER_METADATA_SUCCEEDED,
+          null,
+        );
+      })
+      .catch((error) => {
+        logger.error(
+          error,
+          `Failed to fetch server "${selectedServer.origin}" metadata`,
+        );
+        return globalEventemitter.emit(EventType.FETCH_SERVER_METADATA_FAILED, {
+          error,
+        });
+      });
+  }
+}, 1000 * 15);
+
+export function prefixServerOrigin(path: string) {
+  if (path) {
+    return `${getSelectedServer(server.get())?.origin}${path}`;
+  }
+  return path;
+}
+
+export function useServer() {
+  const serverState = server.useState();
+  return getSelectedServer(serverState);
+}
+
+export function useUser() {
+  const selectedServer = useServer();
+  return selectedServer ? getSelectedUser(selectedServer) : undefined;
+}
+
+export default server;

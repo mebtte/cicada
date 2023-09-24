@@ -128,4 +128,13 @@ export default {
   shared_user: 'shared user',
   username_is_invalid: 'username is invalid',
   invitation_has_been_sent: 'invitation has been sent',
+  origin: 'server address',
+  invalid_origin: 'invalid server origin',
+  add_origin: 'add server address',
+  failed_to_get_server_metadata: 'failed to get server metadata',
+  password: 'password',
+  login: 'login',
+  or: 'or',
+  existed_server: 'existed server',
+  select: 'select',
 };

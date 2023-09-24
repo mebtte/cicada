@@ -1,5 +1,5 @@
 import { Response } from '#/server/api/admin_get_user_list';
-import { prefixServerOrigin } from '@/global_states/setting';
+import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
 
 async function adminGetUserList() {

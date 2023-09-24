@@ -48,11 +48,4 @@ setting.onChange((s) =>
     .catch((error) => logger.error(error, 'Failed to save setting')),
 );
 
-export function prefixServerOrigin(path: string) {
-  if (path) {
-    return `${setting.get().serverOrigin || window.location.origin}${path}`;
-  }
-  return path;
-}
-
 export default setting;

@@ -1,6 +1,7 @@
 import { CSSVariable } from '@/global_style';
 import { ComponentProps, CSSProperties } from 'react';
 import Select from 'react-select';
+import { t } from '@/i18n';
 import { Option } from './constants';
 import './style.scss';
 
@@ -16,16 +17,19 @@ function Wrapper<Value>({
   disabled = false,
   style,
   menuPortalTarget,
+  placeholder = t('select'),
 }: {
-  value: Option<Value>;
+  value?: Option<Value>;
   options: Option<Value>[];
   onChange: (option: Option<Value>) => void;
   disabled?: boolean;
   style?: CSSProperties;
   menuPortalTarget?: HTMLElement;
+  placeholder?: string;
 }) {
   return (
     <Select
+      placeholder={placeholder}
       isSearchable={false}
       isDisabled={disabled}
       value={value}

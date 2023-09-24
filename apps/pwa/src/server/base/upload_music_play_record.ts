@@ -1,5 +1,7 @@
-import { prefixServerOrigin } from '@/global_states/setting';
-import token from '@/global_states/token';
+import server, {
+  getSelectedServer,
+  getSelectedUser,
+} from '@/global_states/server';
 
 function uploadMusicPlayRecord({
   musicId,
@@ -8,10 +10,19 @@ function uploadMusicPlayRecord({
   musicId: string;
   percent: number;
 }) {
+  const selectedServer = getSelectedServer(server.get());
+  if (!selectedServer) {
+    throw new Error('No valid server to fetch');
+  }
+  const selectedUser = getSelectedUser(selectedServer);
+  if (!selectedUser) {
+    throw new Error('No valid user to fetch');
+  }
+
   const blob = new Blob(
     [
       JSON.stringify({
-        token: token.get(),
+        token: selectedUser.token,
         musicId,
         percent,
       }),
@@ -21,7 +32,7 @@ function uploadMusicPlayRecord({
     },
   );
   return window.navigator.sendBeacon(
-    prefixServerOrigin('/base/music_play_record'),
+    `${selectedServer.origin}/base/music_play_record`,
     blob,
   );
 }

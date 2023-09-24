@@ -22,7 +22,7 @@ import deleteMusicbill from '@/server/api/delete_musicbill';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
 import { Variant } from '@/components/button';
-import p from '@/global_states/profile';
+import { useUser } from '@/global_states/server';
 import e, { EventType } from './eventemitter';
 import { Musicbill, ZIndex } from '../../constants';
 import playerEventemitter, {
@@ -47,7 +47,7 @@ const itemStyle: CSSProperties = {
 
 function EditMenu({ musicbill }: { musicbill: Musicbill }) {
   const navigate = useNavigate();
-  const profile = p.useState()!;
+  const user = useUser()!;
 
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
@@ -188,7 +188,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
             });
           }}
         />
-        {musicbill.owner.id === profile?.id ? (
+        {musicbill.owner.id === user.id ? (
           <MenuItem
             style={itemStyle}
             label="删除乐单"

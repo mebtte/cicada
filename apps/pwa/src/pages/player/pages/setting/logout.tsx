@@ -2,11 +2,10 @@ import Button, { Variant } from '@/components/button';
 import useEvent from '@/utils/use_event';
 import { CSSProperties, memo } from 'react';
 import dialog from '@/utils/dialog';
-import token from '@/global_states/token';
 import { CacheName } from '@/constants/cache';
 import logger from '@/utils/logger';
-import setting from '@/global_states/setting';
 import { t } from '@/i18n';
+import server, { getSelectedServer } from '@/global_states/server';
 import { itemStyle } from './constants';
 
 const style: CSSProperties = {
@@ -20,7 +19,21 @@ function Logout() {
     dialog.confirm({
       title: t('logout_question'),
       onConfirm: () => {
-        token.set('');
+        const selectedServer = getSelectedServer(server.get());
+        if (selectedServer) {
+          server.set((ss) => ({
+            ...ss,
+            serverList: ss.serverList.map((s) =>
+              s.origin === selectedServer.origin
+                ? {
+                    ...selectedServer,
+                    users: s.users.filter((u) => u.id !== s.selectedUserId),
+                    selectedUserId: undefined,
+                  }
+                : s,
+            ),
+          }));
+        }
 
         /**
          * 退出登录需要移除相关缓存
@@ -32,10 +45,6 @@ function Logout() {
             .delete(CacheName.API)
             .catch((error) => logger.error(error, 'Failed to remove cache'));
         }
-        setting.set((s) => ({
-          ...s,
-          playerVolume: 1,
-        }));
       },
     }),
   );

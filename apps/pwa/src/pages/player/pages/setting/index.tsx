@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import p from '@/global_states/profile';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { useUser } from '@/global_states/server';
 import Page from '../page';
 import Logout from './logout';
 import UserManage from './user_manage';
@@ -29,12 +29,12 @@ const Style = styled(Page)`
 `;
 
 function Setting() {
-  const profile = p.useState()!;
+  const user = useUser()!;
   return (
     <Style>
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
       <Language />
-      {profile.admin ? <UserManage /> : null}
+      {user.admin ? <UserManage /> : null}
       <Logout />
       <ExtraInfo />
     </Style>
