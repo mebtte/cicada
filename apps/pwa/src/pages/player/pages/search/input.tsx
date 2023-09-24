@@ -4,6 +4,7 @@ import { Query } from '@/constants';
 import parseSearch from '@/utils/parse_search';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { t } from '@/i18n';
 
 function Wrapper() {
   const navigate = useNavigate();
@@ -15,23 +16,21 @@ function Wrapper() {
   return (
     <Input
       className="input"
-      inputProps={{
-        type: 'search',
-        placeholder: '搜索',
-        value: keyword,
-        autoFocus: true,
-        onChange: (e) => setKeyword(e.target.value),
-        onKeyDown: (e) => {
-          if (e.key === 'Enter') {
-            navigate({
-              query: {
-                [Query.KEYWORD]: window.encodeURIComponent(
-                  keyword.replace(/\s+/g, ' ').trim(),
-                ),
-              },
-            });
-          }
-        },
+      type="search"
+      placeholder={t('search')}
+      value={keyword}
+      autoFocus
+      onChange={(e) => setKeyword(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          navigate({
+            query: {
+              [Query.KEYWORD]: window.encodeURIComponent(
+                keyword.replace(/\s+/g, ' ').trim(),
+              ),
+            },
+          });
+        }
       }}
     />
   );

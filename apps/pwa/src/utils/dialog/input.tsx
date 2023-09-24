@@ -1,5 +1,6 @@
 import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
+import Label from '@/components/label';
 import Input from '@/components/input';
 import { CSSProperties, ChangeEventHandler, useState } from 'react';
 import { t } from '@/i18n';
@@ -48,17 +49,16 @@ function InputContent({
     <Container>
       {input.title ? <Title>{input.title}</Title> : null}
       <Content style={contentStyle}>
-        <Input
-          label={input.label}
-          disabled={confirming || canceling}
-          inputProps={{
-            value: text,
-            onChange: onTextChange,
-            autoFocus: true,
-            maxLength: input.maxLength,
-            type: input.inputType,
-          }}
-        />
+        <Label label={input.label}>
+          <Input
+            value={text}
+            onChange={onTextChange}
+            autoFocus
+            maxLength={input.maxLength}
+            type={input.inputType}
+            disabled={confirming || canceling}
+          />
+        </Label>
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>

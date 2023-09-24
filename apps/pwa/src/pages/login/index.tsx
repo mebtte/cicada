@@ -8,15 +8,26 @@ import { Step } from './constants';
 
 const Style = styled(PageContainer)`
   -webkit-app-region: drag;
+  overflow: hidden;
+`;
+const AnimatedDiv = styled(animated.div)`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  width: 320px;
+  padding: 30px 20px;
+
+  -webkit-app-region: no-drag;
 `;
 
 function Login() {
   const [step, setStep] = useState(Step.FIRST);
 
   const transitions = useTransition(step, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
+    from: { opacity: 0, transform: 'translate(-150%, -50%)' },
+    enter: { opacity: 1, transform: 'translate(-50%, -50%)' },
+    leave: { opacity: 0, transform: 'translate(50%, -50%)' },
   });
   return (
     <Style>
@@ -24,16 +35,16 @@ function Login() {
         switch (s) {
           case Step.FIRST: {
             return (
-              <animated.div style={style}>
+              <AnimatedDiv style={style}>
                 <FirstStep toNext={() => setStep(Step.SECOND)} />
-              </animated.div>
+              </AnimatedDiv>
             );
           }
           case Step.SECOND: {
             return (
-              <animated.div style={style}>
+              <AnimatedDiv style={style}>
                 <SecondStep toPrevious={() => setStep(Step.FIRST)} />
-              </animated.div>
+              </AnimatedDiv>
             );
           }
           default: {

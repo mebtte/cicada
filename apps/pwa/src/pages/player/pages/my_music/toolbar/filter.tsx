@@ -38,12 +38,10 @@ function Filter() {
   return (
     <Input
       style={style}
-      inputProps={{
-        autoFocus: !IS_TOUCHABLE,
-        placeholder: t('search'),
-        value: keyword,
-        onChange: (event) => setKeyword(event.target.value),
-      }}
+      autoFocus={!IS_TOUCHABLE}
+      placeholder={t('search')}
+      value={keyword}
+      onChange={(event) => setKeyword(event.target.value)}
     />
   );
 }

@@ -131,10 +131,11 @@ export default {
   origin: 'server address',
   invalid_origin: 'invalid server origin',
   add_origin: 'add server address',
-  failed_to_get_server_metadata: 'failed to get server metadata',
+  failed_to_get_server_metadata: 'failed to connect this server',
   password: 'password',
   login: 'login',
   or: 'or',
   existed_server: 'existed server',
   select: 'select',
+  jump_to: 'jump to',
 };

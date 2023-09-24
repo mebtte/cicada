@@ -2,6 +2,7 @@ import Input from '@/components/input';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties, useEffect, useState } from 'react';
+import { t } from '@/i18n';
 
 const style: CSSProperties = {
   flex: 1,
@@ -28,12 +29,10 @@ function Filter() {
   return (
     <Input
       style={style}
-      inputProps={{
-        value: keyword,
-        onChange: (e) => setKeyword(e.target.value),
-        type: 'search',
-        placeholder: '查找',
-      }}
+      value={keyword}
+      onChange={(e) => setKeyword(e.target.value)}
+      type="search"
+      placeholder={t('search')}
     />
   );
 }

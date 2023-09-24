@@ -237,15 +237,14 @@ function CreateMusicDialog() {
             disabled={loading}
             addon={<MissingSinger />}
           />
-          <Input
-            label={t('name')}
-            inputProps={{
-              value: name,
-              onChange: onNameChange,
-              maxLength: NAME_MAX_LENGTH,
-            }}
-            disabled={loading}
-          />
+          <Label label={t('name')}>
+            <Input
+              value={name}
+              onChange={onNameChange}
+              maxLength={NAME_MAX_LENGTH}
+              disabled={loading}
+            />
+          </Label>
         </StyledContent>
         <Action>
           <Button onClick={onClose} disabled={loading}>

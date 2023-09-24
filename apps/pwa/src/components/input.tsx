@@ -1,16 +1,13 @@
 import {
   ForwardedRef,
   forwardRef,
-  HtmlHTMLAttributes,
   InputHTMLAttributes,
-  ReactNode,
   useImperativeHandle,
   useRef,
 } from 'react';
 import styled from 'styled-components';
 import { ComponentSize } from '../constants/style';
 import { CSSVariable } from '../global_style';
-import Label from './label';
 
 const Input = styled.input`
   padding: 0 10px;
@@ -38,34 +35,19 @@ const Input = styled.input`
   }
 `;
 
-type Ref = {
-  root: HTMLLabelElement;
-  input: HTMLInputElement;
-};
 type Props = {
-  label?: string;
-  inputProps: InputHTMLAttributes<HTMLInputElement>;
   disabled?: boolean;
-  addon?: ReactNode;
-} & HtmlHTMLAttributes<HTMLLabelElement>;
+} & InputHTMLAttributes<HTMLInputElement>;
 
 function Wrapper(
-  { label, inputProps, disabled = false, addon, ...props }: Props,
-  ref: ForwardedRef<Ref>,
+  { disabled = false, ...props }: Props,
+  ref: ForwardedRef<HTMLInputElement>,
 ) {
-  const rootRef = useRef<HTMLLabelElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useImperativeHandle(ref, () => ({
-    root: rootRef.current!,
-    input: inputRef.current!,
-  }));
+  useImperativeHandle(ref, () => inputRef.current!);
 
-  return (
-    <Label {...props} ref={rootRef} label={label} addon={addon}>
-      <Input {...inputProps} disabled={disabled} ref={inputRef} />
-    </Label>
-  );
+  return <Input {...props} disabled={disabled} ref={inputRef} />;
 }
 
-export default forwardRef<Ref, Props>(Wrapper);
+export default forwardRef<HTMLInputElement, Props>(Wrapper);

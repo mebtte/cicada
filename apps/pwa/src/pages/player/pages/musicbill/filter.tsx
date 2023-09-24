@@ -48,11 +48,9 @@ function Filter() {
     <Style>
       <Input
         className="input"
-        inputProps={{
-          value: keyword,
-          onChange: (event) => setKeyword(event.target.value),
-          placeholder: upperCaseFirstLetter(t('find_in_musicbill')),
-        }}
+        value={keyword}
+        onChange={(event) => setKeyword(event.target.value)}
+        placeholder={upperCaseFirstLetter(t('find_in_musicbill'))}
       />
     </Style>
   );

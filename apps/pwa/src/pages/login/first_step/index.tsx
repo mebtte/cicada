@@ -1,26 +1,20 @@
-import {
-  ChangeEventHandler,
-  KeyboardEventHandler,
-  useEffect,
-  useState,
-} from 'react';
-import Label from '@/components/label';
+import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
 import Input from '@/components/input';
+import Label from '@/components/label';
 import logger from '@/utils/logger';
 import Button, { Variant } from '@/components/button';
 import { ORIGIN } from '#/constants/regexp';
 import { t } from '@/i18n';
 import getMetadata from '@/server/base/get_metadata';
-import server, { useServer } from '@/global_states/server';
+import server from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import Logo from '../logo';
-import Paper from '../paper';
 import Language from './language';
 import ServerList from './server_list';
 
-const Style = styled(Paper)`
+const Style = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -90,21 +84,21 @@ function FirstStep({ toNext }: { toNext: () => void }) {
       <Logo />
       <Language disabled={loading} />
       <div className="divider" />
-      <ServerList toNext={toNext} />
-      <Input
-        disabled={loading}
-        label={t('origin')}
-        inputProps={{
-          value: origin,
-          onChange: onOriginChange,
-          onKeyDown,
-          autoFocus: true,
-        }}
-      />
+      <ServerList toNext={toNext} disabled={loading} />
+      <Label label={t('origin')}>
+        <Input
+          disabled={loading}
+          value={origin}
+          onChange={onOriginChange}
+          onKeyDown={onKeyDown}
+          autoFocus
+        />
+      </Label>
       <Button
         variant={Variant.PRIMARY}
         onClick={onSaveOrigin}
-        disabled={loading || !origin.length}
+        disabled={!origin.length}
+        loading={loading}
       >
         {t('add_origin')}
       </Button>

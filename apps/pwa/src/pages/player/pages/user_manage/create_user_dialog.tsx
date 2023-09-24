@@ -1,6 +1,7 @@
 import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import { ChangeEventHandler, CSSProperties, useEffect, useState } from 'react';
 import Button, { Variant } from '@/components/button';
+import Label from '@/components/label';
 import Input from '@/components/input';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
@@ -81,20 +82,12 @@ function CreateUserDialog() {
       <Container>
         <Title>{t('create_user')}</Title>
         <StyledContent>
-          <Input
-            label={t('username')}
-            inputProps={{
-              value: username,
-              onChange: onUsernameChange,
-            }}
-          />
-          <Input
-            label={t('remark')}
-            inputProps={{
-              value: remark,
-              onChange: onRemarkChange,
-            }}
-          />
+          <Label label={t('username')}>
+            <Input value={username} onChange={onUsernameChange} />
+          </Label>
+          <Label label={t('remark')}>
+            <Input value={remark} onChange={onRemarkChange} />
+          </Label>
         </StyledContent>
         <Action>
           <Button onClick={onClose} disabled={loading}>

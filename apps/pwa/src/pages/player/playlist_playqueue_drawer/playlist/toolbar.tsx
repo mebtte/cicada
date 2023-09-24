@@ -1,9 +1,11 @@
+import Label from '@/components/label';
 import Input from '@/components/input';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
 import { MdDelete } from 'react-icons/md';
 import dialog from '@/utils/dialog';
+import { t } from '@/i18n';
 import { FILTER_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -58,14 +60,13 @@ function Toolbar({
       >
         <MdDelete />
       </IconButton>
-      <Input
-        className="filter"
-        inputProps={{
-          value: keyword,
-          onChange: (e) => setKeyword(e.target.value),
-          placeholder: '查找',
-        }}
-      />
+      <Label className="filter">
+        <Input
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder={t('search')}
+        />
+      </Label>
     </Style>
   );
 }

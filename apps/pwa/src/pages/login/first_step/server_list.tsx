@@ -27,7 +27,13 @@ const Style = styled.div`
   }
 `;
 
-function ServerList({ toNext }: { toNext: () => void }) {
+function ServerList({
+  disabled,
+  toNext,
+}: {
+  disabled: boolean;
+  toNext: () => void;
+}) {
   const serverList = useMemo(() => server.get().serverList, []);
 
   if (serverList) {
@@ -35,6 +41,7 @@ function ServerList({ toNext }: { toNext: () => void }) {
       <Style>
         <Label label={t('existed_server')}>
           <Select
+            disabled={disabled}
             options={serverList.map((s) => ({
               label: `${s.hostname} - ${s.origin}`,
               value: s.origin,
