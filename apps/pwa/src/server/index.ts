@@ -49,7 +49,7 @@ export async function request<Data = void>({
   }
 
   const selectedUser = getSelectedUser(selectedServer);
-  let url = `${selectedServer.origin}/${path}`;
+  let url = `${selectedServer.origin}${path}`;
 
   const combineParams = {
     ...params,

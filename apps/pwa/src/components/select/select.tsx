@@ -1,5 +1,6 @@
 import { CSSVariable } from '@/global_style';
 import { ComponentProps, CSSProperties } from 'react';
+import { ComponentSize } from '@/constants/style';
 import Select from 'react-select';
 import { t } from '@/i18n';
 import { Option } from './constants';
@@ -8,7 +9,9 @@ import './style.scss';
 const classNames: ComponentProps<Select>['classNames'] = {
   control: () => 'react-select-single-control',
   option: () => 'react-select-single-option',
+  indicatorsContainer: () => 'react-select-single-indicator-container',
 };
+const noOptionsMessage = () => t('no_data');
 
 function Wrapper<Value>({
   value,
@@ -30,6 +33,7 @@ function Wrapper<Value>({
   return (
     <Select
       placeholder={placeholder}
+      noOptionsMessage={noOptionsMessage}
       isSearchable={false}
       isDisabled={disabled}
       value={value}
@@ -64,6 +68,10 @@ function Wrapper<Value>({
             : isFocused
             ? CSSVariable.BACKGROUND_COLOR_LEVEL_ONE
             : '#fff',
+        }),
+        valueContainer: (baseStyles) => ({
+          ...baseStyles,
+          height: ComponentSize.NORMAL,
         }),
       }}
     />

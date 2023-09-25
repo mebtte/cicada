@@ -2,8 +2,8 @@ import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';
 import generateRandomInteger from '#/utils/generate_random_integer';
 import { REMARK_MAX_LENGTH } from '#/constants/user';
-import { getUserByUsername } from '@/db/user';
 import { USER_TABLE_NAME, UserProperty } from '@/constants/db_definition';
+import getUserByUsername from '@/db/get_user_by_username';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

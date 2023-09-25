@@ -1,23 +1,6 @@
 import { UserProperty, User, USER_TABLE_NAME } from '@/constants/db_definition';
 import { getDB } from '.';
 
-export function getUserByUsername<P extends UserProperty>(
-  username: string,
-  properties: P[],
-) {
-  return getDB().get<{
-    [key in P]: User[key];
-  }>(
-    `
-      SELECT
-        ${properties.join(',')}
-      FROM ${USER_TABLE_NAME}
-      WHERE ${UserProperty.USERNAME} = ?
-    `,
-    [username],
-  );
-}
-
 export function getUserById<P extends UserProperty>(
   id: string,
   properties: P[],

@@ -4,8 +4,12 @@ import Label from '@/components/label';
 import Input from '@/components/input';
 import Button, { Variant } from '@/components/button';
 import { t } from '@/i18n';
-import { USERNAME_MAX_LENGTH } from '#/constants/user';
-import Logo from './logo';
+import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
+import logger from '@/utils/logger';
+import login from '@/server/base/login';
+import dialog from '@/utils/dialog';
+import notice from '@/utils/notice';
+import Logo from '../logo';
 
 const StyledPaper = styled.div`
   display: flex;
@@ -24,10 +28,25 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const onPasswordChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setPassword(event.target.value);
 
-  const onLogin = async () => {
-    setLoading(true);
-    setLoading(false);
-  };
+  const onLogin = () =>
+    dialog.captcha({
+      // title: t('login'),
+      onConfirm: async ({ captchaId, captchaValue }) => {
+        setLoading(true);
+        try {
+          const token = await login({
+            username,
+            password,
+            captchaId,
+            captchaValue,
+          });
+        } catch (error) {
+          logger.error(error, 'Failed to login');
+          notice.error(error.message);
+        }
+        setLoading(false);
+      },
+    });
 
   return (
     <StyledPaper>
@@ -46,10 +65,16 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
           type="password"
           value={password}
           onChange={onPasswordChange}
+          maxLength={PASSWORD_MAX_LENGTH}
           disabled={loading}
         />
       </Label>
-      <Button variant={Variant.PRIMARY} loading={loading} onClick={onLogin}>
+      <Button
+        variant={Variant.PRIMARY}
+        loading={loading}
+        disabled={!username.length || !password.length}
+        onClick={onLogin}
+      >
         {t('login')}
       </Button>
       <Button onClick={toPrevious} disabled={loading}>

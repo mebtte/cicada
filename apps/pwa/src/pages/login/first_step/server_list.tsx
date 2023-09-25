@@ -36,7 +36,7 @@ function ServerList({
 }) {
   const serverList = useMemo(() => server.get().serverList, []);
 
-  if (serverList) {
+  if (serverList.length) {
     return (
       <Style>
         <Label label={t('existed_server')}>

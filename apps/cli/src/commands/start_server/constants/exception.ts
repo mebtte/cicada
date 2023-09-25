@@ -47,4 +47,5 @@ export const EXCEPTION_CODE_MAP_KEY: Record<ExceptionCode, Key> = {
     'no_permission_to_delete_musicbill_shared_user',
   [ExceptionCode.SHARED_MUSICBILL_INVITATION_NOT_EXISTED]:
     'shared_musicbill_invitation_not_existed',
+  [ExceptionCode.WRONG_USERNAME_OR_PASSWORD]: 'wrong_username_or_password',
 };

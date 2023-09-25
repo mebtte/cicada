@@ -38,7 +38,7 @@ const zhHans: {
   repeated_shared_musicbill_invitation: '重复的共享乐单邀请',
   no_permission_to_delete_musicbill_shared_user: '没有权限删除共享乐单用户',
   shared_musicbill_invitation_not_existed: '共享乐单邀请不存在',
-  welcome_to: '欢迎使用%s1',
+  wrong_username_or_password: '错误的用户名或密码',
 };
 
 export default zhHans;

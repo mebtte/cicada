@@ -37,5 +37,5 @@ export default {
     'no permission to delete musicbill shared user',
   shared_musicbill_invitation_not_existed:
     'shared_musicbill_invitation_not_existed',
-  welcome_to: 'welcome to %s1',
+  wrong_username_or_password: 'wrong username or password',
 };
