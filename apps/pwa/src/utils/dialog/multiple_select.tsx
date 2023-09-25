@@ -1,5 +1,6 @@
 import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
+import Label from '@/components/label';
 import { CSSProperties, useState } from 'react';
 import MultipleSelect, { Option } from '@/components/multiple_select';
 import { t } from '@/i18n';
@@ -53,14 +54,14 @@ function TextInputContent({
     <Container>
       {multipleSelect.title ? <Title>{multipleSelect.title}</Title> : null}
       <Content style={contentStyle}>
-        <MultipleSelect<unknown>
-          label={multipleSelect.label}
-          addon={multipleSelect.labelAddon}
-          value={options}
-          onChange={onOptionsChange}
-          optionsGetter={multipleSelect.optionsGetter}
-          disabled={confirming || canceling}
-        />
+        <Label label={multipleSelect.label} addon={multipleSelect.labelAddon}>
+          <MultipleSelect<unknown>
+            value={options}
+            onChange={onOptionsChange}
+            optionsGetter={multipleSelect.optionsGetter}
+            disabled={confirming || canceling}
+          />
+        </Label>
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
