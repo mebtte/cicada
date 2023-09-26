@@ -1,3 +1,4 @@
+import { ExceptionCode } from '#/constants/exception';
 import { Response } from '#/server/base/get_metadata';
 
 async function getMetadata(origin: string) {
@@ -7,11 +8,11 @@ async function getMetadata(origin: string) {
     throw new Error(`${statusText}(#${status})`);
   }
   const { code, message, data } = (await response.json()) as {
-    code: number;
+    code: ExceptionCode;
     message: string;
     data: Response;
   };
-  if (code !== 0) {
+  if (code !== ExceptionCode.SUCCESS) {
     throw new Error(`${message}(#${code})`);
   }
   return data;

@@ -1,4 +1,4 @@
-import Button from '@/components/button';
+import Button, { Variant } from '@/components/button';
 import { t } from '@/i18n';
 import { CSSProperties, useContext } from 'react';
 import dialog from '@/utils/dialog';
@@ -25,6 +25,7 @@ function UserSwitch() {
 
   return (
     <Button
+      variant={Variant.PRIMARY}
       style={style}
       onClick={() =>
         queueMusic

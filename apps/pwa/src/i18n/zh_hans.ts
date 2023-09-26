@@ -139,6 +139,11 @@ const zhCN: {
   switch_user_question: '切换用户将会清空播放列表和播放队列, 是否继续?',
   existed_user: '现有用户',
   update_musicbill_order_error: '更新乐单顺序失败',
+  last_active_time: '上次活动时间',
+  today: '今天',
+  yesterday: '昨天',
+  admin: '管理员',
+  unknown: '未知',
 };
 
 export default zhCN;

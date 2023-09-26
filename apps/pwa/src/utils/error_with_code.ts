@@ -1,4 +1,4 @@
-class ErrorWithCode<Code extends number> extends Error {
+class ErrorWithCode<Code extends number | string> extends Error {
   code: Code;
 
   constructor(message: string, code: Code) {

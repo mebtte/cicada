@@ -142,4 +142,9 @@ export default {
     'switching user will clear playlist and playqueue, continue ?',
   existed_user: 'existed user',
   update_musicbill_order_error: 'failed to update musicbill orders',
+  last_active_time: 'last active time',
+  today: 'today',
+  yesterday: 'yesterday',
+  admin: 'admin',
+  unknown: 'unknown',
 };

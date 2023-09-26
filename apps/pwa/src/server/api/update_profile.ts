@@ -5,6 +5,7 @@ type KeyMapData = {
   [AllowUpdateKey.NICKNAME]: string;
   [AllowUpdateKey.AVATAR]: string;
   [AllowUpdateKey.MUSICBILL_ORDERS]: string[];
+  [AllowUpdateKey.PASSWORD]: string;
 };
 
 function updateProfile<K extends AllowUpdateKey>({

@@ -37,7 +37,7 @@ function UserList({
           <Select
             disabled={disabled}
             options={selectedServer.users.map((u) => ({
-              label: `${u.nickname}(${u.username})`,
+              label: `${u.nickname}(@${u.username})`,
               value: u.id,
             }))}
             onChange={(option) => {

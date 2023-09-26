@@ -10,7 +10,11 @@ import notice from '@/utils/notice';
 import dialog from '@/utils/dialog';
 import adminUpdateUser from '@/server/api/admin_update_user';
 import adminUpdateUserAdmin from '@/server/api/admin_update_user_admin';
-import { AdminAllowUpdateKey, REMARK_MAX_LENGTH } from '#/constants/user';
+import {
+  AdminAllowUpdateKey,
+  REMARK_MAX_LENGTH,
+  USERNAME_MAX_LENGTH,
+} from '#/constants/user';
 import adminDeleteUser from '@/server/api/admin_delete_user';
 import { t } from '@/i18n';
 import { User } from '../constants';
@@ -31,6 +35,10 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
   const onMusicbillMacAmountChange: ChangeEventHandler<HTMLInputElement> = (
     event,
   ) => setMusicbillMaxAmount(event.target.value.replace(/[\D.]/, ''));
+
+  const [username, setUsername] = useState(user.username);
+  const onUsernameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
+    setUsername(event.target.value.trim());
 
   const [createMusicMaxAmountPerDay, setCreateMusicMaxAmountPerDay] = useState(
     () => user.createMusicMaxAmountPerDay.toString(),
@@ -56,6 +64,18 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
     setLoading(true);
 
     try {
+      if (user.username !== username) {
+        await adminUpdateUser({
+          id: user.id,
+          key: AdminAllowUpdateKey.USERNAME,
+          value: username,
+        });
+        e.emit(EventType.USER_UPDATED, {
+          id: user.id,
+          username,
+        });
+      }
+
       const musicbillMaxAmountNumber = Number(musicbillMaxAmount);
       if (user.musicbillMaxAmount !== musicbillMaxAmountNumber) {
         if (musicbillMaxAmountNumber < 0) {
@@ -152,6 +172,10 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
     setLoading(false);
   };
 
+  /**
+   * @todo 重置密码
+   * @author mebtte<hi@mebtte.com>
+   */
   return (
     <Style>
       <Style>
@@ -161,13 +185,18 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         <Label className="part" label={t('nickname')}>
           <Input disabled defaultValue={user.nickname} />
         </Label>
-        <Label className="part" label={t('username')}>
-          <Input disabled defaultValue={user.username} />
-        </Label>
         <Label className="part" label={t('join_time')}>
           <Input
             disabled
             defaultValue={day(user.joinTimestamp).format('YYYY-MM-DD')}
+          />
+        </Label>
+        <Label className="part" label={t('username')}>
+          <Input
+            disabled={loading}
+            value={username}
+            onChange={onUsernameChange}
+            maxLength={USERNAME_MAX_LENGTH}
           />
         </Label>
         <Label

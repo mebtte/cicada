@@ -100,3 +100,5 @@ export enum CommonQuery {
   VERSION = '__v',
   LANGUAGE = '__lang',
 }
+
+export const BETA_VERSION_START = 'beta.';

@@ -88,7 +88,7 @@ function ProfileEditPopup() {
           <Cover src={user.avatar} size={56} />
           <div className="info">
             <div className="primary">{user.nickname}</div>
-            <div className="secondary">用户名: {user.username}</div>
+            <div className="secondary">@{user.username}</div>
           </div>
         </div>
         <MenuItem

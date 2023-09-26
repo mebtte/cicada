@@ -20,6 +20,11 @@ const KEY_MAP_HANDLER: Record<
   AllowUpdateKey,
   ({ ctx, value }: { ctx: Context; value: unknown }) => Promise<void>
 > = {
+  /**
+   * @todo
+   * @author mebtte<hi@mebtte.com>
+   */
+  [AllowUpdateKey.PASSWORD]: async () => {},
   [AllowUpdateKey.AVATAR]: async ({ ctx, value: avatar }) => {
     if (typeof avatar !== 'string' || !avatar.length) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);

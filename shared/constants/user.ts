@@ -7,6 +7,7 @@ export enum AllowUpdateKey {
   AVATAR = 'avatar',
   NICKNAME = 'nickname',
   MUSICBILL_ORDERS = 'musicbill_orders',
+  PASSWORD = 'password',
 }
 
 export enum AdminAllowUpdateKey {

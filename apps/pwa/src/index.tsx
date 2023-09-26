@@ -7,7 +7,13 @@ import App from './app';
 import Unsupported from './unsupported';
 
 function findUnsupportedList(): string[] {
-  return [];
+  const unsupportedList: string[] = [];
+
+  if (!window.CSS.supports('height', '1dvh')) {
+    unsupportedList.push('https://caniuse.com/viewport-unit-variants');
+  }
+
+  return unsupportedList;
 }
 
 const unsupportedList = findUnsupportedList();

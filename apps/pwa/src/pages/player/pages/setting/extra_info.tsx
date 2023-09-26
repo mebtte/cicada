@@ -1,9 +1,9 @@
+import { BETA_VERSION_START } from '#/constants';
 import definition from '@/definition';
 import { useServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 
-const BETA_VERSION_START = 'beta.';
 const Style = styled.div`
   font-size: 12px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};

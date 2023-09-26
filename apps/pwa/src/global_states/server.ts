@@ -5,6 +5,8 @@ import { Server, ServerState } from '@/constants/server';
 import globalEventemitter, { EventType } from '@/platform/global_eventemitter';
 import getMetadata from '@/server/base/get_metadata';
 import getProfile from '@/server/api/get_profile';
+import definition from '@/definition';
+import { BETA_VERSION_START } from '#/constants';
 
 export function getSelectedServer(ss: ServerState) {
   return ss.selectedServerOrigin
@@ -34,6 +36,17 @@ window.setInterval(() => {
   if (selectedServer) {
     getMetadata(selectedServer.origin)
       .then((data) => {
+        if (
+          !definition.DEVELOPMENT &&
+          !data.version.startsWith(BETA_VERSION_START) &&
+          !data.version.startsWith('2.')
+        ) {
+          /**
+           * @todo 不兼容提示
+           * @author mebtte<hi@mebtte.com>
+           */
+        }
+
         server.set((ss) => ({
           ...ss,
           serverList: ss.serverList.map((s) =>

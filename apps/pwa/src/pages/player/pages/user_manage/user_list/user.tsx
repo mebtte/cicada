@@ -7,6 +7,8 @@ import IconButton from '@/components/icon_button';
 import { MdMoreVert } from 'react-icons/md';
 import { ComponentSize } from '@/constants/style';
 import getResizedImage from '@/server/asset/get_resized_image';
+import { t } from '@/i18n';
+import capitalize from '@/style/capitalize';
 import { User as UserType } from '../constants';
 import e, { EventType } from '../eventemitter';
 import playerEventemitter, {
@@ -47,7 +49,9 @@ const Style = styled.div`
       flex: 1;
       min-width: 0;
 
-      > .nickname {
+      > .username {
+        margin-top: 5px;
+
         font-size: 14px;
         color: ${CSSVariable.TEXT_COLOR_PRIMARY};
         ${ellipsis}
@@ -58,9 +62,13 @@ const Style = styled.div`
       }
 
       > .last-active-time {
+        margin-top: 5px;
+
         font-size: 12px;
         color: ${CSSVariable.TEXT_COLOR_SECONDARY};
         font-family: monospace;
+
+        ${capitalize}
 
         > .icon {
           vertical-align: -2px;
@@ -87,22 +95,23 @@ function User({ user, width }: { user: UserType; width: string }) {
           src={getResizedImage({ url: user.avatar, size: ITEM_MIN_WIDTH * 2 })}
           size="100%"
         />
-        {user.admin ? <div className="admin">管理员</div> : null}
+        {user.admin ? <div className="admin">{t('admin')}</div> : null}
       </div>
       <div className="bottom">
         <div className="info">
-          <div className="nickname" title={user.nickname}>
-            <span onClick={openUserDrawer}>{user.nickname}</span>
+          <div className="username" title={user.username}>
+            <span onClick={openUserDrawer}>@{user.username}</span>
           </div>
           <div className="last-active-time">
-            上次活动&nbsp;
+            {t('last_active_time')}:
+            <br />
             {user.lastActiveTimestamp
               ? lastActiveTime.isSame(today, 'D')
-                ? '今天'
+                ? t('today')
                 : lastActiveTime.isSame(yesterday, 'D')
-                ? '昨天'
+                ? t('yesterday')
                 : lastActiveTime.format('YYYY-MM-DD')
-              : '未知'}
+              : t('unknown')}
           </div>
         </div>
         <IconButton

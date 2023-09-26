@@ -8,9 +8,11 @@ import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';
 import { t } from '@/i18n';
+import capitalize from '@/style/capitalize';
 
 const Style = styled.div`
   ${flexCenter}
+  ${capitalize}
 
   font-size: 12px;
   background-color: ${CSSVariable.COLOR_DANGEROUS};
