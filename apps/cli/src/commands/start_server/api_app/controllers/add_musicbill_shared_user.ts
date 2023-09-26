@@ -8,7 +8,7 @@ import {
   UserProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import { getUserByUsername } from '@/db/user';
+import getUserByUsername from '@/db/get_user_by_username';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {

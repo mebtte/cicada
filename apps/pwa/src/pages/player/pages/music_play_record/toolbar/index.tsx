@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
 import { MdHelpOutline } from 'react-icons/md';
 import dialog from '@/utils/dialog';
-import profile from '@/global_states/profile';
+import { useUser } from '@/global_states/server';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';
 
@@ -23,19 +23,19 @@ const Style = styled.div`
 `;
 
 function Toolbar() {
+  const user = useUser()!;
   return (
     <Style>
       <IconButton
-        onClick={() => {
-          const { musicPlayRecordIndate } = profile.get()!;
-          return dialog.alert({
+        onClick={() =>
+          dialog.alert({
             content: (
               <div>
                 <div>
                   1. 你的音乐播放记录将
-                  {musicPlayRecordIndate === 0
+                  {user.musicPlayRecordIndate === 0
                     ? '无限期保留'
-                    : `保留 ${musicPlayRecordIndate} 天`}
+                    : `保留 ${user.musicPlayRecordIndate} 天`}
                   , 更多信息请联系管理员
                 </div>
                 <div>
@@ -45,8 +45,8 @@ function Toolbar() {
               </div>
             ),
             confirmText: '知道了',
-          });
-        }}
+          })
+        }
       >
         <MdHelpOutline />
       </IconButton>

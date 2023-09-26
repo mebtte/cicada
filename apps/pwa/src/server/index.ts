@@ -1,6 +1,9 @@
 import { ExceptionCode } from '#/constants/exception';
-import token from '@/global_states/token';
-import setting, { prefixServerOrigin } from '@/global_states/setting';
+import server, {
+  getSelectedServer,
+  getSelectedUser,
+} from '@/global_states/server';
+import setting from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import definition from '@/definition';
@@ -40,7 +43,13 @@ export async function request<Data = void>({
   requestMinimalDuration?: number;
   timeout?: number;
 }) {
-  let url = prefixServerOrigin(path);
+  const selectedServer = getSelectedServer(server.get());
+  if (!selectedServer) {
+    throw new Error('No valid server to fetch');
+  }
+
+  const selectedUser = getSelectedUser(selectedServer);
+  let url = `${selectedServer.origin}${path}`;
 
   const combineParams = {
     ...params,
@@ -57,8 +66,11 @@ export async function request<Data = void>({
     .join('&')}`;
 
   if (withToken) {
+    if (!selectedUser) {
+      throw new Error('No valid user to fetch');
+    }
     // eslint-disable-next-line no-param-reassign
-    headers.authorization = token.get();
+    headers.authorization = selectedUser.token;
   }
 
   let processedBody: FormData | string | null = null;
@@ -107,7 +119,18 @@ export async function request<Data = void>({
   if (code !== ExceptionCode.SUCCESS) {
     switch (code) {
       case ExceptionCode.NOT_AUTHORIZED: {
-        token.set('');
+        server.set((ss) => ({
+          ...ss,
+          serverList: ss.serverList.map((s) =>
+            s.origin === selectedServer.origin
+              ? {
+                  ...s,
+                  users: s.users.filter((u) => u.id !== s.selectedUserId),
+                  selectedUserId: undefined,
+                }
+              : s,
+          ),
+        }));
         break;
       }
     }

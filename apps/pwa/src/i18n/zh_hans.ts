@@ -126,6 +126,19 @@ const zhCN: {
   shared_user: '共享用户',
   username_is_invalid: '非法的用户名',
   invitation_has_been_sent: '邀请已发送',
+  origin: '服务器地址',
+  invalid_origin: '非法的服务器地址',
+  add_origin: '添加服务器',
+  failed_to_get_server_metadata: '无法连接到当前服务器',
+  password: '密码',
+  login: '登录',
+  or: '或者',
+  existed_server: '现有服务器',
+  select: '选择',
+  jump_to: '跳转到',
+  switch_user: '切换用户',
+  switch_user_question: '切换用户将会清空播放列表和播放队列, 是否继续?',
+  existed_user: '现有用户',
 };
 
 export default zhCN;

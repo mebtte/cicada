@@ -1,8 +1,7 @@
-import { FocusEventHandler, ReactNode, useState } from 'react';
+import { FocusEventHandler, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { t } from '@/i18n';
 import { CSSVariable } from '../../global_style';
-import Label from '../label';
 import { Option as OptionType } from './constants';
 import ValueItem from './value';
 import Options from './options';
@@ -49,15 +48,12 @@ const Input = styled.div<{ active: boolean; disabled: boolean }>`
 `;
 
 function MultipleSelect<Value>({
-  label,
   value,
   onChange,
   optionsGetter,
   emptyMesssage = t('no_data'),
   disabled = false,
-  addon,
 }: {
-  label: string;
   value: OptionType<Value>[];
   onChange: (options: OptionType<Value>[]) => void;
   optionsGetter: (
@@ -65,7 +61,6 @@ function MultipleSelect<Value>({
   ) => OptionType<Value>[] | Promise<OptionType<Value>[]>;
   emptyMesssage?: string;
   disabled?: boolean;
-  addon?: ReactNode;
 }) {
   const [keyword, setKeyword] = useState('');
   const [active, setActive] = useState(false);
@@ -90,7 +85,7 @@ function MultipleSelect<Value>({
 
   const selectedKeys = value.map((i) => i.key);
   return (
-    <Label label={label} addon={addon}>
+    <>
       <Input active={active} disabled={disabled}>
         {value.map((option) => (
           <ValueItem
@@ -119,7 +114,7 @@ function MultipleSelect<Value>({
           onChange={onChangeWrapper}
         />
       ) : null}
-    </Label>
+    </>
   );
 }
 

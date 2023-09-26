@@ -3,7 +3,6 @@ import { CSSProperties, memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MenuItem from '@/components/menu_item';
 import { MdImage, MdTitle, MdRemoveRedEye } from 'react-icons/md';
-import p from '@/global_states/profile';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
@@ -11,12 +10,10 @@ import uploadAsset from '@/server/form/upload_asset';
 import { AssetType } from '#/constants';
 import updateProfile from '@/server/api/update_profile';
 import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
-import globalEventemitter, {
-  EventType as GlobalEventType,
-} from '@/platform/global_eventemitter';
 import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
+import { useUser } from '@/global_states/server';
 import { ZIndex } from './constants';
 import e, { EventType } from './eventemitter';
 
@@ -70,7 +67,7 @@ const Style = styled.div`
 const itemStyle: CSSProperties = { margin: '0 10px' };
 
 function ProfileEditPopup() {
-  const profile = p.useState()!;
+  const user = useUser()!;
 
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
@@ -83,15 +80,15 @@ function ProfileEditPopup() {
   }, []);
 
   const openUserDrawer = () =>
-    e.emit(EventType.OPEN_USER_DRAWER, { id: profile.id });
+    e.emit(EventType.OPEN_USER_DRAWER, { id: user.id });
   return (
     <Popup open={open} onClose={onClose} maskProps={maskProps}>
       <Style onClick={onClose}>
         <div className="profile" onClick={openUserDrawer}>
-          <Cover src={profile.avatar} size={56} />
+          <Cover src={user.avatar} size={56} />
           <div className="info">
-            <div className="primary">{profile.nickname}</div>
-            <div className="secondary">用户名: {profile.username}</div>
+            <div className="primary">{user.nickname}</div>
+            <div className="secondary">用户名: {user.username}</div>
           </div>
         </div>
         <MenuItem
@@ -121,7 +118,10 @@ function ProfileEditPopup() {
                     key: AllowUpdateKey.AVATAR,
                     value: id,
                   });
-                  globalEventemitter.emit(GlobalEventType.RELOAD_PROFILE, null);
+                  /**
+                   * @todo 更新用户
+                   * @author mebtte<hi@mebtte.com>
+                   */
                 } catch (error) {
                   logger.error(error, "Updating profile's avatar fail");
                   notice.error(error.message);
@@ -139,7 +139,7 @@ function ProfileEditPopup() {
             dialog.input({
               title: '修改昵称',
               label: '昵称',
-              initialValue: profile.nickname,
+              initialValue: user.nickname,
               maxLength: NICKNAME_MAX_LENGTH,
               onConfirm: async (nickname: string) => {
                 const trimmedNickname = nickname.replace(/\s+/g, ' ').trim();
@@ -147,16 +147,16 @@ function ProfileEditPopup() {
                   notice.error('请输入昵称');
                   return false;
                 }
-                if (profile.nickname !== trimmedNickname) {
+                if (user.nickname !== trimmedNickname) {
                   try {
                     await updateProfile({
                       key: AllowUpdateKey.NICKNAME,
                       value: trimmedNickname,
                     });
-                    globalEventemitter.emit(
-                      GlobalEventType.RELOAD_PROFILE,
-                      null,
-                    );
+                    /**
+                     * @todo 更新用户
+                     * @author mebtte<hi@mebtte.com>
+                     */
                   } catch (error) {
                     logger.error(error, '更新昵称失败');
                     notice.error(error.message);

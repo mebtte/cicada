@@ -7,9 +7,6 @@ import logger from '@/utils/logger';
 import dialog from '@/utils/dialog';
 import { IS_TOUCHABLE } from '@/constants/browser';
 import { AllowUpdateKey } from '#/constants/user';
-import globalEventemitter, {
-  EventType as GlobalEventType,
-} from '@/platform/global_eventemitter';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { Musicbill as MusicbillType, ZIndex } from '../constants';
@@ -90,18 +87,23 @@ function MusicbillOrderDrawer({
       return;
     }
 
-    return updateProfile({
-      key: AllowUpdateKey.MUSICBILL_ORDERS,
-      value: orderedMusicbillIdList,
-    })
-      .then(() => globalEventemitter.emit(GlobalEventType.RELOAD_PROFILE, null))
-      .catch((error) => {
-        logger.error(error, '更新乐单顺序失败');
-        dialog.alert({
-          title: '更新乐单顺序失败',
-          content: error.message,
-        });
-      });
+    return (
+      updateProfile({
+        key: AllowUpdateKey.MUSICBILL_ORDERS,
+        value: orderedMusicbillIdList,
+      })
+        /**
+         * @todo 更新用户
+         * @author mebtte<hi@mebtte.com>
+         */
+        .catch((error) => {
+          logger.error(error, '更新乐单顺序失败');
+          dialog.alert({
+            title: '更新乐单顺序失败',
+            content: error.message,
+          });
+        })
+    );
   };
 
   useEffect(() => {

@@ -11,6 +11,10 @@ function getInitialLanguage() {
       return Language.ZH_HANS;
     }
 
+    case 'ja': {
+      return Language.JA;
+    }
+
     default: {
       return DEFAULT_LANGUAGE;
     }
@@ -43,12 +47,5 @@ setting.onChange((s) =>
     .setItem(Key.SETTING, s)
     .catch((error) => logger.error(error, 'Failed to save setting')),
 );
-
-export function prefixServerOrigin(path: string) {
-  if (path) {
-    return `${setting.get().serverOrigin || window.location.origin}${path}`;
-  }
-  return path;
-}
 
 export default setting;

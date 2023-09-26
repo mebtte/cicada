@@ -1,5 +1,6 @@
 import { Container, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
+import Label from '@/components/label';
 import Input from '@/components/input';
 import {
   CSSProperties,
@@ -93,15 +94,14 @@ function CaptchaContent({
           reload={reload}
           style={captchaStyle}
         />
-        <Input
-          label={t('captcha')}
-          inputProps={{
-            value: captchaValue,
-            onChange: onCaptchaValueChange,
-            autoFocus: true,
-            onKeyDown,
-          }}
-        />
+        <Label label={t('captcha')}>
+          <Input
+            value={captchaValue}
+            onChange={onCaptchaValueChange}
+            autoFocus
+            onKeyDown={onKeyDown}
+          />
+        </Label>
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>

@@ -1,5 +1,5 @@
 import { MusicType } from '#/constants/music';
-import { prefixServerOrigin } from '@/global_states/setting';
+import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
 
 /**

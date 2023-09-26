@@ -229,23 +229,22 @@ function CreateMusicDialog() {
               'supported_formats',
             )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`}
           />
-          <MultipleSelect<Singer>
-            label={t('singer_list')}
-            value={singerList.map(formatSingerToMultipleSelectOption)}
-            onChange={onSingerListChange}
-            optionsGetter={searchSinger}
-            disabled={loading}
-            addon={<MissingSinger />}
-          />
-          <Input
-            label={t('name')}
-            inputProps={{
-              value: name,
-              onChange: onNameChange,
-              maxLength: NAME_MAX_LENGTH,
-            }}
-            disabled={loading}
-          />
+          <Label label={t('singer_list')} addon={<MissingSinger />}>
+            <MultipleSelect<Singer>
+              value={singerList.map(formatSingerToMultipleSelectOption)}
+              onChange={onSingerListChange}
+              optionsGetter={searchSinger}
+              disabled={loading}
+            />
+          </Label>
+          <Label label={t('name')}>
+            <Input
+              value={name}
+              onChange={onNameChange}
+              maxLength={NAME_MAX_LENGTH}
+              disabled={loading}
+            />
+          </Label>
         </StyledContent>
         <Action>
           <Button onClick={onClose} disabled={loading}>

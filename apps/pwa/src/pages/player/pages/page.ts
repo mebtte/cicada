@@ -1,6 +1,6 @@
+import absoluteFullSize from '@/style/absolute_full_size';
 import styled from 'styled-components';
 
 export default styled.div`
-  flex: 1;
-  min-height: 0;
+  ${absoluteFullSize}
 `;

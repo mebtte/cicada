@@ -29,7 +29,7 @@ function Wrapper() {
   const location = useLocation();
   const { miniMode } = theme.useState();
 
-  const ref = useRef<{ root: HTMLLabelElement; input: HTMLInputElement }>(null);
+  const ref = useRef<HTMLInputElement>(null);
 
   const [keyword, setKeyword] = useState(
     () => parseSearch<Query.KEYWORD>(location.search)[Query.KEYWORD] || '',
@@ -63,7 +63,7 @@ function Wrapper() {
   useEffect(() => {
     const unlistenFocus = eventemitter.listen(
       EventType.FOCUS_SEARCH_INPUT,
-      () => ref.current?.input.focus(),
+      () => ref.current?.focus(),
     );
     return unlistenFocus;
   }, []);
@@ -72,13 +72,11 @@ function Wrapper() {
     <Input
       ref={ref}
       style={style}
-      inputProps={{
-        type: 'search',
-        value: keyword,
-        onChange: onKeywordChange,
-        onKeyDown,
-        placeholder: capitalize(t('search')),
-      }}
+      type="search"
+      value={keyword}
+      onChange={onKeywordChange}
+      onKeyDown={onKeyDown}
+      placeholder={capitalize(t('search'))}
     />
   );
 }

@@ -128,4 +128,18 @@ export default {
   shared_user: 'shared user',
   username_is_invalid: 'username is invalid',
   invitation_has_been_sent: 'invitation has been sent',
+  origin: 'server address',
+  invalid_origin: 'invalid server origin',
+  add_origin: 'add server address',
+  failed_to_get_server_metadata: 'failed to connect this server',
+  password: 'password',
+  login: 'login',
+  or: 'or',
+  existed_server: 'existed server',
+  select: 'select',
+  jump_to: 'jump to',
+  switch_user: 'switch user',
+  switch_user_question:
+    'switching user will clear playlist and playqueue, continue ?',
+  existed_user: 'existed user',
 };

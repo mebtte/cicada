@@ -13,3 +13,9 @@
     background: initial !important;
   }
 }
+
+.react-select-single-indicator-container {
+  > div {
+    padding: 0 5px;
+  }
+}

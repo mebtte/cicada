@@ -1,5 +1,5 @@
 import { Response } from '#/server/api/search_music';
-import { prefixServerOrigin } from '@/global_states/setting';
+import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
 
 async function searchMusic({

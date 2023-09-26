@@ -1,10 +1,12 @@
 import styled from 'styled-components';
-import sm from '@/global_states/server_metadata';
 import { useEffect, useState } from 'react';
 import { CSSVariable } from '@/global_style';
 import useTitlebarAreaRect from '@/utils/use_titlebar_area_rect';
 import { flexCenter } from '@/style/flexbox';
 import useWindowWidth from '@/utils/use_window_width';
+import globalEventemitter, {
+  EventType as GlobalEventType,
+} from '@/platform/global_eventemitter';
 
 const Style = styled.div`
   ${flexCenter}
@@ -13,14 +15,31 @@ const Style = styled.div`
   background-color: ${CSSVariable.COLOR_DANGEROUS};
   color: #fff;
   white-space: nowrap;
+  -webkit-app-region: drag;
 `;
 
 function NetworkStatus() {
   const windowWidth = useWindowWidth();
   const { height, left, right } = useTitlebarAreaRect();
-  const serverMetadata = sm.useState();
-  const [offline, setOffline] = useState(false);
 
+  const [networkError, setNetworkError] = useState(false);
+
+  useEffect(() => {
+    const unlistenFail = globalEventemitter.listen(
+      GlobalEventType.FETCH_SERVER_METADATA_FAILED,
+      () => setNetworkError(true),
+    );
+    const unlistenSucceeded = globalEventemitter.listen(
+      GlobalEventType.FETCH_SERVER_METADATA_SUCCEEDED,
+      () => setNetworkError(false),
+    );
+    return () => {
+      unlistenFail();
+      unlistenSucceeded();
+    };
+  }, []);
+
+  const [offline, setOffline] = useState(false);
   useEffect(() => {
     const onOnline = () => setOffline(false);
     const onOffline = () => setOffline(true);
@@ -33,7 +52,7 @@ function NetworkStatus() {
     };
   }, []);
 
-  if (serverMetadata.lastUpdateError || offline) {
+  if (networkError || offline) {
     return (
       <Style
         style={{

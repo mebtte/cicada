@@ -7,7 +7,9 @@ import {
 } from 'react';
 import Popup from '@/components/popup';
 import { UtilZIndex } from '@/constants/style';
-import Input from '@/components/input';
+import { t } from '@/i18n';
+import Input from '../input';
+import Label from '../label';
 import e, { EventType } from './eventemitter';
 import { IS_TOUCHABLE } from '../../constants/browser';
 
@@ -72,15 +74,14 @@ function CustomPage({
       maskProps={maskProps}
       bodyProps={bodyProps}
     >
-      <Input
-        label="跳转到指定页面"
-        inputProps={{
-          value: page,
-          onChange: onPageChange,
-          onKeyDown,
-          autoFocus: !IS_TOUCHABLE,
-        }}
-      />
+      <Label label={t('jump_to')}>
+        <Input
+          value={page}
+          onChange={onPageChange}
+          onKeyDown={onKeyDown}
+          autoFocus={!IS_TOUCHABLE}
+        />
+      </Label>
     </Popup>
   );
 }

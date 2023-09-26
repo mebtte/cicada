@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import p from '@/global_states/profile';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { useUser } from '@/global_states/server';
 import Page from '../page';
 import Logout from './logout';
 import UserManage from './user_manage';
@@ -9,6 +9,7 @@ import { HEADER_HEIGHT } from '../../constants';
 import Volume from './volume';
 import ExtraInfo from './extra_info';
 import Language from './language';
+import UserSwitch from './user_switch';
 
 const AUDIO_VOLUME_SETABLE = await (() =>
   Promise.race([
@@ -29,12 +30,13 @@ const Style = styled(Page)`
 `;
 
 function Setting() {
-  const profile = p.useState()!;
+  const user = useUser()!;
   return (
     <Style>
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
       <Language />
-      {profile.admin ? <UserManage /> : null}
+      {user.admin ? <UserManage /> : null}
+      <UserSwitch />
       <Logout />
       <ExtraInfo />
     </Style>

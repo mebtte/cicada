@@ -1,14 +1,14 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import p from '@/global_states/profile';
+import { useUser } from '@/global_states/server';
 import { ROOT_PATH } from '@/constants/route';
 import { ComponentType } from 'react';
 import { Query } from '@/constants';
 
 function withLogin<Props = {}>(Component: ComponentType<Props>) {
   return function ComponentWithUser(props: Props) {
-    const profile = p.useState();
+    const user = useUser();
     const { pathname, search } = useLocation();
-    return profile ? (
+    return user ? (
       // @ts-expect-error
       <Component {...props} />
     ) : (

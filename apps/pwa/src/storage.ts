@@ -1,21 +1,17 @@
 import Storage from '@/utils/storage';
 import { Setting } from '@/constants/setting';
-import { Profile } from '@/constants/user';
+import { ServerState } from './constants/server';
 
 export enum Key {
-  TOKEN = 'token',
-  PROFILE = 'profile',
   SETTING = 'setting_v3',
-  PLAYER_VOLUME = 'player_volume',
+  SERVER = 'server',
 }
 
 const storage = new Storage<
   Key,
   {
-    [Key.TOKEN]: string;
-    [Key.PROFILE]: Profile;
     [Key.SETTING]: Setting;
-    [Key.PLAYER_VOLUME]: number;
+    [Key.SERVER]: ServerState;
   }
 >('app');
 

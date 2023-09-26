@@ -1,5 +1,6 @@
 import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
+import Label from '@/components/label';
 import Input from '@/components/input';
 import { useState } from 'react';
 import IconButton from '@/components/icon_button';
@@ -86,7 +87,7 @@ function InputListContent({
       {inputList.title ? <Title>{inputList.title}</Title> : null}
       <StyledContent>
         {values.map((value, index) => (
-          <Input
+          <Label
             key={value.id}
             label={`${inputList.label} ${index + 1}`}
             addon={
@@ -98,13 +99,14 @@ function InputListContent({
                 <MdDelete />
               </IconButton>
             }
-            inputProps={{
-              value: value.content,
-              onChange: (event) => onValueChange(event.target.value, value.id),
-              maxLength: inputList.maxLength,
-            }}
-            disabled={confirming || canceling}
-          />
+          >
+            <Input
+              value={value.content}
+              onChange={(event) => onValueChange(event.target.value, value.id)}
+              maxLength={inputList.maxLength}
+              disabled={confirming || canceling}
+            />
+          </Label>
         ))}
         {values.length >= inputList.max! ? null : (
           <Button

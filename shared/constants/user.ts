@@ -1,5 +1,5 @@
 export const REMARK_MAX_LENGTH = 256;
-export const NICKNAME_MAX_LENGTH = 64;
+export const NICKNAME_MAX_LENGTH = 32;
 
 export enum AllowUpdateKey {
   AVATAR = 'avatar',
@@ -17,3 +17,6 @@ export enum AdminAllowUpdateKey {
 
 export const USERNAME_MIN_LENGTH = 1;
 export const USERNAME_MAX_LENGTH = 16;
+
+export const PASSWORD_MIN_LENGTH = 1;
+export const PASSWORD_MAX_LENGTH = 24;

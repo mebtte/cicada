@@ -1,3 +1,4 @@
+import absoluteFullSize from '@/style/absolute_full_size';
 import styled from 'styled-components';
 
 /**
@@ -5,8 +6,7 @@ import styled from 'styled-components';
  * @author mebtte<hi@mebtte.com>
  */
 const RouteContainer = styled.div`
-  flex: 1;
-  min-height: 0;
+  ${absoluteFullSize}
 `;
 
 export default RouteContainer;

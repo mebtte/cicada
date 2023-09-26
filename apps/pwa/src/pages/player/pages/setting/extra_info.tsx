@@ -1,7 +1,7 @@
 import definition from '@/definition';
+import { useServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import sm from '@/global_states/server_metadata';
 
 const BETA_VERSION_START = 'beta.';
 const Style = styled.div`
@@ -21,7 +21,7 @@ const Style = styled.div`
 `;
 
 function ExtraInfo() {
-  const serverMetadata = sm.useState();
+  const selectedServer = useServer()!;
 
   return (
     <Style>
@@ -37,19 +37,19 @@ function ExtraInfo() {
       >
         {definition.VERSION}
       </a>
-      {serverMetadata.version ? (
+      {selectedServer.version ? (
         <>
           , Server Version:&nbsp;
           <a
             href={
-              serverMetadata.version.startsWith(BETA_VERSION_START)
+              selectedServer.version.startsWith(BETA_VERSION_START)
                 ? 'https://github.com/mebtte/cicada/tree/beta'
                 : `https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`
             }
             target="_blank"
             rel="noreferrer"
           >
-            {serverMetadata.version}
+            {selectedServer.version}
           </a>
         </>
       ) : null}

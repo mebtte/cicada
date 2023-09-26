@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { PLAYER_PATH } from '@/constants/route';
-import p from '@/global_states/profile';
+import { useUser } from '@/global_states/server';
 import Search from './pages/search';
 import Musicbill from './pages/musicbill';
 import Setting from './pages/setting';
@@ -12,7 +12,7 @@ import MusicPlayRecord from './pages/music_play_record';
 import SharedMusicbillInvitation from './pages/shared_musicbill_invitation';
 
 function Wrapper() {
-  const profile = p.useState();
+  const user = useUser()!;
   return (
     <Routes>
       <Route path={PLAYER_PATH.SEARCH} element={<Search />} />
@@ -33,7 +33,7 @@ function Wrapper() {
         element={<MusicPlayRecord />}
       />
 
-      {profile?.admin ? (
+      {user.admin ? (
         <Route path={PLAYER_PATH.USER_MANAGE} element={<UserManage />} />
       ) : null}
 

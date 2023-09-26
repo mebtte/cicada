@@ -6,11 +6,11 @@ import addMusicToMusicbill from '@/server/api/add_music_to_musicbill';
 import removeMusicFromMusicbill from '@/server/api/remove_music_from_musicbill';
 import logger from '@/utils/logger';
 import getMusicbillRequest from '@/server/api/get_musicbill';
-import p from '@/global_states/profile';
 import notice from '@/utils/notice';
 import { ExceptionCode } from '#/constants/exception';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { useUser } from '@/global_states/server';
 import eventemitter, { EventType } from './eventemitter';
 import { Musicbill } from './constants';
 
@@ -224,9 +224,9 @@ export default () => {
     };
   }, []);
 
-  const profile = p.useState()!;
+  const user = useUser()!;
   const sortedMusicbillList = useMemo(() => {
-    const orders = profile.musicbillOrders;
+    const orders = user.musicbillOrders;
     return musicbillList.sort((a, b) => {
       const aOrder = orders.indexOf(a.id);
       const bOrder = orders.indexOf(b.id);
@@ -235,7 +235,7 @@ export default () => {
         (bOrder === -1 ? Infinity : bOrder)
       );
     });
-  }, [musicbillList, profile.musicbillOrders]);
+  }, [musicbillList, user.musicbillOrders]);
 
   useEffect(() => {
     const reloadMusicbillList = () => getMusicbillList(false);

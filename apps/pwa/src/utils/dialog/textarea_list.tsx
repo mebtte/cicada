@@ -1,6 +1,7 @@
 import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import Textarea from '@/components/textarea';
+import Label from '@/components/label';
 import { CSSProperties, useState } from 'react';
 import IconButton from '@/components/icon_button';
 import { ComponentSize } from '@/constants/style';
@@ -117,7 +118,7 @@ function TextareaListContent({
       {textareaList.title ? <Title>{textareaList.title}</Title> : null}
       <StyledContent>
         {values.map((value, index) => (
-          <Textarea
+          <Label
             key={value.id}
             label={`${textareaList.label} ${index + 1}`}
             addon={
@@ -138,15 +139,16 @@ function TextareaListContent({
                 </IconButton>
               </Addon>
             }
-            textareaProps={{
-              value: value.content,
-              onChange: (event) => onValueChange(event.target.value, value.id),
-              placeholder: textareaList.placeholder,
-              rows: 8,
-              maxLength: textareaList.maxLength,
-            }}
-            disabled={confirming || canceling}
-          />
+          >
+            <Textarea
+              value={value.content}
+              onChange={(event) => onValueChange(event.target.value, value.id)}
+              placeholder={textareaList.placeholder}
+              rows={8}
+              maxLength={textareaList.maxLength}
+              disabled={confirming || canceling}
+            />
+          </Label>
         ))}
         {values.length >= textareaList.max! ? null : (
           <Button
