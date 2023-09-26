@@ -13,6 +13,7 @@ export enum AdminAllowUpdateKey {
   MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
   CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
   MUSIC_PLAY_RECORD_INDATE = 'musicPlayRecordIndate',
+  PASSWORD = 'password',
 }
 
 export const USERNAME_MIN_LENGTH = 1;

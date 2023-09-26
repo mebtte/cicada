@@ -1,8 +1,17 @@
 import { ExceptionCode } from '#/constants/exception';
-import { AdminAllowUpdateKey, REMARK_MAX_LENGTH } from '#/constants/user';
+import {
+  AdminAllowUpdateKey,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  REMARK_MAX_LENGTH,
+  USERNAME_MAX_LENGTH,
+  USERNAME_MIN_LENGTH,
+} from '#/constants/user';
 import { User, UserProperty } from '@/constants/db_definition';
 import { getUserById } from '@/db/user';
 import updateUser from '@/db/update_user';
+import getUserByUsername from '@/db/get_user_by_username';
+import md5 from 'md5';
 import { Context } from '../constants';
 
 type LocalUser = Pick<
@@ -19,17 +28,37 @@ const KEY_MAP_HANDLER: Record<
   AdminAllowUpdateKey,
   (data: { ctx: Context; user: LocalUser; value: unknown }) => Promise<void>
 > = {
-  [AdminAllowUpdateKey.USERNAME]: async ({ ctx, user, value }) => {
-    if (typeof value !== 'string' || !value.length) {
+  [AdminAllowUpdateKey.PASSWORD]: async ({ ctx, user, value }) => {
+    if (
+      typeof value !== 'string' ||
+      value.length < PASSWORD_MIN_LENGTH ||
+      value.length > PASSWORD_MAX_LENGTH
+    ) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
 
-    /**
-     * @todo check repeated username
-     * @author mebtte<hi@mebtte.com>
-     */
+    await updateUser({
+      id: user.id,
+      property: UserProperty.PASSWORD,
+      value: md5(md5(value)),
+    });
+    return ctx.success(null);
+  },
+  [AdminAllowUpdateKey.USERNAME]: async ({ ctx, user, value }) => {
+    if (
+      typeof value !== 'string' ||
+      value.length < USERNAME_MIN_LENGTH ||
+      value.length > USERNAME_MAX_LENGTH
+    ) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
     if (user.username === value) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
+    }
+
+    const existedUsername = await getUserByUsername(value, [UserProperty.ID]);
+    if (existedUsername) {
+      return ctx.except(ExceptionCode.USERNAME_ALREADY_REGISTERED);
     }
 
     await updateUser({
@@ -37,7 +66,6 @@ const KEY_MAP_HANDLER: Record<
       property: UserProperty.USERNAME,
       value,
     });
-
     return ctx.success(null);
   },
   [AdminAllowUpdateKey.REMARK]: async ({ ctx, user, value }) => {
