@@ -121,7 +121,6 @@ const zhCN: {
   music_file: '音乐文件',
   singer_list: '歌手列表',
   supported_formats: '支持的格式',
-  valid_username_length: '用户名长度应在 %s1 ~ %s2 之间',
   invite: '邀请',
   shared_user: '共享用户',
   username_is_invalid: '非法的用户名',

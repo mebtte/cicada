@@ -123,7 +123,6 @@ export default {
   music_file: 'music file',
   singer_list: 'singer list',
   supported_formats: 'supported formats',
-  valid_username_length: "username's should be between %s1 and %s2",
   invite: 'invite',
   shared_user: 'shared user',
   username_is_invalid: 'username is invalid',

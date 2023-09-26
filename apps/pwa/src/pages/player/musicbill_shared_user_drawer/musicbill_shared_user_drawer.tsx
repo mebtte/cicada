@@ -11,7 +11,7 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '#/constants/user';
+import { USERNAME_MAX_LENGTH } from '#/constants/user';
 import { useUser } from '@/global_states/server';
 import User from './user';
 import { Musicbill } from '../constants';
@@ -99,10 +99,7 @@ function ShareDrawer({
               confirmVariant: Variant.PRIMARY,
               confirmText: t('invite'),
               onConfirm: async (username) => {
-                if (
-                  username.length < USERNAME_MIN_LENGTH ||
-                  username.length > USERNAME_MAX_LENGTH
-                ) {
+                if (!username.length || username.length > USERNAME_MAX_LENGTH) {
                   notice.error(t('username_is_invalid'));
                   return false;
                 }

@@ -1,9 +1,14 @@
 import { ExceptionCode } from '#/constants/exception';
 import { getDB } from '@/db';
 import generateRandomInteger from '#/utils/generate_random_integer';
-import { REMARK_MAX_LENGTH } from '#/constants/user';
+import {
+  PASSWORD_MAX_LENGTH,
+  REMARK_MAX_LENGTH,
+  USERNAME_MAX_LENGTH,
+} from '#/constants/user';
 import { USER_TABLE_NAME, UserProperty } from '@/constants/db_definition';
 import getUserByUsername from '@/db/get_user_by_username';
+import md5 from 'md5';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -20,8 +25,10 @@ export default async (ctx: Context) => {
   if (
     typeof username !== 'string' ||
     !username.length ||
+    username.length > USERNAME_MAX_LENGTH ||
     typeof password !== 'string' ||
     !password.length ||
+    password.length > PASSWORD_MAX_LENGTH ||
     typeof remark !== 'string' ||
     remark.length > REMARK_MAX_LENGTH
   ) {
@@ -37,9 +44,9 @@ export default async (ctx: Context) => {
   await getDB().run(
     `
       INSERT INTO ${USER_TABLE_NAME} ( ${UserProperty.ID}, ${UserProperty.USERNAME}, ${UserProperty.PASSWORD}, ${UserProperty.NICKNAME}, ${UserProperty.JOIN_TIMESTAMP}, ${UserProperty.REMARK} )
-      VALUES ( ?, ?, ?, ?, ? )
+      VALUES ( ?, ?, ?, ?, ?, ? )
     `,
-    [id, username, password, username, Date.now(), remark],
+    [id, username, md5(md5(password)), username, Date.now(), remark],
   );
 
   return ctx.success(null);

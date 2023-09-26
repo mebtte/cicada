@@ -2,10 +2,8 @@ import { ExceptionCode } from '#/constants/exception';
 import {
   AdminAllowUpdateKey,
   PASSWORD_MAX_LENGTH,
-  PASSWORD_MIN_LENGTH,
   REMARK_MAX_LENGTH,
   USERNAME_MAX_LENGTH,
-  USERNAME_MIN_LENGTH,
 } from '#/constants/user';
 import { User, UserProperty } from '@/constants/db_definition';
 import { getUserById } from '@/db/user';
@@ -31,7 +29,7 @@ const KEY_MAP_HANDLER: Record<
   [AdminAllowUpdateKey.PASSWORD]: async ({ ctx, user, value }) => {
     if (
       typeof value !== 'string' ||
-      value.length < PASSWORD_MIN_LENGTH ||
+      !value.length ||
       value.length > PASSWORD_MAX_LENGTH
     ) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
@@ -47,7 +45,7 @@ const KEY_MAP_HANDLER: Record<
   [AdminAllowUpdateKey.USERNAME]: async ({ ctx, user, value }) => {
     if (
       typeof value !== 'string' ||
-      value.length < USERNAME_MIN_LENGTH ||
+      !value.length ||
       value.length > USERNAME_MAX_LENGTH
     ) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);

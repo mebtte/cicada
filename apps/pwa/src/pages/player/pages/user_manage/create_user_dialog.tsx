@@ -8,7 +8,7 @@ import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import adminCreateUser from '@/server/api/admin_create_user';
 import { t } from '@/i18n';
-import { USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '#/constants/user';
+import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
 import e, { EventType } from './eventemitter';
 import { ZIndex } from '../../constants';
 
@@ -29,34 +29,21 @@ function CreateUserDialog() {
   const onUsernameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setUsername(event.target.value.replace(/\s+/g, ''));
 
+  const [password, setPassword] = useState('');
+  const onPasswordChange: ChangeEventHandler<HTMLInputElement> = (event) =>
+    setPassword(event.target.value);
+
   const [remark, setRemark] = useState('');
   const onRemarkChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setRemark(event.target.value);
 
   const [loading, setLoading] = useState(false);
   const onCreate = async () => {
-    if (
-      username.length < USERNAME_MIN_LENGTH ||
-      username.length > USERNAME_MAX_LENGTH
-    ) {
-      return notice.error(
-        t(
-          'valid_username_length',
-          USERNAME_MIN_LENGTH.toString(),
-          USERNAME_MAX_LENGTH.toString(),
-        ),
-      );
-    }
-
     setLoading(true);
     try {
       await adminCreateUser({
         username,
-        /**
-         * @todo
-         * @author mebtte<hi@mebtte.com>
-         */
-        password: '',
+        password,
         remark: remark.replace(/\s+/g, ' ').trim(),
       });
 
@@ -83,7 +70,18 @@ function CreateUserDialog() {
         <Title>{t('create_user')}</Title>
         <StyledContent>
           <Label label={t('username')}>
-            <Input value={username} onChange={onUsernameChange} />
+            <Input
+              value={username}
+              onChange={onUsernameChange}
+              maxLength={USERNAME_MAX_LENGTH}
+            />
+          </Label>
+          <Label label={t('password')}>
+            <Input
+              value={password}
+              onChange={onPasswordChange}
+              maxLength={PASSWORD_MAX_LENGTH}
+            />
           </Label>
           <Label label={t('remark')}>
             <Input value={remark} onChange={onRemarkChange} />
@@ -96,6 +94,7 @@ function CreateUserDialog() {
           <Button
             variant={Variant.PRIMARY}
             loading={loading}
+            disabled={!username.length || !password.length}
             onClick={onCreate}
           >
             {t('create')}
