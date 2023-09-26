@@ -2,7 +2,7 @@ import Popup from '@/components/popup';
 import { CSSProperties, memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MenuItem from '@/components/menu_item';
-import { MdImage, MdTitle, MdRemoveRedEye } from 'react-icons/md';
+import { MdImage, MdTitle } from 'react-icons/md';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
@@ -91,12 +91,6 @@ function ProfileEditPopup() {
             <div className="secondary">用户名: {user.username}</div>
           </div>
         </div>
-        <MenuItem
-          style={itemStyle}
-          label="查看个人主页"
-          icon={<MdRemoveRedEye />}
-          onClick={openUserDrawer}
-        />
         <MenuItem
           style={itemStyle}
           label="修改头像"
