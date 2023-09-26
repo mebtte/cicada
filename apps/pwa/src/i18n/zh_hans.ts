@@ -136,6 +136,9 @@ const zhCN: {
   existed_server: '现有服务器',
   select: '选择',
   jump_to: '跳转到',
+  switch_user: '切换用户',
+  switch_user_question: '切换用户将会清空播放列表和播放队列, 是否继续?',
+  existed_user: '现有用户',
 };
 
 export default zhCN;

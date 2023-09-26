@@ -138,4 +138,8 @@ export default {
   existed_server: 'existed server',
   select: 'select',
   jump_to: 'jump to',
+  switch_user: 'switch user',
+  switch_user_question:
+    'switching user will clear playlist and playqueue, continue ?',
+  existed_user: 'existed user',
 };

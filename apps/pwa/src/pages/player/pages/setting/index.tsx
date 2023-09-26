@@ -9,6 +9,7 @@ import { HEADER_HEIGHT } from '../../constants';
 import Volume from './volume';
 import ExtraInfo from './extra_info';
 import Language from './language';
+import UserSwitch from './user_switch';
 
 const AUDIO_VOLUME_SETABLE = await (() =>
   Promise.race([
@@ -35,6 +36,7 @@ function Setting() {
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
       <Language />
       {user.admin ? <UserManage /> : null}
+      <UserSwitch />
       <Logout />
       <ExtraInfo />
     </Style>

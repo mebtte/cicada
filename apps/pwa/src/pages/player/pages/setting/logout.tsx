@@ -2,11 +2,10 @@ import Button, { Variant } from '@/components/button';
 import useEvent from '@/utils/use_event';
 import { CSSProperties, memo } from 'react';
 import dialog from '@/utils/dialog';
-import { CacheName } from '@/constants/cache';
-import logger from '@/utils/logger';
 import { t } from '@/i18n';
 import server, { getSelectedServer } from '@/global_states/server';
 import { itemStyle } from './constants';
+import { clearApiCache } from './utils';
 
 const style: CSSProperties = {
   ...itemStyle,
@@ -19,6 +18,8 @@ function Logout() {
     dialog.confirm({
       title: t('logout_question'),
       onConfirm: () => {
+        clearApiCache();
+
         const selectedServer = getSelectedServer(server.get());
         if (selectedServer) {
           server.set((ss) => ({
@@ -33,17 +34,6 @@ function Logout() {
                 : s,
             ),
           }));
-        }
-
-        /**
-         * 退出登录需要移除相关缓存
-         * 以及重置部分设置
-         * @author mebtte<hi@mebtte.com>
-         */
-        if (window.caches) {
-          window.caches
-            .delete(CacheName.API)
-            .catch((error) => logger.error(error, 'Failed to remove cache'));
         }
       },
     }),

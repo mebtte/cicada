@@ -9,7 +9,15 @@ import logger from '@/utils/logger';
 import login from '@/server/base/login';
 import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
+import getProfile from '@/server/api/get_profile';
+import server from '@/global_states/server';
+import { useLocation } from 'react-router-dom';
+import parseSearch from '@/utils/parse_search';
+import { Query } from '@/constants';
+import useNavigate from '@/utils/use_navigate';
+import { ROOT_PATH } from '@/constants/route';
 import Logo from '../logo';
+import UserList from './user_list';
 
 const StyledPaper = styled.div`
   display: flex;
@@ -18,6 +26,9 @@ const StyledPaper = styled.div`
 `;
 
 function SecondStep({ toPrevious }: { toPrevious: () => void }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
 
   const [username, setUserName] = useState('');
@@ -28,9 +39,17 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const onPasswordChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setPassword(event.target.value);
 
+  const redirect = () => {
+    const query = parseSearch<Query.REDIRECT>(location.search);
+    return navigate({
+      replace: true,
+      path: query.redirect || ROOT_PATH.PLAYER,
+    });
+  };
   const onLogin = () =>
     dialog.captcha({
-      // title: t('login'),
+      confirmVariant: Variant.PRIMARY,
+      confirmText: t('login'),
       onConfirm: async ({ captchaId, captchaValue }) => {
         setLoading(true);
         try {
@@ -40,6 +59,40 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
             captchaId,
             captchaValue,
           });
+          const profile = await getProfile(token);
+          server.set((ss) => ({
+            ...ss,
+            serverList: ss.serverList.map((s) =>
+              s.origin === ss.selectedServerOrigin
+                ? {
+                    ...s,
+                    selectedUserId: profile.id,
+                    users: s.users
+                      .filter((u) => u.id !== profile.id)
+                      .concat([
+                        {
+                          id: profile.id,
+                          username: profile.username,
+                          avatar: profile.avatar,
+                          nickname: profile.nickname,
+                          joinTimestamp: profile.joinTimestamp,
+                          admin: !!profile.admin,
+                          musicbillOrders: profile.musicbillOrdersJSON
+                            ? JSON.parse(profile.musicbillOrdersJSON)
+                            : [],
+                          musicbillMaxAmount: profile.musicbillMaxAmount,
+                          createMusicMaxAmountPerDay:
+                            profile.createMusicMaxAmountPerDay,
+                          musicPlayRecordIndate: profile.musicPlayRecordIndate,
+
+                          token,
+                        },
+                      ]),
+                  }
+                : s,
+            ),
+          }));
+          window.setTimeout(redirect, 0);
         } catch (error) {
           logger.error(error, 'Failed to login');
           notice.error(error.message);
@@ -51,6 +104,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   return (
     <StyledPaper>
       <Logo />
+      <UserList disabled={loading} redirect={redirect} />
       <Label label={t('username')}>
         <Input
           value={username}
