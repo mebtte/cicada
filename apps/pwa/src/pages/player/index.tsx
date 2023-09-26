@@ -31,6 +31,7 @@ import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
 import SingerModifyRecordDrawer from './singer_modify_record_drawer';
 import NetworkStatus from './network_status';
+import useProfileUpdate from './use_profile_update';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -58,6 +59,7 @@ const Style = styled(PageContainer)`
 
 function Wrapper() {
   useDocumentTitle(capitalize(t('cicada')));
+  useProfileUpdate();
 
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
   const playlist = usePlaylist();

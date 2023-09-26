@@ -141,4 +141,5 @@ export default {
   switch_user_question:
     'switching user will clear playlist and playqueue, continue ?',
   existed_user: 'existed user',
+  update_musicbill_order_error: 'failed to update musicbill orders',
 };

@@ -4,6 +4,7 @@ import storage, { Key } from '@/storage';
 import { Server, ServerState } from '@/constants/server';
 import globalEventemitter, { EventType } from '@/platform/global_eventemitter';
 import getMetadata from '@/server/base/get_metadata';
+import getProfile from '@/server/api/get_profile';
 
 export function getSelectedServer(ss: ServerState) {
   return ss.selectedServerOrigin
@@ -77,6 +78,46 @@ export function useServer() {
 export function useUser() {
   const selectedServer = useServer();
   return selectedServer ? getSelectedUser(selectedServer) : undefined;
+}
+
+export async function reloadUser() {
+  const selectedServer = getSelectedServer(server.get());
+  if (selectedServer) {
+    const user = getSelectedUser(selectedServer);
+    if (user) {
+      const profile = await getProfile(user.token);
+      server.set((ss) => ({
+        ...ss,
+        serverList: ss.serverList.map((s) =>
+          s.origin === selectedServer.origin
+            ? {
+                ...s,
+                users: s.users.map((u) =>
+                  u.id === profile.id
+                    ? {
+                        ...u,
+
+                        username: profile.username,
+                        avatar: profile.avatar,
+                        nickname: profile.nickname,
+                        joinTimestamp: profile.joinTimestamp,
+                        admin: !!profile.admin,
+                        musicbillOrders: profile.musicbillOrdersJSON
+                          ? JSON.parse(profile.musicbillOrdersJSON)
+                          : [],
+                        musicbillMaxAmount: profile.musicbillMaxAmount,
+                        createMusicMaxAmountPerDay:
+                          profile.createMusicMaxAmountPerDay,
+                        musicPlayRecordIndate: profile.musicPlayRecordIndate,
+                      }
+                    : u,
+                ),
+              }
+            : s,
+        ),
+      }));
+    }
+  }
 }
 
 export default server;

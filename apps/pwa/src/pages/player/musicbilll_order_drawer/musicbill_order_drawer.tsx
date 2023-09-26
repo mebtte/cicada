@@ -9,6 +9,8 @@ import { IS_TOUCHABLE } from '@/constants/browser';
 import { AllowUpdateKey } from '#/constants/user';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { t } from '@/i18n';
+import { reloadUser } from '@/global_states/server';
 import { Musicbill as MusicbillType, ZIndex } from '../constants';
 import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
@@ -87,23 +89,18 @@ function MusicbillOrderDrawer({
       return;
     }
 
-    return (
-      updateProfile({
-        key: AllowUpdateKey.MUSICBILL_ORDERS,
-        value: orderedMusicbillIdList,
-      })
-        /**
-         * @todo 更新用户
-         * @author mebtte<hi@mebtte.com>
-         */
-        .catch((error) => {
-          logger.error(error, '更新乐单顺序失败');
-          dialog.alert({
-            title: '更新乐单顺序失败',
-            content: error.message,
-          });
-        })
-    );
+    return updateProfile({
+      key: AllowUpdateKey.MUSICBILL_ORDERS,
+      value: orderedMusicbillIdList,
+    })
+      .then(() => reloadUser())
+      .catch((error) => {
+        logger.error(error, 'Failed to update musicbill orders');
+        dialog.alert({
+          title: t('update_musicbill_order_error'),
+          content: error.message,
+        });
+      });
   };
 
   useEffect(() => {

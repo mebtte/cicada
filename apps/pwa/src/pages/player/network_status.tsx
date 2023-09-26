@@ -7,6 +7,7 @@ import useWindowWidth from '@/utils/use_window_width';
 import globalEventemitter, {
   EventType as GlobalEventType,
 } from '@/platform/global_eventemitter';
+import { t } from '@/i18n';
 
 const Style = styled.div`
   ${flexCenter}
@@ -61,7 +62,7 @@ function NetworkStatus() {
           paddingRight: right ? windowWidth - right : 0,
         }}
       >
-        暂时无法连接到服务, 部分功能受限
+        {t('can_not_connect_to_server_temporarily')}
       </Style>
     );
   }

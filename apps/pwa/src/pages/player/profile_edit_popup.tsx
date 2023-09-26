@@ -13,7 +13,7 @@ import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
 import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
-import { useUser } from '@/global_states/server';
+import { reloadUser, useUser } from '@/global_states/server';
 import { ZIndex } from './constants';
 import e, { EventType } from './eventemitter';
 
@@ -118,10 +118,7 @@ function ProfileEditPopup() {
                     key: AllowUpdateKey.AVATAR,
                     value: id,
                   });
-                  /**
-                   * @todo 更新用户
-                   * @author mebtte<hi@mebtte.com>
-                   */
+                  await reloadUser();
                 } catch (error) {
                   logger.error(error, "Updating profile's avatar fail");
                   notice.error(error.message);
@@ -153,12 +150,9 @@ function ProfileEditPopup() {
                       key: AllowUpdateKey.NICKNAME,
                       value: trimmedNickname,
                     });
-                    /**
-                     * @todo 更新用户
-                     * @author mebtte<hi@mebtte.com>
-                     */
+                    await reloadUser();
                   } catch (error) {
-                    logger.error(error, '更新昵称失败');
+                    logger.error(error, 'Failed to update nickname');
                     notice.error(error.message);
                     return false;
                   }
