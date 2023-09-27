@@ -33,7 +33,7 @@ function UserList({
   if (selectedServer?.users.length) {
     return (
       <>
-        <Label label={t('existed_user')}>
+        <Label label={t('existing_user')}>
           <Select
             disabled={disabled}
             options={selectedServer.users.map((u) => ({

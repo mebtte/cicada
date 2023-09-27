@@ -25,10 +25,10 @@ const captchaStyle: CSSProperties = {
 
 function CaptchaContent({
   onClose,
-  captcha,
+  options,
 }: {
   onClose: () => void;
-  captcha: CaptchaShape;
+  options: CaptchaShape;
 }) {
   const { captchaData, reload } = useCaptcha();
   const [captchaValue, setCaptchaValue] = useState('');
@@ -42,9 +42,9 @@ function CaptchaContent({
   const [canceling, setCanceling] = useState(false);
   const onCancel = useEvent(() => {
     setCanceling(true);
-    return Promise.resolve(captcha.onCancel ? captcha.onCancel() : undefined)
+    return Promise.resolve(options.onCancel ? options.onCancel() : undefined)
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -63,12 +63,12 @@ function CaptchaContent({
 
     setConfirming(true);
     return Promise.resolve(
-      captcha.onConfirm
-        ? captcha.onConfirm({ captchaId: captchaData.data?.id, captchaValue })
+      options.onConfirm
+        ? options.onConfirm({ captchaId: captchaData.data?.id, captchaValue })
         : undefined,
     )
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         } else {
           reload();
@@ -105,15 +105,15 @@ function CaptchaContent({
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {captcha.cancelText || t('cancel')}
+          {options.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={captcha.confirmVariant}
+          variant={options.confirmVariant}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}
         >
-          {captcha.confirmText || t('confirm')}
+          {options.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
@@ -122,14 +122,14 @@ function CaptchaContent({
 
 function Wrapper({
   onDestroy,
-  captcha,
+  options,
 }: {
   onDestroy: (id: string) => void;
-  captcha: CaptchaShape;
+  options: CaptchaShape;
 }) {
   return (
-    <DialogBase onDestroy={onDestroy} dialog={captcha}>
-      {({ onClose }) => <CaptchaContent onClose={onClose} captcha={captcha} />}
+    <DialogBase onDestroy={onDestroy} options={options}>
+      {({ onClose }) => <CaptchaContent onClose={onClose} options={options} />}
     </DialogBase>
   );
 }

@@ -2,7 +2,7 @@ import Popup from '@/components/popup';
 import { CSSProperties, memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MenuItem from '@/components/menu_item';
-import { MdImage, MdTitle } from 'react-icons/md';
+import { MdImage, MdTitle, MdPassword } from 'react-icons/md';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
@@ -14,9 +14,13 @@ import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { reloadUser, useUser } from '@/global_states/server';
+import getResizedImage from '@/server/asset/get_resized_image';
+import { t } from '@/i18n';
+import { Variant } from '@/components/button';
 import { ZIndex } from './constants';
 import e, { EventType } from './eventemitter';
 
+const AVATAR_SIZE = 36;
 const maskProps: {
   style: CSSProperties;
 } = {
@@ -85,7 +89,13 @@ function ProfileEditPopup() {
     <Popup open={open} onClose={onClose} maskProps={maskProps}>
       <Style onClick={onClose}>
         <div className="profile" onClick={openUserDrawer}>
-          <Cover src={user.avatar} size={56} />
+          <Cover
+            src={getResizedImage({
+              url: user.avatar,
+              size: Math.ceil(AVATAR_SIZE * window.devicePixelRatio),
+            })}
+            size={AVATAR_SIZE}
+          />
           <div className="info">
             <div className="primary">{user.nickname}</div>
             <div className="secondary">@{user.username}</div>
@@ -93,14 +103,14 @@ function ProfileEditPopup() {
         </div>
         <MenuItem
           style={itemStyle}
-          label="修改头像"
+          label={t('edit_avatar')}
           icon={<MdImage />}
           onClick={() =>
             dialog.imageCut({
-              title: '修改头像',
+              title: t('edit_avatar'),
               onConfirm: async (avatar) => {
                 if (!avatar) {
-                  notice.error('请选择头像');
+                  notice.error(t('empty_avatar_warning'));
                   return false;
                 }
                 try {
@@ -114,7 +124,7 @@ function ProfileEditPopup() {
                   });
                   await reloadUser();
                 } catch (error) {
-                  logger.error(error, "Updating profile's avatar fail");
+                  logger.error(error, 'Failed to update avatar');
                   notice.error(error.message);
                   return false;
                 }
@@ -124,18 +134,18 @@ function ProfileEditPopup() {
         />
         <MenuItem
           style={itemStyle}
-          label="修改昵称"
+          label={t('edit_nickname')}
           icon={<MdTitle />}
           onClick={() =>
             dialog.input({
-              title: '修改昵称',
-              label: '昵称',
+              title: t('edit_nickname'),
+              label: t('nickname'),
               initialValue: user.nickname,
               maxLength: NICKNAME_MAX_LENGTH,
-              onConfirm: async (nickname: string) => {
+              onConfirm: async (nickname) => {
                 const trimmedNickname = nickname.replace(/\s+/g, ' ').trim();
                 if (!trimmedNickname) {
-                  notice.error('请输入昵称');
+                  notice.error(t('empty_nickname_warning'));
                   return false;
                 }
                 if (user.nickname !== trimmedNickname) {
@@ -150,6 +160,29 @@ function ProfileEditPopup() {
                     notice.error(error.message);
                     return false;
                   }
+                }
+              },
+            })
+          }
+        />
+        <MenuItem
+          label={t('change_password')}
+          icon={<MdPassword />}
+          style={itemStyle}
+          onClick={() =>
+            dialog.password({
+              confirmVariant: Variant.PRIMARY,
+              onConfirm: async (password) => {
+                try {
+                  await updateProfile({
+                    key: AllowUpdateKey.PASSWORD,
+                    value: password,
+                  });
+                  notice.info(t('password_has_changed'));
+                } catch (error) {
+                  logger.error(error, 'Failed to update password');
+                  notice.error(error.message);
+                  return false;
                 }
               },
             })

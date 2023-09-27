@@ -10,15 +10,15 @@ import useEvent from '../use_event';
 
 const contentStyle: CSSProperties = { overflow: 'hidden' };
 
-function TextInputContent({
+function MultipleSelectContent({
   onClose,
-  multipleSelect,
+  options: multipleSelectOptions,
 }: {
   onClose: () => void;
-  multipleSelect: MultipleSelectShape<unknown>;
+  options: MultipleSelectShape<unknown>;
 }) {
   const [options, setOptions] = useState<Option<unknown>[]>(
-    multipleSelect.initialValue || [],
+    multipleSelectOptions.initialValue || [],
   );
   const onOptionsChange = (os: Option<unknown>[]) => setOptions(os);
 
@@ -26,10 +26,12 @@ function TextInputContent({
   const onCancel = useEvent(() => {
     setCanceling(true);
     return Promise.resolve(
-      multipleSelect.onCancel ? multipleSelect.onCancel() : undefined,
+      multipleSelectOptions.onCancel
+        ? multipleSelectOptions.onCancel()
+        : undefined,
     )
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -40,10 +42,12 @@ function TextInputContent({
   const onConfirm = () => {
     setConfirming(true);
     return Promise.resolve(
-      multipleSelect.onConfirm ? multipleSelect.onConfirm(options) : undefined,
+      multipleSelectOptions.onConfirm
+        ? multipleSelectOptions.onConfirm(options)
+        : undefined,
     )
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -52,28 +56,33 @@ function TextInputContent({
 
   return (
     <Container>
-      {multipleSelect.title ? <Title>{multipleSelect.title}</Title> : null}
+      {multipleSelectOptions.title ? (
+        <Title>{multipleSelectOptions.title}</Title>
+      ) : null}
       <Content style={contentStyle}>
-        <Label label={multipleSelect.label} addon={multipleSelect.labelAddon}>
+        <Label
+          label={multipleSelectOptions.label}
+          addon={multipleSelectOptions.labelAddon}
+        >
           <MultipleSelect<unknown>
             value={options}
             onChange={onOptionsChange}
-            optionsGetter={multipleSelect.optionsGetter}
+            optionsGetter={multipleSelectOptions.optionsGetter}
             disabled={confirming || canceling}
           />
         </Label>
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {multipleSelect.cancelText || t('cancel')}
+          {multipleSelectOptions.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={multipleSelect.confirmVariant}
+          variant={multipleSelectOptions.confirmVariant}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}
         >
-          {multipleSelect.confirmText || t('confirm')}
+          {multipleSelectOptions.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
@@ -82,15 +91,15 @@ function TextInputContent({
 
 function Wrapper({
   onDestroy,
-  multipleSelect,
+  options,
 }: {
   onDestroy: (id: string) => void;
-  multipleSelect: MultipleSelectShape<unknown>;
+  options: MultipleSelectShape<unknown>;
 }) {
   return (
-    <DialogBase onDestroy={onDestroy} dialog={multipleSelect}>
+    <DialogBase onDestroy={onDestroy} options={options}>
       {({ onClose }) => (
-        <TextInputContent onClose={onClose} multipleSelect={multipleSelect} />
+        <MultipleSelectContent onClose={onClose} options={options} />
       )}
     </DialogBase>
   );

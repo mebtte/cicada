@@ -20,6 +20,13 @@ export enum Method {
   DELETE = 'delete',
 }
 
+export function getCommonParams() {
+  return {
+    [CommonQuery.VERSION]: definition.VERSION,
+    [CommonQuery.LANGUAGE]: setting.get().language,
+  };
+}
+
 export async function request<Data = void>({
   path,
   method = Method.GET,
@@ -53,8 +60,7 @@ export async function request<Data = void>({
 
   const combineParams = {
     ...params,
-    [CommonQuery.VERSION]: definition.VERSION,
-    [CommonQuery.LANGUAGE]: setting.get().language,
+    ...getCommonParams(),
   };
   url += `?${Object.keys(combineParams)
     .map(

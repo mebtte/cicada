@@ -39,7 +39,7 @@ function ServerList({
   if (serverList.length) {
     return (
       <Style>
-        <Label label={t('existed_server')}>
+        <Label label={t('existing_server')}>
           <Select
             disabled={disabled}
             options={serverList.map((s) => ({

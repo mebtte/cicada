@@ -13,6 +13,7 @@ import {
   FileSelect,
   TextareaList,
   ImageCut,
+  Password,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import DialogApp from './dialog_app';
@@ -115,6 +116,16 @@ export default {
       id,
     };
     e.emit(EventType.OPEN, imageCut);
+    return id;
+  },
+  password: (ic: Omit<Password, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const options: Password = {
+      ...ic,
+      type: DialogType.PASSWORD,
+      id,
+    };
+    e.emit(EventType.OPEN, options);
     return id;
   },
   close: (id: string) => e.emit(EventType.CLOSE, { id }),

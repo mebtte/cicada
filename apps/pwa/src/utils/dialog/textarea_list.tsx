@@ -33,14 +33,14 @@ const Addon = styled.div`
 
 function TextareaListContent({
   onClose,
-  textareaList,
+  options,
 }: {
   onClose: () => void;
-  textareaList: TextareaListShape;
+  options: TextareaListShape;
 }) {
   const [values, setValues] = useState<{ id: number; content: string }[]>(
     () => {
-      const from = (textareaList.initialValue || []).map((v) => ({
+      const from = (options.initialValue || []).map((v) => ({
         id: Math.random(),
         content: v,
       }));
@@ -86,11 +86,9 @@ function TextareaListContent({
   const [canceling, setCanceling] = useState(false);
   const onCancel = useEvent(() => {
     setCanceling(true);
-    return Promise.resolve(
-      textareaList.onCancel ? textareaList.onCancel() : undefined,
-    )
+    return Promise.resolve(options.onCancel ? options.onCancel() : undefined)
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -101,12 +99,12 @@ function TextareaListContent({
   const onConfirm = () => {
     setConfirming(true);
     return Promise.resolve(
-      textareaList.onConfirm
-        ? textareaList.onConfirm(values.map((v) => v.content))
+      options.onConfirm
+        ? options.onConfirm(values.map((v) => v.content))
         : undefined,
     )
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -115,12 +113,12 @@ function TextareaListContent({
 
   return (
     <Container>
-      {textareaList.title ? <Title>{textareaList.title}</Title> : null}
+      {options.title ? <Title>{options.title}</Title> : null}
       <StyledContent>
         {values.map((value, index) => (
           <Label
             key={value.id}
-            label={`${textareaList.label} ${index + 1}`}
+            label={`${options.label} ${index + 1}`}
             addon={
               <Addon>
                 <IconButton
@@ -143,14 +141,14 @@ function TextareaListContent({
             <Textarea
               value={value.content}
               onChange={(event) => onValueChange(event.target.value, value.id)}
-              placeholder={textareaList.placeholder}
+              placeholder={options.placeholder}
               rows={8}
-              maxLength={textareaList.maxLength}
+              maxLength={options.maxLength}
               disabled={confirming || canceling}
             />
           </Label>
         ))}
-        {values.length >= textareaList.max! ? null : (
+        {values.length >= options.max! ? null : (
           <Button
             className="action"
             onClick={() =>
@@ -164,21 +162,21 @@ function TextareaListContent({
             }
             disabled={confirming || canceling}
           >
-            {t('add')} {textareaList.label}
+            {t('add')} {options.label}
           </Button>
         )}
       </StyledContent>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {textareaList.cancelText || t('cancel')}
+          {options.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={textareaList.confirmVariant}
+          variant={options.confirmVariant}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}
         >
-          {textareaList.confirmText || t('confirm')}
+          {options.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
@@ -187,19 +185,15 @@ function TextareaListContent({
 
 function Wrapper({
   onDestroy,
-  textareaList,
+  options,
 }: {
   onDestroy: (id: string) => void;
-  textareaList: TextareaListShape;
+  options: TextareaListShape;
 }) {
   return (
-    <DialogBase
-      bodyProps={bodyProps}
-      onDestroy={onDestroy}
-      dialog={textareaList}
-    >
+    <DialogBase bodyProps={bodyProps} onDestroy={onDestroy} options={options}>
       {({ onClose }) => (
-        <TextareaListContent onClose={onClose} textareaList={textareaList} />
+        <TextareaListContent onClose={onClose} options={options} />
       )}
     </DialogBase>
   );

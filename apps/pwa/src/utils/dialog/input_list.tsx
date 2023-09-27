@@ -24,14 +24,14 @@ const StyledContent = styled(Content)`
 
 function InputListContent({
   onClose,
-  inputList,
+  options,
 }: {
   onClose: () => void;
-  inputList: InputListShape;
+  options: InputListShape;
 }) {
   const [values, setValues] = useState<{ id: number; content: string }[]>(
     () => {
-      const from = (inputList.initialValue || []).map((a) => ({
+      const from = (options.initialValue || []).map((a) => ({
         id: Math.random(),
         content: a,
       }));
@@ -55,11 +55,9 @@ function InputListContent({
   const [canceling, setCanceling] = useState(false);
   const onCancel = useEvent(() => {
     setCanceling(true);
-    return Promise.resolve(
-      inputList.onCancel ? inputList.onCancel() : undefined,
-    )
+    return Promise.resolve(options.onCancel ? options.onCancel() : undefined)
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -70,12 +68,12 @@ function InputListContent({
   const onConfirm = () => {
     setConfirming(true);
     return Promise.resolve(
-      inputList.onConfirm
-        ? inputList.onConfirm(values.map((v) => v.content))
+      options.onConfirm
+        ? options.onConfirm(values.map((v) => v.content))
         : undefined,
     )
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -84,12 +82,12 @@ function InputListContent({
 
   return (
     <Container>
-      {inputList.title ? <Title>{inputList.title}</Title> : null}
+      {options.title ? <Title>{options.title}</Title> : null}
       <StyledContent>
         {values.map((value, index) => (
           <Label
             key={value.id}
-            label={`${inputList.label} ${index + 1}`}
+            label={`${options.label} ${index + 1}`}
             addon={
               <IconButton
                 size={ComponentSize.SMALL}
@@ -103,12 +101,12 @@ function InputListContent({
             <Input
               value={value.content}
               onChange={(event) => onValueChange(event.target.value, value.id)}
-              maxLength={inputList.maxLength}
+              maxLength={options.maxLength}
               disabled={confirming || canceling}
             />
           </Label>
         ))}
-        {values.length >= inputList.max! ? null : (
+        {values.length >= options.max! ? null : (
           <Button
             className="action"
             onClick={() =>
@@ -122,21 +120,21 @@ function InputListContent({
             }
             disabled={confirming || canceling}
           >
-            {t('add')} {inputList.label}
+            {t('add')} {options.label}
           </Button>
         )}
       </StyledContent>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {inputList.cancelText || t('cancel')}
+          {options.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={inputList.confirmVariant}
+          variant={options.confirmVariant}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}
         >
-          {inputList.confirmText || t('confirm')}
+          {options.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
@@ -145,15 +143,15 @@ function InputListContent({
 
 function Wrapper({
   onDestroy,
-  inputList,
+  options,
 }: {
   onDestroy: (id: string) => void;
-  inputList: InputListShape;
+  options: InputListShape;
 }) {
   return (
-    <DialogBase onDestroy={onDestroy} dialog={inputList}>
+    <DialogBase onDestroy={onDestroy} options={options}>
       {({ onClose }) => (
-        <InputListContent onClose={onClose} inputList={inputList} />
+        <InputListContent onClose={onClose} options={options} />
       )}
     </DialogBase>
   );

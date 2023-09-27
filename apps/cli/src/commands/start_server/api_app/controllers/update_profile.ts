@@ -1,6 +1,10 @@
 import { AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '#/constants/user';
+import {
+  AllowUpdateKey,
+  NICKNAME_MAX_LENGTH,
+  PASSWORD_MAX_LENGTH,
+} from '#/constants/user';
 import exist from '#/utils/exist';
 import {
   MUSICBILL_TABLE_NAME,
@@ -13,6 +17,7 @@ import {
 import { getDB } from '@/db';
 import { getAssetFilePath } from '@/platform/asset';
 import updateUser from '@/db/update_user';
+import md5 from 'md5';
 import { Context } from '../constants';
 
 const ALLOW_UPDATE_KEYS = Object.values(AllowUpdateKey);
@@ -20,11 +25,21 @@ const KEY_MAP_HANDLER: Record<
   AllowUpdateKey,
   ({ ctx, value }: { ctx: Context; value: unknown }) => Promise<void>
 > = {
-  /**
-   * @todo
-   * @author mebtte<hi@mebtte.com>
-   */
-  [AllowUpdateKey.PASSWORD]: async () => {},
+  [AllowUpdateKey.PASSWORD]: async ({ ctx, value: password }) => {
+    if (
+      typeof password !== 'string' ||
+      !password.length ||
+      password.length > PASSWORD_MAX_LENGTH
+    ) {
+      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    }
+    await updateUser({
+      id: ctx.user.id,
+      property: UserProperty.PASSWORD,
+      value: md5(md5(password)),
+    });
+    return ctx.success(null);
+  },
   [AllowUpdateKey.AVATAR]: async ({ ctx, value: avatar }) => {
     if (typeof avatar !== 'string' || !avatar.length) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);

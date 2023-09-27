@@ -72,7 +72,7 @@ function EditMenu({ singer }: { singer: Singer }) {
               title: t('edit_avatar'),
               onConfirm: async (blob) => {
                 if (!blob) {
-                  notice.error(t('please_select_an_avatar'));
+                  notice.error(t('empty_avatar_warning'));
                   return false;
                 }
                 try {

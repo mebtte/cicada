@@ -12,21 +12,21 @@ const contentStyle: CSSProperties = { overflow: 'hidden' };
 
 function InputContent({
   onClose,
-  input,
+  options,
 }: {
   onClose: () => void;
-  input: InputShape;
+  options: InputShape;
 }) {
-  const [text, setText] = useState(input.initialValue || '');
+  const [text, setText] = useState(options.initialValue || '');
   const onTextChange: ChangeEventHandler<HTMLInputElement> = (e) =>
     setText(e.target.value);
 
   const [canceling, setCanceling] = useState(false);
   const onCancel = useEvent(() => {
     setCanceling(true);
-    return Promise.resolve(input.onCancel ? input.onCancel() : undefined)
+    return Promise.resolve(options.onCancel ? options.onCancel() : undefined)
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -36,9 +36,11 @@ function InputContent({
   const [confirming, setConfirming] = useState(false);
   const onConfirm = () => {
     setConfirming(true);
-    return Promise.resolve(input.onConfirm ? input.onConfirm(text) : undefined)
+    return Promise.resolve(
+      options.onConfirm ? options.onConfirm(text) : undefined,
+    )
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -47,30 +49,30 @@ function InputContent({
 
   return (
     <Container>
-      {input.title ? <Title>{input.title}</Title> : null}
+      {options.title ? <Title>{options.title}</Title> : null}
       <Content style={contentStyle}>
-        <Label label={input.label}>
+        <Label label={options.label}>
           <Input
             value={text}
             onChange={onTextChange}
             autoFocus
-            maxLength={input.maxLength}
-            type={input.inputType}
+            maxLength={options.maxLength}
+            type={options.inputType}
             disabled={confirming || canceling}
           />
         </Label>
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {input.cancelText || t('cancel')}
+          {options.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={input.confirmVariant}
+          variant={options.confirmVariant}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}
         >
-          {input.confirmText || t('confirm')}
+          {options.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
@@ -79,14 +81,14 @@ function InputContent({
 
 function Wrapper({
   onDestroy,
-  input,
+  options,
 }: {
   onDestroy: (id: string) => void;
-  input: InputShape;
+  options: InputShape;
 }) {
   return (
-    <DialogBase onDestroy={onDestroy} dialog={input}>
-      {({ onClose }) => <InputContent onClose={onClose} input={input} />}
+    <DialogBase onDestroy={onDestroy} options={options}>
+      {({ onClose }) => <InputContent onClose={onClose} options={options} />}
     </DialogBase>
   );
 }

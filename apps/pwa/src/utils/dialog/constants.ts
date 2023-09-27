@@ -14,6 +14,7 @@ export enum DialogType {
   FILE_SELECT,
   TEXTAREA_LIST,
   IMAGE_CUT,
+  PASSWORD,
 }
 
 interface Confirmable<Payload = void> {
@@ -27,19 +28,19 @@ interface Cancelable {
   onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
-export interface Dialog {
+export interface DialogOptions {
   id: string;
   type: DialogType;
 }
 
-export interface Alert extends Dialog, Confirmable {
+export interface Alert extends DialogOptions, Confirmable {
   type: DialogType.ALERT;
 
   title?: ReactNode;
   content?: ReactNode;
 }
 
-export interface Confirm extends Dialog, Confirmable, Cancelable {
+export interface Confirm extends DialogOptions, Confirmable, Cancelable {
   type: DialogType.CONFIRM;
 
   title?: ReactNode;
@@ -47,7 +48,7 @@ export interface Confirm extends Dialog, Confirmable, Cancelable {
 }
 
 export interface Captcha
-  extends Dialog,
+  extends DialogOptions,
     Confirmable<{
       captchaId: string;
       captchaValue: string;
@@ -56,7 +57,7 @@ export interface Captcha
   type: DialogType.CAPTCHA;
 }
 
-export interface Input extends Dialog, Confirmable<string>, Cancelable {
+export interface Input extends DialogOptions, Confirmable<string>, Cancelable {
   type: DialogType.INPUT;
 
   title?: string;
@@ -66,7 +67,10 @@ export interface Input extends Dialog, Confirmable<string>, Cancelable {
   inputType?: 'text' | 'number';
 }
 
-export interface InputList extends Dialog, Confirmable<string[]>, Cancelable {
+export interface InputList
+  extends DialogOptions,
+    Confirmable<string[]>,
+    Cancelable {
   type: DialogType.INPUT_LIST;
 
   title?: string;
@@ -77,7 +81,7 @@ export interface InputList extends Dialog, Confirmable<string[]>, Cancelable {
 }
 
 export interface MultipleSelect<Value>
-  extends Dialog,
+  extends DialogOptions,
     Confirmable<Option<Value>[]>,
     Cancelable {
   type: DialogType.MULTIPLE_SELECT;
@@ -92,7 +96,7 @@ export interface MultipleSelect<Value>
 }
 
 export interface FileSelect
-  extends Dialog,
+  extends DialogOptions,
     Confirmable<File | null>,
     Cancelable {
   type: DialogType.FILE_SELECT;
@@ -104,7 +108,7 @@ export interface FileSelect
 }
 
 export interface TextareaList
-  extends Dialog,
+  extends DialogOptions,
     Confirmable<string[]>,
     Cancelable {
   type: DialogType.TEXTAREA_LIST;
@@ -117,8 +121,18 @@ export interface TextareaList
   placeholder?: string;
 }
 
-export interface ImageCut extends Dialog, Confirmable<Blob | null>, Cancelable {
+export interface ImageCut
+  extends DialogOptions,
+    Confirmable<Blob | null>,
+    Cancelable {
   type: DialogType.IMAGE_CUT;
 
   title?: string;
+}
+
+export interface Password
+  extends DialogOptions,
+    Confirmable<string>,
+    Cancelable {
+  type: DialogType.PASSWORD;
 }

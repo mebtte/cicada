@@ -11,21 +11,19 @@ const contentStyle: CSSProperties = { overflow: 'hidden' };
 
 function FileSelectContent({
   onClose,
-  fileSelect,
+  options,
 }: {
   onClose: () => void;
-  fileSelect: FileSelectShape;
+  options: FileSelectShape;
 }) {
   const [file, setFile] = useState<File | null>(null);
 
   const [canceling, setCanceling] = useState(false);
   const onCancel = useEvent(() => {
     setCanceling(true);
-    return Promise.resolve(
-      fileSelect.onCancel ? fileSelect.onCancel() : undefined,
-    )
+    return Promise.resolve(options.onCancel ? options.onCancel() : undefined)
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -36,10 +34,10 @@ function FileSelectContent({
   const onConfirm = () => {
     setConfirming(true);
     return Promise.resolve(
-      fileSelect.onConfirm ? fileSelect.onConfirm(file) : undefined,
+      options.onConfirm ? options.onConfirm(file) : undefined,
     )
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -48,28 +46,28 @@ function FileSelectContent({
 
   return (
     <Container>
-      {fileSelect.title ? <Title>{fileSelect.title}</Title> : null}
+      {options.title ? <Title>{options.title}</Title> : null}
       <Content style={contentStyle}>
         <FileSelect
-          label={fileSelect.label}
+          label={options.label}
           value={file}
           onChange={(f) => setFile(f)}
           disabled={confirming || canceling}
-          acceptTypes={fileSelect.acceptTypes}
-          placeholder={fileSelect.placeholder}
+          acceptTypes={options.acceptTypes}
+          placeholder={options.placeholder}
         />
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {fileSelect.cancelText || t('cancel')}
+          {options.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={fileSelect.confirmVariant}
+          variant={options.confirmVariant}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}
         >
-          {fileSelect.confirmText || t('confirm')}
+          {options.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
@@ -78,15 +76,15 @@ function FileSelectContent({
 
 function Wrapper({
   onDestroy,
-  fileSelect,
+  options,
 }: {
   onDestroy: (id: string) => void;
-  fileSelect: FileSelectShape;
+  options: FileSelectShape;
 }) {
   return (
-    <DialogBase onDestroy={onDestroy} dialog={fileSelect}>
+    <DialogBase onDestroy={onDestroy} options={options}>
       {({ onClose }) => (
-        <FileSelectContent onClose={onClose} fileSelect={fileSelect} />
+        <FileSelectContent onClose={onClose} options={options} />
       )}
     </DialogBase>
   );

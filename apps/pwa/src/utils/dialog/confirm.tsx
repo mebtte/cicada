@@ -7,18 +7,18 @@ import useEvent from '../use_event';
 import DialogBase from './dialog_base';
 
 function ConfirmContent({
-  confirm,
+  options,
   onClose,
 }: {
-  confirm: ConfirmShape;
+  options: ConfirmShape;
   onClose: () => void;
 }) {
   const [canceling, setCanceling] = useState(false);
   const onCancel = useEvent(() => {
     setCanceling(true);
-    return Promise.resolve(confirm.onCancel ? confirm.onCancel() : undefined)
+    return Promise.resolve(options.onCancel ? options.onCancel() : undefined)
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -28,9 +28,9 @@ function ConfirmContent({
   const [confirming, setConfirming] = useState(false);
   const onConfirm = useEvent(() => {
     setConfirming(true);
-    return Promise.resolve(confirm.onConfirm ? confirm.onConfirm() : undefined)
+    return Promise.resolve(options.onConfirm ? options.onConfirm() : undefined)
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -38,11 +38,11 @@ function ConfirmContent({
   });
   return (
     <Container>
-      {confirm.title ? <Title>{confirm.title}</Title> : null}
-      {confirm.content ? <Content>{confirm.content}</Content> : null}
+      {options.title ? <Title>{options.title}</Title> : null}
+      {options.content ? <Content>{options.content}</Content> : null}
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {confirm.cancelText || t('cancel')}
+          {options.cancelText || t('cancel')}
         </Button>
         <Button
           variant={Variant.PRIMARY}
@@ -50,7 +50,7 @@ function ConfirmContent({
           loading={confirming}
           disabled={canceling}
         >
-          {confirm.confirmText || t('confirm')}
+          {options.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
@@ -58,15 +58,15 @@ function ConfirmContent({
 }
 
 function Confirm({
-  confirm,
+  options,
   onDestroy,
 }: {
-  confirm: ConfirmShape;
+  options: ConfirmShape;
   onDestroy: (id: string) => void;
 }) {
   return (
-    <DialogBase onDestroy={onDestroy} dialog={confirm}>
-      {({ onClose }) => <ConfirmContent onClose={onClose} confirm={confirm} />}
+    <DialogBase onDestroy={onDestroy} options={options}>
+      {({ onClose }) => <ConfirmContent onClose={onClose} options={options} />}
     </DialogBase>
   );
 }

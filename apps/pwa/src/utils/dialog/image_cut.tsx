@@ -33,10 +33,10 @@ const ImgBox = styled.div`
 
 function ImageCutContent({
   onClose,
-  imageCut,
+  options,
 }: {
   onClose: () => void;
-  imageCut: ImageCutShape;
+  options: ImageCutShape;
 }) {
   const imageRef = useRef<HTMLImageElement>(null);
   const cropperRef = useRef<Cropper | null>(null);
@@ -65,9 +65,9 @@ function ImageCutContent({
   const [canceling, setCanceling] = useState(false);
   const onCancel = useEvent(() => {
     setCanceling(true);
-    return Promise.resolve(imageCut.onCancel ? imageCut.onCancel() : undefined)
+    return Promise.resolve(options.onCancel ? options.onCancel() : undefined)
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -76,7 +76,7 @@ function ImageCutContent({
 
   const [confirming, setConfirming] = useState(false);
   const onConfirm = async () => {
-    if (imageCut.onConfirm) {
+    if (options.onConfirm) {
       setConfirming(true);
       let payload: Blob | null = null;
       if (cropperRef.current) {
@@ -104,8 +104,8 @@ function ImageCutContent({
         );
       }
 
-      const result = await Promise.resolve(imageCut.onConfirm(payload));
-      if (typeof result === 'undefined' || !!result) {
+      const result = await Promise.resolve(options.onConfirm(payload));
+      if (result === undefined || !!result) {
         onClose();
       }
       setConfirming(false);
@@ -124,7 +124,7 @@ function ImageCutContent({
 
   return (
     <Container>
-      {imageCut.title ? <Title>{imageCut.title}</Title> : null}
+      {options.title ? <Title>{options.title}</Title> : null}
       <Content style={contentStyle}>
         {url ? (
           <ImgBox>
@@ -142,15 +142,15 @@ function ImageCutContent({
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
-          {imageCut.cancelText || t('cancel')}
+          {options.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={imageCut.confirmVariant}
+          variant={options.confirmVariant}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}
         >
-          {imageCut.confirmText || t('confirm')}
+          {options.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
@@ -159,16 +159,14 @@ function ImageCutContent({
 
 function Wrapper({
   onDestroy,
-  imageCut,
+  options,
 }: {
   onDestroy: (id: string) => void;
-  imageCut: ImageCutShape;
+  options: ImageCutShape;
 }) {
   return (
-    <DialogBase onDestroy={onDestroy} dialog={imageCut}>
-      {({ onClose }) => (
-        <ImageCutContent onClose={onClose} imageCut={imageCut} />
-      )}
+    <DialogBase onDestroy={onDestroy} options={options}>
+      {({ onClose }) => <ImageCutContent onClose={onClose} options={options} />}
     </DialogBase>
   );
 }

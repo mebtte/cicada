@@ -87,6 +87,7 @@ function FirstStep({ toNext }: { toNext: () => void }) {
       <ServerList toNext={toNext} disabled={loading} />
       <Label label={t('origin')}>
         <Input
+          type="url"
           disabled={loading}
           value={origin}
           onChange={onOriginChange}

@@ -1,5 +1,5 @@
 import Eventin from 'eventin';
-import { Dialog } from './constants';
+import { DialogOptions } from './constants';
 
 export enum EventType {
   OPEN = 'open',
@@ -9,7 +9,7 @@ export enum EventType {
 export default new Eventin<
   EventType,
   {
-    [EventType.OPEN]: Dialog;
+    [EventType.OPEN]: DialogOptions;
     [EventType.CLOSE]: { id: string };
   }
 >();

@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Dialog as DialogShape } from './constants';
+import { DialogOptions } from './constants';
 import Dialog from '../../components/dialog';
 import { UtilZIndex } from '../../constants/style';
 import e, { EventType } from './eventemitter';
@@ -16,12 +16,12 @@ const maskProps: { style: CSSProperties } = {
 };
 
 function DialogBase({
-  dialog,
+  options,
   onDestroy,
   children,
   bodyProps,
 }: {
-  dialog: DialogShape;
+  options: DialogOptions;
   onDestroy: (id: string) => void;
   children: ({ onClose }: { onClose: () => void }) => ReactNode;
   bodyProps?: HtmlHTMLAttributes<HTMLDivElement>;
@@ -35,19 +35,19 @@ function DialogBase({
 
   useEffect(() => {
     const unlistenClose = e.listen(EventType.CLOSE, ({ id }) => {
-      if (dialog.id === id) {
+      if (options.id === id) {
         setOpen(false);
       }
     });
     return unlistenClose;
-  }, [dialog.id]);
+  }, [options.id]);
 
   useEffect(() => {
     if (!open) {
-      const timer = window.setTimeout(() => onDestroy(dialog.id), 1000);
+      const timer = window.setTimeout(() => onDestroy(options.id), 1000);
       return () => window.clearTimeout(timer);
     }
-  }, [dialog.id, onDestroy, open]);
+  }, [options.id, onDestroy, open]);
 
   return (
     <Dialog open={open} maskProps={maskProps} bodyProps={bodyProps}>

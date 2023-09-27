@@ -7,18 +7,18 @@ import useEvent from '../use_event';
 import DialogBase from './dialog_base';
 
 function AlertContent({
-  alert,
+  options,
   onClose,
 }: {
-  alert: AlertType;
+  options: AlertType;
   onClose: () => void;
 }) {
   const [confirming, setConfirming] = useState(false);
   const onConfirm = useEvent(() => {
     setConfirming(true);
-    return Promise.resolve(alert.onConfirm ? alert.onConfirm() : undefined)
+    return Promise.resolve(options.onConfirm ? options.onConfirm() : undefined)
       .then((result) => {
-        if (typeof result === 'undefined' || !!result) {
+        if (result === undefined || !!result) {
           onClose();
         }
       })
@@ -26,15 +26,15 @@ function AlertContent({
   });
   return (
     <Container>
-      {alert.title ? <Title>{alert.title}</Title> : null}
-      {alert.content ? <Content>{alert.content}</Content> : null}
+      {options.title ? <Title>{options.title}</Title> : null}
+      {options.content ? <Content>{options.content}</Content> : null}
       <Action>
         <Button
           variant={Variant.PRIMARY}
           onClick={onConfirm}
           loading={confirming}
         >
-          {alert.confirmText || t('confirm')}
+          {options.confirmText || t('confirm')}
         </Button>
       </Action>
     </Container>
@@ -42,15 +42,15 @@ function AlertContent({
 }
 
 function Alert({
-  alert,
+  options,
   onDestroy,
 }: {
-  alert: AlertType;
+  options: AlertType;
   onDestroy: (id: string) => void;
 }) {
   return (
-    <DialogBase dialog={alert} onDestroy={onDestroy}>
-      {({ onClose }) => <AlertContent alert={alert} onClose={onClose} />}
+    <DialogBase options={options} onDestroy={onDestroy}>
+      {({ onClose }) => <AlertContent options={options} onClose={onClose} />}
     </DialogBase>
   );
 }

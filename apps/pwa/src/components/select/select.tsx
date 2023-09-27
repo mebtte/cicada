@@ -2,6 +2,7 @@ import { CSSVariable } from '@/global_style';
 import { ComponentProps, CSSProperties } from 'react';
 import { ComponentSize } from '@/constants/style';
 import Select from 'react-select';
+import capitalize from '#/utils/capitalize';
 import { t } from '@/i18n';
 import { Option } from './constants';
 import './style.scss';
@@ -20,7 +21,7 @@ function Wrapper<Value>({
   disabled = false,
   style,
   menuPortalTarget,
-  placeholder = t('select'),
+  placeholder = capitalize(t('select')),
 }: {
   value?: Option<Value>;
   options: Option<Value>[];

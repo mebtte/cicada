@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  Dialog,
+  DialogOptions,
   DialogType,
   Input as InputShape,
   InputList as InputListShape,
@@ -11,6 +11,7 @@ import {
   FileSelect as FileSelectShape,
   TextareaList as TextareaListShape,
   ImageCut as ImageCutShape,
+  Password as PasswordShape,
 } from './constants';
 import e, { EventType } from './eventemitter';
 import Alert from './alert';
@@ -22,9 +23,10 @@ import MultipleSelect from './multiple_select';
 import FileSelect from './file_select';
 import TextareaList from './textarea_list';
 import ImageCut from './image_cut';
+import Password from './password';
 
 function DialogApp() {
-  const [dialogList, setDialogList] = useState<Dialog[]>([]);
+  const [dialogList, setDialogList] = useState<DialogOptions[]>([]);
   const onDestroy = useCallback(
     (id: string) => setDialogList((dl) => dl.filter((d) => d.id !== id)),
     [],
@@ -43,14 +45,18 @@ function DialogApp() {
         switch (d.type) {
           case DialogType.ALERT: {
             return (
-              <Alert key={d.id} alert={d as AlertShape} onDestroy={onDestroy} />
+              <Alert
+                key={d.id}
+                options={d as AlertShape}
+                onDestroy={onDestroy}
+              />
             );
           }
           case DialogType.CONFIRM: {
             return (
               <Confirm
                 key={d.id}
-                confirm={d as ConfirmShape}
+                options={d as ConfirmShape}
                 onDestroy={onDestroy}
               />
             );
@@ -59,21 +65,25 @@ function DialogApp() {
             return (
               <Captcha
                 key={d.id}
-                captcha={d as CaptchaShape}
+                options={d as CaptchaShape}
                 onDestroy={onDestroy}
               />
             );
           }
           case DialogType.INPUT: {
             return (
-              <Input key={d.id} input={d as InputShape} onDestroy={onDestroy} />
+              <Input
+                key={d.id}
+                options={d as InputShape}
+                onDestroy={onDestroy}
+              />
             );
           }
           case DialogType.INPUT_LIST: {
             return (
               <InputList
                 key={d.id}
-                inputList={d as InputListShape}
+                options={d as InputListShape}
                 onDestroy={onDestroy}
               />
             );
@@ -82,7 +92,7 @@ function DialogApp() {
             return (
               <MultipleSelect
                 key={d.id}
-                multipleSelect={d as MultipleSelectShape<unknown>}
+                options={d as MultipleSelectShape<unknown>}
                 onDestroy={onDestroy}
               />
             );
@@ -91,7 +101,7 @@ function DialogApp() {
             return (
               <FileSelect
                 key={d.id}
-                fileSelect={d as FileSelectShape}
+                options={d as FileSelectShape}
                 onDestroy={onDestroy}
               />
             );
@@ -100,7 +110,7 @@ function DialogApp() {
             return (
               <TextareaList
                 key={d.id}
-                textareaList={d as TextareaListShape}
+                options={d as TextareaListShape}
                 onDestroy={onDestroy}
               />
             );
@@ -109,7 +119,16 @@ function DialogApp() {
             return (
               <ImageCut
                 key={d.id}
-                imageCut={d as ImageCutShape}
+                options={d as ImageCutShape}
+                onDestroy={onDestroy}
+              />
+            );
+          }
+          case DialogType.PASSWORD: {
+            return (
+              <Password
+                key={d.id}
+                options={d as PasswordShape}
                 onDestroy={onDestroy}
               />
             );
