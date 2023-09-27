@@ -28,5 +28,6 @@ export default async (ctx: Context) => {
     createMusicMaxAmountPerDay: ctx.user.createMusicMaxAmountPerDay,
     lastActiveTimestamp: ctx.user.lastActiveTimestamp,
     musicPlayRecordIndate: ctx.user.musicPlayRecordIndate,
+    totpEnabled: !!ctx.user.totpSecret,
   });
 };

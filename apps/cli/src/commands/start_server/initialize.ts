@@ -118,7 +118,8 @@ export default async () => {
         ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY} INTEGER NOT NULL DEFAULT 10,
         ${UserProperty.LAST_ACTIVE_TIMESTAMP} INTEGER NOT NULL DEFAULT 0,
         ${UserProperty.MUSIC_PLAY_RECORD_INDATE} INTEGER NOT NULL DEFAULT 0,
-        ${UserProperty.PASSWORD} TEXT NOT NULL
+        ${UserProperty.PASSWORD} TEXT NOT NULL,
+        ${UserProperty.TOTP_SECRET} TEXT DEFAULT NULL
       )
     `;
     const TABLE_CAPTCHA = `

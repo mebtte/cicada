@@ -3,12 +3,11 @@ import { sign } from '@/platform/jwt';
 import getUserByUsername from '@/db/get_user_by_username';
 import { UserProperty } from '@/constants/db_definition';
 import { RequestBody, Response } from '#/server/base/login';
-import { verifyCaptcha } from '@/platform/captcha';
 import md5 from 'md5';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const { username, password, captchaId, captchaValue } = ctx.request.body as {
+  const { username, password, totpToken } = ctx.request.body as {
     [key in keyof RequestBody]: unknown;
   };
 
@@ -16,18 +15,9 @@ export default async (ctx: Context) => {
     typeof username !== 'string' ||
     !username.length ||
     typeof password !== 'string' ||
-    !password.length ||
-    typeof captchaId !== 'string' ||
-    !captchaId.length ||
-    typeof captchaValue !== 'string' ||
-    !captchaValue.length
+    !password.length
   ) {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
-  }
-
-  const verified = await verifyCaptcha({ id: captchaId, value: captchaValue });
-  if (!verified) {
-    return ctx.except(ExceptionCode.CAPTCHA_ERROR);
   }
 
   const user = await getUserByUsername(username, [

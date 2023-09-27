@@ -1,8 +1,7 @@
 export interface RequestBody {
   username: string;
   password: string;
-  captchaId: string;
-  captchaValue: string;
+  totpToken?: string;
 }
 
 export type Response = string;
