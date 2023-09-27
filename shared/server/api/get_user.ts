@@ -5,6 +5,7 @@ export type Response = {
   avatar: string;
   joinTimestamp: number;
   nickname: string;
+  username: string;
   musicbillList: {
     id: string;
     cover: string;

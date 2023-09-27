@@ -26,6 +26,13 @@ const Style = styled.div`
       ${ellipsis}
     }
 
+    > .username {
+      margin: 5px 0;
+
+      font-size: 16px;
+      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    }
+
     > .join-time {
       font-size: 12px;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
@@ -39,6 +46,7 @@ function Info({ user }: { user: UserDetail }) {
       <Cover src={user.avatar} size="100%" />
       <div className="info">
         <div className="nickname">{user.nickname}</div>
+        <div className="username">@{user.username}</div>
         <div className="join-time">
           {day(user.joinTimestamp).format('YYYY-MM-DD')} 加入
         </div>

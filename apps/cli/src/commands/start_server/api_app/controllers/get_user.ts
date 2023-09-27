@@ -28,6 +28,7 @@ export default async (ctx: Context) => {
     UserProperty.AVATAR,
     UserProperty.JOIN_TIMESTAMP,
     UserProperty.NICKNAME,
+    UserProperty.USERNAME,
   ]);
   if (!user) {
     return ctx.except(ExceptionCode.USER_NOT_EXISTED);
