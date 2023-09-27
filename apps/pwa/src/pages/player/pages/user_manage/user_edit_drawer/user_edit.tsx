@@ -172,10 +172,6 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
     setLoading(false);
   };
 
-  /**
-   * @todo 重置密码
-   * @author mebtte<hi@mebtte.com>
-   */
   return (
     <Style>
       <Style>
@@ -250,6 +246,31 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           loading={loading}
         >
           {t('save')}
+        </Button>
+        <Button
+          className="part"
+          disabled={loading}
+          onClick={() =>
+            dialog.password({
+              confirmVariant: Variant.PRIMARY,
+              onConfirm: async (password) => {
+                try {
+                  await adminUpdateUser({
+                    id: user.id,
+                    key: AdminAllowUpdateKey.PASSWORD,
+                    value: password,
+                  });
+                  notice.info(t('password_has_changed'));
+                } catch (error) {
+                  logger.error(error, 'Failed to change password');
+                  notice.error(error.message);
+                  return false;
+                }
+              },
+            })
+          }
+        >
+          {t('change_password')}
         </Button>
         {user.admin ? null : (
           <Button
