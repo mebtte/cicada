@@ -1,5 +1,4 @@
 import fs from 'fs';
-import inquirer from 'inquirer';
 import { AssetType } from '#/constants';
 import {
   MusicProperty,
@@ -45,7 +44,7 @@ import {
 } from '@/config';
 import exitWithMessage from '@/utils/exit_with_message';
 import { FIRST_USER_ID } from '@/constants';
-import { createSpinner } from 'nanospinner';
+import md5 from 'md5';
 
 const DATA_VERSION = 2;
 
@@ -119,7 +118,7 @@ export default async () => {
         ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY} INTEGER NOT NULL DEFAULT 10,
         ${UserProperty.LAST_ACTIVE_TIMESTAMP} INTEGER NOT NULL DEFAULT 0,
         ${UserProperty.MUSIC_PLAY_RECORD_INDATE} INTEGER NOT NULL DEFAULT 0,
-        ${UserProperty.PASSWORD} TEXT NOT NULL DEFAULT ''
+        ${UserProperty.PASSWORD} TEXT NOT NULL
       )
     `;
     const TABLE_CAPTCHA = `
@@ -272,43 +271,27 @@ export default async () => {
     }
   }
 
-  /**
-   * 插入首个用户
-   * @author mebtte<hi@mebtte.com>
-   */
   const db = new DB(getDBFilePath());
-  const firstUser = await db.get<Pick<User, UserProperty.ID>>(
+  const admin = await db.get<Pick<User, UserProperty.ID>>(
     `
       SELECT ${UserProperty.ID} FROM ${USER_TABLE_NAME}
+      WHERE ${UserProperty.ADMIN} = 1
     `,
   );
-  if (!firstUser) {
-    let adminUser = process.env.ADMIN_USER || '';
-    while (!adminUser) {
-      const answer = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'adminUser',
-          message: 'Please enter the admin user:',
-        },
-      ]);
-      adminUser = answer.adminUser;
-      if (!adminUser) {
-        createSpinner().error({
-          text: `[ ${adminUser} ] isn't a valid username`,
-        });
-      }
-    }
+  if (!admin) {
+    const username = 'admin';
+    const password = 'cicada';
     await db.run(
       `
-        INSERT INTO ${USER_TABLE_NAME} ( ${UserProperty.ID}, ${UserProperty.USERNAME}, ${UserProperty.NICKNAME}, ${UserProperty.JOIN_TIMESTAMP}, ${UserProperty.ADMIN} )
-        VALUES ( ?, ?, ?, ?, 1 )
+        INSERT INTO ${USER_TABLE_NAME} ( ${UserProperty.ID}, ${UserProperty.USERNAME}, ${UserProperty.PASSWORD}, ${UserProperty.NICKNAME}, ${UserProperty.JOIN_TIMESTAMP}, ${UserProperty.ADMIN} )
+        VALUES ( ?, ?, ?, ?, ?, 1 )
       `,
-      [FIRST_USER_ID, adminUser, 'Admin', Date.now()],
+      [FIRST_USER_ID, username, md5(md5(password)), 'Cicada', Date.now()],
     );
 
-    createSpinner().success({
-      text: `You can use [ ${adminUser} ] to login now`,
-    });
+    // eslint-disable-next-line no-console
+    console.log(
+      `\n--- You can use [ ${username}/${password} ] to login now ---\n`,
+    );
   }
 };

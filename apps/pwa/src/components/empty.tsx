@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import definition from '@/definition';
 import getRandomInteger from '#/utils/generate_random_integer';
 import { CSSVariable } from '@/global_style';
+import capitalize from '@/style/capitalize';
 
 const Style = styled.div`
   display: flex;
@@ -18,6 +19,8 @@ const Style = styled.div`
   > .description {
     font-size: 12px;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+
+    ${capitalize}
   }
 `;
 

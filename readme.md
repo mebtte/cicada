@@ -27,10 +27,9 @@ A multi-user music service for self-hosting.
 
 ### From v1 to v2
 
-If you migrate to v2 from v0, you must to upgrade data before serving:
+If you migrate to v2 from v1, you must upgrade data before serving:
 
 ```sh
-# please backup your data before upgrading
 cicada data-upgrade <data>
 ```
 
@@ -50,23 +49,19 @@ Download cicada from [releases](https://github.com/mebtte/cicada/releases) and s
 > If your platform isn't x64, you can [build cicada](./docs/build/index.md) by yourself
 
 ```sh
- # It will prompt you to enter admin user on first run
 ./cicada start
 ```
 
-Open `localhost:8000` or `{{ip}}:8000` and use the admin name that you entered on cli to login. You can get more options by running `cicada -h` or `cicada start -h`.
+Open `localhost:8000` or `{{ip}}:8000` and use `username:admin/password:cicada` to login. You can get more options by running `cicada -h` or `cicada start -h`.
 
 ### Docker
-
-You can use docker to deploy cicada, but you need to set environment `ADMIN_USER` on first run.
 
 ```sh
 docker run \
   -d \
   --restart=always \
   -p 8000:80 \
-  -v $HOME/cicada/data:/data \
-  -e ADMIN_USER=admin
+  -v <data>:/data \
   --name cicada \
   mebtte/cicada \
   start --port 8000 --data /data
@@ -87,9 +82,6 @@ services:
 
     # user mapping
     # user: 1000:1000
-
-    environment:
-      - ADMIN_USER=admin
 
     command: start --port 8000 --data /data
     ports:

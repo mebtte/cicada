@@ -88,7 +88,7 @@ export default async ({ data }: { data: string }) => {
       type: 'confirm',
       name: 'confirmed',
       message:
-        'Cicada in v2 has deprecated login with email and will add password for all of user. After upgrade, CLI will print the password of each user, and all of user only can login by the password, so you need to save the output of CLI. Make sure you have the backup of data before upgrading. Continue ?',
+        'Cicada in v2 has deprecated login with email and will add password for all of users. After upgrade, CLI will print the password of each user, and all of users only can login by the password, so you need to save the output of CLI. Make sure you have the backup of data before upgrading. Continue ?',
       default: false,
     },
   ]);
@@ -99,12 +99,12 @@ export default async ({ data }: { data: string }) => {
   let spinner: Spinner;
 
   spinner = createSpinner();
-  spinner.start({ text: 'Droping login code...' });
+  spinner.start({ text: 'Dropping login code...' });
   await dropLoginCode();
   spinner.success({ text: 'Login code has dropped' });
 
   spinner = createSpinner();
-  spinner.start({ text: 'Droping login code salt...' });
+  spinner.start({ text: 'Dropping login code salt...' });
   await dropLoginCodeSalt();
   spinner.success({ text: 'Login code salt has dropped' });
 

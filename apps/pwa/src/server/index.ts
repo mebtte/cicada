@@ -109,7 +109,7 @@ export async function request<Data = void>({
 
   const { status, statusText } = response;
   if (status !== 200) {
-    throw new ErrorWithCode(`${statusText}(#${status})`, status);
+    throw new ErrorWithCode(statusText, status);
   }
 
   const {
@@ -141,7 +141,7 @@ export async function request<Data = void>({
       }
     }
 
-    throw new ErrorWithCode(`${message}(#${code})`, code);
+    throw new ErrorWithCode(message, code);
   }
 
   return data as Data;
