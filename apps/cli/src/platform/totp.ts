@@ -1,10 +1,16 @@
 import { Language } from '#/constants';
 import { t } from '@/i18n';
 import * as OTPAuth from 'otpauth';
+import capitalize from '#/utils/capitalize';
 
 const ALGORITHM = 'SHA1';
-const DIGITS = 6;
 const PERIOD = 30;
+
+export const DIGITS = 6;
+
+export function createSecret() {
+  return new OTPAuth.Secret().base32;
+}
 
 export function create({
   language,
@@ -16,7 +22,7 @@ export function create({
   secret: string;
 }) {
   const totp = new OTPAuth.TOTP({
-    issuer: t('cicada', language),
+    issuer: capitalize(t('cicada', language)),
     label: username,
     algorithm: ALGORITHM,
     digits: DIGITS,

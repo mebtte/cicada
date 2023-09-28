@@ -22,6 +22,7 @@ A multi-user music service for self-hosting.
 - Music/singer/musicbill/lyric search
 - [System media shortcut](https://developer.mozilla.org/docs/Web/API/MediaSession)
 - Support of building APP from [HTTP API](./apps/pwa/src/server)
+- Support of 2FA
 
 ## Migration
 

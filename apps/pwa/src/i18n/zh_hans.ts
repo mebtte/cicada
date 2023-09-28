@@ -153,6 +153,9 @@ const zhCN: {
   password_has_changed: '密码已修改',
   enable_2fa: '启用 2FA',
   disable_2fa: '禁用 2FA',
+  '2fa_instruction':
+    '使用例如 Microsoft Authenticator / Google Authenticator 的验证器扫描二维码',
+  one_time_token: '一次性凭证',
 };
 
 export default zhCN;

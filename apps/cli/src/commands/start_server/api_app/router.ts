@@ -39,6 +39,9 @@ import deleteMusicbillSharedUser from './controllers/delete_musicbill_shared_use
 import getSharedMusicbillInvitationList from './controllers/get_shared_musicbill_invitation_list';
 import acceptSharedMusicbillInvitation from './controllers/accept_shared_musicbill_invitation';
 import getSingerModifyRecordList from './controllers/get_singer_modify_record_list';
+import createTotp from './controllers/create_totp';
+import enableTotp from './controllers/enable_totp';
+import disableTotp from './controllers/disable_totp';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -94,6 +97,9 @@ router.get('/singer', getSinger); // 获取歌手
 router.delete('/music_play_record', deleteMusicPlayRecord); // 删除音乐播放记录
 router.get('/music_play_record_list', getMusicPlayRecordList); // 获取音乐播放记录列表
 router.get('/singer_modify_record_list', getSingerModifyRecordList); // 获取歌手修改记录列表
+router.post('/totp', createTotp); // 创建 TOTP
+router.put('/totp', parseBody, enableTotp); // enable TOTP
+router.delete('/totp', disableTotp); // disable TOTP
 
 /**
  * 管理员

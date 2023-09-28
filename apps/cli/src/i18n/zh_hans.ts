@@ -41,7 +41,7 @@ const zhHans: {
   wrong_username_or_password: '错误的用户名或密码',
   lack_of_totp_token: '缺少 2FA 凭证',
   wrong_totp_token: '错误的 2FA 凭证',
-  totp_enabled_already: '2FA 已启用',
+  totp_enabled_already: '2FA 早已启用',
 };
 
 export default zhHans;

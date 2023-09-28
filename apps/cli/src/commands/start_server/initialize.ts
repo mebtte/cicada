@@ -155,7 +155,7 @@ export default async () => {
         ${MusicProperty.ID} TEXT PRIMARY KEY NOT NULL,
         ${MusicProperty.TYPE} INTEGER NOT NULL,
         ${MusicProperty.NAME} TEXT NOT NULL,
-        ${MusicProperty.YEAR} INTEGER,
+        ${MusicProperty.YEAR} INTEGER DEFAULT NULL,
         ${MusicProperty.ALIASES} TEXT NOT NULL DEFAULT '',
         ${MusicProperty.COVER} TEXT NOT NULL DEFAULT '',
         ${MusicProperty.ASSET} TEXT NOT NULL,

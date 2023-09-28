@@ -1,6 +1,5 @@
 import { UNUSED_TOTP_SECRET_PREFIX } from '@/constants';
 import { ExceptionCode } from '#/constants/exception';
-import generateRandomString from '#/utils/generate_random_string';
 import * as totp from '@/platform/totp';
 import updateUser from '@/db/update_user';
 import { UserProperty } from '@/constants/db_definition';
@@ -15,7 +14,7 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.TOTP_ENABLED_ALREADY);
   }
 
-  const secret = generateRandomString(12);
+  const secret = totp.createSecret();
   await updateUser({
     id: ctx.user.id,
     property: UserProperty.TOTP_SECRET,

@@ -156,4 +156,7 @@ export default {
   password_has_changed: 'password has changed',
   enable_2fa: 'enable 2FA',
   disable_2fa: 'disable 2FA',
+  '2fa_instruction':
+    'using Authenticator App like Microsoft Authenticator or Google Authenticator to scan the QR code',
+  one_time_token: 'one-time token',
 };

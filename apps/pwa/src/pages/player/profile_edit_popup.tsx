@@ -20,6 +20,7 @@ import { Variant } from '@/components/button';
 import { ZIndex } from './constants';
 import e, { EventType } from './eventemitter';
 
+const openTotpDialog = () => e.emit(EventType.OPEN_TOTP_DIALOG, null);
 const AVATAR_SIZE = 36;
 const maskProps: {
   style: CSSProperties;
@@ -192,24 +193,7 @@ function ProfileEditPopup() {
           label={user.totpEnabled ? t('disable_2fa') : t('enable_2fa')}
           icon={<MdSecurity />}
           style={itemStyle}
-          onClick={() =>
-            dialog.password({
-              confirmVariant: Variant.PRIMARY,
-              onConfirm: async (password) => {
-                try {
-                  await updateProfile({
-                    key: AllowUpdateKey.PASSWORD,
-                    value: password,
-                  });
-                  notice.info(t('password_has_changed'));
-                } catch (error) {
-                  logger.error(error, 'Failed to update password');
-                  notice.error(error.message);
-                  return false;
-                }
-              },
-            })
-          }
+          onClick={openTotpDialog}
         />
       </Style>
     </Popup>
