@@ -2,7 +2,7 @@ import Popup from '@/components/popup';
 import { CSSProperties, memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MenuItem from '@/components/menu_item';
-import { MdImage, MdTitle, MdPassword } from 'react-icons/md';
+import { MdImage, MdTitle, MdPassword, MdSecurity } from 'react-icons/md';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
@@ -168,6 +168,29 @@ function ProfileEditPopup() {
         <MenuItem
           label={t('change_password')}
           icon={<MdPassword />}
+          style={itemStyle}
+          onClick={() =>
+            dialog.password({
+              confirmVariant: Variant.PRIMARY,
+              onConfirm: async (password) => {
+                try {
+                  await updateProfile({
+                    key: AllowUpdateKey.PASSWORD,
+                    value: password,
+                  });
+                  notice.info(t('password_has_changed'));
+                } catch (error) {
+                  logger.error(error, 'Failed to update password');
+                  notice.error(error.message);
+                  return false;
+                }
+              },
+            })
+          }
+        />
+        <MenuItem
+          label={user.totpEnabled ? t('disable_2fa') : t('enable_2fa')}
+          icon={<MdSecurity />}
           style={itemStyle}
           onClick={() =>
             dialog.password({

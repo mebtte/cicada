@@ -119,8 +119,8 @@ export default async () => {
         ${UserProperty.LAST_ACTIVE_TIMESTAMP} INTEGER NOT NULL DEFAULT 0,
         ${UserProperty.MUSIC_PLAY_RECORD_INDATE} INTEGER NOT NULL DEFAULT 0,
         ${UserProperty.PASSWORD} TEXT NOT NULL,
-        ${UserProperty.TOTP_SECRET} TEXT DEFAULT NULL,
-        ${UserProperty.TOKEN_IDENTIFIER} TEXT NOT NULL DEFAULT ''
+        ${UserProperty.TOKEN_IDENTIFIER} TEXT NOT NULL DEFAULT '',
+        ${UserProperty.TOTP_SECRET} TEXT DEFAULT NULL
       )
     `;
     const TABLE_CAPTCHA = `

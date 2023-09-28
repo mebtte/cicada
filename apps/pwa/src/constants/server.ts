@@ -9,6 +9,7 @@ export interface User {
   musicbillMaxAmount: number;
   createMusicMaxAmountPerDay: number;
   musicPlayRecordIndate: number;
+  totpEnabled: boolean;
 
   token: string;
 }

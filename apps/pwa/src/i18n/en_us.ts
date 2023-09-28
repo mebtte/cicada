@@ -154,4 +154,6 @@ export default {
   confirm_new_password: 'confirm new password',
   passwords_do_not_match: 'passwords do not match',
   password_has_changed: 'password has changed',
+  enable_2fa: 'enable 2FA',
+  disable_2fa: 'disable 2FA',
 };

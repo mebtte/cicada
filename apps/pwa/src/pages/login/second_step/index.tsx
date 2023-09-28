@@ -77,6 +77,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
                       createMusicMaxAmountPerDay:
                         profile.createMusicMaxAmountPerDay,
                       musicPlayRecordIndate: profile.musicPlayRecordIndate,
+                      totpEnabled: profile.totpEnabled,
 
                       token,
                     },

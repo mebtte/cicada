@@ -115,7 +115,7 @@ async function addUserTotpSecret() {
 async function addUserTokenIdentifier() {
   return getDB().run(
     `
-      ALTER TABLE user ADD tokenIdentifier TEXT NOT NULL DEFAULT ''
+      ALTER TABLE user ADD tokenIdentifier TEXT DEFAULT NULL
     `,
   );
 }

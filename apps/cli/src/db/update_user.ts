@@ -14,7 +14,8 @@ function updateUser<
     | UserProperty.LAST_ACTIVE_TIMESTAMP
     | UserProperty.MUSIC_PLAY_RECORD_INDATE
     | UserProperty.PASSWORD
-    | UserProperty.TOKEN_IDENTIFIER,
+    | UserProperty.TOKEN_IDENTIFIER
+    | UserProperty.TOTP_SECRET,
 >({ id, property, value }: { id: string; property: P; value: User[P] }) {
   return getDB().run(
     `

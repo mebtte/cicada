@@ -29,8 +29,8 @@ export enum UserProperty {
   LAST_ACTIVE_TIMESTAMP = 'lastActiveTimestamp',
   MUSIC_PLAY_RECORD_INDATE = 'musicPlayRecordIndate',
   PASSWORD = 'password',
-  TOTP_SECRET = 'totpSecret',
   TOKEN_IDENTIFIER = 'tokenIdentifier',
+  TOTP_SECRET = 'totpSecret',
 }
 export type User = {
   [UserProperty.ID]: string;
@@ -46,8 +46,8 @@ export type User = {
   [UserProperty.LAST_ACTIVE_TIMESTAMP]: number;
   [UserProperty.MUSIC_PLAY_RECORD_INDATE]: number;
   [UserProperty.PASSWORD]: string;
-  [UserProperty.TOTP_SECRET]: string | null;
   [UserProperty.TOKEN_IDENTIFIER]: string;
+  [UserProperty.TOTP_SECRET]: string | null;
 };
 
 export const MUSIC_TABLE_NAME = 'music';
