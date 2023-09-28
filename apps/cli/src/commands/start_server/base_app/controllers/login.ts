@@ -23,6 +23,7 @@ export default async (ctx: Context) => {
   const user = await getUserByUsername(username, [
     UserProperty.ID,
     UserProperty.PASSWORD,
+    UserProperty.TOKEN_IDENTIFIER,
   ]);
   if (!user) {
     return ctx.except(ExceptionCode.WRONG_USERNAME_OR_PASSWORD);
@@ -32,6 +33,9 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.WRONG_USERNAME_OR_PASSWORD);
   }
 
-  const token = sign(user.id);
+  const token = sign({
+    userId: user.id,
+    tokenIdentifier: user.tokenIdentifier,
+  });
   return ctx.success<Response>(token);
 };

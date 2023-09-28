@@ -112,6 +112,14 @@ async function addUserTotpSecret() {
   );
 }
 
+async function addUserTokenIdentifier() {
+  return getDB().run(
+    `
+      ALTER TABLE user ADD tokenIdentifier TEXT NOT NULL DEFAULT ''
+    `,
+  );
+}
+
 function writeNewVersion() {
   return fsPromises.writeFile(getDataVersionPath(), '2');
 }
@@ -136,7 +144,7 @@ export default async ({ data }: { data: string }) => {
       type: 'confirm',
       name: 'confirmed',
       message:
-        'Cicada in v2 has deprecated login with email and will add password for all of users. After upgrade, CLI will print the password of each user, and all of users only can login by the password, so you need to save the output of CLI. Make sure you have the backup of data before upgrading. Continue ?',
+        'Cicada at v2 has deprecated login with email and will add password for all of users. After upgrade, CLI will print the password of each user, and all of users only can login by the password, so you need to save the output of CLI. Make sure you have the backup of data before upgrading. Continue ?',
       default: false,
     },
   ]);
@@ -170,6 +178,11 @@ export default async ({ data }: { data: string }) => {
   spinner.start({ text: 'Adding user.totpSecret...' });
   await addUserTotpSecret();
   spinner.success({ text: 'user.totpSecret has added' });
+
+  spinner = createSpinner();
+  spinner.start({ text: 'Adding user.tokenIdentifier...' });
+  await addUserTokenIdentifier();
+  spinner.success({ text: 'user.tokenIdentifier has added' });
 
   spinner = createSpinner();
   spinner.start({ text: 'Writting new version of data...' });

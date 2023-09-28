@@ -21,16 +21,19 @@ export default async (
     return ctx.except(ExceptionCode.NOT_AUTHORIZED);
   }
 
-  let userId: string;
+  let tokenPayload: { userId: string; tokenIdentifier: string };
   try {
-    userId = verify(token);
+    tokenPayload = verify(token);
   } catch (error) {
     return ctx.except(ExceptionCode.NOT_AUTHORIZED);
   }
 
-  const user = await getUserById(userId, Object.values(UserProperty));
+  const user = await getUserById(
+    tokenPayload.userId,
+    Object.values(UserProperty),
+  );
 
-  if (!user) {
+  if (!user || user.tokenIdentifier !== tokenPayload.tokenIdentifier) {
     return ctx.except(ExceptionCode.NOT_AUTHORIZED);
   }
 

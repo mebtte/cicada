@@ -19,14 +19,23 @@ const getSecret = () => {
   return secret;
 };
 
-export function sign(userId: string) {
-  return jwt.sign({ userId }, getSecret(), {
+export function sign({
+  userId,
+  tokenIdentifier,
+}: {
+  userId: string;
+  tokenIdentifier: string;
+}) {
+  return jwt.sign({ userId, tokenIdentifier }, getSecret(), {
     expiresIn: JWT_TTL / 1000,
   });
 }
 
-export function verify(token: string): string {
+export function verify(token: string): {
+  userId: string;
+  tokenIdentifier: string;
+} {
   const payload = jwt.verify(token, getSecret());
   // @ts-expect-error
-  return payload.userId;
+  return payload;
 }

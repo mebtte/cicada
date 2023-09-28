@@ -6,3 +6,5 @@ export enum PathPrefix {
   ASSET = 'asset',
   API = 'api',
 }
+
+export const TOKEN_IDENTIFIER_LENGTH = 12;

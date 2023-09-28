@@ -18,6 +18,8 @@ import { getDB } from '@/db';
 import { getAssetFilePath } from '@/platform/asset';
 import updateUser from '@/db/update_user';
 import md5 from 'md5';
+import generateRandomString from '#/utils/generate_random_string';
+import { TOKEN_IDENTIFIER_LENGTH } from '@/constants';
 import { Context } from '../constants';
 
 const ALLOW_UPDATE_KEYS = Object.values(AllowUpdateKey);
@@ -33,11 +35,18 @@ const KEY_MAP_HANDLER: Record<
     ) {
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
-    await updateUser({
-      id: ctx.user.id,
-      property: UserProperty.PASSWORD,
-      value: md5(md5(password)),
-    });
+    await Promise.all([
+      updateUser({
+        id: ctx.user.id,
+        property: UserProperty.PASSWORD,
+        value: md5(md5(password)),
+      }),
+      updateUser({
+        id: ctx.user.id,
+        property: UserProperty.TOKEN_IDENTIFIER,
+        value: generateRandomString(TOKEN_IDENTIFIER_LENGTH),
+      }),
+    ]);
     return ctx.success(null);
   },
   [AllowUpdateKey.AVATAR]: async ({ ctx, value: avatar }) => {

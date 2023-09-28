@@ -119,7 +119,8 @@ export default async () => {
         ${UserProperty.LAST_ACTIVE_TIMESTAMP} INTEGER NOT NULL DEFAULT 0,
         ${UserProperty.MUSIC_PLAY_RECORD_INDATE} INTEGER NOT NULL DEFAULT 0,
         ${UserProperty.PASSWORD} TEXT NOT NULL,
-        ${UserProperty.TOTP_SECRET} TEXT DEFAULT NULL
+        ${UserProperty.TOTP_SECRET} TEXT DEFAULT NULL,
+        ${UserProperty.TOKEN_IDENTIFIER} TEXT NOT NULL DEFAULT ''
       )
     `;
     const TABLE_CAPTCHA = `
@@ -280,7 +281,7 @@ export default async () => {
     `,
   );
   if (!admin) {
-    const username = 'admin';
+    const username = 'cicada';
     const password = 'cicada';
     await db.run(
       `
