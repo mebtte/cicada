@@ -15,6 +15,8 @@ import parseSearch from '@/utils/parse_search';
 import { Query } from '@/constants';
 import useNavigate from '@/utils/use_navigate';
 import { ROOT_PATH } from '@/constants/route';
+import { ExceptionCode } from '#/constants/exception';
+import dialog from '@/utils/dialog';
 import Logo from '../logo';
 import UserList from './user_list';
 
@@ -23,6 +25,42 @@ const StyledPaper = styled.div`
   flex-direction: column;
   gap: 20px;
 `;
+const addProfile = async (token: string) => {
+  const profile = await getProfile(token);
+  server.set((ss) => ({
+    ...ss,
+    serverList: ss.serverList.map((s) =>
+      s.origin === ss.selectedServerOrigin
+        ? {
+            ...s,
+            selectedUserId: profile.id,
+            users: s.users
+              .filter((u) => u.id !== profile.id)
+              .concat([
+                {
+                  id: profile.id,
+                  username: profile.username,
+                  avatar: profile.avatar,
+                  nickname: profile.nickname,
+                  joinTimestamp: profile.joinTimestamp,
+                  admin: !!profile.admin,
+                  musicbillOrders: profile.musicbillOrdersJSON
+                    ? JSON.parse(profile.musicbillOrdersJSON)
+                    : [],
+                  musicbillMaxAmount: profile.musicbillMaxAmount,
+                  createMusicMaxAmountPerDay:
+                    profile.createMusicMaxAmountPerDay,
+                  musicPlayRecordIndate: profile.musicPlayRecordIndate,
+                  twoFAEnabled: profile.twoFAEnabled,
+
+                  token,
+                },
+              ]),
+          }
+        : s,
+    ),
+  }));
+};
 
 function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const location = useLocation();
@@ -45,6 +83,28 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       path: query.redirect || ROOT_PATH.PLAYER,
     });
   };
+  const on2FALogin = () =>
+    dialog.input({
+      label: t('2fa_token'),
+      confirmVariant: Variant.PRIMARY,
+      onConfirm: async (twoFAToken) => {
+        if (!twoFAToken) {
+          notice.error(t('lack_of_2fa_token'));
+          return false;
+        }
+
+        try {
+          const token = await login({ username, password, twoFAToken });
+          await addProfile(token);
+          window.setTimeout(redirect, 0);
+        } catch (error) {
+          logger.error(error, 'Failed to login by 2FA');
+          notice.error(error.message);
+          return false;
+        }
+      },
+    });
+
   const onLogin = async () => {
     setLoading(true);
     try {
@@ -52,44 +112,20 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         username,
         password,
       });
-      const profile = await getProfile(token);
-      server.set((ss) => ({
-        ...ss,
-        serverList: ss.serverList.map((s) =>
-          s.origin === ss.selectedServerOrigin
-            ? {
-                ...s,
-                selectedUserId: profile.id,
-                users: s.users
-                  .filter((u) => u.id !== profile.id)
-                  .concat([
-                    {
-                      id: profile.id,
-                      username: profile.username,
-                      avatar: profile.avatar,
-                      nickname: profile.nickname,
-                      joinTimestamp: profile.joinTimestamp,
-                      admin: !!profile.admin,
-                      musicbillOrders: profile.musicbillOrdersJSON
-                        ? JSON.parse(profile.musicbillOrdersJSON)
-                        : [],
-                      musicbillMaxAmount: profile.musicbillMaxAmount,
-                      createMusicMaxAmountPerDay:
-                        profile.createMusicMaxAmountPerDay,
-                      musicPlayRecordIndate: profile.musicPlayRecordIndate,
-                      totpEnabled: profile.totpEnabled,
-
-                      token,
-                    },
-                  ]),
-              }
-            : s,
-        ),
-      }));
+      await addProfile(token);
       window.setTimeout(redirect, 0);
     } catch (error) {
       logger.error(error, 'Failed to login');
-      notice.error(error.message);
+
+      switch (error.code) {
+        case ExceptionCode.LACK_OF_2FA_TOKEN: {
+          on2FALogin();
+          break;
+        }
+        default: {
+          notice.error(error.message);
+        }
+      }
     }
     setLoading(false);
   };

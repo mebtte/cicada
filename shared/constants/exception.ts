@@ -34,7 +34,7 @@ export enum ExceptionCode {
   NO_PERMISSION_TO_DELETE_MUSICBILL_SHARED_USER = 'no_permission_to_delete_musicbill_shared_user',
   SHARED_MUSICBILL_INVITATION_NOT_EXISTED = 'shared_musicbill_invitation_not_existed',
   WRONG_USERNAME_OR_PASSWORD = 'wrong_username_or_password',
-  LACK_OF_TOTP_TOKEN = 'lack_of_totp_token',
-  WRONG_TOTP_TOKEN = 'wrong_totp_token',
-  TOTP_ENABLED_ALREADY = 'totp_enabled_already',
+  LACK_OF_2FA_TOKEN = 'lack_of_2fa_token',
+  WRONG_2FA_TOKEN = 'wrong_2fa_token',
+  TWO_FA_ENABLED_ALREADY = 'two_fa_enabled_already',
 }

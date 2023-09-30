@@ -52,7 +52,10 @@ export async function request<Data = void>({
 }) {
   const selectedServer = getSelectedServer(server.get());
   if (!selectedServer) {
-    throw new Error('No valid server to fetch');
+    throw new ErrorWithCode(
+      'Not authorized from local',
+      ExceptionCode.NOT_AUTHORIZED,
+    );
   }
 
   const selectedUser = getSelectedUser(selectedServer);
@@ -73,7 +76,10 @@ export async function request<Data = void>({
 
   if (withToken) {
     if (!selectedUser) {
-      throw new Error('No valid user to fetch');
+      throw new ErrorWithCode(
+        'Not authorized from local',
+        ExceptionCode.NOT_AUTHORIZED,
+      );
     }
     // eslint-disable-next-line no-param-reassign
     headers.authorization = selectedUser.token;

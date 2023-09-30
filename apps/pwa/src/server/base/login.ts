@@ -1,14 +1,14 @@
 import { RequestBody } from '#/server/base/login';
 import { request, Method } from '..';
 
-function login({ username, password, totpToken }: RequestBody) {
+function login(data: RequestBody) {
   return request<string>({
     path: '/base/login',
     method: Method.POST,
     body: {
-      username,
-      password,
-      totpToken,
+      username: data.username,
+      password: data.password,
+      twoFAToken: data.twoFAToken,
     },
   });
 }

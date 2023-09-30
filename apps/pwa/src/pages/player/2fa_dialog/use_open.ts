@@ -2,11 +2,11 @@ import { useCallback, useEffect, useState } from 'react';
 import e, { EventType } from '../eventemitter';
 
 export default () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
-    const unlistenOpen = e.listen(EventType.OPEN_TOTP_DIALOG, () =>
+    const unlistenOpen = e.listen(EventType.OPEN_2FA_DIALOG, () =>
       setOpen(true),
     );
     return unlistenOpen;

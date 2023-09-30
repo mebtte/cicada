@@ -1,3 +1,3 @@
 export interface RequestParams {
-  totpToken: string;
+  twoFAToken: string;
 }

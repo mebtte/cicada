@@ -122,6 +122,7 @@ export async function reloadUser() {
                         createMusicMaxAmountPerDay:
                           profile.createMusicMaxAmountPerDay,
                         musicPlayRecordIndate: profile.musicPlayRecordIndate,
+                        twoFAEnabled: profile.twoFAEnabled,
                       }
                     : u,
                 ),

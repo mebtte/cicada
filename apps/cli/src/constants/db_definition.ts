@@ -30,7 +30,7 @@ export enum UserProperty {
   MUSIC_PLAY_RECORD_INDATE = 'musicPlayRecordIndate',
   PASSWORD = 'password',
   TOKEN_IDENTIFIER = 'tokenIdentifier',
-  TOTP_SECRET = 'totpSecret',
+  TWO_FA_SECRET = 'twoFASecret',
 }
 export type User = {
   [UserProperty.ID]: string;
@@ -47,7 +47,7 @@ export type User = {
   [UserProperty.MUSIC_PLAY_RECORD_INDATE]: number;
   [UserProperty.PASSWORD]: string;
   [UserProperty.TOKEN_IDENTIFIER]: string;
-  [UserProperty.TOTP_SECRET]: string | null;
+  [UserProperty.TWO_FA_SECRET]: string | null;
 };
 
 export const MUSIC_TABLE_NAME = 'music';

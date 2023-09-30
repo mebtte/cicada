@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { QRCodeSVG } from 'qrcode.react';
-import createTotp from '@/server/api/create_totp';
+import create2FA from '@/server/api/create_2fa';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
@@ -19,6 +19,7 @@ const Style = styled.div`
     flex-shrink: 0;
 
     width: 100px;
+    height: auto;
   }
 
   > .instruction {
@@ -30,13 +31,13 @@ const Style = styled.div`
 `;
 
 function QrCode({ onClose }: { onClose: () => void }) {
-  const [totpURI, setTotpURI] = useState('');
+  const [twoFAURI, setTwoFAURI] = useState('');
 
   useEffect(() => {
-    createTotp()
-      .then((data) => setTotpURI(data))
+    create2FA()
+      .then((data) => setTwoFAURI(data))
       .catch((error) => {
-        logger.error(error, 'Failed to create TOTP');
+        logger.error(error, 'Failed to create 2FA');
         notice.error(error.message);
         onClose();
       });
@@ -44,7 +45,7 @@ function QrCode({ onClose }: { onClose: () => void }) {
 
   return (
     <Style>
-      <QRCodeSVG className="qrcode" value={totpURI} />
+      <QRCodeSVG className="qrcode" value={twoFAURI} />
       <div className="instruction">{t('2fa_instruction')}</div>
     </Style>
   );

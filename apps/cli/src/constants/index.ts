@@ -9,4 +9,4 @@ export enum PathPrefix {
 
 export const TOKEN_IDENTIFIER_LENGTH = 12;
 
-export const UNUSED_TOTP_SECRET_PREFIX = 'unused_';
+export const UNUSED_2FA_SECRET_PREFIX = 'unused_';

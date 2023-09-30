@@ -10,5 +10,5 @@ export type Response = {
   createMusicMaxAmountPerDay: number;
   lastActiveTimestamp: number;
   musicPlayRecordIndate: number;
-  totpEnabled: boolean;
+  twoFAEnabled: boolean;
 };

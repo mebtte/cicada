@@ -158,5 +158,6 @@ export default {
   disable_2fa: 'disable 2FA',
   '2fa_instruction':
     'using Authenticator App like Microsoft Authenticator or Google Authenticator to scan the QR code',
-  one_time_token: 'one-time token',
+  '2fa_token': '2FA token',
+  lack_of_2fa_token: 'lack of 2FA token',
 };

@@ -42,7 +42,7 @@ export enum EventType {
   OPEN_USER_DRAWER = 'open_user_drawer',
   OPEN_PUBLIC_MUSICBILL_DRAWER = 'open_public_musicbill_drawer',
   OPEN_PROFILE_EDIT_POPUP = 'open_profile_edit_popup',
-  OPEN_TOTP_DIALOG = 'open_totp_dialog',
+  OPEN_2FA_DIALOG = 'open_2fa_dialog',
 
   FOCUS_SEARCH_INPUT = 'focus_search_input',
 
@@ -115,7 +115,7 @@ export default new Eventin<
     [EventType.OPEN_USER_DRAWER]: { id: string };
     [EventType.OPEN_PUBLIC_MUSICBILL_DRAWER]: { id: string };
     [EventType.OPEN_PROFILE_EDIT_POPUP]: null;
-    [EventType.OPEN_TOTP_DIALOG]: null;
+    [EventType.OPEN_2FA_DIALOG]: null;
 
     [EventType.FOCUS_SEARCH_INPUT]: null;
 

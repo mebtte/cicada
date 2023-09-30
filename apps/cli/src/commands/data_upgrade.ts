@@ -104,10 +104,10 @@ async function addUserPassword() {
   return userList;
 }
 
-async function addUserTotpSecret() {
+async function addUserTwoFASecret() {
   return getDB().run(
     `
-      ALTER TABLE user ADD totpSecret TEXT DEFAULT NULL
+      ALTER TABLE user ADD twoFASecret TEXT DEFAULT NULL
     `,
   );
 }
@@ -175,9 +175,9 @@ export default async ({ data }: { data: string }) => {
   spinner.success({ text: 'user.password has added' });
 
   spinner = createSpinner();
-  spinner.start({ text: 'Adding user.totpSecret...' });
-  await addUserTotpSecret();
-  spinner.success({ text: 'user.totpSecret has added' });
+  spinner.start({ text: 'Adding user.twoFASecret...' });
+  await addUserTwoFASecret();
+  spinner.success({ text: 'user.twoFASecret has added' });
 
   spinner = createSpinner();
   spinner.start({ text: 'Adding user.tokenIdentifier...' });

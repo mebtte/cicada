@@ -20,7 +20,7 @@ import { Variant } from '@/components/button';
 import { ZIndex } from './constants';
 import e, { EventType } from './eventemitter';
 
-const openTotpDialog = () => e.emit(EventType.OPEN_TOTP_DIALOG, null);
+const open2FADialog = () => e.emit(EventType.OPEN_2FA_DIALOG, null);
 const AVATAR_SIZE = 36;
 const maskProps: {
   style: CSSProperties;
@@ -190,10 +190,10 @@ function ProfileEditPopup() {
           }
         />
         <MenuItem
-          label={user.totpEnabled ? t('disable_2fa') : t('enable_2fa')}
+          label={user.twoFAEnabled ? t('disable_2fa') : t('enable_2fa')}
           icon={<MdSecurity />}
           style={itemStyle}
-          onClick={openTotpDialog}
+          onClick={open2FADialog}
         />
       </Style>
     </Popup>

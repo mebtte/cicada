@@ -1,7 +1,7 @@
 export interface RequestBody {
   username: string;
   password: string;
-  totpToken?: string;
+  twoFAToken?: string;
 }
 
 export type Response = string;

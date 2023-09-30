@@ -39,9 +39,9 @@ const zhHans: {
   no_permission_to_delete_musicbill_shared_user: '没有权限删除共享乐单用户',
   shared_musicbill_invitation_not_existed: '共享乐单邀请不存在',
   wrong_username_or_password: '错误的用户名或密码',
-  lack_of_totp_token: '缺少 2FA 凭证',
-  wrong_totp_token: '错误的 2FA 凭证',
-  totp_enabled_already: '2FA 早已启用',
+  lack_of_2fa_token: '缺少 2FA 凭证',
+  wrong_2fa_token: '错误的 2FA 凭证',
+  '2fa_enabled_already': '2FA 早已启用',
 };
 
 export default zhHans;
