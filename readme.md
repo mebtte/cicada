@@ -38,7 +38,7 @@ Also docker:
 
 ```sh
 # --user {uid}:{gid} to map user
-docker run -it --rm -v <data>:/data mebtte/cicada data-upgrade /data
+docker run -it --rm -v <data>:/data mebtte/cicada:v2 data-upgrade /data
 ```
 
 ### [From v0 to v1](https://github.com/mebtte/cicada/tree/v1#from-v0-to-v1)
@@ -64,7 +64,7 @@ docker run \
   -p 8000:80 \
   -v <data>:/data \
   --name cicada \
-  mebtte/cicada \
+  mebtte/cicada:v2 \
   start --port 8000 --data /data
 ```
 
@@ -77,7 +77,7 @@ services:
   cicada:
     restart: always
     container_name: cicada
-    image: mebtte/cicada
+    image: mebtte/cicada:v2
 
     # user mapping
     # user: 1000:1000
@@ -119,7 +119,7 @@ This command is unharmful, so you can run it even the data isn't broken. Also ru
 
 ```sh
 # --user {uid}:{gid} to map user
-docker run -it --rm -v <data>:/data mebtte/cicada data-fix /data
+docker run -it --rm -v <data>:/data mebtte/cicada:v2 data-fix /data
 ```
 
 ## Q & A
