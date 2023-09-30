@@ -5,6 +5,7 @@ import Negotiator from 'negotiator';
 
 export interface I18nMiddleware {
   t: (key: Key, ...args: string[]) => string;
+  language: Language;
 }
 
 const ACCEPT_LANGUAGES = Object.values(Language);
@@ -25,7 +26,9 @@ export default (ctx: Context & I18nMiddleware, next: Next) => {
     }
     return lang;
   };
+
   ctx.t = (key, ...args) => t(key, getLang(), ...args);
+  ctx.language = getLang();
 
   return next();
 };

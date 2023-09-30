@@ -7,7 +7,6 @@ import { t } from '@/i18n';
 import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
 import logger from '@/utils/logger';
 import login from '@/server/base/login';
-import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import getProfile from '@/server/api/get_profile';
 import server from '@/global_states/server';
@@ -16,6 +15,8 @@ import parseSearch from '@/utils/parse_search';
 import { Query } from '@/constants';
 import useNavigate from '@/utils/use_navigate';
 import { ROOT_PATH } from '@/constants/route';
+import { ExceptionCode } from '#/constants/exception';
+import dialog from '@/utils/dialog';
 import Logo from '../logo';
 import UserList from './user_list';
 
@@ -24,6 +25,42 @@ const StyledPaper = styled.div`
   flex-direction: column;
   gap: 20px;
 `;
+const addProfile = async (token: string) => {
+  const profile = await getProfile(token);
+  server.set((ss) => ({
+    ...ss,
+    serverList: ss.serverList.map((s) =>
+      s.origin === ss.selectedServerOrigin
+        ? {
+            ...s,
+            selectedUserId: profile.id,
+            users: s.users
+              .filter((u) => u.id !== profile.id)
+              .concat([
+                {
+                  id: profile.id,
+                  username: profile.username,
+                  avatar: profile.avatar,
+                  nickname: profile.nickname,
+                  joinTimestamp: profile.joinTimestamp,
+                  admin: !!profile.admin,
+                  musicbillOrders: profile.musicbillOrdersJSON
+                    ? JSON.parse(profile.musicbillOrdersJSON)
+                    : [],
+                  musicbillMaxAmount: profile.musicbillMaxAmount,
+                  createMusicMaxAmountPerDay:
+                    profile.createMusicMaxAmountPerDay,
+                  musicPlayRecordIndate: profile.musicPlayRecordIndate,
+                  twoFAEnabled: profile.twoFAEnabled,
+
+                  token,
+                },
+              ]),
+          }
+        : s,
+    ),
+  }));
+};
 
 function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const location = useLocation();
@@ -46,60 +83,52 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       path: query.redirect || ROOT_PATH.PLAYER,
     });
   };
-  const onLogin = () =>
-    dialog.captcha({
+  const on2FALogin = () =>
+    dialog.input({
+      label: t('2fa_token'),
       confirmVariant: Variant.PRIMARY,
-      confirmText: t('login'),
-      onConfirm: async ({ captchaId, captchaValue }) => {
-        setLoading(true);
-        try {
-          const token = await login({
-            username,
-            password,
-            captchaId,
-            captchaValue,
-          });
-          const profile = await getProfile(token);
-          server.set((ss) => ({
-            ...ss,
-            serverList: ss.serverList.map((s) =>
-              s.origin === ss.selectedServerOrigin
-                ? {
-                    ...s,
-                    selectedUserId: profile.id,
-                    users: s.users
-                      .filter((u) => u.id !== profile.id)
-                      .concat([
-                        {
-                          id: profile.id,
-                          username: profile.username,
-                          avatar: profile.avatar,
-                          nickname: profile.nickname,
-                          joinTimestamp: profile.joinTimestamp,
-                          admin: !!profile.admin,
-                          musicbillOrders: profile.musicbillOrdersJSON
-                            ? JSON.parse(profile.musicbillOrdersJSON)
-                            : [],
-                          musicbillMaxAmount: profile.musicbillMaxAmount,
-                          createMusicMaxAmountPerDay:
-                            profile.createMusicMaxAmountPerDay,
-                          musicPlayRecordIndate: profile.musicPlayRecordIndate,
+      onConfirm: async (twoFAToken) => {
+        if (!twoFAToken) {
+          notice.error(t('lack_of_2fa_token'));
+          return false;
+        }
 
-                          token,
-                        },
-                      ]),
-                  }
-                : s,
-            ),
-          }));
+        try {
+          const token = await login({ username, password, twoFAToken });
+          await addProfile(token);
           window.setTimeout(redirect, 0);
         } catch (error) {
-          logger.error(error, 'Failed to login');
+          logger.error(error, 'Failed to login by 2FA');
           notice.error(error.message);
+          return false;
         }
-        setLoading(false);
       },
     });
+
+  const onLogin = async () => {
+    setLoading(true);
+    try {
+      const token = await login({
+        username,
+        password,
+      });
+      await addProfile(token);
+      window.setTimeout(redirect, 0);
+    } catch (error) {
+      logger.error(error, 'Failed to login');
+
+      switch (error.code) {
+        case ExceptionCode.LACK_OF_2FA_TOKEN: {
+          on2FALogin();
+          break;
+        }
+        default: {
+          notice.error(error.message);
+        }
+      }
+    }
+    setLoading(false);
+  };
 
   return (
     <StyledPaper>

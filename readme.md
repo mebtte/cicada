@@ -22,6 +22,7 @@ A multi-user music service for self-hosting.
 - Music/singer/musicbill/lyric search
 - [System media shortcut](https://developer.mozilla.org/docs/Web/API/MediaSession)
 - Support of building APP from [HTTP API](./apps/pwa/src/server)
+- Support of Two-Factor Authentication
 
 ## Migration
 
@@ -52,7 +53,7 @@ Download cicada from [releases](https://github.com/mebtte/cicada/releases) and s
 ./cicada start
 ```
 
-Open `localhost:8000` or `{{ip}}:8000` and use `username:admin/password:cicada` to login. You can get more options by running `cicada -h` or `cicada start -h`.
+Open `localhost:8000` or `{{ip}}:8000` and use `username:cicada/password:cicada` to login. You can get more options by running `cicada -h` or `cicada start -h`.
 
 ### Docker
 

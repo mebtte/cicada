@@ -118,7 +118,9 @@ export default async () => {
         ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY} INTEGER NOT NULL DEFAULT 10,
         ${UserProperty.LAST_ACTIVE_TIMESTAMP} INTEGER NOT NULL DEFAULT 0,
         ${UserProperty.MUSIC_PLAY_RECORD_INDATE} INTEGER NOT NULL DEFAULT 0,
-        ${UserProperty.PASSWORD} TEXT NOT NULL
+        ${UserProperty.PASSWORD} TEXT NOT NULL,
+        ${UserProperty.TOKEN_IDENTIFIER} TEXT NOT NULL DEFAULT '',
+        ${UserProperty.TWO_FA_SECRET} TEXT DEFAULT NULL
       )
     `;
     const TABLE_CAPTCHA = `
@@ -153,7 +155,7 @@ export default async () => {
         ${MusicProperty.ID} TEXT PRIMARY KEY NOT NULL,
         ${MusicProperty.TYPE} INTEGER NOT NULL,
         ${MusicProperty.NAME} TEXT NOT NULL,
-        ${MusicProperty.YEAR} INTEGER,
+        ${MusicProperty.YEAR} INTEGER DEFAULT NULL,
         ${MusicProperty.ALIASES} TEXT NOT NULL DEFAULT '',
         ${MusicProperty.COVER} TEXT NOT NULL DEFAULT '',
         ${MusicProperty.ASSET} TEXT NOT NULL,
@@ -279,7 +281,7 @@ export default async () => {
     `,
   );
   if (!admin) {
-    const username = 'admin';
+    const username = 'cicada';
     const password = 'cicada';
     await db.run(
       `

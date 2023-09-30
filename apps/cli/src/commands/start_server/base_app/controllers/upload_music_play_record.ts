@@ -1,10 +1,15 @@
 import { EFFECTIVE_PLAY_PERCENT } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
-import { MusicProperty } from '@/constants/db_definition';
+import {
+  MUSIC_TABLE_NAME,
+  MusicProperty,
+  UserProperty,
+} from '@/constants/db_definition';
 import { getDB } from '@/db';
 import { getMusicById } from '@/db/music';
 import addMusicPlayRecord from '@/db/add_music_play_record';
 import { verify } from '@/platform/jwt';
+import { getUserById } from '@/db/user';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -25,10 +30,18 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.PARAMETER_ERROR);
   }
 
-  let userId: string | undefined;
+  let tokenPayload: { userId: string; tokenIdentifier: string };
   try {
-    userId = verify(token);
+    tokenPayload = verify(token);
   } catch (error) {
+    return ctx.except(ExceptionCode.NOT_AUTHORIZED);
+  }
+
+  const user = await getUserById(tokenPayload.userId, [
+    UserProperty.ID,
+    UserProperty.TOKEN_IDENTIFIER,
+  ]);
+  if (!user || user.tokenIdentifier !== tokenPayload.tokenIdentifier) {
     return ctx.except(ExceptionCode.NOT_AUTHORIZED);
   }
 
@@ -37,14 +50,14 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
   }
 
-  await addMusicPlayRecord({ userId, musicId, percent });
+  await addMusicPlayRecord({ userId: tokenPayload.userId, musicId, percent });
 
   /** 有效播放次数 */
   if (percent >= EFFECTIVE_PLAY_PERCENT) {
     getDB().run(
       `
-        UPDATE music SET heat = heat + 1
-        WHERE id = ?;
+        UPDATE ${MUSIC_TABLE_NAME} SET ${MusicProperty.HEAT} = ${MusicProperty.HEAT} + 1
+        WHERE ${MusicProperty.ID} = ?
       `,
       [musicId],
     );

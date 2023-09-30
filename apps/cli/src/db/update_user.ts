@@ -13,7 +13,9 @@ function updateUser<
     | UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
     | UserProperty.LAST_ACTIVE_TIMESTAMP
     | UserProperty.MUSIC_PLAY_RECORD_INDATE
-    | UserProperty.PASSWORD,
+    | UserProperty.PASSWORD
+    | UserProperty.TOKEN_IDENTIFIER
+    | UserProperty.TWO_FA_SECRET,
 >({ id, property, value }: { id: string; property: P; value: User[P] }) {
   return getDB().run(
     `

@@ -2,6 +2,7 @@ import { UserProperty } from '@/constants/db_definition';
 import updateUser from '@/db/update_user';
 import logger from '@/utils/logger';
 import { Response } from '#/server/api/get_profile';
+import { UNUSED_2FA_SECRET_PREFIX } from '@/constants';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -28,5 +29,9 @@ export default async (ctx: Context) => {
     createMusicMaxAmountPerDay: ctx.user.createMusicMaxAmountPerDay,
     lastActiveTimestamp: ctx.user.lastActiveTimestamp,
     musicPlayRecordIndate: ctx.user.musicPlayRecordIndate,
+    twoFAEnabled: Boolean(
+      ctx.user.twoFASecret &&
+        !ctx.user.twoFASecret.startsWith(UNUSED_2FA_SECRET_PREFIX),
+    ),
   });
 };

@@ -2,7 +2,7 @@ import Popup from '@/components/popup';
 import { CSSProperties, memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MenuItem from '@/components/menu_item';
-import { MdImage, MdTitle, MdPassword } from 'react-icons/md';
+import { MdImage, MdTitle, MdPassword, MdSecurity } from 'react-icons/md';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
@@ -20,6 +20,7 @@ import { Variant } from '@/components/button';
 import { ZIndex } from './constants';
 import e, { EventType } from './eventemitter';
 
+const open2FADialog = () => e.emit(EventType.OPEN_2FA_DIALOG, null);
 const AVATAR_SIZE = 36;
 const maskProps: {
   style: CSSProperties;
@@ -187,6 +188,12 @@ function ProfileEditPopup() {
               },
             })
           }
+        />
+        <MenuItem
+          label={user.twoFAEnabled ? t('disable_2fa') : t('enable_2fa')}
+          icon={<MdSecurity />}
+          style={itemStyle}
+          onClick={open2FADialog}
         />
       </Style>
     </Popup>

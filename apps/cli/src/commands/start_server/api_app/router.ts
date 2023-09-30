@@ -39,6 +39,9 @@ import deleteMusicbillSharedUser from './controllers/delete_musicbill_shared_use
 import getSharedMusicbillInvitationList from './controllers/get_shared_musicbill_invitation_list';
 import acceptSharedMusicbillInvitation from './controllers/accept_shared_musicbill_invitation';
 import getSingerModifyRecordList from './controllers/get_singer_modify_record_list';
+import create2FA from './controllers/create_2fa';
+import enable2FA from './controllers/enable_2fa';
+import disable2FA from './controllers/disable_2fa';
 
 import adminCreateUser from './controllers/admin_create_user';
 import adminUpdateUser from './controllers/admin_update_user';
@@ -94,6 +97,9 @@ router.get('/singer', getSinger); // 获取歌手
 router.delete('/music_play_record', deleteMusicPlayRecord); // 删除音乐播放记录
 router.get('/music_play_record_list', getMusicPlayRecordList); // 获取音乐播放记录列表
 router.get('/singer_modify_record_list', getSingerModifyRecordList); // 获取歌手修改记录列表
+router.post('/2fa', create2FA); // 创建 2FA
+router.put('/2fa', parseBody, enable2FA); // enable 2FA
+router.delete('/2fa', disable2FA); // disable 2FA
 
 /**
  * 管理员

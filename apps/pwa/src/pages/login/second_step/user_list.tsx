@@ -1,8 +1,9 @@
 import Label from '@/components/label';
 import Select from '@/components/select';
-import server, { useServer } from '@/global_states/server';
+import server, { getSelectedServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
+import { useMemo } from 'react';
 import styled from 'styled-components';
 
 const Divider = styled.div`
@@ -28,15 +29,18 @@ function UserList({
   disabled: boolean;
   redirect: () => void;
 }) {
-  const selectedServer = useServer();
+  const userList = useMemo(
+    () => getSelectedServer(server.get())?.users || [],
+    [],
+  );
 
-  if (selectedServer?.users.length) {
+  if (userList.length) {
     return (
       <>
         <Label label={t('existing_user')}>
           <Select
             disabled={disabled}
-            options={selectedServer.users.map((u) => ({
+            options={userList.map((u) => ({
               label: `${u.nickname}(@${u.username})`,
               value: u.id,
             }))}
@@ -44,7 +48,7 @@ function UserList({
               server.set((ss) => ({
                 ...ss,
                 serverList: ss.serverList.map((s) =>
-                  s.origin === selectedServer.origin
+                  s.origin === getSelectedServer(server.get())!.origin
                     ? {
                         ...s,
                         selectedUserId: option.value,

@@ -154,4 +154,10 @@ export default {
   confirm_new_password: 'confirm new password',
   passwords_do_not_match: 'passwords do not match',
   password_has_changed: 'password has changed',
+  enable_2fa: 'enable 2FA',
+  disable_2fa: 'disable 2FA',
+  '2fa_instruction':
+    'using Authenticator App like Microsoft Authenticator or Google Authenticator to scan the QR code',
+  '2fa_token': '2FA token',
+  lack_of_2fa_token: 'lack of 2FA token',
 };

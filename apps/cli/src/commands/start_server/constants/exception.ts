@@ -48,4 +48,7 @@ export const EXCEPTION_CODE_MAP_KEY: Record<ExceptionCode, Key> = {
   [ExceptionCode.SHARED_MUSICBILL_INVITATION_NOT_EXISTED]:
     'shared_musicbill_invitation_not_existed',
   [ExceptionCode.WRONG_USERNAME_OR_PASSWORD]: 'wrong_username_or_password',
+  [ExceptionCode.LACK_OF_2FA_TOKEN]: 'lack_of_2fa_token',
+  [ExceptionCode.WRONG_2FA_TOKEN]: 'wrong_2fa_token',
+  [ExceptionCode.TWO_FA_ENABLED_ALREADY]: '2fa_enabled_already',
 };

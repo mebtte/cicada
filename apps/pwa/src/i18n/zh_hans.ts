@@ -151,6 +151,12 @@ const zhCN: {
   confirm_new_password: '确认新的密码',
   passwords_do_not_match: '两次密码不一致',
   password_has_changed: '密码已修改',
+  enable_2fa: '启用 2FA',
+  disable_2fa: '禁用 2FA',
+  '2fa_instruction':
+    '使用例如 Microsoft Authenticator / Google Authenticator 等验证器扫描二维码',
+  '2fa_token': '双重验证凭证',
+  lack_of_2fa_token: '缺少双重验证凭证',
 };
 
 export default zhCN;

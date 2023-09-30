@@ -38,4 +38,7 @@ export default {
   shared_musicbill_invitation_not_existed:
     'shared_musicbill_invitation_not_existed',
   wrong_username_or_password: 'wrong username or password',
+  lack_of_2fa_token: 'lack of 2FA token',
+  wrong_2fa_token: 'wrong 2FA token',
+  '2fa_enabled_already': '2FA enabled already',
 };

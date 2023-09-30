@@ -61,7 +61,63 @@ async function addUserPassword() {
     userList.push({ id: user.id, username: user.username, password });
   }
 
+  /**
+   * make user.password not null
+   * @author mebtte<hi@mebtte.com>
+   */
+  const tmpTableName = 'user_tmp';
+  await getDB().run(
+    `
+      CREATE TABLE ${tmpTableName} (
+        id TEXT PRIMARY KEY NOT NULL,
+        username TEXT UNIQUE NOT NULL,
+        avatar TEXT NOT NULL DEFAULT '',
+        nickname TEXT NOT NULL,
+        joinTimestamp INTEGER NOT NULL,
+        admin INTEGER NOT NULL DEFAULT 0,
+        remark TEXT NOT NULL DEFAULT '',
+        musicbillOrdersJSON TEXT DEFAULT NULL,
+        musicbillMaxAmount INTEGER NOT NULL DEFAULT 100,
+        createMusicMaxAmountPerDay INTEGER NOT NULL DEFAULT 10,
+        lastActiveTimestamp INTEGER NOT NULL DEFAULT 0,
+        musicPlayRecordIndate INTEGER NOT NULL DEFAULT 0,
+        password TEXT NOT NULL
+      )
+    `,
+  );
+  await getDB().run(
+    `
+      INSERT INTO ${tmpTableName} SELECT * FROM user;
+    `,
+  );
+  await getDB().run(
+    `
+      DROP TABLE user
+    `,
+  );
+  await getDB().run(
+    `
+      ALTER TABLE ${tmpTableName} RENAME TO user
+    `,
+  );
+
   return userList;
+}
+
+async function addUserTwoFASecret() {
+  return getDB().run(
+    `
+      ALTER TABLE user ADD twoFASecret TEXT DEFAULT NULL
+    `,
+  );
+}
+
+async function addUserTokenIdentifier() {
+  return getDB().run(
+    `
+      ALTER TABLE user ADD tokenIdentifier TEXT NOT NULL DEFAULT ''
+    `,
+  );
 }
 
 function writeNewVersion() {
@@ -88,7 +144,7 @@ export default async ({ data }: { data: string }) => {
       type: 'confirm',
       name: 'confirmed',
       message:
-        'Cicada in v2 has deprecated login with email and will add password for all of users. After upgrade, CLI will print the password of each user, and all of users only can login by the password, so you need to save the output of CLI. Make sure you have the backup of data before upgrading. Continue ?',
+        'Cicada at v2 has deprecated login with email and will add password for all of users. After upgrade, CLI will print the password of each user, and all of users only can login by the password, so you need to save the output of CLI. Make sure you have the backup of data before upgrading. Continue ?',
       default: false,
     },
   ]);
@@ -117,6 +173,16 @@ export default async ({ data }: { data: string }) => {
   spinner.start({ text: 'Adding user.password...' });
   const userList = await addUserPassword();
   spinner.success({ text: 'user.password has added' });
+
+  spinner = createSpinner();
+  spinner.start({ text: 'Adding user.twoFASecret...' });
+  await addUserTwoFASecret();
+  spinner.success({ text: 'user.twoFASecret has added' });
+
+  spinner = createSpinner();
+  spinner.start({ text: 'Adding user.tokenIdentifier...' });
+  await addUserTokenIdentifier();
+  spinner.success({ text: 'user.tokenIdentifier has added' });
 
   spinner = createSpinner();
   spinner.start({ text: 'Writting new version of data...' });

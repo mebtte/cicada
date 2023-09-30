@@ -10,6 +10,8 @@ import { getUserById } from '@/db/user';
 import updateUser from '@/db/update_user';
 import getUserByUsername from '@/db/get_user_by_username';
 import md5 from 'md5';
+import generateRandomString from '#/utils/generate_random_string';
+import { TOKEN_IDENTIFIER_LENGTH } from '@/constants';
 import { Context } from '../constants';
 
 type LocalUser = Pick<
@@ -35,11 +37,18 @@ const KEY_MAP_HANDLER: Record<
       return ctx.except(ExceptionCode.PARAMETER_ERROR);
     }
 
-    await updateUser({
-      id: user.id,
-      property: UserProperty.PASSWORD,
-      value: md5(md5(value)),
-    });
+    await Promise.all([
+      updateUser({
+        id: user.id,
+        property: UserProperty.PASSWORD,
+        value: md5(md5(value)),
+      }),
+      updateUser({
+        id: user.id,
+        property: UserProperty.TOKEN_IDENTIFIER,
+        value: generateRandomString(TOKEN_IDENTIFIER_LENGTH),
+      }),
+    ]);
     return ctx.success(null);
   },
   [AdminAllowUpdateKey.USERNAME]: async ({ ctx, user, value }) => {

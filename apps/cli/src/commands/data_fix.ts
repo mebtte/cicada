@@ -21,7 +21,7 @@ async function fixMusicYear() {
   if (!yearColumnExist) {
     await getDB().run(
       `
-        ALTER TABLE music ADD year INTEGER
+        ALTER TABLE ${MUSIC_TABLE_NAME} ADD ${MusicProperty.YEAR} INTEGER DEFAULT NULL
       `,
     );
   }
@@ -33,14 +33,6 @@ export default async ({ data }: { data: string }) => {
   if (!fs.existsSync(getDataVersionPath())) {
     return exitWithMessage(`[ ${data} ] isn't a valid datadirectory`);
   }
-  const dataVersion = Number(
-    fs.readFileSync(getDataVersionPath()).toString().replace(/\s/gm, ''),
-  );
-  if (dataVersion !== 1) {
-    return exitWithMessage(
-      `This version of cicada can fix data only v1, your data version is v${dataVersion}`,
-    );
-  }
 
   let spinner: Spinner;
 
@@ -48,8 +40,8 @@ export default async ({ data }: { data: string }) => {
   spinner = createSpinner();
   spinner.start({ text: "Fixing music's year..." });
   await fixMusicYear();
-  spinner.success({ text: "Music's year fixed" });
+  spinner.success({ text: "Music's year has fixed" });
 
-  createSpinner().success({ text: 'Fixing data succeed' });
+  createSpinner().success({ text: 'Fixing data successfully' });
   return process.exit();
 };

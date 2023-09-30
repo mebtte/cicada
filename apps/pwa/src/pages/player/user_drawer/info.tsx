@@ -29,7 +29,7 @@ const Style = styled.div`
     > .username {
       margin: 5px 0;
 
-      font-size: 16px;
+      font-size: 14px;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     }
 
