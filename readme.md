@@ -7,7 +7,9 @@ A multi-user music service for self-hosting.
 ![docker build](https://img.shields.io/github/actions/workflow/status/mebtte/cicada/docker_build_and_push.yaml?label=docker%20build&style=for-the-badge)
 ![license](https://img.shields.io/github/license/mebtte/cicada?style=for-the-badge)
 
-![](./docs/screenshot.png)
+![img](./docs/screenshot.png)
+
+> The tag `latest` on docker hub is deprecated, please use tag `v1`.
 
 ## Feature
 
