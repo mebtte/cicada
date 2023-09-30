@@ -8,6 +8,8 @@ import { Option } from './constants';
 import './style.scss';
 
 const classNames: ComponentProps<Select>['classNames'] = {
+  container: () => 'react-select-single-container',
+  menu: () => 'react-select-single-menu',
   control: () => 'react-select-single-control',
   option: () => 'react-select-single-option',
   indicatorsContainer: () => 'react-select-single-indicator-container',
