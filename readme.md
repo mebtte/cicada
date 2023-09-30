@@ -72,7 +72,7 @@ docker run \
   -v $HOME/cicada/config.json:/config/cicada.json \
   -v $HOME/cicada/data:/data \
   --name cicada \
-  mebtte/cicada
+  mebtte/cicada:v1
 ```
 
 - Cicada container serve on port `80`
@@ -92,7 +92,7 @@ services:
     # user mapping
     # user: 1000:1000
 
-    image: mebtte/cicada
+    image: mebtte/cicada:v1
     ports:
       - 8000:80
     volumes:
@@ -131,7 +131,7 @@ Also docker:
 
 ```sh
 # --user {uid}:{gid} to map user
-docker run -it --rm -v <data>:/data mebtte/cicada cicada data-upgrade /data
+docker run -it --rm -v <data>:/data mebtte/cicada:v1 cicada data-upgrade /data
 ```
 
 ## Data fixing
@@ -146,7 +146,7 @@ This command is unharmful, so you can run it even the data isn't broken. Also ru
 
 ```sh
 # --user {uid}:{gid} to map user
-docker run -it --rm -v <data>:/data mebtte/cicada cicada data-fix /data
+docker run -it --rm -v <data>:/data mebtte/cicada:v1 cicada data-fix /data
 ```
 
 ## Q & A
