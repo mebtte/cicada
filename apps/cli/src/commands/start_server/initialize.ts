@@ -84,9 +84,9 @@ export default async () => {
     if (dataVersion !== DATA_VERSION) {
       if (dataVersion < DATA_VERSION) {
         return exitWithMessage(
-          `Current version of data is v${dataVersion}, please start server after using cicada.v${
+          `\nCurrent version of data is v${dataVersion}, please start server after using cicada.v${
             dataVersion + 1
-          } to upgrade data by [ cicada data-upgrade <data> ]`,
+          } to upgrade data by [ cicada data-upgrade <data> ]\n`,
         );
       }
       return exitWithMessage('Please upgrade your cicada to latest');
