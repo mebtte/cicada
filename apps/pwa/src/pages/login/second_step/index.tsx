@@ -20,10 +20,12 @@ import dialog from '@/utils/dialog';
 import Logo from '../logo';
 import UserList from './user_list';
 
-const StyledPaper = styled.div`
+const Style = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  -webkit-app-region: no-drag;
 `;
 const addProfile = async (token: string) => {
   const profile = await getProfile(token);
@@ -131,7 +133,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   };
 
   return (
-    <StyledPaper>
+    <Style>
       <Logo />
       <UserList disabled={loading} redirect={redirect} />
       <Label label={t('username')}>
@@ -163,7 +165,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       <Button onClick={toPrevious} disabled={loading}>
         {t('previous_step')}
       </Button>
-    </StyledPaper>
+    </Style>
   );
 }
 
