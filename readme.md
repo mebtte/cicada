@@ -1,5 +1,3 @@
-> `v2` is under stable, please use `v1`.
-
 # Cicada
 
 A multi-user music service for self-hosting.
@@ -53,7 +51,7 @@ Download cicada from [releases](https://github.com/mebtte/cicada/releases) and s
 ./cicada start
 ```
 
-Open `localhost:8000` or `{{ip}}:8000` and use `username:cicada/password:cicada` to login. You can get more options by running `cicada -h` or `cicada start -h`.
+Open `localhost:8000` or `{{ip}}:8000` and use `username:cicada/password:cicada` to login. You can get more options by running `cicada start -h` or `cicada -h`.
 
 ### Docker
 
@@ -69,8 +67,6 @@ docker run \
 ```
 
 Also you can use `--user {uid}:{gid}` to map user.
-
-> There is a [tag](https://hub.docker.com/r/mebtte/cicada/tags) list of `cicada` on docker hub, you can deploy the version you want.
 
 ### Docker compose example
 
