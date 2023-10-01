@@ -9,8 +9,6 @@ A multi-user music service for self-hosting.
 
 ![img](./docs/screenshot.png)
 
-> The tag `latest` on docker hub is deprecated, please use tag `v1`.
-
 ## Feature
 
 - No privacy and personal data collection
@@ -128,6 +126,19 @@ docker run -it --rm -v <data>:/data mebtte/cicada:v2 data-fix /data
   <summary>How to migrate ?</summary>
 
 All of data is under `{{data}}` directory, copy or move it to new device.
+
+</details>
+
+<details>
+  <summary>How to login if I forget the password ?</summary>
+
+1. If you are a normal user, you should contact the admin and let him/her help you to change the password. Above operation will also disable 2FA for your account.
+2. If you are an admin, you can let other admins help you to change the password or update the sqlite database using below SQL:
+
+```sql
+UPDATE user SET password = <md5<md5<password>>> WHERE username = <username>;
+UPDATE user SET twoFASecret = NULL WHERE username = <username>;
+```
 
 </details>
 

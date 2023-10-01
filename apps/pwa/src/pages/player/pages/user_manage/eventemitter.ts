@@ -15,9 +15,7 @@ export default new Eventin<
     [EventType.OPEN_CREATE_USER_DIALOG]: null;
     [EventType.RELOAD_DATA]: null;
     [EventType.OPEN_USER_EDIT_DRAWER]: { user: User };
-    [EventType.USER_UPDATED]: NonNullable<Partial<User>> & {
-      id: string;
-    };
+    [EventType.USER_UPDATED]: null;
     [EventType.USER_DELETED]: { id: string };
   }
 >();

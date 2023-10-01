@@ -160,4 +160,5 @@ export default {
     'using Authenticator App like Microsoft Authenticator or Google Authenticator to scan the QR code',
   '2fa_token': '2FA token',
   lack_of_2fa_token: 'lack of 2FA token',
+  '2fa_has_disabled': '2FA has disabled',
 };

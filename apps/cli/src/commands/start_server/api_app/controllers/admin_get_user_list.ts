@@ -3,6 +3,8 @@ import { Response } from '#/server/api/admin_get_user_list';
 import { getAssetPublicPath } from '@/platform/asset';
 import { AssetType } from '#/constants';
 import { USER_TABLE_NAME, User, UserProperty } from '@/constants/db_definition';
+import excludeProperty from '#/utils/exclude_property';
+import { UNUSED_2FA_SECRET_PREFIX } from '@/constants';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -20,6 +22,7 @@ export default async (ctx: Context) => {
       | UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY
       | UserProperty.LAST_ACTIVE_TIMESTAMP
       | UserProperty.MUSIC_PLAY_RECORD_INDATE
+      | UserProperty.TWO_FA_SECRET
     >
   >(
     `
@@ -34,7 +37,8 @@ export default async (ctx: Context) => {
         ${UserProperty.MUSICBILL_MAX_AMOUNT},
         ${UserProperty.CREATE_MUSIC_MAX_AMOUNT_PER_DAY},
         ${UserProperty.LAST_ACTIVE_TIMESTAMP},
-        ${UserProperty.MUSIC_PLAY_RECORD_INDATE}
+        ${UserProperty.MUSIC_PLAY_RECORD_INDATE},
+        ${UserProperty.TWO_FA_SECRET}
       FROM ${USER_TABLE_NAME}
       ORDER BY ${UserProperty.JOIN_TIMESTAMP} DESC
     `,
@@ -42,8 +46,12 @@ export default async (ctx: Context) => {
   );
   return ctx.success<Response>(
     userList.map((user) => ({
-      ...user,
+      ...excludeProperty(user, [UserProperty.TWO_FA_SECRET]),
       avatar: getAssetPublicPath(user.avatar, AssetType.USER_AVATAR),
+      twoFAEnabled: Boolean(
+        user.twoFASecret &&
+          !user.twoFASecret.startsWith(UNUSED_2FA_SECRET_PREFIX),
+      ),
     })),
   );
 };

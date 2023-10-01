@@ -10,4 +10,5 @@ export type Response = {
   musicbillMaxAmount: number;
   createMusicMaxAmountPerDay: number;
   musicPlayRecordIndate: number;
+  twoFAEnabled: boolean;
 }[];
