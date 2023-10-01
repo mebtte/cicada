@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { memo, useCallback, useLayoutEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { MdClose } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
@@ -86,6 +86,12 @@ const Style = styled.div<{ type: NoticeType }>`
     animation-fill-mode: forwards;
   }
 
+  &:hover {
+    > .progress {
+      animation-play-state: paused;
+    }
+  }
+
   ${({ type }) => NOTICE_TYPE_MAP[type].css}
 `;
 
@@ -93,12 +99,6 @@ function NoticeItem({ notice }: { notice: Notice }) {
   const ref = useRef<HTMLDivElement>(null);
   const { id, type, duration, content, visible, top, closable } = notice;
   const onClose = useCallback(() => e.emit(EventType.CLOSE, { id }), [id]);
-
-  useEffect(() => {
-    if (duration !== 0) {
-      window.setTimeout(onClose, duration);
-    }
-  }, [duration, onClose]);
 
   useLayoutEffect(() => {
     e.emit(EventType.UPDATE_HEIGHT, { id, height: ref.current!.clientHeight });
@@ -126,6 +126,7 @@ function NoticeItem({ notice }: { notice: Notice }) {
         <div
           className="progress"
           style={{ animationDuration: `${duration}ms` }}
+          onAnimationEnd={onClose}
         />
       )}
     </Style>
