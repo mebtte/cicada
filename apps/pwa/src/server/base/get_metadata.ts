@@ -14,11 +14,15 @@ async function getMetadata(origin: string) {
   if (status !== 200) {
     throw new ErrorWithCode(statusText, status);
   }
-  const { code, message, data } = (await response.json()) as {
+  const {
+    code,
+    message,
+    data,
+  }: {
     code: ExceptionCode;
     message: string;
     data: Response;
-  };
+  } = await response.json();
   if (code !== ExceptionCode.SUCCESS) {
     throw new ErrorWithCode(message, code);
   }
