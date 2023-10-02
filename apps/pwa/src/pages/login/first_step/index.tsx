@@ -5,7 +5,6 @@ import Input from '@/components/input';
 import Label from '@/components/label';
 import logger from '@/utils/logger';
 import Button, { Variant } from '@/components/button';
-import { ORIGIN } from '#/constants/regexp';
 import { t } from '@/i18n';
 import getMetadata from '@/server/base/get_metadata';
 import server from '@/global_states/server';
@@ -36,10 +35,6 @@ function FirstStep({ toNext }: { toNext: () => void }) {
     setOrigin(event.target.value);
 
   const onSaveOrigin = async () => {
-    if (!ORIGIN.test(origin)) {
-      return notice.error(t('invalid_origin'));
-    }
-
     setLoading(true);
     try {
       const existedServer = server
