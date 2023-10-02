@@ -19,6 +19,8 @@ const Style = styled.div`
   flex-direction: column;
   gap: 20px;
 
+  -webkit-app-region: no-drag;
+
   > .divider {
     height: 1px;
     background-color: ${CSSVariable.COLOR_BORDER};

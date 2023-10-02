@@ -17,8 +17,6 @@ const AnimatedDiv = styled(animated.div)`
 
   width: 320px;
   padding: 30px 20px;
-
-  -webkit-app-region: no-drag;
 `;
 
 function Login() {

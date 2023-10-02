@@ -2,7 +2,7 @@ export default {
   cicada: 'cicada',
   cicada_description: 'a multi-user music service for self-hosting',
   incompatible_tips:
-    'your browser is incompatible with cicada, because lack of below features',
+    "your browser is incompatible with cicada, because it's lack of below features",
   server_origin: 'server origin',
   wrong_server_origin: 'wrong server origin',
   setting: 'setting',
@@ -160,4 +160,5 @@ export default {
     'using Authenticator App like Microsoft Authenticator or Google Authenticator to scan the QR code',
   '2fa_token': '2FA token',
   lack_of_2fa_token: 'lack of 2FA token',
+  '2fa_has_disabled': '2FA has disabled',
 };

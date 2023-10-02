@@ -155,8 +155,9 @@ const zhCN: {
   disable_2fa: '禁用 2FA',
   '2fa_instruction':
     '使用例如 Microsoft Authenticator / Google Authenticator 等验证器扫描二维码',
-  '2fa_token': '双重验证凭证',
-  lack_of_2fa_token: '缺少双重验证凭证',
+  '2fa_token': '2FA 凭证',
+  lack_of_2fa_token: '缺少 2FA 凭证',
+  '2fa_has_disabled': '2FA 已被禁用',
 };
 
 export default zhCN;

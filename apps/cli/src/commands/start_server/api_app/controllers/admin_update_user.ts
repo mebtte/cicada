@@ -48,6 +48,11 @@ const KEY_MAP_HANDLER: Record<
         property: UserProperty.TOKEN_IDENTIFIER,
         value: generateRandomString(TOKEN_IDENTIFIER_LENGTH),
       }),
+      updateUser({
+        id: user.id,
+        property: UserProperty.TWO_FA_SECRET,
+        value: null,
+      }),
     ]);
     return ctx.success(null);
   },

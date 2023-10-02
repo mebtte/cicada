@@ -9,13 +9,16 @@ const Style = styled.div`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   text-align: center;
 
-  > a {
-    color: inherit;
-    text-decoration: none;
+  > .item {
+    margin: 3px 0;
+    > a {
+      color: inherit;
+      text-decoration: none;
 
-    &:hover {
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-      text-decoration: underline;
+      &:hover {
+        color: ${CSSVariable.COLOR_PRIMARY};
+        text-decoration: underline;
+      }
     }
   }
 `;
@@ -25,34 +28,36 @@ function ExtraInfo() {
 
   return (
     <Style>
-      PWA Version:&nbsp;
-      <a
-        href={
-          definition.VERSION.startsWith(BETA_VERSION_START)
-            ? 'https://github.com/mebtte/cicada/tree/beta'
-            : `https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`
-        }
-        target="_blank"
-        rel="noreferrer"
-      >
-        {definition.VERSION}
-      </a>
-      {selectedServer.version ? (
-        <>
-          , Server Version:&nbsp;
-          <a
-            href={
-              selectedServer.version.startsWith(BETA_VERSION_START)
-                ? 'https://github.com/mebtte/cicada/tree/beta'
-                : `https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            {selectedServer.version}
-          </a>
-        </>
-      ) : null}
+      <div className="item">
+        PWA Version:&nbsp;
+        <a
+          href={
+            definition.VERSION.startsWith(BETA_VERSION_START)
+              ? 'https://github.com/mebtte/cicada/tree/beta'
+              : `https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`
+          }
+          target="_blank"
+          rel="noreferrer"
+        >
+          {definition.VERSION}
+        </a>
+      </div>
+      <div className="item">Server Name: {selectedServer.hostname}</div>
+      <div className="item">
+        Server Version:&nbsp;
+        <a
+          href={
+            selectedServer.version.startsWith(BETA_VERSION_START)
+              ? 'https://github.com/mebtte/cicada/tree/beta'
+              : `https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`
+          }
+          target="_blank"
+          rel="noreferrer"
+        >
+          {selectedServer.version}
+        </a>
+      </div>
+      <div className="item">Server Address: {selectedServer.origin}</div>
     </Style>
   );
 }

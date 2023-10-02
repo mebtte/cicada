@@ -9,7 +9,7 @@ import Unsupported from './unsupported';
 function findUnsupportedList(): string[] {
   const unsupportedList: string[] = [];
 
-  if (!window.CSS.supports('height', '1dvh')) {
+  if (!window.CSS.supports('height', '1dvb')) {
     unsupportedList.push('https://caniuse.com/viewport-unit-variants');
   }
 

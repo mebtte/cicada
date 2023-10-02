@@ -50,7 +50,6 @@ function Empty({
         src={emptyImage}
         alt="empty"
         crossOrigin="anonymous"
-        loading="lazy"
       />
       <div className="description">{description}</div>
     </Style>

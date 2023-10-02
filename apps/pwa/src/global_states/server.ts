@@ -74,7 +74,7 @@ window.setInterval(() => {
         });
       });
   }
-}, 1000 * 15);
+}, 1000 * (definition.DEVELOPMENT ? 120 : 15));
 
 export function prefixServerOrigin(path: string) {
   if (path) {

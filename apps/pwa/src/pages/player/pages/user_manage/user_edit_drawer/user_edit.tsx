@@ -63,6 +63,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
   const onSave = async () => {
     setLoading(true);
 
+    let updated = false;
     try {
       if (user.username !== username) {
         await adminUpdateUser({
@@ -70,10 +71,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           key: AdminAllowUpdateKey.USERNAME,
           value: username,
         });
-        e.emit(EventType.USER_UPDATED, {
-          id: user.id,
-          username,
-        });
+        updated = true;
       }
 
       const musicbillMaxAmountNumber = Number(musicbillMaxAmount);
@@ -88,10 +86,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           key: AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT,
           value: musicbillMaxAmountNumber,
         });
-        e.emit(EventType.USER_UPDATED, {
-          id: user.id,
-          musicbillMaxAmount: musicbillMaxAmountNumber,
-        });
+        updated = true;
       }
 
       const createMusicMaxAmountPerDayNumber = Number(
@@ -114,10 +109,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           key: AdminAllowUpdateKey.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,
           value: createMusicMaxAmountPerDayNumber,
         });
-        e.emit(EventType.USER_UPDATED, {
-          id: user.id,
-          createMusicMaxAmountPerDay: createMusicMaxAmountPerDayNumber,
-        });
+        updated = true;
       }
 
       const musicPlayRecordIndateNumber = Number(musicPlayRecordIndate);
@@ -136,10 +128,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           key: AdminAllowUpdateKey.MUSIC_PLAY_RECORD_INDATE,
           value: musicPlayRecordIndateNumber,
         });
-        e.emit(EventType.USER_UPDATED, {
-          id: user.id,
-          musicPlayRecordIndate: musicPlayRecordIndateNumber,
-        });
+        updated = true;
       }
 
       if (user.remark !== remark) {
@@ -157,16 +146,17 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           key: AdminAllowUpdateKey.REMARK,
           value: remark,
         });
-        e.emit(EventType.USER_UPDATED, {
-          id: user.id,
-          remark,
-        });
+        updated = true;
       }
 
-      window.setTimeout(() => onClose(), 0);
+      onClose();
     } catch (error) {
       logger.error(error, 'Failed to update user info');
       notice.error(error.message);
+    }
+
+    if (updated) {
+      e.emit(EventType.USER_UPDATED, null);
     }
 
     setLoading(false);
@@ -247,31 +237,6 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         >
           {t('save')}
         </Button>
-        <Button
-          className="part"
-          disabled={loading}
-          onClick={() =>
-            dialog.password({
-              confirmVariant: Variant.PRIMARY,
-              onConfirm: async (password) => {
-                try {
-                  await adminUpdateUser({
-                    id: user.id,
-                    key: AdminAllowUpdateKey.PASSWORD,
-                    value: password,
-                  });
-                  notice.info(t('password_has_changed'));
-                } catch (error) {
-                  logger.error(error, 'Failed to change password');
-                  notice.error(error.message);
-                  return false;
-                }
-              },
-            })
-          }
-        >
-          {t('change_password')}
-        </Button>
         {user.admin ? null : (
           <Button
             className="part"
@@ -293,10 +258,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
                           captchaValue,
                         });
                         onClose();
-                        e.emit(EventType.USER_UPDATED, {
-                          id: user.id,
-                          admin: 1,
-                        });
+                        e.emit(EventType.USER_UPDATED, null);
                       } catch (error) {
                         logger.error(error, 'Failed to set admin');
                         notice.error(error.message);
@@ -310,6 +272,38 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
             {t('set_as_admin')}
           </Button>
         )}
+        <Button
+          className="part"
+          disabled={loading}
+          onClick={() =>
+            dialog.password({
+              confirmVariant: Variant.PRIMARY,
+              onConfirm: async (password) => {
+                try {
+                  await adminUpdateUser({
+                    id: user.id,
+                    key: AdminAllowUpdateKey.PASSWORD,
+                    value: password,
+                  });
+
+                  if (user.twoFAEnabled) {
+                    notice.info(t('2fa_has_disabled'));
+                  }
+                  notice.info(t('password_has_changed'));
+
+                  onClose();
+                } catch (error) {
+                  logger.error(error, 'Failed to change password');
+                  notice.error(error.message);
+                  return false;
+                }
+              },
+            })
+          }
+        >
+          {user.twoFAEnabled ? `${t('disable_2fa')} / ` : null}
+          {t('change_password')}
+        </Button>
         {user.admin ? null : (
           <Button
             className="part"
