@@ -13,6 +13,7 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { USERNAME_MAX_LENGTH } from '#/constants/user';
 import { useUser } from '@/global_states/server';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import User from './user';
 import { Musicbill } from '../constants';
 import e, { EventType } from '../eventemitter';
@@ -41,8 +42,9 @@ const Title = styled.div`
   font-weight: bold;
   font-size: 16px;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+
+  ${upperCaseFirstLetter}
 `;
-const UserList = styled.div``;
 
 function ShareDrawer({
   open,
@@ -72,7 +74,7 @@ function ShareDrawer({
     >
       <Content>
         <Title>{t('shared_user')}</Title>
-        <UserList>
+        <div>
           <User
             user={musicbill.owner}
             owner
@@ -88,7 +90,7 @@ function ShareDrawer({
               musicbillId={musicbill.id}
             />
           ))}
-        </UserList>
+        </div>
         <Button
           variant={Variant.PRIMARY}
           style={actionStyle}
