@@ -4,29 +4,41 @@ import { ComponentSize } from '@/constants/style';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import loadImage from '@/utils/load_image';
 import logger from '@/utils/logger';
+import { animated, useTransition } from 'react-spring';
 import { Shape } from './constants';
 import intersectionObserver from './intersection_observer';
 
-const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> }> = {
+const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> | null }> = {
   [Shape.CIRCLE]: {
     css: css`
       border-radius: 50%;
     `,
   },
   [Shape.SQUARE]: {
-    css: css``,
+    css: null,
   },
 };
-const Style = styled.img<{ shape: Shape }>`
-  object-fit: cover;
+const Style = styled.div<{ shape: Shape }>`
+  position: relative;
+
+  overflow: hidden;
   aspect-ratio: 1;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
 
   ${({ shape }) => {
     const { css: shapeCss } = SHAPE_MAP[shape];
     return shapeCss;
   }}
+`;
+const Img = styled(animated.img)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 `;
 const preventDefault = (e) => e.preventDefault();
 
@@ -40,8 +52,8 @@ function Cover({
   src: string;
   size?: number | string;
   shape?: Shape;
-} & ImgHTMLAttributes<HTMLImageElement>) {
-  const ref = useRef<HTMLImageElement>(null);
+} & ImgHTMLAttributes<HTMLDivElement>) {
+  const ref = useRef<HTMLDivElement>(null);
   const [currentSrc, setCurrentSrc] = useState(DefaultCover);
 
   useLayoutEffect(() => {
@@ -55,19 +67,30 @@ function Cover({
     return unobserve;
   }, [src]);
 
+  const transitions = useTransition(currentSrc, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
   return (
     <Style
-      ref={ref}
-      crossOrigin="anonymous"
-      {...props}
-      src={currentSrc}
       style={{
         ...style,
         width: size,
       }}
       shape={shape}
-      onDragStart={preventDefault}
-    />
+      ref={ref}
+      {...props}
+    >
+      {transitions((innerStyle, s) => (
+        <Img
+          src={s}
+          style={innerStyle}
+          crossOrigin="anonymous"
+          onDragStart={preventDefault}
+        />
+      ))}
+    </Style>
   );
 }
 
