@@ -22,7 +22,6 @@ const Style = styled(NavLink)`
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   background-color: transparent;
   transition: 300ms;
-  touch-action: none;
 
   > .name {
     flex: 1;

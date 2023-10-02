@@ -1,9 +1,11 @@
-import { ImgHTMLAttributes, useEffect, useState } from 'react';
+import { ImgHTMLAttributes, useLayoutEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '@/constants/style';
-import useEvent from '@/utils/use_event';
 import DefaultCover from '@/asset/default_cover.jpeg';
+import loadImage from '@/utils/load_image';
+import logger from '@/utils/logger';
 import { Shape } from './constants';
+import intersectionObserver from './intersection_observer';
 
 const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> }> = {
   [Shape.CIRCLE]: {
@@ -39,20 +41,26 @@ function Cover({
   size?: number | string;
   shape?: Shape;
 } & ImgHTMLAttributes<HTMLImageElement>) {
-  const [currentSrc, setCurrentSrc] = useState(src);
-  const onError = useEvent(() => setCurrentSrc(DefaultCover));
+  const ref = useRef<HTMLImageElement>(null);
+  const [currentSrc, setCurrentSrc] = useState(DefaultCover);
 
-  useEffect(() => {
-    setCurrentSrc(src || DefaultCover);
+  useLayoutEffect(() => {
+    setCurrentSrc(DefaultCover);
+
+    const unobserve = intersectionObserver.observe(ref.current!, () =>
+      loadImage(src)
+        .then(() => setCurrentSrc(src))
+        .catch((error) => logger.error(error, `Failed to load cover "${src}"`)),
+    );
+    return unobserve;
   }, [src]);
 
   return (
     <Style
-      loading="lazy"
+      ref={ref}
       crossOrigin="anonymous"
       {...props}
       src={currentSrc}
-      onError={onError}
       style={{
         ...style,
         width: size,

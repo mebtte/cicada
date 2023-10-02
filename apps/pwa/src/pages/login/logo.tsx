@@ -24,7 +24,6 @@ function Logo() {
           src="/logo.png"
           alt="logo"
           crossOrigin="anonymous"
-          loading="lazy"
         />
       </Link>
     </Style>

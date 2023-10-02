@@ -36,6 +36,10 @@ export default () => {
       title = t('public_musicbill_collection');
       break;
     }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.MUSIC_PLAY_RECORD: {
+      title = t('music_play_record_short');
+      break;
+    }
     default: {
       title = t('cicada');
     }

@@ -2,7 +2,7 @@ export default {
   cicada: 'cicada',
   cicada_description: 'a multi-user music service for self-hosting',
   incompatible_tips:
-    'your browser is incompatible with cicada, because lack of below features',
+    "your browser is incompatible with cicada, because it's lack of below features",
   server_origin: 'server origin',
   wrong_server_origin: 'wrong server origin',
   setting: 'setting',
