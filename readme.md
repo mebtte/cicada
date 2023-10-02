@@ -59,7 +59,7 @@ Open `localhost:8000` or `{{ip}}:8000` and use `username:cicada/password:cicada`
 docker run \
   -d \
   --restart=always \
-  -p 8000:80 \
+  -p 80:8000 \
   -v <data>:/data \
   --name cicada \
   mebtte/cicada:v2 \
@@ -82,7 +82,7 @@ services:
 
     command: start --port 8000 --data /data
     ports:
-      - 8000:80
+      - 80:8000
     volumes:
       - /path/data:/data
 ```
