@@ -11,13 +11,13 @@ A multi-user music service for self-hosting.
 
 ## Feature
 
-- No privacy and personal data collection
+- No collection of privacy
 - Multiple users
 - Shared musicbill between users
-- Existing music and music directory import
-- [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps) support both desktop and mobile
+- Support of importing music and music directory
+- [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps) supports both desktop and mobile
 - Separation of playlist and custom playqueue
-- Music/singer/musicbill/lyric search
+- Search of music, singer, musicbill and lyric
 - [System media shortcut](https://developer.mozilla.org/docs/Web/API/MediaSession)
 - Support of building APP from [HTTP API](./apps/pwa/src/server)
 - Support of Two-Factor Authentication
