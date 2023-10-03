@@ -5,9 +5,9 @@ import PageContainer from '@/components/page_container';
 import FirstStep from './first_step';
 import SecondStep from './second_step';
 import { Step } from './constants';
+import AppRegion from './app_region';
 
 const Style = styled(PageContainer)`
-  -webkit-app-region: drag;
   overflow: hidden;
 `;
 const AnimatedDiv = styled(animated.div)`
@@ -50,6 +50,7 @@ function Login() {
           }
         }
       })}
+      <AppRegion />
     </Style>
   );
 }
