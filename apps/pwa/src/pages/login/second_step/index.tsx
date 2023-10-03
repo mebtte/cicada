@@ -152,6 +152,15 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
           onChange={onPasswordChange}
           maxLength={PASSWORD_MAX_LENGTH}
           disabled={loading}
+          onKeyDown={(event) => {
+            if (
+              event.key.toLowerCase() === 'enter' &&
+              username.length !== 0 &&
+              password.length !== 0
+            ) {
+              onLogin();
+            }
+          }}
         />
       </Label>
       <Button
