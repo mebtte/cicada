@@ -59,6 +59,11 @@ function InputContent({
             maxLength={options.maxLength}
             type={options.inputType}
             disabled={confirming || canceling}
+            onKeyDown={(event) => {
+              if (event.key.toLowerCase() === 'enter') {
+                onConfirm();
+              }
+            }}
           />
         </Label>
       </Content>
