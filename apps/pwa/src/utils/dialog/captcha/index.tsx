@@ -58,7 +58,7 @@ function CaptchaContent({
     }
 
     if (!captchaValue) {
-      return notice.error(t('please_enter_captcha'));
+      return notice.error(t('empty_captcha_warning'));
     }
 
     setConfirming(true);

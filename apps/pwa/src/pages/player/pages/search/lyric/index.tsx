@@ -12,6 +12,7 @@ import { CSSProperties, useContext } from 'react';
 import Button, { Variant } from '@/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { t } from '@/i18n';
 import { TOOLBAR_HEIGHT, MINI_MODE_TOOLBAR_HEIGHT } from '../constants';
 import { PAGE_SIZE } from './constants';
 import useData from './use_data';
@@ -69,7 +70,7 @@ function Wrapper() {
     if (!d.value!.total) {
       return (
         <CardContainer style={style}>
-          <Empty description="未找到相关音乐" />
+          <Empty description={t('no_suitable_music')} />
           <Button
             variant={Variant.PRIMARY}
             onClick={() =>
@@ -81,7 +82,7 @@ function Wrapper() {
               })
             }
           >
-            自己创建一首
+            {t('create_music_by_myself')}
           </Button>
         </CardContainer>
       );

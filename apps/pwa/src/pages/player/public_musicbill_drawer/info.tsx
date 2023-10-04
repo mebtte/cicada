@@ -1,12 +1,14 @@
 import styled from 'styled-components';
-import Cover from '@/components/cover';
+import Cover, { Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { Musicbill } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 
+const AVATAR_SIZE = 24;
 const Style = styled.div`
   position: relative;
 
@@ -19,7 +21,7 @@ const Style = styled.div`
     left: 0;
     max-width: 80%;
 
-    padding: 10px 0 0 0;
+    padding: 10px 0 5px 0;
     background-color: rgb(255 255 255 / 0.75);
 
     > .name {
@@ -77,6 +79,14 @@ function Info({ musicbill }: { musicbill: Musicbill }) {
             })
           }
         >
+          <Cover
+            src={getResizedImage({
+              url: user.avatar,
+              size: Math.ceil(AVATAR_SIZE * window.devicePixelRatio),
+            })}
+            size={AVATAR_SIZE}
+            shape={Shape.CIRCLE}
+          />
           <div className="nickname">{user.nickname}</div>
         </div>
       </div>

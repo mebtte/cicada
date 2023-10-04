@@ -43,6 +43,7 @@ import MissingSinger from '../../../components/missing_singer';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
+import { Singer } from './constants';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
@@ -51,11 +52,7 @@ const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((mt) => ({
   label: capitalize(MUSIC_TYPE_MAP[mt].label),
   value: mt,
 }));
-interface Singer {
-  id: string;
-  name: string;
-  aliases: string[];
-}
+
 const formatSingerToMultipleSelectOption = (
   singer: Singer,
 ): MultipleSelectOption<Singer> => ({
@@ -130,12 +127,12 @@ function CreateMusicDialog() {
   const [loading, setLoading] = useState(false);
   const onCreate = useEvent(async () => {
     if (!singerList.length) {
-      return notice.error(t('please_select_singers'));
+      return notice.error(t('emtpy_singers_warning'));
     }
 
     const trimmedName = name.trim();
     if (!trimmedName) {
-      return notice.error(t('please_enter_the_name'));
+      return notice.error(t('empty_name_warning'));
     }
 
     if (!asset) {
@@ -229,7 +226,14 @@ function CreateMusicDialog() {
               'supported_formats',
             )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`}
           />
-          <Label label={t('singer_list')} addon={<MissingSinger />}>
+          <Label
+            label={t('singer_list')}
+            addon={
+              <MissingSinger
+                afterCreating={(s) => setSingerList((sl) => [...sl, s])}
+              />
+            }
+          >
             <MultipleSelect<Singer>
               value={singerList.map(formatSingerToMultipleSelectOption)}
               onChange={onSingerListChange}

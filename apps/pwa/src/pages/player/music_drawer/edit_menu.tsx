@@ -229,7 +229,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName.length) {
-                  notice.error(t('please_enter_the_name'));
+                  notice.error(t('empty_name_warning'));
                   return false;
                 }
 
@@ -342,7 +342,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               ),
               onConfirm: async (options) => {
                 if (!options.length) {
-                  notice.error(t('please_select_singers'));
+                  notice.error(t('emtpy_singers_warning'));
                   return false;
                 }
 
