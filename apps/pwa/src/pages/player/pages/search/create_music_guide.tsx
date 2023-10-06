@@ -10,7 +10,7 @@ function CreateMusicGuide() {
   return (
     <TextGuide
       text1={t('no_suitable_music_warning')}
-      text2={t('create_music_by_myself')}
+      text2={t('create_music_by_yourself')}
       onGuide={() =>
         navigate({
           path: ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC,

@@ -101,7 +101,7 @@ function Wrapper() {
               )
             }
           >
-            {t('create_singer_by_myself')}
+            {t('create_singer_by_yourself')}
           </Button>
         </CardContainer>
       );
@@ -149,7 +149,7 @@ function Wrapper() {
         {page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
           <TextGuide
             text1={t('no_suitable_singer_warning')}
-            text2={t('create_singer_by_myself')}
+            text2={t('create_singer_by_yourself')}
             onGuide={() =>
               openCreateSingerDialog((id) =>
                 playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {

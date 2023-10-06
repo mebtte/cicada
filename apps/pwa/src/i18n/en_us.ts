@@ -162,8 +162,8 @@ export default {
   '2fa_has_disabled': '2FA has disabled',
   create_musicbill: 'create musicbill',
   empty_musicbill_warning: 'musicbill is empty',
-  create_music_by_myself: 'create music by myself',
-  create_musicbill_by_myself: 'create musicbill by myself',
+  create_music_by_yourself: 'create music by yourself',
+  create_musicbill_by_yourself: 'create musicbill by yourself',
   no_suitable_musicbill_warning: 'No suitable musicbill ?',
   no_suitable_music_warning: 'No suitable music ?',
   no_suitable_singer_warning: 'No suitable singer ?',
@@ -171,7 +171,7 @@ export default {
   create_singer: 'create singer',
   repeated_name_singer_warning:
     'there is a singer with the same name, are you sure to create forcibly ?',
-  create_singer_by_myself: 'create singer by myself',
+  create_singer_by_yourself: 'create singer by yourself',
   created: 'created',
   accept: 'accept',
   shared_musicbill_invitation_instruction:

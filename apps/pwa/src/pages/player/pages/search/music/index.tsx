@@ -85,7 +85,7 @@ function Wrapper() {
               })
             }
           >
-            {t('create_music_by_myself')}
+            {t('create_music_by_yourself')}
           </Button>
         </CardContainer>
       );

@@ -87,7 +87,7 @@ function Wrapper() {
         <CardContainer style={style}>
           <Empty description={t('no_suitable_musicbill')} />
           <Button variant={Variant.PRIMARY} onClick={openCreateMusicbillDialog}>
-            {t('create_musicbill_by_myself')}
+            {t('create_musicbill_by_yourself')}
           </Button>
         </CardContainer>
       );
@@ -138,7 +138,7 @@ function Wrapper() {
         {page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
           <TextGuide
             text1={t('no_suitable_musicbill_warning')}
-            text2={t('create_musicbill_by_myself')}
+            text2={t('create_musicbill_by_yourself')}
             onGuide={openCreateMusicbillDialog}
           />
         )}
