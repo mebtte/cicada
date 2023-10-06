@@ -4,13 +4,15 @@ import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { memo } from 'react';
 import { Helmet } from 'react-helmet';
 import { IS_MAC_OS } from '@/constants/browser';
+import storage, { Key } from '@/storage';
 
+const appName =
+  (await storage.getItem(Key.CUSTOM_APP_NAME)) || capitalize(t('cicada'));
 const MANIFEST_URL = URL.createObjectURL(
   new Blob(
     [
       JSON.stringify({
-        name: capitalize(t('cicada')),
-        short_name: capitalize(t('cicada')),
+        name: appName,
         description: upperCaseFirstLetter(t('cicada_description')),
         icons: IS_MAC_OS
           ? [
