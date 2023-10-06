@@ -48,6 +48,8 @@ const Style = styled.div<{ type: NoticeType }>`
   right: 20px;
   max-width: min(300px, 75%);
 
+  overflow: hidden;
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   animation: ${slideIn} ${TRANSITION_DURATION}ms ease-in-out;
   transition: all ${TRANSITION_DURATION}ms;
   box-shadow: rgb(0 0 0 / 20%) 0px 3px 5px -1px,

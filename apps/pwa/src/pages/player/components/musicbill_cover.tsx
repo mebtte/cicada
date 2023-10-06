@@ -3,9 +3,11 @@ import styled from 'styled-components';
 import Cover from '@/components/cover';
 import classnames from 'classnames';
 import absoluteFullSize from '@/style/absolute_full_size';
+import { CSSVariable } from '@/global_style';
 
 const Style = styled.div`
   font-size: 0;
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
   &.publiz {
     outline: 2px solid #63d1fa;
@@ -17,6 +19,7 @@ const Style = styled.div`
     &::after {
       content: '';
 
+      border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
       box-shadow: inset 0 0 0 2px #eabec8;
 
       ${absoluteFullSize}

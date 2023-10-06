@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { useTransition, animated } from 'react-spring';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { CSSVariable } from '@/global_style';
 
 const Mask = styled(animated.div)`
   position: fixed;
@@ -26,6 +27,7 @@ const Body = styled(animated.div)`
   overflow: auto;
   ${autoScrollbar}
 
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL} ${CSSVariable.BORDER_RADIUS_NORMAL} 0 0;
   box-shadow: 0px 8px 10px -5px rgba(0, 0, 0, 0.2),
     0px 16px 24px 2px rgba(0, 0, 0, 0.14), 0px 6px 30px 5px rgba(0, 0, 0, 0.12);
   background-color: #fff;

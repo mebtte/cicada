@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Cover from '@/components/cover';
+import Cover, { Shape } from '@/components/cover';
 import day from '#/utils/day';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
@@ -43,7 +43,7 @@ const Style = styled.div`
 function Info({ user }: { user: UserDetail }) {
   return (
     <Style>
-      <Cover src={user.avatar} size="100%" />
+      <Cover src={user.avatar} size="100%" shape={Shape.SQUARE} />
       <div className="info">
         <div className="nickname">{user.nickname}</div>
         <div className="username">@{user.username}</div>

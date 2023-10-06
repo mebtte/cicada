@@ -3,6 +3,7 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties, useEffect, useState } from 'react';
 import { t } from '@/i18n';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 
 const style: CSSProperties = {
   flex: 1,
@@ -32,7 +33,7 @@ function Filter() {
       value={keyword}
       onChange={(e) => setKeyword(e.target.value)}
       type="search"
-      placeholder={t('search')}
+      placeholder={upperCaseFirstLetter(t('search'))}
     />
   );
 }

@@ -6,7 +6,7 @@ import { CSSProperties } from 'react';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
-import Cover from '@/components/cover';
+import Cover, { Shape } from '@/components/cover';
 import autoScrollbar from '@/style/auto_scrollbar';
 import useData from './use_data';
 import { MusicDetail } from './constants';
@@ -51,7 +51,7 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
     <DetailBox style={style}>
       <div className="scrollable">
         <div className="first-screen">
-          <Cover src={music.cover} size="100%" />
+          <Cover src={music.cover} size="100%" shape={Shape.SQUARE} />
           <Info music={music} />
           <SingerList singerList={music.singers} />
           {music.forkFromList.length ? (

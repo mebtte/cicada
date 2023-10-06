@@ -1,6 +1,7 @@
 import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components/button';
 import { CSSProperties, useState } from 'react';
+import Label from '@/components/label';
 import FileSelect from '@/components/file_select';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
@@ -48,14 +49,15 @@ function FileSelectContent({
     <Container>
       {options.title ? <Title>{options.title}</Title> : null}
       <Content style={contentStyle}>
-        <FileSelect
-          label={options.label}
-          value={file}
-          onChange={(f) => setFile(f)}
-          disabled={confirming || canceling}
-          acceptTypes={options.acceptTypes}
-          placeholder={options.placeholder}
-        />
+        <Label label={options.label}>
+          <FileSelect
+            value={file}
+            onChange={(f) => setFile(f)}
+            disabled={confirming || canceling}
+            acceptTypes={options.acceptTypes}
+            placeholder={options.placeholder}
+          />
+        </Label>
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>

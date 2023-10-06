@@ -14,6 +14,7 @@ const Style = styled.div<{ active: boolean }>`
   user-select: none;
   cursor: pointer;
   transition: all 300ms;
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
   > .label {
     font-size: 14px;

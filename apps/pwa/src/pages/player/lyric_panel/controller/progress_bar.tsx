@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Slider from '@/components/slider';
+import Slider, { Edge } from '@/components/slider';
 import { CSSVariable } from '@/global_style';
 import absoluteFullSize from '@/style/absolute_full_size';
 import playerEventemitter, {
@@ -51,6 +51,7 @@ function Wrapper({
     <Style>
       <div className="time">{formatSecond(currentMillisecond / 1000)}</div>
       <Slider
+        edge={Edge.SQUARE}
         current={percent}
         onChange={onTimeChange}
         className="slider"

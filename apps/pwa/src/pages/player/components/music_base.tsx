@@ -9,10 +9,6 @@ import { Singer as SingerType } from '../constants';
 const Style = styled.div<{ active: boolean }>`
   cursor: pointer;
   user-select: none;
-  background-clip: padding-box;
-  border-bottom: 2px solid transparent;
-  border-left-color: ${CSSVariable.COLOR_PRIMARY};
-  border-left-style: solid;
   -webkit-tap-highlight-color: transparent;
 
   display: flex;
@@ -68,18 +64,17 @@ const Style = styled.div<{ active: boolean }>`
   }
 
   &:hover {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE} !important;
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   }
 
   &:active {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO} !important;
+    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   }
 
   ${({ active }) => css`
     background-color: ${active
-      ? CSSVariable.BACKGROUND_COLOR_LEVEL_ONE
+      ? `${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO} !important`
       : 'transparent'};
-    border-left-width: ${active ? 5 : 0}px;
 
     > .index {
       color: ${active

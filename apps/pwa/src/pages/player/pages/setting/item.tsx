@@ -9,6 +9,7 @@ const Style = styled.div`
   gap: 10px;
   padding: 20px;
 
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
 
   > .label {

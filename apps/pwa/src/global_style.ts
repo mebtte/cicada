@@ -21,6 +21,8 @@ export enum CSSVariable {
   BACKGROUND_COLOR_LEVEL_THREE = 'var(--background-color-level-three)',
   BACKGROUND_COLOR_LEVEL_FOUR = 'var(--background-color-level-four)',
   BACKGROUND_COLOR_LEVEL_FIVE = 'var(--background-color-level-five)',
+
+  BORDER_RADIUS_NORMAL = 'var(--border-radius-normal)',
 }
 
 const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
@@ -44,6 +46,8 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.BACKGROUND_COLOR_LEVEL_THREE]: 'rgb(44 182 125 / 0.14)',
   [CSSVariable.BACKGROUND_COLOR_LEVEL_FOUR]: 'rgb(44 182 125 / 0.18)',
   [CSSVariable.BACKGROUND_COLOR_LEVEL_FIVE]: 'rgb(44 182 125 / 0.22)',
+
+  [CSSVariable.BORDER_RADIUS_NORMAL]: '4px',
 };
 
 export const GlobalStyle = createGlobalStyle`

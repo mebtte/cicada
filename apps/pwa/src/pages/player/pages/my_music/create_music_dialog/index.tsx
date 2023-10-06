@@ -216,16 +216,17 @@ function CreateMusicDialog() {
               disabled={loading}
             />
           </Label>
-          <FileSelect
-            label={t('music_file')}
-            value={asset}
-            onChange={onAssetChange}
-            disabled={loading}
-            acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
-            placeholder={`${t('please_select_the_music_file')}, ${t(
-              'supported_formats',
-            )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`}
-          />
+          <Label label={t('music_file')}>
+            <FileSelect
+              value={asset}
+              onChange={onAssetChange}
+              disabled={loading}
+              acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
+              placeholder={`${t('please_select_the_music_file')}, ${t(
+                'supported_formats',
+              )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`}
+            />
+          </Label>
           <Label
             label={t('singer_list')}
             addon={

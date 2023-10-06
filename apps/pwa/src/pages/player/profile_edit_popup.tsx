@@ -40,6 +40,7 @@ const Style = styled.div`
     align-items: center;
     gap: 10px;
 
+    border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
     cursor: pointer;
     transition: 300ms;
 

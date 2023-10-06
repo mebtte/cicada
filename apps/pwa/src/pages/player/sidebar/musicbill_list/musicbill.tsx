@@ -22,6 +22,7 @@ const Style = styled(NavLink)`
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   background-color: transparent;
   transition: 300ms;
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
   > .name {
     flex: 1;

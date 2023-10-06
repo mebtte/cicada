@@ -5,10 +5,16 @@ import DefaultCover from '@/asset/default_cover.jpeg';
 import loadImage from '@/utils/load_image';
 import logger from '@/utils/logger';
 import { animated, useTransition } from 'react-spring';
+import { CSSVariable } from '@/global_style';
 import { Shape } from './constants';
 import intersectionObserver from './intersection_observer';
 
 const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> | null }> = {
+  [Shape.ROUNDED]: {
+    css: css`
+      border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
+    `,
+  },
   [Shape.CIRCLE]: {
     css: css`
       border-radius: 50%;
@@ -44,7 +50,7 @@ const preventDefault = (e) => e.preventDefault();
 
 function Cover({
   size = ComponentSize.NORMAL,
-  shape = Shape.SQUARE,
+  shape = Shape.ROUNDED,
   src,
   style,
   ...props
