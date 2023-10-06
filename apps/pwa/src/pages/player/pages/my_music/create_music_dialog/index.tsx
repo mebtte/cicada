@@ -136,7 +136,7 @@ function CreateMusicDialog() {
     }
 
     if (!asset) {
-      return notice.error(t('please_select_the_music_file'));
+      return notice.error(t('empty_file_warning'));
     }
 
     setLoading(true);
@@ -222,7 +222,7 @@ function CreateMusicDialog() {
               onChange={onAssetChange}
               disabled={loading}
               acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
-              placeholder={`${t('please_select_the_music_file')}, ${t(
+              placeholder={`${t('empty_file_warning')}, ${t(
                 'supported_formats',
               )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`}
             />

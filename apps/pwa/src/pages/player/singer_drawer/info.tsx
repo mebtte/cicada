@@ -16,6 +16,7 @@ const Style = styled.div`
 
     padding: 10px 20px;
     background-color: rgb(255 255 255 / 0.75);
+    border-top-right-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
     > .name {
       font-size: 28px;

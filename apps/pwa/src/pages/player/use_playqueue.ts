@@ -176,7 +176,7 @@ export default (playlist: MusicWithSingerAliases[]) => {
           ]);
           return setCurrentPosition(0);
         }
-        notice.info(`下一首将播放"${music.name}"`);
+        notice.info(t('next_music_info', music.name));
         setPlayqueue([
           ...playqueue.slice(0, currentPosition + 1),
           {

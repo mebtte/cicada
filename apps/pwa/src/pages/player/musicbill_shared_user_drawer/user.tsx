@@ -14,6 +14,8 @@ import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import deleteMusicbillSharedUser from '@/server/api/delete_musicbill_shared_user';
 import getResizedImage from '@/server/asset/get_resized_image';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import { t } from '@/i18n';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -90,9 +92,15 @@ function User({
       <div className="nickname">{user.nickname}</div>
       <div className="actions">
         {owner ? (
-          <MdOutlinePersonPin style={statusStyle} title="所有者" />
+          <MdOutlinePersonPin
+            style={statusStyle}
+            title={upperCaseFirstLetter(t('owner'))}
+          />
         ) : accepted ? null : (
-          <MdOutlineForwardToInbox style={statusStyle} title="已发送邀请" />
+          <MdOutlineForwardToInbox
+            style={statusStyle}
+            title={upperCaseFirstLetter(t('invitation_has_sent'))}
+          />
         )}
         {deletable ? (
           <IconButton
@@ -100,7 +108,7 @@ function User({
             onClick={(event) => {
               event.stopPropagation();
               return dialog.confirm({
-                title: '确定从共享名单中移除吗?',
+                title: t('remove_user_from_shared_musicbill_question'),
                 onConfirm: async () => {
                   try {
                     await deleteMusicbillSharedUser({
@@ -112,7 +120,10 @@ function User({
                       silence: true,
                     });
                   } catch (error) {
-                    logger.error(error, '移除乐单共享用户失败');
+                    logger.error(
+                      error,
+                      'Failed to remove user from shared musicbill',
+                    );
                     notice.error(error.message);
                   }
                 },

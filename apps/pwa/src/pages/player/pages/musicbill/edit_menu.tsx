@@ -23,6 +23,7 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
 import { Variant } from '@/components/button';
 import { useUser } from '@/global_states/server';
+import { t } from '@/i18n';
 import e, { EventType } from './eventemitter';
 import { Musicbill, ZIndex } from '../../constants';
 import playerEventemitter, {
@@ -64,14 +65,14 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
       <Style onClick={onClose}>
         <MenuItem
           style={itemStyle}
-          label="修改封面"
+          label={t('edit_cover')}
           icon={<MdImage />}
           onClick={() =>
             dialog.imageCut({
-              title: '修改封面',
+              title: t('edit_cover'),
               onConfirm: async (cover) => {
                 if (!cover) {
-                  notice.error('请选择封面');
+                  notice.error(t('empty_cover_warning'));
                   return false;
                 }
                 try {
@@ -99,18 +100,18 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
         />
         <MenuItem
           style={itemStyle}
-          label="修改名字"
+          label={t('edit_name')}
           icon={<MdTitle />}
           onClick={() =>
             dialog.input({
-              title: '修改名字',
-              label: '名字',
+              title: t('edit_name'),
+              label: t('name'),
               initialValue: musicbill.name,
               maxLength: NAME_MAX_LENGTH,
               onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName) {
-                  notice.error('请输入名字');
+                  notice.error(t('empty_name_warning'));
                   return false;
                 }
                 if (trimmedName !== musicbill.name) {
@@ -125,7 +126,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                       silence: false,
                     });
                   } catch (error) {
-                    logger.error(error, '更新乐单名字失败');
+                    logger.error(error, "Failed to update musicbill's name");
                     notice.error(error.message);
                     return false;
                   }
@@ -136,14 +137,17 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
         />
         <MenuItem
           style={itemStyle}
-          label={musicbill.public ? '设为隐蔽乐单' : '设为公开乐单'}
+          label={
+            musicbill.public
+              ? t('set_musicbill_as_private')
+              : t('set_musicbill_as_public')
+          }
           icon={musicbill.public ? <MdPublicOff /> : <MdPublic />}
           onClick={() => {
             if (musicbill.public) {
               return dialog.confirm({
-                title: '是否将乐单设为隐藏?',
-                content:
-                  '设为隐藏将会从个人主页移除该乐单, 其他用户无法搜索和收藏, 且会从用户的收藏列表中移除',
+                title: t('question_of_setting_musicbill_as_private'),
+                content: t('instruction_of_setting_musicbill_as_private'),
                 onConfirm: async () =>
                   updateMusicbill({
                     id: musicbill.id,
@@ -160,15 +164,14 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                       ),
                     )
                     .catch((error) => {
-                      logger.error(error, "Fail to update musicbill's public");
+                      logger.error(error, 'Fail to set musicbill as private');
                       notice.error(error.message);
                     }),
               });
             }
             return dialog.confirm({
-              title: '是否将乐单设为公开?',
-              content:
-                '公开的乐单将会出现在个人主页上, 且其他用户可以进行搜索和收藏',
+              title: t('question_of_setting_musicbill_as_public'),
+              content: t('instruction_of_setting_musicbill_as_public'),
               onConfirm: async () =>
                 updateMusicbill({
                   id: musicbill.id,
@@ -182,7 +185,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     }),
                   )
                   .catch((error) => {
-                    logger.error(error, '更新乐单失败');
+                    logger.error(error, 'Failed to set musicbill as public');
                     notice.error(error.message);
                   }),
             });
@@ -191,11 +194,11 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
         {musicbill.owner.id === user.id ? (
           <MenuItem
             style={itemStyle}
-            label="删除乐单"
+            label={t('delete_musicbill')}
             icon={<MdDeleteOutline style={dangerStyle} />}
             onClick={() =>
               dialog.captcha({
-                confirmText: '删除乐单',
+                confirmText: t('delete_musicbill'),
                 confirmVariant: Variant.DANGER,
                 onConfirm: async ({ captchaId, captchaValue }) => {
                   try {
@@ -212,7 +215,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                       path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
                     });
                   } catch (error) {
-                    logger.error(error, '删除乐单失败');
+                    logger.error(error, 'Failed to delete musicbill');
                     notice.error(error.message);
 
                     return false;
@@ -224,7 +227,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
         ) : (
           <MenuItem
             style={itemStyle}
-            label="退出共享乐单"
+            label={t('leave_shared_musicbill')}
             icon={<MdExitToApp style={dangerStyle} />}
             onClick={() =>
               quitSharedMusicbill({

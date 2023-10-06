@@ -125,7 +125,7 @@ function ShareDrawer({
             })
           }
         >
-          邀请用户
+          {t('invite_user')}
         </Button>
         {owned ? null : (
           <Button
@@ -141,7 +141,7 @@ function ShareDrawer({
               })
             }
           >
-            退出共享
+            {t('leave_shared_musicbill_short')}
           </Button>
         )}
       </Content>

@@ -165,7 +165,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               title: t('edit_cover'),
               onConfirm: async (cover) => {
                 if (!cover) {
-                  notice.error(t('please_select_a_cover'));
+                  notice.error(t('empty_cover_warning'));
                   return false;
                 }
                 try {
@@ -384,7 +384,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               ),
               onConfirm: async (file) => {
                 if (!file) {
-                  notice.error(t('please_select_a_file'));
+                  notice.error(t('empty_file_warning'));
                   return false;
                 }
                 try {

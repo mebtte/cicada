@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import notice from '@/utils/notice';
 import getMusic from '@/server/api/get_music';
 import logger from '@/utils/logger';
+import { t } from '@/i18n';
 import { MusicWithSingerAliases } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 
@@ -36,7 +37,7 @@ export default () => {
             (m) => !currentMusicIdList.includes(m.id),
           );
           if (!newMusicList.length) {
-            notice.info('播放列表已包含这些音乐');
+            notice.info(t('music_list_are_added_to_playlist_unsuccessfully'));
             return pl;
           }
           const newPlaylist = [
@@ -44,7 +45,12 @@ export default () => {
             ...newMusicList.map((m) => ({ ...m, index: 0 })),
           ];
           const { length } = newPlaylist;
-          notice.info(`已添加${newMusicList.length}首音乐到播放列表`);
+          notice.info(
+            t(
+              'music_list_are_added_to_playlist',
+              newMusicList.length.toString(),
+            ),
+          );
           return newPlaylist.map((m, index) => ({
             ...m,
             index: length - index,
@@ -99,7 +105,7 @@ export default () => {
               ),
             ),
           )
-          .catch((error) => logger.error(error, 'Fail to get music')),
+          .catch((error) => logger.error(error, 'Failed to get music')),
     );
     const unlistenMusicDeleted = eventemitter.listen(
       EventType.MUSIC_DELETED,
@@ -136,7 +142,7 @@ export default () => {
                   ),
                 ),
               )
-              .catch((error) => logger.error(error, 'Fail to get music'));
+              .catch((error) => logger.error(error, 'Failed to get music'));
           }
         }
       },

@@ -1,3 +1,4 @@
+import { t } from '@/i18n';
 import getUser from '@/server/api/get_user';
 
 export type UserDetail = AsyncReturnType<typeof getUser>;
@@ -8,8 +9,8 @@ export enum Tab {
 }
 
 export const TAB_MAP_LABEL: Record<Tab, string> = {
-  [Tab.MUSIC]: '创建的音乐',
-  [Tab.MUSICBILL]: '乐单',
+  [Tab.MUSIC]: t('music_created'),
+  [Tab.MUSICBILL]: t('musicbill'),
 };
 
 export const MINI_INFO_HEIGHT = 50;

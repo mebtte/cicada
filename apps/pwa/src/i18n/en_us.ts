@@ -87,7 +87,7 @@ export default {
   no_modify_record: 'no modify record',
   no_public_musicbill: 'no public musicbill',
   edit_cover: 'edit cover',
-  please_select_a_cover: 'please select a cover',
+  empty_cover_warning: 'please select a cover',
   reset_cover: 'reset cover',
   reset_cover_question: 'are you sure to reset cover ?',
   edit_lyric: 'edit lyric',
@@ -98,7 +98,7 @@ export default {
   emtpy_singers_warning: 'please select singers',
   modify_file_of_music: 'modify file of music',
   file_of_music: 'file of music',
-  please_select_a_file: 'please select a file',
+  empty_file_warning: 'please select a file',
   one_of_formats: 'one of formats: %s1',
   modify_fork_from: 'modify fork-from',
   fork_from: 'fork-from',
@@ -116,7 +116,6 @@ export default {
   auto_play_next_after_seconds: 'audo play next after %s1 seconds',
   can_not_connect_to_server_temporarily:
     'can not connect to server temporarily',
-  please_select_the_music_file: 'please select the music file',
   music_type_short: 'type',
   music_type_song: 'song',
   music_type_instrument: 'instrument',
@@ -176,4 +175,28 @@ export default {
   accept: 'accept',
   shared_musicbill_invitation_instruction:
     '%s1 invites you to share musicbill %s2',
+  invite_user: 'invite user',
+  leave_shared_musicbill_short: 'leave',
+  leave_shared_musicbill: 'leave shared musicbill',
+  owner: 'owner',
+  invitation_has_sent: 'invitation has sent',
+  remove_user_from_shared_musicbill_question:
+    'are you sure to remove this user from shared musicbill ?',
+  delete_musicbill: 'delete musicbill',
+  set_musicbill_as_public: 'set musicbill as public',
+  set_musicbill_as_private: 'set musicbill as private',
+  question_of_setting_musicbill_as_public:
+    'are you sure to set this musicbill as public ?',
+  instruction_of_setting_musicbill_as_public:
+    'public musicbill will appear in your profile and can be searched and collected by others',
+  question_of_setting_musicbill_as_private:
+    'are you sure to set this musicbill as private ?',
+  instruction_of_setting_musicbill_as_private:
+    'setting musicbill as private will remove it from your profile, others can not serach it or collect it, and it will be removed from collection list of others that collect it',
+  music_created: 'music created',
+  join_at: 'join at %s1',
+  music_list_are_added_to_playlist: '%s1 musics are added to playlist',
+  music_list_are_added_to_playlist_unsuccessfully:
+    'playlist has included these music already',
+  next_music_info: 'next music is %s1',
 };
