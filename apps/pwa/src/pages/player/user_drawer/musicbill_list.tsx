@@ -6,6 +6,7 @@ import { MdOutlineMusicNote } from 'react-icons/md';
 import Empty from '@/components/empty';
 import { CSSProperties } from 'react';
 import { t } from '@/i18n';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { UserDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -80,7 +81,11 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
       }
     >
       <div className="cover-box">
-        <Cover className="cover" src={musicbill.cover} size="100%" />
+        <Cover
+          className="cover"
+          src={getResizedImage({ url: musicbill.cover, size: 400 })}
+          size="100%"
+        />
         <div className="music-count">
           <MdOutlineMusicNote />
           <div className="count">{musicbill.musicCount}</div>

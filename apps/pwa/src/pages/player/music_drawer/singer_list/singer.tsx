@@ -19,6 +19,7 @@ const Style = styled.div`
   transition: 300ms;
   cursor: pointer;
   background-color: transparent;
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
   > .name {
     flex: 1;

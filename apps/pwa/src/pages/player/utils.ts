@@ -7,27 +7,28 @@ import createSingerRequest from '@/server/api/create_singer';
 import { Variant } from '@/components/button';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
+import { t } from '@/i18n';
 import { Music, SingerWithAliases } from './constants';
 import e, { EventType } from './eventemitter';
 
 export function openCreateMusicbillDialog() {
   return dialog.input({
-    title: '创建乐单',
-    label: '名字',
+    title: t('create_musicbill'),
+    label: t('name'),
     maxLength: MUSICBILL_NAME_MAX_LENGTH,
     confirmVariant: Variant.PRIMARY,
-    confirmText: '创建',
+    confirmText: t('create'),
     onConfirm: async (name: string) => {
       const trimmedName = name.replace(/\s+/, ' ').trim();
       if (!trimmedName.length) {
-        notice.error('请输入名字');
+        notice.error(t('empty_name_warning'));
         return false;
       }
       try {
         const id = await createMusicbillRequest(trimmedName);
         e.emit(EventType.MUSICBILL_CREATED, { id });
       } catch (error) {
-        logger.error(error, '创建乐单失败');
+        logger.error(error, 'Failed to create musicbill');
         notice.error(error.message);
         return false;
       }
@@ -45,7 +46,7 @@ export function openCreateSingerDialog(callback: (id: string) => void) {
   }) => {
     const trimmedName = name.replace(/\s+/g, ' ').trim();
     if (!trimmedName) {
-      notice.error('请输入名字');
+      notice.error(t('empty_name_warning'));
       return false;
     }
 
@@ -53,12 +54,10 @@ export function openCreateSingerDialog(callback: (id: string) => void) {
       const id = await createSingerRequest({ name: trimmedName, force });
       callback(id);
     } catch (error) {
-      logger.error(error, '创建歌手失败');
+      logger.error(error, 'Failed to create singer');
       if (error.code === ExceptionCode.SINGER_ALREADY_EXISTED) {
         dialog.confirm({
-          title: '歌手已存在, 是否仍要创建?',
-          content:
-            '重复的歌手难以进行分类, 通常情况下只有两个歌手同名才会重复创建',
+          title: t('repeated_name_singer_warning'),
           onConfirm: () => void createSinger({ name, force: true }),
         });
       } else {
@@ -68,11 +67,11 @@ export function openCreateSingerDialog(callback: (id: string) => void) {
     }
   };
   return dialog.input({
-    title: '创建歌手',
-    label: '名字',
+    title: t('create_singer'),
+    label: t('name'),
     maxLength: SINGER_NAME_MAX_LENGTH,
     confirmVariant: Variant.PRIMARY,
-    confirmText: '创建',
+    confirmText: t('create'),
     onConfirm: async (name: string) =>
       createSinger({
         name,

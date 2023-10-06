@@ -57,11 +57,12 @@ function Wrapper<Value>({
             : menuIsOpen || isFocused
             ? `${CSSVariable.COLOR_PRIMARY} !important`
             : `${CSSVariable.COLOR_BORDER} !important`,
+          borderRadius: CSSVariable.BORDER_RADIUS_NORMAL,
         }),
         menu: (baseStyles) => ({
           ...baseStyles,
           fontSize: 14,
-          borderRadius: 0,
+          borderRadius: CSSVariable.BORDER_RADIUS_NORMAL,
         }),
         option: (baseStyles, { isSelected, isFocused }) => ({
           ...baseStyles,

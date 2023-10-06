@@ -10,6 +10,7 @@ import { CSSVariable } from '@/global_style';
 import { MdHelpOutline } from 'react-icons/md';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import useData from './use_data';
 import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
@@ -40,6 +41,10 @@ const Content = styled(Container)`
     display: flex;
     align-items: center;
     gap: 5px;
+
+    > span {
+      ${upperCaseFirstLetter}
+    }
   }
 `;
 

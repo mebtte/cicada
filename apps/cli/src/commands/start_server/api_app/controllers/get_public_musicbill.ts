@@ -39,7 +39,11 @@ export default async (ctx: Context) => {
   }
 
   const [user, musicList, musicbillCollection] = await Promise.all([
-    getUserById(musicbill.userId, [UserProperty.ID, UserProperty.NICKNAME]),
+    getUserById(musicbill.userId, [
+      UserProperty.ID,
+      UserProperty.NICKNAME,
+      UserProperty.AVATAR,
+    ]),
     getDB().all<
       Pick<
         Music,
@@ -103,7 +107,10 @@ export default async (ctx: Context) => {
       MusicbillProperty.USER_ID,
     ]),
     cover: getAssetPublicPath(musicbill.cover, AssetType.MUSICBILL_COVER),
-    user: user!,
+    user: {
+      ...user!,
+      avatar: getAssetPublicPath(user!.avatar, AssetType.USER_AVATAR),
+    },
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],

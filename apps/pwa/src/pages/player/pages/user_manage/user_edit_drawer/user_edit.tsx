@@ -165,9 +165,6 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
   return (
     <Style>
       <Style>
-        <Label className="part" label="ID">
-          <Input disabled defaultValue={user.id} />
-        </Label>
         <Label className="part" label={t('nickname')}>
           <Input disabled defaultValue={user.nickname} />
         </Label>

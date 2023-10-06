@@ -1,11 +1,13 @@
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import styled from 'styled-components';
-import Cover from '@/components/cover';
+import Cover, { Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { useEffect, useState } from 'react';
+import getResizedImage from '@/server/asset/get_resized_image';
 import { MINI_INFO_HEIGHT, UserDetail } from './constants';
 
+const AVATAR_SIZE = 28;
 const Style = styled.div`
   position: absolute;
   top: 0;
@@ -44,7 +46,15 @@ function MiniInfo({ user }: { user: UserDetail }) {
         padding: `0 ${paddingRight + 20}px 0 20px`,
       }}
     >
-      <Cover src={user.avatar} alt="user avatar" />
+      <Cover
+        src={getResizedImage({
+          url: user.avatar,
+          size: Math.ceil(AVATAR_SIZE * window.devicePixelRatio),
+        })}
+        size={AVATAR_SIZE}
+        alt="user avatar"
+        shape={Shape.CIRCLE}
+      />
       <div className="name">{user.nickname}</div>
     </Style>
   );

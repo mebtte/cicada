@@ -13,6 +13,7 @@ import Button, { Variant } from '@/components/button';
 import WidthObserver from '@/components/width_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { t } from '@/i18n';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
@@ -89,7 +90,7 @@ function Wrapper() {
     if (!d.value!.total) {
       return (
         <CardContainer style={style}>
-          <Empty description="未找到相关歌手" />
+          <Empty description={t('no_suitable_singer')} />
           <Button
             variant={Variant.PRIMARY}
             onClick={() =>
@@ -100,7 +101,7 @@ function Wrapper() {
               )
             }
           >
-            自己创建一个
+            {t('create_singer_by_yourself')}
           </Button>
         </CardContainer>
       );
@@ -147,8 +148,8 @@ function Wrapper() {
         ) : null}
         {page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
           <TextGuide
-            text1="找不到想要的歌手?"
-            text2="自己创建一个"
+            text1={t('no_suitable_singer_warning')}
+            text2={t('create_singer_by_yourself')}
             onGuide={() =>
               openCreateSingerDialog((id) =>
                 playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {

@@ -13,6 +13,7 @@ import classnames from 'classnames';
 import { IS_TOUCHABLE } from '@/constants/browser';
 import { flexCenter } from '@/style/flexbox';
 import absoluteFullSize from '@/style/absolute_full_size';
+import { Edge } from './constants';
 
 const THUMB_SIZE = 24;
 const Style = styled.div`
@@ -24,6 +25,11 @@ const Style = styled.div`
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
   transition: 100ms;
+
+  &.${Edge.ROUNDED} {
+    border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
+    overflow: hidden;
+  }
 
   > .progress {
     ${absoluteFullSize}
@@ -66,6 +72,7 @@ const getPointerEventRelativePercent = (
 };
 
 function Slider({
+  edge = Edge.ROUNDED,
   current,
   onChange,
   max = 1,
@@ -73,6 +80,7 @@ function Slider({
   secondTrack,
   ...props
 }: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
+  edge?: Edge;
   current: number;
   onChange?: (v: number) => void;
   max?: number;
@@ -124,6 +132,7 @@ function Slider({
       className={classnames(
         {
           untouchable: !IS_TOUCHABLE,
+          [edge]: true,
         },
         className,
       )}

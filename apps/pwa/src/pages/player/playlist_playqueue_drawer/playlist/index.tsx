@@ -16,6 +16,7 @@ import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
 import { flexCenter } from '@/style/flexbox';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { t } from '@/i18n';
 import { TAB_LIST_HEIGHT } from '../constants';
 import Context from '../../context';
 import TabContent from '../tab_content';
@@ -140,7 +141,9 @@ function Playlist({ style }: { style: unknown }) {
         </div>
       ) : (
         <div className="content empty">
-          <Empty description={keyword ? '未找到合适的音乐' : '空的播放列表'} />
+          <Empty
+            description={keyword ? t('no_suitable_music') : t('empty_playlist')}
+          />
         </div>
       )}
       <Toolbar onKeywordChange={onKeywordChange} />

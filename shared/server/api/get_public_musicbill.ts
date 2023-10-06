@@ -7,6 +7,7 @@ export type Response = {
   user: {
     id: string;
     nickname: string;
+    avatar: string;
   };
   musicList: {
     id: string;

@@ -13,6 +13,7 @@ import Button, { Variant } from '@/components/button';
 import WidthObserver from '@/components/width_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { t } from '@/i18n';
 import {
   PAGE_SIZE,
   TOOLBAR_HEIGHT,
@@ -84,9 +85,9 @@ function Wrapper() {
     if (!d.value!.total) {
       return (
         <CardContainer style={style}>
-          <Empty description="未找到相关乐单" />
+          <Empty description={t('no_suitable_musicbill')} />
           <Button variant={Variant.PRIMARY} onClick={openCreateMusicbillDialog}>
-            自己创建一个
+            {t('create_musicbill_by_yourself')}
           </Button>
         </CardContainer>
       );
@@ -136,8 +137,8 @@ function Wrapper() {
         ) : null}
         {page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
           <TextGuide
-            text1="找不到想要的乐单?"
-            text2="创建一个"
+            text1={t('no_suitable_musicbill_warning')}
+            text2={t('create_musicbill_by_yourself')}
             onGuide={openCreateMusicbillDialog}
           />
         )}

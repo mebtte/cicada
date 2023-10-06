@@ -41,6 +41,7 @@ const Body = styled(animated.div)`
   max-height: 80%;
 
   background-color: white;
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   transform-origin: bottom;
 
   display: flex;

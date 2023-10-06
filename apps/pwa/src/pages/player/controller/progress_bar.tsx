@@ -1,4 +1,4 @@
-import Slider from '@/components/slider';
+import Slider, { Edge } from '@/components/slider';
 import { CSSProperties } from 'react';
 import styled from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
@@ -35,6 +35,7 @@ function Progress({
 
   return (
     <Slider
+      edge={Edge.SQUARE}
       current={percent}
       onChange={onChange}
       style={style}

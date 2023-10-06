@@ -20,6 +20,7 @@ const Style = styled.button<{ size: ComponentSize }>`
   align-items: center;
   justify-content: center;
 
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   outline: none;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   border: none;

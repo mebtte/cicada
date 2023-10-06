@@ -7,6 +7,7 @@ import ErrorCard from '@/components/error_card';
 import List from 'react-list';
 import Empty from '@/components/empty';
 import { useContext } from 'react';
+import { t } from '@/i18n';
 import { Musicbill } from '../../constants';
 import { FILTER_HEIGHT, INFO_HEIGHT } from './constants';
 import playerEventemitter, {
@@ -99,13 +100,13 @@ function Wrapper({
             }
             return (
               <StatusContainer style={style}>
-                <Empty description="未找到相关音乐" />
+                <Empty description={t('no_suitable_music')} />
               </StatusContainer>
             );
           }
           return (
             <StatusContainer style={style}>
-              <Empty description="乐单暂未收录音乐" />
+              <Empty description={t('empty_musicbill_warning')} />
             </StatusContainer>
           );
         }

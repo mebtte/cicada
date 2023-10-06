@@ -15,7 +15,7 @@ const Input = styled.input`
   height: ${ComponentSize.NORMAL}px;
 
   background-color: #fff;
-  border-radius: 0;
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   border: 1px solid ${CSSVariable.COLOR_BORDER};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   font-size: 14px;

@@ -43,6 +43,7 @@ import MissingSinger from '../../../components/missing_singer';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
+import { Singer } from './constants';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
@@ -51,11 +52,7 @@ const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((mt) => ({
   label: capitalize(MUSIC_TYPE_MAP[mt].label),
   value: mt,
 }));
-interface Singer {
-  id: string;
-  name: string;
-  aliases: string[];
-}
+
 const formatSingerToMultipleSelectOption = (
   singer: Singer,
 ): MultipleSelectOption<Singer> => ({
@@ -130,16 +127,16 @@ function CreateMusicDialog() {
   const [loading, setLoading] = useState(false);
   const onCreate = useEvent(async () => {
     if (!singerList.length) {
-      return notice.error(t('please_select_singers'));
+      return notice.error(t('emtpy_singers_warning'));
     }
 
     const trimmedName = name.trim();
     if (!trimmedName) {
-      return notice.error(t('please_enter_the_name'));
+      return notice.error(t('empty_name_warning'));
     }
 
     if (!asset) {
-      return notice.error(t('please_select_the_music_file'));
+      return notice.error(t('empty_file_warning'));
     }
 
     setLoading(true);
@@ -219,17 +216,25 @@ function CreateMusicDialog() {
               disabled={loading}
             />
           </Label>
-          <FileSelect
-            label={t('music_file')}
-            value={asset}
-            onChange={onAssetChange}
-            disabled={loading}
-            acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
-            placeholder={`${t('please_select_the_music_file')}, ${t(
-              'supported_formats',
-            )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`}
-          />
-          <Label label={t('singer_list')} addon={<MissingSinger />}>
+          <Label label={t('music_file')}>
+            <FileSelect
+              value={asset}
+              onChange={onAssetChange}
+              disabled={loading}
+              acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
+              placeholder={`${t('empty_file_warning')}, ${t(
+                'supported_formats',
+              )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`}
+            />
+          </Label>
+          <Label
+            label={t('singer_list')}
+            addon={
+              <MissingSinger
+                afterCreating={(s) => setSingerList((sl) => [...sl, s])}
+              />
+            }
+          >
             <MultipleSelect<Singer>
               value={singerList.map(formatSingerToMultipleSelectOption)}
               onChange={onSingerListChange}

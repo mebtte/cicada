@@ -1,6 +1,6 @@
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import Cover from '@/components/cover';
+import Cover, { Shape } from '@/components/cover';
 import { Singer } from './constants';
 
 const Style = styled.div`
@@ -16,6 +16,7 @@ const Style = styled.div`
 
     padding: 10px 20px;
     background-color: rgb(255 255 255 / 0.75);
+    border-top-right-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
     > .name {
       font-size: 28px;
@@ -33,7 +34,7 @@ const Style = styled.div`
 function Info({ singer }: { singer: Singer }) {
   return (
     <Style>
-      <Cover src={singer.avatar} size="100%" />
+      <Cover src={singer.avatar} size="100%" shape={Shape.SQUARE} />
 
       <div className="info">
         <div className="name">{singer.name}</div>

@@ -165,7 +165,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               title: t('edit_cover'),
               onConfirm: async (cover) => {
                 if (!cover) {
-                  notice.error(t('please_select_a_cover'));
+                  notice.error(t('empty_cover_warning'));
                   return false;
                 }
                 try {
@@ -229,7 +229,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName.length) {
-                  notice.error(t('please_enter_the_name'));
+                  notice.error(t('empty_name_warning'));
                   return false;
                 }
 
@@ -342,7 +342,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               ),
               onConfirm: async (options) => {
                 if (!options.length) {
-                  notice.error(t('please_select_singers'));
+                  notice.error(t('emtpy_singers_warning'));
                   return false;
                 }
 
@@ -384,7 +384,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               ),
               onConfirm: async (file) => {
                 if (!file) {
-                  notice.error(t('please_select_a_file'));
+                  notice.error(t('empty_file_warning'));
                   return false;
                 }
                 try {

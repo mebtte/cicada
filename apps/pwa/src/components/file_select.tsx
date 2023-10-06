@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { CSSVariable } from '../global_style';
 import useEvent from '../utils/use_event';
-import Label from './label';
 import selectFile from '../utils/select_file';
 
 const Style = styled.div<{ disabled: boolean }>`
@@ -33,16 +33,17 @@ const Style = styled.div<{ disabled: boolean }>`
       : 'transparent'};
   `}
 `;
+const Placeholder = styled.div`
+  ${upperCaseFirstLetter}
+`;
 
 function FileSelect({
-  label,
   placeholder = '选择文件',
   value,
   onChange,
   disabled = false,
   acceptTypes,
 }: {
-  label?: string;
   placeholder?: string;
   value: File | null;
   onChange: (file: File | null) => void;
@@ -60,11 +61,9 @@ function FileSelect({
   });
 
   return (
-    <Label label={label}>
-      <Style onClick={onSelectFile} disabled={disabled}>
-        {value ? value.name : placeholder}
-      </Style>
-    </Label>
+    <Style onClick={onSelectFile} disabled={disabled}>
+      {value ? value.name : <Placeholder>{placeholder}</Placeholder>}
+    </Style>
   );
 }
 

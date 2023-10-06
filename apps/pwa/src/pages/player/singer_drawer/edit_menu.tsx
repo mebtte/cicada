@@ -140,7 +140,7 @@ function EditMenu({ singer }: { singer: Singer }) {
               onConfirm: async (name: string) => {
                 const trimmedName = name.replace(/\s+/g, ' ').trim();
                 if (!trimmedName) {
-                  notice.error(t('please_enter_the_name'));
+                  notice.error(t('empty_name_warning'));
                   return false;
                 }
                 if (singer.name !== trimmedName) {

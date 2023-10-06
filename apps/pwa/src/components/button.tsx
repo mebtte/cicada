@@ -86,6 +86,7 @@ const Style = styled.button<{
   height: ${ComponentSize.NORMAL}px;
   padding: 0 15px;
 
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   font-size: 14px;
   cursor: pointer;
   transition: all 300ms;

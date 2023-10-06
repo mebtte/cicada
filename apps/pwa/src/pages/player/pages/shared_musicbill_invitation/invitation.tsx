@@ -8,6 +8,7 @@ import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { t } from '@/i18n';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -72,7 +73,7 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
         0,
       );
     } catch (error) {
-      logger.error(error, '接受共享乐单邀请失败');
+      logger.error(error, 'Failed to accept invitation of shared musicbill');
       notice.error(error.message);
     }
     setLoading(false);
@@ -81,23 +82,27 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
   return (
     <Style>
       <div className="time">{day(inviteTimestamp).format('MM-DD HH:mm')}</div>
-      <div className="description">
-        <span
-          className="user"
-          onClick={() =>
+      <div
+        className="description"
+        onClick={(event) => {
+          if ((event.target as HTMLSpanElement).classList.contains('user')) {
             playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
               id: inviteUserId,
-            })
+            });
           }
-        >
-          {inviteUserNickname}
-        </span>
-        &nbsp; 邀请你共享乐单 &nbsp;
-        <span className="musicbill">{musicbillName}</span>
-      </div>
+        }}
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{
+          __html: t(
+            'shared_musicbill_invitation_instruction',
+            `<span class="user">${inviteUserNickname}</span>`,
+            `<span class="musicbill">${musicbillName}</span>`,
+          ),
+        }}
+      />
       <div className="actions">
         <Button onClick={onAccept} loading={loading}>
-          接受
+          {t('accept')}
         </Button>
       </div>
     </Style>
