@@ -199,4 +199,5 @@ export default {
   music_list_are_added_to_playlist_unsuccessfully:
     'playlist has included these music already',
   next_music_info: 'next music is %s1',
+  failed_to_get_musicbill_list: 'failed to get musicbill list',
 };

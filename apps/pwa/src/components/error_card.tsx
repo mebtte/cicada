@@ -5,6 +5,7 @@ import definition from '@/definition';
 import getRandomInteger from '#/utils/generate_random_integer';
 import { MdRefresh } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 
 const Style = styled.div`
   display: flex;
@@ -26,6 +27,8 @@ const Style = styled.div`
     font-size: 12px;
     line-height: 1.5;
     text-align: center;
+
+    ${upperCaseFirstLetter}
   }
 `;
 

@@ -190,6 +190,7 @@ const zhCN: {
   music_list_are_added_to_playlist: '%s1 首音乐添加到播放列表',
   music_list_are_added_to_playlist_unsuccessfully: '播放列表已包含这些音乐',
   next_music_info: '下一首播放 %s1',
+  failed_to_get_musicbill_list: '获取乐单列表失败',
 };
 
 export default zhCN;

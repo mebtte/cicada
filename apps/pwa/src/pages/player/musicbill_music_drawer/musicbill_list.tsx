@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
 import Empty from '@/components/empty';
+import { t } from '@/i18n';
 import { MusicWithSingerAliases } from '../constants';
 import Context from '../context';
 import playerEventemitter, {
@@ -38,7 +39,7 @@ function MusicbillList({ music }: { music: MusicWithSingerAliases }) {
     }
     return (
       <StatusContainer>
-        <Empty description="请先创建乐单" />
+        <Empty description={t('empty_musicbill_warning')} />
       </StatusContainer>
     );
   }
@@ -46,7 +47,7 @@ function MusicbillList({ music }: { music: MusicWithSingerAliases }) {
     return (
       <StatusContainer>
         <ErrorCard
-          errorMessage="获取乐单列表失败"
+          errorMessage={t('failed_to_get_musicbill_list')}
           retry={reloadMusicbillList}
         />
       </StatusContainer>

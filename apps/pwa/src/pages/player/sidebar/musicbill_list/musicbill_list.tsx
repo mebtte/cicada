@@ -5,6 +5,7 @@ import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import Button, { Variant } from '@/components/button';
+import { t } from '@/i18n';
 import Context from '../../context';
 import e, { EventType } from '../../eventemitter';
 import Musicbill from './musicbill';
@@ -56,7 +57,7 @@ function MusicbillList() {
                 variant={Variant.PRIMARY}
                 onClick={openCreateMusicbillDialog}
               >
-                创建乐单
+                {t('create_musicbill')}
               </Button>
             </StatusBox>
           );
@@ -72,7 +73,7 @@ function MusicbillList() {
           return (
             <StatusBox style={style}>
               <ErrorCard
-                errorMessage="获取乐单列表失败"
+                errorMessage={t('failed_to_get_musicbill_list')}
                 retry={reloadMusicbillList}
               />
             </StatusBox>
