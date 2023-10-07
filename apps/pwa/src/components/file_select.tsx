@@ -7,6 +7,7 @@ import selectFile from '../utils/select_file';
 const Style = styled.div<{ disabled: boolean }>`
   padding: 10px 20px;
 
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   border: 1px solid ${CSSVariable.COLOR_BORDER};
   cursor: pointer;
   text-align: center;

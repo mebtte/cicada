@@ -66,7 +66,6 @@ interface Singer {
 const formatSingerToMultipleSelectOption = (
   singer: Singer,
 ): Option<Singer> => ({
-  key: singer.id,
   label: `${singer.name}${
     singer.aliases.length ? `(${singer.aliases[0]})` : ''
   }`,
@@ -81,7 +80,6 @@ const searchSinger = (search: string): Promise<Option<Singer>[]> => {
 const emitMusicUpdated = (id: string) =>
   playerEventemitter.emit(PlayerEventType.MUSIC_UPDATED, { id });
 const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
-  key: music.id,
   label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
   value: music,
 });

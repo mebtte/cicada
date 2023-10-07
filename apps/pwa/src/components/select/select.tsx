@@ -1,11 +1,11 @@
+import './style.scss';
 import { CSSVariable } from '@/global_style';
 import { ComponentProps, CSSProperties } from 'react';
-import { ComponentSize } from '@/constants/style';
+import { ComponentSize, UtilZIndex } from '@/constants/style';
 import Select from 'react-select';
 import capitalize from '#/utils/capitalize';
 import { t } from '@/i18n';
 import { Option } from './constants';
-import './style.scss';
 
 const classNames: ComponentProps<Select>['classNames'] = {
   container: () => 'react-select-single-container',
@@ -14,7 +14,7 @@ const classNames: ComponentProps<Select>['classNames'] = {
   option: () => 'react-select-single-option',
   indicatorsContainer: () => 'react-select-single-indicator-container',
 };
-const noOptionsMessage = () => t('no_data');
+const noOptionsMessage = () => capitalize(t('no_data'));
 
 function Wrapper<Value>({
   value,
@@ -22,7 +22,6 @@ function Wrapper<Value>({
   onChange,
   disabled = false,
   style,
-  menuPortalTarget,
   placeholder = capitalize(t('select')),
 }: {
   value?: Option<Value>;
@@ -30,7 +29,6 @@ function Wrapper<Value>({
   onChange: (option: Option<Value>) => void;
   disabled?: boolean;
   style?: CSSProperties;
-  menuPortalTarget?: HTMLElement;
   placeholder?: string;
 }) {
   return (
@@ -42,7 +40,7 @@ function Wrapper<Value>({
       value={value}
       options={options}
       onChange={onChange}
-      menuPortalTarget={menuPortalTarget}
+      menuPortalTarget={document.body}
       classNames={classNames}
       styles={{
         container: (baseStyles) => ({
@@ -76,6 +74,10 @@ function Wrapper<Value>({
         valueContainer: (baseStyles) => ({
           ...baseStyles,
           height: ComponentSize.NORMAL,
+        }),
+        menuPortal: (baseStyles) => ({
+          ...baseStyles,
+          zIndex: UtilZIndex.SELECT,
         }),
       }}
     />

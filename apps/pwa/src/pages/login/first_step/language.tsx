@@ -27,7 +27,6 @@ function Wrapper({ disabled }: { disabled: boolean }) {
           return window.setTimeout(() => window.location.reload(), 0);
         }}
         options={languageOptions}
-        menuPortalTarget={document.body}
         disabled={disabled}
       />
     </Label>

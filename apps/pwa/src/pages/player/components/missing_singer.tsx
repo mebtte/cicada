@@ -9,7 +9,6 @@ import { openCreateSingerDialog } from '../utils';
 const Style = styled.div`
   font-size: 12px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  text-decoration: underline;
   cursor: pointer;
 
   ${upperCaseFirstLetter}

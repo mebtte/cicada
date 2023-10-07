@@ -6,7 +6,7 @@ export enum ComponentSize {
 
 export enum UtilZIndex {
   PAGINATION = 99999999,
-  MULTIPLE_SELECT = 99999999,
-  DIALOG,
+  DIALOG = 99999999,
+  SELECT = 99999999,
   NOTICE,
 }

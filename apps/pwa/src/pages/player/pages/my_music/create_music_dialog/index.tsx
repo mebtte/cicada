@@ -56,7 +56,6 @@ const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((mt) => ({
 const formatSingerToMultipleSelectOption = (
   singer: Singer,
 ): MultipleSelectOption<Singer> => ({
-  key: singer.id,
   label: `${singer.name}${
     singer.aliases.length ? `(${singer.aliases[0]})` : ''
   }`,
