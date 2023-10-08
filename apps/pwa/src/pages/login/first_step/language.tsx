@@ -1,13 +1,13 @@
 import { LANGUAGES, Language } from '#/constants';
 import Label from '@/components/label';
-import Select, { Option } from '@/components/select';
+import { Select, Option } from '@/components/select';
 import setting from '@/global_states/setting';
 import { LANGUAGE_MAP, t } from '@/i18n';
 
 const languageOptions: Option<Language>[] = LANGUAGES.map((l) => ({
-  key: l,
   label: LANGUAGE_MAP[l].label,
   value: l,
+  actualValue: l,
 }));
 
 function Wrapper({ disabled }: { disabled: boolean }) {
@@ -18,11 +18,12 @@ function Wrapper({ disabled }: { disabled: boolean }) {
         value={{
           label: LANGUAGE_MAP[language].label,
           value: language,
+          actualValue: language,
         }}
         onChange={(option) => {
           setting.set((s) => ({
             ...s,
-            language: option.value,
+            language: option.actualValue,
           }));
           return window.setTimeout(() => window.location.reload(), 0);
         }}

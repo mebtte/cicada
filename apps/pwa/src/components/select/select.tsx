@@ -1,20 +1,34 @@
-import './style.scss';
-import { CSSVariable } from '@/global_style';
 import { ComponentProps, CSSProperties } from 'react';
-import { ComponentSize, UtilZIndex } from '@/constants/style';
 import Select from 'react-select';
-import capitalize from '#/utils/capitalize';
-import { t } from '@/i18n';
-import { Option } from './constants';
+import classnames from 'classnames';
+import {
+  ClassName,
+  DEFAULT_PLACEHOLDER,
+  Option,
+  SingleClassName,
+  StateClassName,
+} from './constants';
+import { noOptionsMessage } from './utils';
+import DropdownIndicator from './dropdown_indicator';
 
 const classNames: ComponentProps<Select>['classNames'] = {
-  container: () => 'react-select-single-container',
-  menu: () => 'react-select-single-menu',
-  control: () => 'react-select-single-control',
-  option: () => 'react-select-single-option',
-  indicatorsContainer: () => 'react-select-single-indicator-container',
+  container: () => ClassName.CONTAINER,
+  menu: () => ClassName.MENU,
+  control: ({ isFocused }) =>
+    classnames(ClassName.CONTROL, {
+      [StateClassName.FOCUSED]: isFocused,
+    }),
+  option: ({ isSelected }) =>
+    classnames(ClassName.OPTION, {
+      [StateClassName.SELECTED]: isSelected,
+    }),
+  menuPortal: () => ClassName.MENU_PORTAL,
+  indicatorSeparator: () => ClassName.INDICATOR_SEPARATOR,
+  menuList: () => ClassName.MENU_LIST,
+  singleValue: () => SingleClassName.SINGLE_VALUE,
+  placeholder: () => ClassName.PLACEHOLDER,
+  valueContainer: () => ClassName.VALUE_CONTAINER,
 };
-const noOptionsMessage = () => capitalize(t('no_data'));
 
 function Wrapper<Value>({
   value,
@@ -22,7 +36,7 @@ function Wrapper<Value>({
   onChange,
   disabled = false,
   style,
-  placeholder = capitalize(t('select')),
+  placeholder = DEFAULT_PLACEHOLDER,
 }: {
   value?: Option<Value>;
   options: Option<Value>[];
@@ -42,42 +56,13 @@ function Wrapper<Value>({
       onChange={onChange}
       menuPortalTarget={document.body}
       classNames={classNames}
+      components={{
+        DropdownIndicator,
+      }}
       styles={{
         container: (baseStyles) => ({
           ...baseStyles,
           ...style,
-        }),
-        control: (baseStyles, { menuIsOpen, isFocused, isDisabled }) => ({
-          ...baseStyles,
-          color: CSSVariable.TEXT_COLOR_PRIMARY,
-          borderColor: isDisabled
-            ? `${CSSVariable.TEXT_COLOR_DISABLED} !important`
-            : menuIsOpen || isFocused
-            ? `${CSSVariable.COLOR_PRIMARY} !important`
-            : `${CSSVariable.COLOR_BORDER} !important`,
-          borderRadius: CSSVariable.BORDER_RADIUS_NORMAL,
-        }),
-        menu: (baseStyles) => ({
-          ...baseStyles,
-          fontSize: 14,
-          borderRadius: CSSVariable.BORDER_RADIUS_NORMAL,
-        }),
-        option: (baseStyles, { isSelected, isFocused }) => ({
-          ...baseStyles,
-          color: isSelected ? '#fff' : CSSVariable.TEXT_COLOR_PRIMARY,
-          background: isSelected
-            ? CSSVariable.COLOR_PRIMARY
-            : isFocused
-            ? CSSVariable.BACKGROUND_COLOR_LEVEL_ONE
-            : '#fff',
-        }),
-        valueContainer: (baseStyles) => ({
-          ...baseStyles,
-          height: ComponentSize.NORMAL,
-        }),
-        menuPortal: (baseStyles) => ({
-          ...baseStyles,
-          zIndex: UtilZIndex.SELECT,
         }),
       }}
     />

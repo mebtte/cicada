@@ -1,47 +1,53 @@
-import { UtilZIndex } from '@/constants/style';
+import { ComponentSize, UtilZIndex } from '@/constants/style';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { createGlobalStyle } from 'styled-components';
+import {
+  ClassName,
+  MultiClassName,
+  SingleClassName,
+  StateClassName,
+} from './constants';
 
 export default createGlobalStyle`
-  .react-select-multiple-container {
+  .${ClassName.CONTAINER} {
     -webkit-app-region: no-drag;
   }
 
-  .react-select-multiple-menu {
+  .${ClassName.MENU} {
     -webkit-app-region: no-drag;
     overflow: hidden;
     font-size: 14px;
     border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL} !important;
   }
 
-  .react-select-multiple-menu-portal {
+  .${ClassName.MENU_PORTAL} {
     z-index: ${UtilZIndex.SELECT} !important;
   }
 
-  .react-select-multiple-indicator-separator {
+  .${ClassName.INDICATOR_SEPARATOR} {
     background-color: ${CSSVariable.COLOR_BORDER} !important;
   }
 
-  .react-select-multiple-control {
+  .${ClassName.CONTROL} {
     font-size: 14px !important;
     cursor: pointer !important;
-    min-height: initial !important;
+    min-height: ${ComponentSize.NORMAL}px !important;
     box-shadow: none !important;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL} !important;
     border-color: ${CSSVariable.COLOR_BORDER} !important;
 
-    &.focused {
+    &.${StateClassName.FOCUSED} {
       border-color: ${CSSVariable.COLOR_PRIMARY} !important;
     }
 
-    &.disabled {
+    &.${StateClassName.DISABLED} {
       border-color: ${CSSVariable.TEXT_COLOR_DISABLED} !important;
     }
   }
 
-  .react-select-multiple-option {
+  .${ClassName.OPTION} {
     cursor: pointer !important;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY} !important;
     background-color: transparent !important;
@@ -49,34 +55,51 @@ export default createGlobalStyle`
     &:hover {
       background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE} !important;
     }
-  }
 
-  .react-select-multiple-dropdown-indicator {
-    padding: 0 5px !important;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY} !important;
-
-    &:hover {
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY} !important;
+    &.${StateClassName.SELECTED} {
+      color: #fff !important; 
+      background-color: ${CSSVariable.COLOR_PRIMARY} !important;
     }
   }
 
-  .react-select-multiple-menu-list {
+  .${ClassName.VALUE_CONTAINER} {
+    padding: 2px 10px !important;
+  }
+
+  .${ClassName.INPUT} {
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY} !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .${ClassName.MENU_LIST} {
     max-height: 200px !important;
     ${autoScrollbar}
   }
 
-  .react-select-multiple-multi-value {
+  .${ClassName.PLACEHOLDER} {
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY} !important;
+    margin: 0 !important;
+  }
+
+  .${SingleClassName.SINGLE_VALUE} {
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY} !important;
+    margin: 0 !important;
+  }
+
+  .${MultiClassName.MULTI_VALUE} {
     font-size: 12px;
     background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE} !important;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     border-radius: ${CSSVariable.BORDER_RADIUS_LIGHT} !important;
+    margin-left: 0;
 
-    &.disabled {
+    &.${StateClassName.DISABLED} {
       opacity: 0.5;
     }
   }
 
-  .react-select-multiple-multi-value-remove {
+  .${MultiClassName.MULTI_VALUE_REMOVE} {
     background-color: transparent;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
@@ -84,9 +107,5 @@ export default createGlobalStyle`
       background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE} !important;
       color: ${CSSVariable.COLOR_DANGEROUS} !important;
     }
-  }
-
-  .react-select-multiple-placeholder {
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY} !important;
   }
 `;

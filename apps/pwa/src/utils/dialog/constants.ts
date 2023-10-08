@@ -1,5 +1,5 @@
 import { Variant } from '@/components/button';
-import { Option } from '@/components/multiple_select';
+import { Option } from '@/components/select';
 import { ReactNode } from 'react';
 
 export const ID_LENGTH = 6;
@@ -90,9 +90,7 @@ export interface MultipleSelect<Value>
   initialValue: Option<Value>[];
   label: string;
   labelAddon?: ReactNode;
-  optionsGetter: (
-    keyword: string,
-  ) => Option<Value>[] | Promise<Option<Value>[]>;
+  optionsGetter: (keyword: string) => Promise<Option<Value>[]>;
 }
 
 export interface FileSelect

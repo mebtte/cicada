@@ -1,5 +1,5 @@
 import Label from '@/components/label';
-import Select from '@/components/select';
+import { Select } from '@/components/select';
 import server, { getSelectedServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
@@ -43,6 +43,7 @@ function UserList({
             options={userList.map((u) => ({
               label: `${u.nickname}(@${u.username})`,
               value: u.id,
+              actualValue: u.id,
             }))}
             onChange={(option) => {
               server.set((ss) => ({
@@ -51,7 +52,7 @@ function UserList({
                   s.origin === getSelectedServer(server.get())!.origin
                     ? {
                         ...s,
-                        selectedUserId: option.value,
+                        selectedUserId: option.actualValue,
                       }
                     : s,
                 ),

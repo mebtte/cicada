@@ -1,5 +1,6 @@
 import ErrorBoundary from '@/components/error_boundary';
 import { GlobalStyle } from '@/global_style';
+import { GlobalStyle as SelectGlobalStyle } from '@/components/select';
 import { ThemeProvider } from 'styled-components';
 import App from './app';
 import UncaughtError from './uncaught_error';
@@ -13,8 +14,9 @@ function Wrapper() {
     <ErrorBoundary fallback={fallback}>
       <ThemeProvider theme={theme.useState()}>
         <Head />
-        <GlobalStyle />
         <App />
+        <GlobalStyle />
+        <SelectGlobalStyle />
       </ThemeProvider>
     </ErrorBoundary>
   );

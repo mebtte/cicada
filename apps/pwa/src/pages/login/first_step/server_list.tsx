@@ -4,7 +4,7 @@ import { t } from '@/i18n';
 import { useMemo } from 'react';
 import styled from 'styled-components';
 import Label from '@/components/label';
-import Select from '@/components/select';
+import { Select } from '@/components/select';
 
 const Style = styled.div`
   > .divider {
@@ -45,11 +45,12 @@ function ServerList({
             options={serverList.map((s) => ({
               label: `${s.hostname} - ${s.origin}`,
               value: s.origin,
+              actualValue: s.origin,
             }))}
             onChange={(option) => {
               server.set((ss) => ({
                 ...ss,
-                selectedServerOrigin: option.value,
+                selectedServerOrigin: option.actualValue,
               }));
               return toNext();
             }}
