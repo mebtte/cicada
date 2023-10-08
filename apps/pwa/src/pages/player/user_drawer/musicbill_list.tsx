@@ -46,7 +46,7 @@ const Style = styled.div`
       gap: 5px;
 
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-      font-size: 12px;
+      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       background-color: rgb(255 255 255 / 0.75);
     }
   }
@@ -54,7 +54,7 @@ const Style = styled.div`
   > .name {
     margin-top: 3px;
 
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     ${ellipsis}
   }

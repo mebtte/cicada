@@ -16,7 +16,7 @@ const Button = styled.button<{ active?: boolean }>`
 
   ${flexCenter}
 
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   border: none;
   cursor: pointer;
   transition: 300ms;

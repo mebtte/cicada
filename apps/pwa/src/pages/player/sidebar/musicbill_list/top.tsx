@@ -35,7 +35,7 @@ const Style = styled.div`
     flex: 1;
     min-width: 0;
 
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     ${capitalize}
   }
 `;

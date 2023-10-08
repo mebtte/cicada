@@ -5,7 +5,7 @@ import { formatSecond } from '../utils';
 
 const Style = styled.div`
   font-family: monospace;
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   transform: scale(0.9);
   user-select: none;

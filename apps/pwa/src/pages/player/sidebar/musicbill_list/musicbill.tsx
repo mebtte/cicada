@@ -28,7 +28,7 @@ const Style = styled(NavLink)`
     flex: 1;
     min-width: 0;
 
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     ${ellipsis}
   }
 

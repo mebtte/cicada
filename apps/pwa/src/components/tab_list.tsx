@@ -18,7 +18,7 @@ const Tab = styled.div<{ active: boolean }>`
     padding: 8px 0 5px 0;
 
     font-weight: bold;
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     transition: inherit;
     ${capitalize}
   }

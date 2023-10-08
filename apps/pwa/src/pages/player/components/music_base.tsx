@@ -18,7 +18,7 @@ const Style = styled.div<{ active: boolean }>`
 
   > .index {
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     writing-mode: vertical-lr;
     font-family: monospace;
   }
@@ -44,19 +44,19 @@ const Style = styled.div<{ active: boolean }>`
 
           > .name {
             line-height: 1.5;
-            font-size: 14px;
+            font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
             color: ${CSSVariable.TEXT_COLOR_PRIMARY};
           }
 
           > .alias {
-            font-size: 12px;
+            font-size: ${CSSVariable.TEXT_SIZE_SMALL};
           }
         }
 
         > .singers {
           ${ellipsis}
 
-          font-size: 12px;
+          font-size: ${CSSVariable.TEXT_SIZE_SMALL};
           color: ${CSSVariable.TEXT_COLOR_SECONDARY};
         }
       }

@@ -5,7 +5,7 @@ import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 
 const Style = styled.div`
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   text-align: center;
 

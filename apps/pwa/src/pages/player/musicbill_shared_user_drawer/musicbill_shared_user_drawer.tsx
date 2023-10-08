@@ -40,7 +40,7 @@ const Title = styled.div`
   margin: 40px 20px 20px 20px;
 
   font-weight: bold;
-  font-size: 16px;
+  font-size: ${CSSVariable.TEXT_SIZE_LARGE};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
   ${upperCaseFirstLetter}

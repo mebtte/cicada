@@ -17,7 +17,7 @@ export default createGlobalStyle`
   .${ClassName.MENU} {
     -webkit-app-region: no-drag;
     overflow: hidden;
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL} !important;
   }
 
@@ -30,7 +30,7 @@ export default createGlobalStyle`
   }
 
   .${ClassName.CONTROL} {
-    font-size: 14px !important;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL} !important;
     cursor: pointer !important;
     min-height: ${ComponentSize.NORMAL}px !important;
     box-shadow: none !important;
@@ -88,7 +88,7 @@ export default createGlobalStyle`
   }
 
   .${MultiClassName.MULTI_VALUE} {
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE} !important;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     border-radius: ${CSSVariable.BORDER_RADIUS_LIGHT} !important;

@@ -28,7 +28,7 @@ const Style = styled.div`
     padding: 0 30px;
     max-width: 100%;
 
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     ${ellipsis}
   }
 `;

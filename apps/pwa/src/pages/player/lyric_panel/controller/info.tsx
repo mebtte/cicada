@@ -26,7 +26,7 @@ const Style = styled.div`
   }
 
   > .singers {
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     ${ellipsis}
   }
 `;

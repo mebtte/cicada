@@ -34,7 +34,7 @@ const Style = styled.div`
 
       background-color: ${CSSVariable.COLOR_PRIMARY};
       color: #fff;
-      font-size: 12px;
+      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       padding: 2px 5px;
     }
   }
@@ -52,7 +52,7 @@ const Style = styled.div`
       > .username {
         margin-top: 5px;
 
-        font-size: 14px;
+        font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
         color: ${CSSVariable.TEXT_COLOR_PRIMARY};
         ${ellipsis}
 
@@ -64,7 +64,7 @@ const Style = styled.div`
       > .last-active-time {
         margin-top: 5px;
 
-        font-size: 12px;
+        font-size: ${CSSVariable.TEXT_SIZE_SMALL};
         color: ${CSSVariable.TEXT_COLOR_SECONDARY};
         font-family: monospace;
 

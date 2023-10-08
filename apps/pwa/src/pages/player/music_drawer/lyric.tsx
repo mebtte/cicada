@@ -8,7 +8,7 @@ const Line = styled.div`
   margin: 10px 20px;
 
   line-height: 1.3;
-  font-size: 14px;
+  font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 `;
 

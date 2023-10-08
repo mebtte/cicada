@@ -17,7 +17,7 @@ const Addon = styled.div`
 
   border-top: 1px solid ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   font-family: monospace;
 
   display: flex;

@@ -35,7 +35,7 @@ const Content = styled(Container)`
   > .description {
     margin: 10px 20px;
 
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
     display: flex;

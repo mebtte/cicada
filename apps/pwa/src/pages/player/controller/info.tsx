@@ -36,7 +36,7 @@ const Style = styled(animated.div)`
 
     >.name {
       cursor: pointer;
-      font-size: 14px;
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
       &:hover {
@@ -45,13 +45,13 @@ const Style = styled(animated.div)`
     }
 
     > .alias {
-      font-size: 12px;
+      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     }
   }
 
   > .singers {
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     ${ellipsis}
   }

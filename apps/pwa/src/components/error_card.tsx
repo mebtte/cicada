@@ -24,7 +24,7 @@ const Style = styled.div`
     max-width: 400px;
 
     white-space: pre-wrap;
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     line-height: 1.5;
     text-align: center;
 

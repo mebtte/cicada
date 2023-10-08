@@ -18,7 +18,7 @@ const Line = styled.div<{ active?: boolean }>`
 
     text-align: center;
     backdrop-filter: blur(10px);
-    font-size: 16px;
+    font-size: ${CSSVariable.TEXT_SIZE_LARGE};
     line-height: 1.5;
     font-weight: bold;
 

@@ -14,7 +14,7 @@ const Style = styled.div`
     margin: 0 20px;
     padding: 10px 0;
 
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   }
 

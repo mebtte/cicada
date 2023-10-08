@@ -87,7 +87,7 @@ const Style = styled.button<{
   padding: 0 15px;
 
   border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
-  font-size: 14px;
+  font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
   cursor: pointer;
   transition: all 300ms;
   user-select: none;

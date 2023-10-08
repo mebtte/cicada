@@ -200,4 +200,6 @@ export default {
     'playlist has included these music already',
   next_music_info: 'next music is %s1',
   failed_to_get_musicbill_list: 'failed to get musicbill list',
+  save_time_of_singer_modify_record_instruction:
+    'save time of singer modify record is %s1 days',
 };

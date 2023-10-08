@@ -17,7 +17,7 @@ const Style = styled.div<{ active: boolean }>`
   border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
   > .label {
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     ${capitalize}
   }
 

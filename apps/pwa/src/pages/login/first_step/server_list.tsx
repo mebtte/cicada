@@ -14,7 +14,7 @@ const Style = styled.div`
     align-items: center;
     gap: 10px;
 
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
     > .line {

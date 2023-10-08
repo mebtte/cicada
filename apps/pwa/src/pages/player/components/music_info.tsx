@@ -21,14 +21,14 @@ const Style = styled.div`
 
     > .name {
       ${ellipsis}
-      font-size: 14px;
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       color: rgb(55 55 55);
       line-height: 1.5;
     }
 
     > .singers {
       ${ellipsis}
-      font-size: 12px;
+      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       color: rgb(155 155 155);
     }
   }

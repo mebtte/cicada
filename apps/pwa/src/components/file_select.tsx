@@ -11,7 +11,7 @@ const Style = styled.div<{ disabled: boolean }>`
   border: 1px solid ${CSSVariable.COLOR_BORDER};
   cursor: pointer;
   text-align: center;
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   transition: inherit;
   user-select: none;
   word-break: break-all;

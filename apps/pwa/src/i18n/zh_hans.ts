@@ -191,6 +191,8 @@ const zhCN: {
   music_list_are_added_to_playlist_unsuccessfully: '播放列表已包含这些音乐',
   next_music_info: '下一首播放 %s1',
   failed_to_get_musicbill_list: '获取乐单列表失败',
+  save_time_of_singer_modify_record_instruction:
+    '歌手修改记录保留时间为 %s1 天',
 };
 
 export default zhCN;

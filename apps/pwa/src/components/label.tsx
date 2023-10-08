@@ -22,7 +22,7 @@ const Style = styled.label`
       min-width: 0;
 
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-      font-size: 12px;
+      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       transition: inherit;
       ${upperCaseFirstLetter}
     }

@@ -131,7 +131,7 @@ export const Content = styled.div`
   flex: 1;
   min-height: 0;
 
-  font-size: 14px;
+  font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   line-height: 1.5;
   overflow: auto;
