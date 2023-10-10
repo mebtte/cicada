@@ -21,6 +21,8 @@ const Style = styled.div`
   > .list {
     > .item {
       margin: 0 10px;
+
+      border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
     }
   }
 `;
