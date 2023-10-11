@@ -3,6 +3,7 @@ import IconButton from '@/components/icon_button';
 import { MdPlaylistAdd, MdOutlineEdit, MdCopyAll } from 'react-icons/md';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
+import { t } from '@/i18n';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -47,7 +48,7 @@ function Toolbar({ singer }: { singer: Singer }) {
                     musicList: singer.musicList,
                   },
                 )
-              : notice.error('歌手暂未收录音乐')
+              : notice.error(t('no_music_singer_warning'))
           }
         >
           <MdPlaylistAdd />
@@ -56,9 +57,9 @@ function Toolbar({ singer }: { singer: Singer }) {
           onClick={() =>
             window.navigator.clipboard
               .writeText(singer.name)
-              .then(() => notice.info('已复制歌手名字'))
+              .then(() => notice.info(t('singers_name_copied')))
               .catch((error) => {
-                logger.error(error, '复制歌手名字失败');
+                logger.error(error, "Failed to copy singer's name");
                 return notice.error(error.message);
               })
           }
