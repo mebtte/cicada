@@ -148,10 +148,6 @@ const devMainConfig = {
   plugins: [...mainConfig.plugins, new ForkTsCheckerWebpackPlugin()],
   devServer: {
     port: 8001,
-    hot: true,
-    devMiddleware: {
-      // writeToDisk: true,
-    },
   },
 };
 
