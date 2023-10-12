@@ -6,7 +6,6 @@ import cors from '@koa/cors';
 import mount from 'koa-mount';
 import { PathPrefix } from '#/constants';
 import { updateConfig, getConfig, Config, Mode } from '@/config';
-import definition from '@/definition';
 import initialize from './initialize';
 import startSchedule from './schedule';
 import { getAssetApp } from './asset_app';
@@ -61,14 +60,7 @@ export default async ({
   server.use(mount(`/${PathPrefix.FORM}`, getFormApp()));
   server.use(mount(`/${PathPrefix.API}`, getApiApp()));
   server.use(mount(`/${PathPrefix.BASE}`, getBaseApp()));
-
-  /**
-   * 非构建模式下不用托管 pwa
-   * @author mebtte<hi@mebtte.com>
-   */
-  if (definition.BUILT) {
-    server.use(mount('/', getPwaApp()));
-  }
+  server.use(mount('/', getPwaApp()));
 
   http.createServer(server.callback()).listen(getConfig().port);
 };

@@ -113,7 +113,7 @@ export default {
   empty_playlist: 'empty playlist',
   next_music: 'next music',
   failed_to_play: 'failed to play',
-  auto_play_next_after_seconds: 'audo play next after %s1 seconds',
+  auto_play_next_after_seconds: 'auto play next after %s1 seconds',
   can_not_connect_to_server_temporarily:
     'can not connect to server temporarily',
   music_type_short: 'type',
