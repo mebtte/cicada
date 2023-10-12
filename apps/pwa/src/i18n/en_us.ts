@@ -113,7 +113,7 @@ export default {
   empty_playlist: 'empty playlist',
   next_music: 'next music',
   failed_to_play: 'failed to play',
-  auto_play_next_after_seconds: 'audo play next after %s1 seconds',
+  auto_play_next_after_seconds: 'auto play next after %s1 seconds',
   can_not_connect_to_server_temporarily:
     'can not connect to server temporarily',
   music_type_short: 'type',
@@ -200,4 +200,8 @@ export default {
     'playlist has included these music already',
   next_music_info: 'next music is %s1',
   failed_to_get_musicbill_list: 'failed to get musicbill list',
+  save_time_of_singer_modify_record_instruction:
+    'save time of singer modify record is %s1 days',
+  singers_name_copied: "singer's name copied",
+  no_music_singer_warning: 'this singer has no music',
 };

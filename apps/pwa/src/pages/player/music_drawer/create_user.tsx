@@ -8,7 +8,7 @@ import playerEventemitter, {
 
 const Style = styled.div`
   text-align: center;
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
   > .nickname {

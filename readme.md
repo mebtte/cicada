@@ -28,30 +28,42 @@ A multi-user music service for self-hosting.
 
 If you migrate to v2 from v1, you must upgrade data before serving:
 
+#### Binary
+
 ```sh
 cicada data-upgrade <data>
 ```
 
-Also docker:
+#### Docker:
 
 ```sh
 # --user {uid}:{gid} to map user
 docker run -it --rm -v <data>:/data mebtte/cicada:v2 data-upgrade /data
 ```
 
+#### Source Code
+
+```sh
+npm start -- data-upgrade <data>
+```
+
 ### [From v0 to v1](https://github.com/mebtte/cicada/tree/v1#from-v0-to-v1)
 
 ## Deployment
 
-Download cicada from [releases](https://github.com/mebtte/cicada/releases) and start server:
+You can deploy cicada by under options, and initial user of cicada is `username:cicada/password:cicada`:
 
-> If your platform isn't x64, you can [build cicada](./docs/build/index.md) by yourself
+### Binary
+
+Download from [releases](https://github.com/mebtte/cicada/releases) and start server:
+
+> If your platform isn't x64, you can [build](./docs/build/index.md) by yourself
 
 ```sh
 ./cicada start
 ```
 
-Open `localhost:8000` or `{{ip}}:8000` and use `username:cicada/password:cicada` to login. You can get more options by running `cicada start -h` or `cicada -h`.
+Now cicada is available on `localhost:8000` or `{{ip}}:8000`. You can get more options by running `cicada start -h` or `cicada -h`.
 
 ### Docker
 
@@ -66,9 +78,9 @@ docker run \
   start --port 8000 --data /data
 ```
 
-Also you can use `--user {uid}:{gid}` to map user.
+You can use `--user {uid}:{gid}` to map user.
 
-### Docker compose example
+### Docker Compose
 
 ```yml
 services:
@@ -87,7 +99,27 @@ services:
       - /path/data:/data
 ```
 
-## Music import
+### Source Code
+
+When using source code to deploy, you should install [Node>=18](https://nodejs.org) first.
+
+```sh
+git clone https://github.com/mebtte/cicada.git
+cd cicada
+npm ci
+npm run build:pwa
+npm start -- -- start --port <port> --data <data> # attention: double --
+```
+
+When needing to upgrade, you should run below commands:
+
+```sh
+git pull # pull the latest code
+npm run build:pwa # rebuild pwa
+npm start -- -- start --port <port> --data <data> # restart the server
+```
+
+## Import music
 
 You can use `cicada import` to import music file and music directory, but the filename must to fit the blow format:
 

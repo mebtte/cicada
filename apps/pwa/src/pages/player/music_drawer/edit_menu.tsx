@@ -39,7 +39,7 @@ import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
 import deleteMusic from '@/server/api/delete_music';
 import logger from '@/utils/logger';
-import { Option } from '@/components/multiple_select';
+import { Option } from '@/components/select';
 import searchSingerRequest from '@/server/api/search_singer';
 import searchMusicRequest from '@/server/api/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
@@ -66,11 +66,11 @@ interface Singer {
 const formatSingerToMultipleSelectOption = (
   singer: Singer,
 ): Option<Singer> => ({
-  key: singer.id,
   label: `${singer.name}${
     singer.aliases.length ? `(${singer.aliases[0]})` : ''
   }`,
-  value: singer,
+  value: singer.id,
+  actualValue: singer,
 });
 const searchSinger = (search: string): Promise<Option<Singer>[]> => {
   const keyword = search.trim().substring(0, SINGER_SEARCH_KEYWORD_MAX_LENGTH);
@@ -81,9 +81,9 @@ const searchSinger = (search: string): Promise<Option<Singer>[]> => {
 const emitMusicUpdated = (id: string) =>
   playerEventemitter.emit(PlayerEventType.MUSIC_UPDATED, { id });
 const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
-  key: music.id,
   label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
-  value: music,
+  value: music.id,
+  actualValue: music,
 });
 const itemStyle: CSSProperties = { margin: '0 10px' };
 
@@ -340,6 +340,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               initialValue: music.singers.map(
                 formatSingerToMultipleSelectOption,
               ),
+              confirmVariant: Variant.PRIMARY,
               onConfirm: async (options) => {
                 if (!options.length) {
                   notice.error(t('emtpy_singers_warning'));
@@ -349,14 +350,14 @@ function EditMenu({ music }: { music: MusicDetail }) {
                 if (
                   !stringArrayEqual(
                     music.singers.map((s) => s.id).sort(),
-                    options.map((o) => o.value.id).sort(),
+                    options.map((o) => o.actualValue.id).sort(),
                   )
                 ) {
                   try {
                     await updateMusic({
                       id: music.id,
                       key: AllowUpdateKey.SINGER,
-                      value: options.map((o) => o.value.id),
+                      value: options.map((o) => o.actualValue.id),
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {
@@ -420,14 +421,14 @@ function EditMenu({ music }: { music: MusicDetail }) {
                 if (
                   !stringArrayEqual(
                     music.forkFromList.map((m) => m.id).sort(),
-                    options.map((o) => o.value.id).sort(),
+                    options.map((o) => o.actualValue.id).sort(),
                   )
                 ) {
                   try {
                     await updateMusic({
                       id: music.id,
                       key: AllowUpdateKey.FORK_FROM,
-                      value: options.map((o) => o.value.id),
+                      value: options.map((o) => o.actualValue.id),
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {

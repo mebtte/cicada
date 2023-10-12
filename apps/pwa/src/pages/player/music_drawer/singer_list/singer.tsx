@@ -26,7 +26,7 @@ const Style = styled.div`
     min-width: 0;
 
     ${ellipsis}
-    font-size: 16px;
+    font-size: ${CSSVariable.TEXT_SIZE_LARGE};
     font-weight: bold;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   }

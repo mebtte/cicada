@@ -6,7 +6,7 @@ const Style = styled.div`
   margin: 20px;
 
   text-align: center;
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
   > .create {

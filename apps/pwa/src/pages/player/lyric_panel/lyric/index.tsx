@@ -35,7 +35,7 @@ const ErrorContainer = styled(Container)`
     gap: 10px;
 
     > .message {
-      font-size: 14px;
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
       text-align: center;
     }

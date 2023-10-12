@@ -14,7 +14,7 @@ const Style = styled.div`
   ${flexCenter}
   ${capitalize}
 
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   background-color: ${CSSVariable.COLOR_DANGEROUS};
   color: #fff;
   white-space: nowrap;

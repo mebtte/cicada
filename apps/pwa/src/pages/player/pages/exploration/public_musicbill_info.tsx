@@ -8,12 +8,12 @@ import playerEventemitter, {
 
 const Style = styled.div`
   > .name {
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     ${ellipsis}
   }
   > .user {
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     ${ellipsis}
 

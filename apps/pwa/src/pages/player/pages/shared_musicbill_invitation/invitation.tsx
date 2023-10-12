@@ -19,14 +19,14 @@ const Style = styled.div`
   padding: 10px 0;
 
   > .time {
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   }
 
   > .description {
     margin: 5px 0 10px 0;
 
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
     > .user {

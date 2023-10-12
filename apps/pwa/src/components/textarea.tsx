@@ -16,7 +16,7 @@ const Textarea = styled.textarea`
   border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   border: 1px solid ${CSSVariable.COLOR_BORDER};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-  font-size: 14px;
+  font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
   outline: none;
   transition: inherit;
   resize: none;

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Singer as SingerType } from './constants';
 
 const Style = styled.div`
-  font-size: 14px;
+  font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   ${ellipsis}
 `;

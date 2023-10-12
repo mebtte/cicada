@@ -18,7 +18,7 @@ const Style = styled.div`
     margin-top: 5px;
 
     ${ellipsis}
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     cursor: pointer;
   }
@@ -26,7 +26,7 @@ const Style = styled.div`
   > .nickname {
     flex: 1;
 
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     ${ellipsis}
 

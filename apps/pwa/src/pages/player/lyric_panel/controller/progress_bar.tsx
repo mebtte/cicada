@@ -20,7 +20,7 @@ const Style = styled.div`
   }
 
   > .time {
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     font-family: monospace;
     transform: scale(0.9);

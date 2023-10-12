@@ -23,7 +23,7 @@ const Style = styled.div`
   }
 
   > .instruction {
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
     ${upperCaseFirstLetter}

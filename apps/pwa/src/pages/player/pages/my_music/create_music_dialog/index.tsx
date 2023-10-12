@@ -10,7 +10,7 @@ import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import Button, { Variant } from '@/components/button';
 import Input from '@/components/input';
 import Label from '@/components/label';
-import Select, { Option as SelectOption } from '@/components/select';
+import { Select, MultipleSelect, Option } from '@/components/select';
 import { t } from '@/i18n';
 import {
   AllowUpdateKey,
@@ -19,9 +19,6 @@ import {
   NAME_MAX_LENGTH,
 } from '#/constants/music';
 import FileSelect from '@/components/file_select';
-import MultipleSelect, {
-  Option as MultipleSelectOption,
-} from '@/components/multiple_select';
 import searchSingerRequest from '@/server/api/search_singer';
 import { AssetType, ASSET_TYPE_MAP } from '#/constants';
 import useEvent from '@/utils/use_event';
@@ -48,23 +45,22 @@ import { Singer } from './constants';
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
 };
-const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((mt) => ({
+const MUSIC_TYPE_OPTIONS: Option<MusicType>[] = MUSIC_TYPES.map((mt) => ({
   label: capitalize(MUSIC_TYPE_MAP[mt].label),
   value: mt,
+  actualValue: mt,
 }));
 
 const formatSingerToMultipleSelectOption = (
   singer: Singer,
-): MultipleSelectOption<Singer> => ({
-  key: singer.id,
+): Option<Singer> => ({
   label: `${singer.name}${
     singer.aliases.length ? `(${singer.aliases[0]})` : ''
   }`,
-  value: singer,
+  value: singer.id,
+  actualValue: singer,
 });
-const searchSinger = (
-  search: string,
-): Promise<MultipleSelectOption<Singer>[]> => {
+const searchSinger = (search: string): Promise<Option<Singer>[]> => {
   const keyword = search.trim().substring(0, SEARCH_KEYWORD_MAX_LENGTH);
   return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
     data.singerList.map(formatSingerToMultipleSelectOption),
@@ -85,14 +81,13 @@ function CreateMusicDialog() {
 
   const [singerList, setSingerList] = useState<Singer[]>([]);
   const onSingerListChange = useCallback(
-    (sl: MultipleSelectOption<Singer>[]) =>
-      setSingerList(sl.map((s) => s.value)),
+    (sl: Option<Singer>[]) => setSingerList(sl.map((s) => s.actualValue)),
     [],
   );
 
   const [musicType, setMusicType] = useState(MusicType.SONG);
-  const onMusicTypeChange = (option: SelectOption<MusicType>) =>
-    setMusicType(option.value);
+  const onMusicTypeChange = (option: Option<MusicType>) =>
+    setMusicType(option.actualValue);
 
   const [asset, setAsset] = useState<File | null>(null);
   const onAssetChange = (a) => {
@@ -210,6 +205,7 @@ function CreateMusicDialog() {
               value={{
                 label: capitalize(MUSIC_TYPE_MAP[musicType].label),
                 value: musicType,
+                actualValue: musicType,
               }}
               onChange={onMusicTypeChange}
               options={MUSIC_TYPE_OPTIONS}

@@ -25,7 +25,7 @@ const Style = styled.div`
     }
 
     > .aliases {
-      font-size: 14px;
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     }
   }

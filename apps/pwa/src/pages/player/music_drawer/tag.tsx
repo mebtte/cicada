@@ -10,13 +10,13 @@ const Style = styled.div`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
   > .icon {
-    font-size: 14px;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     line-height: 1;
   }
 
   > .text {
     font-family: monospace;
-    font-size: 12px;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   }
 `;
 

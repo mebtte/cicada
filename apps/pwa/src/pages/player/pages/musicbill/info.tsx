@@ -29,13 +29,13 @@ const Style = styled.div`
     justify-content: space-between;
 
     > .name {
-      font-size: 14px;
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       font-weight: bold;
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     }
 
     > .create-time {
-      font-size: 12px;
+      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       ${upperCaseFirstLetter}
     }

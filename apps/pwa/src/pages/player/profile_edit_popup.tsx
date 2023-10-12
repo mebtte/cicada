@@ -50,13 +50,13 @@ const Style = styled.div`
 
       > .primary {
         color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-        font-size: 14px;
+        font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
         ${ellipsis}
       }
 
       > .secondary {
         color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-        font-size: 12px;
+        font-size: ${CSSVariable.TEXT_SIZE_SMALL};
         ${ellipsis}
       }
     }

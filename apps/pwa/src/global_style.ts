@@ -7,8 +7,8 @@ export enum CSSVariable {
   COLOR_DANGEROUS = 'var(--color-dangerous)',
   COLOR_BORDER = 'var(--color-border)',
 
+  TEXT_SIZE_LARGE = 'var(--text-size-large)',
   TEXT_SIZE_NORMAL = 'var(--text-size-normal)',
-  TEXT_SIZE_MEDIUM = 'var(--text-size-medium)',
   TEXT_SIZE_SMALL = 'var(--text-size-small)',
 
   TEXT_COLOR_PRIMARY = 'var(--text-color-primary)',
@@ -22,6 +22,7 @@ export enum CSSVariable {
   BACKGROUND_COLOR_LEVEL_FOUR = 'var(--background-color-level-four)',
   BACKGROUND_COLOR_LEVEL_FIVE = 'var(--background-color-level-five)',
 
+  BORDER_RADIUS_LIGHT = 'var(--border-radius-light)',
   BORDER_RADIUS_NORMAL = 'var(--border-radius-normal)',
 }
 
@@ -32,8 +33,8 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.COLOR_DANGEROUS]: '#f25042',
   [CSSVariable.COLOR_BORDER]: 'rgb(232 232 232)',
 
-  [CSSVariable.TEXT_SIZE_NORMAL]: '16px',
-  [CSSVariable.TEXT_SIZE_MEDIUM]: '14px',
+  [CSSVariable.TEXT_SIZE_LARGE]: '16px',
+  [CSSVariable.TEXT_SIZE_NORMAL]: '14px',
   [CSSVariable.TEXT_SIZE_SMALL]: '12px',
 
   [CSSVariable.TEXT_COLOR_PRIMARY]: 'rgb(88 88 88)',
@@ -47,6 +48,7 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.BACKGROUND_COLOR_LEVEL_FOUR]: 'rgb(44 182 125 / 0.18)',
   [CSSVariable.BACKGROUND_COLOR_LEVEL_FIVE]: 'rgb(44 182 125 / 0.22)',
 
+  [CSSVariable.BORDER_RADIUS_LIGHT]: '2px',
   [CSSVariable.BORDER_RADIUS_NORMAL]: '4px',
 };
 

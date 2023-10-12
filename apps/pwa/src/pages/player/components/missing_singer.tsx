@@ -7,9 +7,8 @@ import notice from '@/utils/notice';
 import { openCreateSingerDialog } from '../utils';
 
 const Style = styled.div`
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  text-decoration: underline;
   cursor: pointer;
 
   ${upperCaseFirstLetter}

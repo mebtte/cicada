@@ -13,7 +13,7 @@ const StyledLrc = styled(Lrc)`
   border-top: 1px solid ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
 `;
 const Line = styled.div`
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
   .highlight {

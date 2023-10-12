@@ -65,12 +65,16 @@ function Cover({
   useLayoutEffect(() => {
     setCurrentSrc(DefaultCover);
 
-    const unobserve = intersectionObserver.observe(ref.current!, () =>
-      loadImage(src)
-        .then(() => setCurrentSrc(src))
-        .catch((error) => logger.error(error, `Failed to load cover "${src}"`)),
-    );
-    return unobserve;
+    if (src) {
+      const unobserve = intersectionObserver.observe(ref.current!, () =>
+        loadImage(src)
+          .then(() => setCurrentSrc(src))
+          .catch((error) =>
+            logger.error(error, `Failed to load cover "${src}"`),
+          ),
+      );
+      return unobserve;
+    }
   }, [src]);
 
   const transitions = useTransition(currentSrc, {

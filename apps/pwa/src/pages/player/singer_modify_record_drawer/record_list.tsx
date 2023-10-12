@@ -37,12 +37,12 @@ const Style = styled(Root)`
       ${CSSVariable.BACKGROUND_COLOR_LEVEL_THREE};
 
     > .time {
-      font-size: 12px;
+      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     }
 
     > .description {
-      font-size: 14px;
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
       line-height: 2;
 

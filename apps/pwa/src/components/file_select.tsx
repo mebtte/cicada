@@ -7,10 +7,11 @@ import selectFile from '../utils/select_file';
 const Style = styled.div<{ disabled: boolean }>`
   padding: 10px 20px;
 
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   border: 1px solid ${CSSVariable.COLOR_BORDER};
   cursor: pointer;
   text-align: center;
-  font-size: 12px;
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   transition: inherit;
   user-select: none;
   word-break: break-all;

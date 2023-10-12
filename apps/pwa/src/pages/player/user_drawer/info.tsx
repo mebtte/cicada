@@ -32,12 +32,12 @@ const Style = styled.div`
     > .username {
       margin: 5px 0;
 
-      font-size: 14px;
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     }
 
     > .join-time {
-      font-size: 12px;
+      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
       ${upperCaseFirstLetter}
