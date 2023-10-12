@@ -1,6 +1,7 @@
-import { getDataVersionPath, updateConfig } from '@/config';
+import { getConfig, getDataVersionPath, updateConfig } from '@/config';
 import exitWithMessage from '@/utils/exit_with_message';
 import fs from 'fs';
+import fsPromises from 'fs/promises';
 import { getDB } from '@/db';
 import { createSpinner, Spinner } from 'nanospinner';
 import { MusicProperty, MUSIC_TABLE_NAME } from '@/constants/db_definition';
@@ -27,6 +28,13 @@ async function fixMusicYear() {
   }
 }
 
+async function fixDBSnapshots() {
+  const dbSnapshotsDir = `${getConfig().data}/db_snapshots`;
+  if (fs.existsSync(dbSnapshotsDir)) {
+    await fsPromises.rm(dbSnapshotsDir, { force: true, recursive: true });
+  }
+}
+
 export default async ({ data }: { data: string }) => {
   updateConfig({ data });
 
@@ -41,6 +49,11 @@ export default async ({ data }: { data: string }) => {
   spinner.start({ text: "Fixing music's year..." });
   await fixMusicYear();
   spinner.success({ text: "Music's year has fixed" });
+
+  spinner = createSpinner();
+  spinner.start({ text: 'Fixing DB snapshots...' });
+  await fixDBSnapshots();
+  spinner.success({ text: 'DB snapshots have fixed' });
 
   createSpinner().success({ text: 'Fixing data successfully' });
   return process.exit();

@@ -36,7 +36,6 @@ import {
   getAssetDirectory,
   getConfig,
   getDBFilePath,
-  getDBSnapshotDirectory,
   getLogDirectory,
   getTrashDirectory,
   getCacheDirectory,
@@ -61,7 +60,6 @@ export default async () => {
    */
   const directories = [
     getConfig().data,
-    getDBSnapshotDirectory(),
     getTrashDirectory(),
     getLogDirectory(),
     getCacheDirectory(),
@@ -86,7 +84,7 @@ export default async () => {
         return exitWithMessage(
           `\nCurrent version of data is v${dataVersion}, please start server after using cicada.v${
             dataVersion + 1
-          } to upgrade data by [ cicada data-upgrade <data> ]\n`,
+          } to upgrade data by [ cicada upgrade-data <data> ]\n`,
         );
       }
       return exitWithMessage('Please upgrade your cicada to latest');

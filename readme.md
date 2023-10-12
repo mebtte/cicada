@@ -22,36 +22,9 @@ A multi-user music service for self-hosting.
 - Support of building APP from [HTTP API](./apps/pwa/src/server)
 - Support of Two-Factor Authentication
 
-## Migration
-
-### From v1 to v2
-
-If you migrate to v2 from v1, you must upgrade data before serving:
-
-#### Binary
-
-```sh
-cicada data-upgrade <data>
-```
-
-#### Docker:
-
-```sh
-# --user {uid}:{gid} to map user
-docker run -it --rm -v <data>:/data mebtte/cicada:v2 data-upgrade /data
-```
-
-#### Source Code
-
-```sh
-npm start -- data-upgrade <data>
-```
-
-### [From v0 to v1](https://github.com/mebtte/cicada/tree/v1#from-v0-to-v1)
-
 ## Deployment
 
-You can deploy cicada by under options, and initial user of cicada is `username:cicada/password:cicada`:
+You can deploy cicada by under options, and initial user of cicada is `username:cicada/password:cicada`.
 
 ### Binary
 
@@ -119,15 +92,45 @@ npm run build:pwa # rebuild pwa
 npm start -- -- start --port <port> --data <data> # restart the server
 ```
 
+## Migration
+
+### From v1 to v2
+
+If you migrate to v2 from v1, you must upgrade data before serving:
+
+#### Binary
+
+```sh
+cicada upgrade-data <data>
+```
+
+#### Docker:
+
+```sh
+docker run -it --rm -v <data>:/data mebtte/cicada:v2 upgrade-data /data
+```
+
+#### Source Code
+
+```sh
+npm start -- -- upgrade-data <data>
+```
+
+#### Other versions
+
+- [From v0 to v1](https://github.com/mebtte/cicada/tree/v1#from-v0-to-v1)
+
 ## Import music
 
-You can use `cicada import` to import music file and music directory, but the filename must to fit the blow format:
+You can use `cicada import` to import music file and music directory, but the filename must to fit the below format:
 
 ```txt
 singer1[,singer2][,singer3] - name.format
 ```
 
 For example, `Jarryd James,BROODS - 1000x.flac` / `周杰伦 - 晴天.mp3` is valid and `Numb.m4a` / `Daniel Powter Free Loop.mp3` is invalid, the file has invalid filename will be passed when importing.
+
+### Binary
 
 ```sh
 # import direcoty
@@ -137,19 +140,42 @@ cicada import --data /path_to/cicada_data --recursive music_directory
 cicada import --data /path_to/cicada_data music
 ```
 
-## Data fixing
+### Docker
+
+```sh
+# import directory
+docker run -it --rm -v <data>:/data mebtte/cicada:v2 import --data /path_to/cicada_data --recursive music_directory
+
+# import file
+docker run -it --rm -v <data>:/data mebtte/cicada:v2 import --data /path_to/cicada_data music
+```
+
+### Source Code
+
+```sh
+# import directory
+npm start -- -- import --data /path_to/cicada_data --recursive music_directory
+
+# import file
+npm start -- -- import --data /path_to/cicada_data music
+```
+
+## Fix data
 
 According to known issues, some old versions of cicada will breakdown the data, you can fix it by using below command:
 
 ```sh
-cicada data-fix <data>
+cicada fix-data <data>
 ```
 
-This command is unharmful, so you can run it even the data isn't broken. Also run the command by docker:
+This command is unharmful, so you can run it even the data isn't broken. Also can run the command by docker or source code:
 
 ```sh
-# --user {uid}:{gid} to map user
-docker run -it --rm -v <data>:/data mebtte/cicada:v2 data-fix /data
+docker run -it --rm -v <data>:/data mebtte/cicada:v2 fix-data /data
+```
+
+```sh
+npm start -- -- fix-data <data>
 ```
 
 ## Q & A
