@@ -1,7 +1,6 @@
 import * as schedule from 'node-schedule';
 import logger from '@/utils/logger';
 import removeOutdatedDB from './remove_outdated_db';
-import createDBSnapshot from './create_db_snapshot';
 import cleanOutdatedFile from './clean_outdated_file';
 import removeNoMusicSinger from './remove_no_music_singer';
 import moveUnlinkedAssetToTrash from './move_unlinked_asset_to_trash';
@@ -23,10 +22,6 @@ const DAILY_JOBS: Job[] = [
   {
     name: 'remove_outdated_db',
     job: removeOutdatedDB,
-  },
-  {
-    name: 'create_db_snapshot',
-    job: createDBSnapshot,
   },
   {
     name: 'remove_no_music_singer',

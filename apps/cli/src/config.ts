@@ -37,10 +37,6 @@ export function getJWTSecretFilePath() {
   return `${config.data}/jwt_secret`;
 }
 
-export function getDBSnapshotDirectory() {
-  return `${config.data}/db_snapshots`;
-}
-
 export function getTrashDirectory() {
   return `${config.data}/trash`;
 }

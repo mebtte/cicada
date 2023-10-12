@@ -3,7 +3,6 @@ import util from 'util';
 import withTimeout from '#/utils/with_timeout';
 import {
   getCacheDirectory,
-  getDBSnapshotDirectory,
   getLogDirectory,
   getTrashDirectory,
 } from '@/config';
@@ -24,10 +23,6 @@ async function cleanOutdatedFile() {
     {
       directory: getLogDirectory(),
       ttl: 1000 * 60 * 60 * 24 * 30,
-    },
-    {
-      directory: getDBSnapshotDirectory(),
-      ttl: 1000 * 60 * 60 * 24 * 15,
     },
     {
       directory: getCacheDirectory(),

@@ -5,8 +5,8 @@ import exitWithMessage from './utils/exit_with_message';
 import definition from './definition';
 import startServer from './commands/start_server';
 import importMusic from './commands/import_music';
-import dataUpgrade from './commands/data_upgrade';
-import dataFix from './commands/data_fix';
+import upgradeData from './commands/upgrade_data';
+import fixData from './commands/fix_data';
 import { FIRST_USER_ID } from './constants';
 import { DEFAULT_CONFIG, Mode } from './config';
 
@@ -57,7 +57,7 @@ program
  * @author mebtte<hi@mebtte.com>
  */
 program
-  .command('data-upgrade')
+  .command('upgrade data')
   .description('upgrade data from v1 to v2')
   .argument('<data>', 'data directory')
   .action((data: string) => {
@@ -67,7 +67,7 @@ program
     if (!fs.existsSync(absoluteData)) {
       return exitWithMessage(`[ ${absoluteData} ] not exist`);
     }
-    return dataUpgrade({ data: absoluteData });
+    return upgradeData({ data: absoluteData });
   });
 
 /**
@@ -75,7 +75,7 @@ program
  * @author mebtte<hi@mebtte.com>
  */
 program
-  .command('data-fix')
+  .command('fix-data')
   .description('fix data')
   .argument('<data>', 'cicada data directory')
   .action((data: string) => {
@@ -85,7 +85,7 @@ program
     if (!fs.existsSync(absoluteData)) {
       return exitWithMessage(`[ ${absoluteData} ] not exist`);
     }
-    return dataFix({ data: absoluteData });
+    return fixData({ data: absoluteData });
   });
 
 /**
