@@ -134,30 +134,30 @@ For example, `Jarryd James,BROODS - 1000x.flac` / `周杰伦 - 晴天.mp3` is va
 
 ```sh
 # import direcoty
-cicada import --data /path_to/cicada_data --recursive music_directory
+cicada import --data /path_to/cicada_data --recursive <music_directory>
 
 # import file
-cicada import --data /path_to/cicada_data music
+cicada import --data /path_to/cicada_data <music>
 ```
 
 ### Docker
 
 ```sh
 # import directory
-docker run -it --rm -v <data>:/data mebtte/cicada:v2 import --data /path_to/cicada_data --recursive music_directory
+docker run -it --rm -v <data>:/data mebtte/cicada:v2 -v <music_directory>:/source import --data /path_to/cicada_data --recursive /source
 
 # import file
-docker run -it --rm -v <data>:/data mebtte/cicada:v2 import --data /path_to/cicada_data music
+docker run -it --rm -v <data>:/data mebtte/cicada:v2 -v <music_directory>:/source import --data /path_to/cicada_data --recursive /source/<music>
 ```
 
 ### Source Code
 
 ```sh
 # import directory
-npm start -- -- import --data /path_to/cicada_data --recursive music_directory
+npm start -- -- import --data /path_to/cicada_data --recursive <music_directory>
 
 # import file
-npm start -- -- import --data /path_to/cicada_data music
+npm start -- -- import --data /path_to/cicada_data <music>
 ```
 
 ## Fix data
