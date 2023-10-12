@@ -44,7 +44,7 @@ docker run -it --rm -v <data>:/data mebtte/cicada:v2 data-upgrade /data
 #### Source Code
 
 ```sh
-npm start -- data-upgrade <data>
+npm start -- -- data-upgrade <data>
 ```
 
 ### [From v0 to v1](https://github.com/mebtte/cicada/tree/v1#from-v0-to-v1)
