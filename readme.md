@@ -22,35 +22,9 @@ A multi-user music service for self-hosting.
 - Support of building APP from [HTTP API](./apps/pwa/src/server)
 - Support of Two-Factor Authentication
 
-## Migration
-
-### From v1 to v2
-
-If you migrate to v2 from v1, you must upgrade data before serving:
-
-#### Binary
-
-```sh
-cicada upgrade-data <data>
-```
-
-#### Docker:
-
-```sh
-docker run -it --rm -v <data>:/data mebtte/cicada:v2 upgrade-data /data
-```
-
-#### Source Code
-
-```sh
-npm start -- -- upgrade-data <data>
-```
-
-### [From v0 to v1](https://github.com/mebtte/cicada/tree/v1#from-v0-to-v1)
-
 ## Deployment
 
-You can deploy cicada by under options, and initial user of cicada is `username:cicada/password:cicada`:
+You can deploy cicada by under options, and initial user of cicada is `username:cicada/password:cicada`.
 
 ### Binary
 
@@ -117,6 +91,34 @@ git pull # pull the latest code
 npm run build:pwa # rebuild pwa
 npm start -- -- start --port <port> --data <data> # restart the server
 ```
+
+## Migration
+
+### From v1 to v2
+
+If you migrate to v2 from v1, you must upgrade data before serving:
+
+#### Binary
+
+```sh
+cicada upgrade-data <data>
+```
+
+#### Docker:
+
+```sh
+docker run -it --rm -v <data>:/data mebtte/cicada:v2 upgrade-data /data
+```
+
+#### Source Code
+
+```sh
+npm start -- -- upgrade-data <data>
+```
+
+#### Other versions
+
+- [From v0 to v1](https://github.com/mebtte/cicada/tree/v1#from-v0-to-v1)
 
 ## Import music
 
