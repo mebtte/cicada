@@ -6,8 +6,6 @@ const zhCN: {
   cicada: '知了',
   cicada_description: '一个子托管的多用户音乐服务',
   incompatible_tips: '你的浏览器无法兼容知了, 因为缺少以下功能',
-  server_origin: '服务器源地址',
-  wrong_server_origin: '错误的服务器源地址',
   setting: '设置',
   confirm: '确认',
   cancel: '取消',
@@ -195,6 +193,10 @@ const zhCN: {
     '歌手修改记录保留时间为 %s1 天',
   singers_name_copied: '歌手名已复制',
   no_music_singer_warning: '该歌手暂未收录音乐',
+  manage: '管理',
+  manage_origins: '服务器地址管理',
+  origin_users_count: '%s1 用户已登录',
+  delete_origin_question: '确定删除该服务器地址以及已登录用户吗?',
 };
 
 export default zhCN;

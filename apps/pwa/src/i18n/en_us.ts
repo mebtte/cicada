@@ -3,8 +3,6 @@ export default {
   cicada_description: 'a multi-user music service for self-hosting',
   incompatible_tips:
     "your browser is incompatible with cicada, because it's lack of below features",
-  server_origin: 'server origin',
-  wrong_server_origin: 'wrong server origin',
   setting: 'setting',
   confirm: 'confirm',
   cancel: 'cancel',
@@ -204,4 +202,9 @@ export default {
     'save time of singer modify record is %s1 days',
   singers_name_copied: "singer's name copied",
   no_music_singer_warning: 'this singer has no music',
+  manage: 'manage',
+  manage_origins: 'manage server addresses',
+  origin_users_count: '%s1 users have logined',
+  delete_origin_question:
+    'are you sure to delete this server address and users within ?',
 };

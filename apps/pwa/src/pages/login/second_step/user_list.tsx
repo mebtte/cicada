@@ -20,6 +20,10 @@ const Divider = styled.div`
     height: 1px;
     background-color: ${CSSVariable.COLOR_BORDER};
   }
+
+  > .or {
+    text-transform: uppercase;
+  }
 `;
 
 function UserList({
@@ -63,7 +67,7 @@ function UserList({
         </Label>
         <Divider>
           <div className="line" />
-          <div>{t('or')}</div>
+          <span className="or">{t('or')}</span>
           <div className="line" />
         </Divider>
       </>
