@@ -207,4 +207,5 @@ export default {
   origin_users_count: '%s1 users have logined',
   delete_origin_question:
     'are you sure to delete this server address and users within ?',
+  sort_musicbill: 'sort musicbill',
 };
