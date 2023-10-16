@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import withLogin from '@/platform/with_login';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import PageContainer from '@/components/page_container';
 import useDocumentTitle from '@/utils/use_document_title';
 import { t } from '@/i18n';
@@ -84,26 +84,38 @@ function Wrapper() {
     e.emit(EventType.CURRENT_MUSIC_CHANGE, { queueMusic });
   }, [queueMusic]);
 
+  const contextValue = useMemo(
+    () => ({
+      getMusicbillListStatus,
+      musicbillList,
+
+      audioLoading,
+      audioPaused,
+      audioDuration,
+      audioBufferedPercent,
+
+      playlist,
+
+      playqueue,
+      currentPlayqueuePosition,
+
+      lyricPanelOpen,
+    }),
+    [
+      audioBufferedPercent,
+      audioDuration,
+      audioLoading,
+      audioPaused,
+      currentPlayqueuePosition,
+      getMusicbillListStatus,
+      lyricPanelOpen,
+      musicbillList,
+      playlist,
+      playqueue,
+    ],
+  );
   return (
-    <Context.Provider
-      // eslint-disable-next-line react/jsx-no-constructed-context-values
-      value={{
-        getMusicbillListStatus,
-        musicbillList,
-
-        audioLoading,
-        audioPaused,
-        audioDuration,
-        audioBufferedPercent,
-
-        playlist,
-
-        playqueue,
-        currentPlayqueuePosition,
-
-        lyricPanelOpen,
-      }}
-    >
+    <Context.Provider value={contextValue}>
       <Style>
         <NetworkStatus />
         <div className="container">
