@@ -19,7 +19,7 @@ function Logout() {
   const navigate = useNavigate();
   const onLogout = useEvent(() =>
     dialog.confirm({
-      title: t('logout_question'),
+      content: t('logout_question'),
       onConfirm: () => {
         navigate({ replace: true, path: ROOT_PATH.LOGIN });
         clearApiCache();

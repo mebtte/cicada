@@ -57,7 +57,7 @@ export function openCreateSingerDialog(callback: (id: string) => void) {
       logger.error(error, 'Failed to create singer');
       if (error.code === ExceptionCode.SINGER_ALREADY_EXISTED) {
         dialog.confirm({
-          title: t('repeated_name_singer_warning'),
+          content: t('repeated_name_singer_warning'),
           onConfirm: () => void createSinger({ name, force: true }),
         });
       } else {

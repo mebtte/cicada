@@ -195,7 +195,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
             label={t('reset_cover')}
             onClick={() =>
               dialog.confirm({
-                title: t('reset_cover_question'),
+                content: t('reset_cover_question'),
                 onConfirm: async () => {
                   try {
                     await updateMusic({
