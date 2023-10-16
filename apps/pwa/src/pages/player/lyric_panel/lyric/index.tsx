@@ -5,6 +5,8 @@ import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
 import Button, { Variant } from '@/components/button';
 import { CSSVariable } from '@/global_style';
+import { t } from '@/i18n';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { QueueMusic } from '../../constants';
 import { Status } from './constants';
 import useLyricData from './use_lyric_data';
@@ -38,6 +40,8 @@ const ErrorContainer = styled(Container)`
       font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
       text-align: center;
+
+      ${upperCaseFirstLetter}
     }
   }
 `;
@@ -75,7 +79,7 @@ function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
             <div className="content">
               <div className="message">{d.error.message}</div>
               <Button variant={Variant.PRIMARY} onClick={retry}>
-                重新加载
+                {t('retry')}
               </Button>
             </div>
           </ErrorContainer>

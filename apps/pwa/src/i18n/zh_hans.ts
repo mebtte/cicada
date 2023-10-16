@@ -198,6 +198,7 @@ const zhCN: {
   origin_users_count: '%s1 用户已登录',
   delete_origin_question: '确定删除该服务器地址以及已登录用户吗?',
   sort_musicbill: '歌单排序',
+  retry: '重试',
 };
 
 export default zhCN;

@@ -208,4 +208,5 @@ export default {
   delete_origin_question:
     'are you sure to delete this server address and users within ?',
   sort_musicbill: 'sort musicbill',
+  retry: 'retry',
 };
