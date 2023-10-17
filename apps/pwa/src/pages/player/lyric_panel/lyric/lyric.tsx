@@ -16,6 +16,7 @@ const Line = styled.div<{ active?: boolean }>`
   > .content {
     padding: 10px 20px;
 
+    border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
     text-align: center;
     backdrop-filter: blur(10px);
     font-size: ${CSSVariable.TEXT_SIZE_LARGE};
