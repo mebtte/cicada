@@ -180,9 +180,9 @@ npm start -- -- fix-data <data>
 
 ## Development
 
-Cicada is a monorepo that contains two sub-projects under the `apps` directory. `cli` is for the server, which is used to manage assets and start services. `pwa` is for the client, which is used to access for users.
+Cicada is a monorepo that contains two sub-projects under the `apps` directory. `cli` is for the server, which is used to manage assets and start services. `pwa` is for the client, which is used to access for users. And there is a `shared` directory on the root, which contains the code runs on both `cli` and `pwa`.
 
-Most of cicada is developed by TS/JS, if you want to develop or contribute, you should know it. Cicada is relied on [Node>=18](https://nodejs.org) and you should install it on your device first.
+If you want to develop or contribute, **most of cicada is developed by TS/JS** and you should know it. Cicada relies on [Node>=18](https://nodejs.org) and you should install it on your device first.
 
 Clone the project:
 
@@ -196,20 +196,20 @@ Install the dependencies:
 npm install
 ```
 
-Use commands of cicada:
+Use commands of cicada CLI:
 
 ```sh
 npm start -- -- <command> <options> <argument>
 ```
 
-Before developing PWA, you should start server first:
+Before developing PWA, you should start dev server first:
 
 ```sh
 CICADA_DATA=<data> npm run dev:server
 # CICADA_DATA is the directory of data
 ```
 
-Then open the other terminal window and start the pwa server:
+Modify the code of `cli` and the cicada server will restart automatically. Then open another terminal window and start the pwa server:
 
 ```sh
 npm run dev:pwa

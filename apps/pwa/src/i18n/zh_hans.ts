@@ -199,6 +199,7 @@ const zhCN: {
   delete_origin_question: '确定删除该服务器地址以及已登录用户吗?',
   sort_musicbill: '歌单排序',
   retry: '重试',
+  warning_of_exiting_by_keyboard: '请先暂停音乐再使用快捷键退出',
 };
 
 export default zhCN;

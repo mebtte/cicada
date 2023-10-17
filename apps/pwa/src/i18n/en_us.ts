@@ -209,4 +209,6 @@ export default {
     'are you sure to delete this server address and users within ?',
   sort_musicbill: 'sort musicbill',
   retry: 'retry',
+  warning_of_exiting_by_keyboard:
+    'you must pause the music before exiting by keyboard',
 };
