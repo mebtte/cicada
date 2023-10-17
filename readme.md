@@ -180,7 +180,7 @@ npm start -- -- fix-data <data>
 
 ## Development
 
-Cicada is a monorepo that contains two sub-projects under the `apps` directory. `cli` is for the server, which is used to manage assets and start services. `pwa` is for the client, which is used to access for users. And there is a `shared` directory on the root, which contains the code runs on both `cli` and `pwa`.
+Cicada is a **monorepo** that contains two sub-projects under the `apps` directory. `cli` is for the server, which is used to manage assets and start services. `pwa` is for the client, which is used to access for users. And there is a `shared` directory on the root, which contains the code runs on both `cli` and `pwa`.
 
 If you want to develop or contribute, **most of cicada is developed by TS/JS** and you should know it. Cicada relies on [Node>=18](https://nodejs.org) and you should install it on your device first.
 
