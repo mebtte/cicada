@@ -3,6 +3,7 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { useEffect } from 'react';
 import notice from '@/utils/notice';
 import definition from '@/definition';
+import { t } from '@/i18n';
 import e, { EventType } from './eventemitter';
 import { QueueMusic, Musicbill } from './constants';
 
@@ -44,7 +45,7 @@ export default ({
           case 'w': {
             if (!paused && queueMusic && (event.metaKey || event.ctrlKey)) {
               event.preventDefault();
-              notice.error('请先暂停音乐后再使用快捷键退出');
+              notice.error(t('warning_of_exiting_by_keyboard'));
             }
             break;
           }
