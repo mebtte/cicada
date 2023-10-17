@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import withLogin from '@/platform/with_login';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import PageContainer from '@/components/page_container';
 import useDocumentTitle from '@/utils/use_document_title';
 import { t } from '@/i18n';
@@ -18,7 +18,7 @@ import useMediaSession from './use_media_session';
 import MusicDrawer from './music_drawer';
 import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
 import MusicbillMusicDrawer from './musicbill_music_drawer';
-import MusicbillOrderDrawer from './musicbilll_order_drawer';
+import SortMusicbillDrawer from './sort_musicbilll_drawer';
 import MusicbillSharedUserDrawer from './musicbill_shared_user_drawer';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
@@ -84,26 +84,38 @@ function Wrapper() {
     e.emit(EventType.CURRENT_MUSIC_CHANGE, { queueMusic });
   }, [queueMusic]);
 
+  const contextValue = useMemo(
+    () => ({
+      getMusicbillListStatus,
+      musicbillList,
+
+      audioLoading,
+      audioPaused,
+      audioDuration,
+      audioBufferedPercent,
+
+      playlist,
+
+      playqueue,
+      currentPlayqueuePosition,
+
+      lyricPanelOpen,
+    }),
+    [
+      audioBufferedPercent,
+      audioDuration,
+      audioLoading,
+      audioPaused,
+      currentPlayqueuePosition,
+      getMusicbillListStatus,
+      lyricPanelOpen,
+      musicbillList,
+      playlist,
+      playqueue,
+    ],
+  );
   return (
-    <Context.Provider
-      // eslint-disable-next-line react/jsx-no-constructed-context-values
-      value={{
-        getMusicbillListStatus,
-        musicbillList,
-
-        audioLoading,
-        audioPaused,
-        audioDuration,
-        audioBufferedPercent,
-
-        playlist,
-
-        playqueue,
-        currentPlayqueuePosition,
-
-        lyricPanelOpen,
-      }}
-    >
+    <Context.Provider value={contextValue}>
       <Style>
         <NetworkStatus />
         <div className="container">
@@ -126,7 +138,7 @@ function Wrapper() {
       <MusicDrawer />
       <PlaylistPlayqueueDrawer />
       <MusicbillMusicDrawer />
-      <MusicbillOrderDrawer />
+      <SortMusicbillDrawer />
       <UserDrawer />
       <PublicMusicbillDrawer />
       <MusicbillSharedUserDrawer />

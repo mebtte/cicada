@@ -1,7 +1,7 @@
 import { RequestStatus } from '@/constants';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import Context from '../context';
-import MusicbillOrderDrawer from './musicbill_order_drawer';
+import SortMusicbillDrawer from './sort_musicbill_drawer';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -21,7 +21,7 @@ function Wrapper() {
 
   if (getMusicbillListStatus === RequestStatus.SUCCESS) {
     return (
-      <MusicbillOrderDrawer
+      <SortMusicbillDrawer
         open={open}
         onClose={onClose}
         musicbillList={musicbillList}

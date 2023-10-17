@@ -108,7 +108,7 @@ function User({
             onClick={(event) => {
               event.stopPropagation();
               return dialog.confirm({
-                title: t('remove_user_from_shared_musicbill_question'),
+                content: t('remove_user_from_shared_musicbill_question'),
                 onConfirm: async () => {
                   try {
                     await deleteMusicbillSharedUser({

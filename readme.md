@@ -178,10 +178,49 @@ docker run -it --rm -v <data>:/data mebtte/cicada:v2 fix-data /data
 npm start -- -- fix-data <data>
 ```
 
+## Development
+
+Cicada is a monorepo that contains two sub-projects under the `apps` directory. `cli` is for the server, which is used to manage assets and start services. `pwa` is for the client, which is used to access for users.
+
+Most of cicada is developed by TS/JS, if you want to develop or contribute, you should know it. Cicada is relied on [Node>=18](https://nodejs.org) and you should install it on your device first.
+
+Clone the project:
+
+```sh
+git clone https://github.com/mebtte/cicada.git
+```
+
+Install the dependencies:
+
+```sh
+npm install
+```
+
+Use commands of cicada:
+
+```sh
+npm start -- -- <command> <options> <argument>
+```
+
+Before developing PWA, you should start server first:
+
+```sh
+CICADA_DATA=<data> npm run dev:server
+# CICADA_DATA is the directory of data
+```
+
+Then open the other terminal window and start the pwa server:
+
+```sh
+npm run dev:pwa
+```
+
+Visit `localhost:8001` and use `http://localhost:8000` as server address, modify the code of `pwa` and you will see the change after auto reload.
+
 ## Q & A
 
 <details>
-  <summary>How to migrate ?</summary>
+  <summary>How to migrate data?</summary>
 
 All of data is under `{{data}}` directory, copy or move it to new device.
 

@@ -5,7 +5,9 @@ import { Mode } from './src/config';
 
 const data = process.env.CICADA_DATA;
 if (!data) {
-  exitWithMessage('Please set environment [ CICADA_DATA ]');
+  exitWithMessage(
+    '\nPlease start dev server after setting environment [ CICADA_DATA ]\n',
+  );
 }
 const absoluteData = path.isAbsolute(data!)
   ? data!

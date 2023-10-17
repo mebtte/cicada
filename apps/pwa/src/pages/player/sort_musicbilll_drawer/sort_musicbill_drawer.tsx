@@ -1,4 +1,4 @@
-import Drawer from '@/components/drawer';
+import Drawer, { Title } from '@/components/drawer';
 import { CSSProperties, useCallback, useEffect, useState } from 'react';
 import { SortableContainer } from 'react-sortable-hoc';
 import { arrayMoveImmutable } from 'array-move';
@@ -15,7 +15,6 @@ import { Musicbill as MusicbillType, ZIndex } from '../constants';
 import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
 import e, { EventType } from './eventemitter';
-import Top from './top';
 
 const maskProps: { style: CSSProperties } = {
   style: {
@@ -115,7 +114,7 @@ function MusicbillOrderDrawer({
       bodyProps={bodyProps}
     >
       <Content>
-        <Top />
+        <Title>{t('sort_musicbill')}</Title>
         <MusicbillList
           musicbillList={localMusicbillList}
           updateBeforeSortStart={(s) =>

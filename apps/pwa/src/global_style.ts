@@ -7,6 +7,7 @@ export enum CSSVariable {
   COLOR_DANGEROUS = 'var(--color-dangerous)',
   COLOR_BORDER = 'var(--color-border)',
 
+  TEXT_SIZE_TITLE = 'var(--text-size-title)',
   TEXT_SIZE_LARGE = 'var(--text-size-large)',
   TEXT_SIZE_NORMAL = 'var(--text-size-normal)',
   TEXT_SIZE_SMALL = 'var(--text-size-small)',
@@ -33,6 +34,7 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.COLOR_DANGEROUS]: '#f25042',
   [CSSVariable.COLOR_BORDER]: 'rgb(232 232 232)',
 
+  [CSSVariable.TEXT_SIZE_TITLE]: '18px',
   [CSSVariable.TEXT_SIZE_LARGE]: '16px',
   [CSSVariable.TEXT_SIZE_NORMAL]: '14px',
   [CSSVariable.TEXT_SIZE_SMALL]: '12px',

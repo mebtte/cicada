@@ -3,8 +3,6 @@ export default {
   cicada_description: 'a multi-user music service for self-hosting',
   incompatible_tips:
     "your browser is incompatible with cicada, because it's lack of below features",
-  server_origin: 'server origin',
-  wrong_server_origin: 'wrong server origin',
   setting: 'setting',
   confirm: 'confirm',
   cancel: 'cancel',
@@ -67,7 +65,7 @@ export default {
   edit_avatar: 'edit avatar',
   empty_avatar_warning: 'please select an avatar',
   reset_avatar: 'reset avatar',
-  reset_avatar_question: 'Are you sure to reset avatar ?',
+  reset_avatar_question: 'are you sure to reset avatar ?',
   edit_name: 'edit name',
   name: 'name',
   empty_name_warning: 'please enter the name',
@@ -164,8 +162,8 @@ export default {
   create_music_by_yourself: 'create music by yourself',
   create_musicbill_by_yourself: 'create musicbill by yourself',
   no_suitable_musicbill_warning: 'No suitable musicbill ?',
-  no_suitable_music_warning: 'No suitable music ?',
-  no_suitable_singer_warning: 'No suitable singer ?',
+  no_suitable_music_warning: 'no suitable music ?',
+  no_suitable_singer_warning: 'no suitable singer ?',
   no_suitable_singer: 'no suitable singer',
   create_singer: 'create singer',
   repeated_name_singer_warning:
@@ -204,4 +202,11 @@ export default {
     'save time of singer modify record is %s1 days',
   singers_name_copied: "singer's name copied",
   no_music_singer_warning: 'this singer has no music',
+  manage: 'manage',
+  manage_origins: 'manage server addresses',
+  origin_users_count: '%s1 users have logined',
+  delete_origin_question:
+    'are you sure to delete this server address and users within ?',
+  sort_musicbill: 'sort musicbill',
+  retry: 'retry',
 };

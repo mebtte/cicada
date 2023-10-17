@@ -10,8 +10,11 @@ const Style = styled.div`
   font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   cursor: pointer;
-
   ${upperCaseFirstLetter}
+
+  &:hover {
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  }
 `;
 
 function MissingSinger({
@@ -25,8 +28,9 @@ function MissingSinger({
 }) {
   return (
     <Style
-      onClick={() =>
-        openCreateSingerDialog(
+      onClick={(event) => {
+        event.preventDefault();
+        return openCreateSingerDialog(
           afterCreating
             ? (id) =>
                 getSinger(id).then((s) =>
@@ -37,8 +41,8 @@ function MissingSinger({
                   }),
                 )
             : () => notice.info(t('created')),
-        )
-      }
+        );
+      }}
     >
       {t('create_singer')}
     </Style>

@@ -104,7 +104,7 @@ function EditMenu({ singer }: { singer: Singer }) {
             label={t('reset_avatar')}
             onClick={() =>
               dialog.confirm({
-                title: t('reset_avatar_question'),
+                content: t('reset_avatar_question'),
                 onConfirm: async () => {
                   try {
                     await updateSinger({
