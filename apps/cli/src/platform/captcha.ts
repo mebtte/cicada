@@ -4,7 +4,7 @@ import generateRandomString from '#/utils/generate_random_string';
 import { getDB } from '@/db';
 import { CaptchaProperty, CAPTCHA_TABLE_NAME } from '@/constants/db_definition';
 
-export async function createCaptcha() {
+export async function create() {
   const id = generateRandomString(8, false);
   const captchaData = captcha.create({
     size: 5,
@@ -21,7 +21,7 @@ export async function createCaptcha() {
   return { id, svg: captchaData.data };
 }
 
-export async function verifyCaptcha({
+export async function verify({
   id,
   value,
 }: {

@@ -9,7 +9,7 @@ export default async (ctx: Context) => {
   const { musicId } = ctx.query as { musicId?: string };
 
   if (!musicId) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const music = await getMusicById(musicId, [

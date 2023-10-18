@@ -72,7 +72,7 @@ export default async (ctx: Context) => {
     : undefined;
   const asset = file.asset ? file.asset[0] : undefined;
   if (!assetType || !ASSET_TYPES.includes(assetType) || !asset) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const { maxSize, acceptTypes } = ASSET_TYPE_MAP[assetType];
@@ -89,7 +89,7 @@ export default async (ctx: Context) => {
   if (validate) {
     const valid = await validate(data);
     if (!valid) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
   }
   const id = await generateId(data, ft.ext);

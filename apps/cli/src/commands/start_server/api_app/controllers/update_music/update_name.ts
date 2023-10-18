@@ -7,12 +7,12 @@ import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {
   if (typeof value !== 'string') {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const trimmedName = value.replace(/\s+/g, ' ').trim();
   if (!trimmedName.length || trimmedName.length > NAME_MAX_LENGTH) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   if (music.name === trimmedName) {

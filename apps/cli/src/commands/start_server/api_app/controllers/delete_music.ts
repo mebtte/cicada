@@ -19,7 +19,7 @@ import {
   MusicSingerRelationProperty,
   MusicbillMusicProperty,
 } from '@/constants/db_definition';
-import { verifyCaptcha } from '@/platform/captcha';
+import * as captcha from '@/platform/captcha';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -36,15 +36,15 @@ export default async (ctx: Context) => {
     typeof captchaValue !== 'string' ||
     !captchaValue.length
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
-  const captchaVerified = await verifyCaptcha({
+  const captchaVerified = await captcha.verify({
     id: captchaId,
     value: captchaValue,
   });
   if (!captchaVerified) {
-    return ctx.except(ExceptionCode.CAPTCHA_ERROR);
+    return ctx.except(ExceptionCode.WRONG_CAPTCHA);
   }
 
   const music = await getMusicById(id, Object.values(MusicProperty));

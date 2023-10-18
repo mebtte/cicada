@@ -36,7 +36,7 @@ export default async (ctx: Context) => {
     !MUSIC_TYPES.includes(type) ||
     typeof asset !== 'string'
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const assetExist = await exist(getAssetFilePath(asset, AssetType.MUSIC));

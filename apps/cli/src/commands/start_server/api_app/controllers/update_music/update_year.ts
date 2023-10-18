@@ -12,7 +12,7 @@ export default async ({ ctx, music, value }: Parameter) => {
     value < YEAR_MIN ||
     value > YEAR_MAX
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   if (music.year === value) {

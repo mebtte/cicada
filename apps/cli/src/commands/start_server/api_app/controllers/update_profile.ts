@@ -33,7 +33,7 @@ const KEY_MAP_HANDLER: Record<
       !password.length ||
       password.length > PASSWORD_MAX_LENGTH
     ) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     await Promise.all([
       updateUser({
@@ -51,7 +51,7 @@ const KEY_MAP_HANDLER: Record<
   },
   [AllowUpdateKey.AVATAR]: async ({ ctx, value: avatar }) => {
     if (typeof avatar !== 'string' || !avatar.length) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (ctx.user.avatar === avatar) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -76,7 +76,7 @@ const KEY_MAP_HANDLER: Record<
       nickname.length > NICKNAME_MAX_LENGTH ||
       nickname.trim() !== nickname
     ) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (ctx.user.nickname === nickname) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -110,7 +110,7 @@ const KEY_MAP_HANDLER: Record<
       !orders.length ||
       orders.find((o) => typeof o !== 'string')
     ) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
 
     const existMusicbillList = await getDB().all<
@@ -142,7 +142,7 @@ export default async (ctx: Context) => {
   const { key, value } = ctx.request.body as { key: unknown; value: unknown };
   // @ts-expect-error
   if (!ALLOW_UPDATE_KEYS.includes(key)) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
   // @ts-expect-error
   return KEY_MAP_HANDLER[key]({ ctx, value });

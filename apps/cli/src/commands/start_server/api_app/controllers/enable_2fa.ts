@@ -17,7 +17,7 @@ export default async (ctx: Context) => {
     !ctx.user.twoFASecret ||
     !ctx.user.twoFASecret.startsWith(UNUSED_2FA_SECRET_PREFIX)
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   if (

@@ -41,7 +41,7 @@ export default async (ctx: Context) => {
     pageSizeNumber < 0 ||
     pageSizeNumber > MAX_PAGE_SIZE
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   let musicList: LocalMusic[] = [];
@@ -97,7 +97,7 @@ export default async (ctx: Context) => {
     [, musicList] = results;
   } else {
     if (pageNumber !== 1) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
 
     const results = await Promise.all([

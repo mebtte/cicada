@@ -23,6 +23,7 @@ async function getCover(
   const { asset } = ctx.params as { asset: string };
   const { size } = ctx.query as { size?: unknown };
   const sizeNumber = size ? Number(size) : undefined;
+  const assetPath = getAssetFilePath(asset, type);
 
   if (
     sizeNumber &&
@@ -32,8 +33,13 @@ async function getCover(
     const cacheName = `${sizeNumber}_${asset}`;
     const cachePath = `${getCacheDirectory()}/${cacheName}`;
     const cacheExist = await exist(cachePath);
-    const assetPath = getAssetFilePath(asset, type);
     if (!cacheExist) {
+      const assetExist = await exist(assetPath);
+      if (!assetExist) {
+        // eslint-disable-next-line no-return-assign
+        return (ctx.status = 404);
+      }
+
       const cover = await jimp.read(assetPath);
       /**
        * 如果图片本身尺寸小于需要的尺寸

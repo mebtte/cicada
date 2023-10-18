@@ -34,7 +34,7 @@ const KEY_MAP_HANDLER: Record<
       !value.length ||
       value.length > PASSWORD_MAX_LENGTH
     ) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
 
     await Promise.all([
@@ -62,7 +62,7 @@ const KEY_MAP_HANDLER: Record<
       !value.length ||
       value.length > USERNAME_MAX_LENGTH
     ) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (user.username === value) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -82,7 +82,7 @@ const KEY_MAP_HANDLER: Record<
   },
   [AdminAllowUpdateKey.REMARK]: async ({ ctx, user, value }) => {
     if (typeof value !== 'string' || value.length > REMARK_MAX_LENGTH) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (user.remark === value) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -98,7 +98,7 @@ const KEY_MAP_HANDLER: Record<
   },
   [AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT]: async ({ ctx, user, value }) => {
     if (typeof value !== 'number' || value < 0) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (user.musicbillMaxAmount === value) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -118,7 +118,7 @@ const KEY_MAP_HANDLER: Record<
     value,
   }) => {
     if (typeof value !== 'number' || value < 0) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (user.createMusicMaxAmountPerDay === value) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -138,7 +138,7 @@ const KEY_MAP_HANDLER: Record<
     value,
   }) => {
     if (typeof value !== 'number' || value < 0) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (user.musicPlayRecordIndate === value) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -167,7 +167,7 @@ export default async (ctx: Context) => {
     // @ts-expect-error
     !Object.values(AdminAllowUpdateKey).includes(key)
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const user: LocalUser | null = await getUserById(id, [

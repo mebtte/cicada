@@ -9,7 +9,7 @@ import {
   SHARED_MUSICBILL_TABLE_NAME,
   SharedMusicbillProperty,
 } from '@/constants/db_definition';
-import { verifyCaptcha } from '@/platform/captcha';
+import * as captcha from '@/platform/captcha';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -26,15 +26,15 @@ export default async (ctx: Context) => {
     typeof captchaValue !== 'string' ||
     !captchaValue.length
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
-  const captcahVerified = await verifyCaptcha({
+  const captcahVerified = await captcha.verify({
     id: captchaId,
     value: captchaValue,
   });
   if (!captcahVerified) {
-    return ctx.except(ExceptionCode.CAPTCHA_ERROR);
+    return ctx.except(ExceptionCode.WRONG_CAPTCHA);
   }
 
   const musicbill = await getMusicbillById(id, [MusicbillProperty.USER_ID]);

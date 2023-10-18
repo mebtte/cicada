@@ -24,7 +24,7 @@ export default async (ctx: Context) => {
     typeof musicId !== 'string' ||
     !musicId.length
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const musicbill = await getMusicbillById(musicbillId, [

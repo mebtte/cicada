@@ -39,7 +39,7 @@ const KEY_MAP_HANDLER: Record<
       name.length > NAME_MAX_LENGTH ||
       name.replace(/\s+/g, ' ').trim() !== name
     ) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (musicbill.name === name) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -49,7 +49,7 @@ const KEY_MAP_HANDLER: Record<
   },
   [AllowUpdateKey.COVER]: async ({ ctx, musicbill, value: cover }) => {
     if (typeof cover !== 'string' || !cover.length) {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (musicbill.cover === cover) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -65,7 +65,7 @@ const KEY_MAP_HANDLER: Record<
   },
   [AllowUpdateKey.PUBLIC]: async ({ ctx, musicbill, value: publiz }) => {
     if (typeof publiz !== 'boolean') {
-      return ctx.except(ExceptionCode.PARAMETER_ERROR);
+      return ctx.except(ExceptionCode.WRONG_PARAMETER);
     }
     if (musicbill.public === (publiz ? 1 : 0)) {
       return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
@@ -92,7 +92,7 @@ export default async (ctx: Context) => {
     // @ts-expect-error
     !ALLOW_UPDATE_KEYS.includes(key)
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const musicbill = await getMusicbillById(id, [

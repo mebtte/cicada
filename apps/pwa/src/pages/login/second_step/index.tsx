@@ -7,6 +7,7 @@ import { t } from '@/i18n';
 import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
 import logger from '@/utils/logger';
 import login from '@/server/base/login';
+import loginWith2FA from '@/server/base/login_with_2fa';
 import notice from '@/utils/notice';
 import getProfile from '@/server/api/get_profile';
 import server from '@/global_states/server';
@@ -68,8 +69,6 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
-
   const [username, setUserName] = useState('');
   const onUsernameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setUserName(event.target.value.trim());
@@ -85,7 +84,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       path: query.redirect || ROOT_PATH.PLAYER,
     });
   };
-  const on2FALogin = () =>
+  const onLoginWith2FA = () =>
     dialog.input({
       label: t('2fa_token'),
       confirmVariant: Variant.PRIMARY,
@@ -96,53 +95,57 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         }
 
         try {
-          const token = await login({ username, password, twoFAToken });
+          const token = await loginWith2FA({ username, password, twoFAToken });
           await addProfile(token);
           window.setTimeout(redirect, 0);
         } catch (error) {
-          logger.error(error, 'Failed to login by 2FA');
+          logger.error(error, 'Failed to login with 2FA');
           notice.error(error.message);
           return false;
         }
       },
     });
 
-  const onLogin = async () => {
-    setLoading(true);
-    try {
-      const token = await login({
-        username,
-        password,
-      });
-      await addProfile(token);
-      window.setTimeout(redirect, 0);
-    } catch (error) {
-      logger.error(error, 'Failed to login');
+  const onLogin = () =>
+    dialog.captcha({
+      confirmVariant: Variant.PRIMARY,
+      onConfirm: async ({ captchaId, captchaValue }) => {
+        try {
+          const token = await login({
+            username,
+            password,
+            captchaId,
+            captchaValue,
+          });
+          await addProfile(token);
+          window.setTimeout(redirect, 0);
+        } catch (error) {
+          logger.error(error, 'Failed to login');
 
-      switch (error.code) {
-        case ExceptionCode.LACK_OF_2FA_TOKEN: {
-          on2FALogin();
-          break;
+          switch (error.code) {
+            case ExceptionCode.NEED_2FA: {
+              onLoginWith2FA();
+              break;
+            }
+            default: {
+              notice.error(error.message);
+              return error.code === ExceptionCode.WRONG_USERNAME_OR_PASSWORD;
+            }
+          }
         }
-        default: {
-          notice.error(error.message);
-        }
-      }
-    }
-    setLoading(false);
-  };
+      },
+    });
 
   return (
     <Style>
       <Logo />
-      <UserList disabled={loading} redirect={redirect} />
+      <UserList redirect={redirect} />
       <Label label={t('username')}>
         <Input
           value={username}
           onChange={onUsernameChange}
           maxLength={USERNAME_MAX_LENGTH}
           autoFocus
-          disabled={loading}
         />
       </Label>
       <Label label={t('password')}>
@@ -151,7 +154,6 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
           value={password}
           onChange={onPasswordChange}
           maxLength={PASSWORD_MAX_LENGTH}
-          disabled={loading}
           onKeyDown={(event) => {
             if (
               event.key.toLowerCase() === 'enter' &&
@@ -165,15 +167,12 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       </Label>
       <Button
         variant={Variant.PRIMARY}
-        loading={loading}
         disabled={!username.length || !password.length}
         onClick={onLogin}
       >
         {t('login')}
       </Button>
-      <Button onClick={toPrevious} disabled={loading}>
-        {t('previous_step')}
-      </Button>
+      <Button onClick={toPrevious}>{t('previous_step')}</Button>
     </Style>
   );
 }
