@@ -200,6 +200,7 @@ const zhCN: {
   sort_musicbill: '歌单排序',
   retry: '重试',
   warning_of_exiting_by_keyboard: '请先暂停音乐再使用快捷键退出',
+  unknown_singer: '未知歌手',
 };
 
 export default zhCN;

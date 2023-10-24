@@ -211,4 +211,5 @@ export default {
   retry: 'retry',
   warning_of_exiting_by_keyboard:
     'you must pause the music before exiting by keyboard',
+  unknown_singer: 'unknown singer',
 };
