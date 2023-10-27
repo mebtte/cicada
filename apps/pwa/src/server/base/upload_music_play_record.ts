@@ -4,6 +4,7 @@ import server, {
   getSelectedUser,
 } from '@/global_states/server';
 import ErrorWithCode from '@/utils/error_with_code';
+import { getCommonParams } from '..';
 
 function uploadMusicPlayRecord({
   musicId,
@@ -39,8 +40,12 @@ function uploadMusicPlayRecord({
       type: 'application/json; charset=utf-8',
     },
   );
+
+  const commonParams = getCommonParams();
   return window.navigator.sendBeacon(
-    `${selectedServer.origin}/base/music_play_record`,
+    `${selectedServer.origin}/base/music_play_record?${Object.keys(commonParams)
+      .map((key) => `${key}=${commonParams[key]}`)
+      .join('&')}`,
     blob,
   );
 }
