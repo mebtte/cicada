@@ -201,6 +201,7 @@ const zhCN: {
   retry: '重试',
   warning_of_exiting_by_keyboard: '请先暂停音乐再使用快捷键退出',
   unknown_singer: '未知歌手',
+  someone_created_at: '%s1 创建于 %s2',
 };
 
 export default zhCN;

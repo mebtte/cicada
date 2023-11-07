@@ -28,6 +28,7 @@ const bodyProps: { style: CSSProperties } = {
 };
 const Content = styled.div`
   height: 100%;
+  padding-bottom: env(safe-area-inset-bottom, 0);
 
   overflow: auto;
   ${autoScrollbar}

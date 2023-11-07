@@ -46,7 +46,6 @@
     "clrc": "^3.0.1",
     "commander": "^9.4.1",
     "file-type": "^16.5.3",
-    "html-entities": "^2.3.3",
     "inquirer": "^8.2.5",
     "jimp": "^0.22.8",
     "koa": "^2.13.4",

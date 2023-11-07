@@ -212,4 +212,5 @@ export default {
   warning_of_exiting_by_keyboard:
     'you must pause the music before exiting by keyboard',
   unknown_singer: 'unknown singer',
+  someone_created_at: '%s1 created at %s2',
 };

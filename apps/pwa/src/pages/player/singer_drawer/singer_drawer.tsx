@@ -7,12 +7,13 @@ import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import autoScrollbar from '@/style/auto_scrollbar';
+import day from '#/utils/day';
 import useData from './use_data';
 import { Singer } from './constants';
 import Info from './info';
 import Toolbar from './toolbar';
 import MusicList from './music_list';
-import CreateUser from './create_user';
+import CreateUser from '../components/create_user';
 import EditMenu from './edit_menu';
 
 const bodyProps: { style: CSSProperties } = {
@@ -54,8 +55,9 @@ function Detail({ style, singer }: { style: unknown; singer: Singer }) {
           />
         </div>
         <CreateUser
-          user={singer.createUser}
-          createTimestamp={singer.createTimestamp}
+          userId={singer.createUser.id}
+          nickname={singer.createUser.nickname}
+          createTime={day(singer.createTimestamp).format('YYYY-MM-DD')}
         />
         <Toolbar singer={singer} />
       </div>
