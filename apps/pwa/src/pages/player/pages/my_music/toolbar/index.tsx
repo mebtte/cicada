@@ -9,11 +9,11 @@ import { TOOLBAR_HEIGHT } from '../constants';
 const Style = styled.div`
   position: absolute;
   width: 100%;
-  height: ${TOOLBAR_HEIGHT};
+  height: ${TOOLBAR_HEIGHT}px;
   left: 0;
   bottom: 0;
 
-  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
+  padding: 0 20px;
 
   display: flex;
   align-items: center;
