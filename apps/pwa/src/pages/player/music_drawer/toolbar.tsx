@@ -23,8 +23,8 @@ const Style = styled.div`
 
   position: sticky;
   bottom: 0;
-  height: 50px;
-  padding: 0 20px;
+  height: calc(50px + env(safe-area-inset-bottom, 0));
+  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
 
   display: flex;
   align-items: center;
