@@ -103,6 +103,7 @@
     "@typescript-eslint/parser": "^6.5.0",
     "array-move": "^4.0.0",
     "babel-loader": "^8.2.5",
+    "babel-plugin-styled-components": "^2.1.4",
     "classnames": "^2.3.2",
     "copy-webpack-plugin": "^11.0.0",
     "cropperjs": "^1.5.12",

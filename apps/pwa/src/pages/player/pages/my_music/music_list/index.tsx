@@ -35,7 +35,7 @@ const CardContainer = styled(Container)`
   gap: 20px;
 `;
 const MusicListContainer = styled(Container)`
-  padding-bottom: ${TOOLBAR_HEIGHT}px;
+  padding-bottom: ${TOOLBAR_HEIGHT};
 
   overflow: auto;
   ${autoScrollbar}
