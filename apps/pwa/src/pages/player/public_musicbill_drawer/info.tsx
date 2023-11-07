@@ -68,7 +68,7 @@ function Info({ musicbill }: { musicbill: Musicbill }) {
   const { name, cover, user } = musicbill;
   return (
     <Style>
-      <Cover src={cover} size="100%" />
+      <Cover src={cover} size="100%" shape={Shape.SQUARE} />
       <div className="info">
         <div className="name">{name}</div>
         <div
