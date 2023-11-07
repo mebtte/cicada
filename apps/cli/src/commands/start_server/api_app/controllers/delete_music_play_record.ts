@@ -10,7 +10,7 @@ import { Context } from '../constants';
 export default async (ctx: Context) => {
   const id = Number(ctx.query.id);
   if (!id) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const musicPlayRecord = await getDB().get<

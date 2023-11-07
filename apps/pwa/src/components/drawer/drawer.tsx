@@ -114,6 +114,7 @@ const Drawer = ({
         <Mask
           {...maskProps}
           style={{
+            pointerEvents: open ? 'auto' : 'none',
             opacity,
             ...maskProps.style,
           }}

@@ -27,7 +27,7 @@ export default async (ctx: Context) => {
     percent < 0 ||
     percent > 1
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   let tokenPayload: { userId: string; tokenIdentifier: string };

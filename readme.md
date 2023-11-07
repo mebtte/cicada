@@ -19,7 +19,7 @@ A multi-user music service for self-hosting.
 - Separation of playlist and custom playqueue
 - Search of music, singer, musicbill and lyric
 - [System media shortcut](https://developer.mozilla.org/docs/Web/API/MediaSession)
-- Support of building APP from [HTTP API](./apps/pwa/src/server)
+- Support of building APP from [HTTP API](https://www.postman.com/cicada-player)
 - Support of Two-Factor Authentication
 
 ## Deployment
@@ -180,7 +180,7 @@ npm start -- -- fix-data <data>
 
 ## Development
 
-Cicada is a monorepo that contains two sub-projects under the `apps` directory. `cli` is for the server, which is used to manage assets and start services. `pwa` is for the client, which is used to access for users. And there is a `shared` directory on the root, which contains the code runs on both `cli` and `pwa`.
+Cicada is a **monorepo** that contains two sub-projects under the `apps` directory. `cli` is for the server, which is used to manage assets and start services. `pwa` is for the client, which is used to access for users. And there is a `shared` directory on the root, which contains the code runs on both `cli` and `pwa`.
 
 If you want to develop or contribute, **most of cicada is developed by TS/JS** and you should know it. Cicada relies on [Node>=18](https://nodejs.org) and you should install it on your device first.
 
@@ -217,6 +217,16 @@ npm run dev:pwa
 
 Visit `localhost:8001` and use `http://localhost:8000` as server address, modify the code of `pwa` and you will see the change after auto reload.
 
+There are useful documentations:
+
+- [Cicada API](https://www.postman.com/cicada-player)
+
+### Contributor
+
+<a href="https://github.com/mebtte/cicada/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=mebtte/cicada" />
+</a>
+
 ## Q & A
 
 <details>
@@ -245,12 +255,6 @@ UPDATE user SET twoFASecret = NULL WHERE username = <username>;
 Because compatibility of PWA is broken on iOS/iPadOS, there is a plan to develop a App for iOS/iPadOS but it is uncertain.
 
 </details>
-
-## Contributor
-
-<a href="https://github.com/mebtte/cicada/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=mebtte/cicada" />
-</a>
 
 ## License
 

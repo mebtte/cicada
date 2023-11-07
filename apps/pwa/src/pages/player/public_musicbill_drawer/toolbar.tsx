@@ -6,21 +6,17 @@ import collectPublicMusicbill from '@/server/api/collect_public_musicbill';
 import logger from '@/utils/logger';
 import uncollectPublicMusicbill from '@/server/api/uncollect_public_musicbill';
 import { t } from '@/i18n';
-import { Musicbill, TOOLBAR_HEIGHT } from './constants';
+import { Musicbill } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import e, { EventType } from './eventemitter';
 
 const Style = styled.div`
-  z-index: 1;
-
-  position: absolute;
+  position: sticky;
   bottom: 0;
-  left: 0;
-  width: 100%;
-  height: ${TOOLBAR_HEIGHT}px;
-  padding: 0 20px;
+  height: calc(50px + env(safe-area-inset-bottom, 0));
+  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
 
   display: flex;
   align-items: center;

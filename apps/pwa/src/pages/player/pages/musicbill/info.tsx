@@ -54,7 +54,8 @@ function Info({ musicbill }: { musicbill: Musicbill }) {
       <div className="info">
         <div className="name">{musicbill.name}</div>
         <div className="create-time">
-          {t('create_at')}{' '}
+          {t('create_at')}
+          &nbsp;
           {day(musicbill.createTimestamp).format('YYYY-MM-DD HH:mm')}
         </div>
         <Operation musicbill={musicbill} />

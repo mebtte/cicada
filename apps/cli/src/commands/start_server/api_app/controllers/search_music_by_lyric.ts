@@ -38,7 +38,7 @@ export default async (ctx: Context) => {
     pageSizeNumber < 0 ||
     pageSizeNumber > MAX_PAGE_SIZE
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const pattern = `%${keyword}%`;

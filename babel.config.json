@@ -11,6 +11,14 @@
   ],
   "plugins": [
     ["@babel/plugin-transform-runtime", { "regenerator": true }],
-    "@babel/plugin-proposal-class-properties"
+    "@babel/plugin-proposal-class-properties",
+    [
+      "babel-plugin-styled-components",
+      {
+        "ssr": false,
+        "displayName": true,
+        "fileName": true
+      }
+    ]
   ]
 }

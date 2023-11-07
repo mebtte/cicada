@@ -8,7 +8,8 @@ function login(data: RequestBody) {
     body: {
       username: data.username,
       password: data.password,
-      twoFAToken: data.twoFAToken,
+      captchaId: data.captchaId,
+      captchaValue: data.captchaValue,
     },
   });
 }

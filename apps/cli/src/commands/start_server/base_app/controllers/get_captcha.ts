@@ -1,7 +1,7 @@
-import { createCaptcha } from '@/platform/captcha';
+import * as captcha from '@/platform/captcha';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
-  const captchaData = await createCaptcha();
+  const captchaData = await captcha.create();
   return ctx.success(captchaData);
 };

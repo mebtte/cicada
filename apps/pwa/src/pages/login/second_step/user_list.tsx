@@ -26,13 +26,7 @@ const Divider = styled.div`
   }
 `;
 
-function UserList({
-  disabled,
-  redirect,
-}: {
-  disabled: boolean;
-  redirect: () => void;
-}) {
+function UserList({ redirect }: { redirect: () => void }) {
   const userList = useMemo(
     () => getSelectedServer(server.get())?.users || [],
     [],
@@ -43,7 +37,6 @@ function UserList({
       <>
         <Label label={t('existing_user')}>
           <Select
-            disabled={disabled}
             options={userList.map((u) => ({
               label: `${u.nickname}(@${u.username})`,
               value: u.id,

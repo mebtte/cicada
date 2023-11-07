@@ -50,7 +50,7 @@ function MusicWithLyric({
                 __html: xss(
                   content.replace(
                     replacement,
-                    `<span class="highlight">$&</span>`,
+                    '<span class="highlight">$&</span>',
                   ),
                   {
                     whiteList: {

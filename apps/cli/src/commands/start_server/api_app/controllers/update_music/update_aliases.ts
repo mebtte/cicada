@@ -13,14 +13,14 @@ export default async ({ ctx, music, value }: Parameter) => {
     value.length > MUSIC_MAX_ALIAS_COUNT ||
     value.find((v) => typeof v !== 'string' || v.length > ALIAS_MAX_LENGTH)
   ) {
-    return ctx.error(ExceptionCode.PARAMETER_ERROR);
+    return ctx.error(ExceptionCode.WRONG_PARAMETER);
   }
 
   const trimmedAliases: string[] = value.map((v) =>
     v.replace(/\s+/g, ' ').trim(),
   );
   if (trimmedAliases.find((a) => a.length === 0)) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const aliases = value.join(ALIAS_DIVIDER);

@@ -2,8 +2,8 @@ export default {
   cicada: 'cicada',
   success: 'success',
   server_error: 'server error',
-  parameter_error: 'parameter error',
-  captcha_error: 'captcha error',
+  wrong_parameter: 'wrong parameter',
+  wrong_captcha: 'wrong captcha',
   not_authorized: 'not authorized',
   not_authorized_for_admin: 'not authorized for admin',
   username_already_registered: 'username already registered',
@@ -41,4 +41,6 @@ export default {
   lack_of_2fa_token: 'lack of 2FA token',
   wrong_2fa_token: 'wrong 2FA token',
   '2fa_enabled_already': '2FA enabled already',
+  need_2fa: 'need 2FA',
+  no_need_to_2fa: 'no need to 2FA',
 };

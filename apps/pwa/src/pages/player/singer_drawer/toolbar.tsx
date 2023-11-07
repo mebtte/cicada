@@ -12,12 +12,10 @@ import e, { EventType } from './eventemitter';
 
 const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, null);
 const Style = styled.div`
-  z-index: 1;
-
   position: sticky;
   bottom: 0;
-  height: 50px;
-  padding: 0 20px;
+  height: calc(50px + env(safe-area-inset-bottom, 0));
+  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
 
   display: flex;
   align-items: center;

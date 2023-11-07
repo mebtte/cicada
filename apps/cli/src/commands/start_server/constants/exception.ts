@@ -4,8 +4,8 @@ import { Key } from '@/i18n';
 export const EXCEPTION_CODE_MAP_KEY: Record<ExceptionCode, Key> = {
   [ExceptionCode.SUCCESS]: 'success',
   [ExceptionCode.SERVER_ERROR]: 'server_error',
-  [ExceptionCode.PARAMETER_ERROR]: 'parameter_error',
-  [ExceptionCode.CAPTCHA_ERROR]: 'captcha_error',
+  [ExceptionCode.WRONG_PARAMETER]: 'wrong_parameter',
+  [ExceptionCode.WRONG_CAPTCHA]: 'wrong_captcha',
   [ExceptionCode.NOT_AUTHORIZED]: 'not_authorized',
   [ExceptionCode.NOT_AUTHORIZED_FOR_ADMIN]: 'not_authorized_for_admin',
   [ExceptionCode.USERNAME_ALREADY_REGISTERED]: 'username_already_registered',
@@ -51,4 +51,6 @@ export const EXCEPTION_CODE_MAP_KEY: Record<ExceptionCode, Key> = {
   [ExceptionCode.LACK_OF_2FA_TOKEN]: 'lack_of_2fa_token',
   [ExceptionCode.WRONG_2FA_TOKEN]: 'wrong_2fa_token',
   [ExceptionCode.TWO_FA_ENABLED_ALREADY]: '2fa_enabled_already',
+  [ExceptionCode.NEED_2FA]: 'need_2fa',
+  [ExceptionCode.NO_NEED_TO_2FA]: 'no_need_to_2fa',
 };

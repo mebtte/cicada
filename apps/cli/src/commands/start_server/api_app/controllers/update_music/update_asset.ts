@@ -10,7 +10,7 @@ import { Parameter } from './constants';
 
 export default async ({ ctx, music, value }: Parameter) => {
   if (typeof value !== 'string' || !value.length) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
   if (music.asset === value) {
     return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);

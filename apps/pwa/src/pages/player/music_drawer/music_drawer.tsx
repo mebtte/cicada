@@ -10,7 +10,7 @@ import Cover, { Shape } from '@/components/cover';
 import autoScrollbar from '@/style/auto_scrollbar';
 import useData from './use_data';
 import { MusicDetail } from './constants';
-import CreateUser from './create_user';
+import CreateUser from '../components/create_user';
 import SingerList from './singer_list';
 import Toolbar from './toolbar';
 import Lyric from './lyric';
@@ -41,9 +41,6 @@ const DetailBox = styled(Container)`
     }
   }
 `;
-const createUserStyle: CSSProperties = {
-  padding: '30px 20px',
-};
 
 function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
   return (
@@ -69,9 +66,9 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
           <Lyric music={music} />
         </div>
         <CreateUser
-          user={music.createUser}
+          userId={music.createUser.id}
+          nickname={music.createUser.nickname}
           createTime={music.createTime}
-          style={createUserStyle}
         />
         <Toolbar music={music} />
       </div>

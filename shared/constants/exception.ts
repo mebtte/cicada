@@ -1,8 +1,8 @@
 export enum ExceptionCode {
   SUCCESS = 'success',
   SERVER_ERROR = 'server_error',
-  PARAMETER_ERROR = 'parameter_error',
-  CAPTCHA_ERROR = 'captcha_error',
+  WRONG_PARAMETER = 'wrong_parameter',
+  WRONG_CAPTCHA = 'wrong_captcha',
   NOT_AUTHORIZED = 'not_authorized',
   NOT_AUTHORIZED_FOR_ADMIN = 'not_authorized_for_admin',
   USERNAME_ALREADY_REGISTERED = 'username_already_registered',
@@ -37,4 +37,6 @@ export enum ExceptionCode {
   LACK_OF_2FA_TOKEN = 'lack_of_2fa_token',
   WRONG_2FA_TOKEN = 'wrong_2fa_token',
   TWO_FA_ENABLED_ALREADY = 'two_fa_enabled_already',
+  NEED_2FA = 'need_2fa',
+  NO_NEED_TO_2FA = 'no_need_to_2fa',
 }

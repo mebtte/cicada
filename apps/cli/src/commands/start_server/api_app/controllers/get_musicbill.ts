@@ -27,7 +27,7 @@ export default async (ctx: Context) => {
   const { id } = ctx.query as { id?: string };
 
   if (typeof id !== 'string' || !id.length) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   /**

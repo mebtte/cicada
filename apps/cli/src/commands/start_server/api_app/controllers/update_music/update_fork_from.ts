@@ -15,7 +15,7 @@ export default async ({ ctx, music, value }: Parameter) => {
     value.find((v) => typeof v !== 'string') ||
     value.find((v) => v === music.id)
   ) {
-    return ctx.error(ExceptionCode.PARAMETER_ERROR);
+    return ctx.error(ExceptionCode.WRONG_PARAMETER);
   }
 
   const oldForkFromList = await getMusicForkFromList(music.id, [

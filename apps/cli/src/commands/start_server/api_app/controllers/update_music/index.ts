@@ -38,7 +38,7 @@ export default async (ctx: Context) => {
     // @ts-expect-error
     !Object.values(AllowUpdateKey).includes(key)
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const music: Music | null = await getMusicById(id, [

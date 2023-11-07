@@ -41,7 +41,7 @@ export default async (ctx: Context) => {
     pageSizeNumber < 1 ||
     pageSizeNumber > MAX_PAGE_SIZE
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   let total: number;

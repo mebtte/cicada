@@ -10,7 +10,7 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { EventType } from '../eventemitter';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import useData from './use_data';
-import { Musicbill as MusicbillType, TOOLBAR_HEIGHT } from './constants';
+import { Musicbill as MusicbillType } from './constants';
 import Info from './info';
 import MusicList from './music_list';
 import Toolbar from './toolbar';
@@ -28,19 +28,8 @@ const StatusContainer = styled(Container)`
 `;
 const Style = styled.div`
   ${absoluteFullSize}
-
-  >.scrollable {
-    ${absoluteFullSize}
-
-    padding-bottom: calc(env(safe-area-inset-bottom, 0) + ${TOOLBAR_HEIGHT}px);
-
-    overflow: auto;
-    ${autoScrollbar}
-
-    > .tab-content {
-      position: relative;
-    }
-  }
+  ${autoScrollbar}
+  overflow: auto;
 `;
 
 function Musicbill({
@@ -52,10 +41,8 @@ function Musicbill({
 }) {
   return (
     <Style>
-      <div className="scrollable">
-        <Info musicbill={musicbill} />
-        <MusicList musicList={musicbill.musicList} />
-      </div>
+      <Info musicbill={musicbill} />
+      <MusicList musicList={musicbill.musicList} />
       <Toolbar musicbill={musicbill} collected={collected} />
     </Style>
   );

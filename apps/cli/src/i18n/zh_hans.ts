@@ -6,8 +6,8 @@ const zhHans: {
   cicada: '知了',
   success: '成功',
   server_error: '服务器错误',
-  parameter_error: '参数错误',
-  captcha_error: '图形验证码错误',
+  wrong_parameter: '参数错误',
+  wrong_captcha: '错误的图形验证码',
   not_authorized: '未验证权限',
   not_authorized_for_admin: '未验证管理员权限',
   username_already_registered: '用户名已被注册',
@@ -42,6 +42,8 @@ const zhHans: {
   lack_of_2fa_token: '缺少 2FA 凭证',
   wrong_2fa_token: '错误的 2FA 凭证',
   '2fa_enabled_already': '2FA 早已启用',
+  need_2fa: '需要 2FA',
+  no_need_to_2fa: '无需 2FA',
 };
 
 export default zhHans;

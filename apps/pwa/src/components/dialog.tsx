@@ -88,6 +88,7 @@ const Dialog = ({
         <Mask
           {...maskProps}
           style={{
+            pointerEvents: open ? 'auto' : 'none',
             opacity,
             ...maskProps.style,
           }}

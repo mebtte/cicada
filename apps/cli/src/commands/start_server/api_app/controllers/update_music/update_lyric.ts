@@ -17,12 +17,12 @@ export default async ({ ctx, music, value }: Parameter) => {
     value.length > MUSIC_MAX_LRYIC_AMOUNT ||
     value.find((v) => typeof v !== 'string' || v.length > LYRIC_MAX_LENGTH)
   ) {
-    return ctx.error(ExceptionCode.PARAMETER_ERROR);
+    return ctx.error(ExceptionCode.WRONG_PARAMETER);
   }
 
   const trimmedLyrics: string[] = value.map((v) => v.trim());
   if (trimmedLyrics.find((a) => a.length === 0)) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   await Promise.all([

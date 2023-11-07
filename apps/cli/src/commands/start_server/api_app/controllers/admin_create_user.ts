@@ -32,7 +32,7 @@ export default async (ctx: Context) => {
     typeof remark !== 'string' ||
     remark.length > REMARK_MAX_LENGTH
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const user = await getUserByUsername(username, [UserProperty.ID]);

@@ -1,3 +1,4 @@
+import xss from 'xss';
 import styled from 'styled-components';
 import day from '#/utils/day';
 import Button from '@/components/button';
@@ -93,10 +94,17 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
         }}
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
-          __html: t(
-            'shared_musicbill_invitation_instruction',
-            `<span class="user">${inviteUserNickname}</span>`,
-            `<span class="musicbill">${musicbillName}</span>`,
+          __html: xss(
+            t(
+              'shared_musicbill_invitation_instruction',
+              `<span class="user">${inviteUserNickname}</span>`,
+              `<span class="musicbill">${musicbillName}</span>`,
+            ),
+            {
+              allowList: {
+                span: ['class'],
+              },
+            },
           ),
         }}
       />

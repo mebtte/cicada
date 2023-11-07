@@ -14,7 +14,7 @@ export default async ({ ctx, music, value }: Parameter) => {
     value.length > 100 ||
     value.find((v) => typeof v !== 'string')
   ) {
-    return ctx.error(ExceptionCode.PARAMETER_ERROR);
+    return ctx.error(ExceptionCode.WRONG_PARAMETER);
   }
 
   const oldSingerList = await getDB().all<{ id: number; singerId: string }>(

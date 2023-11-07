@@ -80,7 +80,11 @@ const Popup = ({
       o ? (
         <Mask
           {...maskProps}
-          style={{ ...maskProps.style, opacity }}
+          style={{
+            pointerEvents: open ? 'auto' : 'none',
+            opacity,
+            ...maskProps.style,
+          }}
           onClick={onClickWrapper}
         >
           <Body

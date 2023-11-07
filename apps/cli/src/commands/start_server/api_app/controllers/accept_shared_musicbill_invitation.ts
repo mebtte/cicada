@@ -10,7 +10,7 @@ import { Context } from '../constants';
 export default async (ctx: Context) => {
   const { id } = ctx.request.body as { id?: unknown };
   if (typeof id !== 'number') {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   const sharedMusicbillInvitation = await getDB().get<

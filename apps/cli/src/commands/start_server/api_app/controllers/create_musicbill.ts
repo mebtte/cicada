@@ -12,7 +12,7 @@ export default async (ctx: Context) => {
     !name.length ||
     name.length > NAME_MAX_LENGTH
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
   /**

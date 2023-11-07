@@ -1,5 +1,5 @@
 import { ExceptionCode } from '#/constants/exception';
-import { verifyCaptcha } from '@/platform/captcha';
+import * as captcha from '@/platform/captcha';
 import { getUserById } from '@/db/user';
 import { UserProperty } from '@/constants/db_definition';
 import updateUser from '@/db/update_user';
@@ -20,15 +20,15 @@ export default async (ctx: Context) => {
     typeof captchaValue !== 'string' ||
     !captchaValue.length
   ) {
-    return ctx.except(ExceptionCode.PARAMETER_ERROR);
+    return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
-  const captchaVerified = await verifyCaptcha({
+  const captchaVerified = await captcha.verify({
     id: captchaId,
     value: captchaValue,
   });
   if (!captchaVerified) {
-    return ctx.except(ExceptionCode.CAPTCHA_ERROR);
+    return ctx.except(ExceptionCode.WRONG_CAPTCHA);
   }
 
   const user = await getUserById(id, [UserProperty.ID, UserProperty.ADMIN]);

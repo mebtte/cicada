@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
+import { t } from '@/i18n';
 import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
 
@@ -10,10 +11,14 @@ function useMediaSession(music?: QueueMusic) {
     if (music && 'mediaSession' in window.navigator) {
       window.navigator.mediaSession.metadata = new MediaMetadata({
         title: music.name,
-        artist: music.singers.map((s) => s.name).join(',') || '未知歌手',
+        artist:
+          music.singers.map((s) => s.name).join(',') || t('unknown_singer'),
         artwork: music.cover
           ? COVER_SIZES.map((size) => ({
-              src: getResizedImage({ url: music.cover, size }),
+              src: getResizedImage({
+                url: music.cover,
+                size: Math.ceil(size * window.devicePixelRatio),
+              }),
               sizes: `${size}x${size}`,
               type: 'image/jpeg',
             }))
