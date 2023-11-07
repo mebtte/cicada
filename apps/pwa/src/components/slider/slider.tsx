@@ -51,6 +51,7 @@ const Style = styled.div`
     >.inner {
       width: 50%;
       height: 50%;
+      border-radius: 50%;
       background-color: ${CSSVariable.COLOR_PRIMARY};
     }
   }
