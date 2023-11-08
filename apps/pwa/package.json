@@ -1,5 +1,6 @@
 {
   "name": "pwa",
+  "type": "module",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --config webpack/dev.js --progress",
     "dev-with-sw": "cross-env NODE_ENV=development webpack serve --config webpack/dev_with_sw.js --progress",

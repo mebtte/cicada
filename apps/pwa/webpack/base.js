@@ -1,13 +1,15 @@
-const path = require('path');
-const fs = require('fs');
-const cp = require('child_process');
-const webpack = require('webpack');
-const CopyPlugin = require('copy-webpack-plugin');
-const HtmlPlugin = require('html-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+import path from 'path';
+import url from 'url';
+import fs from 'fs';
+import cp from 'child_process';
+import webpack from 'webpack';
+import CopyPlugin from 'copy-webpack-plugin';
+import HtmlPlugin from 'html-webpack-plugin';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
+const CURRENT_DIR = path.dirname(url.fileURLToPath(import.meta.url));
 const INVALID_FILES = ['.DS_Store'];
-const STATIC_DIR = path.join(__dirname, '../src/static');
+const STATIC_DIR = path.join(CURRENT_DIR, '../src/static');
 const experiments = {
   topLevelAwait: true,
 };
@@ -34,9 +36,9 @@ const envDefinePlugin = new webpack.DefinePlugin({
 const mainConfig = {
   mode: process.env.NODE_ENV,
   experiments,
-  entry: path.join(__dirname, '../src/index.tsx'),
+  entry: path.join(CURRENT_DIR, '../src/index.tsx'),
   output: {
-    path: path.join(__dirname, '../../../dist/pwa'),
+    path: path.join(CURRENT_DIR, '../../../dist/pwa'),
     filename: '[name]_[contenthash].js',
     chunkFilename: 'chunk_[name]_[contenthash].js',
     publicPath: '/',
@@ -86,8 +88,8 @@ const mainConfig = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
-      '@': path.resolve(__dirname, '../src'),
-      '#': path.resolve(__dirname, '../../../shared'),
+      '@': path.resolve(CURRENT_DIR, '../src'),
+      '#': path.resolve(CURRENT_DIR, '../../../shared'),
     },
     symlinks: false,
   },
@@ -97,7 +99,7 @@ const mainConfig = {
       patterns: [STATIC_DIR],
     }),
     new HtmlPlugin({
-      template: path.join(__dirname, '../src/index.html'),
+      template: path.join(CURRENT_DIR, '../src/index.html'),
     }),
   ],
 };
@@ -106,9 +108,9 @@ const serviceWorkerConfig = {
   mode: process.env.NODE_ENV,
   experiments,
   target: 'webworker',
-  entry: path.join(__dirname, '../src/service_worker.ts'),
+  entry: path.join(CURRENT_DIR, '../src/service_worker.ts'),
   output: {
-    path: path.join(__dirname, '../../../pwa'),
+    path: path.join(CURRENT_DIR, '../../../pwa'),
     filename: 'service_worker.js',
     publicPath: '/',
   },
@@ -131,8 +133,8 @@ const serviceWorkerConfig = {
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {
-      '@': path.resolve(__dirname, '../src'),
-      '#': path.resolve(__dirname, '../../../shared'),
+      '@': path.resolve(CURRENT_DIR, '../src'),
+      '#': path.resolve(CURRENT_DIR, '../../../shared'),
     },
     symlinks: false,
   },
@@ -151,8 +153,4 @@ const devMainConfig = {
   },
 };
 
-module.exports = {
-  mainConfig,
-  devMainConfig,
-  serviceWorkerConfig,
-};
+export { mainConfig, devMainConfig, serviceWorkerConfig };

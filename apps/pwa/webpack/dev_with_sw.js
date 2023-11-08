@@ -1,8 +1,9 @@
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const webpack = require('webpack');
-const { devMainConfig, serviceWorkerConfig } = require('./base');
+/* eslint-disable import/extensions */
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import webpack from 'webpack';
+import { devMainConfig, serviceWorkerConfig } from './base.js';
 
-module.exports = [
+export default [
   {
     ...devMainConfig,
     plugins: [
