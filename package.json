@@ -2,6 +2,7 @@
   "name": "cicada",
   "description": "A multi-user music service for self-hosting.",
   "private": true,
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mebtte/cicada.git"

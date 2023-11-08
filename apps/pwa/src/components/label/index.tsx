@@ -1,7 +1,7 @@
 import upperCaseFirstLetter from '@/style/capitalize';
 import { ForwardedRef, forwardRef, HtmlHTMLAttributes, ReactNode } from 'react';
 import styled from 'styled-components';
-import { CSSVariable } from '../global_style';
+import { CSSVariable } from '../../global_style';
 
 const Style = styled.label`
   > .top {
