@@ -113,6 +113,9 @@ docker run -it --rm -v <data>:/data mebtte/cicada:v2 upgrade-data /data
 #### Source Code
 
 ```sh
+git fetch -p
+git switch v2
+npm ci
 npm start -- -- upgrade-data <data>
 ```
 
