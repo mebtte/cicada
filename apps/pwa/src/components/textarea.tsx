@@ -1,10 +1,4 @@
-import {
-  ForwardedRef,
-  forwardRef,
-  TextareaHTMLAttributes,
-  useImperativeHandle,
-  useRef,
-} from 'react';
+import { ForwardedRef, forwardRef, TextareaHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '../global_style';
 
@@ -41,9 +35,7 @@ function Wrapper(
   { disabled = false, ...props }: Props,
   ref: ForwardedRef<HTMLTextAreaElement>,
 ) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  useImperativeHandle(ref, () => textareaRef.current!);
-  return <Textarea {...props} disabled={disabled} ref={textareaRef} />;
+  return <Textarea {...props} disabled={disabled} ref={ref} />;
 }
 
 export default forwardRef<HTMLTextAreaElement, Props>(Wrapper);
