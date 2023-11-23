@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import throttle from 'lodash/throttle';
+import { useDeferredValue, useSyncExternalStore } from 'react';
+
+function subscribeWindowResize(callback: () => void) {
+  window.addEventListener('resize', callback);
+  return () => window.removeEventListener('resize', callback);
+}
 
 function getWindowWidth() {
   return window.innerWidth;
 }
 
 function useWindowWidth() {
-  const [windowWidth, setWindowWidth] = useState(getWindowWidth);
-
-  useEffect(() => {
-    const onResize = throttle(() => setWindowWidth(getWindowWidth()), 300);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
-  return windowWidth;
+  const windowWidth = useSyncExternalStore(
+    subscribeWindowResize,
+    getWindowWidth,
+  );
+  return useDeferredValue(windowWidth);
 }
 
 export default useWindowWidth;
