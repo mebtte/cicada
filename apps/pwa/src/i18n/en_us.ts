@@ -213,4 +213,6 @@ export default {
     'you must pause the music before exiting by keyboard',
   unknown_singer: 'unknown singer',
   someone_created_at: '%s1 created at %s2',
+  quit_shared_musicbill_question:
+    'are you sure to quit this shared musicbill ?',
 };

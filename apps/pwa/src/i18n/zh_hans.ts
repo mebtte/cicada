@@ -202,6 +202,7 @@ const zhCN: {
   warning_of_exiting_by_keyboard: '请先暂停音乐再使用快捷键退出',
   unknown_singer: '未知歌手',
   someone_created_at: '%s1 创建于 %s2',
+  quit_shared_musicbill_question: '确定退出该共享乐单吗?',
 };
 
 export default zhCN;
