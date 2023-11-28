@@ -17,6 +17,7 @@ import Empty from '@/components/empty';
 import { flexCenter } from '@/style/flexbox';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
+import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { TAB_LIST_HEIGHT } from '../constants';
 import Context from '../../context';
 import TabContent from '../tab_content';
@@ -33,7 +34,6 @@ const Style = styled(TabContent)`
   > .content {
     ${absoluteFullSize}
 
-    padding-top: ${TAB_LIST_HEIGHT}px;
     padding-bottom: calc(${FILTER_HEIGHT}px + env(safe-area-inset-bottom, 0));
 
     &.list {
@@ -73,6 +73,11 @@ function Playlist({ style }: { style: unknown }) {
     );
   }, [keyword]);
 
+  const { height: titlebarAreaHeight } = useTitlebarArea();
+  const contentStyle: CSSProperties = {
+    paddingTop: TAB_LIST_HEIGHT + titlebarAreaHeight,
+  };
+
   const filteredPlaylist = playlist.filter((music) =>
     filterMusic(music, keyword),
   );
@@ -80,7 +85,7 @@ function Playlist({ style }: { style: unknown }) {
     // @ts-expect-error
     <Style style={style}>
       {filteredPlaylist.length ? (
-        <div className="content list" ref={listRef}>
+        <div className="content list" style={contentStyle} ref={listRef}>
           <List
             length={filteredPlaylist.length}
             type="uniform"
@@ -140,7 +145,7 @@ function Playlist({ style }: { style: unknown }) {
           />
         </div>
       ) : (
-        <div className="content empty">
+        <div className="content empty" style={contentStyle}>
           <Empty
             description={keyword ? t('no_suitable_music') : t('empty_playlist')}
           />

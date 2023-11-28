@@ -215,4 +215,6 @@ export default {
   someone_created_at: '%s1 created at %s2',
   quit_shared_musicbill_question:
     'are you sure to quit this shared musicbill ?',
+  playlist: 'playlist',
+  playqueue: 'playqueue',
 };

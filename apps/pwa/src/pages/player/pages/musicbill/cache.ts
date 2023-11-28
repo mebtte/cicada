@@ -1,4 +1,4 @@
-import Cache from '#/utils/cache';
+import Cache from '@/utils/cache';
 
 export enum CacheKey {
   MUSICBILL_PAGE_SCROLL_TOP = 'musicbill_page_scroll_top_{{id}}',

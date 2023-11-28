@@ -1,13 +1,13 @@
-import Cache from '#/utils/cache';
+import Cache from '@/utils/cache';
 import { Tab } from './constants';
 
 export enum CacheKey {
-  TAB = 'tab',
+  SELECTED_TAB = 'selected_tab',
 }
 
 export default new Cache<
   CacheKey,
   {
-    [CacheKey.TAB]: Tab;
+    [CacheKey.SELECTED_TAB]: Tab;
   }
 >();

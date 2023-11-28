@@ -64,17 +64,17 @@ const Style = styled.div`
     }
   }
 `;
-const StyledTabList = styled(TabList)`
-  z-index: 1;
+const tabListStyle: CSSProperties = {
+  zIndex: 1,
 
-  position: sticky;
-  top: ${MINI_INFO_HEIGHT}px;
+  position: 'sticky',
+  top: MINI_INFO_HEIGHT,
 
-  padding: 5px 20px;
+  padding: '5px 20px',
 
-  backdrop-filter: blur(5px);
-  background-color: rgb(255 255 255 / 0.5);
-`;
+  backdropFilter: 'blur(5px)',
+  backgroundColor: 'rgb(255 255 255 / 0.5)',
+};
 const TabContent = styled(animated.div)`
   position: absolute;
   top: 0;
@@ -87,7 +87,7 @@ const TabContent = styled(animated.div)`
 function UserDetail({ user }: { user: UserDetailType }) {
   const mountedRef = useRef(false);
   const scrollableRef = useRef<HTMLDivElement>(null);
-  const [tab, setTab] = useState(Tab.MUSIC);
+  const [selectedTab, setSelectedTab] = useState(Tab.MUSIC);
 
   const [miniInfoVisible, setMiniInfoVisible] = useState(false);
   const onScroll: UIEventHandler<HTMLDivElement> = (e) => {
@@ -103,17 +103,18 @@ function UserDetail({ user }: { user: UserDetailType }) {
       });
     }
     mountedRef.current = true;
-  }, [tab]);
+  }, [selectedTab]);
 
-  const transitions = useTransition(tab, TRANSITION);
+  const transitions = useTransition(selectedTab, TRANSITION);
   return (
     <Style>
       <div className="scrollable" onScroll={onScroll} ref={scrollableRef}>
         <Info user={user} />
-        <StyledTabList
-          current={tab}
+        <TabList
+          current={selectedTab}
           tabList={TAB_LIST}
-          onChange={(t) => setTab(t)}
+          onChange={(tab) => setSelectedTab(tab)}
+          style={tabListStyle}
         />
         <div className="tab-content">
           {transitions((style, t) => {

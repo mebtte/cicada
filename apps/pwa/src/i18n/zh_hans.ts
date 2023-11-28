@@ -203,6 +203,8 @@ const zhCN: {
   unknown_singer: '未知歌手',
   someone_created_at: '%s1 创建于 %s2',
   quit_shared_musicbill_question: '确定退出该共享乐单吗?',
+  playlist: '播放列表',
+  playqueue: '播放队列',
 };
 
 export default zhCN;
