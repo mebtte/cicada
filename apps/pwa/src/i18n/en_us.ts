@@ -217,4 +217,5 @@ export default {
     'are you sure to quit this shared musicbill ?',
   playlist: 'playlist',
   playqueue: 'playqueue',
+  clear_playlist_question: 'are you sure to clear playlist ?',
 };

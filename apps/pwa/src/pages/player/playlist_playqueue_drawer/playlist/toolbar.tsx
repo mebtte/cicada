@@ -6,6 +6,7 @@ import IconButton from '@/components/icon_button';
 import { MdDelete } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { FILTER_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -49,7 +50,7 @@ function Toolbar({
       <IconButton
         onClick={() =>
           dialog.confirm({
-            title: '确认清空播放列表吗?',
+            title: t('clear_playlist_question'),
             onConfirm: () =>
               void playerEventemitter.emit(
                 PlayerEventType.ACTION_CLEAR_PLAYLIST,
@@ -64,7 +65,7 @@ function Toolbar({
         <Input
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          placeholder={t('search')}
+          placeholder={upperCaseFirstLetter(t('search'))}
         />
       </Label>
     </Style>

@@ -205,6 +205,7 @@ const zhCN: {
   quit_shared_musicbill_question: '确定退出该共享乐单吗?',
   playlist: '播放列表',
   playqueue: '播放队列',
+  clear_playlist_question: '确定清空播放列表吗?',
 };
 
 export default zhCN;
