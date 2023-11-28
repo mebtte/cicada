@@ -1,4 +1,4 @@
-import { useState, useEffect, ComponentType } from 'react';
+import { useState, useEffect } from 'react';
 import Eventin from 'eventin';
 
 enum EventType {
@@ -50,25 +50,6 @@ class XState<State> {
     }, []);
 
     return state;
-  }
-
-  withState<
-    PropName extends string,
-    Props extends { [key in PropName]: State },
-  >(propName: PropName, Component: ComponentType<Props>) {
-    const self = this;
-    return function ComponentWithXState(props: Omit<Props, PropName>) {
-      const state = self.useState();
-      return (
-        // @ts-expect-error
-        <Component
-          {...{
-            ...props,
-            [propName]: state,
-          }}
-        />
-      );
-    };
   }
 }
 

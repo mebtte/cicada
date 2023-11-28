@@ -1,7 +1,8 @@
-const webpack = require('webpack');
-const { devMainConfig } = require('./base');
+/* eslint-disable import/extensions */
+import webpack from 'webpack';
+import { devMainConfig } from './base.js';
 
-module.exports = {
+export default {
   ...devMainConfig,
   plugins: [
     ...devMainConfig.plugins,

@@ -16,6 +16,7 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
+import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import Context from '../context';
 import TabContent from './tab_content';
 import MusicBase from '../components/music_base';
@@ -32,7 +33,6 @@ const Style = styled(TabContent)`
   > .content {
     ${absoluteFullSize}
 
-    padding-top: ${TAB_LIST_HEIGHT}px;
     padding-bottom: env(safe-area-inset-bottom, 0);
 
     &.list {
@@ -56,13 +56,17 @@ const removeStyle: CSSProperties = {
 
 function Playqueue({ style }: { style: unknown }) {
   const { currentPlayqueuePosition, playqueue } = useContext(Context);
+  const { height: titlebarAreaHeight } = useTitlebarArea();
 
   const { length } = playqueue;
+  const contentStyle: CSSProperties = {
+    paddingTop: TAB_LIST_HEIGHT + titlebarAreaHeight,
+  };
   return (
     // @ts-expect-error
     <Style style={style}>
       {playqueue.length ? (
-        <div className="content list">
+        <div className="content list" style={contentStyle}>
           <List
             type="uniform"
             length={length}
@@ -159,7 +163,7 @@ function Playqueue({ style }: { style: unknown }) {
           />
         </div>
       ) : (
-        <div className="content empty">
+        <div className="content empty" style={contentStyle}>
           <Empty description={t('empty_playqueue')} />
         </div>
       )}

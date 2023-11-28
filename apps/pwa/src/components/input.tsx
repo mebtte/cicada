@@ -1,10 +1,4 @@
-import {
-  ForwardedRef,
-  forwardRef,
-  InputHTMLAttributes,
-  useImperativeHandle,
-  useRef,
-} from 'react';
+import { ForwardedRef, forwardRef, InputHTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { ComponentSize } from '../constants/style';
 import { CSSVariable } from '../global_style';
@@ -43,11 +37,7 @@ function Wrapper(
   { disabled = false, ...props }: Props,
   ref: ForwardedRef<HTMLInputElement>,
 ) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useImperativeHandle(ref, () => inputRef.current!);
-
-  return <Input {...props} disabled={disabled} ref={inputRef} />;
+  return <Input {...props} disabled={disabled} ref={ref} />;
 }
 
 export default forwardRef<HTMLInputElement, Props>(Wrapper);

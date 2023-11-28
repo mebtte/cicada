@@ -6,6 +6,7 @@ import server, {
   getSelectedServer,
   getSelectedUser,
 } from '@/global_states/server';
+import { t } from '@/i18n';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -20,7 +21,7 @@ export function quitSharedMusicbill({
   const selectedServer = getSelectedServer(server.get())!;
   const user = getSelectedUser(selectedServer)!;
   return dialog.confirm({
-    title: '确定退出共享乐单吗?',
+    title: t('quit_shared_musicbill_question'),
     onConfirm: async () => {
       try {
         await deleteMusicbillSharedUser({
@@ -32,7 +33,7 @@ export function quitSharedMusicbill({
         });
         afterQuitted();
       } catch (error) {
-        logger.error(error, '退出共享乐单失败');
+        logger.error(error, 'Failed to quit shared musicbill');
         notice.error(error.message);
         return false;
       }

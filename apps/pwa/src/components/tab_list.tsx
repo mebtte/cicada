@@ -49,7 +49,7 @@ function TabList<TabType extends string>({
   tabList,
   onChange,
   ...props
-}: HtmlHTMLAttributes<HTMLDivElement> & {
+}: Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
   current: TabType;
   tabList: {
     tab: TabType;
