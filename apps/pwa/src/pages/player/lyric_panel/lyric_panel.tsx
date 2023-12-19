@@ -30,7 +30,7 @@ function LyricPanel({ style }: { style: unknown }) {
   const queueMusic = playqueue[currentPlayqueuePosition];
 
   return (
-    // @ts-expect-error
+    // @ts-expect-error: style is known
     <Style style={style}>
       <WakeLock />
       <Backdrop cover={queueMusic.cover} />

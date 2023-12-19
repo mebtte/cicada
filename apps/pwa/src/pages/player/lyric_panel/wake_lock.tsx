@@ -5,26 +5,24 @@ const WAKE_LOCK_SUPPORTED = 'wakeLock' in window.navigator;
 
 function WakeLock() {
   const unmountedRef = useRef(false);
-  // eslint-disable-next-line no-undef
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   useEffect(() => {
     (async () => {
-      try {
-        const wakeLock = await navigator.wakeLock.request('screen');
-        if (unmountedRef.current) {
-          wakeLock.release();
-        } else {
-          wakeLockRef.current = wakeLock;
-        }
-      } catch (error) {
-        logger.error(error, 'Failed to request wake lock');
+      const wakeLock = await navigator.wakeLock.request('screen');
+      if (unmountedRef.current) {
+        wakeLock.release().catch((error) => {
+          logger.error(error, 'Failed to release wake lock');
+        });
+      } else {
+        wakeLockRef.current = wakeLock;
       }
-    })();
-    return () => {
-      if (wakeLockRef.current) {
-        wakeLockRef.current.release();
-      }
-    };
+    })().catch((error) => {
+      logger.error(error, 'Failed to request wake lock');
+    });
+    return () =>
+      void wakeLockRef.current?.release().catch((error) => {
+        logger.error(error, 'Failed to release wake lock');
+      });
   }, []);
   useEffect(
     () => () => {
