@@ -1,4 +1,4 @@
-import './polyfill'; // 需要保证 polyfill 在第一个
+import './polyfill'; // make sure that polyfill is first
 import './updater';
 import './devtool';
 import { createRoot } from 'react-dom/client';
