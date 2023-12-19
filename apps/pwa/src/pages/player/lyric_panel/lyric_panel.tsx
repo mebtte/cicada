@@ -7,7 +7,6 @@ import Context from '../context';
 import Backdrop from './backdrop';
 import Controller from './controller';
 import Lyric from './lyric';
-import WakeLock from './wake_lock';
 
 const Style = styled(animated.div)`
   z-index: ${ZIndex.LYRIC_PANEL};
@@ -32,7 +31,6 @@ function LyricPanel({ style }: { style: unknown }) {
   return (
     // @ts-expect-error: style is known
     <Style style={style}>
-      <WakeLock />
       <Backdrop cover={queueMusic.cover} />
       <Lyric queueMusic={queueMusic} />
       <Controller
