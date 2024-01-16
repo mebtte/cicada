@@ -5,6 +5,7 @@ import parseSearch from '@/utils/parse_search';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { t } from '@/i18n';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 
 function Wrapper() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Wrapper() {
     <Input
       className="input"
       type="search"
-      placeholder={t('search')}
+      placeholder={upperCaseFirstLetter(t('search'))}
       value={keyword}
       autoFocus
       onChange={(e) => setKeyword(e.target.value)}

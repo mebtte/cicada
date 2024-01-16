@@ -1,4 +1,4 @@
-import { ID_LENGTH, MusicType } from '#/constants/music';
+import { ID_LENGTH, type MusicType } from '#/constants/music';
 import generateRandomString from '#/utils/generate_random_string';
 import { MUSIC_TABLE_NAME, MusicProperty } from '@/constants/db_definition';
 import { getDB } from '.';

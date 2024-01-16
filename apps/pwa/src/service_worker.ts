@@ -116,7 +116,12 @@ registerRoute(
  * API 网络优先
  * @author mebtte<hi@mebtte.com>
  */
-const PREVNET_CACHE_PATHS: string[] = ['/api/captcha', '/api/profile'];
+const PREVNET_CACHE_PATHS: string[] = [
+  '/base/metadata',
+  '/base/captcha',
+
+  '/api/profile',
+];
 registerRoute(
   ({ request }) => {
     const url = new URL(request.url);
