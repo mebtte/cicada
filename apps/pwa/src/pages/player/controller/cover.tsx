@@ -14,13 +14,13 @@ const Style = styled.div`
   height: 100%;
 
   aspect-ratio: 1;
-  cursor: pointer;
   overflow: hidden;
 
   > .expand {
     ${absoluteFullSize}
     ${flexCenter}
     
+    cursor: pointer;
     opacity: 0;
     transition: 100ms;
     background-color: rgb(0 0 0 / 0.5);
