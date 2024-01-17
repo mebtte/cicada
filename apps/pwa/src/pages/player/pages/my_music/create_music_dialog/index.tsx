@@ -41,6 +41,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
 import { Singer } from './constants';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
@@ -218,9 +219,11 @@ function CreateMusicDialog() {
               onChange={onAssetChange}
               disabled={loading}
               acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
-              placeholder={`${t('empty_file_warning')}, ${t(
-                'supported_formats',
-              )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`}
+              placeholder={upperCaseFirstLetter(
+                `${t('empty_file_warning')}, ${t(
+                  'supported_formats',
+                )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`,
+              )}
             />
           </Label>
           <Label

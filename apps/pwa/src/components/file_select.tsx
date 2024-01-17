@@ -34,9 +34,6 @@ const Style = styled.div<{ disabled: boolean }>`
       : 'transparent'};
   `}
 `;
-const Placeholder = styled.div`
-  ${upperCaseFirstLetter}
-`;
 
 function FileSelect({
   placeholder = '选择文件',
@@ -63,7 +60,7 @@ function FileSelect({
 
   return (
     <Style onClick={onSelectFile} disabled={disabled}>
-      {value ? value.name : <Placeholder>{placeholder}</Placeholder>}
+      {value ? value.name : placeholder}
     </Style>
   );
 }
