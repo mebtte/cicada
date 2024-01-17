@@ -94,6 +94,7 @@ function Slider({
   );
 
   const onPointerDown: PointerEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
 
     pointerDownRef.current = true;
@@ -102,6 +103,7 @@ function Slider({
     setShadowPercent(percent);
   };
   const onPointerMove: PointerEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
     if (pointerDownRef.current) {
       const percent = getPointerEventRelativePercent(e);
       setShadowPercent(percent);
