@@ -57,7 +57,7 @@ const Style = styled(animated.div)`
   }
 `;
 
-function Info({ queueMusic }: { queueMusic: QueueMusic }) {
+function Info({ queueMusic }: { queueMusic?: QueueMusic }) {
   const transitions = useTransition(queueMusic, {
     from: { transform: 'translateY(100%)', opacity: 0 },
     enter: { transform: 'translateY(0%)', opacity: 1 },
@@ -66,30 +66,32 @@ function Info({ queueMusic }: { queueMusic: QueueMusic }) {
 
   return (
     <Root>
-      {transitions((style, qm) => (
-        <Style style={style}>
-          <div className="top">
-            <span
-              className="name"
-              onClick={() =>
-                playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, {
-                  id: qm.id,
-                })
-              }
-            >
-              {qm.name}
-            </span>
-            {qm.aliases.length ? (
-              <span className="alias">&nbsp;{qm.aliases[0]}</span>
-            ) : null}
-          </div>
-          <div className="singers">
-            {qm.singers.map((singer) => (
-              <Singer key={singer.id} singer={singer} />
-            ))}
-          </div>
-        </Style>
-      ))}
+      {transitions((style, qm) =>
+        qm ? (
+          <Style style={style}>
+            <div className="top">
+              <span
+                className="name"
+                onClick={() =>
+                  playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, {
+                    id: qm.id,
+                  })
+                }
+              >
+                {qm.name}
+              </span>
+              {qm.aliases.length ? (
+                <span className="alias">&nbsp;{qm.aliases[0]}</span>
+              ) : null}
+            </div>
+            <div className="singers">
+              {qm.singers.map((singer) => (
+                <Singer key={singer.id} singer={singer} />
+              ))}
+            </div>
+          </Style>
+        ) : null,
+      )}
     </Root>
   );
 }

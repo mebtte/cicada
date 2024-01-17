@@ -206,6 +206,7 @@ const zhCN: {
   playlist: '播放列表',
   playqueue: '播放队列',
   clear_playlist_question: '确定清空播放列表吗?',
+  no_music_is_playing: '暂无音乐正在播放',
 };
 
 export default zhCN;

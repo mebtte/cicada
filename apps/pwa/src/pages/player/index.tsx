@@ -125,12 +125,8 @@ function Wrapper() {
             <Route />
           </div>
         </div>
-        {queueMusic ? (
-          <>
-            <Controller lyricPanelOpen={lyricPanelOpen} />
-            <LyricPanel open={lyricPanelOpen} />
-          </>
-        ) : null}
+        <Controller lyricPanelOpen={lyricPanelOpen} />
+        {queueMusic ? <LyricPanel open={lyricPanelOpen} /> : null}
       </Style>
 
       {/* dynamic z-index */}

@@ -17,7 +17,7 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
     return null;
   }, [queueMusic]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [duration, setDuration] = useState(0);
   const [paused, setPaused] = useState(true);
   const [bufferedPercent, setBufferedPercent] = useState(0);

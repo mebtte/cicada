@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import theme from '@/global_states/theme';
 import { useContext } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
-import { ZIndex } from '../constants';
+import { type QueueMusic, ZIndex } from '../constants';
 import Cover from './cover';
 import Operation from './operation';
 import Info from './info';
@@ -59,7 +59,9 @@ function Controller() {
     audioDuration,
     audioBufferedPercent,
   } = useContext(Context);
-  const queueMusic = playqueue[currentPlayqueuePosition];
+  const queueMusic = playqueue[currentPlayqueuePosition] as
+    | QueueMusic
+    | undefined;
 
   const { miniMode } = theme.useState();
   return (
@@ -69,7 +71,13 @@ function Controller() {
         bufferedPercent={audioBufferedPercent}
       />
       <div className="content">
-        <Cover cover={getResizedImage({ url: queueMusic.cover, size: 200 })} />
+        <Cover
+          cover={
+            queueMusic?.cover
+              ? getResizedImage({ url: queueMusic.cover, size: 200 })
+              : ''
+          }
+        />
         <div className="rest">
           <Info queueMusic={queueMusic} />
           {miniMode ? null : <Time duration={audioDuration} />}

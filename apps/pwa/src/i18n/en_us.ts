@@ -218,4 +218,5 @@ export default {
   playlist: 'playlist',
   playqueue: 'playqueue',
   clear_playlist_question: 'are you sure to clear playlist ?',
+  no_music_is_playing: 'no music is playing',
 };
