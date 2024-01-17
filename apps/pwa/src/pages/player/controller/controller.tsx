@@ -9,7 +9,12 @@ import Info from './info';
 import ProgressBar from './progress_bar';
 import Time from './time';
 import Context from '../context';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 
+const toggleLyric = () =>
+  playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: true });
 const Style = styled.div`
   z-index: ${ZIndex.CONTROLLER};
 
@@ -77,6 +82,8 @@ function Controller() {
               ? getResizedImage({ url: queueMusic.cover, size: 200 })
               : ''
           }
+          onClick={queueMusic ? toggleLyric : undefined}
+          mask={!!queueMusic}
         />
         <div className="rest">
           <Info queueMusic={queueMusic} />
