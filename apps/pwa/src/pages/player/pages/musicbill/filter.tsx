@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { t } from '@/i18n';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { FILTER_HEIGHT } from './constants';
+import capitalize from '#/utils/capitalize';
 
 const Style = styled.div`
   position: absolute;
@@ -50,7 +50,7 @@ function Filter() {
         className="input"
         value={keyword}
         onChange={(event) => setKeyword(event.target.value)}
-        placeholder={upperCaseFirstLetter(t('find_in_musicbill'))}
+        placeholder={capitalize(t('find_in_musicbill'))}
       />
     </Style>
   );
