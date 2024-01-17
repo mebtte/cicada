@@ -16,7 +16,7 @@ export default (playlist: MusicWithSingerAliases[]) => {
       () =>
         setCurrentPosition((i) => {
           if (i <= 0) {
-            notice.error('已经是播放队列的第一首');
+            notice.error(t('head_of_playqueue_tips'));
             return i;
           }
           return i - 1;
