@@ -10,6 +10,8 @@ export interface Config {
 
   data: string;
   port: number;
+
+  jwtExpiry: number;
 }
 
 export const DEFAULT_CONFIG: Config = {
@@ -17,6 +19,7 @@ export const DEFAULT_CONFIG: Config = {
 
   data: `${process.cwd()}/cicada`,
   port: 8000,
+  jwtExpiry: 1000 * 60 * 60 * 24 * 180,
 };
 
 let config: Config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));

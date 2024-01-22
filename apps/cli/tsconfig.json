@@ -12,5 +12,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*", "../../global.d.ts"]
+  "include": ["dev_server.ts", "src/**/*", "../../global.d.ts"]
 }
