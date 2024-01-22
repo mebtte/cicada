@@ -30,7 +30,7 @@ You can deploy cicada by under options, and initial user of cicada is `username:
 
 Download from [releases](https://github.com/mebtte/cicada/releases) and start server:
 
-> If your platform isn't x64, you can [build](./docs/build/index.md) by yourself
+> If your platform isn't x64, you can [build](./docs/build/index.md) by yourself or deploy by [source code](./docs/run_by_source_code/index.md).
 
 ```sh
 ./cicada start
@@ -72,26 +72,6 @@ services:
       - /path/data:/data
 ```
 
-### Source Code
-
-When using source code to deploy, you should install [Node>=18](https://nodejs.org) first.
-
-```sh
-git clone https://github.com/mebtte/cicada.git
-cd cicada
-npm ci
-npm run build:pwa
-npm start -- -- start --port <port> --data <data> # attention: double --
-```
-
-When needing to upgrade, you should run below commands:
-
-```sh
-git pull # pull the latest code
-npm run build:pwa # rebuild pwa
-npm start -- -- start --port <port> --data <data> # restart the server
-```
-
 ## Migration
 
 ### From v1 to v2
@@ -110,20 +90,11 @@ cicada upgrade-data <data>
 docker run -it --rm -v <data>:/data mebtte/cicada:v2 upgrade-data /data
 ```
 
-#### Source Code
-
-```sh
-git fetch -p
-git switch v2
-npm ci
-npm start -- -- upgrade-data <data>
-```
-
 #### Other versions
 
 - [From v0 to v1](https://github.com/mebtte/cicada/tree/v1#from-v0-to-v1)
 
-## Import music
+## Music import
 
 You can use `cicada import` to import music file and music directory, but the filename must to fit the below format:
 
@@ -153,17 +124,7 @@ docker run -it --rm -v <data>:/data mebtte/cicada:v2 -v <music_directory>:/sourc
 docker run -it --rm -v <data>:/data mebtte/cicada:v2 -v <music_directory>:/source import --data /path_to/cicada_data --recursive /source/<music>
 ```
 
-### Source Code
-
-```sh
-# import directory
-npm start -- -- import --data /path_to/cicada_data --recursive <music_directory>
-
-# import file
-npm start -- -- import --data /path_to/cicada_data <music>
-```
-
-## Fix data
+## Data fixing
 
 According to known issues, some old versions of cicada will breakdown the data, you can fix it by using below command:
 
@@ -171,14 +132,10 @@ According to known issues, some old versions of cicada will breakdown the data, 
 cicada fix-data <data>
 ```
 
-This command is unharmful, so you can run it even the data isn't broken. Also can run the command by docker or source code:
+This command is unharmful, so you can run it even the data isn't broken. Also can run the command by docker:
 
 ```sh
 docker run -it --rm -v <data>:/data mebtte/cicada:v2 fix-data /data
-```
-
-```sh
-npm start -- -- fix-data <data>
 ```
 
 ## Development
