@@ -39,9 +39,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@expo/spawn-async": "^1.6.0",
     "@koa/cors": "^3.3.0",
-    "archiver": "^5.3.1",
     "chalk": "^4.1.2",
     "commander": "^9.4.1",
     "file-type": "^16.5.3",
@@ -58,8 +56,7 @@
     "otpauth": "^9.1.4",
     "sanitize-filename": "^1.6.3",
     "sqlite3": "^5.1.6",
-    "svg-captcha": "^1.4.0",
-    "uuid": "^9.0.1"
+    "svg-captcha": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.22.11",
@@ -69,7 +66,6 @@
     "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.23.2",
     "@testing-library/react": "^14.1.0",
-    "@types/archiver": "^5.3.1",
     "@types/dompurify": "^2.2.2",
     "@types/file-saver": "^2.0.5",
     "@types/inquirer": "^8.2.6",
@@ -97,7 +93,6 @@
     "@types/resize-observer-browser": "^0.1.5",
     "@types/sqlite3": "^3.1.8",
     "@types/styled-components": "^5.1.25",
-    "@types/uuid": "^9.0.4",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "array-move": "^4.0.0",
     "babel-jest": "^29.7.0",
