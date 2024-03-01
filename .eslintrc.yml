@@ -28,5 +28,6 @@ rules:
   "@typescript-eslint/no-misused-promises": off
   "@typescript-eslint/no-non-null-assertion": off
   "@typescript-eslint/no-floating-promises": off
+  "@typescript-eslint/array-type": off
 
   "react/react-in-jsx-scope": off

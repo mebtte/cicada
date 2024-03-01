@@ -37,8 +37,8 @@ async function base64ToCover(base64: string) {
     imgNode.naturalWidth,
     imgNode.naturalHeight,
   );
-  return new Promise<Blob>((rs) =>
-    canvas.toBlob((blob) => rs(blob!), 'image/jpeg', 0.8),
+  return await new Promise<Blob>((resolve) =>
+    canvas.toBlob((blob) => resolve(blob!), 'image/jpeg', 0.8),
   );
 }
 
@@ -60,5 +60,6 @@ function getMusicFileMetadata(file: File) {
   });
 }
 
-export { Metadata, base64ToCover };
+export type { Metadata };
+export { base64ToCover };
 export default getMusicFileMetadata;
