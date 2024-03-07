@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { Music } from '../constants';
 import MusicInfo from '../components/music_info';
+import capitalize from '@/style/capitalize';
 
 const Style = styled.div`
   margin: 10px 0;
@@ -16,6 +17,7 @@ const Style = styled.div`
 
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    ${capitalize}
   }
 
   > .list {

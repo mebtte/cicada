@@ -17,6 +17,7 @@ import Lyric from './lyric';
 import SubMusicList from './sub_music_list';
 import EditMenu from './edit_menu';
 import Info from './info';
+import { t } from '@/i18n';
 
 const bodyProps: { style: CSSProperties } = {
   style: {
@@ -44,7 +45,7 @@ const DetailBox = styled(Container)`
 
 function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
   return (
-    // @ts-expect-error
+    // @ts-expect-error: style is known
     <DetailBox style={style}>
       <div className="scrollable">
         <div className="first-screen">
@@ -53,13 +54,13 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
           <SingerList singerList={music.singers} />
           {music.forkFromList.length ? (
             <SubMusicList
-              label="二次创作自以下音乐"
+              label={t('fork_from_these_musics')}
               musicList={music.forkFromList}
             />
           ) : null}
           {music.forkList.length ? (
             <SubMusicList
-              label="被以下音乐二次创作"
+              label={t('forked_by_these_musics')}
               musicList={music.forkList}
             />
           ) : null}
