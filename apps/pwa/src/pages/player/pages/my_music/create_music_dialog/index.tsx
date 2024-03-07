@@ -146,7 +146,9 @@ function CreateMusicDialog() {
       });
 
       try {
-        const { lyric, pictureBase64 } = await getMusicFileMetadata(asset);
+        const { lyric, pictureBase64, year } = await getMusicFileMetadata(
+          asset,
+        );
         const updateCover = async (pb: string) => {
           const coverBlob = await base64ToCover(pb);
           const { id: assetId } = await uploadAsset(
@@ -171,6 +173,14 @@ function CreateMusicDialog() {
               })
             : null,
           pictureBase64 ? updateCover(pictureBase64) : null,
+          year
+            ? updateMusic({
+                id,
+                key: AllowUpdateKey.YEAR,
+                value: year,
+                requestMinimalDuration: 0,
+              })
+            : null,
         ]);
       } catch (error) {
         logger.error(error, "Failed to parse music's metadata");

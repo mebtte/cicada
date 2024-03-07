@@ -7,6 +7,7 @@ interface Metadata {
   title?: string;
   artist?: string;
   pictureBase64?: string;
+  year?: number;
 }
 
 function getPictureBase64(picture: { data: number[]; format: string }) {
@@ -46,13 +47,14 @@ function getMusicFileMetadata(file: File) {
   return new Promise<Metadata>((resolve, reject) => {
     jsmediatags.read(file, {
       onSuccess: async (metadata) => {
-        const { lyrics, picture, title, artist } = metadata.tags;
+        const { lyrics, picture, title, artist, year } = metadata.tags;
 
         return resolve({
           title,
           artist,
           lyric: lyrics,
           pictureBase64: picture ? getPictureBase64(picture) : undefined,
+          year: (year ? Number(year) : undefined) || undefined,
         });
       },
       onError: reject,
