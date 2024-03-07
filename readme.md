@@ -153,7 +153,7 @@ npm install
 Use commands of cicada CLI:
 
 ```sh
-npm start -- -- <command> <options> <argument>
+npm start -- -- <command> <options> <arguments>
 ```
 
 Before developing PWA, you should start dev server first:
