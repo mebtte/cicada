@@ -1,6 +1,3 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "files.exclude": {
-    "**/design": true
-  }
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

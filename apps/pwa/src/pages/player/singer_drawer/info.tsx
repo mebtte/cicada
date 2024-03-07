@@ -2,6 +2,7 @@ import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import Cover, { Shape } from '@/components/cover';
 import { Singer } from './constants';
+import JpegDefaultSingerAvatar from '@/asset/default_singer_avatar.jpeg';
 
 const Style = styled.div`
   position: relative;
@@ -34,7 +35,12 @@ const Style = styled.div`
 function Info({ singer }: { singer: Singer }) {
   return (
     <Style>
-      <Cover src={singer.avatar} size="100%" shape={Shape.SQUARE} />
+      <Cover
+        src={singer.avatar}
+        size="100%"
+        shape={Shape.SQUARE}
+        defaultSrc={JpegDefaultSingerAvatar}
+      />
 
       <div className="info">
         <div className="name">{singer.name}</div>

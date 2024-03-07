@@ -42,7 +42,7 @@ const DetailContainer = styled(Container)`
 
 function Detail({ style, singer }: { style: unknown; singer: Singer }) {
   return (
-    // @ts-expect-error
+    // @ts-expect-error: style is known
     <DetailContainer style={style}>
       <div className="scrollable">
         <div className="first-screen">

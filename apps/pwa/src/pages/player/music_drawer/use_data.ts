@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import getMusicRequest from '@/server/api/get_music';
 import { MusicType } from '#/constants/music';
 import getLyricList from '@/server/api/get_lyric_list';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import day from '#/utils/day';
 import { CacheName } from '@/constants/cache';
 import logger from '@/utils/logger';
@@ -102,18 +101,6 @@ export default (id: string) => {
           ...music,
           lyrics,
           createTime: day(music.createTimestamp).format('YYYY-MM-DD'),
-          singers: music.singers.map((s) => ({
-            ...s,
-            avatar: s.avatar || DefaultCover,
-          })),
-          forkFromList: music.forkFromList.map((m) => ({
-            ...m,
-            cover: m.cover || DefaultCover,
-          })),
-          forkList: music.forkList.map((m) => ({
-            ...m,
-            cover: m.cover || DefaultCover,
-          })),
           heat: music.heat,
 
           size,
@@ -150,7 +137,7 @@ export default (id: string) => {
     const unlistenSingerUpdated = playerEventemitter.listen(
       PlayerEventType.SINGER_UPDATED,
       (payload) => {
-        if (data.music && data.music.singers.find((s) => s.id === payload.id)) {
+        if (data.music?.singers.find((s) => s.id === payload.id)) {
           getMusic();
         }
       },
