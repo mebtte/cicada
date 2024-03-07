@@ -42,6 +42,7 @@
     "@koa/cors": "^3.3.0",
     "chalk": "^4.1.2",
     "commander": "^9.4.1",
+    "data-uri-to-buffer": "^6.0.2",
     "file-type": "^16.5.3",
     "inquirer": "^8.2.5",
     "jimp": "^0.22.8",

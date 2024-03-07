@@ -35,7 +35,7 @@ export default async (ctx: Context) => {
   if (
     typeof id !== 'string' ||
     !id.length ||
-    // @ts-expect-error
+    // @ts-expect-error: key is unknown
     !Object.values(AllowUpdateKey).includes(key)
   ) {
     return ctx.except(ExceptionCode.WRONG_PARAMETER);

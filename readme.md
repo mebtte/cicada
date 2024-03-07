@@ -96,13 +96,7 @@ docker run -it --rm -v <data>:/data mebtte/cicada:v2 upgrade-data /data
 
 ## Music import
 
-You can use `cicada import` to import music file and music directory, but the filename must to fit the below format:
-
-```txt
-singer1[,singer2][,singer3] - name.format
-```
-
-For example, `Jarryd James,BROODS - 1000x.flac` / `周杰伦 - 晴天.mp3` is valid and `Numb.m4a` / `Daniel Powter Free Loop.mp3` is invalid, the file has invalid filename will be passed when importing.
+You can use `cicada import` to import music file or music directory. If Cicada can get music tags from the file, it will be imported. If not, it will be ignored.
 
 ### Binary
 

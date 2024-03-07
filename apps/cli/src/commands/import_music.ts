@@ -24,23 +24,12 @@ import {
   MusicSingerRelationProperty,
 } from '@/constants/db_definition';
 import { getAssetDirectory, updateConfig } from '../config';
-
-/**
- * 文件格式, singer1,singer2 - name.format
- * @author mebtte<hi@mebtte.com>
- */
-const MATCH_FILENAME = /^((([^,]+)(,?))+)(\s+)-(\s+)(.+)\.(\S+)$/;
+import getMusicFileMetadata, {
+  Metadata,
+} from '#/utils/get_music_file_metadata';
 
 let successful = 0;
 let ignored = 0;
-
-/**
- * 合并多个空格以及移除头尾空格
- * @author mebtte<hi@mebtte.com>
- */
-function handleSpace(s: string) {
-  return s.replace(/\s+/g, ' ').trim();
-}
 
 /**
  * 检查音乐是否已存在
@@ -88,7 +77,7 @@ async function checkMusicExist({
 }
 
 async function importFile(
-  file: string,
+  filepath: string,
   {
     skipExistenceCheck,
     uid,
@@ -97,46 +86,38 @@ async function importFile(
     uid: string;
   },
 ) {
-  const spinner = createSpinner(file);
-  spinner.start();
-
-  /**
-   * 检查文件名
-   * @author mebtte<hi@mebtte.com>
-   */
-  if (!MATCH_FILENAME.test(path.parse(file).base)) {
-    ignored += 1;
-    return spinner.warn({
-      text: `[ ${file} ] isn't a valid filename, ignored`,
-    });
-  }
+  const spinner = createSpinner(filepath).start();
 
   /**
    * 检查文件类型
    * @author mebtte<hi@mebtte.com>
    */
-  const ft = await fileType.fromFile(file);
+  const ft = await fileType.fromFile(filepath);
   const { acceptTypes } = ASSET_TYPE_MAP[AssetType.MUSIC];
   if (ft && acceptTypes.includes(ft.mime)) {
-    const [singerString, originalName] = path.parse(file).name.split(' - ');
-    const name = handleSpace(originalName);
-    const singers = singerString
-      .split(',')
-      .map((s) => handleSpace(s))
-      .filter((s) => s.length > 0);
-
+    let musicTag: Metadata;
+    try {
+      musicTag = await getMusicFileMetadata(filepath);
+    } catch (error) {
+      ignored += 1;
+      return spinner.warn({
+        text: `[ ${filepath} ] can not be parsed and been ignored`,
+      });
+    }
+    const name = musicTag.title || 'Unknown';
+    const singers = musicTag.artist?.split(',') || ['Unknown'];
     if (!skipExistenceCheck) {
       const exist = await checkMusicExist({ singers, name });
       if (exist) {
         ignored += 1;
         return spinner.warn({
-          text: `[ ${file} ] has been database already and ignored, using [ --skip-existence-check ] will skip existence check`,
+          text: `[ ${filepath} ] has been in database already and ignored, using [ --skip-existence-check ] will skip existence check`,
         });
       }
     }
 
-    const fileData = await fs.readFile(file);
-    const assetName = md5(fileData) + path.parse(file).ext;
+    const fileData = await fs.readFile(filepath);
+    const assetName = md5(fileData) + path.parse(filepath).ext;
     await fs.writeFile(
       `${getAssetDirectory(AssetType.MUSIC)}/${assetName}`,
       fileData,
@@ -169,14 +150,46 @@ async function importFile(
       );
     }
 
-    spinner.success({
-      text: `[ ${file} ] imported`,
-    });
+    if (musicTag.year) {
+      await getDB().run(
+        `
+          UPDATE ${MUSIC_TABLE_NAME} SET ${MusicProperty.YEAR} = ?
+          WHERE ${MusicProperty.ID} = ?
+        `,
+        [musicTag.year, id],
+      );
+    }
+
+    if (musicTag.picture) {
+      const buffer = Buffer.from(
+        musicTag.picture.dataURI.split(',')[1],
+        'base64',
+      );
+      const coverFilename = `${md5(buffer)}.${
+        musicTag.picture.format.split('/')[1]
+      }`;
+      await Promise.all([
+        fs.writeFile(
+          `${getAssetDirectory(AssetType.MUSIC_COVER)}/${coverFilename}`,
+          buffer,
+        ),
+        getDB().run(
+          `
+            UPDATE ${MUSIC_TABLE_NAME} SET ${MusicProperty.COVER} = ?
+            WHERE ${MusicProperty.ID} = ?
+          `,
+          [coverFilename, id],
+        ),
+      ]);
+    }
 
     successful += 1;
+    spinner.success({
+      text: `[ ${filepath} ] imported`,
+    });
   } else {
-    spinner.warn({ text: `[ ${file} ] isn't a valid format, ignored` });
     ignored += 1;
+    spinner.warn({ text: `[ ${filepath} ] isn't a valid format, ignored` });
   }
 }
 
@@ -217,7 +230,7 @@ async function importDirectory(
   }
 }
 
-export default async ({
+async function importMusic({
   source,
   data,
   uid,
@@ -229,7 +242,7 @@ export default async ({
   uid: string;
   recursive: boolean;
   skipExistenceCheck: boolean;
-}) => {
+}) {
   updateConfig({ data });
 
   /**
@@ -252,4 +265,6 @@ export default async ({
     text: `Successful ${successful}, ignored ${ignored}`,
   });
   return process.exit();
-};
+}
+
+export default importMusic;
