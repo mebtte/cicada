@@ -19,7 +19,7 @@ A multi-user music service for self-hosting.
 - Separation of playlist and custom playqueue
 - Search of music, singer, musicbill and lyric
 - [System media shortcut](https://developer.mozilla.org/docs/Web/API/MediaSession)
-- Support of building APP from [HTTP API](https://www.postman.com/cicada-player)
+- Support of building APP from [HTTP API](https://www.postman.com/cicada-player/workspace/cicada-v2)
 - Support of Two-Factor Authentication
 
 ## Deployment
