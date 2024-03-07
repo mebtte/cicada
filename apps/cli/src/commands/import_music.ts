@@ -58,7 +58,7 @@ async function checkMusicExist({
   >(
     `
       SELECT
-      ${MusicProperty.ID},
+        ${MusicProperty.ID},
         ${MusicProperty.NAME}
       FROM ${MUSIC_TABLE_NAME}
       WHERE ${MusicProperty.NAME} = ?
