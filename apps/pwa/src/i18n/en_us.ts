@@ -218,4 +218,9 @@ export default {
   playlist: 'playlist',
   playqueue: 'playqueue',
   clear_playlist_question: 'are you sure to clear playlist ?',
+  no_music_is_playing: 'no music is playing',
+  head_of_playqueue_tips: 'it is the first of playqueue already',
+  feedback: 'feedback',
+  fork_from_these_musics: 'fork from these musics',
+  forked_by_these_musics: 'forked by these musics',
 };

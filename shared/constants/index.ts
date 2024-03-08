@@ -47,12 +47,12 @@ export const ASSET_TYPE_MAP: Record<
   },
   [AssetType.MUSIC]: {
     acceptTypes: [
-      'audio/mpeg',
-      'audio/wav',
-      'audio/flac',
-      'audio/x-flac',
-      'audio/m4a',
-      'audio/x-m4a',
+      'audio/mpeg', // .mp3
+      'audio/mp4', // .mp4
+      'audio/flac', // .flac
+      'audio/x-flac', // .flac
+      'audio/m4a', // .m4a
+      'audio/x-m4a', // .m4a
     ],
     maxSize: 1024 * 1024 * 200,
   },

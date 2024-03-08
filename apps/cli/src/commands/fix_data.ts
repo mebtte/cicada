@@ -45,13 +45,11 @@ export default async ({ data }: { data: string }) => {
   let spinner: Spinner;
 
   // eslint-disable-next-line prefer-const
-  spinner = createSpinner();
-  spinner.start({ text: "Fixing music's year..." });
+  spinner = createSpinner().start({ text: "Fixing music's year..." });
   await fixMusicYear();
   spinner.success({ text: "Music's year has fixed" });
 
-  spinner = createSpinner();
-  spinner.start({ text: 'Fixing DB snapshots...' });
+  spinner = createSpinner().start({ text: 'Fixing DB snapshots...' });
   await fixDBSnapshots();
   spinner.success({ text: 'DB snapshots have fixed' });
 

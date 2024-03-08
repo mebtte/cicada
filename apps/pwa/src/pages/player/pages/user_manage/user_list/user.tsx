@@ -36,6 +36,8 @@ const Style = styled.div`
       color: #fff;
       font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       padding: 2px 5px;
+      border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL} 0
+        ${CSSVariable.BORDER_RADIUS_NORMAL} 0;
     }
   }
 

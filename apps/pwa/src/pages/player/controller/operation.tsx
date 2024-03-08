@@ -16,6 +16,8 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import { QueueMusic } from '../constants';
+import notice from '@/utils/notice';
+import { t } from '@/i18n';
 
 const openPlaylistPlayqueueDrawer = () =>
   playerEventemitter.emit(PlayerEventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER, null);
@@ -50,7 +52,7 @@ function Operation({
   paused,
   loading,
 }: {
-  queueMusic: QueueMusic;
+  queueMusic?: QueueMusic;
   paused: boolean;
   loading: boolean;
 }) {
@@ -61,29 +63,35 @@ function Operation({
         <>
           <IconButton
             onClick={() =>
-              playerEventemitter.emit(
-                PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-                { music: queueMusic },
-              )
+              queueMusic
+                ? playerEventemitter.emit(
+                    PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                    { music: queueMusic },
+                  )
+                : notice.error(t('no_music_is_playing'))
             }
           >
             <MdReadMore />
           </IconButton>
           <IconButton
             onClick={() =>
-              playerEventemitter.emit(
-                PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
-                { music: queueMusic },
-              )
+              queueMusic
+                ? playerEventemitter.emit(
+                    PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
+                    { music: queueMusic },
+                  )
+                : notice.error(t('no_music_is_playing'))
             }
           >
             <MdOutlinePostAdd />
           </IconButton>
           <IconButton
             onClick={() =>
-              playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, {
-                id: queueMusic.id,
-              })
+              queueMusic
+                ? playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, {
+                    id: queueMusic.id,
+                  })
+                : notice.error(t('no_music_is_playing'))
             }
           >
             <MdMoreHoriz />

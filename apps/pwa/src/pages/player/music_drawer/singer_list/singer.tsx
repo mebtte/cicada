@@ -5,6 +5,7 @@ import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { SingerDetail } from '../constants';
 import e, { EventType } from '../../eventemitter';
+import JpegDefaultSingerAvatar from '@/asset/default_singer_avatar.jpeg';
 
 const COVER_SIZE = 28;
 const Style = styled.div`
@@ -49,7 +50,8 @@ function Singer({ singer }: { singer: SingerDetail }) {
         size={COVER_SIZE}
         shape={Shape.CIRCLE}
         src={getResizedImage({ url: singer.avatar, size: COVER_SIZE * 2 })}
-        alt="singer cover"
+        defaultSrc={JpegDefaultSingerAvatar}
+        alt="singer avatar"
       />
       <div className="name">{singer.name}</div>
     </Style>

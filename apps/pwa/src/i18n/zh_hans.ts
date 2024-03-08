@@ -206,6 +206,11 @@ const zhCN: {
   playlist: '播放列表',
   playqueue: '播放队列',
   clear_playlist_question: '确定清空播放列表吗?',
+  no_music_is_playing: '暂无音乐正在播放',
+  head_of_playqueue_tips: '已经是播放列表的第一首了',
+  feedback: '反馈',
+  fork_from_these_musics: '二次创作自以下音乐',
+  forked_by_these_musics: '被以下音乐二次创作',
 };
 
 export default zhCN;

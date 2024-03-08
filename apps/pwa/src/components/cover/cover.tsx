@@ -51,6 +51,7 @@ const preventDefault = (e) => e.preventDefault();
 function Cover({
   size = ComponentSize.NORMAL,
   shape = Shape.ROUNDED,
+  defaultSrc = DefaultCover,
   src,
   style,
   ...props
@@ -58,12 +59,13 @@ function Cover({
   src: string;
   size?: number | string;
   shape?: Shape;
+  defaultSrc?: string;
 } & ImgHTMLAttributes<HTMLDivElement>) {
   const ref = useRef<HTMLDivElement>(null);
-  const [currentSrc, setCurrentSrc] = useState(DefaultCover);
+  const [currentSrc, setCurrentSrc] = useState(defaultSrc);
 
   useLayoutEffect(() => {
-    setCurrentSrc(DefaultCover);
+    setCurrentSrc(defaultSrc);
 
     if (src) {
       const unobserve = intersectionObserver.observe(ref.current!, () =>
@@ -75,7 +77,7 @@ function Cover({
       );
       return unobserve;
     }
-  }, [src]);
+  }, [src, defaultSrc]);
 
   const transitions = useTransition(currentSrc, {
     from: { opacity: 0 },

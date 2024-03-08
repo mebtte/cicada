@@ -1,4 +1,4 @@
-import { CSSProperties, memo } from 'react';
+import { type CSSProperties, memo } from 'react';
 import setting from '@/global_states/setting';
 import Slider from '@/components/slider';
 import theme from '@/global_states/theme';

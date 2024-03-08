@@ -27,6 +27,7 @@ const ErrorContainer = styled(Container)`
   >.content {
     backdrop-filter: blur(10px);
     background-color: rgb(255 255 255 / 0.8);
+    border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
     padding: 20px;
     margin: 0 20px;

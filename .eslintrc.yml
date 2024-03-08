@@ -7,6 +7,9 @@ extends:
   - plugin:react/recommended
   - plugin:react-hooks/recommended
   - prettier
+settings:
+  react:
+    version: "detect"
 parserOptions:
   ecmaVersion: latest
   sourceType: module
@@ -20,5 +23,12 @@ rules:
   "@typescript-eslint/no-unsafe-argument": off
   "@typescript-eslint/explicit-function-return-type": off
   "@typescript-eslint/promise-function-async": off
+  "@typescript-eslint/strict-boolean-expressions": off
+  "@typescript-eslint/consistent-type-imports": off
+  "@typescript-eslint/no-misused-promises": off
+  "@typescript-eslint/no-non-null-assertion": off
+  "@typescript-eslint/no-floating-promises": off
+  "@typescript-eslint/array-type": off
+  "@typescript-eslint/prefer-nullish-coalescing": off
 
   "react/react-in-jsx-scope": off

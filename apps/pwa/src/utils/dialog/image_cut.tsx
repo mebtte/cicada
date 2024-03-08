@@ -16,6 +16,7 @@ import DialogBase from './dialog_base';
 import { ImageCut as ImageCutShape } from './constants';
 import useEvent from '../use_event';
 import loadImage from '../load_image';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 
 const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
 const contentStyle: CSSProperties = {
@@ -133,7 +134,7 @@ function ImageCutContent({
           </ImgBox>
         ) : null}
         <FileSelect
-          placeholder={t('image_select_placeholder')}
+          placeholder={upperCaseFirstLetter(t('image_select_placeholder'))}
           value={file}
           onChange={(f) => setFile(f)}
           acceptTypes={ACCEPT_TYPES}

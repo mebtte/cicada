@@ -27,9 +27,7 @@ import uploadAsset from '@/server/form/upload_asset';
 import createMusic from '@/server/api/create_music';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import updateMusic from '@/server/api/update_music';
-import getMusicFileMetadata, {
-  base64ToCover,
-} from '@/utils/get_music_file_metadata';
+import getMusicFileMetadata from '#/utils/get_music_file_metadata';
 import logger from '@/utils/logger';
 import { MUSIC_TYPE_MAP } from '@/constants/music';
 import capitalize from '#/utils/capitalize';
@@ -41,6 +39,8 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
 import { Singer } from './constants';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import { base64ToCover } from './utils';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
@@ -145,7 +145,11 @@ function CreateMusicDialog() {
       });
 
       try {
-        const { lyric, pictureBase64 } = await getMusicFileMetadata(asset);
+        const {
+          // lyric,
+          picture,
+          year,
+        } = await getMusicFileMetadata(asset);
         const updateCover = async (pb: string) => {
           const coverBlob = await base64ToCover(pb);
           const { id: assetId } = await uploadAsset(
@@ -161,15 +165,23 @@ function CreateMusicDialog() {
         };
 
         await Promise.all([
-          musicType === MusicType.SONG && lyric
-            ? await updateMusic({
+          // musicType === MusicType.SONG && lyric
+          //   ? await updateMusic({
+          //       id,
+          //       key: AllowUpdateKey.LYRIC,
+          //       value: [lyric],
+          //       requestMinimalDuration: 0,
+          //     })
+          //   : null,
+          picture ? updateCover(picture.dataURI) : null,
+          year
+            ? updateMusic({
                 id,
-                key: AllowUpdateKey.LYRIC,
-                value: [lyric],
+                key: AllowUpdateKey.YEAR,
+                value: year,
                 requestMinimalDuration: 0,
               })
             : null,
-          pictureBase64 ? updateCover(pictureBase64) : null,
         ]);
       } catch (error) {
         logger.error(error, "Failed to parse music's metadata");
@@ -218,9 +230,11 @@ function CreateMusicDialog() {
               onChange={onAssetChange}
               disabled={loading}
               acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
-              placeholder={`${t('empty_file_warning')}, ${t(
-                'supported_formats',
-              )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`}
+              placeholder={upperCaseFirstLetter(
+                `${t('empty_file_warning')}, ${t(
+                  'supported_formats',
+                )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`,
+              )}
             />
           </Label>
           <Label

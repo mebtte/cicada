@@ -1,19 +1,13 @@
 import Button, { Variant } from '@/components/button';
 import useEvent from '@/utils/use_event';
-import { CSSProperties, memo } from 'react';
+import { memo } from 'react';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
 import server, { getSelectedServer } from '@/global_states/server';
 import useNavigate from '@/utils/use_navigate';
 import { ROOT_PATH } from '@/constants/route';
-import { itemStyle } from './constants';
 import { clearApiCache } from './utils';
-
-const style: CSSProperties = {
-  ...itemStyle,
-  display: 'block',
-  width: 'calc(100% - 40px)',
-};
+import { buttonItemStyle } from './constants';
 
 function Logout() {
   const navigate = useNavigate();
@@ -44,7 +38,7 @@ function Logout() {
     }),
   );
   return (
-    <Button variant={Variant.DANGER} style={style} onClick={onLogout}>
+    <Button variant={Variant.DANGER} style={buttonItemStyle} onClick={onLogout}>
       {t('logout')}
     </Button>
   );

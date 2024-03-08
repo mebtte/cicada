@@ -1,7 +1,7 @@
 class CustomAudio<Extra> {
   readonly extra: Extra;
 
-  private audio: HTMLAudioElement;
+  private readonly audio: HTMLAudioElement;
 
   constructor({ src, extra }: { src: string; extra: Extra }) {
     const audio = new window.Audio();

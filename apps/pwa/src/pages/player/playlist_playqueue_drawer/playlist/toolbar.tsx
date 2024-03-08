@@ -6,11 +6,11 @@ import IconButton from '@/components/icon_button';
 import { MdDelete } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { FILTER_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
+import capitalize from '#/utils/capitalize';
 
 const Style = styled.div`
   position: absolute;
@@ -65,7 +65,7 @@ function Toolbar({
         <Input
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          placeholder={upperCaseFirstLetter(t('search'))}
+          placeholder={capitalize(t('search'))}
         />
       </Label>
     </Style>

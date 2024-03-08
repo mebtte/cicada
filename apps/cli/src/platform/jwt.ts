@@ -1,9 +1,7 @@
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import generateRandomString from '#/utils/generate_random_string';
-import { getJWTSecretFilePath } from '@/config';
-
-const JWT_TTL = 1000 * 60 * 60 * 24 * 180;
+import { getConfig, getJWTSecretFilePath } from '@/config';
 
 let secret: string = '';
 const getSecret = () => {
@@ -27,7 +25,7 @@ export function sign({
   tokenIdentifier: string;
 }) {
   return jwt.sign({ userId, tokenIdentifier }, getSecret(), {
-    expiresIn: JWT_TTL / 1000,
+    expiresIn: getConfig().jwtExpiry / 1000,
   });
 }
 
@@ -35,7 +33,9 @@ export function verify(token: string): {
   userId: string;
   tokenIdentifier: string;
 } {
-  const payload = jwt.verify(token, getSecret());
-  // @ts-expect-error
+  const payload = jwt.verify(token, getSecret()) as {
+    userId: string;
+    tokenIdentifier: string;
+  };
   return payload;
 }

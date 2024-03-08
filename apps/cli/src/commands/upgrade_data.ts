@@ -9,7 +9,7 @@ import { getDB } from '@/db';
 import generateRandomString from '#/utils/generate_random_string';
 
 function dropLoginCodeSalt() {
-  return fs.unlinkSync(`${getConfig().data}/login_code_salt`);
+  return fsPromises.unlink(`${getConfig().data}/login_code_salt`);
 }
 
 function dropLoginCode() {
@@ -105,7 +105,7 @@ async function addUserPassword() {
 }
 
 async function addUserTwoFASecret() {
-  return getDB().run(
+  return await getDB().run(
     `
       ALTER TABLE user ADD twoFASecret TEXT DEFAULT NULL
     `,
@@ -113,7 +113,7 @@ async function addUserTwoFASecret() {
 }
 
 async function addUserTokenIdentifier() {
-  return getDB().run(
+  return await getDB().run(
     `
       ALTER TABLE user ADD tokenIdentifier TEXT NOT NULL DEFAULT ''
     `,
@@ -154,38 +154,33 @@ export default async ({ data }: { data: string }) => {
 
   let spinner: Spinner;
 
-  spinner = createSpinner();
-  spinner.start({ text: 'Dropping login code...' });
+  spinner = createSpinner().start({ text: 'Dropping login code...' });
   await dropLoginCode();
   spinner.success({ text: 'Login code has dropped' });
 
-  spinner = createSpinner();
-  spinner.start({ text: 'Dropping login code salt...' });
+  spinner = createSpinner().start({ text: 'Dropping login code salt...' });
   await dropLoginCodeSalt();
   spinner.success({ text: 'Login code salt has dropped' });
 
-  spinner = createSpinner();
-  spinner.start({ text: 'Renaming user.email to user.username...' });
+  spinner = createSpinner().start({
+    text: 'Renaming user.email to user.username...',
+  });
   await renameUserEmailToUsername();
   spinner.success({ text: 'user.email has renamed to user.username' });
 
-  spinner = createSpinner();
-  spinner.start({ text: 'Adding user.password...' });
+  spinner = createSpinner().start({ text: 'Adding user.password...' });
   const userList = await addUserPassword();
   spinner.success({ text: 'user.password has added' });
 
-  spinner = createSpinner();
-  spinner.start({ text: 'Adding user.twoFASecret...' });
+  spinner = createSpinner().start({ text: 'Adding user.twoFASecret...' });
   await addUserTwoFASecret();
   spinner.success({ text: 'user.twoFASecret has added' });
 
-  spinner = createSpinner();
-  spinner.start({ text: 'Adding user.tokenIdentifier...' });
+  spinner = createSpinner().start({ text: 'Adding user.tokenIdentifier...' });
   await addUserTokenIdentifier();
   spinner.success({ text: 'user.tokenIdentifier has added' });
 
-  spinner = createSpinner();
-  spinner.start({ text: 'Writting new version of data...' });
+  spinner = createSpinner().start({ text: 'Writting new version of data...' });
   await writeNewVersion();
   spinner.success({ text: 'New version of data has wrote' });
 

@@ -14,14 +14,16 @@ import { getFormApp } from './form_app';
 import { getPwaApp } from './pwa_app';
 import { getBaseApp } from './base_app';
 import i18n from './middlewares/i18n';
+import ms from 'ms';
 
 function printConfig() {
   const config = getConfig();
-  const printConfigKeys: (keyof Config)[] = ['mode', 'port', 'data'];
+  const printConfigKeys: Array<keyof Config> = ['mode', 'port', 'data'];
   console.log('---');
   for (const key of printConfigKeys) {
     console.log(`${key}: ${config[key]}`);
   }
+  console.log(`jwtExpiry: ${ms(config.jwtExpiry)}`);
   console.log('---');
 }
 
@@ -29,12 +31,14 @@ export default async ({
   mode,
   port,
   data,
+  jwtExpiry,
 }: {
   mode: Mode;
   port: number;
   data: string;
+  jwtExpiry: number;
 }) => {
-  updateConfig({ mode, port, data });
+  updateConfig({ mode, port, data, jwtExpiry });
   printConfig();
 
   await initialize();

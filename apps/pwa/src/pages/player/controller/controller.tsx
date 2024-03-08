@@ -2,14 +2,19 @@ import styled, { css } from 'styled-components';
 import theme from '@/global_states/theme';
 import { useContext } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
-import { ZIndex } from '../constants';
+import { type QueueMusic, ZIndex } from '../constants';
 import Cover from './cover';
 import Operation from './operation';
 import Info from './info';
 import ProgressBar from './progress_bar';
 import Time from './time';
 import Context from '../context';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 
+const toggleLyric = () =>
+  playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: true });
 const Style = styled.div`
   z-index: ${ZIndex.CONTROLLER};
 
@@ -59,7 +64,9 @@ function Controller() {
     audioDuration,
     audioBufferedPercent,
   } = useContext(Context);
-  const queueMusic = playqueue[currentPlayqueuePosition];
+  const queueMusic = playqueue[currentPlayqueuePosition] as
+    | QueueMusic
+    | undefined;
 
   const { miniMode } = theme.useState();
   return (
@@ -69,7 +76,15 @@ function Controller() {
         bufferedPercent={audioBufferedPercent}
       />
       <div className="content">
-        <Cover cover={getResizedImage({ url: queueMusic.cover, size: 200 })} />
+        <Cover
+          cover={
+            queueMusic?.cover
+              ? getResizedImage({ url: queueMusic.cover, size: 200 })
+              : ''
+          }
+          onClick={queueMusic ? toggleLyric : undefined}
+          mask={!!queueMusic}
+        />
         <div className="rest">
           <Info queueMusic={queueMusic} />
           {miniMode ? null : <Time duration={audioDuration} />}

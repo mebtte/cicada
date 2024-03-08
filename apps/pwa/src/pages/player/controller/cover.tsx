@@ -1,31 +1,26 @@
 import loadImage from '@/utils/load_image';
 import logger from '@/utils/logger';
-import { useEffect, useState } from 'react';
+import { HtmlHTMLAttributes, useEffect, useState } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import { MdUnfoldMore } from 'react-icons/md';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import PngDefaultCover from '@/asset/default_cover.jpeg';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../eventemitter';
 
-const toggleLyric = () =>
-  playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: true });
 const Style = styled.div`
   position: relative;
 
   height: 100%;
 
   aspect-ratio: 1;
-  cursor: pointer;
   overflow: hidden;
 
   > .expand {
     ${absoluteFullSize}
     ${flexCenter}
     
+    cursor: pointer;
     opacity: 0;
     transition: 100ms;
     background-color: rgb(0 0 0 / 0.5);
@@ -52,7 +47,11 @@ const Cover = styled(animated.img)`
   object-position: center;
 `;
 
-function Wrapper({ cover }: { cover?: string }) {
+function Wrapper({
+  cover,
+  mask,
+  ...props
+}: { cover?: string; mask: boolean } & HtmlHTMLAttributes<HTMLDivElement>) {
   const [src, setSrc] = useState(PngDefaultCover);
 
   useEffect(() => {
@@ -83,14 +82,15 @@ function Wrapper({ cover }: { cover?: string }) {
     leave: { transform: 'translateX(100%)' },
   });
   return (
-    <Style onClick={toggleLyric}>
+    <Style {...props}>
       {transitions((style, s) => (
         <Cover style={style} src={s} crossOrigin="anonymous" />
       ))}
-
-      <div className="expand">
-        <MdUnfoldMore />
-      </div>
+      {mask ? (
+        <div className="expand">
+          <MdUnfoldMore />
+        </div>
+      ) : null}
     </Style>
   );
 }

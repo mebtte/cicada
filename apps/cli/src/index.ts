@@ -9,6 +9,7 @@ import upgradeData from './commands/upgrade_data';
 import fixData from './commands/fix_data';
 import { FIRST_USER_ID } from './constants';
 import { DEFAULT_CONFIG, Mode } from './config';
+import ms from 'ms';
 
 const program = new Command()
   .name('cicada')
@@ -25,15 +26,21 @@ program
   .option('--mode [mode]', 'development or production')
   .option('--data [data]', 'data directory location')
   .option('--port [port]', 'port of http server')
+  .option(
+    '--jwt-expiry [jwtExpiry]',
+    'expiry for jwt, use [ms](https://www.npmjs.com/package/ms) to parse string to millisecond',
+  )
   .action(
     async ({
       mode,
       data,
       port,
+      jwtExpiry,
     }: {
       mode?: Mode;
       data?: string;
       port?: string;
+      jwtExpiry?: string;
     }) => {
       if (mode && !Object.values(Mode).includes(mode)) {
         return exitWithMessage(`[ ${mode} ] is not a valid mode`);
@@ -44,10 +51,11 @@ program
           ? data
           : path.resolve(process.cwd(), data)
         : DEFAULT_CONFIG.data;
-      return startServer({
-        mode: mode || DEFAULT_CONFIG.mode,
+      return await startServer({
+        mode: mode ?? DEFAULT_CONFIG.mode,
         data: absoluteData,
         port: port ? Number(port) : DEFAULT_CONFIG.port,
+        jwtExpiry: jwtExpiry ? ms(jwtExpiry) : DEFAULT_CONFIG.jwtExpiry,
       });
     },
   );

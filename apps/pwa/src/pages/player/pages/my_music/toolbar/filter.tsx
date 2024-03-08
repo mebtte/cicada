@@ -6,7 +6,7 @@ import parseSearch from '@/utils/parse_search';
 import { CSSProperties, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { t } from '@/i18n';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import capitalize from '#/utils/capitalize';
 
 const style: CSSProperties = {
   flex: 1,
@@ -40,7 +40,7 @@ function Filter() {
     <Input
       style={style}
       autoFocus={!IS_TOUCHABLE}
-      placeholder={upperCaseFirstLetter(t('search'))}
+      placeholder={capitalize(t('search'))}
       value={keyword}
       onChange={(event) => setKeyword(event.target.value)}
     />
