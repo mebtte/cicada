@@ -3,9 +3,11 @@ import { MultipleLrc, MultipleLrcLine } from 'react-lrc';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { CSSVariable } from '@/global_style';
 import useAudioCurrentMillisecond from '../../use_audio_current_millisecond';
+import autoScrollbar from '@/style/auto_scrollbar';
 
 const StyledMultipleLrc = styled(MultipleLrc)`
   ${absoluteFullSize}
+  ${autoScrollbar}
 `;
 const Line = styled.div<{ active?: boolean }>`
   margin: 20px;
