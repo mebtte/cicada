@@ -15,12 +15,12 @@ A multi-user music service for self-hosting.
 - Multiple users
 - Shared musicbill between users
 - Support of importing music and music directory
-- [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps) supports both desktop and mobile
 - Separation of playlist and custom playqueue
 - Search of music, singer, musicbill and lyric
-- [System media shortcut](https://developer.mozilla.org/docs/Web/API/MediaSession)
-- Support of building APP from [HTTP API](https://www.postman.com/cicada-player/workspace/cicada-v2)
 - Support of Two-Factor Authentication
+- [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps) supports both desktop and mobile
+- [Native client for iPhone/iPad/macOS](https://github.com/mebtte/cicada-swift)
+- Support of building APP from [HTTP API](https://www.postman.com/cicada-player/workspace/cicada-v2)
 
 ## Deployment
 
