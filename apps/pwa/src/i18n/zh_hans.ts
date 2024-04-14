@@ -211,6 +211,7 @@ const zhCN: {
   feedback: '反馈',
   fork_from_these_musics: '二次创作自以下音乐',
   forked_by_these_musics: '被以下音乐二次创作',
+  can_not_play_audio_file: '音乐文件无法被播放',
 };
 
 export default zhCN;

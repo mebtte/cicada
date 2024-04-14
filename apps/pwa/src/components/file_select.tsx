@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { CSSVariable } from '../global_style';
 import useEvent from '../utils/use_event';
 import selectFile from '../utils/select_file';
@@ -15,6 +14,10 @@ const Style = styled.div<{ disabled: boolean }>`
   transition: inherit;
   user-select: none;
   word-break: break-all;
+
+  > .placeholder {
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  }
 
   &:active {
     border-color: ${CSSVariable.COLOR_PRIMARY};
@@ -60,7 +63,7 @@ function FileSelect({
 
   return (
     <Style onClick={onSelectFile} disabled={disabled}>
-      {value ? value.name : placeholder}
+      {value ? value.name : <span className="placeholder">{placeholder}</span>}
     </Style>
   );
 }

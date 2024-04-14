@@ -66,7 +66,7 @@ const ASSET_TYPE_MAP_OPTION: Record<
 
 export default async (ctx: Context) => {
   const { field, file } = await parseFormdata<'assetType', 'asset'>(ctx.req);
-  // @ts-expect-error
+  // @ts-expect-error: known type
   const assetType: AssetType | undefined = field.assetType
     ? field.assetType[0]
     : undefined;
@@ -75,12 +75,12 @@ export default async (ctx: Context) => {
     return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
 
-  const { maxSize, acceptTypes } = ASSET_TYPE_MAP[assetType];
+  const { maxSize, acceptType } = ASSET_TYPE_MAP[assetType];
   if (asset.size > maxSize) {
     return ctx.except(ExceptionCode.ASSET_OVERSIZE);
   }
   const ft = await fileType.fromFile(asset.path);
-  if (!ft || !acceptTypes.includes(ft.mime)) {
+  if (!ft || !new Set(Object.values(acceptType).flat()).has(ft.mime)) {
     return ctx.except(ExceptionCode.WRONG_ASSET_TYPE);
   }
 
