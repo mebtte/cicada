@@ -57,6 +57,7 @@ import playerEventemitter, {
 } from '../eventemitter';
 import MusicInfo from '../components/music_info';
 import MissingSinger from '../components/missing_singer';
+import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 
 interface Singer {
   id: string;
@@ -381,10 +382,12 @@ function EditMenu({ music }: { music: MusicDetail }) {
               acceptTypes: Object.values(
                 ASSET_TYPE_MAP[AssetType.MUSIC].acceptType,
               ).flat(),
-              placeholder: t(
-                'one_of_formats',
-                Object.keys(ASSET_TYPE_MAP[AssetType.MUSIC].acceptType).join(
-                  '/',
+              placeholder: upperCaseFirstLetter(
+                t(
+                  'one_of_formats',
+                  Object.keys(ASSET_TYPE_MAP[AssetType.MUSIC].acceptType).join(
+                    '/',
+                  ),
                 ),
               ),
               onConfirm: async (file) => {
