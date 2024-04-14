@@ -40,7 +40,7 @@ import playerEventemitter, {
 } from '../../../eventemitter';
 import { Singer } from './constants';
 import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
-import { base64ToCover } from './utils';
+import { base64ToCover, canAudioPlay } from './utils';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
@@ -90,33 +90,43 @@ function CreateMusicDialog() {
     setMusicType(option.actualValue);
 
   const [asset, setAsset] = useState<File | null>(null);
-  const onAssetChange = (a) => {
+  const onAssetChange = (a: File | null) => {
     setAsset(a);
 
-    getMusicFileMetadata(a)
-      .then((metadata) => {
-        const { title, artist } = metadata;
-        if (!name && title) {
-          setName(title);
+    if (a) {
+      canAudioPlay(a).then((canPlay) => {
+        if (!canPlay) {
+          setAsset(null);
+          return notice.error(t('can_not_play_audio_file'));
         }
-        if (!singerList.length && artist) {
-          searchSingerRequest({
-            keyword: artist,
-            page: 1,
-            pageSize: 10,
-            requestMinimalDuration: 0,
-          })
-            .then((data) => {
-              if (!singerList.length) {
-                setSingerList(data.singerList);
-              }
+      });
+      getMusicFileMetadata(a)
+        .then((metadata) => {
+          const { title, artist } = metadata;
+          if (!name && title) {
+            setName(title);
+          }
+          if (!singerList.length && artist) {
+            searchSingerRequest({
+              keyword: artist,
+              page: 1,
+              pageSize: 10,
+              requestMinimalDuration: 0,
             })
-            .catch((error) => logger.error(error, 'Failed to search singers'));
-        }
-      })
-      .catch((error) =>
-        logger.error(error, "Failed to parse music's metadata"),
-      );
+              .then((data) => {
+                if (!singerList.length) {
+                  setSingerList(data.singerList);
+                }
+              })
+              .catch((error) =>
+                logger.error(error, 'Failed to search singers'),
+              );
+          }
+        })
+        .catch((error) =>
+          logger.error(error, "Failed to parse music's metadata"),
+        );
+    }
   };
 
   const [loading, setLoading] = useState(false);
