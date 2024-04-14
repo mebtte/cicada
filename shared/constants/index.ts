@@ -25,35 +25,45 @@ export const ASSET_TYPES = Object.values(AssetType);
 export const ASSET_TYPE_MAP: Record<
   AssetType,
   {
-    acceptTypes: string[];
+    acceptType: Record<string, string[]>;
     maxSize: number;
   }
 > = {
   [AssetType.SINGER_AVATAR]: {
-    acceptTypes: ['image/jpeg'],
+    acceptType: {
+      jpg: ['image/jpeg'],
+      jpeg: ['image/jpeg'],
+    },
     maxSize: 1024 * 1024 * 2,
   },
   [AssetType.MUSICBILL_COVER]: {
-    acceptTypes: ['image/jpeg'],
+    acceptType: {
+      jpg: ['image/jpeg'],
+      jpeg: ['image/jpeg'],
+    },
     maxSize: 1024 * 1024 * 2,
   },
   [AssetType.MUSIC_COVER]: {
-    acceptTypes: ['image/jpeg'],
+    acceptType: {
+      jpg: ['image/jpeg'],
+      jpeg: ['image/jpeg'],
+    },
     maxSize: 1024 * 1024 * 2,
   },
   [AssetType.USER_AVATAR]: {
-    acceptTypes: ['image/jpeg'],
+    acceptType: {
+      jpg: ['image/jpeg'],
+      jpeg: ['image/jpeg'],
+    },
     maxSize: 1024 * 1024 * 2,
   },
   [AssetType.MUSIC]: {
-    acceptTypes: [
-      'audio/mpeg', // .mp3
-      'audio/mp4', // .mp4
-      'audio/flac', // .flac
-      'audio/x-flac', // .flac
-      'audio/m4a', // .m4a
-      'audio/x-m4a', // .m4a
-    ],
+    acceptType: {
+      mp3: ['audio/mpeg'],
+      flac: ['audio/flac', 'audio/x-flac'],
+      m4a: ['audio/m4a', 'audio/x-m4a'],
+      mp4: ['audio/mp4', 'video/mp4'],
+    },
     maxSize: 1024 * 1024 * 200,
   },
 };

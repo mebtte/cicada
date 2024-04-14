@@ -229,11 +229,13 @@ function CreateMusicDialog() {
               value={asset}
               onChange={onAssetChange}
               disabled={loading}
-              acceptTypes={ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes}
+              acceptTypes={Object.values(
+                ASSET_TYPE_MAP[AssetType.MUSIC].acceptType,
+              ).flat()}
               placeholder={upperCaseFirstLetter(
-                `${t('empty_file_warning')}, ${t(
-                  'supported_formats',
-                )} ${ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(', ')}`,
+                `${t('supported_formats')}: ${Object.keys(
+                  ASSET_TYPE_MAP[AssetType.MUSIC].acceptType,
+                ).join('/')}`,
               )}
             />
           </Label>

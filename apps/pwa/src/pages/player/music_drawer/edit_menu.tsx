@@ -378,10 +378,14 @@ function EditMenu({ music }: { music: MusicDetail }) {
             dialog.fileSelect({
               title: t('modify_file_of_music'),
               label: t('file_of_music'),
-              acceptTypes: ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes,
+              acceptTypes: Object.values(
+                ASSET_TYPE_MAP[AssetType.MUSIC].acceptType,
+              ).flat(),
               placeholder: t(
                 'one_of_formats',
-                ASSET_TYPE_MAP[AssetType.MUSIC].acceptTypes.join(','),
+                Object.keys(ASSET_TYPE_MAP[AssetType.MUSIC].acceptType).join(
+                  '/',
+                ),
               ),
               onConfirm: async (file) => {
                 if (!file) {
