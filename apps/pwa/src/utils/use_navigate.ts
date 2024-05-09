@@ -15,9 +15,7 @@ function useNavigate() {
       replace = false,
     }: {
       path?: string;
-      query?: {
-        [key: string]: number | string | undefined;
-      };
+      query?: Record<string, number | string | undefined>;
       replace?: boolean;
     }) => {
       const combineQuery = {

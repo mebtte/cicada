@@ -9,7 +9,6 @@ import globalEventemitter, {
 } from '@/platform/global_eventemitter';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
-import useOnline from './use_online';
 
 const Style = styled.div`
   ${flexCenter}
@@ -27,7 +26,6 @@ function NetworkStatus() {
   const { height, left, right } = useTitlebarAreaRect();
 
   const [networkError, setNetworkError] = useState(false);
-  const online = useOnline();
 
   useEffect(() => {
     const unlistenFail = globalEventemitter.listen(
@@ -44,7 +42,7 @@ function NetworkStatus() {
     };
   }, []);
 
-  if (networkError || !online) {
+  if (networkError) {
     return (
       <Style
         style={{
