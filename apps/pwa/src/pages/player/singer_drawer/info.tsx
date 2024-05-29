@@ -2,7 +2,7 @@ import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import Cover, { Shape } from '@/components/cover';
 import { Singer } from './constants';
-import JpegDefaultSingerAvatar from '@/asset/default_singer_avatar.jpeg';
+import JpegDefaultSingerAvatar from '@/asset/default_cover.jpeg';
 
 const Style = styled.div`
   position: relative;

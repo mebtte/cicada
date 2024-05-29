@@ -1,4 +1,3 @@
-/// <reference lib="WebWorker" />
 /* global ServiceWorkerGlobalScope */
 import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute, PrecacheEntry } from 'workbox-precaching';
