@@ -224,4 +224,6 @@ export default {
   fork_from_these_musics: 'fork from these musics',
   forked_by_these_musics: 'forked by these musics',
   can_not_play_audio_file: 'this file can not be played',
+  stop_timer: 'stop timer',
+  minute: 'minute',
 };
