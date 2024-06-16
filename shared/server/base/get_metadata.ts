@@ -1,4 +1,4 @@
-export type Response = {
+export interface Response {
   version: string;
   hostname: string;
-};
+}

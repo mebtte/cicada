@@ -1,10 +1,8 @@
 import XState from '@/utils/x_state';
 import logger from '@/utils/logger';
 import storage, { Key } from '@/storage';
-import { Server, ServerState } from '@/constants/server';
+import { type Server, type ServerState } from '@/constants/server';
 import globalEventemitter, { EventType } from '@/platform/global_eventemitter';
-import getMetadata from '@/server/base/get_metadata';
-import getProfile from '@/server/api/get_profile';
 import definition from '@/definition';
 import { BETA_VERSION_START } from '#/constants';
 
@@ -34,7 +32,8 @@ server.onChange((ss) => {
 window.setInterval(() => {
   const selectedServer = getSelectedServer(server.get());
   if (selectedServer) {
-    getMetadata(selectedServer.origin)
+    import('@/server/base/get_metadata')
+      .then(({ default: getMetadata }) => getMetadata(selectedServer.origin))
       .then((data) => {
         if (
           !definition.DEVELOPMENT &&
@@ -98,6 +97,7 @@ export async function reloadUser() {
   if (selectedServer) {
     const user = getSelectedUser(selectedServer);
     if (user) {
+      const { default: getProfile } = await import('@/server/api/get_profile');
       const profile = await getProfile(user.token);
       server.set((ss) => ({
         ...ss,
