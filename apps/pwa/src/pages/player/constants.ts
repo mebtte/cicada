@@ -33,11 +33,11 @@ export interface QueueMusic extends MusicWithSingerAliases {
   shuffle: boolean;
 }
 
-type MusicbillUser = {
+interface MusicbillUser {
   id: string;
   avatar: string;
   nickname: string;
-};
+}
 
 export interface Musicbill {
   id: string;
@@ -77,4 +77,8 @@ export enum SearchTab {
   SINGER = 'singer',
   PUBLIC_MUSICBILL = 'public_musicbill',
   LYRIC = 'lyric',
+}
+
+export interface StopTimer {
+  endTimestamp: number;
 }

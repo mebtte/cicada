@@ -3,8 +3,13 @@ import { itemStyle } from './constants';
 import { t } from '@/i18n';
 import Input from '@/components/input';
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Button, { Variant } from '@/components/button';
+import Context from '../../context';
+import notice from '@/utils/notice';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../../eventemitter';
 
 const Style = styled.div`
   display: flex;
@@ -17,9 +22,20 @@ const Style = styled.div`
 `;
 const isValidMinute = (minutes: number) => minutes > 0;
 
-function Timer() {
+function StopTimer() {
+  const { stopTimer } = useContext(Context);
   const [value, setValue] = useState('');
   const minutes = Number(value);
+
+  const onTimerStart = () => {
+    if (stopTimer) {
+      return notice.error(t('stop_timer_exist_warning'));
+    }
+    playerEventemitter.emit(PlayerEventType.ADD_STOP_TIMER, {
+      endTimestamp: Date.now() + minutes * 60 * 1000,
+    });
+    return setValue('');
+  };
 
   const isValid = isValidMinute(minutes);
   return (
@@ -30,8 +46,13 @@ function Timer() {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           type="number"
+          min={1}
         />
-        <Button variant={Variant.PRIMARY} disabled={!isValid}>
+        <Button
+          variant={Variant.PRIMARY}
+          disabled={!isValid}
+          onClick={onTimerStart}
+        >
           开始
         </Button>
       </Style>
@@ -39,4 +60,4 @@ function Timer() {
   );
 }
 
-export default Timer;
+export default StopTimer;

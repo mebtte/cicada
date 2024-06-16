@@ -33,6 +33,7 @@ import SingerModifyRecordDrawer from './singer_modify_record_drawer';
 import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
+import useStopTimer from './use_stop_timer';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -76,6 +77,7 @@ function Wrapper() {
     duration: audioDuration,
     bufferedPercent: audioBufferedPercent,
   } = useAudio({ queueMusic });
+  const stopTimer = useStopTimer();
 
   useKeyboard({ paused: audioPaused, queueMusic, musicbillList });
   useMediaSession(queueMusic);
@@ -100,6 +102,8 @@ function Wrapper() {
       currentPlayqueuePosition,
 
       lyricPanelOpen,
+
+      stopTimer,
     }),
     [
       audioBufferedPercent,
@@ -112,6 +116,7 @@ function Wrapper() {
       musicbillList,
       playlist,
       playqueue,
+      stopTimer,
     ],
   );
   return (

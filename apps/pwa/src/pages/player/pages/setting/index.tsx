@@ -11,7 +11,7 @@ import ExtraInfo from './extra_info';
 import Language from './language';
 import UserSwitch from './user_switch';
 import Feedback from './feedback';
-import Timer from './timer';
+import StopTimer from './stop_timer';
 
 const AUDIO_VOLUME_SETABLE = await (() =>
   Promise.race([
@@ -35,7 +35,7 @@ function Setting() {
   const user = useUser()!;
   return (
     <Style>
-      <Timer />
+      <StopTimer />
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
       <Language />
       {user.admin ? <UserManage /> : null}

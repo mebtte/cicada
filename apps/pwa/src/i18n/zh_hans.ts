@@ -214,6 +214,8 @@ const zhCN: {
   can_not_play_audio_file: '音乐文件无法被播放',
   stop_timer: '定时停止',
   minute: '分钟',
+  stop_timer_exist_warning: '已存在一个定时器',
+  stop_timer_is_up: '定时停止时间到',
 };
 
 export default zhCN;

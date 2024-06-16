@@ -226,4 +226,6 @@ export default {
   can_not_play_audio_file: 'this file can not be played',
   stop_timer: 'stop timer',
   minute: 'minute',
+  stop_timer_exist_warning: 'a existing stop timer is running',
+  stop_timer_is_up: 'stop timer is up',
 };
