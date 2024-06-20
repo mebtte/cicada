@@ -6,6 +6,7 @@ import {
   ZIndex,
 } from '../constants';
 import Content from './content';
+import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 
 const Style = styled.div`
   z-index: ${ZIndex.STOP_TIMER};
@@ -27,6 +28,7 @@ interface DraggingInfo {
 }
 
 function StopTimer({ stopTimer }: { stopTimer: StopTimerType }) {
+  const { height: titlebarAreaHeight } = useTitlebarArea();
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState<StopTimerPosition>(DEFAULT_POSITION);
   const [draggingPosition, setDraggingPosition] = useState<DraggingPosition>({
@@ -68,25 +70,27 @@ function StopTimer({ stopTimer }: { stopTimer: StopTimerType }) {
     const top = pageY - offsetY;
     setPosition({
       direction: pageX > innerWidth / 2 ? 'right' : 'left',
-      top: Math.min(Math.max(top, 0), innerHeight - ref.current!.clientHeight),
+      top: Math.min(
+        Math.max(top, titlebarAreaHeight),
+        innerHeight - ref.current!.clientHeight,
+      ),
     });
     globalThis.setTimeout(() => setDragging(false));
   };
 
   useEffect(() => {
-    const onWindowResize = () => {
-      const { innerHeight } = window;
-      return setPosition((p) => ({
+    const updatePosition = () =>
+      setPosition((p) => ({
         ...p,
         top: Math.min(
-          Math.max(p.top, 0),
-          innerHeight - ref.current!.clientHeight,
+          Math.max(p.top, titlebarAreaHeight),
+          window.innerHeight - ref.current!.clientHeight,
         ),
       }));
-    };
-    window.addEventListener('resize', onWindowResize);
-    return () => window.removeEventListener('resize', onWindowResize);
-  }, []);
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    return () => window.removeEventListener('resize', updatePosition);
+  }, [titlebarAreaHeight]);
 
   return (
     <Style
