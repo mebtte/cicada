@@ -3,7 +3,7 @@ import { request } from '..';
 
 /**
  * 获取歌手修改记录列表
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function getSingerModifyRecordList({
   id,

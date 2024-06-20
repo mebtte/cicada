@@ -17,7 +17,7 @@ const isSquare = async (buffer: Buffer) => {
   const image = await jimp.read(buffer);
   /**
    * 允许一定的误差
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   return Math.abs(image.bitmap.width - image.bitmap.height) < 5;
 };

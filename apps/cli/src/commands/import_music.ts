@@ -33,7 +33,7 @@ let ignored = 0;
 
 /**
  * 检查音乐是否已存在
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 async function checkMusicExist({
   singers,
@@ -90,7 +90,7 @@ async function importFile(
 
   /**
    * 检查文件类型
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   const ft = await fileType.fromFile(filepath);
   const { acceptTypes } = ASSET_TYPE_MAP[AssetType.MUSIC];
@@ -207,7 +207,7 @@ async function importDirectory(
 ) {
   /**
    * 过滤隐藏文件
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   const files = (await fs.readdir(directory)).filter((f) => !f.startsWith('.'));
   for (const file of files) {
@@ -247,7 +247,7 @@ async function importMusic({
 
   /**
    * 检查 uid 是否存在
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   const user = await getUserById(uid, [UserProperty.ID]);
   if (!user) {

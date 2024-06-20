@@ -51,7 +51,7 @@ export async function verify({
   /**
    * 无论验证成功与否
    * 都需要记录已使用
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   getDB()
     .run(

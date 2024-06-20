@@ -10,7 +10,7 @@ import { QueueMusic } from '../constants';
  * workbox 不支持缓存媒体
  * 需要手动进行缓存
  * 详情查看 https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 export default (audio: CustomAudio<QueueMusic> | null) => {
   useEffect(() => {

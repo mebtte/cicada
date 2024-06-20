@@ -54,7 +54,7 @@ export default async ({
 
       /**
        * 当 navigator.sendBeacon 格式是 json 时必须
-       * @author mebtte<hi@mebtte.com>
+       * @author mebtte<i@mebtte.com>
        */
       credentials: true,
     }),

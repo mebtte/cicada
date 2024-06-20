@@ -34,7 +34,7 @@ const Style = styled.div`
 
 /**
  * 错误卡片
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function ErrorCard({
   errorMessage,

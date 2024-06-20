@@ -59,18 +59,19 @@ export interface Musicbill {
 export const ZIndex = {
   CONTROLLER: 10,
   LYRIC_PANEL: 11,
-  STOP_TIMER: 12,
 
   /**
    * 与下一级需要大数字间隔
    * 会随着时间的增加而增加
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   DYNAMIC_START: 12,
 
-  DRAWER: UtilZIndex.PAGINATION - 1,
-  POPUP: UtilZIndex.PAGINATION - 1,
-  DIALOG: UtilZIndex.PAGINATION - 1,
+  DRAWER: UtilZIndex.PAGINATION - 2,
+  POPUP: UtilZIndex.PAGINATION - 2,
+  DIALOG: UtilZIndex.PAGINATION - 2,
+
+  STOP_TIMER: UtilZIndex.PAGINATION - 1,
 };
 
 export enum SearchTab {

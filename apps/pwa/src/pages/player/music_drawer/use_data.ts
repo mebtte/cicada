@@ -59,7 +59,7 @@ export default (id: string) => {
        * 2. 存在缓存从缓存获取[大小]和[时长]信息
        * 3. 不存在缓存通过 head 方法请求文件获取 content-length 作为大小
        * 4. 不要通过网络加载的方法获取时长, service worker 会下载完整文件大小
-       * @author mebtte<hi@mebtte.com>
+       * @author mebtte<i@mebtte.com>
        */
       let size = 0;
       let duration = 0;
@@ -84,7 +84,7 @@ export default (id: string) => {
           const assetHeadResponse = await window.fetch(music.asset, {
             /**
              * 只获取 http header
-             * @author mebtte<hi@mebtte.com>
+             * @author mebtte<i@mebtte.com>
              */
             method: 'head',
           });

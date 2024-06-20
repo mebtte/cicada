@@ -82,7 +82,7 @@ const CHARS_WITH_SIGN = [...CHARS, ...SIGNS];
 
 /**
  * Get a random string.
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function generateRandomString(length = 10, sign = true) {
   const chars = sign ? CHARS_WITH_SIGN : CHARS;

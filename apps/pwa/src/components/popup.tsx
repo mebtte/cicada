@@ -35,7 +35,7 @@ const Body = styled(animated.div)`
 
 /**
  * 弹出框
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 const Popup = ({
   open,

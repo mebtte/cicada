@@ -18,12 +18,12 @@ declare const self: ServiceWorkerGlobalScope & {
 /**
  * 生产模式下缓存构建资源以及收到指令才升级
  * 开发模式下默认自动升级并托管所有 client
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 if (process.env.NODE_ENV === 'production') {
   /**
    * workbox injectManifest 注入的缓存资源列表
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   // eslint-disable-next-line no-underscore-dangle
   precacheAndRoute(self.__WB_MANIFEST || []);
@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === 'production') {
 self.addEventListener('activate', () => {
   /**
    * 移除过期的 API cache
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   self.caches.open(CacheName.API).then(async (cache) => {
     const keys = await cache.keys();
@@ -62,7 +62,7 @@ self.addEventListener('activate', () => {
  * 媒体类型, 缓存优先
  * 需要额外处理 range
  * 详情查看 https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 const MEDIA_ASSET_TYPES = [AssetType.MUSIC];
 function isMediaAsset(url: URL) {
@@ -97,7 +97,7 @@ registerRoute(
 /**
  * Asset, 缓存优先
  * 媒体类型已额外处理, 需要排除
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 registerRoute(
   ({ request }) => {
@@ -113,7 +113,7 @@ registerRoute(
 
 /**
  * API 网络优先
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 const PREVNET_CACHE_PATHS: string[] = [
   '/base/metadata',

@@ -4,7 +4,7 @@ import { request } from '..';
 
 /**
  * 获取用户详情
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 async function getUser(id: string) {
   const user = await request<Response>({

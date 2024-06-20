@@ -33,7 +33,7 @@ const setting = new XState<Setting>({
 
 /**
  * correct language
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 if (!LANGUAGES.includes(setting.get().language)) {
   setting.set((s) => ({

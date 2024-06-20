@@ -63,7 +63,7 @@ export default async (ctx: Context) => {
   /**
    * 1. 删除数据库相关记录, 注意外键依赖顺序
    * 2. 转移所有权
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   const musicbillList = await getUserMusicbillList(id, [MusicbillProperty.ID]);
   await Promise.all([

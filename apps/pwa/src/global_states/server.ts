@@ -42,7 +42,7 @@ window.setInterval(() => {
         ) {
           /**
            * @todo 不兼容提示
-           * @author mebtte<hi@mebtte.com>
+           * @author mebtte<i@mebtte.com>
            */
         }
 

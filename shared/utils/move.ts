@@ -3,7 +3,7 @@ import exist from './exist';
 
 /**
  * 移动文件并修改文件的 birthtime
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 async function mvFile(source: string, destination: string) {
   const data = await fs.readFile(source);
@@ -17,7 +17,7 @@ async function mvFile(source: string, destination: string) {
 /**
  * 移动文件夹或者文件
  * 并修改 birthtime
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 async function mvDirectoryOrFile(source: string, destination: string) {
   const stat = await fs.stat(source);

@@ -56,7 +56,7 @@ function mkdirIfNotExist(dir: string) {
 export default async () => {
   /**
    * create directory
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   const directories = [
     getConfig().data,
@@ -73,7 +73,7 @@ export default async () => {
 
   /**
    * initialize or verify data version
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   if (fs.existsSync(getDataVersionPath())) {
     const dataVersion = Number(
@@ -95,7 +95,7 @@ export default async () => {
 
   /**
    * initialize database
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   if (
     !fs.existsSync(getDBFilePath()) ||

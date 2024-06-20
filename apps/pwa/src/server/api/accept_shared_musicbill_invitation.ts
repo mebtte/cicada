@@ -2,10 +2,10 @@ import { Method, request } from '..';
 
 /**
  * 接受共享乐单邀请
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function acceptSharedMusicbillInvitation(id: number) {
-  return request<void>({
+  return request({
     path: '/api/shared_musicbill_invitation',
     withToken: true,
     body: { id },

@@ -41,7 +41,7 @@ const Style = styled.div`
 
 /**
  * 加载器
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function Spinner({
   size = ComponentSize.SMALL,

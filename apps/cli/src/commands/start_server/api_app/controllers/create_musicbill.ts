@@ -17,7 +17,7 @@ export default async (ctx: Context) => {
 
   /**
    * 0 表示无限制
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   if (ctx.user.musicbillMaxAmount !== 0) {
     const musicbillList = await getUserMusicbillList(ctx.user.id, [
