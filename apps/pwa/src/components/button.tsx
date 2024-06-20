@@ -86,6 +86,7 @@ const Style = styled.button<{
   height: ${ComponentSize.NORMAL}px;
   padding: 0 15px;
 
+  white-space: nowrap;
   border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
   cursor: pointer;

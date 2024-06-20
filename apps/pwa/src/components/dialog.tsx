@@ -50,7 +50,7 @@ const Body = styled(animated.div)`
 
 /**
  * 弹窗
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 const Dialog = ({
   open,

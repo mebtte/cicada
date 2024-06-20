@@ -3,7 +3,7 @@ import { request } from '..';
 
 /**
  * 获取共享乐单邀请列表
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function getSharedMusicbillInvitationList() {
   return request<Response>({

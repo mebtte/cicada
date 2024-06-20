@@ -3,7 +3,7 @@ import { Method, request } from '..';
 
 /**
  * 创建音乐
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function createMusic({
   name,

@@ -2,7 +2,7 @@ import { request } from '..';
 
 /**
  * 获取音乐播放记录列表
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function getMusicPlayRecordList({
   page,

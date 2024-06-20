@@ -1,6 +1,11 @@
 import { createContext } from 'react';
 import { RequestStatus } from '@/constants';
-import { MusicWithSingerAliases, QueueMusic, Musicbill } from './constants';
+import {
+  MusicWithSingerAliases,
+  QueueMusic,
+  Musicbill,
+  StopTimer,
+} from './constants';
 
 interface Context {
   getMusicbillListStatus: RequestStatus;
@@ -17,6 +22,8 @@ interface Context {
   currentPlayqueuePosition: number;
 
   lyricPanelOpen: boolean;
+
+  stopTimer: StopTimer | null;
 }
 
 const context = createContext<Context>({
@@ -34,6 +41,8 @@ const context = createContext<Context>({
   currentPlayqueuePosition: -1,
 
   lyricPanelOpen: false,
+
+  stopTimer: null,
 });
 
 export default context;

@@ -18,7 +18,7 @@ const storage = new Storage<
   }
 >('app');
 
-// @ts-expect-error
+// @ts-expect-error: for debug
 window.appStorage = storage;
 
 export default storage;

@@ -1,6 +1,5 @@
 import logger from '@/utils/logger';
 import type { Query } from '@/constants';
-import getMusicPlayRecordList from '@/server/api/get_music_play_record_list';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE, MusicPlayRecord } from '../constants';
@@ -45,6 +44,9 @@ export default () => {
     async ({ keyword: k, page: p }: { keyword: string; page: number }) => {
       setData(dataLoading);
       try {
+        const { default: getMusicPlayRecordList } = await import(
+          '@/server/api/get_music_play_record_list'
+        );
         const d = await getMusicPlayRecordList({
           keyword: k,
           page: p,
@@ -63,7 +65,7 @@ export default () => {
           },
         });
       } catch (error) {
-        logger.error(error, '获取我的音乐列表失败');
+        logger.error(error, 'Failed to get music play record list');
         setData({
           error,
           loading: false,

@@ -29,7 +29,7 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
 
   /**
    * listen event
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   useEffect(() => {
     if (audio) {
@@ -78,7 +78,7 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
   /**
    * reset all data
    * make sure this keep last of hooks
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   useEffect(() => {
     if (audio) {

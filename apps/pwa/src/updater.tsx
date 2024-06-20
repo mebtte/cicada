@@ -35,7 +35,7 @@ if ('serviceWorker' in navigator) {
       /**
        * 生产模式下询问是否升级
        * 开发模式下默认升级
-       * @author mebtte<hi@mebtte.com>
+       * @author mebtte<i@mebtte.com>
        */
       if (process.env.NODE_ENV === 'production') {
         let updateNoticeId: string = '';
@@ -72,7 +72,7 @@ if ('serviceWorker' in navigator) {
 
         /**
          * 定时检查更新
-         * @author mebtte<hi@mebtte.com>
+         * @author mebtte<i@mebtte.com>
          */
         window.setInterval(() => {
           notice.close(updateNoticeId);

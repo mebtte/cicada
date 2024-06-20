@@ -26,7 +26,7 @@ const Style = styled.div`
 
 /**
  * 空数据
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function Empty({
   /** 描述 */

@@ -4,7 +4,7 @@ import { request } from '..';
 
 /**
  * 获取公开乐单详情
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 async function getPublicMusicbill(id: string) {
   const musicbill = await request<Response>({

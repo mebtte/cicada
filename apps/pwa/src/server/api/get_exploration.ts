@@ -4,7 +4,7 @@ import { request } from '..';
 
 /**
  * 获取发现内容
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 async function getExploration() {
   const data = await request<Response>({

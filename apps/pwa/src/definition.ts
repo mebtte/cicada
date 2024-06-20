@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle,no-undef */
 declare global {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   const __DEFINE__: {
     VERSION: string;
 

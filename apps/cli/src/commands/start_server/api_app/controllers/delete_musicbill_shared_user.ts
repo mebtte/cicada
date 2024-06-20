@@ -12,7 +12,7 @@ import { Context } from '../constants';
 /**
  * 所有者可以删除任何人
  * 共享者只能删除自己
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 export default async (ctx: Context) => {
   const { musicbillId, userId } = ctx.query as {

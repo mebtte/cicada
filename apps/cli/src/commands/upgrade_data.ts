@@ -63,7 +63,7 @@ async function addUserPassword() {
 
   /**
    * make user.password not null
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   const tmpTableName = 'user_tmp';
   await getDB().run(

@@ -18,7 +18,7 @@ const program = new Command()
 
 /**
  * 启动服务
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 program
   .command('start')
@@ -62,7 +62,7 @@ program
 
 /**
  * 数据升级
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 program
   .command('upgrade data')
@@ -80,7 +80,7 @@ program
 
 /**
  * 数据修复
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 program
   .command('fix-data')
@@ -98,7 +98,7 @@ program
 
 /**
  * 导入音乐
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 program
   .command('import')

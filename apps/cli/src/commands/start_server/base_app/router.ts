@@ -21,7 +21,7 @@ router.post('/login_with_2fa', parseBody, loginWith2FA);
  * 上传音乐播放记录
  * 由于使用 navigator.sendBeacon
  * 无法设置 http header, 需要特殊处理鉴权
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 router.post('/music_play_record', parseBody, createMusicPlayRecord);
 

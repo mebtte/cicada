@@ -1,6 +1,6 @@
 /**
  * 获取随机整数 [min, max)
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function generateRandomInteger(min = 0, max = 1) {
   if (min > max) {

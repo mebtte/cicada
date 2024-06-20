@@ -2,7 +2,7 @@ import { Method, request } from '..';
 
 /**
  * 删除音乐
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function deleteMusic({
   id,

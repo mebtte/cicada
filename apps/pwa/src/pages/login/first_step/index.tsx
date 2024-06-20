@@ -6,7 +6,6 @@ import Label from '@/components/label';
 import logger from '@/utils/logger';
 import Button, { Variant } from '@/components/button';
 import { t } from '@/i18n';
-import getMetadata from '@/server/base/get_metadata';
 import server from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import Logo from '../logo';
@@ -46,6 +45,9 @@ function FirstStep({ toNext }: { toNext: () => void }) {
           selectedServerOrigin: origin,
         }));
       } else {
+        const { default: getMetadata } = await import(
+          '@/server/base/get_metadata'
+        );
         const metadata = await getMetadata(origin);
         server.set((ss) => ({
           ...ss,
