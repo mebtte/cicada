@@ -34,6 +34,7 @@ import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
 import useStopTimer from './use_stop_timer';
+import StopTimer from './stop_timer';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -55,6 +56,8 @@ const Style = styled(PageContainer)`
 
       display: flex;
       flex-direction: column;
+
+      transform: scale(1);
     }
   }
 `;
@@ -132,6 +135,8 @@ function Wrapper() {
         </div>
         <Controller lyricPanelOpen={lyricPanelOpen} />
         {queueMusic ? <LyricPanel open={lyricPanelOpen} /> : null}
+
+        {stopTimer ? <StopTimer stopTimer={stopTimer} /> : null}
       </Style>
 
       {/* dynamic z-index */}

@@ -58,6 +58,7 @@ export enum EventType {
   CURRENT_MUSIC_CHANGE = 'current_music_change',
 
   ADD_STOP_TIMER = 'add-stop-timer',
+  REMOVE_STOP_TIMER = 'remove-stop-timer',
 }
 
 export default new Eventin<
@@ -133,5 +134,6 @@ export default new Eventin<
     [EventType.CURRENT_MUSIC_CHANGE]: { queueMusic?: QueueMusic };
 
     [EventType.ADD_STOP_TIMER]: { endTimestamp: number };
+    [EventType.REMOVE_STOP_TIMER]: null;
   }
 >();

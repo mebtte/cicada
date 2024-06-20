@@ -59,6 +59,7 @@ export interface Musicbill {
 export const ZIndex = {
   CONTROLLER: 10,
   LYRIC_PANEL: 11,
+  STOP_TIMER: 12,
 
   /**
    * 与下一级需要大数字间隔
@@ -81,4 +82,9 @@ export enum SearchTab {
 
 export interface StopTimer {
   endTimestamp: number;
+}
+
+export interface StopTimerPosition {
+  direction: 'left' | 'right';
+  top: number;
 }

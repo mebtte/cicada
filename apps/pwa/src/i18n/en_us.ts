@@ -224,8 +224,9 @@ export default {
   fork_from_these_musics: 'fork from these musics',
   forked_by_these_musics: 'forked by these musics',
   can_not_play_audio_file: 'this file can not be played',
-  stop_timer: 'stop timer',
-  minute: 'minute',
-  stop_timer_exist_warning: 'a existing stop timer is running',
-  stop_timer_is_up: 'stop timer is up',
+  stop_timer: 'stop-timer',
+  minutes: 'minutes',
+  stop_timer_exist_warning: 'stop-timer is existing',
+  stop_timer_is_up: 'stop-timer is up',
+  remove_stop_timer_question: 'are you sure to remove stop-timer',
 };

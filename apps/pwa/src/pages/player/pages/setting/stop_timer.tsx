@@ -24,22 +24,21 @@ const isValidMinute = (minutes: number) => minutes > 0;
 
 function StopTimer() {
   const { stopTimer } = useContext(Context);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState('30');
   const minutes = Number(value);
 
   const onTimerStart = () => {
     if (stopTimer) {
       return notice.error(t('stop_timer_exist_warning'));
     }
-    playerEventemitter.emit(PlayerEventType.ADD_STOP_TIMER, {
+    return playerEventemitter.emit(PlayerEventType.ADD_STOP_TIMER, {
       endTimestamp: Date.now() + minutes * 60 * 1000,
     });
-    return setValue('');
   };
 
   const isValid = isValidMinute(minutes);
   return (
-    <Item label={`${t('stop_timer')}(${t('minute')})`} style={itemStyle}>
+    <Item label={`${t('stop_timer')}(${t('minutes')})`} style={itemStyle}>
       <Style>
         <Input
           className="input"
@@ -47,6 +46,7 @@ function StopTimer() {
           onChange={(e) => setValue(e.target.value)}
           type="number"
           min={1}
+          onFocus={(e) => e.target.select()}
         />
         <Button
           variant={Variant.PRIMARY}

@@ -16,7 +16,14 @@ export default () => {
           endTimestamp: payload.endTimestamp,
         }),
     );
-    return unlistenAddStopTimer;
+    const unlistenRemoveStopTimer = eventemitter.listen(
+      EventType.REMOVE_STOP_TIMER,
+      () => setStopTimer(null),
+    );
+    return () => {
+      unlistenAddStopTimer();
+      unlistenRemoveStopTimer();
+    };
   }, []);
 
   useEffect(() => {
