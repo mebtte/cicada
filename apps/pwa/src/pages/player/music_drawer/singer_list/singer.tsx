@@ -5,7 +5,7 @@ import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { SingerDetail } from '../constants';
 import e, { EventType } from '../../eventemitter';
-import JpegDefaultSingerAvatar from '@/asset/default_singer_avatar.jpeg';
+import JpegDefaultSingerAvatar from '@/asset/default_cover.jpeg';
 
 const COVER_SIZE = 28;
 const Style = styled.div`

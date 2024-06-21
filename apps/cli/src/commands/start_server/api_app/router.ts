@@ -103,7 +103,7 @@ router.delete('/2fa', disable2FA); // disable 2FA
 
 /**
  * 管理员
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 router.post('/admin/user', adminAuthorize, parseBody, adminCreateUser); // 创建用户
 router.put('/admin/user', adminAuthorize, parseBody, adminUpdateUser); // 更新用户

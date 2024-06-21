@@ -2,7 +2,7 @@ import { Method, request } from '..';
 
 /**
  * 乐单添加共享用户
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function addMusicbillSharedUser({
   musicbillId,
@@ -11,7 +11,7 @@ function addMusicbillSharedUser({
   musicbillId: string;
   username: string;
 }) {
-  return request<void>({
+  return request({
     path: '/api/musicbill/shared_user',
     method: Method.POST,
     withToken: true,

@@ -49,7 +49,7 @@ const mainConfig = {
       {
         /**
          * https://github.com/pmndrs/react-spring/issues/2097
-         * @author mebtte<hi@mebtte.com>
+         * @author mebtte<i@mebtte.com>
          */
         test: /\.m?js/,
         resolve: {
@@ -81,7 +81,7 @@ const mainConfig = {
 
   /**
    * https://github.com/aadsm/jsmediatags/issues/116
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   externals: { fs: true, 'react-native-fs': true },
 

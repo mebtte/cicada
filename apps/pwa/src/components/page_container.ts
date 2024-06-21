@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 /**
  * 根路由容器
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 const RouteContainer = styled.div`
   ${absoluteFullSize}

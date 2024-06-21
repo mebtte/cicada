@@ -40,7 +40,7 @@ function TwoFADialog() {
 
       /**
        * make sure reload user after closing dialog
-       * @author mebtte<hi@mebtte.com>
+       * @author mebtte<i@mebtte.com>
        */
       await sleep(1000);
       await reloadUser();

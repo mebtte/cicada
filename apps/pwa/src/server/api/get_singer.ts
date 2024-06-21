@@ -4,7 +4,7 @@ import { request } from '..';
 
 /**
  * 获取歌手详情
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 async function getSinger(id: string) {
   const singer = await request<Response>({

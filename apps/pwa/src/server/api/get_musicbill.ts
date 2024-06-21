@@ -4,7 +4,7 @@ import { request } from '..';
 
 /**
  * 获取乐单
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 async function getMusicbill(id: string) {
   const musicbill = await request<Response>({

@@ -34,7 +34,7 @@ export default async (ctx: Context) => {
    * 1. 乐单是否存在
    * 2. 是否乐单创建者
    * 3. 是否拥有共享乐单
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   const musicbill = await getDB().get<
     Pick<
@@ -130,13 +130,11 @@ export default async (ctx: Context) => {
     [id],
   );
 
-  const musicIdMapSingers: {
-    [key: string]: {
+  const musicIdMapSingers: Record<string, {
       id: string;
       name: string;
       aliases: string[];
-    }[];
-  } = {};
+    }[]> = {};
   if (musicList.length) {
     const allSingerList = await getSingerListInMusicIds(
       Array.from(new Set(musicList.map((m) => m.id))),

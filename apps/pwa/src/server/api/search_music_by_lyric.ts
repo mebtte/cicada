@@ -4,7 +4,7 @@ import { request } from '..';
 
 /**
  * 通过歌词搜索音乐
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 async function searchMusicByLyric({
   keyword,

@@ -1,5 +1,5 @@
 import { ExceptionCode } from '#/constants/exception';
-import { Response } from '#/server/base/get_metadata';
+import { type Response } from '#/server/base/get_metadata';
 import ErrorWithCode from '@/utils/error_with_code';
 import { getCommonParams } from '..';
 

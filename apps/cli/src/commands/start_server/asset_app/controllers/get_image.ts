@@ -44,7 +44,7 @@ async function getCover(
       /**
        * 如果图片本身尺寸小于需要的尺寸
        * 直接写入缓存
-       * @author mebtte<hi@mebtte.com>
+       * @author mebtte<i@mebtte.com>
        */
       if (cover.bitmap.width > sizeNumber) {
         await new Promise<void>((resolve, reject) =>
@@ -57,13 +57,13 @@ async function getCover(
         await fsPromises.writeFile(cachePath, fs.createReadStream(assetPath));
       }
     }
-    return send(ctx, cacheName, {
+    return await send(ctx, cacheName, {
       immutable: true,
       root: getCacheDirectory(),
     });
   }
 
-  return send(ctx, asset, {
+  return await send(ctx, asset, {
     immutable: true,
     root: getAssetDirectory(type),
   });

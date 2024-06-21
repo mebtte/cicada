@@ -2,7 +2,7 @@ import { Method, request } from '..';
 
 /**
  * 删除乐单共享用户
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function deleteMusicbillSharedUser({
   musicbillId,
@@ -11,7 +11,7 @@ function deleteMusicbillSharedUser({
   musicbillId: string;
   userId: string;
 }) {
-  return request<void>({
+  return request({
     path: '/api/musicbill/shared_user',
     withToken: true,
     params: { musicbillId, userId },

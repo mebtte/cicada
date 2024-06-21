@@ -32,7 +32,7 @@ export default async (ctx: Context) => {
     name.trim() !== name ||
     typeof singerIds !== 'string' ||
     !singerIds.length ||
-    // @ts-expect-error
+    // @ts-expect-error: known type
     !MUSIC_TYPES.includes(type) ||
     typeof asset !== 'string'
   ) {
@@ -54,7 +54,7 @@ export default async (ctx: Context) => {
 
   /**
    * 0 表示无限制
-   * @author mebtte<hi@mebtte.com>
+   * @author mebtte<i@mebtte.com>
    */
   if (ctx.user.createMusicMaxAmountPerDay !== 0) {
     const now = day();

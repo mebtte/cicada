@@ -1,15 +1,15 @@
 /**
  * API referrence: https://github.com/TryGhost/node-sqlite3/wiki/API
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 import * as sqlite3 from 'sqlite3';
 
 export enum EventType {
   PROFILE = 'profile',
 }
-type EventTypeMapListener = {
+interface EventTypeMapListener {
   [EventType.PROFILE]: (sql: string, ms: number) => void;
-};
+}
 
 class DB {
   db: sqlite3.Database;

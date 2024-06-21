@@ -4,7 +4,7 @@ import logger from '@/utils/logger';
 
 /**
  * 错误边界
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 class ErrorBoundary extends React.PureComponent<
   React.PropsWithChildren<{

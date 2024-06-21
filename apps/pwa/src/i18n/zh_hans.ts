@@ -212,6 +212,11 @@ const zhCN: {
   fork_from_these_musics: '二次创作自以下音乐',
   forked_by_these_musics: '被以下音乐二次创作',
   can_not_play_audio_file: '音乐文件无法被播放',
+  stop_timer: '停止定时器',
+  minutes: '分钟',
+  stop_timer_exist_warning: '已存在一个定时器',
+  stop_timer_is_up: '停止定时器时间到',
+  remove_stop_timer_question: '确定移除停止定时器?',
 };
 
 export default zhCN;

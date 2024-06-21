@@ -2,10 +2,10 @@ import { request, Method } from '..';
 
 /**
  * 删除音乐播放记录
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function deleteMusicPlayRecord(id: number) {
-  return request<void>({
+  return request({
     path: '/api/music_play_record',
     method: Method.DELETE,
     params: { id },

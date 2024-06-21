@@ -2,7 +2,7 @@ import { Method, request } from '..';
 
 /**
  * 设用户为管理员
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 function adminUpdateUserAdmin({
   id,
@@ -13,7 +13,7 @@ function adminUpdateUserAdmin({
   captchaId: string;
   captchaValue: string;
 }) {
-  return request<void>({
+  return request({
     path: '/api/admin/user_admin',
     method: Method.PUT,
     body: {

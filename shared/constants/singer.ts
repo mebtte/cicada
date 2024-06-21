@@ -13,6 +13,6 @@ export enum AllowUpdateKey {
 
 /**
  * 没有挂载音乐保存时间
- * @author mebtte<hi@mebtte.com>
+ * @author mebtte<i@mebtte.com>
  */
 export const NO_MUSIC_EXIST_DURATION = 1000 * 60 * 60 * 24 * 3;

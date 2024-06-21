@@ -7,7 +7,7 @@ const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 20px;
+  padding: 10px 15px;
 
   border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
