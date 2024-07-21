@@ -40,7 +40,7 @@ import playerEventemitter, {
 } from '../../../eventemitter';
 import { Singer } from './constants';
 import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
-import { base64ToCover, canAudioPlay } from './utils';
+import { base64ToCover, canAudioPlay, getMusicNameFromFilename } from './utils';
 
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
@@ -103,8 +103,8 @@ function CreateMusicDialog() {
       getMusicFileMetadata(a)
         .then((metadata) => {
           const { title, artist } = metadata;
-          if (!name && title) {
-            setName(title);
+          if (!name) {
+            setName(title || getMusicNameFromFilename(a.name));
           }
           if (!singerList.length && artist) {
             searchSingerRequest({
@@ -155,11 +155,7 @@ function CreateMusicDialog() {
       });
 
       try {
-        const {
-          // lyric,
-          picture,
-          year,
-        } = await getMusicFileMetadata(asset);
+        const { picture, year } = await getMusicFileMetadata(asset);
         const updateCover = async (pb: string) => {
           const coverBlob = await base64ToCover(pb);
           const { id: assetId } = await uploadAsset(
@@ -175,14 +171,6 @@ function CreateMusicDialog() {
         };
 
         await Promise.all([
-          // musicType === MusicType.SONG && lyric
-          //   ? await updateMusic({
-          //       id,
-          //       key: AllowUpdateKey.LYRIC,
-          //       value: [lyric],
-          //       requestMinimalDuration: 0,
-          //     })
-          //   : null,
           picture ? updateCover(picture.dataURI) : null,
           year
             ? updateMusic({
