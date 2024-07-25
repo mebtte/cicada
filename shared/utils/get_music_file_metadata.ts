@@ -1,7 +1,6 @@
 import jsmediatags from 'jsmediatags';
 
 interface Metadata {
-  // lyric?: string;
   title?: string;
   artist?: string;
   picture?: {
@@ -21,18 +20,11 @@ function getMusicFileMetadata(file: File | string) {
   return new Promise<Metadata>((resolve, reject) => {
     jsmediatags.read(file, {
       onSuccess: async (metadata) => {
-        const {
-          // lyrics,
-          picture,
-          title,
-          artist,
-          year,
-        } = metadata.tags;
+        const { picture, title, artist, year } = metadata.tags;
 
         return resolve({
           title,
           artist,
-          // lyric: lyrics,
           picture: picture
             ? {
                 dataURI: pictureToDataURI(picture),

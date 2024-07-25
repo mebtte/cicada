@@ -19,7 +19,6 @@ A multi-user music service for self-hosting.
 - Search of music, singer, musicbill and lyric
 - Support of Two-Factor Authentication
 - [PWA](https://developer.mozilla.org/docs/Web/Progressive_web_apps) supports both desktop and mobile
-- [Native client for iPhone/iPad/macOS](https://github.com/mebtte/cicada-swift)(under development)
 - Support of building APP from [HTTP API](https://www.postman.com/cicada-player/workspace/cicada-v2)
 
 ## Deployment
@@ -200,13 +199,6 @@ All of data is under `{{data}}` directory, copy or move it to new device.
 UPDATE user SET password = <md5<md5<password>>> WHERE username = <username>;
 UPDATE user SET twoFASecret = NULL WHERE username = <username>;
 ```
-
-</details>
-
-<details>
-  <summary>Why can't play next music on iOS/iPadOS automatically ?</summary>
-
-Because compatibility of PWA is broken on iOS/iPadOS, there is a plan to develop a App for iOS/iPadOS but it is uncertain.
 
 </details>
 

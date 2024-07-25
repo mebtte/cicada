@@ -40,3 +40,12 @@ export function canAudioPlay(file: File) {
     URL.revokeObjectURL(url);
   });
 }
+
+export function getMusicNameFromFilename(filename: string) {
+  const lastIndex = filename.lastIndexOf('.');
+  return lastIndex === -1
+    ? filename
+    : lastIndex === 0
+    ? ''
+    : filename.slice(0, lastIndex);
+}
