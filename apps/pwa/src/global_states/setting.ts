@@ -1,4 +1,4 @@
-import XState from '@/utils/x_state';
+import { create } from 'zustand';
 import storage, { Key } from '@/storage';
 import { Setting } from '@/constants/setting';
 import logger from '@/utils/logger';
@@ -26,26 +26,23 @@ const DEFAULT_SETTING: Setting = {
   language: getInitialLanguage(),
 };
 const initialSetting = await storage.getItem(Key.SETTING);
-const setting = new XState<Setting>({
+export const useSetting = create<Setting>(() => ({
   ...DEFAULT_SETTING,
   ...initialSetting,
-});
+}));
 
 /**
  * correct language
  * @author mebtte<i@mebtte.com>
  */
-if (!LANGUAGES.includes(setting.get().language)) {
-  setting.set((s) => ({
-    ...s,
+if (!LANGUAGES.includes(useSetting.getState().language)) {
+  useSetting.setState({
     language: DEFAULT_LANGUAGE,
-  }));
+  });
 }
 
-setting.onChange((s) =>
+useSetting.subscribe((setting) =>
   storage
-    .setItem(Key.SETTING, s)
-    .catch((error) => logger.error(error, 'Failed to save setting')),
+    .setItem(Key.SETTING, setting)
+    .catch((error) => logger.error(error, 'Failed to store setting')),
 );
-
-export default setting;

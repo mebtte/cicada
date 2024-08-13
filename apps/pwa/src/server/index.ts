@@ -4,7 +4,6 @@ import {
   getSelectedServer,
   getSelectedUser,
 } from '@/global_states/server';
-import setting from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import definition from '@/definition';
@@ -12,6 +11,7 @@ import { NORMAL_REQUEST_MINIMAL_DURATION } from '@/constants';
 import timeoutFn from '#/utils/timeout';
 import { CommonQuery } from '#/constants';
 import { t } from '@/i18n';
+import { useSetting } from '@/global_states/setting';
 
 export enum Method {
   GET = 'get',
@@ -24,7 +24,7 @@ export enum Method {
 export function getCommonParams() {
   return {
     [CommonQuery.VERSION]: definition.VERSION,
-    [CommonQuery.LANGUAGE]: setting.get().language,
+    [CommonQuery.LANGUAGE]: useSetting.getState().language,
   };
 }
 

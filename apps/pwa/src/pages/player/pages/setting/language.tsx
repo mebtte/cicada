@@ -1,11 +1,11 @@
 import { memo, CSSProperties } from 'react';
-import setting from '@/global_states/setting';
 import { Select, Option } from '@/components/select';
 import { LANGUAGE_MAP, t } from '@/i18n';
 import { Language } from '#/constants';
 import dialog from '@/utils/dialog';
 import Item from './item';
 import { itemStyle } from './constants';
+import { useSetting } from '@/global_states/setting';
 
 const LANGUAGES = Object.values(Language);
 const style: CSSProperties = {
@@ -18,7 +18,7 @@ const options: Option<Language>[] = LANGUAGES.map((l) => ({
 }));
 
 function Wrapper() {
-  const { language } = setting.useState();
+  const { language } = useSetting();
   return (
     <Item label={t('language')} style={itemStyle}>
       <Select<Language>
@@ -32,10 +32,9 @@ function Wrapper() {
             dialog.confirm({
               content: t('change_language_question'),
               onConfirm: () => {
-                setting.set((prev) => ({
-                  ...prev,
+                useSetting.setState({
                   language: option.actualValue,
-                }));
+                });
                 window.setTimeout(() => window.location.reload(), 0);
               },
             });

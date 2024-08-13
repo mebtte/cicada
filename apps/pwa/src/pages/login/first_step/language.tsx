@@ -1,7 +1,7 @@
 import { LANGUAGES, Language } from '#/constants';
 import Label from '@/components/label';
 import { Select, Option } from '@/components/select';
-import setting from '@/global_states/setting';
+import { useSetting } from '@/global_states/setting';
 import { LANGUAGE_MAP, t } from '@/i18n';
 
 const languageOptions: Option<Language>[] = LANGUAGES.map((l) => ({
@@ -11,7 +11,7 @@ const languageOptions: Option<Language>[] = LANGUAGES.map((l) => ({
 }));
 
 function Wrapper({ disabled }: { disabled: boolean }) {
-  const { language } = setting.useState();
+  const { language } = useSetting();
   return (
     <Label label={t('language')}>
       <Select<Language>
@@ -21,10 +21,9 @@ function Wrapper({ disabled }: { disabled: boolean }) {
           actualValue: language,
         }}
         onChange={(option) => {
-          setting.set((s) => ({
-            ...s,
+          useSetting.setState({
             language: option.actualValue,
-          }));
+          });
           return window.setTimeout(() => window.location.reload(), 0);
         }}
         options={languageOptions}
