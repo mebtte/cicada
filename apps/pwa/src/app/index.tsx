@@ -5,8 +5,8 @@ import { ThemeProvider } from 'styled-components';
 import { HashRouter } from 'react-router-dom';
 import App from './app';
 import UncaughtError from './uncaught_error';
-import theme from '../global_states/theme';
 import Head from './head';
+import { useTheme } from '@/global_states/theme';
 
 const fallback = (error: Error) => <UncaughtError error={error} />;
 
@@ -14,7 +14,7 @@ function Wrapper() {
   return (
     <ErrorBoundary fallback={fallback}>
       <HashRouter>
-        <ThemeProvider theme={theme.useState()}>
+        <ThemeProvider theme={useTheme()}>
           <Head />
           <App />
           <GlobalStyle />

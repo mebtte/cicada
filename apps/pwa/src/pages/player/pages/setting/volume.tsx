@@ -1,7 +1,7 @@
 import { type CSSProperties, memo } from 'react';
 import setting from '@/global_states/setting';
 import Slider from '@/components/slider';
-import theme from '@/global_states/theme';
+import { useTheme } from '@/global_states/theme';
 import { t } from '@/i18n';
 import Item from './item';
 import { itemStyle } from './constants';
@@ -26,7 +26,7 @@ function Volume() {
       <Slider
         current={playerVolume}
         onChange={onVolumnChange}
-        style={theme.useState().miniMode ? miniModeSliderStyle : sliderStyle}
+        style={useTheme().miniMode ? miniModeSliderStyle : sliderStyle}
       />
     </Item>
   );

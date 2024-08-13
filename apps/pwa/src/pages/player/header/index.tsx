@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
-import theme from '@/global_states/theme';
 import IconButton from '@/components/icon_button';
 import { MdMenu, MdSearch } from 'react-icons/md';
 import useNavigate from '@/utils/use_navigate';
@@ -12,6 +11,7 @@ import useTitle from './use_title';
 import e, { EventType } from '../eventemitter';
 import useTitlebar from './use_titlebar';
 import { HEADER_HEIGHT } from '../constants';
+import { useTheme } from '@/global_states/theme';
 
 const openSidebar = () => e.emit(EventType.MINI_MODE_OPEN_SIDEBAR, null);
 const Style = styled.div`
@@ -33,7 +33,7 @@ const Style = styled.div`
 
 function Header() {
   const navigate = useNavigate();
-  const { miniMode } = theme.useState();
+  const { miniMode } = useTheme();
   const title = useTitle();
   const { left, right } = useTitlebar();
 

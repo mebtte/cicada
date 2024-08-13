@@ -173,7 +173,8 @@
     "workbox-strategies": "^6.5.4",
     "workbox-webpack-plugin": "^6.5.4",
     "workbox-window": "^6.5.4",
-    "xss": "^1.0.14"
+    "xss": "^1.0.14",
+    "zustand": "^4.5.4"
   },
   "overrides": {
     "react": "^18.1.0",

@@ -10,7 +10,6 @@ import {
   MdReadMore,
   MdOutlinePostAdd,
 } from 'react-icons/md';
-import theme from '@/global_states/theme';
 import { CSSVariable } from '@/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -18,6 +17,7 @@ import playerEventemitter, {
 import { QueueMusic } from '../constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
+import { useTheme } from '@/global_states/theme';
 
 const openPlaylistPlayqueueDrawer = () =>
   playerEventemitter.emit(PlayerEventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER, null);
@@ -56,7 +56,7 @@ function Operation({
   paused: boolean;
   loading: boolean;
 }) {
-  const { miniMode } = theme.useState();
+  const { miniMode } = useTheme();
   return (
     <Style>
       {miniMode ? null : (

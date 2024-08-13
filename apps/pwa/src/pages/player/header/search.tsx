@@ -10,16 +10,16 @@ import {
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
 import Input from '@/components/input';
-import theme from '@/global_states/theme';
 import { Query } from '@/constants';
 import { useLocation } from 'react-router-dom';
 import parseSearch from '@/utils/parse_search';
 import { t } from '@/i18n';
 import capitalize from '#/utils/capitalize';
 import eventemitter, { EventType } from '../eventemitter';
+import { useTheme } from '@/global_states/theme';
 
 const style: CSSProperties = {
-  // @ts-expect-error
+  // @ts-expect-error: existed css property
   WebkitAppRegion: 'no-drag',
   width: 180,
 };
@@ -27,7 +27,7 @@ const style: CSSProperties = {
 function Wrapper() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { miniMode } = theme.useState();
+  const { miniMode } = useTheme();
 
   const ref = useRef<HTMLInputElement>(null);
 

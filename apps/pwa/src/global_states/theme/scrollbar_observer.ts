@@ -3,16 +3,16 @@ import Eventin from 'eventin';
 enum EventType {
   RESIZE = 'resize',
 }
-type EventTypeMapData = {
+interface EventTypeMapData {
   [EventType.RESIZE]: null;
-};
+}
 
 export default new (class {
   outer: HTMLDivElement;
 
   inner: HTMLDivElement;
 
-  private eventemitter: Eventin<EventType, EventTypeMapData>;
+  private readonly eventemitter: Eventin<EventType, EventTypeMapData>;
 
   constructor() {
     this.eventemitter = new Eventin<EventType, EventTypeMapData>();

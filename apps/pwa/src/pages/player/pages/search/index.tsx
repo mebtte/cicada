@@ -2,7 +2,6 @@ import { Query } from '@/constants';
 import styled, { css } from 'styled-components';
 import TabList from '@/components/tab_list';
 import useNavigate from '@/utils/use_navigate';
-import theme from '@/global_states/theme';
 import Input from './input';
 import { HEADER_HEIGHT, SearchTab } from '../../constants';
 import Page from '../page';
@@ -13,6 +12,7 @@ import {
 } from './constants';
 import Content from './content';
 import useTab from './use_tab';
+import { useTheme } from '@/global_states/theme';
 
 const Style = styled(Page)`
   position: relative;
@@ -54,7 +54,7 @@ function Search() {
     <Style>
       <Content tab={tab} />
       <div className="toolbar">
-        {theme.useState().miniMode ? <Input /> : null}
+        {useTheme().miniMode ? <Input /> : null}
         <TabList<SearchTab>
           current={tab}
           tabList={TAB_LIST}

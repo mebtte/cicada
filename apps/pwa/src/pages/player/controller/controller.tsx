@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import theme from '@/global_states/theme';
 import { useContext } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { type QueueMusic, ZIndex } from '../constants';
@@ -12,6 +11,7 @@ import Context from '../context';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { useTheme } from '@/global_states/theme';
 
 const toggleLyric = () =>
   playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: true });
@@ -68,7 +68,7 @@ function Controller() {
     | QueueMusic
     | undefined;
 
-  const { miniMode } = theme.useState();
+  const { miniMode } = useTheme();
   return (
     <Style>
       <ProgressBar
