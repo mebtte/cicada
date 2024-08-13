@@ -1,5 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
-import server, {
+import {
+  useServer,
   getSelectedServer,
   getSelectedUser,
 } from '@/global_states/server';
@@ -13,7 +14,7 @@ function uploadMusicPlayRecord({
   musicId: string;
   percent: number;
 }) {
-  const selectedServer = getSelectedServer(server.get());
+  const selectedServer = getSelectedServer(useServer.getState());
   if (!selectedServer) {
     throw new ErrorWithCode(
       'Not authorized from local',

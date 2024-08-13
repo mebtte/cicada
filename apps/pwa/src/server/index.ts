@@ -1,5 +1,6 @@
 import { ExceptionCode } from '#/constants/exception';
-import server, {
+import {
+  useServer,
   getSelectedServer,
   getSelectedUser,
 } from '@/global_states/server';
@@ -39,18 +40,14 @@ export async function request<Data = void>({
 }: {
   path: string;
   method?: Method;
-  params?: {
-    [key: string]: string | number | undefined;
-  };
-  body?: FormData | { [key: string]: unknown };
-  headers?: {
-    [key: string]: string;
-  };
+  params?: Record<string, string | number | undefined>;
+  body?: FormData | Record<string, unknown>;
+  headers?: Record<string, string>;
   withToken?: boolean;
   requestMinimalDuration?: number;
   timeout?: number;
 }) {
-  const selectedServer = getSelectedServer(server.get());
+  const selectedServer = getSelectedServer(useServer.getState());
   if (!selectedServer) {
     throw new ErrorWithCode(
       'Not authorized from local',
@@ -131,9 +128,8 @@ export async function request<Data = void>({
   if (code !== ExceptionCode.SUCCESS) {
     switch (code) {
       case ExceptionCode.NOT_AUTHORIZED: {
-        server.set((ss) => ({
-          ...ss,
-          serverList: ss.serverList.map((s) =>
+        useServer.setState((server) => ({
+          serverList: server.serverList.map((s) =>
             s.origin === selectedServer.origin
               ? {
                   ...s,
@@ -150,5 +146,5 @@ export async function request<Data = void>({
     throw new ErrorWithCode(message, code);
   }
 
-  return data as Data;
+  return data;
 }

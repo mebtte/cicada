@@ -7,7 +7,7 @@ interface EventTypeMapData {
   [EventType.RESIZE]: null;
 }
 
-export default new (class {
+class ScollbarObserver {
   outer: HTMLDivElement;
 
   inner: HTMLDivElement;
@@ -42,4 +42,6 @@ export default new (class {
   onChange(listener: () => void) {
     return this.eventemitter.listen(EventType.RESIZE, listener);
   }
-})();
+}
+
+export default new ScollbarObserver();

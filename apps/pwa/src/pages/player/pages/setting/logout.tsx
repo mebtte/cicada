@@ -3,7 +3,7 @@ import useEvent from '@/utils/use_event';
 import { memo } from 'react';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
-import server, { getSelectedServer } from '@/global_states/server';
+import { getSelectedServer, useServer } from '@/global_states/server';
 import useNavigate from '@/utils/use_navigate';
 import { ROOT_PATH } from '@/constants/route';
 import { clearApiCache } from './utils';
@@ -18,11 +18,10 @@ function Logout() {
         navigate({ replace: true, path: ROOT_PATH.LOGIN });
         clearApiCache();
         return void window.setTimeout(() => {
-          const selectedServer = getSelectedServer(server.get());
+          const selectedServer = getSelectedServer(useServer.getState());
           if (selectedServer) {
-            server.set((ss) => ({
-              ...ss,
-              serverList: ss.serverList.map((s) =>
+            useServer.setState((server) => ({
+              serverList: server.serverList.map((s) =>
                 s.origin === selectedServer.origin
                   ? {
                       ...selectedServer,

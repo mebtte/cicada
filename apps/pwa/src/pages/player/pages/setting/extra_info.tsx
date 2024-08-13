@@ -1,6 +1,6 @@
 import { BETA_VERSION_START } from '#/constants';
 import definition from '@/definition';
-import { useServer } from '@/global_states/server';
+import { useSelectedServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 
@@ -24,7 +24,7 @@ const Style = styled.div`
 `;
 
 function ExtraInfo() {
-  const selectedServer = useServer()!;
+  const selectedServer = useSelectedServer()!;
 
   return (
     <Style>

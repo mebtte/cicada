@@ -2,9 +2,10 @@ import dialog from '@/utils/dialog';
 import deleteMusicbillSharedUser from '@/server/api/delete_musicbill_shared_user';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
-import server, {
+import {
   getSelectedServer,
   getSelectedUser,
+  useServer,
 } from '@/global_states/server';
 import { t } from '@/i18n';
 import playerEventemitter, {
@@ -18,7 +19,7 @@ export function quitSharedMusicbill({
   musicbillId;
   afterQuitted;
 }) {
-  const selectedServer = getSelectedServer(server.get())!;
+  const selectedServer = getSelectedServer(useServer.getState())!;
   const user = getSelectedUser(selectedServer)!;
   return dialog.confirm({
     title: t('quit_shared_musicbill_question'),

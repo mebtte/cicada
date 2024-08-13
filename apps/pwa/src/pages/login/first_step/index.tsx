@@ -6,11 +6,11 @@ import Label from '@/components/label';
 import logger from '@/utils/logger';
 import Button, { Variant } from '@/components/button';
 import { t } from '@/i18n';
-import server from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import Logo from '../logo';
 import Language from './language';
 import ServerList from './server_list';
+import { useServer } from '@/global_states/server';
 
 const Style = styled.div`
   display: flex;
@@ -28,7 +28,7 @@ const Style = styled.div`
 function FirstStep({ toNext }: { toNext: () => void }) {
   const [loading, setLoading] = useState(false);
   const [origin, setOrigin] = useState(
-    () => server.get().selectedServerOrigin || window.location.origin,
+    () => useServer.getState().selectedServerOrigin || window.location.origin,
   );
   const onOriginChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setOrigin(event.target.value);
@@ -36,24 +36,22 @@ function FirstStep({ toNext }: { toNext: () => void }) {
   const onSaveOrigin = async () => {
     setLoading(true);
     try {
-      const existedServer = server
-        .get()
+      const existedServer = useServer
+        .getState()
         .serverList.find((s) => s.origin === origin);
       if (existedServer) {
-        server.set((ss) => ({
-          ...ss,
+        useServer.setState({
           selectedServerOrigin: origin,
-        }));
+        });
       } else {
         const { default: getMetadata } = await import(
           '@/server/base/get_metadata'
         );
         const metadata = await getMetadata(origin);
-        server.set((ss) => ({
-          ...ss,
+        useServer.setState((server) => ({
           selectedServerOrigin: origin,
           serverList: [
-            ...ss.serverList,
+            ...server.serverList,
             {
               version: metadata.version,
               hostname: metadata.hostname,
