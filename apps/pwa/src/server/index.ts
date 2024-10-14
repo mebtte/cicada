@@ -93,23 +93,23 @@ export async function request<Data = void>({
     }
   }
 
-  let response: Response;
-  try {
-    [response] = await Promise.race([
-      Promise.all([
-        window.fetch(url, {
+  const [response] = await Promise.race([
+    Promise.all([
+      window
+        .fetch(url, {
           method,
           headers,
           body: processedBody,
+        })
+        .catch((error) => {
+          throw new Error(t('can_not_connect_to_server_temporarily'), {
+            cause: error,
+          });
         }),
-        sleep(requestMinimalDuration),
-      ]),
-      timeoutFn(timeout),
-    ]);
-  } catch (error) {
-    throw new Error(t('can_not_connect_to_server_temporarily'));
-  }
-
+      sleep(requestMinimalDuration),
+    ]),
+    timeoutFn(timeout),
+  ]);
   const { status, statusText } = response;
   if (status !== 200) {
     throw new ErrorWithCode(statusText, status);
