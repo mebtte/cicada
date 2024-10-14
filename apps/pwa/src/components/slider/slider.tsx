@@ -1,12 +1,13 @@
 import { CSSVariable } from '@/global_style';
 import {
   HtmlHTMLAttributes,
-  PointerEvent,
+  PointerEvent as ReactPointerEvent,
   PointerEventHandler,
   ReactNode,
   useEffect,
-  useRef,
   useState,
+  useCallback,
+  useRef,
 } from 'react';
 import styled from 'styled-components';
 import classnames from 'classnames';
@@ -62,15 +63,6 @@ const Style = styled.div`
     }
   }
 `;
-const getPointerEventRelativePercent = (
-  event: PointerEvent<HTMLDivElement>,
-) => {
-  const target = event.currentTarget as HTMLDivElement;
-  const rect = target.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const percent = x / target.clientWidth;
-  return Math.max(Math.min(percent, 1), 0);
-};
 
 function Slider({
   edge = Edge.ROUNDED,
@@ -87,51 +79,63 @@ function Slider({
   max?: number;
   secondTrack?: ReactNode;
 }) {
-  const pointerDownRef = useRef(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const getPointerEventRelativePercent = useCallback(
+    (event: ReactPointerEvent | PointerEvent) => {
+      const rect = ref.current!.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const percent = x / ref.current!.clientWidth;
+      return Math.max(Math.min(percent, 1), 0);
+    },
+    [],
+  );
 
+  const [pointerDown, setPointerDown] = useState(false);
   const [shadowPercent, setShadowPercent] = useState<number | undefined>(
     undefined,
   );
-
   const onPointerDown: PointerEventHandler<HTMLDivElement> = (e) => {
     e.preventDefault();
     (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
 
-    pointerDownRef.current = true;
+    setPointerDown(true);
 
     const percent = getPointerEventRelativePercent(e);
-    setShadowPercent(percent);
-  };
-  const onPointerMove: PointerEventHandler<HTMLDivElement> = (e) => {
-    e.preventDefault();
-    if (pointerDownRef.current) {
-      const percent = getPointerEventRelativePercent(e);
-      setShadowPercent(percent);
-    }
-  };
-  const onPointerUp: PointerEventHandler<HTMLDivElement> = (e) => {
-    pointerDownRef.current = false;
-
-    const percent = getPointerEventRelativePercent(e);
-    // eslint-disable-next-line no-unused-expressions
-    onChange && onChange(max * percent);
-
-    window.setTimeout(() => setShadowPercent(undefined), 0);
+    return setShadowPercent(percent);
   };
 
   useEffect(() => {
-    const onLeaveDocument = () => {
-      pointerDownRef.current = false;
-      window.setTimeout(() => setShadowPercent(undefined), 0);
-    };
-    document.addEventListener('mouseleave', onLeaveDocument);
-    return () => document.removeEventListener('mouseleave', onLeaveDocument);
-  }, []);
+    if (pointerDown) {
+      const onPointerMove = (e: PointerEvent) => {
+        const percent = getPointerEventRelativePercent(e);
+        return setShadowPercent(percent);
+      };
+      document.addEventListener('pointermove', onPointerMove);
+      return () => document.removeEventListener('pointermove', onPointerMove);
+    }
+  }, [getPointerEventRelativePercent, pointerDown]);
+
+  useEffect(() => {
+    if (pointerDown) {
+      const onPointerUp = (e: PointerEvent) => {
+        setPointerDown(false);
+
+        const percent = getPointerEventRelativePercent(e);
+        // eslint-disable-next-line no-unused-expressions
+        onChange && onChange(max * percent);
+
+        return globalThis.setTimeout(() => setShadowPercent(undefined), 0);
+      };
+      document.addEventListener('pointerup', onPointerUp);
+      return () => document.removeEventListener('pointerup', onPointerUp);
+    }
+  }, [getPointerEventRelativePercent, max, onChange, pointerDown]);
 
   const actualPercent = shadowPercent ?? current / max;
   return (
     <Style
       {...props}
+      ref={ref}
       className={classnames(
         {
           untouchable: !IS_TOUCHABLE,
@@ -140,8 +144,6 @@ function Slider({
         className,
       )}
       onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onPointerMove={onPointerMove}
     >
       {secondTrack}
       <div
