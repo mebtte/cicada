@@ -1,13 +1,11 @@
 import { Language } from '#/constants';
 import { Key } from './constants';
-import enUS from './en_us';
+import en from './en';
 import zhHans from './zh_hans';
-import ja from './ja';
 
-const LANGUAGE_MAP: Record<Language, typeof enUS> = {
-  [Language.EN_US]: enUS,
+const LANGUAGE_MAP: Record<Language, typeof en> = {
+  [Language.EN]: en,
   [Language.ZH_HANS]: zhHans,
-  [Language.JA]: ja,
 };
 
 export function t(key: Key, language: Language, ...args: string[]) {
@@ -22,4 +20,4 @@ export function t(key: Key, language: Language, ...args: string[]) {
   return value;
 }
 
-export { Key };
+export type { Key };

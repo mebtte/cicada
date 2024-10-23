@@ -10,11 +10,6 @@ function getInitialLanguage() {
     case 'zh-cn': {
       return Language.ZH_HANS;
     }
-
-    case 'ja': {
-      return Language.JA;
-    }
-
     default: {
       return DEFAULT_LANGUAGE;
     }
