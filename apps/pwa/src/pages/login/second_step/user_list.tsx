@@ -1,6 +1,6 @@
 import Label from '@/components/label';
 import { Select } from '@/components/select';
-import server, { getSelectedServer } from '@/global_states/server';
+import { getSelectedServer, useServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import { useMemo } from 'react';
@@ -28,7 +28,7 @@ const Divider = styled.div`
 
 function UserList({ redirect }: { redirect: () => void }) {
   const userList = useMemo(
-    () => getSelectedServer(server.get())?.users || [],
+    () => getSelectedServer(useServer.getState())?.users || [],
     [],
   );
 
@@ -43,10 +43,9 @@ function UserList({ redirect }: { redirect: () => void }) {
               actualValue: u.id,
             }))}
             onChange={(option) => {
-              server.set((ss) => ({
-                ...ss,
-                serverList: ss.serverList.map((s) =>
-                  s.origin === getSelectedServer(server.get())!.origin
+              useServer.setState((server) => ({
+                serverList: server.serverList.map((s) =>
+                  s.origin === getSelectedServer(server)!.origin
                     ? {
                         ...s,
                         selectedUserId: option.actualValue,

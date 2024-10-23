@@ -1,9 +1,9 @@
 import { ExceptionCode } from '#/constants/exception';
-import server, {
+import {
+  useServer,
   getSelectedServer,
   getSelectedUser,
 } from '@/global_states/server';
-import setting from '@/global_states/setting';
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '#/utils/sleep';
 import definition from '@/definition';
@@ -11,6 +11,7 @@ import { NORMAL_REQUEST_MINIMAL_DURATION } from '@/constants';
 import timeoutFn from '#/utils/timeout';
 import { CommonQuery } from '#/constants';
 import { t } from '@/i18n';
+import { useSetting } from '@/global_states/setting';
 
 export enum Method {
   GET = 'get',
@@ -23,7 +24,7 @@ export enum Method {
 export function getCommonParams() {
   return {
     [CommonQuery.VERSION]: definition.VERSION,
-    [CommonQuery.LANGUAGE]: setting.get().language,
+    [CommonQuery.LANGUAGE]: useSetting.getState().language,
   };
 }
 
@@ -39,18 +40,14 @@ export async function request<Data = void>({
 }: {
   path: string;
   method?: Method;
-  params?: {
-    [key: string]: string | number | undefined;
-  };
-  body?: FormData | { [key: string]: unknown };
-  headers?: {
-    [key: string]: string;
-  };
+  params?: Record<string, string | number | undefined>;
+  body?: FormData | Record<string, unknown>;
+  headers?: Record<string, string>;
   withToken?: boolean;
   requestMinimalDuration?: number;
   timeout?: number;
 }) {
-  const selectedServer = getSelectedServer(server.get());
+  const selectedServer = getSelectedServer(useServer.getState());
   if (!selectedServer) {
     throw new ErrorWithCode(
       'Not authorized from local',
@@ -96,23 +93,23 @@ export async function request<Data = void>({
     }
   }
 
-  let response: Response;
-  try {
-    [response] = await Promise.race([
-      Promise.all([
-        window.fetch(url, {
+  const [response] = await Promise.race([
+    Promise.all([
+      window
+        .fetch(url, {
           method,
           headers,
           body: processedBody,
+        })
+        .catch((error) => {
+          throw new Error(t('can_not_connect_to_server_temporarily'), {
+            cause: error,
+          });
         }),
-        sleep(requestMinimalDuration),
-      ]),
-      timeoutFn(timeout),
-    ]);
-  } catch (error) {
-    throw new Error(t('can_not_connect_to_server_temporarily'));
-  }
-
+      sleep(requestMinimalDuration),
+    ]),
+    timeoutFn(timeout),
+  ]);
   const { status, statusText } = response;
   if (status !== 200) {
     throw new ErrorWithCode(statusText, status);
@@ -131,9 +128,8 @@ export async function request<Data = void>({
   if (code !== ExceptionCode.SUCCESS) {
     switch (code) {
       case ExceptionCode.NOT_AUTHORIZED: {
-        server.set((ss) => ({
-          ...ss,
-          serverList: ss.serverList.map((s) =>
+        useServer.setState((server) => ({
+          serverList: server.serverList.map((s) =>
             s.origin === selectedServer.origin
               ? {
                   ...s,
@@ -150,5 +146,5 @@ export async function request<Data = void>({
     throw new ErrorWithCode(message, code);
   }
 
-  return data as Data;
+  return data;
 }

@@ -1,16 +1,15 @@
 import { type CSSProperties, memo } from 'react';
-import setting from '@/global_states/setting';
 import Slider from '@/components/slider';
-import theme from '@/global_states/theme';
+import { useTheme } from '@/global_states/theme';
 import { t } from '@/i18n';
 import Item from './item';
 import { itemStyle } from './constants';
+import { useSetting } from '@/global_states/setting';
 
 const onVolumnChange = (v: number) =>
-  setting.set((s) => ({
-    ...s,
+  useSetting.setState({
     playerVolume: v,
-  }));
+  });
 const sliderStyle: CSSProperties = {
   width: 200,
 };
@@ -20,13 +19,13 @@ const miniModeSliderStyle: CSSProperties = {
 };
 
 function Volume() {
-  const { playerVolume } = setting.useState();
+  const { playerVolume } = useSetting();
   return (
     <Item label={t('relative_volume')} style={itemStyle}>
       <Slider
         current={playerVolume}
         onChange={onVolumnChange}
-        style={theme.useState().miniMode ? miniModeSliderStyle : sliderStyle}
+        style={useTheme().miniMode ? miniModeSliderStyle : sliderStyle}
       />
     </Item>
   );

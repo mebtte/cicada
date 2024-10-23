@@ -10,7 +10,6 @@ import login from '@/server/base/login';
 import loginWith2FA from '@/server/base/login_with_2fa';
 import notice from '@/utils/notice';
 import getProfile from '@/server/api/get_profile';
-import server from '@/global_states/server';
 import { useLocation } from 'react-router-dom';
 import parseSearch from '@/utils/parse_search';
 import { Query } from '@/constants';
@@ -20,6 +19,7 @@ import { ExceptionCode } from '#/constants/exception';
 import dialog from '@/utils/dialog';
 import Logo from '../logo';
 import UserList from './user_list';
+import { useServer } from '@/global_states/server';
 
 const Style = styled.div`
   display: flex;
@@ -30,10 +30,9 @@ const Style = styled.div`
 `;
 const addProfile = async (token: string) => {
   const profile = await getProfile(token);
-  server.set((ss) => ({
-    ...ss,
-    serverList: ss.serverList.map((s) =>
-      s.origin === ss.selectedServerOrigin
+  useServer.setState((server) => ({
+    serverList: server.serverList.map((s) =>
+      s.origin === server.selectedServerOrigin
         ? {
             ...s,
             selectedUserId: profile.id,

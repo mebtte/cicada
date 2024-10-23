@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import theme from '@/global_states/theme';
 import useTitlebarAreaRect from '@/utils/use_titlebar_area_rect';
 import useWindowWidth from '@/utils/use_window_width';
+import { useTheme } from '@/global_states/theme';
 
 const INITIAL_LEFT = 20;
 const INITIAL_RIGHT = 20;
 
 export default () => {
-  const { miniMode } = theme.useState();
+  const { miniMode } = useTheme();
   const windowWidth = useWindowWidth();
   const rect = useTitlebarAreaRect();
 

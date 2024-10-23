@@ -1,10 +1,9 @@
-import XState from '@/utils/x_state';
 import logger from '@/utils/logger';
 import storage, { Key } from '@/storage';
 import { type Server, type ServerState } from '@/constants/server';
 import globalEventemitter, { EventType } from '@/platform/global_eventemitter';
 import definition from '@/definition';
-import { BETA_VERSION_START } from '#/constants';
+import { create } from 'zustand';
 
 export function getSelectedServer(ss: ServerState) {
   return ss.selectedServerOrigin
@@ -19,36 +18,27 @@ export function getSelectedUser(server: Server) {
 }
 
 const initialServerList = await storage.getItem(Key.SERVER);
-const server = new XState<ServerState>(
-  initialServerList || {
-    serverList: [],
-  },
+export const useServer = create(
+  () =>
+    initialServerList || {
+      serverList: [],
+    },
 );
 
-server.onChange((ss) => {
-  storage.setItem(Key.SERVER, ss);
-});
+useServer.subscribe((server) =>
+  storage
+    .setItem(Key.SERVER, server)
+    .catch((error) => logger.error(error, 'Failed to store server')),
+);
 
 window.setInterval(() => {
-  const selectedServer = getSelectedServer(server.get());
+  const selectedServer = getSelectedServer(useServer.getState());
   if (selectedServer) {
     import('@/server/base/get_metadata')
       .then(({ default: getMetadata }) => getMetadata(selectedServer.origin))
       .then((data) => {
-        if (
-          !definition.DEVELOPMENT &&
-          !data.version.startsWith(BETA_VERSION_START) &&
-          !data.version.startsWith('2.')
-        ) {
-          /**
-           * @todo 不兼容提示
-           * @author mebtte<i@mebtte.com>
-           */
-        }
-
-        server.set((ss) => ({
-          ...ss,
-          serverList: ss.serverList.map((s) =>
+        useServer.setState((server) => ({
+          serverList: server.serverList.map((s) =>
             s.origin === selectedServer.origin
               ? {
                   ...s,
@@ -77,31 +67,30 @@ window.setInterval(() => {
 
 export function prefixServerOrigin(path: string) {
   if (path) {
-    return `${getSelectedServer(server.get())?.origin}${path}`;
+    return `${getSelectedServer(useServer.getState())?.origin}${path}`;
   }
   return path;
 }
 
-export function useServer() {
-  const serverState = server.useState();
-  return getSelectedServer(serverState);
+export function useSelectedServer() {
+  const server = useServer();
+  return getSelectedServer(server);
 }
 
 export function useUser() {
-  const selectedServer = useServer();
+  const selectedServer = useSelectedServer();
   return selectedServer ? getSelectedUser(selectedServer) : undefined;
 }
 
 export async function reloadUser() {
-  const selectedServer = getSelectedServer(server.get());
+  const selectedServer = getSelectedServer(useServer.getState());
   if (selectedServer) {
     const user = getSelectedUser(selectedServer);
     if (user) {
       const { default: getProfile } = await import('@/server/api/get_profile');
       const profile = await getProfile(user.token);
-      server.set((ss) => ({
-        ...ss,
-        serverList: ss.serverList.map((s) =>
+      useServer.setState((server) => ({
+        serverList: server.serverList.map((s) =>
           s.origin === selectedServer.origin
             ? {
                 ...s,
@@ -133,5 +122,3 @@ export async function reloadUser() {
     }
   }
 }
-
-export default server;

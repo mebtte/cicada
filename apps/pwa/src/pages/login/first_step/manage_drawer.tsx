@@ -1,5 +1,4 @@
 import Drawer, { Title } from '@/components/drawer';
-import server from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import absoluteFullSize from '@/style/absolute_full_size';
@@ -11,6 +10,7 @@ import { MdDeleteOutline } from 'react-icons/md';
 import ellipsis from '@/style/ellipsis';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import dialog from '@/utils/dialog';
+import { useServer } from '@/global_states/server';
 
 const bodyProps: {
   style: CSSProperties;
@@ -79,7 +79,7 @@ function ManageDrawer({
   open: boolean;
   onClose: () => void;
 }) {
-  const { serverList } = server.useState();
+  const { serverList } = useServer();
 
   useEffect(() => {
     if (!serverList.length) {
@@ -108,9 +108,8 @@ function ManageDrawer({
                   dialog.confirm({
                     content: t('delete_origin_question'),
                     onConfirm: () =>
-                      server.set((ss) => ({
-                        ...ss,
-                        serverList: ss.serverList.filter(
+                      useServer.setState((server) => ({
+                        serverList: server.serverList.filter(
                           (is) => is.origin !== s.origin,
                         ),
                       })),

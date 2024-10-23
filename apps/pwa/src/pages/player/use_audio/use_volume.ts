@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import setting from '@/global_states/setting';
 import CustomAudio from '@/utils/custom_audio';
 import { QueueMusic } from '../constants';
+import { useSetting } from '@/global_states/setting';
 
 export default (audio: CustomAudio<QueueMusic> | null) => {
-  const { playerVolume } = setting.useState();
+  const { playerVolume } = useSetting();
 
   useEffect(() => {
     if (audio) {

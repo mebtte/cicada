@@ -14,7 +14,7 @@ export default (ctx: Context & I18nMiddleware, next: Next) => {
   let lang: Language | null = null;
   const getLang = () => {
     if (!lang) {
-      // @ts-expect-error
+      // @ts-expect-error: known types
       ({ __lang: lang } = ctx.query as { [CommonQuery.LANGUAGE]: unknown });
       if (!lang || !ACCEPT_LANGUAGES.includes(lang)) {
         const negotiator = new Negotiator(ctx.request);

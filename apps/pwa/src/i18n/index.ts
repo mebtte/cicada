@@ -1,9 +1,9 @@
 import { Language } from '#/constants';
-import setting from '../global_states/setting';
+import { useSetting } from '@/global_states/setting';
 import type { Key } from './constants';
 
 let translation: { [key in Key]: string };
-switch (setting.get().language) {
+switch (useSetting.getState().language) {
   case Language.ZH_HANS: {
     ({ default: translation } = await import('./zh_hans'));
     break;
@@ -40,4 +40,4 @@ export const LANGUAGE_MAP: Record<
   [Language.JA]: { label: '日本語' },
 };
 
-export { Key };
+export type { Key };

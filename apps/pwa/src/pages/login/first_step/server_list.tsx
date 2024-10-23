@@ -1,4 +1,3 @@
-import server from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import { useCallback, useState } from 'react';
@@ -7,6 +6,7 @@ import Label from '@/components/label';
 import { Select } from '@/components/select';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import ManageDrawer from './manage_drawer';
+import { useServer } from '@/global_states/server';
 
 const Style = styled.div`
   > .divider {
@@ -42,7 +42,7 @@ const Addon = styled.span`
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   }
 `;
-const getServerList = () => server.get().serverList;
+const getServerList = () => useServer.getState().serverList;
 
 function ServerList({
   disabled,
@@ -83,10 +83,9 @@ function ServerList({
                 actualValue: s.origin,
               }))}
               onChange={(option) => {
-                server.set((ss) => ({
-                  ...ss,
+                useServer.setState({
                   selectedServerOrigin: option.actualValue,
-                }));
+                });
                 return toNext();
               }}
             />

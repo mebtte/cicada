@@ -3,16 +3,16 @@ import Eventin from 'eventin';
 enum EventType {
   RESIZE = 'resize',
 }
-type EventTypeMapData = {
+interface EventTypeMapData {
   [EventType.RESIZE]: null;
-};
+}
 
-export default new (class {
+class ScollbarObserver {
   outer: HTMLDivElement;
 
   inner: HTMLDivElement;
 
-  private eventemitter: Eventin<EventType, EventTypeMapData>;
+  private readonly eventemitter: Eventin<EventType, EventTypeMapData>;
 
   constructor() {
     this.eventemitter = new Eventin<EventType, EventTypeMapData>();
@@ -42,4 +42,6 @@ export default new (class {
   onChange(listener: () => void) {
     return this.eventemitter.listen(EventType.RESIZE, listener);
   }
-})();
+}
+
+export default new ScollbarObserver();
