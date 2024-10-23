@@ -8,12 +8,8 @@ switch (useSetting.getState().language) {
     ({ default: translation } = await import('./zh_hans'));
     break;
   }
-  case Language.JA: {
-    ({ default: translation } = await import('./ja'));
-    break;
-  }
   default: {
-    ({ default: translation } = await import('./en_us'));
+    ({ default: translation } = await import('./en'));
   }
 }
 
@@ -35,9 +31,8 @@ export const LANGUAGE_MAP: Record<
     label: string;
   }
 > = {
-  [Language.EN_US]: { label: 'English(US)' },
+  [Language.EN]: { label: 'English' },
   [Language.ZH_HANS]: { label: '简体中文' },
-  [Language.JA]: { label: '日本語' },
 };
 
 export type { Key };

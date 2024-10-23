@@ -97,11 +97,10 @@ export const SINGER_MODIFY_RECORD_TTL = 1000 * 60 * 60 * 24 * 180;
 
 export enum Language {
   ZH_HANS = 'zh-hans',
-  EN_US = 'en-us',
-  JA = 'ja',
+  EN = 'en',
 }
 export const LANGUAGES = Object.values(Language);
-export const DEFAULT_LANGUAGE = Language.EN_US;
+export const DEFAULT_LANGUAGE = Language.EN;
 
 export enum CommonQuery {
   VERSION = '__v',

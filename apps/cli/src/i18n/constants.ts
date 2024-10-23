@@ -1,3 +1,3 @@
-import enUS from './en_us';
+import en from './en';
 
-export type Key = keyof typeof enUS;
+export type Key = keyof typeof en;
