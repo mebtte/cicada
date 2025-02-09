@@ -31,13 +31,10 @@ const Restore = styled.div`
 `;
 
 function usePlaylistRestore(playlist: PlaylistMusic[]) {
-  useEffect(
-    () =>
-      playlist && playlist.length > 0
-        ? void storage.setItem(Key.PLAYLIST, playlist)
-        : undefined,
-    [playlist],
-  );
+  useEffect(() => {
+    storage.setItem(Key.PLAYLIST, playlist);
+    return () => void storage.removeItem(Key.PLAYLIST);
+  }, [playlist]);
 
   useEffect(() => {
     let noticeId: string | undefined;
@@ -99,6 +96,7 @@ function usePlaylistRestore(playlist: PlaylistMusic[]) {
       unlistenActionPlayMusic();
       unlistenActionAddMusicListToPlaylist();
       unlistenActionInsertMusicToPlayqueue();
+      closeNotice();
     };
   }, []);
 }

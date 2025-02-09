@@ -11,8 +11,8 @@ export function getSelectedServer(ss: ServerState) {
     : undefined;
 }
 
-export function getSelectedUser(server: Server) {
-  return server.selectedUserId
+export function getSelectedUser(server: Server | undefined) {
+  return server?.selectedUserId
     ? server.users.find((u) => u.id === server.selectedUserId)
     : undefined;
 }
@@ -25,11 +25,11 @@ export const useServer = create(
     },
 );
 
-useServer.subscribe((server) =>
+useServer.subscribe((server) => {
   storage
     .setItem(Key.SERVER, server)
-    .catch((error) => logger.error(error, 'Failed to store server')),
-);
+    .catch((error) => logger.error(error, 'Failed to store server'));
+});
 
 window.setInterval(() => {
   const selectedServer = getSelectedServer(useServer.getState());
