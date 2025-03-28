@@ -9,6 +9,7 @@ import { MdCheck, MdClose } from 'react-icons/md';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import eventemitter, { EventType } from '../eventemitter';
 import { t } from '@/i18n';
+import useUnmount from '@/utils/use_unmount';
 
 const Restore = styled.div`
   > .text {
@@ -33,10 +34,22 @@ const Restore = styled.div`
 function usePlaylistRestore(playlist: PlaylistMusic[]) {
   useEffect(
     () =>
-      playlist && playlist.length > 0
-        ? void storage.setItem(Key.PLAYLIST, playlist)
+      playlist.length
+        ? void storage
+            .setItem(Key.PLAYLIST, playlist)
+            .catch((error) =>
+              logger.error(error, 'Failed to save playlist to storage'),
+            )
         : undefined,
     [playlist],
+  );
+  useUnmount(
+    () =>
+      void storage
+        .removeItem(Key.PLAYLIST)
+        .catch((error) =>
+          logger.error(error, 'Failed to remove playlist from storage'),
+        ),
   );
 
   useEffect(() => {
@@ -99,6 +112,7 @@ function usePlaylistRestore(playlist: PlaylistMusic[]) {
       unlistenActionPlayMusic();
       unlistenActionAddMusicListToPlaylist();
       unlistenActionInsertMusicToPlayqueue();
+      closeNotice();
     };
   }, []);
 }

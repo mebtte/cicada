@@ -11,8 +11,8 @@ export function getSelectedServer(ss: ServerState) {
     : undefined;
 }
 
-export function getSelectedUser(server: Server) {
-  return server.selectedUserId
+export function getSelectedUser(server: Server | undefined) {
+  return server?.selectedUserId
     ? server.users.find((u) => u.id === server.selectedUserId)
     : undefined;
 }
