@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 
 interface Rect {
   left: number;
@@ -18,22 +18,22 @@ function useTitlebarArea() {
 
   useEffect(() => {
     if ('windowControlsOverlay' in navigator) {
-      // @ts-expect-error
+      // @ts-expect-error: known issue
       setRect(window.navigator.windowControlsOverlay.getTitlebarAreaRect());
 
       const onGeometryChange = throttle(
         () =>
-          // @ts-expect-error
+          // @ts-expect-error: known issue
           setRect(window.navigator.windowControlsOverlay.getTitlebarAreaRect()),
         300,
       );
-      // @ts-expect-error
+      // @ts-expect-error: known issue
       window.navigator.windowControlsOverlay.addEventListener(
         'geometrychange',
         onGeometryChange,
       );
       return () =>
-        // @ts-expect-error
+        // @ts-expect-error: known issue
         window.navigator.windowControlsOverlay.removeEventListener(
           'geometrychange',
           onGeometryChange,
