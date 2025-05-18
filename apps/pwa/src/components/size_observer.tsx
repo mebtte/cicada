@@ -14,12 +14,12 @@ interface Size {
   width: number;
   height: number;
 }
-type Props = HtmlHTMLAttributes<HTMLDivElement> & {
+type Props = Omit<HtmlHTMLAttributes<HTMLDivElement>, 'children'> & {
   children: (size: Size) => ReactNode;
   resizeDelay?: number;
 };
 
-function SizeDetector(
+function SizeObserver(
   { children, resizeDelay = 100, ...props }: Props,
   ref: ForwardedRef<HTMLDivElement>,
 ) {
@@ -53,4 +53,4 @@ function SizeDetector(
   );
 }
 
-export default forwardRef<HTMLDivElement, Props>(SizeDetector);
+export default forwardRef<HTMLDivElement, Props>(SizeObserver);

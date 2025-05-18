@@ -6,7 +6,7 @@ import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import useQuery from '@/utils/use_query';
 import { Query } from '@/constants';
-import WidthObserver from '@/components/width_observer';
+import SizeObserver from '@/components/size_observer';
 import useData from './use_data';
 import User from './user';
 import { HEADER_HEIGHT } from '../../../constants';
@@ -70,15 +70,14 @@ function UserList() {
 
     return (
       <UserListContainer style={style}>
-        <WidthObserver
-          className="content"
-          render={(width) => {
+        <SizeObserver className="content">
+          {({ width }) => {
             const itemWidth = `${100 / Math.floor(width / ITEM_MIN_WIDTH)}%`;
             return filteredUserList.map((user) => (
               <User key={user.id} user={user} width={itemWidth} />
             ));
           }}
-        />
+        </SizeObserver>
       </UserListContainer>
     );
   });

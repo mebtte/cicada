@@ -10,7 +10,7 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
 import Button, { Variant } from '@/components/button';
-import WidthObserver from '@/components/width_observer';
+import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
@@ -95,9 +95,8 @@ function Wrapper() {
 
     return (
       <MusicContainer style={style}>
-        <WidthObserver
-          className="list"
-          render={(width) => {
+        <SizeObserver className="list">
+          {({ width }) => {
             const itemWidth = `${100 / Math.floor(width / ITEM_MIN_WIDTH)}%`;
             return d.value!.musicbillList.map((musicbill) => (
               <div
@@ -118,7 +117,7 @@ function Wrapper() {
               </div>
             ));
           }}
-        />
+        </SizeObserver>
 
         {d.value!.total ? (
           <Pagination
