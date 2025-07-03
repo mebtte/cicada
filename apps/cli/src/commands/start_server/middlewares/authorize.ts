@@ -1,4 +1,4 @@
-import { AssetType } from '#/constants';
+import { AssetType, HEADER_TOKEN } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { verify } from '@/platform/jwt';
 import { Context, Next } from 'koa';
@@ -15,7 +15,7 @@ export default async (
   ctx: Context & ParasiteMiddleware & AuthorizeMiddleware,
   next: Next,
 ) => {
-  const token = ctx.get('authorization');
+  const token = ctx.get(HEADER_TOKEN);
 
   if (!token) {
     return ctx.except(ExceptionCode.NOT_AUTHORIZED);

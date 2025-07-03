@@ -9,7 +9,7 @@ import sleep from '#/utils/sleep';
 import definition from '@/definition';
 import { NORMAL_REQUEST_MINIMAL_DURATION } from '@/constants';
 import timeoutFn from '#/utils/timeout';
-import { CommonQuery } from '#/constants';
+import { CommonQuery, HEADER_TOKEN } from '#/constants';
 import { t } from '@/i18n';
 import { useSetting } from '@/global_states/setting';
 
@@ -78,8 +78,7 @@ export async function request<Data = void>({
         ExceptionCode.NOT_AUTHORIZED,
       );
     }
-    // eslint-disable-next-line no-param-reassign
-    headers.authorization = selectedUser.token;
+    headers[HEADER_TOKEN] = selectedUser.token;
   }
 
   let processedBody: FormData | string | null = null;
