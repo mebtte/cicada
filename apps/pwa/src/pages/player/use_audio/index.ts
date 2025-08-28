@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import CustomAudio from '@/utils/custom_audio';
 import { QueueMusic } from '../constants';
 import onError from './on_error';

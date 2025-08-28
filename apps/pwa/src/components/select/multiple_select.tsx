@@ -1,7 +1,7 @@
 import { CSSProperties, ComponentProps, useMemo } from 'react';
 import Select from 'react-select/async';
 import classnames from 'classnames';
-import { throttle } from 'lodash';
+import { throttle } from 'lodash-es';
 import {
   ClassName,
   DEFAULT_PLACEHOLDER,

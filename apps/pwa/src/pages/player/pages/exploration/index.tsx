@@ -4,7 +4,7 @@ import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
-import WidthObserver from '@/components/width_observer';
+import SizeObserver from '@/components/size_observer';
 import Empty from '@/components/empty';
 import absoluteFullSize from '@/style/absolute_full_size';
 import getResizedImage from '@/server/asset/get_resized_image';
@@ -97,9 +97,8 @@ function Wrapper() {
         }
         return (
           <ContentContainer style={style}>
-            <WidthObserver
-              className="content"
-              render={(width) => {
+            <SizeObserver className="content">
+              {({ width }) => {
                 const amountOfOneLine = Math.floor(width / ITEM_MIN_WIDTH);
                 const itemWidth = `${100 / amountOfOneLine}%`;
                 return (
@@ -172,7 +171,7 @@ function Wrapper() {
                   </>
                 );
               }}
-            />
+            </SizeObserver>
             <Empty className="empty" description={t('no_data')} />
           </ContentContainer>
         );

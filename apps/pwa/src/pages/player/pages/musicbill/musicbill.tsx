@@ -8,7 +8,7 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import { Query, RequestStatus } from '@/constants';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import useQuery from '@/utils/use_query';
 import autoScrollbar from '@/style/auto_scrollbar';
 import cache, { CacheKey } from './cache';

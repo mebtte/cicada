@@ -11,7 +11,7 @@ import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import Button, { Variant } from '@/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import WidthObserver from '@/components/width_observer';
+import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
@@ -121,9 +121,8 @@ function CollectionList() {
 
         return (
           <MusicListContainer style={style}>
-            <WidthObserver
-              className="list"
-              render={(width) => {
+            <SizeObserver className="list">
+              {({ width }) => {
                 const itemWidth = `${
                   100 / Math.floor(width / ITEM_MIN_WIDTH)
                 }%`;
@@ -144,7 +143,7 @@ function CollectionList() {
                   </div>
                 ));
               }}
-            />
+            </SizeObserver>
             {value!.total ? (
               <Pagination
                 style={paginationStyle}

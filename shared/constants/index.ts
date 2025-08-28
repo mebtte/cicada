@@ -108,3 +108,5 @@ export enum CommonQuery {
 }
 
 export const BETA_VERSION_START = 'beta.';
+
+export const HEADER_TOKEN = 'x-cicada-token';

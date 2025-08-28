@@ -1,5 +1,5 @@
 import { MINI_MODE_MAX_WIDTH } from '@/constants';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 import scrollbarObserver from './scrollbar_observer';
 import { create } from 'zustand';
 import { Theme } from '@/styled';
