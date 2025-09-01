@@ -90,13 +90,14 @@ export default async (ctx: Context) => {
     ),
   ]);
 
-  const musicIdMapSingers: {
-    [key: string]: {
+  const musicIdMapSingers: Record<
+    string,
+    {
       id: string;
       name: string;
       aliases: string[];
-    }[];
-  } = {};
+    }[]
+  > = {};
   if (musicList.length) {
     const allSingerList = await getSingerListInMusicIds(
       Array.from(new Set(musicList.map((m) => m.id))),

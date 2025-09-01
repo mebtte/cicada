@@ -1,6 +1,6 @@
 import { MusicType } from '../../constants/music';
 
-export type Response = {
+export interface Response {
   id: string;
   avatar: string;
   joinTimestamp: number;
@@ -25,4 +25,4 @@ export type Response = {
       aliases: string[];
     }[];
   }[];
-};
+}
