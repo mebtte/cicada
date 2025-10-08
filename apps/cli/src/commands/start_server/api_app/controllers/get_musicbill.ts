@@ -2,7 +2,7 @@ import { Response } from '#/server/api/get_musicbill';
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getSingerListInMusicIds } from '@/db/singer';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import { getAssetPublicPath } from '@/platform/asset';
 import { getDB } from '@/db';
 import {
@@ -130,11 +130,14 @@ export default async (ctx: Context) => {
     [id],
   );
 
-  const musicIdMapSingers: Record<string, {
+  const musicIdMapSingers: Record<
+    string,
+    {
       id: string;
       name: string;
       aliases: string[];
-    }[]> = {};
+    }[]
+  > = {};
   if (musicList.length) {
     const allSingerList = await getSingerListInMusicIds(
       Array.from(new Set(musicList.map((m) => m.id))),
@@ -145,7 +148,7 @@ export default async (ctx: Context) => {
         musicIdMapSingers[singer.musicId] = [];
       }
       musicIdMapSingers[singer.musicId].push({
-        ...excludeProperty(singer, ['musicId']),
+        ...excludeProperties(singer, ['musicId']),
         aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
       });
     }

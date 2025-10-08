@@ -3,7 +3,7 @@ import { Response } from '#/server/api/admin_get_user_list';
 import { getAssetPublicPath } from '@/platform/asset';
 import { AssetType } from '#/constants';
 import { USER_TABLE_NAME, User, UserProperty } from '@/constants/db_definition';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import { UNUSED_2FA_SECRET_PREFIX } from '@/constants';
 import { Context } from '../constants';
 
@@ -46,7 +46,7 @@ export default async (ctx: Context) => {
   );
   return ctx.success<Response>(
     userList.map((user) => ({
-      ...excludeProperty(user, [UserProperty.TWO_FA_SECRET]),
+      ...excludeProperties(user, [UserProperty.TWO_FA_SECRET]),
       avatar: getAssetPublicPath(user.avatar, AssetType.USER_AVATAR),
       twoFAEnabled: Boolean(
         user.twoFASecret &&

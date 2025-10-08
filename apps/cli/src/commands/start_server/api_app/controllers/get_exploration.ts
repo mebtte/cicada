@@ -2,7 +2,7 @@ import { AssetType } from '#/constants';
 import { Response } from '#/server/api/get_exploration';
 import { getDB } from '@/db';
 import { getSingerListInMusicIds } from '@/db/singer';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import {
   Music,
   MusicProperty,
@@ -116,14 +116,14 @@ export default async (ctx: Context) => {
       cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       singers: musicSingerList
         .filter((s) => s.musicId === m.id)
-        .map((s) => excludeProperty(s, ['musicId'])),
+        .map((s) => excludeProperties(s, ['musicId'])),
     })),
     singerList: singerList.map((s) => ({
       ...s,
       avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
     })),
     publicMusicbillList: publicMusicbillList.map((mb) => ({
-      ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
+      ...excludeProperties(mb, [MusicbillProperty.USER_ID]),
       cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
       user: musicbillCreateUserList.find((u) => mb.userId === u.id)!,
     })),

@@ -1,8 +1,12 @@
 import { MusicType } from '../../constants/music';
 
-type User = { id: string; nickname: string; avatar: string };
+interface User {
+  id: string;
+  nickname: string;
+  avatar: string;
+}
 
-export type Response = {
+export interface Response {
   id: string;
   cover: string;
   name: string;
@@ -25,4 +29,4 @@ export type Response = {
       aliases: string[];
     }[];
   }[];
-};
+}

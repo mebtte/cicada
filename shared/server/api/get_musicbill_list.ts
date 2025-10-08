@@ -1,4 +1,8 @@
-type User = { id: string; nickname: string; avatar: string };
+interface User {
+  id: string;
+  nickname: string;
+  avatar: string;
+}
 
 export type Response = {
   id: string;

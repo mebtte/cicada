@@ -1,7 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
 import { Response } from '#/server/api/get_public_musicbill_collection_list';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import {
   PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
   MUSICBILL_TABLE_NAME,
@@ -139,7 +139,7 @@ export default async (ctx: Context) => {
   return ctx.success<Response>({
     total,
     collectionList: collectionList.map((mb) => ({
-      ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
+      ...excludeProperties(mb, [MusicbillProperty.USER_ID]),
       user: userList.find((u) => u.id === mb.userId)!,
       cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
     })),

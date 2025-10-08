@@ -13,7 +13,7 @@ import {
   UserProperty,
 } from '@/constants/db_definition';
 import { getDB } from '@/db';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import { Context } from '../constants';
 
 export default async (ctx: Context) => {
@@ -101,7 +101,7 @@ export default async (ctx: Context) => {
         sharedUserList: sharedUserList
           .filter((u) => u.musicbillId === mb.id)
           .map((u) => ({
-            ...excludeProperty(u, [SharedMusicbillProperty.MUSICBILL_ID]),
+            ...excludeProperties(u, [SharedMusicbillProperty.MUSICBILL_ID]),
             avatar: getAssetPublicPath(u.avatar, AssetType.USER_AVATAR),
             accepted: !!u.accepted,
           })),

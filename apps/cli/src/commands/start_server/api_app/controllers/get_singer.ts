@@ -1,7 +1,7 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { Response } from '#/server/api/get_singer';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import {
   MUSIC_SINGER_RELATION_TABLE_NAME,
   MUSIC_TABLE_NAME,
@@ -84,11 +84,9 @@ export default async (ctx: Context) => {
       ),
   ]);
 
-  const musicIdMapSingers: {
-    [key: string]: (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
+  const musicIdMapSingers: Record<string, (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
       aliases: string[];
-    })[];
-  } = {};
+    })[]> = {};
   if (musicList.length) {
     const allSingerList = await getSingerListInMusicIds(
       Array.from(new Set(musicList.map((m) => m.id))),
@@ -99,14 +97,14 @@ export default async (ctx: Context) => {
         musicIdMapSingers[s.musicId] = [];
       }
       musicIdMapSingers[s.musicId].push({
-        ...excludeProperty(s, ['musicId']),
+        ...excludeProperties(s, ['musicId']),
         aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
       });
     });
   }
 
   return ctx.success<Response>({
-    ...excludeProperty(singer, [SingerProperty.CREATE_USER_ID]),
+    ...excludeProperties(singer, [SingerProperty.CREATE_USER_ID]),
     avatar: getAssetPublicPath(singer.avatar, AssetType.SINGER_AVATAR),
     aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
     createUser: createUser!,

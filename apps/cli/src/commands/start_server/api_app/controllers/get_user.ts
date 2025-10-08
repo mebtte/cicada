@@ -4,7 +4,7 @@ import { ExceptionCode } from '#/constants/exception';
 import { getUserById } from '@/db/user';
 import { getDB } from '@/db';
 import { getSingerListInMusicIds } from '@/db/singer';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import {
   Music,
   MusicProperty,
@@ -108,7 +108,7 @@ export default async (ctx: Context) => {
         musicIdMapSingers[singer.musicId] = [];
       }
       musicIdMapSingers[singer.musicId].push({
-        ...excludeProperty(singer, ['musicId']),
+        ...excludeProperties(singer, ['musicId']),
         aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
       });
     }

@@ -2,7 +2,7 @@ import { Response } from '#/server/api/search_music_by_lyric';
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import {
   LYRIC_TABLE_NAME,
   Lyric,
@@ -112,29 +112,25 @@ export default async (ctx: Context) => {
     ),
   ]);
 
-  const musicIdMapLyricList: {
-    [key: string]: Pick<Lyric, LyricProperty.ID | LyricProperty.LRC>[];
-  } = {};
+  const musicIdMapLyricList: Record<string, Pick<Lyric, LyricProperty.ID | LyricProperty.LRC>[]> = {};
   lyricList.forEach((lyric) => {
     if (!musicIdMapLyricList[lyric.musicId]) {
       musicIdMapLyricList[lyric.musicId] = [];
     }
     musicIdMapLyricList[lyric.musicId].push(
-      excludeProperty(lyric, [LyricProperty.MUSIC_ID]),
+      excludeProperties(lyric, [LyricProperty.MUSIC_ID]),
     );
   });
 
-  const musicIdMapSingerList: {
-    [key: string]: (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
+  const musicIdMapSingerList: Record<string, (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
       aliases: string[];
-    })[];
-  } = {};
+    })[]> = {};
   singerList.forEach((singer) => {
     if (!musicIdMapSingerList[singer.musicId]) {
       musicIdMapSingerList[singer.musicId] = [];
     }
     musicIdMapSingerList[singer.musicId].push({
-      ...excludeProperty(singer, ['musicId']),
+      ...excludeProperties(singer, ['musicId']),
       aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
     });
   });

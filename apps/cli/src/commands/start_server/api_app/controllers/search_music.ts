@@ -4,7 +4,7 @@ import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
 import { getDB } from '@/db';
 import { getSingerListInMusicIds } from '@/db/singer';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import {
   Music,
   MusicProperty,
@@ -139,17 +139,15 @@ export default async (ctx: Context) => {
     musicList.map((m) => m.id),
     [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
   );
-  const musicIdMapSingerList: {
-    [key: string]: (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
+  const musicIdMapSingerList: Record<string, (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
       aliases: string[];
-    })[];
-  } = {};
+    })[]> = {};
   singerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
       musicIdMapSingerList[s.musicId] = [];
     }
     musicIdMapSingerList[s.musicId].push({
-      ...excludeProperty(s, ['musicId']),
+      ...excludeProperties(s, ['musicId']),
       aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     });
   });
@@ -157,7 +155,7 @@ export default async (ctx: Context) => {
   return ctx.success<Response>({
     total,
     musicList: musicList.map((m) => ({
-      ...excludeProperty(m, [MusicProperty.CREATE_USER_ID]),
+      ...excludeProperties(m, [MusicProperty.CREATE_USER_ID]),
       cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
