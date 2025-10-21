@@ -69,15 +69,6 @@ if ('serviceWorker' in navigator) {
             { duration: 0, closable: false },
           );
         });
-
-        /**
-         * 定时检查更新
-         * @author mebtte<i@mebtte.com>
-         */
-        window.setInterval(() => {
-          notice.close(updateNoticeId);
-          return wb.update();
-        }, 1000 * 60 * 60);
       }
     });
   } else {
