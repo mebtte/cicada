@@ -1,3 +1,5 @@
+import 'package:cicada/event_bus.dart';
+
 import './utils/preference.dart';
 import 'package:flutter/foundation.dart'
     show kIsWeb, defaultTargetPlatform, TargetPlatform;
@@ -30,6 +32,8 @@ void main() async {
 
   await serverState.initialize();
   serverState.saveOnChange();
+
+  initializeListeners();
 
   runApp(
     MultiProvider(

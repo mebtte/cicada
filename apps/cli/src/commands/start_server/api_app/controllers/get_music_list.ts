@@ -150,9 +150,12 @@ export default async (ctx: Context) => {
     musicList.map((m) => m.id),
     [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
   );
-  const musicIdMapSingerList: Record<string, (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
+  const musicIdMapSingerList: Record<
+    string,
+    (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
       aliases: string[];
-    })[]> = {};
+    })[]
+  > = {};
   singerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
       musicIdMapSingerList[s.musicId] = [];

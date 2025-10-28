@@ -84,13 +84,24 @@ export default async (ctx: Context) => {
       ),
   ]);
 
-  const musicIdMapSingers: Record<string, (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
+  const musicIdMapSingers: Record<
+    string,
+    (Pick<
+      Singer,
+      SingerProperty.ID | SingerProperty.NAME | SingerProperty.AVATAR
+    > & {
       aliases: string[];
-    })[]> = {};
+    })[]
+  > = {};
   if (musicList.length) {
     const allSingerList = await getSingerListInMusicIds(
       Array.from(new Set(musicList.map((m) => m.id))),
-      [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
+      [
+        SingerProperty.ID,
+        SingerProperty.NAME,
+        SingerProperty.ALIASES,
+        SingerProperty.AVATAR,
+      ],
     );
     allSingerList.forEach((s) => {
       if (!musicIdMapSingers[s.musicId]) {
@@ -113,7 +124,10 @@ export default async (ctx: Context) => {
       cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      singers: musicIdMapSingers[m.id] || [],
+      singers: (musicIdMapSingers[m.id] || []).map((s) => ({
+        ...s,
+        avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
+      })),
     })),
 
     editable: !!editable,

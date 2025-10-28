@@ -1,45 +1,6 @@
+import 'package:cicada/model/music.dart';
 import '../../utils/prefix_server_origin.dart';
 import '../request.dart';
-
-class Singer {
-  final String id;
-  final String name;
-  final List<String> aliases;
-
-  Singer({required this.id, required this.name, required this.aliases});
-
-  factory Singer.fromJSON(Map<String, dynamic> json) => Singer(
-    id: json['id'],
-    name: json['name'],
-    aliases: List<String>.from(json['aliases']),
-  );
-}
-
-class Music {
-  final String id;
-  final String name;
-  final String asset;
-  final String? cover;
-  final List<Singer> singers;
-
-  Music({
-    required this.id,
-    required this.name,
-    required this.asset,
-    required this.cover,
-    required this.singers,
-  });
-
-  factory Music.fromJSON(Map<String, dynamic> json) => Music(
-    id: json['id'],
-    name: json['name'],
-    asset: prefixServerOrigin(json['asset'])!,
-    cover: prefixServerOrigin(json['cover']),
-    singers: (json['singers'] as List<dynamic>)
-        .map((json) => Singer.fromJSON(json))
-        .toList(),
-  );
-}
 
 class Musicbill {
   String name;

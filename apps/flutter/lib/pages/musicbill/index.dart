@@ -1,4 +1,4 @@
-import 'package:cicada/states/playlist.dart';
+import 'package:cicada/event_bus.dart';
 import 'package:uuid/uuid.dart';
 import '../../utils/get_musicbill_by_id.dart';
 import '../../states/musicbill.dart' as musicbill_state;
@@ -57,14 +57,7 @@ class _MusicbillState extends State<Musicbill> {
                     leading: const Icon(Icons.music_note_outlined),
                     title: Text(music.name),
                     onTap: () {
-                      playlistState.addMusicList([
-                        PlaylistMusic(
-                          pid: uuid.v4(),
-                          id: music.id,
-                          name: music.name,
-                          asset: music.asset,
-                        ),
-                      ]);
+                      eventBus.fire(PlayMusicEvent(music: music));
                     },
                   );
                 },

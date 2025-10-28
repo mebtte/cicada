@@ -1,32 +1,10 @@
+import 'package:cicada/model/music.dart';
+import 'package:cicada/model/singer.dart';
 import '../server/api/get_musicbill.dart' as get_musicbill;
 import '../server/api/get_musicbill_list.dart';
 import 'package:flutter/material.dart';
 
 enum MusicbillStatus { INITIAL, LOADING, SUCCESSFUL, FAILED }
-
-class Singer {
-  final String id;
-  final String name;
-  final List<String> aliases;
-
-  Singer({required this.id, required this.name, required this.aliases});
-}
-
-class Music {
-  final String id;
-  final String name;
-  final String asset;
-  final String? cover;
-  final List<Singer> singers;
-
-  Music({
-    required this.id,
-    required this.name,
-    required this.asset,
-    required this.cover,
-    required this.singers,
-  });
-}
 
 class Musicbill {
   String id;
@@ -100,6 +78,7 @@ class MusicbillState extends ChangeNotifier {
                             id: s.id,
                             name: s.name,
                             aliases: s.aliases,
+                            avatar: s.avatar,
                           ),
                         )
                         .toList(),

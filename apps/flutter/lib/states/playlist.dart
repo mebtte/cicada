@@ -1,38 +1,30 @@
-import 'dart:math';
-
-import 'package:cicada/states/playqueue.dart';
+import 'package:cicada/model/music.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
-final random = Random();
+final uuid = Uuid();
 
 class PlaylistMusic {
   final String pid;
-  final String id;
-  final String name;
-  final String asset;
+  final Music music;
 
-  PlaylistMusic({
-    required this.pid,
-    required this.id,
-    required this.name,
-    required this.asset,
-  });
+  PlaylistMusic({required this.pid, required this.music});
 }
 
 class PlaylistState extends ChangeNotifier {
   List<PlaylistMusic> playlist = [];
 
-  void addMusicList(List<PlaylistMusic> musicList) {
-    final existedMusicIds = playlist.map((m) => m.id).toList();
+  void addMusicList(List<Music> musicList) {
+    final existedMusicIds = playlist.map((m) => m.music.id);
     final unrepeatedMusicList = musicList
         .where((m) => !existedMusicIds.contains(m.id))
         .toList();
-    playlist.addAll(unrepeatedMusicList);
+    playlist.addAll(
+      unrepeatedMusicList.map(
+        (music) => PlaylistMusic(pid: uuid.v4(), music: music),
+      ),
+    );
     notifyListeners();
-
-    if (playqueueState.currentMusic == null) {
-      Future.delayed(Duration.zero, () => playqueueState.next());
-    }
   }
 }
 

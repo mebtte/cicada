@@ -1,12 +1,12 @@
+import 'package:cicada/model/music.dart';
 import 'package:flutter/material.dart';
 import '../extensions/list.dart';
 
 class PlayqueueMusic {
-  final String id;
-  final String name;
-  final String asset;
+  final String pid;
+  final Music music;
 
-  PlayqueueMusic({required this.id, required this.name, required this.asset});
+  PlayqueueMusic({required this.pid, required this.music});
 }
 
 class PlayqueueState extends ChangeNotifier {
