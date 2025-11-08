@@ -1,5 +1,5 @@
-import 'package:cicada/model/music.dart';
-import 'package:cicada/model/singer.dart';
+import 'package:cicada/models/music.dart';
+import 'package:cicada/models/singer.dart';
 import '../server/api/get_musicbill.dart' as get_musicbill;
 import '../server/api/get_musicbill_list.dart';
 import 'package:flutter/material.dart';

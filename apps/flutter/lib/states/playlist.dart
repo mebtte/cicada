@@ -1,5 +1,5 @@
 import 'package:cicada/event_bus.dart';
-import 'package:cicada/model/music.dart';
+import 'package:cicada/models/music.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 

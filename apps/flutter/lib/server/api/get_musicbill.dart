@@ -1,4 +1,4 @@
-import 'package:cicada/model/music.dart';
+import 'package:cicada/models/music.dart';
 import '../../utils/prefix_server_origin.dart';
 import '../request.dart';
 

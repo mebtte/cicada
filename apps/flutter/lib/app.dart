@@ -1,3 +1,4 @@
+import 'package:cicada/play_indicator/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './states/playlist.dart';
@@ -32,11 +33,32 @@ class _AppContentState extends State<AppContent> {
         ChangeNotifierProvider.value(value: playqueueState),
       ],
       child: MaterialApp(
-        initialRoute: '/',
-        routes: {
-          '/': (context) => Home(),
-          "/musicbill": (context) => musicbill_page.Musicbill(),
-        },
+        home: Column(
+          children: [
+            Expanded(
+              child: Navigator(
+                key: GlobalKey<NavigatorState>(),
+                onGenerateRoute: (setting) {
+                  switch (setting.name) {
+                    case '/musicbill':
+                      {
+                        final args = setting.arguments as Map<String, dynamic>;
+                        return MaterialPageRoute(
+                          builder: (_) =>
+                              musicbill_page.Musicbill(id: args['id']),
+                        );
+                      }
+                    default:
+                      {
+                        return MaterialPageRoute(builder: (_) => Home());
+                      }
+                  }
+                },
+              ),
+            ),
+            PlayIndicator(),
+          ],
+        ),
       ),
     );
   }

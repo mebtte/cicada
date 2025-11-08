@@ -1,4 +1,4 @@
-import 'package:cicada/model/music.dart';
+import 'package:cicada/models/music.dart';
 import 'package:event_bus/event_bus.dart';
 
 class PlayMusicEvent {

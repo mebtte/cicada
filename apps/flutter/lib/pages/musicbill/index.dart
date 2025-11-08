@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 const uuid = Uuid();
 
 class Musicbill extends StatefulWidget {
-  const Musicbill({super.key});
+  final String id;
+
+  const Musicbill({super.key, required this.id});
 
   @override
   State<Musicbill> createState() => _MusicbillState();
@@ -17,32 +19,24 @@ class _MusicbillState extends State<Musicbill> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final id =
-          (ModalRoute.of(context)!.settings.arguments
-              as Map<String, String>)['id']!;
-      final musicbill = musicbill_state.musicbillState.musicbillList.firstWhere(
-        (m) => m.id == id,
+    final musicbill = musicbill_state.musicbillState.musicbillList.firstWhere(
+      (m) => m.id == widget.id,
+    );
+    if (musicbill.status != musicbill_state.MusicbillStatus.LOADING) {
+      Future.delayed(
+        Duration.zero,
+        () => musicbill_state.musicbillState.reloadMusicbill(
+          id: widget.id,
+          silence:
+              musicbill.status == musicbill_state.MusicbillStatus.SUCCESSFUL,
+        ),
       );
-      if (musicbill.status != musicbill_state.MusicbillStatus.LOADING) {
-        Future.delayed(
-          Duration.zero,
-          () => musicbill_state.musicbillState.reloadMusicbill(
-            id: id,
-            silence:
-                musicbill.status == musicbill_state.MusicbillStatus.SUCCESSFUL,
-          ),
-        );
-      }
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final id =
-        (ModalRoute.of(context)!.settings.arguments
-            as Map<String, String>)['id']!;
-    final musicbill = useMusicbillById(context, id);
+    final musicbill = useMusicbillById(context, widget.id);
     return Scaffold(
       appBar: AppBar(title: Text(musicbill.name)),
       body: Column(

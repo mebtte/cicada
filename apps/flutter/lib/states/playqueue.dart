@@ -2,7 +2,7 @@ import 'package:cicada/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '../extensions/list.dart';
-import '../model/music.dart';
+import '../models/music.dart';
 
 final uuid = Uuid();
 

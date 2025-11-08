@@ -1,4 +1,4 @@
-import 'package:cicada/model/singer.dart';
+import 'package:cicada/models/singer.dart';
 import 'package:cicada/utils/prefix_server_origin.dart';
 
 class Music {
