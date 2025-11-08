@@ -19,15 +19,15 @@ class PlayqueueState extends ChangeNotifier {
 
   PlayqueueMusic? get currentMusic => playqueue.safeGet(playqueueIndex);
 
-  void insert(Music music) {
+  void jump(Music music) {
     final playqueueMusic = PlayqueueMusic(pid: uuid.v4(), music: music);
     if (playqueueIndex == -1) {
       playqueue = [playqueueMusic, ...playqueue];
     } else {
       playqueue = [
-        ...playqueue.sublist(0, playqueueIndex),
+        ...playqueue.sublist(0, playqueueIndex + 1),
         playqueueMusic,
-        ...playqueue.sublist(playqueueIndex),
+        ...playqueue.sublist(playqueueIndex + 1),
       ];
     }
     notifyListeners();
@@ -49,7 +49,7 @@ class PlayqueueState extends ChangeNotifier {
 
   void Function() listen() {
     final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
-      insert(event.music);
+      jump(event.music);
       next();
     });
     return () {

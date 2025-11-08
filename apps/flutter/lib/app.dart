@@ -56,7 +56,7 @@ class _AppContentState extends State<AppContent> {
                 },
               ),
             ),
-            PlayIndicator(),
+            PlayIndicatorContainer(),
           ],
         ),
       ),
