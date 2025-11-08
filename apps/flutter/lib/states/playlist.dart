@@ -1,3 +1,4 @@
+import 'package:cicada/event_bus.dart';
 import 'package:cicada/model/music.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -25,6 +26,15 @@ class PlaylistState extends ChangeNotifier {
       ),
     );
     notifyListeners();
+  }
+
+  void Function() listen() {
+    final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
+      addMusicList([event.music]);
+    });
+    return () {
+      playMusicSubscription.cancel();
+    };
   }
 }
 

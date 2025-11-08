@@ -1,13 +1,12 @@
-import 'package:cicada/states/playlist.dart';
-import 'package:cicada/states/playqueue.dart';
-
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import './states/playlist.dart';
+import './states/playqueue.dart';
 import './pages/home/index.dart';
 import './server_management/index.dart';
 import './states/musicbill.dart' as musicbill_state;
 import './user_management/index.dart';
 import './states/server.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import './pages/musicbill/index.dart' as musicbill_page;
 
 class AppContent extends StatefulWidget {

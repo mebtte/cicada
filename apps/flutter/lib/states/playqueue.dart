@@ -1,6 +1,10 @@
-import 'package:cicada/model/music.dart';
+import 'package:cicada/event_bus.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import '../extensions/list.dart';
+import '../model/music.dart';
+
+final uuid = Uuid();
 
 class PlayqueueMusic {
   final String pid;
@@ -15,13 +19,14 @@ class PlayqueueState extends ChangeNotifier {
 
   PlayqueueMusic? get currentMusic => playqueue.safeGet(playqueueIndex);
 
-  void insert(PlayqueueMusic music) {
+  void insert(Music music) {
+    final playqueueMusic = PlayqueueMusic(pid: uuid.v4(), music: music);
     if (playqueueIndex == -1) {
-      playqueue = [music, ...playqueue];
+      playqueue = [playqueueMusic, ...playqueue];
     } else {
       playqueue = [
         ...playqueue.sublist(0, playqueueIndex),
-        music,
+        playqueueMusic,
         ...playqueue.sublist(playqueueIndex),
       ];
     }
@@ -30,8 +35,26 @@ class PlayqueueState extends ChangeNotifier {
 
   void next() {
     final nextPlayqueueIndex = playqueueIndex + 1;
-    if (nextPlayqueueIndex >= playqueue.length) {}
-    notifyListeners();
+    if (nextPlayqueueIndex >= playqueue.length) {
+      /**
+       * @todo remind user
+       * @author mebtte<i@mebtte.com>
+       */
+      print("No more music in playqueue");
+    } else {
+      playqueueIndex = nextPlayqueueIndex;
+      notifyListeners();
+    }
+  }
+
+  void Function() listen() {
+    final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
+      insert(event.music);
+      next();
+    });
+    return () {
+      playMusicSubscription.cancel();
+    };
   }
 }
 

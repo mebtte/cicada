@@ -1,13 +1,13 @@
-import 'package:cicada/event_bus.dart';
-
-import './utils/preference.dart';
+import 'package:cicada/states/playqueue.dart';
 import 'package:flutter/foundation.dart'
     show kIsWeb, defaultTargetPlatform, TargetPlatform;
 import 'package:audio_service/audio_service.dart';
-import './window_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
+import './states/playlist.dart';
+import './utils/preference.dart';
+import './window_manager.dart';
 import './app.dart';
 import './states/server.dart';
 import './audio_handler.dart';
@@ -33,7 +33,8 @@ void main() async {
   await serverState.initialize();
   serverState.saveOnChange();
 
-  initializeListeners();
+  playlistState.listen();
+  playqueueState.listen();
 
   runApp(
     MultiProvider(
