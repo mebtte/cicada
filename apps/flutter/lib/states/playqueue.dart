@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:cicada/event_bus.dart';
+import 'package:cicada/states/playlist.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '../extensions/list.dart';
@@ -33,14 +36,36 @@ class PlayqueueState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void previous() {
+    final nextPlayqueueIndex = playqueueIndex - 1;
+    if (nextPlayqueueIndex <= 0) {
+      /**
+       * @todo remind user there is no music in playqueue
+       * @author mebtte<i@mebtte.com>
+       */
+      print("can not skip to previous");
+    } else {
+      playqueueIndex = nextPlayqueueIndex;
+      notifyListeners();
+    }
+  }
+
   void next() {
     final nextPlayqueueIndex = playqueueIndex + 1;
     if (nextPlayqueueIndex >= playqueue.length) {
-      /**
-       * @todo remind user
-       * @author mebtte<i@mebtte.com>
-       */
-      print("No more music in playqueue");
+      final playlist = playlistState.playlist;
+      if (playlist.isEmpty) {
+        /**
+         * @todo remind user
+         * @author mebtte<i@mebtte.com>
+         */
+        print("no musics in playlist");
+      } else {
+        final random = Random();
+        final playlistMusic = playlist[random.nextInt(playlist.length)];
+        jump(playlistMusic.music);
+        next();
+      }
     } else {
       playqueueIndex = nextPlayqueueIndex;
       notifyListeners();

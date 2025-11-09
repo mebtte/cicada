@@ -105,7 +105,10 @@ class ServerState extends ChangeNotifier {
       selectedServerOrigin = server['selectedServerOrigin'];
       selectedUserId = server['selectedUserId'];
     }
-    notifyListeners();
+
+    addListener(() {
+      preference.instance.setString(StorageKey.SERVER, jsonEncode(this));
+    });
   }
 
   void addServer(Server server) {
@@ -146,12 +149,6 @@ class ServerState extends ChangeNotifier {
   void reselectUser() {
     selectedUserId = null;
     notifyListeners();
-  }
-
-  void saveOnChange() {
-    addListener(() {
-      preference.instance.setString(StorageKey.SERVER, jsonEncode(this));
-    });
   }
 }
 

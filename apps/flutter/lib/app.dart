@@ -1,5 +1,7 @@
+import 'package:cicada/audio_handler.dart';
 import 'package:cicada/play_indicator/index.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import './states/playlist.dart';
 import './states/playqueue.dart';
@@ -22,6 +24,12 @@ class _AppContentState extends State<AppContent> {
   void initState() {
     super.initState();
     musicbill_state.musicbillState.reloadMusicbillList(silence: false);
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    GetIt.instance.get<MyAudioHandler>().stop();
   }
 
   @override

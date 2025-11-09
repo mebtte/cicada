@@ -12,8 +12,6 @@ import './app.dart';
 import './states/server.dart';
 import './audio_handler.dart';
 
-final getIt = GetIt.instance;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await preference.initialize();
@@ -27,11 +25,11 @@ void main() async {
     initializeWindow();
   }
 
-  var audioHandler = await AudioService.init(builder: () => MyAudioHandler());
-  getIt.registerSingleton(audioHandler);
+  final audioHandler = await AudioService.init(builder: () => MyAudioHandler());
+  audioHandler.listen();
+  GetIt.instance.registerSingleton(audioHandler);
 
   await serverState.initialize();
-  serverState.saveOnChange();
 
   playlistState.listen();
   playqueueState.listen();

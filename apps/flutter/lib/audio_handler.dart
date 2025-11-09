@@ -1,7 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:just_audio/just_audio.dart';
+import './states/playqueue.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
+  PlayqueueMusic? lastQueueMusic;
   final player = AudioPlayer();
 
   MyAudioHandler() {
@@ -18,27 +20,44 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> stop() => player.stop();
 
   @override
+  Future<void> skipToPrevious() async => playqueueState.previous();
+
+  @override
+  Future<void> skipToNext() async => playqueueState.next();
+
+  @override
   Future<void> seek(Duration position) => player.seek(position);
 
   @override
   Future<void> skipToQueueItem(int i) => player.seek(Duration.zero, index: i);
 
-  Future<void> playTest() async {
-    final url =
-        'https://music.mebtte.com/asset/music/3ee665c538c5793d44e7d11b435dc8fd.mp3';
-    var duration = await player.setAudioSource(AudioSource.uri(Uri.parse(url)));
+  Future<void> playQueueMusic(PlayqueueMusic queueMusic) async {
+    var duration = await player.setAudioSource(
+      AudioSource.uri(Uri.parse(queueMusic.music.asset)),
+    );
     player.play();
 
     var item = MediaItem(
-      id: url,
-      title: "test",
-      artist: "hello",
-      artUri: Uri.parse(
-        "https://music.mebtte.com/asset/music_cover/8de82c491047b3bddbd88f8b21408e72.jpg",
-      ),
+      id: queueMusic.pid,
+      title: queueMusic.music.name,
+      artist: queueMusic.music.singers.map((s) => s.name).join(','),
+      artUri: queueMusic.music.cover == null
+          ? null
+          : Uri.parse(queueMusic.music.cover!),
       duration: duration,
     );
     mediaItem.add(item);
+  }
+
+  void listen() {
+    playqueueState.addListener(() {
+      final currentQueueMusic = playqueueState.currentMusic;
+      if (currentQueueMusic != null &&
+          currentQueueMusic.pid != lastQueueMusic?.pid) {
+        lastQueueMusic = currentQueueMusic;
+        playQueueMusic(currentQueueMusic);
+      }
+    });
   }
 
   void _broadcastState(PlayerState state) {
@@ -47,10 +66,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         controls: [
           MediaControl.skipToPrevious,
           state.playing ? MediaControl.pause : MediaControl.play,
-          MediaControl.stop,
           MediaControl.skipToNext,
         ],
-        androidCompactActionIndices: const [0, 1, 3],
         processingState: {
           ProcessingState.idle: AudioProcessingState.idle,
           ProcessingState.loading: AudioProcessingState.loading,
@@ -65,5 +82,9 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         updateTime: DateTime.now(),
       ),
     );
+
+    if (state.processingState == ProcessingState.completed) {
+      playqueueState.next();
+    }
   }
 }
