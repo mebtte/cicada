@@ -38,7 +38,7 @@ class PlayqueueState extends ChangeNotifier {
 
   void previous() {
     final nextPlayqueueIndex = playqueueIndex - 1;
-    if (nextPlayqueueIndex <= 0) {
+    if (nextPlayqueueIndex < 0) {
       /**
        * @todo remind user there is no music in playqueue
        * @author mebtte<i@mebtte.com>
@@ -77,8 +77,18 @@ class PlayqueueState extends ChangeNotifier {
       jump(event.music);
       next();
     });
+    final addMusicListToPlaylistSubscription = eventBus
+        .on<AddMusicListToPlaylistEvent>()
+        .listen((event) {
+          if (currentMusic == null) {
+            final random = Random();
+            jump(event.musicList[random.nextInt(event.musicList.length)]);
+            next();
+          }
+        });
     return () {
       playMusicSubscription.cancel();
+      addMusicListToPlaylistSubscription.cancel();
     };
   }
 }

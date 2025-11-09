@@ -106,9 +106,11 @@ class ServerState extends ChangeNotifier {
       selectedUserId = server['selectedUserId'];
     }
 
-    addListener(() {
-      preference.instance.setString(StorageKey.SERVER, jsonEncode(this));
-    });
+    addListener(saveToPreference);
+  }
+
+  void saveToPreference() {
+    preference.instance.setString(StorageKey.SERVER, jsonEncode(this));
   }
 
   void addServer(Server server) {

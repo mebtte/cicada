@@ -32,8 +32,14 @@ class PlaylistState extends ChangeNotifier {
     final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
       addMusicList([event.music]);
     });
+    final addMusicListToPlaylistSubscription = eventBus
+        .on<AddMusicListToPlaylistEvent>()
+        .listen((event) {
+          addMusicList(event.musicList);
+        });
     return () {
       playMusicSubscription.cancel();
+      addMusicListToPlaylistSubscription.cancel();
     };
   }
 }

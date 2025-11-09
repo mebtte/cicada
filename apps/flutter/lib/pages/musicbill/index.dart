@@ -1,8 +1,9 @@
-import 'package:cicada/event_bus.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/material.dart';
 import '../../utils/get_musicbill_by_id.dart';
 import '../../states/musicbill.dart' as musicbill_state;
-import 'package:flutter/material.dart';
+import '../../event_bus.dart';
+import './actions.dart' as actions;
 
 const uuid = Uuid();
 
@@ -37,11 +38,15 @@ class _MusicbillState extends State<Musicbill> {
   @override
   Widget build(BuildContext context) {
     final musicbill = useMusicbillById(context, widget.id);
+    final empty = musicbill.musicList.isEmpty;
     return Scaffold(
       appBar: AppBar(title: Text(musicbill.name)),
       body: Column(
         children: [
-          if (musicbill.musicList.isNotEmpty)
+          actions.Actions(musicbill: musicbill),
+          if (empty)
+            Expanded(child: Center(child: Text("No Music")))
+          else
             Expanded(
               child: ListView.builder(
                 itemCount: musicbill.musicList.length,

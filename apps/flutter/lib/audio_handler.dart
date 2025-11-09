@@ -17,9 +17,6 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> pause() => player.pause();
 
   @override
-  Future<void> stop() => player.stop();
-
-  @override
   Future<void> skipToPrevious() async => playqueueState.previous();
 
   @override
@@ -27,9 +24,6 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> seek(Duration position) => player.seek(position);
-
-  @override
-  Future<void> skipToQueueItem(int i) => player.seek(Duration.zero, index: i);
 
   Future<void> playQueueMusic(PlayqueueMusic queueMusic) async {
     var duration = await player.setAudioSource(
@@ -64,10 +58,20 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     playbackState.add(
       PlaybackState(
         controls: [
-          MediaControl.skipToPrevious,
+          if (playqueueState.playqueueIndex > 0) MediaControl.skipToPrevious,
           state.playing ? MediaControl.pause : MediaControl.play,
           MediaControl.skipToNext,
         ],
+        systemActions: {
+          MediaAction.play,
+          MediaAction.pause,
+          MediaAction.playPause,
+          MediaAction.seek,
+          MediaAction.seekForward,
+          MediaAction.seekBackward,
+          MediaAction.skipToPrevious,
+          MediaAction.skipToNext,
+        },
         processingState: {
           ProcessingState.idle: AudioProcessingState.idle,
           ProcessingState.loading: AudioProcessingState.loading,
@@ -79,7 +83,6 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         updatePosition: player.position,
         bufferedPosition: player.bufferedPosition,
         speed: player.speed,
-        updateTime: DateTime.now(),
       ),
     );
 

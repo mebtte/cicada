@@ -9,7 +9,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     final musicbillList = context.watch<MusicbillState>().musicbillList;
     return Scaffold(
-      appBar: AppBar(title: Text("Exploration")),
+      appBar: AppBar(title: Text("My Musicbill")),
       body: Column(
         children: [
           if (musicbillList.isNotEmpty)
