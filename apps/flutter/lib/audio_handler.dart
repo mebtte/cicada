@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:cicada/states/audio.dart';
 import 'package:just_audio/just_audio.dart';
 import './states/playqueue.dart';
 
@@ -7,7 +8,43 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final player = AudioPlayer();
 
   MyAudioHandler() {
-    player.playerStateStream.listen(_broadcastState);
+    player.playerStateStream.listen((PlayerState state) {
+      audioState.updatePlaying(state.playing);
+      playbackState.add(
+        PlaybackState(
+          controls: [
+            if (playqueueState.playqueueIndex > 0) MediaControl.skipToPrevious,
+            state.playing ? MediaControl.pause : MediaControl.play,
+            MediaControl.skipToNext,
+          ],
+          systemActions: {
+            MediaAction.play,
+            MediaAction.pause,
+            MediaAction.playPause,
+            MediaAction.seek,
+            MediaAction.seekForward,
+            MediaAction.seekBackward,
+            MediaAction.skipToPrevious,
+            MediaAction.skipToNext,
+          },
+          processingState: {
+            ProcessingState.idle: AudioProcessingState.idle,
+            ProcessingState.loading: AudioProcessingState.loading,
+            ProcessingState.buffering: AudioProcessingState.buffering,
+            ProcessingState.ready: AudioProcessingState.ready,
+            ProcessingState.completed: AudioProcessingState.completed,
+          }[state.processingState]!,
+          playing: state.playing,
+          updatePosition: player.position,
+          bufferedPosition: player.bufferedPosition,
+          speed: player.speed,
+        ),
+      );
+
+      if (state.processingState == ProcessingState.completed) {
+        playqueueState.next();
+      }
+    });
   }
 
   @override
@@ -43,7 +80,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     mediaItem.add(item);
   }
 
-  void listen() {
+  void subscribe() {
     playqueueState.addListener(() {
       final currentQueueMusic = playqueueState.currentMusic;
       if (currentQueueMusic != null &&
@@ -52,42 +89,5 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         playQueueMusic(currentQueueMusic);
       }
     });
-  }
-
-  void _broadcastState(PlayerState state) {
-    playbackState.add(
-      PlaybackState(
-        controls: [
-          if (playqueueState.playqueueIndex > 0) MediaControl.skipToPrevious,
-          state.playing ? MediaControl.pause : MediaControl.play,
-          MediaControl.skipToNext,
-        ],
-        systemActions: {
-          MediaAction.play,
-          MediaAction.pause,
-          MediaAction.playPause,
-          MediaAction.seek,
-          MediaAction.seekForward,
-          MediaAction.seekBackward,
-          MediaAction.skipToPrevious,
-          MediaAction.skipToNext,
-        },
-        processingState: {
-          ProcessingState.idle: AudioProcessingState.idle,
-          ProcessingState.loading: AudioProcessingState.loading,
-          ProcessingState.buffering: AudioProcessingState.buffering,
-          ProcessingState.ready: AudioProcessingState.ready,
-          ProcessingState.completed: AudioProcessingState.completed,
-        }[state.processingState]!,
-        playing: state.playing,
-        updatePosition: player.position,
-        bufferedPosition: player.bufferedPosition,
-        speed: player.speed,
-      ),
-    );
-
-    if (state.processingState == ProcessingState.completed) {
-      playqueueState.next();
-    }
   }
 }

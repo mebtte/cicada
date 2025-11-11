@@ -28,7 +28,7 @@ class PlaylistState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void Function() listen() {
+  void Function() subscribe() {
     final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
       addMusicList([event.music]);
     });

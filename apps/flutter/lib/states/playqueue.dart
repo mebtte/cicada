@@ -72,7 +72,7 @@ class PlayqueueState extends ChangeNotifier {
     }
   }
 
-  void Function() listen() {
+  void Function() subscribe() {
     final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
       jump(event.music);
       next();

@@ -1,5 +1,6 @@
 import 'package:cicada/audio_handler.dart';
-import 'package:cicada/play_indicator/index.dart';
+import 'package:cicada/player_controller/index.dart';
+import 'package:cicada/states/audio.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -39,6 +40,7 @@ class _AppContentState extends State<AppContent> {
         ChangeNotifierProvider.value(value: musicbill_state.musicbillState),
         ChangeNotifierProvider.value(value: playlistState),
         ChangeNotifierProvider.value(value: playqueueState),
+        ChangeNotifierProvider.value(value: audioState),
       ],
       child: MaterialApp(
         home: Column(
@@ -64,7 +66,7 @@ class _AppContentState extends State<AppContent> {
                 },
               ),
             ),
-            PlayIndicatorContainer(),
+            PlayerControllerContainer(),
           ],
         ),
       ),

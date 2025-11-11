@@ -26,13 +26,13 @@ void main() async {
   }
 
   final audioHandler = await AudioService.init(builder: () => MyAudioHandler());
-  audioHandler.listen();
+  audioHandler.subscribe();
   GetIt.instance.registerSingleton(audioHandler);
 
   await serverState.initialize();
 
-  playlistState.listen();
-  playqueueState.listen();
+  playlistState.subscribe();
+  playqueueState.subscribe();
 
   runApp(
     MultiProvider(
