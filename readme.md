@@ -12,6 +12,7 @@ A multi-user music service for self-hosting.
 ## Feature
 
 - No collection of privacy
+- No advertisements
 - Multiple users
 - Shared musicbill between users
 - Support of importing music and music directory
