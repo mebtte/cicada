@@ -11,3 +11,5 @@ export const IS_IPAD =
 export const IS_IPHONE = window.navigator.userAgent
   .toLowerCase()
   .includes('iphone');
+
+export const ENABLE_FILE_SYSTEM = 'showDirectoryPicker' in window;

@@ -1,7 +1,14 @@
 import Eventin from 'eventin';
-import { Musicbill, MusicWithSingerAliases, QueueMusic } from './constants';
+import {
+  Music,
+  Musicbill,
+  MusicWithSingerAliases,
+  QueueMusic,
+} from './constants';
 
 export enum EventType {
+  EXPORT_MUSIC_LIST = 'export-music-list',
+
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
   MINI_MODE_CLOSE_SIDEBAR = 'mini_mode_close_sidebar',
 
@@ -64,6 +71,11 @@ export enum EventType {
 export default new Eventin<
   EventType,
   {
+    [EventType.EXPORT_MUSIC_LIST]: {
+      musicList: Music[];
+      directoryHandle: FileSystemDirectoryHandle;
+    };
+
     [EventType.MINI_MODE_OPEN_SIDEBAR]: null;
     [EventType.MINI_MODE_CLOSE_SIDEBAR]: null;
 

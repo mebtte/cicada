@@ -4,7 +4,7 @@
   "compilerOptions": {
     "module": "ESNext",
     "jsx": "preserve", // 由 babel 进一步编译
-    "lib": ["DOM", "WebWorker", "ESNext"],
+    "lib": ["DOM", "WebWorker", "ESNext", "DOM.Iterable"],
 
     "baseUrl": ".",
     "paths": {

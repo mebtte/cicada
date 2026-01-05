@@ -35,6 +35,7 @@ import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
 import useStopTimer from './use_stop_timer';
 import StopTimer from './stop_timer';
+import useExports from './use_exports';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -66,6 +67,7 @@ function Wrapper() {
   useDocumentTitle(capitalize(t('cicada')));
   useProfileUpdate();
 
+  const exportingMusicList = useExports();
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
   const playlist = usePlaylist();
   const { playqueue, currentPosition: currentPlayqueuePosition } =
@@ -107,6 +109,8 @@ function Wrapper() {
       lyricPanelOpen,
 
       stopTimer,
+
+      exportingMusicList,
     }),
     [
       audioBufferedPercent,
@@ -120,6 +124,7 @@ function Wrapper() {
       playlist,
       playqueue,
       stopTimer,
+      exportingMusicList,
     ],
   );
   return (

@@ -91,3 +91,17 @@ export interface StopTimerPosition {
   direction: 'left' | 'right';
   top: number;
 }
+
+export enum ExportStatus {
+  WAITING,
+  DOWNLOADING,
+  FAILED,
+  SUCCESSFUL,
+}
+
+export interface ExportingMusic {
+  id: string;
+  music: Music;
+  directoryHandle: FileSystemDirectoryHandle;
+  status: ExportStatus;
+}
