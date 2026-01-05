@@ -10,7 +10,7 @@ class ResponseWrapper {
 
   ResponseWrapper({required this.code, required this.data});
 
-  factory ResponseWrapper.fromJSON(Map<String, dynamic> json) =>
+  factory ResponseWrapper.fromJson(Map<String, dynamic> json) =>
       ResponseWrapper(code: json['code'], data: json['data']);
 }
 
@@ -26,7 +26,7 @@ Future<dynamic> handleResponse(Response<dynamic> response) async {
       "The server responsed with code \"${response.statusCode}\"",
     );
   }
-  final responseData = ResponseWrapper.fromJSON(response.data);
+  final responseData = ResponseWrapper.fromJson(response.data);
   if (responseData.code != 'success') {
     throw Exception("The server responsed with code \"${responseData.code}\"");
   }

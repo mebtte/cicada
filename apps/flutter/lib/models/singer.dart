@@ -13,7 +13,7 @@ class Singer {
     required this.aliases,
   });
 
-  factory Singer.fromJSON(Map<String, dynamic> json) => Singer(
+  factory Singer.fromJson(Map<String, dynamic> json) => Singer(
     id: json['id'],
     name: json['name'],
     avatar: prefixServerOrigin(json['avatar']),

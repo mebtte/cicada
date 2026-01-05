@@ -8,7 +8,7 @@ class Musicbill {
 
   Musicbill({required this.id, required this.name, required this.cover});
 
-  factory Musicbill.fromJSON(Map<String, dynamic> json) => Musicbill(
+  factory Musicbill.fromJson(Map<String, dynamic> json) => Musicbill(
     id: json['id'],
     name: json['name'],
     cover: prefixServerOrigin(json['cover']),
@@ -21,6 +21,6 @@ Future<List<Musicbill>> getMusicbillList() async {
     withToken: true,
   );
   return (responseData as List<dynamic>)
-      .map((json) => Musicbill.fromJSON(json))
+      .map((json) => Musicbill.fromJson(json))
       .toList();
 }

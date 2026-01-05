@@ -20,7 +20,7 @@ class Profile {
     required this.twoFAEnabled,
   });
 
-  factory Profile.fromJSON(Map<String, dynamic> json) => Profile(
+  factory Profile.fromJson(Map<String, dynamic> json) => Profile(
     id: json['id'],
     username: json['username'],
     avatar: prefixServerOrigin(json['avatar']),
@@ -36,5 +36,5 @@ Future<Profile> getProfile(String? token) async {
     headers[TOKEN_HEADER_KEY] = token;
   }
   final responseData = await httpGet(path: "/api/profile", headers: headers);
-  return Profile.fromJSON(responseData);
+  return Profile.fromJson(responseData);
 }

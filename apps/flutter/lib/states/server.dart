@@ -20,7 +20,7 @@ class User {
     required this.nickname,
   });
 
-  factory User.fromJSON(Map<String, dynamic> json) => User(
+  factory User.fromJson(Map<String, dynamic> json) => User(
     token: json['token'],
     avatar: json['avatar'],
     id: json['id'],
@@ -29,7 +29,7 @@ class User {
     nickname: json['nickname'],
   );
 
-  Map<String, dynamic> toJSON() => {
+  Map<String, dynamic> toJson() => {
     'token': token,
     'avatar': avatar,
     'id': id,
@@ -52,21 +52,21 @@ class Server {
     required this.users,
   });
 
-  factory Server.fromJSON(Map<String, dynamic> json) => Server(
+  factory Server.fromJson(Map<String, dynamic> json) => Server(
     origin: json['origin'],
     hostname: json['hostname'],
     version: json['version'],
     users: (json['users'] as List<dynamic>)
-        .map((json) => User.fromJSON(json))
+        .map((json) => User.fromJson(json))
         .toList(),
   );
 
-  Map<String, dynamic> toJSON() {
+  Map<String, dynamic> toJson() {
     return {
       'origin': origin,
       'hostname': hostname,
       'version': version,
-      'users': users.map((user) => user.toJSON()).toList(),
+      'users': users.map((user) => user.toJson()).toList(),
     };
   }
 }
@@ -84,7 +84,7 @@ class ServerState extends ChangeNotifier {
     (user) => user.id == selectedUserId,
   );
 
-  Map<String, dynamic> toJSON() {
+  Map<String, dynamic> toJson() {
     return {
       'selectedServerOrigin': selectedServerOrigin,
       'selectedUserId': selectedUserId,
@@ -99,7 +99,7 @@ class ServerState extends ChangeNotifier {
       final undecodedServerList =
           jsonDecode(server['serverList']) as List<dynamic>;
       final serverList = undecodedServerList
-          .map((json) => Server.fromJSON(json))
+          .map((json) => Server.fromJson(json))
           .toList();
       this.serverList = serverList;
       selectedServerOrigin = server['selectedServerOrigin'];
