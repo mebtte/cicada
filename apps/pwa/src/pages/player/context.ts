@@ -5,7 +5,6 @@ import {
   QueueMusic,
   Musicbill,
   StopTimer,
-  ExportingMusic,
 } from './constants';
 
 interface Context {
@@ -25,8 +24,6 @@ interface Context {
   lyricPanelOpen: boolean;
 
   stopTimer: StopTimer | null;
-
-  exportingMusicList: ExportingMusic[];
 }
 
 const context = createContext<Context>({
@@ -46,8 +43,6 @@ const context = createContext<Context>({
   lyricPanelOpen: false,
 
   stopTimer: null,
-
-  exportingMusicList: [],
 });
 
 export default context;
