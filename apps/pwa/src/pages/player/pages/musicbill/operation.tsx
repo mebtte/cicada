@@ -17,7 +17,7 @@ import playerEventemitter, {
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import { exportMusicList } from '../../utils';
+import { downloadMusicListByFileSystem } from '../../utils';
 
 const Style = styled.div`
   display: flex;
@@ -62,7 +62,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
       {ENABLE_FILE_SYSTEM ? (
         <IconButton
           disabled={!musicbill.musicList.length}
-          onClick={() => exportMusicList(musicbill.musicList)}
+          onClick={() => downloadMusicListByFileSystem(musicbill.musicList)}
         >
           <MdOutlineDownload />
         </IconButton>

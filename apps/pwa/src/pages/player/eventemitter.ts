@@ -7,7 +7,7 @@ import {
 } from './constants';
 
 export enum EventType {
-  EXPORT_MUSIC_LIST = 'export-music-list',
+  DOWNLOAD_MUSIC_LIST = 'download-music-list',
 
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
   MINI_MODE_CLOSE_SIDEBAR = 'mini_mode_close_sidebar',
@@ -71,7 +71,7 @@ export enum EventType {
 export default new Eventin<
   EventType,
   {
-    [EventType.EXPORT_MUSIC_LIST]: {
+    [EventType.DOWNLOAD_MUSIC_LIST]: {
       musicList: Music[];
       directoryHandle: FileSystemDirectoryHandle;
     };

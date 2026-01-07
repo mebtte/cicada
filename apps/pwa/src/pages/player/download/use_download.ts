@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DownloadingMusic, DownloadStatus } from './constants';
 import eventemitter, { EventType } from '../eventemitter';
 import generateRandomString from '#/utils/generate_random_string';
 import { logger } from 'workbox-core/_private';
-import sanitize from 'sanitize-filename';
-import { t } from '@/i18n';
+import formatMusicFilename from '#/utils/format_music_filename';
 
 async function downloadAndSave(downloadingMusic: DownloadingMusic) {
   const { music, directoryHandle } = downloadingMusic;
   const fileHandle = await directoryHandle.getFileHandle(
-    sanitize(
-      `${music.singers.map((s) => s.name).join(',') || t('unknown_singer')} - ${
-        music.name
-      }.${music.asset.split('.').at(-1)}`,
-    ),
+    formatMusicFilename({
+      name: music.name,
+      singerNames: music.singers.map((s) => s.name),
+      ext: music.asset.split('.').at(-1)!,
+    }),
     {
       create: true,
     },
@@ -27,22 +26,49 @@ function useDownload() {
   const [downloadingMusicList, setDownloadingMusicList] = useState<
     DownloadingMusic[]
   >([]);
+  const cleanAll = useCallback(() => setDownloadingMusicList([]), []);
+  const cleanSuccessful = useCallback(
+    () =>
+      setDownloadingMusicList((dml) =>
+        dml.filter((m) => m.status !== DownloadStatus.SUCCESSFUL),
+      ),
+    [],
+  );
+  const retryFailed = useCallback(
+    () =>
+      setDownloadingMusicList((dml) =>
+        dml.map((m) =>
+          m.status === DownloadStatus.FAILED
+            ? {
+                ...m,
+                status: DownloadStatus.WAITING,
+              }
+            : m,
+        ),
+      ),
+    [],
+  );
 
   useEffect(
     () =>
-      eventemitter.listen(EventType.EXPORT_MUSIC_LIST, (payload) =>
-        setDownloadingMusicList((dml) => [
-          ...dml,
-          ...payload.musicList.map(
-            (music) =>
-              ({
-                id: generateRandomString(),
-                music,
-                directoryHandle: payload.directoryHandle,
-                status: DownloadStatus.WAITING,
-              } satisfies DownloadingMusic),
-          ),
-        ]),
+      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST, (payload) =>
+        setDownloadingMusicList((dml) => {
+          const existingMusicIds = dml.map(({ music }) => music.id);
+          return [
+            ...payload.musicList
+              .filter((m) => !existingMusicIds.includes(m.id))
+              .map(
+                (music) =>
+                  ({
+                    id: generateRandomString(),
+                    music,
+                    directoryHandle: payload.directoryHandle,
+                    status: DownloadStatus.WAITING,
+                  } satisfies DownloadingMusic),
+              ),
+            ...dml,
+          ];
+        }),
       ),
     [],
   );
@@ -54,7 +80,7 @@ function useDownload() {
     if (downloading) {
       return;
     }
-    const waiting = downloadingMusicList.find(
+    const waiting = downloadingMusicList.findLast(
       (m) => m.status === DownloadStatus.WAITING,
     );
     if (waiting) {
@@ -88,7 +114,7 @@ function useDownload() {
     }
   }, [downloadingMusicList]);
 
-  return downloadingMusicList;
+  return { downloadingMusicList, cleanAll, cleanSuccessful, retryFailed };
 }
 
 export default useDownload;

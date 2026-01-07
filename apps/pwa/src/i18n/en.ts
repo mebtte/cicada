@@ -232,4 +232,8 @@ export default {
   timeout_while_fetching_data: 'timeout while fetching data',
   timeout: 'timeout of %s1 milliseconds',
   question_restore_playlist: 'do you want to restore last playlist ?',
+  multiple_singers: 'multiple singers',
+  clean_successful_items: 'clean successful items',
+  retry_failed_items: 'retry failed items',
+  clean_all_items: 'clean all items',
 };

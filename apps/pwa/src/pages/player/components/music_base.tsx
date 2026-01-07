@@ -85,14 +85,14 @@ const Style = styled.div<{ active: boolean }>`
 `;
 
 function MusicBase({
-  active,
+  active = false,
   index,
   music,
   lineAfter,
   addon,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
-  active: boolean;
+  active?: boolean;
   index: number;
   music: {
     id: string;

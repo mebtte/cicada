@@ -110,12 +110,12 @@ export function formatSecond(s: number) {
   }${second}`;
 }
 
-export async function exportMusicList(musicList: Music[]) {
+export async function downloadMusicListByFileSystem(musicList: Music[]) {
   try {
     const directoryHandle = await window.showDirectoryPicker({
       mode: 'readwrite',
     });
-    e.emit(EventType.EXPORT_MUSIC_LIST, {
+    e.emit(EventType.DOWNLOAD_MUSIC_LIST, {
       musicList,
       directoryHandle,
     });

@@ -8,7 +8,6 @@ import {
   MdOutlineEdit,
   MdOutlineDownload,
 } from 'react-icons/md';
-import { IS_IPAD, IS_IPHONE } from '@/constants/browser';
 import { saveAs } from 'file-saver';
 import formatMusicFilename from '#/utils/format_music_filename';
 import { useUser } from '@/global_states/server';
@@ -17,6 +16,8 @@ import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
+import { downloadMusicListByFileSystem } from '../utils';
 
 const Style = styled.div`
   z-index: 1;
@@ -93,23 +94,22 @@ function Toolbar({ music }: { music: MusicDetail }) {
         >
           <MdPlaylistAdd />
         </IconButton>
-        {IS_IPAD || IS_IPHONE ? null : (
-          <IconButton
-            onClick={() => {
-              const parts = music.asset.split('.');
-              return saveAs(
-                music.asset,
-                formatMusicFilename({
-                  name: music.name,
-                  singerNames: music.singers.map((s) => s.name),
-                  ext: `.${parts[parts.length - 1]}`,
-                }),
-              );
-            }}
-          >
-            <MdOutlineDownload />
-          </IconButton>
-        )}
+        <IconButton
+          onClick={() =>
+            ENABLE_FILE_SYSTEM
+              ? downloadMusicListByFileSystem([music])
+              : saveAs(
+                  music.asset,
+                  formatMusicFilename({
+                    name: music.name,
+                    singerNames: music.singers.map((s) => s.name),
+                    ext: music.asset.split('.').at(-1)!,
+                  }),
+                )
+          }
+        >
+          <MdOutlineDownload />
+        </IconButton>
       </div>
       {user.admin || user.id === music.createUser.id ? (
         <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>

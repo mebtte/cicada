@@ -27,8 +27,10 @@ const Style = styled.div`
 
 function Floating({
   downloadingMusicList,
+  onOpenDrawer,
 }: {
   downloadingMusicList: DownloadingMusic[];
+  onOpenDrawer: () => void;
 }) {
   const { position, ref, onPointerDown, onPointerUp, onPointerMove } =
     usePosition();
@@ -53,6 +55,7 @@ function Floating({
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       onPointerMove={onPointerMove}
+      onClick={onOpenDrawer}
     >
       {downloadingMusicList.length > 99 ? `99+` : downloadingMusicList.length}
     </Style>
