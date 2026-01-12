@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DownloadingMusic, DownloadStatus } from './constants';
-import eventemitter, { EventType } from '../eventemitter';
+import eventemitter, { EventType } from './eventemitter';
 import generateRandomString from '#/utils/generate_random_string';
-import { logger } from 'workbox-core/_private';
 import formatMusicFilename from '#/utils/format_music_filename';
+import logger from '@/utils/logger';
+import timeout from '#/utils/timeout';
 
 async function downloadAndSave(downloadingMusic: DownloadingMusic) {
   const { music, directoryHandle } = downloadingMusic;
@@ -22,28 +23,31 @@ async function downloadAndSave(downloadingMusic: DownloadingMusic) {
   await response.body?.pipeTo(writable);
 }
 
+function downloadAndSaveWithTimeout(downloadingMusic: DownloadingMusic) {
+  return Promise.race([
+    downloadAndSave(downloadingMusic),
+    timeout(1000 * 60 * 5),
+  ]);
+}
+
 function useDownload() {
   const [downloadingMusicList, setDownloadingMusicList] = useState<
     DownloadingMusic[]
   >([]);
-  const cleanAll = useCallback(() => setDownloadingMusicList([]), []);
-  const cleanSuccessful = useCallback(
+
+  useEffect(
     () =>
-      setDownloadingMusicList((dml) =>
-        dml.filter((m) => m.status !== DownloadStatus.SUCCESSFUL),
+      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST_CLEAN_ALL, () =>
+        setDownloadingMusicList([]),
       ),
     [],
   );
-  const retryFailed = useCallback(
+
+  useEffect(
     () =>
-      setDownloadingMusicList((dml) =>
-        dml.map((m) =>
-          m.status === DownloadStatus.FAILED
-            ? {
-                ...m,
-                status: DownloadStatus.WAITING,
-              }
-            : m,
+      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST_CLEAN_SUCCESSFUL, () =>
+        setDownloadingMusicList((dml) =>
+          dml.filter((m) => m.status !== DownloadStatus.SUCCESSFUL),
         ),
       ),
     [],
@@ -52,32 +56,44 @@ function useDownload() {
   useEffect(
     () =>
       eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST, (payload) =>
-        setDownloadingMusicList((dml) => {
-          const existingMusicIds = dml.map(({ music }) => music.id);
-          return [
-            ...payload.musicList
-              .filter((m) => !existingMusicIds.includes(m.id))
-              .map(
-                (music) =>
-                  ({
-                    id: generateRandomString(),
-                    music,
-                    directoryHandle: payload.directoryHandle,
-                    status: DownloadStatus.WAITING,
-                  } satisfies DownloadingMusic),
-              ),
-            ...dml,
-          ];
-        }),
+        setDownloadingMusicList((dml) => [
+          ...payload.musicList.map(
+            (music) =>
+              ({
+                id: generateRandomString(),
+                music,
+                directoryHandle: payload.directoryHandle,
+                status: DownloadStatus.WAITING,
+              } satisfies DownloadingMusic),
+          ),
+          ...dml,
+        ]),
+      ),
+    [],
+  );
+
+  useEffect(
+    () =>
+      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST_RETRY_FAILED, () =>
+        setDownloadingMusicList((dml) =>
+          dml.map((m) =>
+            m.status === DownloadStatus.FAILED
+              ? {
+                  ...m,
+                  status: DownloadStatus.WAITING,
+                }
+              : m,
+          ),
+        ),
       ),
     [],
   );
 
   useEffect(() => {
-    const downloading = downloadingMusicList.find(
+    const downloadingList = downloadingMusicList.filter(
       (m) => m.status === DownloadStatus.DOWNLOADING,
     );
-    if (downloading) {
+    if (downloadingList.length >= 3) {
       return;
     }
     const waiting = downloadingMusicList.findLast(
@@ -91,7 +107,7 @@ function useDownload() {
             : m,
         ),
       );
-      downloadAndSave(waiting)
+      downloadAndSaveWithTimeout(waiting)
         .then(() =>
           setDownloadingMusicList((ml) =>
             ml.map((m) =>
@@ -114,7 +130,7 @@ function useDownload() {
     }
   }, [downloadingMusicList]);
 
-  return { downloadingMusicList, cleanAll, cleanSuccessful, retryFailed };
+  return downloadingMusicList;
 }
 
 export default useDownload;

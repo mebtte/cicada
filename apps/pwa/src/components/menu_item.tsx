@@ -17,6 +17,9 @@ const Style = styled.div<{ active: boolean }>`
   border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
   > .label {
+    flex: 1;
+    min-width: 0;
+
     font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     ${capitalize}
   }
@@ -46,16 +49,19 @@ function MenuItem({
   active = false,
   icon,
   label,
+  suffix,
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   active?: boolean;
   icon: ReactNode;
   label: string;
+  suffix?: ReactNode;
 }) {
   return (
     <Style {...props} active={active}>
       {icon}
       <div className="label">{label}</div>
+      {suffix}
     </Style>
   );
 }

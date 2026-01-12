@@ -2,23 +2,36 @@ import styled from 'styled-components';
 import {
   DownloadingMusic,
   DownloadStatus as DownloadStatusType,
-} from '../constants';
+  HEADER_HEIGHT,
+} from '../../../constants';
 import List from 'react-list';
-import MusicBase from '../../components/music_base';
+import MusicBase from '../../../components/music_base';
 import {
   MdAccessTime,
   MdDownloadDone,
   MdOutlineWarningAmber,
 } from 'react-icons/md';
-import { CSSProperties } from 'react';
+import { CSSProperties, useContext } from 'react';
 import { CSSVariable } from '@/global_style';
 import Spinner from '@/components/spinner';
+import autoScrollbar from '@/style/auto_scrollbar';
+import { TOOLBAR_HEIGHT } from '../constants';
+import context from '@/pages/player/context';
+import Empty from '@/components/empty';
+import absoluteFullSize from '@/style/absolute_full_size';
 
 const Style = styled.div`
   flex: 1;
   min-height: 0;
 
+  position: relative;
+  padding-block: ${HEADER_HEIGHT}px ${TOOLBAR_HEIGHT}px;
+
+  ${autoScrollbar}
   overflow: auto;
+`;
+const StyledEmpty = styled(Empty)`
+  ${absoluteFullSize}
 `;
 const DOWNLOAD_STATUS_SIZE = 16;
 const downloadStatusStyle: CSSProperties = {
@@ -62,29 +75,32 @@ function DownloadStatus({
   }
 }
 
-function MusicList({
-  downloadingMusicList,
-}: {
-  downloadingMusicList: DownloadingMusic[];
-}) {
+function MusicList() {
+  const { downloadingMusicList } = useContext(context);
   const length = downloadingMusicList.length;
   return (
     <Style>
-      <List
-        type="uniform"
-        length={length}
-        itemRenderer={(index, key) => {
-          const downloadingMusic = downloadingMusicList[index];
-          return (
-            <MusicBase
-              key={key}
-              index={length - index}
-              music={downloadingMusic.music}
-              lineAfter={<DownloadStatus downloadingMusic={downloadingMusic} />}
-            />
-          );
-        }}
-      />
+      {length > 0 ? (
+        <List
+          type="uniform"
+          length={length}
+          itemRenderer={(index, key) => {
+            const downloadingMusic = downloadingMusicList[index];
+            return (
+              <MusicBase
+                key={key}
+                index={length - index}
+                music={downloadingMusic.music}
+                lineAfter={
+                  <DownloadStatus downloadingMusic={downloadingMusic} />
+                }
+              />
+            );
+          }}
+        />
+      ) : (
+        <StyledEmpty description="暂无下载" />
+      )}
     </Style>
   );
 }

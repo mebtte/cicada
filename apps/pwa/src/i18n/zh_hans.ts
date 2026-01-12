@@ -224,6 +224,7 @@ const zhCN: {
   clean_successful_items: '清理已完成项目',
   retry_failed_items: '重试失败项目',
   clean_all_items: '清理所有项目',
+  download: '下载',
 };
 
 export default zhCN;

@@ -236,4 +236,5 @@ export default {
   clean_successful_items: 'clean successful items',
   retry_failed_items: 'retry failed items',
   clean_all_items: 'clean all items',
+  download: 'download',
 };

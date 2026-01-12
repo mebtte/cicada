@@ -10,6 +10,7 @@ import PublicMusicbillCollection from './pages/public_musicbill_collection';
 import Exploration from './pages/exploration';
 import MusicPlayRecord from './pages/music_play_record';
 import SharedMusicbillInvitation from './pages/shared_musicbill_invitation';
+import DownloadingMusic from './pages/downloading_music';
 
 function Wrapper() {
   const user = useUser()!;
@@ -20,6 +21,10 @@ function Wrapper() {
       <Route path={PLAYER_PATH.MY_MUSIC} element={<MyMusic />} />
       <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
       <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
+      <Route
+        path={PLAYER_PATH.DOWNLOADING_MUSIC}
+        element={<DownloadingMusic />}
+      />
       <Route
         path={PLAYER_PATH.SHARED_MUSICBILL_INVITATION}
         element={<SharedMusicbillInvitation />}

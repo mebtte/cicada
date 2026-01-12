@@ -35,7 +35,7 @@ import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
 import useStopTimer from './use_stop_timer';
 import StopTimer from './stop_timer';
-import Download from './download';
+import useDownload from './use_download';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -90,6 +90,7 @@ function Wrapper() {
     [queueMusic],
   );
 
+  const downloadingMusicList = useDownload();
   const contextValue = useMemo(
     () => ({
       getMusicbillListStatus,
@@ -108,6 +109,8 @@ function Wrapper() {
       lyricPanelOpen,
 
       stopTimer,
+
+      downloadingMusicList,
     }),
     [
       audioBufferedPercent,
@@ -121,6 +124,7 @@ function Wrapper() {
       playlist,
       playqueue,
       stopTimer,
+      downloadingMusicList,
     ],
   );
   return (
@@ -154,7 +158,6 @@ function Wrapper() {
       {/* fixed z-index */}
       <ProfileEditPopup />
       <TwoFADialog />
-      <Download />
     </context.Provider>
   );
 }
