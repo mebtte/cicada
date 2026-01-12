@@ -1,9 +1,9 @@
 import Label from '@/components/label';
 import Input from '@/components/input';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
-import { MdDelete } from 'react-icons/md';
+import { MdPlaylistRemove } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
 import { FILTER_HEIGHT } from './constants';
@@ -11,6 +11,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import capitalize from '#/utils/capitalize';
+import context from '../../context';
 
 const Style = styled.div`
   position: absolute;
@@ -45,9 +46,11 @@ function Toolbar({
     return () => window.clearTimeout(timer);
   }, [keyword, onKeywordChange]);
 
+  const { playlist } = useContext(context);
   return (
     <Style>
       <IconButton
+        disabled={playlist.length === 0}
         onClick={() =>
           dialog.confirm({
             title: t('clear_playlist_question'),
@@ -59,7 +62,7 @@ function Toolbar({
           })
         }
       >
-        <MdDelete />
+        <MdPlaylistRemove />
       </IconButton>
       <Label className="filter">
         <Input
