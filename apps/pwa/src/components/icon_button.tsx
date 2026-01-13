@@ -1,9 +1,4 @@
-import {
-  ButtonHTMLAttributes,
-  CSSProperties,
-  ForwardedRef,
-  forwardRef,
-} from 'react';
+import { ButtonHTMLAttributes, CSSProperties, forwardRef } from 'react';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '../constants/style';
 import { CSSVariable } from '../global_style';
@@ -60,30 +55,34 @@ const spinnerStyle: CSSProperties = {
   transform: 'translate(-50%, -50%)',
 };
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  size?: number;
-  loading?: boolean;
-};
+const IconButton = forwardRef<
+  HTMLButtonElement,
+  ButtonHTMLAttributes<HTMLButtonElement> & {
+    size?: number;
+    loading?: boolean;
+  }
+>(
+  (
+    {
+      size = ComponentSize.NORMAL,
+      loading = false,
+      disabled = false,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <Style {...props} size={size} disabled={disabled || loading} ref={ref}>
+        {loading ? (
+          <Spinner style={spinnerStyle} size={size * SVG_PERCENTAGE} />
+        ) : (
+          children
+        )}
+      </Style>
+    );
+  },
+);
+IconButton.displayName = 'IconButton';
 
-function IconButton(
-  {
-    size = ComponentSize.NORMAL,
-    loading = false,
-    disabled = false,
-    children,
-    ...props
-  }: Props,
-  ref: ForwardedRef<HTMLButtonElement>,
-) {
-  return (
-    <Style {...props} size={size} disabled={disabled || loading} ref={ref}>
-      {loading ? (
-        <Spinner style={spinnerStyle} size={size * SVG_PERCENTAGE} />
-      ) : (
-        children
-      )}
-    </Style>
-  );
-}
-
-export default forwardRef<HTMLButtonElement, Props>(IconButton);
+export default IconButton;

@@ -10,6 +10,7 @@ import {
   MdAccessTime,
   MdDownloadDone,
   MdOutlineWarningAmber,
+  MdClose,
 } from 'react-icons/md';
 import { CSSProperties, useContext } from 'react';
 import { CSSVariable } from '@/global_style';
@@ -19,7 +20,15 @@ import { TOOLBAR_HEIGHT } from '../constants';
 import context from '@/pages/player/context';
 import Empty from '@/components/empty';
 import absoluteFullSize from '@/style/absolute_full_size';
+import IconButton from '@/components/icon_button';
+import eventemitter, { EventType } from '@/pages/player/eventemitter';
+import dialog from '@/utils/dialog';
 
+const LineAfter = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`;
 const Style = styled.div`
   flex: 1;
   min-height: 0;
@@ -33,7 +42,7 @@ const Style = styled.div`
 const StyledEmpty = styled(Empty)`
   ${absoluteFullSize}
 `;
-const DOWNLOAD_STATUS_SIZE = 16;
+const DOWNLOAD_STATUS_SIZE = 24;
 const downloadStatusStyle: CSSProperties = {
   fontSize: DOWNLOAD_STATUS_SIZE,
 };
@@ -47,6 +56,9 @@ const waitingStyle: CSSProperties = {
 };
 const failedStyle: CSSProperties = {
   ...downloadStatusStyle,
+  color: CSSVariable.COLOR_DANGEROUS,
+};
+const removeStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
 
@@ -92,7 +104,33 @@ function MusicList() {
                 index={length - index}
                 music={downloadingMusic.music}
                 lineAfter={
-                  <DownloadStatus downloadingMusic={downloadingMusic} />
+                  <LineAfter>
+                    <DownloadStatus downloadingMusic={downloadingMusic} />
+                    <IconButton
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        const removeItem = () =>
+                          eventemitter.emit(
+                            EventType.DOWNLOAD_MUSIC_LIST_REMOVE_ITEM,
+                            {
+                              id: downloadingMusic.id,
+                            },
+                          );
+                        if (
+                          downloadingMusic.status ===
+                          DownloadStatusType.SUCCESSFUL
+                        ) {
+                          return removeItem();
+                        }
+                        return dialog.confirm({
+                          content: '确定移除该项吗?',
+                          onConfirm: removeItem,
+                        });
+                      }}
+                    >
+                      <MdClose style={removeStyle} />
+                    </IconButton>
+                  </LineAfter>
                 }
               />
             );

@@ -5,6 +5,8 @@ import generateRandomString from '#/utils/generate_random_string';
 import formatMusicFilename from '#/utils/format_music_filename';
 import logger from '@/utils/logger';
 import timeout from '#/utils/timeout';
+import useNavigate from '@/utils/use_navigate';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 
 async function downloadAndSave(downloadingMusic: DownloadingMusic) {
   const { music, directoryHandle } = downloadingMusic;
@@ -31,6 +33,7 @@ function downloadAndSaveWithTimeout(downloadingMusic: DownloadingMusic) {
 }
 
 function useDownload() {
+  const navigate = useNavigate();
   const [downloadingMusicList, setDownloadingMusicList] = useState<
     DownloadingMusic[]
   >([]);
@@ -45,17 +48,19 @@ function useDownload() {
 
   useEffect(
     () =>
-      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST_CLEAN_SUCCESSFUL, () =>
-        setDownloadingMusicList((dml) =>
-          dml.filter((m) => m.status !== DownloadStatus.SUCCESSFUL),
-        ),
+      eventemitter.listen(
+        EventType.DOWNLOAD_MUSIC_LIST_REMOVE_ITEM,
+        (payload) =>
+          setDownloadingMusicList((dml) =>
+            dml.filter((m) => m.id !== payload.id),
+          ),
       ),
     [],
   );
 
   useEffect(
     () =>
-      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST, (payload) =>
+      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST, (payload) => {
         setDownloadingMusicList((dml) => [
           ...payload.musicList.map(
             (music) =>
@@ -67,9 +72,12 @@ function useDownload() {
               } satisfies DownloadingMusic),
           ),
           ...dml,
-        ]),
-      ),
-    [],
+        ]);
+        globalThis.setTimeout(() =>
+          navigate({ path: ROOT_PATH.PLAYER + PLAYER_PATH.DOWNLOADING_MUSIC }),
+        );
+      }),
+    [navigate],
   );
 
   useEffect(

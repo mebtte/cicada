@@ -9,8 +9,8 @@ import {
 export enum EventType {
   DOWNLOAD_MUSIC_LIST = 'download-music-list',
   DOWNLOAD_MUSIC_LIST_RETRY_FAILED = 'download-music-list-retry-failed',
-  DOWNLOAD_MUSIC_LIST_CLEAN_SUCCESSFUL = 'download-music-list-clean-successful',
   DOWNLOAD_MUSIC_LIST_CLEAN_ALL = 'download-music-list-clean-all',
+  DOWNLOAD_MUSIC_LIST_REMOVE_ITEM = 'download-music-list-remove-item',
 
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
   MINI_MODE_CLOSE_SIDEBAR = 'mini_mode_close_sidebar',
@@ -79,8 +79,8 @@ export default new Eventin<
       directoryHandle: FileSystemDirectoryHandle;
     };
     [EventType.DOWNLOAD_MUSIC_LIST_RETRY_FAILED]: null;
-    [EventType.DOWNLOAD_MUSIC_LIST_CLEAN_SUCCESSFUL]: null;
     [EventType.DOWNLOAD_MUSIC_LIST_CLEAN_ALL]: null;
+    [EventType.DOWNLOAD_MUSIC_LIST_REMOVE_ITEM]: { id: string };
 
     [EventType.MINI_MODE_OPEN_SIDEBAR]: null;
     [EventType.MINI_MODE_CLOSE_SIDEBAR]: null;
