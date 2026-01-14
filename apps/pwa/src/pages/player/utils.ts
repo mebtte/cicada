@@ -114,6 +114,7 @@ export async function downloadMusicListByFileSystem(musicList: Music[]) {
   try {
     const directoryHandle = await window.showDirectoryPicker({
       mode: 'readwrite',
+      startIn: 'downloads',
     });
     e.emit(EventType.DOWNLOAD_MUSIC_LIST, {
       musicList,
