@@ -1,7 +1,7 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { Response } from '#/server/api/get_music';
 import { ExceptionCode } from '#/constants/exception';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import {
   Music,
   MusicProperty,
@@ -85,26 +85,23 @@ export default async (ctx: Context) => {
         )
       : undefined,
   ]);
-  const musicIdMapSingerList: {
-    [key: string]: (Pick<
+  const musicIdMapSingerList: Record<string, (Pick<
       Singer,
       SingerProperty.ID | SingerProperty.NAME | SingerProperty.AVATAR
     > & {
       aliases: string[];
-    })[];
-  } = {};
+    })[]> = {};
   allSingerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
       musicIdMapSingerList[s.musicId] = [];
     }
     musicIdMapSingerList[s.musicId].push({
-      ...excludeProperty(s, ['musicId']),
+      ...excludeProperties(s, ['musicId']),
       aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     });
   });
 
-  const musicIdMapMusic: {
-    [key: string]: Pick<
+  const musicIdMapMusic: Record<string, Pick<
       Music,
       MusicProperty.ID | MusicProperty.NAME | MusicProperty.COVER
     > & {
@@ -112,19 +109,18 @@ export default async (ctx: Context) => {
         Singer,
         SingerProperty.ID | SingerProperty.NAME | SingerProperty.AVATAR
       >[];
-    };
-  } = {};
+    }> = {};
   musicList.forEach((m) => {
     musicIdMapMusic[m.id] = {
       ...m,
       singers: (musicIdMapSingerList[m.id] || []).map((s) =>
-        excludeProperty(s, ['aliases']),
+        excludeProperties(s, ['aliases']),
       ),
     };
   });
 
   return ctx.success<Response>({
-    ...excludeProperty(music, [MusicProperty.CREATE_USER_ID]),
+    ...excludeProperties(music, [MusicProperty.CREATE_USER_ID]),
     cover: getAssetPublicPath(music.cover, AssetType.MUSIC_COVER),
     asset: getAssetPublicPath(music.asset, AssetType.MUSIC),
     aliases: music.aliases ? music.aliases.split(ALIAS_DIVIDER) : [],

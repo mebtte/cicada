@@ -1,7 +1,17 @@
 import Eventin from 'eventin';
-import { Musicbill, MusicWithSingerAliases, QueueMusic } from './constants';
+import {
+  Music,
+  Musicbill,
+  MusicWithSingerAliases,
+  QueueMusic,
+} from './constants';
 
 export enum EventType {
+  DOWNLOAD_MUSIC_LIST = 'download-music-list',
+  DOWNLOAD_MUSIC_LIST_RETRY_FAILED = 'download-music-list-retry-failed',
+  DOWNLOAD_MUSIC_LIST_CLEAN_ALL = 'download-music-list-clean-all',
+  DOWNLOAD_MUSIC_LIST_REMOVE_ITEM = 'download-music-list-remove-item',
+
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
   MINI_MODE_CLOSE_SIDEBAR = 'mini_mode_close_sidebar',
 
@@ -64,6 +74,14 @@ export enum EventType {
 export default new Eventin<
   EventType,
   {
+    [EventType.DOWNLOAD_MUSIC_LIST]: {
+      musicList: Music[];
+      directoryHandle: FileSystemDirectoryHandle;
+    };
+    [EventType.DOWNLOAD_MUSIC_LIST_RETRY_FAILED]: null;
+    [EventType.DOWNLOAD_MUSIC_LIST_CLEAN_ALL]: null;
+    [EventType.DOWNLOAD_MUSIC_LIST_REMOVE_ITEM]: { id: string };
+
     [EventType.MINI_MODE_OPEN_SIDEBAR]: null;
     [EventType.MINI_MODE_CLOSE_SIDEBAR]: null;
 

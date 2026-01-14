@@ -1,7 +1,7 @@
 import { ExceptionCode } from '#/constants/exception';
 import { Response } from '#/server/api/search_public_musicbill';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/musicbill';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import {
   PUBLIC_MUSICBILL_COLLECTION_TABLE_NAME,
   MUSICBILL_MUSIC_TABLE_NAME,
@@ -155,7 +155,7 @@ export default async (ctx: Context) => {
     musicbillList: musicbillList.map((mb) => {
       const user = userList.find((u) => u.id === mb.userId)!;
       return {
-        ...excludeProperty(mb, [MusicbillProperty.USER_ID]),
+        ...excludeProperties(mb, [MusicbillProperty.USER_ID]),
         cover: getAssetPublicPath(mb.cover, AssetType.MUSICBILL_COVER),
         user,
       };

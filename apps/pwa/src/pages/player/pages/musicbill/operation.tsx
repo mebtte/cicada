@@ -5,6 +5,7 @@ import {
   MdPlaylistAdd,
   MdOutlineEdit,
   MdOutlinePeopleAlt,
+  MdOutlineDownload,
 } from 'react-icons/md';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
@@ -15,6 +16,8 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
+import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
+import { downloadMusicListByFileSystem } from '../../utils';
 
 const Style = styled.div`
   display: flex;
@@ -56,6 +59,14 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
       <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
         <MdOutlineEdit />
       </IconButton>
+      {ENABLE_FILE_SYSTEM ? (
+        <IconButton
+          disabled={!musicbill.musicList.length}
+          onClick={() => downloadMusicListByFileSystem(musicbill.musicList)}
+        >
+          <MdOutlineDownload />
+        </IconButton>
+      ) : null}
       <IconButton
         onClick={() =>
           playerEventemitter.emit(

@@ -1,4 +1,4 @@
-export type Response = {
+export interface Response {
   id: string;
   username: string;
   avatar: string;
@@ -11,4 +11,4 @@ export type Response = {
   lastActiveTimestamp: number;
   musicPlayRecordIndate: number;
   twoFAEnabled: boolean;
-};
+}

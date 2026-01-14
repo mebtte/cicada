@@ -9,7 +9,7 @@ import Content from './content';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 
 const Style = styled.div`
-  z-index: ${ZIndex.STOP_TIMER};
+  z-index: ${ZIndex.FLOATING};
   position: absolute;
 
   cursor: grab;

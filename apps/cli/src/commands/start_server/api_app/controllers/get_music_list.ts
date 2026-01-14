@@ -1,7 +1,7 @@
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import {
   Music,
   MusicProperty,
@@ -150,17 +150,18 @@ export default async (ctx: Context) => {
     musicList.map((m) => m.id),
     [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
   );
-  const musicIdMapSingerList: {
-    [key: string]: (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
+  const musicIdMapSingerList: Record<
+    string,
+    (Pick<Singer, SingerProperty.ID | SingerProperty.NAME> & {
       aliases: string[];
-    })[];
-  } = {};
+    })[]
+  > = {};
   singerList.forEach((s) => {
     if (!musicIdMapSingerList[s.musicId]) {
       musicIdMapSingerList[s.musicId] = [];
     }
     musicIdMapSingerList[s.musicId].push({
-      ...excludeProperty(s, ['musicId']),
+      ...excludeProperties(s, ['musicId']),
       aliases: s.aliases ? s.aliases.split(ALIAS_DIVIDER) : [],
     });
   });

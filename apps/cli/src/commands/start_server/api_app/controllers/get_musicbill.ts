@@ -2,7 +2,7 @@ import { Response } from '#/server/api/get_musicbill';
 import { ALIAS_DIVIDER, AssetType } from '#/constants';
 import { ExceptionCode } from '#/constants/exception';
 import { getSingerListInMusicIds } from '@/db/singer';
-import excludeProperty from '#/utils/exclude_property';
+import excludeProperties from '#/utils/exclude_properties';
 import { getAssetPublicPath } from '@/platform/asset';
 import { getDB } from '@/db';
 import {
@@ -130,22 +130,31 @@ export default async (ctx: Context) => {
     [id],
   );
 
-  const musicIdMapSingers: Record<string, {
+  const musicIdMapSingers: Record<
+    string,
+    {
       id: string;
       name: string;
       aliases: string[];
-    }[]> = {};
+      avatar: string;
+    }[]
+  > = {};
   if (musicList.length) {
     const allSingerList = await getSingerListInMusicIds(
       Array.from(new Set(musicList.map((m) => m.id))),
-      [SingerProperty.ID, SingerProperty.NAME, SingerProperty.ALIASES],
+      [
+        SingerProperty.ID,
+        SingerProperty.NAME,
+        SingerProperty.ALIASES,
+        SingerProperty.AVATAR,
+      ],
     );
     for (const singer of allSingerList) {
       if (!musicIdMapSingers[singer.musicId]) {
         musicIdMapSingers[singer.musicId] = [];
       }
       musicIdMapSingers[singer.musicId].push({
-        ...excludeProperty(singer, ['musicId']),
+        ...excludeProperties(singer, ['musicId']),
         aliases: singer.aliases ? singer.aliases.split(ALIAS_DIVIDER) : [],
       });
     }
@@ -171,7 +180,10 @@ export default async (ctx: Context) => {
     musicList: musicList.map((m) => ({
       ...m,
       aliases: m.aliases ? m.aliases.split(ALIAS_DIVIDER) : [],
-      singers: musicIdMapSingers[m.id] || [],
+      singers: (musicIdMapSingers[m.id] || []).map((s) => ({
+        ...s,
+        avatar: getAssetPublicPath(s.avatar, AssetType.SINGER_AVATAR),
+      })),
       cover: getAssetPublicPath(m.cover, AssetType.MUSIC_COVER),
       asset: getAssetPublicPath(m.asset, AssetType.MUSIC),
     })),

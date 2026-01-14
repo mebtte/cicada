@@ -63,7 +63,7 @@ function Playqueue({ style }: { style: unknown }) {
     paddingTop: TAB_LIST_HEIGHT + titlebarAreaHeight,
   };
   return (
-    // @ts-expect-error
+    // @ts-expect-error: known types
     <Style style={style}>
       {playqueue.length ? (
         <div className="content list" style={contentStyle}>

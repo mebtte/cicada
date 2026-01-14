@@ -4,11 +4,15 @@ import {
   MdOutlineSettings,
   MdOutlineMusicNote,
   MdHistory,
+  MdOutlineDownload,
 } from 'react-icons/md';
 import MenuItem from '@/components/menu_item';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CSSProperties } from 'react';
+import { CSSProperties, useContext } from 'react';
 import { t } from '@/i18n';
+import context from '../context';
+import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
+import DownloadTag from './download_tag';
 
 const itemStyle: CSSProperties = { margin: '0 10px' };
 
@@ -16,6 +20,7 @@ function Menu() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
+  const { downloadingMusicList } = useContext(context);
   return (
     <div>
       <MenuItem
@@ -55,6 +60,20 @@ function Menu() {
         label={t('setting')}
         icon={<MdOutlineSettings />}
       />
+      {ENABLE_FILE_SYSTEM && downloadingMusicList.length ? (
+        <MenuItem
+          style={itemStyle}
+          active={
+            pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.DOWNLOADING_MUSIC}`
+          }
+          onClick={() =>
+            navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.DOWNLOADING_MUSIC}`)
+          }
+          label={t('download')}
+          icon={<MdOutlineDownload />}
+          suffix={<DownloadTag />}
+        />
+      ) : null}
     </div>
   );
 }

@@ -73,7 +73,7 @@ export const ZIndex = {
   POPUP: UtilZIndex.PAGINATION - 2,
   DIALOG: UtilZIndex.PAGINATION - 2,
 
-  STOP_TIMER: UtilZIndex.PAGINATION - 1,
+  FLOATING: UtilZIndex.PAGINATION - 1,
 };
 
 export enum SearchTab {
@@ -90,4 +90,18 @@ export interface StopTimer {
 export interface StopTimerPosition {
   direction: 'left' | 'right';
   top: number;
+}
+
+export enum DownloadStatus {
+  WAITING,
+  DOWNLOADING,
+  FAILED,
+  SUCCESSFUL,
+}
+
+export interface DownloadingMusic {
+  id: string;
+  music: Music;
+  directoryHandle: FileSystemDirectoryHandle;
+  status: DownloadStatus;
 }
