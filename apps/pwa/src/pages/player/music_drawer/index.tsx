@@ -4,10 +4,12 @@ import MusicDrawer from './music_drawer';
 
 function Wrapper() {
   const { zIndex, open, onClose, id } = useOpen();
-  if (!id) {
-    return null;
+  if (id) {
+    return (
+      <MusicDrawer open={open} onClose={onClose} id={id} zIndex={zIndex} />
+    );
   }
-  return <MusicDrawer open={open} onClose={onClose} id={id} zIndex={zIndex} />;
+  return null;
 }
 
 export default memo(Wrapper);

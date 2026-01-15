@@ -12,7 +12,7 @@ import Route from './route';
 import useMusicbillList from './use_musicbill_list';
 import usePlaylist from './use_playlist';
 import usePlayqueue from './use_playqueue';
-import Context from './context';
+import context from './context';
 import useAudio from './use_audio';
 import useMediaSession from './use_media_session';
 import MusicDrawer from './music_drawer';
@@ -35,6 +35,7 @@ import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
 import useStopTimer from './use_stop_timer';
 import StopTimer from './stop_timer';
+import useDownload from './use_download';
 
 const Style = styled(PageContainer)`
   display: flex;
@@ -89,6 +90,7 @@ function Wrapper() {
     [queueMusic],
   );
 
+  const downloadingMusicList = useDownload();
   const contextValue = useMemo(
     () => ({
       getMusicbillListStatus,
@@ -107,6 +109,8 @@ function Wrapper() {
       lyricPanelOpen,
 
       stopTimer,
+
+      downloadingMusicList,
     }),
     [
       audioBufferedPercent,
@@ -120,10 +124,11 @@ function Wrapper() {
       playlist,
       playqueue,
       stopTimer,
+      downloadingMusicList,
     ],
   );
   return (
-    <Context.Provider value={contextValue}>
+    <context.Provider value={contextValue}>
       <Style>
         <NetworkStatus />
         <div className="container">
@@ -153,7 +158,7 @@ function Wrapper() {
       {/* fixed z-index */}
       <ProfileEditPopup />
       <TwoFADialog />
-    </Context.Provider>
+    </context.Provider>
   );
 }
 

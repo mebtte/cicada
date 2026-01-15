@@ -50,6 +50,7 @@ function Empty({
         src={emptyImage}
         alt="empty"
         crossOrigin="anonymous"
+        draggable={false}
       />
       <div className="description">{description}</div>
     </Style>

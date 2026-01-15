@@ -79,12 +79,12 @@ export function openCreateSingerDialog(callback: (id: string) => void) {
   });
 }
 
-export const filterMusic = (
+export function filterMusic(
   music: Omit<Music, 'singers'> & {
     singers: SingerWithAliases[];
   },
   keyword: string,
-) => {
+) {
   if (keyword) {
     const lowerCaseKeyword = keyword.toLowerCase();
     return (
@@ -100,12 +100,31 @@ export const filterMusic = (
     );
   }
   return true;
-};
+}
 
-export const formatSecond = (s: number) => {
+export function formatSecond(s: number) {
   const minute = Math.floor(s / 60);
   const second = Math.floor(s % 60);
   return `${minute < 10 ? '0' : ''}${minute}:${
     second < 10 ? '0' : ''
   }${second}`;
-};
+}
+
+export async function downloadMusicListByFileSystem(musicList: Music[]) {
+  try {
+    const directoryHandle = await window.showDirectoryPicker({
+      mode: 'readwrite',
+      startIn: 'downloads',
+    });
+    e.emit(EventType.DOWNLOAD_MUSIC_LIST, {
+      musicList,
+      directoryHandle,
+    });
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      return;
+    }
+    logger.error(error, '无法选择保存目录');
+    notice.error(error.message);
+  }
+}

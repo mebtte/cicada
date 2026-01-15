@@ -1,4 +1,5 @@
 import sanitize from 'sanitize-filename';
+import { t } from '../../apps/pwa/src/i18n';
 
 function formatMusicFilename({
   name,
@@ -13,11 +14,11 @@ function formatMusicFilename({
     `${
       // eslint-disable-next-line no-nested-ternary
       singerNames.length === 0
-        ? '未知歌手'
+        ? t('unknown_singer')
         : singerNames.length > 3
-        ? '群星'
+        ? t('multiple_singers')
         : singerNames.join(',')
-    } - ${name}${ext}`,
+    } - ${name}.${ext}`,
   );
 }
 

@@ -4,12 +4,12 @@ import { ROOT_PATH } from '@/constants/route';
 import { ComponentType } from 'react';
 import { Query } from '@/constants';
 
-function withLogin<Props = {}>(Component: ComponentType<Props>) {
+function withLogin<Props>(Component: ComponentType<Props>) {
   return function ComponentWithUser(props: Props) {
     const user = useUser();
     const { pathname, search } = useLocation();
     return user ? (
-      // @ts-expect-error
+      // @ts-expect-error: known issue
       <Component {...props} />
     ) : (
       <Navigate

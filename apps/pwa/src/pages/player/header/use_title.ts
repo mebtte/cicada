@@ -40,6 +40,10 @@ export default () => {
       title = t('music_play_record_short');
       break;
     }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.DOWNLOADING_MUSIC: {
+      title = t('download');
+      break;
+    }
     default: {
       title = t('cicada');
     }
