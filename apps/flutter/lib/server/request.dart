@@ -1,6 +1,7 @@
 import '../constants/index.dart';
 import '../states/server.dart';
 import 'package:dio/dio.dart';
+import './server_exception.dart';
 
 final dio = Dio();
 
@@ -28,7 +29,10 @@ Future<dynamic> handleResponse(Response<dynamic> response) async {
   }
   final responseData = ResponseWrapper.fromJson(response.data);
   if (responseData.code != 'success') {
-    throw Exception("The server responsed with code \"${responseData.code}\"");
+    throw ServerException(
+      code: responseData.code,
+      message: response.data['message'] ?? responseData.code,
+    );
   }
   return responseData.data;
 }
