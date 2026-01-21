@@ -10,7 +10,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final musicbillList = context.watch<MusicbillState>().musicbillList;
+    final musicbillState = context.watch<MusicbillState>();
     final currentUser = context.watch<ServerState>().currentUser;
     final currentServer = context.watch<ServerState>().currentServer;
 
@@ -19,7 +19,10 @@ class Home extends StatelessWidget {
         child: Column(
           children: [
             UserInfoCard(user: currentUser, server: currentServer),
-            MusicbillList(musicbillList: musicbillList),
+            MusicbillList(
+              musicbillList: musicbillState.musicbillList,
+              isLoading: musicbillState.loading,
+            ),
           ],
         ),
       ),
