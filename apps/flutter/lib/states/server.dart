@@ -1,5 +1,6 @@
 import '../extensions/list.dart';
 import '../utils/preference.dart';
+import '../utils/prefix_server_origin.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
@@ -22,7 +23,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) => User(
     token: json['token'],
-    avatar: json['avatar'],
+    avatar: prefixServerOrigin(json['avatar']),
     id: json['id'],
     twoFAEnabled: json['twoFAEnabled'],
     username: json['username'],

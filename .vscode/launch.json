@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug server",
+      "name": "Server",
       "request": "launch",
       "type": "node",
       "runtimeArgs": [
@@ -16,6 +16,15 @@
       "env": {
         "TS_NODE_PROJECT": "${workspaceFolder}/apps/cli/tsconfig.json"
       }
+    },
+    {
+      "name": "Flutter - macOS",
+      "request": "launch",
+      "type": "dart",
+      "program": "${workspaceFolder}/apps/flutter/lib/main.dart",
+      "cwd": "${workspaceFolder}/apps/flutter",
+      "deviceId": "macos",
+      "flutterMode": "debug"
     }
   ]
 }

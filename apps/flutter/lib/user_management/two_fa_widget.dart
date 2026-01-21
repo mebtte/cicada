@@ -7,7 +7,11 @@ class TwoFAWidget extends StatefulWidget {
   final String username;
   final String password;
 
-  const TwoFAWidget({required this.username, required this.password});
+  const TwoFAWidget({
+    super.key,
+    required this.username,
+    required this.password,
+  });
 
   @override
   State<TwoFAWidget> createState() => _TwoFAWidgetState();

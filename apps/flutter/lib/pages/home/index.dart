@@ -1,4 +1,7 @@
 import '../../states/musicbill.dart';
+import '../../states/server.dart';
+import './user_info_card.dart';
+import './musicbill_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,28 +11,14 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final musicbillList = context.watch<MusicbillState>().musicbillList;
+    final currentUser = context.watch<ServerState>().currentUser;
+    final currentServer = context.watch<ServerState>().currentServer;
+
     return Scaffold(
-      appBar: AppBar(title: Text("My Musicbill")),
       body: Column(
         children: [
-          if (musicbillList.isNotEmpty)
-            Expanded(
-              child: ListView.builder(
-                itemCount: musicbillList.length,
-                itemBuilder: (context, index) {
-                  final musicbill = musicbillList[index];
-                  return ListTile(
-                    leading: const Icon(Icons.list),
-                    title: Text(musicbill.name),
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      "/musicbill",
-                      arguments: {"id": musicbill.id},
-                    ),
-                  );
-                },
-              ),
-            ),
+          UserInfoCard(user: currentUser, server: currentServer),
+          MusicbillList(musicbillList: musicbillList),
         ],
       ),
     );
