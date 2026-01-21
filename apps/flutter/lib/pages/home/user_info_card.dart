@@ -20,14 +20,19 @@ class UserInfoCard extends StatelessWidget {
       child: Card(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              _buildAvatar(context),
-              const SizedBox(width: 20),
-              _buildUserDetails(context),
-            ],
+        child: InkWell(
+          onTap: () => Navigator.pushNamed(context, '/profile'),
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                _buildAvatar(context),
+                const SizedBox(width: 20),
+                _buildUserDetails(context),
+                const Icon(Icons.chevron_right, color: Colors.grey),
+              ],
+            ),
           ),
         ),
       ),

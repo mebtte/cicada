@@ -12,6 +12,7 @@ import './states/musicbill.dart' as musicbill_state;
 import './user_management/index.dart';
 import './states/server.dart';
 import './pages/musicbill/index.dart' as musicbill_page;
+import './pages/profile/index.dart';
 
 class AppContent extends StatefulWidget {
   const AppContent({super.key});
@@ -56,6 +57,12 @@ class _AppContentState extends State<AppContent> {
                         return MaterialPageRoute(
                           builder: (_) =>
                               musicbill_page.Musicbill(id: args['id']),
+                        );
+                      }
+                    case '/profile':
+                      {
+                        return MaterialPageRoute(
+                          builder: (_) => const ProfilePage(),
                         );
                       }
                     default:
