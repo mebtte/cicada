@@ -14,12 +14,17 @@ class PlayController extends StatelessWidget {
     final cover = music.cover;
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+      margin: EdgeInsets.fromLTRB(
+        6,
+        6,
+        6,
+        6 + MediaQuery.of(context).padding.bottom,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 16,
             offset: Offset(0, -4),
             spreadRadius: 0,
@@ -32,12 +37,12 @@ class PlayController extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             height: 54,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.95),
+              color: Colors.white.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 1,
               ),
             ),
@@ -115,10 +120,10 @@ class PlayController extends StatelessWidget {
   /// 构建默认封面
   Widget _buildDefaultCover(BuildContext context) {
     return Container(
-      width: 46,
-      height: 46,
+      width: 42,
+      height: 42,
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.1),
+        color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Icon(

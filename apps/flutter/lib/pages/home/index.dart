@@ -15,16 +15,14 @@ class Home extends StatelessWidget {
     final currentServer = context.watch<ServerState>().currentServer;
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            UserInfoCard(user: currentUser, server: currentServer),
-            MusicbillList(
-              musicbillList: musicbillState.musicbillList,
-              isLoading: musicbillState.loading,
-            ),
-          ],
-        ),
+      body: Column(
+        children: [
+          UserInfoCard(user: currentUser, server: currentServer),
+          MusicbillList(
+            musicbillList: musicbillState.musicbillList,
+            isLoading: musicbillState.loading,
+          ),
+        ],
       ),
     );
   }

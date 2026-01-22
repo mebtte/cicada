@@ -27,17 +27,21 @@ class MusicbillList extends StatelessWidget {
           else if (musicbillList.isEmpty)
             _buildEmptyState(context)
           else
-            _buildList(),
+            _buildList(context),
         ],
       ),
     );
   }
 
   /// 构建列表
-  Widget _buildList() {
+  Widget _buildList(BuildContext context) {
     return Expanded(
       child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: MediaQuery.of(context).padding.bottom,
+        ),
         itemCount: musicbillList.length + 1,
         itemBuilder: (context, index) {
           if (index == musicbillList.length) {

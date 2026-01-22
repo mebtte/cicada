@@ -15,59 +15,121 @@ class UserInfoCard extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: InkWell(
-          onTap: () => Navigator.pushNamed(context, '/profile'),
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                _buildAvatar(context),
-                const SizedBox(width: 20),
-                _buildUserDetails(context),
-                const Icon(Icons.chevron_right, color: Colors.grey),
-              ],
+    return AspectRatio(
+      aspectRatio: 1.6,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
             ),
-          ),
+          ],
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: Stack(
+          children: [
+            // 背景头像（从右侧逐渐显现）
+            Positioned.fill(child: _buildBackgroundAvatar(context)),
+            // 渐变遮罩（从上到下，顶部透明到底部不透明）
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.0),
+                      Colors.black.withValues(alpha: 0.3),
+                      Colors.black.withValues(alpha: 0.6),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
+                ),
+              ),
+            ),
+            // 内容层
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: _buildUserDetails(context),
+              ),
+            ),
+            // 交互层 (水波纹)
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => Navigator.pushNamed(context, '/profile'),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  /// 构建用户头像
-  Widget _buildAvatar(BuildContext context) {
-    return CircleAvatar(
-      radius: 40,
-      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-      backgroundImage: user!.avatar != null && user!.avatar!.isNotEmpty
-          ? NetworkImage(user!.avatar!)
-          : null,
-      child: user!.avatar == null || user!.avatar!.isEmpty
-          ? Icon(Icons.person, size: 40, color: Theme.of(context).primaryColor)
-          : null,
+  /// 构建背景头像
+  Widget _buildBackgroundAvatar(BuildContext context) {
+    if (user!.avatar != null && user!.avatar!.isNotEmpty) {
+      return Image.network(
+        user!.avatar!,
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildDefaultBackground(context);
+        },
+      );
+    }
+    return _buildDefaultBackground(context);
+  }
+
+  /// 构建默认背景
+  Widget _buildDefaultBackground(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(context).primaryColor.withValues(alpha: 0.3),
+            Theme.of(context).primaryColor.withValues(alpha: 0.1),
+          ],
+        ),
+      ),
+      child: Icon(
+        Icons.person_rounded,
+        size: 60,
+        color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
+      ),
     );
   }
 
   /// 构建用户详细信息
   Widget _buildUserDetails(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildNickname(context),
-          const SizedBox(height: 4),
-          _buildUsername(context),
-          if (server != null) ...[
-            const SizedBox(height: 8),
-            _buildServerInfo(context),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildNickname(context),
+        const SizedBox(height: 2),
+        _buildUsername(context),
+        if (server != null) ...[
+          const SizedBox(height: 6),
+          _buildServerInfo(context),
         ],
-      ),
+      ],
     );
   }
 
@@ -75,9 +137,14 @@ class UserInfoCard extends StatelessWidget {
   Widget _buildNickname(BuildContext context) {
     return Text(
       user!.nickname,
-      style: Theme.of(
-        context,
-      ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+      style: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: Colors.white,
+        shadows: [
+          Shadow(color: Colors.black54, blurRadius: 12, offset: Offset(0, 2)),
+        ],
+      ),
       overflow: TextOverflow.ellipsis,
     );
   }
@@ -86,9 +153,13 @@ class UserInfoCard extends StatelessWidget {
   Widget _buildUsername(BuildContext context) {
     return Text(
       '@${user!.username}',
-      style: Theme.of(
-        context,
-      ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+      style: const TextStyle(
+        fontSize: 14,
+        color: Colors.white,
+        shadows: [
+          Shadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 1)),
+        ],
+      ),
       overflow: TextOverflow.ellipsis,
     );
   }
@@ -97,14 +168,22 @@ class UserInfoCard extends StatelessWidget {
   Widget _buildServerInfo(BuildContext context) {
     return Row(
       children: [
-        Icon(Icons.cloud, size: 16, color: Colors.grey[500]),
-        const SizedBox(width: 4),
+        const Icon(Icons.cloud_outlined, size: 14, color: Colors.white),
+        const SizedBox(width: 6),
         Expanded(
           child: Text(
             server!.hostname,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(color: Colors.grey[500]),
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.white,
+              shadows: [
+                Shadow(
+                  color: Colors.black45,
+                  blurRadius: 8,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ),

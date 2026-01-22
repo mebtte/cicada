@@ -43,7 +43,9 @@ class ProfilePage extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 50,
-            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+            backgroundColor: Theme.of(
+              context,
+            ).primaryColor.withValues(alpha: 0.1),
             backgroundImage: user.avatar != null && user.avatar!.isNotEmpty
                 ? NetworkImage(user.avatar!)
                 : null,
