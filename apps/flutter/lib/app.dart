@@ -13,6 +13,7 @@ import './user_management/index.dart';
 import './states/server.dart';
 import './pages/musicbill/index.dart' as musicbill_page;
 import './pages/profile/index.dart';
+import './theme.dart';
 
 class AppContent extends StatefulWidget {
   const AppContent({super.key});
@@ -22,6 +23,7 @@ class AppContent extends StatefulWidget {
 }
 
 class _AppContentState extends State<AppContent> {
+  // ... initState and reassemble ...
   @override
   void initState() {
     super.initState();
@@ -44,36 +46,41 @@ class _AppContentState extends State<AppContent> {
         ChangeNotifierProvider.value(value: audioState),
       ],
       child: MaterialApp(
-        home: Column(
+        theme: appTheme,
+        home: Stack(
           children: [
-            Expanded(
-              child: Navigator(
-                key: GlobalKey<NavigatorState>(),
-                onGenerateRoute: (setting) {
-                  switch (setting.name) {
-                    case '/musicbill':
-                      {
-                        final args = setting.arguments as Map<String, dynamic>;
-                        return MaterialPageRoute(
-                          builder: (_) =>
-                              musicbill_page.Musicbill(id: args['id']),
-                        );
-                      }
-                    case '/profile':
-                      {
-                        return MaterialPageRoute(
-                          builder: (_) => const ProfilePage(),
-                        );
-                      }
-                    default:
-                      {
-                        return MaterialPageRoute(builder: (_) => Home());
-                      }
-                  }
-                },
-              ),
+            // ... (Navigator and PlayerController)
+            Navigator(
+              key: GlobalKey<NavigatorState>(),
+              onGenerateRoute: (setting) {
+                switch (setting.name) {
+                  case '/musicbill':
+                    {
+                      final args = setting.arguments as Map<String, dynamic>;
+                      return MaterialPageRoute(
+                        builder: (_) =>
+                            musicbill_page.Musicbill(id: args['id']),
+                      );
+                    }
+                  case '/profile':
+                    {
+                      return MaterialPageRoute(
+                        builder: (_) => const ProfilePage(),
+                      );
+                    }
+                  default:
+                    {
+                      return MaterialPageRoute(builder: (_) => Home());
+                    }
+                }
+              },
             ),
-            PlayerControllerContainer(),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: PlayerControllerContainer(),
+            ),
           ],
         ),
       ),
@@ -88,6 +95,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     final serverState = context.watch<ServerState>();
     return MaterialApp(
+      theme: appTheme,
       home: serverState.currentServer == null
           ? ServerManagement()
           : serverState.currentUser == null

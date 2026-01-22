@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../states/server.dart';
+import '../../widgets/player_bottom_spacer.dart';
 
 /// 用户个人资料页面
 /// 显示用户信息和提供退出登录功能
@@ -28,6 +29,7 @@ class ProfilePage extends StatelessWidget {
           _buildUserInfo(context, currentUser, currentServer),
           const Divider(),
           _buildActions(context),
+          const PlayerBottomSpacer(),
         ],
       ),
     );

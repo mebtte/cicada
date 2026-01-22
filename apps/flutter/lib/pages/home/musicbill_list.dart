@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../states/musicbill.dart';
 import './musicbill_card.dart';
 import './musicbill_list_header.dart';
+import '../../widgets/player_bottom_spacer.dart';
 
 /// 音乐清单列表组件
 /// 显示用户的所有音乐清单，支持空状态展示和加载状态
@@ -37,8 +38,11 @@ class MusicbillList extends StatelessWidget {
     return Expanded(
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: musicbillList.length,
+        itemCount: musicbillList.length + 1,
         itemBuilder: (context, index) {
+          if (index == musicbillList.length) {
+            return const PlayerBottomSpacer();
+          }
           final musicbill = musicbillList[index];
           return MusicbillCard(musicbill: musicbill);
         },

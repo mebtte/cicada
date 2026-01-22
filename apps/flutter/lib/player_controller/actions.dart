@@ -13,16 +13,18 @@ class Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final playing = context.watch<AudioState>().playing;
-    final spacing = SizedBox(width: 10);
+    final spacing = SizedBox(width: 2);
     return Row(
       children: [
-        spacing,
         IconButton(
           onPressed: () {
             final audioHandler = GetIt.instance.get<MyAudioHandler>();
             playing ? audioHandler.pause() : audioHandler.play();
           },
           icon: Icon(playing ? Icons.pause : Icons.play_arrow),
+          iconSize: 20,
+          padding: EdgeInsets.zero,
+          constraints: BoxConstraints(minWidth: 32, minHeight: 32),
         ),
         spacing,
         IconButton(
@@ -30,6 +32,9 @@ class Actions extends StatelessWidget {
             playqueueState.next();
           },
           icon: Icon(Icons.skip_next),
+          iconSize: 20,
+          padding: EdgeInsets.zero,
+          constraints: BoxConstraints(minWidth: 32, minHeight: 32),
         ),
         spacing,
         IconButton(
@@ -82,8 +87,10 @@ class Actions extends StatelessWidget {
             );
           },
           icon: Icon(Icons.list_outlined),
+          iconSize: 20,
+          padding: EdgeInsets.zero,
+          constraints: BoxConstraints(minWidth: 32, minHeight: 32),
         ),
-        spacing,
       ],
     );
   }

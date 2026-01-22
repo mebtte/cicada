@@ -4,6 +4,7 @@ import '../../utils/get_musicbill_by_id.dart';
 import '../../states/musicbill.dart' as musicbill_state;
 import '../../event_bus.dart';
 import './actions.dart' as actions;
+import '../../widgets/player_bottom_spacer.dart';
 
 const uuid = Uuid();
 
@@ -49,8 +50,11 @@ class _MusicbillState extends State<Musicbill> {
           else
             Expanded(
               child: ListView.builder(
-                itemCount: musicbill.musicList.length,
+                itemCount: musicbill.musicList.length + 1,
                 itemBuilder: (context, index) {
+                  if (index == musicbill.musicList.length) {
+                    return const PlayerBottomSpacer();
+                  }
                   final music = musicbill.musicList[index];
                   return ListTile(
                     leading: const Icon(Icons.music_note_outlined),
