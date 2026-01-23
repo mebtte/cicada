@@ -20,6 +20,8 @@ class PlayController extends StatelessWidget {
     final music = playqueueMusic.music;
     final cover = music.cover;
 
+    const borderRadius = kContentHeight / 2;
+
     return Container(
       margin: EdgeInsets.fromLTRB(
         kMargin,
@@ -28,7 +30,7 @@ class PlayController extends StatelessWidget {
         kMargin + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.15),
@@ -39,7 +41,7 @@ class PlayController extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(borderRadius),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
@@ -47,7 +49,7 @@ class PlayController extends StatelessWidget {
             padding: const EdgeInsets.all(kMargin),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.95),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(
                 color: Colors.white.withValues(alpha: 0.2),
                 width: 1,
@@ -57,8 +59,7 @@ class PlayController extends StatelessWidget {
               children: [
                 // 封面
                 if (cover != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
+                  ClipOval(
                     child: AspectRatio(
                       aspectRatio: 1,
                       child: Image.network(
@@ -131,7 +132,7 @@ class PlayController extends StatelessWidget {
       height: 42,
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6),
+        shape: BoxShape.circle,
       ),
       child: Icon(
         Icons.music_note,

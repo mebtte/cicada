@@ -16,12 +16,10 @@ class UserInfoCard extends StatelessWidget {
     }
 
     return AspectRatio(
-      aspectRatio: 1.6,
+      aspectRatio: 1.0,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -35,7 +33,26 @@ class UserInfoCard extends StatelessWidget {
           children: [
             // 背景头像（从右侧逐渐显现）
             Positioned.fill(child: _buildBackgroundAvatar(context)),
-            // 渐变遮罩（从上到下，顶部透明到底部不透明）
+            // 顶部渐变遮罩
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 120,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.5),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // 底部渐变遮罩（从上到下，融入背景）
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
@@ -43,11 +60,12 @@ class UserInfoCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withValues(alpha: 0.0),
-                      Colors.black.withValues(alpha: 0.3),
-                      Colors.black.withValues(alpha: 0.6),
+                      Theme.of(
+                        context,
+                      ).scaffoldBackgroundColor.withValues(alpha: 0.0),
+                      Theme.of(context).scaffoldBackgroundColor,
                     ],
-                    stops: const [0.0, 0.5, 1.0],
+                    stops: const [0.5, 1.0],
                   ),
                 ),
               ),
@@ -125,10 +143,6 @@ class UserInfoCard extends StatelessWidget {
         _buildNickname(context),
         const SizedBox(height: 2),
         _buildUsername(context),
-        if (server != null) ...[
-          const SizedBox(height: 6),
-          _buildServerInfo(context),
-        ],
       ],
     );
   }
@@ -138,12 +152,10 @@ class UserInfoCard extends StatelessWidget {
     return Text(
       user!.nickname,
       style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: Colors.white,
-        shadows: [
-          Shadow(color: Colors.black54, blurRadius: 12, offset: Offset(0, 2)),
-        ],
+        fontSize: 24,
+        fontWeight: FontWeight.w800,
+        color: Colors.black87,
+        height: 1.2,
       ),
       overflow: TextOverflow.ellipsis,
     );
@@ -152,42 +164,13 @@ class UserInfoCard extends StatelessWidget {
   /// 构建用户名
   Widget _buildUsername(BuildContext context) {
     return Text(
-      '@${user!.username}',
-      style: const TextStyle(
+      '${user!.username}@${server!.hostname}',
+      style: TextStyle(
         fontSize: 14,
-        color: Colors.white,
-        shadows: [
-          Shadow(color: Colors.black54, blurRadius: 10, offset: Offset(0, 1)),
-        ],
+        color: Colors.black.withValues(alpha: 0.6),
+        fontWeight: FontWeight.w600,
       ),
       overflow: TextOverflow.ellipsis,
-    );
-  }
-
-  /// 构建服务器信息
-  Widget _buildServerInfo(BuildContext context) {
-    return Row(
-      children: [
-        const Icon(Icons.cloud_outlined, size: 14, color: Colors.white),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            server!.hostname,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Colors.black45,
-                  blurRadius: 8,
-                  offset: Offset(0, 1),
-                ),
-              ],
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
     );
   }
 }

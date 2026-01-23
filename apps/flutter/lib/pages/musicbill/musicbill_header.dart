@@ -11,9 +11,8 @@ class MusicbillHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 1.6,
+      aspectRatio: 1.0,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -29,7 +28,26 @@ class MusicbillHeader extends StatelessWidget {
           children: [
             // 背景封面
             Positioned.fill(child: _buildBackgroundCover(context)),
-            // 渐变遮罩
+            // 顶部渐变遮罩
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 120,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.5),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // 底部渐变遮罩 (融入背景)
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
@@ -37,11 +55,12 @@ class MusicbillHeader extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withValues(alpha: 0.0),
-                      Colors.black.withValues(alpha: 0.3),
-                      Colors.black.withValues(alpha: 0.6),
+                      Theme.of(
+                        context,
+                      ).scaffoldBackgroundColor.withValues(alpha: 0.0),
+                      Theme.of(context).scaffoldBackgroundColor,
                     ],
-                    stops: const [0.0, 0.5, 1.0],
+                    stops: const [0.5, 1.0],
                   ),
                 ),
               ),
@@ -119,12 +138,10 @@ class MusicbillHeader extends StatelessWidget {
     return Text(
       musicbill.name,
       style: const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: Colors.white,
-        shadows: [
-          Shadow(color: Colors.black54, blurRadius: 12, offset: Offset(0, 2)),
-        ],
+        fontSize: 24, // Slightly larger for better impact
+        fontWeight: FontWeight.w800,
+        color: Colors.black87, // Changed to dark
+        height: 1.2,
       ),
       overflow: TextOverflow.ellipsis,
       maxLines: 2,
@@ -135,20 +152,18 @@ class MusicbillHeader extends StatelessWidget {
   Widget _buildMusicCount(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.music_note_outlined, size: 14, color: Colors.white),
+        Icon(
+          Icons.music_note_rounded,
+          size: 16,
+          color: Theme.of(context).primaryColor,
+        ),
         const SizedBox(width: 6),
         Text(
           '${musicbill.musicList.length} tracks',
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.white,
-            shadows: [
-              Shadow(
-                color: Colors.black45,
-                blurRadius: 8,
-                offset: Offset(0, 1),
-              ),
-            ],
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.black.withValues(alpha: 0.6), // Darker grey
           ),
         ),
       ],
