@@ -1,12 +1,18 @@
+import 'dart:async';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import '../../utils/get_musicbill_by_id.dart';
 import '../../states/musicbill.dart' as musicbill_state;
-import '../../event_bus.dart';
-import './actions.dart' as actions;
-import '../../widgets/player_bottom_spacer.dart';
+import '../../states/route.dart';
+import './bottom_toolbar.dart';
+import './musicbill_header.dart';
+import './status_views.dart';
+import './music_list_content.dart';
 
 const uuid = Uuid();
+
+// 底部工具栏的高度：padding (8*2) + button height (36) = 52
+const double _bottomToolbarHeight = 52.0;
 
 class Musicbill extends StatefulWidget {
   final String id;
@@ -21,6 +27,12 @@ class _MusicbillState extends State<Musicbill> {
   @override
   void initState() {
     super.initState();
+
+    // 延迟设置路由，避免在 build 期间调用 setState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      routeState.setRoute('/musicbill');
+    });
+
     final musicbill = musicbill_state.musicbillState.musicbillList.firstWhere(
       (m) => m.id == widget.id,
     );
@@ -37,35 +49,39 @@ class _MusicbillState extends State<Musicbill> {
   }
 
   @override
+  void dispose() {
+    // 延迟重置路由，避免在 build 期间调用 setState
+    scheduleMicrotask(() {
+      routeState.setRoute('/');
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final musicbill = useMusicbillById(context, widget.id);
     final empty = musicbill.musicList.isEmpty;
+
     return Scaffold(
-      appBar: AppBar(title: Text(musicbill.name)),
       body: Column(
         children: [
-          actions.Actions(musicbill: musicbill),
-          if (empty)
-            Expanded(child: Center(child: Text("No Music")))
+          MusicbillHeader(musicbill: musicbill),
+          if (musicbill.status == musicbill_state.MusicbillStatus.LOADING &&
+              empty)
+            const Expanded(child: MusicbillLoadingView())
+          else if (musicbill.status == musicbill_state.MusicbillStatus.FAILED &&
+              empty)
+            Expanded(child: MusicbillErrorView(musicbillId: widget.id))
+          else if (empty)
+            const Expanded(child: MusicbillEmptyView())
           else
             Expanded(
-              child: ListView.builder(
-                itemCount: musicbill.musicList.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == musicbill.musicList.length) {
-                    return const PlayerBottomSpacer();
-                  }
-                  final music = musicbill.musicList[index];
-                  return ListTile(
-                    leading: const Icon(Icons.music_note_outlined),
-                    title: Text(music.name),
-                    onTap: () {
-                      eventBus.fire(PlayMusicEvent(music: music));
-                    },
-                  );
-                },
+              child: MusicListContent(
+                musicbill: musicbill,
+                bottomToolbarHeight: _bottomToolbarHeight,
               ),
             ),
+          BottomToolbar(musicbill: musicbill),
         ],
       ),
     );

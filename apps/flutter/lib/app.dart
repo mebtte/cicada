@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import './states/playlist.dart';
 import './states/playqueue.dart';
+import './states/route.dart';
 import './pages/home/index.dart';
 import './server_management/index.dart';
 import './states/musicbill.dart' as musicbill_state;
@@ -44,6 +45,7 @@ class _AppContentState extends State<AppContent> {
         ChangeNotifierProvider.value(value: playlistState),
         ChangeNotifierProvider.value(value: playqueueState),
         ChangeNotifierProvider.value(value: audioState),
+        ChangeNotifierProvider.value(value: routeState),
       ],
       child: MaterialApp(
         theme: appTheme,
@@ -75,12 +77,7 @@ class _AppContentState extends State<AppContent> {
                 }
               },
             ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: PlayerControllerContainer(),
-            ),
+            PlayerControllerContainer(),
           ],
         ),
       ),

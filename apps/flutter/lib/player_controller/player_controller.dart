@@ -4,6 +4,13 @@ import 'package:flutter/material.dart';
 import './actions.dart' as actions;
 
 class PlayController extends StatelessWidget {
+  static const double kContentHeight = 54.0;
+  static const double kMargin = 6.0;
+
+  /// 播放器总高度（包含上下边距，但不包含 SafeArea）
+  /// 实际高度通常还需要加上 MediaQuery.of(context).padding.bottom
+  static const double kTotalHeight = kContentHeight + kMargin * 2;
+
   final PlayqueueMusic playqueueMusic;
 
   const PlayController({super.key, required this.playqueueMusic});
@@ -15,10 +22,10 @@ class PlayController extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.fromLTRB(
-        6,
-        6,
-        6,
-        6 + MediaQuery.of(context).padding.bottom,
+        kMargin,
+        kMargin,
+        kMargin,
+        kMargin + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -36,8 +43,8 @@ class PlayController extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            height: 54,
-            padding: const EdgeInsets.all(6),
+            height: kContentHeight,
+            padding: const EdgeInsets.all(kMargin),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(12),
