@@ -14,6 +14,11 @@ class PlayerControllerContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 键盘弹出时不渲染
+    if (MediaQuery.of(context).viewInsets.bottom > 0) {
+      return const SizedBox.shrink();
+    }
+
     final currentMusic = context.watch<PlayqueueState>().currentMusic;
     final currentRoute = context.watch<RouteState>().currentRoute;
 

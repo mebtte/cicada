@@ -65,7 +65,7 @@ class Home extends StatelessWidget {
                       const Icon(Icons.search, size: 20, color: Colors.black38),
                       const SizedBox(width: 12),
                       const Text(
-                        'Search music, singer, ...',
+                        'Search',
                         style: TextStyle(color: Colors.black38, fontSize: 14),
                       ),
                     ],

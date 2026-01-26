@@ -45,11 +45,16 @@ class _SearchPageState extends State<SearchPage>
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+
     // 底部工具栏 + 播放器高度 + 安全区域
+    // 键盘弹出时，播放器隐藏，不需要预留播放器高度和底部安全区域
     final bottomPadding =
         _bottomToolbarHeight +
-        PlayController.kTotalHeight +
-        MediaQuery.of(context).padding.bottom;
+        (isKeyboardOpen
+            ? 0.0
+            : (PlayController.kTotalHeight +
+                  MediaQuery.of(context).padding.bottom));
 
     return Scaffold(
       body: Stack(
