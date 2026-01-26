@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:cicada/states/playqueue.dart';
 import 'package:flutter/material.dart';
 import './actions.dart' as actions;
+import './cover.dart';
+import './info.dart';
 
 class PlayController extends StatelessWidget {
   static const double kContentHeight = 54.0;
@@ -18,8 +20,6 @@ class PlayController extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final music = playqueueMusic.music;
-    final cover = music.cover;
-
     const borderRadius = kContentHeight / 2;
 
     return Container(
@@ -58,60 +58,12 @@ class PlayController extends StatelessWidget {
             child: Row(
               children: [
                 // 封面
-                if (cover != null)
-                  ClipOval(
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.network(
-                        cover,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return _buildDefaultCover(context);
-                        },
-                      ),
-                    ),
-                  )
-                else
-                  _buildDefaultCover(context),
+                RotatingCover(coverUrl: music.cover),
 
                 const SizedBox(width: 8),
 
                 // 歌曲信息
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        music.name,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black87,
-                          height: 1.2,
-                          decoration: TextDecoration.none,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        music.singers.isEmpty
-                            ? 'Unknown singers'
-                            : music.singers.map((s) => s.name).join(', '),
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black54,
-                          height: 1.2,
-                          decoration: TextDecoration.none,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
+                Expanded(child: MusicInfo(music: music)),
 
                 const SizedBox(width: 4),
 
@@ -121,23 +73,6 @@ class PlayController extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  /// 构建默认封面
-  Widget _buildDefaultCover(BuildContext context) {
-    return Container(
-      width: 42,
-      height: 42,
-      decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        Icons.music_note,
-        color: Theme.of(context).primaryColor,
-        size: 20,
       ),
     );
   }
