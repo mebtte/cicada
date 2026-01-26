@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../states/route.dart';
 import '../../player_controller/player_controller.dart';
+import './music_tab.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -17,6 +18,8 @@ class _SearchPageState extends State<SearchPage>
 
   final List<String> _tabs = ['Music', 'Singer', 'Lyric', 'Playlist'];
   static const double _bottomToolbarHeight = 60.0;
+
+  String _searchKeyword = '';
 
   @override
   void initState() {
@@ -72,15 +75,12 @@ class _SearchPageState extends State<SearchPage>
                   padding: EdgeInsets.only(bottom: bottomPadding),
                   child: TabBarView(
                     controller: _tabController,
-                    children: _tabs.map((t) {
-                      return ListView.builder(
-                        padding: EdgeInsets.zero,
-                        itemCount: 20,
-                        itemBuilder: (context, index) {
-                          return ListTile(title: Text('Result $index for $t'));
-                        },
-                      );
-                    }).toList(),
+                    children: [
+                      MusicTab(keyword: _searchKeyword),
+                      Center(child: Text('Search Singer: $_searchKeyword')),
+                      Center(child: Text('Search Lyric: $_searchKeyword')),
+                      Center(child: Text('Search Playlist: $_searchKeyword')),
+                    ],
                   ),
                 ),
               ),
@@ -143,6 +143,11 @@ class _SearchPageState extends State<SearchPage>
                           fontSize: 16,
                         ),
                         textInputAction: TextInputAction.search,
+                        onSubmitted: (value) {
+                          setState(() {
+                            _searchKeyword = value;
+                          });
+                        },
                       ),
                     ),
                   ),
