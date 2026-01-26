@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../states/route.dart';
 import '../../player_controller/player_controller.dart';
 import './music_tab.dart';
+import './lyric_tab.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,7 +17,7 @@ class _SearchPageState extends State<SearchPage>
   late final TextEditingController _textController;
   late final TabController _tabController;
 
-  final List<String> _tabs = ['Music', 'Singer', 'Lyric', 'Playlist'];
+  final List<String> _tabs = ['Music', 'Singer', 'Lyric', 'Musicbill'];
   static const double _bottomToolbarHeight = 60.0;
 
   String _searchKeyword = '';
@@ -78,8 +79,8 @@ class _SearchPageState extends State<SearchPage>
                     children: [
                       MusicTab(keyword: _searchKeyword),
                       Center(child: Text('Search Singer: $_searchKeyword')),
-                      Center(child: Text('Search Lyric: $_searchKeyword')),
-                      Center(child: Text('Search Playlist: $_searchKeyword')),
+                      LyricTab(keyword: _searchKeyword),
+                      Center(child: Text('Search Musicbill: $_searchKeyword')),
                     ],
                   ),
                 ),
