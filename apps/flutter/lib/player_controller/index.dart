@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 
 // musicbill 页面底部工具栏的高度
 const double _musicbillBottomToolbarHeight = 52.0;
+// search 页面底部工具栏的高度
+const double _searchBottomToolbarHeight = 60.0;
 
 class PlayerControllerContainer extends StatelessWidget {
   const PlayerControllerContainer({super.key});
@@ -20,9 +22,12 @@ class PlayerControllerContainer extends StatelessWidget {
     }
 
     // 根据路由计算底部偏移量
-    final bottomOffset = currentRoute == '/musicbill'
-        ? _musicbillBottomToolbarHeight
-        : 0.0;
+    double bottomOffset = 0.0;
+    if (currentRoute == '/musicbill') {
+      bottomOffset = _musicbillBottomToolbarHeight;
+    } else if (currentRoute == '/search') {
+      bottomOffset = _searchBottomToolbarHeight;
+    }
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),

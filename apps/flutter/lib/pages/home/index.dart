@@ -1,5 +1,6 @@
 import '../../states/musicbill.dart';
 import '../../states/server.dart';
+import '../search/index.dart';
 import './user_info_card.dart';
 import './musicbill_list_header.dart';
 import './musicbill_list.dart';
@@ -34,6 +35,43 @@ class Home extends StatelessWidget {
                 server: currentServer,
               ),
               stretchModes: const [StretchMode.zoomBackground],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const SearchPage()),
+                  );
+                },
+                child: Container(
+                  height: 48,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.search, size: 20, color: Colors.black38),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Search music, singer, ...',
+                        style: TextStyle(color: Colors.black38, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 16)),
