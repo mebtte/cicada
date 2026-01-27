@@ -2,13 +2,20 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cicada/states/audio.dart';
 import 'package:just_audio/just_audio.dart';
 import './states/playqueue.dart';
+import './server/base/upload_music_play_record.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   PlayqueueMusic? lastQueueMusic;
   final player = AudioPlayer();
+  final _playTimer = Stopwatch();
 
   MyAudioHandler() {
     player.playerStateStream.listen((PlayerState state) {
+      if (state.playing) {
+        _playTimer.start();
+      } else {
+        _playTimer.stop();
+      }
       audioState.updatePlaying(state.playing);
       playbackState.add(
         PlaybackState(
@@ -63,6 +70,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> seek(Duration position) => player.seek(position);
 
   Future<void> playQueueMusic(PlayqueueMusic queueMusic) async {
+    _playTimer.reset();
     var duration = await player.setAudioSource(
       AudioSource.uri(Uri.parse(queueMusic.music.asset)),
     );
@@ -80,11 +88,35 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     mediaItem.add(item);
   }
 
+  Future<void> _uploadPlayRecord(PlayqueueMusic queueMusic) async {
+    final duration = player.duration;
+    final playedMilliseconds = _playTimer.elapsedMilliseconds;
+
+    if (duration == null || duration.inMilliseconds == 0) return;
+
+    final percent = (playedMilliseconds / duration.inMilliseconds).clamp(
+      0.0,
+      1.0,
+    );
+
+    try {
+      await uploadMusicPlayRecord(
+        musicId: queueMusic.music.id,
+        percent: percent,
+      );
+    } catch (e) {
+      print('Failed to upload play record: $e');
+    }
+  }
+
   void subscribe() {
     playqueueState.addListener(() {
       final currentQueueMusic = playqueueState.currentMusic;
       if (currentQueueMusic != null &&
           currentQueueMusic.pid != lastQueueMusic?.pid) {
+        if (lastQueueMusic != null) {
+          _uploadPlayRecord(lastQueueMusic!);
+        }
         lastQueueMusic = currentQueueMusic;
         playQueueMusic(currentQueueMusic);
       }
