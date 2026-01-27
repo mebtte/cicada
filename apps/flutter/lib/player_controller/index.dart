@@ -9,6 +9,9 @@ const double _musicbillBottomToolbarHeight = 52.0;
 // search 页面底部工具栏的高度
 const double _searchBottomToolbarHeight = 60.0;
 
+// 搜索中间页面底部工具栏高度
+const double _searchIntermediateBottomToolbarHeight = 60.0;
+
 class PlayerControllerContainer extends StatelessWidget {
   const PlayerControllerContainer({super.key});
 
@@ -32,6 +35,8 @@ class PlayerControllerContainer extends StatelessWidget {
       bottomOffset = _musicbillBottomToolbarHeight;
     } else if (currentRoute == '/search') {
       bottomOffset = _searchBottomToolbarHeight;
+    } else if (currentRoute == '/search_intermediate') {
+      bottomOffset = _searchIntermediateBottomToolbarHeight;
     }
 
     return AnimatedPositioned(

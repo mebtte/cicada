@@ -62,8 +62,6 @@ class _RotatingCoverState extends State<RotatingCover>
           stream: audioHandler.playbackState,
           builder: (context, snapshot) {
             final playbackState = snapshot.data;
-            final processingState =
-                playbackState?.processingState ?? AudioProcessingState.idle;
 
             return StreamBuilder<Duration>(
               stream: Stream.periodic(const Duration(milliseconds: 200), (_) {

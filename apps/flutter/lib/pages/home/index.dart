@@ -1,6 +1,6 @@
 import '../../states/musicbill.dart';
 import '../../states/server.dart';
-import '../search/index.dart';
+import '../search_intermediate/index.dart';
 import './user_info_card.dart';
 import './musicbill_list_header.dart';
 import './musicbill_list.dart';
@@ -43,7 +43,9 @@ class Home extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const SearchPage()),
+                    MaterialPageRoute(
+                      builder: (context) => const SearchIntermediatePage(),
+                    ),
                   );
                 },
                 child: Container(

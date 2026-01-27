@@ -17,6 +17,10 @@ class Singer {
     id: json['id'],
     name: json['name'],
     avatar: prefixServerOrigin(json['avatar']),
-    aliases: List<String>.from(json['aliases']),
+    aliases:
+        (json['aliases'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [],
   );
 }

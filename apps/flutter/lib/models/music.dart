@@ -19,10 +19,12 @@ class Music {
   factory Music.fromJson(Map<String, dynamic> json) => Music(
     id: json['id'],
     name: json['name'],
-    asset: prefixServerOrigin(json['asset'])!,
+    asset: prefixServerOrigin(json['asset']) ?? '',
     cover: prefixServerOrigin(json['cover']),
-    singers: (json['singers'] as List<dynamic>)
-        .map((json) => Singer.fromJson(json))
-        .toList(),
+    singers:
+        (json['singers'] as List<dynamic>?)
+            ?.map((json) => Singer.fromJson(json))
+            .toList() ??
+        [],
   );
 }

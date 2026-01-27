@@ -6,7 +6,9 @@ import './music_tab.dart';
 import './lyric_tab.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  final String? initialKeyword;
+
+  const SearchPage({super.key, this.initialKeyword});
 
   @override
   State<SearchPage> createState() => _SearchPageState();
@@ -25,8 +27,13 @@ class _SearchPageState extends State<SearchPage>
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController();
+    _textController = TextEditingController(text: widget.initialKeyword ?? '');
     _tabController = TabController(length: _tabs.length, vsync: this);
+
+    // 如果有初始关键词，立即执行搜索
+    if (widget.initialKeyword != null && widget.initialKeyword!.isNotEmpty) {
+      _searchKeyword = widget.initialKeyword!;
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       routeState.setRoute('/search');
@@ -38,7 +45,7 @@ class _SearchPageState extends State<SearchPage>
     _textController.dispose();
     _tabController.dispose();
     scheduleMicrotask(() {
-      routeState.setRoute('/');
+      // routeState.setRoute('/');
     });
     super.dispose();
   }
@@ -136,7 +143,11 @@ class _SearchPageState extends State<SearchPage>
                       ),
                       child: TextField(
                         controller: _textController,
-                        autofocus: true,
+                        readOnly: true,
+                        autofocus: false,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
                         decoration: const InputDecoration(
                           hintText: 'Search...',
                           border: InputBorder.none,
@@ -148,12 +159,6 @@ class _SearchPageState extends State<SearchPage>
                           color: Colors.black87,
                           fontSize: 16,
                         ),
-                        textInputAction: TextInputAction.search,
-                        onSubmitted: (value) {
-                          setState(() {
-                            _searchKeyword = value;
-                          });
-                        },
                       ),
                     ),
                   ),
