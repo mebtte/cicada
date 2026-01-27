@@ -36,7 +36,10 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: serverState)],
+      providers: [
+        ChangeNotifierProvider.value(value: serverState),
+        Provider<AudioHandler>.value(value: audioHandler),
+      ],
       child: App(),
     ),
   );

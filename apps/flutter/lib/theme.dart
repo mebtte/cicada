@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 
 final appTheme = ThemeData(
   useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: const Color.fromARGB(255, 44, 182, 125),
+  ),
+  primaryColor: const Color.fromARGB(255, 44, 182, 125),
+  tabBarTheme: const TabBarThemeData(
+    indicatorColor: Color.fromARGB(255, 44, 182, 125),
+  ),
   textTheme: const TextTheme(
     // 最大的标题 (例如页面 AppBar 标题)
     headlineLarge: TextStyle(

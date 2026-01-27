@@ -46,7 +46,10 @@ class PlayController extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
             height: kContentHeight,
-            padding: const EdgeInsets.all(kMargin),
+            padding: const EdgeInsets.symmetric(
+              horizontal: kMargin,
+              vertical: 2,
+            ),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.95),
               borderRadius: BorderRadius.circular(borderRadius),

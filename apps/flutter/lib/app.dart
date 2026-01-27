@@ -1,8 +1,9 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:cicada/audio_handler.dart';
 import 'package:cicada/player_controller/index.dart';
 import 'package:cicada/states/audio.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+
 import 'package:provider/provider.dart';
 import './states/playlist.dart';
 import './states/playqueue.dart';
@@ -34,7 +35,7 @@ class _AppContentState extends State<AppContent> {
   @override
   void reassemble() {
     super.reassemble();
-    GetIt.instance.get<MyAudioHandler>().stop();
+    context.read<AudioHandler>().stop();
   }
 
   @override
