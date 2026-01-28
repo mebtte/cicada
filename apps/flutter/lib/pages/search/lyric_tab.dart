@@ -1,6 +1,7 @@
 import 'package:cicada/event_bus.dart';
 import 'package:cicada/server/api/search_lyric.dart';
 import 'package:flutter/material.dart';
+import '../../widgets/error_view.dart';
 import 'music_with_lyric_list_item.dart';
 
 class LyricTab extends StatefulWidget {
@@ -74,7 +75,7 @@ class _LyricTabState extends State<LyricTab> {
       return const Center(child: CircularProgressIndicator());
     }
     if (_error != null) {
-      return Center(child: Text('Error: $_error'));
+      return ErrorView(errorMessage: _error, onRetry: _search);
     }
     if (_results.isEmpty) {
       if (widget.keyword.isEmpty) {

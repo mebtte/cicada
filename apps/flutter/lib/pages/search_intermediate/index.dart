@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../server/api/get_exploration.dart';
 import '../search/index.dart';
 import '../../states/route.dart';
+import '../../widgets/error_view.dart';
 import './exploration_grid.dart';
 import './search_toolbar.dart';
 
@@ -106,16 +107,7 @@ class _SearchIntermediatePageState extends State<SearchIntermediatePage> {
     }
 
     if (_errorMessage != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('加载失败: $_errorMessage'),
-            const SizedBox(height: 16),
-            ElevatedButton(onPressed: _loadData, child: const Text('重试')),
-          ],
-        ),
-      );
+      return ErrorView(errorMessage: _errorMessage, onRetry: _loadData);
     }
 
     if (_explorationData == null) {

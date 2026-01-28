@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../states/musicbill.dart';
 import './musicbill_card.dart';
 
+import '../../widgets/error_view.dart';
 import '../../widgets/player_bottom_spacer.dart';
 
 /// 音乐清单列表组件
@@ -9,11 +10,15 @@ import '../../widgets/player_bottom_spacer.dart';
 class MusicbillList extends StatelessWidget {
   final List<Musicbill> musicbillList;
   final bool isLoading;
+  final Exception? exception;
+  final VoidCallback? onRetry;
 
   const MusicbillList({
     super.key,
     required this.musicbillList,
     this.isLoading = false,
+    this.exception,
+    this.onRetry,
   });
 
   @override
@@ -21,6 +26,12 @@ class MusicbillList extends StatelessWidget {
     if (isLoading) {
       return const SliverFillRemaining(
         child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (exception != null && onRetry != null) {
+      return SliverFillRemaining(
+        child: ErrorView(errorMessage: exception.toString(), onRetry: onRetry!),
       );
     }
 

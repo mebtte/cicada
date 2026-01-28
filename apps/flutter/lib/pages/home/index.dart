@@ -85,6 +85,8 @@ class Home extends StatelessWidget {
           MusicbillList(
             musicbillList: musicbillState.musicbillList,
             isLoading: musicbillState.loading,
+            exception: musicbillState.exception,
+            onRetry: () => musicbillState.reloadMusicbillList(silence: false),
           ),
         ],
       ),
