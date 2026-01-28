@@ -1,13 +1,9 @@
 import 'package:audio_service/audio_service.dart';
 
 import 'package:cicada/player_controller/index.dart';
-import 'package:cicada/states/audio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import './states/playlist.dart';
-import './states/playqueue.dart';
-import './states/route.dart';
 import './pages/home/index.dart';
 import './server_management/index.dart';
 import './states/musicbill.dart' as musicbill_state;
@@ -40,47 +36,37 @@ class _AppContentState extends State<AppContent> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: musicbill_state.musicbillState),
-        ChangeNotifierProvider.value(value: playlistState),
-        ChangeNotifierProvider.value(value: playqueueState),
-        ChangeNotifierProvider.value(value: audioState),
-        ChangeNotifierProvider.value(value: routeState),
-      ],
-      child: MaterialApp(
-        theme: appTheme,
-        home: Stack(
-          children: [
-            // ... (Navigator and PlayerController)
-            Navigator(
-              key: GlobalKey<NavigatorState>(),
-              onGenerateRoute: (setting) {
-                switch (setting.name) {
-                  case '/musicbill':
-                    {
-                      final args = setting.arguments as Map<String, dynamic>;
-                      return MaterialPageRoute(
-                        builder: (_) =>
-                            musicbill_page.Musicbill(id: args['id']),
-                      );
-                    }
-                  case '/profile':
-                    {
-                      return MaterialPageRoute(
-                        builder: (_) => const ProfilePage(),
-                      );
-                    }
-                  default:
-                    {
-                      return MaterialPageRoute(builder: (_) => Home());
-                    }
-                }
-              },
-            ),
-            PlayerControllerContainer(),
-          ],
-        ),
+    return MaterialApp(
+      theme: appTheme,
+      home: Stack(
+        children: [
+          // ... (Navigator and PlayerController)
+          Navigator(
+            key: GlobalKey<NavigatorState>(),
+            onGenerateRoute: (setting) {
+              switch (setting.name) {
+                case '/musicbill':
+                  {
+                    final args = setting.arguments as Map<String, dynamic>;
+                    return MaterialPageRoute(
+                      builder: (_) => musicbill_page.Musicbill(id: args['id']),
+                    );
+                  }
+                case '/profile':
+                  {
+                    return MaterialPageRoute(
+                      builder: (_) => const ProfilePage(),
+                    );
+                  }
+                default:
+                  {
+                    return MaterialPageRoute(builder: (_) => Home());
+                  }
+              }
+            },
+          ),
+          PlayerControllerContainer(),
+        ],
       ),
     );
   }

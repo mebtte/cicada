@@ -11,6 +11,9 @@ import './window_manager.dart';
 import './app.dart';
 import './states/server.dart';
 import './audio_handler.dart';
+import './states/musicbill.dart';
+import './states/audio.dart';
+import './states/route.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +42,11 @@ void main() async {
       providers: [
         ChangeNotifierProvider.value(value: serverState),
         Provider<AudioHandler>.value(value: audioHandler),
+        ChangeNotifierProvider.value(value: musicbillState),
+        ChangeNotifierProvider.value(value: playlistState),
+        ChangeNotifierProvider.value(value: playqueueState),
+        ChangeNotifierProvider.value(value: audioState),
+        ChangeNotifierProvider.value(value: routeState),
       ],
       child: App(),
     ),

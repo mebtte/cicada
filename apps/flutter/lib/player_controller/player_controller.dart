@@ -5,7 +5,7 @@ import './actions.dart' as actions;
 import './cover.dart';
 import './info.dart';
 
-import '../pages/player/index.dart';
+import '../widgets/player/index.dart';
 
 class PlayController extends StatelessWidget {
   static const double kContentHeight = 54.0;
@@ -26,27 +26,13 @@ class PlayController extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const PlayerDetailPage(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-                  const begin = Offset(0.0, 1.0);
-                  const end = Offset.zero;
-                  const curve = Curves.ease;
-
-                  var tween = Tween(
-                    begin: begin,
-                    end: end,
-                  ).chain(CurveTween(curve: curve));
-
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                },
-          ),
+        final topPadding = MediaQuery.of(context).padding.top;
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          useRootNavigator: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => PlayerWidget(topPadding: topPadding),
         );
       },
       child: Container(

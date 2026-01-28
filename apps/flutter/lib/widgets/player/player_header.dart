@@ -3,12 +3,16 @@ import '../../models/music.dart';
 
 class PlayerHeader extends StatelessWidget {
   final Music music;
+  final double? topPadding;
 
-  const PlayerHeader({super.key, required this.music});
+  const PlayerHeader({super.key, required this.music, this.topPadding});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    final safePadding = topPadding ?? MediaQuery.of(context).padding.top;
+
+    return Padding(
+      padding: EdgeInsets.only(top: safePadding),
       child: Container(
         height: kToolbarHeight,
         padding: const EdgeInsets.symmetric(horizontal: 4),
