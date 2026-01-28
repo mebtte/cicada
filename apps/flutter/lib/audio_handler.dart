@@ -10,6 +10,22 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final _playTimer = Stopwatch();
 
   MyAudioHandler() {
+    _initStreams();
+  }
+
+  void _initStreams() {
+    // Listen to all relevant streams and update state
+    // We combine the streams or just listen separately and invoke update
+
+    // Just Audio's position stream is what we need for progress bar
+    player.positionStream.listen((position) {
+      _broadcastState();
+    });
+
+    player.bufferedPositionStream.listen((bufferedPosition) {
+      _broadcastState();
+    });
+
     player.playerStateStream.listen((PlayerState state) {
       if (state.playing) {
         _playTimer.start();
@@ -17,41 +33,47 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         _playTimer.stop();
       }
       audioState.updatePlaying(state.playing);
-      playbackState.add(
-        PlaybackState(
-          controls: [
-            if (playqueueState.playqueueIndex > 0) MediaControl.skipToPrevious,
-            state.playing ? MediaControl.pause : MediaControl.play,
-            MediaControl.skipToNext,
-          ],
-          systemActions: {
-            MediaAction.play,
-            MediaAction.pause,
-            MediaAction.playPause,
-            MediaAction.seek,
-            MediaAction.seekForward,
-            MediaAction.seekBackward,
-            MediaAction.skipToPrevious,
-            MediaAction.skipToNext,
-          },
-          processingState: {
-            ProcessingState.idle: AudioProcessingState.idle,
-            ProcessingState.loading: AudioProcessingState.loading,
-            ProcessingState.buffering: AudioProcessingState.buffering,
-            ProcessingState.ready: AudioProcessingState.ready,
-            ProcessingState.completed: AudioProcessingState.completed,
-          }[state.processingState]!,
-          playing: state.playing,
-          updatePosition: player.position,
-          bufferedPosition: player.bufferedPosition,
-          speed: player.speed,
-        ),
-      );
+      _broadcastState();
 
       if (state.processingState == ProcessingState.completed) {
         playqueueState.next();
       }
     });
+  }
+
+  void _broadcastState() {
+    final state = player.playerState;
+    playbackState.add(
+      PlaybackState(
+        controls: [
+          if (playqueueState.playqueueIndex > 0) MediaControl.skipToPrevious,
+          state.playing ? MediaControl.pause : MediaControl.play,
+          MediaControl.skipToNext,
+        ],
+        systemActions: {
+          MediaAction.play,
+          MediaAction.pause,
+          MediaAction.playPause,
+          MediaAction.seek,
+          MediaAction.seekForward,
+          MediaAction.seekBackward,
+          MediaAction.skipToPrevious,
+          MediaAction.skipToNext,
+        },
+        processingState: {
+          ProcessingState.idle: AudioProcessingState.idle,
+          ProcessingState.loading: AudioProcessingState.loading,
+          ProcessingState.buffering: AudioProcessingState.buffering,
+          ProcessingState.ready: AudioProcessingState.ready,
+          ProcessingState.completed: AudioProcessingState.completed,
+        }[state.processingState]!,
+        playing: state.playing,
+        updatePosition: player.position,
+        bufferedPosition: player.bufferedPosition,
+        speed: player.speed,
+        queueIndex: playqueueState.playqueueIndex,
+      ),
+    );
   }
 
   @override

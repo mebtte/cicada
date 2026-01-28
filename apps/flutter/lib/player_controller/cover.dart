@@ -103,20 +103,27 @@ class _RotatingCoverState extends State<RotatingCover>
                       height: 40,
                       child: RotationTransition(
                         turns: _controller,
-                        child: widget.coverUrl != null
-                            ? ClipOval(
-                                child: AspectRatio(
-                                  aspectRatio: 1,
-                                  child: Image.network(
-                                    widget.coverUrl!,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return _buildDefaultCover(context);
-                                    },
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          switchInCurve: Curves.easeIn,
+                          switchOutCurve: Curves.easeOut,
+                          child: widget.coverUrl != null
+                              ? ClipOval(
+                                  key: ValueKey(widget.coverUrl),
+                                  child: AspectRatio(
+                                    aspectRatio: 1,
+                                    child: Image.network(
+                                      widget.coverUrl!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return _buildDefaultCover(context);
+                                          },
+                                    ),
                                   ),
-                                ),
-                              )
-                            : _buildDefaultCover(context),
+                                )
+                              : _buildDefaultCover(context),
+                        ),
                       ),
                     ),
                   ],
