@@ -9,6 +9,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   PlayqueueMusic? lastQueueMusic;
   final player = AudioPlayer();
   final _playTimer = Stopwatch();
+  String? _currentLoadingPid; // 跟踪当前正在加载的歌曲，用于处理竞态条件
 
   MyAudioHandler() {
     _initStreams();
@@ -94,10 +95,25 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Future<void> playQueueMusic(PlayqueueMusic queueMusic) async {
     _playTimer.reset();
+
+    // 记录当前正在加载的歌曲 ID，用于检测竞态条件
+    final loadingPid = queueMusic.pid;
+    _currentLoadingPid = loadingPid;
+
+    // 先停止当前播放，避免干扰
+    await player.stop();
+
     try {
       var duration = await player.setAudioSource(
         AudioSource.uri(Uri.parse(queueMusic.music.asset)),
       );
+
+      // 检查是否仍是当前要播放的歌曲（用户可能在加载过程中切换了歌曲）
+      if (_currentLoadingPid != loadingPid) {
+        // 用户已切换到其他歌曲，忽略此次加载结果
+        return;
+      }
+
       player.play();
 
       var item = MediaItem(
@@ -111,12 +127,15 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
       mediaItem.add(item);
     } catch (e) {
-      eventBus.fire(
-        PlayErrorEvent(
-          musicName: queueMusic.music.name,
-          errorMessage: e.toString(),
-        ),
-      );
+      // 只有当错误发生时仍是当前歌曲才显示错误
+      if (_currentLoadingPid == loadingPid) {
+        eventBus.fire(
+          PlayErrorEvent(
+            musicName: queueMusic.music.name,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
     }
   }
 
