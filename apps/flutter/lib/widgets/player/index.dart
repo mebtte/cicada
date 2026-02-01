@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../models/music.dart';
 import '../../models/lyric.dart';
 import '../../server/api/get_lyric.dart';
+import '../../states/audio.dart';
 import './lyric_view.dart';
 import './player_controls.dart';
 import './player_header.dart';
@@ -21,10 +22,9 @@ class PlayerWidget extends StatefulWidget {
 }
 
 class _PlayerWidgetState extends State<PlayerWidget> {
-  // ... (keep existing state vars)
-
   Music? _currentMusic;
   List<LyricLine> _lyrics = [];
+  bool _isLoadingLyric = false;
   double _dragOffset = 0;
   bool _isDragging = false;
 
@@ -45,23 +45,33 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     setState(() {
       _currentMusic = music;
       _lyrics = [];
+      _isLoadingLyric = false;
     });
 
-    _loadLyric(music.id);
+    // 纯音乐不加载歌词
+    if (!music.isInstrumental) {
+      _loadLyric(music);
+    }
   }
 
-  Future<void> _loadLyric(String id) async {
+  Future<void> _loadLyric(Music music) async {
+    setState(() {
+      _isLoadingLyric = true;
+    });
+
     try {
-      final lrc = await getLyric(id: id);
-      if (mounted && _currentMusic?.id == id) {
+      final lrc = await getLyric(id: music.id);
+      if (mounted && _currentMusic?.id == music.id) {
         setState(() {
           _lyrics = LyricParser.parse(lrc);
+          _isLoadingLyric = false;
         });
       }
     } catch (e) {
-      if (mounted && _currentMusic?.id == id) {
+      if (mounted && _currentMusic?.id == music.id) {
         setState(() {
-          // Optionally show error or empty lyrics
+          _lyrics = [];
+          _isLoadingLyric = false;
         });
       }
     }
@@ -170,6 +180,10 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                         return LyricView(
                           lyrics: _lyrics,
                           currentPosition: position,
+                          isLoading: _isLoadingLyric,
+                          isInstrumental: displayMusic.isInstrumental,
+                          coverUrl: displayMusic.cover,
+                          isPlaying: context.watch<AudioState>().playing,
                           onTap: () {
                             // Tap to toggle controls visibility? for now do nothing or standard
                           },
@@ -211,34 +225,36 @@ class _PlayerBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      fit: StackFit.expand,
       children: [
-        Positioned.fill(
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
-            switchInCurve: Curves.easeIn,
-            switchOutCurve: Curves.easeOut,
-            child: coverUrl != null
-                ? Image.network(
-                    coverUrl!,
-                    key: ValueKey(coverUrl),
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      key: const ValueKey('error'),
-                      color: Colors.grey[900],
-                    ),
-                  )
-                : Container(
-                    key: const ValueKey('default'),
+        // 背景图片
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 500),
+          switchInCurve: Curves.easeIn,
+          switchOutCurve: Curves.easeOut,
+          child: coverUrl != null
+              ? Image.network(
+                  coverUrl!,
+                  key: ValueKey(coverUrl),
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                  alignment: Alignment.center,
+                  errorBuilder: (_, __, ___) => Container(
+                    key: const ValueKey('error'),
                     color: Colors.grey[900],
                   ),
-          ),
+                )
+              : Container(
+                  key: const ValueKey('default'),
+                  color: Colors.grey[900],
+                ),
         ),
 
-        Positioned.fill(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-            child: Container(color: Colors.black.withValues(alpha: 0.5)),
-          ),
+        // 模糊遮罩层
+        BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          child: Container(color: Colors.black.withValues(alpha: 0.5)),
         ),
       ],
     );

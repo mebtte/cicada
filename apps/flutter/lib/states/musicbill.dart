@@ -72,6 +72,7 @@ class MusicbillState extends ChangeNotifier {
                     name: music.name,
                     cover: music.cover,
                     asset: music.asset,
+                    type: music.type,
                     singers: music.singers
                         .map(
                           (s) => Singer(
