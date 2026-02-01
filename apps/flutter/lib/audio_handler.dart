@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:cicada/states/audio.dart';
 import 'package:just_audio/just_audio.dart';
+import './event_bus.dart';
 import './states/playqueue.dart';
 import './server/base/upload_music_play_record.dart';
 
@@ -93,21 +94,30 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Future<void> playQueueMusic(PlayqueueMusic queueMusic) async {
     _playTimer.reset();
-    var duration = await player.setAudioSource(
-      AudioSource.uri(Uri.parse(queueMusic.music.asset)),
-    );
-    player.play();
+    try {
+      var duration = await player.setAudioSource(
+        AudioSource.uri(Uri.parse(queueMusic.music.asset)),
+      );
+      player.play();
 
-    var item = MediaItem(
-      id: queueMusic.pid,
-      title: queueMusic.music.name,
-      artist: queueMusic.music.singers.map((s) => s.name).join(','),
-      artUri: queueMusic.music.cover == null
-          ? null
-          : Uri.parse(queueMusic.music.cover!),
-      duration: duration,
-    );
-    mediaItem.add(item);
+      var item = MediaItem(
+        id: queueMusic.pid,
+        title: queueMusic.music.name,
+        artist: queueMusic.music.singers.map((s) => s.name).join(','),
+        artUri: queueMusic.music.cover == null
+            ? null
+            : Uri.parse(queueMusic.music.cover!),
+        duration: duration,
+      );
+      mediaItem.add(item);
+    } catch (e) {
+      eventBus.fire(
+        PlayErrorEvent(
+          musicName: queueMusic.music.name,
+          errorMessage: e.toString(),
+        ),
+      );
+    }
   }
 
   Future<void> _uploadPlayRecord(PlayqueueMusic queueMusic) async {

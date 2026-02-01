@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 
 import 'package:cicada/player_controller/index.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import './event_bus.dart';
 import './pages/home/index.dart';
 import './server_management/index.dart';
 import './states/musicbill.dart' as musicbill_state;
@@ -11,6 +13,7 @@ import './user_management/index.dart';
 import './states/server.dart';
 import './pages/musicbill/index.dart' as musicbill_page;
 import './pages/profile/index.dart';
+import './widgets/play_error_dialog.dart';
 import './theme.dart';
 
 class AppContent extends StatefulWidget {
@@ -21,17 +24,35 @@ class AppContent extends StatefulWidget {
 }
 
 class _AppContentState extends State<AppContent> {
-  // ... initState and reassemble ...
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  StreamSubscription<PlayErrorEvent>? _errorSubscription;
+
   @override
   void initState() {
     super.initState();
     musicbill_state.musicbillState.reloadMusicbillList(silence: false);
+    _errorSubscription = eventBus.on<PlayErrorEvent>().listen((event) {
+      _showPlayError(event);
+    });
+  }
+
+  @override
+  void dispose() {
+    _errorSubscription?.cancel();
+    super.dispose();
   }
 
   @override
   void reassemble() {
     super.reassemble();
     context.read<AudioHandler>().stop();
+  }
+
+  void _showPlayError(PlayErrorEvent event) {
+    final navContext = _navigatorKey.currentContext;
+    if (navContext != null) {
+      showPlayErrorDialog(navContext, event);
+    }
   }
 
   @override
@@ -42,7 +63,7 @@ class _AppContentState extends State<AppContent> {
         children: [
           // ... (Navigator and PlayerController)
           Navigator(
-            key: GlobalKey<NavigatorState>(),
+            key: _navigatorKey,
             onGenerateRoute: (setting) {
               switch (setting.name) {
                 case '/musicbill':
