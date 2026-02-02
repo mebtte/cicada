@@ -6,6 +6,7 @@ void showPlaylistDialog(BuildContext context) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
+    useRootNavigator: true, // 确保弹窗显示在播放控制器之上
     backgroundColor: Colors.transparent,
     builder: (context) {
       return FractionallySizedBox(

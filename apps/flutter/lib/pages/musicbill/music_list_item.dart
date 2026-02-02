@@ -83,12 +83,13 @@ class MusicListItem extends StatelessWidget {
     late OverlayEntry entry;
 
     entry = OverlayEntry(
-      builder: (context) => MusicOptionMenu(
+      builder: (_) => MusicOptionMenu(
         music: music,
         onPlay: onTap,
         onClose: () {
           entry.remove();
         },
+        parentContext: context,
       ),
     );
 

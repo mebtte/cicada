@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import '../../models/music.dart';
 import '../../event_bus.dart';
+import '../../player_controller/show_playlist_dialog.dart';
 
 /// 自定义音乐选项菜单（Overlay 实现，覆盖 PlayerController）
 class MusicOptionMenu extends StatefulWidget {
   final Music music;
   final VoidCallback onPlay;
   final VoidCallback onClose;
+  final BuildContext? parentContext; // 用于显示播放队列弹窗
 
   const MusicOptionMenu({
     super.key,
     required this.music,
     required this.onPlay,
     required this.onClose,
+    this.parentContext,
   });
 
   @override
@@ -82,6 +85,7 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: SafeArea(
+                top: false, // 不需要顶部安全区域
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -134,7 +138,7 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
                     ),
                     ListTile(
                       leading: const Icon(Icons.playlist_add_rounded),
-                      title: const Text('Add to queue'),
+                      title: const Text('Insert to queue'),
                       onTap: () {
                         _close();
                         eventBus.fire(
@@ -142,13 +146,10 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
                             musicList: [widget.music],
                           ),
                         );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Added to queue'),
-                            behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
+                        // 显示播放队列弹窗
+                        if (widget.parentContext != null) {
+                          showPlaylistDialog(widget.parentContext!);
+                        }
                       },
                     ),
                     const SizedBox(height: 16),
