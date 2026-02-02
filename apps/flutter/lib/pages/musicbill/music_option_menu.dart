@@ -146,9 +146,12 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
                             musicList: [widget.music],
                           ),
                         );
-                        // 显示播放队列弹窗
+                        // 显示播放列表弹窗，定位到播放列表 tab
                         if (widget.parentContext != null) {
-                          showPlaylistDialog(widget.parentContext!);
+                          showPlaylistDialog(
+                            widget.parentContext!,
+                            initialTabIndex: 0,
+                          );
                         }
                       },
                     ),

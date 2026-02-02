@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../states/musicbill.dart';
 import '../../widgets/safe_tooltip.dart';
 import '../../event_bus.dart';
+import '../../player_controller/show_playlist_dialog.dart';
 
 /// 音乐清单底部工具栏组件
 /// 提供返回按钮和添加全部到播放列表功能
@@ -76,16 +77,8 @@ class BottomToolbar extends StatelessWidget {
                   eventBus.fire(
                     AddMusicListToPlaylistEvent(musicList: musicbill.musicList),
                   );
-                  // 显示提示
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        '${musicbill.musicList.length} tracks added to playlist',
-                      ),
-                      duration: const Duration(seconds: 2),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
+                  // 显示播放列表弹窗，定位到播放列表 tab
+                  showPlaylistDialog(context, initialTabIndex: 0);
                 }
               : null,
           borderRadius: BorderRadius.circular(20),

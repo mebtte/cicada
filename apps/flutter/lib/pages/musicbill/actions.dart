@@ -1,5 +1,6 @@
 import 'package:cicada/event_bus.dart';
 import 'package:cicada/states/musicbill.dart';
+import 'package:cicada/player_controller/show_playlist_dialog.dart';
 import 'package:flutter/material.dart';
 
 class Actions extends StatelessWidget {
@@ -22,6 +23,8 @@ class Actions extends StatelessWidget {
                           musicList: musicbill.musicList,
                         ),
                       );
+                      // 显示播放列表弹窗，定位到播放列表 tab
+                      showPlaylistDialog(context, initialTabIndex: 0);
                     }
                   : null,
               borderRadius: BorderRadius.circular(20),

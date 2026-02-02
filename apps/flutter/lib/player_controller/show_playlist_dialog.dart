@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import './playlist.dart';
 import './playqueue.dart';
 
-void showPlaylistDialog(BuildContext context) {
+/// 显示播放列表/队列弹窗
+/// [initialTabIndex] 0=播放列表, 1=播放队列
+void showPlaylistDialog(BuildContext context, {int initialTabIndex = 1}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -18,7 +20,7 @@ void showPlaylistDialog(BuildContext context) {
           ),
           child: DefaultTabController(
             length: 2,
-            initialIndex: 1,
+            initialIndex: initialTabIndex,
             child: Column(
               children: [
                 Container(
@@ -32,8 +34,8 @@ void showPlaylistDialog(BuildContext context) {
                 ),
                 const TabBar(
                   tabs: [
-                    Tab(text: "播放列表"),
-                    Tab(text: "播放队列"),
+                    Tab(text: "Playlist"),
+                    Tab(text: "Playqueue"),
                   ],
                 ),
                 Expanded(

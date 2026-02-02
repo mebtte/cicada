@@ -28,6 +28,12 @@ class PlaylistState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 从播放列表中移除音乐
+  void removeMusic(String pid) {
+    playlist.removeWhere((m) => m.pid == pid);
+    notifyListeners();
+  }
+
   void Function() subscribe() {
     final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
       addMusicList([event.music]);
