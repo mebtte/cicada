@@ -35,7 +35,12 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       } else {
         _playTimer.stop();
       }
-      audioState.updatePlaying(state.playing);
+      audioState.updateState(
+        playing: state.playing,
+        loading:
+            state.processingState == ProcessingState.loading ||
+            state.processingState == ProcessingState.buffering,
+      );
       _broadcastState();
 
       if (state.processingState == ProcessingState.completed &&

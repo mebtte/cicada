@@ -16,7 +16,7 @@ class Home extends StatelessWidget {
     final currentUser = context.watch<ServerState>().currentUser;
     final currentServer = context.watch<ServerState>().currentServer;
 
-    final headerHeight = MediaQuery.of(context).size.width;
+    final headerHeight = MediaQuery.of(context).size.width / 1.5;
 
     return Scaffold(
       body: CustomScrollView(

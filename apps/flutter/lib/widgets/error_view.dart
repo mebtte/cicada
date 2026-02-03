@@ -34,7 +34,7 @@ class ErrorView extends StatelessWidget {
             Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
             const SizedBox(height: 16),
             Text(
-              title ?? '加载失败',
+              title ?? 'Failed to load',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: Colors.grey[800],
                 fontWeight: FontWeight.w600,
@@ -56,7 +56,7 @@ class ErrorView extends StatelessWidget {
             FilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh, size: 20),
-              label: Text(retryButtonText ?? '重试'),
+              label: Text(retryButtonText ?? 'Retry'),
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,

@@ -12,8 +12,13 @@ final uuid = Uuid();
 class PlayqueueMusic {
   final String pid;
   final Music music;
+  final bool isUserAdded;
 
-  PlayqueueMusic({required this.pid, required this.music});
+  PlayqueueMusic({
+    required this.pid,
+    required this.music,
+    this.isUserAdded = false,
+  });
 }
 
 class PlayqueueState extends ChangeNotifier {
@@ -22,8 +27,12 @@ class PlayqueueState extends ChangeNotifier {
 
   PlayqueueMusic? get currentMusic => playqueue.safeGet(playqueueIndex);
 
-  void jump(Music music) {
-    final playqueueMusic = PlayqueueMusic(pid: uuid.v4(), music: music);
+  void jump(Music music, {bool isUserAdded = false}) {
+    final playqueueMusic = PlayqueueMusic(
+      pid: uuid.v4(),
+      music: music,
+      isUserAdded: isUserAdded,
+    );
     if (playqueueIndex == -1) {
       playqueue = [playqueueMusic, ...playqueue];
     } else {
@@ -63,7 +72,7 @@ class PlayqueueState extends ChangeNotifier {
       } else {
         final random = Random();
         final playlistMusic = playlist[random.nextInt(playlist.length)];
-        jump(playlistMusic.music);
+        jump(playlistMusic.music, isUserAdded: false);
         next();
       }
     } else {
@@ -100,9 +109,12 @@ class PlayqueueState extends ChangeNotifier {
     }
   }
 
+  // Actually, rewind works for both forward and backward if it just sets the index.
+  // I will just use rewind (or rename it to proper 'jumpTo' but 'rewind' exists).
+
   void Function() subscribe() {
     final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
-      jump(event.music);
+      jump(event.music, isUserAdded: false);
       next();
     });
     final addMusicListToPlaylistSubscription = eventBus
@@ -110,11 +122,20 @@ class PlayqueueState extends ChangeNotifier {
         .listen((event) {
           if (currentMusic == null) {
             final random = Random();
-            jump(event.musicList[random.nextInt(event.musicList.length)]);
+            jump(
+              event.musicList[random.nextInt(event.musicList.length)],
+              isUserAdded: false,
+            );
             next();
           } else {
             final newItems = event.musicList
-                .map((music) => PlayqueueMusic(pid: uuid.v4(), music: music))
+                .map(
+                  (music) => PlayqueueMusic(
+                    pid: uuid.v4(),
+                    music: music,
+                    isUserAdded: true, // User manually added
+                  ),
+                )
                 .toList();
             playqueue = [
               ...playqueue.sublist(0, playqueueIndex + 1),
