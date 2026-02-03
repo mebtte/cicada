@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../event_bus.dart';
 import '../states/playqueue.dart';
 
-/// 显示播放失败对话框
-/// 返回 true 表示用户取消了自动播放下一首，false 表示自动播放下一首
+/// Display playback error dialog
+/// Returns true indicating the user cancelled autoplaying the next song, false indicates autoplay proceeded
 void showPlayErrorDialog(BuildContext context, PlayErrorEvent event) {
   showDialog(
     context: context,
@@ -72,16 +72,17 @@ class _PlayErrorDialogState extends State<_PlayErrorDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
       title: Row(
         children: [
-          Icon(Icons.error_outline, color: Colors.red[400], size: 28),
+          Icon(Icons.error_outline_rounded, color: Colors.red[400], size: 28),
           const SizedBox(width: 12),
-          Expanded(
+          const Expanded(
             child: Text(
-              '播放失败',
+              'Playback Error',
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.black87,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -93,45 +94,75 @@ class _PlayErrorDialogState extends State<_PlayErrorDialog> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '无法播放「${widget.event.musicName}」',
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.9),
-              fontSize: 16,
+          RichText(
+            text: TextSpan(
+              style: const TextStyle(fontSize: 16, color: Colors.black87),
+              children: [
+                const TextSpan(text: 'Unable to play '),
+                TextSpan(
+                  text: ' "${widget.event.musicName}"',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            widget.event.errorMessage,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.6),
-              fontSize: 13,
-            ),
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 20),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.skip_next, color: Colors.blue[400], size: 20),
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 16,
+                  color: Colors.grey[600],
+                ),
                 const SizedBox(width: 8),
-                Text(
-                  '$_remainingSeconds 秒后自动播放下一首',
-                  style: TextStyle(
-                    color: Colors.blue[400],
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                Expanded(
+                  child: Text(
+                    widget.event.errorMessage,
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 13,
+                      fontFamily: 'monospace',
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 24),
+          LinearProgressIndicator(
+            value: 1 - (_remainingSeconds / _countdownSeconds),
+            backgroundColor: Colors.grey[200],
+            color: Theme.of(context).primaryColor,
+            borderRadius: BorderRadius.circular(2),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(
+                Icons.skip_next_rounded,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Auto skipping in $_remainingSeconds s',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -139,22 +170,20 @@ class _PlayErrorDialogState extends State<_PlayErrorDialog> {
         TextButton(
           onPressed: _cancel,
           style: TextButton.styleFrom(
-            foregroundColor: Colors.white.withValues(alpha: 0.7),
+            foregroundColor: Colors.grey[600],
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
-          child: const Text('取消自动播放', style: TextStyle(fontSize: 15)),
+          child: const Text('Cancel'),
         ),
-        ElevatedButton(
+        FilledButton(
           onPressed: _playNext,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue[600],
-            foregroundColor: Colors.white,
+          style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: const Text('立即播放下一首', style: TextStyle(fontSize: 15)),
+          child: const Text('Skip Now'),
         ),
       ],
     );

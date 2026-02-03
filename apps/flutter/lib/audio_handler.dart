@@ -10,6 +10,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   final player = AudioPlayer();
   final _playTimer = Stopwatch();
   String? _currentLoadingPid; // 跟踪当前正在加载的歌曲，用于处理竞态条件
+  ProcessingState? _lastProcessingState;
 
   MyAudioHandler() {
     _initStreams();
@@ -37,9 +38,11 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       audioState.updatePlaying(state.playing);
       _broadcastState();
 
-      if (state.processingState == ProcessingState.completed) {
+      if (state.processingState == ProcessingState.completed &&
+          _lastProcessingState != ProcessingState.completed) {
         playqueueState.next();
       }
+      _lastProcessingState = state.processingState;
     });
   }
 

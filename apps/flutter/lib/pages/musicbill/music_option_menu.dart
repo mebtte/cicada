@@ -138,7 +138,7 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
                     ),
                     ListTile(
                       leading: const Icon(Icons.playlist_add_rounded),
-                      title: const Text('Insert to queue'),
+                      title: const Text('Insert to playqueue'),
                       onTap: () {
                         _close();
                         eventBus.fire(
@@ -147,12 +147,15 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
                           ),
                         );
                         // 显示播放列表弹窗，定位到播放列表 tab
-                        if (widget.parentContext != null) {
-                          showPlaylistDialog(
-                            widget.parentContext!,
-                            initialTabIndex: 0,
-                          );
-                        }
+                        Future.delayed(const Duration(milliseconds: 100), () {
+                          if (widget.parentContext != null &&
+                              widget.parentContext!.mounted) {
+                            showPlaylistDialog(
+                              widget.parentContext!,
+                              initialTabIndex: 1,
+                            );
+                          }
+                        });
                       },
                     ),
                     const SizedBox(height: 16),

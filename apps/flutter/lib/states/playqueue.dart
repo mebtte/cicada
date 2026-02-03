@@ -84,6 +84,16 @@ class PlayqueueState extends ChangeNotifier {
             final random = Random();
             jump(event.musicList[random.nextInt(event.musicList.length)]);
             next();
+          } else {
+            final newItems = event.musicList
+                .map((music) => PlayqueueMusic(pid: uuid.v4(), music: music))
+                .toList();
+            playqueue = [
+              ...playqueue.sublist(0, playqueueIndex + 1),
+              ...newItems,
+              ...playqueue.sublist(playqueueIndex + 1),
+            ];
+            notifyListeners();
           }
         });
     return () {
