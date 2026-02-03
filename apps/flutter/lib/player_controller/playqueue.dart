@@ -94,6 +94,50 @@ class Playqueue extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (playqueue.length - index - 1 >
+                    playqueueState.playqueueIndex)
+                  IconButton(
+                    icon: Icon(Icons.close, size: 18, color: Colors.grey[400]),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Remove from playqueue'),
+                          content: Text(
+                            'Are you sure you want to remove "${music.name}" from the playqueue?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                playqueueState.remove(playqueueMusic);
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text(
+                                'Remove',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                if (playqueue.length - index - 1 <
+                    playqueueState.playqueueIndex)
+                  IconButton(
+                    icon: Icon(
+                      Icons.settings_backup_restore,
+                      size: 18,
+                      color: Colors.grey[400],
+                    ),
+                    onPressed: () {
+                      playqueueState.rewind(playqueueMusic);
+                    },
+                  ),
               ],
             ),
           ),

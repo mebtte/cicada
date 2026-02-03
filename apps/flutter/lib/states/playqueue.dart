@@ -72,6 +72,34 @@ class PlayqueueState extends ChangeNotifier {
     }
   }
 
+  void remove(PlayqueueMusic item) {
+    final index = playqueue.indexWhere((element) => element.pid == item.pid);
+    if (index != -1) {
+      playqueue = List.from(playqueue)..removeAt(index);
+      if (index < playqueueIndex) {
+        playqueueIndex--;
+      } else if (index == playqueueIndex) {
+        // If removing current song, logic might be complex (skip to next?),
+        // but UI only allows removing NEXT songs, so this might not be hit.
+        // For safety, let's say if we remove current, we stay at current index
+        // which now points to the next song, effectively skipping.
+        // But if it was the last song, we might need to handle empty or end of list.
+        if (playqueueIndex >= playqueue.length) {
+          playqueueIndex = playqueue.length - 1;
+        }
+      }
+      notifyListeners();
+    }
+  }
+
+  void rewind(PlayqueueMusic item) {
+    final index = playqueue.indexWhere((element) => element.pid == item.pid);
+    if (index != -1) {
+      playqueueIndex = index;
+      notifyListeners();
+    }
+  }
+
   void Function() subscribe() {
     final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
       jump(event.music);
