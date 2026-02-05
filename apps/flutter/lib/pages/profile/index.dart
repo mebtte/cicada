@@ -1,3 +1,4 @@
+import 'package:cicada/constants/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../states/server.dart';
@@ -78,11 +79,6 @@ class ProfilePage extends StatelessWidget {
 
   /// 构建用户信息列表
   Widget _buildUserInfo(BuildContext context, User user, Server? server) {
-    const appVersion = String.fromEnvironment(
-      'VERSION',
-      defaultValue: 'Unknown',
-    );
-
     return Column(
       children: [
         ListTile(
@@ -106,7 +102,7 @@ class ProfilePage extends StatelessWidget {
         ListTile(
           leading: const Icon(Icons.info_outline),
           title: const Text('App Version'),
-          subtitle: const Text(appVersion),
+          subtitle: const Text(VERSION),
         ),
       ],
     );
