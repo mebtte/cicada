@@ -24,7 +24,10 @@
       "program": "${workspaceFolder}/apps/flutter/lib/main.dart",
       "cwd": "${workspaceFolder}/apps/flutter",
       "deviceId": "macos",
-      "flutterMode": "debug"
+      "flutterMode": "debug",
+      "toolArgs": [
+        "--dart-define-from-file=${workspaceFolder}/apps/flutter/env.json"
+      ]
     }
   ]
 }

@@ -78,6 +78,11 @@ class ProfilePage extends StatelessWidget {
 
   /// 构建用户信息列表
   Widget _buildUserInfo(BuildContext context, User user, Server? server) {
+    const appVersion = String.fromEnvironment(
+      'VERSION',
+      defaultValue: 'Unknown',
+    );
+
     return Column(
       children: [
         ListTile(
@@ -97,6 +102,11 @@ class ProfilePage extends StatelessWidget {
           trailing: user.twoFAEnabled
               ? const Icon(Icons.check_circle, color: Colors.green)
               : const Icon(Icons.cancel, color: Colors.grey),
+        ),
+        ListTile(
+          leading: const Icon(Icons.info_outline),
+          title: const Text('App Version'),
+          subtitle: const Text(appVersion),
         ),
       ],
     );
