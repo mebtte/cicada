@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:cicada/states/audio.dart';
@@ -143,9 +145,15 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     await player.stop();
 
     try {
-      var duration = await player.setAudioSource(
-        AudioSource.uri(Uri.parse(queueMusic.music.asset)),
-      );
+      // 设置 60 秒超时
+      var duration = await player
+          .setAudioSource(AudioSource.uri(Uri.parse(queueMusic.music.asset)))
+          .timeout(
+            const Duration(seconds: 60),
+            onTimeout: () {
+              throw TimeoutException('Loading timeout after 60 seconds');
+            },
+          );
 
       // 检查是否仍是当前要播放的歌曲（用户可能在加载过程中切换了歌曲）
       if (_currentLoadingPid != loadingPid) {
@@ -166,6 +174,17 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
       mediaItem.add(item);
       _broadcastState(); // 确保通知更新
+    } on TimeoutException {
+      // 加载超时
+      if (_currentLoadingPid == loadingPid) {
+        eventBus.fire(
+          PlayErrorEvent(
+            musicName: queueMusic.music.name,
+            errorMessage:
+                'Loading timeout, please check your network connection',
+          ),
+        );
+      }
     } catch (e) {
       // 只有当错误发生时仍是当前歌曲才显示错误
       if (_currentLoadingPid == loadingPid) {
