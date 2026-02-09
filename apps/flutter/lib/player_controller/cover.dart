@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cicada/states/audio.dart';
+import 'package:cicada/utils/get_resized_image_url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:audio_service/audio_service.dart';
@@ -112,13 +114,16 @@ class _RotatingCoverState extends State<RotatingCover>
                                   key: ValueKey(widget.coverUrl),
                                   child: AspectRatio(
                                     aspectRatio: 1,
-                                    child: Image.network(
-                                      widget.coverUrl!,
+                                    child: CachedNetworkImage(
+                                      imageUrl: getResizedImageUrl(
+                                        widget.coverUrl!,
+                                        80,
+                                      ), // 40px * 2
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return _buildDefaultCover(context);
-                                          },
+                                      placeholder: (context, url) =>
+                                          _buildDefaultCover(context),
+                                      errorWidget: (context, url, error) =>
+                                          _buildDefaultCover(context),
                                     ),
                                   ),
                                 )

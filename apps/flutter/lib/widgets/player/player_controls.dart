@@ -17,6 +17,10 @@ class PlayerControls extends StatelessWidget {
       builder: (context, snapshot) {
         final playbackState = snapshot.data;
         final playing = playbackState?.playing ?? false;
+        final processingState = playbackState?.processingState;
+        final isLoading =
+            processingState == AudioProcessingState.loading ||
+            processingState == AudioProcessingState.buffering;
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -39,6 +43,8 @@ class PlayerControls extends StatelessWidget {
 
             // Play/Pause
             Container(
+              width: 72,
+              height: 72,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
@@ -50,20 +56,33 @@ class PlayerControls extends StatelessWidget {
                   ),
                 ],
               ),
-              child: IconButton(
-                icon: Icon(
-                  playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                ),
-                iconSize: 48,
-                color: Colors.black,
-                onPressed: () {
-                  if (playing) {
-                    audioHandler.pause();
-                  } else {
-                    audioHandler.play();
-                  }
-                },
-              ),
+              child: isLoading
+                  ? const Center(
+                      child: SizedBox(
+                        width: 32,
+                        height: 32,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
+                  : IconButton(
+                      icon: Icon(
+                        playing
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                      ),
+                      iconSize: 48,
+                      color: Colors.black,
+                      onPressed: () {
+                        if (playing) {
+                          audioHandler.pause();
+                        } else {
+                          audioHandler.play();
+                        }
+                      },
+                    ),
             ),
 
             // Next

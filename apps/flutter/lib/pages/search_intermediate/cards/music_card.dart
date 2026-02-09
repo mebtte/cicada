@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/music.dart';
+import '../../../widgets/cached_image.dart';
 
 class MusicCard extends StatelessWidget {
   final Music music;
@@ -22,17 +23,15 @@ class MusicCard extends StatelessWidget {
                 color: Colors.grey[200],
               ),
               child: music.cover != null
-                  ? ClipRRect(
+                  ? CachedImage(
+                      imageUrl: music.cover,
+                      size: 200, // Fixed size for exploration cards
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        music.cover!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(
-                            child: Icon(Icons.music_note, size: 48),
-                          );
-                        },
+                      placeholder: const Center(
+                        child: Icon(Icons.music_note, size: 48),
+                      ),
+                      errorWidget: const Center(
+                        child: Icon(Icons.music_note, size: 48),
                       ),
                     )
                   : const Center(child: Icon(Icons.music_note, size: 48)),

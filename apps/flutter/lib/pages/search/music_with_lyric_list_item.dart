@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/music.dart';
+import '../../widgets/cached_image.dart';
 import '../musicbill/music_option_menu.dart';
 
 class MusicWithLyricListItem extends StatelessWidget {
@@ -172,17 +173,14 @@ class MusicWithLyricListItem extends StatelessWidget {
 
   Widget _buildCover(BuildContext context) {
     if (music.cover != null && music.cover!.isNotEmpty) {
-      return ClipRRect(
+      return CachedImage(
+        imageUrl: music.cover,
+        width: 44,
+        height: 44,
+        size: 88, // 2x for high DPI screens
         borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          music.cover!,
-          width: 44,
-          height: 44,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildDefaultCover(context);
-          },
-        ),
+        placeholder: _buildDefaultCover(context),
+        errorWidget: _buildDefaultCover(context),
       );
     }
     return _buildDefaultCover(context);

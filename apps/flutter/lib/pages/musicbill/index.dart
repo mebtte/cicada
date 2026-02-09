@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/material.dart';
 import '../../utils/get_musicbill_by_id.dart';
+import '../../utils/get_resized_image_url.dart';
 import '../../states/musicbill.dart' as musicbill_state;
 import '../../states/route.dart';
 import './bottom_toolbar.dart';
@@ -152,13 +154,15 @@ class _MusicbillState extends State<Musicbill> {
                               padding: const EdgeInsets.only(right: 8),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
-                                child: Image.network(
-                                  musicbill.cover!,
+                                child: CachedNetworkImage(
+                                  imageUrl: getResizedImageUrl(
+                                    musicbill.cover!,
+                                    40,
+                                  ), // 20px * 2
                                   width: 20,
                                   height: 20,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (_, __, ___) =>
-                                      const SizedBox(),
+                                  errorWidget: (_, __, ___) => const SizedBox(),
                                 ),
                               ),
                             ),

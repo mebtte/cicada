@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'package:audio_service/audio_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/music.dart';
 import '../../models/lyric.dart';
 import '../../server/api/get_lyric.dart';
 import '../../states/audio.dart';
+import '../../utils/get_resized_image_url.dart';
 import './lyric_view.dart';
 import './player_controls.dart';
 import './player_header.dart';
@@ -233,14 +235,21 @@ class _PlayerBackground extends StatelessWidget {
           switchInCurve: Curves.easeIn,
           switchOutCurve: Curves.easeOut,
           child: coverUrl != null
-              ? Image.network(
-                  coverUrl!,
+              ? CachedNetworkImage(
+                  imageUrl: getResizedImageUrl(
+                    coverUrl!,
+                    800,
+                  ), // Full screen background
                   key: ValueKey(coverUrl),
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: double.infinity,
                   alignment: Alignment.center,
-                  errorBuilder: (_, __, ___) => Container(
+                  placeholder: (_, __) => Container(
+                    key: const ValueKey('loading'),
+                    color: Colors.grey[900],
+                  ),
+                  errorWidget: (_, __, ___) => Container(
                     key: const ValueKey('error'),
                     color: Colors.grey[900],
                   ),

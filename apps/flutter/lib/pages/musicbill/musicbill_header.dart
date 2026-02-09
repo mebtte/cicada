@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../states/musicbill.dart';
+import '../../utils/get_resized_image_url.dart';
 
 /// 音乐清单详情页头部组件
 /// 显示封面、名称和音乐数量
@@ -84,14 +86,16 @@ class MusicbillHeader extends StatelessWidget {
   /// 构建背景封面
   Widget _buildBackgroundCover(BuildContext context) {
     if (musicbill.cover != null && musicbill.cover!.isNotEmpty) {
-      return Image.network(
-        musicbill.cover!,
+      return CachedNetworkImage(
+        imageUrl: getResizedImageUrl(
+          musicbill.cover!,
+          800,
+        ), // Large background cover
         width: double.infinity,
         height: double.infinity,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildDefaultBackground(context);
-        },
+        placeholder: (_, __) => _buildDefaultBackground(context),
+        errorWidget: (_, __, ___) => _buildDefaultBackground(context),
       );
     }
     return _buildDefaultBackground(context);

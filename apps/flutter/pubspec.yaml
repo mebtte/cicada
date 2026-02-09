@@ -9,6 +9,7 @@ environment:
 dependencies:
   audio_service: ^0.18.18
   audio_session: ^0.1.21
+  cached_network_image: ^3.4.1
   dio: ^5.9.0
   event_bus: ^2.0.1
   flutter:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../server/api/get_exploration.dart';
+import '../../../widgets/cached_image.dart';
 
 class MusicbillCard extends StatelessWidget {
   final ExplorationPublicMusicbill musicbill;
@@ -22,17 +23,15 @@ class MusicbillCard extends StatelessWidget {
                 color: Colors.grey[200],
               ),
               child: musicbill.cover != null
-                  ? ClipRRect(
+                  ? CachedImage(
+                      imageUrl: musicbill.cover,
+                      size: 200, // Fixed size for exploration cards
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        musicbill.cover!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(
-                            child: Icon(Icons.queue_music, size: 48),
-                          );
-                        },
+                      placeholder: const Center(
+                        child: Icon(Icons.queue_music, size: 48),
+                      ),
+                      errorWidget: const Center(
+                        child: Icon(Icons.queue_music, size: 48),
                       ),
                     )
                   : const Center(child: Icon(Icons.queue_music, size: 48)),

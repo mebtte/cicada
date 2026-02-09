@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/music.dart';
 import '../../event_bus.dart';
 import '../../player_controller/show_playlist_dialog.dart';
+import '../../widgets/cached_image.dart';
 
 /// 自定义音乐选项菜单（Overlay 实现，覆盖 PlayerController）
 class MusicOptionMenu extends StatefulWidget {
@@ -172,17 +173,14 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
   // 复用 MusicListItem 中的构建逻辑
   Widget _buildCover(BuildContext context) {
     if (widget.music.cover != null && widget.music.cover!.isNotEmpty) {
-      return ClipRRect(
+      return CachedImage(
+        imageUrl: widget.music.cover,
+        width: 44,
+        height: 44,
+        size: 88, // 2x for high DPI screens
         borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          widget.music.cover!,
-          width: 44,
-          height: 44,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildDefaultCover(context);
-          },
-        ),
+        placeholder: _buildDefaultCover(context),
+        errorWidget: _buildDefaultCover(context),
       );
     }
     return _buildDefaultCover(context);

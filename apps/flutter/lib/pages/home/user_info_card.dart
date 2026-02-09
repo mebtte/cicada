@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../states/server.dart';
+import '../../utils/get_resized_image_url.dart';
 
 /// 用户信息卡片组件
 /// 显示用户头像、昵称、用户名和服务器信息
@@ -91,14 +93,13 @@ class UserInfoCard extends StatelessWidget {
   /// 构建背景头像
   Widget _buildBackgroundAvatar(BuildContext context) {
     if (user!.avatar != null && user!.avatar!.isNotEmpty) {
-      return Image.network(
-        user!.avatar!,
+      return CachedNetworkImage(
+        imageUrl: getResizedImageUrl(user!.avatar!, 400), // Background avatar
         width: double.infinity,
         height: double.infinity,
         fit: BoxFit.cover,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildDefaultBackground(context);
-        },
+        placeholder: (_, __) => _buildDefaultBackground(context),
+        errorWidget: (_, __, ___) => _buildDefaultBackground(context),
       );
     }
     return _buildDefaultBackground(context);

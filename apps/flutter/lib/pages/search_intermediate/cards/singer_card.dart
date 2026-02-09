@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../server/api/get_exploration.dart';
+import '../../../widgets/cached_image.dart';
 
 class SingerCard extends StatelessWidget {
   final ExplorationSinger singer;
@@ -22,17 +23,15 @@ class SingerCard extends StatelessWidget {
                 color: Colors.grey[200],
               ),
               child: singer.avatar != null
-                  ? ClipRRect(
+                  ? CachedImage(
+                      imageUrl: singer.avatar,
+                      size: 200, // Fixed size for exploration cards
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        singer.avatar!,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(
-                            child: Icon(Icons.person, size: 48),
-                          );
-                        },
+                      placeholder: const Center(
+                        child: Icon(Icons.person, size: 48),
+                      ),
+                      errorWidget: const Center(
+                        child: Icon(Icons.person, size: 48),
                       ),
                     )
                   : const Center(child: Icon(Icons.person, size: 48)),

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../models/lyric.dart';
+import '../../utils/get_resized_image_url.dart';
 
 class LyricView extends StatefulWidget {
   final List<LyricLine> lyrics;
@@ -207,12 +209,16 @@ class _LyricViewState extends State<LyricView>
             ),
             child: ClipOval(
               child: widget.coverUrl != null
-                  ? Image.network(
-                      widget.coverUrl!,
+                  ? CachedNetworkImage(
+                      imageUrl: getResizedImageUrl(
+                        widget.coverUrl!,
+                        440,
+                      ), // 220px * 2
                       fit: BoxFit.cover,
                       width: 220,
                       height: 220,
-                      errorBuilder: (_, __, ___) => _buildDefaultCover(),
+                      placeholder: (_, __) => _buildDefaultCover(),
+                      errorWidget: (_, __, ___) => _buildDefaultCover(),
                     )
                   : _buildDefaultCover(),
             ),
