@@ -143,9 +143,7 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
                       onTap: () {
                         _close();
                         eventBus.fire(
-                          AddMusicListToPlaylistEvent(
-                            musicList: [widget.music],
-                          ),
+                          InsertToPlayqueueEvent(musicList: [widget.music]),
                         );
                         // 显示播放列表弹窗，定位到播放列表 tab
                         Future.delayed(const Duration(milliseconds: 100), () {

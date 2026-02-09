@@ -127,6 +127,18 @@ class PlayqueueState extends ChangeNotifier {
               isUserAdded: false,
             );
             next();
+          }
+        });
+    final insertToPlayqueueSubscription = eventBus
+        .on<InsertToPlayqueueEvent>()
+        .listen((event) {
+          if (currentMusic == null) {
+            final random = Random();
+            jump(
+              event.musicList[random.nextInt(event.musicList.length)],
+              isUserAdded: false,
+            );
+            next();
           } else {
             final newItems = event.musicList
                 .map(
@@ -148,6 +160,7 @@ class PlayqueueState extends ChangeNotifier {
     return () {
       playMusicSubscription.cancel();
       addMusicListToPlaylistSubscription.cancel();
+      insertToPlayqueueSubscription.cancel();
     };
   }
 }
