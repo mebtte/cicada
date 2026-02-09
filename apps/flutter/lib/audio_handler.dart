@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:audio_session/audio_session.dart';
 import 'package:cicada/states/audio.dart';
 import 'package:just_audio/just_audio.dart';
 import './event_bus.dart';
@@ -13,7 +14,30 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   ProcessingState? _lastProcessingState;
 
   MyAudioHandler() {
+    _initPlayer();
     _initStreams();
+    // 设置初始 playbackState，确保 Android 前台服务正确初始化
+    playbackState.add(
+      PlaybackState(
+        controls: [MediaControl.play, MediaControl.skipToNext],
+        systemActions: const {
+          MediaAction.play,
+          MediaAction.pause,
+          MediaAction.playPause,
+          MediaAction.seek,
+          MediaAction.skipToPrevious,
+          MediaAction.skipToNext,
+        },
+        processingState: AudioProcessingState.idle,
+        playing: false,
+      ),
+    );
+  }
+
+  Future<void> _initPlayer() async {
+    // 配置音频会话为音乐类型
+    final session = await AudioSession.instance;
+    await session.configure(const AudioSessionConfiguration.music());
   }
 
   void _initStreams() {
@@ -53,10 +77,12 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   void _broadcastState() {
     final state = player.playerState;
+    final hasPrevious = playqueueState.playqueueIndex > 0;
+
     playbackState.add(
       PlaybackState(
         controls: [
-          if (playqueueState.playqueueIndex > 0) MediaControl.skipToPrevious,
+          if (hasPrevious) MediaControl.skipToPrevious,
           state.playing ? MediaControl.pause : MediaControl.play,
           MediaControl.skipToNext,
         ],
@@ -70,6 +96,10 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           MediaAction.skipToPrevious,
           MediaAction.skipToNext,
         },
+        // 在紧凑视图（系统媒体控制面板）中显示的按钮索引
+        androidCompactActionIndices: hasPrevious
+            ? const [0, 1, 2] // previous, play/pause, next
+            : const [0, 1], // play/pause, next
         processingState: {
           ProcessingState.idle: AudioProcessingState.idle,
           ProcessingState.loading: AudioProcessingState.loading,
@@ -82,6 +112,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         bufferedPosition: player.bufferedPosition,
         speed: player.speed,
         queueIndex: playqueueState.playqueueIndex,
+        updateTime: DateTime.now(),
       ),
     );
   }
@@ -134,6 +165,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         duration: duration,
       );
       mediaItem.add(item);
+      _broadcastState(); // 确保通知更新
     } catch (e) {
       // 只有当错误发生时仍是当前歌曲才显示错误
       if (_currentLoadingPid == loadingPid) {

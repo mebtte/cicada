@@ -1,4 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.WAKE_LOCK"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+  
   <application
     android:label="cicada"
     android:name="${applicationName}"
@@ -25,6 +31,24 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
+    
+    <!-- audio_service -->
+    <service
+      android:name="com.ryanheise.audioservice.AudioService"
+      android:foregroundServiceType="mediaPlayback"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.media.browse.MediaBrowserService" />
+      </intent-filter>
+    </service>
+    <receiver 
+      android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.MEDIA_BUTTON" />
+      </intent-filter>
+    </receiver>
+    
     <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
     <meta-data
