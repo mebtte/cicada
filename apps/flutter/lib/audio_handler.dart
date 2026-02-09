@@ -7,6 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import './event_bus.dart';
 import './states/playqueue.dart';
 import './server/base/upload_music_play_record.dart';
+import './utils/audio_cache_manager.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   PlayqueueMusic? lastQueueMusic;
@@ -145,9 +146,16 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     await player.stop();
 
     try {
+      // 使用缓存管理器获取音频源
+      // 如果已缓存，会从本地读取；否则边下载边播放并保存到缓存
+      final audioSource = AudioCacheManager.instance.getAudioSource(
+        queueMusic.music.id,
+        queueMusic.music.asset,
+      );
+
       // 设置 60 秒超时
       var duration = await player
-          .setAudioSource(AudioSource.uri(Uri.parse(queueMusic.music.asset)))
+          .setAudioSource(audioSource)
           .timeout(
             const Duration(seconds: 60),
             onTimeout: () {

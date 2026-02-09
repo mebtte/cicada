@@ -17,6 +17,7 @@ dependencies:
   flutter_svg: ^2.2.0
   get_it: ^8.2.0
   just_audio: ^0.10.4
+  path_provider: ^2.1.5
   permission_handler: ^11.3.1
   provider: ^6.1.5
   shared_preferences: ^2.5.3

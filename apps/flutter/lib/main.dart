@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import './states/playlist.dart';
 import './utils/preference.dart';
+import './utils/audio_cache_manager.dart';
 import './window_manager.dart';
 import './app.dart';
 import './states/server.dart';
@@ -33,6 +34,9 @@ void main() async {
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     await Permission.notification.request();
   }
+
+  // 初始化音频缓存管理器
+  await AudioCacheManager.instance.init();
 
   final audioHandler = await AudioService.init(
     builder: () => MyAudioHandler(),
