@@ -102,6 +102,7 @@ const zhCN: {
   add: '添加',
   image_select_placeholder: '选择 jpeg/png 格式的图片',
   pwa_update_question: '检查到新版本, 是否马上加载?',
+  pwa_update_try_later: '版本更新超时, 请稍后再试',
   music: '音乐',
   public_musicbill: '公开乐单',
   pick_from_playlist_randomly: '随机从播放列表选取',
