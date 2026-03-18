@@ -44,6 +44,8 @@ const zhHans: {
   '2fa_enabled_already': '2FA 早已启用',
   need_2fa: '需要 2FA',
   no_need_to_2fa: '无需 2FA',
+  login_too_frequent: 'login 请求过于频繁',
+  login_with_2fa_too_frequent: 'login_with_2fa 请求过于频繁',
 };
 
 export default zhHans;

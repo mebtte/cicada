@@ -53,4 +53,6 @@ export const EXCEPTION_CODE_MAP_KEY: Record<ExceptionCode, Key> = {
   [ExceptionCode.TWO_FA_ENABLED_ALREADY]: '2fa_enabled_already',
   [ExceptionCode.NEED_2FA]: 'need_2fa',
   [ExceptionCode.NO_NEED_TO_2FA]: 'no_need_to_2fa',
+  [ExceptionCode.LOGIN_TOO_FREQUENT]: 'login_too_frequent',
+  [ExceptionCode.LOGIN_WITH_2FA_TOO_FREQUENT]: 'login_with_2fa_too_frequent',
 };
