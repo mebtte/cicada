@@ -1,13 +1,14 @@
 # AGENTS.md
 
-## Project Overview
+## Overview
 
-Cicada is a multi-user music service for self-hosting, which has three apps:
+Cicada is a multi-user music service for self-hosting, and it has three apps:
 
-- cli: it uses for starting a server and managing the data, which is powered by node.js
-- flutter: it's a client for cross-platform, which is powered by flutter
-- pwa: it's a client for web
+- cli: it uses for starting a server and managing the data and it is powered by node.js
+- flutter: it's a client for cross-platform and it is powered by flutter
+- pwa: it's a client for web and it is powered by react
 
 ## Rules
 
-- The variants prefer lower camel case
+- Variants prefer lower camel case
+- Filenames prefer snake case
