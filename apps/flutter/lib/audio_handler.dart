@@ -5,6 +5,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:cicada/states/audio.dart';
 import 'package:cicada/states/playlist.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:just_audio/just_audio.dart';
 import './event_bus.dart';
 import './server/base/upload_music_play_record.dart';
@@ -15,7 +16,10 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   PlayqueueMusic? lastQueueMusic;
   final player = AudioPlayer();
   // ignore: deprecated_member_use
-  final _playlist = ConcatenatingAudioSource(children: [], useLazyPreparation: true);
+  final _playlist = ConcatenatingAudioSource(
+    children: [],
+    useLazyPreparation: true,
+  );
   final _playTimer = Stopwatch();
   final _random = Random();
   String? _currentLoadingPid;
@@ -24,6 +28,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   bool _syncingFromPlayerIndex = false;
   int _loadedQueueBaseIndex = -1;
   int _loadedQueueLength = 0;
+  List<String> _loadedQueuePids = const [];
+  bool _mutatingPlayqueueFromHandler = false;
 
   MyAudioHandler() {
     _initPlayer();
@@ -102,6 +108,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           currentQueueMusic != null &&
           previousQueueMusic.pid != currentQueueMusic.pid) {
         unawaited(_uploadPlayRecord(previousQueueMusic));
+        _playTimer.reset();
       }
       lastQueueMusic = currentQueueMusic;
       unawaited(_appendUpcomingTrackIfNeeded());
@@ -112,9 +119,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       if (currentSource != null && currentSource.tag is MediaItem) {
         final currentTaggedMediaItem = currentSource.tag as MediaItem;
         mediaItem.add(
-          currentTaggedMediaItem.copyWith(
-            duration: player.duration,
-          ),
+          currentTaggedMediaItem.copyWith(duration: player.duration),
         );
       }
       _broadcastState();
@@ -184,6 +189,32 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }).toList();
   }
 
+  void _syncAudioServiceQueue(List<PlayqueueMusic> queueSnapshot) {
+    queue.add(
+      queueSnapshot
+          .map((queueMusic) => _buildMediaItem(queueMusic))
+          .toList(growable: false),
+    );
+  }
+
+  Future<void> _handleLoadFailure(String loadingPid) async {
+    if (_currentLoadingPid != loadingPid) {
+      return;
+    }
+
+    _currentLoadingPid = null;
+    _shouldPlayAfterLoad = false;
+
+    try {
+      await player.stop();
+    } catch (_) {
+      // Swallow stop errors so the UI can recover from the original failure.
+    }
+
+    audioState.updateState(playing: false, loading: false);
+    _broadcastState();
+  }
+
   Future<void> _appendUpcomingTrackIfNeeded() async {
     if (_loadedQueueBaseIndex < 0 || _loadedQueueLength == 0) {
       return;
@@ -206,7 +237,12 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       }
 
       final playlistMusic = playlist[_random.nextInt(playlist.length)];
-      playqueueState.jump(playlistMusic.music, isUserAdded: false);
+      _mutatingPlayqueueFromHandler = true;
+      try {
+        playqueueState.jump(playlistMusic.music, isUserAdded: false);
+      } finally {
+        _mutatingPlayqueueFromHandler = false;
+      }
       if (nextAbsoluteIndex < playqueueState.playqueue.length) {
         nextQueueMusic = playqueueState.playqueue[nextAbsoluteIndex];
       }
@@ -223,24 +259,36 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         tag: _buildMediaItem(nextQueueMusic),
       ),
     );
-    _loadedQueueLength++;
+    _loadedQueuePids = playqueueState.playqueue
+        .map((queueMusic) => queueMusic.pid)
+        .toList(growable: false);
+    _loadedQueueLength = _loadedQueuePids.length;
+    _syncAudioServiceQueue(playqueueState.playqueue);
   }
 
-  Future<void> playQueueMusic(PlayqueueMusic queueMusic) async {
-    _playTimer.reset();
-    _shouldPlayAfterLoad = true;
-
+  Future<void> _loadCurrentQueue({
+    required PlayqueueMusic queueMusic,
+    required Duration initialPosition,
+    required bool resetPlayTimer,
+    required bool shouldPlayAfterLoad,
+  }) async {
+    if (resetPlayTimer) {
+      _playTimer.reset();
+    }
+    _shouldPlayAfterLoad = shouldPlayAfterLoad;
     final loadingPid = queueMusic.pid;
     _currentLoadingPid = loadingPid;
     final queueIndex = playqueueState.playqueueIndex;
     if (queueIndex < 0 || queueIndex >= playqueueState.playqueue.length) {
       return;
     }
-    final queueSnapshot = List<PlayqueueMusic>.from(
-      playqueueState.playqueue.sublist(queueIndex),
-    );
-    _loadedQueueBaseIndex = queueIndex;
+    final queueSnapshot = List<PlayqueueMusic>.from(playqueueState.playqueue);
+    _loadedQueueBaseIndex = 0;
     _loadedQueueLength = queueSnapshot.length;
+    _loadedQueuePids = queueSnapshot
+        .map((queueMusic) => queueMusic.pid)
+        .toList(growable: false);
+    _syncAudioServiceQueue(queueSnapshot);
 
     await player.stop();
 
@@ -251,8 +299,8 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       final duration = await player
           .setAudioSource(
             _playlist,
-            initialIndex: 0,
-            initialPosition: Duration.zero,
+            initialIndex: queueIndex,
+            initialPosition: initialPosition,
             preload: true,
           )
           .timeout(
@@ -273,10 +321,14 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       if (_shouldPlayAfterLoad) {
         await player.play();
       }
+      if (_currentLoadingPid == loadingPid) {
+        _currentLoadingPid = null;
+      }
     } on PlayerInterruptedException {
       // A newer song load took over; ignore the interrupted request.
     } on TimeoutException {
       if (_currentLoadingPid == loadingPid) {
+        await _handleLoadFailure(loadingPid);
         eventBus.fire(
           PlayErrorEvent(
             musicName: queueMusic.music.name,
@@ -287,6 +339,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       }
     } catch (error) {
       if (_currentLoadingPid == loadingPid) {
+        await _handleLoadFailure(loadingPid);
         eventBus.fire(
           PlayErrorEvent(
             musicName: queueMusic.music.name,
@@ -295,6 +348,29 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         );
       }
     }
+  }
+
+  Future<void> playQueueMusic(PlayqueueMusic queueMusic) {
+    return _loadCurrentQueue(
+      queueMusic: queueMusic,
+      initialPosition: Duration.zero,
+      resetPlayTimer: true,
+      shouldPlayAfterLoad: true,
+    );
+  }
+
+  Future<void> _reloadCurrentQueue() {
+    final currentQueueMusic = playqueueState.currentMusic;
+    if (currentQueueMusic == null) {
+      return Future.value();
+    }
+
+    return _loadCurrentQueue(
+      queueMusic: currentQueueMusic,
+      initialPosition: player.position,
+      resetPlayTimer: false,
+      shouldPlayAfterLoad: player.playing,
+    );
   }
 
   @override
@@ -321,12 +397,27 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   @override
   Future<void> skipToPrevious() async {
     _shouldPlayAfterLoad = true;
+    if (player.audioSource != null && player.hasPrevious) {
+      await player.seekToPrevious();
+      if (!player.playing) {
+        await player.play();
+      }
+      return;
+    }
     playqueueState.previous();
   }
 
   @override
   Future<void> skipToNext() async {
     _shouldPlayAfterLoad = true;
+    await _appendUpcomingTrackIfNeeded();
+    if (player.audioSource != null && player.hasNext) {
+      await player.seekToNext();
+      if (!player.playing) {
+        await player.play();
+      }
+      return;
+    }
     playqueueState.next();
   }
 
@@ -357,13 +448,22 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   void subscribe() {
     playqueueState.addListener(() {
-      if (_syncingFromPlayerIndex) {
+      if (_syncingFromPlayerIndex || _mutatingPlayqueueFromHandler) {
         return;
       }
 
       final currentQueueMusic = playqueueState.currentMusic;
-      if (currentQueueMusic == null ||
-          currentQueueMusic.pid == lastQueueMusic?.pid) {
+      if (currentQueueMusic == null) {
+        return;
+      }
+
+      final currentQueuePids = playqueueState.playqueue
+          .map((queueMusic) => queueMusic.pid)
+          .toList(growable: false);
+      if (currentQueueMusic.pid == lastQueueMusic?.pid) {
+        if (!listEquals(_loadedQueuePids, currentQueuePids)) {
+          unawaited(_reloadCurrentQueue());
+        }
         return;
       }
 

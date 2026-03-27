@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../event_bus.dart';
-import '../states/playqueue.dart';
 
 /// Display playback error dialog
 /// Returns true indicating the user cancelled autoplaying the next song, false indicates autoplay proceeded
@@ -59,8 +60,9 @@ class _PlayErrorDialogState extends State<_PlayErrorDialog> {
   }
 
   void _playNext() {
+    final audioHandler = context.read<AudioHandler>();
     Navigator.of(context).pop();
-    playqueueState.next();
+    audioHandler.skipToNext();
   }
 
   void _cancel() {

@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import '../audio_handler.dart';
 import '../states/audio.dart';
-import '../states/playqueue.dart';
 import './show_playlist_dialog.dart';
 
 class Actions extends StatelessWidget {
@@ -39,7 +38,8 @@ class Actions extends StatelessWidget {
         spacing,
         IconButton(
           onPressed: () {
-            playqueueState.next();
+            final audioHandler = GetIt.instance.get<MyAudioHandler>();
+            audioHandler.skipToNext();
           },
           icon: Icon(Icons.skip_next),
           iconSize: 20,
