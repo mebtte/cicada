@@ -43,16 +43,27 @@ class _MusicbillState extends State<Musicbill> {
     final musicbill = musicbill_state.musicbillState.musicbillList.firstWhere(
       (m) => m.id == widget.id,
     );
-    if (musicbill.status != musicbill_state.MusicbillStatus.LOADING) {
-      Future.delayed(
-        Duration.zero,
-        () => musicbill_state.musicbillState.reloadMusicbill(
-          id: widget.id,
-          silence:
-              musicbill.status == musicbill_state.MusicbillStatus.SUCCESSFUL,
-        ),
-      );
+    final shouldSilentlyRefresh = musicbill_state.musicbillState
+        .shouldSilentlyRefreshOnEnter(widget.id);
+    if (musicbill.status == musicbill_state.MusicbillStatus.LOADING) {
+      return;
     }
+
+    final shouldReload =
+        musicbill.status != musicbill_state.MusicbillStatus.SUCCESSFUL ||
+        shouldSilentlyRefresh;
+
+    if (!shouldReload) {
+      return;
+    }
+
+    Future.delayed(
+      Duration.zero,
+      () => musicbill_state.musicbillState.reloadMusicbill(
+        id: widget.id,
+        silence: musicbill.status == musicbill_state.MusicbillStatus.SUCCESSFUL,
+      ),
+    );
   }
 
   void _onScroll() {

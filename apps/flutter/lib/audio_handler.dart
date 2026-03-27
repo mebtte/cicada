@@ -1,25 +1,33 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:cicada/states/audio.dart';
+import 'package:cicada/states/playlist.dart';
 import 'package:just_audio/just_audio.dart';
 import './event_bus.dart';
-import './states/playqueue.dart';
 import './server/base/upload_music_play_record.dart';
+import './states/playqueue.dart';
 import './utils/audio_cache_manager.dart';
 
 class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   PlayqueueMusic? lastQueueMusic;
   final player = AudioPlayer();
+  // ignore: deprecated_member_use
+  final _playlist = ConcatenatingAudioSource(children: [], useLazyPreparation: true);
   final _playTimer = Stopwatch();
-  String? _currentLoadingPid; // 跟踪当前正在加载的歌曲，用于处理竞态条件
+  final _random = Random();
+  String? _currentLoadingPid;
   ProcessingState? _lastProcessingState;
+  bool _shouldPlayAfterLoad = false;
+  bool _syncingFromPlayerIndex = false;
+  int _loadedQueueBaseIndex = -1;
+  int _loadedQueueLength = 0;
 
   MyAudioHandler() {
     _initPlayer();
     _initStreams();
-    // 设置初始 playbackState，确保 Android 前台服务正确初始化
     playbackState.add(
       PlaybackState(
         controls: [MediaControl.play, MediaControl.skipToNext],
@@ -38,16 +46,11 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   Future<void> _initPlayer() async {
-    // 配置音频会话为音乐类型
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.music());
   }
 
   void _initStreams() {
-    // Listen to all relevant streams and update state
-    // We combine the streams or just listen separately and invoke update
-
-    // Just Audio's position stream is what we need for progress bar
     player.positionStream.listen((position) {
       _broadcastState();
     });
@@ -62,6 +65,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       } else {
         _playTimer.stop();
       }
+
       audioState.updateState(
         playing: state.playing,
         loading:
@@ -75,6 +79,45 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         playqueueState.next();
       }
       _lastProcessingState = state.processingState;
+    });
+
+    player.currentIndexStream.listen((relativeIndex) {
+      if (relativeIndex == null || _loadedQueueBaseIndex < 0) {
+        return;
+      }
+
+      final absoluteIndex = _loadedQueueBaseIndex + relativeIndex;
+      if (absoluteIndex == playqueueState.playqueueIndex) {
+        return;
+      }
+
+      final previousQueueMusic = lastQueueMusic;
+
+      _syncingFromPlayerIndex = true;
+      playqueueState.setCurrentIndex(absoluteIndex);
+      _syncingFromPlayerIndex = false;
+
+      final currentQueueMusic = playqueueState.currentMusic;
+      if (previousQueueMusic != null &&
+          currentQueueMusic != null &&
+          previousQueueMusic.pid != currentQueueMusic.pid) {
+        unawaited(_uploadPlayRecord(previousQueueMusic));
+      }
+      lastQueueMusic = currentQueueMusic;
+      unawaited(_appendUpcomingTrackIfNeeded());
+    });
+
+    player.sequenceStateStream.listen((sequenceState) {
+      final currentSource = sequenceState.currentSource;
+      if (currentSource != null && currentSource.tag is MediaItem) {
+        final currentTaggedMediaItem = currentSource.tag as MediaItem;
+        mediaItem.add(
+          currentTaggedMediaItem.copyWith(
+            duration: player.duration,
+          ),
+        );
+      }
+      _broadcastState();
     });
   }
 
@@ -99,10 +142,9 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           MediaAction.skipToPrevious,
           MediaAction.skipToNext,
         },
-        // 在紧凑视图（系统媒体控制面板）中显示的按钮索引
         androidCompactActionIndices: hasPrevious
-            ? const [0, 1, 2] // previous, play/pause, next
-            : const [0, 1], // play/pause, next
+            ? const [0, 1, 2]
+            : const [0, 1],
         processingState: {
           ProcessingState.idle: AudioProcessingState.idle,
           ProcessingState.loading: AudioProcessingState.loading,
@@ -120,42 +162,99 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     );
   }
 
-  @override
-  Future<void> play() => player.play();
+  MediaItem _buildMediaItem(PlayqueueMusic queueMusic, {Duration? duration}) {
+    return MediaItem(
+      id: queueMusic.pid,
+      title: queueMusic.music.name,
+      artist: queueMusic.music.singers.map((s) => s.name).join(','),
+      artUri: queueMusic.music.cover == null
+          ? null
+          : Uri.parse(queueMusic.music.cover!),
+      duration: duration,
+    );
+  }
 
-  @override
-  Future<void> pause() => player.pause();
+  List<AudioSource> _buildSources(List<PlayqueueMusic> queue) {
+    return queue.map((queueMusic) {
+      return AudioCacheManager.instance.getAudioSource(
+        queueMusic.music.id,
+        queueMusic.music.asset,
+        tag: _buildMediaItem(queueMusic),
+      );
+    }).toList();
+  }
 
-  @override
-  Future<void> skipToPrevious() async => playqueueState.previous();
+  Future<void> _appendUpcomingTrackIfNeeded() async {
+    if (_loadedQueueBaseIndex < 0 || _loadedQueueLength == 0) {
+      return;
+    }
 
-  @override
-  Future<void> skipToNext() async => playqueueState.next();
+    final currentAbsoluteIndex = playqueueState.playqueueIndex;
+    final currentRelativeIndex = currentAbsoluteIndex - _loadedQueueBaseIndex;
+    if (currentRelativeIndex != _loadedQueueLength - 1) {
+      return;
+    }
 
-  @override
-  Future<void> seek(Duration position) => player.seek(position);
+    final nextAbsoluteIndex = currentAbsoluteIndex + 1;
+    PlayqueueMusic? nextQueueMusic;
+    if (nextAbsoluteIndex < playqueueState.playqueue.length) {
+      nextQueueMusic = playqueueState.playqueue[nextAbsoluteIndex];
+    } else {
+      final playlist = playlistState.playlist;
+      if (playlist.isEmpty) {
+        return;
+      }
+
+      final playlistMusic = playlist[_random.nextInt(playlist.length)];
+      playqueueState.jump(playlistMusic.music, isUserAdded: false);
+      if (nextAbsoluteIndex < playqueueState.playqueue.length) {
+        nextQueueMusic = playqueueState.playqueue[nextAbsoluteIndex];
+      }
+    }
+
+    if (nextQueueMusic == null) {
+      return;
+    }
+
+    await _playlist.add(
+      AudioCacheManager.instance.getAudioSource(
+        nextQueueMusic.music.id,
+        nextQueueMusic.music.asset,
+        tag: _buildMediaItem(nextQueueMusic),
+      ),
+    );
+    _loadedQueueLength++;
+  }
 
   Future<void> playQueueMusic(PlayqueueMusic queueMusic) async {
     _playTimer.reset();
+    _shouldPlayAfterLoad = true;
 
-    // 记录当前正在加载的歌曲 ID，用于检测竞态条件
     final loadingPid = queueMusic.pid;
     _currentLoadingPid = loadingPid;
+    final queueIndex = playqueueState.playqueueIndex;
+    if (queueIndex < 0 || queueIndex >= playqueueState.playqueue.length) {
+      return;
+    }
+    final queueSnapshot = List<PlayqueueMusic>.from(
+      playqueueState.playqueue.sublist(queueIndex),
+    );
+    _loadedQueueBaseIndex = queueIndex;
+    _loadedQueueLength = queueSnapshot.length;
 
-    // 先停止当前播放，避免干扰
     await player.stop();
 
     try {
-      // 使用缓存管理器获取音频源
-      // 如果已缓存，会从本地读取；否则边下载边播放并保存到缓存
-      final audioSource = AudioCacheManager.instance.getAudioSource(
-        queueMusic.music.id,
-        queueMusic.music.asset,
-      );
+      await _playlist.clear();
+      await _playlist.addAll(_buildSources(queueSnapshot));
 
-      // 设置 60 秒超时
-      var duration = await player
-          .setAudioSource(audioSource)
+      final duration = await player
+          .setAudioSource(
+            _playlist,
+            initialIndex: 0,
+            initialPosition: Duration.zero,
+            preload: true,
+          )
           .timeout(
             const Duration(seconds: 60),
             onTimeout: () {
@@ -163,27 +262,20 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
             },
           );
 
-      // 检查是否仍是当前要播放的歌曲（用户可能在加载过程中切换了歌曲）
       if (_currentLoadingPid != loadingPid) {
-        // 用户已切换到其他歌曲，忽略此次加载结果
         return;
       }
 
-      player.play();
+      mediaItem.add(_buildMediaItem(queueMusic, duration: duration));
+      _broadcastState();
+      await _appendUpcomingTrackIfNeeded();
 
-      var item = MediaItem(
-        id: queueMusic.pid,
-        title: queueMusic.music.name,
-        artist: queueMusic.music.singers.map((s) => s.name).join(','),
-        artUri: queueMusic.music.cover == null
-            ? null
-            : Uri.parse(queueMusic.music.cover!),
-        duration: duration,
-      );
-      mediaItem.add(item);
-      _broadcastState(); // 确保通知更新
+      if (_shouldPlayAfterLoad) {
+        await player.play();
+      }
+    } on PlayerInterruptedException {
+      // A newer song load took over; ignore the interrupted request.
     } on TimeoutException {
-      // 加载超时
       if (_currentLoadingPid == loadingPid) {
         eventBus.fire(
           PlayErrorEvent(
@@ -193,18 +285,53 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           ),
         );
       }
-    } catch (e) {
-      // 只有当错误发生时仍是当前歌曲才显示错误
+    } catch (error) {
       if (_currentLoadingPid == loadingPid) {
         eventBus.fire(
           PlayErrorEvent(
             musicName: queueMusic.music.name,
-            errorMessage: e.toString(),
+            errorMessage: error.toString(),
           ),
         );
       }
     }
   }
+
+  @override
+  Future<void> play() {
+    _shouldPlayAfterLoad = true;
+    if (player.audioSource != null) {
+      return player.play();
+    }
+
+    final currentQueueMusic = playqueueState.currentMusic;
+    if (currentQueueMusic == null) {
+      return Future.value();
+    }
+
+    return playQueueMusic(currentQueueMusic);
+  }
+
+  @override
+  Future<void> pause() {
+    _shouldPlayAfterLoad = false;
+    return player.pause();
+  }
+
+  @override
+  Future<void> skipToPrevious() async {
+    _shouldPlayAfterLoad = true;
+    playqueueState.previous();
+  }
+
+  @override
+  Future<void> skipToNext() async {
+    _shouldPlayAfterLoad = true;
+    playqueueState.next();
+  }
+
+  @override
+  Future<void> seek(Duration position) => player.seek(position);
 
   Future<void> _uploadPlayRecord(PlayqueueMusic queueMusic) async {
     final duration = player.duration;
@@ -222,22 +349,32 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         musicId: queueMusic.music.id,
         percent: percent,
       );
-    } catch (e) {
-      print('Failed to upload play record: $e');
+    } catch (error) {
+      // ignore: avoid_print
+      print('Failed to upload play record: $error');
     }
   }
 
   void subscribe() {
     playqueueState.addListener(() {
-      final currentQueueMusic = playqueueState.currentMusic;
-      if (currentQueueMusic != null &&
-          currentQueueMusic.pid != lastQueueMusic?.pid) {
-        if (lastQueueMusic != null) {
-          _uploadPlayRecord(lastQueueMusic!);
-        }
-        lastQueueMusic = currentQueueMusic;
-        playQueueMusic(currentQueueMusic);
+      if (_syncingFromPlayerIndex) {
+        return;
       }
+
+      final currentQueueMusic = playqueueState.currentMusic;
+      if (currentQueueMusic == null ||
+          currentQueueMusic.pid == lastQueueMusic?.pid) {
+        return;
+      }
+
+      final previousQueueMusic = lastQueueMusic;
+      lastQueueMusic = currentQueueMusic;
+
+      if (previousQueueMusic != null) {
+        unawaited(_uploadPlayRecord(previousQueueMusic));
+      }
+
+      unawaited(playQueueMusic(currentQueueMusic));
     });
   }
 }

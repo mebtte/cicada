@@ -2,6 +2,7 @@ import 'package:cicada/constants/index.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../states/server.dart';
+import '../../widgets/cached_image.dart';
 import '../../widgets/player_bottom_spacer.dart';
 
 /// 用户个人资料页面
@@ -38,25 +39,46 @@ class ProfilePage extends StatelessWidget {
 
   /// 构建用户头部
   Widget _buildUserHeader(BuildContext context, User user, Server? server) {
+    final avatarUrl = user.avatar;
+    final hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
+
     return Container(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundColor: Theme.of(
-              context,
-            ).primaryColor.withValues(alpha: 0.1),
-            backgroundImage: user.avatar != null && user.avatar!.isNotEmpty
-                ? NetworkImage(user.avatar!)
-                : null,
-            child: user.avatar == null || user.avatar!.isEmpty
-                ? Icon(
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Theme.of(
+                context,
+              ).primaryColor.withValues(alpha: 0.1),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: hasAvatar
+                ? CachedImage(
+                    imageUrl: avatarUrl,
+                    width: 100,
+                    height: 100,
+                    size: 200,
+                    fit: BoxFit.cover,
+                    placeholder: Icon(
+                      Icons.person,
+                      size: 50,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    errorWidget: Icon(
+                      Icons.person,
+                      size: 50,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  )
+                : Icon(
                     Icons.person,
                     size: 50,
                     color: Theme.of(context).primaryColor,
-                  )
-                : null,
+                  ),
           ),
           const SizedBox(height: 16),
           Text(

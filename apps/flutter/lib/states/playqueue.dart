@@ -59,6 +59,14 @@ class PlayqueueState extends ChangeNotifier {
     }
   }
 
+  void setCurrentIndex(int index) {
+    if (index < -1 || index >= playqueue.length || index == playqueueIndex) {
+      return;
+    }
+    playqueueIndex = index;
+    notifyListeners();
+  }
+
   void next() {
     final nextPlayqueueIndex = playqueueIndex + 1;
     if (nextPlayqueueIndex >= playqueue.length) {
@@ -104,8 +112,7 @@ class PlayqueueState extends ChangeNotifier {
   void rewind(PlayqueueMusic item) {
     final index = playqueue.indexWhere((element) => element.pid == item.pid);
     if (index != -1) {
-      playqueueIndex = index;
-      notifyListeners();
+      setCurrentIndex(index);
     }
   }
 

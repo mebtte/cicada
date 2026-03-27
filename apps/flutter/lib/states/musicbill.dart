@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 enum MusicbillStatus { INITIAL, LOADING, SUCCESSFUL, FAILED }
 
+const musicbillRefreshInterval = Duration(minutes: 5);
+
 class Musicbill {
   String id;
   String name;
@@ -28,6 +30,7 @@ class MusicbillState extends ChangeNotifier {
   bool loading = false;
   Exception? exception;
   List<Musicbill> musicbillList = [];
+  final Map<String, DateTime> _musicbillLastEnteredAt = {};
 
   void reloadMusicbillList({required bool silence}) async {
     exception = null;
@@ -105,6 +108,14 @@ class MusicbillState extends ChangeNotifier {
       }).toList();
       notifyListeners();
     }
+  }
+
+  bool shouldSilentlyRefreshOnEnter(String id) {
+    final now = DateTime.now();
+    final lastEnteredAt = _musicbillLastEnteredAt[id];
+    _musicbillLastEnteredAt[id] = now;
+    return lastEnteredAt == null ||
+        now.difference(lastEnteredAt) > musicbillRefreshInterval;
   }
 }
 

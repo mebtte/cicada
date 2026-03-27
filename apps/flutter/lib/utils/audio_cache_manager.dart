@@ -44,13 +44,18 @@ class AudioCacheManager {
   /// 获取缓存的音频源
   ///
   /// 如果已缓存，返回本地文件源；否则返回带缓存的网络源
-  AudioSource getAudioSource(String musicId, String url) {
+  AudioSource getAudioSource(String musicId, String url, {dynamic tag}) {
     final cacheFile = getCacheFile(musicId);
 
     // 使用 LockCachingAudioSource 来缓存音频
     // 如果缓存文件存在，它会直接从缓存读取
     // 如果不存在，它会边下载边播放，同时保存到缓存文件
-    return LockCachingAudioSource(Uri.parse(url), cacheFile: cacheFile);
+    // ignore: experimental_member_use
+    return LockCachingAudioSource(
+      Uri.parse(url),
+      cacheFile: cacheFile,
+      tag: tag,
+    );
   }
 
   /// 清除所有缓存
