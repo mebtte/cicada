@@ -74,3 +74,24 @@ Future<dynamic> httpPost<Data>({
   );
   return handleResponse(response);
 }
+
+Future<dynamic> httpDelete<Data>({
+  required String path,
+  Map<String, String>? query,
+  Object? data,
+  bool withToken = false,
+  String? origin,
+}) async {
+  final response = await dio.delete(
+    '${origin ?? serverState.currentServer!.origin}$path',
+    queryParameters: query,
+    data: data,
+    options: Options(
+      headers: {
+        ...getTokenHeader(withToken),
+        "content-type": "application/json",
+      },
+    ),
+  );
+  return handleResponse(response);
+}

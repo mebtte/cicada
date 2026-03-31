@@ -3,6 +3,7 @@ import '../../models/music.dart';
 import '../../event_bus.dart';
 import '../../player_controller/show_playlist_dialog.dart';
 import '../../widgets/cached_image.dart';
+import './add_to_musicbill_sheet.dart';
 
 /// 自定义音乐选项菜单（Overlay 实现，覆盖 PlayerController）
 class MusicOptionMenu extends StatefulWidget {
@@ -10,6 +11,7 @@ class MusicOptionMenu extends StatefulWidget {
   final VoidCallback onPlay;
   final VoidCallback onClose;
   final BuildContext? parentContext; // 用于显示播放队列弹窗
+  final bool showPlaylistAfterInsert;
 
   const MusicOptionMenu({
     super.key,
@@ -17,6 +19,7 @@ class MusicOptionMenu extends StatefulWidget {
     required this.onPlay,
     required this.onClose,
     this.parentContext,
+    this.showPlaylistAfterInsert = true,
   });
 
   @override
@@ -145,16 +148,37 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
                         eventBus.fire(
                           InsertToPlayqueueEvent(musicList: [widget.music]),
                         );
-                        // 显示播放列表弹窗，定位到播放列表 tab
-                        Future.delayed(const Duration(milliseconds: 100), () {
-                          if (widget.parentContext != null &&
-                              widget.parentContext!.mounted) {
-                            showPlaylistDialog(
-                              widget.parentContext!,
-                              initialTabIndex: 1,
-                            );
-                          }
-                        });
+                        if (widget.showPlaylistAfterInsert) {
+                          // 显示播放列表弹窗，定位到播放列表 tab
+                          Future.delayed(const Duration(milliseconds: 100), () {
+                            if (widget.parentContext != null &&
+                                widget.parentContext!.mounted) {
+                              showPlaylistDialog(
+                                widget.parentContext!,
+                                initialTabIndex: 1,
+                              );
+                            }
+                          });
+                        }
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.library_add_rounded),
+                      title: const Text('Add to musicbill'),
+                      onTap: () async {
+                        final dialogContext =
+                            widget.parentContext != null &&
+                                widget.parentContext!.mounted
+                            ? widget.parentContext!
+                            : context;
+                        await _close();
+                        if (!dialogContext.mounted) {
+                          return;
+                        }
+                        showAddToMusicbillSheet(
+                          dialogContext,
+                          music: widget.music,
+                        );
                       },
                     ),
                     const SizedBox(height: 16),

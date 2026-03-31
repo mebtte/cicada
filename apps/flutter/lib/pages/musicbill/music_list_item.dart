@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/music.dart';
 import '../../widgets/cached_image.dart';
-import 'music_option_menu.dart';
+import 'show_music_option_menu.dart';
 
 /// 音乐列表项组件
 /// 显示音乐封面、名称和歌手信息
@@ -31,7 +31,8 @@ class MusicListItem extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: onTap,
-          onLongPress: () => _showMusicOptions(context),
+          onLongPress: () =>
+              showMusicOptionMenu(context, music: music, onPlay: onTap),
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Row(
@@ -63,7 +64,8 @@ class MusicListItem extends StatelessWidget {
                     color: Colors.grey[400],
                     size: 20,
                   ),
-                  onPressed: () => _showMusicOptions(context),
+                  onPressed: () =>
+                      showMusicOptionMenu(context, music: music, onPlay: onTap),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   style: const ButtonStyle(
@@ -76,25 +78,6 @@ class MusicListItem extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  /// 显示音乐选项菜单
-  void _showMusicOptions(BuildContext context) {
-    final overlay = Overlay.of(context, rootOverlay: true);
-    late OverlayEntry entry;
-
-    entry = OverlayEntry(
-      builder: (_) => MusicOptionMenu(
-        music: music,
-        onPlay: onTap,
-        onClose: () {
-          entry.remove();
-        },
-        parentContext: context,
-      ),
-    );
-
-    overlay.insert(entry);
   }
 
   /// 构建封面

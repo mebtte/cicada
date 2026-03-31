@@ -15,7 +15,7 @@ class PlayerHeader extends StatelessWidget {
       padding: EdgeInsets.only(top: safePadding),
       child: Container(
         height: kToolbarHeight,
-        padding: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
           children: [
             Expanded(

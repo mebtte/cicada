@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/music.dart';
 import '../../widgets/cached_image.dart';
-import '../musicbill/music_option_menu.dart';
+import '../musicbill/show_music_option_menu.dart';
 
 class MusicWithLyricListItem extends StatelessWidget {
   final Music music;
@@ -37,7 +37,8 @@ class MusicWithLyricListItem extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: onTap,
-          onLongPress: () => _showMusicOptions(context),
+          onLongPress: () =>
+              showMusicOptionMenu(context, music: music, onPlay: onTap),
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Column(
@@ -72,7 +73,11 @@ class MusicWithLyricListItem extends StatelessWidget {
                         color: Colors.grey[400],
                         size: 20,
                       ),
-                      onPressed: () => _showMusicOptions(context),
+                      onPressed: () => showMusicOptionMenu(
+                        context,
+                        music: music,
+                        onPlay: onTap,
+                      ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                       style: const ButtonStyle(
@@ -151,24 +156,6 @@ class MusicWithLyricListItem extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
     );
-  }
-
-  void _showMusicOptions(BuildContext context) {
-    final overlay = Overlay.of(context, rootOverlay: true);
-    late OverlayEntry entry;
-
-    entry = OverlayEntry(
-      builder: (_) => MusicOptionMenu(
-        music: music,
-        onPlay: onTap,
-        onClose: () {
-          entry.remove();
-        },
-        parentContext: context,
-      ),
-    );
-
-    overlay.insert(entry);
   }
 
   Widget _buildCover(BuildContext context) {

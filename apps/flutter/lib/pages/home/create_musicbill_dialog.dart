@@ -48,14 +48,15 @@ class _CreateMusicbillDialogState extends State<CreateMusicbillDialog> {
 
     try {
       // 调用 API 创建 musicbill
-      await createMusicbill(name: name);
+      final id = await createMusicbill(name: name);
 
       // 重新加载列表
-      musicbillState.reloadMusicbillList(silence: true);
+      await musicbillState.reloadMusicbillList(silence: true);
+      await musicbillState.reloadMusicbill(id: id, silence: true);
 
       // 关闭对话框
       if (mounted) {
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(id);
       }
     } catch (e) {
       setState(() {

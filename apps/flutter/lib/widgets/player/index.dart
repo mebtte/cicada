@@ -3,6 +3,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../event_bus.dart';
 import '../../models/music.dart';
 import '../../models/lyric.dart';
 import '../../server/api/get_lyric.dart';
@@ -12,6 +13,7 @@ import './lyric_view.dart';
 import './player_controls.dart';
 import './player_header.dart';
 import '../../states/playqueue.dart';
+import '../../pages/musicbill/add_to_musicbill_sheet.dart';
 import '../../player_controller/show_playlist_dialog.dart';
 
 class PlayerWidget extends StatefulWidget {
@@ -204,6 +206,15 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                         const SizedBox(height: 32),
                         PlayerControls(
                           onBack: () => Navigator.of(context).pop(),
+                          onAddToMusicbill: () => showAddToMusicbillSheet(
+                            context,
+                            music: displayMusic,
+                          ),
+                          onInsertToPlayqueue: () {
+                            eventBus.fire(
+                              InsertToPlayqueueEvent(musicList: [displayMusic]),
+                            );
+                          },
                           onPlaylist: () => showPlaylistDialog(context),
                         ),
                       ],

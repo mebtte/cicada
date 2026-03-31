@@ -3,6 +3,7 @@ import 'package:cicada/states/playlist.dart';
 import 'package:cicada/states/playqueue.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../pages/musicbill/show_music_option_menu.dart';
 
 class Playlist extends StatelessWidget {
   const Playlist({super.key});
@@ -46,6 +47,13 @@ class Playlist extends StatelessWidget {
 
         return InkWell(
           onTap: () => eventBus.fire(PlayMusicEvent(music: music)),
+          onLongPress: () => showMusicOptionMenu(
+            context,
+            music: music,
+            onPlay: () => eventBus.fire(PlayMusicEvent(music: music)),
+            parentContext: context,
+            showPlaylistAfterInsert: false,
+          ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
@@ -96,6 +104,25 @@ class Playlist extends StatelessWidget {
                         ),
                       ],
                     ],
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.more_horiz_rounded,
+                    size: 18,
+                    color: Colors.grey[400],
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
+                  onPressed: () => showMusicOptionMenu(
+                    context,
+                    music: music,
+                    onPlay: () => eventBus.fire(PlayMusicEvent(music: music)),
+                    parentContext: context,
+                    showPlaylistAfterInsert: false,
                   ),
                 ),
                 // 删除按钮

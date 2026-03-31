@@ -84,7 +84,7 @@ class PlayController extends StatelessWidget {
                   const SizedBox(width: 4),
 
                   // 操作按钮
-                  actions.Actions(),
+                  const actions.Actions(),
                 ],
               ),
             ),

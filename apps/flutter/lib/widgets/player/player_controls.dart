@@ -4,9 +4,17 @@ import 'package:provider/provider.dart';
 
 class PlayerControls extends StatelessWidget {
   final VoidCallback? onBack;
+  final VoidCallback? onAddToMusicbill;
+  final VoidCallback? onInsertToPlayqueue;
   final VoidCallback? onPlaylist;
 
-  const PlayerControls({super.key, this.onBack, this.onPlaylist});
+  const PlayerControls({
+    super.key,
+    this.onBack,
+    this.onAddToMusicbill,
+    this.onInsertToPlayqueue,
+    this.onPlaylist,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +31,27 @@ class PlayerControls extends StatelessWidget {
             processingState == AudioProcessingState.buffering;
 
         return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             // Collapse (Back)
-            IconButton(
+            _ControlButton(
               icon: const Icon(Icons.keyboard_arrow_down_rounded),
               iconSize: 28,
-              color: Colors.white,
+              tooltip: 'Collapse',
               onPressed: onBack,
             ),
 
+            _ControlButton(
+              icon: const Icon(Icons.library_add_rounded),
+              iconSize: 22,
+              tooltip: 'Add to musicbill',
+              onPressed: onAddToMusicbill,
+            ),
+
             // Previous
-            IconButton(
+            _ControlButton(
               icon: const Icon(Icons.skip_previous_rounded),
               iconSize: 36,
-              color: Colors.white,
               onPressed: () => audioHandler.skipToPrevious(),
             ),
 
@@ -86,18 +100,24 @@ class PlayerControls extends StatelessWidget {
             ),
 
             // Next
-            IconButton(
+            _ControlButton(
               icon: const Icon(Icons.skip_next_rounded),
               iconSize: 36,
-              color: Colors.white,
               onPressed: () => audioHandler.skipToNext(),
             ),
 
+            _ControlButton(
+              icon: const Icon(Icons.playlist_add_rounded),
+              iconSize: 22,
+              tooltip: 'Insert to playqueue',
+              onPressed: onInsertToPlayqueue,
+            ),
+
             // Playlist
-            IconButton(
+            _ControlButton(
               icon: const Icon(Icons.queue_music_rounded),
               iconSize: 28,
-              color: Colors.white,
+              tooltip: 'Open playlist',
               onPressed: onPlaylist,
             ),
           ],
@@ -222,4 +242,31 @@ class _SeekBarState extends State<_SeekBar> {
   }
 
   double min(double a, double b) => a < b ? a : b;
+}
+
+class _ControlButton extends StatelessWidget {
+  final Widget icon;
+  final double iconSize;
+  final VoidCallback? onPressed;
+  final String? tooltip;
+
+  const _ControlButton({
+    required this.icon,
+    required this.iconSize,
+    required this.onPressed,
+    this.tooltip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: icon,
+      iconSize: iconSize,
+      color: Colors.white,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+      tooltip: tooltip,
+      onPressed: onPressed,
+    );
+  }
 }

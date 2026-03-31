@@ -30,6 +30,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   int _loadedQueueLength = 0;
   List<String> _loadedQueuePids = const [];
   bool _mutatingPlayqueueFromHandler = false;
+  Future<void> _queueStructureSync = Future.value();
 
   MyAudioHandler() {
     _initPlayer();
@@ -179,14 +180,16 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     );
   }
 
+  AudioSource _buildSource(PlayqueueMusic queueMusic) {
+    return AudioCacheManager.instance.getAudioSource(
+      queueMusic.music.id,
+      queueMusic.music.asset,
+      tag: _buildMediaItem(queueMusic),
+    );
+  }
+
   List<AudioSource> _buildSources(List<PlayqueueMusic> queue) {
-    return queue.map((queueMusic) {
-      return AudioCacheManager.instance.getAudioSource(
-        queueMusic.music.id,
-        queueMusic.music.asset,
-        tag: _buildMediaItem(queueMusic),
-      );
-    }).toList();
+    return queue.map(_buildSource).toList();
   }
 
   void _syncAudioServiceQueue(List<PlayqueueMusic> queueSnapshot) {
@@ -252,18 +255,96 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return;
     }
 
-    await _playlist.add(
-      AudioCacheManager.instance.getAudioSource(
-        nextQueueMusic.music.id,
-        nextQueueMusic.music.asset,
-        tag: _buildMediaItem(nextQueueMusic),
-      ),
-    );
+    await _playlist.add(_buildSource(nextQueueMusic));
     _loadedQueuePids = playqueueState.playqueue
         .map((queueMusic) => queueMusic.pid)
         .toList(growable: false);
     _loadedQueueLength = _loadedQueuePids.length;
     _syncAudioServiceQueue(playqueueState.playqueue);
+  }
+
+  Future<bool> _syncCurrentQueueStructure({
+    required List<PlayqueueMusic> queueSnapshot,
+    required String currentPid,
+  }) async {
+    if (_currentLoadingPid != null ||
+        player.audioSource == null ||
+        _loadedQueueBaseIndex != 0 ||
+        _playlist.children.length != _loadedQueuePids.length ||
+        playqueueState.currentMusic?.pid != currentPid ||
+        lastQueueMusic?.pid != currentPid) {
+      return false;
+    }
+
+    final targetPids = queueSnapshot
+        .map((queueMusic) => queueMusic.pid)
+        .toList(growable: false);
+    if (listEquals(_loadedQueuePids, targetPids)) {
+      return true;
+    }
+
+    final workingPids = List<String>.from(_loadedQueuePids);
+
+    try {
+      for (
+        var targetIndex = 0;
+        targetIndex < queueSnapshot.length;
+        targetIndex++
+      ) {
+        final targetQueueMusic = queueSnapshot[targetIndex];
+        final targetPid = targetQueueMusic.pid;
+
+        if (targetIndex < workingPids.length &&
+            workingPids[targetIndex] == targetPid) {
+          continue;
+        }
+
+        final existingIndex = workingPids.indexOf(targetPid);
+        if (existingIndex == -1) {
+          await _playlist.insert(targetIndex, _buildSource(targetQueueMusic));
+          workingPids.insert(targetIndex, targetPid);
+          continue;
+        }
+
+        await _playlist.move(existingIndex, targetIndex);
+        final movedPid = workingPids.removeAt(existingIndex);
+        workingPids.insert(targetIndex, movedPid);
+      }
+
+      while (workingPids.length > queueSnapshot.length) {
+        await _playlist.removeAt(workingPids.length - 1);
+        workingPids.removeLast();
+      }
+    } catch (_) {
+      return false;
+    }
+
+    _loadedQueuePids = targetPids;
+    _loadedQueueLength = targetPids.length;
+    _syncAudioServiceQueue(queueSnapshot);
+    return true;
+  }
+
+  void _scheduleCurrentQueueStructureSync(String currentPid) {
+    _queueStructureSync = _queueStructureSync.catchError((_) {}).then((
+      _,
+    ) async {
+      if (playqueueState.currentMusic?.pid != currentPid ||
+          lastQueueMusic?.pid != currentPid) {
+        return;
+      }
+
+      final queueSnapshot = List<PlayqueueMusic>.from(playqueueState.playqueue);
+      final synced = await _syncCurrentQueueStructure(
+        queueSnapshot: queueSnapshot,
+        currentPid: currentPid,
+      );
+      if (!synced &&
+          playqueueState.currentMusic?.pid == currentPid &&
+          lastQueueMusic?.pid == currentPid) {
+        await _reloadCurrentQueue();
+      }
+    });
   }
 
   Future<void> _loadCurrentQueue({
@@ -462,7 +543,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           .toList(growable: false);
       if (currentQueueMusic.pid == lastQueueMusic?.pid) {
         if (!listEquals(_loadedQueuePids, currentQueuePids)) {
-          unawaited(_reloadCurrentQueue());
+          _scheduleCurrentQueueStructureSync(currentQueueMusic.pid);
         }
         return;
       }

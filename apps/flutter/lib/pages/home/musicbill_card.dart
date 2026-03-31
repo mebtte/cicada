@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../states/musicbill.dart';
-import '../../widgets/cached_image.dart';
+import '../../widgets/musicbill_cover.dart';
 
 /// 音乐清单卡片组件
 /// 显示单个音乐清单的信息（封面、名称）
@@ -77,19 +77,14 @@ class MusicbillCard extends StatelessWidget {
 
   /// 构建封面
   Widget _buildCover(BuildContext context) {
-    if (musicbill.cover != null && musicbill.cover!.isNotEmpty) {
-      return CachedImage(
-        imageUrl: musicbill.cover,
-        width: 44,
-        height: 44,
-        size: 88, // 2x for high DPI screens
-        borderRadius: BorderRadius.circular(8),
-        placeholder: _buildDefaultCover(context),
-        errorWidget: _buildDefaultCover(context),
-      );
-    }
-
-    return _buildDefaultCover(context);
+    return MusicbillCover(
+      imageUrl: musicbill.cover,
+      size: 44,
+      isPublic: musicbill.isPublic,
+      isShared: musicbill.isShared,
+      borderRadius: BorderRadius.circular(8),
+      placeholder: _buildDefaultCover(context),
+    );
   }
 
   /// 构建默认封面
