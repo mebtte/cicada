@@ -3,7 +3,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../event_bus.dart';
+import '../../audio_handler.dart' as cicada_audio;
 import '../../models/music.dart';
 import '../../models/lyric.dart';
 import '../../server/api/get_lyric.dart';
@@ -146,6 +146,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     // AudioHandler is a singleton/service, it doesn't notify changes itself (streams do)
     // So we use read() to avoid rebuilding if it were to notify (which it shouldn't, but safe is better)
     final audioHandler = context.read<AudioHandler>();
+    final appAudioHandler = audioHandler as cicada_audio.MyAudioHandler;
 
     return GestureDetector(
       onHorizontalDragStart: _handleDragStart,
@@ -176,7 +177,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                     child: StreamBuilder<Duration>(
                       stream: Stream.periodic(
                         const Duration(milliseconds: 100),
-                        (_) => (audioHandler as dynamic).player.position,
+                        (_) => appAudioHandler.player.position,
                       ),
                       builder: (context, positionSnapshot) {
                         final position = positionSnapshot.data ?? Duration.zero;
@@ -211,9 +212,9 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                             music: displayMusic,
                           ),
                           onInsertToPlayqueue: () {
-                            eventBus.fire(
-                              InsertToPlayqueueEvent(musicList: [displayMusic]),
-                            );
+                            appAudioHandler.insertMusicListToPlayqueue([
+                              displayMusic,
+                            ]);
                           },
                           onPlaylist: () => showPlaylistDialog(context),
                         ),

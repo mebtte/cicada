@@ -45,6 +45,37 @@ class PlayqueueState extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<PlayqueueMusic> insertAfterCurrent(
+    List<Music> musicList, {
+    bool isUserAdded = true,
+  }) {
+    final newItems = musicList
+        .map(
+          (music) => PlayqueueMusic(
+            pid: uuid.v4(),
+            music: music,
+            isUserAdded: isUserAdded,
+          ),
+        )
+        .toList();
+
+    if (newItems.isEmpty) {
+      return const [];
+    }
+
+    if (playqueueIndex == -1) {
+      playqueue = [...newItems, ...playqueue];
+    } else {
+      playqueue = [
+        ...playqueue.sublist(0, playqueueIndex + 1),
+        ...newItems,
+        ...playqueue.sublist(playqueueIndex + 1),
+      ];
+    }
+    notifyListeners();
+    return newItems;
+  }
+
   void previous() {
     final nextPlayqueueIndex = playqueueIndex - 1;
     if (nextPlayqueueIndex < 0) {
@@ -147,21 +178,7 @@ class PlayqueueState extends ChangeNotifier {
             );
             next();
           } else {
-            final newItems = event.musicList
-                .map(
-                  (music) => PlayqueueMusic(
-                    pid: uuid.v4(),
-                    music: music,
-                    isUserAdded: true, // User manually added
-                  ),
-                )
-                .toList();
-            playqueue = [
-              ...playqueue.sublist(0, playqueueIndex + 1),
-              ...newItems,
-              ...playqueue.sublist(playqueueIndex + 1),
-            ];
-            notifyListeners();
+            insertAfterCurrent(event.musicList, isUserAdded: true);
           }
         });
     return () {

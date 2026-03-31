@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:cicada/models/music.dart';
 import 'package:cicada/states/audio.dart';
 import 'package:cicada/states/playlist.dart';
 import 'package:flutter/foundation.dart' show listEquals;
@@ -180,16 +181,27 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     );
   }
 
-  AudioSource _buildSource(PlayqueueMusic queueMusic) {
+  AudioSource _buildSource(
+    PlayqueueMusic queueMusic, {
+    required bool useCache,
+  }) {
+    final tag = _buildMediaItem(queueMusic);
+    if (!useCache) {
+      return AudioSource.uri(Uri.parse(queueMusic.music.asset), tag: tag);
+    }
     return AudioCacheManager.instance.getAudioSource(
       queueMusic.music.id,
       queueMusic.music.asset,
-      tag: _buildMediaItem(queueMusic),
+      tag: tag,
     );
   }
 
   List<AudioSource> _buildSources(List<PlayqueueMusic> queue) {
-    return queue.map(_buildSource).toList();
+    final seenMusicIds = <String>{};
+    return queue.map((queueMusic) {
+      final useCache = seenMusicIds.add(queueMusic.music.id);
+      return _buildSource(queueMusic, useCache: useCache);
+    }).toList();
   }
 
   void _syncAudioServiceQueue(List<PlayqueueMusic> queueSnapshot) {
@@ -255,7 +267,15 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return;
     }
 
-    await _playlist.add(_buildSource(nextQueueMusic));
+    final firstOccurrenceIndex = playqueueState.playqueue.indexWhere(
+      (queueMusic) => queueMusic.music.id == nextQueueMusic!.music.id,
+    );
+    await _playlist.add(
+      _buildSource(
+        nextQueueMusic,
+        useCache: firstOccurrenceIndex == nextAbsoluteIndex,
+      ),
+    );
     _loadedQueuePids = playqueueState.playqueue
         .map((queueMusic) => queueMusic.pid)
         .toList(growable: false);
@@ -301,7 +321,16 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
         final existingIndex = workingPids.indexOf(targetPid);
         if (existingIndex == -1) {
-          await _playlist.insert(targetIndex, _buildSource(targetQueueMusic));
+          final firstOccurrenceIndex = queueSnapshot.indexWhere(
+            (queueMusic) => queueMusic.music.id == targetQueueMusic.music.id,
+          );
+          await _playlist.insert(
+            targetIndex,
+            _buildSource(
+              targetQueueMusic,
+              useCache: firstOccurrenceIndex == targetIndex,
+            ),
+          );
           workingPids.insert(targetIndex, targetPid);
           continue;
         }
@@ -395,6 +424,7 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         return;
       }
 
+      lastQueueMusic = queueMusic;
       mediaItem.add(_buildMediaItem(queueMusic, duration: duration));
       _broadcastState();
       await _appendUpcomingTrackIfNeeded();
@@ -437,6 +467,52 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       initialPosition: Duration.zero,
       resetPlayTimer: true,
       shouldPlayAfterLoad: true,
+    );
+  }
+
+  Future<void> insertMusicListToPlayqueue(List<Music> musicList) async {
+    if (musicList.isEmpty) {
+      return;
+    }
+
+    playlistState.addMusicList(musicList);
+
+    final currentQueueMusic = playqueueState.currentMusic;
+    if (currentQueueMusic == null) {
+      _mutatingPlayqueueFromHandler = true;
+      try {
+        playqueueState.jump(musicList.first, isUserAdded: false);
+        playqueueState.next();
+        if (musicList.length > 1) {
+          playqueueState.insertAfterCurrent(
+            musicList.sublist(1),
+            isUserAdded: true,
+          );
+        }
+      } finally {
+        _mutatingPlayqueueFromHandler = false;
+      }
+
+      final nextQueueMusic = playqueueState.currentMusic;
+      if (nextQueueMusic != null) {
+        lastQueueMusic = nextQueueMusic;
+        await playQueueMusic(nextQueueMusic);
+      }
+      return;
+    }
+
+    final currentPid = currentQueueMusic.pid;
+    _mutatingPlayqueueFromHandler = true;
+    try {
+      playqueueState.insertAfterCurrent(musicList, isUserAdded: true);
+    } finally {
+      _mutatingPlayqueueFromHandler = false;
+    }
+
+    final queueSnapshot = List<PlayqueueMusic>.from(playqueueState.playqueue);
+    await _syncCurrentQueueStructure(
+      queueSnapshot: queueSnapshot,
+      currentPid: currentPid,
     );
   }
 
@@ -536,6 +612,10 @@ class MyAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       final currentQueueMusic = playqueueState.currentMusic;
       if (currentQueueMusic == null) {
         return;
+      }
+
+      if (lastQueueMusic == null && player.audioSource != null) {
+        lastQueueMusic = currentQueueMusic;
       }
 
       final currentQueuePids = playqueueState.playqueue

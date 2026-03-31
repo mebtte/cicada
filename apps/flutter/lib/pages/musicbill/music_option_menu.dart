@@ -1,6 +1,8 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../audio_handler.dart' as cicada_audio;
 import '../../models/music.dart';
-import '../../event_bus.dart';
 import '../../player_controller/show_playlist_dialog.dart';
 import '../../widgets/cached_image.dart';
 import './add_to_musicbill_sheet.dart';
@@ -143,11 +145,19 @@ class _MusicOptionMenuState extends State<MusicOptionMenu>
                     ListTile(
                       leading: const Icon(Icons.playlist_add_rounded),
                       title: const Text('Insert to playqueue'),
-                      onTap: () {
-                        _close();
-                        eventBus.fire(
-                          InsertToPlayqueueEvent(musicList: [widget.music]),
-                        );
+                      onTap: () async {
+                        final handlerContext =
+                            widget.parentContext != null &&
+                                widget.parentContext!.mounted
+                            ? widget.parentContext!
+                            : context;
+                        final audioHandler =
+                            handlerContext.read<AudioHandler>()
+                                as cicada_audio.MyAudioHandler;
+                        await _close();
+                        await audioHandler.insertMusicListToPlayqueue([
+                          widget.music,
+                        ]);
                         if (widget.showPlaylistAfterInsert) {
                           // 显示播放列表弹窗，定位到播放列表 tab
                           Future.delayed(const Duration(milliseconds: 100), () {
