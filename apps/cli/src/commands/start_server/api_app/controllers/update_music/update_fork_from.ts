@@ -8,11 +8,15 @@ import { getMusicListByIds } from '@/db/music';
 import { MusicForkProperty, MusicProperty } from '@/constants/db_definition';
 import { Parameter } from './constants';
 
+function isString(s: unknown): s is string {
+  return typeof s === 'string';
+}
+
 export default async ({ ctx, music, value }: Parameter) => {
   if (
     !Array.isArray(value) ||
     value.length > 100 ||
-    value.find((v) => typeof v !== 'string') ||
+    !value.every(isString) ||
     value.find((v) => v === music.id)
   ) {
     return ctx.error(ExceptionCode.WRONG_PARAMETER);
@@ -31,9 +35,11 @@ export default async ({ ctx, music, value }: Parameter) => {
     return ctx.except(ExceptionCode.NO_NEED_TO_UPDATE);
   }
 
-  const musicList = await getMusicListByIds(value, [MusicProperty.ID]);
-  if (musicList.length !== value.length) {
-    return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
+  if (value.length) {
+    const musicList = await getMusicListByIds(value, [MusicProperty.ID]);
+    if (musicList.length !== value.length) {
+      return ctx.except(ExceptionCode.MUSIC_NOT_EXISTED);
+    }
   }
 
   await Promise.all([
@@ -44,13 +50,15 @@ export default async ({ ctx, music, value }: Parameter) => {
       `,
       oldForkFromList.map((f) => f.id),
     ),
-    getDB().run(
-      `
-        INSERT INTO music_fork ( musicId, forkFrom )
-        VALUES ${value.map(() => '( ?, ? )').join(', ')}
-      `,
-      value.map((v) => [music.id, v]).flat(),
-    ),
+    value.length
+      ? getDB().run(
+          `
+            INSERT INTO music_fork ( musicId, forkFrom )
+            VALUES ${value.map(() => '( ?, ? )').join(', ')}
+          `,
+          value.map((v) => [music.id, v]).flat(),
+        )
+      : null,
     saveMusicModifyRecord({
       musicId: music.id,
       key: AllowUpdateKey.FORK_FROM,
