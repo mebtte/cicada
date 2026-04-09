@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
 import Spinner from '@/components/spinner';
 import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';

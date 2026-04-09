@@ -31,7 +31,6 @@ class ErrorBoundary extends React.PureComponent<
   componentDidCatch(error: Error) {
     const { onError } = this.props;
     this.setState({ error });
-    // eslint-disable-next-line no-unused-expressions
     onError && onError(error);
   }
 

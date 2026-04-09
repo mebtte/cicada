@@ -72,7 +72,6 @@ function Pagination(
         </Button>
         {pages.map((p, index) => (
           <Button
-            // eslint-disable-next-line react/no-array-index-key
             key={index}
             active={p.active}
             onClick={p.onClick}

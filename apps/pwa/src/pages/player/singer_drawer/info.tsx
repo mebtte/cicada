@@ -47,7 +47,6 @@ function Info({ singer }: { singer: Singer }) {
         {singer.aliases.length ? (
           <div className="aliases">
             {singer.aliases.map((alias, index) => (
-              // eslint-disable-next-line react/no-array-index-key
               <div className="alias" key={index}>
                 {alias}
               </div>

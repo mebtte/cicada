@@ -289,7 +289,6 @@ export default async () => {
       [FIRST_USER_ID, username, md5(md5(password)), 'Cicada', Date.now()],
     );
 
-    // eslint-disable-next-line no-console
     console.log(
       `\n--- You can use [ ${username}/${password} ] to login now ---\n`,
     );

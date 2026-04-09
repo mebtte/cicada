@@ -187,7 +187,6 @@ export default async ({ data }: { data: string }) => {
   createSpinner().success({ text: 'Data upgrade to v2 from v1 successfully' });
 
   for (const user of userList) {
-    // eslint-disable-next-line no-console
     console.log(
       `id:${user.id} username:${user.username} password:${user.password}`,
     );

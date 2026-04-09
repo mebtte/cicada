@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import http from 'http';
 import Koa from 'koa';
 import log from 'koa-logger';

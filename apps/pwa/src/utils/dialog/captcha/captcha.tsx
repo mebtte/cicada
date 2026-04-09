@@ -58,7 +58,6 @@ function Captcha({
           <div
             className="svg"
             onClick={reload}
-            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{
               __html: captchaData.data.svg,
             }}

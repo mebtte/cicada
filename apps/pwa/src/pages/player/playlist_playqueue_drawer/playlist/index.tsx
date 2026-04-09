@@ -89,7 +89,6 @@ function Playlist({ style }: { style: unknown }) {
           <List
             length={filteredPlaylist.length}
             type="uniform"
-            // eslint-disable-next-line react/no-unstable-nested-components
             itemRenderer={(index, key) => {
               const music = filteredPlaylist[index];
               return (

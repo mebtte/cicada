@@ -73,7 +73,6 @@ const Dialog = ({
 }>) => {
   const bodyRef = useRef<HTMLDivElement | null>(null);
   const onRequestClose = (event) => {
-    // eslint-disable-next-line no-unused-expressions
     maskProps.onClick && maskProps.onClick(event);
 
     if (onClose && !bodyRef.current?.contains(event.target)) {

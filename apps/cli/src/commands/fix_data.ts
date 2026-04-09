@@ -44,7 +44,6 @@ export default async ({ data }: { data: string }) => {
 
   let spinner: Spinner;
 
-  // eslint-disable-next-line prefer-const
   spinner = createSpinner().start({ text: "Fixing music's year..." });
   await fixMusicYear();
   spinner.success({ text: "Music's year has fixed" });

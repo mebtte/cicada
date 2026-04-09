@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import webpack from 'webpack';
 import { devMainConfig, serviceWorkerConfig } from './base.js';

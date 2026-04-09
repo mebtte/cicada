@@ -87,7 +87,6 @@ export async function request<Data = void>({
       processedBody = body;
     } else {
       processedBody = JSON.stringify(body);
-      // eslint-disable-next-line no-param-reassign
       headers['Content-Type'] = 'application/json';
     }
   }

@@ -36,7 +36,6 @@ async function getCover(
     if (!cacheExist) {
       const assetExist = await exist(assetPath);
       if (!assetExist) {
-        // eslint-disable-next-line no-return-assign
         return (ctx.status = 404);
       }
 

@@ -70,7 +70,6 @@ function Playqueue({ style }: { style: unknown }) {
           <List
             type="uniform"
             length={length}
-            // eslint-disable-next-line react/no-unstable-nested-components
             itemRenderer={(index, key) => {
               const actualIndex = length - index - 1;
               const queueMusic = playqueue[actualIndex];

@@ -12,7 +12,6 @@ function formatMusicFilename({
 }) {
   return sanitize(
     `${
-      // eslint-disable-next-line no-nested-ternary
       singerNames.length === 0
         ? t('unknown_singer')
         : singerNames.length > 3

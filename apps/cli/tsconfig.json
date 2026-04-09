@@ -1,7 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
-
   "compilerOptions": {
+    "target": "ESNext", // 由 babel 进一步编译
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
     "module": "CommonJS",
     "lib": ["ESNext"],
     "allowJs": true,
@@ -12,5 +17,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["dev_server.ts", "src/**/*", "../../global.d.ts"]
+  "include": ["dev_server.ts", "src/**/*", "../../global.d.ts"],
+  "exclude": ["node_modules", "**/node_modules/*"]
 }

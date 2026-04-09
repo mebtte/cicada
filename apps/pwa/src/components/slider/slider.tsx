@@ -121,7 +121,6 @@ function Slider({
         setPointerDown(false);
 
         const percent = getPointerEventRelativePercent(e);
-        // eslint-disable-next-line no-unused-expressions
         onChange && onChange(max * percent);
 
         return globalThis.setTimeout(() => setShadowPercent(undefined), 0);

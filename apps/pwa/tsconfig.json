@@ -1,7 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
-
   "compilerOptions": {
+    "target": "ESNext", // 由 babel 进一步编译
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
     "module": "ESNext",
     "jsx": "preserve", // 由 babel 进一步编译
     "lib": ["DOM", "WebWorker", "ESNext", "DOM.Iterable"],
@@ -18,5 +23,6 @@
     "../../global.d.ts",
     "../../shared/components/tooltip",
     "../../shared/style"
-  ]
+  ],
+  "exclude": ["node_modules", "**/node_modules/*"]
 }

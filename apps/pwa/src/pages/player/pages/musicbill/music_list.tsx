@@ -80,7 +80,6 @@ function Wrapper({
                   <List
                     type="uniform"
                     length={filteredMusicList.length}
-                    // eslint-disable-next-line react/no-unstable-nested-components
                     itemRenderer={(index, key) => {
                       const music = filteredMusicList[index];
                       return (

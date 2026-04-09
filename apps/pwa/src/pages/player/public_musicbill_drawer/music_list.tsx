@@ -16,7 +16,6 @@ function MusicList({ musicList }: { musicList: MusicWithSingerAliases[] }) {
     <List
       length={musicList.length}
       type="uniform"
-      // eslint-disable-next-line react/no-unstable-nested-components
       itemRenderer={(index, key) => {
         const music = musicList[index];
         return (

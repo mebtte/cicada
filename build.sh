@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-npm ci
+npm ci --prefix apps/cli
+npm ci --prefix apps/pwa
 
 mkdir -p cache
 
 # get sqlite3 version
-sqlite3_pkg=$(cat node_modules/sqlite3/package.json)
+sqlite3_pkg=$(cat apps/cli/node_modules/sqlite3/package.json)
 sqlite3_version=$(node -e "console.log(JSON.parse(\`$sqlite3_pkg\`).version)")
 
 # download sqlite3 binary that need to pkg
@@ -24,32 +25,32 @@ for target in ${targets[@]}; do
   fi
 
   tar -zxvf cache/$target.tar.gz
-  cp -rf $target ./node_modules/sqlite3/lib/binding
+  cp -rf $target ./apps/cli/node_modules/sqlite3/lib/binding
   rm -rf $target
 done
 
-npm run build:pwa
-npm run build:cli
+npm run build --prefix apps/pwa
+npm run build --prefix apps/cli
 
 # backup package.json
-cp package.json package.json.bak
+cp apps/cli/package.json apps/cli/package.json.bak
 
 # write pkg targets to package.json
-pkg="$(cat package.json)"
+pkg="$(cat apps/cli/package.json)"
 if [[ $1 == "docker" ]]; then
-  node -e "const pkg = JSON.parse(\`$pkg\`); pkg.pkg.targets = [\"node18-linux-x64\"]; console.log(JSON.stringify(pkg))" >package.json
+  node -e "const pkg = JSON.parse(\`$pkg\`); pkg.pkg.targets = [\"node18-linux-x64\"]; console.log(JSON.stringify(pkg))" >apps/cli/package.json
 else
-  node -e "const pkg = JSON.parse(\`$pkg\`); pkg.pkg.targets = [\"node18-macos-x64\",\"node18-win-x64\",\"node18-linux-x64\"]; console.log(JSON.stringify(pkg))" >package.json
+  node -e "const pkg = JSON.parse(\`$pkg\`); pkg.pkg.targets = [\"node18-macos-x64\",\"node18-win-x64\",\"node18-linux-x64\"]; console.log(JSON.stringify(pkg))" >apps/cli/package.json
 fi
 
 if [ -d "build" ]; then
   rm -rf build
 fi
-npm run pkg
+npm run pkg --prefix apps/cli
 
 # recover package.json
-rm package.json
-mv package.json.bak package.json
+rm apps/cli/package.json
+mv apps/cli/package.json.bak apps/cli/package.json
 
 if [[ $1 == "docker" ]]; then
   echo 'skip compression on docker building.'

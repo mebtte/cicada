@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import url from 'url';
 import path from 'path';
 import webpack from 'webpack';

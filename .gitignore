@@ -1,14 +1,2 @@
-# node & npm
-node_modules/
-
 # macOS
 .DS_Store
-
-# build & dist
-dist/
-build/
-coverage/
-
-# cicada
-/config.json
-/cache

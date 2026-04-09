@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 import webpack from 'webpack';
 import { devMainConfig } from './base.js';
 
