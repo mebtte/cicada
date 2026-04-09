@@ -1,0 +1,183 @@
+import 'package:cicada/constants/index.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../states/server.dart';
+import '../../widgets/cached_image.dart';
+import '../../widgets/player_bottom_spacer.dart';
+
+/// 用户个人资料页面
+/// 显示用户信息和提供退出登录功能
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final currentUser = context.watch<ServerState>().currentUser;
+    final currentServer = context.watch<ServerState>().currentServer;
+
+    if (currentUser == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Profile')),
+        body: const Center(child: Text('No user logged in')),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Profile')),
+      body: ListView(
+        children: [
+          _buildUserHeader(context, currentUser, currentServer),
+          const Divider(),
+          _buildUserInfo(context, currentUser, currentServer),
+          const Divider(),
+          _buildActions(context),
+          const PlayerBottomSpacer(),
+        ],
+      ),
+    );
+  }
+
+  /// 构建用户头部
+  Widget _buildUserHeader(BuildContext context, User user, Server? server) {
+    final avatarUrl = user.avatar;
+    final hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Theme.of(
+                context,
+              ).primaryColor.withValues(alpha: 0.1),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: hasAvatar
+                ? CachedImage(
+                    imageUrl: avatarUrl,
+                    width: 100,
+                    height: 100,
+                    size: 200,
+                    fit: BoxFit.cover,
+                    placeholder: Icon(
+                      Icons.person,
+                      size: 50,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    errorWidget: Icon(
+                      Icons.person,
+                      size: 50,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  )
+                : Icon(
+                    Icons.person,
+                    size: 50,
+                    color: Theme.of(context).primaryColor,
+                  ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            user.nickname,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '@${user.username}',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 构建用户信息列表
+  Widget _buildUserInfo(BuildContext context, User user, Server? server) {
+    return Column(
+      children: [
+        ListTile(
+          leading: const Icon(Icons.cloud),
+          title: const Text('Server'),
+          subtitle: Text(server?.hostname ?? 'Unknown'),
+        ),
+        ListTile(
+          leading: const Icon(Icons.link),
+          title: const Text('Server URL'),
+          subtitle: Text(server?.origin ?? 'Unknown'),
+        ),
+        ListTile(
+          leading: const Icon(Icons.security),
+          title: const Text('Two-Factor Authentication'),
+          subtitle: Text(user.twoFAEnabled ? 'Enabled' : 'Disabled'),
+          trailing: user.twoFAEnabled
+              ? const Icon(Icons.check_circle, color: Colors.green)
+              : const Icon(Icons.cancel, color: Colors.grey),
+        ),
+        ListTile(
+          leading: const Icon(Icons.info_outline),
+          title: const Text('App Version'),
+          subtitle: const Text(VERSION),
+        ),
+      ],
+    );
+  }
+
+  /// 构建操作按钮
+  Widget _buildActions(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          OutlinedButton.icon(
+            onPressed: () => _showLogoutDialog(context),
+            icon: const Icon(Icons.logout),
+            label: const Text('Logout'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.red,
+              side: const BorderSide(color: Colors.red),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 显示退出登录确认对话框
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              // 关闭对话框
+              Navigator.of(dialogContext).pop();
+              // 返回到根路由
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              // 退出登录（这会触发 App 重新构建并显示登录页面）
+              serverState.reselectUser();
+            },
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+  }
+}

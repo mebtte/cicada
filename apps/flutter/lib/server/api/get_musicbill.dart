@@ -5,15 +5,25 @@ import '../request.dart';
 class Musicbill {
   String name;
   String? cover;
+  bool isPublic;
+  bool isShared;
   List<Music> musicList;
 
-  Musicbill({required this.name, required this.cover, required this.musicList});
+  Musicbill({
+    required this.name,
+    required this.cover,
+    required this.isPublic,
+    required this.isShared,
+    required this.musicList,
+  });
 
-  factory Musicbill.fromJSON(Map<String, dynamic> json) => Musicbill(
+  factory Musicbill.fromJson(Map<String, dynamic> json) => Musicbill(
     name: json['name'],
     cover: prefixServerOrigin(json['cover']),
+    isPublic: json['public'] == true,
+    isShared: (json['sharedUserList'] as List<dynamic>? ?? const []).isNotEmpty,
     musicList: (json['musicList'] as List<dynamic>)
-        .map((json) => Music.fromJSON(json))
+        .map((json) => Music.fromJson(json))
         .toList(),
   );
 }
@@ -24,5 +34,5 @@ Future<Musicbill> getMusicbill({required String id}) async {
     query: {"id": id},
     withToken: true,
   );
-  return Musicbill.fromJSON(responseData);
+  return Musicbill.fromJson(responseData);
 }

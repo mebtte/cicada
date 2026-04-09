@@ -4,13 +4,18 @@ import 'package:flutter/foundation.dart'
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import './states/playlist.dart';
 import './utils/preference.dart';
+import './utils/audio_cache_manager.dart';
 import './window_manager.dart';
 import './app.dart';
 import './states/server.dart';
 import './audio_handler.dart';
+import './states/musicbill.dart';
+import './states/audio.dart';
+import './states/route.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,18 +30,45 @@ void main() async {
     initializeWindow();
   }
 
-  final audioHandler = await AudioService.init(builder: () => MyAudioHandler());
-  audioHandler.listen();
+  // 请求通知权限 (Android 13+)
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    await Permission.notification.request();
+  }
+
+  // 初始化音频缓存管理器
+  await AudioCacheManager.instance.init();
+
+  final audioHandler = await AudioService.init(
+    builder: () => MyAudioHandler(),
+    config: AudioServiceConfig(
+      androidNotificationChannelId: 'com.mebtte.cicada.audio',
+      androidNotificationChannelName: 'Cicada Audio',
+      androidStopForegroundOnPause: false,
+      androidNotificationIcon: 'mipmap/ic_launcher',
+      androidShowNotificationBadge: true,
+      preloadArtwork: true,
+      androidNotificationClickStartsActivity: true,
+    ),
+  );
+  audioHandler.subscribe();
   GetIt.instance.registerSingleton(audioHandler);
 
   await serverState.initialize();
 
-  playlistState.listen();
-  playqueueState.listen();
+  playlistState.subscribe();
+  playqueueState.subscribe();
 
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: serverState)],
+      providers: [
+        ChangeNotifierProvider.value(value: serverState),
+        Provider<AudioHandler>.value(value: audioHandler),
+        ChangeNotifierProvider.value(value: musicbillState),
+        ChangeNotifierProvider.value(value: playlistState),
+        ChangeNotifierProvider.value(value: playqueueState),
+        ChangeNotifierProvider.value(value: audioState),
+        ChangeNotifierProvider.value(value: routeState),
+      ],
       child: App(),
     ),
   );

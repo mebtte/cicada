@@ -6,11 +6,11 @@ class Captcha {
 
   Captcha({required this.id, required this.svg});
 
-  factory Captcha.fromJSON(Map<String, dynamic> json) =>
+  factory Captcha.fromJson(Map<String, dynamic> json) =>
       Captcha(id: json['id'], svg: json['svg']);
 }
 
 Future<Captcha> getCaptcha() async {
   final responseData = await httpGet(path: "/base/captcha");
-  return Captcha.fromJSON(responseData);
+  return Captcha.fromJson(responseData);
 }

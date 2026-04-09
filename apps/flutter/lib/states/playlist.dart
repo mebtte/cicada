@@ -28,7 +28,13 @@ class PlaylistState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void Function() listen() {
+  /// 从播放列表中移除音乐
+  void removeMusic(String pid) {
+    playlist.removeWhere((m) => m.pid == pid);
+    notifyListeners();
+  }
+
+  void Function() subscribe() {
     final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
       addMusicList([event.music]);
     });
@@ -37,9 +43,15 @@ class PlaylistState extends ChangeNotifier {
         .listen((event) {
           addMusicList(event.musicList);
         });
+    final insertToPlayqueueSubscription = eventBus
+        .on<InsertToPlayqueueEvent>()
+        .listen((event) {
+          addMusicList(event.musicList);
+        });
     return () {
       playMusicSubscription.cancel();
       addMusicListToPlaylistSubscription.cancel();
+      insertToPlayqueueSubscription.cancel();
     };
   }
 }

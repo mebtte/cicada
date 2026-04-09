@@ -8,6 +8,17 @@ import { UNUSED_2FA_SECRET_PREFIX } from '@/constants';
 import * as twoFA from '@/platform/2fa';
 import { Context } from '../constants';
 
+const USER_LOGIN_WITH_2FA_INTERVAL = 3000;
+const userLastLoginWith2FATime = new Map<string, number>();
+
+function clearExpiredUserLastLoginWith2FATime(now: number) {
+  for (const [username, lastLoginWith2FATime] of userLastLoginWith2FATime) {
+    if (now - lastLoginWith2FATime >= USER_LOGIN_WITH_2FA_INTERVAL) {
+      userLastLoginWith2FATime.delete(username);
+    }
+  }
+}
+
 export default async (ctx: Context) => {
   const { username, password, twoFAToken } = ctx.request.body as {
     [key in keyof RequestBody]: unknown;
@@ -23,6 +34,17 @@ export default async (ctx: Context) => {
   ) {
     return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
+
+  const now = Date.now();
+  clearExpiredUserLastLoginWith2FATime(now);
+  const lastLoginWith2FATime = userLastLoginWith2FATime.get(username);
+  if (
+    typeof lastLoginWith2FATime === 'number' &&
+    now - lastLoginWith2FATime < USER_LOGIN_WITH_2FA_INTERVAL
+  ) {
+    return ctx.except(ExceptionCode.LOGIN_WITH_2FA_TOO_FREQUENT);
+  }
+  userLastLoginWith2FATime.set(username, now);
 
   const user = await getUserByUsername(username, [
     UserProperty.ID,

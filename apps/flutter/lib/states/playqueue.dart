@@ -12,8 +12,13 @@ final uuid = Uuid();
 class PlayqueueMusic {
   final String pid;
   final Music music;
+  final bool isUserAdded;
 
-  PlayqueueMusic({required this.pid, required this.music});
+  PlayqueueMusic({
+    required this.pid,
+    required this.music,
+    this.isUserAdded = false,
+  });
 }
 
 class PlayqueueState extends ChangeNotifier {
@@ -22,8 +27,12 @@ class PlayqueueState extends ChangeNotifier {
 
   PlayqueueMusic? get currentMusic => playqueue.safeGet(playqueueIndex);
 
-  void jump(Music music) {
-    final playqueueMusic = PlayqueueMusic(pid: uuid.v4(), music: music);
+  void jump(Music music, {bool isUserAdded = false}) {
+    final playqueueMusic = PlayqueueMusic(
+      pid: uuid.v4(),
+      music: music,
+      isUserAdded: isUserAdded,
+    );
     if (playqueueIndex == -1) {
       playqueue = [playqueueMusic, ...playqueue];
     } else {
@@ -34,6 +43,37 @@ class PlayqueueState extends ChangeNotifier {
       ];
     }
     notifyListeners();
+  }
+
+  List<PlayqueueMusic> insertAfterCurrent(
+    List<Music> musicList, {
+    bool isUserAdded = true,
+  }) {
+    final newItems = musicList
+        .map(
+          (music) => PlayqueueMusic(
+            pid: uuid.v4(),
+            music: music,
+            isUserAdded: isUserAdded,
+          ),
+        )
+        .toList();
+
+    if (newItems.isEmpty) {
+      return const [];
+    }
+
+    if (playqueueIndex == -1) {
+      playqueue = [...newItems, ...playqueue];
+    } else {
+      playqueue = [
+        ...playqueue.sublist(0, playqueueIndex + 1),
+        ...newItems,
+        ...playqueue.sublist(playqueueIndex + 1),
+      ];
+    }
+    notifyListeners();
+    return newItems;
   }
 
   void previous() {
@@ -50,6 +90,14 @@ class PlayqueueState extends ChangeNotifier {
     }
   }
 
+  void setCurrentIndex(int index) {
+    if (index < -1 || index >= playqueue.length || index == playqueueIndex) {
+      return;
+    }
+    playqueueIndex = index;
+    notifyListeners();
+  }
+
   void next() {
     final nextPlayqueueIndex = playqueueIndex + 1;
     if (nextPlayqueueIndex >= playqueue.length) {
@@ -63,7 +111,7 @@ class PlayqueueState extends ChangeNotifier {
       } else {
         final random = Random();
         final playlistMusic = playlist[random.nextInt(playlist.length)];
-        jump(playlistMusic.music);
+        jump(playlistMusic.music, isUserAdded: false);
         next();
       }
     } else {
@@ -72,9 +120,39 @@ class PlayqueueState extends ChangeNotifier {
     }
   }
 
-  void Function() listen() {
+  void remove(PlayqueueMusic item) {
+    final index = playqueue.indexWhere((element) => element.pid == item.pid);
+    if (index != -1) {
+      playqueue = List.from(playqueue)..removeAt(index);
+      if (index < playqueueIndex) {
+        playqueueIndex--;
+      } else if (index == playqueueIndex) {
+        // If removing current song, logic might be complex (skip to next?),
+        // but UI only allows removing NEXT songs, so this might not be hit.
+        // For safety, let's say if we remove current, we stay at current index
+        // which now points to the next song, effectively skipping.
+        // But if it was the last song, we might need to handle empty or end of list.
+        if (playqueueIndex >= playqueue.length) {
+          playqueueIndex = playqueue.length - 1;
+        }
+      }
+      notifyListeners();
+    }
+  }
+
+  void rewind(PlayqueueMusic item) {
+    final index = playqueue.indexWhere((element) => element.pid == item.pid);
+    if (index != -1) {
+      setCurrentIndex(index);
+    }
+  }
+
+  // Actually, rewind works for both forward and backward if it just sets the index.
+  // I will just use rewind (or rename it to proper 'jumpTo' but 'rewind' exists).
+
+  void Function() subscribe() {
     final playMusicSubscription = eventBus.on<PlayMusicEvent>().listen((event) {
-      jump(event.music);
+      jump(event.music, isUserAdded: false);
       next();
     });
     final addMusicListToPlaylistSubscription = eventBus
@@ -82,13 +160,31 @@ class PlayqueueState extends ChangeNotifier {
         .listen((event) {
           if (currentMusic == null) {
             final random = Random();
-            jump(event.musicList[random.nextInt(event.musicList.length)]);
+            jump(
+              event.musicList[random.nextInt(event.musicList.length)],
+              isUserAdded: false,
+            );
             next();
+          }
+        });
+    final insertToPlayqueueSubscription = eventBus
+        .on<InsertToPlayqueueEvent>()
+        .listen((event) {
+          if (currentMusic == null) {
+            final random = Random();
+            jump(
+              event.musicList[random.nextInt(event.musicList.length)],
+              isUserAdded: false,
+            );
+            next();
+          } else {
+            insertAfterCurrent(event.musicList, isUserAdded: true);
           }
         });
     return () {
       playMusicSubscription.cancel();
       addMusicListToPlaylistSubscription.cancel();
+      insertToPlayqueueSubscription.cancel();
     };
   }
 }

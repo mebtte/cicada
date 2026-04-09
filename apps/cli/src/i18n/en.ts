@@ -43,4 +43,6 @@ export default {
   '2fa_enabled_already': '2FA enabled already',
   need_2fa: 'need 2FA',
   no_need_to_2fa: 'no need to 2FA',
+  login_too_frequent: 'login too frequent',
+  login_with_2fa_too_frequent: 'login with 2FA too frequent',
 };

@@ -103,6 +103,7 @@ export default {
   add: 'add',
   image_select_placeholder: 'select a image with jpeg/png format',
   pwa_update_question: 'do you want to reload to switch new version now ?',
+  pwa_update_try_later: 'update timed out, please try again later',
   music: 'music',
   public_musicbill: 'public musicbill',
   pick_from_playlist_randomly: 'pick from playlist randomly',

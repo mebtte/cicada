@@ -7,7 +7,7 @@ class Metadata {
 
   Metadata({required this.hostname, required this.version});
 
-  factory Metadata.fromJSON(Map<String, dynamic> json) =>
+  factory Metadata.fromJson(Map<String, dynamic> json) =>
       Metadata(hostname: json['hostname'], version: json['version']);
 }
 
@@ -16,5 +16,5 @@ Future<Metadata> getMetadata(String? origin) async {
     origin: origin ?? serverState.currentServer!.origin,
     path: "/base/metadata",
   );
-  return Metadata.fromJSON(responseData);
+  return Metadata.fromJson(responseData);
 }

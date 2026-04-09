@@ -1,6 +1,6 @@
 name: cicada
-description: "Client for cicada."
-publish_to: "none"
+description: 'Client for cicada.'
+publish_to: 'none'
 version: 0.1.0
 
 environment:
@@ -8,6 +8,8 @@ environment:
 
 dependencies:
   audio_service: ^0.18.18
+  audio_session: ^0.1.21
+  cached_network_image: ^3.4.1
   dio: ^5.9.0
   event_bus: ^2.0.1
   flutter:
@@ -15,6 +17,8 @@ dependencies:
   flutter_svg: ^2.2.0
   get_it: ^8.2.0
   just_audio: ^0.10.4
+  path_provider: ^2.1.5
+  permission_handler: ^11.3.1
   provider: ^6.1.5
   shared_preferences: ^2.5.3
   uuid: ^4.5.1

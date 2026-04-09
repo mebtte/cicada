@@ -8,6 +8,17 @@ import { UNUSED_2FA_SECRET_PREFIX } from '@/constants';
 import * as captcha from '@/platform/captcha';
 import { Context } from '../constants';
 
+const USER_LOGIN_INTERVAL = 3000;
+const userLastLoginTime = new Map<string, number>();
+
+function clearExpiredUserLastLoginTime(now: number) {
+  for (const [username, lastLoginTime] of userLastLoginTime) {
+    if (now - lastLoginTime >= USER_LOGIN_INTERVAL) {
+      userLastLoginTime.delete(username);
+    }
+  }
+}
+
 export default async (ctx: Context) => {
   const { username, password, captchaId, captchaValue } = ctx.request.body as {
     [key in keyof RequestBody]: unknown;
@@ -25,6 +36,17 @@ export default async (ctx: Context) => {
   ) {
     return ctx.except(ExceptionCode.WRONG_PARAMETER);
   }
+
+  const now = Date.now();
+  clearExpiredUserLastLoginTime(now);
+  const lastLoginTime = userLastLoginTime.get(username);
+  if (
+    typeof lastLoginTime === 'number' &&
+    now - lastLoginTime < USER_LOGIN_INTERVAL
+  ) {
+    return ctx.except(ExceptionCode.LOGIN_TOO_FREQUENT);
+  }
+  userLastLoginTime.set(username, now);
 
   const captchaVerified = await captcha.verify({
     id: captchaId,

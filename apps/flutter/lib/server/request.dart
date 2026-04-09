@@ -1,6 +1,7 @@
 import '../constants/index.dart';
 import '../states/server.dart';
 import 'package:dio/dio.dart';
+import './server_exception.dart';
 
 final dio = Dio();
 
@@ -10,7 +11,7 @@ class ResponseWrapper {
 
   ResponseWrapper({required this.code, required this.data});
 
-  factory ResponseWrapper.fromJSON(Map<String, dynamic> json) =>
+  factory ResponseWrapper.fromJson(Map<String, dynamic> json) =>
       ResponseWrapper(code: json['code'], data: json['data']);
 }
 
@@ -26,9 +27,12 @@ Future<dynamic> handleResponse(Response<dynamic> response) async {
       "The server responsed with code \"${response.statusCode}\"",
     );
   }
-  final responseData = ResponseWrapper.fromJSON(response.data);
+  final responseData = ResponseWrapper.fromJson(response.data);
   if (responseData.code != 'success') {
-    throw Exception("The server responsed with code \"${responseData.code}\"");
+    throw ServerException(
+      code: responseData.code,
+      message: response.data['message'] ?? responseData.code,
+    );
   }
   return responseData.data;
 }
@@ -58,6 +62,27 @@ Future<dynamic> httpPost<Data>({
   String? origin,
 }) async {
   final response = await dio.post(
+    '${origin ?? serverState.currentServer!.origin}$path',
+    queryParameters: query,
+    data: data,
+    options: Options(
+      headers: {
+        ...getTokenHeader(withToken),
+        "content-type": "application/json",
+      },
+    ),
+  );
+  return handleResponse(response);
+}
+
+Future<dynamic> httpDelete<Data>({
+  required String path,
+  Map<String, String>? query,
+  Object? data,
+  bool withToken = false,
+  String? origin,
+}) async {
+  final response = await dio.delete(
     '${origin ?? serverState.currentServer!.origin}$path',
     queryParameters: query,
     data: data,

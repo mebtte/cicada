@@ -11,4 +11,15 @@ class AddMusicListToPlaylistEvent {
   AddMusicListToPlaylistEvent({required this.musicList});
 }
 
+class InsertToPlayqueueEvent {
+  List<Music> musicList;
+  InsertToPlayqueueEvent({required this.musicList});
+}
+
+class PlayErrorEvent {
+  final String musicName;
+  final String errorMessage;
+  PlayErrorEvent({required this.musicName, required this.errorMessage});
+}
+
 EventBus eventBus = EventBus();

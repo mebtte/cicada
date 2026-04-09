@@ -39,4 +39,6 @@ export enum ExceptionCode {
   TWO_FA_ENABLED_ALREADY = 'two_fa_enabled_already',
   NEED_2FA = 'need_2fa',
   NO_NEED_TO_2FA = 'no_need_to_2fa',
+  LOGIN_TOO_FREQUENT = 'login_too_frequent',
+  LOGIN_WITH_2FA_TOO_FREQUENT = 'login_with_2fa_too_frequent',
 }
