@@ -16,15 +16,6 @@
       "env": {
         "TS_NODE_PROJECT": "${workspaceFolder}/apps/cli/tsconfig.json"
       }
-    },
-    {
-      "name": "Flutter - macOS",
-      "request": "launch",
-      "type": "dart",
-      "program": "${workspaceFolder}/apps/flutter/lib/main.dart",
-      "cwd": "${workspaceFolder}/apps/flutter",
-      "deviceId": "macos",
-      "flutterMode": "debug"
     }
   ]
 }
