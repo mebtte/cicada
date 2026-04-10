@@ -70,7 +70,14 @@ const mainConfig = {
       },
       {
         test: /\.s?css$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: { api: 'modern' },
+          },
+        ],
       },
       {
         test: /\.(jpe?g|png|svg|gif)$/,
@@ -89,7 +96,7 @@ const mainConfig = {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
       '@': path.resolve(CURRENT_DIR, '../src'),
-      '#': path.resolve(CURRENT_DIR, '../../../shared'),
+      '#': path.resolve(CURRENT_DIR, '../src/shared'),
     },
     symlinks: false,
   },
@@ -134,7 +141,7 @@ const serviceWorkerConfig = {
     extensions: ['.ts', '.js'],
     alias: {
       '@': path.resolve(CURRENT_DIR, '../src'),
-      '#': path.resolve(CURRENT_DIR, '../../../shared'),
+      '#': path.resolve(CURRENT_DIR, '../src/shared'),
     },
     symlinks: false,
   },

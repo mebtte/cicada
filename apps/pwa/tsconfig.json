@@ -13,16 +13,13 @@
 
     "baseUrl": ".",
     "paths": {
-      "#/*": ["../../shared/*"],
+      "#/*": ["src/shared/*"],
       "@/*": ["src/*"]
     }
   },
   "include": [
     "src/**/*",
-    "webpack/**/*",
-    "../../global.d.ts",
-    "../../shared/components/tooltip",
-    "../../shared/style"
+    "webpack/**/*"
   ],
   "exclude": ["node_modules", "**/node_modules/*"]
 }

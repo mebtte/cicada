@@ -1,14 +1,13 @@
 import styled from 'styled-components';
-import { SortableElement } from 'react-sortable-hoc';
 import { CSSVariable } from '@/global_style';
-import { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import MusicbillCover from '../components/musicbill_cover';
 import { LocalMusicbill } from './constant';
 import { ZIndex } from '../constants';
-import e, { EventType } from './eventemitter';
 
 const COVER_SIZE = 28;
 const Style = styled.div`
@@ -41,27 +40,19 @@ const Style = styled.div`
     }
   }
 `;
-type Props = { selfIndex: number; musicbill: LocalMusicbill };
 
-function Musicbill({ selfIndex, musicbill }: Props) {
-  const [active, setActive] = useState(false);
-
-  useEffect(() => {
-    const unlistenBeforeDragStart = e.listen(
-      EventType.BEFORE_DRAG_START,
-      (data) => setActive(data.index === selfIndex),
-    );
-    const unlistenDragEnd = e.listen(EventType.DRAG_END, () =>
-      setActive(false),
-    );
-    return () => {
-      unlistenBeforeDragStart();
-      unlistenDragEnd();
-    };
-  }, [selfIndex]);
+function Musicbill({ musicbill }: { musicbill: LocalMusicbill }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: musicbill.id });
 
   return (
-    <Style className={classnames({ active })}>
+    <Style
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      className={classnames({ active: isDragging })}
+      {...attributes}
+      {...listeners}
+    >
       <MusicbillCover
         size={COVER_SIZE}
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
@@ -73,4 +64,4 @@ function Musicbill({ selfIndex, musicbill }: Props) {
   );
 }
 
-export default SortableElement<Props>(Musicbill);
+export default Musicbill;

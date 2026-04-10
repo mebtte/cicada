@@ -13,10 +13,10 @@
 
     "baseUrl": ".",
     "paths": {
-      "#/*": ["../../shared/*"],
+      "#/*": ["src/shared/*"],
       "@/*": ["src/*"]
     }
   },
-  "include": ["dev_server.ts", "src/**/*", "../../global.d.ts"],
+  "include": ["dev_server.ts", "src/**/*"],
   "exclude": ["node_modules", "**/node_modules/*"]
 }

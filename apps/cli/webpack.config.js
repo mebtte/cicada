@@ -45,13 +45,11 @@ module.exports = {
     extensions: ['.ts', '.js'],
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '#': path.resolve(__dirname, '../../shared'),
+      '#': path.resolve(__dirname, './src/shared'),
     },
     symlinks: false,
   },
   externals: [
-    nodeExternals({
-      additionalModuleDirs: [path.join(__dirname, '../../node_modules')],
-    }),
+    nodeExternals(),
   ],
 };

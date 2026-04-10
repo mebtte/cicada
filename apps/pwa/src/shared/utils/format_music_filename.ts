@@ -1,5 +1,5 @@
 import sanitize from 'sanitize-filename';
-import { t } from '../../apps/pwa/src/i18n';
+import { t } from '@/i18n';
 
 function formatMusicFilename({
   name,
