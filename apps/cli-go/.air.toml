@@ -1,0 +1,12 @@
+#:schema https://json.schemastore.org/any.json
+
+[build]
+  cmd = "go build -o ./tmp/cicada ."
+  bin = "./tmp/cicada"
+  args_bin = ["start", "--data", ".dev-data", "--port", "8000"]
+  include_ext = ["go"]
+  exclude_dir = ["tmp", ".dev-data"]
+  delay = 500
+
+[log]
+  time = false
