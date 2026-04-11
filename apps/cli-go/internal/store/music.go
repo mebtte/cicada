@@ -11,9 +11,14 @@ import (
 type MusicType int
 
 const (
-	MusicTypeSong    MusicType = 0
-	MusicTypeUnknown MusicType = 1
+	// Keep these values aligned with the existing database and TypeScript clients.
+	MusicTypeSong         MusicType = 1
+	MusicTypeInstrumental MusicType = 2
 )
+
+func (t MusicType) Valid() bool {
+	return t == MusicTypeSong || t == MusicTypeInstrumental
+}
 
 type Music struct {
 	ID              string

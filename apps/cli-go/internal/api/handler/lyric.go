@@ -19,7 +19,7 @@ func GetLyricList(c *gin.Context) {
 		api.Fail(c, apperr.MusicNotExisted)
 		return
 	}
-	if music.Type == store.MusicTypeUnknown {
+	if music.Type == store.MusicTypeInstrumental {
 		api.Fail(c, apperr.InstrumentalHasNoLyric)
 		return
 	}

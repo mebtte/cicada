@@ -125,9 +125,9 @@ func GetMusic(c *gin.Context) {
 	for i, f := range forks {
 		rm := relatedMap[f.MusicID]
 		forkList[i] = gin.H{
-			"id":    rm.ID,
-			"name":  rm.Name,
-			"cover": config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
+			"id":      rm.ID,
+			"name":    rm.Name,
+			"cover":   config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
 			"singers": singerItems(singersByMusic[rm.ID]),
 		}
 	}
@@ -135,9 +135,9 @@ func GetMusic(c *gin.Context) {
 	for i, f := range forkFroms {
 		rm := relatedMap[f.ForkFrom]
 		forkFromList[i] = gin.H{
-			"id":    rm.ID,
-			"name":  rm.Name,
-			"cover": config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
+			"id":      rm.ID,
+			"name":    rm.Name,
+			"cover":   config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
 			"singers": singerItems(singersByMusic[rm.ID]),
 		}
 	}
@@ -176,6 +176,11 @@ func CreateMusic(c *gin.Context) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
+	musicType := store.MusicType(body.Type)
+	if !musicType.Valid() {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
 	if !assetExists(body.Asset, config.AssetTypeMusic) {
 		api.Fail(c, apperr.AssetNotExisted)
 		return
@@ -193,7 +198,7 @@ func CreateMusic(c *gin.Context) {
 			return
 		}
 	}
-	id, err := store.CreateMusic(body.Name, store.MusicType(body.Type), u.ID, body.Asset)
+	id, err := store.CreateMusic(body.Name, musicType, u.ID, body.Asset)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
@@ -293,12 +298,17 @@ func UpdateMusic(c *gin.Context) {
 		store.RecordMusicModify(body.ID, u.ID, "singers")
 
 	case "type":
-		t, ok := body.Value.(float64)
-		if !ok {
+		rawType, ok := body.Value.(float64)
+		if !ok || rawType != float64(int(rawType)) {
 			api.Fail(c, apperr.WrongParameter)
 			return
 		}
-		store.UpdateMusic(body.ID, "type", int(t))
+		musicType := store.MusicType(int(rawType))
+		if !musicType.Valid() {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		store.UpdateMusic(body.ID, "type", int(musicType))
 		store.RecordMusicModify(body.ID, u.ID, "type")
 
 	case "year":
@@ -498,8 +508,8 @@ func GetExploration(c *gin.Context) {
 	}
 
 	api.OK(c, gin.H{
-		"musicList":          musicList,
-		"singerList":         singerList,
+		"musicList":           musicList,
+		"singerList":          singerList,
 		"publicMusicbillList": publicMBList,
 	})
 }
