@@ -10,8 +10,16 @@ import (
 )
 
 func NewServer() *gin.Engine {
-	gin.SetMode(gin.ReleaseMode)
+	if config.Get().Mode == config.ModeDevelopment {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	r := gin.New()
+	if config.Get().Mode == config.ModeDevelopment {
+		r.Use(gin.Logger())
+	}
 	r.Use(middleware.Recovery())
 	r.Use(corsMiddleware())
 

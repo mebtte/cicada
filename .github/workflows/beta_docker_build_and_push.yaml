@@ -32,4 +32,4 @@ jobs:
           go-version-file: apps/cli/go.mod
 
       - run: git tag beta.$(date +\%y\%m\%d\%H\%M)
-      - run: ./docker_build_and_push.sh beta
+      - run: ./docker/docker_build_and_push.sh beta

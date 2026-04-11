@@ -36,7 +36,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 	jwtExpiry := parseExpiry(startJWTExpiry)
 
 	cfg := config.Config{
-		Mode:      config.ModeProduction,
+		Mode:      config.DefaultMode(),
 		Data:      startData,
 		Port:      startPort,
 		JWTExpiry: jwtExpiry,
@@ -45,6 +45,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 
 	fmt.Println("---")
 	fmt.Printf("data: %s\n", cfg.Data)
+	fmt.Printf("mode: %s\n", cfg.Mode)
 	fmt.Printf("port: %d\n", cfg.Port)
 	fmt.Printf("jwtExpiry: %dms\n", cfg.JWTExpiry)
 	fmt.Println("---")

@@ -71,7 +71,7 @@ func DefaultDataPath() string {
 var (
 	mu  sync.RWMutex
 	cfg = Config{
-		Mode:      ModeProduction,
+		Mode:      DefaultMode(),
 		Data:      DefaultDataPath(),
 		Port:      8000,
 		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
