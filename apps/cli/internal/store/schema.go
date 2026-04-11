@@ -4,6 +4,7 @@ import (
 	"cicada/internal/config"
 	"crypto/md5"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
@@ -12,7 +13,6 @@ import (
 
 const (
 	dataVersion = 2
-	firstUserID = "1"
 
 	TableUser                     = "user"
 	TableCaptcha                  = "captcha"
@@ -197,17 +197,28 @@ func Initialize() error {
 	var adminID string
 	if err := DB().QueryRow(`SELECT id FROM user WHERE admin=1`).Scan(&adminID); err != nil {
 		const (
-			username = "cicada"
-			password = "cicada"
+			username    = "cicada"
+			letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 		)
+		r := rand.New(rand.NewSource(time.Now().UnixNano()))
+		id := fmt.Sprintf("%d", 10000+r.Intn(9990000))
+		pwBytes := make([]byte, 16)
+		for i := range pwBytes {
+			pwBytes[i] = letterBytes[r.Intn(len(letterBytes))]
+		}
+		password := string(pwBytes)
 		_, err = DB().Exec(
 			`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin) VALUES (?,?,?,?,?,1)`,
-			firstUserID, username, doubleMD5(password), "Cicada", time.Now().UnixMilli(),
+			id, username, doubleMD5(password), "Cicada", time.Now().UnixMilli(),
 		)
 		if err != nil {
 			return fmt.Errorf("seed admin: %w", err)
 		}
-		fmt.Printf("\n--- Login with [ %s / %s ] ---\n\n", username, password)
+		fmt.Printf("\n========================================\n")
+		fmt.Printf("  Default user created\n")
+		fmt.Printf("  Username : %s\n", username)
+		fmt.Printf("  Password : %s\n", password)
+		fmt.Printf("========================================\n\n")
 	}
 	return nil
 }
