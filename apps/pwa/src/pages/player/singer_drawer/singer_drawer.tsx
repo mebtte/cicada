@@ -41,6 +41,7 @@ const DetailContainer = styled(Container)`
 `;
 
 function Detail({ style, singer }: { style: unknown; singer: Singer }) {
+  const hasCreateUser = !!singer.createUser.id && !!singer.createUser.nickname;
   return (
     // @ts-expect-error: style is known
     <DetailContainer style={style}>
@@ -54,11 +55,13 @@ function Detail({ style, singer }: { style: unknown; singer: Singer }) {
             }))}
           />
         </div>
-        <CreateUser
-          userId={singer.createUser.id}
-          nickname={singer.createUser.nickname}
-          createTime={day(singer.createTimestamp).format('YYYY-MM-DD')}
-        />
+        {hasCreateUser ? (
+          <CreateUser
+            userId={singer.createUser.id}
+            nickname={singer.createUser.nickname}
+            createTime={day(singer.createTimestamp).format('YYYY-MM-DD')}
+          />
+        ) : null}
         <Toolbar singer={singer} />
       </div>
 

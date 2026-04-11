@@ -1,2 +1,5 @@
 # node & npm
 node_modules/
+
+dist/
+dist-sw/

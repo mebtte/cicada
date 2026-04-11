@@ -10,6 +10,8 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 const CURRENT_DIR = path.dirname(url.fileURLToPath(import.meta.url));
 const INVALID_FILES = ['.DS_Store'];
 const STATIC_DIR = path.join(CURRENT_DIR, '../src/static');
+const BUILD_DIR = path.join(CURRENT_DIR, '../dist');
+const SERVICE_WORKER_BUILD_DIR = path.join(CURRENT_DIR, '../dist-sw');
 const experiments = {
   topLevelAwait: true,
 };
@@ -38,7 +40,7 @@ const mainConfig = {
   experiments,
   entry: path.join(CURRENT_DIR, '../src/index.tsx'),
   output: {
-    path: path.join(CURRENT_DIR, '../../../dist/pwa'),
+    path: BUILD_DIR,
     filename: '[name]_[contenthash].js',
     chunkFilename: 'chunk_[name]_[contenthash].js',
     publicPath: '/',
@@ -117,7 +119,7 @@ const serviceWorkerConfig = {
   target: 'webworker',
   entry: path.join(CURRENT_DIR, '../src/service_worker.ts'),
   output: {
-    path: path.join(CURRENT_DIR, '../../../pwa'),
+    path: SERVICE_WORKER_BUILD_DIR,
     filename: 'service_worker.js',
     publicPath: '/',
   },
