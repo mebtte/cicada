@@ -26,7 +26,7 @@ var (
 )
 
 func init() {
-	startCmd.Flags().StringVar(&startData, "data", "cicada", "Data directory")
+	startCmd.Flags().StringVar(&startData, "data", config.DefaultDataPath(), "Data directory (env: CICADA_DATA)")
 	startCmd.Flags().IntVar(&startPort, "port", 8000, "HTTP listen port")
 	startCmd.Flags().StringVar(&startJWTExpiry, "jwt-expiry", "180d", "JWT expiry duration (e.g. 7d, 24h)")
 	rootCmd.AddCommand(startCmd)

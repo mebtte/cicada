@@ -1,9 +1,10 @@
 #:schema https://json.schemastore.org/any.json
+# Run with: CICADA_DATA=.dev-data air
 
 [build]
   cmd = "go build -o ./tmp/cicada ."
   bin = "./tmp/cicada"
-  args_bin = ["start", "--data", ".dev-data", "--port", "8000"]
+  args_bin = ["start", "--port", "8000"]
   include_ext = ["go"]
   exclude_dir = ["tmp", ".dev-data"]
   delay = 500

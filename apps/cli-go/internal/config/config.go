@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"sync"
 )
@@ -55,11 +56,23 @@ type Config struct {
 	JWTExpiry int64 // milliseconds
 }
 
+const (
+	DefaultDataDir = "cicada"
+	DataEnvVar     = "CICADA_DATA"
+)
+
+func DefaultDataPath() string {
+	if data := os.Getenv(DataEnvVar); data != "" {
+		return data
+	}
+	return DefaultDataDir
+}
+
 var (
 	mu  sync.RWMutex
 	cfg = Config{
 		Mode:      ModeProduction,
-		Data:      "cicada",
+		Data:      DefaultDataPath(),
 		Port:      8000,
 		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
 	}
@@ -77,13 +90,13 @@ func Set(c Config) {
 	cfg = c
 }
 
-func DataVersionPath() string   { return filepath.Join(Get().Data, "v") }
-func DBPath() string            { return filepath.Join(Get().Data, "db") }
-func JWTSecretPath() string     { return filepath.Join(Get().Data, "jwt_secret") }
-func TrashDir() string          { return filepath.Join(Get().Data, "trash") }
-func LogDir() string            { return filepath.Join(Get().Data, "logs") }
-func CacheDir() string          { return filepath.Join(Get().Data, "cache") }
-func AssetsDir() string         { return filepath.Join(Get().Data, "assets") }
+func DataVersionPath() string     { return filepath.Join(Get().Data, "v") }
+func DBPath() string              { return filepath.Join(Get().Data, "db") }
+func JWTSecretPath() string       { return filepath.Join(Get().Data, "jwt_secret") }
+func TrashDir() string            { return filepath.Join(Get().Data, "trash") }
+func LogDir() string              { return filepath.Join(Get().Data, "logs") }
+func CacheDir() string            { return filepath.Join(Get().Data, "cache") }
+func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }
 func AssetDir(t AssetType) string { return filepath.Join(Get().Data, "assets", string(t)) }
 
 // AssetPublicURL returns the public HTTP path for a stored asset filename.

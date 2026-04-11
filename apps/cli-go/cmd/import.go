@@ -17,14 +17,14 @@ var importCmd = &cobra.Command{
 }
 
 var (
-	importData              string
-	importUID               string
-	importRecursive         bool
+	importData               string
+	importUID                string
+	importRecursive          bool
 	importSkipExistenceCheck bool
 )
 
 func init() {
-	importCmd.Flags().StringVar(&importData, "data", "cicada", "Data directory")
+	importCmd.Flags().StringVar(&importData, "data", config.DefaultDataPath(), "Data directory (env: CICADA_DATA)")
 	importCmd.Flags().StringVar(&importUID, "uid", "", "User ID to assign imported music to")
 	importCmd.Flags().BoolVarP(&importRecursive, "recursive", "r", false, "Recursively scan subdirectories")
 	importCmd.Flags().BoolVar(&importSkipExistenceCheck, "skip-existence-check", false, "Skip existence check")
