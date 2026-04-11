@@ -175,6 +175,20 @@ func GetSingersInMusicIDs(musicIDs []string) ([]SingerInMusic, error) {
 	return out, nil
 }
 
+func GetMusicsBySingerID(singerID string) ([]Music, error) {
+	rows, err := DB().Query(
+		`SELECT m.id,m.type,m.name,m.aliases,m.cover,m.asset,m.heat,m.createUserId,m.createTimestamp,m.year
+		FROM music_singer_relation msr JOIN music m ON msr.musicId=m.id
+		WHERE msr.singerId=? ORDER BY m.createTimestamp DESC`,
+		singerID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return scanMusicRows(rows)
+}
+
 func LinkMusicSingers(musicID string, singerIDs []string) error {
 	if len(singerIDs) == 0 {
 		return nil

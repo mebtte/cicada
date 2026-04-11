@@ -9,8 +9,9 @@ cd "$ROOT_DIR"
 npm ci --prefix apps/pwa
 npm run build --prefix apps/pwa
 
+rm -rf dist/pwa pwa
 rm -rf apps/cli/pwa/dist
-cp -R dist/pwa apps/cli/pwa/dist
+cp -R apps/pwa/dist apps/cli/pwa/dist
 
 rm -rf build
 mkdir -p build

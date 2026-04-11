@@ -12,6 +12,7 @@ import (
 )
 
 func GetSinger(c *gin.Context) {
+	u := middleware.GetUser(c)
 	id := c.Query("id")
 	if id == "" {
 		api.Fail(c, apperr.WrongParameter)
@@ -22,6 +23,44 @@ func GetSinger(c *gin.Context) {
 		api.Fail(c, apperr.SingerNotExisted)
 		return
 	}
+
+	musicList, _ := store.GetMusicsBySingerID(id)
+	musicIDs := make([]string, len(musicList))
+	for i, m := range musicList {
+		musicIDs[i] = m.ID
+	}
+	singerMap := map[string][]gin.H{}
+	if len(musicIDs) > 0 {
+		singers, _ := store.GetSingersInMusicIDs(musicIDs)
+		for _, singer := range singers {
+			singerMap[singer.MusicID] = append(singerMap[singer.MusicID], gin.H{
+				"id":      singer.ID,
+				"name":    singer.Name,
+				"aliases": splitAliases(singer.Aliases),
+				"avatar":  config.AssetPublicURL(singer.Avatar, config.AssetTypeSingerAvatar),
+			})
+		}
+	}
+	musicItems := make([]gin.H, len(musicList))
+	for i, m := range musicList {
+		singers := singerMap[m.ID]
+		if singers == nil {
+			singers = []gin.H{}
+		}
+		musicItems[i] = gin.H{
+			"id":      m.ID,
+			"type":    m.Type,
+			"name":    m.Name,
+			"aliases": splitAliases(m.Aliases),
+			"cover":   config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+			"asset":   config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"singers": singers,
+		}
+	}
+
+	var createUserNickname string
+	_ = store.DB().QueryRow(`SELECT nickname FROM user WHERE id=?`, s.CreateUserID).Scan(&createUserNickname)
+
 	records, _ := store.GetSingerModifyRecords(id)
 	modifyList := make([]gin.H, len(records))
 	for i, r := range records {
@@ -39,6 +78,9 @@ func GetSinger(c *gin.Context) {
 		"aliases":         splitAliases(s.Aliases),
 		"avatar":          config.AssetPublicURL(s.Avatar, config.AssetTypeSingerAvatar),
 		"createTimestamp": s.CreateTimestamp,
+		"createUser":      gin.H{"id": s.CreateUserID, "nickname": createUserNickname},
+		"musicList":       musicItems,
+		"editable":        u.Admin == 1 || s.CreateUserID == u.ID,
 		"modifyList":      modifyList,
 	})
 }
