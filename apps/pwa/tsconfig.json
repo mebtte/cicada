@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext", // 由 babel 进一步编译
+    "target": "ESNext",
     "strictNullChecks": true,
     "skipLibCheck": true,
     "moduleResolution": "Node",
@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "module": "ESNext",
-    "jsx": "preserve", // 由 babel 进一步编译
+    "jsx": "react-jsx",
     "lib": ["DOM", "WebWorker", "ESNext", "DOM.Iterable"],
 
     "baseUrl": ".",
@@ -17,9 +17,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "webpack/**/*"
-  ],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "**/node_modules/*"]
 }

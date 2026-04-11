@@ -2,7 +2,6 @@ import { t } from '@/i18n';
 import capitalize from '#/utils/capitalize';
 import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { memo } from 'react';
-import { Helmet } from 'react-helmet';
 import { IS_MAC_OS } from '@/constants/browser';
 import storage, { Key } from '@/storage';
 
@@ -54,14 +53,14 @@ const MANIFEST_URL = URL.createObjectURL(
 
 function Head() {
   return (
-    <Helmet>
+    <>
       <title>{upperCaseFirstLetter(t('cicada'))}</title>
       <meta
         name="description"
         content={upperCaseFirstLetter(t('cicada_description'))}
       />
       <link rel="manifest" href={MANIFEST_URL} />
-    </Helmet>
+    </>
   );
 }
 
