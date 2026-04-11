@@ -2,8 +2,7 @@
 
 Cicada is monorepo, which has multiple apps:
 
-- apps/cli: deprecated, cli tool for serving data and managing data, powered by `node.js`
-- apps/cli-go: cli tool for serving data and managing data, powered by `go`
+- apps/cli: cli tool for serving data and managing data, powered by `go`
 - apps/pwa: client for browser, powered by `react`/`typescript`
 
 ## Nouns
