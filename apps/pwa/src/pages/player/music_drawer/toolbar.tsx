@@ -5,13 +5,10 @@ import {
   MdReadMore,
   MdOutlinePostAdd,
   MdPlaylistAdd,
-  MdOutlineEdit,
   MdOutlineDownload,
 } from 'react-icons/md';
 import { saveAs } from 'file-saver';
 import formatMusicFilename from '#/utils/format_music_filename';
-import { useUser } from '@/global_states/server';
-import e, { EventType } from './eventemitter';
 import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -44,8 +41,6 @@ const Style = styled.div`
 `;
 
 function Toolbar({ music }: { music: MusicDetail }) {
-  const user = useUser()!;
-
   return (
     <Style>
       <div className="left">
@@ -111,11 +106,6 @@ function Toolbar({ music }: { music: MusicDetail }) {
           <MdOutlineDownload />
         </IconButton>
       </div>
-      {user.admin || user.id === music.createUser.id ? (
-        <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
-          <MdOutlineEdit />
-        </IconButton>
-      ) : null}
     </Style>
   );
 }

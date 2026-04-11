@@ -15,7 +15,6 @@ import SingerList from './singer_list';
 import Toolbar from './toolbar';
 import Lyric from './lyric';
 import SubMusicList from './sub_music_list';
-import EditMenu from './edit_menu';
 import Info from './info';
 import { t } from '@/i18n';
 
@@ -74,7 +73,6 @@ function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
         <Toolbar music={music} />
       </div>
 
-      <EditMenu music={music} />
     </DetailBox>
   );
 }

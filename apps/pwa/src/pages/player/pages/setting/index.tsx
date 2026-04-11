@@ -1,10 +1,8 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { useUser } from '@/global_states/server';
 import Page from '../page';
 import Logout from './logout';
-import UserManage from './user_manage';
 import { HEADER_HEIGHT } from '../../constants';
 import Volume from './volume';
 import ExtraInfo from './extra_info';
@@ -32,13 +30,11 @@ const Style = styled(Page)`
 `;
 
 function Setting() {
-  const user = useUser()!;
   return (
     <Style>
       <StopTimer />
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
       <Language />
-      {user.admin ? <UserManage /> : null}
       <UserSwitch />
       <Feedback />
       <Logout />

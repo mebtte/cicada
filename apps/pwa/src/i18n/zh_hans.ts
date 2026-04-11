@@ -226,6 +226,15 @@ const zhCN: {
   retry_failed_items: '重试失败项目',
   clean_all_items: '清理所有项目',
   download: '下载',
+  admin_panel: '管理后台',
+  music_management: '音乐管理',
+  import_music: '导入音乐',
+  importing: '导入中',
+  import_success: '导入成功',
+  import_failed: '导入失败',
+  pending: '待导入',
+  start_import: '开始导入',
+  select_music_files: '选择音乐文件',
 };
 
 export default zhCN;

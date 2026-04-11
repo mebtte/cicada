@@ -10,6 +10,9 @@ const Login = lazy(
 const Player = lazy(
   () => import(/* webpackChunkName: "page_player" */ '../pages/player'),
 );
+const Admin = lazy(
+  () => import(/* webpackChunkName: "page_admin" */ '../pages/admin'),
+);
 const ROUTES: RouteObject[] = [
   {
     path: `${ROOT_PATH.PLAYER}/*`,
@@ -18,6 +21,10 @@ const ROUTES: RouteObject[] = [
   {
     path: ROOT_PATH.LOGIN,
     element: <Login />,
+  },
+  {
+    path: ROOT_PATH.ADMIN,
+    element: <Admin />,
   },
   {
     path: '*',

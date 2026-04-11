@@ -5,6 +5,7 @@ import {
   MdOutlineMusicNote,
   MdHistory,
   MdOutlineDownload,
+  MdAdminPanelSettings,
 } from 'react-icons/md';
 import MenuItem from '@/components/menu_item';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -13,12 +14,14 @@ import { t } from '@/i18n';
 import context from '../context';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
 import DownloadTag from './download_tag';
+import { useUser } from '@/global_states/server';
 
 const itemStyle: CSSProperties = { margin: '0 10px' };
 
 function Menu() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const user = useUser()!;
 
   const { downloadingMusicList } = useContext(context);
   return (
@@ -72,6 +75,15 @@ function Menu() {
           label={t('download')}
           icon={<MdOutlineDownload />}
           suffix={<DownloadTag />}
+        />
+      ) : null}
+      {user.admin ? (
+        <MenuItem
+          style={itemStyle}
+          active={false}
+          onClick={() => window.open(`#${ROOT_PATH.ADMIN}`, '_blank')}
+          label={t('admin_panel')}
+          icon={<MdAdminPanelSettings />}
         />
       ) : null}
     </div>

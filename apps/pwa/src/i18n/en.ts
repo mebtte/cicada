@@ -238,4 +238,13 @@ export default {
   retry_failed_items: 'retry failed items',
   clean_all_items: 'clean all items',
   download: 'download',
+  admin_panel: 'admin panel',
+  music_management: 'music management',
+  import_music: 'import music',
+  importing: 'importing',
+  import_success: 'import successful',
+  import_failed: 'import failed',
+  pending: 'pending',
+  start_import: 'start import',
+  select_music_files: 'select music files',
 };
