@@ -9,7 +9,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "cicada",
-	Short: "Cicada music server",
+	Short: "A multi-user music service for self-hosting.",
 }
 
 func Execute() {

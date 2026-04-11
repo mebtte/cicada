@@ -57,15 +57,18 @@ type Config struct {
 }
 
 const (
-	DefaultDataDir = "cicada"
-	DataEnvVar     = "CICADA_DATA"
+	DataEnvVar = "CICADA_DATA"
 )
 
 func DefaultDataPath() string {
 	if data := os.Getenv(DataEnvVar); data != "" {
 		return data
 	}
-	return DefaultDataDir
+	exe, err := os.Executable()
+	if err != nil {
+		return "cicada_data"
+	}
+	return filepath.Join(filepath.Dir(exe), "cicada_data")
 }
 
 var (
