@@ -217,6 +217,15 @@ func CountTodayMusicByUser(userID string, dayStartMs int64) (int, error) {
 	return count, err
 }
 
+func GetAllMusic() ([]Music, error) {
+	rows, err := DB().Query(`SELECT id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year FROM music ORDER BY createTimestamp ASC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return scanMusicRows(rows)
+}
+
 // SearchMusic searches across all users by name/alias/singer (paginated).
 func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	if keyword == "" {
