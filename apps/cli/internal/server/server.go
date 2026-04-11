@@ -3,6 +3,7 @@ package server
 import (
 	"cicada/internal/api/handler"
 	"cicada/internal/api/middleware"
+	"cicada/internal/apidoc"
 	"cicada/internal/config"
 	"fmt"
 
@@ -22,6 +23,7 @@ func NewServer() *gin.Engine {
 	}
 	r.Use(middleware.Recovery())
 	r.Use(corsMiddleware())
+	apidoc.Register(r)
 
 	// Asset serving (no auth)
 	for _, at := range config.AllAssetTypes {
