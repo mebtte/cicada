@@ -1,0 +1,166 @@
+direction: right
+
+user: {
+  shape: sql_table
+  id: "TEXT PK"
+  username: "TEXT NOT NULL UQ"
+  avatar: "TEXT NOT NULL DEFAULT ''"
+  nickname: "TEXT NOT NULL"
+  joinTimestamp: "INTEGER NOT NULL"
+  admin: "INTEGER NOT NULL DEFAULT 0"
+  remark: "TEXT NOT NULL DEFAULT ''"
+  musicbillOrdersJSON: "TEXT NULL"
+  musicbillMaxAmount: "INTEGER NOT NULL DEFAULT 100"
+  createMusicMaxAmountPerDay: "INTEGER NOT NULL DEFAULT 10"
+  lastActiveTimestamp: "INTEGER NOT NULL DEFAULT 0"
+  musicPlayRecordIndate: "INTEGER NOT NULL DEFAULT 0"
+  password: "TEXT NOT NULL"
+  tokenIdentifier: "TEXT NOT NULL DEFAULT ''"
+  twoFASecret: "TEXT NULL"
+}
+
+captcha: {
+  shape: sql_table
+  id: "TEXT PK"
+  value: "TEXT NOT NULL"
+  createTimestamp: "INTEGER NOT NULL"
+  used: "INTEGER NOT NULL DEFAULT 0"
+}
+
+singer: {
+  shape: sql_table
+  id: "TEXT PK"
+  avatar: "TEXT NOT NULL DEFAULT ''"
+  name: "TEXT NOT NULL"
+  aliases: "TEXT NOT NULL DEFAULT ''"
+  createUserId: "TEXT FK NOT NULL"
+  createTimestamp: "INTEGER NOT NULL"
+}
+
+singer_modify_record: {
+  shape: sql_table
+  id: "INTEGER PK AUTOINCREMENT"
+  singerId: "TEXT FK NOT NULL"
+  modifyUserId: "TEXT FK NOT NULL"
+  key: "TEXT NOT NULL"
+  modifyTimestamp: "INTEGER NOT NULL"
+}
+
+music: {
+  shape: sql_table
+  id: "TEXT PK"
+  type: "INTEGER NOT NULL"
+  name: "TEXT NOT NULL"
+  year: "INTEGER NULL"
+  aliases: "TEXT NOT NULL DEFAULT ''"
+  cover: "TEXT NOT NULL DEFAULT ''"
+  asset: "TEXT NOT NULL"
+  heat: "INTEGER NOT NULL DEFAULT 0"
+  createUserId: "TEXT FK NOT NULL"
+  createTimestamp: "INTEGER NOT NULL"
+}
+
+music_modify_record: {
+  shape: sql_table
+  id: "INTEGER PK AUTOINCREMENT"
+  musicId: "TEXT FK NOT NULL"
+  modifyUserId: "TEXT FK NOT NULL"
+  key: "TEXT NOT NULL"
+  modifyTimestamp: "INTEGER NOT NULL"
+}
+
+music_fork: {
+  shape: sql_table
+  id: "INTEGER PK AUTOINCREMENT"
+  musicId: "TEXT FK NOT NULL"
+  forkFrom: "TEXT FK NOT NULL"
+  unique_musicId_forkFrom: "UQ(musicId, forkFrom) REPLACE"
+}
+
+lyric: {
+  shape: sql_table
+  id: "INTEGER PK AUTOINCREMENT"
+  musicId: "TEXT FK NOT NULL"
+  lrc: "TEXT NOT NULL"
+  lrcContent: "TEXT NOT NULL"
+}
+
+music_play_record: {
+  shape: sql_table
+  id: "INTEGER PK AUTOINCREMENT"
+  userId: "TEXT FK NOT NULL"
+  musicId: "TEXT FK NOT NULL"
+  percent: "REAL NOT NULL"
+  timestamp: "INTEGER NOT NULL"
+}
+
+music_singer_relation: {
+  shape: sql_table
+  id: "INTEGER PK AUTOINCREMENT"
+  musicId: "TEXT FK NOT NULL"
+  singerId: "TEXT FK NOT NULL"
+  unique_musicId_singerId: "UQ(musicId, singerId) REPLACE"
+}
+
+musicbill: {
+  shape: sql_table
+  id: "TEXT PK"
+  userId: "TEXT FK NOT NULL"
+  cover: "TEXT NOT NULL DEFAULT ''"
+  name: "TEXT NOT NULL"
+  public: "INTEGER NOT NULL DEFAULT 0"
+  createTimestamp: "INTEGER NOT NULL"
+}
+
+musicbill_music: {
+  shape: sql_table
+  id: "INTEGER PK AUTOINCREMENT"
+  musicbillId: "TEXT FK NOT NULL"
+  musicId: "TEXT FK NOT NULL"
+  addTimestamp: "INTEGER NOT NULL"
+  unique_musicbillId_musicId: "UQ(musicbillId, musicId) REPLACE"
+}
+
+public_musicbill_collection: {
+  shape: sql_table
+  id: "INTEGER PK AUTOINCREMENT"
+  musicbillId: "TEXT FK NOT NULL"
+  userId: "TEXT FK NOT NULL"
+  collectTimestamp: "INTEGER NOT NULL"
+  unique_musicbillId_userId: "UQ(musicbillId, userId) REPLACE"
+}
+
+shared_musicbill: {
+  shape: sql_table
+  id: "INTEGER PK AUTOINCREMENT"
+  musicbillId: "TEXT FK NOT NULL"
+  sharedUserId: "TEXT FK NOT NULL"
+  inviteUserId: "TEXT FK NOT NULL"
+  inviteTimestamp: "INTEGER NOT NULL"
+  accepted: "INTEGER NOT NULL DEFAULT 0"
+  unique_musicbillId_sharedUserId: "UQ(musicbillId, sharedUserId) REPLACE"
+}
+
+singer.createUserId -> user.id
+singer_modify_record.singerId -> singer.id
+singer_modify_record.modifyUserId -> user.id
+
+music.createUserId -> user.id
+music_modify_record.musicId -> music.id
+music_modify_record.modifyUserId -> user.id
+music_fork.musicId -> music.id
+music_fork.forkFrom -> music.id
+lyric.musicId -> music.id
+music_play_record.userId -> user.id
+music_play_record.musicId -> music.id
+music_singer_relation.musicId -> music.id
+music_singer_relation.singerId -> singer.id
+
+musicbill.userId -> user.id
+musicbill_music.musicbillId -> musicbill.id
+musicbill_music.musicId -> music.id
+public_musicbill_collection.musicbillId -> musicbill.id
+public_musicbill_collection.userId -> user.id
+shared_musicbill.musicbillId -> musicbill.id
+shared_musicbill.sharedUserId -> user.id
+shared_musicbill.inviteUserId -> user.id
