@@ -22,7 +22,6 @@ import SortMusicbillDrawer from './sort_musicbilll_drawer';
 import MusicbillSharedUserDrawer from './musicbill_shared_user_drawer';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
-import useKeyboard from './use_keyboard';
 import SingerDrawer from './singer_drawer';
 import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
@@ -83,7 +82,6 @@ function Wrapper() {
   } = useAudio({ queueMusic });
   const stopTimer = useStopTimer();
 
-  useKeyboard({ paused: audioPaused, queueMusic, musicbillList });
   useMediaSession(queueMusic);
   useEffect(
     () => e.emit(EventType.CURRENT_MUSIC_CHANGE, { queueMusic }),

@@ -12,16 +12,8 @@ export default () => {
       (data) => (data ? setOpen(data.open) : setOpen((o) => !o)),
     );
 
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('keydown', onKeyDown);
-
     return () => {
       unlistenToggleLyricPanel();
-      document.removeEventListener('keydown', onKeyDown);
     };
   }, []);
 
