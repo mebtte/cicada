@@ -43,3 +43,4 @@ d2 docs/development/database.d2 local_dir/database.svg
 ## Rules
 
 - Alter database must also update `database.d2`
+- Variabls prefer lower-camel case

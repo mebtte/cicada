@@ -1,5 +1,5 @@
 import { type CSSProperties, memo } from 'react';
-import Slider from '@/components/slider';
+import { Slider } from '@/components_next';
 import { useTheme } from '@/global_states/theme';
 import { t } from '@/i18n';
 import Item from './item';
@@ -23,7 +23,7 @@ function Volume() {
   return (
     <Item label={t('relative_volume')} style={itemStyle}>
       <Slider
-        current={playerVolume}
+        value={playerVolume}
         onChange={onVolumnChange}
         style={useTheme().miniMode ? miniModeSliderStyle : sliderStyle}
       />

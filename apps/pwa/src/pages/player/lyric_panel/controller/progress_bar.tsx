@@ -1,7 +1,6 @@
 import styled from 'styled-components';
-import Slider from '@/components/slider';
+import { Slider } from '@/components_next';
 import { CSSVariable } from '@/global_style';
-import absoluteFullSize from '@/style/absolute_full_size';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -26,12 +25,6 @@ const Style = styled.div`
     transform: scale(0.9);
   }
 `;
-const SecondTrack = styled.div`
-  ${absoluteFullSize}
-  background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_FIVE};
-  transform-origin: left;
-  transition: transform 0.3s;
-`;
 
 function Wrapper({
   duration,
@@ -51,16 +44,10 @@ function Wrapper({
     <Style>
       <div className="time">{formatSecond(currentMillisecond / 1000)}</div>
       <Slider
-        current={percent}
+        value={percent}
         onChange={onTimeChange}
         className="slider"
-        secondTrack={
-          <SecondTrack
-            style={{
-              transform: `scaleX(${bufferedPercent * 100}%)`,
-            }}
-          />
-        }
+        secondValue={bufferedPercent}
       />
       <div className="time">{formatSecond(duration)}</div>
     </Style>

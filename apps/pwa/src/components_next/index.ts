@@ -1,6 +1,9 @@
 export { default as Button } from './button';
 export type { ButtonProps, Variant as ButtonVariant, Size as ButtonSize } from './button';
 
+export { default as Slider } from './slider';
+export type { SliderProps, SliderEdge } from './slider';
+
 export { Icon, IconList, IconPlayQueue } from './icon';
 export type { IconProps } from './icon';
 
