@@ -9,7 +9,7 @@ import Pagination from '@/components/pagination';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties, useContext } from 'react';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
@@ -72,7 +72,7 @@ function Wrapper() {
         <CardContainer style={style}>
           <Empty description={t('no_suitable_music')} />
           <Button
-            variant={Variant.PRIMARY}
+            variant={'primary'}
             onClick={() =>
               navigate({
                 path: ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC,

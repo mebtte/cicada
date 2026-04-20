@@ -2,7 +2,7 @@ import Drawer from '@/components/drawer';
 import { CSSProperties } from 'react';
 import styled from 'styled-components';
 import useNavigate from '@/utils/use_navigate';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import addMusicbillSharedUser from '@/server/api/add_musicbill_shared_user';
@@ -92,13 +92,13 @@ function ShareDrawer({
           ))}
         </div>
         <Button
-          variant={Variant.PRIMARY}
+          variant={'primary'}
           style={actionStyle}
           onClick={() =>
             dialog.input({
               label: t('username'),
               maxLength: USERNAME_MAX_LENGTH,
-              confirmVariant: Variant.PRIMARY,
+              confirmVariant: 'primary',
               confirmText: t('invite'),
               onConfirm: async (username) => {
                 if (!username.length || username.length > USERNAME_MAX_LENGTH) {
@@ -129,7 +129,7 @@ function ShareDrawer({
         </Button>
         {owned ? null : (
           <Button
-            variant={Variant.DANGER}
+            variant={'danger'}
             style={actionStyle}
             onClick={() =>
               quitSharedMusicbill({

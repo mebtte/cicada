@@ -4,7 +4,6 @@ import { NAME_MAX_LENGTH as SINGER_NAME_MAX_LENGTH } from '#/constants/singer';
 import dialog from '@/utils/dialog';
 import createMusicbillRequest from '@/server/api/create_musicbill';
 import createSingerRequest from '@/server/api/create_singer';
-import { Variant } from '@/components/button';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
@@ -16,7 +15,7 @@ export function openCreateMusicbillDialog() {
     title: t('create_musicbill'),
     label: t('name'),
     maxLength: MUSICBILL_NAME_MAX_LENGTH,
-    confirmVariant: Variant.PRIMARY,
+    confirmVariant: 'primary',
     confirmText: t('create'),
     onConfirm: async (name: string) => {
       const trimmedName = name.replace(/\s+/, ' ').trim();
@@ -70,7 +69,7 @@ export function openCreateSingerDialog(callback: (id: string) => void) {
     title: t('create_singer'),
     label: t('name'),
     maxLength: SINGER_NAME_MAX_LENGTH,
-    confirmVariant: Variant.PRIMARY,
+    confirmVariant: 'primary',
     confirmText: t('create'),
     onConfirm: async (name: string) =>
       createSinger({

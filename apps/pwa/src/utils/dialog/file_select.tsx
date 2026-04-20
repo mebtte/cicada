@@ -1,5 +1,5 @@
 import { Container, Title, Content, Action } from '@/components/dialog';
-import Button from '@/components/button';
+import Button from '@/components_next/button';
 import { CSSProperties, useState } from 'react';
 import Label from '@/components/label';
 import FileSelect from '@/components/file_select';

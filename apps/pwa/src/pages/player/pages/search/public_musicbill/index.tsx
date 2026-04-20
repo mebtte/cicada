@@ -9,7 +9,7 @@ import Pagination from '@/components/pagination';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -86,7 +86,7 @@ function Wrapper() {
       return (
         <CardContainer style={style}>
           <Empty description={t('no_suitable_musicbill')} />
-          <Button variant={Variant.PRIMARY} onClick={openCreateMusicbillDialog}>
+          <Button variant={'primary'} onClick={openCreateMusicbillDialog}>
             {t('create_musicbill_by_yourself')}
           </Button>
         </CardContainer>

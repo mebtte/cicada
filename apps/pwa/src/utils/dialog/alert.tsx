@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { t } from '@/i18n';
 import { Alert as AlertType } from './constants';
 import { Container, Content, Title, Action } from '../../components/dialog';
-import Button, { Variant } from '../../components/button';
+import Button from '@/components_next/button';
 import useEvent from '../use_event';
 import DialogBase from './dialog_base';
 
@@ -30,7 +30,7 @@ function AlertContent({
       {options.content ? <Content>{options.content}</Content> : null}
       <Action>
         <Button
-          variant={Variant.PRIMARY}
+          variant={'primary'}
           onClick={onConfirm}
           loading={confirming}
         >

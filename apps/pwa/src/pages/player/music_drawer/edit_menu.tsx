@@ -45,7 +45,6 @@ import searchMusicRequest from '@/server/api/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import absoluteFullSize from '@/style/absolute_full_size';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
-import { Variant } from '@/components/button';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -341,7 +340,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
               initialValue: music.singers.map(
                 formatSingerToMultipleSelectOption,
               ),
-              confirmVariant: Variant.PRIMARY,
+              confirmVariant: 'primary',
               onConfirm: async (options) => {
                 if (!options.length) {
                   notice.error(t('emtpy_singers_warning'));
@@ -509,7 +508,7 @@ function EditMenu({ music }: { music: MusicDetail }) {
             }
             return dialog.captcha({
               confirmText: t('delete_music'),
-              confirmVariant: Variant.DANGER,
+              confirmVariant: 'danger',
               onConfirm: async ({ captchaId, captchaValue }) => {
                 try {
                   await deleteMusic({ id: music.id, captchaId, captchaValue });

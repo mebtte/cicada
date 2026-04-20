@@ -16,7 +16,6 @@ import logger from '@/utils/logger';
 import { reloadUser, useUser } from '@/global_states/server';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
-import { Variant } from '@/components/button';
 import { ZIndex } from './constants';
 import e, { EventType } from './eventemitter';
 
@@ -173,7 +172,7 @@ function ProfileEditPopup() {
           style={itemStyle}
           onClick={() =>
             dialog.password({
-              confirmVariant: Variant.PRIMARY,
+              confirmVariant: 'primary',
               onConfirm: async (password) => {
                 try {
                   await updateProfile({

@@ -1,6 +1,6 @@
 import { ChangeEventHandler, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import {
@@ -352,7 +352,7 @@ function ImportSection() {
           <ActionRow>
             {pendingCount > 0 ? (
               <Button
-                variant={Variant.PRIMARY}
+                variant={'primary'}
                 onClick={startImport}
                 loading={importing}
               >

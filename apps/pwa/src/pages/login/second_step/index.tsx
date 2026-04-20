@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { ChangeEventHandler, useState } from 'react';
 import Label from '@/components/label';
 import Input from '@/components/input';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import { t } from '@/i18n';
 import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
 import logger from '@/utils/logger';
@@ -86,7 +86,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const onLoginWith2FA = () =>
     dialog.input({
       label: t('2fa_token'),
-      confirmVariant: Variant.PRIMARY,
+      confirmVariant: 'primary',
       onConfirm: async (twoFAToken) => {
         if (!twoFAToken) {
           notice.error(t('lack_of_2fa_token'));
@@ -107,7 +107,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
 
   const onLogin = () =>
     dialog.captcha({
-      confirmVariant: Variant.PRIMARY,
+      confirmVariant: 'primary',
       onConfirm: async ({ captchaId, captchaValue }) => {
         try {
           const token = await login({
@@ -165,7 +165,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         />
       </Label>
       <Button
-        variant={Variant.PRIMARY}
+        variant={'primary'}
         disabled={!username.length || !password.length}
         onClick={onLogin}
       >

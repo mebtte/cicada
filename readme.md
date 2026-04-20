@@ -9,6 +9,10 @@ A multi-user music service for self-hosting.
 
 todo: screenshot
 
+## Development
+
+If you are interested in developing `cicada`, see the [docs](./docs/development/index.md).
+
 ## License
 
 [GPL](./license)

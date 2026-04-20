@@ -1,4 +1,4 @@
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ function UserManage() {
   const navigate = useNavigate();
   return (
     <Button
-      variant={Variant.PRIMARY}
+      variant={'primary'}
       style={buttonItemStyle}
       onClick={() => navigate(ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE)}
     >

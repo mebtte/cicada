@@ -1,9 +1,9 @@
 # Development
 
-Cicada is monorepo, which has multiple apps:
+Cicada is monorepo which has multiple apps:
 
-- apps/cli: cli tool for serving data and managing data, powered by `go`
-- apps/pwa: client for browser, powered by `react`/`typescript`
+- apps/cli: CLI tool for serving data and managing data, powered by `go`. See the [development docs](./cli/index.md).
+- apps/pwa: Client for browser, powered by `react`/`typescript`. See the [development docs](./pwa/index.md).
 
 ## Nouns
 

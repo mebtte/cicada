@@ -12,7 +12,7 @@ const INVALID_FILES = ['.DS_Store'];
 
 function getVersion() {
   try {
-    return cp.execSync('git describe --abbrev=0 --tags').toString().trim();
+    return cp.execSync('git describe --abbrev=0 --tags', { stdio: 'pipe' }).toString().trim();
   } catch {
     return 'unknown';
   }

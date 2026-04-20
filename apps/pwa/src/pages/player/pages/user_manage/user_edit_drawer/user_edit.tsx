@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Input from '@/components/input';
 import Label from '@/components/label';
 import Textarea from '@/components/textarea';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import day from '#/utils/day';
 import { ChangeEventHandler, useState } from 'react';
 import logger from '@/utils/logger';
@@ -228,7 +228,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         </Label>
         <Button
           className="part"
-          variant={Variant.PRIMARY}
+          variant={'primary'}
           onClick={onSave}
           loading={loading}
         >
@@ -246,7 +246,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
                 onConfirm: () =>
                   void dialog.captcha({
                     confirmText: t('set_as_admin'),
-                    confirmVariant: Variant.PRIMARY,
+                    confirmVariant: 'primary',
                     onConfirm: async ({ captchaId, captchaValue }) => {
                       try {
                         await adminUpdateUserAdmin({
@@ -274,7 +274,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
           disabled={loading}
           onClick={() =>
             dialog.password({
-              confirmVariant: Variant.PRIMARY,
+              confirmVariant: 'primary',
               onConfirm: async (password) => {
                 try {
                   await adminUpdateUser({
@@ -304,7 +304,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
         {user.admin ? null : (
           <Button
             className="part"
-            variant={Variant.DANGER}
+            variant={'danger'}
             disabled={loading}
             onClick={() =>
               dialog.confirm({
@@ -314,7 +314,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
                 onConfirm: () =>
                   void dialog.captcha({
                     confirmText: t('delete_user'),
-                    confirmVariant: Variant.DANGER,
+                    confirmVariant: 'danger',
                     onConfirm: async ({ captchaId, captchaValue }) => {
                       try {
                         await adminDeleteUser({

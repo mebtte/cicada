@@ -1,7 +1,7 @@
 import xss from 'xss';
 import styled from 'styled-components';
 import day from '#/utils/day';
-import Button from '@/components/button';
+import Button from '@/components_next/button';
 import { CSSVariable } from '@/global_style';
 import { useState } from 'react';
 import acceptSharedMusicbillInvitation from '@/server/api/accept_shared_musicbill_invitation';

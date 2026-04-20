@@ -1,4 +1,4 @@
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import useEvent from '@/utils/use_event';
 import { memo } from 'react';
 import dialog from '@/utils/dialog';
@@ -37,7 +37,7 @@ function Logout() {
     }),
   );
   return (
-    <Button variant={Variant.DANGER} style={buttonItemStyle} onClick={onLogout}>
+    <Button variant={'danger'} style={buttonItemStyle} onClick={onLogout}>
       {t('logout')}
     </Button>
   );

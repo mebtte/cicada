@@ -23,7 +23,7 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 	}
 
 	requiredPaths := []string{
-		"/docs/openapi.json",
+		"/api_reference/openapi.json",
 		"/base/login",
 		"/api/profile",
 		"/api/music",
@@ -83,13 +83,13 @@ func TestRegisterServesDocsPageAndSpec(t *testing.T) {
 
 	t.Run("page", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/docs", nil)
+		req := httptest.NewRequest(http.MethodGet, "/api_reference", nil)
 		r.ServeHTTP(w, req)
 
 		if w.Code != http.StatusOK {
 			t.Fatalf("unexpected status: %d", w.Code)
 		}
-		if !strings.Contains(w.Body.String(), "/docs/openapi.json") {
+		if !strings.Contains(w.Body.String(), "/api_reference/openapi.json") {
 			t.Fatalf("docs page does not reference the OpenAPI document")
 		}
 		if !strings.Contains(w.Body.String(), "Authentication") {
@@ -102,7 +102,7 @@ func TestRegisterServesDocsPageAndSpec(t *testing.T) {
 
 	t.Run("spec", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/docs/openapi.json", nil)
+		req := httptest.NewRequest(http.MethodGet, "/api_reference/openapi.json", nil)
 		r.ServeHTTP(w, req)
 
 		if w.Code != http.StatusOK {
