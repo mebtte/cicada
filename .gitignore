@@ -3,3 +3,6 @@
 
 tmp/
 build/
+
+# claude
+.claude/
