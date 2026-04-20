@@ -39,7 +39,6 @@ import searchSingerRequest from '@/server/api/search_singer';
 import searchMusicRequest from '@/server/api/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { Variant } from '@/components/button';
 import { t } from '@/i18n';
 import getMusicRequest from '@/server/api/get_music';
 import getLyricList from '@/server/api/get_lyric_list';
@@ -398,7 +397,7 @@ function EditContent({
             title: t('modify_singer'),
             optionsGetter: searchSinger,
             initialValue: music.singers.map(formatSingerToOption),
-            confirmVariant: Variant.PRIMARY,
+            confirmVariant: 'primary',
             onConfirm: async (options) => {
               if (!options.length) {
                 notice.error(t('emtpy_singers_warning'));
@@ -557,7 +556,7 @@ function EditContent({
           }
           return dialog.captcha({
             confirmText: t('delete_music'),
-            confirmVariant: Variant.DANGER,
+            confirmVariant: 'danger',
             onConfirm: async ({ captchaId, captchaValue }) => {
               try {
                 await deleteMusic({ id: music.id, captchaId, captchaValue });

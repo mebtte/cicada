@@ -3,7 +3,7 @@ import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
@@ -79,7 +79,7 @@ function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
           <ErrorContainer style={style}>
             <div className="content">
               <div className="message">{d.error.message}</div>
-              <Button variant={Variant.PRIMARY} onClick={retry}>
+              <Button variant={'primary'} onClick={retry}>
                 {t('retry')}
               </Button>
             </div>

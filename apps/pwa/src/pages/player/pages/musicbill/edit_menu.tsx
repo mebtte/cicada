@@ -21,7 +21,6 @@ import { CSSVariable } from '@/global_style';
 import deleteMusicbill from '@/server/api/delete_musicbill';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
-import { Variant } from '@/components/button';
 import { useUser } from '@/global_states/server';
 import { t } from '@/i18n';
 import e, { EventType } from './eventemitter';
@@ -199,7 +198,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
             onClick={() =>
               dialog.captcha({
                 confirmText: t('delete_musicbill'),
-                confirmVariant: Variant.DANGER,
+                confirmVariant: 'danger',
                 onConfirm: async ({ captchaId, captchaValue }) => {
                   try {
                     await deleteMusicbill({

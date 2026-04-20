@@ -1,5 +1,5 @@
 import { Container, Content, Action } from '@/components/dialog';
-import Button from '@/components/button';
+import Button from '@/components_next/button';
 import Label from '@/components/label';
 import Input from '@/components/input';
 import {

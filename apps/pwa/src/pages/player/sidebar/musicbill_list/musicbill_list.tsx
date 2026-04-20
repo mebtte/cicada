@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
 import { animated, useTransition } from 'react-spring';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import { t } from '@/i18n';
 import Context from '../../context';
 import e, { EventType } from '../../eventemitter';
@@ -54,7 +54,7 @@ function MusicbillList() {
           return (
             <StatusBox style={style}>
               <Button
-                variant={Variant.PRIMARY}
+                variant={'primary'}
                 onClick={openCreateMusicbillDialog}
               >
                 {t('create_musicbill')}

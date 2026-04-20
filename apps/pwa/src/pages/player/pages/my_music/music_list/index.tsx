@@ -9,7 +9,7 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { HEADER_HEIGHT } from '../../../constants';
@@ -88,7 +88,7 @@ function MusicList() {
             <CardContainer style={style}>
               <Empty description={t('no_suitable_music')} />
               <Button
-                variant={Variant.PRIMARY}
+                variant={'primary'}
                 onClick={() =>
                   navigate({
                     query: {

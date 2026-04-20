@@ -1,5 +1,5 @@
 import { Container, Content, Action } from '@/components/dialog';
-import Button from '@/components/button';
+import Button from '@/components_next/button';
 import Input from '@/components/input';
 import Label from '@/components/label';
 import { ChangeEventHandler, useState } from 'react';

@@ -1,4 +1,4 @@
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import { memo } from 'react';
 import { t } from '@/i18n';
 import { buttonItemStyle } from './constants';
@@ -6,7 +6,7 @@ import { buttonItemStyle } from './constants';
 function Feedback() {
   return (
     <Button
-      variant={Variant.NORMAL}
+      variant={'ghost'}
       style={buttonItemStyle}
       onClick={() => window.open('https://github.com/mebtte/cicada/issues')}
     >

@@ -1,4 +1,4 @@
-import { Variant } from '@/components/button';
+import type { Variant } from '@/components_next/button';
 import { Option } from '@/components/select';
 import { ReactNode } from 'react';
 

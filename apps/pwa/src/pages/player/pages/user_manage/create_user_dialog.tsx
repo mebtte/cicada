@@ -1,6 +1,6 @@
 import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import { ChangeEventHandler, CSSProperties, useEffect, useState } from 'react';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import Label from '@/components/label';
 import Input from '@/components/input';
 import styled from 'styled-components';
@@ -92,7 +92,7 @@ function CreateUserDialog() {
             {t('cancel')}
           </Button>
           <Button
-            variant={Variant.PRIMARY}
+            variant={'primary'}
             loading={loading}
             disabled={!username.length || !password.length}
             onClick={onCreate}

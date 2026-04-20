@@ -4,7 +4,7 @@ import notice from '@/utils/notice';
 import Input from '@/components/input';
 import Label from '@/components/label';
 import logger from '@/utils/logger';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import Logo from '../logo';
@@ -93,7 +93,7 @@ function FirstStep({ toNext }: { toNext: () => void }) {
         />
       </Label>
       <Button
-        variant={Variant.PRIMARY}
+        variant={'primary'}
         onClick={onSaveOrigin}
         disabled={!origin.length}
         loading={loading}

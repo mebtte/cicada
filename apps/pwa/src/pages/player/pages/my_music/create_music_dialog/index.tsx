@@ -7,7 +7,7 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import Input from '@/components/input';
 import Label from '@/components/label';
 import { Select, MultipleSelect, Option } from '@/components/select';
@@ -266,7 +266,7 @@ function CreateMusicDialog() {
             {t('cancel')}
           </Button>
           <Button
-            variant={Variant.PRIMARY}
+            variant={'primary'}
             onClick={onCreate}
             loading={loading}
           >

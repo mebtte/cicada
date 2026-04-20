@@ -1,5 +1,5 @@
 import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import { CSSProperties, useState } from 'react';
 import Input from '@/components/input';
 import Label from '@/components/label';
@@ -73,7 +73,7 @@ function TwoFADialog() {
             {t('cancel')}
           </Button>
           <Button
-            variant={Variant.PRIMARY}
+            variant={'primary'}
             disabled={!twoFAToken.length}
             loading={loading}
             onClick={onConfirm}

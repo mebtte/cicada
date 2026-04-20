@@ -9,7 +9,7 @@ import Pagination from '@/components/pagination';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components_next/button';
 import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -92,7 +92,7 @@ function Wrapper() {
         <CardContainer style={style}>
           <Empty description={t('no_suitable_singer')} />
           <Button
-            variant={Variant.PRIMARY}
+            variant={'primary'}
             onClick={() =>
               openCreateSingerDialog((id) =>
                 playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {

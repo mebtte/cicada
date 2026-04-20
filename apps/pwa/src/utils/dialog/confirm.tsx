@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { t } from '@/i18n';
 import { Confirm as ConfirmShape } from './constants';
 import { Container, Content, Title, Action } from '../../components/dialog';
-import Button, { Variant } from '../../components/button';
+import Button from '@/components_next/button';
 import useEvent from '../use_event';
 import DialogBase from './dialog_base';
 
@@ -45,7 +45,7 @@ function ConfirmContent({
           {options.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={Variant.PRIMARY}
+          variant={'primary'}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}
