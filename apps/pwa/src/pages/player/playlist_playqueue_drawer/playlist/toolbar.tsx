@@ -1,5 +1,4 @@
-import Label from '@/components/label';
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import IconButton from '@/components/icon_button';
@@ -64,13 +63,12 @@ function Toolbar({
       >
         <MdPlaylistRemove />
       </IconButton>
-      <Label className="filter">
-        <Input
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder={capitalize(t('search'))}
-        />
-      </Label>
+      <Input
+        className="filter"
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+        placeholder={capitalize(t('search'))}
+      />
     </Style>
   );
 }

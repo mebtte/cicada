@@ -1,8 +1,7 @@
 import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import { ChangeEventHandler, CSSProperties, useEffect, useState } from 'react';
 import Button from '@/components_next/button';
-import Label from '@/components/label';
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
@@ -69,23 +68,23 @@ function CreateUserDialog() {
       <Container>
         <Title>{t('create_user')}</Title>
         <StyledContent>
-          <Label label={t('username')}>
-            <Input
-              value={username}
-              onChange={onUsernameChange}
-              maxLength={USERNAME_MAX_LENGTH}
-            />
-          </Label>
-          <Label label={t('password')}>
-            <Input
-              value={password}
-              onChange={onPasswordChange}
-              maxLength={PASSWORD_MAX_LENGTH}
-            />
-          </Label>
-          <Label label={t('remark')}>
-            <Input value={remark} onChange={onRemarkChange} />
-          </Label>
+          <Input
+            label={t('username')}
+            value={username}
+            onChange={onUsernameChange}
+            maxLength={USERNAME_MAX_LENGTH}
+          />
+          <Input
+            label={t('password')}
+            value={password}
+            onChange={onPasswordChange}
+            maxLength={PASSWORD_MAX_LENGTH}
+          />
+          <Input
+            label={t('remark')}
+            value={remark}
+            onChange={onRemarkChange}
+          />
         </StyledContent>
         <Action>
           <Button onClick={onClose} disabled={loading}>

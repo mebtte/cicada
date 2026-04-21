@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import { Query } from '@/constants';
 import { useLocation } from 'react-router-dom';
 import parseSearch from '@/utils/parse_search';

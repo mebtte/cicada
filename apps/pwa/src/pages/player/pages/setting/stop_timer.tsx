@@ -1,7 +1,7 @@
 import Item from './item';
 import { itemStyle } from './constants';
 import { t } from '@/i18n';
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import styled from 'styled-components';
 import { useContext, useState } from 'react';
 import Button from '@/components_next/button';

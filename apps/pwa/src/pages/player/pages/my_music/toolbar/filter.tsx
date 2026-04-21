@@ -1,4 +1,4 @@
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { IS_TOUCHABLE } from '@/constants/browser';

@@ -8,8 +8,7 @@ import {
 import Popup from '@/components/popup';
 import { UtilZIndex } from '@/constants/style';
 import { t } from '@/i18n';
-import Input from '../input';
-import Label from '../label';
+import Input from '@/components_next/input';
 import e, { EventType } from './eventemitter';
 import { IS_TOUCHABLE } from '../../constants/browser';
 
@@ -74,14 +73,13 @@ function CustomPage({
       maskProps={maskProps}
       bodyProps={bodyProps}
     >
-      <Label label={t('jump_to')}>
-        <Input
-          value={page}
-          onChange={onPageChange}
-          onKeyDown={onKeyDown}
-          autoFocus={!IS_TOUCHABLE}
-        />
-      </Label>
+      <Input
+        label={t('jump_to')}
+        value={page}
+        onChange={onPageChange}
+        onKeyDown={onKeyDown}
+        autoFocus={!IS_TOUCHABLE}
+      />
     </Popup>
   );
 }

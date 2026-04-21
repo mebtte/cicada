@@ -1,7 +1,6 @@
 import { Container, Content, Action } from '@/components/dialog';
 import Button from '@/components_next/button';
-import Input from '@/components/input';
-import Label from '@/components/label';
+import Input from '@/components_next/input';
 import { ChangeEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import { t } from '@/i18n';
@@ -70,23 +69,21 @@ function PasswordContent({
   return (
     <Container>
       <StyledContent>
-        <Label label={t('new_password')}>
-          <Input
-            value={password}
-            onChange={onPasswordChange}
-            type="password"
-            autoFocus
-            maxLength={PASSWORD_MAX_LENGTH}
-          />
-        </Label>
-        <Label label={t('confirm_new_password')}>
-          <Input
-            value={repeatedPassword}
-            onChange={onRepeatedPasswordChange}
-            type="password"
-            maxLength={PASSWORD_MAX_LENGTH}
-          />
-        </Label>
+        <Input
+          label={t('new_password')}
+          value={password}
+          onChange={onPasswordChange}
+          type="password"
+          autoFocus
+          maxLength={PASSWORD_MAX_LENGTH}
+        />
+        <Input
+          label={t('confirm_new_password')}
+          value={repeatedPassword}
+          onChange={onRepeatedPasswordChange}
+          type="password"
+          maxLength={PASSWORD_MAX_LENGTH}
+        />
       </StyledContent>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>

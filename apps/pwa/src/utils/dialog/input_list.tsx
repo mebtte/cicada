@@ -1,7 +1,7 @@
 import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components_next/button';
 import Label from '@/components/label';
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import { useState } from 'react';
 import IconButton from '@/components/icon_button';
 import { ComponentSize } from '@/constants/style';

@@ -8,7 +8,7 @@ import {
 import styled from 'styled-components';
 import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components_next/button';
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import Label from '@/components/label';
 import { Select, MultipleSelect, Option } from '@/components/select';
 import { t } from '@/i18n';
@@ -252,14 +252,13 @@ function CreateMusicDialog() {
               disabled={loading}
             />
           </Label>
-          <Label label={t('name')}>
-            <Input
-              value={name}
-              onChange={onNameChange}
-              maxLength={NAME_MAX_LENGTH}
-              disabled={loading}
-            />
-          </Label>
+          <Input
+            label={t('name')}
+            value={name}
+            onChange={onNameChange}
+            maxLength={NAME_MAX_LENGTH}
+            disabled={loading}
+          />
         </StyledContent>
         <Action>
           <Button onClick={onClose} disabled={loading}>

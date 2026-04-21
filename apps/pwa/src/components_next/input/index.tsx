@@ -177,6 +177,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       hint,
       disabled,
       id: idProp,
+      className,
+      style,
       ...rest
     },
     ref,
@@ -186,7 +188,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const bottom = error || hint;
 
     return (
-      <Root>
+      <Root className={className} style={style}>
         {label && <Label htmlFor={id}>{label}</Label>}
         <Wrapper $size={size} $error={!!error} $disabled={!!disabled}>
           {prefix && <Affix>{prefix}</Affix>}

@@ -1,8 +1,7 @@
 import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components_next/button';
 import { CSSProperties, useState } from 'react';
-import Input from '@/components/input';
-import Label from '@/components/label';
+import Input from '@/components_next/input';
 import { t } from '@/i18n';
 import { reloadUser, useUser } from '@/global_states/server';
 import logger from '@/utils/logger';
@@ -60,13 +59,12 @@ function TwoFADialog() {
         <Title>{user.twoFAEnabled ? t('disable_2fa') : t('enable_2fa')}</Title>
         <Content>
           {user.twoFAEnabled ? null : <Qrcode onClose={onClose} />}
-          <Label label={t('2fa_token')} className="label">
-            <Input
-              value={twoFAToken}
-              onChange={(event) => setTwoFAToken(event.target.value)}
-              autoFocus
-            />
-          </Label>
+          <Input
+            label={t('2fa_token')}
+            value={twoFAToken}
+            onChange={(event) => setTwoFAToken(event.target.value)}
+            autoFocus
+          />
         </Content>
         <Action>
           <Button onClick={onClose} disabled={loading}>

@@ -1,8 +1,7 @@
 import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
-import Input from '@/components/input';
-import Label from '@/components/label';
+import Input from '@/components_next/input';
 import logger from '@/utils/logger';
 import Button from '@/components_next/button';
 import { t } from '@/i18n';
@@ -82,16 +81,15 @@ function FirstStep({ toNext }: { toNext: () => void }) {
       <Language disabled={loading} />
       <div className="divider" />
       <ServerList toNext={toNext} disabled={loading} />
-      <Label label={t('origin')}>
-        <Input
-          type="url"
-          disabled={loading}
-          value={origin}
-          onChange={onOriginChange}
-          onKeyDown={onKeyDown}
-          autoFocus
-        />
-      </Label>
+      <Input
+        label={t('origin')}
+        type="url"
+        disabled={loading}
+        value={origin}
+        onChange={onOriginChange}
+        onKeyDown={onKeyDown}
+        autoFocus
+      />
       <Button
         variant={'primary'}
         onClick={onSaveOrigin}

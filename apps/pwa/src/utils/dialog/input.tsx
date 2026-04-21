@@ -1,7 +1,6 @@
 import { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components_next/button';
-import Label from '@/components/label';
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import { CSSProperties, ChangeEventHandler, useState } from 'react';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
@@ -51,21 +50,20 @@ function InputContent({
     <Container>
       {options.title ? <Title>{options.title}</Title> : null}
       <Content style={contentStyle}>
-        <Label label={options.label}>
-          <Input
-            value={text}
-            onChange={onTextChange}
-            autoFocus
-            maxLength={options.maxLength}
-            type={options.inputType}
-            disabled={confirming || canceling}
-            onKeyDown={(event) => {
-              if (event.key.toLowerCase() === 'enter') {
-                onConfirm();
-              }
-            }}
-          />
-        </Label>
+        <Input
+          label={options.label}
+          value={text}
+          onChange={onTextChange}
+          autoFocus
+          maxLength={options.maxLength}
+          type={options.inputType}
+          disabled={confirming || canceling}
+          onKeyDown={(event) => {
+            if (event.key.toLowerCase() === 'enter') {
+              onConfirm();
+            }
+          }}
+        />
       </Content>
       <Action>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
