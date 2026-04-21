@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          '基础按钮组件，支持 4 种变体、3 种尺寸，内置加载和禁用状态，移动端触摸友好。',
+          'Duolingo-style button with a hard bottom shadow and a satisfying press-down animation. Supports 4 variants, 3 sizes, loading and disabled states.',
       },
     },
   },
@@ -18,30 +18,30 @@ const meta = {
     variant: {
       control: 'select',
       options: ['primary', 'secondary', 'ghost', 'danger'],
-      description: '视觉变体',
+      description: 'Visual variant',
       table: { defaultValue: { summary: 'primary' } },
     },
     size: {
       control: 'select',
       options: ['sm', 'md', 'lg'],
-      description: '尺寸',
+      description: 'Size',
       table: { defaultValue: { summary: 'md' } },
     },
     loading: {
       control: 'boolean',
-      description: '加载中（自动禁用交互）',
+      description: 'Loading state — disables interaction and shows a spinner',
     },
     disabled: {
       control: 'boolean',
-      description: '禁用',
+      description: 'Disabled state',
     },
     block: {
       control: 'boolean',
-      description: '宽度撑满父容器',
+      description: 'Stretch to full container width',
     },
     children: {
       control: 'text',
-      description: '按钮文字',
+      description: 'Button label',
     },
     onClick: { action: 'clicked' },
   },
@@ -49,8 +49,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-// ── Single stories (用于 Controls 面板交互调试) ──
 
 export const Primary: Story = {
   args: { children: 'Primary', variant: 'primary' },
@@ -86,8 +84,6 @@ export const Block: Story = {
     ),
   ],
 };
-
-// ── Showcase stories (静态对比展示) ──
 
 export const AllVariants: Story = {
   name: 'All Variants',
