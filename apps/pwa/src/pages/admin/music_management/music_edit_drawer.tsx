@@ -34,7 +34,7 @@ import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
 import deleteMusic from '@/server/api/delete_music';
 import logger from '@/utils/logger';
-import { Option } from '@/components/select';
+import type { SelectOption } from '@/components_next';
 import searchSingerRequest from '@/server/api/search_singer';
 import searchMusicRequest from '@/server/api/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
@@ -74,13 +74,12 @@ interface Music {
   year: number | null;
 }
 
-const formatSingerToOption = (singer: Singer): Option<Singer> => ({
+const formatSingerToOption = (singer: Singer): SelectOption<Singer> => ({
   label: `${singer.name}${singer.aliases.length ? `(${singer.aliases[0]})` : ''}`,
-  value: singer.id,
-  actualValue: singer,
+  value: singer,
 });
 
-const searchSinger = (search: string): Promise<Option<Singer>[]> => {
+const searchSinger = (search: string): Promise<SelectOption<Singer>[]> => {
   const keyword = search.trim().substring(0, SINGER_SEARCH_KEYWORD_MAX_LENGTH);
   return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
     data.singerList.map(formatSingerToOption),
@@ -91,10 +90,9 @@ const formatMusicToOption = (music: {
   id: string;
   name: string;
   singers: Singer[];
-}): Option<{ id: string; name: string; singers: Singer[] }> => ({
+}): SelectOption<{ id: string; name: string; singers: Singer[] }> => ({
   label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
-  value: music.id,
-  actualValue: music,
+  value: music,
 });
 
 const bodyProps: { style: CSSProperties } = {
@@ -395,7 +393,7 @@ function EditContent({
             label: t('singer'),
             labelAddon: <MissingSinger />,
             title: t('modify_singer'),
-            optionsGetter: searchSinger,
+            loadOptions: searchSinger,
             initialValue: music.singers.map(formatSingerToOption),
             confirmVariant: 'primary',
             onConfirm: async (options) => {
@@ -406,14 +404,14 @@ function EditContent({
               if (
                 !stringArrayEqual(
                   music.singers.map((s) => s.id).sort(),
-                  options.map((o) => o.actualValue.id).sort(),
+                  options.map((o) => o.value.id).sort(),
                 )
               ) {
                 try {
                   await updateMusic({
                     id: music.id,
                     key: AllowUpdateKey.SINGER,
-                    value: options.map((o) => o.actualValue.id),
+                    value: options.map((o) => o.value.id),
                   });
                   onReload();
                 } catch (error) {
@@ -475,20 +473,20 @@ function EditContent({
           dialog.multipleSelect({
             title: t('modify_fork_from'),
             label: t('fork_from'),
-            optionsGetter: searchMusic,
+            loadOptions: searchMusic,
             initialValue: music.forkFromList.map(formatMusicToOption),
             onConfirm: async (options) => {
               if (
                 !stringArrayEqual(
                   music.forkFromList.map((m) => m.id).sort(),
-                  options.map((o) => o.actualValue.id).sort(),
+                  options.map((o) => (o.value as { id: string }).id).sort(),
                 )
               ) {
                 try {
                   await updateMusic({
                     id: music.id,
                     key: AllowUpdateKey.FORK_FROM,
-                    value: options.map((o) => o.actualValue.id),
+                    value: options.map((o) => (o.value as { id: string }).id),
                   });
                   onReload();
                 } catch (error) {

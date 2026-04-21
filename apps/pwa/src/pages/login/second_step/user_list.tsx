@@ -1,5 +1,4 @@
-import Label from '@/components/label';
-import { Select } from '@/components/select';
+import { Select } from '@/components_next';
 import { getSelectedServer, useServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
@@ -35,28 +34,23 @@ function UserList({ redirect }: { redirect: () => void }) {
   if (userList.length) {
     return (
       <>
-        <Label label={t('existing_user')}>
-          <Select
-            options={userList.map((u) => ({
-              label: `${u.nickname}(@${u.username})`,
-              value: u.id,
-              actualValue: u.id,
-            }))}
-            onChange={(option) => {
-              useServer.setState((server) => ({
-                serverList: server.serverList.map((s) =>
-                  s.origin === getSelectedServer(server)!.origin
-                    ? {
-                        ...s,
-                        selectedUserId: option.actualValue,
-                      }
-                    : s,
-                ),
-              }));
-              return window.setTimeout(redirect, 0);
-            }}
-          />
-        </Label>
+        <Select
+          label={t('existing_user')}
+          options={userList.map((u) => ({
+            label: `${u.nickname}(@${u.username})`,
+            value: u.id,
+          }))}
+          onChange={(value) => {
+            useServer.setState((server) => ({
+              serverList: server.serverList.map((s) =>
+                s.origin === getSelectedServer(server)!.origin
+                  ? { ...s, selectedUserId: value }
+                  : s,
+              ),
+            }));
+            return window.setTimeout(redirect, 0);
+          }}
+        />
         <Divider>
           <div className="line" />
           <span className="or">{t('or')}</span>

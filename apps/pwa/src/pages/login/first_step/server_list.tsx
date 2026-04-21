@@ -2,8 +2,7 @@ import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import Label from '@/components/label';
-import { Select } from '@/components/select';
+import { Select } from '@/components_next';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import ManageDrawer from './manage_drawer';
 import { useServer } from '@/global_states/server';
@@ -62,34 +61,24 @@ function ServerList({
     return (
       <>
         <Style>
-          <Label
+          <Select
             label={t('existing_server')}
-            addon={
-              <Addon
-                onClick={(event) => {
-                  event.preventDefault();
-                  return setManageDrawerOpen(true);
-                }}
-              >
-                {t('manage')}
-              </Addon>
-            }
+            disabled={disabled}
+            options={serverList.map((s) => ({
+              label: `${s.hostname} - ${s.origin}`,
+              value: s.origin,
+            }))}
+            onChange={(value) => {
+              useServer.setState({ selectedServerOrigin: value });
+              return toNext();
+            }}
+          />
+          <Addon
+            style={{ alignSelf: 'flex-end', marginTop: 4 }}
+            onClick={() => setManageDrawerOpen(true)}
           >
-            <Select
-              disabled={disabled}
-              options={serverList.map((s) => ({
-                label: `${s.hostname} - ${s.origin}`,
-                value: s.origin,
-                actualValue: s.origin,
-              }))}
-              onChange={(option) => {
-                useServer.setState({
-                  selectedServerOrigin: option.actualValue,
-                });
-                return toNext();
-              }}
-            />
-          </Label>
+            {t('manage')}
+          </Addon>
           <div className="divider">
             <div className="line" />
             <span className="or">{t('or')}</span>

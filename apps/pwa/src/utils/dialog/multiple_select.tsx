@@ -3,7 +3,7 @@ import Button from '@/components_next/button';
 import Label from '@/components/label';
 import { CSSProperties, useState } from 'react';
 import { t } from '@/i18n';
-import { MultipleSelect, Option } from '@/components/select';
+import { MultiSelect, SelectOption } from '@/components_next';
 import DialogBase from './dialog_base';
 import { MultipleSelect as MultipleSelectShape } from './constants';
 import useEvent from '../use_event';
@@ -17,10 +17,9 @@ function MultipleSelectContent({
   onClose: () => void;
   options: MultipleSelectShape<unknown>;
 }) {
-  const [options, setOptions] = useState<Option<unknown>[]>(
+  const [value, setValue] = useState<SelectOption<unknown>[]>(
     multipleSelectOptions.initialValue || [],
   );
-  const onOptionsChange = (os: Option<unknown>[]) => setOptions(os);
 
   const [canceling, setCanceling] = useState(false);
   const onCancel = useEvent(() => {
@@ -43,7 +42,7 @@ function MultipleSelectContent({
     setConfirming(true);
     return Promise.resolve(
       multipleSelectOptions.onConfirm
-        ? multipleSelectOptions.onConfirm(options)
+        ? multipleSelectOptions.onConfirm(value)
         : undefined,
     )
       .then((result) => {
@@ -64,10 +63,10 @@ function MultipleSelectContent({
           label={multipleSelectOptions.label}
           addon={multipleSelectOptions.labelAddon}
         >
-          <MultipleSelect<unknown>
-            value={options}
-            onChange={onOptionsChange}
-            optionsGetter={multipleSelectOptions.optionsGetter}
+          <MultiSelect<unknown>
+            value={value}
+            onChange={setValue}
+            loadOptions={multipleSelectOptions.loadOptions}
             disabled={confirming || canceling}
           />
         </Label>

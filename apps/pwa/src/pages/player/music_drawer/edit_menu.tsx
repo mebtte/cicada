@@ -39,7 +39,7 @@ import stringArrayEqual from '#/utils/string_array_equal';
 import dialog from '@/utils/dialog';
 import deleteMusic from '@/server/api/delete_music';
 import logger from '@/utils/logger';
-import { Option } from '@/components/select';
+import type { SelectOption } from '@/components_next';
 import searchSingerRequest from '@/server/api/search_singer';
 import searchMusicRequest from '@/server/api/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
@@ -63,27 +63,21 @@ interface Singer {
   name: string;
   aliases: string[];
 }
-const formatSingerToMultipleSelectOption = (
-  singer: Singer,
-): Option<Singer> => ({
-  label: `${singer.name}${
-    singer.aliases.length ? `(${singer.aliases[0]})` : ''
-  }`,
-  value: singer.id,
-  actualValue: singer,
+const formatSingerToOption = (singer: Singer): SelectOption<Singer> => ({
+  label: `${singer.name}${singer.aliases.length ? `(${singer.aliases[0]})` : ''}`,
+  value: singer,
 });
-const searchSinger = (search: string): Promise<Option<Singer>[]> => {
+const searchSinger = (search: string): Promise<SelectOption<Singer>[]> => {
   const keyword = search.trim().substring(0, SINGER_SEARCH_KEYWORD_MAX_LENGTH);
   return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
-    data.singerList.map(formatSingerToMultipleSelectOption),
+    data.singerList.map(formatSingerToOption),
   );
 };
 const emitMusicUpdated = (id: string) =>
   playerEventemitter.emit(PlayerEventType.MUSIC_UPDATED, { id });
-const formatMusicTouMultipleSelectOtion = (music: Music): Option<Music> => ({
+const formatMusicToOption = (music: Music): SelectOption<Music> => ({
   label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
-  value: music.id,
-  actualValue: music,
+  value: music,
 });
 const itemStyle: CSSProperties = { margin: '0 10px' };
 
@@ -113,15 +107,13 @@ function EditMenu({ music }: { music: MusicDetail }) {
   // const [open, setOpen] = useState(true);
   const onClose = () => setOpen(false);
   const searchMusic = useCallback(
-    (search: string): Promise<Option<Music>[]> => {
-      const keyword = search
-        .trim()
-        .substring(0, MUSIC_SEARCH_KEYWORD_MAX_LENGTH);
+    (search: string): Promise<SelectOption<Music>[]> => {
+      const keyword = search.trim().substring(0, MUSIC_SEARCH_KEYWORD_MAX_LENGTH);
       return searchMusicRequest({ keyword, page: 1, pageSize: 100 }).then(
         (data) =>
           data.musicList
             .filter((m) => m.id !== music.id)
-            .map(formatMusicTouMultipleSelectOtion),
+            .map(formatMusicToOption),
       );
     },
     [music.id],
@@ -336,10 +328,8 @@ function EditMenu({ music }: { music: MusicDetail }) {
               label: t('singer'),
               labelAddon: <MissingSinger />,
               title: t('modify_singer'),
-              optionsGetter: searchSinger,
-              initialValue: music.singers.map(
-                formatSingerToMultipleSelectOption,
-              ),
+              loadOptions: searchSinger,
+              initialValue: music.singers.map(formatSingerToOption),
               confirmVariant: 'primary',
               onConfirm: async (options) => {
                 if (!options.length) {
@@ -350,14 +340,14 @@ function EditMenu({ music }: { music: MusicDetail }) {
                 if (
                   !stringArrayEqual(
                     music.singers.map((s) => s.id).sort(),
-                    options.map((o) => o.actualValue.id).sort(),
+                    options.map((o) => o.value.id).sort(),
                   )
                 ) {
                   try {
                     await updateMusic({
                       id: music.id,
                       key: AllowUpdateKey.SINGER,
-                      value: options.map((o) => o.actualValue.id),
+                      value: options.map((o) => o.value.id),
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {
@@ -419,22 +409,20 @@ function EditMenu({ music }: { music: MusicDetail }) {
             dialog.multipleSelect<Music>({
               title: t('modify_fork_from'),
               label: t('fork_from'),
-              optionsGetter: searchMusic,
-              initialValue: music.forkFromList.map(
-                formatMusicTouMultipleSelectOtion,
-              ),
+              loadOptions: searchMusic,
+              initialValue: music.forkFromList.map(formatMusicToOption),
               onConfirm: async (options) => {
                 if (
                   !stringArrayEqual(
                     music.forkFromList.map((m) => m.id).sort(),
-                    options.map((o) => o.actualValue.id).sort(),
+                    options.map((o) => o.value.id).sort(),
                   )
                 ) {
                   try {
                     await updateMusic({
                       id: music.id,
                       key: AllowUpdateKey.FORK_FROM,
-                      value: options.map((o) => o.actualValue.id),
+                      value: options.map((o) => o.value.id),
                     });
                     emitMusicUpdated(music.id);
                   } catch (error) {

@@ -10,7 +10,7 @@ import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
 import Button from '@/components_next/button';
 import Input from '@/components_next/input';
 import Label from '@/components/label';
-import { Select, MultipleSelect, Option } from '@/components/select';
+import { Select, MultiSelect, SelectOption } from '@/components_next';
 import { t } from '@/i18n';
 import {
   AllowUpdateKey,
@@ -45,25 +45,19 @@ import { base64ToCover, canAudioPlay, getMusicNameFromFilename } from './utils';
 const maskProps: { style: CSSProperties } = {
   style: { zIndex: ZIndex.DIALOG },
 };
-const MUSIC_TYPE_OPTIONS: Option<MusicType>[] = MUSIC_TYPES.map((mt) => ({
+const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((mt) => ({
   label: capitalize(MUSIC_TYPE_MAP[mt].label),
   value: mt,
-  actualValue: mt,
 }));
 
-const formatSingerToMultipleSelectOption = (
-  singer: Singer,
-): Option<Singer> => ({
-  label: `${singer.name}${
-    singer.aliases.length ? `(${singer.aliases[0]})` : ''
-  }`,
-  value: singer.id,
-  actualValue: singer,
+const formatSingerToOption = (singer: Singer): SelectOption<Singer> => ({
+  label: `${singer.name}${singer.aliases.length ? `(${singer.aliases[0]})` : ''}`,
+  value: singer,
 });
-const searchSinger = (search: string): Promise<Option<Singer>[]> => {
+const searchSinger = (search: string): Promise<SelectOption<Singer>[]> => {
   const keyword = search.trim().substring(0, SEARCH_KEYWORD_MAX_LENGTH);
   return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
-    data.singerList.map(formatSingerToMultipleSelectOption),
+    data.singerList.map(formatSingerToOption),
   );
 };
 
@@ -79,15 +73,9 @@ function CreateMusicDialog() {
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setName(event.target.value);
 
-  const [singerList, setSingerList] = useState<Singer[]>([]);
-  const onSingerListChange = useCallback(
-    (sl: Option<Singer>[]) => setSingerList(sl.map((s) => s.actualValue)),
-    [],
-  );
+  const [singerList, setSingerList] = useState<SelectOption<Singer>[]>([]);
 
   const [musicType, setMusicType] = useState(MusicType.SONG);
-  const onMusicTypeChange = (option: Option<MusicType>) =>
-    setMusicType(option.actualValue);
 
   const [asset, setAsset] = useState<File | null>(null);
   const onAssetChange = (a: File | null) => {
@@ -115,7 +103,7 @@ function CreateMusicDialog() {
             })
               .then((data) => {
                 if (!singerList.length) {
-                  setSingerList(data.singerList);
+                  setSingerList(data.singerList.map(formatSingerToOption));
                 }
               })
               .catch((error) =>
@@ -149,7 +137,7 @@ function CreateMusicDialog() {
       const { id: musicAssetId } = await uploadAsset(asset, AssetType.MUSIC);
       const id = await createMusic({
         name: trimmedName,
-        singerIds: singerList.map((s) => s.id),
+        singerIds: singerList.map((s) => s.value.id),
         type: musicType,
         asset: musicAssetId,
       });
@@ -200,6 +188,7 @@ function CreateMusicDialog() {
     if (!open) {
       setName('');
       setSingerList([]);
+
       setMusicType(MusicType.SONG);
       setAsset(null);
     }
@@ -210,18 +199,13 @@ function CreateMusicDialog() {
       <Container>
         <Title>{t('create_music')}</Title>
         <StyledContent>
-          <Label label={t('music_type_short')}>
-            <Select<MusicType>
-              value={{
-                label: capitalize(MUSIC_TYPE_MAP[musicType].label),
-                value: musicType,
-                actualValue: musicType,
-              }}
-              onChange={onMusicTypeChange}
-              options={MUSIC_TYPE_OPTIONS}
-              disabled={loading}
-            />
-          </Label>
+          <Select<MusicType>
+            label={t('music_type_short')}
+            value={musicType}
+            onChange={(value) => setMusicType(value)}
+            options={MUSIC_TYPE_OPTIONS}
+            disabled={loading}
+          />
           <Label label={t('music_file')}>
             <FileSelect
               value={asset}
@@ -241,14 +225,16 @@ function CreateMusicDialog() {
             label={t('singer_list')}
             addon={
               <MissingSinger
-                afterCreating={(s) => setSingerList((sl) => [...sl, s])}
+                afterCreating={(s) =>
+                  setSingerList((sl) => [...sl, formatSingerToOption(s)])
+                }
               />
             }
           >
-            <MultipleSelect<Singer>
-              value={singerList.map(formatSingerToMultipleSelectOption)}
-              onChange={onSingerListChange}
-              optionsGetter={searchSinger}
+            <MultiSelect<Singer>
+              value={singerList}
+              onChange={setSingerList}
+              loadOptions={searchSinger}
               disabled={loading}
             />
           </Label>
