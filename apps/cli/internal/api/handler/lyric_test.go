@@ -14,6 +14,14 @@ import (
 
 func TestGetLyricList(t *testing.T) {
 	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
 
 	dataDir := t.TempDir()
 	config.Set(config.Config{
@@ -27,6 +35,12 @@ func TestGetLyricList(t *testing.T) {
 	}
 
 	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"1", "tester", store.DoubleMD5("password"), "Tester", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
 		"song-1", int(store.MusicTypeSong), "Song", "song.mp3", "1", now,

@@ -1,10 +1,14 @@
 {
   "name": "pwa",
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "vite",
     "dev-with-sw": "WITH_SW=true vite",
     "build": "vite build",
+    "test": "node -e \"require('node:fs').rmSync('.test-dist', { recursive: true, force: true })\" && tsc -p tsconfig.test.json && cd .test-dist && node --test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
