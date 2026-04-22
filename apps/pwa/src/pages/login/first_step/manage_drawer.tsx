@@ -1,9 +1,8 @@
-import Drawer, { Title } from '@/components/drawer';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components_next';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
-import absoluteFullSize from '@/style/absolute_full_size';
 import scrollbar from '@/style/scrollbar';
-import { CSSProperties, useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 import Button from '@/components_next/button';
 import { MdDeleteOutline } from 'react-icons/md';
@@ -12,16 +11,7 @@ import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import dialog from '@/utils/dialog';
 import { useServer } from '@/global_states/server';
 
-const bodyProps: {
-  style: CSSProperties;
-} = {
-  style: {
-    width: 300,
-  },
-};
 const Style = styled.div`
-  ${absoluteFullSize}
-
   overflow: auto;
   ${scrollbar}
 
@@ -88,42 +78,46 @@ function ManageDrawer({
   }, [onClose, serverList.length]);
 
   return (
-    <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
-      <Style>
-        <Title> {t('manage_origins')}</Title>
-        <div className="list">
-          {serverList.map((s) => (
-            <div key={s.origin} className="server">
-              <div className="info">
-                <div className="name">{s.hostname}</div>
-                <div className="origin">{s.origin}</div>
-                <div className="users">
-                  {t('origin_users_count', s.users.length.toString())}
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent side="right" style={{ width: 300 }}>
+        <DrawerHeader>
+          <DrawerTitle>{t('manage_origins')}</DrawerTitle>
+        </DrawerHeader>
+        <Style>
+          <div className="list">
+            {serverList.map((s) => (
+              <div key={s.origin} className="server">
+                <div className="info">
+                  <div className="name">{s.hostname}</div>
+                  <div className="origin">{s.origin}</div>
+                  <div className="users">
+                    {t('origin_users_count', s.users.length.toString())}
+                  </div>
                 </div>
+                <Button
+                  className="delete"
+                  square
+                  variant="plain"
+                  size="sm"
+                  onClick={() =>
+                    dialog.confirm({
+                      content: t('delete_origin_question'),
+                      onConfirm: () =>
+                        useServer.setState((server) => ({
+                          serverList: server.serverList.filter(
+                            (is) => is.origin !== s.origin,
+                          ),
+                        })),
+                    })
+                  }
+                >
+                  <MdDeleteOutline />
+                </Button>
               </div>
-              <Button
-                className="delete"
-                square
-                variant="plain"
-                size="sm"
-                onClick={() =>
-                  dialog.confirm({
-                    content: t('delete_origin_question'),
-                    onConfirm: () =>
-                      useServer.setState((server) => ({
-                        serverList: server.serverList.filter(
-                          (is) => is.origin !== s.origin,
-                        ),
-                      })),
-                  })
-                }
-              >
-                <MdDeleteOutline />
-              </Button>
-            </div>
-          ))}
-        </div>
-      </Style>
+            ))}
+          </div>
+        </Style>
+      </DrawerContent>
     </Drawer>
   );
 }

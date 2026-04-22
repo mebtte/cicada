@@ -1,18 +1,10 @@
-import Drawer from '@/components/drawer';
-import { CSSProperties } from 'react';
+import { Drawer, DrawerContent } from '@/components_next';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { Singer } from './constants';
-import useDynamicZIndex from '../use_dynamic_z_index';
-import { EventType } from '../eventemitter';
 import Content from './content';
 import Hint from './hint';
 
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    width: 300,
-  },
-};
 const ContentWrapper = styled.div`
   height: 100%;
 
@@ -29,20 +21,14 @@ function SingerModifyRecordDrawer({
   open: boolean;
   onClose: () => void;
 }) {
-  const zIndex = useDynamicZIndex(EventType.OPEN_SINGER_MODIFY_RECORD_DRAWER);
   return (
-    <Drawer
-      open={open}
-      onClose={onClose}
-      maskProps={{
-        style: { zIndex },
-      }}
-      bodyProps={bodyProps}
-    >
-      <ContentWrapper>
-        <Content singer={singer} />
-        <Hint />
-      </ContentWrapper>
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent side="right" style={{ width: 300 }}>
+        <ContentWrapper>
+          <Content singer={singer} />
+          <Hint />
+        </ContentWrapper>
+      </DrawerContent>
     </Drawer>
   );
 }

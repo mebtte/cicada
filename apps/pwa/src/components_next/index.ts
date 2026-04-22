@@ -26,5 +26,18 @@ export {
 } from './dialog';
 export type { DialogProps, DialogContentProps } from './dialog';
 
+export {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerClose,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerBody,
+  DrawerFooter,
+} from './drawer';
+export type { DrawerProps, DrawerContentProps, DrawerSide } from './drawer';
+
 export { ThemeProvider, useTheme, DEFAULT_THEME } from './theme';
 export type { Theme, ThemeProviderProps } from './theme';

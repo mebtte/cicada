@@ -9,7 +9,6 @@ import { Query } from '@/constants';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useQuery from '@/utils/use_query';
 import { useTheme } from '@/global_states/theme';
-import useDynamicZIndex from '../use_dynamic_z_index';
 import eventemitter, { EventType } from '../eventemitter';
 
 const getMusicPath = (id: string) =>
@@ -93,6 +92,5 @@ export default () => {
     onClose,
     id,
     miniMode,
-    zIndex: useDynamicZIndex(EventType.OPEN_MUSIC_DRAWER),
   };
 };

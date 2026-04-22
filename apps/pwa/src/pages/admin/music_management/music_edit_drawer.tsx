@@ -1,4 +1,4 @@
-import Drawer from '@/components/drawer';
+import { Drawer, DrawerContent } from '@/components_next';
 import { CSSProperties, useCallback, useEffect, useState } from 'react';
 import MenuItem from '@/components/menu_item';
 import {
@@ -94,10 +94,6 @@ const formatMusicToOption = (music: {
   label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
   value: music,
 });
-
-const bodyProps: { style: CSSProperties } = {
-  style: { width: 320 },
-};
 
 const dangerousIconStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
@@ -636,25 +632,27 @@ function MusicEditDrawer({
   };
 
   return (
-    <Drawer open={open} onClose={onClose} bodyProps={bodyProps}>
-      {loading ? (
-        <CenterBox>
-          <Spinner />
-        </CenterBox>
-      ) : error ? (
-        <CenterBox>
-          <ErrorCard
-            errorMessage={error.message}
-            retry={() => musicId && loadMusic(musicId)}
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent side="right" style={{ width: 320 }} showClose={false}>
+        {loading ? (
+          <CenterBox>
+            <Spinner />
+          </CenterBox>
+        ) : error ? (
+          <CenterBox>
+            <ErrorCard
+              errorMessage={error.message}
+              retry={() => musicId && loadMusic(musicId)}
+            />
+          </CenterBox>
+        ) : music ? (
+          <EditContent
+            music={music}
+            onDeleted={handleDeleted}
+            onReload={handleReload}
           />
-        </CenterBox>
-      ) : music ? (
-        <EditContent
-          music={music}
-          onDeleted={handleDeleted}
-          onReload={handleReload}
-        />
-      ) : null}
+        ) : null}
+      </DrawerContent>
     </Drawer>
   );
 }

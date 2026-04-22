@@ -6,7 +6,6 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useQuery from '@/utils/use_query';
 import { useTheme } from '@/global_states/theme';
 import e, { EventType } from '../eventemitter';
-import useDynamicZIndex from '../use_dynamic_z_index';
 
 const getSingerPath = (id: string) =>
   `${ROOT_PATH.PLAYER}${PLAYER_PATH.SINGER.replace(':id', id)}`;
@@ -58,7 +57,6 @@ export default () => {
   }, [miniMode, navigate, routerNavigate]);
 
   return {
-    zIndex: useDynamicZIndex(EventType.OPEN_SINGER_DRAWER),
     id,
     miniMode,
     open: !miniMode && !!urlId,

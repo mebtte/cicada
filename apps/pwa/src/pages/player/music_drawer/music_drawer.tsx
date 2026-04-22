@@ -1,32 +1,20 @@
-import Drawer from '@/components/drawer';
-import { CSSProperties } from 'react';
+import { Drawer, DrawerContent } from '@/components_next';
 import MusicContent from './content';
 
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    width: 'min(350px, 85%)',
-  },
-};
-
 function MusicDrawer({
-  zIndex,
   id,
   open,
   onClose,
 }: {
-  zIndex: number;
   id: string;
   open: boolean;
   onClose: () => void;
 }) {
   return (
-    <Drawer
-      open={open}
-      onClose={onClose}
-      maskProps={{ style: { zIndex } }}
-      bodyProps={bodyProps}
-    >
-      <MusicContent id={id} />
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent side="right" style={{ width: 'min(350px, 85%)' }}>
+        <MusicContent id={id} />
+      </DrawerContent>
     </Drawer>
   );
 }
