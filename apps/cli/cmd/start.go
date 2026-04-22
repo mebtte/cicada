@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"cicada/internal/config"
+	"cicada/internal/ffmpeg"
 	"cicada/internal/scheduler"
 	"cicada/internal/server"
 	"cicada/internal/store"
@@ -43,16 +44,23 @@ func runStart(cmd *cobra.Command, args []string) error {
 	}
 	config.Set(cfg)
 
+	if err := store.Initialize(); err != nil {
+		return fmt.Errorf("initialize: %w", err)
+	}
+
+	paths, err := ffmpeg.PrepareEmbeddedTools()
+	if err != nil {
+		return fmt.Errorf("prepare embedded ffmpeg tools: %w", err)
+	}
+
 	fmt.Println("---")
 	fmt.Printf("data: %s\n", cfg.Data)
 	fmt.Printf("mode: %s\n", cfg.Mode)
 	fmt.Printf("port: %d\n", cfg.Port)
 	fmt.Printf("jwtExpiry: %s\n", formatExpiry(cfg.JWTExpiry))
+	fmt.Printf("ffmpegPath: %s\n", paths.FFmpeg)
+	fmt.Printf("ffprobePath: %s\n", paths.FFprobe)
 	fmt.Println("---")
-
-	if err := store.Initialize(); err != nil {
-		return fmt.Errorf("initialize: %w", err)
-	}
 
 	scheduler.Start()
 

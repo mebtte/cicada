@@ -24,7 +24,13 @@ const Style = styled.div`
   }
 `;
 
-function FirstStep({ toNext }: { toNext: () => void }) {
+function FirstStep({
+  toNext,
+  onManage,
+}: {
+  toNext: () => void;
+  onManage: () => void;
+}) {
   const [loading, setLoading] = useState(false);
   const [origin, setOrigin] = useState(
     () => useServer.getState().selectedServerOrigin || window.location.origin,
@@ -80,7 +86,7 @@ function FirstStep({ toNext }: { toNext: () => void }) {
       <Logo />
       <Language disabled={loading} />
       <div className="divider" />
-      <ServerList toNext={toNext} disabled={loading} />
+      <ServerList toNext={toNext} disabled={loading} onManage={onManage} />
       <Input
         label={t('origin')}
         type="url"

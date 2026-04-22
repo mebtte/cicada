@@ -6,6 +6,7 @@ import FirstStep from './first_step';
 import SecondStep from './second_step';
 import { Step } from './constants';
 import AppRegion from './app_region';
+import ManagePage from './manage_page';
 
 const Style = styled(PageContainer)`
   overflow: hidden;
@@ -21,6 +22,7 @@ const AnimatedDiv = styled(animated.div)`
 
 function Login() {
   const [step, setStep] = useState(Step.FIRST);
+  const [showManagePage, setShowManagePage] = useState(false);
 
   const transitions = useTransition(step, {
     from: { opacity: 0, transform: 'translate(-150%, -50%)' },
@@ -34,7 +36,10 @@ function Login() {
           case Step.FIRST: {
             return (
               <AnimatedDiv style={style}>
-                <FirstStep toNext={() => setStep(Step.SECOND)} />
+                <FirstStep
+                  toNext={() => setStep(Step.SECOND)}
+                  onManage={() => setShowManagePage(true)}
+                />
               </AnimatedDiv>
             );
           }
@@ -50,6 +55,9 @@ function Login() {
           }
         }
       })}
+      {showManagePage && (
+        <ManagePage onClose={() => setShowManagePage(false)} />
+      )}
       <AppRegion />
     </Style>
   );

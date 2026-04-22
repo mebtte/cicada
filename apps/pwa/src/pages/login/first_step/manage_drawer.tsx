@@ -1,66 +1,6 @@
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components_next';
-import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
-import scrollbar from '@/style/scrollbar';
-import { useEffect } from 'react';
-import styled from 'styled-components';
-import Button from '@/components_next/button';
-import { MdDeleteOutline } from 'react-icons/md';
-import ellipsis from '@/style/ellipsis';
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
-import dialog from '@/utils/dialog';
-import { useServer } from '@/global_states/server';
-
-const Style = styled.div`
-  overflow: auto;
-  ${scrollbar}
-
-  >.list {
-    > .server {
-      margin: 0 15px 20px 15px;
-      padding: 10px 15px;
-
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
-      background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
-
-      &:hover {
-        background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
-      }
-
-      > .info {
-        flex: 1;
-        min-width: 0;
-
-        line-height: 1.5;
-
-        > .name {
-          font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-          color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-        }
-
-        > .origin {
-          font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-          color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-          ${ellipsis}
-        }
-
-        > .users {
-          font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-          color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-          ${upperCaseFirstLetter}
-        }
-      }
-
-      > .delete {
-        color: ${CSSVariable.COLOR_DANGEROUS};
-      }
-    }
-  }
-`;
+import ManageContent from './manage_content';
 
 function ManageDrawer({
   open,
@@ -69,54 +9,13 @@ function ManageDrawer({
   open: boolean;
   onClose: () => void;
 }) {
-  const { serverList } = useServer();
-
-  useEffect(() => {
-    if (!serverList.length) {
-      onClose();
-    }
-  }, [onClose, serverList.length]);
-
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="right" style={{ width: 300 }}>
+      <DrawerContent side="right" style={{ width: 'min(340px, 85%)' }}>
         <DrawerHeader>
           <DrawerTitle>{t('manage_origins')}</DrawerTitle>
         </DrawerHeader>
-        <Style>
-          <div className="list">
-            {serverList.map((s) => (
-              <div key={s.origin} className="server">
-                <div className="info">
-                  <div className="name">{s.hostname}</div>
-                  <div className="origin">{s.origin}</div>
-                  <div className="users">
-                    {t('origin_users_count', s.users.length.toString())}
-                  </div>
-                </div>
-                <Button
-                  className="delete"
-                  square
-                  variant="plain"
-                  size="sm"
-                  onClick={() =>
-                    dialog.confirm({
-                      content: t('delete_origin_question'),
-                      onConfirm: () =>
-                        useServer.setState((server) => ({
-                          serverList: server.serverList.filter(
-                            (is) => is.origin !== s.origin,
-                          ),
-                        })),
-                    })
-                  }
-                >
-                  <MdDeleteOutline />
-                </Button>
-              </div>
-            ))}
-          </div>
-        </Style>
+        <ManageContent onEmpty={onClose} />
       </DrawerContent>
     </Drawer>
   );

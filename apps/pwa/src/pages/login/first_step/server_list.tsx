@@ -1,11 +1,12 @@
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Select } from '@/components_next';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import ManageDrawer from './manage_drawer';
 import { useServer } from '@/global_states/server';
+import { useTheme } from '@/global_states/theme';
 
 const Style = styled.div`
   > .select-wrapper {
@@ -74,21 +75,27 @@ const Addon = styled.button`
     opacity: 0.5;
   }
 `;
-const getServerList = () => useServer.getState().serverList;
 
 function ServerList({
   disabled,
   toNext,
+  onManage,
 }: {
   disabled: boolean;
   toNext: () => void;
+  onManage: () => void;
 }) {
-  const [serverList, setServerList] = useState(getServerList);
+  const { serverList } = useServer();
+  const { miniMode } = useTheme();
   const [manageDrawerOpen, setManageDrawerOpen] = useState(false);
-  const onManageDrawerClose = useCallback(() => {
-    setManageDrawerOpen(false);
-    return window.setTimeout(() => setServerList(getServerList), 1000);
-  }, []);
+
+  const handleManage = () => {
+    if (miniMode) {
+      onManage();
+    } else {
+      setManageDrawerOpen(true);
+    }
+  };
 
   if (serverList.length) {
     return (
@@ -111,7 +118,7 @@ function ServerList({
             <Addon
               className="manage-button"
               disabled={disabled}
-              onClick={() => setManageDrawerOpen(true)}
+              onClick={handleManage}
             >
               {t('manage')}
             </Addon>
@@ -122,7 +129,12 @@ function ServerList({
             <div className="line" />
           </div>
         </Style>
-        <ManageDrawer open={manageDrawerOpen} onClose={onManageDrawerClose} />
+        {!miniMode && (
+          <ManageDrawer
+            open={manageDrawerOpen}
+            onClose={() => setManageDrawerOpen(false)}
+          />
+        )}
       </>
     );
   }
