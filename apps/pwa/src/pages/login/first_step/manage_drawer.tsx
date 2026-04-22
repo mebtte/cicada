@@ -5,7 +5,7 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import scrollbar from '@/style/scrollbar';
 import { CSSProperties, useEffect } from 'react';
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdDeleteOutline } from 'react-icons/md';
 import ellipsis from '@/style/ellipsis';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
@@ -101,9 +101,11 @@ function ManageDrawer({
                   {t('origin_users_count', s.users.length.toString())}
                 </div>
               </div>
-              <IconButton
+              <Button
                 className="delete"
-                size={24}
+                square
+                variant="plain"
+                size="sm"
                 onClick={() =>
                   dialog.confirm({
                     content: t('delete_origin_question'),
@@ -117,7 +119,7 @@ function ManageDrawer({
                 }
               >
                 <MdDeleteOutline />
-              </IconButton>
+              </Button>
             </div>
           ))}
         </div>

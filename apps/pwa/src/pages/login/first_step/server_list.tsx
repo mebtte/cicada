@@ -8,6 +8,29 @@ import ManageDrawer from './manage_drawer';
 import { useServer } from '@/global_states/server';
 
 const Style = styled.div`
+  > .select-wrapper {
+    position: relative;
+
+    > .server-select {
+      > label {
+        display: flex;
+        align-items: center;
+        min-height: 20px;
+        padding-right: 48px;
+      }
+    }
+
+    > .manage-button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: inline-flex;
+      align-items: center;
+      height: 20px;
+      z-index: 1;
+    }
+  }
+
   > .divider {
     margin-top: 20px;
 
@@ -31,7 +54,11 @@ const Style = styled.div`
     }
   }
 `;
-const Addon = styled.span`
+const Addon = styled.button`
+  padding: 0;
+  border: none;
+  background: transparent;
+
   font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   cursor: pointer;
@@ -39,6 +66,12 @@ const Addon = styled.span`
 
   &:hover {
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    opacity: 0.5;
   }
 `;
 const getServerList = () => useServer.getState().serverList;
@@ -61,24 +94,28 @@ function ServerList({
     return (
       <>
         <Style>
-          <Select
-            label={t('existing_server')}
-            disabled={disabled}
-            options={serverList.map((s) => ({
-              label: `${s.hostname} - ${s.origin}`,
-              value: s.origin,
-            }))}
-            onChange={(value) => {
-              useServer.setState({ selectedServerOrigin: value });
-              return toNext();
-            }}
-          />
-          <Addon
-            style={{ alignSelf: 'flex-end', marginTop: 4 }}
-            onClick={() => setManageDrawerOpen(true)}
-          >
-            {t('manage')}
-          </Addon>
+          <div className="select-wrapper">
+            <Select
+              className="server-select"
+              label={t('existing_server')}
+              disabled={disabled}
+              options={serverList.map((s) => ({
+                label: `${s.hostname} - ${s.origin}`,
+                value: s.origin,
+              }))}
+              onChange={(value) => {
+                useServer.setState({ selectedServerOrigin: value });
+                return toNext();
+              }}
+            />
+            <Addon
+              className="manage-button"
+              disabled={disabled}
+              onClick={() => setManageDrawerOpen(true)}
+            >
+              {t('manage')}
+            </Addon>
+          </div>
           <div className="divider">
             <div className="line" />
             <span className="or">{t('or')}</span>

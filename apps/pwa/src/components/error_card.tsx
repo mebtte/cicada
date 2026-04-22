@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import definition from '@/definition';
 import getRandomInteger from '#/utils/generate_random_integer';
 import { MdRefresh } from 'react-icons/md';
@@ -63,9 +63,9 @@ function ErrorCard({
         crossOrigin="anonymous"
       />
       <div className="error-message">{errorMessage}</div>
-      <IconButton onClick={retry}>
+      <Button square variant="plain" size="sm" onClick={retry}>
         <MdRefresh />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

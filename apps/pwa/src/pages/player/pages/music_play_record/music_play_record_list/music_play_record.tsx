@@ -2,7 +2,7 @@ import { CSSVariable } from '@/global_style';
 import day from '#/utils/day';
 import styled from 'styled-components';
 import { MdAvTimer, MdDeleteOutline } from 'react-icons/md';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
@@ -45,8 +45,10 @@ function MusicWithExternalInfo({
       music={musicPlayRecord}
       lineAfter={
         <LineAfter>
-          <IconButton
-            size={28}
+          <Button
+            square
+            variant="plain"
+            size="sm"
             onClick={(event) => {
               event.stopPropagation();
               return dialog.confirm({
@@ -64,7 +66,7 @@ function MusicWithExternalInfo({
             }}
           >
             <MdDeleteOutline />
-          </IconButton>
+          </Button>
         </LineAfter>
       }
       addon={

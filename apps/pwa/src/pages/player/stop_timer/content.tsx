@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { type StopTimer as StopTimerType } from '../constants';
 import { CSSProperties, useEffect, useState } from 'react';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdClose } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import dialog from '@/utils/dialog';
@@ -85,9 +85,9 @@ function Content({
       <div className="time">
         <TimeString stopTimer={stopTimer} />
       </div>
-      <IconButton size={24} style={closeIconStyle} onClick={onClose}>
+      <Button square variant="plain" size="sm" style={closeIconStyle} onClick={onClose}>
         <MdClose />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

@@ -9,9 +9,8 @@ import {
 import styled from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
 import List from 'react-list';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdPlayArrow, MdReadMore, MdOutlineClose } from 'react-icons/md';
-import { ComponentSize } from '@/constants/style';
 import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
 import { flexCenter } from '@/style/flexbox';
@@ -99,8 +98,10 @@ function Playlist({ style }: { style: unknown }) {
                   active={music.id === currentMusic?.id}
                   lineAfter={
                     <Operation>
-                      <IconButton
-                        size={ComponentSize.SMALL}
+                      <Button
+                        square
+                        variant="plain"
+                        size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
                           return playerEventemitter.emit(
@@ -110,9 +111,11 @@ function Playlist({ style }: { style: unknown }) {
                         }}
                       >
                         <MdPlayArrow />
-                      </IconButton>
-                      <IconButton
-                        size={ComponentSize.SMALL}
+                      </Button>
+                      <Button
+                        square
+                        variant="plain"
+                        size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
                           return playerEventemitter.emit(
@@ -122,9 +125,11 @@ function Playlist({ style }: { style: unknown }) {
                         }}
                       >
                         <MdReadMore />
-                      </IconButton>
-                      <IconButton
-                        size={ComponentSize.SMALL}
+                      </Button>
+                      <Button
+                        square
+                        variant="plain"
+                        size="sm"
                         style={removeStyle}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -135,7 +140,7 @@ function Playlist({ style }: { style: unknown }) {
                         }}
                       >
                         <MdOutlineClose />
-                      </IconButton>
+                      </Button>
                     </Operation>
                   }
                 />

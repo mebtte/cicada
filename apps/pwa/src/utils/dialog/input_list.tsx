@@ -3,8 +3,6 @@ import Button from '@/components_next/button';
 import Label from '@/components/label';
 import Input from '@/components_next/input';
 import { useState } from 'react';
-import IconButton from '@/components/icon_button';
-import { ComponentSize } from '@/constants/style';
 import { MdDelete } from 'react-icons/md';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
@@ -82,13 +80,15 @@ function InputListContent({
             key={value.id}
             label={`${options.label} ${index + 1}`}
             addon={
-              <IconButton
-                size={ComponentSize.SMALL}
+              <Button
+                square
+                variant="plain"
+                size="sm"
                 onClick={() => onDelete(value.id)}
                 disabled={confirming || canceling}
               >
                 <MdDelete />
-              </IconButton>
+              </Button>
             }
           >
             <Input

@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, ReactNode } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { CSS_VAR } from '../theme';
 
-export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'plain';
 export type Size = 'sm' | 'md' | 'lg';
 
 const cn = (v: string) => `var(${v})`;
@@ -82,11 +82,33 @@ const makeVariant = (
   }
 `;
 
+const plainVariant = css<{ $offset: number }>`
+  color: inherit;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  transition: background 120ms;
+
+  &:not(:disabled):hover {
+    background: rgb(0 0 0 / 0.06);
+  }
+
+  &:not(:disabled):active {
+    background: rgb(0 0 0 / 0.12);
+  }
+
+  &:disabled {
+    box-shadow: none;
+    opacity: 0.5;
+  }
+`;
+
 const VARIANT_MAP: Record<Variant, ReturnType<typeof css>> = {
   primary:   makeVariant(PRIMARY,   PRIMARY_SHADOW),
   secondary: makeVariant('#ffffff', PRIMARY,        PRIMARY),
   ghost:     makeVariant('#ffffff', 'rgb(180 180 180)', 'rgb(88 88 88)'),
   danger:    makeVariant('rgb(242 80 66)', 'rgb(190 46 34)'),
+  plain:     plainVariant,
 };
 
 // ─── Loader ───────────────────────────────────────────────────────────────────
@@ -123,6 +145,7 @@ const StyledButton = styled.button<{
   $block: boolean;
   $loading: boolean;
   $offset: number;
+  $square: boolean;
 }>`
   position: relative;
   display: inline-flex;
@@ -159,6 +182,10 @@ const StyledButton = styled.button<{
   }
 
   ${({ $size }) => SIZE_MAP[$size]}
+  ${({ $square }) => $square && css`
+    aspect-ratio: 1;
+    padding: 0;
+  `}
   ${({ $variant, $offset }) => css`
     ${VARIANT_MAP[$variant]}
     --offset: ${$offset}px;
@@ -172,6 +199,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size;
   loading?: boolean;
   block?: boolean;
+  square?: boolean;
   icon?: ReactNode;
 }
 
@@ -180,6 +208,7 @@ function Button({
   size = 'md',
   loading = false,
   block = false,
+  square = false,
   disabled = false,
   icon,
   children,
@@ -192,6 +221,7 @@ function Button({
       $variant={variant}
       $size={size}
       $block={block}
+      $square={square}
       $loading={loading}
       $offset={offset}
       disabled={loading || disabled}

@@ -1,7 +1,7 @@
 import Input from '@/components_next/input';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdPlaylistRemove } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
@@ -48,7 +48,10 @@ function Toolbar({
   const { playlist } = useContext(context);
   return (
     <Style>
-      <IconButton
+      <Button
+        square
+        variant="plain"
+        size="sm"
         disabled={playlist.length === 0}
         onClick={() =>
           dialog.confirm({
@@ -62,7 +65,7 @@ function Toolbar({
         }
       >
         <MdPlaylistRemove />
-      </IconButton>
+      </Button>
       <Input
         className="filter"
         value={keyword}

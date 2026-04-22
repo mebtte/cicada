@@ -3,8 +3,6 @@ import Button from '@/components_next/button';
 import Textarea from '@/components/textarea';
 import Label from '@/components/label';
 import { useState } from 'react';
-import IconButton from '@/components/icon_button';
-import { ComponentSize } from '@/constants/style';
 import { MdDelete, MdUploadFile } from 'react-icons/md';
 import styled from 'styled-components';
 import { t } from '@/i18n';
@@ -113,20 +111,24 @@ function TextareaListContent({
             label={`${options.label} ${index + 1}`}
             addon={
               <Addon>
-                <IconButton
-                  size={ComponentSize.SMALL}
+                <Button
+                  square
+                  variant="plain"
+                  size="sm"
                   onClick={() => onOpenFile(value.id)}
                   disabled={confirming || canceling}
                 >
                   <MdUploadFile />
-                </IconButton>
-                <IconButton
-                  size={ComponentSize.SMALL}
+                </Button>
+                <Button
+                  square
+                  variant="plain"
+                  size="sm"
                   onClick={() => onDelete(value.id)}
                   disabled={confirming || canceling}
                 >
                   <MdDelete />
-                </IconButton>
+                </Button>
               </Addon>
             }
           >

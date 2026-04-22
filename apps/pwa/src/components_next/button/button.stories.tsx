@@ -10,15 +10,15 @@ const meta = {
     docs: {
       description: {
         component:
-          'Duolingo-style button with a hard bottom shadow and a satisfying press-down animation. Supports 4 variants, 3 sizes, loading and disabled states.',
+          'Duolingo-style button with a hard bottom shadow and a satisfying press-down animation. Supports 5 variants (`primary`, `secondary`, `ghost`, `danger`, `plain`), 3 sizes, loading and disabled states. Use `square` prop for icon-only buttons (replaces the old icon_button component).',
       },
     },
   },
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary', 'ghost', 'danger'],
-      description: 'Visual variant',
+      options: ['primary', 'secondary', 'ghost', 'danger', 'plain'],
+      description: 'Visual variant. `plain` is transparent with no border — suitable for icon-only buttons.',
       table: { defaultValue: { summary: 'primary' } },
     },
     size: {
@@ -38,6 +38,10 @@ const meta = {
     block: {
       control: 'boolean',
       description: 'Stretch to full container width',
+    },
+    square: {
+      control: 'boolean',
+      description: 'Icon-only mode — forces aspect-ratio 1:1 and removes padding. Use with `variant="plain"` to replicate the old icon button style.',
     },
     children: {
       control: 'text',
@@ -64,6 +68,10 @@ export const Ghost: Story = {
 
 export const Danger: Story = {
   args: { children: 'Delete', variant: 'danger' },
+};
+
+export const Plain: Story = {
+  args: { children: 'Plain', variant: 'plain' },
 };
 
 export const Loading: Story = {
@@ -93,6 +101,7 @@ export const AllVariants: Story = {
       <Button variant="secondary">Secondary</Button>
       <Button variant="ghost">Ghost</Button>
       <Button variant="danger">Danger</Button>
+      <Button variant="plain">Plain</Button>
     </div>
   ),
 };
@@ -134,6 +143,20 @@ export const WithIcon: Story = {
       <Button variant="secondary" icon={<span>+</span>}>Add to List</Button>
       <Button variant="ghost" icon={<span>↗</span>}>Share</Button>
       <Button variant="danger" icon={<span>✕</span>}>Remove</Button>
+    </div>
+  ),
+};
+
+export const IconOnly: Story = {
+  name: 'Icon Only (square)',
+  render: () => (
+    <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+      <Button square variant="plain" size="sm">▶</Button>
+      <Button square variant="plain" size="md">▶</Button>
+      <Button square variant="plain" size="lg">▶</Button>
+      <Button square variant="primary" size="sm">+</Button>
+      <Button square variant="ghost" size="sm">↗</Button>
+      <Button square variant="danger" size="sm">✕</Button>
     </div>
   ),
 };

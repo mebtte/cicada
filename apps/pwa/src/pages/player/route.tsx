@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { PLAYER_PATH } from '@/constants/route';
 import Search from './pages/search';
 import Musicbill from './pages/musicbill';
+import Music from './pages/music';
 import Setting from './pages/setting';
 import MyMusic from './pages/my_music';
 import PublicMusicbillCollection from './pages/public_musicbill_collection';
@@ -9,6 +10,7 @@ import Exploration from './pages/exploration';
 import MusicPlayRecord from './pages/music_play_record';
 import SharedMusicbillInvitation from './pages/shared_musicbill_invitation';
 import DownloadingMusic from './pages/downloading_music';
+import Singer from './pages/singer';
 
 function Wrapper() {
   return (
@@ -16,7 +18,9 @@ function Wrapper() {
       <Route path={PLAYER_PATH.SEARCH} element={<Search />} />
       <Route path={PLAYER_PATH.EXPLORATION} element={<Exploration />} />
       <Route path={PLAYER_PATH.MY_MUSIC} element={<MyMusic />} />
+      <Route path={PLAYER_PATH.MUSIC} element={<Music />} />
       <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
+      <Route path={PLAYER_PATH.SINGER} element={<Singer />} />
       <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
       <Route
         path={PLAYER_PATH.DOWNLOADING_MUSIC}

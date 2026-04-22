@@ -1,8 +1,13 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
-import IconButton from '@/components/icon_button';
-import { MdMenu, MdSearch } from 'react-icons/md';
+import Button from '@/components_next/button';
+import { MdArrowBack, MdMenu, MdSearch } from 'react-icons/md';
+import {
+  matchPath,
+  useLocation,
+  useNavigate as useRouterNavigate,
+} from 'react-router-dom';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import Search from './search';
@@ -33,24 +38,58 @@ const Style = styled.div`
 
 function Header() {
   const navigate = useNavigate();
+  const routerNavigate = useRouterNavigate();
+  const { pathname } = useLocation();
   const { miniMode } = useTheme();
   const title = useTitle();
   const { left, right } = useTitlebar();
+  const musicbillMatch = matchPath(
+    `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL}`,
+    pathname,
+  );
+  const musicMatch = matchPath(
+    `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSIC}`,
+    pathname,
+  );
+  const singerMatch = matchPath(
+    `${ROOT_PATH.PLAYER}${PLAYER_PATH.SINGER}`,
+    pathname,
+  );
+  const showBackButton =
+    miniMode && !!(musicMatch || musicbillMatch || singerMatch);
 
   return (
     <Style style={{ paddingLeft: left, paddingRight: right }}>
       {miniMode ? (
         <>
-          <IconButton onClick={openSidebar}>
-            <MdMenu />
-          </IconButton>
-          <IconButton
+          <Button
+            square
+            variant="plain"
+            size="sm"
+            onClick={() => {
+              if (showBackButton) {
+                if (window.history.length > 1) {
+                  routerNavigate(-1);
+                  return;
+                }
+                navigate({ path: ROOT_PATH.PLAYER });
+                return;
+              }
+              openSidebar();
+            }}
+          >
+            {showBackButton ? <MdArrowBack /> : <MdMenu />}
+          </Button>
+          <Button
+            square
+            variant="plain"
+            size="sm"
             onClick={() =>
               navigate({ path: `${ROOT_PATH.PLAYER}${PLAYER_PATH.SEARCH}` })
             }
           >
             <MdSearch />
-          </IconButton>
+          </Button>
         </>
       ) : (
         <Cover src="/logo.png" size={24} />

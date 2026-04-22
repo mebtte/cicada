@@ -4,7 +4,7 @@ import storage, { Key } from '../storage';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdCheck, MdClose } from 'react-icons/md';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import eventemitter, { EventType } from '../eventemitter';
@@ -62,8 +62,11 @@ function usePlaylistRestore(playlist: PlaylistMusic[]) {
             <Restore>
               <div className="text">{t('question_restore_playlist')}</div>
               <div className="actions">
-                <IconButton
+                <Button
                   className="action"
+                  square
+                  variant="plain"
+                  size="sm"
                   onClick={() => {
                     notice.close(noticeId!);
                     return eventemitter.emit(
@@ -75,13 +78,16 @@ function usePlaylistRestore(playlist: PlaylistMusic[]) {
                   }}
                 >
                   <MdCheck />
-                </IconButton>
-                <IconButton
+                </Button>
+                <Button
                   className="action"
+                  square
+                  variant="plain"
+                  size="sm"
                   onClick={() => notice.close(noticeId!)}
                 >
                   <MdClose />
-                </IconButton>
+                </Button>
               </div>
             </Restore>,
             { duration: 0, closable: false },

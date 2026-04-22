@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { TOOLBAR_HEIGHT } from '../constants';
 import Filter from './filter';
@@ -27,9 +27,9 @@ const Style = styled.div`
 function Toolbar() {
   return (
     <Style>
-      <IconButton onClick={openCreateUserDialog}>
+      <Button square variant="plain" size="sm" onClick={openCreateUserDialog}>
         <MdOutlineAddBox />
-      </IconButton>
+      </Button>
       <Filter />
     </Style>
   );
