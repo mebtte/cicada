@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := release
 
-VERSION   := $(or $(strip $(CICADA_VERSION)),$(shell node scripts/build_version.mjs 2>/dev/null || echo unknown))
+VERSION   := $(shell node scripts/build_version.mjs latest-tag 2>/dev/null || echo unknown)
 ROOT_DIR  := $(CURDIR)
 BUILD_DIR := $(ROOT_DIR)/build
 CLI_DIR   := $(ROOT_DIR)/apps/cli
@@ -22,26 +22,31 @@ pwa:
 release: pwa
 	rm -rf $(BUILD_DIR)
 	mkdir -p $(BUILD_DIR)
-	$(call build_cli,darwin,arm64,$(BUILD_DIR)/cicada-darwin-arm64)
-	$(call build_cli,darwin,amd64,$(BUILD_DIR)/cicada-darwin-amd64)
-	$(call build_cli,windows,amd64,$(BUILD_DIR)/cicada-windows-amd64.exe)
-	$(call build_cli,windows,arm64,$(BUILD_DIR)/cicada-windows-arm64.exe)
-	$(call build_cli,linux,amd64,$(BUILD_DIR)/cicada-linux-amd64)
-	$(call build_cli,linux,arm64,$(BUILD_DIR)/cicada-linux-arm64)
-	cd $(BUILD_DIR) && \
-		tar -zcf cicada-macos-arm-$(VERSION).tar.gz  cicada-darwin-arm64       && \
-		tar -zcf cicada-macos-x64-$(VERSION).tar.gz  cicada-darwin-amd64       && \
-		tar -zcf cicada-windows-x64-$(VERSION).tar.gz cicada-windows-amd64.exe && \
-		tar -zcf cicada-windows-arm-$(VERSION).tar.gz cicada-windows-arm64.exe && \
-		tar -zcf cicada-linux-x64-$(VERSION).tar.gz  cicada-linux-amd64        && \
-		tar -zcf cicada-linux-arm-$(VERSION).tar.gz  cicada-linux-arm64
-	rm \
-		$(BUILD_DIR)/cicada-darwin-arm64       \
-		$(BUILD_DIR)/cicada-darwin-amd64       \
-		$(BUILD_DIR)/cicada-windows-amd64.exe  \
-		$(BUILD_DIR)/cicada-windows-arm64.exe  \
-		$(BUILD_DIR)/cicada-linux-amd64        \
-		$(BUILD_DIR)/cicada-linux-arm64
+	mkdir -p $(BUILD_DIR)/darwin-arm64
+	$(call build_cli,darwin,arm64,$(BUILD_DIR)/darwin-arm64/cicada)
+	cd $(BUILD_DIR)/darwin-arm64 && tar -zcf ../cicada-$(VERSION)-darwin-arm64.tar.gz cicada
+	mkdir -p $(BUILD_DIR)/darwin-amd64
+	$(call build_cli,darwin,amd64,$(BUILD_DIR)/darwin-amd64/cicada)
+	cd $(BUILD_DIR)/darwin-amd64 && tar -zcf ../cicada-$(VERSION)-darwin-amd64.tar.gz cicada
+	mkdir -p $(BUILD_DIR)/windows-amd64
+	$(call build_cli,windows,amd64,$(BUILD_DIR)/windows-amd64/cicada.exe)
+	cd $(BUILD_DIR)/windows-amd64 && tar -zcf ../cicada-$(VERSION)-windows-amd64.tar.gz cicada.exe
+	mkdir -p $(BUILD_DIR)/windows-arm64
+	$(call build_cli,windows,arm64,$(BUILD_DIR)/windows-arm64/cicada.exe)
+	cd $(BUILD_DIR)/windows-arm64 && tar -zcf ../cicada-$(VERSION)-windows-arm64.tar.gz cicada.exe
+	mkdir -p $(BUILD_DIR)/linux-amd64
+	$(call build_cli,linux,amd64,$(BUILD_DIR)/linux-amd64/cicada)
+	cd $(BUILD_DIR)/linux-amd64 && tar -zcf ../cicada-$(VERSION)-linux-amd64.tar.gz cicada
+	mkdir -p $(BUILD_DIR)/linux-arm64
+	$(call build_cli,linux,arm64,$(BUILD_DIR)/linux-arm64/cicada)
+	cd $(BUILD_DIR)/linux-arm64 && tar -zcf ../cicada-$(VERSION)-linux-arm64.tar.gz cicada
+	rm -rf \
+		$(BUILD_DIR)/darwin-arm64    \
+		$(BUILD_DIR)/darwin-amd64    \
+		$(BUILD_DIR)/windows-amd64   \
+		$(BUILD_DIR)/windows-arm64   \
+		$(BUILD_DIR)/linux-amd64     \
+		$(BUILD_DIR)/linux-arm64
 
 ## 构建 Linux x64 二进制 (供 Docker 使用, 不压缩)
 docker: pwa

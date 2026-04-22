@@ -95,5 +95,11 @@ export function resolveVersion(options = {}) {
 }
 
 if (fileURLToPath(import.meta.url) === path.resolve(process.argv[1] || '')) {
-  process.stdout.write(`${resolveVersion()}\n`);
+  const mode = process.argv[2];
+
+  if (mode === 'latest-tag') {
+    process.stdout.write(`${getLatestTag()}\n`);
+  } else {
+    process.stdout.write(`${resolveVersion()}\n`);
+  }
 }
