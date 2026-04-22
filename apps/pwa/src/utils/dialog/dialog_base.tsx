@@ -1,30 +1,28 @@
-import {
-  CSSProperties,
-  HtmlHTMLAttributes,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogTitle } from '@/components_next';
 import { DialogOptions } from './constants';
-import Dialog from '../../components/dialog';
-import { UtilZIndex } from '../../constants/style';
 import e, { EventType } from './eventemitter';
 
-const maskProps: { style: CSSProperties } = {
-  style: { zIndex: UtilZIndex.DIALOG },
+const srOnly: CSSProperties = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: 'hidden',
+  clip: 'rect(0,0,0,0)',
+  whiteSpace: 'nowrap',
+  border: 0,
 };
 
 function DialogBase({
   options,
   onDestroy,
   children,
-  bodyProps,
 }: {
   options: DialogOptions;
   onDestroy: (id: string) => void;
   children: ({ onClose }: { onClose: () => void }) => ReactNode;
-  bodyProps?: HtmlHTMLAttributes<HTMLDivElement>;
 }) {
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
@@ -35,9 +33,7 @@ function DialogBase({
 
   useEffect(() => {
     const unlistenClose = e.listen(EventType.CLOSE, ({ id }) => {
-      if (options.id === id) {
-        setOpen(false);
-      }
+      if (options.id === id) setOpen(false);
     });
     return unlistenClose;
   }, [options.id]);
@@ -50,8 +46,11 @@ function DialogBase({
   }, [options.id, onDestroy, open]);
 
   return (
-    <Dialog open={open} maskProps={maskProps} bodyProps={bodyProps}>
-      {children({ onClose })}
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent showClose={false} aria-describedby={undefined}>
+        <DialogTitle style={srOnly}>Dialog</DialogTitle>
+        {children({ onClose })}
+      </DialogContent>
     </Dialog>
   );
 }

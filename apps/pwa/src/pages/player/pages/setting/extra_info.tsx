@@ -1,4 +1,4 @@
-import { BETA_VERSION_START } from '#/constants';
+import { BETA_VERSION_IDENTIFIER } from '#/constants';
 import definition from '@/definition';
 import { useSelectedServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
@@ -23,6 +23,14 @@ const Style = styled.div`
   }
 `;
 
+function getVersionLink(version: string) {
+  if (version.includes(BETA_VERSION_IDENTIFIER)) {
+    return 'https://github.com/mebtte/cicada/tree/beta';
+  }
+
+  return `https://github.com/mebtte/cicada/releases/tag/${version}`;
+}
+
 function ExtraInfo() {
   const selectedServer = useSelectedServer()!;
 
@@ -30,30 +38,14 @@ function ExtraInfo() {
     <Style>
       <div className="item">
         PWA Version:&nbsp;
-        <a
-          href={
-            definition.VERSION.startsWith(BETA_VERSION_START)
-              ? 'https://github.com/mebtte/cicada/tree/beta'
-              : `https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`
-          }
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href={getVersionLink(definition.VERSION)} target="_blank" rel="noreferrer">
           {definition.VERSION}
         </a>
       </div>
       <div className="item">Server Name: {selectedServer.hostname}</div>
       <div className="item">
         Server Version:&nbsp;
-        <a
-          href={
-            selectedServer.version.startsWith(BETA_VERSION_START)
-              ? 'https://github.com/mebtte/cicada/tree/beta'
-              : `https://github.com/mebtte/cicada/releases/tag/${definition.VERSION}`
-          }
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href={getVersionLink(selectedServer.version)} target="_blank" rel="noreferrer">
           {selectedServer.version}
         </a>
       </div>

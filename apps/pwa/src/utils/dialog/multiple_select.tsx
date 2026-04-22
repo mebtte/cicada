@@ -1,14 +1,11 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter, MultiSelect, SelectOption } from '@/components_next';
 import Button from '@/components_next/button';
 import Label from '@/components/label';
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
 import { t } from '@/i18n';
-import { MultiSelect, SelectOption } from '@/components_next';
 import DialogBase from './dialog_base';
 import { MultipleSelect as MultipleSelectShape } from './constants';
 import useEvent from '../use_event';
-
-const contentStyle: CSSProperties = { overflow: 'hidden' };
 
 function MultipleSelectContent({
   onClose,
@@ -54,11 +51,13 @@ function MultipleSelectContent({
   };
 
   return (
-    <Container>
-      {multipleSelectOptions.title ? (
-        <Title>{multipleSelectOptions.title}</Title>
-      ) : null}
-      <Content style={contentStyle}>
+    <>
+      {multipleSelectOptions.title && (
+        <DialogHeader>
+          <DialogTitle>{multipleSelectOptions.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      <DialogBody>
         <Label
           label={multipleSelectOptions.label}
           addon={multipleSelectOptions.labelAddon}
@@ -70,8 +69,8 @@ function MultipleSelectContent({
             disabled={confirming || canceling}
           />
         </Label>
-      </Content>
-      <Action>
+      </DialogBody>
+      <DialogFooter>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {multipleSelectOptions.cancelText || t('cancel')}
         </Button>
@@ -83,8 +82,8 @@ function MultipleSelectContent({
         >
           {multipleSelectOptions.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

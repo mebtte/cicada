@@ -1,12 +1,12 @@
 .DEFAULT_GOAL := release
 
-VERSION   := $(shell git describe --abbrev=0 --tags 2>/dev/null || echo dev)
+VERSION   := $(or $(strip $(CICADA_VERSION)),$(shell node scripts/build_version.mjs 2>/dev/null || echo unknown))
 ROOT_DIR  := $(CURDIR)
 BUILD_DIR := $(ROOT_DIR)/build
 CLI_DIR   := $(ROOT_DIR)/apps/cli
 
 define build_cli
-	cd $(CLI_DIR) && CGO_ENABLED=0 GOOS=$(1) GOARCH=$(2) go build -tags prod -o $(3) .
+	cd $(CLI_DIR) && CGO_ENABLED=0 GOOS=$(1) GOARCH=$(2) go build -tags prod -ldflags "-X cicada/internal/version.Version=$(VERSION)" -o $(3) .
 endef
 
 .PHONY: pwa release docker clean
@@ -14,7 +14,7 @@ endef
 ## 构建 PWA 并嵌入 CLI
 pwa:
 	npm ci --prefix apps/pwa
-	npm run build --prefix apps/pwa
+	CICADA_VERSION=$(VERSION) npm run build --prefix apps/pwa
 	rm -rf $(CLI_DIR)/pwa/dist
 	cp -R apps/pwa/dist $(CLI_DIR)/pwa/dist
 

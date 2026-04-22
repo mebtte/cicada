@@ -23,6 +23,10 @@ All of `cicada` data is under a directory, here is its structure:
 |- jwt_secret # its content is secret of jwt
 ```
 
+## Data Versioning
+
+The most important thing in `cicada` is data and the data has its version. Generally, data version needs to equal to `cicada` version. When the major version changes, `cicada` can upgrade data of **last version**. For example, cicada changes its version to `v3` from `v2`, `v3` cicda can upgrade `v2` data to `v3`.
+
 ## Database structure
 
 Cicada use SQLite as database.

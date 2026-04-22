@@ -1,31 +1,29 @@
 import { HtmlHTMLAttributes } from 'react';
 import styled from 'styled-components';
-import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import { CaptchaData } from './constants';
 
 const Style = styled.div`
-  > .content {
-    position: relative;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
 
-    padding-bottom: 33.33%;
+  > .loading {
+    aspect-ratio: 8 / 3;
+    ${flexCenter}
+    background: rgb(240 240 240);
+  }
 
-    > .loading {
-      ${absoluteFullSize}
-      ${flexCenter}
-    }
+  > .svg {
+    cursor: pointer;
+    line-height: 0;
 
-    > .svg {
-      ${absoluteFullSize}
-
-      cursor: pointer;
-
-      > svg {
-        width: 100%;
-        height: 100%;
-      }
+    > svg {
+      display: block;
+      width: 100%;
+      height: auto;
     }
   }
 `;
@@ -49,21 +47,17 @@ function Captcha({
   }
   return (
     <Style {...props}>
-      <div className="content">
-        {captchaData.loading ? (
-          <div className="loading">
-            <Spinner />
-          </div>
-        ) : (
-          <div
-            className="svg"
-            onClick={reload}
-            dangerouslySetInnerHTML={{
-              __html: captchaData.data.svg,
-            }}
-          />
-        )}
-      </div>
+      {captchaData.loading ? (
+        <div className="loading">
+          <Spinner />
+        </div>
+      ) : (
+        <div
+          className="svg"
+          onClick={reload}
+          dangerouslySetInnerHTML={{ __html: captchaData.data.svg }}
+        />
+      )}
     </Style>
   );
 }

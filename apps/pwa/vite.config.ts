@@ -1,25 +1,18 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import cp from 'child_process';
 import fs from 'fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { resolveVersion } from '../../scripts/build_version.mjs';
 
 const CURRENT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const STATIC_DIR = path.join(CURRENT_DIR, 'src/static');
 const INVALID_FILES = ['.DS_Store'];
 
-function getVersion() {
-  try {
-    return cp.execSync('git describe --abbrev=0 --tags', { stdio: 'pipe' }).toString().trim();
-  } catch {
-    return 'unknown';
-  }
-}
-
 export default defineConfig(({ command }) => {
   const withSW = command === 'build' || process.env.WITH_SW === 'true';
+  const version = resolveVersion({ command });
 
   return {
     publicDir: STATIC_DIR,
@@ -42,7 +35,7 @@ export default defineConfig(({ command }) => {
     define: {
       global: 'globalThis',
       __DEFINE__: JSON.stringify({
-        VERSION: getVersion(),
+        VERSION: version,
         BUILD_TIME: new Date(),
         EMPTY_IMAGE_LIST: fs
           .readdirSync(`${STATIC_DIR}/empty_image`)

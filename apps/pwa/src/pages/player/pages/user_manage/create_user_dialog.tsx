@@ -1,24 +1,13 @@
-import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
-import { ChangeEventHandler, CSSProperties, useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
+import { ChangeEventHandler, useEffect, useState } from 'react';
 import Button from '@/components_next/button';
 import Input from '@/components_next/input';
-import styled from 'styled-components';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import adminCreateUser from '@/server/api/admin_create_user';
 import { t } from '@/i18n';
 import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
 import e, { EventType } from './eventemitter';
-import { ZIndex } from '../../constants';
-
-const maskProps: { style: CSSProperties } = {
-  style: { zIndex: ZIndex.DIALOG },
-};
-const StyledContent = styled(Content)`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
 
 function CreateUserDialog() {
   const [open, setOpen] = useState(false);
@@ -64,10 +53,12 @@ function CreateUserDialog() {
   }, []);
 
   return (
-    <Dialog open={open} maskProps={maskProps}>
-      <Container>
-        <Title>{t('create_user')}</Title>
-        <StyledContent>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent showClose={false} aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{t('create_user')}</DialogTitle>
+        </DialogHeader>
+        <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <Input
             label={t('username')}
             value={username}
@@ -85,8 +76,8 @@ function CreateUserDialog() {
             value={remark}
             onChange={onRemarkChange}
           />
-        </StyledContent>
-        <Action>
+        </DialogBody>
+        <DialogFooter>
           <Button onClick={onClose} disabled={loading}>
             {t('cancel')}
           </Button>
@@ -98,8 +89,8 @@ function CreateUserDialog() {
           >
             {t('create')}
           </Button>
-        </Action>
-      </Container>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }

@@ -107,6 +107,6 @@ export enum CommonQuery {
   LANGUAGE = '__lang',
 }
 
-export const BETA_VERSION_START = 'beta.';
+export const BETA_VERSION_IDENTIFIER = '-beta-';
 
 export const HEADER_TOKEN = 'x-cicada-token';

@@ -7,6 +7,7 @@ import (
 	"cicada/internal/api/middleware"
 	"cicada/internal/auth"
 	"cicada/internal/store"
+	"cicada/internal/version"
 	"os"
 	"sync"
 	"time"
@@ -16,11 +17,9 @@ import (
 
 // ── Metadata ──────────────────────────────────────────────────────────────────
 
-const appVersion = "beta"
-
 func GetMetadata(c *gin.Context) {
 	hostname, _ := os.Hostname()
-	api.OK(c, gin.H{"hostname": hostname, "version": appVersion})
+	api.OK(c, gin.H{"hostname": hostname, "version": version.Get()})
 }
 
 // ── Captcha ───────────────────────────────────────────────────────────────────

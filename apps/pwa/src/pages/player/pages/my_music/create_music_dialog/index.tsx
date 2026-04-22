@@ -1,16 +1,13 @@
 import {
   ChangeEventHandler,
-  CSSProperties,
   useCallback,
   useEffect,
   useState,
 } from 'react';
-import styled from 'styled-components';
-import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter, Select, MultiSelect, SelectOption } from '@/components_next';
 import Button from '@/components_next/button';
 import Input from '@/components_next/input';
 import Label from '@/components/label';
-import { Select, MultiSelect, SelectOption } from '@/components_next';
 import { t } from '@/i18n';
 import {
   AllowUpdateKey,
@@ -31,7 +28,6 @@ import getMusicFileMetadata from '#/utils/get_music_file_metadata';
 import logger from '@/utils/logger';
 import { MUSIC_TYPE_MAP } from '@/constants/music';
 import capitalize from '#/utils/capitalize';
-import { ZIndex } from '../../../constants';
 import useOpen from './use_open';
 import e, { EventType } from '../eventemitter';
 import MissingSinger from '../../../components/missing_singer';
@@ -42,9 +38,6 @@ import { Singer } from './constants';
 import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 import { base64ToCover, canAudioPlay, getMusicNameFromFilename } from './utils';
 
-const maskProps: { style: CSSProperties } = {
-  style: { zIndex: ZIndex.DIALOG },
-};
 const MUSIC_TYPE_OPTIONS: SelectOption<MusicType>[] = MUSIC_TYPES.map((mt) => ({
   label: capitalize(MUSIC_TYPE_MAP[mt].label),
   value: mt,
@@ -61,11 +54,6 @@ const searchSinger = (search: string): Promise<SelectOption<Singer>[]> => {
   );
 };
 
-const StyledContent = styled(Content)`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
 
 function CreateMusicDialog() {
   const { open, onClose } = useOpen();
@@ -195,10 +183,12 @@ function CreateMusicDialog() {
   }, [open]);
 
   return (
-    <Dialog open={open} maskProps={maskProps}>
-      <Container>
-        <Title>{t('create_music')}</Title>
-        <StyledContent>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent showClose={false} aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{t('create_music')}</DialogTitle>
+        </DialogHeader>
+        <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <Select<MusicType>
             label={t('music_type_short')}
             value={musicType}
@@ -245,8 +235,8 @@ function CreateMusicDialog() {
             maxLength={NAME_MAX_LENGTH}
             disabled={loading}
           />
-        </StyledContent>
-        <Action>
+        </DialogBody>
+        <DialogFooter>
           <Button onClick={onClose} disabled={loading}>
             {t('cancel')}
           </Button>
@@ -257,8 +247,8 @@ function CreateMusicDialog() {
           >
             {t('create')}
           </Button>
-        </Action>
-      </Container>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }

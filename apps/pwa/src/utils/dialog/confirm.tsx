@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { t } from '@/i18n';
 import { Confirm as ConfirmShape } from './constants';
-import { Container, Content, Title, Action } from '../../components/dialog';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
 import Button from '@/components_next/button';
 import useEvent from '../use_event';
 import DialogBase from './dialog_base';
@@ -37,10 +37,14 @@ function ConfirmContent({
       .finally(() => setConfirming(false));
   });
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      {options.content ? <Content>{options.content}</Content> : null}
-      <Action>
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      {options.content && <DialogBody>{options.content}</DialogBody>}
+      <DialogFooter>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {options.cancelText || t('cancel')}
         </Button>
@@ -52,8 +56,8 @@ function ConfirmContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

@@ -51,7 +51,7 @@ func buildSVG(text string) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	const w, h = 160, 60
 	var sb strings.Builder
-	sb.WriteString(fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d">`, w, h))
+	sb.WriteString(fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d">`, w, h))
 	sb.WriteString(fmt.Sprintf(`<rect width="%d" height="%d" fill="#f0f0f0"/>`, w, h))
 	for i := 0; i < 4; i++ {
 		sb.WriteString(fmt.Sprintf(`<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#%02x%02x%02x" stroke-width="1"/>`,

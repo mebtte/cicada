@@ -2,6 +2,7 @@ package apidoc
 
 import (
 	"cicada/internal/config"
+	"cicada/internal/version"
 	"net/http"
 	"strings"
 
@@ -35,6 +36,7 @@ func Register(r *gin.Engine) {
 
 // Spec returns the OpenAPI 3.0 document for the current HTTP API.
 func Spec() map[string]any {
+	appVersion := version.Get()
 	paths := map[string]any{}
 	for _, op := range operations() {
 		addOperation(paths, op)
@@ -44,7 +46,7 @@ func Spec() map[string]any {
 		"openapi": "3.0.3",
 		"info": map[string]any{
 			"title":   "Cicada API",
-			"version": "beta",
+			"version": appVersion,
 			"description": "Cicada server API documentation.\n\n" +
 				"Except for static asset downloads, business endpoints usually return HTTP 200 for both success and failure.\n" +
 				"Use the `code` field in the response body to determine success: `success` means success; any other value is a business error code.",
@@ -212,7 +214,7 @@ func operations() []operation {
 			Description:    "Return the current node hostname and version.",
 			Tags:           []string{"Base"},
 			SuccessSchema:  metadataSchema(),
-			SuccessExample: map[string]any{"hostname": "cicada.local", "version": "beta"},
+			SuccessExample: map[string]any{"hostname": "cicada.local", "version": version.Get()},
 		},
 		{
 			Method:      "GET",
@@ -1237,11 +1239,12 @@ func nullableSchema(schema map[string]any) map[string]any {
 }
 
 func metadataSchema() map[string]any {
+	appVersion := version.Get()
 	return objSchema(
 		[]string{"hostname", "version"},
 		map[string]any{
 			"hostname": strSchema("Hostname of the current service node.", "cicada.local"),
-			"version":  strSchema("Application version.", "beta"),
+			"version":  strSchema("Application version.", appVersion),
 		},
 	)
 }

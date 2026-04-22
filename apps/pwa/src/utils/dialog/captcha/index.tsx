@@ -1,8 +1,7 @@
-import { Container, Content, Action } from '@/components/dialog';
+import { DialogBody, DialogFooter } from '@/components_next';
 import Button from '@/components_next/button';
 import Input from '@/components_next/input';
 import {
-  CSSProperties,
   ChangeEventHandler,
   useEffect,
   useState,
@@ -16,11 +15,6 @@ import DialogBase from '../dialog_base';
 import { Captcha as CaptchaShape } from '../constants';
 import useEvent from '../../use_event';
 import notice from '../../notice';
-
-const contentStyle: CSSProperties = { overflow: 'hidden' };
-const captchaStyle: CSSProperties = {
-  marginBottom: 10,
-};
 
 function CaptchaContent({
   onClose,
@@ -86,13 +80,9 @@ function CaptchaContent({
   );
 
   return (
-    <Container>
-      <Content style={contentStyle}>
-        <Captcha
-          captchaData={captchaData}
-          reload={reload}
-          style={captchaStyle}
-        />
+    <>
+      <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <Captcha captchaData={captchaData} reload={reload} />
         <Input
           label={t('captcha')}
           value={captchaValue}
@@ -100,8 +90,8 @@ function CaptchaContent({
           autoFocus
           onKeyDown={onKeyDown}
         />
-      </Content>
-      <Action>
+      </DialogBody>
+      <DialogFooter>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {options.cancelText || t('cancel')}
         </Button>
@@ -113,8 +103,8 @@ function CaptchaContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

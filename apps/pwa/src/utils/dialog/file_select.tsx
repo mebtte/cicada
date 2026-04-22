@@ -1,14 +1,12 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
 import Button from '@/components_next/button';
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
 import Label from '@/components/label';
 import FileSelect from '@/components/file_select';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { FileSelect as FileSelectShape } from './constants';
 import useEvent from '../use_event';
-
-const contentStyle: CSSProperties = { overflow: 'hidden' };
 
 function FileSelectContent({
   onClose,
@@ -46,9 +44,13 @@ function FileSelectContent({
   };
 
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      <Content style={contentStyle}>
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      <DialogBody>
         <Label label={options.label}>
           <FileSelect
             value={file}
@@ -58,8 +60,8 @@ function FileSelectContent({
             placeholder={options.placeholder}
           />
         </Label>
-      </Content>
-      <Action>
+      </DialogBody>
+      <DialogFooter>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {options.cancelText || t('cancel')}
         </Button>
@@ -71,8 +73,8 @@ function FileSelectContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

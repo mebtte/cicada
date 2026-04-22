@@ -1,7 +1,6 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
 import Button from '@/components_next/button';
 import {
-  CSSProperties,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -19,11 +18,6 @@ import loadImage from '../load_image';
 import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
 
 const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
-const contentStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10,
-};
 const ImgBox = styled.div`
   img {
     display: block;
@@ -131,9 +125,13 @@ function ImageCutContent({
   }, [confirming, canceling]);
 
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      <Content style={contentStyle}>
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {url ? (
           <ImgBox>
             <img src={url} ref={imageRef} />
@@ -146,8 +144,8 @@ function ImageCutContent({
           acceptTypes={ACCEPT_TYPES}
           disabled={confirming || canceling}
         />
-      </Content>
-      <Action>
+      </DialogBody>
+      <DialogFooter>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {options.cancelText || t('cancel')}
         </Button>
@@ -159,8 +157,8 @@ function ImageCutContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

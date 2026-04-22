@@ -1,6 +1,6 @@
-import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
 import Button from '@/components_next/button';
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
 import Input from '@/components_next/input';
 import { t } from '@/i18n';
 import { reloadUser, useUser } from '@/global_states/server';
@@ -10,16 +10,7 @@ import disable2FA from '@/server/api/disable_2fa';
 import enable2FA from '@/server/api/enable_2fa';
 import sleep from '#/utils/sleep';
 import Qrcode from './qrcode';
-import { ZIndex } from '../constants';
 import useOpen from './use_open';
-
-const maskProps: {
-  style: CSSProperties;
-} = {
-  style: {
-    zIndex: ZIndex.DIALOG,
-  },
-};
 
 function TwoFADialog() {
   const { open, onClose } = useOpen();
@@ -54,10 +45,12 @@ function TwoFADialog() {
   };
 
   return (
-    <Dialog open={open} maskProps={maskProps}>
-      <Container>
-        <Title>{user.twoFAEnabled ? t('disable_2fa') : t('enable_2fa')}</Title>
-        <Content>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent showClose={false} aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{user.twoFAEnabled ? t('disable_2fa') : t('enable_2fa')}</DialogTitle>
+        </DialogHeader>
+        <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {user.twoFAEnabled ? null : <Qrcode onClose={onClose} />}
           <Input
             label={t('2fa_token')}
@@ -65,8 +58,8 @@ function TwoFADialog() {
             onChange={(event) => setTwoFAToken(event.target.value)}
             autoFocus
           />
-        </Content>
-        <Action>
+        </DialogBody>
+        <DialogFooter>
           <Button onClick={onClose} disabled={loading}>
             {t('cancel')}
           </Button>
@@ -78,8 +71,8 @@ function TwoFADialog() {
           >
             {t('confirm')}
           </Button>
-        </Action>
-      </Container>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }

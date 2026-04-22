@@ -1,13 +1,11 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
 import Button from '@/components_next/button';
 import Input from '@/components_next/input';
-import { CSSProperties, ChangeEventHandler, useState } from 'react';
+import { ChangeEventHandler, useState } from 'react';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { Input as InputShape } from './constants';
 import useEvent from '../use_event';
-
-const contentStyle: CSSProperties = { overflow: 'hidden' };
 
 function InputContent({
   onClose,
@@ -47,9 +45,13 @@ function InputContent({
   };
 
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      <Content style={contentStyle}>
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      <DialogBody>
         <Input
           label={options.label}
           value={text}
@@ -64,8 +66,8 @@ function InputContent({
             }
           }}
         />
-      </Content>
-      <Action>
+      </DialogBody>
+      <DialogFooter>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {options.cancelText || t('cancel')}
         </Button>
@@ -77,8 +79,8 @@ function InputContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

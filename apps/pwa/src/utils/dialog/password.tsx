@@ -1,8 +1,7 @@
-import { Container, Content, Action } from '@/components/dialog';
+import { DialogBody, DialogFooter } from '@/components_next';
 import Button from '@/components_next/button';
 import Input from '@/components_next/input';
 import { ChangeEventHandler, useState } from 'react';
-import styled from 'styled-components';
 import { t } from '@/i18n';
 import { PASSWORD_MAX_LENGTH } from '#/constants/user';
 import DialogBase from './dialog_base';
@@ -10,15 +9,6 @@ import { Password as PasswordShape } from './constants';
 import useEvent from '../use_event';
 import notice from '../notice';
 
-const StyledContent = styled(Content)`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-
-  > .action {
-    flex-shrink: 0;
-  }
-`;
 
 function PasswordContent({
   onClose,
@@ -67,8 +57,8 @@ function PasswordContent({
   };
 
   return (
-    <Container>
-      <StyledContent>
+    <>
+      <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         <Input
           label={t('new_password')}
           value={password}
@@ -84,8 +74,8 @@ function PasswordContent({
           type="password"
           maxLength={PASSWORD_MAX_LENGTH}
         />
-      </StyledContent>
-      <Action>
+      </DialogBody>
+      <DialogFooter>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {options.cancelText || t('cancel')}
         </Button>
@@ -97,8 +87,8 @@ function PasswordContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

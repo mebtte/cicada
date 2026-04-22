@@ -13,5 +13,18 @@ export type { SelectProps, MultiSelectProps, SelectOption, SelectSize } from './
 export { Icon, IconList, IconPlayQueue } from './icon';
 export type { IconProps } from './icon';
 
+export {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogClose,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogBody,
+  DialogFooter,
+} from './dialog';
+export type { DialogProps, DialogContentProps } from './dialog';
+
 export { ThemeProvider, useTheme, DEFAULT_THEME } from './theme';
 export type { Theme, ThemeProviderProps } from './theme';

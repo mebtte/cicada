@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"cicada/internal/version"
 	"fmt"
 	"os"
 
@@ -8,8 +9,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "cicada",
-	Short: "A multi-user music service for self-hosting.",
+	Use:     "cicada",
+	Short:   "A multi-user music service for self-hosting.",
+	Version: version.Get(),
 }
 
 func Execute() {
