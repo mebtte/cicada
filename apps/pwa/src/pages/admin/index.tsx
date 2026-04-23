@@ -8,6 +8,7 @@ import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import capitalize from '#/utils/capitalize';
 import UserManage from '@/pages/player/pages/user_manage';
+import LanguageSelect from '@/components/language_select';
 import MusicManagement from './music_management';
 
 const enum Tab {
@@ -31,11 +32,31 @@ const Header = styled.header`
 `;
 
 const HeaderTop = styled.div`
-  height: 56px;
-  padding: 0 28px;
+  min-height: 56px;
+  padding: 10px 28px;
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
+`;
+
+const HeaderInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+`;
+
+const HeaderActions = styled.div`
+  margin-left: auto;
+  width: 176px;
+  min-width: 176px;
+
+  @media (max-width: 640px) {
+    margin-left: 0;
+    width: 100%;
+    min-width: 0;
+  }
 `;
 
 const Brand = styled.div`
@@ -133,12 +154,17 @@ function AdminPage() {
     <Page>
       <Header>
         <HeaderTop>
-          <Brand>
-            <BrandDot />
-            <BrandName>{capitalize(t('cicada'))}</BrandName>
-          </Brand>
-          <Divider />
-          <SubTitle>{capitalize(t('admin_panel'))}</SubTitle>
+          <HeaderInfo>
+            <Brand>
+              <BrandDot />
+              <BrandName>{capitalize(t('cicada'))}</BrandName>
+            </Brand>
+            <Divider />
+            <SubTitle>{capitalize(t('admin_panel'))}</SubTitle>
+          </HeaderInfo>
+          <HeaderActions>
+            <LanguageSelect confirmBeforeReload size="sm" />
+          </HeaderActions>
         </HeaderTop>
         <TabBar>
           <TabItem
