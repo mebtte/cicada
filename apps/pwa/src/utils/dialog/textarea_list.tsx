@@ -1,7 +1,6 @@
-import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label } from '@/components_next';
 import Button from '@/components_next/button';
 import Textarea from '@/components/textarea';
-import Label from '@/components/label';
 import { useState } from 'react';
 import { MdDelete, MdUploadFile } from 'react-icons/md';
 import styled from 'styled-components';

@@ -1,7 +1,6 @@
-import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label } from '@/components_next';
 import Button from '@/components_next/button';
 import { useState } from 'react';
-import Label from '@/components/label';
 import FileSelect from '@/components/file_select';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';

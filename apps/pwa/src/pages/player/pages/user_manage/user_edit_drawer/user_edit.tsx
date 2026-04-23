@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Input from '@/components_next/input';
-import Label from '@/components/label';
+import { Label } from '@/components_next';
 import Textarea from '@/components/textarea';
 import Button from '@/components_next/button';
 import day from '#/utils/day';

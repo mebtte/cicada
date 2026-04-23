@@ -3,17 +3,17 @@ import { t } from '@/i18n';
 import styled from 'styled-components';
 import { useServer } from '@/global_states/server';
 import dialog from '@/utils/dialog';
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { Divider } from '@/components_next';
 import { FONT, ServerCardItem } from './server_card';
 
 const Style = styled.div`
   > .label {
     font-family: ${FONT};
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+    font-size: 15px;
     font-weight: 700;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    ${upperCaseFirstLetter}
+    letter-spacing: 0.3px;
+    text-transform: capitalize;
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     margin-bottom: 10px;
   }
 

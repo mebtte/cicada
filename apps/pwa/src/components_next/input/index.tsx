@@ -6,7 +6,7 @@ import {
 } from 'react';
 import styled, { css } from 'styled-components';
 import { CSS_VAR } from '../theme';
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import Label from '../label';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 
@@ -30,16 +30,6 @@ const Root = styled.div`
   flex-direction: column;
   gap: 6px;
   width: 100%;
-`;
-
-const Label = styled.label`
-  font-family: ${FONT};
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  color: rgb(66 66 66);
-  user-select: none;
-  ${upperCaseFirstLetter}
 `;
 
 const Wrapper = styled.div<{

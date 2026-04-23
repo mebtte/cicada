@@ -1,5 +1,4 @@
 import { CSSProperties, useCallback, useId, useMemo } from 'react';
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import ReactSelect, {
   type StylesConfig,
   type SingleValue,
@@ -9,6 +8,7 @@ import ReactSelect, {
 } from 'react-select';
 import AsyncReactSelect from 'react-select/async';
 import styled from 'styled-components';
+import Label from '../label';
 import { useTheme } from '../theme';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -47,16 +47,6 @@ const Root = styled.div`
   flex-direction: column;
   gap: 6px;
   width: 100%;
-`;
-
-const LabelEl = styled.label`
-  font-family: ${FONT};
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  color: rgb(66 66 66);
-  user-select: none;
-  ${upperCaseFirstLetter}
 `;
 
 const Bottom = styled.p<{ $error: boolean }>`
@@ -292,7 +282,7 @@ export function Select<T>({
 
   return (
     <Root className={className} style={style}>
-      {label && <LabelEl htmlFor={inputId}>{label}</LabelEl>}
+      {label && <Label htmlFor={inputId}>{label}</Label>}
       <ReactSelect<SelectOption<T>>
         inputId={inputId}
         options={options}
@@ -363,7 +353,7 @@ export function MultiSelect<T>({
 
   return (
     <Root className={className} style={style}>
-      {label && <LabelEl htmlFor={inputId}>{label}</LabelEl>}
+      {label && <Label htmlFor={inputId}>{label}</Label>}
       {loadOptions ? (
         <AsyncReactSelect<SelectOption<T>, true>
           {...sharedProps}

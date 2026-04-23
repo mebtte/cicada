@@ -18,7 +18,7 @@ import { ExceptionCode } from '#/constants/exception';
 import dialog from '@/utils/dialog';
 import Logo from '../logo';
 import UserList from './user_list';
-import { useServer } from '@/global_states/server';
+import { getSelectedServer, useServer } from '@/global_states/server';
 
 const Style = styled.div`
   display: flex;
@@ -66,6 +66,8 @@ const addProfile = async (token: string) => {
 function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const selectedServer = useServer(getSelectedServer);
+  const hasExistingUser = !!selectedServer?.users.length;
 
   const [username, setUserName] = useState('');
   const onUsernameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
@@ -143,7 +145,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         value={username}
         onChange={onUsernameChange}
         maxLength={USERNAME_MAX_LENGTH}
-        autoFocus
+        autoFocus={!hasExistingUser}
       />
       <Input
         label={t('password')}
@@ -168,7 +170,9 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       >
         {t('login')}
       </Button>
-      <Button onClick={toPrevious}>{t('previous_step')}</Button>
+      <Button variant={'ghost'} onClick={toPrevious}>
+        {t('previous_step')}
+      </Button>
     </Style>
   );
 }

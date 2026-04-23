@@ -7,7 +7,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter, Select, MultiSelect, SelectOption } from '@/components_next';
 import Button from '@/components_next/button';
 import Input from '@/components_next/input';
-import Label from '@/components/label';
+import { Label } from '@/components_next';
 import { t } from '@/i18n';
 import {
   AllowUpdateKey,
