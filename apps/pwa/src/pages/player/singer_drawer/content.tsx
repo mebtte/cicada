@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { CSSProperties } from 'react';
+import type { ComponentProps } from 'react';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
@@ -34,7 +34,9 @@ const DetailContainer = styled(Container)`
   }
 `;
 
-function Detail({ style, singer }: { style: CSSProperties; singer: Singer }) {
+type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
+
+function Detail({ style, singer }: { style: AnimatedStyle; singer: Singer }) {
   const hasCreateUser = !!singer.createUser.id && !!singer.createUser.nickname;
   return (
     <DetailContainer style={style}>

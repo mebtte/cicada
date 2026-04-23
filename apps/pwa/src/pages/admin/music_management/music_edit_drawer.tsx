@@ -54,6 +54,17 @@ interface Singer {
   aliases: string[];
 }
 
+interface MusicSinger {
+  id: string;
+  name: string;
+}
+
+interface RelatedMusic {
+  id: string;
+  name: string;
+  singers: MusicSinger[];
+}
+
 interface Lyric {
   id: number;
   lrc: string;
@@ -69,8 +80,8 @@ interface Music {
   singers: Singer[];
   heat: number;
   lyrics: Lyric[];
-  forkFromList: { id: string; name: string; singers: Singer[] }[];
-  forkList: { id: string; name: string; singers: Singer[] }[];
+  forkFromList: RelatedMusic[];
+  forkList: RelatedMusic[];
   year: number | null;
 }
 
@@ -86,11 +97,9 @@ const searchSinger = (search: string): Promise<SelectOption<Singer>[]> => {
   );
 };
 
-const formatMusicToOption = (music: {
-  id: string;
-  name: string;
-  singers: Singer[];
-}): SelectOption<{ id: string; name: string; singers: Singer[] }> => ({
+const formatMusicToOption = (
+  music: RelatedMusic,
+): SelectOption<RelatedMusic> => ({
   label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
   value: music,
 });

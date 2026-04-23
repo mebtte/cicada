@@ -77,7 +77,7 @@ const Overlay = styled(RadixDialog.Overlay)`
 
 // ─── Panel ────────────────────────────────────────────────────────────────────
 
-const Panel = styled(RadixDialog.Content)`
+const Panel = styled.div`
   position: fixed;
   z-index: 9000;
   display: flex;
@@ -195,21 +195,23 @@ export const DialogContent = forwardRef<
   return (
     <RadixDialog.Portal>
       <Overlay />
-      <Panel ref={ref} style={{ ...themeVars, ...style }} {...props}>
-        <Handle aria-hidden />
-        {showClose && (
-          <CloseButton aria-label="Close">
-            <svg
-              width={14} height={14} viewBox="0 0 24 24"
-              fill="none" stroke="currentColor"
-              strokeWidth={2.5} strokeLinecap="round"
-            >
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </CloseButton>
-        )}
-        <ScrollArea>{children}</ScrollArea>
-      </Panel>
+      <RadixDialog.Content ref={ref} {...props} asChild>
+        <Panel style={{ ...themeVars, ...style }}>
+          <Handle aria-hidden />
+          {showClose && (
+            <CloseButton aria-label="Close">
+              <svg
+                width={14} height={14} viewBox="0 0 24 24"
+                fill="none" stroke="currentColor"
+                strokeWidth={2.5} strokeLinecap="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </CloseButton>
+          )}
+          <ScrollArea>{children}</ScrollArea>
+        </Panel>
+      </RadixDialog.Content>
     </RadixDialog.Portal>
   );
 });
@@ -224,7 +226,7 @@ export const DialogHeader = styled.div<HTMLAttributes<HTMLDivElement>>`
 
 // ─── DialogTitle ──────────────────────────────────────────────────────────────
 
-export const DialogTitle = styled(RadixDialog.Title)`
+const DialogTitleText = styled.h2`
   margin: 0;
   font-family: ${FONT};
   font-size: 18px;
@@ -234,9 +236,19 @@ export const DialogTitle = styled(RadixDialog.Title)`
   line-height: 1.2;
 `;
 
+export const DialogTitle = forwardRef<
+  ElementRef<typeof RadixDialog.Title>,
+  ComponentPropsWithoutRef<typeof RadixDialog.Title>
+>(({ children, ...props }, ref) => (
+  <RadixDialog.Title ref={ref} {...props} asChild>
+    <DialogTitleText>{children}</DialogTitleText>
+  </RadixDialog.Title>
+));
+DialogTitle.displayName = 'DialogTitle';
+
 // ─── DialogDescription ───────────────────────────────────────────────────────
 
-export const DialogDescription = styled(RadixDialog.Description)`
+const DialogDescriptionText = styled.p`
   margin: 6px 0 0;
   font-family: ${FONT};
   font-size: 14px;
@@ -245,6 +257,16 @@ export const DialogDescription = styled(RadixDialog.Description)`
   color: rgb(140 140 140);
   line-height: 1.55;
 `;
+
+export const DialogDescription = forwardRef<
+  ElementRef<typeof RadixDialog.Description>,
+  ComponentPropsWithoutRef<typeof RadixDialog.Description>
+>(({ children, ...props }, ref) => (
+  <RadixDialog.Description ref={ref} {...props} asChild>
+    <DialogDescriptionText>{children}</DialogDescriptionText>
+  </RadixDialog.Description>
+));
+DialogDescription.displayName = 'DialogDescription';
 
 // ─── DialogBody ───────────────────────────────────────────────────────────────
 // Optional wrapper for the main content area below DialogHeader.

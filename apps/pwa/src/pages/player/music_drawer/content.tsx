@@ -1,4 +1,4 @@
-import { CSSProperties } from 'react';
+import type { ComponentProps } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
@@ -36,7 +36,9 @@ const DetailBox = styled(Container)`
   }
 `;
 
-function Detail({ style, music }: { style: CSSProperties; music: MusicDetail }) {
+type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
+
+function Detail({ style, music }: { style: AnimatedStyle; music: MusicDetail }) {
   return (
     <DetailBox style={style}>
       <div className="scrollable">

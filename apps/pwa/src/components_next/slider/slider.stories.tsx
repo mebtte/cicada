@@ -92,16 +92,19 @@ export const Disabled: Story = {
 
 export const Interactive: Story = {
   name: 'Interactive',
+  args: { value: 0.4 },
   render: () => <Controlled initialValue={0.4} />,
 };
 
 export const InteractiveWithBuffer: Story = {
   name: 'Interactive with Buffer',
+  args: { value: 0.25, secondValue: 0.6 },
   render: () => <Controlled initialValue={0.25} secondValue={0.6} />,
 };
 
 export const AllEdges: Story = {
   name: 'All Edges',
+  args: { value: 0.6 },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28, width: 300 }}>
       {(['rounded', 'square'] as const).map((edge) => (
@@ -118,6 +121,7 @@ export const AllEdges: Story = {
 
 export const Scenarios: Story = {
   name: 'Scenarios',
+  args: { value: 0.75 },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28, width: 300 }}>
       <div>

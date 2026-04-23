@@ -93,6 +93,7 @@ export const NineUsers: Story = {
 
 export const AllCases: Story = {
   name: 'All cases (1/3/5/8/9 users)',
+  args: { ...BASE_PROPS, users: ALL_USERS.slice(0, 1) },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: 320 }}>
       {CASES.map((n) => (

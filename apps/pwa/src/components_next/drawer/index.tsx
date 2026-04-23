@@ -120,7 +120,7 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
   `,
 };
 
-const Panel = styled(RadixDialog.Content)<{ $side: DrawerSide }>`
+const Panel = styled.div<{ $side: DrawerSide }>`
   position: fixed;
   z-index: 9000;
   display: flex;
@@ -198,20 +198,22 @@ export const DrawerContent = forwardRef<
   return (
     <RadixDialog.Portal>
       <Overlay />
-      <Panel ref={ref} $side={side} style={{ ...themeVars, ...style }} {...props}>
-        {showClose && (
-          <CloseButton aria-label="Close">
-            <svg
-              width={14} height={14} viewBox="0 0 24 24"
-              fill="none" stroke="currentColor"
-              strokeWidth={2.5} strokeLinecap="round"
-            >
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </CloseButton>
-        )}
-        <ScrollArea>{children}</ScrollArea>
-      </Panel>
+      <RadixDialog.Content ref={ref} {...props} asChild>
+        <Panel $side={side} style={{ ...themeVars, ...style }}>
+          {showClose && (
+            <CloseButton aria-label="Close">
+              <svg
+                width={14} height={14} viewBox="0 0 24 24"
+                fill="none" stroke="currentColor"
+                strokeWidth={2.5} strokeLinecap="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </CloseButton>
+          )}
+          <ScrollArea>{children}</ScrollArea>
+        </Panel>
+      </RadixDialog.Content>
     </RadixDialog.Portal>
   );
 });
@@ -227,7 +229,7 @@ export const DrawerHeader = styled.div<HTMLAttributes<HTMLDivElement>>`
 
 // ─── DrawerTitle ──────────────────────────────────────────────────────────────
 
-export const DrawerTitle = styled(RadixDialog.Title)`
+const DrawerTitleText = styled.h2`
   margin: 0;
   font-family: ${FONT};
   font-size: 18px;
@@ -237,9 +239,19 @@ export const DrawerTitle = styled(RadixDialog.Title)`
   line-height: 1.2;
 `;
 
+export const DrawerTitle = forwardRef<
+  ElementRef<typeof RadixDialog.Title>,
+  ComponentPropsWithoutRef<typeof RadixDialog.Title>
+>(({ children, ...props }, ref) => (
+  <RadixDialog.Title ref={ref} {...props} asChild>
+    <DrawerTitleText>{children}</DrawerTitleText>
+  </RadixDialog.Title>
+));
+DrawerTitle.displayName = 'DrawerTitle';
+
 // ─── DrawerDescription ────────────────────────────────────────────────────────
 
-export const DrawerDescription = styled(RadixDialog.Description)`
+const DrawerDescriptionText = styled.p`
   margin: 6px 0 0;
   font-family: ${FONT};
   font-size: 14px;
@@ -248,6 +260,16 @@ export const DrawerDescription = styled(RadixDialog.Description)`
   color: rgb(140 140 140);
   line-height: 1.55;
 `;
+
+export const DrawerDescription = forwardRef<
+  ElementRef<typeof RadixDialog.Description>,
+  ComponentPropsWithoutRef<typeof RadixDialog.Description>
+>(({ children, ...props }, ref) => (
+  <RadixDialog.Description ref={ref} {...props} asChild>
+    <DrawerDescriptionText>{children}</DrawerDescriptionText>
+  </RadixDialog.Description>
+));
+DrawerDescription.displayName = 'DrawerDescription';
 
 // ─── DrawerBody ───────────────────────────────────────────────────────────────
 // Main scrollable content area.

@@ -43,6 +43,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Type-check PWA
+        run: npm run typecheck
+
       - name: Build PWA
         run: npm run build
 

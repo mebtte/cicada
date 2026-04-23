@@ -129,7 +129,7 @@ const StyledRoot = styled(Radix.Root)`
 export interface SliderProps
   extends Omit<
     ComponentPropsWithoutRef<typeof Radix.Root>,
-    'value' | 'onValueChange' | 'onValueCommit' | 'min' | 'max' | 'step'
+    'value' | 'onChange' | 'onValueChange' | 'onValueCommit' | 'min' | 'max' | 'step'
   > {
   value: number;
   max?: number;
