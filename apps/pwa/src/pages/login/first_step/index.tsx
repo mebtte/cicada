@@ -5,11 +5,11 @@ import Input from '@/components_next/input';
 import logger from '@/utils/logger';
 import Button from '@/components_next/button';
 import { t } from '@/i18n';
-import { CSSVariable } from '@/global_style';
 import Logo from '../logo';
 import Language from './language';
 import ServerList from './server_list';
 import { useServer } from '@/global_states/server';
+import { Divider } from '@/components_next';
 
 const Style = styled.div`
   display: flex;
@@ -17,16 +17,11 @@ const Style = styled.div`
   gap: 20px;
 
   -webkit-app-region: no-drag;
-
-  > .divider {
-    height: 1px;
-    background-color: ${CSSVariable.COLOR_BORDER};
-  }
 `;
 
 function FirstStep({
   toNext,
-  onManage,
+  onManage: _onManage,
 }: {
   toNext: () => void;
   onManage: () => void;
@@ -85,8 +80,8 @@ function FirstStep({
     <Style>
       <Logo />
       <Language disabled={loading} />
-      <div className="divider" />
-      <ServerList toNext={toNext} disabled={loading} onManage={onManage} />
+      <Divider />
+      <ServerList toNext={toNext} disabled={loading} />
       <Input
         label={t('origin')}
         type="url"

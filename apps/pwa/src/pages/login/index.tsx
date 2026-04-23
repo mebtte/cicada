@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import PageContainer from '@/components/page_container';
@@ -23,11 +23,32 @@ const AnimatedDiv = styled(animated.div)`
 function Login() {
   const [step, setStep] = useState(Step.FIRST);
   const [showManagePage, setShowManagePage] = useState(false);
+  const directionRef = useRef<1 | -1>(1);
+
+  const toNext = () => {
+    directionRef.current = 1;
+    setStep(Step.SECOND);
+  };
+
+  const toPrevious = () => {
+    directionRef.current = -1;
+    setStep(Step.FIRST);
+  };
 
   const transitions = useTransition(step, {
-    from: { opacity: 0, transform: 'translate(-150%, -50%)' },
+    from: {
+      opacity: 0,
+      transform: directionRef.current === 1
+        ? 'translate(50%, -50%)'
+        : 'translate(-150%, -50%)',
+    },
     enter: { opacity: 1, transform: 'translate(-50%, -50%)' },
-    leave: { opacity: 0, transform: 'translate(50%, -50%)' },
+    leave: {
+      opacity: 0,
+      transform: directionRef.current === 1
+        ? 'translate(-150%, -50%)'
+        : 'translate(50%, -50%)',
+    },
   });
   return (
     <Style>
@@ -37,7 +58,7 @@ function Login() {
             return (
               <AnimatedDiv style={style}>
                 <FirstStep
-                  toNext={() => setStep(Step.SECOND)}
+                  toNext={toNext}
                   onManage={() => setShowManagePage(true)}
                 />
               </AnimatedDiv>
@@ -46,7 +67,7 @@ function Login() {
           case Step.SECOND: {
             return (
               <AnimatedDiv style={style}>
-                <SecondStep toPrevious={() => setStep(Step.FIRST)} />
+                <SecondStep toPrevious={toPrevious} />
               </AnimatedDiv>
             );
           }

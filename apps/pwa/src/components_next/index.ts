@@ -41,3 +41,5 @@ export type { DrawerProps, DrawerContentProps, DrawerSide } from './drawer';
 
 export { ThemeProvider, useTheme, DEFAULT_THEME } from './theme';
 export type { Theme, ThemeProviderProps } from './theme';
+
+export { default as Divider } from './divider';

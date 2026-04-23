@@ -1,4 +1,5 @@
 import { CSSProperties, useCallback, useId, useMemo } from 'react';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import ReactSelect, {
   type StylesConfig,
   type SingleValue,
@@ -55,6 +56,7 @@ const LabelEl = styled.label`
   letter-spacing: 0.2px;
   color: rgb(66 66 66);
   user-select: none;
+  ${upperCaseFirstLetter}
 `;
 
 const Bottom = styled.p<{ $error: boolean }>`

@@ -1,29 +1,7 @@
-import { Select } from '@/components_next';
+import { Divider, Select } from '@/components_next';
 import { getSelectedServer, useServer } from '@/global_states/server';
-import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import { useMemo } from 'react';
-import styled from 'styled-components';
-
-const Divider = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 5px;
-
-  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-
-  > .line {
-    flex: 1;
-    min-width: 0;
-    height: 1px;
-    background-color: ${CSSVariable.COLOR_BORDER};
-  }
-
-  > .or {
-    text-transform: uppercase;
-  }
-`;
 
 function UserList({ redirect }: { redirect: () => void }) {
   const userList = useMemo(
@@ -51,11 +29,7 @@ function UserList({ redirect }: { redirect: () => void }) {
             return window.setTimeout(redirect, 0);
           }}
         />
-        <Divider>
-          <div className="line" />
-          <span className="or">{t('or')}</span>
-          <div className="line" />
-        </Divider>
+        <Divider label={t('or')} />
       </>
     );
   }

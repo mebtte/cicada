@@ -6,6 +6,7 @@ import {
 } from 'react';
 import styled, { css } from 'styled-components';
 import { CSS_VAR } from '../theme';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 
@@ -38,6 +39,7 @@ const Label = styled.label`
   letter-spacing: 0.2px;
   color: rgb(66 66 66);
   user-select: none;
+  ${upperCaseFirstLetter}
 `;
 
 const Wrapper = styled.div<{
