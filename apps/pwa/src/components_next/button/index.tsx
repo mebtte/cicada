@@ -8,6 +8,7 @@ export type Size = 'sm' | 'md' | 'lg';
 const cn = (v: string) => `var(${v})`;
 const PRIMARY        = cn(CSS_VAR.colorPrimary);
 const PRIMARY_SHADOW = cn(CSS_VAR.colorPrimaryShadow);
+const DISABLED_SHADOW = 'rgb(214 214 214)';
 
 // ─── 阴影偏移量 ────────────────────────────────────────────────────────────────
 
@@ -46,7 +47,7 @@ const SIZE_MAP: Record<Size, ReturnType<typeof css>> = {
 //   悬停  — 整体略亮（filter brightness）
 //   按下  — translateY(offset) + box-shadow 归零
 //   释放  — 慢速弹回（150ms ease-out）
-//   禁用  — 去阴影 + 降不透明度
+//   禁用  — 保留更浅的硬阴影，避免视觉高度变矮
 
 const makeVariant = (
   face: string,
@@ -77,8 +78,9 @@ const makeVariant = (
   }
 
   &:disabled {
-    box-shadow: none;
-    opacity: 0.5;
+    box-shadow: 0 ${({ $offset }) => $offset}px 0 ${DISABLED_SHADOW};
+    filter: saturate(0.45);
+    opacity: 0.65;
   }
 `;
 

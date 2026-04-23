@@ -7,6 +7,9 @@ export type { InputProps, InputSize } from './input';
 export { default as Label } from './label';
 export type { LabelProps } from './label';
 
+export { default as Avatar } from './avatar';
+export type { AvatarProps } from './avatar';
+
 export { default as Slider } from './slider';
 export type { SliderProps, SliderEdge } from './slider';
 

@@ -23,7 +23,6 @@ import MusicbillSharedUserDrawer from './musicbill_shared_user_drawer';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
 import SingerDrawer from './singer_drawer';
-import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
 import PublicMusicbillDrawer from './public_musicbill_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
@@ -154,7 +153,6 @@ function Wrapper() {
       <SingerModifyRecordDrawer />
 
       {/* fixed z-index */}
-      <ProfileEditPopup />
       <TwoFADialog />
     </context.Provider>
   );

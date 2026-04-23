@@ -40,6 +40,10 @@ export default () => {
       title = t('user_management');
       break;
     }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.USER: {
+      title = t('profile');
+      break;
+    }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {
       title = t('setting');
       break;

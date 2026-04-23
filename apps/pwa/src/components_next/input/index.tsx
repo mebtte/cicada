@@ -22,6 +22,9 @@ const SIZE: Record<
 };
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
+const DISABLED_BACKGROUND = 'rgb(248 248 248)';
+const DISABLED_BORDER = 'rgb(226 226 226)';
+const DISABLED_SHADOW = 'rgb(214 214 214)';
 
 // ─── Styled ───────────────────────────────────────────────────────────────────
 
@@ -85,11 +88,12 @@ const Wrapper = styled.div<{
     `}
 
   /* 禁用 */
-  ${({ $disabled }) =>
+  ${({ $disabled, $size }) =>
     $disabled &&
     css`
-      opacity: 0.5;
-      box-shadow: none;
+      background: ${DISABLED_BACKGROUND};
+      border-color: ${DISABLED_BORDER};
+      box-shadow: 0 ${SIZE[$size].shadow}px 0 ${DISABLED_SHADOW};
       cursor: not-allowed;
     `}
 `;
@@ -126,6 +130,7 @@ const NativeInput = styled.input<{ $size: InputSize }>`
 
   &:disabled {
     cursor: not-allowed;
+    color: rgb(145 145 145);
   }
 `;
 

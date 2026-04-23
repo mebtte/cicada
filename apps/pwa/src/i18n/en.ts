@@ -3,6 +3,7 @@ export default {
   cicada_description: 'a multi-user music service for self-hosting',
   incompatible_tips:
     "your browser is incompatible with cicada, because it's lack of below features",
+  profile: 'profile',
   setting: 'setting',
   confirm: 'confirm',
   cancel: 'cancel',

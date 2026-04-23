@@ -9,6 +9,7 @@ export const PLAYER_PATH = {
   MUSIC: '/music/:id',
   MUSICBILL: '/musicbill/:id',
   SINGER: '/singer/:id',
+  USER: '/user',
   SETTING: '/setting',
   SHARED_MUSICBILL_INVITATION: '/shared_musicbill_invitation',
   SEARCH: '/search',

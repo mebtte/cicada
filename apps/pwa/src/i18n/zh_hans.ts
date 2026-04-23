@@ -6,6 +6,7 @@ const zhCN: {
   cicada: '知了',
   cicada_description: '一个自托管的多用户音乐服务',
   incompatible_tips: '你的浏览器无法兼容知了, 因为缺少以下功能',
+  profile: '个人资料',
   setting: '设置',
   confirm: '确认',
   cancel: '取消',

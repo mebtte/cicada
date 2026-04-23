@@ -1,9 +1,10 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { IconList, IconPlayQueue } from '.';
+import { IconEdit, IconList, IconPlayQueue } from '.';
 import type { IconProps } from '.';
 
 const ALL_ICONS: { name: string; Component: (p: Omit<IconProps, 'children'>) => React.ReactElement }[] = [
+  { name: 'IconEdit',      Component: IconEdit      },
   { name: 'IconList',      Component: IconList      },
   { name: 'IconPlayQueue', Component: IconPlayQueue },
 ];

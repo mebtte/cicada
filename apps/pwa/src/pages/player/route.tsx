@@ -3,6 +3,7 @@ import { PLAYER_PATH } from '@/constants/route';
 import Search from './pages/search';
 import Musicbill from './pages/musicbill';
 import Music from './pages/music';
+import User from './pages/user';
 import Setting from './pages/setting';
 import PublicMusicbillCollection from './pages/public_musicbill_collection';
 import Exploration from './pages/exploration';
@@ -19,6 +20,7 @@ function Wrapper() {
       <Route path={PLAYER_PATH.MUSIC} element={<Music />} />
       <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
       <Route path={PLAYER_PATH.SINGER} element={<Singer />} />
+      <Route path={PLAYER_PATH.USER} element={<User />} />
       <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
       <Route
         path={PLAYER_PATH.DOWNLOADING_MUSIC}
