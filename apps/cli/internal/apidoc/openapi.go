@@ -456,20 +456,6 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/music_list",
-			Summary:     "Get current user music list",
-			Description: "Return the list of music created by the current signed-in user.",
-			Tags:        []string{"Music"},
-			Auth:        true,
-			Parameters: paginationParams(
-				queryParam("keyword", "Filter by name.", false, strSchema("", "night")),
-			),
-			SuccessSchema:  musicListPageSchema("musicList"),
-			SuccessExample: musicListPageExample("musicList"),
-			ErrorCodes:     []string{"wrong_parameter", "server_error", "not_authorized"},
-		},
-		{
-			Method:      "GET",
 			Path:        "/api/singer",
 			Summary:     "Get singer details",
 			Description: "Return singer metadata, related music, and modify records.",

@@ -9,15 +9,12 @@ import Pagination from '@/components/pagination';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties, useContext } from 'react';
-import Button from '@/components_next/button';
-import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { TOOLBAR_HEIGHT, MINI_MODE_TOOLBAR_HEIGHT } from '../constants';
 import { PAGE_SIZE } from './constants';
 import useData from './use_data';
 import MusicWithLyric from './music_with_lyric';
-import CreateMusicGuide from '../create_music_guide';
 import Context from '../../../context';
 
 const Container = styled(animated.div)`
@@ -71,19 +68,6 @@ function Wrapper() {
       return (
         <CardContainer style={style}>
           <Empty description={t('no_suitable_music')} />
-          <Button
-            variant={'primary'}
-            onClick={() =>
-              navigate({
-                path: ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC,
-                query: {
-                  [Query.CREATE_MUSIC_DIALOG_OPEN]: 1,
-                },
-              })
-            }
-          >
-            {t('create_music_by_yourself')}
-          </Button>
         </CardContainer>
       );
     }
@@ -114,9 +98,6 @@ function Wrapper() {
               })
             }
           />
-        ) : null}
-        {page === Math.ceil(d.value!.total / PAGE_SIZE) ? (
-          <CreateMusicGuide />
         ) : null}
       </MusicContainer>
     );

@@ -36,10 +36,6 @@ export default () => {
       title = t('search');
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC: {
-      title = t('my_music');
-      break;
-    }
     case ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE: {
       title = t('user_management');
       break;

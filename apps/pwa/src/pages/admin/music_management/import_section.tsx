@@ -20,7 +20,7 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import {
   base64ToCover,
   getMusicNameFromFilename,
-} from '@/pages/player/pages/my_music/create_music_dialog/utils';
+} from '#/utils/music_file';
 import capitalize from '#/utils/capitalize';
 
 type ImportStatus = 'pending' | 'importing' | 'success' | 'failed';

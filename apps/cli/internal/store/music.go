@@ -263,42 +263,6 @@ func searchMusicRandom(pageSize int) (int, []Music, error) {
 	return total, musics, err
 }
 
-// SearchMusicByUser lists music created by a user (paginated, optional keyword).
-func SearchMusicByUser(userID, keyword string, page, pageSize int) (int, []Music, error) {
-	var (
-		total int
-		args  []any
-		where string
-	)
-	if keyword != "" {
-		pat := "%" + keyword + "%"
-		where = `WHERE id IN (
-			SELECT id FROM music WHERE createUserId=? AND (name LIKE ? OR aliases LIKE ?)
-			UNION
-			SELECT msr.musicId FROM music_singer_relation msr
-				JOIN singer s ON msr.singerId=s.id
-				JOIN music m ON msr.musicId=m.id
-			WHERE m.createUserId=? AND (s.name LIKE ? OR s.aliases LIKE ?)
-		)`
-		args = []any{userID, pat, pat, userID, pat, pat}
-	} else {
-		where = `WHERE createUserId=?`
-		args = []any{userID}
-	}
-	DB().QueryRow(`SELECT COUNT(1) FROM music `+where, args...).Scan(&total)
-	paginatedArgs := append(args, pageSize, (page-1)*pageSize)
-	rows, err := DB().Query(
-		`SELECT id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year FROM music `+where+` ORDER BY createTimestamp DESC LIMIT ? OFFSET ?`,
-		paginatedArgs...,
-	)
-	if err != nil {
-		return 0, nil, err
-	}
-	defer rows.Close()
-	musics, err := scanMusicRows(rows)
-	return total, musics, err
-}
-
 func scanMusicRows(rows *sql.Rows) ([]Music, error) {
 	var out []Music
 	for rows.Next() {

@@ -2,7 +2,6 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import {
   MdLooks,
   MdOutlineSettings,
-  MdOutlineMusicNote,
   MdHistory,
   MdOutlineDownload,
   MdAdminPanelSettings,
@@ -37,13 +36,6 @@ function Menu() {
         }
         label={t('exploration')}
         icon={<MdLooks />}
-      />
-      <MenuItem
-        style={itemStyle}
-        active={pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.MY_MUSIC}`}
-        onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.MY_MUSIC}`)}
-        label={t('my_music')}
-        icon={<MdOutlineMusicNote />}
       />
       <MenuItem
         style={itemStyle}

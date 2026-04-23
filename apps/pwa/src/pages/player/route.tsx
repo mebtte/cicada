@@ -4,7 +4,6 @@ import Search from './pages/search';
 import Musicbill from './pages/musicbill';
 import Music from './pages/music';
 import Setting from './pages/setting';
-import MyMusic from './pages/my_music';
 import PublicMusicbillCollection from './pages/public_musicbill_collection';
 import Exploration from './pages/exploration';
 import MusicPlayRecord from './pages/music_play_record';
@@ -17,7 +16,6 @@ function Wrapper() {
     <Routes>
       <Route path={PLAYER_PATH.SEARCH} element={<Search />} />
       <Route path={PLAYER_PATH.EXPLORATION} element={<Exploration />} />
-      <Route path={PLAYER_PATH.MY_MUSIC} element={<MyMusic />} />
       <Route path={PLAYER_PATH.MUSIC} element={<Music />} />
       <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
       <Route path={PLAYER_PATH.SINGER} element={<Singer />} />

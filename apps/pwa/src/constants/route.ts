@@ -6,7 +6,6 @@ export const ROOT_PATH = {
 
 export const PLAYER_PATH = {
   EXPLORATION: '/',
-  MY_MUSIC: '/my_music',
   MUSIC: '/music/:id',
   MUSICBILL: '/musicbill/:id',
   SINGER: '/singer/:id',
