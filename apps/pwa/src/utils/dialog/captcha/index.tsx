@@ -67,6 +67,9 @@ function CaptchaContent({
           reload();
         }
       })
+      .catch(() => {
+        reload();
+      })
       .finally(() => setConfirming(false));
   });
 

@@ -95,7 +95,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         try {
           const token = await loginWith2FA({ username, password, twoFAToken });
           await addProfile(token);
-          window.setTimeout(redirect, 0);
+          redirect();
         } catch (error) {
           logger.error(error, 'Failed to login with 2FA');
           notice.error(error.message);
@@ -116,7 +116,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
             captchaValue,
           });
           await addProfile(token);
-          window.setTimeout(redirect, 0);
+          redirect();
         } catch (error) {
           logger.error(error, 'Failed to login');
 
