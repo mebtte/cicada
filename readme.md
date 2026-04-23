@@ -9,9 +9,23 @@ A multi-user music service for self-hosting.
 
 todo: screenshot
 
+## Features
+
+todo
+
+## Demo
+
+todo
+
+## Deploy
+
+> If you use docker, see this [docs](./docs/docker_deployment/index.md).
+
+todo
+
 ## Development
 
-If you are interested in developing `cicada`, see the [docs](./docs/development/index.md).
+If you are interested in developing `cicada`, see the development [docs](./docs/development/index.md).
 
 ## License
 

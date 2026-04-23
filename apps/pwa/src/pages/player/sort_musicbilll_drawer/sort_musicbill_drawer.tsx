@@ -1,5 +1,5 @@
-import Drawer, { Title } from '@/components/drawer';
-import { CSSProperties, useCallback, useEffect, useState } from 'react';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components_next';
+import { useCallback, useEffect, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -18,20 +18,10 @@ import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { reloadUser } from '@/global_states/server';
-import { Musicbill as MusicbillType, ZIndex } from '../constants';
+import { Musicbill as MusicbillType } from '../constants';
 import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
 
-const maskProps: { style: CSSProperties } = {
-  style: {
-    zIndex: ZIndex.DRAWER,
-  },
-};
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    width: 250,
-  },
-};
 const Content = styled.div`
   height: 100%;
   padding-bottom: env(safe-area-inset-bottom, 0);
@@ -104,27 +94,26 @@ function MusicbillOrderDrawer({
   }, [musicbillList]);
 
   return (
-    <Drawer
-      open={open}
-      onClose={onCloseWrapper}
-      maskProps={maskProps}
-      bodyProps={bodyProps}
-    >
-      <Content>
-        <Title>{t('sort_musicbill')}</Title>
-        <DndContext sensors={sensors} onDragEnd={onDragEnd}>
-          <SortableContext
-            items={localMusicbillList.map((m) => m.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div>
-              {localMusicbillList.map((musicbill) => (
-                <Musicbill key={musicbill.id} musicbill={musicbill} />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-      </Content>
+    <Drawer open={open} onOpenChange={(v) => !v && onCloseWrapper()}>
+      <DrawerContent side="right" style={{ width: 250 }}>
+        <DrawerHeader>
+          <DrawerTitle>{t('sort_musicbill')}</DrawerTitle>
+        </DrawerHeader>
+        <Content>
+          <DndContext sensors={sensors} onDragEnd={onDragEnd}>
+            <SortableContext
+              items={localMusicbillList.map((m) => m.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div>
+                {localMusicbillList.map((musicbill) => (
+                  <Musicbill key={musicbill.id} musicbill={musicbill} />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </Content>
+      </DrawerContent>
     </Drawer>
   );
 }

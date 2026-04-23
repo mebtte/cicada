@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import {
   MdRefresh,
   MdPlaylistAdd,
@@ -29,7 +29,10 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
   const { status, musicList } = musicbill;
   return (
     <Style>
-      <IconButton
+      <Button
+        square
+        variant="plain"
+        size="sm"
         disabled={status !== RequestStatus.SUCCESS}
         onClick={() =>
           musicList.length
@@ -43,8 +46,11 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         }
       >
         <MdPlaylistAdd />
-      </IconButton>
-      <IconButton
+      </Button>
+      <Button
+        square
+        variant="plain"
+        size="sm"
         loading={status === RequestStatus.LOADING}
         disabled={status !== RequestStatus.SUCCESS}
         onClick={() =>
@@ -55,19 +61,25 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         }
       >
         <MdRefresh />
-      </IconButton>
-      <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
+      </Button>
+      <Button square variant="plain" size="sm" onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
         <MdOutlineEdit />
-      </IconButton>
+      </Button>
       {ENABLE_FILE_SYSTEM ? (
-        <IconButton
+        <Button
+          square
+          variant="plain"
+          size="sm"
           disabled={!musicbill.musicList.length}
           onClick={() => downloadMusicListByFileSystem(musicbill.musicList)}
         >
           <MdOutlineDownload />
-        </IconButton>
+        </Button>
       ) : null}
-      <IconButton
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={() =>
           playerEventemitter.emit(
             PlayerEventType.OPEN_MUSICBILL_SHARED_USER_DRAWER,
@@ -76,7 +88,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         }
       >
         <MdOutlinePeopleAlt />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

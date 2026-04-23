@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdHelpOutline } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { useUser } from '@/global_states/server';
@@ -26,7 +26,10 @@ function Toolbar() {
   const user = useUser()!;
   return (
     <Style>
-      <IconButton
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={() =>
           dialog.alert({
             content: (
@@ -49,7 +52,7 @@ function Toolbar() {
         }
       >
         <MdHelpOutline />
-      </IconButton>
+      </Button>
       <Filter />
     </Style>
   );

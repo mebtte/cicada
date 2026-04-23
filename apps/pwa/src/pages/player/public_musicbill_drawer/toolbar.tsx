@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdPlaylistAdd, MdStar, MdStarOutline } from 'react-icons/md';
 import notice from '@/utils/notice';
 import collectPublicMusicbill from '@/server/api/collect_public_musicbill';
@@ -34,7 +34,10 @@ function Toolbar({
 }) {
   return (
     <Style>
-      <IconButton
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={() =>
           musicbill.musicList.length
             ? playerEventemitter.emit(
@@ -45,8 +48,11 @@ function Toolbar({
         }
       >
         <MdPlaylistAdd />
-      </IconButton>
-      <IconButton
+      </Button>
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={() => {
           if (collected) {
             e.emit(EventType.UNCOLLECT_MUSICBILL, { id: musicbill.id });
@@ -84,7 +90,7 @@ function Toolbar({
         }}
       >
         {collected ? <MdStar /> : <MdStarOutline />}
-      </IconButton>
+      </Button>
     </Style>
   );
 }

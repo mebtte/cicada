@@ -1,10 +1,7 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label } from '@/components_next';
 import Button from '@/components_next/button';
 import Textarea from '@/components/textarea';
-import Label from '@/components/label';
-import { CSSProperties, useState } from 'react';
-import IconButton from '@/components/icon_button';
-import { ComponentSize } from '@/constants/style';
+import { useState } from 'react';
 import { MdDelete, MdUploadFile } from 'react-icons/md';
 import styled from 'styled-components';
 import { t } from '@/i18n';
@@ -13,18 +10,6 @@ import { TextareaList as TextareaListShape } from './constants';
 import useEvent from '../use_event';
 import selectFile from '../select_file';
 
-const bodyProps: { style: CSSProperties } = {
-  style: { width: 'min(750px, 80%)' },
-};
-const StyledContent = styled(Content)`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  > .action {
-    flex-shrink: 0;
-  }
-`;
 const Addon = styled.div`
   display: flex;
   align-items: center;
@@ -112,29 +97,37 @@ function TextareaListContent({
   };
 
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      <StyledContent>
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {values.map((value, index) => (
           <Label
             key={value.id}
             label={`${options.label} ${index + 1}`}
             addon={
               <Addon>
-                <IconButton
-                  size={ComponentSize.SMALL}
+                <Button
+                  square
+                  variant="plain"
+                  size="sm"
                   onClick={() => onOpenFile(value.id)}
                   disabled={confirming || canceling}
                 >
                   <MdUploadFile />
-                </IconButton>
-                <IconButton
-                  size={ComponentSize.SMALL}
+                </Button>
+                <Button
+                  square
+                  variant="plain"
+                  size="sm"
                   onClick={() => onDelete(value.id)}
                   disabled={confirming || canceling}
                 >
                   <MdDelete />
-                </IconButton>
+                </Button>
               </Addon>
             }
           >
@@ -150,7 +143,6 @@ function TextareaListContent({
         ))}
         {values.length >= options.max! ? null : (
           <Button
-            className="action"
             onClick={() =>
               setValues((vs) => [
                 ...vs,
@@ -165,8 +157,8 @@ function TextareaListContent({
             {t('add')} {options.label}
           </Button>
         )}
-      </StyledContent>
-      <Action>
+      </DialogBody>
+      <DialogFooter>
         <Button onClick={onCancel} loading={canceling} disabled={confirming}>
           {options.cancelText || t('cancel')}
         </Button>
@@ -178,8 +170,8 @@ function TextareaListContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 
@@ -191,7 +183,7 @@ function Wrapper({
   options: TextareaListShape;
 }) {
   return (
-    <DialogBase bodyProps={bodyProps} onDestroy={onDestroy} options={options}>
+    <DialogBase onDestroy={onDestroy} options={options}>
       {({ onClose }) => (
         <TextareaListContent onClose={onClose} options={options} />
       )}

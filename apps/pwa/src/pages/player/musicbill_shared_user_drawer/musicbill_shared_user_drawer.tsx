@@ -1,4 +1,4 @@
-import Drawer from '@/components/drawer';
+import { Drawer, DrawerContent } from '@/components_next';
 import { CSSProperties } from 'react';
 import styled from 'styled-components';
 import useNavigate from '@/utils/use_navigate';
@@ -18,13 +18,7 @@ import User from './user';
 import { Musicbill } from '../constants';
 import e, { EventType } from '../eventemitter';
 import { quitSharedMusicbill } from '../pages/musicbill/utils';
-import useDynamicZIndex from '../use_dynamic_z_index';
 
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    width: 300,
-  },
-};
 const Content = styled.div`
   height: 100%;
 
@@ -55,96 +49,87 @@ function ShareDrawer({
   onClose: () => void;
   musicbill: Musicbill;
 }) {
-  const zIndex = useDynamicZIndex(EventType.OPEN_MUSICBILL_SHARED_USER_DRAWER);
-
   const navigate = useNavigate();
   const user = useUser()!;
 
   const owned = musicbill.owner.id === user.id;
   return (
-    <Drawer
-      maskProps={{
-        style: {
-          zIndex,
-        },
-      }}
-      bodyProps={bodyProps}
-      open={open}
-      onClose={onClose}
-    >
-      <Content>
-        <Title>{t('shared_user')}</Title>
-        <div>
-          <User
-            user={musicbill.owner}
-            owner
-            accepted
-            musicbillId={musicbill.id}
-          />
-          {musicbill.sharedUserList.map((u) => (
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent side="right" style={{ width: 300 }}>
+        <Content>
+          <Title>{t('shared_user')}</Title>
+          <div>
             <User
-              key={u.id}
-              user={u}
-              accepted={u.accepted}
-              deletable={owned}
+              user={musicbill.owner}
+              owner
+              accepted
               musicbillId={musicbill.id}
             />
-          ))}
-        </div>
-        <Button
-          variant={'primary'}
-          style={actionStyle}
-          onClick={() =>
-            dialog.input({
-              label: t('username'),
-              maxLength: USERNAME_MAX_LENGTH,
-              confirmVariant: 'primary',
-              confirmText: t('invite'),
-              onConfirm: async (username) => {
-                if (!username.length || username.length > USERNAME_MAX_LENGTH) {
-                  notice.error(t('username_is_invalid'));
-                  return false;
-                }
-
-                try {
-                  await addMusicbillSharedUser({
-                    musicbillId: musicbill.id,
-                    username,
-                  });
-                  notice.info(t('invitation_has_been_sent'));
-                  e.emit(EventType.RELOAD_MUSICBILL, {
-                    id: musicbill.id,
-                    silence: true,
-                  });
-                } catch (error) {
-                  logger.error(error, 'Fail to invite shared user');
-                  notice.error(error.message);
-                  return false;
-                }
-              },
-            })
-          }
-        >
-          {t('invite_user')}
-        </Button>
-        {owned ? null : (
+            {musicbill.sharedUserList.map((u) => (
+              <User
+                key={u.id}
+                user={u}
+                accepted={u.accepted}
+                deletable={owned}
+                musicbillId={musicbill.id}
+              />
+            ))}
+          </div>
           <Button
-            variant={'danger'}
+            variant={'primary'}
             style={actionStyle}
             onClick={() =>
-              quitSharedMusicbill({
-                musicbillId: musicbill.id,
-                afterQuitted: () =>
-                  navigate({
-                    path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
-                  }),
+              dialog.input({
+                label: t('username'),
+                maxLength: USERNAME_MAX_LENGTH,
+                confirmVariant: 'primary',
+                confirmText: t('invite'),
+                onConfirm: async (username) => {
+                  if (!username.length || username.length > USERNAME_MAX_LENGTH) {
+                    notice.error(t('username_is_invalid'));
+                    return false;
+                  }
+
+                  try {
+                    await addMusicbillSharedUser({
+                      musicbillId: musicbill.id,
+                      username,
+                    });
+                    notice.info(t('invitation_has_been_sent'));
+                    e.emit(EventType.RELOAD_MUSICBILL, {
+                      id: musicbill.id,
+                      silence: true,
+                    });
+                  } catch (error) {
+                    logger.error(error, 'Fail to invite shared user');
+                    notice.error(error.message);
+                    return false;
+                  }
+                },
               })
             }
           >
-            {t('leave_shared_musicbill_short')}
+            {t('invite_user')}
           </Button>
-        )}
-      </Content>
+          {owned ? null : (
+            <Button
+              variant={'danger'}
+              style={actionStyle}
+              onClick={() =>
+                quitSharedMusicbill({
+                  musicbillId: musicbill.id,
+                  afterQuitted: () =>
+                    navigate({
+                      path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION,
+                    }),
+                })
+              }
+            >
+              {t('leave_shared_musicbill_short')}
+            </Button>
+          )}
+        </Content>
+      </DrawerContent>
     </Drawer>
   );
 }

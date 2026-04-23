@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import Input from '@/components/input';
-import Label from '@/components/label';
+import Input from '@/components_next/input';
+import { Label } from '@/components_next';
 import Textarea from '@/components/textarea';
 import Button from '@/components_next/button';
 import day from '#/utils/day';
@@ -165,59 +165,47 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
   return (
     <Style>
       <Style>
-        <Label className="part" label={t('nickname')}>
-          <Input disabled defaultValue={user.nickname} />
-        </Label>
-        <Label className="part" label={t('join_time')}>
-          <Input
-            disabled
-            defaultValue={day(user.joinTimestamp).format('YYYY-MM-DD')}
-          />
-        </Label>
-        <Label className="part" label={t('username')}>
-          <Input
-            disabled={loading}
-            value={username}
-            onChange={onUsernameChange}
-            maxLength={USERNAME_MAX_LENGTH}
-          />
-        </Label>
-        <Label
+        <Input
           className="part"
-          label={`${t('maximum_amount_of_musicbill')}(${t(
-            'zero_means_unlimited',
-          )})`}
-        >
-          <Input
-            disabled={loading}
-            value={musicbillMaxAmount}
-            onChange={onMusicbillMacAmountChange}
-          />
-        </Label>
-        <Label
+          label={t('nickname')}
+          disabled
+          defaultValue={user.nickname}
+        />
+        <Input
           className="part"
-          label={`${t('maximum_amount_of_creating_music_per_day')}(${t(
-            'zero_means_unlimited',
-          )})`}
-        >
-          <Input
-            disabled={loading}
-            value={createMusicMaxAmountPerDay}
-            onChange={onCreateMusicMaxAmountPerDayChange}
-          />
-        </Label>
-        <Label
+          label={t('join_time')}
+          disabled
+          defaultValue={day(user.joinTimestamp).format('YYYY-MM-DD')}
+        />
+        <Input
           className="part"
-          label={`${t('music_play_record_indate')}(${t(
-            'zero_means_unlimited',
-          )})`}
-        >
-          <Input
-            disabled={loading}
-            value={musicPlayRecordIndate}
-            onChange={onMusicPlayRecordIndateChange}
-          />
-        </Label>
+          label={t('username')}
+          disabled={loading}
+          value={username}
+          onChange={onUsernameChange}
+          maxLength={USERNAME_MAX_LENGTH}
+        />
+        <Input
+          className="part"
+          label={`${t('maximum_amount_of_musicbill')}(${t('zero_means_unlimited')})`}
+          disabled={loading}
+          value={musicbillMaxAmount}
+          onChange={onMusicbillMacAmountChange}
+        />
+        <Input
+          className="part"
+          label={`${t('maximum_amount_of_creating_music_per_day')}(${t('zero_means_unlimited')})`}
+          disabled={loading}
+          value={createMusicMaxAmountPerDay}
+          onChange={onCreateMusicMaxAmountPerDayChange}
+        />
+        <Input
+          className="part"
+          label={`${t('music_play_record_indate')}(${t('zero_means_unlimited')})`}
+          disabled={loading}
+          value={musicPlayRecordIndate}
+          onChange={onMusicPlayRecordIndateChange}
+        />
         <Label label={t('remark')} className="part">
           <Textarea
             disabled={loading}

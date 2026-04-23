@@ -1,6 +1,5 @@
 import ErrorBoundary from '@/components/error_boundary';
 import { GlobalStyle } from '@/global_style';
-import { GlobalStyle as SelectGlobalStyle } from '@/components/select';
 import { ThemeProvider } from 'styled-components';
 import { ThemeProvider as CicadaThemeProvider } from '@/components_next/theme';
 import { HashRouter } from 'react-router-dom';
@@ -20,7 +19,6 @@ function Wrapper() {
             <Head />
             <App />
             <GlobalStyle />
-            <SelectGlobalStyle />
           </ThemeProvider>
         </CicadaThemeProvider>
       </HashRouter>

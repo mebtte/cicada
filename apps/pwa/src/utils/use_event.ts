@@ -3,16 +3,16 @@ import { useRef, useCallback } from 'react';
 function useEvent<Callback extends (...args: unknown[]) => unknown>(
   callback: Callback,
 ) {
-  const callbackRef = useRef<Callback>();
+  const callbackRef = useRef(callback);
   callbackRef.current = callback;
 
-  const memoCallback: Callback = useCallback(
-    // @ts-expect-error: known types
-    (...args) => callbackRef.current!(...args),
+  const memoCallback = useCallback(
+    (...args: Parameters<Callback>): ReturnType<Callback> =>
+      callbackRef.current(...args) as ReturnType<Callback>,
     [],
   );
 
-  return memoCallback;
+  return memoCallback as Callback;
 }
 
 export default useEvent;

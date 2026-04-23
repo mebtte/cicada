@@ -1,16 +1,15 @@
 import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
-import Input from '@/components/input';
-import Label from '@/components/label';
+import Input from '@/components_next/input';
 import logger from '@/utils/logger';
 import Button from '@/components_next/button';
 import { t } from '@/i18n';
-import { CSSVariable } from '@/global_style';
 import Logo from '../logo';
 import Language from './language';
 import ServerList from './server_list';
 import { useServer } from '@/global_states/server';
+import { Divider } from '@/components_next';
 
 const Style = styled.div`
   display: flex;
@@ -18,14 +17,15 @@ const Style = styled.div`
   gap: 20px;
 
   -webkit-app-region: no-drag;
-
-  > .divider {
-    height: 1px;
-    background-color: ${CSSVariable.COLOR_BORDER};
-  }
 `;
 
-function FirstStep({ toNext }: { toNext: () => void }) {
+function FirstStep({
+  toNext,
+  onManage: _onManage,
+}: {
+  toNext: () => void;
+  onManage: () => void;
+}) {
   const [loading, setLoading] = useState(false);
   const [origin, setOrigin] = useState(
     () => useServer.getState().selectedServerOrigin || window.location.origin,
@@ -80,18 +80,17 @@ function FirstStep({ toNext }: { toNext: () => void }) {
     <Style>
       <Logo />
       <Language disabled={loading} />
-      <div className="divider" />
+      <Divider />
       <ServerList toNext={toNext} disabled={loading} />
-      <Label label={t('origin')}>
-        <Input
-          type="url"
-          disabled={loading}
-          value={origin}
-          onChange={onOriginChange}
-          onKeyDown={onKeyDown}
-          autoFocus
-        />
-      </Label>
+      <Input
+        label={t('origin')}
+        type="url"
+        disabled={loading}
+        value={origin}
+        onChange={onOriginChange}
+        onKeyDown={onKeyDown}
+        autoFocus
+      />
       <Button
         variant={'primary'}
         onClick={onSaveOrigin}

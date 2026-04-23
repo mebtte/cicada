@@ -1,0 +1,65 @@
+name: Cicada
+options:
+  minimumXcodeGenVersion: 2.45.4
+  bundleIdPrefix: io.github.manyone.cicada
+  createIntermediateGroups: true
+  developmentLanguage: en
+settings:
+  base:
+    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 1
+    IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+targets:
+  Cicada:
+    type: application
+    supportedDestinations:
+      - iOS
+      - macOS
+    sources:
+      - path: Cicada
+    info:
+      path: Cicada/Info.plist
+      properties:
+        LSApplicationCategoryType: public.app-category.music
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: true
+        UIApplicationSupportsIndirectInputEvents: true
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    settings:
+      base:
+        PRODUCT_NAME: Cicada
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.manyone.cicada.apple
+        SWIFT_VERSION: 6.0
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SUPPORTS_MACCATALYST: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        ENABLE_PREVIEWS: YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
+        LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]: "$(inherited) @executable_path/../Frameworks"
+schemes:
+  Cicada:
+    build:
+      targets:
+        Cicada: all
+    run:
+      config: Debug
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+    profile:
+      config: Release

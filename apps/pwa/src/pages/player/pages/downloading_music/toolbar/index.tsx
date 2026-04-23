@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { TOOLBAR_HEIGHT } from '../constants';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdPlaylistRemove, MdOutlineRestartAlt } from 'react-icons/md';
 import { useContext, useMemo } from 'react';
 import context from '@/pages/player/context';
@@ -32,7 +32,10 @@ function Toolbar() {
   );
   return (
     <Style>
-      <IconButton
+      <Button
+        square
+        variant="plain"
+        size="sm"
         disabled={downloadingMusicList.length === 0}
         onClick={() =>
           dialog.confirm({
@@ -43,15 +46,18 @@ function Toolbar() {
         }
       >
         <MdPlaylistRemove />
-      </IconButton>
-      <IconButton
+      </Button>
+      <Button
+        square
+        variant="plain"
+        size="sm"
         disabled={!failed}
         onClick={() =>
           eventemitter.emit(EventType.DOWNLOAD_MUSIC_LIST_RETRY_FAILED, null)
         }
       >
         <MdOutlineRestartAlt />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

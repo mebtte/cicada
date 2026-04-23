@@ -64,7 +64,6 @@ func NewServer() *gin.Engine {
 	api.DELETE("/music", handler.DeleteMusic)
 	api.GET("/music/search", handler.SearchMusic)
 	api.GET("/music/search_by_lyric", handler.SearchMusicByLyric)
-	api.GET("/music_list", handler.GetMusicList)
 
 	// Singer
 	api.GET("/singer", handler.GetSinger)

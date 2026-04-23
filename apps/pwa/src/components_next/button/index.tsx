@@ -2,12 +2,13 @@ import { ButtonHTMLAttributes, ReactNode } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { CSS_VAR } from '../theme';
 
-export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'plain';
 export type Size = 'sm' | 'md' | 'lg';
 
 const cn = (v: string) => `var(${v})`;
 const PRIMARY        = cn(CSS_VAR.colorPrimary);
 const PRIMARY_SHADOW = cn(CSS_VAR.colorPrimaryShadow);
+const DISABLED_SHADOW = 'rgb(214 214 214)';
 
 // ─── 阴影偏移量 ────────────────────────────────────────────────────────────────
 
@@ -46,7 +47,7 @@ const SIZE_MAP: Record<Size, ReturnType<typeof css>> = {
 //   悬停  — 整体略亮（filter brightness）
 //   按下  — translateY(offset) + box-shadow 归零
 //   释放  — 慢速弹回（150ms ease-out）
-//   禁用  — 去阴影 + 降不透明度
+//   禁用  — 保留更浅的硬阴影，避免视觉高度变矮
 
 const makeVariant = (
   face: string,
@@ -77,6 +78,28 @@ const makeVariant = (
   }
 
   &:disabled {
+    box-shadow: 0 ${({ $offset }) => $offset}px 0 ${DISABLED_SHADOW};
+    filter: saturate(0.45);
+    opacity: 0.65;
+  }
+`;
+
+const plainVariant = css<{ $offset: number }>`
+  color: inherit;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  transition: background 120ms;
+
+  &:not(:disabled):hover {
+    background: rgb(0 0 0 / 0.06);
+  }
+
+  &:not(:disabled):active {
+    background: rgb(0 0 0 / 0.12);
+  }
+
+  &:disabled {
     box-shadow: none;
     opacity: 0.5;
   }
@@ -87,6 +110,7 @@ const VARIANT_MAP: Record<Variant, ReturnType<typeof css>> = {
   secondary: makeVariant('#ffffff', PRIMARY,        PRIMARY),
   ghost:     makeVariant('#ffffff', 'rgb(180 180 180)', 'rgb(88 88 88)'),
   danger:    makeVariant('rgb(242 80 66)', 'rgb(190 46 34)'),
+  plain:     plainVariant,
 };
 
 // ─── Loader ───────────────────────────────────────────────────────────────────
@@ -123,6 +147,7 @@ const StyledButton = styled.button<{
   $block: boolean;
   $loading: boolean;
   $offset: number;
+  $square: boolean;
 }>`
   position: relative;
   display: inline-flex;
@@ -159,6 +184,10 @@ const StyledButton = styled.button<{
   }
 
   ${({ $size }) => SIZE_MAP[$size]}
+  ${({ $square }) => $square && css`
+    aspect-ratio: 1;
+    padding: 0;
+  `}
   ${({ $variant, $offset }) => css`
     ${VARIANT_MAP[$variant]}
     --offset: ${$offset}px;
@@ -172,6 +201,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size;
   loading?: boolean;
   block?: boolean;
+  square?: boolean;
   icon?: ReactNode;
 }
 
@@ -180,6 +210,7 @@ function Button({
   size = 'md',
   loading = false,
   block = false,
+  square = false,
   disabled = false,
   icon,
   children,
@@ -192,6 +223,7 @@ function Button({
       $variant={variant}
       $size={size}
       $block={block}
+      $square={square}
       $loading={loading}
       $offset={offset}
       disabled={loading || disabled}

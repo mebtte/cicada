@@ -7,3 +7,4 @@ export type { IconProps } from './base';
 
 export { default as IconList }      from './icons/list';
 export { default as IconPlayQueue } from './icons/play-queue';
+export { default as IconEdit }      from './icons/edit';

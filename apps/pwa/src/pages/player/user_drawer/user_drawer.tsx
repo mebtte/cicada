@@ -1,6 +1,4 @@
-import Drawer from '@/components/drawer';
 import {
-  CSSProperties,
   UIEventHandler,
   useLayoutEffect,
   useRef,
@@ -14,8 +12,7 @@ import Spinner from '@/components/spinner';
 import TabList from '@/components/tab_list';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { EventType } from '../eventemitter';
-import useDynamicZIndex from '../use_dynamic_z_index';
+import { Drawer, DrawerContent } from '@/components_next';
 import useData from './use_data';
 import {
   MINI_INFO_HEIGHT,
@@ -39,11 +36,6 @@ const TAB_LIST: { label: string; tab: Tab }[] = Object.values(Tab).map(
     label: TAB_MAP_LABEL[tab],
   }),
 );
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    width: 'min(85%, 400px)',
-  },
-};
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
@@ -64,14 +56,11 @@ const Style = styled.div`
     }
   }
 `;
-const tabListStyle: CSSProperties = {
+const tabListStyle = {
   zIndex: 1,
-
-  position: 'sticky',
+  position: 'sticky' as const,
   top: MINI_INFO_HEIGHT,
-
   padding: '5px 20px',
-
   backdropFilter: 'blur(5px)',
   backgroundColor: 'rgb(255 255 255 / 0.5)',
 };
@@ -155,41 +144,35 @@ function Wrapper({
   onClose: () => void;
   id: string;
 }) {
-  const zIndex = useDynamicZIndex(EventType.OPEN_USER_DRAWER);
   const { data, reload } = useData(id);
 
   const transitions = useTransition(data, TRANSITION);
   return (
-    <Drawer
-      open={open}
-      onClose={onClose}
-      maskProps={{
-        style: { zIndex },
-      }}
-      bodyProps={bodyProps}
-    >
-      {transitions((style, d) => {
-        const { error, loading, userDetail } = d;
-        if (error) {
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent side="right" style={{ width: 'min(85%, 400px)' }} showClose={false}>
+        {transitions((style, d) => {
+          const { error, loading, userDetail } = d;
+          if (error) {
+            return (
+              <StatusContainer style={style}>
+                <ErrorCard errorMessage={error.message} retry={reload} />
+              </StatusContainer>
+            );
+          }
+          if (loading) {
+            return (
+              <StatusContainer style={style}>
+                <Spinner />
+              </StatusContainer>
+            );
+          }
           return (
-            <StatusContainer style={style}>
-              <ErrorCard errorMessage={error.message} retry={reload} />
-            </StatusContainer>
+            <Container style={style}>
+              <UserDetail user={userDetail!} />
+            </Container>
           );
-        }
-        if (loading) {
-          return (
-            <StatusContainer style={style}>
-              <Spinner />
-            </StatusContainer>
-          );
-        }
-        return (
-          <Container style={style}>
-            <UserDetail user={userDetail!} />
-          </Container>
-        );
-      })}
+        })}
+      </DrawerContent>
     </Drawer>
   );
 }

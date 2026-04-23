@@ -3,9 +3,8 @@ import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdMoreVert } from 'react-icons/md';
-import { ComponentSize } from '@/constants/style';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
@@ -116,15 +115,17 @@ function User({ user, width }: { user: UserType; width: string }) {
               : t('unknown')}
           </div>
         </div>
-        <IconButton
-          size={ComponentSize.SMALL}
+        <Button
+          square
+          variant="plain"
+          size="sm"
           onClick={(event) => {
             event.stopPropagation();
             return e.emit(EventType.OPEN_USER_EDIT_DRAWER, { user });
           }}
         >
           <MdMoreVert />
-        </IconButton>
+        </Button>
       </div>
     </Style>
   );

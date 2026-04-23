@@ -1,11 +1,12 @@
 import styled from 'styled-components';
-import Cover, { Shape } from '@/components/cover';
 import ellipsis from '@/style/ellipsis';
 import { CSSVariable } from '@/global_style';
 import { memo } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { useUser } from '@/global_states/server';
-import e, { EventType } from '../eventemitter';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Avatar from '@/components_next/avatar';
 
 const AVATAR_SIZE = 100;
 const Style = styled.div`
@@ -13,16 +14,6 @@ const Style = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 5px;
-
-  > .avatar {
-    cursor: pointer;
-    outline: 1px solid ${CSSVariable.COLOR_PRIMARY};
-    transition: 300ms;
-
-    &:hover {
-      outline-width: 3px;
-    }
-  }
 
   > .nickname {
     padding: 0 30px;
@@ -32,19 +23,21 @@ const Style = styled.div`
     ${ellipsis}
   }
 `;
-const openProfileEditPopup = () =>
-  e.emit(EventType.OPEN_PROFILE_EDIT_POPUP, null);
 
 function Profile() {
   const user = useUser()!;
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const profilePath = `${ROOT_PATH.PLAYER}${PLAYER_PATH.USER}`;
+
   return (
     <Style>
-      <Cover
+      <Avatar
         className="avatar"
         src={getResizedImage({ url: user.avatar, size: AVATAR_SIZE * 2 })}
         size={AVATAR_SIZE}
-        shape={Shape.CIRCLE}
-        onClick={openProfileEditPopup}
+        active={pathname === profilePath}
+        onClick={() => navigate(profilePath)}
       />
       <div className="nickname" title={user.nickname}>
         {user.nickname}

@@ -6,7 +6,7 @@ import { UtilZIndex } from '@/constants/style';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { Notice, TRANSITION_DURATION, NoticeType } from './constants';
 import e, { EventType } from './eventemitter';
-import IconButton from '../../components/icon_button';
+import Button from '@/components_next/button';
 
 const NOTICE_TYPE_MAP: Record<
   NoticeType,
@@ -119,9 +119,9 @@ function NoticeItem({ notice }: { notice: Notice }) {
       <div className="top">
         <div className="content">{content}</div>
         {closable ? (
-          <IconButton className="close" onClick={onClose} size={24}>
+          <Button className="close" square variant="plain" size="sm" onClick={onClose}>
             <MdClose />
-          </IconButton>
+          </Button>
         ) : null}
       </div>
       {duration === 0 ? null : (

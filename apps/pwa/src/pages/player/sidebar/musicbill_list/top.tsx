@@ -1,6 +1,6 @@
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import {
   MdOutlineAddBox,
   MdSort,
@@ -8,7 +8,6 @@ import {
   MdStarOutline,
   MdOutlinePeopleAlt,
 } from 'react-icons/md';
-import { ComponentSize } from '@/constants/style';
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
@@ -46,21 +45,27 @@ function Top() {
   return (
     <Style>
       <div className="label">{t('musicbill')}</div>
-      <IconButton
-        size={ComponentSize.SMALL}
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={reloadMusicbillList}
         loading={getMusicbillListStatus === RequestStatus.LOADING}
       >
         <MdRefresh />
-      </IconButton>
-      <IconButton
-        size={ComponentSize.SMALL}
+      </Button>
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={openCreateMusicbillDialog}
       >
         <MdOutlineAddBox />
-      </IconButton>
-      <IconButton
-        size={ComponentSize.SMALL}
+      </Button>
+      <Button
+        square
+        variant="plain"
+        size="sm"
         disabled={getMusicbillListStatus !== RequestStatus.SUCCESS}
         onClick={() => {
           if (musicbillList.length) {
@@ -70,23 +75,27 @@ function Top() {
         }}
       >
         <MdSort />
-      </IconButton>
-      <IconButton
-        size={ComponentSize.SMALL}
+      </Button>
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={() =>
           navigate(ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION)
         }
       >
         <MdStarOutline />
-      </IconButton>
-      <IconButton
-        size={ComponentSize.SMALL}
+      </Button>
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={() =>
           navigate(ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION)
         }
       >
         <MdOutlinePeopleAlt />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

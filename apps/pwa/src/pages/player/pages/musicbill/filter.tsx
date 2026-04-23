@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import { useEffect, useState } from 'react';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';

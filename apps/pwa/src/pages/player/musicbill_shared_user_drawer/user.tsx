@@ -7,7 +7,7 @@ import {
   MdOutlineForwardToInbox,
   MdClose,
 } from 'react-icons/md';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { CSSProperties } from 'react';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
@@ -21,9 +21,8 @@ import playerEventemitter, {
 } from '../eventemitter';
 
 const AVATAR_SIZE = 24;
-const ACTION_SIZE = 24;
 const statusStyle: CSSProperties = {
-  width: ACTION_SIZE,
+  width: 24,
   color: CSSVariable.TEXT_COLOR_SECONDARY,
 };
 const Style = styled.div`
@@ -103,8 +102,10 @@ function User({
           />
         )}
         {deletable ? (
-          <IconButton
-            size={ACTION_SIZE}
+          <Button
+            square
+            variant="plain"
+            size="sm"
             onClick={(event) => {
               event.stopPropagation();
               return dialog.confirm({
@@ -131,7 +132,7 @@ function User({
             }}
           >
             <MdClose style={removeStyle} />
-          </IconButton>
+          </Button>
         ) : null}
       </div>
     </Style>

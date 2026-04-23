@@ -14,6 +14,14 @@ import (
 
 func TestGetSinger(t *testing.T) {
 	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
 
 	dataDir := t.TempDir()
 	config.Set(config.Config{

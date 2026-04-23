@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdPlaylistAdd, MdOutlineEdit, MdCopyAll } from 'react-icons/md';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
@@ -37,7 +37,10 @@ function Toolbar({ singer }: { singer: Singer }) {
   return (
     <Style>
       <div className="left">
-        <IconButton
+        <Button
+          square
+          variant="plain"
+          size="sm"
           onClick={() =>
             singer.musicList.length
               ? playerEventemitter.emit(
@@ -50,8 +53,11 @@ function Toolbar({ singer }: { singer: Singer }) {
           }
         >
           <MdPlaylistAdd />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
+          square
+          variant="plain"
+          size="sm"
           onClick={() =>
             window.navigator.clipboard
               .writeText(singer.name)
@@ -63,12 +69,12 @@ function Toolbar({ singer }: { singer: Singer }) {
           }
         >
           <MdCopyAll />
-        </IconButton>
+        </Button>
       </div>
       {singer.editable ? (
-        <IconButton onClick={openEditMenu}>
+        <Button square variant="plain" size="sm" onClick={openEditMenu}>
           <MdOutlineEdit />
-        </IconButton>
+        </Button>
       ) : null}
     </Style>
   );

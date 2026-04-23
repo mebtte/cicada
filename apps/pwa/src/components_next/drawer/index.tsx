@@ -1,0 +1,309 @@
+/**
+ * Drawer — side panel with the same visual language as Dialog.
+ *
+ * API (shadcn/ui style):
+ *   <Drawer open={open} onOpenChange={setOpen}>
+ *     <DrawerTrigger asChild><Button>Open</Button></DrawerTrigger>
+ *     <DrawerContent side="right">
+ *       <DrawerHeader>
+ *         <DrawerTitle>Settings</DrawerTitle>
+ *         <DrawerDescription>Manage your preferences.</DrawerDescription>
+ *       </DrawerHeader>
+ *       <DrawerBody>…content…</DrawerBody>
+ *       <DrawerFooter>
+ *         <DrawerClose asChild><Button variant="secondary">Cancel</Button></DrawerClose>
+ *         <Button onClick={onSave}>Save</Button>
+ *       </DrawerFooter>
+ *     </DrawerContent>
+ *   </Drawer>
+ *
+ * Sides:
+ *   'right'  — slides in from the right (default)
+ *   'left'   — slides in from the left
+ *   'bottom' — slides up from the bottom (full-width sheet)
+ */
+
+import {
+  ComponentPropsWithoutRef,
+  CSSProperties,
+  ElementRef,
+  forwardRef,
+  HTMLAttributes,
+} from 'react';
+import * as RadixDialog from '@radix-ui/react-dialog';
+import styled, { css, keyframes } from 'styled-components';
+import { useTheme, CSS_VAR } from '../theme';
+
+// ─── Tokens ───────────────────────────────────────────────────────────────────
+
+const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export type DrawerSide = 'left' | 'right' | 'bottom';
+
+// ─── Animations ───────────────────────────────────────────────────────────────
+
+const overlayIn  = keyframes`from{opacity:0}to{opacity:1}`;
+const overlayOut = keyframes`from{opacity:1}to{opacity:0}`;
+
+const slideInRight  = keyframes`from{transform:translateX(100%)}to{transform:translateX(0)}`;
+const slideOutRight = keyframes`from{transform:translateX(0)}to{transform:translateX(100%)}`;
+
+const slideInLeft   = keyframes`from{transform:translateX(-100%)}to{transform:translateX(0)}`;
+const slideOutLeft  = keyframes`from{transform:translateX(0)}to{transform:translateX(-100%)}`;
+
+const slideInBottom  = keyframes`from{transform:translateY(100%)}to{transform:translateY(0)}`;
+const slideOutBottom = keyframes`from{transform:translateY(0)}to{transform:translateY(100%)}`;
+
+// ─── Overlay ──────────────────────────────────────────────────────────────────
+
+const Overlay = styled(RadixDialog.Overlay)`
+  position: fixed;
+  inset: 0;
+  z-index: 8999;
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  -webkit-app-region: no-drag;
+
+  &[data-state='open']   { animation: ${overlayIn}  200ms ease; }
+  &[data-state='closed'] { animation: ${overlayOut} 180ms ease; }
+`;
+
+// ─── Panel ────────────────────────────────────────────────────────────────────
+//
+// Hard shadow mirrors the design system's Duolingo-style depth:
+//   right  drawer → shadow extends left  (−x)
+//   left   drawer → shadow extends right (+x)
+//   bottom drawer → shadow extends up    (−y)
+
+const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
+  right: css`
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(360px, calc(100vw - 20px));
+    border-radius: 20px 0 0 20px;
+    border: 2px solid rgb(220 220 220);
+    border-right: none;
+    box-shadow: -5px 0 0 rgb(185 185 185);
+
+    &[data-state='open']   { animation: ${slideInRight}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
+    &[data-state='closed'] { animation: ${slideOutRight} 220ms ease-in; }
+  `,
+  left: css`
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: min(360px, calc(100vw - 20px));
+    border-radius: 0 20px 20px 0;
+    border: 2px solid rgb(220 220 220);
+    border-left: none;
+    box-shadow: 5px 0 0 rgb(185 185 185);
+
+    &[data-state='open']   { animation: ${slideInLeft}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
+    &[data-state='closed'] { animation: ${slideOutLeft} 220ms ease-in; }
+  `,
+  bottom: css`
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 92dvh;
+    border-radius: 20px 20px 0 0;
+    border: 2px solid rgb(220 220 220);
+    border-bottom: none;
+    box-shadow: 0 -5px 0 rgb(185 185 185);
+
+    &[data-state='open']   { animation: ${slideInBottom}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
+    &[data-state='closed'] { animation: ${slideOutBottom} 220ms ease-in; }
+  `,
+};
+
+const Panel = styled.div<{ $side: DrawerSide }>`
+  position: fixed;
+  z-index: 9000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  outline: none;
+  -webkit-app-region: no-drag;
+
+  ${({ $side }) => SIDE_MAP[$side]}
+`;
+
+// ─── Close button ─────────────────────────────────────────────────────────────
+
+const CloseButton = styled(RadixDialog.Close)`
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgb(185 185 185);
+  cursor: pointer;
+  transition: color 120ms, background 120ms;
+  flex-shrink: 0;
+
+  &:hover        { color: rgb(60 60 60); background: rgb(240 240 240); }
+  &:focus-visible {
+    outline: 3px solid currentColor;
+    outline-offset: 2px;
+  }
+`;
+
+// ─── Scroll area ──────────────────────────────────────────────────────────────
+// Wraps all slotted children so they can scroll while the close button stays fixed.
+
+const ScrollArea = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  &::-webkit-scrollbar       { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgb(210 210 210); border-radius: 4px; }
+`;
+
+// ─── DrawerContent ────────────────────────────────────────────────────────────
+
+export interface DrawerContentProps
+  extends ComponentPropsWithoutRef<typeof RadixDialog.Content> {
+  /** Which edge the drawer slides from. Default: 'right'. */
+  side?: DrawerSide;
+  /** Show the × close button. Default: true. */
+  showClose?: boolean;
+}
+
+export const DrawerContent = forwardRef<
+  ElementRef<typeof RadixDialog.Content>,
+  DrawerContentProps
+>(({ children, side = 'right', showClose = true, style, ...props }, ref) => {
+  const theme = useTheme();
+  const themeVars = {
+    [CSS_VAR.colorPrimary]: theme.colorPrimary,
+    [CSS_VAR.colorPrimaryShadow]: `color-mix(in srgb, ${theme.colorPrimary} 70%, #000)`,
+  } as CSSProperties;
+
+  return (
+    <RadixDialog.Portal>
+      <Overlay />
+      <RadixDialog.Content ref={ref} {...props} asChild>
+        <Panel $side={side} style={{ ...themeVars, ...style }}>
+          {showClose && (
+            <CloseButton aria-label="Close">
+              <svg
+                width={14} height={14} viewBox="0 0 24 24"
+                fill="none" stroke="currentColor"
+                strokeWidth={2.5} strokeLinecap="round"
+              >
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </CloseButton>
+          )}
+          <ScrollArea>{children}</ScrollArea>
+        </Panel>
+      </RadixDialog.Content>
+    </RadixDialog.Portal>
+  );
+});
+DrawerContent.displayName = 'DrawerContent';
+
+// ─── DrawerHeader ─────────────────────────────────────────────────────────────
+// Right padding leaves room for the × close button.
+
+export const DrawerHeader = styled.div<HTMLAttributes<HTMLDivElement>>`
+  padding: 20px 50px 0 24px;
+  flex-shrink: 0;
+`;
+
+// ─── DrawerTitle ──────────────────────────────────────────────────────────────
+
+const DrawerTitleText = styled.h2`
+  margin: 0;
+  font-family: ${FONT};
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  color: rgb(50 50 50);
+  line-height: 1.2;
+`;
+
+export const DrawerTitle = forwardRef<
+  ElementRef<typeof RadixDialog.Title>,
+  ComponentPropsWithoutRef<typeof RadixDialog.Title>
+>(({ children, ...props }, ref) => (
+  <RadixDialog.Title ref={ref} {...props} asChild>
+    <DrawerTitleText>{children}</DrawerTitleText>
+  </RadixDialog.Title>
+));
+DrawerTitle.displayName = 'DrawerTitle';
+
+// ─── DrawerDescription ────────────────────────────────────────────────────────
+
+const DrawerDescriptionText = styled.p`
+  margin: 6px 0 0;
+  font-family: ${FONT};
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  color: rgb(140 140 140);
+  line-height: 1.55;
+`;
+
+export const DrawerDescription = forwardRef<
+  ElementRef<typeof RadixDialog.Description>,
+  ComponentPropsWithoutRef<typeof RadixDialog.Description>
+>(({ children, ...props }, ref) => (
+  <RadixDialog.Description ref={ref} {...props} asChild>
+    <DrawerDescriptionText>{children}</DrawerDescriptionText>
+  </RadixDialog.Description>
+));
+DrawerDescription.displayName = 'DrawerDescription';
+
+// ─── DrawerBody ───────────────────────────────────────────────────────────────
+// Main scrollable content area.
+
+export const DrawerBody = styled.div<
+  HTMLAttributes<HTMLDivElement> & { style?: CSSProperties }
+>`
+  padding: 20px 24px 0;
+  font-family: ${FONT};
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(100 100 100);
+  line-height: 1.55;
+  letter-spacing: 0.1px;
+`;
+
+// ─── DrawerFooter ─────────────────────────────────────────────────────────────
+// Sticky bottom toolbar — use `position: sticky; bottom: 0` via style if
+// needed, or let it flow naturally with the content.
+
+export const DrawerFooter = styled.div<HTMLAttributes<HTMLDivElement>>`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 24px;
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+  flex-shrink: 0;
+`;
+
+// ─── Re-exports ───────────────────────────────────────────────────────────────
+
+export const Drawer        = RadixDialog.Root;
+export const DrawerTrigger = RadixDialog.Trigger;
+export const DrawerClose   = RadixDialog.Close;
+export type  DrawerProps   = ComponentPropsWithoutRef<typeof RadixDialog.Root>;

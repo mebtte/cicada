@@ -1,125 +1,20 @@
-import { useTransition, animated } from 'react-spring';
-import styled from 'styled-components';
-import ErrorCard from '@/components/error_card';
-import Drawer from '@/components/drawer';
-import { CSSProperties } from 'react';
-import absoluteFullSize from '@/style/absolute_full_size';
-import { flexCenter } from '@/style/flexbox';
-import Spinner from '@/components/spinner';
-import Cover, { Shape } from '@/components/cover';
-import autoScrollbar from '@/style/auto_scrollbar';
-import useData from './use_data';
-import { MusicDetail } from './constants';
-import CreateUser from '../components/create_user';
-import SingerList from './singer_list';
-import Toolbar from './toolbar';
-import Lyric from './lyric';
-import SubMusicList from './sub_music_list';
-import Info from './info';
-import { t } from '@/i18n';
-
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    width: 'min(350px, 85%)',
-  },
-};
-const Container = styled(animated.div)`
-  ${absoluteFullSize}
-`;
-const StatusBox = styled(Container)`
-  ${flexCenter}
-`;
-const DetailBox = styled(Container)`
-  > .scrollable {
-    ${absoluteFullSize}
-
-    overflow: auto;
-    ${autoScrollbar}
-
-    > .first-screen {
-      min-height: 100dvb;
-    }
-  }
-`;
-
-function Detail({ style, music }: { style: unknown; music: MusicDetail }) {
-  return (
-    // @ts-expect-error: style is known
-    <DetailBox style={style}>
-      <div className="scrollable">
-        <div className="first-screen">
-          <Cover src={music.cover} size="100%" shape={Shape.SQUARE} />
-          <Info music={music} />
-          <SingerList singerList={music.singers} />
-          {music.forkFromList.length ? (
-            <SubMusicList
-              label={t('fork_from_these_musics')}
-              musicList={music.forkFromList}
-            />
-          ) : null}
-          {music.forkList.length ? (
-            <SubMusicList
-              label={t('forked_by_these_musics')}
-              musicList={music.forkList}
-            />
-          ) : null}
-          <Lyric music={music} />
-        </div>
-        <CreateUser
-          userId={music.createUser.id}
-          nickname={music.createUser.nickname}
-          createTime={music.createTime}
-        />
-        <Toolbar music={music} />
-      </div>
-
-    </DetailBox>
-  );
-}
+import { Drawer, DrawerContent } from '@/components_next';
+import MusicContent from './content';
 
 function MusicDrawer({
-  zIndex,
   id,
   open,
   onClose,
 }: {
-  zIndex: number;
   id: string;
   open: boolean;
   onClose: () => void;
 }) {
-  const { data, reload } = useData(id);
-  const transitions = useTransition(data, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
   return (
-    <Drawer
-      open={open}
-      onClose={onClose}
-      maskProps={{ style: { zIndex } }}
-      bodyProps={bodyProps}
-    >
-      {transitions((style, d) => {
-        if (d.error) {
-          return (
-            <StatusBox style={style}>
-              <ErrorCard errorMessage={d.error.message} retry={reload} />
-            </StatusBox>
-          );
-        }
-
-        if (d.loading) {
-          return (
-            <StatusBox style={style}>
-              <Spinner />
-            </StatusBox>
-          );
-        }
-
-        return <Detail style={style} music={d.music!} />;
-      })}
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent side="right" style={{ width: 'min(350px, 85%)' }}>
+        <MusicContent id={id} />
+      </DrawerContent>
     </Drawer>
   );
 }

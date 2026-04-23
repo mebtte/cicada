@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import {
   MdOutlineQueueMusic,
   MdPause,
@@ -61,7 +61,10 @@ function Operation({
     <Style>
       {miniMode ? null : (
         <>
-          <IconButton
+          <Button
+            square
+            variant="plain"
+            size="sm"
             onClick={() =>
               queueMusic
                 ? playerEventemitter.emit(
@@ -72,8 +75,11 @@ function Operation({
             }
           >
             <MdReadMore />
-          </IconButton>
-          <IconButton
+          </Button>
+          <Button
+            square
+            variant="plain"
+            size="sm"
             onClick={() =>
               queueMusic
                 ? playerEventemitter.emit(
@@ -84,8 +90,11 @@ function Operation({
             }
           >
             <MdOutlinePostAdd />
-          </IconButton>
-          <IconButton
+          </Button>
+          <Button
+            square
+            variant="plain"
+            size="sm"
             onClick={() =>
               queueMusic
                 ? playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, {
@@ -95,24 +104,24 @@ function Operation({
             }
           >
             <MdMoreHoriz />
-          </IconButton>
+          </Button>
           <div className="divider" />
         </>
       )}
-      <IconButton onClick={openPlaylistPlayqueueDrawer}>
+      <Button square variant="plain" size="sm" onClick={openPlaylistPlayqueueDrawer}>
         <MdOutlineQueueMusic />
-      </IconButton>
+      </Button>
       {miniMode ? null : (
-        <IconButton onClick={onPrevious}>
+        <Button square variant="plain" size="sm" onClick={onPrevious}>
           <MdSkipPrevious />
-        </IconButton>
+        </Button>
       )}
-      <IconButton onClick={paused ? onPlay : onPause} loading={loading}>
+      <Button square variant="plain" size="sm" onClick={paused ? onPlay : onPause} loading={loading}>
         {paused ? <MdPlayArrow /> : <MdPause />}
-      </IconButton>
-      <IconButton onClick={onNext}>
+      </Button>
+      <Button square variant="plain" size="sm" onClick={onNext}>
         <MdSkipNext />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

@@ -1,41 +1,43 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { IconList, IconPlayQueue } from '.';
+import { IconEdit, IconList, IconPlayQueue } from '.';
 import type { IconProps } from '.';
 
-// ── Gallery 数据：新增 icon 后在这里加一行 ─────────────────────────────────────
-const ALL_ICONS: { name: string; Component: (p: Omit<IconProps, 'children'>) => JSX.Element }[] = [
+const ALL_ICONS: { name: string; Component: (p: Omit<IconProps, 'children'>) => React.ReactElement }[] = [
+  { name: 'IconEdit',      Component: IconEdit      },
   { name: 'IconList',      Component: IconList      },
   { name: 'IconPlayQueue', Component: IconPlayQueue },
 ];
 
-// ── Meta ──────────────────────────────────────────────────────────────────────
-
 const meta = {
   title: 'Basic/Icon',
-  component: IconList,           // 用于 autodocs 生成 props 表格
+  component: IconList,
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
     docs: {
       description: {
         component:
-          '描边式 SVG 图标。每个 icon 是独立文件，支持 tree-shaking。\n\n' +
-          '**使用方式**\n```tsx\nimport { IconPlayQueue } from \'@/components_next/icon\';\n<IconPlayQueue size={24} />\n```\n\n' +
-          '**新增 icon**：在 `icons/` 目录新建文件，在 `index.ts` 加一行 export。',
+          'Stroke-based SVG icons. Each icon is an independent file — unused icons are tree-shaken out of the bundle. ' +
+          'Import named icons directly: `import { IconPlayQueue } from "@/components_next/icon"`. ' +
+          'To add a new icon, create a file under `icons/` and add one export line to `index.ts`.',
       },
     },
   },
   argTypes: {
     size: {
       control: { type: 'range', min: 12, max: 64, step: 2 },
+      description: 'Icon size in px',
       table: { defaultValue: { summary: '24' } },
     },
     strokeWidth: {
       control: { type: 'range', min: 1, max: 4, step: 0.5 },
+      description: 'Stroke width',
       table: { defaultValue: { summary: '2' } },
     },
     color: {
       control: 'color',
+      description: 'Icon color (maps to CSS currentColor)',
       table: { defaultValue: { summary: 'currentColor' } },
     },
   },
@@ -43,8 +45,6 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-// ── Gallery（文档首屏展示） ────────────────────────────────────────────────────
 
 export const Gallery: Story = {
   name: 'Gallery',
@@ -82,15 +82,12 @@ export const Gallery: Story = {
   ),
 };
 
-// ── Playground ────────────────────────────────────────────────────────────────
-
 export const Playground: Story = {
   args: { size: 24, strokeWidth: 2 },
 };
 
-// ── Sizes ─────────────────────────────────────────────────────────────────────
-
 export const Sizes: Story = {
+  name: 'Sizes',
   parameters: { controls: { disable: true } },
   render: () => (
     <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end' }}>
@@ -103,8 +100,6 @@ export const Sizes: Story = {
     </div>
   ),
 };
-
-// ── Stroke Weights ────────────────────────────────────────────────────────────
 
 export const StrokeWeights: Story = {
   name: 'Stroke Weights',

@@ -1,11 +1,31 @@
-import { useLocation } from 'react-router-dom';
+import { matchPath, useLocation } from 'react-router-dom';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 
 export default () => {
   const { pathname } = useLocation();
+  const musicbillMatch = matchPath(
+    `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL}`,
+    pathname,
+  );
+  const musicMatch = matchPath(
+    `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSIC}`,
+    pathname,
+  );
+  const singerMatch = matchPath(
+    `${ROOT_PATH.PLAYER}${PLAYER_PATH.SINGER}`,
+    pathname,
+  );
 
   let title: string;
+  if (musicMatch || musicbillMatch || singerMatch) {
+    if (musicMatch) {
+      title = t('music');
+      return title;
+    }
+    title = musicbillMatch ? t('musicbill') : t('singer');
+    return title;
+  }
   switch (pathname) {
     case ROOT_PATH.PLAYER:
     case ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION: {
@@ -16,12 +36,12 @@ export default () => {
       title = t('search');
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.MY_MUSIC: {
-      title = t('my_music');
-      break;
-    }
     case ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE: {
       title = t('user_management');
+      break;
+    }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.USER: {
+      title = t('profile');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {

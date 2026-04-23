@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import {
   MdUnfoldLess,
   MdOutlineQueueMusic,
@@ -42,7 +42,10 @@ function Operation({
 }) {
   return (
     <Style>
-      <IconButton
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={() =>
           playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER, {
             music: queueMusic,
@@ -50,8 +53,11 @@ function Operation({
         }
       >
         <MdOutlinePostAdd />
-      </IconButton>
-      <IconButton
+      </Button>
+      <Button
+        square
+        variant="plain"
+        size="sm"
         onClick={() =>
           playerEventemitter.emit(
             PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
@@ -60,26 +66,28 @@ function Operation({
         }
       >
         <MdReadMore />
-      </IconButton>
-      <IconButton onClick={onPrevious}>
+      </Button>
+      <Button square variant="plain" size="sm" onClick={onPrevious}>
         <MdSkipPrevious />
-      </IconButton>
-      <IconButton
+      </Button>
+      <Button
+        square
+        variant="plain"
+        size="lg"
         onClick={paused ? onPlay : onPause}
-        size={56}
         loading={loading}
       >
         {paused ? <MdPlayArrow /> : <MdPause />}
-      </IconButton>
-      <IconButton onClick={onNext}>
+      </Button>
+      <Button square variant="plain" size="sm" onClick={onNext}>
         <MdSkipNext />
-      </IconButton>
-      <IconButton onClick={openPlaylistPlayqueueDrawer}>
+      </Button>
+      <Button square variant="plain" size="sm" onClick={openPlaylistPlayqueueDrawer}>
         <MdOutlineQueueMusic />
-      </IconButton>
-      <IconButton onClick={closeLyricPanel}>
+      </Button>
+      <Button square variant="plain" size="sm" onClick={closeLyricPanel}>
         <MdUnfoldLess />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

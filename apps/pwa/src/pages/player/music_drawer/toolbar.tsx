@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import {
   MdPlayArrow,
   MdReadMore,
@@ -44,7 +44,10 @@ function Toolbar({ music }: { music: MusicDetail }) {
   return (
     <Style>
       <div className="left">
-        <IconButton
+        <Button
+          square
+          variant="plain"
+          size="sm"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, {
               music,
@@ -52,8 +55,11 @@ function Toolbar({ music }: { music: MusicDetail }) {
           }
         >
           <MdPlayArrow />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
+          square
+          variant="plain"
+          size="sm"
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
@@ -64,8 +70,11 @@ function Toolbar({ music }: { music: MusicDetail }) {
           }
         >
           <MdReadMore />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
+          square
+          variant="plain"
+          size="sm"
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
@@ -76,8 +85,11 @@ function Toolbar({ music }: { music: MusicDetail }) {
           }
         >
           <MdOutlinePostAdd />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
+          square
+          variant="plain"
+          size="sm"
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
@@ -88,8 +100,11 @@ function Toolbar({ music }: { music: MusicDetail }) {
           }
         >
           <MdPlaylistAdd />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
+          square
+          variant="plain"
+          size="sm"
           onClick={() =>
             ENABLE_FILE_SYSTEM
               ? downloadMusicListByFileSystem([music])
@@ -104,7 +119,7 @@ function Toolbar({ music }: { music: MusicDetail }) {
           }
         >
           <MdOutlineDownload />
-        </IconButton>
+        </Button>
       </div>
     </Style>
   );

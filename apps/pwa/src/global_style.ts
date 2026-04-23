@@ -60,6 +60,8 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   html {
+    height: 100%;
+
     ${Object.keys(CSS_VARIABLE_MAP_VALUE)
       .map(
         (variable) =>
@@ -73,6 +75,8 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
+    height: 100%;
+
     overscroll-behavior: contain;
     overflow: hidden;
 

@@ -1,7 +1,7 @@
 import notice from '@/utils/notice';
 import { useState } from 'react';
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdCheck, MdClose } from 'react-icons/md';
 import definition from './definition';
 import { t } from './i18n';
@@ -46,8 +46,11 @@ function VersionUpdateNotice({
     <VersionUpdater>
       <div className="text">{t('pwa_update_question')}</div>
       <div className="action-box">
-        <IconButton
+        <Button
           className="action"
+          square
+          variant="plain"
+          size="sm"
           loading={updating}
           onClick={() => {
             if (updating) {
@@ -73,14 +76,17 @@ function VersionUpdateNotice({
           }}
         >
           <MdCheck />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
           className="action"
+          square
+          variant="plain"
+          size="sm"
           disabled={updating}
           onClick={() => notice.close(getNoticeId())}
         >
           <MdClose />
-        </IconButton>
+        </Button>
       </div>
     </VersionUpdater>
   );

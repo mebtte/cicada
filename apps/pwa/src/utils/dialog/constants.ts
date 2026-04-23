@@ -1,5 +1,5 @@
 import type { Variant } from '@/components_next/button';
-import { Option } from '@/components/select';
+import type { SelectOption } from '@/components_next';
 import { ReactNode } from 'react';
 
 export const ID_LENGTH = 6;
@@ -82,15 +82,15 @@ export interface InputList
 
 export interface MultipleSelect<Value>
   extends DialogOptions,
-    Confirmable<Option<Value>[]>,
+    Confirmable<SelectOption<Value>[]>,
     Cancelable {
   type: DialogType.MULTIPLE_SELECT;
 
   title?: string;
-  initialValue: Option<Value>[];
+  initialValue: SelectOption<Value>[];
   label: string;
   labelAddon?: ReactNode;
-  optionsGetter: (keyword: string) => Promise<Option<Value>[]>;
+  loadOptions: (keyword: string) => Promise<SelectOption<Value>[]>;
 }
 
 export interface FileSelect

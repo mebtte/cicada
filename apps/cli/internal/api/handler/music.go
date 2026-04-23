@@ -53,25 +53,6 @@ func SearchMusicByLyric(c *gin.Context) {
 	api.OK(c, musicListResponse(musics, total))
 }
 
-// ── Get music list (current user's) ──────────────────────────────────────────
-
-func GetMusicList(c *gin.Context) {
-	u := middleware.GetUser(c)
-	keyword := c.Query("keyword")
-	page := queryInt(c, "page", 1)
-	pageSize := queryInt(c, "pageSize", 20)
-	if page < 1 || pageSize < 1 || pageSize > 100 {
-		api.Fail(c, apperr.WrongParameter)
-		return
-	}
-	total, musics, err := store.SearchMusicByUser(u.ID, keyword, page, pageSize)
-	if err != nil {
-		api.Fail(c, apperr.ServerError)
-		return
-	}
-	api.OK(c, musicListResponse(musics, total))
-}
-
 // ── Get single music ──────────────────────────────────────────────────────────
 
 func GetMusic(c *gin.Context) {

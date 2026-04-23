@@ -1,7 +1,7 @@
 import { CSSProperties, useContext } from 'react';
 import styled from 'styled-components';
 import List from 'react-list';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import {
   MdOutlineLocationOn,
   MdOutlineClose,
@@ -9,7 +9,6 @@ import {
   MdArrowDownward,
   MdShuffle,
 } from 'react-icons/md';
-import { ComponentSize } from '@/constants/style';
 import { flexCenter } from '@/style/flexbox';
 import Empty from '@/components/empty';
 import absoluteFullSize from '@/style/absolute_full_size';
@@ -26,7 +25,7 @@ import playerEventemitter, {
 } from '../eventemitter';
 
 const shuffleStyle: CSSProperties = {
-  width: ComponentSize.SMALL,
+  width: 24,
   color: CSSVariable.COLOR_PRIMARY,
 };
 const Style = styled(TabContent)`
@@ -88,9 +87,11 @@ function Playqueue({ style }: { style: unknown }) {
                         />
                       ) : null}
                       {actualIndex === currentPlayqueuePosition ? null : (
-                        <IconButton
+                        <Button
+                          square
+                          variant="plain"
+                          size="sm"
                           title={t('relocate_to_here')}
-                          size={ComponentSize.SMALL}
                           onClick={(e) => {
                             e.stopPropagation();
                             return playerEventemitter.emit(
@@ -102,12 +103,14 @@ function Playqueue({ style }: { style: unknown }) {
                           }}
                         >
                           <MdOutlineLocationOn />
-                        </IconButton>
+                        </Button>
                       )}
                       {actualIndex < length - 1 &&
                       actualIndex > currentPlayqueuePosition ? (
-                        <IconButton
-                          size={ComponentSize.SMALL}
+                        <Button
+                          square
+                          variant="plain"
+                          size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             return playerEventemitter.emit(
@@ -119,11 +122,13 @@ function Playqueue({ style }: { style: unknown }) {
                           }}
                         >
                           <MdArrowUpward />
-                        </IconButton>
+                        </Button>
                       ) : null}
                       {actualIndex > currentPlayqueuePosition + 1 ? (
-                        <IconButton
-                          size={ComponentSize.SMALL}
+                        <Button
+                          square
+                          variant="plain"
+                          size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
                             return playerEventemitter.emit(
@@ -135,11 +140,13 @@ function Playqueue({ style }: { style: unknown }) {
                           }}
                         >
                           <MdArrowDownward />
-                        </IconButton>
+                        </Button>
                       ) : null}
                       {actualIndex > currentPlayqueuePosition ? (
-                        <IconButton
-                          size={ComponentSize.SMALL}
+                        <Button
+                          square
+                          variant="plain"
+                          size="sm"
                           style={removeStyle}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -152,7 +159,7 @@ function Playqueue({ style }: { style: unknown }) {
                           }}
                         >
                           <MdOutlineClose />
-                        </IconButton>
+                        </Button>
                       ) : null}
                     </Operation>
                   }

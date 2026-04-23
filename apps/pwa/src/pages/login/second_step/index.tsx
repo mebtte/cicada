@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { ChangeEventHandler, useState } from 'react';
-import Label from '@/components/label';
-import Input from '@/components/input';
+import Input from '@/components_next/input';
 import Button from '@/components_next/button';
 import { t } from '@/i18n';
 import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
@@ -19,7 +18,7 @@ import { ExceptionCode } from '#/constants/exception';
 import dialog from '@/utils/dialog';
 import Logo from '../logo';
 import UserList from './user_list';
-import { useServer } from '@/global_states/server';
+import { getSelectedServer, useServer } from '@/global_states/server';
 
 const Style = styled.div`
   display: flex;
@@ -67,6 +66,8 @@ const addProfile = async (token: string) => {
 function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const selectedServer = useServer(getSelectedServer);
+  const hasExistingUser = !!selectedServer?.users.length;
 
   const [username, setUserName] = useState('');
   const onUsernameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
@@ -96,7 +97,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         try {
           const token = await loginWith2FA({ username, password, twoFAToken });
           await addProfile(token);
-          window.setTimeout(redirect, 0);
+          redirect();
         } catch (error) {
           logger.error(error, 'Failed to login with 2FA');
           notice.error(error.message);
@@ -117,7 +118,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
             captchaValue,
           });
           await addProfile(token);
-          window.setTimeout(redirect, 0);
+          redirect();
         } catch (error) {
           logger.error(error, 'Failed to login');
 
@@ -139,31 +140,29 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
     <Style>
       <Logo />
       <UserList redirect={redirect} />
-      <Label label={t('username')}>
-        <Input
-          value={username}
-          onChange={onUsernameChange}
-          maxLength={USERNAME_MAX_LENGTH}
-          autoFocus
-        />
-      </Label>
-      <Label label={t('password')}>
-        <Input
-          type="password"
-          value={password}
-          onChange={onPasswordChange}
-          maxLength={PASSWORD_MAX_LENGTH}
-          onKeyDown={(event) => {
-            if (
-              event.key.toLowerCase() === 'enter' &&
-              username.length !== 0 &&
-              password.length !== 0
-            ) {
-              onLogin();
-            }
-          }}
-        />
-      </Label>
+      <Input
+        label={t('username')}
+        value={username}
+        onChange={onUsernameChange}
+        maxLength={USERNAME_MAX_LENGTH}
+        autoFocus={!hasExistingUser}
+      />
+      <Input
+        label={t('password')}
+        type="password"
+        value={password}
+        onChange={onPasswordChange}
+        maxLength={PASSWORD_MAX_LENGTH}
+        onKeyDown={(event) => {
+          if (
+            event.key.toLowerCase() === 'enter' &&
+            username.length !== 0 &&
+            password.length !== 0
+          ) {
+            onLogin();
+          }
+        }}
+      />
       <Button
         variant={'primary'}
         disabled={!username.length || !password.length}
@@ -171,7 +170,9 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       >
         {t('login')}
       </Button>
-      <Button onClick={toPrevious}>{t('previous_step')}</Button>
+      <Button variant={'ghost'} onClick={toPrevious}>
+        {t('previous_step')}
+      </Button>
     </Style>
   );
 }

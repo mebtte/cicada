@@ -3,6 +3,8 @@
 
 tmp/
 build/
+apps/cli/internal/ffmpeg/generated/
+apps/cli/internal/ffmpeg/zz_bundle_*.go
 
 # claude
 .claude/

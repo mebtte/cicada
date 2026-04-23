@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { CSSVariable } from '@/global_style';
-import IconButton from '@/components/icon_button';
+import Button from '@/components_next/button';
 import { MdOutlineAddBox } from 'react-icons/md';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { Music } from '../constants';
@@ -60,9 +60,9 @@ function Top({ music }: { music: Music }) {
       />
       <div className="header">
         <div className="title">添加到乐单</div>
-        <IconButton onClick={openCreateMusicbillDialog}>
+        <Button square variant="plain" size="sm" onClick={openCreateMusicbillDialog}>
           <MdOutlineAddBox />
-        </IconButton>
+        </Button>
       </div>
     </Style>
   );
