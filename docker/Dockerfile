@@ -1,6 +1,9 @@
 FROM ubuntu
 
-COPY build/cicada /bin/cicada
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+
+COPY build/${TARGETOS}-${TARGETARCH}/cicada /bin/cicada
 ENTRYPOINT ["/bin/cicada"]
 
 LABEL org.opencontainers.image.title="cicada" \

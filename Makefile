@@ -79,11 +79,13 @@ release: pwa ffmpeg-bundles
 		$(BUILD_DIR)/linux-amd64     \
 		$(BUILD_DIR)/linux-arm64
 
-## 构建 Linux x64 二进制 (供 Docker 使用, 不压缩)
-docker: pwa ffmpeg-bundle-linux-amd64
+## 构建 Linux 多架构二进制 (供 Docker buildx 使用, 不压缩)
+docker: pwa ffmpeg-bundle-linux-amd64 ffmpeg-bundle-linux-arm64
 	rm -rf $(BUILD_DIR)
-	mkdir -p $(BUILD_DIR)
-	$(call build_cli,linux,amd64,$(BUILD_DIR)/cicada)
+	mkdir -p $(BUILD_DIR)/linux-amd64
+	$(call build_cli,linux,amd64,$(BUILD_DIR)/linux-amd64/cicada)
+	mkdir -p $(BUILD_DIR)/linux-arm64
+	$(call build_cli,linux,arm64,$(BUILD_DIR)/linux-arm64/cicada)
 	@echo 'skip compression on docker building.'
 
 ## 清理构建产物
