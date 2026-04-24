@@ -21,6 +21,7 @@ permissions:
 
 jobs:
   build-and-push:
+    if: github.repository == 'mebtte/cicada'
     name: Build And Push Docker Image
     runs-on: ubuntu-latest
     steps:
