@@ -9,14 +9,12 @@ import { Query } from '@/constants';
 import SizeObserver from '@/components/size_observer';
 import useData from './use_data';
 import User from './user';
-import { HEADER_HEIGHT } from '../../../constants';
 import { TOOLBAR_HEIGHT } from '../constants';
 import { GAP, ITEM_MIN_WIDTH } from './constants';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 
-  padding-top: ${HEADER_HEIGHT}px;
   padding-bottom: ${TOOLBAR_HEIGHT}px;
 `;
 const StatusContainer = styled(Container)`

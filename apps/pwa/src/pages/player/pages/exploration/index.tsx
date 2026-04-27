@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { Query } from '@/constants';
 import { useUser } from '@/global_states/server';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import { HEADER_HEIGHT, SearchTab } from '../../constants';
+import { SearchTab } from '../../constants';
 import Page from '../page';
 import useData from './use_data';
 import playerEventemitter, {
@@ -41,8 +41,6 @@ const Container = styled(animated.div)`
   left: 0;
   width: 100%;
   height: 100%;
-
-  padding-top: ${HEADER_HEIGHT}px;
 `;
 const StatusContainer = styled(Container)`
   ${flexCenter}

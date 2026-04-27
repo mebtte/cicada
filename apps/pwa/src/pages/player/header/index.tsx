@@ -17,14 +17,14 @@ import e, { EventType } from '../eventemitter';
 import useTitlebar from './use_titlebar';
 import { HEADER_HEIGHT } from '../constants';
 import { useTheme } from '@/global_states/theme';
+import { CSSVariable } from '@/global_style';
 
 const openSidebar = () => e.emit(EventType.MINI_MODE_OPEN_SIDEBAR, null);
 const Style = styled.div`
   z-index: 1;
 
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
+  flex: 0 0 ${HEADER_HEIGHT}px;
   width: 100%;
   height: ${HEADER_HEIGHT}px;
 
@@ -32,7 +32,10 @@ const Style = styled.div`
   align-items: center;
   gap: 15px;
 
-  backdrop-filter: blur(5px);
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  background: #fff;
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 0 3px 0 rgb(214 214 214);
   -webkit-app-region: drag;
 `;
 

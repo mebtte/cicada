@@ -15,7 +15,7 @@ import cache, { CacheKey } from './cache';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
-import { HEADER_HEIGHT, Musicbill as MusicbillType } from '../../constants';
+import { Musicbill as MusicbillType } from '../../constants';
 import Page from '../page';
 import Info from './info';
 import MusicList from './music_list';
@@ -26,10 +26,10 @@ import Filter from './filter';
 const RELOAD_INTERVAL = 1000 * 60 * 15;
 const Style = styled(Page)`
   position: absolute;
-  top: ${HEADER_HEIGHT}px;
+  top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - ${HEADER_HEIGHT}px);
+  height: 100%;
 
   > .scrollable {
     height: 100%;

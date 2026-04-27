@@ -2,7 +2,7 @@ import { RequestStatus } from '@/constants';
 import { MusicType } from '#/constants/music';
 import { UtilZIndex } from '@/constants/style';
 
-export const HEADER_HEIGHT = 55;
+export const HEADER_HEIGHT = 64;
 
 export interface Singer {
   id: string;

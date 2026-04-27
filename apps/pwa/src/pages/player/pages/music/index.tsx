@@ -1,15 +1,14 @@
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Page from '../page';
-import { HEADER_HEIGHT } from '../../constants';
 import MusicContent from '../../music_drawer/content';
 
 const Style = styled(Page)`
   position: absolute;
-  top: ${HEADER_HEIGHT}px;
+  top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - ${HEADER_HEIGHT}px);
+  height: 100%;
 `;
 
 function Wrapper() {

@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import TabList from '@/components/tab_list';
 import useNavigate from '@/utils/use_navigate';
 import Input from './input';
-import { HEADER_HEIGHT, SearchTab } from '../../constants';
+import { SearchTab } from '../../constants';
 import Page from '../page';
 import {
   MINI_MODE_TOOLBAR_HEIGHT,
@@ -16,8 +16,6 @@ import { useTheme } from '@/global_states/theme';
 
 const Style = styled(Page)`
   position: relative;
-
-  margin-top: ${HEADER_HEIGHT}px;
 
   > .toolbar {
     position: absolute;

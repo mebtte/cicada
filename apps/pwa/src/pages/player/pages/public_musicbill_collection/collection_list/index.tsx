@@ -15,7 +15,7 @@ import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import { HEADER_HEIGHT, SearchTab } from '../../../constants';
+import { SearchTab } from '../../../constants';
 import useCollectionList from './use_collection_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import PublicMusicbill from '../../../components/public_musicbill';
@@ -29,8 +29,6 @@ const Style = styled.div`
 `;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
-
-  padding-top: ${HEADER_HEIGHT}px;
 `;
 const CardContainer = styled(Container)`
   ${flexCenter}
