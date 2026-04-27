@@ -18,6 +18,13 @@ const zhCN: {
   relative_volume: '相对音量',
   music_play_record_short: '播放记录',
   exploration: '发现',
+  recommended_music: '推荐音乐',
+  recommended_singer: '推荐歌手',
+  recommended_public_musicbill: '推荐乐单',
+  exploration_empty_title: '还没有推荐内容',
+  exploration_empty_description:
+    '导入带封面的音乐、完善歌手头像，或公开带封面的乐单后，这里会展示推荐内容。',
+  search_public_musicbill: '搜索公开乐单',
   musicbill: '乐单',
   user_management: '用户管理',
   logout: '退出登录',

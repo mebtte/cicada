@@ -1,13 +1,7 @@
 import logger from '@/utils/logger';
 import getExploration from '@/server/api/get_exploration';
 import { useCallback, useEffect, useState } from 'react';
-import {
-  ExplorationItem,
-  ExplorationItemType,
-  ExplorationMusic,
-  ExplorationPublicMusicbill,
-  ExplorationSinger,
-} from './constants';
+import { ExplorationData } from './constants';
 import cache, { CacheKey } from './cache';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -17,22 +11,26 @@ type Data =
   | {
       error: Error;
       loading: false;
-      value: ExplorationItem[];
+      value: ExplorationData;
     }
   | {
       error: null;
       loading: true;
-      value: ExplorationItem[];
+      value: ExplorationData;
     }
   | {
       error: null;
       loading: false;
-      value: ExplorationItem[];
+      value: ExplorationData;
     };
 const dataLoading: Data = {
   error: null,
   loading: true,
-  value: [],
+  value: {
+    musicList: [],
+    singerList: [],
+    publicMusicbillList: [],
+  },
 };
 
 export default () => {
@@ -42,30 +40,7 @@ export default () => {
     try {
       let explorationData = cache.get(CacheKey.EXPLORATION);
       if (!explorationData) {
-        const result = await getExploration();
-        explorationData = [
-          ...result.musicList.map(
-            (m) =>
-              ({
-                type: ExplorationItemType.MUSIC,
-                value: m,
-              } as ExplorationMusic),
-          ),
-          ...result.singerList.map(
-            (s) =>
-              ({
-                type: ExplorationItemType.SINGER,
-                value: s,
-              } as ExplorationSinger),
-          ),
-          ...result.publicMusicbillList.map(
-            (mb) =>
-              ({
-                type: ExplorationItemType.PUBLIC_MUSICBILL,
-                value: mb,
-              } as ExplorationPublicMusicbill),
-          ),
-        ].sort(() => Math.random() * 2 - 1);
+        explorationData = await getExploration();
         cache.set({
           key: CacheKey.EXPLORATION,
           value: explorationData,
@@ -82,36 +57,36 @@ export default () => {
       setData({
         error,
         loading: false,
-        value: [],
+        value: dataLoading.value,
       });
     }
   }, []);
+  const reload = useCallback(() => {
+    cache.remove(CacheKey.EXPLORATION);
+    return getData();
+  }, [getData]);
 
   useEffect(() => {
     getData();
 
-    const destroyCacheAndReloadData = () => {
-      cache.remove(CacheKey.EXPLORATION);
-      return getData();
-    };
     const unlistenMusicUpdated = playerEventemitter.listen(
       PlayerEventType.MUSIC_UPDATED,
-      destroyCacheAndReloadData,
+      reload,
     );
     const unlistenMusicDeleted = playerEventemitter.listen(
       PlayerEventType.MUSIC_DELETED,
-      destroyCacheAndReloadData,
+      reload,
     );
     const unlistenSingerUpdated = playerEventemitter.listen(
       PlayerEventType.SINGER_UPDATED,
-      destroyCacheAndReloadData,
+      reload,
     );
     return () => {
       unlistenMusicUpdated();
       unlistenMusicDeleted();
       unlistenSingerUpdated();
     };
-  }, [getData]);
+  }, [getData, reload]);
 
-  return { data, reload: getData };
+  return { data, reload };
 };

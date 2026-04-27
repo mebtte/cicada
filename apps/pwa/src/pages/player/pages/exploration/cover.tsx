@@ -3,12 +3,9 @@ import { HtmlHTMLAttributes, ReactNode } from 'react';
 import Cover from '@/components/cover';
 
 const Style = styled.div`
-  display: inline-block;
-  padding: 0 10px;
-  margin: 7px 0;
+  min-width: 0;
 
   cursor: pointer;
-  vertical-align: top;
 
   > .info {
     margin-top: 3px;

@@ -16,6 +16,13 @@ export default {
   relative_volume: 'relative volume',
   music_play_record_short: 'play record',
   exploration: 'exploration',
+  recommended_music: 'recommended music',
+  recommended_singer: 'recommended singers',
+  recommended_public_musicbill: 'recommended musicbills',
+  exploration_empty_title: 'no recommendations yet',
+  exploration_empty_description:
+    'Import music with covers, add singer avatars, or publish musicbills with covers. They will appear here as recommendations.',
+  search_public_musicbill: 'search public musicbills',
   musicbill: 'musicbill',
   user_management: 'user management',
   logout: 'logout',
