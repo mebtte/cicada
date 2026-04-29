@@ -11,6 +11,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// canEditSinger returns true when u may edit s. Admins can edit any singer;
+// otherwise only the creator can.
+func canEditSinger(u *store.User, s *store.Singer) bool {
+	return u.Admin == 1 || s.CreateUserID == u.ID
+}
+
 func GetSinger(c *gin.Context) {
 	u := middleware.GetUser(c)
 	id := c.Query("id")
@@ -37,7 +43,6 @@ func GetSinger(c *gin.Context) {
 				"id":      singer.ID,
 				"name":    singer.Name,
 				"aliases": splitAliases(singer.Aliases),
-				"avatar":  config.AssetPublicURL(singer.Avatar, config.AssetTypeSingerAvatar),
 			})
 		}
 	}
@@ -61,27 +66,25 @@ func GetSinger(c *gin.Context) {
 	var createUserNickname string
 	_ = store.DB().QueryRow(`SELECT nickname FROM user WHERE id=?`, s.CreateUserID).Scan(&createUserNickname)
 
-	records, _ := store.GetSingerModifyRecords(id)
-	modifyList := make([]gin.H, len(records))
-	for i, r := range records {
-		modifyList[i] = gin.H{
-			"id":              r.ID,
-			"key":             r.Key,
-			"modifyUserId":    r.ModifyUserID,
-			"modifyTimestamp": r.ModifyTimestamp,
-			"modifyNickname":  r.ModifyNickname,
+	photos, _ := store.ListSingerPhotos(id)
+	photoItems := make([]gin.H, len(photos))
+	for i, p := range photos {
+		photoItems[i] = gin.H{
+			"id":          p.ID,
+			"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeSingerPhoto),
+			"description": p.Description,
 		}
 	}
+
 	api.OK(c, gin.H{
 		"id":              s.ID,
 		"name":            s.Name,
 		"aliases":         splitAliases(s.Aliases),
-		"avatar":          config.AssetPublicURL(s.Avatar, config.AssetTypeSingerAvatar),
+		"photos":          photoItems,
 		"createTimestamp": s.CreateTimestamp,
 		"createUser":      gin.H{"id": s.CreateUserID, "nickname": createUserNickname},
 		"musicList":       musicItems,
-		"editable":        u.Admin == 1 || s.CreateUserID == u.ID,
-		"modifyList":      modifyList,
+		"editable":        canEditSinger(u, s),
 	})
 }
 
@@ -104,7 +107,6 @@ func SearchSinger(c *gin.Context) {
 			"id":      s.ID,
 			"name":    s.Name,
 			"aliases": splitAliases(s.Aliases),
-			"avatar":  config.AssetPublicURL(s.Avatar, config.AssetTypeSingerAvatar),
 		}
 	}
 	api.OK(c, gin.H{"total": total, "singerList": list})
@@ -136,7 +138,6 @@ type updateSingerBody struct {
 }
 
 func UpdateSinger(c *gin.Context) {
-	u := middleware.GetUser(c)
 	var body updateSingerBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
@@ -155,7 +156,6 @@ func UpdateSinger(c *gin.Context) {
 			return
 		}
 		store.UpdateSinger(body.ID, "name", name)
-		store.RecordSingerModify(body.ID, u.ID, "name")
 
 	case "aliases":
 		rawAliases, ok := body.Value.([]any)
@@ -173,16 +173,6 @@ func UpdateSinger(c *gin.Context) {
 			aliases[i] = s
 		}
 		store.UpdateSinger(body.ID, "aliases", joinAliases(aliases))
-		store.RecordSingerModify(body.ID, u.ID, "aliases")
-
-	case "avatar":
-		avatar, ok := body.Value.(string)
-		if !ok || (avatar != "" && !assetExists(avatar, config.AssetTypeSingerAvatar)) {
-			api.Fail(c, apperr.AssetNotExisted)
-			return
-		}
-		store.UpdateSinger(body.ID, "avatar", avatar)
-		store.RecordSingerModify(body.ID, u.ID, "avatar")
 
 	default:
 		api.Fail(c, apperr.WrongParameter)
@@ -190,28 +180,4 @@ func UpdateSinger(c *gin.Context) {
 	}
 
 	api.OK(c, nil)
-}
-
-func GetSingerModifyRecordList(c *gin.Context) {
-	singerID := c.Query("singerId")
-	if singerID == "" {
-		api.Fail(c, apperr.WrongParameter)
-		return
-	}
-	if _, err := store.GetSingerByID(singerID); err != nil {
-		api.Fail(c, apperr.SingerNotExisted)
-		return
-	}
-	records, _ := store.GetSingerModifyRecords(singerID)
-	list := make([]gin.H, len(records))
-	for i, r := range records {
-		list[i] = gin.H{
-			"id":              r.ID,
-			"key":             r.Key,
-			"modifyUserId":    r.ModifyUserID,
-			"modifyTimestamp": r.ModifyTimestamp,
-			"modifyNickname":  r.ModifyNickname,
-		}
-	}
-	api.OK(c, list)
 }

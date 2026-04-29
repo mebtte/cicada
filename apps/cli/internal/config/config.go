@@ -19,7 +19,7 @@ type AssetType string
 const (
 	AssetTypeUserAvatar     AssetType = "user_avatar"
 	AssetTypeMusicbillCover AssetType = "musicbill_cover"
-	AssetTypeSingerAvatar   AssetType = "singer_avatar"
+	AssetTypeSingerPhoto    AssetType = "singer_photo"
 	AssetTypeMusicCover     AssetType = "music_cover"
 	AssetTypeMusic          AssetType = "music"
 )
@@ -27,14 +27,14 @@ const (
 var AllAssetTypes = []AssetType{
 	AssetTypeUserAvatar,
 	AssetTypeMusicbillCover,
-	AssetTypeSingerAvatar,
+	AssetTypeSingerPhoto,
 	AssetTypeMusicCover,
 	AssetTypeMusic,
 }
 
 // AssetAcceptMIME defines allowed MIME types per asset type.
 var AssetAcceptMIME = map[AssetType][]string{
-	AssetTypeSingerAvatar:   {"image/jpeg"},
+	AssetTypeSingerPhoto:   {"image/jpeg"},
 	AssetTypeMusicbillCover: {"image/jpeg"},
 	AssetTypeMusicCover:     {"image/jpeg"},
 	AssetTypeUserAvatar:     {"image/jpeg"},
@@ -42,7 +42,7 @@ var AssetAcceptMIME = map[AssetType][]string{
 }
 
 var AssetMaxSize = map[AssetType]int64{
-	AssetTypeSingerAvatar:   2 * 1024 * 1024,
+	AssetTypeSingerPhoto:   2 * 1024 * 1024,
 	AssetTypeMusicbillCover: 2 * 1024 * 1024,
 	AssetTypeMusicCover:     2 * 1024 * 1024,
 	AssetTypeUserAvatar:     2 * 1024 * 1024,

@@ -133,7 +133,7 @@ func GetMusic(c *gin.Context) {
 		"heat":            m.Heat,
 		"createTimestamp": m.CreateTimestamp,
 		"year":            nullInt64(m.Year),
-		"singers":         singerItemsWithAvatar(singersByMusic[id]),
+		"singers":         singerItems(singersByMusic[id]),
 		"createUser":      gin.H{"id": m.CreateUserID, "nickname": createUserNickname},
 		"forkList":        forkList,
 		"forkFromList":    forkFromList,
@@ -366,9 +366,8 @@ func GetExploration(c *gin.Context) {
 		Cover string
 	}
 	type singerRow struct {
-		ID     string
-		Name   string
-		Avatar string
+		ID   string
+		Name string
 	}
 	type mbRow struct {
 		ID     string
@@ -396,7 +395,7 @@ func GetExploration(c *gin.Context) {
 
 	singerRows, _ := func() ([]singerRow, error) {
 		rows, err := store.DB().Query(
-			`SELECT id,name,avatar FROM singer WHERE avatar!='' ORDER BY random() LIMIT ?`, quality,
+			`SELECT id,name FROM singer ORDER BY random() LIMIT ?`, quality,
 		)
 		if err != nil {
 			return nil, err
@@ -405,7 +404,7 @@ func GetExploration(c *gin.Context) {
 		var out []singerRow
 		for rows.Next() {
 			r := singerRow{}
-			rows.Scan(&r.ID, &r.Name, &r.Avatar)
+			rows.Scan(&r.ID, &r.Name)
 			out = append(out, r)
 		}
 		return out, nil
@@ -452,9 +451,8 @@ func GetExploration(c *gin.Context) {
 	singerList := make([]gin.H, len(singerRows))
 	for i, s := range singerRows {
 		singerList[i] = gin.H{
-			"id":     s.ID,
-			"name":   s.Name,
-			"avatar": config.AssetPublicURL(s.Avatar, config.AssetTypeSingerAvatar),
+			"id":   s.ID,
+			"name": s.Name,
 		}
 	}
 
@@ -540,19 +538,6 @@ func singerItems(ss []store.SingerInMusic) []gin.H {
 			"id":      s.ID,
 			"name":    s.Name,
 			"aliases": splitAliases(s.Aliases),
-		}
-	}
-	return out
-}
-
-func singerItemsWithAvatar(ss []store.SingerInMusic) []gin.H {
-	out := make([]gin.H, len(ss))
-	for i, s := range ss {
-		out[i] = gin.H{
-			"id":      s.ID,
-			"name":    s.Name,
-			"aliases": splitAliases(s.Aliases),
-			"avatar":  config.AssetPublicURL(s.Avatar, config.AssetTypeSingerAvatar),
 		}
 	}
 	return out

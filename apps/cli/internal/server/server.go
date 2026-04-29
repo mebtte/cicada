@@ -78,7 +78,10 @@ func NewServer() *gin.Engine {
 	api.POST("/singer", auth(), handler.CreateSinger)
 	api.PUT("/singer", auth(), handler.UpdateSinger)
 	api.GET("/singer/search", auth(), handler.SearchSinger)
-	api.GET("/singer_modify_record_list", auth(), handler.GetSingerModifyRecordList)
+	api.POST("/singer/photo", auth(), handler.CreateSingerPhoto)
+	api.PUT("/singer/photo", auth(), handler.UpdateSingerPhoto)
+	api.DELETE("/singer/photo", auth(), handler.DeleteSingerPhoto)
+	api.PUT("/singer/photo/order", auth(), handler.ReorderSingerPhotos)
 
 	// Lyric
 	api.GET("/lyric_list", auth(), handler.GetLyricList)

@@ -12,20 +12,20 @@ import (
 )
 
 const (
-	TableUser                     = "user"
-	TableCaptcha                  = "captcha"
-	TableSinger                   = "singer"
-	TableSingerModifyRecord       = "singer_modify_record"
-	TableMusic                    = "music"
-	TableMusicModifyRecord        = "music_modify_record"
-	TableMusicFork                = "music_fork"
-	TableLyric                    = "lyric"
-	TableMusicPlayRecord          = "music_play_record"
-	TableMusicSingerRelation      = "music_singer_relation"
-	TableMusicbill                = "musicbill"
-	TableMusicbillMusic           = "musicbill_music"
+	TableUser                      = "user"
+	TableCaptcha                   = "captcha"
+	TableSinger                    = "singer"
+	TableSingerPhoto               = "singer_photo"
+	TableMusic                     = "music"
+	TableMusicModifyRecord         = "music_modify_record"
+	TableMusicFork                 = "music_fork"
+	TableLyric                     = "lyric"
+	TableMusicPlayRecord           = "music_play_record"
+	TableMusicSingerRelation       = "music_singer_relation"
+	TableMusicbill                 = "musicbill"
+	TableMusicbillMusic            = "musicbill_music"
 	TablePublicMusicbillCollection = "public_musicbill_collection"
-	TableSharedMusicbill          = "shared_musicbill"
+	TableSharedMusicbill           = "shared_musicbill"
 )
 
 var tables = []string{
@@ -54,19 +54,21 @@ var tables = []string{
 	)`,
 	`CREATE TABLE IF NOT EXISTS singer (
 		id TEXT PRIMARY KEY NOT NULL,
-		avatar TEXT NOT NULL DEFAULT '',
 		name TEXT NOT NULL,
 		aliases TEXT NOT NULL DEFAULT '',
 		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL
 	)`,
-	`CREATE TABLE IF NOT EXISTS singer_modify_record (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
+	`CREATE TABLE IF NOT EXISTS singer_photo (
+		id TEXT PRIMARY KEY NOT NULL,
 		singerId TEXT NOT NULL REFERENCES singer(id),
-		modifyUserId TEXT NOT NULL REFERENCES user(id),
-		key TEXT NOT NULL,
-		modifyTimestamp INTEGER NOT NULL
+		asset TEXT NOT NULL,
+		position INTEGER NOT NULL,
+		description TEXT NOT NULL DEFAULT '',
+		addUserId TEXT NOT NULL REFERENCES user(id),
+		addTimestamp INTEGER NOT NULL
 	)`,
+	`CREATE INDEX IF NOT EXISTS idx_singer_photo_singer ON singer_photo(singerId, position)`,
 	`CREATE TABLE IF NOT EXISTS music (
 		id TEXT PRIMARY KEY NOT NULL,
 		type INTEGER NOT NULL,
@@ -209,7 +211,7 @@ func Initialize() error {
 			return fmt.Errorf("seed admin: %w", err)
 		}
 		fmt.Printf("\n========================================\n")
-		fmt.Printf("  Default user created\n")
+		fmt.Printf("  DEFAULT USER\n")
 		fmt.Printf("  Username : %s\n", username)
 		fmt.Printf("  Password : %s\n", password)
 		fmt.Printf("========================================\n\n")

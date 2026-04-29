@@ -48,7 +48,7 @@ func Start() {
 	c.Start()
 }
 
-// removeOutdatedDB deletes expired captcha, music modify records, singer modify records.
+// removeOutdatedDB deletes expired captcha and music modify records.
 func removeOutdatedDB() {
 	now := time.Now().UnixMilli()
 	tables := []struct {
@@ -58,7 +58,6 @@ func removeOutdatedDB() {
 	}{
 		{"captcha", "createTimestamp", int64(3 * 24 * time.Hour / time.Millisecond)},
 		{"music_modify_record", "modifyTimestamp", int64(180 * 24 * time.Hour / time.Millisecond)},
-		{"singer_modify_record", "modifyTimestamp", int64(180 * 24 * time.Hour / time.Millisecond)},
 	}
 	for _, t := range tables {
 		store.DB().Exec(
@@ -72,7 +71,7 @@ func removeOutdatedDB() {
 func removeNoMusicSinger() {
 	threshold := time.Now().Add(-3 * 24 * time.Hour).UnixMilli()
 	rows, err := store.DB().Query(
-		`SELECT id,name,aliases,avatar,createTimestamp FROM singer
+		`SELECT id,name,aliases,createTimestamp FROM singer
 		WHERE id NOT IN (SELECT singerId FROM music_singer_relation)
 		AND createTimestamp < ?`, threshold,
 	)
@@ -82,13 +81,13 @@ func removeNoMusicSinger() {
 	defer rows.Close()
 
 	type row struct {
-		ID, Name, Aliases, Avatar string
-		CreateTimestamp            int64
+		ID, Name, Aliases string
+		CreateTimestamp   int64
 	}
 	var singers []row
 	for rows.Next() {
 		var s row
-		rows.Scan(&s.ID, &s.Name, &s.Aliases, &s.Avatar, &s.CreateTimestamp)
+		rows.Scan(&s.ID, &s.Name, &s.Aliases, &s.CreateTimestamp)
 		singers = append(singers, s)
 	}
 	rows.Close()
@@ -110,7 +109,9 @@ func removeNoMusicSinger() {
 
 	placeholders := store.Placeholders(len(ids))
 	args := store.Strs2Any(ids)
-	store.DB().Exec(`DELETE FROM singer_modify_record WHERE singerId IN (`+placeholders+`)`, args...)
+	// Delete photos first since they reference singer; the asset files are
+	// reaped by moveUnlinkedAssetToTrash on the next run.
+	store.DB().Exec(`DELETE FROM singer_photo WHERE singerId IN (`+placeholders+`)`, args...)
 	store.DB().Exec(`DELETE FROM singer WHERE id IN (`+placeholders+`)`, args...)
 }
 
@@ -123,7 +124,7 @@ func moveUnlinkedAssetToTrash() {
 	queries := []assetQuery{
 		{config.AssetTypeUserAvatar, `SELECT DISTINCT avatar FROM user WHERE avatar != ''`},
 		{config.AssetTypeMusicbillCover, `SELECT DISTINCT cover FROM musicbill WHERE cover != ''`},
-		{config.AssetTypeSingerAvatar, `SELECT DISTINCT avatar FROM singer WHERE avatar != ''`},
+		{config.AssetTypeSingerPhoto, `SELECT DISTINCT asset FROM singer_photo WHERE asset != ''`},
 		{config.AssetTypeMusicCover, `SELECT DISTINCT cover FROM music WHERE cover != ''`},
 		{config.AssetTypeMusic, `SELECT DISTINCT asset FROM music WHERE asset != ''`},
 	}
