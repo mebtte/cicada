@@ -95,12 +95,16 @@ func Set(c Config) {
 
 func DataVersionPath() string     { return filepath.Join(Get().Data, "v") }
 func DBPath() string              { return filepath.Join(Get().Data, "db") }
+func DBBackupPath() string        { return filepath.Join(Get().Data, "db.backup") }
 func JWTSecretPath() string       { return filepath.Join(Get().Data, "jwt_secret") }
 func TrashDir() string            { return filepath.Join(Get().Data, "trash") }
 func LogDir() string              { return filepath.Join(Get().Data, "logs") }
 func CacheDir() string            { return filepath.Join(Get().Data, "cache") }
 func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }
 func AssetDir(t AssetType) string { return filepath.Join(Get().Data, "assets", string(t)) }
+func UpgradeLockPath() string     { return filepath.Join(Get().Data, "upgrade.lock") }
+func UpgradeJournalPath() string  { return filepath.Join(Get().Data, "upgrade.journal") }
+func UpgradeTrashDir() string     { return filepath.Join(Get().Data, "upgrade.trash") }
 
 // AssetPublicURL returns the public HTTP path for a stored asset filename.
 func AssetPublicURL(filename string, t AssetType) string {

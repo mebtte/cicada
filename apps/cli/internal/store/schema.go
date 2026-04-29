@@ -2,18 +2,16 @@ package store
 
 import (
 	"cicada/internal/config"
+	"cicada/internal/store/migration"
+	"context"
 	"crypto/md5"
 	"fmt"
 	"math/rand"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 )
 
 const (
-	dataVersion = 2
-
 	TableUser                     = "user"
 	TableCaptcha                  = "captcha"
 	TableSinger                   = "singer"
@@ -165,20 +163,16 @@ func Initialize() error {
 		}
 	}
 
-	// Data version
-	vPath := config.DataVersionPath()
-	if raw, err := os.ReadFile(vPath); err == nil {
-		v, _ := strconv.Atoi(strings.TrimSpace(string(raw)))
-		if v < dataVersion {
-			return fmt.Errorf("data is v%d; run 'cicada upgrade-data' first", v)
-		}
-		if v > dataVersion {
-			return fmt.Errorf("data version %d is newer than this binary; please upgrade cicada", v)
-		}
-	} else {
-		if err := os.WriteFile(vPath, []byte(strconv.Itoa(dataVersion)), 0644); err != nil {
-			return fmt.Errorf("write version file: %w", err)
-		}
+	// Recover from any half-finished previous upgrade before touching the db.
+	if err := migration.Recover(config.Get().Data); err != nil {
+		return fmt.Errorf("recover: %w", err)
+	}
+
+	// Bring data dir to the binary's current data version (no-op when up to
+	// date). Run owns the db connection while it works and closes it before
+	// returning, so the long-lived Open() below gets a clean handle.
+	if err := migration.Run(context.Background(), config.Get().Data); err != nil {
+		return fmt.Errorf("data upgrade: %w", err)
 	}
 
 	// Open DB
