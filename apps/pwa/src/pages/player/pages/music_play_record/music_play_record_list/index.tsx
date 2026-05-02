@@ -11,7 +11,6 @@ import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import { HEADER_HEIGHT } from '../../../constants';
 import useMusicPlayRecordList from './use_music_play_record_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import MusicPlayRecord from './music_play_record';
@@ -24,8 +23,6 @@ const Style = styled.div`
 `;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
-
-  padding-top: ${HEADER_HEIGHT}px;
 `;
 const CardContainer = styled(Container)`
   ${flexCenter}

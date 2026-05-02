@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import {
   DownloadingMusic,
   DownloadStatus as DownloadStatusType,
-  HEADER_HEIGHT,
 } from '../../../constants';
 import List from 'react-list';
 import MusicBase from '../../../components/music_base';
@@ -34,7 +33,7 @@ const Style = styled.div`
   min-height: 0;
 
   position: relative;
-  padding-block: ${HEADER_HEIGHT}px ${TOOLBAR_HEIGHT}px;
+  padding-bottom: ${TOOLBAR_HEIGHT}px;
 
   ${autoScrollbar}
   overflow: auto;

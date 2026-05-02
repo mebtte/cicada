@@ -64,26 +64,27 @@ All of `cicada` data is under a directory, here is its structure:
 |- cache # app runtime cache under data, cleaned up periodically
 |- logs
 |- trash # save removed data temporarily
-|- v # its content indicates version of data
+|- v # data version (monotonic integer, see "Data version" below)
 |- db # the database of sqlite
 |- jwt_secret # its content is secret of jwt
 ```
 
-## Data Versioning
+During an in-progress data upgrade these transient files / directories may be present and are cleaned up automatically once the upgrade succeeds (or once the next startup recovers a crashed upgrade):
 
-The most important thing in `cicada` is data and the data has its version. Generally, data version needs to equal to `cicada` version. When the major version changes, `cicada` can upgrade data of **last version**. For example, cicada changes its version to `v3` from `v2`, `v3` cicda can upgrade `v2` data to `v3`.
-
-## Database structure
-
-Cicada use SQLite as database.
-
-The SQLite schema diagram is maintained in [database.d2](./database.d2) which powered by [d2](https://d2lang.com).
-
-Render the diagram locally with:
-
-```bash
-d2 docs/development/database.d2 local_dir/database.svg
 ```
+|- db.backup       # VACUUM INTO snapshot of db taken before migrations run
+|- upgrade.lock    # JSON state of the in-flight upgrade (from, to, pid, lastApplied)
+|- upgrade.journal # append-only JSONL of file operations performed by migrations
+|- upgrade.trash   # files moved aside by migrations, restored on rollback
+```
+
+## Data version
+
+The `v` file holds a monotonic integer that is **independent of the CLI's git tag version**. It is bumped only when a migration is added to `internal/store/migration`.
+
+- Baseline of the new scheme is `100`. Pre-`v3` binaries wrote `1` or `2`; on first start of a binary using this scheme, those values are auto-bridged to `100` (no schema change).
+- A binary supports a range `[BaselineVersion, CurrentVersion]`. Starting against newer data refuses with an explicit "please upgrade cicada".
+- Schema upgrades run automatically at startup, including destructive ones: each upgrade first does `VACUUM INTO db.backup` and runs every migration inside a transaction with file-system operations recorded in `upgrade.journal`. A crash mid-upgrade is rolled back on the next start.
 
 ## Start DEV Server
 
@@ -117,4 +118,6 @@ After starting dev server, the API reference can be visited on `http://localhost
 
 ## Rules
 
-- Alter database must also update [database.d2](./database.d2)
+- Any change to schema or to the on-disk layout under the data directory must ship as a new file in `internal/store/migration/` that calls `migration.Register` from `init()` — never edit the baseline DDL in `internal/store/schema.go` after release.
+- Each schema migration must add a new `changelog/database.v<to_version>.d2` snapshot reflecting the post-migration schema, plus an entry in [`changelog/database.changelog.md`](./changelog/database.changelog.md). Existing snapshots are immutable history and must not be modified.
+- Each migration that changes the data directory layout (renames, new dirs, asset moves) must add an entry in [`changelog/data.changelog.md`](./changelog/data.changelog.md).

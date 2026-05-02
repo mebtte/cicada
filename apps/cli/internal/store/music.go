@@ -39,7 +39,6 @@ type SingerInMusic struct {
 	ID      string
 	Name    string
 	Aliases string
-	Avatar  string
 }
 
 type MusicFork struct {
@@ -158,7 +157,7 @@ func GetSingersInMusicIDs(musicIDs []string) ([]SingerInMusic, error) {
 	if len(musicIDs) == 0 {
 		return nil, nil
 	}
-	q := `SELECT msr.musicId,s.id,s.name,s.aliases,s.avatar
+	q := `SELECT msr.musicId,s.id,s.name,s.aliases
 		FROM music_singer_relation msr JOIN singer s ON msr.singerId=s.id
 		WHERE msr.musicId IN (` + placeholders(len(musicIDs)) + `)`
 	rows, err := DB().Query(q, strs2any(musicIDs)...)
@@ -169,7 +168,7 @@ func GetSingersInMusicIDs(musicIDs []string) ([]SingerInMusic, error) {
 	var out []SingerInMusic
 	for rows.Next() {
 		s := SingerInMusic{}
-		rows.Scan(&s.MusicID, &s.ID, &s.Name, &s.Aliases, &s.Avatar)
+		rows.Scan(&s.MusicID, &s.ID, &s.Name, &s.Aliases)
 		out = append(out, s)
 	}
 	return out, nil

@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { MdPassword, MdSecurity } from 'react-icons/md';
 import Page from '../page';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { HEADER_HEIGHT } from '../../constants';
 import { CSSVariable } from '@/global_style';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { reloadUser, useUser } from '@/global_states/server';
@@ -24,7 +23,7 @@ import Avatar from '@/components_next/avatar';
 
 const AVATAR_SIZE = 120;
 const Style = styled(Page)`
-  padding: ${HEADER_HEIGHT + 20}px 20px 20px;
+  padding: 20px;
 
   overflow: auto;
   ${autoScrollbar}

@@ -12,7 +12,6 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import useData from './use_data';
-import { HEADER_HEIGHT } from '../../constants';
 import Page from '../page';
 import Invitation from './invitation';
 
@@ -22,8 +21,6 @@ const Root = styled(Page)`
 `;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
-
-  padding-top: ${HEADER_HEIGHT}px;
 `;
 const CenteredContainer = styled(Container)`
   ${flexCenter}

@@ -48,16 +48,26 @@ func TestGetSinger(t *testing.T) {
 	insertUser("user-2", "viewer", "Viewer")
 
 	if _, err := store.DB().Exec(
-		`INSERT INTO singer (id,avatar,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"singer-1", "creator.jpg", "Creator Singer", joinAliases([]string{"Alias A", "Alias B"}), "user-1", now,
+		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?)`,
+		"singer-1", "Creator Singer", joinAliases([]string{"Alias A", "Alias B"}), "user-1", now,
 	); err != nil {
 		t.Fatalf("insert singer-1: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO singer (id,avatar,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"singer-2", "guest.jpg", "Guest Singer", joinAliases([]string{"Guest Alias"}), "user-2", now,
+		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?)`,
+		"singer-2", "Guest Singer", joinAliases([]string{"Guest Alias"}), "user-2", now,
 	); err != nil {
 		t.Fatalf("insert singer-2: %v", err)
+	}
+	// Two photos for singer-1 with explicit positions to verify ordering (and
+	// that descriptions round-trip).
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer_photo (id,singerId,asset,position,description,addUserId,addTimestamp) VALUES
+			('photo-a','singer-1','a.jpg',1,'second',  'user-1',?),
+			('photo-b','singer-1','b.jpg',0,'first one','user-1',?)`,
+		now, now,
+	); err != nil {
+		t.Fatalf("insert photos: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,aliases,cover,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?,?,?)`,
@@ -69,14 +79,19 @@ func TestGetSinger(t *testing.T) {
 		t.Fatalf("link music singers: %v", err)
 	}
 
+	type photoResp struct {
+		ID          string `json:"id"`
+		Asset       string `json:"asset"`
+		Description string `json:"description"`
+	}
 	type response struct {
 		Code string `json:"code"`
 		Data struct {
-			ID         string   `json:"id"`
-			Name       string   `json:"name"`
-			Aliases    []string `json:"aliases"`
-			Avatar     string   `json:"avatar"`
-			Editable   bool     `json:"editable"`
+			ID         string      `json:"id"`
+			Name       string      `json:"name"`
+			Aliases    []string    `json:"aliases"`
+			Photos     []photoResp `json:"photos"`
+			Editable   bool        `json:"editable"`
 			CreateUser struct {
 				ID       string `json:"id"`
 				Nickname string `json:"nickname"`
@@ -91,7 +106,6 @@ func TestGetSinger(t *testing.T) {
 					ID      string   `json:"id"`
 					Name    string   `json:"name"`
 					Aliases []string `json:"aliases"`
-					Avatar  string   `json:"avatar"`
 				} `json:"singers"`
 			} `json:"musicList"`
 		} `json:"data"`
@@ -131,6 +145,21 @@ func TestGetSinger(t *testing.T) {
 		if !resp.Data.Editable {
 			t.Fatalf("expected editable for creator")
 		}
+
+		// Photos sorted by position; first one is the avatar.
+		if len(resp.Data.Photos) != 2 {
+			t.Fatalf("expected 2 photos, got %d", len(resp.Data.Photos))
+		}
+		if resp.Data.Photos[0].ID != "photo-b" || resp.Data.Photos[0].Description != "first one" {
+			t.Fatalf("expected photo-b first: %+v", resp.Data.Photos[0])
+		}
+		if resp.Data.Photos[0].Asset != "/asset/singer_photo/b.jpg" {
+			t.Fatalf("unexpected first photo asset url: %q", resp.Data.Photos[0].Asset)
+		}
+		if resp.Data.Photos[1].ID != "photo-a" || resp.Data.Photos[1].Description != "second" {
+			t.Fatalf("expected photo-a second: %+v", resp.Data.Photos[1])
+		}
+
 		if len(resp.Data.MusicList) != 1 {
 			t.Fatalf("unexpected musicList: %+v", resp.Data.MusicList)
 		}

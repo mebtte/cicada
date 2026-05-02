@@ -174,7 +174,6 @@ func GetMusicbill(c *gin.Context) {
 				"id":      s.ID,
 				"name":    s.Name,
 				"aliases": splitAliases(s.Aliases),
-				"avatar":  config.AssetPublicURL(s.Avatar, config.AssetTypeSingerAvatar),
 			})
 		}
 	}

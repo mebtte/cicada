@@ -41,6 +41,8 @@ func Auth() gin.HandlerFunc {
 }
 
 // Admin ensures the authenticated user has admin flag.
+// Must be chained AFTER Auth() in the same handler chain, since it reads the
+// user injected by Auth(): r.GET(path, Auth(), Admin(), handler).
 func Admin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		u := GetUser(c)

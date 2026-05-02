@@ -2,32 +2,30 @@ package store
 
 import (
 	"cicada/internal/config"
+	"cicada/internal/store/migration"
+	"context"
 	"crypto/md5"
 	"fmt"
 	"math/rand"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 )
 
 const (
-	dataVersion = 2
-
-	TableUser                     = "user"
-	TableCaptcha                  = "captcha"
-	TableSinger                   = "singer"
-	TableSingerModifyRecord       = "singer_modify_record"
-	TableMusic                    = "music"
-	TableMusicModifyRecord        = "music_modify_record"
-	TableMusicFork                = "music_fork"
-	TableLyric                    = "lyric"
-	TableMusicPlayRecord          = "music_play_record"
-	TableMusicSingerRelation      = "music_singer_relation"
-	TableMusicbill                = "musicbill"
-	TableMusicbillMusic           = "musicbill_music"
+	TableUser                      = "user"
+	TableCaptcha                   = "captcha"
+	TableSinger                    = "singer"
+	TableSingerPhoto               = "singer_photo"
+	TableMusic                     = "music"
+	TableMusicModifyRecord         = "music_modify_record"
+	TableMusicFork                 = "music_fork"
+	TableLyric                     = "lyric"
+	TableMusicPlayRecord           = "music_play_record"
+	TableMusicSingerRelation       = "music_singer_relation"
+	TableMusicbill                 = "musicbill"
+	TableMusicbillMusic            = "musicbill_music"
 	TablePublicMusicbillCollection = "public_musicbill_collection"
-	TableSharedMusicbill          = "shared_musicbill"
+	TableSharedMusicbill           = "shared_musicbill"
 )
 
 var tables = []string{
@@ -56,19 +54,21 @@ var tables = []string{
 	)`,
 	`CREATE TABLE IF NOT EXISTS singer (
 		id TEXT PRIMARY KEY NOT NULL,
-		avatar TEXT NOT NULL DEFAULT '',
 		name TEXT NOT NULL,
 		aliases TEXT NOT NULL DEFAULT '',
 		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL
 	)`,
-	`CREATE TABLE IF NOT EXISTS singer_modify_record (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
+	`CREATE TABLE IF NOT EXISTS singer_photo (
+		id TEXT PRIMARY KEY NOT NULL,
 		singerId TEXT NOT NULL REFERENCES singer(id),
-		modifyUserId TEXT NOT NULL REFERENCES user(id),
-		key TEXT NOT NULL,
-		modifyTimestamp INTEGER NOT NULL
+		asset TEXT NOT NULL,
+		position INTEGER NOT NULL,
+		description TEXT NOT NULL DEFAULT '',
+		addUserId TEXT NOT NULL REFERENCES user(id),
+		addTimestamp INTEGER NOT NULL
 	)`,
+	`CREATE INDEX IF NOT EXISTS idx_singer_photo_singer ON singer_photo(singerId, position)`,
 	`CREATE TABLE IF NOT EXISTS music (
 		id TEXT PRIMARY KEY NOT NULL,
 		type INTEGER NOT NULL,
@@ -165,20 +165,16 @@ func Initialize() error {
 		}
 	}
 
-	// Data version
-	vPath := config.DataVersionPath()
-	if raw, err := os.ReadFile(vPath); err == nil {
-		v, _ := strconv.Atoi(strings.TrimSpace(string(raw)))
-		if v < dataVersion {
-			return fmt.Errorf("data is v%d; run 'cicada upgrade-data' first", v)
-		}
-		if v > dataVersion {
-			return fmt.Errorf("data version %d is newer than this binary; please upgrade cicada", v)
-		}
-	} else {
-		if err := os.WriteFile(vPath, []byte(strconv.Itoa(dataVersion)), 0644); err != nil {
-			return fmt.Errorf("write version file: %w", err)
-		}
+	// Recover from any half-finished previous upgrade before touching the db.
+	if err := migration.Recover(config.Get().Data); err != nil {
+		return fmt.Errorf("recover: %w", err)
+	}
+
+	// Bring data dir to the binary's current data version (no-op when up to
+	// date). Run owns the db connection while it works and closes it before
+	// returning, so the long-lived Open() below gets a clean handle.
+	if err := migration.Run(context.Background(), config.Get().Data); err != nil {
+		return fmt.Errorf("data upgrade: %w", err)
 	}
 
 	// Open DB
@@ -215,7 +211,7 @@ func Initialize() error {
 			return fmt.Errorf("seed admin: %w", err)
 		}
 		fmt.Printf("\n========================================\n")
-		fmt.Printf("  Default user created\n")
+		fmt.Printf("  DEFAULT USER\n")
 		fmt.Printf("  Username : %s\n", username)
 		fmt.Printf("  Password : %s\n", password)
 		fmt.Printf("========================================\n\n")
