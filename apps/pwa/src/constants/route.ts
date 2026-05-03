@@ -4,6 +4,13 @@ export const ROOT_PATH = {
   ADMIN: '/admin',
 };
 
+export const ADMIN_PATH = {
+  DASHBOARD: 'dashboard',
+  USER_MANAGEMENT: 'user_management',
+  SINGER_MANAGEMENT: 'singer_management',
+  MUSIC_MANAGEMENT: 'music_management',
+};
+
 export const PLAYER_PATH = {
   EXPLORATION: '/',
   MUSIC: '/music/:id',

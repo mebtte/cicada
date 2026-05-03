@@ -1,9 +1,9 @@
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Navigate } from 'react-router-dom';
+import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import withLogin from '@/platform/with_login';
 import { useUser } from '@/global_states/server';
-import { ROOT_PATH } from '@/constants/route';
+import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import capitalize from '@/utils/capitalize';
@@ -25,17 +25,35 @@ import Dashboard from './dashboard';
 import MusicManagement from './music_management';
 import SingerManagement from './singer_management';
 
-const enum Tab {
-  DASHBOARD = 'dashboard',
-  USER_MANAGEMENT = 'user_management',
-  SINGER_MANAGEMENT = 'singer_management',
-  MUSIC_MANAGEMENT = 'music_management',
-}
-
 const SIDEBAR_WIDTH = 216;
 const HEADER_HEIGHT = 64;
 const MOBILE_BREAKPOINT = 760;
 const AVATAR_SIZE = 36;
+
+const ADMIN_MENU_ITEMS = [
+  {
+    path: ADMIN_PATH.DASHBOARD,
+    label: 'dashboard',
+    Icon: MdDashboard,
+  },
+  {
+    path: ADMIN_PATH.USER_MANAGEMENT,
+    label: 'user_management',
+    Icon: MdPeopleOutline,
+  },
+  {
+    path: ADMIN_PATH.SINGER_MANAGEMENT,
+    label: 'singer_management',
+    Icon: MdRecordVoiceOver,
+  },
+  {
+    path: ADMIN_PATH.MUSIC_MANAGEMENT,
+    label: 'music_management',
+    Icon: MdLibraryMusic,
+  },
+] as const;
+
+const getAdminPath = (path: string) => `${ROOT_PATH.ADMIN}/${path}`;
 
 const Page = styled.div`
   position: fixed;
@@ -131,7 +149,7 @@ const MenuList = styled.nav`
   ${autoScrollbar}
 `;
 
-const MenuButton = styled.button<{ $active: boolean }>`
+const MenuLink = styled(NavLink)`
   width: 100%;
   min-height: 42px;
   border: none;
@@ -140,12 +158,11 @@ const MenuButton = styled.button<{ $active: boolean }>`
   display: flex;
   align-items: center;
   gap: 10px;
-  background: ${({ $active }) =>
-    $active ? CSSVariable.COLOR_PRIMARY : 'transparent'};
-  color: ${({ $active }) =>
-    $active ? '#fff' : CSSVariable.TEXT_COLOR_PRIMARY};
+  background: transparent;
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   font-size: 14px;
-  font-weight: ${({ $active }) => ($active ? '600' : '500')};
+  font-weight: 500;
+  text-decoration: none;
   cursor: pointer;
   transition:
     background 120ms,
@@ -166,10 +183,17 @@ const MenuButton = styled.button<{ $active: boolean }>`
   }
 
   &:hover {
-    background: ${({ $active }) =>
-      $active
-        ? CSSVariable.COLOR_PRIMARY
-        : CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+    background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  }
+
+  &.active {
+    background: ${CSSVariable.COLOR_PRIMARY};
+    color: #fff;
+    font-weight: 600;
+
+    &:hover {
+      background: ${CSSVariable.COLOR_PRIMARY};
+    }
   }
 
   & + & {
@@ -344,25 +368,20 @@ const UserManageWrapper = styled.div`
   inset: 0;
 `;
 
-const getTabLabel = (tab: Tab) => {
-  switch (tab) {
-    case Tab.DASHBOARD:
-      return capitalize(t('dashboard'));
-    case Tab.USER_MANAGEMENT:
-      return capitalize(t('user_management'));
-    case Tab.SINGER_MANAGEMENT:
-      return capitalize(t('singer_management'));
-    case Tab.MUSIC_MANAGEMENT:
-      return capitalize(t('music_management'));
-  }
+const getCurrentMenuItem = (pathname: string) => {
+  return (
+    ADMIN_MENU_ITEMS.find(({ path }) => pathname === getAdminPath(path)) ??
+    ADMIN_MENU_ITEMS[0]
+  );
 };
 
 function AdminPage() {
   const user = useUser()!;
-  const [tab, setTab] = useState<Tab>(Tab.DASHBOARD);
+  const { pathname } = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const currentMenuItem = getCurrentMenuItem(pathname);
 
   useEffect(() => {
     if (!userMenuOpen) return;
@@ -384,8 +403,7 @@ function AdminPage() {
     return <Navigate to={ROOT_PATH.PLAYER} replace />;
   }
 
-  const selectTab = (nextTab: Tab) => {
-    setTab(nextTab);
+  const closeSidebar = () => {
     setSidebarOpen(false);
   };
 
@@ -423,38 +441,17 @@ function AdminPage() {
         </SidebarHeader>
 
         <MenuList>
-          <MenuButton
-            type="button"
-            $active={tab === Tab.DASHBOARD}
-            onClick={() => selectTab(Tab.DASHBOARD)}
-          >
-            <MdDashboard />
-            <span>{capitalize(t('dashboard'))}</span>
-          </MenuButton>
-          <MenuButton
-            type="button"
-            $active={tab === Tab.USER_MANAGEMENT}
-            onClick={() => selectTab(Tab.USER_MANAGEMENT)}
-          >
-            <MdPeopleOutline />
-            <span>{capitalize(t('user_management'))}</span>
-          </MenuButton>
-          <MenuButton
-            type="button"
-            $active={tab === Tab.SINGER_MANAGEMENT}
-            onClick={() => selectTab(Tab.SINGER_MANAGEMENT)}
-          >
-            <MdRecordVoiceOver />
-            <span>{capitalize(t('singer_management'))}</span>
-          </MenuButton>
-          <MenuButton
-            type="button"
-            $active={tab === Tab.MUSIC_MANAGEMENT}
-            onClick={() => selectTab(Tab.MUSIC_MANAGEMENT)}
-          >
-            <MdLibraryMusic />
-            <span>{capitalize(t('music_management'))}</span>
-          </MenuButton>
+          {ADMIN_MENU_ITEMS.map(({ path, label, Icon }) => (
+            <MenuLink
+              key={path}
+              to={getAdminPath(path)}
+              end
+              onClick={closeSidebar}
+            >
+              <Icon />
+              <span>{capitalize(t(label))}</span>
+            </MenuLink>
+          ))}
         </MenuList>
       </Sidebar>
       <Overlay
@@ -474,7 +471,7 @@ function AdminPage() {
             <MdMenu size={22} />
           </MenuToggle>
           <HeaderTitle>
-            <HeaderTitleText>{getTabLabel(tab)}</HeaderTitleText>
+            <HeaderTitleText>{capitalize(t(currentMenuItem.label))}</HeaderTitleText>
           </HeaderTitle>
           <HeaderActions>
             <UserMenuRoot ref={userMenuRef}>
@@ -510,17 +507,37 @@ function AdminPage() {
           </HeaderActions>
         </Header>
         <Content>
-          {tab === Tab.DASHBOARD ? (
-            <Dashboard />
-          ) : tab === Tab.USER_MANAGEMENT ? (
-            <UserManageWrapper>
-              <UserManage />
-            </UserManageWrapper>
-          ) : tab === Tab.SINGER_MANAGEMENT ? (
-            <SingerManagement />
-          ) : (
-            <MusicManagement />
-          )}
+          <Routes>
+            <Route
+              index
+              element={
+                <Navigate to={getAdminPath(ADMIN_PATH.DASHBOARD)} replace />
+              }
+            />
+            <Route path={ADMIN_PATH.DASHBOARD} element={<Dashboard />} />
+            <Route
+              path={ADMIN_PATH.USER_MANAGEMENT}
+              element={
+                <UserManageWrapper>
+                  <UserManage />
+                </UserManageWrapper>
+              }
+            />
+            <Route
+              path={ADMIN_PATH.SINGER_MANAGEMENT}
+              element={<SingerManagement />}
+            />
+            <Route
+              path={ADMIN_PATH.MUSIC_MANAGEMENT}
+              element={<MusicManagement />}
+            />
+            <Route
+              path="*"
+              element={
+                <Navigate to={getAdminPath(ADMIN_PATH.DASHBOARD)} replace />
+              }
+            />
+          </Routes>
         </Content>
       </Main>
     </Page>

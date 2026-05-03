@@ -23,7 +23,7 @@ const ROUTES: RouteObject[] = [
     element: <Login />,
   },
   {
-    path: ROOT_PATH.ADMIN,
+    path: `${ROOT_PATH.ADMIN}/*`,
     element: <Admin />,
   },
   {
