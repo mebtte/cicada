@@ -448,11 +448,31 @@ func GetExploration(c *gin.Context) {
 		}
 	}
 
+	singerIDs := make([]string, len(singerRows))
+	for i, s := range singerRows {
+		singerIDs[i] = s.ID
+	}
+	photosBySinger := map[string][]gin.H{}
+	if len(singerIDs) > 0 {
+		photos, _ := store.ListSingerPhotosBySingerIDs(singerIDs)
+		for _, p := range photos {
+			photosBySinger[p.SingerID] = append(photosBySinger[p.SingerID], gin.H{
+				"id":          p.ID,
+				"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeSingerPhoto),
+				"description": p.Description,
+			})
+		}
+	}
 	singerList := make([]gin.H, len(singerRows))
 	for i, s := range singerRows {
+		photos := photosBySinger[s.ID]
+		if photos == nil {
+			photos = []gin.H{}
+		}
 		singerList[i] = gin.H{
-			"id":   s.ID,
-			"name": s.Name,
+			"id":     s.ID,
+			"name":   s.Name,
+			"photos": photos,
 		}
 	}
 

@@ -14,7 +14,7 @@ type Response = {
   singerList: {
     id: string;
     name: string;
-    avatar: string;
+    photos: { id: string; asset: string; description: string }[];
   }[];
   publicMusicbillList: {
     id: string;
@@ -40,7 +40,10 @@ async function getExploration() {
     })),
     singerList: data.singerList.map((s) => ({
       ...s,
-      avatar: prefixServerOrigin(s.avatar),
+      photos: s.photos.map((p) => ({
+        ...p,
+        asset: prefixServerOrigin(p.asset),
+      })),
     })),
     publicMusicbillList: data.publicMusicbillList.map((mb) => ({
       ...mb,

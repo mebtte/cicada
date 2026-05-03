@@ -288,17 +288,26 @@ function Wrapper() {
                 <ExplorationSection
                   title={t('recommended_singer')}
                   items={d.value.singerList}
-                  renderItem={(singer) => (
-                    <Cover
-                      key={singer.id}
-                      src={getResizedImage({
-                        url: singer.avatar,
-                        size: Math.ceil(ITEM_MIN_WIDTH * window.devicePixelRatio),
-                      })}
-                      onClick={() => openSingerDrawer(singer.id)}
-                      info={<SingerInfo singer={singer} />}
-                    />
-                  )}
+                  renderItem={(singer) => {
+                    const avatar = singer.photos[0]?.asset;
+                    return (
+                      <Cover
+                        key={singer.id}
+                        src={
+                          avatar
+                            ? getResizedImage({
+                                url: avatar,
+                                size: Math.ceil(
+                                  ITEM_MIN_WIDTH * window.devicePixelRatio,
+                                ),
+                              })
+                            : ''
+                        }
+                        onClick={() => openSingerDrawer(singer.id)}
+                        info={<SingerInfo singer={singer} />}
+                      />
+                    );
+                  }}
                 />
                 <ExplorationSection
                   title={t('recommended_public_musicbill')}
