@@ -1,5 +1,5 @@
 import { CSSProperties } from 'react';
-import { Select, SelectOption, SelectProps } from '@/components_next';
+import { Select, SelectOption, SelectProps } from '@/components';
 import { useSetting } from '@/global_states/setting';
 import { LANGUAGE_MAP, t } from '@/i18n';
 import dialog from '@/utils/dialog';

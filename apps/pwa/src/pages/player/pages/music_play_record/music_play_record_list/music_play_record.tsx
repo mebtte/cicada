@@ -2,7 +2,7 @@ import { CSSVariable } from '@/global_style';
 import day from '@/utils/day';
 import styled from 'styled-components';
 import { MdAvTimer, MdDeleteOutline } from 'react-icons/md';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';

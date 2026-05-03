@@ -1,4 +1,4 @@
-import { Drawer, DrawerContent } from '@/components_next';
+import { Drawer, DrawerContent } from '@/components';
 import SingerContent from './content';
 
 function SingerDrawer({

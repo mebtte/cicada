@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdPlaylistAdd, MdStar, MdStarOutline } from 'react-icons/md';
 import notice from '@/utils/notice';
 import collectPublicMusicbill from '@/server/api/collect_public_musicbill';

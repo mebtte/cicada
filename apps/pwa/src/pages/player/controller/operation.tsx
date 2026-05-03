@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import {
   MdOutlineQueueMusic,
   MdPause,

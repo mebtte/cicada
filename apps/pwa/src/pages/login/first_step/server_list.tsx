@@ -3,7 +3,7 @@ import { t } from '@/i18n';
 import styled from 'styled-components';
 import { useServer } from '@/global_states/server';
 import dialog from '@/utils/dialog';
-import { Divider } from '@/components_next';
+import { Divider } from '@/components';
 import { FONT, ServerCardItem } from './server_card';
 
 const Style = styled.div`

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Slider } from '@/components_next';
+import { Slider } from '@/components';
 import { CSSVariable } from '@/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,

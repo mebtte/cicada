@@ -1,7 +1,7 @@
 import notice from '@/utils/notice';
 import { useState } from 'react';
 import styled from 'styled-components';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdCheck, MdClose } from 'react-icons/md';
 import definition from './definition';
 import { t } from './i18n';

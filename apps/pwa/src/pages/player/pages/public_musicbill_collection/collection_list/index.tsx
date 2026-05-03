@@ -9,7 +9,7 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';

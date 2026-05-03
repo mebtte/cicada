@@ -1,7 +1,7 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
 import { ChangeEventHandler, useEffect, useState } from 'react';
-import Button from '@/components_next/button';
-import Input from '@/components_next/input';
+import Button from '@/components/button';
+import Input from '@/components/input';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import adminCreateUser from '@/server/api/admin_create_user';

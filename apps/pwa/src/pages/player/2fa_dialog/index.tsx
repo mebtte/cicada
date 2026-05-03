@@ -1,7 +1,7 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
-import Button from '@/components_next/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
+import Button from '@/components/button';
 import { useState } from 'react';
-import Input from '@/components_next/input';
+import Input from '@/components/input';
 import { t } from '@/i18n';
 import { reloadUser, useUser } from '@/global_states/server';
 import logger from '@/utils/logger';

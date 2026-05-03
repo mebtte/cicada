@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import SizeObserver from '@/components/size_observer';
 import Empty from '@/components/empty';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';

@@ -9,8 +9,8 @@ import {
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import { MdClose, MdRecordVoiceOver } from 'react-icons/md';
-import Input from '@/components_next/input';
-import { Select, type SelectOption } from '@/components_next';
+import Input from '@/components/input';
+import { Select, type SelectOption } from '@/components';
 import Pagination from '@/components/pagination';
 import Spinner from '@/components/spinner';
 import ErrorCard from '@/components/error_card';

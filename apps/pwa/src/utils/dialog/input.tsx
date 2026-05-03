@@ -1,6 +1,6 @@
-import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
-import Button from '@/components_next/button';
-import Input from '@/components_next/input';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
+import Button from '@/components/button';
+import Input from '@/components/input';
 import { ChangeEventHandler, useState } from 'react';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';

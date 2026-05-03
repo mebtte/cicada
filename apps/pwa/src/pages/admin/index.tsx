@@ -9,7 +9,7 @@ import { CSSVariable } from '@/global_style';
 import capitalize from '@/utils/capitalize';
 import UserManage from '@/pages/player/pages/user_manage';
 import LanguageSelect from '@/components/language_select';
-import Avatar from '@/components_next/avatar';
+import Avatar from '@/components/avatar';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import definition from '@/definition';

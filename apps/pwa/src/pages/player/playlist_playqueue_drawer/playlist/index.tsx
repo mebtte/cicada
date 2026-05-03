@@ -9,7 +9,7 @@ import {
 import styled from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
 import List from 'react-list';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdPlayArrow, MdReadMore, MdOutlineClose } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';

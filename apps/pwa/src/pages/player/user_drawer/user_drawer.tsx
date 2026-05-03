@@ -12,7 +12,7 @@ import Spinner from '@/components/spinner';
 import TabList from '@/components/tab_list';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { Drawer, DrawerContent } from '@/components_next';
+import { Drawer, DrawerContent } from '@/components';
 import useData from './use_data';
 import {
   MINI_INFO_HEIGHT,

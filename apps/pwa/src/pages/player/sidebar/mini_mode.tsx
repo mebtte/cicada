@@ -1,4 +1,4 @@
-import { Drawer, DrawerContent } from '@/components_next';
+import { Drawer, DrawerContent } from '@/components';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';

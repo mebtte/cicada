@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { type StopTimer as StopTimerType } from '../constants';
 import { CSSProperties, useEffect, useState } from 'react';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdClose } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import dialog from '@/utils/dialog';

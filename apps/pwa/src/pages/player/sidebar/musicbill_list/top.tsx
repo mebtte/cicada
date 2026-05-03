@@ -1,6 +1,6 @@
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import {
   MdOutlineAddBox,
   MdSort,

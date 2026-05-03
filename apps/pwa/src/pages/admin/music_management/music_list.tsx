@@ -2,7 +2,7 @@ import { ChangeEventHandler, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import searchMusicRequest from '@/server/api/search_music';
 import { CSSVariable } from '@/global_style';
-import Input from '@/components_next/input';
+import Input from '@/components/input';
 import Spinner from '@/components/spinner';
 import { t } from '@/i18n';
 import { MdOutlineEdit, MdMusicNote } from 'react-icons/md';

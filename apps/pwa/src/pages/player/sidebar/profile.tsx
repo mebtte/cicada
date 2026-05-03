@@ -6,7 +6,7 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import { useUser } from '@/global_states/server';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Avatar from '@/components_next/avatar';
+import Avatar from '@/components/avatar';
 
 const AVATAR_SIZE = 100;
 const Style = styled.div`

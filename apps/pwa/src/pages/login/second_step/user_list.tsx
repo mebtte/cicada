@@ -1,4 +1,4 @@
-import { Divider } from '@/components_next';
+import { Divider } from '@/components';
 import { CSSVariable } from '@/global_style';
 import { getSelectedServer, useServer } from '@/global_states/server';
 import { t } from '@/i18n';

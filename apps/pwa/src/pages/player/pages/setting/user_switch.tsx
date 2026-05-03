@@ -1,4 +1,4 @@
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { t } from '@/i18n';
 import { CSSProperties, useContext } from 'react';
 import dialog from '@/utils/dialog';

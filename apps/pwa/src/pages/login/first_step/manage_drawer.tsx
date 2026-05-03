@@ -1,4 +1,4 @@
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components_next';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components';
 import { t } from '@/i18n';
 import ManageContent from './manage_content';
 

@@ -4,7 +4,7 @@ import storage, { Key } from '../storage';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import styled from 'styled-components';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdCheck, MdClose } from 'react-icons/md';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import eventemitter, { EventType } from '../eventemitter';

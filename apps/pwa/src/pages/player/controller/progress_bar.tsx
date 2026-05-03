@@ -1,4 +1,4 @@
-import { Slider } from '@/components_next';
+import { Slider } from '@/components';
 import { CSSProperties } from 'react';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import playerEventemitter, {

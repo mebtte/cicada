@@ -1,4 +1,4 @@
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { memo } from 'react';
 import { t } from '@/i18n';
 import { buttonItemStyle } from './constants';

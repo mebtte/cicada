@@ -1,6 +1,6 @@
 import { ChangeEventHandler, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import {

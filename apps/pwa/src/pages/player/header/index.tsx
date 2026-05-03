@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdArrowBack, MdMenu, MdSearch } from 'react-icons/md';
 import {
   matchPath,

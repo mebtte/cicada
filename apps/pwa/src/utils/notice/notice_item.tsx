@@ -6,7 +6,7 @@ import { UtilZIndex } from '@/constants/style';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { Notice, TRANSITION_DURATION, NoticeType } from './constants';
 import e, { EventType } from './eventemitter';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 
 const NOTICE_TYPE_MAP: Record<
   NoticeType,

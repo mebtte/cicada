@@ -1,5 +1,5 @@
 import { type CSSProperties, memo } from 'react';
-import { Slider } from '@/components_next';
+import { Slider } from '@/components';
 import { useTheme } from '@/global_states/theme';
 import { t } from '@/i18n';
 import Item from './item';

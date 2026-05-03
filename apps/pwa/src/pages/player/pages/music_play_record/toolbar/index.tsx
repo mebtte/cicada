@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdHelpOutline } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { useUser } from '@/global_states/server';

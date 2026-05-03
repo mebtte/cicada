@@ -1,8 +1,8 @@
-import { Drawer, DrawerContent } from '@/components_next';
+import { Drawer, DrawerContent } from '@/components';
 import { CSSProperties } from 'react';
 import styled from 'styled-components';
 import useNavigate from '@/utils/use_navigate';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import dialog from '@/utils/dialog';
 import notice from '@/utils/notice';
 import addMusicbillSharedUser from '@/server/api/add_musicbill_shared_user';

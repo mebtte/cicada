@@ -7,7 +7,7 @@ import { CSSVariable } from '@/global_style';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { reloadUser, useUser } from '@/global_states/server';
 import day from '@/utils/day';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import dialog from '@/utils/dialog';
 import uploadAsset from '@/server/form/upload_asset';
 import { AssetType } from '@/constants/asset';
@@ -17,9 +17,9 @@ import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
 import playerEventemitter, { EventType } from '../../eventemitter';
-import { IconEdit } from '@/components_next/icon';
-import Input from '@/components_next/input';
-import Avatar from '@/components_next/avatar';
+import { IconEdit } from '@/components/icon';
+import Input from '@/components/input';
+import Avatar from '@/components/avatar';
 
 const AVATAR_SIZE = 120;
 const Style = styled(Page)`

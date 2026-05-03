@@ -1,7 +1,7 @@
 import { CSSProperties, useContext } from 'react';
 import styled from 'styled-components';
 import List from 'react-list';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import {
   MdOutlineLocationOn,
   MdOutlineClose,

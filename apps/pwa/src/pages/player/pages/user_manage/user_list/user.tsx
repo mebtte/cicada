@@ -3,7 +3,7 @@ import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdMoreVert } from 'react-icons/md';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';

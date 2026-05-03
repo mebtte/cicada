@@ -7,7 +7,7 @@ import {
   MdOutlineForwardToInbox,
   MdClose,
 } from 'react-icons/md';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { CSSProperties } from 'react';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';

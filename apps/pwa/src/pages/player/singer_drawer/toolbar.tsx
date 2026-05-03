@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdPlaylistAdd, MdCopyAll } from 'react-icons/md';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';

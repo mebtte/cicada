@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
 import { animated, useTransition } from 'react-spring';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { t } from '@/i18n';
 import Context from '../../context';
 import e, { EventType } from '../../eventemitter';

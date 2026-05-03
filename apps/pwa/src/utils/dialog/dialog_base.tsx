@@ -1,5 +1,5 @@
 import { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components_next';
+import { Dialog, DialogContent, DialogTitle } from '@/components';
 import { DialogOptions } from './constants';
 import e, { EventType } from './eventemitter';
 

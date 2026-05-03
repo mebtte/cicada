@@ -1,6 +1,6 @@
-import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label } from '@/components_next';
-import Button from '@/components_next/button';
-import Input from '@/components_next/input';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label } from '@/components';
+import Button from '@/components/button';
+import Input from '@/components/input';
 import { useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { t } from '@/i18n';

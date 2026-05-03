@@ -1,4 +1,4 @@
-import { Drawer, DrawerContent } from '@/components_next';
+import { Drawer, DrawerContent } from '@/components';
 import { CSSProperties, useCallback, useEffect, useState } from 'react';
 import MenuItem from '@/components/menu_item';
 import {
@@ -34,7 +34,7 @@ import stringArrayEqual from '@/utils/string_array_equal';
 import dialog from '@/utils/dialog';
 import deleteMusic from '@/server/api/delete_music';
 import logger from '@/utils/logger';
-import type { SelectOption } from '@/components_next';
+import type { SelectOption } from '@/components';
 import searchSingerRequest from '@/server/api/search_singer';
 import searchMusicRequest from '@/server/api/search_music';
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/singer';

@@ -1,7 +1,7 @@
-import Input from '@/components_next/input';
+import Input from '@/components/input';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdPlaylistRemove } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';

@@ -5,7 +5,7 @@ import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { Drawer, DrawerContent } from '@/components_next';
+import { Drawer, DrawerContent } from '@/components';
 import useData from './use_data';
 import { Musicbill as MusicbillType } from './constants';
 import Info from './info';

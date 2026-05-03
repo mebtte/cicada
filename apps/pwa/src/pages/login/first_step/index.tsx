@@ -1,15 +1,15 @@
 import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import notice from '@/utils/notice';
-import Input from '@/components_next/input';
+import Input from '@/components/input';
 import logger from '@/utils/logger';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { t } from '@/i18n';
 import Logo from '../logo';
 import Language from './language';
 import ServerList from './server_list';
 import { useServer } from '@/global_states/server';
-import { Divider } from '@/components_next';
+import { Divider } from '@/components';
 
 const Style = styled.div`
   display: flex;

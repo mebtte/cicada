@@ -1,4 +1,4 @@
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components_next';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components';
 import { useCallback, useEffect, useState } from 'react';
 import {
   DndContext,

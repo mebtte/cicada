@@ -3,7 +3,7 @@ import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';

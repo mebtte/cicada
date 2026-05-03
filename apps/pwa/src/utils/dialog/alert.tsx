@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { t } from '@/i18n';
 import { Alert as AlertType } from './constants';
-import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components_next';
-import Button from '@/components_next/button';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
+import Button from '@/components/button';
 import useEvent from '../use_event';
 import DialogBase from './dialog_base';
 

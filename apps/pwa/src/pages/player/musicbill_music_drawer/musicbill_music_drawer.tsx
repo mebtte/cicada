@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Drawer, DrawerContent } from '@/components_next';
+import { Drawer, DrawerContent } from '@/components';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { MusicWithSingerAliases } from '../constants';

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import Input from '@/components_next/input';
-import { Label } from '@/components_next';
+import Input from '@/components/input';
+import { Label } from '@/components';
 import Textarea from '@/components/textarea';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import day from '@/utils/day';
 import { ChangeEventHandler, useState } from 'react';
 import logger from '@/utils/logger';

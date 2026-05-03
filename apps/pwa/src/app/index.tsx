@@ -1,7 +1,7 @@
 import ErrorBoundary from '@/components/error_boundary';
 import { GlobalStyle } from '@/global_style';
 import { ThemeProvider } from 'styled-components';
-import { ThemeProvider as CicadaThemeProvider } from '@/components_next/theme';
+import { ThemeProvider as CicadaThemeProvider } from '@/components/theme';
 import { HashRouter } from 'react-router-dom';
 import App from './app';
 import UncaughtError from './uncaught_error';

@@ -1,4 +1,4 @@
-import { Drawer, DrawerContent } from '@/components_next';
+import { Drawer, DrawerContent } from '@/components';
 import useOpen from './use_open';
 import Content from './content';
 

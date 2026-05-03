@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { ChangeEventHandler, useState } from 'react';
-import Input from '@/components_next/input';
-import Button from '@/components_next/button';
+import Input from '@/components/input';
+import Button from '@/components/button';
 import { t } from '@/i18n';
 import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '@/constants/user';
 import logger from '@/utils/logger';

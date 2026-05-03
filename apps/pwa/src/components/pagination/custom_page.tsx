@@ -8,7 +8,7 @@ import {
 import Popup from '@/components/popup';
 import { UtilZIndex } from '@/constants/style';
 import { t } from '@/i18n';
-import Input from '@/components_next/input';
+import Input from '@/components/input';
 import e, { EventType } from './eventemitter';
 import { IS_TOUCHABLE } from '../../constants/browser';
 

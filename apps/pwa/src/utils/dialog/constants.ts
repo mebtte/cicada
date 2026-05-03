@@ -1,5 +1,5 @@
-import type { Variant } from '@/components_next/button';
-import type { SelectOption } from '@/components_next';
+import type { Variant } from '@/components/button';
+import type { SelectOption } from '@/components';
 import { ReactNode } from 'react';
 
 export const ID_LENGTH = 6;

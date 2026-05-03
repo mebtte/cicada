@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { TOOLBAR_HEIGHT } from '../constants';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { MdPlaylistRemove, MdOutlineRestartAlt } from 'react-icons/md';
 import { useContext, useMemo } from 'react';
 import context from '@/pages/player/context';

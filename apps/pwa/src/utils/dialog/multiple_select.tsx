@@ -1,5 +1,5 @@
-import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label, MultiSelect, SelectOption } from '@/components_next';
-import Button from '@/components_next/button';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label, MultiSelect, SelectOption } from '@/components';
+import Button from '@/components/button';
 import { useState } from 'react';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';

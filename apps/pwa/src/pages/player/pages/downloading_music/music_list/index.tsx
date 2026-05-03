@@ -19,7 +19,7 @@ import { TOOLBAR_HEIGHT } from '../constants';
 import context from '@/pages/player/context';
 import Empty from '@/components/empty';
 import absoluteFullSize from '@/style/absolute_full_size';
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import eventemitter, { EventType } from '@/pages/player/eventemitter';
 import dialog from '@/utils/dialog';
 

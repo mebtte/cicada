@@ -1,4 +1,4 @@
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import useEvent from '@/utils/use_event';
 import { memo } from 'react';
 import dialog from '@/utils/dialog';

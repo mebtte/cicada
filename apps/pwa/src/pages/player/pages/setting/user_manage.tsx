@@ -1,4 +1,4 @@
-import Button from '@/components_next/button';
+import Button from '@/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import { useNavigate } from 'react-router-dom';

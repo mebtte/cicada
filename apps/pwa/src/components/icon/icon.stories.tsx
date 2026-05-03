@@ -19,7 +19,7 @@ const meta = {
       description: {
         component:
           'Stroke-based SVG icons. Each icon is an independent file — unused icons are tree-shaken out of the bundle. ' +
-          'Import named icons directly: `import { IconPlayQueue } from "@/components_next/icon"`. ' +
+          'Import named icons directly: `import { IconPlayQueue } from "@/components/icon"`. ' +
           'To add a new icon, create a file under `icons/` and add one export line to `index.ts`.',
       },
     },
