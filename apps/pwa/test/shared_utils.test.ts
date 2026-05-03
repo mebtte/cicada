@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import capitalize from "../src/shared/utils/capitalize.js";
-import stringArrayEqual from "../src/shared/utils/string_array_equal.js";
+import capitalize from "../src/utils/capitalize.js";
+import stringArrayEqual from "../src/utils/string_array_equal.js";
 import parseSearch from "../src/utils/parse_search.js";
 
 test("capitalize uppercases the first letter of each word", () => {

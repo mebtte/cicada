@@ -1,4 +1,4 @@
-import { AssetType } from '#/constants';
+import { AssetType } from '@/constants/asset';
 import { request, Method } from '..';
 
 function uploadAsset(asset: Blob, assetType: AssetType) {

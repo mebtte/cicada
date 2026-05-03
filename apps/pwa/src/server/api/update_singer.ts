@@ -1,4 +1,4 @@
-import { AllowUpdateKey } from '#/constants/singer';
+import { AllowUpdateKey } from '@/constants/singer';
 import { request, Method } from '..';
 
 type KeyMapData = {
@@ -17,7 +17,7 @@ function updateSinger<K extends AllowUpdateKey>({
   value: KeyMapData[K];
 }) {
   return request({
-    path: '/api/singer',
+    path: '/api/admin/singer',
     method: Method.PUT,
     withToken: true,
     body: { id, key, value },

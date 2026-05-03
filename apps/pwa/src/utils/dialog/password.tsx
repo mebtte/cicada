@@ -3,7 +3,7 @@ import Button from '@/components_next/button';
 import Input from '@/components_next/input';
 import { ChangeEventHandler, useState } from 'react';
 import { t } from '@/i18n';
-import { PASSWORD_MAX_LENGTH } from '#/constants/user';
+import { PASSWORD_MAX_LENGTH } from '@/constants/user';
 import DialogBase from './dialog_base';
 import { Password as PasswordShape } from './constants';
 import useEvent from '../use_event';

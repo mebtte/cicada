@@ -8,7 +8,7 @@ import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import disable2FA from '@/server/api/disable_2fa';
 import enable2FA from '@/server/api/enable_2fa';
-import sleep from '#/utils/sleep';
+import sleep from '@/utils/sleep';
 import Qrcode from './qrcode';
 import useOpen from './use_open';
 

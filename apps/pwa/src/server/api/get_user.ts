@@ -1,6 +1,34 @@
+import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
-import { Response } from '#/server/api/get_user';
 import { request } from '..';
+
+interface Response {
+  id: string;
+  avatar: string;
+  joinTimestamp: number;
+  nickname: string;
+  username: string;
+  musicbillList: {
+    id: string;
+    cover: string;
+    name: string;
+    musicCount: number;
+  }[];
+  musicList: {
+    id: string;
+    type: MusicType;
+    name: string;
+    aliases: string[];
+    cover: string;
+    asset: string;
+    singers: {
+      id: string;
+      name: string;
+      aliases: string[];
+      avatar: string;
+    }[];
+  }[];
+}
 
 /**
  * 获取用户详情

@@ -3,7 +3,7 @@ import { StopTimer } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
-import day from '#/utils/day';
+import day from '@/utils/day';
 
 export default () => {
   const [stopTimer, setStopTimer] = useState<StopTimer | null>(null);

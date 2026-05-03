@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import storage, { Key } from '@/storage';
 import { Setting } from '@/constants/setting';
 import logger from '@/utils/logger';
-import { DEFAULT_LANGUAGE, LANGUAGES, Language } from '#/constants';
+import { DEFAULT_LANGUAGE, LANGUAGES, Language } from '@/constants/language';
 
 function getInitialLanguage() {
   switch (window.navigator.language.toLowerCase()) {

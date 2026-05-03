@@ -11,14 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// canEditSinger returns true when u may edit s. Admins can edit any singer;
-// otherwise only the creator can.
-func canEditSinger(u *store.User, s *store.Singer) bool {
-	return u.Admin == 1 || s.CreateUserID == u.ID
-}
-
 func GetSinger(c *gin.Context) {
-	u := middleware.GetUser(c)
 	id := c.Query("id")
 	if id == "" {
 		api.Fail(c, apperr.WrongParameter)
@@ -84,7 +77,6 @@ func GetSinger(c *gin.Context) {
 		"createTimestamp": s.CreateTimestamp,
 		"createUser":      gin.H{"id": s.CreateUserID, "nickname": createUserNickname},
 		"musicList":       musicItems,
-		"editable":        canEditSinger(u, s),
 	})
 }
 
@@ -116,7 +108,7 @@ type createSingerBody struct {
 	Name string `json:"name" binding:"required"`
 }
 
-func CreateSinger(c *gin.Context) {
+func AdminCreateSinger(c *gin.Context) {
 	u := middleware.GetUser(c)
 	var body createSingerBody
 	if err := c.ShouldBindJSON(&body); err != nil || len(body.Name) > 50 {
@@ -137,7 +129,7 @@ type updateSingerBody struct {
 	Value any    `json:"value"`
 }
 
-func UpdateSinger(c *gin.Context) {
+func AdminUpdateSinger(c *gin.Context) {
 	var body updateSingerBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)

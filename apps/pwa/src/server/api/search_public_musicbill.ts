@@ -1,6 +1,21 @@
-import { Response } from '#/server/api/search_public_musicbill';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
+
+type Response = {
+  total: number;
+  musicbillList: {
+    id: string;
+    name: string;
+    cover: string;
+    musicCount: number;
+    collectionCount: number;
+    user: {
+      id: string;
+      nickname: string;
+      avatar: string;
+    };
+  }[];
+};
 
 async function searchPublicMusicbill({
   keyword,

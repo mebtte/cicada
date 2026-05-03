@@ -8,7 +8,7 @@ import {
   MdOutlineDownload,
 } from 'react-icons/md';
 import { saveAs } from 'file-saver';
-import formatMusicFilename from '#/utils/format_music_filename';
+import formatMusicFilename from '@/utils/format_music_filename';
 import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,

@@ -9,19 +9,19 @@ import {
   MdCloudUpload,
   MdMusicNote,
 } from 'react-icons/md';
-import { AssetType, ASSET_TYPE_MAP } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP } from '@/constants/asset';
 import uploadAsset from '@/server/form/upload_asset';
 import createMusic from '@/server/api/create_music';
 import updateMusic from '@/server/api/update_music';
-import { AllowUpdateKey, MusicType } from '#/constants/music';
-import getMusicFileMetadata from '#/utils/get_music_file_metadata';
+import { AllowUpdateKey, MusicType } from '@/constants/music';
+import getMusicFileMetadata from '@/utils/get_music_file_metadata';
 import logger from '@/utils/logger';
 import autoScrollbar from '@/style/auto_scrollbar';
 import {
   base64ToCover,
   getMusicNameFromFilename,
-} from '#/utils/music_file';
-import capitalize from '#/utils/capitalize';
+} from '@/utils/music_file';
+import capitalize from '@/utils/capitalize';
 
 type ImportStatus = 'pending' | 'importing' | 'success' | 'failed';
 

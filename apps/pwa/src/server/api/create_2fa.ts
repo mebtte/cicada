@@ -1,5 +1,6 @@
-import { Response } from '#/server/api/create_2fa';
 import { Method, request } from '..';
+
+type Response = string;
 
 function create2FA() {
   return request<Response>({

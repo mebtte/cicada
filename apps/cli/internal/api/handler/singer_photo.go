@@ -18,7 +18,7 @@ type createSingerPhotoBody struct {
 	Description string `json:"description"`
 }
 
-func CreateSingerPhoto(c *gin.Context) {
+func AdminCreateSingerPhoto(c *gin.Context) {
 	u := middleware.GetUser(c)
 	var body createSingerPhotoBody
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -29,13 +29,8 @@ func CreateSingerPhoto(c *gin.Context) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
-	s, err := store.GetSingerByID(body.SingerID)
-	if err != nil {
+	if _, err := store.GetSingerByID(body.SingerID); err != nil {
 		api.Fail(c, apperr.SingerNotExisted)
-		return
-	}
-	if !canEditSinger(u, s) {
-		api.Fail(c, apperr.NotAuthorized)
 		return
 	}
 	if !assetExists(body.Asset, config.AssetTypeSingerPhoto) {
@@ -55,8 +50,7 @@ type updateSingerPhotoBody struct {
 	Description string `json:"description"`
 }
 
-func UpdateSingerPhoto(c *gin.Context) {
-	u := middleware.GetUser(c)
+func AdminUpdateSingerPhoto(c *gin.Context) {
 	var body updateSingerPhotoBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
@@ -71,13 +65,8 @@ func UpdateSingerPhoto(c *gin.Context) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
-	s, err := store.GetSingerByID(p.SingerID)
-	if err != nil {
+	if _, err := store.GetSingerByID(p.SingerID); err != nil {
 		api.Fail(c, apperr.SingerNotExisted)
-		return
-	}
-	if !canEditSinger(u, s) {
-		api.Fail(c, apperr.NotAuthorized)
 		return
 	}
 	if err := store.UpdateSingerPhotoDescription(body.ID, body.Description); err != nil {
@@ -91,8 +80,7 @@ type deleteSingerPhotoBody struct {
 	ID string `json:"id" binding:"required"`
 }
 
-func DeleteSingerPhoto(c *gin.Context) {
-	u := middleware.GetUser(c)
+func AdminDeleteSingerPhoto(c *gin.Context) {
 	var body deleteSingerPhotoBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
@@ -103,13 +91,8 @@ func DeleteSingerPhoto(c *gin.Context) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
-	s, err := store.GetSingerByID(p.SingerID)
-	if err != nil {
+	if _, err := store.GetSingerByID(p.SingerID); err != nil {
 		api.Fail(c, apperr.SingerNotExisted)
-		return
-	}
-	if !canEditSinger(u, s) {
-		api.Fail(c, apperr.NotAuthorized)
 		return
 	}
 	if err := store.DeleteSingerPhoto(body.ID); err != nil {
@@ -124,20 +107,14 @@ type reorderSingerPhotosBody struct {
 	IDs      []string `json:"ids" binding:"required"`
 }
 
-func ReorderSingerPhotos(c *gin.Context) {
-	u := middleware.GetUser(c)
+func AdminReorderSingerPhotos(c *gin.Context) {
 	var body reorderSingerPhotosBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
-	s, err := store.GetSingerByID(body.SingerID)
-	if err != nil {
+	if _, err := store.GetSingerByID(body.SingerID); err != nil {
 		api.Fail(c, apperr.SingerNotExisted)
-		return
-	}
-	if !canEditSinger(u, s) {
-		api.Fail(c, apperr.NotAuthorized)
 		return
 	}
 	if err := store.ReorderSingerPhotos(body.SingerID, body.IDs); err != nil {

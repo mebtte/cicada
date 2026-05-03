@@ -1,5 +1,5 @@
 import { createRoot, Root } from 'react-dom/client';
-import generateRandomString from '#/utils/generate_random_string';
+import generateRandomString from '@/utils/generate_random_string';
 import { StrictMode } from 'react';
 import {
   ID_LENGTH,

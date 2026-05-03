@@ -13,7 +13,7 @@ import updateProfile from '@/server/api/update_profile';
 import logger from '@/utils/logger';
 import dialog from '@/utils/dialog';
 import { IS_TOUCHABLE } from '@/constants/browser';
-import { AllowUpdateKey } from '#/constants/user';
+import { AllowUpdateKey } from '@/constants/user';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';

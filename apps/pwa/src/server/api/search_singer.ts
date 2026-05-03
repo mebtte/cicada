@@ -1,6 +1,15 @@
-import { Response } from '#/server/api/search_singer';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
+
+type Response = {
+  total: number;
+  singerList: {
+    id: string;
+    avatar: string;
+    name: string;
+    aliases: string[];
+  }[];
+};
 
 async function searchSinger({
   keyword,

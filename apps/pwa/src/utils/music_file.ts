@@ -1,4 +1,4 @@
-import { IMAGE_MAX_SIZE } from '#/constants';
+import { IMAGE_MAX_SIZE } from '@/constants/asset';
 import loadImage from '@/utils/load_image';
 
 export async function base64ToCover(base64: string) {

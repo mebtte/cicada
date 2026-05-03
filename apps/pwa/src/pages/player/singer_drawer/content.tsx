@@ -6,14 +6,13 @@ import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import autoScrollbar from '@/style/auto_scrollbar';
-import day from '#/utils/day';
+import day from '@/utils/day';
 import useData from './use_data';
 import { Singer } from './constants';
 import Info from './info';
 import Toolbar from './toolbar';
 import MusicList from './music_list';
 import CreateUser from '../components/create_user';
-import EditMenu from './edit_menu';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -59,8 +58,6 @@ function Detail({ style, singer }: { style: AnimatedStyle; singer: Singer }) {
         ) : null}
         <Toolbar singer={singer} />
       </div>
-
-      <EditMenu singer={singer} />
     </DetailContainer>
   );
 }

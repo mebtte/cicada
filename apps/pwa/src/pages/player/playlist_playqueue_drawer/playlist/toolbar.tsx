@@ -9,7 +9,7 @@ import { FILTER_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
-import capitalize from '#/utils/capitalize';
+import capitalize from '@/utils/capitalize';
 import context from '../../context';
 
 const Style = styled.div`

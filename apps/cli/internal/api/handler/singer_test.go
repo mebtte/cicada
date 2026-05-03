@@ -91,7 +91,6 @@ func TestGetSinger(t *testing.T) {
 			Name       string      `json:"name"`
 			Aliases    []string    `json:"aliases"`
 			Photos     []photoResp `json:"photos"`
-			Editable   bool        `json:"editable"`
 			CreateUser struct {
 				ID       string `json:"id"`
 				Nickname string `json:"nickname"`
@@ -142,9 +141,6 @@ func TestGetSinger(t *testing.T) {
 		if resp.Data.CreateUser.ID != "user-1" || resp.Data.CreateUser.Nickname != "Creator" {
 			t.Fatalf("unexpected createUser: %+v", resp.Data.CreateUser)
 		}
-		if !resp.Data.Editable {
-			t.Fatalf("expected editable for creator")
-		}
 
 		// Photos sorted by position; first one is the avatar.
 		if len(resp.Data.Photos) != 2 {
@@ -187,16 +183,6 @@ func TestGetSinger(t *testing.T) {
 		}
 		if !guestFound {
 			t.Fatalf("guest singer not found in nested singer list: %+v", music.Singers)
-		}
-	})
-
-	t.Run("marks non-owner as not editable", func(t *testing.T) {
-		resp := getSinger("user-2", 0)
-		if resp.Code != "success" {
-			t.Fatalf("unexpected code: %s", resp.Code)
-		}
-		if resp.Data.Editable {
-			t.Fatalf("expected non-owner to be non-editable")
 		}
 	})
 }

@@ -11,7 +11,7 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import { USERNAME_MAX_LENGTH } from '#/constants/user';
+import { USERNAME_MAX_LENGTH } from '@/constants/user';
 import { useUser } from '@/global_states/server';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import User from './user';

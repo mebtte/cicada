@@ -1,6 +1,6 @@
 import { t } from '@/i18n';
-import capitalize from '#/utils/capitalize';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import capitalize from '@/utils/capitalize';
+import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 import { memo } from 'react';
 import { IS_MAC_OS } from '@/constants/browser';
 import storage, { Key } from '@/storage';

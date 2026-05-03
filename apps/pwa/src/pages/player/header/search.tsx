@@ -14,7 +14,7 @@ import { Query } from '@/constants';
 import { useLocation } from 'react-router-dom';
 import parseSearch from '@/utils/parse_search';
 import { t } from '@/i18n';
-import capitalize from '#/utils/capitalize';
+import capitalize from '@/utils/capitalize';
 import eventemitter, { EventType } from '../eventemitter';
 import { useTheme } from '@/global_states/theme';
 

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { DownloadingMusic, DownloadStatus } from './constants';
 import eventemitter, { EventType } from './eventemitter';
-import generateRandomString from '#/utils/generate_random_string';
-import formatMusicFilename from '#/utils/format_music_filename';
+import generateRandomString from '@/utils/generate_random_string';
+import formatMusicFilename from '@/utils/format_music_filename';
 import logger from '@/utils/logger';
-import timeout from '#/utils/timeout';
+import timeout from '@/utils/timeout';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 

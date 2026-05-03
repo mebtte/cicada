@@ -469,39 +469,6 @@ func operations() []operation {
 			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized"},
 		},
 		{
-			Method:      "POST",
-			Path:        "/api/singer",
-			Summary:     "Create singer",
-			Description: "Create a new singer.",
-			Tags:        []string{"Singer"},
-			Auth:        true,
-			RequestBody: jsonRequestBody(
-				objSchema([]string{"name"}, map[string]any{
-					"name": strSchema("Singer name.", "Aurora"),
-				}),
-				map[string]any{"name": "Aurora"},
-			),
-			SuccessSchema:  strSchema("Created singer ID.", "singer-1"),
-			SuccessExample: "singer-1",
-			ErrorCodes:     []string{"wrong_parameter", "server_error", "not_authorized"},
-		},
-		{
-			Method:      "PUT",
-			Path:        "/api/singer",
-			Summary:     "Update singer",
-			Description: "Update singer name or aliases using the key/value pattern. To change the avatar, manage photos via the `/api/singer/photo` endpoints.",
-			Tags:        []string{"Singer"},
-			Auth:        true,
-			RequestBody: jsonRequestBody(updateSingerRequestSchema(), map[string]any{
-				"id":    "singer-1",
-				"key":   "name",
-				"value": "Aurora",
-			}),
-			SuccessSchema:  nil,
-			SuccessExample: nil,
-			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized"},
-		},
-		{
 			Method:      "GET",
 			Path:        "/api/singer/search",
 			Summary:     "Search singers",
@@ -525,89 +492,6 @@ func operations() []operation {
 				},
 			},
 			ErrorCodes: []string{"wrong_parameter", "server_error", "not_authorized"},
-		},
-		{
-			Method:      "POST",
-			Path:        "/api/singer/photo",
-			Summary:     "Add singer photo",
-			Description: "Append a photo to the end of the singer's photo list. The new photo's position is `max(position)+1`. Only the singer's creator (or an admin) may add photos.",
-			Tags:        []string{"Singer"},
-			Auth:        true,
-			RequestBody: jsonRequestBody(
-				objSchema(
-					[]string{"singerId", "asset"},
-					map[string]any{
-						"singerId":    strSchema("Singer ID.", "singer-1"),
-						"asset":       strSchema("Uploaded photo asset filename.", "photo.jpg"),
-						"description": strSchema("Optional description, max 500 chars.", "Live in Tokyo, 2024"),
-					},
-				),
-				map[string]any{"singerId": "singer-1", "asset": "photo.jpg", "description": ""},
-			),
-			SuccessSchema: objSchema([]string{"id"}, map[string]any{
-				"id": strSchema("Photo ID.", "photo-1"),
-			}),
-			SuccessExample: map[string]any{"id": "photo-1"},
-			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "asset_not_existed", "not_authorized"},
-		},
-		{
-			Method:      "PUT",
-			Path:        "/api/singer/photo",
-			Summary:     "Update singer photo description",
-			Description: "Update the description text of a singer photo. The asset and position are immutable; use the order endpoint to reorder.",
-			Tags:        []string{"Singer"},
-			Auth:        true,
-			RequestBody: jsonRequestBody(
-				objSchema(
-					[]string{"id", "description"},
-					map[string]any{
-						"id":          strSchema("Photo ID.", "photo-1"),
-						"description": strSchema("New description, may be empty. Max 500 chars.", "Live in Tokyo, 2024"),
-					},
-				),
-				map[string]any{"id": "photo-1", "description": "Live in Tokyo, 2024"},
-			),
-			SuccessSchema:  nil,
-			SuccessExample: nil,
-			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized"},
-		},
-		{
-			Method:      "DELETE",
-			Path:        "/api/singer/photo",
-			Summary:     "Delete singer photo",
-			Description: "Delete a photo from a singer. Remaining photos keep their position values; gaps are allowed and only relative ordering matters.",
-			Tags:        []string{"Singer"},
-			Auth:        true,
-			RequestBody: jsonRequestBody(
-				objSchema([]string{"id"}, map[string]any{
-					"id": strSchema("Photo ID.", "photo-1"),
-				}),
-				map[string]any{"id": "photo-1"},
-			),
-			SuccessSchema:  nil,
-			SuccessExample: nil,
-			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized"},
-		},
-		{
-			Method:      "PUT",
-			Path:        "/api/singer/photo/order",
-			Summary:     "Reorder singer photos",
-			Description: "Rewrite photo positions to match the order of `ids` (0..N-1). `ids` must contain exactly the singer's existing photo ids — the first id becomes the avatar.",
-			Tags:        []string{"Singer"},
-			Auth:        true,
-			RequestBody: jsonRequestBody(
-				objSchema(
-					[]string{"singerId", "ids"},
-					map[string]any{
-						"singerId": strSchema("Singer ID.", "singer-1"),
-						"ids":      arraySchema(strSchema("Photo ID.", "photo-1")),
-					},
-				),
-				map[string]any{"singerId": "singer-1", "ids": []string{"photo-2", "photo-1"}},
-			),
-			SuccessSchema:  nil,
-			SuccessExample: nil,
-			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized"},
 		},
 		{
 			Method:      "GET",
@@ -1019,6 +903,128 @@ func operations() []operation {
 			SuccessSchema:  arraySchema(adminUserSchema()),
 			SuccessExample: []any{adminUserExample()},
 			ErrorCodes:     []string{"server_error", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
+			Method:      "POST",
+			Path:        "/api/admin/singer",
+			Summary:     "Admin create singer",
+			Description: "Create a new singer.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			RequestBody: jsonRequestBody(
+				objSchema([]string{"name"}, map[string]any{
+					"name": strSchema("Singer name.", "Aurora"),
+				}),
+				map[string]any{"name": "Aurora"},
+			),
+			SuccessSchema:  strSchema("Created singer ID.", "singer-1"),
+			SuccessExample: "singer-1",
+			ErrorCodes:     []string{"wrong_parameter", "server_error", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
+			Method:      "PUT",
+			Path:        "/api/admin/singer",
+			Summary:     "Admin update singer",
+			Description: "Update singer name or aliases using the key/value pattern. To change the avatar, manage photos via the `/api/admin/singer/photo` endpoints.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			RequestBody: jsonRequestBody(updateSingerRequestSchema(), map[string]any{
+				"id":    "singer-1",
+				"key":   "name",
+				"value": "Aurora",
+			}),
+			SuccessSchema:  nil,
+			SuccessExample: nil,
+			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
+			Method:      "POST",
+			Path:        "/api/admin/singer/photo",
+			Summary:     "Admin add singer photo",
+			Description: "Append a photo to the end of the singer's photo list. The new photo's position is `max(position)+1`.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			RequestBody: jsonRequestBody(
+				objSchema(
+					[]string{"singerId", "asset"},
+					map[string]any{
+						"singerId":    strSchema("Singer ID.", "singer-1"),
+						"asset":       strSchema("Uploaded photo asset filename.", "photo.jpg"),
+						"description": strSchema("Optional description, max 500 chars.", "Live in Tokyo, 2024"),
+					},
+				),
+				map[string]any{"singerId": "singer-1", "asset": "photo.jpg", "description": ""},
+			),
+			SuccessSchema: objSchema([]string{"id"}, map[string]any{
+				"id": strSchema("Photo ID.", "photo-1"),
+			}),
+			SuccessExample: map[string]any{"id": "photo-1"},
+			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "asset_not_existed", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
+			Method:      "PUT",
+			Path:        "/api/admin/singer/photo",
+			Summary:     "Admin update singer photo description",
+			Description: "Update the description text of a singer photo. The asset and position are immutable; use the order endpoint to reorder.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			RequestBody: jsonRequestBody(
+				objSchema(
+					[]string{"id", "description"},
+					map[string]any{
+						"id":          strSchema("Photo ID.", "photo-1"),
+						"description": strSchema("New description, may be empty. Max 500 chars.", "Live in Tokyo, 2024"),
+					},
+				),
+				map[string]any{"id": "photo-1", "description": "Live in Tokyo, 2024"},
+			),
+			SuccessSchema:  nil,
+			SuccessExample: nil,
+			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
+			Method:      "DELETE",
+			Path:        "/api/admin/singer/photo",
+			Summary:     "Admin delete singer photo",
+			Description: "Delete a photo from a singer. Remaining photos keep their position values; gaps are allowed and only relative ordering matters.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			RequestBody: jsonRequestBody(
+				objSchema([]string{"id"}, map[string]any{
+					"id": strSchema("Photo ID.", "photo-1"),
+				}),
+				map[string]any{"id": "photo-1"},
+			),
+			SuccessSchema:  nil,
+			SuccessExample: nil,
+			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
+			Method:      "PUT",
+			Path:        "/api/admin/singer/photo/order",
+			Summary:     "Admin reorder singer photos",
+			Description: "Rewrite photo positions to match the order of `ids` (0..N-1). `ids` must contain exactly the singer's existing photo ids — the first id becomes the avatar.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			RequestBody: jsonRequestBody(
+				objSchema(
+					[]string{"singerId", "ids"},
+					map[string]any{
+						"singerId": strSchema("Singer ID.", "singer-1"),
+						"ids":      arraySchema(strSchema("Photo ID.", "photo-1")),
+					},
+				),
+				map[string]any{"singerId": "singer-1", "ids": []string{"photo-2", "photo-1"}},
+			),
+			SuccessSchema:  nil,
+			SuccessExample: nil,
+			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized", "not_authorized_for_admin"},
 		},
 	}
 }
@@ -1594,7 +1600,7 @@ func musicListPageExample(listKey string) map[string]any {
 
 func singerDetailSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "aliases", "photos", "createTimestamp", "createUser", "musicList", "editable"},
+		[]string{"id", "name", "aliases", "photos", "createTimestamp", "createUser", "musicList"},
 		map[string]any{
 			"id":              strSchema("Singer ID.", "singer-1"),
 			"name":            strSchema("Singer name.", "Aurora"),
@@ -1611,7 +1617,6 @@ func singerDetailSchema() map[string]any {
 				"asset":   strSchema("Audio asset path.", "/asset/music/track.mp3"),
 				"singers": arraySchema(singerSchema()),
 			})),
-			"editable": boolSchema("Whether the current user can edit.", true),
 		},
 	)
 }
@@ -1637,7 +1642,6 @@ func singerDetailExample() map[string]any {
 				"singers": []any{map[string]any{"id": "singer-1", "name": "Aurora", "aliases": []string{"AUR"}}},
 			},
 		},
-		"editable": true,
 	}
 }
 

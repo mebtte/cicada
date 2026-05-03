@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import definition from '@/definition';
-import { EFFECTIVE_PLAY_PERCENT } from '#/constants';
+import { EFFECTIVE_PLAY_PERCENT } from '@/constants/music';
 import { CacheName } from '@/constants/cache';
 import logger from '@/utils/logger';
 import CustomAudio from '@/utils/custom_audio';

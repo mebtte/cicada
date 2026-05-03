@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import getMusicRequest from '@/server/api/get_music';
-import { MusicType } from '#/constants/music';
+import { MusicType } from '@/constants/music';
 import getLyricList from '@/server/api/get_lyric_list';
-import day from '#/utils/day';
+import day from '@/utils/day';
 import { CacheName } from '@/constants/cache';
 import logger from '@/utils/logger';
-import timeout from '#/utils/timeout';
+import timeout from '@/utils/timeout';
 import { MusicDetail, Lyric } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,

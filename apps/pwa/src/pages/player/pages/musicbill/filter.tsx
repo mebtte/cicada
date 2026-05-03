@@ -5,7 +5,7 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { t } from '@/i18n';
 import { FILTER_HEIGHT } from './constants';
-import capitalize from '#/utils/capitalize';
+import capitalize from '@/utils/capitalize';
 
 const Style = styled.div`
   position: absolute;

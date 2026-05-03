@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import day from '#/utils/day';
+import day from '@/utils/day';
 import { CSSVariable } from '@/global_style';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';

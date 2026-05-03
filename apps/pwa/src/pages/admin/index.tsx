@@ -6,7 +6,7 @@ import { useUser } from '@/global_states/server';
 import { ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
-import capitalize from '#/utils/capitalize';
+import capitalize from '@/utils/capitalize';
 import UserManage from '@/pages/player/pages/user_manage';
 import LanguageSelect from '@/components/language_select';
 import Avatar from '@/components_next/avatar';

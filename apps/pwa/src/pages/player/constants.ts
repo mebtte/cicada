@@ -1,5 +1,5 @@
 import { RequestStatus } from '@/constants';
-import { MusicType } from '#/constants/music';
+import { MusicType } from '@/constants/music';
 import { UtilZIndex } from '@/constants/style';
 
 export const HEADER_HEIGHT = 64;

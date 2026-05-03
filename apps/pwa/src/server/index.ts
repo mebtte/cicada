@@ -1,15 +1,16 @@
-import { ExceptionCode } from '#/constants/exception';
+import { ExceptionCode } from '@/constants/exception';
 import {
   useServer,
   getSelectedServer,
   getSelectedUser,
 } from '@/global_states/server';
 import ErrorWithCode from '@/utils/error_with_code';
-import sleep from '#/utils/sleep';
+import sleep from '@/utils/sleep';
 import definition from '@/definition';
 import { NORMAL_REQUEST_MINIMAL_DURATION } from '@/constants';
-import timeoutFn from '#/utils/timeout';
-import { CommonQuery, HEADER_TOKEN } from '#/constants';
+import timeoutFn from '@/utils/timeout';
+import { CommonQuery } from '@/constants';
+import { HEADER_TOKEN } from '@/constants/api';
 import { t } from '@/i18n';
 import { useSetting } from '@/global_states/setting';
 

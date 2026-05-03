@@ -6,7 +6,9 @@ import { CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
 import { CacheName } from '@/constants/cache';
-import { AssetType, CommonQuery, PathPrefix } from '#/constants';
+import { AssetType } from '@/constants/asset';
+import { PathPrefix } from '@/constants/api';
+import { CommonQuery } from '@/constants';
 import parseSearch from './utils/parse_search';
 import definition from './definition';
 

@@ -1,6 +1,6 @@
 import { createRoot, Root } from 'react-dom/client';
 import { ReactNode } from 'react';
-import generateRandomString from '#/utils/generate_random_string';
+import generateRandomString from '@/utils/generate_random_string';
 import { NoticeType } from './constants';
 import NoticeApp from './notice_app';
 import e, { EventType } from './eventemitter';

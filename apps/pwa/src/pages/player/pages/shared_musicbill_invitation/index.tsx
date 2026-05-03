@@ -5,7 +5,7 @@ import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
 import Empty from '@/components/empty';
 import ErrorCard from '@/components/error_card';
-import { SHARED_MUSICBILL_INVITATION_MINIMAL_TTL } from '#/constants';
+import { SHARED_MUSICBILL_INVITATION_MINIMAL_TTL } from '@/constants/musicbill';
 import { CSSVariable } from '@/global_style';
 import { MdHelpOutline } from 'react-icons/md';
 import autoScrollbar from '@/style/auto_scrollbar';

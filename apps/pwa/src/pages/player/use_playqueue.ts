@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import notice from '@/utils/notice';
-import getRandomInteger from '#/utils/generate_random_integer';
-import getRandomString from '#/utils/generate_random_string';
+import getRandomInteger from '@/utils/generate_random_integer';
+import getRandomString from '@/utils/generate_random_string';
 import { t } from '@/i18n';
 import eventemitter, { EventType } from './eventemitter';
 import { MusicWithSingerAliases, QueueMusic } from './constants';

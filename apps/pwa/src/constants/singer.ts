@@ -16,3 +16,5 @@ export enum AllowUpdateKey {
  * @author mebtte<i@mebtte.com>
  */
 export const NO_MUSIC_EXIST_DURATION = 1000 * 60 * 60 * 24 * 3;
+
+export const SINGER_MODIFY_RECORD_TTL = 1000 * 60 * 60 * 24 * 180;

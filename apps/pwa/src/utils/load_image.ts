@@ -1,4 +1,4 @@
-import timeoutFn from '#/utils/timeout';
+import timeoutFn from '@/utils/timeout';
 import { t } from '@/i18n';
 
 function loadImage(

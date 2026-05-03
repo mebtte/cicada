@@ -1,6 +1,27 @@
-import { Response } from '#/server/api/search_music_by_lyric';
+import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
+
+type Response = {
+  total: number;
+  musicList: {
+    id: string;
+    type: MusicType;
+    name: string;
+    aliases: string[];
+    cover: string;
+    asset: string;
+    singers: {
+      id: string;
+      name: string;
+      aliases: string[];
+    }[];
+    lyrics: {
+      id: number;
+      lrc: string;
+    }[];
+  }[];
+};
 
 /**
  * 通过歌词搜索音乐

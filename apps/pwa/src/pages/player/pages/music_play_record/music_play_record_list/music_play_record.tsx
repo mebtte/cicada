@@ -1,5 +1,5 @@
 import { CSSVariable } from '@/global_style';
-import day from '#/utils/day';
+import day from '@/utils/day';
 import styled from 'styled-components';
 import { MdAvTimer, MdDeleteOutline } from 'react-icons/md';
 import Button from '@/components_next/button';

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { CAPTCHA_TTL_FRONTEND } from '#/constants';
+import { CAPTCHA_TTL_FRONTEND } from '@/constants/captcha';
 import logger from '@/utils/logger';
 import getCaptcha from '@/server/base/get_captcha';
 import { CaptchaData } from './constants';

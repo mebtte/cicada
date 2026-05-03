@@ -1,11 +1,41 @@
-import { Response } from '#/server/api/get_singer';
+import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
 
-type RawResponse = Omit<Response, 'createUser' | 'musicList' | 'editable'> & {
+interface Response {
+  id: string;
+  name: string;
+  aliases: string[];
+  photos: {
+    id: string;
+    asset: string;
+    description: string;
+  }[];
+  createTimestamp: number;
+  createUser: {
+    id: string;
+    nickname: string;
+  };
+  musicList: {
+    id: string;
+    type: MusicType;
+    name: string;
+    aliases: string[];
+    cover: string;
+    asset: string;
+    singers: {
+      id: string;
+      name: string;
+      aliases: string[];
+      avatar: string;
+    }[];
+  }[];
+}
+
+type RawResponse = Omit<Response, 'createUser' | 'musicList' | 'photos'> & {
   createUser?: Response['createUser'];
   musicList?: Response['musicList'];
-  editable?: boolean;
+  photos?: Response['photos'];
 };
 
 /**
@@ -19,12 +49,15 @@ async function getSinger(id: string): Promise<Response> {
     withToken: true,
   });
   const musicList = singer.musicList ?? [];
+  const photos = singer.photos ?? [];
   return {
     ...singer,
     aliases: singer.aliases ?? [],
-    avatar: prefixServerOrigin(singer.avatar ?? ''),
+    photos: photos.map((p) => ({
+      ...p,
+      asset: prefixServerOrigin(p.asset),
+    })),
     createUser: singer.createUser ?? { id: '', nickname: '' },
-    editable: singer.editable ?? false,
     musicList: musicList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),

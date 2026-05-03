@@ -8,14 +8,14 @@ import {
 } from 'react';
 import Cropper from 'cropperjs';
 import styled from 'styled-components';
-import { IMAGE_MAX_SIZE } from '#/constants';
+import { IMAGE_MAX_SIZE } from '@/constants/asset';
 import FileSelect from '@/components/file_select';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { ImageCut as ImageCutShape } from './constants';
 import useEvent from '../use_event';
 import loadImage from '../load_image';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 
 const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
 const ImgBox = styled.div`

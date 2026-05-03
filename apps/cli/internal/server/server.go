@@ -73,15 +73,9 @@ func NewServer() *gin.Engine {
 	api.GET("/music/search", auth(), handler.SearchMusic)
 	api.GET("/music/search_by_lyric", auth(), handler.SearchMusicByLyric)
 
-	// Singer
+	// Singer (read)
 	api.GET("/singer", auth(), handler.GetSinger)
-	api.POST("/singer", auth(), handler.CreateSinger)
-	api.PUT("/singer", auth(), handler.UpdateSinger)
 	api.GET("/singer/search", auth(), handler.SearchSinger)
-	api.POST("/singer/photo", auth(), handler.CreateSingerPhoto)
-	api.PUT("/singer/photo", auth(), handler.UpdateSingerPhoto)
-	api.DELETE("/singer/photo", auth(), handler.DeleteSingerPhoto)
-	api.PUT("/singer/photo/order", auth(), handler.ReorderSingerPhotos)
 
 	// Lyric
 	api.GET("/lyric_list", auth(), handler.GetLyricList)
@@ -121,6 +115,12 @@ func NewServer() *gin.Engine {
 	api.PUT("/admin/user_admin", auth(), admin(), handler.AdminUpdateUserAdmin)
 	api.DELETE("/admin/user", auth(), admin(), handler.AdminDeleteUser)
 	api.GET("/admin/user_list", auth(), admin(), handler.AdminGetUserList)
+	api.POST("/admin/singer", auth(), admin(), handler.AdminCreateSinger)
+	api.PUT("/admin/singer", auth(), admin(), handler.AdminUpdateSinger)
+	api.POST("/admin/singer/photo", auth(), admin(), handler.AdminCreateSingerPhoto)
+	api.PUT("/admin/singer/photo", auth(), admin(), handler.AdminUpdateSingerPhoto)
+	api.DELETE("/admin/singer/photo", auth(), admin(), handler.AdminDeleteSingerPhoto)
+	api.PUT("/admin/singer/photo/order", auth(), admin(), handler.AdminReorderSingerPhotos)
 
 	return r
 }

@@ -1,6 +1,6 @@
 import xss from 'xss';
 import styled from 'styled-components';
-import day from '#/utils/day';
+import day from '@/utils/day';
 import Button from '@/components_next/button';
 import { CSSVariable } from '@/global_style';
 import { useState } from 'react';

@@ -1,6 +1,15 @@
 import { prefixServerOrigin } from '@/global_states/server';
-import { Response } from '#/server/api/get_public_musicbill_collection_list';
 import { request } from '..';
+
+type Response = {
+  total: number;
+  collectionList: {
+    id: string;
+    name: string;
+    cover: string;
+    user: { id: string; nickname: string };
+  }[];
+};
 
 async function getSelfMusicbillCollectionList({
   keyword,

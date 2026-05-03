@@ -1,7 +1,11 @@
-import { ExceptionCode } from '#/constants/exception';
-import { type Response } from '#/server/base/get_metadata';
+import { ExceptionCode } from '@/constants/exception';
 import ErrorWithCode from '@/utils/error_with_code';
 import { getCommonParams } from '..';
+
+interface Response {
+  version: string;
+  hostname: string;
+}
 
 async function getMetadata(origin: string) {
   const commonParams = getCommonParams();

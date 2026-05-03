@@ -1,4 +1,4 @@
-import { BETA_VERSION_IDENTIFIER } from '#/constants';
+import { BETA_VERSION_IDENTIFIER } from '@/constants/version';
 import definition from '@/definition';
 import { useSelectedServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';

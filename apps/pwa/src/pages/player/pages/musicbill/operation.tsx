@@ -10,7 +10,7 @@ import {
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';

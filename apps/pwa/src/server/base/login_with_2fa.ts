@@ -1,5 +1,10 @@
-import { RequestBody } from '#/server/base/login_with_2fa';
 import { request, Method } from '..';
+
+interface RequestBody {
+  username: string;
+  password: string;
+  twoFAToken: string;
+}
 
 function loginWith2FA(data: RequestBody) {
   return request<string>({

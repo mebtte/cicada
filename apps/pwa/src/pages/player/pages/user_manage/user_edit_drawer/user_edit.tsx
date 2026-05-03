@@ -3,7 +3,7 @@ import Input from '@/components_next/input';
 import { Label } from '@/components_next';
 import Textarea from '@/components/textarea';
 import Button from '@/components_next/button';
-import day from '#/utils/day';
+import day from '@/utils/day';
 import { ChangeEventHandler, useState } from 'react';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
@@ -14,7 +14,7 @@ import {
   AdminAllowUpdateKey,
   REMARK_MAX_LENGTH,
   USERNAME_MAX_LENGTH,
-} from '#/constants/user';
+} from '@/constants/user';
 import adminDeleteUser from '@/server/api/admin_delete_user';
 import { t } from '@/i18n';
 import { User } from '../constants';

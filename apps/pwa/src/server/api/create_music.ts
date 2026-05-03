@@ -1,4 +1,4 @@
-import { MusicType } from '#/constants/music';
+import { MusicType } from '@/constants/music';
 import { Method, request } from '..';
 
 /**

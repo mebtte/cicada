@@ -3,7 +3,7 @@ import { Select, SelectOption, SelectProps } from '@/components_next';
 import { useSetting } from '@/global_states/setting';
 import { LANGUAGE_MAP, t } from '@/i18n';
 import dialog from '@/utils/dialog';
-import { LANGUAGES, Language } from '#/constants';
+import { LANGUAGES, Language } from '@/constants/language';
 
 const options: SelectOption<Language>[] = LANGUAGES.map((language) => ({
   label: LANGUAGE_MAP[language].label,

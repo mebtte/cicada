@@ -11,9 +11,9 @@ import {
   MdExitToApp,
 } from 'react-icons/md';
 import updateMusicbill from '@/server/api/update_musicbill';
-import { AllowUpdateKey, NAME_MAX_LENGTH } from '#/constants/musicbill';
+import { AllowUpdateKey, NAME_MAX_LENGTH } from '@/constants/musicbill';
 import uploadAsset from '@/server/form/upload_asset';
-import { AssetType } from '#/constants';
+import { AssetType } from '@/constants/asset';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';

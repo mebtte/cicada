@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
-import capitalize from '#/utils/capitalize';
+import capitalize from '@/utils/capitalize';
 import autoScrollbar from '@/style/auto_scrollbar';
 import ImportSection from './import_section';
 import MusicList from './music_list';

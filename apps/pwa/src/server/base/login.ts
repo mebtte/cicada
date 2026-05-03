@@ -1,5 +1,11 @@
-import { RequestBody } from '#/server/base/login';
 import { request, Method } from '..';
+
+interface RequestBody {
+  username: string;
+  password: string;
+  captchaId: string;
+  captchaValue: string;
+}
 
 function login(data: RequestBody) {
   return request<string>({

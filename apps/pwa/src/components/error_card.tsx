@@ -2,7 +2,7 @@ import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 import Button from '@/components_next/button';
 import definition from '@/definition';
-import getRandomInteger from '#/utils/generate_random_integer';
+import getRandomInteger from '@/utils/generate_random_integer';
 import { MdRefresh } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';

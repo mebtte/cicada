@@ -22,7 +22,6 @@ export default defineConfig(({ command }) => {
     resolve: {
       alias: {
         '@': path.resolve(CURRENT_DIR, 'src'),
-        '#': path.resolve(CURRENT_DIR, 'src/shared'),
         fs: path.resolve(CURRENT_DIR, 'src/__empty_module.ts'),
         'react-native-fs': path.resolve(CURRENT_DIR, 'src/__empty_module.ts'),
         jsmediatags: path.resolve(

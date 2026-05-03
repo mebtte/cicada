@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react';
 import styled from 'styled-components';
 import definition from '@/definition';
-import getRandomInteger from '#/utils/generate_random_integer';
+import getRandomInteger from '@/utils/generate_random_integer';
 import { CSSVariable } from '@/global_style';
 import capitalize from '@/style/capitalize';
 

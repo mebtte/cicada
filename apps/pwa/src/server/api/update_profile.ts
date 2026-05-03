@@ -1,4 +1,4 @@
-import { AllowUpdateKey } from '#/constants/user';
+import { AllowUpdateKey } from '@/constants/user';
 import { request, Method } from '..';
 
 type KeyMapData = {

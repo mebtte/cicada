@@ -1,5 +1,8 @@
-import { RequestParams } from '#/server/api/disable_2fa';
 import { Method, request } from '..';
+
+interface RequestParams {
+  twoFAToken: string;
+}
 
 function disable2FA(params: RequestParams) {
   return request({

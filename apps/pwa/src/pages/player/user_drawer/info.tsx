@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Cover, { Shape } from '@/components/cover';
-import day from '#/utils/day';
+import day from '@/utils/day';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { t } from '@/i18n';

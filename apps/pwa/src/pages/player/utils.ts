@@ -1,6 +1,6 @@
-import { ExceptionCode } from '#/constants/exception';
-import { NAME_MAX_LENGTH as MUSICBILL_NAME_MAX_LENGTH } from '#/constants/musicbill';
-import { NAME_MAX_LENGTH as SINGER_NAME_MAX_LENGTH } from '#/constants/singer';
+import { ExceptionCode } from '@/constants/exception';
+import { NAME_MAX_LENGTH as MUSICBILL_NAME_MAX_LENGTH } from '@/constants/musicbill';
+import { NAME_MAX_LENGTH as SINGER_NAME_MAX_LENGTH } from '@/constants/singer';
 import dialog from '@/utils/dialog';
 import createMusicbillRequest from '@/server/api/create_musicbill';
 import createSingerRequest from '@/server/api/create_singer';

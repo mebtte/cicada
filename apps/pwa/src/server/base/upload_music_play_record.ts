@@ -1,4 +1,4 @@
-import { ExceptionCode } from '#/constants/exception';
+import { ExceptionCode } from '@/constants/exception';
 import {
   useServer,
   getSelectedServer,

@@ -30,18 +30,18 @@ import {
   SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
   YEAR_MIN,
   YEAR_MAX,
-} from '#/constants/music';
+} from '@/constants/music';
 import uploadAsset from '@/server/form/upload_asset';
-import { AssetType, ASSET_TYPE_MAP } from '#/constants';
+import { AssetType, ASSET_TYPE_MAP } from '@/constants/asset';
 import updateMusic from '@/server/api/update_music';
-import stringArrayEqual from '#/utils/string_array_equal';
+import stringArrayEqual from '@/utils/string_array_equal';
 import dialog from '@/utils/dialog';
 import deleteMusic from '@/server/api/delete_music';
 import logger from '@/utils/logger';
 import type { SelectOption } from '@/components_next';
 import searchSingerRequest from '@/server/api/search_singer';
 import searchMusicRequest from '@/server/api/search_music';
-import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
+import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/singer';
 import absoluteFullSize from '@/style/absolute_full_size';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import getResizedImage from '@/server/asset/get_resized_image';
@@ -55,7 +55,7 @@ import playerEventemitter, {
 } from '../eventemitter';
 import MusicInfo from '../components/music_info';
 import MissingSinger from '../components/missing_singer';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 
 interface Singer {
   id: string;

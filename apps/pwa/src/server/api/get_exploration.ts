@@ -1,6 +1,28 @@
 import { prefixServerOrigin } from '@/global_states/server';
-import { Response } from '#/server/api/get_exploration';
 import { request } from '..';
+
+type Response = {
+  musicList: {
+    id: string;
+    name: string;
+    cover: string;
+    singers: {
+      id: string;
+      name: string;
+    }[];
+  }[];
+  singerList: {
+    id: string;
+    name: string;
+    avatar: string;
+  }[];
+  publicMusicbillList: {
+    id: string;
+    name: string;
+    cover: string;
+    user: { id: string; nickname: string };
+  }[];
+};
 
 /**
  * 获取发现内容

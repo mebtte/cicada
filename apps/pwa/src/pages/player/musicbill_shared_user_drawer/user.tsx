@@ -14,7 +14,7 @@ import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import deleteMusicbillSharedUser from '@/server/api/delete_musicbill_shared_user';
 import getResizedImage from '@/server/asset/get_resized_image';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 import { t } from '@/i18n';
 import playerEventemitter, {
   EventType as PlayerEventType,

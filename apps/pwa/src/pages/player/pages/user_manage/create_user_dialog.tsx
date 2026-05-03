@@ -6,7 +6,7 @@ import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import adminCreateUser from '@/server/api/admin_create_user';
 import { t } from '@/i18n';
-import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
+import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '@/constants/user';
 import e, { EventType } from './eventemitter';
 
 function CreateUserDialog() {

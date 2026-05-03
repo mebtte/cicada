@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Button from '@/components_next/button';
-import { MdPlaylistAdd, MdOutlineEdit, MdCopyAll } from 'react-icons/md';
+import { MdPlaylistAdd, MdCopyAll } from 'react-icons/md';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
@@ -8,9 +8,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import { Singer } from './constants';
-import e, { EventType } from './eventemitter';
 
-const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, null);
 const Style = styled.div`
   position: sticky;
   bottom: 0;
@@ -71,11 +69,6 @@ function Toolbar({ singer }: { singer: Singer }) {
           <MdCopyAll />
         </Button>
       </div>
-      {singer.editable ? (
-        <Button square variant="plain" size="sm" onClick={openEditMenu}>
-          <MdOutlineEdit />
-        </Button>
-      ) : null}
     </Style>
   );
 }

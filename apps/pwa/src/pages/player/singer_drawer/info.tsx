@@ -1,13 +1,14 @@
 import { CSSVariable } from '@/global_style';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { useEffect, useState } from 'react';
 import Cover, { Shape } from '@/components/cover';
 import { Singer } from './constants';
-import JpegDefaultSingerAvatar from '@/asset/default_cover.jpeg';
 
 const Style = styled.div`
-  position: relative;
-
   font-size: 0;
+`;
+const Main = styled.div`
+  position: relative;
 
   > .info {
     position: absolute;
@@ -31,29 +32,117 @@ const Style = styled.div`
     }
   }
 `;
+const Header = styled.div`
+  padding: 20px;
+
+  > .name {
+    font-size: 28px;
+    font-weight: bold;
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  }
+
+  > .aliases {
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  }
+`;
+const ThumbnailRow = styled.div`
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+const ThumbnailItem = styled.div<{ selected: boolean }>`
+  flex: 0 0 auto;
+  border: 2px solid transparent;
+  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
+  cursor: pointer;
+
+  ${({ selected }) =>
+    selected
+      ? css`
+          border-color: ${CSSVariable.COLOR_PRIMARY};
+        `
+      : css`
+          opacity: 0.7;
+        `}
+`;
+
+function NameAndAliases({ singer }: { singer: Singer }) {
+  return (
+    <>
+      <div className="name">{singer.name}</div>
+      {singer.aliases.length ? (
+        <div className="aliases">
+          {singer.aliases.map((alias, index) => (
+            <div className="alias" key={index}>
+              {alias}
+            </div>
+          ))}
+        </div>
+      ) : null}
+    </>
+  );
+}
 
 function Info({ singer }: { singer: Singer }) {
+  const { photos } = singer;
+  const [selectedId, setSelectedId] = useState<string | undefined>(
+    () => photos[0]?.id,
+  );
+
+  useEffect(() => {
+    if (!photos.length) {
+      setSelectedId(undefined);
+      return;
+    }
+    setSelectedId((prev) =>
+      prev && photos.some((p) => p.id === prev) ? prev : photos[0].id,
+    );
+  }, [photos]);
+
+  if (!photos.length) {
+    return (
+      <Style>
+        <Header>
+          <NameAndAliases singer={singer} />
+        </Header>
+      </Style>
+    );
+  }
+
+  const selected = photos.find((p) => p.id === selectedId) ?? photos[0];
+  const showThumbnails = photos.length > 1;
+
   return (
     <Style>
-      <Cover
-        src={singer.avatar}
-        size="100%"
-        shape={Shape.SQUARE}
-        defaultSrc={JpegDefaultSingerAvatar}
-      />
-
-      <div className="info">
-        <div className="name">{singer.name}</div>
-        {singer.aliases.length ? (
-          <div className="aliases">
-            {singer.aliases.map((alias, index) => (
-              <div className="alias" key={index}>
-                {alias}
-              </div>
-            ))}
-          </div>
-        ) : null}
-      </div>
+      <Main>
+        <Cover src={selected.asset} size="100%" shape={Shape.SQUARE} />
+        <div className="info">
+          <NameAndAliases singer={singer} />
+        </div>
+      </Main>
+      {showThumbnails ? (
+        <ThumbnailRow>
+          {photos.map((photo) => (
+            <ThumbnailItem
+              key={photo.id}
+              role="button"
+              tabIndex={0}
+              selected={photo.id === selected.id}
+              onClick={() => setSelectedId(photo.id)}
+              aria-label={photo.description || singer.name}
+            >
+              <Cover src={photo.asset} size={60} shape={Shape.ROUNDED} />
+            </ThumbnailItem>
+          ))}
+        </ThumbnailRow>
+      ) : null}
     </Style>
   );
 }

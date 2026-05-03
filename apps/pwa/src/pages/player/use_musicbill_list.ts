@@ -7,7 +7,7 @@ import removeMusicFromMusicbill from '@/server/api/remove_music_from_musicbill';
 import logger from '@/utils/logger';
 import getMusicbillRequest from '@/server/api/get_musicbill';
 import notice from '@/utils/notice';
-import { ExceptionCode } from '#/constants/exception';
+import { ExceptionCode } from '@/constants/exception';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { useUser } from '@/global_states/server';
