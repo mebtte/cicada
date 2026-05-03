@@ -177,14 +177,6 @@ const MenuButton = styled.button<{ $active: boolean }>`
   }
 `;
 
-const SidebarFooter = styled.div`
-  margin-top: auto;
-  padding: 14px 18px 18px;
-  border-top: 1px solid ${CSSVariable.COLOR_BORDER};
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  font-size: 12px;
-`;
-
 const Overlay = styled.button<{ $open: boolean }>`
   display: none;
 
@@ -216,7 +208,7 @@ const Header = styled.header`
   background: #fff;
   border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.04);
-  z-index: 1;
+  z-index: 10;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
     padding: 0 14px;
@@ -312,7 +304,7 @@ const UserMenu = styled.div`
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 10px 30px rgb(0 0 0 / 0.12);
-  z-index: 4;
+  z-index: 20;
 `;
 
 const UserMenuProfile = styled.div`
@@ -344,6 +336,7 @@ const Content = styled.div`
   min-height: 0;
   position: relative;
   overflow: hidden;
+  z-index: 0;
 `;
 
 const UserManageWrapper = styled.div`
@@ -463,8 +456,6 @@ function AdminPage() {
             <span>{capitalize(t('music_management'))}</span>
           </MenuButton>
         </MenuList>
-
-        <SidebarFooter>{user.nickname}</SidebarFooter>
       </Sidebar>
       <Overlay
         type="button"

@@ -104,6 +104,64 @@ func SearchSinger(c *gin.Context) {
 	api.OK(c, gin.H{"total": total, "singerList": list})
 }
 
+func AdminGetSingerList(c *gin.Context) {
+	keyword := c.Query("keyword")
+	filterKey := c.Query("filterKey")
+	page := queryInt(c, "page", 1)
+	pageSize := queryInt(c, "pageSize", 20)
+	if page < 1 || pageSize < 1 || pageSize > 100 {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	switch filterKey {
+	case "", "all", "id", "name", "alias":
+	default:
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+
+	total, singers, err := store.GetAdminSingerList(keyword, filterKey, page, pageSize)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	singerIDs := make([]string, len(singers))
+	for i, s := range singers {
+		singerIDs[i] = s.ID
+	}
+	photosBySinger := map[string][]gin.H{}
+	if len(singerIDs) > 0 {
+		photos, _ := store.ListSingerPhotosBySingerIDs(singerIDs)
+		for _, p := range photos {
+			photosBySinger[p.SingerID] = append(photosBySinger[p.SingerID], gin.H{
+				"id":          p.ID,
+				"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeSingerPhoto),
+				"description": p.Description,
+			})
+		}
+	}
+	list := make([]gin.H, len(singers))
+	for i, s := range singers {
+		photos := photosBySinger[s.ID]
+		if photos == nil {
+			photos = []gin.H{}
+		}
+		list[i] = gin.H{
+			"id":      s.ID,
+			"name":    s.Name,
+			"aliases": splitAliases(s.Aliases),
+			"photos":  photos,
+			"createUser": gin.H{
+				"id":       s.CreateUserID,
+				"username": s.CreateUserUsername,
+				"nickname": s.CreateUserNickname,
+			},
+			"createTimestamp": s.CreateTimestamp,
+		}
+	}
+	api.OK(c, gin.H{"total": total, "singerList": list})
+}
+
 type createSingerBody struct {
 	Name string `json:"name" binding:"required"`
 }

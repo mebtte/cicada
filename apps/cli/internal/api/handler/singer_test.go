@@ -186,3 +186,150 @@ func TestGetSinger(t *testing.T) {
 		}
 	})
 }
+
+func TestAdminGetSingerList(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	dataDir := t.TempDir()
+	config.Set(config.Config{
+		Mode:      config.ModeProduction,
+		Data:      dataDir,
+		Port:      8000,
+		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES
+			('user-1','creator_one',?, 'Creator One', ?),
+			('user-2','creator_two',?, 'Creator Two', ?)`,
+		store.DoubleMD5("password"), now, store.DoubleMD5("password"), now,
+	); err != nil {
+		t.Fatalf("insert users: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES
+			('singer-alpha','Alpha',?, 'user-1', ?),
+			('singer-beta','Beta', ?, 'user-2', ?),
+			('singer-gamma','Gamma',?, 'user-1', ?)`,
+		joinAliases([]string{"First Alias", "Shared Key"}), now-300,
+		joinAliases([]string{"Second Alias"}), now-100,
+		joinAliases([]string{"Third Alias"}), now-200,
+	); err != nil {
+		t.Fatalf("insert singers: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer_photo (id,singerId,asset,position,description,addUserId,addTimestamp) VALUES
+			('photo-beta-2','singer-beta','beta-2.jpg',1,'second beta photo','user-2',?),
+			('photo-beta-1','singer-beta','beta-1.jpg',0,'first beta photo','user-2',?),
+			('photo-alpha-1','singer-alpha','alpha-1.jpg',0,'first alpha photo','user-1',?)`,
+		now, now, now,
+	); err != nil {
+		t.Fatalf("insert photos: %v", err)
+	}
+
+	type singerItem struct {
+		ID      string   `json:"id"`
+		Name    string   `json:"name"`
+		Aliases []string `json:"aliases"`
+		Photos  []struct {
+			ID          string `json:"id"`
+			Asset       string `json:"asset"`
+			Description string `json:"description"`
+		} `json:"photos"`
+		CreateUser struct {
+			ID       string `json:"id"`
+			Username string `json:"username"`
+			Nickname string `json:"nickname"`
+		} `json:"createUser"`
+		CreateTimestamp int64 `json:"createTimestamp"`
+	}
+	type response struct {
+		Code string `json:"code"`
+		Data struct {
+			Total      int          `json:"total"`
+			SingerList []singerItem `json:"singerList"`
+		} `json:"data"`
+	}
+
+	call := func(rawQuery string) response {
+		t.Helper()
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/admin/singer_list?"+rawQuery, nil)
+		c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+		AdminGetSingerList(c)
+
+		var resp response
+		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		return resp
+	}
+
+	t.Run("returns paged singers ordered by create time desc", func(t *testing.T) {
+		resp := call("page=1&pageSize=2")
+		if resp.Code != "success" {
+			t.Fatalf("unexpected code: %s", resp.Code)
+		}
+		if resp.Data.Total != 3 {
+			t.Fatalf("expected total 3, got %d", resp.Data.Total)
+		}
+		if len(resp.Data.SingerList) != 2 {
+			t.Fatalf("expected 2 singers, got %d", len(resp.Data.SingerList))
+		}
+		if resp.Data.SingerList[0].ID != "singer-beta" || resp.Data.SingerList[1].ID != "singer-gamma" {
+			t.Fatalf("unexpected order: %+v", resp.Data.SingerList)
+		}
+		if resp.Data.SingerList[0].CreateUser.Username != "creator_two" {
+			t.Fatalf("unexpected create user: %+v", resp.Data.SingerList[0].CreateUser)
+		}
+		if len(resp.Data.SingerList[0].Aliases) != 1 || resp.Data.SingerList[0].Aliases[0] != "Second Alias" {
+			t.Fatalf("unexpected aliases: %+v", resp.Data.SingerList[0].Aliases)
+		}
+		photos := resp.Data.SingerList[0].Photos
+		if len(photos) != 2 {
+			t.Fatalf("expected 2 photos, got %+v", photos)
+		}
+		if photos[0].ID != "photo-beta-1" || photos[0].Asset != "/asset/singer_photo/beta-1.jpg" {
+			t.Fatalf("unexpected first photo: %+v", photos[0])
+		}
+		if photos[1].ID != "photo-beta-2" || photos[1].Description != "second beta photo" {
+			t.Fatalf("unexpected second photo: %+v", photos[1])
+		}
+	})
+
+	t.Run("filters by id name alias and all", func(t *testing.T) {
+		cases := []struct {
+			query string
+			want  string
+		}{
+			{"page=1&pageSize=10&filterKey=id&keyword=alpha", "singer-alpha"},
+			{"page=1&pageSize=10&filterKey=name&keyword=Beta", "singer-beta"},
+			{"page=1&pageSize=10&filterKey=alias&keyword=Third", "singer-gamma"},
+			{"page=1&pageSize=10&filterKey=all&keyword=Shared", "singer-alpha"},
+		}
+		for _, tc := range cases {
+			resp := call(tc.query)
+			if resp.Code != "success" || resp.Data.Total != 1 {
+				t.Fatalf("query %q unexpected response: %+v", tc.query, resp)
+			}
+			if resp.Data.SingerList[0].ID != tc.want {
+				t.Fatalf("query %q expected %s, got %+v", tc.query, tc.want, resp.Data.SingerList[0])
+			}
+		}
+	})
+}
