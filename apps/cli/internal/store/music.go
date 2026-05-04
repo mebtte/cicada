@@ -92,13 +92,6 @@ func UpdateMusic(id, field string, value any) error {
 	return err
 }
 
-func RecordMusicModify(musicID, userID, key string) {
-	_, _ = DB().Exec(
-		`INSERT INTO music_modify_record (musicId,modifyUserId,key,modifyTimestamp) VALUES (?,?,?,?)`,
-		musicID, userID, key, time.Now().UnixMilli(),
-	)
-}
-
 func DeleteMusicCascade(id string, isSong bool) error {
 	tx, err := DB().Begin()
 	if err != nil {
@@ -110,7 +103,6 @@ func DeleteMusicCascade(id string, isSong bool) error {
 	}
 	for _, del := range []string{
 		`DELETE FROM music_fork WHERE musicId=?`,
-		`DELETE FROM music_modify_record WHERE musicId=?`,
 		`DELETE FROM music_play_record WHERE musicId=?`,
 		`DELETE FROM music_singer_relation WHERE musicId=?`,
 		`DELETE FROM musicbill_music WHERE musicId=?`,

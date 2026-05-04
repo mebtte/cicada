@@ -17,7 +17,6 @@ const (
 	TableSinger                    = "singer"
 	TableSingerPhoto               = "singer_photo"
 	TableMusic                     = "music"
-	TableMusicModifyRecord         = "music_modify_record"
 	TableMusicFork                 = "music_fork"
 	TableLyric                     = "lyric"
 	TableMusicPlayRecord           = "music_play_record"
@@ -80,13 +79,6 @@ var tables = []string{
 		heat INTEGER NOT NULL DEFAULT 0,
 		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL
-	)`,
-	`CREATE TABLE IF NOT EXISTS music_modify_record (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		musicId TEXT NOT NULL REFERENCES music(id),
-		modifyUserId TEXT NOT NULL REFERENCES user(id),
-		key TEXT NOT NULL,
-		modifyTimestamp INTEGER NOT NULL
 	)`,
 	`CREATE TABLE IF NOT EXISTS music_fork (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,

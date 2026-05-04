@@ -217,7 +217,6 @@ func UpdateMusic(c *gin.Context) {
 			return
 		}
 		store.UpdateMusic(body.ID, "name", name)
-		store.RecordMusicModify(body.ID, u.ID, "name")
 
 	case "aliases":
 		rawAliases, ok := body.Value.([]any)
@@ -235,7 +234,6 @@ func UpdateMusic(c *gin.Context) {
 			aliases[i] = s
 		}
 		store.UpdateMusic(body.ID, "aliases", joinAliases(aliases))
-		store.RecordMusicModify(body.ID, u.ID, "aliases")
 
 	case "cover":
 		cover, ok := body.Value.(string)
@@ -244,7 +242,6 @@ func UpdateMusic(c *gin.Context) {
 			return
 		}
 		store.UpdateMusic(body.ID, "cover", cover)
-		store.RecordMusicModify(body.ID, u.ID, "cover")
 
 	case "asset":
 		asset, ok := body.Value.(string)
@@ -253,7 +250,6 @@ func UpdateMusic(c *gin.Context) {
 			return
 		}
 		store.UpdateMusic(body.ID, "asset", asset)
-		store.RecordMusicModify(body.ID, u.ID, "asset")
 
 	case "singers":
 		rawIDs, ok := body.Value.([]any)
@@ -276,7 +272,6 @@ func UpdateMusic(c *gin.Context) {
 		}
 		store.DB().Exec(`DELETE FROM music_singer_relation WHERE musicId=?`, body.ID)
 		store.LinkMusicSingers(body.ID, ids)
-		store.RecordMusicModify(body.ID, u.ID, "singers")
 
 	case "type":
 		rawType, ok := body.Value.(float64)
@@ -290,7 +285,6 @@ func UpdateMusic(c *gin.Context) {
 			return
 		}
 		store.UpdateMusic(body.ID, "type", int(musicType))
-		store.RecordMusicModify(body.ID, u.ID, "type")
 
 	case "year":
 		var year any
@@ -303,7 +297,6 @@ func UpdateMusic(c *gin.Context) {
 			year = int(y)
 		}
 		store.UpdateMusic(body.ID, "year", year)
-		store.RecordMusicModify(body.ID, u.ID, "year")
 
 	case "fork":
 		forkFrom, ok := body.Value.(string)
@@ -316,7 +309,6 @@ func UpdateMusic(c *gin.Context) {
 			return
 		}
 		store.DB().Exec(`INSERT OR REPLACE INTO music_fork (musicId,forkFrom) VALUES (?,?)`, body.ID, forkFrom)
-		store.RecordMusicModify(body.ID, u.ID, "fork")
 
 	default:
 		api.Fail(c, apperr.WrongParameter)

@@ -48,7 +48,7 @@ func Start() {
 	c.Start()
 }
 
-// removeOutdatedDB deletes expired captcha and music modify records.
+// removeOutdatedDB deletes expired captcha records.
 func removeOutdatedDB() {
 	now := time.Now().UnixMilli()
 	tables := []struct {
@@ -57,7 +57,6 @@ func removeOutdatedDB() {
 		ttlMillis int64
 	}{
 		{"captcha", "createTimestamp", int64(3 * 24 * time.Hour / time.Millisecond)},
-		{"music_modify_record", "modifyTimestamp", int64(180 * 24 * time.Hour / time.Millisecond)},
 	}
 	for _, t := range tables {
 		store.DB().Exec(
