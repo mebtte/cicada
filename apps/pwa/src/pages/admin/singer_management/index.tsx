@@ -8,25 +8,35 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import { MdClose, MdRecordVoiceOver } from 'react-icons/md';
+import { MdClose, MdOutlineAddBox, MdRecordVoiceOver } from 'react-icons/md';
+import Button from '@/components/button';
 import Input from '@/components/input';
 import { Select, type SelectOption } from '@/components';
 import Pagination from '@/components/pagination';
 import Spinner from '@/components/spinner';
 import ErrorCard from '@/components/error_card';
+import { Query } from '@/constants';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import capitalize from '@/utils/capitalize';
 import day from '@/utils/day';
+import notice from '@/utils/notice';
+import useNavigate from '@/utils/use_navigate';
+import useQuery from '@/utils/use_query';
 import getResizedImage from '@/server/asset/get_resized_image';
 import adminGetSingerList, {
   AdminSingerListFilterKey,
 } from '@/server/api/admin_get_singer_list';
+import openCreateSingerDialog from '../open_create_singer_dialog';
 
 const PAGE_SIZE = 20;
 const PHOTO_SIZE = 36;
 const VIEWER_ANIMATION_DURATION = 180;
+
+enum SingerManagementQuery {
+  FILTER_KEY = 'filter_key',
+}
 
 interface Singer {
   id: string;
@@ -76,6 +86,21 @@ const filterOptions: SelectOption<AdminSingerListFilterKey>[] = [
   },
 ];
 
+const filterKeyValues = new Set<string>(Object.values(AdminSingerListFilterKey));
+
+const parseFilterKey = (value?: string) =>
+  value && filterKeyValues.has(value)
+    ? (value as AdminSingerListFilterKey)
+    : AdminSingerListFilterKey.ALL;
+
+const parsePage = (value?: string) => {
+  const page = Number(value);
+  return Number.isInteger(page) && page > 0 ? page : 1;
+};
+
+const encodeKeyword = (keyword: string) =>
+  keyword ? window.encodeURIComponent(keyword) : undefined;
+
 const ScrollArea = styled.div`
   height: 100%;
   overflow: hidden;
@@ -92,7 +117,7 @@ const Card = styled.div`
 const Toolbar = styled.div`
   padding: 16px 20px;
   display: grid;
-  grid-template-columns: 180px minmax(220px, 420px);
+  grid-template-columns: 180px minmax(220px, 420px) max-content;
   gap: 12px;
   align-items: start;
   border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
@@ -416,9 +441,13 @@ function ImageViewer({
 }
 
 function SingerManagement() {
-  const [keyword, setKeyword] = useState('');
-  const [filterKey, setFilterKey] = useState(AdminSingerListFilterKey.ALL);
-  const [page, setPage] = useState(1);
+  const navigate = useNavigate();
+  const query = useQuery<
+    Query.KEYWORD | Query.PAGE | SingerManagementQuery.FILTER_KEY
+  >();
+  const keyword = query[Query.KEYWORD] ?? '';
+  const filterKey = parseFilterKey(query[SingerManagementQuery.FILTER_KEY]);
+  const page = parsePage(query[Query.PAGE]);
   const [data, setData] = useState<Data>({
     error: null,
     loading: true,
@@ -427,77 +456,108 @@ function SingerManagement() {
   });
   const [viewerPhoto, setViewerPhoto] = useState<ViewerPhoto | null>(null);
 
+  const updateQuery = useCallback(
+    (
+      query: Record<string, number | string | undefined>,
+      { replace = true }: { replace?: boolean } = {},
+    ) =>
+      navigate({
+        query: {
+          [Query.KEYWORD]: encodeKeyword(keyword),
+          [SingerManagementQuery.FILTER_KEY]:
+            filterKey === AdminSingerListFilterKey.ALL ? undefined : filterKey,
+          [Query.PAGE]: page === 1 ? undefined : page,
+          ...query,
+        },
+        replace,
+      }),
+    [filterKey, keyword, navigate, page],
+  );
+
   const onKeywordChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setKeyword(event.target.value);
-    setPage(1);
+    const nextKeyword = event.target.value;
+    updateQuery({
+      [Query.KEYWORD]: encodeKeyword(nextKeyword),
+      [Query.PAGE]: undefined,
+    });
   };
+
+  const requestSingerList = useCallback(
+    ({
+      signal,
+      page: requestPage = page,
+      keyword: requestKeyword = keyword,
+      filterKey: requestFilterKey = filterKey,
+    }: {
+      signal?: AbortSignal;
+      page?: number;
+      keyword?: string;
+      filterKey?: AdminSingerListFilterKey;
+    } = {}) => {
+      setData((d) => ({
+        ...d,
+        error: null,
+        loading: true,
+      }));
+      return adminGetSingerList({
+        page: requestPage,
+        pageSize: PAGE_SIZE,
+        keyword: requestKeyword.trim(),
+        filterKey: requestFilterKey,
+        requestMinimalDuration: 0,
+      })
+        .then((result) => {
+          if (signal?.aborted) return;
+          setData({
+            error: null,
+            loading: false,
+            total: result.total,
+            singerList: result.singerList,
+          });
+        })
+        .catch((error) => {
+          if (signal?.aborted) return;
+          setData({
+            error,
+            loading: false,
+            total: 0,
+            singerList: [],
+          });
+        });
+    },
+    [filterKey, keyword, page],
+  );
 
   useEffect(() => {
     const controller = new AbortController();
-    setData((d) => ({
-      ...d,
-      error: null,
-      loading: true,
-    }));
-    adminGetSingerList({
-      page,
-      pageSize: PAGE_SIZE,
-      keyword: keyword.trim(),
-      filterKey,
-      requestMinimalDuration: 0,
-    })
-      .then((result) => {
-        if (controller.signal.aborted) return;
-        setData({
-          error: null,
-          loading: false,
-          total: result.total,
-          singerList: result.singerList,
-        });
-      })
-      .catch((error) => {
-        if (controller.signal.aborted) return;
-        setData({
-          error,
-          loading: false,
-          total: 0,
-          singerList: [],
-        });
-      });
-
+    void requestSingerList({ signal: controller.signal });
     return () => controller.abort();
-  }, [filterKey, keyword, page]);
+  }, [requestSingerList]);
 
-  const reload = () => {
-    setData((d) => ({
-      ...d,
-      error: null,
-      loading: true,
-    }));
-    adminGetSingerList({
-      page,
-      pageSize: PAGE_SIZE,
-      keyword: keyword.trim(),
-      filterKey,
-      requestMinimalDuration: 0,
-    })
-      .then((result) =>
-        setData({
-          error: null,
-          loading: false,
-          total: result.total,
-          singerList: result.singerList,
-        }),
-      )
-      .catch((error) =>
-        setData({
-          error,
-          loading: false,
-          total: 0,
-          singerList: [],
-        }),
-      );
-  };
+  const reload = useCallback(() => {
+    void requestSingerList();
+  }, [requestSingerList]);
+
+  const onOpenCreateSingerDialog = useCallback(() => {
+    openCreateSingerDialog({
+      onCreated: () => {
+        notice.info(t('created'));
+        if (
+          !keyword &&
+          filterKey === AdminSingerListFilterKey.ALL &&
+          page === 1
+        ) {
+          reload();
+        } else {
+          updateQuery({
+            [Query.KEYWORD]: undefined,
+            [SingerManagementQuery.FILTER_KEY]: undefined,
+            [Query.PAGE]: undefined,
+          });
+        }
+      },
+    });
+  }, [filterKey, keyword, page, reload, updateQuery]);
 
   return (
     <ScrollArea>
@@ -508,8 +568,11 @@ function SingerManagement() {
             options={filterOptions}
             value={filterKey}
             onChange={(value) => {
-              setFilterKey(value);
-              setPage(1);
+              updateQuery({
+                [SingerManagementQuery.FILTER_KEY]:
+                  value === AdminSingerListFilterKey.ALL ? undefined : value,
+                [Query.PAGE]: undefined,
+              });
             }}
           />
           <Input
@@ -518,6 +581,14 @@ function SingerManagement() {
             onChange={onKeywordChange}
             placeholder={t('search')}
           />
+          <Button
+            size="sm"
+            variant="primary"
+            icon={<MdOutlineAddBox />}
+            onClick={onOpenCreateSingerDialog}
+          >
+            {t('create_singer')}
+          </Button>
         </Toolbar>
 
         <Content>
@@ -612,7 +683,13 @@ function SingerManagement() {
                 total={data.total}
                 pageSize={PAGE_SIZE}
                 page={page}
-                onChange={setPage}
+                onChange={(nextPage) =>
+                  updateQuery({
+                    [Query.PAGE]: nextPage === 1 ? undefined : nextPage,
+                  }, {
+                    replace: false,
+                  })
+                }
               />
             </PaginationBox>
           ) : null}

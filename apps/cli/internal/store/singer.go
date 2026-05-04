@@ -1,11 +1,18 @@
 package store
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"fmt"
+	"math/big"
 	"strings"
 	"time"
+)
 
-	"github.com/google/uuid"
+const (
+	singerIDLength            = 6
+	singerIDAlphabet          = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	maxCreateSingerIDAttempts = 20
 )
 
 type Singer struct {
@@ -53,6 +60,14 @@ func GetSingersByIDs(ids []string) ([]Singer, error) {
 		out = append(out, s)
 	}
 	return out, nil
+}
+
+func SingerNameExists(name string) (bool, error) {
+	var count int
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM singer WHERE name=?`, name).Scan(&count); err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }
 
 func SearchSingers(keyword string, page, pageSize int) (int, []Singer, error) {
@@ -144,13 +159,42 @@ func GetAdminSingerList(keyword, filterKey string, page, pageSize int) (int, []A
 	return total, singers, nil
 }
 
+func generateSingerID() (string, error) {
+	max := big.NewInt(int64(len(singerIDAlphabet)))
+	bytes := make([]byte, singerIDLength)
+	for i := range bytes {
+		n, err := rand.Int(rand.Reader, max)
+		if err != nil {
+			return "", err
+		}
+		bytes[i] = singerIDAlphabet[n.Int64()]
+	}
+	return string(bytes), nil
+}
+
 func CreateSinger(name, createUserID string) (string, error) {
-	id := uuid.New().String()
-	_, err := DB().Exec(
-		`INSERT INTO singer (id,name,createUserId,createTimestamp) VALUES (?,?,?,?)`,
-		id, name, createUserID, time.Now().UnixMilli(),
-	)
-	return id, err
+	for range maxCreateSingerIDAttempts {
+		id, err := generateSingerID()
+		if err != nil {
+			return "", err
+		}
+
+		result, err := DB().Exec(
+			`INSERT OR IGNORE INTO singer (id,name,createUserId,createTimestamp) VALUES (?,?,?,?)`,
+			id, name, createUserID, time.Now().UnixMilli(),
+		)
+		if err != nil {
+			return "", err
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return "", err
+		}
+		if affected > 0 {
+			return id, nil
+		}
+	}
+	return "", fmt.Errorf("create singer: exhausted %d id generation attempts", maxCreateSingerIDAttempts)
 }
 
 func UpdateSinger(id, field string, value any) error {

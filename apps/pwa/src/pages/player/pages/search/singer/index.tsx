@@ -9,23 +9,17 @@ import Pagination from '@/components/pagination';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
-import Button from '@/components/button';
 import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../../../eventemitter';
 import {
   PAGE_SIZE,
   TOOLBAR_HEIGHT,
   MINI_MODE_TOOLBAR_HEIGHT,
 } from '../constants';
 import useData from './use_data';
-import { openCreateSingerDialog } from '../../../utils';
 import Singer from './singer';
-import TextGuide from '../text_guide';
 
 const ITEM_MIN_WIDTH = 150;
 const Container = styled(animated.div)`
@@ -91,18 +85,6 @@ function Wrapper() {
       return (
         <CardContainer style={style}>
           <Empty description={t('no_suitable_singer')} />
-          <Button
-            variant={'primary'}
-            onClick={() =>
-              openCreateSingerDialog((id) =>
-                playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
-                  id,
-                }),
-              )
-            }
-          >
-            {t('create_singer_by_yourself')}
-          </Button>
         </CardContainer>
       );
     }
@@ -145,19 +127,6 @@ function Wrapper() {
             }
           />
         ) : null}
-        {page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
-          <TextGuide
-            text1={t('no_suitable_singer_warning')}
-            text2={t('create_singer_by_yourself')}
-            onGuide={() =>
-              openCreateSingerDialog((id) =>
-                playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
-                  id,
-                }),
-              )
-            }
-          />
-        )}
       </SingerContainer>
     );
   });

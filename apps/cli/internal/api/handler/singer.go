@@ -163,7 +163,8 @@ func AdminGetSingerList(c *gin.Context) {
 }
 
 type createSingerBody struct {
-	Name string `json:"name" binding:"required"`
+	Name  string `json:"name" binding:"required"`
+	Force bool   `json:"force"`
 }
 
 func AdminCreateSinger(c *gin.Context) {
@@ -172,6 +173,17 @@ func AdminCreateSinger(c *gin.Context) {
 	if err := c.ShouldBindJSON(&body); err != nil || len(body.Name) > 50 {
 		api.Fail(c, apperr.WrongParameter)
 		return
+	}
+	if !body.Force {
+		exists, err := store.SingerNameExists(body.Name)
+		if err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		if exists {
+			api.Fail(c, apperr.SingerAlreadyExisted)
+			return
+		}
 	}
 	id, err := store.CreateSinger(body.Name, u.ID)
 	if err != nil {

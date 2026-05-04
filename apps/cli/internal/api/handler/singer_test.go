@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"bytes"
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"testing"
 	"time"
 
@@ -185,6 +187,86 @@ func TestGetSinger(t *testing.T) {
 			t.Fatalf("guest singer not found in nested singer list: %+v", music.Singers)
 		}
 	})
+}
+
+func TestAdminCreateSingerForceDuplicateName(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode:      config.ModeProduction,
+		Data:      t.TempDir(),
+		Port:      8000,
+		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?)`,
+		"ABC123", "Same Name", "", "user-1", now,
+	); err != nil {
+		t.Fatalf("insert singer: %v", err)
+	}
+
+	type response struct {
+		Code string `json:"code"`
+		Data string `json:"data"`
+	}
+	call := func(body string) response {
+		t.Helper()
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/admin/singer", bytes.NewBufferString(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+		c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+		AdminCreateSinger(c)
+
+		var resp response
+		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		return resp
+	}
+
+	duplicateResp := call(`{"name":"Same Name","force":false}`)
+	if duplicateResp.Code != "singer_already_existed" {
+		t.Fatalf("expected singer_already_existed, got %+v", duplicateResp)
+	}
+
+	forcedResp := call(`{"name":"Same Name","force":true}`)
+	if forcedResp.Code != "success" {
+		t.Fatalf("expected success, got %+v", forcedResp)
+	}
+	if matched := regexp.MustCompile(`^[0-9A-Za-z]{6}$`).MatchString(forcedResp.Data); !matched {
+		t.Fatalf("expected short singer id, got %q", forcedResp.Data)
+	}
+	if forcedResp.Data == "ABC123" {
+		t.Fatalf("forced create reused existing id")
+	}
+	var count int
+	if err := store.DB().QueryRow(`SELECT COUNT(1) FROM singer WHERE name=?`, "Same Name").Scan(&count); err != nil {
+		t.Fatalf("count singers: %v", err)
+	}
+	if count != 2 {
+		t.Fatalf("expected 2 same-name singers after force create, got %d", count)
+	}
 }
 
 func TestAdminGetSingerList(t *testing.T) {

@@ -46,7 +46,7 @@ import Spinner from '@/components/spinner';
 import ErrorCard from '@/components/error_card';
 import { prefixServerOrigin } from '@/global_states/server';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
-import MissingSinger from '@/pages/player/components/missing_singer';
+import CreateSingerLabel from '../components/create_singer_label';
 
 interface Singer {
   id: string;
@@ -396,7 +396,7 @@ function EditContent({
         onClick={() =>
           dialog.multipleSelect<Singer>({
             label: t('singer'),
-            labelAddon: <MissingSinger />,
+            labelAddon: <CreateSingerLabel />,
             title: t('modify_singer'),
             loadOptions: searchSinger,
             initialValue: music.singers.map(formatSingerToOption),

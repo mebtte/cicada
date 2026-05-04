@@ -54,7 +54,6 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import MusicInfo from '../components/music_info';
-import MissingSinger from '../components/missing_singer';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 
 interface Singer {
@@ -311,7 +310,6 @@ function EditMenu({ music }: { music: MusicDetail }) {
             onClick={() =>
               dialog.multipleSelect<Singer>({
                 label: t('singer'),
-                labelAddon: <MissingSinger />,
                 title: t('modify_singer'),
                 loadOptions: searchSinger,
                 initialValue: music.singers.map(formatSingerToOption),
