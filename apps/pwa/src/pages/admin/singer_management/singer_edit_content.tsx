@@ -30,6 +30,7 @@ import {
 } from 'react-icons/md';
 import Button from '@/components/button';
 import Input from '@/components/input';
+import Textarea from '@/components/textarea';
 import { AssetType } from '@/constants/asset';
 import { IS_TOUCHABLE } from '@/constants/browser';
 import { CSSVariable } from '@/global_style';
@@ -64,10 +65,16 @@ const PHOTO_DESCRIPTION_MAX_LENGTH = 500;
 const Form = styled.div<{ $page: boolean }>`
   width: 100%;
   max-width: ${({ $page }) => ($page ? '560px' : 'none')};
+  height: ${({ $page }) => ($page ? 'auto' : '100%')};
   padding: ${({ $page }) => ($page ? '24px' : '0')};
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: ${({ $page }) => ($page ? 'visible' : 'hidden')};
 `;
 
 const Header = styled.div`
+  flex-shrink: 0;
   padding: 18px 20px 16px;
   border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
   display: flex;
@@ -119,11 +126,14 @@ const HeaderSubTitle = styled.div`
   white-space: nowrap;
 `;
 
-const Body = styled.div`
+const Body = styled.div<{ $page: boolean }>`
+  flex: ${({ $page }) => ($page ? 'initial' : '1')};
+  min-height: 0;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 18px;
+  overflow-y: ${({ $page }) => ($page ? 'visible' : 'auto')};
 `;
 
 const FieldGroup = styled.div`
@@ -162,14 +172,16 @@ const PhotoList = styled.div`
 `;
 
 const PhotoRow = styled.div<{ $dragging: boolean }>`
+  position: relative;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) max-content;
+  grid-template-columns: 48px minmax(0, 1fr);
   gap: 10px;
   align-items: center;
   min-width: 0;
-  padding: 8px;
+  padding: 8px 8px 8px 20px;
   border-radius: 8px;
   background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  overflow: visible;
   opacity: ${({ $dragging }) => ($dragging ? 0.72 : 1)};
   z-index: ${({ $dragging }) => ($dragging ? 1 : 0)};
 `;
@@ -198,37 +210,78 @@ const PhotoInfo = styled.div`
   min-width: 0;
 `;
 
-const PhotoDescriptionInput = styled(Input)`
+const PhotoDescriptionTextarea = styled(Textarea)`
   min-width: 0;
+  height: 76px;
+  max-height: 120px;
+  line-height: 1.4;
+  overflow-y: auto;
 `;
 
-const PhotoActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
+const PhotoDeleteButton = styled(Button)<{ $visible: boolean }>`
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  border: 1px solid ${CSSVariable.COLOR_BORDER};
+  background: #fff;
+  color: rgb(242 80 66);
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.16);
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
+  transition:
+    opacity 120ms,
+    transform 120ms,
+    background 120ms,
+    color 120ms;
+  transform: scale(${({ $visible }) => ($visible ? 1 : 0.92)});
+
+  &:not(:disabled):hover {
+    background: rgb(242 80 66);
+    color: #fff;
+  }
+
+  ${PhotoRow}:hover &,
+  &:focus-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+  }
 `;
 
 const DragHandle = styled.button`
-  width: 34px;
-  height: 34px;
+  position: absolute;
+  top: 50%;
+  left: -6px;
+  z-index: 2;
+  width: 12px;
+  height: 52px;
   border: none;
-  border-radius: 8px;
+  border-radius: 999px;
   padding: 0;
-  background: transparent;
+  background: #fff;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: grab;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.12);
+  transform: translateY(-50%);
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
   transition:
     background 120ms,
-    color 120ms;
+    color 120ms,
+    box-shadow 120ms;
 
   &:hover {
-    background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
+    background: #fff;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.18);
   }
 
   &:active {
@@ -246,8 +299,9 @@ const DragHandle = styled.button`
   }
 `;
 
-const Footer = styled.div`
-  position: sticky;
+const Footer = styled.div<{ $page: boolean }>`
+  flex-shrink: 0;
+  position: ${({ $page }) => ($page ? 'sticky' : 'static')};
   bottom: 0;
   padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0));
   border-top: 1px solid ${CSSVariable.COLOR_BORDER};
@@ -303,8 +357,7 @@ function SortablePhoto({
         )}
       </PhotoThumb>
       <PhotoInfo>
-        <PhotoDescriptionInput
-          size="sm"
+        <PhotoDescriptionTextarea
           value={photo.description}
           maxLength={PHOTO_DESCRIPTION_MAX_LENGTH}
           disabled={disabled}
@@ -315,29 +368,28 @@ function SortablePhoto({
           }
         />
       </PhotoInfo>
-      <PhotoActions>
-        <DragHandle
-          type="button"
-          title={t('sort')}
-          aria-label={t('sort')}
-          disabled={disabled}
-          {...attributes}
-          {...listeners}
-        >
-          <MdDragIndicator size={18} />
-        </DragHandle>
-        <Button
-          square
-          size="sm"
-          variant="plain"
-          disabled={disabled}
-          title={t('delete')}
-          aria-label={t('delete')}
-          onClick={() => onDelete(photo.id)}
-        >
-          <MdDelete />
-        </Button>
-      </PhotoActions>
+      <DragHandle
+        type="button"
+        title={t('sort')}
+        aria-label={t('sort')}
+        disabled={disabled}
+        {...attributes}
+        {...listeners}
+      >
+        <MdDragIndicator size={18} />
+      </DragHandle>
+      <PhotoDeleteButton
+        square
+        size="sm"
+        variant="plain"
+        disabled={disabled}
+        title={t('delete')}
+        aria-label={t('delete')}
+        onClick={() => onDelete(photo.id)}
+        $visible={IS_TOUCHABLE || disabled}
+      >
+        <MdDelete />
+      </PhotoDeleteButton>
     </PhotoRow>
   );
 }
@@ -577,7 +629,7 @@ function SingerEditContent({
         </HeaderInfo>
       </Header>
 
-      <Body>
+      <Body $page={page}>
         <Input
           label={capitalize(t('name'))}
           value={name}
@@ -659,7 +711,7 @@ function SingerEditContent({
         </Group>
       </Body>
 
-      <Footer>
+      <Footer $page={page}>
         <Button
           block
           variant="primary"

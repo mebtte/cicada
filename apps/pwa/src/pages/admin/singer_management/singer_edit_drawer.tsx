@@ -9,6 +9,12 @@ import adminGetSinger from '@/server/api/admin_get_singer';
 import SingerEditContent from './singer_edit_content';
 import type { Singer } from './types';
 
+const EditDrawerContent = styled(DrawerContent)`
+  > div {
+    overflow: hidden;
+  }
+`;
+
 const CloseButton = styled.button`
   position: absolute;
   top: 14px;
@@ -110,7 +116,7 @@ function SingerEditDrawer({
 
   return (
     <Drawer open={open} onOpenChange={(nextOpen) => nextOpen || undefined}>
-      <DrawerContent
+      <EditDrawerContent
         side="right"
         style={{ width: 360 }}
         showClose={false}
@@ -144,7 +150,7 @@ function SingerEditDrawer({
             onPhotosChanged={handleSaved}
           />
         ) : null}
-      </DrawerContent>
+      </EditDrawerContent>
     </Drawer>
   );
 }
