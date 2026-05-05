@@ -6,14 +6,13 @@ import {
   useRef,
   useState,
 } from 'react';
-import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import {
-  MdClose,
   MdOutlineAddBox,
   MdOutlineEdit,
   MdRecordVoiceOver,
 } from 'react-icons/md';
+import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import { Select, type SelectOption } from '@/components';
@@ -43,7 +42,6 @@ import type { Singer } from './types';
 const DEFAULT_PAGE_SIZE = 20;
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
 const PHOTO_SIZE = 36;
-const VIEWER_ANIMATION_DURATION = 180;
 const EDIT_PAGE_BREAKPOINT = 760;
 
 enum SingerManagementQuery {
@@ -56,11 +54,6 @@ interface Data {
   loading: boolean;
   total: number;
   singerList: Singer[];
-}
-
-interface ViewerPhoto {
-  src: string;
-  alt: string;
 }
 
 const filterOptions: SelectOption<AdminSingerListFilterKey>[] = [
@@ -351,59 +344,6 @@ const PaginationBox = styled.div`
   }
 `;
 
-const ViewerBackdrop = styled.div<{ $visible: boolean }>`
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: rgb(0 0 0 / 0.72);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 28px;
-  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  transition: opacity 160ms ease;
-`;
-
-const ViewerPanel = styled.div<{ $visible: boolean }>`
-  position: relative;
-  max-width: min(960px, 100%);
-  max-height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  transform: scale(${({ $visible }) => ($visible ? 1 : 0.96)});
-  transition:
-    opacity 160ms ease,
-    transform ${VIEWER_ANIMATION_DURATION}ms cubic-bezier(0.2, 0.8, 0.2, 1);
-`;
-
-const ViewerImage = styled.img`
-  max-width: 100%;
-  max-height: calc(100vh - 56px);
-  object-fit: contain;
-  border-radius: 10px;
-  background: #111;
-  box-shadow: 0 24px 60px rgb(0 0 0 / 0.36);
-`;
-
-const ViewerCloseButton = styled.button`
-  position: absolute;
-  top: -14px;
-  right: -14px;
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: 50%;
-  background: #fff;
-  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 0.24);
-`;
-
 const formatCreateUser = (singer: Singer) => {
   const { createUser } = singer;
   if (!createUser.id) return <Muted>{t('unknown')}</Muted>;
@@ -450,55 +390,6 @@ function LazyPhoto({
   );
 }
 
-function ImageViewer({
-  photo,
-  onClose,
-}: {
-  photo: ViewerPhoto;
-  onClose: () => void;
-}) {
-  const [visible, setVisible] = useState(false);
-  const closingRef = useRef(false);
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setVisible(true));
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
-
-  const close = useCallback(() => {
-    if (closingRef.current) return;
-    closingRef.current = true;
-    setVisible(false);
-    window.setTimeout(onClose, VIEWER_ANIMATION_DURATION);
-  }, [onClose]);
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') close();
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [close]);
-
-  return (
-    createPortal(<ViewerBackdrop $visible={visible} onClick={close}>
-      <ViewerPanel
-        $visible={visible}
-        onClick={(event) => event.stopPropagation()}
-      >
-        <ViewerImage src={photo.src} alt={photo.alt} decoding="async" />
-        <ViewerCloseButton
-          type="button"
-          aria-label="Close image viewer"
-          onClick={close}
-        >
-          <MdClose size={20} />
-        </ViewerCloseButton>
-      </ViewerPanel>
-    </ViewerBackdrop>, document.body)
-  );
-}
-
 function SingerManagement() {
   const navigate = useNavigate();
   const windowWidth = useWindowWidth();
@@ -518,7 +409,7 @@ function SingerManagement() {
     total: 0,
     singerList: [],
   });
-  const [viewerPhoto, setViewerPhoto] = useState<ViewerPhoto | null>(null);
+  const [viewerPhoto, setViewerPhoto] = useState<ImageViewerPhoto | null>(null);
   const [editSingerId, setEditSingerId] = useState<string | null>(null);
 
   const updateQuery = useCallback(
@@ -806,15 +697,17 @@ function SingerManagement() {
         <Footer>
           <FooterInfo>
             <div>
-              {t(
-                'page_result_range',
-                rangeStart.toString(),
-                rangeEnd.toString(),
-                data.total.toString(),
+              {capitalize(
+                t(
+                  'page_result_range',
+                  rangeStart.toString(),
+                  rangeEnd.toString(),
+                  data.total.toString(),
+                ),
               )}
             </div>
             <PageSizeSelectBox>
-              <PageSizeLabel>{t('items_per_page')}</PageSizeLabel>
+              <PageSizeLabel>{capitalize(t('items_per_page'))}</PageSizeLabel>
               <PageSizeSelectControl>
                 <Select
                   size="sm"
@@ -851,12 +744,7 @@ function SingerManagement() {
           ) : null}
         </Footer>
       </Card>
-      {viewerPhoto ? (
-        <ImageViewer
-          photo={viewerPhoto}
-          onClose={() => setViewerPhoto(null)}
-        />
-      ) : null}
+      <ImageViewer photo={viewerPhoto} onClose={() => setViewerPhoto(null)} />
       <SingerEditDrawer
         open={editSingerId !== null}
         singerId={editSingerId}
