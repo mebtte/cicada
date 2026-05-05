@@ -415,3 +415,128 @@ func TestAdminGetSingerList(t *testing.T) {
 		}
 	})
 }
+
+func TestAdminGetSinger(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	dataDir := t.TempDir()
+	config.Set(config.Config{
+		Mode:      config.ModeProduction,
+		Data:      dataDir,
+		Port:      8000,
+		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES
+			('user-1','creator_one',?, 'Creator One', ?)`,
+		store.DoubleMD5("password"), now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES
+			('singer-alpha','Alpha',?, 'user-1', ?)`,
+		joinAliases([]string{"First Alias", "Second Alias"}), now-100,
+	); err != nil {
+		t.Fatalf("insert singer: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer_photo (id,singerId,asset,position,description,addUserId,addTimestamp) VALUES
+			('photo-alpha-2','singer-alpha','alpha-2.jpg',1,'second photo','user-1',?),
+			('photo-alpha-1','singer-alpha','alpha-1.jpg',0,'first photo','user-1',?)`,
+		now, now,
+	); err != nil {
+		t.Fatalf("insert photos: %v", err)
+	}
+
+	type response struct {
+		Code string `json:"code"`
+		Data struct {
+			ID      string   `json:"id"`
+			Name    string   `json:"name"`
+			Aliases []string `json:"aliases"`
+			Photos  []struct {
+				ID          string `json:"id"`
+				Asset       string `json:"asset"`
+				Description string `json:"description"`
+			} `json:"photos"`
+			CreateUser struct {
+				ID       string `json:"id"`
+				Username string `json:"username"`
+				Nickname string `json:"nickname"`
+			} `json:"createUser"`
+			CreateTimestamp int64 `json:"createTimestamp"`
+			MusicList       []any `json:"musicList"`
+		} `json:"data"`
+	}
+
+	call := func(rawQuery string) response {
+		t.Helper()
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/admin/singer?"+rawQuery, nil)
+		c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+		AdminGetSinger(c)
+
+		var resp response
+		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		return resp
+	}
+
+	t.Run("returns admin singer detail payload", func(t *testing.T) {
+		resp := call("id=singer-alpha")
+		if resp.Code != "success" {
+			t.Fatalf("unexpected code: %s", resp.Code)
+		}
+		if resp.Data.ID != "singer-alpha" || resp.Data.Name != "Alpha" {
+			t.Fatalf("unexpected singer payload: %+v", resp.Data)
+		}
+		if len(resp.Data.Aliases) != 2 || resp.Data.Aliases[0] != "First Alias" {
+			t.Fatalf("unexpected aliases: %+v", resp.Data.Aliases)
+		}
+		if resp.Data.CreateUser.Username != "creator_one" || resp.Data.CreateUser.Nickname != "Creator One" {
+			t.Fatalf("unexpected create user: %+v", resp.Data.CreateUser)
+		}
+		if resp.Data.CreateTimestamp != now-100 {
+			t.Fatalf("unexpected create timestamp: %d", resp.Data.CreateTimestamp)
+		}
+		if len(resp.Data.Photos) != 2 {
+			t.Fatalf("expected 2 photos, got %+v", resp.Data.Photos)
+		}
+		if resp.Data.Photos[0].ID != "photo-alpha-1" || resp.Data.Photos[0].Asset != "/asset/singer_photo/alpha-1.jpg" {
+			t.Fatalf("unexpected first photo: %+v", resp.Data.Photos[0])
+		}
+		if resp.Data.MusicList != nil {
+			t.Fatalf("admin singer detail should not include musicList: %+v", resp.Data.MusicList)
+		}
+	})
+
+	t.Run("validates id", func(t *testing.T) {
+		resp := call("")
+		if resp.Code != "wrong_parameter" {
+			t.Fatalf("expected wrong_parameter, got %+v", resp)
+		}
+
+		resp = call("id=missing")
+		if resp.Code != "singer_not_existed" {
+			t.Fatalf("expected singer_not_existed, got %+v", resp)
+		}
+	})
+}

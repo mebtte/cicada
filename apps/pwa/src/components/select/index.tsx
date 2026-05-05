@@ -5,6 +5,7 @@ import ReactSelect, {
   type GroupBase,
   components,
   type DropdownIndicatorProps,
+  type MenuPlacement,
 } from 'react-select';
 import AsyncReactSelect from 'react-select/async';
 import styled from 'styled-components';
@@ -161,15 +162,16 @@ function buildStyles<T, IsMulti extends boolean>(
       color: 'rgb(175 175 175)',
       cursor: 'pointer',
     }),
-    menu: (_) => ({
-      position: 'absolute' as const,
+    menu: (base, state) => ({
+      ...base,
       zIndex: 9000,
       background: '#fff',
       border: '2px solid rgb(220 220 220)',
       borderRadius: s.radius,
       boxShadow: '0 8px 28px rgba(0,0,0,0.13)',
       overflow: 'hidden',
-      marginTop: 4,
+      marginTop: state.placement === 'top' ? 0 : 4,
+      marginBottom: state.placement === 'top' ? 4 : 0,
     }),
     menuPortal: (base) => ({ ...base, zIndex: 9000 }),
     menuList: (_) => ({
@@ -246,6 +248,7 @@ export interface SelectProps<T> {
   value?:       T;
   onChange?:    (value: T, option: SelectOption<T>) => void;
   placeholder?: string;
+  menuPlacement?: MenuPlacement;
   disabled?:    boolean;
   size?:        SelectSize;
   label?:       string;
@@ -256,7 +259,7 @@ export interface SelectProps<T> {
 }
 
 export function Select<T>({
-  options, value, onChange, placeholder = 'Select...', disabled = false,
+  options, value, onChange, placeholder = 'Select...', menuPlacement = 'auto', disabled = false,
   size = 'md', label, hint, error, className, style,
 }: SelectProps<T>) {
   const inputId = useId();
@@ -293,6 +296,7 @@ export function Select<T>({
         isSearchable={false}
         styles={styles}
         getOptionValue={(o) => toKey(o.value)}
+        menuPlacement={menuPlacement}
         menuPortalTarget={document.body}
         menuPosition="fixed"
         components={{ DropdownIndicator }}

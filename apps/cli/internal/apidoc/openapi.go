@@ -905,6 +905,21 @@ func operations() []operation {
 			ErrorCodes:     []string{"server_error", "not_authorized", "not_authorized_for_admin"},
 		},
 		{
+			Method:      "GET",
+			Path:        "/api/admin/singer",
+			Summary:     "Admin get singer",
+			Description: "Return singer metadata and ordered photo list for admin editing.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			Parameters: []map[string]any{
+				queryParam("id", "Singer ID.", true, strSchema("", "singer-1")),
+			},
+			SuccessSchema:  adminSingerDetailSchema(),
+			SuccessExample: adminSingerDetailExample(),
+			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
 			Method:      "POST",
 			Path:        "/api/admin/singer",
 			Summary:     "Admin create singer",
@@ -1642,6 +1657,37 @@ func singerDetailExample() map[string]any {
 				"singers": []any{map[string]any{"id": "singer-1", "name": "Aurora", "aliases": []string{"AUR"}}},
 			},
 		},
+	}
+}
+
+func adminSingerDetailSchema() map[string]any {
+	return objSchema(
+		[]string{"id", "name", "aliases", "photos", "createTimestamp", "createUser"},
+		map[string]any{
+			"id":              strSchema("Singer ID.", "singer-1"),
+			"name":            strSchema("Singer name.", "Aurora"),
+			"aliases":         arraySchema(strSchema("", "AUR")),
+			"photos":          arraySchema(singerPhotoSchema()),
+			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
+			"createUser": objSchema([]string{"id", "username", "nickname"}, map[string]any{
+				"id":       strSchema("User ID.", "1"),
+				"username": strSchema("Username.", "alice"),
+				"nickname": strSchema("Nickname.", "Alice"),
+			}),
+		},
+	)
+}
+
+func adminSingerDetailExample() map[string]any {
+	return map[string]any{
+		"id":      "singer-1",
+		"name":    "Aurora",
+		"aliases": []string{"AUR"},
+		"photos": []any{
+			map[string]any{"id": "photo-1", "asset": "/asset/singer_photo/photo.jpg", "description": "Live in Tokyo, 2024"},
+		},
+		"createTimestamp": int64(1710000000000),
+		"createUser":      map[string]any{"id": "1", "username": "alice", "nickname": "Alice"},
 	}
 }
 

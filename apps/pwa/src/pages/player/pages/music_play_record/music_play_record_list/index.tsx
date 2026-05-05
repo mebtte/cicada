@@ -101,8 +101,7 @@ function MusicList() {
             {value!.total ? (
               <Pagination
                 style={paginationStyle}
-                total={value!.total}
-                pageSize={PAGE_SIZE}
+                count={Math.ceil(value!.total / PAGE_SIZE)}
                 page={page}
                 onChange={onPageChange}
               />

@@ -370,7 +370,10 @@ const UserManageWrapper = styled.div`
 
 const getCurrentMenuItem = (pathname: string) => {
   return (
-    ADMIN_MENU_ITEMS.find(({ path }) => pathname === getAdminPath(path)) ??
+    ADMIN_MENU_ITEMS.find(({ path }) => {
+      const adminPath = getAdminPath(path);
+      return pathname === adminPath || pathname.startsWith(`${adminPath}/`);
+    }) ??
     ADMIN_MENU_ITEMS[0]
   );
 };
@@ -445,7 +448,7 @@ function AdminPage() {
             <MenuLink
               key={path}
               to={getAdminPath(path)}
-              end
+              end={path === ADMIN_PATH.DASHBOARD}
               onClick={closeSidebar}
             >
               <Icon />
@@ -524,7 +527,7 @@ function AdminPage() {
               }
             />
             <Route
-              path={ADMIN_PATH.SINGER_MANAGEMENT}
+              path={`${ADMIN_PATH.SINGER_MANAGEMENT}/*`}
               element={<SingerManagement />}
             />
             <Route

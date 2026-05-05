@@ -123,8 +123,7 @@ function Wrapper() {
           <Pagination
             style={paginationStyle}
             page={page}
-            pageSize={PAGE_SIZE}
-            total={d.value!.total}
+            count={Math.ceil(d.value!.total / PAGE_SIZE)}
             onChange={(p) =>
               navigate({
                 query: {

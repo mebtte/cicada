@@ -8,7 +8,12 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import { MdClose, MdOutlineAddBox, MdRecordVoiceOver } from 'react-icons/md';
+import {
+  MdClose,
+  MdOutlineAddBox,
+  MdOutlineEdit,
+  MdRecordVoiceOver,
+} from 'react-icons/md';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import { Select, type SelectOption } from '@/components';
@@ -24,35 +29,26 @@ import day from '@/utils/day';
 import notice from '@/utils/notice';
 import useNavigate from '@/utils/use_navigate';
 import useQuery from '@/utils/use_query';
+import useWindowWidth from '@/utils/use_window_width';
 import getResizedImage from '@/server/asset/get_resized_image';
 import adminGetSingerList, {
   AdminSingerListFilterKey,
 } from '@/server/api/admin_get_singer_list';
+import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
 import openCreateSingerDialog from '../open_create_singer_dialog';
+import SingerEditDrawer from './singer_edit_drawer';
+import SingerEditPage from './singer_edit_page';
+import type { Singer } from './types';
 
-const PAGE_SIZE = 20;
+const DEFAULT_PAGE_SIZE = 20;
+const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
 const PHOTO_SIZE = 36;
 const VIEWER_ANIMATION_DURATION = 180;
+const EDIT_PAGE_BREAKPOINT = 760;
 
 enum SingerManagementQuery {
   FILTER_KEY = 'filter_key',
-}
-
-interface Singer {
-  id: string;
-  name: string;
-  aliases: string[];
-  photos: {
-    id: string;
-    asset: string;
-    description: string;
-  }[];
-  createUser: {
-    id: string;
-    username: string;
-    nickname: string;
-  };
-  createTimestamp: number;
+  PAGE_SIZE = 'page_size',
 }
 
 interface Data {
@@ -98,8 +94,22 @@ const parsePage = (value?: string) => {
   return Number.isInteger(page) && page > 0 ? page : 1;
 };
 
+const parsePageSize = (value?: string) => {
+  const pageSize = Number(value);
+  return PAGE_SIZE_OPTIONS.includes(
+    pageSize as (typeof PAGE_SIZE_OPTIONS)[number],
+  )
+    ? pageSize
+    : DEFAULT_PAGE_SIZE;
+};
+
 const encodeKeyword = (keyword: string) =>
   keyword ? window.encodeURIComponent(keyword) : undefined;
+
+const pageSizeOptions: SelectOption<number>[] = PAGE_SIZE_OPTIONS.map((size) => ({
+  label: size.toString(),
+  value: size,
+}));
 
 const ScrollArea = styled.div`
   height: 100%;
@@ -165,7 +175,7 @@ const TableScroll = styled.div`
 
 const Table = styled.table`
   width: 100%;
-  min-width: 1020px;
+  min-width: 1080px;
   border-collapse: collapse;
 `;
 
@@ -174,7 +184,7 @@ const Th = styled.th`
   top: 0;
   z-index: 1;
   height: 42px;
-  padding: 0 14px;
+  padding: 0 20px;
   background: #fafafa;
   border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
@@ -185,11 +195,11 @@ const Th = styled.th`
 `;
 
 const Td = styled.td`
-  padding: 12px 14px;
+  padding: 12px 20px;
   border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   font-size: 13px;
-  vertical-align: top;
+  vertical-align: middle;
 `;
 
 const Mono = styled.span`
@@ -267,6 +277,34 @@ const UserAccount = styled.div`
   font-size: 12px;
 `;
 
+const ActionButton = styled.button`
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 6px;
+  padding: 0;
+  background: transparent;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 120ms,
+    color 120ms;
+
+  &:hover {
+    background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
+    color: ${CSSVariable.COLOR_PRIMARY};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
+    outline-offset: 2px;
+  }
+`;
+
 const Footer = styled.div`
   padding: 14px 20px;
   border-top: 1px solid ${CSSVariable.COLOR_BORDER};
@@ -281,6 +319,27 @@ const Footer = styled.div`
     flex-direction: column;
     align-items: stretch;
   }
+`;
+
+const FooterInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
+const PageSizeSelectBox = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const PageSizeLabel = styled.span`
+  white-space: nowrap;
+`;
+
+const PageSizeSelectControl = styled.div`
+  width: 82px;
 `;
 
 const PaginationBox = styled.div`
@@ -442,12 +501,17 @@ function ImageViewer({
 
 function SingerManagement() {
   const navigate = useNavigate();
+  const windowWidth = useWindowWidth();
   const query = useQuery<
-    Query.KEYWORD | Query.PAGE | SingerManagementQuery.FILTER_KEY
+    | Query.KEYWORD
+    | Query.PAGE
+    | SingerManagementQuery.FILTER_KEY
+    | SingerManagementQuery.PAGE_SIZE
   >();
   const keyword = query[Query.KEYWORD] ?? '';
   const filterKey = parseFilterKey(query[SingerManagementQuery.FILTER_KEY]);
   const page = parsePage(query[Query.PAGE]);
+  const pageSize = parsePageSize(query[SingerManagementQuery.PAGE_SIZE]);
   const [data, setData] = useState<Data>({
     error: null,
     loading: true,
@@ -455,6 +519,7 @@ function SingerManagement() {
     singerList: [],
   });
   const [viewerPhoto, setViewerPhoto] = useState<ViewerPhoto | null>(null);
+  const [editSingerId, setEditSingerId] = useState<string | null>(null);
 
   const updateQuery = useCallback(
     (
@@ -467,11 +532,25 @@ function SingerManagement() {
           [SingerManagementQuery.FILTER_KEY]:
             filterKey === AdminSingerListFilterKey.ALL ? undefined : filterKey,
           [Query.PAGE]: page === 1 ? undefined : page,
+          [SingerManagementQuery.PAGE_SIZE]:
+            pageSize === DEFAULT_PAGE_SIZE ? undefined : pageSize,
           ...query,
         },
         replace,
       }),
-    [filterKey, keyword, navigate, page],
+    [filterKey, keyword, navigate, page, pageSize],
+  );
+
+  const getCurrentListQuery = useCallback(
+    () => ({
+      [Query.KEYWORD]: encodeKeyword(keyword),
+      [SingerManagementQuery.FILTER_KEY]:
+        filterKey === AdminSingerListFilterKey.ALL ? undefined : filterKey,
+      [Query.PAGE]: page === 1 ? undefined : page,
+      [SingerManagementQuery.PAGE_SIZE]:
+        pageSize === DEFAULT_PAGE_SIZE ? undefined : pageSize,
+    }),
+    [filterKey, keyword, page, pageSize],
   );
 
   const onKeywordChange: ChangeEventHandler<HTMLInputElement> = (event) => {
@@ -501,7 +580,7 @@ function SingerManagement() {
       }));
       return adminGetSingerList({
         page: requestPage,
-        pageSize: PAGE_SIZE,
+        pageSize,
         keyword: requestKeyword.trim(),
         filterKey: requestFilterKey,
         requestMinimalDuration: 0,
@@ -525,7 +604,7 @@ function SingerManagement() {
           });
         });
     },
-    [filterKey, keyword, page],
+    [filterKey, keyword, page, pageSize],
   );
 
   useEffect(() => {
@@ -545,7 +624,8 @@ function SingerManagement() {
         if (
           !keyword &&
           filterKey === AdminSingerListFilterKey.ALL &&
-          page === 1
+          page === 1 &&
+          pageSize === DEFAULT_PAGE_SIZE
         ) {
           reload();
         } else {
@@ -553,11 +633,48 @@ function SingerManagement() {
             [Query.KEYWORD]: undefined,
             [SingerManagementQuery.FILTER_KEY]: undefined,
             [Query.PAGE]: undefined,
+            [SingerManagementQuery.PAGE_SIZE]: undefined,
           });
         }
       },
     });
-  }, [filterKey, keyword, page, reload, updateQuery]);
+  }, [filterKey, keyword, page, pageSize, reload, updateQuery]);
+
+  const onEditSinger = useCallback(
+    (id: string) => {
+      if (windowWidth <= EDIT_PAGE_BREAKPOINT) {
+        navigate({
+          path: `${ROOT_PATH.ADMIN}/${ADMIN_PATH.SINGER_MANAGEMENT}/${id}`,
+          query: getCurrentListQuery(),
+        });
+        return;
+      }
+      setEditSingerId(id);
+    },
+    [getCurrentListQuery, navigate, windowWidth],
+  );
+
+  useEffect(() => {
+    if (!editSingerId || windowWidth > EDIT_PAGE_BREAKPOINT) return;
+    navigate({
+      path: `${ROOT_PATH.ADMIN}/${ADMIN_PATH.SINGER_MANAGEMENT}/${editSingerId}`,
+      query: getCurrentListQuery(),
+    });
+    setEditSingerId(null);
+  }, [editSingerId, getCurrentListQuery, navigate, windowWidth]);
+
+  const totalPageCount = Math.ceil(data.total / pageSize);
+  useEffect(() => {
+    if (data.loading || data.error || data.total === 0) return;
+    if (totalPageCount > 0 && page > totalPageCount) {
+      updateQuery({
+        [Query.PAGE]: totalPageCount === 1 ? undefined : totalPageCount,
+      });
+    }
+  }, [data.error, data.loading, data.total, page, totalPageCount, updateQuery]);
+
+  const rangeStart = data.total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const rangeEnd = Math.min(page * pageSize, data.total);
 
   return (
     <ScrollArea>
@@ -610,12 +727,13 @@ function SingerManagement() {
               <Table>
                 <thead>
                   <tr>
-                    <Th>{t('singer_id')}</Th>
+                    <Th>{capitalize(t('singer_id'))}</Th>
                     <Th>{capitalize(t('name'))}</Th>
                     <Th>{capitalize(t('alias'))}</Th>
-                    <Th>{t('photo')}</Th>
-                    <Th>{t('creator')}</Th>
-                    <Th>{t('create_time')}</Th>
+                    <Th>{capitalize(t('photo'))}</Th>
+                    <Th>{capitalize(t('creator'))}</Th>
+                    <Th>{capitalize(t('create_time'))}</Th>
+                    <Th>{capitalize(t('manage'))}</Th>
                   </tr>
                 </thead>
                 <tbody>
@@ -667,6 +785,16 @@ function SingerManagement() {
                           'YYYY-MM-DD HH:mm',
                         )}
                       </Td>
+                      <Td>
+                        <ActionButton
+                          type="button"
+                          title={t('modify_singer')}
+                          aria-label={t('modify_singer')}
+                          onClick={() => onEditSinger(singer.id)}
+                        >
+                          <MdOutlineEdit size={18} />
+                        </ActionButton>
+                      </Td>
                     </tr>
                   ))}
                 </tbody>
@@ -676,12 +804,40 @@ function SingerManagement() {
         </Content>
 
         <Footer>
-          <div>{t('total_count', data.total.toString())}</div>
-          {data.total > PAGE_SIZE ? (
+          <FooterInfo>
+            <div>
+              {t(
+                'page_result_range',
+                rangeStart.toString(),
+                rangeEnd.toString(),
+                data.total.toString(),
+              )}
+            </div>
+            <PageSizeSelectBox>
+              <PageSizeLabel>{t('items_per_page')}</PageSizeLabel>
+              <PageSizeSelectControl>
+                <Select
+                  size="sm"
+                  options={pageSizeOptions}
+                  value={pageSize}
+                  menuPlacement="top"
+                  onChange={(nextPageSize) =>
+                    updateQuery({
+                      [SingerManagementQuery.PAGE_SIZE]:
+                        nextPageSize === DEFAULT_PAGE_SIZE
+                          ? undefined
+                          : nextPageSize,
+                      [Query.PAGE]: undefined,
+                    })
+                  }
+                />
+              </PageSizeSelectControl>
+            </PageSizeSelectBox>
+          </FooterInfo>
+          {totalPageCount > 1 ? (
             <PaginationBox>
               <Pagination
-                total={data.total}
-                pageSize={PAGE_SIZE}
+                count={totalPageCount}
                 page={page}
                 onChange={(nextPage) =>
                   updateQuery({
@@ -701,6 +857,13 @@ function SingerManagement() {
           onClose={() => setViewerPhoto(null)}
         />
       ) : null}
+      <SingerEditDrawer
+        open={editSingerId !== null}
+        singerId={editSingerId}
+        onClose={() => setEditSingerId(null)}
+        onSaved={reload}
+      />
+      <SingerEditPage onSaved={reload} />
     </ScrollArea>
   );
 }

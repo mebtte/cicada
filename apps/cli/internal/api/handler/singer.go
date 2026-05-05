@@ -162,6 +162,49 @@ func AdminGetSingerList(c *gin.Context) {
 	api.OK(c, gin.H{"total": total, "singerList": list})
 }
 
+func AdminGetSinger(c *gin.Context) {
+	id := c.Query("id")
+	if id == "" {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	s, err := store.GetSingerByID(id)
+	if err != nil {
+		api.Fail(c, apperr.SingerNotExisted)
+		return
+	}
+
+	var createUserUsername string
+	var createUserNickname string
+	_ = store.DB().QueryRow(
+		`SELECT username,nickname FROM user WHERE id=?`,
+		s.CreateUserID,
+	).Scan(&createUserUsername, &createUserNickname)
+
+	photos, _ := store.ListSingerPhotos(id)
+	photoItems := make([]gin.H, len(photos))
+	for i, p := range photos {
+		photoItems[i] = gin.H{
+			"id":          p.ID,
+			"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeSingerPhoto),
+			"description": p.Description,
+		}
+	}
+
+	api.OK(c, gin.H{
+		"id":      s.ID,
+		"name":    s.Name,
+		"aliases": splitAliases(s.Aliases),
+		"photos":  photoItems,
+		"createUser": gin.H{
+			"id":       s.CreateUserID,
+			"username": createUserUsername,
+			"nickname": createUserNickname,
+		},
+		"createTimestamp": s.CreateTimestamp,
+	})
+}
+
 type createSingerBody struct {
 	Name  string `json:"name" binding:"required"`
 	Force bool   `json:"force"`
