@@ -130,15 +130,71 @@ func GetUser(c *gin.Context) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
-	var id, nickname, avatar string
-	if err := store.DB().QueryRow(`SELECT id,nickname,avatar FROM user WHERE id=?`, uid).Scan(&id, &nickname, &avatar); err != nil {
+
+	user, err := store.GetUserByID(uid)
+	if err != nil {
 		api.Fail(c, apperr.UserNotExisted)
 		return
 	}
+
+	musics, err := store.GetMusicsByCreateUserID(uid)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+
+	type publicMusicbill struct {
+		ID         string
+		Cover      string
+		Name       string
+		MusicCount int
+	}
+	rows, err := store.DB().Query(
+		`SELECT id,cover,name,
+			(SELECT COUNT(1) FROM musicbill_music WHERE musicbillId=musicbill.id)
+		FROM musicbill
+		WHERE userId=? AND public=1
+		ORDER BY createTimestamp DESC`,
+		uid,
+	)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	defer rows.Close()
+
+	musicbills := []publicMusicbill{}
+	for rows.Next() {
+		mb := publicMusicbill{}
+		if err := rows.Scan(&mb.ID, &mb.Cover, &mb.Name, &mb.MusicCount); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		musicbills = append(musicbills, mb)
+	}
+	if err := rows.Err(); err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+
+	musicbillItems := make([]gin.H, len(musicbills))
+	for i, mb := range musicbills {
+		musicbillItems[i] = gin.H{
+			"id":         mb.ID,
+			"cover":      config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+			"name":       mb.Name,
+			"musicCount": mb.MusicCount,
+		}
+	}
+
 	api.OK(c, gin.H{
-		"id":       id,
-		"nickname": nickname,
-		"avatar":   config.AssetPublicURL(avatar, config.AssetTypeUserAvatar),
+		"id":            user.ID,
+		"avatar":        config.AssetPublicURL(user.Avatar, config.AssetTypeUserAvatar),
+		"joinTimestamp": user.JoinTimestamp,
+		"nickname":      user.Nickname,
+		"username":      user.Username,
+		"musicbillList": musicbillItems,
+		"musicList":     musicListResponse(musics, len(musics))["musicList"],
 	})
 }
 

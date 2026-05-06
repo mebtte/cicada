@@ -77,6 +77,7 @@ const zhCN: {
   edit_year_of_issue: '编辑发行年份',
   year_of_issue_limit: '发行年份应在 %s1 - %s2 之间',
   edit_avatar: '编辑头像',
+  view_personal_homepage: '查看个人主页',
   empty_avatar_warning: '请选择一个头像',
   reset_avatar: '重置头像',
   reset_avatar_question: '确定重置头像吗?',

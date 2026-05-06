@@ -10,32 +10,47 @@ import styled from 'styled-components';
 import { MusicDetail } from './constants';
 import Tag from './tag';
 
-const Style = styled.div`
-  margin-top: 10px;
+const Style = styled.section<{ $showTitle: boolean }>`
+  padding: ${({ $showTitle }) => ($showTitle ? '22px 20px 0' : '18px 20px 0')};
 
-  > .name {
-    margin: 0 20px;
+  > .headline {
+    margin-bottom: 16px;
 
-    font-size: 28px;
-    font-weight: bold;
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    > .name {
+      margin: 0;
+
+      font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: 0;
+      color: rgb(50 50 50);
+      overflow-wrap: anywhere;
+    }
+
+    > .aliases {
+      margin: 8px 0 0;
+
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+      font-weight: 600;
+      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+      line-height: 1.3;
+    }
   }
-
-  > .aliases {
-    margin: 0 20px 5px 20px;
-
-    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  }
-
-  > .tags {
-    margin: 0 20px 5px 20px;
-
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 5px 10px;
-  }
+`;
+const MetaList = styled.div<{ $compact: boolean }>`
+  width: ${({ $compact }) => ($compact ? '100%' : 'auto')};
+  display: ${({ $compact }) => ($compact ? 'flex' : 'grid')};
+  grid-template-columns: ${({ $compact }) =>
+    $compact ? 'none' : 'repeat(auto-fit, minmax(118px, 1fr))'};
+  align-items: center;
+  justify-content: ${({ $compact }) => ($compact ? 'flex-start' : 'stretch')};
+  flex-wrap: wrap;
+  gap: ${({ $compact }) => ($compact ? '6px' : '10px')};
 `;
 const formatDuration = (duration: number) => {
   const minute = Math.floor(duration / 60);
@@ -44,62 +59,92 @@ const formatDuration = (duration: number) => {
     second > 9 ? second : `0${second}`
   }`;
 };
+const formatFileSize = (size: number) => {
+  if (size < 1024) {
+    return `${size}B`;
+  }
+  if (size < 1024 * 1024) {
+    return `${Math.round(size / 1024)}KB`;
+  }
+  return `${(size / 1024 / 1024).toFixed(2)}MB`;
+};
 
-function Info2({ music }: { music: MusicDetail }) {
-  const assetParts = music.asset.split('.');
-  const assetFormat = assetParts[assetParts.length - 1];
+export function MusicMetaList({
+  music,
+  compact = false,
+}: {
+  music: MusicDetail;
+  compact?: boolean;
+}) {
   return (
-    <Style>
-      <div className="name">{music.name}</div>
-      {music.aliases.length ? (
-        <div className="aliases">
-          {music.aliases.map((alias, index) => (
-            <div className="alias" key={index}>
-              {alias}
-            </div>
-          ))}
-        </div>
+    <MetaList $compact={compact}>
+      {music.year ? (
+        <Tag
+          compact={compact}
+          title="发行年份"
+          icon={<MdOutlineCalendarToday />}
+          text={music.year}
+        />
       ) : null}
-      <div className="tags">
-        {music.year ? (
-          <Tag
-            title="发行年份"
-            icon={<MdOutlineCalendarToday />}
-            text={music.year}
-          />
-        ) : null}
-        {music.duration ? (
-          <Tag
-            title="时长"
-            icon={<MdAccessTime />}
-            text={formatDuration(music.duration)}
-          />
-        ) : null}
-        {music.size ? (
-          <Tag
-            title="文件大小"
-            icon={<MdFilePresent />}
-            text={`${(music.size / 1024 / 1024).toFixed(2)}MB`}
-          />
-        ) : null}
+      {music.duration ? (
         <Tag
-          title="文件类型"
+          compact={compact}
+          title="时长"
+          icon={<MdAccessTime />}
+          text={formatDuration(music.duration)}
+        />
+      ) : null}
+      {music.size ? (
+        <Tag
+          compact={compact}
+          title="文件大小"
           icon={<MdFilePresent />}
-          text={assetFormat.toUpperCase()}
+          text={formatFileSize(music.size)}
         />
-        <Tag
-          title="加入乐单数量"
-          icon={<MdOutlinePostAdd />}
-          text={music.musicbillCount}
-        />
-        <Tag
-          title="热度"
-          icon={<MdOutlineLocalFireDepartment />}
-          text={music.heat}
-        />
+      ) : null}
+      <Tag
+        compact={compact}
+        title="加入乐单数量"
+        icon={<MdOutlinePostAdd />}
+        text={music.musicbillCount}
+      />
+      <Tag
+        compact={compact}
+        title="热度"
+        icon={<MdOutlineLocalFireDepartment />}
+        text={music.heat}
+      />
+    </MetaList>
+  );
+}
+
+function Info({
+  music,
+  showTitle = true,
+}: {
+  music: MusicDetail;
+  showTitle?: boolean;
+}) {
+  if (!showTitle) {
+    return null;
+  }
+
+  return (
+    <Style $showTitle={showTitle}>
+      <div className="headline">
+        <h1 className="name">{music.name}</h1>
+        {music.aliases.length ? (
+          <div className="aliases">
+            {music.aliases.map((alias, index) => (
+              <div className="alias" key={index}>
+                {alias}
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
     </Style>
   );
 }
 
-export default Info2;
+export default Info;

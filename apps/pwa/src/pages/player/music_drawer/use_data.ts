@@ -86,9 +86,12 @@ export default (id: string) => {
              * 只获取 http header
              * @author mebtte<i@mebtte.com>
              */
-            method: 'head',
+            method: 'HEAD',
           });
-          size = Number(assetHeadResponse.headers.get('content-length')) || 0;
+          if (assetHeadResponse.ok) {
+            size =
+              Number(assetHeadResponse.headers.get('content-length')) || 0;
+          }
         } catch (error) {
           logger.error(error, '从网络获取音乐文件大小失败');
         }

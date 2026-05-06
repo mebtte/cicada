@@ -180,6 +180,19 @@ func GetMusicsBySingerID(singerID string) ([]Music, error) {
 	return scanMusicRows(rows)
 }
 
+func GetMusicsByCreateUserID(userID string) ([]Music, error) {
+	rows, err := DB().Query(
+		`SELECT id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year
+		FROM music WHERE createUserId=? ORDER BY createTimestamp DESC`,
+		userID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return scanMusicRows(rows)
+}
+
 func LinkMusicSingers(musicID string, singerIDs []string) error {
 	if len(singerIDs) == 0 {
 		return nil

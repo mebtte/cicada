@@ -13,31 +13,37 @@ const Style = styled.div`
   align-items: center;
   gap: 10px;
 
-  height: 44px;
-  padding: 0 10px;
-  margin: 0 10px;
+  min-height: 56px;
+  padding: 8px 12px 12px;
 
-  transition: 300ms;
+  transition:
+    transform 120ms ease-out,
+    box-shadow 120ms ease-out,
+    filter 120ms ease-out;
   cursor: pointer;
-  background-color: transparent;
-  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
+  background: #fff;
+  border: 2px solid rgb(229 229 229);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 rgb(229 229 229);
 
   > .name {
     flex: 1;
     min-width: 0;
 
     ${ellipsis}
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
     font-size: ${CSSVariable.TEXT_SIZE_LARGE};
-    font-weight: bold;
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    font-weight: 800;
+    color: rgb(75 75 75);
   }
 
   &:hover {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+    filter: brightness(1.03);
   }
 
   &:active {
-    background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
+    transform: translateY(4px);
+    box-shadow: none;
   }
 `;
 

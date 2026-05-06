@@ -78,6 +78,7 @@ export default {
   edit_year_of_issue: 'edit year of issue',
   year_of_issue_limit: 'year of issue should be between %s1 and %s2',
   edit_avatar: 'edit avatar',
+  view_personal_homepage: 'view profile',
   empty_avatar_warning: 'please select an avatar',
   reset_avatar: 'reset avatar',
   reset_avatar_question: 'are you sure to reset avatar ?',

@@ -89,6 +89,11 @@ func GetMusic(c *gin.Context) {
 	singers, _ := store.GetSingersInMusicIDs(unique(allIDs))
 
 	singersByMusic := groupSingersByMusic(singers)
+	singerIDs := make([]string, 0, len(singers))
+	for _, s := range singers {
+		singerIDs = append(singerIDs, s.ID)
+	}
+	photosBySinger := singerPhotosBySingerIDs(unique(singerIDs))
 
 	var musicbillCount int
 	store.DB().QueryRow(`SELECT COUNT(1) FROM musicbill_music WHERE musicId=?`, id).Scan(&musicbillCount)
@@ -118,7 +123,7 @@ func GetMusic(c *gin.Context) {
 			"id":      rm.ID,
 			"name":    rm.Name,
 			"cover":   config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
-			"singers": singerItems(singersByMusic[rm.ID]),
+			"singers": singerItemsWithPhotos(singersByMusic[rm.ID], photosBySinger),
 		}
 	}
 	forkFromList := make([]gin.H, len(forkFroms))
@@ -128,7 +133,7 @@ func GetMusic(c *gin.Context) {
 			"id":      rm.ID,
 			"name":    rm.Name,
 			"cover":   config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
-			"singers": singerItems(singersByMusic[rm.ID]),
+			"singers": singerItemsWithPhotos(singersByMusic[rm.ID], photosBySinger),
 		}
 	}
 
@@ -142,7 +147,7 @@ func GetMusic(c *gin.Context) {
 		"heat":            m.Heat,
 		"createTimestamp": m.CreateTimestamp,
 		"year":            nullInt64(m.Year),
-		"singers":         singerItems(singersByMusic[id]),
+		"singers":         singerItemsWithPhotos(singersByMusic[id], photosBySinger),
 		"createUser":      gin.H{"id": m.CreateUserID, "nickname": createUserNickname},
 		"forkList":        forkList,
 		"forkFromList":    forkFromList,
@@ -585,6 +590,39 @@ func singerItems(ss []store.SingerInMusic) []gin.H {
 		}
 	}
 	return out
+}
+
+func singerItemsWithPhotos(ss []store.SingerInMusic, photosBySinger map[string][]gin.H) []gin.H {
+	out := make([]gin.H, len(ss))
+	for i, s := range ss {
+		photos := photosBySinger[s.ID]
+		if photos == nil {
+			photos = []gin.H{}
+		}
+		out[i] = gin.H{
+			"id":      s.ID,
+			"name":    s.Name,
+			"aliases": splitAliases(s.Aliases),
+			"photos":  photos,
+		}
+	}
+	return out
+}
+
+func singerPhotosBySingerIDs(singerIDs []string) map[string][]gin.H {
+	photosBySinger := map[string][]gin.H{}
+	if len(singerIDs) == 0 {
+		return photosBySinger
+	}
+	photos, _ := store.ListSingerPhotosBySingerIDs(singerIDs)
+	for _, p := range photos {
+		photosBySinger[p.SingerID] = append(photosBySinger[p.SingerID], gin.H{
+			"id":          p.ID,
+			"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeSingerPhoto),
+			"description": p.Description,
+		})
+	}
+	return photosBySinger
 }
 
 func unique(ss []string) []string {

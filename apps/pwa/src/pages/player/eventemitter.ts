@@ -60,6 +60,7 @@ export enum EventType {
 
   MUSIC_UPDATED = 'music_updated',
   MUSIC_DELETED = 'music_deleted',
+  MUSIC_DETAIL_LOADED = 'music_detail_loaded',
 
   SINGER_UPDATED = 'singer_updated',
   SINGER_DETAIL_LOADED = 'singer_detail_loaded',
@@ -144,6 +145,12 @@ export default new Eventin<
 
     [EventType.MUSIC_UPDATED]: { id: string };
     [EventType.MUSIC_DELETED]: { id: string };
+    [EventType.MUSIC_DETAIL_LOADED]: {
+      id: string;
+      name: string;
+      aliases: string[];
+      singers: { id: string; name: string }[];
+    };
 
     [EventType.SINGER_UPDATED]: { id: string };
     [EventType.SINGER_DETAIL_LOADED]: {

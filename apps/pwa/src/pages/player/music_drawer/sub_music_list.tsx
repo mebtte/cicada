@@ -6,25 +6,45 @@ import MusicInfo from '../components/music_info';
 import capitalize from '@/style/capitalize';
 
 const Style = styled.div`
-  margin: 10px 0;
-  padding: 10px 0;
-
-  background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  margin: 22px 20px;
 
   > .label {
-    margin: 0 20px;
-    padding: 10px 0;
+    margin-bottom: 10px;
 
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    color: rgb(75 75 75);
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+    font-weight: 800;
+    line-height: 1.2;
     ${capitalize}
   }
 
   > .list {
-    > .item {
-      margin: 0 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
-      border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
+    > .item {
+      min-height: 64px;
+      padding: 8px 10px 12px;
+
+      background: #fff;
+      border: 2px solid rgb(229 229 229);
+      border-radius: 14px;
+      box-shadow: 0 4px 0 rgb(229 229 229);
+      transition:
+        transform 120ms ease-out,
+        box-shadow 120ms ease-out,
+        filter 120ms ease-out;
+
+      &:hover {
+        filter: brightness(1.03);
+      }
+
+      &:active {
+        transform: translateY(4px);
+        box-shadow: none;
+      }
     }
   }
 `;

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import getSinger from '@/server/api/get_singer';
+import getMusic from '@/server/api/get_music';
 import logger from '@/utils/logger';
 import playerEventemitter, { EventType } from '../eventemitter';
 
@@ -14,6 +15,27 @@ export interface HeaderTitle {
 interface SingerHeaderTitle extends HeaderTitle {
   id: string;
 }
+interface MusicHeaderTitle extends HeaderTitle {
+  id: string;
+}
+
+const getMusicDescription = ({
+  aliases,
+}: {
+  aliases: string[];
+}) =>
+  aliases.length ? aliases.join(' / ') : undefined;
+
+const getMusicHeaderTitle = async (id: string): Promise<MusicHeaderTitle> => {
+  const music = await getMusic({ id });
+  return {
+    id,
+    title: music.name,
+    description: getMusicDescription({
+      aliases: music.aliases,
+    }),
+  };
+};
 
 const getSingerHeaderTitle = async (
   id: string,
@@ -44,9 +66,19 @@ export default () => {
     pathname,
   );
   const singerId = singerMatch?.params.id;
+  const musicId = musicMatch?.params.id;
+  const [musicTitle, setMusicTitle] = useState<MusicHeaderTitle | null>(null);
   const [singerTitle, setSingerTitle] = useState<SingerHeaderTitle | null>(
     null,
   );
+  const loadMusicTitle = useCallback(async (id: string) => {
+    try {
+      setMusicTitle(await getMusicHeaderTitle(id));
+    } catch (error) {
+      logger.error(error as Error, 'Fail to get music title');
+      setMusicTitle(null);
+    }
+  }, []);
   const loadSingerTitle = useCallback(async (id: string) => {
     try {
       setSingerTitle(await getSingerHeaderTitle(id));
@@ -55,6 +87,34 @@ export default () => {
       setSingerTitle(null);
     }
   }, []);
+
+  useEffect(() => {
+    if (!musicId) {
+      setMusicTitle(null);
+      return;
+    }
+
+    let canceled = false;
+    setMusicTitle((current) => (current?.id === musicId ? current : null));
+    getMusicHeaderTitle(musicId)
+      .then((nextMusicTitle) => {
+        if (canceled) {
+          return;
+        }
+        setMusicTitle(nextMusicTitle);
+      })
+      .catch((error) => {
+        if (canceled) {
+          return;
+        }
+        logger.error(error as Error, 'Fail to get music title');
+        setMusicTitle(null);
+      });
+
+    return () => {
+      canceled = true;
+    };
+  }, [musicId]);
 
   useEffect(() => {
     if (!singerId) {
@@ -85,6 +145,18 @@ export default () => {
   }, [singerId]);
 
   useEffect(() => {
+    if (!musicId) {
+      return;
+    }
+
+    return playerEventemitter.listen(EventType.MUSIC_UPDATED, (payload) => {
+      if (payload.id === musicId) {
+        loadMusicTitle(musicId);
+      }
+    });
+  }, [loadMusicTitle, musicId]);
+
+  useEffect(() => {
     if (!singerId) {
       return;
     }
@@ -95,6 +167,27 @@ export default () => {
       }
     });
   }, [loadSingerTitle, singerId]);
+
+  useEffect(() => {
+    if (!musicId) {
+      return;
+    }
+
+    return playerEventemitter.listen(
+      EventType.MUSIC_DETAIL_LOADED,
+      (payload) => {
+        if (payload.id === musicId) {
+          setMusicTitle({
+            id: payload.id,
+            title: payload.name,
+            description: getMusicDescription({
+              aliases: payload.aliases,
+            }),
+          });
+        }
+      },
+    );
+  }, [musicId]);
 
   useEffect(() => {
     if (!singerId) {
@@ -120,9 +213,17 @@ export default () => {
   let title: HeaderTitle;
   if (musicMatch || musicbillMatch || singerId) {
     if (musicMatch) {
-      title = { title: t('music') };
-      lastTitleRef.current = title;
-      return title;
+      if (musicTitle && musicTitle.id === musicId) {
+        title = {
+          title: musicTitle.title,
+          description: musicTitle.description,
+        };
+        lastTitleRef.current = title;
+        return title;
+      }
+      return lastTitleRef.current.title
+        ? lastTitleRef.current
+        : { title: t('music') };
     }
     if (musicbillMatch) {
       title = { title: t('musicbill') };
