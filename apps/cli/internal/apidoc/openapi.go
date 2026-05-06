@@ -1685,14 +1685,12 @@ func musicSummaryWithLyricsSchema() map[string]any {
 
 func singerDetailSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "aliases", "photos", "createTimestamp", "createUser", "musicList"},
+		[]string{"id", "name", "aliases", "photos", "musicList"},
 		map[string]any{
-			"id":              strSchema("Singer ID.", "singer-1"),
-			"name":            strSchema("Singer name.", "Aurora"),
-			"aliases":         arraySchema(strSchema("", "AUR")),
-			"photos":          arraySchema(singerPhotoSchema()),
-			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
-			"createUser":      userBriefSchema(false),
+			"id":      strSchema("Singer ID.", "singer-1"),
+			"name":    strSchema("Singer name.", "Aurora"),
+			"aliases": arraySchema(strSchema("", "AUR")),
+			"photos":  arraySchema(singerPhotoSchema()),
 			"musicList": arraySchema(objSchema([]string{"id", "type", "name", "aliases", "cover", "asset", "singers"}, map[string]any{
 				"id":      strSchema("Music ID.", "music-1"),
 				"type":    intSchema("Music type.", 1),
@@ -1714,8 +1712,6 @@ func singerDetailExample() map[string]any {
 		"photos": []any{
 			map[string]any{"id": "photo-1", "asset": "/asset/singer_photo/photo.jpg", "description": "Live in Tokyo, 2024"},
 		},
-		"createTimestamp": int64(1710000000000),
-		"createUser":      map[string]any{"id": "1", "nickname": "Cicada"},
 		"musicList": []any{
 			map[string]any{
 				"id":      "music-1",

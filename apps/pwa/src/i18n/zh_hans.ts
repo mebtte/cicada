@@ -36,7 +36,7 @@ const zhCN: {
   search: '搜索',
   all: '全部',
   shared_musicbill_invitation: '共享乐单邀请',
-  public_musicbill_collection: '收藏的公开乐单',
+  public_musicbill_collection: '收藏乐单',
   previous_step: '上一步',
   welcome_back: '欢迎回来',
   create_at: '创建于',

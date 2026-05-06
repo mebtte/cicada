@@ -56,9 +56,6 @@ func GetSinger(c *gin.Context) {
 		}
 	}
 
-	var createUserNickname string
-	_ = store.DB().QueryRow(`SELECT nickname FROM user WHERE id=?`, s.CreateUserID).Scan(&createUserNickname)
-
 	photos, _ := store.ListSingerPhotos(id)
 	photoItems := make([]gin.H, len(photos))
 	for i, p := range photos {
@@ -70,13 +67,11 @@ func GetSinger(c *gin.Context) {
 	}
 
 	api.OK(c, gin.H{
-		"id":              s.ID,
-		"name":            s.Name,
-		"aliases":         splitAliases(s.Aliases),
-		"photos":          photoItems,
-		"createTimestamp": s.CreateTimestamp,
-		"createUser":      gin.H{"id": s.CreateUserID, "nickname": createUserNickname},
-		"musicList":       musicItems,
+		"id":        s.ID,
+		"name":      s.Name,
+		"aliases":   splitAliases(s.Aliases),
+		"photos":    photoItems,
+		"musicList": musicItems,
 	})
 }
 

@@ -5,7 +5,6 @@ import {
   MdOutlineAddBox,
   MdSort,
   MdRefresh,
-  MdStarOutline,
   MdOutlinePeopleAlt,
 } from 'react-icons/md';
 import { useContext } from 'react';
@@ -75,16 +74,6 @@ function Top() {
         }}
       >
         <MdSort />
-      </Button>
-      <Button
-        square
-        variant="plain"
-        size="sm"
-        onClick={() =>
-          navigate(ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION)
-        }
-      >
-        <MdStarOutline />
       </Button>
       <Button
         square

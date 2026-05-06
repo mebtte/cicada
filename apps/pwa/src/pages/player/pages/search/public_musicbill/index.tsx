@@ -1,7 +1,7 @@
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import Empty from '@/components/empty';
@@ -14,11 +14,7 @@ import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import {
-  PAGE_SIZE,
-  TOOLBAR_HEIGHT,
-  MINI_MODE_TOOLBAR_HEIGHT,
-} from '../constants';
+import { PAGE_SIZE } from '../constants';
 import useData from './use_data';
 import { openCreateMusicbillDialog } from '../../../utils';
 import PublicMusicbill from '../../../components/public_musicbill';
@@ -49,10 +45,6 @@ const MusicContainer = styled(Container)`
       padding: 10px;
     }
   }
-
-  ${({ theme: { miniMode } }) => css`
-    padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
-  `}
 `;
 const paginationStyle: CSSProperties = {
   display: 'flex',

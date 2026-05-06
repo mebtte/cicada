@@ -1,0 +1,281 @@
+import {
+  HTMLAttributes,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { animated, useSpring } from 'react-spring';
+import styled, { css } from 'styled-components';
+import { CSSVariable } from '@/global_style';
+import { CSS_VAR } from './theme';
+
+const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
+const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
+
+export type DuolingoTabItem<TabType extends string> = {
+  tab: TabType;
+  label: ReactNode;
+  disabled?: boolean;
+};
+
+export type DuolingoTabPanel<TabType extends string> = {
+  tab: TabType;
+  content: ReactNode;
+};
+
+const TabListRoot = styled.div`
+  position: relative;
+
+  min-width: 0;
+  padding: 4px;
+
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+
+  background: rgb(255 255 255 / 0.78);
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 16px;
+  box-shadow: 0 4px 0 rgb(232 232 232);
+`;
+
+const ActiveBlock = styled.div<{
+  $leftOffset: number;
+  $leftPercent: number;
+  $widthOffset: number;
+  $widthPercent: number;
+}>`
+  position: absolute;
+  top: 4px;
+  left: calc(
+    ${({ $leftPercent }) => $leftPercent}% + ${({ $leftOffset }) =>
+        $leftOffset}px
+  );
+  bottom: 8px;
+  z-index: 0;
+
+  width: calc(
+    ${({ $widthPercent }) => $widthPercent}% - ${({ $widthOffset }) =>
+        $widthOffset}px
+  );
+  background: ${PRIMARY};
+  border: 2px solid ${PRIMARY_SHADOW};
+  border-radius: 12px;
+  box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
+  transition: left 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+`;
+
+const TabButton = styled.button<{ $active: boolean }>`
+  position: relative;
+  z-index: 1;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 34px;
+  padding: 0 12px 4px;
+
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: capitalize;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  transition:
+    color 150ms ease-out,
+    filter 120ms ease-out,
+    transform 120ms ease-out;
+
+  &:not(:disabled):hover {
+    filter: brightness(1.04);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(2px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: ${CSSVariable.TEXT_COLOR_DISABLED};
+  }
+
+  &:focus-visible {
+    outline: 3px solid ${PRIMARY};
+    outline-offset: 2px;
+  }
+
+  ${({ $active }) =>
+    $active &&
+    css`
+      color: #fff;
+    `}
+`;
+
+const PanelsRoot = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+`;
+
+const PanelRoot = styled(animated.div)<{ $active: boolean }>`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+
+  pointer-events: ${({ $active }) => ($active ? 'auto' : 'none')};
+  visibility: ${({ $active }) => ($active ? 'visible' : 'hidden')};
+  transition: visibility 0s linear ${({ $active }) => ($active ? '0s' : '220ms')};
+`;
+
+export function DuolingoTabList<TabType extends string>({
+  current,
+  tabList,
+  onChange,
+  style,
+  ...props
+}: Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> & {
+  current: TabType;
+  tabList: DuolingoTabItem<TabType>[];
+  onChange: (tab: TabType) => void;
+}) {
+  const activeIndex = Math.max(
+    tabList.findIndex(({ tab }) => tab === current),
+    0,
+  );
+  const tabCount = Math.max(tabList.length, 1);
+  const activeGapTotal = (tabCount - 1) * 4;
+  const activeWidthPercent = 100 / tabCount;
+  const activeWidthOffset = (8 + activeGapTotal) / tabCount;
+
+  return (
+    <TabListRoot
+      role="tablist"
+      style={style}
+      {...props}
+    >
+      <ActiveBlock
+        $leftPercent={activeIndex * activeWidthPercent}
+        $leftOffset={4 + activeIndex * (4 - activeWidthOffset)}
+        $widthPercent={activeWidthPercent}
+        $widthOffset={activeWidthOffset}
+      />
+      {tabList.map(({ tab, label, disabled }) => {
+        const active = tab === current;
+        return (
+          <TabButton
+            key={tab}
+            role="tab"
+            type="button"
+            $active={active}
+            aria-selected={active}
+            disabled={disabled}
+            onClick={() => {
+              if (!disabled && !active) {
+                onChange(tab);
+              }
+            }}
+          >
+            {label}
+          </TabButton>
+        );
+      })}
+    </TabListRoot>
+  );
+}
+
+function AnimatedPanel({
+  active,
+  direction,
+  children,
+}: {
+  active: boolean;
+  direction: number;
+  children: ReactNode;
+}) {
+  const style = useSpring({
+    opacity: active ? 1 : 0,
+    transform: active
+      ? 'translate3d(0, 0, 0) scale(1)'
+      : `translate3d(${direction * -22}px, 0, 0) scale(0.985)`,
+    config: {
+      tension: 360,
+      friction: 34,
+    },
+  });
+
+  return (
+    <PanelRoot $active={active} style={style} aria-hidden={!active}>
+      {children}
+    </PanelRoot>
+  );
+}
+
+export function DuolingoTabPanels<TabType extends string>({
+  current,
+  tabList,
+  ...props
+}: HTMLAttributes<HTMLDivElement> & {
+  current: TabType;
+  tabList: DuolingoTabPanel<TabType>[];
+}) {
+  const [mountedTabs, setMountedTabs] = useState<Set<TabType>>(
+    () => new Set([current]),
+  );
+  const activeIndex = Math.max(
+    tabList.findIndex(({ tab }) => tab === current),
+    0,
+  );
+  const previousIndexRef = useRef(activeIndex);
+  const direction =
+    activeIndex === previousIndexRef.current
+      ? 1
+      : activeIndex > previousIndexRef.current
+        ? 1
+        : -1;
+  const renderedTabs = mountedTabs.has(current)
+    ? mountedTabs
+    : new Set(mountedTabs).add(current);
+
+  useEffect(() => {
+    previousIndexRef.current = activeIndex;
+  }, [activeIndex]);
+
+  useEffect(() => {
+    setMountedTabs((tabs) => {
+      if (tabs.has(current)) {
+        return tabs;
+      }
+
+      return new Set(tabs).add(current);
+    });
+  }, [current]);
+
+  return (
+    <PanelsRoot {...props}>
+      {tabList.map(({ tab, content }) =>
+        renderedTabs.has(tab) ? (
+          <AnimatedPanel
+            key={tab}
+            active={tab === current}
+            direction={direction}
+          >
+            {content}
+          </AnimatedPanel>
+        ) : null,
+      )}
+    </PanelsRoot>
+  );
+}

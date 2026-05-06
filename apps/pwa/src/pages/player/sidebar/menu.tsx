@@ -5,6 +5,7 @@ import {
   MdHistory,
   MdOutlineDownload,
   MdAdminPanelSettings,
+  MdStarOutline,
 } from 'react-icons/md';
 import MenuItem from '@/components/menu_item';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -36,6 +37,20 @@ function Menu() {
         }
         label={t('exploration')}
         icon={<MdLooks />}
+      />
+      <MenuItem
+        style={itemStyle}
+        active={
+          pathname ===
+          `${ROOT_PATH.PLAYER}${PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION}`
+        }
+        onClick={() =>
+          navigate(
+            `${ROOT_PATH.PLAYER}${PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION}`,
+          )
+        }
+        label={t('public_musicbill_collection')}
+        icon={<MdStarOutline />}
       />
       <MenuItem
         style={itemStyle}

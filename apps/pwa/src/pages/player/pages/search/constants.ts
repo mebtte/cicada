@@ -15,7 +15,7 @@ export const TAB_LIST: { tab: SearchTab; label: string }[] = TABS.map(
   }),
 );
 
-export const TOOLBAR_HEIGHT = 45;
-export const MINI_MODE_TOOLBAR_HEIGHT = 90;
+export const TOOLBAR_HEIGHT = 68;
+export const MINI_MODE_TOOLBAR_HEIGHT = 118;
 
 export const PAGE_SIZE = 50;

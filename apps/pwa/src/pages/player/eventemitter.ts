@@ -62,6 +62,7 @@ export enum EventType {
   MUSIC_DELETED = 'music_deleted',
 
   SINGER_UPDATED = 'singer_updated',
+  SINGER_DETAIL_LOADED = 'singer_detail_loaded',
 
   MUSICBILL_COLLECTION_CHANGE = 'musicbill_collection_change',
   CURRENT_MUSIC_CHANGE = 'current_music_change',
@@ -145,6 +146,11 @@ export default new Eventin<
     [EventType.MUSIC_DELETED]: { id: string };
 
     [EventType.SINGER_UPDATED]: { id: string };
+    [EventType.SINGER_DETAIL_LOADED]: {
+      id: string;
+      name: string;
+      aliases: string[];
+    };
 
     [EventType.MUSICBILL_COLLECTION_CHANGE]: null;
     [EventType.CURRENT_MUSIC_CHANGE]: { queueMusic?: QueueMusic };

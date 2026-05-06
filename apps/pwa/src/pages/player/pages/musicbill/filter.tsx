@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 import Input from '@/components/input';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { t } from '@/i18n';
 import { FILTER_HEIGHT } from './constants';
 import capitalize from '@/utils/capitalize';
+import { useLocation } from 'react-router-dom';
+import parseSearch from '@/utils/parse_search';
 
 const Style = styled.div`
   position: absolute;
@@ -27,22 +29,38 @@ const Style = styled.div`
   }
 `;
 
+const normalizeKeyword = (keyword: string) =>
+  keyword.replace(/\s+/g, ' ').trim();
+
 function Filter() {
-  const [keyword, setKeyword] = useState('');
+  const location = useLocation();
+  const queryKeyword = useMemo(() => {
+    const query = parseSearch<Query.KEYWORD>(location.search);
+    return query[Query.KEYWORD] || '';
+  }, [location.search]);
+  const [keyword, setKeyword] = useState(queryKeyword);
   const navigate = useNavigate();
 
+  useEffect(() => setKeyword(queryKeyword), [queryKeyword]);
+
   useEffect(() => {
+    const normalizedKeyword = normalizeKeyword(keyword);
+    if (normalizedKeyword === queryKeyword) {
+      return;
+    }
+
     const timer = window.setTimeout(
       () =>
         navigate({
           query: {
-            [Query.KEYWORD]: keyword,
+            [Query.KEYWORD]: normalizedKeyword || undefined,
           },
+          replace: true,
         }),
       500,
     );
     return () => window.clearTimeout(timer);
-  }, [keyword, navigate]);
+  }, [keyword, navigate, queryKeyword]);
 
   return (
     <Style>

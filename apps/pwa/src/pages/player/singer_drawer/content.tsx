@@ -1,12 +1,11 @@
-import styled from 'styled-components';
-import type { ComponentProps } from 'react';
+import styled, { css } from 'styled-components';
+import { useEffect, type ComponentProps } from 'react';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import autoScrollbar from '@/style/auto_scrollbar';
-import day from '@/utils/day';
 import {
   DrawerHeader,
   DrawerTitle,
@@ -19,7 +18,7 @@ import { Singer } from './constants';
 import Info from './info';
 import Toolbar from './toolbar';
 import MusicList from './music_list';
-import CreateUser from '../components/create_user';
+import playerEventemitter, { EventType } from '../eventemitter';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -28,8 +27,12 @@ const CardContainer = styled(Container)`
   ${flexCenter}
 `;
 const DetailContainer = styled(Container)`
+  display: flex;
+  flex-direction: column;
+
   > .scrollable {
-    ${absoluteFullSize}
+    flex: 1;
+    min-height: 0;
 
     overflow: auto;
     ${autoScrollbar}
@@ -39,9 +42,17 @@ const DetailContainer = styled(Container)`
     }
   }
 `;
-const headerStyle = { paddingRight: 16, paddingBottom: 16 };
-const descriptionStyle = { marginTop: 2, lineHeight: 1.3 };
+const Header = styled(DrawerHeader)`
+  height: 72px;
+  padding: 0 16px 0 24px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+`;
 const HeaderRow = styled.div`
+  width: 100%;
+
   display: flex;
   align-items: center;
   gap: 12px;
@@ -50,22 +61,64 @@ const HeaderText = styled.div`
   flex: 1;
   min-width: 0;
 `;
+const titleStyle = css`
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  && {
+    color: rgb(50 50 50);
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: 0.2px;
+  }
+`;
+const SingerDrawerTitle = styled(DrawerTitle)`
+  ${titleStyle}
+`;
+const descriptionStyle = css`
+  margin: 4px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  && {
+    margin-top: 4px;
+    color: rgb(140 140 140);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.1px;
+  }
+`;
+const SingerDrawerDescription = styled(DrawerDescription)`
+  ${descriptionStyle}
+`;
 
 type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
 
-function Detail({ style, singer }: { style: AnimatedStyle; singer: Singer }) {
-  const hasCreateUser = !!singer.createUser.id && !!singer.createUser.nickname;
+function Detail({
+  style,
+  singer,
+  insideDrawer,
+}: {
+  style: AnimatedStyle;
+  singer: Singer;
+  insideDrawer: boolean;
+}) {
   return (
     <DetailContainer style={style}>
-      <div className="scrollable">
-        <DrawerHeader style={headerStyle}>
+      {insideDrawer ? (
+        <Header>
           <HeaderRow>
             <HeaderText>
-              <DrawerTitle>{singer.name}</DrawerTitle>
+              <SingerDrawerTitle>{singer.name}</SingerDrawerTitle>
               {singer.aliases.length ? (
-                <DrawerDescription style={descriptionStyle}>
+                <SingerDrawerDescription>
                   {singer.aliases.join(' / ')}
-                </DrawerDescription>
+                </SingerDrawerDescription>
               ) : null}
             </HeaderText>
             <DrawerClose asChild>
@@ -84,7 +137,9 @@ function Detail({ style, singer }: { style: AnimatedStyle; singer: Singer }) {
               </Button>
             </DrawerClose>
           </HeaderRow>
-        </DrawerHeader>
+        </Header>
+      ) : null}
+      <div className="scrollable">
         <div className="first-screen">
           <Info singer={singer} />
           <MusicList
@@ -94,21 +149,30 @@ function Detail({ style, singer }: { style: AnimatedStyle; singer: Singer }) {
             }))}
           />
         </div>
-        {hasCreateUser ? (
-          <CreateUser
-            userId={singer.createUser.id}
-            nickname={singer.createUser.nickname}
-            createTime={day(singer.createTimestamp).format('YYYY-MM-DD')}
-          />
-        ) : null}
-        <Toolbar singer={singer} />
       </div>
+      <Toolbar singer={singer} />
     </DetailContainer>
   );
 }
 
-function SingerContent({ id }: { id: string }) {
+function SingerContent({
+  id,
+  insideDrawer = false,
+}: {
+  id: string;
+  insideDrawer?: boolean;
+}) {
   const { data, reload } = useData(id);
+
+  useEffect(() => {
+    if (!insideDrawer && data.value) {
+      playerEventemitter.emit(EventType.SINGER_DETAIL_LOADED, {
+        id: data.value.id,
+        name: data.value.name,
+        aliases: data.value.aliases,
+      });
+    }
+  }, [data.value, insideDrawer]);
 
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -130,7 +194,9 @@ function SingerContent({ id }: { id: string }) {
         </CardContainer>
       );
     }
-    return <Detail style={style} singer={d.value} />;
+    return (
+      <Detail style={style} singer={d.value} insideDrawer={insideDrawer} />
+    );
   });
 }
 

@@ -49,3 +49,6 @@ export { ThemeProvider, useTheme, DEFAULT_THEME } from './theme';
 export type { Theme, ThemeProviderProps } from './theme';
 
 export { default as Divider } from './divider';
+
+export { DuolingoTabList, DuolingoTabPanels } from './duolingo_tabs';
+export type { DuolingoTabItem, DuolingoTabPanel } from './duolingo_tabs';

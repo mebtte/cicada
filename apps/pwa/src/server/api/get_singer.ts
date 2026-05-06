@@ -11,11 +11,6 @@ interface Response {
     asset: string;
     description: string;
   }[];
-  createTimestamp: number;
-  createUser: {
-    id: string;
-    nickname: string;
-  };
   musicList: {
     id: string;
     type: MusicType;
@@ -32,8 +27,7 @@ interface Response {
   }[];
 }
 
-type RawResponse = Omit<Response, 'createUser' | 'musicList' | 'photos'> & {
-  createUser?: Response['createUser'];
+type RawResponse = Omit<Response, 'musicList' | 'photos'> & {
   musicList?: Response['musicList'];
   photos?: Response['photos'];
 };
@@ -51,13 +45,13 @@ async function getSinger(id: string): Promise<Response> {
   const musicList = singer.musicList ?? [];
   const photos = singer.photos ?? [];
   return {
-    ...singer,
+    id: singer.id,
+    name: singer.name,
     aliases: singer.aliases ?? [],
     photos: photos.map((p) => ({
       ...p,
       asset: prefixServerOrigin(p.asset),
     })),
-    createUser: singer.createUser ?? { id: '', nickname: '' },
     musicList: musicList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),

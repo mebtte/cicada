@@ -89,14 +89,10 @@ func TestGetSinger(t *testing.T) {
 	type response struct {
 		Code string `json:"code"`
 		Data struct {
-			ID         string      `json:"id"`
-			Name       string      `json:"name"`
-			Aliases    []string    `json:"aliases"`
-			Photos     []photoResp `json:"photos"`
-			CreateUser struct {
-				ID       string `json:"id"`
-				Nickname string `json:"nickname"`
-			} `json:"createUser"`
+			ID        string      `json:"id"`
+			Name      string      `json:"name"`
+			Aliases   []string    `json:"aliases"`
+			Photos    []photoResp `json:"photos"`
 			MusicList []struct {
 				ID      string   `json:"id"`
 				Name    string   `json:"name"`
@@ -110,6 +106,7 @@ func TestGetSinger(t *testing.T) {
 				} `json:"singers"`
 			} `json:"musicList"`
 		} `json:"data"`
+		RawData map[string]json.RawMessage `json:"-"`
 	}
 
 	getSinger := func(userID string, admin int) response {
@@ -126,6 +123,13 @@ func TestGetSinger(t *testing.T) {
 		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 			t.Fatalf("decode response: %v", err)
 		}
+		var raw struct {
+			Data map[string]json.RawMessage `json:"data"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &raw); err != nil {
+			t.Fatalf("decode raw response: %v", err)
+		}
+		resp.RawData = raw.Data
 		return resp
 	}
 
@@ -140,8 +144,11 @@ func TestGetSinger(t *testing.T) {
 		if len(resp.Data.Aliases) != 2 || resp.Data.Aliases[0] != "Alias A" {
 			t.Fatalf("unexpected aliases: %+v", resp.Data.Aliases)
 		}
-		if resp.Data.CreateUser.ID != "user-1" || resp.Data.CreateUser.Nickname != "Creator" {
-			t.Fatalf("unexpected createUser: %+v", resp.Data.CreateUser)
+		if _, ok := resp.RawData["createUser"]; ok {
+			t.Fatalf("singer detail should not include createUser: %s", resp.RawData["createUser"])
+		}
+		if _, ok := resp.RawData["createTimestamp"]; ok {
+			t.Fatalf("singer detail should not include createTimestamp: %s", resp.RawData["createTimestamp"])
 		}
 
 		// Photos sorted by position; first one is the avatar.

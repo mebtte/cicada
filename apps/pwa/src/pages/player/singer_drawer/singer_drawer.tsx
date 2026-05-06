@@ -14,8 +14,13 @@ function SingerDrawer({
 }) {
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="right" style={{ width: 'min(85%, 400px)' }} zIndex={zIndex} showClose={false}>
-        <SingerContent id={id} />
+      <DrawerContent
+        side="right"
+        style={{ width: 'min(85%, 400px)' }}
+        zIndex={zIndex}
+        showClose={false}
+      >
+        <SingerContent id={id} insideDrawer />
       </DrawerContent>
     </Drawer>
   );

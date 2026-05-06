@@ -1,45 +1,49 @@
-import absoluteFullSize from '@/style/absolute_full_size';
-import { ReactNode } from 'react';
-import { animated, useTransition } from 'react-spring';
-import styled from 'styled-components';
+import { DuolingoTabPanels } from '@/components/duolingo_tabs';
+import styled, { css } from 'styled-components';
 import Music from './music';
 import Singer from './singer';
 import Lyric from './lyric';
 import PublicMusicbill from './public_musicbill';
 import { SearchTab } from '../../constants';
+import { MINI_MODE_TOOLBAR_HEIGHT, TOOLBAR_HEIGHT } from './constants';
 
-const Container = styled(animated.div)`
-  ${absoluteFullSize}
+const Container = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  ${({ theme: { miniMode } }) => css`
+    top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
+  `}
 `;
 
 function Content({ tab }: { tab: SearchTab }) {
-  const transitions = useTransition(tab, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
-  return transitions((style, t) => {
-    let content: ReactNode = null;
-    switch (t) {
-      case SearchTab.MUSIC: {
-        content = <Music />;
-        break;
-      }
-      case SearchTab.SINGER: {
-        content = <Singer />;
-        break;
-      }
-      case SearchTab.PUBLIC_MUSICBILL: {
-        content = <PublicMusicbill />;
-        break;
-      }
-      case SearchTab.LYRIC: {
-        content = <Lyric />;
-        break;
-      }
-    }
-    return <Container style={style}>{content}</Container>;
-  });
+  return (
+    <Container>
+      <DuolingoTabPanels<SearchTab>
+        current={tab}
+        tabList={[
+          {
+            tab: SearchTab.MUSIC,
+            content: <Music />,
+          },
+          {
+            tab: SearchTab.SINGER,
+            content: <Singer />,
+          },
+          {
+            tab: SearchTab.PUBLIC_MUSICBILL,
+            content: <PublicMusicbill />,
+          },
+          {
+            tab: SearchTab.LYRIC,
+            content: <Lyric />,
+          },
+        ]}
+      />
+    </Container>
+  );
 }
 
 export default Content;
