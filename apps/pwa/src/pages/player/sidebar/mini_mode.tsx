@@ -10,6 +10,7 @@ const onClose = () => e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
 const ContentWrapper = styled.div`
   height: 100%;
 
+  background: rgb(250 250 250);
   overflow: auto;
   ${autoScrollbar}
 `;
