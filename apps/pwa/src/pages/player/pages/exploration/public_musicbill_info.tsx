@@ -15,10 +15,12 @@ const Style = styled.div`
   > .user {
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    cursor: pointer;
+    transition: color 120ms ease-out;
     ${ellipsis}
 
     &:hover {
-      text-decoration: underline;
+      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     }
   }
 `;

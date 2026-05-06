@@ -33,7 +33,7 @@ function MiniMode() {
 
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="left" style={{ width: WIDTH }}>
+      <DrawerContent side="left" showClose={false} style={{ width: WIDTH }}>
         <ContentWrapper onClick={onClose}>
           <Content />
         </ContentWrapper>

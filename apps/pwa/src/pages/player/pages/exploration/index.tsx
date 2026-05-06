@@ -15,6 +15,14 @@ import { useNavigate } from 'react-router-dom';
 import { Query } from '@/constants';
 import { useUser } from '@/global_states/server';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import {
+  MdAdd,
+  MdAdminPanelSettings,
+  MdMic,
+  MdMusicNote,
+  MdQueueMusic,
+  MdSearch,
+} from 'react-icons/md';
 import { FLOATING_CONTROLLER_SCROLL_SPACE, SearchTab } from '../../constants';
 import Page from '../page';
 import useData from './use_data';
@@ -27,13 +35,22 @@ import MusicInfo from './music_info';
 import SingerInfo from './singer_info';
 import PublicMusicbillInfo from './public_musicbill_info';
 
-const ITEM_MIN_WIDTH = 150;
-const MOBILE_ITEM_WIDTH = 96;
-const GAP = 14;
+const ITEM_MIN_WIDTH = 164;
+const MOBILE_ITEM_WIDTH = 118;
+const GAP = 16;
 const MAX_SECTION_ROW_AMOUNT = 2;
 const MOBILE_BREAKPOINT = 720;
+const ACCENT = {
+  MUSIC: 'rgb(88 204 2)',
+  MUSIC_SHADOW: 'rgb(88 167 0)',
+  SINGER: 'rgb(28 176 246)',
+  SINGER_SHADOW: 'rgb(24 132 183)',
+  MUSICBILL: 'rgb(255 184 28)',
+  MUSICBILL_SHADOW: 'rgb(214 130 0)',
+};
 const Root = styled(Page)`
   position: relative;
+  background: rgb(248 249 250);
 `;
 const Container = styled(animated.div)`
   position: absolute;
@@ -44,17 +61,23 @@ const Container = styled(animated.div)`
 `;
 const StatusContainer = styled(Container)`
   ${flexCenter}
+  background: rgb(248 249 250);
 `;
 const ContentContainer = styled(Container)`
   overflow: auto;
+  background:
+    linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 310px),
+    rgb(248 249 250);
   ${autoScrollbar}
 
   > .content {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    padding: 20px 20px 24px;
+
     display: flex;
     flex-direction: column;
-    gap: 26px;
-
-    padding: 14px 16px 20px;
+    gap: 30px;
   }
 
   > .empty {
@@ -77,12 +100,12 @@ const EmptyFallback = styled.div`
 
   > .panel {
     width: min(560px, 100%);
-    padding: 28px;
+    padding: 28px 26px 32px;
 
-    border: 1px solid ${CSSVariable.COLOR_BORDER};
-    border-radius: 18px;
+    border: 2px solid ${CSSVariable.COLOR_BORDER};
+    border-radius: 8px;
     background: #fff;
-    box-shadow: 0 18px 60px rgb(0 0 0 / 0.06);
+    box-shadow: 0 6px 0 rgb(224 224 224);
     text-align: center;
 
     > .placeholder {
@@ -134,14 +157,55 @@ const EmptyFallback = styled.div`
     }
   }
 `;
-const Section = styled.section`
-  > .title {
-    margin: 0 0 12px;
+const Section = styled.section<{
+  $accent: string;
+  $shadow: string;
+}>`
+  > .heading {
+    margin-bottom: 14px;
 
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    font-size: ${CSSVariable.TEXT_SIZE_LARGE};
-    font-weight: 600;
-    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    > .badge {
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 2px solid ${({ $shadow }) => $shadow};
+      border-radius: 50%;
+      background: ${({ $accent }) => $accent};
+      box-shadow: 0 4px 0 ${({ $shadow }) => $shadow};
+      color: #fff;
+
+      > svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    > .title-group {
+      min-width: 0;
+      flex: 1;
+
+      > .title {
+        margin: 0;
+
+        color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+        font-size: ${CSSVariable.TEXT_SIZE_LARGE};
+        font-weight: 900;
+        letter-spacing: 0;
+        text-transform: capitalize;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
   }
 `;
 const SectionContent = styled.div`
@@ -167,10 +231,16 @@ const openMusicbillDrawer = (id: string) =>
 function ExplorationSection<Item>({
   title,
   items,
+  icon,
+  accent,
+  shadow,
   renderItem,
 }: {
   title: string;
   items: Item[];
+  icon: ReactNode;
+  accent: string;
+  shadow: string;
   renderItem: (item: Item) => ReactNode;
 }) {
   if (!items.length) {
@@ -178,8 +248,13 @@ function ExplorationSection<Item>({
   }
 
   return (
-    <Section>
-      <h2 className="title">{title}</h2>
+    <Section $accent={accent} $shadow={shadow}>
+      <div className="heading">
+        <div className="badge">{icon}</div>
+        <div className="title-group">
+          <h2 className="title">{title}</h2>
+        </div>
+      </div>
       <SizeObserver>
         {({ width }) => {
           const isMobile = width <= MOBILE_BREAKPOINT;
@@ -215,15 +290,24 @@ function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
         <div className="description">{t('exploration_empty_description')}</div>
         <div className="actions">
           {user.admin ? (
-            <Button variant="primary" onClick={() => navigate(ROOT_PATH.ADMIN)}>
+            <Button
+              variant="primary"
+              icon={<MdAdminPanelSettings />}
+              onClick={() => navigate(ROOT_PATH.ADMIN)}
+            >
               {t('admin_panel')}
             </Button>
           ) : null}
-          <Button variant="secondary" onClick={openCreateMusicbillDialog}>
+          <Button
+            variant="secondary"
+            icon={<MdAdd />}
+            onClick={openCreateMusicbillDialog}
+          >
             {t('create_musicbill')}
           </Button>
           <Button
             variant="ghost"
+            icon={<MdSearch />}
             onClick={() =>
               navigate(
                 `${ROOT_PATH.PLAYER}${PLAYER_PATH.SEARCH}?${Query.SEARCH_TAB}=${SearchTab.PUBLIC_MUSICBILL}`,
@@ -277,12 +361,18 @@ function Wrapper() {
                 <ExplorationSection
                   title={t('recommended_music')}
                   items={d.value.musicList}
+                  icon={<MdMusicNote />}
+                  accent={ACCENT.MUSIC}
+                  shadow={ACCENT.MUSIC_SHADOW}
                   renderItem={(music) => (
                     <Cover
                       key={music.id}
+                      accent={ACCENT.MUSIC}
                       src={getResizedImage({
                         url: music.cover,
-                        size: Math.ceil(ITEM_MIN_WIDTH * window.devicePixelRatio),
+                        size: Math.ceil(
+                          ITEM_MIN_WIDTH * window.devicePixelRatio,
+                        ),
                       })}
                       onClick={() => openMusicDrawer(music.id)}
                       info={<MusicInfo music={music} />}
@@ -292,11 +382,15 @@ function Wrapper() {
                 <ExplorationSection
                   title={t('recommended_singer')}
                   items={d.value.singerList}
+                  icon={<MdMic />}
+                  accent={ACCENT.SINGER}
+                  shadow={ACCENT.SINGER_SHADOW}
                   renderItem={(singer) => {
                     const avatar = singer.photos[0]?.asset;
                     return (
                       <Cover
                         key={singer.id}
+                        accent={ACCENT.SINGER}
                         src={
                           avatar
                             ? getResizedImage({
@@ -316,12 +410,18 @@ function Wrapper() {
                 <ExplorationSection
                   title={t('recommended_public_musicbill')}
                   items={d.value.publicMusicbillList}
+                  icon={<MdQueueMusic />}
+                  accent={ACCENT.MUSICBILL}
+                  shadow={ACCENT.MUSICBILL_SHADOW}
                   renderItem={(publicMusicbill) => (
                     <Cover
                       key={publicMusicbill.id}
+                      accent={ACCENT.MUSICBILL}
                       src={getResizedImage({
                         url: publicMusicbill.cover,
-                        size: Math.ceil(ITEM_MIN_WIDTH * window.devicePixelRatio),
+                        size: Math.ceil(
+                          ITEM_MIN_WIDTH * window.devicePixelRatio,
+                        ),
                       })}
                       onClick={() => openMusicbillDrawer(publicMusicbill.id)}
                       info={
