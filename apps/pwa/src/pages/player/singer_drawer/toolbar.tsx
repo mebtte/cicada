@@ -52,9 +52,9 @@ function Toolbar({
           square
           variant="ghost"
           size="sm"
-          onClick={(event) =>
+          onClick={() =>
             singer.musicList.length
-              ? addMusicListToPlaylist(singer.musicList, event.currentTarget)
+              ? addMusicListToPlaylist(singer.musicList)
               : notice.error(t('no_music_singer_warning'))
           }
         >

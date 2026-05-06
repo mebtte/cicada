@@ -40,9 +40,9 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         variant="ghost"
         size="sm"
         disabled={status !== RequestStatus.SUCCESS}
-        onClick={(event) =>
+        onClick={() =>
           musicList.length
-            ? addMusicListToPlaylist(musicList, event.currentTarget)
+            ? addMusicListToPlaylist(musicList)
             : notice.error(upperCaseFirstLetter(t('no_music_in_musicbill')))
         }
       >

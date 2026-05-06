@@ -23,7 +23,7 @@ import { useTheme } from '@/global_states/theme';
 
 const toggleLyric = () =>
   playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: true });
-const Style = styled.div`
+const Style = styled.div<{ $playing: boolean }>`
   z-index: ${ZIndex.CONTROLLER};
 
   position: absolute;
@@ -39,9 +39,16 @@ const Style = styled.div`
   padding: 6px 10px 8px;
 
   background: #fff;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border: 2px solid
+    ${({ $playing }) =>
+      $playing ? `var(${CSS_VAR.colorPrimary})` : CSSVariable.COLOR_BORDER};
   border-radius: 16px;
-  box-shadow: 0 6px 0 rgb(232 232 232);
+  box-shadow: 0 6px 0
+    ${({ $playing }) =>
+      $playing ? `var(${CSS_VAR.colorPrimaryShadow})` : 'rgb(232 232 232)'};
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 
   > .content {
     flex: 1;
@@ -83,10 +90,6 @@ const Style = styled.div`
     }
   `}
 
-  &:focus-within {
-    border-color: var(${CSS_VAR.colorPrimary});
-    box-shadow: 0 6px 0 var(${CSS_VAR.colorPrimaryShadow});
-  }
 `;
 
 function Controller() {
@@ -104,7 +107,7 @@ function Controller() {
 
   const { miniMode } = useTheme();
   return (
-    <Style>
+    <Style $playing={!!queueMusic && !audioPaused}>
       <div className="content">
         <Cover
           cover={

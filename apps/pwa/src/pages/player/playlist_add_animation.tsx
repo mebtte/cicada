@@ -1,27 +1,88 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import { useEffect, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 import { PiMusicNotesSimpleLight } from 'react-icons/pi';
 import { CSS_VAR } from '@/components/theme';
+import { CSSVariable } from '@/global_style';
 import eventemitter, { EventType } from './eventemitter';
 import { ZIndex } from './constants';
 
-const NOTE_SIZE = 34;
-const MAX_NOTE_COUNT = 10;
-const ANIMATION_DURATION = 980;
-
-interface Point {
-  x: number;
-  y: number;
-}
+const MAX_STAGE_COUNT = 4;
+const MAX_APPEND_COUNT = 5;
+const STAGE_DURATION = 1600;
+const ROW_GAP = 34;
 
 interface AnimationItem {
   id: number;
-  origin: Point;
-  side: number;
-  durationSecond: number;
-  gravity: number;
-  riseVelocity: number;
+  count: number;
 }
+
+const stageLife = keyframes`
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, calc(-50% + 12px), 0) scale(0.94);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+
+  86% {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, calc(-50% - 8px), 0) scale(0.98);
+  }
+`;
+
+const existingBreathe = keyframes`
+  0%, 30% {
+    opacity: 0.68;
+    transform: translate3d(0, 0, 0);
+  }
+
+  58%, 100% {
+    opacity: 0.42;
+    transform: translate3d(0, -4px, 0);
+  }
+`;
+
+const slotOpen = keyframes`
+  0%, 18% {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scaleX(0.72);
+  }
+
+  38%, 76% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scaleX(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -2px, 0) scaleX(0.9);
+  }
+`;
+
+const appendRow = keyframes`
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 42px, 0) scale(0.9);
+  }
+
+  48% {
+    opacity: 1;
+    transform: translate3d(0, -4px, 0) scale(1.04);
+  }
+
+  72%, 100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+`;
 
 const Layer = styled.div`
   z-index: ${ZIndex.FLOATING};
@@ -32,143 +93,112 @@ const Layer = styled.div`
   pointer-events: none;
 `;
 
-const Note = styled.div`
+const Stage = styled.div`
   position: absolute;
-  top: 0;
-  left: 0;
-  width: ${NOTE_SIZE}px;
-  height: ${NOTE_SIZE}px;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 312px;
+
+  animation: ${stageLife} ${STAGE_DURATION}ms ease-out forwards;
+`;
+
+const RowBase = styled.div<{
+  $top: number;
+}>`
+  position: absolute;
+  top: ${({ $top }) => $top}px;
+  left: 38px;
+  width: 144px;
+  height: 28px;
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
 
-  color: var(${CSS_VAR.colorPrimary});
-  filter: drop-shadow(0 3px 0 var(${CSS_VAR.colorPrimaryShadow}));
+  padding: 0 10px;
 
-  opacity: 0;
-  transform: translate3d(0, 0, 0) scale(0.42);
-  will-change: transform, opacity;
+  background: #fff;
+  border-radius: 10px;
 
-  > svg {
-    width: 100%;
-    height: 100%;
+  > .bar {
+    flex: 1;
+    height: 7px;
+    border-radius: 999px;
+    background: currentColor;
+    opacity: 0.34;
   }
 `;
 
-function getScale(progress: number) {
-  if (progress < 0.08) {
-    return 0.65 + (1.08 - 0.65) * (progress / 0.08);
+const ExistingRow = styled(RowBase)<{
+  $delay: number;
+}>`
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 0 3px 0 rgb(232 232 232);
+
+  animation: ${existingBreathe} ${STAGE_DURATION}ms ease-out forwards;
+  animation-delay: ${({ $delay }) => $delay}ms;
+`;
+
+const AppendSlot = styled.div<{
+  $top: number;
+  $delay: number;
+}>`
+  position: absolute;
+  top: ${({ $top }) => $top}px;
+  left: 34px;
+  width: 152px;
+  height: 32px;
+
+  border: 2px dashed var(${CSS_VAR.colorPrimary});
+  border-radius: 12px;
+  opacity: 0;
+  transform-origin: center;
+
+  animation: ${slotOpen} 760ms ease-out forwards;
+  animation-delay: ${({ $delay }) => $delay}ms;
+`;
+
+const AppendRow = styled(RowBase)<{
+  $delay: number;
+}>`
+  color: var(${CSS_VAR.colorPrimary});
+  border: 2px solid var(${CSS_VAR.colorPrimary});
+  box-shadow: 0 3px 0 var(${CSS_VAR.colorPrimaryShadow});
+  opacity: 0;
+
+  animation: ${appendRow} 620ms cubic-bezier(0.18, 0.88, 0.24, 1) forwards;
+  animation-delay: ${({ $delay }) => $delay}ms;
+
+  > svg {
+    width: 19px;
+    height: 19px;
   }
-  if (progress < 0.34) {
-    return 1.08 + (1 - 1.08) * ((progress - 0.08) / 0.26);
-  }
-  if (progress < 0.82) {
-    return 1 + (0.82 - 1) * ((progress - 0.34) / 0.48);
-  }
-  return 0.82 + (0.55 - 0.82) * ((progress - 0.82) / 0.18);
+`;
+
+function getAppendTop(index: number) {
+  return 116 + index * ROW_GAP;
 }
 
-function getOpacity(progress: number) {
-  if (progress < 0.08) {
-    return progress / 0.08;
-  }
-  if (progress < 0.82) {
-    return 1;
-  }
-  return Math.max(0, 1 - (progress - 0.82) / 0.18);
-}
-
-function createAnimationItem(id: number, source: Point) {
-  const direction = Math.random() > 0.5 ? 1 : -1;
-  const side = direction * (150 + Math.random() * 40);
-  const fall = 420 + Math.random() * 80;
-  const apex = 82 + Math.random() * 24;
-  const durationSecond = ANIMATION_DURATION / 1000;
-  const apexTime =
-    durationSecond / (1 + Math.sqrt(1 + fall / apex));
-  const gravity = (2 * apex) / apexTime ** 2;
+function createItem(id: number, count: number): AnimationItem {
   return {
     id,
-    origin: {
-      x: source.x - NOTE_SIZE / 2,
-      y: source.y - NOTE_SIZE / 2,
-    },
-    side,
-    durationSecond,
-    gravity,
-    riseVelocity: gravity * apexTime,
+    count: Math.max(1, Math.min(MAX_APPEND_COUNT, count)),
   };
-}
-
-function AnimatedNote({
-  item,
-  onDone,
-}: {
-  item: AnimationItem;
-  onDone: (id: number) => void;
-}) {
-  const noteRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let frame: number;
-    const startTimestamp = performance.now();
-
-    const update = (timestamp: number) => {
-      const progress = Math.min(
-        (timestamp - startTimestamp) / ANIMATION_DURATION,
-        1,
-      );
-      const elapsedSecond = item.durationSecond * progress;
-      const x = item.origin.x + item.side * progress;
-      const y =
-        item.origin.y -
-        item.riseVelocity * elapsedSecond +
-        0.5 * item.gravity * elapsedSecond ** 2;
-      const note = noteRef.current;
-      if (note) {
-        note.style.opacity = getOpacity(progress).toString();
-        note.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${getScale(
-          progress,
-        )})`;
-      }
-
-      if (progress < 1) {
-        frame = window.requestAnimationFrame(update);
-      } else {
-        onDone(item.id);
-      }
-    };
-
-    frame = window.requestAnimationFrame(update);
-    return () => window.cancelAnimationFrame(frame);
-  }, [item, onDone]);
-
-  return (
-    <Note ref={noteRef}>
-      <PiMusicNotesSimpleLight />
-    </Note>
-  );
 }
 
 function PlaylistAddAnimation() {
   const [items, setItems] = useState<AnimationItem[]>([]);
-  const removeItem = useCallback(
-    (id: number) => setItems((list) => list.filter((item) => item.id !== id)),
-    [],
-  );
 
   useEffect(() => {
     let nextId = 0;
     return eventemitter.listen(
       EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-      ({ animationSource }) => {
-        if (!animationSource) {
-          return;
-        }
-        const item = createAnimationItem(nextId, animationSource);
+      ({ musicList }) => {
+        const item = createItem(nextId, musicList.length);
         nextId += 1;
-        setItems((list) => [...list, item].slice(-MAX_NOTE_COUNT));
+        setItems((list) => [...list, item].slice(-MAX_STAGE_COUNT));
       },
     );
   }, []);
@@ -179,7 +209,40 @@ function PlaylistAddAnimation() {
   return (
     <Layer>
       {items.map((item) => (
-        <AnimatedNote key={item.id} item={item} onDone={removeItem} />
+        <Stage
+          key={item.id}
+          onAnimationEnd={(event) => {
+            if (event.currentTarget === event.target) {
+              setItems((list) => list.filter(({ id }) => id !== item.id));
+            }
+          }}
+        >
+          <ExistingRow $top={16} $delay={0}>
+            <PiMusicNotesSimpleLight />
+            <span className="bar" />
+          </ExistingRow>
+          <ExistingRow $top={50} $delay={60}>
+            <PiMusicNotesSimpleLight />
+            <span className="bar" />
+          </ExistingRow>
+          <ExistingRow $top={84} $delay={120}>
+            <PiMusicNotesSimpleLight />
+            <span className="bar" />
+          </ExistingRow>
+          {Array.from({ length: item.count }, (_, index) => {
+            const delay = 210 + index * 130;
+            const top = getAppendTop(index);
+            return (
+              <div key={index}>
+                <AppendSlot $top={top - 2} $delay={delay - 120} />
+                <AppendRow $top={top} $delay={delay}>
+                  <PiMusicNotesSimpleLight />
+                  <span className="bar" />
+                </AppendRow>
+              </div>
+            );
+          })}
+        </Stage>
       ))}
     </Layer>
   );

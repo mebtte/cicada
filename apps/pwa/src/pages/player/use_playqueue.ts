@@ -176,7 +176,6 @@ export default (playlist: MusicWithSingerAliases[]) => {
           ]);
           return setCurrentPosition(0);
         }
-        notice.info(t('next_music_info', music.name));
         setPlayqueue([
           ...playqueue.slice(0, currentPosition + 1),
           {

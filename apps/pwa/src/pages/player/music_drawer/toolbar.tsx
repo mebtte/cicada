@@ -111,9 +111,7 @@ function Toolbar({
           variant="ghost"
           size="sm"
           aria-label="Add to playlist"
-          onClick={(event) =>
-            addMusicListToPlaylist([music], event.currentTarget)
-          }
+          onClick={() => addMusicListToPlaylist([music])}
         >
           <MdPlaylistAdd />
         </Button>

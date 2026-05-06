@@ -39,9 +39,9 @@ function Toolbar({
         square
         variant="plain"
         size="sm"
-        onClick={(event) =>
+        onClick={() =>
           musicbill.musicList.length
-            ? addMusicListToPlaylist(musicbill.musicList, event.currentTarget)
+            ? addMusicListToPlaylist(musicbill.musicList)
             : notice.error(t('no_music_in_musicbill'))
         }
       >
