@@ -29,10 +29,6 @@ const Style = styled.div`
   align-items: center;
   gap: 3px;
 
-  background: #fff;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 15px;
-  box-shadow: 0 3px 0 rgb(232 232 232);
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
   > .label {

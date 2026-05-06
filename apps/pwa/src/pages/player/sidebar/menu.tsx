@@ -35,7 +35,7 @@ const Item = styled.button<{ $active: boolean }>`
   width: 100%;
   min-width: 0;
   min-height: 44px;
-  padding: 0 12px 4px;
+  padding: 0 12px;
 
   display: flex;
   align-items: center;

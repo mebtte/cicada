@@ -1,4 +1,10 @@
-import { useEffect, type ComponentProps } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ComponentProps,
+} from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
@@ -25,6 +31,9 @@ import useData from './use_data';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../constants';
 import playerEventemitter, { EventType } from '../eventemitter';
 
+// Set to false to restore the previous drawer header-only title behavior.
+const USE_COLLAPSING_DRAWER_TITLE = true;
+
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
@@ -34,6 +43,7 @@ const StatusBox = styled(Container)`
 const DetailBox = styled(Container)<{ $floatingControllerOffset: boolean }>`
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background: #fff;
 
   > .scrollable {
@@ -57,13 +67,34 @@ const DetailBox = styled(Container)<{ $floatingControllerOffset: boolean }>`
     }
   }
 `;
-const Header = styled(DrawerHeader)`
+const Header = styled(DrawerHeader)<{ $floating: boolean; $visible: boolean }>`
+  z-index: 2;
+  ${({ $floating, $visible }) =>
+    $floating
+      ? css`
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          background-color: ${$visible
+            ? 'rgb(255 255 255 / 0.92)'
+            : 'transparent'};
+          border-bottom: 1px solid
+            ${$visible ? 'rgb(229 229 229)' : 'transparent'};
+          backdrop-filter: ${$visible ? 'blur(8px)' : 'none'};
+        `
+      : null}
+
   height: 72px;
   padding: 0 16px 0 24px;
   box-sizing: border-box;
 
   display: flex;
   align-items: center;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+  pointer-events: none;
 `;
 const HeaderRow = styled.div`
   width: 100%;
@@ -72,9 +103,43 @@ const HeaderRow = styled.div`
   align-items: center;
   gap: 12px;
 `;
+const HeaderMeta = styled.div<{ $visible: boolean }>`
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: translateY(${({ $visible }) => ($visible ? 0 : '-4px')});
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+`;
+const HeaderCover = styled.div`
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  padding: 2px;
+  box-sizing: border-box;
+
+  background: #fff;
+  border: 2px solid rgb(229 229 229);
+  border-radius: 12px;
+  box-shadow: 0 4px 0 rgb(229 229 229);
+
+  > .header-cover-image {
+    border-radius: 8px;
+  }
+`;
 const HeaderText = styled.div`
   flex: 1;
   min-width: 0;
+`;
+const CloseButton = styled(Button)`
+  flex-shrink: 0;
+  pointer-events: auto;
 `;
 const titleStyle = css`
   margin: 0;
@@ -160,6 +225,44 @@ function Detail({
   insideDrawer: boolean;
 }) {
   const description = getDescription(music);
+  const scrollableRef = useRef<HTMLDivElement | null>(null);
+  const titleRef = useRef<HTMLDivElement | null>(null);
+  const [showCollapsedTitle, setShowCollapsedTitle] = useState(
+    !USE_COLLAPSING_DRAWER_TITLE,
+  );
+  const useCollapsingTitle = insideDrawer && USE_COLLAPSING_DRAWER_TITLE;
+
+  const updateCollapsedTitleVisibility = useCallback(() => {
+    if (!useCollapsingTitle) {
+      setShowCollapsedTitle(true);
+      return;
+    }
+
+    const scrollableElement = scrollableRef.current;
+    const titleElement = titleRef.current;
+    if (!scrollableElement || !titleElement) {
+      setShowCollapsedTitle(false);
+      return;
+    }
+
+    const scrollableRect = scrollableElement.getBoundingClientRect();
+    const titleRect = titleElement.getBoundingClientRect();
+    const nextVisible = titleRect.bottom <= scrollableRect.top + 8;
+    setShowCollapsedTitle((current) =>
+      current === nextVisible ? current : nextVisible,
+    );
+  }, [useCollapsingTitle]);
+
+  useEffect(() => {
+    if (!useCollapsingTitle) {
+      setShowCollapsedTitle(true);
+      return;
+    }
+
+    setShowCollapsedTitle(false);
+    const frame = window.requestAnimationFrame(updateCollapsedTitleVisibility);
+    return () => window.cancelAnimationFrame(frame);
+  }, [music.id, updateCollapsedTitleVisibility, useCollapsingTitle]);
 
   return (
     <DetailBox
@@ -167,16 +270,28 @@ function Detail({
       $floatingControllerOffset={floatingControllerOffset}
     >
       {insideDrawer ? (
-        <Header>
+        <Header $floating={useCollapsingTitle} $visible={showCollapsedTitle}>
           <HeaderRow>
-            <HeaderText>
-              <MusicDrawerTitle>{music.name}</MusicDrawerTitle>
-              {description ? (
-                <MusicDrawerDescription>{description}</MusicDrawerDescription>
+            <HeaderMeta $visible={showCollapsedTitle}>
+              {useCollapsingTitle && music.cover ? (
+                <HeaderCover>
+                  <Cover
+                    className="header-cover-image"
+                    src={music.cover}
+                    size="100%"
+                    shape={Shape.ROUNDED}
+                  />
+                </HeaderCover>
               ) : null}
-            </HeaderText>
+              <HeaderText>
+                <MusicDrawerTitle>{music.name}</MusicDrawerTitle>
+                {description ? (
+                  <MusicDrawerDescription>{description}</MusicDrawerDescription>
+                ) : null}
+              </HeaderText>
+            </HeaderMeta>
             <DrawerClose asChild>
-              <Button variant="ghost" size="sm" square aria-label="Close">
+              <CloseButton variant="ghost" size="sm" square aria-label="Close">
                 <svg
                   width={18}
                   height={18}
@@ -188,12 +303,18 @@ function Detail({
                 >
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
-              </Button>
+              </CloseButton>
             </DrawerClose>
           </HeaderRow>
         </Header>
       ) : null}
-      <div className="scrollable">
+      <div
+        className="scrollable"
+        ref={scrollableRef}
+        onScroll={
+          useCollapsingTitle ? updateCollapsedTitleVisibility : undefined
+        }
+      >
         <div className="first-screen">
           <DetailContent $insideDrawer={insideDrawer}>
             <CoverFrame $insideDrawer={insideDrawer}>
@@ -204,7 +325,11 @@ function Detail({
                 </div>
               </div>
             </CoverFrame>
-            <Info music={music} showTitle={!insideDrawer} />
+            <Info
+              music={music}
+              showTitle={!insideDrawer || USE_COLLAPSING_DRAWER_TITLE}
+              titleRef={titleRef}
+            />
             <SingerList singerList={music.singers} />
             {music.forkFromList.length ? (
               <SubMusicList

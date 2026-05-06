@@ -1,3 +1,4 @@
+import { type Ref } from 'react';
 import { CSSVariable } from '@/global_style';
 import {
   MdAccessTime,
@@ -121,9 +122,11 @@ export function MusicMetaList({
 function Info({
   music,
   showTitle = true,
+  titleRef,
 }: {
   music: MusicDetail;
   showTitle?: boolean;
+  titleRef?: Ref<HTMLDivElement>;
 }) {
   if (!showTitle) {
     return null;
@@ -131,7 +134,7 @@ function Info({
 
   return (
     <Style $showTitle={showTitle}>
-      <div className="headline">
+      <div className="headline" ref={titleRef}>
         <h1 className="name">{music.name}</h1>
         {music.aliases.length ? (
           <div className="aliases">

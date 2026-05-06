@@ -5,7 +5,7 @@ import MusicbillList from './musicbill_list';
 const Style = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
 `;
 
 function Wrapper() {

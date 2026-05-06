@@ -14,7 +14,7 @@ const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 
 const Style = styled(NavLink)`
   min-height: 40px;
-  padding: 0 12px 4px;
+  padding: 0 12px;
   margin: 0 12px;
 
   display: flex;
@@ -94,8 +94,8 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
       <MusicbillCover
         size={COVER_SIZE}
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
-        publiz={musicbill.public}
-        shared={musicbill.sharedUserList.length > 0}
+        publiz={false}
+        shared={false}
       />
       <div className="name">{musicbill.name}</div>
     </Style>
