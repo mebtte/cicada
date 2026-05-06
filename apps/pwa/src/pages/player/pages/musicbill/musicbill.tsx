@@ -7,9 +7,8 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { Query, RequestStatus } from '@/constants';
+import { RequestStatus } from '@/constants';
 import { throttle } from 'lodash-es';
-import useQuery from '@/utils/use_query';
 import autoScrollbar from '@/style/auto_scrollbar';
 import cache, { CacheKey } from './cache';
 import playerEventemitter, {
@@ -21,7 +20,6 @@ import Info from './info';
 import MusicList from './music_list';
 import { INFO_HEIGHT, MINI_INFO_HEIGHT } from './constants';
 import MiniInfo from './mini_info';
-import Filter from './filter';
 
 const RELOAD_INTERVAL = 1000 * 60 * 15;
 const Style = styled(Page)`
@@ -30,18 +28,27 @@ const Style = styled(Page)`
   left: 0;
   width: 100%;
   height: 100%;
+  background: rgb(248 249 250);
 
   > .scrollable {
     height: 100%;
-
     overflow: auto;
+    padding: 20px;
+    background:
+      linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 300px),
+      rgb(248 249 250);
     ${autoScrollbar}
+  }
+
+  @media (max-width: 680px) {
+    > .scrollable {
+      padding: 12px;
+    }
   }
 `;
 
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
-  const { id, status, musicList, lastUpdateTimestamp } = musicbill;
-  const { keyword = '' } = useQuery<Query.KEYWORD>();
+  const { id, status, lastUpdateTimestamp } = musicbill;
 
   const scrollableRef = useRef<HTMLDivElement>(null);
   const [miniInfoVisible, setMiniInfoVisible] = useState(false);
@@ -63,10 +70,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
   const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
     const { scrollTop } = event.target as HTMLDivElement;
     setMiniInfoVisible(scrollTop >= INFO_HEIGHT - MINI_INFO_HEIGHT);
-
-    if (!keyword) {
-      saveScrollTop(scrollTop);
-    }
+    saveScrollTop(scrollTop);
   };
 
   useEffect(() => {
@@ -80,13 +84,10 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
 
   useLayoutEffect(() => {
     if (status === RequestStatus.SUCCESS) {
-      let scrollTop = 0;
-      if (!keyword) {
-        scrollTop =
-          cache.get(CacheKey.MUSICBILL_PAGE_SCROLL_TOP, (k) =>
-            k.replace('{{id}}', id),
-          ) || 0;
-      }
+      const scrollTop =
+        cache.get(CacheKey.MUSICBILL_PAGE_SCROLL_TOP, (k) =>
+          k.replace('{{id}}', id),
+        ) || 0;
       window.setTimeout(
         () =>
           scrollableRef.current?.scrollTo({
@@ -95,17 +96,16 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
         0,
       );
     }
-  }, [id, status, keyword]);
+  }, [id, status]);
 
   return (
     <Style>
       <div className="scrollable" ref={scrollableRef} onScroll={onScroll}>
         <Info musicbill={musicbill} />
-        <MusicList keyword={keyword} musicbill={musicbill} />
+        <MusicList musicbill={musicbill} />
       </div>
 
       {miniInfoVisible ? <MiniInfo musicbill={musicbill} /> : null}
-      {status === RequestStatus.SUCCESS && musicList.length ? <Filter /> : null}
     </Style>
   );
 }

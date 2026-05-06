@@ -13,22 +13,33 @@ import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
 import { downloadMusicListByFileSystem } from '../utils';
+import addMusicListToPlaylist from '../add_to_playlist';
 
-const Style = styled.div`
+const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
 
-  position: sticky;
-  bottom: 0;
-  height: calc(50px + env(safe-area-inset-bottom, 0));
-  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
+  position: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? 'absolute' : 'sticky'};
+  left: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? 0 : 'auto'};
+  right: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? 0 : 'auto'};
+  bottom: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? CONTROLLER_FLOATING_RESERVED_HEIGHT : 0};
+  flex-shrink: 0;
+  height: calc(64px + env(safe-area-inset-bottom, 0));
+  padding: 10px 20px calc(14px + env(safe-area-inset-bottom, 0)) 20px;
 
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
 
-  backdrop-filter: blur(5px);
+  background: rgb(255 255 255 / 0.9);
+  border-top: 2px solid rgb(229 229 229);
+  backdrop-filter: blur(8px);
 
   > .left {
     flex: 1;
@@ -36,18 +47,25 @@ const Style = styled.div`
 
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
   }
 `;
 
-function Toolbar({ music }: { music: MusicDetail }) {
+function Toolbar({
+  music,
+  floatingControllerOffset = false,
+}: {
+  music: MusicDetail;
+  floatingControllerOffset?: boolean;
+}) {
   return (
-    <Style>
+    <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
         <Button
           square
-          variant="plain"
+          variant="primary"
           size="sm"
+          aria-label="Play"
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, {
               music,
@@ -58,8 +76,9 @@ function Toolbar({ music }: { music: MusicDetail }) {
         </Button>
         <Button
           square
-          variant="plain"
+          variant="ghost"
           size="sm"
+          aria-label="Play next"
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
@@ -73,8 +92,9 @@ function Toolbar({ music }: { music: MusicDetail }) {
         </Button>
         <Button
           square
-          variant="plain"
+          variant="ghost"
           size="sm"
+          aria-label="Add to musicbill"
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
@@ -88,23 +108,18 @@ function Toolbar({ music }: { music: MusicDetail }) {
         </Button>
         <Button
           square
-          variant="plain"
+          variant="ghost"
           size="sm"
-          onClick={() =>
-            playerEventemitter.emit(
-              PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-              {
-                musicList: [music],
-              },
-            )
-          }
+          aria-label="Add to playlist"
+          onClick={() => addMusicListToPlaylist([music])}
         >
           <MdPlaylistAdd />
         </Button>
         <Button
           square
-          variant="plain"
+          variant="ghost"
           size="sm"
+          aria-label="Download"
           onClick={() =>
             ENABLE_FILE_SYSTEM
               ? downloadMusicListByFileSystem([music])

@@ -8,6 +8,7 @@ import Button from '@/components/button';
 import { t } from '@/i18n';
 import Context from '../../context';
 import e, { EventType } from '../../eventemitter';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 import Musicbill from './musicbill';
 import { openCreateMusicbillDialog } from '../../utils';
 
@@ -23,10 +24,14 @@ const TransitionBox = styled(animated.div)`
   left: 0;
 `;
 const StyledMusicbillList = styled(TransitionBox)`
-  padding-bottom: calc(env(safe-area-inset-bottom, 0) + 10px);
+  padding-bottom: calc(14px + ${FLOATING_CONTROLLER_SCROLL_SPACE});
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 const StatusBox = styled(TransitionBox)`
-  padding: 5px 20px;
+  padding: 5px 12px;
 `;
 
 function MusicbillList() {

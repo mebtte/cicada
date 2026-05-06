@@ -1,13 +1,14 @@
 import { Slider } from '@/components';
-import { CSSProperties } from 'react';
+import styled from 'styled-components';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 
-const style: CSSProperties = {
-  zIndex: 1,
-};
+const StyledSlider = styled(Slider)`
+  z-index: 1;
+  flex: 0 0 auto;
+`;
 
 function Progress({
   duration,
@@ -25,11 +26,10 @@ function Progress({
   const percent = duration ? currentMillisecond / 1000 / duration : 0;
 
   return (
-    <Slider
-      edge="square"
+    <StyledSlider
+      edge="rounded"
       value={percent}
       onChange={onChange}
-      style={style}
       secondValue={bufferedPercent}
     />
   );

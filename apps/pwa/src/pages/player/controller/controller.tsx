@@ -1,7 +1,15 @@
 import styled, { css } from 'styled-components';
 import { useContext } from 'react';
+import { CSSVariable } from '@/global_style';
+import { CSS_VAR } from '@/components/theme';
 import getResizedImage from '@/server/asset/get_resized_image';
-import { type QueueMusic, ZIndex } from '../constants';
+import {
+  CONTROLLER_FLOATING_BOTTOM,
+  CONTROLLER_FLOATING_GAP,
+  CONTROLLER_HEIGHT,
+  type QueueMusic,
+  ZIndex,
+} from '../constants';
 import Cover from './cover';
 import Operation from './operation';
 import Info from './info';
@@ -15,15 +23,32 @@ import { useTheme } from '@/global_states/theme';
 
 const toggleLyric = () =>
   playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: true });
-const Style = styled.div`
+const Style = styled.div<{ $playing: boolean }>`
   z-index: ${ZIndex.CONTROLLER};
 
-  height: calc(env(safe-area-inset-bottom, 0) + 60px);
+  position: absolute;
+  left: ${CONTROLLER_FLOATING_GAP}px;
+  right: ${CONTROLLER_FLOATING_GAP}px;
+  bottom: ${CONTROLLER_FLOATING_BOTTOM};
+
+  height: ${CONTROLLER_HEIGHT}px;
 
   display: flex;
   flex-direction: column;
 
-  background-color: rgb(255 255 255 / 0.75);
+  padding: 6px 10px 8px;
+
+  background: #fff;
+  border: 2px solid
+    ${({ $playing }) =>
+      $playing ? `var(${CSS_VAR.colorPrimary})` : CSSVariable.COLOR_BORDER};
+  border-radius: 16px;
+  box-shadow: 0 6px 0
+    ${({ $playing }) =>
+      $playing ? `var(${CSS_VAR.colorPrimaryShadow})` : 'rgb(232 232 232)'};
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 
   > .content {
     flex: 1;
@@ -31,14 +56,21 @@ const Style = styled.div`
 
     display: flex;
 
-    > .rest {
+    > .main {
       flex: 1;
       min-width: 0;
+      min-height: 0;
 
       display: flex;
-      align-items: center;
+      flex-direction: column;
 
-      padding-bottom: env(safe-area-inset-bottom, 0);
+      > .rest {
+        flex: 1;
+        min-height: 0;
+
+        display: flex;
+        align-items: center;
+      }
     }
   }
 
@@ -46,13 +78,18 @@ const Style = styled.div`
     > .content {
       gap: ${miniMode ? 10 : 15}px;
 
-      padding-right: ${miniMode ? 10 : 20}px;
+      padding-right: ${miniMode ? 0 : 10}px;
 
-      > .rest {
-        gap: ${miniMode ? 10 : 20}px;
+      > .main {
+        gap: ${miniMode ? 7 : 8}px;
+
+        > .rest {
+          gap: ${miniMode ? 10 : 20}px;
+        }
       }
     }
   `}
+
 `;
 
 function Controller() {
@@ -70,11 +107,7 @@ function Controller() {
 
   const { miniMode } = useTheme();
   return (
-    <Style>
-      <ProgressBar
-        duration={audioDuration}
-        bufferedPercent={audioBufferedPercent}
-      />
+    <Style $playing={!!queueMusic && !audioPaused}>
       <div className="content">
         <Cover
           cover={
@@ -85,14 +118,20 @@ function Controller() {
           onClick={queueMusic ? toggleLyric : undefined}
           mask={!!queueMusic}
         />
-        <div className="rest">
-          <Info queueMusic={queueMusic} />
-          {miniMode ? null : <Time duration={audioDuration} />}
-          <Operation
-            queueMusic={queueMusic}
-            paused={audioPaused}
-            loading={audioLoading}
+        <div className="main">
+          <ProgressBar
+            duration={audioDuration}
+            bufferedPercent={audioBufferedPercent}
           />
+          <div className="rest">
+            <Info queueMusic={queueMusic} />
+            {miniMode ? null : <Time duration={audioDuration} />}
+            <Operation
+              queueMusic={queueMusic}
+              paused={audioPaused}
+              loading={audioLoading}
+            />
+          </div>
         </div>
       </div>
     </Style>

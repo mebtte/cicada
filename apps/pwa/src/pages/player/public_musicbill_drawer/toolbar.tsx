@@ -11,6 +11,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import e, { EventType } from './eventemitter';
+import addMusicListToPlaylist from '../add_to_playlist';
 
 const Style = styled.div`
   position: sticky;
@@ -40,10 +41,7 @@ function Toolbar({
         size="sm"
         onClick={() =>
           musicbill.musicList.length
-            ? playerEventemitter.emit(
-                PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-                { musicList: musicbill.musicList },
-              )
+            ? addMusicListToPlaylist(musicbill.musicList)
             : notice.error(t('no_music_in_musicbill'))
         }
       >

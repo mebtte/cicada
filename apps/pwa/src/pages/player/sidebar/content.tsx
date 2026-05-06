@@ -4,11 +4,12 @@ import MusicbillList from './musicbill_list';
 import Menu from './menu';
 
 const Style = styled.div`
-  padding-top: 30px;
+  min-height: 100%;
+  padding: 18px 0 28px;
 
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 `;
 
 function Content() {

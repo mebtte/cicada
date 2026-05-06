@@ -7,6 +7,7 @@ import Spinner from '@/components/spinner';
 import useQuery from '@/utils/use_query';
 import { Query } from '@/constants';
 import SizeObserver from '@/components/size_observer';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import useData from './use_data';
 import User from './user';
 import { TOOLBAR_HEIGHT } from '../constants';
@@ -14,8 +15,6 @@ import { GAP, ITEM_MIN_WIDTH } from './constants';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
-
-  padding-bottom: ${TOOLBAR_HEIGHT}px;
 `;
 const StatusContainer = styled(Container)`
   ${flexCenter}
@@ -26,6 +25,12 @@ const UserListContainer = styled(Container)`
   > .content {
     font-size: 0;
     padding: 0 ${GAP / 2}px;
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    height: calc(${TOOLBAR_HEIGHT}px + ${FLOATING_CONTROLLER_SCROLL_SPACE});
   }
 `;
 

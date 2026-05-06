@@ -180,6 +180,19 @@ func GetMusicsBySingerID(singerID string) ([]Music, error) {
 	return scanMusicRows(rows)
 }
 
+func GetMusicsByCreateUserID(userID string) ([]Music, error) {
+	rows, err := DB().Query(
+		`SELECT id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year
+		FROM music WHERE createUserId=? ORDER BY createTimestamp DESC`,
+		userID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return scanMusicRows(rows)
+}
+
 func LinkMusicSingers(musicID string, singerIDs []string) error {
 	if len(singerIDs) == 0 {
 		return nil
@@ -223,14 +236,23 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 		return searchMusicRandom(pageSize)
 	}
 	pat := "%" + keyword + "%"
-	q := `SELECT id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year FROM music
-		WHERE id IN (SELECT id FROM music WHERE name LIKE ? OR aliases LIKE ?)
-		   OR id IN (SELECT msr.musicId FROM music_singer_relation msr JOIN singer s ON msr.singerId=s.id WHERE s.name LIKE ? OR s.aliases LIKE ?)
-		ORDER BY heat DESC LIMIT ? OFFSET ?`
+	where := `WHERE m.name LIKE ? OR m.aliases LIKE ?
+		OR EXISTS (
+			SELECT 1
+			FROM music_singer_relation msr
+			JOIN singer s ON msr.singerId=s.id
+			WHERE msr.musicId=m.id AND (s.name LIKE ? OR s.aliases LIKE ?)
+		)`
 	var total int
-	DB().QueryRow(strings.Replace(q, "SELECT id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year FROM music", "SELECT COUNT(1) FROM music", 1),
-		pat, pat, pat, pat).Scan(&total) // rough count
-	rows, err := DB().Query(q, pat, pat, pat, pat, pageSize, (page-1)*pageSize)
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM music m `+where, pat, pat, pat, pat).Scan(&total); err != nil {
+		return 0, nil, err
+	}
+	rows, err := DB().Query(
+		`SELECT m.id,m.type,m.name,m.aliases,m.cover,m.asset,m.heat,m.createUserId,m.createTimestamp,m.year
+		FROM music m `+where+`
+		ORDER BY m.heat DESC LIMIT ? OFFSET ?`,
+		pat, pat, pat, pat, pageSize, (page-1)*pageSize,
+	)
 	if err != nil {
 		return 0, nil, err
 	}

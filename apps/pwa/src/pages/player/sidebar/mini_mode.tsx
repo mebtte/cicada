@@ -10,6 +10,7 @@ const onClose = () => e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
 const ContentWrapper = styled.div`
   height: 100%;
 
+  background: rgb(250 250 250);
   overflow: auto;
   ${autoScrollbar}
 `;
@@ -32,7 +33,7 @@ function MiniMode() {
 
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="left" style={{ width: WIDTH }}>
+      <DrawerContent side="left" showClose={false} style={{ width: WIDTH }}>
         <ContentWrapper onClick={onClose}>
           <Content />
         </ContentWrapper>

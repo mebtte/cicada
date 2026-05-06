@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import {
   DownloadingMusic,
   DownloadStatus as DownloadStatusType,
+  FLOATING_CONTROLLER_SCROLL_SPACE,
 } from '../../../constants';
 import List from 'react-list';
 import MusicBase from '../../../components/music_base';
@@ -33,10 +34,15 @@ const Style = styled.div`
   min-height: 0;
 
   position: relative;
-  padding-bottom: ${TOOLBAR_HEIGHT}px;
 
   ${autoScrollbar}
   overflow: auto;
+
+  &::after {
+    content: '';
+    display: block;
+    height: calc(${TOOLBAR_HEIGHT}px + ${FLOATING_CONTROLLER_SCROLL_SPACE});
+  }
 `;
 const StyledEmpty = styled(Empty)`
   ${absoluteFullSize}

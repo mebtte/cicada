@@ -314,14 +314,14 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/user",
 			Summary:     "Get public user info",
-			Description: "Return the user nickname and avatar by `uid`.",
+			Description: "Return the public user profile, created music, and public musicbills by `uid`.",
 			Tags:        []string{"User"},
 			Auth:        true,
 			Parameters: []map[string]any{
 				queryParam("uid", "User ID.", true, strSchema("", "1")),
 			},
 			SuccessSchema:  publicUserSchema(),
-			SuccessExample: map[string]any{"id": "1", "nickname": "Cicada", "avatar": "/asset/user_avatar/avatar.jpg"},
+			SuccessExample: publicUserExample(),
 			ErrorCodes:     []string{"wrong_parameter", "user_not_existed", "not_authorized"},
 		},
 		{
@@ -450,8 +450,8 @@ func operations() []operation {
 			Parameters: paginationParams(
 				queryParam("keyword", "Lyric keyword.", true, strSchema("", "starlight")),
 			),
-			SuccessSchema:  musicListPageSchema("musicList"),
-			SuccessExample: musicListPageExample("musicList"),
+			SuccessSchema:  lyricSearchPageSchema(),
+			SuccessExample: lyricSearchPageExample(),
 			ErrorCodes:     []string{"wrong_parameter", "server_error", "not_authorized"},
 		},
 		{
@@ -472,7 +472,7 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/singer/search",
 			Summary:     "Search singers",
-			Description: "Search singers by name or alias.",
+			Description: "Search singers by name or alias. The photo list is sorted by position; clients can use the first photo as the singer avatar.",
 			Tags:        []string{"Singer"},
 			Auth:        true,
 			Parameters: paginationParams(
@@ -482,13 +482,20 @@ func operations() []operation {
 				[]string{"total", "singerList"},
 				map[string]any{
 					"total":      intSchema("Total count.", 1),
-					"singerList": arraySchema(singerSchema()),
+					"singerList": arraySchema(singerWithPhotosSchema()),
 				},
 			),
 			SuccessExample: map[string]any{
 				"total": 1,
 				"singerList": []any{
-					map[string]any{"id": "singer-1", "name": "Aurora", "aliases": []string{"AUR"}},
+					map[string]any{
+						"id":      "singer-1",
+						"name":    "Aurora",
+						"aliases": []string{"AUR"},
+						"photos": []any{
+							map[string]any{"id": "photo-1", "asset": "/asset/singer_photo/photo.jpg", "description": "Live in Tokyo, 2024"},
+						},
+					},
 				},
 			},
 			ErrorCodes: []string{"wrong_parameter", "server_error", "not_authorized"},
@@ -1419,11 +1426,46 @@ func profileExample() map[string]any {
 
 func publicUserSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "nickname", "avatar"},
+		[]string{"id", "avatar", "joinTimestamp", "nickname", "username", "musicbillList", "musicList"},
 		map[string]any{
-			"id":       strSchema("User ID.", "1"),
-			"nickname": strSchema("Nickname.", "Cicada"),
-			"avatar":   strSchema("Avatar path.", "/asset/user_avatar/avatar.jpg"),
+			"id":            strSchema("User ID.", "1"),
+			"avatar":        strSchema("Avatar path.", "/asset/user_avatar/avatar.jpg"),
+			"joinTimestamp": intSchema("Join timestamp in milliseconds.", 1710000000000),
+			"nickname":      strSchema("Nickname.", "Cicada"),
+			"username":      strSchema("Username.", "cicada"),
+			"musicbillList": arraySchema(publicUserMusicbillSchema()),
+			"musicList":     arraySchema(musicSummarySchema()),
+		},
+	)
+}
+
+func publicUserExample() map[string]any {
+	return map[string]any{
+		"id":            "1",
+		"avatar":        "/asset/user_avatar/avatar.jpg",
+		"joinTimestamp": int64(1710000000000),
+		"nickname":      "Cicada",
+		"username":      "cicada",
+		"musicbillList": []any{
+			map[string]any{
+				"id":         "musicbill-1",
+				"cover":      "/asset/musicbill_cover/cover.jpg",
+				"name":       "Favorites",
+				"musicCount": 12,
+			},
+		},
+		"musicList": musicListPageExample("musicList")["musicList"],
+	}
+}
+
+func publicUserMusicbillSchema() map[string]any {
+	return objSchema(
+		[]string{"id", "cover", "name", "musicCount"},
+		map[string]any{
+			"id":         strSchema("Public musicbill ID.", "musicbill-1"),
+			"cover":      strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+			"name":       strSchema("Musicbill name.", "Favorites"),
+			"musicCount": intSchema("Music count.", 12),
 		},
 	)
 }
@@ -1458,6 +1500,18 @@ func singerSchema() map[string]any {
 			"id":      strSchema("Singer ID.", "singer-1"),
 			"name":    strSchema("Singer name.", "Aurora"),
 			"aliases": arraySchema(strSchema("", "AUR")),
+		},
+	)
+}
+
+func singerWithPhotosSchema() map[string]any {
+	return objSchema(
+		[]string{"id", "name", "aliases", "photos"},
+		map[string]any{
+			"id":      strSchema("Singer ID.", "singer-1"),
+			"name":    strSchema("Singer name.", "Aurora"),
+			"aliases": arraySchema(strSchema("", "AUR")),
+			"photos":  arraySchema(singerPhotoSchema()),
 		},
 	)
 }
@@ -1613,16 +1667,65 @@ func musicListPageExample(listKey string) map[string]any {
 	}
 }
 
+func lyricSearchPageSchema() map[string]any {
+	return objSchema(
+		[]string{"total", "musicList"},
+		map[string]any{
+			"total":     intSchema("Total count.", 1),
+			"musicList": arraySchema(musicSummaryWithLyricsSchema()),
+		},
+	)
+}
+
+func lyricSearchPageExample() map[string]any {
+	return map[string]any{
+		"total": 1,
+		"musicList": []any{
+			map[string]any{
+				"id":              "music-1",
+				"type":            1,
+				"name":            "Nightingale",
+				"aliases":         []string{"Night Song"},
+				"cover":           "/asset/music_cover/cover.jpg",
+				"asset":           "/asset/music/track.mp3",
+				"heat":            42,
+				"createTimestamp": int64(1710000000000),
+				"singers":         []any{map[string]any{"id": "singer-1", "name": "Aurora", "aliases": []string{"AUR"}}},
+				"lyrics":          []any{map[string]any{"id": 1, "lrc": "[00:00.00]starlight"}},
+			},
+		},
+	}
+}
+
+func musicSummaryWithLyricsSchema() map[string]any {
+	return objSchema(
+		[]string{"id", "type", "name", "aliases", "cover", "asset", "heat", "createTimestamp", "singers", "lyrics"},
+		map[string]any{
+			"id":              strSchema("Music ID.", "music-1"),
+			"type":            intSchema("Music type. 1 = song, 2 = instrumental.", 1),
+			"name":            strSchema("Music name.", "Nightingale"),
+			"aliases":         arraySchema(strSchema("", "Night Song")),
+			"cover":           strSchema("Cover path.", "/asset/music_cover/cover.jpg"),
+			"asset":           strSchema("Audio asset path.", "/asset/music/track.mp3"),
+			"heat":            intSchema("Heat score.", 42),
+			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
+			"singers":         arraySchema(singerSchema()),
+			"lyrics": objArraySchema(map[string]any{
+				"id":  intSchema("Lyric record ID.", 1),
+				"lrc": strSchema("LRC content.", "[00:00.00]starlight"),
+			}),
+		},
+	)
+}
+
 func singerDetailSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "aliases", "photos", "createTimestamp", "createUser", "musicList"},
+		[]string{"id", "name", "aliases", "photos", "musicList"},
 		map[string]any{
-			"id":              strSchema("Singer ID.", "singer-1"),
-			"name":            strSchema("Singer name.", "Aurora"),
-			"aliases":         arraySchema(strSchema("", "AUR")),
-			"photos":          arraySchema(singerPhotoSchema()),
-			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
-			"createUser":      userBriefSchema(false),
+			"id":      strSchema("Singer ID.", "singer-1"),
+			"name":    strSchema("Singer name.", "Aurora"),
+			"aliases": arraySchema(strSchema("", "AUR")),
+			"photos":  arraySchema(singerPhotoSchema()),
 			"musicList": arraySchema(objSchema([]string{"id", "type", "name", "aliases", "cover", "asset", "singers"}, map[string]any{
 				"id":      strSchema("Music ID.", "music-1"),
 				"type":    intSchema("Music type.", 1),
@@ -1644,8 +1747,6 @@ func singerDetailExample() map[string]any {
 		"photos": []any{
 			map[string]any{"id": "photo-1", "asset": "/asset/singer_photo/photo.jpg", "description": "Live in Tokyo, 2024"},
 		},
-		"createTimestamp": int64(1710000000000),
-		"createUser":      map[string]any{"id": "1", "nickname": "Cicada"},
 		"musicList": []any{
 			map[string]any{
 				"id":      "music-1",

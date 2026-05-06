@@ -26,47 +26,16 @@ const Main = styled.div`
       outline-offset: -2px;
     }
   }
-
-  > .info {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    max-width: 90%;
-
-    padding: 10px 20px;
-    background-color: rgb(255 255 255 / 0.75);
-    border-top-right-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
-
-    > .name {
-      font-size: 28px;
-      font-weight: bold;
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    }
-
-    > .aliases {
-      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    }
-  }
-`;
-const Header = styled.div`
-  padding: 20px;
-
-  > .name {
-    font-size: 28px;
-    font-weight: bold;
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-  }
-
-  > .aliases {
-    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  }
 `;
 const ThumbnailRow = styled.div`
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  max-width: 90%;
+  padding: 10px 20px;
+
   display: flex;
   gap: 6px;
-  margin-top: 8px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 
@@ -76,7 +45,7 @@ const ThumbnailRow = styled.div`
 `;
 const ThumbnailItem = styled.div<{ selected: boolean }>`
   flex: 0 0 auto;
-  border: 2px solid transparent;
+  border: 2px solid rgb(220 220 220);
   border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
   overflow: hidden;
   cursor: pointer;
@@ -90,23 +59,6 @@ const ThumbnailItem = styled.div<{ selected: boolean }>`
           opacity: 0.7;
         `}
 `;
-
-function NameAndAliases({ singer }: { singer: Singer }) {
-  return (
-    <>
-      <div className="name">{singer.name}</div>
-      {singer.aliases.length ? (
-        <div className="aliases">
-          {singer.aliases.map((alias, index) => (
-            <div className="alias" key={index}>
-              {alias}
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </>
-  );
-}
 
 function Info({ singer }: { singer: Singer }) {
   const { photos } = singer;
@@ -126,13 +78,7 @@ function Info({ singer }: { singer: Singer }) {
   }, [photos]);
 
   if (!photos.length) {
-    return (
-      <Style>
-        <Header>
-          <NameAndAliases singer={singer} />
-        </Header>
-      </Style>
-    );
+    return null;
   }
 
   const selected = photos.find((p) => p.id === selectedId) ?? photos[0];
@@ -152,25 +98,22 @@ function Info({ singer }: { singer: Singer }) {
         >
           <Cover src={selected.asset} size="100%" shape={Shape.SQUARE} />
         </button>
-        <div className="info">
-          <NameAndAliases singer={singer} />
-          {showThumbnails ? (
-            <ThumbnailRow>
-              {photos.map((photo) => (
-                <ThumbnailItem
-                  key={photo.id}
-                  role="button"
-                  tabIndex={0}
-                  selected={photo.id === selected.id}
-                  onClick={() => setSelectedId(photo.id)}
-                  aria-label={photo.description || singer.name}
-                >
-                  <Cover src={photo.asset} size={30} shape={Shape.SQUARE} />
-                </ThumbnailItem>
-              ))}
-            </ThumbnailRow>
-          ) : null}
-        </div>
+        {showThumbnails ? (
+          <ThumbnailRow>
+            {photos.map((photo) => (
+              <ThumbnailItem
+                key={photo.id}
+                role="button"
+                tabIndex={0}
+                selected={photo.id === selected.id}
+                onClick={() => setSelectedId(photo.id)}
+                aria-label={photo.description || singer.name}
+              >
+                <Cover src={photo.asset} size={30} shape={Shape.SQUARE} />
+              </ThumbnailItem>
+            ))}
+          </ThumbnailRow>
+        ) : null}
       </Main>
       <ImageViewer
         photo={viewerPhoto}

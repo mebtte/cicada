@@ -10,16 +10,22 @@ import Avatar from '@/components/avatar';
 
 const AVATAR_SIZE = 100;
 const Style = styled.div`
+  padding: 10px 12px 0;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
 
   > .nickname {
-    padding: 0 30px;
+    padding: 0 12px;
     max-width: 100%;
 
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
     font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+    font-weight: 800;
+    letter-spacing: 0;
     ${ellipsis}
   }
 `;

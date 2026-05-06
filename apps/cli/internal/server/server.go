@@ -27,7 +27,10 @@ func NewServer() *gin.Engine {
 
 	// Asset serving (no auth)
 	for _, at := range config.AllAssetTypes {
-		r.GET(fmt.Sprintf("/asset/%s/:filename", at), handler.ServeAsset(at))
+		path := fmt.Sprintf("/asset/%s/:filename", at)
+		assetHandler := handler.ServeAsset(at)
+		r.GET(path, assetHandler)
+		r.HEAD(path, assetHandler)
 	}
 
 	// Per-route auth: each handler explicitly declares the middleware it needs.
@@ -130,7 +133,7 @@ func NewServer() *gin.Engine {
 func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Header("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, OPTIONS")
 		c.Header("Access-Control-Allow-Headers", "Content-Type, x-cicada-token")
 		c.Header("Access-Control-Max-Age", "86400")
 		if c.Request.Method == "OPTIONS" {

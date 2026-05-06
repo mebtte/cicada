@@ -10,8 +10,15 @@ export interface CreateUser {
   nickname: string;
 }
 
+export interface SingerPhoto {
+  id: string;
+  asset: string;
+  description: string;
+}
+
 export interface SingerDetail extends SingerWithAliases {
   avatar: string;
+  photos: SingerPhoto[];
 }
 
 export interface MusicDetail extends Music {

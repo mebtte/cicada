@@ -17,6 +17,7 @@ import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
 import playerEventemitter, { EventType } from '../../eventemitter';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 import { IconEdit } from '@/components/icon';
 import Input from '@/components/input';
 import Avatar from '@/components/avatar';
@@ -31,6 +32,11 @@ const Style = styled(Page)`
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  &::after {
+    content: '';
+    flex: 0 0 ${FLOATING_CONTROLLER_SCROLL_SPACE};
+  }
 `;
 const ProfileCard = styled.section`
   display: flex;
@@ -44,8 +50,15 @@ const ProfileCard = styled.section`
     align-items: center;
     gap: 10px;
 
-    > .avatar-action {
-      margin-bottom: 0;
+    > .avatar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      > .avatar-action {
+        margin-bottom: 0;
+      }
     }
   }
 
@@ -124,6 +137,11 @@ function User() {
       },
     });
 
+  const openUserDrawer = () =>
+    playerEventemitter.emit(EventType.OPEN_USER_DRAWER, {
+      id: user.id,
+    });
+
   const updateNickname = async () => {
     if (!canUpdateNickname) {
       if (!trimmedNickname) {
@@ -182,17 +200,27 @@ function User() {
             })}
             size={AVATAR_SIZE}
           />
-          <Button
-            className="avatar-action"
-            variant="secondary"
-            size="sm"
-            square
-            onClick={editAvatar}
-            title={t('edit_avatar')}
-            aria-label={t('edit_avatar')}
-          >
-            <IconEdit size={18} />
-          </Button>
+          <div className="avatar-actions">
+            <Button
+              className="avatar-action"
+              variant="secondary"
+              size="sm"
+              square
+              onClick={editAvatar}
+              title={t('edit_avatar')}
+              aria-label={t('edit_avatar')}
+            >
+              <IconEdit size={18} />
+            </Button>
+            <Button
+              className="avatar-action"
+              variant="secondary"
+              size="sm"
+              onClick={openUserDrawer}
+            >
+              {t('view_personal_homepage')}
+            </Button>
+          </div>
         </div>
       </ProfileCard>
 

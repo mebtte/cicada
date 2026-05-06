@@ -89,14 +89,10 @@ func TestGetSinger(t *testing.T) {
 	type response struct {
 		Code string `json:"code"`
 		Data struct {
-			ID         string      `json:"id"`
-			Name       string      `json:"name"`
-			Aliases    []string    `json:"aliases"`
-			Photos     []photoResp `json:"photos"`
-			CreateUser struct {
-				ID       string `json:"id"`
-				Nickname string `json:"nickname"`
-			} `json:"createUser"`
+			ID        string      `json:"id"`
+			Name      string      `json:"name"`
+			Aliases   []string    `json:"aliases"`
+			Photos    []photoResp `json:"photos"`
 			MusicList []struct {
 				ID      string   `json:"id"`
 				Name    string   `json:"name"`
@@ -110,6 +106,7 @@ func TestGetSinger(t *testing.T) {
 				} `json:"singers"`
 			} `json:"musicList"`
 		} `json:"data"`
+		RawData map[string]json.RawMessage `json:"-"`
 	}
 
 	getSinger := func(userID string, admin int) response {
@@ -126,6 +123,13 @@ func TestGetSinger(t *testing.T) {
 		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 			t.Fatalf("decode response: %v", err)
 		}
+		var raw struct {
+			Data map[string]json.RawMessage `json:"data"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &raw); err != nil {
+			t.Fatalf("decode raw response: %v", err)
+		}
+		resp.RawData = raw.Data
 		return resp
 	}
 
@@ -140,8 +144,11 @@ func TestGetSinger(t *testing.T) {
 		if len(resp.Data.Aliases) != 2 || resp.Data.Aliases[0] != "Alias A" {
 			t.Fatalf("unexpected aliases: %+v", resp.Data.Aliases)
 		}
-		if resp.Data.CreateUser.ID != "user-1" || resp.Data.CreateUser.Nickname != "Creator" {
-			t.Fatalf("unexpected createUser: %+v", resp.Data.CreateUser)
+		if _, ok := resp.RawData["createUser"]; ok {
+			t.Fatalf("singer detail should not include createUser: %s", resp.RawData["createUser"])
+		}
+		if _, ok := resp.RawData["createTimestamp"]; ok {
+			t.Fatalf("singer detail should not include createTimestamp: %s", resp.RawData["createTimestamp"])
 		}
 
 		// Photos sorted by position; first one is the avatar.
@@ -187,6 +194,102 @@ func TestGetSinger(t *testing.T) {
 			t.Fatalf("guest singer not found in nested singer list: %+v", music.Singers)
 		}
 	})
+}
+
+func TestSearchSingerReturnsPhotos(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode:      config.ModeProduction,
+		Data:      t.TempDir(),
+		Port:      8000,
+		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES
+			('user-1','creator_one',?, 'Creator One', ?)`,
+		store.DoubleMD5("password"), now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES
+			('singer-alpha','Alpha',?, 'user-1', ?),
+			('singer-beta','Beta', ?, 'user-1', ?)`,
+		joinAliases([]string{"First Alias"}), now-100,
+		joinAliases([]string{"Second Alias"}), now,
+	); err != nil {
+		t.Fatalf("insert singers: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer_photo (id,singerId,asset,position,description,addUserId,addTimestamp) VALUES
+			('photo-beta-2','singer-beta','beta-2.jpg',1,'second beta photo','user-1',?),
+			('photo-beta-1','singer-beta','beta-1.jpg',0,'first beta photo','user-1',?)`,
+		now, now,
+	); err != nil {
+		t.Fatalf("insert photos: %v", err)
+	}
+
+	type response struct {
+		Code string `json:"code"`
+		Data struct {
+			Total      int `json:"total"`
+			SingerList []struct {
+				ID      string   `json:"id"`
+				Name    string   `json:"name"`
+				Aliases []string `json:"aliases"`
+				Photos  []struct {
+					ID          string `json:"id"`
+					Asset       string `json:"asset"`
+					Description string `json:"description"`
+				} `json:"photos"`
+			} `json:"singerList"`
+		} `json:"data"`
+	}
+
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodGet, "/api/singer/search?keyword=Beta&page=1&pageSize=10", nil)
+	c.Set("authed_user", &store.User{ID: "user-1", Admin: 0})
+
+	SearchSinger(c)
+
+	var resp response
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if resp.Code != "success" {
+		t.Fatalf("unexpected code: %s", resp.Code)
+	}
+	if resp.Data.Total != 1 || len(resp.Data.SingerList) != 1 {
+		t.Fatalf("unexpected singer list: %+v", resp.Data)
+	}
+	singer := resp.Data.SingerList[0]
+	if singer.ID != "singer-beta" || singer.Name != "Beta" {
+		t.Fatalf("unexpected singer: %+v", singer)
+	}
+	if len(singer.Photos) != 2 {
+		t.Fatalf("expected 2 photos, got %+v", singer.Photos)
+	}
+	if singer.Photos[0].ID != "photo-beta-1" || singer.Photos[0].Asset != "/asset/singer_photo/beta-1.jpg" {
+		t.Fatalf("unexpected first photo: %+v", singer.Photos[0])
+	}
+	if singer.Photos[1].ID != "photo-beta-2" || singer.Photos[1].Description != "second beta photo" {
+		t.Fatalf("unexpected second photo: %+v", singer.Photos[1])
+	}
 }
 
 func TestAdminCreateSingerForceDuplicateName(t *testing.T) {

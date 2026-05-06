@@ -41,10 +41,12 @@ function MusicbillOrderDrawer({
   open,
   onClose,
   musicbillList,
+  zIndex,
 }: {
   open: boolean;
   onClose: () => void;
   musicbillList: MusicbillType[];
+  zIndex: number;
 }) {
   const [localMusicbillList, setLocalMusicbillList] = useState(() =>
     musicbillList.map(toLocalMusicbill),
@@ -95,7 +97,7 @@ function MusicbillOrderDrawer({
 
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onCloseWrapper()}>
-      <DrawerContent side="right" style={{ width: 250 }}>
+      <DrawerContent side="right" style={{ width: 250 }} zIndex={zIndex}>
         <DrawerHeader>
           <DrawerTitle>{t('sort_musicbill')}</DrawerTitle>
         </DrawerHeader>

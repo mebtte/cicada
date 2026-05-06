@@ -23,6 +23,12 @@ type Response = {
   }[];
 };
 
+type RawResponse = Omit<Response, 'musicList'> & {
+  musicList: (Omit<Response['musicList'][number], 'lyrics'> & {
+    lyrics?: Response['musicList'][number]['lyrics'];
+  })[];
+};
+
 /**
  * 通过歌词搜索音乐
  * @author mebtte<i@mebtte.com>
@@ -36,7 +42,7 @@ async function searchMusicByLyric({
   page: number;
   pageSize: number;
 }) {
-  const data = await request<Response>({
+  const data = await request<RawResponse>({
     path: '/api/music/search_by_lyric',
     params: { keyword, page, pageSize },
     withToken: true,
@@ -47,6 +53,7 @@ async function searchMusicByLyric({
       ...m,
       asset: prefixServerOrigin(m.asset),
       cover: prefixServerOrigin(m.cover),
+      lyrics: m.lyrics ?? [],
     })),
   };
 }

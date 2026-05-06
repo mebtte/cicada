@@ -1,6 +1,6 @@
 import { Query } from '@/constants';
 import styled, { css } from 'styled-components';
-import TabList from '@/components/tab_list';
+import { DuolingoTabList } from '@/components/duolingo_tabs';
 import useNavigate from '@/utils/use_navigate';
 import Input from './input';
 import { SearchTab } from '../../constants';
@@ -23,14 +23,14 @@ const Style = styled(Page)`
     left: 0;
     width: 100%;
 
-    padding: 0 20px 5px 20px;
+    padding: 10px 20px;
 
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 5px;
+    gap: 8px;
 
-    backdrop-filter: blur(5px);
+    background-color: #fff;
   }
 
   ${({ theme: { miniMode } }) => css`
@@ -53,14 +53,13 @@ function Search() {
       <Content tab={tab} />
       <div className="toolbar">
         {useTheme().miniMode ? <Input /> : null}
-        <TabList<SearchTab>
+        <DuolingoTabList<SearchTab>
           current={tab}
           tabList={TAB_LIST}
           onChange={(t) =>
             navigate({
               query: {
                 [Query.SEARCH_TAB]: t,
-                [Query.PAGE]: 1,
               },
             })
           }

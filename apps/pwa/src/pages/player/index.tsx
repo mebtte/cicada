@@ -34,8 +34,12 @@ import TwoFADialog from './2fa_dialog';
 import useStopTimer from './use_stop_timer';
 import StopTimer from './stop_timer';
 import useDownload from './use_download';
+import PlaylistAddAnimation from './playlist_add_animation';
+import PlayqueueInsertAnimation from './playqueue_insert_animation';
 
 const Style = styled(PageContainer)`
+  position: relative;
+
   display: flex;
   flex-direction: column;
 
@@ -151,6 +155,9 @@ function Wrapper() {
       <PublicMusicbillDrawer />
       <MusicbillSharedUserDrawer />
       <SingerModifyRecordDrawer />
+
+      <PlaylistAddAnimation />
+      <PlayqueueInsertAnimation />
 
       {/* fixed z-index */}
       <TwoFADialog />

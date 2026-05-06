@@ -7,10 +7,12 @@ import MiniMode from './mini_mode';
 import { useTheme } from '@/global_states/theme';
 
 const Placeholder = styled.div`
+  flex: 0 0 ${WIDTH}px;
   width: ${WIDTH}px;
 
-  border-right: 1px solid transparent;
-  background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  border-right: 2px solid ${CSSVariable.COLOR_BORDER};
+  background: rgb(250 250 250);
+  box-shadow: 4px 0 0 rgb(232 232 232 / 0.35);
   overflow: auto;
   ${autoScrollbar}
 `;

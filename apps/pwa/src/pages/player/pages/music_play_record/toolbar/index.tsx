@@ -5,13 +5,14 @@ import dialog from '@/utils/dialog';
 import { useUser } from '@/global_states/server';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../../constants';
 
 const Style = styled.div`
   position: absolute;
   width: 100%;
   height: ${TOOLBAR_HEIGHT}px;
   left: 0;
-  bottom: 0;
+  bottom: ${CONTROLLER_FLOATING_RESERVED_HEIGHT};
 
   padding: 0 20px;
 

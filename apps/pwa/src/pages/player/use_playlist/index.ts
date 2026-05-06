@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import notice from '@/utils/notice';
 import getMusic from '@/server/api/get_music';
 import logger from '@/utils/logger';
-import { t } from '@/i18n';
 import { PlaylistMusic } from '../constants';
 import eventemitter, { EventType } from '../eventemitter';
 import usePlaylistRestore from './use_playlist_restore';
@@ -37,7 +35,6 @@ export default () => {
             (m) => !currentMusicIdList.includes(m.id),
           );
           if (!newMusicList.length) {
-            notice.info(t('music_list_are_added_to_playlist_unsuccessfully'));
             return pl;
           }
           const newPlaylist = [
@@ -45,12 +42,6 @@ export default () => {
             ...newMusicList.map((m) => ({ ...m, index: 0 })),
           ];
           const { length } = newPlaylist;
-          notice.info(
-            t(
-              'music_list_are_added_to_playlist',
-              newMusicList.length.toString(),
-            ),
-          );
           return newPlaylist.map((m, index) => ({
             ...m,
             index: length - index,

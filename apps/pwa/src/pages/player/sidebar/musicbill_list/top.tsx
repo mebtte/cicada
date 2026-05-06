@@ -5,7 +5,6 @@ import {
   MdOutlineAddBox,
   MdSort,
   MdRefresh,
-  MdStarOutline,
   MdOutlinePeopleAlt,
 } from 'react-icons/md';
 import { useContext } from 'react';
@@ -22,11 +21,13 @@ import { openCreateMusicbillDialog } from '../../utils';
 const reloadMusicbillList = () =>
   e.emit(EventType.RELOAD_MUSICBILL_LIST, { silence: false });
 const Style = styled.div`
-  margin: 0 20px;
+  margin: 0 12px;
+  min-height: 42px;
+  padding: 4px 5px 7px 12px;
 
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
 
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 
@@ -34,8 +35,21 @@ const Style = styled.div`
     flex: 1;
     min-width: 0;
 
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+    font-weight: 900;
+    letter-spacing: 0;
     ${capitalize}
+  }
+`;
+const ToolButton = styled(Button)`
+  && {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+
+    border-radius: 10px;
+    font-size: 18px;
   }
 `;
 
@@ -45,7 +59,7 @@ function Top() {
   return (
     <Style>
       <div className="label">{t('musicbill')}</div>
-      <Button
+      <ToolButton
         square
         variant="plain"
         size="sm"
@@ -53,16 +67,16 @@ function Top() {
         loading={getMusicbillListStatus === RequestStatus.LOADING}
       >
         <MdRefresh />
-      </Button>
-      <Button
+      </ToolButton>
+      <ToolButton
         square
         variant="plain"
         size="sm"
         onClick={openCreateMusicbillDialog}
       >
         <MdOutlineAddBox />
-      </Button>
-      <Button
+      </ToolButton>
+      <ToolButton
         square
         variant="plain"
         size="sm"
@@ -75,18 +89,8 @@ function Top() {
         }}
       >
         <MdSort />
-      </Button>
-      <Button
-        square
-        variant="plain"
-        size="sm"
-        onClick={() =>
-          navigate(ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION)
-        }
-      >
-        <MdStarOutline />
-      </Button>
-      <Button
+      </ToolButton>
+      <ToolButton
         square
         variant="plain"
         size="sm"
@@ -95,7 +99,7 @@ function Top() {
         }
       >
         <MdOutlinePeopleAlt />
-      </Button>
+      </ToolButton>
     </Style>
   );
 }

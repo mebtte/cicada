@@ -1,17 +1,24 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
-import { MdPlaylistAdd, MdCopyAll } from 'react-icons/md';
+import { MdPlaylistAdd } from 'react-icons/md';
 import notice from '@/utils/notice';
-import logger from '@/utils/logger';
 import { t } from '@/i18n';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../eventemitter';
 import { Singer } from './constants';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
+import addMusicListToPlaylist from '../add_to_playlist';
 
-const Style = styled.div`
-  position: sticky;
-  bottom: 0;
+const Style = styled.div<{ $floatingControllerOffset: boolean }>`
+  z-index: 1;
+
+  position: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? 'absolute' : 'sticky'};
+  left: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? 0 : 'auto'};
+  right: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? 0 : 'auto'};
+  bottom: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? CONTROLLER_FLOATING_RESERVED_HEIGHT : 0};
+  flex-shrink: 0;
   height: calc(50px + env(safe-area-inset-bottom, 0));
   padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
 
@@ -31,42 +38,27 @@ const Style = styled.div`
   }
 `;
 
-function Toolbar({ singer }: { singer: Singer }) {
+function Toolbar({
+  singer,
+  floatingControllerOffset = false,
+}: {
+  singer: Singer;
+  floatingControllerOffset?: boolean;
+}) {
   return (
-    <Style>
+    <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
         <Button
           square
-          variant="plain"
+          variant="ghost"
           size="sm"
           onClick={() =>
             singer.musicList.length
-              ? playerEventemitter.emit(
-                  PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-                  {
-                    musicList: singer.musicList,
-                  },
-                )
+              ? addMusicListToPlaylist(singer.musicList)
               : notice.error(t('no_music_singer_warning'))
           }
         >
           <MdPlaylistAdd />
-        </Button>
-        <Button
-          square
-          variant="plain"
-          size="sm"
-          onClick={() =>
-            window.navigator.clipboard
-              .writeText(singer.name)
-              .then(() => notice.info(t('singers_name_copied')))
-              .catch((error) => {
-                logger.error(error, "Failed to copy singer's name");
-                return notice.error(error.message);
-              })
-          }
-        >
-          <MdCopyAll />
         </Button>
       </div>
     </Style>

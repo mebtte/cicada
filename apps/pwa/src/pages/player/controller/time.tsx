@@ -4,14 +4,21 @@ import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import { formatSecond } from '../utils';
 
 const Style = styled.div`
-  font-family: monospace;
+  padding: 4px 7px;
+
+  font-family: 'Nunito', monospace;
   font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+  font-weight: 800;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  transform: scale(0.9);
   user-select: none;
 
+  background: rgb(248 248 248);
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 10px;
+  box-shadow: 0 3px 0 rgb(232 232 232);
+
   > .duration {
-    border-top: 1px solid ${CSSVariable.COLOR_BORDER};
+    border-top: 2px solid ${CSSVariable.COLOR_BORDER};
   }
 `;
 

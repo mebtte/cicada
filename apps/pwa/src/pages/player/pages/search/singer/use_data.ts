@@ -44,7 +44,7 @@ export default () => {
           total: d.total,
           singerList: d.singerList.map((s) => ({
             ...s,
-            avatar: s.avatar || DefaultCover,
+            avatar: s.photos[0]?.asset || DefaultCover,
           })),
         },
       });

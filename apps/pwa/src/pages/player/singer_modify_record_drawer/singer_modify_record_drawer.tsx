@@ -16,14 +16,16 @@ function SingerModifyRecordDrawer({
   singer,
   open,
   onClose,
+  zIndex,
 }: {
   singer: Singer;
   open: boolean;
   onClose: () => void;
+  zIndex: number;
 }) {
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="right" style={{ width: 300 }}>
+      <DrawerContent side="right" style={{ width: 300 }} zIndex={zIndex}>
         <ContentWrapper>
           <Content singer={singer} />
           <Hint />

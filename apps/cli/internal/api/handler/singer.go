@@ -56,9 +56,6 @@ func GetSinger(c *gin.Context) {
 		}
 	}
 
-	var createUserNickname string
-	_ = store.DB().QueryRow(`SELECT nickname FROM user WHERE id=?`, s.CreateUserID).Scan(&createUserNickname)
-
 	photos, _ := store.ListSingerPhotos(id)
 	photoItems := make([]gin.H, len(photos))
 	for i, p := range photos {
@@ -70,13 +67,11 @@ func GetSinger(c *gin.Context) {
 	}
 
 	api.OK(c, gin.H{
-		"id":              s.ID,
-		"name":            s.Name,
-		"aliases":         splitAliases(s.Aliases),
-		"photos":          photoItems,
-		"createTimestamp": s.CreateTimestamp,
-		"createUser":      gin.H{"id": s.CreateUserID, "nickname": createUserNickname},
-		"musicList":       musicItems,
+		"id":        s.ID,
+		"name":      s.Name,
+		"aliases":   splitAliases(s.Aliases),
+		"photos":    photoItems,
+		"musicList": musicItems,
 	})
 }
 
@@ -93,12 +88,36 @@ func SearchSinger(c *gin.Context) {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
+	singerIDs := make([]string, len(singers))
+	for i, s := range singers {
+		singerIDs[i] = s.ID
+	}
+	photosBySinger := map[string][]gin.H{}
+	if len(singerIDs) > 0 {
+		photos, err := store.ListSingerPhotosBySingerIDs(singerIDs)
+		if err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		for _, p := range photos {
+			photosBySinger[p.SingerID] = append(photosBySinger[p.SingerID], gin.H{
+				"id":          p.ID,
+				"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeSingerPhoto),
+				"description": p.Description,
+			})
+		}
+	}
 	list := make([]gin.H, len(singers))
 	for i, s := range singers {
+		photos := photosBySinger[s.ID]
+		if photos == nil {
+			photos = []gin.H{}
+		}
 		list[i] = gin.H{
 			"id":      s.ID,
 			"name":    s.Name,
 			"aliases": splitAliases(s.Aliases),
+			"photos":  photos,
 		}
 	}
 	api.OK(c, gin.H{"total": total, "singerList": list})

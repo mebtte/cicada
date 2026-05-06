@@ -67,7 +67,7 @@ function Header() {
         <>
           <Button
             square
-            variant="plain"
+            variant="ghost"
             size="sm"
             onClick={() => {
               if (showBackButton) {
@@ -85,7 +85,7 @@ function Header() {
           </Button>
           <Button
             square
-            variant="plain"
+            variant="ghost"
             size="sm"
             onClick={() =>
               navigate({ path: `${ROOT_PATH.PLAYER}${PLAYER_PATH.SEARCH}` })
@@ -97,7 +97,7 @@ function Header() {
       ) : (
         <Cover src="/logo.png" size={24} />
       )}
-      <Title title={title} />
+      <Title title={title.title} description={title.description} />
       {miniMode ? null : <Search />}
     </Style>
   );

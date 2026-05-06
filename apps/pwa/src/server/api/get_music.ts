@@ -2,10 +2,16 @@ import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
 
+interface SingerPhoto {
+  id: string;
+  asset: string;
+  description: string;
+}
+
 interface Singer {
   id: string;
   name: string;
-  avatar: string;
+  photos?: SingerPhoto[];
 }
 
 interface Music {
@@ -31,6 +37,12 @@ type Response = Omit<Music, 'singers'> & {
   })[];
 };
 
+const normalizePhotos = (photos: SingerPhoto[] = []) =>
+  photos.map((p) => ({
+    ...p,
+    asset: prefixServerOrigin(p.asset),
+  }));
+
 /**
  * 获取音乐详情
  * @author mebtte<i@mebtte.com>
@@ -52,17 +64,29 @@ async function getMusic({
     ...music,
     cover: prefixServerOrigin(music.cover),
     asset: prefixServerOrigin(music.asset),
-    singers: music.singers.map((s) => ({
-      ...s,
-      avatar: prefixServerOrigin(s.avatar),
-    })),
+    singers: music.singers.map((s) => {
+      const photos = normalizePhotos(s.photos);
+      return {
+        ...s,
+        photos,
+        avatar: photos[0]?.asset ?? '',
+      };
+    }),
     forkList: music.forkList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),
+      singers: m.singers.map((s) => ({
+        ...s,
+        photos: normalizePhotos(s.photos),
+      })),
     })),
     forkFromList: music.forkFromList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),
+      singers: m.singers.map((s) => ({
+        ...s,
+        photos: normalizePhotos(s.photos),
+      })),
     })),
   };
 }

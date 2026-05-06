@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { TOOLBAR_HEIGHT } from '../constants';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../../constants';
 import Filter from './filter';
 import e, { EventType } from '../eventemitter';
 
@@ -13,7 +14,7 @@ const Style = styled.div`
   width: 100%;
   height: ${TOOLBAR_HEIGHT}px;
   left: 0;
-  bottom: 0;
+  bottom: ${CONTROLLER_FLOATING_RESERVED_HEIGHT};
 
   padding: 0 20px;
 

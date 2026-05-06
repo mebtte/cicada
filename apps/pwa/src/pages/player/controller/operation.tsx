@@ -63,7 +63,7 @@ function Operation({
         <>
           <Button
             square
-            variant="plain"
+            variant="ghost"
             size="sm"
             onClick={() =>
               queueMusic
@@ -78,7 +78,7 @@ function Operation({
           </Button>
           <Button
             square
-            variant="plain"
+            variant="ghost"
             size="sm"
             onClick={() =>
               queueMusic
@@ -93,7 +93,7 @@ function Operation({
           </Button>
           <Button
             square
-            variant="plain"
+            variant="ghost"
             size="sm"
             onClick={() =>
               queueMusic
@@ -108,18 +108,18 @@ function Operation({
           <div className="divider" />
         </>
       )}
-      <Button square variant="plain" size="sm" onClick={openPlaylistPlayqueueDrawer}>
+      <Button square variant="ghost" size="sm" onClick={openPlaylistPlayqueueDrawer}>
         <MdOutlineQueueMusic />
       </Button>
       {miniMode ? null : (
-        <Button square variant="plain" size="sm" onClick={onPrevious}>
+        <Button square variant="ghost" size="sm" onClick={onPrevious}>
           <MdSkipPrevious />
         </Button>
       )}
-      <Button square variant="plain" size="sm" onClick={paused ? onPlay : onPause} loading={loading}>
+      <Button square variant="primary" size="sm" onClick={paused ? onPlay : onPause} loading={loading}>
         {paused ? <MdPlayArrow /> : <MdPause />}
       </Button>
-      <Button square variant="plain" size="sm" onClick={onNext}>
+      <Button square variant="ghost" size="sm" onClick={onNext}>
         <MdSkipNext />
       </Button>
     </Style>

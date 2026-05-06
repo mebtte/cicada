@@ -11,6 +11,7 @@ import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
+import { CSSVariable } from '@/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -18,30 +19,30 @@ import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
 import { downloadMusicListByFileSystem } from '../../utils';
+import addMusicListToPlaylist from '../../add_to_playlist';
 
 const Style = styled.div`
   display: flex;
   align-items: center;
-  gap: 5px;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 `;
 
 function Operation({ musicbill }: { musicbill: Musicbill }) {
-  const { status, musicList } = musicbill;
+  const { status, musicList, sharedUserList } = musicbill;
+  const shared = sharedUserList.length > 0;
   return (
     <Style>
       <Button
         square
-        variant="plain"
+        variant="ghost"
         size="sm"
         disabled={status !== RequestStatus.SUCCESS}
         onClick={() =>
           musicList.length
-            ? playerEventemitter.emit(
-                PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-                {
-                  musicList,
-                },
-              )
+            ? addMusicListToPlaylist(musicList)
             : notice.error(upperCaseFirstLetter(t('no_music_in_musicbill')))
         }
       >
@@ -49,7 +50,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
       </Button>
       <Button
         square
-        variant="plain"
+        variant="ghost"
         size="sm"
         loading={status === RequestStatus.LOADING}
         disabled={status !== RequestStatus.SUCCESS}
@@ -62,13 +63,18 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
       >
         <MdRefresh />
       </Button>
-      <Button square variant="plain" size="sm" onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
+      <Button
+        square
+        variant="ghost"
+        size="sm"
+        onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}
+      >
         <MdOutlineEdit />
       </Button>
       {ENABLE_FILE_SYSTEM ? (
         <Button
           square
-          variant="plain"
+          variant="ghost"
           size="sm"
           disabled={!musicbill.musicList.length}
           onClick={() => downloadMusicListByFileSystem(musicbill.musicList)}
@@ -78,7 +84,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
       ) : null}
       <Button
         square
-        variant="plain"
+        variant={shared ? 'primary' : 'ghost'}
         size="sm"
         onClick={() =>
           playerEventemitter.emit(

@@ -5,15 +5,22 @@ function SingerDrawer({
   open,
   onClose,
   id,
+  zIndex,
 }: {
   open: boolean;
   onClose: () => void;
   id: string;
+  zIndex: number;
 }) {
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="right" style={{ width: 'min(85%, 400px)' }}>
-        <SingerContent id={id} />
+      <DrawerContent
+        side="right"
+        style={{ width: 'min(85%, 400px)' }}
+        zIndex={zIndex}
+        showClose={false}
+      >
+        <SingerContent id={id} insideDrawer />
       </DrawerContent>
     </Drawer>
   );
