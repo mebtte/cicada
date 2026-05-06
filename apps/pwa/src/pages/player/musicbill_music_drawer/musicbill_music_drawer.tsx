@@ -17,14 +17,16 @@ function MusicbillMusicDrawer({
   open,
   onClose,
   music,
+  zIndex,
 }: {
   open: boolean;
   onClose: () => void;
   music: MusicWithSingerAliases;
+  zIndex: number;
 }) {
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="right" style={{ width: 300 }}>
+      <DrawerContent side="right" style={{ width: 300 }} zIndex={zIndex}>
         <Content>
           <Top music={music} />
           <MusicbillList music={music} />

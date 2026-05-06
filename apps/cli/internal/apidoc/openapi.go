@@ -450,8 +450,8 @@ func operations() []operation {
 			Parameters: paginationParams(
 				queryParam("keyword", "Lyric keyword.", true, strSchema("", "starlight")),
 			),
-			SuccessSchema:  musicListPageSchema("musicList"),
-			SuccessExample: musicListPageExample("musicList"),
+			SuccessSchema:  lyricSearchPageSchema(),
+			SuccessExample: lyricSearchPageExample(),
 			ErrorCodes:     []string{"wrong_parameter", "server_error", "not_authorized"},
 		},
 		{
@@ -472,7 +472,7 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/singer/search",
 			Summary:     "Search singers",
-			Description: "Search singers by name or alias.",
+			Description: "Search singers by name or alias. The photo list is sorted by position; clients can use the first photo as the singer avatar.",
 			Tags:        []string{"Singer"},
 			Auth:        true,
 			Parameters: paginationParams(
@@ -482,13 +482,20 @@ func operations() []operation {
 				[]string{"total", "singerList"},
 				map[string]any{
 					"total":      intSchema("Total count.", 1),
-					"singerList": arraySchema(singerSchema()),
+					"singerList": arraySchema(singerWithPhotosSchema()),
 				},
 			),
 			SuccessExample: map[string]any{
 				"total": 1,
 				"singerList": []any{
-					map[string]any{"id": "singer-1", "name": "Aurora", "aliases": []string{"AUR"}},
+					map[string]any{
+						"id":      "singer-1",
+						"name":    "Aurora",
+						"aliases": []string{"AUR"},
+						"photos": []any{
+							map[string]any{"id": "photo-1", "asset": "/asset/singer_photo/photo.jpg", "description": "Live in Tokyo, 2024"},
+						},
+					},
 				},
 			},
 			ErrorCodes: []string{"wrong_parameter", "server_error", "not_authorized"},
@@ -1462,6 +1469,18 @@ func singerSchema() map[string]any {
 	)
 }
 
+func singerWithPhotosSchema() map[string]any {
+	return objSchema(
+		[]string{"id", "name", "aliases", "photos"},
+		map[string]any{
+			"id":      strSchema("Singer ID.", "singer-1"),
+			"name":    strSchema("Singer name.", "Aurora"),
+			"aliases": arraySchema(strSchema("", "AUR")),
+			"photos":  arraySchema(singerPhotoSchema()),
+		},
+	)
+}
+
 func singerPhotoSchema() map[string]any {
 	return objSchema(
 		[]string{"id", "asset", "description"},
@@ -1611,6 +1630,57 @@ func musicListPageExample(listKey string) map[string]any {
 			},
 		},
 	}
+}
+
+func lyricSearchPageSchema() map[string]any {
+	return objSchema(
+		[]string{"total", "musicList"},
+		map[string]any{
+			"total":     intSchema("Total count.", 1),
+			"musicList": arraySchema(musicSummaryWithLyricsSchema()),
+		},
+	)
+}
+
+func lyricSearchPageExample() map[string]any {
+	return map[string]any{
+		"total": 1,
+		"musicList": []any{
+			map[string]any{
+				"id":              "music-1",
+				"type":            1,
+				"name":            "Nightingale",
+				"aliases":         []string{"Night Song"},
+				"cover":           "/asset/music_cover/cover.jpg",
+				"asset":           "/asset/music/track.mp3",
+				"heat":            42,
+				"createTimestamp": int64(1710000000000),
+				"singers":         []any{map[string]any{"id": "singer-1", "name": "Aurora", "aliases": []string{"AUR"}}},
+				"lyrics":          []any{map[string]any{"id": 1, "lrc": "[00:00.00]starlight"}},
+			},
+		},
+	}
+}
+
+func musicSummaryWithLyricsSchema() map[string]any {
+	return objSchema(
+		[]string{"id", "type", "name", "aliases", "cover", "asset", "heat", "createTimestamp", "singers", "lyrics"},
+		map[string]any{
+			"id":              strSchema("Music ID.", "music-1"),
+			"type":            intSchema("Music type. 1 = song, 2 = instrumental.", 1),
+			"name":            strSchema("Music name.", "Nightingale"),
+			"aliases":         arraySchema(strSchema("", "Night Song")),
+			"cover":           strSchema("Cover path.", "/asset/music_cover/cover.jpg"),
+			"asset":           strSchema("Audio asset path.", "/asset/music/track.mp3"),
+			"heat":            intSchema("Heat score.", 42),
+			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
+			"singers":         arraySchema(singerSchema()),
+			"lyrics": objArraySchema(map[string]any{
+				"id":  intSchema("Lyric record ID.", 1),
+				"lrc": strSchema("LRC content.", "[00:00.00]starlight"),
+			}),
+		},
+	)
 }
 
 func singerDetailSchema() map[string]any {

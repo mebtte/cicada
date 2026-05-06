@@ -139,17 +139,19 @@ function Wrapper({
   open,
   onClose,
   id,
+  zIndex,
 }: {
   open: boolean;
   onClose: () => void;
   id: string;
+  zIndex: number;
 }) {
   const { data, reload } = useData(id);
 
   const transitions = useTransition(data, TRANSITION);
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="right" style={{ width: 'min(85%, 400px)' }} showClose={false}>
+      <DrawerContent side="right" style={{ width: 'min(85%, 400px)' }} showClose={false} zIndex={zIndex}>
         {transitions((style, d) => {
           const { error, loading, userDetail } = d;
           if (error) {

@@ -14,6 +14,9 @@ const DISABLED_SHADOW = 'rgb(214 214 214)';
 
 const SHADOW_OFFSET: Record<Size, number> = { sm: 3, md: 4, lg: 5 };
 
+// 纯图标按钮使用更大的图标（约按钮高度 50%），让视觉重心居中
+const SQUARE_ICON_SIZE: Record<Size, number> = { sm: 18, md: 22, lg: 28 };
+
 // ─── 尺寸 ─────────────────────────────────────────────────────────────────────
 
 const SIZE_MAP: Record<Size, ReturnType<typeof css>> = {
@@ -184,9 +187,10 @@ const StyledButton = styled.button<{
   }
 
   ${({ $size }) => SIZE_MAP[$size]}
-  ${({ $square }) => $square && css`
+  ${({ $square, $size }) => $square && css`
     aspect-ratio: 1;
     padding: 0;
+    font-size: ${SQUARE_ICON_SIZE[$size]}px;
   `}
   ${({ $variant, $offset }) => css`
     ${VARIANT_MAP[$variant]}

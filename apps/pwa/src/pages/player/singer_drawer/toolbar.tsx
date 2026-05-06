@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
-import { MdPlaylistAdd, MdCopyAll } from 'react-icons/md';
+import { MdPlaylistAdd } from 'react-icons/md';
 import notice from '@/utils/notice';
-import logger from '@/utils/logger';
 import { t } from '@/i18n';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -37,7 +36,7 @@ function Toolbar({ singer }: { singer: Singer }) {
       <div className="left">
         <Button
           square
-          variant="plain"
+          variant="ghost"
           size="sm"
           onClick={() =>
             singer.musicList.length
@@ -51,22 +50,6 @@ function Toolbar({ singer }: { singer: Singer }) {
           }
         >
           <MdPlaylistAdd />
-        </Button>
-        <Button
-          square
-          variant="plain"
-          size="sm"
-          onClick={() =>
-            window.navigator.clipboard
-              .writeText(singer.name)
-              .then(() => notice.info(t('singers_name_copied')))
-              .catch((error) => {
-                logger.error(error, "Failed to copy singer's name");
-                return notice.error(error.message);
-              })
-          }
-        >
-          <MdCopyAll />
         </Button>
       </div>
     </Style>

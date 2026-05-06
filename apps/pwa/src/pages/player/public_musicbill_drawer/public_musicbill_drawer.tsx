@@ -44,10 +44,12 @@ function Wrapper({
   open,
   onClose,
   id,
+  zIndex,
 }: {
   open: boolean;
   onClose: () => void;
   id: string;
+  zIndex: number;
 }) {
   const { data, reload, collected } = useData(id);
 
@@ -58,7 +60,7 @@ function Wrapper({
   });
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="right" style={{ width: 'min(85%, 400px)' }} showClose={false}>
+      <DrawerContent side="right" style={{ width: 'min(85%, 400px)' }} showClose={false} zIndex={zIndex}>
         {transitions((style, d) => {
           const { error, loading, musicbill } = d;
           if (error) {

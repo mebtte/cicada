@@ -189,6 +189,102 @@ func TestGetSinger(t *testing.T) {
 	})
 }
 
+func TestSearchSingerReturnsPhotos(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode:      config.ModeProduction,
+		Data:      t.TempDir(),
+		Port:      8000,
+		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES
+			('user-1','creator_one',?, 'Creator One', ?)`,
+		store.DoubleMD5("password"), now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES
+			('singer-alpha','Alpha',?, 'user-1', ?),
+			('singer-beta','Beta', ?, 'user-1', ?)`,
+		joinAliases([]string{"First Alias"}), now-100,
+		joinAliases([]string{"Second Alias"}), now,
+	); err != nil {
+		t.Fatalf("insert singers: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer_photo (id,singerId,asset,position,description,addUserId,addTimestamp) VALUES
+			('photo-beta-2','singer-beta','beta-2.jpg',1,'second beta photo','user-1',?),
+			('photo-beta-1','singer-beta','beta-1.jpg',0,'first beta photo','user-1',?)`,
+		now, now,
+	); err != nil {
+		t.Fatalf("insert photos: %v", err)
+	}
+
+	type response struct {
+		Code string `json:"code"`
+		Data struct {
+			Total      int `json:"total"`
+			SingerList []struct {
+				ID      string   `json:"id"`
+				Name    string   `json:"name"`
+				Aliases []string `json:"aliases"`
+				Photos  []struct {
+					ID          string `json:"id"`
+					Asset       string `json:"asset"`
+					Description string `json:"description"`
+				} `json:"photos"`
+			} `json:"singerList"`
+		} `json:"data"`
+	}
+
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodGet, "/api/singer/search?keyword=Beta&page=1&pageSize=10", nil)
+	c.Set("authed_user", &store.User{ID: "user-1", Admin: 0})
+
+	SearchSinger(c)
+
+	var resp response
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if resp.Code != "success" {
+		t.Fatalf("unexpected code: %s", resp.Code)
+	}
+	if resp.Data.Total != 1 || len(resp.Data.SingerList) != 1 {
+		t.Fatalf("unexpected singer list: %+v", resp.Data)
+	}
+	singer := resp.Data.SingerList[0]
+	if singer.ID != "singer-beta" || singer.Name != "Beta" {
+		t.Fatalf("unexpected singer: %+v", singer)
+	}
+	if len(singer.Photos) != 2 {
+		t.Fatalf("expected 2 photos, got %+v", singer.Photos)
+	}
+	if singer.Photos[0].ID != "photo-beta-1" || singer.Photos[0].Asset != "/asset/singer_photo/beta-1.jpg" {
+		t.Fatalf("unexpected first photo: %+v", singer.Photos[0])
+	}
+	if singer.Photos[1].ID != "photo-beta-2" || singer.Photos[1].Description != "second beta photo" {
+		t.Fatalf("unexpected second photo: %+v", singer.Photos[1])
+	}
+}
+
 func TestAdminCreateSingerForceDuplicateName(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	if err := store.ResetForTests(); err != nil {

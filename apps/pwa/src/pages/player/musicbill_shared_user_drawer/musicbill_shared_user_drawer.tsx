@@ -44,10 +44,12 @@ function ShareDrawer({
   open,
   onClose,
   musicbill,
+  zIndex,
 }: {
   open: boolean;
   onClose: () => void;
   musicbill: Musicbill;
+  zIndex: number;
 }) {
   const navigate = useNavigate();
   const user = useUser()!;
@@ -55,7 +57,7 @@ function ShareDrawer({
   const owned = musicbill.owner.id === user.id;
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="right" style={{ width: 300 }}>
+      <DrawerContent side="right" style={{ width: 300 }} zIndex={zIndex}>
         <Content>
           <Title>{t('shared_user')}</Title>
           <div>

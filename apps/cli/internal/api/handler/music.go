@@ -49,8 +49,17 @@ func SearchMusicByLyric(c *gin.Context) {
 		api.OK(c, gin.H{"total": total, "musicList": []any{}})
 		return
 	}
-	musics, _ := store.GetMusicsByIDs(ids)
-	api.OK(c, musicListResponse(musics, total))
+	musics, err := store.GetMusicsByIDs(ids)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	resp, err := musicListWithLyricsResponse(musics, total)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	api.OK(c, resp)
 }
 
 // ── Get single music ──────────────────────────────────────────────────────────
@@ -533,6 +542,29 @@ func musicListResponse(musics []store.Music, total int) gin.H {
 		}
 	}
 	return gin.H{"total": total, "musicList": list}
+}
+
+func musicListWithLyricsResponse(musics []store.Music, total int) (gin.H, error) {
+	resp := musicListResponse(musics, total)
+	list, ok := resp["musicList"].([]gin.H)
+	if !ok {
+		return resp, nil
+	}
+	for i, m := range musics {
+		lyrics, err := store.GetLyricsByMusicID(m.ID)
+		if err != nil {
+			return nil, err
+		}
+		lyricItems := make([]gin.H, len(lyrics))
+		for j, l := range lyrics {
+			lyricItems[j] = gin.H{
+				"id":  l.ID,
+				"lrc": l.LRC,
+			}
+		}
+		list[i]["lyrics"] = lyricItems
+	}
+	return resp, nil
 }
 
 func groupSingersByMusic(singers []store.SingerInMusic) map[string][]store.SingerInMusic {

@@ -38,6 +38,8 @@ const MusicContainer = styled(Container)`
   `}
 `;
 const paginationStyle: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
   margin: '20px 0',
 };
 

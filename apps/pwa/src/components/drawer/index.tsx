@@ -61,7 +61,6 @@ const slideOutBottom = keyframes`from{transform:translateY(0)}to{transform:trans
 const Overlay = styled(RadixDialog.Overlay)`
   position: fixed;
   inset: 0;
-  z-index: 8999;
   background: rgba(0, 0, 0, 0.42);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
@@ -122,7 +121,6 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
 
 const Panel = styled.div<{ $side: DrawerSide }>`
   position: fixed;
-  z-index: 9000;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -183,12 +181,20 @@ export interface DrawerContentProps
   side?: DrawerSide;
   /** Show the × close button. Default: true. */
   showClose?: boolean;
+  /**
+   * Stacking order. Pass a unique value when multiple drawers can be open
+   * concurrently so the most recently opened one sits on top. The overlay
+   * is placed at `zIndex` and the panel at `zIndex + 1`. Default: 9000.
+   */
+  zIndex?: number;
 }
+
+const DEFAULT_Z_INDEX = 9000;
 
 export const DrawerContent = forwardRef<
   ElementRef<typeof RadixDialog.Content>,
   DrawerContentProps
->(({ children, side = 'right', showClose = true, style, ...props }, ref) => {
+>(({ children, side = 'right', showClose = true, zIndex = DEFAULT_Z_INDEX, style, ...props }, ref) => {
   const theme = useTheme();
   const themeVars = {
     [CSS_VAR.colorPrimary]: theme.colorPrimary,
@@ -197,9 +203,9 @@ export const DrawerContent = forwardRef<
 
   return (
     <RadixDialog.Portal>
-      <Overlay />
+      <Overlay style={{ zIndex }} />
       <RadixDialog.Content ref={ref} {...props} asChild>
-        <Panel $side={side} style={{ ...themeVars, ...style }}>
+        <Panel $side={side} style={{ ...themeVars, zIndex: zIndex + 1, ...style }}>
           {showClose && (
             <CloseButton aria-label="Close">
               <svg

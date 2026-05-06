@@ -134,3 +134,80 @@ func TestGetLyricList(t *testing.T) {
 		}
 	})
 }
+
+func TestSearchMusicByLyricIncludesLyrics(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode:      config.ModeProduction,
+		Data:      t.TempDir(),
+		Port:      8000,
+		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"1", "tester", store.DoubleMD5("password"), "Tester", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
+		"song-1", int(store.MusicTypeSong), "Song", "song.mp3", "1", now,
+	); err != nil {
+		t.Fatalf("insert song: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO lyric (musicId,lrc,lrcContent) VALUES (?,?,?)`,
+		"song-1", "[00:00.00]hello world", "hello world",
+	); err != nil {
+		t.Fatalf("insert lyric: %v", err)
+	}
+
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodGet, "/api/music/search_by_lyric?keyword=hello&page=1&pageSize=10", nil)
+
+	SearchMusicByLyric(c)
+
+	var resp struct {
+		Code string `json:"code"`
+		Data struct {
+			Total     int `json:"total"`
+			MusicList []struct {
+				ID     string `json:"id"`
+				Lyrics []struct {
+					ID  int64  `json:"id"`
+					LRC string `json:"lrc"`
+				} `json:"lyrics"`
+			} `json:"musicList"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if resp.Code != "success" {
+		t.Fatalf("unexpected code: %s", resp.Code)
+	}
+	if resp.Data.Total != 1 || len(resp.Data.MusicList) != 1 {
+		t.Fatalf("unexpected music list: %+v", resp.Data)
+	}
+	if resp.Data.MusicList[0].ID != "song-1" {
+		t.Fatalf("unexpected music item: %+v", resp.Data.MusicList[0])
+	}
+	if len(resp.Data.MusicList[0].Lyrics) != 1 || resp.Data.MusicList[0].Lyrics[0].LRC != "[00:00.00]hello world" {
+		t.Fatalf("unexpected lyrics: %+v", resp.Data.MusicList[0].Lyrics)
+	}
+}
