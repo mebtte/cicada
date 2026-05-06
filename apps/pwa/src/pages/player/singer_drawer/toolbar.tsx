@@ -7,10 +7,19 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import { Singer } from './constants';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
 
-const Style = styled.div`
-  position: sticky;
-  bottom: 0;
+const Style = styled.div<{ $floatingControllerOffset: boolean }>`
+  z-index: 1;
+
+  position: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? 'absolute' : 'sticky'};
+  left: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? 0 : 'auto'};
+  right: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? 0 : 'auto'};
+  bottom: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? CONTROLLER_FLOATING_RESERVED_HEIGHT : 0};
   flex-shrink: 0;
   height: calc(50px + env(safe-area-inset-bottom, 0));
   padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
@@ -31,9 +40,15 @@ const Style = styled.div`
   }
 `;
 
-function Toolbar({ singer }: { singer: Singer }) {
+function Toolbar({
+  singer,
+  floatingControllerOffset = false,
+}: {
+  singer: Singer;
+  floatingControllerOffset?: boolean;
+}) {
   return (
-    <Style>
+    <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
         <Button
           square

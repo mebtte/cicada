@@ -19,7 +19,7 @@ function Wrapper() {
   }
   return (
     <Style>
-      <MusicContent id={id} />
+      <MusicContent id={id} floatingControllerOffset />
     </Style>
   );
 }

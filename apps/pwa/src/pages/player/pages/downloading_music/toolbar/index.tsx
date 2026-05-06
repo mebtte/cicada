@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { TOOLBAR_HEIGHT } from '../constants';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../../constants';
 import Button from '@/components/button';
 import { MdPlaylistRemove, MdOutlineRestartAlt } from 'react-icons/md';
 import { useContext, useMemo } from 'react';
@@ -13,7 +14,7 @@ const Style = styled.div`
   width: 100%;
   height: ${TOOLBAR_HEIGHT}px;
   left: 0;
-  bottom: 0;
+  bottom: ${CONTROLLER_FLOATING_RESERVED_HEIGHT};
 
   padding: 0 20px;
 

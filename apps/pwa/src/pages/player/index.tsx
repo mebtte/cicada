@@ -36,6 +36,8 @@ import StopTimer from './stop_timer';
 import useDownload from './use_download';
 
 const Style = styled(PageContainer)`
+  position: relative;
+
   display: flex;
   flex-direction: column;
 

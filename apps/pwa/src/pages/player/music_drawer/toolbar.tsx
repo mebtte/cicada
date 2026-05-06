@@ -13,14 +13,16 @@ import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
 import { downloadMusicListByFileSystem } from '../utils';
 
-const Style = styled.div`
+const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
 
   position: sticky;
-  bottom: 0;
+  bottom: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset ? CONTROLLER_FLOATING_RESERVED_HEIGHT : 0};
   height: calc(50px + env(safe-area-inset-bottom, 0));
   padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
 
@@ -40,9 +42,15 @@ const Style = styled.div`
   }
 `;
 
-function Toolbar({ music }: { music: MusicDetail }) {
+function Toolbar({
+  music,
+  floatingControllerOffset = false,
+}: {
+  music: MusicDetail;
+  floatingControllerOffset?: boolean;
+}) {
   return (
-    <Style>
+    <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
         <Button
           square

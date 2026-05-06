@@ -16,6 +16,7 @@ import SingerList from './singer_list';
 import SubMusicList from './sub_music_list';
 import Toolbar from './toolbar';
 import useData from './use_data';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../constants';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -23,7 +24,7 @@ const Container = styled(animated.div)`
 const StatusBox = styled(Container)`
   ${flexCenter}
 `;
-const DetailBox = styled(Container)`
+const DetailBox = styled(Container)<{ $floatingControllerOffset: boolean }>`
   > .scrollable {
     ${absoluteFullSize}
 
@@ -33,14 +34,32 @@ const DetailBox = styled(Container)`
     > .first-screen {
       min-height: 100%;
     }
+
+    &::after {
+      content: '';
+      display: block;
+      height: ${({ $floatingControllerOffset }) =>
+        $floatingControllerOffset ? FLOATING_CONTROLLER_SCROLL_SPACE : 0};
+    }
   }
 `;
 
 type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
 
-function Detail({ style, music }: { style: AnimatedStyle; music: MusicDetail }) {
+function Detail({
+  style,
+  music,
+  floatingControllerOffset,
+}: {
+  style: AnimatedStyle;
+  music: MusicDetail;
+  floatingControllerOffset: boolean;
+}) {
   return (
-    <DetailBox style={style}>
+    <DetailBox
+      style={style}
+      $floatingControllerOffset={floatingControllerOffset}
+    >
       <div className="scrollable">
         <div className="first-screen">
           <Cover src={music.cover} size="100%" shape={Shape.SQUARE} />
@@ -65,13 +84,22 @@ function Detail({ style, music }: { style: AnimatedStyle; music: MusicDetail }) 
           nickname={music.createUser.nickname}
           createTime={music.createTime}
         />
-        <Toolbar music={music} />
+        <Toolbar
+          music={music}
+          floatingControllerOffset={floatingControllerOffset}
+        />
       </div>
     </DetailBox>
   );
 }
 
-function MusicContent({ id }: { id: string }) {
+function MusicContent({
+  id,
+  floatingControllerOffset = false,
+}: {
+  id: string;
+  floatingControllerOffset?: boolean;
+}) {
   const { data, reload } = useData(id);
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -96,7 +124,13 @@ function MusicContent({ id }: { id: string }) {
       );
     }
 
-    return <Detail style={style} music={d.music!} />;
+    return (
+      <Detail
+        style={style}
+        music={d.music!}
+        floatingControllerOffset={floatingControllerOffset}
+      />
+    );
   });
 }
 

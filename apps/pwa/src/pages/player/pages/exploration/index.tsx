@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { Query } from '@/constants';
 import { useUser } from '@/global_states/server';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import { SearchTab } from '../../constants';
+import { FLOATING_CONTROLLER_SCROLL_SPACE, SearchTab } from '../../constants';
 import Page from '../page';
 import useData from './use_data';
 import playerEventemitter, {
@@ -49,8 +49,6 @@ const ContentContainer = styled(Container)`
   overflow: auto;
   ${autoScrollbar}
 
-  padding-bottom: env(safe-area-inset-bottom, 0);
-
   > .content {
     display: flex;
     flex-direction: column;
@@ -62,10 +60,16 @@ const ContentContainer = styled(Container)`
   > .empty {
     height: 100%;
   }
+
+  &::after {
+    content: '';
+    display: block;
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
+  }
 `;
 const EmptyFallback = styled.div`
   min-height: 100%;
-  padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0));
+  padding: 24px 16px;
 
   display: flex;
   align-items: center;

@@ -14,6 +14,7 @@ import { t } from '@/i18n';
 import { PAGE_SIZE } from './constants';
 import useData from './use_data';
 import MusicWithLyric from './music_with_lyric';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import Context from '../../../context';
 
 const Container = styled(animated.div)`
@@ -28,6 +29,12 @@ const CardContainer = styled(Container)`
 const MusicContainer = styled(Container)`
   overflow: auto;
   ${autoScrollbar}
+
+  &::after {
+    content: '';
+    display: block;
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
+  }
 `;
 const paginationStyle: CSSProperties = {
   display: 'flex',

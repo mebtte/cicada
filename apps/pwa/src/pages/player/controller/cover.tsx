@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { MdUnfoldMore } from 'react-icons/md';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
+import { CSS_VAR } from '@/components/theme';
 import PngDefaultCover from '@/asset/default_cover.jpeg';
 
 const Style = styled.div`
@@ -15,6 +16,10 @@ const Style = styled.div`
 
   aspect-ratio: 1;
   overflow: hidden;
+  border: 2px solid var(${CSS_VAR.colorPrimaryShadow});
+  border-radius: 12px;
+  box-shadow: 0 3px 0 var(${CSS_VAR.colorPrimaryShadow});
+  background: #fff;
 
   > .expand {
     ${absoluteFullSize}

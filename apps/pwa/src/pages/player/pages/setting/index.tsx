@@ -9,6 +9,7 @@ import Language from './language';
 import UserSwitch from './user_switch';
 import Feedback from './feedback';
 import StopTimer from './stop_timer';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 
 const AUDIO_VOLUME_SETABLE = await (() =>
   Promise.race([
@@ -24,6 +25,12 @@ const AUDIO_VOLUME_SETABLE = await (() =>
 const Style = styled(Page)`
   overflow: auto;
   ${autoScrollbar}
+
+  &::after {
+    content: '';
+    display: block;
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
+  }
 `;
 
 function Setting() {

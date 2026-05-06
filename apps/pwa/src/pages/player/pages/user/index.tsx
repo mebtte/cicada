@@ -17,6 +17,7 @@ import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
 import playerEventemitter, { EventType } from '../../eventemitter';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 import { IconEdit } from '@/components/icon';
 import Input from '@/components/input';
 import Avatar from '@/components/avatar';
@@ -31,6 +32,11 @@ const Style = styled(Page)`
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  &::after {
+    content: '';
+    flex: 0 0 ${FLOATING_CONTROLLER_SCROLL_SPACE};
+  }
 `;
 const ProfileCard = styled.section`
   display: flex;

@@ -15,7 +15,10 @@ import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import { SearchTab } from '../../../constants';
+import {
+  FLOATING_CONTROLLER_SCROLL_SPACE,
+  SearchTab,
+} from '../../../constants';
 import useCollectionList from './use_collection_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import PublicMusicbill from '../../../components/public_musicbill';
@@ -37,8 +40,6 @@ const CardContainer = styled(Container)`
   gap: 20px;
 `;
 const MusicListContainer = styled(Container)`
-  padding-bottom: ${TOOLBAR_HEIGHT}px;
-
   overflow: auto;
   ${autoScrollbar}
 
@@ -52,6 +53,12 @@ const MusicListContainer = styled(Container)`
     > .item {
       padding: 10px;
     }
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    height: calc(${TOOLBAR_HEIGHT}px + ${FLOATING_CONTROLLER_SCROLL_SPACE});
   }
 `;
 const paginationStyle: CSSProperties = {

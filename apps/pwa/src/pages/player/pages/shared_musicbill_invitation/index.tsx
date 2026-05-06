@@ -11,6 +11,7 @@ import { MdHelpOutline } from 'react-icons/md';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 import useData from './use_data';
 import Page from '../page';
 import Invitation from './invitation';
@@ -42,6 +43,12 @@ const Content = styled(Container)`
     > span {
       ${upperCaseFirstLetter}
     }
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
   }
 `;
 

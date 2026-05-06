@@ -15,6 +15,7 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { PAGE_SIZE } from '../constants';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import useData from './use_data';
 import { openCreateMusicbillDialog } from '../../../utils';
 import PublicMusicbill from '../../../components/public_musicbill';
@@ -44,6 +45,12 @@ const MusicContainer = styled(Container)`
     > .item {
       padding: 10px;
     }
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
   }
 `;
 const paginationStyle: CSSProperties = {

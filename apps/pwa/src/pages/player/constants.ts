@@ -4,6 +4,19 @@ import { UtilZIndex } from '@/constants/style';
 
 export const HEADER_HEIGHT = 64;
 
+export const CONTROLLER_HEIGHT = 84;
+
+export const CONTROLLER_FLOATING_GAP = 12;
+
+export const CONTROLLER_FLOATING_BOTTOM = `calc(${CONTROLLER_FLOATING_GAP}px + env(safe-area-inset-bottom, 0))`;
+
+export const CONTROLLER_FLOATING_RESERVED_HEIGHT = `calc(${CONTROLLER_HEIGHT}px + ${
+  CONTROLLER_FLOATING_GAP * 2
+}px + env(safe-area-inset-bottom, 0))`;
+
+export const FLOATING_CONTROLLER_SCROLL_SPACE =
+  CONTROLLER_FLOATING_RESERVED_HEIGHT;
+
 export interface Singer {
   id: string;
   name: string;

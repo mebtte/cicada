@@ -5,13 +5,14 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { t } from '@/i18n';
 import { FILTER_HEIGHT } from './constants';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../constants';
 import capitalize from '@/utils/capitalize';
 import { useLocation } from 'react-router-dom';
 import parseSearch from '@/utils/parse_search';
 
 const Style = styled.div`
   position: absolute;
-  bottom: 0;
+  bottom: ${CONTROLLER_FLOATING_RESERVED_HEIGHT};
   left: 0;
   width: 100%;
   height: ${FILTER_HEIGHT}px;

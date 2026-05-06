@@ -8,7 +8,7 @@ import List from 'react-list';
 import Empty from '@/components/empty';
 import { useContext } from 'react';
 import { t } from '@/i18n';
-import { Musicbill } from '../../constants';
+import { FLOATING_CONTROLLER_SCROLL_SPACE, Musicbill } from '../../constants';
 import { FILTER_HEIGHT, INFO_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -33,7 +33,11 @@ const StatusContainer = styled(Container)`
   ${flexCenter}
 `;
 const ListContainer = styled(Container)`
-  padding-bottom: ${FILTER_HEIGHT}px;
+  &::after {
+    content: '';
+    display: block;
+    height: calc(${FILTER_HEIGHT}px + ${FLOATING_CONTROLLER_SCROLL_SPACE});
+  }
 `;
 
 function Wrapper({

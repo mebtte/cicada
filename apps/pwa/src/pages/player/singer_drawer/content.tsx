@@ -19,6 +19,7 @@ import Info from './info';
 import Toolbar from './toolbar';
 import MusicList from './music_list';
 import playerEventemitter, { EventType } from '../eventemitter';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../constants';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -26,7 +27,7 @@ const Container = styled(animated.div)`
 const CardContainer = styled(Container)`
   ${flexCenter}
 `;
-const DetailContainer = styled(Container)`
+const DetailContainer = styled(Container)<{ $floatingControllerOffset: boolean }>`
   display: flex;
   flex-direction: column;
 
@@ -39,6 +40,15 @@ const DetailContainer = styled(Container)`
 
     > .first-screen {
       min-height: 100%;
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      height: ${({ $floatingControllerOffset }) =>
+        $floatingControllerOffset
+          ? `calc(50px + env(safe-area-inset-bottom, 0) + ${FLOATING_CONTROLLER_SCROLL_SPACE})`
+          : 0};
     }
   }
 `;
@@ -109,7 +119,10 @@ function Detail({
   insideDrawer: boolean;
 }) {
   return (
-    <DetailContainer style={style}>
+    <DetailContainer
+      style={style}
+      $floatingControllerOffset={!insideDrawer}
+    >
       {insideDrawer ? (
         <Header>
           <HeaderRow>
@@ -150,7 +163,7 @@ function Detail({
           />
         </div>
       </div>
-      <Toolbar singer={singer} />
+      <Toolbar singer={singer} floatingControllerOffset={!insideDrawer} />
     </DetailContainer>
   );
 }

@@ -11,6 +11,7 @@ import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import useMusicPlayRecordList from './use_music_play_record_list';
 import { PAGE_SIZE, TOOLBAR_HEIGHT } from '../constants';
 import MusicPlayRecord from './music_play_record';
@@ -31,10 +32,14 @@ const CardContainer = styled(Container)`
   gap: 20px;
 `;
 const MusicListContainer = styled(Container)`
-  padding-bottom: ${TOOLBAR_HEIGHT}px;
-
   overflow: auto;
   ${autoScrollbar}
+
+  &::after {
+    content: '';
+    display: block;
+    height: calc(${TOOLBAR_HEIGHT}px + ${FLOATING_CONTROLLER_SCROLL_SPACE});
+  }
 `;
 const paginationStyle: CSSProperties = {
   margin: '10px 0',
