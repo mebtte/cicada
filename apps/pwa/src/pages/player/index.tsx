@@ -34,6 +34,7 @@ import TwoFADialog from './2fa_dialog';
 import useStopTimer from './use_stop_timer';
 import StopTimer from './stop_timer';
 import useDownload from './use_download';
+import PlaylistAddAnimation from './playlist_add_animation';
 
 const Style = styled(PageContainer)`
   position: relative;
@@ -139,6 +140,7 @@ function Wrapper() {
         </div>
         <Controller lyricPanelOpen={lyricPanelOpen} />
         {queueMusic ? <LyricPanel open={lyricPanelOpen} /> : null}
+        <PlaylistAddAnimation />
 
         {stopTimer ? <StopTimer stopTimer={stopTimer} /> : null}
       </Style>

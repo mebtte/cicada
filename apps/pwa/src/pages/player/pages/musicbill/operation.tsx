@@ -19,6 +19,7 @@ import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
 import { downloadMusicListByFileSystem } from '../../utils';
+import addMusicListToPlaylist from '../../add_to_playlist';
 
 const Style = styled.div`
   display: flex;
@@ -39,14 +40,9 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         variant="ghost"
         size="sm"
         disabled={status !== RequestStatus.SUCCESS}
-        onClick={() =>
+        onClick={(event) =>
           musicList.length
-            ? playerEventemitter.emit(
-                PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-                {
-                  musicList,
-                },
-              )
+            ? addMusicListToPlaylist(musicList, event.currentTarget)
             : notice.error(upperCaseFirstLetter(t('no_music_in_musicbill')))
         }
       >

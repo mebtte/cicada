@@ -16,6 +16,7 @@ import playerEventemitter, {
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
 import { downloadMusicListByFileSystem } from '../utils';
+import addMusicListToPlaylist from '../add_to_playlist';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
@@ -110,13 +111,8 @@ function Toolbar({
           variant="ghost"
           size="sm"
           aria-label="Add to playlist"
-          onClick={() =>
-            playerEventemitter.emit(
-              PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-              {
-                musicList: [music],
-              },
-            )
+          onClick={(event) =>
+            addMusicListToPlaylist([music], event.currentTarget)
           }
         >
           <MdPlaylistAdd />

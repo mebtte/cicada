@@ -97,6 +97,7 @@ export default new Eventin<
     [EventType.ACTION_PLAY_MUSIC]: { music: MusicWithSingerAliases };
     [EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST]: {
       musicList: MusicWithSingerAliases[];
+      animationSource?: { x: number; y: number };
     };
     [EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE]: {
       music: MusicWithSingerAliases;

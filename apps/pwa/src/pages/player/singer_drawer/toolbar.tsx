@@ -3,11 +3,9 @@ import Button from '@/components/button';
 import { MdPlaylistAdd } from 'react-icons/md';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../eventemitter';
 import { Singer } from './constants';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
+import addMusicListToPlaylist from '../add_to_playlist';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
@@ -54,14 +52,9 @@ function Toolbar({
           square
           variant="ghost"
           size="sm"
-          onClick={() =>
+          onClick={(event) =>
             singer.musicList.length
-              ? playerEventemitter.emit(
-                  PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-                  {
-                    musicList: singer.musicList,
-                  },
-                )
+              ? addMusicListToPlaylist(singer.musicList, event.currentTarget)
               : notice.error(t('no_music_singer_warning'))
           }
         >
