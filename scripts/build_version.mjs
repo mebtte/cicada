@@ -2,8 +2,6 @@ import cp from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const BETA_BRANCH = 'beta';
-
 function runGit(args) {
   try {
     return cp.execFileSync('git', args, {
@@ -27,17 +25,6 @@ export function getLatestTag() {
   );
 }
 
-export function getCurrentBranch() {
-  for (const key of ['GITHUB_REF_NAME', 'CI_COMMIT_REF_NAME', 'BRANCH_NAME']) {
-    const value = process.env[key]?.trim();
-    if (value) {
-      return value;
-    }
-  }
-
-  return runGit(['branch', '--show-current']);
-}
-
 export function formatVersionTimestamp(date = new Date()) {
   const pad = (value) => String(value).padStart(2, '0');
 
@@ -47,27 +34,19 @@ export function formatVersionTimestamp(date = new Date()) {
     pad(date.getDate()),
     pad(date.getHours()),
     pad(date.getMinutes()),
+    pad(date.getSeconds()),
   ].join('');
 }
 
 export function resolveBuildProfile({
   command,
   buildProfile = process.env.CICADA_BUILD_PROFILE?.trim(),
-  branch = getCurrentBranch(),
 } = {}) {
   if (buildProfile === 'development' || command === 'serve') {
     return 'development';
   }
 
   if (buildProfile === 'beta') {
-    return 'beta';
-  }
-
-  if (buildProfile === 'production') {
-    return 'production';
-  }
-
-  if (branch === BETA_BRANCH) {
     return 'beta';
   }
 
@@ -88,7 +67,7 @@ export function resolveVersion(options = {}) {
   }
 
   if (buildProfile === 'beta') {
-    return `${latestTag}-beta-${formatVersionTimestamp(options.now ?? new Date())}`;
+    return `${latestTag}-beta.${formatVersionTimestamp(options.now ?? new Date())}`;
   }
 
   return latestTag;

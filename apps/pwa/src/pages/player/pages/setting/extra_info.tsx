@@ -1,4 +1,7 @@
-import { BETA_VERSION_IDENTIFIER } from '@/constants/version';
+import {
+  BETA_VERSION_BRANCH,
+  BETA_VERSION_IDENTIFIER,
+} from '@/constants/version';
 import definition from '@/definition';
 import { useSelectedServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
@@ -25,7 +28,7 @@ const Style = styled.div`
 
 function getVersionLink(version: string) {
   if (version.includes(BETA_VERSION_IDENTIFIER)) {
-    return 'https://github.com/mebtte/cicada/tree/beta';
+    return `https://github.com/mebtte/cicada/tree/${BETA_VERSION_BRANCH}`;
   }
 
   return `https://github.com/mebtte/cicada/releases/tag/${version}`;
