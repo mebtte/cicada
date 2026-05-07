@@ -199,6 +199,7 @@ func CreateMusic(c *gin.Context) {
 		return
 	}
 	store.LinkMusicSingers(id, singerIDs)
+	syncMusicMetadataToAsset(id)
 	api.OK(c, id)
 }
 
@@ -223,6 +224,7 @@ func UpdateMusic(c *gin.Context) {
 		return
 	}
 
+	syncMetadata := false
 	switch body.Key {
 	case "name":
 		name, ok := body.Value.(string)
@@ -231,6 +233,7 @@ func UpdateMusic(c *gin.Context) {
 			return
 		}
 		store.UpdateMusic(body.ID, "name", name)
+		syncMetadata = true
 
 	case "aliases":
 		rawAliases, ok := body.Value.([]any)
@@ -256,6 +259,7 @@ func UpdateMusic(c *gin.Context) {
 			return
 		}
 		store.UpdateMusic(body.ID, "cover", cover)
+		syncMetadata = true
 
 	case "asset":
 		asset, ok := body.Value.(string)
@@ -264,6 +268,7 @@ func UpdateMusic(c *gin.Context) {
 			return
 		}
 		store.UpdateMusic(body.ID, "asset", asset)
+		syncMetadata = true
 
 	case "singers":
 		rawIDs, ok := body.Value.([]any)
@@ -286,6 +291,7 @@ func UpdateMusic(c *gin.Context) {
 		}
 		store.DB().Exec(`DELETE FROM music_singer_relation WHERE musicId=?`, body.ID)
 		store.LinkMusicSingers(body.ID, ids)
+		syncMetadata = true
 
 	case "type":
 		rawType, ok := body.Value.(float64)
@@ -311,6 +317,7 @@ func UpdateMusic(c *gin.Context) {
 			year = int(y)
 		}
 		store.UpdateMusic(body.ID, "year", year)
+		syncMetadata = true
 
 	case "fork":
 		forkFrom, ok := body.Value.(string)
@@ -329,6 +336,9 @@ func UpdateMusic(c *gin.Context) {
 		return
 	}
 
+	if syncMetadata {
+		syncMusicMetadataToAsset(body.ID)
+	}
 	api.OK(c, nil)
 }
 

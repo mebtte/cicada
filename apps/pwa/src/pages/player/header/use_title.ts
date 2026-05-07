@@ -1,10 +1,11 @@
 import { matchPath, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import { t } from '@/i18n';
+import { t, type Key } from '@/i18n';
 import getSinger from '@/server/api/get_singer';
 import getMusic from '@/server/api/get_music';
 import logger from '@/utils/logger';
+import capitalize from '@/utils/capitalize';
 import playerEventemitter, { EventType } from '../eventemitter';
 
 export interface HeaderTitle {
@@ -25,6 +26,10 @@ const getMusicDescription = ({
   aliases: string[];
 }) =>
   aliases.length ? aliases.join(' / ') : undefined;
+
+const getStaticHeaderTitle = (key: Key): HeaderTitle => ({
+  title: capitalize(t(key)),
+});
 
 const getMusicHeaderTitle = async (id: string): Promise<MusicHeaderTitle> => {
   const music = await getMusic({ id });
@@ -223,10 +228,10 @@ export default () => {
       }
       return lastTitleRef.current.title
         ? lastTitleRef.current
-        : { title: t('music') };
+        : getStaticHeaderTitle('music');
     }
     if (musicbillMatch) {
-      title = { title: t('musicbill') };
+      title = getStaticHeaderTitle('musicbill');
       lastTitleRef.current = title;
       return title;
     }
@@ -243,43 +248,43 @@ export default () => {
   switch (pathname) {
     case ROOT_PATH.PLAYER:
     case ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION: {
-      title = { title: t('exploration') };
+      title = getStaticHeaderTitle('exploration');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH: {
-      title = { title: t('search') };
+      title = getStaticHeaderTitle('search');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE: {
-      title = { title: t('user_management') };
+      title = getStaticHeaderTitle('user_management');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.USER: {
-      title = { title: t('profile') };
+      title = getStaticHeaderTitle('profile');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SETTING: {
-      title = { title: t('setting') };
+      title = getStaticHeaderTitle('setting');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION: {
-      title = { title: t('shared_musicbill_invitation') };
+      title = getStaticHeaderTitle('shared_musicbill_invitation');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION: {
-      title = { title: t('public_musicbill_collection') };
+      title = getStaticHeaderTitle('public_musicbill_collection');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.MUSIC_PLAY_RECORD: {
-      title = { title: t('music_play_record_short') };
+      title = getStaticHeaderTitle('music_play_record_short');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.DOWNLOADING_MUSIC: {
-      title = { title: t('download') };
+      title = getStaticHeaderTitle('download');
       break;
     }
     default: {
-      title = { title: t('cicada') };
+      title = getStaticHeaderTitle('cicada');
     }
   }
 

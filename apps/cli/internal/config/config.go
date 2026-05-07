@@ -93,15 +93,18 @@ func Set(c Config) {
 	cfg = c
 }
 
-func DataVersionPath() string     { return filepath.Join(Get().Data, "v") }
-func DBPath() string              { return filepath.Join(Get().Data, "db") }
-func DBBackupPath() string        { return filepath.Join(Get().Data, "db.backup") }
-func JWTSecretPath() string       { return filepath.Join(Get().Data, "jwt_secret") }
-func LogDir() string              { return filepath.Join(Get().Data, "logs") }
-func AccessLogDir() string        { return filepath.Join(LogDir(), "access") }
-func SchedulerLogDir() string     { return filepath.Join(LogDir(), "scheduler") }
-func CacheDir() string            { return filepath.Join(Get().Data, "cache") }
-func ThumbnailCacheDir() string   { return filepath.Join(CacheDir(), "thumbnails") }
+func DataVersionPath() string   { return filepath.Join(Get().Data, "v") }
+func DBPath() string            { return filepath.Join(Get().Data, "db") }
+func DBBackupPath() string      { return filepath.Join(Get().Data, "db.backup") }
+func JWTSecretPath() string     { return filepath.Join(Get().Data, "jwt_secret") }
+func LogDir() string            { return filepath.Join(Get().Data, "logs") }
+func AccessLogDir() string      { return filepath.Join(LogDir(), "access") }
+func SchedulerLogDir() string   { return filepath.Join(LogDir(), "scheduler") }
+func CacheDir() string          { return filepath.Join(Get().Data, "cache") }
+func ThumbnailCacheDir() string { return filepath.Join(CacheDir(), "thumbnails") }
+func MusicTranscodeCacheDir() string {
+	return filepath.Join(CacheDir(), "music_transcoded")
+}
 func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }
 func AssetDir(t AssetType) string { return filepath.Join(Get().Data, "assets", string(t)) }
 func UpgradeLockPath() string     { return filepath.Join(Get().Data, "upgrade.lock") }

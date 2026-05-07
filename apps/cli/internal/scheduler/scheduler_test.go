@@ -24,6 +24,7 @@ func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 	for _, dir := range []string{
 		config.CacheDir(),
 		config.ThumbnailCacheDir(),
+		config.MusicTranscodeCacheDir(),
 	} {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			t.Fatalf("mkdir %s: %v", dir, err)
@@ -34,13 +35,15 @@ func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 	oldRootCache := filepath.Join(config.CacheDir(), "old-cache")
 	oldThumbnail := filepath.Join(config.ThumbnailCacheDir(), "64_old.jpg")
 	freshThumbnail := filepath.Join(config.ThumbnailCacheDir(), "64_fresh.jpg")
+	oldTranscode := filepath.Join(config.MusicTranscodeCacheDir(), "song.flac_codec-aac_bitrate-192k.m4a")
+	freshTranscode := filepath.Join(config.MusicTranscodeCacheDir(), "song.flac_codec-flac.flac")
 
-	for _, path := range []string{oldRootCache, oldThumbnail, freshThumbnail} {
+	for _, path := range []string{oldRootCache, oldThumbnail, freshThumbnail, oldTranscode, freshTranscode} {
 		if err := os.WriteFile(path, []byte("cache"), 0644); err != nil {
 			t.Fatalf("write %s: %v", path, err)
 		}
 	}
-	for _, path := range []string{oldRootCache, oldThumbnail} {
+	for _, path := range []string{oldRootCache, oldThumbnail, oldTranscode} {
 		if err := os.Chtimes(path, oldTime, oldTime); err != nil {
 			t.Fatalf("chtimes %s: %v", path, err)
 		}
@@ -48,11 +51,17 @@ func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 	if err := os.Chtimes(config.ThumbnailCacheDir(), oldTime, oldTime); err != nil {
 		t.Fatalf("chtimes thumbnail dir: %v", err)
 	}
+	if err := os.Chtimes(config.MusicTranscodeCacheDir(), oldTime, oldTime); err != nil {
+		t.Fatalf("chtimes music transcode dir: %v", err)
+	}
 
 	cleanOutdatedFile()
 
 	if info, err := os.Stat(config.ThumbnailCacheDir()); err != nil || !info.IsDir() {
 		t.Fatalf("expected thumbnail cache dir to remain, info=%v err=%v", info, err)
+	}
+	if info, err := os.Stat(config.MusicTranscodeCacheDir()); err != nil || !info.IsDir() {
+		t.Fatalf("expected music transcode cache dir to remain, info=%v err=%v", info, err)
 	}
 	if _, err := os.Stat(oldRootCache); !os.IsNotExist(err) {
 		t.Fatalf("expected old root cache file to be removed, err=%v", err)
@@ -60,8 +69,14 @@ func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 	if _, err := os.Stat(oldThumbnail); !os.IsNotExist(err) {
 		t.Fatalf("expected old thumbnail cache file to be removed, err=%v", err)
 	}
+	if _, err := os.Stat(oldTranscode); !os.IsNotExist(err) {
+		t.Fatalf("expected old transcode cache file to be removed, err=%v", err)
+	}
 	if _, err := os.Stat(freshThumbnail); err != nil {
 		t.Fatalf("expected fresh thumbnail cache file to remain: %v", err)
+	}
+	if _, err := os.Stat(freshTranscode); err != nil {
+		t.Fatalf("expected fresh transcode cache file to remain: %v", err)
 	}
 }
 

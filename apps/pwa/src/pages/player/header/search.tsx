@@ -2,14 +2,16 @@ import {
   memo,
   useState,
   ChangeEvent,
-  KeyboardEvent,
-  CSSProperties,
   useRef,
   useEffect,
+  FormEvent,
 } from 'react';
+import styled from 'styled-components';
+import { MdSearch } from 'react-icons/md';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
 import Input from '@/components/input';
+import Button from '@/components/button';
 import { Query } from '@/constants';
 import { useLocation } from 'react-router-dom';
 import parseSearch from '@/utils/parse_search';
@@ -18,16 +20,43 @@ import capitalize from '@/utils/capitalize';
 import eventemitter, { EventType } from '../eventemitter';
 import { useTheme } from '@/global_states/theme';
 
-const style: CSSProperties = {
-  // @ts-expect-error: existed css property
-  WebkitAppRegion: 'no-drag',
-  width: 180,
-};
+const SearchForm = styled.form`
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 240px;
+  -webkit-app-region: no-drag;
+
+  > .input {
+    flex: 1;
+    min-width: 0;
+
+    > div {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right-width: 0;
+    }
+  }
+
+  > button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  @media (min-width: 1024px) {
+    width: 320px;
+  }
+
+  @media (min-width: 1440px) {
+    width: 420px;
+  }
+`;
 
 function Wrapper() {
   const navigate = useNavigate();
   const location = useLocation();
   const { miniMode } = useTheme();
+  const searchLabel = capitalize(t('search'));
 
   const ref = useRef<HTMLInputElement>(null);
 
@@ -54,10 +83,9 @@ function Wrapper() {
       },
     });
   };
-  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      onSearch();
-    }
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onSearch();
   };
 
   useEffect(() => {
@@ -69,15 +97,25 @@ function Wrapper() {
   }, []);
 
   return (
-    <Input
-      ref={ref}
-      style={style}
-      type="search"
-      value={keyword}
-      onChange={onKeywordChange}
-      onKeyDown={onKeyDown}
-      placeholder={capitalize(t('search'))}
-    />
+    <SearchForm onSubmit={onSubmit}>
+      <Input
+        ref={ref}
+        className="input"
+        type="search"
+        value={keyword}
+        onChange={onKeywordChange}
+        placeholder={searchLabel}
+      />
+      <Button
+        square
+        type="submit"
+        size="md"
+        aria-label={searchLabel}
+        title={searchLabel}
+      >
+        <MdSearch />
+      </Button>
+    </SearchForm>
   );
 }
 

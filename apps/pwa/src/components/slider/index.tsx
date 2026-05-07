@@ -118,8 +118,8 @@ const StyledRoot = styled(Radix.Root)`
     opacity: 0.5;
   }
 
-  /* 非触摸设备：隐藏拇指 */
-  &.untouchable ${StyledThumb} {
+  /* 非触摸设备：默认隐藏拇指 */
+  &.untouchable:not(.always-show-thumb) ${StyledThumb} {
     display: none;
   }
 `;
@@ -135,6 +135,8 @@ export interface SliderProps
   max?: number;
   onChange?: (value: number) => void;
   edge?: SliderEdge;
+  /** 在非触摸设备上也显示拇指 */
+  alwaysShowThumb?: boolean;
   /** 副轨道值（0–1），用于缓冲进度等场景 */
   secondValue?: number;
 }
@@ -144,6 +146,7 @@ function Slider({
   max = 1,
   onChange,
   edge = 'rounded',
+  alwaysShowThumb = false,
   secondValue,
   className,
   ...props
@@ -156,7 +159,14 @@ function Slider({
       step={max / 1000}
       value={[value]}
       onValueChange={([v]) => onChange?.(v)}
-      className={classnames(edge, { untouchable: !IS_TOUCHABLE }, className)}
+      className={classnames(
+        edge,
+        {
+          untouchable: !IS_TOUCHABLE,
+          'always-show-thumb': alwaysShowThumb,
+        },
+        className,
+      )}
     >
       <StyledTrack>
         {secondValue !== undefined && (

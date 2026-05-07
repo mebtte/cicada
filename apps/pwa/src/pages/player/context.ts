@@ -4,7 +4,6 @@ import {
   MusicWithSingerAliases,
   QueueMusic,
   Musicbill,
-  StopTimer,
   DownloadingMusic,
 } from './constants';
 
@@ -24,8 +23,6 @@ interface Context {
 
   lyricPanelOpen: boolean;
 
-  stopTimer: StopTimer | null;
-
   downloadingMusicList: DownloadingMusic[];
 }
 
@@ -44,8 +41,6 @@ const context = createContext<Context>({
   currentPlayqueuePosition: -1,
 
   lyricPanelOpen: false,
-
-  stopTimer: null,
 
   downloadingMusicList: [],
 });

@@ -2,7 +2,7 @@ import { RequestStatus } from '@/constants';
 import { MusicType } from '@/constants/music';
 import { UtilZIndex } from '@/constants/style';
 
-export const HEADER_HEIGHT = 64;
+export const HEADER_HEIGHT = 72;
 
 export const CONTROLLER_HEIGHT = 84;
 
@@ -94,15 +94,6 @@ export enum SearchTab {
   SINGER = 'singer',
   PUBLIC_MUSICBILL = 'public_musicbill',
   LYRIC = 'lyric',
-}
-
-export interface StopTimer {
-  endTimestamp: number;
-}
-
-export interface StopTimerPosition {
-  direction: 'left' | 'right';
-  top: number;
 }
 
 export enum DownloadStatus {

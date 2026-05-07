@@ -31,8 +31,6 @@ import SingerModifyRecordDrawer from './singer_modify_record_drawer';
 import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
-import useStopTimer from './use_stop_timer';
-import StopTimer from './stop_timer';
 import useDownload from './use_download';
 import PlaylistAddAnimation from './playlist_add_animation';
 import PlayqueueInsertAnimation from './playqueue_insert_animation';
@@ -83,7 +81,6 @@ function Wrapper() {
     duration: audioDuration,
     bufferedPercent: audioBufferedPercent,
   } = useAudio({ queueMusic });
-  const stopTimer = useStopTimer();
 
   useMediaSession(queueMusic);
   useEffect(
@@ -109,8 +106,6 @@ function Wrapper() {
 
       lyricPanelOpen,
 
-      stopTimer,
-
       downloadingMusicList,
     }),
     [
@@ -124,7 +119,6 @@ function Wrapper() {
       musicbillList,
       playlist,
       playqueue,
-      stopTimer,
       downloadingMusicList,
     ],
   );
@@ -141,8 +135,6 @@ function Wrapper() {
         </div>
         <Controller lyricPanelOpen={lyricPanelOpen} />
         {queueMusic ? <LyricPanel open={lyricPanelOpen} /> : null}
-
-        {stopTimer ? <StopTimer stopTimer={stopTimer} /> : null}
       </Style>
 
       {/* dynamic z-index */}

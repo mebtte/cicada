@@ -8,7 +8,7 @@ import ExtraInfo from './extra_info';
 import Language from './language';
 import UserSwitch from './user_switch';
 import Feedback from './feedback';
-import StopTimer from './stop_timer';
+import PlaybackQuality from './playback_quality';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 
 const AUDIO_VOLUME_SETABLE = await (() =>
@@ -36,8 +36,8 @@ const Style = styled(Page)`
 function Setting() {
   return (
     <Style>
-      <StopTimer />
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
+      <PlaybackQuality />
       <Language />
       <UserSwitch />
       <Feedback />

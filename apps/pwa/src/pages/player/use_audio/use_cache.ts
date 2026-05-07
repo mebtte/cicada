@@ -24,14 +24,15 @@ export default (audio: CustomAudio<QueueMusic> | null) => {
           audio.getPlayedSeconds() / duration > EFFECTIVE_PLAY_PERCENT
         ) {
           window.caches.open(CacheName.ASSET_MEDIA).then(async (cache) => {
-            const exist = await cache.match(audio.extra.asset);
+            const asset = audio.getSrc();
+            const exist = await cache.match(asset);
             if (!exist) {
               cache
-                .add(audio.extra.asset)
+                .add(asset)
                 .catch((error) =>
                   logger.error(
                     error,
-                    `Failed to cache music "${audio.extra.asset}"`,
+                    `Failed to cache music "${asset}"`,
                   ),
                 );
             }

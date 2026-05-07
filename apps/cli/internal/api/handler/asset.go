@@ -30,6 +30,11 @@ func ServeAsset(at config.AssetType) gin.HandlerFunc {
 		assetDir := config.AssetDir(at)
 		assetPath := filepath.Join(assetDir, filename)
 
+		if at == config.AssetTypeMusic {
+			serveMusicAsset(c, filename, assetPath)
+			return
+		}
+
 		// image resize support
 		if sizeStr := c.Query("size"); sizeStr != "" && at != config.AssetTypeMusic {
 			size, err := strconv.Atoi(sizeStr)
@@ -63,6 +68,8 @@ func ServeAsset(at config.AssetType) gin.HandlerFunc {
 					}
 				}
 
+				touchFile(cachePath)
+
 				f, err := os.Open(cachePath)
 				if err != nil {
 					c.Status(http.StatusNotFound)
@@ -76,14 +83,23 @@ func ServeAsset(at config.AssetType) gin.HandlerFunc {
 			}
 		}
 
-		f, err := os.Open(assetPath)
-		if err != nil {
-			c.Status(http.StatusNotFound)
-			return
-		}
-		defer f.Close()
-		fi, _ := f.Stat()
-		c.Header("Cache-Control", "public, max-age=31536000, immutable")
-		http.ServeContent(c.Writer, c.Request, filename, fi.ModTime(), f)
+		serveAssetFile(c, assetPath, filename, "public, max-age=31536000, immutable", "")
 	}
+}
+
+func serveAssetFile(c *gin.Context, path, name, cacheControl, contentType string) {
+	f, err := os.Open(path)
+	if err != nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	defer f.Close()
+	fi, _ := f.Stat()
+	if cacheControl != "" {
+		c.Header("Cache-Control", cacheControl)
+	}
+	if contentType != "" {
+		c.Header("Content-Type", contentType)
+	}
+	http.ServeContent(c.Writer, c.Request, name, fi.ModTime(), f)
 }

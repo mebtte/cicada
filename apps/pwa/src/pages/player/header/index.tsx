@@ -30,7 +30,7 @@ const Style = styled.div`
 
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 18px;
 
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   background: #fff;
@@ -68,7 +68,7 @@ function Header() {
           <Button
             square
             variant="ghost"
-            size="sm"
+            size="md"
             onClick={() => {
               if (showBackButton) {
                 if (window.history.length > 1) {
@@ -86,7 +86,7 @@ function Header() {
           <Button
             square
             variant="ghost"
-            size="sm"
+            size="md"
             onClick={() =>
               navigate({ path: `${ROOT_PATH.PLAYER}${PLAYER_PATH.SEARCH}` })
             }
@@ -95,7 +95,7 @@ function Header() {
           </Button>
         </>
       ) : (
-        <Cover src="/logo.png" size={24} />
+        <Cover src="/logo.png" size={30} />
       )}
       <Title title={title.title} description={title.description} />
       {miniMode ? null : <Search />}

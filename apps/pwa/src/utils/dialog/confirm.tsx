@@ -1,10 +1,33 @@
 import { useState } from 'react';
 import { t } from '@/i18n';
 import { Confirm as ConfirmShape } from './constants';
-import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogBody,
+  DialogFooter,
+} from '@/components';
 import Button from '@/components/button';
 import useEvent from '../use_event';
 import DialogBase from './dialog_base';
+import styled from 'styled-components';
+
+const ConfirmFooter = styled(DialogFooter)`
+  gap: 12px;
+
+  @media (min-width: 640px) {
+    gap: 14px;
+
+    > button {
+      min-width: 96px;
+    }
+  }
+`;
+
+function isSimpleContent(content: ConfirmShape['content']) {
+  return typeof content === 'string' || typeof content === 'number';
+}
 
 function ConfirmContent({
   options,
@@ -41,11 +64,21 @@ function ConfirmContent({
       {options.title && (
         <DialogHeader>
           <DialogTitle>{options.title}</DialogTitle>
+          {isSimpleContent(options.content) && (
+            <DialogDescription>{options.content}</DialogDescription>
+          )}
         </DialogHeader>
       )}
-      {options.content && <DialogBody>{options.content}</DialogBody>}
-      <DialogFooter>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+      {options.content && (!options.title || !isSimpleContent(options.content)) && (
+        <DialogBody>{options.content}</DialogBody>
+      )}
+      <ConfirmFooter>
+        <Button
+          variant="ghost"
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button
@@ -56,7 +89,7 @@ function ConfirmContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </DialogFooter>
+      </ConfirmFooter>
     </>
   );
 }

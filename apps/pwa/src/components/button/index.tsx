@@ -116,6 +116,14 @@ const VARIANT_MAP: Record<Variant, ReturnType<typeof css>> = {
   plain:     plainVariant,
 };
 
+const FOCUS_RING_MAP: Record<Variant, string> = {
+  primary: PRIMARY,
+  secondary: PRIMARY,
+  ghost: 'rgb(180 180 180)',
+  danger: 'rgb(242 80 66)',
+  plain: PRIMARY,
+};
+
 // ─── Loader ───────────────────────────────────────────────────────────────────
 
 const spin = keyframes`to { transform: rotate(360deg); }`;
@@ -164,6 +172,8 @@ const StyledButton = styled.button<{
   text-transform: capitalize;
   white-space: nowrap;
   border-style: solid;
+  appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -172,7 +182,7 @@ const StyledButton = styled.button<{
   width: ${({ $block }) => ($block ? '100%' : 'auto')};
 
   &:focus-visible {
-    outline: 3px solid ${PRIMARY};
+    outline: 3px solid ${({ $variant }) => FOCUS_RING_MAP[$variant]};
     outline-offset: 3px;
   }
 

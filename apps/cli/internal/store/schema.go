@@ -149,6 +149,7 @@ func Initialize() error {
 			config.SchedulerLogDir(),
 			config.CacheDir(),
 			config.ThumbnailCacheDir(),
+			config.MusicTranscodeCacheDir(),
 			config.AssetsDir(),
 		},
 		func() []string {

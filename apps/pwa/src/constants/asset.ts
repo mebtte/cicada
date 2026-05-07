@@ -6,6 +6,7 @@ export enum AssetType {
   MUSIC = 'music',
 }
 export const ASSET_TYPES = Object.values(AssetType);
+export const MUSIC_ASSET_ACCEPT_TYPES: string[] = [];
 export const ASSET_TYPE_MAP: Record<
   AssetType,
   {
@@ -42,12 +43,7 @@ export const ASSET_TYPE_MAP: Record<
     maxSize: 1024 * 1024 * 2,
   },
   [AssetType.MUSIC]: {
-    acceptType: {
-      mp3: ['audio/mpeg'],
-      flac: ['audio/flac', 'audio/x-flac'],
-      m4a: ['audio/m4a', 'audio/x-m4a'],
-      mp4: ['audio/mp4', 'video/mp4'],
-    },
+    acceptType: {},
     maxSize: 1024 * 1024 * 200,
   },
 };

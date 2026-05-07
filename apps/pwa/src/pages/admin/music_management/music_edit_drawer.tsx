@@ -28,7 +28,11 @@ import {
   YEAR_MAX,
 } from '@/constants/music';
 import uploadAsset from '@/server/form/upload_asset';
-import { AssetType, ASSET_TYPE_MAP } from '@/constants/asset';
+import {
+  AssetType,
+  ASSET_TYPE_MAP,
+  MUSIC_ASSET_ACCEPT_TYPES,
+} from '@/constants/asset';
 import updateMusic from '@/server/api/update_music';
 import stringArrayEqual from '@/utils/string_array_equal';
 import dialog from '@/utils/dialog';
@@ -437,16 +441,9 @@ function EditContent({
           dialog.fileSelect({
             title: t('modify_file_of_music'),
             label: t('file_of_music'),
-            acceptTypes: Object.values(
-              ASSET_TYPE_MAP[AssetType.MUSIC].acceptType,
-            ).flat(),
+            acceptTypes: MUSIC_ASSET_ACCEPT_TYPES,
             placeholder: upperCaseFirstLetter(
-              t(
-                'one_of_formats',
-                Object.keys(ASSET_TYPE_MAP[AssetType.MUSIC].acceptType).join(
-                  '/',
-                ),
-              ),
+              t('one_of_formats', t('ffmpeg_supported_audio')),
             ),
             onConfirm: async (file) => {
               if (!file) {

@@ -2,6 +2,7 @@ import { type Ref } from 'react';
 import { CSSVariable } from '@/global_style';
 import {
   MdAccessTime,
+  MdAudioFile,
   MdFilePresent,
   MdOutlineCalendarToday,
   MdOutlineLocalFireDepartment,
@@ -69,6 +70,16 @@ const formatFileSize = (size: number) => {
   }
   return `${(size / 1024 / 1024).toFixed(2)}MB`;
 };
+const getMusicFileType = (asset: string) => {
+  const pathname = new URL(asset, window.location.origin).pathname;
+  const filename = pathname.split('/').at(-1) || '';
+  const extensionIndex = filename.lastIndexOf('.');
+
+  if (extensionIndex === -1 || extensionIndex === filename.length - 1) {
+    return '';
+  }
+  return filename.slice(extensionIndex + 1).toLowerCase();
+};
 
 export function MusicMetaList({
   music,
@@ -77,6 +88,8 @@ export function MusicMetaList({
   music: MusicDetail;
   compact?: boolean;
 }) {
+  const fileType = getMusicFileType(music.asset);
+
   return (
     <MetaList $compact={compact}>
       {music.year ? (
@@ -93,6 +106,14 @@ export function MusicMetaList({
           title="时长"
           icon={<MdAccessTime />}
           text={formatDuration(music.duration)}
+        />
+      ) : null}
+      {fileType ? (
+        <Tag
+          compact={compact}
+          title="文件类型"
+          icon={<MdAudioFile />}
+          text={fileType}
         />
       ) : null}
       {music.size ? (

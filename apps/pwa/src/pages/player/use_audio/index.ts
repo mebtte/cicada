@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { debounce } from 'lodash-es';
 import CustomAudio from '@/utils/custom_audio';
+import { useSetting } from '@/global_states/setting';
+import getMusicPlaybackAsset from '@/utils/music_playback_asset';
 import { QueueMusic } from '../constants';
 import onError from './on_error';
 import eventemitter, { EventType } from '../eventemitter';
@@ -10,12 +12,19 @@ import useAction from './use_action';
 import usePlayRecord from './use_play_record';
 
 function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
+  const musicPlaybackQuality = useSetting((s) => s.musicPlaybackQuality);
   const audio = useMemo(() => {
     if (queueMusic) {
-      return new CustomAudio({ src: queueMusic.asset, extra: queueMusic });
+      return new CustomAudio({
+        src: getMusicPlaybackAsset({
+          asset: queueMusic.asset,
+          quality: musicPlaybackQuality,
+        }),
+        extra: queueMusic,
+      });
     }
     return null;
-  }, [queueMusic]);
+  }, [queueMusic, musicPlaybackQuality]);
 
   const [loading, setLoading] = useState(false);
   const [duration, setDuration] = useState(0);

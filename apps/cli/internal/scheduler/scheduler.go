@@ -327,8 +327,7 @@ func removeOutdatedSharedInvitation() (schedulerJobResult, error) {
 	}, err
 }
 
-// cleanOutdatedFile removes files older than 30 days from cache and thumbnail
-// cache.
+// cleanOutdatedFile removes files older than 30 days from runtime caches.
 func cleanOutdatedFile() (schedulerJobResult, error) {
 	type cleanDir struct {
 		name     string
@@ -337,15 +336,33 @@ func cleanOutdatedFile() (schedulerJobResult, error) {
 	}
 
 	dirs := []cleanDir{
-		{name: "cache", path: config.CacheDir(), skipName: filepath.Base(config.ThumbnailCacheDir())},
+		{
+			name:     "cache",
+			path:     config.CacheDir(),
+			skipName: filepath.Base(config.ThumbnailCacheDir()),
+		},
 		{name: "thumbnail_cache", path: config.ThumbnailCacheDir()},
+		{
+			name: "music_transcode_cache",
+			path: config.MusicTranscodeCacheDir(),
+		},
 	}
 
 	metrics := map[string]int64{}
 	var errs []error
 	var totalRemoved int64
 	for _, dir := range dirs {
-		removed, err := cleanOutdatedEntries(dir.path, 30*24*time.Hour, dir.skipName)
+		skipNames := []string{}
+		if dir.path == config.CacheDir() {
+			skipNames = append(
+				skipNames,
+				filepath.Base(config.ThumbnailCacheDir()),
+				filepath.Base(config.MusicTranscodeCacheDir()),
+			)
+		} else if dir.skipName != "" {
+			skipNames = append(skipNames, dir.skipName)
+		}
+		removed, err := cleanOutdatedEntries(dir.path, 30*24*time.Hour, skipNames...)
 		metrics["removed_"+dir.name+"_entries"] = removed
 		totalRemoved += removed
 		if err != nil {
@@ -375,7 +392,7 @@ func cleanOutdatedSchedulerLog() (schedulerJobResult, error) {
 	}, err
 }
 
-func cleanOutdatedEntries(dir string, ttl time.Duration, skipName string) (int64, error) {
+func cleanOutdatedEntries(dir string, ttl time.Duration, skipNames ...string) (int64, error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -386,8 +403,14 @@ func cleanOutdatedEntries(dir string, ttl time.Duration, skipName string) (int64
 	now := time.Now()
 	var removed int64
 	var errs []error
+	skip := map[string]bool{}
+	for _, name := range skipNames {
+		if name != "" {
+			skip[name] = true
+		}
+	}
 	for _, e := range entries {
-		if skipName != "" && e.Name() == skipName {
+		if skip[e.Name()] {
 			continue
 		}
 		info, err := e.Info()

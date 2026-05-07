@@ -44,6 +44,9 @@ func TestInitializeCreatesThumbnailCacheDirAndLeavesExistingRootCache(t *testing
 	if info, err := os.Stat(config.ThumbnailCacheDir()); err != nil || !info.IsDir() {
 		t.Fatalf("expected thumbnail cache dir, info=%v err=%v", info, err)
 	}
+	if info, err := os.Stat(config.MusicTranscodeCacheDir()); err != nil || !info.IsDir() {
+		t.Fatalf("expected music transcode cache dir, info=%v err=%v", info, err)
+	}
 	if _, err := os.Stat(filepath.Join(dataDir, "trash")); !os.IsNotExist(err) {
 		t.Fatalf("expected runtime trash dir to not be created, err=%v", err)
 	}
