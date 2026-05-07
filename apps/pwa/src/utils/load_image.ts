@@ -1,6 +1,13 @@
 import timeoutFn from '@/utils/timeout';
 import { t } from '@/i18n';
 
+const loadedImageSrcSet = new Set<string>();
+const pendingImageLoadMap = new Map<string, Promise<HTMLImageElement>>();
+
+export function isImageLoaded(url: string) {
+  return loadedImageSrcSet.has(url);
+}
+
 function loadImage(
   url: string,
   {
@@ -11,11 +18,15 @@ function loadImage(
     timeoutErrorGenerator?: (ms: number) => Error;
   } = {},
 ) {
+  const pendingImageLoad = pendingImageLoadMap.get(url);
+  if (pendingImageLoad) {
+    return pendingImageLoad;
+  }
+
   const imgNode = document.createElement('img');
-  imgNode.src = url;
   imgNode.crossOrigin = 'anonymous';
 
-  return Promise.race([
+  const imageLoadPromise = Promise.race([
     new Promise<HTMLImageElement>((resolve, reject) => {
       imgNode.onload = () => resolve(imgNode);
       imgNode.onerror = () =>
@@ -28,7 +39,16 @@ function loadImage(
           : new Error(t('timeout', timeout.toString())),
       ),
     ),
-  ]);
+  ])
+    .then((image) => {
+      loadedImageSrcSet.add(url);
+      return image;
+    })
+    .finally(() => pendingImageLoadMap.delete(url));
+
+  pendingImageLoadMap.set(url, imageLoadPromise);
+  imgNode.src = url;
+  return imageLoadPromise;
 }
 
 export default loadImage;

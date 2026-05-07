@@ -63,6 +63,8 @@ const ProfileCard = styled.section`
   }
 
   @media (max-width: 720px) {
+    padding-inline: 0;
+
     > .avatar-box {
       align-items: center;
     }
@@ -117,6 +119,8 @@ function User() {
   const editAvatar = () =>
     dialog.imageCut({
       title: t('edit_avatar'),
+      inlineFooter: true,
+      cancelVariant: 'ghost',
       onConfirm: async (avatar) => {
         if (!avatar) {
           notice.error(t('empty_avatar_warning'));

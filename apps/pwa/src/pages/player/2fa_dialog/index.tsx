@@ -59,8 +59,8 @@ function TwoFADialog() {
             autoFocus
           />
         </DialogBody>
-        <DialogFooter>
-          <Button onClick={onClose} disabled={loading}>
+        <DialogFooter $inline>
+          <Button variant="ghost" onClick={onClose} disabled={loading}>
             {t('cancel')}
           </Button>
           <Button

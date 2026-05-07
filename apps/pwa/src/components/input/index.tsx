@@ -2,7 +2,10 @@ import {
   forwardRef,
   InputHTMLAttributes,
   ReactNode,
+  useEffect,
   useId,
+  useImperativeHandle,
+  useRef,
 } from 'react';
 import styled, { css } from 'styled-components';
 import { CSS_VAR } from '../theme';
@@ -48,6 +51,7 @@ const Wrapper = styled.div<{
   border-style: solid;
   border-width: 2px;
   cursor: text;
+  -webkit-tap-highlight-color: transparent;
 
   transition:
     border-color 150ms ease-out,
@@ -115,13 +119,20 @@ const NativeInput = styled.input<{ $size: InputSize }>`
   min-width: 0;
   border: none;
   outline: none;
-  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
   font-family: ${FONT};
   font-weight: 600;
   letter-spacing: 0.2px;
   color: rgb(55 55 55);
+  -webkit-tap-highlight-color: transparent;
 
   font-size: ${({ $size }) => SIZE[$size].font}px;
+
+  @media (pointer: coarse) {
+    font-size: ${({ $size }) => Math.max(SIZE[$size].font, 16)}px;
+  }
 
   &::placeholder {
     color: rgb(205 205 205);
@@ -176,13 +187,27 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       id: idProp,
       className,
       style,
+      autoFocus,
       ...rest
     },
     ref,
   ) => {
+    const inputRef = useRef<HTMLInputElement>(null);
     const generatedId = useId();
     const id = idProp ?? generatedId;
     const bottom = error || hint;
+
+    useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
+
+    useEffect(() => {
+      if (!autoFocus) return undefined;
+
+      const frame = window.requestAnimationFrame(() => {
+        inputRef.current?.focus({ preventScroll: true });
+      });
+
+      return () => window.cancelAnimationFrame(frame);
+    }, [autoFocus]);
 
     return (
       <Root className={className} style={style}>
@@ -190,7 +215,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         <Wrapper $size={size} $error={!!error} $disabled={!!disabled}>
           {prefix && <Affix>{prefix}</Affix>}
           <NativeInput
-            ref={ref}
+            ref={inputRef}
             id={id}
             $size={size}
             disabled={disabled}

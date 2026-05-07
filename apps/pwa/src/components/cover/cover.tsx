@@ -2,7 +2,7 @@ import { ImgHTMLAttributes, useLayoutEffect, useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '@/constants/style';
 import DefaultCover from '@/asset/default_cover.jpeg';
-import loadImage from '@/utils/load_image';
+import loadImage, { isImageLoaded } from '@/utils/load_image';
 import logger from '@/utils/logger';
 import { animated, useTransition } from 'react-spring';
 import { CSSVariable } from '@/global_style';
@@ -62,21 +62,39 @@ function Cover({
   defaultSrc?: string;
 } & ImgHTMLAttributes<HTMLDivElement>) {
   const ref = useRef<HTMLDivElement>(null);
-  const [currentSrc, setCurrentSrc] = useState(defaultSrc);
+  const [currentSrc, setCurrentSrc] = useState(() =>
+    src && isImageLoaded(src) ? src : defaultSrc,
+  );
 
   useLayoutEffect(() => {
+    if (!src) {
+      setCurrentSrc(defaultSrc);
+      return;
+    }
+
+    if (isImageLoaded(src)) {
+      setCurrentSrc(src);
+      return;
+    }
+
     setCurrentSrc(defaultSrc);
 
-    if (src) {
-      const unobserve = intersectionObserver.observe(ref.current!, () =>
-        loadImage(src)
-          .then(() => setCurrentSrc(src))
-          .catch((error) =>
-            logger.error(error, `Failed to load cover "${src}"`),
-          ),
-      );
-      return unobserve;
-    }
+    let active = true;
+    const unobserve = intersectionObserver.observe(ref.current!, () =>
+      loadImage(src)
+        .then(() => {
+          if (active) {
+            setCurrentSrc(src);
+          }
+        })
+        .catch((error) =>
+          logger.error(error, `Failed to load cover "${src}"`),
+        ),
+    );
+    return () => {
+      active = false;
+      unobserve();
+    };
   }, [src, defaultSrc]);
 
   const transitions = useTransition(currentSrc, {

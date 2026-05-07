@@ -145,8 +145,13 @@ function ImageCutContent({
           disabled={confirming || canceling}
         />
       </DialogBody>
-      <DialogFooter>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+      <DialogFooter $inline={options.inlineFooter}>
+        <Button
+          variant={options.cancelVariant}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button

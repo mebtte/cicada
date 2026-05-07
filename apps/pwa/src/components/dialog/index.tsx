@@ -28,6 +28,8 @@ import {
   ElementRef,
   forwardRef,
   HTMLAttributes,
+  useEffect,
+  useState,
 } from 'react';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import styled, { keyframes } from 'styled-components';
@@ -37,6 +39,7 @@ import { useTheme, CSS_VAR } from '../theme';
 
 const FONT   = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 const MOBILE = 640; // px — breakpoint between sheet and modal
+const ROOT_Z_INDEX = 9000;
 
 // ─── Animations ───────────────────────────────────────────────────────────────
 
@@ -61,15 +64,87 @@ const modalOut = keyframes`
   to   { opacity: 0; transform: translate(-50%, -48%) scale(0.96); }
 `;
 
+function readVisualViewportStyle(): CSSProperties {
+  if (typeof window === 'undefined') {
+    return {
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100dvh',
+    };
+  }
+
+  const viewport = window.visualViewport;
+
+  if (!viewport) {
+    return {
+      top: 0,
+      left: 0,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+  }
+
+  return {
+    top: `${viewport.offsetTop}px`,
+    left: `${viewport.offsetLeft}px`,
+    width: `${viewport.width}px`,
+    height: `${viewport.height}px`,
+  };
+}
+
+function useVisualViewportStyle() {
+  const [viewportStyle, setViewportStyle] = useState<CSSProperties>(
+    readVisualViewportStyle,
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+
+    let frame = 0;
+    const update = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() =>
+        setViewportStyle(readVisualViewportStyle()),
+      );
+    };
+
+    update();
+
+    const viewport = window.visualViewport;
+    viewport?.addEventListener('resize', update);
+    viewport?.addEventListener('scroll', update);
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      viewport?.removeEventListener('resize', update);
+      viewport?.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
+    };
+  }, []);
+
+  return viewportStyle;
+}
+
 // ─── Overlay ──────────────────────────────────────────────────────────────────
 
-const Overlay = styled(RadixDialog.Overlay)`
+const ViewportFrame = styled.div`
   position: fixed;
+  z-index: ${ROOT_Z_INDEX};
+  pointer-events: none;
+  overflow: hidden;
+`;
+
+const Overlay = styled(RadixDialog.Overlay)`
+  position: absolute;
   inset: 0;
-  z-index: 8999;
   background: rgba(0, 0, 0, 0.42);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
+  pointer-events: auto;
 
   &[data-state='open']   { animation: ${overlayIn}  200ms ease; }
   &[data-state='closed'] { animation: ${overlayOut} 180ms ease; }
@@ -78,19 +153,20 @@ const Overlay = styled(RadixDialog.Overlay)`
 // ─── Panel ────────────────────────────────────────────────────────────────────
 
 const Panel = styled.div`
-  position: fixed;
-  z-index: 9000;
+  position: absolute;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   background: #fff;
   outline: none;
+  pointer-events: auto;
 
   /* ── Mobile: bottom sheet ─────────────────────────────── */
   left: 0;
   right: 0;
   bottom: 0;
-  max-height: 92dvh;
+  max-height: 92%;
   border-radius: 20px 20px 0 0;
   border: 2px solid rgb(220 220 220);
   border-bottom: none;
@@ -106,8 +182,8 @@ const Panel = styled.div`
     right: auto;
     bottom: auto;
     transform: translate(-50%, -50%);
-    width: min(480px, calc(100vw - 48px));
-    max-height: calc(100dvh - 48px);
+    width: min(480px, calc(100% - 48px));
+    max-height: calc(100% - 48px);
     border-radius: 20px;
     border: 2px solid rgb(220 220 220);
     box-shadow: 0 8px 0 rgb(185 185 185);
@@ -187,6 +263,7 @@ export const DialogContent = forwardRef<
   DialogContentProps
 >(({ children, showClose = true, style, ...props }, ref) => {
   const theme = useTheme();
+  const viewportStyle = useVisualViewportStyle();
   const themeVars = {
     [CSS_VAR.colorPrimary]: theme.colorPrimary,
     [CSS_VAR.colorPrimaryShadow]: `color-mix(in srgb, ${theme.colorPrimary} 70%, #000)`,
@@ -194,24 +271,26 @@ export const DialogContent = forwardRef<
 
   return (
     <RadixDialog.Portal>
-      <Overlay />
-      <RadixDialog.Content ref={ref} {...props} asChild>
-        <Panel style={{ ...themeVars, ...style }}>
-          <Handle aria-hidden />
-          {showClose && (
-            <CloseButton aria-label="Close">
-              <svg
-                width={14} height={14} viewBox="0 0 24 24"
-                fill="none" stroke="currentColor"
-                strokeWidth={2.5} strokeLinecap="round"
-              >
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            </CloseButton>
-          )}
-          <ScrollArea>{children}</ScrollArea>
-        </Panel>
-      </RadixDialog.Content>
+      <ViewportFrame style={viewportStyle}>
+        <Overlay />
+        <RadixDialog.Content ref={ref} {...props} asChild>
+          <Panel style={{ ...themeVars, ...style }}>
+            <Handle aria-hidden />
+            {showClose && (
+              <CloseButton aria-label="Close">
+                <svg
+                  width={14} height={14} viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor"
+                  strokeWidth={2.5} strokeLinecap="round"
+                >
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </CloseButton>
+            )}
+            <ScrollArea>{children}</ScrollArea>
+          </Panel>
+        </RadixDialog.Content>
+      </ViewportFrame>
     </RadixDialog.Portal>
   );
 });
@@ -293,19 +372,25 @@ export const DialogBody = styled.div<
 `;
 
 // ─── DialogFooter ─────────────────────────────────────────────────────────────
-// Mobile:  buttons stack full-width (column, primary at bottom)
+// Mobile: buttons stack full-width by default. `$inline` keeps compact dialogs
+// on one row.
 // Desktop: buttons inline, right-aligned
 
-export const DialogFooter = styled.div<HTMLAttributes<HTMLDivElement>>`
+export const DialogFooter = styled.div<
+  HTMLAttributes<HTMLDivElement> & { $inline?: boolean }
+>`
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: ${({ $inline }) => ($inline ? 'row' : 'column')};
+  gap: ${({ $inline }) => ($inline ? '10px' : '8px')};
   padding: 20px 24px;
   padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
   flex-shrink: 0;
 
-  /* full-width buttons on mobile */
-  & > * { width: 100%; }
+  & > * {
+    width: ${({ $inline }) => ($inline ? 'auto' : '100%')};
+    flex: ${({ $inline }) => ($inline ? '1 1 0' : 'initial')};
+    min-width: 0;
+  }
 
   @media (min-width: ${MOBILE}px) {
     flex-direction: row;
@@ -313,7 +398,10 @@ export const DialogFooter = styled.div<HTMLAttributes<HTMLDivElement>>`
     gap: 10px;
     padding-bottom: 20px;
 
-    & > * { width: auto; }
+    & > * {
+      width: auto;
+      flex: initial;
+    }
   }
 `;
 

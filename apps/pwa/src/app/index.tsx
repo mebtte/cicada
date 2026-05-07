@@ -7,10 +7,13 @@ import App from './app';
 import UncaughtError from './uncaught_error';
 import Head from './head';
 import { useTheme } from '@/global_states/theme';
+import usePreventEdgeSwipeNavigation from './use_prevent_edge_swipe_navigation';
 
 const fallback = (error: Error) => <UncaughtError error={error} />;
 
 function Wrapper() {
+  usePreventEdgeSwipeNavigation();
+
   return (
     <ErrorBoundary fallback={fallback}>
       <HashRouter>

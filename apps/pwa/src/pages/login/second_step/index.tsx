@@ -87,6 +87,8 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const onLoginWith2FA = () =>
     dialog.input({
       label: t('2fa_token'),
+      inlineFooter: true,
+      cancelVariant: 'ghost',
       confirmVariant: 'primary',
       onConfirm: async (twoFAToken) => {
         if (!twoFAToken) {
@@ -108,6 +110,8 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
 
   const onLogin = () =>
     dialog.captcha({
+      inlineFooter: true,
+      cancelVariant: 'ghost',
       confirmVariant: 'primary',
       onConfirm: async ({ captchaId, captchaValue }) => {
         try {

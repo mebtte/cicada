@@ -64,6 +64,7 @@ export const GlobalStyle = createGlobalStyle`
 
   html {
     height: 100%;
+    overscroll-behavior-x: none;
 
     ${Object.keys(CSS_VARIABLE_MAP_VALUE)
       .map(
@@ -81,6 +82,7 @@ export const GlobalStyle = createGlobalStyle`
     height: 100%;
 
     overscroll-behavior: contain;
+    overscroll-behavior-x: none;
     overflow: hidden;
 
     margin: 0;

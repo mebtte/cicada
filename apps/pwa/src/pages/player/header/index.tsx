@@ -3,11 +3,7 @@ import styled from 'styled-components';
 import Cover from '@/components/cover';
 import Button from '@/components/button';
 import { MdArrowBack, MdMenu, MdSearch } from 'react-icons/md';
-import {
-  matchPath,
-  useLocation,
-  useNavigate as useRouterNavigate,
-} from 'react-router-dom';
+import { useLocation, useNavigate as useRouterNavigate } from 'react-router-dom';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import Search from './search';
@@ -18,6 +14,7 @@ import useTitlebar from './use_titlebar';
 import { HEADER_HEIGHT } from '../constants';
 import { useTheme } from '@/global_states/theme';
 import { CSSVariable } from '@/global_style';
+import { getIsHeaderBackButtonPath } from './back_button';
 
 const openSidebar = () => e.emit(EventType.MINI_MODE_OPEN_SIDEBAR, null);
 const Style = styled.div`
@@ -33,7 +30,7 @@ const Style = styled.div`
   gap: 18px;
 
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  background: #fff;
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
   box-shadow: 0 3px 0 rgb(214 214 214);
   -webkit-app-region: drag;
@@ -46,20 +43,7 @@ function Header() {
   const { miniMode } = useTheme();
   const title = useTitle();
   const { left, right } = useTitlebar();
-  const musicbillMatch = matchPath(
-    `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL}`,
-    pathname,
-  );
-  const musicMatch = matchPath(
-    `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSIC}`,
-    pathname,
-  );
-  const singerMatch = matchPath(
-    `${ROOT_PATH.PLAYER}${PLAYER_PATH.SINGER}`,
-    pathname,
-  );
-  const showBackButton =
-    miniMode && !!(musicMatch || musicbillMatch || singerMatch);
+  const showBackButton = miniMode && getIsHeaderBackButtonPath(pathname);
 
   return (
     <Style style={{ paddingLeft: left, paddingRight: right }}>

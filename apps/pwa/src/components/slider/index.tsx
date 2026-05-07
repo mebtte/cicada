@@ -21,6 +21,7 @@ const StyledRange = styled(Radix.Range)`
   position: absolute;
   height: 100%;
   background: ${PRIMARY};
+  z-index: 1;
 `;
 
 // 副轨道（缓冲进度）：用主色半透明叠加
@@ -30,6 +31,7 @@ const SecondaryFill = styled.div`
   background: color-mix(in srgb, ${PRIMARY} 30%, transparent);
   transform-origin: left;
   transition: transform 0.3s;
+  z-index: 0;
 `;
 
 // ─── track ────────────────────────────────────────────────────────────────────
@@ -42,10 +44,21 @@ const StyledTrack = styled(Radix.Track)`
   flex: 1;
   height: ${TRACK_H}px;
   background: rgb(229 231 235);
-  border: ${BORDER}px solid ${PRIMARY_SHADOW};
   overflow: hidden;
   box-shadow: 0 ${OFFSET}px 0 ${PRIMARY_SHADOW};
+  isolation: isolate;
   transition: filter 120ms;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    border: ${BORDER}px solid ${PRIMARY_SHADOW};
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 2;
+  }
 `;
 
 // ─── thumb ────────────────────────────────────────────────────────────────────

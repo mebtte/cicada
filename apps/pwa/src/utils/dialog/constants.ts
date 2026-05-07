@@ -25,12 +25,14 @@ interface Confirmable<Payload = void> {
 
 interface Cancelable {
   cancelText?: string;
+  cancelVariant?: Variant;
   onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
 export interface DialogOptions {
   id: string;
   type: DialogType;
+  inlineFooter?: boolean;
 }
 
 export interface Alert extends DialogOptions, Confirmable {

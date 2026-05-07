@@ -32,6 +32,7 @@ const VersionFooter = styled.div`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   text-align: center;
 `;
+const CENTER_TRANSFORM = 'translate(-50%, -50%)';
 
 function Login() {
   const [step, setStep] = useState(Step.FIRST);
@@ -50,13 +51,17 @@ function Login() {
   };
 
   const transitions = useTransition(step, {
+    initial: {
+      opacity: 1,
+      transform: CENTER_TRANSFORM,
+    },
     from: {
       opacity: 0,
       transform: directionRef.current === 1
         ? 'translate(50%, -50%)'
         : 'translate(-150%, -50%)',
     },
-    enter: { opacity: 1, transform: 'translate(-50%, -50%)' },
+    enter: { opacity: 1, transform: CENTER_TRANSFORM },
     leave: {
       opacity: 0,
       transform: directionRef.current === 1
