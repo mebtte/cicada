@@ -64,6 +64,8 @@ All of `cicada` data is under a directory, here is its structure:
 |- cache # app runtime cache under data, cleaned up periodically
   |- thumbnails # resized asset thumbnails
 |- logs
+  |- access # JSONL HTTP access logs, rotated daily and cleaned up periodically
+  |- scheduler # JSONL scheduler job logs, rotated daily and cleaned up periodically
 |- v # data version (monotonic integer, see "Data version" below)
 |- db # the database of sqlite
 |- jwt_secret # its content is secret of jwt

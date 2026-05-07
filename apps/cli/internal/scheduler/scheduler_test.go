@@ -1,15 +1,19 @@
 package scheduler
 
 import (
-	"cicada/internal/config"
-	"cicada/internal/store"
+	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
+
+	"cicada/internal/config"
+	"cicada/internal/store"
 )
 
-func TestCleanOutdatedFileCleansThumbnailContentsWithoutRemovingDir(t *testing.T) {
+func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 	config.Set(config.Config{
 		Mode:      config.ModeProduction,
 		Data:      t.TempDir(),
@@ -18,7 +22,6 @@ func TestCleanOutdatedFileCleansThumbnailContentsWithoutRemovingDir(t *testing.T
 	})
 
 	for _, dir := range []string{
-		config.LogDir(),
 		config.CacheDir(),
 		config.ThumbnailCacheDir(),
 	} {
@@ -59,6 +62,164 @@ func TestCleanOutdatedFileCleansThumbnailContentsWithoutRemovingDir(t *testing.T
 	}
 	if _, err := os.Stat(freshThumbnail); err != nil {
 		t.Fatalf("expected fresh thumbnail cache file to remain: %v", err)
+	}
+}
+
+func TestCleanOutdatedAccessLogRemovesOnlyOldAccessLogs(t *testing.T) {
+	config.Set(config.Config{
+		Mode:      config.ModeProduction,
+		Data:      t.TempDir(),
+		Port:      8000,
+		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+	})
+
+	if err := os.MkdirAll(config.AccessLogDir(), 0755); err != nil {
+		t.Fatalf("mkdir access log dir: %v", err)
+	}
+
+	oldTime := time.Now().Add(-31 * 24 * time.Hour)
+	oldAccessLog := filepath.Join(config.AccessLogDir(), "access-old.log")
+	freshAccessLog := filepath.Join(config.AccessLogDir(), "access-fresh.log")
+	for _, path := range []string{oldAccessLog, freshAccessLog} {
+		if err := os.WriteFile(path, []byte("access"), 0644); err != nil {
+			t.Fatalf("write %s: %v", path, err)
+		}
+	}
+	if err := os.Chtimes(oldAccessLog, oldTime, oldTime); err != nil {
+		t.Fatalf("chtimes old access log: %v", err)
+	}
+
+	cleanOutdatedAccessLog()
+
+	if info, err := os.Stat(config.AccessLogDir()); err != nil || !info.IsDir() {
+		t.Fatalf("expected access log dir to remain, info=%v err=%v", info, err)
+	}
+	if _, err := os.Stat(oldAccessLog); !os.IsNotExist(err) {
+		t.Fatalf("expected old access log to be removed, err=%v", err)
+	}
+	if _, err := os.Stat(freshAccessLog); err != nil {
+		t.Fatalf("expected fresh access log to remain: %v", err)
+	}
+}
+
+func TestCleanOutdatedSchedulerLogRemovesOnlyOldSchedulerLogs(t *testing.T) {
+	config.Set(config.Config{
+		Mode:      config.ModeProduction,
+		Data:      t.TempDir(),
+		Port:      8000,
+		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+	})
+
+	if err := os.MkdirAll(config.SchedulerLogDir(), 0755); err != nil {
+		t.Fatalf("mkdir scheduler log dir: %v", err)
+	}
+
+	oldTime := time.Now().Add(-31 * 24 * time.Hour)
+	oldSchedulerLog := filepath.Join(config.SchedulerLogDir(), "scheduler-old.log")
+	freshSchedulerLog := filepath.Join(config.SchedulerLogDir(), "scheduler-fresh.log")
+	for _, path := range []string{oldSchedulerLog, freshSchedulerLog} {
+		if err := os.WriteFile(path, []byte("scheduler"), 0644); err != nil {
+			t.Fatalf("write %s: %v", path, err)
+		}
+	}
+	if err := os.Chtimes(oldSchedulerLog, oldTime, oldTime); err != nil {
+		t.Fatalf("chtimes old scheduler log: %v", err)
+	}
+
+	cleanOutdatedSchedulerLog()
+
+	if info, err := os.Stat(config.SchedulerLogDir()); err != nil || !info.IsDir() {
+		t.Fatalf("expected scheduler log dir to remain, info=%v err=%v", info, err)
+	}
+	if _, err := os.Stat(oldSchedulerLog); !os.IsNotExist(err) {
+		t.Fatalf("expected old scheduler log to be removed, err=%v", err)
+	}
+	if _, err := os.Stat(freshSchedulerLog); err != nil {
+		t.Fatalf("expected fresh scheduler log to remain: %v", err)
+	}
+}
+
+func TestRunScheduledJobWritesSchedulerLog(t *testing.T) {
+	dir := t.TempDir()
+	logger := newSchedulerLogger(dir)
+
+	runScheduledJob(logger, "test_job", func() (schedulerJobResult, error) {
+		return schedulerJobResult{
+			Summary: "did test work",
+			Metrics: map[string]int64{"items": 2},
+		}, nil
+	})
+
+	records := readSchedulerLogRecords(t, dir)
+	if len(records) != 2 {
+		t.Fatalf("expected 2 scheduler log records, got %d", len(records))
+	}
+	if records[0].Job != "test_job" || records[0].Status != "start" {
+		t.Fatalf("unexpected start record: %+v", records[0])
+	}
+	if records[1].Job != "test_job" || records[1].Status != "finish" {
+		t.Fatalf("unexpected finish record: %+v", records[1])
+	}
+	if records[1].Summary != "did test work" {
+		t.Fatalf("summary = %q", records[1].Summary)
+	}
+	if records[1].Metrics["items"] != 2 {
+		t.Fatalf("metrics = %+v", records[1].Metrics)
+	}
+}
+
+func TestRunScheduledJobLogsError(t *testing.T) {
+	dir := t.TempDir()
+	logger := newSchedulerLogger(dir)
+
+	runScheduledJob(logger, "error_job", func() (schedulerJobResult, error) {
+		return schedulerJobResult{
+			Summary: "removed some files before error",
+			Metrics: map[string]int64{"removed_files": 3},
+		}, errors.New("disk failed")
+	})
+
+	records := readSchedulerLogRecords(t, dir)
+	if len(records) != 2 {
+		t.Fatalf("expected 2 scheduler log records, got %d", len(records))
+	}
+	if records[0].Status != "start" {
+		t.Fatalf("unexpected start record: %+v", records[0])
+	}
+	if records[1].Job != "error_job" || records[1].Status != "error" {
+		t.Fatalf("unexpected error record: %+v", records[1])
+	}
+	if records[1].Summary != "removed some files before error" {
+		t.Fatalf("summary = %q", records[1].Summary)
+	}
+	if records[1].Metrics["removed_files"] != 3 {
+		t.Fatalf("metrics = %+v", records[1].Metrics)
+	}
+	if !strings.Contains(records[1].Error, "disk failed") {
+		t.Fatalf("expected error to contain disk failed, got %q", records[1].Error)
+	}
+}
+
+func TestRunScheduledJobLogsPanic(t *testing.T) {
+	dir := t.TempDir()
+	logger := newSchedulerLogger(dir)
+
+	runScheduledJob(logger, "panic_job", func() (schedulerJobResult, error) {
+		panic("boom")
+	})
+
+	records := readSchedulerLogRecords(t, dir)
+	if len(records) != 2 {
+		t.Fatalf("expected 2 scheduler log records, got %d", len(records))
+	}
+	if records[0].Status != "start" {
+		t.Fatalf("unexpected start record: %+v", records[0])
+	}
+	if records[1].Job != "panic_job" || records[1].Status != "panic" {
+		t.Fatalf("unexpected panic record: %+v", records[1])
+	}
+	if !strings.Contains(records[1].Error, "boom") {
+		t.Fatalf("expected panic error to contain boom, got %q", records[1].Error)
 	}
 }
 
@@ -111,4 +272,24 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 	if _, err := os.Stat(unlinked); !os.IsNotExist(err) {
 		t.Fatalf("expected unlinked asset to be removed, err=%v", err)
 	}
+}
+
+func readSchedulerLogRecords(t *testing.T, dir string) []schedulerLogRecord {
+	t.Helper()
+
+	path := filepath.Join(dir, "scheduler-"+time.Now().Format("2006-01-02")+".log")
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read scheduler log: %v", err)
+	}
+	lines := strings.Split(strings.TrimSpace(string(data)), "\n")
+	records := make([]schedulerLogRecord, 0, len(lines))
+	for _, line := range lines {
+		var record schedulerLogRecord
+		if err := json.Unmarshal([]byte(line), &record); err != nil {
+			t.Fatalf("unmarshal scheduler log: %v", err)
+		}
+		records = append(records, record)
+	}
+	return records
 }

@@ -145,6 +145,8 @@ func Initialize() error {
 		[]string{
 			config.Get().Data,
 			config.LogDir(),
+			config.AccessLogDir(),
+			config.SchedulerLogDir(),
 			config.CacheDir(),
 			config.ThumbnailCacheDir(),
 			config.AssetsDir(),

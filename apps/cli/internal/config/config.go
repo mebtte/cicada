@@ -98,6 +98,8 @@ func DBPath() string              { return filepath.Join(Get().Data, "db") }
 func DBBackupPath() string        { return filepath.Join(Get().Data, "db.backup") }
 func JWTSecretPath() string       { return filepath.Join(Get().Data, "jwt_secret") }
 func LogDir() string              { return filepath.Join(Get().Data, "logs") }
+func AccessLogDir() string        { return filepath.Join(LogDir(), "access") }
+func SchedulerLogDir() string     { return filepath.Join(LogDir(), "scheduler") }
 func CacheDir() string            { return filepath.Join(Get().Data, "cache") }
 func ThumbnailCacheDir() string   { return filepath.Join(CacheDir(), "thumbnails") }
 func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }

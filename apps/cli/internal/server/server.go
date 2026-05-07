@@ -21,6 +21,7 @@ func NewServer() *gin.Engine {
 	if config.Get().Mode == config.ModeDevelopment {
 		r.Use(gin.Logger())
 	}
+	r.Use(middleware.AccessLogger())
 	r.Use(middleware.Recovery())
 	r.Use(corsMiddleware())
 	apidoc.Register(r)
