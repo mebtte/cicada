@@ -80,9 +80,15 @@ function Wrapper() {
     paused: audioPaused,
     duration: audioDuration,
     bufferedPercent: audioBufferedPercent,
+    audio,
   } = useAudio({ queueMusic });
 
-  useMediaSession(queueMusic);
+  useMediaSession({
+    music: queueMusic,
+    audio,
+    paused: audioPaused,
+    duration: audioDuration,
+  });
   useEffect(
     () => e.emit(EventType.CURRENT_MUSIC_CHANGE, { queueMusic }),
     [queueMusic],

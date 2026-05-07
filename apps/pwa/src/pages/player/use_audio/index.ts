@@ -110,6 +110,7 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
     duration,
     paused,
     bufferedPercent,
+    audio,
   };
 }
 
