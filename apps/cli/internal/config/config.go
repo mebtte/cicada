@@ -34,7 +34,7 @@ var AllAssetTypes = []AssetType{
 
 // AssetAcceptMIME defines allowed MIME types per asset type.
 var AssetAcceptMIME = map[AssetType][]string{
-	AssetTypeSingerPhoto:   {"image/jpeg"},
+	AssetTypeSingerPhoto:    {"image/jpeg"},
 	AssetTypeMusicbillCover: {"image/jpeg"},
 	AssetTypeMusicCover:     {"image/jpeg"},
 	AssetTypeUserAvatar:     {"image/jpeg"},
@@ -42,7 +42,7 @@ var AssetAcceptMIME = map[AssetType][]string{
 }
 
 var AssetMaxSize = map[AssetType]int64{
-	AssetTypeSingerPhoto:   2 * 1024 * 1024,
+	AssetTypeSingerPhoto:    2 * 1024 * 1024,
 	AssetTypeMusicbillCover: 2 * 1024 * 1024,
 	AssetTypeMusicCover:     2 * 1024 * 1024,
 	AssetTypeUserAvatar:     2 * 1024 * 1024,
@@ -100,6 +100,7 @@ func JWTSecretPath() string       { return filepath.Join(Get().Data, "jwt_secret
 func TrashDir() string            { return filepath.Join(Get().Data, "trash") }
 func LogDir() string              { return filepath.Join(Get().Data, "logs") }
 func CacheDir() string            { return filepath.Join(Get().Data, "cache") }
+func ThumbnailCacheDir() string   { return filepath.Join(CacheDir(), "thumbnails") }
 func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }
 func AssetDir(t AssetType) string { return filepath.Join(Get().Data, "assets", string(t)) }
 func UpgradeLockPath() string     { return filepath.Join(Get().Data, "upgrade.lock") }

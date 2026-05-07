@@ -34,11 +34,15 @@ func ServeAsset(at config.AssetType) gin.HandlerFunc {
 		if sizeStr := c.Query("size"); sizeStr != "" && at != config.AssetTypeMusic {
 			size, err := strconv.Atoi(sizeStr)
 			if err == nil && size > 0 && size <= imageMaxSize {
-				cacheDir := config.CacheDir()
+				cacheDir := config.ThumbnailCacheDir()
 				cacheName := strconv.Itoa(size) + "_" + filename
 				cachePath := filepath.Join(cacheDir, cacheName)
 
 				if _, err := os.Stat(cachePath); os.IsNotExist(err) {
+					if err := os.MkdirAll(cacheDir, 0755); err != nil {
+						c.Status(http.StatusInternalServerError)
+						return
+					}
 					// check source exists
 					if _, err := os.Stat(assetPath); os.IsNotExist(err) {
 						c.Status(http.StatusNotFound)

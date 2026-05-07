@@ -62,6 +62,7 @@ All of `cicada` data is under a directory, here is its structure:
   |- singer_avatar
   |- user_avatar
 |- cache # app runtime cache under data, cleaned up periodically
+  |- thumbnails # resized asset thumbnails
 |- logs
 |- trash # save removed data temporarily
 |- v # data version (monotonic integer, see "Data version" below)

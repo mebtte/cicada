@@ -183,8 +183,8 @@ func removeOutdatedPlayRecord() {
 	defer rows.Close()
 
 	type userRow struct {
-		ID      string
-		Indate  int64 // days
+		ID     string
+		Indate int64 // days
 	}
 	var users []userRow
 	for rows.Next() {
@@ -213,28 +213,38 @@ func removeOutdatedSharedInvitation() {
 	)
 }
 
-// cleanOutdatedFile removes files older than 30 days from trash, logs, and cache.
+// cleanOutdatedFile removes files older than 30 days from trash, logs, cache,
+// and thumbnail cache.
 func cleanOutdatedFile() {
-	dirs := []string{
-		config.TrashDir(),
-		config.LogDir(),
-		config.CacheDir(),
+	type cleanDir struct {
+		path     string
+		skipName string
+	}
+
+	dirs := []cleanDir{
+		{path: config.TrashDir()},
+		{path: config.LogDir()},
+		{path: config.CacheDir(), skipName: filepath.Base(config.ThumbnailCacheDir())},
+		{path: config.ThumbnailCacheDir()},
 	}
 	ttl := 30 * 24 * time.Hour
 	now := time.Now()
 
 	for _, dir := range dirs {
-		entries, err := os.ReadDir(dir)
+		entries, err := os.ReadDir(dir.path)
 		if err != nil {
 			continue
 		}
 		for _, e := range entries {
+			if dir.skipName != "" && e.Name() == dir.skipName {
+				continue
+			}
 			info, err := e.Info()
 			if err != nil {
 				continue
 			}
 			if now.Sub(info.ModTime()) >= ttl {
-				os.RemoveAll(filepath.Join(dir, e.Name()))
+				os.RemoveAll(filepath.Join(dir.path, e.Name()))
 			}
 		}
 	}
