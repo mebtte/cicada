@@ -1,16 +1,7 @@
 import { type Ref } from 'react';
 import { CSSVariable } from '@/global_style';
-import {
-  MdAccessTime,
-  MdAudioFile,
-  MdFilePresent,
-  MdOutlineCalendarToday,
-  MdOutlineLocalFireDepartment,
-  MdOutlinePostAdd,
-} from 'react-icons/md';
 import styled from 'styled-components';
 import { MusicDetail } from './constants';
-import Tag from './tag';
 
 const Style = styled.section<{ $showTitle: boolean }>`
   padding: ${({ $showTitle }) => ($showTitle ? '22px 20px 0' : '18px 20px 0')};
@@ -42,18 +33,20 @@ const Style = styled.section<{ $showTitle: boolean }>`
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       line-height: 1.3;
     }
+
+    > .meta {
+      margin-top: 10px;
+
+      color: rgb(145 145 145);
+      font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
   }
 `;
-const MetaList = styled.div<{ $compact: boolean }>`
-  width: ${({ $compact }) => ($compact ? '100%' : 'auto')};
-  display: ${({ $compact }) => ($compact ? 'flex' : 'grid')};
-  grid-template-columns: ${({ $compact }) =>
-    $compact ? 'none' : 'repeat(auto-fit, minmax(118px, 1fr))'};
-  align-items: center;
-  justify-content: ${({ $compact }) => ($compact ? 'flex-start' : 'stretch')};
-  flex-wrap: wrap;
-  gap: ${({ $compact }) => ($compact ? '6px' : '10px')};
-`;
+
 const formatDuration = (duration: number) => {
   const minute = Math.floor(duration / 60);
   const second = Math.floor(duration % 60);
@@ -81,63 +74,20 @@ const getMusicFileType = (asset: string) => {
   return filename.slice(extensionIndex + 1).toLowerCase();
 };
 
-export function MusicMetaList({
-  music,
-  compact = false,
-}: {
-  music: MusicDetail;
-  compact?: boolean;
-}) {
+function MusicMetaLine({ music }: { music: MusicDetail }) {
   const fileType = getMusicFileType(music.asset);
+  const metaList = [
+    fileType ? fileType.toUpperCase() : '',
+    music.duration ? formatDuration(music.duration) : '',
+    music.size ? formatFileSize(music.size) : '',
+    music.year ? `${music.year}` : '',
+    `${music.heat} 热度`,
+    `${music.musicbillCount} 乐单`,
+  ].filter(Boolean);
 
-  return (
-    <MetaList $compact={compact}>
-      {music.year ? (
-        <Tag
-          compact={compact}
-          title="发行年份"
-          icon={<MdOutlineCalendarToday />}
-          text={music.year}
-        />
-      ) : null}
-      {music.duration ? (
-        <Tag
-          compact={compact}
-          title="时长"
-          icon={<MdAccessTime />}
-          text={formatDuration(music.duration)}
-        />
-      ) : null}
-      {fileType ? (
-        <Tag
-          compact={compact}
-          title="文件类型"
-          icon={<MdAudioFile />}
-          text={fileType}
-        />
-      ) : null}
-      {music.size ? (
-        <Tag
-          compact={compact}
-          title="文件大小"
-          icon={<MdFilePresent />}
-          text={formatFileSize(music.size)}
-        />
-      ) : null}
-      <Tag
-        compact={compact}
-        title="加入乐单数量"
-        icon={<MdOutlinePostAdd />}
-        text={music.musicbillCount}
-      />
-      <Tag
-        compact={compact}
-        title="热度"
-        icon={<MdOutlineLocalFireDepartment />}
-        text={music.heat}
-      />
-    </MetaList>
-  );
+  return metaList.length ? (
+    <div className="meta">{metaList.join(' · ')}</div>
+  ) : null;
 }
 
 function Info({
@@ -166,6 +116,7 @@ function Info({
             ))}
           </div>
         ) : null}
+        <MusicMetaLine music={music} />
       </div>
     </Style>
   );

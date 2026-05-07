@@ -33,7 +33,7 @@ const Style = styled.div`
   gap: 18px;
 
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-  background: #fff;
+  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
   box-shadow: 0 3px 0 rgb(214 214 214);
   -webkit-app-region: drag;

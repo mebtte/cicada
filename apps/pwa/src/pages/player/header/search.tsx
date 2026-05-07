@@ -97,11 +97,12 @@ function Wrapper() {
   }, []);
 
   return (
-    <SearchForm onSubmit={onSubmit}>
+    <SearchForm onSubmit={onSubmit} autoComplete="off">
       <Input
         ref={ref}
         className="input"
         type="search"
+        autoComplete="off"
         value={keyword}
         onChange={onKeywordChange}
         placeholder={searchLabel}

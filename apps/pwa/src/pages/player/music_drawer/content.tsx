@@ -18,10 +18,8 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerDescription,
-  DrawerClose,
 } from '@/components';
-import Button from '@/components/button';
-import Info, { MusicMetaList } from './info';
+import Info from './info';
 import { MusicDetail } from './constants';
 import Lyric from './lyric';
 import SingerList from './singer_list';
@@ -137,10 +135,6 @@ const HeaderText = styled.div`
   flex: 1;
   min-width: 0;
 `;
-const CloseButton = styled(Button)`
-  flex-shrink: 0;
-  pointer-events: auto;
-`;
 const titleStyle = css`
   margin: 0;
   overflow: hidden;
@@ -195,15 +189,20 @@ const CoverFrame = styled.div<{ $insideDrawer: boolean }>`
     box-shadow: ${({ $insideDrawer }) =>
       $insideDrawer ? 'none' : '0 5px 0 rgb(229 229 229)'};
 
-    > .cover-meta {
+    &::after {
+      content: '';
       position: absolute;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      z-index: 1;
-
-      display: flex;
-      justify-content: flex-start;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: ${({ $insideDrawer }) => ($insideDrawer ? '34%' : '24%')};
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgb(255 255 255 / 0),
+        rgb(255 255 255 / 0.72) 72%,
+        #fff
+      );
     }
   }
 `;
@@ -290,21 +289,6 @@ function Detail({
                 ) : null}
               </HeaderText>
             </HeaderMeta>
-            <DrawerClose asChild>
-              <CloseButton variant="ghost" size="sm" square aria-label="Close">
-                <svg
-                  width={18}
-                  height={18}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                >
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </CloseButton>
-            </DrawerClose>
           </HeaderRow>
         </Header>
       ) : null}
@@ -320,9 +304,6 @@ function Detail({
             <CoverFrame $insideDrawer={insideDrawer}>
               <div className="cover-shell">
                 <Cover src={music.cover} size="100%" shape={Shape.SQUARE} />
-                <div className="cover-meta">
-                  <MusicMetaList music={music} compact />
-                </div>
               </div>
             </CoverFrame>
             <Info

@@ -120,13 +120,9 @@ const Stage = styled.div<{
     width: 280px;
     height: ${({ $count }) => getStageBackdropHeight($count)}px;
 
-    background: radial-gradient(
-      ellipse closest-side at center,
-      rgb(255 255 255 / 0.78) 0%,
-      rgb(255 255 255 / 0.58) 42%,
-      rgb(255 255 255 / 0.18) 68%,
-      rgb(255 255 255 / 0) 100%
-    );
+    background: rgb(255 255 255 / 0.62);
+    border-radius: 50%;
+    filter: blur(24px);
   }
 `;
 
