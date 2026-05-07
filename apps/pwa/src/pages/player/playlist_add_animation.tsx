@@ -93,14 +93,37 @@ const Layer = styled.div`
   pointer-events: none;
 `;
 
-const Stage = styled.div`
+const getStageBackdropTop = (count: number) => -18 + (count - 1) * 17;
+
+const getStageBackdropHeight = (count: number) => 196 + (count - 1) * 34;
+
+const Stage = styled.div<{
+  $count: number;
+}>`
   position: absolute;
   top: 50%;
   left: 50%;
   width: 220px;
   height: 312px;
+  isolation: isolate;
 
   animation: ${stageLife} ${STAGE_DURATION}ms ease-out forwards;
+
+  &::before {
+    content: '';
+
+    z-index: -1;
+
+    position: absolute;
+    top: ${({ $count }) => getStageBackdropTop($count)}px;
+    left: -30px;
+    width: 280px;
+    height: ${({ $count }) => getStageBackdropHeight($count)}px;
+
+    background: rgb(255 255 255 / 0.62);
+    border-radius: 50%;
+    filter: blur(24px);
+  }
 `;
 
 const RowBase = styled.div<{
@@ -211,6 +234,7 @@ function PlaylistAddAnimation() {
       {items.map((item) => (
         <Stage
           key={item.id}
+          $count={item.count}
           onAnimationEnd={(event) => {
             if (event.currentTarget === event.target) {
               setItems((list) => list.filter(({ id }) => id !== item.id));

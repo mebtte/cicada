@@ -83,7 +83,6 @@ registerRoute(
     cacheName: CacheName.ASSET_MEDIA,
     matchOptions: {
       ignoreVary: true,
-      ignoreSearch: true,
       ignoreMethod: true,
     },
     plugins: [

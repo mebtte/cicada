@@ -1,18 +1,19 @@
 import styled, { css } from 'styled-components';
-import { useEffect, type ComponentProps } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ComponentProps,
+} from 'react';
 import { animated, useTransition } from 'react-spring';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import autoScrollbar from '@/style/auto_scrollbar';
-import {
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-  DrawerClose,
-} from '@/components';
-import Button from '@/components/button';
+import { DrawerDescription, DrawerHeader, DrawerTitle } from '@/components';
+import Cover, { Shape } from '@/components/cover';
 import useData from './use_data';
 import { Singer } from './constants';
 import Info from './info';
@@ -52,24 +53,53 @@ const DetailContainer = styled(Container)<{ $floatingControllerOffset: boolean }
     }
   }
 `;
-const Header = styled(DrawerHeader)`
+const Header = styled(DrawerHeader)<{ $visible: boolean }>`
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 72px;
-  padding: 0 16px 0 24px;
+  padding: 0 20px;
   box-sizing: border-box;
 
   display: flex;
   align-items: center;
-`;
-const HeaderRow = styled.div`
-  width: 100%;
+  pointer-events: none;
 
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  background-color: ${({ $visible }) =>
+    $visible ? 'rgb(255 255 255 / 0.92)' : 'transparent'};
+  border-bottom: 1px solid
+    ${({ $visible }) => ($visible ? 'rgb(229 229 229)' : 'transparent')};
+  backdrop-filter: ${({ $visible }) => ($visible ? 'blur(8px)' : 'none')};
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: translateY(${({ $visible }) => ($visible ? 0 : '-4px')});
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
 `;
 const HeaderText = styled.div`
   flex: 1;
   min-width: 0;
+`;
+const HeaderCover = styled.div`
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  margin-right: 10px;
+  padding: 2px;
+  box-sizing: border-box;
+
+  background: #fff;
+  border: 2px solid rgb(229 229 229);
+  border-radius: 12px;
+  box-shadow: 0 4px 0 rgb(229 229 229);
+
+  > .header-cover-image {
+    border-radius: 8px;
+  }
 `;
 const titleStyle = css`
   margin: 0;
@@ -106,7 +136,6 @@ const descriptionStyle = css`
 const SingerDrawerDescription = styled(DrawerDescription)`
   ${descriptionStyle}
 `;
-
 type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
 
 function Detail({
@@ -118,43 +147,83 @@ function Detail({
   singer: Singer;
   insideDrawer: boolean;
 }) {
+  const scrollableRef = useRef<HTMLDivElement | null>(null);
+  const identityRef = useRef<HTMLElement | null>(null);
+  const [showCollapsedHeader, setShowCollapsedHeader] = useState(false);
+  const useCollapsingHeader = insideDrawer;
+
+  const updateCollapsedHeaderVisibility = useCallback(() => {
+    if (!useCollapsingHeader) {
+      setShowCollapsedHeader(false);
+      return;
+    }
+
+    const scrollableElement = scrollableRef.current;
+    const identityElement = identityRef.current;
+    if (!scrollableElement || !identityElement) {
+      setShowCollapsedHeader(false);
+      return;
+    }
+
+    const scrollableRect = scrollableElement.getBoundingClientRect();
+    const identityRect = identityElement.getBoundingClientRect();
+    const nextVisible = identityRect.bottom <= scrollableRect.top + 8;
+    setShowCollapsedHeader((current) =>
+      current === nextVisible ? current : nextVisible,
+    );
+  }, [useCollapsingHeader]);
+
+  useEffect(() => {
+    if (!useCollapsingHeader) {
+      setShowCollapsedHeader(false);
+      return;
+    }
+
+    setShowCollapsedHeader(false);
+    const frame = window.requestAnimationFrame(updateCollapsedHeaderVisibility);
+    return () => window.cancelAnimationFrame(frame);
+  }, [singer.id, updateCollapsedHeaderVisibility, useCollapsingHeader]);
+
   return (
     <DetailContainer
       style={style}
       $floatingControllerOffset={!insideDrawer}
     >
       {insideDrawer ? (
-        <Header>
-          <HeaderRow>
-            <HeaderText>
-              <SingerDrawerTitle>{singer.name}</SingerDrawerTitle>
-              {singer.aliases.length ? (
-                <SingerDrawerDescription>
-                  {singer.aliases.join(' / ')}
-                </SingerDrawerDescription>
-              ) : null}
-            </HeaderText>
-            <DrawerClose asChild>
-              <Button variant="ghost" size="sm" square aria-label="Close">
-                <svg
-                  width={18}
-                  height={18}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                >
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </Button>
-            </DrawerClose>
-          </HeaderRow>
+        <Header $visible={showCollapsedHeader}>
+          {singer.photos[0] ? (
+            <HeaderCover>
+              <Cover
+                className="header-cover-image"
+                src={singer.photos[0].asset}
+                size="100%"
+                shape={Shape.ROUNDED}
+              />
+            </HeaderCover>
+          ) : null}
+          <HeaderText>
+            <SingerDrawerTitle>{singer.name}</SingerDrawerTitle>
+            {singer.aliases.length ? (
+              <SingerDrawerDescription>
+                {singer.aliases.join(' / ')}
+              </SingerDrawerDescription>
+            ) : null}
+          </HeaderText>
         </Header>
       ) : null}
-      <div className="scrollable">
+      <div
+        className="scrollable"
+        ref={scrollableRef}
+        onScroll={
+          useCollapsingHeader ? updateCollapsedHeaderVisibility : undefined
+        }
+      >
         <div className="first-screen">
-          <Info singer={singer} />
+          <Info
+            singer={singer}
+            insideDrawer={insideDrawer}
+            identityRef={identityRef}
+          />
           <MusicList
             musicList={singer.musicList.map((m, index) => ({
               ...m,

@@ -11,7 +11,7 @@ const Placeholder = styled.div`
   width: ${WIDTH}px;
 
   border-right: 2px solid ${CSSVariable.COLOR_BORDER};
-  background: rgb(250 250 250);
+  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   box-shadow: 4px 0 0 rgb(232 232 232 / 0.35);
   overflow: auto;
   ${autoScrollbar}

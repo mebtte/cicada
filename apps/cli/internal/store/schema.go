@@ -142,7 +142,16 @@ var tables = []string{
 func Initialize() error {
 	// Directories
 	dirs := append(
-		[]string{config.Get().Data, config.TrashDir(), config.LogDir(), config.CacheDir(), config.AssetsDir()},
+		[]string{
+			config.Get().Data,
+			config.LogDir(),
+			config.AccessLogDir(),
+			config.SchedulerLogDir(),
+			config.CacheDir(),
+			config.ThumbnailCacheDir(),
+			config.MusicTranscodeCacheDir(),
+			config.AssetsDir(),
+		},
 		func() []string {
 			s := make([]string, len(config.AllAssetTypes))
 			for i, t := range config.AllAssetTypes {

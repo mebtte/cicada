@@ -34,7 +34,7 @@ var AllAssetTypes = []AssetType{
 
 // AssetAcceptMIME defines allowed MIME types per asset type.
 var AssetAcceptMIME = map[AssetType][]string{
-	AssetTypeSingerPhoto:   {"image/jpeg"},
+	AssetTypeSingerPhoto:    {"image/jpeg"},
 	AssetTypeMusicbillCover: {"image/jpeg"},
 	AssetTypeMusicCover:     {"image/jpeg"},
 	AssetTypeUserAvatar:     {"image/jpeg"},
@@ -42,7 +42,7 @@ var AssetAcceptMIME = map[AssetType][]string{
 }
 
 var AssetMaxSize = map[AssetType]int64{
-	AssetTypeSingerPhoto:   2 * 1024 * 1024,
+	AssetTypeSingerPhoto:    2 * 1024 * 1024,
 	AssetTypeMusicbillCover: 2 * 1024 * 1024,
 	AssetTypeMusicCover:     2 * 1024 * 1024,
 	AssetTypeUserAvatar:     2 * 1024 * 1024,
@@ -93,18 +93,22 @@ func Set(c Config) {
 	cfg = c
 }
 
-func DataVersionPath() string     { return filepath.Join(Get().Data, "v") }
-func DBPath() string              { return filepath.Join(Get().Data, "db") }
-func DBBackupPath() string        { return filepath.Join(Get().Data, "db.backup") }
-func JWTSecretPath() string       { return filepath.Join(Get().Data, "jwt_secret") }
-func TrashDir() string            { return filepath.Join(Get().Data, "trash") }
-func LogDir() string              { return filepath.Join(Get().Data, "logs") }
-func CacheDir() string            { return filepath.Join(Get().Data, "cache") }
+func DataVersionPath() string   { return filepath.Join(Get().Data, "v") }
+func DBPath() string            { return filepath.Join(Get().Data, "db") }
+func DBBackupPath() string      { return filepath.Join(Get().Data, "db.backup") }
+func JWTSecretPath() string     { return filepath.Join(Get().Data, "jwt_secret") }
+func LogDir() string            { return filepath.Join(Get().Data, "logs") }
+func AccessLogDir() string      { return filepath.Join(LogDir(), "access") }
+func SchedulerLogDir() string   { return filepath.Join(LogDir(), "scheduler") }
+func CacheDir() string          { return filepath.Join(Get().Data, "cache") }
+func ThumbnailCacheDir() string { return filepath.Join(CacheDir(), "thumbnails") }
+func MusicTranscodeCacheDir() string {
+	return filepath.Join(CacheDir(), "music_transcoded")
+}
 func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }
 func AssetDir(t AssetType) string { return filepath.Join(Get().Data, "assets", string(t)) }
 func UpgradeLockPath() string     { return filepath.Join(Get().Data, "upgrade.lock") }
 func UpgradeJournalPath() string  { return filepath.Join(Get().Data, "upgrade.journal") }
-func UpgradeTrashDir() string     { return filepath.Join(Get().Data, "upgrade.trash") }
 
 // AssetPublicURL returns the public HTTP path for a stored asset filename.
 func AssetPublicURL(filename string, t AssetType) string {

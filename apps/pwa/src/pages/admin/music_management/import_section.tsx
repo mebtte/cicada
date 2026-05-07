@@ -9,7 +9,10 @@ import {
   MdCloudUpload,
   MdMusicNote,
 } from 'react-icons/md';
-import { AssetType, ASSET_TYPE_MAP } from '@/constants/asset';
+import {
+  AssetType,
+  MUSIC_ASSET_ACCEPT_TYPES,
+} from '@/constants/asset';
 import uploadAsset from '@/server/form/upload_asset';
 import createMusic from '@/server/api/create_music';
 import updateMusic from '@/server/api/update_music';
@@ -304,9 +307,7 @@ function ImportSection() {
   const hasSuccessful = items.some((i) => i.status === 'success');
   const hasFailed = items.some((i) => i.status === 'failed');
 
-  const acceptTypes = Object.values(
-    ASSET_TYPE_MAP[AssetType.MUSIC].acceptType,
-  ).flat();
+  const acceptTypes = MUSIC_ASSET_ACCEPT_TYPES;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -326,7 +327,7 @@ function ImportSection() {
         <UploadHint>
           <span className="highlight">{capitalize(t('select_music_files'))}</span>
           <br />
-          {Object.keys(ASSET_TYPE_MAP[AssetType.MUSIC].acceptType).join(' / ')}
+          {t('ffmpeg_supported_audio')}
         </UploadHint>
       </UploadZone>
 

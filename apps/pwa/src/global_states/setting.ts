@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import storage, { Key } from '@/storage';
-import { Setting } from '@/constants/setting';
+import { MusicPlaybackQuality, Setting } from '@/constants/setting';
 import logger from '@/utils/logger';
 import { DEFAULT_LANGUAGE, LANGUAGES, Language } from '@/constants/language';
 
@@ -19,6 +19,7 @@ function getInitialLanguage() {
 const DEFAULT_SETTING: Setting = {
   playerVolume: 1,
   language: getInitialLanguage(),
+  musicPlaybackQuality: MusicPlaybackQuality.SOURCE_BITRATE,
 };
 const initialSetting = await storage.getItem(Key.SETTING);
 export const useSetting = create<Setting>(() => ({
@@ -33,6 +34,16 @@ export const useSetting = create<Setting>(() => ({
 if (!LANGUAGES.includes(useSetting.getState().language)) {
   useSetting.setState({
     language: DEFAULT_LANGUAGE,
+  });
+}
+
+if (
+  !Object.values(MusicPlaybackQuality).includes(
+    useSetting.getState().musicPlaybackQuality,
+  )
+) {
+  useSetting.setState({
+    musicPlaybackQuality: MusicPlaybackQuality.SOURCE_BITRATE,
   });
 }
 

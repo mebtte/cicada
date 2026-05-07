@@ -22,7 +22,7 @@ const AnimatedDiv = styled(animated.div)`
 const MainTitle = styled.div`
   ${ellipsis}
 
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 800;
   line-height: 1.05;
   letter-spacing: 0.2px;
@@ -31,8 +31,8 @@ const MainTitle = styled.div`
 const Description = styled.div`
   ${ellipsis}
 
-  margin-top: 3px;
-  font-size: 12px;
+  margin-top: 4px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: 0.1px;

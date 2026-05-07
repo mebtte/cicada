@@ -48,6 +48,10 @@ class CustomAudio<Extra> {
     return () => this.audio.removeEventListener(eventType, listener);
   }
 
+  getSrc() {
+    return this.audio.src;
+  }
+
   setVolume(volume: number) {
     this.audio.volume = volume;
   }

@@ -12,6 +12,7 @@ import { CSS_VAR } from './theme';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
+const HOVER_SHADOW = 'rgb(214 214 214)';
 
 export type DuolingoTabItem<TabType extends string> = {
   tab: TabType;
@@ -70,6 +71,7 @@ const ActiveBlock = styled.div<{
 const TabButton = styled.button<{ $active: boolean }>`
   position: relative;
   z-index: 1;
+  isolation: isolate;
   flex: 1 1 0;
   min-width: 0;
   height: 34px;
@@ -97,6 +99,22 @@ const TabButton = styled.button<{ $active: boolean }>`
     filter 120ms ease-out,
     transform 120ms ease-out;
 
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 4px;
+    z-index: -1;
+    border: 2px solid ${HOVER_SHADOW};
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 0 ${HOVER_SHADOW};
+    opacity: 0;
+    transition:
+      opacity 120ms ease-out,
+      box-shadow 120ms ease-out;
+    pointer-events: none;
+  }
+
   &:not(:disabled):hover {
     filter: brightness(1.04);
   }
@@ -119,6 +137,22 @@ const TabButton = styled.button<{ $active: boolean }>`
     $active &&
     css`
       color: #fff;
+    `}
+
+  ${({ $active }) =>
+    !$active &&
+    css`
+      &:not(:disabled):hover {
+        &::before {
+          opacity: 1;
+        }
+      }
+
+      &:not(:disabled):active {
+        &::before {
+          box-shadow: none;
+        }
+      }
     `}
 `;
 

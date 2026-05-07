@@ -1,10 +1,7 @@
 package handler
 
 import (
-	"cicada/internal/api"
-	"cicada/internal/api/apperr"
-	"cicada/internal/api/middleware"
-	"cicada/internal/config"
+	"context"
 	"crypto/md5"
 	"fmt"
 	"image"
@@ -12,6 +9,13 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"time"
+
+	"cicada/internal/api"
+	"cicada/internal/api/apperr"
+	"cicada/internal/api/middleware"
+	"cicada/internal/config"
+	"cicada/internal/ffmpeg"
 
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/gin-gonic/gin"
@@ -68,20 +72,29 @@ func UploadAsset(c *gin.Context) {
 			break
 		}
 	}
-	validMIME := false
-	for _, m := range acceptMIMEs {
-		if m == mimeStr {
-			validMIME = true
-			break
+	if at == config.AssetTypeMusic {
+		validAudio, err := uploadedMusicHasAudioStream(c.Request.Context(), data)
+		if err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
 		}
-	}
-	if !validMIME {
-		api.Fail(c, apperr.WrongAssetType)
-		return
-	}
+		if !validAudio {
+			api.Fail(c, apperr.WrongAssetType)
+			return
+		}
+	} else {
+		validMIME := false
+		for _, m := range acceptMIMEs {
+			if m == mimeStr {
+				validMIME = true
+				break
+			}
+		}
+		if !validMIME {
+			api.Fail(c, apperr.WrongAssetType)
+			return
+		}
 
-	// validate image dimensions (must be square) for image asset types
-	if at != config.AssetTypeMusic {
 		if !isSquareImage(data) {
 			api.Fail(c, apperr.WrongParameter)
 			return
@@ -106,6 +119,30 @@ func UploadAsset(c *gin.Context) {
 		"id":   filename,
 		"path": config.AssetPublicURL(filename, at),
 	})
+}
+
+func uploadedMusicHasAudioStream(ctx context.Context, data []byte) (bool, error) {
+	if err := os.MkdirAll(config.CacheDir(), 0755); err != nil {
+		return false, err
+	}
+	tmp, err := os.CreateTemp(config.CacheDir(), "upload_music_*")
+	if err != nil {
+		return false, err
+	}
+	tmpPath := tmp.Name()
+	defer os.Remove(tmpPath)
+
+	if _, err := tmp.Write(data); err != nil {
+		tmp.Close()
+		return false, err
+	}
+	if err := tmp.Close(); err != nil {
+		return false, err
+	}
+
+	probeCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+	return ffmpeg.HasAudioStream(probeCtx, tmpPath)
 }
 
 func isSquareImage(data []byte) bool {
@@ -136,4 +173,3 @@ func (b *bytesReader) Read(p []byte) (int, error) {
 	b.pos += n
 	return n, nil
 }
-

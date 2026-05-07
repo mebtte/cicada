@@ -1,32 +1,44 @@
 package scheduler
 
 import (
-	"cicada/internal/config"
-	"cicada/internal/store"
-	"encoding/json"
+	"database/sql"
+	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"time"
+
+	"cicada/internal/config"
+	"cicada/internal/store"
 
 	"github.com/robfig/cron/v3"
 )
 
+type schedulerJobResult struct {
+	Summary string
+	Metrics map[string]int64
+}
+
+type schedulerJobFunc func() (schedulerJobResult, error)
+
 func Start() {
 	c := cron.New()
+	logger := newSchedulerLogger(config.SchedulerLogDir())
 
 	// Daily jobs spread from 04:00, every 5 minutes apart
 	jobs := []struct {
 		name string
-		fn   func()
+		fn   schedulerJobFunc
 	}{
 		{"remove_outdated_db", removeOutdatedDB},
 		{"remove_no_music_singer", removeNoMusicSinger},
-		{"move_unlinked_asset_to_trash", moveUnlinkedAssetToTrash},
+		{"remove_unlinked_asset", removeUnlinkedAsset},
 		{"remove_outdated_play_record", removeOutdatedPlayRecord},
 		{"remove_outdated_shared_invitation", removeOutdatedSharedInvitation},
 		{"clean_outdated_file", cleanOutdatedFile},
+		{"clean_outdated_access_log", cleanOutdatedAccessLog},
+		{"clean_outdated_scheduler_log", cleanOutdatedSchedulerLog},
 	}
 
 	hour, min := 4, 0
@@ -34,9 +46,7 @@ func Start() {
 		job := job // capture
 		schedule := fmt.Sprintf("%d %d * * *", min, hour)
 		c.AddFunc(schedule, func() {
-			log.Printf("[schedule] %s start", job.name)
-			job.fn()
-			log.Printf("[schedule] %s finish", job.name)
+			runScheduledJob(logger, job.name, job.fn)
 		})
 		min += 5
 		if min >= 60 {
@@ -48,8 +58,50 @@ func Start() {
 	c.Start()
 }
 
+func runScheduledJob(logger *schedulerLogger, name string, fn schedulerJobFunc) {
+	start := time.Now()
+	_ = logger.write(schedulerLogRecord{
+		Time:   start.Format(time.RFC3339Nano),
+		Job:    name,
+		Status: "start",
+	})
+	defer func() {
+		if r := recover(); r != nil {
+			_ = logger.write(schedulerLogRecord{
+				Time:       time.Now().Format(time.RFC3339Nano),
+				Job:        name,
+				Status:     "panic",
+				DurationMS: time.Since(start).Milliseconds(),
+				Error:      fmt.Sprintf("%v\n%s", r, debug.Stack()),
+			})
+		}
+	}()
+
+	result, err := fn()
+	if err != nil {
+		_ = logger.write(schedulerLogRecord{
+			Time:       time.Now().Format(time.RFC3339Nano),
+			Job:        name,
+			Status:     "error",
+			DurationMS: time.Since(start).Milliseconds(),
+			Summary:    result.Summary,
+			Metrics:    result.Metrics,
+			Error:      err.Error(),
+		})
+		return
+	}
+	_ = logger.write(schedulerLogRecord{
+		Time:       time.Now().Format(time.RFC3339Nano),
+		Job:        name,
+		Status:     "finish",
+		DurationMS: time.Since(start).Milliseconds(),
+		Summary:    result.Summary,
+		Metrics:    result.Metrics,
+	})
+}
+
 // removeOutdatedDB deletes expired captcha records.
-func removeOutdatedDB() {
+func removeOutdatedDB() (schedulerJobResult, error) {
 	now := time.Now().UnixMilli()
 	tables := []struct {
 		table     string
@@ -58,64 +110,80 @@ func removeOutdatedDB() {
 	}{
 		{"captcha", "createTimestamp", int64(3 * 24 * time.Hour / time.Millisecond)},
 	}
+	metrics := map[string]int64{}
+	var errs []error
 	for _, t := range tables {
-		store.DB().Exec(
+		affected, err := execRowsAffected(
 			fmt.Sprintf(`DELETE FROM %s WHERE %s <= ?`, t.table, t.col),
 			now-t.ttlMillis,
 		)
+		metrics["deleted_"+t.table] = affected
+		if err != nil {
+			errs = append(errs, fmt.Errorf("delete outdated rows from %s: %w", t.table, err))
+		}
 	}
+	return schedulerJobResult{
+		Summary: "deleted expired database rows",
+		Metrics: metrics,
+	}, errors.Join(errs...)
 }
 
 // removeNoMusicSinger removes singers with no music that were created > 3 days ago.
-func removeNoMusicSinger() {
+func removeNoMusicSinger() (schedulerJobResult, error) {
 	threshold := time.Now().Add(-3 * 24 * time.Hour).UnixMilli()
 	rows, err := store.DB().Query(
-		`SELECT id,name,aliases,createTimestamp FROM singer
+		`SELECT id FROM singer
 		WHERE id NOT IN (SELECT singerId FROM music_singer_relation)
 		AND createTimestamp < ?`, threshold,
 	)
 	if err != nil {
-		return
+		return schedulerJobResult{Summary: "failed to find no-music singers"}, err
 	}
 	defer rows.Close()
 
-	type row struct {
-		ID, Name, Aliases string
-		CreateTimestamp   int64
-	}
-	var singers []row
+	var ids []string
 	for rows.Next() {
-		var s row
-		rows.Scan(&s.ID, &s.Name, &s.Aliases, &s.CreateTimestamp)
-		singers = append(singers, s)
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return schedulerJobResult{Summary: "failed to scan no-music singers"}, err
+		}
+		ids = append(ids, id)
 	}
-	rows.Close()
-
-	if len(singers) == 0 {
-		return
-	}
-
-	ids := make([]string, len(singers))
-	for i, s := range singers {
-		ids[i] = s.ID
+	if err := rows.Err(); err != nil {
+		return schedulerJobResult{Summary: "failed to iterate no-music singers"}, err
 	}
 
-	// write to trash
-	data, _ := json.Marshal(singers)
-	trashPath := filepath.Join(config.TrashDir(),
-		fmt.Sprintf("deleted_singer_%s.json", time.Now().Format("20060102150405")))
-	os.WriteFile(trashPath, data, 0644)
+	metrics := map[string]int64{"candidate_singers": int64(len(ids))}
+	if len(ids) == 0 {
+		return schedulerJobResult{
+			Summary: "no no-music singers older than 3 days",
+			Metrics: metrics,
+		}, nil
+	}
 
 	placeholders := store.Placeholders(len(ids))
 	args := store.Strs2Any(ids)
 	// Delete photos first since they reference singer; the asset files are
-	// reaped by moveUnlinkedAssetToTrash on the next run.
-	store.DB().Exec(`DELETE FROM singer_photo WHERE singerId IN (`+placeholders+`)`, args...)
-	store.DB().Exec(`DELETE FROM singer WHERE id IN (`+placeholders+`)`, args...)
+	// removed by removeUnlinkedAsset on the next run.
+	deletedPhotos, photoErr := execRowsAffected(`DELETE FROM singer_photo WHERE singerId IN (`+placeholders+`)`, args...)
+	metrics["deleted_singer_photos"] = deletedPhotos
+	if photoErr != nil {
+		return schedulerJobResult{
+			Summary: "failed to remove photos for no-music singers",
+			Metrics: metrics,
+		}, photoErr
+	}
+
+	deletedSingers, singerErr := execRowsAffected(`DELETE FROM singer WHERE id IN (`+placeholders+`)`, args...)
+	metrics["deleted_singers"] = deletedSingers
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("removed %d no-music singers older than 3 days", deletedSingers),
+		Metrics: metrics,
+	}, singerErr
 }
 
-// moveUnlinkedAssetToTrash moves asset files not referenced by the DB to trash.
-func moveUnlinkedAssetToTrash() {
+// removeUnlinkedAsset removes asset files not referenced by the DB.
+func removeUnlinkedAsset() (schedulerJobResult, error) {
 	type assetQuery struct {
 		assetType config.AssetType
 		query     string
@@ -128,26 +196,46 @@ func moveUnlinkedAssetToTrash() {
 		{config.AssetTypeMusic, `SELECT DISTINCT asset FROM music WHERE asset != ''`},
 	}
 
+	metrics := map[string]int64{}
+	var errs []error
+	var totalRemoved int64
 	for _, aq := range queries {
+		prefix := string(aq.assetType)
 		rows, err := store.DB().Query(aq.query)
 		if err != nil {
+			errs = append(errs, fmt.Errorf("query linked %s assets: %w", aq.assetType, err))
 			continue
 		}
 		linked := map[string]bool{}
+		scanFailed := false
 		for rows.Next() {
 			var v string
-			rows.Scan(&v)
+			if err := rows.Scan(&v); err != nil {
+				errs = append(errs, fmt.Errorf("scan linked %s asset: %w", aq.assetType, err))
+				scanFailed = true
+				break
+			}
 			if v != "" {
 				linked[v] = true
 			}
 		}
+		if err := rows.Err(); err != nil {
+			errs = append(errs, fmt.Errorf("iterate linked %s assets: %w", aq.assetType, err))
+			scanFailed = true
+		}
 		rows.Close()
+		metrics[prefix+"_linked_files"] = int64(len(linked))
+		if scanFailed {
+			continue
+		}
 
 		dir := config.AssetDir(aq.assetType)
 		entries, err := os.ReadDir(dir)
 		if err != nil {
+			errs = append(errs, fmt.Errorf("read %s asset dir: %w", aq.assetType, err))
 			continue
 		}
+		metrics[prefix+"_scanned_files"] = int64(len(entries))
 
 		var unlinked []string
 		for _, e := range entries {
@@ -159,83 +247,200 @@ func moveUnlinkedAssetToTrash() {
 			continue
 		}
 
-		data, _ := json.Marshal(unlinked)
-		trashPath := filepath.Join(config.TrashDir(),
-			fmt.Sprintf("unlinked_%s_%s.json", aq.assetType, time.Now().Format("20060102")))
-		os.WriteFile(trashPath, data, 0644)
-
+		var removed int64
 		for _, name := range unlinked {
-			src := filepath.Join(dir, name)
-			dst := filepath.Join(config.TrashDir(), name)
-			os.Rename(src, dst)
+			if err := os.Remove(filepath.Join(dir, name)); err != nil {
+				errs = append(errs, fmt.Errorf("remove unlinked %s asset %s: %w", aq.assetType, name, err))
+				continue
+			}
+			removed++
 		}
+		metrics[prefix+"_unlinked_files"] = int64(len(unlinked))
+		metrics[prefix+"_removed_files"] = removed
+		totalRemoved += removed
 	}
+	metrics["removed_files"] = totalRemoved
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("removed %d unlinked asset files", totalRemoved),
+		Metrics: metrics,
+	}, errors.Join(errs...)
 }
 
 // removeOutdatedPlayRecord removes play records older than the user's indate setting.
-func removeOutdatedPlayRecord() {
+func removeOutdatedPlayRecord() (schedulerJobResult, error) {
 	rows, err := store.DB().Query(
 		`SELECT id,musicPlayRecordIndate FROM user WHERE musicPlayRecordIndate != 0`,
 	)
 	if err != nil {
-		return
+		return schedulerJobResult{Summary: "failed to find users with play-record retention"}, err
 	}
 	defer rows.Close()
 
 	type userRow struct {
-		ID      string
-		Indate  int64 // days
+		ID     string
+		Indate int64 // days
 	}
 	var users []userRow
 	for rows.Next() {
 		var u userRow
-		rows.Scan(&u.ID, &u.Indate)
+		if err := rows.Scan(&u.ID, &u.Indate); err != nil {
+			return schedulerJobResult{Summary: "failed to scan users with play-record retention"}, err
+		}
 		users = append(users, u)
 	}
-	rows.Close()
+	if err := rows.Err(); err != nil {
+		return schedulerJobResult{Summary: "failed to iterate users with play-record retention"}, err
+	}
 
+	metrics := map[string]int64{"users_checked": int64(len(users))}
 	now := time.Now().UnixMilli()
+	var errs []error
+	var totalDeleted int64
 	for _, u := range users {
 		threshold := now - u.Indate*24*60*60*1000
-		store.DB().Exec(
+		deleted, err := execRowsAffected(
 			`DELETE FROM music_play_record WHERE userId=? AND timestamp <= ?`,
 			u.ID, threshold,
 		)
+		totalDeleted += deleted
+		if err != nil {
+			errs = append(errs, fmt.Errorf("delete outdated play records for user %s: %w", u.ID, err))
+		}
 	}
+	metrics["deleted_play_records"] = totalDeleted
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("deleted %d outdated play records", totalDeleted),
+		Metrics: metrics,
+	}, errors.Join(errs...)
 }
 
 // removeOutdatedSharedInvitation removes unanswered shared musicbill invitations older than 3 days.
-func removeOutdatedSharedInvitation() {
+func removeOutdatedSharedInvitation() (schedulerJobResult, error) {
 	threshold := time.Now().Add(-3 * 24 * time.Hour).UnixMilli()
-	store.DB().Exec(
+	deleted, err := execRowsAffected(
 		`DELETE FROM shared_musicbill WHERE inviteTimestamp <= ? AND accepted=0`,
 		threshold,
 	)
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("deleted %d unanswered shared musicbill invitations older than 3 days", deleted),
+		Metrics: map[string]int64{"deleted_shared_invitations": deleted},
+	}, err
 }
 
-// cleanOutdatedFile removes files older than 30 days from trash, logs, and cache.
-func cleanOutdatedFile() {
-	dirs := []string{
-		config.TrashDir(),
-		config.LogDir(),
-		config.CacheDir(),
+// cleanOutdatedFile removes files older than 30 days from runtime caches.
+func cleanOutdatedFile() (schedulerJobResult, error) {
+	type cleanDir struct {
+		name     string
+		path     string
+		skipName string
 	}
-	ttl := 30 * 24 * time.Hour
-	now := time.Now()
 
+	dirs := []cleanDir{
+		{
+			name:     "cache",
+			path:     config.CacheDir(),
+			skipName: filepath.Base(config.ThumbnailCacheDir()),
+		},
+		{name: "thumbnail_cache", path: config.ThumbnailCacheDir()},
+		{
+			name: "music_transcode_cache",
+			path: config.MusicTranscodeCacheDir(),
+		},
+	}
+
+	metrics := map[string]int64{}
+	var errs []error
+	var totalRemoved int64
 	for _, dir := range dirs {
-		entries, err := os.ReadDir(dir)
+		skipNames := []string{}
+		if dir.path == config.CacheDir() {
+			skipNames = append(
+				skipNames,
+				filepath.Base(config.ThumbnailCacheDir()),
+				filepath.Base(config.MusicTranscodeCacheDir()),
+			)
+		} else if dir.skipName != "" {
+			skipNames = append(skipNames, dir.skipName)
+		}
+		removed, err := cleanOutdatedEntries(dir.path, 30*24*time.Hour, skipNames...)
+		metrics["removed_"+dir.name+"_entries"] = removed
+		totalRemoved += removed
 		if err != nil {
+			errs = append(errs, fmt.Errorf("clean outdated %s entries: %w", dir.name, err))
+		}
+	}
+	metrics["removed_entries"] = totalRemoved
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("removed %d outdated cache entries", totalRemoved),
+		Metrics: metrics,
+	}, errors.Join(errs...)
+}
+
+func cleanOutdatedAccessLog() (schedulerJobResult, error) {
+	removed, err := cleanOutdatedEntries(config.AccessLogDir(), 30*24*time.Hour, "")
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("removed %d outdated access log entries", removed),
+		Metrics: map[string]int64{"removed_access_log_entries": removed},
+	}, err
+}
+
+func cleanOutdatedSchedulerLog() (schedulerJobResult, error) {
+	removed, err := cleanOutdatedEntries(config.SchedulerLogDir(), 30*24*time.Hour, "")
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("removed %d outdated scheduler log entries", removed),
+		Metrics: map[string]int64{"removed_scheduler_log_entries": removed},
+	}, err
+}
+
+func cleanOutdatedEntries(dir string, ttl time.Duration, skipNames ...string) (int64, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return 0, nil
+		}
+		return 0, err
+	}
+	now := time.Now()
+	var removed int64
+	var errs []error
+	skip := map[string]bool{}
+	for _, name := range skipNames {
+		if name != "" {
+			skip[name] = true
+		}
+	}
+	for _, e := range entries {
+		if skip[e.Name()] {
 			continue
 		}
-		for _, e := range entries {
-			info, err := e.Info()
-			if err != nil {
+		info, err := e.Info()
+		if err != nil {
+			errs = append(errs, fmt.Errorf("stat %s: %w", filepath.Join(dir, e.Name()), err))
+			continue
+		}
+		if now.Sub(info.ModTime()) >= ttl {
+			if err := os.RemoveAll(filepath.Join(dir, e.Name())); err != nil {
+				errs = append(errs, fmt.Errorf("remove %s: %w", filepath.Join(dir, e.Name()), err))
 				continue
 			}
-			if now.Sub(info.ModTime()) >= ttl {
-				os.RemoveAll(filepath.Join(dir, e.Name()))
-			}
+			removed++
 		}
 	}
+	return removed, errors.Join(errs...)
+}
+
+func execRowsAffected(query string, args ...any) (int64, error) {
+	res, err := store.DB().Exec(query, args...)
+	return rowsAffected(res, err)
+}
+
+func rowsAffected(res sql.Result, err error) (int64, error) {
+	if err != nil {
+		return 0, err
+	}
+	affected, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return affected, nil
 }

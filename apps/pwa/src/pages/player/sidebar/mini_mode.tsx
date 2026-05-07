@@ -2,6 +2,7 @@ import { Drawer, DrawerContent } from '@/components';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { CSSVariable } from '@/global_style';
 import Content from './content';
 import e, { EventType } from '../eventemitter';
 import { WIDTH } from './constants';
@@ -10,7 +11,7 @@ const onClose = () => e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
 const ContentWrapper = styled.div`
   height: 100%;
 
-  background: rgb(250 250 250);
+  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
   overflow: auto;
   ${autoScrollbar}
 `;

@@ -30,15 +30,24 @@ func ServeAsset(at config.AssetType) gin.HandlerFunc {
 		assetDir := config.AssetDir(at)
 		assetPath := filepath.Join(assetDir, filename)
 
+		if at == config.AssetTypeMusic {
+			serveMusicAsset(c, filename, assetPath)
+			return
+		}
+
 		// image resize support
 		if sizeStr := c.Query("size"); sizeStr != "" && at != config.AssetTypeMusic {
 			size, err := strconv.Atoi(sizeStr)
 			if err == nil && size > 0 && size <= imageMaxSize {
-				cacheDir := config.CacheDir()
+				cacheDir := config.ThumbnailCacheDir()
 				cacheName := strconv.Itoa(size) + "_" + filename
 				cachePath := filepath.Join(cacheDir, cacheName)
 
 				if _, err := os.Stat(cachePath); os.IsNotExist(err) {
+					if err := os.MkdirAll(cacheDir, 0755); err != nil {
+						c.Status(http.StatusInternalServerError)
+						return
+					}
 					// check source exists
 					if _, err := os.Stat(assetPath); os.IsNotExist(err) {
 						c.Status(http.StatusNotFound)
@@ -59,6 +68,8 @@ func ServeAsset(at config.AssetType) gin.HandlerFunc {
 					}
 				}
 
+				touchFile(cachePath)
+
 				f, err := os.Open(cachePath)
 				if err != nil {
 					c.Status(http.StatusNotFound)
@@ -72,14 +83,23 @@ func ServeAsset(at config.AssetType) gin.HandlerFunc {
 			}
 		}
 
-		f, err := os.Open(assetPath)
-		if err != nil {
-			c.Status(http.StatusNotFound)
-			return
-		}
-		defer f.Close()
-		fi, _ := f.Stat()
-		c.Header("Cache-Control", "public, max-age=31536000, immutable")
-		http.ServeContent(c.Writer, c.Request, filename, fi.ModTime(), f)
+		serveAssetFile(c, assetPath, filename, "public, max-age=31536000, immutable", "")
 	}
+}
+
+func serveAssetFile(c *gin.Context, path, name, cacheControl, contentType string) {
+	f, err := os.Open(path)
+	if err != nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	defer f.Close()
+	fi, _ := f.Stat()
+	if cacheControl != "" {
+		c.Header("Cache-Control", cacheControl)
+	}
+	if contentType != "" {
+		c.Header("Content-Type", contentType)
+	}
+	http.ServeContent(c.Writer, c.Request, name, fi.ModTime(), f)
 }

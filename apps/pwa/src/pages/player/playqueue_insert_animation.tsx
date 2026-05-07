@@ -8,6 +8,7 @@ import eventemitter, { EventType } from './eventemitter';
 import { ZIndex } from './constants';
 
 const MAX_ITEM_COUNT = 4;
+const INSERT_ANIMATION_DURATION = 1280;
 
 interface AnimationItem {
   id: number;
@@ -134,8 +135,22 @@ const Stage = styled.div`
   left: 50%;
   width: 218px;
   height: 160px;
+  isolation: isolate;
 
-  animation: ${stageLife} 920ms ease-out forwards;
+  animation: ${stageLife} ${INSERT_ANIMATION_DURATION}ms ease-out forwards;
+
+  &::before {
+    content: '';
+
+    z-index: -1;
+
+    position: absolute;
+    inset: -34px -30px;
+
+    background: rgb(255 255 255 / 0.62);
+    border-radius: 50%;
+    filter: blur(24px);
+  }
 `;
 
 const QueueRow = styled.div<{
@@ -170,7 +185,8 @@ const QueueRow = styled.div<{
   ${({ $shift, $tail }) =>
     $shift
       ? css`
-          animation: ${$tail ? tailUp : shiftUp} 920ms ease-out forwards;
+          animation: ${$tail ? tailUp : shiftUp}
+            ${INSERT_ANIMATION_DURATION}ms ease-out forwards;
         `
       : null}
 
@@ -194,7 +210,7 @@ const Slot = styled.div`
   border-radius: 12px;
   opacity: 0;
 
-  animation: ${slotPulse} 920ms ease-out forwards;
+  animation: ${slotPulse} ${INSERT_ANIMATION_DURATION}ms ease-out forwards;
 `;
 
 const Incoming = styled.div<{ $direction: number }>`
@@ -216,7 +232,7 @@ const Incoming = styled.div<{ $direction: number }>`
   filter: drop-shadow(0 8px 12px rgb(0 0 0 / 0.08));
 
   animation: ${({ $direction }) => ($direction < 0 ? insertLeft : insertRight)}
-    920ms cubic-bezier(0.18, 0.88, 0.24, 1) forwards;
+    ${INSERT_ANIMATION_DURATION}ms cubic-bezier(0.18, 0.88, 0.24, 1) forwards;
 
   > svg {
     width: 27px;

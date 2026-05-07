@@ -88,6 +88,7 @@ function buildStyles<T, IsMulti extends boolean>(
   size: SelectSize,
   hasError: boolean,
   isDisabled: boolean,
+  isMulti: IsMulti,
 ): StylesConfig<SelectOption<T>, IsMulti, GroupBase<SelectOption<T>>> {
   const s = SIZE[size];
   const shadowColor = `color-mix(in srgb, ${primary} 70%, #000)`;
@@ -121,7 +122,7 @@ function buildStyles<T, IsMulti extends boolean>(
     valueContainer: (_) => ({
       display: 'flex',
       flex: 1,
-      flexWrap: 'wrap' as const,
+      flexWrap: isMulti ? 'wrap' as const : 'nowrap' as const,
       alignItems: 'center',
       padding: `4px ${s.px - 4}px`,
       gap: 4,
@@ -134,6 +135,10 @@ function buildStyles<T, IsMulti extends boolean>(
       fontWeight: 600,
       fontSize: s.font,
       letterSpacing: '0.2px',
+      maxWidth: '100%',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
     }),
     placeholder: (provided) => ({
       ...provided,
@@ -265,7 +270,7 @@ export function Select<T>({
   const inputId = useId();
   const { colorPrimary } = useTheme();
   const styles = useMemo(
-    () => buildStyles<T, false>(colorPrimary, size, !!error, !!disabled),
+    () => buildStyles<T, false>(colorPrimary, size, !!error, !!disabled, false),
     [colorPrimary, size, error, disabled],
   );
 
@@ -331,7 +336,7 @@ export function MultiSelect<T>({
   const inputId = useId();
   const { colorPrimary } = useTheme();
   const styles = useMemo(
-    () => buildStyles<T, true>(colorPrimary, size, !!error, !!disabled),
+    () => buildStyles<T, true>(colorPrimary, size, !!error, !!disabled, true),
     [colorPrimary, size, error, disabled],
   );
 

@@ -57,6 +57,9 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
 export const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
 
   html {
@@ -82,6 +85,20 @@ export const GlobalStyle = createGlobalStyle`
 
     margin: 0;
     padding: 0;
+  }
+
+  input,
+  textarea,
+  [contenteditable='true'],
+  [contenteditable='plaintext-only'] {
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+  }
+
+  img,
+  svg {
+    -webkit-user-drag: none;
   }
 
   #root {
