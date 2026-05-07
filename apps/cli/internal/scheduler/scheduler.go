@@ -3,7 +3,6 @@ package scheduler
 import (
 	"cicada/internal/config"
 	"cicada/internal/store"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -23,7 +22,7 @@ func Start() {
 	}{
 		{"remove_outdated_db", removeOutdatedDB},
 		{"remove_no_music_singer", removeNoMusicSinger},
-		{"move_unlinked_asset_to_trash", moveUnlinkedAssetToTrash},
+		{"remove_unlinked_asset", removeUnlinkedAsset},
 		{"remove_outdated_play_record", removeOutdatedPlayRecord},
 		{"remove_outdated_shared_invitation", removeOutdatedSharedInvitation},
 		{"clean_outdated_file", cleanOutdatedFile},
@@ -70,52 +69,36 @@ func removeOutdatedDB() {
 func removeNoMusicSinger() {
 	threshold := time.Now().Add(-3 * 24 * time.Hour).UnixMilli()
 	rows, err := store.DB().Query(
-		`SELECT id,name,aliases,createTimestamp FROM singer
+		`SELECT id FROM singer
 		WHERE id NOT IN (SELECT singerId FROM music_singer_relation)
 		AND createTimestamp < ?`, threshold,
 	)
 	if err != nil {
 		return
 	}
-	defer rows.Close()
 
-	type row struct {
-		ID, Name, Aliases string
-		CreateTimestamp   int64
-	}
-	var singers []row
+	var ids []string
 	for rows.Next() {
-		var s row
-		rows.Scan(&s.ID, &s.Name, &s.Aliases, &s.CreateTimestamp)
-		singers = append(singers, s)
+		var id string
+		rows.Scan(&id)
+		ids = append(ids, id)
 	}
 	rows.Close()
 
-	if len(singers) == 0 {
+	if len(ids) == 0 {
 		return
 	}
-
-	ids := make([]string, len(singers))
-	for i, s := range singers {
-		ids[i] = s.ID
-	}
-
-	// write to trash
-	data, _ := json.Marshal(singers)
-	trashPath := filepath.Join(config.TrashDir(),
-		fmt.Sprintf("deleted_singer_%s.json", time.Now().Format("20060102150405")))
-	os.WriteFile(trashPath, data, 0644)
 
 	placeholders := store.Placeholders(len(ids))
 	args := store.Strs2Any(ids)
 	// Delete photos first since they reference singer; the asset files are
-	// reaped by moveUnlinkedAssetToTrash on the next run.
+	// removed by removeUnlinkedAsset on the next run.
 	store.DB().Exec(`DELETE FROM singer_photo WHERE singerId IN (`+placeholders+`)`, args...)
 	store.DB().Exec(`DELETE FROM singer WHERE id IN (`+placeholders+`)`, args...)
 }
 
-// moveUnlinkedAssetToTrash moves asset files not referenced by the DB to trash.
-func moveUnlinkedAssetToTrash() {
+// removeUnlinkedAsset removes asset files not referenced by the DB.
+func removeUnlinkedAsset() {
 	type assetQuery struct {
 		assetType config.AssetType
 		query     string
@@ -159,15 +142,8 @@ func moveUnlinkedAssetToTrash() {
 			continue
 		}
 
-		data, _ := json.Marshal(unlinked)
-		trashPath := filepath.Join(config.TrashDir(),
-			fmt.Sprintf("unlinked_%s_%s.json", aq.assetType, time.Now().Format("20060102")))
-		os.WriteFile(trashPath, data, 0644)
-
 		for _, name := range unlinked {
-			src := filepath.Join(dir, name)
-			dst := filepath.Join(config.TrashDir(), name)
-			os.Rename(src, dst)
+			_ = os.Remove(filepath.Join(dir, name))
 		}
 	}
 }
@@ -213,8 +189,8 @@ func removeOutdatedSharedInvitation() {
 	)
 }
 
-// cleanOutdatedFile removes files older than 30 days from trash, logs, cache,
-// and thumbnail cache.
+// cleanOutdatedFile removes files older than 30 days from logs, cache, and
+// thumbnail cache.
 func cleanOutdatedFile() {
 	type cleanDir struct {
 		path     string
@@ -222,7 +198,6 @@ func cleanOutdatedFile() {
 	}
 
 	dirs := []cleanDir{
-		{path: config.TrashDir()},
 		{path: config.LogDir()},
 		{path: config.CacheDir(), skipName: filepath.Base(config.ThumbnailCacheDir())},
 		{path: config.ThumbnailCacheDir()},

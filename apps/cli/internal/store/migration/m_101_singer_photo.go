@@ -49,7 +49,7 @@ func upSingerPhoto(ctx context.Context, env *Env) error {
 		}
 	}
 	// Best-effort cleanup of the (now empty) legacy dir; ignore failures since
-	// a non-empty dir is benign (next moveUnlinkedAssetToTrash run will sweep).
+	// a non-empty dir is benign (next removeUnlinkedAsset run will sweep).
 	if err == nil {
 		_ = os.Remove(oldDir)
 	}

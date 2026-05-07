@@ -2,6 +2,7 @@ package scheduler
 
 import (
 	"cicada/internal/config"
+	"cicada/internal/store"
 	"os"
 	"path/filepath"
 	"testing"
@@ -17,7 +18,6 @@ func TestCleanOutdatedFileCleansThumbnailContentsWithoutRemovingDir(t *testing.T
 	})
 
 	for _, dir := range []string{
-		config.TrashDir(),
 		config.LogDir(),
 		config.CacheDir(),
 		config.ThumbnailCacheDir(),
@@ -59,5 +59,56 @@ func TestCleanOutdatedFileCleansThumbnailContentsWithoutRemovingDir(t *testing.T
 	}
 	if _, err := os.Stat(freshThumbnail); err != nil {
 		t.Fatalf("expected fresh thumbnail cache file to remain: %v", err)
+	}
+}
+
+func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode:      config.ModeProduction,
+		Data:      t.TempDir(),
+		Port:      8000,
+		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+	})
+
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	assetDir := config.AssetDir(config.AssetTypeMusic)
+	linked := filepath.Join(assetDir, "linked.mp3")
+	unlinked := filepath.Join(assetDir, "unlinked.mp3")
+	for _, path := range []string{linked, unlinked} {
+		if err := os.WriteFile(path, []byte("music"), 0644); err != nil {
+			t.Fatalf("write %s: %v", path, err)
+		}
+	}
+
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES ('u','u','p','u',0)`,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES ('m',1,'song','linked.mp3','u',0)`,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+
+	removeUnlinkedAsset()
+
+	if _, err := os.Stat(linked); err != nil {
+		t.Fatalf("expected linked asset to remain: %v", err)
+	}
+	if _, err := os.Stat(unlinked); !os.IsNotExist(err) {
+		t.Fatalf("expected unlinked asset to be removed, err=%v", err)
 	}
 }

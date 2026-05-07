@@ -144,7 +144,6 @@ func Initialize() error {
 	dirs := append(
 		[]string{
 			config.Get().Data,
-			config.TrashDir(),
 			config.LogDir(),
 			config.CacheDir(),
 			config.ThumbnailCacheDir(),
