@@ -18,6 +18,7 @@ import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
 import capitalize from '@/style/capitalize';
+import { IconExternalLink } from '@/components/icon';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
@@ -74,6 +75,13 @@ const Item = styled.button<{ $active: boolean }>`
 
   > .suffix {
     flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+
+    > svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 
   > svg {
@@ -230,9 +238,12 @@ function Menu() {
       {user.admin ? (
         <SidebarItem
           active={false}
-          onClick={() => window.open(`#${ROOT_PATH.ADMIN}`, '_blank')}
+          onClick={() =>
+            window.open(`#${ROOT_PATH.ADMIN}`, '_blank', 'noopener,noreferrer')
+          }
           label={t('admin_panel')}
           icon={<MdAdminPanelSettings />}
+          suffix={<IconExternalLink aria-hidden="true" />}
         />
       ) : null}
     </Style>

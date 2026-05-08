@@ -6,6 +6,6 @@ export const itemStyle: CSSProperties = {
 
 export const buttonItemStyle: CSSProperties = {
   ...itemStyle,
-  display: 'block',
+  display: 'flex',
   width: 'calc(100% - 40px)',
 };
