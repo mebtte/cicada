@@ -36,7 +36,7 @@ import SingerInfo from './singer_info';
 import PublicMusicbillInfo from './public_musicbill_info';
 
 const ITEM_MIN_WIDTH = 164;
-const MOBILE_ITEM_WIDTH = 118;
+const MOBILE_ITEM_WIDTH = 96;
 const GAP = 16;
 const MAX_SECTION_ROW_AMOUNT = 2;
 const MOBILE_BREAKPOINT = 720;
@@ -208,15 +208,21 @@ const Section = styled.section<{
     }
   }
 `;
-const SectionContent = styled.div`
+const SectionContent = styled.div<{
+  $itemMinWidth: number;
+  $mobileItemMinWidth: number;
+}>`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(${ITEM_MIN_WIDTH}px, 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(${({ $itemMinWidth }) => $itemMinWidth}px, 1fr)
+  );
   gap: ${GAP}px;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
     grid-template-columns: repeat(
       auto-fill,
-      minmax(${MOBILE_ITEM_WIDTH}px, 1fr)
+      minmax(${({ $mobileItemMinWidth }) => $mobileItemMinWidth}px, 1fr)
     );
   }
 `;
@@ -226,7 +232,7 @@ const openMusicDrawer = (id: string) =>
 const openSingerDrawer = (id: string) =>
   playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, { id });
 const openMusicbillDrawer = (id: string) =>
-  playerEventemitter.emit(PlayerEventType.OPEN_PUBLIC_MUSICBILL_DRAWER, { id });
+  playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_DRAWER, { id });
 
 function ExplorationSection<Item>({
   title,
@@ -234,6 +240,8 @@ function ExplorationSection<Item>({
   icon,
   accent,
   shadow,
+  itemMinWidth = ITEM_MIN_WIDTH,
+  mobileItemMinWidth = MOBILE_ITEM_WIDTH,
   renderItem,
 }: {
   title: string;
@@ -241,6 +249,8 @@ function ExplorationSection<Item>({
   icon: ReactNode;
   accent: string;
   shadow: string;
+  itemMinWidth?: number;
+  mobileItemMinWidth?: number;
   renderItem: (item: Item) => ReactNode;
 }) {
   if (!items.length) {
@@ -258,17 +268,24 @@ function ExplorationSection<Item>({
       <SizeObserver>
         {({ width }) => {
           const isMobile = width <= MOBILE_BREAKPOINT;
-          const itemMinWidth = isMobile ? MOBILE_ITEM_WIDTH : ITEM_MIN_WIDTH;
+          const activeItemMinWidth = isMobile
+            ? mobileItemMinWidth
+            : itemMinWidth;
           const amountOfOneLine = Math.max(
             1,
-            Math.floor((width + GAP) / (itemMinWidth + GAP)),
+            Math.floor((width + GAP) / (activeItemMinWidth + GAP)),
           );
           const visibleItems = items.slice(
             0,
             amountOfOneLine * MAX_SECTION_ROW_AMOUNT,
           );
           return (
-            <SectionContent>{visibleItems.map(renderItem)}</SectionContent>
+            <SectionContent
+              $itemMinWidth={itemMinWidth}
+              $mobileItemMinWidth={mobileItemMinWidth}
+            >
+              {visibleItems.map(renderItem)}
+            </SectionContent>
           );
         }}
       </SizeObserver>
@@ -368,6 +385,8 @@ function Wrapper() {
                     <Cover
                       key={music.id}
                       accent={ACCENT.MUSIC}
+                      shadow={ACCENT.MUSIC_SHADOW}
+                      variant="record"
                       src={getResizedImage({
                         url: music.cover,
                         size: Math.ceil(
@@ -385,12 +404,16 @@ function Wrapper() {
                   icon={<MdMic />}
                   accent={ACCENT.SINGER}
                   shadow={ACCENT.SINGER_SHADOW}
+                  itemMinWidth={240}
+                  mobileItemMinWidth={148}
                   renderItem={(singer) => {
                     const avatar = singer.photos[0]?.asset;
                     return (
                       <Cover
                         key={singer.id}
                         accent={ACCENT.SINGER}
+                        shadow={ACCENT.SINGER_SHADOW}
+                        variant="profile"
                         src={
                           avatar
                             ? getResizedImage({
@@ -417,6 +440,8 @@ function Wrapper() {
                     <Cover
                       key={publicMusicbill.id}
                       accent={ACCENT.MUSICBILL}
+                      shadow={ACCENT.MUSICBILL_SHADOW}
+                      variant="record"
                       src={getResizedImage({
                         url: publicMusicbill.cover,
                         size: Math.ceil(

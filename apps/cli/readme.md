@@ -4,7 +4,6 @@ Currently, `cicada` can be run on:
 
 - AMD64
   - Linux
-  - macOS
   - Windows
 - ARM64
   - Linux
@@ -28,7 +27,6 @@ make release
 
 Current default providers are:
 
-- `darwin/amd64`: Evermeet release ZIP endpoints
 - `darwin/arm64`: osxexperts Apple Silicon builds
 - `linux/*`, `windows/*`: BtbN latest GPL archives
 

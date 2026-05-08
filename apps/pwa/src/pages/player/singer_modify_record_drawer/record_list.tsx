@@ -13,9 +13,9 @@ import playerEventemitter, {
 } from '../eventemitter';
 
 const KEY_MAP_LABEL: Record<AllowUpdateKey, string> = {
-  [AllowUpdateKey.AVATAR]: '头像',
-  [AllowUpdateKey.NAME]: '名字',
-  [AllowUpdateKey.ALIASES]: '别名',
+  [AllowUpdateKey.AVATAR]: t('avatar'),
+  [AllowUpdateKey.NAME]: t('name'),
+  [AllowUpdateKey.ALIASES]: t('aliases'),
 };
 const Root = styled.div`
   flex: 1;
@@ -116,7 +116,7 @@ function RecordList({ singerId }: { singerId: string }) {
             >
               {record.modifyUserNickname}
             </span>
-            &nbsp;修改了&nbsp;
+            &nbsp;{t('modified')}&nbsp;
             <span className="key">
               {KEY_MAP_LABEL[record.key] || record.key}
             </span>

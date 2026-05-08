@@ -31,7 +31,7 @@ useServer.subscribe((server) =>
     .catch((error) => logger.error(error, 'Failed to store server')),
 );
 
-window.setInterval(() => {
+function refreshSelectedServerMetadata() {
   const selectedServer = getSelectedServer(useServer.getState());
   if (selectedServer) {
     import('@/server/base/get_metadata')
@@ -63,7 +63,13 @@ window.setInterval(() => {
         });
       });
   }
-}, 1000 * (definition.DEVELOPMENT ? 120 : 15));
+}
+
+refreshSelectedServerMetadata();
+window.setInterval(
+  refreshSelectedServerMetadata,
+  1000 * (definition.DEVELOPMENT ? 120 : 15),
+);
 
 export function prefixServerOrigin(path: string) {
   if (path) {

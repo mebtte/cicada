@@ -33,6 +33,7 @@ import {
 import * as RadixDialog from '@radix-ui/react-dialog';
 import styled, { css, keyframes } from 'styled-components';
 import { useTheme, CSS_VAR } from '../theme';
+import { t } from '@/i18n';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 
@@ -207,7 +208,7 @@ export const DrawerContent = forwardRef<
       <RadixDialog.Content ref={ref} {...props} asChild>
         <Panel $side={side} style={{ ...themeVars, zIndex: zIndex + 1, ...style }}>
           {showClose && (
-            <CloseButton aria-label="Close">
+            <CloseButton aria-label={t('close')}>
               <svg
                 width={14} height={14} viewBox="0 0 24 24"
                 fill="none" stroke="currentColor"

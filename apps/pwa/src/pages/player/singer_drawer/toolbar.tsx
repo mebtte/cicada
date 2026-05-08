@@ -19,14 +19,16 @@ const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   bottom: ${({ $floatingControllerOffset }) =>
     $floatingControllerOffset ? CONTROLLER_FLOATING_RESERVED_HEIGHT : 0};
   flex-shrink: 0;
-  height: calc(50px + env(safe-area-inset-bottom, 0));
-  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
+  height: calc(64px + env(safe-area-inset-bottom, 0));
+  padding: 10px 20px calc(14px + env(safe-area-inset-bottom, 0)) 20px;
 
   display: flex;
   align-items: center;
   gap: 10px;
 
-  backdrop-filter: blur(5px);
+  background: rgb(255 255 255 / 0.9);
+  border-top: 2px solid rgb(229 229 229);
+  backdrop-filter: blur(8px);
 
   > .left {
     flex: 1;
@@ -34,7 +36,7 @@ const Style = styled.div<{ $floatingControllerOffset: boolean }>`
 
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 10px;
   }
 `;
 
@@ -52,6 +54,7 @@ function Toolbar({
           square
           variant="ghost"
           size="sm"
+          aria-label={t('add_to_playlist')}
           onClick={() =>
             singer.musicList.length
               ? addMusicListToPlaylist(singer.musicList)

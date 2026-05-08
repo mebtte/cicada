@@ -20,7 +20,10 @@ const NOTICE_TYPE_MAP: Record<
     css: css`
       background-color: ${CSSVariable.COLOR_PRIMARY};
       border-color: ${CSSVariable.COLOR_PRIMARY_ACTIVE};
-      box-shadow: 0 4px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
+      box-shadow:
+        0 4px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE},
+        0 14px 28px rgb(0 0 0 / 0.18),
+        0 0 18px rgb(44 182 125 / 0.28);
     `,
   },
   [NoticeType.ERROR]: {
@@ -28,7 +31,10 @@ const NOTICE_TYPE_MAP: Record<
     css: css`
       background-color: ${CSSVariable.COLOR_DANGEROUS};
       border-color: rgb(190 46 34);
-      box-shadow: 0 4px 0 rgb(190 46 34);
+      box-shadow:
+        0 4px 0 rgb(190 46 34),
+        0 14px 28px rgb(0 0 0 / 0.18),
+        0 0 18px rgb(242 80 66 / 0.24);
     `,
   },
 };
@@ -131,7 +137,8 @@ const Style = styled.div<{ type: NoticeType }>`
 
 function NoticeItem({ notice }: { notice: Notice }) {
   const ref = useRef<HTMLDivElement>(null);
-  const { id, type, duration, content, visible, top, closable } = notice;
+  const { id, type, duration, content, visible, top, closable, showTypeIcon } =
+    notice;
   const onClose = useCallback(() => e.emit(EventType.CLOSE, { id }), [id]);
 
   useLayoutEffect(() => {
@@ -149,7 +156,9 @@ function NoticeItem({ notice }: { notice: Notice }) {
       type={type}
     >
       <div className="top">
-        <div className="type-icon">{NOTICE_TYPE_MAP[type].icon}</div>
+        {showTypeIcon ? (
+          <div className="type-icon">{NOTICE_TYPE_MAP[type].icon}</div>
+        ) : null}
         <div className="content">{content}</div>
         {closable ? (
           <Button className="close" square variant="plain" size="sm" onClick={onClose}>

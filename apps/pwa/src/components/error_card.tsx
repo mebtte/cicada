@@ -6,6 +6,7 @@ import getRandomInteger from '@/utils/generate_random_integer';
 import { MdRefresh } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import { t } from '@/i18n';
 
 const Style = styled.div`
   display: flex;
@@ -59,7 +60,7 @@ function ErrorCard({
       <img
         className="placeholder"
         src={errorImage}
-        alt="error"
+        alt={t('error')}
         crossOrigin="anonymous"
       />
       <div className="error-message">{errorMessage}</div>

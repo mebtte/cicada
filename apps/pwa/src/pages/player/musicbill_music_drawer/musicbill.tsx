@@ -19,6 +19,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import MusicbillCover from '../components/musicbill_cover';
+import { t } from '@/i18n';
 
 const ICON_SIZE = 24;
 const Style = styled.div`
@@ -87,7 +88,7 @@ function Musicbill({
           );
         }
         if (status === RequestStatus.LOADING) {
-          return notice.error('请等待乐单加载完毕');
+          return notice.error(t('musicbill_is_loading'));
         }
         return playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
           id,

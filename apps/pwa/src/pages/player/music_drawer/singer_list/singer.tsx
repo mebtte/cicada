@@ -6,6 +6,7 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import { SingerDetail } from '../constants';
 import e, { EventType } from '../../eventemitter';
 import JpegDefaultSingerAvatar from '@/asset/default_cover.jpeg';
+import { t } from '@/i18n';
 
 const COVER_SIZE = 28;
 const Style = styled.div`
@@ -57,7 +58,7 @@ function Singer({ singer }: { singer: SingerDetail }) {
         shape={Shape.CIRCLE}
         src={getResizedImage({ url: singer.avatar, size: COVER_SIZE * 2 })}
         defaultSrc={JpegDefaultSingerAvatar}
-        alt="singer avatar"
+        alt={t('singer_avatar')}
       />
       <div className="name">{singer.name}</div>
     </Style>

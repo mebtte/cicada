@@ -429,7 +429,7 @@ function AdminPage() {
     <Page>
       <Sidebar $open={sidebarOpen}>
         <SidebarHeader>
-          <BrandLogo src="/logo.png" alt="logo" crossOrigin="anonymous" />
+          <BrandLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
           <BrandText>
             <BrandName>{capitalize(t('cicada'))}</BrandName>
             <BrandSubTitle>{definition.VERSION}</BrandSubTitle>
@@ -437,7 +437,7 @@ function AdminPage() {
           <MobileCloseButton
             type="button"
             onClick={() => setSidebarOpen(false)}
-            aria-label="Close menu"
+            aria-label={t('close_menu')}
           >
             <MdClose size={20} />
           </MobileCloseButton>
@@ -461,7 +461,7 @@ function AdminPage() {
         type="button"
         $open={sidebarOpen}
         onClick={() => setSidebarOpen(false)}
-        aria-label="Close menu overlay"
+        aria-label={t('close_menu_overlay')}
       />
 
       <Main>
@@ -469,7 +469,7 @@ function AdminPage() {
           <MenuToggle
             type="button"
             onClick={() => setSidebarOpen(true)}
-            aria-label="Open menu"
+            aria-label={t('open_menu')}
           >
             <MdMenu size={22} />
           </MenuToggle>

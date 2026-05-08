@@ -3,6 +3,7 @@ import Empty from '@/components/empty';
 import { MusicWithSingerAliases } from '../constants';
 import Music from '../components/music';
 import Context from '../context';
+import { t } from '@/i18n';
 
 const emptyStyle: CSSProperties = {
   padding: '50px 0',
@@ -22,7 +23,7 @@ function MusicList({ musicList }: { musicList: MusicWithSingerAliases[] }) {
       ))}
     </div>
   ) : (
-    <Empty description="暂未收录音乐" style={emptyStyle} />
+    <Empty description={t('no_music_singer_warning')} style={emptyStyle} />
   );
 }
 

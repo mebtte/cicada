@@ -34,6 +34,7 @@ import {
 import * as RadixDialog from '@radix-ui/react-dialog';
 import styled, { keyframes } from 'styled-components';
 import { useTheme, CSS_VAR } from '../theme';
+import { t } from '@/i18n';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 
@@ -277,7 +278,7 @@ export const DialogContent = forwardRef<
           <Panel style={{ ...themeVars, ...style }}>
             <Handle aria-hidden />
             {showClose && (
-              <CloseButton aria-label="Close">
+              <CloseButton aria-label={t('close')}>
                 <svg
                   width={14} height={14} viewBox="0 0 24 24"
                   fill="none" stroke="currentColor"

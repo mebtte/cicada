@@ -10,6 +10,7 @@ import deleteMusicPlayRecord from '@/server/api/delete_music_play_record';
 import { MusicPlayRecord } from '../constants';
 import MusicBase from '../../../components/music_base';
 import e, { EventType } from '../eventemitter';
+import { t } from '@/i18n';
 
 const LineAfter = styled.div``;
 const Addon = styled.div`
@@ -52,7 +53,7 @@ function MusicWithExternalInfo({
             onClick={(event) => {
               event.stopPropagation();
               return dialog.confirm({
-                title: '确定删除该条播放记录吗?',
+                title: t('delete_music_play_record_question'),
                 onConfirm: async () => {
                   try {
                     await deleteMusicPlayRecord(musicPlayRecord.recordId);

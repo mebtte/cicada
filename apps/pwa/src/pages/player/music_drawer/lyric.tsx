@@ -54,10 +54,10 @@ function Lyric({ music }: { music: MusicDetail }) {
               )}
             />
           ) : (
-            <Line>暂未收录歌词</Line>
+            <Line>{t('no_lyric')}</Line>
           )
         ) : (
-          <Line>乐曲, 无歌词</Line>
+          <Line>{t('instrument_without_lyric')}</Line>
         )}
       </div>
     </Style>

@@ -15,6 +15,7 @@ type EventTypeMapData = {
     duration: number;
     content: ReactNode;
     closable: boolean;
+    showTypeIcon: boolean;
   };
   [EventType.CLOSE]: { id: string };
   [EventType.UPDATE_HEIGHT]: { id: string; height: number };

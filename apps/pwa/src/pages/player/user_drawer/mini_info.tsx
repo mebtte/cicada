@@ -6,6 +6,7 @@ import ellipsis from '@/style/ellipsis';
 import { useEffect, useState } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { MINI_INFO_HEIGHT, UserDetail } from './constants';
+import { t } from '@/i18n';
 
 const AVATAR_SIZE = 28;
 const Style = styled.div`
@@ -52,7 +53,7 @@ function MiniInfo({ user }: { user: UserDetail }) {
           size: Math.ceil(AVATAR_SIZE * window.devicePixelRatio),
         })}
         size={AVATAR_SIZE}
-        alt="user avatar"
+        alt={t('user_avatar')}
         shape={Shape.CIRCLE}
       />
       <div className="name">{user.nickname}</div>

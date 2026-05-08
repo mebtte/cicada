@@ -1,6 +1,5 @@
 import { ChangeEventHandler, KeyboardEventHandler, useState } from 'react';
 import styled from 'styled-components';
-import notice from '@/utils/notice';
 import Input from '@/components/input';
 import logger from '@/utils/logger';
 import Button from '@/components/button';
@@ -10,6 +9,9 @@ import Language from './language';
 import ServerList from './server_list';
 import { useServer } from '@/global_states/server';
 import { Divider } from '@/components';
+import definition from '@/definition';
+import { isSameMajorVersion } from '@/utils/version';
+import dialog from '@/utils/dialog';
 
 const Style = styled.div`
   display: flex;
@@ -39,15 +41,34 @@ function FirstStep({
       const existedServer = useServer
         .getState()
         .serverList.find((s) => s.origin === origin);
-      if (existedServer) {
-        useServer.setState({
-          selectedServerOrigin: origin,
+      const { default: getMetadata } = await import(
+        '@/server/base/get_metadata'
+      );
+      const metadata = await getMetadata(origin);
+      if (!isSameMajorVersion(definition.VERSION, metadata.version)) {
+        dialog.alert({
+          content: t(
+            'server_major_version_mismatch',
+            definition.VERSION,
+            metadata.version,
+          ),
         });
+        return;
+      }
+      if (existedServer) {
+        useServer.setState((server) => ({
+          selectedServerOrigin: origin,
+          serverList: server.serverList.map((s) =>
+            s.origin === origin
+              ? {
+                  ...s,
+                  version: metadata.version,
+                  hostname: metadata.hostname,
+                }
+              : s,
+          ),
+        }));
       } else {
-        const { default: getMetadata } = await import(
-          '@/server/base/get_metadata'
-        );
-        const metadata = await getMetadata(origin);
         useServer.setState((server) => ({
           selectedServerOrigin: origin,
           serverList: [
@@ -65,9 +86,10 @@ function FirstStep({
       toNext();
     } catch (error) {
       logger.error(error, `Failed to get origin "${origin}" metadata`);
-      notice.error(t('failed_to_get_server_metadata'));
+      dialog.alert({ content: t('failed_to_get_server_metadata') });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {

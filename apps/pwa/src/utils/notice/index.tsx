@@ -40,14 +40,23 @@ function generateType(type: NoticeType) {
     {
       duration = 5000,
       closable = true,
+      showTypeIcon = true,
     }: {
       duration?: number;
       closable?: boolean;
+      showTypeIcon?: boolean;
     } = {},
   ) => {
     const id = generateRandomString();
 
-    e.emit(EventType.OPEN, { id, type, duration, content, closable });
+    e.emit(EventType.OPEN, {
+      id,
+      type,
+      duration,
+      content,
+      closable,
+      showTypeIcon,
+    });
 
     return id;
   };
