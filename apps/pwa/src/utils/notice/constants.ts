@@ -12,6 +12,7 @@ export interface Notice {
   visible: boolean;
   content: ReactNode;
   closable: boolean;
+  showTypeIcon: boolean;
 
   height: number;
   top: number;

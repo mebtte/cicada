@@ -14,7 +14,7 @@ define stage_ffmpeg_bundle
 	node scripts/prepare_ffmpeg_bundle.mjs --target $(1) --version "$(FFMPEG_VERSION)" $(if $($(2)),--archive "$($(2))") $(if $($(3)),--sha256 "$($(3))")
 endef
 
-.PHONY: pwa release docker clean ffmpeg-bundles ffmpeg-bundle-darwin-arm64 ffmpeg-bundle-darwin-amd64 ffmpeg-bundle-windows-amd64 ffmpeg-bundle-windows-arm64 ffmpeg-bundle-linux-amd64 ffmpeg-bundle-linux-arm64
+.PHONY: pwa release docker clean ffmpeg-bundles ffmpeg-bundle-darwin-arm64 ffmpeg-bundle-windows-amd64 ffmpeg-bundle-windows-arm64 ffmpeg-bundle-linux-amd64 ffmpeg-bundle-linux-arm64
 
 ## 构建 PWA 并嵌入 CLI
 pwa:
@@ -25,9 +25,6 @@ pwa:
 
 ffmpeg-bundle-darwin-arm64:
 	$(call stage_ffmpeg_bundle,darwin-arm64,FFMPEG_ARCHIVE_DARWIN_ARM64,FFMPEG_SHA256_DARWIN_ARM64)
-
-ffmpeg-bundle-darwin-amd64:
-	$(call stage_ffmpeg_bundle,darwin-amd64,FFMPEG_ARCHIVE_DARWIN_AMD64,FFMPEG_SHA256_DARWIN_AMD64)
 
 ffmpeg-bundle-windows-amd64:
 	$(call stage_ffmpeg_bundle,windows-amd64,FFMPEG_ARCHIVE_WINDOWS_AMD64,FFMPEG_SHA256_WINDOWS_AMD64)
@@ -43,7 +40,6 @@ ffmpeg-bundle-linux-arm64:
 
 ffmpeg-bundles: \
 	ffmpeg-bundle-darwin-arm64 \
-	ffmpeg-bundle-darwin-amd64 \
 	ffmpeg-bundle-windows-amd64 \
 	ffmpeg-bundle-windows-arm64 \
 	ffmpeg-bundle-linux-amd64 \
@@ -56,9 +52,6 @@ release: pwa ffmpeg-bundles
 	mkdir -p $(BUILD_DIR)/darwin-arm64
 	$(call build_cli,darwin,arm64,$(BUILD_DIR)/darwin-arm64/cicada)
 	cd $(BUILD_DIR)/darwin-arm64 && tar -zcf ../cicada-$(VERSION)-darwin-arm64.tar.gz cicada
-	mkdir -p $(BUILD_DIR)/darwin-amd64
-	$(call build_cli,darwin,amd64,$(BUILD_DIR)/darwin-amd64/cicada)
-	cd $(BUILD_DIR)/darwin-amd64 && tar -zcf ../cicada-$(VERSION)-darwin-amd64.tar.gz cicada
 	mkdir -p $(BUILD_DIR)/windows-amd64
 	$(call build_cli,windows,amd64,$(BUILD_DIR)/windows-amd64/cicada.exe)
 	cd $(BUILD_DIR)/windows-amd64 && tar -zcf ../cicada-$(VERSION)-windows-amd64.tar.gz cicada.exe
@@ -73,7 +66,6 @@ release: pwa ffmpeg-bundles
 	cd $(BUILD_DIR)/linux-arm64 && tar -zcf ../cicada-$(VERSION)-linux-arm64.tar.gz cicada
 	rm -rf \
 		$(BUILD_DIR)/darwin-arm64    \
-		$(BUILD_DIR)/darwin-amd64    \
 		$(BUILD_DIR)/windows-amd64   \
 		$(BUILD_DIR)/windows-arm64   \
 		$(BUILD_DIR)/linux-amd64     \

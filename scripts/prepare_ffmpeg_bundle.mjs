@@ -9,17 +9,9 @@ const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const TARGET_DIR = path.join(ROOT_DIR, 'apps', 'cli', 'internal', 'ffmpeg');
 const GENERATED_DIR = path.join(TARGET_DIR, 'generated');
 const OSX_EXPERTS_URL = 'https://www.osxexperts.net/';
-const EVERMEET_URL = 'https://evermeet.cx/ffmpeg/';
 const BTBN_RELEASE_BASE = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/';
 
 const TARGETS = {
-  'darwin-amd64': {
-    goos: 'darwin',
-    goarch: 'amd64',
-    ffmpeg: 'ffmpeg',
-    ffprobe: 'ffprobe',
-    provider: 'evermeet',
-  },
   'darwin-arm64': {
     goos: 'darwin',
     goarch: 'arm64',
@@ -286,21 +278,6 @@ async function resolveBtbNSourcePlan(targetConfig) {
   };
 }
 
-async function resolveEvermeetSourcePlan(targetConfig) {
-  return {
-    kind: 'pair',
-    version: 'evermeet-release',
-    ffmpeg: {
-      location: new URL('getrelease/zip', EVERMEET_URL).toString(),
-      fileName: `${targetConfig.ffmpeg}.zip`,
-    },
-    ffprobe: {
-      location: new URL('getrelease/ffprobe/zip', EVERMEET_URL).toString(),
-      fileName: `${targetConfig.ffprobe}.zip`,
-    },
-  };
-}
-
 function parseOsxExpertsBinary(html, binaryName, label) {
   const anchorPattern = new RegExp(
     `<a[^>]+href="([^"]+)"[^>]*>\\s*Download\\s+${binaryName}\\s+([^<]+?)\\s*\\(${label}\\)\\s*<\\/a>`,
@@ -338,8 +315,6 @@ async function resolveDefaultSourcePlan(target, targetConfig) {
   switch (targetConfig.provider) {
     case 'btbn':
       return resolveBtbNSourcePlan(targetConfig);
-    case 'evermeet':
-      return resolveEvermeetSourcePlan(targetConfig);
     case 'osxexperts':
       return resolveOsxExpertsSourcePlan();
     default:

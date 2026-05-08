@@ -44,6 +44,7 @@ function NoticeApp() {
             content: data.content,
             visible: true,
             closable: data.closable,
+            showTypeIcon: data.showTypeIcon,
 
             height: 0,
             top,

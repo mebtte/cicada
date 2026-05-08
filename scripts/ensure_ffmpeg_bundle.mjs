@@ -9,7 +9,6 @@ const GENERATED_DIR = path.join(FFMPEG_DIR, 'generated');
 const PREPARE_SCRIPT = path.join(ROOT_DIR, 'scripts', 'prepare_ffmpeg_bundle.mjs');
 
 const TARGETS = {
-  'darwin-amd64': { ffmpeg: 'ffmpeg', ffprobe: 'ffprobe' },
   'darwin-arm64': { ffmpeg: 'ffmpeg', ffprobe: 'ffprobe' },
   'linux-amd64': { ffmpeg: 'ffmpeg', ffprobe: 'ffprobe' },
   'linux-arm64': { ffmpeg: 'ffmpeg', ffprobe: 'ffprobe' },
