@@ -22,8 +22,8 @@ const reloadMusicbillList = () =>
   e.emit(EventType.RELOAD_MUSICBILL_LIST, { silence: false });
 const Style = styled.div`
   margin: 0 12px;
-  min-height: 42px;
-  padding: 4px 5px 7px 12px;
+  min-height: 40px;
+  padding: 4px 5px 5px 12px;
 
   display: flex;
   align-items: center;
@@ -61,7 +61,7 @@ function Top() {
       <div className="label">{t('musicbill')}</div>
       <ToolButton
         square
-        variant="plain"
+        variant="ghost"
         size="sm"
         onClick={reloadMusicbillList}
         loading={getMusicbillListStatus === RequestStatus.LOADING}
@@ -70,7 +70,7 @@ function Top() {
       </ToolButton>
       <ToolButton
         square
-        variant="plain"
+        variant="primary"
         size="sm"
         onClick={openCreateMusicbillDialog}
       >
@@ -78,7 +78,7 @@ function Top() {
       </ToolButton>
       <ToolButton
         square
-        variant="plain"
+        variant="ghost"
         size="sm"
         disabled={getMusicbillListStatus !== RequestStatus.SUCCESS}
         onClick={() => {
@@ -92,7 +92,7 @@ function Top() {
       </ToolButton>
       <ToolButton
         square
-        variant="plain"
+        variant="ghost"
         size="sm"
         onClick={() =>
           navigate(ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION)

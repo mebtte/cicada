@@ -47,7 +47,13 @@ const Style = styled(NavLink)`
     ${ellipsis}
   }
 
-  &:hover {
+  &:not(.active) {
+    background: #fff;
+    border-color: ${CSSVariable.COLOR_BORDER};
+    box-shadow: 0 3px 0 rgb(232 232 232);
+  }
+
+  &:not(.active):hover {
     color: ${PRIMARY};
     background: #fff;
     border-color: ${CSSVariable.COLOR_BORDER};

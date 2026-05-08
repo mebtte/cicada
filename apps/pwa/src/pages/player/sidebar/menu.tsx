@@ -94,6 +94,19 @@ const Item = styled.button<{ $active: boolean }>`
     box-shadow: 0 3px 0 rgb(232 232 232);
   }
 
+  ${({ $active }) =>
+    !$active &&
+    css`
+      background: #fff;
+      border-color: ${CSSVariable.COLOR_BORDER};
+      box-shadow: 0 3px 0 rgb(232 232 232);
+
+      &:not(:disabled):hover {
+        color: ${PRIMARY};
+        border-color: ${CSSVariable.COLOR_BORDER};
+      }
+    `}
+
   &:not(:disabled):active {
     transform: translateY(3px);
     box-shadow: none;
