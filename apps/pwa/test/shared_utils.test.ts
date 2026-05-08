@@ -27,12 +27,12 @@ test("parseSearch decodes the search string into key-value pairs", () => {
   );
 });
 
-test("header shows back button on player detail pages", () => {
+test("header shows back button on nested player detail pages except musicbill", () => {
   assert.equal(
     getIsHeaderBackButtonPath("/player/musicbill/musicbill-1"),
-    true,
+    false,
   );
-  assert.equal(getIsHeaderBackButtonPath("/musicbill/musicbill-1"), true);
+  assert.equal(getIsHeaderBackButtonPath("/musicbill/musicbill-1"), false);
   assert.equal(getIsHeaderBackButtonPath("/player/music/music-1"), true);
   assert.equal(getIsHeaderBackButtonPath("/player/singer/singer-1"), true);
 
