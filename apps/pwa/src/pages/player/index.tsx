@@ -24,7 +24,7 @@ import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
 import SingerDrawer from './singer_drawer';
 import UserDrawer from './user_drawer';
-import PublicMusicbillDrawer from './public_musicbill_drawer';
+import MusicbillDrawer from './musicbill_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
 import SingerModifyRecordDrawer from './singer_modify_record_drawer';
@@ -150,7 +150,7 @@ function Wrapper() {
       <MusicbillMusicDrawer />
       <SortMusicbillDrawer />
       <UserDrawer />
-      <PublicMusicbillDrawer />
+      <MusicbillDrawer />
       <MusicbillSharedUserDrawer />
       <SingerModifyRecordDrawer />
 

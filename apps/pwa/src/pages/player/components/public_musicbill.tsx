@@ -54,16 +54,16 @@ function PublicMusicbill({
   userId: string;
   userNickname: string;
 }) {
-  const openPublicMusicbillDrawer = () =>
-    playerEventemitter.emit(PlayerEventType.OPEN_PUBLIC_MUSICBILL_DRAWER, {
+  const openMusicbillDrawer = () =>
+    playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_DRAWER, {
       id,
     });
   return (
     <Style {...props}>
-      <div className="cover-box" onClick={openPublicMusicbillDrawer}>
+      <div className="cover-box" onClick={openMusicbillDrawer}>
         <Cover src={cover} size="100%" />
       </div>
-      <div className="name" onClick={openPublicMusicbillDrawer}>
+      <div className="name" onClick={openMusicbillDrawer}>
         {name}
       </div>
       <div className="nickname">

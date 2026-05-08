@@ -232,7 +232,7 @@ const openMusicDrawer = (id: string) =>
 const openSingerDrawer = (id: string) =>
   playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, { id });
 const openMusicbillDrawer = (id: string) =>
-  playerEventemitter.emit(PlayerEventType.OPEN_PUBLIC_MUSICBILL_DRAWER, { id });
+  playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_DRAWER, { id });
 
 function ExplorationSection<Item>({
   title,
