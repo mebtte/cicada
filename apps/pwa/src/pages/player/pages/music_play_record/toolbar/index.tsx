@@ -3,6 +3,7 @@ import Button from '@/components/button';
 import { MdHelpOutline } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { useUser } from '@/global_states/server';
+import { t } from '@/i18n';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../../constants';
@@ -36,19 +37,19 @@ function Toolbar() {
             content: (
               <div>
                 <div>
-                  1. 你的音乐播放记录将
                   {user.musicPlayRecordIndate === 0
-                    ? '无限期保留'
-                    : `保留 ${user.musicPlayRecordIndate} 天`}
-                  , 更多信息请联系管理员
+                    ? t('music_play_record_indefinite_retention_instruction')
+                    : t(
+                        'music_play_record_days_retention_instruction',
+                        user.musicPlayRecordIndate.toString(),
+                      )}
                 </div>
                 <div>
-                  2. 由于浏览器的限制,
-                  有一定的概率在某些极端情况下无法保留音乐播放记录
+                  {t('music_play_record_browser_limit_instruction')}
                 </div>
               </div>
             ),
-            confirmText: '知道了',
+            confirmText: t('got_it'),
           })
         }
       >

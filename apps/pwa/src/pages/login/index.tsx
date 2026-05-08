@@ -5,6 +5,7 @@ import PageContainer from '@/components/page_container';
 import definition from '@/definition';
 import { useSelectedServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
+import { t } from '@/i18n';
 import FirstStep from './first_step';
 import SecondStep from './second_step';
 import { Step } from './constants';
@@ -99,9 +100,9 @@ function Login() {
         <ManagePage onClose={() => setShowManagePage(false)} />
       )}
       <VersionFooter>
-        PWA Version: {definition.VERSION}
+        {t('pwa_version')}: {definition.VERSION}
         {step === Step.SECOND && selectedServer
-          ? ` · Server Version: ${selectedServer.version}`
+          ? ` · ${t('server_version')}: ${selectedServer.version}`
           : ''}
       </VersionFooter>
       <AppRegion />

@@ -13,6 +13,7 @@ import { CommonQuery } from '@/constants';
 import { HEADER_TOKEN } from '@/constants/api';
 import { t } from '@/i18n';
 import { useSetting } from '@/global_states/setting';
+import { isSameMajorVersion } from '@/utils/version';
 
 export enum Method {
   GET = 'get',
@@ -53,6 +54,15 @@ export async function request<Data = void>({
     throw new ErrorWithCode(
       'Not authorized from local',
       ExceptionCode.NOT_AUTHORIZED,
+    );
+  }
+  if (!isSameMajorVersion(definition.VERSION, selectedServer.version)) {
+    throw new Error(
+      t(
+        'server_major_version_mismatch',
+        definition.VERSION,
+        selectedServer.version,
+      ),
     );
   }
 

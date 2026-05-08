@@ -4,6 +4,7 @@ import definition from '@/definition';
 import getRandomInteger from '@/utils/generate_random_integer';
 import { CSSVariable } from '@/global_style';
 import capitalize from '@/style/capitalize';
+import { t } from '@/i18n';
 
 const Style = styled.div`
   display: flex;
@@ -30,7 +31,7 @@ const Style = styled.div`
  */
 function Empty({
   /** 描述 */
-  description = '暂时没有数据',
+  description = t('no_data'),
   ...props
 }: {
   description?: string;
@@ -48,7 +49,7 @@ function Empty({
       <img
         className="placeholder"
         src={emptyImage}
-        alt="empty"
+        alt={t('no_data')}
         crossOrigin="anonymous"
         draggable={false}
       />

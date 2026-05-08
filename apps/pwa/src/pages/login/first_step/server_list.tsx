@@ -5,6 +5,10 @@ import { useServer } from '@/global_states/server';
 import dialog from '@/utils/dialog';
 import { Divider } from '@/components';
 import { FONT, ServerCardItem } from './server_card';
+import definition from '@/definition';
+import { isSameMajorVersion } from '@/utils/version';
+import { useState } from 'react';
+import logger from '@/utils/logger';
 
 const Style = styled.div`
   > .label {
@@ -40,6 +44,7 @@ function ServerList({
   toNext: () => void;
 }) {
   const { serverList } = useServer();
+  const [checkingOrigin, setCheckingOrigin] = useState<string>();
 
   if (!serverList.length) return null;
 
@@ -54,10 +59,47 @@ function ServerList({
             origin={s.origin}
             users={s.users}
             selectedUserId={s.selectedUserId}
-            onClick={() => {
-              if (disabled) return;
-              useServer.setState({ selectedServerOrigin: s.origin });
-              toNext();
+            onClick={async () => {
+              if (disabled || checkingOrigin) return;
+
+              setCheckingOrigin(s.origin);
+              try {
+                const { default: getMetadata } = await import(
+                  '@/server/base/get_metadata'
+                );
+                const metadata = await getMetadata(s.origin);
+                if (!isSameMajorVersion(definition.VERSION, metadata.version)) {
+                  dialog.alert({
+                    content: t(
+                      'server_major_version_mismatch',
+                      definition.VERSION,
+                      metadata.version,
+                    ),
+                  });
+                  return;
+                }
+                useServer.setState((server) => ({
+                  selectedServerOrigin: s.origin,
+                  serverList: server.serverList.map((item) =>
+                    item.origin === s.origin
+                      ? {
+                          ...item,
+                          version: metadata.version,
+                          hostname: metadata.hostname,
+                        }
+                      : item,
+                  ),
+                }));
+                toNext();
+              } catch (error) {
+                logger.error(
+                  error,
+                  `Failed to get origin "${s.origin}" metadata`,
+                );
+                dialog.alert({ content: t('failed_to_get_server_metadata') });
+              } finally {
+                setCheckingOrigin(undefined);
+              }
             }}
             onDelete={(e) => {
               e.stopPropagation();

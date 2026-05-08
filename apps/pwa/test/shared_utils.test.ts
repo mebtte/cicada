@@ -4,6 +4,7 @@ import test from "node:test";
 import capitalize from "../src/utils/capitalize.js";
 import stringArrayEqual from "../src/utils/string_array_equal.js";
 import parseSearch from "../src/utils/parse_search.js";
+import { getMajorVersion, isSameMajorVersion } from "../src/utils/version.js";
 import { getIsHeaderBackButtonPath } from "../src/pages/player/header/back_button.js";
 
 test("capitalize uppercases the first letter of each word", () => {
@@ -25,6 +26,16 @@ test("parseSearch decodes the search string into key-value pairs", () => {
       page: "2",
     },
   );
+});
+
+test("version helpers compare semantic major versions", () => {
+  assert.equal(getMajorVersion("v3.1.0"), 3);
+  assert.equal(getMajorVersion("3.1.0-beta.20260508"), 3);
+  assert.equal(getMajorVersion("unknown"), null);
+
+  assert.equal(isSameMajorVersion("3.1.0", "3.2.0-beta.1"), true);
+  assert.equal(isSameMajorVersion("3.1.0", "4.0.0"), false);
+  assert.equal(isSameMajorVersion("unknown", "4.0.0"), true);
 });
 
 test("header shows back button on nested player detail pages except musicbill", () => {

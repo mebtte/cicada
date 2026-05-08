@@ -7,6 +7,7 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import { Music } from '../constants';
 import MusicInfo from '../components/music_info';
 import { openCreateMusicbillDialog } from '../utils';
+import { t } from '@/i18n';
 
 const Style = styled.div`
   z-index: 1;
@@ -59,8 +60,13 @@ function Top({ music }: { music: Music }) {
         singers={music.singers}
       />
       <div className="header">
-        <div className="title">添加到乐单</div>
-        <Button square variant="plain" size="sm" onClick={openCreateMusicbillDialog}>
+        <div className="title">{t('add_to_musicbill')}</div>
+        <Button
+          square
+          variant="plain"
+          size="sm"
+          onClick={openCreateMusicbillDialog}
+        >
           <MdOutlineAddBox />
         </Button>
       </div>

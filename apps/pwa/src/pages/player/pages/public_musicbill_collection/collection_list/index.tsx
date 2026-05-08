@@ -118,7 +118,7 @@ function CollectionList() {
                   })
                 }
               >
-                发现乐单
+                {t('discover_musicbill')}
               </Button>
             </CardContainer>
           );

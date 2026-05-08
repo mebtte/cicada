@@ -9,6 +9,7 @@ import {
 } from 'react-icons/md';
 import Button, { Size } from '@/components/button';
 import usePagination from './use_pagination';
+import { t } from '@/i18n';
 
 const GAP_MAP: Record<Size, number> = { sm: 5, md: 6, lg: 8 };
 const ELLIPSIS_SIZE: Record<Size, { box: number; icon: number }> = {
@@ -99,7 +100,7 @@ function Pagination({
                 square
                 size={size}
                 variant="ghost"
-                aria-label="First page"
+                aria-label={t('first_page')}
                 disabled={disabled || item.disabled}
                 onClick={() => navTo(1)}
                 icon={<MdFirstPage />}
@@ -112,7 +113,7 @@ function Pagination({
                 square
                 size={size}
                 variant="ghost"
-                aria-label="Last page"
+                aria-label={t('last_page')}
                 disabled={disabled || item.disabled}
                 onClick={() => navTo(count)}
                 icon={<MdLastPage />}
@@ -125,7 +126,7 @@ function Pagination({
                 square
                 size={size}
                 variant="ghost"
-                aria-label="Previous page"
+                aria-label={t('previous_page')}
                 disabled={disabled || item.disabled}
                 onClick={() => navTo(page - 1)}
                 icon={<MdKeyboardArrowLeft />}
@@ -138,7 +139,7 @@ function Pagination({
                 square
                 size={size}
                 variant="ghost"
-                aria-label="Next page"
+                aria-label={t('next_page')}
                 disabled={disabled || item.disabled}
                 onClick={() => navTo(page + 1)}
                 icon={<MdKeyboardArrowRight />}

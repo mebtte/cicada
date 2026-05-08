@@ -160,7 +160,7 @@ function Menu() {
 
   const { downloadingMusicList } = useContext(context);
   return (
-    <Style aria-label="Sidebar">
+    <Style aria-label={t('sidebar')}>
       <SidebarItem
         active={
           pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORATION}` ||

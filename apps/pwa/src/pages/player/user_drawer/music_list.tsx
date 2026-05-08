@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Music from '../components/music';
 import { MusicWithSingerAliases } from '../constants';
 import Context from '../context';
+import { t } from '@/i18n';
 
 const Root = styled.div`
   min-height: 100dvb;
@@ -29,7 +30,7 @@ function MusicList({ musicList }: { musicList: MusicWithSingerAliases[] }) {
       </Root>
     );
   }
-  return <Empty description="暂未创建音乐" style={style} />;
+  return <Empty description={t('no_created_music')} style={style} />;
 }
 
 export default MusicList;

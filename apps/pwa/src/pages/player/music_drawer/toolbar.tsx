@@ -17,6 +17,7 @@ import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
 import { downloadMusicListByFileSystem } from '../utils';
 import addMusicListToPlaylist from '../add_to_playlist';
+import { t } from '@/i18n';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
@@ -65,7 +66,7 @@ function Toolbar({
           square
           variant="primary"
           size="sm"
-          aria-label="Play"
+          aria-label={t('play')}
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, {
               music,
@@ -78,7 +79,7 @@ function Toolbar({
           square
           variant="ghost"
           size="sm"
-          aria-label="Play next"
+          aria-label={t('play_next')}
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
@@ -94,7 +95,7 @@ function Toolbar({
           square
           variant="ghost"
           size="sm"
-          aria-label="Add to musicbill"
+          aria-label={t('add_to_musicbill')}
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
@@ -110,7 +111,7 @@ function Toolbar({
           square
           variant="ghost"
           size="sm"
-          aria-label="Add to playlist"
+          aria-label={t('add_to_playlist')}
           onClick={() => addMusicListToPlaylist([music])}
         >
           <MdPlaylistAdd />
@@ -119,7 +120,7 @@ function Toolbar({
           square
           variant="ghost"
           size="sm"
-          aria-label="Download"
+          aria-label={t('download')}
           onClick={() =>
             ENABLE_FILE_SYSTEM
               ? downloadMusicListByFileSystem([music])

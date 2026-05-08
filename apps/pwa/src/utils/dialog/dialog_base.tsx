@@ -2,6 +2,7 @@ import { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'reac
 import { Dialog, DialogContent, DialogTitle } from '@/components';
 import { DialogOptions } from './constants';
 import e, { EventType } from './eventemitter';
+import { t } from '@/i18n';
 
 const srOnly: CSSProperties = {
   position: 'absolute',
@@ -48,7 +49,7 @@ function DialogBase({
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent showClose={false} aria-describedby={undefined}>
-        <DialogTitle style={srOnly}>Dialog</DialogTitle>
+        <DialogTitle style={srOnly}>{t('dialog')}</DialogTitle>
         {children({ onClose })}
       </DialogContent>
     </Dialog>

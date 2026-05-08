@@ -23,6 +23,7 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import Button from '@/components/button';
 import eventemitter, { EventType } from '@/pages/player/eventemitter';
 import dialog from '@/utils/dialog';
+import { t } from '@/i18n';
 
 const LineAfter = styled.div`
   display: flex;
@@ -131,7 +132,7 @@ function MusicList() {
                           return removeItem();
                         }
                         return dialog.confirm({
-                          content: '确定移除该项吗?',
+                          content: t('remove_download_item_question'),
                           onConfirm: removeItem,
                         });
                       }}
@@ -145,7 +146,7 @@ function MusicList() {
           }}
         />
       ) : (
-        <StyledEmpty description="暂无下载" />
+        <StyledEmpty description={t('no_download')} />
       )}
     </Style>
   );

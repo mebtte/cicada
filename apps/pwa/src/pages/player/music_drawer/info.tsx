@@ -2,6 +2,7 @@ import { type Ref } from 'react';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import { MusicDetail } from './constants';
+import { t } from '@/i18n';
 
 const Style = styled.section<{ $showTitle: boolean }>`
   padding: ${({ $showTitle }) => ($showTitle ? '22px 20px 0' : '18px 20px 0')};
@@ -81,8 +82,8 @@ function MusicMetaLine({ music }: { music: MusicDetail }) {
     music.duration ? formatDuration(music.duration) : '',
     music.size ? formatFileSize(music.size) : '',
     music.year ? `${music.year}` : '',
-    `${music.heat} 热度`,
-    `${music.musicbillCount} 乐单`,
+    t('heat', music.heat.toString()),
+    t('musicbill_count', music.musicbillCount.toString()),
   ].filter(Boolean);
 
   return metaList.length ? (

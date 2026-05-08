@@ -91,7 +91,7 @@ function ManagePage({ onClose }: { onClose: () => void }) {
   return (
     <Wrapper>
       <Header>
-        <BackButton onClick={onClose} aria-label="Back">
+        <BackButton onClick={onClose} aria-label={t('back')}>
           <MdArrowBack />
         </BackButton>
         <Title>{t('manage_origins')}</Title>

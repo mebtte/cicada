@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 import { CSSVariable } from '../global_style';
 import useEvent from '../utils/use_event';
 import selectFile from '../utils/select_file';
+import { t } from '@/i18n';
 
 const Style = styled.div<{ disabled: boolean }>`
   padding: 10px 20px;
@@ -39,7 +40,7 @@ const Style = styled.div<{ disabled: boolean }>`
 `;
 
 function FileSelect({
-  placeholder = '选择文件',
+  placeholder = t('select_file'),
   value,
   onChange,
   disabled = false,

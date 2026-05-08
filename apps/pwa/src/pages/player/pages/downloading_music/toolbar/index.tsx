@@ -8,6 +8,7 @@ import context from '@/pages/player/context';
 import dialog from '@/utils/dialog';
 import eventemitter, { EventType } from '@/pages/player/eventemitter';
 import { DownloadStatus } from '@/pages/player/constants';
+import { t } from '@/i18n';
 
 const Style = styled.div`
   position: absolute;
@@ -37,10 +38,11 @@ function Toolbar() {
         square
         variant="plain"
         size="sm"
+        aria-label={t('clean_all_items')}
         disabled={downloadingMusicList.length === 0}
         onClick={() =>
           dialog.confirm({
-            content: '确定移除所有下载项吗?',
+            content: t('remove_all_download_items_question'),
             onConfirm: () =>
               eventemitter.emit(EventType.DOWNLOAD_MUSIC_LIST_CLEAN_ALL, null),
           })
@@ -52,6 +54,7 @@ function Toolbar() {
         square
         variant="plain"
         size="sm"
+        aria-label={t('retry_failed_items')}
         disabled={!failed}
         onClick={() =>
           eventemitter.emit(EventType.DOWNLOAD_MUSIC_LIST_RETRY_FAILED, null)

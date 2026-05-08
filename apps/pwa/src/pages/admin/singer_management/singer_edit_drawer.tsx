@@ -8,6 +8,7 @@ import { CSSVariable } from '@/global_style';
 import adminGetSinger from '@/server/api/admin_get_singer';
 import SingerEditContent from './singer_edit_content';
 import type { Singer } from './types';
+import { t } from '@/i18n';
 
 const EditDrawerContent = styled(DrawerContent)`
   > div {
@@ -126,8 +127,8 @@ function SingerEditDrawer({
       >
         <CloseButton
           type="button"
-          aria-label="Close"
-          title="Close"
+          aria-label={t('close')}
+          title={t('close')}
           onClick={onClose}
         >
           <MdClose size={20} />
