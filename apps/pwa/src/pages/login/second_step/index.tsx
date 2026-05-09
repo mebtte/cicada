@@ -3,7 +3,12 @@ import { ChangeEventHandler, useState } from 'react';
 import Input from '@/components/input';
 import Button from '@/components/button';
 import { t } from '@/i18n';
-import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '@/constants/user';
+import {
+  isPasswordLengthValid,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  USERNAME_MAX_LENGTH,
+} from '@/constants/user';
 import logger from '@/utils/logger';
 import login from '@/server/base/login';
 import loginWith2FA from '@/server/base/login_with_2fa';
@@ -84,8 +89,22 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       path: query.redirect || ROOT_PATH.PLAYER,
     });
   };
-  const onLoginWith2FA = () =>
-    dialog.input({
+  const passwordLengthWarning = () =>
+    t(
+      'password_length_warning',
+      PASSWORD_MIN_LENGTH.toString(),
+      PASSWORD_MAX_LENGTH.toString(),
+    );
+  const validatePasswordLength = () => {
+    if (isPasswordLengthValid(password)) return true;
+
+    notice.error(passwordLengthWarning());
+    return false;
+  };
+  const onLoginWith2FA = () => {
+    if (!validatePasswordLength()) return;
+
+    return dialog.input({
       label: t('2fa_token'),
       inlineFooter: true,
       cancelVariant: 'ghost',
@@ -107,9 +126,12 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         }
       },
     });
+  };
 
-  const onLogin = () =>
-    dialog.captcha({
+  const onLogin = () => {
+    if (!validatePasswordLength()) return;
+
+    return dialog.captcha({
       inlineFooter: true,
       cancelVariant: 'ghost',
       confirmVariant: 'primary',
@@ -139,6 +161,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         }
       },
     });
+  };
 
   return (
     <Style>
@@ -156,6 +179,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         type="password"
         value={password}
         onChange={onPasswordChange}
+        minLength={PASSWORD_MIN_LENGTH}
         maxLength={PASSWORD_MAX_LENGTH}
         onKeyDown={(event) => {
           if (

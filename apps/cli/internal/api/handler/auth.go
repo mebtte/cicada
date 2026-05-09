@@ -49,7 +49,7 @@ type loginBody struct {
 
 func Login(c *gin.Context) {
 	var body loginBody
-	if err := c.ShouldBindJSON(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil || !validPasswordLength(body.Password) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
@@ -107,7 +107,7 @@ type login2FABody struct {
 
 func LoginWith2FA(c *gin.Context) {
 	var body login2FABody
-	if err := c.ShouldBindJSON(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil || !validPasswordLength(body.Password) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}

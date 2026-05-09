@@ -56,6 +56,7 @@ function ServerList({
           <ServerCardItem
             key={s.origin}
             hostname={s.hostname}
+            version={s.version}
             origin={s.origin}
             users={s.users}
             selectedUserId={s.selectedUserId}

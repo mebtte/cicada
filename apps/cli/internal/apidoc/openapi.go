@@ -844,7 +844,7 @@ func operations() []operation {
 					[]string{"username", "password"},
 					map[string]any{
 						"username": strSchema("Username.", "alice"),
-						"password": strSchema("Password.", "secret"),
+						"password": passwordSchema(),
 						"remark":   strSchema("Remark.", "test account"),
 					},
 				),
@@ -858,7 +858,7 @@ func operations() []operation {
 			Method:      "PUT",
 			Path:        "/api/admin/user",
 			Summary:     "Admin update user settings",
-			Description: "Update user remarks and quota settings using the key/value pattern.",
+			Description: "Update user password, remarks, and quota settings using the key/value pattern.",
 			Tags:        []string{"Admin"},
 			Auth:        true,
 			Admin:       true,
@@ -1239,6 +1239,13 @@ func strSchema(desc, example string) map[string]any {
 	return out
 }
 
+func passwordSchema() map[string]any {
+	out := strSchema("Password, 6-32 characters.", "secret")
+	out["minLength"] = 6
+	out["maxLength"] = 32
+	return out
+}
+
 func strEnumSchema(values []string, example string) map[string]any {
 	enumVals := make([]any, 0, len(values))
 	for _, v := range values {
@@ -1356,7 +1363,7 @@ func loginRequestSchema() map[string]any {
 		[]string{"username", "password", "captchaId", "captchaValue"},
 		map[string]any{
 			"username":     strSchema("Username.", "cicada"),
-			"password":     strSchema("Password.", "cicada"),
+			"password":     passwordSchema(),
 			"captchaId":    strSchema("Captcha ID.", "9c4a0f42"),
 			"captchaValue": strSchema("Captcha value.", "5k7n"),
 		},
@@ -1368,7 +1375,7 @@ func login2FARequestSchema() map[string]any {
 		[]string{"username", "password", "twoFAToken"},
 		map[string]any{
 			"username":   strSchema("Username.", "cicada"),
-			"password":   strSchema("Password.", "cicada"),
+			"password":   passwordSchema(),
 			"twoFAToken": strSchema("6-digit TOTP token.", "123456"),
 		},
 	)
@@ -1381,7 +1388,7 @@ func updateProfileRequestSchema() map[string]any {
 			"key": strEnumSchema([]string{"password", "avatar", "nickname", "musicbillOrders"}, "nickname"),
 			"value": map[string]any{
 				"oneOf": []any{
-					strSchema("String value.", "Cicada"),
+					strSchema("String value. Password values must be 6-32 characters.", "Cicada"),
 					intSchema("Integer value.", 1),
 					boolSchema("Boolean value.", true),
 					arraySchema(strSchema("", "musicbill-1")),
@@ -2079,7 +2086,7 @@ func adminUpdateUserRequestSchema() map[string]any {
 		[]string{"id", "key"},
 		map[string]any{
 			"id":    strSchema("User ID.", "10001"),
-			"key":   strEnumSchema([]string{"remark", "musicbillMaxAmount", "createMusicMaxAmountPerDay", "musicPlayRecordIndate"}, "remark"),
+			"key":   strEnumSchema([]string{"password", "remark", "musicbillMaxAmount", "createMusicMaxAmountPerDay", "musicPlayRecordIndate"}, "remark"),
 			"value": flexibleValueSchema(),
 		},
 	)

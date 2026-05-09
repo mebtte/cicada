@@ -186,6 +186,7 @@ const zhCN: {
   new_password: '新的密码',
   confirm_new_password: '确认新的密码',
   passwords_do_not_match: '两次密码不一致',
+  password_length_warning: '密码长度应为 %s1-%s2 位',
   password_has_changed: '密码已修改',
   enable_2fa: '启用 2FA',
   disable_2fa: '禁用 2FA',

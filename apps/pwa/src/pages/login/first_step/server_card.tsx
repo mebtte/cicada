@@ -38,14 +38,32 @@ export const ServerCard = styled.div`
     flex-direction: column;
     gap: 2px;
 
-    > .hostname {
-      font-family: ${FONT};
-      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-      font-weight: 700;
-      color: rgb(50 50 50);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    > .name-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      min-width: 0;
+
+      > .hostname {
+        min-width: 0;
+        flex: 0 1 auto;
+        font-family: ${FONT};
+        font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+        font-weight: 700;
+        color: rgb(50 50 50);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      > .server-version {
+        flex-shrink: 0;
+        font-family: ${FONT};
+        font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+        font-weight: 700;
+        color: rgb(180 180 180);
+        white-space: nowrap;
+      }
     }
 
     > .origin {
@@ -103,9 +121,11 @@ export const DeleteButton = styled.button`
 const avatarBase = `
   width: 22px;
   height: 22px;
-  border-radius: 50%;
+  box-sizing: border-box;
+  border-radius: 8px;
   border: 2px solid #fff;
   flex-shrink: 0;
+  box-shadow: 0 2px 0 rgb(205 205 205);
 
   &:not(:first-child) {
     margin-left: -6px;
@@ -135,7 +155,7 @@ const OverflowBadge = styled.div`
   height: 22px;
   padding: 0 6px;
   margin-left: -6px;
-  border-radius: 11px;
+  border-radius: 8px;
   border: 2px solid #fff;
   flex-shrink: 0;
   background: ${CSSVariable.COLOR_PRIMARY};
@@ -147,6 +167,7 @@ const OverflowBadge = styled.div`
   align-items: center;
   justify-content: center;
   letter-spacing: 0.02em;
+  box-shadow: 0 2px 0 rgb(30 150 100);
 `;
 
 function UserAvatar({ user, selected }: { user: User; selected: boolean }) {
@@ -196,6 +217,7 @@ export function UserAvatars({
 
 export function ServerCardItem({
   hostname,
+  version,
   origin,
   users,
   selectedUserId,
@@ -203,6 +225,7 @@ export function ServerCardItem({
   onDelete,
 }: {
   hostname: string;
+  version?: string;
   origin: string;
   users: User[];
   selectedUserId?: string;
@@ -212,7 +235,10 @@ export function ServerCardItem({
   return (
     <ServerCard onClick={onClick}>
       <div className="info">
-        <span className="hostname">{hostname}</span>
+        <span className="name-row">
+          <span className="hostname">{hostname}</span>
+          {version && <span className="server-version">{version}</span>}
+        </span>
         <span className="origin">{origin}</span>
         {users.length > 0 && (
           <div className="users">

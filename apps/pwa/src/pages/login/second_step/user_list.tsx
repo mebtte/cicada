@@ -65,7 +65,8 @@ const UserItem = styled.button`
 
   &:hover > .avatar,
   &:focus-visible > .avatar {
-    box-shadow: 0 0 0 2px ${CSSVariable.COLOR_PRIMARY};
+    border-color: ${CSSVariable.COLOR_PRIMARY};
+    box-shadow: 0 4px 0 rgb(30 150 100);
   }
 
   &:active {
@@ -79,23 +80,23 @@ const UserItem = styled.button`
   }
 
   > .avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 2px solid #fff;
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    border: 2px solid rgb(210 210 210);
     flex-shrink: 0;
     overflow: hidden;
-    background: rgb(200 200 200);
-    color: #fff;
+    background: #fff;
+    color: ${CSSVariable.COLOR_PRIMARY};
     font-family: ${FONT};
-    font-size: 16px;
-    font-weight: 800;
+    font-size: 18px;
+    font-weight: 900;
     display: flex;
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
-    box-shadow: 0 0 0 2px rgb(230 230 230);
-    transition: box-shadow 120ms;
+    box-shadow: 0 4px 0 rgb(185 185 185);
+    transition: border-color 120ms, box-shadow 80ms;
 
     > img {
       width: 100%;

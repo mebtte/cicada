@@ -189,6 +189,7 @@ export default {
   new_password: 'new password',
   confirm_new_password: 'confirm new password',
   passwords_do_not_match: 'passwords do not match',
+  password_length_warning: 'password must be %s1-%s2 characters',
   password_has_changed: 'password has changed',
   enable_2fa: 'enable 2FA',
   disable_2fa: 'disable 2FA',
