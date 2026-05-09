@@ -89,7 +89,7 @@ const insertLeft = keyframes`
 
   48% {
     opacity: 1;
-    transform: translate3d(50px, 56px, 0) scale(0.94);
+    transform: translate3d(58px, 56px, 0) scale(0.94);
   }
 
   68%, 100% {
@@ -111,7 +111,7 @@ const insertRight = keyframes`
 
   48% {
     opacity: 1;
-    transform: translate3d(70px, 56px, 0) scale(0.94);
+    transform: translate3d(58px, 56px, 0) scale(0.94);
   }
 
   68%, 100% {
@@ -136,8 +136,11 @@ const Stage = styled.div`
   width: 218px;
   height: 160px;
   isolation: isolate;
+  opacity: 0;
+  transform: translate3d(-50%, calc(-50% + 12px), 0) scale(0.94);
+  will-change: transform, opacity;
 
-  animation: ${stageLife} ${INSERT_ANIMATION_DURATION}ms ease-out forwards;
+  animation: ${stageLife} ${INSERT_ANIMATION_DURATION}ms ease-out both;
 
   &::before {
     content: '';
@@ -230,9 +233,17 @@ const Incoming = styled.div<{ $direction: number }>`
   border-radius: 50%;
   box-shadow: 0 4px 0 var(${CSS_VAR.colorPrimaryShadow});
   filter: drop-shadow(0 8px 12px rgb(0 0 0 / 0.08));
+  opacity: 0;
+  transform: ${({ $direction }) =>
+    $direction < 0
+      ? 'translate3d(-34px, -10px, 0) scale(0.56)'
+      : 'translate3d(160px, -10px, 0) scale(0.56)'};
+  transform-origin: center;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
 
   animation: ${({ $direction }) => ($direction < 0 ? insertLeft : insertRight)}
-    ${INSERT_ANIMATION_DURATION}ms cubic-bezier(0.18, 0.88, 0.24, 1) forwards;
+    ${INSERT_ANIMATION_DURATION}ms cubic-bezier(0.18, 0.88, 0.24, 1) both;
 
   > svg {
     width: 27px;
