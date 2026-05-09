@@ -37,3 +37,29 @@ func TestAudioStreamInfoLossless(t *testing.T) {
 		})
 	}
 }
+
+func TestRewriteAudioMetadataArgsIncludesLyrics(t *testing.T) {
+	lyrics := "[00:00.00]hello\n[00:01.00]world"
+	args := rewriteAudioMetadataArgs("in.mp3", "out.mp3", AudioMetadata{
+		Title:  "Title",
+		Artist: "Artist",
+		Date:   "2026",
+		Lyrics: lyrics,
+	}, "")
+
+	if !containsArgPair(args, "-map_metadata", "-1") {
+		t.Fatalf("expected metadata rewrite to clear existing metadata, args=%v", args)
+	}
+	if !containsArgPair(args, "-metadata", "lyrics="+lyrics) {
+		t.Fatalf("expected lyrics metadata, args=%v", args)
+	}
+}
+
+func containsArgPair(args []string, key, value string) bool {
+	for i := 0; i < len(args)-1; i++ {
+		if args[i] == key && args[i+1] == value {
+			return true
+		}
+	}
+	return false
+}

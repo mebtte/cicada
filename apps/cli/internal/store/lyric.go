@@ -1,5 +1,10 @@
 package store
 
+import (
+	"regexp"
+	"strings"
+)
+
 type Lyric struct {
 	ID         int64
 	MusicID    string
@@ -7,8 +12,10 @@ type Lyric struct {
 	LRCContent string
 }
 
+var leadingLRCTagRE = regexp.MustCompile(`^\s*\[[^\]\r\n]*\]`)
+
 func GetLyricsByMusicID(musicID string) ([]Lyric, error) {
-	rows, err := DB().Query(`SELECT id,musicId,lrc,lrcContent FROM lyric WHERE musicId=?`, musicID)
+	rows, err := DB().Query(`SELECT id,musicId,lrc,lrcContent FROM lyric WHERE musicId=? ORDER BY id`, musicID)
 	if err != nil {
 		return nil, err
 	}
@@ -16,10 +23,57 @@ func GetLyricsByMusicID(musicID string) ([]Lyric, error) {
 	var out []Lyric
 	for rows.Next() {
 		l := Lyric{}
-		rows.Scan(&l.ID, &l.MusicID, &l.LRC, &l.LRCContent)
+		if err := rows.Scan(&l.ID, &l.MusicID, &l.LRC, &l.LRCContent); err != nil {
+			return nil, err
+		}
 		out = append(out, l)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 	return out, nil
+}
+
+func UpdateLyricsByMusicID(musicID string, lrcs []string) error {
+	tx, err := DB().Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.Exec(`DELETE FROM lyric WHERE musicId=?`, musicID); err != nil {
+		return err
+	}
+	for _, lrc := range lrcs {
+		if _, err := tx.Exec(
+			`INSERT INTO lyric (musicId,lrc,lrcContent) VALUES (?,?,?)`,
+			musicID,
+			lrc,
+			LRCContent(lrc),
+		); err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
+}
+
+func LRCContent(lrc string) string {
+	lines := strings.Split(lrc, "\n")
+	contents := make([]string, 0, len(lines))
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		for {
+			next := leadingLRCTagRE.ReplaceAllString(line, "")
+			if next == line {
+				break
+			}
+			line = strings.TrimSpace(next)
+		}
+		if line != "" {
+			contents = append(contents, line)
+		}
+	}
+	return strings.Join(contents, "\n")
 }
 
 func SearchMusicIDsByLyric(keyword string, page, pageSize int) (int, []string, error) {

@@ -401,7 +401,7 @@ func operations() []operation {
 			Method:      "PUT",
 			Path:        "/api/music",
 			Summary:     "Update music",
-			Description: "Update music name, aliases, cover, file, singers, type, year, or fork source using the key/value pattern.",
+			Description: "Update music name, aliases, lyrics, cover, file, singers, type, year, or fork source using the key/value pattern.",
 			Tags:        []string{"Music"},
 			Auth:        true,
 			RequestBody: jsonRequestBody(updateMusicRequestSchema(), map[string]any{
@@ -411,7 +411,7 @@ func operations() []operation {
 			}),
 			SuccessSchema:  nil,
 			SuccessExample: nil,
-			ErrorCodes:     []string{"wrong_parameter", "music_not_existed", "asset_not_existed", "singer_not_existed", "not_authorized"},
+			ErrorCodes:     []string{"wrong_parameter", "music_not_existed", "instrumental_has_no_lyric", "asset_not_existed", "singer_not_existed", "server_error", "not_authorized"},
 		},
 		{
 			Method:      "DELETE",
@@ -1635,7 +1635,7 @@ func updateMusicRequestSchema() map[string]any {
 		[]string{"id", "key"},
 		map[string]any{
 			"id":    strSchema("Music ID.", "music-1"),
-			"key":   strEnumSchema([]string{"name", "aliases", "cover", "asset", "singers", "type", "year", "fork"}, "aliases"),
+			"key":   strEnumSchema([]string{"name", "aliases", "lyric", "cover", "asset", "singers", "type", "year", "fork"}, "aliases"),
 			"value": flexibleValueSchema(),
 		},
 	)
