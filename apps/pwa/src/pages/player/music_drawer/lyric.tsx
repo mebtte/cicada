@@ -3,6 +3,7 @@ import { CSSVariable } from '@/global_style';
 import { MultipleLrc } from 'react-lrc';
 import styled from 'styled-components';
 import { t } from '@/i18n';
+import capitalize from '@/style/capitalize';
 import { MusicDetail } from './constants';
 
 const Style = styled.section`
@@ -16,6 +17,7 @@ const Style = styled.section`
     font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     font-weight: 800;
     line-height: 1.2;
+    ${capitalize}
   }
 
   > .content {
