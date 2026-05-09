@@ -356,15 +356,21 @@ func operations() []operation {
 			ErrorCodes:     []string{"wrong_parameter", "two_fa_enabled_already", "wrong_2fa_token", "not_authorized"},
 		},
 		{
-			Method:         "DELETE",
-			Path:           "/api/2fa",
-			Summary:        "Disable 2FA",
-			Description:    "Disable 2FA for the current user.",
-			Tags:           []string{"Profile"},
-			Auth:           true,
+			Method:      "DELETE",
+			Path:        "/api/2fa",
+			Summary:     "Disable 2FA",
+			Description: "Disable 2FA for the current user using a TOTP code.",
+			Tags:        []string{"Profile"},
+			Auth:        true,
+			RequestBody: jsonRequestBody(
+				objSchema([]string{"token"}, map[string]any{
+					"token": strSchema("Current TOTP token.", "123456"),
+				}),
+				map[string]any{"token": "123456"},
+			),
 			SuccessSchema:  nil,
 			SuccessExample: nil,
-			ErrorCodes:     []string{"no_need_to_2fa", "not_authorized"},
+			ErrorCodes:     []string{"wrong_parameter", "wrong_2fa_token", "no_need_to_2fa", "not_authorized"},
 		},
 		{
 			Method:      "GET",

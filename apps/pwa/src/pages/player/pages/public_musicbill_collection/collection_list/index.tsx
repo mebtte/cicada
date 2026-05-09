@@ -55,12 +55,7 @@ const CardContainer = styled(Container)`
 
   > .status-panel {
     width: min(560px, 100%);
-    padding: 28px 26px 32px;
-
-    border: 2px solid rgb(229 229 229);
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 6px 0 rgb(229 229 229);
+    padding: 24px 20px;
 
     display: flex;
     flex-direction: column;
@@ -72,7 +67,7 @@ const CardContainer = styled(Container)`
     align-items: flex-start;
 
     > .status-panel {
-      padding: 22px 18px 26px;
+      padding: 20px 12px;
 
       > button {
         width: 100%;

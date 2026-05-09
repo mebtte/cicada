@@ -193,6 +193,7 @@ const zhCN: {
     '使用例如 Microsoft Authenticator / Google Authenticator 等验证器扫描二维码',
   '2fa_token': '2FA 凭证',
   lack_of_2fa_token: '缺少 2FA 凭证',
+  wrong_2fa_token: '错误的 2FA 凭证',
   '2fa_has_disabled': '2FA 已被禁用',
   create_musicbill: '创建乐单',
   empty_musicbill_warning: '空的乐单',

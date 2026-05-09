@@ -1,6 +1,9 @@
 import { Method, request } from '..';
 
-type Response = string;
+interface Response {
+  secret: string;
+  url: string;
+}
 
 function create2FA() {
   return request<Response>({

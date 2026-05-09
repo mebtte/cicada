@@ -78,7 +78,7 @@ function CreateUserDialog() {
           />
         </DialogBody>
         <DialogFooter>
-          <Button onClick={onClose} disabled={loading}>
+          <Button variant="ghost" onClick={onClose} disabled={loading}>
             {t('cancel')}
           </Button>
           <Button

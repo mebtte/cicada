@@ -40,10 +40,6 @@ export default defineConfig(({ command }) => {
           .readdirSync(`${STATIC_DIR}/empty_image`)
           .filter((f) => !INVALID_FILES.includes(f))
           .map((f) => `/empty_image/${f}`),
-        ERROR_IMAGE_LIST: fs
-          .readdirSync(`${STATIC_DIR}/error_image`)
-          .filter((f) => !INVALID_FILES.includes(f))
-          .map((f) => `/error_image/${f}`),
       }),
       'process.env.WITH_SW': JSON.stringify(withSW),
     },

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import FileSelect from '@/components/file_select';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
-import { FileSelect as FileSelectShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, FileSelect as FileSelectShape } from './constants';
 import useEvent from '../use_event';
 
 function FileSelectContent({
@@ -61,7 +61,12 @@ function FileSelectContent({
         </Label>
       </DialogBody>
       <DialogFooter>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+        <Button
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button

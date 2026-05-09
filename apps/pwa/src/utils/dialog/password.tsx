@@ -5,7 +5,7 @@ import { ChangeEventHandler, useState } from 'react';
 import { t } from '@/i18n';
 import { PASSWORD_MAX_LENGTH } from '@/constants/user';
 import DialogBase from './dialog_base';
-import { Password as PasswordShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, Password as PasswordShape } from './constants';
 import useEvent from '../use_event';
 import notice from '../notice';
 
@@ -76,7 +76,12 @@ function PasswordContent({
         />
       </DialogBody>
       <DialogFooter>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+        <Button
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button

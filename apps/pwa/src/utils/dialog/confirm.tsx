@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { t } from '@/i18n';
-import { Confirm as ConfirmShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, Confirm as ConfirmShape } from './constants';
 import {
   DialogHeader,
   DialogTitle,
@@ -74,7 +74,7 @@ function ConfirmContent({
       )}
       <ConfirmFooter>
         <Button
-          variant="ghost"
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
           onClick={onCancel}
           loading={canceling}
           disabled={confirming}

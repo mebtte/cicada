@@ -102,8 +102,8 @@ export async function request<Data = void>({
     }
   }
 
-  const [response] = await Promise.race([
-    Promise.all([
+  const response = await Promise.race([
+    Promise.allSettled([
       window
         .fetch(url, {
           method,
@@ -116,7 +116,12 @@ export async function request<Data = void>({
           });
         }),
       sleep(requestMinimalDuration),
-    ]),
+    ]).then(([fetchResult]) => {
+      if (fetchResult.status === 'rejected') {
+        throw fetchResult.reason;
+      }
+      return fetchResult.value;
+    }),
     timeoutFn(timeout).catch(() =>
       Promise.reject(new Error(t('timeout_while_fetching_data'))),
     ),

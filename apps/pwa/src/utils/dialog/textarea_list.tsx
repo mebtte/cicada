@@ -6,7 +6,7 @@ import { MdDelete, MdUploadFile } from 'react-icons/md';
 import styled from 'styled-components';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
-import { TextareaList as TextareaListShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, TextareaList as TextareaListShape } from './constants';
 import useEvent from '../use_event';
 import selectFile from '../select_file';
 
@@ -159,7 +159,12 @@ function TextareaListContent({
         )}
       </DialogBody>
       <DialogFooter>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+        <Button
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button
