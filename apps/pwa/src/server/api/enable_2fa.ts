@@ -10,7 +10,7 @@ function enable2FA(data: RequestBody) {
     method: Method.PUT,
     withToken: true,
     body: {
-      twoFAToken: data.twoFAToken,
+      token: data.twoFAToken,
     },
   });
 }

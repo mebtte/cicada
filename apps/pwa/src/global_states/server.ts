@@ -25,6 +25,10 @@ export const useServer = create(
     },
 );
 
+export const useServerMetadataStatus = create<{ error: Error | null }>(() => ({
+  error: null,
+}));
+
 useServer.subscribe((server) =>
   storage
     .setItem(Key.SERVER, server)
@@ -48,6 +52,7 @@ function refreshSelectedServerMetadata() {
               : s,
           ),
         }));
+        useServerMetadataStatus.setState({ error: null });
         return globalEventemitter.emit(
           EventType.FETCH_SERVER_METADATA_SUCCEEDED,
           null,
@@ -58,6 +63,7 @@ function refreshSelectedServerMetadata() {
           error,
           `Failed to fetch server "${selectedServer.origin}" metadata`,
         );
+        useServerMetadataStatus.setState({ error });
         return globalEventemitter.emit(EventType.FETCH_SERVER_METADATA_FAILED, {
           error,
         });

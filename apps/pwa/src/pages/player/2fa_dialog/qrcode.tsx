@@ -35,7 +35,7 @@ function QrCode({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     create2FA()
-      .then((data) => setTwoFAURI(data))
+      .then((data) => setTwoFAURI(data.url))
       .catch((error) => {
         logger.error(error, 'Failed to create 2FA');
         notice.error(error.message);
@@ -45,7 +45,7 @@ function QrCode({ onClose }: { onClose: () => void }) {
 
   return (
     <Style>
-      <QRCodeSVG className="qrcode" value={twoFAURI} />
+      {twoFAURI ? <QRCodeSVG className="qrcode" value={twoFAURI} /> : null}
       <div className="instruction">{t('2fa_instruction')}</div>
     </Style>
   );

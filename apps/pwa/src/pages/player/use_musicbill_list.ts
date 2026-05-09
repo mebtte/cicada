@@ -47,7 +47,6 @@ export default () => {
       setStatus(RequestStatus.SUCCESS);
     } catch (error) {
       logger.error(error, 'Fail to get musicbill list');
-      notice.error(error.message);
       setStatus(RequestStatus.ERROR);
     }
   }, []);

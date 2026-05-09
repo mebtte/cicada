@@ -279,7 +279,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
                   onClose();
                 } catch (error) {
                   logger.error(error, 'Failed to change password');
-                  notice.error(error.message);
+                  dialog.alert({ content: error.message });
                   return false;
                 }
               },

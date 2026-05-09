@@ -55,7 +55,7 @@ function Wrapper() {
   };
 
   return (
-    <SearchForm className="input" onSubmit={onSubmit}>
+    <SearchForm className="input" onSubmit={onSubmit} autoComplete="off">
       <Input
         className="search-input"
         type="search"

@@ -49,7 +49,7 @@ type loginBody struct {
 
 func Login(c *gin.Context) {
 	var body loginBody
-	if err := c.ShouldBindJSON(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil || !validPasswordLength(body.Password) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
@@ -107,7 +107,7 @@ type login2FABody struct {
 
 func LoginWith2FA(c *gin.Context) {
 	var body login2FABody
-	if err := c.ShouldBindJSON(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil || !validPasswordLength(body.Password) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
@@ -209,13 +209,13 @@ func Create2FA(c *gin.Context) {
 	api.OK(c, gin.H{"secret": secret[len(auth.UnusedTOTPPrefix):], "url": url})
 }
 
-type enable2FABody struct {
+type twoFATokenBody struct {
 	Token string `json:"token" binding:"required"`
 }
 
 func Enable2FA(c *gin.Context) {
 	u := middleware.GetUser(c)
-	var body enable2FABody
+	var body twoFATokenBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
 		return
@@ -240,8 +240,17 @@ func Enable2FA(c *gin.Context) {
 
 func Disable2FA(c *gin.Context) {
 	u := middleware.GetUser(c)
+	var body twoFATokenBody
+	if err := c.ShouldBindJSON(&body); err != nil {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
 	if !u.TwoFASecret.Valid || !auth.TOTPEnabled(u.TwoFASecret.String) {
 		api.Fail(c, apperr.NoNeedTo2FA)
+		return
+	}
+	if !auth.ValidateTOTP(body.Token, u.TwoFASecret.String) {
+		api.Fail(c, apperr.Wrong2FAToken)
 		return
 	}
 	store.UpdateUser(u.ID, "twoFASecret", nil)

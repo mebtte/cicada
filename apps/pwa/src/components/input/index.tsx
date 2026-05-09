@@ -188,6 +188,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       className,
       style,
       autoFocus,
+      type = 'text',
       ...rest
     },
     ref,
@@ -218,8 +219,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={inputRef}
             id={id}
             $size={size}
+            type={type}
             disabled={disabled}
             {...rest}
+            autoComplete={type === 'password' ? 'new-password' : 'off'}
           />
           {suffix && <Affix>{suffix}</Affix>}
         </Wrapper>

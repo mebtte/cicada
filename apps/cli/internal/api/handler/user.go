@@ -60,7 +60,7 @@ func UpdateProfile(c *gin.Context) {
 	switch body.Key {
 	case "password":
 		pwd, ok := body.Value.(string)
-		if !ok || pwd == "" || len(pwd) > 30 {
+		if !ok || !validPasswordLength(pwd) {
 			api.Fail(c, apperr.WrongParameter)
 			return
 		}
@@ -209,7 +209,7 @@ type createUserBody struct {
 func AdminCreateUser(c *gin.Context) {
 	var body createUserBody
 	if err := c.ShouldBindJSON(&body); err != nil ||
-		len(body.Username) > 30 || len(body.Password) > 30 || len(body.Remark) > 200 {
+		len(body.Username) > 30 || !validPasswordLength(body.Password) || len(body.Remark) > 200 {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
@@ -239,7 +239,7 @@ func AdminUpdateUser(c *gin.Context) {
 	}
 	allowed := map[string]bool{
 		"remark": true, "musicbillMaxAmount": true,
-		"createMusicMaxAmountPerDay": true, "musicPlayRecordIndate": true,
+		"createMusicMaxAmountPerDay": true, "musicPlayRecordIndate": true, "password": true,
 	}
 	if !allowed[body.Key] {
 		api.Fail(c, apperr.WrongParameter)
@@ -247,6 +247,18 @@ func AdminUpdateUser(c *gin.Context) {
 	}
 	if _, err := store.GetUserByID(body.ID); err != nil {
 		api.Fail(c, apperr.UserNotExisted)
+		return
+	}
+	if body.Key == "password" {
+		pwd, ok := body.Value.(string)
+		if !ok || !validPasswordLength(pwd) {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		store.UpdateUser(body.ID, "password", store.DoubleMD5(pwd))
+		store.UpdateUser(body.ID, "tokenIdentifier", auth.RandString(12))
+		store.UpdateUser(body.ID, "twoFASecret", nil)
+		api.OK(c, nil)
 		return
 	}
 	store.UpdateUser(body.ID, body.Key, body.Value)

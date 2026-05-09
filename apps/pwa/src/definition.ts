@@ -4,7 +4,6 @@ declare global {
 
     BUILD_TIME: string;
     EMPTY_IMAGE_LIST: string[];
-    ERROR_IMAGE_LIST: string[];
   };
 }
 

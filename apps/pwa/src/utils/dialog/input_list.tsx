@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { MdDelete } from 'react-icons/md';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
-import { InputList as InputListShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, InputList as InputListShape } from './constants';
 import useEvent from '../use_event';
 
 function InputListContent({
@@ -116,7 +116,12 @@ function InputListContent({
         )}
       </DialogBody>
       <DialogFooter>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+        <Button
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button

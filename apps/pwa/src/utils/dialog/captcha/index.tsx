@@ -12,7 +12,7 @@ import { t } from '@/i18n';
 import Captcha from './captcha';
 import useCaptcha from './use_captcha';
 import DialogBase from '../dialog_base';
-import { Captcha as CaptchaShape } from '../constants';
+import { DEFAULT_CANCEL_VARIANT, Captcha as CaptchaShape } from '../constants';
 import useEvent from '../../use_event';
 import notice from '../../notice';
 
@@ -96,7 +96,7 @@ function CaptchaContent({
       </DialogBody>
       <DialogFooter $inline={options.inlineFooter}>
         <Button
-          variant={options.cancelVariant}
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
           onClick={onCancel}
           loading={canceling}
           disabled={confirming}

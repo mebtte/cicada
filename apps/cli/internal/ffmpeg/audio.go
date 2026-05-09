@@ -18,6 +18,7 @@ type AudioMetadata struct {
 	Title  string
 	Artist string
 	Date   string
+	Lyrics string
 }
 
 type AudioStreamInfo struct {
@@ -178,6 +179,18 @@ func rewriteAudioMetadata(ctx context.Context, inputPath, outputPath string, met
 		return err
 	}
 
+	args := rewriteAudioMetadataArgs(inputPath, outputPath, metadata, coverPath)
+	output, err := exec.CommandContext(ctx, paths.FFmpeg, args...).CombinedOutput()
+	if err != nil {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+		return fmt.Errorf("%w: %s", err, strings.TrimSpace(string(output)))
+	}
+	return nil
+}
+
+func rewriteAudioMetadataArgs(inputPath, outputPath string, metadata AudioMetadata, coverPath string) []string {
 	args := []string{
 		"-y",
 		"-i", inputPath,
@@ -206,6 +219,9 @@ func rewriteAudioMetadata(ctx context.Context, inputPath, outputPath string, met
 			"-metadata", "year="+metadata.Date,
 		)
 	}
+	if metadata.Lyrics != "" {
+		args = append(args, "-metadata", "lyrics="+metadata.Lyrics)
+	}
 	if coverPath != "" {
 		args = append(args,
 			"-map", "1:v:0",
@@ -217,12 +233,5 @@ func rewriteAudioMetadata(ctx context.Context, inputPath, outputPath string, met
 	}
 	args = append(args, outputPath)
 
-	output, err := exec.CommandContext(ctx, paths.FFmpeg, args...).CombinedOutput()
-	if err != nil {
-		if ctx.Err() != nil {
-			return ctx.Err()
-		}
-		return fmt.Errorf("%w: %s", err, strings.TrimSpace(string(output)))
-	}
-	return nil
+	return args
 }

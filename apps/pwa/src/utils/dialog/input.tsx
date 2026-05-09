@@ -4,7 +4,7 @@ import Input from '@/components/input';
 import { ChangeEventHandler, useState } from 'react';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
-import { Input as InputShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, Input as InputShape } from './constants';
 import useEvent from '../use_event';
 
 function InputContent({
@@ -69,7 +69,7 @@ function InputContent({
       </DialogBody>
       <DialogFooter $inline={options.inlineFooter}>
         <Button
-          variant={options.cancelVariant}
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
           onClick={onCancel}
           loading={canceling}
           disabled={confirming}

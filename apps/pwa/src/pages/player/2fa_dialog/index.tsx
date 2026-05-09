@@ -1,14 +1,16 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
 import Button from '@/components/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Input from '@/components/input';
 import { t } from '@/i18n';
 import { reloadUser, useUser } from '@/global_states/server';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
+import dialog from '@/utils/dialog';
 import disable2FA from '@/server/api/disable_2fa';
 import enable2FA from '@/server/api/enable_2fa';
 import sleep from '@/utils/sleep';
+import { ExceptionCode } from '@/constants/exception';
 import Qrcode from './qrcode';
 import useOpen from './use_open';
 
@@ -18,6 +20,13 @@ function TwoFADialog() {
 
   const [loading, setLoading] = useState(false);
   const [twoFAToken, setTwoFAToken] = useState('');
+
+  useEffect(() => {
+    if (open) {
+      setTwoFAToken('');
+    }
+  }, [open]);
+
   const onConfirm = async () => {
     setLoading(true);
     try {
@@ -39,7 +48,11 @@ function TwoFADialog() {
         error,
         user.twoFAEnabled ? 'Failed to disable 2FA' : 'Failed to enable 2FA',
       );
-      notice.error(error.message);
+      if (error.code === ExceptionCode.WRONG_2FA_TOKEN) {
+        dialog.alert({ content: t(ExceptionCode.WRONG_2FA_TOKEN) });
+      } else {
+        notice.error(error.message);
+      }
     }
     setLoading(false);
   };

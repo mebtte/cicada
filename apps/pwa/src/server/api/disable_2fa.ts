@@ -9,8 +9,8 @@ function disable2FA(params: RequestParams) {
     path: '/api/2fa',
     method: Method.DELETE,
     withToken: true,
-    params: {
-      twoFAToken: params.twoFAToken,
+    body: {
+      token: params.twoFAToken,
     },
   });
 }

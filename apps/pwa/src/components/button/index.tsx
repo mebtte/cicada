@@ -1,4 +1,8 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import {
+  ButtonHTMLAttributes,
+  MouseEvent as ReactMouseEvent,
+  ReactNode,
+} from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { CSS_VAR } from '../theme';
 
@@ -228,9 +232,18 @@ function Button({
   disabled = false,
   icon,
   children,
+  onClick,
   ...rest
 }: ButtonProps) {
   const offset = SHADOW_OFFSET[size];
+  const handleClick = (event: ReactMouseEvent<HTMLButtonElement>) => {
+    onClick?.(event);
+
+    if (event.detail > 0) {
+      event.currentTarget.blur();
+    }
+  };
+
   return (
     <StyledButton
       type="button"
@@ -242,6 +255,7 @@ function Button({
       $offset={offset}
       disabled={loading || disabled}
       {...rest}
+      onClick={handleClick}
     >
       {loading && <Loader $size={size} />}
       <span className="btn-label">

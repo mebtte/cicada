@@ -33,6 +33,7 @@ func syncMusicMetadataToAsset(musicID string) {
 	metadata := ffmpeg.AudioMetadata{
 		Title:  m.Name,
 		Artist: musicArtist(musicID),
+		Lyrics: musicLyrics(musicID),
 	}
 	if m.Year.Valid {
 		metadata.Date = strconv.FormatInt(m.Year.Int64, 10)
@@ -76,6 +77,22 @@ func musicArtist(musicID string) string {
 		names = append(names, s.Name)
 	}
 	return strings.Join(names, ", ")
+}
+
+func musicLyrics(musicID string) string {
+	lyrics, err := store.GetLyricsByMusicID(musicID)
+	if err != nil {
+		log.Printf("sync music metadata: get lyrics for %s: %v", musicID, err)
+		return ""
+	}
+
+	lrcs := make([]string, 0, len(lyrics))
+	for _, l := range lyrics {
+		if l.LRC != "" {
+			lrcs = append(lrcs, l.LRC)
+		}
+	}
+	return strings.Join(lrcs, "\n\n")
 }
 
 func metadataTempPath(sourcePath string) (string, error) {

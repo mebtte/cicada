@@ -187,7 +187,7 @@ function User() {
           notice.info(t('password_has_changed'));
         } catch (error) {
           logger.error(error, 'Failed to update password');
-          notice.error(error.message);
+          dialog.alert({ content: error.message });
           return false;
         }
       },

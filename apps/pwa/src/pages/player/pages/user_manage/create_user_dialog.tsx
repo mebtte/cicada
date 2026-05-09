@@ -6,7 +6,12 @@ import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import adminCreateUser from '@/server/api/admin_create_user';
 import { t } from '@/i18n';
-import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '@/constants/user';
+import {
+  isPasswordLengthValid,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  USERNAME_MAX_LENGTH,
+} from '@/constants/user';
 import e, { EventType } from './eventemitter';
 
 function CreateUserDialog() {
@@ -27,6 +32,17 @@ function CreateUserDialog() {
 
   const [loading, setLoading] = useState(false);
   const onCreate = async () => {
+    if (!isPasswordLengthValid(password)) {
+      notice.error(
+        t(
+          'password_length_warning',
+          PASSWORD_MIN_LENGTH.toString(),
+          PASSWORD_MAX_LENGTH.toString(),
+        ),
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       await adminCreateUser({
@@ -67,8 +83,10 @@ function CreateUserDialog() {
           />
           <Input
             label={t('password')}
+            type="password"
             value={password}
             onChange={onPasswordChange}
+            minLength={PASSWORD_MIN_LENGTH}
             maxLength={PASSWORD_MAX_LENGTH}
           />
           <Input
@@ -78,7 +96,7 @@ function CreateUserDialog() {
           />
         </DialogBody>
         <DialogFooter>
-          <Button onClick={onClose} disabled={loading}>
+          <Button variant="ghost" onClick={onClose} disabled={loading}>
             {t('cancel')}
           </Button>
           <Button

@@ -6,6 +6,7 @@ import stringArrayEqual from "../src/utils/string_array_equal.js";
 import parseSearch from "../src/utils/parse_search.js";
 import { getMajorVersion, isSameMajorVersion } from "../src/utils/version.js";
 import { getIsHeaderBackButtonPath } from "../src/pages/player/header/back_button.js";
+import { isPasswordLengthValid } from "../src/constants/user.js";
 
 test("capitalize uppercases the first letter of each word", () => {
   assert.equal(capitalize("hello world"), "Hello World");
@@ -50,4 +51,11 @@ test("header shows back button on nested player detail pages except musicbill", 
   assert.equal(getIsHeaderBackButtonPath("/player"), false);
   assert.equal(getIsHeaderBackButtonPath("/player/setting"), false);
   assert.equal(getIsHeaderBackButtonPath("/player/search"), false);
+});
+
+test("password length accepts 6 to 32 characters", () => {
+  assert.equal(isPasswordLengthValid("12345"), false);
+  assert.equal(isPasswordLengthValid("123456"), true);
+  assert.equal(isPasswordLengthValid("1".repeat(32)), true);
+  assert.equal(isPasswordLengthValid("1".repeat(33)), false);
 });

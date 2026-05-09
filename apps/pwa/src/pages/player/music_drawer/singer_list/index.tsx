@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
+import capitalize from '@/style/capitalize';
 import { SingerDetail } from '../constants';
 import Singer from './singer';
 
@@ -15,6 +16,7 @@ const Style = styled.div`
     font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     font-weight: 800;
     line-height: 1.2;
+    ${capitalize}
   }
 
   > .list {

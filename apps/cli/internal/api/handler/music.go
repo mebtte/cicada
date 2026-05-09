@@ -211,6 +211,11 @@ type updateMusicBody struct {
 	Value any    `json:"value"`
 }
 
+const (
+	musicMaxLyricAmount = 5
+	musicMaxLyricLength = 16384
+)
+
 func UpdateMusic(c *gin.Context) {
 	u := middleware.GetUser(c)
 	var body updateMusicBody
@@ -251,6 +256,39 @@ func UpdateMusic(c *gin.Context) {
 			aliases[i] = s
 		}
 		store.UpdateMusic(body.ID, "aliases", joinAliases(aliases))
+
+	case "lyric":
+		if m.Type == store.MusicTypeInstrumental {
+			api.Fail(c, apperr.InstrumentalHasNoLyric)
+			return
+		}
+		rawLyrics, ok := body.Value.([]any)
+		if !ok || len(rawLyrics) > musicMaxLyricAmount {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		lyrics := make([]string, 0, len(rawLyrics))
+		for _, v := range rawLyrics {
+			lrc, ok := v.(string)
+			if !ok {
+				api.Fail(c, apperr.WrongParameter)
+				return
+			}
+			lrc = strings.TrimSpace(lrc)
+			if lrc == "" {
+				continue
+			}
+			if len(lrc) > musicMaxLyricLength {
+				api.Fail(c, apperr.WrongParameter)
+				return
+			}
+			lyrics = append(lyrics, lrc)
+		}
+		if err := store.UpdateLyricsByMusicID(body.ID, lyrics); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		syncMetadata = true
 
 	case "cover":
 		cover, ok := body.Value.(string)

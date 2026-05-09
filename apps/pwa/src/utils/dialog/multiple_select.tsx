@@ -3,7 +3,7 @@ import Button from '@/components/button';
 import { useState } from 'react';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
-import { MultipleSelect as MultipleSelectShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, MultipleSelect as MultipleSelectShape } from './constants';
 import useEvent from '../use_event';
 
 function MultipleSelectContent({
@@ -70,7 +70,12 @@ function MultipleSelectContent({
         </Label>
       </DialogBody>
       <DialogFooter>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+        <Button
+          variant={multipleSelectOptions.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {multipleSelectOptions.cancelText || t('cancel')}
         </Button>
         <Button

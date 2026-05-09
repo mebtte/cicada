@@ -12,7 +12,7 @@ import { IMAGE_MAX_SIZE } from '@/constants/asset';
 import FileSelect from '@/components/file_select';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
-import { ImageCut as ImageCutShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, ImageCut as ImageCutShape } from './constants';
 import useEvent from '../use_event';
 import loadImage from '../load_image';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
@@ -147,7 +147,7 @@ function ImageCutContent({
       </DialogBody>
       <DialogFooter $inline={options.inlineFooter}>
         <Button
-          variant={options.cancelVariant}
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
           onClick={onCancel}
           loading={canceling}
           disabled={confirming}
