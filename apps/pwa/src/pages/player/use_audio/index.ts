@@ -28,7 +28,7 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
 
   const [loading, setLoading] = useState(false);
   const [duration, setDuration] = useState(0);
-  const [paused, setPaused] = useState(true);
+  const [paused, setPaused] = useState(!audio);
   const [bufferedPercent, setBufferedPercent] = useState(0);
 
   useVolume(audio);
@@ -42,21 +42,23 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
    */
   useEffect(() => {
     if (audio) {
-      const unlistenError = audio.listen('error', onError);
+      const unlistenError = audio.listen('error', () => {
+        setLoading(false);
+        setBufferedPercent(0);
+        onError();
+      });
       const unlistenDurationChange = audio.listen('durationchange', () =>
         setDuration(audio.getDuration()),
       );
       const unlistenPlay = audio.listen('play', () => setPaused(false));
       const unlistenPause = audio.listen('pause', () => setPaused(true));
-      const unlistenTimeUpdate = audio.listen(
-        'timeupdate',
-        debounce(() => {
-          const currentTime = audio.getCurrentTime();
-          return eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
-            currentMillisecond: currentTime * 1000,
-          });
-        }, 100),
-      );
+      const onTimeUpdate = debounce(() => {
+        const currentTime = audio.getCurrentTime();
+        return eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
+          currentMillisecond: currentTime * 1000,
+        });
+      }, 100);
+      const unlistenTimeUpdate = audio.listen('timeupdate', onTimeUpdate);
       const unlistenEnded = audio.listen('ended', () =>
         eventemitter.emit(EventType.ACTION_NEXT, null),
       );
@@ -74,6 +76,7 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
         unlistenPlay();
         unlistenPause();
         unlistenTimeUpdate();
+        onTimeUpdate.cancel();
         unlistenEnded();
         unlistenWaiting();
         unlistenPlaying();
@@ -90,13 +93,13 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
    * @author mebtte<i@mebtte.com>
    */
   useEffect(() => {
+    setPaused(!audio);
     if (audio) {
       return () => {
         audio.pause(); // pause audio and let it be garbage collected
 
         setLoading(true);
         setDuration(0);
-        setPaused(true);
         setBufferedPercent(0);
         eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
           currentMillisecond: 0,

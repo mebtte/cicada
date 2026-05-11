@@ -56,6 +56,10 @@ class CustomAudio<Extra> {
     this.audio.volume = volume;
   }
 
+  getVolume() {
+    return this.audio.volume;
+  }
+
   getDuration() {
     return this.audio.duration;
   }
@@ -69,7 +73,15 @@ class CustomAudio<Extra> {
   }
 
   play() {
-    return this.audio.play();
+    const p = this.audio.play();
+    if (p && typeof p.then === 'function') {
+      p.catch((err: DOMException) => {
+        if (err.name !== 'AbortError' && err.name !== 'NotAllowedError') {
+          throw err;
+        }
+      });
+    }
+    return p;
   }
 
   pause() {

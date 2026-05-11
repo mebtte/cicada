@@ -45,12 +45,8 @@ function useMediaSession({
         music.singers.map((s) => s.name).join(',') || t('unknown_singer'),
       artwork: music.cover
         ? COVER_SIZES.map((size) => ({
-            src: getResizedImage({
-              url: music.cover,
-              size: Math.ceil(size * window.devicePixelRatio),
-            }),
+            src: getResizedImage({ url: music.cover, size }),
             sizes: `${size}x${size}`,
-            type: 'image/jpeg',
           }))
         : [],
     });
@@ -92,6 +88,17 @@ function useMediaSession({
             audio.getCurrentTime() + offset,
           );
           e.emit(EventType.ACTION_SET_TIME, { second: next });
+        },
+      ],
+      [
+        'stop',
+        () => {
+          if (!audio) {
+            return;
+          }
+          audio.pause();
+          audio.setCurrentTime(0);
+          e.emit(EventType.AUDIO_TIME_UPDATED, { currentMillisecond: 0 });
         },
       ],
     ];
@@ -140,14 +147,18 @@ function useMediaSession({
     const unlistenPlay = audio.listen('play', sync);
     const unlistenPause = audio.listen('pause', sync);
     const unlistenRateChange = audio.listen('ratechange', sync);
+    const heartbeat = paused ? null : window.setInterval(sync, 1000);
     return () => {
       unlistenSeeked();
       unlistenDurationChange();
       unlistenPlay();
       unlistenPause();
       unlistenRateChange();
+      if (heartbeat !== null) {
+        window.clearInterval(heartbeat);
+      }
     };
-  }, [audio, duration]);
+  }, [audio, duration, paused]);
 }
 
 export default useMediaSession;
