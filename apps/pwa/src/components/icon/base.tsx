@@ -1,7 +1,7 @@
 import { CSSProperties, ReactNode, SVGProps } from 'react';
 
 export interface IconProps extends SVGProps<SVGSVGElement> {
-  size?: number;
+  size?: number | string;
   color?: string;
   strokeWidth?: number;
   children?: ReactNode;

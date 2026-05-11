@@ -6,6 +6,7 @@ import logger from '@/utils/logger';
 import { t } from '@/i18n';
 import { Music, SingerWithAliases } from './constants';
 import e, { EventType } from './eventemitter';
+import { MusicDownloadQuality } from '@/utils/music_download_asset';
 
 export function openCreateMusicbillDialog() {
   return dialog.input({
@@ -63,7 +64,10 @@ export function formatSecond(s: number) {
   }${second}`;
 }
 
-export async function downloadMusicListByFileSystem(musicList: Music[]) {
+export async function downloadMusicListByFileSystem(
+  musicList: Music[],
+  quality: MusicDownloadQuality,
+) {
   try {
     const directoryHandle = await window.showDirectoryPicker({
       mode: 'readwrite',
@@ -72,6 +76,7 @@ export async function downloadMusicListByFileSystem(musicList: Music[]) {
     e.emit(EventType.DOWNLOAD_MUSIC_LIST, {
       musicList,
       directoryHandle,
+      quality,
     });
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') {

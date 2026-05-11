@@ -9,3 +9,5 @@ export { default as IconList }         from './icons/list';
 export { default as IconPlayQueue }    from './icons/play-queue';
 export { default as IconEdit }         from './icons/edit';
 export { default as IconExternalLink } from './icons/external-link';
+export { default as IconExport }       from './icons/export';
+export { default as IconCheckCircle }  from './icons/check-circle';

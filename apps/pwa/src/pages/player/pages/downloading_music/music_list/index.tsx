@@ -8,10 +8,10 @@ import List from 'react-list';
 import MusicBase from '../../../components/music_base';
 import {
   MdAccessTime,
-  MdDownloadDone,
   MdOutlineWarningAmber,
   MdClose,
 } from 'react-icons/md';
+import { IconCheckCircle } from '@/components/icon';
 import { CSSProperties, useContext } from 'react';
 import { CSSVariable } from '@/global_style';
 import Spinner from '@/components/spinner';
@@ -82,7 +82,7 @@ function DownloadStatus({
       return <MdAccessTime style={waitingStyle} />;
     }
     case DownloadStatusType.SUCCESSFUL: {
-      return <MdDownloadDone style={successfulStyle} />;
+      return <IconCheckCircle style={successfulStyle} />;
     }
     case DownloadStatusType.FAILED: {
       return <MdOutlineWarningAmber style={failedStyle} />;

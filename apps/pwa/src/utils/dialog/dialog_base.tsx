@@ -26,11 +26,18 @@ function DialogBase({
   children: ({ onClose }: { onClose: () => void }) => ReactNode;
 }) {
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     setOpen(true);
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      setHasOpened(true);
+    }
+  }, [open]);
 
   useEffect(() => {
     const unlistenClose = e.listen(EventType.CLOSE, ({ id }) => {
@@ -48,7 +55,11 @@ function DialogBase({
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent showClose={false} aria-describedby={undefined}>
+      <DialogContent
+        showClose={false}
+        aria-describedby={undefined}
+        forceMount={hasOpened ? true : undefined}
+      >
         <DialogTitle style={srOnly}>{t('dialog')}</DialogTitle>
         {children({ onClose })}
       </DialogContent>

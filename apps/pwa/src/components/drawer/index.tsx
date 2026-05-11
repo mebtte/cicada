@@ -29,11 +29,18 @@ import {
   ElementRef,
   forwardRef,
   HTMLAttributes,
+  ReactNode,
+  useRef,
 } from 'react';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import styled, { css, keyframes } from 'styled-components';
 import { useTheme, CSS_VAR } from '../theme';
 import { t } from '@/i18n';
+import {
+  useComposedRefs,
+  useDialogContentA11y,
+  visuallyHiddenStyle,
+} from '../dialog_a11y';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 
@@ -182,6 +189,8 @@ export interface DrawerContentProps
   side?: DrawerSide;
   /** Show the × close button. Default: true. */
   showClose?: boolean;
+  /** Screen reader title used when no DrawerTitle is rendered. */
+  accessibleTitle?: ReactNode;
   /**
    * Stacking order. Pass a unique value when multiple drawers can be open
    * concurrently so the most recently opened one sits on top. The overlay
@@ -195,8 +204,21 @@ const DEFAULT_Z_INDEX = 9000;
 export const DrawerContent = forwardRef<
   ElementRef<typeof RadixDialog.Content>,
   DrawerContentProps
->(({ children, side = 'right', showClose = true, zIndex = DEFAULT_Z_INDEX, style, ...props }, ref) => {
+>(({
+  children,
+  side = 'right',
+  showClose = true,
+  zIndex = DEFAULT_Z_INDEX,
+  style,
+  accessibleTitle,
+  'aria-describedby': ariaDescribedBy,
+  'aria-label': ariaLabel,
+  ...props
+}, ref) => {
   const theme = useTheme();
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const composedPanelRef = useComposedRefs(ref, panelRef);
+  const showFallbackTitle = useDialogContentA11y(panelRef, ariaDescribedBy);
   const themeVars = {
     [CSS_VAR.colorPrimary]: theme.colorPrimary,
     [CSS_VAR.colorPrimaryShadow]: `color-mix(in srgb, ${theme.colorPrimary} 70%, #000)`,
@@ -205,8 +227,21 @@ export const DrawerContent = forwardRef<
   return (
     <RadixDialog.Portal>
       <Overlay style={{ zIndex }} />
-      <RadixDialog.Content ref={ref} {...props} asChild>
+      <RadixDialog.Content
+        ref={composedPanelRef}
+        aria-describedby={ariaDescribedBy}
+        aria-label={ariaLabel}
+        {...props}
+        asChild
+      >
         <Panel $side={side} style={{ ...themeVars, zIndex: zIndex + 1, ...style }}>
+          {showFallbackTitle && (
+            <RadixDialog.Title asChild>
+              <h2 style={visuallyHiddenStyle}>
+                {accessibleTitle ?? ariaLabel ?? t('dialog')}
+              </h2>
+            </RadixDialog.Title>
+          )}
           {showClose && (
             <CloseButton aria-label={t('close')}>
               <svg
@@ -250,7 +285,12 @@ export const DrawerTitle = forwardRef<
   ElementRef<typeof RadixDialog.Title>,
   ComponentPropsWithoutRef<typeof RadixDialog.Title>
 >(({ children, ...props }, ref) => (
-  <RadixDialog.Title ref={ref} {...props} asChild>
+  <RadixDialog.Title
+    ref={ref}
+    {...props}
+    data-cicada-dialog-title=""
+    asChild
+  >
     <DrawerTitleText>{children}</DrawerTitleText>
   </RadixDialog.Title>
 ));
@@ -272,7 +312,12 @@ export const DrawerDescription = forwardRef<
   ElementRef<typeof RadixDialog.Description>,
   ComponentPropsWithoutRef<typeof RadixDialog.Description>
 >(({ children, ...props }, ref) => (
-  <RadixDialog.Description ref={ref} {...props} asChild>
+  <RadixDialog.Description
+    ref={ref}
+    {...props}
+    data-cicada-dialog-description=""
+    asChild
+  >
     <DrawerDescriptionText>{children}</DrawerDescriptionText>
   </RadixDialog.Description>
 ));

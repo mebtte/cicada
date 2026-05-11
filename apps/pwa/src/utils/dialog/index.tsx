@@ -6,6 +6,7 @@ import {
   Alert,
   Captcha,
   Confirm,
+  Actions,
   Input,
   InputList,
   DialogType,
@@ -70,6 +71,16 @@ export default {
       id,
     };
     e.emit(EventType.OPEN, confirm);
+    return id;
+  },
+  actions: (a: Omit<Actions, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const actions: Actions = {
+      ...a,
+      type: DialogType.ACTIONS,
+      id,
+    };
+    e.emit(EventType.OPEN, actions);
     return id;
   },
   captcha: (c: Omit<Captcha, 'id' | 'type'>) => {

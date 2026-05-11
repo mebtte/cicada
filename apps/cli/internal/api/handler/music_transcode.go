@@ -17,13 +17,12 @@ import (
 )
 
 const (
-	musicTranscodeCacheMaxAge = 30 * 24 * time.Hour
-	musicTranscodeTimeout     = 3 * time.Minute
-	musicSmoothBitrateKbps    = 192
+	musicTranscodeTimeout  = 3 * time.Minute
+	musicSmoothBitrateKbps = 192
 )
 
 var (
-	musicTranscodeCacheControl = fmt.Sprintf("public, max-age=%d", int(musicTranscodeCacheMaxAge.Seconds()))
+	musicTranscodeCacheControl = "public, max-age=31536000, immutable"
 	musicProbeAudioStream      = ffmpeg.ProbeAudioStream
 	musicTranscodeAudio        = ffmpeg.TranscodeAudio
 	musicTranscodeInflight     = struct {

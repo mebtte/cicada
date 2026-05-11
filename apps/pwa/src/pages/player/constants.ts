@@ -1,6 +1,7 @@
 import { RequestStatus } from '@/constants';
 import { MusicType } from '@/constants/music';
 import { UtilZIndex } from '@/constants/style';
+import { MusicDownloadQuality } from '@/utils/music_download_asset';
 
 export const HEADER_HEIGHT = 72;
 
@@ -107,5 +108,8 @@ export interface DownloadingMusic {
   id: string;
   music: Music;
   directoryHandle: FileSystemDirectoryHandle;
+  asset: string;
+  ext: string;
+  quality: MusicDownloadQuality;
   status: DownloadStatus;
 }

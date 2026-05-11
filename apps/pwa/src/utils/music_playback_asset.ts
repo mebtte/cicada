@@ -1,4 +1,8 @@
 import { MusicPlaybackQuality } from '@/constants/setting';
+import {
+  getSmoothMusicAsset,
+  getSourceBitrateMusicAsset,
+} from './music_asset';
 
 export default function getMusicPlaybackAsset({
   asset,
@@ -7,21 +11,12 @@ export default function getMusicPlaybackAsset({
   asset: string;
   quality: MusicPlaybackQuality;
 }) {
-  const url = new URL(asset, window.location.origin);
-  url.searchParams.delete('codec');
-  url.searchParams.delete('bitrate');
-
   switch (quality) {
     case MusicPlaybackQuality.SMOOTH: {
-      url.searchParams.set('codec', 'aac');
-      url.searchParams.set('bitrate', '192');
-      break;
+      return getSmoothMusicAsset(asset);
     }
     case MusicPlaybackQuality.SOURCE_BITRATE: {
-      url.searchParams.set('codec', 'flac');
-      break;
+      return getSourceBitrateMusicAsset(asset);
     }
   }
-
-  return url.href;
 }

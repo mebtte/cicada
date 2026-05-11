@@ -5,17 +5,14 @@ import {
   MdReadMore,
   MdOutlinePostAdd,
   MdPlaylistAdd,
-  MdOutlineDownload,
 } from 'react-icons/md';
-import { saveAs } from 'file-saver';
-import formatMusicFilename from '@/utils/format_music_filename';
+import { IconExport } from '@/components/icon';
 import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
-import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import { downloadMusicListByFileSystem } from '../utils';
+import { openDownloadMusicListDialog } from '../download_music_list';
 import addMusicListToPlaylist from '../add_to_playlist';
 import { t } from '@/i18n';
 
@@ -121,20 +118,9 @@ function Toolbar({
           variant="ghost"
           size="sm"
           aria-label={t('download')}
-          onClick={() =>
-            ENABLE_FILE_SYSTEM
-              ? downloadMusicListByFileSystem([music])
-              : saveAs(
-                  music.asset,
-                  formatMusicFilename({
-                    name: music.name,
-                    singerNames: music.singers.map((s) => s.name),
-                    ext: music.asset.split('.').at(-1)!,
-                  }),
-                )
-          }
+          onClick={() => openDownloadMusicListDialog([music])}
         >
-          <MdOutlineDownload />
+          <IconExport size="1em" />
         </Button>
       </div>
     </Style>

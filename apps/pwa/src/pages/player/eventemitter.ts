@@ -5,6 +5,7 @@ import {
   MusicWithSingerAliases,
   QueueMusic,
 } from './constants';
+import { MusicDownloadQuality } from '@/utils/music_download_asset';
 
 export enum EventType {
   DOWNLOAD_MUSIC_LIST = 'download-music-list',
@@ -75,6 +76,7 @@ export default new Eventin<
     [EventType.DOWNLOAD_MUSIC_LIST]: {
       musicList: Music[];
       directoryHandle: FileSystemDirectoryHandle;
+      quality: MusicDownloadQuality;
     };
     [EventType.DOWNLOAD_MUSIC_LIST_RETRY_FAILED]: null;
     [EventType.DOWNLOAD_MUSIC_LIST_CLEAN_ALL]: null;

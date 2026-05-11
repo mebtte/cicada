@@ -81,7 +81,11 @@ function Wrapper() {
     duration: audioDuration,
     bufferedPercent: audioBufferedPercent,
     audio,
-  } = useAudio({ queueMusic });
+  } = useAudio({
+    queueMusic,
+    playqueue,
+    currentPlayqueuePosition,
+  });
 
   useMediaSession({
     music: queueMusic,

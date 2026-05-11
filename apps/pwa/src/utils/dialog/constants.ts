@@ -8,6 +8,7 @@ export const DEFAULT_CANCEL_VARIANT = 'ghost';
 export enum DialogType {
   ALERT,
   CONFIRM,
+  ACTIONS,
   CAPTCHA,
   INPUT,
   INPUT_LIST,
@@ -48,6 +49,20 @@ export interface Confirm extends DialogOptions, Confirmable, Cancelable {
 
   title?: ReactNode;
   content?: ReactNode;
+}
+
+export interface ActionDialogAction {
+  text: ReactNode;
+  variant?: Variant;
+  onClick?: () => void | boolean | Promise<void | boolean>;
+}
+
+export interface Actions extends DialogOptions, Cancelable {
+  type: DialogType.ACTIONS;
+
+  title?: ReactNode;
+  content?: ReactNode;
+  actions: ActionDialogAction[];
 }
 
 export interface Captcha

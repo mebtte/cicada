@@ -5,8 +5,8 @@ import {
   MdPlaylistAdd,
   MdOutlineEdit,
   MdOutlinePeopleAlt,
-  MdOutlineDownload,
 } from 'react-icons/md';
+import { IconExport } from '@/components/icon';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
@@ -18,7 +18,7 @@ import playerEventemitter, {
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import { downloadMusicListByFileSystem } from '../../utils';
+import { openDownloadMusicListDialog } from '../../download_music_list';
 import addMusicListToPlaylist from '../../add_to_playlist';
 
 const Style = styled.div`
@@ -77,9 +77,9 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
           variant="ghost"
           size="sm"
           disabled={!musicbill.musicList.length}
-          onClick={() => downloadMusicListByFileSystem(musicbill.musicList)}
+          onClick={() => openDownloadMusicListDialog(musicbill.musicList)}
         >
-          <MdOutlineDownload />
+          <IconExport size="1em" />
         </Button>
       ) : null}
       <Button

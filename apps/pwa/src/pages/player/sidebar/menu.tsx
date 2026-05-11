@@ -3,7 +3,6 @@ import {
   MdLooks,
   MdOutlineSettings,
   MdHistory,
-  MdOutlineDownload,
   MdAdminPanelSettings,
   MdStarOutline,
 } from 'react-icons/md';
@@ -18,7 +17,7 @@ import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
 import capitalize from '@/style/capitalize';
-import { IconExternalLink } from '@/components/icon';
+import { IconExport, IconExternalLink } from '@/components/icon';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
@@ -231,7 +230,7 @@ function Menu() {
             navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.DOWNLOADING_MUSIC}`)
           }
           label={t('download')}
-          icon={<MdOutlineDownload />}
+          icon={<IconExport />}
           suffix={<DownloadTag />}
         />
       ) : null}

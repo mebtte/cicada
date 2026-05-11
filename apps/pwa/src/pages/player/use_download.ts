@@ -7,22 +7,26 @@ import logger from '@/utils/logger';
 import timeout from '@/utils/timeout';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import getMusicDownloadAsset from '@/utils/music_download_asset';
 
 async function downloadAndSave(downloadingMusic: DownloadingMusic) {
-  const { music, directoryHandle } = downloadingMusic;
+  const { music, directoryHandle, asset, ext } = downloadingMusic;
   const fileHandle = await directoryHandle.getFileHandle(
     formatMusicFilename({
       name: music.name,
       singerNames: music.singers.map((s) => s.name),
-      ext: music.asset.split('.').at(-1)!,
+      ext,
     }),
     {
       create: true,
     },
   );
   const writable = await fileHandle.createWritable();
-  const response = await globalThis.fetch(music.asset);
-  await response.body?.pipeTo(writable);
+  const response = await globalThis.fetch(asset);
+  if (!response.ok || !response.body) {
+    throw new Error(`Failed to fetch music asset, status ${response.status}`);
+  }
+  await response.body.pipeTo(writable);
 }
 
 function downloadAndSaveWithTimeout(downloadingMusic: DownloadingMusic) {
@@ -63,13 +67,21 @@ function useDownload() {
       eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST, (payload) => {
         setDownloadingMusicList((dml) => [
           ...payload.musicList.map(
-            (music) =>
-              ({
+            (music) => {
+              const asset = getMusicDownloadAsset({
+                asset: music.asset,
+                quality: payload.quality,
+              });
+              return {
                 id: generateRandomString(),
                 music,
                 directoryHandle: payload.directoryHandle,
+                asset: asset.url,
+                ext: asset.ext,
+                quality: payload.quality,
                 status: DownloadStatus.WAITING,
-              } satisfies DownloadingMusic),
+              } satisfies DownloadingMusic;
+            },
           ),
           ...dml,
         ]);
@@ -126,7 +138,7 @@ function useDownload() {
           ),
         )
         .catch((error) => {
-          logger.error(error, '下载并保存音乐失败');
+          logger.error(error, '导出并保存音乐失败');
           setDownloadingMusicList((ml) =>
             ml.map((m) =>
               m.id === waiting.id

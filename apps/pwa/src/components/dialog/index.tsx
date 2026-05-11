@@ -28,13 +28,20 @@ import {
   ElementRef,
   forwardRef,
   HTMLAttributes,
+  ReactNode,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import styled, { keyframes } from 'styled-components';
 import { useTheme, CSS_VAR } from '../theme';
 import { t } from '@/i18n';
+import {
+  useComposedRefs,
+  useDialogContentA11y,
+  visuallyHiddenStyle,
+} from '../dialog_a11y';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 
@@ -147,8 +154,14 @@ const Overlay = styled(RadixDialog.Overlay)`
   -webkit-backdrop-filter: blur(2px);
   pointer-events: auto;
 
-  &[data-state='open']   { animation: ${overlayIn}  200ms ease; }
-  &[data-state='closed'] { animation: ${overlayOut} 180ms ease; }
+  &[data-state='open'] {
+    animation: ${overlayIn} 200ms ease;
+  }
+
+  &[data-state='closed'] {
+    pointer-events: none;
+    animation: ${overlayOut} 180ms ease forwards;
+  }
 `;
 
 // ─── Panel ────────────────────────────────────────────────────────────────────
@@ -173,8 +186,14 @@ const Panel = styled.div`
   border-bottom: none;
   box-shadow: 0 -5px 0 rgb(185 185 185);
 
-  &[data-state='open']   { animation: ${sheetIn}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
-  &[data-state='closed'] { animation: ${sheetOut} 220ms ease-in; }
+  &[data-state='open'] {
+    animation: ${sheetIn} 340ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &[data-state='closed'] {
+    pointer-events: none;
+    animation: ${sheetOut} 220ms ease-in forwards;
+  }
 
   /* ── Desktop: centered modal ──────────────────────────── */
   @media (min-width: ${MOBILE}px) {
@@ -189,8 +208,14 @@ const Panel = styled.div`
     border: 2px solid rgb(220 220 220);
     box-shadow: 0 8px 0 rgb(185 185 185);
 
-    &[data-state='open']   { animation: ${modalIn}  210ms cubic-bezier(0.16, 1, 0.3, 1); }
-    &[data-state='closed'] { animation: ${modalOut} 160ms ease-in; }
+    &[data-state='open'] {
+      animation: ${modalIn} 210ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    &[data-state='closed'] {
+      pointer-events: none;
+      animation: ${modalOut} 160ms ease-in forwards;
+    }
   }
 `;
 
@@ -257,25 +282,53 @@ export interface DialogContentProps
   extends ComponentPropsWithoutRef<typeof RadixDialog.Content> {
   /** Show the × close button. Default true. */
   showClose?: boolean;
+  /** Screen reader title used when no DialogTitle is rendered. */
+  accessibleTitle?: ReactNode;
 }
 
 export const DialogContent = forwardRef<
   ElementRef<typeof RadixDialog.Content>,
   DialogContentProps
->(({ children, showClose = true, style, ...props }, ref) => {
+>(({
+  children,
+  showClose = true,
+  style,
+  accessibleTitle,
+  forceMount,
+  'aria-describedby': ariaDescribedBy,
+  'aria-label': ariaLabel,
+  ...props
+}, ref) => {
   const theme = useTheme();
   const viewportStyle = useVisualViewportStyle();
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const composedPanelRef = useComposedRefs(ref, panelRef);
+  const showFallbackTitle = useDialogContentA11y(panelRef, ariaDescribedBy);
   const themeVars = {
     [CSS_VAR.colorPrimary]: theme.colorPrimary,
     [CSS_VAR.colorPrimaryShadow]: `color-mix(in srgb, ${theme.colorPrimary} 70%, #000)`,
   } as CSSProperties;
 
   return (
-    <RadixDialog.Portal>
+    <RadixDialog.Portal forceMount={forceMount}>
       <ViewportFrame style={viewportStyle}>
-        <Overlay />
-        <RadixDialog.Content ref={ref} {...props} asChild>
+        <Overlay forceMount={forceMount} />
+        <RadixDialog.Content
+          ref={composedPanelRef}
+          aria-describedby={ariaDescribedBy}
+          aria-label={ariaLabel}
+          forceMount={forceMount}
+          {...props}
+          asChild
+        >
           <Panel style={{ ...themeVars, ...style }}>
+            {showFallbackTitle && (
+              <RadixDialog.Title asChild>
+                <h2 style={visuallyHiddenStyle}>
+                  {accessibleTitle ?? ariaLabel ?? t('dialog')}
+                </h2>
+              </RadixDialog.Title>
+            )}
             <Handle aria-hidden />
             {showClose && (
               <CloseButton aria-label={t('close')}>
@@ -321,7 +374,12 @@ export const DialogTitle = forwardRef<
   ElementRef<typeof RadixDialog.Title>,
   ComponentPropsWithoutRef<typeof RadixDialog.Title>
 >(({ children, ...props }, ref) => (
-  <RadixDialog.Title ref={ref} {...props} asChild>
+  <RadixDialog.Title
+    ref={ref}
+    {...props}
+    data-cicada-dialog-title=""
+    asChild
+  >
     <DialogTitleText>{children}</DialogTitleText>
   </RadixDialog.Title>
 ));
@@ -347,7 +405,12 @@ export const DialogDescription = forwardRef<
   ElementRef<typeof RadixDialog.Description>,
   ComponentPropsWithoutRef<typeof RadixDialog.Description>
 >(({ children, ...props }, ref) => (
-  <RadixDialog.Description ref={ref} {...props} asChild>
+  <RadixDialog.Description
+    ref={ref}
+    {...props}
+    data-cicada-dialog-description=""
+    asChild
+  >
     <DialogDescriptionText>{children}</DialogDescriptionText>
   </RadixDialog.Description>
 ));

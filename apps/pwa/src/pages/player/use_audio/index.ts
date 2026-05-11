@@ -11,7 +11,15 @@ import useVolume from './use_volume';
 import useAction from './use_action';
 import usePlayRecord from './use_play_record';
 
-function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
+function useAudio({
+  queueMusic,
+  playqueue,
+  currentPlayqueuePosition,
+}: {
+  queueMusic?: QueueMusic;
+  playqueue: QueueMusic[];
+  currentPlayqueuePosition: number;
+}) {
   const musicPlaybackQuality = useSetting((s) => s.musicPlaybackQuality);
   const audio = useMemo(() => {
     if (queueMusic) {
@@ -32,7 +40,11 @@ function useAudio({ queueMusic }: { queueMusic?: QueueMusic }) {
   const [bufferedPercent, setBufferedPercent] = useState(0);
 
   useVolume(audio);
-  useCache(audio);
+  useCache(audio, {
+    playqueue,
+    currentPlayqueuePosition,
+    musicPlaybackQuality,
+  });
   useAction(audio);
   usePlayRecord(audio);
 
