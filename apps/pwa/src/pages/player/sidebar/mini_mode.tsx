@@ -1,5 +1,6 @@
 import { Drawer, DrawerContent } from '@/components';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import Content from './content';
@@ -17,6 +18,7 @@ const ContentWrapper = styled.div`
 
 function MiniMode() {
   const [open, setOpen] = useState(false);
+  const { pathname, search } = useLocation();
 
   useEffect(() => {
     const unlistenOpen = e.listen(EventType.MINI_MODE_OPEN_SIDEBAR, () =>
@@ -30,6 +32,10 @@ function MiniMode() {
       unlistenClose();
     };
   }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname, search]);
 
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>

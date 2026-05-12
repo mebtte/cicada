@@ -10,13 +10,13 @@ import {
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
-import { useNavigate } from 'react-router-dom';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
 import e, { EventType } from '../../eventemitter';
 import Context from '../../context';
 import { openCreateMusicbillDialog } from '../../utils';
+import useSidebarNavigate from '../use_sidebar_navigate';
 
 const reloadMusicbillList = () =>
   e.emit(EventType.RELOAD_MUSICBILL_LIST, { silence: false });
@@ -54,7 +54,7 @@ const ToolButton = styled(Button)`
 `;
 
 function Top() {
-  const navigate = useNavigate();
+  const navigate = useSidebarNavigate();
   const { getMusicbillListStatus, musicbillList } = useContext(Context);
   return (
     <Style>

@@ -5,8 +5,9 @@ import { memo } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { useUser } from '@/global_states/server';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Avatar from '@/components/avatar';
+import useSidebarNavigate from './use_sidebar_navigate';
 
 const AVATAR_SIZE = 100;
 const Style = styled.div`
@@ -32,7 +33,7 @@ const Style = styled.div`
 
 function Profile() {
   const user = useUser()!;
-  const navigate = useNavigate();
+  const navigate = useSidebarNavigate();
   const { pathname } = useLocation();
   const profilePath = `${ROOT_PATH.PLAYER}${PLAYER_PATH.USER}`;
 
