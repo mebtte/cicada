@@ -52,6 +52,7 @@ export enum EventType {
   TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER = 'toggle_playlist_playqueue_drawer',
   OPEN_USER_DRAWER = 'open_user_drawer',
   OPEN_MUSICBILL_DRAWER = 'open_musicbill_drawer',
+  OPEN_AUTHORIZED_DEVICE_DRAWER = 'open_authorized_device_drawer',
   OPEN_2FA_DIALOG = 'open_2fa_dialog',
 
   FOCUS_SEARCH_INPUT = 'focus_search_input',
@@ -135,6 +136,7 @@ export default new Eventin<
     [EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.OPEN_USER_DRAWER]: { id: string };
     [EventType.OPEN_MUSICBILL_DRAWER]: { id: string };
+    [EventType.OPEN_AUTHORIZED_DEVICE_DRAWER]: null;
     [EventType.OPEN_2FA_DIALOG]: null;
 
     [EventType.FOCUS_SEARCH_INPUT]: null;

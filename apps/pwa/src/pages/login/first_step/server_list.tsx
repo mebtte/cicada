@@ -9,6 +9,7 @@ import definition from '@/definition';
 import { isSameMajorVersion } from '@/utils/version';
 import { useState } from 'react';
 import logger from '@/utils/logger';
+import { getServerMetadataErrorMessage } from '../utils';
 
 const Style = styled.div`
   > .label {
@@ -97,7 +98,7 @@ function ServerList({
                   error,
                   `Failed to get origin "${s.origin}" metadata`,
                 );
-                dialog.alert({ content: t('failed_to_get_server_metadata') });
+                dialog.alert({ content: getServerMetadataErrorMessage(error) });
               } finally {
                 setCheckingOrigin(undefined);
               }

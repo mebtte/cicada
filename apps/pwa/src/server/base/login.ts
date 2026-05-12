@@ -5,10 +5,16 @@ interface RequestBody {
   password: string;
   captchaId: string;
   captchaValue: string;
+  deviceName?: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  sessionId: string;
 }
 
 function login(data: RequestBody) {
-  return request<string>({
+  return request<LoginResponse>({
     path: '/base/login',
     method: Method.POST,
     body: {
@@ -16,6 +22,7 @@ function login(data: RequestBody) {
       password: data.password,
       captchaId: data.captchaId,
       captchaValue: data.captchaValue,
+      deviceName: data.deviceName,
     },
   });
 }

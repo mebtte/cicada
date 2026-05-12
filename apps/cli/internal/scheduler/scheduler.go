@@ -9,6 +9,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"cicada/internal/auth"
 	"cicada/internal/config"
 	"cicada/internal/store"
 
@@ -36,6 +37,7 @@ func Start() {
 		{"remove_unlinked_asset", removeUnlinkedAsset},
 		{"remove_outdated_play_record", removeOutdatedPlayRecord},
 		{"remove_outdated_shared_invitation", removeOutdatedSharedInvitation},
+		{"remove_outdated_auth_session", removeOutdatedAuthSession},
 		{"clean_outdated_file", cleanOutdatedFile},
 		{"clean_outdated_access_log", cleanOutdatedAccessLog},
 		{"clean_outdated_scheduler_log", cleanOutdatedSchedulerLog},
@@ -324,6 +326,18 @@ func removeOutdatedSharedInvitation() (schedulerJobResult, error) {
 	return schedulerJobResult{
 		Summary: fmt.Sprintf("deleted %d unanswered shared musicbill invitations older than 3 days", deleted),
 		Metrics: map[string]int64{"deleted_shared_invitations": deleted},
+	}, err
+}
+
+func removeOutdatedAuthSession() (schedulerJobResult, error) {
+	now := time.Now()
+	deleted, err := store.DeleteOutdatedAuthSessions(
+		auth.SessionRevokedCleanupBefore(now),
+		auth.SessionInactiveCleanupBefore(now),
+	)
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("deleted %d outdated auth sessions", deleted),
+		Metrics: map[string]int64{"deleted_auth_sessions": deleted},
 	}, err
 }
 

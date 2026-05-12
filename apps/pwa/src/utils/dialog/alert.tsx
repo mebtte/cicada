@@ -33,7 +33,7 @@ function AlertContent({
       {options.content && <DialogBody>{options.content}</DialogBody>}
       <DialogFooter>
         <Button variant="primary" onClick={onConfirm} loading={confirming}>
-          {options.confirmText || t('confirm')}
+          {options.confirmText || t('alert_confirm')}
         </Button>
       </DialogFooter>
     </>

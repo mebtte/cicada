@@ -534,11 +534,11 @@ func GetSharedMusicbillInvitationList(c *gin.Context) {
 	list := make([]gin.H, len(invitations))
 	for i, inv := range invitations {
 		list[i] = gin.H{
-			"id":                inv.ID,
-			"inviteTimestamp":   inv.InviteTimestamp,
-			"inviteUserId":      inv.InviteUserID,
+			"id":                 inv.ID,
+			"inviteTimestamp":    inv.InviteTimestamp,
+			"inviteUserId":       inv.InviteUserID,
 			"inviteUserNickname": inv.UserNickname,
-			"musicbillId":       inv.MusicbillID,
+			"musicbillId":        inv.MusicbillID,
 		}
 	}
 	api.OK(c, list)

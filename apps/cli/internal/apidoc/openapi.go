@@ -82,11 +82,11 @@ func Spec() map[string]any {
 func authenticationGuide() map[string]any {
 	return map[string]any{
 		"title":   "Authentication",
-		"summary": "Cicada uses a JWT-based business token. The token is returned by the login endpoints and is usually sent in the `x-cicada-token` request header.",
+		"summary": "Cicada uses an opaque server-side session token. The token is returned by the login endpoints and is usually sent in the `x-cicada-token` request header.",
 		"header": map[string]any{
 			"name":        "x-cicada-token",
 			"type":        "string",
-			"description": "JWT auth token used by authenticated endpoints.",
+			"description": "Opaque session token used by authenticated endpoints.",
 		},
 		"tokenEndpoints": []any{
 			map[string]any{
@@ -246,9 +246,10 @@ func operations() []operation {
 				"password":     "cicada",
 				"captchaId":    "9c4a0f42",
 				"captchaValue": "5k7n",
+				"deviceName":   "Chrome on macOS",
 			}),
-			SuccessSchema:  strSchema("JWT auth token.", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"),
-			SuccessExample: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+			SuccessSchema:  loginResponseSchema(),
+			SuccessExample: map[string]any{"token": "cicada_abc123", "sessionId": "session-1"},
 			ErrorCodes:     []string{"wrong_parameter", "wrong_captcha", "wrong_username_or_password", "need_2fa", "login_too_frequent", "server_error"},
 		},
 		{
@@ -261,9 +262,10 @@ func operations() []operation {
 				"username":   "cicada",
 				"password":   "cicada",
 				"twoFAToken": "123456",
+				"deviceName": "Chrome on macOS",
 			}),
-			SuccessSchema:  strSchema("JWT auth token.", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"),
-			SuccessExample: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+			SuccessSchema:  loginResponseSchema(),
+			SuccessExample: map[string]any{"token": "cicada_abc123", "sessionId": "session-1"},
 			ErrorCodes:     []string{"wrong_parameter", "wrong_username_or_password", "wrong_2fa_token", "no_need_to_2fa", "login_with_2fa_too_frequent", "server_error"},
 		},
 		{
@@ -276,12 +278,12 @@ func operations() []operation {
 				objSchema(
 					[]string{"token", "musicId"},
 					map[string]any{
-						"token":   strSchema("JWT auth token.", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"),
+						"token":   strSchema("Opaque session token.", "cicada_abc123"),
 						"musicId": strSchema("Music ID.", "music-1"),
 						"percent": numSchema("Playback completion ratio, from 0 to 1.", 0.82),
 					},
 				),
-				map[string]any{"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", "musicId": "music-1", "percent": 0.82},
+				map[string]any{"token": "cicada_abc123", "musicId": "music-1", "percent": 0.82},
 			),
 			SuccessSchema:  nil,
 			SuccessExample: nil,
@@ -371,6 +373,51 @@ func operations() []operation {
 			SuccessSchema:  nil,
 			SuccessExample: nil,
 			ErrorCodes:     []string{"wrong_parameter", "wrong_2fa_token", "no_need_to_2fa", "not_authorized"},
+		},
+		{
+			Method:         "GET",
+			Path:           "/api/sessions",
+			Summary:        "List authorized devices",
+			Description:    "Return active auth sessions for the current user.",
+			Tags:           []string{"Profile"},
+			Auth:           true,
+			SuccessSchema:  arraySchema(authSessionSchema()),
+			SuccessExample: []any{authSessionExample()},
+			ErrorCodes:     []string{"not_authorized", "server_error"},
+		},
+		{
+			Method:      "PUT",
+			Path:        "/api/sessions/{id}",
+			Summary:     "Rename authorized device",
+			Description: "Update the display name for one of the current user's auth sessions.",
+			Tags:        []string{"Profile"},
+			Auth:        true,
+			Parameters: []map[string]any{
+				pathParam("id", "Auth session ID.", strSchema("", "session-1")),
+			},
+			RequestBody: jsonRequestBody(
+				objSchema([]string{"deviceName"}, map[string]any{
+					"deviceName": strSchema("Device display name.", "MacBook Pro"),
+				}),
+				map[string]any{"deviceName": "MacBook Pro"},
+			),
+			SuccessSchema:  nil,
+			SuccessExample: nil,
+			ErrorCodes:     []string{"wrong_parameter", "not_authorized", "server_error"},
+		},
+		{
+			Method:      "DELETE",
+			Path:        "/api/sessions/{id}",
+			Summary:     "Revoke authorized device",
+			Description: "Revoke one auth session. Use `current` as the ID to revoke the current device.",
+			Tags:        []string{"Profile"},
+			Auth:        true,
+			Parameters: []map[string]any{
+				pathParam("id", "Auth session ID or `current`.", strSchema("", "session-1")),
+			},
+			SuccessSchema:  nil,
+			SuccessExample: nil,
+			ErrorCodes:     []string{"wrong_parameter", "not_authorized", "server_error"},
 		},
 		{
 			Method:      "GET",
@@ -1366,6 +1413,7 @@ func loginRequestSchema() map[string]any {
 			"password":     passwordSchema(),
 			"captchaId":    strSchema("Captcha ID.", "9c4a0f42"),
 			"captchaValue": strSchema("Captcha value.", "5k7n"),
+			"deviceName":   strSchema("Optional device display name. Defaults to a short name derived from User-Agent.", "Chrome on macOS"),
 		},
 	)
 }
@@ -1377,6 +1425,17 @@ func login2FARequestSchema() map[string]any {
 			"username":   strSchema("Username.", "cicada"),
 			"password":   passwordSchema(),
 			"twoFAToken": strSchema("6-digit TOTP token.", "123456"),
+			"deviceName": strSchema("Optional device display name. Defaults to a short name derived from User-Agent.", "Chrome on macOS"),
+		},
+	)
+}
+
+func loginResponseSchema() map[string]any {
+	return objSchema(
+		[]string{"token", "sessionId"},
+		map[string]any{
+			"token":     strSchema("Opaque session token.", "cicada_abc123"),
+			"sessionId": strSchema("Auth session ID.", "session-1"),
 		},
 	)
 }
@@ -1388,7 +1447,12 @@ func updateProfileRequestSchema() map[string]any {
 			"key": strEnumSchema([]string{"password", "avatar", "nickname", "musicbillOrders"}, "nickname"),
 			"value": map[string]any{
 				"oneOf": []any{
-					strSchema("String value. Password values must be 6-32 characters.", "Cicada"),
+					strSchema("String value for avatar or nickname updates.", "Cicada"),
+					objSchema([]string{"password"}, map[string]any{
+						"password":        passwordSchema(),
+						"currentPassword": passwordSchema(),
+						"twoFAToken":      strSchema("Current TOTP token.", "123456"),
+					}),
 					intSchema("Integer value.", 1),
 					boolSchema("Boolean value.", true),
 					arraySchema(strSchema("", "musicbill-1")),
@@ -1437,6 +1501,37 @@ func profileExample() map[string]any {
 		"lastActiveTimestamp":        int64(1710000000000),
 		"musicPlayRecordIndate":      0,
 		"twoFAEnabled":               true,
+	}
+}
+
+func authSessionSchema() map[string]any {
+	return objSchema(
+		[]string{"id", "deviceName", "createTimestamp", "lastSeenTimestamp", "inactiveExpireTimestamp", "current"},
+		map[string]any{
+			"id":                      strSchema("Auth session ID.", "session-1"),
+			"deviceName":              strSchema("Device display name.", "Chrome on macOS"),
+			"userAgent":               strSchema("Raw User-Agent.", "Chrome on macOS"),
+			"createIP":                strSchema("IP address used when the session was created.", "127.0.0.1"),
+			"lastSeenIP":              strSchema("Most recent IP address seen for the session.", "127.0.0.1"),
+			"createTimestamp":         intSchema("Creation timestamp in milliseconds.", 1710000000000),
+			"lastSeenTimestamp":       intSchema("Last activity timestamp in milliseconds.", 1710100000000),
+			"inactiveExpireTimestamp": intSchema("Idle-expiry timestamp in milliseconds.", 1725652000000),
+			"current":                 boolSchema("Whether this is the token used by the current request.", true),
+		},
+	)
+}
+
+func authSessionExample() map[string]any {
+	return map[string]any{
+		"id":                      "session-1",
+		"deviceName":              "Chrome on macOS",
+		"userAgent":               "Chrome on macOS",
+		"createIP":                "127.0.0.1",
+		"lastSeenIP":              "127.0.0.1",
+		"createTimestamp":         int64(1710000000000),
+		"lastSeenTimestamp":       int64(1710100000000),
+		"inactiveExpireTimestamp": int64(1725652000000),
+		"current":                 true,
 	}
 }
 

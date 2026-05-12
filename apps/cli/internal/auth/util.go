@@ -1,20 +1,23 @@
 package auth
 
 import (
-	"math/rand"
-	"time"
+	"crypto/rand"
+	"math/big"
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 func randString(n int) string {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	b := make([]byte, n)
 	for i := range b {
-		b[i] = letterBytes[r.Intn(len(letterBytes))]
+		idx, err := rand.Int(rand.Reader, big.NewInt(int64(len(letterBytes))))
+		if err != nil {
+			panic(err)
+		}
+		b[i] = letterBytes[idx.Int64()]
 	}
 	return string(b)
 }
 
-// RandString is exported for token identifiers.
+// RandString returns a cryptographically random alphanumeric string.
 func RandString(n int) string { return randString(n) }

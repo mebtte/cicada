@@ -25,6 +25,7 @@ import LyricPanel from './lyric_panel';
 import SingerDrawer from './singer_drawer';
 import UserDrawer from './user_drawer';
 import MusicbillDrawer from './musicbill_drawer';
+import AuthorizedDeviceDrawer from './authorized_device_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
 import SingerModifyRecordDrawer from './singer_modify_record_drawer';
@@ -155,6 +156,7 @@ function Wrapper() {
       <SortMusicbillDrawer />
       <UserDrawer />
       <MusicbillDrawer />
+      <AuthorizedDeviceDrawer />
       <MusicbillSharedUserDrawer />
       <SingerModifyRecordDrawer />
 

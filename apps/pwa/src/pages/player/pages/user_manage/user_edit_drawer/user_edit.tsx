@@ -270,10 +270,6 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
                     key: AdminAllowUpdateKey.PASSWORD,
                     value: password,
                   });
-
-                  if (user.twoFAEnabled) {
-                    notice.info(t('2fa_has_disabled'));
-                  }
                   notice.info(t('password_has_changed'));
 
                   onClose();
@@ -286,7 +282,6 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
             })
           }
         >
-          {user.twoFAEnabled ? `${t('disable_2fa')} / ` : null}
           {t('change_password')}
         </Button>
         {user.admin ? null : (

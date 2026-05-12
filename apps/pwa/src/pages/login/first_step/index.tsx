@@ -12,6 +12,7 @@ import { Divider } from '@/components';
 import definition from '@/definition';
 import { isSameMajorVersion } from '@/utils/version';
 import dialog from '@/utils/dialog';
+import { getServerMetadataErrorMessage } from '../utils';
 
 const Style = styled.div`
   display: flex;
@@ -86,7 +87,7 @@ function FirstStep({
       toNext();
     } catch (error) {
       logger.error(error, `Failed to get origin "${origin}" metadata`);
-      dialog.alert({ content: t('failed_to_get_server_metadata') });
+      dialog.alert({ content: getServerMetadataErrorMessage(error) });
     } finally {
       setLoading(false);
     }

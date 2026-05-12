@@ -17,10 +17,9 @@ func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 	})
 
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 	if err := Initialize(); err != nil {
 		t.Fatalf("initialize store: %v", err)

@@ -49,6 +49,12 @@ type updateProfileBody struct {
 	Value any    `json:"value"`
 }
 
+type updatePasswordValue struct {
+	Password        string `json:"password"`
+	CurrentPassword string `json:"currentPassword"`
+	TwoFAToken      string `json:"twoFAToken"`
+}
+
 func UpdateProfile(c *gin.Context) {
 	u := middleware.GetUser(c)
 	var body updateProfileBody
@@ -59,13 +65,24 @@ func UpdateProfile(c *gin.Context) {
 
 	switch body.Key {
 	case "password":
-		pwd, ok := body.Value.(string)
-		if !ok || !validPasswordLength(pwd) {
+		value, ok := decodeUpdatePasswordValue(body.Value)
+		if !ok || !validPasswordLength(value.Password) {
 			api.Fail(c, apperr.WrongParameter)
 			return
 		}
-		store.UpdateUser(u.ID, "password", store.DoubleMD5(pwd))
-		store.UpdateUser(u.ID, "tokenIdentifier", auth.RandString(12))
+		if !validateCurrentCredential(u, value.CurrentPassword, value.TwoFAToken) {
+			api.Fail(c, apperr.WrongUsernameOrPassword)
+			return
+		}
+		passwordHash, err := store.HashPassword(value.Password)
+		if err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		store.UpdateUser(u.ID, "password", passwordHash)
+		if s := middleware.GetSession(c); s != nil {
+			store.RevokeOtherAuthSessions(u.ID, s.ID, time.Now().UnixMilli(), "password_changed")
+		}
 		api.OK(c, nil)
 
 	case "avatar":
@@ -122,6 +139,37 @@ func UpdateProfile(c *gin.Context) {
 	default:
 		api.Fail(c, apperr.WrongParameter)
 	}
+}
+
+func decodeUpdatePasswordValue(value any) (updatePasswordValue, bool) {
+	raw, ok := value.(map[string]any)
+	if !ok {
+		return updatePasswordValue{}, false
+	}
+	out := updatePasswordValue{}
+	if v, ok := raw["password"].(string); ok {
+		out.Password = v
+	}
+	if v, ok := raw["currentPassword"].(string); ok {
+		out.CurrentPassword = v
+	}
+	if v, ok := raw["twoFAToken"].(string); ok {
+		out.TwoFAToken = v
+	}
+	return out, out.Password != "" && (out.CurrentPassword != "" || out.TwoFAToken != "")
+}
+
+func validateCurrentCredential(u *store.User, password, twoFAToken string) bool {
+	if password != "" {
+		ok, _ := store.VerifyPassword(u.Password, password)
+		if ok {
+			return true
+		}
+	}
+	if twoFAToken != "" && u.TwoFASecret.Valid && auth.TOTPEnabled(u.TwoFASecret.String) {
+		return auth.ValidateTOTP(twoFAToken, u.TwoFASecret.String)
+	}
+	return false
 }
 
 func GetUser(c *gin.Context) {
@@ -255,9 +303,13 @@ func AdminUpdateUser(c *gin.Context) {
 			api.Fail(c, apperr.WrongParameter)
 			return
 		}
-		store.UpdateUser(body.ID, "password", store.DoubleMD5(pwd))
-		store.UpdateUser(body.ID, "tokenIdentifier", auth.RandString(12))
-		store.UpdateUser(body.ID, "twoFASecret", nil)
+		passwordHash, err := store.HashPassword(pwd)
+		if err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		store.UpdateUser(body.ID, "password", passwordHash)
+		store.RevokeAllAuthSessions(body.ID, time.Now().UnixMilli(), "admin_reset")
 		api.OK(c, nil)
 		return
 	}

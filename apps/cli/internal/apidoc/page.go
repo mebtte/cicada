@@ -656,7 +656,7 @@ const docsPageHTML = `<!doctype html>
 
       const notes = [];
       if (operation.auth) {
-        notes.push("Send the JWT token in the x-cicada-token header unless the endpoint description says otherwise.");
+        notes.push("Send the session token in the x-cicada-token header unless the endpoint description says otherwise.");
       }
       if (operation.admin) {
         notes.push("This endpoint also requires an authenticated user with admin = 1.");

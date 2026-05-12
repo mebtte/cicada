@@ -12,6 +12,7 @@ export interface User {
   twoFAEnabled: boolean;
 
   token: string;
+  sessionId?: string;
 }
 
 export interface Server {

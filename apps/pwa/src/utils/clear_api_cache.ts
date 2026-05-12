@@ -1,7 +1,7 @@
 import { CacheName } from '@/constants/cache';
 import logger from '@/utils/logger';
 
-export function clearApiCache() {
+export default function clearApiCache() {
   if (window.caches) {
     window.caches
       .delete(CacheName.API)

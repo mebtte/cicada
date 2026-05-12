@@ -15,10 +15,9 @@ import (
 
 func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	for _, dir := range []string{
@@ -82,10 +81,9 @@ func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 
 func TestCleanOutdatedAccessLogRemovesOnlyOldAccessLogs(t *testing.T) {
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := os.MkdirAll(config.AccessLogDir(), 0755); err != nil {
@@ -119,10 +117,9 @@ func TestCleanOutdatedAccessLogRemovesOnlyOldAccessLogs(t *testing.T) {
 
 func TestCleanOutdatedSchedulerLogRemovesOnlyOldSchedulerLogs(t *testing.T) {
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := os.MkdirAll(config.SchedulerLogDir(), 0755); err != nil {
@@ -249,10 +246,9 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 	})
 
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := store.Initialize(); err != nil {

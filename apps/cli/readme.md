@@ -66,7 +66,6 @@ All of `cicada` data is under a directory, here is its structure:
   |- scheduler # JSONL scheduler job logs, rotated daily and cleaned up periodically
 |- v # data version (monotonic integer, see "Data version" below)
 |- db # the database of sqlite
-|- jwt_secret # its content is secret of jwt
 ```
 
 During an in-progress data upgrade these transient files / directories may be present and are cleaned up automatically once the upgrade succeeds (or once the next startup recovers a crashed upgrade):

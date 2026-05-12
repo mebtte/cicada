@@ -27,10 +27,9 @@ func TestGetSinger(t *testing.T) {
 
 	dataDir := t.TempDir()
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      dataDir,
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: dataDir,
+		Port: 8000,
 	})
 	if err := store.Initialize(); err != nil {
 		t.Fatalf("initialize store: %v", err)
@@ -208,10 +207,9 @@ func TestSearchSingerReturnsPhotos(t *testing.T) {
 	})
 
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 	if err := store.Initialize(); err != nil {
 		t.Fatalf("initialize store: %v", err)
@@ -304,10 +302,9 @@ func TestAdminCreateSingerForceDuplicateName(t *testing.T) {
 	})
 
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 	if err := store.Initialize(); err != nil {
 		t.Fatalf("initialize store: %v", err)
@@ -385,10 +382,9 @@ func TestAdminGetSingerList(t *testing.T) {
 
 	dataDir := t.TempDir()
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      dataDir,
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: dataDir,
+		Port: 8000,
 	})
 	if err := store.Initialize(); err != nil {
 		t.Fatalf("initialize store: %v", err)
@@ -532,10 +528,9 @@ func TestAdminGetSinger(t *testing.T) {
 
 	dataDir := t.TempDir()
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      dataDir,
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: dataDir,
+		Port: 8000,
 	})
 	if err := store.Initialize(); err != nil {
 		t.Fatalf("initialize store: %v", err)

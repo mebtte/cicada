@@ -4,8 +4,9 @@ import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import styled, { css } from 'styled-components';
 
-const Style = styled.div`
-  margin: 28px 20px 0;
+const Style = styled.section`
+  flex: 0 0 auto;
+  margin-top: auto;
   overflow: hidden;
 
   border: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -29,10 +30,10 @@ const Table = styled.table`
 `;
 
 const LabelCell = styled.th`
-  width: 132px;
-  padding: 11px 14px 13px;
+  width: 50%;
+  padding: 11px 12px 13px 14px;
   vertical-align: middle;
-  text-align: left;
+  text-align: right;
 
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   font-weight: 800;
@@ -42,15 +43,16 @@ const LabelCell = styled.th`
   ${({ theme: { miniMode } }) =>
     miniMode &&
     css`
-      width: 108px;
       padding: 10px 12px 12px;
     `}
 `;
 
 const ValueCell = styled.td`
+  width: 50%;
   min-width: 0;
-  padding: 11px 14px 13px;
+  padding: 11px 14px 13px 12px;
   vertical-align: middle;
+  text-align: left;
 
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   font-weight: 800;

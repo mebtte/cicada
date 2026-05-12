@@ -33,6 +33,7 @@ import {
   useRef,
 } from 'react';
 import * as RadixDialog from '@radix-ui/react-dialog';
+import { MdClose } from 'react-icons/md';
 import styled, { css, keyframes } from 'styled-components';
 import { useTheme, CSS_VAR } from '../theme';
 import { t } from '@/i18n';
@@ -143,26 +144,43 @@ const Panel = styled.div<{ $side: DrawerSide }>`
 
 const CloseButton = styled(RadixDialog.Close)`
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 34px;
+  height: 34px;
   padding: 0;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: rgb(185 185 185);
+  border: 2px solid rgb(180 180 180);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 3px 0 rgb(180 180 180);
+  color: rgb(88 88 88);
   cursor: pointer;
-  transition: color 120ms, background 120ms;
   flex-shrink: 0;
+  font-size: 20px;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    filter 120ms;
 
-  &:hover        { color: rgb(60 60 60); background: rgb(240 240 240); }
+  &:hover {
+    filter: brightness(1.06);
+  }
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: none;
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in,
+      filter 60ms;
+  }
+
   &:focus-visible {
-    outline: 3px solid currentColor;
+    outline: 3px solid rgb(180 180 180);
     outline-offset: 2px;
   }
 `;
@@ -187,7 +205,7 @@ export interface DrawerContentProps
   extends ComponentPropsWithoutRef<typeof RadixDialog.Content> {
   /** Which edge the drawer slides from. Default: 'right'. */
   side?: DrawerSide;
-  /** Show the × close button. Default: true. */
+  /** Show the close button. Default: false. */
   showClose?: boolean;
   /** Screen reader title used when no DrawerTitle is rendered. */
   accessibleTitle?: ReactNode;
@@ -207,7 +225,7 @@ export const DrawerContent = forwardRef<
 >(({
   children,
   side = 'right',
-  showClose = true,
+  showClose = false,
   zIndex = DEFAULT_Z_INDEX,
   style,
   accessibleTitle,
@@ -244,13 +262,7 @@ export const DrawerContent = forwardRef<
           )}
           {showClose && (
             <CloseButton aria-label={t('close')}>
-              <svg
-                width={14} height={14} viewBox="0 0 24 24"
-                fill="none" stroke="currentColor"
-                strokeWidth={2.5} strokeLinecap="round"
-              >
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
+              <MdClose />
             </CloseButton>
           )}
           <ScrollArea>{children}</ScrollArea>
