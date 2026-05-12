@@ -36,6 +36,8 @@ const Style = styled.div`
 
   position: relative;
 
+  padding: 12px 12px 0;
+
   ${autoScrollbar}
   overflow: auto;
 

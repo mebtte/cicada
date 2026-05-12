@@ -29,16 +29,6 @@ const Style = styled.div`
   border-radius: 18px;
   box-shadow: 0 6px 0 rgb(232 232 232);
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 8px;
-    background: ${PRIMARY};
-  }
-
   > .cover-card {
     flex: 0 0 auto;
     border-radius: 16px;

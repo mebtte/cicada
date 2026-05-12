@@ -36,6 +36,8 @@ const Style = styled(TabContent)`
 
     &.list {
       overflow: auto;
+      padding-right: 12px;
+      padding-left: 12px;
       ${autoScrollbar}
     }
 

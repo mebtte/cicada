@@ -8,6 +8,7 @@ import { t } from '@/i18n';
 
 const Root = styled.div`
   min-height: 100dvb;
+  padding: 12px 12px 16px;
 `;
 const style: CSSProperties = {
   padding: '50px 0',
