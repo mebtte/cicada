@@ -27,19 +27,31 @@ var (
 )
 
 func init() {
-	startCmd.Flags().StringVar(&startData, "data", config.DefaultDataPath(), "Data directory (env: CICADA_DATA)")
-	startCmd.Flags().IntVar(&startPort, "port", 8000, "HTTP listen port")
-	startCmd.Flags().StringVar(&startJWTExpiry, "jwt-expiry", "180d", "JWT expiry duration (e.g. 7d, 24h)")
+	startCmd.Flags().StringVar(&startData, "data", "", "Data directory, defaults to <exe_dir>/cicada_data (env: CICADA_DATA)")
+	startCmd.Flags().IntVar(&startPort, "port", 0, "HTTP listen port (env: CICADA_PORT, default 8000)")
+	startCmd.Flags().StringVar(&startJWTExpiry, "jwt-expiry", "", "JWT expiry duration, e.g. 7d, 24h (env: CICADA_JWT_EXPIRY, default 180d)")
 	rootCmd.AddCommand(startCmd)
 }
 
 func runStart(cmd *cobra.Command, args []string) error {
-	jwtExpiry := parseExpiry(startJWTExpiry)
+	data := startData
+	if data == "" {
+		data = config.DefaultDataPath()
+	}
+	port := startPort
+	if port == 0 {
+		port = config.DefaultPort()
+	}
+	expiryStr := startJWTExpiry
+	if expiryStr == "" {
+		expiryStr = config.DefaultJWTExpiry()
+	}
+	jwtExpiry := parseExpiry(expiryStr)
 
 	cfg := config.Config{
 		Mode:      config.DefaultMode(),
-		Data:      startData,
-		Port:      startPort,
+		Data:      data,
+		Port:      port,
 		JWTExpiry: jwtExpiry,
 	}
 	config.Set(cfg)

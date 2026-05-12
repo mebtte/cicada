@@ -22,7 +22,7 @@ var exportCmd = &cobra.Command{
 var exportData string
 
 func init() {
-	exportCmd.Flags().StringVar(&exportData, "data", config.DefaultDataPath(), "Data directory (env: CICADA_DATA)")
+	exportCmd.Flags().StringVar(&exportData, "data", "", "Data directory, defaults to <exe_dir>/cicada_data (env: CICADA_DATA)")
 	rootCmd.AddCommand(exportCmd)
 }
 
@@ -32,9 +32,14 @@ func runExport(cmd *cobra.Command, args []string) error {
 		dest = args[0]
 	}
 
+	data := exportData
+	if data == "" {
+		data = config.DefaultDataPath()
+	}
+
 	cfg := config.Config{
 		Mode: config.ModeProduction,
-		Data: exportData,
+		Data: data,
 	}
 	config.Set(cfg)
 

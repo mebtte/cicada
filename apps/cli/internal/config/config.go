@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"sync"
 )
 
@@ -57,7 +58,12 @@ type Config struct {
 }
 
 const (
-	DataEnvVar = "CICADA_DATA"
+	DataEnvVar      = "CICADA_DATA"
+	PortEnvVar      = "CICADA_PORT"
+	JWTExpiryEnvVar = "CICADA_JWT_EXPIRY"
+
+	DefaultPortValue      = 8000
+	DefaultJWTExpiryValue = "180d"
 )
 
 func DefaultDataPath() string {
@@ -71,12 +77,28 @@ func DefaultDataPath() string {
 	return filepath.Join(filepath.Dir(exe), "cicada_data")
 }
 
+func DefaultPort() int {
+	if v := os.Getenv(PortEnvVar); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			return n
+		}
+	}
+	return DefaultPortValue
+}
+
+func DefaultJWTExpiry() string {
+	if v := os.Getenv(JWTExpiryEnvVar); v != "" {
+		return v
+	}
+	return DefaultJWTExpiryValue
+}
+
 var (
 	mu  sync.RWMutex
 	cfg = Config{
 		Mode:      DefaultMode(),
 		Data:      DefaultDataPath(),
-		Port:      8000,
+		Port:      DefaultPortValue,
 		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
 	}
 )
