@@ -3,4 +3,4 @@ export enum Tab {
   PLAYQUEUE = 'playqueue',
 }
 
-export const TAB_LIST_HEIGHT = 55;
+export const TAB_LIST_HEIGHT = 68;

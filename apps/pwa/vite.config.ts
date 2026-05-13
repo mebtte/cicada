@@ -1,6 +1,5 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -8,7 +7,6 @@ import { resolveVersion } from '../../scripts/build_version.mjs';
 
 const CURRENT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const STATIC_DIR = path.join(CURRENT_DIR, 'src/static');
-const INVALID_FILES = ['.DS_Store'];
 
 export default defineConfig(({ command }) => {
   const withSW = command === 'build' || process.env.WITH_SW === 'true';
@@ -36,10 +34,6 @@ export default defineConfig(({ command }) => {
       __DEFINE__: JSON.stringify({
         VERSION: version,
         BUILD_TIME: new Date(),
-        EMPTY_IMAGE_LIST: fs
-          .readdirSync(`${STATIC_DIR}/empty_image`)
-          .filter((f) => !INVALID_FILES.includes(f))
-          .map((f) => `/empty_image/${f}`),
       }),
       'process.env.WITH_SW': JSON.stringify(withSW),
     },

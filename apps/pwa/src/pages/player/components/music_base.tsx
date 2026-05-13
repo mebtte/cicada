@@ -10,13 +10,15 @@ import { Singer as SingerType } from '../constants';
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 
-const Style = styled.div<{ active: boolean }>`
+const Style = styled.div`
+  padding-bottom: 10px;
+`;
+const Card = styled.div<{ active: boolean }>`
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 
   min-height: 72px;
-  margin-bottom: 10px;
   padding: 0 14px 4px;
 
   display: flex;
@@ -172,35 +174,36 @@ function MusicBase({
   const openMusicDrawer = () =>
     e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id });
   return (
-    <Style
-      {...props}
-      active={active}
-      onClick={openMusicDrawer}
-      onContextMenu={(event) => {
-        event.preventDefault();
-        return openMusicDrawer();
-      }}
-    >
-      <div className="index">{index}</div>
-      <div className="content">
-        <div className="music">
-          <div className="info">
-            <div className="top">
-              <span className="name">{music.name}</span>
-              {music.aliases.length ? (
-                <span className="alias">&nbsp;{music.aliases[0]}</span>
-              ) : null}
+    <Style {...props}>
+      <Card
+        active={active}
+        onClick={openMusicDrawer}
+        onContextMenu={(event) => {
+          event.preventDefault();
+          return openMusicDrawer();
+        }}
+      >
+        <div className="index">{index}</div>
+        <div className="content">
+          <div className="music">
+            <div className="info">
+              <div className="top">
+                <span className="name">{music.name}</span>
+                {music.aliases.length ? (
+                  <span className="alias">&nbsp;{music.aliases[0]}</span>
+                ) : null}
+              </div>
+              <div className="singers">
+                {music.singers.map((singer) => (
+                  <Singer key={singer.id} singer={singer} />
+                ))}
+              </div>
             </div>
-            <div className="singers">
-              {music.singers.map((singer) => (
-                <Singer key={singer.id} singer={singer} />
-              ))}
-            </div>
+            {lineAfter}
           </div>
-          {lineAfter}
+          {addon}
         </div>
-        {addon}
-      </div>
+      </Card>
     </Style>
   );
 }

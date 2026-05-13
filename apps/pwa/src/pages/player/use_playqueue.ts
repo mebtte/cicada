@@ -56,6 +56,13 @@ function appendRandomMusicFromPlaylist({
   ];
 }
 
+function moveArrayItem<T>(list: T[], from: number, to: number) {
+  const next = [...list];
+  const [item] = next.splice(from, 1);
+  next.splice(to, 0, item);
+  return next;
+}
+
 export default (playlist: MusicWithSingerAliases[]) => {
   const [playqueue, setPlayqueue] = useState<QueueMusic[]>([]);
   const [currentPosition, setCurrentPosition] = useState(-1);
@@ -158,6 +165,32 @@ export default (playlist: MusicWithSingerAliases[]) => {
       unlistenActionMovePlayqueueMusicEarly();
     };
   }, []);
+
+  useEffect(() => {
+    const unlistenActionReorderPlayqueueMusic = eventemitter.listen(
+      EventType.ACTION_REORDER_PLAYQUEUE_MUSIC,
+      ({ activePid, overPid }) =>
+        setPlayqueue((pq) => {
+          const oldIndex = pq.findIndex((m) => m.pid === activePid);
+          const newIndex = pq.findIndex((m) => m.pid === overPid);
+          if (
+            oldIndex < 0 ||
+            newIndex < 0 ||
+            oldIndex <= currentPosition ||
+            newIndex <= currentPosition
+          ) {
+            return pq;
+          }
+
+          return moveArrayItem(pq, oldIndex, newIndex).map((m, index) => ({
+            ...m,
+            index: index + 1,
+          }));
+        }),
+    );
+
+    return unlistenActionReorderPlayqueueMusic;
+  }, [currentPosition]);
 
   useEffect(() => {
     const unlistenActionPlayMusic = eventemitter.listen(

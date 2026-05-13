@@ -4,7 +4,6 @@ import {
   DownloadStatus as DownloadStatusType,
   FLOATING_CONTROLLER_SCROLL_SPACE,
 } from '../../../constants';
-import List from 'react-list';
 import MusicBase from '../../../components/music_base';
 import {
   MdAccessTime,
@@ -12,7 +11,7 @@ import {
   MdClose,
 } from 'react-icons/md';
 import { IconCheckCircle } from '@/components/icon';
-import { CSSProperties, useContext } from 'react';
+import { CSSProperties, useContext, useRef } from 'react';
 import { CSSVariable } from '@/global_style';
 import Spinner from '@/components/spinner';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -21,6 +20,7 @@ import context from '@/pages/player/context';
 import Empty from '@/components/empty';
 import absoluteFullSize from '@/style/absolute_full_size';
 import Button from '@/components/button';
+import VirtualList from '@/components/virtual_list';
 import eventemitter, { EventType } from '@/pages/player/eventemitter';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
@@ -97,14 +97,16 @@ function DownloadStatus({
 
 function MusicList() {
   const { downloadingMusicList } = useContext(context);
+  const listRef = useRef<HTMLDivElement | null>(null);
   const length = downloadingMusicList.length;
   return (
-    <Style>
+    <Style ref={listRef}>
       {length > 0 ? (
-        <List
-          type="uniform"
-          length={length}
-          itemRenderer={(index, key) => {
+        <VirtualList
+          count={length}
+          getItemKey={(index) => downloadingMusicList[index].id}
+          scrollElementRef={listRef}
+          renderItem={(index, key) => {
             const downloadingMusic = downloadingMusicList[index];
             return (
               <MusicBase

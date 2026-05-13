@@ -4,9 +4,9 @@ import { RequestStatus } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
-import List from 'react-list';
 import Empty from '@/components/empty';
-import { useContext } from 'react';
+import { RefObject, useContext } from 'react';
+import VirtualList from '@/components/virtual_list';
 import { t } from '@/i18n';
 import { FLOATING_CONTROLLER_SCROLL_SPACE, Musicbill } from '../../constants';
 import { INFO_HEIGHT } from './constants';
@@ -40,7 +40,13 @@ const ListContainer = styled(Container)`
   }
 `;
 
-function Wrapper({ musicbill }: { musicbill: Musicbill }) {
+function Wrapper({
+  musicbill,
+  scrollElementRef,
+}: {
+  musicbill: Musicbill;
+  scrollElementRef: RefObject<HTMLElement | null>;
+}) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
 
   const transitions = useTransition(musicbill, {
@@ -71,10 +77,11 @@ function Wrapper({ musicbill }: { musicbill: Musicbill }) {
           if (mb.musicList.length) {
             return (
               <ListContainer style={style}>
-                <List
-                  type="uniform"
-                  length={mb.musicList.length}
-                  itemRenderer={(index, key) => {
+                <VirtualList
+                  count={mb.musicList.length}
+                  getItemKey={(index) => mb.musicList[index].id}
+                  scrollElementRef={scrollElementRef}
+                  renderItem={(index, key) => {
                     const music = mb.musicList[index];
                     const active =
                       playqueue[currentPlayqueuePosition]?.id === music.id;
