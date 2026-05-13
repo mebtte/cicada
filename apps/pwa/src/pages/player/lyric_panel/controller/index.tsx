@@ -14,8 +14,6 @@ const Style = styled.div`
 
   padding: 10px 0 max(env(safe-area-inset-bottom, 0), 10px) 0;
 
-  background-color: rgb(255 255 255 / 0.5);
-  backdrop-filter: blur(10px);
   overflow: hidden;
 
   display: flex;

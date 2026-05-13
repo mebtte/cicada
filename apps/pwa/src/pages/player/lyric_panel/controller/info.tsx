@@ -14,9 +14,11 @@ const Style = styled.div`
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
   > .name {
-    font-size: 20px;
-    font-weight: bold;
-    line-height: 1.8;
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: 0;
     ${ellipsis}
 
     >.content {
@@ -26,7 +28,14 @@ const Style = styled.div`
   }
 
   > .singers {
+    margin-top: 4px;
+
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
     font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+    font-weight: 800;
+    line-height: 1.35;
+    letter-spacing: 0;
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     ${ellipsis}
   }
 `;

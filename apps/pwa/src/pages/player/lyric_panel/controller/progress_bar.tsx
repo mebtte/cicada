@@ -19,10 +19,15 @@ const Style = styled.div`
   }
 
   > .time {
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+    min-width: 42px;
+
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    text-align: center;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    font-family: monospace;
-    transform: scale(0.9);
   }
 `;
 
