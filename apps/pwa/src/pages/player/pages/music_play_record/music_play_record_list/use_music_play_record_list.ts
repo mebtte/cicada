@@ -79,6 +79,28 @@ export default () => {
     () => getPageMusicPlayRecordList({ keyword, page }),
     [getPageMusicPlayRecordList, keyword, page],
   );
+  const removeLocalMusicPlayRecord = useCallback((recordId: number) => {
+    setData((d) => {
+      if (!d.value) {
+        return d;
+      }
+
+      const musicPlayRecordList = d.value.musicPlayRecordList.filter(
+        (mpr) => mpr.recordId !== recordId,
+      );
+      if (musicPlayRecordList.length === d.value.musicPlayRecordList.length) {
+        return d;
+      }
+
+      return {
+        ...d,
+        value: {
+          total: Math.max(0, d.value.total - 1),
+          musicPlayRecordList,
+        },
+      };
+    });
+  }, []);
 
   useEffect(() => {
     getPageMusicPlayRecordList({ keyword, page });
@@ -91,13 +113,18 @@ export default () => {
     );
     const unlistenMusicPlayRecordDeleted = e.listen(
       EventType.MUSIC_PLAY_RECORD_DELETED,
+      ({ recordId }) => removeLocalMusicPlayRecord(recordId),
+    );
+    const unlistenMusicPlayRecordDeleteFailed = e.listen(
+      EventType.MUSIC_PLAY_RECORD_DELETE_FAILED,
       reload,
     );
     return () => {
       unlistenMusicDeleted();
       unlistenMusicPlayRecordDeleted();
+      unlistenMusicPlayRecordDeleteFailed();
     };
-  }, [reload]);
+  }, [reload, removeLocalMusicPlayRecord]);
 
   return {
     page,

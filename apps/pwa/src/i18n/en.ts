@@ -245,7 +245,6 @@ export default {
     'are you sure to set this musicbill as private ?',
   instruction_of_setting_musicbill_as_private:
     'setting musicbill as private will remove it from your profile, others can not serach it or collect it, and it will be removed from collection list of others that collect it',
-  music_created: 'music created',
   join_at: 'join at %s1',
   music_list_are_added_to_playlist: '%s1 musics are added to playlist',
   music_list_are_added_to_playlist_unsuccessfully:
@@ -302,7 +301,6 @@ unknown_singer: 'unknown singer',
   pending: 'pending',
   start_import: 'start import',
   select_music_files: 'select music files',
-  no_created_music: 'no created music',
   remove_export_item_question:
     'are you sure to remove this export item ?',
   no_export: 'no exports',

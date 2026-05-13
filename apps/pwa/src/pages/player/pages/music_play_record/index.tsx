@@ -13,8 +13,8 @@ const Style = styled(Page)`
 function MusicPlayRecord() {
   return (
     <Style>
-      <MusicPlayRecordList />
       <Toolbar />
+      <MusicPlayRecordList />
     </Style>
   );
 }

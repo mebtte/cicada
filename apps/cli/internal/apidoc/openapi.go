@@ -319,7 +319,7 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/user",
 			Summary:     "Get public user info",
-			Description: "Return the public user profile, created music, and public musicbills by `uid`.",
+			Description: "Return the public user profile and public musicbills by `uid`.",
 			Tags:        []string{"User"},
 			Auth:        true,
 			Parameters: []map[string]any{
@@ -1537,7 +1537,7 @@ func authSessionExample() map[string]any {
 
 func publicUserSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "avatar", "joinTimestamp", "nickname", "username", "musicbillList", "musicList"},
+		[]string{"id", "avatar", "joinTimestamp", "nickname", "username", "musicbillList"},
 		map[string]any{
 			"id":            strSchema("User ID.", "1"),
 			"avatar":        strSchema("Avatar path.", "/asset/user_avatar/avatar.jpg"),
@@ -1545,7 +1545,6 @@ func publicUserSchema() map[string]any {
 			"nickname":      strSchema("Nickname.", "Cicada"),
 			"username":      strSchema("Username.", "cicada"),
 			"musicbillList": arraySchema(publicUserMusicbillSchema()),
-			"musicList":     arraySchema(musicSummarySchema()),
 		},
 	)
 }
@@ -1565,7 +1564,6 @@ func publicUserExample() map[string]any {
 				"musicCount": 12,
 			},
 		},
-		"musicList": musicListPageExample("musicList")["musicList"],
 	}
 }
 

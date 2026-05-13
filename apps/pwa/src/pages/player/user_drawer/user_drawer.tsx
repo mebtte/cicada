@@ -1,137 +1,207 @@
 import {
-  UIEventHandler,
-  useLayoutEffect,
+  useCallback,
+  useEffect,
   useRef,
   useState,
+  type ComponentProps,
 } from 'react';
 import { animated, useTransition } from 'react-spring';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
-import TabList from '@/components/tab_list';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { Drawer, DrawerContent } from '@/components';
-import useData from './use_data';
 import {
-  MINI_INFO_HEIGHT,
-  Tab,
-  TAB_MAP_LABEL,
-  UserDetail as UserDetailType,
-} from './constants';
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components';
+import Cover, { Shape } from '@/components/cover';
+import getResizedImage from '@/server/asset/get_resized_image';
+import useData from './use_data';
+import { UserDetail as UserDetailType } from './constants';
 import Info from './info';
-import MusicList from './music_list';
 import MusicbillList from './musicbill_list';
-import MiniInfo from './mini_info';
 
 const TRANSITION = {
   from: { opacity: 0 },
   enter: { opacity: 1 },
   leave: { opacity: 0 },
 };
-const TAB_LIST: { label: string; tab: Tab }[] = Object.values(Tab).map(
-  (tab) => ({
-    tab,
-    label: TAB_MAP_LABEL[tab],
-  }),
-);
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
 const StatusContainer = styled(Container)`
   ${flexCenter}
 `;
-const Style = styled.div`
-  ${absoluteFullSize}
+const DetailContainer = styled(Container)`
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
 
-  >.scrollable {
-    ${absoluteFullSize}
-
+  > .scrollable {
+    flex: 1;
+    min-height: 0;
     overflow: auto;
     ${autoScrollbar}
 
-    > .tab-content {
-      position: relative;
+    > .first-screen {
+      min-height: 100%;
     }
   }
 `;
-const tabListStyle = {
-  zIndex: 1,
-  position: 'sticky' as const,
-  top: MINI_INFO_HEIGHT,
-  padding: '5px 20px',
-  backdropFilter: 'blur(5px)',
-  backgroundColor: 'rgb(255 255 255 / 0.5)',
-};
-const TabContent = styled(animated.div)`
+const Header = styled(DrawerHeader)<{ $visible: boolean }>`
+  z-index: 2;
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  right: 0;
+  height: 72px;
+  padding: 0 20px;
+  box-sizing: border-box;
 
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+
+  background-color: ${({ $visible }) =>
+    $visible ? 'rgb(255 255 255 / 0.92)' : 'transparent'};
+  border-bottom: 1px solid
+    ${({ $visible }) => ($visible ? 'rgb(229 229 229)' : 'transparent')};
+  backdrop-filter: ${({ $visible }) => ($visible ? 'blur(8px)' : 'none')};
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: translateY(${({ $visible }) => ($visible ? 0 : '-4px')});
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
 `;
+const HeaderAvatar = styled.div`
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  margin-right: 10px;
+  padding: 2px;
+  box-sizing: border-box;
 
-function UserDetail({ user }: { user: UserDetailType }) {
-  const mountedRef = useRef(false);
-  const scrollableRef = useRef<HTMLDivElement>(null);
-  const [selectedTab, setSelectedTab] = useState(Tab.MUSIC);
+  background: #fff;
+  border: 2px solid rgb(229 229 229);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 rgb(210 210 210);
 
-  const [miniInfoVisible, setMiniInfoVisible] = useState(false);
-  const onScroll: UIEventHandler<HTMLDivElement> = (e) => {
-    const { clientWidth, scrollTop } = e.target as HTMLDivElement;
-    return setMiniInfoVisible(scrollTop >= clientWidth - MINI_INFO_HEIGHT);
-  };
+  > .header-avatar-image {
+    border-radius: 10px;
+  }
+`;
+const HeaderText = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+const titleStyle = css`
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
-  useLayoutEffect(() => {
-    if (mountedRef.current) {
-      scrollableRef.current!.scrollTo({
-        top: scrollableRef.current!.clientWidth - MINI_INFO_HEIGHT,
-        behavior: 'smooth',
-      });
+  && {
+    color: rgb(50 50 50);
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: 0.2px;
+  }
+`;
+const UserDrawerTitle = styled(DrawerTitle)`
+  ${titleStyle}
+`;
+const descriptionStyle = css`
+  margin: 4px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  && {
+    margin-top: 4px;
+    color: rgb(140 140 140);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.1px;
+  }
+`;
+const UserDrawerDescription = styled(DrawerDescription)`
+  ${descriptionStyle}
+`;
+type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
+
+function UserDetail({
+  style,
+  user,
+}: {
+  style: AnimatedStyle;
+  user: UserDetailType;
+}) {
+  const scrollableRef = useRef<HTMLDivElement | null>(null);
+  const identityRef = useRef<HTMLElement | null>(null);
+  const [showCollapsedHeader, setShowCollapsedHeader] = useState(false);
+
+  const updateCollapsedHeaderVisibility = useCallback(() => {
+    const scrollableElement = scrollableRef.current;
+    const identityElement = identityRef.current;
+    if (!scrollableElement || !identityElement) {
+      setShowCollapsedHeader(false);
+      return;
     }
-    mountedRef.current = true;
-  }, [selectedTab]);
 
-  const transitions = useTransition(selectedTab, TRANSITION);
+    const scrollableRect = scrollableElement.getBoundingClientRect();
+    const identityRect = identityElement.getBoundingClientRect();
+    const nextVisible = identityRect.bottom <= scrollableRect.top + 8;
+    setShowCollapsedHeader((current) =>
+      current === nextVisible ? current : nextVisible,
+    );
+  }, []);
+
+  useEffect(() => {
+    setShowCollapsedHeader(false);
+    const frame = window.requestAnimationFrame(updateCollapsedHeaderVisibility);
+    return () => window.cancelAnimationFrame(frame);
+  }, [user.id, updateCollapsedHeaderVisibility]);
+
   return (
-    <Style>
-      <div className="scrollable" onScroll={onScroll} ref={scrollableRef}>
-        <Info user={user} />
-        <TabList
-          current={selectedTab}
-          tabList={TAB_LIST}
-          onChange={(tab) => setSelectedTab(tab)}
-          style={tabListStyle}
-        />
-        <div className="tab-content">
-          {transitions((style, t) => {
-            switch (t) {
-              case Tab.MUSIC: {
-                return (
-                  <TabContent style={style}>
-                    <MusicList musicList={user.musicList} />
-                  </TabContent>
-                );
-              }
-
-              case Tab.MUSICBILL: {
-                return (
-                  <TabContent style={style}>
-                    <MusicbillList musicbillList={user.musicbillList} />
-                  </TabContent>
-                );
-              }
-
-              default:
-                return null;
-            }
-          })}
+    <DetailContainer style={style}>
+      <Header $visible={showCollapsedHeader}>
+        <HeaderAvatar>
+          <Cover
+            className="header-avatar-image"
+            src={getResizedImage({
+              url: user.avatar,
+              size: Math.ceil(48 * window.devicePixelRatio),
+            })}
+            size="100%"
+            shape={Shape.SQUARE}
+          />
+        </HeaderAvatar>
+        <HeaderText>
+          <UserDrawerTitle>{user.nickname}</UserDrawerTitle>
+          <UserDrawerDescription>@{user.username}</UserDrawerDescription>
+        </HeaderText>
+      </Header>
+      <div
+        className="scrollable"
+        ref={scrollableRef}
+        onScroll={updateCollapsedHeaderVisibility}
+      >
+        <div className="first-screen">
+          <Info user={user} identityRef={identityRef} />
+          <MusicbillList musicbillList={user.musicbillList} />
         </div>
       </div>
-      {miniInfoVisible ? <MiniInfo user={user} /> : null}
-    </Style>
+    </DetailContainer>
   );
 }
 
@@ -151,7 +221,12 @@ function Wrapper({
   const transitions = useTransition(data, TRANSITION);
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="right" style={{ width: 'min(85%, 400px)' }} showClose={false} zIndex={zIndex}>
+      <DrawerContent
+        side="right"
+        style={{ width: 'min(85%, 400px)' }}
+        showClose={false}
+        zIndex={zIndex}
+      >
         {transitions((style, d) => {
           const { error, loading, userDetail } = d;
           if (error) {
@@ -169,9 +244,7 @@ function Wrapper({
             );
           }
           return (
-            <Container style={style}>
-              <UserDetail user={userDetail!} />
-            </Container>
+            <UserDetail style={style} user={userDetail!} />
           );
         })}
       </DrawerContent>

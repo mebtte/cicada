@@ -24,8 +24,8 @@ function AuthorizedDeviceDrawer() {
         side="right"
         showClose={false}
         style={{
-          width: 'min(420px, calc(100dvw - 20px))',
-          maxWidth: 'calc(100dvw - 20px)',
+          width: 'min(350px, calc(100dvw - 48px))',
+          maxWidth: 'calc(100dvw - 48px)',
         }}
         zIndex={zIndex}
       >

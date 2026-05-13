@@ -185,12 +185,6 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	musics, err := store.GetMusicsByCreateUserID(uid)
-	if err != nil {
-		api.Fail(c, apperr.ServerError)
-		return
-	}
-
 	type publicMusicbill struct {
 		ID         string
 		Cover      string
@@ -242,7 +236,6 @@ func GetUser(c *gin.Context) {
 		"nickname":      user.Nickname,
 		"username":      user.Username,
 		"musicbillList": musicbillItems,
-		"musicList":     musicListResponse(musics, len(musics))["musicList"],
 	})
 }
 

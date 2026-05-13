@@ -4,16 +4,16 @@ import { MdHelpOutline } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { useUser } from '@/global_states/server';
 import { t } from '@/i18n';
+import { CSSVariable } from '@/global_style';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';
-import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../../constants';
 
 const Style = styled.div`
-  position: absolute;
+  position: relative;
+  z-index: 2;
+
   width: 100%;
-  height: ${TOOLBAR_HEIGHT}px;
-  left: 0;
-  bottom: ${CONTROLLER_FLOATING_RESERVED_HEIGHT};
+  flex: 0 0 ${TOOLBAR_HEIGHT}px;
 
   padding: 0 20px;
 
@@ -21,7 +21,9 @@ const Style = styled.div`
   align-items: center;
   gap: 10px;
 
-  backdrop-filter: blur(5px);
+  background: #fff;
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 0 3px 0 rgb(214 214 214);
 `;
 
 function Toolbar() {
@@ -30,8 +32,8 @@ function Toolbar() {
     <Style>
       <Button
         square
-        variant="plain"
-        size="sm"
+        variant="ghost"
+        size="md"
         onClick={() =>
           dialog.alert({
             content: (

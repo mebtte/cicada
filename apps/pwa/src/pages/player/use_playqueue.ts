@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import notice from '@/utils/notice';
 import getRandomInteger from '@/utils/generate_random_integer';
 import getRandomString from '@/utils/generate_random_string';
@@ -66,6 +66,11 @@ function moveArrayItem<T>(list: T[], from: number, to: number) {
 export default (playlist: MusicWithSingerAliases[]) => {
   const [playqueue, setPlayqueue] = useState<QueueMusic[]>([]);
   const [currentPosition, setCurrentPosition] = useState(-1);
+  const currentPositionRef = useRef(currentPosition);
+
+  useEffect(() => {
+    currentPositionRef.current = currentPosition;
+  }, [currentPosition]);
 
   useEffect(() => {
     const unlistenActionPrevious = eventemitter.listen(
@@ -85,7 +90,11 @@ export default (playlist: MusicWithSingerAliases[]) => {
     );
     const unlistenActionRemovePlayqueueMusic = eventemitter.listen(
       EventType.ACTION_REMOVE_PLAYQUEUE_MUSIC,
-      ({ queueMusic }) =>
+      ({ queueMusic }) => {
+        if (queueMusic.index - 1 <= currentPositionRef.current) {
+          return;
+        }
+
         setPlayqueue((pq) =>
           pq
             .filter((m) => m.pid !== queueMusic.pid)
@@ -97,7 +106,8 @@ export default (playlist: MusicWithSingerAliases[]) => {
                   }
                 : m,
             ),
-        ),
+        );
+      },
     );
     const unlistenActionMovePlayqueueMusicLater = eventemitter.listen(
       EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER,

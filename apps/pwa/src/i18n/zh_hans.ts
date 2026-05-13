@@ -236,7 +236,6 @@ const zhCN: {
   question_of_setting_musicbill_as_private: '确定设为私有乐单吗?',
   instruction_of_setting_musicbill_as_private:
     '设为隐藏将会从个人主页移除该乐单, 其他用户无法搜索和收藏, 且会从用户的收藏列表中移除',
-  music_created: '创建的音乐',
   join_at: '%s1 加入',
   music_list_are_added_to_playlist: '%s1 首音乐添加到播放列表',
   music_list_are_added_to_playlist_unsuccessfully: '播放列表已包含这些音乐',
@@ -290,7 +289,6 @@ const zhCN: {
   pending: '待导入',
   start_import: '开始导入',
   select_music_files: '选择音乐文件',
-  no_created_music: '暂未创建音乐',
   remove_export_item_question: '确定移除该导出项吗?',
   no_export: '暂无导出',
   export_status_total: '全部',
