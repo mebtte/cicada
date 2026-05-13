@@ -18,7 +18,7 @@ import playerEventemitter, {
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import { openDownloadMusicListDialog } from '../../download_music_list';
+import { openExportMusicListDialog } from '../../export_music_list';
 import addMusicListToPlaylist from '../../add_to_playlist';
 
 const Style = styled.div`
@@ -77,7 +77,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
           variant="ghost"
           size="sm"
           disabled={!musicbill.musicList.length}
-          onClick={() => openDownloadMusicListDialog(musicbill.musicList)}
+          onClick={() => openExportMusicListDialog(musicbill.musicList)}
         >
           <IconExport size="1em" />
         </Button>

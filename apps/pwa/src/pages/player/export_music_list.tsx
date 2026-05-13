@@ -3,19 +3,19 @@ import { t } from '@/i18n';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
 import dialog from '@/utils/dialog';
 import formatMusicFilename from '@/utils/format_music_filename';
-import getMusicDownloadAsset, {
-  MusicDownloadQuality,
-} from '@/utils/music_download_asset';
+import getMusicExportAsset, {
+  MusicExportQuality,
+} from '@/utils/music_export_asset';
 import { Music } from './constants';
-import { downloadMusicListByFileSystem } from './utils';
+import { exportMusicListByFileSystem } from './utils';
 
 const EXPORT_DIALOG_CLOSE_DELAY = 260;
 
-function downloadMusicByFileSaver(
+function exportMusicByFileSaver(
   music: Music,
-  quality: MusicDownloadQuality,
+  quality: MusicExportQuality,
 ) {
-  const asset = getMusicDownloadAsset({
+  const asset = getMusicExportAsset({
     asset: music.asset,
     quality,
   });
@@ -29,23 +29,23 @@ function downloadMusicByFileSaver(
   );
 }
 
-export function openDownloadMusicListDialog(musicList: Music[]) {
+export function openExportMusicListDialog(musicList: Music[]) {
   if (musicList.length === 0) {
     return;
   }
 
-  const exportMusicList = (quality: MusicDownloadQuality) => {
+  const exportMusicList = (quality: MusicExportQuality) => {
     if (ENABLE_FILE_SYSTEM) {
-      return downloadMusicListByFileSystem(musicList, quality);
+      return exportMusicListByFileSystem(musicList, quality);
     }
 
     for (const music of musicList) {
-      downloadMusicByFileSaver(music, quality);
+      exportMusicByFileSaver(music, quality);
     }
   };
 
   let dialogId = '';
-  const closeThenExport = (quality: MusicDownloadQuality) => {
+  const closeThenExport = (quality: MusicExportQuality) => {
     dialog.close(dialogId);
     window.setTimeout(
       () => exportMusicList(quality),
@@ -55,17 +55,17 @@ export function openDownloadMusicListDialog(musicList: Music[]) {
   };
 
   dialogId = dialog.actions({
-    title: t('music_download_quality'),
+    title: t('music_export_quality'),
     actions: [
       {
-        text: t('music_download_quality_original'),
+        text: t('music_export_quality_original'),
         variant: 'primary',
-        onClick: () => closeThenExport(MusicDownloadQuality.ORIGINAL),
+        onClick: () => closeThenExport(MusicExportQuality.ORIGINAL),
       },
       {
         text: t('music_playback_quality_smooth'),
         variant: 'secondary',
-        onClick: () => closeThenExport(MusicDownloadQuality.SMOOTH),
+        onClick: () => closeThenExport(MusicExportQuality.SMOOTH),
       },
     ],
   });

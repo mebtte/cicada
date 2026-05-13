@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import {
-  DownloadingMusic,
-  DownloadStatus as DownloadStatusType,
+  ExportingMusic,
+  ExportStatus as ExportStatusType,
   FLOATING_CONTROLLER_SCROLL_SPACE,
 } from '../../../constants';
 import MusicBase from '../../../components/music_base';
@@ -236,26 +236,26 @@ const QueueItem = styled(animated.div)`
   overflow: hidden;
 `;
 const statusBadgeStyle = {
-  [DownloadStatusType.WAITING]: css`
+  [ExportStatusType.WAITING]: css`
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     background: #fff;
     border-color: rgb(210 210 210);
     box-shadow: 0 3px 0 rgb(185 185 185);
   `,
-  [DownloadStatusType.DOWNLOADING]: css`
+  [ExportStatusType.EXPORTING]: css`
     color: #fff;
     background: ${PRIMARY};
     border-color: ${PRIMARY_SHADOW};
     box-shadow: 0 3px 0 ${PRIMARY_SHADOW};
   `,
-  [DownloadStatusType.FAILED]: css`
+  [ExportStatusType.FAILED]: css`
     color: #fff;
     background: ${CSSVariable.COLOR_DANGEROUS};
     border-color: rgb(190 46 34);
     box-shadow: 0 3px 0 rgb(190 46 34);
   `,
 };
-const statusBadgeBase = css<{ $status: DownloadStatusType }>`
+const statusBadgeBase = css<{ $status: ExportStatusType }>`
   width: 34px;
   height: 34px;
 
@@ -277,7 +277,7 @@ const statusBadgeBase = css<{ $status: DownloadStatusType }>`
     background-color: currentColor;
   }
 `;
-const StatusBadge = styled.span<{ $status: DownloadStatusType }>`
+const StatusBadge = styled.span<{ $status: ExportStatusType }>`
   ${statusBadgeBase}
 `;
 const StatusIcon = styled.span`
@@ -295,7 +295,7 @@ const StatusIcon = styled.span`
     display: block;
   }
 `;
-const StatusButton = styled.button<{ $status: DownloadStatusType }>`
+const StatusButton = styled.button<{ $status: ExportStatusType }>`
   ${statusBadgeBase}
 
   padding: 0;
@@ -324,27 +324,27 @@ const StatusButton = styled.button<{ $status: DownloadStatusType }>`
     outline-offset: 3px;
   }
 `;
-const DOWNLOAD_STATUS_SIZE = 24;
-const downloadStatusStyle: CSSProperties = {
-  fontSize: DOWNLOAD_STATUS_SIZE,
+const EXPORT_STATUS_SIZE = 24;
+const exportStatusStyle: CSSProperties = {
+  fontSize: EXPORT_STATUS_SIZE,
 };
 const removeStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
 
-function getDownloadStatusLabel(status: DownloadStatusType) {
+function getExportStatusLabel(status: ExportStatusType) {
   switch (status) {
-    case DownloadStatusType.DOWNLOADING: {
-      return t('download_status_downloading');
+    case ExportStatusType.EXPORTING: {
+      return t('export_status_exporting');
     }
-    case DownloadStatusType.WAITING: {
-      return t('download_status_waiting');
+    case ExportStatusType.WAITING: {
+      return t('export_status_waiting');
     }
-    case DownloadStatusType.SUCCESSFUL: {
-      return t('download_status_successful');
+    case ExportStatusType.SUCCESSFUL: {
+      return t('export_status_successful');
     }
-    case DownloadStatusType.FAILED: {
-      return t('download_status_failed');
+    case ExportStatusType.FAILED: {
+      return t('export_status_failed');
     }
     default: {
       return '';
@@ -352,26 +352,26 @@ function getDownloadStatusLabel(status: DownloadStatusType) {
   }
 }
 
-function DownloadStatus({
-  downloadingMusic,
+function ExportStatus({
+  exportingMusic,
 }: {
-  downloadingMusic: DownloadingMusic;
+  exportingMusic: ExportingMusic;
 }) {
-  const { status } = downloadingMusic;
-  const label = getDownloadStatusLabel(status);
+  const { status } = exportingMusic;
+  const label = getExportStatusLabel(status);
   const content = (() => {
     switch (status) {
-      case DownloadStatusType.DOWNLOADING: {
-        return <Spinner size={DOWNLOAD_STATUS_SIZE} />;
+      case ExportStatusType.EXPORTING: {
+        return <Spinner size={EXPORT_STATUS_SIZE} />;
       }
-      case DownloadStatusType.WAITING: {
-        return <MdAccessTime style={downloadStatusStyle} />;
+      case ExportStatusType.WAITING: {
+        return <MdAccessTime style={exportStatusStyle} />;
       }
-      case DownloadStatusType.SUCCESSFUL: {
-        return <IconCheckCircle style={downloadStatusStyle} />;
+      case ExportStatusType.SUCCESSFUL: {
+        return <IconCheckCircle style={exportStatusStyle} />;
       }
-      case DownloadStatusType.FAILED: {
-        return <MdOutlineRestartAlt style={downloadStatusStyle} />;
+      case ExportStatusType.FAILED: {
+        return <MdOutlineRestartAlt style={exportStatusStyle} />;
       }
       default: {
         return null;
@@ -383,7 +383,7 @@ function DownloadStatus({
     return null;
   }
 
-  if (status === DownloadStatusType.SUCCESSFUL) {
+  if (status === ExportStatusType.SUCCESSFUL) {
     return (
       <StatusIcon title={label} aria-label={label}>
         {content}
@@ -391,7 +391,7 @@ function DownloadStatus({
     );
   }
 
-  if (status === DownloadStatusType.FAILED) {
+  if (status === ExportStatusType.FAILED) {
     return (
       <StatusButton
         type="button"
@@ -400,8 +400,8 @@ function DownloadStatus({
         aria-label={t('retry_failed_item')}
         onClick={(event) => {
           event.stopPropagation();
-          eventemitter.emit(EventType.DOWNLOAD_MUSIC_LIST_RETRY_ITEM, {
-            id: downloadingMusic.id,
+          eventemitter.emit(EventType.EXPORT_MUSIC_LIST_RETRY_ITEM, {
+            id: exportingMusic.id,
           });
         }}
       >
@@ -418,32 +418,32 @@ function DownloadStatus({
 }
 
 function SummaryPanel({
-  downloadingMusicList,
+  exportingMusicList,
 }: {
-  downloadingMusicList: DownloadingMusic[];
+  exportingMusicList: ExportingMusic[];
 }) {
   const summary = useMemo(() => {
     const value = {
       waiting: 0,
-      downloading: 0,
+      exporting: 0,
       successful: 0,
       failed: 0,
     };
-    for (const downloadingMusic of downloadingMusicList) {
-      switch (downloadingMusic.status) {
-        case DownloadStatusType.WAITING: {
+    for (const exportingMusic of exportingMusicList) {
+      switch (exportingMusic.status) {
+        case ExportStatusType.WAITING: {
           value.waiting += 1;
           break;
         }
-        case DownloadStatusType.DOWNLOADING: {
-          value.downloading += 1;
+        case ExportStatusType.EXPORTING: {
+          value.exporting += 1;
           break;
         }
-        case DownloadStatusType.SUCCESSFUL: {
+        case ExportStatusType.SUCCESSFUL: {
           value.successful += 1;
           break;
         }
-        case DownloadStatusType.FAILED: {
+        case ExportStatusType.FAILED: {
           value.failed += 1;
           break;
         }
@@ -453,28 +453,28 @@ function SummaryPanel({
       }
     }
     return value;
-  }, [downloadingMusicList]);
+  }, [exportingMusicList]);
 
   return (
     <Summary>
       <StatGrid>
         <StatCard $tone="total">
-          <div className="value">{downloadingMusicList.length}</div>
-          <div className="label">{t('download_status_total')}</div>
+          <div className="value">{exportingMusicList.length}</div>
+          <div className="label">{t('export_status_total')}</div>
         </StatCard>
         <StatCard $tone="active">
-          <div className="value">{summary.downloading + summary.waiting}</div>
-          <div className="label">{t('download_status_active')}</div>
+          <div className="value">{summary.exporting + summary.waiting}</div>
+          <div className="label">{t('export_status_active')}</div>
         </StatCard>
         <StatCard $tone="success">
           <div className="value">{summary.successful}</div>
-          <div className="label">{t('download_status_successful')}</div>
+          <div className="label">{t('export_status_successful')}</div>
         </StatCard>
         <StatCard $tone="failed">
           <div className="content">
             <div className="main">
               <div className="value">{summary.failed}</div>
-              <div className="label">{t('download_status_failed')}</div>
+              <div className="label">{t('export_status_failed')}</div>
             </div>
             {summary.failed ? (
               <Button
@@ -485,7 +485,7 @@ function SummaryPanel({
                 aria-label={t('retry_failed_items')}
                 onClick={() =>
                   eventemitter.emit(
-                    EventType.DOWNLOAD_MUSIC_LIST_RETRY_FAILED,
+                    EventType.EXPORT_MUSIC_LIST_RETRY_FAILED,
                     null,
                   )
                 }
@@ -501,8 +501,8 @@ function SummaryPanel({
 }
 
 function MusicList() {
-  const { downloadingMusicList } = useContext(context);
-  const length = downloadingMusicList.length;
+  const { exportingMusicList } = useContext(context);
+  const length = exportingMusicList.length;
   const [showQueue, setShowQueue] = useState(length > 0);
   const shouldShowQueue = length > 0 || showQueue;
   const lengthRef = useRef(length);
@@ -510,12 +510,12 @@ function MusicList() {
   const displayIndexMap = useMemo(
     () =>
       new Map(
-        downloadingMusicList.map((downloadingMusic, index) => [
-          downloadingMusic.id,
+        exportingMusicList.map((exportingMusic, index) => [
+          exportingMusic.id,
           length - index,
         ]),
       ),
-    [downloadingMusicList, length],
+    [exportingMusicList, length],
   );
 
   useEffect(() => {
@@ -530,8 +530,8 @@ function MusicList() {
     });
   }, [displayIndexMap, length]);
 
-  const transitions = useTransition(downloadingMusicList, {
-    keys: (downloadingMusic) => downloadingMusic.id,
+  const transitions = useTransition(exportingMusicList, {
+    keys: (exportingMusic) => exportingMusic.id,
     from: {
       maxHeight: 0,
       opacity: 0,
@@ -551,8 +551,8 @@ function MusicList() {
       tension: 360,
       friction: 32,
     },
-    onDestroyed: (downloadingMusic) => {
-      displayIndexRef.current.delete(downloadingMusic.id);
+    onDestroyed: (exportingMusic) => {
+      displayIndexRef.current.delete(exportingMusic.id);
 
       if (lengthRef.current === 0 && displayIndexRef.current.size === 0) {
         setShowQueue(false);
@@ -564,20 +564,20 @@ function MusicList() {
     <Style>
       {shouldShowQueue ? (
         <>
-          <SummaryPanel downloadingMusicList={downloadingMusicList} />
+          <SummaryPanel exportingMusicList={exportingMusicList} />
           <Queue>
-            {transitions((style, downloadingMusic, _, index) => (
+            {transitions((style, exportingMusic, _, index) => (
               <QueueItem style={style}>
                 <MusicBase
                   index={
-                    displayIndexMap.get(downloadingMusic.id) ??
-                    displayIndexRef.current.get(downloadingMusic.id) ??
+                    displayIndexMap.get(exportingMusic.id) ??
+                    displayIndexRef.current.get(exportingMusic.id) ??
                     length - index
                   }
-                  music={downloadingMusic.music}
+                  music={exportingMusic.music}
                   lineAfter={
                     <LineAfter>
-                      <DownloadStatus downloadingMusic={downloadingMusic} />
+                      <ExportStatus exportingMusic={exportingMusic} />
                       <Button
                         square
                         variant="plain"
@@ -588,19 +588,19 @@ function MusicList() {
                           event.stopPropagation();
                           const removeItem = () =>
                             eventemitter.emit(
-                              EventType.DOWNLOAD_MUSIC_LIST_REMOVE_ITEM,
+                              EventType.EXPORT_MUSIC_LIST_REMOVE_ITEM,
                               {
-                                id: downloadingMusic.id,
+                                id: exportingMusic.id,
                               },
                             );
                           if (
-                            downloadingMusic.status ===
-                            DownloadStatusType.SUCCESSFUL
+                            exportingMusic.status ===
+                            ExportStatusType.SUCCESSFUL
                           ) {
                             return removeItem();
                           }
                           return dialog.confirm({
-                            content: t('remove_download_item_question'),
+                            content: t('remove_export_item_question'),
                             onConfirm: removeItem,
                           });
                         }}
@@ -616,7 +616,7 @@ function MusicList() {
         </>
       ) : (
         <EmptyState>
-          <Empty description={t('no_download')} />
+          <Empty description={t('no_export')} />
         </EmptyState>
       )}
     </Style>

@@ -1,7 +1,7 @@
 import { useContext, useMemo } from 'react';
 import styled from 'styled-components';
 import context from '../context';
-import { DownloadStatus } from '../constants';
+import { ExportStatus } from '../constants';
 
 const Style = styled.div`
   min-width: 34px;
@@ -17,22 +17,22 @@ const Style = styled.div`
   text-align: center;
 `;
 
-function DownloadTag() {
-  const { downloadingMusicList } = useContext(context);
+function ExportTag() {
+  const { exportingMusicList } = useContext(context);
   const ended = useMemo(
     () =>
-      downloadingMusicList.filter(
+      exportingMusicList.filter(
         (m) =>
-          m.status === DownloadStatus.FAILED ||
-          m.status === DownloadStatus.SUCCESSFUL,
+          m.status === ExportStatus.FAILED ||
+          m.status === ExportStatus.SUCCESSFUL,
       ),
-    [downloadingMusicList],
+    [exportingMusicList],
   );
   return (
     <Style>
-      {ended.length}/{downloadingMusicList.length}
+      {ended.length}/{exportingMusicList.length}
     </Style>
   );
 }
 
-export default DownloadTag;
+export default ExportTag;

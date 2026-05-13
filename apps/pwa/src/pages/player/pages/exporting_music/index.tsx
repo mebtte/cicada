@@ -9,7 +9,7 @@ const Style = styled(Page)`
   background: rgb(247 247 247);
 `;
 
-function DownloadingMusic() {
+function ExportingMusic() {
   return (
     <Style>
       <MusicList />
@@ -17,4 +17,4 @@ function DownloadingMusic() {
   );
 }
 
-export default DownloadingMusic;
+export default ExportingMusic;

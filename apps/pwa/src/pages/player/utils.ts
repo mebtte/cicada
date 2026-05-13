@@ -6,7 +6,7 @@ import logger from '@/utils/logger';
 import { t } from '@/i18n';
 import { Music, SingerWithAliases } from './constants';
 import e, { EventType } from './eventemitter';
-import { MusicDownloadQuality } from '@/utils/music_download_asset';
+import { MusicExportQuality } from '@/utils/music_export_asset';
 
 export function openCreateMusicbillDialog() {
   return dialog.input({
@@ -64,16 +64,16 @@ export function formatSecond(s: number) {
   }${second}`;
 }
 
-export async function downloadMusicListByFileSystem(
+export async function exportMusicListByFileSystem(
   musicList: Music[],
-  quality: MusicDownloadQuality,
+  quality: MusicExportQuality,
 ) {
   try {
     const directoryHandle = await window.showDirectoryPicker({
       mode: 'readwrite',
       startIn: 'downloads',
     });
-    e.emit(EventType.DOWNLOAD_MUSIC_LIST, {
+    e.emit(EventType.EXPORT_MUSIC_LIST, {
       musicList,
       directoryHandle,
       quality,

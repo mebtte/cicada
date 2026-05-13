@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { DownloadingMusic, DownloadStatus } from './constants';
+import { ExportingMusic, ExportStatus } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 import generateRandomString from '@/utils/generate_random_string';
 import formatMusicFilename from '@/utils/format_music_filename';
@@ -8,10 +8,10 @@ import timeout from '@/utils/timeout';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import getMusicDownloadAsset from '@/utils/music_download_asset';
+import getMusicExportAsset from '@/utils/music_export_asset';
 
-async function downloadAndSave(downloadingMusic: DownloadingMusic) {
-  const { music, directoryHandle, asset, ext } = downloadingMusic;
+async function exportAndSave(exportingMusic: ExportingMusic) {
+  const { music, directoryHandle, asset, ext } = exportingMusic;
   const fileHandle = await directoryHandle.getFileHandle(
     formatMusicFilename({
       name: music.name,
@@ -30,26 +30,26 @@ async function downloadAndSave(downloadingMusic: DownloadingMusic) {
   await response.body.pipeTo(writable);
 }
 
-function downloadAndSaveWithTimeout(downloadingMusic: DownloadingMusic) {
+function exportAndSaveWithTimeout(exportingMusic: ExportingMusic) {
   return Promise.race([
-    downloadAndSave(downloadingMusic),
+    exportAndSave(exportingMusic),
     timeout(1000 * 60 * 5),
   ]);
 }
 
-function useDownload() {
+function useExport() {
   const navigate = useNavigate();
-  const [downloadingMusicList, setDownloadingMusicList] = useState<
-    DownloadingMusic[]
+  const [exportingMusicList, setExportingMusicList] = useState<
+    ExportingMusic[]
   >([]);
 
   useEffect(
     () =>
       eventemitter.listen(
-        EventType.DOWNLOAD_MUSIC_LIST_REMOVE_ITEM,
+        EventType.EXPORT_MUSIC_LIST_REMOVE_ITEM,
         (payload) =>
-          setDownloadingMusicList((dml) =>
-            dml.filter((m) => m.id !== payload.id),
+          setExportingMusicList((exportList) =>
+            exportList.filter((m) => m.id !== payload.id),
           ),
       ),
     [],
@@ -57,11 +57,11 @@ function useDownload() {
 
   useEffect(
     () =>
-      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST, (payload) => {
-        setDownloadingMusicList((dml) => [
+      eventemitter.listen(EventType.EXPORT_MUSIC_LIST, (payload) => {
+        setExportingMusicList((exportList) => [
           ...payload.musicList.map(
             (music) => {
-              const asset = getMusicDownloadAsset({
+              const asset = getMusicExportAsset({
                 asset: music.asset,
                 quality: payload.quality,
               });
@@ -72,15 +72,15 @@ function useDownload() {
                 asset: asset.url,
                 ext: asset.ext,
                 quality: payload.quality,
-                status: DownloadStatus.WAITING,
-              } satisfies DownloadingMusic;
+                status: ExportStatus.WAITING,
+              } satisfies ExportingMusic;
             },
           ),
-          ...dml,
+          ...exportList,
         ]);
         globalThis.setTimeout(() =>
           navigate({
-            path: ROOT_PATH.PLAYER + PLAYER_PATH.DOWNLOADING_MUSIC,
+            path: ROOT_PATH.PLAYER + PLAYER_PATH.EXPORTING_MUSIC,
             query: {
               [Query.MUSIC_DRAWER_ID]: '',
             },
@@ -92,13 +92,13 @@ function useDownload() {
 
   useEffect(
     () =>
-      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST_RETRY_FAILED, () =>
-        setDownloadingMusicList((dml) =>
-          dml.map((m) =>
-            m.status === DownloadStatus.FAILED
+      eventemitter.listen(EventType.EXPORT_MUSIC_LIST_RETRY_FAILED, () =>
+        setExportingMusicList((exportList) =>
+          exportList.map((m) =>
+            m.status === ExportStatus.FAILED
               ? {
                   ...m,
-                  status: DownloadStatus.WAITING,
+                  status: ExportStatus.WAITING,
                 }
               : m,
           ),
@@ -110,14 +110,14 @@ function useDownload() {
   useEffect(
     () =>
       eventemitter.listen(
-        EventType.DOWNLOAD_MUSIC_LIST_RETRY_ITEM,
+        EventType.EXPORT_MUSIC_LIST_RETRY_ITEM,
         (payload) =>
-          setDownloadingMusicList((dml) =>
-            dml.map((m) =>
-              m.id === payload.id && m.status === DownloadStatus.FAILED
+          setExportingMusicList((exportList) =>
+            exportList.map((m) =>
+              m.id === payload.id && m.status === ExportStatus.FAILED
                 ? {
                     ...m,
-                    status: DownloadStatus.WAITING,
+                    status: ExportStatus.WAITING,
                   }
                 : m,
             ),
@@ -127,47 +127,47 @@ function useDownload() {
   );
 
   useEffect(() => {
-    const downloadingList = downloadingMusicList.filter(
-      (m) => m.status === DownloadStatus.DOWNLOADING,
+    const exportingList = exportingMusicList.filter(
+      (m) => m.status === ExportStatus.EXPORTING,
     );
-    if (downloadingList.length >= 3) {
+    if (exportingList.length >= 3) {
       return;
     }
-    const waiting = downloadingMusicList.findLast(
-      (m) => m.status === DownloadStatus.WAITING,
+    const waiting = exportingMusicList.findLast(
+      (m) => m.status === ExportStatus.WAITING,
     );
     if (waiting) {
-      setDownloadingMusicList((ml) =>
+      setExportingMusicList((ml) =>
         ml.map((m) =>
           m.id === waiting.id
-            ? { ...waiting, status: DownloadStatus.DOWNLOADING }
+            ? { ...waiting, status: ExportStatus.EXPORTING }
             : m,
         ),
       );
-      downloadAndSaveWithTimeout(waiting)
+      exportAndSaveWithTimeout(waiting)
         .then(() =>
-          setDownloadingMusicList((ml) =>
+          setExportingMusicList((ml) =>
             ml.map((m) =>
               m.id === waiting.id
-                ? { ...waiting, status: DownloadStatus.SUCCESSFUL }
+                ? { ...waiting, status: ExportStatus.SUCCESSFUL }
                 : m,
             ),
           ),
         )
         .catch((error) => {
           logger.error(error, '导出并保存音乐失败');
-          setDownloadingMusicList((ml) =>
+          setExportingMusicList((ml) =>
             ml.map((m) =>
               m.id === waiting.id
-                ? { ...waiting, status: DownloadStatus.FAILED }
+                ? { ...waiting, status: ExportStatus.FAILED }
                 : m,
             ),
           );
         });
     }
-  }, [downloadingMusicList]);
+  }, [exportingMusicList]);
 
-  return downloadingMusicList;
+  return exportingMusicList;
 }
 
-export default useDownload;
+export default useExport;

@@ -11,7 +11,7 @@ import { ReactNode, useContext } from 'react';
 import { t } from '@/i18n';
 import context from '../context';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import DownloadTag from './download_tag';
+import ExportTag from './export_tag';
 import { useUser } from '@/global_states/server';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
@@ -179,7 +179,7 @@ function Menu() {
   const navigate = useSidebarNavigate();
   const user = useUser()!;
 
-  const { downloadingMusicList } = useContext(context);
+  const { exportingMusicList } = useContext(context);
   return (
     <Style aria-label={t('sidebar')}>
       <SidebarItem
@@ -222,17 +222,17 @@ function Menu() {
         label={t('setting')}
         icon={<MdOutlineSettings />}
       />
-      {ENABLE_FILE_SYSTEM && downloadingMusicList.length ? (
+      {ENABLE_FILE_SYSTEM && exportingMusicList.length ? (
         <SidebarItem
           active={
-            pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.DOWNLOADING_MUSIC}`
+            pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPORTING_MUSIC}`
           }
           onClick={() =>
-            navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.DOWNLOADING_MUSIC}`)
+            navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPORTING_MUSIC}`)
           }
-          label={t('download')}
+          label={t('export_music')}
           icon={<IconExport />}
-          suffix={<DownloadTag />}
+          suffix={<ExportTag />}
         />
       ) : null}
       {user.admin ? (

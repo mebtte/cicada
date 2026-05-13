@@ -3,26 +3,26 @@ import {
   getSmoothMusicAsset,
 } from './music_asset';
 
-export enum MusicDownloadQuality {
+export enum MusicExportQuality {
   ORIGINAL = 'original',
   SMOOTH = 'smooth',
 }
 
-export default function getMusicDownloadAsset({
+export default function getMusicExportAsset({
   asset,
   quality,
 }: {
   asset: string;
-  quality: MusicDownloadQuality;
+  quality: MusicExportQuality;
 }) {
   switch (quality) {
-    case MusicDownloadQuality.SMOOTH: {
+    case MusicExportQuality.SMOOTH: {
       return {
         url: getSmoothMusicAsset(asset),
         ext: 'm4a',
       };
     }
-    case MusicDownloadQuality.ORIGINAL:
+    case MusicExportQuality.ORIGINAL:
     default: {
       return {
         url: asset,
