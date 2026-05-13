@@ -144,6 +144,12 @@ function MusicList({ onEdit }: { onEdit: (id: string) => void }) {
 
   useEffect(() => {
     const trimmed = keyword.trim();
+    if (!trimmed) {
+      setMusicList([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     const controller = new AbortController();
     searchMusicRequest({ keyword: trimmed, page: 1, pageSize: 30 })

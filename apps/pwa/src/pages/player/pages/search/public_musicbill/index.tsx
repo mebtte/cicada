@@ -36,14 +36,17 @@ const MusicContainer = styled(Container)`
   ${autoScrollbar}
 
   > .list {
-    margin: 0 10px;
+    --gap: 10px;
+
+    margin: 0 var(--gap);
+    padding-top: calc(var(--search-toolbar-height) - var(--gap));
 
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
 
     > .item {
-      padding: 10px;
+      padding: var(--gap);
     }
   }
 

@@ -192,10 +192,14 @@ export default (playlist: MusicWithSingerAliases[]) => {
             return pq;
           }
 
-          return moveArrayItem(pq, oldIndex, newIndex).map((m, index) => ({
-            ...m,
-            index: index + 1,
-          }));
+          return moveArrayItem(pq, oldIndex, newIndex).map((m, index) =>
+            m.index === index + 1
+              ? m
+              : {
+                  ...m,
+                  index: index + 1,
+                },
+          );
         }),
     );
 

@@ -71,6 +71,10 @@ func SingerNameExists(name string) (bool, error) {
 }
 
 func SearchSingers(keyword string, page, pageSize int) (int, []Singer, error) {
+	keyword = strings.TrimSpace(keyword)
+	if keyword == "" {
+		return 0, []Singer{}, nil
+	}
 	pat := "%" + keyword + "%"
 	var total int
 	DB().QueryRow(`SELECT COUNT(1) FROM singer WHERE name LIKE ? OR aliases LIKE ?`, pat, pat).Scan(&total)

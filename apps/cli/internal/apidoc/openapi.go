@@ -486,11 +486,11 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/music/search",
 			Summary:     "Search music",
-			Description: "Search all music by keyword. Returns random music when the keyword is empty.",
+			Description: "Search all music by keyword.",
 			Tags:        []string{"Music"},
 			Auth:        true,
 			Parameters: paginationParams(
-				queryParam("keyword", "Name, alias, or singer keyword.", false, strSchema("", "night")),
+				queryParam("keyword", "Name, alias, or singer keyword.", true, strSchema("", "night")),
 			),
 			SuccessSchema:  musicListPageSchema("musicList"),
 			SuccessExample: musicListPageExample("musicList"),
@@ -532,7 +532,7 @@ func operations() []operation {
 			Tags:        []string{"Singer"},
 			Auth:        true,
 			Parameters: paginationParams(
-				queryParam("keyword", "Singer keyword.", false, strSchema("", "aur")),
+				queryParam("keyword", "Singer keyword.", true, strSchema("", "aur")),
 			),
 			SuccessSchema: objSchema(
 				[]string{"total", "singerList"},
@@ -816,7 +816,7 @@ func operations() []operation {
 			Tags:        []string{"Musicbill"},
 			Auth:        true,
 			Parameters: paginationParams(
-				queryParam("keyword", "Musicbill keyword.", false, strSchema("", "night")),
+				queryParam("keyword", "Musicbill keyword.", true, strSchema("", "night")),
 			),
 			SuccessSchema:  musicbillPageSchema("musicbillList"),
 			SuccessExample: musicbillPageExample("musicbillList"),

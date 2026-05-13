@@ -96,6 +96,9 @@ const formatSingerToOption = (singer: Singer): SelectOption<Singer> => ({
 
 const searchSinger = (search: string): Promise<SelectOption<Singer>[]> => {
   const keyword = search.trim().substring(0, SINGER_SEARCH_KEYWORD_MAX_LENGTH);
+  if (!keyword) {
+    return Promise.resolve([]);
+  }
   return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
     data.singerList.map(formatSingerToOption),
   );
@@ -199,6 +202,9 @@ function EditContent({
   const searchMusic = useCallback(
     (search: string) => {
       const keyword = search.trim().substring(0, MUSIC_SEARCH_KEYWORD_MAX_LENGTH);
+      if (!keyword) {
+        return Promise.resolve([]);
+      }
       return searchMusicRequest({ keyword, page: 1, pageSize: 100 }).then(
         (data) =>
           data.musicList

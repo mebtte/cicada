@@ -1,7 +1,7 @@
 import Spinner from '@/components/spinner';
 import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import SizeObserver from '@/components/size_observer';
 import Empty from '@/components/empty';
@@ -11,10 +11,14 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate as useRouterNavigate } from 'react-router-dom';
 import { Query } from '@/constants';
 import { useUser } from '@/global_states/server';
-import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { ROOT_PATH } from '@/constants/route';
+import useQuery from '@/utils/use_query';
+import useNavigate from '@/utils/use_navigate';
+import { useTheme } from '@/global_states/theme';
+import { DuolingoTabList } from '@/components/duolingo_tabs';
 import {
   MdAdd,
   MdAdminPanelSettings,
@@ -34,6 +38,14 @@ import Cover from './cover';
 import MusicInfo from './music_info';
 import SingerInfo from './singer_info';
 import PublicMusicbillInfo from './public_musicbill_info';
+import SearchInput from '../search/input';
+import SearchContent from '../search/content';
+import useSearchTab from '../search/use_tab';
+import {
+  MINI_MODE_TOOLBAR_HEIGHT,
+  TAB_LIST,
+  TOOLBAR_HEIGHT,
+} from '../search/constants';
 
 const ITEM_MIN_WIDTH = 164;
 const MOBILE_ITEM_WIDTH = 96;
@@ -51,6 +63,31 @@ const ACCENT = {
 const Root = styled(Page)`
   position: relative;
   background: rgb(248 249 250);
+
+  > .search-toolbar {
+    z-index: 2;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    padding: 14px 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+
+    background: transparent;
+  }
+
+  ${({ theme: { miniMode } }) => css`
+    > .search-toolbar {
+      height: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
+      gap: ${miniMode ? 12 : 8}px;
+    }
+  `}
 `;
 const Container = styled(animated.div)`
   position: absolute;
@@ -129,6 +166,10 @@ const EmptyFallback = styled.div`
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       line-height: 1.7;
+    }
+
+    > .input {
+      margin-top: 18px;
     }
 
     > .actions {
@@ -294,8 +335,9 @@ function ExplorationSection<Item>({
 }
 
 function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
-  const navigate = useNavigate();
+  const navigate = useRouterNavigate();
   const user = useUser()!;
+  const { miniMode } = useTheme();
 
   return (
     <EmptyFallback>
@@ -305,6 +347,7 @@ function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
           description={t('exploration_empty_title')}
         />
         <div className="description">{t('exploration_empty_description')}</div>
+        {miniMode ? <SearchInput autoFocus={false} /> : null}
         <div className="actions">
           {user.admin ? (
             <Button
@@ -325,11 +368,14 @@ function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
           <Button
             variant="ghost"
             icon={<MdSearch />}
-            onClick={() =>
+            onClick={() => {
               navigate(
-                `${ROOT_PATH.PLAYER}${PLAYER_PATH.SEARCH}?${Query.SEARCH_TAB}=${SearchTab.PUBLIC_MUSICBILL}`,
-              )
-            }
+                `${ROOT_PATH.PLAYER}?${Query.SEARCH_TAB}=${SearchTab.PUBLIC_MUSICBILL}`,
+              );
+              window.requestAnimationFrame(() =>
+                playerEventemitter.emit(PlayerEventType.FOCUS_SEARCH_INPUT, null),
+              );
+            }}
           >
             {t('search_public_musicbill')}
           </Button>
@@ -342,8 +388,36 @@ function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
   );
 }
 
-function Wrapper() {
+function SearchResultPage() {
+  const navigate = useNavigate();
+  const { miniMode } = useTheme();
+  const tab = useSearchTab();
+
+  return (
+    <Root>
+      <SearchContent tab={tab} />
+      <div className="search-toolbar">
+        {miniMode ? <SearchInput /> : null}
+        <DuolingoTabList<SearchTab>
+          current={tab}
+          tabList={TAB_LIST}
+          onChange={(t) =>
+            navigate({
+              query: {
+                [Query.SEARCH_TAB]: t,
+                [Query.PAGE]: 1,
+              },
+            })
+          }
+        />
+      </div>
+    </Root>
+  );
+}
+
+function RecommendationPage() {
   const { data, reload } = useData();
+  const { miniMode } = useTheme();
 
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -375,6 +449,7 @@ function Wrapper() {
           <ContentContainer style={style}>
             {hasData ? (
               <div className="content">
+                {miniMode ? <SearchInput autoFocus={false} /> : null}
                 <ExplorationSection
                   title={t('recommended_music')}
                   items={d.value.musicList}
@@ -466,6 +541,13 @@ function Wrapper() {
       })}
     </Root>
   );
+}
+
+function Wrapper() {
+  const { keyword = '' } = useQuery<Query.KEYWORD>();
+  const normalizedKeyword = keyword.replace(/\s+/g, ' ').trim();
+
+  return normalizedKeyword ? <SearchResultPage /> : <RecommendationPage />;
 }
 
 export default Wrapper;

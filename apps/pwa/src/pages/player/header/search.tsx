@@ -8,7 +8,7 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import { MdSearch } from 'react-icons/md';
-import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
 import Input from '@/components/input';
 import Button from '@/components/button';
@@ -69,18 +69,23 @@ function Wrapper() {
   const onSearch = () => {
     if (miniMode) {
       return navigate({
-        path: ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH,
+        path: ROOT_PATH.PLAYER,
       });
     }
 
+    const normalizedKeyword = keyword.replace(/\s+/g, ' ').trim();
     return navigate({
-      path: ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH,
-      query: {
-        [Query.KEYWORD]: window.encodeURIComponent(
-          keyword.replace(/\s+/g, ' ').trim(),
-        ),
-        [Query.PAGE]: 1,
-      },
+      path: ROOT_PATH.PLAYER,
+      query: normalizedKeyword
+        ? {
+            [Query.KEYWORD]: window.encodeURIComponent(normalizedKeyword),
+            [Query.PAGE]: 1,
+          }
+        : {
+            [Query.KEYWORD]: null,
+            [Query.PAGE]: null,
+            [Query.SEARCH_TAB]: null,
+          },
     });
   };
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -95,6 +100,10 @@ function Wrapper() {
     );
     return unlistenFocus;
   }, []);
+
+  useEffect(() => {
+    setKeyword(parseSearch<Query.KEYWORD>(location.search)[Query.KEYWORD] || '');
+  }, [location.search]);
 
   return (
     <SearchForm onSubmit={onSubmit} autoComplete="off">

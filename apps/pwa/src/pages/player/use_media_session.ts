@@ -6,7 +6,6 @@ import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
 
 const COVER_SIZES = [96, 256, 512];
-const DEFAULT_SEEK_OFFSET = 10;
 
 function safeSetActionHandler(
   action: MediaSessionAction,
@@ -62,32 +61,6 @@ function useMediaSession({
           if (typeof details.seekTime === 'number') {
             e.emit(EventType.ACTION_SET_TIME, { second: details.seekTime });
           }
-        },
-      ],
-      [
-        'seekbackward',
-        (details) => {
-          if (!audio) {
-            return;
-          }
-          const offset = details.seekOffset ?? DEFAULT_SEEK_OFFSET;
-          const next = Math.max(0, audio.getCurrentTime() - offset);
-          e.emit(EventType.ACTION_SET_TIME, { second: next });
-        },
-      ],
-      [
-        'seekforward',
-        (details) => {
-          if (!audio) {
-            return;
-          }
-          const offset = details.seekOffset ?? DEFAULT_SEEK_OFFSET;
-          const dur = audio.getDuration();
-          const next = Math.min(
-            Number.isFinite(dur) ? dur : Infinity,
-            audio.getCurrentTime() + offset,
-          );
-          e.emit(EventType.ACTION_SET_TIME, { second: next });
         },
       ],
       [

@@ -1,12 +1,14 @@
 import { matchPath, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { Query } from '@/constants';
 import { t, type Key } from '@/i18n';
 import getSinger from '@/server/api/get_singer';
 import getMusic from '@/server/api/get_music';
 import logger from '@/utils/logger';
 import capitalize from '@/utils/capitalize';
 import playerEventemitter, { EventType } from '../eventemitter';
+import parseSearch from '@/utils/parse_search';
 
 export interface HeaderTitle {
   title: string;
@@ -56,7 +58,10 @@ const getSingerHeaderTitle = async (
 };
 
 export default () => {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
+  const keyword = parseSearch<Query.KEYWORD>(search)
+    [Query.KEYWORD]?.replace(/\s+/g, ' ')
+    .trim();
   const lastTitleRef = useRef<HeaderTitle>({ title: '' });
   const musicbillMatch = matchPath(
     `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL}`,
@@ -248,11 +253,7 @@ export default () => {
   switch (pathname) {
     case ROOT_PATH.PLAYER:
     case ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION: {
-      title = getStaticHeaderTitle('exploration');
-      break;
-    }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH: {
-      title = getStaticHeaderTitle('search');
+      title = getStaticHeaderTitle(keyword ? 'search' : 'exploration');
       break;
     }
     case ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE: {

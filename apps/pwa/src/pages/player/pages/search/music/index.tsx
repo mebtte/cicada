@@ -31,7 +31,7 @@ const MusicContainer = styled(Container)`
   ${autoScrollbar}
 
   > .list {
-    padding: 12px 12px 0;
+    padding: var(--search-toolbar-height) 12px 0;
   }
 
   &::after {

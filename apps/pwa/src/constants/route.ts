@@ -19,7 +19,6 @@ export const PLAYER_PATH = {
   USER: '/user',
   SETTING: '/setting',
   SHARED_MUSICBILL_INVITATION: '/shared_musicbill_invitation',
-  SEARCH: '/search',
   USER_MANAGE: '/user_manage',
   PUBLIC_MUSICBILL_COLLECTION: '/public_musicbill_collection',
   MUSIC_PLAY_RECORD: '/music_play_record',
