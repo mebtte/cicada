@@ -319,11 +319,11 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/user",
 			Summary:     "Get public user info",
-			Description: "Return the public user profile and public musicbills by `uid`.",
+			Description: "Return the public user profile and public musicbills by `userId`.",
 			Tags:        []string{"User"},
 			Auth:        true,
 			Parameters: []map[string]any{
-				queryParam("uid", "User ID.", true, strSchema("", "1")),
+				queryParam("userId", "User ID.", true, strSchema("", "1")),
 			},
 			SuccessSchema:  publicUserSchema(),
 			SuccessExample: publicUserExample(),
@@ -1741,7 +1741,7 @@ func updateMusicRequestSchema() map[string]any {
 		[]string{"id", "key"},
 		map[string]any{
 			"id":    strSchema("Music ID.", "music-1"),
-			"key":   strEnumSchema([]string{"name", "aliases", "lyric", "cover", "asset", "singers", "type", "year", "fork"}, "aliases"),
+			"key":   strEnumSchema([]string{"name", "aliases", "lyric", "cover", "asset", "singers", "type", "year", "forkFrom"}, "aliases"),
 			"value": flexibleValueSchema(),
 		},
 	)

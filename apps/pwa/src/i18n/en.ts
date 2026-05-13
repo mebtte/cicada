@@ -114,6 +114,7 @@ export default {
   invitation_will_be_canceled_automatically_after_days:
     'invitation will be canceled automatically after %s1 days',
   create_music: 'create music',
+  edit_musicbill: 'edit musicbill',
   no_music: 'no music',
   no_modify_record: 'no modify record',
   no_public_musicbill: 'no musicbill',

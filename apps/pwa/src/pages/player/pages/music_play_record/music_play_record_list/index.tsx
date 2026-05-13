@@ -21,7 +21,11 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import useMusicPlayRecordList from './use_music_play_record_list';
-import { PAGE_SIZE, type MusicPlayRecord as MusicPlayRecordData } from '../constants';
+import {
+  PAGE_SIZE,
+  TOOLBAR_HEIGHT,
+  type MusicPlayRecord as MusicPlayRecordData,
+} from '../constants';
 import MusicPlayRecord from './music_play_record';
 
 const Style = styled.div`
@@ -52,7 +56,9 @@ const MusicListContainer = styled(Container)`
   &::after {
     content: '';
     display: block;
-    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
+    height: calc(
+      ${FLOATING_CONTROLLER_SCROLL_SPACE} + ${TOOLBAR_HEIGHT}px + 24px
+    );
   }
 `;
 const MusicPlayRecordContainer = styled(animated.div)`

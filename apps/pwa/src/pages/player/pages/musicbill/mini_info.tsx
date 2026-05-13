@@ -1,45 +1,39 @@
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
+import { type ComponentProps } from 'react';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
+import { animated } from 'react-spring';
 import getResizedImage from '@/server/asset/get_resized_image';
-import MusicbillCover from '../../components/musicbill_cover';
-import { Musicbill } from '../../constants';
+import Cover from '@/components/cover';
+import { FLOATING_CONTROLLER_SCROLL_SPACE, Musicbill } from '../../constants';
 import { MINI_INFO_HEIGHT } from './constants';
 import Operation from './operation';
 
 const COVER_SIZE = 34;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
-const Style = styled.div`
+const PUBLIC = '#63d1fa';
+const PUBLIC_SHADOW = 'rgb(72 179 220)';
+const NEUTRAL_SHADOW = 'rgb(232 232 232)';
+type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
+
+const Style = styled(animated.div)`
   z-index: 2;
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  left: 36px;
+  right: 36px;
+  bottom: calc(${FLOATING_CONTROLLER_SCROLL_SPACE} + 12px);
   height: ${MINI_INFO_HEIGHT}px;
-  padding: 8px 20px 12px;
+  padding: 8px 12px 12px;
 
   background: #fff;
-  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 0 4px 0 rgb(232 232 232);
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 16px;
+  box-shadow: 0 6px 0 ${NEUTRAL_SHADOW};
 
   display: flex;
   align-items: center;
   gap: 10px;
-
-  > .cover-card {
-    flex: 0 0 auto;
-    border-radius: 10px;
-    box-shadow: 0 3px 0 rgb(232 232 232);
-
-    > div {
-      border-radius: 9px;
-    }
-
-    &.shared::after {
-      border-radius: 10px;
-    }
-  }
 
   > .name {
     flex: 1;
@@ -51,28 +45,65 @@ const Style = styled.div`
     ${ellipsis}
   }
 
+  > .operation-row {
+    flex: 0 0 auto;
+    min-width: 0;
+
+    > div {
+      flex-wrap: nowrap;
+    }
+  }
+
   &:focus-within {
     border-color: ${PRIMARY};
-    box-shadow: 0 4px 0 var(${CSS_VAR.colorPrimaryShadow});
+    box-shadow: 0 6px 0 var(${CSS_VAR.colorPrimaryShadow});
   }
 
   @media (max-width: 680px) {
-    padding: 8px 12px 12px;
+    left: 24px;
+    right: 24px;
+  }
+
+  @media (max-width: 420px) {
+    left: 18px;
+    right: 18px;
+    gap: 8px;
+    padding-right: 10px;
+    padding-left: 10px;
   }
 `;
+const CoverArt = styled(Cover)<{ $public: boolean }>`
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
 
-function MiniInfo({ musicbill }: { musicbill: Musicbill }) {
+  background: #fff;
+  border: 2px solid
+    ${({ $public }) => ($public ? PUBLIC : CSSVariable.COLOR_BORDER)};
+  border-radius: 10px;
+  box-shadow: 0 3px 0
+    ${({ $public }) => ($public ? PUBLIC_SHADOW : NEUTRAL_SHADOW)};
+`;
+
+function MiniInfo({
+  musicbill,
+  style,
+}: {
+  musicbill: Musicbill;
+  style?: AnimatedStyle;
+}) {
   return (
-    <Style>
-      <MusicbillCover
+    <Style style={style}>
+      <CoverArt
         className="cover-card"
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         size={COVER_SIZE}
-        publiz={false}
-        shared={false}
+        $public={musicbill.public}
       />
       <div className="name">{musicbill.name}</div>
-      <Operation musicbill={musicbill} />
+      <div className="operation-row">
+        <Operation musicbill={musicbill} />
+      </div>
     </Style>
   );
 }

@@ -22,7 +22,7 @@ interface Response {
 async function getUser(id: string) {
   const user = await request<Response>({
     path: '/api/user',
-    params: { uid: id },
+    params: { userId: id },
     withToken: true,
   });
   return {

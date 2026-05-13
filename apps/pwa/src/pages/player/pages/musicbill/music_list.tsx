@@ -9,7 +9,7 @@ import { RefObject, useContext } from 'react';
 import VirtualList from '@/components/virtual_list';
 import { t } from '@/i18n';
 import { FLOATING_CONTROLLER_SCROLL_SPACE, Musicbill } from '../../constants';
-import { INFO_HEIGHT } from './constants';
+import { INFO_HEIGHT, MINI_INFO_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -36,7 +36,9 @@ const ListContainer = styled(Container)`
   &::after {
     content: '';
     display: block;
-    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
+    height: calc(
+      ${FLOATING_CONTROLLER_SCROLL_SPACE} + ${MINI_INFO_HEIGHT}px + 24px
+    );
   }
 `;
 

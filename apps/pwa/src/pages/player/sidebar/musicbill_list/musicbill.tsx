@@ -5,14 +5,17 @@ import { type MouseEvent } from 'react';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
+import Cover from '@/components/cover';
 import { Musicbill as MusicbillType } from '../../constants';
-import MusicbillCover from '../../components/musicbill_cover';
 import { CSS_VAR } from '@/components/theme';
 import useSidebarNavigate from '../use_sidebar_navigate';
 
 const COVER_SIZE = 26;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
+const PUBLIC = '#63d1fa';
+const PUBLIC_SHADOW = 'rgb(72 179 220)';
+const NEUTRAL_SHADOW = 'rgb(232 232 232)';
 
 const Style = styled(NavLink)`
   min-height: 40px;
@@ -52,14 +55,14 @@ const Style = styled(NavLink)`
   &:not(.active) {
     background: #fff;
     border-color: ${CSSVariable.COLOR_BORDER};
-    box-shadow: 0 3px 0 rgb(232 232 232);
+    box-shadow: 0 3px 0 ${NEUTRAL_SHADOW};
   }
 
   &:not(.active):hover {
     color: ${PRIMARY};
     background: #fff;
     border-color: ${CSSVariable.COLOR_BORDER};
-    box-shadow: 0 3px 0 rgb(232 232 232);
+    box-shadow: 0 3px 0 ${NEUTRAL_SHADOW};
   }
 
   &:active {
@@ -89,6 +92,18 @@ const Style = styled(NavLink)`
   &.active:active {
     box-shadow: none;
   }
+`;
+const CoverArt = styled(Cover)<{ $public: boolean }>`
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  background: #fff;
+  border: 2px solid
+    ${({ $public }) => ($public ? PUBLIC : CSSVariable.COLOR_BORDER)};
+  border-radius: 9px;
+  box-shadow: 0 3px 0
+    ${({ $public }) => ($public ? PUBLIC_SHADOW : NEUTRAL_SHADOW)};
 `;
 
 function shouldUseBrowserNavigation(event: MouseEvent<HTMLAnchorElement>) {
@@ -121,11 +136,10 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
         navigate(to);
       }}
     >
-      <MusicbillCover
+      <CoverArt
+        $public={musicbill.public}
         size={COVER_SIZE}
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
-        publiz={false}
-        shared={false}
       />
       <div className="name">{musicbill.name}</div>
     </Style>

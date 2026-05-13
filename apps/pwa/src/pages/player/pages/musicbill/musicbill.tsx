@@ -1,5 +1,6 @@
 import { UIEventHandler, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useTransition } from 'react-spring';
 import autoScrollbar from '@/style/auto_scrollbar';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -42,6 +43,24 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
 
   const scrollableRef = useRef<HTMLDivElement | null>(null);
   const [miniInfoVisible, setMiniInfoVisible] = useState(false);
+  const miniInfoTransitions = useTransition(miniInfoVisible, {
+    from: {
+      opacity: 0,
+      transform: 'translate3d(0, 18px, 0) scale(0.98)',
+    },
+    enter: {
+      opacity: 1,
+      transform: 'translate3d(0, 0, 0) scale(1)',
+    },
+    leave: {
+      opacity: 0,
+      transform: 'translate3d(0, 18px, 0) scale(0.98)',
+    },
+    config: {
+      tension: 360,
+      friction: 32,
+    },
+  });
 
   const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
     const { scrollTop } = event.target as HTMLDivElement;
@@ -64,7 +83,9 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
         <MusicList musicbill={musicbill} scrollElementRef={scrollableRef} />
       </div>
 
-      {miniInfoVisible ? <MiniInfo musicbill={musicbill} /> : null}
+      {miniInfoTransitions((style, visible) =>
+        visible ? <MiniInfo musicbill={musicbill} style={style} /> : null,
+      )}
     </Style>
   );
 }

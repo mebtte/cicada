@@ -1,10 +1,9 @@
 import { ImgHTMLAttributes, useLayoutEffect, useRef, useState } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { ComponentSize } from '@/constants/style';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import loadImage, { isImageLoaded } from '@/utils/load_image';
 import logger from '@/utils/logger';
-import { animated, useTransition } from 'react-spring';
 import { CSSVariable } from '@/global_style';
 import { Shape } from './constants';
 import intersectionObserver from './intersection_observer';
@@ -35,7 +34,16 @@ const Style = styled.div<{ shape: Shape }>`
     return shapeCss;
   }}
 `;
-const Img = styled(animated.img)`
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+`;
+const Img = styled.img`
   position: absolute;
   top: 0;
   left: 0;
@@ -45,6 +53,7 @@ const Img = styled(animated.img)`
   object-fit: cover;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  animation: ${fadeIn} 160ms ease-out;
 `;
 const preventDefault = (e) => e.preventDefault();
 
@@ -80,7 +89,8 @@ function Cover({
     setCurrentSrc(defaultSrc);
 
     let active = true;
-    const unobserve = intersectionObserver.observe(ref.current!, () =>
+    const target = ref.current;
+    const load = () =>
       loadImage(src)
         .then(() => {
           if (active) {
@@ -89,19 +99,14 @@ function Cover({
         })
         .catch((error) =>
           logger.error(error, `Failed to load cover "${src}"`),
-        ),
-    );
+        );
+    const unobserve = intersectionObserver.observe(target, load);
     return () => {
       active = false;
       unobserve();
     };
   }, [src, defaultSrc]);
 
-  const transitions = useTransition(currentSrc, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
   return (
     <Style
       style={{
@@ -112,14 +117,12 @@ function Cover({
       ref={ref}
       {...props}
     >
-      {transitions((innerStyle, s) => (
-        <Img
-          src={s}
-          style={innerStyle}
-          crossOrigin="anonymous"
-          onDragStart={preventDefault}
-        />
-      ))}
+      <Img
+        key={currentSrc}
+        src={currentSrc}
+        crossOrigin="anonymous"
+        onDragStart={preventDefault}
+      />
     </Style>
   );
 }

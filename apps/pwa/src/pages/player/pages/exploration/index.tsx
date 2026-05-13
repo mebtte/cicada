@@ -60,9 +60,14 @@ const ACCENT = {
   MUSICBILL: 'rgb(255 184 28)',
   MUSICBILL_SHADOW: 'rgb(214 130 0)',
 };
+type ExplorationMode = 'recommendation' | 'search';
+
 const Root = styled(Page)`
   position: relative;
-  background: rgb(248 249 250);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 310px),
+    rgb(248 249 250);
 
   > .search-toolbar {
     z-index: 2;
@@ -79,13 +84,28 @@ const Root = styled(Page)`
     justify-content: center;
     gap: 8px;
 
-    background: transparent;
+    background: linear-gradient(
+      180deg,
+      rgb(247 253 248) 0%,
+      rgb(247 253 248 / 0.92) 78%,
+      rgb(247 253 248 / 0) 100%
+    );
+    transition: height 180ms ease-out;
   }
 
   ${({ theme: { miniMode } }) => css`
+    --recommendation-toolbar-height: ${miniMode ? TOOLBAR_HEIGHT : 0}px;
+    --search-mode-toolbar-height: ${miniMode
+      ? MINI_MODE_TOOLBAR_HEIGHT
+      : TOOLBAR_HEIGHT}px;
+
     > .search-toolbar {
-      height: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
+      height: var(--search-mode-toolbar-height);
       gap: ${miniMode ? 12 : 8}px;
+    }
+
+    > .search-toolbar.recommendation-toolbar {
+      height: var(--recommendation-toolbar-height);
     }
   `}
 `;
@@ -96,21 +116,31 @@ const Container = styled(animated.div)`
   width: 100%;
   height: 100%;
 `;
+const SwitchPanel = styled.div<{ $active: boolean }>`
+  position: absolute;
+  inset: 0;
+
+  opacity: ${({ $active }) => ($active ? 1 : 0)};
+  transform: ${({ $active }) =>
+    $active
+      ? 'translate3d(0, 0, 0) scale(1)'
+      : 'translate3d(0, 10px, 0) scale(0.995)'};
+  pointer-events: ${({ $active }) => ($active ? 'auto' : 'none')};
+  transition:
+    opacity 180ms ease-out,
+    transform 180ms ease-out;
+`;
 const StatusContainer = styled(Container)`
   ${flexCenter}
-  background: rgb(248 249 250);
 `;
 const ContentContainer = styled(Container)`
   overflow: auto;
-  background:
-    linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 310px),
-    rgb(248 249 250);
   ${autoScrollbar}
 
   > .content {
     width: min(1120px, 100%);
     margin: 0 auto;
-    padding: 20px 20px 24px;
+    padding: calc(var(--recommendation-toolbar-height) + 20px) 20px 24px;
 
     display: flex;
     flex-direction: column;
@@ -129,7 +159,7 @@ const ContentContainer = styled(Container)`
 `;
 const EmptyFallback = styled.div`
   min-height: 100%;
-  padding: 24px 16px;
+  padding: calc(var(--recommendation-toolbar-height) + 24px) 16px 24px;
 
   display: flex;
   align-items: center;
@@ -337,7 +367,6 @@ function ExplorationSection<Item>({
 function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
   const navigate = useRouterNavigate();
   const user = useUser()!;
-  const { miniMode } = useTheme();
 
   return (
     <EmptyFallback>
@@ -347,7 +376,6 @@ function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
           description={t('exploration_empty_title')}
         />
         <div className="description">{t('exploration_empty_description')}</div>
-        {miniMode ? <SearchInput autoFocus={false} /> : null}
         <div className="actions">
           {user.admin ? (
             <Button
@@ -388,17 +416,31 @@ function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
   );
 }
 
-function SearchResultPage() {
+function ExplorationToolbar({
+  mode,
+  tab,
+}: {
+  mode: ExplorationMode;
+  tab: SearchTab;
+}) {
   const navigate = useNavigate();
   const { miniMode } = useTheme();
-  const tab = useSearchTab();
+  const searching = mode === 'search';
+
+  if (!searching && !miniMode) {
+    return null;
+  }
 
   return (
-    <Root>
-      <SearchContent tab={tab} />
-      <div className="search-toolbar">
-        {miniMode ? <SearchInput /> : null}
+    <div
+      className={`search-toolbar ${
+        searching ? 'search-mode-toolbar' : 'recommendation-toolbar'
+      }`}
+    >
+      {miniMode ? <SearchInput autoFocus={searching} /> : null}
+      {searching ? (
         <DuolingoTabList<SearchTab>
+          className="search-tabs"
           current={tab}
           tabList={TAB_LIST}
           onChange={(t) =>
@@ -410,14 +452,17 @@ function SearchResultPage() {
             })
           }
         />
-      </div>
-    </Root>
+      ) : null}
+    </div>
   );
 }
 
-function RecommendationPage() {
+function SearchPanel({ tab }: { tab: SearchTab }) {
+  return <SearchContent tab={tab} />;
+}
+
+function RecommendationPanel() {
   const { data, reload } = useData();
-  const { miniMode } = useTheme();
 
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -425,7 +470,7 @@ function RecommendationPage() {
     leave: { opacity: 0 },
   });
   return (
-    <Root>
+    <>
       {transitions((style, d) => {
         if (d.error) {
           return (
@@ -449,7 +494,6 @@ function RecommendationPage() {
           <ContentContainer style={style}>
             {hasData ? (
               <div className="content">
-                {miniMode ? <SearchInput autoFocus={false} /> : null}
                 <ExplorationSection
                   title={t('recommended_music')}
                   items={d.value.musicList}
@@ -539,15 +583,32 @@ function RecommendationPage() {
           </ContentContainer>
         );
       })}
-    </Root>
+    </>
   );
 }
 
 function Wrapper() {
   const { keyword = '' } = useQuery<Query.KEYWORD>();
   const normalizedKeyword = keyword.replace(/\s+/g, ' ').trim();
+  const mode: ExplorationMode = normalizedKeyword ? 'search' : 'recommendation';
+  const tab = useSearchTab();
 
-  return normalizedKeyword ? <SearchResultPage /> : <RecommendationPage />;
+  return (
+    <Root>
+      <SwitchPanel
+        key="recommendation-panel"
+        $active={mode === 'recommendation'}
+      >
+        <RecommendationPanel />
+      </SwitchPanel>
+      {mode === 'search' ? (
+        <SwitchPanel key="search-panel" $active>
+          <SearchPanel tab={tab} />
+        </SwitchPanel>
+      ) : null}
+      <ExplorationToolbar key="exploration-toolbar" mode={mode} tab={tab} />
+    </Root>
+  );
 }
 
 export default Wrapper;

@@ -76,7 +76,7 @@ func TestGetUser(t *testing.T) {
 		t.Fatalf("insert musicbill music: %v", err)
 	}
 
-	t.Run("requires uid", func(t *testing.T) {
+	t.Run("requires userId", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Request = httptest.NewRequest(http.MethodGet, "/api/user", nil)
@@ -98,7 +98,7 @@ func TestGetUser(t *testing.T) {
 	t.Run("returns public profile drawer payload", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/user?uid=user-1", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/user?userId=user-1", nil)
 		c.Set("authed_user", &store.User{ID: "viewer"})
 
 		GetUser(c)

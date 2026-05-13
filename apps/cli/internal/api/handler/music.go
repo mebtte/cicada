@@ -357,17 +357,50 @@ func UpdateMusic(c *gin.Context) {
 		store.UpdateMusic(body.ID, "year", year)
 		syncMetadata = true
 
-	case "fork":
-		forkFrom, ok := body.Value.(string)
-		if !ok || forkFrom == "" {
+	case "forkFrom":
+		rawIDs, ok := body.Value.([]any)
+		if !ok {
 			api.Fail(c, apperr.WrongParameter)
 			return
 		}
-		if _, err := store.GetMusicByID(forkFrom); err != nil {
-			api.Fail(c, apperr.MusicNotExisted)
+		ids := make([]string, 0, len(rawIDs))
+		seen := map[string]bool{}
+		for _, v := range rawIDs {
+			id, ok := v.(string)
+			if !ok || id == "" || id == body.ID {
+				api.Fail(c, apperr.WrongParameter)
+				return
+			}
+			if seen[id] {
+				continue
+			}
+			if _, err := store.GetMusicByID(id); err != nil {
+				api.Fail(c, apperr.MusicNotExisted)
+				return
+			}
+			seen[id] = true
+			ids = append(ids, id)
+		}
+		tx, err := store.DB().Begin()
+		if err != nil {
+			api.Fail(c, apperr.ServerError)
 			return
 		}
-		store.DB().Exec(`INSERT OR REPLACE INTO music_fork (musicId,forkFrom) VALUES (?,?)`, body.ID, forkFrom)
+		defer tx.Rollback()
+		if _, err := tx.Exec(`DELETE FROM music_fork WHERE musicId=?`, body.ID); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		for _, id := range ids {
+			if _, err := tx.Exec(`INSERT INTO music_fork (musicId,forkFrom) VALUES (?,?)`, body.ID, id); err != nil {
+				api.Fail(c, apperr.ServerError)
+				return
+			}
+		}
+		if err := tx.Commit(); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
 
 	default:
 		api.Fail(c, apperr.WrongParameter)

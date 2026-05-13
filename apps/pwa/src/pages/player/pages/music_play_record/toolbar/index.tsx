@@ -5,25 +5,44 @@ import dialog from '@/utils/dialog';
 import { useUser } from '@/global_states/server';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';
 
+const NEUTRAL_SHADOW = 'rgb(232 232 232)';
+
 const Style = styled.div`
-  position: relative;
   z-index: 2;
 
-  width: 100%;
-  flex: 0 0 ${TOOLBAR_HEIGHT}px;
+  position: absolute;
+  left: 36px;
+  right: 36px;
+  bottom: calc(${FLOATING_CONTROLLER_SCROLL_SPACE} + 12px);
+  height: ${TOOLBAR_HEIGHT}px;
 
-  padding: 0 20px;
+  padding: 8px 12px 12px;
 
   display: flex;
   align-items: center;
   gap: 10px;
 
   background: #fff;
-  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 0 3px 0 rgb(214 214 214);
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 16px;
+  box-shadow: 0 6px 0 ${NEUTRAL_SHADOW};
+
+  @media (max-width: 680px) {
+    left: 24px;
+    right: 24px;
+  }
+
+  @media (max-width: 420px) {
+    left: 18px;
+    right: 18px;
+    gap: 8px;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
 `;
 
 function Toolbar() {

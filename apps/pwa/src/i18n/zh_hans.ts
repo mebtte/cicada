@@ -113,6 +113,7 @@ const zhCN: {
   invitation_will_be_canceled_automatically_after_days:
     '邀请将在 %s1 天后自动取消',
   create_music: '创建音乐',
+  edit_musicbill: '编辑乐单',
   no_music: '暂无音乐',
   no_modify_record: '暂无修改记录',
   no_public_musicbill: '暂无乐单',

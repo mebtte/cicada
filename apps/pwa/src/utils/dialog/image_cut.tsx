@@ -1,4 +1,9 @@
-import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
+import {
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components';
 import Button from '@/components/button';
 import {
   useEffect,
@@ -11,6 +16,7 @@ import styled from 'styled-components';
 import { IMAGE_MAX_SIZE } from '@/constants/asset';
 import FileSelect from '@/components/file_select';
 import { t } from '@/i18n';
+import { CSSVariable } from '@/global_style';
 import DialogBase from './dialog_base';
 import { DEFAULT_CANCEL_VARIANT, ImageCut as ImageCutShape } from './constants';
 import useEvent from '../use_event';
@@ -18,11 +24,37 @@ import loadImage from '../load_image';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 
 const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
+
+const Body = styled(DialogBody)`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
 const ImgBox = styled.div`
+  overflow: hidden;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 0 rgb(185 185 185);
+
   img {
     display: block;
     width: 100%;
     max-width: 100%;
+  }
+
+  .cropper-container {
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  }
+
+  .cropper-view-box {
+    outline-color: ${CSSVariable.COLOR_PRIMARY};
+  }
+
+  .cropper-line,
+  .cropper-point {
+    background-color: ${CSSVariable.COLOR_PRIMARY};
   }
 `;
 
@@ -131,7 +163,7 @@ function ImageCutContent({
           <DialogTitle>{options.title}</DialogTitle>
         </DialogHeader>
       )}
-      <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <Body>
         {url ? (
           <ImgBox>
             <img src={url} ref={imageRef} />
@@ -144,7 +176,7 @@ function ImageCutContent({
           acceptTypes={ACCEPT_TYPES}
           disabled={confirming || canceling}
         />
-      </DialogBody>
+      </Body>
       <DialogFooter $inline={options.inlineFooter}>
         <Button
           variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}

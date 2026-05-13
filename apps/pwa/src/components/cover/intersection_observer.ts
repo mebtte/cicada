@@ -9,7 +9,12 @@ const intersectionObserver = new window.IntersectionObserver((entries) => {
 });
 
 export default {
-  observe: (target: Element, callback: () => void) => {
+  observe: (target: Element | null, callback: () => void) => {
+    if (!target) {
+      callback();
+      return () => {};
+    }
+
     map.set(target, callback);
     intersectionObserver.observe(target);
     return () => {
