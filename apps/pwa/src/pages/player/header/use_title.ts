@@ -251,10 +251,6 @@ export default () => {
       title = getStaticHeaderTitle('exploration');
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.SEARCH: {
-      title = getStaticHeaderTitle('search');
-      break;
-    }
     case ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE: {
       title = getStaticHeaderTitle('user_management');
       break;

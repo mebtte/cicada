@@ -1,7 +1,6 @@
 import dialog from '@/utils/dialog';
 import deleteMusicbillSharedUser from '@/server/api/delete_musicbill_shared_user';
 import logger from '@/utils/logger';
-import notice from '@/utils/notice';
 import {
   getSelectedServer,
   getSelectedUser,
@@ -35,7 +34,7 @@ export function quitSharedMusicbill({
         afterQuitted();
       } catch (error) {
         logger.error(error, 'Failed to quit shared musicbill');
-        notice.error(error.message);
+        dialog.alert({ content: error.message });
         return false;
       }
     },

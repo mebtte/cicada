@@ -1,14 +1,12 @@
-import Cover, { Shape } from '@/components/cover';
+import Avatar from '@/components/avatar';
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { SingerDetail } from '../constants';
 import e, { EventType } from '../../eventemitter';
-import JpegDefaultSingerAvatar from '@/asset/default_cover.jpeg';
-import { t } from '@/i18n';
 
-const COVER_SIZE = 28;
+const AVATAR_SIZE = 32;
 const Style = styled.div`
   display: flex;
   align-items: center;
@@ -53,12 +51,9 @@ function Singer({ singer }: { singer: SingerDetail }) {
     <Style
       onClick={() => e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })}
     >
-      <Cover
-        size={COVER_SIZE}
-        shape={Shape.CIRCLE}
-        src={getResizedImage({ url: singer.avatar, size: COVER_SIZE * 2 })}
-        defaultSrc={JpegDefaultSingerAvatar}
-        alt={t('singer_avatar')}
+      <Avatar
+        size={AVATAR_SIZE}
+        src={getResizedImage({ url: singer.avatar, size: AVATAR_SIZE * 2 })}
       />
       <div className="name">{singer.name}</div>
     </Style>

@@ -170,7 +170,7 @@ func GetMusicsBySingerID(singerID string) ([]Music, error) {
 	rows, err := DB().Query(
 		`SELECT m.id,m.type,m.name,m.aliases,m.cover,m.asset,m.heat,m.createUserId,m.createTimestamp,m.year
 		FROM music_singer_relation msr JOIN music m ON msr.musicId=m.id
-		WHERE msr.singerId=? ORDER BY m.createTimestamp DESC`,
+		WHERE msr.singerId=? ORDER BY m.heat DESC, m.createTimestamp DESC`,
 		singerID,
 	)
 	if err != nil {
@@ -232,8 +232,9 @@ func GetAllMusic() ([]Music, error) {
 
 // SearchMusic searches across all users by name/alias/singer (paginated).
 func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
+	keyword = strings.TrimSpace(keyword)
 	if keyword == "" {
-		return searchMusicRandom(pageSize)
+		return 0, []Music{}, nil
 	}
 	pat := "%" + keyword + "%"
 	where := `WHERE m.name LIKE ? OR m.aliases LIKE ?
@@ -259,21 +260,6 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	defer rows.Close()
 	musics, err2 := scanMusicRows(rows)
 	return total, musics, err2
-}
-
-func searchMusicRandom(pageSize int) (int, []Music, error) {
-	var total int
-	DB().QueryRow(`SELECT COUNT(1) FROM music`).Scan(&total)
-	if total > pageSize {
-		total = pageSize
-	}
-	rows, err := DB().Query(`SELECT id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year FROM music ORDER BY random() LIMIT ?`, pageSize)
-	if err != nil {
-		return 0, nil, err
-	}
-	defer rows.Close()
-	musics, err := scanMusicRows(rows)
-	return total, musics, err
 }
 
 func scanMusicRows(rows *sql.Rows) ([]Music, error) {

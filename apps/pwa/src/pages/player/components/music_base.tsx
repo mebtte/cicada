@@ -9,6 +9,7 @@ import { Singer as SingerType } from '../constants';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
+const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
 const Style = styled.div`
   padding-bottom: 10px;
@@ -28,6 +29,7 @@ const Card = styled.div<{ active: boolean }>`
   position: relative;
   overflow: hidden;
 
+  font-family: ${FONT};
   background: ${({ active }) =>
     active ? 'rgb(232 255 218)' : '#fff'} !important;
   border: 2px solid
@@ -50,7 +52,6 @@ const Card = styled.div<{ active: boolean }>`
     color: ${({ active }) =>
       active ? PRIMARY : CSSVariable.TEXT_COLOR_SECONDARY};
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-    font-family: monospace;
     font-weight: 900;
     writing-mode: vertical-lr;
   }

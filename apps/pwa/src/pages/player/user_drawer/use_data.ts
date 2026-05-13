@@ -31,10 +31,6 @@ export default (id: string) => {
             ...m,
             cover: m.cover || DefaultCover,
           })),
-          musicList: userDetail.musicList.map((m, i) => ({
-            ...m,
-            index: i + 1,
-          })),
         },
       });
     } catch (error) {

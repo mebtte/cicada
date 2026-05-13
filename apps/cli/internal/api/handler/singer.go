@@ -76,10 +76,10 @@ func GetSinger(c *gin.Context) {
 }
 
 func SearchSinger(c *gin.Context) {
-	keyword := c.Query("keyword")
+	keyword := strings.TrimSpace(c.Query("keyword"))
 	page := queryInt(c, "page", 1)
 	pageSize := queryInt(c, "pageSize", 20)
-	if page < 1 || pageSize < 1 || pageSize > 100 {
+	if keyword == "" || page < 1 || pageSize < 1 || pageSize > 100 {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}

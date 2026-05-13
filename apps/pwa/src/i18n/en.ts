@@ -42,7 +42,7 @@ export default {
   exploration_empty_title: 'no recommendations yet',
   exploration_empty_description:
     'Import music with covers, add singer avatars, or publish musicbills with covers. They will appear here as recommendations.',
-  search_public_musicbill: 'search public musicbills',
+  search_public_musicbill: 'search musicbills',
   musicbill: 'musicbill',
   user_management: 'user management',
   logout: 'logout',
@@ -114,9 +114,10 @@ export default {
   invitation_will_be_canceled_automatically_after_days:
     'invitation will be canceled automatically after %s1 days',
   create_music: 'create music',
+  edit_musicbill: 'edit musicbill',
   no_music: 'no music',
   no_modify_record: 'no modify record',
-  no_public_musicbill: 'no public musicbill',
+  no_public_musicbill: 'no musicbill',
   edit_cover: 'edit cover',
   empty_cover_warning: 'please select a cover',
   reset_cover: 'reset cover',
@@ -138,7 +139,7 @@ export default {
   pwa_update_question: 'new version available',
   pwa_update_try_later: 'update timed out, try again later',
   music: 'music',
-  public_musicbill: 'public musicbill',
+  public_musicbill: 'musicbill',
   pick_from_playlist_randomly: 'pick from playlist randomly',
   relocate_to_here: 'relocate to here',
   empty_playqueue: 'empty playqueue',
@@ -245,7 +246,6 @@ export default {
     'are you sure to set this musicbill as private ?',
   instruction_of_setting_musicbill_as_private:
     'setting musicbill as private will remove it from your profile, others can not serach it or collect it, and it will be removed from collection list of others that collect it',
-  music_created: 'music created',
   join_at: 'join at %s1',
   music_list_are_added_to_playlist: '%s1 musics are added to playlist',
   music_list_are_added_to_playlist_unsuccessfully:
@@ -302,7 +302,6 @@ unknown_singer: 'unknown singer',
   pending: 'pending',
   start_import: 'start import',
   select_music_files: 'select music files',
-  no_created_music: 'no created music',
   remove_export_item_question:
     'are you sure to remove this export item ?',
   no_export: 'no exports',

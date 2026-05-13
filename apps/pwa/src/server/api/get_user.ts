@@ -1,4 +1,3 @@
-import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
 
@@ -14,20 +13,6 @@ interface Response {
     name: string;
     musicCount: number;
   }[];
-  musicList: {
-    id: string;
-    type: MusicType;
-    name: string;
-    aliases: string[];
-    cover: string;
-    asset: string;
-    singers: {
-      id: string;
-      name: string;
-      aliases: string[];
-      avatar: string;
-    }[];
-  }[];
 }
 
 /**
@@ -37,7 +22,7 @@ interface Response {
 async function getUser(id: string) {
   const user = await request<Response>({
     path: '/api/user',
-    params: { uid: id },
+    params: { userId: id },
     withToken: true,
   });
   return {
@@ -46,11 +31,6 @@ async function getUser(id: string) {
     musicbillList: user.musicbillList.map((mb) => ({
       ...mb,
       cover: prefixServerOrigin(mb.cover),
-    })),
-    musicList: user.musicList.map((m) => ({
-      ...m,
-      cover: prefixServerOrigin(m.cover),
-      asset: prefixServerOrigin(m.asset),
     })),
   };
 }

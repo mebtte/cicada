@@ -1,6 +1,7 @@
 import {
   CSSProperties,
   ReactNode,
+  useCallback,
   useContext,
   useMemo,
   useRef,
@@ -9,7 +10,6 @@ import {
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { MdDragIndicator, MdOutlineClose, MdShuffle } from 'react-icons/md';
-import { useVirtualizer, type VirtualItem } from '@tanstack/react-virtual';
 import {
   closestCenter,
   DndContext,
@@ -29,6 +29,7 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { flexCenter } from '@/style/flexbox';
 import Empty from '@/components/empty';
+import VirtualList from '@/components/virtual_list';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -43,8 +44,9 @@ import { TAB_LIST_HEIGHT } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import RemovalAnimationItem from './removal_animation_item';
+import useRemovalAnimation from './use_removal_animation';
 
-const ROW_HEIGHT = 82;
 const LIST_BOTTOM_SPACE = TAB_LIST_HEIGHT + 32;
 
 const shuffleStyle: CSSProperties = {
@@ -73,16 +75,6 @@ const Operation = styled.div`
   align-items: center;
   gap: 5px;
 `;
-const VirtualList = styled.div`
-  position: relative;
-  width: 100%;
-`;
-const VirtualRow = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-`;
 const SortableItem = styled.div<{ $dragging: boolean }>`
   opacity: ${({ $dragging }) => ($dragging ? 0.42 : 1)};
 `;
@@ -104,14 +96,14 @@ const removeStyle: CSSProperties = {
 
 function QueueMusicItem({
   active,
+  canRemove,
   dragHandle,
   queueMusic,
-  showActions = true,
 }: {
   active: boolean;
+  canRemove: boolean;
   dragHandle?: ReactNode;
   queueMusic: QueueMusic;
-  showActions?: boolean;
 }) {
   return (
     <MusicBase
@@ -127,7 +119,7 @@ function QueueMusicItem({
             />
           ) : null}
           {dragHandle}
-          {showActions ? (
+          {canRemove ? (
             <Button
               square
               variant="plain"
@@ -154,9 +146,11 @@ function QueueMusicItem({
 
 function SortableQueueMusicItem({
   active,
+  canRemove,
   queueMusic,
 }: {
   active: boolean;
+  canRemove: boolean;
   queueMusic: QueueMusic;
 }) {
   const {
@@ -179,6 +173,7 @@ function SortableQueueMusicItem({
     >
       <QueueMusicItem
         active={active}
+        canRemove={canRemove}
         queueMusic={queueMusic}
         dragHandle={
           <DragActivator {...attributes} {...listeners}>
@@ -211,8 +206,22 @@ function Playqueue() {
     }),
   );
 
-  const { length } = playqueue;
   const renderedPlayqueue = useMemo(() => [...playqueue].reverse(), [playqueue]);
+  const getPlayqueueItemKey = useCallback(
+    (queueMusic: QueueMusic) => queueMusic.pid,
+    [],
+  );
+  const { finishRemoval, renderedItems: animatedPlayqueue } = useRemovalAnimation(
+    renderedPlayqueue,
+    getPlayqueueItemKey,
+  );
+  const leavingIndexes = useMemo(
+    () =>
+      animatedPlayqueue.flatMap((item, index) =>
+        item.leaving ? [index] : [],
+      ),
+    [animatedPlayqueue],
+  );
   const sortableIds = useMemo(
     () =>
       renderedPlayqueue
@@ -223,16 +232,7 @@ function Playqueue() {
   const activeQueueMusic = activePid
     ? playqueue.find((queueMusic) => queueMusic.pid === activePid)
     : null;
-  const rowVirtualizer = useVirtualizer<HTMLDivElement, HTMLDivElement>({
-    count: length,
-    estimateSize: () => ROW_HEIGHT,
-    getItemKey: (index) => renderedPlayqueue[index]?.pid ?? index,
-    getScrollElement: () => listRef.current,
-    overscan: 8,
-    paddingEnd: LIST_BOTTOM_SPACE,
-    paddingStart: titlebarAreaHeight + 12,
-    useFlushSync: false,
-  });
+  const listTopSpace = titlebarAreaHeight + 12;
   const onDragStart = ({ active }: DragStartEvent) =>
     setActivePid(String(active.id));
   const onDragEnd = ({ active, over }: DragEndEvent) => {
@@ -253,7 +253,7 @@ function Playqueue() {
 
   return (
     <Style>
-      {playqueue.length ? (
+      {animatedPlayqueue.length ? (
         <div className="content list" ref={listRef}>
           <DndContext
             sensors={sensors}
@@ -266,45 +266,55 @@ function Playqueue() {
               items={sortableIds}
               strategy={verticalListSortingStrategy}
             >
-              <VirtualList style={{ height: rowVirtualizer.getTotalSize() }}>
-                {rowVirtualizer
-                  .getVirtualItems()
-                  .map((virtualItem: VirtualItem) => {
-                    const queueMusic = renderedPlayqueue[virtualItem.index];
-                    const actualIndex = queueMusic.index - 1;
-                    const sortable = actualIndex > currentPlayqueuePosition;
-
-                    return (
-                      <VirtualRow
-                        key={virtualItem.key}
-                        style={{
-                          height: virtualItem.size,
-                          transform: `translateY(${virtualItem.start}px)`,
-                        }}
-                      >
-                        {sortable ? (
-                          <SortableQueueMusicItem
-                            active={actualIndex === currentPlayqueuePosition}
-                            queueMusic={queueMusic}
-                          />
-                        ) : (
-                          <QueueMusicItem
-                            active={actualIndex === currentPlayqueuePosition}
-                            queueMusic={queueMusic}
-                            showActions={false}
-                          />
-                        )}
-                      </VirtualRow>
-                    );
-                  })}
-              </VirtualList>
+              <VirtualList
+                count={animatedPlayqueue.length}
+                forceRenderIndexes={leavingIndexes}
+                getItemKey={(index) => animatedPlayqueue[index].key}
+                paddingStart={listTopSpace}
+                paddingEnd={LIST_BOTTOM_SPACE}
+                scrollElementRef={listRef}
+                renderItem={(index, _key, { requestMeasure }) => {
+                  const animatedQueueMusic = animatedPlayqueue[index];
+                  const queueMusic = animatedQueueMusic.item;
+                  const actualIndex = queueMusic.index - 1;
+                  const active =
+                    !animatedQueueMusic.leaving &&
+                    actualIndex === currentPlayqueuePosition;
+                  const canRemove =
+                    !animatedQueueMusic.leaving &&
+                    actualIndex > currentPlayqueuePosition;
+                  const sortable = canRemove;
+                  return (
+                    <RemovalAnimationItem
+                      itemKey={animatedQueueMusic.key}
+                      leaving={animatedQueueMusic.leaving}
+                      finishRemoval={finishRemoval}
+                      requestMeasure={requestMeasure}
+                    >
+                      {sortable ? (
+                        <SortableQueueMusicItem
+                          active={active}
+                          canRemove={canRemove}
+                          queueMusic={queueMusic}
+                        />
+                      ) : (
+                        <QueueMusicItem
+                          active={active}
+                          canRemove={canRemove}
+                          queueMusic={queueMusic}
+                        />
+                      )}
+                    </RemovalAnimationItem>
+                  );
+                }}
+              />
             </SortableContext>
             <DragOverlay>
               {activeQueueMusic ? (
                 <QueueMusicItem
                   active={false}
+                  canRemove={false}
                   queueMusic={activeQueueMusic}
-                  showActions={false}
                 />
               ) : null}
             </DragOverlay>

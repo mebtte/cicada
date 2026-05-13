@@ -71,13 +71,25 @@ func TestGetSinger(t *testing.T) {
 		t.Fatalf("insert photos: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,aliases,cover,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeSong), "Song 1", joinAliases([]string{"Song Alias"}), "cover.jpg", "song.mp3", "user-1", now,
+		`INSERT INTO music (id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp) VALUES
+			('music-1', ?, 'Song 1', ?, 'cover.jpg', 'song.mp3', 20, 'user-1', ?),
+			('music-2', ?, 'Song 2', '', '', 'song-2.mp3', 20, 'user-1', ?),
+			('music-3', ?, 'Song 3', '', '', 'song-3.mp3', 10, 'user-1', ?),
+			('music-4', ?, 'Song 4', '', '', 'song-4.mp3', 1,  'user-1', ?)`,
+		int(store.MusicTypeSong), joinAliases([]string{"Song Alias"}), now+2000,
+		int(store.MusicTypeSong), now+1000,
+		int(store.MusicTypeSong), now+4000,
+		int(store.MusicTypeSong), now+3000,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
 	if err := store.LinkMusicSingers("music-1", []string{"singer-1", "singer-2"}); err != nil {
 		t.Fatalf("link music singers: %v", err)
+	}
+	for _, musicID := range []string{"music-2", "music-3", "music-4"} {
+		if err := store.LinkMusicSingers(musicID, []string{"singer-1"}); err != nil {
+			t.Fatalf("link %s singers: %v", musicID, err)
+		}
 	}
 
 	type photoResp struct {
@@ -164,8 +176,13 @@ func TestGetSinger(t *testing.T) {
 			t.Fatalf("expected photo-a second: %+v", resp.Data.Photos[1])
 		}
 
-		if len(resp.Data.MusicList) != 1 {
+		if len(resp.Data.MusicList) != 4 {
 			t.Fatalf("unexpected musicList: %+v", resp.Data.MusicList)
+		}
+		for i, wantID := range []string{"music-1", "music-2", "music-3", "music-4"} {
+			if resp.Data.MusicList[i].ID != wantID {
+				t.Fatalf("musicList[%d] ID = %s, want %s; list = %+v", i, resp.Data.MusicList[i].ID, wantID, resp.Data.MusicList)
+			}
 		}
 		music := resp.Data.MusicList[0]
 		if music.ID != "music-1" || music.Name != "Song 1" {

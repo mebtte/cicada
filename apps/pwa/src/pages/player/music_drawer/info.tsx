@@ -78,12 +78,12 @@ const getMusicFileType = (asset: string) => {
 function MusicMetaLine({ music }: { music: MusicDetail }) {
   const fileType = getMusicFileType(music.asset);
   const metaList = [
-    fileType ? fileType.toUpperCase() : '',
     music.duration ? formatDuration(music.duration) : '',
-    music.size ? formatFileSize(music.size) : '',
     music.year ? `${music.year}` : '',
     t('heat', music.heat.toString()),
     t('musicbill_count', music.musicbillCount.toString()),
+    fileType ? fileType.toUpperCase() : '',
+    music.size ? formatFileSize(music.size) : '',
   ].filter(Boolean);
 
   return metaList.length ? (

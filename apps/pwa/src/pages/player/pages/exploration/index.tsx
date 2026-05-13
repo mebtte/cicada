@@ -1,7 +1,7 @@
 import Spinner from '@/components/spinner';
 import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import SizeObserver from '@/components/size_observer';
 import Empty from '@/components/empty';
@@ -11,10 +11,14 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate as useRouterNavigate } from 'react-router-dom';
 import { Query } from '@/constants';
 import { useUser } from '@/global_states/server';
-import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { ROOT_PATH } from '@/constants/route';
+import useQuery from '@/utils/use_query';
+import useNavigate from '@/utils/use_navigate';
+import { useTheme } from '@/global_states/theme';
+import { DuolingoTabList } from '@/components/duolingo_tabs';
 import {
   MdAdd,
   MdAdminPanelSettings,
@@ -34,6 +38,14 @@ import Cover from './cover';
 import MusicInfo from './music_info';
 import SingerInfo from './singer_info';
 import PublicMusicbillInfo from './public_musicbill_info';
+import SearchInput from '../search/input';
+import SearchContent from '../search/content';
+import useSearchTab from '../search/use_tab';
+import {
+  MINI_MODE_TOOLBAR_HEIGHT,
+  TAB_LIST,
+  TOOLBAR_HEIGHT,
+} from '../search/constants';
 
 const ITEM_MIN_WIDTH = 164;
 const MOBILE_ITEM_WIDTH = 96;
@@ -48,9 +60,54 @@ const ACCENT = {
   MUSICBILL: 'rgb(255 184 28)',
   MUSICBILL_SHADOW: 'rgb(214 130 0)',
 };
+type ExplorationMode = 'recommendation' | 'search';
+
 const Root = styled(Page)`
   position: relative;
-  background: rgb(248 249 250);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 310px),
+    rgb(248 249 250);
+
+  > .search-toolbar {
+    z-index: 2;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    padding: 14px 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+
+    background: linear-gradient(
+      180deg,
+      rgb(247 253 248) 0%,
+      rgb(247 253 248 / 0.92) 78%,
+      rgb(247 253 248 / 0) 100%
+    );
+    transition: height 180ms ease-out;
+  }
+
+  ${({ theme: { miniMode } }) => css`
+    --recommendation-toolbar-height: ${miniMode ? TOOLBAR_HEIGHT : 0}px;
+    --search-mode-toolbar-height: ${miniMode
+      ? MINI_MODE_TOOLBAR_HEIGHT
+      : TOOLBAR_HEIGHT}px;
+
+    > .search-toolbar {
+      height: var(--search-mode-toolbar-height);
+      gap: ${miniMode ? 12 : 8}px;
+    }
+
+    > .search-toolbar.recommendation-toolbar {
+      height: var(--recommendation-toolbar-height);
+    }
+  `}
 `;
 const Container = styled(animated.div)`
   position: absolute;
@@ -59,21 +116,31 @@ const Container = styled(animated.div)`
   width: 100%;
   height: 100%;
 `;
+const SwitchPanel = styled.div<{ $active: boolean }>`
+  position: absolute;
+  inset: 0;
+
+  opacity: ${({ $active }) => ($active ? 1 : 0)};
+  transform: ${({ $active }) =>
+    $active
+      ? 'translate3d(0, 0, 0) scale(1)'
+      : 'translate3d(0, 10px, 0) scale(0.995)'};
+  pointer-events: ${({ $active }) => ($active ? 'auto' : 'none')};
+  transition:
+    opacity 180ms ease-out,
+    transform 180ms ease-out;
+`;
 const StatusContainer = styled(Container)`
   ${flexCenter}
-  background: rgb(248 249 250);
 `;
 const ContentContainer = styled(Container)`
   overflow: auto;
-  background:
-    linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 310px),
-    rgb(248 249 250);
   ${autoScrollbar}
 
   > .content {
     width: min(1120px, 100%);
     margin: 0 auto;
-    padding: 20px 20px 24px;
+    padding: calc(var(--recommendation-toolbar-height) + 20px) 20px 24px;
 
     display: flex;
     flex-direction: column;
@@ -92,7 +159,7 @@ const ContentContainer = styled(Container)`
 `;
 const EmptyFallback = styled.div`
   min-height: 100%;
-  padding: 24px 16px;
+  padding: calc(var(--recommendation-toolbar-height) + 24px) 16px 24px;
 
   display: flex;
   align-items: center;
@@ -129,6 +196,10 @@ const EmptyFallback = styled.div`
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
       line-height: 1.7;
+    }
+
+    > .input {
+      margin-top: 18px;
     }
 
     > .actions {
@@ -294,7 +365,7 @@ function ExplorationSection<Item>({
 }
 
 function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
-  const navigate = useNavigate();
+  const navigate = useRouterNavigate();
   const user = useUser()!;
 
   return (
@@ -325,11 +396,14 @@ function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
           <Button
             variant="ghost"
             icon={<MdSearch />}
-            onClick={() =>
+            onClick={() => {
               navigate(
-                `${ROOT_PATH.PLAYER}${PLAYER_PATH.SEARCH}?${Query.SEARCH_TAB}=${SearchTab.PUBLIC_MUSICBILL}`,
-              )
-            }
+                `${ROOT_PATH.PLAYER}?${Query.SEARCH_TAB}=${SearchTab.PUBLIC_MUSICBILL}`,
+              );
+              window.requestAnimationFrame(() =>
+                playerEventemitter.emit(PlayerEventType.FOCUS_SEARCH_INPUT, null),
+              );
+            }}
           >
             {t('search_public_musicbill')}
           </Button>
@@ -342,7 +416,52 @@ function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
   );
 }
 
-function Wrapper() {
+function ExplorationToolbar({
+  mode,
+  tab,
+}: {
+  mode: ExplorationMode;
+  tab: SearchTab;
+}) {
+  const navigate = useNavigate();
+  const { miniMode } = useTheme();
+  const searching = mode === 'search';
+
+  if (!searching && !miniMode) {
+    return null;
+  }
+
+  return (
+    <div
+      className={`search-toolbar ${
+        searching ? 'search-mode-toolbar' : 'recommendation-toolbar'
+      }`}
+    >
+      {miniMode ? <SearchInput autoFocus={searching} /> : null}
+      {searching ? (
+        <DuolingoTabList<SearchTab>
+          className="search-tabs"
+          current={tab}
+          tabList={TAB_LIST}
+          onChange={(t) =>
+            navigate({
+              query: {
+                [Query.SEARCH_TAB]: t,
+                [Query.PAGE]: 1,
+              },
+            })
+          }
+        />
+      ) : null}
+    </div>
+  );
+}
+
+function SearchPanel({ tab }: { tab: SearchTab }) {
+  return <SearchContent tab={tab} />;
+}
+
+function RecommendationPanel() {
   const { data, reload } = useData();
 
   const transitions = useTransition(data, {
@@ -351,7 +470,7 @@ function Wrapper() {
     leave: { opacity: 0 },
   });
   return (
-    <Root>
+    <>
       {transitions((style, d) => {
         if (d.error) {
           return (
@@ -464,6 +583,30 @@ function Wrapper() {
           </ContentContainer>
         );
       })}
+    </>
+  );
+}
+
+function Wrapper() {
+  const { keyword = '' } = useQuery<Query.KEYWORD>();
+  const normalizedKeyword = keyword.replace(/\s+/g, ' ').trim();
+  const mode: ExplorationMode = normalizedKeyword ? 'search' : 'recommendation';
+  const tab = useSearchTab();
+
+  return (
+    <Root>
+      <SwitchPanel
+        key="recommendation-panel"
+        $active={mode === 'recommendation'}
+      >
+        <RecommendationPanel />
+      </SwitchPanel>
+      {mode === 'search' ? (
+        <SwitchPanel key="search-panel" $active>
+          <SearchPanel tab={tab} />
+        </SwitchPanel>
+      ) : null}
+      <ExplorationToolbar key="exploration-toolbar" mode={mode} tab={tab} />
     </Root>
   );
 }

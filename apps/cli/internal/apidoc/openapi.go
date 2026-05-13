@@ -319,11 +319,11 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/user",
 			Summary:     "Get public user info",
-			Description: "Return the public user profile, created music, and public musicbills by `uid`.",
+			Description: "Return the public user profile and public musicbills by `userId`.",
 			Tags:        []string{"User"},
 			Auth:        true,
 			Parameters: []map[string]any{
-				queryParam("uid", "User ID.", true, strSchema("", "1")),
+				queryParam("userId", "User ID.", true, strSchema("", "1")),
 			},
 			SuccessSchema:  publicUserSchema(),
 			SuccessExample: publicUserExample(),
@@ -486,11 +486,11 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/music/search",
 			Summary:     "Search music",
-			Description: "Search all music by keyword. Returns random music when the keyword is empty.",
+			Description: "Search all music by keyword.",
 			Tags:        []string{"Music"},
 			Auth:        true,
 			Parameters: paginationParams(
-				queryParam("keyword", "Name, alias, or singer keyword.", false, strSchema("", "night")),
+				queryParam("keyword", "Name, alias, or singer keyword.", true, strSchema("", "night")),
 			),
 			SuccessSchema:  musicListPageSchema("musicList"),
 			SuccessExample: musicListPageExample("musicList"),
@@ -532,7 +532,7 @@ func operations() []operation {
 			Tags:        []string{"Singer"},
 			Auth:        true,
 			Parameters: paginationParams(
-				queryParam("keyword", "Singer keyword.", false, strSchema("", "aur")),
+				queryParam("keyword", "Singer keyword.", true, strSchema("", "aur")),
 			),
 			SuccessSchema: objSchema(
 				[]string{"total", "singerList"},
@@ -816,7 +816,7 @@ func operations() []operation {
 			Tags:        []string{"Musicbill"},
 			Auth:        true,
 			Parameters: paginationParams(
-				queryParam("keyword", "Musicbill keyword.", false, strSchema("", "night")),
+				queryParam("keyword", "Musicbill keyword.", true, strSchema("", "night")),
 			),
 			SuccessSchema:  musicbillPageSchema("musicbillList"),
 			SuccessExample: musicbillPageExample("musicbillList"),
@@ -1537,7 +1537,7 @@ func authSessionExample() map[string]any {
 
 func publicUserSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "avatar", "joinTimestamp", "nickname", "username", "musicbillList", "musicList"},
+		[]string{"id", "avatar", "joinTimestamp", "nickname", "username", "musicbillList"},
 		map[string]any{
 			"id":            strSchema("User ID.", "1"),
 			"avatar":        strSchema("Avatar path.", "/asset/user_avatar/avatar.jpg"),
@@ -1545,7 +1545,6 @@ func publicUserSchema() map[string]any {
 			"nickname":      strSchema("Nickname.", "Cicada"),
 			"username":      strSchema("Username.", "cicada"),
 			"musicbillList": arraySchema(publicUserMusicbillSchema()),
-			"musicList":     arraySchema(musicSummarySchema()),
 		},
 	)
 }
@@ -1565,7 +1564,6 @@ func publicUserExample() map[string]any {
 				"musicCount": 12,
 			},
 		},
-		"musicList": musicListPageExample("musicList")["musicList"],
 	}
 }
 
@@ -1743,7 +1741,7 @@ func updateMusicRequestSchema() map[string]any {
 		[]string{"id", "key"},
 		map[string]any{
 			"id":    strSchema("Music ID.", "music-1"),
-			"key":   strEnumSchema([]string{"name", "aliases", "lyric", "cover", "asset", "singers", "type", "year", "fork"}, "aliases"),
+			"key":   strEnumSchema([]string{"name", "aliases", "lyric", "cover", "asset", "singers", "type", "year", "forkFrom"}, "aliases"),
 			"value": flexibleValueSchema(),
 		},
 	)

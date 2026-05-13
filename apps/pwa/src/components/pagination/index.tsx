@@ -12,6 +12,7 @@ import usePagination from './use_pagination';
 import { t } from '@/i18n';
 
 const GAP_MAP: Record<Size, number> = { sm: 5, md: 6, lg: 8 };
+const SHADOW_OFFSET: Record<Size, number> = { sm: 3, md: 4, lg: 5 };
 const ELLIPSIS_SIZE: Record<Size, { box: number; icon: number }> = {
   sm: { box: 34, icon: 18 },
   md: { box: 44, icon: 22 },
@@ -22,6 +23,33 @@ const Style = styled.div<{ $gap: number }>`
   display: inline-flex;
   align-items: center;
   gap: ${({ $gap }) => $gap}px;
+`;
+const PageButton = styled(Button)<{ $selected: boolean; $size: Size }>`
+  min-width: ${({ $size }) => ELLIPSIS_SIZE[$size].box}px;
+
+  ${({ $selected, $size }) =>
+    !$selected &&
+    css`
+      transition:
+        background 150ms ease-out,
+        border-color 150ms ease-out,
+        box-shadow 150ms ease-out,
+        transform 150ms ease-out,
+        filter 120ms ease-out;
+
+      &:not(:disabled):hover {
+        background: #fff;
+        border-color: rgb(180 180 180);
+        box-shadow: 0 ${SHADOW_OFFSET[$size]}px 0 rgb(180 180 180);
+      }
+
+      &:not(:disabled):active {
+        transition:
+          transform 60ms ease-in,
+          box-shadow 60ms ease-in,
+          filter 60ms ease-in;
+      }
+    `}
 `;
 const Ellipsis = styled.span<{ $size: Size }>`
   display: inline-flex;
@@ -158,10 +186,11 @@ function Pagination({
             );
           case 'page':
             return (
-              <Button
+              <PageButton
                 key={`page-${item.page}`}
-                square
                 size={size}
+                $selected={item.selected}
+                $size={size}
                 variant={item.selected ? 'primary' : 'plain'}
                 aria-label={`Page ${item.page}`}
                 aria-current={item.selected ? 'page' : undefined}
@@ -169,7 +198,7 @@ function Pagination({
                 onClick={() => navTo(item.page)}
               >
                 {item.page}
-              </Button>
+              </PageButton>
             );
         }
       })}

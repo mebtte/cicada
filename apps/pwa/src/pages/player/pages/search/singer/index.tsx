@@ -36,6 +36,7 @@ const SingerContainer = styled(Container)`
     --gap: 10px;
 
     margin: 0 var(--gap);
+    padding-top: calc(var(--search-toolbar-height) - var(--gap));
 
     display: flex;
     align-items: flex-start;

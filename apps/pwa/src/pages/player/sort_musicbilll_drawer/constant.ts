@@ -3,5 +3,4 @@ export interface LocalMusicbill {
   name: string;
   cover: string;
   public: boolean;
-  shared: boolean;
 }

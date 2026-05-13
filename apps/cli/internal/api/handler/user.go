@@ -173,21 +173,15 @@ func validateCurrentCredential(u *store.User, password, twoFAToken string) bool 
 }
 
 func GetUser(c *gin.Context) {
-	uid := c.Query("uid")
-	if uid == "" {
+	userID := c.Query("userId")
+	if userID == "" {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
 
-	user, err := store.GetUserByID(uid)
+	user, err := store.GetUserByID(userID)
 	if err != nil {
 		api.Fail(c, apperr.UserNotExisted)
-		return
-	}
-
-	musics, err := store.GetMusicsByCreateUserID(uid)
-	if err != nil {
-		api.Fail(c, apperr.ServerError)
 		return
 	}
 
@@ -203,7 +197,7 @@ func GetUser(c *gin.Context) {
 		FROM musicbill
 		WHERE userId=? AND public=1
 		ORDER BY createTimestamp DESC`,
-		uid,
+		userID,
 	)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
@@ -242,7 +236,6 @@ func GetUser(c *gin.Context) {
 		"nickname":      user.Nickname,
 		"username":      user.Username,
 		"musicbillList": musicbillItems,
-		"musicList":     musicListResponse(musics, len(musics))["musicList"],
 	})
 }
 

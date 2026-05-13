@@ -1,6 +1,7 @@
 package store
 
 import (
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -225,6 +226,10 @@ func GetPublicMusicbillByID(id string) (*MusicbillWithOwner, error) {
 }
 
 func SearchPublicMusicbills(keyword string, page, pageSize int) (int, []MusicbillWithOwner, error) {
+	keyword = strings.TrimSpace(keyword)
+	if keyword == "" {
+		return 0, []MusicbillWithOwner{}, nil
+	}
 	pat := "%" + keyword + "%"
 	var total int
 	DB().QueryRow(`SELECT COUNT(1) FROM musicbill WHERE public=1 AND name LIKE ?`, pat).Scan(&total)

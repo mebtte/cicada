@@ -76,7 +76,7 @@ func TestGetUser(t *testing.T) {
 		t.Fatalf("insert musicbill music: %v", err)
 	}
 
-	t.Run("requires uid", func(t *testing.T) {
+	t.Run("requires userId", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Request = httptest.NewRequest(http.MethodGet, "/api/user", nil)
@@ -98,7 +98,7 @@ func TestGetUser(t *testing.T) {
 	t.Run("returns public profile drawer payload", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/user?uid=user-1", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/user?userId=user-1", nil)
 		c.Set("authed_user", &store.User{ID: "viewer"})
 
 		GetUser(c)
@@ -117,27 +117,23 @@ func TestGetUser(t *testing.T) {
 					Name       string `json:"name"`
 					MusicCount int    `json:"musicCount"`
 				} `json:"musicbillList"`
-				MusicList []struct {
-					ID      string   `json:"id"`
-					Type    int      `json:"type"`
-					Name    string   `json:"name"`
-					Aliases []string `json:"aliases"`
-					Cover   string   `json:"cover"`
-					Asset   string   `json:"asset"`
-					Singers []struct {
-						ID      string   `json:"id"`
-						Name    string   `json:"name"`
-						Aliases []string `json:"aliases"`
-					} `json:"singers"`
-				} `json:"musicList"`
 			} `json:"data"`
 		}
 		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
 			t.Fatalf("decode response: %v", err)
 		}
+		var rawResp struct {
+			Data map[string]json.RawMessage `json:"data"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &rawResp); err != nil {
+			t.Fatalf("decode raw response: %v", err)
+		}
 
 		if resp.Code != "success" {
 			t.Fatalf("unexpected code: %s", resp.Code)
+		}
+		if _, ok := rawResp.Data["musicList"]; ok {
+			t.Fatalf("user payload should not include musicList: %s", string(rawResp.Data["musicList"]))
 		}
 		if resp.Data.ID != "user-1" || resp.Data.Username != "creator" || resp.Data.Nickname != "Creator" {
 			t.Fatalf("unexpected user payload: %+v", resp.Data)
@@ -153,20 +149,6 @@ func TestGetUser(t *testing.T) {
 		}
 		if resp.Data.MusicbillList[0].MusicCount != 1 {
 			t.Fatalf("unexpected music count: %d", resp.Data.MusicbillList[0].MusicCount)
-		}
-		if len(resp.Data.MusicList) != 1 || resp.Data.MusicList[0].ID != "music-1" {
-			t.Fatalf("unexpected music list: %+v", resp.Data.MusicList)
-		}
-		if resp.Data.MusicList[0].Cover != "/asset/music_cover/cover.jpg" ||
-			resp.Data.MusicList[0].Asset != "/asset/music/song.mp3" {
-			t.Fatalf("unexpected music assets: %+v", resp.Data.MusicList[0])
-		}
-		if len(resp.Data.MusicList[0].Aliases) != 1 || resp.Data.MusicList[0].Aliases[0] != "Song Alias" {
-			t.Fatalf("unexpected music aliases: %+v", resp.Data.MusicList[0].Aliases)
-		}
-		if len(resp.Data.MusicList[0].Singers) != 1 ||
-			resp.Data.MusicList[0].Singers[0].Aliases[0] != "Singer Alias" {
-			t.Fatalf("unexpected singers: %+v", resp.Data.MusicList[0].Singers)
 		}
 	})
 }

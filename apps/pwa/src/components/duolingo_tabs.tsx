@@ -35,7 +35,7 @@ const TabListRoot = styled.div`
   align-items: stretch;
   gap: 4px;
 
-  background: rgb(255 255 255 / 0.78);
+  background: #fff;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 16px;
   box-shadow: 0 4px 0 rgb(232 232 232);

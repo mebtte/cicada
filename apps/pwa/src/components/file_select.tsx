@@ -1,42 +1,23 @@
-import styled, { css } from 'styled-components';
+import { CSSProperties } from 'react';
+import styled from 'styled-components';
+import Button from './button';
 import { CSSVariable } from '../global_style';
 import useEvent from '../utils/use_event';
 import selectFile from '../utils/select_file';
 import { t } from '@/i18n';
 
-const Style = styled.div<{ disabled: boolean }>`
-  padding: 10px 20px;
-
-  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
-  border: 1px solid ${CSSVariable.COLOR_BORDER};
-  cursor: pointer;
-  text-align: center;
-  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-  transition: inherit;
-  user-select: none;
+const SelectButton = styled(Button)`
+  height: auto;
+  min-height: 44px;
+  padding-top: 10px;
+  padding-bottom: 12px;
+  white-space: normal;
   word-break: break-all;
+  line-height: 1.25;
 
   > .placeholder {
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   }
-
-  &:active {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
-    border-style: solid;
-  }
-
-  ${({ disabled }) => css`
-    border-color: ${disabled
-      ? `${CSSVariable.TEXT_COLOR_DISABLED} !important`
-      : CSSVariable.COLOR_BORDER};
-    cursor: ${disabled ? 'not-allowed' : 'poiter'};
-    color: ${disabled
-      ? CSSVariable.TEXT_COLOR_SECONDARY
-      : CSSVariable.TEXT_COLOR_PRIMARY};
-    background-color: ${disabled
-      ? CSSVariable.BACKGROUND_DISABLED
-      : 'transparent'};
-  `}
 `;
 
 function FileSelect({
@@ -45,12 +26,16 @@ function FileSelect({
   onChange,
   disabled = false,
   acceptTypes,
+  className,
+  style,
 }: {
   placeholder?: string;
   value: File | null;
   onChange: (file: File | null) => void;
   disabled?: boolean;
   acceptTypes?: string[];
+  className?: string;
+  style?: CSSProperties;
 }) {
   const onSelectFile = useEvent(() => {
     if (disabled) {
@@ -63,9 +48,16 @@ function FileSelect({
   });
 
   return (
-    <Style onClick={onSelectFile} disabled={disabled}>
+    <SelectButton
+      className={className}
+      style={style}
+      onClick={onSelectFile}
+      disabled={disabled}
+      variant="ghost"
+      block
+    >
       {value ? value.name : <span className="placeholder">{placeholder}</span>}
-    </Style>
+    </SelectButton>
   );
 }
 

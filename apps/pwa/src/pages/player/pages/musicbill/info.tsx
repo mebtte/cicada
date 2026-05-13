@@ -1,17 +1,18 @@
 import styled from 'styled-components';
 import day from '@/utils/day';
 import { CSSVariable } from '@/global_style';
-import { CSS_VAR } from '@/components/theme';
 import getResizedImage from '@/server/asset/get_resized_image';
+import Cover from '@/components/cover';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { Musicbill } from '../../constants';
 import { INFO_HEIGHT } from './constants';
 import Operation from './operation';
-import MusicbillCover from '../../components/musicbill_cover';
 
 const COVER_SIZE = 96;
-const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
+const PUBLIC = '#63d1fa';
+const PUBLIC_SHADOW = 'rgb(72 179 220)';
+const NEUTRAL_SHADOW = 'rgb(232 232 232)';
 const Style = styled.div`
   height: ${INFO_HEIGHT}px;
   width: 100%;
@@ -27,21 +28,7 @@ const Style = styled.div`
   background: #fff;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 18px;
-  box-shadow: 0 6px 0 rgb(232 232 232);
-
-  > .cover-card {
-    flex: 0 0 auto;
-    border-radius: 16px;
-    box-shadow: 0 6px 0 rgb(232 232 232);
-
-    > div {
-      border-radius: 14px;
-    }
-
-    &.shared::after {
-      border-radius: 16px;
-    }
-  }
+  box-shadow: 0 6px 0 ${NEUTRAL_SHADOW};
 
   > .info {
     flex: 1;
@@ -70,11 +57,6 @@ const Style = styled.div`
       font-weight: 700;
       color: ${CSSVariable.TEXT_COLOR_SECONDARY};
       ${upperCaseFirstLetter}
-
-      > .public-state {
-        color: ${PRIMARY};
-        font-weight: 900;
-      }
     }
 
     > .operation-row {
@@ -102,10 +84,6 @@ const Style = styled.div`
 
     > .cover-card {
       width: 96px;
-
-      > div {
-        width: 96px !important;
-      }
     }
 
     > .info {
@@ -119,28 +97,31 @@ const Style = styled.div`
     }
   }
 `;
+const CoverArt = styled(Cover)<{ $public: boolean }>`
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  background: #fff;
+  border: 2px solid
+    ${({ $public }) => ($public ? PUBLIC : CSSVariable.COLOR_BORDER)};
+  border-radius: 16px;
+  box-shadow: 0 6px 0
+    ${({ $public }) => ($public ? PUBLIC_SHADOW : NEUTRAL_SHADOW)};
+`;
 
 function Info({ musicbill }: { musicbill: Musicbill }) {
-  const sharedUserCount = musicbill.sharedUserList.length;
-
   return (
     <Style>
-      <MusicbillCover
+      <CoverArt
         className="cover-card"
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         size={COVER_SIZE}
-        publiz={false}
-        shared={false}
+        $public={musicbill.public}
       />
       <div className="info">
         <div className="name">{musicbill.name}</div>
         <div className="create-time">
-          {musicbill.public ? (
-            <>
-              <span className="public-state">{t('public')}</span>
-              &nbsp;·&nbsp;
-            </>
-          ) : null}
           {t('create_at')}
           &nbsp;
           {day(musicbill.createTimestamp).format('YYYY-MM-DD HH:mm')}

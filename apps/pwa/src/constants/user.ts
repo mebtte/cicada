@@ -14,7 +14,7 @@ export function isPasswordLengthValid(password: string) {
 export enum AllowUpdateKey {
   AVATAR = 'avatar',
   NICKNAME = 'nickname',
-  MUSICBILL_ORDERS = 'musicbill_orders',
+  MUSICBILL_ORDERS = 'musicbillOrders',
   PASSWORD = 'password',
 }
 
