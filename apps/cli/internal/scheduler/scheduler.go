@@ -36,6 +36,7 @@ func Start() {
 		{"remove_no_music_singer", removeNoMusicSinger},
 		{"remove_unlinked_asset", removeUnlinkedAsset},
 		{"remove_outdated_play_record", removeOutdatedPlayRecord},
+		{"decrease_music_heat", decreaseMusicHeat},
 		{"remove_outdated_shared_invitation", removeOutdatedSharedInvitation},
 		{"remove_outdated_auth_session", removeOutdatedAuthSession},
 		{"clean_outdated_file", cleanOutdatedFile},
@@ -314,6 +315,18 @@ func removeOutdatedPlayRecord() (schedulerJobResult, error) {
 		Summary: fmt.Sprintf("deleted %d outdated play records", totalDeleted),
 		Metrics: metrics,
 	}, errors.Join(errs...)
+}
+
+func decreaseMusicHeat() (schedulerJobResult, error) {
+	updated, err := execRowsAffected(
+		`UPDATE music
+		SET heat = CASE WHEN heat > 0 THEN heat - 1 ELSE 0 END
+		WHERE heat != 0`,
+	)
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("decreased heat for %d music rows", updated),
+		Metrics: map[string]int64{"updated_music_heat_rows": updated},
+	}, err
 }
 
 // removeOutdatedSharedInvitation removes unanswered shared musicbill invitations older than 3 days.

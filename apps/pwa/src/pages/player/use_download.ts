@@ -6,6 +6,7 @@ import formatMusicFilename from '@/utils/format_music_filename';
 import logger from '@/utils/logger';
 import timeout from '@/utils/timeout';
 import useNavigate from '@/utils/use_navigate';
+import { Query } from '@/constants';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import getMusicDownloadAsset from '@/utils/music_download_asset';
 
@@ -44,14 +45,6 @@ function useDownload() {
 
   useEffect(
     () =>
-      eventemitter.listen(EventType.DOWNLOAD_MUSIC_LIST_CLEAN_ALL, () =>
-        setDownloadingMusicList([]),
-      ),
-    [],
-  );
-
-  useEffect(
-    () =>
       eventemitter.listen(
         EventType.DOWNLOAD_MUSIC_LIST_REMOVE_ITEM,
         (payload) =>
@@ -86,7 +79,12 @@ function useDownload() {
           ...dml,
         ]);
         globalThis.setTimeout(() =>
-          navigate({ path: ROOT_PATH.PLAYER + PLAYER_PATH.DOWNLOADING_MUSIC }),
+          navigate({
+            path: ROOT_PATH.PLAYER + PLAYER_PATH.DOWNLOADING_MUSIC,
+            query: {
+              [Query.MUSIC_DRAWER_ID]: '',
+            },
+          }),
         );
       }),
     [navigate],
@@ -105,6 +103,25 @@ function useDownload() {
               : m,
           ),
         ),
+      ),
+    [],
+  );
+
+  useEffect(
+    () =>
+      eventemitter.listen(
+        EventType.DOWNLOAD_MUSIC_LIST_RETRY_ITEM,
+        (payload) =>
+          setDownloadingMusicList((dml) =>
+            dml.map((m) =>
+              m.id === payload.id && m.status === DownloadStatus.FAILED
+                ? {
+                    ...m,
+                    status: DownloadStatus.WAITING,
+                  }
+                : m,
+            ),
+          ),
       ),
     [],
   );
