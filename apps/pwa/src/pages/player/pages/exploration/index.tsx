@@ -441,7 +441,7 @@ function Wrapper() {
                       key={publicMusicbill.id}
                       accent={ACCENT.MUSICBILL}
                       shadow={ACCENT.MUSICBILL_SHADOW}
-                      variant="record"
+                      variant="cassette"
                       src={getResizedImage({
                         url: publicMusicbill.cover,
                         size: Math.ceil(

@@ -8,17 +8,12 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useQuery from '@/utils/use_query';
-import { useTheme } from '@/global_states/theme';
 import eventemitter, { EventType } from '../eventemitter';
-
-const getMusicPath = (id: string) =>
-  `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSIC.replace(':id', id)}`;
 
 export default () => {
   const navigate = useNavigate();
   const routerNavigate = useRouterNavigate();
   const { pathname } = useLocation();
-  const { miniMode } = useTheme();
   const onClose = useCallback(
     () =>
       navigate({
@@ -40,32 +35,21 @@ export default () => {
   }, [urlId]);
 
   useEffect(() => {
-    if (miniMode && urlId) {
-      routerNavigate(getMusicPath(urlId), { replace: true });
-    }
-  }, [miniMode, routerNavigate, urlId]);
-
-  useEffect(() => {
     const unlistenOpenMusicDrawer = eventemitter.listen(
       EventType.OPEN_MUSIC_DRAWER,
       (data) =>
         window.setTimeout(
-          () => {
-            if (miniMode) {
-              routerNavigate(getMusicPath(data.id));
-              return;
-            }
+          () =>
             navigate({
               query: {
                 [Query.MUSIC_DRAWER_ID]: data.id,
               },
-            });
-          },
+            }),
           0,
         ),
     );
     return unlistenOpenMusicDrawer;
-  }, [miniMode, navigate, routerNavigate]);
+  }, [navigate]);
 
   useEffect(() => {
     const unlistenMusicDeleted = eventemitter.listen(
@@ -88,9 +72,8 @@ export default () => {
   }, [id, musicMatch?.params.id, navigate, onClose, routerNavigate]);
 
   return {
-    open: !miniMode && !!urlId,
+    open: !!urlId,
     onClose,
     id,
-    miniMode,
   };
 };

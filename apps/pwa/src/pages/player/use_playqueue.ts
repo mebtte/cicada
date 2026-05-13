@@ -6,6 +6,63 @@ import { t } from '@/i18n';
 import eventemitter, { EventType } from './eventemitter';
 import { MusicWithSingerAliases, QueueMusic } from './constants';
 
+function getRandomPlaylistMusic(
+  playlist: MusicWithSingerAliases[],
+  currentMusic?: MusicWithSingerAliases,
+) {
+  const nextMusicCandidates =
+    currentMusic && playlist.length > 1
+      ? playlist.filter((music) => music.id !== currentMusic.id)
+      : playlist;
+  return nextMusicCandidates[
+    getRandomInteger(0, nextMusicCandidates.length)
+  ];
+}
+
+function createShuffleQueueMusic({
+  music,
+  index,
+}: {
+  music: MusicWithSingerAliases;
+  index: number;
+}): QueueMusic {
+  return {
+    ...music,
+    index,
+    pid: getRandomString(),
+    shuffle: true,
+  };
+}
+
+function appendRandomMusicFromPlaylist({
+  playqueue,
+  playlist,
+  currentPosition,
+}: {
+  playqueue: QueueMusic[];
+  playlist: MusicWithSingerAliases[];
+  currentPosition: number;
+}) {
+  const music = getRandomPlaylistMusic(
+    playlist,
+    playqueue[currentPosition],
+  );
+  return [
+    ...playqueue,
+    createShuffleQueueMusic({
+      music,
+      index: playqueue.length + 1,
+    }),
+  ];
+}
+
+function moveArrayItem<T>(list: T[], from: number, to: number) {
+  const next = [...list];
+  const [item] = next.splice(from, 1);
+  next.splice(to, 0, item);
+  return next;
+}
+
 export default (playlist: MusicWithSingerAliases[]) => {
   const [playqueue, setPlayqueue] = useState<QueueMusic[]>([]);
   const [currentPosition, setCurrentPosition] = useState(-1);
@@ -69,15 +126,13 @@ export default (playlist: MusicWithSingerAliases[]) => {
           if (pq.length) {
             return pq;
           }
-          const music = musicList[getRandomInteger(0, musicList.length)];
+          const music = getRandomPlaylistMusic(musicList);
           window.setTimeout(() => setCurrentPosition(0), 0);
           return [
-            {
-              ...music,
+            createShuffleQueueMusic({
+              music,
               index: 1,
-              pid: getRandomString(),
-              shuffle: true,
-            },
+            }),
           ];
         }),
     );
@@ -112,6 +167,32 @@ export default (playlist: MusicWithSingerAliases[]) => {
   }, []);
 
   useEffect(() => {
+    const unlistenActionReorderPlayqueueMusic = eventemitter.listen(
+      EventType.ACTION_REORDER_PLAYQUEUE_MUSIC,
+      ({ activePid, overPid }) =>
+        setPlayqueue((pq) => {
+          const oldIndex = pq.findIndex((m) => m.pid === activePid);
+          const newIndex = pq.findIndex((m) => m.pid === overPid);
+          if (
+            oldIndex < 0 ||
+            newIndex < 0 ||
+            oldIndex <= currentPosition ||
+            newIndex <= currentPosition
+          ) {
+            return pq;
+          }
+
+          return moveArrayItem(pq, oldIndex, newIndex).map((m, index) => ({
+            ...m,
+            index: index + 1,
+          }));
+        }),
+    );
+
+    return unlistenActionReorderPlayqueueMusic;
+  }, [currentPosition]);
+
+  useEffect(() => {
     const unlistenActionPlayMusic = eventemitter.listen(
       EventType.ACTION_PLAY_MUSIC,
       ({ music }) => {
@@ -139,20 +220,12 @@ export default (playlist: MusicWithSingerAliases[]) => {
           if (!playlist.length) {
             return notice.error(t('empty_playlist'));
           }
-          const music = playlist[getRandomInteger(0, playlist.length)];
           setPlayqueue(
-            [
-              ...playqueue,
-              {
-                ...music,
-                index: playqueue.length,
-                pid: getRandomString(),
-                shuffle: true,
-              },
-            ].map((m, index) => ({
-              ...m,
-              index: index + 1,
-            })),
+            appendRandomMusicFromPlaylist({
+              playqueue,
+              playlist,
+              currentPosition,
+            }),
           );
         }
         setCurrentPosition(currentPosition + 1);
@@ -160,6 +233,32 @@ export default (playlist: MusicWithSingerAliases[]) => {
     );
     return unlistenActionNext;
   }, [playlist, playqueue, currentPosition]);
+
+  useEffect(() => {
+    if (
+      currentPosition < 0 ||
+      currentPosition < playqueue.length - 1 ||
+      !playlist.length
+    ) {
+      return;
+    }
+
+    setPlayqueue((pq) => {
+      if (
+        currentPosition < 0 ||
+        currentPosition < pq.length - 1 ||
+        !playlist.length
+      ) {
+        return pq;
+      }
+
+      return appendRandomMusicFromPlaylist({
+        playqueue: pq,
+        playlist,
+        currentPosition,
+      });
+    });
+  }, [currentPosition, playlist, playqueue.length]);
 
   useEffect(() => {
     const unlistenActionInsertMusicToPlayqueue = eventemitter.listen(

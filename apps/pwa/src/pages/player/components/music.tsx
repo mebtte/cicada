@@ -33,6 +33,7 @@ function Music({
       lineAfter={
         <LineAfterPart>
           <Button
+            className="primary-action"
             square
             variant="plain"
             size="sm"

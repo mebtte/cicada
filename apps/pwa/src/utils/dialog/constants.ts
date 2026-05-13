@@ -82,7 +82,7 @@ export interface Input extends DialogOptions, Confirmable<string>, Cancelable {
   label: string;
   initialValue?: string;
   maxLength?: number;
-  inputType?: 'text' | 'number';
+  inputType?: 'text' | 'number' | 'password';
 }
 
 export interface InputList

@@ -1,4 +1,3 @@
-import absoluteFullSize from '@/style/absolute_full_size';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
@@ -15,8 +14,11 @@ import Lyric from './lyric';
 const Container = styled(animated.div)`
   z-index: 1;
 
-  ${absoluteFullSize}
-  height: calc(100% - 120px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(184px + env(safe-area-inset-bottom, 0px));
 `;
 const LoadingContainer = styled(Container)`
   ${flexCenter}

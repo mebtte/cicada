@@ -9,6 +9,7 @@ import (
 	"runtime/debug"
 	"time"
 
+	"cicada/internal/auth"
 	"cicada/internal/config"
 	"cicada/internal/store"
 
@@ -35,7 +36,9 @@ func Start() {
 		{"remove_no_music_singer", removeNoMusicSinger},
 		{"remove_unlinked_asset", removeUnlinkedAsset},
 		{"remove_outdated_play_record", removeOutdatedPlayRecord},
+		{"decrease_music_heat", decreaseMusicHeat},
 		{"remove_outdated_shared_invitation", removeOutdatedSharedInvitation},
+		{"remove_outdated_auth_session", removeOutdatedAuthSession},
 		{"clean_outdated_file", cleanOutdatedFile},
 		{"clean_outdated_access_log", cleanOutdatedAccessLog},
 		{"clean_outdated_scheduler_log", cleanOutdatedSchedulerLog},
@@ -314,6 +317,18 @@ func removeOutdatedPlayRecord() (schedulerJobResult, error) {
 	}, errors.Join(errs...)
 }
 
+func decreaseMusicHeat() (schedulerJobResult, error) {
+	updated, err := execRowsAffected(
+		`UPDATE music
+		SET heat = CASE WHEN heat > 0 THEN heat - 1 ELSE 0 END
+		WHERE heat != 0`,
+	)
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("decreased heat for %d music rows", updated),
+		Metrics: map[string]int64{"updated_music_heat_rows": updated},
+	}, err
+}
+
 // removeOutdatedSharedInvitation removes unanswered shared musicbill invitations older than 3 days.
 func removeOutdatedSharedInvitation() (schedulerJobResult, error) {
 	threshold := time.Now().Add(-3 * 24 * time.Hour).UnixMilli()
@@ -324,6 +339,18 @@ func removeOutdatedSharedInvitation() (schedulerJobResult, error) {
 	return schedulerJobResult{
 		Summary: fmt.Sprintf("deleted %d unanswered shared musicbill invitations older than 3 days", deleted),
 		Metrics: map[string]int64{"deleted_shared_invitations": deleted},
+	}, err
+}
+
+func removeOutdatedAuthSession() (schedulerJobResult, error) {
+	now := time.Now()
+	deleted, err := store.DeleteOutdatedAuthSessions(
+		auth.SessionRevokedCleanupBefore(now),
+		auth.SessionInactiveCleanupBefore(now),
+	)
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("deleted %d outdated auth sessions", deleted),
+		Metrics: map[string]int64{"deleted_auth_sessions": deleted},
 	}, err
 }
 

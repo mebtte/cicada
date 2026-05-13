@@ -92,6 +92,10 @@ class CustomAudio<Extra> {
     return this.audio.paused;
   }
 
+  hasPlayableData() {
+    return this.audio.readyState >= this.audio.HAVE_FUTURE_DATA;
+  }
+
   getPlayedSeconds() {
     const { played } = this.audio;
     let playedSeconeds = 0;

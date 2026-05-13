@@ -279,8 +279,8 @@ export default () => {
       title = getStaticHeaderTitle('music_play_record_short');
       break;
     }
-    case ROOT_PATH.PLAYER + PLAYER_PATH.DOWNLOADING_MUSIC: {
-      title = getStaticHeaderTitle('download');
+    case ROOT_PATH.PLAYER + PLAYER_PATH.EXPORTING_MUSIC: {
+      title = getStaticHeaderTitle('export_music');
       break;
     }
     default: {

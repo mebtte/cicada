@@ -3,7 +3,6 @@ declare global {
     VERSION: string;
 
     BUILD_TIME: string;
-    EMPTY_IMAGE_LIST: string[];
   };
 }
 

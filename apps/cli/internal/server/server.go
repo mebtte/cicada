@@ -69,6 +69,11 @@ func NewServer() *gin.Engine {
 	api.PUT("/2fa", auth(), handler.Enable2FA)
 	api.DELETE("/2fa", auth(), handler.Disable2FA)
 
+	// Auth sessions
+	api.GET("/sessions", auth(), handler.GetSessionList)
+	api.PUT("/sessions/:id", auth(), handler.UpdateSession)
+	api.DELETE("/sessions/:id", auth(), handler.DeleteSession)
+
 	// Music
 	api.GET("/music", auth(), handler.GetMusic)
 	api.POST("/music", auth(), handler.CreateMusic)

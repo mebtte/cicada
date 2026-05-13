@@ -19,13 +19,12 @@ type User struct {
 	LastActiveTimestamp        int64
 	MusicPlayRecordIndate      int64
 	Password                   string
-	TokenIdentifier            string
 	TwoFASecret                sql.NullString
 }
 
 const userColumns = `id, username, avatar, nickname, joinTimestamp, admin, remark,
 	musicbillOrdersJSON, musicbillMaxAmount, createMusicMaxAmountPerDay,
-	lastActiveTimestamp, musicPlayRecordIndate, password, tokenIdentifier, twoFASecret`
+	lastActiveTimestamp, musicPlayRecordIndate, password, twoFASecret`
 
 func scanUser(row interface{ Scan(...any) error }) (*User, error) {
 	u := &User{}
@@ -33,7 +32,7 @@ func scanUser(row interface{ Scan(...any) error }) (*User, error) {
 		&u.ID, &u.Username, &u.Avatar, &u.Nickname, &u.JoinTimestamp,
 		&u.Admin, &u.Remark, &u.MusicbillOrdersJSON, &u.MusicbillMaxAmount,
 		&u.CreateMusicMaxAmountPerDay, &u.LastActiveTimestamp,
-		&u.MusicPlayRecordIndate, &u.Password, &u.TokenIdentifier, &u.TwoFASecret,
+		&u.MusicPlayRecordIndate, &u.Password, &u.TwoFASecret,
 	)
 }
 
@@ -72,9 +71,13 @@ func GetAllUsers() ([]User, error) {
 }
 
 func CreateUser(id, username, password, remark string) error {
-	_, err := DB().Exec(
+	passwordHash, err := HashPassword(password)
+	if err != nil {
+		return err
+	}
+	_, err = DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp,remark) VALUES (?,?,?,?,?,?)`,
-		id, username, DoubleMD5(password), username, time.Now().UnixMilli(), remark,
+		id, username, passwordHash, username, time.Now().UnixMilli(), remark,
 	)
 	return err
 }

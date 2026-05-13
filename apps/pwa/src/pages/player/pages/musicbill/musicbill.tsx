@@ -1,16 +1,6 @@
-import {
-  UIEventHandler,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { UIEventHandler, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { RequestStatus } from '@/constants';
-import { throttle } from 'lodash-es';
 import autoScrollbar from '@/style/auto_scrollbar';
-import cache, { CacheKey } from './cache';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -48,29 +38,14 @@ const Style = styled(Page)`
 `;
 
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
-  const { id, status, lastUpdateTimestamp } = musicbill;
+  const { id, lastUpdateTimestamp } = musicbill;
 
-  const scrollableRef = useRef<HTMLDivElement>(null);
+  const scrollableRef = useRef<HTMLDivElement | null>(null);
   const [miniInfoVisible, setMiniInfoVisible] = useState(false);
-
-  const saveScrollTop = useMemo(
-    () =>
-      throttle(
-        (scrollTop: number) =>
-          cache.set({
-            key: CacheKey.MUSICBILL_PAGE_SCROLL_TOP,
-            value: scrollTop,
-            keyReplace: (k) => k.replace('{{id}}', id),
-          }),
-        1000,
-      ),
-    [id],
-  );
 
   const onScroll: UIEventHandler<HTMLDivElement> = (event) => {
     const { scrollTop } = event.target as HTMLDivElement;
     setMiniInfoVisible(scrollTop >= INFO_HEIGHT - MINI_INFO_HEIGHT);
-    saveScrollTop(scrollTop);
   };
 
   useEffect(() => {
@@ -82,27 +57,11 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     }
   }, [id, lastUpdateTimestamp]);
 
-  useLayoutEffect(() => {
-    if (status === RequestStatus.SUCCESS) {
-      const scrollTop =
-        cache.get(CacheKey.MUSICBILL_PAGE_SCROLL_TOP, (k) =>
-          k.replace('{{id}}', id),
-        ) || 0;
-      window.setTimeout(
-        () =>
-          scrollableRef.current?.scrollTo({
-            top: scrollTop,
-          }),
-        0,
-      );
-    }
-  }, [id, status]);
-
   return (
     <Style>
       <div className="scrollable" ref={scrollableRef} onScroll={onScroll}>
         <Info musicbill={musicbill} />
-        <MusicList musicbill={musicbill} />
+        <MusicList musicbill={musicbill} scrollElementRef={scrollableRef} />
       </div>
 
       {miniInfoVisible ? <MiniInfo musicbill={musicbill} /> : null}

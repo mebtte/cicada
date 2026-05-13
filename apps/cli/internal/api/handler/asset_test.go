@@ -25,10 +25,9 @@ func TestServeAssetWritesThumbnailCacheToThumbnailDir(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := os.MkdirAll(config.AssetDir(config.AssetTypeMusicCover), 0755); err != nil {
@@ -59,10 +58,9 @@ func TestServeAssetRefreshesThumbnailCacheModTimeOnAccess(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := os.MkdirAll(config.AssetDir(config.AssetTypeMusicCover), 0755); err != nil {
@@ -93,10 +91,9 @@ func TestServeMusicAssetRejectsInvalidTranscodeQuery(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := os.MkdirAll(config.AssetDir(config.AssetTypeMusic), 0755); err != nil {
@@ -122,10 +119,9 @@ func TestServeMusicAssetWithoutTranscodeQueryReturnsSource(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := os.MkdirAll(config.AssetDir(config.AssetTypeMusic), 0755); err != nil {
@@ -253,10 +249,9 @@ func TestApplyMusicTranscodeSourceLimitsKeepsTargetWhenSourceBitrateIsHigherOrUn
 
 func TestEnsureMusicTranscodeCacheSharesConcurrentTranscode(t *testing.T) {
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), "song.flac")
@@ -331,10 +326,9 @@ func TestEnsureMusicTranscodeCacheSharesConcurrentTranscode(t *testing.T) {
 
 func TestEnsureMusicTranscodeCacheDoesNotProbeFreshCache(t *testing.T) {
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), "song.flac")

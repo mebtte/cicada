@@ -1,4 +1,5 @@
 import notice from '@/utils/notice';
+import dialog from '@/utils/dialog';
 import { useState } from 'react';
 import styled from 'styled-components';
 import Button from '@/components/button';
@@ -160,7 +161,7 @@ function VersionUpdateNotice({
               const timeoutTimer = window.setTimeout(() => {
                 wb.removeEventListener('controlling', onControlling);
                 notice.close(getNoticeId());
-                notice.error(t('pwa_update_try_later'));
+                dialog.alert({ content: t('pwa_update_try_later') });
                 setUpdating(false);
               }, UPDATE_TIMEOUT);
 

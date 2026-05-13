@@ -34,9 +34,13 @@ function useAudio({
     return null;
   }, [queueMusic, musicPlaybackQuality]);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(() =>
+    audio ? !audio.hasPlayableData() : false,
+  );
   const [duration, setDuration] = useState(0);
-  const [paused, setPaused] = useState(!audio);
+  const [paused, setPaused] = useState(() =>
+    audio ? audio.isPaused() : true,
+  );
   const [bufferedPercent, setBufferedPercent] = useState(0);
 
   useVolume(audio);
@@ -54,16 +58,28 @@ function useAudio({
    */
   useEffect(() => {
     if (audio) {
+      const stopLoadingWhenPlayable = () => {
+        if (audio.hasPlayableData()) {
+          setLoading(false);
+        }
+      };
       const unlistenError = audio.listen('error', () => {
         setLoading(false);
+        setPaused(true);
         setBufferedPercent(0);
         onError();
       });
       const unlistenDurationChange = audio.listen('durationchange', () =>
         setDuration(audio.getDuration()),
       );
-      const unlistenPlay = audio.listen('play', () => setPaused(false));
-      const unlistenPause = audio.listen('pause', () => setPaused(true));
+      const unlistenPlay = audio.listen('play', () => {
+        setLoading(true);
+        setPaused(false);
+      });
+      const unlistenPause = audio.listen('pause', () => {
+        setLoading(false);
+        setPaused(true);
+      });
       const onTimeUpdate = debounce(() => {
         const currentTime = audio.getCurrentTime();
         return eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
@@ -74,8 +90,24 @@ function useAudio({
       const unlistenEnded = audio.listen('ended', () =>
         eventemitter.emit(EventType.ACTION_NEXT, null),
       );
+      const unlistenLoadStart = audio.listen('loadstart', () =>
+        setLoading(true),
+      );
       const unlistenWaiting = audio.listen('waiting', () => setLoading(true));
-      const unlistenPlaying = audio.listen('playing', () => setLoading(false));
+      const unlistenStalled = audio.listen('stalled', () => setLoading(true));
+      const unlistenLoadedData = audio.listen(
+        'loadeddata',
+        stopLoadingWhenPlayable,
+      );
+      const unlistenCanplay = audio.listen('canplay', stopLoadingWhenPlayable);
+      const unlistenCanplaythrough = audio.listen(
+        'canplaythrough',
+        stopLoadingWhenPlayable,
+      );
+      const unlistenPlaying = audio.listen('playing', () => {
+        setLoading(false);
+        setPaused(false);
+      });
       const unlistenProgress = audio.listen('progress', () =>
         setBufferedPercent(audio.getBufferedPercent()),
       );
@@ -90,7 +122,12 @@ function useAudio({
         unlistenTimeUpdate();
         onTimeUpdate.cancel();
         unlistenEnded();
+        unlistenLoadStart();
         unlistenWaiting();
+        unlistenStalled();
+        unlistenLoadedData();
+        unlistenCanplay();
+        unlistenCanplaythrough();
         unlistenPlaying();
         unlistenProgress();
         unlistenSeeking();
@@ -105,7 +142,8 @@ function useAudio({
    * @author mebtte<i@mebtte.com>
    */
   useEffect(() => {
-    setPaused(!audio);
+    setLoading(audio ? !audio.hasPlayableData() : false);
+    setPaused(audio ? audio.isPaused() : true);
     if (audio) {
       return () => {
         audio.pause(); // pause audio and let it be garbage collected

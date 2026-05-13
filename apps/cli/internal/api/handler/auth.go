@@ -9,6 +9,7 @@ import (
 	"cicada/internal/store"
 	"cicada/internal/version"
 	"os"
+	"strings"
 	"sync"
 	"time"
 
@@ -45,6 +46,12 @@ type loginBody struct {
 	Password     string `json:"password" binding:"required"`
 	CaptchaID    string `json:"captchaId" binding:"required"`
 	CaptchaValue string `json:"captchaValue" binding:"required"`
+	DeviceName   string `json:"deviceName"`
+}
+
+type loginResponse struct {
+	Token     string `json:"token"`
+	SessionID string `json:"sessionId"`
 }
 
 func Login(c *gin.Context) {
@@ -76,7 +83,7 @@ func Login(c *gin.Context) {
 	}
 
 	u, err := store.GetUserByUsername(body.Username)
-	if err != nil || u.Password != store.DoubleMD5(body.Password) {
+	if err != nil || !verifyLoginPassword(u, body.Password) {
 		api.Fail(c, apperr.WrongUsernameOrPassword)
 		return
 	}
@@ -86,12 +93,12 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := auth.JWTSign(u.ID, u.TokenIdentifier)
+	resp, err := createLoginSession(c, u.ID, body.DeviceName)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
-	api.OK(c, token)
+	api.OK(c, resp)
 }
 
 // ── Login with 2FA ────────────────────────────────────────────────────────────
@@ -103,6 +110,7 @@ type login2FABody struct {
 	Username   string `json:"username" binding:"required"`
 	Password   string `json:"password" binding:"required"`
 	TwoFAToken string `json:"twoFAToken" binding:"required"`
+	DeviceName string `json:"deviceName"`
 }
 
 func LoginWith2FA(c *gin.Context) {
@@ -128,7 +136,7 @@ func LoginWith2FA(c *gin.Context) {
 	login2FAMu.Unlock()
 
 	u, err := store.GetUserByUsername(body.Username)
-	if err != nil || u.Password != store.DoubleMD5(body.Password) {
+	if err != nil || !verifyLoginPassword(u, body.Password) {
 		api.Fail(c, apperr.WrongUsernameOrPassword)
 		return
 	}
@@ -143,12 +151,108 @@ func LoginWith2FA(c *gin.Context) {
 		return
 	}
 
-	token, err := auth.JWTSign(u.ID, u.TokenIdentifier)
+	resp, err := createLoginSession(c, u.ID, body.DeviceName)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
-	api.OK(c, token)
+	api.OK(c, resp)
+}
+
+func verifyLoginPassword(u *store.User, password string) bool {
+	ok, needsUpgrade := store.VerifyPassword(u.Password, password)
+	if ok && needsUpgrade {
+		if hash, err := store.HashPassword(password); err == nil {
+			_ = store.UpdateUser(u.ID, "password", hash)
+		}
+	}
+	return ok
+}
+
+func createLoginSession(c *gin.Context, userID, deviceName string) (loginResponse, error) {
+	token, tokenPrefix, tokenHash, err := auth.NewSessionToken()
+	if err != nil {
+		return loginResponse{}, err
+	}
+	userAgent := c.Request.UserAgent()
+	if deviceName == "" {
+		deviceName = defaultDeviceName(userAgent)
+	}
+	sessionID, err := store.CreateAuthSession(
+		userID,
+		tokenHash,
+		tokenPrefix,
+		limitString(deviceName, 80),
+		limitString(userAgent, 500),
+		c.ClientIP(),
+	)
+	if err != nil {
+		return loginResponse{}, err
+	}
+	return loginResponse{Token: token, SessionID: sessionID}, nil
+}
+
+func defaultDeviceName(userAgent string) string {
+	if userAgent == "" {
+		return "Unknown device"
+	}
+	browser := detectBrowserName(userAgent)
+	osName := detectOSName(userAgent)
+	if browser != "" && osName != "" {
+		return browser + " on " + osName
+	}
+	if browser != "" {
+		return browser
+	}
+	if osName != "" {
+		return osName
+	}
+	return "Unknown device"
+}
+
+func detectBrowserName(userAgent string) string {
+	switch {
+	case strings.Contains(userAgent, "Edg/"):
+		return "Edge"
+	case strings.Contains(userAgent, "OPR/"):
+		return "Opera"
+	case strings.Contains(userAgent, "Firefox/") || strings.Contains(userAgent, "FxiOS/"):
+		return "Firefox"
+	case strings.Contains(userAgent, "CriOS/") ||
+		strings.Contains(userAgent, "Chrome/") ||
+		strings.Contains(userAgent, "Chromium/"):
+		return "Chrome"
+	case strings.Contains(userAgent, "Safari/"):
+		return "Safari"
+	default:
+		return ""
+	}
+}
+
+func detectOSName(userAgent string) string {
+	switch {
+	case strings.Contains(userAgent, "iPhone") ||
+		strings.Contains(userAgent, "iPad") ||
+		strings.Contains(userAgent, "iPod"):
+		return "iOS"
+	case strings.Contains(userAgent, "Android"):
+		return "Android"
+	case strings.Contains(userAgent, "Windows NT"):
+		return "Windows"
+	case strings.Contains(userAgent, "Mac OS X") || strings.Contains(userAgent, "Macintosh"):
+		return "macOS"
+	case strings.Contains(userAgent, "Linux"):
+		return "Linux"
+	default:
+		return ""
+	}
+}
+
+func limitString(v string, n int) string {
+	if len(v) <= n {
+		return v
+	}
+	return v[:n]
 }
 
 // ── Music play record (sendBeacon – token in body) ────────────────────────────
@@ -168,13 +272,8 @@ func CreateMusicPlayRecordBeacon(c *gin.Context) {
 		return
 	}
 
-	userID, tokenID, err := auth.JWTVerify(body.Token)
+	u, _, err := middleware.AuthenticateToken(c, body.Token)
 	if err != nil {
-		api.Fail(c, apperr.NotAuthorized)
-		return
-	}
-	u, err := store.GetUserByID(userID)
-	if err != nil || u.TokenIdentifier != tokenID {
 		api.Fail(c, apperr.NotAuthorized)
 		return
 	}
@@ -185,7 +284,7 @@ func CreateMusicPlayRecordBeacon(c *gin.Context) {
 		return
 	}
 
-	store.AddPlayRecord(userID, body.MusicID, body.Percent)
+	store.AddPlayRecord(u.ID, body.MusicID, body.Percent)
 	if body.Percent >= effectivePlayPercent {
 		store.IncrMusicHeat(body.MusicID)
 	}

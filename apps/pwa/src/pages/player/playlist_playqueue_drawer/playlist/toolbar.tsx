@@ -6,6 +6,7 @@ import { MdPlaylistRemove } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
 import { FILTER_HEIGHT } from './constants';
+import { TAB_LIST_HEIGHT } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -15,17 +16,20 @@ import context from '../../context';
 const Style = styled.div`
   position: absolute;
   width: 100%;
-  height: calc(env(safe-area-inset-bottom, 0) + ${FILTER_HEIGHT}px);
+  height: ${FILTER_HEIGHT}px;
   left: 0;
-  bottom: 0;
+  bottom: calc(${TAB_LIST_HEIGHT}px + env(safe-area-inset-bottom, 0));
 
   display: flex;
   align-items: center;
   gap: 10px;
 
-  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
+  padding: 6px 16px 10px;
 
-  backdrop-filter: blur(5px);
+  background: rgb(255 255 255 / 0.94);
+  border-top: 2px solid rgb(232 232 232);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
   > .filter {
     flex: 1;
@@ -50,7 +54,7 @@ function Toolbar({
     <Style>
       <Button
         square
-        variant="plain"
+        variant="danger"
         size="sm"
         disabled={playlist.length === 0}
         onClick={() =>

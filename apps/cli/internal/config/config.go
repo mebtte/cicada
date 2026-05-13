@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"sync"
 )
 
@@ -50,14 +51,16 @@ var AssetMaxSize = map[AssetType]int64{
 }
 
 type Config struct {
-	Mode      Mode
-	Data      string
-	Port      int
-	JWTExpiry int64 // milliseconds
+	Mode Mode
+	Data string
+	Port int
 }
 
 const (
 	DataEnvVar = "CICADA_DATA"
+	PortEnvVar = "CICADA_PORT"
+
+	DefaultPortValue = 8000
 )
 
 func DefaultDataPath() string {
@@ -71,13 +74,21 @@ func DefaultDataPath() string {
 	return filepath.Join(filepath.Dir(exe), "cicada_data")
 }
 
+func DefaultPort() int {
+	if v := os.Getenv(PortEnvVar); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			return n
+		}
+	}
+	return DefaultPortValue
+}
+
 var (
 	mu  sync.RWMutex
 	cfg = Config{
-		Mode:      DefaultMode(),
-		Data:      DefaultDataPath(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: DefaultMode(),
+		Data: DefaultDataPath(),
+		Port: DefaultPortValue,
 	}
 )
 
@@ -96,7 +107,6 @@ func Set(c Config) {
 func DataVersionPath() string   { return filepath.Join(Get().Data, "v") }
 func DBPath() string            { return filepath.Join(Get().Data, "db") }
 func DBBackupPath() string      { return filepath.Join(Get().Data, "db.backup") }
-func JWTSecretPath() string     { return filepath.Join(Get().Data, "jwt_secret") }
 func LogDir() string            { return filepath.Join(Get().Data, "logs") }
 func AccessLogDir() string      { return filepath.Join(LogDir(), "access") }
 func SchedulerLogDir() string   { return filepath.Join(LogDir(), "scheduler") }

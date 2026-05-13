@@ -35,6 +35,10 @@ const MusicListContainer = styled(Container)`
   overflow: auto;
   ${autoScrollbar}
 
+  > .list {
+    padding: 12px 12px 0;
+  }
+
   &::after {
     content: '';
     display: block;

@@ -3,7 +3,7 @@ import { HTMLAttributes, ReactNode } from 'react';
 import Cover from '@/components/cover';
 import { Shape } from '@/components/cover/constants';
 
-type Variant = 'record' | 'profile';
+type Variant = 'record' | 'profile' | 'cassette';
 
 const Style = styled.div<{
   $accent: string;
@@ -12,8 +12,15 @@ const Style = styled.div<{
 }>`
   position: relative;
   min-width: 0;
-  padding: ${({ $variant }) =>
-    $variant === 'profile' ? '4px 4px 7px' : '10px 10px 7px'};
+  padding: ${({ $variant }) => {
+    if ($variant === 'profile') {
+      return '4px 4px 7px';
+    }
+    if ($variant === 'cassette') {
+      return '10px 10px 8px';
+    }
+    return '10px 10px 7px';
+  }};
 
   border: 2px solid ${({ $shadow }) => $shadow};
   border-radius: 8px;
@@ -178,6 +185,130 @@ const RecordScene = styled.div<{
 
 `;
 
+const CassetteScene = styled.div<{
+  $accent: string;
+  $shadow: string;
+}>`
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+
+  border: 3px solid ${({ $shadow }) => $shadow};
+  border-radius: 8px;
+  background: #fff;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(180deg, transparent 0 48%, rgb(0 0 0 / 0.08) 100%),
+      radial-gradient(circle at 20% 16%, rgb(255 255 255 / 0.42) 0 14px, transparent 15px);
+    pointer-events: none;
+  }
+
+  > .artwork-frame {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  > .artwork-frame > .artwork {
+    width: 100%;
+    height: 100%;
+  }
+
+  > .artwork-frame > .artwork img {
+    object-fit: cover;
+  }
+
+  > .cassette-panel {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    bottom: 7%;
+    z-index: 2;
+    height: 38%;
+    padding: 7% 12% 6%;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 22%;
+
+    border: 3px solid ${({ $shadow }) => $shadow};
+    border-radius: 8px;
+    background:
+      linear-gradient(90deg, rgb(255 255 255 / 0.22) 0 1px, transparent 1px 15px),
+      linear-gradient(135deg, rgb(255 250 229 / 0.92), rgb(255 225 122 / 0.92));
+    box-shadow:
+      0 4px 0 ${({ $shadow }) => $shadow},
+      inset 0 0 0 3px rgb(255 255 255 / 0.42);
+    backdrop-filter: blur(3px);
+  }
+
+  > .cassette-panel::before {
+    content: '';
+    position: absolute;
+    top: 13%;
+    left: 11%;
+    right: 11%;
+    height: 7px;
+
+    border-radius: 999px;
+    background: ${({ $shadow }) => $shadow};
+    opacity: 0.78;
+  }
+
+  > .cassette-panel::after {
+    content: '';
+    position: absolute;
+    left: 21%;
+    right: 21%;
+    bottom: 12%;
+    height: 16%;
+
+    border: 2px solid ${({ $shadow }) => $shadow};
+    border-bottom: 0;
+    border-radius: 6px 6px 0 0;
+    background: rgb(255 255 255 / 0.62);
+  }
+
+  > .cassette-panel > .reel {
+    position: relative;
+    z-index: 1;
+    aspect-ratio: 1;
+
+    border: 3px solid ${({ $shadow }) => $shadow};
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, ${({ $shadow }) => $shadow} 0 11%, transparent 12%),
+      repeating-radial-gradient(circle, rgb(71 72 80) 0 4px, rgb(255 255 255) 4px 8px);
+    box-shadow: inset 0 0 0 4px rgb(255 255 255);
+  }
+
+  > .cassette-panel > .bridge {
+    position: absolute;
+    top: 54%;
+    left: 28%;
+    right: 28%;
+    height: 5px;
+    z-index: 0;
+
+    border-radius: 999px;
+    background: rgb(71 72 80);
+    transform: translateY(-50%);
+  }
+
+  @media (max-width: 720px) {
+    > .cassette-panel {
+      gap: 16%;
+      padding-inline: 11%;
+    }
+  }
+`;
+
 const ProfileScene = styled.div<{
   $accent: string;
   $shadow: string;
@@ -297,6 +428,20 @@ function Wrapper({
           </div>
           <div className="profile-info">{info}</div>
         </ProfileScene>
+      ) : variant === 'cassette' ? (
+        <>
+          <CassetteScene $accent={accent} $shadow={shadow}>
+            <div className="artwork-frame">
+              <Cover className="artwork" size="100%" src={src} />
+            </div>
+            <div className="cassette-panel">
+              <div className="reel" />
+              <div className="bridge" />
+              <div className="reel" />
+            </div>
+          </CassetteScene>
+          <div className="info">{info}</div>
+        </>
       ) : (
         <>
           <RecordScene $accent={accent} $shadow={shadow}>

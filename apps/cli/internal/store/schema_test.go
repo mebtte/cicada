@@ -19,10 +19,9 @@ func TestInitializeCreatesThumbnailCacheDirAndLeavesExistingRootCache(t *testing
 
 	dataDir := t.TempDir()
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      dataDir,
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: dataDir,
+		Port: 8000,
 	})
 
 	if err := os.MkdirAll(config.CacheDir(), 0755); err != nil {

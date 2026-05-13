@@ -5,8 +5,9 @@ import (
 	"cicada/internal/store/migration"
 	"context"
 	"crypto/md5"
+	"crypto/rand"
 	"fmt"
-	"math/rand"
+	"math/big"
 	"os"
 	"time"
 )
@@ -42,9 +43,24 @@ var tables = []string{
 		lastActiveTimestamp INTEGER NOT NULL DEFAULT 0,
 		musicPlayRecordIndate INTEGER NOT NULL DEFAULT 0,
 		password TEXT NOT NULL,
-		tokenIdentifier TEXT NOT NULL DEFAULT '',
 		twoFASecret TEXT DEFAULT NULL
 	)`,
+	`CREATE TABLE IF NOT EXISTS auth_session (
+		id TEXT PRIMARY KEY NOT NULL,
+		userId TEXT NOT NULL REFERENCES user(id),
+		tokenHash TEXT NOT NULL UNIQUE,
+		tokenPrefix TEXT NOT NULL DEFAULT '',
+		deviceName TEXT NOT NULL DEFAULT '',
+		userAgent TEXT NOT NULL DEFAULT '',
+		createIP TEXT NOT NULL DEFAULT '',
+		lastSeenIP TEXT NOT NULL DEFAULT '',
+		createTimestamp INTEGER NOT NULL,
+		lastSeenTimestamp INTEGER NOT NULL,
+		revokeTimestamp INTEGER DEFAULT NULL,
+		revokeReason TEXT NOT NULL DEFAULT ''
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_auth_session_user ON auth_session(userId, revokeTimestamp, lastSeenTimestamp)`,
+	`CREATE INDEX IF NOT EXISTS idx_auth_session_cleanup ON auth_session(revokeTimestamp, lastSeenTimestamp)`,
 	`CREATE TABLE IF NOT EXISTS captcha (
 		id TEXT PRIMARY KEY NOT NULL,
 		value TEXT NOT NULL,
@@ -197,16 +213,22 @@ func Initialize() error {
 			username    = "cicada"
 			letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 		)
-		r := rand.New(rand.NewSource(time.Now().UnixNano()))
-		id := fmt.Sprintf("%d", 10000+r.Intn(9990000))
-		pwBytes := make([]byte, 16)
-		for i := range pwBytes {
-			pwBytes[i] = letterBytes[r.Intn(len(letterBytes))]
+		idNum, err := rand.Int(rand.Reader, big.NewInt(9990000))
+		if err != nil {
+			return fmt.Errorf("generate admin id: %w", err)
 		}
-		password := string(pwBytes)
+		id := fmt.Sprintf("%d", 10000+idNum.Int64())
+		password, err := secureRandomString(16, letterBytes)
+		if err != nil {
+			return fmt.Errorf("generate admin password: %w", err)
+		}
+		passwordHash, err := HashPassword(password)
+		if err != nil {
+			return fmt.Errorf("hash admin password: %w", err)
+		}
 		_, err = DB().Exec(
 			`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin) VALUES (?,?,?,?,?,1)`,
-			id, username, doubleMD5(password), "Cicada", time.Now().UnixMilli(),
+			id, username, passwordHash, "Cicada", time.Now().UnixMilli(),
 		)
 		if err != nil {
 			return fmt.Errorf("seed admin: %w", err)
@@ -228,3 +250,15 @@ func doubleMD5(s string) string {
 
 // DoubleMD5 is the exported hash used for passwords.
 func DoubleMD5(s string) string { return doubleMD5(s) }
+
+func secureRandomString(n int, chars string) (string, error) {
+	b := make([]byte, n)
+	for i := range b {
+		idx, err := rand.Int(rand.Reader, big.NewInt(int64(len(chars))))
+		if err != nil {
+			return "", err
+		}
+		b[i] = chars[idx.Int64()]
+	}
+	return string(b), nil
+}

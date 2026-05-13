@@ -35,8 +35,8 @@ const meta = {
     },
     showClose: {
       control: 'boolean',
-      description: 'Show the × close button.',
-      table: { defaultValue: { summary: 'true' } },
+      description: 'Show the close button.',
+      table: { defaultValue: { summary: 'false' } },
     },
   },
 } satisfies Meta<typeof DrawerContent>;
@@ -50,7 +50,7 @@ function DrawerDemo({
   side = 'right',
   title = 'Drawer',
   description,
-  showClose = true,
+  showClose = false,
   longContent = false,
 }: {
   side?: 'left' | 'right' | 'bottom';
@@ -170,6 +170,18 @@ export const NoCloseButton: Story = {
       title="No × Button"
       description="Use the Cancel button or press Escape to close."
       showClose={false}
+    />
+  ),
+};
+
+export const WithCloseButton: Story = {
+  name: 'With close button',
+  render: () => (
+    <DrawerDemo
+      side="right"
+      title="Close Button"
+      description="The optional close button uses the same hard-shadow button style."
+      showClose
     />
   ),
 };

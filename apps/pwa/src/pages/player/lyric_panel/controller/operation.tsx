@@ -18,7 +18,11 @@ import { QueueMusic } from '../../constants';
 
 const Style = styled.div`
   ${flexCenter}
-  gap: 15px;
+  gap: clamp(4px, 2vw, 12px);
+
+  > button {
+    flex: 0 0 auto;
+  }
 `;
 const closeLyricPanel = () =>
   playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: false });
@@ -44,7 +48,7 @@ function Operation({
     <Style>
       <Button
         square
-        variant="plain"
+        variant="ghost"
         size="sm"
         onClick={() =>
           playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER, {
@@ -56,7 +60,7 @@ function Operation({
       </Button>
       <Button
         square
-        variant="plain"
+        variant="ghost"
         size="sm"
         onClick={() =>
           playerEventemitter.emit(
@@ -67,25 +71,30 @@ function Operation({
       >
         <MdReadMore />
       </Button>
-      <Button square variant="plain" size="sm" onClick={onPrevious}>
+      <Button square variant="ghost" size="sm" onClick={onPrevious}>
         <MdSkipPrevious />
       </Button>
       <Button
         square
-        variant="plain"
+        variant="primary"
         size="lg"
         onClick={paused ? onPlay : onPause}
         loading={loading}
       >
         {paused ? <MdPlayArrow /> : <MdPause />}
       </Button>
-      <Button square variant="plain" size="sm" onClick={onNext}>
+      <Button square variant="ghost" size="sm" onClick={onNext}>
         <MdSkipNext />
       </Button>
-      <Button square variant="plain" size="sm" onClick={openPlaylistPlayqueueDrawer}>
+      <Button
+        square
+        variant="ghost"
+        size="sm"
+        onClick={openPlaylistPlayqueueDrawer}
+      >
         <MdOutlineQueueMusic />
       </Button>
-      <Button square variant="plain" size="sm" onClick={closeLyricPanel}>
+      <Button square variant="ghost" size="sm" onClick={closeLyricPanel}>
         <MdUnfoldLess />
       </Button>
     </Style>

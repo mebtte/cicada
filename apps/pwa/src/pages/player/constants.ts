@@ -1,7 +1,7 @@
 import { RequestStatus } from '@/constants';
 import { MusicType } from '@/constants/music';
 import { UtilZIndex } from '@/constants/style';
-import { MusicDownloadQuality } from '@/utils/music_download_asset';
+import { MusicExportQuality } from '@/utils/music_export_asset';
 
 export const HEADER_HEIGHT = 72;
 
@@ -97,19 +97,19 @@ export enum SearchTab {
   LYRIC = 'lyric',
 }
 
-export enum DownloadStatus {
+export enum ExportStatus {
   WAITING,
-  DOWNLOADING,
+  EXPORTING,
   FAILED,
   SUCCESSFUL,
 }
 
-export interface DownloadingMusic {
+export interface ExportingMusic {
   id: string;
   music: Music;
   directoryHandle: FileSystemDirectoryHandle;
   asset: string;
   ext: string;
-  quality: MusicDownloadQuality;
-  status: DownloadStatus;
+  quality: MusicExportQuality;
+  status: ExportStatus;
 }

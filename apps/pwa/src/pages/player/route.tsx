@@ -18,7 +18,7 @@ import PublicMusicbillCollection from './pages/public_musicbill_collection';
 import Exploration from './pages/exploration';
 import MusicPlayRecord from './pages/music_play_record';
 import SharedMusicbillInvitation from './pages/shared_musicbill_invitation';
-import DownloadingMusic from './pages/downloading_music';
+import ExportingMusic from './pages/exporting_music';
 import Singer from './pages/singer';
 
 const Style = styled.div`
@@ -76,8 +76,8 @@ function Wrapper() {
           <Route path={PLAYER_PATH.USER} element={<User />} />
           <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
           <Route
-            path={PLAYER_PATH.DOWNLOADING_MUSIC}
-            element={<DownloadingMusic />}
+            path={PLAYER_PATH.EXPORTING_MUSIC}
+            element={<ExportingMusic />}
           />
           <Route
             path={PLAYER_PATH.SHARED_MUSICBILL_INVITATION}

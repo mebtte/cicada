@@ -195,7 +195,10 @@ function Musicbill({
       >
         <div className="first-screen">
           <Info musicbill={musicbill} identityRef={identityRef} />
-          <MusicList musicList={musicbill.musicList} />
+          <MusicList
+            musicList={musicbill.musicList}
+            scrollElementRef={scrollableRef}
+          />
         </div>
       </div>
       <Toolbar musicbill={musicbill} collected={collected} />

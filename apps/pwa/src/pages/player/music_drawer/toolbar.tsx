@@ -12,7 +12,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
-import { openDownloadMusicListDialog } from '../download_music_list';
+import { openExportMusicListDialog } from '../export_music_list';
 import addMusicListToPlaylist from '../add_to_playlist';
 import { t } from '@/i18n';
 
@@ -117,8 +117,8 @@ function Toolbar({
           square
           variant="ghost"
           size="sm"
-          aria-label={t('download')}
-          onClick={() => openDownloadMusicListDialog([music])}
+          aria-label={t('export_music')}
+          onClick={() => openExportMusicListDialog([music])}
         >
           <IconExport size="1em" />
         </Button>

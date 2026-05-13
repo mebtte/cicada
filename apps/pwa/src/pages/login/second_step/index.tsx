@@ -11,6 +11,7 @@ import {
 } from '@/constants/user';
 import logger from '@/utils/logger';
 import login from '@/server/base/login';
+import type { LoginResponse } from '@/server/base/login';
 import loginWith2FA from '@/server/base/login_with_2fa';
 import notice from '@/utils/notice';
 import getProfile from '@/server/api/get_profile';
@@ -21,6 +22,7 @@ import useNavigate from '@/utils/use_navigate';
 import { ROOT_PATH } from '@/constants/route';
 import { ExceptionCode } from '@/constants/exception';
 import dialog from '@/utils/dialog';
+import { getCurrentDeviceName } from '@/utils/device_name';
 import Logo from '../logo';
 import UserList from './user_list';
 import { getSelectedServer, useServer } from '@/global_states/server';
@@ -32,7 +34,11 @@ const Style = styled.div`
 
   -webkit-app-region: no-drag;
 `;
-const addProfile = async (token: string) => {
+const getDeviceInfo = () => ({
+  deviceName: getCurrentDeviceName(),
+});
+
+const addProfile = async ({ token, sessionId }: LoginResponse) => {
   const profile = await getProfile(token);
   useServer.setState((server) => ({
     serverList: server.serverList.map((s) =>
@@ -60,6 +66,7 @@ const addProfile = async (token: string) => {
                   twoFAEnabled: profile.twoFAEnabled,
 
                   token,
+                  sessionId,
                 },
               ]),
           }
@@ -116,8 +123,13 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         }
 
         try {
-          const token = await loginWith2FA({ username, password, twoFAToken });
-          await addProfile(token);
+          const loginResult = await loginWith2FA({
+            username,
+            password,
+            twoFAToken,
+            ...getDeviceInfo(),
+          });
+          await addProfile(loginResult);
           redirect();
         } catch (error) {
           logger.error(error, 'Failed to login with 2FA');
@@ -137,13 +149,14 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       confirmVariant: 'primary',
       onConfirm: async ({ captchaId, captchaValue }) => {
         try {
-          const token = await login({
+          const loginResult = await login({
             username,
             password,
             captchaId,
             captchaValue,
+            ...getDeviceInfo(),
           });
-          await addProfile(token);
+          await addProfile(loginResult);
           redirect();
         } catch (error) {
           logger.error(error, 'Failed to login');

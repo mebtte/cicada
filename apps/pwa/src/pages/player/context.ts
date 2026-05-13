@@ -4,7 +4,7 @@ import {
   MusicWithSingerAliases,
   QueueMusic,
   Musicbill,
-  DownloadingMusic,
+  ExportingMusic,
 } from './constants';
 
 interface Context {
@@ -23,7 +23,7 @@ interface Context {
 
   lyricPanelOpen: boolean;
 
-  downloadingMusicList: DownloadingMusic[];
+  exportingMusicList: ExportingMusic[];
 }
 
 const context = createContext<Context>({
@@ -42,7 +42,7 @@ const context = createContext<Context>({
 
   lyricPanelOpen: false,
 
-  downloadingMusicList: [],
+  exportingMusicList: [],
 });
 
 export default context;

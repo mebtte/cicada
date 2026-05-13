@@ -15,10 +15,9 @@ import (
 
 func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	for _, dir := range []string{
@@ -82,10 +81,9 @@ func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 
 func TestCleanOutdatedAccessLogRemovesOnlyOldAccessLogs(t *testing.T) {
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := os.MkdirAll(config.AccessLogDir(), 0755); err != nil {
@@ -119,10 +117,9 @@ func TestCleanOutdatedAccessLogRemovesOnlyOldAccessLogs(t *testing.T) {
 
 func TestCleanOutdatedSchedulerLogRemovesOnlyOldSchedulerLogs(t *testing.T) {
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := os.MkdirAll(config.SchedulerLogDir(), 0755); err != nil {
@@ -249,10 +246,9 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 	})
 
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      t.TempDir(),
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
 	})
 
 	if err := store.Initialize(); err != nil {
@@ -286,6 +282,64 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 	}
 	if _, err := os.Stat(unlinked); !os.IsNotExist(err) {
 		t.Fatalf("expected unlinked asset to be removed, err=%v", err)
+	}
+}
+
+func TestDecreaseMusicHeatDecreasesDailyWithoutGoingBelowZero(t *testing.T) {
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES ('u','u','p','u',0)`,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,asset,heat,createUserId,createTimestamp) VALUES
+			('heat-2',1,'two','two.mp3',2,'u',0),
+			('heat-1',1,'one','one.mp3',1,'u',0),
+			('heat-0',1,'zero','zero.mp3',0,'u',0)`,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+
+	result, err := decreaseMusicHeat()
+	if err != nil {
+		t.Fatalf("decrease music heat: %v", err)
+	}
+	if result.Metrics["updated_music_heat_rows"] != 2 {
+		t.Fatalf("updated rows = %d", result.Metrics["updated_music_heat_rows"])
+	}
+
+	expected := map[string]int64{
+		"heat-2": 1,
+		"heat-1": 0,
+		"heat-0": 0,
+	}
+	for id, want := range expected {
+		var got int64
+		if err := store.DB().QueryRow(`SELECT heat FROM music WHERE id=?`, id).Scan(&got); err != nil {
+			t.Fatalf("query %s heat: %v", id, err)
+		}
+		if got != want {
+			t.Fatalf("%s heat = %d, want %d", id, got, want)
+		}
 	}
 }
 

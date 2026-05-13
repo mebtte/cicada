@@ -2,11 +2,8 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import Page from '../page';
-import Logout from './logout';
 import Volume from './volume';
-import ExtraInfo from './extra_info';
 import Language from './language';
-import UserSwitch from './user_switch';
 import Feedback from './feedback';
 import PlaybackQuality from './playback_quality';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
@@ -39,10 +36,7 @@ function Setting() {
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
       <PlaybackQuality />
       <Language />
-      <UserSwitch />
       <Feedback />
-      <Logout />
-      <ExtraInfo />
     </Style>
   );
 }

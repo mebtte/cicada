@@ -35,10 +35,9 @@ func setupSingerPhotoTest(t *testing.T) (admin *store.User, singerID string) {
 
 	dataDir := t.TempDir()
 	config.Set(config.Config{
-		Mode:      config.ModeProduction,
-		Data:      dataDir,
-		Port:      8000,
-		JWTExpiry: int64(180 * 24 * 60 * 60 * 1000),
+		Mode: config.ModeProduction,
+		Data: dataDir,
+		Port: 8000,
 	})
 	if err := store.Initialize(); err != nil {
 		t.Fatalf("initialize store: %v", err)

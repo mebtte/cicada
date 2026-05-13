@@ -25,13 +25,14 @@ import LyricPanel from './lyric_panel';
 import SingerDrawer from './singer_drawer';
 import UserDrawer from './user_drawer';
 import MusicbillDrawer from './musicbill_drawer';
+import AuthorizedDeviceDrawer from './authorized_device_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
 import SingerModifyRecordDrawer from './singer_modify_record_drawer';
 import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
-import useDownload from './use_download';
+import useExport from './use_export';
 import PlaylistAddAnimation from './playlist_add_animation';
 import PlayqueueInsertAnimation from './playqueue_insert_animation';
 
@@ -98,7 +99,7 @@ function Wrapper() {
     [queueMusic],
   );
 
-  const downloadingMusicList = useDownload();
+  const exportingMusicList = useExport();
   const contextValue = useMemo(
     () => ({
       getMusicbillListStatus,
@@ -116,7 +117,7 @@ function Wrapper() {
 
       lyricPanelOpen,
 
-      downloadingMusicList,
+      exportingMusicList,
     }),
     [
       audioBufferedPercent,
@@ -129,7 +130,7 @@ function Wrapper() {
       musicbillList,
       playlist,
       playqueue,
-      downloadingMusicList,
+      exportingMusicList,
     ],
   );
   return (
@@ -155,6 +156,7 @@ function Wrapper() {
       <SortMusicbillDrawer />
       <UserDrawer />
       <MusicbillDrawer />
+      <AuthorizedDeviceDrawer />
       <MusicbillSharedUserDrawer />
       <SingerModifyRecordDrawer />
 

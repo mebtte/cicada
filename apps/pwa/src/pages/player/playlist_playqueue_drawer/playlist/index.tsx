@@ -8,11 +8,11 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
-import List from 'react-list';
 import Button from '@/components/button';
 import { MdPlayArrow, MdReadMore, MdOutlineClose } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
+import VirtualList from '@/components/virtual_list';
 import { flexCenter } from '@/style/flexbox';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
@@ -33,10 +33,16 @@ const Style = styled(TabContent)`
   > .content {
     ${absoluteFullSize}
 
-    padding-bottom: calc(${FILTER_HEIGHT}px + env(safe-area-inset-bottom, 0));
+    background: rgb(247 247 247);
+    padding-bottom: calc(
+      ${FILTER_HEIGHT}px + ${TAB_LIST_HEIGHT}px +
+        env(safe-area-inset-bottom, 0)
+    );
 
     &.list {
       overflow: auto;
+      padding-right: 16px;
+      padding-left: 16px;
       ${autoScrollbar}
     }
 
@@ -54,7 +60,7 @@ const removeStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
 
-function Playlist({ style }: { style: unknown }) {
+function Playlist() {
   const listRef = useRef<HTMLDivElement>(null);
 
   const [keyword, setKeyword] = useState('');
@@ -74,21 +80,21 @@ function Playlist({ style }: { style: unknown }) {
 
   const { height: titlebarAreaHeight } = useTitlebarArea();
   const contentStyle: CSSProperties = {
-    paddingTop: TAB_LIST_HEIGHT + titlebarAreaHeight,
+    paddingTop: titlebarAreaHeight + 12,
   };
 
   const filteredPlaylist = playlist.filter((music) =>
     filterMusic(music, keyword),
   );
   return (
-    // @ts-expect-error
-    <Style style={style}>
+    <Style>
       {filteredPlaylist.length ? (
         <div className="content list" style={contentStyle} ref={listRef}>
-          <List
-            length={filteredPlaylist.length}
-            type="uniform"
-            itemRenderer={(index, key) => {
+          <VirtualList
+            count={filteredPlaylist.length}
+            getItemKey={(index) => filteredPlaylist[index].id}
+            scrollElementRef={listRef}
+            renderItem={(index, key) => {
               const music = filteredPlaylist[index];
               return (
                 <MusicBase
@@ -99,6 +105,7 @@ function Playlist({ style }: { style: unknown }) {
                   lineAfter={
                     <Operation>
                       <Button
+                        className="primary-action"
                         square
                         variant="plain"
                         size="sm"

@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { NavLink } from 'react-router-dom';
+import { type MouseEvent } from 'react';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { Musicbill as MusicbillType } from '../../constants';
 import MusicbillCover from '../../components/musicbill_cover';
 import { CSS_VAR } from '@/components/theme';
+import useSidebarNavigate from '../use_sidebar_navigate';
 
 const COVER_SIZE = 26;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
@@ -89,13 +91,35 @@ const Style = styled(NavLink)`
   }
 `;
 
+function shouldUseBrowserNavigation(event: MouseEvent<HTMLAnchorElement>) {
+  return (
+    event.defaultPrevented ||
+    event.button !== 0 ||
+    event.metaKey ||
+    event.altKey ||
+    event.ctrlKey ||
+    event.shiftKey
+  );
+}
+
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
+  const navigate = useSidebarNavigate();
+  const to = `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL.replace(
+    ':id',
+    musicbill.id,
+  )}`;
+
   return (
     <Style
-      to={`${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL.replace(
-        ':id',
-        musicbill.id,
-      )}`}
+      to={to}
+      onClick={(event) => {
+        if (shouldUseBrowserNavigation(event)) {
+          return;
+        }
+
+        event.preventDefault();
+        navigate(to);
+      }}
     >
       <MusicbillCover
         size={COVER_SIZE}

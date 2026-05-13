@@ -6,18 +6,19 @@ import {
   MdAdminPanelSettings,
   MdStarOutline,
 } from 'react-icons/md';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { ReactNode, useContext } from 'react';
 import { t } from '@/i18n';
 import context from '../context';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import DownloadTag from './download_tag';
+import ExportTag from './export_tag';
 import { useUser } from '@/global_states/server';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
 import capitalize from '@/style/capitalize';
 import { IconExport, IconExternalLink } from '@/components/icon';
+import useSidebarNavigate from './use_sidebar_navigate';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
@@ -175,10 +176,10 @@ function SidebarItem({
 
 function Menu() {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
+  const navigate = useSidebarNavigate();
   const user = useUser()!;
 
-  const { downloadingMusicList } = useContext(context);
+  const { exportingMusicList } = useContext(context);
   return (
     <Style aria-label={t('sidebar')}>
       <SidebarItem
@@ -221,17 +222,17 @@ function Menu() {
         label={t('setting')}
         icon={<MdOutlineSettings />}
       />
-      {ENABLE_FILE_SYSTEM && downloadingMusicList.length ? (
+      {ENABLE_FILE_SYSTEM && exportingMusicList.length ? (
         <SidebarItem
           active={
-            pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.DOWNLOADING_MUSIC}`
+            pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPORTING_MUSIC}`
           }
           onClick={() =>
-            navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.DOWNLOADING_MUSIC}`)
+            navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPORTING_MUSIC}`)
           }
-          label={t('download')}
+          label={t('export_music')}
           icon={<IconExport />}
-          suffix={<DownloadTag />}
+          suffix={<ExportTag />}
         />
       ) : null}
       {user.admin ? (
