@@ -16,10 +16,6 @@ function normalizeError(error: unknown) {
   return error instanceof Error ? error : new Error(String(error));
 }
 
-function getAudioSrc(audio: CustomAudio<QueueMusic> | null) {
-  return audio ? audio.getSrc() : null;
-}
-
 function dedupeUrls(urls: string[]) {
   const urlSet = new Set<string>();
   const dedupedUrls: string[] = [];
@@ -44,7 +40,22 @@ export default (
     musicPlaybackQuality: MusicPlaybackQuality;
   },
 ) => {
-  const currentUrl = getAudioSrc(audio);
+  /**
+   * 从 playqueue 推导 currentUrl, 而不是从 audio.getSrc() 读.
+   * 因为 audio 已改为单例, src 的更新发生在 effect 阶段, 渲染期间
+   * 读不到最新值, 会导致 currentUrl 派生的 effect 错过切歌信号.
+   * @author mebtte<i@mebtte.com>
+   */
+  const currentMusic =
+    currentPlayqueuePosition >= 0
+      ? playqueue[currentPlayqueuePosition]
+      : undefined;
+  const currentUrl = currentMusic
+    ? getMusicPlaybackAsset({
+        asset: currentMusic.asset,
+        quality: musicPlaybackQuality,
+      })
+    : null;
   const [preloadBlocked, setPreloadBlocked] = useState(true);
   const preloadUrls = useMemo(() => {
     if (!currentUrl || currentPlayqueuePosition < 0) {
@@ -65,12 +76,19 @@ export default (
   }, [currentUrl, currentPlayqueuePosition, musicPlaybackQuality, playqueue]);
 
   /**
+   * 切歌时立即阻断预加载, 等当前音乐稳定播放后再放行.
+   * @author mebtte<i@mebtte.com>
+   */
+  useEffect(() => {
+    setPreloadBlocked(true);
+  }, [currentUrl]);
+
+  /**
    * 当前音乐只交给 audio 加载.
    * 后续预加载必须给当前音频让路, 稳定播放后再运行.
    * @author mebtte<i@mebtte.com>
    */
   useEffect(() => {
-    setPreloadBlocked(true);
     if (!audio) {
       return;
     }

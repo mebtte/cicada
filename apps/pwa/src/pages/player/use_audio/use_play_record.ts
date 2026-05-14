@@ -17,7 +17,7 @@ function getPlayRecordDraft(audio: CustomAudio<QueueMusic>): PlayRecordDraft {
   const duration = audio.getDuration();
   const playedSeconds = audio.getPlayedSeconds();
   return {
-    musicId: audio.extra.id,
+    musicId: audio.extra!.id,
     percent: duration ? playedSeconds / duration : 0,
   };
 }
@@ -39,14 +39,27 @@ function uploadPlayRecord(draft: PlayRecordDraft) {
   return uploadMusicPlayRecord(draft);
 }
 
-export default (audio: CustomAudio<QueueMusic> | null) => {
+/**
+ * audio 实例已改为长期单例 (避免 iOS Safari 锁屏失效),
+ * 切歌不再让 audio 引用变化, 因此通过 queueMusic 作为依赖触发
+ * cleanup 上传上一首的播放记录.
+ *
+ * 时序保证: usePlayRecord 在 useAudio 内部声明早于 setSource effect,
+ * effect cleanup 反向执行, 因此 cleanup 跑时 audio.extra 仍是上一首.
+ * @author mebtte<i@mebtte.com>
+ */
+export default (
+  audio: CustomAudio<QueueMusic> | null,
+  queueMusic: QueueMusic | undefined,
+) => {
   const carriedDraftRef = useRef<PlayRecordDraft | null>(null);
   const pendingUploadRef = useRef<PendingUpload | null>(null);
 
   useEffect(() => {
-    if (audio) {
+    if (audio && queueMusic) {
+      // 用户切回上一首前正好处于延迟上传窗口, 合并记录避免覆盖.
       const pendingUpload = pendingUploadRef.current;
-      if (pendingUpload?.draft.musicId === audio.extra.id) {
+      if (pendingUpload?.draft.musicId === queueMusic.id) {
         window.clearTimeout(pendingUpload.timer);
         pendingUploadRef.current = null;
         carriedDraftRef.current = mergePlayRecordDraft(
@@ -65,10 +78,10 @@ export default (audio: CustomAudio<QueueMusic> | null) => {
       window.addEventListener('beforeunload', onBeforeUnload);
       return () => window.removeEventListener('beforeunload', onBeforeUnload);
     }
-  }, [audio]);
+  }, [audio, queueMusic]);
 
   useEffect(() => {
-    if (audio) {
+    if (audio && queueMusic) {
       return () => {
         const draft = mergePlayRecordDraft(
           carriedDraftRef.current,
@@ -88,5 +101,5 @@ export default (audio: CustomAudio<QueueMusic> | null) => {
         };
       };
     }
-  }, [audio]);
+  }, [audio, queueMusic]);
 };

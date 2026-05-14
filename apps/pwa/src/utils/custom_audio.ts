@@ -1,11 +1,9 @@
 class CustomAudio<Extra> {
-  readonly extra: Extra;
+  extra: Extra | null = null;
 
   private readonly audio: HTMLAudioElement;
 
-  private destroyed = false;
-
-  constructor({ src, extra }: { src: string; extra: Extra }) {
+  constructor() {
     const audio = window.document.createElement('audio');
     audio.crossOrigin = 'anonymous';
     audio.autoplay = true;
@@ -28,10 +26,8 @@ class CustomAudio<Extra> {
     (window.document.body || window.document.documentElement).appendChild(
       audio,
     );
-    audio.src = src;
 
     this.audio = audio;
-    this.extra = extra;
   }
 
   listen(
@@ -65,6 +61,25 @@ class CustomAudio<Extra> {
   ) {
     this.audio.addEventListener(eventType, listener);
     return () => this.audio.removeEventListener(eventType, listener);
+  }
+
+  /**
+   * 切换音源.
+   * 复用同一个 <audio> 元素以保留 iOS Safari 锁屏下的音频会话权限,
+   * 否则每次新建 element 会被视为缺少用户手势, autoplay 被拒.
+   * @author mebtte<i@mebtte.com>
+   */
+  setSource({ src, extra }: { src: string; extra: Extra }) {
+    this.extra = extra;
+    if (this.audio.src !== src) {
+      this.audio.src = src;
+    }
+  }
+
+  clearSource() {
+    this.extra = null;
+    this.audio.removeAttribute('src');
+    this.audio.load();
   }
 
   getSrc() {
@@ -131,17 +146,6 @@ class CustomAudio<Extra> {
     return duration && buffered.length
       ? buffered.end(buffered.length - 1) / duration
       : 0;
-  }
-
-  destroy() {
-    if (this.destroyed) {
-      return;
-    }
-    this.destroyed = true;
-    this.audio.pause();
-    this.audio.removeAttribute('src');
-    this.audio.load();
-    this.audio.remove();
   }
 }
 
