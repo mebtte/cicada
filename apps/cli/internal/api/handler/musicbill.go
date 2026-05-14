@@ -539,6 +539,7 @@ func GetSharedMusicbillInvitationList(c *gin.Context) {
 			"inviteUserId":       inv.InviteUserID,
 			"inviteUserNickname": inv.UserNickname,
 			"musicbillId":        inv.MusicbillID,
+			"musicbillName":      inv.MusicbillName,
 		}
 	}
 	api.OK(c, list)

@@ -905,7 +905,7 @@ func operations() []operation {
 			Method:      "PUT",
 			Path:        "/api/admin/user",
 			Summary:     "Admin update user settings",
-			Description: "Update user password, remarks, and quota settings using the key/value pattern.",
+			Description: "Update user password, remarks, and quota settings using the key/value pattern. Password resets disable the target user's 2FA and revoke all target sessions. Admins must use `/api/profile` to change their own password.",
 			Tags:        []string{"Admin"},
 			Auth:        true,
 			Admin:       true,
@@ -916,7 +916,7 @@ func operations() []operation {
 			}),
 			SuccessSchema:  nil,
 			SuccessExample: nil,
-			ErrorCodes:     []string{"wrong_parameter", "user_not_existed", "not_authorized", "not_authorized_for_admin"},
+			ErrorCodes:     []string{"wrong_parameter", "user_not_existed", "can_not_reset_own_password", "not_authorized", "not_authorized_for_admin"},
 		},
 		{
 			Method:      "PUT",
@@ -2029,13 +2029,14 @@ func updateMusicbillRequestSchema() map[string]any {
 
 func invitationSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "inviteTimestamp", "inviteUserId", "inviteUserNickname", "musicbillId"},
+		[]string{"id", "inviteTimestamp", "inviteUserId", "inviteUserNickname", "musicbillId", "musicbillName"},
 		map[string]any{
 			"id":                 intSchema("Invitation record ID.", 1),
 			"inviteTimestamp":    intSchema("Invitation timestamp in milliseconds.", 1710000000000),
 			"inviteUserId":       strSchema("Inviter user ID.", "1"),
 			"inviteUserNickname": strSchema("Inviter nickname.", "Cicada"),
 			"musicbillId":        strSchema("Musicbill ID.", "musicbill-1"),
+			"musicbillName":      strSchema("Musicbill name.", "My Favorites"),
 		},
 	)
 }
@@ -2047,6 +2048,7 @@ func invitationExample() map[string]any {
 		"inviteUserId":       "1",
 		"inviteUserNickname": "Cicada",
 		"musicbillId":        "musicbill-1",
+		"musicbillName":      "My Favorites",
 	}
 }
 

@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"bytes"
+	"cicada/internal/api/apperr"
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"encoding/json"
@@ -151,4 +153,156 @@ func TestGetUser(t *testing.T) {
 			t.Fatalf("unexpected music count: %d", resp.Data.MusicbillList[0].MusicCount)
 		}
 	})
+}
+
+func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	dataDir := t.TempDir()
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: dataDir,
+		Port: 8000,
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	adminPasswordHash, err := store.HashPassword("admin-password")
+	if err != nil {
+		t.Fatalf("hash admin password: %v", err)
+	}
+	targetPasswordHash, err := store.HashPassword("old-password")
+	if err != nil {
+		t.Fatalf("hash target password: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin,twoFASecret) VALUES (?,?,?,?,?,?,?)`,
+		"admin-user", "admin-user", adminPasswordHash, "Admin", now, 1, "admin-two-fa",
+	); err != nil {
+		t.Fatalf("insert admin user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin,twoFASecret) VALUES (?,?,?,?,?,?,?)`,
+		"target-user", "target-user", targetPasswordHash, "Target", now, 0, "target-two-fa",
+	); err != nil {
+		t.Fatalf("insert target user: %v", err)
+	}
+	if _, err := store.CreateAuthSession("target-user", "target-token-hash-1", "target1", "Browser 1", "agent", "127.0.0.1"); err != nil {
+		t.Fatalf("create target session 1: %v", err)
+	}
+	if _, err := store.CreateAuthSession("target-user", "target-token-hash-2", "target2", "Browser 2", "agent", "127.0.0.1"); err != nil {
+		t.Fatalf("create target session 2: %v", err)
+	}
+	adminSessionID, err := store.CreateAuthSession("admin-user", "admin-token-hash", "admin", "Admin Browser", "agent", "127.0.0.1")
+	if err != nil {
+		t.Fatalf("create admin session: %v", err)
+	}
+
+	admin := &store.User{ID: "admin-user", Admin: 1}
+
+	t.Run("resetting another user password disables 2FA and revokes sessions", func(t *testing.T) {
+		resp := callAdminUpdateUser(t, admin, map[string]any{
+			"id":    "target-user",
+			"key":   "password",
+			"value": "new-password",
+		})
+		if resp.Code != apperr.Success {
+			t.Fatalf("expected success, got %+v", resp)
+		}
+
+		target, err := store.GetUserByID("target-user")
+		if err != nil {
+			t.Fatalf("get target user: %v", err)
+		}
+		ok, _ := store.VerifyPassword(target.Password, "new-password")
+		if !ok {
+			t.Fatal("target password was not updated")
+		}
+		if target.TwoFASecret.Valid {
+			t.Fatalf("target 2FA should be disabled, got %q", target.TwoFASecret.String)
+		}
+
+		var revokedCount int
+		if err := store.DB().QueryRow(
+			`SELECT COUNT(1) FROM auth_session
+			WHERE userId=? AND revokeTimestamp IS NOT NULL AND revokeReason=?`,
+			"target-user", "admin_reset",
+		).Scan(&revokedCount); err != nil {
+			t.Fatalf("count target revoked sessions: %v", err)
+		}
+		if revokedCount != 2 {
+			t.Fatalf("expected 2 target sessions revoked, got %d", revokedCount)
+		}
+	})
+
+	t.Run("admin cannot reset own password through admin endpoint", func(t *testing.T) {
+		resp := callAdminUpdateUser(t, admin, map[string]any{
+			"id":    "admin-user",
+			"key":   "password",
+			"value": "self-new-password",
+		})
+		if resp.Code != apperr.CanNotResetOwnPassword {
+			t.Fatalf("expected %s, got %+v", apperr.CanNotResetOwnPassword, resp)
+		}
+
+		updatedAdmin, err := store.GetUserByID("admin-user")
+		if err != nil {
+			t.Fatalf("get admin user: %v", err)
+		}
+		ok, _ := store.VerifyPassword(updatedAdmin.Password, "admin-password")
+		if !ok {
+			t.Fatal("admin password should remain unchanged")
+		}
+		if !updatedAdmin.TwoFASecret.Valid || updatedAdmin.TwoFASecret.String != "admin-two-fa" {
+			t.Fatalf("admin 2FA should remain unchanged, got %+v", updatedAdmin.TwoFASecret)
+		}
+
+		var revokedCount int
+		if err := store.DB().QueryRow(
+			`SELECT COUNT(1) FROM auth_session WHERE id=? AND revokeTimestamp IS NOT NULL`,
+			adminSessionID,
+		).Scan(&revokedCount); err != nil {
+			t.Fatalf("count admin revoked sessions: %v", err)
+		}
+		if revokedCount != 0 {
+			t.Fatalf("admin session should remain active, revoked count %d", revokedCount)
+		}
+	})
+}
+
+func callAdminUpdateUser(t *testing.T, requester *store.User, body map[string]any) struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+} {
+	t.Helper()
+
+	raw, err := json.Marshal(body)
+	if err != nil {
+		t.Fatalf("marshal body: %v", err)
+	}
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/user", bytes.NewReader(raw))
+	c.Set("authed_user", requester)
+
+	AdminUpdateUser(c)
+
+	var resp struct {
+		Code    string `json:"code"`
+		Message string `json:"message"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	return resp
 }

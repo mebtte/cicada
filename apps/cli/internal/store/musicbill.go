@@ -25,6 +25,7 @@ type MusicbillWithOwner struct {
 type SharedMusicbillRow struct {
 	ID              int64
 	MusicbillID     string
+	MusicbillName   string
 	SharedUserID    string
 	InviteUserID    string
 	InviteTimestamp int64
@@ -188,8 +189,10 @@ func RemoveMusicbillSharedUser(musicbillID, sharedUserID string) (bool, error) {
 
 func GetPendingInvitationsForUser(userID string) ([]SharedMusicbillRow, error) {
 	rows, err := DB().Query(
-		`SELECT smb.id,smb.musicbillId,smb.sharedUserId,smb.inviteUserId,smb.inviteTimestamp,smb.accepted,u.nickname,u.avatar
-		FROM shared_musicbill smb JOIN user u ON smb.inviteUserId=u.id
+		`SELECT smb.id,smb.musicbillId,mb.name,smb.sharedUserId,smb.inviteUserId,smb.inviteTimestamp,smb.accepted,u.nickname,u.avatar
+		FROM shared_musicbill smb
+		JOIN user u ON smb.inviteUserId=u.id
+		JOIN musicbill mb ON smb.musicbillId=mb.id
 		WHERE smb.sharedUserId=? AND smb.accepted=0`, userID,
 	)
 	if err != nil {
@@ -199,7 +202,7 @@ func GetPendingInvitationsForUser(userID string) ([]SharedMusicbillRow, error) {
 	var out []SharedMusicbillRow
 	for rows.Next() {
 		r := SharedMusicbillRow{}
-		rows.Scan(&r.ID, &r.MusicbillID, &r.SharedUserID, &r.InviteUserID, &r.InviteTimestamp, &r.Accepted, &r.UserNickname, &r.UserAvatar)
+		rows.Scan(&r.ID, &r.MusicbillID, &r.MusicbillName, &r.SharedUserID, &r.InviteUserID, &r.InviteTimestamp, &r.Accepted, &r.UserNickname, &r.UserAvatar)
 		out = append(out, r)
 	}
 	return out, nil

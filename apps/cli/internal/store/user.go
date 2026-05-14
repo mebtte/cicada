@@ -49,6 +49,29 @@ func UpdateUser(id, field string, value any) error {
 	return err
 }
 
+func ResetUserPasswordAndDisable2FA(id, passwordHash string, now int64, revokeReason string) error {
+	tx, err := DB().Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if _, err := tx.Exec(
+		`UPDATE user SET password=?, twoFASecret=NULL WHERE id=?`,
+		passwordHash, id,
+	); err != nil {
+		return err
+	}
+	if _, err := tx.Exec(
+		`UPDATE auth_session SET revokeTimestamp=?, revokeReason=?
+		WHERE userId=? AND revokeTimestamp IS NULL`,
+		now, revokeReason, id,
+	); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
 func TouchUser(id string) {
 	_, _ = DB().Exec(`UPDATE user SET lastActiveTimestamp=? WHERE id=?`, time.Now().UnixMilli(), id)
 }

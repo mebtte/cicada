@@ -288,6 +288,7 @@ const DrawerTitleText = styled.h2`
   font-family: ${FONT};
   font-size: 18px;
   font-weight: 800;
+  text-transform: capitalize;
   letter-spacing: 0.2px;
   color: rgb(50 50 50);
   line-height: 1.2;

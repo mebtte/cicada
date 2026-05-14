@@ -27,6 +27,7 @@ export enum ExceptionCode {
   MUSICBILL_NOT_COLLECTED = "musicbill_not_collected",
   OVER_USER_MUSICBILL_MAX_AMOUNT = "over_user_musicbill_max_amount",
   CAN_NOT_DELETE_ADMIN = "can_not_delete_admin",
+  CAN_NOT_RESET_OWN_PASSWORD = "can_not_reset_own_password",
   USER_IS_ADMIN_ALREADY = "user_is_admin_already",
   MUSIC_PLAY_RECORD_NOT_EXISTED = "music_play_record_not_existed",
   CAN_NOT_INVITE_MUSICBILL_OWNER = "can_not_invite_musicbill_owner",

@@ -10,13 +10,12 @@ import {
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
-import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
+import { useTheme } from '@/global_states/theme';
 import e, { EventType } from '../../eventemitter';
 import Context from '../../context';
 import { openCreateMusicbillDialog } from '../../utils';
-import useSidebarNavigate from '../use_sidebar_navigate';
 
 const reloadMusicbillList = () =>
   e.emit(EventType.RELOAD_MUSICBILL_LIST, { silence: false });
@@ -54,8 +53,19 @@ const ToolButton = styled(Button)`
 `;
 
 function Top() {
-  const navigate = useSidebarNavigate();
+  const { miniMode } = useTheme();
   const { getMusicbillListStatus, musicbillList } = useContext(Context);
+  const openSharedMusicbillInvitationDrawer = () => {
+    if (miniMode) {
+      e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
+      window.requestAnimationFrame(() =>
+        e.emit(EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER, null),
+      );
+      return;
+    }
+    e.emit(EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER, null);
+  };
+
   return (
     <Style>
       <div className="label">{t('musicbill')}</div>
@@ -94,9 +104,7 @@ function Top() {
         square
         variant="ghost"
         size="sm"
-        onClick={() =>
-          navigate(ROOT_PATH.PLAYER + PLAYER_PATH.SHARED_MUSICBILL_INVITATION)
-        }
+        onClick={openSharedMusicbillInvitationDrawer}
       >
         <MdOutlinePeopleAlt />
       </ToolButton>

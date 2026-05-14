@@ -273,6 +273,7 @@ type updateUserBody struct {
 }
 
 func AdminUpdateUser(c *gin.Context) {
+	requester := middleware.GetUser(c)
 	var body updateUserBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
@@ -291,6 +292,14 @@ func AdminUpdateUser(c *gin.Context) {
 		return
 	}
 	if body.Key == "password" {
+		if requester == nil {
+			api.Fail(c, apperr.NotAuthorized)
+			return
+		}
+		if body.ID == requester.ID {
+			api.Fail(c, apperr.CanNotResetOwnPassword)
+			return
+		}
 		pwd, ok := body.Value.(string)
 		if !ok || !validPasswordLength(pwd) {
 			api.Fail(c, apperr.WrongParameter)
@@ -301,8 +310,10 @@ func AdminUpdateUser(c *gin.Context) {
 			api.Fail(c, apperr.ServerError)
 			return
 		}
-		store.UpdateUser(body.ID, "password", passwordHash)
-		store.RevokeAllAuthSessions(body.ID, time.Now().UnixMilli(), "admin_reset")
+		if err := store.ResetUserPasswordAndDisable2FA(body.ID, passwordHash, time.Now().UnixMilli(), "admin_reset"); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
 		api.OK(c, nil)
 		return
 	}

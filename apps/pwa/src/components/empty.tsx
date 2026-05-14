@@ -8,40 +8,31 @@ function EmptyIcon() {
   return (
     <svg
       className="placeholder"
-      viewBox="0 0 128 112"
+      viewBox="0 0 128 128"
       fill="none"
       aria-hidden="true"
       focusable="false"
     >
-      <path
-        d="M31 35.5h66l12 22.5v31.5c0 8-6.5 14.5-14.5 14.5h-61C25.5 104 19 97.5 19 89.5V58l12-22.5Z"
-        fill="rgb(232 255 218)"
+      <circle
+        cx="64"
+        cy="64"
+        r="44"
+        fill="rgb(44 182 125 / 0.1)"
         stroke="currentColor"
         strokeWidth="6"
-        strokeLinejoin="round"
       />
-      <path
-        d="M19 58h30.5c3 0 5.7 1.7 7 4.4l1.6 3.2c2.3 4.6 8.9 4.6 11.2 0l1.6-3.2c1.3-2.7 4-4.4 7-4.4H109"
+      <circle
+        cx="64"
+        cy="64"
+        r="28"
         stroke="currentColor"
-        strokeWidth="6"
+        strokeWidth="2.5"
+        strokeDasharray="3 6"
         strokeLinecap="round"
-        strokeLinejoin="round"
+        opacity="0.55"
       />
-      <path
-        d="M42.5 78.5h43"
-        stroke="rgb(88 204 2)"
-        strokeWidth="6"
-        strokeLinecap="round"
-      />
-      <path
-        d="M47 15.5 64 5l17 10.5"
-        stroke="rgb(255 199 44)"
-        strokeWidth="6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="43.5" cy="20.5" r="5.5" fill="rgb(255 199 44)" />
-      <circle cx="84.5" cy="20.5" r="5.5" fill="rgb(255 199 44)" />
+      <circle cx="64" cy="64" r="11" fill="currentColor" />
+      <circle cx="64" cy="64" r="3" fill="white" />
     </svg>
   );
 }
@@ -49,45 +40,79 @@ function EmptyIcon() {
 const Style = styled.div`
   width: min(100%, 360px);
   margin: 0 auto;
-  padding: 12px;
+  padding: 16px 12px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
 
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
 
-  > .placeholder {
-    width: 164px;
-    max-width: 66%;
-    display: block;
-    color: ${CSSVariable.COLOR_PRIMARY};
-    filter: drop-shadow(0 4px 0 rgb(232 232 232));
+  animation: empty-pop-in 280ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+  @keyframes empty-pop-in {
+    0% {
+      transform: scale(0.86);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 
-  > .description {
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+
+  > .placeholder {
+    width: 132px;
+    max-width: 56%;
+    display: block;
+    color: ${CSSVariable.COLOR_PRIMARY};
+    filter: drop-shadow(0 4px 0 rgb(44 182 125 / 0.15));
+  }
+
+  > .text {
     width: 100%;
     max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
 
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+  > .text > .description {
+    width: 100%;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     font-weight: 800;
-    line-height: 1.5;
+    line-height: 1.45;
     text-align: center;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     overflow-wrap: anywhere;
 
     ${capitalize}
   }
 
+  > .text > .secondary {
+    width: 100%;
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+    font-weight: 600;
+    line-height: 1.5;
+    text-align: center;
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    overflow-wrap: anywhere;
+  }
+
   @media (max-width: 420px) {
-    padding: 10px;
-    gap: 10px;
+    padding: 12px 10px;
+    gap: 12px;
 
     > .placeholder {
-      width: 150px;
+      width: 120px;
     }
   }
 `;
@@ -97,16 +122,22 @@ const Style = styled.div`
  * @author mebtte<i@mebtte.com>
  */
 function Empty({
-  /** 描述 */
   description = t('no_data'),
+  secondaryDescription,
   ...props
 }: {
   description?: string;
+  secondaryDescription?: string;
 } & HTMLAttributes<HTMLDivElement>) {
   return (
     <Style {...props}>
       <EmptyIcon />
-      <div className="description">{description}</div>
+      <div className="text">
+        <div className="description">{description}</div>
+        {secondaryDescription ? (
+          <div className="secondary">{secondaryDescription}</div>
+        ) : null}
+      </div>
     </Style>
   );
 }

@@ -10,6 +10,7 @@ import notice from '@/utils/notice';
 import dialog from '@/utils/dialog';
 import adminUpdateUser from '@/server/api/admin_update_user';
 import adminUpdateUserAdmin from '@/server/api/admin_update_user_admin';
+import { useUser } from '@/global_states/server';
 import {
   AdminAllowUpdateKey,
   REMARK_MAX_LENGTH,
@@ -29,6 +30,9 @@ const Style = styled.div`
 `;
 
 function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
+  const currentUser = useUser();
+  const isCurrentUser = currentUser?.id === user.id;
+
   const [musicbillMaxAmount, setMusicbillMaxAmount] = useState(() =>
     user.musicbillMaxAmount.toString(),
   );
@@ -257,33 +261,35 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
             {t('set_as_admin')}
           </Button>
         )}
-        <Button
-          className="part"
-          disabled={loading}
-          onClick={() =>
-            dialog.password({
-              confirmVariant: 'primary',
-              onConfirm: async (password) => {
-                try {
-                  await adminUpdateUser({
-                    id: user.id,
-                    key: AdminAllowUpdateKey.PASSWORD,
-                    value: password,
-                  });
-                  notice.info(t('password_has_changed'));
+        {isCurrentUser ? null : (
+          <Button
+            className="part"
+            disabled={loading}
+            onClick={() =>
+              dialog.password({
+                confirmVariant: 'primary',
+                onConfirm: async (password) => {
+                  try {
+                    await adminUpdateUser({
+                      id: user.id,
+                      key: AdminAllowUpdateKey.PASSWORD,
+                      value: password,
+                    });
+                    notice.info(t('password_has_changed'));
 
-                  onClose();
-                } catch (error) {
-                  logger.error(error, 'Failed to change password');
-                  dialog.alert({ content: error.message });
-                  return false;
-                }
-              },
-            })
-          }
-        >
-          {t('change_password')}
-        </Button>
+                    onClose();
+                  } catch (error) {
+                    logger.error(error, 'Failed to change password');
+                    dialog.alert({ content: error.message });
+                    return false;
+                  }
+                },
+              })
+            }
+          >
+            {t('change_password')}
+          </Button>
+        )}
         {user.admin ? null : (
           <Button
             className="part"
