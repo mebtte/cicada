@@ -15,19 +15,22 @@ import context from '../../context';
 
 const Style = styled.div`
   position: absolute;
-  width: 100%;
+  left: 32px;
+  right: 32px;
   height: ${FILTER_HEIGHT}px;
-  left: 0;
   bottom: calc(${TAB_LIST_HEIGHT}px + env(safe-area-inset-bottom, 0));
+  z-index: 2;
 
   display: flex;
   align-items: center;
   gap: 10px;
 
-  padding: 6px 16px 10px;
+  padding: 8px 10px 12px;
 
   background: rgb(255 255 255 / 0.94);
-  border-top: 2px solid rgb(232 232 232);
+  border: 2px solid rgb(232 232 232);
+  border-radius: 16px;
+  box-shadow: 0 4px 0 rgb(218 218 218);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 

@@ -81,16 +81,8 @@ const Root = styled(Page)`
 
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 8px;
-
-    background: linear-gradient(
-      180deg,
-      rgb(247 253 248) 0%,
-      rgb(247 253 248 / 0.92) 78%,
-      rgb(247 253 248 / 0) 100%
-    );
-    transition: height 180ms ease-out;
   }
 
   ${({ theme: { miniMode } }) => css`
@@ -102,6 +94,13 @@ const Root = styled(Page)`
     > .search-toolbar {
       height: var(--search-mode-toolbar-height);
       gap: ${miniMode ? 12 : 8}px;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    > .search-toolbar > .input,
+    > .search-toolbar > .search-tabs {
+      pointer-events: auto;
     }
 
     > .search-toolbar.recommendation-toolbar {

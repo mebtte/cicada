@@ -5,7 +5,7 @@ import Button from '@/components/button';
 import { MdArrowBack, MdMenu, MdSearch } from 'react-icons/md';
 import { useLocation, useNavigate as useRouterNavigate } from 'react-router-dom';
 import useNavigate from '@/utils/use_navigate';
-import { ROOT_PATH } from '@/constants/route';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import Search from './search';
 import Title from './title';
 import useTitle from './use_title';
@@ -44,6 +44,9 @@ function Header() {
   const title = useTitle();
   const { left, right } = useTitlebar();
   const showBackButton = miniMode && getIsHeaderBackButtonPath(pathname);
+  const isExplorationPath =
+    pathname === ROOT_PATH.PLAYER ||
+    pathname === ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION;
 
   return (
     <Style style={{ paddingLeft: left, paddingRight: right }}>
@@ -67,26 +70,28 @@ function Header() {
           >
             {showBackButton ? <MdArrowBack /> : <MdMenu />}
           </Button>
-          <Button
-            square
-            variant="ghost"
-            size="md"
-            onClick={() => {
-              navigate({
-                path: ROOT_PATH.PLAYER,
-                query: {
-                  keyword: null,
-                  page: null,
-                  search_tab: null,
-                },
-              });
-              window.requestAnimationFrame(() =>
-                e.emit(EventType.FOCUS_SEARCH_INPUT, null),
-              );
-            }}
-          >
-            <MdSearch />
-          </Button>
+          {isExplorationPath ? null : (
+            <Button
+              square
+              variant="ghost"
+              size="md"
+              onClick={() => {
+                navigate({
+                  path: ROOT_PATH.PLAYER,
+                  query: {
+                    keyword: null,
+                    page: null,
+                    search_tab: null,
+                  },
+                });
+                window.requestAnimationFrame(() =>
+                  e.emit(EventType.FOCUS_SEARCH_INPUT, null),
+                );
+              }}
+            >
+              <MdSearch />
+            </Button>
+          )}
         </>
       ) : (
         <Cover src="/logo.png" size={30} />
