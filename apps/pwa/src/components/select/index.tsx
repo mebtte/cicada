@@ -1,13 +1,26 @@
-import { CSSProperties, useCallback, useId, useMemo } from 'react';
+import {
+  type CompositionEvent,
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import ReactSelect, {
   type StylesConfig,
   type SingleValue,
+  type MultiValue,
   type GroupBase,
   components,
   type DropdownIndicatorProps,
+  type InputActionMeta,
+  type InputProps,
+  type MenuProps,
   type MenuPlacement,
 } from 'react-select';
-import AsyncReactSelect from 'react-select/async';
+import { Branch as DismissableLayerBranch } from '@radix-ui/react-dismissable-layer';
 import styled from 'styled-components';
 import Label from '../label';
 import { useTheme } from '../theme';
@@ -81,6 +94,32 @@ function DropdownIndicator<T>(props: DropdownIndicatorProps<SelectOption<T>, boo
   );
 }
 
+function Menu<T, IsMulti extends boolean>(
+  props: MenuProps<SelectOption<T>, IsMulti, GroupBase<SelectOption<T>>>,
+) {
+  return (
+    <components.Menu {...props} />
+  );
+}
+
+function MenuPortal<T, IsMulti extends boolean>(
+  props: Parameters<
+    typeof components.MenuPortal<
+      SelectOption<T>,
+      IsMulti,
+      GroupBase<SelectOption<T>>
+    >
+  >[0],
+) {
+  return (
+    <components.MenuPortal {...props}>
+      <DismissableLayerBranch>
+        {props.children}
+      </DismissableLayerBranch>
+    </components.MenuPortal>
+  );
+}
+
 // ─── Styles factory ───────────────────────────────────────────────────────────
 
 function buildStyles<T, IsMulti extends boolean>(
@@ -119,13 +158,20 @@ function buildStyles<T, IsMulti extends boolean>(
       transition: 'border-color 150ms ease-out, box-shadow 150ms ease-out',
       outline: 'none',
     }),
-    valueContainer: (_) => ({
-      display: 'flex',
+    valueContainer: (_, state) => ({
+      display:
+        isMulti && state.hasValue && state.selectProps.controlShouldRenderValue !== false
+          ? 'flex'
+          : 'grid',
       flex: 1,
       flexWrap: isMulti ? 'wrap' as const : 'nowrap' as const,
       alignItems: 'center',
       padding: `4px ${s.px - 4}px`,
-      gap: 4,
+      gap:
+        isMulti && state.hasValue && state.selectProps.controlShouldRenderValue !== false
+          ? 4
+          : 0,
+      position: 'relative',
       overflow: 'hidden',
     }),
     singleValue: (provided) => ({
@@ -182,7 +228,7 @@ function buildStyles<T, IsMulti extends boolean>(
       marginTop: state.placement === 'top' ? 0 : s.shadow + 6,
       marginBottom: state.placement === 'top' ? s.shadow + 6 : 0,
     }),
-    menuPortal: (base) => ({ ...base, zIndex: 10000 }),
+    menuPortal: (base) => ({ ...base, zIndex: 10000, pointerEvents: 'auto' }),
     menuList: (_) => ({
       padding: 0,
       maxHeight: 248,
@@ -226,7 +272,8 @@ function buildStyles<T, IsMulti extends boolean>(
     multiValue: (_) => ({
       display: 'inline-flex',
       alignItems: 'center',
-      padding: '0 2px 2px 8px',
+      justifyContent: 'center',
+      padding: '0 2px 0 8px',
       minHeight: 24,
       border: '2px solid rgb(220 220 220)',
       borderRadius: 8,
@@ -240,6 +287,7 @@ function buildStyles<T, IsMulti extends boolean>(
       fontFamily: FONT,
       fontSize: 12,
       fontWeight: 700,
+      lineHeight: '18px',
       letterSpacing: '0.1px',
       padding: 0,
     }),
@@ -247,6 +295,7 @@ function buildStyles<T, IsMulti extends boolean>(
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      alignSelf: 'stretch',
       color: 'rgb(160 160 160)',
       padding: '0 3px',
       marginLeft: 2,
@@ -330,7 +379,7 @@ export function Select<T>({
         menuPlacement={menuPlacement}
         menuPortalTarget={document.body}
         menuPosition="fixed"
-        components={{ DropdownIndicator }}
+        components={{ DropdownIndicator, Menu, MenuPortal }}
       />
       {(error || hint) && <Bottom $error={!!error}>{error ?? hint}</Bottom>}
     </Root>
@@ -362,22 +411,115 @@ export function MultiSelect<T>({
 }: MultiSelectProps<T>) {
   const inputId = useId();
   const { colorPrimary } = useTheme();
+  const composingRef = useRef(false);
+  const requestSeqRef = useRef(0);
+  const [inputValue, setInputValue] = useState('');
+  const [asyncOptions, setAsyncOptions] = useState<SelectOption<T>[]>([]);
+  const [asyncLoading, setAsyncLoading] = useState(false);
   const styles = useMemo(
     () => buildStyles<T, true>(colorPrimary, size, !!error, !!disabled, true),
     [colorPrimary, size, error, disabled],
   );
 
+  const requestOptions = useCallback(
+    (keyword: string) => {
+      if (!loadOptions) return;
+
+      const seq = requestSeqRef.current + 1;
+      requestSeqRef.current = seq;
+      setAsyncLoading(true);
+      loadOptions(keyword)
+        .then((options) => {
+          if (requestSeqRef.current === seq) {
+            setAsyncOptions(options);
+          }
+        })
+        .catch(() => {
+          if (requestSeqRef.current === seq) {
+            setAsyncOptions([]);
+          }
+        })
+        .finally(() => {
+          if (requestSeqRef.current === seq) {
+            setAsyncLoading(false);
+          }
+        });
+    },
+    [loadOptions],
+  );
+
+  useEffect(() => {
+    if (!loadOptions) return;
+    requestSeqRef.current += 1;
+    setInputValue('');
+    setAsyncOptions([]);
+    setAsyncLoading(false);
+  }, [loadOptions]);
+
   const handleChange = useCallback(
-    (opts: readonly SelectOption<T>[]) => onChange?.(Array.from(opts)),
-    [onChange],
+    (opts: MultiValue<SelectOption<T>>) => {
+      onChange?.(Array.from(opts));
+      if (loadOptions) {
+        setInputValue('');
+      }
+    },
+    [loadOptions, onChange],
+  );
+
+  const handleInputChange = useCallback(
+    (nextValue: string, meta: InputActionMeta) => {
+      if (meta.action === 'input-change') {
+        setInputValue(nextValue);
+        if (!composingRef.current) {
+          requestOptions(nextValue);
+        }
+        return nextValue;
+      }
+
+      if (meta.action === 'set-value') {
+        setInputValue('');
+        return '';
+      }
+
+      return inputValue;
+    },
+    [inputValue, requestOptions],
   );
 
   const selectComponents = useMemo(
-    () => ({
-      DropdownIndicator,
-      ...(clearable === false ? { ClearIndicator: () => null } : {}),
-    }),
-    [clearable],
+    () => {
+      function Input(
+        props: InputProps<SelectOption<T>, true, GroupBase<SelectOption<T>>>,
+      ) {
+        return (
+          <components.Input
+            {...props}
+            onCompositionStart={(
+              event: CompositionEvent<HTMLInputElement>,
+            ) => {
+              props.onCompositionStart?.(event);
+              composingRef.current = true;
+            }}
+            onCompositionEnd={(event: CompositionEvent<HTMLInputElement>) => {
+              props.onCompositionEnd?.(event);
+              composingRef.current = false;
+              const nextValue = event.currentTarget.value;
+              setInputValue(nextValue);
+              requestOptions(nextValue);
+            }}
+          />
+        );
+      }
+
+      return {
+        DropdownIndicator,
+        Menu,
+        MenuPortal,
+        ...(loadOptions ? { Input } : {}),
+        ...(clearable === false ? { ClearIndicator: () => null } : {}),
+      };
+    },
+    [clearable, loadOptions, requestOptions],
   );
 
   const sharedProps = {
@@ -394,17 +536,20 @@ export function MultiSelect<T>({
     menuPosition: 'fixed' as const,
     components: selectComponents,
     closeMenuOnSelect: false,
+    blurInputOnSelect: false,
   };
 
   return (
     <Root className={className} style={style}>
       {label && <Label htmlFor={inputId}>{label}</Label>}
       {loadOptions ? (
-        <AsyncReactSelect<SelectOption<T>, true>
+        <ReactSelect<SelectOption<T>, true>
           {...sharedProps}
-          loadOptions={loadOptions}
-          defaultOptions
-          cacheOptions
+          options={asyncOptions}
+          inputValue={inputValue}
+          onInputChange={handleInputChange}
+          isLoading={asyncLoading}
+          filterOption={() => true}
         />
       ) : (
         <ReactSelect<SelectOption<T>, true>

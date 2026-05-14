@@ -6,7 +6,11 @@ import notice from '@/utils/notice';
 import openCreateSingerDialog from '../open_create_singer_dialog';
 
 const Style = styled.div`
-  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   cursor: pointer;
   ${upperCaseFirstLetter}

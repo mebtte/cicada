@@ -196,6 +196,7 @@ const zhCN: {
   last_seen_ip: '最近活动 IP',
   inactive_expire_at: '闲置失效时间',
   rename: '重命名',
+  modify: '修改',
   revoke: '撤销',
   revoke_authorized_device_question: '确定撤销这台授权设备吗?',
   edit_nickname: '编辑昵称',

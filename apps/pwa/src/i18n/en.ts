@@ -198,6 +198,7 @@ export default {
   last_seen_ip: 'last seen IP',
   inactive_expire_at: 'inactive expire at',
   rename: 'rename',
+  modify: 'modify',
   revoke: 'revoke',
   revoke_authorized_device_question:
     'are you sure to revoke this authorized device ?',

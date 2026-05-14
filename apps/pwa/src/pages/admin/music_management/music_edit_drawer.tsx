@@ -9,7 +9,6 @@ import styled from 'styled-components';
 import {
   MdAdd,
   MdDelete,
-  MdImage,
   MdMusicNote,
   MdOutlineFilePresent,
 } from 'react-icons/md';
@@ -21,6 +20,7 @@ import {
 } from '@/components';
 import Button from '@/components/button';
 import ErrorCard from '@/components/error_card';
+import { IconEdit } from '@/components/icon';
 import Input from '@/components/input';
 import Spinner from '@/components/spinner';
 import Textarea from '@/components/textarea';
@@ -82,6 +82,10 @@ interface Music {
   name: string;
   cover: string;
   asset: string;
+  assetSize: number;
+  assetDurationMs: number;
+  assetCodec: string;
+  assetBitRate: number;
   type: MusicType;
   aliases: string[];
   singers: Singer[];
@@ -92,7 +96,7 @@ interface Music {
   year: number | null;
 }
 
-const COVER_SIZE = 48;
+const COVER_SIZE = 120;
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
 const ROW_SHADOW = 'rgb(232 232 232)';
 
@@ -143,15 +147,10 @@ const Form = styled.div`
   overflow: hidden;
 `;
 
-const Header = styled.div`
-  flex-shrink: 0;
-  padding: 14px 16px 18px;
-  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
-  background: #fff;
+const CoverSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  box-shadow: 0 3px 0 ${ROW_SHADOW};
+  gap: 10px;
 `;
 
 const CoverBox = styled.div`
@@ -177,36 +176,11 @@ const CoverBox = styled.div`
   }
 `;
 
-const HeaderInfo = styled.div`
-  flex: 1;
-  min-width: 0;
+const CoverActions = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-const HeaderTitle = styled.div`
-  font-family: ${FONT};
-  font-size: 17px;
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: 0;
-  color: rgb(75 75 75);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const HeaderSubTitle = styled.div`
-  margin-top: 4px;
-  font-family: ${FONT};
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 `;
 
 const Body = styled.div`
@@ -249,6 +223,36 @@ const GroupTitle = styled.div`
   color: rgb(66 66 66);
 `;
 
+const FileFieldBox = styled.div`
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
+`;
+
+const FileInfo = styled.div`
+  min-width: 0;
+  font-family: ${FONT};
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0;
+  color: rgb(75 75 75);
+  overflow: hidden;
+`;
+
+const FileInfoSecondary = styled.div`
+  margin-top: 2px;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  font-size: 12px;
+`;
+
 const AliasInputRow = styled.div`
   display: grid;
   grid-template-columns: 1fr max-content;
@@ -257,16 +261,15 @@ const AliasInputRow = styled.div`
 `;
 
 const TextareaRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr max-content;
-  gap: 8px;
-  align-items: start;
+  position: relative;
+  min-width: 0;
 `;
 
 const LyricTextarea = styled(Textarea)`
   min-width: 0;
   height: 112px;
   max-height: 180px;
+  padding-right: 44px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 13px;
   box-shadow: 0 3px 0 ${ROW_SHADOW};
@@ -282,6 +285,49 @@ const LyricTextarea = styled(Textarea)`
   &:focus {
     border-color: ${CSSVariable.COLOR_PRIMARY};
     box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
+  }
+`;
+
+const LyricDeleteButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border: 2px solid transparent;
+  border-radius: 9px;
+  padding: 0;
+  background: rgb(255 255 255 / 0.88);
+  color: ${CSSVariable.TEXT_COLOR_DISABLED};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color 120ms,
+    background 120ms,
+    border-color 120ms,
+    filter 120ms;
+
+  &:not(:disabled):hover {
+    color: ${CSSVariable.COLOR_DANGEROUS};
+    border-color: rgb(242 80 66 / 0.18);
+    background: rgb(255 245 244);
+  }
+
+  &:not(:disabled):active {
+    filter: brightness(0.96);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${CSSVariable.COLOR_DANGEROUS};
+    outline-offset: 2px;
   }
 `;
 
@@ -307,6 +353,75 @@ const FullWidthActionButton = styled(Button)`
   flex-shrink: 0;
   min-height: 44px;
 `;
+
+const formatDurationMs = (durationMs: number) => {
+  const totalSeconds = Math.round(durationMs / 1000);
+  const minute = Math.floor(totalSeconds / 60);
+  const second = totalSeconds % 60;
+  return `${minute > 9 ? minute : `0${minute}`}:${
+    second > 9 ? second : `0${second}`
+  }`;
+};
+
+const formatFileSize = (size: number) => {
+  if (size < 1024) {
+    return `${size}B`;
+  }
+  if (size < 1024 * 1024) {
+    return `${Math.round(size / 1024)}KB`;
+  }
+  return `${(size / 1024 / 1024).toFixed(2)}MB`;
+};
+
+const formatBitRate = (bitRate: number) => `${Math.round(bitRate / 1000)}kbps`;
+
+function MusicFileField({
+  music,
+  onModifyFile,
+  loading,
+  disabled,
+}: {
+  music: Music;
+  onModifyFile: () => void;
+  loading: boolean;
+  disabled: boolean;
+}) {
+  const primary = [
+    music.assetDurationMs ? formatDurationMs(music.assetDurationMs) : '',
+    music.assetSize ? formatFileSize(music.assetSize) : '',
+  ].filter(Boolean);
+  const secondary = [
+    music.assetCodec ? music.assetCodec.toUpperCase() : '',
+    music.assetBitRate ? formatBitRate(music.assetBitRate) : '',
+  ].filter(Boolean);
+
+  return (
+    <Group>
+      <GroupTitle>{t('music_file')}</GroupTitle>
+      <FileFieldBox>
+        <FileInfo>
+          {primary.length ? <div>{primary.join(' · ')}</div> : null}
+          {secondary.length ? (
+            <FileInfoSecondary>{secondary.join(' · ')}</FileInfoSecondary>
+          ) : null}
+          {!primary.length && !secondary.length ? t('unknown') : null}
+        </FileInfo>
+        <Button
+          variant="secondary"
+          size="sm"
+          icon={<MdOutlineFilePresent />}
+          onClick={onModifyFile}
+          loading={loading}
+          disabled={disabled}
+          title={t('modify_file_of_music')}
+          aria-label={t('modify_file_of_music')}
+        >
+          {t('modify')}
+        </Button>
+      </FileFieldBox>
+    </Group>
+  );
+}
 
 function EditContent({
   music,
@@ -604,47 +719,36 @@ function EditContent({
 
   return (
     <Form>
-      <Header>
-        <CoverBox>
-          {music.cover ? (
-            <img src={music.cover} alt={music.name} />
-          ) : (
-            <MdMusicNote />
-          )}
-        </CoverBox>
-        <HeaderInfo>
-          <HeaderTitle>{music.name}</HeaderTitle>
-          <HeaderSubTitle>{music.id}</HeaderSubTitle>
-        </HeaderInfo>
-      </Header>
-
       <Body>
-        <FullWidthActionButton
-          block
-          variant="secondary"
-          icon={<MdImage />}
-          onClick={onEditCover}
-          loading={coverSaving}
-          disabled={saving || fileSaving || deleting}
-        >
-          {t('edit_cover')}
-        </FullWidthActionButton>
+        <CoverSection>
+          <CoverBox>
+            {music.cover ? (
+              <img src={music.cover} alt={music.name} />
+            ) : (
+              <MdMusicNote />
+            )}
+          </CoverBox>
+          <CoverActions>
+            <Button
+              variant="secondary"
+              size="sm"
+              square
+              onClick={onEditCover}
+              loading={coverSaving}
+              disabled={saving || fileSaving || deleting}
+              title={t('edit_cover')}
+              aria-label={t('edit_cover')}
+            >
+              <IconEdit size={18} />
+            </Button>
+          </CoverActions>
+        </CoverSection>
 
         <Input
           label={t('name')}
           value={name}
           onChange={onNameChange}
           maxLength={NAME_MAX_LENGTH}
-          disabled={saving}
-        />
-
-        <Input
-          label={t('year_of_issue')}
-          value={year}
-          type="number"
-          onChange={onYearChange}
-          min={YEAR_MIN}
-          max={YEAR_MAX}
           disabled={saving}
         />
 
@@ -697,9 +801,19 @@ function EditContent({
             onChange={setSingers}
             clearable={false}
             disabled={saving}
-            placeholder={t('singer')}
+            placeholder=""
           />
         </Group>
+
+        <Input
+          label={t('year_of_issue')}
+          value={year}
+          type="number"
+          onChange={onYearChange}
+          min={YEAR_MIN}
+          max={YEAR_MAX}
+          disabled={saving}
+        />
 
         <Group>
           <GroupTitle>{t('fork_from')}</GroupTitle>
@@ -708,9 +822,16 @@ function EditContent({
             loadOptions={searchMusic}
             onChange={setForkFromList}
             disabled={saving}
-            placeholder={t('fork_from')}
+            placeholder=""
           />
         </Group>
+
+        <MusicFileField
+          music={music}
+          onModifyFile={onModifyFile}
+          loading={fileSaving}
+          disabled={saving || coverSaving || deleting}
+        />
 
         {music.type === MusicType.SONG ? (
           <Group>
@@ -727,17 +848,15 @@ function EditContent({
                       onLyricChange(index, event.target.value)
                     }
                   />
-                  <Button
-                    square
-                    size="md"
-                    variant="ghost"
+                  <LyricDeleteButton
+                    type="button"
                     onClick={() => onRemoveLyric(index)}
                     disabled={saving}
                     title={t('delete')}
                     aria-label={t('delete')}
                   >
-                    <MdDelete />
-                  </Button>
+                    <MdDelete size={18} />
+                  </LyricDeleteButton>
                 </TextareaRow>
               ))}
               {lyrics.length < MUSIC_MAX_LRYIC_AMOUNT ? (
@@ -754,27 +873,6 @@ function EditContent({
           </Group>
         ) : null}
 
-        <FullWidthActionButton
-          block
-          variant="secondary"
-          icon={<MdOutlineFilePresent />}
-          onClick={onModifyFile}
-          loading={fileSaving}
-          disabled={saving || coverSaving || deleting}
-        >
-          {t('modify_file_of_music')}
-        </FullWidthActionButton>
-
-        <FullWidthActionButton
-          block
-          variant="danger"
-          icon={<MdDelete />}
-          onClick={onDelete}
-          loading={deleting}
-          disabled={saving || coverSaving || fileSaving}
-        >
-          {t('delete_music')}
-        </FullWidthActionButton>
       </Body>
 
       <Footer>
@@ -787,6 +885,16 @@ function EditContent({
         >
           {t('save')}
         </Button>
+        <FullWidthActionButton
+          block
+          variant="danger"
+          icon={<MdDelete />}
+          onClick={onDelete}
+          loading={deleting}
+          disabled={saving || coverSaving || fileSaving}
+        >
+          {t('delete_music')}
+        </FullWidthActionButton>
       </Footer>
     </Form>
   );
@@ -821,6 +929,10 @@ function MusicEditDrawer({
         name: result.name,
         cover: result.cover,
         asset: result.asset,
+        assetSize: result.assetSize,
+        assetDurationMs: result.assetDurationMs,
+        assetCodec: result.assetCodec,
+        assetBitRate: result.assetBitRate,
         type: result.type,
         aliases: result.aliases,
         singers: result.singers,
