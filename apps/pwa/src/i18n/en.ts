@@ -71,15 +71,11 @@ export default {
   delete_user_question: 'are you sure to delete user ?',
   delete_user_question_content:
     'the music/singer current user created will transfer to your account after deleting',
-  set_as_admin: 'set as admin',
-  set_as_admin_question: 'are you sure to set this user as admin ?',
-  set_as_admin_question_content:
-    "the privilege of current user is same as your and the user can't be deleted after setting as admin",
+  set_as_admin: 'enable admin role',
+  set_as_admin_question: 'enable admin role ?',
+  unset_as_admin: 'revoke admin role',
+  unset_as_admin_question: 'revoke admin role ?',
   save: 'save',
-  maximum_amount_of_musicbill: 'maximum amount of musicbill',
-  maximum_amount_of_creating_music_per_day:
-    'maximum amount of creating music per day',
-  music_play_record_indate: 'music play record indate',
   should_be_greater_than: '%s1 should be greater than %s2',
   should_be_greater_than_or_equal_to:
     '%s1 should be greater than or equal to %s2',
@@ -87,7 +83,6 @@ export default {
   length_of: 'length of %s1',
   nickname: 'nickname',
   join_time: 'join time',
-  zero_means_unlimited: '0 means unlimited',
   delete_music: 'delete music',
   delete: 'delete',
   music_forked_by_other_can_not_be_deleted:
@@ -333,12 +328,8 @@ unknown_singer: 'unknown singer',
   modified: 'modified',
   avatar: 'avatar',
   got_it: 'got it',
-  music_play_record_indefinite_retention_instruction:
-    '1. Your music play records will be kept indefinitely. Contact the administrator for more information.',
-  music_play_record_days_retention_instruction:
-    '1. Your music play records will be kept for %s1 days. Contact the administrator for more information.',
   music_play_record_browser_limit_instruction:
-    '2. Due to browser limitations, music play records may not be saved in some edge cases.',
+    'Due to browser limitations, music play records may not be saved in some edge cases.',
   discover_musicbill: 'discover musicbills',
   select_file: 'select file',
   error: 'error',

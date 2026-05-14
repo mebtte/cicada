@@ -18,7 +18,6 @@ const (
 	WrongAssetType                          = "wrong_asset_type"
 	AssetNotExisted                         = "asset_not_existed"
 	SingerNotExisted                        = "singer_not_existed"
-	OverCreateMusicTimesPerDay              = "over_create_music_times_per_day"
 	SingerAlreadyExisted                    = "singer_already_existed"
 	NoNeedToUpdate                          = "no_need_to_update"
 	AliasOverMaxLength                      = "alias_over_max_length"

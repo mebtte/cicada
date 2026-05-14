@@ -10,9 +10,6 @@ type Response = {
   remark: string;
   joinTimestamp: number;
   lastActiveTimestamp: number;
-  musicbillMaxAmount: number;
-  createMusicMaxAmountPerDay: number;
-  musicPlayRecordIndate: number;
   twoFAEnabled: boolean;
 }[];
 

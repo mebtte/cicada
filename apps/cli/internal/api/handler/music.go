@@ -210,13 +210,6 @@ func CreateMusic(c *gin.Context) {
 		api.Fail(c, apperr.SingerNotExisted)
 		return
 	}
-	if u.CreateMusicMaxAmountPerDay != 0 {
-		count, _ := store.CountTodayMusicByUser(u.ID, store.TodayStartMs())
-		if count >= u.CreateMusicMaxAmountPerDay {
-			api.Fail(c, apperr.OverCreateMusicTimesPerDay)
-			return
-		}
-	}
 	id, err := store.CreateMusic(body.Name, musicType, u.ID, body.Asset)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)

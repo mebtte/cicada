@@ -278,6 +278,58 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 			t.Fatalf("admin session should remain active, revoked count %d", revokedCount)
 		}
 	})
+
+	t.Run("admin can grant and revoke another user's admin role", func(t *testing.T) {
+		resp := callAdminUpdateUserAdmin(t, admin, map[string]any{
+			"id":    "target-user",
+			"admin": 1,
+		})
+		if resp.Code != apperr.Success {
+			t.Fatalf("expected grant success, got %+v", resp)
+		}
+
+		target, err := store.GetUserByID("target-user")
+		if err != nil {
+			t.Fatalf("get target user after grant: %v", err)
+		}
+		if target.Admin != 1 {
+			t.Fatalf("expected target admin flag 1, got %d", target.Admin)
+		}
+
+		resp = callAdminUpdateUserAdmin(t, admin, map[string]any{
+			"id":    "target-user",
+			"admin": 0,
+		})
+		if resp.Code != apperr.Success {
+			t.Fatalf("expected revoke success, got %+v", resp)
+		}
+
+		target, err = store.GetUserByID("target-user")
+		if err != nil {
+			t.Fatalf("get target user after revoke: %v", err)
+		}
+		if target.Admin != 0 {
+			t.Fatalf("expected target admin flag 0, got %d", target.Admin)
+		}
+	})
+
+	t.Run("admin cannot change own admin role", func(t *testing.T) {
+		resp := callAdminUpdateUserAdmin(t, admin, map[string]any{
+			"id":    "admin-user",
+			"admin": 0,
+		})
+		if resp.Code != apperr.UserIsAdminAlready {
+			t.Fatalf("expected %s, got %+v", apperr.UserIsAdminAlready, resp)
+		}
+
+		updatedAdmin, err := store.GetUserByID("admin-user")
+		if err != nil {
+			t.Fatalf("get admin user: %v", err)
+		}
+		if updatedAdmin.Admin != 1 {
+			t.Fatalf("admin role should remain unchanged, got %d", updatedAdmin.Admin)
+		}
+	})
 }
 
 func callAdminUpdateUser(t *testing.T, requester *store.User, body map[string]any) struct {
@@ -296,6 +348,33 @@ func callAdminUpdateUser(t *testing.T, requester *store.User, body map[string]an
 	c.Set("authed_user", requester)
 
 	AdminUpdateUser(c)
+
+	var resp struct {
+		Code    string `json:"code"`
+		Message string `json:"message"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	return resp
+}
+
+func callAdminUpdateUserAdmin(t *testing.T, requester *store.User, body map[string]any) struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+} {
+	t.Helper()
+
+	raw, err := json.Marshal(body)
+	if err != nil {
+		t.Fatalf("marshal body: %v", err)
+	}
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/user_admin", bytes.NewReader(raw))
+	c.Set("authed_user", requester)
+
+	AdminUpdateUserAdmin(c)
 
 	var resp struct {
 		Code    string `json:"code"`

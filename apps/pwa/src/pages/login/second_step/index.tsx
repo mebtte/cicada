@@ -59,10 +59,6 @@ const addProfile = async ({ token, sessionId }: LoginResponse) => {
                   musicbillOrders: profile.musicbillOrdersJSON
                     ? JSON.parse(profile.musicbillOrdersJSON)
                     : [],
-                  musicbillMaxAmount: profile.musicbillMaxAmount,
-                  createMusicMaxAmountPerDay:
-                    profile.createMusicMaxAmountPerDay,
-                  musicPlayRecordIndate: profile.musicPlayRecordIndate,
                   twoFAEnabled: profile.twoFAEnabled,
 
                   token,

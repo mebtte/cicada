@@ -47,7 +47,7 @@ import {
 
 const FONT   = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 const MOBILE = 640; // px — breakpoint between sheet and modal
-const ROOT_Z_INDEX = 9000;
+const ROOT_Z_INDEX = 9200;
 
 // ─── Animations ───────────────────────────────────────────────────────────────
 

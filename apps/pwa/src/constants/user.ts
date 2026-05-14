@@ -21,8 +21,5 @@ export enum AllowUpdateKey {
 export enum AdminAllowUpdateKey {
   USERNAME = 'username',
   REMARK = 'remark',
-  MUSICBILL_MAX_AMOUNT = 'musicbillMaxAmount',
-  CREATE_MUSIC_MAX_AMOUNT_PER_DAY = 'createMusicMaxAmountPerDay',
-  MUSIC_PLAY_RECORD_INDATE = 'musicPlayRecordIndate',
   PASSWORD = 'password',
 }

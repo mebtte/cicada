@@ -8,9 +8,6 @@ struct ServerUserRecord: Codable, Hashable, Identifiable {
     var joinTimestamp: TimeInterval
     var admin: Bool
     var musicbillOrders: [String]
-    var musicbillMaxAmount: Int
-    var createMusicMaxAmountPerDay: Int
-    var musicPlayRecordIndate: Int
     var twoFAEnabled: Bool
     var token: String
 }

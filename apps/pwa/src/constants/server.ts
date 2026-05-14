@@ -6,9 +6,6 @@ export interface User {
   joinTimestamp: number;
   admin: boolean;
   musicbillOrders: string[];
-  musicbillMaxAmount: number;
-  createMusicMaxAmountPerDay: number;
-  musicPlayRecordIndate: number;
   twoFAEnabled: boolean;
 
   token: string;

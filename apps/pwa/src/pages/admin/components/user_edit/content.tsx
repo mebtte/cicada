@@ -1,6 +1,6 @@
-import { ChangeEventHandler, useMemo, useState } from 'react';
+import { ChangeEventHandler, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { MdAdminPanelSettings, MdDeleteOutline, MdKey, MdSave } from 'react-icons/md';
+import { MdDeleteOutline, MdKey, MdSave } from 'react-icons/md';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import Input from '@/components/input';
@@ -26,8 +26,7 @@ import notice from '@/utils/notice';
 import type { User } from './types';
 
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
-const ROW_SHADOW = 'rgb(232 232 232)';
-const AVATAR_SIZE = 72;
+const AVATAR_SIZE = 88;
 
 const Root = styled.div`
   min-height: 100%;
@@ -39,62 +38,12 @@ const Root = styled.div`
 const Header = styled.div`
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 4px 4px 18px;
-  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
-`;
-
-const HeaderText = styled.div`
-  min-width: 0;
-  flex: 1;
-`;
-
-const Nickname = styled.div`
-  color: rgb(75 75 75);
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1.25;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const Account = styled.div`
-  margin-top: 5px;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  font-size: 13px;
-  font-weight: 700;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const Badge = styled.span<{ $admin?: boolean }>`
-  display: inline-flex;
-  align-items: center;
-  max-width: 100%;
-  margin-top: 10px;
-  padding: 4px 8px;
-  border: 2px solid
-    ${({ $admin }) =>
-      $admin ? CSSVariable.COLOR_PRIMARY : CSSVariable.COLOR_BORDER};
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 2px 0
-    ${({ $admin }) =>
-      $admin ? 'var(--cicada-color-primary-shadow)' : ROW_SHADOW};
-  color: ${({ $admin }) =>
-    $admin ? CSSVariable.COLOR_PRIMARY : CSSVariable.TEXT_COLOR_SECONDARY};
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  justify-content: flex-start;
+  padding: 4px 4px 0;
 `;
 
 const Form = styled.div`
-  padding-top: 18px;
+  padding-top: 16px;
   display: grid;
   gap: 16px;
 `;
@@ -119,18 +68,90 @@ const TextareaBox = styled(Label)`
   }
 `;
 
+const SwitchField = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 44px;
+`;
+
+const SwitchTitle = styled.div`
+  color: rgb(75 75 75);
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: capitalize;
+`;
+
+const SwitchButton = styled.button<{ $checked: boolean }>`
+  position: relative;
+  flex: 0 0 auto;
+  width: 58px;
+  height: 34px;
+  padding: 3px;
+  border: 2px solid
+    ${({ $checked }) =>
+      $checked ? CSSVariable.COLOR_PRIMARY_ACTIVE : 'rgb(180 180 180)'};
+  border-radius: 999px;
+  background: ${({ $checked }) =>
+    $checked ? CSSVariable.COLOR_PRIMARY : '#fff'};
+  box-shadow: 0 4px 0
+    ${({ $checked }) =>
+      $checked ? CSSVariable.COLOR_PRIMARY_ACTIVE : 'rgb(180 180 180)'};
+  cursor: pointer;
+  transition:
+    transform 150ms ease-out,
+    background 150ms ease,
+    box-shadow 150ms ease,
+    filter 120ms;
+
+  &:not(:disabled):hover {
+    filter: brightness(1.04);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(4px);
+    box-shadow: none;
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in,
+      filter 60ms;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    filter: saturate(0.45);
+  }
+
+  &:focus-visible {
+    outline: 3px solid ${CSSVariable.COLOR_PRIMARY};
+    outline-offset: 3px;
+  }
+
+  > .thumb {
+    display: block;
+    width: 24px;
+    height: 24px;
+    box-sizing: border-box;
+    border: 2px solid
+      ${({ $checked }) =>
+        $checked ? CSSVariable.COLOR_PRIMARY_ACTIVE : 'rgb(180 180 180)'};
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 2px 0
+      ${({ $checked }) =>
+        $checked ? CSSVariable.COLOR_PRIMARY_ACTIVE : 'rgb(180 180 180)'};
+    transform: translateX(${({ $checked }) => ($checked ? '24px' : '0')});
+    transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+`;
+
 const ActionList = styled.div`
   margin-top: 20px;
-  padding-top: 18px;
-  border-top: 2px solid ${CSSVariable.COLOR_BORDER};
   display: grid;
   gap: 12px;
 `;
-
-const normalizeUnsignedIntegerInput = (value: string) =>
-  value.replace(/\D/g, '');
-
-const toNumber = (value: string) => Number(value || 0);
 
 function UserEditContent({
   user,
@@ -146,17 +167,14 @@ function UserEditContent({
   const currentUser = useUser();
   const isCurrentUser = currentUser?.id === user.id;
   const [username, setUsername] = useState(user.username);
-  const [musicbillMaxAmount, setMusicbillMaxAmount] = useState(() =>
-    user.musicbillMaxAmount.toString(),
-  );
-  const [createMusicMaxAmountPerDay, setCreateMusicMaxAmountPerDay] = useState(
-    () => user.createMusicMaxAmountPerDay.toString(),
-  );
-  const [musicPlayRecordIndate, setMusicPlayRecordIndate] = useState(() =>
-    user.musicPlayRecordIndate.toString(),
-  );
   const [remark, setRemark] = useState(user.remark);
+  const [admin, setAdmin] = useState(!!user.admin);
   const [loading, setLoading] = useState(false);
+  const [adminUpdating, setAdminUpdating] = useState(false);
+
+  useEffect(() => {
+    setAdmin(!!user.admin);
+  }, [user.admin, user.id]);
 
   const avatarSrc = useMemo(
     () =>
@@ -168,26 +186,11 @@ function UserEditContent({
   );
   const changed =
     user.username !== username ||
-    user.musicbillMaxAmount !== toNumber(musicbillMaxAmount) ||
-    user.createMusicMaxAmountPerDay !== toNumber(createMusicMaxAmountPerDay) ||
-    user.musicPlayRecordIndate !== toNumber(musicPlayRecordIndate) ||
     user.remark !== remark;
+  const busy = loading || adminUpdating;
 
   const onUsernameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setUsername(event.target.value.trim());
-  const onMusicbillMaxAmountChange: ChangeEventHandler<HTMLInputElement> = (
-    event,
-  ) => setMusicbillMaxAmount(normalizeUnsignedIntegerInput(event.target.value));
-  const onCreateMusicMaxAmountPerDayChange: ChangeEventHandler<
-    HTMLInputElement
-  > = (event) =>
-    setCreateMusicMaxAmountPerDay(
-      normalizeUnsignedIntegerInput(event.target.value),
-    );
-  const onMusicPlayRecordIndateChange: ChangeEventHandler<HTMLInputElement> = (
-    event,
-  ) =>
-    setMusicPlayRecordIndate(normalizeUnsignedIntegerInput(event.target.value));
 
   const onSave = async () => {
     if (!username) {
@@ -217,40 +220,6 @@ function UserEditContent({
         updated = true;
       }
 
-      const nextMusicbillMaxAmount = toNumber(musicbillMaxAmount);
-      if (user.musicbillMaxAmount !== nextMusicbillMaxAmount) {
-        await adminUpdateUser({
-          id: user.id,
-          key: AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT,
-          value: nextMusicbillMaxAmount,
-        });
-        updated = true;
-      }
-
-      const nextCreateMusicMaxAmountPerDay = toNumber(
-        createMusicMaxAmountPerDay,
-      );
-      if (
-        user.createMusicMaxAmountPerDay !== nextCreateMusicMaxAmountPerDay
-      ) {
-        await adminUpdateUser({
-          id: user.id,
-          key: AdminAllowUpdateKey.CREATE_MUSIC_MAX_AMOUNT_PER_DAY,
-          value: nextCreateMusicMaxAmountPerDay,
-        });
-        updated = true;
-      }
-
-      const nextMusicPlayRecordIndate = toNumber(musicPlayRecordIndate);
-      if (user.musicPlayRecordIndate !== nextMusicPlayRecordIndate) {
-        await adminUpdateUser({
-          id: user.id,
-          key: AdminAllowUpdateKey.MUSIC_PLAY_RECORD_INDATE,
-          value: nextMusicPlayRecordIndate,
-        });
-        updated = true;
-      }
-
       if (user.remark !== remark) {
         await adminUpdateUser({
           id: user.id,
@@ -272,57 +241,86 @@ function UserEditContent({
     }
   };
 
+  const updateAdmin = async (nextAdmin: boolean) => {
+    setAdminUpdating(true);
+    try {
+      await adminUpdateUserAdmin({
+        id: user.id,
+        admin: nextAdmin,
+      });
+      setAdmin(nextAdmin);
+      onSaved();
+      return true;
+    } catch (error) {
+      logger.error(error, 'Failed to update admin role');
+      notice.error(error.message);
+      return false;
+    } finally {
+      setAdminUpdating(false);
+    }
+  };
+
+  const onAdminToggle = () => {
+    if (isCurrentUser) {
+      return;
+    }
+
+    const nextAdmin = !admin;
+    if (nextAdmin) {
+      dialog.confirm({
+        title: t('set_as_admin_question'),
+        confirmText: t('set_as_admin'),
+        confirmVariant: 'primary',
+        onConfirm: () => updateAdmin(nextAdmin),
+      });
+      return;
+    }
+
+    dialog.confirm({
+      title: t('unset_as_admin_question'),
+      confirmText: t('unset_as_admin'),
+      confirmVariant: 'danger',
+      onConfirm: () => updateAdmin(nextAdmin),
+    });
+  };
+
   return (
     <Root>
       <Header>
         <Avatar src={avatarSrc} size={AVATAR_SIZE} />
-        <HeaderText>
-          <Nickname title={user.nickname || user.username}>
-            {user.nickname || user.username}
-          </Nickname>
-          <Account title={user.id}>@{user.username}</Account>
-          <Badge $admin={!!user.admin}>
-            {user.admin ? t('admin') : t('user')}
-          </Badge>
-        </HeaderText>
       </Header>
 
       <Form>
-        <Input label={t('user_id')} disabled value={user.id} />
+        <SwitchField>
+          <SwitchTitle>{t('admin')}</SwitchTitle>
+          <SwitchButton
+            type="button"
+            role="switch"
+            aria-checked={admin}
+            aria-label={t('admin')}
+            $checked={admin}
+            disabled={busy || isCurrentUser}
+            onClick={() => void onAdminToggle()}
+          >
+            <span className="thumb" />
+          </SwitchButton>
+        </SwitchField>
+        <Input
+          label={t('username')}
+          disabled={busy}
+          value={username}
+          onChange={onUsernameChange}
+          maxLength={USERNAME_MAX_LENGTH}
+        />
         <Input label={t('nickname')} disabled value={user.nickname} />
         <Input
           label={t('join_time')}
           disabled
           value={day(user.joinTimestamp).format('YYYY-MM-DD HH:mm')}
         />
-        <Input
-          label={t('username')}
-          disabled={loading}
-          value={username}
-          onChange={onUsernameChange}
-          maxLength={USERNAME_MAX_LENGTH}
-        />
-        <Input
-          label={`${t('maximum_amount_of_musicbill')} (${t('zero_means_unlimited')})`}
-          disabled={loading}
-          value={musicbillMaxAmount}
-          onChange={onMusicbillMaxAmountChange}
-        />
-        <Input
-          label={`${t('maximum_amount_of_creating_music_per_day')} (${t('zero_means_unlimited')})`}
-          disabled={loading}
-          value={createMusicMaxAmountPerDay}
-          onChange={onCreateMusicMaxAmountPerDayChange}
-        />
-        <Input
-          label={`${t('music_play_record_indate')} (${t('zero_means_unlimited')})`}
-          disabled={loading}
-          value={musicPlayRecordIndate}
-          onChange={onMusicPlayRecordIndateChange}
-        />
         <TextareaBox label={t('remark')}>
           <Textarea
-            disabled={loading}
+            disabled={busy}
             value={remark}
             onChange={(event) => setRemark(event.target.value)}
             rows={5}
@@ -337,54 +335,17 @@ function UserEditContent({
           variant="primary"
           icon={<MdSave />}
           loading={loading}
-          disabled={!changed || !username}
+          disabled={adminUpdating || !changed || !username}
           onClick={onSave}
         >
           {t('save')}
         </Button>
-        {user.admin ? null : (
-          <Button
-            type="button"
-            variant="secondary"
-            icon={<MdAdminPanelSettings />}
-            disabled={loading}
-            onClick={() =>
-              dialog.confirm({
-                title: t('set_as_admin_question'),
-                content: t('set_as_admin_question_content'),
-                confirmText: t('continue'),
-                onConfirm: () =>
-                  void dialog.captcha({
-                    confirmText: t('set_as_admin'),
-                    confirmVariant: 'primary',
-                    onConfirm: async ({ captchaId, captchaValue }) => {
-                      try {
-                        await adminUpdateUserAdmin({
-                          id: user.id,
-                          captchaId,
-                          captchaValue,
-                        });
-                        onSaved();
-                        onClose();
-                      } catch (error) {
-                        logger.error(error, 'Failed to set admin');
-                        notice.error(error.message);
-                        return false;
-                      }
-                    },
-                  }),
-              })
-            }
-          >
-            {t('set_as_admin')}
-          </Button>
-        )}
         {isCurrentUser ? null : (
           <Button
             type="button"
             variant="ghost"
             icon={<MdKey />}
-            disabled={loading}
+            disabled={busy}
             onClick={() =>
               dialog.password({
                 confirmVariant: 'primary',
@@ -409,12 +370,12 @@ function UserEditContent({
             {t('change_password')}
           </Button>
         )}
-        {user.admin ? null : (
+        {admin ? null : (
           <Button
             type="button"
             variant="danger"
             icon={<MdDeleteOutline />}
-            disabled={loading}
+            disabled={busy}
             onClick={() =>
               dialog.confirm({
                 title: t('delete_user_question'),

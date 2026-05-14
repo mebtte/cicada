@@ -14,7 +14,6 @@ export enum ExceptionCode {
   WRONG_ASSET_TYPE = "wrong_asset_type",
   ASSET_NOT_EXISTED = "asset_not_existed",
   SINGER_NOT_EXISTED = "singer_not_existed",
-  OVER_CREATE_MUSIC_TIMES_PER_DAY = "over_create_music_times_per_day",
   INSTRUMENTAL_HAS_NO_LYRIC = "instrumental_has_no_lyric",
   SINGER_ALREADY_EXISTED = "singer_already_existed",
   NO_NEED_TO_UPDATE = "no_need_to_update",

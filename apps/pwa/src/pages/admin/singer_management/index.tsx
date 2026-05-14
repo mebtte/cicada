@@ -142,13 +142,13 @@ const Content = styled.div`
 
 const FloatingCreateButton = styled(Button)`
   position: absolute;
-  right: 24px;
-  bottom: 22px;
+  right: 40px;
+  bottom: 34px;
   z-index: 3;
 
   @media (max-width: 640px) {
-    right: 16px;
-    bottom: 16px;
+    right: 28px;
+    bottom: 28px;
   }
 `;
 
@@ -199,9 +199,10 @@ const EmptyTip = styled.div`
 
 const TableScroll = styled.div`
   height: 100%;
-  padding: 0 20px 18px;
+  padding: 0 20px 92px;
   background: rgb(247 247 247);
   overflow: auto;
+  scroll-padding-bottom: 92px;
   ${autoScrollbar}
 `;
 
@@ -863,7 +864,7 @@ function SingerManagement() {
           )}
           <FloatingCreateButton
             square
-            size="md"
+            size="lg"
             variant="primary"
             icon={<MdOutlineAddBox />}
             aria-label={t('create_singer')}

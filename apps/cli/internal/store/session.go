@@ -66,9 +66,8 @@ func GetActiveAuthSessionByTokenHash(tokenHash string, activeAfter int64) (*Auth
 		&s.UserAgent, &s.CreateIP, &s.LastSeenIP, &s.CreateTimestamp, &s.LastSeenTimestamp,
 		&s.RevokeTimestamp, &s.RevokeReason,
 		&u.ID, &u.Username, &u.Avatar, &u.Nickname, &u.JoinTimestamp,
-		&u.Admin, &u.Remark, &u.MusicbillOrdersJSON, &u.MusicbillMaxAmount,
-		&u.CreateMusicMaxAmountPerDay, &u.LastActiveTimestamp,
-		&u.MusicPlayRecordIndate, &u.Password, &u.TwoFASecret,
+		&u.Admin, &u.Remark, &u.MusicbillOrdersJSON, &u.LastActiveTimestamp,
+		&u.Password, &u.TwoFASecret,
 	)
 	if err != nil {
 		return nil, nil, err
@@ -79,8 +78,7 @@ func GetActiveAuthSessionByTokenHash(tokenHash string, activeAfter int64) (*Auth
 func userColumnsWithPrefix(prefix string) string {
 	cols := []string{
 		"id", "username", "avatar", "nickname", "joinTimestamp", "admin", "remark",
-		"musicbillOrdersJSON", "musicbillMaxAmount", "createMusicMaxAmountPerDay",
-		"lastActiveTimestamp", "musicPlayRecordIndate", "password", "twoFASecret",
+		"musicbillOrdersJSON", "lastActiveTimestamp", "password", "twoFASecret",
 	}
 	out := ""
 	for i, col := range cols {

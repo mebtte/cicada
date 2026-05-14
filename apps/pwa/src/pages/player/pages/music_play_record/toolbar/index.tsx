@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { MdHelpOutline } from 'react-icons/md';
 import dialog from '@/utils/dialog';
-import { useUser } from '@/global_states/server';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
@@ -46,7 +45,6 @@ const Style = styled.div`
 `;
 
 function Toolbar() {
-  const user = useUser()!;
   return (
     <Style>
       <Button
@@ -55,21 +53,7 @@ function Toolbar() {
         size="md"
         onClick={() =>
           dialog.alert({
-            content: (
-              <div>
-                <div>
-                  {user.musicPlayRecordIndate === 0
-                    ? t('music_play_record_indefinite_retention_instruction')
-                    : t(
-                        'music_play_record_days_retention_instruction',
-                        user.musicPlayRecordIndate.toString(),
-                      )}
-                </div>
-                <div>
-                  {t('music_play_record_browser_limit_instruction')}
-                </div>
-              </div>
-            ),
+            content: t('music_play_record_browser_limit_instruction'),
             confirmText: t('got_it'),
           })
         }

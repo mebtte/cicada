@@ -448,7 +448,7 @@ func operations() []operation {
 			}),
 			SuccessSchema:  strSchema("Created music ID.", "music-1"),
 			SuccessExample: "music-1",
-			ErrorCodes:     []string{"wrong_parameter", "asset_not_existed", "singer_not_existed", "over_create_music_times_per_day", "server_error", "not_authorized"},
+			ErrorCodes:     []string{"wrong_parameter", "asset_not_existed", "singer_not_existed", "server_error", "not_authorized"},
 		},
 		{
 			Method:      "PUT",
@@ -649,7 +649,7 @@ func operations() []operation {
 			Method:      "POST",
 			Path:        "/api/musicbill",
 			Summary:     "Create musicbill",
-			Description: "Create a new musicbill for the current user.",
+			Description: "Create a new musicbill for the current user. Each user can have up to 1024 musicbills.",
 			Tags:        []string{"Musicbill"},
 			Auth:        true,
 			RequestBody: jsonRequestBody(
@@ -921,14 +921,14 @@ func operations() []operation {
 		{
 			Method:      "PUT",
 			Path:        "/api/admin/user_admin",
-			Summary:     "Admin update admin flag",
-			Description: "Set the `admin` flag for the specified user.",
+			Summary:     "Admin update user admin role",
+			Description: "Set or revoke the admin role for another user. Admins cannot update their own admin role.",
 			Tags:        []string{"Admin"},
 			Auth:        true,
 			Admin:       true,
 			RequestBody: jsonRequestBody(
 				objSchema(
-					[]string{"id"},
+					[]string{"id", "admin"},
 					map[string]any{
 						"id":    strSchema("User ID.", "10001"),
 						"admin": intSchema("Admin flag, 0 or 1.", 1),
@@ -1467,40 +1467,33 @@ func profileSchema() map[string]any {
 	return objSchema(
 		[]string{
 			"id", "username", "avatar", "nickname", "joinTimestamp", "admin",
-			"musicbillMaxAmount", "createMusicMaxAmountPerDay", "lastActiveTimestamp",
-			"musicPlayRecordIndate", "twoFAEnabled",
+			"lastActiveTimestamp", "twoFAEnabled",
 		},
 		map[string]any{
-			"id":                         strSchema("User ID.", "1"),
-			"username":                   strSchema("Username.", "cicada"),
-			"avatar":                     strSchema("Avatar path.", "/asset/user_avatar/avatar.jpg"),
-			"nickname":                   strSchema("Nickname.", "Cicada"),
-			"joinTimestamp":              intSchema("Join timestamp in milliseconds.", 1710000000000),
-			"admin":                      intSchema("Admin flag.", 1),
-			"musicbillOrdersJSON":        nullableSchema(strSchema("Musicbill order JSON string.", "[\"musicbill-1\"]")),
-			"musicbillMaxAmount":         intSchema("Musicbill limit.", 100),
-			"createMusicMaxAmountPerDay": intSchema("Daily music creation limit.", 10),
-			"lastActiveTimestamp":        intSchema("Last active timestamp in milliseconds.", 1710000000000),
-			"musicPlayRecordIndate":      intSchema("Play record retention setting.", 0),
-			"twoFAEnabled":               boolSchema("Whether 2FA is enabled.", true),
+			"id":                  strSchema("User ID.", "1"),
+			"username":            strSchema("Username.", "cicada"),
+			"avatar":              strSchema("Avatar path.", "/asset/user_avatar/avatar.jpg"),
+			"nickname":            strSchema("Nickname.", "Cicada"),
+			"joinTimestamp":       intSchema("Join timestamp in milliseconds.", 1710000000000),
+			"admin":               intSchema("Admin flag.", 1),
+			"musicbillOrdersJSON": nullableSchema(strSchema("Musicbill order JSON string.", "[\"musicbill-1\"]")),
+			"lastActiveTimestamp": intSchema("Last active timestamp in milliseconds.", 1710000000000),
+			"twoFAEnabled":        boolSchema("Whether 2FA is enabled.", true),
 		},
 	)
 }
 
 func profileExample() map[string]any {
 	return map[string]any{
-		"id":                         "1",
-		"username":                   "cicada",
-		"avatar":                     "/asset/user_avatar/avatar.jpg",
-		"nickname":                   "Cicada",
-		"joinTimestamp":              int64(1710000000000),
-		"admin":                      1,
-		"musicbillOrdersJSON":        "[\"musicbill-1\"]",
-		"musicbillMaxAmount":         100,
-		"createMusicMaxAmountPerDay": 10,
-		"lastActiveTimestamp":        int64(1710000000000),
-		"musicPlayRecordIndate":      0,
-		"twoFAEnabled":               true,
+		"id":                  "1",
+		"username":            "cicada",
+		"avatar":              "/asset/user_avatar/avatar.jpg",
+		"nickname":            "Cicada",
+		"joinTimestamp":       int64(1710000000000),
+		"admin":               1,
+		"musicbillOrdersJSON": "[\"musicbill-1\"]",
+		"lastActiveTimestamp": int64(1710000000000),
+		"twoFAEnabled":        true,
 	}
 }
 
@@ -2181,7 +2174,7 @@ func adminUpdateUserRequestSchema() map[string]any {
 		[]string{"id", "key"},
 		map[string]any{
 			"id":    strSchema("User ID.", "10001"),
-			"key":   strEnumSchema([]string{"password", "remark", "musicbillMaxAmount", "createMusicMaxAmountPerDay", "musicPlayRecordIndate"}, "remark"),
+			"key":   strEnumSchema([]string{"username", "password", "remark"}, "remark"),
 			"value": flexibleValueSchema(),
 		},
 	)
@@ -2191,36 +2184,30 @@ func adminUserSchema() map[string]any {
 	return objSchema(
 		[]string{
 			"id", "username", "nickname", "avatar", "joinTimestamp", "admin", "remark",
-			"musicbillMaxAmount", "createMusicMaxAmountPerDay", "lastActiveTimestamp", "musicPlayRecordIndate",
+			"lastActiveTimestamp",
 		},
 		map[string]any{
-			"id":                         strSchema("User ID.", "10001"),
-			"username":                   strSchema("Username.", "alice"),
-			"nickname":                   strSchema("Nickname.", "Alice"),
-			"avatar":                     strSchema("Avatar path.", "/asset/user_avatar/avatar.jpg"),
-			"joinTimestamp":              intSchema("Join timestamp in milliseconds.", 1710000000000),
-			"admin":                      intSchema("Admin flag.", 0),
-			"remark":                     strSchema("Remark.", "VIP user"),
-			"musicbillMaxAmount":         intSchema("Musicbill limit.", 100),
-			"createMusicMaxAmountPerDay": intSchema("Daily music creation limit.", 10),
-			"lastActiveTimestamp":        intSchema("Last active timestamp in milliseconds.", 1710000000000),
-			"musicPlayRecordIndate":      intSchema("Play record retention setting.", 0),
+			"id":                  strSchema("User ID.", "10001"),
+			"username":            strSchema("Username.", "alice"),
+			"nickname":            strSchema("Nickname.", "Alice"),
+			"avatar":              strSchema("Avatar path.", "/asset/user_avatar/avatar.jpg"),
+			"joinTimestamp":       intSchema("Join timestamp in milliseconds.", 1710000000000),
+			"admin":               intSchema("Admin flag.", 0),
+			"remark":              strSchema("Remark.", "VIP user"),
+			"lastActiveTimestamp": intSchema("Last active timestamp in milliseconds.", 1710000000000),
 		},
 	)
 }
 
 func adminUserExample() map[string]any {
 	return map[string]any{
-		"id":                         "10001",
-		"username":                   "alice",
-		"nickname":                   "Alice",
-		"avatar":                     "/asset/user_avatar/avatar.jpg",
-		"joinTimestamp":              int64(1710000000000),
-		"admin":                      0,
-		"remark":                     "VIP user",
-		"musicbillMaxAmount":         100,
-		"createMusicMaxAmountPerDay": 10,
-		"lastActiveTimestamp":        int64(1710000000000),
-		"musicPlayRecordIndate":      0,
+		"id":                  "10001",
+		"username":            "alice",
+		"nickname":            "Alice",
+		"avatar":              "/asset/user_avatar/avatar.jpg",
+		"joinTimestamp":       int64(1710000000000),
+		"admin":               0,
+		"remark":              "VIP user",
+		"lastActiveTimestamp": int64(1710000000000),
 	}
 }

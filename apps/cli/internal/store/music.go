@@ -221,12 +221,6 @@ func SingersExist(ids []string) (bool, error) {
 	return count == len(ids), err
 }
 
-func CountTodayMusicByUser(userID string, dayStartMs int64) (int, error) {
-	var count int
-	err := DB().QueryRow(`SELECT COUNT(1) FROM music WHERE createUserId=? AND createTimestamp>?`, userID, dayStartMs).Scan(&count)
-	return count, err
-}
-
 func GetAllMusic() ([]Music, error) {
 	rows, err := DB().Query(`SELECT id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year FROM music ORDER BY createTimestamp ASC`)
 	if err != nil {

@@ -119,10 +119,6 @@ export async function reloadUser() {
                         musicbillOrders: profile.musicbillOrdersJSON
                           ? JSON.parse(profile.musicbillOrdersJSON)
                           : [],
-                        musicbillMaxAmount: profile.musicbillMaxAmount,
-                        createMusicMaxAmountPerDay:
-                          profile.createMusicMaxAmountPerDay,
-                        musicPlayRecordIndate: profile.musicPlayRecordIndate,
                         twoFAEnabled: profile.twoFAEnabled,
                       }
                     : u,
