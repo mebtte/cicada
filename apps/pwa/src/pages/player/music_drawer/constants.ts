@@ -31,7 +31,8 @@ export interface MusicDetail extends Music {
   singers: SingerDetail[];
   year: number | null;
   musicbillCount: number;
-
-  size: number;
-  duration: number;
+  assetSize: number;
+  assetDurationMs: number;
+  assetCodec: string;
+  assetBitRate: number;
 }

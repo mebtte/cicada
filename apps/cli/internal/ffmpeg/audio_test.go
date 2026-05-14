@@ -38,6 +38,15 @@ func TestAudioStreamInfoLossless(t *testing.T) {
 	}
 }
 
+func TestParseDurationMs(t *testing.T) {
+	if got := parseDurationMs("123.456"); got != 123456 {
+		t.Fatalf("parseDurationMs() = %d, want 123456", got)
+	}
+	if got := parseDurationMs("bad"); got != 0 {
+		t.Fatalf("parseDurationMs(bad) = %d, want 0", got)
+	}
+}
+
 func TestRewriteAudioMetadataArgsIncludesLyrics(t *testing.T) {
 	lyrics := "[00:00.00]hello\n[00:01.00]world"
 	args := rewriteAudioMetadataArgs("in.mp3", "out.mp3", AudioMetadata{

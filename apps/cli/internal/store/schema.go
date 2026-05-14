@@ -89,6 +89,10 @@ var tables = []string{
 		aliases TEXT NOT NULL DEFAULT '',
 		cover TEXT NOT NULL DEFAULT '',
 		asset TEXT NOT NULL,
+		assetSize INTEGER NOT NULL DEFAULT 0,
+		assetDurationMs INTEGER NOT NULL DEFAULT 0,
+		assetCodec TEXT NOT NULL DEFAULT '',
+		assetBitRate INTEGER NOT NULL DEFAULT 0,
 		heat INTEGER NOT NULL DEFAULT 0,
 		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL

@@ -19,6 +19,10 @@ type Response = {
     aliases: string[];
     cover: string;
     asset: string;
+    assetSize: number;
+    assetDurationMs: number;
+    assetCodec: string;
+    assetBitRate: number;
     heat: number;
     year: number | null;
     singers: {

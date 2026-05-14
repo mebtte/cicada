@@ -17,6 +17,7 @@ import { CSS_VAR } from '@/components/theme';
 import {
   MdClose,
   MdDashboard,
+  MdHeadphones,
   MdLibraryMusic,
   MdMenu,
   MdPeopleOutline,
@@ -349,6 +350,50 @@ const AvatarButton = styled.div`
   }
 `;
 
+const PlayerLink = styled.button`
+  width: ${AVATAR_SIZE}px;
+  height: ${AVATAR_SIZE + 5}px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 150ms ease-out;
+
+  &:active {
+    transform: translateY(3px);
+    transition: transform 60ms ease-in;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
+    outline-offset: 3px;
+    border-radius: 14px;
+  }
+`;
+
+const PlayerLinkBox = styled.span`
+  width: ${AVATAR_SIZE}px;
+  height: ${AVATAR_SIZE}px;
+  border: 2px solid ${NEUTRAL_SHADOW};
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 3px 0 ${NEUTRAL_SHADOW};
+  color: ${PRIMARY};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ${PlayerLink}:hover & {
+    color: ${PRIMARY};
+    border-color: ${PRIMARY};
+    box-shadow: 0 3px 0 ${PRIMARY_SHADOW};
+  }
+`;
+
 const AvatarFallback = styled.div<{ $active?: boolean; $size?: number }>`
   width: ${({ $size }) => $size ?? AVATAR_SIZE}px;
   height: ${({ $size }) => $size ?? AVATAR_SIZE}px;
@@ -554,6 +599,22 @@ function AdminPage() {
             <HeaderTitleText>{capitalize(t(currentMenuItem.label))}</HeaderTitleText>
           </HeaderTitle>
           <HeaderActions>
+            <PlayerLink
+              type="button"
+              onClick={() =>
+                window.open(
+                  `#${ROOT_PATH.PLAYER}`,
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+              }
+              title={capitalize(t('player'))}
+              aria-label={capitalize(t('player'))}
+            >
+              <PlayerLinkBox>
+                <MdHeadphones size={20} />
+              </PlayerLinkBox>
+            </PlayerLink>
             <UserMenuRoot ref={userMenuRef}>
               <AvatarButton
                 role="button"

@@ -168,6 +168,10 @@ func GetMusic(c *gin.Context) {
 		"aliases":         splitAliases(m.Aliases),
 		"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
 		"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+		"assetSize":       m.AssetSize,
+		"assetDurationMs": m.AssetDurationMs,
+		"assetCodec":      m.AssetCodec,
+		"assetBitRate":    m.AssetBitRate,
 		"heat":            m.Heat,
 		"createTimestamp": m.CreateTimestamp,
 		"year":            nullInt64(m.Year),
@@ -217,6 +221,7 @@ func CreateMusic(c *gin.Context) {
 	}
 	store.LinkMusicSingers(id, singerIDs)
 	syncMusicMetadataToAsset(id)
+	syncMusicAssetInfo(id)
 	api.OK(c, id)
 }
 
@@ -426,6 +431,7 @@ func UpdateMusic(c *gin.Context) {
 
 	if syncMetadata {
 		syncMusicMetadataToAsset(body.ID)
+		syncMusicAssetInfo(body.ID)
 	}
 	api.OK(c, nil)
 }
@@ -639,6 +645,10 @@ func musicListResponse(musics []store.Music, total int) gin.H {
 			"aliases":         splitAliases(m.Aliases),
 			"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
 			"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"assetSize":       m.AssetSize,
+			"assetDurationMs": m.AssetDurationMs,
+			"assetCodec":      m.AssetCodec,
+			"assetBitRate":    m.AssetBitRate,
 			"heat":            m.Heat,
 			"createTimestamp": m.CreateTimestamp,
 			"singers":         singerItems(bySong[m.ID]),
@@ -690,6 +700,10 @@ func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
 			"aliases":         splitAliases(m.Aliases),
 			"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
 			"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"assetSize":       m.AssetSize,
+			"assetDurationMs": m.AssetDurationMs,
+			"assetCodec":      m.AssetCodec,
+			"assetBitRate":    m.AssetBitRate,
 			"heat":            m.Heat,
 			"year":            nullInt64(m.Year),
 			"createTimestamp": m.CreateTimestamp,

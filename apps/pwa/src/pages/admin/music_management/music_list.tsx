@@ -10,6 +10,7 @@ import {
 import styled from 'styled-components';
 import {
   MdMusicNote,
+  MdOpenInNew,
   MdOutlineEdit,
   MdSearch,
 } from 'react-icons/md';
@@ -192,7 +193,7 @@ const TableScroll = styled.div`
 
 const Table = styled.table`
   width: 100%;
-  min-width: 1240px;
+  min-width: 1460px;
   border-collapse: separate;
   border-spacing: 0 ${TABLE_ROW_GAP}px;
   font-family: ${FONT};
@@ -438,6 +439,29 @@ const UserAccount = styled.div`
   letter-spacing: 0;
 `;
 
+const FileInfoBox = styled.div`
+  min-width: 170px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: ${FONT};
+  font-weight: 800;
+  line-height: 1.4;
+  color: rgb(75 75 75);
+  white-space: nowrap;
+`;
+
+const FileInfoText = styled.div`
+  min-width: 0;
+  flex: 1;
+`;
+
+const FileInfoSecondary = styled.div`
+  margin-top: 2px;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  font-size: 12px;
+`;
+
 const ActionButton = styled.button`
   width: 34px;
   height: 34px;
@@ -578,6 +602,67 @@ const formatCreateUser = (music: MusicItem) => {
     </>
   );
 };
+
+const formatDurationMs = (durationMs: number) => {
+  const totalSeconds = Math.round(durationMs / 1000);
+  const minute = Math.floor(totalSeconds / 60);
+  const second = totalSeconds % 60;
+  return `${minute > 9 ? minute : `0${minute}`}:${
+    second > 9 ? second : `0${second}`
+  }`;
+};
+
+const formatFileSize = (size: number) => {
+  if (size < 1024) {
+    return `${size}B`;
+  }
+  if (size < 1024 * 1024) {
+    return `${Math.round(size / 1024)}KB`;
+  }
+  return `${(size / 1024 / 1024).toFixed(2)}MB`;
+};
+
+const formatBitRate = (bitRate: number) => `${Math.round(bitRate / 1000)}kbps`;
+
+function MusicFileInfo({ music }: { music: MusicItem }) {
+  const primary = [
+    music.assetDurationMs ? formatDurationMs(music.assetDurationMs) : '',
+    music.assetSize ? formatFileSize(music.assetSize) : '',
+  ].filter(Boolean);
+  const secondary = [
+    music.assetCodec ? music.assetCodec.toUpperCase() : '',
+    music.assetBitRate ? formatBitRate(music.assetBitRate) : '',
+  ].filter(Boolean);
+
+  const hasInfo = primary.length || secondary.length;
+
+  return (
+    <FileInfoBox>
+      <ActionButton
+        type="button"
+        title={t('open_original_music_file')}
+        aria-label={t('open_original_music_file')}
+        onClick={() =>
+          window.open(music.asset, '_blank', 'noopener,noreferrer')
+        }
+      >
+        <MdOpenInNew size={18} />
+      </ActionButton>
+      <FileInfoText>
+        {hasInfo ? (
+          <>
+            {primary.length ? <div>{primary.join(' · ')}</div> : null}
+            {secondary.length ? (
+              <FileInfoSecondary>{secondary.join(' · ')}</FileInfoSecondary>
+            ) : null}
+          </>
+        ) : (
+          <Muted>{t('unknown')}</Muted>
+        )}
+      </FileInfoText>
+    </FileInfoBox>
+  );
+}
 
 function LazyCover({
   src,
@@ -828,6 +913,7 @@ function MusicList({
                   <Th>{capitalize(t('alias'))}</Th>
                   <Th>{capitalize(t('singer'))}</Th>
                   <Th>{capitalize(t('music_type_short'))}</Th>
+                  <Th>{capitalize(t('file_info'))}</Th>
                   <Th>{capitalize(t('year_of_issue'))}</Th>
                   <Th>{capitalize(t('creator'))}</Th>
                   <Th>{capitalize(t('create_time'))}</Th>
@@ -897,6 +983,9 @@ function MusicList({
                       <TypeTag>
                         {MUSIC_TYPE_MAP[music.type]?.label ?? t('unknown')}
                       </TypeTag>
+                    </Td>
+                    <Td>
+                      <MusicFileInfo music={music} />
                     </Td>
                     <Td>
                       {music.year === null ? (
