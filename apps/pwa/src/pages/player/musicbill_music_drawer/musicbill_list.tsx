@@ -11,6 +11,7 @@ import Context from '../context';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { FLOATING_GAP } from './constants';
 import Musicbill from './musicbill';
 
 const reloadMusicbillList = () =>
@@ -18,7 +19,7 @@ const reloadMusicbillList = () =>
     silence: false,
   });
 const Style = styled.div`
-  padding: 10px 0 max(env(safe-area-inset-bottom, 0) + 10px) 0;
+  padding: ${FLOATING_GAP}px 0 max(env(safe-area-inset-bottom, 0) + 80px) 0;
 `;
 const StatusContainer = styled.div`
   ${flexCenter}
