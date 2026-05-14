@@ -32,9 +32,6 @@ function mockUser(id: string, nickname: string): User {
     joinTimestamp: 0,
     admin: false,
     musicbillOrders: [],
-    musicbillMaxAmount: 100,
-    createMusicMaxAmountPerDay: 10,
-    musicPlayRecordIndate: 30,
     twoFAEnabled: false,
     token: 'mock-token',
   };

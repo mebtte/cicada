@@ -20,6 +20,7 @@ import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
 import MusicbillMusicDrawer from './musicbill_music_drawer';
 import SortMusicbillDrawer from './sort_musicbilll_drawer';
 import MusicbillSharedUserDrawer from './musicbill_shared_user_drawer';
+import SharedMusicbillInvitationDrawer from './pages/shared_musicbill_invitation';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
 import SingerDrawer from './singer_drawer';
@@ -158,6 +159,7 @@ function Wrapper() {
       <MusicbillDrawer />
       <AuthorizedDeviceDrawer />
       <MusicbillSharedUserDrawer />
+      <SharedMusicbillInvitationDrawer />
       <SingerModifyRecordDrawer />
 
       <PlaylistAddAnimation />

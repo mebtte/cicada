@@ -62,6 +62,44 @@ func SearchMusicByLyric(c *gin.Context) {
 	api.OK(c, resp)
 }
 
+func AdminGetMusicList(c *gin.Context) {
+	keyword := c.Query("keyword")
+	filterKey := c.Query("filterKey")
+	sortBy := c.Query("sortBy")
+	sortOrder := c.Query("sortOrder")
+	page := queryInt(c, "page", 1)
+	pageSize := queryInt(c, "pageSize", 20)
+	if page < 1 || pageSize < 1 || pageSize > 100 {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	switch filterKey {
+	case "", "all", "id", "name", "alias", "singer":
+	default:
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	switch sortBy {
+	case "", "createTimestamp", "heat":
+	default:
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	switch sortOrder {
+	case "", "desc", "asc":
+	default:
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+
+	total, musics, err := store.GetAdminMusicList(keyword, filterKey, sortBy, sortOrder, page, pageSize)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	api.OK(c, adminMusicListResponse(musics, total))
+}
+
 // ── Get single music ──────────────────────────────────────────────────────────
 
 func GetMusic(c *gin.Context) {
@@ -144,6 +182,10 @@ func GetMusic(c *gin.Context) {
 		"aliases":         splitAliases(m.Aliases),
 		"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
 		"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+		"assetSize":       m.AssetSize,
+		"assetDurationMs": m.AssetDurationMs,
+		"assetCodec":      m.AssetCodec,
+		"assetBitRate":    m.AssetBitRate,
 		"heat":            m.Heat,
 		"createTimestamp": m.CreateTimestamp,
 		"year":            nullInt64(m.Year),
@@ -164,8 +206,12 @@ type createMusicBody struct {
 	Asset     string `json:"asset" binding:"required"`
 }
 
-func CreateMusic(c *gin.Context) {
+func AdminCreateMusic(c *gin.Context) {
 	u := middleware.GetUser(c)
+	if u == nil || u.Admin != 1 {
+		api.Fail(c, apperr.NotAuthorizedForAdmin)
+		return
+	}
 	var body createMusicBody
 	if err := c.ShouldBindJSON(&body); err != nil || len(body.Name) > 50 || strings.TrimSpace(body.Name) != body.Name {
 		api.Fail(c, apperr.WrongParameter)
@@ -186,13 +232,6 @@ func CreateMusic(c *gin.Context) {
 		api.Fail(c, apperr.SingerNotExisted)
 		return
 	}
-	if u.CreateMusicMaxAmountPerDay != 0 {
-		count, _ := store.CountTodayMusicByUser(u.ID, store.TodayStartMs())
-		if count >= u.CreateMusicMaxAmountPerDay {
-			api.Fail(c, apperr.OverCreateMusicTimesPerDay)
-			return
-		}
-	}
 	id, err := store.CreateMusic(body.Name, musicType, u.ID, body.Asset)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
@@ -200,6 +239,7 @@ func CreateMusic(c *gin.Context) {
 	}
 	store.LinkMusicSingers(id, singerIDs)
 	syncMusicMetadataToAsset(id)
+	syncMusicAssetInfo(id)
 	api.OK(c, id)
 }
 
@@ -216,15 +256,19 @@ const (
 	musicMaxLyricLength = 16384
 )
 
-func UpdateMusic(c *gin.Context) {
+func AdminUpdateMusic(c *gin.Context) {
 	u := middleware.GetUser(c)
+	if u == nil || u.Admin != 1 {
+		api.Fail(c, apperr.NotAuthorizedForAdmin)
+		return
+	}
 	var body updateMusicBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
 	m, err := store.GetMusicByID(body.ID)
-	if err != nil || (u.Admin == 0 && m.CreateUserID != u.ID) {
+	if err != nil {
 		api.Fail(c, apperr.MusicNotExisted)
 		return
 	}
@@ -409,14 +453,19 @@ func UpdateMusic(c *gin.Context) {
 
 	if syncMetadata {
 		syncMusicMetadataToAsset(body.ID)
+		syncMusicAssetInfo(body.ID)
 	}
 	api.OK(c, nil)
 }
 
 // ── Delete music ──────────────────────────────────────────────────────────────
 
-func DeleteMusic(c *gin.Context) {
+func AdminDeleteMusic(c *gin.Context) {
 	u := middleware.GetUser(c)
+	if u == nil || u.Admin != 1 {
+		api.Fail(c, apperr.NotAuthorizedForAdmin)
+		return
+	}
 	id := c.Query("id")
 	captchaID := c.Query("captchaId")
 	captchaValue := c.Query("captchaValue")
@@ -430,7 +479,7 @@ func DeleteMusic(c *gin.Context) {
 		return
 	}
 	m, err := store.GetMusicByID(id)
-	if err != nil || (u.Admin == 0 && m.CreateUserID != u.ID) {
+	if err != nil {
 		api.Fail(c, apperr.MusicNotExisted)
 		return
 	}
@@ -622,6 +671,10 @@ func musicListResponse(musics []store.Music, total int) gin.H {
 			"aliases":         splitAliases(m.Aliases),
 			"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
 			"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"assetSize":       m.AssetSize,
+			"assetDurationMs": m.AssetDurationMs,
+			"assetCodec":      m.AssetCodec,
+			"assetBitRate":    m.AssetBitRate,
 			"heat":            m.Heat,
 			"createTimestamp": m.CreateTimestamp,
 			"singers":         singerItems(bySong[m.ID]),
@@ -651,6 +704,44 @@ func musicListWithLyricsResponse(musics []store.Music, total int) (gin.H, error)
 		list[i]["lyrics"] = lyricItems
 	}
 	return resp, nil
+}
+
+func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
+	if len(musics) == 0 {
+		return gin.H{"total": total, "musicList": []any{}}
+	}
+	ids := make([]string, len(musics))
+	for i, m := range musics {
+		ids[i] = m.ID
+	}
+	singers, _ := store.GetSingersInMusicIDs(ids)
+	bySong := groupSingersByMusic(singers)
+
+	list := make([]gin.H, len(musics))
+	for i, m := range musics {
+		list[i] = gin.H{
+			"id":              m.ID,
+			"type":            m.Type,
+			"name":            m.Name,
+			"aliases":         splitAliases(m.Aliases),
+			"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+			"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"assetSize":       m.AssetSize,
+			"assetDurationMs": m.AssetDurationMs,
+			"assetCodec":      m.AssetCodec,
+			"assetBitRate":    m.AssetBitRate,
+			"heat":            m.Heat,
+			"year":            nullInt64(m.Year),
+			"createTimestamp": m.CreateTimestamp,
+			"singers":         singerItems(bySong[m.ID]),
+			"createUser": gin.H{
+				"id":       m.CreateUserID,
+				"username": m.CreateUserUsername,
+				"nickname": m.CreateUserNickname,
+			},
+		}
+	}
+	return gin.H{"total": total, "musicList": list}
 }
 
 func groupSingersByMusic(singers []store.SingerInMusic) map[string][]store.SingerInMusic {

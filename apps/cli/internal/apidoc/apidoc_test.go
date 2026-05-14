@@ -27,6 +27,7 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 		"/base/login",
 		"/api/profile",
 		"/api/music",
+		"/api/admin/music",
 		"/api/musicbill",
 	}
 
@@ -46,6 +47,18 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 	}
 	if _, ok := profileGet["security"].([]any); !ok {
 		t.Fatalf("expected authenticated operation to include security metadata")
+	}
+
+	adminMusicPath, ok := paths["/api/admin/music"].(map[string]any)
+	if !ok {
+		t.Fatalf("admin music path missing or invalid: %T", paths["/api/admin/music"])
+	}
+	adminMusicPost, ok := adminMusicPath["post"].(map[string]any)
+	if !ok {
+		t.Fatalf("admin music post operation missing or invalid: %T", adminMusicPath["post"])
+	}
+	if adminMusicPost["x-cicada-admin"] != true {
+		t.Fatalf("expected admin music write operation to require admin")
 	}
 
 	loginPath, ok := paths["/base/login"].(map[string]any)

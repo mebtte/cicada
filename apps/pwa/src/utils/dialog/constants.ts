@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 
 export const ID_LENGTH = 6;
 export const DEFAULT_CANCEL_VARIANT = 'ghost';
+export const DEFAULT_CONFIRM_VARIANT = 'ghost';
 
 export enum DialogType {
   ALERT,

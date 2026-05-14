@@ -35,7 +35,6 @@ func Start() {
 		{"remove_outdated_db", removeOutdatedDB},
 		{"remove_no_music_singer", removeNoMusicSinger},
 		{"remove_unlinked_asset", removeUnlinkedAsset},
-		{"remove_outdated_play_record", removeOutdatedPlayRecord},
 		{"decrease_music_heat", decreaseMusicHeat},
 		{"remove_outdated_shared_invitation", removeOutdatedSharedInvitation},
 		{"remove_outdated_auth_session", removeOutdatedAuthSession},
@@ -265,54 +264,6 @@ func removeUnlinkedAsset() (schedulerJobResult, error) {
 	metrics["removed_files"] = totalRemoved
 	return schedulerJobResult{
 		Summary: fmt.Sprintf("removed %d unlinked asset files", totalRemoved),
-		Metrics: metrics,
-	}, errors.Join(errs...)
-}
-
-// removeOutdatedPlayRecord removes play records older than the user's indate setting.
-func removeOutdatedPlayRecord() (schedulerJobResult, error) {
-	rows, err := store.DB().Query(
-		`SELECT id,musicPlayRecordIndate FROM user WHERE musicPlayRecordIndate != 0`,
-	)
-	if err != nil {
-		return schedulerJobResult{Summary: "failed to find users with play-record retention"}, err
-	}
-	defer rows.Close()
-
-	type userRow struct {
-		ID     string
-		Indate int64 // days
-	}
-	var users []userRow
-	for rows.Next() {
-		var u userRow
-		if err := rows.Scan(&u.ID, &u.Indate); err != nil {
-			return schedulerJobResult{Summary: "failed to scan users with play-record retention"}, err
-		}
-		users = append(users, u)
-	}
-	if err := rows.Err(); err != nil {
-		return schedulerJobResult{Summary: "failed to iterate users with play-record retention"}, err
-	}
-
-	metrics := map[string]int64{"users_checked": int64(len(users))}
-	now := time.Now().UnixMilli()
-	var errs []error
-	var totalDeleted int64
-	for _, u := range users {
-		threshold := now - u.Indate*24*60*60*1000
-		deleted, err := execRowsAffected(
-			`DELETE FROM music_play_record WHERE userId=? AND timestamp <= ?`,
-			u.ID, threshold,
-		)
-		totalDeleted += deleted
-		if err != nil {
-			errs = append(errs, fmt.Errorf("delete outdated play records for user %s: %w", u.ID, err))
-		}
-	}
-	metrics["deleted_play_records"] = totalDeleted
-	return schedulerJobResult{
-		Summary: fmt.Sprintf("deleted %d outdated play records", totalDeleted),
 		Metrics: metrics,
 	}, errors.Join(errs...)
 }

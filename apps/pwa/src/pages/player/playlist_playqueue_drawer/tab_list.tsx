@@ -2,7 +2,7 @@ import { DuolingoTabList } from '@/components';
 import { t } from '@/i18n';
 import { useContext } from 'react';
 import styled from 'styled-components';
-import { Tab, TAB_LIST_HEIGHT } from './constants';
+import { Tab } from './constants';
 import context from '../context';
 
 const TAB_MAP_LABEL: Record<Tab, string> = {
@@ -12,20 +12,19 @@ const TAB_MAP_LABEL: Record<Tab, string> = {
 
 const Toolbar = styled.div`
   position: absolute;
-  left: 0;
-  bottom: 0;
+  left: 32px;
+  right: 32px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0));
   z-index: 2;
-  width: 100%;
-  height: calc(${TAB_LIST_HEIGHT}px + env(safe-area-inset-bottom, 0));
 
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 
-  padding: 10px 16px calc(env(safe-area-inset-bottom, 0) + 12px);
-  background: rgb(255 255 255 / 0.94);
-  border-top: 2px solid rgb(232 232 232);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
 `;
 
 function Wrapper({

@@ -1,11 +1,12 @@
 import Cover, { Shape } from '@/components/cover';
 import { HTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
+import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '../theme';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
-const NEUTRAL_SHADOW = 'rgb(180 180 180)';
+const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 const FACE = '#ffffff';
 
 function getBorderWidth(size: number | string) {

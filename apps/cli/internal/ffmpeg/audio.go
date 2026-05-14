@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os/exec"
+	"strconv"
 	"strings"
 )
 
@@ -22,8 +23,9 @@ type AudioMetadata struct {
 }
 
 type AudioStreamInfo struct {
-	CodecName string
-	BitRate   int64
+	CodecName  string
+	BitRate    int64
+	DurationMs int64
 }
 
 func HasAudioStream(ctx context.Context, path string) (bool, error) {
@@ -62,7 +64,7 @@ func ProbeAudioStream(ctx context.Context, path string) (AudioStreamInfo, error)
 		paths.FFprobe,
 		"-v", "error",
 		"-select_streams", "a:0",
-		"-show_entries", "stream=codec_name,bit_rate:format=bit_rate",
+		"-show_entries", "stream=codec_name,bit_rate,duration:format=bit_rate,duration",
 		"-of", "json",
 		path,
 	).Output()
@@ -77,9 +79,11 @@ func ProbeAudioStream(ctx context.Context, path string) (AudioStreamInfo, error)
 		Streams []struct {
 			CodecName string `json:"codec_name"`
 			BitRate   string `json:"bit_rate"`
+			Duration  string `json:"duration"`
 		} `json:"streams"`
 		Format struct {
-			BitRate string `json:"bit_rate"`
+			BitRate  string `json:"bit_rate"`
+			Duration string `json:"duration"`
 		} `json:"format"`
 	}
 	if err := json.Unmarshal(output, &result); err != nil {
@@ -93,9 +97,14 @@ func ProbeAudioStream(ctx context.Context, path string) (AudioStreamInfo, error)
 	if bitRate == 0 {
 		bitRate = parseBitRate(result.Format.BitRate)
 	}
+	durationMs := parseDurationMs(result.Streams[0].Duration)
+	if durationMs == 0 {
+		durationMs = parseDurationMs(result.Format.Duration)
+	}
 	return AudioStreamInfo{
-		CodecName: strings.ToLower(result.Streams[0].CodecName),
-		BitRate:   bitRate,
+		CodecName:  strings.ToLower(result.Streams[0].CodecName),
+		BitRate:    bitRate,
+		DurationMs: durationMs,
 	}, nil
 }
 
@@ -117,6 +126,14 @@ func parseBitRate(value string) int64 {
 		return 0
 	}
 	return n
+}
+
+func parseDurationMs(value string) int64 {
+	seconds, err := strconv.ParseFloat(strings.TrimSpace(value), 64)
+	if err != nil || seconds <= 0 {
+		return 0
+	}
+	return int64(seconds*1000 + 0.5)
 }
 
 func TranscodeAudio(ctx context.Context, inputPath, outputPath string, profile AudioTranscodeProfile) error {

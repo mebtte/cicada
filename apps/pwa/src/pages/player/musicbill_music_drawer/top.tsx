@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { CSSVariable } from '@/global_style';
-import Button from '@/components/button';
-import { MdOutlineAddBox } from 'react-icons/md';
+import { CSS_VAR } from '@/components/theme';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { Music } from '../constants';
 import MusicInfo from '../components/music_info';
-import { openCreateMusicbillDialog } from '../utils';
-import { t } from '@/i18n';
+import { FLOATING_GAP } from './constants';
+
+const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
 const Style = styled.div`
   z-index: 1;
@@ -15,30 +16,79 @@ const Style = styled.div`
   position: sticky;
   top: 0;
 
-  backdrop-filter: blur(5px);
-  background-color: rgb(255 255 255 / 0.5);
-
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  pointer-events: none;
 
   > .music-info {
-    margin: 0 10px;
-  }
+    margin: 0 12px;
 
-  > .header {
-    margin: 0 20px;
+    pointer-events: auto;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgb(255 255 255 / 0.96);
+    border: 2px solid ${CSSVariable.COLOR_BORDER};
+    border-radius: 14px;
+    box-shadow: 0 4px 0 ${NEUTRAL_SHADOW};
+    transition:
+      transform 150ms ease-out,
+      box-shadow 150ms ease-out,
+      border-color 150ms ease-out,
+      filter 120ms ease-out;
 
-    display: flex;
-    align-items: center;
+    > :first-child {
+      flex: 0 0 auto;
+      box-sizing: border-box;
+      overflow: hidden;
 
-    > .title {
-      flex: 1;
-      min-width: 0;
+      background: #fff;
+      border: 2px solid ${CSSVariable.COLOR_BORDER};
+      border-radius: 10px;
+      box-shadow: 0 3px 0 ${NEUTRAL_SHADOW};
+    }
 
-      font-size: 18px;
-      font-weight: bold;
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    > .info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    > .info > .name {
+      font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1.2;
+      color: rgb(50 50 50);
+    }
+
+    > .info > .singers {
+      font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 1.25;
+      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+
+      .name {
+        font-weight: 800;
+      }
+    }
+
+    &:hover {
+      background: #fff;
+      border-color: ${PRIMARY};
+      filter: brightness(1.03);
+    }
+
+    &:active {
+      transform: translateY(4px);
+      box-shadow: none;
+      transition:
+        transform 60ms ease-in,
+        box-shadow 60ms ease-in,
+        filter 60ms ease-in;
     }
   }
 `;
@@ -49,7 +99,7 @@ function Top({ music }: { music: Music }) {
   return (
     <Style
       style={{
-        padding: `${height}px 0 10px 0`,
+        padding: `${height + FLOATING_GAP}px 0 0 0`,
       }}
     >
       <MusicInfo
@@ -59,17 +109,6 @@ function Top({ music }: { music: Music }) {
         musicCover={getResizedImage({ url: music.cover, size: 80 })}
         singers={music.singers}
       />
-      <div className="header">
-        <div className="title">{t('add_to_musicbill')}</div>
-        <Button
-          square
-          variant="plain"
-          size="sm"
-          onClick={openCreateMusicbillDialog}
-        >
-          <MdOutlineAddBox />
-        </Button>
-      </div>
     </Style>
   );
 }

@@ -19,7 +19,7 @@ const Style = styled.div`
     font-weight: 900;
     line-height: 1.35;
     letter-spacing: 0;
-    ${ellipsis}
+    overflow-wrap: break-word;
 
     >.content {
       cursor: pointer;

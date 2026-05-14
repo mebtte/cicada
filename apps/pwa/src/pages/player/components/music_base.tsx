@@ -36,7 +36,7 @@ const Card = styled.div<{ active: boolean }>`
     ${({ active }) => (active ? PRIMARY : CSSVariable.COLOR_BORDER)};
   border-radius: 16px;
   box-shadow: 0 4px 0 ${({ active }) =>
-    active ? PRIMARY_SHADOW : 'rgb(232 232 232)'};
+    active ? PRIMARY_SHADOW : CSSVariable.COLOR_SURFACE_SHADOW};
   transition:
     transform 150ms ease-out,
     box-shadow 150ms ease-out,
@@ -107,7 +107,7 @@ const Card = styled.div<{ active: boolean }>`
           background: #fff;
           border-color: rgb(210 210 210);
           border-radius: 10px;
-          box-shadow: 0 3px 0 rgb(185 185 185);
+          box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
           transition:
             transform 150ms ease-out,
             box-shadow 150ms ease-out,

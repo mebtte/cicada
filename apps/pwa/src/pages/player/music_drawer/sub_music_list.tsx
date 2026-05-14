@@ -38,12 +38,35 @@ const Style = styled.div`
         filter 120ms ease-out;
 
       &:hover {
+        background: #fff;
         filter: brightness(1.03);
       }
 
       &:active {
+        background: #fff;
         transform: translateY(4px);
         box-shadow: none;
+      }
+
+      > div:first-child {
+        box-sizing: border-box;
+        background: #fff;
+        border: 2px solid rgb(229 229 229);
+        border-radius: 10px;
+        box-shadow: 0 2px 0 rgb(229 229 229);
+      }
+
+      > .info {
+        > .name {
+          font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+          font-weight: 800;
+          color: rgb(55 55 55);
+        }
+
+        > .singers {
+          font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+          font-weight: 700;
+        }
       }
     }
   }

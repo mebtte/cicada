@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { CSSVariable } from '@/global_style';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -27,7 +28,7 @@ const WithLabel = styled.div`
     font-family: ${FONT};
     font-size: 12px;
     font-weight: 800;
-    color: rgb(180 180 180);
+    color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     text-transform: uppercase;
     letter-spacing: 0.06em;
     white-space: nowrap;

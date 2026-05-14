@@ -61,6 +61,13 @@ const Style = styled.div<{ type: NoticeType }>`
   right: 20px;
   max-width: min(320px, 75%);
 
+  /**
+   * Radix Dialog 在 modal 模式下会给 body 设置 pointer-events: none,
+   * notice 渲染在 body 上, 会继承该样式导致无法点击, 故显式开启.
+   * @author mebtte<i@mebtte.com>
+   */
+  pointer-events: auto;
+
   overflow: hidden;
   border-style: solid;
   border-width: 2px;

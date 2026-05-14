@@ -59,10 +59,6 @@ const addProfile = async ({ token, sessionId }: LoginResponse) => {
                   musicbillOrders: profile.musicbillOrdersJSON
                     ? JSON.parse(profile.musicbillOrdersJSON)
                     : [],
-                  musicbillMaxAmount: profile.musicbillMaxAmount,
-                  createMusicMaxAmountPerDay:
-                    profile.createMusicMaxAmountPerDay,
-                  musicPlayRecordIndate: profile.musicPlayRecordIndate,
                   twoFAEnabled: profile.twoFAEnabled,
 
                   token,
@@ -133,7 +129,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
           redirect();
         } catch (error) {
           logger.error(error, 'Failed to login with 2FA');
-          notice.error(error.message);
+          dialog.alert({ content: error.message });
           return false;
         }
       },
@@ -167,7 +163,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
               break;
             }
             default: {
-              notice.error(error.message);
+              dialog.alert({ content: error.message });
               return error.code === ExceptionCode.WRONG_USERNAME_OR_PASSWORD;
             }
           }

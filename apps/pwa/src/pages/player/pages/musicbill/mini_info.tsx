@@ -14,7 +14,7 @@ const COVER_SIZE = 34;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PUBLIC = '#63d1fa';
 const PUBLIC_SHADOW = 'rgb(72 179 220)';
-const NEUTRAL_SHADOW = 'rgb(232 232 232)';
+const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
 
 const Style = styled(animated.div)`

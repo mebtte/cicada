@@ -95,7 +95,7 @@ const UserItem = styled.button`
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
-    box-shadow: 0 4px 0 rgb(185 185 185);
+    box-shadow: 0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     transition: border-color 120ms, box-shadow 80ms;
 
     > img {

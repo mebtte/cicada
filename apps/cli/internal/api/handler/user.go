@@ -29,18 +29,15 @@ func GetProfile(c *gin.Context) {
 	u := middleware.GetUser(c)
 	go store.TouchUser(u.ID)
 	api.OK(c, gin.H{
-		"id":                         u.ID,
-		"username":                   u.Username,
-		"avatar":                     u.Avatar,
-		"nickname":                   u.Nickname,
-		"joinTimestamp":              u.JoinTimestamp,
-		"admin":                      u.Admin,
-		"musicbillOrdersJSON":        nullStr(u.MusicbillOrdersJSON),
-		"musicbillMaxAmount":         u.MusicbillMaxAmount,
-		"createMusicMaxAmountPerDay": u.CreateMusicMaxAmountPerDay,
-		"lastActiveTimestamp":        u.LastActiveTimestamp,
-		"musicPlayRecordIndate":      u.MusicPlayRecordIndate,
-		"twoFAEnabled":               u.TwoFASecret.Valid && auth.TOTPEnabled(u.TwoFASecret.String),
+		"id":                  u.ID,
+		"username":            u.Username,
+		"avatar":              u.Avatar,
+		"nickname":            u.Nickname,
+		"joinTimestamp":       u.JoinTimestamp,
+		"admin":               u.Admin,
+		"musicbillOrdersJSON": nullStr(u.MusicbillOrdersJSON),
+		"lastActiveTimestamp": u.LastActiveTimestamp,
+		"twoFAEnabled":        u.TwoFASecret.Valid && auth.TOTPEnabled(u.TwoFASecret.String),
 	})
 }
 
@@ -273,24 +270,51 @@ type updateUserBody struct {
 }
 
 func AdminUpdateUser(c *gin.Context) {
+	requester := middleware.GetUser(c)
 	var body updateUserBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
 	allowed := map[string]bool{
-		"remark": true, "musicbillMaxAmount": true,
-		"createMusicMaxAmountPerDay": true, "musicPlayRecordIndate": true, "password": true,
+		"username": true,
+		"remark":   true,
+		"password": true,
 	}
 	if !allowed[body.Key] {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
-	if _, err := store.GetUserByID(body.ID); err != nil {
+	target, err := store.GetUserByID(body.ID)
+	if err != nil {
 		api.Fail(c, apperr.UserNotExisted)
 		return
 	}
+	if body.Key == "username" {
+		username, ok := body.Value.(string)
+		if !ok || username == "" || len(username) > 30 || strings.TrimSpace(username) != username {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		if username != target.Username {
+			if _, err := store.GetUserByUsername(username); err == nil {
+				api.Fail(c, apperr.UsernameAlreadyRegistered)
+				return
+			}
+		}
+		store.UpdateUser(body.ID, "username", username)
+		api.OK(c, nil)
+		return
+	}
 	if body.Key == "password" {
+		if requester == nil {
+			api.Fail(c, apperr.NotAuthorized)
+			return
+		}
+		if body.ID == requester.ID {
+			api.Fail(c, apperr.CanNotResetOwnPassword)
+			return
+		}
 		pwd, ok := body.Value.(string)
 		if !ok || !validPasswordLength(pwd) {
 			api.Fail(c, apperr.WrongParameter)
@@ -301,8 +325,10 @@ func AdminUpdateUser(c *gin.Context) {
 			api.Fail(c, apperr.ServerError)
 			return
 		}
-		store.UpdateUser(body.ID, "password", passwordHash)
-		store.RevokeAllAuthSessions(body.ID, time.Now().UnixMilli(), "admin_reset")
+		if err := store.ResetUserPasswordAndDisable2FA(body.ID, passwordHash, time.Now().UnixMilli(), "admin_reset"); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
 		api.OK(c, nil)
 		return
 	}
@@ -312,13 +338,21 @@ func AdminUpdateUser(c *gin.Context) {
 
 type updateUserAdminBody struct {
 	ID    string `json:"id" binding:"required"`
-	Admin int    `json:"admin"`
+	Admin *int   `json:"admin" binding:"required"`
 }
 
 func AdminUpdateUserAdmin(c *gin.Context) {
 	requester := middleware.GetUser(c)
 	var body updateUserAdminBody
 	if err := c.ShouldBindJSON(&body); err != nil {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	if body.Admin == nil {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	if *body.Admin != 0 && *body.Admin != 1 {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
@@ -331,11 +365,11 @@ func AdminUpdateUserAdmin(c *gin.Context) {
 		api.Fail(c, apperr.UserNotExisted)
 		return
 	}
-	if body.Admin == 1 && target.Admin == 1 {
+	if *body.Admin == 1 && target.Admin == 1 {
 		api.Fail(c, apperr.UserIsAdminAlready)
 		return
 	}
-	store.UpdateUser(body.ID, "admin", body.Admin)
+	store.UpdateUser(body.ID, "admin", *body.Admin)
 	api.OK(c, nil)
 }
 
@@ -371,17 +405,14 @@ func AdminGetUserList(c *gin.Context) {
 	list := make([]gin.H, len(users))
 	for i, u := range users {
 		list[i] = gin.H{
-			"id":                         u.ID,
-			"username":                   u.Username,
-			"nickname":                   u.Nickname,
-			"avatar":                     config.AssetPublicURL(u.Avatar, config.AssetTypeUserAvatar),
-			"joinTimestamp":              u.JoinTimestamp,
-			"admin":                      u.Admin,
-			"remark":                     u.Remark,
-			"musicbillMaxAmount":         u.MusicbillMaxAmount,
-			"createMusicMaxAmountPerDay": u.CreateMusicMaxAmountPerDay,
-			"lastActiveTimestamp":        u.LastActiveTimestamp,
-			"musicPlayRecordIndate":      u.MusicPlayRecordIndate,
+			"id":                  u.ID,
+			"username":            u.Username,
+			"nickname":            u.Nickname,
+			"avatar":              config.AssetPublicURL(u.Avatar, config.AssetTypeUserAvatar),
+			"joinTimestamp":       u.JoinTimestamp,
+			"admin":               u.Admin,
+			"remark":              u.Remark,
+			"lastActiveTimestamp": u.LastActiveTimestamp,
 		}
 	}
 	api.OK(c, list)

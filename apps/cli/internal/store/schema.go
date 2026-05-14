@@ -38,10 +38,7 @@ var tables = []string{
 		admin INTEGER NOT NULL DEFAULT 0,
 		remark TEXT NOT NULL DEFAULT '',
 		musicbillOrdersJSON TEXT DEFAULT NULL,
-		musicbillMaxAmount INTEGER NOT NULL DEFAULT 100,
-		createMusicMaxAmountPerDay INTEGER NOT NULL DEFAULT 10,
 		lastActiveTimestamp INTEGER NOT NULL DEFAULT 0,
-		musicPlayRecordIndate INTEGER NOT NULL DEFAULT 0,
 		password TEXT NOT NULL,
 		twoFASecret TEXT DEFAULT NULL
 	)`,
@@ -92,6 +89,10 @@ var tables = []string{
 		aliases TEXT NOT NULL DEFAULT '',
 		cover TEXT NOT NULL DEFAULT '',
 		asset TEXT NOT NULL,
+		assetSize INTEGER NOT NULL DEFAULT 0,
+		assetDurationMs INTEGER NOT NULL DEFAULT 0,
+		assetCodec TEXT NOT NULL DEFAULT '',
+		assetBitRate INTEGER NOT NULL DEFAULT 0,
 		heat INTEGER NOT NULL DEFAULT 0,
 		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL

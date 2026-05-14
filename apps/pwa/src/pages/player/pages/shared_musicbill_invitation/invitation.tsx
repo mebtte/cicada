@@ -1,4 +1,3 @@
-import xss from 'xss';
 import styled from 'styled-components';
 import day from '@/utils/day';
 import Button from '@/components/button';
@@ -10,42 +9,147 @@ import notice from '@/utils/notice';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
+import {
+  MdCheckCircle,
+  MdSchedule,
+} from 'react-icons/md';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { Invitation as InvitationType } from './constants';
 
-const Style = styled.div`
-  margin: 0 20px;
-  padding: 10px 0;
+const USER_MARKER = '__INVITE_USER__';
+const MUSICBILL_MARKER = '__INVITE_MUSICBILL__';
+const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
-  > .time {
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  }
+const Style = styled.article`
+  padding: 14px 14px 16px;
 
-  > .description {
-    margin: 5px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 
-    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  background: #fff;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 18px;
+  box-shadow: 0 4px 0 ${NEUTRAL_SHADOW};
+  font-family: ${FONT};
+`;
+const Top = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+const TimeBadge = styled.div`
+  height: 26px;
+  padding: 0 9px;
 
-    > .user {
-      color: ${CSSVariable.COLOR_PRIMARY};
-      cursor: pointer;
-    }
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 
-    > .musicbill {
-      text-decoration: underline;
-    }
-  }
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+  font-weight: 900;
+  line-height: 1;
+  background: rgb(247 247 247);
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 999px;
+  box-shadow: 0 2px 0 ${NEUTRAL_SHADOW};
 
-  &:not(:last-child) {
-    border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
+  > svg {
+    flex: 0 0 auto;
+    font-size: 15px;
   }
 `;
+const Description = styled.div`
+  color: rgb(50 50 50);
+  font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+  font-weight: 900;
+  line-height: 1.45;
+`;
+const UserButton = styled.button`
+  max-width: 100%;
+  padding: 0;
 
-function Invitation({ invitation }: { invitation: InvitationType }) {
+  display: inline;
+
+  color: ${CSSVariable.COLOR_PRIMARY};
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  vertical-align: baseline;
+
+  &:focus-visible {
+    outline: 3px solid ${CSSVariable.COLOR_PRIMARY};
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+`;
+const MusicbillName = styled.span`
+  color: rgb(28 106 138);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+`;
+function InvitationText({
+  inviteUserId,
+  inviteUserNickname,
+  musicbillName,
+}: {
+  inviteUserId: string;
+  inviteUserNickname: string;
+  musicbillName: string;
+}) {
+  const text = t(
+    'shared_musicbill_invitation_instruction',
+    USER_MARKER,
+    MUSICBILL_MARKER,
+  );
+  const pieces = text.split(new RegExp(`(${USER_MARKER}|${MUSICBILL_MARKER})`));
+
+  return (
+    <Description>
+      {pieces.map((piece, index) => {
+        if (piece === USER_MARKER) {
+          return (
+            <UserButton
+              key={`${piece}-${index}`}
+              type="button"
+              onClick={() =>
+                playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
+                  id: inviteUserId,
+                })
+              }
+            >
+              {inviteUserNickname}
+            </UserButton>
+          );
+        }
+        if (piece === MUSICBILL_MARKER) {
+          return (
+            <MusicbillName key={`${piece}-${index}`}>
+              {musicbillName}
+            </MusicbillName>
+          );
+        }
+        return piece;
+      })}
+    </Description>
+  );
+}
+
+function Invitation({
+  invitation,
+  onAccepted,
+}: {
+  invitation: InvitationType;
+  onAccepted: () => void;
+}) {
   const navigate = useNavigate();
   const {
     id,
@@ -55,6 +159,7 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
     musicbillId,
     musicbillName,
   } = invitation;
+  const safeMusicbillName = musicbillName || t('musicbill');
 
   const [loading, setLoading] = useState(false);
   const onAccept = async () => {
@@ -64,6 +169,7 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
       playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL_LIST, {
         silence: true,
       });
+      onAccepted();
       window.setTimeout(
         () =>
           navigate({
@@ -76,42 +182,32 @@ function Invitation({ invitation }: { invitation: InvitationType }) {
     } catch (error) {
       logger.error(error, 'Failed to accept invitation of shared musicbill');
       notice.error(error.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <Style>
-      <div className="time">{day(inviteTimestamp).format('MM-DD HH:mm')}</div>
-      <div
-        className="description"
-        onClick={(event) => {
-          if ((event.target as HTMLSpanElement).classList.contains('user')) {
-            playerEventemitter.emit(PlayerEventType.OPEN_USER_DRAWER, {
-              id: inviteUserId,
-            });
-          }
-        }}
-        dangerouslySetInnerHTML={{
-          __html: xss(
-            t(
-              'shared_musicbill_invitation_instruction',
-              `<span class="user">${inviteUserNickname}</span>`,
-              `<span class="musicbill">${musicbillName}</span>`,
-            ),
-            {
-              allowList: {
-                span: ['class'],
-              },
-            },
-          ),
-        }}
+      <Top>
+        <TimeBadge>
+          <MdSchedule />
+          <span>{day(inviteTimestamp).format('MM-DD HH:mm')}</span>
+        </TimeBadge>
+      </Top>
+      <InvitationText
+        inviteUserId={inviteUserId}
+        inviteUserNickname={inviteUserNickname}
+        musicbillName={safeMusicbillName}
       />
-      <div className="actions">
-        <Button onClick={onAccept} loading={loading}>
-          {t('accept')}
-        </Button>
-      </div>
+      <Button
+        block
+        icon={<MdCheckCircle />}
+        onClick={onAccept}
+        loading={loading}
+      >
+        {t('accept')}
+      </Button>
     </Style>
   );
 }

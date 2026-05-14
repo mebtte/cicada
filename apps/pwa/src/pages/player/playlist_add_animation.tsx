@@ -158,7 +158,7 @@ const ExistingRow = styled(RowBase)<{
 }>`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   border: 2px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 0 3px 0 rgb(232 232 232);
+  box-shadow: 0 3px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
 
   animation: ${existingBreathe} ${STAGE_DURATION}ms ease-out forwards;
   animation-delay: ${({ $delay }) => $delay}ms;

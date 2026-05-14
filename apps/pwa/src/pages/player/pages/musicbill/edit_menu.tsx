@@ -84,7 +84,7 @@ const CoverArt = styled(Cover)`
   box-sizing: border-box;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 16px;
-  box-shadow: 0 5px 0 rgb(185 185 185);
+  box-shadow: 0 5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 `;
 
 const CoverActions = styled.div`
@@ -127,13 +127,17 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
   padding: 3px;
   border: 2px solid
     ${({ $checked }) =>
-      $checked ? CSSVariable.COLOR_PRIMARY_ACTIVE : 'rgb(180 180 180)'};
+      $checked
+        ? CSSVariable.COLOR_PRIMARY_ACTIVE
+        : CSSVariable.COLOR_CONTROL_NEUTRAL};
   border-radius: 999px;
   background: ${({ $checked }) =>
     $checked ? CSSVariable.COLOR_PRIMARY : '#fff'};
   box-shadow: 0 4px 0
     ${({ $checked }) =>
-      $checked ? CSSVariable.COLOR_PRIMARY_ACTIVE : 'rgb(180 180 180)'};
+      $checked
+        ? CSSVariable.COLOR_PRIMARY_ACTIVE
+        : CSSVariable.COLOR_CONTROL_NEUTRAL};
   cursor: pointer;
   transition:
     transform 150ms ease-out,
@@ -172,12 +176,16 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
     box-sizing: border-box;
     border: 2px solid
       ${({ $checked }) =>
-        $checked ? CSSVariable.COLOR_PRIMARY_ACTIVE : 'rgb(180 180 180)'};
+        $checked
+          ? CSSVariable.COLOR_PRIMARY_ACTIVE
+          : CSSVariable.COLOR_CONTROL_NEUTRAL};
     border-radius: 50%;
     background: #fff;
     box-shadow: 0 2px 0
       ${({ $checked }) =>
-        $checked ? CSSVariable.COLOR_PRIMARY_ACTIVE : 'rgb(180 180 180)'};
+        $checked
+          ? CSSVariable.COLOR_PRIMARY_ACTIVE
+          : CSSVariable.COLOR_CONTROL_NEUTRAL};
     transform: translateX(${({ $checked }) => ($checked ? '24px' : '0')});
     transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
   }

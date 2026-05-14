@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { t } from '@/i18n';
-import { DEFAULT_CANCEL_VARIANT, Confirm as ConfirmShape } from './constants';
+import {
+  DEFAULT_CANCEL_VARIANT,
+  DEFAULT_CONFIRM_VARIANT,
+  Confirm as ConfirmShape,
+} from './constants';
 import {
   DialogHeader,
   DialogTitle,
@@ -72,7 +76,7 @@ function ConfirmContent({
       {options.content && (!options.title || !isSimpleContent(options.content)) && (
         <DialogBody>{options.content}</DialogBody>
       )}
-      <ConfirmFooter>
+      <ConfirmFooter $inline={options.inlineFooter ?? true}>
         <Button
           variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
           onClick={onCancel}
@@ -82,7 +86,7 @@ function ConfirmContent({
           {options.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={'primary'}
+          variant={options.confirmVariant ?? DEFAULT_CONFIRM_VARIANT}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}

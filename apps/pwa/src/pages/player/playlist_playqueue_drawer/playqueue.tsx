@@ -222,12 +222,18 @@ function Playqueue() {
       ),
     [animatedPlayqueue],
   );
+  const followingMusicCount = playqueue.length - currentPlayqueuePosition - 1;
+  const canReorderFollowingMusic = followingMusicCount > 1;
   const sortableIds = useMemo(
     () =>
-      renderedPlayqueue
-        .filter((queueMusic) => queueMusic.index - 1 > currentPlayqueuePosition)
-        .map((queueMusic) => queueMusic.pid),
-    [currentPlayqueuePosition, renderedPlayqueue],
+      canReorderFollowingMusic
+        ? renderedPlayqueue
+            .filter(
+              (queueMusic) => queueMusic.index - 1 > currentPlayqueuePosition,
+            )
+            .map((queueMusic) => queueMusic.pid)
+        : [],
+    [canReorderFollowingMusic, currentPlayqueuePosition, renderedPlayqueue],
   );
   const activeQueueMusic = activePid
     ? playqueue.find((queueMusic) => queueMusic.pid === activePid)
@@ -283,7 +289,7 @@ function Playqueue() {
                   const canRemove =
                     !animatedQueueMusic.leaving &&
                     actualIndex > currentPlayqueuePosition;
-                  const sortable = canRemove;
+                  const sortable = canRemove && canReorderFollowingMusic;
                   return (
                     <RemovalAnimationItem
                       itemKey={animatedQueueMusic.key}

@@ -9,7 +9,7 @@ type KeyMapValue = {
   [AllowUpdateKey.ASSET]: string;
   [AllowUpdateKey.SINGER]: string[];
   [AllowUpdateKey.FORK_FROM]: string[];
-  [AllowUpdateKey.YEAR]: number;
+  [AllowUpdateKey.YEAR]: number | null;
 };
 
 function updateMusic<Key extends AllowUpdateKey>({
@@ -24,7 +24,7 @@ function updateMusic<Key extends AllowUpdateKey>({
   requestMinimalDuration?: number;
 }) {
   return request({
-    path: '/api/music',
+    path: '/api/admin/music',
     method: Method.PUT,
     body: {
       id,

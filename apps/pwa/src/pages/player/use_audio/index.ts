@@ -58,6 +58,8 @@ function useAudio({
    */
   useEffect(() => {
     if (audio) {
+      const updateLoadingByPlayableState = () =>
+        setLoading(!audio.isPaused() && !audio.hasPlayableData());
       const stopLoadingWhenPlayable = () => {
         if (audio.hasPlayableData()) {
           setLoading(false);
@@ -73,7 +75,7 @@ function useAudio({
         setDuration(audio.getDuration()),
       );
       const unlistenPlay = audio.listen('play', () => {
-        setLoading(true);
+        updateLoadingByPlayableState();
         setPaused(false);
       });
       const unlistenPause = audio.listen('pause', () => {
@@ -81,6 +83,7 @@ function useAudio({
         setPaused(true);
       });
       const onTimeUpdate = debounce(() => {
+        stopLoadingWhenPlayable();
         const currentTime = audio.getCurrentTime();
         return eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
           currentMillisecond: currentTime * 1000,
@@ -93,8 +96,14 @@ function useAudio({
       const unlistenLoadStart = audio.listen('loadstart', () =>
         setLoading(true),
       );
-      const unlistenWaiting = audio.listen('waiting', () => setLoading(true));
-      const unlistenStalled = audio.listen('stalled', () => setLoading(true));
+      const unlistenWaiting = audio.listen(
+        'waiting',
+        updateLoadingByPlayableState,
+      );
+      const unlistenStalled = audio.listen(
+        'stalled',
+        updateLoadingByPlayableState,
+      );
       const unlistenLoadedData = audio.listen(
         'loadeddata',
         stopLoadingWhenPlayable,
@@ -146,7 +155,7 @@ function useAudio({
     setPaused(audio ? audio.isPaused() : true);
     if (audio) {
       return () => {
-        audio.pause(); // pause audio and let it be garbage collected
+        audio.destroy();
 
         setLoading(true);
         setDuration(0);

@@ -61,6 +61,9 @@ import type { Singer } from './types';
 
 const AVATAR_SIZE = 48;
 const PHOTO_DESCRIPTION_MAX_LENGTH = 500;
+const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
+const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 
 const Form = styled.div<{ $page: boolean }>`
   width: 100%;
@@ -75,20 +78,24 @@ const Form = styled.div<{ $page: boolean }>`
 
 const Header = styled.div`
   flex-shrink: 0;
-  padding: 18px 20px 16px;
-  border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
+  padding: 14px 16px 18px;
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  background: #fff;
   display: flex;
   align-items: center;
   gap: 12px;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
 `;
 
 const AvatarBox = styled.div`
   width: ${AVATAR_SIZE}px;
   height: ${AVATAR_SIZE}px;
-  border-radius: 8px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 15px;
   flex-shrink: 0;
   overflow: hidden;
-  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
+  background: #fff;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,20 +113,29 @@ const AvatarBox = styled.div`
 const HeaderInfo = styled.div`
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const HeaderTitle = styled.div`
-  font-size: 15px;
-  font-weight: 700;
-  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  font-family: ${FONT};
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: rgb(75 75 75);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
 const HeaderSubTitle = styled.div`
-  margin-top: 3px;
+  margin-top: 4px;
+  font-family: ${FONT};
   font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   overflow: hidden;
   text-overflow: ellipsis;
@@ -129,6 +145,7 @@ const HeaderSubTitle = styled.div`
 const Body = styled.div<{ $page: boolean }>`
   flex: ${({ $page }) => ($page ? 'initial' : '1')};
   min-height: 0;
+  background: #fff;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -171,27 +188,43 @@ const PhotoList = styled.div`
   gap: 8px;
 `;
 
-const PhotoRow = styled.div<{ $dragging: boolean }>`
+const PhotoRow = styled.div<{ $dragging: boolean; $sortable: boolean }>`
   position: relative;
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 12px;
   align-items: center;
   min-width: 0;
-  padding: 8px 8px 8px 20px;
-  border-radius: 8px;
-  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  padding: ${({ $sortable }) => ($sortable ? '12px 12px 12px 30px' : '12px')};
+  border: 2px solid
+    ${({ $dragging }) =>
+      $dragging ? CSSVariable.COLOR_PRIMARY : CSSVariable.COLOR_BORDER};
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 4px 0
+    ${({ $dragging }) =>
+      $dragging ? CSSVariable.COLOR_PRIMARY_ACTIVE : ROW_SHADOW};
   overflow: visible;
   opacity: ${({ $dragging }) => ($dragging ? 0.72 : 1)};
   z-index: ${({ $dragging }) => ($dragging ? 1 : 0)};
+  transition:
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out,
+    filter 120ms ease-out;
+
+  &:hover {
+    filter: brightness(1.01);
+  }
 `;
 
 const PhotoThumb = styled.div`
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 56px;
+  height: 56px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 15px;
   overflow: hidden;
-  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
+  background: #fff;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
   color: ${CSSVariable.TEXT_COLOR_DISABLED};
   display: flex;
   align-items: center;
@@ -212,37 +245,59 @@ const PhotoInfo = styled.div`
 
 const PhotoDescriptionTextarea = styled(Textarea)`
   min-width: 0;
-  height: 76px;
-  max-height: 120px;
+  height: 78px;
+  max-height: 128px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 13px;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
+  font-family: ${FONT};
+  font-weight: 700;
+  letter-spacing: 0;
   line-height: 1.4;
   overflow-y: auto;
+  transition:
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+
+  &:focus {
+    border-color: ${CSSVariable.COLOR_PRIMARY};
+    box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
+  }
 `;
 
 const PhotoDeleteButton = styled(Button)<{ $visible: boolean }>`
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: -12px;
+  right: -12px;
   z-index: 2;
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  border-radius: 50%;
-  border: 1px solid ${CSSVariable.COLOR_BORDER};
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border: 2px solid rgb(190 46 34);
+  border-radius: 10px;
   background: #fff;
   color: rgb(242 80 66);
-  box-shadow: 0 3px 10px rgb(0 0 0 / 0.16);
+  box-shadow: 0 3px 0 rgb(190 46 34);
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
   transition:
-    opacity 120ms,
-    transform 120ms,
-    background 120ms,
-    color 120ms;
+    opacity 120ms ease-out,
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    filter 120ms ease-out;
   transform: scale(${({ $visible }) => ($visible ? 1 : 0.92)});
 
   &:not(:disabled):hover {
-    background: rgb(242 80 66);
-    color: #fff;
+    filter: brightness(1.06);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(3px) scale(1);
+    box-shadow: none;
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in,
+      filter 60ms ease-in;
   }
 
   ${PhotoRow}:hover &,
@@ -256,12 +311,12 @@ const PhotoDeleteButton = styled(Button)<{ $visible: boolean }>`
 const DragHandle = styled.button`
   position: absolute;
   top: 50%;
-  left: -6px;
+  left: -14px;
   z-index: 2;
-  width: 12px;
+  width: 30px;
   height: 52px;
-  border: none;
-  border-radius: 999px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 12px;
   padding: 0;
   background: #fff;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
@@ -269,23 +324,29 @@ const DragHandle = styled.button`
   align-items: center;
   justify-content: center;
   cursor: grab;
-  box-shadow: 0 3px 10px rgb(0 0 0 / 0.12);
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
   transform: translateY(-50%);
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
   transition:
-    background 120ms,
     color 120ms,
-    box-shadow 120ms;
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    filter 120ms ease-out;
 
   &:hover {
-    background: #fff;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.18);
+    filter: brightness(1.04);
   }
 
   &:active {
     cursor: grabbing;
+    transform: translateY(calc(-50% + 3px));
+    box-shadow: none;
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in,
+      filter 60ms ease-in;
   }
 
   &:disabled {
@@ -303,8 +364,8 @@ const Footer = styled.div<{ $page: boolean }>`
   flex-shrink: 0;
   position: ${({ $page }) => ($page ? 'sticky' : 'static')};
   bottom: 0;
-  padding: 14px 20px calc(14px + env(safe-area-inset-bottom, 0));
-  border-top: 1px solid ${CSSVariable.COLOR_BORDER};
+  padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0));
+  border-top: 2px solid ${CSSVariable.COLOR_BORDER};
   background: #fff;
 `;
 
@@ -319,12 +380,14 @@ function SortablePhoto({
   photo,
   singerName,
   disabled,
+  sortable,
   onDescriptionChange,
   onDelete,
 }: {
   photo: Photo;
   singerName: string;
   disabled: boolean;
+  sortable: boolean;
   onDescriptionChange: (id: string, description: string) => void;
   onDelete: (id: string) => void;
 }) {
@@ -335,12 +398,13 @@ function SortablePhoto({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: photo.id, disabled });
+  } = useSortable({ id: photo.id, disabled: disabled || !sortable });
 
   return (
     <PhotoRow
       ref={setNodeRef}
       $dragging={isDragging}
+      $sortable={sortable}
       style={{ transform: CSS.Transform.toString(transform), transition }}
     >
       <PhotoThumb>
@@ -368,16 +432,18 @@ function SortablePhoto({
           }
         />
       </PhotoInfo>
-      <DragHandle
-        type="button"
-        title={t('sort')}
-        aria-label={t('sort')}
-        disabled={disabled}
-        {...attributes}
-        {...listeners}
-      >
-        <MdDragIndicator size={18} />
-      </DragHandle>
+      {sortable ? (
+        <DragHandle
+          type="button"
+          title={t('sort')}
+          aria-label={t('sort')}
+          disabled={disabled}
+          {...attributes}
+          {...listeners}
+        >
+          <MdDragIndicator size={18} />
+        </DragHandle>
+      ) : null}
       <PhotoDeleteButton
         square
         size="sm"
@@ -654,6 +720,7 @@ function SingerEditContent({
                         photo={photo}
                         singerName={singer.name}
                         disabled={saving || photoSaving}
+                        sortable={photos.length > 1}
                         onDescriptionChange={onPhotoDescriptionChange}
                         onDelete={onDeletePhoto}
                       />

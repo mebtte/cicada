@@ -7,15 +7,17 @@ import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import capitalize from '@/utils/capitalize';
-import UserManage from '@/pages/player/pages/user_manage';
 import LanguageSelect from '@/components/language_select';
 import Avatar from '@/components/avatar';
+import Button from '@/components/button';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import definition from '@/definition';
+import { CSS_VAR } from '@/components/theme';
 import {
   MdClose,
   MdDashboard,
+  MdHeadphones,
   MdLibraryMusic,
   MdMenu,
   MdPeopleOutline,
@@ -24,11 +26,16 @@ import {
 import Dashboard from './dashboard';
 import MusicManagement from './music_management';
 import SingerManagement from './singer_management';
+import UserManagement from './user_management';
 
-const SIDEBAR_WIDTH = 216;
-const HEADER_HEIGHT = 64;
+const SIDEBAR_WIDTH = 240;
+const HEADER_HEIGHT = 72;
 const MOBILE_BREAKPOINT = 760;
 const AVATAR_SIZE = 36;
+const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
+const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
+const SURFACE_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
 const ADMIN_MENU_ITEMS = [
   {
@@ -59,7 +66,7 @@ const Page = styled.div`
   position: fixed;
   inset: 0;
   display: flex;
-  background: #f5f6f8;
+  background: rgb(247 247 247);
   overflow: hidden;
 `;
 
@@ -69,8 +76,9 @@ const Sidebar = styled.aside<{ $open: boolean }>`
   display: flex;
   flex-direction: column;
   background: #fff;
-  border-right: 1px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 1px 0 3px rgb(0 0 0 / 0.03);
+  border-right: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 4px 0 0
+    color-mix(in srgb, ${SURFACE_SHADOW} 35%, transparent);
   z-index: 3;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
@@ -82,20 +90,23 @@ const Sidebar = styled.aside<{ $open: boolean }>`
 `;
 
 const SidebarHeader = styled.div`
-  height: ${HEADER_HEIGHT}px;
-  padding: 0 18px;
+  padding: 18px 12px 14px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
+  gap: 12px;
 `;
 
 const BrandLogo = styled.img`
-  width: 34px;
-  height: 34px;
+  width: 52px;
+  height: 52px;
+  padding: 8px;
   object-fit: contain;
   flex-shrink: 0;
   user-select: none;
+  background: #fff;
+  border: 2px solid ${NEUTRAL_SHADOW};
+  border-radius: 15px;
+  box-shadow: 0 4px 0 ${NEUTRAL_SHADOW};
 `;
 
 const BrandText = styled.div`
@@ -103,101 +114,130 @@ const BrandText = styled.div`
 `;
 
 const BrandName = styled.div`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: rgb(75 75 75);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
 const BrandSubTitle = styled.div`
-  margin-top: 1px;
+  margin-top: 3px;
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
   font-size: 12px;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  font-weight: 700;
+  letter-spacing: 0;
+  color: rgb(150 150 150);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 `;
 
-const MobileCloseButton = styled.button`
+const MobileCloseButton = styled(Button)`
   display: none;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
     margin-left: auto;
-    width: 34px;
-    height: 34px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-
-    &:active {
-      background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
-    }
+    display: inline-flex;
   }
 `;
 
 const MenuList = styled.nav`
-  padding: 14px 10px;
+  padding: 4px 12px 18px;
   overflow-y: auto;
   ${autoScrollbar}
 `;
 
 const MenuLink = styled(NavLink)`
+  position: relative;
   width: 100%;
-  min-height: 42px;
-  border: none;
-  border-radius: 8px;
+  min-width: 0;
+  min-height: 44px;
   padding: 0 12px;
+
   display: flex;
   align-items: center;
   gap: 10px;
-  background: transparent;
+
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-  font-size: 14px;
-  font-weight: 500;
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0;
   text-decoration: none;
   cursor: pointer;
+  user-select: none;
   transition:
-    background 120ms,
-    color 120ms;
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    border-color 150ms ease-out,
+    background 150ms ease-out,
+    color 150ms ease-out,
+    filter 120ms ease-out;
   -webkit-tap-highlight-color: transparent;
 
   > svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     flex-shrink: 0;
   }
 
   > span {
+    flex: 1;
     min-width: 0;
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  &:hover {
-    background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_ONE};
+  &:focus-visible {
+    outline: 3px solid ${PRIMARY};
+    outline-offset: 2px;
+  }
+
+  &:not(.active):hover {
+    color: ${PRIMARY};
+    border-color: ${CSSVariable.COLOR_BORDER};
+    filter: brightness(1.02);
+  }
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: none;
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in,
+      filter 60ms ease-in;
   }
 
   &.active {
-    background: ${CSSVariable.COLOR_PRIMARY};
+    background: ${PRIMARY};
+    border-color: ${PRIMARY_SHADOW};
+    box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
     color: #fff;
-    font-weight: 600;
 
     &:hover {
-      background: ${CSSVariable.COLOR_PRIMARY};
+      color: #fff;
+      background: ${PRIMARY};
+      border-color: ${PRIMARY_SHADOW};
+      box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
+      filter: brightness(1.04);
+    }
+
+    &:active {
+      box-shadow: none;
     }
   }
 
   & + & {
-    margin-top: 6px;
+    margin-top: 8px;
   }
 `;
 
@@ -211,7 +251,7 @@ const Overlay = styled.button<{ $open: boolean }>`
     z-index: 2;
     border: none;
     padding: 0;
-    background: rgb(0 0 0 / 0.22);
+    background: rgb(0 0 0 / 0.26);
   }
 `;
 
@@ -225,40 +265,39 @@ const Main = styled.main`
 const Header = styled.header`
   height: ${HEADER_HEIGHT}px;
   flex-shrink: 0;
-  padding: 0 24px;
+  padding: 0 18px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
   background: #fff;
-  border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 0 1px 3px rgb(0 0 0 / 0.04);
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
   z-index: 10;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    padding: 0 14px;
+    padding: 0 12px;
+    gap: 12px;
   }
 `;
 
-const MenuToggle = styled.button`
+const MenuToggle = styled(Button)`
   display: none;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    width: 38px;
-    height: 38px;
     flex-shrink: 0;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    display: inline-flex;
+  }
+`;
 
-    &:active {
-      background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
-    }
+const HeaderLogo = styled.img`
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
+  user-select: none;
+
+  @media (max-width: ${MOBILE_BREAKPOINT}px) {
+    display: none;
   }
 `;
 
@@ -268,9 +307,12 @@ const HeaderTitle = styled.div`
 `;
 
 const HeaderTitleText = styled.div`
-  font-size: 16px;
-  font-weight: 600;
-  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: 0;
+  color: rgb(75 75 75);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -290,56 +332,125 @@ const UserMenuRoot = styled.div`
 
 const AvatarButton = styled.div`
   width: ${AVATAR_SIZE}px;
-  height: ${AVATAR_SIZE + 4}px;
+  height: ${AVATAR_SIZE + 5}px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition: transform 150ms ease-out;
+
+  &:active {
+    transform: translateY(3px);
+    transition: transform 60ms ease-in;
+  }
 
   &:focus-visible {
     outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
     outline-offset: 3px;
-    border-radius: 10px;
+    border-radius: 14px;
   }
 `;
 
-const AvatarFallback = styled.div`
+const PlayerLink = styled.button`
+  width: ${AVATAR_SIZE}px;
+  height: ${AVATAR_SIZE + 5}px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 150ms ease-out;
+
+  &:active {
+    transform: translateY(3px);
+    transition: transform 60ms ease-in;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
+    outline-offset: 3px;
+    border-radius: 14px;
+  }
+`;
+
+const PlayerLinkBox = styled.span`
   width: ${AVATAR_SIZE}px;
   height: ${AVATAR_SIZE}px;
-  border: none;
-  border-radius: 10px;
-  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
-  color: ${CSSVariable.COLOR_PRIMARY};
+  border: 2px solid ${NEUTRAL_SHADOW};
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 3px 0 ${NEUTRAL_SHADOW};
+  color: ${PRIMARY};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+
+  ${PlayerLink}:hover & {
+    color: ${PRIMARY};
+    border-color: ${PRIMARY};
+    box-shadow: 0 3px 0 ${PRIMARY_SHADOW};
+  }
+`;
+
+const AvatarFallback = styled.div<{ $active?: boolean; $size?: number }>`
+  width: ${({ $size }) => $size ?? AVATAR_SIZE}px;
+  height: ${({ $size }) => $size ?? AVATAR_SIZE}px;
+  border: 2px solid ${({ $active }) => ($active ? PRIMARY : NEUTRAL_SHADOW)};
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 3px 0
+    ${({ $active }) => ($active ? PRIMARY_SHADOW : NEUTRAL_SHADOW)};
+  color: ${PRIMARY};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-weight: 800;
   font-size: 14px;
 `;
 
 const UserMenu = styled.div`
   position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 220px;
-  padding: 12px;
-  border: 1px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 8px;
+  top: 0;
+  right: calc(100% + 12px);
+  width: min(260px, calc(100vw - 72px));
+  padding: 10px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 15px;
   background: #fff;
-  box-shadow: 0 10px 30px rgb(0 0 0 / 0.12);
+  box-shadow:
+    0 4px 0 ${SURFACE_SHADOW},
+    0 18px 30px rgb(0 0 0 / 0.1);
   z-index: 20;
 `;
 
 const UserMenuProfile = styled.div`
-  padding: 2px 2px 10px;
-  margin-bottom: 10px;
-  border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
+  position: relative;
+  padding: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
+`;
+
+const UserMenuProfileText = styled.div`
+  min-width: 0;
+  flex: 1;
 `;
 
 const UserMenuName = styled.div`
-  font-size: 13px;
-  font-weight: 600;
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   overflow: hidden;
   text-overflow: ellipsis;
@@ -347,12 +458,25 @@ const UserMenuName = styled.div`
 `;
 
 const UserMenuAccount = styled.div`
-  margin-top: 2px;
+  margin-top: 3px;
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
   font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const UserMenuLanguage = styled(LanguageSelect)`
+  position: relative;
+  z-index: 1;
+  padding: 10px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
 `;
 
 const Content = styled.div`
@@ -361,11 +485,6 @@ const Content = styled.div`
   position: relative;
   overflow: hidden;
   z-index: 0;
-`;
-
-const UserManageWrapper = styled.div`
-  position: absolute;
-  inset: 0;
 `;
 
 const getCurrentMenuItem = (pathname: string) => {
@@ -435,7 +554,9 @@ function AdminPage() {
             <BrandSubTitle>{definition.VERSION}</BrandSubTitle>
           </BrandText>
           <MobileCloseButton
-            type="button"
+            square
+            variant="ghost"
+            size="sm"
             onClick={() => setSidebarOpen(false)}
             aria-label={t('close_menu')}
           >
@@ -467,16 +588,35 @@ function AdminPage() {
       <Main>
         <Header>
           <MenuToggle
-            type="button"
+            square
+            variant="ghost"
+            size="md"
             onClick={() => setSidebarOpen(true)}
             aria-label={t('open_menu')}
           >
             <MdMenu size={22} />
           </MenuToggle>
+          <HeaderLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
           <HeaderTitle>
             <HeaderTitleText>{capitalize(t(currentMenuItem.label))}</HeaderTitleText>
           </HeaderTitle>
           <HeaderActions>
+            <PlayerLink
+              type="button"
+              onClick={() =>
+                window.open(
+                  `#${ROOT_PATH.PLAYER}`,
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+              }
+              title={capitalize(t('player'))}
+              aria-label={capitalize(t('player'))}
+            >
+              <PlayerLinkBox>
+                <MdHeadphones size={20} />
+              </PlayerLinkBox>
+            </PlayerLink>
             <UserMenuRoot ref={userMenuRef}>
               <AvatarButton
                 role="button"
@@ -488,22 +628,41 @@ function AdminPage() {
                 onKeyDown={onAvatarKeyDown}
               >
                 {avatarSrc ? (
-                  <Avatar src={avatarSrc} size={AVATAR_SIZE} />
+                  <Avatar
+                    src={avatarSrc}
+                    size={AVATAR_SIZE}
+                    active={userMenuOpen}
+                  />
                 ) : (
-                  <AvatarFallback>{user.nickname[0]}</AvatarFallback>
+                  <AvatarFallback $active={userMenuOpen}>
+                    {user.nickname[0]}
+                  </AvatarFallback>
                 )}
               </AvatarButton>
               {userMenuOpen ? (
                 <UserMenu role="menu">
                   <UserMenuProfile>
-                    <UserMenuName title={user.nickname}>
-                      {user.nickname}
-                    </UserMenuName>
-                    <UserMenuAccount title={user.username}>
-                      @{user.username}
-                    </UserMenuAccount>
+                    {avatarSrc ? (
+                      <Avatar src={avatarSrc} size={42} />
+                    ) : (
+                      <AvatarFallback $size={42}>
+                        {user.nickname[0]}
+                      </AvatarFallback>
+                    )}
+                    <UserMenuProfileText>
+                      <UserMenuName title={user.nickname}>
+                        {user.nickname}
+                      </UserMenuName>
+                      <UserMenuAccount title={user.username}>
+                        @{user.username}
+                      </UserMenuAccount>
+                    </UserMenuProfileText>
                   </UserMenuProfile>
-                  <LanguageSelect confirmBeforeReload size="sm" />
+                  <UserMenuLanguage
+                    confirmBeforeReload
+                    label={t('language')}
+                    size="sm"
+                  />
                 </UserMenu>
               ) : null}
             </UserMenuRoot>
@@ -520,11 +679,7 @@ function AdminPage() {
             <Route path={ADMIN_PATH.DASHBOARD} element={<Dashboard />} />
             <Route
               path={ADMIN_PATH.USER_MANAGEMENT}
-              element={
-                <UserManageWrapper>
-                  <UserManage />
-                </UserManageWrapper>
-              }
+              element={<UserManagement />}
             />
             <Route
               path={`${ADMIN_PATH.SINGER_MANAGEMENT}/*`}

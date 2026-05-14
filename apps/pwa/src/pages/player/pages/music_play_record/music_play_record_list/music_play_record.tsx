@@ -60,6 +60,7 @@ function MusicWithExternalInfo({
               event.stopPropagation();
               return dialog.confirm({
                 title: t('delete_music_play_record_question'),
+                confirmVariant: 'danger',
                 onConfirm: () => {
                   const { recordId } = musicPlayRecord;
                   e.emit(EventType.MUSIC_PLAY_RECORD_DELETED, { recordId });

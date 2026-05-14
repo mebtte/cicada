@@ -45,6 +45,7 @@ export enum EventType {
   OPEN_SINGER_MODIFY_RECORD_DRAWER = 'open_singer_modify_record_drawer',
   OPEN_MUSICBILL_MUSIC_DRAWER = 'open_musicbill_music_drawer',
   OPEN_MUSICBILL_SHARED_USER_DRAWER = 'open_musicbill_shared_user_drawer',
+  OPEN_SHARED_MUSICBILL_INVITATION_DRAWER = 'open_shared_musicbill_invitation_drawer',
   OPEN_SINGER_DRAWER = 'open_singer_drawer',
   OPEN_MUSIC_DRAWER = 'open_music_drawer',
   OPEN_ORIGINAL_MUSIC_DIALOG = 'open_original_music_dialog',
@@ -130,6 +131,7 @@ export default new Eventin<
       singer: { id: string; name: string; avatar: string };
     };
     [EventType.OPEN_MUSICBILL_SHARED_USER_DRAWER]: { id: string };
+    [EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER]: null;
     [EventType.OPEN_MUSICBILL_MUSIC_DRAWER]: {
       music: MusicWithSingerAliases;
     };

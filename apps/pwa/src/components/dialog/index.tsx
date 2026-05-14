@@ -35,6 +35,7 @@ import {
 } from 'react';
 import * as RadixDialog from '@radix-ui/react-dialog';
 import styled, { keyframes } from 'styled-components';
+import { CSSVariable } from '@/global_style';
 import { useTheme, CSS_VAR } from '../theme';
 import { t } from '@/i18n';
 import {
@@ -47,7 +48,7 @@ import {
 
 const FONT   = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 const MOBILE = 640; // px — breakpoint between sheet and modal
-const ROOT_Z_INDEX = 9000;
+const ROOT_Z_INDEX = 9200;
 
 // ─── Animations ───────────────────────────────────────────────────────────────
 
@@ -184,7 +185,7 @@ const Panel = styled.div`
   border-radius: 20px 20px 0 0;
   border: 2px solid rgb(220 220 220);
   border-bottom: none;
-  box-shadow: 0 -5px 0 rgb(185 185 185);
+  box-shadow: 0 -5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 
   &[data-state='open'] {
     animation: ${sheetIn} 340ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -206,7 +207,7 @@ const Panel = styled.div`
     max-height: calc(100% - 48px);
     border-radius: 20px;
     border: 2px solid rgb(220 220 220);
-    box-shadow: 0 8px 0 rgb(185 185 185);
+    box-shadow: 0 8px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 
     &[data-state='open'] {
       animation: ${modalIn} 210ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -249,7 +250,7 @@ const CloseButton = styled(RadixDialog.Close)`
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: rgb(185 185 185);
+  color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
   cursor: pointer;
   transition: color 120ms, background 120ms;
 

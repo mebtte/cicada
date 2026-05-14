@@ -11,7 +11,7 @@ const Style = styled.div`
   overflow: hidden;
 
   > .loading {
-    aspect-ratio: 8 / 3;
+    aspect-ratio: 3 / 1;
     ${flexCenter}
     background: rgb(240 240 240);
   }

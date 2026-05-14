@@ -74,10 +74,11 @@ export async function request<Data = void>({
     ...getCommonParams(),
   };
   url += `?${Object.keys(combineParams)
+    .filter((key) => combineParams[key] !== undefined)
     .map(
       (key) =>
         `${window.encodeURIComponent(key)}=${window.encodeURIComponent(
-          combineParams[key],
+          combineParams[key]!,
         )}`,
     )
     .join('&')}`;

@@ -56,11 +56,11 @@ func TestUpdateMusicLyric(t *testing.T) {
 	body := []byte(`{"id":"music-1","key":"lyric","value":[" [00:00.00]hello world ","[00:01.00]second line"]}`)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodPut, "/api/music", bytes.NewReader(body))
+	c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/music", bytes.NewReader(body))
 	c.Request.Header.Set("Content-Type", "application/json")
-	c.Set("authed_user", &store.User{ID: "user-1"})
+	c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
 
-	UpdateMusic(c)
+	AdminUpdateMusic(c)
 
 	var resp struct {
 		Code string `json:"code"`
@@ -121,11 +121,11 @@ func TestUpdateMusicLyricRejectsInstrumental(t *testing.T) {
 	body := []byte(`{"id":"music-1","key":"lyric","value":["[00:00.00]hello"]}`)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodPut, "/api/music", bytes.NewReader(body))
+	c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/music", bytes.NewReader(body))
 	c.Request.Header.Set("Content-Type", "application/json")
-	c.Set("authed_user", &store.User{ID: "user-1"})
+	c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
 
-	UpdateMusic(c)
+	AdminUpdateMusic(c)
 
 	var resp struct {
 		Code string `json:"code"`
@@ -183,11 +183,11 @@ func TestUpdateMusicForkFrom(t *testing.T) {
 	body := []byte(`{"id":"music-1","key":"forkFrom","value":["source-1","source-2"]}`)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodPut, "/api/music", bytes.NewReader(body))
+	c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/music", bytes.NewReader(body))
 	c.Request.Header.Set("Content-Type", "application/json")
-	c.Set("authed_user", &store.User{ID: "user-1"})
+	c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
 
-	UpdateMusic(c)
+	AdminUpdateMusic(c)
 
 	var resp struct {
 		Code string `json:"code"`

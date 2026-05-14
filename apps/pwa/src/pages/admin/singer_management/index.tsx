@@ -1,6 +1,7 @@
 import {
   ButtonHTMLAttributes,
   ChangeEventHandler,
+  FormEvent,
   useCallback,
   useEffect,
   useRef,
@@ -11,6 +12,7 @@ import {
   MdOutlineAddBox,
   MdOutlineEdit,
   MdRecordVoiceOver,
+  MdSearch,
 } from 'react-icons/md';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
@@ -33,16 +35,17 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import adminGetSingerList, {
   AdminSingerListFilterKey,
 } from '@/server/api/admin_get_singer_list';
-import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
 import openCreateSingerDialog from '../open_create_singer_dialog';
-import SingerEditDrawer from './singer_edit_drawer';
-import SingerEditPage from './singer_edit_page';
-import type { Singer } from './types';
+import SingerEditDrawer from '../components/singer_edit/drawer';
+import type { Singer } from '../components/singer_edit/types';
 
 const DEFAULT_PAGE_SIZE = 20;
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
 const PHOTO_SIZE = 36;
-const EDIT_PAGE_BREAKPOINT = 760;
+const MOBILE_BREAKPOINT = 640;
+const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
+const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const TABLE_ROW_GAP = 10;
 
 enum SingerManagementQuery {
   FILTER_KEY = 'filter_key',
@@ -120,13 +123,13 @@ const Card = styled.div`
 const Toolbar = styled.div`
   padding: 16px 20px;
   display: grid;
-  grid-template-columns: 180px minmax(220px, 420px) max-content;
+  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
   gap: 12px;
   align-items: start;
-  border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
 
   @media (max-width: 640px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(112px, 34%) minmax(0, 1fr);
   }
 `;
 
@@ -135,6 +138,40 @@ const Content = styled.div`
   min-height: 0;
   position: relative;
   overflow: hidden;
+`;
+
+const FloatingCreateButton = styled(Button)`
+  position: absolute;
+  right: 40px;
+  bottom: 34px;
+  z-index: 3;
+
+  @media (max-width: 640px) {
+    right: 28px;
+    bottom: 28px;
+  }
+`;
+
+const SearchForm = styled.form`
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+
+  > .search-input {
+    flex: 1;
+    min-width: 0;
+
+    > div {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right-width: 0;
+    }
+  }
+
+  > button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
 `;
 
 const StatusBox = styled.div`
@@ -162,49 +199,101 @@ const EmptyTip = styled.div`
 
 const TableScroll = styled.div`
   height: 100%;
+  padding: 0 20px 92px;
+  background: rgb(247 247 247);
   overflow: auto;
+  scroll-padding-bottom: 92px;
   ${autoScrollbar}
 `;
 
 const Table = styled.table`
   width: 100%;
   min-width: 1080px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 ${TABLE_ROW_GAP}px;
+  font-family: ${FONT};
 `;
 
 const Th = styled.th`
   position: sticky;
-  top: 0;
-  z-index: 1;
-  height: 42px;
-  padding: 0 20px;
-  background: #fafafa;
-  border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
+  top: ${TABLE_ROW_GAP}px;
+  z-index: 2;
+  height: 40px;
+  padding: 0 18px;
+  background: #fff;
+  border-top: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 800;
+  letter-spacing: 0;
   text-align: left;
   white-space: nowrap;
+
+  &:first-child {
+    border-left: 2px solid ${CSSVariable.COLOR_BORDER};
+    border-radius: 15px 0 0 15px;
+  }
+
+  &:last-child {
+    right: 0;
+    z-index: 3;
+    border-right: 2px solid ${CSSVariable.COLOR_BORDER};
+    border-radius: 0 15px 15px 0;
+    box-shadow:
+      -6px 0 0 rgb(247 247 247),
+      0 3px 0 ${ROW_SHADOW};
+  }
 `;
 
 const Td = styled.td`
-  padding: 12px 20px;
-  border-bottom: 1px solid ${CSSVariable.COLOR_BORDER};
+  padding: 12px 18px;
+  background: #fff;
+  border-top: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
   vertical-align: middle;
+
+  &:first-child {
+    border-left: 2px solid ${CSSVariable.COLOR_BORDER};
+    border-radius: 15px 0 0 15px;
+  }
+
+  &:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 1;
+    border-right: 2px solid ${CSSVariable.COLOR_BORDER};
+    border-radius: 0 15px 15px 0;
+    box-shadow:
+      -6px 0 0 rgb(247 247 247),
+      0 3px 0 ${ROW_SHADOW};
+  }
+
+  tbody tr:hover & {
+    color: rgb(75 75 75);
+    filter: brightness(1.01);
+  }
 `;
 
 const Mono = styled.span`
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     'Liberation Mono', 'Courier New', monospace;
   font-size: 12px;
+  font-weight: 700;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 `;
 
 const Name = styled.div`
-  font-weight: 600;
+  font-family: ${FONT};
+  font-weight: 800;
   line-height: 1.45;
+  color: rgb(75 75 75);
 `;
 
 const AliasList = styled.div`
@@ -215,11 +304,16 @@ const AliasList = styled.div`
 
 const Alias = styled.span`
   max-width: 180px;
-  padding: 3px 7px;
-  border-radius: 999px;
-  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
+  padding: 4px 8px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 0 ${ROW_SHADOW};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  font-family: ${FONT};
   font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -234,13 +328,31 @@ const PhotoList = styled.div`
 const PhotoButton = styled.button`
   width: ${PHOTO_SIZE}px;
   height: ${PHOTO_SIZE}px;
-  border: none;
-  border-radius: 6px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 10px;
   padding: 0;
-  background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
+  background: #fff;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
   cursor: zoom-in;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    filter 120ms ease-out;
+
+  &:hover {
+    filter: brightness(1.04);
+  }
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: none;
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in,
+      filter 60ms ease-in;
+  }
 
   &:focus-visible {
     outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
@@ -249,8 +361,8 @@ const PhotoButton = styled.button`
 `;
 
 const Photo = styled.img`
-  width: ${PHOTO_SIZE}px;
-  height: ${PHOTO_SIZE}px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
 `;
@@ -260,23 +372,29 @@ const Muted = styled.span`
 `;
 
 const UserName = styled.div`
-  font-weight: 500;
+  font-family: ${FONT};
+  font-weight: 800;
   line-height: 1.45;
+  color: rgb(75 75 75);
 `;
 
 const UserAccount = styled.div`
   margin-top: 2px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  font-family: ${FONT};
   font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
 `;
 
 const ActionButton = styled.button`
-  width: 30px;
-  height: 30px;
-  border: none;
-  border-radius: 6px;
+  width: 34px;
+  height: 34px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 10px;
   padding: 0;
-  background: transparent;
+  background: #fff;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   display: flex;
   align-items: center;
@@ -284,12 +402,23 @@ const ActionButton = styled.button`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition:
-    background 120ms,
-    color 120ms;
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    color 120ms,
+    filter 120ms;
 
   &:hover {
-    background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
     color: ${CSSVariable.COLOR_PRIMARY};
+    filter: brightness(1.04);
+  }
+
+  &:active {
+    transform: translateY(3px);
+    box-shadow: none;
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in,
+      filter 60ms;
   }
 
   &:focus-visible {
@@ -300,17 +429,23 @@ const ActionButton = styled.button`
 
 const Footer = styled.div`
   padding: 14px 20px;
-  border-top: 1px solid ${CSSVariable.COLOR_BORDER};
+  border-top: 2px solid ${CSSVariable.COLOR_BORDER};
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  font-family: ${FONT};
   font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
 
   @media (max-width: 640px) {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+    padding: 12px 14px 16px;
+    background: rgb(247 247 247);
   }
 `;
 
@@ -319,16 +454,42 @@ const FooterInfo = styled.div`
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+
+  @media (max-width: 640px) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 10px;
+    border: 2px solid ${CSSVariable.COLOR_BORDER};
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 3px 0 ${ROW_SHADOW};
+  }
+`;
+
+const ResultRange = styled.div`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const PageSizeSelectBox = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
+
+  @media (max-width: 640px) {
+    justify-content: flex-end;
+  }
 `;
 
 const PageSizeLabel = styled.span`
   white-space: nowrap;
+
+  @media (max-width: 420px) {
+    display: none;
+  }
 `;
 
 const PageSizeSelectControl = styled.div`
@@ -339,7 +500,14 @@ const PaginationBox = styled.div`
   display: flex;
   justify-content: flex-end;
 
-  @media (max-width: 640px) {
+  @media (max-width: ${MOBILE_BREAKPOINT}px) {
+    max-width: 100%;
+    padding: 10px;
+    border: 2px solid ${CSSVariable.COLOR_BORDER};
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 3px 0 ${ROW_SHADOW};
+    overflow: hidden;
     justify-content: center;
   }
 `;
@@ -392,7 +560,7 @@ function LazyPhoto({
 
 function SingerManagement() {
   const navigate = useNavigate();
-  const windowWidth = useWindowWidth();
+  const compactPagination = useWindowWidth() <= MOBILE_BREAKPOINT;
   const query = useQuery<
     | Query.KEYWORD
     | Query.PAGE
@@ -411,6 +579,8 @@ function SingerManagement() {
   });
   const [viewerPhoto, setViewerPhoto] = useState<ImageViewerPhoto | null>(null);
   const [editSingerId, setEditSingerId] = useState<string | null>(null);
+  const [keywordInput, setKeywordInput] = useState(keyword);
+  const composingKeywordRef = useRef(false);
 
   const updateQuery = useCallback(
     (
@@ -432,24 +602,26 @@ function SingerManagement() {
     [filterKey, keyword, navigate, page, pageSize],
   );
 
-  const getCurrentListQuery = useCallback(
-    () => ({
-      [Query.KEYWORD]: encodeKeyword(keyword),
-      [SingerManagementQuery.FILTER_KEY]:
-        filterKey === AdminSingerListFilterKey.ALL ? undefined : filterKey,
-      [Query.PAGE]: page === 1 ? undefined : page,
-      [SingerManagementQuery.PAGE_SIZE]:
-        pageSize === DEFAULT_PAGE_SIZE ? undefined : pageSize,
-    }),
-    [filterKey, keyword, page, pageSize],
-  );
+  useEffect(() => {
+    if (!composingKeywordRef.current) {
+      setKeywordInput(keyword);
+    }
+  }, [keyword]);
 
   const onKeywordChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     const nextKeyword = event.target.value;
+    setKeywordInput(nextKeyword);
+  };
+  const submitKeywordSearch = useCallback(() => {
+    const normalizedKeyword = keywordInput.replace(/\s+/g, ' ').trim();
     updateQuery({
-      [Query.KEYWORD]: encodeKeyword(nextKeyword),
+      [Query.KEYWORD]: encodeKeyword(normalizedKeyword),
       [Query.PAGE]: undefined,
     });
+  }, [keywordInput, updateQuery]);
+  const onSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    submitKeywordSearch();
   };
 
   const requestSingerList = useCallback(
@@ -533,26 +705,10 @@ function SingerManagement() {
 
   const onEditSinger = useCallback(
     (id: string) => {
-      if (windowWidth <= EDIT_PAGE_BREAKPOINT) {
-        navigate({
-          path: `${ROOT_PATH.ADMIN}/${ADMIN_PATH.SINGER_MANAGEMENT}/${id}`,
-          query: getCurrentListQuery(),
-        });
-        return;
-      }
       setEditSingerId(id);
     },
-    [getCurrentListQuery, navigate, windowWidth],
+    [],
   );
-
-  useEffect(() => {
-    if (!editSingerId || windowWidth > EDIT_PAGE_BREAKPOINT) return;
-    navigate({
-      path: `${ROOT_PATH.ADMIN}/${ADMIN_PATH.SINGER_MANAGEMENT}/${editSingerId}`,
-      query: getCurrentListQuery(),
-    });
-    setEditSingerId(null);
-  }, [editSingerId, getCurrentListQuery, navigate, windowWidth]);
 
   const totalPageCount = Math.ceil(data.total / pageSize);
   useEffect(() => {
@@ -583,20 +739,34 @@ function SingerManagement() {
               });
             }}
           />
-          <Input
-            size="sm"
-            value={keyword}
-            onChange={onKeywordChange}
-            placeholder={t('search')}
-          />
-          <Button
-            size="sm"
-            variant="primary"
-            icon={<MdOutlineAddBox />}
-            onClick={onOpenCreateSingerDialog}
-          >
-            {t('create_singer')}
-          </Button>
+          <SearchForm onSubmit={onSearchSubmit} autoComplete="off">
+            <Input
+              className="search-input"
+              type="search"
+              size="sm"
+              value={keywordInput}
+              onChange={onKeywordChange}
+              onCompositionStart={() => {
+                composingKeywordRef.current = true;
+              }}
+              onCompositionEnd={(event) => {
+                composingKeywordRef.current = false;
+                const nextKeyword = event.currentTarget.value;
+                setKeywordInput(nextKeyword);
+              }}
+              placeholder={t('search')}
+            />
+            <Button
+              square
+              type="submit"
+              size="sm"
+              variant="primary"
+              aria-label={t('search')}
+              title={t('search')}
+            >
+              <MdSearch />
+            </Button>
+          </SearchForm>
         </Toolbar>
 
         <Content>
@@ -692,11 +862,20 @@ function SingerManagement() {
               </Table>
             </TableScroll>
           )}
+          <FloatingCreateButton
+            square
+            size="lg"
+            variant="primary"
+            icon={<MdOutlineAddBox />}
+            aria-label={t('create_singer')}
+            title={t('create_singer')}
+            onClick={onOpenCreateSingerDialog}
+          />
         </Content>
 
         <Footer>
           <FooterInfo>
-            <div>
+            <ResultRange>
               {capitalize(
                 t(
                   'page_result_range',
@@ -705,7 +884,7 @@ function SingerManagement() {
                   data.total.toString(),
                 ),
               )}
-            </div>
+            </ResultRange>
             <PageSizeSelectBox>
               <PageSizeLabel>{capitalize(t('items_per_page'))}</PageSizeLabel>
               <PageSizeSelectControl>
@@ -732,6 +911,7 @@ function SingerManagement() {
               <Pagination
                 count={totalPageCount}
                 page={page}
+                siblingCount={compactPagination ? 0 : 1}
                 onChange={(nextPage) =>
                   updateQuery({
                     [Query.PAGE]: nextPage === 1 ? undefined : nextPage,
@@ -751,7 +931,6 @@ function SingerManagement() {
         onClose={() => setEditSingerId(null)}
         onSaved={reload}
       />
-      <SingerEditPage onSaved={reload} />
     </ScrollArea>
   );
 }

@@ -31,6 +31,10 @@ type Response = Omit<Music, 'singers'> & {
   forkFromList: Music[];
   year: number | null;
   asset: string;
+  assetSize: number;
+  assetDurationMs: number;
+  assetCodec: string;
+  assetBitRate: number;
   musicbillCount: number;
   singers: (Singer & {
     aliases: string[];

@@ -45,7 +45,9 @@ const Style = styled.div<{ $playing: boolean }>`
   border-radius: 16px;
   box-shadow: 0 6px 0
     ${({ $playing }) =>
-      $playing ? `var(${CSS_VAR.colorPrimaryShadow})` : 'rgb(232 232 232)'};
+      $playing
+        ? `var(${CSS_VAR.colorPrimaryShadow})`
+        : CSSVariable.COLOR_SURFACE_SHADOW};
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease;

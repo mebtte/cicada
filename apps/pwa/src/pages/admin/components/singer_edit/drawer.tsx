@@ -1,50 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { MdClose } from 'react-icons/md';
 import { Drawer, DrawerContent } from '@/components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
-import { CSSVariable } from '@/global_style';
 import adminGetSinger from '@/server/api/admin_get_singer';
-import SingerEditContent from './singer_edit_content';
+import SingerEditContent from './content';
 import type { Singer } from './types';
-import { t } from '@/i18n';
 
 const EditDrawerContent = styled(DrawerContent)`
   > div {
     overflow: hidden;
-  }
-`;
-
-const CloseButton = styled.button`
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 2;
-  width: 30px;
-  height: 30px;
-  border: none;
-  border-radius: 8px;
-  padding: 0;
-  background: transparent;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition:
-    background 120ms,
-    color 120ms;
-
-  &:hover {
-    background: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
-    outline-offset: 2px;
   }
 `;
 
@@ -116,23 +81,13 @@ function SingerEditDrawer({
   };
 
   return (
-    <Drawer open={open} onOpenChange={(nextOpen) => nextOpen || undefined}>
+    <Drawer open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <EditDrawerContent
         side="right"
         style={{ width: 360 }}
         showClose={false}
-        onPointerDownOutside={(event) => event.preventDefault()}
-        onInteractOutside={(event) => event.preventDefault()}
-        onEscapeKeyDown={(event) => event.preventDefault()}
+        onOpenAutoFocus={(event) => event.preventDefault()}
       >
-        <CloseButton
-          type="button"
-          aria-label={t('close')}
-          title={t('close')}
-          onClick={onClose}
-        >
-          <MdClose size={20} />
-        </CloseButton>
         {loading ? (
           <CenterBox>
             <Spinner />

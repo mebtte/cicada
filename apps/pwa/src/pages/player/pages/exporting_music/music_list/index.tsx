@@ -60,7 +60,7 @@ const Summary = styled.div`
 
   background: #fff;
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 0 4px 0 rgb(232 232 232);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
 `;
 const StatGrid = styled.div`
   display: grid;
@@ -75,7 +75,7 @@ const statToneStyle = {
   total: css`
     --stat-color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     --stat-face: #fff;
-    --stat-shadow: rgb(232 232 232);
+    --stat-shadow: ${CSSVariable.COLOR_SURFACE_SHADOW};
   `,
   active: css`
     --stat-color: ${PRIMARY};
@@ -240,7 +240,7 @@ const statusBadgeStyle = {
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     background: #fff;
     border-color: rgb(210 210 210);
-    box-shadow: 0 3px 0 rgb(185 185 185);
+    box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
   `,
   [ExportStatusType.EXPORTING]: css`
     color: #fff;

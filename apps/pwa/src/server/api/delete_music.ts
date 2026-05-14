@@ -14,7 +14,7 @@ function deleteMusic({
   captchaValue: string;
 }) {
   return request({
-    path: '/api/music',
+    path: '/api/admin/music',
     method: Method.DELETE,
     params: { id, captchaId, captchaValue },
     withToken: true,

@@ -6,7 +6,7 @@ export enum AssetType {
   MUSIC = 'music',
 }
 export const ASSET_TYPES = Object.values(AssetType);
-export const MUSIC_ASSET_ACCEPT_TYPES: string[] = [];
+export const MUSIC_ASSET_ACCEPT_TYPES: string[] = ['audio/*'];
 export const ASSET_TYPE_MAP: Record<
   AssetType,
   {

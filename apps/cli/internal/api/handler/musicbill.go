@@ -225,6 +225,8 @@ type createMusicbillBody struct {
 	Name string `json:"name" binding:"required"`
 }
 
+const maxMusicbillAmountPerUser = 1024
+
 func CreateMusicbill(c *gin.Context) {
 	u := middleware.GetUser(c)
 	var body createMusicbillBody
@@ -232,12 +234,10 @@ func CreateMusicbill(c *gin.Context) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
-	if u.MusicbillMaxAmount != 0 {
-		count, _ := store.CountUserMusicbills(u.ID)
-		if count >= u.MusicbillMaxAmount {
-			api.Fail(c, apperr.OverUserMusicbillMaxAmount)
-			return
-		}
+	count, _ := store.CountUserMusicbills(u.ID)
+	if count >= maxMusicbillAmountPerUser {
+		api.Fail(c, apperr.OverUserMusicbillMaxAmount)
+		return
 	}
 	id, err := store.CreateMusicbill(u.ID, body.Name)
 	if err != nil {
@@ -539,6 +539,7 @@ func GetSharedMusicbillInvitationList(c *gin.Context) {
 			"inviteUserId":       inv.InviteUserID,
 			"inviteUserNickname": inv.UserNickname,
 			"musicbillId":        inv.MusicbillID,
+			"musicbillName":      inv.MusicbillName,
 		}
 	}
 	api.OK(c, list)

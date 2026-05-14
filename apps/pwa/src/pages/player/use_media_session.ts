@@ -18,6 +18,14 @@ function safeSetActionHandler(
   }
 }
 
+function safeSetPlaybackState(state: MediaSessionPlaybackState) {
+  try {
+    window.navigator.mediaSession.playbackState = state;
+  } catch {
+    /* ignore */
+  }
+}
+
 function useMediaSession({
   music,
   audio,
@@ -35,7 +43,7 @@ function useMediaSession({
     }
     if (!music) {
       window.navigator.mediaSession.metadata = null;
-      window.navigator.mediaSession.playbackState = 'none';
+      safeSetPlaybackState('none');
       return;
     }
     window.navigator.mediaSession.metadata = new MediaMetadata({
@@ -87,8 +95,32 @@ function useMediaSession({
     if (!('mediaSession' in window.navigator) || !music) {
       return;
     }
-    window.navigator.mediaSession.playbackState = paused ? 'paused' : 'playing';
+    safeSetPlaybackState(paused ? 'paused' : 'playing');
   }, [music, paused]);
+
+  useEffect(() => {
+    if (!('mediaSession' in window.navigator) || !music || !audio) {
+      return;
+    }
+    const sync = () =>
+      safeSetPlaybackState(audio.isPaused() ? 'paused' : 'playing');
+    const setPlaying = () => safeSetPlaybackState('playing');
+    const setPaused = () => safeSetPlaybackState('paused');
+
+    sync();
+    const unlistenPlay = audio.listen('play', setPlaying);
+    const unlistenPlaying = audio.listen('playing', setPlaying);
+    const unlistenPause = audio.listen('pause', setPaused);
+    const unlistenEnded = audio.listen('ended', setPaused);
+    const unlistenError = audio.listen('error', setPaused);
+    return () => {
+      unlistenPlay();
+      unlistenPlaying();
+      unlistenPause();
+      unlistenEnded();
+      unlistenError();
+    };
+  }, [music, audio]);
 
   useEffect(() => {
     if (
@@ -118,6 +150,7 @@ function useMediaSession({
     const unlistenSeeked = audio.listen('seeked', sync);
     const unlistenDurationChange = audio.listen('durationchange', sync);
     const unlistenPlay = audio.listen('play', sync);
+    const unlistenPlaying = audio.listen('playing', sync);
     const unlistenPause = audio.listen('pause', sync);
     const unlistenRateChange = audio.listen('ratechange', sync);
     const heartbeat = paused ? null : window.setInterval(sync, 1000);
@@ -125,6 +158,7 @@ function useMediaSession({
       unlistenSeeked();
       unlistenDurationChange();
       unlistenPlay();
+      unlistenPlaying();
       unlistenPause();
       unlistenRateChange();
       if (heartbeat !== null) {

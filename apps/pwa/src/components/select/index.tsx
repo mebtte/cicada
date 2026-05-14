@@ -1,14 +1,28 @@
-import { CSSProperties, useCallback, useId, useMemo } from 'react';
+import {
+  type CompositionEvent,
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import ReactSelect, {
   type StylesConfig,
   type SingleValue,
+  type MultiValue,
   type GroupBase,
   components,
   type DropdownIndicatorProps,
+  type InputActionMeta,
+  type InputProps,
+  type MenuProps,
   type MenuPlacement,
 } from 'react-select';
-import AsyncReactSelect from 'react-select/async';
+import { Branch as DismissableLayerBranch } from '@radix-ui/react-dismissable-layer';
 import styled from 'styled-components';
+import { CSSVariable } from '@/global_style';
 import Label from '../label';
 import { useTheme } from '../theme';
 
@@ -81,6 +95,32 @@ function DropdownIndicator<T>(props: DropdownIndicatorProps<SelectOption<T>, boo
   );
 }
 
+function Menu<T, IsMulti extends boolean>(
+  props: MenuProps<SelectOption<T>, IsMulti, GroupBase<SelectOption<T>>>,
+) {
+  return (
+    <components.Menu {...props} />
+  );
+}
+
+function MenuPortal<T, IsMulti extends boolean>(
+  props: Parameters<
+    typeof components.MenuPortal<
+      SelectOption<T>,
+      IsMulti,
+      GroupBase<SelectOption<T>>
+    >
+  >[0],
+) {
+  return (
+    <components.MenuPortal {...props}>
+      <DismissableLayerBranch>
+        {props.children}
+      </DismissableLayerBranch>
+    </components.MenuPortal>
+  );
+}
+
 // ─── Styles factory ───────────────────────────────────────────────────────────
 
 function buildStyles<T, IsMulti extends boolean>(
@@ -109,7 +149,7 @@ function buildStyles<T, IsMulti extends boolean>(
       boxShadow: isDisabled ? 'none' :
         hasError        ? `0 ${s.shadow}px 0 rgb(190 46 34)` :
         state.isFocused ? `0 ${s.shadow}px 0 ${shadowColor}` :
-        `0 ${s.shadow}px 0 rgb(185 185 185)`,
+        `0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}`,
       cursor: isDisabled ? 'not-allowed' : 'pointer',
       fontFamily: FONT,
       fontSize: s.font,
@@ -119,13 +159,20 @@ function buildStyles<T, IsMulti extends boolean>(
       transition: 'border-color 150ms ease-out, box-shadow 150ms ease-out',
       outline: 'none',
     }),
-    valueContainer: (_) => ({
-      display: 'flex',
+    valueContainer: (_, state) => ({
+      display:
+        isMulti && state.hasValue && state.selectProps.controlShouldRenderValue !== false
+          ? 'flex'
+          : 'grid',
       flex: 1,
       flexWrap: isMulti ? 'wrap' as const : 'nowrap' as const,
       alignItems: 'center',
       padding: `4px ${s.px - 4}px`,
-      gap: 4,
+      gap:
+        isMulti && state.hasValue && state.selectProps.controlShouldRenderValue !== false
+          ? 4
+          : 0,
+      position: 'relative',
       overflow: 'hidden',
     }),
     singleValue: (provided) => ({
@@ -169,43 +216,70 @@ function buildStyles<T, IsMulti extends boolean>(
     }),
     menu: (base, state) => ({
       ...base,
-      zIndex: 9000,
+      zIndex: 10000,
       background: '#fff',
       border: '2px solid rgb(220 220 220)',
-      borderRadius: s.radius,
-      boxShadow: '0 8px 28px rgba(0,0,0,0.13)',
-      overflow: 'hidden',
-      marginTop: state.placement === 'top' ? 0 : 4,
-      marginBottom: state.placement === 'top' ? 4 : 0,
-    }),
-    menuPortal: (base) => ({ ...base, zIndex: 9000 }),
-    menuList: (_) => ({
+      borderRadius: Math.max(15, s.radius + 2),
+      boxShadow:
+        state.placement === 'top'
+          ? `0 -4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}, 0 14px 28px rgb(0 0 0 / 0.1)`
+          : `0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}, 0 14px 28px rgb(0 0 0 / 0.1)`,
+      overflow: 'visible',
       padding: 6,
+      marginTop: state.placement === 'top' ? 0 : s.shadow + 6,
+      marginBottom: state.placement === 'top' ? s.shadow + 6 : 0,
+    }),
+    menuPortal: (base) => ({ ...base, zIndex: 10000, pointerEvents: 'auto' }),
+    menuList: (_) => ({
+      padding: 0,
       maxHeight: 248,
       overflowY: 'auto' as const,
+      scrollbarWidth: 'thin' as const,
     }),
     option: (_, state) => ({
       display: 'flex',
       alignItems: 'center',
-      height: Math.round(s.height * 0.82),
+      minHeight: Math.max(30, Math.round(s.height * 0.88)),
       padding: `0 ${s.px}px`,
-      borderRadius: s.radius - 4,
+      marginTop: state.isSelected || state.isFocused ? 0 : 0,
+      border: `2px solid ${
+        state.isSelected ? shadowColor : state.isFocused ? 'rgb(220 220 220)' : 'transparent'
+      }`,
+      borderRadius: Math.max(10, s.radius),
+      boxShadow: state.isSelected
+        ? `0 ${Math.max(2, s.shadow - 1)}px 0 ${shadowColor}`
+        : state.isFocused
+          ? `0 ${Math.max(2, s.shadow - 1)}px 0 rgb(220 220 220)`
+          : 'none',
       fontFamily: FONT,
       fontSize: s.font,
-      fontWeight: 600,
+      fontWeight: 800,
+      letterSpacing: 0,
       cursor: 'pointer',
-      background: state.isSelected ? primary :
-        state.isFocused ? 'rgb(245 245 245)' : 'transparent',
+      background: state.isSelected ? primary : '#fff',
       color: state.isSelected ? '#fff' : 'rgb(55 55 55)',
-      transition: 'background 80ms, color 80ms',
+      transition:
+        'background 120ms, border-color 120ms, box-shadow 120ms, color 120ms',
+      ':active': {
+        transform: state.isSelected || state.isFocused
+          ? `translateY(${Math.max(2, s.shadow - 1)}px)`
+          : undefined,
+        boxShadow: 'none',
+      },
+      ':not(:first-of-type)': {
+        marginTop: 6,
+      },
     }),
     multiValue: (_) => ({
       display: 'inline-flex',
       alignItems: 'center',
+      justifyContent: 'center',
       padding: '0 2px 0 8px',
-      height: 22,
-      borderRadius: 6,
-      background: 'rgb(240 240 240)',
+      minHeight: 24,
+      border: '2px solid rgb(220 220 220)',
+      borderRadius: 8,
+      background: '#fff',
+      boxShadow: '0 2px 0 rgb(220 220 220)',
       flexShrink: 0,
     }),
     multiValueLabel: (provided) => ({
@@ -214,6 +288,7 @@ function buildStyles<T, IsMulti extends boolean>(
       fontFamily: FONT,
       fontSize: 12,
       fontWeight: 700,
+      lineHeight: '18px',
       letterSpacing: '0.1px',
       padding: 0,
     }),
@@ -221,6 +296,7 @@ function buildStyles<T, IsMulti extends boolean>(
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      alignSelf: 'stretch',
       color: 'rgb(160 160 160)',
       padding: '0 3px',
       marginLeft: 2,
@@ -232,7 +308,7 @@ function buildStyles<T, IsMulti extends boolean>(
       textAlign: 'center' as const,
       fontFamily: FONT,
       fontSize: 13,
-      color: 'rgb(180 180 180)',
+      color: CSSVariable.COLOR_CONTROL_NEUTRAL,
       fontWeight: 600,
     }),
     loadingMessage: (_) => ({
@@ -240,7 +316,7 @@ function buildStyles<T, IsMulti extends boolean>(
       textAlign: 'center' as const,
       fontFamily: FONT,
       fontSize: 13,
-      color: 'rgb(180 180 180)',
+      color: CSSVariable.COLOR_CONTROL_NEUTRAL,
       fontWeight: 600,
     }),
   };
@@ -304,7 +380,7 @@ export function Select<T>({
         menuPlacement={menuPlacement}
         menuPortalTarget={document.body}
         menuPosition="fixed"
-        components={{ DropdownIndicator }}
+        components={{ DropdownIndicator, Menu, MenuPortal }}
       />
       {(error || hint) && <Bottom $error={!!error}>{error ?? hint}</Bottom>}
     </Root>
@@ -319,6 +395,7 @@ export interface MultiSelectProps<T> {
   value:        SelectOption<T>[];
   onChange?:    (options: SelectOption<T>[]) => void;
   placeholder?: string;
+  clearable?:   boolean;
   disabled?:    boolean;
   size?:        SelectSize;
   label?:       string;
@@ -330,19 +407,120 @@ export interface MultiSelectProps<T> {
 
 export function MultiSelect<T>({
   options: staticOptions, loadOptions, value, onChange,
-  placeholder = 'Select...', disabled = false,
+  placeholder = 'Select...', clearable, disabled = false,
   size = 'md', label, hint, error, className, style,
 }: MultiSelectProps<T>) {
   const inputId = useId();
   const { colorPrimary } = useTheme();
+  const composingRef = useRef(false);
+  const requestSeqRef = useRef(0);
+  const [inputValue, setInputValue] = useState('');
+  const [asyncOptions, setAsyncOptions] = useState<SelectOption<T>[]>([]);
+  const [asyncLoading, setAsyncLoading] = useState(false);
   const styles = useMemo(
     () => buildStyles<T, true>(colorPrimary, size, !!error, !!disabled, true),
     [colorPrimary, size, error, disabled],
   );
 
+  const requestOptions = useCallback(
+    (keyword: string) => {
+      if (!loadOptions) return;
+
+      const seq = requestSeqRef.current + 1;
+      requestSeqRef.current = seq;
+      setAsyncLoading(true);
+      loadOptions(keyword)
+        .then((options) => {
+          if (requestSeqRef.current === seq) {
+            setAsyncOptions(options);
+          }
+        })
+        .catch(() => {
+          if (requestSeqRef.current === seq) {
+            setAsyncOptions([]);
+          }
+        })
+        .finally(() => {
+          if (requestSeqRef.current === seq) {
+            setAsyncLoading(false);
+          }
+        });
+    },
+    [loadOptions],
+  );
+
+  useEffect(() => {
+    if (!loadOptions) return;
+    requestSeqRef.current += 1;
+    setInputValue('');
+    setAsyncOptions([]);
+    setAsyncLoading(false);
+  }, [loadOptions]);
+
   const handleChange = useCallback(
-    (opts: readonly SelectOption<T>[]) => onChange?.(Array.from(opts)),
-    [onChange],
+    (opts: MultiValue<SelectOption<T>>) => {
+      onChange?.(Array.from(opts));
+      if (loadOptions) {
+        setInputValue('');
+      }
+    },
+    [loadOptions, onChange],
+  );
+
+  const handleInputChange = useCallback(
+    (nextValue: string, meta: InputActionMeta) => {
+      if (meta.action === 'input-change') {
+        setInputValue(nextValue);
+        if (!composingRef.current) {
+          requestOptions(nextValue);
+        }
+        return nextValue;
+      }
+
+      if (meta.action === 'set-value') {
+        setInputValue('');
+        return '';
+      }
+
+      return inputValue;
+    },
+    [inputValue, requestOptions],
+  );
+
+  const selectComponents = useMemo(
+    () => {
+      function Input(
+        props: InputProps<SelectOption<T>, true, GroupBase<SelectOption<T>>>,
+      ) {
+        return (
+          <components.Input
+            {...props}
+            onCompositionStart={(
+              event: CompositionEvent<HTMLInputElement>,
+            ) => {
+              props.onCompositionStart?.(event);
+              composingRef.current = true;
+            }}
+            onCompositionEnd={(event: CompositionEvent<HTMLInputElement>) => {
+              props.onCompositionEnd?.(event);
+              composingRef.current = false;
+              const nextValue = event.currentTarget.value;
+              setInputValue(nextValue);
+              requestOptions(nextValue);
+            }}
+          />
+        );
+      }
+
+      return {
+        DropdownIndicator,
+        Menu,
+        MenuPortal,
+        ...(loadOptions ? { Input } : {}),
+        ...(clearable === false ? { ClearIndicator: () => null } : {}),
+      };
+    },
+    [clearable, loadOptions, requestOptions],
   );
 
   const sharedProps = {
@@ -351,24 +529,28 @@ export function MultiSelect<T>({
     value,
     onChange: handleChange,
     placeholder,
+    ...(clearable === undefined ? {} : { isClearable: clearable }),
     isDisabled: disabled,
     styles,
     getOptionValue: (o: SelectOption<T>) => toKey(o.value),
     menuPortalTarget: document.body,
     menuPosition: 'fixed' as const,
-    components: { DropdownIndicator },
+    components: selectComponents,
     closeMenuOnSelect: false,
+    blurInputOnSelect: false,
   };
 
   return (
     <Root className={className} style={style}>
       {label && <Label htmlFor={inputId}>{label}</Label>}
       {loadOptions ? (
-        <AsyncReactSelect<SelectOption<T>, true>
+        <ReactSelect<SelectOption<T>, true>
           {...sharedProps}
-          loadOptions={loadOptions}
-          defaultOptions
-          cacheOptions
+          options={asyncOptions}
+          inputValue={inputValue}
+          onInputChange={handleInputChange}
+          isLoading={asyncLoading}
+          filterOption={() => true}
         />
       ) : (
         <ReactSelect<SelectOption<T>, true>
