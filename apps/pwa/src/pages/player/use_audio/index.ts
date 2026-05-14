@@ -146,7 +146,7 @@ function useAudio({
     setPaused(audio ? audio.isPaused() : true);
     if (audio) {
       return () => {
-        audio.pause(); // pause audio and let it be garbage collected
+        audio.destroy();
 
         setLoading(true);
         setDuration(0);
