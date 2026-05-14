@@ -5,6 +5,7 @@ import Button from '@/components/button';
 import { MdPlaylistRemove } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
+import { CSSVariable } from '@/global_style';
 import { FILTER_HEIGHT } from './constants';
 import { TAB_LIST_HEIGHT } from '../constants';
 import playerEventemitter, {
@@ -28,9 +29,9 @@ const Style = styled.div`
   padding: 8px 10px 12px;
 
   background: rgb(255 255 255 / 0.94);
-  border: 2px solid rgb(232 232 232);
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 16px;
-  box-shadow: 0 4px 0 rgb(218 218 218);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 

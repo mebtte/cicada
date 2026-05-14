@@ -183,7 +183,9 @@ const QueueRow = styled.div<{
   border-radius: 10px;
   box-shadow: 0 3px 0
     ${({ $active }) =>
-      $active ? `var(${CSS_VAR.colorPrimaryShadow})` : 'rgb(232 232 232)'};
+      $active
+        ? `var(${CSS_VAR.colorPrimaryShadow})`
+        : CSSVariable.COLOR_SURFACE_SHADOW};
 
   ${({ $shift, $tail }) =>
     $shift

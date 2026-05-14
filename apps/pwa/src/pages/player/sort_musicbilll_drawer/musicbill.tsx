@@ -14,7 +14,7 @@ const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const PUBLIC = '#63d1fa';
 const PUBLIC_SHADOW = 'rgb(72 179 220)';
-const NEUTRAL_SHADOW = 'rgb(218 218 218)';
+const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
 const Style = styled.div<{ $dragging: boolean }>`

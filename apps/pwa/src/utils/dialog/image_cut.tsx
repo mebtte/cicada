@@ -35,7 +35,7 @@ const ImgBox = styled.div`
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 16px;
   background: #fff;
-  box-shadow: 0 5px 0 rgb(185 185 185);
+  box-shadow: 0 5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 
   img {
     display: block;

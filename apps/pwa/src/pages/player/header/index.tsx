@@ -32,7 +32,7 @@ const Style = styled.div`
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   background: #fff;
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 0 3px 0 rgb(214 214 214);
+  box-shadow: 0 3px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
   -webkit-app-region: drag;
 `;
 

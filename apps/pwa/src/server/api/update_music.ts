@@ -24,7 +24,7 @@ function updateMusic<Key extends AllowUpdateKey>({
   requestMinimalDuration?: number;
 }) {
   return request({
-    path: '/api/music',
+    path: '/api/admin/music',
     method: Method.PUT,
     body: {
       id,

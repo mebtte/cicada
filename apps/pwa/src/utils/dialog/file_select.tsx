@@ -20,7 +20,7 @@ const SelectedFile = styled.div`
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 14px;
   background: #fff;
-  box-shadow: 0 4px 0 rgb(185 185 185);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
   font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
 `;
 

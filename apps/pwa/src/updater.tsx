@@ -3,6 +3,7 @@ import dialog from '@/utils/dialog';
 import { useState } from 'react';
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { CSSVariable } from '@/global_style';
 import { MdClose } from 'react-icons/md';
 import definition from './definition';
 import { t } from './i18n';
@@ -68,8 +69,8 @@ const VersionUpdater = styled.div`
       > .confirm-action {
         color: rgb(29 139 94);
         background: #fff;
-        border-color: rgb(180 180 180);
-        box-shadow: 0 3px 0 rgb(180 180 180);
+        border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+        box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 
         &:not(:disabled):hover {
           filter: brightness(1.03);

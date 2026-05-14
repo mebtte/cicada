@@ -8,6 +8,7 @@ import addMusicbillSharedUser from '@/server/api/add_musicbill_shared_user';
 import logger from '@/utils/logger';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import { USERNAME_MAX_LENGTH } from '@/constants/user';
 import { useUser } from '@/global_states/server';
@@ -40,7 +41,7 @@ const ActionBar = styled.div`
   gap: 12px;
 
   background: rgb(255 255 255 / 0.94);
-  border-top: 2px solid rgb(232 232 232);
+  border-top: 2px solid ${CSSVariable.COLOR_BORDER};
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 `;

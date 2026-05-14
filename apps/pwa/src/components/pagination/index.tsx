@@ -8,6 +8,7 @@ import {
   MdMoreHoriz,
 } from 'react-icons/md';
 import Button, { Size } from '@/components/button';
+import { CSSVariable } from '@/global_style';
 import usePagination from './use_pagination';
 import { t } from '@/i18n';
 
@@ -39,8 +40,9 @@ const PageButton = styled(Button)<{ $selected: boolean; $size: Size }>`
 
       &:not(:disabled):hover {
         background: #fff;
-        border-color: rgb(180 180 180);
-        box-shadow: 0 ${SHADOW_OFFSET[$size]}px 0 rgb(180 180 180);
+        border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+        box-shadow: 0 ${SHADOW_OFFSET[$size]}px 0
+          ${CSSVariable.COLOR_CONTROL_NEUTRAL};
       }
 
       &:not(:disabled):active {

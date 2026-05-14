@@ -4,6 +4,7 @@ import {
   ReactNode,
 } from 'react';
 import styled, { css, keyframes } from 'styled-components';
+import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '../theme';
 
 export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'plain';
@@ -12,7 +13,8 @@ export type Size = 'sm' | 'md' | 'lg';
 const cn = (v: string) => `var(${v})`;
 const PRIMARY        = cn(CSS_VAR.colorPrimary);
 const PRIMARY_SHADOW = cn(CSS_VAR.colorPrimaryShadow);
-const DISABLED_SHADOW = 'rgb(214 214 214)';
+const CONTROL_NEUTRAL = CSSVariable.COLOR_CONTROL_NEUTRAL;
+const DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
 
 // ─── 阴影偏移量 ────────────────────────────────────────────────────────────────
 
@@ -115,7 +117,7 @@ const plainVariant = css<{ $offset: number }>`
 const VARIANT_MAP: Record<Variant, ReturnType<typeof css>> = {
   primary:   makeVariant(PRIMARY,   PRIMARY_SHADOW),
   secondary: makeVariant('#ffffff', PRIMARY,        PRIMARY),
-  ghost:     makeVariant('#ffffff', 'rgb(180 180 180)', 'rgb(88 88 88)'),
+  ghost:     makeVariant('#ffffff', CONTROL_NEUTRAL, 'rgb(88 88 88)'),
   danger:    makeVariant('rgb(242 80 66)', 'rgb(190 46 34)'),
   plain:     plainVariant,
 };
@@ -123,7 +125,7 @@ const VARIANT_MAP: Record<Variant, ReturnType<typeof css>> = {
 const FOCUS_RING_MAP: Record<Variant, string> = {
   primary: PRIMARY,
   secondary: PRIMARY,
-  ghost: 'rgb(180 180 180)',
+  ghost: CONTROL_NEUTRAL,
   danger: 'rgb(242 80 66)',
   plain: PRIMARY,
 };

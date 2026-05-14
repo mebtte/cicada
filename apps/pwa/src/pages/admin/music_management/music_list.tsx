@@ -9,10 +9,14 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import {
+  MdArrowDownward,
+  MdArrowUpward,
   MdMusicNote,
   MdOpenInNew,
   MdOutlineEdit,
+  MdPlayArrow,
   MdSearch,
+  MdUnfoldMore,
 } from 'react-icons/md';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
@@ -34,19 +38,24 @@ import useWindowWidth from '@/utils/use_window_width';
 import getResizedImage from '@/server/asset/get_resized_image';
 import adminGetMusicList, {
   AdminMusicListFilterKey,
+  AdminMusicListSortBy,
+  AdminMusicListSortOrder,
 } from '@/server/api/admin_get_music_list';
+import FloatingMusicPlayer from './floating_music_player';
 
 const DEFAULT_PAGE_SIZE = 20;
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
 const COVER_SIZE = 42;
 const MOBILE_BREAKPOINT = 640;
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
-const ROW_SHADOW = 'rgb(232 232 232)';
+const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 const TABLE_ROW_GAP = 10;
 
 enum MusicManagementQuery {
   FILTER_KEY = 'filter_key',
   PAGE_SIZE = 'page_size',
+  SORT_BY = 'sort_by',
+  SORT_ORDER = 'sort_order',
 }
 
 type MusicItem = Awaited<ReturnType<typeof adminGetMusicList>>['musicList'][number];
@@ -101,6 +110,19 @@ const parsePageSize = (value?: string) => {
     ? pageSize
     : DEFAULT_PAGE_SIZE;
 };
+
+const sortByValues = new Set<string>(Object.values(AdminMusicListSortBy));
+const sortOrderValues = new Set<string>(Object.values(AdminMusicListSortOrder));
+
+const parseSortBy = (value?: string) =>
+  value && sortByValues.has(value)
+    ? (value as AdminMusicListSortBy)
+    : undefined;
+
+const parseSortOrder = (value?: string) =>
+  value && sortOrderValues.has(value)
+    ? (value as AdminMusicListSortOrder)
+    : undefined;
 
 const encodeKeyword = (keyword: string) =>
   keyword ? window.encodeURIComponent(keyword) : undefined;
@@ -193,7 +215,7 @@ const TableScroll = styled.div`
 
 const Table = styled.table`
   width: 100%;
-  min-width: 1460px;
+  min-width: 1560px;
   border-collapse: separate;
   border-spacing: 0 ${TABLE_ROW_GAP}px;
   font-family: ${FONT};
@@ -229,6 +251,42 @@ const Th = styled.th`
     box-shadow:
       -6px 0 0 rgb(247 247 247),
       0 3px 0 ${ROW_SHADOW};
+  }
+`;
+
+const SortHeaderButton = styled.button<{ $active: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  margin: 0 -8px;
+  border: 0;
+  background: transparent;
+  color: ${({ $active }) =>
+    $active ? CSSVariable.COLOR_PRIMARY : CSSVariable.TEXT_COLOR_SECONDARY};
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color 120ms,
+    background 120ms;
+
+  &:hover {
+    color: ${CSSVariable.COLOR_PRIMARY};
+    background: rgb(247 247 247);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
+    outline-offset: 2px;
+  }
+
+  > svg {
+    font-size: 14px;
+    opacity: ${({ $active }) => ($active ? 1 : 0.6)};
   }
 `;
 
@@ -462,7 +520,13 @@ const FileInfoSecondary = styled.div`
   font-size: 12px;
 `;
 
-const ActionButton = styled.button`
+const ActionGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ActionButton = styled.button<{ $active?: boolean }>`
   width: 34px;
   height: 34px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -470,7 +534,8 @@ const ActionButton = styled.button`
   padding: 0;
   background: #fff;
   box-shadow: 0 3px 0 ${ROW_SHADOW};
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  color: ${({ $active }) =>
+    $active ? CSSVariable.COLOR_PRIMARY : CSSVariable.TEXT_COLOR_SECONDARY};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -718,11 +783,18 @@ function MusicList({
     | Query.PAGE
     | MusicManagementQuery.FILTER_KEY
     | MusicManagementQuery.PAGE_SIZE
+    | MusicManagementQuery.SORT_BY
+    | MusicManagementQuery.SORT_ORDER
   >();
   const keyword = query[Query.KEYWORD] ?? '';
   const filterKey = parseFilterKey(query[MusicManagementQuery.FILTER_KEY]);
   const page = parsePage(query[Query.PAGE]);
   const pageSize = parsePageSize(query[MusicManagementQuery.PAGE_SIZE]);
+  const sortBy = parseSortBy(query[MusicManagementQuery.SORT_BY]);
+  const sortOrder = sortBy
+    ? parseSortOrder(query[MusicManagementQuery.SORT_ORDER]) ??
+      AdminMusicListSortOrder.DESC
+    : undefined;
   const [data, setData] = useState<Data>({
     error: null,
     loading: true,
@@ -730,6 +802,8 @@ function MusicList({
     musicList: [],
   });
   const [viewerPhoto, setViewerPhoto] = useState<ImageViewerPhoto | null>(null);
+  const [playerMusic, setPlayerMusic] = useState<MusicItem | null>(null);
+  const [playerPlayToken, setPlayerPlayToken] = useState(0);
   const [keywordInput, setKeywordInput] = useState(keyword);
   const composingKeywordRef = useRef(false);
 
@@ -746,11 +820,16 @@ function MusicList({
           [Query.PAGE]: page === 1 ? undefined : page,
           [MusicManagementQuery.PAGE_SIZE]:
             pageSize === DEFAULT_PAGE_SIZE ? undefined : pageSize,
+          [MusicManagementQuery.SORT_BY]: sortBy,
+          [MusicManagementQuery.SORT_ORDER]:
+            sortOrder && sortOrder !== AdminMusicListSortOrder.DESC
+              ? sortOrder
+              : undefined,
           ...query,
         },
         replace,
       }),
-    [filterKey, keyword, navigate, page, pageSize],
+    [filterKey, keyword, navigate, page, pageSize, sortBy, sortOrder],
   );
 
   useEffect(() => {
@@ -796,6 +875,8 @@ function MusicList({
         pageSize,
         keyword: requestKeyword.trim(),
         filterKey: requestFilterKey,
+        sortBy,
+        sortOrder,
         requestMinimalDuration: 0,
       })
         .then((result) => {
@@ -817,7 +898,7 @@ function MusicList({
           });
         });
     },
-    [filterKey, keyword, page, pageSize],
+    [filterKey, keyword, page, pageSize, sortBy, sortOrder],
   );
 
   useEffect(() => {
@@ -826,9 +907,47 @@ function MusicList({
     return () => controller.abort();
   }, [requestMusicList, reloadToken]);
 
+  const onHeatSortClick = useCallback(() => {
+    if (sortBy !== AdminMusicListSortBy.HEAT) {
+      updateQuery({
+        [MusicManagementQuery.SORT_BY]: AdminMusicListSortBy.HEAT,
+        [MusicManagementQuery.SORT_ORDER]: undefined,
+        [Query.PAGE]: undefined,
+      });
+      return;
+    }
+    if (sortOrder === AdminMusicListSortOrder.DESC) {
+      updateQuery({
+        [MusicManagementQuery.SORT_BY]: AdminMusicListSortBy.HEAT,
+        [MusicManagementQuery.SORT_ORDER]: AdminMusicListSortOrder.ASC,
+        [Query.PAGE]: undefined,
+      });
+      return;
+    }
+    updateQuery({
+      [MusicManagementQuery.SORT_BY]: undefined,
+      [MusicManagementQuery.SORT_ORDER]: undefined,
+      [Query.PAGE]: undefined,
+    });
+  }, [sortBy, sortOrder, updateQuery]);
+
+  useEffect(() => {
+    if (!playerMusic) return;
+
+    const latestMusic = data.musicList.find((music) => music.id === playerMusic.id);
+    if (latestMusic && latestMusic !== playerMusic) {
+      setPlayerMusic(latestMusic);
+    }
+  }, [data.musicList, playerMusic]);
+
   const reload = useCallback(() => {
     void requestMusicList();
   }, [requestMusicList]);
+
+  const playMusic = useCallback((music: MusicItem) => {
+    setPlayerMusic(music);
+    setPlayerPlayToken((token) => token + 1);
+  }, []);
 
   const totalPageCount = Math.ceil(data.total / pageSize);
   useEffect(() => {
@@ -915,6 +1034,25 @@ function MusicList({
                   <Th>{capitalize(t('music_type_short'))}</Th>
                   <Th>{capitalize(t('file_info'))}</Th>
                   <Th>{capitalize(t('year_of_issue'))}</Th>
+                  <Th>
+                    <SortHeaderButton
+                      type="button"
+                      $active={sortBy === AdminMusicListSortBy.HEAT}
+                      onClick={onHeatSortClick}
+                      title={capitalize(t('music_heat'))}
+                    >
+                      {capitalize(t('music_heat'))}
+                      {sortBy === AdminMusicListSortBy.HEAT ? (
+                        sortOrder === AdminMusicListSortOrder.ASC ? (
+                          <MdArrowUpward />
+                        ) : (
+                          <MdArrowDownward />
+                        )
+                      ) : (
+                        <MdUnfoldMore />
+                      )}
+                    </SortHeaderButton>
+                  </Th>
                   <Th>{capitalize(t('creator'))}</Th>
                   <Th>{capitalize(t('create_time'))}</Th>
                   <Th>{capitalize(t('manage'))}</Th>
@@ -994,19 +1132,33 @@ function MusicList({
                         music.year
                       )}
                     </Td>
+                    <Td>
+                      <Mono>{music.heat}</Mono>
+                    </Td>
                     <Td>{formatCreateUser(music)}</Td>
                     <Td>
                       {day(music.createTimestamp).format('YYYY-MM-DD HH:mm')}
                     </Td>
                     <Td>
-                      <ActionButton
-                        type="button"
-                        title={t('edit_name')}
-                        aria-label={t('edit_name')}
-                        onClick={() => onEdit(music.id)}
-                      >
-                        <MdOutlineEdit size={18} />
-                      </ActionButton>
+                      <ActionGroup>
+                        <ActionButton
+                          type="button"
+                          title={t('play')}
+                          aria-label={t('play')}
+                          $active={playerMusic?.id === music.id}
+                          onClick={() => playMusic(music)}
+                        >
+                          <MdPlayArrow size={18} />
+                        </ActionButton>
+                        <ActionButton
+                          type="button"
+                          title={t('edit_name')}
+                          aria-label={t('edit_name')}
+                          onClick={() => onEdit(music.id)}
+                        >
+                          <MdOutlineEdit size={18} />
+                        </ActionButton>
+                      </ActionGroup>
                     </Td>
                   </tr>
                 ))}
@@ -1070,6 +1222,11 @@ function MusicList({
         ) : null}
       </Footer>
       <ImageViewer photo={viewerPhoto} onClose={() => setViewerPhoto(null)} />
+      <FloatingMusicPlayer
+        music={playerMusic}
+        playToken={playerPlayToken}
+        onClose={() => setPlayerMusic(null)}
+      />
     </Card>
   );
 }

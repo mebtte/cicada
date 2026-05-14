@@ -76,9 +76,6 @@ func NewServer() *gin.Engine {
 
 	// Music
 	api.GET("/music", auth(), handler.GetMusic)
-	api.POST("/music", auth(), handler.CreateMusic)
-	api.PUT("/music", auth(), handler.UpdateMusic)
-	api.DELETE("/music", auth(), handler.DeleteMusic)
 	api.GET("/music/search", auth(), handler.SearchMusic)
 	api.GET("/music/search_by_lyric", auth(), handler.SearchMusicByLyric)
 
@@ -124,6 +121,9 @@ func NewServer() *gin.Engine {
 	api.PUT("/admin/user_admin", auth(), admin(), handler.AdminUpdateUserAdmin)
 	api.DELETE("/admin/user", auth(), admin(), handler.AdminDeleteUser)
 	api.GET("/admin/user_list", auth(), admin(), handler.AdminGetUserList)
+	api.POST("/admin/music", auth(), admin(), handler.AdminCreateMusic)
+	api.PUT("/admin/music", auth(), admin(), handler.AdminUpdateMusic)
+	api.DELETE("/admin/music", auth(), admin(), handler.AdminDeleteMusic)
 	api.GET("/admin/music_list", auth(), admin(), handler.AdminGetMusicList)
 	api.GET("/admin/singer_list", auth(), admin(), handler.AdminGetSingerList)
 	api.GET("/admin/singer", auth(), admin(), handler.AdminGetSinger)

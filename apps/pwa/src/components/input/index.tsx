@@ -8,6 +8,7 @@ import {
   useRef,
 } from 'react';
 import styled, { css } from 'styled-components';
+import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '../theme';
 import Label from '../label';
 
@@ -27,7 +28,7 @@ const SIZE: Record<
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 const DISABLED_BACKGROUND = 'rgb(248 248 248)';
 const DISABLED_BORDER = 'rgb(226 226 226)';
-const DISABLED_SHADOW = 'rgb(214 214 214)';
+const DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
 
 // ─── Styled ───────────────────────────────────────────────────────────────────
 
@@ -64,7 +65,7 @@ const Wrapper = styled.div<{
       height: ${s.height}px;
       padding: ${s.padding};
       border-radius: ${s.radius}px;
-      box-shadow: 0 ${s.shadow}px 0 rgb(185 185 185);
+      box-shadow: 0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     `;
   }}
 

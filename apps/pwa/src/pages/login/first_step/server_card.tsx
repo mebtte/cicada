@@ -61,7 +61,7 @@ export const ServerCard = styled.div`
         font-family: ${FONT};
         font-size: ${CSSVariable.TEXT_SIZE_SMALL};
         font-weight: 700;
-        color: rgb(180 180 180);
+        color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
         white-space: nowrap;
       }
     }

@@ -36,6 +36,7 @@ import * as RadixDialog from '@radix-ui/react-dialog';
 import { MdClose } from 'react-icons/md';
 import styled, { css, keyframes } from 'styled-components';
 import { useTheme, CSS_VAR } from '../theme';
+import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import {
   useComposedRefs,
@@ -95,7 +96,7 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     border-radius: 20px 0 0 20px;
     border: 2px solid rgb(220 220 220);
     border-right: none;
-    box-shadow: -5px 0 0 rgb(185 185 185);
+    box-shadow: -5px 0 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 
     &[data-state='open']   { animation: ${slideInRight}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
     &[data-state='closed'] { animation: ${slideOutRight} 220ms ease-in; }
@@ -108,7 +109,7 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     border-radius: 0 20px 20px 0;
     border: 2px solid rgb(220 220 220);
     border-left: none;
-    box-shadow: 5px 0 0 rgb(185 185 185);
+    box-shadow: 5px 0 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 
     &[data-state='open']   { animation: ${slideInLeft}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
     &[data-state='closed'] { animation: ${slideOutLeft} 220ms ease-in; }
@@ -121,7 +122,7 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     border-radius: 20px 20px 0 0;
     border: 2px solid rgb(220 220 220);
     border-bottom: none;
-    box-shadow: 0 -5px 0 rgb(185 185 185);
+    box-shadow: 0 -5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 
     &[data-state='open']   { animation: ${slideInBottom}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
     &[data-state='closed'] { animation: ${slideOutBottom} 220ms ease-in; }
@@ -153,10 +154,10 @@ const CloseButton = styled(RadixDialog.Close)`
   width: 34px;
   height: 34px;
   padding: 0;
-  border: 2px solid rgb(180 180 180);
+  border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
   border-radius: 10px;
   background: #fff;
-  box-shadow: 0 3px 0 rgb(180 180 180);
+  box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
   color: rgb(88 88 88);
   cursor: pointer;
   flex-shrink: 0;
@@ -180,7 +181,7 @@ const CloseButton = styled(RadixDialog.Close)`
   }
 
   &:focus-visible {
-    outline: 3px solid rgb(180 180 180);
+    outline: 3px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     outline-offset: 2px;
   }
 `;

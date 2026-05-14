@@ -62,8 +62,8 @@ import type { Singer } from './types';
 const AVATAR_SIZE = 48;
 const PHOTO_DESCRIPTION_MAX_LENGTH = 500;
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
-const ROW_SHADOW = 'rgb(232 232 232)';
-const NEUTRAL_SHADOW = 'rgb(185 185 185)';
+const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 
 const Form = styled.div<{ $page: boolean }>`
   width: 100%;
@@ -188,14 +188,14 @@ const PhotoList = styled.div`
   gap: 8px;
 `;
 
-const PhotoRow = styled.div<{ $dragging: boolean }>`
+const PhotoRow = styled.div<{ $dragging: boolean; $sortable: boolean }>`
   position: relative;
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr);
   gap: 12px;
   align-items: center;
   min-width: 0;
-  padding: 12px 12px 12px 30px;
+  padding: ${({ $sortable }) => ($sortable ? '12px 12px 12px 30px' : '12px')};
   border: 2px solid
     ${({ $dragging }) =>
       $dragging ? CSSVariable.COLOR_PRIMARY : CSSVariable.COLOR_BORDER};
@@ -380,12 +380,14 @@ function SortablePhoto({
   photo,
   singerName,
   disabled,
+  sortable,
   onDescriptionChange,
   onDelete,
 }: {
   photo: Photo;
   singerName: string;
   disabled: boolean;
+  sortable: boolean;
   onDescriptionChange: (id: string, description: string) => void;
   onDelete: (id: string) => void;
 }) {
@@ -396,12 +398,13 @@ function SortablePhoto({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: photo.id, disabled });
+  } = useSortable({ id: photo.id, disabled: disabled || !sortable });
 
   return (
     <PhotoRow
       ref={setNodeRef}
       $dragging={isDragging}
+      $sortable={sortable}
       style={{ transform: CSS.Transform.toString(transform), transition }}
     >
       <PhotoThumb>
@@ -429,16 +432,18 @@ function SortablePhoto({
           }
         />
       </PhotoInfo>
-      <DragHandle
-        type="button"
-        title={t('sort')}
-        aria-label={t('sort')}
-        disabled={disabled}
-        {...attributes}
-        {...listeners}
-      >
-        <MdDragIndicator size={18} />
-      </DragHandle>
+      {sortable ? (
+        <DragHandle
+          type="button"
+          title={t('sort')}
+          aria-label={t('sort')}
+          disabled={disabled}
+          {...attributes}
+          {...listeners}
+        >
+          <MdDragIndicator size={18} />
+        </DragHandle>
+      ) : null}
       <PhotoDeleteButton
         square
         size="sm"
@@ -715,6 +720,7 @@ function SingerEditContent({
                         photo={photo}
                         singerName={singer.name}
                         disabled={saving || photoSaving}
+                        sortable={photos.length > 1}
                         onDescriptionChange={onPhotoDescriptionChange}
                         onDelete={onDeletePhoto}
                       />

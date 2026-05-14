@@ -22,6 +22,7 @@ import ReactSelect, {
 } from 'react-select';
 import { Branch as DismissableLayerBranch } from '@radix-ui/react-dismissable-layer';
 import styled from 'styled-components';
+import { CSSVariable } from '@/global_style';
 import Label from '../label';
 import { useTheme } from '../theme';
 
@@ -148,7 +149,7 @@ function buildStyles<T, IsMulti extends boolean>(
       boxShadow: isDisabled ? 'none' :
         hasError        ? `0 ${s.shadow}px 0 rgb(190 46 34)` :
         state.isFocused ? `0 ${s.shadow}px 0 ${shadowColor}` :
-        `0 ${s.shadow}px 0 rgb(185 185 185)`,
+        `0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}`,
       cursor: isDisabled ? 'not-allowed' : 'pointer',
       fontFamily: FONT,
       fontSize: s.font,
@@ -221,8 +222,8 @@ function buildStyles<T, IsMulti extends boolean>(
       borderRadius: Math.max(15, s.radius + 2),
       boxShadow:
         state.placement === 'top'
-          ? '0 -4px 0 rgb(185 185 185), 0 14px 28px rgb(0 0 0 / 0.1)'
-          : '0 4px 0 rgb(185 185 185), 0 14px 28px rgb(0 0 0 / 0.1)',
+          ? `0 -4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}, 0 14px 28px rgb(0 0 0 / 0.1)`
+          : `0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}, 0 14px 28px rgb(0 0 0 / 0.1)`,
       overflow: 'visible',
       padding: 6,
       marginTop: state.placement === 'top' ? 0 : s.shadow + 6,
@@ -307,7 +308,7 @@ function buildStyles<T, IsMulti extends boolean>(
       textAlign: 'center' as const,
       fontFamily: FONT,
       fontSize: 13,
-      color: 'rgb(180 180 180)',
+      color: CSSVariable.COLOR_CONTROL_NEUTRAL,
       fontWeight: 600,
     }),
     loadingMessage: (_) => ({
@@ -315,7 +316,7 @@ function buildStyles<T, IsMulti extends boolean>(
       textAlign: 'center' as const,
       fontFamily: FONT,
       fontSize: 13,
-      color: 'rgb(180 180 180)',
+      color: CSSVariable.COLOR_CONTROL_NEUTRAL,
       fontWeight: 600,
     }),
   };

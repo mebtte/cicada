@@ -26,7 +26,8 @@ const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const PUBLIC = '#63d1fa';
 const PUBLIC_SHADOW = 'rgb(72 179 220)';
-const NEUTRAL_SHADOW = 'rgb(232 232 232)';
+const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const CONTROL_NEUTRAL = CSSVariable.COLOR_CONTROL_NEUTRAL;
 const COVER_SIZE = 28;
 const COVER_INNER_SIZE = COVER_SIZE - 4;
 const CHECKBOX_SIZE = 24;
@@ -135,10 +136,10 @@ const Checkbox = styled.span<{ $checked: boolean }>`
   color: #fff;
   background: ${({ $checked }) => ($checked ? PRIMARY : '#fff')};
   border: 2px solid
-    ${({ $checked }) => ($checked ? PRIMARY_SHADOW : 'rgb(180 180 180)')};
+    ${({ $checked }) => ($checked ? PRIMARY_SHADOW : CONTROL_NEUTRAL)};
   border-radius: 8px;
   box-shadow: 0 3px 0
-    ${({ $checked }) => ($checked ? PRIMARY_SHADOW : 'rgb(180 180 180)')};
+    ${({ $checked }) => ($checked ? PRIMARY_SHADOW : CONTROL_NEUTRAL)};
   transition:
     background 150ms ease-out,
     border-color 150ms ease-out,

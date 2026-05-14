@@ -15,7 +15,7 @@ const Style = styled.div`
   background: rgb(248 248 248);
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 10px;
-  box-shadow: 0 3px 0 rgb(232 232 232);
+  box-shadow: 0 3px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
 
   > .duration {
     border-top: 2px solid ${CSSVariable.COLOR_BORDER};

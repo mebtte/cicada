@@ -44,7 +44,7 @@ const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
 const PHOTO_SIZE = 36;
 const MOBILE_BREAKPOINT = 640;
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
-const ROW_SHADOW = 'rgb(232 232 232)';
+const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 const TABLE_ROW_GAP = 10;
 
 enum SingerManagementQuery {

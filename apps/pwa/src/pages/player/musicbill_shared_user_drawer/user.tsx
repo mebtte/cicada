@@ -23,7 +23,7 @@ const OWNER = 'rgb(255 200 0)';
 const OWNER_SHADOW = 'rgb(224 168 0)';
 const PENDING = 'rgb(99 209 250)';
 const PENDING_SHADOW = 'rgb(72 179 220)';
-const NEUTRAL_SHADOW = 'rgb(218 218 218)';
+const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
 const Style = styled.div<{ $owner: boolean; $accepted: boolean }>`
   margin: 0 0 12px;
@@ -74,9 +74,9 @@ const Style = styled.div<{ $owner: boolean; $accepted: boolean }>`
       overflow: hidden;
 
       background: rgb(247 247 247);
-      border: 2px solid rgb(232 232 232);
+      border: 2px solid ${CSSVariable.COLOR_BORDER};
       border-radius: 16px;
-      box-shadow: 0 3px 0 rgb(218 218 218);
+      box-shadow: 0 3px 0 ${NEUTRAL_SHADOW};
 
       > .avatar {
         display: block;

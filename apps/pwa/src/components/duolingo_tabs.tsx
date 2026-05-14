@@ -12,7 +12,7 @@ import { CSS_VAR } from './theme';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
-const HOVER_SHADOW = 'rgb(214 214 214)';
+const HOVER_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
 
 export type DuolingoTabItem<TabType extends string> = {
   tab: TabType;
@@ -38,7 +38,7 @@ const TabListRoot = styled.div`
   background: #fff;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 16px;
-  box-shadow: 0 4px 0 rgb(232 232 232);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
 `;
 
 const ActiveBlock = styled.div<{

@@ -167,4 +167,43 @@ func TestAdminGetMusicList(t *testing.T) {
 			t.Fatalf("expected wrong_parameter, got %+v", resp)
 		}
 	})
+
+	t.Run("sorts by heat descending", func(t *testing.T) {
+		resp := call("page=1&pageSize=10&sortBy=heat")
+		if resp.Code != "success" {
+			t.Fatalf("unexpected code: %s", resp.Code)
+		}
+		if len(resp.Data.MusicList) != 3 {
+			t.Fatalf("expected 3 music items, got %d", len(resp.Data.MusicList))
+		}
+		if resp.Data.MusicList[0].ID != "music-alpha" ||
+			resp.Data.MusicList[1].ID != "music-beta" ||
+			resp.Data.MusicList[2].ID != "music-gamma" {
+			t.Fatalf("unexpected order: %+v", resp.Data.MusicList)
+		}
+	})
+
+	t.Run("sorts by heat ascending", func(t *testing.T) {
+		resp := call("page=1&pageSize=10&sortBy=heat&sortOrder=asc")
+		if resp.Code != "success" {
+			t.Fatalf("unexpected code: %s", resp.Code)
+		}
+		if len(resp.Data.MusicList) != 3 {
+			t.Fatalf("expected 3 music items, got %d", len(resp.Data.MusicList))
+		}
+		if resp.Data.MusicList[0].ID != "music-gamma" ||
+			resp.Data.MusicList[1].ID != "music-beta" ||
+			resp.Data.MusicList[2].ID != "music-alpha" {
+			t.Fatalf("unexpected order: %+v", resp.Data.MusicList)
+		}
+	})
+
+	t.Run("rejects invalid sort", func(t *testing.T) {
+		if resp := call("page=1&pageSize=10&sortBy=name"); resp.Code != "wrong_parameter" {
+			t.Fatalf("expected wrong_parameter for sortBy, got %+v", resp)
+		}
+		if resp := call("page=1&pageSize=10&sortBy=heat&sortOrder=random"); resp.Code != "wrong_parameter" {
+			t.Fatalf("expected wrong_parameter for sortOrder, got %+v", resp)
+		}
+	})
 }

@@ -21,7 +21,7 @@ import { Invitation as InvitationType } from './constants';
 const USER_MARKER = '__INVITE_USER__';
 const MUSICBILL_MARKER = '__INVITE_MUSICBILL__';
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
-const NEUTRAL_SHADOW = 'rgb(218 218 218)';
+const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
 const Style = styled.article`
   padding: 14px 14px 16px;
@@ -54,7 +54,7 @@ const TimeBadge = styled.div`
   font-weight: 900;
   line-height: 1;
   background: rgb(247 247 247);
-  border: 2px solid rgb(232 232 232);
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 999px;
   box-shadow: 0 2px 0 ${NEUTRAL_SHADOW};
 

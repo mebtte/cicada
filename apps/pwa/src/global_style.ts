@@ -6,6 +6,9 @@ export enum CSSVariable {
   COLOR_PRIMARY_ACTIVE = 'var(--color-primary-active)',
   COLOR_DANGEROUS = 'var(--color-dangerous)',
   COLOR_BORDER = 'var(--color-border)',
+  COLOR_CONTROL_NEUTRAL = 'var(--color-control-neutral)',
+  COLOR_DISABLED_SHADOW = 'var(--color-disabled-shadow)',
+  COLOR_SURFACE_SHADOW = 'var(--color-surface-shadow)',
 
   TEXT_SIZE_TITLE = 'var(--text-size-title)',
   TEXT_SIZE_LARGE = 'var(--text-size-large)',
@@ -33,6 +36,9 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.COLOR_PRIMARY_ACTIVE]: '#1d8b5e',
   [CSSVariable.COLOR_DANGEROUS]: '#f25042',
   [CSSVariable.COLOR_BORDER]: 'rgb(232 232 232)',
+  [CSSVariable.COLOR_CONTROL_NEUTRAL]: 'rgb(180 180 180)',
+  [CSSVariable.COLOR_DISABLED_SHADOW]: 'rgb(214 214 214)',
+  [CSSVariable.COLOR_SURFACE_SHADOW]: 'rgb(232 232 232)',
 
   [CSSVariable.TEXT_SIZE_TITLE]: '18px',
   [CSSVariable.TEXT_SIZE_LARGE]: '16px',

@@ -65,6 +65,8 @@ func SearchMusicByLyric(c *gin.Context) {
 func AdminGetMusicList(c *gin.Context) {
 	keyword := c.Query("keyword")
 	filterKey := c.Query("filterKey")
+	sortBy := c.Query("sortBy")
+	sortOrder := c.Query("sortOrder")
 	page := queryInt(c, "page", 1)
 	pageSize := queryInt(c, "pageSize", 20)
 	if page < 1 || pageSize < 1 || pageSize > 100 {
@@ -77,8 +79,20 @@ func AdminGetMusicList(c *gin.Context) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
+	switch sortBy {
+	case "", "createTimestamp", "heat":
+	default:
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	switch sortOrder {
+	case "", "desc", "asc":
+	default:
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
 
-	total, musics, err := store.GetAdminMusicList(keyword, filterKey, page, pageSize)
+	total, musics, err := store.GetAdminMusicList(keyword, filterKey, sortBy, sortOrder, page, pageSize)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
@@ -192,8 +206,12 @@ type createMusicBody struct {
 	Asset     string `json:"asset" binding:"required"`
 }
 
-func CreateMusic(c *gin.Context) {
+func AdminCreateMusic(c *gin.Context) {
 	u := middleware.GetUser(c)
+	if u == nil || u.Admin != 1 {
+		api.Fail(c, apperr.NotAuthorizedForAdmin)
+		return
+	}
 	var body createMusicBody
 	if err := c.ShouldBindJSON(&body); err != nil || len(body.Name) > 50 || strings.TrimSpace(body.Name) != body.Name {
 		api.Fail(c, apperr.WrongParameter)
@@ -238,15 +256,19 @@ const (
 	musicMaxLyricLength = 16384
 )
 
-func UpdateMusic(c *gin.Context) {
+func AdminUpdateMusic(c *gin.Context) {
 	u := middleware.GetUser(c)
+	if u == nil || u.Admin != 1 {
+		api.Fail(c, apperr.NotAuthorizedForAdmin)
+		return
+	}
 	var body updateMusicBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
 	m, err := store.GetMusicByID(body.ID)
-	if err != nil || (u.Admin == 0 && m.CreateUserID != u.ID) {
+	if err != nil {
 		api.Fail(c, apperr.MusicNotExisted)
 		return
 	}
@@ -438,8 +460,12 @@ func UpdateMusic(c *gin.Context) {
 
 // ── Delete music ──────────────────────────────────────────────────────────────
 
-func DeleteMusic(c *gin.Context) {
+func AdminDeleteMusic(c *gin.Context) {
 	u := middleware.GetUser(c)
+	if u == nil || u.Admin != 1 {
+		api.Fail(c, apperr.NotAuthorizedForAdmin)
+		return
+	}
 	id := c.Query("id")
 	captchaID := c.Query("captchaId")
 	captchaValue := c.Query("captchaValue")
@@ -453,7 +479,7 @@ func DeleteMusic(c *gin.Context) {
 		return
 	}
 	m, err := store.GetMusicByID(id)
-	if err != nil || (u.Admin == 0 && m.CreateUserID != u.ID) {
+	if err != nil {
 		api.Fail(c, apperr.MusicNotExisted)
 		return
 	}

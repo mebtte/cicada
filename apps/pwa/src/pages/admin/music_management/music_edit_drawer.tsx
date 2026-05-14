@@ -98,7 +98,7 @@ interface Music {
 
 const COVER_SIZE = 120;
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
-const ROW_SHADOW = 'rgb(232 232 232)';
+const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
 const formatSingerToOption = (singer: Singer): SelectOption<Singer> => ({
   label: `${singer.name}${singer.aliases.length ? `(${singer.aliases[0]})` : ''}`,

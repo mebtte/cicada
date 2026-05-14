@@ -10,6 +10,16 @@ export enum AdminMusicListFilterKey {
   SINGER = 'singer',
 }
 
+export enum AdminMusicListSortBy {
+  CREATE_TIMESTAMP = 'createTimestamp',
+  HEAT = 'heat',
+}
+
+export enum AdminMusicListSortOrder {
+  DESC = 'desc',
+  ASC = 'asc',
+}
+
 type Response = {
   total: number;
   musicList: {
@@ -44,12 +54,16 @@ async function adminGetMusicList({
   pageSize,
   keyword,
   filterKey,
+  sortBy,
+  sortOrder,
   requestMinimalDuration,
 }: {
   page: number;
   pageSize: number;
   keyword: string;
   filterKey: AdminMusicListFilterKey;
+  sortBy?: AdminMusicListSortBy;
+  sortOrder?: AdminMusicListSortOrder;
   requestMinimalDuration?: number;
 }) {
   const data = await request<Response>({
@@ -59,6 +73,8 @@ async function adminGetMusicList({
       pageSize,
       keyword,
       filterKey,
+      sortBy,
+      sortOrder,
     },
     withToken: true,
     requestMinimalDuration,

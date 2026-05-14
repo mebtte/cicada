@@ -45,7 +45,7 @@ const Header = styled(DrawerHeader)`
 
   background: #fff;
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 0 4px 0 rgb(232 232 232);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
 `;
 const HeaderRow = styled.div`
   display: flex;

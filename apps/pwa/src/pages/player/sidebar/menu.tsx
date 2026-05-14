@@ -99,7 +99,7 @@ const Item = styled.button<{ $active: boolean }>`
     color: ${PRIMARY};
     background: #fff;
     border-color: ${CSSVariable.COLOR_BORDER};
-    box-shadow: 0 3px 0 rgb(232 232 232);
+    box-shadow: 0 3px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
   }
 
   ${({ $active }) =>
@@ -107,7 +107,7 @@ const Item = styled.button<{ $active: boolean }>`
     css`
       background: #fff;
       border-color: ${CSSVariable.COLOR_BORDER};
-      box-shadow: 0 3px 0 rgb(232 232 232);
+      box-shadow: 0 3px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
 
       &:not(:disabled):hover {
         color: ${PRIMARY};

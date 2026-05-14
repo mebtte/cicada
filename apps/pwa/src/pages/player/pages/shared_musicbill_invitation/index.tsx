@@ -59,9 +59,9 @@ const Hint = styled.div`
   font-weight: 800;
   line-height: 1.45;
   background: #fff;
-  border: 2px solid rgb(232 232 232);
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 16px;
-  box-shadow: 0 4px 0 rgb(218 218 218);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
 
   > svg {
     flex: 0 0 auto;

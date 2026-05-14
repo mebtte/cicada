@@ -8,7 +8,7 @@ import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import Filter from './filter';
 import { TOOLBAR_HEIGHT } from '../constants';
 
-const NEUTRAL_SHADOW = 'rgb(232 232 232)';
+const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
 const Style = styled.div`
   z-index: 2;

@@ -34,7 +34,8 @@ const MOBILE_BREAKPOINT = 760;
 const AVATAR_SIZE = 36;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
-const NEUTRAL_SHADOW = 'rgb(180 180 180)';
+const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
+const SURFACE_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
 const ADMIN_MENU_ITEMS = [
   {
@@ -76,7 +77,8 @@ const Sidebar = styled.aside<{ $open: boolean }>`
   flex-direction: column;
   background: #fff;
   border-right: 2px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 4px 0 0 rgb(232 232 232 / 0.35);
+  box-shadow: 4px 0 0
+    color-mix(in srgb, ${SURFACE_SHADOW} 35%, transparent);
   z-index: 3;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
@@ -163,7 +165,7 @@ const MenuLink = styled(NavLink)`
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 15px;
   background: #fff;
-  box-shadow: 0 3px 0 rgb(232 232 232);
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
   font-weight: 800;
@@ -269,7 +271,7 @@ const Header = styled.header`
   gap: 18px;
   background: #fff;
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
-  box-shadow: 0 3px 0 rgb(214 214 214);
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
   z-index: 10;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
@@ -421,7 +423,7 @@ const UserMenu = styled.div`
   border-radius: 15px;
   background: #fff;
   box-shadow:
-    0 4px 0 rgb(232 232 232),
+    0 4px 0 ${SURFACE_SHADOW},
     0 18px 30px rgb(0 0 0 / 0.1);
   z-index: 20;
 `;
@@ -436,7 +438,7 @@ const UserMenuProfile = styled.div`
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 15px;
   background: #fff;
-  box-shadow: 0 3px 0 rgb(232 232 232);
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
 `;
 
 const UserMenuProfileText = styled.div`
@@ -474,7 +476,7 @@ const UserMenuLanguage = styled(LanguageSelect)`
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 15px;
   background: #fff;
-  box-shadow: 0 3px 0 rgb(232 232 232);
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
 `;
 
 const Content = styled.div`

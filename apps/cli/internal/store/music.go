@@ -279,7 +279,7 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	return total, musics, err2
 }
 
-func GetAdminMusicList(keyword, filterKey string, page, pageSize int) (int, []AdminMusic, error) {
+func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageSize int) (int, []AdminMusic, error) {
 	where := ""
 	args := []any{}
 	trimmedKeyword := strings.TrimSpace(keyword)
@@ -315,13 +315,23 @@ func GetAdminMusicList(keyword, filterKey string, page, pageSize int) (int, []Ad
 		return 0, nil, err
 	}
 
+	direction := "DESC"
+	if sortOrder == "asc" {
+		direction = "ASC"
+	}
+	orderColumn := "m.createTimestamp"
+	if sortBy == "heat" {
+		orderColumn = "m.heat"
+	}
+	orderBy := orderColumn + " " + direction + ", m.id DESC"
+
 	listArgs := append([]any{}, args...)
 	listArgs = append(listArgs, pageSize, (page-1)*pageSize)
 	rows, err := DB().Query(
 		`SELECT `+musicSelectColumnsWithAlias+`,u.username,u.nickname
 		FROM music m
 		LEFT JOIN user u ON u.id=m.createUserId`+where+`
-		ORDER BY m.createTimestamp DESC, m.id DESC
+		ORDER BY `+orderBy+`
 		LIMIT ? OFFSET ?`,
 		listArgs...,
 	)
