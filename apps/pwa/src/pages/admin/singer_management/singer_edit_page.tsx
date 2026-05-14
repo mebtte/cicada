@@ -11,8 +11,8 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import adminGetSinger from '@/server/api/admin_get_singer';
 import { t } from '@/i18n';
 import capitalize from '@/utils/capitalize';
-import SingerEditContent from './singer_edit_content';
-import type { Singer } from './types';
+import SingerEditContent from '../components/singer_edit/content';
+import type { Singer } from '../components/singer_edit/types';
 
 const Page = styled.div`
   position: absolute;

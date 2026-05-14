@@ -7,7 +7,6 @@ import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import capitalize from '@/utils/capitalize';
-import UserManage from '@/pages/player/pages/user_manage';
 import LanguageSelect from '@/components/language_select';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
@@ -26,6 +25,7 @@ import {
 import Dashboard from './dashboard';
 import MusicManagement from './music_management';
 import SingerManagement from './singer_management';
+import UserManagement from './user_management';
 
 const SIDEBAR_WIDTH = 240;
 const HEADER_HEIGHT = 72;
@@ -440,11 +440,6 @@ const Content = styled.div`
   z-index: 0;
 `;
 
-const UserManageWrapper = styled.div`
-  position: absolute;
-  inset: 0;
-`;
-
 const getCurrentMenuItem = (pathname: string) => {
   return (
     ADMIN_MENU_ITEMS.find(({ path }) => {
@@ -621,11 +616,7 @@ function AdminPage() {
             <Route path={ADMIN_PATH.DASHBOARD} element={<Dashboard />} />
             <Route
               path={ADMIN_PATH.USER_MANAGEMENT}
-              element={
-                <UserManageWrapper>
-                  <UserManage />
-                </UserManageWrapper>
-              }
+              element={<UserManagement />}
             />
             <Route
               path={`${ADMIN_PATH.SINGER_MANAGEMENT}/*`}

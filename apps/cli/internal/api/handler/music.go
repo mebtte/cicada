@@ -62,6 +62,30 @@ func SearchMusicByLyric(c *gin.Context) {
 	api.OK(c, resp)
 }
 
+func AdminGetMusicList(c *gin.Context) {
+	keyword := c.Query("keyword")
+	filterKey := c.Query("filterKey")
+	page := queryInt(c, "page", 1)
+	pageSize := queryInt(c, "pageSize", 20)
+	if page < 1 || pageSize < 1 || pageSize > 100 {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	switch filterKey {
+	case "", "all", "id", "name", "alias", "singer":
+	default:
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+
+	total, musics, err := store.GetAdminMusicList(keyword, filterKey, page, pageSize)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	api.OK(c, adminMusicListResponse(musics, total))
+}
+
 // ── Get single music ──────────────────────────────────────────────────────────
 
 func GetMusic(c *gin.Context) {
@@ -651,6 +675,40 @@ func musicListWithLyricsResponse(musics []store.Music, total int) (gin.H, error)
 		list[i]["lyrics"] = lyricItems
 	}
 	return resp, nil
+}
+
+func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
+	if len(musics) == 0 {
+		return gin.H{"total": total, "musicList": []any{}}
+	}
+	ids := make([]string, len(musics))
+	for i, m := range musics {
+		ids[i] = m.ID
+	}
+	singers, _ := store.GetSingersInMusicIDs(ids)
+	bySong := groupSingersByMusic(singers)
+
+	list := make([]gin.H, len(musics))
+	for i, m := range musics {
+		list[i] = gin.H{
+			"id":              m.ID,
+			"type":            m.Type,
+			"name":            m.Name,
+			"aliases":         splitAliases(m.Aliases),
+			"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+			"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"heat":            m.Heat,
+			"year":            nullInt64(m.Year),
+			"createTimestamp": m.CreateTimestamp,
+			"singers":         singerItems(bySong[m.ID]),
+			"createUser": gin.H{
+				"id":       m.CreateUserID,
+				"username": m.CreateUserUsername,
+				"nickname": m.CreateUserNickname,
+			},
+		}
+	}
+	return gin.H{"total": total, "musicList": list}
 }
 
 func groupSingersByMusic(singers []store.SingerInMusic) map[string][]store.SingerInMusic {

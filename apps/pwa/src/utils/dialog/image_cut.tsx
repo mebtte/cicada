@@ -14,16 +14,15 @@ import {
 import Cropper from 'cropperjs';
 import styled from 'styled-components';
 import { IMAGE_MAX_SIZE } from '@/constants/asset';
-import FileSelect from '@/components/file_select';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import DialogBase from './dialog_base';
 import { DEFAULT_CANCEL_VARIANT, ImageCut as ImageCutShape } from './constants';
 import useEvent from '../use_event';
 import loadImage from '../load_image';
-import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
+import selectFile from '../select_file';
 
-const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
+const ACCEPT_TYPES = ['image/*'];
 
 const Body = styled(DialogBody)`
   display: flex;
@@ -56,6 +55,10 @@ const ImgBox = styled.div`
   .cropper-point {
     background-color: ${CSSVariable.COLOR_PRIMARY};
   }
+`;
+
+const SelectImageButton = styled(Button)`
+  margin-right: auto;
 `;
 
 function ImageCutContent({
@@ -156,6 +159,16 @@ function ImageCutContent({
     }
   }, [confirming, canceling]);
 
+  const onSelectImage = useEvent(() => {
+    if (confirming || canceling) {
+      return;
+    }
+    return selectFile({
+      acceptTypes: ACCEPT_TYPES,
+      onSelect: (f) => setFile(f),
+    });
+  });
+
   return (
     <>
       {options.title && (
@@ -169,15 +182,15 @@ function ImageCutContent({
             <img src={url} ref={imageRef} />
           </ImgBox>
         ) : null}
-        <FileSelect
-          placeholder={upperCaseFirstLetter(t('image_select_placeholder'))}
-          value={file}
-          onChange={(f) => setFile(f)}
-          acceptTypes={ACCEPT_TYPES}
-          disabled={confirming || canceling}
-        />
       </Body>
       <DialogFooter $inline={options.inlineFooter}>
+        <SelectImageButton
+          variant="secondary"
+          onClick={onSelectImage}
+          disabled={confirming || canceling}
+        >
+          {t('select_image')}
+        </SelectImageButton>
         <Button
           variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
           onClick={onCancel}

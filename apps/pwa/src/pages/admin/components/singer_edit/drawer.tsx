@@ -4,7 +4,7 @@ import { Drawer, DrawerContent } from '@/components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import adminGetSinger from '@/server/api/admin_get_singer';
-import SingerEditContent from './singer_edit_content';
+import SingerEditContent from './content';
 import type { Singer } from './types';
 
 const EditDrawerContent = styled(DrawerContent)`
@@ -86,6 +86,7 @@ function SingerEditDrawer({
         side="right"
         style={{ width: 360 }}
         showClose={false}
+        onOpenAutoFocus={(event) => event.preventDefault()}
       >
         {loading ? (
           <CenterBox>

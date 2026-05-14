@@ -169,7 +169,7 @@ function buildStyles<T, IsMulti extends boolean>(
     }),
     menu: (base, state) => ({
       ...base,
-      zIndex: 9000,
+      zIndex: 10000,
       background: '#fff',
       border: '2px solid rgb(220 220 220)',
       borderRadius: Math.max(15, s.radius + 2),
@@ -182,7 +182,7 @@ function buildStyles<T, IsMulti extends boolean>(
       marginTop: state.placement === 'top' ? 0 : s.shadow + 6,
       marginBottom: state.placement === 'top' ? s.shadow + 6 : 0,
     }),
-    menuPortal: (base) => ({ ...base, zIndex: 9000 }),
+    menuPortal: (base) => ({ ...base, zIndex: 10000 }),
     menuList: (_) => ({
       padding: 0,
       maxHeight: 248,
@@ -345,6 +345,7 @@ export interface MultiSelectProps<T> {
   value:        SelectOption<T>[];
   onChange?:    (options: SelectOption<T>[]) => void;
   placeholder?: string;
+  clearable?:   boolean;
   disabled?:    boolean;
   size?:        SelectSize;
   label?:       string;
@@ -356,7 +357,7 @@ export interface MultiSelectProps<T> {
 
 export function MultiSelect<T>({
   options: staticOptions, loadOptions, value, onChange,
-  placeholder = 'Select...', disabled = false,
+  placeholder = 'Select...', clearable, disabled = false,
   size = 'md', label, hint, error, className, style,
 }: MultiSelectProps<T>) {
   const inputId = useId();
@@ -371,18 +372,27 @@ export function MultiSelect<T>({
     [onChange],
   );
 
+  const selectComponents = useMemo(
+    () => ({
+      DropdownIndicator,
+      ...(clearable === false ? { ClearIndicator: () => null } : {}),
+    }),
+    [clearable],
+  );
+
   const sharedProps = {
     inputId,
     isMulti: true as const,
     value,
     onChange: handleChange,
     placeholder,
+    ...(clearable === undefined ? {} : { isClearable: clearable }),
     isDisabled: disabled,
     styles,
     getOptionValue: (o: SelectOption<T>) => toKey(o.value),
     menuPortalTarget: document.body,
     menuPosition: 'fixed' as const,
-    components: { DropdownIndicator },
+    components: selectComponents,
     closeMenuOnSelect: false,
   };
 

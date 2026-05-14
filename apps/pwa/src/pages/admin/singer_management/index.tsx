@@ -36,8 +36,8 @@ import adminGetSingerList, {
   AdminSingerListFilterKey,
 } from '@/server/api/admin_get_singer_list';
 import openCreateSingerDialog from '../open_create_singer_dialog';
-import SingerEditDrawer from './singer_edit_drawer';
-import type { Singer } from './types';
+import SingerEditDrawer from '../components/singer_edit/drawer';
+import type { Singer } from '../components/singer_edit/types';
 
 const DEFAULT_PAGE_SIZE = 20;
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
@@ -236,8 +236,13 @@ const Th = styled.th`
   }
 
   &:last-child {
+    right: 0;
+    z-index: 3;
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
+    box-shadow:
+      -6px 0 0 rgb(247 247 247),
+      0 3px 0 ${ROW_SHADOW};
   }
 `;
 
@@ -259,8 +264,14 @@ const Td = styled.td`
   }
 
   &:last-child {
+    position: sticky;
+    right: 0;
+    z-index: 1;
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
+    box-shadow:
+      -6px 0 0 rgb(247 247 247),
+      0 3px 0 ${ROW_SHADOW};
   }
 
   tbody tr:hover & {

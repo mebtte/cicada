@@ -1,27 +1,28 @@
 import {
-  ButtonHTMLAttributes,
   ChangeEventHandler,
   FormEvent,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 import styled from 'styled-components';
 import {
-  MdMusicNote,
+  MdOutlineAddBox,
   MdOutlineEdit,
+  MdPeopleOutline,
   MdSearch,
 } from 'react-icons/md';
-import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
+import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import { Select, type SelectOption } from '@/components';
 import Pagination from '@/components/pagination';
 import Spinner from '@/components/spinner';
 import ErrorCard from '@/components/error_card';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import { Query } from '@/constants';
-import { MUSIC_TYPE_MAP } from '@/constants/music';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
@@ -31,61 +32,67 @@ import useNavigate from '@/utils/use_navigate';
 import useQuery from '@/utils/use_query';
 import useWindowWidth from '@/utils/use_window_width';
 import getResizedImage from '@/server/asset/get_resized_image';
-import adminGetMusicList, {
-  AdminMusicListFilterKey,
-} from '@/server/api/admin_get_music_list';
+import adminGetUserList from '@/server/api/admin_get_user_list';
+import UserEditDrawer from '../components/user_edit/drawer';
+import type { User } from '../components/user_edit/types';
+import CreateUserDialog from './create_user_dialog';
 
 const DEFAULT_PAGE_SIZE = 20;
 const PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
-const COVER_SIZE = 42;
+const AVATAR_SIZE = 38;
 const MOBILE_BREAKPOINT = 640;
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
 const ROW_SHADOW = 'rgb(232 232 232)';
 const TABLE_ROW_GAP = 10;
 
-enum MusicManagementQuery {
+enum UserManagementQuery {
   FILTER_KEY = 'filter_key',
   PAGE_SIZE = 'page_size',
 }
 
-type MusicItem = Awaited<ReturnType<typeof adminGetMusicList>>['musicList'][number];
+enum UserListFilterKey {
+  ALL = 'all',
+  ID = 'id',
+  USERNAME = 'username',
+  NICKNAME = 'nickname',
+  REMARK = 'remark',
+}
 
 interface Data {
   error: Error | null;
   loading: boolean;
-  total: number;
-  musicList: MusicItem[];
+  userList: User[];
 }
 
-const filterOptions: SelectOption<AdminMusicListFilterKey>[] = [
+const filterOptions: SelectOption<UserListFilterKey>[] = [
   {
     label: capitalize(t('all')),
-    value: AdminMusicListFilterKey.ALL,
+    value: UserListFilterKey.ALL,
   },
   {
     label: 'ID',
-    value: AdminMusicListFilterKey.ID,
+    value: UserListFilterKey.ID,
   },
   {
-    label: capitalize(t('name')),
-    value: AdminMusicListFilterKey.NAME,
+    label: capitalize(t('username')),
+    value: UserListFilterKey.USERNAME,
   },
   {
-    label: capitalize(t('alias')),
-    value: AdminMusicListFilterKey.ALIAS,
+    label: capitalize(t('nickname')),
+    value: UserListFilterKey.NICKNAME,
   },
   {
-    label: capitalize(t('singer')),
-    value: AdminMusicListFilterKey.SINGER,
+    label: capitalize(t('remark')),
+    value: UserListFilterKey.REMARK,
   },
 ];
 
-const filterKeyValues = new Set<string>(Object.values(AdminMusicListFilterKey));
+const filterKeyValues = new Set<string>(Object.values(UserListFilterKey));
 
 const parseFilterKey = (value?: string) =>
   value && filterKeyValues.has(value)
-    ? (value as AdminMusicListFilterKey)
-    : AdminMusicListFilterKey.ALL;
+    ? (value as UserListFilterKey)
+    : UserListFilterKey.ALL;
 
 const parsePage = (value?: string) => {
   const page = Number(value);
@@ -135,6 +142,18 @@ const Content = styled.div`
   min-height: 0;
   position: relative;
   overflow: hidden;
+`;
+
+const FloatingCreateButton = styled(Button)`
+  position: absolute;
+  right: 24px;
+  bottom: 22px;
+  z-index: 3;
+
+  @media (max-width: 640px) {
+    right: 16px;
+    bottom: 16px;
+  }
 `;
 
 const SearchForm = styled.form`
@@ -192,7 +211,7 @@ const TableScroll = styled.div`
 
 const Table = styled.table`
   width: 100%;
-  min-width: 1240px;
+  min-width: 1220px;
   border-collapse: separate;
   border-spacing: 0 ${TABLE_ROW_GAP}px;
   font-family: ${FONT};
@@ -265,163 +284,6 @@ const Td = styled.td`
   }
 `;
 
-const Mono = styled.span`
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
-  font-size: 12px;
-  font-weight: 700;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-`;
-
-const CoverButton = styled.button`
-  width: ${COVER_SIZE}px;
-  height: ${COVER_SIZE}px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 10px;
-  padding: 0;
-  background: #fff;
-  box-shadow: 0 3px 0 ${ROW_SHADOW};
-  color: ${CSSVariable.TEXT_COLOR_DISABLED};
-  cursor: zoom-in;
-  overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms ease-out;
-
-  &:hover {
-    filter: brightness(1.04);
-  }
-
-  &:active {
-    transform: translateY(3px);
-    box-shadow: none;
-    transition:
-      transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
-    outline-offset: 2px;
-  }
-
-  > svg {
-    font-size: 18px;
-  }
-`;
-
-const CoverPlaceholder = styled.div`
-  width: ${COVER_SIZE}px;
-  height: ${COVER_SIZE}px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 3px 0 ${ROW_SHADOW};
-  color: ${CSSVariable.TEXT_COLOR_DISABLED};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-`;
-
-const Cover = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-`;
-
-const Name = styled.div`
-  max-width: 210px;
-  font-family: ${FONT};
-  font-weight: 800;
-  line-height: 1.45;
-  color: rgb(75 75 75);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const TagList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-`;
-
-const Tag = styled.span`
-  max-width: 170px;
-  padding: 4px 8px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 2px 0 ${ROW_SHADOW};
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  font-family: ${FONT};
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const SingerButton = styled.button`
-  max-width: 170px;
-  padding: 4px 8px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 2px 0 ${ROW_SHADOW};
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  font-family: ${FONT};
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition:
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    color 120ms,
-    filter 120ms;
-
-  &:hover {
-    color: ${CSSVariable.COLOR_PRIMARY};
-    filter: brightness(1.04);
-  }
-
-  &:active {
-    transform: translateY(2px);
-    box-shadow: none;
-    transition:
-      transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
-    outline-offset: 2px;
-  }
-`;
-
-const TypeTag = styled(Tag)`
-  color: ${CSSVariable.COLOR_PRIMARY};
-`;
-
-const Muted = styled.span`
-  color: ${CSSVariable.TEXT_COLOR_DISABLED};
-`;
-
 const UserName = styled.div`
   font-family: ${FONT};
   font-weight: 800;
@@ -429,13 +291,39 @@ const UserName = styled.div`
   color: rgb(75 75 75);
 `;
 
-const UserAccount = styled.div`
-  margin-top: 2px;
+const Remark = styled.div`
+  max-width: 240px;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  font-family: ${FONT};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const Badge = styled.span<{ $active?: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  max-width: 160px;
+  padding: 4px 8px;
+  border: 2px solid
+    ${({ $active }) =>
+      $active ? CSSVariable.COLOR_PRIMARY : CSSVariable.COLOR_BORDER};
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 0
+    ${({ $active }) =>
+      $active ? 'var(--cicada-color-primary-shadow)' : ROW_SHADOW};
+  color: ${({ $active }) =>
+    $active ? CSSVariable.COLOR_PRIMARY : CSSVariable.TEXT_COLOR_SECONDARY};
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const Muted = styled.span`
+  color: ${CSSVariable.TEXT_COLOR_DISABLED};
 `;
 
 const ActionButton = styled.button`
@@ -563,88 +451,44 @@ const PaginationBox = styled.div`
   }
 `;
 
-const formatCreateUser = (music: MusicItem) => {
-  const { createUser } = music;
-  if (!createUser.id) return <Muted>{t('unknown')}</Muted>;
+const formatTimestamp = (timestamp: number) =>
+  timestamp ? day(timestamp).format('YYYY-MM-DD HH:mm') : t('unknown');
 
-  return (
-    <>
-      <UserName title={createUser.nickname || createUser.username}>
-        {createUser.nickname || createUser.username || t('unknown')}
-      </UserName>
-      <UserAccount title={createUser.id}>
-        {createUser.username ? `@${createUser.username}` : createUser.id}
-      </UserAccount>
-    </>
-  );
+const getSearchText = (user: User, filterKey: UserListFilterKey) => {
+  switch (filterKey) {
+    case UserListFilterKey.ID:
+      return user.id;
+    case UserListFilterKey.USERNAME:
+      return user.username;
+    case UserListFilterKey.NICKNAME:
+      return user.nickname;
+    case UserListFilterKey.REMARK:
+      return user.remark;
+    default:
+      return [user.id, user.username, user.nickname, user.remark].join(' ');
+  }
 };
 
-function LazyCover({
-  src,
-  alt,
-  ...props
-}: {
-  src: string;
-  alt: string;
-} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>) {
-  const ref = useRef<HTMLImageElement>(null);
-
-  useEffect(() => {
-    const image = ref.current;
-    if (!image || !src) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      image.src = src;
-      observer.disconnect();
-    });
-    observer.observe(image);
-    return () => observer.disconnect();
-  }, [src]);
-
-  if (!src) {
-    return (
-      <CoverPlaceholder>
-        <MdMusicNote />
-      </CoverPlaceholder>
-    );
-  }
-
-  return (
-    <CoverButton type="button" {...props}>
-      <Cover ref={ref} alt={alt} decoding="async" />
-    </CoverButton>
-  );
-}
-
-function MusicList({
-  reloadToken = 0,
-  onEdit,
-  onSingerEdit,
-}: {
-  reloadToken?: number;
-  onEdit: (id: string) => void;
-  onSingerEdit: (id: string) => void;
-}) {
+function UserManagement() {
   const navigate = useNavigate();
   const compactPagination = useWindowWidth() <= MOBILE_BREAKPOINT;
   const query = useQuery<
     | Query.KEYWORD
     | Query.PAGE
-    | MusicManagementQuery.FILTER_KEY
-    | MusicManagementQuery.PAGE_SIZE
+    | UserManagementQuery.FILTER_KEY
+    | UserManagementQuery.PAGE_SIZE
   >();
   const keyword = query[Query.KEYWORD] ?? '';
-  const filterKey = parseFilterKey(query[MusicManagementQuery.FILTER_KEY]);
+  const filterKey = parseFilterKey(query[UserManagementQuery.FILTER_KEY]);
   const page = parsePage(query[Query.PAGE]);
-  const pageSize = parsePageSize(query[MusicManagementQuery.PAGE_SIZE]);
+  const pageSize = parsePageSize(query[UserManagementQuery.PAGE_SIZE]);
   const [data, setData] = useState<Data>({
     error: null,
     loading: true,
-    total: 0,
-    musicList: [],
+    userList: [],
   });
-  const [viewerPhoto, setViewerPhoto] = useState<ImageViewerPhoto | null>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editUser, setEditUser] = useState<User | null>(null);
   const [keywordInput, setKeywordInput] = useState(keyword);
   const composingKeywordRef = useRef(false);
 
@@ -656,10 +500,10 @@ function MusicList({
       navigate({
         query: {
           [Query.KEYWORD]: encodeKeyword(keyword),
-          [MusicManagementQuery.FILTER_KEY]:
-            filterKey === AdminMusicListFilterKey.ALL ? undefined : filterKey,
+          [UserManagementQuery.FILTER_KEY]:
+            filterKey === UserListFilterKey.ALL ? undefined : filterKey,
           [Query.PAGE]: page === 1 ? undefined : page,
-          [MusicManagementQuery.PAGE_SIZE]:
+          [UserManagementQuery.PAGE_SIZE]:
             pageSize === DEFAULT_PAGE_SIZE ? undefined : pageSize,
           ...query,
         },
@@ -673,6 +517,80 @@ function MusicList({
       setKeywordInput(keyword);
     }
   }, [keyword]);
+
+  const requestUserList = useCallback(
+    ({ signal }: { signal?: AbortSignal } = {}) => {
+      setData((d) => ({
+        ...d,
+        error: null,
+        loading: true,
+      }));
+      return adminGetUserList()
+        .then((userList) => {
+          if (signal?.aborted) return;
+          setData({
+            error: null,
+            loading: false,
+            userList: userList.map((user) => ({
+              ...user,
+              avatar: user.avatar || DefaultCover,
+            })),
+          });
+        })
+        .catch((error) => {
+          if (signal?.aborted) return;
+          setData({
+            error,
+            loading: false,
+            userList: [],
+          });
+        });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void requestUserList({ signal: controller.signal });
+    return () => controller.abort();
+  }, [requestUserList]);
+
+  const reload = useCallback(() => {
+    void requestUserList();
+  }, [requestUserList]);
+
+  const filteredUserList = useMemo(() => {
+    const lowerCaseKeyword = keyword.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!lowerCaseKeyword) {
+      return data.userList;
+    }
+
+    return data.userList.filter((user) =>
+      getSearchText(user, filterKey).toLowerCase().includes(lowerCaseKeyword),
+    );
+  }, [data.userList, filterKey, keyword]);
+
+  const totalPageCount = Math.ceil(filteredUserList.length / pageSize);
+  useEffect(() => {
+    if (data.loading || data.error || filteredUserList.length === 0) return;
+    if (totalPageCount > 0 && page > totalPageCount) {
+      updateQuery({
+        [Query.PAGE]: totalPageCount === 1 ? undefined : totalPageCount,
+      });
+    }
+  }, [
+    data.error,
+    data.loading,
+    filteredUserList.length,
+    page,
+    totalPageCount,
+    updateQuery,
+  ]);
+
+  const visibleUserList = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredUserList.slice(start, start + pageSize);
+  }, [filteredUserList, page, pageSize]);
 
   const onKeywordChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setKeywordInput(event.target.value);
@@ -689,74 +607,37 @@ function MusicList({
     submitKeywordSearch();
   };
 
-  const requestMusicList = useCallback(
-    ({
-      signal,
-      page: requestPage = page,
-      keyword: requestKeyword = keyword,
-      filterKey: requestFilterKey = filterKey,
-    }: {
-      signal?: AbortSignal;
-      page?: number;
-      keyword?: string;
-      filterKey?: AdminMusicListFilterKey;
-    } = {}) => {
-      setData((d) => ({
-        ...d,
-        error: null,
-        loading: true,
-      }));
-      return adminGetMusicList({
-        page: requestPage,
-        pageSize,
-        keyword: requestKeyword.trim(),
-        filterKey: requestFilterKey,
-        requestMinimalDuration: 0,
-      })
-        .then((result) => {
-          if (signal?.aborted) return;
-          setData({
-            error: null,
-            loading: false,
-            total: result.total,
-            musicList: result.musicList,
-          });
-        })
-        .catch((error) => {
-          if (signal?.aborted) return;
-          setData({
-            error,
-            loading: false,
-            total: 0,
-            musicList: [],
-          });
-        });
-    },
-    [filterKey, keyword, page, pageSize],
-  );
+  const resetListQuery = useCallback(() => {
+    updateQuery({
+      [Query.KEYWORD]: undefined,
+      [UserManagementQuery.FILTER_KEY]: undefined,
+      [Query.PAGE]: undefined,
+      [UserManagementQuery.PAGE_SIZE]: undefined,
+    });
+  }, [updateQuery]);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    void requestMusicList({ signal: controller.signal });
-    return () => controller.abort();
-  }, [requestMusicList, reloadToken]);
-
-  const reload = useCallback(() => {
-    void requestMusicList();
-  }, [requestMusicList]);
-
-  const totalPageCount = Math.ceil(data.total / pageSize);
-  useEffect(() => {
-    if (data.loading || data.error || data.total === 0) return;
-    if (totalPageCount > 0 && page > totalPageCount) {
-      updateQuery({
-        [Query.PAGE]: totalPageCount === 1 ? undefined : totalPageCount,
-      });
+  const onCreated = useCallback(() => {
+    if (
+      keyword ||
+      filterKey !== UserListFilterKey.ALL ||
+      page !== 1 ||
+      pageSize !== DEFAULT_PAGE_SIZE
+    ) {
+      resetListQuery();
     }
-  }, [data.error, data.loading, data.total, page, totalPageCount, updateQuery]);
+    reload();
+  }, [filterKey, keyword, page, pageSize, reload, resetListQuery]);
 
-  const rangeStart = data.total === 0 ? 0 : (page - 1) * pageSize + 1;
-  const rangeEnd = Math.min(page * pageSize, data.total);
+  const onDeleted = useCallback((id: string) => {
+    setData((d) => ({
+      ...d,
+      userList: d.userList.filter((user) => user.id !== id),
+    }));
+  }, []);
+
+  const rangeStart =
+    filteredUserList.length === 0 ? 0 : (page - 1) * pageSize + 1;
+  const rangeEnd = Math.min(page * pageSize, filteredUserList.length);
 
   return (
     <Card>
@@ -767,8 +648,8 @@ function MusicList({
           value={filterKey}
           onChange={(value) => {
             updateQuery({
-              [MusicManagementQuery.FILTER_KEY]:
-                value === AdminMusicListFilterKey.ALL ? undefined : value,
+              [UserManagementQuery.FILTER_KEY]:
+                value === UserListFilterKey.ALL ? undefined : value,
               [Query.PAGE]: undefined,
             });
           }}
@@ -812,109 +693,76 @@ function MusicList({
           <StatusBox>
             <Spinner />
           </StatusBox>
-        ) : data.musicList.length === 0 ? (
+        ) : visibleUserList.length === 0 ? (
           <EmptyTip>
-            <MdMusicNote />
-            {t('no_suitable_music')}
+            <MdPeopleOutline />
+            {t('no_suitable_user')}
           </EmptyTip>
         ) : (
           <TableScroll>
             <Table>
               <thead>
                 <tr>
-                  <Th>{capitalize(t('music_id'))}</Th>
-                  <Th>{capitalize(t('cover'))}</Th>
-                  <Th>{capitalize(t('name'))}</Th>
-                  <Th>{capitalize(t('alias'))}</Th>
-                  <Th>{capitalize(t('singer'))}</Th>
-                  <Th>{capitalize(t('music_type_short'))}</Th>
-                  <Th>{capitalize(t('year_of_issue'))}</Th>
-                  <Th>{capitalize(t('creator'))}</Th>
-                  <Th>{capitalize(t('create_time'))}</Th>
+                  <Th>{capitalize(t('username'))}</Th>
+                  <Th>{capitalize(t('avatar'))}</Th>
+                  <Th>{capitalize(t('nickname'))}</Th>
+                  <Th>{capitalize(t('role'))}</Th>
+                  <Th>2FA</Th>
+                  <Th>{capitalize(t('remark'))}</Th>
+                  <Th>{capitalize(t('last_active_time'))}</Th>
+                  <Th>{capitalize(t('join_time'))}</Th>
                   <Th>{capitalize(t('manage'))}</Th>
                 </tr>
               </thead>
               <tbody>
-                {data.musicList.map((music) => (
-                  <tr key={music.id}>
+                {visibleUserList.map((user) => (
+                  <tr key={user.id}>
                     <Td>
-                      <Mono>{music.id}</Mono>
+                      <UserName title={user.username}>
+                        @{user.username}
+                      </UserName>
                     </Td>
                     <Td>
-                      <LazyCover
-                        src={
-                          music.cover
-                            ? getResizedImage({
-                                url: music.cover,
-                                size: COVER_SIZE * 2,
-                              })
-                            : ''
-                        }
-                        alt={music.name}
-                        title={music.name}
-                        onClick={() =>
-                          music.cover &&
-                          setViewerPhoto({
-                            src: music.cover,
-                            alt: music.name,
-                          })
-                        }
+                      <Avatar
+                        src={getResizedImage({
+                          url: user.avatar || DefaultCover,
+                          size: AVATAR_SIZE * 2,
+                        })}
+                        size={AVATAR_SIZE}
                       />
                     </Td>
                     <Td>
-                      <Name title={music.name}>{music.name}</Name>
-                    </Td>
-                    <Td>
-                      {music.aliases.length ? (
-                        <TagList>
-                          {music.aliases.map((alias, index) => (
-                            <Tag key={`${alias}-${index}`} title={alias}>
-                              {alias}
-                            </Tag>
-                          ))}
-                        </TagList>
-                      ) : null}
-                    </Td>
-                    <Td>
-                      {music.singers.length ? (
-                        <TagList>
-                          {music.singers.map((singer) => (
-                            <SingerButton
-                              key={singer.id}
-                              type="button"
-                              title={singer.name}
-                              onClick={() => onSingerEdit(singer.id)}
-                            >
-                              {singer.name}
-                            </SingerButton>
-                          ))}
-                        </TagList>
+                      {user.nickname ? (
+                        <UserName title={user.nickname}>{user.nickname}</UserName>
                       ) : (
                         <Muted>{t('unknown')}</Muted>
                       )}
                     </Td>
                     <Td>
-                      <TypeTag>
-                        {MUSIC_TYPE_MAP[music.type]?.label ?? t('unknown')}
-                      </TypeTag>
+                      <Badge $active={!!user.admin}>
+                        {user.admin ? t('admin') : t('user')}
+                      </Badge>
                     </Td>
                     <Td>
-                      {music.year === null ? (
-                        <Muted>{t('unknown')}</Muted>
+                      <Badge $active={user.twoFAEnabled}>
+                        {user.twoFAEnabled ? t('enabled') : t('disabled')}
+                      </Badge>
+                    </Td>
+                    <Td>
+                      {user.remark ? (
+                        <Remark title={user.remark}>{user.remark}</Remark>
                       ) : (
-                        music.year
+                        <Muted>{t('unknown')}</Muted>
                       )}
                     </Td>
-                    <Td>{formatCreateUser(music)}</Td>
-                    <Td>
-                      {day(music.createTimestamp).format('YYYY-MM-DD HH:mm')}
-                    </Td>
+                    <Td>{formatTimestamp(user.lastActiveTimestamp)}</Td>
+                    <Td>{formatTimestamp(user.joinTimestamp)}</Td>
                     <Td>
                       <ActionButton
                         type="button"
-                        title={t('edit_name')}
-                        aria-label={t('edit_name')}
-                        onClick={() => onEdit(music.id)}
+                        title={t('manage')}
+                        aria-label={t('manage')}
+                        onClick={() => setEditUser(user)}
                       >
                         <MdOutlineEdit size={18} />
                       </ActionButton>
@@ -925,6 +773,15 @@ function MusicList({
             </Table>
           </TableScroll>
         )}
+        <FloatingCreateButton
+          square
+          size="md"
+          variant="primary"
+          icon={<MdOutlineAddBox />}
+          aria-label={t('create_user')}
+          title={t('create_user')}
+          onClick={() => setCreateDialogOpen(true)}
+        />
       </Content>
 
       <Footer>
@@ -935,7 +792,7 @@ function MusicList({
                 'page_result_range',
                 rangeStart.toString(),
                 rangeEnd.toString(),
-                data.total.toString(),
+                filteredUserList.length.toString(),
               ),
             )}
           </ResultRange>
@@ -949,7 +806,7 @@ function MusicList({
                 menuPlacement="top"
                 onChange={(nextPageSize) =>
                   updateQuery({
-                    [MusicManagementQuery.PAGE_SIZE]:
+                    [UserManagementQuery.PAGE_SIZE]:
                       nextPageSize === DEFAULT_PAGE_SIZE
                         ? undefined
                         : nextPageSize,
@@ -980,9 +837,21 @@ function MusicList({
           </PaginationBox>
         ) : null}
       </Footer>
-      <ImageViewer photo={viewerPhoto} onClose={() => setViewerPhoto(null)} />
+
+      <CreateUserDialog
+        open={createDialogOpen}
+        onClose={() => setCreateDialogOpen(false)}
+        onCreated={onCreated}
+      />
+      <UserEditDrawer
+        open={editUser !== null}
+        user={editUser}
+        onClose={() => setEditUser(null)}
+        onSaved={reload}
+        onDeleted={onDeleted}
+      />
     </Card>
   );
 }
 
-export default MusicList;
+export default UserManagement;

@@ -33,6 +33,12 @@ type Music struct {
 	Year            sql.NullInt64
 }
 
+type AdminMusic struct {
+	Music
+	CreateUserUsername string
+	CreateUserNickname string
+}
+
 // SingerInMusic is returned when querying singers that belong to a music track.
 type SingerInMusic struct {
 	MusicID string
@@ -260,6 +266,88 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	defer rows.Close()
 	musics, err2 := scanMusicRows(rows)
 	return total, musics, err2
+}
+
+func GetAdminMusicList(keyword, filterKey string, page, pageSize int) (int, []AdminMusic, error) {
+	where := ""
+	args := []any{}
+	trimmedKeyword := strings.TrimSpace(keyword)
+	if trimmedKeyword != "" {
+		pattern := "%" + trimmedKeyword + "%"
+		singerExists := `EXISTS (
+			SELECT 1
+			FROM music_singer_relation msr
+			JOIN singer s ON msr.singerId=s.id
+			WHERE msr.musicId=m.id AND (s.id LIKE ? OR s.name LIKE ? OR s.aliases LIKE ?)
+		)`
+		switch filterKey {
+		case "id":
+			where = " WHERE m.id LIKE ?"
+			args = append(args, pattern)
+		case "name":
+			where = " WHERE m.name LIKE ?"
+			args = append(args, pattern)
+		case "alias":
+			where = " WHERE m.aliases LIKE ?"
+			args = append(args, pattern)
+		case "singer":
+			where = " WHERE " + singerExists
+			args = append(args, pattern, pattern, pattern)
+		default:
+			where = " WHERE m.id LIKE ? OR m.name LIKE ? OR m.aliases LIKE ? OR " + singerExists
+			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern)
+		}
+	}
+
+	var total int
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM music m`+where, args...).Scan(&total); err != nil {
+		return 0, nil, err
+	}
+
+	listArgs := append([]any{}, args...)
+	listArgs = append(listArgs, pageSize, (page-1)*pageSize)
+	rows, err := DB().Query(
+		`SELECT m.id,m.type,m.name,m.aliases,m.cover,m.asset,m.heat,m.createUserId,m.createTimestamp,m.year,u.username,u.nickname
+		FROM music m
+		LEFT JOIN user u ON u.id=m.createUserId`+where+`
+		ORDER BY m.createTimestamp DESC, m.id DESC
+		LIMIT ? OFFSET ?`,
+		listArgs...,
+	)
+	if err != nil {
+		return 0, nil, err
+	}
+	defer rows.Close()
+
+	var musics []AdminMusic
+	for rows.Next() {
+		var username sql.NullString
+		var nickname sql.NullString
+		m := AdminMusic{}
+		if err := rows.Scan(
+			&m.ID,
+			&m.Type,
+			&m.Name,
+			&m.Aliases,
+			&m.Cover,
+			&m.Asset,
+			&m.Heat,
+			&m.CreateUserID,
+			&m.CreateTimestamp,
+			&m.Year,
+			&username,
+			&nickname,
+		); err != nil {
+			return 0, nil, err
+		}
+		m.CreateUserUsername = username.String
+		m.CreateUserNickname = nickname.String
+		musics = append(musics, m)
+	}
+	if err := rows.Err(); err != nil {
+		return 0, nil, err
+	}
+	return total, musics, nil
 }
 
 func scanMusicRows(rows *sql.Rows) ([]Music, error) {
