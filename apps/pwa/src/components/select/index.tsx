@@ -172,40 +172,66 @@ function buildStyles<T, IsMulti extends boolean>(
       zIndex: 9000,
       background: '#fff',
       border: '2px solid rgb(220 220 220)',
-      borderRadius: s.radius,
-      boxShadow: '0 8px 28px rgba(0,0,0,0.13)',
-      overflow: 'hidden',
-      marginTop: state.placement === 'top' ? 0 : 4,
-      marginBottom: state.placement === 'top' ? 4 : 0,
+      borderRadius: Math.max(15, s.radius + 2),
+      boxShadow:
+        state.placement === 'top'
+          ? '0 -4px 0 rgb(185 185 185), 0 14px 28px rgb(0 0 0 / 0.1)'
+          : '0 4px 0 rgb(185 185 185), 0 14px 28px rgb(0 0 0 / 0.1)',
+      overflow: 'visible',
+      padding: 6,
+      marginTop: state.placement === 'top' ? 0 : s.shadow + 6,
+      marginBottom: state.placement === 'top' ? s.shadow + 6 : 0,
     }),
     menuPortal: (base) => ({ ...base, zIndex: 9000 }),
     menuList: (_) => ({
-      padding: 6,
+      padding: 0,
       maxHeight: 248,
       overflowY: 'auto' as const,
+      scrollbarWidth: 'thin' as const,
     }),
     option: (_, state) => ({
       display: 'flex',
       alignItems: 'center',
-      height: Math.round(s.height * 0.82),
+      minHeight: Math.max(30, Math.round(s.height * 0.88)),
       padding: `0 ${s.px}px`,
-      borderRadius: s.radius - 4,
+      marginTop: state.isSelected || state.isFocused ? 0 : 0,
+      border: `2px solid ${
+        state.isSelected ? shadowColor : state.isFocused ? 'rgb(220 220 220)' : 'transparent'
+      }`,
+      borderRadius: Math.max(10, s.radius),
+      boxShadow: state.isSelected
+        ? `0 ${Math.max(2, s.shadow - 1)}px 0 ${shadowColor}`
+        : state.isFocused
+          ? `0 ${Math.max(2, s.shadow - 1)}px 0 rgb(220 220 220)`
+          : 'none',
       fontFamily: FONT,
       fontSize: s.font,
-      fontWeight: 600,
+      fontWeight: 800,
+      letterSpacing: 0,
       cursor: 'pointer',
-      background: state.isSelected ? primary :
-        state.isFocused ? 'rgb(245 245 245)' : 'transparent',
+      background: state.isSelected ? primary : '#fff',
       color: state.isSelected ? '#fff' : 'rgb(55 55 55)',
-      transition: 'background 80ms, color 80ms',
+      transition:
+        'background 120ms, border-color 120ms, box-shadow 120ms, color 120ms',
+      ':active': {
+        transform: state.isSelected || state.isFocused
+          ? `translateY(${Math.max(2, s.shadow - 1)}px)`
+          : undefined,
+        boxShadow: 'none',
+      },
+      ':not(:first-of-type)': {
+        marginTop: 6,
+      },
     }),
     multiValue: (_) => ({
       display: 'inline-flex',
       alignItems: 'center',
-      padding: '0 2px 0 8px',
-      height: 22,
-      borderRadius: 6,
-      background: 'rgb(240 240 240)',
+      padding: '0 2px 2px 8px',
+      minHeight: 24,
+      border: '2px solid rgb(220 220 220)',
+      borderRadius: 8,
+      background: '#fff',
+      boxShadow: '0 2px 0 rgb(220 220 220)',
       flexShrink: 0,
     }),
     multiValueLabel: (provided) => ({
