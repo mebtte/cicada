@@ -220,11 +220,11 @@ const PhotoRow = styled.div<{ $dragging: boolean; $sortable: boolean }>`
 `;
 
 const PhotoThumb = styled.div`
+  position: relative;
   width: 56px;
   height: 56px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 15px;
-  overflow: hidden;
   background: #fff;
   box-shadow: 0 3px 0 ${ROW_SHADOW};
   color: ${CSSVariable.TEXT_COLOR_DISABLED};
@@ -236,6 +236,7 @@ const PhotoThumb = styled.div`
   > img {
     width: 100%;
     height: 100%;
+    border-radius: 13px;
     object-fit: cover;
     display: block;
   }
@@ -267,47 +268,16 @@ const PhotoDescriptionTextarea = styled(Textarea)`
   }
 `;
 
-const PhotoDeleteButton = styled(Button)<{ $visible: boolean }>`
+const PhotoDeleteButton = styled(Button)`
   position: absolute;
-  top: -12px;
-  right: -12px;
+  top: -8px;
+  right: -8px;
   z-index: 2;
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  border: 2px solid rgb(190 46 34);
-  border-radius: 10px;
-  background: #fff;
-  color: rgb(242 80 66);
-  box-shadow: 0 3px 0 rgb(190 46 34);
-  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-  pointer-events: ${({ $visible }) => ($visible ? 'auto' : 'none')};
-  transition:
-    opacity 120ms ease-out,
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms ease-out;
-  transform: scale(${({ $visible }) => ($visible ? 1 : 0.92)});
-
-  &:not(:disabled):hover {
-    filter: brightness(1.06);
-  }
-
-  &:not(:disabled):active {
-    transform: translateY(3px) scale(1);
-    box-shadow: none;
-    transition:
-      transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
-  }
-
-  ${PhotoRow}:hover &,
-  &:focus-visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
-  }
+  width: 26px;
+  height: 26px;
+  min-width: 0;
+  border-radius: 8px;
+  font-size: 14px;
 `;
 
 const DragHandle = styled.button`
@@ -450,12 +420,11 @@ function SortablePhoto({
       <PhotoDeleteButton
         square
         size="sm"
-        variant="plain"
+        variant="danger"
         disabled={disabled}
         title={t('delete')}
         aria-label={t('delete')}
         onClick={() => onDelete(photo.id)}
-        $visible={IS_TOUCHABLE || disabled}
       >
         <MdDelete />
       </PhotoDeleteButton>

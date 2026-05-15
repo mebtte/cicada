@@ -272,7 +272,6 @@ const LyricTextarea = styled(Textarea)`
   min-width: 0;
   height: 112px;
   max-height: 180px;
-  padding-right: 44px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 13px;
   box-shadow: 0 3px 0 ${ROW_SHADOW};
@@ -291,47 +290,16 @@ const LyricTextarea = styled(Textarea)`
   }
 `;
 
-const LyricDeleteButton = styled.button`
+const LyricDeleteButton = styled(Button)`
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 30px;
-  height: 30px;
-  border: 2px solid transparent;
-  border-radius: 9px;
-  padding: 0;
-  background: rgb(255 255 255 / 0.88);
-  color: ${CSSVariable.TEXT_COLOR_DISABLED};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  transition:
-    color 120ms,
-    background 120ms,
-    border-color 120ms,
-    filter 120ms;
-
-  &:not(:disabled):hover {
-    color: ${CSSVariable.COLOR_DANGEROUS};
-    border-color: rgb(242 80 66 / 0.18);
-    background: rgb(255 245 244);
-  }
-
-  &:not(:disabled):active {
-    filter: brightness(0.96);
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.45;
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${CSSVariable.COLOR_DANGEROUS};
-    outline-offset: 2px;
-  }
+  top: -8px;
+  right: -8px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  min-width: 0;
+  border-radius: 8px;
+  font-size: 14px;
 `;
 
 const CenterBox = styled.div`
@@ -553,8 +521,31 @@ function EditContent({
       list.length >= MUSIC_MAX_LRYIC_AMOUNT ? list : [...list, ''],
     );
 
-  const onRemoveLyric = (index: number) =>
-    setLyrics((list) => list.filter((_, lyricIndex) => lyricIndex !== index));
+  const onRemoveLyric = (index: number) => {
+    const removeAt = () =>
+      setLyrics((list) => list.filter((_, lyricIndex) => lyricIndex !== index));
+    if (!lyrics[index]?.trim()) {
+      removeAt();
+      return;
+    }
+    dialog.confirm({
+      content: t('delete_lyric_question'),
+      confirmText: t('delete'),
+      confirmVariant: 'danger',
+      onConfirm: () => {
+        removeAt();
+      },
+    });
+  };
+
+  const onSingerCreated = useCallback((singer: Singer) => {
+    setSingers((list) => {
+      if (list.some((option) => option.value.id === singer.id)) {
+        return list;
+      }
+      return [...list, formatSingerToOption(singer)];
+    });
+  }, []);
 
   const onEditCover = () =>
     dialog.imageCut({
@@ -804,7 +795,10 @@ function EditContent({
         <Group>
           <GroupHeader>
             <GroupTitle>{t('singer')}</GroupTitle>
-            <CreateSingerLabel />
+            <CreateSingerLabel
+              notifyOnCreated={false}
+              onCreated={onSingerCreated}
+            />
           </GroupHeader>
           <MultiSelect
             value={singers}
@@ -860,13 +854,15 @@ function EditContent({
                     }
                   />
                   <LyricDeleteButton
-                    type="button"
+                    square
+                    size="sm"
+                    variant="danger"
                     onClick={() => onRemoveLyric(index)}
                     disabled={saving}
                     title={t('delete')}
                     aria-label={t('delete')}
                   >
-                    <MdDelete size={18} />
+                    <MdDelete />
                   </LyricDeleteButton>
                 </TextareaRow>
               ))}

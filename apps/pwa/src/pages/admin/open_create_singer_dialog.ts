@@ -6,10 +6,16 @@ import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 
+export interface CreatedSinger {
+  id: string;
+  name: string;
+  aliases: string[];
+}
+
 function openCreateSingerDialog({
   onCreated,
 }: {
-  onCreated?: (id: string) => void | Promise<void>;
+  onCreated?: (id: string, singer: CreatedSinger) => void | Promise<void>;
 } = {}) {
   const createSinger = async ({
     name,
@@ -26,7 +32,7 @@ function openCreateSingerDialog({
 
     try {
       const id = await createSingerRequest({ name: trimmedName, force });
-      await onCreated?.(id);
+      await onCreated?.(id, { id, name: trimmedName, aliases: [] });
     } catch (error) {
       logger.error(error, 'Failed to create singer');
       if (error.code === ExceptionCode.SINGER_ALREADY_EXISTED) {
