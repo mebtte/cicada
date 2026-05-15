@@ -11,14 +11,14 @@ import { Status } from './constants';
 import useLyricData from './use_lyric_data';
 import Lyric from './lyric';
 
-const Container = styled(animated.div)`
+const Container = styled(animated.div)<{ $controllerHeight: number }>`
   z-index: 1;
 
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  bottom: calc(184px + env(safe-area-inset-bottom, 0px));
+  bottom: ${({ $controllerHeight }) => `${$controllerHeight}px`};
 `;
 const LoadingContainer = styled(Container)`
   ${flexCenter}
@@ -54,7 +54,13 @@ const ErrorContainer = styled(Container)`
   }
 `;
 
-function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
+function Wrapper({
+  queueMusic,
+  controllerHeight,
+}: {
+  queueMusic: QueueMusic;
+  controllerHeight: number;
+}) {
   const { data, retry } = useLyricData(queueMusic);
 
   const transitions = useTransition(data, {
@@ -67,7 +73,7 @@ function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
     switch (d.status) {
       case Status.SUCCESS: {
         return (
-          <Container style={style}>
+          <Container style={style} $controllerHeight={controllerHeight}>
             <Lyric lrcs={d.lrcs} />
           </Container>
         );
@@ -75,7 +81,10 @@ function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
 
       case Status.LOADING: {
         return (
-          <LoadingContainer style={style}>
+          <LoadingContainer
+            style={style}
+            $controllerHeight={controllerHeight}
+          >
             <Spinner />
           </LoadingContainer>
         );
@@ -83,7 +92,7 @@ function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
 
       case Status.ERROR: {
         return (
-          <ErrorContainer style={style}>
+          <ErrorContainer style={style} $controllerHeight={controllerHeight}>
             <div className="message">
               <span className="outline" aria-hidden>
                 {d.error.message}

@@ -30,6 +30,7 @@ import Button from '@/components/button';
 import eventemitter, { EventType } from '@/pages/player/eventemitter';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
@@ -56,7 +57,7 @@ const Summary = styled.div`
 
   position: relative;
   flex: 0 0 auto;
-  padding: 16px 16px 14px;
+  padding: 16px ${PAGE_HORIZONTAL_PADDING} 14px;
 
   background: #fff;
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -221,7 +222,7 @@ const EmptyState = styled.div`
 const Queue = styled.div`
   flex: 1 1 auto;
   min-height: 0;
-  padding: 16px 16px 0;
+  padding: 16px ${PAGE_HORIZONTAL_PADDING} 0;
 
   ${autoScrollbar}
   overflow: auto;

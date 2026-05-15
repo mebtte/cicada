@@ -6,7 +6,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { Musicbill as MusicbillType } from '../../constants';
-import Page from '../page';
+import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
 import Info from './info';
 import MusicList from './music_list';
 import { INFO_HEIGHT, MINI_INFO_HEIGHT } from './constants';
@@ -24,17 +24,11 @@ const Style = styled(Page)`
   > .scrollable {
     height: 100%;
     overflow: auto;
-    padding: 20px;
+    padding: ${PAGE_HORIZONTAL_PADDING};
     background:
       linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 300px),
       rgb(248 249 250);
     ${autoScrollbar}
-  }
-
-  @media (max-width: 680px) {
-    > .scrollable {
-      padding: 12px;
-    }
   }
 `;
 

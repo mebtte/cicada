@@ -25,6 +25,7 @@ import {
   FLOATING_CONTROLLER_SCROLL_SPACE,
   SearchTab,
 } from '../../../constants';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 import useCollectionList from './use_collection_list';
 import { Collection, PAGE_SIZE } from '../constants';
 
@@ -51,7 +52,7 @@ const Container = styled(animated.div)`
 const CardContainer = styled(Container)`
   ${flexCenter}
 
-  padding: 24px 16px;
+  padding: 24px ${PAGE_HORIZONTAL_PADDING};
 
   > .status-panel {
     width: min(560px, 100%);
@@ -82,7 +83,7 @@ const MusicListContainer = styled(Container)`
   > .content {
     width: min(1120px, 100%);
     margin: 0 auto;
-    padding: 20px 20px 0;
+    padding: 20px ${PAGE_HORIZONTAL_PADDING} 0;
   }
 
   &::after {
@@ -93,7 +94,7 @@ const MusicListContainer = styled(Container)`
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
     > .content {
-      padding: 16px 16px 0;
+      padding: 16px ${PAGE_HORIZONTAL_PADDING} 0;
     }
 
     &::after {

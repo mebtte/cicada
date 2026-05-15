@@ -20,9 +20,11 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 import useMusicPlayRecordList from './use_music_play_record_list';
 import {
   PAGE_SIZE,
+  TOOLBAR_FLOATING_GAP,
   TOOLBAR_HEIGHT,
   type MusicPlayRecord as MusicPlayRecordData,
 } from '../constants';
@@ -50,15 +52,15 @@ const MusicListContainer = styled(Container)`
   ${autoScrollbar}
 
   > .list {
-    padding: 12px 12px 0;
+    /* Reserve room for the top floating toolbar so the first row stays reachable. */
+    padding: ${TOOLBAR_HEIGHT + TOOLBAR_FLOATING_GAP * 2}px
+      ${PAGE_HORIZONTAL_PADDING} 0;
   }
 
   &::after {
     content: '';
     display: block;
-    height: calc(
-      ${FLOATING_CONTROLLER_SCROLL_SPACE} + ${TOOLBAR_HEIGHT}px + 24px
-    );
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
   }
 `;
 const MusicPlayRecordContainer = styled(animated.div)`

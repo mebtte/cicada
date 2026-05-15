@@ -39,6 +39,7 @@ function Filter() {
   return (
     <Input
       style={style}
+      size="sm"
       autoFocus={!IS_TOUCHABLE}
       placeholder={capitalize(t('search'))}
       value={keyword}

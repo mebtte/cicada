@@ -3,6 +3,7 @@ import Button from '@/components/button';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { TOOLBAR_HEIGHT } from '../constants';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../../constants';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 import Filter from './filter';
 import e, { EventType } from '../eventemitter';
 
@@ -16,7 +17,7 @@ const Style = styled.div`
   left: 0;
   bottom: ${CONTROLLER_FLOATING_RESERVED_HEIGHT};
 
-  padding: 0 20px;
+  padding: 0 ${PAGE_HORIZONTAL_PADDING};
 
   display: flex;
   align-items: center;

@@ -8,6 +8,7 @@ import useQuery from '@/utils/use_query';
 import { Query } from '@/constants';
 import SizeObserver from '@/components/size_observer';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 import useData from './use_data';
 import User from './user';
 import { TOOLBAR_HEIGHT } from '../constants';
@@ -24,7 +25,7 @@ const UserListContainer = styled(Container)`
 
   > .content {
     font-size: 0;
-    padding: 0 ${GAP / 2}px;
+    padding: 0 calc(${PAGE_HORIZONTAL_PADDING} - ${GAP / 2}px);
   }
 
   &::after {

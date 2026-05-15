@@ -3,9 +3,13 @@ import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import { MusicDetail } from './constants';
 import { t } from '@/i18n';
+import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
 const Style = styled.section<{ $showTitle: boolean }>`
-  padding: ${({ $showTitle }) => ($showTitle ? '22px 20px 0' : '18px 20px 0')};
+  padding: ${({ $showTitle }) =>
+    $showTitle
+      ? `22px ${PAGE_HORIZONTAL_PADDING} 0`
+      : `18px ${PAGE_HORIZONTAL_PADDING} 0`};
 
   > .headline {
     margin-bottom: 16px;

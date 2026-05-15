@@ -5,9 +5,10 @@ import styled from 'styled-components';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
 import { MusicDetail } from './constants';
+import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
 const Style = styled.section`
-  margin: 22px 20px 4px;
+  margin: 22px ${PAGE_HORIZONTAL_PADDING} 4px;
 
   > .label {
     margin-bottom: 10px;

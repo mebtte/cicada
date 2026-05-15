@@ -20,6 +20,7 @@ import useData from './use_data';
 import { openCreateMusicbillDialog } from '../../../utils';
 import PublicMusicbill from '../../../components/public_musicbill';
 import TextGuide from '../text_guide';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 
 const ITEM_MIN_WIDTH = 150;
 const Container = styled(animated.div)`
@@ -38,7 +39,7 @@ const MusicContainer = styled(Container)`
   > .list {
     --gap: 10px;
 
-    margin: 0 var(--gap);
+    margin: 0 calc(${PAGE_HORIZONTAL_PADDING} - var(--gap));
     padding-top: calc(var(--search-toolbar-height) - var(--gap));
 
     display: flex;

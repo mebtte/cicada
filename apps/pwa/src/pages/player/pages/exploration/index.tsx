@@ -28,7 +28,7 @@ import {
   MdSearch,
 } from 'react-icons/md';
 import { FLOATING_CONTROLLER_SCROLL_SPACE, SearchTab } from '../../constants';
-import Page from '../page';
+import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
 import useData from './use_data';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -52,6 +52,7 @@ const MOBILE_ITEM_WIDTH = 96;
 const GAP = 16;
 const MAX_SECTION_ROW_AMOUNT = 2;
 const MOBILE_BREAKPOINT = 720;
+const SEARCH_TOOLBAR_CONTENT_INSET = '12px';
 const ACCENT = {
   MUSIC: 'rgb(88 204 2)',
   MUSIC_SHADOW: 'rgb(88 167 0)',
@@ -77,7 +78,7 @@ const Root = styled(Page)`
     left: 0;
     width: 100%;
 
-    padding: 14px 20px;
+    padding: 14px ${PAGE_HORIZONTAL_PADDING};
 
     display: flex;
     flex-direction: column;
@@ -100,6 +101,8 @@ const Root = styled(Page)`
 
     > .search-toolbar > .input,
     > .search-toolbar > .search-tabs {
+      width: calc(100% - ${SEARCH_TOOLBAR_CONTENT_INSET} * 2);
+      align-self: center;
       pointer-events: auto;
     }
 
@@ -139,7 +142,8 @@ const ContentContainer = styled(Container)`
   > .content {
     width: min(1120px, 100%);
     margin: 0 auto;
-    padding: calc(var(--recommendation-toolbar-height) + 20px) 12px 24px;
+    padding: calc(var(--recommendation-toolbar-height) + 20px)
+      ${PAGE_HORIZONTAL_PADDING} 24px;
 
     display: flex;
     flex-direction: column;
@@ -158,7 +162,8 @@ const ContentContainer = styled(Container)`
 `;
 const EmptyFallback = styled.div`
   min-height: 100%;
-  padding: calc(var(--recommendation-toolbar-height) + 24px) 12px 24px;
+  padding: calc(var(--recommendation-toolbar-height) + 24px)
+    ${PAGE_HORIZONTAL_PADDING} 24px;
 
   display: flex;
   align-items: center;

@@ -17,6 +17,7 @@ import { PAGE_SIZE } from '../constants';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import useData from './use_data';
 import Singer from './singer';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 
 const ITEM_MIN_WIDTH = 150;
 const Container = styled(animated.div)`
@@ -35,7 +36,7 @@ const SingerContainer = styled(Container)`
   > .list {
     --gap: 10px;
 
-    margin: 0 var(--gap);
+    margin: 0 calc(${PAGE_HORIZONTAL_PADDING} - var(--gap));
     padding-top: calc(var(--search-toolbar-height) - var(--gap));
 
     display: flex;

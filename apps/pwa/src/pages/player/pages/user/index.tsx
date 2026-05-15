@@ -7,7 +7,7 @@ import {
   MdSecurity,
   MdSwitchAccount,
 } from 'react-icons/md';
-import Page from '../page';
+import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { CSSVariable } from '@/global_style';
 import getResizedImage from '@/server/asset/get_resized_image';
@@ -41,7 +41,7 @@ import ExtraInfo from './extra_info';
 
 const AVATAR_SIZE = 120;
 const Style = styled(Page)`
-  padding: 20px;
+  padding: 20px ${PAGE_HORIZONTAL_PADDING};
   padding-bottom: calc(20px + ${FLOATING_CONTROLLER_SCROLL_SPACE});
 
   overflow: auto;

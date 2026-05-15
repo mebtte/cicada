@@ -16,6 +16,7 @@ import useData from './use_data';
 import MusicWithLyric from './music_with_lyric';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import Context from '../../../context';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
@@ -31,7 +32,7 @@ const MusicContainer = styled(Container)`
   ${autoScrollbar}
 
   > .list {
-    padding: var(--search-toolbar-height) 12px 0;
+    padding: var(--search-toolbar-height) ${PAGE_HORIZONTAL_PADDING} 0;
   }
 
   &::after {

@@ -1,9 +1,10 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import { PAGE_HORIZONTAL_PADDING } from '../page';
 
 const Style = styled.div`
-  margin: 20px;
+  margin: 20px ${PAGE_HORIZONTAL_PADDING};
 
   text-align: center;
   font-size: ${CSSVariable.TEXT_SIZE_SMALL};

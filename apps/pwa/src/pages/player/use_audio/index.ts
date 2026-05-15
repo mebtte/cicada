@@ -169,6 +169,10 @@ function useAudio({
         extra: queueMusic,
       });
       setLoading(sourceChanged || !audio.hasPlayableData());
+      if (sourceChanged) {
+        // 加载态切歌会中断上一次 play 请求, 需要为新音源重新发起播放.
+        audio.play();
+      }
 
       const readyStateSyncTimer = window.setTimeout(() => {
         if (audio.getSrc() === src && audio.hasPlayableData()) {

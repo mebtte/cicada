@@ -28,6 +28,7 @@ import Toolbar from './toolbar';
 import useData from './use_data';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../constants';
 import playerEventemitter, { EventType } from '../eventemitter';
+import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
 // Set to false to restore the previous drawer header-only title behavior.
 const USE_COLLAPSING_DRAWER_TITLE = true;
@@ -177,7 +178,7 @@ const DetailContent = styled.div<{ $insideDrawer: boolean }>`
 `;
 const CoverFrame = styled.div<{ $insideDrawer: boolean }>`
   padding: ${({ $insideDrawer }) =>
-    $insideDrawer ? '0' : '18px 20px 0'};
+    $insideDrawer ? '0' : `18px ${PAGE_HORIZONTAL_PADDING} 0`};
 
   > .cover-shell {
     position: relative;

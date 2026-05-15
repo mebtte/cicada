@@ -6,12 +6,13 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import useAudioCurrentMillisecond from '../../use_audio_current_millisecond';
 import { formatSecond } from '../../utils';
+import { LYRIC_PANEL_PROGRESS_BOTTOM_PADDING } from '../constants';
 
 const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 10px 12px;
+  padding: 8px 10px ${LYRIC_PANEL_PROGRESS_BOTTOM_PADDING}px;
 
   > .slider {
     flex: 1;

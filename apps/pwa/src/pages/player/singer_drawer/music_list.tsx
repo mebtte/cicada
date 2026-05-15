@@ -5,9 +5,10 @@ import { MusicWithSingerAliases } from '../constants';
 import Music from '../components/music';
 import Context from '../context';
 import { t } from '@/i18n';
+import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
 const Root = styled.div`
-  padding: 12px 12px 16px;
+  padding: 12px ${PAGE_HORIZONTAL_PADDING} 16px;
 `;
 const emptyStyle: CSSProperties = {
   padding: '50px 0',

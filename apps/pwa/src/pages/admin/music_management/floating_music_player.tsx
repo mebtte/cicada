@@ -13,13 +13,16 @@ import {
   MdDragIndicator,
   MdExpandLess,
   MdExpandMore,
+  MdHighQuality,
   MdMusicNote,
   MdPause,
   MdPlayArrow,
+  MdSpeed,
 } from 'react-icons/md';
 import { Slider } from '@/components';
 import Button from '@/components/button';
 import { useSetting } from '@/global_states/setting';
+import { MusicPlaybackQuality } from '@/constants/setting';
 import { MusicType } from '@/constants/music';
 import { UtilZIndex } from '@/constants/style';
 import { CSSVariable } from '@/global_style';
@@ -58,11 +61,10 @@ const DEFAULT_POSITION_GAP = 18;
 const EXPANDED_WIDTH = 420;
 const EXPANDED_HEIGHT = 484;
 const COLLAPSED_WIDTH = 420;
-const CONTROL_RAIL_BUTTON_SIZE = 30;
-const CONTROL_RAIL_GAP = 6;
-const CONTROLLER_HEIGHT = CONTROL_RAIL_BUTTON_SIZE * 3 + CONTROL_RAIL_GAP * 2;
+const CONTROL_RAIL_BUTTON_SIZE = 26;
+const CONTROLLER_HEIGHT = 88;
 const BORDER_WIDTH = 2;
-const PLAYER_CONTENT_PADDING = 12;
+const PLAYER_CONTENT_PADDING = 10;
 const CONTROLLER_SHADOW_OFFSET = 6;
 const COLLAPSED_HEIGHT =
   CONTROLLER_HEIGHT +
@@ -197,7 +199,7 @@ const DragHandle = styled.button`
   }
 
   > svg {
-    font-size: 22px;
+    font-size: 18px;
   }
 `;
 
@@ -258,7 +260,7 @@ const IconButton = styled.button<{ $primary?: boolean; $danger?: boolean }>`
   }
 
   > svg {
-    font-size: 18px;
+    font-size: 16px;
   }
 `;
 
@@ -282,19 +284,18 @@ const ControllerRow = styled.div`
 `;
 
 const ControlRail = styled.div`
-  min-height: ${CONTROLLER_HEIGHT}px;
+  height: ${CONTROLLER_HEIGHT}px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: ${CONTROL_RAIL_GAP}px;
+  justify-content: space-between;
 `;
 
 const ControllerSurface = styled.div<{ $playing: boolean }>`
   height: ${CONTROLLER_HEIGHT}px;
   display: flex;
   flex-direction: column;
-  padding: 6px 10px 8px;
+  padding: 0 10px 2px;
   border: ${BORDER_WIDTH}px solid
     ${({ $playing }) =>
       $playing ? CSSVariable.COLOR_PRIMARY : CSSVariable.COLOR_BORDER};
@@ -324,7 +325,7 @@ const ControllerMain = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
+  gap: 12px;
 `;
 
 const ControllerRest = styled.div`
@@ -402,30 +403,29 @@ const SingerText = styled.div`
 `;
 
 const TimeBadge = styled.div`
+  min-width: 42px;
+  height: 34px;
   flex-shrink: 0;
-  padding: 4px 7px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 10px;
-  background: rgb(248 248 248);
-  box-shadow: 0 3px 0 ${ROW_SHADOW};
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
   font-family: 'Nunito', monospace;
   font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-  line-height: 1.1;
   font-weight: 800;
+  line-height: 1;
+  text-align: center;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   user-select: none;
-
-  > .duration {
-    margin-top: 2px;
-    padding-top: 2px;
-    border-top: 2px solid ${CSSVariable.COLOR_BORDER};
-  }
+  transform: translateY(1.5px);
 `;
 
 const OperationGroup = styled.div`
   flex-shrink: 0;
   display: flex;
   align-items: center;
+  gap: 8px;
 `;
 
 const StyledSlider = styled(Slider)`
@@ -635,6 +635,27 @@ function FloatingMusicPlayer({
   const singerText = music?.singers.map((singer) => singer.name).join(', ') || '';
   const canSeek = duration > 0 && Number.isFinite(duration);
   const currentSecond = currentMillisecond / 1000;
+  const nextMusicPlaybackQuality =
+    musicPlaybackQuality === MusicPlaybackQuality.SMOOTH
+      ? MusicPlaybackQuality.SOURCE_BITRATE
+      : MusicPlaybackQuality.SMOOTH;
+  const musicPlaybackQualityLabel =
+    musicPlaybackQuality === MusicPlaybackQuality.SMOOTH
+      ? t('music_playback_quality_smooth')
+      : t('music_playback_quality_source_bitrate');
+  const musicPlaybackQualityTitle = [
+    t('music_playback_quality'),
+    musicPlaybackQualityLabel,
+  ].join(': ');
+  const isSmoothPlaybackQuality =
+    musicPlaybackQuality === MusicPlaybackQuality.SMOOTH;
+
+  const togglePlaybackQuality = useCallback(() => {
+    // 切换全局播放质量后, source 会重算并触发当前音频按新质量重载。
+    useSetting.setState({
+      musicPlaybackQuality: nextMusicPlaybackQuality,
+    });
+  }, [nextMusicPlaybackQuality]);
 
   useEffect(() => {
     const musicId = music?.id ?? null;
@@ -823,6 +844,17 @@ function FloatingMusicPlayer({
               <div className="duration">{formatSecond(duration)}</div>
             </TimeBadge>
             <OperationGroup>
+              <Button
+                square
+                variant={isSmoothPlaybackQuality ? 'secondary' : 'ghost'}
+                size="sm"
+                title={musicPlaybackQualityTitle}
+                aria-label={musicPlaybackQualityTitle}
+                aria-pressed={isSmoothPlaybackQuality}
+                onClick={togglePlaybackQuality}
+              >
+                {isSmoothPlaybackQuality ? <MdSpeed /> : <MdHighQuality />}
+              </Button>
               <Button
                 square
                 variant="primary"

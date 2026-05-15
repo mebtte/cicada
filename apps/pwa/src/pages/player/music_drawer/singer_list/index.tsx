@@ -4,9 +4,10 @@ import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
 import { SingerDetail } from '../constants';
 import Singer from './singer';
+import { PAGE_HORIZONTAL_PADDING } from '../../pages/page';
 
 const Style = styled.div`
-  margin: 20px;
+  margin: 20px ${PAGE_HORIZONTAL_PADDING};
 
   > .label {
     margin-bottom: 10px;

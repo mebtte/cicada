@@ -4,9 +4,10 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import { Music } from '../constants';
 import MusicInfo from '../components/music_info';
 import capitalize from '@/style/capitalize';
+import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
 const Style = styled.div`
-  margin: 22px 20px;
+  margin: 22px ${PAGE_HORIZONTAL_PADDING};
 
   > .label {
     margin-bottom: 10px;

@@ -1,5 +1,10 @@
+import { useLayoutEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { QueueMusic } from '../../constants';
+import {
+  LYRIC_PANEL_CONTROLLER_BOTTOM_PADDING,
+  LYRIC_PANEL_CONTROLLER_GAP,
+} from '../constants';
 import Operation from './operation';
 import Info from './info';
 import ProgressBar from './progress_bar';
@@ -12,13 +17,13 @@ const Style = styled.div`
   left: 0;
   width: 100%;
 
-  padding: 10px 0 max(env(safe-area-inset-bottom, 0), 10px) 0;
+  padding: 10px 0 ${LYRIC_PANEL_CONTROLLER_BOTTOM_PADDING} 0;
 
   overflow: hidden;
 
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: ${LYRIC_PANEL_CONTROLLER_GAP}px;
 `;
 
 function Controller({
@@ -27,15 +32,33 @@ function Controller({
   duration,
   loading,
   bufferedPercent,
+  onHeightChange,
 }: {
   queueMusic: QueueMusic;
   paused: boolean;
   duration: number;
   loading: boolean;
   bufferedPercent: number;
+  onHeightChange: (height: number) => void;
 }) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const updateHeight = () => onHeightChange(container.offsetHeight);
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(updateHeight);
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
+  }, [onHeightChange]);
+
   return (
-    <Style>
+    <Style ref={containerRef}>
       <Info queueMusic={queueMusic} />
       <ProgressBar duration={duration} bufferedPercent={bufferedPercent} />
       <Operation queueMusic={queueMusic} paused={paused} loading={loading} />

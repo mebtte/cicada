@@ -5,6 +5,7 @@ import Cover, { Shape } from '@/components/cover';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import { t } from '@/i18n';
 import { Singer } from './constants';
+import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
 const Style = styled.div`
   background: #fff;
@@ -13,7 +14,8 @@ const Style = styled.div`
 const Identity = styled.section<{
   $integrated: boolean;
 }>`
-  padding: ${({ $integrated }) => ($integrated ? 0 : '24px 20px 12px')};
+  padding: ${({ $integrated }) =>
+    $integrated ? 0 : `24px ${PAGE_HORIZONTAL_PADDING} 12px`};
   background: ${({ $integrated }) => ($integrated ? 'transparent' : '#fff')};
 
   ${({ $integrated }) =>
@@ -87,7 +89,9 @@ const PhotoOverlay = styled.div<{ $hasThumbnails: boolean }>`
   bottom: 0;
   z-index: 1;
   padding: ${({ $hasThumbnails }) =>
-    $hasThumbnails ? '108px 20px 14px' : '108px 20px 18px'};
+    $hasThumbnails
+      ? `108px ${PAGE_HORIZONTAL_PADDING} 14px`
+      : `108px ${PAGE_HORIZONTAL_PADDING} 18px`};
   box-sizing: border-box;
   background: linear-gradient(
     to bottom,
@@ -102,7 +106,8 @@ const PhotoOverlay = styled.div<{ $hasThumbnails: boolean }>`
 `;
 const ThumbnailRow = styled.div<{ $integrated: boolean }>`
   margin-top: ${({ $integrated }) => ($integrated ? '12px' : 0)};
-  padding: ${({ $integrated }) => ($integrated ? '0 0 4px' : '0 20px 18px')};
+  padding: ${({ $integrated }) =>
+    $integrated ? '0 0 4px' : `0 ${PAGE_HORIZONTAL_PADDING} 18px`};
   box-sizing: border-box;
 
   display: flex;
