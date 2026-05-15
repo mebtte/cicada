@@ -83,6 +83,41 @@ func TestDisable2FARequiresValidToken(t *testing.T) {
 	}
 }
 
+func TestGetMetadataIncludesAssetMaxSize(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodGet, "/base/metadata", nil)
+
+	GetMetadata(c)
+
+	var resp struct {
+		Code string `json:"code"`
+		Data struct {
+			Hostname     string           `json:"hostname"`
+			Version      string           `json:"version"`
+			AssetMaxSize map[string]int64 `json:"assetMaxSize"`
+		} `json:"data"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if resp.Code != apperr.Success {
+		t.Fatalf("expected success, got %s", resp.Code)
+	}
+	got := resp.Data.AssetMaxSize[string(config.AssetTypeMusic)]
+	want := config.AssetMaxSize[config.AssetTypeMusic]
+	if got != want {
+		t.Fatalf("expected music max size %d, got %d", want, got)
+	}
+}
+
 func callDisable2FA(t *testing.T, token string, secret string) struct {
 	Code string `json:"code"`
 } {

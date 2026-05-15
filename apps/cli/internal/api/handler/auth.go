@@ -6,6 +6,7 @@ import (
 	"cicada/internal/api/apperr"
 	"cicada/internal/api/middleware"
 	"cicada/internal/auth"
+	"cicada/internal/config"
 	"cicada/internal/store"
 	"cicada/internal/version"
 	"os"
@@ -20,7 +21,15 @@ import (
 
 func GetMetadata(c *gin.Context) {
 	hostname, _ := os.Hostname()
-	api.OK(c, gin.H{"hostname": hostname, "version": version.Get()})
+	assetMaxSize := make(map[string]int64, len(config.AssetMaxSize))
+	for at, size := range config.AssetMaxSize {
+		assetMaxSize[string(at)] = size
+	}
+	api.OK(c, gin.H{
+		"hostname":     hostname,
+		"version":      version.Get(),
+		"assetMaxSize": assetMaxSize,
+	})
 }
 
 // ── Captcha ───────────────────────────────────────────────────────────────────

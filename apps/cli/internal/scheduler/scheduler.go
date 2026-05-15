@@ -11,6 +11,7 @@ import (
 
 	"cicada/internal/auth"
 	"cicada/internal/config"
+	"cicada/internal/musicasset"
 	"cicada/internal/store"
 
 	"github.com/robfig/cron/v3"
@@ -41,7 +42,12 @@ func Start() {
 		{"clean_outdated_file", cleanOutdatedFile},
 		{"clean_outdated_access_log", cleanOutdatedAccessLog},
 		{"clean_outdated_scheduler_log", cleanOutdatedSchedulerLog},
+		{"clean_outdated_partial_upload", cleanOutdatedPartialUpload},
 	}
+
+	// Reap any partial uploads left over by a previous (possibly crashed)
+	// process so they do not occupy disk indefinitely.
+	go runScheduledJob(logger, "clean_outdated_partial_upload_startup", cleanOutdatedPartialUpload)
 
 	hour, min := 4, 0
 	for _, job := range jobs {
@@ -367,6 +373,14 @@ func cleanOutdatedSchedulerLog() (schedulerJobResult, error) {
 	return schedulerJobResult{
 		Summary: fmt.Sprintf("removed %d outdated scheduler log entries", removed),
 		Metrics: map[string]int64{"removed_scheduler_log_entries": removed},
+	}, err
+}
+
+func cleanOutdatedPartialUpload() (schedulerJobResult, error) {
+	removed, err := musicasset.CleanOutdatedSessions(time.Now(), musicasset.PartialUploadTTL)
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("removed %d outdated partial uploads", removed),
+		Metrics: map[string]int64{"removed_partial_uploads": removed},
 	}, err
 }
 

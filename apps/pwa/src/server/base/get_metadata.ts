@@ -1,10 +1,12 @@
 import { ExceptionCode } from '@/constants/exception';
+import { AssetType } from '@/constants/asset';
 import ErrorWithCode from '@/utils/error_with_code';
 import { getCommonParams } from '..';
 
 interface Response {
   version: string;
   hostname: string;
+  assetMaxSize: Partial<Record<AssetType, number>>;
 }
 
 async function getMetadata(origin: string) {

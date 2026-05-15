@@ -41,4 +41,9 @@ export enum ExceptionCode {
   NO_NEED_TO_2FA = "no_need_to_2fa",
   LOGIN_TOO_FREQUENT = "login_too_frequent",
   LOGIN_WITH_2FA_TOO_FREQUENT = "login_with_2fa_too_frequent",
+  PARTIAL_UPLOAD_NOT_EXISTED = "partial_upload_not_existed",
+  PARTIAL_UPLOAD_OWNER_MISMATCH = "partial_upload_owner_mismatch",
+  PARTIAL_UPLOAD_RANGE_INVALID = "partial_upload_range_invalid",
+  PARTIAL_UPLOAD_HASH_MISMATCH = "partial_upload_hash_mismatch",
+  DISK_SPACE_INSUFFICIENT = "disk_space_insufficient",
 }

@@ -47,6 +47,11 @@ func NewServer() *gin.Engine {
 	// Form: asset upload
 	form := r.Group("/form")
 	form.POST("/asset", auth(), handler.UploadAsset)
+	form.POST("/asset/chunked/init", auth(), handler.InitPartialUpload)
+	form.GET("/asset/chunked/:uploadId", auth(), handler.GetPartialUpload)
+	form.PUT("/asset/chunked/:uploadId", auth(), handler.PutPartialUploadChunk)
+	form.POST("/asset/chunked/:uploadId/complete", auth(), handler.CompletePartialUpload)
+	form.DELETE("/asset/chunked/:uploadId", auth(), handler.CancelPartialUpload)
 
 	// Base routes (public)
 	base := r.Group("/base")
