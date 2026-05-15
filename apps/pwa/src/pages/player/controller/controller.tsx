@@ -27,16 +27,17 @@ const Style = styled.div<{ $playing: boolean }>`
   z-index: ${ZIndex.CONTROLLER};
 
   position: absolute;
-  left: ${CONTROLLER_FLOATING_GAP}px;
-  right: ${CONTROLLER_FLOATING_GAP}px;
+  left: 50%;
   bottom: ${CONTROLLER_FLOATING_BOTTOM};
+  transform: translateX(-50%);
 
+  width: calc(100% - ${CONTROLLER_FLOATING_GAP * 4}px);
   height: ${CONTROLLER_HEIGHT}px;
 
   display: flex;
   flex-direction: column;
 
-  padding: 6px 10px 8px;
+  padding: 2px 10px;
 
   background: #fff;
   border: 2px solid
@@ -82,8 +83,13 @@ const Style = styled.div<{ $playing: boolean }>`
 
       padding-right: ${miniMode ? 0 : 10}px;
 
+      > .cover {
+        align-self: center;
+        height: ${miniMode ? 64 : 68}px;
+      }
+
       > .main {
-        gap: ${miniMode ? 7 : 8}px;
+        gap: ${miniMode ? 3 : 4}px;
 
         > .rest {
           gap: ${miniMode ? 10 : 20}px;
@@ -112,6 +118,7 @@ function Controller() {
     <Style $playing={!!queueMusic && !audioPaused}>
       <div className="content">
         <Cover
+          className="cover"
           cover={
             queueMusic?.cover
               ? getResizedImage({ url: queueMusic.cover, size: 200 })

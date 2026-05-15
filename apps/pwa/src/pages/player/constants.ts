@@ -5,7 +5,7 @@ import { MusicExportQuality } from '@/utils/music_export_asset';
 
 export const HEADER_HEIGHT = 72;
 
-export const CONTROLLER_HEIGHT = 84;
+export const CONTROLLER_HEIGHT = 88;
 
 export const CONTROLLER_FLOATING_GAP = 12;
 

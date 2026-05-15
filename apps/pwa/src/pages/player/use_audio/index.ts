@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { debounce } from 'lodash-es';
 import CustomAudio from '@/utils/custom_audio';
 import { useSetting } from '@/global_states/setting';
@@ -45,7 +45,14 @@ function useAudio({
     currentPlayqueuePosition,
     musicPlaybackQuality,
   });
-  useAction(audio);
+  const updateLoadingByPlayRequest = useCallback(() => {
+    if (audio.getSrc()) {
+      setLoading(!audio.hasPlayableData());
+    }
+  }, [audio]);
+  useAction(audio, {
+    onPlayRequest: updateLoadingByPlayRequest,
+  });
   usePlayRecord(audio, queueMusic);
 
   /**
@@ -141,7 +148,8 @@ function useAudio({
 
   /**
    * 切歌: 复用同一个 audio 实例, 只更新 src.
-   * 切歌时主动重置进度/duration/buffer, 等新源的 loadstart 触发 loading.
+   * 切歌时主动重置进度/duration/buffer/loading, 避免依赖浏览器 loadstart
+   * 的派发时机.
    * @author mebtte<i@mebtte.com>
    */
   useEffect(() => {
@@ -151,13 +159,23 @@ function useAudio({
       currentMillisecond: 0,
     });
     if (queueMusic) {
+      const src = getMusicPlaybackAsset({
+        asset: queueMusic.asset,
+        quality: musicPlaybackQuality,
+      });
+      const sourceChanged = audio.getSrc() !== src;
       audio.setSource({
-        src: getMusicPlaybackAsset({
-          asset: queueMusic.asset,
-          quality: musicPlaybackQuality,
-        }),
+        src,
         extra: queueMusic,
       });
+      setLoading(sourceChanged || !audio.hasPlayableData());
+
+      const readyStateSyncTimer = window.setTimeout(() => {
+        if (audio.getSrc() === src && audio.hasPlayableData()) {
+          setLoading(false);
+        }
+      }, 0);
+      return () => window.clearTimeout(readyStateSyncTimer);
     } else {
       audio.clearSource();
       setLoading(false);

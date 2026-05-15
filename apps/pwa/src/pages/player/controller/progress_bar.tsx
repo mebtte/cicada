@@ -7,7 +7,7 @@ import playerEventemitter, {
 
 const StyledSlider = styled(Slider)`
   z-index: 1;
-  flex: 0 0 auto;
+  flex: 0 0 26px;
 `;
 
 function Progress({
@@ -31,6 +31,7 @@ function Progress({
       value={percent}
       onChange={onChange}
       secondValue={bufferedPercent}
+      alwaysShowThumb
     />
   );
 }
