@@ -117,6 +117,7 @@ func MusicTranscodeCacheDir() string {
 }
 func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }
 func AssetDir(t AssetType) string { return filepath.Join(Get().Data, "assets", string(t)) }
+func PartialUploadDir() string    { return filepath.Join(Get().Data, "partial_uploads") }
 func UpgradeLockPath() string     { return filepath.Join(Get().Data, "upgrade.lock") }
 func UpgradeJournalPath() string  { return filepath.Join(Get().Data, "upgrade.journal") }
 

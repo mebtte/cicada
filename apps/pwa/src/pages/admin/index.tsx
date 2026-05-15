@@ -16,6 +16,7 @@ import definition from '@/definition';
 import { CSS_VAR } from '@/components/theme';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import {
+  MdAdd,
   MdClose,
   MdDashboard,
   MdHeadphones,
@@ -28,6 +29,12 @@ import Dashboard from './dashboard';
 import MusicManagement from './music_management';
 import SingerManagement from './singer_management';
 import UserManagement from './user_management';
+import UploadManagerHost from './music_management/import/upload_manager_host';
+import FloatingUploadWindow from './music_management/import/floating_window';
+import {
+  toggleWindow,
+  useMusicImport,
+} from '@/global_states/music_import';
 
 const SIDEBAR_WIDTH = 240;
 const HEADER_HEIGHT = 72;
@@ -378,6 +385,7 @@ const PlayerLink = styled.button`
   }
 `;
 
+
 const PlayerLinkBox = styled.span`
   width: ${AVATAR_SIZE}px;
   height: ${AVATAR_SIZE}px;
@@ -511,6 +519,7 @@ function AdminPage() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const currentMenuItem = getCurrentMenuItem(pathname);
+  const uploadWindowOpen = useMusicImport((s) => s.windowOpen);
 
   useEffect(() => {
     if (!userMenuOpen) return;
@@ -561,6 +570,8 @@ function AdminPage() {
 
   return (
     <Page>
+      <UploadManagerHost />
+      <FloatingUploadWindow />
       <Sidebar $open={sidebarOpen}>
         <SidebarHeader style={{ paddingTop: sidebarTopPadding }}>
           <BrandLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
@@ -621,6 +632,17 @@ function AdminPage() {
             <HeaderTitleText>{capitalize(t(currentMenuItem.label))}</HeaderTitleText>
           </HeaderTitle>
           <HeaderActions>
+            <Button
+              size="sm"
+              variant={uploadWindowOpen ? 'primary' : 'secondary'}
+              icon={<MdAdd />}
+              onClick={toggleWindow}
+              title={capitalize(t('batch_import_music'))}
+              aria-label={capitalize(t('batch_import_music'))}
+              aria-pressed={uploadWindowOpen}
+            >
+              {capitalize(t('music'))}
+            </Button>
             <PlayerLink
               type="button"
               onClick={() =>
