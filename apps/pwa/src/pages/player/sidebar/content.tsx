@@ -5,7 +5,7 @@ import Menu from './menu';
 
 const Style = styled.div`
   min-height: 100%;
-  padding: 18px 0 28px;
+  padding: 18px 0 0;
 
   display: flex;
   flex-direction: column;

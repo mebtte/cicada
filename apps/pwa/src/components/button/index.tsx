@@ -89,7 +89,6 @@ const makeVariant = (
   &:disabled {
     box-shadow: 0 ${({ $offset }) => $offset}px 0 ${DISABLED_SHADOW};
     filter: saturate(0.45);
-    opacity: 0.65;
   }
 `;
 
@@ -110,7 +109,6 @@ const plainVariant = css<{ $offset: number }>`
 
   &:disabled {
     box-shadow: none;
-    opacity: 0.5;
   }
 `;
 

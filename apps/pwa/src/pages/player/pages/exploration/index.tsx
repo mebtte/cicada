@@ -139,7 +139,7 @@ const ContentContainer = styled(Container)`
   > .content {
     width: min(1120px, 100%);
     margin: 0 auto;
-    padding: calc(var(--recommendation-toolbar-height) + 20px) 20px 24px;
+    padding: calc(var(--recommendation-toolbar-height) + 20px) 12px 24px;
 
     display: flex;
     flex-direction: column;
@@ -158,7 +158,7 @@ const ContentContainer = styled(Container)`
 `;
 const EmptyFallback = styled.div`
   min-height: 100%;
-  padding: calc(var(--recommendation-toolbar-height) + 24px) 16px 24px;
+  padding: calc(var(--recommendation-toolbar-height) + 24px) 12px 24px;
 
   display: flex;
   align-items: center;

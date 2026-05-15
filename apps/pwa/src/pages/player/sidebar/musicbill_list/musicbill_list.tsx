@@ -24,7 +24,7 @@ const TransitionBox = styled(animated.div)`
   left: 0;
 `;
 const StyledMusicbillList = styled(TransitionBox)`
-  padding-bottom: calc(14px + ${FLOATING_CONTROLLER_SCROLL_SPACE});
+  padding-bottom: ${FLOATING_CONTROLLER_SCROLL_SPACE};
 
   display: flex;
   flex-direction: column;

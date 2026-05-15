@@ -66,6 +66,7 @@ const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 
 const Form = styled.div<{ $page: boolean }>`
+  position: ${({ $page }) => ($page ? 'static' : 'relative')};
   width: 100%;
   max-width: ${({ $page }) => ($page ? '560px' : 'none')};
   height: ${({ $page }) => ($page ? 'auto' : '100%')};
@@ -146,7 +147,8 @@ const Body = styled.div<{ $page: boolean }>`
   flex: ${({ $page }) => ($page ? 'initial' : '1')};
   min-height: 0;
   background: #fff;
-  padding: 20px;
+  padding: ${({ $page }) =>
+    $page ? '20px' : '20px 20px calc(96px + env(safe-area-inset-bottom, 0))'};
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -361,12 +363,13 @@ const DragHandle = styled.button`
 `;
 
 const Footer = styled.div<{ $page: boolean }>`
-  flex-shrink: 0;
-  position: ${({ $page }) => ($page ? 'sticky' : 'static')};
+  flex-shrink: ${({ $page }) => ($page ? '0' : 'initial')};
+  position: ${({ $page }) => ($page ? 'sticky' : 'absolute')};
+  left: ${({ $page }) => ($page ? 'auto' : '0')};
+  right: ${({ $page }) => ($page ? 'auto' : '0')};
   bottom: 0;
+  z-index: ${({ $page }) => ($page ? 'auto' : '2')};
   padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0));
-  border-top: 2px solid ${CSSVariable.COLOR_BORDER};
-  background: #fff;
 `;
 
 const normalizeName = (name: string) => name.replace(/\s+/g, ' ').trim();
@@ -678,22 +681,24 @@ function SingerEditContent({
 
   return (
     <Form $page={page}>
-      <Header>
-        <AvatarBox>
-          {avatar ? (
-            <img
-              src={getResizedImage({ url: avatar, size: AVATAR_SIZE * 2 })}
-              alt={singer.name}
-            />
-          ) : (
-            <MdRecordVoiceOver />
-          )}
-        </AvatarBox>
-        <HeaderInfo>
-          <HeaderTitle>{singer.name}</HeaderTitle>
-          <HeaderSubTitle>{singer.id}</HeaderSubTitle>
-        </HeaderInfo>
-      </Header>
+      {page ? (
+        <Header>
+          <AvatarBox>
+            {avatar ? (
+              <img
+                src={getResizedImage({ url: avatar, size: AVATAR_SIZE * 2 })}
+                alt={singer.name}
+              />
+            ) : (
+              <MdRecordVoiceOver />
+            )}
+          </AvatarBox>
+          <HeaderInfo>
+            <HeaderTitle>{singer.name}</HeaderTitle>
+            <HeaderSubTitle>{singer.id}</HeaderSubTitle>
+          </HeaderInfo>
+        </Header>
+      ) : null}
 
       <Body $page={page}>
         <Input

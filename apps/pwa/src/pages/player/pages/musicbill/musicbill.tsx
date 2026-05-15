@@ -46,7 +46,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
   const miniInfoTransitions = useTransition(miniInfoVisible, {
     from: {
       opacity: 0,
-      transform: 'translate3d(0, 18px, 0) scale(0.98)',
+      transform: 'translate3d(0, -18px, 0) scale(0.98)',
     },
     enter: {
       opacity: 1,
@@ -54,7 +54,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
     },
     leave: {
       opacity: 0,
-      transform: 'translate3d(0, 18px, 0) scale(0.98)',
+      transform: 'translate3d(0, -18px, 0) scale(0.98)',
     },
     config: {
       tension: 360,

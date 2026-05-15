@@ -4,10 +4,11 @@ import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { CONTROLLER_PROGRESS_HEIGHT } from '../constants';
 
 const StyledSlider = styled(Slider)`
   z-index: 1;
-  flex: 0 0 26px;
+  flex: 0 0 ${CONTROLLER_PROGRESS_HEIGHT}px;
 `;
 
 function Progress({

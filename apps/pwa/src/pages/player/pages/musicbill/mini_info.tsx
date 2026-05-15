@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { animated } from 'react-spring';
 import getResizedImage from '@/server/asset/get_resized_image';
 import Cover from '@/components/cover';
-import { FLOATING_CONTROLLER_SCROLL_SPACE, Musicbill } from '../../constants';
+import { Musicbill } from '../../constants';
 import { MINI_INFO_HEIGHT } from './constants';
 import Operation from './operation';
 
@@ -22,7 +22,7 @@ const Style = styled(animated.div)`
   position: absolute;
   left: 36px;
   right: 36px;
-  bottom: calc(${FLOATING_CONTROLLER_SCROLL_SPACE} + 12px);
+  top: 12px;
   height: ${MINI_INFO_HEIGHT}px;
   padding: 8px 12px 12px;
 

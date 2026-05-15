@@ -99,6 +99,8 @@ interface Music {
 const COVER_SIZE = 120;
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
 const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const DRAWER_WIDTH = 420;
+const DRAWER_NARROW_SCREEN_GUTTER = 48;
 
 const formatSingerToOption = (singer: Singer): SelectOption<Singer> => ({
   label: `${singer.name}${singer.aliases.length ? `(${singer.aliases[0]})` : ''}`,
@@ -139,6 +141,7 @@ const EditDrawerContent = styled(DrawerContent)`
 `;
 
 const Form = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
@@ -187,7 +190,7 @@ const Body = styled.div`
   flex: 1;
   min-height: 0;
   background: #fff;
-  padding: 20px;
+  padding: 20px 20px calc(96px + env(safe-area-inset-bottom, 0));
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -340,18 +343,26 @@ const CenterBox = styled.div`
 `;
 
 const Footer = styled.div`
-  flex-shrink: 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
   padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0));
-  border-top: 2px solid ${CSSVariable.COLOR_BORDER};
-  background: #fff;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
 `;
 
-const FullWidthActionButton = styled(Button)`
-  flex-shrink: 0;
+const ActionButton = styled(Button)`
+  flex: 1;
+  min-width: 0;
   min-height: 44px;
+
+  @media (max-width: 360px) {
+    padding: 0 12px;
+    font-size: 14px;
+  }
 `;
 
 const formatDurationMs = (durationMs: number) => {
@@ -876,17 +887,15 @@ function EditContent({
       </Body>
 
       <Footer>
-        <Button
-          block
+        <ActionButton
           variant="primary"
           onClick={onSave}
           loading={saving}
           disabled={!changed || coverSaving || fileSaving || deleting}
         >
           {t('save')}
-        </Button>
-        <FullWidthActionButton
-          block
+        </ActionButton>
+        <ActionButton
           variant="danger"
           icon={<MdDelete />}
           onClick={onDelete}
@@ -894,7 +903,7 @@ function EditContent({
           disabled={saving || coverSaving || fileSaving}
         >
           {t('delete_music')}
-        </FullWidthActionButton>
+        </ActionButton>
       </Footer>
     </Form>
   );
@@ -975,7 +984,10 @@ function MusicEditDrawer({
     <Drawer open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <EditDrawerContent
         side="right"
-        style={{ width: 420 }}
+        style={{
+          width: DRAWER_WIDTH,
+          maxWidth: `calc(100vw - ${DRAWER_NARROW_SCREEN_GUTTER}px)`,
+        }}
         showClose={false}
         onOpenAutoFocus={(event) => event.preventDefault()}
       >

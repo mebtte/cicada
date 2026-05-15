@@ -25,26 +25,31 @@ const LoadingContainer = styled(Container)`
 `;
 const ErrorContainer = styled(Container)`
   ${flexCenter}
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 40px;
 
-  >.content {
-    backdrop-filter: blur(10px);
-    background-color: rgb(255 255 255 / 0.8);
-    border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
+  > .message {
+    display: inline-grid;
 
-    padding: 20px;
-    margin: 0 20px;
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-align: center;
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-
-    > .message {
-      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-      text-align: center;
+    > span {
+      grid-area: 1 / 1;
 
       ${upperCaseFirstLetter}
+    }
+
+    > .outline {
+      color: transparent;
+      pointer-events: none;
+      -webkit-text-stroke: 3px rgb(255 255 255 / 0.96);
     }
   }
 `;
@@ -79,12 +84,15 @@ function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
       case Status.ERROR: {
         return (
           <ErrorContainer style={style}>
-            <div className="content">
-              <div className="message">{d.error.message}</div>
-              <Button variant={'primary'} onClick={retry}>
-                {t('retry')}
-              </Button>
+            <div className="message">
+              <span className="outline" aria-hidden>
+                {d.error.message}
+              </span>
+              <span>{d.error.message}</span>
             </div>
+            <Button variant="primary" onClick={retry}>
+              {t('retry')}
+            </Button>
           </ErrorContainer>
         );
       }

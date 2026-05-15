@@ -4,9 +4,14 @@ import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
 import getResizedImage from '@/server/asset/get_resized_image';
 import {
+  CONTROLLER_BORDER_WIDTH,
+  CONTROLLER_BUTTON_ROW_HEIGHT,
+  CONTROLLER_COVER_HEIGHT,
   CONTROLLER_FLOATING_BOTTOM,
   CONTROLLER_FLOATING_GAP,
   CONTROLLER_HEIGHT,
+  CONTROLLER_PROGRESS_BUTTON_GAP,
+  CONTROLLER_VERTICAL_PADDING,
   type QueueMusic,
   ZIndex,
 } from '../constants';
@@ -37,10 +42,10 @@ const Style = styled.div<{ $playing: boolean }>`
   display: flex;
   flex-direction: column;
 
-  padding: 2px 10px;
+  padding: ${CONTROLLER_VERTICAL_PADDING}px 10px;
 
   background: #fff;
-  border: 2px solid
+  border: ${CONTROLLER_BORDER_WIDTH}px solid
     ${({ $playing }) =>
       $playing ? `var(${CSS_VAR.colorPrimary})` : CSSVariable.COLOR_BORDER};
   border-radius: 16px;
@@ -68,7 +73,7 @@ const Style = styled.div<{ $playing: boolean }>`
       flex-direction: column;
 
       > .rest {
-        flex: 1;
+        flex: 0 0 ${CONTROLLER_BUTTON_ROW_HEIGHT}px;
         min-height: 0;
 
         display: flex;
@@ -84,12 +89,12 @@ const Style = styled.div<{ $playing: boolean }>`
       padding-right: ${miniMode ? 0 : 10}px;
 
       > .cover {
-        align-self: center;
-        height: ${miniMode ? 64 : 68}px;
+        align-self: flex-start;
+        height: ${CONTROLLER_COVER_HEIGHT}px;
       }
 
       > .main {
-        gap: ${miniMode ? 3 : 4}px;
+        gap: ${CONTROLLER_PROGRESS_BUTTON_GAP}px;
 
         > .rest {
           gap: ${miniMode ? 10 : 20}px;
