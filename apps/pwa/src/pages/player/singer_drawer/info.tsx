@@ -11,11 +11,9 @@ const Style = styled.div`
   font-size: 0;
 `;
 const Identity = styled.section<{
-  $insideDrawer: boolean;
   $integrated: boolean;
 }>`
-  padding: ${({ $insideDrawer, $integrated }) =>
-    $integrated ? 0 : $insideDrawer ? '20px 20px 12px' : '24px 20px 12px'};
+  padding: ${({ $integrated }) => ($integrated ? 0 : '24px 20px 12px')};
   background: ${({ $integrated }) => ($integrated ? 'transparent' : '#fff')};
 
   ${({ $integrated }) =>
@@ -156,11 +154,9 @@ const ThumbnailItem = styled.div<{ selected: boolean }>`
 
 function Info({
   singer,
-  insideDrawer = false,
   identityRef,
 }: {
   singer: Singer;
-  insideDrawer?: boolean;
   identityRef?: Ref<HTMLElement>;
 }) {
   const { photos } = singer;
@@ -184,7 +180,6 @@ function Info({
   const photoLabel = selected?.description || singer.name;
   const identity = (
     <Identity
-      $insideDrawer={insideDrawer}
       $integrated={!!selected}
       ref={identityRef}
     >

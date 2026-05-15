@@ -15,6 +15,7 @@ export function openCreateMusicbillDialog() {
     maxLength: MUSICBILL_NAME_MAX_LENGTH,
     confirmVariant: 'primary',
     confirmText: t('create'),
+    inlineFooter: true,
     onConfirm: async (name: string) => {
       const trimmedName = name.replace(/\s+/, ' ').trim();
       if (!trimmedName.length) {

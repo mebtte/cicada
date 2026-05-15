@@ -19,33 +19,35 @@ import { t } from '@/i18n';
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
 
-  position: ${({ $floatingControllerOffset }) =>
-    $floatingControllerOffset ? 'absolute' : 'sticky'};
-  left: ${({ $floatingControllerOffset }) =>
-    $floatingControllerOffset ? 0 : 'auto'};
-  right: ${({ $floatingControllerOffset }) =>
-    $floatingControllerOffset ? 0 : 'auto'};
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: ${({ $floatingControllerOffset }) =>
-    $floatingControllerOffset ? CONTROLLER_FLOATING_RESERVED_HEIGHT : 0};
-  flex-shrink: 0;
-  height: calc(64px + env(safe-area-inset-bottom, 0));
-  padding: 10px 20px calc(14px + env(safe-area-inset-bottom, 0)) 20px;
+    $floatingControllerOffset
+      ? CONTROLLER_FLOATING_RESERVED_HEIGHT
+      : 'calc(14px + env(safe-area-inset-bottom, 0))'};
+  max-width: calc(100% - 32px);
+  padding: 8px 12px;
+  box-sizing: border-box;
 
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
-  background: rgb(255 255 255 / 0.9);
-  border-top: 2px solid rgb(229 229 229);
-  backdrop-filter: blur(8px);
+  background: rgb(255 255 255 / 0.92);
+  border: 2px solid rgb(229 229 229);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 0 rgb(229 229 229),
+    0 10px 24px rgb(0 0 0 / 0.1);
+  backdrop-filter: blur(12px);
 
   > .left {
-    flex: 1;
     min-width: 0;
 
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
   }
 `;
 

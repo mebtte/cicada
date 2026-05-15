@@ -27,7 +27,6 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import capitalize from '@/utils/capitalize';
 import day from '@/utils/day';
-import notice from '@/utils/notice';
 import useNavigate from '@/utils/use_navigate';
 import useQuery from '@/utils/use_query';
 import useWindowWidth from '@/utils/use_window_width';
@@ -682,8 +681,8 @@ function SingerManagement() {
 
   const onOpenCreateSingerDialog = useCallback(() => {
     openCreateSingerDialog({
-      onCreated: () => {
-        notice.info(t('created'));
+      onCreated: (id) => {
+        setEditSingerId(id);
         if (
           !keyword &&
           filterKey === AdminSingerListFilterKey.ALL &&

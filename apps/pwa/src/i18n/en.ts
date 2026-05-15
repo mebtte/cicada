@@ -128,6 +128,7 @@ export default {
   edit_lyric: 'edit lyric',
   lyric: 'lyric',
   text_of_lrc: 'text of lrc',
+  delete_lyric_question: 'are you sure to delete this lyric ?',
   modify_singer: 'modify singer',
   singer: 'singer',
   emtpy_singers_warning: 'please select singers',

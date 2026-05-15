@@ -7,6 +7,9 @@ import adminGetSinger from '@/server/api/admin_get_singer';
 import SingerEditContent from './content';
 import type { Singer } from './types';
 
+const DRAWER_WIDTH = 360;
+const DRAWER_NARROW_SCREEN_GUTTER = 48;
+
 const EditDrawerContent = styled(DrawerContent)`
   > div {
     overflow: hidden;
@@ -84,7 +87,10 @@ function SingerEditDrawer({
     <Drawer open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <EditDrawerContent
         side="right"
-        style={{ width: 360 }}
+        style={{
+          width: DRAWER_WIDTH,
+          maxWidth: `calc(100vw - ${DRAWER_NARROW_SCREEN_GUTTER}px)`,
+        }}
         showClose={false}
         onOpenAutoFocus={(event) => event.preventDefault()}
       >

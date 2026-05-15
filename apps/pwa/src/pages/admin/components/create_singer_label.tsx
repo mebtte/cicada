@@ -3,7 +3,9 @@ import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import notice from '@/utils/notice';
-import openCreateSingerDialog from '../open_create_singer_dialog';
+import openCreateSingerDialog, {
+  type CreatedSinger,
+} from '../open_create_singer_dialog';
 
 const Style = styled.div`
   font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
@@ -20,15 +22,24 @@ const Style = styled.div`
   }
 `;
 
-function CreateSingerLabel() {
+function CreateSingerLabel({
+  notifyOnCreated = true,
+  onCreated,
+}: {
+  notifyOnCreated?: boolean;
+  onCreated?: (singer: CreatedSinger) => void | Promise<void>;
+}) {
   return (
     <Style
       onClick={(event) => {
         event.preventDefault();
         event.stopPropagation();
         return openCreateSingerDialog({
-          onCreated: () => {
-            notice.info(t('created'));
+          onCreated: async (_, singer) => {
+            await onCreated?.(singer);
+            if (notifyOnCreated) {
+              notice.info(t('created'));
+            }
           },
         });
       }}

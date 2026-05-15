@@ -11,7 +11,7 @@ const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 10px;
+  padding: 8px 10px 12px;
 
   > .slider {
     flex: 1;
@@ -53,6 +53,7 @@ function Wrapper({
         onChange={onTimeChange}
         className="slider"
         secondValue={bufferedPercent}
+        alwaysShowThumb
       />
       <div className="time">{formatSecond(duration)}</div>
     </Style>

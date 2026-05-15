@@ -128,6 +128,7 @@ const zhCN: {
   edit_lyric: '编辑歌词',
   lyric: '歌词',
   text_of_lrc: 'LRC 格式文本',
+  delete_lyric_question: '确定删除该歌词吗?',
   modify_singer: '修改歌手',
   singer: '歌手',
   emtpy_singers_warning: '请选择歌手',
