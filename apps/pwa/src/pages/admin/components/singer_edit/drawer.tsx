@@ -4,6 +4,7 @@ import { Drawer, DrawerContent } from '@/components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import adminGetSinger from '@/server/api/admin_get_singer';
+import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import SingerEditContent from './content';
 import type { Singer } from './types';
 
@@ -50,6 +51,7 @@ function SingerEditDrawer({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [singer, setSinger] = useState<Singer | null>(null);
@@ -90,6 +92,7 @@ function SingerEditDrawer({
         style={{
           width: DRAWER_WIDTH,
           maxWidth: `calc(100vw - ${DRAWER_NARROW_SCREEN_GUTTER}px)`,
+          paddingTop: titlebarTop,
         }}
         showClose={false}
         onOpenAutoFocus={(event) => event.preventDefault()}

@@ -93,7 +93,8 @@ const Layer = styled.div`
   pointer-events: none;
 `;
 
-const getStageBackdropTop = (count: number) => -18 + (count - 1) * 17;
+// Backdrop height already grows with appended rows, so keep the top anchored.
+const STAGE_BACKDROP_TOP = -18;
 
 const getStageBackdropHeight = (count: number) => 196 + (count - 1) * 34;
 
@@ -115,7 +116,7 @@ const Stage = styled.div<{
     z-index: -1;
 
     position: absolute;
-    top: ${({ $count }) => getStageBackdropTop($count)}px;
+    top: ${STAGE_BACKDROP_TOP}px;
     left: -30px;
     width: 280px;
     height: ${({ $count }) => getStageBackdropHeight($count)}px;

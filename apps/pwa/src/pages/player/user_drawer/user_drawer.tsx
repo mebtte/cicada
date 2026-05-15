@@ -19,6 +19,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components';
+import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import Cover, { Shape } from '@/components/cover';
 import getResizedImage from '@/server/asset/get_resized_image';
 import useData from './use_data';
@@ -217,13 +218,14 @@ function Wrapper({
   zIndex: number;
 }) {
   const { data, reload } = useData(id);
+  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   const transitions = useTransition(data, TRANSITION);
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
       <DrawerContent
         side="right"
-        style={{ width: 'min(85%, 400px)' }}
+        style={{ width: 'min(85%, 400px)', paddingTop: titlebarTop }}
         showClose={false}
         zIndex={zIndex}
       >

@@ -12,7 +12,9 @@ function useDynamicZIndex(eventType: EventType) {
     const unlisten = e.listen(eventType, () => {
       if (lastEventType !== eventType) {
         lastEventType = eventType;
-        current += 1;
+        // Drawer has an overlay at zIndex and a panel at zIndex + 1,
+        // so each activation needs to reserve two layers.
+        current += 2;
         setZIndex(current);
       }
     });

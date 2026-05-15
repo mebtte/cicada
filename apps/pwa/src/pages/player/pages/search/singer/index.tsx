@@ -9,7 +9,6 @@ import Pagination from '@/components/pagination';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
-import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
@@ -19,7 +18,7 @@ import useData from './use_data';
 import Singer from './singer';
 import { PAGE_HORIZONTAL_PADDING } from '../../page';
 
-const ITEM_MIN_WIDTH = 150;
+const AVATAR_IMAGE_SIZE = 72;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
@@ -34,18 +33,13 @@ const SingerContainer = styled(Container)`
   ${autoScrollbar}
 
   > .list {
-    --gap: 10px;
-
-    margin: 0 calc(${PAGE_HORIZONTAL_PADDING} - var(--gap));
-    padding-top: calc(var(--search-toolbar-height) - var(--gap));
+    width: 100%;
+    padding: calc(var(--search-toolbar-height) + 12px)
+      ${PAGE_HORIZONTAL_PADDING} 0;
 
     display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-
-    > .item {
-      padding: var(--gap);
-    }
+    flex-direction: column;
+    gap: 12px;
   }
 
   &::after {
@@ -93,28 +87,21 @@ function Wrapper() {
     }
     return (
       <SingerContainer style={style}>
-        <SizeObserver className="list">
-          {({ width }) => {
-            const itemWidth = `${100 / Math.floor(width / ITEM_MIN_WIDTH)}%`;
-            return d.value!.singerList.map((singer) => (
-              <div
-                key={singer.id}
-                className="item"
-                style={{ width: itemWidth }}
-              >
-                <Singer
-                  singerId={singer.id}
-                  singerName={singer.name}
-                  singerAvatar={getResizedImage({
-                    url: singer.avatar,
-                    size: Math.ceil(ITEM_MIN_WIDTH * window.devicePixelRatio),
-                  })}
-                  singerAliases={singer.aliases}
-                />
-              </div>
-            ));
-          }}
-        </SizeObserver>
+        <div className="list">
+          {d.value!.singerList.map((singer) => (
+            <Singer
+              key={singer.id}
+              singerId={singer.id}
+              singerName={singer.name}
+              singerAvatar={getResizedImage({
+                url: singer.avatar,
+                size: Math.ceil(AVATAR_IMAGE_SIZE * window.devicePixelRatio),
+              })}
+              singerAliases={singer.aliases}
+              musicCount={singer.musicCount}
+            />
+          ))}
+        </div>
         {d.value!.total ? (
           <Pagination
             style={paginationStyle}

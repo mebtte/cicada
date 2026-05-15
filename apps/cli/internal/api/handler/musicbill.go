@@ -647,9 +647,10 @@ func SearchPublicMusicbill(c *gin.Context) {
 	list := make([]gin.H, len(mbs))
 	for i, mb := range mbs {
 		list[i] = gin.H{
-			"id":    mb.ID,
-			"name":  mb.Name,
-			"cover": config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+			"id":         mb.ID,
+			"name":       mb.Name,
+			"cover":      config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+			"musicCount": mb.MusicCount,
 			"user": gin.H{
 				"id":       mb.UserID,
 				"nickname": mb.OwnerNickname,
@@ -720,8 +721,10 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 			WHERE m.public=1 AND m.name LIKE ? AND mc.userId=?`,
 			pat, u.ID,
 		).Scan(&total)
+		// 收藏页直接展示乐单音乐数量，在列表查询里一起取出。
 		r, err := store.DB().Query(
-			`SELECT m.id,m.name,m.cover,m.userId
+			`SELECT m.id,m.name,m.cover,m.userId,
+				(SELECT COUNT(1) FROM musicbill_music mm WHERE mm.musicbillId=m.id) AS musicCount
 			FROM public_musicbill_collection mc
 			LEFT JOIN musicbill m ON m.id=mc.musicbillId
 			WHERE m.public=1 AND m.name LIKE ? AND mc.userId=?
@@ -737,12 +740,13 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 
 		type row struct {
 			ID, Name, Cover, UserID string
+			MusicCount              int
 		}
 		var items []row
 		sqlRows := r
 		for sqlRows.Next() {
 			var item row
-			sqlRows.Scan(&item.ID, &item.Name, &item.Cover, &item.UserID)
+			sqlRows.Scan(&item.ID, &item.Name, &item.Cover, &item.UserID, &item.MusicCount)
 			items = append(items, item)
 		}
 
@@ -774,10 +778,11 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 		list := make([]gin.H, len(items))
 		for i, item := range items {
 			list[i] = gin.H{
-				"id":    item.ID,
-				"name":  item.Name,
-				"cover": config.AssetPublicURL(item.Cover, config.AssetTypeMusicbillCover),
-				"user":  ownerMap[item.UserID],
+				"id":         item.ID,
+				"name":       item.Name,
+				"cover":      config.AssetPublicURL(item.Cover, config.AssetTypeMusicbillCover),
+				"musicCount": item.MusicCount,
+				"user":       ownerMap[item.UserID],
 			}
 		}
 		_ = rows
@@ -793,7 +798,8 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 		u.ID,
 	).Scan(&total)
 	r, err := store.DB().Query(
-		`SELECT m.id,m.name,m.cover,m.userId
+		`SELECT m.id,m.name,m.cover,m.userId,
+			(SELECT COUNT(1) FROM musicbill_music mm WHERE mm.musicbillId=m.id) AS musicCount
 		FROM public_musicbill_collection mc
 		LEFT JOIN musicbill m ON m.id=mc.musicbillId
 		WHERE m.public=1 AND mc.userId=?
@@ -808,11 +814,12 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 
 	type row struct {
 		ID, Name, Cover, UserID string
+		MusicCount              int
 	}
 	var items []row
 	for r.Next() {
 		var item row
-		r.Scan(&item.ID, &item.Name, &item.Cover, &item.UserID)
+		r.Scan(&item.ID, &item.Name, &item.Cover, &item.UserID, &item.MusicCount)
 		items = append(items, item)
 	}
 
@@ -843,10 +850,11 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 	list := make([]gin.H, len(items))
 	for i, item := range items {
 		list[i] = gin.H{
-			"id":    item.ID,
-			"name":  item.Name,
-			"cover": config.AssetPublicURL(item.Cover, config.AssetTypeMusicbillCover),
-			"user":  ownerMap[item.UserID],
+			"id":         item.ID,
+			"name":       item.Name,
+			"cover":      config.AssetPublicURL(item.Cover, config.AssetTypeMusicbillCover),
+			"musicCount": item.MusicCount,
+			"user":       ownerMap[item.UserID],
 		}
 	}
 	api.OK(c, gin.H{"total": total, "collectionList": list})

@@ -87,8 +87,7 @@ const makeVariant = (
   }
 
   &:disabled {
-    box-shadow: 0 ${({ $offset }) => $offset}px 0 ${DISABLED_SHADOW};
-    filter: saturate(0.45);
+    filter: none;
   }
 `;
 
@@ -210,6 +209,34 @@ const StyledButton = styled.button<{
     ${VARIANT_MAP[$variant]}
     --offset: ${$offset}px;
   `}
+  ${({ $loading, $offset, $variant }) =>
+    !$loading &&
+    ($variant === 'plain'
+      ? css`
+          &:disabled {
+            color: ${CSSVariable.TEXT_COLOR_DISABLED};
+            background: transparent;
+            border-color: transparent;
+            box-shadow: none;
+            filter: grayscale(1);
+          }
+        `
+      : css`
+          &:disabled {
+            color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+            background: ${CSSVariable.BACKGROUND_DISABLED};
+            border-color: ${CSSVariable.COLOR_DISABLED_SHADOW};
+            box-shadow: 0 ${$offset}px 0 ${CSSVariable.COLOR_DISABLED_SHADOW};
+            filter: grayscale(1);
+          }
+
+          &:disabled:hover,
+          &:disabled:active {
+            transform: none;
+            box-shadow: 0 ${$offset}px 0 ${CSSVariable.COLOR_DISABLED_SHADOW};
+            filter: grayscale(1);
+          }
+        `)}
 `;
 
 // ─── Component ────────────────────────────────────────────────────────────────

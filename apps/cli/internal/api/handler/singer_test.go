@@ -257,16 +257,34 @@ func TestSearchSingerReturnsPhotos(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert photos: %v", err)
 	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES
+			('music-beta-1',1,'Beta Song One','beta-1.mp3','user-1',?),
+			('music-beta-2',1,'Beta Song Two','beta-2.mp3','user-1',?),
+			('music-alpha-1',1,'Alpha Song','alpha-1.mp3','user-1',?)`,
+		now, now-1, now-2,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music_singer_relation (musicId,singerId) VALUES
+			('music-beta-1','singer-beta'),
+			('music-beta-2','singer-beta'),
+			('music-alpha-1','singer-alpha')`,
+	); err != nil {
+		t.Fatalf("insert music singer relations: %v", err)
+	}
 
 	type response struct {
 		Code string `json:"code"`
 		Data struct {
 			Total      int `json:"total"`
 			SingerList []struct {
-				ID      string   `json:"id"`
-				Name    string   `json:"name"`
-				Aliases []string `json:"aliases"`
-				Photos  []struct {
+				ID         string   `json:"id"`
+				Name       string   `json:"name"`
+				Aliases    []string `json:"aliases"`
+				MusicCount int      `json:"musicCount"`
+				Photos     []struct {
 					ID          string `json:"id"`
 					Asset       string `json:"asset"`
 					Description string `json:"description"`
@@ -295,6 +313,9 @@ func TestSearchSingerReturnsPhotos(t *testing.T) {
 	singer := resp.Data.SingerList[0]
 	if singer.ID != "singer-beta" || singer.Name != "Beta" {
 		t.Fatalf("unexpected singer: %+v", singer)
+	}
+	if singer.MusicCount != 2 {
+		t.Fatalf("expected music count 2, got %d", singer.MusicCount)
 	}
 	if len(singer.Photos) != 2 {
 		t.Fatalf("expected 2 photos, got %+v", singer.Photos)

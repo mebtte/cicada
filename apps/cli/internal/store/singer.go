@@ -95,6 +95,38 @@ func SearchSingers(keyword string, page, pageSize int) (int, []Singer, error) {
 	return total, singers, nil
 }
 
+func GetMusicCountsBySingerIDs(singerIDs []string) (map[string]int, error) {
+	counts := make(map[string]int, len(singerIDs))
+	if len(singerIDs) == 0 {
+		return counts, nil
+	}
+
+	// 批量统计搜索结果内歌手关联的音乐数量，避免逐项查询。
+	rows, err := DB().Query(
+		`SELECT singerId,COUNT(1)
+		FROM music_singer_relation
+		WHERE singerId IN (`+placeholders(len(singerIDs))+`)
+		GROUP BY singerId`,
+		strs2any(singerIDs)...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var singerID string
+		var count int
+		if err := rows.Scan(&singerID, &count); err != nil {
+			return nil, err
+		}
+		counts[singerID] = count
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return counts, nil
+}
+
 func GetAdminSingerList(keyword, filterKey string, page, pageSize int) (int, []AdminSinger, error) {
 	where := ""
 	args := []any{}

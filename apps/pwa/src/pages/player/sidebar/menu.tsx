@@ -4,7 +4,6 @@ import {
   MdOutlineSettings,
   MdHistory,
   MdAdminPanelSettings,
-  MdStarOutline,
 } from 'react-icons/md';
 import { useLocation } from 'react-router-dom';
 import { ReactNode, useContext } from 'react';
@@ -192,19 +191,6 @@ function Menu() {
         }
         label={t('exploration')}
         icon={<MdLooks />}
-      />
-      <SidebarItem
-        active={
-          pathname ===
-          `${ROOT_PATH.PLAYER}${PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION}`
-        }
-        onClick={() =>
-          navigate(
-            `${ROOT_PATH.PLAYER}${PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION}`,
-          )
-        }
-        label={t('public_musicbill_collection')}
-        icon={<MdStarOutline />}
       />
       <SidebarItem
         active={

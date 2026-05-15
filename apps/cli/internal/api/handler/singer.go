@@ -107,6 +107,11 @@ func SearchSinger(c *gin.Context) {
 			})
 		}
 	}
+	musicCounts, err := store.GetMusicCountsBySingerIDs(singerIDs)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
 	list := make([]gin.H, len(singers))
 	for i, s := range singers {
 		photos := photosBySinger[s.ID]
@@ -114,10 +119,11 @@ func SearchSinger(c *gin.Context) {
 			photos = []gin.H{}
 		}
 		list[i] = gin.H{
-			"id":      s.ID,
-			"name":    s.Name,
-			"aliases": splitAliases(s.Aliases),
-			"photos":  photos,
+			"id":         s.ID,
+			"name":       s.Name,
+			"aliases":    splitAliases(s.Aliases),
+			"photos":     photos,
+			"musicCount": musicCounts[s.ID],
 		}
 	}
 	api.OK(c, gin.H{"total": total, "singerList": list})

@@ -20,6 +20,7 @@ type MusicbillWithOwner struct {
 	Musicbill
 	OwnerNickname string
 	OwnerAvatar   string
+	MusicCount    int
 }
 
 type SharedMusicbillRow struct {
@@ -236,8 +237,10 @@ func SearchPublicMusicbills(keyword string, page, pageSize int) (int, []Musicbil
 	pat := "%" + keyword + "%"
 	var total int
 	DB().QueryRow(`SELECT COUNT(1) FROM musicbill WHERE public=1 AND name LIKE ?`, pat).Scan(&total)
+	// 搜索页需要直接展示乐单音乐数量，在同一条查询里补齐避免二次请求。
 	rows, err := DB().Query(
-		`SELECT mb.id,mb.userId,mb.cover,mb.name,mb.public,mb.createTimestamp,u.nickname,u.avatar
+		`SELECT mb.id,mb.userId,mb.cover,mb.name,mb.public,mb.createTimestamp,u.nickname,u.avatar,
+			(SELECT COUNT(1) FROM musicbill_music mm WHERE mm.musicbillId=mb.id) AS musicCount
 		FROM musicbill mb JOIN user u ON mb.userId=u.id
 		WHERE mb.public=1 AND mb.name LIKE ?
 		ORDER BY mb.createTimestamp DESC LIMIT ? OFFSET ?`,
@@ -250,7 +253,7 @@ func SearchPublicMusicbills(keyword string, page, pageSize int) (int, []Musicbil
 	var out []MusicbillWithOwner
 	for rows.Next() {
 		mb := MusicbillWithOwner{}
-		rows.Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.Name, &mb.Public, &mb.CreateTimestamp, &mb.OwnerNickname, &mb.OwnerAvatar)
+		rows.Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.Name, &mb.Public, &mb.CreateTimestamp, &mb.OwnerNickname, &mb.OwnerAvatar, &mb.MusicCount)
 		out = append(out, mb)
 	}
 	return total, out, nil

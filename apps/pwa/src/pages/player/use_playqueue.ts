@@ -284,7 +284,7 @@ export default (playlist: MusicWithSingerAliases[]) => {
     if (
       currentPosition < 0 ||
       currentPosition < playqueue.length - 1 ||
-      !playlist.length
+      playlist.length <= 1
     ) {
       return;
     }
@@ -293,7 +293,8 @@ export default (playlist: MusicWithSingerAliases[]) => {
       if (
         currentPosition < 0 ||
         currentPosition < pq.length - 1 ||
-        !playlist.length
+        // 仅限制预填队列: 单曲播放列表仍由 ACTION_NEXT 在切歌时补队列.
+        playlist.length <= 1
       ) {
         return pq;
       }

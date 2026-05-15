@@ -11,6 +11,11 @@ import useVolume from './use_volume';
 import useAction from './use_action';
 import usePlayRecord from './use_play_record';
 
+function getFiniteAudioDuration(audio: CustomAudio<QueueMusic>) {
+  const duration = audio.getDuration();
+  return Number.isFinite(duration) ? duration : 0;
+}
+
 function useAudio({
   queueMusic,
   playqueue,
@@ -29,6 +34,7 @@ function useAudio({
    * @author mebtte<i@mebtte.com>
    */
   const audioRef = useRef<CustomAudio<QueueMusic> | null>(null);
+  const queueMusicPidRef = useRef<string | null>(null);
   if (!audioRef.current) {
     audioRef.current = new CustomAudio<QueueMusic>();
   }
@@ -74,7 +80,7 @@ function useAudio({
       onError();
     });
     const unlistenDurationChange = audio.listen('durationchange', () =>
-      setDuration(audio.getDuration()),
+      setDuration(getFiniteAudioDuration(audio)),
     );
     const unlistenPlay = audio.listen('play', () => {
       updateLoadingByPlayableState();
@@ -153,24 +159,38 @@ function useAudio({
    * @author mebtte<i@mebtte.com>
    */
   useEffect(() => {
-    setDuration(0);
-    setBufferedPercent(0);
-    eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
-      currentMillisecond: 0,
-    });
     if (queueMusic) {
       const src = getMusicPlaybackAsset({
         asset: queueMusic.asset,
         quality: musicPlaybackQuality,
       });
       const sourceChanged = audio.getSrc() !== src;
+      const queueMusicChanged = queueMusicPidRef.current !== queueMusic.pid;
+      queueMusicPidRef.current = queueMusic.pid;
+
+      if (sourceChanged || queueMusicChanged) {
+        setDuration(0);
+        setBufferedPercent(0);
+        eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
+          currentMillisecond: 0,
+        });
+      }
+
       audio.setSource({
         src,
         extra: queueMusic,
       });
+
+      if (!sourceChanged && queueMusicChanged) {
+        // 同一首歌作为新的队列项播放时 src 不变, 浏览器不会自动重载音源.
+        audio.setCurrentTime(0);
+        setDuration(getFiniteAudioDuration(audio));
+        setBufferedPercent(audio.getBufferedPercent());
+      }
+
       setLoading(sourceChanged || !audio.hasPlayableData());
-      if (sourceChanged) {
-        // 加载态切歌会中断上一次 play 请求, 需要为新音源重新发起播放.
+      if (sourceChanged || queueMusicChanged) {
+        // 加载态切歌会中断上一次 play 请求, 需要为新队列项重新发起播放.
         audio.play();
       }
 
@@ -181,6 +201,12 @@ function useAudio({
       }, 0);
       return () => window.clearTimeout(readyStateSyncTimer);
     } else {
+      queueMusicPidRef.current = null;
+      setDuration(0);
+      setBufferedPercent(0);
+      eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
+        currentMillisecond: 0,
+      });
       audio.clearSource();
       setLoading(false);
       setPaused(true);

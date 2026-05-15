@@ -13,6 +13,7 @@ import { t } from '@/i18n';
 import { USERNAME_MAX_LENGTH } from '@/constants/user';
 import { useUser } from '@/global_states/server';
 import { MdLogout, MdPersonAddAlt1 } from 'react-icons/md';
+import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import User from './user';
 import { Musicbill } from '../constants';
 import e, { EventType } from '../eventemitter';
@@ -21,6 +22,7 @@ import { quitSharedMusicbill } from '../pages/musicbill/utils';
 const Content = styled.div`
   height: 100%;
   min-height: 0;
+  box-sizing: border-box;
 
   display: flex;
   flex-direction: column;
@@ -59,6 +61,7 @@ function ShareDrawer({
 }) {
   const navigate = useNavigate();
   const user = useUser()!;
+  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   const owned = musicbill.owner.id === user.id;
 
@@ -70,7 +73,7 @@ function ShareDrawer({
         style={{ width: 340 }}
         zIndex={zIndex}
       >
-        <Content>
+        <Content style={{ paddingTop: titlebarTop }}>
           <List>
             <User
               user={musicbill.owner}

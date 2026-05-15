@@ -6,12 +6,12 @@ import {
   MdSort,
   MdRefresh,
   MdOutlinePeopleAlt,
+  MdStarOutline,
 } from 'react-icons/md';
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
-import capitalize from '@/style/capitalize';
 import { useTheme } from '@/global_states/theme';
 import e, { EventType } from '../../eventemitter';
 import Context from '../../context';
@@ -19,6 +19,25 @@ import { openCreateMusicbillDialog } from '../../utils';
 
 const reloadMusicbillList = () =>
   e.emit(EventType.RELOAD_MUSICBILL_LIST, { silence: false });
+const OPEN_DRAWER_AFTER_CLOSE_FRAME_COUNT = 2;
+
+function runAfterAnimationFrames(callback: () => void, frameCount: number) {
+  let currentFrame = 0;
+
+  const run = () => {
+    currentFrame += 1;
+
+    if (currentFrame >= frameCount) {
+      callback();
+      return;
+    }
+
+    window.requestAnimationFrame(run);
+  };
+
+  window.requestAnimationFrame(run);
+}
+
 const Style = styled.div`
   margin: 0 12px;
   min-height: 40px;
@@ -26,20 +45,10 @@ const Style = styled.div`
 
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 3px;
 
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-
-  > .label {
-    flex: 1;
-    min-width: 0;
-
-    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-    font-weight: 900;
-    letter-spacing: 0;
-    ${capitalize}
-  }
 `;
 const ToolButton = styled(Button)`
   && {
@@ -65,10 +74,22 @@ function Top() {
     }
     e.emit(EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER, null);
   };
+  const openPublicMusicbillCollectionDrawer = () => {
+    if (!miniMode) {
+      e.emit(EventType.OPEN_PUBLIC_MUSICBILL_COLLECTION_DRAWER, null);
+      return;
+    }
+
+    e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
+    // 先等窄屏侧栏关闭，再打开收藏抽屉，避免两个 drawer 叠加后关闭按钮不可达。
+    runAfterAnimationFrames(
+      () => e.emit(EventType.OPEN_PUBLIC_MUSICBILL_COLLECTION_DRAWER, null),
+      OPEN_DRAWER_AFTER_CLOSE_FRAME_COUNT,
+    );
+  };
 
   return (
-    <Style>
-      <div className="label">{t('musicbill')}</div>
+    <Style aria-label={t('musicbill')}>
       <ToolButton
         square
         variant="ghost"
@@ -107,6 +128,16 @@ function Top() {
         onClick={openSharedMusicbillInvitationDrawer}
       >
         <MdOutlinePeopleAlt />
+      </ToolButton>
+      <ToolButton
+        square
+        variant="ghost"
+        size="sm"
+        aria-label={t('public_musicbill_collection')}
+        title={t('public_musicbill_collection')}
+        onClick={openPublicMusicbillCollectionDrawer}
+      >
+        <MdStarOutline />
       </ToolButton>
     </Style>
   );

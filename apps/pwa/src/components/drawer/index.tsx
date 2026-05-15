@@ -244,7 +244,8 @@ export const DrawerContent = forwardRef<
   } as CSSProperties;
 
   return (
-    <RadixDialog.Portal>
+    // Keep Radix's DismissableLayer stack aligned when an open drawer is raised.
+    <RadixDialog.Portal key={zIndex}>
       <Overlay style={{ zIndex }} />
       <RadixDialog.Content
         ref={composedPanelRef}

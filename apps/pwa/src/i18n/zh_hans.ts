@@ -320,6 +320,7 @@ const zhCN: {
   heat: '%s1 热度',
   music_heat: '热度',
   musicbill_count: '%s1 乐单',
+  music_count: '%s1 首音乐',
   no_lyric: '暂未收录歌词',
   instrument_without_lyric: '乐曲, 无歌词',
   modified: '修改了',

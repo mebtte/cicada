@@ -49,7 +49,7 @@ const DetailContainer = styled(Container)<{ $floatingControllerOffset: boolean }
       height: ${({ $floatingControllerOffset }) =>
         $floatingControllerOffset
           ? `calc(64px + env(safe-area-inset-bottom, 0) + ${FLOATING_CONTROLLER_SCROLL_SPACE})`
-          : 'calc(80px + env(safe-area-inset-bottom, 0))'};
+          : 'calc(68px + env(safe-area-inset-bottom, 0))'};
     }
   }
 `;

@@ -548,9 +548,10 @@ func operations() []operation {
 				"total": 1,
 				"singerList": []any{
 					map[string]any{
-						"id":      "singer-1",
-						"name":    "Aurora",
-						"aliases": []string{"AUR"},
+						"id":         "singer-1",
+						"name":       "Aurora",
+						"aliases":    []string{"AUR"},
+						"musicCount": 12,
 						"photos": []any{
 							map[string]any{"id": "photo-1", "asset": "/asset/singer_photo/photo.jpg", "description": "Live in Tokyo, 2024"},
 						},
@@ -1611,12 +1612,13 @@ func singerSchema() map[string]any {
 
 func singerWithPhotosSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "aliases", "photos"},
+		[]string{"id", "name", "aliases", "musicCount", "photos"},
 		map[string]any{
-			"id":      strSchema("Singer ID.", "singer-1"),
-			"name":    strSchema("Singer name.", "Aurora"),
-			"aliases": arraySchema(strSchema("", "AUR")),
-			"photos":  arraySchema(singerPhotoSchema()),
+			"id":         strSchema("Singer ID.", "singer-1"),
+			"name":       strSchema("Singer name.", "Aurora"),
+			"aliases":    arraySchema(strSchema("", "AUR")),
+			"musicCount": intSchema("Music count.", 12),
+			"photos":     arraySchema(singerPhotoSchema()),
 		},
 	)
 }
@@ -2095,12 +2097,13 @@ func publicMusicbillDetailExample() map[string]any {
 
 func musicbillCardSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "cover", "user"},
+		[]string{"id", "name", "cover", "musicCount", "user"},
 		map[string]any{
-			"id":    strSchema("Musicbill ID.", "musicbill-1"),
-			"name":  strSchema("Musicbill name.", "Late Night"),
-			"cover": strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
-			"user":  userBriefSchema(true),
+			"id":         strSchema("Musicbill ID.", "musicbill-1"),
+			"name":       strSchema("Musicbill name.", "Late Night"),
+			"cover":      strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+			"musicCount": intSchema("Music count.", 12),
+			"user":       userBriefSchema(true),
 		},
 	)
 }
@@ -2120,10 +2123,11 @@ func musicbillPageExample(listKey string) map[string]any {
 		"total": 1,
 		listKey: []any{
 			map[string]any{
-				"id":    "musicbill-1",
-				"name":  "Late Night",
-				"cover": "/asset/musicbill_cover/cover.jpg",
-				"user":  map[string]any{"id": "1", "nickname": "Cicada", "avatar": "/asset/user_avatar/avatar.jpg"},
+				"id":         "musicbill-1",
+				"name":       "Late Night",
+				"cover":      "/asset/musicbill_cover/cover.jpg",
+				"musicCount": 12,
+				"user":       map[string]any{"id": "1", "nickname": "Cicada", "avatar": "/asset/user_avatar/avatar.jpg"},
 			},
 		},
 	}

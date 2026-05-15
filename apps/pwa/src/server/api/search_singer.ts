@@ -13,13 +13,15 @@ type Response = {
     id: string;
     name: string;
     aliases: string[];
+    musicCount: number;
     photos: SingerPhoto[];
   }[];
 };
 
 type RawResponse = {
   total: number;
-  singerList: (Omit<Response['singerList'][number], 'photos'> & {
+  singerList: (Omit<Response['singerList'][number], 'musicCount' | 'photos'> & {
+    musicCount?: number;
     photos?: SingerPhoto[];
   })[];
 };
@@ -45,6 +47,7 @@ async function searchSinger({
     ...data,
     singerList: data.singerList.map((s) => ({
       ...s,
+      musicCount: s.musicCount ?? 0,
       photos: (s.photos ?? []).map((p) => ({
         ...p,
         asset: prefixServerOrigin(p.asset),

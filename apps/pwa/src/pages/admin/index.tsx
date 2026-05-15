@@ -14,6 +14,7 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import definition from '@/definition';
 import { CSS_VAR } from '@/components/theme';
+import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import {
   MdClose,
   MdDashboard,
@@ -500,6 +501,12 @@ const getCurrentMenuItem = (pathname: string) => {
 function AdminPage() {
   const user = useUser()!;
   const { pathname } = useLocation();
+  const {
+    top: titlebarTop,
+    left: titlebarLeft,
+    right: titlebarRight,
+    windowWidth,
+  } = useTitlebarOverlayInsets();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -528,6 +535,14 @@ function AdminPage() {
   const closeSidebar = () => {
     setSidebarOpen(false);
   };
+  const headerSidePadding = windowWidth <= MOBILE_BREAKPOINT ? 12 : 18;
+  const headerPaddingLeft = titlebarLeft
+    ? titlebarLeft + headerSidePadding
+    : headerSidePadding;
+  const headerPaddingRight = titlebarRight
+    ? titlebarRight + headerSidePadding
+    : headerSidePadding;
+  const sidebarTopPadding = titlebarLeft ? titlebarTop + 18 : 18;
 
   const avatarSrc = getResizedImage({
     url: user.avatar,
@@ -547,7 +562,7 @@ function AdminPage() {
   return (
     <Page>
       <Sidebar $open={sidebarOpen}>
-        <SidebarHeader>
+        <SidebarHeader style={{ paddingTop: sidebarTopPadding }}>
           <BrandLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
           <BrandText>
             <BrandName>{capitalize(t('cicada'))}</BrandName>
@@ -586,7 +601,12 @@ function AdminPage() {
       />
 
       <Main>
-        <Header>
+        <Header
+          style={{
+            paddingLeft: headerPaddingLeft,
+            paddingRight: headerPaddingRight,
+          }}
+        >
           <MenuToggle
             square
             variant="ghost"

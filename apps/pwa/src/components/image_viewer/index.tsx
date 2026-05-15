@@ -16,6 +16,7 @@ import { DismissableLayer } from '@radix-ui/react-dismissable-layer';
 import Button from '@/components/button';
 import { CSS_VAR, useTheme } from '@/components/theme';
 import { t } from '@/i18n';
+import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 
 export interface ImageViewerPhoto {
   src: string;
@@ -98,6 +99,10 @@ function ImageViewer({
   onClose: () => void;
 }) {
   const theme = useTheme();
+  const {
+    top: titlebarTop,
+    right: titlebarRight,
+  } = useTitlebarOverlayInsets();
   const [visible, setVisible] = useState(false);
   const closingRef = useRef(false);
   const scaleRef = useRef(1);
@@ -206,7 +211,13 @@ function ImageViewer({
               </>
             )}
           </TransformWrapper>
-          <CloseSlot onClick={stopPropagation}>
+          <CloseSlot
+            style={{
+              top: titlebarTop + 8,
+              right: titlebarRight + 8,
+            }}
+            onClick={stopPropagation}
+          >
             <Button
               square
               size="sm"

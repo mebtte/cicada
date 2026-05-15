@@ -14,6 +14,7 @@ import ErrorCard from '@/components/error_card';
 import { MdHelpOutline } from 'react-icons/md';
 import { t } from '@/i18n';
 import autoScrollbar from '@/style/auto_scrollbar';
+import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import useDynamicZIndex from '../../use_dynamic_z_index';
 import playerEventemitter, { EventType } from '../../eventemitter';
 import useData from './use_data';
@@ -89,6 +90,7 @@ function SharedMusicbillInvitationDrawer() {
   const zIndex = useDynamicZIndex(
     EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER,
   );
+  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const { data, reload } = useData(open);
 
   useEffect(() => {
@@ -105,7 +107,10 @@ function SharedMusicbillInvitationDrawer() {
       <DrawerContent
         side="right"
         accessibleTitle={t('shared_musicbill_invitation')}
-        style={{ width: 'min(380px, calc(100vw - 20px))' }}
+        style={{
+          width: 'min(380px, calc(100vw - 20px))',
+          paddingTop: titlebarTop,
+        }}
         zIndex={zIndex}
       >
         <Root>

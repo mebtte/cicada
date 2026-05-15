@@ -17,7 +17,7 @@ const Style = styled.div`
   height: ${INFO_HEIGHT}px;
   width: 100%;
   margin: 0 0 14px;
-  padding: 16px 18px 18px;
+  padding: 10px 18px 12px;
 
   display: flex;
   align-items: center;
@@ -67,7 +67,7 @@ const Style = styled.div`
   @media (max-width: 680px) {
     min-height: ${INFO_HEIGHT}px;
     height: auto;
-    padding: 14px 12px 16px;
+    padding: 8px 12px 10px;
     gap: 12px;
 
     > .info {

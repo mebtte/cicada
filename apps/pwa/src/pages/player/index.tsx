@@ -36,6 +36,7 @@ import TwoFADialog from './2fa_dialog';
 import useExport from './use_export';
 import PlaylistAddAnimation from './playlist_add_animation';
 import PlayqueueInsertAnimation from './playqueue_insert_animation';
+import PublicMusicbillCollectionDrawer from './public_musicbill_collection_drawer';
 
 const Style = styled(PageContainer)`
   position: relative;
@@ -157,6 +158,7 @@ function Wrapper() {
       <SortMusicbillDrawer />
       <UserDrawer />
       <MusicbillDrawer />
+      <PublicMusicbillCollectionDrawer />
       <AuthorizedDeviceDrawer />
       <MusicbillSharedUserDrawer />
       <SharedMusicbillInvitationDrawer />

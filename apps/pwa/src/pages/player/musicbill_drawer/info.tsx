@@ -1,6 +1,7 @@
 import { type Ref } from 'react';
 import styled from 'styled-components';
 import Cover, { Shape } from '@/components/cover';
+import Avatar from '@/components/avatar';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
@@ -9,7 +10,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 
-const AVATAR_SIZE = 24;
+const AVATAR_SIZE = 32;
 const USER_CARD_SHADOW = 'rgb(210 210 210)';
 const Style = styled.div`
   background: #fff;
@@ -60,7 +61,8 @@ const Identity = styled.section`
     width: fit-content;
     max-width: 100%;
     margin-top: 10px;
-    padding: 5px 10px 5px 6px;
+    min-height: 46px;
+    padding: 5px 11px 5px 6px;
     box-sizing: border-box;
 
     display: flex;
@@ -69,15 +71,17 @@ const Identity = styled.section`
 
     background: #fff;
     border: 2px solid rgb(229 229 229);
-    border-radius: 14px;
+    border-radius: 12px;
     box-shadow: 0 3px 0 ${USER_CARD_SHADOW};
     transition:
       transform 150ms ease-out,
       box-shadow 150ms ease-out,
-      filter 120ms;
+      filter 120ms ease-out,
+      border-color 150ms ease-out;
     cursor: pointer;
 
     &:hover {
+      border-color: rgb(210 210 210);
       filter: brightness(1.03);
     }
 
@@ -92,26 +96,19 @@ const Identity = styled.section`
 
     > .avatar {
       flex: 0 0 auto;
-      padding: 2px;
-      box-sizing: border-box;
-
-      background: #fff;
-      border: 2px solid rgb(229 229 229);
-      border-radius: 50%;
-
-      > * {
-        display: block;
-      }
     }
 
     > .nickname {
       flex: 1;
       min-width: 0;
 
+      font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
       font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-      font-weight: 800;
-      line-height: 1;
-      color: rgb(88 88 88);
+      font-weight: 900;
+      height: ${AVATAR_SIZE}px;
+      line-height: ${AVATAR_SIZE}px;
+      letter-spacing: 0;
+      color: rgb(50 50 50);
       ${ellipsis}
     }
   }
@@ -140,16 +137,14 @@ function Info({
                 })
               }
             >
-              <div className="avatar">
-                <Cover
-                  src={getResizedImage({
-                    url: user.avatar,
-                    size: Math.ceil(AVATAR_SIZE * window.devicePixelRatio),
-                  })}
-                  size={AVATAR_SIZE}
-                  shape={Shape.CIRCLE}
-                />
-              </div>
+              <Avatar
+                className="avatar"
+                src={getResizedImage({
+                  url: user.avatar,
+                  size: Math.ceil(AVATAR_SIZE * window.devicePixelRatio),
+                })}
+                size={AVATAR_SIZE}
+              />
               <div className="nickname">{user.nickname}</div>
             </div>
           </Identity>

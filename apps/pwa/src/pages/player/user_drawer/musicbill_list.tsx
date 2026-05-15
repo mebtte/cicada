@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Cover from '@/components/cover';
+import Cover, { Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { MdOutlineMusicNote } from 'react-icons/md';
@@ -13,6 +13,7 @@ import playerEventemitter, {
 } from '../eventemitter';
 
 type MusicbillType = UserDetail['musicbillList'][0];
+const COVER_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 const Root = styled.div`
   padding: 16px 12px calc(22px + env(safe-area-inset-bottom, 0));
 
@@ -47,9 +48,12 @@ const Style = styled.button`
   > .cover-box {
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
 
-    border-radius: 12px;
-    background: rgb(247 247 247);
+    border: 2px solid ${COVER_SHADOW};
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 3px 0 ${COVER_SHADOW};
 
     > .cover {
       display: block;
@@ -131,6 +135,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
           className="cover"
           src={getResizedImage({ url: musicbill.cover, size: 400 })}
           size="100%"
+          shape={Shape.SQUARE}
         />
         <div className="music-count">
           <MdOutlineMusicNote />

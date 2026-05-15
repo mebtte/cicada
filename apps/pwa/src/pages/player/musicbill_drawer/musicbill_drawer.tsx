@@ -19,6 +19,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components';
+import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import Cover, { Shape } from '@/components/cover';
 import useData from './use_data';
 import { Musicbill as MusicbillType } from './constants';
@@ -47,6 +48,12 @@ const DetailContainer = styled(Container)`
 
     > .first-screen {
       min-height: 100%;
+    }
+
+    &::after {
+      content: '';
+      display: block;
+      height: calc(68px + env(safe-area-inset-bottom, 0));
     }
   }
 `;
@@ -218,6 +225,7 @@ function Wrapper({
   zIndex: number;
 }) {
   const { data, reload, collected } = useData(id);
+  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -228,7 +236,7 @@ function Wrapper({
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
       <DrawerContent
         side="right"
-        style={{ width: 'min(85%, 400px)' }}
+        style={{ width: 'min(85%, 400px)', paddingTop: titlebarTop }}
         showClose={false}
         zIndex={zIndex}
       >

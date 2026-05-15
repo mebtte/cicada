@@ -17,6 +17,17 @@ type Response = {
   }[];
 };
 
+type RawResponse = {
+  total: number;
+  musicbillList: (Omit<
+    Response['musicbillList'][number],
+    'musicCount' | 'collectionCount'
+  > & {
+    musicCount?: number;
+    collectionCount?: number;
+  })[];
+};
+
 async function searchPublicMusicbill({
   keyword,
   page,
@@ -26,7 +37,7 @@ async function searchPublicMusicbill({
   page: number;
   pageSize: number;
 }) {
-  const data = await request<Response>({
+  const data = await request<RawResponse>({
     path: '/api/public_musicbill/search',
     params: { keyword, page, pageSize },
     withToken: true,
@@ -35,6 +46,8 @@ async function searchPublicMusicbill({
     ...data,
     musicbillList: data.musicbillList.map((mb) => ({
       ...mb,
+      musicCount: mb.musicCount ?? 0,
+      collectionCount: mb.collectionCount ?? 0,
       cover: prefixServerOrigin(mb.cover),
       user: {
         ...mb.user,
