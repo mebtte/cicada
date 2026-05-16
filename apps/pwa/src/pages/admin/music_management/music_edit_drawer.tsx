@@ -23,6 +23,7 @@ import Button from '@/components/button';
 import ErrorCard from '@/components/error_card';
 import { IconEdit } from '@/components/icon';
 import Input from '@/components/input';
+import Slider from '@/components/slider';
 import Spinner from '@/components/spinner';
 import Textarea from '@/components/textarea';
 import {
@@ -42,6 +43,7 @@ import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '@
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import autoScrollbar from '@/style/auto_scrollbar';
+import upperCaseFirstLetterStyle from '@/style/upper_case_first_letter';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
@@ -241,6 +243,7 @@ const GroupTitle = styled.div`
   font-weight: 700;
   letter-spacing: 0.2px;
   color: rgb(66 66 66);
+  ${upperCaseFirstLetterStyle}
 `;
 
 const FileFieldBox = styled.div`
@@ -280,22 +283,13 @@ const FileUploadProgressBox = styled.div`
   min-width: 0;
 `;
 
-const FileUploadTrack = styled.div`
-  height: 8px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: rgb(229 231 235);
-  box-shadow: inset 0 0 0 1px ${CSSVariable.COLOR_BORDER};
-`;
+// 只读进度条：禁止指针交互，并隐藏拇指（slider 内部最后一个 span）
+const FileUploadTrack = styled(Slider)`
+  pointer-events: none;
 
-const FileUploadTrackValue = styled.div<{ $percent: number }>`
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background: ${CSSVariable.COLOR_PRIMARY};
-  transform: scaleX(${({ $percent }) => $percent / 100});
-  transform-origin: left center;
-  transition: transform 160ms ease-out;
+  > span:last-child {
+    display: none;
+  }
 `;
 
 const FileUploadMeta = styled.div`
@@ -473,9 +467,7 @@ function MusicFileUploadProgressView({
   const uploadPercent = getFileUploadPercent(progress);
   return (
     <FileUploadProgressBox>
-      <FileUploadTrack>
-        <FileUploadTrackValue $percent={uploadPercent} />
-      </FileUploadTrack>
+      <FileUploadTrack value={uploadPercent} max={100} />
       <FileUploadMeta>
         <span>{getFileUploadPhaseText(progress)}</span>
         <span>

@@ -12,6 +12,7 @@ import definition from '@/definition';
 import ErrorWithCode from '@/utils/error_with_code';
 import getAssetMaxSize from '@/utils/get_asset_max_size';
 import { isSameMajorVersion } from '@/utils/version';
+import { bytesToHex, sha256Hex } from '@/utils/sha256';
 import { t } from '@/i18n';
 
 export const HASH_CHUNK_SIZE = 4 * 1024 * 1024;
@@ -155,20 +156,17 @@ async function jsonRequest<T>(
 }
 
 /**
- * Streams the file through SHA-256 in HASH_CHUNK_SIZE slices so the entire
- * file never sits in memory. Aborts cooperatively on signal.
+ * Reads the file in HASH_CHUNK_SIZE slices so hashing can yield back to the UI.
+ * The final SHA-256 must match the server-side verifier exactly.
  */
 export async function hashFile(
   file: File | Blob,
   signal?: AbortSignal,
 ): Promise<string> {
   const total = file.size;
-  // crypto.subtle.digest does not support streaming, so we fall back to a
-  // single-shot digest per chunk and combine them via SHA-256-of-concat-of
-  // chunk-hashes? That would change the wire hash. Instead we accumulate the
-  // file into a single ArrayBuffer using sequential reads — memory peak is
-  // file size, but chunked reads keep main-thread blocking down. For files in
-  // the hundreds-of-MB range that is acceptable on desktop browsers.
+  // The server verifies the SHA-256 of the exact file bytes, so we cannot hash
+  // independent chunks and combine those hashes. Sequential reads keep the UI
+  // responsive while preserving the final digest input.
   const buffer = new Uint8Array(total);
   let offset = 0;
   while (offset < total) {
@@ -183,10 +181,19 @@ export async function hashFile(
     // Yield to the event loop between chunks so the UI stays responsive.
     await new Promise<void>((r) => window.setTimeout(r, 0));
   }
-  const digest = await window.crypto.subtle.digest('SHA-256', buffer);
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+
+  const subtle = globalThis.crypto?.subtle;
+  if (subtle?.digest) {
+    try {
+      const digest = await subtle.digest('SHA-256', buffer);
+      return bytesToHex(new Uint8Array(digest));
+    } catch {
+      // Some installed PWA/WebView contexts expose crypto.subtle but fail it
+      // at runtime. The JS fallback keeps imports working in those contexts.
+    }
+  }
+
+  return sha256Hex(buffer);
 }
 
 function putChunk(
