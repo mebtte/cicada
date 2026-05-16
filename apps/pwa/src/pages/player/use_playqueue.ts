@@ -5,6 +5,7 @@ import getRandomString from '@/utils/generate_random_string';
 import { t } from '@/i18n';
 import eventemitter, { EventType } from './eventemitter';
 import { MusicWithSingerAliases, QueueMusic } from './constants';
+import { insertMusicToPlayqueue } from './playqueue_utils';
 
 function getRandomPlaylistMusic(
   playlist: MusicWithSingerAliases[],
@@ -322,19 +323,13 @@ export default (playlist: MusicWithSingerAliases[]) => {
           ]);
           return setCurrentPositionSync(0);
         }
-        setPlayqueueSync([
-          ...playqueue.slice(0, currentPosition + 1),
-          {
-            ...music,
-            pid: getRandomString(),
-            shuffle: false,
-            index: currentPosition + 2,
-          },
-          ...playqueue.slice(currentPosition + 1).map((m) => ({
-            ...m,
-            index: m.index + 1,
-          })),
-        ]);
+        setPlayqueueSync(
+          insertMusicToPlayqueue({
+            playqueue,
+            currentPosition,
+            music,
+          }),
+        );
       },
     );
     return unlistenActionInsertMusicToPlayqueue;

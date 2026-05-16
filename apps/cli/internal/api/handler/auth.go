@@ -9,6 +9,7 @@ import (
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"cicada/internal/version"
+	"math"
 	"os"
 	"strings"
 	"sync"
@@ -274,9 +275,22 @@ type playRecordBeaconBody struct {
 	Percent float64 `json:"percent"`
 }
 
+func normalizePlayPercent(percent float64) (float64, bool) {
+	if math.IsNaN(percent) || math.IsInf(percent, 0) {
+		return 0, false
+	}
+	// HTMLMediaElement 结束点附近可能因为浮点误差给出略小于 0 或略大于 1 的值.
+	return min(max(percent, 0), 1), true
+}
+
 func CreateMusicPlayRecordBeacon(c *gin.Context) {
 	var body playRecordBeaconBody
-	if err := c.ShouldBindJSON(&body); err != nil || body.Percent < 0 || body.Percent > 1 {
+	if err := c.ShouldBindJSON(&body); err != nil {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	percent, ok := normalizePlayPercent(body.Percent)
+	if !ok {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
@@ -293,8 +307,8 @@ func CreateMusicPlayRecordBeacon(c *gin.Context) {
 		return
 	}
 
-	store.AddPlayRecord(u.ID, body.MusicID, body.Percent)
-	if body.Percent >= effectivePlayPercent {
+	store.AddPlayRecord(u.ID, body.MusicID, percent)
+	if percent >= effectivePlayPercent {
 		store.IncrMusicHeat(body.MusicID)
 	}
 	api.OK(c, nil)

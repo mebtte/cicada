@@ -125,6 +125,7 @@ func NewServer() *gin.Engine {
 	api.PUT("/admin/user", auth(), admin(), handler.AdminUpdateUser)
 	api.PUT("/admin/user_admin", auth(), admin(), handler.AdminUpdateUserAdmin)
 	api.DELETE("/admin/user", auth(), admin(), handler.AdminDeleteUser)
+	api.GET("/admin/dashboard", auth(), admin(), handler.AdminGetDashboard)
 	api.GET("/admin/user_list", auth(), admin(), handler.AdminGetUserList)
 	api.POST("/admin/music", auth(), admin(), handler.AdminCreateMusic)
 	api.PUT("/admin/music", auth(), admin(), handler.AdminUpdateMusic)

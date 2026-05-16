@@ -7,6 +7,14 @@ import {
 import ErrorWithCode from '@/utils/error_with_code';
 import { getCommonParams } from '..';
 
+function normalizePercent(percent: number) {
+  if (!Number.isFinite(percent)) {
+    return 0;
+  }
+  // HTMLMediaElement 的 played/duration 在结束附近可能略微越界, 上传前先收敛到接口约定范围.
+  return Math.min(Math.max(percent, 0), 1);
+}
+
 function uploadMusicPlayRecord({
   musicId,
   percent,
@@ -34,7 +42,7 @@ function uploadMusicPlayRecord({
       JSON.stringify({
         token: selectedUser.token,
         musicId,
-        percent,
+        percent: normalizePercent(percent),
       }),
     ],
     {
