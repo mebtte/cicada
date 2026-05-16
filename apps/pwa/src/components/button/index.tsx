@@ -209,9 +209,9 @@ const StyledButton = styled.button<{
     ${VARIANT_MAP[$variant]}
     --offset: ${$offset}px;
   `}
-  ${({ $loading, $offset, $variant }) =>
-    !$loading &&
-    ($variant === 'plain'
+  // loading 时同样会设置 disabled，保留禁用外观避免提交中看起来仍可点击。
+  ${({ $offset, $variant }) =>
+    $variant === 'plain'
       ? css`
           &:disabled {
             color: ${CSSVariable.TEXT_COLOR_DISABLED};
@@ -236,7 +236,7 @@ const StyledButton = styled.button<{
             box-shadow: 0 ${$offset}px 0 ${CSSVariable.COLOR_DISABLED_SHADOW};
             filter: grayscale(1);
           }
-        `)}
+        `}
 `;
 
 // ─── Component ────────────────────────────────────────────────────────────────

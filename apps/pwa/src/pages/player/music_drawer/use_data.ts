@@ -3,10 +3,13 @@ import getMusicRequest from '@/server/api/get_music';
 import { MusicType } from '@/constants/music';
 import getLyricList from '@/server/api/get_lyric_list';
 import day from '@/utils/day';
+import sleep from '@/utils/sleep';
 import { MusicDetail, Lyric } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+
+const MUSIC_DRAWER_LOAD_MINIMAL_DURATION = 1000;
 
 interface Data {
   error: Error | null;
@@ -19,30 +22,43 @@ const dataLoading: Data = {
   music: null,
 };
 
+async function loadMusicDetail(id: string): Promise<MusicDetail> {
+  const music = await getMusicRequest({ id, requestMinimalDuration: 0 });
+  let lyrics: Lyric[] = [];
+  if (music.type === MusicType.SONG) {
+    lyrics = await getLyricList({
+      musicId: music.id,
+      requestMinimalDuration: 0,
+    });
+  }
+
+  return {
+    ...music,
+    lyrics,
+    createTime: day(music.createTimestamp).format('YYYY-MM-DD'),
+    heat: music.heat,
+  };
+}
+
 export default (id: string) => {
   const [data, setData] = useState<Data>(dataLoading);
 
   const getMusic = useCallback(async () => {
     setData(dataLoading);
     try {
-      const music = await getMusicRequest({ id, requestMinimalDuration: 0 });
-      let lyrics: Lyric[] = [];
-      if (music.type === MusicType.SONG) {
-        lyrics = await getLyricList({
-          musicId: music.id,
-          requestMinimalDuration: 0,
-        });
+      // 详情和歌词是串行请求, 统一限制抽屉加载态最短 1s, 避免两个接口各自叠加等待。
+      const [musicResult] = await Promise.allSettled([
+        loadMusicDetail(id),
+        sleep(MUSIC_DRAWER_LOAD_MINIMAL_DURATION),
+      ]);
+      if (musicResult.status === 'rejected') {
+        throw musicResult.reason;
       }
 
       setData({
         error: null,
         loading: false,
-        music: {
-          ...music,
-          lyrics,
-          createTime: day(music.createTimestamp).format('YYYY-MM-DD'),
-          heat: music.heat,
-        },
+        music: musicResult.value,
       });
     } catch (error) {
       setData({
