@@ -5,21 +5,37 @@ A multi-user music service for self-hosting.
 ![version](https://img.shields.io/github/v/release/mebtte/cicada?style=for-the-badge)
 ![license](https://img.shields.io/github/license/mebtte/cicada?style=for-the-badge)
 
-todo: screenshot
-
 ## Features
 
-todo
-
-## Demo
-
-todo
+- **No privacy collection**
+- Single-binary deployment with embedded PWA assets and bundled
+  `ffmpeg`/`ffprobe`
+- Batch music import and manage data by yourself
+- Custom playqueue and share musicbills between users
+- Support 2FA
 
 ## Deploy
 
 > If you use docker, see this [docs](./docs/docker_deployment/index.md).
 
-todo
+Download the archive for your platform from
+[GitHub Releases](https://github.com/mebtte/cicada/releases). Extract and start the server:
+
+```sh
+./cicada start --data /path/to/cicada_data --port 8000
+```
+
+On Windows, use `cicada.exe`:
+
+```powershell
+.\cicada.exe start --data C:\path\to\cicada_data --port 8000
+```
+
+`--data` is optional and defaults to `cicada_data` next to the executable.
+`--port` is optional and defaults to `8000`. You can also configure them with
+`CICADA_DATA` and `CICADA_PORT`.
+
+Open `http://localhost:8000` after the server starts.
 
 ## Development
 
