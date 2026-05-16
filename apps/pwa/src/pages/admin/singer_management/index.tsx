@@ -11,11 +11,11 @@ import styled from 'styled-components';
 import {
   MdOutlineAddBox,
   MdOutlineEdit,
-  MdRecordVoiceOver,
   MdSearch,
 } from 'react-icons/md';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
+import Empty from '@/components/empty';
 import Input from '@/components/input';
 import { Select, type SelectOption } from '@/components';
 import Pagination from '@/components/pagination';
@@ -174,26 +174,13 @@ const SearchForm = styled.form`
 `;
 
 const StatusBox = styled.div`
+  height: 100%;
   min-height: 360px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-`;
-
-const EmptyTip = styled.div`
-  min-height: 360px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: ${CSSVariable.TEXT_COLOR_DISABLED};
-  font-size: 13px;
-
-  > svg {
-    font-size: 36px;
-  }
 `;
 
 const TableScroll = styled.div`
@@ -801,10 +788,10 @@ function SingerManagement() {
               <Spinner />
             </StatusBox>
           ) : data.singerList.length === 0 ? (
-            <EmptyTip>
-              <MdRecordVoiceOver />
-              {t('no_suitable_singer')}
-            </EmptyTip>
+            <StatusBox>
+              {/* 后台歌手列表为空时统一复用 Empty 组件展示空状态。 */}
+              <Empty description={t('no_suitable_singer')} />
+            </StatusBox>
           ) : (
             <TableScroll>
               <Table>

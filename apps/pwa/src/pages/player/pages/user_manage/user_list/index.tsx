@@ -66,7 +66,6 @@ function UserList() {
     const lowerCaseKeyword = keyword.toLowerCase();
     const filteredUserList = userList.filter(
       (u) =>
-        u.id.includes(lowerCaseKeyword) ||
         u.nickname.toLowerCase().includes(lowerCaseKeyword) ||
         u.username.toLowerCase().includes(lowerCaseKeyword) ||
         u.remark.toLowerCase().includes(lowerCaseKeyword),

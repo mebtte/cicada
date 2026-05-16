@@ -1,0 +1,114 @@
+name: release v3
+
+on:
+  push:
+    tags:
+      - '3.*.*'
+
+concurrency:
+  group: release-v3-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.repository == 'mebtte/cicada'
+    name: Release V3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/pwa/package-lock.json
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: apps/cli/go.mod
+
+      - uses: docker/setup-qemu-action@v3
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build release packages
+        run: make release VERSION="${GITHUB_REF_NAME}"
+
+      - name: Preserve release packages
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Keep the uploadable archives before the Docker preparation step reuses build output.
+          mkdir -p release-artifacts
+          cp build/*.tar.gz release-artifacts/
+
+      - name: Generate release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${GITHUB_REF_NAME}"
+          commit="$(git rev-list -n 1 "${tag}")"
+          previous_tag=''
+          range="${commit}"
+
+          # Find the previous tag from the current tag's parent and list only commits in that range.
+          if previous_tag="$(git describe --tags --abbrev=0 "${commit}^" 2>/dev/null)"; then
+            range="${previous_tag}..${commit}"
+          fi
+
+          commits="$(git log --format='- %s (%h)' "${range}")"
+
+          {
+            echo '## Changes'
+            echo
+            if [ -n "${previous_tag}" ]; then
+              echo "Since \`${previous_tag}\`:"
+            else
+              echo 'No previous tag found:'
+            fi
+            echo
+            if [ -n "${commits}" ]; then
+              printf '%s\n' "${commits}"
+            else
+              echo '- No commits since previous tag.'
+            fi
+          } > release_notes.md
+
+      - name: Prepare Docker binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Restore uncompressed Linux binaries so the image uses the same build output as the release.
+          mkdir -p build/linux-amd64 build/linux-arm64
+          tar -xzf "release-artifacts/cicada-${GITHUB_REF_NAME}-linux-amd64.tar.gz" -C build/linux-amd64
+          tar -xzf "release-artifacts/cicada-${GITHUB_REF_NAME}-linux-arm64.tar.gz" -C build/linux-arm64
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cicada:v3
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" release-artifacts/*.tar.gz \
+            --title "${GITHUB_REF_NAME}" \
+            --notes-file release_notes.md \
+            --verify-tag

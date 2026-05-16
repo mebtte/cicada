@@ -5,35 +5,23 @@ import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import SizeObserver from '@/components/size_observer';
 import Empty from '@/components/empty';
-import Button from '@/components/button';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import { ReactNode } from 'react';
-import { useNavigate as useRouterNavigate } from 'react-router-dom';
 import { Query } from '@/constants';
-import { useUser } from '@/global_states/server';
-import { ROOT_PATH } from '@/constants/route';
 import useQuery from '@/utils/use_query';
 import useNavigate from '@/utils/use_navigate';
 import { useTheme } from '@/global_states/theme';
 import { DuolingoTabList } from '@/components/duolingo_tabs';
-import {
-  MdAdd,
-  MdAdminPanelSettings,
-  MdMic,
-  MdMusicNote,
-  MdQueueMusic,
-  MdSearch,
-} from 'react-icons/md';
+import { MdMic, MdMusicNote, MdQueueMusic } from 'react-icons/md';
 import { FLOATING_CONTROLLER_SCROLL_SPACE, SearchTab } from '../../constants';
 import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
 import useData from './use_data';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
-import { openCreateMusicbillDialog } from '../../utils';
 import Cover from './cover';
 import MusicInfo from './music_info';
 import SingerInfo from './singer_info';
@@ -168,67 +156,8 @@ const EmptyFallback = styled.div`
   align-items: center;
   justify-content: center;
 
-  > .panel {
-    width: min(560px, 100%);
-    padding: 28px 26px 32px;
-
-    border: 2px solid ${CSSVariable.COLOR_BORDER};
-    border-radius: 8px;
-    background: #fff;
-    box-shadow: 0 6px 0 rgb(224 224 224);
-    text-align: center;
-
-    > .placeholder {
-      gap: 10px;
-
-      > .placeholder {
-        width: 150px;
-      }
-
-      > .description {
-        color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-        font-size: ${CSSVariable.TEXT_SIZE_LARGE};
-        font-weight: 600;
-      }
-    }
-
-    > .description {
-      margin: 14px auto 0;
-      max-width: 420px;
-
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-      line-height: 1.7;
-    }
-
-    > .input {
-      margin-top: 18px;
-    }
-
-    > .actions {
-      margin-top: 22px;
-
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-    }
-  }
-
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
     align-items: flex-start;
-
-    > .panel {
-      padding: 22px 18px;
-
-      > .actions {
-        flex-direction: column;
-
-        > button {
-          width: 100%;
-        }
-      }
-    }
   }
 `;
 const Section = styled.section<{
@@ -367,54 +296,11 @@ function ExplorationSection<Item>({
   );
 }
 
-function ExplorationEmptyFallback({ reload }: { reload: () => void }) {
-  const navigate = useRouterNavigate();
-  const user = useUser()!;
-
+function ExplorationEmptyFallback() {
   return (
-    <EmptyFallback>
-      <div className="panel">
-        <Empty
-          className="placeholder"
-          description={t('exploration_empty_title')}
-        />
-        <div className="description">{t('exploration_empty_description')}</div>
-        <div className="actions">
-          {user.admin ? (
-            <Button
-              variant="primary"
-              icon={<MdAdminPanelSettings />}
-              onClick={() => navigate(ROOT_PATH.ADMIN)}
-            >
-              {t('admin_panel')}
-            </Button>
-          ) : null}
-          <Button
-            variant="secondary"
-            icon={<MdAdd />}
-            onClick={openCreateMusicbillDialog}
-          >
-            {t('create_musicbill')}
-          </Button>
-          <Button
-            variant="ghost"
-            icon={<MdSearch />}
-            onClick={() => {
-              navigate(
-                `${ROOT_PATH.PLAYER}?${Query.SEARCH_TAB}=${SearchTab.PUBLIC_MUSICBILL}`,
-              );
-              window.requestAnimationFrame(() =>
-                playerEventemitter.emit(PlayerEventType.FOCUS_SEARCH_INPUT, null),
-              );
-            }}
-          >
-            {t('search_public_musicbill')}
-          </Button>
-          <Button variant="plain" onClick={reload}>
-            {t('retry')}
-          </Button>
-        </div>
-      </div>
+    <EmptyFallback className="empty">
+      {/* Fresh installs can have no recommendable content; keep a plain empty state here. */}
+      <Empty />
     </EmptyFallback>
   );
 }
@@ -581,7 +467,7 @@ function RecommendationPanel() {
                 />
               </div>
             ) : (
-              <ExplorationEmptyFallback reload={reload} />
+              <ExplorationEmptyFallback />
             )}
           </ContentContainer>
         );

@@ -51,7 +51,6 @@ enum UserManagementQuery {
 
 enum UserListFilterKey {
   ALL = 'all',
-  ID = 'id',
   USERNAME = 'username',
   NICKNAME = 'nickname',
   REMARK = 'remark',
@@ -67,10 +66,6 @@ const filterOptions: SelectOption<UserListFilterKey>[] = [
   {
     label: capitalize(t('all')),
     value: UserListFilterKey.ALL,
-  },
-  {
-    label: 'ID',
-    value: UserListFilterKey.ID,
   },
   {
     label: capitalize(t('username')),
@@ -475,8 +470,6 @@ const formatTimestamp = (timestamp: number) =>
 
 const getSearchText = (user: User, filterKey: UserListFilterKey) => {
   switch (filterKey) {
-    case UserListFilterKey.ID:
-      return user.id;
     case UserListFilterKey.USERNAME:
       return user.username;
     case UserListFilterKey.NICKNAME:
@@ -484,7 +477,7 @@ const getSearchText = (user: User, filterKey: UserListFilterKey) => {
     case UserListFilterKey.REMARK:
       return user.remark;
     default:
-      return [user.id, user.username, user.nickname, user.remark].join(' ');
+      return [user.username, user.nickname, user.remark].join(' ');
   }
 };
 
