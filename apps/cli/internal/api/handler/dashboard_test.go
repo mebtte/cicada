@@ -97,6 +97,17 @@ func TestAdminGetDashboard(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert musicbills: %v", err)
 	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO shared_musicbill (musicbillId,sharedUserId,inviteUserId,inviteTimestamp,accepted) VALUES
+			('musicbill-1','user-2','user-1',?,1),
+			('musicbill-1','user-3','user-1',?,1),
+			('musicbill-2','user-3','user-1',?,0)`,
+		recent,
+		recent,
+		recent,
+	); err != nil {
+		t.Fatalf("insert shared musicbills: %v", err)
+	}
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
@@ -119,6 +130,7 @@ func TestAdminGetDashboard(t *testing.T) {
 			Singer struct {
 				Total             int `json:"total"`
 				Created7d         int `json:"created7d"`
+				PhotoCount        int `json:"photoCount"`
 				WithoutPhotoCount int `json:"withoutPhotoCount"`
 			} `json:"singer"`
 			User struct {
@@ -129,6 +141,7 @@ func TestAdminGetDashboard(t *testing.T) {
 			Musicbill struct {
 				Total  int `json:"total"`
 				Public int `json:"public"`
+				Shared int `json:"shared"`
 			} `json:"musicbill"`
 		} `json:"data"`
 	}
@@ -155,6 +168,7 @@ func TestAdminGetDashboard(t *testing.T) {
 	}
 	if resp.Data.Singer.Total != 2 ||
 		resp.Data.Singer.Created7d != 1 ||
+		resp.Data.Singer.PhotoCount != 1 ||
 		resp.Data.Singer.WithoutPhotoCount != 1 {
 		t.Fatalf("unexpected singer summary: %+v", resp.Data.Singer)
 	}
@@ -163,7 +177,9 @@ func TestAdminGetDashboard(t *testing.T) {
 		resp.Data.User.ActiveUser7dCount != 2 {
 		t.Fatalf("unexpected user summary: %+v", resp.Data.User)
 	}
-	if resp.Data.Musicbill.Total != 3 || resp.Data.Musicbill.Public != 2 {
+	if resp.Data.Musicbill.Total != 3 ||
+		resp.Data.Musicbill.Public != 2 ||
+		resp.Data.Musicbill.Shared != 1 {
 		t.Fatalf("unexpected musicbill summary: %+v", resp.Data.Musicbill)
 	}
 }

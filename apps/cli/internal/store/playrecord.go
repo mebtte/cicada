@@ -1,9 +1,17 @@
 package store
 
+import (
+	"database/sql"
+	"errors"
+)
+
+var ErrPlayRecordClientIDConflict = errors.New("play record client id conflicts with another music")
+
 type PlayRecord struct {
 	ID        int64
 	UserID    string
 	MusicID   string
+	ClientID  string
 	Percent   float64
 	Timestamp int64
 	// Joined fields
@@ -51,6 +59,85 @@ func AddPlayRecord(userID, musicID string, percent float64) {
 		userID, musicID, percent, nowMs())
 }
 
+func SavePlayRecord(userID, musicID, clientRecordID string, percent, effectivePercent float64) error {
+	tx, err := DB().Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	heatCounted := percent >= effectivePercent
+	now := nowMs()
+	if clientRecordID == "" {
+		if _, err := tx.Exec(
+			`INSERT INTO music_play_record (userId,musicId,percent,timestamp,heatCounted) VALUES (?,?,?,?,?)`,
+			userID, musicID, percent, now, boolInt(heatCounted),
+		); err != nil {
+			return err
+		}
+		if heatCounted {
+			if _, err := tx.Exec(`UPDATE music SET heat=heat+1 WHERE id=?`, musicID); err != nil {
+				return err
+			}
+		}
+		return tx.Commit()
+	}
+
+	var existing struct {
+		ID          int64
+		MusicID     string
+		Percent     float64
+		HeatCounted int
+	}
+	err = tx.QueryRow(
+		`SELECT id,musicId,percent,heatCounted FROM music_play_record WHERE userId=? AND clientRecordId=?`,
+		userID, clientRecordID,
+	).Scan(&existing.ID, &existing.MusicID, &existing.Percent, &existing.HeatCounted)
+	if errors.Is(err, sql.ErrNoRows) {
+		if _, err := tx.Exec(
+			`INSERT INTO music_play_record (userId,musicId,clientRecordId,percent,timestamp,heatCounted) VALUES (?,?,?,?,?,?)`,
+			userID, musicID, clientRecordID, percent, now, boolInt(heatCounted),
+		); err != nil {
+			return err
+		}
+		if heatCounted {
+			if _, err := tx.Exec(`UPDATE music SET heat=heat+1 WHERE id=?`, musicID); err != nil {
+				return err
+			}
+		}
+		return tx.Commit()
+	}
+	if err != nil {
+		return err
+	}
+	if existing.MusicID != musicID {
+		return ErrPlayRecordClientIDConflict
+	}
+
+	nextPercent := max(existing.Percent, percent)
+	nextHeatCounted := existing.HeatCounted == 1
+	if !nextHeatCounted && nextPercent >= effectivePercent {
+		nextHeatCounted = true
+		if _, err := tx.Exec(`UPDATE music SET heat=heat+1 WHERE id=?`, musicID); err != nil {
+			return err
+		}
+	}
+	if _, err := tx.Exec(
+		`UPDATE music_play_record SET percent=?, timestamp=?, heatCounted=? WHERE id=?`,
+		nextPercent, now, boolInt(nextHeatCounted), existing.ID,
+	); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
 func IncrMusicHeat(musicID string) {
 	DB().Exec(`UPDATE music SET heat=heat+1 WHERE id=?`, musicID)
+}
+
+func boolInt(v bool) int {
+	if v {
+		return 1
+	}
+	return 0
 }

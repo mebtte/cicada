@@ -288,8 +288,12 @@ const formatCount = (value: number) =>
 const formatDuration = (millisecond: number) => {
   if (!Number.isFinite(millisecond) || millisecond <= 0) return '-';
   const totalSecond = Math.round(millisecond / 1000);
-  const hour = Math.floor(totalSecond / 3600);
+  const dayCount = Math.floor(totalSecond / 86400);
+  const hour = Math.floor((totalSecond % 86400) / 3600);
   const minute = Math.floor((totalSecond % 3600) / 60);
+  if (dayCount > 0) {
+    return `${dayCount}d ${hour}h ${minute}m`;
+  }
   if (hour > 0) {
     return `${hour}h ${minute}m`;
   }
@@ -463,6 +467,10 @@ function Dashboard() {
                 <span>{capitalize(t('new_singer_7d'))}</span>
                 <strong>{formatCount(dashboard.singer.created7d)}</strong>
               </MetaRow>
+              <MetaRow>
+                <span>{capitalize(t('singer_photo_total'))}</span>
+                <strong>{formatCount(dashboard.singer.photoCount)}</strong>
+              </MetaRow>
             </MetaList>
           </ActionCard>
 
@@ -502,6 +510,10 @@ function Dashboard() {
               <MetaRow>
                 <span>{capitalize(t('public_musicbill_total'))}</span>
                 <strong>{formatCount(dashboard.musicbill.public)}</strong>
+              </MetaRow>
+              <MetaRow>
+                <span>{capitalize(t('shared_musicbill_total'))}</span>
+                <strong>{formatCount(dashboard.musicbill.shared)}</strong>
               </MetaRow>
             </MetaList>
           </StaticCard>

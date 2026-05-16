@@ -14,6 +14,7 @@ type Response = {
   singer: {
     total: number;
     created7d: number;
+    photoCount: number;
     withoutPhotoCount: number;
   };
   user: {
@@ -24,6 +25,7 @@ type Response = {
   musicbill: {
     total: number;
     public: number;
+    shared: number;
   };
 };
 

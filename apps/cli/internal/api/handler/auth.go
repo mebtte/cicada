@@ -9,6 +9,7 @@ import (
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"cicada/internal/version"
+	"errors"
 	"math"
 	"os"
 	"strings"
@@ -270,9 +271,10 @@ func limitString(v string, n int) string {
 const effectivePlayPercent = 0.75
 
 type playRecordBeaconBody struct {
-	Token   string  `json:"token" binding:"required"`
-	MusicID string  `json:"musicId" binding:"required"`
-	Percent float64 `json:"percent"`
+	Token          string  `json:"token" binding:"required"`
+	MusicID        string  `json:"musicId" binding:"required"`
+	ClientRecordID string  `json:"clientRecordId"`
+	Percent        float64 `json:"percent"`
 }
 
 func normalizePlayPercent(percent float64) (float64, bool) {
@@ -286,6 +288,11 @@ func normalizePlayPercent(percent float64) (float64, bool) {
 func CreateMusicPlayRecordBeacon(c *gin.Context) {
 	var body playRecordBeaconBody
 	if err := c.ShouldBindJSON(&body); err != nil {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	clientRecordID := strings.TrimSpace(body.ClientRecordID)
+	if len(clientRecordID) > 128 {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
@@ -307,9 +314,13 @@ func CreateMusicPlayRecordBeacon(c *gin.Context) {
 		return
 	}
 
-	store.AddPlayRecord(u.ID, body.MusicID, percent)
-	if percent >= effectivePlayPercent {
-		store.IncrMusicHeat(body.MusicID)
+	if err := store.SavePlayRecord(u.ID, body.MusicID, clientRecordID, percent, effectivePlayPercent); err != nil {
+		if errors.Is(err, store.ErrPlayRecordClientIDConflict) {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		api.Fail(c, apperr.ServerError)
+		return
 	}
 	api.OK(c, nil)
 }

@@ -113,9 +113,14 @@ var tables = []string{
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		userId TEXT NOT NULL REFERENCES user(id),
 		musicId TEXT NOT NULL REFERENCES music(id),
+		clientRecordId TEXT NOT NULL DEFAULT '',
 		percent REAL NOT NULL,
-		timestamp INTEGER NOT NULL
+		timestamp INTEGER NOT NULL,
+		heatCounted INTEGER NOT NULL DEFAULT 0
 	)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_music_play_record_client_record
+		ON music_play_record(userId, clientRecordId)
+		WHERE clientRecordId != ''`,
 	`CREATE TABLE IF NOT EXISTS music_singer_relation (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		musicId TEXT NOT NULL REFERENCES music(id),

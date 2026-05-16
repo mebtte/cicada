@@ -31,6 +31,7 @@ func AdminGetDashboard(c *gin.Context) {
 		"singer": gin.H{
 			"total":             summary.Singer.Total,
 			"created7d":         summary.Singer.Created7d,
+			"photoCount":        summary.Singer.PhotoCount,
 			"withoutPhotoCount": summary.Singer.WithoutPhotoCount,
 		},
 		"user": gin.H{
@@ -41,6 +42,7 @@ func AdminGetDashboard(c *gin.Context) {
 		"musicbill": gin.H{
 			"total":  summary.Musicbill.Total,
 			"public": summary.Musicbill.Public,
+			"shared": summary.Musicbill.Shared,
 		},
 	})
 }

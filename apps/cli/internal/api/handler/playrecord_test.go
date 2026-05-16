@@ -15,7 +15,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TestCreateMusicPlayRecordBeaconNormalizesPercent(t *testing.T) {
+func TestCreateMusicPlayRecordBeaconUpsertsClientRecord(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	if err := store.ResetForTests(); err != nil {
 		t.Fatalf("reset store: %v", err)
@@ -64,35 +64,51 @@ func TestCreateMusicPlayRecordBeaconNormalizesPercent(t *testing.T) {
 		t.Fatalf("create auth session: %v", err)
 	}
 
-	body, err := json.Marshal(map[string]any{
-		"token":   token,
-		"musicId": "music-1",
-		"percent": 1.0000001,
-	})
-	if err != nil {
-		t.Fatalf("encode request: %v", err)
+	call := func(percent float64) {
+		t.Helper()
+
+		body, err := json.Marshal(map[string]any{
+			"token":          token,
+			"musicId":        "music-1",
+			"clientRecordId": "client-record-1",
+			"percent":        percent,
+		})
+		if err != nil {
+			t.Fatalf("encode request: %v", err)
+		}
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodPost, "/base/music_play_record", bytes.NewReader(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+
+		CreateMusicPlayRecordBeacon(c)
+
+		var resp struct {
+			Code string `json:"code"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		if resp.Code != apperr.Success {
+			t.Fatalf("expected success, got %s", resp.Code)
+		}
 	}
 
-	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodPost, "/base/music_play_record", bytes.NewReader(body))
-	c.Request.Header.Set("Content-Type", "application/json")
-
-	CreateMusicPlayRecordBeacon(c)
-
-	var resp struct {
-		Code string `json:"code"`
-	}
-	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
-		t.Fatalf("decode response: %v", err)
-	}
-	if resp.Code != apperr.Success {
-		t.Fatalf("expected success, got %s", resp.Code)
-	}
+	call(0.7)
+	call(1.0000001)
+	call(0.8)
 
 	var percent float64
-	if err := store.DB().QueryRow(`SELECT percent FROM music_play_record WHERE userId=? AND musicId=?`, "user-1", "music-1").Scan(&percent); err != nil {
+	var count int
+	if err := store.DB().QueryRow(
+		`SELECT COUNT(1), MAX(percent) FROM music_play_record WHERE userId=? AND musicId=? AND clientRecordId=?`,
+		"user-1", "music-1", "client-record-1",
+	).Scan(&count, &percent); err != nil {
 		t.Fatalf("query play record: %v", err)
+	}
+	if count != 1 {
+		t.Fatalf("expected one play record, got %d", count)
 	}
 	if percent != 1 {
 		t.Fatalf("expected percent to be normalized to 1, got %v", percent)
