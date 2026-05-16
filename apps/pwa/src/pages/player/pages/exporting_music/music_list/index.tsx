@@ -35,6 +35,20 @@ import { PAGE_HORIZONTAL_PADDING } from '../../page';
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const BOTTOM_SCROLL_SPACE = `calc(${FLOATING_CONTROLLER_SCROLL_SPACE} + 16px)`;
+const SUMMARY_FLOATING_GAP = 12;
+const SUMMARY_STAT_CARD_HEIGHT = 44;
+const SUMMARY_GRID_GAP = 6;
+const SUMMARY_PADDING_TOP = 8;
+const SUMMARY_PADDING_BOTTOM = 10;
+const SUMMARY_VERTICAL_BORDER = 4;
+const SUMMARY_SHADOW_HEIGHT = 4;
+const SUMMARY_HEIGHT =
+  SUMMARY_PADDING_TOP +
+  SUMMARY_STAT_CARD_HEIGHT +
+  SUMMARY_PADDING_BOTTOM +
+  SUMMARY_VERTICAL_BORDER +
+  SUMMARY_SHADOW_HEIGHT;
+const SUMMARY_RESERVED_SPACE = SUMMARY_FLOATING_GAP * 2 + SUMMARY_HEIGHT;
 
 const LineAfter = styled.div`
   display: flex;
@@ -55,22 +69,31 @@ const Style = styled.div`
 const Summary = styled.div`
   z-index: 2;
 
-  position: relative;
-  flex: 0 0 auto;
-  padding: 16px ${PAGE_HORIZONTAL_PADDING} 14px;
+  position: absolute;
+  left: 36px;
+  right: 36px;
+  top: ${SUMMARY_FLOATING_GAP}px;
+  padding: ${SUMMARY_PADDING_TOP}px 10px ${SUMMARY_PADDING_BOTTOM}px;
 
   background: #fff;
-  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 14px;
   box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
+
+  @media (max-width: 680px) {
+    left: 24px;
+    right: 24px;
+  }
+
+  @media (max-width: 420px) {
+    left: 18px;
+    right: 18px;
+  }
 `;
 const StatGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
-
-  @media (max-width: 720px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  gap: ${SUMMARY_GRID_GAP}px;
 `;
 const statToneStyle = {
   total: css`
@@ -99,18 +122,18 @@ const statCardStyle = css<{
   $interactive?: boolean;
 }>`
   min-width: 0;
-  min-height: 66px;
-  padding: 9px 12px 12px;
+  min-height: ${SUMMARY_STAT_CARD_HEIGHT}px;
+  padding: 5px 8px 8px;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 2px;
+  gap: 1px;
 
   background: var(--stat-face);
   border: 2px solid var(--stat-shadow);
-  border-radius: 16px;
-  box-shadow: 0 4px 0 var(--stat-shadow);
+  border-radius: 12px;
+  box-shadow: 0 3px 0 var(--stat-shadow);
 
   appearance: none;
   text-align: left;
@@ -120,55 +143,23 @@ const statCardStyle = css<{
 
   > .value {
     color: var(--stat-color);
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 900;
-    line-height: 1.1;
+    line-height: 1;
   }
 
   > .label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    display: block;
+    min-width: 0;
 
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     font-weight: 800;
-    line-height: 1.2;
+    line-height: 1;
     text-transform: capitalize;
-    overflow-wrap: anywhere;
-
-    > svg {
-      flex: 0 0 auto;
-      font-size: 16px;
-      color: var(--stat-color);
-    }
-  }
-
-  > .content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-
-  > .content > .main {
-    min-width: 0;
-
-    > .value {
-      color: var(--stat-color);
-      font-size: 22px;
-      font-weight: 900;
-      line-height: 1.1;
-    }
-
-    > .label {
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-      font-weight: 800;
-      line-height: 1.2;
-      text-transform: capitalize;
-      overflow-wrap: anywhere;
-    }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   ${({ $interactive }) =>
@@ -185,7 +176,7 @@ const statCardStyle = css<{
       }
 
       &:not(:disabled):active {
-        transform: translateY(4px);
+        transform: translateY(3px);
         box-shadow: none;
         transition:
           transform 60ms ease-in,
@@ -210,6 +201,13 @@ const StatCard = styled.div<{
 }>`
   ${statCardStyle}
 `;
+const StatButton = styled.button<{
+  $tone: keyof typeof statToneStyle;
+  $interactive?: boolean;
+}>`
+  width: 100%;
+  ${statCardStyle}
+`;
 const EmptyState = styled.div`
   flex: 1;
   min-height: 0;
@@ -222,7 +220,8 @@ const EmptyState = styled.div`
 const Queue = styled.div`
   flex: 1 1 auto;
   min-height: 0;
-  padding: 16px ${PAGE_HORIZONTAL_PADDING} 0;
+  /* 为顶部悬浮状态栏预留空间，确保列表首项不会被遮挡。 */
+  padding: ${SUMMARY_RESERVED_SPACE}px ${PAGE_HORIZONTAL_PADDING} 0;
 
   ${autoScrollbar}
   overflow: auto;
@@ -471,31 +470,26 @@ function SummaryPanel({
           <div className="value">{summary.successful}</div>
           <div className="label">{t('export_status_successful')}</div>
         </StatCard>
-        <StatCard $tone="failed">
-          <div className="content">
-            <div className="main">
-              <div className="value">{summary.failed}</div>
-              <div className="label">{t('export_status_failed')}</div>
-            </div>
-            {summary.failed ? (
-              <Button
-                square
-                variant="danger"
-                size="sm"
-                title={t('retry_failed_items')}
-                aria-label={t('retry_failed_items')}
-                onClick={() =>
-                  eventemitter.emit(
-                    EventType.EXPORT_MUSIC_LIST_RETRY_FAILED,
-                    null,
-                  )
-                }
-              >
-                <MdOutlineRestartAlt />
-              </Button>
-            ) : null}
-          </div>
-        </StatCard>
+        {summary.failed ? (
+          <StatButton
+            type="button"
+            $tone="failed"
+            $interactive
+            title={t('retry_failed_items')}
+            aria-label={t('retry_failed_items')}
+            onClick={() =>
+              eventemitter.emit(EventType.EXPORT_MUSIC_LIST_RETRY_FAILED, null)
+            }
+          >
+            <div className="value">{summary.failed}</div>
+            <div className="label">{t('export_status_failed')}</div>
+          </StatButton>
+        ) : (
+          <StatCard $tone="failed">
+            <div className="value">{summary.failed}</div>
+            <div className="label">{t('export_status_failed')}</div>
+          </StatCard>
+        )}
       </StatGrid>
     </Summary>
   );

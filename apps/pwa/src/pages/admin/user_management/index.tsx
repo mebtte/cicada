@@ -21,7 +21,6 @@ import { Select, type SelectOption } from '@/components';
 import Pagination from '@/components/pagination';
 import Spinner from '@/components/spinner';
 import ErrorCard from '@/components/error_card';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import { Query } from '@/constants';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -551,10 +550,7 @@ function UserManagement() {
           setData({
             error: null,
             loading: false,
-            userList: userList.map((user) => ({
-              ...user,
-              avatar: user.avatar || DefaultCover,
-            })),
+            userList,
           });
         })
         .catch((error) => {
@@ -744,13 +740,16 @@ function UserManagement() {
                       </UserName>
                     </Td>
                     <Td>
-                      <Avatar
-                        src={getResizedImage({
-                          url: user.avatar || DefaultCover,
-                          size: AVATAR_SIZE * 2,
-                        })}
-                        size={AVATAR_SIZE}
-                      />
+                      {/* 无头像时不使用默认图, 让头像列保持为空。 */}
+                      {user.avatar ? (
+                        <Avatar
+                          src={getResizedImage({
+                            url: user.avatar,
+                            size: AVATAR_SIZE * 2,
+                          })}
+                          size={AVATAR_SIZE}
+                        />
+                      ) : null}
                     </Td>
                     <Td>
                       {user.nickname ? (

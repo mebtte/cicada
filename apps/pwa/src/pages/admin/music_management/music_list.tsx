@@ -18,7 +18,6 @@ import {
   MdSearch,
   MdUnfoldMore,
 } from 'react-icons/md';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
 import Input from '@/components/input';
@@ -1061,21 +1060,23 @@ function MusicList({
                       <Mono>{music.id}</Mono>
                     </Td>
                     <Td>
-                      <LazyCover
-                        src={getResizedImage({
-                          url: music.cover || DefaultCover,
-                          size: COVER_SIZE * 2,
-                        })}
-                        alt={music.name}
-                        title={music.name}
-                        onClick={() =>
-                          music.cover &&
-                          setViewerPhoto({
-                            src: music.cover,
-                            alt: music.name,
-                          })
-                        }
-                      />
+                      {/* 无封面时不使用默认图, 让封面列保持为空。 */}
+                      {music.cover ? (
+                        <LazyCover
+                          src={getResizedImage({
+                            url: music.cover,
+                            size: COVER_SIZE * 2,
+                          })}
+                          alt={music.name}
+                          title={music.name}
+                          onClick={() =>
+                            setViewerPhoto({
+                              src: music.cover,
+                              alt: music.name,
+                            })
+                          }
+                        />
+                      ) : null}
                     </Td>
                     <Td>
                       <Name title={music.name}>{music.name}</Name>

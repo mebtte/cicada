@@ -2,7 +2,6 @@ import logger from '@/utils/logger';
 import storage, { Key } from '@/storage';
 import { type Server, type ServerState } from '@/constants/server';
 import globalEventemitter, { EventType } from '@/platform/global_eventemitter';
-import definition from '@/definition';
 import { create } from 'zustand';
 
 export function getSelectedServer(ss: ServerState) {
@@ -73,10 +72,7 @@ function refreshSelectedServerMetadata() {
 }
 
 refreshSelectedServerMetadata();
-window.setInterval(
-  refreshSelectedServerMetadata,
-  1000 * (definition.DEVELOPMENT ? 120 : 15),
-);
+window.setInterval(refreshSelectedServerMetadata, 1000 * 15);
 
 export function prefixServerOrigin(path: string) {
   if (path) {
