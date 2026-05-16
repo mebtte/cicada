@@ -140,8 +140,7 @@ const ContentContainer = styled(Container)`
   ${autoScrollbar}
 
   > .content {
-    width: min(1120px, 100%);
-    margin: 0 auto;
+    width: 100%;
     padding: calc(var(--recommendation-toolbar-height) + 20px)
       ${PAGE_HORIZONTAL_PADDING} 24px;
 

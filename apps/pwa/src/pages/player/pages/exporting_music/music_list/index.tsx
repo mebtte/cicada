@@ -206,7 +206,25 @@ const StatButton = styled.button<{
   $interactive?: boolean;
 }>`
   width: 100%;
+  position: relative;
   ${statCardStyle}
+`;
+// 失败卡片右上角的重试图标, 提示用户该卡片可点击
+const RetryHint = styled.span`
+  position: absolute;
+  top: 4px;
+  right: 5px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--stat-color);
+  pointer-events: none;
+
+  svg {
+    display: block;
+  }
 `;
 const EmptyState = styled.div`
   flex: 1;
@@ -481,6 +499,9 @@ function SummaryPanel({
               eventemitter.emit(EventType.EXPORT_MUSIC_LIST_RETRY_FAILED, null)
             }
           >
+            <RetryHint aria-hidden="true">
+              <MdOutlineRestartAlt size={14} />
+            </RetryHint>
             <div className="value">{summary.failed}</div>
             <div className="label">{t('export_status_failed')}</div>
           </StatButton>
