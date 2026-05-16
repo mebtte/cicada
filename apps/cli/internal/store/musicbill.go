@@ -1,10 +1,13 @@
 package store
 
 import (
+	"fmt"
 	"strings"
 	"time"
+)
 
-	"github.com/google/uuid"
+const (
+	maxCreateMusicbillIDAttempts = 20
 )
 
 type Musicbill struct {
@@ -71,12 +74,29 @@ func GetMusicbillsByUserID(userID string) ([]Musicbill, error) {
 }
 
 func CreateMusicbill(userID, name string) (string, error) {
-	id := uuid.New().String()
-	_, err := DB().Exec(
-		`INSERT INTO musicbill (id,userId,name,createTimestamp) VALUES (?,?,?,?)`,
-		id, userID, name, time.Now().UnixMilli(),
-	)
-	return id, err
+	for range maxCreateMusicbillIDAttempts {
+		id, err := generateShortPublicID()
+		if err != nil {
+			return "", err
+		}
+
+		// Short public IDs can theoretically collide, so insert atomically and retry on conflict.
+		result, err := DB().Exec(
+			`INSERT OR IGNORE INTO musicbill (id,userId,name,createTimestamp) VALUES (?,?,?,?)`,
+			id, userID, name, time.Now().UnixMilli(),
+		)
+		if err != nil {
+			return "", err
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return "", err
+		}
+		if affected > 0 {
+			return id, nil
+		}
+	}
+	return "", fmt.Errorf("create musicbill: exhausted %d id generation attempts", maxCreateMusicbillIDAttempts)
 }
 
 func UpdateMusicbill(id, field string, value any) error {

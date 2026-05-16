@@ -2,9 +2,55 @@ package store
 
 import (
 	"cicada/internal/config"
+	"regexp"
 	"testing"
 	"time"
 )
+
+func TestCreateMusicAndMusicbillUseShortPublicIDs(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	const userID = "user-1"
+	if _, err := DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		userID, "creator", DoubleMD5("password"), "Creator", time.Now().UnixMilli(),
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+
+	pattern := regexp.MustCompile(`^[0-9A-Za-z]{8}$`)
+	musicID, err := CreateMusic("Hidden Track", MusicTypeSong, userID, "one.mp3")
+	if err != nil {
+		t.Fatalf("create music: %v", err)
+	}
+	if !pattern.MatchString(musicID) {
+		t.Fatalf("expected 8-character alphanumeric music id, got %q", musicID)
+	}
+
+	musicbillID, err := CreateMusicbill(userID, "Favorites")
+	if err != nil {
+		t.Fatalf("create musicbill: %v", err)
+	}
+	if !pattern.MatchString(musicbillID) {
+		t.Fatalf("expected 8-character alphanumeric musicbill id, got %q", musicbillID)
+	}
+}
 
 func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 	if err := ResetForTests(); err != nil {

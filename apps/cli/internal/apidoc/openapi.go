@@ -448,8 +448,8 @@ func operations() []operation {
 				"type":      1,
 				"asset":     "track.mp3",
 			}),
-			SuccessSchema:  strSchema("Created music ID.", "music-1"),
-			SuccessExample: "music-1",
+			SuccessSchema:  strSchema("Created music ID.", "aB3dE9xY"),
+			SuccessExample: "aB3dE9xY",
 			ErrorCodes:     []string{"wrong_parameter", "asset_not_existed", "singer_not_existed", "server_error", "not_authorized", "not_authorized_for_admin"},
 		},
 		{
@@ -663,8 +663,8 @@ func operations() []operation {
 				}),
 				map[string]any{"name": "Late Night"},
 			),
-			SuccessSchema:  strSchema("Created musicbill ID.", "musicbill-1"),
-			SuccessExample: "musicbill-1",
+			SuccessSchema:  strSchema("Created musicbill ID.", "mB3dE9xY"),
+			SuccessExample: "mB3dE9xY",
 			ErrorCodes:     []string{"wrong_parameter", "over_user_musicbill_max_amount", "server_error", "not_authorized"},
 		},
 		{
@@ -1001,8 +1001,8 @@ func operations() []operation {
 				}),
 				map[string]any{"name": "Aurora"},
 			),
-			SuccessSchema:  strSchema("Created singer ID.", "singer-1"),
-			SuccessExample: "singer-1",
+			SuccessSchema:  strSchema("Created singer ID.", "sG3dE9xY"),
+			SuccessExample: "sG3dE9xY",
 			ErrorCodes:     []string{"wrong_parameter", "server_error", "not_authorized", "not_authorized_for_admin"},
 		},
 		{

@@ -1,17 +1,13 @@
 package store
 
 import (
-	"crypto/rand"
 	"database/sql"
 	"fmt"
-	"math/big"
 	"strings"
 	"time"
 )
 
 const (
-	singerIDLength            = 6
-	singerIDAlphabet          = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	maxCreateSingerIDAttempts = 20
 )
 
@@ -195,26 +191,14 @@ func GetAdminSingerList(keyword, filterKey string, page, pageSize int) (int, []A
 	return total, singers, nil
 }
 
-func generateSingerID() (string, error) {
-	max := big.NewInt(int64(len(singerIDAlphabet)))
-	bytes := make([]byte, singerIDLength)
-	for i := range bytes {
-		n, err := rand.Int(rand.Reader, max)
-		if err != nil {
-			return "", err
-		}
-		bytes[i] = singerIDAlphabet[n.Int64()]
-	}
-	return string(bytes), nil
-}
-
 func CreateSinger(name, createUserID string) (string, error) {
 	for range maxCreateSingerIDAttempts {
-		id, err := generateSingerID()
+		id, err := generateShortPublicID()
 		if err != nil {
 			return "", err
 		}
 
+		// Short public IDs can theoretically collide, so insert atomically and retry on conflict.
 		result, err := DB().Exec(
 			`INSERT OR IGNORE INTO singer (id,name,createUserId,createTimestamp) VALUES (?,?,?,?)`,
 			id, name, createUserID, time.Now().UnixMilli(),

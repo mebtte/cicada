@@ -2,10 +2,13 @@ package store
 
 import (
 	"database/sql"
+	"fmt"
 	"strings"
 	"time"
+)
 
-	"github.com/google/uuid"
+const (
+	maxCreateMusicIDAttempts = 20
 )
 
 type MusicType int
@@ -94,12 +97,29 @@ func GetMusicsByIDs(ids []string) ([]Music, error) {
 }
 
 func CreateMusic(name string, t MusicType, createUserID, asset string) (string, error) {
-	id := uuid.New().String()
-	_, err := DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		id, int(t), name, asset, createUserID, time.Now().UnixMilli(),
-	)
-	return id, err
+	for range maxCreateMusicIDAttempts {
+		id, err := generateShortPublicID()
+		if err != nil {
+			return "", err
+		}
+
+		// Short public IDs can theoretically collide, so insert atomically and retry on conflict.
+		result, err := DB().Exec(
+			`INSERT OR IGNORE INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
+			id, int(t), name, asset, createUserID, time.Now().UnixMilli(),
+		)
+		if err != nil {
+			return "", err
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return "", err
+		}
+		if affected > 0 {
+			return id, nil
+		}
+	}
+	return "", fmt.Errorf("create music: exhausted %d id generation attempts", maxCreateMusicIDAttempts)
 }
 
 func UpdateMusic(id, field string, value any) error {
