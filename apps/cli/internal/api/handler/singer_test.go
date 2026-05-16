@@ -392,8 +392,8 @@ func TestAdminCreateSingerForceDuplicateName(t *testing.T) {
 	if forcedResp.Code != "success" {
 		t.Fatalf("expected success, got %+v", forcedResp)
 	}
-	if matched := regexp.MustCompile(`^[0-9A-Za-z]{6}$`).MatchString(forcedResp.Data); !matched {
-		t.Fatalf("expected short singer id, got %q", forcedResp.Data)
+	if matched := regexp.MustCompile(`^[0-9A-Za-z]{8}$`).MatchString(forcedResp.Data); !matched {
+		t.Fatalf("expected 8-character alphanumeric singer id, got %q", forcedResp.Data)
 	}
 	if forcedResp.Data == "ABC123" {
 		t.Fatalf("forced create reused existing id")

@@ -38,7 +38,7 @@ func TestCreateSingerUsesShortAlphanumericID(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create singer: %v", err)
 	}
-	if matched := regexp.MustCompile(`^[0-9A-Za-z]{6}$`).MatchString(id); !matched {
-		t.Fatalf("expected 6-character alphanumeric singer id, got %q", id)
+	if matched := regexp.MustCompile(`^[0-9A-Za-z]{8}$`).MatchString(id); !matched {
+		t.Fatalf("expected 8-character alphanumeric singer id, got %q", id)
 	}
 }
