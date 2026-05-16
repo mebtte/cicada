@@ -7,7 +7,7 @@
 ## Start DEV Server
 
 ```sh
-npm install 
+npm install
 npm run dev
 ```
 

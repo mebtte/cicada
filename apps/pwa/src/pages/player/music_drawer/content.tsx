@@ -24,6 +24,7 @@ import { MusicDetail } from './constants';
 import Lyric from './lyric';
 import SingerList from './singer_list';
 import SubMusicList from './sub_music_list';
+import RelatedPublicMusicbillList from './related_public_musicbill_list';
 import Toolbar from './toolbar';
 import useData from './use_data';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../constants';
@@ -325,6 +326,9 @@ function Detail({
                 musicList={music.forkList}
               />
             ) : null}
+            <RelatedPublicMusicbillList
+              musicbillList={music.relatedPublicMusicbillList}
+            />
             <Lyric music={music} />
           </DetailContent>
         </div>

@@ -21,6 +21,16 @@ export interface SingerDetail extends SingerWithAliases {
   photos: SingerPhoto[];
 }
 
+export interface RelatedPublicMusicbill {
+  id: string;
+  name: string;
+  cover: string;
+  musicCount: number;
+  user: CreateUser & {
+    avatar: string;
+  };
+}
+
 export interface MusicDetail extends Music {
   heat: number;
   lyrics: Lyric[];
@@ -35,4 +45,5 @@ export interface MusicDetail extends Music {
   assetDurationMs: number;
   assetCodec: string;
   assetBitRate: number;
+  relatedPublicMusicbillList: RelatedPublicMusicbill[];
 }

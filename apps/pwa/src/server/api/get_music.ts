@@ -36,6 +36,17 @@ type Response = Omit<Music, 'singers'> & {
   assetCodec: string;
   assetBitRate: number;
   musicbillCount: number;
+  relatedPublicMusicbillList?: {
+    id: string;
+    name: string;
+    cover: string;
+    musicCount: number;
+    user: {
+      id: string;
+      nickname: string;
+      avatar: string;
+    };
+  }[];
   singers: (Singer & {
     aliases: string[];
   })[];
@@ -91,6 +102,16 @@ async function getMusic({
         ...s,
         photos: normalizePhotos(s.photos),
       })),
+    })),
+    relatedPublicMusicbillList: (
+      music.relatedPublicMusicbillList ?? []
+    ).map((mb) => ({
+      ...mb,
+      cover: prefixServerOrigin(mb.cover),
+      user: {
+        ...mb.user,
+        avatar: prefixServerOrigin(mb.user.avatar),
+      },
     })),
   };
 }

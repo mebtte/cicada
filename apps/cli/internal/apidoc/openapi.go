@@ -424,7 +424,7 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/music",
 			Summary:     "Get music details",
-			Description: "Return music metadata, singers, fork relations, creator information, and musicbill usage count.",
+			Description: "Return music metadata, singers, fork relations, creator information, musicbill usage count, and related public musicbills.",
 			Tags:        []string{"Music"},
 			Auth:        true,
 			Parameters: []map[string]any{
@@ -1664,6 +1664,19 @@ func musicRelatedSchema() map[string]any {
 	)
 }
 
+func relatedPublicMusicbillSchema() map[string]any {
+	return objSchema(
+		[]string{"id", "name", "cover", "musicCount", "user"},
+		map[string]any{
+			"id":         strSchema("Musicbill ID.", "musicbill-1"),
+			"name":       strSchema("Musicbill name.", "Late Night"),
+			"cover":      strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+			"musicCount": intSchema("Music count.", 12),
+			"user":       userBriefSchema(true),
+		},
+	)
+}
+
 func musicDetailSchema() map[string]any {
 	return objSchema(
 		[]string{
@@ -1685,6 +1698,9 @@ func musicDetailSchema() map[string]any {
 			"forkList":        arraySchema(musicRelatedSchema()),
 			"forkFromList":    arraySchema(musicRelatedSchema()),
 			"musicbillCount":  intSchema("Musicbill reference count.", 3),
+			"relatedPublicMusicbillList": arraySchema(
+				relatedPublicMusicbillSchema(),
+			),
 		},
 	)
 }
@@ -1707,6 +1723,15 @@ func musicDetailExample() map[string]any {
 		"forkList":       []any{},
 		"forkFromList":   []any{},
 		"musicbillCount": 3,
+		"relatedPublicMusicbillList": []any{
+			map[string]any{
+				"id":         "musicbill-1",
+				"name":       "Late Night",
+				"cover":      "/asset/musicbill_cover/cover.jpg",
+				"musicCount": 12,
+				"user":       map[string]any{"id": "1", "nickname": "Cicada", "avatar": "/asset/user_avatar/avatar.jpg"},
+			},
+		},
 	}
 }
 

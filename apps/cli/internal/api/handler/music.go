@@ -176,24 +176,25 @@ func GetMusic(c *gin.Context) {
 	}
 
 	api.OK(c, gin.H{
-		"id":              m.ID,
-		"type":            m.Type,
-		"name":            m.Name,
-		"aliases":         splitAliases(m.Aliases),
-		"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
-		"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
-		"assetSize":       m.AssetSize,
-		"assetDurationMs": m.AssetDurationMs,
-		"assetCodec":      m.AssetCodec,
-		"assetBitRate":    m.AssetBitRate,
-		"heat":            m.Heat,
-		"createTimestamp": m.CreateTimestamp,
-		"year":            nullInt64(m.Year),
-		"singers":         singerItemsWithPhotos(singersByMusic[id], photosBySinger),
-		"createUser":      gin.H{"id": m.CreateUserID, "nickname": createUserNickname},
-		"forkList":        forkList,
-		"forkFromList":    forkFromList,
-		"musicbillCount":  musicbillCount,
+		"id":                         m.ID,
+		"type":                       m.Type,
+		"name":                       m.Name,
+		"aliases":                    splitAliases(m.Aliases),
+		"cover":                      config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+		"asset":                      config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+		"assetSize":                  m.AssetSize,
+		"assetDurationMs":            m.AssetDurationMs,
+		"assetCodec":                 m.AssetCodec,
+		"assetBitRate":               m.AssetBitRate,
+		"heat":                       m.Heat,
+		"createTimestamp":            m.CreateTimestamp,
+		"year":                       nullInt64(m.Year),
+		"singers":                    singerItemsWithPhotos(singersByMusic[id], photosBySinger),
+		"createUser":                 gin.H{"id": m.CreateUserID, "nickname": createUserNickname},
+		"forkList":                   forkList,
+		"forkFromList":               forkFromList,
+		"musicbillCount":             musicbillCount,
+		"relatedPublicMusicbillList": relatedPublicMusicbillItems(id),
 	})
 }
 
@@ -653,6 +654,46 @@ func GetExploration(c *gin.Context) {
 }
 
 // ── helpers ───────────────────────────────────────────────────────────────────
+
+func relatedPublicMusicbillItems(musicID string) []gin.H {
+	// 相关公开乐单只在音乐抽屉末尾展示少量卡片, 在数据库层随机抽样避免返回全量后再裁剪。
+	rows, err := store.DB().Query(
+		`SELECT mb.id,mb.name,mb.cover,mb.userId,u.nickname,u.avatar,COUNT(all_mm.id)
+		FROM musicbill mb
+		JOIN musicbill_music matched_mm ON matched_mm.musicbillId=mb.id AND matched_mm.musicId=?
+		JOIN user u ON u.id=mb.userId
+		LEFT JOIN musicbill_music all_mm ON all_mm.musicbillId=mb.id
+		WHERE mb.public=1
+		GROUP BY mb.id,mb.name,mb.cover,mb.userId,u.nickname,u.avatar
+		ORDER BY random()
+		LIMIT 5`, musicID,
+	)
+	if err != nil {
+		return []gin.H{}
+	}
+	defer rows.Close()
+
+	list := []gin.H{}
+	for rows.Next() {
+		var id, name, cover, userID, nickname, avatar string
+		var musicCount int
+		if err := rows.Scan(&id, &name, &cover, &userID, &nickname, &avatar, &musicCount); err != nil {
+			continue
+		}
+		list = append(list, gin.H{
+			"id":         id,
+			"name":       name,
+			"cover":      config.AssetPublicURL(cover, config.AssetTypeMusicbillCover),
+			"musicCount": musicCount,
+			"user": gin.H{
+				"id":       userID,
+				"nickname": nickname,
+				"avatar":   config.AssetPublicURL(avatar, config.AssetTypeUserAvatar),
+			},
+		})
+	}
+	return list
+}
 
 func musicListResponse(musics []store.Music, total int) gin.H {
 	if len(musics) == 0 {

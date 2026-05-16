@@ -44,6 +44,7 @@ export default {
   recommended_music: 'recommended music',
   recommended_singer: 'recommended singers',
   recommended_public_musicbill: 'recommended musicbills',
+  related_public_musicbill: 'related musicbills',
   exploration_empty_title: 'no recommendations yet',
   exploration_empty_description:
     'Import music with covers, add singer avatars, or publish musicbills with covers. They will appear here as recommendations.',

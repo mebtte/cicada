@@ -46,6 +46,7 @@ const zhCN: {
   recommended_music: '推荐音乐',
   recommended_singer: '推荐歌手',
   recommended_public_musicbill: '推荐乐单',
+  related_public_musicbill: '相关乐单',
   exploration_empty_title: '还没有推荐内容',
   exploration_empty_description:
     '导入带封面的音乐、完善歌手头像，或公开带封面的乐单后，这里会展示推荐内容。',
