@@ -16,8 +16,8 @@ import definition from '@/definition';
 import { CSS_VAR } from '@/components/theme';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import {
-  MdAdd,
   MdClose,
+  MdCloudUpload,
   MdDashboard,
   MdHeadphones,
   MdLibraryMusic,
@@ -30,8 +30,10 @@ import MusicManagement from './music_management';
 import SingerManagement from './singer_management';
 import UserManagement from './user_management';
 import UploadManagerHost from './music_management/import/upload_manager_host';
-import FloatingUploadWindow from './music_management/import/floating_window';
+import MusicImportSidebar from './music_management/import/sidebar';
 import {
+  getMusicImportSummary,
+  isActiveImportPhase,
   toggleWindow,
   useMusicImport,
 } from '@/global_states/music_import';
@@ -44,6 +46,17 @@ const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 const SURFACE_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+
+const runningWave = `
+  @keyframes admin-import-running-wave {
+    from {
+      background-position-x: 0;
+    }
+    to {
+      background-position-x: 18px;
+    }
+  }
+`;
 
 const ADMIN_MENU_ITEMS = [
   {
@@ -333,6 +346,142 @@ const HeaderActions = styled.div`
   flex-shrink: 0;
 `;
 
+const UploadStatusButton = styled.button`
+  position: relative;
+  height: ${AVATAR_SIZE + 5}px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 150ms ease-out,
+    filter 120ms;
+
+  &:active {
+    transform: translateY(3px);
+    transition:
+      transform 60ms ease-in,
+      filter 60ms;
+  }
+
+  &:focus-visible {
+    outline: 3px solid ${PRIMARY};
+    outline-offset: 3px;
+    border-radius: 14px;
+  }
+`;
+
+const UploadStatusBox = styled.span<{
+  $active: boolean;
+  $open: boolean;
+  $running: boolean;
+}>`
+  position: relative;
+  width: auto;
+  min-width: ${({ $active }) => ($active ? '112px' : '104px')};
+  max-width: min(360px, 42vw);
+  height: ${AVATAR_SIZE}px;
+  padding: 0 10px;
+  border: 2px solid
+    ${({ $active, $open }) =>
+      $active || $open ? PRIMARY_SHADOW : NEUTRAL_SHADOW};
+  border-radius: 14px;
+  background: ${({ $active, $open }) =>
+    $active || $open ? PRIMARY : '#fff'};
+  box-shadow: 0 3px 0
+    ${({ $active, $open }) =>
+      $active || $open ? PRIMARY_SHADOW : NEUTRAL_SHADOW};
+  color: ${({ $active, $open }) =>
+    $active || $open ? '#fff' : PRIMARY};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  overflow: hidden;
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0;
+  white-space: nowrap;
+  transition:
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out,
+    color 150ms ease-out,
+    background 150ms ease-out,
+    filter 120ms;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    top: 50%;
+    z-index: 0;
+    height: 8px;
+    transform: translateY(-50%);
+    background:
+      radial-gradient(
+        8px 5px at 9px 8px,
+        transparent 6px,
+        rgb(255 255 255 / 0.46) 6.5px,
+        rgb(255 255 255 / 0.46) 7.5px,
+        transparent 8px
+      )
+      0 0 / 18px 8px repeat-x;
+    opacity: ${({ $running }) => ($running ? 1 : 0)};
+    animation: ${({ $running }) =>
+      $running ? 'admin-import-running-wave 700ms linear infinite' : 'none'};
+    pointer-events: none;
+    transition: opacity 120ms;
+  }
+
+  > svg {
+    position: relative;
+    z-index: 1;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  > span {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: ${MOBILE_BREAKPOINT}px) {
+    max-width: 38vw;
+    min-width: ${({ $active }) => ($active ? '92px' : '104px')};
+    font-size: 12px;
+  }
+
+  ${UploadStatusButton}:hover & {
+    border-color: ${({ $active, $open }) =>
+      $active || $open ? PRIMARY_SHADOW : PRIMARY};
+    box-shadow: 0 3px 0 ${PRIMARY_SHADOW};
+    filter: brightness(1.04);
+  }
+
+  ${UploadStatusButton}:active & {
+    box-shadow: none;
+    transition:
+      border-color 60ms ease-in,
+      box-shadow 60ms ease-in,
+      filter 60ms;
+  }
+
+  ${runningWave}
+`;
+
 const UserMenuRoot = styled.div`
   position: relative;
   flex-shrink: 0;
@@ -519,7 +668,16 @@ function AdminPage() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const currentMenuItem = getCurrentMenuItem(pathname);
-  const uploadWindowOpen = useMusicImport((s) => s.windowOpen);
+  const uploadTasks = useMusicImport((s) => s.tasks);
+  const uploadSidebarOpen = useMusicImport((s) => s.windowOpen);
+  const uploadSummary = getMusicImportSummary(uploadTasks);
+  const uploadActive = uploadTasks.length > 0;
+  const uploadRunning = uploadTasks.some((task) =>
+    isActiveImportPhase(task.phase),
+  );
+  const uploadStatusText = uploadActive
+    ? `${uploadSummary.pct.toFixed(0)}%`
+    : capitalize(t('upload_music'));
 
   useEffect(() => {
     if (!userMenuOpen) return;
@@ -571,7 +729,7 @@ function AdminPage() {
   return (
     <Page>
       <UploadManagerHost />
-      <FloatingUploadWindow />
+      <MusicImportSidebar />
       <Sidebar $open={sidebarOpen}>
         <SidebarHeader style={{ paddingTop: sidebarTopPadding }}>
           <BrandLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
@@ -632,17 +790,22 @@ function AdminPage() {
             <HeaderTitleText>{capitalize(t(currentMenuItem.label))}</HeaderTitleText>
           </HeaderTitle>
           <HeaderActions>
-            <Button
-              size="sm"
-              variant={uploadWindowOpen ? 'primary' : 'secondary'}
-              icon={<MdAdd />}
+            <UploadStatusButton
+              type="button"
               onClick={toggleWindow}
-              title={capitalize(t('batch_import_music'))}
-              aria-label={capitalize(t('batch_import_music'))}
-              aria-pressed={uploadWindowOpen}
+              title={uploadStatusText}
+              aria-label={uploadStatusText}
+              aria-pressed={uploadSidebarOpen}
             >
-              {capitalize(t('music'))}
-            </Button>
+              <UploadStatusBox
+                $active={uploadActive}
+                $open={uploadSidebarOpen}
+                $running={uploadRunning}
+              >
+                <MdCloudUpload />
+                <span>{uploadStatusText}</span>
+              </UploadStatusBox>
+            </UploadStatusButton>
             <PlayerLink
               type="button"
               onClick={() =>

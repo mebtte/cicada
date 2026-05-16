@@ -7,6 +7,8 @@ export interface Singer {
     asset: string;
     description: string;
   }[];
+  // 仅在歌手列表场景下由后端返回，编辑详情不包含
+  musicCount?: number;
   createUser: {
     id: string;
     username: string;

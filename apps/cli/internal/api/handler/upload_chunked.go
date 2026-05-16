@@ -18,7 +18,6 @@ import (
 	"cicada/internal/api/apperr"
 	"cicada/internal/api/middleware"
 	"cicada/internal/config"
-	"cicada/internal/ffmpeg"
 	"cicada/internal/musicasset"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -257,28 +256,24 @@ func CompletePartialUpload(c *gin.Context) {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
+	mimeStr := trimMIMEParams(mt.String())
 	if at == config.AssetTypeMusic {
 		probeCtx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
-		ok, ferr := ffmpeg.HasAudioStream(probeCtx, srcPath)
+		ok, ferr := probeUploadedMusicHasAudioStream(probeCtx, srcPath)
 		cancel()
 		if ferr != nil {
 			_ = musicasset.CancelSession(uploadID)
 			api.Fail(c, apperr.ServerError)
 			return
 		}
-		if !ok {
+		// MP3 MIME is used as a narrow fallback when ffprobe misses a file that
+		// the sniffer still recognises as MP3.
+		if !ok && !isTrustedMusicMIMEFallback(mimeStr) {
 			_ = musicasset.CancelSession(uploadID)
 			api.Fail(c, apperr.WrongAssetType)
 			return
 		}
 	} else {
-		mimeStr := mt.String()
-		for i, ch := range mimeStr {
-			if ch == ';' {
-				mimeStr = mimeStr[:i]
-				break
-			}
-		}
 		valid := false
 		for _, m := range acceptMIMEs {
 			if m == mimeStr {

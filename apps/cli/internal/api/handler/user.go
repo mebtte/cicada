@@ -402,17 +402,26 @@ func AdminGetUserList(c *gin.Context) {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
+	// 聚合每个用户的乐单数量, 避免循环内逐个查询.
+	musicbillCounts, err := store.GetAllUserMusicbillCounts()
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
 	list := make([]gin.H, len(users))
 	for i, u := range users {
+		mbCount := musicbillCounts[u.ID]
 		list[i] = gin.H{
-			"id":                  u.ID,
-			"username":            u.Username,
-			"nickname":            u.Nickname,
-			"avatar":              config.AssetPublicURL(u.Avatar, config.AssetTypeUserAvatar),
-			"joinTimestamp":       u.JoinTimestamp,
-			"admin":               u.Admin,
-			"remark":              u.Remark,
-			"lastActiveTimestamp": u.LastActiveTimestamp,
+			"id":                   u.ID,
+			"username":             u.Username,
+			"nickname":             u.Nickname,
+			"avatar":               config.AssetPublicURL(u.Avatar, config.AssetTypeUserAvatar),
+			"joinTimestamp":        u.JoinTimestamp,
+			"admin":                u.Admin,
+			"remark":               u.Remark,
+			"lastActiveTimestamp":  u.LastActiveTimestamp,
+			"musicbillCount":       mbCount.Total,
+			"publicMusicbillCount": mbCount.Public,
 		}
 	}
 	api.OK(c, list)

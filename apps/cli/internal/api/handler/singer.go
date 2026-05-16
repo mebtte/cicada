@@ -165,6 +165,12 @@ func AdminGetSingerList(c *gin.Context) {
 			})
 		}
 	}
+	// 批量统计每个歌手关联的音乐数量，避免在循环里逐条查询
+	musicCounts, err := store.GetMusicCountsBySingerIDs(singerIDs)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
 	list := make([]gin.H, len(singers))
 	for i, s := range singers {
 		photos := photosBySinger[s.ID]
@@ -172,10 +178,11 @@ func AdminGetSingerList(c *gin.Context) {
 			photos = []gin.H{}
 		}
 		list[i] = gin.H{
-			"id":      s.ID,
-			"name":    s.Name,
-			"aliases": splitAliases(s.Aliases),
-			"photos":  photos,
+			"id":         s.ID,
+			"name":       s.Name,
+			"aliases":    splitAliases(s.Aliases),
+			"photos":     photos,
+			"musicCount": musicCounts[s.ID],
 			"createUser": gin.H{
 				"id":       s.CreateUserID,
 				"username": s.CreateUserUsername,

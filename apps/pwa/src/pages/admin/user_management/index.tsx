@@ -300,6 +300,25 @@ const Remark = styled.div`
   white-space: nowrap;
 `;
 
+const MusicbillCount = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.2;
+  white-space: nowrap;
+
+  > .total {
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    font-weight: 800;
+  }
+
+  > .public {
+    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    font-size: 11px;
+    font-weight: 700;
+  }
+`;
+
 const Badge = styled.span<{ $active?: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -710,6 +729,7 @@ function UserManagement() {
                   <Th>{capitalize(t('role'))}</Th>
                   <Th>2FA</Th>
                   <Th>{capitalize(t('remark'))}</Th>
+                  <Th>{capitalize(t('musicbill_count_column'))}</Th>
                   <Th>{capitalize(t('last_active_time'))}</Th>
                   <Th>{capitalize(t('join_time'))}</Th>
                   <Th>{capitalize(t('manage'))}</Th>
@@ -752,9 +772,18 @@ function UserManagement() {
                     <Td>
                       {user.remark ? (
                         <Remark title={user.remark}>{user.remark}</Remark>
-                      ) : (
-                        <Muted>{t('unknown')}</Muted>
-                      )}
+                      ) : null}
+                    </Td>
+                    <Td>
+                      <MusicbillCount>
+                        <span className="total">{user.musicbillCount}</span>
+                        <span className="public">
+                          {t(
+                            'public_musicbill_count_label',
+                            user.publicMusicbillCount.toString(),
+                          )}
+                        </span>
+                      </MusicbillCount>
                     </Td>
                     <Td>{formatTimestamp(user.lastActiveTimestamp)}</Td>
                     <Td>{formatTimestamp(user.joinTimestamp)}</Td>

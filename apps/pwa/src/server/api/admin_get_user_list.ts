@@ -11,6 +11,8 @@ type Response = {
   joinTimestamp: number;
   lastActiveTimestamp: number;
   twoFAEnabled: boolean;
+  musicbillCount: number;
+  publicMusicbillCount: number;
 }[];
 
 async function adminGetUserList() {

@@ -20,12 +20,6 @@ export default defineConfig(({ command }) => {
     resolve: {
       alias: {
         '@': path.resolve(CURRENT_DIR, 'src'),
-        fs: path.resolve(CURRENT_DIR, 'src/__empty_module.ts'),
-        'react-native-fs': path.resolve(CURRENT_DIR, 'src/__empty_module.ts'),
-        jsmediatags: path.resolve(
-          CURRENT_DIR,
-          'node_modules/jsmediatags/dist/jsmediatags.min.js',
-        ),
       },
       symlinks: false,
     },

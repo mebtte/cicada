@@ -64,16 +64,13 @@ func UploadAsset(c *gin.Context) {
 
 	// detect MIME
 	mt := mimetype.Detect(data)
-	mimeStr := mt.String()
-	// strip params e.g. "image/jpeg; charset=..."
-	for i, ch := range mimeStr {
-		if ch == ';' {
-			mimeStr = mimeStr[:i]
-			break
-		}
-	}
+	mimeStr := trimMIMEParams(mt.String())
 	if at == config.AssetTypeMusic {
-		validAudio, err := uploadedMusicHasAudioStream(c.Request.Context(), data)
+		validAudio, err := uploadedMusicHasAudioStream(
+			c.Request.Context(),
+			data,
+			mimeStr,
+		)
 		if err != nil {
 			api.Fail(c, apperr.ServerError)
 			return
@@ -121,7 +118,31 @@ func UploadAsset(c *gin.Context) {
 	})
 }
 
-func uploadedMusicHasAudioStream(ctx context.Context, data []byte) (bool, error) {
+var probeUploadedMusicHasAudioStream = ffmpeg.HasAudioStream
+
+func trimMIMEParams(mimeStr string) string {
+	for i, ch := range mimeStr {
+		if ch == ';' {
+			return mimeStr[:i]
+		}
+	}
+	return mimeStr
+}
+
+func isTrustedMusicMIMEFallback(mimeStr string) bool {
+	switch mimeStr {
+	case "audio/mpeg", "audio/mp3", "audio/x-mpeg":
+		return true
+	default:
+		return false
+	}
+}
+
+func uploadedMusicHasAudioStream(
+	ctx context.Context,
+	data []byte,
+	mimeStr string,
+) (bool, error) {
 	if err := os.MkdirAll(config.CacheDir(), 0755); err != nil {
 		return false, err
 	}
@@ -142,7 +163,13 @@ func uploadedMusicHasAudioStream(ctx context.Context, data []byte) (bool, error)
 
 	probeCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
-	return ffmpeg.HasAudioStream(probeCtx, tmpPath)
+	ok, err := probeUploadedMusicHasAudioStream(probeCtx, tmpPath)
+	if err != nil || ok {
+		return ok, err
+	}
+	// Some valid MP3 files can be rejected by the probe path, but the MIME
+	// sniffer can still identify their MP3 frame/ID3 signature.
+	return isTrustedMusicMIMEFallback(mimeStr), nil
 }
 
 func isSquareImage(data []byte) bool {

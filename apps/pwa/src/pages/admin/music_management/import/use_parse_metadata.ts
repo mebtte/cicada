@@ -8,13 +8,16 @@ export interface ParsedMusicFile {
     artist?: string;
     year?: number;
     pictureDataURI?: string;
+    durationMs?: number;
+    codec?: string;
+    bitRate?: number;
   };
 }
 
 /**
- * Reads ID3 tags off a music file. Falls back to the filename-derived name
- * when the file is not standard or jsmediatags fails. Never throws so callers
- * can use it inside Promise.all without unwinding.
+ * Reads tags off a music file. Falls back to the filename-derived name
+ * when the file is not standard or metadata parsing fails. Never throws so
+ * callers can use it inside Promise.all without unwinding.
  */
 export async function parseMusicFile(file: File): Promise<ParsedMusicFile> {
   try {
@@ -26,6 +29,9 @@ export async function parseMusicFile(file: File): Promise<ParsedMusicFile> {
         artist: metadata.artist,
         year: metadata.year,
         pictureDataURI: metadata.picture?.dataURI,
+        durationMs: metadata.durationMs,
+        codec: metadata.codec,
+        bitRate: metadata.bitRate,
       },
     };
   } catch {

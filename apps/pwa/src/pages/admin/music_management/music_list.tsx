@@ -18,6 +18,7 @@ import {
   MdSearch,
   MdUnfoldMore,
 } from 'react-icons/md';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
 import Input from '@/components/input';
@@ -333,6 +334,7 @@ const Mono = styled.span`
 `;
 
 const CoverButton = styled.button`
+  position: relative;
   width: ${COVER_SIZE}px;
   height: ${COVER_SIZE}px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -375,25 +377,16 @@ const CoverButton = styled.button`
   }
 `;
 
-const CoverPlaceholder = styled.div`
-  width: ${COVER_SIZE}px;
-  height: ${COVER_SIZE}px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 3px 0 ${ROW_SHADOW};
-  color: ${CSSVariable.TEXT_COLOR_DISABLED};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-`;
-
-const Cover = styled.img`
+const Cover = styled.img<{ $loaded: boolean }>`
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  /* 加载完成前用透明遮住底层占位图标, 避免快速滚动时露出 <img> 的浏览器原生裂图 */
+  opacity: ${({ $loaded }) => ($loaded ? 1 : 0)};
+  transition: opacity 120ms ease-out;
 `;
 
 const Name = styled.div`
@@ -738,10 +731,13 @@ function LazyCover({
   alt: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>) {
   const ref = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    // src 变化时重置, 防止旧封面/旧加载状态泄漏到新封面
+    setLoaded(false);
     const image = ref.current;
-    if (!image || !src) return;
+    if (!image) return;
 
     const observer = new IntersectionObserver((entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return;
@@ -752,17 +748,17 @@ function LazyCover({
     return () => observer.disconnect();
   }, [src]);
 
-  if (!src) {
-    return (
-      <CoverPlaceholder>
-        <MdMusicNote />
-      </CoverPlaceholder>
-    );
-  }
-
   return (
     <CoverButton type="button" {...props}>
-      <Cover ref={ref} alt={alt} decoding="async" />
+      {/* 占位图标始终存在, 加载完成前作为兜底显示, 避免裂图 */}
+      <MdMusicNote />
+      <Cover
+        ref={ref}
+        alt={alt}
+        decoding="async"
+        $loaded={loaded}
+        onLoad={() => setLoaded(true)}
+      />
     </CoverButton>
   );
 }
@@ -1066,14 +1062,10 @@ function MusicList({
                     </Td>
                     <Td>
                       <LazyCover
-                        src={
-                          music.cover
-                            ? getResizedImage({
-                                url: music.cover,
-                                size: COVER_SIZE * 2,
-                              })
-                            : ''
-                        }
+                        src={getResizedImage({
+                          url: music.cover || DefaultCover,
+                          size: COVER_SIZE * 2,
+                        })}
                         alt={music.name}
                         title={music.name}
                         onClick={() =>

@@ -1,18 +1,11 @@
-import { ChangeEventHandler, useCallback } from 'react';
-import styled, { keyframes } from 'styled-components';
-import {
-  MdCheckCircle,
-  MdCloudUpload,
-  MdDelete,
-  MdError,
-  MdMusicNote,
-  MdPause,
-  MdPlayArrow,
-  MdReplay,
-} from 'react-icons/md';
+import { ChangeEventHandler, useState } from 'react';
+import styled from 'styled-components';
+import { MdDelete, MdPlayArrow } from 'react-icons/md';
 import Button from '@/components/button';
+import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Input from '@/components/input';
 import { Select, MultiSelect, type SelectOption } from '@/components';
+import Slider from '@/components/slider';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import capitalize from '@/utils/capitalize';
@@ -27,25 +20,18 @@ import {
 import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/singer';
 import searchSingerRequest from '@/server/api/search_singer';
 import {
-  clearFinished,
   ImportPhase,
   ImportTask,
   ImportTaskSinger,
+  isActiveImportPhase,
   removeTask,
   updateTask,
   useMusicImport,
 } from '@/global_states/music_import';
 import {
   cancelTask,
-  pauseTask,
-  resumeTask,
   retryTask,
 } from './upload_manager';
-
-const spin = keyframes`
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-`;
 
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
 const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
@@ -56,38 +42,16 @@ const Container = styled.div`
   gap: 12px;
 `;
 
-const Toolbar = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  padding: 10px 12px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 3px 0 ${ROW_SHADOW};
-`;
-
-const Counter = styled.div`
-  margin-left: auto;
-  display: flex;
-  gap: 10px;
-  font-family: ${FONT};
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-`;
-
 const TaskList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 22px;
 `;
 
 const Card = styled.div<{ $status: ImportPhase }>`
+  position: relative;
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) max-content;
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   padding: 12px;
   border: 2px solid
@@ -101,25 +65,28 @@ const Card = styled.div<{ $status: ImportPhase }>`
   box-shadow: 0 3px 0 ${ROW_SHADOW};
 `;
 
-const Cover = styled.div`
-  width: 56px;
-  height: 56px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 3px 0 ${ROW_SHADOW};
-  color: ${CSSVariable.TEXT_COLOR_DISABLED};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
+const DeleteButton = styled(Button)`
+  position: absolute;
+  top: -18px;
+  right: -8px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  min-width: 0;
+  border-radius: 8px;
+  font-size: 14px;
+`;
 
-  > img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+const StartButton = styled(Button)`
+  position: absolute;
+  top: -18px;
+  right: 22px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  min-width: 0;
+  border-radius: 8px;
+  font-size: 14px;
 `;
 
 const InfoBox = styled.div`
@@ -133,6 +100,7 @@ const HeaderRow = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
   font-family: ${FONT};
   font-size: 12px;
   font-weight: 800;
@@ -153,50 +121,130 @@ const FileName = styled.div`
   white-space: nowrap;
 `;
 
-const Fields = styled.div`
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1fr);
-  gap: 8px;
+const FileMetadata = styled.span`
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: min(45%, 220px);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: ${FONT};
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: rgb(145 145 145);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
-  @media (max-width: 720px) {
-    grid-template-columns: minmax(0, 1fr);
+const CoverMetadataButton = styled.button`
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: ${CSSVariable.COLOR_PRIMARY};
+  font: inherit;
+  font-weight: 900;
+  letter-spacing: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 `;
 
-const Actions = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-`;
-
-const ProgressTrack = styled.div`
-  height: 8px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
-  border-radius: 6px;
-  background: #fff;
+const MetadataText = styled.span`
+  min-width: 0;
   overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
-const ProgressFill = styled.div<{ $pct: number; $status: ImportPhase }>`
-  width: ${({ $pct }) => `${$pct}%`};
-  height: 100%;
-  background: ${({ $status }) => {
-    if ($status === 'failed') return CSSVariable.COLOR_DANGEROUS;
-    return CSSVariable.COLOR_PRIMARY;
-  }};
-  transition: width 200ms ease-out;
-`;
-
-const StatusLine = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+const Fields = styled.div`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(118px, 150px);
   gap: 8px;
+`;
+
+const SingerField = styled.div`
+  grid-column: 1 / -1;
+  min-width: 0;
+`;
+
+const ProgressSlider = styled(Slider)`
+  margin-top: 4px;
+  pointer-events: none;
+
+  > span:last-child {
+    display: none;
+  }
+`;
+
+const ProgressMeta = styled.div`
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
   font-family: ${FONT};
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+`;
+
+const ProgressSizeText = styled.span`
+  min-width: 0;
+  white-space: nowrap;
+`;
+
+const ProgressMetaRight = styled.div`
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  overflow: hidden;
+`;
+
+const InlineActionButton = styled.button`
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: ${CSSVariable.COLOR_PRIMARY};
+  font-family: ${FONT};
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color 120ms,
+    filter 120ms,
+    transform 120ms;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${CSSVariable.COLOR_PRIMARY};
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 `;
 
 const InstantBadge = styled.span`
@@ -211,55 +259,31 @@ const InstantBadge = styled.span`
   box-shadow: 0 2px 0 ${ROW_SHADOW};
 `;
 
-const ErrorText = styled.span`
+const ErrorText = styled.div`
+  min-width: 0;
+  max-width: min(240px, 100%);
+  flex: 1 1 auto;
+  font-family: ${FONT};
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: ${CSSVariable.COLOR_DANGEROUS};
 `;
 
-const SpinIcon = styled(MdCloudUpload)`
-  font-size: 18px;
-  color: ${CSSVariable.COLOR_PRIMARY};
-  animation: ${spin} 1s linear infinite;
+const UploadedText = styled.span`
+  font-family: ${FONT};
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: rgb(44 182 125);
+  white-space: nowrap;
 `;
-
-const phaseLabel = (phase: ImportPhase): string => {
-  switch (phase) {
-    case 'editing':
-      return capitalize(t('pending'));
-    case 'queued':
-      return capitalize(t('pending'));
-    case 'hashing':
-      return capitalize(t('hashing_file'));
-    case 'initializing':
-      return capitalize(t('initializing_upload'));
-    case 'uploading':
-      return capitalize(t('uploading_chunk'));
-    case 'completing':
-      return capitalize(t('completing_upload'));
-    case 'creating':
-      return capitalize(t('creating_music'));
-    case 'success':
-      return capitalize(t('import_success'));
-    case 'failed':
-      return capitalize(t('import_failed'));
-    case 'paused':
-      return capitalize(t('paused_state'));
-    case 'canceled':
-      return capitalize(t('cancel_upload'));
-    default:
-      return phase;
-  }
-};
-
-const isRunningPhase = (p: ImportPhase) =>
-  p === 'queued' ||
-  p === 'hashing' ||
-  p === 'initializing' ||
-  p === 'uploading' ||
-  p === 'completing' ||
-  p === 'creating';
-
-const isFinalPhase = (p: ImportPhase) =>
-  p === 'success' || p === 'canceled';
 
 const formatSingerToOption = (
   singer: ImportTaskSinger & { aliases?: string[] },
@@ -285,30 +309,43 @@ const musicTypeOptions: SelectOption<MusicType>[] = MUSIC_TYPES.map((type) => ({
   value: type,
 }));
 
-function StatusIcon({ phase }: { phase: ImportPhase }) {
-  if (phase === 'success') {
-    return (
-      <MdCheckCircle
-        style={{ fontSize: 18, color: CSSVariable.COLOR_PRIMARY }}
-      />
-    );
+const formatDurationMs = (durationMs: number) => {
+  const totalSeconds = Math.round(durationMs / 1000);
+  const minute = Math.floor(totalSeconds / 60);
+  const second = totalSeconds % 60;
+  return `${minute > 9 ? minute : `0${minute}`}:${
+    second > 9 ? second : `0${second}`
+  }`;
+};
+
+const formatBitRate = (bitRate: number) => `${Math.round(bitRate / 1000)}kbps`;
+
+const formatCodec = (codec?: string) => {
+  const value = codec?.split('/').pop()?.trim();
+  // Existing parsed tasks may still hold the parser's formal MP3 codec name.
+  if (/^(mp3|mpeg[\s-]*(1|2|2\.5)?\s*(audio\s*)?layer\s*(3|iii))$/i.test(value || '')) {
+    return 'MP3';
   }
-  if (phase === 'failed') {
-    return (
-      <MdError style={{ fontSize: 18, color: CSSVariable.COLOR_DANGEROUS }} />
-    );
-  }
-  if (isRunningPhase(phase)) {
-    return <SpinIcon />;
-  }
-  return <MdMusicNote style={{ fontSize: 18 }} />;
-}
+  return value ? value.toUpperCase() : '';
+};
+
+const formatTaskMetadata = (task: ImportTask) =>
+  [
+    task.parsed.durationMs ? formatDurationMs(task.parsed.durationMs) : '',
+    formatCodec(task.parsed.codec),
+    task.parsed.bitRate ? formatBitRate(task.parsed.bitRate) : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
 function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean }) {
+  const [viewerPhoto, setViewerPhoto] = useState<ImageViewerPhoto | null>(null);
   const editable = task.phase === 'editing';
   const pct = task.totalBytes
     ? Math.min(100, (task.uploadedBytes / task.totalBytes) * 100)
     : 0;
+  const metadataText = formatTaskMetadata(task);
+  const hasCover = !!task.parsed.pictureDataURI;
 
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     updateTask(task.id, { name: event.target.value });
@@ -319,218 +356,136 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
       notice.error(t('empty_name_warning'));
       return;
     }
-    if (!task.singers.length) {
-      notice.error(t('singers_required_warning', task.fileName));
-      return;
-    }
     updateTask(task.id, { phase: 'queued', errorMessage: undefined });
+  };
+  const deleteActiveTask =
+    isActiveImportPhase(task.phase) || task.phase === 'paused';
+  const onDelete = () =>
+    deleteActiveTask ? cancelTask(task.id) : removeTask(task.id);
+  const deleteTitle = deleteActiveTask ? t('cancel_upload') : t('remove');
+
+  const onOpenCover = () => {
+    if (!task.parsed.pictureDataURI) return;
+    setViewerPhoto({
+      src: task.parsed.pictureDataURI,
+      alt: task.fileName,
+    });
   };
 
   return (
-    <Card $status={task.phase}>
-      <Cover>
-        {task.parsed.pictureDataURI ? (
-          <img src={task.parsed.pictureDataURI} alt={task.fileName} />
-        ) : (
-          <StatusIcon phase={task.phase} />
-        )}
-      </Cover>
-      <InfoBox>
-        <HeaderRow>
-          <FileName title={task.fileName}>{task.fileName}</FileName>
-          <span>{formatBytes(task.fileSize)}</span>
-          {instantHit ? (
-            <InstantBadge>{t('instant_upload_hit')}</InstantBadge>
-          ) : null}
-        </HeaderRow>
-        <Fields>
-          <Input
-            value={task.name}
-            onChange={onNameChange}
-            maxLength={NAME_MAX_LENGTH}
-            disabled={!editable}
-            placeholder={t('name')}
-          />
-          <MultiSelect
-            value={task.singers.map((s) => formatSingerToOption(s))}
-            loadOptions={searchSinger}
-            onChange={(value) =>
-              updateTask(task.id, {
-                singers: value.map((v) => ({ id: v.value.id, name: v.value.name })),
-              })
-            }
-            disabled={!editable}
-            placeholder={t('singer')}
-          />
-          <Select
-            options={musicTypeOptions}
-            value={task.type}
-            onChange={(value) => updateTask(task.id, { type: value })}
-            disabled={!editable}
-          />
-        </Fields>
-        {task.phase !== 'editing' ? (
-          <>
-            <ProgressTrack>
-              <ProgressFill $pct={pct} $status={task.phase} />
-            </ProgressTrack>
-            <StatusLine>
-              <span>{phaseLabel(task.phase)}</span>
-              <span>
-                {formatBytes(task.uploadedBytes)} / {formatBytes(task.totalBytes)}
-                {task.totalBytes > 0
-                  ? ` (${pct.toFixed(1)}%)`
-                  : ''}
-              </span>
-              {task.speedBps > 0 && isRunningPhase(task.phase) ? (
-                <span>{t('speed_per_second', formatBytes(task.speedBps))}</span>
-              ) : null}
-              {task.errorMessage ? (
-                <ErrorText>{task.errorMessage}</ErrorText>
-              ) : null}
-            </StatusLine>
-          </>
-        ) : null}
-      </InfoBox>
-      <Actions>
+    <>
+      <Card $status={task.phase}>
         {editable ? (
-          <>
-            <Button
-              size="sm"
-              variant="primary"
-              onClick={onStart}
-            >
-              {capitalize(t('start_import'))}
-            </Button>
-            <Button
-              size="sm"
-              square
-              variant="ghost"
-              onClick={() => removeTask(task.id)}
-              title={t('remove')}
-              aria-label={t('remove')}
-            >
-              <MdDelete />
-            </Button>
-          </>
-        ) : isRunningPhase(task.phase) ? (
-          <>
-            <Button
-              size="sm"
-              square
-              variant="secondary"
-              onClick={() => pauseTask(task.id)}
-              title={t('pause')}
-              aria-label={t('pause')}
-            >
-              <MdPause />
-            </Button>
-            <Button
-              size="sm"
-              square
-              variant="ghost"
-              onClick={() => cancelTask(task.id)}
-              title={t('cancel_upload')}
-              aria-label={t('cancel_upload')}
-            >
-              <MdDelete />
-            </Button>
-          </>
-        ) : task.phase === 'paused' ? (
-          <>
-            <Button
-              size="sm"
-              square
-              variant="primary"
-              onClick={() => resumeTask(task.id)}
-              title={t('resume_upload')}
-              aria-label={t('resume_upload')}
-            >
-              <MdPlayArrow />
-            </Button>
-            <Button
-              size="sm"
-              square
-              variant="ghost"
-              onClick={() => cancelTask(task.id)}
-              title={t('cancel_upload')}
-              aria-label={t('cancel_upload')}
-            >
-              <MdDelete />
-            </Button>
-          </>
-        ) : task.phase === 'failed' ? (
-          <>
-            <Button
-              size="sm"
-              square
-              variant="primary"
-              onClick={() => retryTask(task.id)}
-              title={t('retry_upload')}
-              aria-label={t('retry_upload')}
-            >
-              <MdReplay />
-            </Button>
-            <Button
-              size="sm"
-              square
-              variant="ghost"
-              onClick={() => removeTask(task.id)}
-              title={t('remove')}
-              aria-label={t('remove')}
-            >
-              <MdDelete />
-            </Button>
-          </>
-        ) : isFinalPhase(task.phase) ? (
-          <Button
+          <StartButton
             size="sm"
             square
-            variant="ghost"
-            onClick={() => removeTask(task.id)}
-            title={t('remove')}
-            aria-label={t('remove')}
+            variant="primary"
+            onClick={onStart}
+            title={capitalize(t('start_import'))}
+            aria-label={capitalize(t('start_import'))}
           >
-            <MdDelete />
-          </Button>
+            <MdPlayArrow />
+          </StartButton>
         ) : null}
-      </Actions>
-    </Card>
+        <DeleteButton
+          size="sm"
+          square
+          variant="danger"
+          onClick={onDelete}
+          title={deleteTitle}
+          aria-label={deleteTitle}
+        >
+          <MdDelete />
+        </DeleteButton>
+        <InfoBox>
+          <HeaderRow>
+            <FileName title={task.fileName}>{task.fileName}</FileName>
+            {hasCover || metadataText ? (
+              <FileMetadata
+                title={[hasCover ? t('cover') : '', metadataText]
+                  .filter(Boolean)
+                  .join(' · ')}
+              >
+                {hasCover ? (
+                  <CoverMetadataButton type="button" onClick={onOpenCover}>
+                    {t('cover')}
+                  </CoverMetadataButton>
+                ) : null}
+                {hasCover && metadataText ? <span>·</span> : null}
+                {metadataText ? <MetadataText>{metadataText}</MetadataText> : null}
+              </FileMetadata>
+            ) : null}
+            {instantHit ? (
+              <InstantBadge>{t('instant_upload_hit')}</InstantBadge>
+            ) : null}
+          </HeaderRow>
+          <Fields>
+            <Input
+              size="sm"
+              value={task.name}
+              onChange={onNameChange}
+              maxLength={NAME_MAX_LENGTH}
+              disabled={!editable}
+              placeholder={t('name')}
+            />
+            <Select
+              size="sm"
+              options={musicTypeOptions}
+              value={task.type}
+              onChange={(value) => updateTask(task.id, { type: value })}
+              disabled={!editable}
+            />
+            <SingerField>
+              <MultiSelect
+                size="sm"
+                wrapValues
+                value={task.singers.map((s) => formatSingerToOption(s))}
+                loadOptions={searchSinger}
+                onChange={(value) =>
+                  updateTask(task.id, {
+                    singers: value.map((v) => ({
+                      id: v.value.id,
+                      name: v.value.name,
+                    })),
+                  })
+                }
+                disabled={!editable}
+                placeholder={t('singer')}
+              />
+            </SingerField>
+          </Fields>
+          <ProgressSlider value={pct} max={100} />
+          <ProgressMeta>
+            <ProgressSizeText>
+              {formatBytes(task.uploadedBytes)} / {formatBytes(task.totalBytes)}
+            </ProgressSizeText>
+            <ProgressMetaRight>
+              {task.errorMessage ? (
+                <ErrorText title={task.errorMessage}>
+                  {task.errorMessage}
+                </ErrorText>
+              ) : null}
+              {task.phase === 'failed' ? (
+                <InlineActionButton
+                  type="button"
+                  onClick={() => retryTask(task.id)}
+                >
+                  {t('retry_upload')}
+                </InlineActionButton>
+              ) : task.phase === 'success' ? (
+                <UploadedText>{t('upload_status_uploaded')}</UploadedText>
+              ) : null}
+            </ProgressMetaRight>
+          </ProgressMeta>
+        </InfoBox>
+      </Card>
+      <ImageViewer photo={viewerPhoto} onClose={() => setViewerPhoto(null)} />
+    </>
   );
 }
 
 function ImportPanel() {
   const tasks = useMusicImport((s) => s.tasks);
-
-  const onApplyToAll = useCallback(() => {
-    const editableTasks = tasks.filter((t) => t.phase === 'editing');
-    if (editableTasks.length < 2) return;
-    const first = editableTasks[0];
-    editableTasks.slice(1).forEach((task) => {
-      updateTask(task.id, { type: first.type, singers: first.singers });
-    });
-    notice.info(t('apply_to_all'));
-  }, [tasks]);
-
-  const onStartAll = () => {
-    const ready = tasks.filter((t) => t.phase === 'editing');
-    let issued = 0;
-    ready.forEach((task) => {
-      if (!task.name.trim()) return;
-      if (!task.singers.length) return;
-      updateTask(task.id, { phase: 'queued', errorMessage: undefined });
-      issued += 1;
-    });
-    if (!issued) {
-      notice.error(t('singers_required_warning', t('select_music_files')));
-    }
-  };
-
-  const editableCount = tasks.filter((t) => t.phase === 'editing').length;
-  const successCount = tasks.filter((t) => t.phase === 'success').length;
-  const failedCount = tasks.filter((t) => t.phase === 'failed').length;
-  const runningCount = tasks.filter((t) => isRunningPhase(t.phase) || t.phase === 'paused').length;
-  const finishedCount = tasks.filter((t) => isFinalPhase(t.phase)).length;
 
   if (tasks.length === 0) {
     return null;
@@ -538,28 +493,6 @@ function ImportPanel() {
 
   return (
     <Container>
-      <Toolbar>
-        {editableCount > 0 ? (
-          <Button variant="primary" size="sm" onClick={onStartAll}>
-            {capitalize(t('start_import'))} ({editableCount})
-          </Button>
-        ) : null}
-        {editableCount > 1 ? (
-          <Button variant="secondary" size="sm" onClick={onApplyToAll}>
-            {t('apply_to_all')}
-          </Button>
-        ) : null}
-        {finishedCount > 0 ? (
-          <Button size="sm" onClick={clearFinished}>
-            {t('clean_successful_items')}
-          </Button>
-        ) : null}
-        <Counter>
-          {runningCount > 0 ? <span>{t('pending_uploads', String(runningCount))}</span> : null}
-          {successCount > 0 ? <span>{t('successful_uploads', String(successCount))}</span> : null}
-          {failedCount > 0 ? <span>{t('failed_uploads', String(failedCount))}</span> : null}
-        </Counter>
-      </Toolbar>
       <TaskList>
         {tasks.map((task) => (
           <TaskCard key={task.id} task={task} />

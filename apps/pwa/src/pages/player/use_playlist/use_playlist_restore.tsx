@@ -41,7 +41,7 @@ function RestoreNotice({
               );
             }}
           >
-            {t('confirm')}
+            {t('alert_confirm')}
           </Button>
           <Button
             className="dismiss-action"

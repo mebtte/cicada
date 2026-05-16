@@ -50,6 +50,9 @@ const SIZE: Record<SelectSize, {
 };
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
+const DISABLED_BACKGROUND = 'rgb(248 248 248)';
+const DISABLED_BORDER = 'rgb(226 226 226)';
+const DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
 
 function toKey<T>(v: T): string {
   return JSON.stringify(v);
@@ -129,6 +132,7 @@ function buildStyles<T, IsMulti extends boolean>(
   hasError: boolean,
   isDisabled: boolean,
   isMulti: IsMulti,
+  wrapValues = false,
 ): StylesConfig<SelectOption<T>, IsMulti, GroupBase<SelectOption<T>>> {
   const s = SIZE[size];
   const shadowColor = `color-mix(in srgb, ${primary} 70%, #000)`;
@@ -139,23 +143,28 @@ function buildStyles<T, IsMulti extends boolean>(
       alignItems: 'center',
       width: '100%',
       minHeight: s.height,
+      height: !isMulti || (size === 'sm' && !wrapValues) ? s.height : undefined,
       background: '#fff',
       border: `2px solid ${
         hasError         ? 'rgb(242 80 66)' :
+        isDisabled       ? DISABLED_BORDER   :
         state.isFocused  ? primary          :
         'rgb(220 220 220)'
       }`,
       borderRadius: s.radius,
-      boxShadow: isDisabled ? 'none' :
-        hasError        ? `0 ${s.shadow}px 0 rgb(190 46 34)` :
-        state.isFocused ? `0 ${s.shadow}px 0 ${shadowColor}` :
-        `0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}`,
+      boxShadow: isDisabled
+        ? `0 ${s.shadow}px 0 ${DISABLED_SHADOW}`
+        : hasError
+          ? `0 ${s.shadow}px 0 rgb(190 46 34)`
+          : state.isFocused
+            ? `0 ${s.shadow}px 0 ${shadowColor}`
+            : `0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}`,
       cursor: isDisabled ? 'not-allowed' : 'pointer',
       fontFamily: FONT,
       fontSize: s.font,
       fontWeight: 600,
       letterSpacing: '0.2px',
-      opacity: isDisabled ? 0.5 : 1,
+      backgroundColor: isDisabled ? DISABLED_BACKGROUND : '#fff',
       transition: 'border-color 150ms ease-out, box-shadow 150ms ease-out',
       outline: 'none',
     }),
@@ -165,7 +174,10 @@ function buildStyles<T, IsMulti extends boolean>(
           ? 'flex'
           : 'grid',
       flex: 1,
-      flexWrap: isMulti ? 'wrap' as const : 'nowrap' as const,
+      flexWrap:
+        isMulti && (size !== 'sm' || wrapValues)
+          ? 'wrap' as const
+          : 'nowrap' as const,
       alignItems: 'center',
       padding: `4px ${s.px - 4}px`,
       gap:
@@ -177,7 +189,7 @@ function buildStyles<T, IsMulti extends boolean>(
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: 'rgb(55 55 55)',
+      color: isDisabled ? 'rgb(145 145 145)' : 'rgb(55 55 55)',
       fontFamily: FONT,
       fontWeight: 600,
       fontSize: s.font,
@@ -199,7 +211,9 @@ function buildStyles<T, IsMulti extends boolean>(
       display: 'flex',
       alignItems: 'center',
       flexShrink: 0,
+      height: s.height - 4,
       paddingRight: s.px - 10,
+      color: isDisabled ? 'rgb(175 175 175)' : undefined,
     }),
     dropdownIndicator: (_) => ({
       display: 'flex',
@@ -275,22 +289,26 @@ function buildStyles<T, IsMulti extends boolean>(
       alignItems: 'center',
       justifyContent: 'center',
       padding: '0 2px 0 8px',
-      minHeight: 24,
+      minHeight: size === 'sm' ? 20 : 24,
       border: '2px solid rgb(220 220 220)',
       borderRadius: 8,
-      background: '#fff',
-      boxShadow: '0 2px 0 rgb(220 220 220)',
+      background: isDisabled ? DISABLED_BACKGROUND : '#fff',
+      boxShadow: `0 2px 0 ${isDisabled ? DISABLED_SHADOW : 'rgb(220 220 220)'}`,
       flexShrink: 0,
+      maxWidth: wrapValues ? 'min(180px, 100%)' : size === 'sm' ? 84 : 140,
     }),
     multiValueLabel: (provided) => ({
       ...provided,
-      color: 'rgb(66 66 66)',
+      color: isDisabled ? 'rgb(145 145 145)' : 'rgb(66 66 66)',
       fontFamily: FONT,
-      fontSize: 12,
+      fontSize: size === 'sm' ? 11 : 12,
       fontWeight: 700,
-      lineHeight: '18px',
+      lineHeight: size === 'sm' ? '14px' : '18px',
       letterSpacing: '0.1px',
       padding: 0,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
     }),
     multiValueRemove: (_) => ({
       display: 'flex',
@@ -396,6 +414,7 @@ export interface MultiSelectProps<T> {
   onChange?:    (options: SelectOption<T>[]) => void;
   placeholder?: string;
   clearable?:   boolean;
+  wrapValues?:  boolean;
   disabled?:    boolean;
   size?:        SelectSize;
   label?:       string;
@@ -407,7 +426,7 @@ export interface MultiSelectProps<T> {
 
 export function MultiSelect<T>({
   options: staticOptions, loadOptions, value, onChange,
-  placeholder = 'Select...', clearable, disabled = false,
+  placeholder = 'Select...', clearable, wrapValues = false, disabled = false,
   size = 'md', label, hint, error, className, style,
 }: MultiSelectProps<T>) {
   const inputId = useId();
@@ -418,8 +437,16 @@ export function MultiSelect<T>({
   const [asyncOptions, setAsyncOptions] = useState<SelectOption<T>[]>([]);
   const [asyncLoading, setAsyncLoading] = useState(false);
   const styles = useMemo(
-    () => buildStyles<T, true>(colorPrimary, size, !!error, !!disabled, true),
-    [colorPrimary, size, error, disabled],
+    () =>
+      buildStyles<T, true>(
+        colorPrimary,
+        size,
+        !!error,
+        !!disabled,
+        true,
+        wrapValues,
+      ),
+    [colorPrimary, size, error, disabled, wrapValues],
   );
 
   const requestOptions = useCallback(

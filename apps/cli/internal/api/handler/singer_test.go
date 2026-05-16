@@ -457,6 +457,24 @@ func TestAdminGetSingerList(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert photos: %v", err)
 	}
+	// 准备音乐和歌手关联数据用于校验 musicCount 字段
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES
+			('music-1',1,'Song One','song-1.mp3','user-1',?),
+			('music-2',1,'Song Two','song-2.mp3','user-1',?),
+			('music-3',1,'Song Three','song-3.mp3','user-1',?)`,
+		now, now, now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music_singer_relation (musicId,singerId) VALUES
+			('music-1','singer-alpha'),
+			('music-2','singer-alpha'),
+			('music-3','singer-beta')`,
+	); err != nil {
+		t.Fatalf("insert music_singer_relation: %v", err)
+	}
 
 	type singerItem struct {
 		ID      string   `json:"id"`
@@ -467,6 +485,7 @@ func TestAdminGetSingerList(t *testing.T) {
 			Asset       string `json:"asset"`
 			Description string `json:"description"`
 		} `json:"photos"`
+		MusicCount int `json:"musicCount"`
 		CreateUser struct {
 			ID       string `json:"id"`
 			Username string `json:"username"`
@@ -528,6 +547,26 @@ func TestAdminGetSingerList(t *testing.T) {
 		}
 		if photos[1].ID != "photo-beta-2" || photos[1].Description != "second beta photo" {
 			t.Fatalf("unexpected second photo: %+v", photos[1])
+		}
+	})
+
+	t.Run("includes music count per singer", func(t *testing.T) {
+		resp := call("page=1&pageSize=10")
+		if resp.Code != "success" {
+			t.Fatalf("unexpected code: %s", resp.Code)
+		}
+		counts := map[string]int{}
+		for _, s := range resp.Data.SingerList {
+			counts[s.ID] = s.MusicCount
+		}
+		if counts["singer-alpha"] != 2 {
+			t.Fatalf("expected singer-alpha music count 2, got %d", counts["singer-alpha"])
+		}
+		if counts["singer-beta"] != 1 {
+			t.Fatalf("expected singer-beta music count 1, got %d", counts["singer-beta"])
+		}
+		if counts["singer-gamma"] != 0 {
+			t.Fatalf("expected singer-gamma music count 0, got %d", counts["singer-gamma"])
 		}
 	})
 

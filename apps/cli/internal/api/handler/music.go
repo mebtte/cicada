@@ -201,7 +201,7 @@ func GetMusic(c *gin.Context) {
 
 type createMusicBody struct {
 	Name      string `json:"name" binding:"required"`
-	SingerIDs string `json:"singerIds" binding:"required"`
+	SingerIDs string `json:"singerIds"`
 	Type      int    `json:"type"`
 	Asset     string `json:"asset" binding:"required"`
 }
@@ -226,11 +226,14 @@ func AdminCreateMusic(c *gin.Context) {
 		api.Fail(c, apperr.AssetNotExisted)
 		return
 	}
-	singerIDs := strings.Split(body.SingerIDs, ",")
-	ok, _ := store.SingersExist(singerIDs)
-	if !ok {
-		api.Fail(c, apperr.SingerNotExisted)
-		return
+	singerIDs := []string{}
+	if body.SingerIDs != "" {
+		singerIDs = strings.Split(body.SingerIDs, ",")
+		ok, _ := store.SingersExist(singerIDs)
+		if !ok {
+			api.Fail(c, apperr.SingerNotExisted)
+			return
+		}
 	}
 	id, err := store.CreateMusic(body.Name, musicType, u.ID, body.Asset)
 	if err != nil {

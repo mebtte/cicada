@@ -325,6 +325,7 @@ const PhotoList = styled.div`
 `;
 
 const PhotoButton = styled.button`
+  position: relative;
   width: ${PHOTO_SIZE}px;
   height: ${PHOTO_SIZE}px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -359,15 +360,28 @@ const PhotoButton = styled.button`
   }
 `;
 
-const Photo = styled.img`
+const Photo = styled.img<{ $loaded: boolean }>`
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  /* 加载完成前用透明遮住, 露出按钮白底, 避免快速滚动时露出 <img> 的浏览器原生裂图 */
+  opacity: ${({ $loaded }) => ($loaded ? 1 : 0)};
+  transition: opacity 120ms ease-out;
 `;
 
 const Muted = styled.span`
   color: ${CSSVariable.TEXT_COLOR_DISABLED};
+`;
+
+const MusicCount = styled.span`
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 800;
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 `;
 
 const UserName = styled.div`
@@ -536,8 +550,11 @@ function LazyPhoto({
   alt: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>) {
   const ref = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    // src 变化时重置, 防止旧照片/旧加载状态泄漏到新照片
+    setLoaded(false);
     const image = ref.current;
     if (!image || !src) return;
 
@@ -552,7 +569,13 @@ function LazyPhoto({
 
   return (
     <PhotoButton type="button" {...props}>
-      <Photo ref={ref} alt={alt} decoding="async" />
+      <Photo
+        ref={ref}
+        alt={alt}
+        decoding="async"
+        $loaded={loaded}
+        onLoad={() => setLoaded(true)}
+      />
     </PhotoButton>
   );
 }
@@ -791,6 +814,7 @@ function SingerManagement() {
                     <Th>{capitalize(t('name'))}</Th>
                     <Th>{capitalize(t('alias'))}</Th>
                     <Th>{capitalize(t('photo'))}</Th>
+                    <Th>{capitalize(t('music_amount'))}</Th>
                     <Th>{capitalize(t('creator'))}</Th>
                     <Th>{capitalize(t('create_time'))}</Th>
                     <Th>{capitalize(t('manage'))}</Th>
@@ -838,6 +862,9 @@ function SingerManagement() {
                             ))}
                           </PhotoList>
                         ) : null}
+                      </Td>
+                      <Td>
+                        <MusicCount>{singer.musicCount ?? 0}</MusicCount>
                       </Td>
                       <Td>{formatCreateUser(singer)}</Td>
                       <Td>

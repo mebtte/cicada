@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -238,6 +239,52 @@ func TestPartialUploadPutSequentialChunks(t *testing.T) {
 	_ = json.Unmarshal(status.Data, &statusData)
 	if statusData.ReceivedBytes != int64(len(payload)) {
 		t.Fatalf("expected %d, got %d", len(payload), statusData.ReceivedBytes)
+	}
+}
+
+func TestPartialUploadCompleteAllowsMP3MIMEFallback(t *testing.T) {
+	setupChunkedTest(t)
+
+	originalProbe := probeUploadedMusicHasAudioStream
+	t.Cleanup(func() {
+		probeUploadedMusicHasAudioStream = originalProbe
+	})
+	probeUploadedMusicHasAudioStream = func(context.Context, string) (bool, error) {
+		return false, nil
+	}
+
+	payload := append(
+		[]byte("ID3\x03\x00\x00\x00\x00\x00\x00"),
+		append([]byte{0xff, 0xfb, 0x90, 0x64}, bytes.Repeat([]byte{0}, 32)...)...,
+	)
+	hash := sha256Hex(payload)
+	body := initBody(string(config.AssetTypeMusic), int64(len(payload)), hash, int64(len(payload)), "song.mp3")
+
+	_, init := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
+		"/form/asset/chunked/init",
+		map[string]string{"Content-Type": "application/json"},
+		body, "user-1", nil)
+	if init.Code != apperr.Success {
+		t.Fatalf("init: %s", init.Code)
+	}
+	var initData initOK
+	_ = json.Unmarshal(init.Data, &initData)
+
+	rangeHdr := fmt.Sprintf("bytes 0-%d/%d", len(payload)-1, len(payload))
+	_, putResp := invokeChunkedHandler(t, PutPartialUploadChunk, http.MethodPut,
+		"/form/asset/chunked/"+initData.UploadID,
+		map[string]string{"Content-Range": rangeHdr},
+		payload, "user-1", gin.Params{{Key: "uploadId", Value: initData.UploadID}})
+	if putResp.Code != apperr.Success {
+		t.Fatalf("put: %s", putResp.Code)
+	}
+
+	_, complete := invokeChunkedHandler(t, CompletePartialUpload, http.MethodPost,
+		"/form/asset/chunked/"+initData.UploadID+"/complete",
+		nil, nil, "user-1",
+		gin.Params{{Key: "uploadId", Value: initData.UploadID}})
+	if complete.Code != apperr.Success {
+		t.Fatalf("complete: %s", complete.Code)
 	}
 }
 

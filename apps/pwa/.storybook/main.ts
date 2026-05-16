@@ -22,12 +22,6 @@ const config: StorybookConfig = {
       ...(config.resolve.alias as Record<string, string>),
       '@': SRC_DIR,
       '#': path.resolve(SRC_DIR, 'shared'),
-      fs: path.resolve(SRC_DIR, '__empty_module.ts'),
-      'react-native-fs': path.resolve(SRC_DIR, '__empty_module.ts'),
-      jsmediatags: path.resolve(
-        CURRENT_DIR,
-        '../node_modules/jsmediatags/dist/jsmediatags.min.js',
-      ),
     };
 
     config.define = {

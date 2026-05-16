@@ -109,6 +109,32 @@ func CountUserMusicbills(userID string) (int, error) {
 	return n, err
 }
 
+type MusicbillCount struct {
+	Total  int
+	Public int
+}
+
+// GetAllUserMusicbillCounts 一次性聚合所有用户的乐单数量, 避免按用户逐个查询.
+func GetAllUserMusicbillCounts() (map[string]MusicbillCount, error) {
+	rows, err := DB().Query(
+		`SELECT userId, COUNT(1), SUM(CASE WHEN public=1 THEN 1 ELSE 0 END) FROM musicbill GROUP BY userId`,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := map[string]MusicbillCount{}
+	for rows.Next() {
+		var userID string
+		var total, public int
+		if err := rows.Scan(&userID, &total, &public); err != nil {
+			return nil, err
+		}
+		out[userID] = MusicbillCount{Total: total, Public: public}
+	}
+	return out, nil
+}
+
 func GetMusicsInMusicbill(musicbillID string) ([]MusicInMusicbill, error) {
 	rows, err := DB().Query(
 		`SELECT m.id,m.type,m.name,m.aliases,m.cover,m.asset

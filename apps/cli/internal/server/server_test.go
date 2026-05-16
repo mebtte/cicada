@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
@@ -18,6 +19,30 @@ func TestNewServerDoesNotPanic(t *testing.T) {
 		Port: 8000,
 	})
 	_ = NewServer()
+}
+
+func TestCORSAllowsChunkedUploadHeaders(t *testing.T) {
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	r := NewServer()
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodOptions, "/form/asset/chunked/upload-id", nil)
+	req.Header.Set("Origin", "http://localhost:5173")
+	req.Header.Set("Access-Control-Request-Method", http.MethodPut)
+	req.Header.Set("Access-Control-Request-Headers", "content-range,x-cicada-token")
+
+	r.ServeHTTP(w, req)
+
+	if w.Code != http.StatusNoContent {
+		t.Fatalf("expected 204 preflight, got %d", w.Code)
+	}
+	allowHeaders := w.Header().Get("Access-Control-Allow-Headers")
+	if !strings.Contains(strings.ToLower(allowHeaders), "content-range") {
+		t.Fatalf("expected Content-Range to be allowed, got %q", allowHeaders)
+	}
 }
 
 func TestMusicWriteRoutesAreUnderAdmin(t *testing.T) {

@@ -3,15 +3,16 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import styled from 'styled-components';
 import {
   MdAdd,
   MdDelete,
-  MdMusicNote,
   MdOutlineFilePresent,
 } from 'react-icons/md';
+import DefaultCover from '@/asset/default_cover.jpeg';
 import {
   Drawer,
   DrawerContent,
@@ -44,6 +45,10 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
+import formatBytes from '@/utils/format_bytes';
+import getMusicFileMetadata, {
+  type Metadata as MusicFileMetadata,
+} from '@/utils/get_music_file_metadata';
 import stringArrayEqual from '@/utils/string_array_equal';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
@@ -54,6 +59,10 @@ import searchMusicRequest from '@/server/api/search_music';
 import searchSingerRequest from '@/server/api/search_singer';
 import updateMusic from '@/server/api/update_music';
 import uploadAsset from '@/server/form/upload_asset';
+import uploadAssetChunked, {
+  cancelPartialUpload,
+  type UploadPhase,
+} from '@/server/form/upload_asset_chunked';
 import CreateSingerLabel from '../components/create_singer_label';
 
 interface Singer {
@@ -95,6 +104,13 @@ interface Music {
   forkFromList: RelatedMusic[];
   forkList: RelatedMusic[];
   year: number | null;
+}
+
+interface MusicFileUploadProgress {
+  phase: UploadPhase;
+  uploadedBytes: number;
+  totalBytes: number;
+  instant: boolean;
 }
 
 const COVER_SIZE = 120;
@@ -257,6 +273,56 @@ const FileInfoSecondary = styled.div`
   font-size: 12px;
 `;
 
+const FileUploadProgressBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+`;
+
+const FileUploadTrack = styled.div`
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgb(229 231 235);
+  box-shadow: inset 0 0 0 1px ${CSSVariable.COLOR_BORDER};
+`;
+
+const FileUploadTrackValue = styled.div<{ $percent: number }>`
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: ${CSSVariable.COLOR_PRIMARY};
+  transform: scaleX(${({ $percent }) => $percent / 100});
+  transform-origin: left center;
+  transition: transform 160ms ease-out;
+`;
+
+const FileUploadMeta = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  font-family: ${FONT};
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+
+  > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  > span:last-child {
+    flex-shrink: 0;
+  }
+`;
+
 const AliasInputRow = styled.div`
   display: grid;
   grid-template-columns: 1fr max-content;
@@ -355,6 +421,112 @@ const formatFileSize = (size: number) => {
 
 const formatBitRate = (bitRate: number) => `${Math.round(bitRate / 1000)}kbps`;
 
+const clampPercent = (value: number) => Math.max(0, Math.min(100, value));
+
+const getFileUploadPercent = (progress: MusicFileUploadProgress) =>
+  progress.totalBytes
+    ? clampPercent((progress.uploadedBytes / progress.totalBytes) * 100)
+    : 0;
+
+const getFileUploadPhaseText = ({
+  phase,
+  instant,
+}: MusicFileUploadProgress) => {
+  if (instant) {
+    return t('instant_upload_hit');
+  }
+  switch (phase) {
+    case 'hashing':
+      return t('hashing_file');
+    case 'initializing':
+      return t('initializing_upload');
+    case 'uploading':
+      return t('uploading_file');
+    case 'completing':
+      return t('completing_upload');
+  }
+};
+
+const formatSelectedMusicMetadata = (metadata: MusicFileMetadata | null) => {
+  if (!metadata) {
+    return [];
+  }
+  return [
+    metadata.year ? `${metadata.year}` : '',
+    metadata.durationMs ? formatDurationMs(metadata.durationMs) : '',
+    metadata.codec ? metadata.codec.toUpperCase() : '',
+    metadata.bitRate ? formatBitRate(metadata.bitRate) : '',
+  ].filter(Boolean);
+};
+
+const isAbortedUploadError = (error: unknown) =>
+  typeof error === 'object' &&
+  error !== null &&
+  'code' in error &&
+  (error as { code?: unknown }).code === 'aborted';
+
+function MusicFileUploadProgressView({
+  progress,
+}: {
+  progress: MusicFileUploadProgress;
+}) {
+  const uploadPercent = getFileUploadPercent(progress);
+  return (
+    <FileUploadProgressBox>
+      <FileUploadTrack>
+        <FileUploadTrackValue $percent={uploadPercent} />
+      </FileUploadTrack>
+      <FileUploadMeta>
+        <span>{getFileUploadPhaseText(progress)}</span>
+        <span>
+          {formatBytes(progress.uploadedBytes)} / {formatBytes(progress.totalBytes)} ·{' '}
+          {Math.round(uploadPercent)}%
+        </span>
+      </FileUploadMeta>
+    </FileUploadProgressBox>
+  );
+}
+
+function SelectedMusicFileMetadata({ file }: { file: File }) {
+  const [loading, setLoading] = useState(false);
+  const [metadata, setMetadata] = useState<MusicFileMetadata | null>(null);
+
+  useEffect(() => {
+    let disposed = false;
+    setLoading(true);
+    setMetadata(null);
+    getMusicFileMetadata(file)
+      .then((nextMetadata) => {
+        if (!disposed) {
+          setMetadata(nextMetadata);
+        }
+      })
+      .catch((error) => {
+        logger.error(error as Error, 'Failed to read selected music metadata');
+        if (!disposed) {
+          setMetadata(null);
+        }
+      })
+      .finally(() => {
+        if (!disposed) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      disposed = true;
+    };
+  }, [file]);
+
+  const lines = formatSelectedMusicMetadata(metadata);
+
+  if (loading) {
+    return <> · {t('reading_metadata')}</>;
+  }
+
+  return lines.length ? <> · {lines.join(' · ')}</> : null;
+}
+
 function MusicFileField({
   music,
   onModifyFile,
@@ -428,6 +600,10 @@ function EditContent({
   const [coverSaving, setCoverSaving] = useState(false);
   const [fileSaving, setFileSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const mountedRef = useRef(true);
+  const fileUploadAbortRef = useRef<AbortController | null>(null);
+  const fileUploadIdRef = useRef<string | null>(null);
+  const fileSelectDialogIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     setName(music.name);
@@ -437,6 +613,27 @@ function EditContent({
     setForkFromList(music.forkFromList.map(formatMusicToOption));
     setYear(music.year === null ? '' : `${music.year}`);
   }, [music]);
+
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+      const uploadId = fileUploadIdRef.current;
+      fileUploadIdRef.current = null;
+      fileUploadAbortRef.current?.abort();
+      fileUploadAbortRef.current = null;
+      if (fileSelectDialogIdRef.current) {
+        dialog.close(fileSelectDialogIdRef.current);
+        fileSelectDialogIdRef.current = null;
+      }
+      // Drawer-local replacement uploads have no resume UI, so cancel the
+      // partial server session when the drawer disappears mid-upload.
+      if (uploadId) {
+        cancelPartialUpload(uploadId).catch((error) =>
+          logger.error(error as Error, 'Failed to cancel partial music upload'),
+        );
+      }
+    };
+  }, []);
 
   const searchMusic = useCallback(
     (search: string) => {
@@ -578,37 +775,127 @@ function EditContent({
       },
     });
 
-  const onModifyFile = () =>
-    dialog.fileSelect({
+  const uploadMusicFile = async (
+    file: File,
+    setDialogProgress: (progress: MusicFileUploadProgress | null) => void,
+    dialogSignal: AbortSignal,
+  ) => {
+    fileUploadAbortRef.current?.abort();
+    const controller = new AbortController();
+    const abortFromDialog = () => controller.abort();
+    dialogSignal.addEventListener('abort', abortFromDialog, { once: true });
+    fileUploadAbortRef.current = controller;
+    fileUploadIdRef.current = null;
+    let currentUploadedBytes = 0;
+    let currentTotalBytes = file.size;
+    if (mountedRef.current) {
+      setFileSaving(true);
+    }
+    setDialogProgress({
+      phase: 'hashing',
+      uploadedBytes: 0,
+      totalBytes: file.size,
+      instant: false,
+    });
+
+    try {
+      const { id, instant } = await uploadAssetChunked(file, AssetType.MUSIC, {
+        signal: controller.signal,
+        onPhase: (phase) => {
+          if (phase === 'completing') {
+            currentUploadedBytes = file.size;
+            currentTotalBytes = file.size;
+          }
+          setDialogProgress({
+            phase,
+            uploadedBytes: currentUploadedBytes,
+            totalBytes: currentTotalBytes,
+            instant: false,
+          });
+        },
+        onProgress: (uploadedBytes, totalBytes) => {
+          currentUploadedBytes = uploadedBytes;
+          currentTotalBytes = totalBytes;
+          setDialogProgress({
+            phase: 'uploading',
+            uploadedBytes,
+            totalBytes,
+            instant: false,
+          });
+        },
+        onResumeMetaResolved: (meta) => {
+          fileUploadIdRef.current = meta.uploadId;
+        },
+      });
+      fileUploadIdRef.current = null;
+      setDialogProgress({
+        phase: 'completing',
+        uploadedBytes: file.size,
+        totalBytes: file.size,
+        instant,
+      });
+      await updateMusic({
+        id: music.id,
+        key: AllowUpdateKey.ASSET,
+        value: id,
+      });
+      if (mountedRef.current) {
+        onReload();
+      }
+      return true;
+    } catch (error) {
+      const uploadId = fileUploadIdRef.current;
+      fileUploadIdRef.current = null;
+      if (uploadId) {
+        cancelPartialUpload(uploadId).catch((cancelError) =>
+          logger.error(
+            cancelError as Error,
+            'Failed to cancel partial music upload',
+          ),
+        );
+      }
+      if (isAbortedUploadError(error)) {
+        return false;
+      }
+      logger.error(error as Error, 'Failed to modify file of music');
+      notice.error(error instanceof Error ? error.message : String(error));
+      return false;
+    } finally {
+      dialogSignal.removeEventListener('abort', abortFromDialog);
+      if (fileUploadAbortRef.current === controller) {
+        fileUploadAbortRef.current = null;
+      }
+      setDialogProgress(null);
+      if (mountedRef.current) {
+        setFileSaving(false);
+      }
+    }
+  };
+
+  const onModifyFile = () => {
+    fileSelectDialogIdRef.current = dialog.fileSelect({
       title: t('modify_file_of_music'),
       label: t('file_of_music'),
       acceptTypes: MUSIC_ASSET_ACCEPT_TYPES,
       placeholder: upperCaseFirstLetter(
         t('one_of_formats', t('ffmpeg_supported_audio')),
       ),
-      onConfirm: async (file) => {
+      renderSelectedFileExtra: (file) => <SelectedMusicFileMetadata file={file} />,
+      onConfirm: (file, { setProgress, signal }) => {
         if (!file) {
-          notice.error(t('empty_file_warning'));
           return false;
         }
-        setFileSaving(true);
-        try {
-          const { id } = await uploadAsset(file, AssetType.MUSIC);
-          await updateMusic({
-            id: music.id,
-            key: AllowUpdateKey.ASSET,
-            value: id,
-          });
-          onReload();
-        } catch (error) {
-          logger.error(error, 'Failed to modify file of music');
-          notice.error(error.message);
-          return false;
-        } finally {
-          setFileSaving(false);
-        }
+        return uploadMusicFile(
+          file,
+          (progress) =>
+            setProgress(
+              progress ? <MusicFileUploadProgressView progress={progress} /> : null,
+            ),
+          signal,
+        );
       },
     });
+  };
 
   const onSave = async () => {
     const nextName = normalizeText(name);
@@ -725,11 +1012,7 @@ function EditContent({
       <Body>
         <CoverSection>
           <CoverBox>
-            {music.cover ? (
-              <img src={music.cover} alt={music.name} />
-            ) : (
-              <MdMusicNote />
-            )}
+            <img src={music.cover || DefaultCover} alt={music.name} />
           </CoverBox>
           <CoverActions>
             <Button

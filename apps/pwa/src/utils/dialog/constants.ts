@@ -112,16 +112,25 @@ export interface MultipleSelect<Value>
   loadOptions: (keyword: string) => Promise<SelectOption<Value>[]>;
 }
 
-export interface FileSelect
-  extends DialogOptions,
-    Confirmable<File | null>,
-    Cancelable {
+export interface FileSelectConfirmContext {
+  signal: AbortSignal;
+  setProgress: (progress: ReactNode | null) => void;
+}
+
+export interface FileSelect extends DialogOptions, Cancelable {
   type: DialogType.FILE_SELECT;
 
   title?: string;
   label: string;
   acceptTypes: string[];
   placeholder: string;
+  renderSelectedFileExtra?: (file: File) => ReactNode;
+  confirmVariant?: Variant;
+  confirmText?: string;
+  onConfirm?: (
+    file: File | null,
+    context: FileSelectConfirmContext,
+  ) => void | boolean | Promise<void | boolean>;
 }
 
 export interface TextareaList

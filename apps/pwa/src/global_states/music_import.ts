@@ -22,6 +22,9 @@ export interface ImportTaskParsedMetadata {
   artist?: string;
   year?: number;
   pictureDataURI?: string;
+  durationMs?: number;
+  codec?: string;
+  bitRate?: number;
 }
 
 export interface ImportTask {
@@ -48,31 +51,29 @@ export interface ImportTask {
   createdAt: number;
 }
 
-export interface WindowPosition {
-  x: number;
-  y: number;
+export interface MusicImportSummary {
+  startedCount: number;
+  activeCount: number;
+  finishedCount: number;
+  totalBytes: number;
+  uploadedBytes: number;
+  pct: number;
+  allDone: boolean;
 }
 
 interface MusicImportState {
   tasks: ImportTask[];
   /** Token bumped on success so MusicList can react and reload. */
   reloadToken: number;
-  /** Visibility of the global upload window. Lives here so it survives admin
+  /** Visibility of the global upload sidebar. Lives here so it survives admin
    *  menu switches and can be toggled from any page. */
   windowOpen: boolean;
-  /** Whether the upload window body is collapsed to the summary strip. */
-  windowMinimized: boolean;
-  /** Last user-chosen position. null means "use the default bottom-right
-   *  anchor"; stored only for the lifetime of the tab. */
-  windowPosition: WindowPosition | null;
 }
 
 export const useMusicImport = create<MusicImportState>(() => ({
   tasks: [],
   reloadToken: 0,
   windowOpen: false,
-  windowMinimized: false,
-  windowPosition: null,
 }));
 
 export function setWindowOpen(open: boolean) {
@@ -81,18 +82,6 @@ export function setWindowOpen(open: boolean) {
 
 export function toggleWindow() {
   useMusicImport.setState((s) => ({ windowOpen: !s.windowOpen }));
-}
-
-export function setWindowMinimized(minimized: boolean) {
-  useMusicImport.setState({ windowMinimized: minimized });
-}
-
-export function toggleMinimized() {
-  useMusicImport.setState((s) => ({ windowMinimized: !s.windowMinimized }));
-}
-
-export function setWindowPosition(position: WindowPosition | null) {
-  useMusicImport.setState({ windowPosition: position });
 }
 
 export function getTask(id: string): ImportTask | undefined {
@@ -129,15 +118,59 @@ export function bumpReloadToken() {
   useMusicImport.setState((s) => ({ reloadToken: s.reloadToken + 1 }));
 }
 
+export function isActiveImportPhase(phase: ImportPhase): boolean {
+  return (
+    phase === 'queued' ||
+    phase === 'hashing' ||
+    phase === 'initializing' ||
+    phase === 'uploading' ||
+    phase === 'completing' ||
+    phase === 'creating'
+  );
+}
+
+export function isFinishedImportPhase(phase: ImportPhase): boolean {
+  return phase === 'success' || phase === 'failed' || phase === 'canceled';
+}
+
+export function getMusicImportSummary(
+  tasks = useMusicImport.getState().tasks,
+): MusicImportSummary {
+  const totalBytes = tasks.reduce(
+    (sum, task) => sum + task.totalBytes,
+    0,
+  );
+  const uploadedBytes = tasks.reduce(
+    (sum, task) =>
+      sum + (task.phase === 'success' ? task.totalBytes : task.uploadedBytes),
+    0,
+  );
+  const activeCount = tasks.filter((task) =>
+    isActiveImportPhase(task.phase),
+  ).length;
+  const finishedCount = tasks.filter((task) =>
+    isFinishedImportPhase(task.phase),
+  ).length;
+  // Global progress is based on every file in the drawer. Drafts that have not
+  // started yet contribute their full size to the denominator and 0 uploaded
+  // bytes, so the total reflects the whole batch.
+  const pct =
+    totalBytes > 0
+      ? Math.min(100, (uploadedBytes / totalBytes) * 100)
+      : 0;
+
+  return {
+    startedCount: tasks.length,
+    activeCount,
+    finishedCount,
+    totalBytes,
+    uploadedBytes,
+    pct,
+    allDone: tasks.length > 0 && finishedCount === tasks.length,
+  };
+}
+
 /** True when at least one task is in a non-terminal upload phase. */
 export function hasActiveTasks(state = useMusicImport.getState()): boolean {
-  return state.tasks.some(
-    (t) =>
-      t.phase === 'queued' ||
-      t.phase === 'hashing' ||
-      t.phase === 'initializing' ||
-      t.phase === 'uploading' ||
-      t.phase === 'completing' ||
-      t.phase === 'creating',
-  );
+  return state.tasks.some((task) => isActiveImportPhase(task.phase));
 }

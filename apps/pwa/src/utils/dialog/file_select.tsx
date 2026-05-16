@@ -1,6 +1,6 @@
 import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
 import Button from '@/components/button';
-import { useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
@@ -61,8 +61,17 @@ function FileSelectContent({
   options: FileSelectShape;
 }) {
   const [file, setFile] = useState<File | null>(null);
+  const [progress, setProgress] = useState<ReactNode | null>(null);
   const [canceling, setCanceling] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const confirmAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(
+    () => () => {
+      confirmAbortRef.current?.abort();
+    },
+    [],
+  );
 
   const onSelectFile = useEvent(() => {
     if (confirming || canceling) {
@@ -70,7 +79,10 @@ function FileSelectContent({
     }
     return selectFile({
       acceptTypes: options.acceptTypes,
-      onSelect: setFile,
+      onSelect: (nextFile) => {
+        setFile(nextFile);
+        setProgress(null);
+      },
     });
   });
 
@@ -86,16 +98,32 @@ function FileSelectContent({
   });
 
   const onConfirm = () => {
+    if (!file) {
+      return;
+    }
+    const controller = new AbortController();
+    confirmAbortRef.current = controller;
     setConfirming(true);
     return Promise.resolve(
-      options.onConfirm ? options.onConfirm(file) : undefined,
+      options.onConfirm
+        ? options.onConfirm(file, {
+            signal: controller.signal,
+            setProgress,
+          })
+        : undefined,
     )
       .then((result) => {
         if (result === undefined || !!result) {
           onClose();
         }
       })
-      .finally(() => setConfirming(false));
+      .finally(() => {
+        if (confirmAbortRef.current === controller) {
+          confirmAbortRef.current = null;
+        }
+        setProgress(null);
+        setConfirming(false);
+      });
   };
 
   return (
@@ -109,8 +137,12 @@ function FileSelectContent({
         <Body>
           <SelectedFile>
             <FileName>{file.name}</FileName>
-            <FileSize>{formatFileSize(file.size)}</FileSize>
+            <FileSize>
+              {formatFileSize(file.size)}
+              {options.renderSelectedFileExtra?.(file)}
+            </FileSize>
           </SelectedFile>
+          {progress}
         </Body>
       ) : null}
       <DialogFooter $inline={options.inlineFooter}>
@@ -133,7 +165,7 @@ function FileSelectContent({
           variant={options.confirmVariant}
           onClick={onConfirm}
           loading={confirming}
-          disabled={canceling}
+          disabled={canceling || !file}
         >
           {options.confirmText || t('confirm')}
         </Button>
