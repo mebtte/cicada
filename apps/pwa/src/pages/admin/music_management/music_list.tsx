@@ -1107,11 +1107,7 @@ function MusicList({
                       <MusicFileInfo music={music} />
                     </Td>
                     <Td>
-                      {music.year === null ? (
-                        <Muted>{t('unknown')}</Muted>
-                      ) : (
-                        music.year
-                      )}
+                      {music.year === null ? null : music.year}
                     </Td>
                     <Td>
                       <Mono>{music.heat}</Mono>
