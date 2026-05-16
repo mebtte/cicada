@@ -6,7 +6,7 @@ import parseSearch from '@/utils/parse_search';
 import { CSSProperties, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { t } from '@/i18n';
-import capitalize from '#/utils/capitalize';
+import capitalize from '@/utils/capitalize';
 
 const style: CSSProperties = {
   flex: 1,
@@ -39,6 +39,7 @@ function Filter() {
   return (
     <Input
       style={style}
+      size="sm"
       autoFocus={!IS_TOUCHABLE}
       placeholder={capitalize(t('search'))}
       value={keyword}

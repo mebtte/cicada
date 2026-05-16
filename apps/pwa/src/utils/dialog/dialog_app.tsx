@@ -7,6 +7,7 @@ import {
   Alert as AlertShape,
   Captcha as CaptchaShape,
   Confirm as ConfirmShape,
+  Actions as ActionsShape,
   MultipleSelect as MultipleSelectShape,
   FileSelect as FileSelectShape,
   TextareaList as TextareaListShape,
@@ -16,6 +17,7 @@ import {
 import e, { EventType } from './eventemitter';
 import Alert from './alert';
 import Confirm from './confirm';
+import Actions from './actions';
 import Captcha from './captcha';
 import Input from './input';
 import InputList from './input_list';
@@ -57,6 +59,15 @@ function DialogApp() {
               <Confirm
                 key={d.id}
                 options={d as ConfirmShape}
+                onDestroy={onDestroy}
+              />
+            );
+          }
+          case DialogType.ACTIONS: {
+            return (
+              <Actions
+                key={d.id}
+                options={d as ActionsShape}
                 onDestroy={onDestroy}
               />
             );

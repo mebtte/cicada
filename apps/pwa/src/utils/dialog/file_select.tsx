@@ -1,14 +1,57 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
 import Button from '@/components/button';
-import { CSSProperties, useState } from 'react';
-import Label from '@/components/label';
-import FileSelect from '@/components/file_select';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
-import { FileSelect as FileSelectShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, FileSelect as FileSelectShape } from './constants';
 import useEvent from '../use_event';
+import selectFile from '../select_file';
 
-const contentStyle: CSSProperties = { overflow: 'hidden' };
+const Body = styled(DialogBody)`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const SelectedFile = styled.div`
+  padding: 12px 14px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+`;
+
+const FileName = styled.div`
+  color: rgb(75 75 75);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+`;
+
+const FileSize = styled.div`
+  margin-top: 4px;
+  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+  font-size: 12px;
+  font-weight: 700;
+`;
+
+const SelectFileButton = styled(Button)`
+  margin-right: auto;
+`;
+
+const formatFileSize = (size: number) => {
+  if (size < 1024) {
+    return `${size}B`;
+  }
+  if (size < 1024 * 1024) {
+    return `${Math.round(size / 1024)}KB`;
+  }
+  return `${(size / 1024 / 1024).toFixed(2)}MB`;
+};
 
 function FileSelectContent({
   onClose,
@@ -18,8 +61,31 @@ function FileSelectContent({
   options: FileSelectShape;
 }) {
   const [file, setFile] = useState<File | null>(null);
-
+  const [progress, setProgress] = useState<ReactNode | null>(null);
   const [canceling, setCanceling] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  const confirmAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(
+    () => () => {
+      confirmAbortRef.current?.abort();
+    },
+    [],
+  );
+
+  const onSelectFile = useEvent(() => {
+    if (confirming || canceling) {
+      return;
+    }
+    return selectFile({
+      acceptTypes: options.acceptTypes,
+      onSelect: (nextFile) => {
+        setFile(nextFile);
+        setProgress(null);
+      },
+    });
+  });
+
   const onCancel = useEvent(() => {
     setCanceling(true);
     return Promise.resolve(options.onCancel ? options.onCancel() : undefined)
@@ -31,48 +97,80 @@ function FileSelectContent({
       .finally(() => setCanceling(false));
   });
 
-  const [confirming, setConfirming] = useState(false);
   const onConfirm = () => {
+    if (!file) {
+      return;
+    }
+    const controller = new AbortController();
+    confirmAbortRef.current = controller;
     setConfirming(true);
     return Promise.resolve(
-      options.onConfirm ? options.onConfirm(file) : undefined,
+      options.onConfirm
+        ? options.onConfirm(file, {
+            signal: controller.signal,
+            setProgress,
+          })
+        : undefined,
     )
       .then((result) => {
         if (result === undefined || !!result) {
           onClose();
         }
       })
-      .finally(() => setConfirming(false));
+      .finally(() => {
+        if (confirmAbortRef.current === controller) {
+          confirmAbortRef.current = null;
+        }
+        setProgress(null);
+        setConfirming(false);
+      });
   };
 
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      <Content style={contentStyle}>
-        <Label label={options.label}>
-          <FileSelect
-            value={file}
-            onChange={(f) => setFile(f)}
-            disabled={confirming || canceling}
-            acceptTypes={options.acceptTypes}
-            placeholder={options.placeholder}
-          />
-        </Label>
-      </Content>
-      <Action>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      {file ? (
+        <Body>
+          <SelectedFile>
+            <FileName>{file.name}</FileName>
+            <FileSize>
+              {formatFileSize(file.size)}
+              {options.renderSelectedFileExtra?.(file)}
+            </FileSize>
+          </SelectedFile>
+          {progress}
+        </Body>
+      ) : null}
+      <DialogFooter $inline={options.inlineFooter}>
+        <SelectFileButton
+          variant="secondary"
+          onClick={onSelectFile}
+          disabled={confirming || canceling}
+        >
+          {t('select_file')}
+        </SelectFileButton>
+        <Button
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button
           variant={options.confirmVariant}
           onClick={onConfirm}
           loading={confirming}
-          disabled={canceling}
+          disabled={canceling || !file}
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

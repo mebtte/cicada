@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components/button';
 import {
   MdOutlineQueueMusic,
   MdPause,
@@ -15,7 +15,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import { QueueMusic } from '../constants';
-import notice from '@/utils/notice';
+import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
 import { useTheme } from '@/global_states/theme';
 
@@ -27,6 +27,8 @@ const onPause = () =>
 const onPrevious = () =>
   playerEventemitter.emit(PlayerEventType.ACTION_PREVIOUS, null);
 const onNext = () => playerEventemitter.emit(PlayerEventType.ACTION_NEXT, null);
+const alertNoPlayingMusic = () =>
+  dialog.alert({ content: t('no_music_is_playing') });
 
 const Style = styled.div`
   display: flex;
@@ -57,62 +59,84 @@ function Operation({
   loading: boolean;
 }) {
   const { miniMode } = useTheme();
+  const onTogglePlay = () => {
+    if (!queueMusic) {
+      return alertNoPlayingMusic();
+    }
+    return paused ? onPlay() : onPause();
+  };
+
   return (
     <Style>
       {miniMode ? null : (
         <>
-          <IconButton
+          <Button
+            square
+            variant="ghost"
+            size="sm"
             onClick={() =>
               queueMusic
                 ? playerEventemitter.emit(
                     PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
                     { music: queueMusic },
                   )
-                : notice.error(t('no_music_is_playing'))
+                : alertNoPlayingMusic()
             }
           >
             <MdReadMore />
-          </IconButton>
-          <IconButton
+          </Button>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
             onClick={() =>
               queueMusic
                 ? playerEventemitter.emit(
                     PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
                     { music: queueMusic },
                   )
-                : notice.error(t('no_music_is_playing'))
+                : alertNoPlayingMusic()
             }
           >
             <MdOutlinePostAdd />
-          </IconButton>
-          <IconButton
+          </Button>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
             onClick={() =>
               queueMusic
                 ? playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, {
                     id: queueMusic.id,
                   })
-                : notice.error(t('no_music_is_playing'))
+                : alertNoPlayingMusic()
             }
           >
             <MdMoreHoriz />
-          </IconButton>
+          </Button>
           <div className="divider" />
         </>
       )}
-      <IconButton onClick={openPlaylistPlayqueueDrawer}>
+      <Button square variant="ghost" size="sm" onClick={openPlaylistPlayqueueDrawer}>
         <MdOutlineQueueMusic />
-      </IconButton>
+      </Button>
       {miniMode ? null : (
-        <IconButton onClick={onPrevious}>
+        <Button square variant="ghost" size="sm" onClick={onPrevious}>
           <MdSkipPrevious />
-        </IconButton>
+        </Button>
       )}
-      <IconButton onClick={paused ? onPlay : onPause} loading={loading}>
+      <Button
+        square
+        variant="primary"
+        size="sm"
+        onClick={onTogglePlay}
+        loading={!!queueMusic && loading}
+      >
         {paused ? <MdPlayArrow /> : <MdPause />}
-      </IconButton>
-      <IconButton onClick={onNext}>
+      </Button>
+      <Button square variant="ghost" size="sm" onClick={onNext}>
         <MdSkipNext />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

@@ -1,0 +1,13 @@
+#:schema https://json.schemastore.org/any.json
+# Run with: CICADA_DATA=.dev-data air
+
+[build]
+  pre_cmd = ["node ../../scripts/ensure_ffmpeg_bundle.mjs"]
+  cmd = "go build -o ./tmp/cicada ."
+  entrypoint = ["./tmp/cicada", "start", "--port", "8000"]
+  include_ext = ["go"]
+  exclude_dir = ["tmp", ".dev-data"]
+  delay = 500
+
+[log]
+  time = false

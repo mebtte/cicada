@@ -1,21 +1,14 @@
-import Slider, { Edge } from '@/components/slider';
-import { CSSProperties } from 'react';
+import { Slider } from '@/components';
 import styled from 'styled-components';
-import absoluteFullSize from '@/style/absolute_full_size';
-import { CSSVariable } from '@/global_style';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { CONTROLLER_PROGRESS_HEIGHT } from '../constants';
 
-const style: CSSProperties = {
-  zIndex: 1,
-};
-const SecondTrack = styled.div`
-  ${absoluteFullSize}
-  background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_FIVE};
-  transform-origin: left;
-  transition: transform 0.3s;
+const StyledSlider = styled(Slider)`
+  z-index: 1;
+  flex: 0 0 ${CONTROLLER_PROGRESS_HEIGHT}px;
 `;
 
 function Progress({
@@ -34,18 +27,12 @@ function Progress({
   const percent = duration ? currentMillisecond / 1000 / duration : 0;
 
   return (
-    <Slider
-      edge={Edge.SQUARE}
-      current={percent}
+    <StyledSlider
+      edge="rounded"
+      value={percent}
       onChange={onChange}
-      style={style}
-      secondTrack={
-        <SecondTrack
-          style={{
-            transform: `scaleX(${bufferedPercent * 100}%)`,
-          }}
-        />
-      }
+      secondValue={bufferedPercent}
+      alwaysShowThumb
     />
   );
 }

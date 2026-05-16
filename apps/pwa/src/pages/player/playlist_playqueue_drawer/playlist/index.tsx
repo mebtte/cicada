@@ -3,17 +3,17 @@ import {
   useCallback,
   useContext,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 import styled from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
-import List from 'react-list';
-import IconButton from '@/components/icon_button';
+import Button from '@/components/button';
 import { MdPlayArrow, MdReadMore, MdOutlineClose } from 'react-icons/md';
-import { ComponentSize } from '@/constants/style';
 import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
+import VirtualList from '@/components/virtual_list';
 import { flexCenter } from '@/style/flexbox';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
@@ -29,15 +29,20 @@ import { filterMusic } from '../../utils';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
+import RemovalAnimationItem from '../removal_animation_item';
+import useRemovalAnimation from '../use_removal_animation';
 
 const Style = styled(TabContent)`
   > .content {
     ${absoluteFullSize}
 
-    padding-bottom: calc(${FILTER_HEIGHT}px + env(safe-area-inset-bottom, 0));
+    background: rgb(247 247 247);
+    padding-bottom: env(safe-area-inset-bottom, 0);
 
     &.list {
       overflow: auto;
+      padding-right: 16px;
+      padding-left: 16px;
       ${autoScrollbar}
     }
 
@@ -54,8 +59,10 @@ const Operation = styled.div`
 const removeStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
+const LIST_BOTTOM_SPACE = FILTER_HEIGHT + TAB_LIST_HEIGHT;
+const LIST_BOTTOM_SAFE_AREA_SPACE = `calc(${LIST_BOTTOM_SPACE}px + env(safe-area-inset-bottom, 0))`;
 
-function Playlist({ style }: { style: unknown }) {
+function Playlist() {
   const listRef = useRef<HTMLDivElement>(null);
 
   const [keyword, setKeyword] = useState('');
@@ -74,78 +81,112 @@ function Playlist({ style }: { style: unknown }) {
   }, [keyword]);
 
   const { height: titlebarAreaHeight } = useTitlebarArea();
-  const contentStyle: CSSProperties = {
-    paddingTop: TAB_LIST_HEIGHT + titlebarAreaHeight,
+  const listTopSpace = titlebarAreaHeight + 12;
+  const emptyContentStyle: CSSProperties = {
+    paddingTop: titlebarAreaHeight + 12,
+    paddingBottom: LIST_BOTTOM_SAFE_AREA_SPACE,
   };
 
-  const filteredPlaylist = playlist.filter((music) =>
-    filterMusic(music, keyword),
+  const filteredPlaylist = useMemo(
+    () => playlist.filter((music) => filterMusic(music, keyword)),
+    [keyword, playlist],
+  );
+  const getPlaylistItemKey = useCallback((music) => music.id, []);
+  const { finishRemoval, renderedItems: renderedPlaylist } = useRemovalAnimation(
+    filteredPlaylist,
+    getPlaylistItemKey,
+  );
+  const leavingIndexes = useMemo(
+    () =>
+      renderedPlaylist.flatMap((item, index) =>
+        item.leaving ? [index] : [],
+      ),
+    [renderedPlaylist],
   );
   return (
-    // @ts-expect-error
-    <Style style={style}>
-      {filteredPlaylist.length ? (
-        <div className="content list" style={contentStyle} ref={listRef}>
-          <List
-            length={filteredPlaylist.length}
-            type="uniform"
-            // eslint-disable-next-line react/no-unstable-nested-components
-            itemRenderer={(index, key) => {
-              const music = filteredPlaylist[index];
+    <Style>
+      {renderedPlaylist.length ? (
+        <div className="content list" ref={listRef}>
+          <VirtualList
+            count={renderedPlaylist.length}
+            forceRenderIndexes={leavingIndexes}
+            getItemKey={(index) => renderedPlaylist[index].key}
+            paddingStart={listTopSpace}
+            paddingEnd={LIST_BOTTOM_SPACE}
+            scrollElementRef={listRef}
+            renderItem={(index, key, { requestMeasure }) => {
+              const renderedMusic = renderedPlaylist[index];
+              const music = renderedMusic.item;
               return (
-                <MusicBase
+                <RemovalAnimationItem
                   key={key}
-                  index={music.index}
-                  music={music}
-                  active={music.id === currentMusic?.id}
-                  lineAfter={
-                    <Operation>
-                      <IconButton
-                        size={ComponentSize.SMALL}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          return playerEventemitter.emit(
-                            PlayerEventType.ACTION_PLAY_MUSIC,
-                            { music },
-                          );
-                        }}
-                      >
-                        <MdPlayArrow />
-                      </IconButton>
-                      <IconButton
-                        size={ComponentSize.SMALL}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          return playerEventemitter.emit(
-                            PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-                            { music },
-                          );
-                        }}
-                      >
-                        <MdReadMore />
-                      </IconButton>
-                      <IconButton
-                        size={ComponentSize.SMALL}
-                        style={removeStyle}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          return playerEventemitter.emit(
-                            PlayerEventType.ACTION_REMOVE_PLAYLIST_MUSIC,
-                            { id: music.id },
-                          );
-                        }}
-                      >
-                        <MdOutlineClose />
-                      </IconButton>
-                    </Operation>
-                  }
-                />
+                  itemKey={renderedMusic.key}
+                  leaving={renderedMusic.leaving}
+                  finishRemoval={finishRemoval}
+                  requestMeasure={requestMeasure}
+                >
+                  <MusicBase
+                    index={music.index}
+                    music={music}
+                    active={
+                      !renderedMusic.leaving && music.id === currentMusic?.id
+                    }
+                    lineAfter={
+                      <Operation>
+                        <Button
+                          className="primary-action"
+                          square
+                          variant="plain"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            return playerEventemitter.emit(
+                              PlayerEventType.ACTION_PLAY_MUSIC,
+                              { music },
+                            );
+                          }}
+                        >
+                          <MdPlayArrow />
+                        </Button>
+                        <Button
+                          square
+                          variant="plain"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            return playerEventemitter.emit(
+                              PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                              { music },
+                            );
+                          }}
+                        >
+                          <MdReadMore />
+                        </Button>
+                        <Button
+                          square
+                          variant="plain"
+                          size="sm"
+                          style={removeStyle}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            return playerEventemitter.emit(
+                              PlayerEventType.ACTION_REMOVE_PLAYLIST_MUSIC,
+                              { id: music.id },
+                            );
+                          }}
+                        >
+                          <MdOutlineClose />
+                        </Button>
+                      </Operation>
+                    }
+                  />
+                </RemovalAnimationItem>
               );
             }}
           />
         </div>
       ) : (
-        <div className="content empty" style={contentStyle}>
+        <div className="content empty" style={emptyContentStyle}>
           <Empty
             description={keyword ? t('no_suitable_music') : t('empty_playlist')}
           />

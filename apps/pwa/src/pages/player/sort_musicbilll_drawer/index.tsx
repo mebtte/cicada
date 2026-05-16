@@ -5,11 +5,13 @@ import SortMusicbillDrawer from './sort_musicbill_drawer';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import useDynamicZIndex from '../use_dynamic_z_index';
 
 function Wrapper() {
   const { getMusicbillListStatus, musicbillList } = useContext(Context);
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
+  const zIndex = useDynamicZIndex(PlayerEventType.OPEN_MUSICBILL_ORDER_DRAWER);
 
   useEffect(() => {
     const unlistenOpen = playerEventemitter.listen(
@@ -25,6 +27,7 @@ function Wrapper() {
         open={open}
         onClose={onClose}
         musicbillList={musicbillList}
+        zIndex={zIndex}
       />
     );
   }

@@ -1,5 +1,13 @@
-import { Response } from '#/server/api/get_shared_musicbill_invitation_list';
 import { request } from '..';
+
+type Response = {
+  id: number;
+  inviteTimestamp: number;
+  inviteUserId: string;
+  inviteUserNickname: string;
+  musicbillId: string;
+  musicbillName: string;
+}[];
 
 /**
  * 获取共享乐单邀请列表

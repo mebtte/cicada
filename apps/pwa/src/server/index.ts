@@ -1,17 +1,19 @@
-import { ExceptionCode } from '#/constants/exception';
+import { ExceptionCode } from '@/constants/exception';
 import {
   useServer,
   getSelectedServer,
   getSelectedUser,
 } from '@/global_states/server';
 import ErrorWithCode from '@/utils/error_with_code';
-import sleep from '#/utils/sleep';
+import sleep from '@/utils/sleep';
 import definition from '@/definition';
 import { NORMAL_REQUEST_MINIMAL_DURATION } from '@/constants';
-import timeoutFn from '#/utils/timeout';
-import { CommonQuery, HEADER_TOKEN } from '#/constants';
+import timeoutFn from '@/utils/timeout';
+import { CommonQuery } from '@/constants';
+import { HEADER_TOKEN } from '@/constants/api';
 import { t } from '@/i18n';
 import { useSetting } from '@/global_states/setting';
+import { isSameMajorVersion } from '@/utils/version';
 
 export enum Method {
   GET = 'get',
@@ -54,6 +56,15 @@ export async function request<Data = void>({
       ExceptionCode.NOT_AUTHORIZED,
     );
   }
+  if (!isSameMajorVersion(definition.VERSION, selectedServer.version)) {
+    throw new Error(
+      t(
+        'server_major_version_mismatch',
+        definition.VERSION,
+        selectedServer.version,
+      ),
+    );
+  }
 
   const selectedUser = getSelectedUser(selectedServer);
   let url = `${selectedServer.origin}${path}`;
@@ -63,10 +74,11 @@ export async function request<Data = void>({
     ...getCommonParams(),
   };
   url += `?${Object.keys(combineParams)
+    .filter((key) => combineParams[key] !== undefined)
     .map(
       (key) =>
         `${window.encodeURIComponent(key)}=${window.encodeURIComponent(
-          combineParams[key],
+          combineParams[key]!,
         )}`,
     )
     .join('&')}`;
@@ -87,13 +99,12 @@ export async function request<Data = void>({
       processedBody = body;
     } else {
       processedBody = JSON.stringify(body);
-      // eslint-disable-next-line no-param-reassign
       headers['Content-Type'] = 'application/json';
     }
   }
 
-  const [response] = await Promise.race([
-    Promise.all([
+  const response = await Promise.race([
+    Promise.allSettled([
       window
         .fetch(url, {
           method,
@@ -106,7 +117,12 @@ export async function request<Data = void>({
           });
         }),
       sleep(requestMinimalDuration),
-    ]),
+    ]).then(([fetchResult]) => {
+      if (fetchResult.status === 'rejected') {
+        throw fetchResult.reason;
+      }
+      return fetchResult.value;
+    }),
     timeoutFn(timeout).catch(() =>
       Promise.reject(new Error(t('timeout_while_fetching_data'))),
     ),

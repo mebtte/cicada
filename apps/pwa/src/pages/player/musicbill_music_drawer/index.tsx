@@ -2,11 +2,13 @@ import { memo, useState, useCallback, useEffect } from 'react';
 import eventemitter, { EventType } from '../eventemitter';
 import { MusicWithSingerAliases } from '../constants';
 import MusicbillMusicDrawer from './musicbill_music_drawer';
+import useDynamicZIndex from '../use_dynamic_z_index';
 
 function Wrapper() {
   const [open, setOpen] = useState(false);
   const [music, setMusic] = useState<MusicWithSingerAliases | null>(null);
   const onClose = useCallback(() => setOpen(false), []);
+  const zIndex = useDynamicZIndex(EventType.OPEN_MUSICBILL_MUSIC_DRAWER);
 
   useEffect(() => {
     const unlistenOpenMusicbillListDrawer = eventemitter.listen(
@@ -22,7 +24,7 @@ function Wrapper() {
   if (!music) {
     return null;
   }
-  return <MusicbillMusicDrawer open={open} onClose={onClose} music={music} />;
+  return <MusicbillMusicDrawer open={open} onClose={onClose} music={music} zIndex={zIndex} />;
 }
 
 export default memo(Wrapper);

@@ -3,7 +3,7 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties, useEffect, useState } from 'react';
 import { t } from '@/i18n';
-import capitalize from '#/utils/capitalize';
+import capitalize from '@/utils/capitalize';
 
 const style: CSSProperties = {
   flex: 1,

@@ -1,34 +1,47 @@
-import { memo, useCallback, useLayoutEffect, useRef } from 'react';
+import { memo, ReactNode, useCallback, useLayoutEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdInfoOutline, MdErrorOutline } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import { UtilZIndex } from '@/constants/style';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { Notice, TRANSITION_DURATION, NoticeType } from './constants';
 import e, { EventType } from './eventemitter';
-import IconButton from '../../components/icon_button';
+import Button from '@/components/button';
 
 const NOTICE_TYPE_MAP: Record<
   NoticeType,
   {
+    icon: ReactNode;
     css: ReturnType<typeof css>;
   }
 > = {
   [NoticeType.INFO]: {
+    icon: <MdInfoOutline />,
     css: css`
       background-color: ${CSSVariable.COLOR_PRIMARY};
+      border-color: ${CSSVariable.COLOR_PRIMARY_ACTIVE};
+      box-shadow:
+        0 4px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE},
+        0 14px 28px rgb(0 0 0 / 0.18),
+        0 0 18px rgb(44 182 125 / 0.28);
     `,
   },
   [NoticeType.ERROR]: {
+    icon: <MdErrorOutline />,
     css: css`
       background-color: ${CSSVariable.COLOR_DANGEROUS};
+      border-color: rgb(190 46 34);
+      box-shadow:
+        0 4px 0 rgb(190 46 34),
+        0 14px 28px rgb(0 0 0 / 0.18),
+        0 0 18px rgb(242 80 66 / 0.24);
     `,
   },
 };
 const slideIn = keyframes`
   0% {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateX(110%);
   } 100% {
     opacity: 1;
     transform: translateX(0%);
@@ -46,42 +59,74 @@ const Style = styled.div<{ type: NoticeType }>`
 
   position: fixed;
   right: 20px;
-  max-width: min(300px, 75%);
+  max-width: min(320px, 75%);
+
+  /**
+   * Radix Dialog 在 modal 模式下会给 body 设置 pointer-events: none,
+   * notice 渲染在 body 上, 会继承该样式导致无法点击, 故显式开启.
+   * @author mebtte<i@mebtte.com>
+   */
+  pointer-events: auto;
 
   overflow: hidden;
-  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
-  animation: ${slideIn} ${TRANSITION_DURATION}ms ease-in-out;
-  transition: all ${TRANSITION_DURATION}ms;
-  box-shadow: rgb(0 0 0 / 20%) 0px 3px 5px -1px,
-    rgb(0 0 0 / 14%) 0px 6px 10px 0px, rgb(0 0 0 / 12%) 0px 1px 18px 0px;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 16px;
+  animation: ${slideIn} ${TRANSITION_DURATION}ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition:
+    top ${TRANSITION_DURATION}ms ease-out,
+    opacity ${TRANSITION_DURATION}ms ease-out,
+    transform ${TRANSITION_DURATION}ms ease-out;
 
   > .top {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px 15px 3px 15px;
+    gap: 10px;
+    padding: 10px 10px 10px 14px;
+
+    > .type-icon {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: #fff;
+      font-size: 22px;
+      line-height: 1;
+
+      > svg {
+        display: block;
+      }
+    }
 
     > .content {
       flex: 1;
       min-width: 0;
 
-      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-      line-height: 1.5;
+      font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+      font-weight: 700;
+      line-height: 1.35;
       color: #fff;
+      letter-spacing: 0.1px;
+      overflow-wrap: anywhere;
 
       ${upperCaseFirstLetter}
     }
 
     > .close {
-      margin-right: -10px;
+      flex: 0 0 auto;
 
       color: #fff;
     }
   }
 
   > .progress {
-    height: 2px;
-    background-color: rgb(255 255 255 / 0.4);
+    height: 3px;
+    background-color: rgb(255 255 255 / 0.55);
     transform-origin: right;
     animation-name: ${countdown};
     animation-timing-function: linear;
@@ -99,7 +144,8 @@ const Style = styled.div<{ type: NoticeType }>`
 
 function NoticeItem({ notice }: { notice: Notice }) {
   const ref = useRef<HTMLDivElement>(null);
-  const { id, type, duration, content, visible, top, closable } = notice;
+  const { id, type, duration, content, visible, top, closable, showTypeIcon } =
+    notice;
   const onClose = useCallback(() => e.emit(EventType.CLOSE, { id }), [id]);
 
   useLayoutEffect(() => {
@@ -112,16 +158,19 @@ function NoticeItem({ notice }: { notice: Notice }) {
       style={{
         top,
         opacity: visible ? 1 : 0,
-        transform: `translateX(${visible ? 0 : 100}%)`,
+        transform: `translateX(${visible ? 0 : 110}%)`,
       }}
       type={type}
     >
       <div className="top">
+        {showTypeIcon ? (
+          <div className="type-icon">{NOTICE_TYPE_MAP[type].icon}</div>
+        ) : null}
         <div className="content">{content}</div>
         {closable ? (
-          <IconButton className="close" onClick={onClose} size={24}>
+          <Button className="close" square variant="plain" size="sm" onClick={onClose}>
             <MdClose />
-          </IconButton>
+          </Button>
         ) : null}
       </div>
       {duration === 0 ? null : (

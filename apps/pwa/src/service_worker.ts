@@ -6,7 +6,9 @@ import { CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
 import { CacheName } from '@/constants/cache';
-import { AssetType, CommonQuery, PathPrefix } from '#/constants';
+import { AssetType } from '@/constants/asset';
+import { PathPrefix } from '@/constants/api';
+import { CommonQuery } from '@/constants';
 import parseSearch from './utils/parse_search';
 import definition from './definition';
 
@@ -25,7 +27,6 @@ if (process.env.NODE_ENV === 'production') {
    * workbox injectManifest 注入的缓存资源列表
    * @author mebtte<i@mebtte.com>
    */
-  // eslint-disable-next-line no-underscore-dangle
   precacheAndRoute(self.__WB_MANIFEST || []);
 
   self.addEventListener('message', (event) => {
@@ -82,7 +83,6 @@ registerRoute(
     cacheName: CacheName.ASSET_MEDIA,
     matchOptions: {
       ignoreVary: true,
-      ignoreSearch: true,
       ignoreMethod: true,
     },
     plugins: [

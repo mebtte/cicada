@@ -1,14 +1,10 @@
-# node & npm
-node_modules/
-
 # macOS
 .DS_Store
 
-# build & dist
-dist/
+tmp/
 build/
-coverage/
+apps/cli/internal/ffmpeg/generated/
+apps/cli/internal/ffmpeg/zz_bundle_*.go
 
-# cicada
-/config.json
-/cache
+# claude
+.claude/

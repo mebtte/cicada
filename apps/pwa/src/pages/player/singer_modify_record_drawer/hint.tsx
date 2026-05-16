@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SINGER_MODIFY_RECORD_TTL } from '#/constants';
+import { SINGER_MODIFY_RECORD_TTL } from '@/constants/singer';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 

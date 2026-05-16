@@ -4,7 +4,7 @@ import { useEffect, useMemo } from 'react';
 import PageContainer from '@/components/page_container';
 import useDocumentTitle from '@/utils/use_document_title';
 import { t } from '@/i18n';
-import capitalize from '#/utils/capitalize';
+import capitalize from '@/utils/capitalize';
 import Sidebar from './sidebar';
 import Header from './header';
 import Controller from './controller';
@@ -20,24 +20,27 @@ import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
 import MusicbillMusicDrawer from './musicbill_music_drawer';
 import SortMusicbillDrawer from './sort_musicbilll_drawer';
 import MusicbillSharedUserDrawer from './musicbill_shared_user_drawer';
+import SharedMusicbillInvitationDrawer from './pages/shared_musicbill_invitation';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
-import useKeyboard from './use_keyboard';
 import SingerDrawer from './singer_drawer';
-import ProfileEditPopup from './profile_edit_popup';
 import UserDrawer from './user_drawer';
-import PublicMusicbillDrawer from './public_musicbill_drawer';
+import MusicbillDrawer from './musicbill_drawer';
+import AuthorizedDeviceDrawer from './authorized_device_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import e, { EventType } from './eventemitter';
 import SingerModifyRecordDrawer from './singer_modify_record_drawer';
 import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
-import useStopTimer from './use_stop_timer';
-import StopTimer from './stop_timer';
-import useDownload from './use_download';
+import useExport from './use_export';
+import PlaylistAddAnimation from './playlist_add_animation';
+import PlayqueueInsertAnimation from './playqueue_insert_animation';
+import PublicMusicbillCollectionDrawer from './public_musicbill_collection_drawer';
 
 const Style = styled(PageContainer)`
+  position: relative;
+
   display: flex;
   flex-direction: column;
 
@@ -80,17 +83,25 @@ function Wrapper() {
     paused: audioPaused,
     duration: audioDuration,
     bufferedPercent: audioBufferedPercent,
-  } = useAudio({ queueMusic });
-  const stopTimer = useStopTimer();
+    audio,
+  } = useAudio({
+    queueMusic,
+    playqueue,
+    currentPlayqueuePosition,
+  });
 
-  useKeyboard({ paused: audioPaused, queueMusic, musicbillList });
-  useMediaSession(queueMusic);
+  useMediaSession({
+    music: queueMusic,
+    audio,
+    paused: audioPaused,
+    duration: audioDuration,
+  });
   useEffect(
     () => e.emit(EventType.CURRENT_MUSIC_CHANGE, { queueMusic }),
     [queueMusic],
   );
 
-  const downloadingMusicList = useDownload();
+  const exportingMusicList = useExport();
   const contextValue = useMemo(
     () => ({
       getMusicbillListStatus,
@@ -108,9 +119,7 @@ function Wrapper() {
 
       lyricPanelOpen,
 
-      stopTimer,
-
-      downloadingMusicList,
+      exportingMusicList,
     }),
     [
       audioBufferedPercent,
@@ -123,8 +132,7 @@ function Wrapper() {
       musicbillList,
       playlist,
       playqueue,
-      stopTimer,
-      downloadingMusicList,
+      exportingMusicList,
     ],
   );
   return (
@@ -140,8 +148,6 @@ function Wrapper() {
         </div>
         <Controller lyricPanelOpen={lyricPanelOpen} />
         {queueMusic ? <LyricPanel open={lyricPanelOpen} /> : null}
-
-        {stopTimer ? <StopTimer stopTimer={stopTimer} /> : null}
       </Style>
 
       {/* dynamic z-index */}
@@ -151,12 +157,17 @@ function Wrapper() {
       <MusicbillMusicDrawer />
       <SortMusicbillDrawer />
       <UserDrawer />
-      <PublicMusicbillDrawer />
+      <MusicbillDrawer />
+      <PublicMusicbillCollectionDrawer />
+      <AuthorizedDeviceDrawer />
       <MusicbillSharedUserDrawer />
+      <SharedMusicbillInvitationDrawer />
       <SingerModifyRecordDrawer />
 
+      <PlaylistAddAnimation />
+      <PlayqueueInsertAnimation />
+
       {/* fixed z-index */}
-      <ProfileEditPopup />
       <TwoFADialog />
     </context.Provider>
   );

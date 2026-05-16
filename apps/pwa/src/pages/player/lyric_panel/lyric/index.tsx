@@ -1,9 +1,8 @@
-import absoluteFullSize from '@/style/absolute_full_size';
 import { animated, useTransition } from 'react-spring';
 import styled from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components/button';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
@@ -12,42 +11,56 @@ import { Status } from './constants';
 import useLyricData from './use_lyric_data';
 import Lyric from './lyric';
 
-const Container = styled(animated.div)`
+const Container = styled(animated.div)<{ $controllerHeight: number }>`
   z-index: 1;
 
-  ${absoluteFullSize}
-  height: calc(100% - 120px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: ${({ $controllerHeight }) => `${$controllerHeight}px`};
 `;
 const LoadingContainer = styled(Container)`
   ${flexCenter}
 `;
 const ErrorContainer = styled(Container)`
   ${flexCenter}
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 40px;
 
-  >.content {
-    backdrop-filter: blur(10px);
-    background-color: rgb(255 255 255 / 0.8);
-    border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
+  > .message {
+    display: inline-grid;
 
-    padding: 20px;
-    margin: 0 20px;
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-align: center;
+    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-
-    > .message {
-      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-      text-align: center;
+    > span {
+      grid-area: 1 / 1;
 
       ${upperCaseFirstLetter}
+    }
+
+    > .outline {
+      color: transparent;
+      pointer-events: none;
+      -webkit-text-stroke: 3px rgb(255 255 255 / 0.96);
     }
   }
 `;
 
-function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
+function Wrapper({
+  queueMusic,
+  controllerHeight,
+}: {
+  queueMusic: QueueMusic;
+  controllerHeight: number;
+}) {
   const { data, retry } = useLyricData(queueMusic);
 
   const transitions = useTransition(data, {
@@ -60,7 +73,7 @@ function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
     switch (d.status) {
       case Status.SUCCESS: {
         return (
-          <Container style={style}>
+          <Container style={style} $controllerHeight={controllerHeight}>
             <Lyric lrcs={d.lrcs} />
           </Container>
         );
@@ -68,7 +81,10 @@ function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
 
       case Status.LOADING: {
         return (
-          <LoadingContainer style={style}>
+          <LoadingContainer
+            style={style}
+            $controllerHeight={controllerHeight}
+          >
             <Spinner />
           </LoadingContainer>
         );
@@ -76,13 +92,16 @@ function Wrapper({ queueMusic }: { queueMusic: QueueMusic }) {
 
       case Status.ERROR: {
         return (
-          <ErrorContainer style={style}>
-            <div className="content">
-              <div className="message">{d.error.message}</div>
-              <Button variant={Variant.PRIMARY} onClick={retry}>
-                {t('retry')}
-              </Button>
+          <ErrorContainer style={style} $controllerHeight={controllerHeight}>
+            <div className="message">
+              <span className="outline" aria-hidden>
+                {d.error.message}
+              </span>
+              <span>{d.error.message}</span>
             </div>
+            <Button variant="primary" onClick={retry}>
+              {t('retry')}
+            </Button>
           </ErrorContainer>
         );
       }

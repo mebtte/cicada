@@ -25,7 +25,7 @@ const dataLoading: Data = {
   value: [],
 };
 
-export default () => {
+export default (enabled = true) => {
   const [data, setData] = useState<Data>(dataLoading);
   const getData = useCallback(async () => {
     setData(dataLoading);
@@ -47,8 +47,10 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    getData();
-  }, [getData]);
+    if (enabled) {
+      getData();
+    }
+  }, [enabled, getData]);
 
   return { data, reload: getData };
 };

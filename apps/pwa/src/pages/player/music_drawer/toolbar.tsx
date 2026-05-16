@@ -1,55 +1,71 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components/button';
 import {
   MdPlayArrow,
   MdReadMore,
   MdOutlinePostAdd,
   MdPlaylistAdd,
-  MdOutlineEdit,
-  MdOutlineDownload,
 } from 'react-icons/md';
-import { saveAs } from 'file-saver';
-import formatMusicFilename from '#/utils/format_music_filename';
-import { useUser } from '@/global_states/server';
-import e, { EventType } from './eventemitter';
+import { IconExport } from '@/components/icon';
 import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
-import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import { downloadMusicListByFileSystem } from '../utils';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
+import { openExportMusicListDialog } from '../export_music_list';
+import addMusicListToPlaylist from '../add_to_playlist';
+import { t } from '@/i18n';
 
-const Style = styled.div`
+const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
 
-  position: sticky;
-  bottom: 0;
-  height: calc(50px + env(safe-area-inset-bottom, 0));
-  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset
+      ? CONTROLLER_FLOATING_RESERVED_HEIGHT
+      : 'calc(14px + env(safe-area-inset-bottom, 0))'};
+  max-width: calc(100% - 32px);
+  padding: 8px 12px;
+  box-sizing: border-box;
 
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
 
-  backdrop-filter: blur(5px);
+  background: rgb(255 255 255 / 0.92);
+  border: 2px solid rgb(229 229 229);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 0 rgb(229 229 229),
+    0 10px 24px rgb(0 0 0 / 0.1);
+  backdrop-filter: blur(12px);
 
   > .left {
-    flex: 1;
     min-width: 0;
 
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
   }
 `;
 
-function Toolbar({ music }: { music: MusicDetail }) {
-  const user = useUser()!;
-
+function Toolbar({
+  music,
+  floatingControllerOffset = false,
+}: {
+  music: MusicDetail;
+  floatingControllerOffset?: boolean;
+}) {
   return (
-    <Style>
+    <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
-        <IconButton
+        <Button
+          square
+          variant="primary"
+          size="sm"
+          aria-label={t('play')}
           onClick={() =>
             playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, {
               music,
@@ -57,8 +73,12 @@ function Toolbar({ music }: { music: MusicDetail }) {
           }
         >
           <MdPlayArrow />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          aria-label={t('play_next')}
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
@@ -69,8 +89,12 @@ function Toolbar({ music }: { music: MusicDetail }) {
           }
         >
           <MdReadMore />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          aria-label={t('add_to_musicbill')}
           onClick={() =>
             playerEventemitter.emit(
               PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
@@ -81,41 +105,26 @@ function Toolbar({ music }: { music: MusicDetail }) {
           }
         >
           <MdOutlinePostAdd />
-        </IconButton>
-        <IconButton
-          onClick={() =>
-            playerEventemitter.emit(
-              PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-              {
-                musicList: [music],
-              },
-            )
-          }
+        </Button>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          aria-label={t('add_to_playlist')}
+          onClick={() => addMusicListToPlaylist([music])}
         >
           <MdPlaylistAdd />
-        </IconButton>
-        <IconButton
-          onClick={() =>
-            ENABLE_FILE_SYSTEM
-              ? downloadMusicListByFileSystem([music])
-              : saveAs(
-                  music.asset,
-                  formatMusicFilename({
-                    name: music.name,
-                    singerNames: music.singers.map((s) => s.name),
-                    ext: music.asset.split('.').at(-1)!,
-                  }),
-                )
-          }
+        </Button>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          aria-label={t('export_music')}
+          onClick={() => openExportMusicListDialog([music])}
         >
-          <MdOutlineDownload />
-        </IconButton>
+          <IconExport size="1em" />
+        </Button>
       </div>
-      {user.admin || user.id === music.createUser.id ? (
-        <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
-          <MdOutlineEdit />
-        </IconButton>
-      ) : null}
     </Style>
   );
 }

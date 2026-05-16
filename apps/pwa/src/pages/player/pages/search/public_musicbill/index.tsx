@@ -1,7 +1,7 @@
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import Empty from '@/components/empty';
@@ -9,22 +9,19 @@ import Pagination from '@/components/pagination';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
-import Button, { Variant } from '@/components/button';
-import SizeObserver from '@/components/size_observer';
+import Button from '@/components/button';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import {
-  PAGE_SIZE,
-  TOOLBAR_HEIGHT,
-  MINI_MODE_TOOLBAR_HEIGHT,
-} from '../constants';
+import { PAGE_SIZE } from '../constants';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import useData from './use_data';
 import { openCreateMusicbillDialog } from '../../../utils';
-import PublicMusicbill from '../../../components/public_musicbill';
 import TextGuide from '../text_guide';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
+import Musicbill from './musicbill';
 
-const ITEM_MIN_WIDTH = 150;
+const COVER_IMAGE_SIZE = 96;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
@@ -39,22 +36,24 @@ const MusicContainer = styled(Container)`
   ${autoScrollbar}
 
   > .list {
-    margin: 0 10px;
+    width: 100%;
+    padding: calc(var(--search-toolbar-height) + 12px)
+      ${PAGE_HORIZONTAL_PADDING} 0;
 
     display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-
-    > .item {
-      padding: 10px;
-    }
+    flex-direction: column;
+    gap: 12px;
   }
 
-  ${({ theme: { miniMode } }) => css`
-    padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
-  `}
+  &::after {
+    content: '';
+    display: block;
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
+  }
 `;
 const paginationStyle: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
   margin: '20px 0',
 };
 
@@ -86,7 +85,7 @@ function Wrapper() {
       return (
         <CardContainer style={style}>
           <Empty description={t('no_suitable_musicbill')} />
-          <Button variant={Variant.PRIMARY} onClick={openCreateMusicbillDialog}>
+          <Button variant={'primary'} onClick={openCreateMusicbillDialog}>
             {t('create_musicbill_by_yourself')}
           </Button>
         </CardContainer>
@@ -95,36 +94,27 @@ function Wrapper() {
 
     return (
       <MusicContainer style={style}>
-        <SizeObserver className="list">
-          {({ width }) => {
-            const itemWidth = `${100 / Math.floor(width / ITEM_MIN_WIDTH)}%`;
-            return d.value!.musicbillList.map((musicbill) => (
-              <div
-                className="item"
-                key={musicbill.id}
-                style={{ width: itemWidth }}
-              >
-                <PublicMusicbill
-                  id={musicbill.id}
-                  cover={getResizedImage({
-                    url: musicbill.cover,
-                    size: Math.ceil(ITEM_MIN_WIDTH * window.devicePixelRatio),
-                  })}
-                  name={musicbill.name}
-                  userId={musicbill.user.id}
-                  userNickname={musicbill.user.nickname}
-                />
-              </div>
-            ));
-          }}
-        </SizeObserver>
+        <div className="list">
+          {d.value!.musicbillList.map((musicbill) => (
+            <Musicbill
+              key={musicbill.id}
+              id={musicbill.id}
+              cover={getResizedImage({
+                url: musicbill.cover,
+                size: Math.ceil(COVER_IMAGE_SIZE * window.devicePixelRatio),
+              })}
+              name={musicbill.name}
+              userNickname={musicbill.user.nickname}
+              musicCount={musicbill.musicCount}
+            />
+          ))}
+        </div>
 
         {d.value!.total ? (
           <Pagination
             style={paginationStyle}
             page={page}
-            pageSize={PAGE_SIZE}
-            total={d.value!.total}
+            count={Math.ceil(d.value!.total / PAGE_SIZE)}
             onChange={(p) =>
               navigate({
                 query: {

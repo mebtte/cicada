@@ -1,6 +1,32 @@
-import { Response } from '#/server/api/get_public_musicbill';
+import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
+
+type Response = {
+  id: string;
+  cover: string;
+  name: string;
+  user: {
+    id: string;
+    nickname: string;
+    avatar: string;
+  };
+  musicList: {
+    id: string;
+    type: MusicType;
+    name: string;
+    aliases: string[];
+    cover: string;
+    asset: string;
+    singers: {
+      id: string;
+      name: string;
+      aliases: string[];
+    }[];
+  }[];
+
+  collected: boolean;
+};
 
 /**
  * 获取公开乐单详情

@@ -2,6 +2,7 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { ROOT_PATH } from '@/constants/route';
+import { t } from '@/i18n';
 
 const Style = styled.div`
   display: flex;
@@ -22,7 +23,7 @@ function Logo() {
         <img
           className="logo"
           src="/logo.png"
-          alt="logo"
+          alt={t('logo')}
           crossOrigin="anonymous"
         />
       </Link>

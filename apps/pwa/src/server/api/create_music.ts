@@ -1,4 +1,4 @@
-import { MusicType } from '#/constants/music';
+import { MusicType } from '@/constants/music';
 import { Method, request } from '..';
 
 /**
@@ -18,7 +18,7 @@ function createMusic({
 }) {
   return request<string>({
     method: Method.POST,
-    path: '/api/music',
+    path: '/api/admin/music',
     body: { name, singerIds: singerIds.join(','), type, asset },
     withToken: true,
   });

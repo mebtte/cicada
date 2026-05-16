@@ -1,10 +1,37 @@
 import { useState } from 'react';
 import { t } from '@/i18n';
-import { Confirm as ConfirmShape } from './constants';
-import { Container, Content, Title, Action } from '../../components/dialog';
-import Button, { Variant } from '../../components/button';
+import {
+  DEFAULT_CANCEL_VARIANT,
+  DEFAULT_CONFIRM_VARIANT,
+  Confirm as ConfirmShape,
+} from './constants';
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogBody,
+  DialogFooter,
+} from '@/components';
+import Button from '@/components/button';
 import useEvent from '../use_event';
 import DialogBase from './dialog_base';
+import styled from 'styled-components';
+
+const ConfirmFooter = styled(DialogFooter)`
+  gap: 12px;
+
+  @media (min-width: 640px) {
+    gap: 14px;
+
+    > button {
+      min-width: 96px;
+    }
+  }
+`;
+
+function isSimpleContent(content: ConfirmShape['content']) {
+  return typeof content === 'string' || typeof content === 'number';
+}
 
 function ConfirmContent({
   options,
@@ -37,23 +64,37 @@ function ConfirmContent({
       .finally(() => setConfirming(false));
   });
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      {options.content ? <Content>{options.content}</Content> : null}
-      <Action>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+          {isSimpleContent(options.content) && (
+            <DialogDescription>{options.content}</DialogDescription>
+          )}
+        </DialogHeader>
+      )}
+      {options.content && (!options.title || !isSimpleContent(options.content)) && (
+        <DialogBody>{options.content}</DialogBody>
+      )}
+      <ConfirmFooter $inline={options.inlineFooter ?? true}>
+        <Button
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button
-          variant={Variant.PRIMARY}
+          variant={options.confirmVariant ?? DEFAULT_CONFIRM_VARIANT}
           onClick={onConfirm}
           loading={confirming}
           disabled={canceling}
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </ConfirmFooter>
+    </>
   );
 }
 

@@ -28,15 +28,18 @@ const Style = styled(animated.div)`
   flex-direction: column;
   justify-content: center;
 
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+
   > .top {
     user-select: none;
-    line-height: 1.5;
+    line-height: 1.35;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     ${ellipsis}
 
     >.name {
       cursor: pointer;
       font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+      font-weight: 800;
       color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
       &:hover {
@@ -52,6 +55,7 @@ const Style = styled(animated.div)`
 
   > .singers {
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+    font-weight: 700;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     ${ellipsis}
   }

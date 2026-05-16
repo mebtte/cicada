@@ -1,7 +1,11 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import {
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components';
 import Button from '@/components/button';
 import {
-  CSSProperties,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -9,27 +13,52 @@ import {
 } from 'react';
 import Cropper from 'cropperjs';
 import styled from 'styled-components';
-import { IMAGE_MAX_SIZE } from '#/constants';
-import FileSelect from '@/components/file_select';
+import { IMAGE_MAX_SIZE } from '@/constants/asset';
 import { t } from '@/i18n';
+import { CSSVariable } from '@/global_style';
 import DialogBase from './dialog_base';
-import { ImageCut as ImageCutShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, ImageCut as ImageCutShape } from './constants';
 import useEvent from '../use_event';
 import loadImage from '../load_image';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import selectFile from '../select_file';
 
-const ACCEPT_TYPES = ['image/jpeg', 'image/png'];
-const contentStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10,
-};
+const ACCEPT_TYPES = ['image/*'];
+
+const Body = styled(DialogBody)`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
 const ImgBox = styled.div`
+  overflow: hidden;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+
   img {
     display: block;
     width: 100%;
     max-width: 100%;
   }
+
+  .cropper-container {
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  }
+
+  .cropper-view-box {
+    outline-color: ${CSSVariable.COLOR_PRIMARY};
+  }
+
+  .cropper-line,
+  .cropper-point {
+    background-color: ${CSSVariable.COLOR_PRIMARY};
+  }
+`;
+
+const SelectImageButton = styled(Button)`
+  margin-right: auto;
 `;
 
 function ImageCutContent({
@@ -130,25 +159,44 @@ function ImageCutContent({
     }
   }, [confirming, canceling]);
 
+  const onSelectImage = useEvent(() => {
+    if (confirming || canceling) {
+      return;
+    }
+    return selectFile({
+      acceptTypes: ACCEPT_TYPES,
+      onSelect: (f) => setFile(f),
+    });
+  });
+
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      <Content style={contentStyle}>
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      <Body>
         {url ? (
           <ImgBox>
             <img src={url} ref={imageRef} />
           </ImgBox>
         ) : null}
-        <FileSelect
-          placeholder={upperCaseFirstLetter(t('image_select_placeholder'))}
-          value={file}
-          onChange={(f) => setFile(f)}
-          acceptTypes={ACCEPT_TYPES}
+      </Body>
+      <DialogFooter $inline={options.inlineFooter}>
+        <SelectImageButton
+          variant="secondary"
+          onClick={onSelectImage}
           disabled={confirming || canceling}
-        />
-      </Content>
-      <Action>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+        >
+          {t('select_image')}
+        </SelectImageButton>
+        <Button
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button
@@ -159,8 +207,8 @@ function ImageCutContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

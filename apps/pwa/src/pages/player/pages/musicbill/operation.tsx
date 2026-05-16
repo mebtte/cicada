@@ -1,50 +1,57 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components/button';
 import {
   MdRefresh,
   MdPlaylistAdd,
   MdOutlineEdit,
   MdOutlinePeopleAlt,
-  MdOutlineDownload,
 } from 'react-icons/md';
+import { IconExport } from '@/components/icon';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
-import upperCaseFirstLetter from '#/utils/upper_case_first_letter';
+import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
+import { CSSVariable } from '@/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
 import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import { downloadMusicListByFileSystem } from '../../utils';
+import { openExportMusicListDialog } from '../../export_music_list';
+import addMusicListToPlaylist from '../../add_to_playlist';
 
 const Style = styled.div`
   display: flex;
   align-items: center;
-  gap: 5px;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 `;
 
 function Operation({ musicbill }: { musicbill: Musicbill }) {
-  const { status, musicList } = musicbill;
+  const { status, musicList, sharedUserList } = musicbill;
+  const shared = sharedUserList.length > 0;
   return (
     <Style>
-      <IconButton
+      <Button
+        square
+        variant="ghost"
+        size="sm"
         disabled={status !== RequestStatus.SUCCESS}
         onClick={() =>
           musicList.length
-            ? playerEventemitter.emit(
-                PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-                {
-                  musicList,
-                },
-              )
+            ? addMusicListToPlaylist(musicList)
             : notice.error(upperCaseFirstLetter(t('no_music_in_musicbill')))
         }
       >
         <MdPlaylistAdd />
-      </IconButton>
-      <IconButton
+      </Button>
+      <Button
+        square
+        variant="ghost"
+        size="sm"
         loading={status === RequestStatus.LOADING}
         disabled={status !== RequestStatus.SUCCESS}
         onClick={() =>
@@ -55,19 +62,30 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         }
       >
         <MdRefresh />
-      </IconButton>
-      <IconButton onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}>
+      </Button>
+      <Button
+        square
+        variant="ghost"
+        size="sm"
+        onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}
+      >
         <MdOutlineEdit />
-      </IconButton>
+      </Button>
       {ENABLE_FILE_SYSTEM ? (
-        <IconButton
+        <Button
+          square
+          variant="ghost"
+          size="sm"
           disabled={!musicbill.musicList.length}
-          onClick={() => downloadMusicListByFileSystem(musicbill.musicList)}
+          onClick={() => openExportMusicListDialog(musicbill.musicList)}
         >
-          <MdOutlineDownload />
-        </IconButton>
+          <IconExport size="1em" />
+        </Button>
       ) : null}
-      <IconButton
+      <Button
+        square
+        variant={shared ? 'primary' : 'ghost'}
+        size="sm"
         onClick={() =>
           playerEventemitter.emit(
             PlayerEventType.OPEN_MUSICBILL_SHARED_USER_DRAWER,
@@ -76,7 +94,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
         }
       >
         <MdOutlinePeopleAlt />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

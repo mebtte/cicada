@@ -1,22 +1,12 @@
-import Drawer from '@/components/drawer';
-import { CSSProperties, useEffect, useState } from 'react';
+import { Drawer, DrawerContent } from '@/components';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
+import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import e, { EventType } from '../eventemitter';
 import { User } from '../constants';
-import { ZIndex } from '../../../constants';
 import UserEdit from './user_edit';
 
-const maskProps: { style: CSSProperties } = {
-  style: {
-    zIndex: ZIndex.POPUP,
-  },
-};
-const bodyProps: {
-  style: CSSProperties;
-} = {
-  style: { width: 350 },
-};
 const Content = styled.div`
   height: 100%;
 
@@ -28,6 +18,7 @@ function UserEditDrawer() {
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
   const [user, setUser] = useState<User | null>(null);
+  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   useEffect(() => {
     const unlistenOpen = e.listen(EventType.OPEN_USER_EDIT_DRAWER, (data) => {
@@ -41,15 +32,15 @@ function UserEditDrawer() {
     return null;
   }
   return (
-    <Drawer
-      open={open}
-      onClose={onClose}
-      maskProps={maskProps}
-      bodyProps={bodyProps}
-    >
-      <Content>
-        <UserEdit user={user} onClose={onClose} />
-      </Content>
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent
+        side="right"
+        style={{ width: 350, paddingTop: titlebarTop }}
+      >
+        <Content>
+          <UserEdit user={user} onClose={onClose} />
+        </Content>
+      </DrawerContent>
     </Drawer>
   );
 }

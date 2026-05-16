@@ -5,5 +5,3 @@ export type Collection = AsyncReturnType<
 >['collectionList'][0];
 
 export const PAGE_SIZE = 50;
-
-export const TOOLBAR_HEIGHT = 60;

@@ -71,7 +71,6 @@ const Popup = ({
       onClose();
     }
 
-    // eslint-disable-next-line no-unused-expressions
     maskProps.onClick && maskProps.onClick(event);
   };
 

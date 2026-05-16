@@ -6,14 +6,21 @@ import Singer from '../../components/singer';
 
 const Style = styled.div`
   > .name {
-    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+    font-size: ${CSSVariable.TEXT_SIZE_LARGE};
+    font-weight: 900;
+    line-height: 1.3;
     ${ellipsis}
   }
 
   > .singers {
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+    margin-top: 2px;
+
+    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+    font-weight: 800;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+    line-height: 1.35;
     ${ellipsis}
   }
 `;

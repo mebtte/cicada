@@ -1,32 +1,46 @@
-import { type CSSProperties, memo } from 'react';
-import Slider from '@/components/slider';
-import { useTheme } from '@/global_states/theme';
+import { memo } from 'react';
+import { Slider } from '@/components';
 import { t } from '@/i18n';
+import styled, { css } from 'styled-components';
 import Item from './item';
 import { itemStyle } from './constants';
 import { useSetting } from '@/global_states/setting';
 
-const onVolumnChange = (v: number) =>
+const Control = styled.div`
+  width: 280px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  ${({ theme: { miniMode } }) =>
+    miniMode &&
+    css`
+      width: 100%;
+    `}
+`;
+
+const StyledSlider = styled(Slider)`
+  width: 100%;
+  min-width: 0;
+`;
+
+const onVolumeChange = (v: number) =>
   useSetting.setState({
     playerVolume: v,
   });
-const sliderStyle: CSSProperties = {
-  width: 200,
-};
-const miniModeSliderStyle: CSSProperties = {
-  ...sliderStyle,
-  width: 150,
-};
 
 function Volume() {
   const { playerVolume } = useSetting();
   return (
     <Item label={t('relative_volume')} style={itemStyle}>
-      <Slider
-        current={playerVolume}
-        onChange={onVolumnChange}
-        style={useTheme().miniMode ? miniModeSliderStyle : sliderStyle}
-      />
+      <Control>
+        <StyledSlider
+          value={playerVolume}
+          onChange={onVolumeChange}
+          alwaysShowThumb
+        />
+      </Control>
     </Item>
   );
 }

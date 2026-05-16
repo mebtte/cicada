@@ -1,7 +1,7 @@
 import ErrorBoundary from '@/components/error_boundary';
 import { GlobalStyle } from '@/global_style';
-import { GlobalStyle as SelectGlobalStyle } from '@/components/select';
 import { ThemeProvider } from 'styled-components';
+import { ThemeProvider as CicadaThemeProvider } from '@/components/theme';
 import { HashRouter } from 'react-router-dom';
 import App from './app';
 import UncaughtError from './uncaught_error';
@@ -14,12 +14,13 @@ function Wrapper() {
   return (
     <ErrorBoundary fallback={fallback}>
       <HashRouter>
-        <ThemeProvider theme={useTheme()}>
-          <Head />
-          <App />
-          <GlobalStyle />
-          <SelectGlobalStyle />
-        </ThemeProvider>
+        <CicadaThemeProvider>
+          <ThemeProvider theme={useTheme()}>
+            <Head />
+            <App />
+            <GlobalStyle />
+          </ThemeProvider>
+        </CicadaThemeProvider>
       </HashRouter>
     </ErrorBoundary>
   );

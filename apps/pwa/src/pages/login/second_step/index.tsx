@@ -1,12 +1,17 @@
 import styled from 'styled-components';
 import { ChangeEventHandler, useState } from 'react';
-import Label from '@/components/label';
 import Input from '@/components/input';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components/button';
 import { t } from '@/i18n';
-import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
+import {
+  isPasswordLengthValid,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  USERNAME_MAX_LENGTH,
+} from '@/constants/user';
 import logger from '@/utils/logger';
 import login from '@/server/base/login';
+import type { LoginResponse } from '@/server/base/login';
 import loginWith2FA from '@/server/base/login_with_2fa';
 import notice from '@/utils/notice';
 import getProfile from '@/server/api/get_profile';
@@ -15,11 +20,12 @@ import parseSearch from '@/utils/parse_search';
 import { Query } from '@/constants';
 import useNavigate from '@/utils/use_navigate';
 import { ROOT_PATH } from '@/constants/route';
-import { ExceptionCode } from '#/constants/exception';
+import { ExceptionCode } from '@/constants/exception';
 import dialog from '@/utils/dialog';
+import { getCurrentDeviceName } from '@/utils/device_name';
 import Logo from '../logo';
 import UserList from './user_list';
-import { useServer } from '@/global_states/server';
+import { getSelectedServer, useServer } from '@/global_states/server';
 
 const Style = styled.div`
   display: flex;
@@ -28,7 +34,11 @@ const Style = styled.div`
 
   -webkit-app-region: no-drag;
 `;
-const addProfile = async (token: string) => {
+const getDeviceInfo = () => ({
+  deviceName: getCurrentDeviceName(),
+});
+
+const addProfile = async ({ token, sessionId }: LoginResponse) => {
   const profile = await getProfile(token);
   useServer.setState((server) => ({
     serverList: server.serverList.map((s) =>
@@ -49,13 +59,10 @@ const addProfile = async (token: string) => {
                   musicbillOrders: profile.musicbillOrdersJSON
                     ? JSON.parse(profile.musicbillOrdersJSON)
                     : [],
-                  musicbillMaxAmount: profile.musicbillMaxAmount,
-                  createMusicMaxAmountPerDay:
-                    profile.createMusicMaxAmountPerDay,
-                  musicPlayRecordIndate: profile.musicPlayRecordIndate,
                   twoFAEnabled: profile.twoFAEnabled,
 
                   token,
+                  sessionId,
                 },
               ]),
           }
@@ -67,6 +74,8 @@ const addProfile = async (token: string) => {
 function SecondStep({ toPrevious }: { toPrevious: () => void }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const selectedServer = useServer(getSelectedServer);
+  const hasExistingUser = !!selectedServer?.users.length;
 
   const [username, setUserName] = useState('');
   const onUsernameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
@@ -83,10 +92,26 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
       path: query.redirect || ROOT_PATH.PLAYER,
     });
   };
-  const onLoginWith2FA = () =>
-    dialog.input({
+  const passwordLengthWarning = () =>
+    t(
+      'password_length_warning',
+      PASSWORD_MIN_LENGTH.toString(),
+      PASSWORD_MAX_LENGTH.toString(),
+    );
+  const validatePasswordLength = () => {
+    if (isPasswordLengthValid(password)) return true;
+
+    notice.error(passwordLengthWarning());
+    return false;
+  };
+  const onLoginWith2FA = () => {
+    if (!validatePasswordLength()) return;
+
+    return dialog.input({
       label: t('2fa_token'),
-      confirmVariant: Variant.PRIMARY,
+      inlineFooter: true,
+      cancelVariant: 'ghost',
+      confirmVariant: 'primary',
       onConfirm: async (twoFAToken) => {
         if (!twoFAToken) {
           notice.error(t('lack_of_2fa_token'));
@@ -94,30 +119,41 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         }
 
         try {
-          const token = await loginWith2FA({ username, password, twoFAToken });
-          await addProfile(token);
-          window.setTimeout(redirect, 0);
+          const loginResult = await loginWith2FA({
+            username,
+            password,
+            twoFAToken,
+            ...getDeviceInfo(),
+          });
+          await addProfile(loginResult);
+          redirect();
         } catch (error) {
           logger.error(error, 'Failed to login with 2FA');
-          notice.error(error.message);
+          dialog.alert({ content: error.message });
           return false;
         }
       },
     });
+  };
 
-  const onLogin = () =>
-    dialog.captcha({
-      confirmVariant: Variant.PRIMARY,
+  const onLogin = () => {
+    if (!validatePasswordLength()) return;
+
+    return dialog.captcha({
+      inlineFooter: true,
+      cancelVariant: 'ghost',
+      confirmVariant: 'primary',
       onConfirm: async ({ captchaId, captchaValue }) => {
         try {
-          const token = await login({
+          const loginResult = await login({
             username,
             password,
             captchaId,
             captchaValue,
+            ...getDeviceInfo(),
           });
-          await addProfile(token);
-          window.setTimeout(redirect, 0);
+          await addProfile(loginResult);
+          redirect();
         } catch (error) {
           logger.error(error, 'Failed to login');
 
@@ -127,51 +163,53 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
               break;
             }
             default: {
-              notice.error(error.message);
+              dialog.alert({ content: error.message });
               return error.code === ExceptionCode.WRONG_USERNAME_OR_PASSWORD;
             }
           }
         }
       },
     });
+  };
 
   return (
     <Style>
       <Logo />
       <UserList redirect={redirect} />
-      <Label label={t('username')}>
-        <Input
-          value={username}
-          onChange={onUsernameChange}
-          maxLength={USERNAME_MAX_LENGTH}
-          autoFocus
-        />
-      </Label>
-      <Label label={t('password')}>
-        <Input
-          type="password"
-          value={password}
-          onChange={onPasswordChange}
-          maxLength={PASSWORD_MAX_LENGTH}
-          onKeyDown={(event) => {
-            if (
-              event.key.toLowerCase() === 'enter' &&
-              username.length !== 0 &&
-              password.length !== 0
-            ) {
-              onLogin();
-            }
-          }}
-        />
-      </Label>
+      <Input
+        label={t('username')}
+        value={username}
+        onChange={onUsernameChange}
+        maxLength={USERNAME_MAX_LENGTH}
+        autoFocus={!hasExistingUser}
+      />
+      <Input
+        label={t('password')}
+        type="password"
+        value={password}
+        onChange={onPasswordChange}
+        minLength={PASSWORD_MIN_LENGTH}
+        maxLength={PASSWORD_MAX_LENGTH}
+        onKeyDown={(event) => {
+          if (
+            event.key.toLowerCase() === 'enter' &&
+            username.length !== 0 &&
+            password.length !== 0
+          ) {
+            onLogin();
+          }
+        }}
+      />
       <Button
-        variant={Variant.PRIMARY}
+        variant={'primary'}
         disabled={!username.length || !password.length}
         onClick={onLogin}
       >
         {t('login')}
       </Button>
-      <Button onClick={toPrevious}>{t('previous_step')}</Button>
+      <Button variant={'ghost'} onClick={toPrevious}>
+        {t('previous_step')}
+      </Button>
     </Style>
   );
 }

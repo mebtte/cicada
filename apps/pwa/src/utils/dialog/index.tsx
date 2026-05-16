@@ -1,11 +1,12 @@
-import { createRoot } from 'react-dom/client';
-import generateRandomString from '#/utils/generate_random_string';
+import { createRoot, Root } from 'react-dom/client';
+import generateRandomString from '@/utils/generate_random_string';
 import { StrictMode } from 'react';
 import {
   ID_LENGTH,
   Alert,
   Captcha,
   Confirm,
+  Actions,
   Input,
   InputList,
   DialogType,
@@ -18,14 +19,38 @@ import {
 import e, { EventType } from './eventemitter';
 import DialogApp from './dialog_app';
 
-const root = document.createElement('div');
-root.className = 'dialog-app';
-document.body.appendChild(root);
-createRoot(root).render(
-  <StrictMode>
-    <DialogApp />
-  </StrictMode>,
-);
+const GLOBAL_KEY = '__cicada_dialog_app__';
+const globalStore = globalThis as typeof globalThis & {
+  [GLOBAL_KEY]?: { domRoot: HTMLDivElement; reactRoot: Root };
+};
+const hot = (import.meta as ImportMeta & {
+  hot?: { dispose: (callback: () => void) => void };
+}).hot;
+
+if (!globalStore[GLOBAL_KEY]) {
+  const domRoot = document.createElement('div');
+  domRoot.className = 'dialog-app';
+  document.body.appendChild(domRoot);
+
+  const reactRoot = createRoot(domRoot);
+  reactRoot.render(
+    <StrictMode>
+      <DialogApp />
+    </StrictMode>,
+  );
+  globalStore[GLOBAL_KEY] = { domRoot, reactRoot };
+}
+
+if (hot) {
+  hot.dispose(() => {
+    const dialogApp = globalStore[GLOBAL_KEY];
+    if (dialogApp) {
+      dialogApp.reactRoot.unmount();
+      dialogApp.domRoot.remove();
+      delete globalStore[GLOBAL_KEY];
+    }
+  });
+}
 
 export default {
   alert: (a: Omit<Alert, 'id' | 'type'>) => {
@@ -46,6 +71,16 @@ export default {
       id,
     };
     e.emit(EventType.OPEN, confirm);
+    return id;
+  },
+  actions: (a: Omit<Actions, 'id' | 'type'>) => {
+    const id = generateRandomString(ID_LENGTH, false);
+    const actions: Actions = {
+      ...a,
+      type: DialogType.ACTIONS,
+      id,
+    };
+    e.emit(EventType.OPEN, actions);
     return id;
   },
   captcha: (c: Omit<Captcha, 'id' | 'type'>) => {

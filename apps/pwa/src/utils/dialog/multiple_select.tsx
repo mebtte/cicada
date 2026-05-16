@@ -1,14 +1,10 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label, MultiSelect, SelectOption } from '@/components';
 import Button from '@/components/button';
-import Label from '@/components/label';
-import { CSSProperties, useState } from 'react';
+import { useState } from 'react';
 import { t } from '@/i18n';
-import { MultipleSelect, Option } from '@/components/select';
 import DialogBase from './dialog_base';
-import { MultipleSelect as MultipleSelectShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, MultipleSelect as MultipleSelectShape } from './constants';
 import useEvent from '../use_event';
-
-const contentStyle: CSSProperties = { overflow: 'hidden' };
 
 function MultipleSelectContent({
   onClose,
@@ -17,10 +13,9 @@ function MultipleSelectContent({
   onClose: () => void;
   options: MultipleSelectShape<unknown>;
 }) {
-  const [options, setOptions] = useState<Option<unknown>[]>(
+  const [value, setValue] = useState<SelectOption<unknown>[]>(
     multipleSelectOptions.initialValue || [],
   );
-  const onOptionsChange = (os: Option<unknown>[]) => setOptions(os);
 
   const [canceling, setCanceling] = useState(false);
   const onCancel = useEvent(() => {
@@ -43,7 +38,7 @@ function MultipleSelectContent({
     setConfirming(true);
     return Promise.resolve(
       multipleSelectOptions.onConfirm
-        ? multipleSelectOptions.onConfirm(options)
+        ? multipleSelectOptions.onConfirm(value)
         : undefined,
     )
       .then((result) => {
@@ -55,25 +50,32 @@ function MultipleSelectContent({
   };
 
   return (
-    <Container>
-      {multipleSelectOptions.title ? (
-        <Title>{multipleSelectOptions.title}</Title>
-      ) : null}
-      <Content style={contentStyle}>
+    <>
+      {multipleSelectOptions.title && (
+        <DialogHeader>
+          <DialogTitle>{multipleSelectOptions.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      <DialogBody>
         <Label
           label={multipleSelectOptions.label}
           addon={multipleSelectOptions.labelAddon}
         >
-          <MultipleSelect<unknown>
-            value={options}
-            onChange={onOptionsChange}
-            optionsGetter={multipleSelectOptions.optionsGetter}
+          <MultiSelect<unknown>
+            value={value}
+            onChange={setValue}
+            loadOptions={multipleSelectOptions.loadOptions}
             disabled={confirming || canceling}
           />
         </Label>
-      </Content>
-      <Action>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+      </DialogBody>
+      <DialogFooter>
+        <Button
+          variant={multipleSelectOptions.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {multipleSelectOptions.cancelText || t('cancel')}
         </Button>
         <Button
@@ -84,8 +86,8 @@ function MultipleSelectContent({
         >
           {multipleSelectOptions.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

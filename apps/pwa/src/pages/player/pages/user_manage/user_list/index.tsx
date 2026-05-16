@@ -7,17 +7,15 @@ import Spinner from '@/components/spinner';
 import useQuery from '@/utils/use_query';
 import { Query } from '@/constants';
 import SizeObserver from '@/components/size_observer';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 import useData from './use_data';
 import User from './user';
-import { HEADER_HEIGHT } from '../../../constants';
 import { TOOLBAR_HEIGHT } from '../constants';
 import { GAP, ITEM_MIN_WIDTH } from './constants';
 
 const Container = styled(animated.div)`
   ${absoluteFullSize}
-
-  padding-top: ${HEADER_HEIGHT}px;
-  padding-bottom: ${TOOLBAR_HEIGHT}px;
 `;
 const StatusContainer = styled(Container)`
   ${flexCenter}
@@ -27,7 +25,13 @@ const UserListContainer = styled(Container)`
 
   > .content {
     font-size: 0;
-    padding: 0 ${GAP / 2}px;
+    padding: 0 calc(${PAGE_HORIZONTAL_PADDING} - ${GAP / 2}px);
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    height: calc(${TOOLBAR_HEIGHT}px + ${FLOATING_CONTROLLER_SCROLL_SPACE});
   }
 `;
 
@@ -62,7 +66,6 @@ function UserList() {
     const lowerCaseKeyword = keyword.toLowerCase();
     const filteredUserList = userList.filter(
       (u) =>
-        u.id.includes(lowerCaseKeyword) ||
         u.nickname.toLowerCase().includes(lowerCaseKeyword) ||
         u.username.toLowerCase().includes(lowerCaseKeyword) ||
         u.remark.toLowerCase().includes(lowerCaseKeyword),

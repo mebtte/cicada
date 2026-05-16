@@ -1,30 +1,18 @@
-import Drawer from '@/components/drawer';
-import { CSSProperties } from 'react';
-import useDynamicZIndex from '../use_dynamic_z_index';
+import { Drawer, DrawerContent } from '@/components';
 import useOpen from './use_open';
-import { EventType as PlayerEventType } from '../eventemitter';
 import Content from './content';
-
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    width: 'min(400px, 85%)',
-  },
-};
+import useDynamicZIndex from '../use_dynamic_z_index';
+import { EventType } from '../eventemitter';
 
 function PlaylistPlayqueueDrawer() {
-  const zIndex = useDynamicZIndex(
-    PlayerEventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER,
-  );
   const { open, onClose } = useOpen();
+  const zIndex = useDynamicZIndex(EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER);
 
   return (
-    <Drawer
-      open={open}
-      onClose={onClose}
-      maskProps={{ style: { zIndex } }}
-      bodyProps={bodyProps}
-    >
-      <Content />
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent side="right" style={{ width: 'min(400px, 85%)' }} zIndex={zIndex}>
+        <Content />
+      </DrawerContent>
     </Drawer>
   );
 }

@@ -1,26 +1,18 @@
-import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
-import Button, { Variant } from '@/components/button';
-import { CSSProperties, useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
+import Button from '@/components/button';
+import { useEffect, useState } from 'react';
 import Input from '@/components/input';
-import Label from '@/components/label';
 import { t } from '@/i18n';
 import { reloadUser, useUser } from '@/global_states/server';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
+import dialog from '@/utils/dialog';
 import disable2FA from '@/server/api/disable_2fa';
 import enable2FA from '@/server/api/enable_2fa';
-import sleep from '#/utils/sleep';
+import sleep from '@/utils/sleep';
+import { ExceptionCode } from '@/constants/exception';
 import Qrcode from './qrcode';
-import { ZIndex } from '../constants';
 import useOpen from './use_open';
-
-const maskProps: {
-  style: CSSProperties;
-} = {
-  style: {
-    zIndex: ZIndex.DIALOG,
-  },
-};
 
 function TwoFADialog() {
   const { open, onClose } = useOpen();
@@ -28,6 +20,13 @@ function TwoFADialog() {
 
   const [loading, setLoading] = useState(false);
   const [twoFAToken, setTwoFAToken] = useState('');
+
+  useEffect(() => {
+    if (open) {
+      setTwoFAToken('');
+    }
+  }, [open]);
+
   const onConfirm = async () => {
     setLoading(true);
     try {
@@ -49,39 +48,44 @@ function TwoFADialog() {
         error,
         user.twoFAEnabled ? 'Failed to disable 2FA' : 'Failed to enable 2FA',
       );
-      notice.error(error.message);
+      if (error.code === ExceptionCode.WRONG_2FA_TOKEN) {
+        dialog.alert({ content: t(ExceptionCode.WRONG_2FA_TOKEN) });
+      } else {
+        notice.error(error.message);
+      }
     }
     setLoading(false);
   };
 
   return (
-    <Dialog open={open} maskProps={maskProps}>
-      <Container>
-        <Title>{user.twoFAEnabled ? t('disable_2fa') : t('enable_2fa')}</Title>
-        <Content>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent showClose={false} aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{user.twoFAEnabled ? t('disable_2fa') : t('enable_2fa')}</DialogTitle>
+        </DialogHeader>
+        <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {user.twoFAEnabled ? null : <Qrcode onClose={onClose} />}
-          <Label label={t('2fa_token')} className="label">
-            <Input
-              value={twoFAToken}
-              onChange={(event) => setTwoFAToken(event.target.value)}
-              autoFocus
-            />
-          </Label>
-        </Content>
-        <Action>
-          <Button onClick={onClose} disabled={loading}>
+          <Input
+            label={t('2fa_token')}
+            value={twoFAToken}
+            onChange={(event) => setTwoFAToken(event.target.value)}
+            autoFocus
+          />
+        </DialogBody>
+        <DialogFooter $inline>
+          <Button variant="ghost" onClick={onClose} disabled={loading}>
             {t('cancel')}
           </Button>
           <Button
-            variant={Variant.PRIMARY}
+            variant={'primary'}
             disabled={!twoFAToken.length}
             loading={loading}
             onClick={onConfirm}
           >
             {t('confirm')}
           </Button>
-        </Action>
-      </Container>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }

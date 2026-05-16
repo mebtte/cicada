@@ -1,12 +1,9 @@
-import { AdminAllowUpdateKey } from '#/constants/user';
+import { AdminAllowUpdateKey } from '@/constants/user';
 import { Method, request } from '..';
 
 type KeyMapValue = {
   [AdminAllowUpdateKey.REMARK]: string;
   [AdminAllowUpdateKey.USERNAME]: string;
-  [AdminAllowUpdateKey.MUSICBILL_MAX_AMOUNT]: number;
-  [AdminAllowUpdateKey.CREATE_MUSIC_MAX_AMOUNT_PER_DAY]: number;
-  [AdminAllowUpdateKey.MUSIC_PLAY_RECORD_INDATE]: number;
   [AdminAllowUpdateKey.PASSWORD]: string;
 };
 

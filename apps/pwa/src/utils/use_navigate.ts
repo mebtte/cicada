@@ -5,6 +5,8 @@ import {
 import parseSearch from '@/utils/parse_search';
 import useEvent from './use_event';
 
+type QueryValue = number | string | null | undefined;
+
 function useNavigate() {
   const location = useLocation();
   const originalNavigate = useOriginalNavigate();
@@ -15,23 +17,26 @@ function useNavigate() {
       replace = false,
     }: {
       path?: string;
-      query?: Record<string, number | string | undefined>;
+      query?: Record<string, QueryValue>;
       replace?: boolean;
     }) => {
       const combineQuery = {
         ...parseSearch(location.search),
         ...query,
       };
-      return originalNavigate(
-        `${path}?${Object.keys(combineQuery)
-          .filter(
-            (key) =>
-              combineQuery[key] !== undefined && combineQuery[key] !== null,
-          )
-          .map((key) => `${key}=${combineQuery[key]}`)
-          .join('&')}`,
-        { replace },
-      );
+      const search = Object.keys(combineQuery)
+        .filter((key) => {
+          const value = combineQuery[key];
+          return value !== undefined && value !== null && value !== '';
+        })
+        .map((key) => `${key}=${combineQuery[key]}`)
+        .join('&');
+      const target = `${path}${search ? `?${search}` : ''}`;
+
+      if (target === `${location.pathname}${location.search}`) {
+        return;
+      }
+      return originalNavigate(target, { replace });
     },
   );
   return navigate;

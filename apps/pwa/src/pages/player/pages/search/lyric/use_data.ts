@@ -1,4 +1,4 @@
-import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/music';
+import { SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/music';
 import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import searchMusicByLyric from '@/server/api/search_music_by_lyric';
@@ -6,6 +6,7 @@ import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { parse, LineType, LyricLine } from 'clrc';
 import { MusicWithLyric, PAGE_SIZE } from './constants';
+import { t } from '@/i18n';
 
 type Data =
   | {
@@ -50,7 +51,7 @@ export default () => {
   const getData = useCallback(async () => {
     if (!keyword) {
       return setData({
-        error: new Error('请输入关键词进行歌词搜索'),
+        error: new Error(t('empty_lyric_search_keyword_warning')),
         loading: false,
         value: null,
       });

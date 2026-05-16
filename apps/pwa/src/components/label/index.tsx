@@ -1,15 +1,26 @@
-import upperCaseFirstLetter from '@/style/capitalize';
-import { ForwardedRef, forwardRef, HtmlHTMLAttributes, ReactNode } from 'react';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import {
+  ForwardedRef,
+  LabelHTMLAttributes,
+  ReactNode,
+  forwardRef,
+} from 'react';
 import styled from 'styled-components';
-import { CSSVariable } from '../../global_style';
 
-const Style = styled.label`
+const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
+
+const Root = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  transition: inherit;
+
   > .top {
-    margin-bottom: 5px;
-
     display: flex;
     align-items: center;
-
+    gap: 8px;
+    width: 100%;
     transition: inherit;
     user-select: none;
 
@@ -17,51 +28,41 @@ const Style = styled.label`
       display: none;
     }
 
-    > .label {
+    > .text {
       flex: 1;
       min-width: 0;
-
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-      transition: inherit;
+      font-family: ${FONT};
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: rgb(66 66 66);
       ${upperCaseFirstLetter}
     }
   }
-
-  &:focus-within {
-    > .top {
-      > .label {
-        color: ${CSSVariable.COLOR_PRIMARY};
-      }
-    }
-  }
-
-  &:disabled {
-    > .top {
-      > .label {
-        color: ${CSSVariable.TEXT_COLOR_DISABLED} !important;
-      }
-    }
-  }
 `;
-type Props = HtmlHTMLAttributes<HTMLLabelElement> & {
-  label?: string;
+
+export interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
+  label?: ReactNode;
   addon?: ReactNode;
-};
+}
 
 function Label(
-  { label, addon, children, ...props }: Props,
+  { label, children, addon, ...props }: LabelProps,
   ref: ForwardedRef<HTMLLabelElement>,
 ) {
+  const hasWrappedContent = label !== undefined || addon !== undefined;
+  const text = hasWrappedContent ? label : children;
+  const content = hasWrappedContent ? children : null;
+
   return (
-    <Style {...props} ref={ref}>
+    <Root {...props} ref={ref}>
       <div className="top">
-        {label ? <div className="label">{label}</div> : null}
+        {text ? <span className="text">{text}</span> : null}
         {addon}
       </div>
-      {children}
-    </Style>
+      {content}
+    </Root>
   );
 }
 
-export default forwardRef<HTMLLabelElement, Props>(Label);
+export default forwardRef<HTMLLabelElement, LabelProps>(Label);

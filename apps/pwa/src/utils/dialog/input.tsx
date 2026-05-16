@@ -1,14 +1,11 @@
-import { Container, Title, Content, Action } from '@/components/dialog';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
 import Button from '@/components/button';
-import Label from '@/components/label';
 import Input from '@/components/input';
-import { CSSProperties, ChangeEventHandler, useState } from 'react';
+import { ChangeEventHandler, useState } from 'react';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
-import { Input as InputShape } from './constants';
+import { DEFAULT_CANCEL_VARIANT, Input as InputShape } from './constants';
 import useEvent from '../use_event';
-
-const contentStyle: CSSProperties = { overflow: 'hidden' };
 
 function InputContent({
   onClose,
@@ -48,27 +45,35 @@ function InputContent({
   };
 
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      <Content style={contentStyle}>
-        <Label label={options.label}>
-          <Input
-            value={text}
-            onChange={onTextChange}
-            autoFocus
-            maxLength={options.maxLength}
-            type={options.inputType}
-            disabled={confirming || canceling}
-            onKeyDown={(event) => {
-              if (event.key.toLowerCase() === 'enter') {
-                onConfirm();
-              }
-            }}
-          />
-        </Label>
-      </Content>
-      <Action>
-        <Button onClick={onCancel} loading={canceling} disabled={confirming}>
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      <DialogBody>
+        <Input
+          label={options.label}
+          value={text}
+          onChange={onTextChange}
+          autoFocus
+          maxLength={options.maxLength}
+          type={options.inputType}
+          disabled={confirming || canceling}
+          onKeyDown={(event) => {
+            if (event.key.toLowerCase() === 'enter') {
+              onConfirm();
+            }
+          }}
+        />
+      </DialogBody>
+      <DialogFooter $inline={options.inlineFooter}>
+        <Button
+          variant={options.cancelVariant ?? DEFAULT_CANCEL_VARIANT}
+          onClick={onCancel}
+          loading={canceling}
+          disabled={confirming}
+        >
           {options.cancelText || t('cancel')}
         </Button>
         <Button
@@ -79,8 +84,8 @@ function InputContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

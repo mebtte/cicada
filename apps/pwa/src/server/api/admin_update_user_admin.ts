@@ -1,23 +1,26 @@
 import { Method, request } from '..';
 
 /**
- * 设用户为管理员
+ * 更新用户管理员角色
  * @author mebtte<i@mebtte.com>
  */
 function adminUpdateUserAdmin({
   id,
+  admin,
   captchaId,
   captchaValue,
 }: {
   id: string;
-  captchaId: string;
-  captchaValue: string;
+  admin: boolean | 0 | 1;
+  captchaId?: string;
+  captchaValue?: string;
 }) {
   return request({
     path: '/api/admin/user_admin',
     method: Method.PUT,
     body: {
       id,
+      admin: admin === true || admin === 1 ? 1 : 0,
       captchaId,
       captchaValue,
     },

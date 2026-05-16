@@ -1,32 +1,130 @@
 import { useEffect } from 'react';
-import { PlaylistMusic } from '../constants';
+import { MusicWithSingerAliases, PlaylistMusic } from '../constants';
 import storage, { Key } from '../storage';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
-import { MdCheck, MdClose } from 'react-icons/md';
+import Button from '@/components/button';
+import { MdClose, MdPlaylistPlay } from 'react-icons/md';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import eventemitter, { EventType } from '../eventemitter';
 import { t } from '@/i18n';
 import useUnmount from '@/utils/use_unmount';
+import { CSSVariable } from '@/global_style';
+
+function RestoreNotice({
+  getNoticeId,
+  playlist,
+}: {
+  getNoticeId: () => string;
+  playlist: MusicWithSingerAliases[];
+}) {
+  return (
+    <Restore>
+      <div className="badge">
+        <MdPlaylistPlay />
+      </div>
+      <div className="body">
+        <div className="text">{t('question_restore_playlist')}</div>
+        <div className="action-box">
+          <Button
+            className="confirm-action"
+            variant="primary"
+            size="sm"
+            onClick={() => {
+              notice.close(getNoticeId());
+              return eventemitter.emit(
+                EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
+                {
+                  musicList: playlist,
+                },
+              );
+            }}
+          >
+            {t('alert_confirm')}
+          </Button>
+          <Button
+            className="dismiss-action"
+            square
+            variant="ghost"
+            size="sm"
+            title={t('cancel')}
+            aria-label={t('cancel')}
+            onClick={() => notice.close(getNoticeId())}
+          >
+            <MdClose />
+          </Button>
+        </div>
+      </div>
+    </Restore>
+  );
+}
 
 const Restore = styled.div`
-  > .text {
-    padding-top: 10px;
-    ${upperCaseFirstLetter}
-  }
+  width: min(260px, 100%);
 
-  > .actions {
-    margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  > .badge {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
 
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 5px;
+    justify-content: center;
 
-    > .action {
+    border: 2px solid rgb(29 139 94);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 4px 0 rgb(29 139 94);
+    color: rgb(44 182 125);
+    font-size: 28px;
+
+    > svg {
+      display: block;
+      width: 1em;
+      height: 1em;
+    }
+  }
+
+  > .body {
+    flex: 1;
+    min-width: 0;
+    padding-top: 1px;
+
+    > .text {
       color: #fff;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.35;
+      ${upperCaseFirstLetter}
+    }
+
+    > .action-box {
+      margin-top: 9px;
+
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 9px;
+
+      > .confirm-action {
+        color: rgb(29 139 94);
+        background: #fff;
+        border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+        box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+
+        &:not(:disabled):hover {
+          filter: brightness(1.03);
+        }
+
+        &:not(:disabled):active {
+          box-shadow: none;
+        }
+      }
     }
   }
 `;
@@ -59,32 +157,11 @@ function usePlaylistRestore(playlist: PlaylistMusic[]) {
       .then((cachedPlaylist) => {
         if (cachedPlaylist && cachedPlaylist.length > 0) {
           noticeId = notice.info(
-            <Restore>
-              <div className="text">{t('question_restore_playlist')}</div>
-              <div className="actions">
-                <IconButton
-                  className="action"
-                  onClick={() => {
-                    notice.close(noticeId!);
-                    return eventemitter.emit(
-                      EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-                      {
-                        musicList: cachedPlaylist,
-                      },
-                    );
-                  }}
-                >
-                  <MdCheck />
-                </IconButton>
-                <IconButton
-                  className="action"
-                  onClick={() => notice.close(noticeId!)}
-                >
-                  <MdClose />
-                </IconButton>
-              </div>
-            </Restore>,
-            { duration: 0, closable: false },
+            <RestoreNotice
+              getNoticeId={() => noticeId!}
+              playlist={cachedPlaylist}
+            />,
+            { duration: 0, closable: false, showTypeIcon: false },
           );
         }
       })

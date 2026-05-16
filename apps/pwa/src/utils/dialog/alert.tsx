@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { t } from '@/i18n';
 import { Alert as AlertType } from './constants';
-import { Container, Content, Title, Action } from '../../components/dialog';
-import Button, { Variant } from '../../components/button';
+import { DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
+import Button from '@/components/button';
 import useEvent from '../use_event';
 import DialogBase from './dialog_base';
 
@@ -18,26 +18,25 @@ function AlertContent({
     setConfirming(true);
     return Promise.resolve(options.onConfirm ? options.onConfirm() : undefined)
       .then((result) => {
-        if (result === undefined || !!result) {
-          onClose();
-        }
+        if (result === undefined || !!result) onClose();
       })
       .finally(() => setConfirming(false));
   });
+
   return (
-    <Container>
-      {options.title ? <Title>{options.title}</Title> : null}
-      {options.content ? <Content>{options.content}</Content> : null}
-      <Action>
-        <Button
-          variant={Variant.PRIMARY}
-          onClick={onConfirm}
-          loading={confirming}
-        >
-          {options.confirmText || t('confirm')}
+    <>
+      {options.title && (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+        </DialogHeader>
+      )}
+      {options.content && <DialogBody>{options.content}</DialogBody>}
+      <DialogFooter>
+        <Button variant="primary" onClick={onConfirm} loading={confirming}>
+          {options.confirmText || t('alert_confirm')}
         </Button>
-      </Action>
-    </Container>
+      </DialogFooter>
+    </>
   );
 }
 

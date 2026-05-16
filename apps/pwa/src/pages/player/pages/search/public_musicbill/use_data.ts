@@ -1,4 +1,4 @@
-import { SEARCH_KEYWORD_MAX_LENGTH } from '#/constants/singer';
+import { SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/singer';
 import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import searchPublicMusicbill from '@/server/api/search_public_musicbill';

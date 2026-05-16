@@ -1,22 +1,21 @@
 {
-  "extends": "../../tsconfig.json",
-
   "compilerOptions": {
+    "target": "ESNext",
+    "strictNullChecks": true,
+    "skipLibCheck": true,
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
     "module": "ESNext",
-    "jsx": "preserve", // 由 babel 进一步编译
+    "jsx": "react-jsx",
     "lib": ["DOM", "WebWorker", "ESNext", "DOM.Iterable"],
 
     "baseUrl": ".",
     "paths": {
-      "#/*": ["../../shared/*"],
       "@/*": ["src/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "webpack/**/*",
-    "../../global.d.ts",
-    "../../shared/components/tooltip",
-    "../../shared/style"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/node_modules/*"]
 }

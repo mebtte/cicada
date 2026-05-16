@@ -10,8 +10,25 @@ export interface CreateUser {
   nickname: string;
 }
 
+export interface SingerPhoto {
+  id: string;
+  asset: string;
+  description: string;
+}
+
 export interface SingerDetail extends SingerWithAliases {
   avatar: string;
+  photos: SingerPhoto[];
+}
+
+export interface RelatedPublicMusicbill {
+  id: string;
+  name: string;
+  cover: string;
+  musicCount: number;
+  user: CreateUser & {
+    avatar: string;
+  };
 }
 
 export interface MusicDetail extends Music {
@@ -24,7 +41,9 @@ export interface MusicDetail extends Music {
   singers: SingerDetail[];
   year: number | null;
   musicbillCount: number;
-
-  size: number;
-  duration: number;
+  assetSize: number;
+  assetDurationMs: number;
+  assetCodec: string;
+  assetBitRate: number;
+  relatedPublicMusicbillList: RelatedPublicMusicbill[];
 }

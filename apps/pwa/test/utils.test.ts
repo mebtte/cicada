@@ -1,0 +1,61 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import capitalize from "../src/utils/capitalize.js";
+import stringArrayEqual from "../src/utils/string_array_equal.js";
+import parseSearch from "../src/utils/parse_search.js";
+import { getMajorVersion, isSameMajorVersion } from "../src/utils/version.js";
+import { getIsHeaderBackButtonPath } from "../src/pages/player/header/back_button.js";
+import { isPasswordLengthValid } from "../src/constants/user.js";
+
+test("capitalize uppercases the first letter of each word", () => {
+  assert.equal(capitalize("hello world"), "Hello World");
+  assert.equal(capitalize("cicada"), "Cicada");
+});
+
+test("stringArrayEqual compares array length and item order", () => {
+  assert.equal(stringArrayEqual(["a", "b"], ["a", "b"]), true);
+  assert.equal(stringArrayEqual(["a", "b"], ["b", "a"]), false);
+  assert.equal(stringArrayEqual(["a"], ["a", "b"]), false);
+});
+
+test("parseSearch decodes the search string into key-value pairs", () => {
+  assert.deepEqual(
+    parseSearch<"keyword" | "page">("?keyword=lofi%20mix&page=2"),
+    {
+      keyword: "lofi mix",
+      page: "2",
+    },
+  );
+});
+
+test("version helpers compare semantic major versions", () => {
+  assert.equal(getMajorVersion("v3.1.0"), 3);
+  assert.equal(getMajorVersion("3.1.0-beta.20260508"), 3);
+  assert.equal(getMajorVersion("unknown"), null);
+
+  assert.equal(isSameMajorVersion("3.1.0", "3.2.0-beta.1"), true);
+  assert.equal(isSameMajorVersion("3.1.0", "4.0.0"), false);
+  assert.equal(isSameMajorVersion("unknown", "4.0.0"), true);
+});
+
+test("header shows back button on nested player detail pages except musicbill", () => {
+  assert.equal(
+    getIsHeaderBackButtonPath("/player/musicbill/musicbill-1"),
+    false,
+  );
+  assert.equal(getIsHeaderBackButtonPath("/musicbill/musicbill-1"), false);
+  assert.equal(getIsHeaderBackButtonPath("/player/music/music-1"), true);
+  assert.equal(getIsHeaderBackButtonPath("/player/singer/singer-1"), true);
+
+  assert.equal(getIsHeaderBackButtonPath("/player"), false);
+  assert.equal(getIsHeaderBackButtonPath("/player/setting"), false);
+  assert.equal(getIsHeaderBackButtonPath("/player/search"), false);
+});
+
+test("password length accepts 6 to 32 characters", () => {
+  assert.equal(isPasswordLengthValid("12345"), false);
+  assert.equal(isPasswordLengthValid("123456"), true);
+  assert.equal(isPasswordLengthValid("1".repeat(32)), true);
+  assert.equal(isPasswordLengthValid("1".repeat(33)), false);
+});

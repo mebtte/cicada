@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components/button';
 import {
   MdUnfoldLess,
   MdOutlineQueueMusic,
@@ -18,7 +18,11 @@ import { QueueMusic } from '../../constants';
 
 const Style = styled.div`
   ${flexCenter}
-  gap: 15px;
+  gap: clamp(4px, 2vw, 12px);
+
+  > button {
+    flex: 0 0 auto;
+  }
 `;
 const closeLyricPanel = () =>
   playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: false });
@@ -42,7 +46,10 @@ function Operation({
 }) {
   return (
     <Style>
-      <IconButton
+      <Button
+        square
+        variant="ghost"
+        size="sm"
         onClick={() =>
           playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER, {
             music: queueMusic,
@@ -50,8 +57,11 @@ function Operation({
         }
       >
         <MdOutlinePostAdd />
-      </IconButton>
-      <IconButton
+      </Button>
+      <Button
+        square
+        variant="ghost"
+        size="sm"
         onClick={() =>
           playerEventemitter.emit(
             PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
@@ -60,26 +70,33 @@ function Operation({
         }
       >
         <MdReadMore />
-      </IconButton>
-      <IconButton onClick={onPrevious}>
+      </Button>
+      <Button square variant="ghost" size="sm" onClick={onPrevious}>
         <MdSkipPrevious />
-      </IconButton>
-      <IconButton
+      </Button>
+      <Button
+        square
+        variant="primary"
+        size="lg"
         onClick={paused ? onPlay : onPause}
-        size={56}
         loading={loading}
       >
         {paused ? <MdPlayArrow /> : <MdPause />}
-      </IconButton>
-      <IconButton onClick={onNext}>
+      </Button>
+      <Button square variant="ghost" size="sm" onClick={onNext}>
         <MdSkipNext />
-      </IconButton>
-      <IconButton onClick={openPlaylistPlayqueueDrawer}>
+      </Button>
+      <Button
+        square
+        variant="ghost"
+        size="sm"
+        onClick={openPlaylistPlayqueueDrawer}
+      >
         <MdOutlineQueueMusic />
-      </IconButton>
-      <IconButton onClick={closeLyricPanel}>
+      </Button>
+      <Button square variant="ghost" size="sm" onClick={closeLyricPanel}>
         <MdUnfoldLess />
-      </IconButton>
+      </Button>
     </Style>
   );
 }

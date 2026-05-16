@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useTransition } from 'react-spring';
+import styled from 'styled-components';
+import { DuolingoTabPanels } from '@/components';
 import Playqueue from './playqueue';
 import Playlist from './playlist';
 import { Tab } from './constants';
 import cache, { CacheKey } from './cache';
 import TabList from './tab_list';
+
+const Style = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  background: rgb(247 247 247);
+`;
 
 function Content() {
   const [selectedTab, setSelectedTab] = useState(
@@ -19,31 +28,23 @@ function Content() {
     });
   }, [selectedTab]);
 
-  const transitions = useTransition(selectedTab, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-  });
-
   return (
-    <>
-      {transitions((style, tab) => {
-        switch (tab) {
-          case Tab.PLAYLIST: {
-            return <Playlist style={style} />;
-          }
-
-          case Tab.PLAYQUEUE: {
-            return <Playqueue style={style} />;
-          }
-
-          default: {
-            return null;
-          }
-        }
-      })}
+    <Style>
+      <DuolingoTabPanels<Tab>
+        current={selectedTab}
+        tabList={[
+          {
+            tab: Tab.PLAYQUEUE,
+            content: <Playqueue />,
+          },
+          {
+            tab: Tab.PLAYLIST,
+            content: <Playlist />,
+          },
+        ]}
+      />
       <TabList selectedTab={selectedTab} onChange={setSelectedTab} />
-    </>
+    </Style>
   );
 }
 

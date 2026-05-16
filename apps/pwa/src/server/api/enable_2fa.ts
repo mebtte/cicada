@@ -1,5 +1,8 @@
-import { RequestBody } from '#/server/api/enable_2fa';
 import { Method, request } from '..';
+
+interface RequestBody {
+  twoFAToken: string;
+}
 
 function enable2FA(data: RequestBody) {
   return request({
@@ -7,7 +10,7 @@ function enable2FA(data: RequestBody) {
     method: Method.PUT,
     withToken: true,
     body: {
-      twoFAToken: data.twoFAToken,
+      token: data.twoFAToken,
     },
   });
 }

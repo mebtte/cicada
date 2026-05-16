@@ -1,32 +1,32 @@
-import {
-  CSSProperties,
-  HtmlHTMLAttributes,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogTitle } from '@/components';
 import { DialogOptions } from './constants';
-import Dialog from '../../components/dialog';
-import { UtilZIndex } from '../../constants/style';
 import e, { EventType } from './eventemitter';
+import { t } from '@/i18n';
 
-const maskProps: { style: CSSProperties } = {
-  style: { zIndex: UtilZIndex.DIALOG },
+const srOnly: CSSProperties = {
+  position: 'absolute',
+  width: 1,
+  height: 1,
+  padding: 0,
+  margin: -1,
+  overflow: 'hidden',
+  clip: 'rect(0,0,0,0)',
+  whiteSpace: 'nowrap',
+  border: 0,
 };
 
 function DialogBase({
   options,
   onDestroy,
   children,
-  bodyProps,
 }: {
   options: DialogOptions;
   onDestroy: (id: string) => void;
   children: ({ onClose }: { onClose: () => void }) => ReactNode;
-  bodyProps?: HtmlHTMLAttributes<HTMLDivElement>;
 }) {
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
@@ -34,10 +34,14 @@ function DialogBase({
   }, []);
 
   useEffect(() => {
+    if (open) {
+      setHasOpened(true);
+    }
+  }, [open]);
+
+  useEffect(() => {
     const unlistenClose = e.listen(EventType.CLOSE, ({ id }) => {
-      if (options.id === id) {
-        setOpen(false);
-      }
+      if (options.id === id) setOpen(false);
     });
     return unlistenClose;
   }, [options.id]);
@@ -50,8 +54,15 @@ function DialogBase({
   }, [options.id, onDestroy, open]);
 
   return (
-    <Dialog open={open} maskProps={maskProps} bodyProps={bodyProps}>
-      {children({ onClose })}
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent
+        showClose={false}
+        aria-describedby={undefined}
+        forceMount={hasOpened ? true : undefined}
+      >
+        <DialogTitle style={srOnly}>{t('dialog')}</DialogTitle>
+        {children({ onClose })}
+      </DialogContent>
     </Dialog>
   );
 }

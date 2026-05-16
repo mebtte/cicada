@@ -1,7 +1,20 @@
 import styled, { css } from 'styled-components';
 import { useContext } from 'react';
+import { CSSVariable } from '@/global_style';
+import { CSS_VAR } from '@/components/theme';
 import getResizedImage from '@/server/asset/get_resized_image';
-import { type QueueMusic, ZIndex } from '../constants';
+import {
+  CONTROLLER_BORDER_WIDTH,
+  CONTROLLER_BUTTON_ROW_HEIGHT,
+  CONTROLLER_COVER_HEIGHT,
+  CONTROLLER_FLOATING_BOTTOM,
+  CONTROLLER_FLOATING_GAP,
+  CONTROLLER_HEIGHT,
+  CONTROLLER_PROGRESS_BUTTON_GAP,
+  CONTROLLER_VERTICAL_PADDING,
+  type QueueMusic,
+  ZIndex,
+} from '../constants';
 import Cover from './cover';
 import Operation from './operation';
 import Info from './info';
@@ -15,15 +28,35 @@ import { useTheme } from '@/global_states/theme';
 
 const toggleLyric = () =>
   playerEventemitter.emit(PlayerEventType.TOGGLE_LYRIC_PANEL, { open: true });
-const Style = styled.div`
+const Style = styled.div<{ $playing: boolean }>`
   z-index: ${ZIndex.CONTROLLER};
 
-  height: calc(env(safe-area-inset-bottom, 0) + 60px);
+  position: absolute;
+  left: 50%;
+  bottom: ${CONTROLLER_FLOATING_BOTTOM};
+  transform: translateX(-50%);
+
+  width: calc(100% - ${CONTROLLER_FLOATING_GAP * 4}px);
+  height: ${CONTROLLER_HEIGHT}px;
 
   display: flex;
   flex-direction: column;
 
-  background-color: rgb(255 255 255 / 0.75);
+  padding: ${CONTROLLER_VERTICAL_PADDING}px 10px;
+
+  background: #fff;
+  border: ${CONTROLLER_BORDER_WIDTH}px solid
+    ${({ $playing }) =>
+      $playing ? `var(${CSS_VAR.colorPrimary})` : CSSVariable.COLOR_BORDER};
+  border-radius: 16px;
+  box-shadow: 0 6px 0
+    ${({ $playing }) =>
+      $playing
+        ? `var(${CSS_VAR.colorPrimaryShadow})`
+        : CSSVariable.COLOR_SURFACE_SHADOW};
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 
   > .content {
     flex: 1;
@@ -31,14 +64,21 @@ const Style = styled.div`
 
     display: flex;
 
-    > .rest {
+    > .main {
       flex: 1;
       min-width: 0;
+      min-height: 0;
 
       display: flex;
-      align-items: center;
+      flex-direction: column;
 
-      padding-bottom: env(safe-area-inset-bottom, 0);
+      > .rest {
+        flex: 0 0 ${CONTROLLER_BUTTON_ROW_HEIGHT}px;
+        min-height: 0;
+
+        display: flex;
+        align-items: center;
+      }
     }
   }
 
@@ -46,13 +86,23 @@ const Style = styled.div`
     > .content {
       gap: ${miniMode ? 10 : 15}px;
 
-      padding-right: ${miniMode ? 10 : 20}px;
+      padding-right: ${miniMode ? 0 : 10}px;
 
-      > .rest {
-        gap: ${miniMode ? 10 : 20}px;
+      > .cover {
+        align-self: flex-start;
+        height: ${CONTROLLER_COVER_HEIGHT}px;
+      }
+
+      > .main {
+        gap: ${CONTROLLER_PROGRESS_BUTTON_GAP}px;
+
+        > .rest {
+          gap: ${miniMode ? 10 : 20}px;
+        }
       }
     }
   `}
+
 `;
 
 function Controller() {
@@ -70,13 +120,10 @@ function Controller() {
 
   const { miniMode } = useTheme();
   return (
-    <Style>
-      <ProgressBar
-        duration={audioDuration}
-        bufferedPercent={audioBufferedPercent}
-      />
+    <Style $playing={!!queueMusic && !audioPaused}>
       <div className="content">
         <Cover
+          className="cover"
           cover={
             queueMusic?.cover
               ? getResizedImage({ url: queueMusic.cover, size: 200 })
@@ -85,14 +132,20 @@ function Controller() {
           onClick={queueMusic ? toggleLyric : undefined}
           mask={!!queueMusic}
         />
-        <div className="rest">
-          <Info queueMusic={queueMusic} />
-          {miniMode ? null : <Time duration={audioDuration} />}
-          <Operation
-            queueMusic={queueMusic}
-            paused={audioPaused}
-            loading={audioLoading}
+        <div className="main">
+          <ProgressBar
+            duration={audioDuration}
+            bufferedPercent={audioBufferedPercent}
           />
+          <div className="rest">
+            <Info queueMusic={queueMusic} />
+            {miniMode ? null : <Time duration={audioDuration} />}
+            <Operation
+              queueMusic={queueMusic}
+              paused={audioPaused}
+              loading={audioLoading}
+            />
+          </div>
         </div>
       </div>
     </Style>

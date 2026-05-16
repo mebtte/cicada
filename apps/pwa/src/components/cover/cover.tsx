@@ -1,13 +1,15 @@
 import { ImgHTMLAttributes, useLayoutEffect, useRef, useState } from 'react';
+import { animated, useTransition } from 'react-spring';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '@/constants/style';
 import DefaultCover from '@/asset/default_cover.jpeg';
-import loadImage from '@/utils/load_image';
+import loadImage, { isImageLoaded } from '@/utils/load_image';
 import logger from '@/utils/logger';
-import { animated, useTransition } from 'react-spring';
 import { CSSVariable } from '@/global_style';
 import { Shape } from './constants';
 import intersectionObserver from './intersection_observer';
+
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
 const SHAPE_MAP: Record<Shape, { css: ReturnType<typeof css> | null }> = {
   [Shape.ROUNDED]: {
@@ -45,6 +47,7 @@ const Img = styled(animated.img)`
   object-fit: cover;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  will-change: opacity, transform, filter;
 `;
 const preventDefault = (e) => e.preventDefault();
 
@@ -62,28 +65,64 @@ function Cover({
   defaultSrc?: string;
 } & ImgHTMLAttributes<HTMLDivElement>) {
   const ref = useRef<HTMLDivElement>(null);
-  const [currentSrc, setCurrentSrc] = useState(defaultSrc);
+  const [currentSrc, setCurrentSrc] = useState(() =>
+    src && isImageLoaded(src) ? src : defaultSrc,
+  );
 
   useLayoutEffect(() => {
+    if (!src) {
+      setCurrentSrc(defaultSrc);
+      return;
+    }
+
+    if (isImageLoaded(src)) {
+      setCurrentSrc(src);
+      return;
+    }
+
     setCurrentSrc(defaultSrc);
 
-    if (src) {
-      const unobserve = intersectionObserver.observe(ref.current!, () =>
-        loadImage(src)
-          .then(() => setCurrentSrc(src))
-          .catch((error) =>
-            logger.error(error, `Failed to load cover "${src}"`),
-          ),
-      );
-      return unobserve;
-    }
+    let active = true;
+    const target = ref.current;
+    const load = () =>
+      loadImage(src)
+        .then(() => {
+          if (active) {
+            setCurrentSrc(src);
+          }
+        })
+        .catch((error) =>
+          logger.error(error, `Failed to load cover "${src}"`),
+        );
+    const unobserve = intersectionObserver.observe(target, load);
+    return () => {
+      active = false;
+      unobserve();
+    };
   }, [src, defaultSrc]);
 
   const transitions = useTransition(currentSrc, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
+    from: {
+      opacity: 0,
+      transform: 'scale(1.035)',
+      filter: 'brightness(1.08) saturate(1.06)',
+    },
+    enter: {
+      opacity: 1,
+      transform: 'scale(1)',
+      filter: 'brightness(1) saturate(1)',
+    },
+    leave: {
+      opacity: 0,
+      transform: 'scale(1.02)',
+      filter: 'brightness(0.98) saturate(0.96)',
+    },
+    config: {
+      duration: 260,
+      easing: easeOutCubic,
+    },
   });
+
   return (
     <Style
       style={{
@@ -94,10 +133,10 @@ function Cover({
       ref={ref}
       {...props}
     >
-      {transitions((innerStyle, s) => (
+      {transitions((transitionStyle, imageSrc) => (
         <Img
-          src={s}
-          style={innerStyle}
+          style={transitionStyle}
+          src={imageSrc}
           crossOrigin="anonymous"
           onDragStart={preventDefault}
         />

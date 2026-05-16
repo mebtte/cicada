@@ -1,6 +1,19 @@
 import { prefixServerOrigin } from '@/global_states/server';
-import { Response } from '#/server/api/get_user';
 import { request } from '..';
+
+interface Response {
+  id: string;
+  avatar: string;
+  joinTimestamp: number;
+  nickname: string;
+  username: string;
+  musicbillList: {
+    id: string;
+    cover: string;
+    name: string;
+    musicCount: number;
+  }[];
+}
 
 /**
  * 获取用户详情
@@ -9,7 +22,7 @@ import { request } from '..';
 async function getUser(id: string) {
   const user = await request<Response>({
     path: '/api/user',
-    params: { id },
+    params: { userId: id },
     withToken: true,
   });
   return {
@@ -18,11 +31,6 @@ async function getUser(id: string) {
     musicbillList: user.musicbillList.map((mb) => ({
       ...mb,
       cover: prefixServerOrigin(mb.cover),
-    })),
-    musicList: user.musicList.map((m) => ({
-      ...m,
-      cover: prefixServerOrigin(m.cover),
-      asset: prefixServerOrigin(m.asset),
     })),
   };
 }

@@ -1,47 +1,72 @@
-import { CSSProperties, memo } from 'react';
-import Drawer from '@/components/drawer';
+import { memo } from 'react';
+import { Drawer, DrawerContent } from '@/components';
+import Button from '@/components/button';
+import { MdOutlineAddBox } from 'react-icons/md';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { EventType } from '../eventemitter';
 import { MusicWithSingerAliases } from '../constants';
-import useDynamicZIndex from '../use_dynamic_z_index';
+import { t } from '@/i18n';
+import { openCreateMusicbillDialog } from '../utils';
 import Top from './top';
 import MusicbillList from './musicbill_list';
 
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    width: 300,
-  },
-};
 const Content = styled.div`
+  position: relative;
   height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+const ScrollContent = styled.div`
+  flex: 1;
+  min-height: 0;
 
   overflow: auto;
   ${autoScrollbar}
+`;
+const FloatingCreateButton = styled(Button)`
+  position: absolute;
+  right: 16px;
+  bottom: max(env(safe-area-inset-bottom, 0) + 16px, 16px);
+  z-index: 2;
 `;
 
 function MusicbillMusicDrawer({
   open,
   onClose,
   music,
+  zIndex,
 }: {
   open: boolean;
   onClose: () => void;
   music: MusicWithSingerAliases;
+  zIndex: number;
 }) {
-  const zIndex = useDynamicZIndex(EventType.OPEN_MUSICBILL_MUSIC_DRAWER);
-
   return (
-    <Drawer
-      open={open}
-      onClose={onClose}
-      maskProps={{ style: { zIndex } }}
-      bodyProps={bodyProps}
-    >
-      <Content>
-        <Top music={music} />
-        <MusicbillList music={music} />
-      </Content>
+    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
+      <DrawerContent
+        side="right"
+        style={{ width: 300 }}
+        zIndex={zIndex}
+        accessibleTitle={t('add_to_musicbill')}
+      >
+        <Content>
+          <ScrollContent>
+            <Top music={music} />
+            <MusicbillList music={music} />
+          </ScrollContent>
+          <FloatingCreateButton
+            square
+            variant="primary"
+            size="md"
+            aria-label={t('create_musicbill')}
+            onClick={openCreateMusicbillDialog}
+          >
+            <MdOutlineAddBox />
+          </FloatingCreateButton>
+        </Content>
+      </DrawerContent>
     </Drawer>
   );
 }

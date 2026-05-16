@@ -1,4 +1,4 @@
-import { Language } from '#/constants';
+import { Language } from '@/constants/language';
 import { useSetting } from '@/global_states/setting';
 import type { Key } from './constants';
 

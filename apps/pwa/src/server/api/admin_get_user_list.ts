@@ -1,6 +1,19 @@
-import { Response } from '#/server/api/admin_get_user_list';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
+
+type Response = {
+  id: string;
+  username: string;
+  nickname: string;
+  avatar: string;
+  admin: 0 | 1;
+  remark: string;
+  joinTimestamp: number;
+  lastActiveTimestamp: number;
+  twoFAEnabled: boolean;
+  musicbillCount: number;
+  publicMusicbillCount: number;
+}[];
 
 async function adminGetUserList() {
   const userList = await request<Response>({

@@ -1,18 +1,18 @@
 import styled from 'styled-components';
-import Slider from '@/components/slider';
+import { Slider } from '@/components';
 import { CSSVariable } from '@/global_style';
-import absoluteFullSize from '@/style/absolute_full_size';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import useAudioCurrentMillisecond from '../../use_audio_current_millisecond';
 import { formatSecond } from '../../utils';
+import { LYRIC_PANEL_PROGRESS_BOTTOM_PADDING } from '../constants';
 
 const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 10px;
+  padding: 8px 10px ${LYRIC_PANEL_PROGRESS_BOTTOM_PADDING}px;
 
   > .slider {
     flex: 1;
@@ -20,17 +20,16 @@ const Style = styled.div`
   }
 
   > .time {
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
+    min-width: 42px;
+
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    text-align: center;
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    font-family: monospace;
-    transform: scale(0.9);
   }
-`;
-const SecondTrack = styled.div`
-  ${absoluteFullSize}
-  background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_FIVE};
-  transform-origin: left;
-  transition: transform 0.3s;
 `;
 
 function Wrapper({
@@ -51,16 +50,11 @@ function Wrapper({
     <Style>
       <div className="time">{formatSecond(currentMillisecond / 1000)}</div>
       <Slider
-        current={percent}
+        value={percent}
         onChange={onTimeChange}
         className="slider"
-        secondTrack={
-          <SecondTrack
-            style={{
-              transform: `scaleX(${bufferedPercent * 100}%)`,
-            }}
-          />
-        }
+        secondValue={bufferedPercent}
+        alwaysShowThumb
       />
       <div className="time">{formatSecond(duration)}</div>
     </Style>

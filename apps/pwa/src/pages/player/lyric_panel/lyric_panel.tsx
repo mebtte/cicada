@@ -1,5 +1,5 @@
 import absoluteFullSize from '@/style/absolute_full_size';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { animated } from 'react-spring';
 import styled from 'styled-components';
 import { ZIndex } from '../constants';
@@ -27,18 +27,20 @@ function LyricPanel({ style }: { style: unknown }) {
     currentPlayqueuePosition,
   } = useContext(Context);
   const queueMusic = playqueue[currentPlayqueuePosition];
+  const [controllerHeight, setControllerHeight] = useState(0);
 
   return (
     // @ts-expect-error: style is known
     <Style style={style}>
       <Backdrop cover={queueMusic.cover} />
-      <Lyric queueMusic={queueMusic} />
+      <Lyric queueMusic={queueMusic} controllerHeight={controllerHeight} />
       <Controller
         queueMusic={queueMusic}
         paused={audioPaused}
         duration={audioDuration}
         loading={audioLoading}
         bufferedPercent={audioBufferedPercent}
+        onHeightChange={setControllerHeight}
       />
     </Style>
   );

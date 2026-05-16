@@ -1,25 +1,18 @@
-import Dialog, { Container, Title, Content, Action } from '@/components/dialog';
-import { ChangeEventHandler, CSSProperties, useEffect, useState } from 'react';
-import Button, { Variant } from '@/components/button';
-import Label from '@/components/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from '@/components';
+import { ChangeEventHandler, useEffect, useState } from 'react';
+import Button from '@/components/button';
 import Input from '@/components/input';
-import styled from 'styled-components';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import adminCreateUser from '@/server/api/admin_create_user';
 import { t } from '@/i18n';
-import { PASSWORD_MAX_LENGTH, USERNAME_MAX_LENGTH } from '#/constants/user';
+import {
+  isPasswordLengthValid,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  USERNAME_MAX_LENGTH,
+} from '@/constants/user';
 import e, { EventType } from './eventemitter';
-import { ZIndex } from '../../constants';
-
-const maskProps: { style: CSSProperties } = {
-  style: { zIndex: ZIndex.DIALOG },
-};
-const StyledContent = styled(Content)`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
 
 function CreateUserDialog() {
   const [open, setOpen] = useState(false);
@@ -39,6 +32,17 @@ function CreateUserDialog() {
 
   const [loading, setLoading] = useState(false);
   const onCreate = async () => {
+    if (!isPasswordLengthValid(password)) {
+      notice.error(
+        t(
+          'password_length_warning',
+          PASSWORD_MIN_LENGTH.toString(),
+          PASSWORD_MAX_LENGTH.toString(),
+        ),
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       await adminCreateUser({
@@ -65,42 +69,46 @@ function CreateUserDialog() {
   }, []);
 
   return (
-    <Dialog open={open} maskProps={maskProps}>
-      <Container>
-        <Title>{t('create_user')}</Title>
-        <StyledContent>
-          <Label label={t('username')}>
-            <Input
-              value={username}
-              onChange={onUsernameChange}
-              maxLength={USERNAME_MAX_LENGTH}
-            />
-          </Label>
-          <Label label={t('password')}>
-            <Input
-              value={password}
-              onChange={onPasswordChange}
-              maxLength={PASSWORD_MAX_LENGTH}
-            />
-          </Label>
-          <Label label={t('remark')}>
-            <Input value={remark} onChange={onRemarkChange} />
-          </Label>
-        </StyledContent>
-        <Action>
-          <Button onClick={onClose} disabled={loading}>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
+      <DialogContent showClose={false} aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{t('create_user')}</DialogTitle>
+        </DialogHeader>
+        <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <Input
+            label={t('username')}
+            value={username}
+            onChange={onUsernameChange}
+            maxLength={USERNAME_MAX_LENGTH}
+          />
+          <Input
+            label={t('password')}
+            type="password"
+            value={password}
+            onChange={onPasswordChange}
+            minLength={PASSWORD_MIN_LENGTH}
+            maxLength={PASSWORD_MAX_LENGTH}
+          />
+          <Input
+            label={t('remark')}
+            value={remark}
+            onChange={onRemarkChange}
+          />
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose} disabled={loading}>
             {t('cancel')}
           </Button>
           <Button
-            variant={Variant.PRIMARY}
+            variant={'primary'}
             loading={loading}
             disabled={!username.length || !password.length}
             onClick={onCreate}
           >
             {t('create')}
           </Button>
-        </Action>
-      </Container>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   );
 }

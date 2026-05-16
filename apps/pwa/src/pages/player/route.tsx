@@ -1,52 +1,72 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { PLAYER_PATH } from '@/constants/route';
-import { useUser } from '@/global_states/server';
-import Search from './pages/search';
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from 'react-router-dom';
+import styled from 'styled-components';
+import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import Musicbill from './pages/musicbill';
+import Music from './pages/music';
+import User from './pages/user';
 import Setting from './pages/setting';
-import MyMusic from './pages/my_music';
-import UserManage from './pages/user_manage';
-import PublicMusicbillCollection from './pages/public_musicbill_collection';
 import Exploration from './pages/exploration';
 import MusicPlayRecord from './pages/music_play_record';
-import SharedMusicbillInvitation from './pages/shared_musicbill_invitation';
-import DownloadingMusic from './pages/downloading_music';
+import ExportingMusic from './pages/exporting_music';
+import Singer from './pages/singer';
+import { useEffect } from 'react';
+import e, { EventType } from './eventemitter';
+
+const Style = styled.div`
+  flex: 1;
+  min-height: 0;
+  position: relative;
+`;
+
+function PublicMusicbillCollectionEntry() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // 延后一帧，确保全局 drawer 监听已经挂载，再从旧页面地址切换到抽屉形态。
+    const frame = window.requestAnimationFrame(() => {
+      e.emit(EventType.OPEN_PUBLIC_MUSICBILL_COLLECTION_DRAWER, null);
+      navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORATION}`, {
+        replace: true,
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [navigate]);
+
+  return null;
+}
 
 function Wrapper() {
-  const user = useUser()!;
   return (
-    <Routes>
-      <Route path={PLAYER_PATH.SEARCH} element={<Search />} />
-      <Route path={PLAYER_PATH.EXPLORATION} element={<Exploration />} />
-      <Route path={PLAYER_PATH.MY_MUSIC} element={<MyMusic />} />
-      <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
-      <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
-      <Route
-        path={PLAYER_PATH.DOWNLOADING_MUSIC}
-        element={<DownloadingMusic />}
-      />
-      <Route
-        path={PLAYER_PATH.SHARED_MUSICBILL_INVITATION}
-        element={<SharedMusicbillInvitation />}
-      />
-      <Route
-        path={PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION}
-        element={<PublicMusicbillCollection />}
-      />
-      <Route
-        path={PLAYER_PATH.MUSIC_PLAY_RECORD}
-        element={<MusicPlayRecord />}
-      />
+    <Style>
+      <Routes>
+        <Route path={PLAYER_PATH.EXPLORATION} element={<Exploration />} />
+        <Route path={PLAYER_PATH.MUSIC} element={<Music />} />
+        <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
+        <Route path={PLAYER_PATH.SINGER} element={<Singer />} />
+        <Route path={PLAYER_PATH.USER} element={<User />} />
+        <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
+        <Route path={PLAYER_PATH.EXPORTING_MUSIC} element={<ExportingMusic />} />
+        <Route
+          path={PLAYER_PATH.PUBLIC_MUSICBILL_COLLECTION}
+          element={<PublicMusicbillCollectionEntry />}
+        />
+        <Route
+          path={PLAYER_PATH.MUSIC_PLAY_RECORD}
+          element={<MusicPlayRecord />}
+        />
 
-      {user.admin ? (
-        <Route path={PLAYER_PATH.USER_MANAGE} element={<UserManage />} />
-      ) : null}
-
-      <Route
-        path="*"
-        element={<Navigate to={PLAYER_PATH.EXPLORATION} replace />}
-      />
-    </Routes>
+        <Route
+          path="*"
+          element={<Navigate to={PLAYER_PATH.EXPLORATION} replace />}
+        />
+      </Routes>
+    </Style>
   );
 }
 

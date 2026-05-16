@@ -8,6 +8,22 @@ import autoScrollbar from '@/style/auto_scrollbar';
 const StyledMultipleLrc = styled(MultipleLrc)`
   ${absoluteFullSize}
   ${autoScrollbar}
+
+  --lyric-fade-size: 44px;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--lyric-fade-size),
+    #000 calc(100% - var(--lyric-fade-size)),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 var(--lyric-fade-size),
+    #000 calc(100% - var(--lyric-fade-size)),
+    transparent 100%
+  );
 `;
 const Line = styled.div<{ active?: boolean }>`
   margin: 20px;
@@ -20,24 +36,52 @@ const Line = styled.div<{ active?: boolean }>`
 
     border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
     text-align: center;
-    backdrop-filter: blur(10px);
-    font-size: ${CSSVariable.TEXT_SIZE_LARGE};
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+    font-size: 18px;
     line-height: 1.5;
-    font-weight: bold;
+    font-weight: 900;
+    letter-spacing: 0;
 
     &:empty {
       visibility: hidden;
+    }
+
+    .child {
+      display: block;
+    }
+
+    .text {
+      display: inline-grid;
+    }
+
+    .text > span {
+      grid-area: 1 / 1;
+    }
+
+    .outline {
+      color: transparent;
+      pointer-events: none;
+      -webkit-text-stroke: 3px rgb(255 255 255 / 0.96);
+    }
+
+    .value {
+      position: relative;
     }
   }
 
   ${({ active }) => css`
     > .content {
-      background-color: ${active
-        ? 'rgb(255 255 255 / 0.8)'
-        : 'rgb(255 255 255 / 0.4)'};
+      background-color: transparent;
       color: ${active
-        ? CSSVariable.COLOR_PRIMARY
+        ? CSSVariable.COLOR_PRIMARY_ACTIVE
         : CSSVariable.TEXT_COLOR_PRIMARY};
+      font-size: ${active ? '21px' : '18px'};
+
+      .outline {
+        -webkit-text-stroke: ${active
+          ? '4px rgb(255 255 255 / 0.98)'
+          : '3px rgb(255 255 255 / 0.96)'};
+      }
     }
   `}
 `;
@@ -54,7 +98,12 @@ const lineRenderer = ({
       {line.children.map((child) =>
         child.content ? (
           <div key={child.id} className="child">
-            {child.content}
+            <span className="text">
+              <span className="outline" aria-hidden>
+                {child.content}
+              </span>
+              <span className="value">{child.content}</span>
+            </span>
           </div>
         ) : null,
       )}

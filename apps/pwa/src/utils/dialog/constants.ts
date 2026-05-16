@@ -1,12 +1,15 @@
-import { Variant } from '@/components/button';
-import { Option } from '@/components/select';
+import type { Variant } from '@/components/button';
+import type { SelectOption } from '@/components';
 import { ReactNode } from 'react';
 
 export const ID_LENGTH = 6;
+export const DEFAULT_CANCEL_VARIANT = 'ghost';
+export const DEFAULT_CONFIRM_VARIANT = 'ghost';
 
 export enum DialogType {
   ALERT,
   CONFIRM,
+  ACTIONS,
   CAPTCHA,
   INPUT,
   INPUT_LIST,
@@ -25,12 +28,14 @@ interface Confirmable<Payload = void> {
 
 interface Cancelable {
   cancelText?: string;
+  cancelVariant?: Variant;
   onCancel?: () => void | boolean | Promise<void | boolean>;
 }
 
 export interface DialogOptions {
   id: string;
   type: DialogType;
+  inlineFooter?: boolean;
 }
 
 export interface Alert extends DialogOptions, Confirmable {
@@ -45,6 +50,20 @@ export interface Confirm extends DialogOptions, Confirmable, Cancelable {
 
   title?: ReactNode;
   content?: ReactNode;
+}
+
+export interface ActionDialogAction {
+  text: ReactNode;
+  variant?: Variant;
+  onClick?: () => void | boolean | Promise<void | boolean>;
+}
+
+export interface Actions extends DialogOptions, Cancelable {
+  type: DialogType.ACTIONS;
+
+  title?: ReactNode;
+  content?: ReactNode;
+  actions: ActionDialogAction[];
 }
 
 export interface Captcha
@@ -64,7 +83,7 @@ export interface Input extends DialogOptions, Confirmable<string>, Cancelable {
   label: string;
   initialValue?: string;
   maxLength?: number;
-  inputType?: 'text' | 'number';
+  inputType?: 'text' | 'number' | 'password';
 }
 
 export interface InputList
@@ -82,27 +101,36 @@ export interface InputList
 
 export interface MultipleSelect<Value>
   extends DialogOptions,
-    Confirmable<Option<Value>[]>,
+    Confirmable<SelectOption<Value>[]>,
     Cancelable {
   type: DialogType.MULTIPLE_SELECT;
 
   title?: string;
-  initialValue: Option<Value>[];
+  initialValue: SelectOption<Value>[];
   label: string;
   labelAddon?: ReactNode;
-  optionsGetter: (keyword: string) => Promise<Option<Value>[]>;
+  loadOptions: (keyword: string) => Promise<SelectOption<Value>[]>;
 }
 
-export interface FileSelect
-  extends DialogOptions,
-    Confirmable<File | null>,
-    Cancelable {
+export interface FileSelectConfirmContext {
+  signal: AbortSignal;
+  setProgress: (progress: ReactNode | null) => void;
+}
+
+export interface FileSelect extends DialogOptions, Cancelable {
   type: DialogType.FILE_SELECT;
 
   title?: string;
   label: string;
   acceptTypes: string[];
   placeholder: string;
+  renderSelectedFileExtra?: (file: File) => ReactNode;
+  confirmVariant?: Variant;
+  confirmText?: string;
+  onConfirm?: (
+    file: File | null,
+    context: FileSelectConfirmContext,
+  ) => void | boolean | Promise<void | boolean>;
 }
 
 export interface TextareaList

@@ -1,83 +1,117 @@
-import Drawer, { Title } from '@/components/drawer';
-import { CSSProperties, useCallback, useEffect, useState } from 'react';
-import { SortableContainer } from 'react-sortable-hoc';
-import { arrayMoveImmutable } from 'array-move';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import updateProfile from '@/server/api/update_profile';
 import logger from '@/utils/logger';
 import dialog from '@/utils/dialog';
 import { IS_TOUCHABLE } from '@/constants/browser';
-import { AllowUpdateKey } from '#/constants/user';
+import { AllowUpdateKey } from '@/constants/user';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { reloadUser } from '@/global_states/server';
-import { Musicbill as MusicbillType, ZIndex } from '../constants';
+import { CSSVariable } from '@/global_style';
+import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
+import { Musicbill as MusicbillType } from '../constants';
 import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
-import e, { EventType } from './eventemitter';
 
-const maskProps: { style: CSSProperties } = {
-  style: {
-    zIndex: ZIndex.DRAWER,
-  },
-};
-const bodyProps: { style: CSSProperties } = {
-  style: {
-    width: 250,
-  },
-};
-const Content = styled.div`
+const Shell = styled.div`
   height: 100%;
-  padding-bottom: env(safe-area-inset-bottom, 0);
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+`;
+const Header = styled(DrawerHeader)`
+  padding: 20px 18px 16px;
+
+  background: #fff;
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
+`;
+const HeaderRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+const HeaderTitle = styled(DrawerTitle)`
+  flex: 1;
+  min-width: 0;
+`;
+const Content = styled.div`
+  flex: 1;
+  min-height: 0;
+  padding: 16px 14px max(20px, env(safe-area-inset-bottom, 20px));
 
   overflow: auto;
+  overscroll-behavior: contain;
   ${autoScrollbar}
 `;
+const MusicbillList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+const drawerStyle = {
+  width: 'min(340px, calc(100vw - 20px))',
+};
+
 const toLocalMusicbill = (musicbill: MusicbillType): LocalMusicbill => ({
   id: musicbill.id,
   cover: musicbill.cover,
   name: musicbill.name,
   public: musicbill.public,
-  shared: musicbill.sharedUserList.length > 0,
 });
-type MusicbillListProps = { musicbillList: LocalMusicbill[] };
-
-const MusicbillList = SortableContainer<MusicbillListProps>(
-  ({ musicbillList }: MusicbillListProps) => (
-    <div>
-      {musicbillList.map((musicbill, index) => (
-        <Musicbill
-          key={musicbill.id}
-          index={index}
-          selfIndex={index}
-          musicbill={musicbill}
-        />
-      ))}
-    </div>
-  ),
-);
 
 function MusicbillOrderDrawer({
   open,
   onClose,
   musicbillList,
+  zIndex,
 }: {
   open: boolean;
   onClose: () => void;
   musicbillList: MusicbillType[];
+  zIndex: number;
 }) {
+  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const [localMusicbillList, setLocalMusicbillList] = useState(() =>
     musicbillList.map(toLocalMusicbill),
   );
-  const onSortEnd = useCallback(
-    ({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) => {
-      e.emit(EventType.DRAG_END, null);
-      return setLocalMusicbillList((lml) =>
-        arrayMoveImmutable(lml, oldIndex, newIndex),
-      );
-    },
-    [],
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: IS_TOUCHABLE ? 250 : 0, tolerance: 5 },
+    }),
   );
+  const onDragEnd = useCallback(({ active, over }: DragEndEvent) => {
+    if (over && active.id !== over.id) {
+      setLocalMusicbillList((lml) => {
+        const oldIndex = lml.findIndex((m) => m.id === active.id);
+        const newIndex = lml.findIndex((m) => m.id === over.id);
+        return arrayMove(lml, oldIndex, newIndex);
+      });
+    }
+  }, []);
   const onCloseWrapper = () => {
     onClose();
 
@@ -108,23 +142,41 @@ function MusicbillOrderDrawer({
   }, [musicbillList]);
 
   return (
-    <Drawer
-      open={open}
-      onClose={onCloseWrapper}
-      maskProps={maskProps}
-      bodyProps={bodyProps}
-    >
-      <Content>
-        <Title>{t('sort_musicbill')}</Title>
-        <MusicbillList
-          musicbillList={localMusicbillList}
-          updateBeforeSortStart={(s) =>
-            e.emit(EventType.BEFORE_DRAG_START, { index: s.index })
-          }
-          onSortEnd={onSortEnd}
-          pressDelay={IS_TOUCHABLE ? 250 : 0}
-        />
-      </Content>
+    <Drawer open={open} onOpenChange={(v) => !v && onCloseWrapper()}>
+      <DrawerContent
+        side="right"
+        style={{ ...drawerStyle, paddingTop: titlebarTop }}
+        zIndex={zIndex}
+      >
+        <Shell>
+          <Header>
+            <HeaderRow>
+              <HeaderTitle>{t('sort_musicbill')}</HeaderTitle>
+            </HeaderRow>
+          </Header>
+          <Content>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={onDragEnd}
+            >
+              <SortableContext
+                items={localMusicbillList.map((m) => m.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <MusicbillList>
+                  {localMusicbillList.map((musicbill) => (
+                    <Musicbill
+                      key={musicbill.id}
+                      musicbill={musicbill}
+                    />
+                  ))}
+                </MusicbillList>
+              </SortableContext>
+            </DndContext>
+          </Content>
+        </Shell>
+      </DrawerContent>
     </Drawer>
   );
 }

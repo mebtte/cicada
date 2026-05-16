@@ -1,75 +1,87 @@
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
-import { MdPlaylistAdd, MdOutlineEdit, MdCopyAll } from 'react-icons/md';
+import Button from '@/components/button';
+import { MdPlaylistAdd } from 'react-icons/md';
+import { IconExport } from '@/components/icon';
 import notice from '@/utils/notice';
-import logger from '@/utils/logger';
 import { t } from '@/i18n';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../eventemitter';
 import { Singer } from './constants';
-import e, { EventType } from './eventemitter';
+import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
+import addMusicListToPlaylist from '../add_to_playlist';
+import { openExportMusicListDialog } from '../export_music_list';
 
-const openEditMenu = () => e.emit(EventType.OPEN_EDIT_MENU, null);
-const Style = styled.div`
-  position: sticky;
-  bottom: 0;
-  height: calc(50px + env(safe-area-inset-bottom, 0));
-  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
+const Style = styled.div<{ $floatingControllerOffset: boolean }>`
+  z-index: 1;
+
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: ${({ $floatingControllerOffset }) =>
+    $floatingControllerOffset
+      ? CONTROLLER_FLOATING_RESERVED_HEIGHT
+      : 'calc(14px + env(safe-area-inset-bottom, 0))'};
+  max-width: calc(100% - 32px);
+  padding: 8px 12px;
+  box-sizing: border-box;
 
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 
-  backdrop-filter: blur(5px);
+  background: rgb(255 255 255 / 0.92);
+  border: 2px solid rgb(229 229 229);
+  border-radius: 16px;
+  box-shadow:
+    0 4px 0 rgb(229 229 229),
+    0 10px 24px rgb(0 0 0 / 0.1);
+  backdrop-filter: blur(12px);
 
   > .left {
-    flex: 1;
     min-width: 0;
 
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
   }
 `;
 
-function Toolbar({ singer }: { singer: Singer }) {
+function Toolbar({
+  singer,
+  floatingControllerOffset = false,
+}: {
+  singer: Singer;
+  floatingControllerOffset?: boolean;
+}) {
+  const hasMusic = singer.musicList.length > 0;
   return (
-    <Style>
+    <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
-        <IconButton
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          aria-label={t('add_to_playlist')}
           onClick={() =>
-            singer.musicList.length
-              ? playerEventemitter.emit(
-                  PlayerEventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
-                  {
-                    musicList: singer.musicList,
-                  },
-                )
+            hasMusic
+              ? addMusicListToPlaylist(singer.musicList)
               : notice.error(t('no_music_singer_warning'))
           }
         >
           <MdPlaylistAdd />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          aria-label={t('export_music')}
           onClick={() =>
-            window.navigator.clipboard
-              .writeText(singer.name)
-              .then(() => notice.info(t('singers_name_copied')))
-              .catch((error) => {
-                logger.error(error, "Failed to copy singer's name");
-                return notice.error(error.message);
-              })
+            hasMusic
+              ? openExportMusicListDialog(singer.musicList)
+              : notice.error(t('no_music_singer_warning'))
           }
         >
-          <MdCopyAll />
-        </IconButton>
+          <IconExport size="1em" />
+        </Button>
       </div>
-      {singer.editable ? (
-        <IconButton onClick={openEditMenu}>
-          <MdOutlineEdit />
-        </IconButton>
-      ) : null}
     </Style>
   );
 }

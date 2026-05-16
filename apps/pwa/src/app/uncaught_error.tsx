@@ -1,5 +1,6 @@
 import { CSSProperties } from 'react';
 import ErrorCard from '../components/error_card';
+import { t } from '@/i18n';
 
 const style: CSSProperties = {
   position: 'absolute',
@@ -9,7 +10,7 @@ const style: CSSProperties = {
 function UncaughtError({ error }: { error: Error }) {
   return (
     <ErrorCard
-      errorMessage={`未知错误: ${error.message}`}
+      errorMessage={t('unknown_error', error.message)}
       retry={() => window.location.reload()}
       style={style}
     />

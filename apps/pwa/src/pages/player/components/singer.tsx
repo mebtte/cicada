@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { CSSVariable } from '@/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -8,9 +9,10 @@ const Style = styled.span`
 
   > .name {
     cursor: pointer;
+    transition: color 120ms ease-out;
 
     &:hover {
-      text-decoration: underline;
+      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
     }
   }
 

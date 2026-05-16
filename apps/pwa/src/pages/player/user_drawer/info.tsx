@@ -1,61 +1,107 @@
+import { type Ref } from 'react';
 import styled from 'styled-components';
-import Cover, { Shape } from '@/components/cover';
-import day from '#/utils/day';
+import Avatar from '@/components/avatar';
+import day from '@/utils/day';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { UserDetail } from './constants';
 
-const Style = styled.div`
-  position: relative;
+const AVATAR_SIZE = 156;
+const Style = styled.section`
+  padding: 28px 20px 20px;
 
   font-size: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(232 255 218) 0%,
+    rgb(255 248 220) 58%,
+    #fff 100%
+  );
+  border-bottom: 2px solid rgb(229 229 229);
+  user-select: none;
 
-  > .info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    max-width: 90%;
+  > .avatar-stage {
+    display: flex;
+    justify-content: center;
 
-    border-top-right-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
-    padding: 10px 20px;
-    background-color: rgb(255 255 255 / 0.75);
+    > .avatar {
+      flex: 0 0 auto;
+    }
+  }
+
+  > .identity {
+    margin-top: 22px;
+
+    text-align: center;
 
     > .nickname {
-      font-size: 24px;
-      font-weight: bold;
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-      ${ellipsis}
+      margin: 0;
+
+      font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: 0;
+      color: rgb(50 50 50);
+      overflow-wrap: anywhere;
     }
 
     > .username {
-      margin: 5px 0;
+      width: fit-content;
+      max-width: 100%;
+      margin: 10px auto 0;
+      padding: 6px 12px 8px;
 
+      font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
       font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+      font-weight: 800;
+      line-height: 1;
+      color: rgb(88 88 88);
+      background: #fff;
+      border: 2px solid rgb(229 229 229);
+      border-radius: 12px;
+      box-shadow: 0 3px 0 rgb(210 210 210);
+      ${ellipsis}
     }
 
     > .join-time {
-      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+      width: fit-content;
+      max-width: 100%;
+      margin: 12px auto 0;
 
+      font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+      font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+      font-weight: 700;
+      line-height: 1.35;
+      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+      overflow-wrap: anywhere;
       ${upperCaseFirstLetter}
     }
+
   }
 `;
 
-function Info({ user }: { user: UserDetail }) {
+function Info({
+  user,
+  identityRef,
+}: {
+  user: UserDetail;
+  identityRef?: Ref<HTMLElement>;
+}) {
   return (
     <Style>
-      <Cover src={user.avatar} size="100%" shape={Shape.SQUARE} />
-      <div className="info">
-        <div className="nickname">{user.nickname}</div>
+      <div className="avatar-stage">
+        <Avatar className="avatar" src={user.avatar} size={AVATAR_SIZE} />
+      </div>
+      <section className="identity" ref={identityRef}>
+        <h1 className="nickname">{user.nickname}</h1>
         <div className="username">@{user.username}</div>
         <div className="join-time">
           {t('join_at', day(user.joinTimestamp).format('YYYY-MM-DD'))}
         </div>
-      </div>
+      </section>
     </Style>
   );
 }

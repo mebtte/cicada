@@ -5,12 +5,13 @@ import {
   MusicWithSingerAliases,
   QueueMusic,
 } from './constants';
+import { MusicExportQuality } from '@/utils/music_export_asset';
 
 export enum EventType {
-  DOWNLOAD_MUSIC_LIST = 'download-music-list',
-  DOWNLOAD_MUSIC_LIST_RETRY_FAILED = 'download-music-list-retry-failed',
-  DOWNLOAD_MUSIC_LIST_CLEAN_ALL = 'download-music-list-clean-all',
-  DOWNLOAD_MUSIC_LIST_REMOVE_ITEM = 'download-music-list-remove-item',
+  EXPORT_MUSIC_LIST = 'export-music-list',
+  EXPORT_MUSIC_LIST_RETRY_FAILED = 'export-music-list-retry-failed',
+  EXPORT_MUSIC_LIST_RETRY_ITEM = 'export-music-list-retry-item',
+  EXPORT_MUSIC_LIST_REMOVE_ITEM = 'export-music-list-remove-item',
 
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
   MINI_MODE_CLOSE_SIDEBAR = 'mini_mode_close_sidebar',
@@ -32,6 +33,7 @@ export enum EventType {
   ACTION_REMOVE_PLAYQUEUE_MUSIC = 'action_remove_playqueue_music',
   ACTION_MOVE_PLAYQUEUE_MUSIC_LATER = 'action_move_playqueue_music_LATER',
   ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY = 'action_move_playqueue_music_EARLY',
+  ACTION_REORDER_PLAYQUEUE_MUSIC = 'action_reorder_playqueue_music',
 
   RELOAD_MUSICBILL_LIST = 'reload_musicbill_list',
   RELOAD_MUSICBILL = 'reload_musicbill',
@@ -43,6 +45,7 @@ export enum EventType {
   OPEN_SINGER_MODIFY_RECORD_DRAWER = 'open_singer_modify_record_drawer',
   OPEN_MUSICBILL_MUSIC_DRAWER = 'open_musicbill_music_drawer',
   OPEN_MUSICBILL_SHARED_USER_DRAWER = 'open_musicbill_shared_user_drawer',
+  OPEN_SHARED_MUSICBILL_INVITATION_DRAWER = 'open_shared_musicbill_invitation_drawer',
   OPEN_SINGER_DRAWER = 'open_singer_drawer',
   OPEN_MUSIC_DRAWER = 'open_music_drawer',
   OPEN_ORIGINAL_MUSIC_DIALOG = 'open_original_music_dialog',
@@ -50,8 +53,9 @@ export enum EventType {
   OPEN_PLAYLIST_PLAYQUEUE_DRAWER = 'open_playlist_playqueue_drawer',
   TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER = 'toggle_playlist_playqueue_drawer',
   OPEN_USER_DRAWER = 'open_user_drawer',
-  OPEN_PUBLIC_MUSICBILL_DRAWER = 'open_public_musicbill_drawer',
-  OPEN_PROFILE_EDIT_POPUP = 'open_profile_edit_popup',
+  OPEN_MUSICBILL_DRAWER = 'open_musicbill_drawer',
+  OPEN_PUBLIC_MUSICBILL_COLLECTION_DRAWER = 'open_public_musicbill_collection_drawer',
+  OPEN_AUTHORIZED_DEVICE_DRAWER = 'open_authorized_device_drawer',
   OPEN_2FA_DIALOG = 'open_2fa_dialog',
 
   FOCUS_SEARCH_INPUT = 'focus_search_input',
@@ -61,26 +65,26 @@ export enum EventType {
 
   MUSIC_UPDATED = 'music_updated',
   MUSIC_DELETED = 'music_deleted',
+  MUSIC_DETAIL_LOADED = 'music_detail_loaded',
 
   SINGER_UPDATED = 'singer_updated',
+  SINGER_DETAIL_LOADED = 'singer_detail_loaded',
 
   MUSICBILL_COLLECTION_CHANGE = 'musicbill_collection_change',
   CURRENT_MUSIC_CHANGE = 'current_music_change',
-
-  ADD_STOP_TIMER = 'add-stop-timer',
-  REMOVE_STOP_TIMER = 'remove-stop-timer',
 }
 
 export default new Eventin<
   EventType,
   {
-    [EventType.DOWNLOAD_MUSIC_LIST]: {
+    [EventType.EXPORT_MUSIC_LIST]: {
       musicList: Music[];
       directoryHandle: FileSystemDirectoryHandle;
+      quality: MusicExportQuality;
     };
-    [EventType.DOWNLOAD_MUSIC_LIST_RETRY_FAILED]: null;
-    [EventType.DOWNLOAD_MUSIC_LIST_CLEAN_ALL]: null;
-    [EventType.DOWNLOAD_MUSIC_LIST_REMOVE_ITEM]: { id: string };
+    [EventType.EXPORT_MUSIC_LIST_RETRY_FAILED]: null;
+    [EventType.EXPORT_MUSIC_LIST_RETRY_ITEM]: { id: string };
+    [EventType.EXPORT_MUSIC_LIST_REMOVE_ITEM]: { id: string };
 
     [EventType.MINI_MODE_OPEN_SIDEBAR]: null;
     [EventType.MINI_MODE_CLOSE_SIDEBAR]: null;
@@ -106,6 +110,10 @@ export default new Eventin<
     [EventType.ACTION_REMOVE_PLAYQUEUE_MUSIC]: { queueMusic: QueueMusic };
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER]: { queueMusic: QueueMusic };
     [EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY]: { queueMusic: QueueMusic };
+    [EventType.ACTION_REORDER_PLAYQUEUE_MUSIC]: {
+      activePid: string;
+      overPid: string;
+    };
 
     [EventType.RELOAD_MUSICBILL_LIST]: { silence: boolean };
     [EventType.RELOAD_MUSICBILL]: { id: string; silence: boolean };
@@ -124,6 +132,7 @@ export default new Eventin<
       singer: { id: string; name: string; avatar: string };
     };
     [EventType.OPEN_MUSICBILL_SHARED_USER_DRAWER]: { id: string };
+    [EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER]: null;
     [EventType.OPEN_MUSICBILL_MUSIC_DRAWER]: {
       music: MusicWithSingerAliases;
     };
@@ -134,8 +143,9 @@ export default new Eventin<
     [EventType.OPEN_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.TOGGLE_PLAYLIST_PLAYQUEUE_DRAWER]: null;
     [EventType.OPEN_USER_DRAWER]: { id: string };
-    [EventType.OPEN_PUBLIC_MUSICBILL_DRAWER]: { id: string };
-    [EventType.OPEN_PROFILE_EDIT_POPUP]: null;
+    [EventType.OPEN_MUSICBILL_DRAWER]: { id: string };
+    [EventType.OPEN_PUBLIC_MUSICBILL_COLLECTION_DRAWER]: null;
+    [EventType.OPEN_AUTHORIZED_DEVICE_DRAWER]: null;
     [EventType.OPEN_2FA_DIALOG]: null;
 
     [EventType.FOCUS_SEARCH_INPUT]: null;
@@ -145,13 +155,21 @@ export default new Eventin<
 
     [EventType.MUSIC_UPDATED]: { id: string };
     [EventType.MUSIC_DELETED]: { id: string };
+    [EventType.MUSIC_DETAIL_LOADED]: {
+      id: string;
+      name: string;
+      aliases: string[];
+      singers: { id: string; name: string }[];
+    };
 
     [EventType.SINGER_UPDATED]: { id: string };
+    [EventType.SINGER_DETAIL_LOADED]: {
+      id: string;
+      name: string;
+      aliases: string[];
+    };
 
     [EventType.MUSICBILL_COLLECTION_CHANGE]: null;
     [EventType.CURRENT_MUSIC_CHANGE]: { queueMusic?: QueueMusic };
-
-    [EventType.ADD_STOP_TIMER]: { endTimestamp: number };
-    [EventType.REMOVE_STOP_TIMER]: null;
   }
 >();

@@ -22,11 +22,18 @@ const dataLoading: Data = {
   value: null,
 };
 
-export default () => {
-  const { keyword = '', page: pageString } = useQuery<
+export default ({
+  keyword: controlledKeyword,
+  page: controlledPage,
+}: {
+  keyword?: string;
+  page?: number;
+} = {}) => {
+  const { keyword: queryKeyword = '', page: pageString } = useQuery<
     Query.KEYWORD | Query.PAGE
   >();
-  const page = pageString ? Number(pageString) || 1 : 1;
+  const keyword = controlledKeyword ?? queryKeyword;
+  const page = controlledPage ?? (pageString ? Number(pageString) || 1 : 1);
 
   const [data, setData] = useState<Data>(dataLoading);
   const getPageMusicList = useCallback(

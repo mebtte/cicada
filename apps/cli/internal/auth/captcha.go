@@ -1,0 +1,107 @@
+package auth
+
+import (
+	"cicada/internal/store"
+	"fmt"
+	"math/rand"
+	"strings"
+	"time"
+)
+
+const captchaTTLms = 2 * 60 * 1000
+
+func NewCaptcha() (id, svg string, err error) {
+	id = randString(8)
+	text := captchaText(5)
+	_, err = store.DB().Exec(
+		`INSERT INTO captcha (id,value,createTimestamp) VALUES (?,?,?)`,
+		id, text, time.Now().UnixMilli(),
+	)
+	if err != nil {
+		return "", "", fmt.Errorf("insert captcha: %w", err)
+	}
+	return id, buildSVG(text), nil
+}
+
+func VerifyCaptcha(id, value string) (bool, error) {
+	threshold := time.Now().UnixMilli() - captchaTTLms
+	var stored string
+	err := store.DB().QueryRow(
+		`SELECT value FROM captcha WHERE id=? AND createTimestamp>=? AND used=0`, id, threshold,
+	).Scan(&stored)
+	// Always mark used
+	store.DB().Exec(`UPDATE captcha SET used=1 WHERE id=?`, id)
+	if err != nil {
+		return false, nil
+	}
+	return strings.EqualFold(value, stored), nil
+}
+
+func captchaText(n int) string {
+	const chars = "abcdefghjkmnpqrstuvwxy34567891ABCDEFGHJKMNPQRSTUVWXY"
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = chars[r.Intn(len(chars))]
+	}
+	return string(b)
+}
+
+func buildSVG(text string) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	const w, h = 180, 60
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d">`, w, h))
+	sb.WriteString(fmt.Sprintf(`<rect width="%d" height="%d" fill="#f0f0f0"/>`, w, h))
+
+	// 干扰弧线 (贝塞尔曲线)
+	for i := 0; i < 3; i++ {
+		x1, y1 := r.Intn(w/3), r.Intn(h)
+		cx, cy := w/2+r.Intn(40)-20, r.Intn(h)
+		x2, y2 := w-r.Intn(w/3), r.Intn(h)
+		sb.WriteString(fmt.Sprintf(
+			`<path d="M%d,%d Q%d,%d %d,%d" stroke="#%02x%02x%02x" stroke-width="1.2" fill="none"/>`,
+			x1, y1, cx, cy, x2, y2,
+			r.Intn(160), r.Intn(160), r.Intn(160),
+		))
+	}
+
+	// 直线干扰
+	for i := 0; i < 8; i++ {
+		sb.WriteString(fmt.Sprintf(
+			`<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#%02x%02x%02x" stroke-width="1"/>`,
+			r.Intn(w), r.Intn(h), r.Intn(w), r.Intn(h),
+			r.Intn(180), r.Intn(180), r.Intn(180),
+		))
+	}
+
+	// 噪点
+	for i := 0; i < 60; i++ {
+		sb.WriteString(fmt.Sprintf(
+			`<circle cx="%d" cy="%d" r="%.1f" fill="#%02x%02x%02x"/>`,
+			r.Intn(w), r.Intn(h), 0.6+r.Float64()*0.9,
+			r.Intn(200), r.Intn(200), r.Intn(200),
+		))
+	}
+
+	// 字符: 颜色/字号/旋转/位置各自抖动
+	for i, ch := range text {
+		x := 15 + i*28 + r.Intn(8) - 4
+		y := 40 + r.Intn(10) - 5
+		rot := r.Intn(60) - 30
+		size := 26 + r.Intn(10)
+		// 限制在较深的颜色范围, 保证可读
+		cr, cg, cb := r.Intn(110), r.Intn(110), r.Intn(110)
+		weight := "normal"
+		if r.Intn(2) == 0 {
+			weight = "bold"
+		}
+		sb.WriteString(fmt.Sprintf(
+			`<text x="%d" y="%d" font-size="%d" font-family="Arial" font-weight="%s" fill="#%02x%02x%02x" transform="rotate(%d,%d,%d)">%c</text>`,
+			x, y, size, weight, cr, cg, cb, rot, x, y, ch,
+		))
+	}
+
+	sb.WriteString(`</svg>`)
+	return sb.String()
+}

@@ -1,4 +1,4 @@
-import { MusicType } from '#/constants/music';
+import { MusicType } from '@/constants/music';
 import logger from '@/utils/logger';
 import getLyricList from '@/server/api/get_lyric_list';
 import { useCallback, useEffect, useState } from 'react';

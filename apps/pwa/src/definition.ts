@@ -1,13 +1,8 @@
-/* eslint-disable no-console */
-/* eslint-disable no-underscore-dangle,no-undef */
 declare global {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   const __DEFINE__: {
     VERSION: string;
 
     BUILD_TIME: string;
-    EMPTY_IMAGE_LIST: string[];
-    ERROR_IMAGE_LIST: string[];
   };
 }
 

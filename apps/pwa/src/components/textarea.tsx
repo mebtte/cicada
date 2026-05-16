@@ -35,7 +35,9 @@ function Wrapper(
   { disabled = false, ...props }: Props,
   ref: ForwardedRef<HTMLTextAreaElement>,
 ) {
-  return <Textarea {...props} disabled={disabled} ref={ref} />;
+  return (
+    <Textarea {...props} autoComplete="off" disabled={disabled} ref={ref} />
+  );
 }
 
 export default forwardRef<HTMLTextAreaElement, Props>(Wrapper);

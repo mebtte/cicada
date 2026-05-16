@@ -3,7 +3,6 @@ import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
 import e, { EventType } from '../eventemitter';
-import useDynamicZIndex from '../use_dynamic_z_index';
 
 export default () => {
   const navigate = useNavigate();
@@ -39,7 +38,6 @@ export default () => {
   }, [navigate]);
 
   return {
-    zIndex: useDynamicZIndex(EventType.OPEN_SINGER_DRAWER),
     id,
     open: !!urlId,
     onClose,

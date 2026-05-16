@@ -1,6 +1,23 @@
-import { Response } from '#/server/api/get_musicbill_list';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
+
+interface User {
+  id: string;
+  nickname: string;
+  avatar: string;
+}
+
+type Response = {
+  id: string;
+  cover: string;
+  name: string;
+  public: boolean;
+  createTimestamp: number;
+  owner: User;
+  sharedUserList: (User & {
+    accepted: boolean;
+  })[];
+}[];
 
 async function getMusicbillList({
   requestMinimalDuration,

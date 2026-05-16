@@ -1,7 +1,7 @@
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import Empty from '@/components/empty';
@@ -9,25 +9,16 @@ import Pagination from '@/components/pagination';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
 import { CSSProperties } from 'react';
-import Button, { Variant } from '@/components/button';
-import SizeObserver from '@/components/size_observer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../../../eventemitter';
-import {
-  PAGE_SIZE,
-  TOOLBAR_HEIGHT,
-  MINI_MODE_TOOLBAR_HEIGHT,
-} from '../constants';
+import { PAGE_SIZE } from '../constants';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../../constants';
 import useData from './use_data';
-import { openCreateSingerDialog } from '../../../utils';
 import Singer from './singer';
-import TextGuide from '../text_guide';
+import { PAGE_HORIZONTAL_PADDING } from '../../page';
 
-const ITEM_MIN_WIDTH = 150;
+const AVATAR_IMAGE_SIZE = 72;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;
@@ -42,24 +33,24 @@ const SingerContainer = styled(Container)`
   ${autoScrollbar}
 
   > .list {
-    --gap: 10px;
-
-    margin: 0 var(--gap);
+    width: 100%;
+    padding: calc(var(--search-toolbar-height) + 12px)
+      ${PAGE_HORIZONTAL_PADDING} 0;
 
     display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap;
-
-    > .item {
-      padding: var(--gap);
-    }
+    flex-direction: column;
+    gap: 12px;
   }
 
-  ${({ theme: { miniMode } }) => css`
-    padding-top: ${miniMode ? MINI_MODE_TOOLBAR_HEIGHT : TOOLBAR_HEIGHT}px;
-  `}
+  &::after {
+    content: '';
+    display: block;
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
+  }
 `;
 const paginationStyle: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
   margin: '20px 0',
 };
 
@@ -91,51 +82,31 @@ function Wrapper() {
       return (
         <CardContainer style={style}>
           <Empty description={t('no_suitable_singer')} />
-          <Button
-            variant={Variant.PRIMARY}
-            onClick={() =>
-              openCreateSingerDialog((id) =>
-                playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
-                  id,
-                }),
-              )
-            }
-          >
-            {t('create_singer_by_yourself')}
-          </Button>
         </CardContainer>
       );
     }
     return (
       <SingerContainer style={style}>
-        <SizeObserver className="list">
-          {({ width }) => {
-            const itemWidth = `${100 / Math.floor(width / ITEM_MIN_WIDTH)}%`;
-            return d.value!.singerList.map((singer) => (
-              <div
-                key={singer.id}
-                className="item"
-                style={{ width: itemWidth }}
-              >
-                <Singer
-                  singerId={singer.id}
-                  singerName={singer.name}
-                  singerAvatar={getResizedImage({
-                    url: singer.avatar,
-                    size: Math.ceil(ITEM_MIN_WIDTH * window.devicePixelRatio),
-                  })}
-                  singerAliases={singer.aliases}
-                />
-              </div>
-            ));
-          }}
-        </SizeObserver>
+        <div className="list">
+          {d.value!.singerList.map((singer) => (
+            <Singer
+              key={singer.id}
+              singerId={singer.id}
+              singerName={singer.name}
+              singerAvatar={getResizedImage({
+                url: singer.avatar,
+                size: Math.ceil(AVATAR_IMAGE_SIZE * window.devicePixelRatio),
+              })}
+              singerAliases={singer.aliases}
+              musicCount={singer.musicCount}
+            />
+          ))}
+        </div>
         {d.value!.total ? (
           <Pagination
             style={paginationStyle}
             page={page}
-            pageSize={PAGE_SIZE}
-            total={d.value!.total}
+            count={Math.ceil(d.value!.total / PAGE_SIZE)}
             onChange={(p) =>
               navigate({
                 query: {
@@ -145,19 +116,6 @@ function Wrapper() {
             }
           />
         ) : null}
-        {page !== Math.ceil(d.value!.total / PAGE_SIZE) ? null : (
-          <TextGuide
-            text1={t('no_suitable_singer_warning')}
-            text2={t('create_singer_by_yourself')}
-            onGuide={() =>
-              openCreateSingerDialog((id) =>
-                playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
-                  id,
-                }),
-              )
-            }
-          />
-        )}
       </SingerContainer>
     );
   });

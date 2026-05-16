@@ -2,7 +2,7 @@ import { request, Method } from '..';
 
 function createSinger({ name, force }: { name: string; force: boolean }) {
   return request<string>({
-    path: '/api/singer',
+    path: '/api/admin/singer',
     method: Method.POST,
     body: { name, force },
     withToken: true,

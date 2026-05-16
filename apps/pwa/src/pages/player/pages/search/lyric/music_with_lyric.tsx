@@ -42,7 +42,6 @@ function MusicWithLyric({
         <StyledLrc
           className="lrc"
           lrc={music.lrc}
-          // eslint-disable-next-line react/no-unstable-nested-components
           lineRenderer={({ line: { id, content } }) => (
             <Line
               key={id}

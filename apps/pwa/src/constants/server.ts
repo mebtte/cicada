@@ -6,17 +6,18 @@ export interface User {
   joinTimestamp: number;
   admin: boolean;
   musicbillOrders: string[];
-  musicbillMaxAmount: number;
-  createMusicMaxAmountPerDay: number;
-  musicPlayRecordIndate: number;
   twoFAEnabled: boolean;
 
   token: string;
+  sessionId?: string;
 }
+
+import { AssetType } from './asset';
 
 export interface Server {
   version: string;
   hostname: string;
+  assetMaxSize?: Partial<Record<AssetType, number>>;
 
   origin: string;
 

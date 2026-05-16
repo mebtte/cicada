@@ -1,17 +1,12 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { useUser } from '@/global_states/server';
 import Page from '../page';
-import Logout from './logout';
-import UserManage from './user_manage';
-import { HEADER_HEIGHT } from '../../constants';
 import Volume from './volume';
-import ExtraInfo from './extra_info';
 import Language from './language';
-import UserSwitch from './user_switch';
 import Feedback from './feedback';
-import StopTimer from './stop_timer';
+import PlaybackQuality from './playback_quality';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 
 const AUDIO_VOLUME_SETABLE = await (() =>
   Promise.race([
@@ -25,24 +20,23 @@ const AUDIO_VOLUME_SETABLE = await (() =>
     ),
   ]))();
 const Style = styled(Page)`
-  padding-top: ${HEADER_HEIGHT}px;
-
   overflow: auto;
   ${autoScrollbar}
+
+  &::after {
+    content: '';
+    display: block;
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
+  }
 `;
 
 function Setting() {
-  const user = useUser()!;
   return (
     <Style>
-      <StopTimer />
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
+      <PlaybackQuality />
       <Language />
-      {user.admin ? <UserManage /> : null}
-      <UserSwitch />
       <Feedback />
-      <Logout />
-      <ExtraInfo />
     </Style>
   );
 }

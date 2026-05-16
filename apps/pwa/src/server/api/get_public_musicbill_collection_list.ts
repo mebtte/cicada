@@ -1,6 +1,23 @@
 import { prefixServerOrigin } from '@/global_states/server';
-import { Response } from '#/server/api/get_public_musicbill_collection_list';
 import { request } from '..';
+
+type Response = {
+  total: number;
+  collectionList: {
+    id: string;
+    name: string;
+    cover: string;
+    musicCount: number;
+    user: { id: string; nickname: string };
+  }[];
+};
+
+type RawResponse = {
+  total: number;
+  collectionList: (Omit<Response['collectionList'][number], 'musicCount'> & {
+    musicCount?: number;
+  })[];
+};
 
 async function getSelfMusicbillCollectionList({
   keyword,
@@ -11,7 +28,7 @@ async function getSelfMusicbillCollectionList({
   page: number;
   pageSize: number;
 }) {
-  const data = await request<Response>({
+  const data = await request<RawResponse>({
     path: '/api/public_musicbill_collection_list',
     params: { keyword, page, pageSize },
     withToken: true,
@@ -20,6 +37,7 @@ async function getSelfMusicbillCollectionList({
     ...data,
     collectionList: data.collectionList.map((mb) => ({
       ...mb,
+      musicCount: mb.musicCount ?? 0,
       cover: prefixServerOrigin(mb.cover),
     })),
   };

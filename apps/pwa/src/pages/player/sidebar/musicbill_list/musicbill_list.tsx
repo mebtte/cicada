@@ -1,13 +1,16 @@
 import Spinner from '@/components/spinner';
+import Empty from '@/components/empty';
 import { useContext } from 'react';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
 import { animated, useTransition } from 'react-spring';
-import Button, { Variant } from '@/components/button';
+import Button from '@/components/button';
 import { t } from '@/i18n';
+import { MdOutlineAddBox } from 'react-icons/md';
 import Context from '../../context';
 import e, { EventType } from '../../eventemitter';
+import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 import Musicbill from './musicbill';
 import { openCreateMusicbillDialog } from '../../utils';
 
@@ -23,10 +26,27 @@ const TransitionBox = styled(animated.div)`
   left: 0;
 `;
 const StyledMusicbillList = styled(TransitionBox)`
-  padding-bottom: calc(env(safe-area-inset-bottom, 0) + 10px);
+  padding-bottom: ${FLOATING_CONTROLLER_SCROLL_SPACE};
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 `;
 const StatusBox = styled(TransitionBox)`
-  padding: 5px 20px;
+  padding: 5px 12px;
+`;
+const EmptyBox = styled(TransitionBox)`
+  padding: 18px 12px calc(${FLOATING_CONTROLLER_SCROLL_SPACE} + 18px);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  > .empty {
+    padding-top: 6px;
+    padding-bottom: 2px;
+  }
 `;
 
 function MusicbillList() {
@@ -52,14 +72,19 @@ function MusicbillList() {
             );
           }
           return (
-            <StatusBox style={style}>
+            <EmptyBox style={style}>
+              {/* 全新安装时乐单列表为空，在列表区域展示空状态并保留创建入口。 */}
+              <Empty className="empty" description={t('no_musicbill')} />
               <Button
-                variant={Variant.PRIMARY}
+                block
+                size="sm"
+                variant="primary"
+                icon={<MdOutlineAddBox />}
                 onClick={openCreateMusicbillDialog}
               >
                 {t('create_musicbill')}
               </Button>
-            </StatusBox>
+            </EmptyBox>
           );
         }
         if (status === RequestStatus.LOADING) {

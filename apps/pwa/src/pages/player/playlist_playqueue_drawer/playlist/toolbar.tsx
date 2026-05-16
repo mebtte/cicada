@@ -1,32 +1,39 @@
-import Label from '@/components/label';
 import Input from '@/components/input';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import IconButton from '@/components/icon_button';
+import Button from '@/components/button';
 import { MdPlaylistRemove } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
+import { CSSVariable } from '@/global_style';
 import { FILTER_HEIGHT } from './constants';
+import { TAB_LIST_HEIGHT } from '../constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
-import capitalize from '#/utils/capitalize';
+import capitalize from '@/utils/capitalize';
 import context from '../../context';
 
 const Style = styled.div`
   position: absolute;
-  width: 100%;
-  height: calc(env(safe-area-inset-bottom, 0) + ${FILTER_HEIGHT}px);
-  left: 0;
-  bottom: 0;
+  left: 32px;
+  right: 32px;
+  height: ${FILTER_HEIGHT}px;
+  bottom: calc(${TAB_LIST_HEIGHT}px + env(safe-area-inset-bottom, 0));
+  z-index: 2;
 
   display: flex;
   align-items: center;
   gap: 10px;
 
-  padding: 0 20px env(safe-area-inset-bottom, 0) 20px;
+  padding: 8px 10px 12px;
 
-  backdrop-filter: blur(5px);
+  background: rgb(255 255 255 / 0.94);
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 16px;
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 
   > .filter {
     flex: 1;
@@ -49,7 +56,10 @@ function Toolbar({
   const { playlist } = useContext(context);
   return (
     <Style>
-      <IconButton
+      <Button
+        square
+        variant="danger"
+        size="sm"
         disabled={playlist.length === 0}
         onClick={() =>
           dialog.confirm({
@@ -63,14 +73,13 @@ function Toolbar({
         }
       >
         <MdPlaylistRemove />
-      </IconButton>
-      <Label className="filter">
-        <Input
-          value={keyword}
-          onChange={(e) => setKeyword(e.target.value)}
-          placeholder={capitalize(t('search'))}
-        />
-      </Label>
+      </Button>
+      <Input
+        className="filter"
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
+        placeholder={capitalize(t('search'))}
+      />
     </Style>
   );
 }
