@@ -3,6 +3,7 @@ import {
   MdAdd,
   MdDeleteSweep,
   MdMusicNote,
+  MdPersonAddAlt1,
   MdPlayArrow,
 } from 'react-icons/md';
 import styled from 'styled-components';
@@ -30,6 +31,7 @@ import {
   updateTask,
   useMusicImport,
 } from '@/global_states/music_import';
+import openCreateSingerDialog from '../../open_create_singer_dialog';
 import ImportPanel from '.';
 import useSelectFiles from './use_select_files';
 
@@ -287,6 +289,16 @@ function MusicImportSidebar() {
     setWindowOpen(nextOpen);
   }, []);
 
+  const onCreateSinger = useCallback(() => {
+    // Newly created singers are loaded through each task's async search, so
+    // existing import drafts stay untouched.
+    openCreateSingerDialog({
+      onCreated: () => {
+        notice.info(t('created'));
+      },
+    });
+  }, []);
+
   const onStartAll = () => {
     const ready = tasks.filter((task) => task.phase === 'editing');
     let issued = 0;
@@ -329,6 +341,16 @@ function MusicImportSidebar() {
               </HeaderTitleRow>
             </HeaderMain>
             <HeaderActions>
+              <Button
+                square
+                size="sm"
+                variant="secondary"
+                onClick={onCreateSinger}
+                title={t('create_singer')}
+                aria-label={t('create_singer')}
+              >
+                <MdPersonAddAlt1 />
+              </Button>
               <Button
                 square
                 size="sm"

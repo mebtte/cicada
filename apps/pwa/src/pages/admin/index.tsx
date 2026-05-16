@@ -554,23 +554,6 @@ const PlayerLinkBox = styled.span`
   }
 `;
 
-const AvatarFallback = styled.div<{ $active?: boolean; $size?: number }>`
-  width: ${({ $size }) => $size ?? AVATAR_SIZE}px;
-  height: ${({ $size }) => $size ?? AVATAR_SIZE}px;
-  border: 2px solid ${({ $active }) => ($active ? PRIMARY : NEUTRAL_SHADOW)};
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 3px 0
-    ${({ $active }) => ($active ? PRIMARY_SHADOW : NEUTRAL_SHADOW)};
-  color: ${PRIMARY};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
-  font-weight: 800;
-  font-size: 14px;
-`;
-
 const UserMenu = styled.div`
   position: absolute;
   top: 0;
@@ -832,28 +815,17 @@ function AdminPage() {
                 onClick={toggleUserMenu}
                 onKeyDown={onAvatarKeyDown}
               >
-                {avatarSrc ? (
-                  <Avatar
-                    src={avatarSrc}
-                    size={AVATAR_SIZE}
-                    active={userMenuOpen}
-                  />
-                ) : (
-                  <AvatarFallback $active={userMenuOpen}>
-                    {user.nickname[0]}
-                  </AvatarFallback>
-                )}
+                {/* Empty src lets Avatar render the shared default avatar image. */}
+                <Avatar
+                  src={avatarSrc}
+                  size={AVATAR_SIZE}
+                  active={userMenuOpen}
+                />
               </AvatarButton>
               {userMenuOpen ? (
                 <UserMenu role="menu">
                   <UserMenuProfile>
-                    {avatarSrc ? (
-                      <Avatar src={avatarSrc} size={42} />
-                    ) : (
-                      <AvatarFallback $size={42}>
-                        {user.nickname[0]}
-                      </AvatarFallback>
-                    )}
+                    <Avatar src={avatarSrc} size={42} />
                     <UserMenuProfileText>
                       <UserMenuName title={user.nickname}>
                         {user.nickname}
