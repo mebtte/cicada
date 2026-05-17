@@ -28,9 +28,19 @@ const Body = styled(DialogBody)`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
+  padding-bottom: 5px;
 `;
 
 const ImgBox = styled.div`
+  /* 高长图需要先限制预览高度, 避免 Cropper 按图片渲染高度撑开整个弹窗。 */
+  --image-cut-preview-max-height: clamp(120px, calc(92vh - 280px), 520px);
+  --image-cut-preview-max-height: clamp(120px, calc(92dvh - 280px), 520px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: var(--image-cut-preview-max-height);
   overflow: hidden;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 16px;
@@ -39,11 +49,14 @@ const ImgBox = styled.div`
 
   img {
     display: block;
-    width: 100%;
+    width: auto;
+    height: auto;
     max-width: 100%;
+    max-height: var(--image-cut-preview-max-height);
   }
 
   .cropper-container {
+    max-width: 100%;
     font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
   }
 
@@ -55,10 +68,23 @@ const ImgBox = styled.div`
   .cropper-point {
     background-color: ${CSSVariable.COLOR_PRIMARY};
   }
+
+  @media (min-width: 640px) {
+    --image-cut-preview-max-height: clamp(220px, calc(100vh - 220px), 560px);
+    --image-cut-preview-max-height: clamp(220px, calc(100dvh - 220px), 560px);
+  }
 `;
 
 const SelectImageButton = styled(Button)`
   margin-right: auto;
+`;
+
+const Footer = styled(DialogFooter)`
+  /* 高图裁剪时内容仍可能滚动, 操作按钮必须始终留在可点击区域内。 */
+  position: sticky;
+  z-index: 1;
+  bottom: 0;
+  background: #fff;
 `;
 
 function ImageCutContent({
@@ -183,7 +209,7 @@ function ImageCutContent({
           </ImgBox>
         ) : null}
       </Body>
-      <DialogFooter $inline={options.inlineFooter}>
+      <Footer $inline={options.inlineFooter}>
         <SelectImageButton
           variant="secondary"
           onClick={onSelectImage}
@@ -207,7 +233,7 @@ function ImageCutContent({
         >
           {options.confirmText || t('confirm')}
         </Button>
-      </DialogFooter>
+      </Footer>
     </>
   );
 }
