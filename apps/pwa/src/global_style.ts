@@ -60,6 +60,9 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.BORDER_RADIUS_NORMAL]: '4px',
 };
 
+const DUOLINGO_FONT_FAMILY =
+  "'Nunito', 'Varela Round', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
 export const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
@@ -93,6 +96,16 @@ export const GlobalStyle = createGlobalStyle`
 
     margin: 0;
     padding: 0;
+
+    /* 全局字体基线，避免页面局部逐个声明 Duolingo 字体。 */
+    font-family: ${DUOLINGO_FONT_FAMILY};
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font-family: inherit;
   }
 
   input,

@@ -28,6 +28,7 @@ import UserDrawer from './user_drawer';
 import MusicbillDrawer from './musicbill_drawer';
 import AuthorizedDeviceDrawer from './authorized_device_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
+import useSearchHotkey from './use_search_hotkey';
 import e, { EventType } from './eventemitter';
 import SingerModifyRecordDrawer from './singer_modify_record_drawer';
 import NetworkStatus from './network_status';
@@ -69,6 +70,7 @@ const Style = styled(PageContainer)`
 function Wrapper() {
   useDocumentTitle(capitalize(t('cicada')));
   useProfileUpdate();
+  useSearchHotkey();
 
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
   const playlist = usePlaylist();

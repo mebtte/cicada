@@ -15,6 +15,8 @@ import { t } from '@/i18n';
 import { getDisplayDeviceName } from '@/utils/device_name';
 
 const Body = styled.div`
+  flex: 1;
+  min-height: 0;
   padding: 20px 24px 24px;
   display: flex;
   flex-direction: column;
@@ -22,6 +24,7 @@ const Body = styled.div`
 `;
 
 const Status = styled.div`
+  flex: 1;
   min-height: 180px;
   display: flex;
   align-items: center;

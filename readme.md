@@ -16,7 +16,7 @@ A multi-user music service for self-hosting.
 
 ## Demo
 
-There is a online demo you can visit on [https://cicada.mebtte.com](https://cicada.mebtte.com), you can login by `username: cicada` and `password: cicada`. **The demo data resets every two hours.**
+There is a online demo you can visit on [https://cicada.mebtte.com](https://cicada.mebtte.com), you can login by `username: cicada` and `password: cicada`. **The demo data resets every three hours.**
 
 > Attention: this account isn't a administrator, so you can't manage the data.
 
