@@ -5,6 +5,8 @@ A multi-user music service for self-hosting.
 ![version](https://img.shields.io/github/v/release/mebtte/cicada?style=for-the-badge)
 ![license](https://img.shields.io/github/license/mebtte/cicada?style=for-the-badge)
 
+![](./docs/screenshot.png)
+
 ## Features
 
 - **No privacy collection**
