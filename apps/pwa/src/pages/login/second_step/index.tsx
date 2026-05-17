@@ -26,6 +26,7 @@ import { getCurrentDeviceName } from '@/utils/device_name';
 import Logo from '../logo';
 import UserList from './user_list';
 import { getSelectedServer, useServer } from '@/global_states/server';
+import { isKeyboardEventComposing } from '@/utils/keyboard';
 
 const Style = styled.div`
   display: flex;
@@ -192,6 +193,7 @@ function SecondStep({ toPrevious }: { toPrevious: () => void }) {
         maxLength={PASSWORD_MAX_LENGTH}
         onKeyDown={(event) => {
           if (
+            !isKeyboardEventComposing(event) &&
             event.key.toLowerCase() === 'enter' &&
             username.length !== 0 &&
             password.length !== 0

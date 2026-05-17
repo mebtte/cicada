@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import { MdSearch } from 'react-icons/md';
 import { ROOT_PATH } from '@/constants/route';
 import eventemitter, { EventType } from '../../eventemitter';
+import { isComposingEnterKeyDown } from '@/utils/keyboard';
 
 const SearchForm = styled.form`
   display: flex;
@@ -87,6 +88,11 @@ function Wrapper({ autoFocus = true }: { autoFocus?: boolean }) {
         value={keyword}
         autoFocus={autoFocus}
         onChange={(e) => setKeyword(e.target.value)}
+        onKeyDown={(event) => {
+          if (isComposingEnterKeyDown(event)) {
+            event.preventDefault();
+          }
+        }}
       />
       <Button
         square

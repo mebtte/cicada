@@ -19,6 +19,7 @@ import { t } from '@/i18n';
 import capitalize from '@/utils/capitalize';
 import eventemitter, { EventType } from '../eventemitter';
 import { useTheme } from '@/global_states/theme';
+import { isComposingEnterKeyDown } from '@/utils/keyboard';
 
 const SearchForm = styled.form`
   display: flex;
@@ -114,6 +115,11 @@ function Wrapper() {
         autoComplete="off"
         value={keyword}
         onChange={onKeywordChange}
+        onKeyDown={(event) => {
+          if (isComposingEnterKeyDown(event)) {
+            event.preventDefault();
+          }
+        }}
         placeholder={searchLabel}
       />
       <Button

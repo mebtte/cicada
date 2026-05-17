@@ -37,6 +37,7 @@ import useNavigate from '@/utils/use_navigate';
 import useQuery from '@/utils/use_query';
 import useWindowWidth from '@/utils/use_window_width';
 import getResizedImage from '@/server/asset/get_resized_image';
+import { isComposingEnterKeyDown } from '@/utils/keyboard';
 import adminGetMusicList, {
   AdminMusicListFilterKey,
   AdminMusicListSortBy,
@@ -974,6 +975,14 @@ function MusicList({
               composingKeywordRef.current = false;
               const nextKeyword = event.currentTarget.value;
               setKeywordInput(nextKeyword);
+            }}
+            onKeyDown={(event) => {
+              if (
+                isComposingEnterKeyDown(event) ||
+                (composingKeywordRef.current && event.key === 'Enter')
+              ) {
+                event.preventDefault();
+              }
             }}
             placeholder={t('search')}
           />
