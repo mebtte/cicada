@@ -5,6 +5,8 @@ A multi-user music service for self-hosting.
 ![version](https://img.shields.io/github/v/release/mebtte/cicada?style=for-the-badge)
 ![license](https://img.shields.io/github/license/mebtte/cicada?style=for-the-badge)
 
+![](./docs/screenshot.png)
+
 ## Features
 
 - **No privacy collection**
@@ -13,6 +15,12 @@ A multi-user music service for self-hosting.
 - Batch music import and manage data by yourself
 - Custom playqueue and share musicbills between users
 - Support 2FA
+
+## Demo
+
+There is a online demo you can visit on [https://cicada.mebtte.com](https://cicada.mebtte.com), you can login by `username: cicada` and `password: cicada`. **The demo data resets every six hours.**
+
+> Attention: this account isn't a administrator, so you can't manage the data.
 
 ## Deploy
 

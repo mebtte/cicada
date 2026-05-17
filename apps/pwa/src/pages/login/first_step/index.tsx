@@ -13,6 +13,7 @@ import definition from '@/definition';
 import { isSameMajorVersion } from '@/utils/version';
 import dialog from '@/utils/dialog';
 import { getServerMetadataErrorMessage } from '../utils';
+import { isKeyboardEventComposing } from '@/utils/keyboard';
 
 const Style = styled.div`
   display: flex;
@@ -94,7 +95,7 @@ function FirstStep({
   };
 
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
-    if (event.key === 'Enter') {
+    if (!isKeyboardEventComposing(event) && event.key === 'Enter') {
       onSaveOrigin();
     }
   };

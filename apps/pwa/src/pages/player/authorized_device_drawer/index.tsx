@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components';
 import { t } from '@/i18n';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import playerEventemitter, { EventType } from '../eventemitter';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import Content from './content';
+
+// Keep status states centered in the drawer's remaining body area.
+const ContentFrame = styled.div`
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+`;
 
 function AuthorizedDeviceDrawer() {
   const [open, setOpen] = useState(false);
@@ -32,10 +40,12 @@ function AuthorizedDeviceDrawer() {
         }}
         zIndex={zIndex}
       >
-        <DrawerHeader>
-          <DrawerTitle>{t('authorized_devices')}</DrawerTitle>
-        </DrawerHeader>
-        <Content />
+        <ContentFrame>
+          <DrawerHeader>
+            <DrawerTitle>{t('authorized_devices')}</DrawerTitle>
+          </DrawerHeader>
+          <Content />
+        </ContentFrame>
       </DrawerContent>
     </Drawer>
   );

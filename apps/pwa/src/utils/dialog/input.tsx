@@ -6,6 +6,7 @@ import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { DEFAULT_CANCEL_VARIANT, Input as InputShape } from './constants';
 import useEvent from '../use_event';
+import { isKeyboardEventComposing } from '../keyboard';
 
 function InputContent({
   onClose,
@@ -61,7 +62,10 @@ function InputContent({
           type={options.inputType}
           disabled={confirming || canceling}
           onKeyDown={(event) => {
-            if (event.key.toLowerCase() === 'enter') {
+            if (
+              !isKeyboardEventComposing(event) &&
+              event.key.toLowerCase() === 'enter'
+            ) {
               onConfirm();
             }
           }}

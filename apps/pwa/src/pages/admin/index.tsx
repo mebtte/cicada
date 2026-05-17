@@ -41,6 +41,8 @@ import {
 const SIDEBAR_WIDTH = 240;
 const HEADER_HEIGHT = 72;
 const MOBILE_BREAKPOINT = 760;
+const MOBILE_OVERLAY_Z_INDEX = 20;
+const MOBILE_SIDEBAR_Z_INDEX = 30;
 const AVATAR_SIZE = 36;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
@@ -105,6 +107,8 @@ const Sidebar = styled.aside<{ $open: boolean }>`
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
     position: fixed;
     inset: 0 auto 0 0;
+    /* Keep the mobile drawer above the fixed admin header while it is open. */
+    z-index: ${MOBILE_SIDEBAR_Z_INDEX};
     transform: translateX(${({ $open }) => ($open ? '0' : '-100%')});
     transition: transform 180ms ease;
   }
@@ -269,7 +273,7 @@ const Overlay = styled.button<{ $open: boolean }>`
     position: fixed;
     inset: 0;
     display: ${({ $open }) => ($open ? 'block' : 'none')};
-    z-index: 2;
+    z-index: ${MOBILE_OVERLAY_Z_INDEX};
     border: none;
     padding: 0;
     background: rgb(0 0 0 / 0.26);
@@ -685,8 +689,10 @@ function AdminPage() {
   const closeSidebar = () => {
     setSidebarOpen(false);
   };
-  const headerSidePadding = windowWidth <= MOBILE_BREAKPOINT ? 12 : 18;
-  const headerPaddingLeft = titlebarLeft
+  const isMobileLayout = windowWidth <= MOBILE_BREAKPOINT;
+  const headerSidePadding = isMobileLayout ? 12 : 18;
+  // On desktop, the persistent sidebar already owns the left titlebar inset.
+  const headerPaddingLeft = isMobileLayout && titlebarLeft
     ? titlebarLeft + headerSidePadding
     : headerSidePadding;
   const headerPaddingRight = titlebarRight

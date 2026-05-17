@@ -15,6 +15,7 @@ import DialogBase from '../dialog_base';
 import { DEFAULT_CANCEL_VARIANT, Captcha as CaptchaShape } from '../constants';
 import useEvent from '../../use_event';
 import notice from '../../notice';
+import { isKeyboardEventComposing } from '../../keyboard';
 
 function CaptchaContent({
   onClose,
@@ -75,7 +76,7 @@ function CaptchaContent({
 
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = useCallback(
     (event) => {
-      if (event.key === 'Enter') {
+      if (!isKeyboardEventComposing(event) && event.key === 'Enter') {
         onConfirm();
       }
     },

@@ -116,7 +116,7 @@ function ShareDrawer({
                         musicbillId: musicbill.id,
                         username,
                       });
-                      notice.info(t('invitation_has_been_sent'));
+                      dialog.alert({ content: t('invitation_has_been_sent') });
                       e.emit(EventType.RELOAD_MUSICBILL, {
                         id: musicbill.id,
                         silence: true,

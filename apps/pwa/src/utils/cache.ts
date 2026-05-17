@@ -75,8 +75,9 @@ class Cache<
     return value;
   }
 
-  remove<K extends Key>(key: K) {
-    return this.cache.delete(key);
+  remove<K extends Key>(key: K, keyReplace?: (k: string) => string) {
+    const newKey = keyReplace ? keyReplace(key) : key;
+    return this.cache.delete(newKey);
   }
 
   destroy() {

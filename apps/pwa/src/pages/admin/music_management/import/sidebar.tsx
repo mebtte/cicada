@@ -292,11 +292,7 @@ function MusicImportSidebar() {
   const onCreateSinger = useCallback(() => {
     // Newly created singers are loaded through each task's async search, so
     // existing import drafts stay untouched.
-    openCreateSingerDialog({
-      onCreated: () => {
-        notice.info(t('created'));
-      },
-    });
+    openCreateSingerDialog();
   }, []);
 
   const onStartAll = () => {

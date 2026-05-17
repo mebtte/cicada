@@ -41,6 +41,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { quitSharedMusicbill } from './utils';
+import { isKeyboardEventComposing } from '@/utils/keyboard';
 
 const COVER_SIZE = 128;
 const EDIT_DRAWER_Z_INDEX = 8000;
@@ -291,7 +292,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
   };
 
   const onNameKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (!isKeyboardEventComposing(event) && event.key === 'Enter') {
       event.preventDefault();
       void updateName();
     }

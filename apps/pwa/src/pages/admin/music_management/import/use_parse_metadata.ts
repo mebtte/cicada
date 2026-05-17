@@ -1,3 +1,4 @@
+import { NAME_MAX_LENGTH } from '@/constants/music';
 import getMusicFileMetadata from '@/utils/get_music_file_metadata';
 import { getMusicNameFromFilename } from '@/utils/music_file';
 
@@ -14,6 +15,12 @@ export interface ParsedMusicFile {
   };
 }
 
+const limitMusicNameLength = (name: string) =>
+  Array.from(name).slice(0, NAME_MAX_LENGTH).join('');
+
+const getImportMusicName = (file: File, title?: string) =>
+  limitMusicNameLength(title || getMusicNameFromFilename(file.name) || file.name);
+
 /**
  * Reads tags off a music file. Falls back to the filename-derived name
  * when the file is not standard or metadata parsing fails. Never throws so
@@ -23,7 +30,7 @@ export async function parseMusicFile(file: File): Promise<ParsedMusicFile> {
   try {
     const metadata = await getMusicFileMetadata(file);
     return {
-      name: metadata.title || getMusicNameFromFilename(file.name) || file.name,
+      name: getImportMusicName(file, metadata.title),
       parsed: {
         title: metadata.title,
         artist: metadata.artist,
@@ -36,7 +43,7 @@ export async function parseMusicFile(file: File): Promise<ParsedMusicFile> {
     };
   } catch {
     return {
-      name: getMusicNameFromFilename(file.name) || file.name,
+      name: getImportMusicName(file),
       parsed: {},
     };
   }

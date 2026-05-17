@@ -38,6 +38,7 @@ import useNavigate from '@/utils/use_navigate';
 import deleteCurrentSession from '@/server/api/delete_current_session';
 import clearApiCache from '@/utils/clear_api_cache';
 import ExtraInfo from './extra_info';
+import { isKeyboardEventComposing } from '@/utils/keyboard';
 
 const AVATAR_SIZE = 120;
 const Style = styled(Page)`
@@ -201,7 +202,7 @@ function User() {
   };
 
   const onNicknameKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (!isKeyboardEventComposing(event) && event.key === 'Enter') {
       event.preventDefault();
       void updateNickname();
     }

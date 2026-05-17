@@ -5,8 +5,13 @@ import capitalize from "../src/utils/capitalize.js";
 import stringArrayEqual from "../src/utils/string_array_equal.js";
 import parseSearch from "../src/utils/parse_search.js";
 import { getMajorVersion, isSameMajorVersion } from "../src/utils/version.js";
+import Cache from "../src/utils/cache.js";
 import { getIsHeaderBackButtonPath } from "../src/pages/player/header/back_button.js";
 import { isPasswordLengthValid } from "../src/constants/user.js";
+import {
+  isComposingEnterKeyDown,
+  isKeyboardEventComposing,
+} from "../src/utils/keyboard.js";
 
 test("capitalize uppercases the first letter of each word", () => {
   assert.equal(capitalize("hello world"), "Hello World");
@@ -27,6 +32,26 @@ test("parseSearch decodes the search string into key-value pairs", () => {
       page: "2",
     },
   );
+});
+
+test("cache removes entries with the same scoped key replacement used for set", () => {
+  enum CacheKey {
+    VALUE = "value",
+  }
+  const cache = new Cache<
+    CacheKey,
+    {
+      [CacheKey.VALUE]: string;
+    }
+  >();
+  const keyReplace = (key: string) => `user-1:${key}`;
+
+  cache.set({ key: CacheKey.VALUE, keyReplace, value: "recommendation" });
+  assert.equal(cache.get(CacheKey.VALUE, keyReplace), "recommendation");
+  cache.remove(CacheKey.VALUE, keyReplace);
+  assert.equal(cache.get(CacheKey.VALUE, keyReplace), null);
+
+  cache.destroy();
 });
 
 test("version helpers compare semantic major versions", () => {
@@ -58,4 +83,27 @@ test("password length accepts 6 to 32 characters", () => {
   assert.equal(isPasswordLengthValid("123456"), true);
   assert.equal(isPasswordLengthValid("1".repeat(32)), true);
   assert.equal(isPasswordLengthValid("1".repeat(33)), false);
+});
+
+test("keyboard helpers detect IME composition before handling Enter", () => {
+  const composingEnter = {
+    key: "Enter",
+    isComposing: true,
+    keyCode: 13,
+  } as KeyboardEvent;
+  const legacyComposingEnter = {
+    key: "Enter",
+    isComposing: false,
+    keyCode: 229,
+  } as KeyboardEvent;
+  const committedEnter = {
+    key: "Enter",
+    isComposing: false,
+    keyCode: 13,
+  } as KeyboardEvent;
+
+  assert.equal(isKeyboardEventComposing(composingEnter), true);
+  assert.equal(isComposingEnterKeyDown(composingEnter), true);
+  assert.equal(isComposingEnterKeyDown(legacyComposingEnter), true);
+  assert.equal(isComposingEnterKeyDown(committedEnter), false);
 });
