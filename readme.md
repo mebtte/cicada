@@ -39,11 +39,7 @@ On Windows, use `cicada.exe`:
 .\cicada.exe start --data C:\path\to\cicada_data --port 8000
 ```
 
-`--data` is optional and defaults to `cicada_data` next to the executable.
-`--port` is optional and defaults to `8000`. You can also configure them with
-`CICADA_DATA` and `CICADA_PORT`.
-
-Open `http://localhost:8000` after the server starts.
+On the first startup, Cicada creates a default user and prints `username`/`password` to the log. After startup, you can visit cicada on `http://localhost:8000`.
 
 ## Development
 
