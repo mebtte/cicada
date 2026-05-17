@@ -8,6 +8,7 @@ import (
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
 )
@@ -207,6 +208,16 @@ type createMusicBody struct {
 	Asset     string `json:"asset" binding:"required"`
 }
 
+const musicNameMaxLength = 128
+
+func validMusicName(name string) bool {
+	// Count runes so non-ASCII song names get the same 128-character budget as
+	// the frontend input limit instead of being capped by UTF-8 byte length.
+	return name != "" &&
+		utf8.RuneCountInString(name) <= musicNameMaxLength &&
+		strings.TrimSpace(name) == name
+}
+
 func AdminCreateMusic(c *gin.Context) {
 	u := middleware.GetUser(c)
 	if u == nil || u.Admin != 1 {
@@ -214,7 +225,7 @@ func AdminCreateMusic(c *gin.Context) {
 		return
 	}
 	var body createMusicBody
-	if err := c.ShouldBindJSON(&body); err != nil || len(body.Name) > 50 || strings.TrimSpace(body.Name) != body.Name {
+	if err := c.ShouldBindJSON(&body); err != nil || !validMusicName(body.Name) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
@@ -281,7 +292,7 @@ func AdminUpdateMusic(c *gin.Context) {
 	switch body.Key {
 	case "name":
 		name, ok := body.Value.(string)
-		if !ok || name == "" || len(name) > 50 || strings.TrimSpace(name) != name {
+		if !ok || !validMusicName(name) {
 			api.Fail(c, apperr.WrongParameter)
 			return
 		}
