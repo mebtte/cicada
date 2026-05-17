@@ -5,6 +5,7 @@ import capitalize from "../src/utils/capitalize.js";
 import stringArrayEqual from "../src/utils/string_array_equal.js";
 import parseSearch from "../src/utils/parse_search.js";
 import { getMajorVersion, isSameMajorVersion } from "../src/utils/version.js";
+import Cache from "../src/utils/cache.js";
 import { getIsHeaderBackButtonPath } from "../src/pages/player/header/back_button.js";
 import { isPasswordLengthValid } from "../src/constants/user.js";
 import {
@@ -31,6 +32,26 @@ test("parseSearch decodes the search string into key-value pairs", () => {
       page: "2",
     },
   );
+});
+
+test("cache removes entries with the same scoped key replacement used for set", () => {
+  enum CacheKey {
+    VALUE = "value",
+  }
+  const cache = new Cache<
+    CacheKey,
+    {
+      [CacheKey.VALUE]: string;
+    }
+  >();
+  const keyReplace = (key: string) => `user-1:${key}`;
+
+  cache.set({ key: CacheKey.VALUE, keyReplace, value: "recommendation" });
+  assert.equal(cache.get(CacheKey.VALUE, keyReplace), "recommendation");
+  cache.remove(CacheKey.VALUE, keyReplace);
+  assert.equal(cache.get(CacheKey.VALUE, keyReplace), null);
+
+  cache.destroy();
 });
 
 test("version helpers compare semantic major versions", () => {
