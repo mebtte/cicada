@@ -1,5 +1,6 @@
 import Spinner from '@/components/spinner';
 import Empty from '@/components/empty';
+import { flexCenter } from '@/style/flexbox';
 import { useContext } from 'react';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
@@ -17,6 +18,9 @@ import { openCreateMusicbillDialog } from '../../utils';
 const reloadMusicbillList = () =>
   e.emit(EventType.RELOAD_MUSICBILL_LIST, { silence: false });
 const Style = styled.div`
+  /* 撑满侧栏剩余高度，供 loading 状态在列表区域居中。 */
+  flex: 1 1 auto;
+  min-height: 120px;
   position: relative;
 `;
 const TransitionBox = styled(animated.div)`
@@ -33,7 +37,11 @@ const StyledMusicbillList = styled(TransitionBox)`
   gap: 8px;
 `;
 const StatusBox = styled(TransitionBox)`
-  padding: 5px 12px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 5px 12px calc(${FLOATING_CONTROLLER_SCROLL_SPACE} + 5px);
+
+  ${flexCenter}
 `;
 const EmptyBox = styled(TransitionBox)`
   padding: 18px 12px calc(${FLOATING_CONTROLLER_SCROLL_SPACE} + 18px);
