@@ -55,7 +55,8 @@ const Style = styled(Page)`
 const ProfileCard = styled.section`
   display: flex;
   align-items: center;
-  padding: 20px;
+  /* 头像横向位置由页面容器控制，确保宽屏和窄屏都与下方内容对齐。 */
+  padding: 20px 0;
 
   border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
 
@@ -77,8 +78,6 @@ const ProfileCard = styled.section`
   }
 
   @media (max-width: 720px) {
-    padding-inline: 0;
-
     > .avatar-box {
       align-items: center;
     }
