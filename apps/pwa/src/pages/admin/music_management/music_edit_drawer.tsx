@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import {
   MdAdd,
   MdDelete,
+  MdFileUpload,
   MdOutlineFilePresent,
 } from 'react-icons/md';
 import DefaultCover from '@/asset/default_cover.jpeg';
@@ -353,7 +354,7 @@ const LyricTextarea = styled(Textarea)`
 
 const LyricDeleteButton = styled(Button)`
   position: absolute;
-  top: -8px;
+  top: -16px;
   right: -8px;
   z-index: 2;
   width: 26px;
@@ -361,6 +362,28 @@ const LyricDeleteButton = styled(Button)`
   min-width: 0;
   border-radius: 8px;
   font-size: 14px;
+`;
+
+// 与删除按钮等大, 紧贴在删除按钮左侧
+const LyricUploadButton = styled(Button)`
+  position: absolute;
+  top: -16px;
+  right: 24px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  min-width: 0;
+  border-radius: 8px;
+  font-size: 14px;
+`;
+
+// 歌词块行距比通用 FieldGroup 大, 给按钮溢出留出空间
+const LyricFieldGroup = styled(FieldGroup)`
+  gap: 20px;
+`;
+
+const HiddenFileInput = styled.input`
+  display: none;
 `;
 
 const CenterBox = styled.div`
@@ -597,6 +620,9 @@ function EditContent({
   const fileUploadAbortRef = useRef<AbortController | null>(null);
   const fileUploadIdRef = useRef<string | null>(null);
   const fileSelectDialogIdRef = useRef<string | null>(null);
+  const lyricFileInputRef = useRef<HTMLInputElement | null>(null);
+  // 同一个隐藏 input 复用给所有歌词槽位, 用 ref 记住当前点击的是哪一条
+  const lyricUploadTargetRef = useRef<number | null>(null);
 
   useEffect(() => {
     setName(music.name);
@@ -711,6 +737,38 @@ function EditContent({
     setLyrics((list) =>
       list.length >= MUSIC_MAX_LRYIC_AMOUNT ? list : [...list, ''],
     );
+
+  const onTriggerLyricUpload = (index: number) => {
+    lyricUploadTargetRef.current = index;
+    lyricFileInputRef.current?.click();
+  };
+
+  const onLyricFileSelected: ChangeEventHandler<HTMLInputElement> = async (
+    event,
+  ) => {
+    const input = event.target;
+    const file = input.files?.[0];
+    const targetIndex = lyricUploadTargetRef.current;
+    lyricUploadTargetRef.current = null;
+    // 重置以便用户再次选同一个文件时仍能触发 change 事件
+    input.value = '';
+    if (!file || targetIndex === null) {
+      return;
+    }
+    try {
+      const text = await file.text();
+      // 超长直接截断, 与 textarea 的 maxLength 行为一致
+      const truncated = text.slice(0, LYRIC_MAX_LENGTH);
+      setLyrics((list) =>
+        list.map((lyric, lyricIndex) =>
+          lyricIndex === targetIndex ? truncated : lyric,
+        ),
+      );
+    } catch (error) {
+      logger.error(error as Error, 'Failed to read lyric file');
+      notice.error(error instanceof Error ? error.message : String(error));
+    }
+  };
 
   const onRemoveLyric = (index: number) => {
     const removeAt = () =>
@@ -1157,7 +1215,7 @@ function EditContent({
         {music.type === MusicType.SONG ? (
           <Group>
             <GroupTitle>{t('lyric')}</GroupTitle>
-            <FieldGroup>
+            <LyricFieldGroup>
               {lyrics.map((lyric, index) => (
                 <TextareaRow key={index}>
                   <LyricTextarea
@@ -1169,6 +1227,17 @@ function EditContent({
                       onLyricChange(index, event.target.value)
                     }
                   />
+                  <LyricUploadButton
+                    square
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => onTriggerLyricUpload(index)}
+                    disabled={saving}
+                    title={t('upload_lyric')}
+                    aria-label={t('upload_lyric')}
+                  >
+                    <MdFileUpload />
+                  </LyricUploadButton>
                   <LyricDeleteButton
                     square
                     size="sm"
@@ -1192,7 +1261,13 @@ function EditContent({
                   {t('add')} {t('lyric')}
                 </Button>
               ) : null}
-            </FieldGroup>
+            </LyricFieldGroup>
+            <HiddenFileInput
+              ref={lyricFileInputRef}
+              type="file"
+              accept=".lrc,text/plain"
+              onChange={onLyricFileSelected}
+            />
           </Group>
         ) : null}
 

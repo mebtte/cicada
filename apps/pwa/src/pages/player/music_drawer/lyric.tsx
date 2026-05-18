@@ -2,8 +2,11 @@ import { MusicType } from '@/constants/music';
 import { CSSVariable } from '@/global_style';
 import { MultipleLrc } from 'react-lrc';
 import styled from 'styled-components';
+import { MdFileDownload } from 'react-icons/md';
+import { saveAs } from 'file-saver';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
+import formatMusicFilename from '@/utils/format_music_filename';
 import { MusicDetail } from './constants';
 import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
@@ -22,6 +25,7 @@ const Style = styled.section`
   }
 
   > .content {
+    position: relative;
     padding: 8px 0 12px;
 
     background: #fff;
@@ -38,8 +42,89 @@ const Line = styled.div`
   font-weight: 600;
   color: rgb(120 120 120);
 `;
+// Duolingo 风格小按钮: 纯色填充 + 同色硬阴影(无 blur), 按下 translateY 抹平阴影
+const DOWNLOAD_BTN_OFFSET = 2;
+const DownloadButton = styled.button`
+  position: absolute;
+  right: 10px;
+  bottom: ${10 + DOWNLOAD_BTN_OFFSET}px;
+
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  margin: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: rgb(120 120 120);
+  background: #fff;
+  border: 2px solid rgb(229 229 229);
+  border-radius: 8px;
+  box-shadow: 0 ${DOWNLOAD_BTN_OFFSET}px 0 rgb(229 229 229);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  will-change: transform, box-shadow;
+  appearance: none;
+  -webkit-appearance: none;
+
+  opacity: 0.4;
+  transition:
+    opacity 160ms ease,
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    filter 120ms;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  &:hover {
+    filter: brightness(1.04);
+  }
+
+  &:active {
+    transform: translateY(${DOWNLOAD_BTN_OFFSET}px);
+    box-shadow: none;
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in,
+      filter 60ms;
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    outline-offset: 2px;
+  }
+`;
 
 function Lyric({ music }: { music: MusicDetail }) {
+  const downloadable =
+    music.type === MusicType.SONG && music.lyrics.length > 0;
+
+  const downloadLyrics = () => {
+    const singerNames = music.singers.map((s) => s.name);
+    // 单条歌词不加 (n) 后缀, 多条则按 1..N 顺序追加
+    const multiple = music.lyrics.length > 1;
+    music.lyrics.forEach((lyric, i) => {
+      const filename = formatMusicFilename({
+        name: music.name,
+        singerNames,
+        ext: 'lrc',
+        index: multiple ? i + 1 : undefined,
+      });
+      saveAs(
+        new Blob([lyric.lrc], { type: 'text/plain;charset=utf-8' }),
+        filename,
+      );
+    });
+  };
+
   return (
     <Style>
       <div className="label">{t('lyric')}</div>
@@ -62,6 +147,15 @@ function Lyric({ music }: { music: MusicDetail }) {
         ) : (
           <Line>{t('instrument_without_lyric')}</Line>
         )}
+        {downloadable ? (
+          <DownloadButton
+            type="button"
+            aria-label={t('download_lyric')}
+            onClick={downloadLyrics}
+          >
+            <MdFileDownload />
+          </DownloadButton>
+        ) : null}
       </div>
     </Style>
   );

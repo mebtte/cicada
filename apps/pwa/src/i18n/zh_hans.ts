@@ -130,6 +130,8 @@ const zhCN: {
   delete_cover_question: '确定删除封面吗?',
   edit_lyric: '编辑歌词',
   lyric: '歌词',
+  download_lyric: '下载歌词',
+  upload_lyric: '上传歌词',
   text_of_lrc: 'LRC 格式文本',
   delete_lyric_question: '确定删除该歌词吗?',
   modify_singer: '修改歌手',
