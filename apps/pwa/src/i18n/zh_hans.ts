@@ -126,6 +126,8 @@ const zhCN: {
   empty_cover_warning: '请选择封面',
   reset_cover: '重置封面',
   reset_cover_question: '确定重置封面吗?',
+  delete_cover: '删除封面',
+  delete_cover_question: '确定删除封面吗?',
   edit_lyric: '编辑歌词',
   lyric: '歌词',
   text_of_lrc: 'LRC 格式文本',

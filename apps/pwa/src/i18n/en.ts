@@ -126,6 +126,8 @@ export default {
   empty_cover_warning: 'please select a cover',
   reset_cover: 'reset cover',
   reset_cover_question: 'are you sure to reset cover ?',
+  delete_cover: 'delete cover',
+  delete_cover_question: 'are you sure to delete cover ?',
   edit_lyric: 'edit lyric',
   lyric: 'lyric',
   text_of_lrc: 'text of lrc',

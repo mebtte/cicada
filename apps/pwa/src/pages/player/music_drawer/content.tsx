@@ -303,11 +303,13 @@ function Detail({
       >
         <div className="first-screen">
           <DetailContent $insideDrawer={insideDrawer}>
-            <CoverFrame $insideDrawer={insideDrawer}>
-              <div className="cover-shell">
-                <Cover src={music.cover} size="100%" shape={Shape.SQUARE} />
-              </div>
-            </CoverFrame>
+            {music.cover ? (
+              <CoverFrame $insideDrawer={insideDrawer}>
+                <div className="cover-shell">
+                  <Cover src={music.cover} size="100%" shape={Shape.SQUARE} />
+                </div>
+              </CoverFrame>
+            ) : null}
             <Info
               music={music}
               showTitle={!insideDrawer || USE_COLLAPSING_DRAWER_TITLE}

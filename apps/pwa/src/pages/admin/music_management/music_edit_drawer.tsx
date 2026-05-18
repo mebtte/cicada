@@ -590,6 +590,7 @@ function EditContent({
   const [year, setYear] = useState(music.year === null ? '' : `${music.year}`);
   const [saving, setSaving] = useState(false);
   const [coverSaving, setCoverSaving] = useState(false);
+  const [coverDeleting, setCoverDeleting] = useState(false);
   const [fileSaving, setFileSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const mountedRef = useRef(true);
@@ -763,6 +764,31 @@ function EditContent({
           return false;
         } finally {
           setCoverSaving(false);
+        }
+      },
+    });
+
+  // 删除封面：弹出确认框，通过将 COVER 字段置空调用更新接口实现“删除”
+  const onDeleteCover = () =>
+    dialog.confirm({
+      content: t('delete_cover_question'),
+      confirmText: t('delete'),
+      confirmVariant: 'danger',
+      onConfirm: async () => {
+        setCoverDeleting(true);
+        try {
+          await updateMusic({
+            id: music.id,
+            key: AllowUpdateKey.COVER,
+            value: '',
+          });
+          onReload();
+        } catch (error) {
+          logger.error(error, 'Failed to delete cover of music');
+          notice.error(error.message);
+          return false;
+        } finally {
+          setCoverDeleting(false);
         }
       },
     });
@@ -1013,11 +1039,25 @@ function EditContent({
               square
               onClick={onEditCover}
               loading={coverSaving}
-              disabled={saving || fileSaving || deleting}
+              disabled={saving || fileSaving || deleting || coverDeleting}
               title={t('edit_cover')}
               aria-label={t('edit_cover')}
             >
               <IconEdit size={18} />
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              square
+              onClick={onDeleteCover}
+              loading={coverDeleting}
+              disabled={
+                !music.cover || saving || fileSaving || deleting || coverSaving
+              }
+              title={t('delete_cover')}
+              aria-label={t('delete_cover')}
+            >
+              <MdDelete />
             </Button>
           </CoverActions>
         </CoverSection>
@@ -1111,7 +1151,7 @@ function EditContent({
           music={music}
           onModifyFile={onModifyFile}
           loading={fileSaving}
-          disabled={saving || coverSaving || deleting}
+          disabled={saving || coverSaving || coverDeleting || deleting}
         />
 
         {music.type === MusicType.SONG ? (
@@ -1163,7 +1203,9 @@ function EditContent({
           variant="primary"
           onClick={onSave}
           loading={saving}
-          disabled={!changed || coverSaving || fileSaving || deleting}
+          disabled={
+            !changed || coverSaving || coverDeleting || fileSaving || deleting
+          }
         >
           {t('save')}
         </ActionButton>
@@ -1172,7 +1214,7 @@ function EditContent({
           icon={<MdDelete />}
           onClick={onDelete}
           loading={deleting}
-          disabled={saving || coverSaving || fileSaving}
+          disabled={saving || coverSaving || coverDeleting || fileSaving}
         >
           {t('delete_music')}
         </ActionButton>

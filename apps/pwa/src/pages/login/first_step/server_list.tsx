@@ -107,6 +107,7 @@ function ServerList({
               e.stopPropagation();
               dialog.confirm({
                 content: t('delete_origin_question'),
+                confirmVariant: 'danger',
                 onConfirm: () =>
                   useServer.setState((server) => ({
                     serverList: server.serverList.filter(
