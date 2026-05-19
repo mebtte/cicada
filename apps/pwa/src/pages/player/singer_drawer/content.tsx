@@ -39,17 +39,14 @@ const DetailContainer = styled(Container)<{ $floatingControllerOffset: boolean }
     overflow: auto;
     ${autoScrollbar}
 
+    /* 底部留白合并进 first-screen，避免内容少时仍产生 100% + padding 的溢出滚动 */
     > .first-screen {
       min-height: 100%;
-    }
-
-    &::after {
-      content: '';
-      display: block;
-      height: ${({ $floatingControllerOffset }) =>
+      padding-bottom: ${({ $floatingControllerOffset }) =>
         $floatingControllerOffset
           ? `calc(64px + env(safe-area-inset-bottom, 0) + ${FLOATING_CONTROLLER_SCROLL_SPACE})`
           : 'calc(68px + env(safe-area-inset-bottom, 0))'};
+      box-sizing: border-box;
     }
   }
 `;

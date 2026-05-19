@@ -108,6 +108,16 @@ export const GlobalStyle = createGlobalStyle`
     font-family: inherit;
   }
 
+  button,
+  input,
+  textarea,
+  select,
+  a,
+  [role='button'] {
+    /* 标题栏拖拽区域内的交互控件必须显式退出 drag, 否则 macOS PWA 会吞掉点击。 */
+    -webkit-app-region: no-drag;
+  }
+
   input,
   textarea,
   [contenteditable='true'],

@@ -2,6 +2,7 @@ import { ChangeEventHandler, useState } from 'react';
 import styled from 'styled-components';
 import { MdDelete, MdPlayArrow } from 'react-icons/md';
 import Button from '@/components/button';
+import Divider from '@/components/divider';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Input from '@/components/input';
 import { Select, MultiSelect, type SelectOption } from '@/components';
@@ -28,6 +29,7 @@ import {
   updateTask,
   useMusicImport,
 } from '@/global_states/music_import';
+import CreateSingerLabel from '../../components/create_singer_label';
 import {
   cancelTask,
   retryTask,
@@ -171,7 +173,8 @@ const MetadataText = styled.span`
 const Fields = styled.div`
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(118px, 150px);
-  gap: 8px;
+  column-gap: 8px;
+  row-gap: 14px;
 `;
 
 const SingerField = styled.div`
@@ -179,8 +182,15 @@ const SingerField = styled.div`
   min-width: 0;
 `;
 
+const ProgressBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  /* 与 Fields 内部的 row-gap 保持一致, 让进度区与上方输入区视觉间距连续 */
+  margin-top: 6px;
+`;
+
 const ProgressSlider = styled(Slider)`
-  margin-top: 4px;
   pointer-events: none;
 
   > span:last-child {
@@ -188,20 +198,13 @@ const ProgressSlider = styled(Slider)`
   }
 `;
 
-const ProgressMeta = styled.div`
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
+const ProgressSizeText = styled.div`
+  align-self: flex-end;
   font-family: ${FONT};
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 0;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-`;
-
-const ProgressSizeText = styled.span`
-  min-width: 0;
   white-space: nowrap;
 `;
 
@@ -372,6 +375,16 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
     });
   };
 
+  // Append the newly-created singer to the current task without disturbing
+  // other in-flight drafts; existing tasks discover new singers through async
+  // search.
+  const onSingerCreated = (singer: { id: string; name: string }) => {
+    if (task.singers.some((s) => s.id === singer.id)) return;
+    updateTask(task.id, {
+      singers: [...task.singers, { id: singer.id, name: singer.name }],
+    });
+  };
+
   return (
     <>
       <Card $status={task.phase}>
@@ -419,17 +432,19 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
               <InstantBadge>{t('instant_upload_hit')}</InstantBadge>
             ) : null}
           </HeaderRow>
+          <Divider />
           <Fields>
             <Input
               size="sm"
+              label={t('name')}
               value={task.name}
               onChange={onNameChange}
               maxLength={NAME_MAX_LENGTH}
               disabled={!editable}
-              placeholder={t('name')}
             />
             <Select
               size="sm"
+              label={t('music_type_short')}
               options={musicTypeOptions}
               value={task.type}
               onChange={(value) => updateTask(task.id, { type: value })}
@@ -438,6 +453,15 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
             <SingerField>
               <MultiSelect
                 size="sm"
+                label={t('singer')}
+                labelAddon={
+                  editable ? (
+                    <CreateSingerLabel
+                      notifyOnCreated={false}
+                      onCreated={onSingerCreated}
+                    />
+                  ) : undefined
+                }
                 wrapValues
                 value={task.singers.map((s) => formatSingerToOption(s))}
                 loadOptions={searchSinger}
@@ -450,15 +474,19 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
                   })
                 }
                 disabled={!editable}
-                placeholder={t('singer')}
+                placeholder=""
               />
             </SingerField>
           </Fields>
-          <ProgressSlider value={pct} max={100} />
-          <ProgressMeta>
+          <ProgressBlock>
             <ProgressSizeText>
               {formatBytes(task.uploadedBytes)} / {formatBytes(task.totalBytes)}
             </ProgressSizeText>
+            <ProgressSlider value={pct} max={100} />
+          </ProgressBlock>
+          {task.errorMessage ||
+          task.phase === 'failed' ||
+          task.phase === 'success' ? (
             <ProgressMetaRight>
               {task.errorMessage ? (
                 <ErrorText title={task.errorMessage}>
@@ -476,7 +504,7 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
                 <UploadedText>{t('upload_status_uploaded')}</UploadedText>
               ) : null}
             </ProgressMetaRight>
-          </ProgressMeta>
+          ) : null}
         </InfoBox>
       </Card>
       <ImageViewer photo={viewerPhoto} onClose={() => setViewerPhoto(null)} />

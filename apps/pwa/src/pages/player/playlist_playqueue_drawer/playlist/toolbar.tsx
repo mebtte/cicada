@@ -64,6 +64,7 @@ function Toolbar({
         onClick={() =>
           dialog.confirm({
             title: t('clear_playlist_question'),
+            confirmVariant: 'danger',
             onConfirm: () =>
               void playerEventemitter.emit(
                 PlayerEventType.ACTION_CLEAR_PLAYLIST,

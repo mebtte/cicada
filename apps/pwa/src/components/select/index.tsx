@@ -1,6 +1,7 @@
 import {
   type CompositionEvent,
   CSSProperties,
+  type ReactNode,
   useCallback,
   useEffect,
   useId,
@@ -418,6 +419,8 @@ export interface MultiSelectProps<T> {
   disabled?:    boolean;
   size?:        SelectSize;
   label?:       string;
+  /** Label 右侧的附加内容（按钮等） */
+  labelAddon?:  ReactNode;
   hint?:        string;
   error?:       string;
   className?:   string;
@@ -427,7 +430,7 @@ export interface MultiSelectProps<T> {
 export function MultiSelect<T>({
   options: staticOptions, loadOptions, value, onChange,
   placeholder = 'Select...', clearable, wrapValues = false, disabled = false,
-  size = 'md', label, hint, error, className, style,
+  size = 'md', label, labelAddon, hint, error, className, style,
 }: MultiSelectProps<T>) {
   const inputId = useId();
   const { colorPrimary } = useTheme();
@@ -569,7 +572,9 @@ export function MultiSelect<T>({
 
   return (
     <Root className={className} style={style}>
-      {label && <Label htmlFor={inputId}>{label}</Label>}
+      {(label || labelAddon) && (
+        <Label htmlFor={inputId} label={label} addon={labelAddon} />
+      )}
       {loadOptions ? (
         <ReactSelect<SelectOption<T>, true>
           {...sharedProps}
