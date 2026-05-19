@@ -62,10 +62,12 @@ const Style = styled(animated.div)`
 `;
 
 function Info({ queueMusic }: { queueMusic?: QueueMusic }) {
+  // 切歌动画: 模糊渐隐 + 轻微缩放, 比上下滑动更克制
   const transitions = useTransition(queueMusic, {
-    from: { transform: 'translateY(100%)', opacity: 0 },
-    enter: { transform: 'translateY(0%)', opacity: 1 },
-    leave: { transform: 'translateY(-100%)', opacity: 0 },
+    from: { opacity: 0, filter: 'blur(8px)', transform: 'scale(0.96)' },
+    enter: { opacity: 1, filter: 'blur(0px)', transform: 'scale(1)' },
+    leave: { opacity: 0, filter: 'blur(8px)', transform: 'scale(1.04)' },
+    config: { tension: 220, friction: 26 },
   });
 
   return (
