@@ -1023,6 +1023,21 @@ func operations() []operation {
 			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized", "not_authorized_for_admin"},
 		},
 		{
+			Method:      "DELETE",
+			Path:        "/api/admin/singer",
+			Summary:     "Admin delete singer",
+			Description: "Delete a singer along with its photos. The singer must not be referenced by any music; otherwise `singer_has_music_can_not_be_deleted` is returned. Asset files for removed photos are reclaimed by the next `remove_unlinked_asset` scheduler run.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			Parameters: []map[string]any{
+				queryParam("id", "Singer ID.", true, strSchema("", "singer-1")),
+			},
+			SuccessSchema:  nil,
+			SuccessExample: nil,
+			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "singer_has_music_can_not_be_deleted", "server_error", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
 			Method:      "POST",
 			Path:        "/api/admin/singer/photo",
 			Summary:     "Admin add singer photo",
@@ -1896,12 +1911,13 @@ func singerDetailExample() map[string]any {
 
 func adminSingerDetailSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "aliases", "photos", "createTimestamp", "createUser"},
+		[]string{"id", "name", "aliases", "photos", "musicCount", "createTimestamp", "createUser"},
 		map[string]any{
 			"id":              strSchema("Singer ID.", "singer-1"),
 			"name":            strSchema("Singer name.", "Aurora"),
 			"aliases":         arraySchema(strSchema("", "AUR")),
 			"photos":          arraySchema(singerPhotoSchema()),
+			"musicCount":      intSchema("Number of music entries linked to this singer.", 3),
 			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
 			"createUser": objSchema([]string{"id", "username", "nickname"}, map[string]any{
 				"id":       strSchema("User ID.", "1"),
@@ -1920,6 +1936,7 @@ func adminSingerDetailExample() map[string]any {
 		"photos": []any{
 			map[string]any{"id": "photo-1", "asset": "/asset/singer_photo/photo.jpg", "description": "Live in Tokyo, 2024"},
 		},
+		"musicCount":      3,
 		"createTimestamp": int64(1710000000000),
 		"createUser":      map[string]any{"id": "1", "username": "alice", "nickname": "Alice"},
 	}

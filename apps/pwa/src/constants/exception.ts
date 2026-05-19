@@ -16,6 +16,7 @@ export enum ExceptionCode {
   SINGER_NOT_EXISTED = "singer_not_existed",
   INSTRUMENTAL_HAS_NO_LYRIC = "instrumental_has_no_lyric",
   SINGER_ALREADY_EXISTED = "singer_already_existed",
+  SINGER_HAS_MUSIC_CAN_NOT_BE_DELETED = "singer_has_music_can_not_be_deleted",
   NO_NEED_TO_UPDATE = "no_need_to_update",
   ALIAS_OVER_MAX_LENGTH = "alias_over_max_length",
   REPEATED_ALIAS = "repeated_alias",

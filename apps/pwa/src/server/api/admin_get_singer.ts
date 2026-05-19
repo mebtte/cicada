@@ -10,6 +10,7 @@ interface Response {
     asset: string;
     description: string;
   }[];
+  musicCount: number;
   createUser: {
     id: string;
     username: string;

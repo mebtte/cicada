@@ -44,10 +44,12 @@ import stringArrayEqual from '@/utils/string_array_equal';
 import getResizedImage from '@/server/asset/get_resized_image';
 import uploadAsset from '@/server/form/upload_asset';
 import adminCreateSingerPhoto from '@/server/api/admin_create_singer_photo';
+import adminDeleteSinger from '@/server/api/admin_delete_singer';
 import adminDeleteSingerPhoto from '@/server/api/admin_delete_singer_photo';
 import adminReorderSingerPhotos from '@/server/api/admin_reorder_singer_photos';
 import adminUpdateSingerPhoto from '@/server/api/admin_update_singer_photo';
 import updateSinger from '@/server/api/update_singer';
+import { ExceptionCode } from '@/constants/exception';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '@/pages/player/eventemitter';
@@ -340,6 +342,13 @@ const Footer = styled.div<{ $page: boolean }>`
   bottom: 0;
   z-index: ${({ $page }) => ($page ? 'auto' : '2')};
   padding: 14px 16px calc(16px + env(safe-area-inset-bottom, 0));
+  display: flex;
+  gap: 10px;
+`;
+
+const SaveButton = styled(Button)`
+  flex: 1;
+  min-width: 0;
 `;
 
 const normalizeName = (name: string) => name.replace(/\s+/g, ' ').trim();
@@ -437,17 +446,22 @@ function SingerEditContent({
   page = false,
   onSaved,
   onPhotosChanged,
+  onDeleted,
 }: {
   singer: Singer;
   page?: boolean;
   onSaved?: () => void;
   onPhotosChanged?: () => void;
+  onDeleted?: () => void;
 }) {
   const [name, setName] = useState(singer.name);
   const [aliases, setAliases] = useState<string[]>(() => singer.aliases);
   const [photos, setPhotos] = useState(() => singer.photos);
   const [saving, setSaving] = useState(false);
   const [photoSaving, setPhotoSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  // musicCount > 0 时禁止删除歌手, 需要先把所有关联音乐解绑或删除
+  const hasMusic = singer.musicCount > 0;
   const aliasInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const pendingFocusAliasIndexRef = useRef<number | null>(null);
   const sensors = useSensors(
@@ -648,6 +662,31 @@ function SingerEditContent({
     }
   };
 
+  const onDelete = () =>
+    dialog.confirm({
+      content: t('delete_singer_question'),
+      confirmText: t('delete'),
+      confirmVariant: 'danger',
+      onConfirm: async () => {
+        setDeleting(true);
+        try {
+          await adminDeleteSinger(singer.id);
+          onDeleted?.();
+        } catch (error) {
+          logger.error(error, 'Failed to delete singer');
+          // 服务端兜底返回的错误码需要翻译成可读文案
+          notice.error(
+            error.code === ExceptionCode.SINGER_HAS_MUSIC_CAN_NOT_BE_DELETED
+              ? t('singer_has_music_can_not_be_deleted')
+              : error.message,
+          );
+          return false;
+        } finally {
+          setDeleting(false);
+        }
+      },
+    });
+
   return (
     <Form $page={page}>
       {page ? (
@@ -753,15 +792,24 @@ function SingerEditContent({
       </Body>
 
       <Footer $page={page}>
-        <Button
-          block
+        <SaveButton
           variant="primary"
           onClick={onSave}
           loading={saving}
-          disabled={!changed || photoSaving}
+          disabled={!changed || photoSaving || deleting}
         >
           {t('save')}
-        </Button>
+        </SaveButton>
+        {hasMusic ? null : (
+          <Button
+            variant="danger"
+            onClick={onDelete}
+            loading={deleting}
+            disabled={saving || photoSaving}
+          >
+            {t('delete')}
+          </Button>
+        )}
       </Footer>
     </Form>
   );

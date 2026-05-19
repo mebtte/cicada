@@ -405,14 +405,17 @@ const Footer = styled.div`
 `;
 
 const ActionButton = styled(Button)`
-  flex: 1;
-  min-width: 0;
   min-height: 44px;
 
   @media (max-width: 360px) {
     padding: 0 12px;
     font-size: 14px;
   }
+`;
+
+const SaveButton = styled(ActionButton)`
+  flex: 1;
+  min-width: 0;
 `;
 
 const formatDurationMs = (durationMs: number) => {
@@ -1263,7 +1266,7 @@ function EditContent({
       </Body>
 
       <Footer>
-        <ActionButton
+        <SaveButton
           variant="primary"
           onClick={onSave}
           loading={saving}
@@ -1272,10 +1275,9 @@ function EditContent({
           }
         >
           {t('save')}
-        </ActionButton>
+        </SaveButton>
         <ActionButton
           variant="danger"
-          icon={<MdDelete />}
           onClick={onDelete}
           loading={deleting}
           disabled={saving || coverSaving || coverDeleting || fileSaving}

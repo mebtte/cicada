@@ -77,6 +77,7 @@ const toEditableSinger = (
   name: singer.name,
   aliases: singer.aliases,
   photos: singer.photos,
+  musicCount: singer.musicCount,
   createUser: {
     id: singer.createUser.id,
     username: singer.createUser.username,
@@ -156,6 +157,7 @@ function SingerEditPage({ onSaved }: { onSaved: () => void }) {
             singer={singer}
             onSaved={handleSaved}
             onPhotosChanged={handlePhotosChanged}
+            onDeleted={handleSaved}
           />
         </Content>
       ) : null}

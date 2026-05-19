@@ -93,6 +93,10 @@ export default {
   delete: 'delete',
   music_forked_by_other_can_not_be_deleted:
     'music forked by other can not be deleted',
+  delete_singer: 'delete singer',
+  delete_singer_question: 'are you sure to delete this singer ?',
+  singer_has_music_can_not_be_deleted:
+    'singer with linked music can not be deleted',
   year_of_issue: 'year of issue',
   edit_year_of_issue: 'edit year of issue',
   year_of_issue_limit: 'year of issue should be between %s1 and %s2',

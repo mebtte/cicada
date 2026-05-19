@@ -19,6 +19,7 @@ const (
 	AssetNotExisted                         = "asset_not_existed"
 	SingerNotExisted                        = "singer_not_existed"
 	SingerAlreadyExisted                    = "singer_already_existed"
+	SingerHasMusicCanNotBeDeleted           = "singer_has_music_can_not_be_deleted"
 	NoNeedToUpdate                          = "no_need_to_update"
 	AliasOverMaxLength                      = "alias_over_max_length"
 	RepeatedAlias                           = "repeated_alias"

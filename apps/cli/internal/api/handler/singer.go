@@ -223,11 +223,15 @@ func AdminGetSinger(c *gin.Context) {
 		}
 	}
 
+	// musicCount 用于编辑页判定能否删除歌手，避免再发起一次单独的查询。
+	musicCount, _ := store.GetMusicCountBySingerID(id)
+
 	api.OK(c, gin.H{
-		"id":      s.ID,
-		"name":    s.Name,
-		"aliases": splitAliases(s.Aliases),
-		"photos":  photoItems,
+		"id":         s.ID,
+		"name":       s.Name,
+		"aliases":    splitAliases(s.Aliases),
+		"photos":     photoItems,
+		"musicCount": musicCount,
 		"createUser": gin.H{
 			"id":       s.CreateUserID,
 			"username": createUserUsername,
@@ -316,5 +320,32 @@ func AdminUpdateSinger(c *gin.Context) {
 		return
 	}
 
+	api.OK(c, nil)
+}
+
+func AdminDeleteSinger(c *gin.Context) {
+	id := c.Query("id")
+	if id == "" {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	if _, err := store.GetSingerByID(id); err != nil {
+		api.Fail(c, apperr.SingerNotExisted)
+		return
+	}
+	// 即便前端已禁用按钮，仍在服务端复核音乐数量，避免竞态导致带音乐的歌手被误删。
+	count, err := store.GetMusicCountBySingerID(id)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	if count > 0 {
+		api.Fail(c, apperr.SingerHasMusicCanNotBeDeleted)
+		return
+	}
+	if err := store.DeleteSingerCascade(id); err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
 	api.OK(c, nil)
 }
