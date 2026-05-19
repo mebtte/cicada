@@ -103,6 +103,7 @@ const zhCN: {
   reset_avatar_question: '确定重置头像吗?',
   edit_name: '编辑名字',
   name: '名字',
+  song_name: '歌名',
   empty_name_warning: '请输入名字',
   edit_alias: '编辑别名',
   alias: '别名',

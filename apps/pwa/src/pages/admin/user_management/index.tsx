@@ -532,12 +532,18 @@ function UserManagement() {
   }, [keyword]);
 
   const requestUserList = useCallback(
-    ({ signal }: { signal?: AbortSignal } = {}) => {
-      setData((d) => ({
-        ...d,
-        error: null,
-        loading: true,
-      }));
+    ({
+      signal,
+      silent = false,
+    }: { signal?: AbortSignal; silent?: boolean } = {}) => {
+      // 静默刷新: 不触发 loading 态, 保持当前列表可见, 失败时再切到错误 UI
+      if (!silent) {
+        setData((d) => ({
+          ...d,
+          error: null,
+          loading: true,
+        }));
+      }
       return adminGetUserList()
         .then((userList) => {
           if (signal?.aborted) return;
@@ -565,7 +571,13 @@ function UserManagement() {
     return () => controller.abort();
   }, [requestUserList]);
 
+  // CRUD 完成后的刷新: 静默路径
   const reload = useCallback(() => {
+    void requestUserList({ silent: true });
+  }, [requestUserList]);
+
+  // 错误 UI 的"重试"按钮: 显式 loading 反馈, 与初次加载行为一致
+  const retry = useCallback(() => {
     void requestUserList();
   }, [requestUserList]);
 
@@ -705,7 +717,7 @@ function UserManagement() {
       <Content>
         {data.error ? (
           <StatusBox>
-            <ErrorCard errorMessage={data.error.message} retry={reload} />
+            <ErrorCard errorMessage={data.error.message} retry={retry} />
           </StatusBox>
         ) : data.loading ? (
           <StatusBox>

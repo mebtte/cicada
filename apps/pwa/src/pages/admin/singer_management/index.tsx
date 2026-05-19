@@ -637,20 +637,25 @@ function SingerManagement() {
   const requestSingerList = useCallback(
     ({
       signal,
+      silent = false,
       page: requestPage = page,
       keyword: requestKeyword = keyword,
       filterKey: requestFilterKey = filterKey,
     }: {
       signal?: AbortSignal;
+      silent?: boolean;
       page?: number;
       keyword?: string;
       filterKey?: AdminSingerListFilterKey;
     } = {}) => {
-      setData((d) => ({
-        ...d,
-        error: null,
-        loading: true,
-      }));
+      // 静默刷新: 不触发 loading 态, 保持当前列表可见, 失败时再切到错误 UI
+      if (!silent) {
+        setData((d) => ({
+          ...d,
+          error: null,
+          loading: true,
+        }));
+      }
       return adminGetSingerList({
         page: requestPage,
         pageSize,
@@ -686,7 +691,13 @@ function SingerManagement() {
     return () => controller.abort();
   }, [requestSingerList]);
 
+  // CRUD 完成后的刷新: 静默路径
   const reload = useCallback(() => {
+    void requestSingerList({ silent: true });
+  }, [requestSingerList]);
+
+  // 错误 UI 的"重试"按钮: 显式 loading 反馈
+  const retry = useCallback(() => {
     void requestSingerList();
   }, [requestSingerList]);
 
@@ -790,7 +801,7 @@ function SingerManagement() {
         <Content>
           {data.error ? (
             <StatusBox>
-              <ErrorCard errorMessage={data.error.message} retry={reload} />
+              <ErrorCard errorMessage={data.error.message} retry={retry} />
             </StatusBox>
           ) : data.loading ? (
             <StatusBox>

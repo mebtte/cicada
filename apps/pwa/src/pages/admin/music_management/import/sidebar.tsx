@@ -196,7 +196,6 @@ const Body = styled.div<{ $center: boolean; $hasBottomToolbar: boolean }>`
   min-height: 0;
   padding: 21px 16px ${({ $hasBottomToolbar }) => ($hasBottomToolbar ? 84 : 16)}px;
   overflow-y: auto;
-  background: rgb(247 247 247);
   display: flex;
   flex-direction: column;
   ${({ $center }) =>

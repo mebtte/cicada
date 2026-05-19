@@ -436,7 +436,7 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
           <Fields>
             <Input
               size="sm"
-              label={t('name')}
+              label={t('song_name')}
               value={task.name}
               onChange={onNameChange}
               maxLength={NAME_MAX_LENGTH}

@@ -103,6 +103,7 @@ export default {
   reset_avatar_question: 'are you sure to reset avatar ?',
   edit_name: 'edit name',
   name: 'name',
+  song_name: 'music name',
   empty_name_warning: 'please enter the name',
   edit_alias: 'edit alias',
   alias: 'alias',

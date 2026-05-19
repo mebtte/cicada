@@ -971,10 +971,6 @@ function EditContent({
       notice.error(t('empty_name_warning'));
       return;
     }
-    if (!singerIds.length) {
-      notice.error(t('emtpy_singers_warning'));
-      return;
-    }
     if (
       parsedYear !== null &&
       (!Number.isInteger(parsedYear) ||
@@ -1284,7 +1280,7 @@ function EditContent({
           loading={deleting}
           disabled={saving || coverSaving || coverDeleting || fileSaving}
         >
-          {t('delete_music')}
+          {t('delete')}
         </ActionButton>
       </Footer>
     </Form>
@@ -1307,39 +1303,56 @@ function MusicEditDrawer({
   const [error, setError] = useState<Error | null>(null);
   const [music, setMusic] = useState<Music | null>(null);
 
-  const loadMusic = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await getMusicRequest({ id, requestMinimalDuration: 0 });
-      let lyrics: Lyric[] = [];
-      if (result.type === MusicType.SONG) {
-        lyrics = await getLyricList({ musicId: id, requestMinimalDuration: 0 });
+  const loadMusic = useCallback(
+    async (id: string, { silent = false }: { silent?: boolean } = {}) => {
+      // 静默刷新: 不切换到 Spinner, 避免保存后 EditContent 短暂被替换造成闪烁
+      if (!silent) {
+        setLoading(true);
+        setError(null);
       }
-      setMusic({
-        id: result.id,
-        name: result.name,
-        cover: result.cover,
-        asset: result.asset,
-        assetSize: result.assetSize,
-        assetDurationMs: result.assetDurationMs,
-        assetCodec: result.assetCodec,
-        assetBitRate: result.assetBitRate,
-        type: result.type,
-        aliases: result.aliases,
-        singers: result.singers,
-        heat: result.heat,
-        lyrics,
-        forkFromList: result.forkFromList,
-        forkList: result.forkList,
-        year: result.year ?? null,
-      });
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      try {
+        const result = await getMusicRequest({ id, requestMinimalDuration: 0 });
+        let lyrics: Lyric[] = [];
+        if (result.type === MusicType.SONG) {
+          lyrics = await getLyricList({
+            musicId: id,
+            requestMinimalDuration: 0,
+          });
+        }
+        setMusic({
+          id: result.id,
+          name: result.name,
+          cover: result.cover,
+          asset: result.asset,
+          assetSize: result.assetSize,
+          assetDurationMs: result.assetDurationMs,
+          assetCodec: result.assetCodec,
+          assetBitRate: result.assetBitRate,
+          type: result.type,
+          aliases: result.aliases,
+          singers: result.singers,
+          heat: result.heat,
+          lyrics,
+          forkFromList: result.forkFromList,
+          forkList: result.forkList,
+          year: result.year ?? null,
+        });
+      } catch (err) {
+        if (silent) {
+          // 静默路径下失败仅作提示, 保留当前 EditContent 不切到 ErrorCard
+          logger.error(err as Error, 'Failed to silently reload music');
+          notice.error((err as Error).message);
+        } else {
+          setError(err as Error);
+        }
+      } finally {
+        if (!silent) {
+          setLoading(false);
+        }
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     if (open && musicId) {
@@ -1359,7 +1372,8 @@ function MusicEditDrawer({
   const handleReload = () => {
     onSaved?.();
     if (musicId) {
-      void loadMusic(musicId);
+      // 保存/上传完成后刷新 drawer 数据走静默路径, drawer 内容不闪烁
+      void loadMusic(musicId, { silent: true });
     }
   };
 
