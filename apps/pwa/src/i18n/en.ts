@@ -131,7 +131,7 @@ export default {
   edit_lyric: 'edit lyric',
   lyric: 'lyric',
   download_lyric: 'download lyric',
-  upload_lyric: 'upload lyric',
+  upload_lrc: 'upload LRC',
   text_of_lrc: 'text of lrc',
   delete_lyric_question: 'are you sure to delete this lyric ?',
   modify_singer: 'modify singer',
