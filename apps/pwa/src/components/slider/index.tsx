@@ -43,7 +43,7 @@ const StyledTrack = styled(Radix.Track)`
   position: relative;
   flex: 1;
   height: ${TRACK_H}px;
-  background: rgb(229 231 235);
+  background: #fff;
   overflow: hidden;
   box-shadow: 0 ${OFFSET}px 0 ${PRIMARY_SHADOW};
   isolation: isolate;
