@@ -154,10 +154,21 @@ function Login() {
           </Stage>
         </StageSlot>
         <VersionFooter>
-          {t('pwa_version')}: {definition.VERSION}
-          {step === Step.SECOND && selectedServer
-            ? ` · ${t('server_version')}: ${selectedServer.version}`
-            : ''}
+          {/* 第二步时已选定服务端, 将版本号拆成 server 和 pwa 各一行展示 */}
+          {step === Step.SECOND && selectedServer ? (
+            <>
+              <div>
+                {t('server_version')}: {selectedServer.version}
+              </div>
+              <div>
+                {t('pwa_version')}: {definition.VERSION}
+              </div>
+            </>
+          ) : (
+            <div>
+              {t('pwa_version')}: {definition.VERSION}
+            </div>
+          )}
         </VersionFooter>
       </Layout>
       {showManagePage && (

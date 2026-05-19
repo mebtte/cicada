@@ -7,7 +7,7 @@ import eventemitter, { EventType } from './eventemitter';
 import { ZIndex } from './constants';
 
 const MAX_STAGE_COUNT = 4;
-const MAX_APPEND_COUNT = 5;
+const MAX_APPEND_COUNT = 3;
 const STAGE_DURATION = 1600;
 const ROW_GAP = 34;
 

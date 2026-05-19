@@ -187,7 +187,6 @@ const StatusBox = styled.div`
 const TableScroll = styled.div`
   height: 100%;
   padding: 0 20px 92px;
-  background: rgb(247 247 247);
   overflow: auto;
   scroll-padding-bottom: 92px;
   ${autoScrollbar}
@@ -229,7 +228,7 @@ const Th = styled.th`
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
     box-shadow:
-      -6px 0 0 rgb(247 247 247),
+      -6px 0 0 #fff,
       0 3px 0 ${ROW_SHADOW};
   }
 `;
@@ -258,7 +257,7 @@ const Td = styled.td`
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
     box-shadow:
-      -6px 0 0 rgb(247 247 247),
+      -6px 0 0 #fff,
       0 3px 0 ${ROW_SHADOW};
   }
 
