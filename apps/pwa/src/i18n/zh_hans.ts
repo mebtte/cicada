@@ -46,6 +46,9 @@ const zhCN: {
   recommended_music: '推荐音乐',
   recommended_singer: '推荐歌手',
   recommended_public_musicbill: '推荐乐单',
+  recent_music: '最近添加音乐',
+  recent_singer: '最近添加歌手',
+  recent_public_musicbill: '最近添加乐单',
   related_public_musicbill: '相关乐单',
   exploration_empty_title: '还没有推荐内容',
   exploration_empty_description:

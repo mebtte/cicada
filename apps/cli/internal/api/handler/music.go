@@ -511,6 +511,7 @@ func AdminDeleteMusic(c *gin.Context) {
 
 func GetExploration(c *gin.Context) {
 	const quality = 30
+	const recentLimit = 20
 	type musicRow struct {
 		ID    string
 		Name  string
@@ -527,12 +528,10 @@ func GetExploration(c *gin.Context) {
 		UserID string
 	}
 
-	musicRows, _ := func() ([]musicRow, error) {
-		rows, err := store.DB().Query(
-			`SELECT id,name,cover FROM music WHERE cover!='' ORDER BY random() LIMIT ?`, quality,
-		)
+	queryMusicRows := func(sql string, args ...any) []musicRow {
+		rows, err := store.DB().Query(sql, args...)
 		if err != nil {
-			return nil, err
+			return nil
 		}
 		defer rows.Close()
 		var out []musicRow
@@ -541,15 +540,12 @@ func GetExploration(c *gin.Context) {
 			rows.Scan(&r.ID, &r.Name, &r.Cover)
 			out = append(out, r)
 		}
-		return out, nil
-	}()
-
-	singerRows, _ := func() ([]singerRow, error) {
-		rows, err := store.DB().Query(
-			`SELECT id,name FROM singer ORDER BY random() LIMIT ?`, quality,
-		)
+		return out
+	}
+	querySingerRows := func(sql string, args ...any) []singerRow {
+		rows, err := store.DB().Query(sql, args...)
 		if err != nil {
-			return nil, err
+			return nil
 		}
 		defer rows.Close()
 		var out []singerRow
@@ -558,15 +554,12 @@ func GetExploration(c *gin.Context) {
 			rows.Scan(&r.ID, &r.Name)
 			out = append(out, r)
 		}
-		return out, nil
-	}()
-
-	mbRows, _ := func() ([]mbRow, error) {
-		rows, err := store.DB().Query(
-			`SELECT id,name,cover,userId FROM musicbill WHERE public=1 AND cover!='' ORDER BY random() LIMIT ?`, quality,
-		)
+		return out
+	}
+	queryMbRows := func(sql string, args ...any) []mbRow {
+		rows, err := store.DB().Query(sql, args...)
 		if err != nil {
-			return nil, err
+			return nil
 		}
 		defer rows.Close()
 		var out []mbRow
@@ -575,36 +568,79 @@ func GetExploration(c *gin.Context) {
 			rows.Scan(&r.ID, &r.Name, &r.Cover, &r.UserID)
 			out = append(out, r)
 		}
-		return out, nil
-	}()
-
-	musicIDs := make([]string, len(musicRows))
-	for i, m := range musicRows {
-		musicIDs[i] = m.ID
+		return out
 	}
-	allSingers, _ := store.GetSingersInMusicIDs(musicIDs)
+
+	musicRows := queryMusicRows(
+		`SELECT id,name,cover FROM music WHERE cover!='' ORDER BY random() LIMIT ?`, quality,
+	)
+	singerRows := querySingerRows(
+		`SELECT id,name FROM singer ORDER BY random() LIMIT ?`, quality,
+	)
+	mbRows := queryMbRows(
+		`SELECT id,name,cover,userId FROM musicbill WHERE public=1 AND cover!='' ORDER BY random() LIMIT ?`, quality,
+	)
+	// 最近添加: 按 createTimestamp 倒序取最新条目, 让发现页能呈现新入库内容。
+	recentMusicRows := queryMusicRows(
+		`SELECT id,name,cover FROM music WHERE cover!='' ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
+	)
+	recentSingerRows := querySingerRows(
+		`SELECT id,name FROM singer ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
+	)
+	recentMbRows := queryMbRows(
+		`SELECT id,name,cover,userId FROM musicbill WHERE public=1 AND cover!='' ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
+	)
+
+	// 合并随机和最近添加列表的 ID, 用一次查询拉齐关联数据 (歌手、图片、用户), 减少数据库往返。
+	collectMusicIDs := func(groups ...[]musicRow) []string {
+		ids := []string{}
+		for _, g := range groups {
+			for _, m := range g {
+				ids = append(ids, m.ID)
+			}
+		}
+		return ids
+	}
+	collectSingerIDs := func(groups ...[]singerRow) []string {
+		ids := []string{}
+		for _, g := range groups {
+			for _, s := range g {
+				ids = append(ids, s.ID)
+			}
+		}
+		return ids
+	}
+	collectMbUserIDs := func(groups ...[]mbRow) []string {
+		ids := []string{}
+		for _, g := range groups {
+			for _, mb := range g {
+				ids = append(ids, mb.UserID)
+			}
+		}
+		return ids
+	}
+
+	allSingers, _ := store.GetSingersInMusicIDs(collectMusicIDs(musicRows, recentMusicRows))
 	bySong := groupSingersByMusic(allSingers)
-
-	musicList := make([]gin.H, len(musicRows))
-	for i, m := range musicRows {
-		ss := make([]gin.H, 0)
-		for _, s := range bySong[m.ID] {
-			ss = append(ss, gin.H{"id": s.ID, "name": s.Name})
+	buildMusicList := func(rows []musicRow) []gin.H {
+		list := make([]gin.H, len(rows))
+		for i, m := range rows {
+			ss := make([]gin.H, 0)
+			for _, s := range bySong[m.ID] {
+				ss = append(ss, gin.H{"id": s.ID, "name": s.Name})
+			}
+			list[i] = gin.H{
+				"id":      m.ID,
+				"name":    m.Name,
+				"cover":   config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+				"singers": ss,
+			}
 		}
-		musicList[i] = gin.H{
-			"id":      m.ID,
-			"name":    m.Name,
-			"cover":   config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
-			"singers": ss,
-		}
+		return list
 	}
 
-	singerIDs := make([]string, len(singerRows))
-	for i, s := range singerRows {
-		singerIDs[i] = s.ID
-	}
 	photosBySinger := map[string][]gin.H{}
-	if len(singerIDs) > 0 {
+	if singerIDs := collectSingerIDs(singerRows, recentSingerRows); len(singerIDs) > 0 {
 		photos, _ := store.ListSingerPhotosBySingerIDs(singerIDs)
 		for _, p := range photos {
 			photosBySinger[p.SingerID] = append(photosBySinger[p.SingerID], gin.H{
@@ -614,26 +650,24 @@ func GetExploration(c *gin.Context) {
 			})
 		}
 	}
-	singerList := make([]gin.H, len(singerRows))
-	for i, s := range singerRows {
-		photos := photosBySinger[s.ID]
-		if photos == nil {
-			photos = []gin.H{}
+	buildSingerList := func(rows []singerRow) []gin.H {
+		list := make([]gin.H, len(rows))
+		for i, s := range rows {
+			photos := photosBySinger[s.ID]
+			if photos == nil {
+				photos = []gin.H{}
+			}
+			list[i] = gin.H{
+				"id":     s.ID,
+				"name":   s.Name,
+				"photos": photos,
+			}
 		}
-		singerList[i] = gin.H{
-			"id":     s.ID,
-			"name":   s.Name,
-			"photos": photos,
-		}
+		return list
 	}
 
-	// Collect user IDs for musicbill owners
-	mbUserIDs := make([]string, len(mbRows))
-	for i, mb := range mbRows {
-		mbUserIDs[i] = mb.UserID
-	}
 	userMap := map[string]string{}
-	if len(mbUserIDs) > 0 {
+	if mbUserIDs := collectMbUserIDs(mbRows, recentMbRows); len(mbUserIDs) > 0 {
 		rows, _ := store.DB().Query(
 			`SELECT id,nickname FROM user WHERE id IN (`+store.Placeholders(len(mbUserIDs))+`)`, store.Strs2Any(mbUserIDs)...,
 		)
@@ -646,21 +680,26 @@ func GetExploration(c *gin.Context) {
 			}
 		}
 	}
-
-	publicMBList := make([]gin.H, len(mbRows))
-	for i, mb := range mbRows {
-		publicMBList[i] = gin.H{
-			"id":    mb.ID,
-			"name":  mb.Name,
-			"cover": config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
-			"user":  gin.H{"id": mb.UserID, "nickname": userMap[mb.UserID]},
+	buildMbList := func(rows []mbRow) []gin.H {
+		list := make([]gin.H, len(rows))
+		for i, mb := range rows {
+			list[i] = gin.H{
+				"id":    mb.ID,
+				"name":  mb.Name,
+				"cover": config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+				"user":  gin.H{"id": mb.UserID, "nickname": userMap[mb.UserID]},
+			}
 		}
+		return list
 	}
 
 	api.OK(c, gin.H{
-		"musicList":           musicList,
-		"singerList":          singerList,
-		"publicMusicbillList": publicMBList,
+		"musicList":                 buildMusicList(musicRows),
+		"singerList":                buildSingerList(singerRows),
+		"publicMusicbillList":       buildMbList(mbRows),
+		"recentMusicList":           buildMusicList(recentMusicRows),
+		"recentSingerList":          buildSingerList(recentSingerRows),
+		"recentPublicMusicbillList": buildMbList(recentMbRows),
 	})
 }
 

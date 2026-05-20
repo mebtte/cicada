@@ -3,7 +3,6 @@ import getExploration from '@/server/api/get_exploration';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelectedServer, useUser } from '@/global_states/server';
 import { ExplorationData } from './constants';
-import cache, { CacheKey } from './cache';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
@@ -31,11 +30,11 @@ const dataLoading: Data = {
     musicList: [],
     singerList: [],
     publicMusicbillList: [],
+    recentMusicList: [],
+    recentSingerList: [],
+    recentPublicMusicbillList: [],
   },
 };
-const EXPLORATION_CACHE_TTL = 1000 * 60 * 5;
-
-let lastActiveCacheScope: string | null = null;
 
 export default () => {
   const selectedServer = useSelectedServer();
@@ -44,23 +43,17 @@ export default () => {
   const userId = user?.id;
   const [data, setData] = useState<Data>(dataLoading);
   const requestIdRef = useRef(0);
-  const cacheScope = useMemo(() => {
-    if (!selectedServerOrigin || !userId) {
-      return null;
-    }
-
-    return `${selectedServerOrigin}:${userId}`;
-  }, [selectedServerOrigin, userId]);
-  const replaceCacheKey = useCallback(
-    (key: string) => `${cacheScope}:${key}`,
-    [cacheScope],
+  // 仅作为"是否处于已登录会话"的判定; 发现页数据不再做缓存, 每次都直接请求。
+  const sessionReady = useMemo(
+    () => Boolean(selectedServerOrigin && userId),
+    [selectedServerOrigin, userId],
   );
-  const getData = useCallback(async ({ ignoreCache = false } = {}) => {
+  const getData = useCallback(async () => {
     const requestId = requestIdRef.current + 1;
     requestIdRef.current = requestId;
     setData(dataLoading);
 
-    if (!cacheScope) {
+    if (!sessionReady) {
       setData({
         error: null,
         loading: false,
@@ -70,18 +63,7 @@ export default () => {
     }
 
     try {
-      let explorationData = ignoreCache
-        ? null
-        : cache.get(CacheKey.EXPLORATION, replaceCacheKey);
-      if (!explorationData) {
-        explorationData = await getExploration();
-        cache.set({
-          key: CacheKey.EXPLORATION,
-          keyReplace: replaceCacheKey,
-          value: explorationData,
-          ttl: EXPLORATION_CACHE_TTL,
-        });
-      }
+      const explorationData = await getExploration();
 
       if (requestId !== requestIdRef.current) {
         return;
@@ -104,19 +86,11 @@ export default () => {
         value: dataLoading.value,
       });
     }
-  }, [cacheScope, replaceCacheKey]);
-  const reload = useCallback(() => {
-    if (cacheScope) {
-      cache.remove(CacheKey.EXPLORATION, replaceCacheKey);
-    }
-    return getData({ ignoreCache: true });
-  }, [cacheScope, getData, replaceCacheKey]);
+  }, [sessionReady]);
+  const reload = useCallback(() => getData(), [getData]);
 
   useEffect(() => {
-    // 推荐结果和当前用户相关, 切换用户后需要跳过上一账号留下的内存缓存。
-    const cacheScopeChanged = lastActiveCacheScope !== cacheScope;
-    lastActiveCacheScope = cacheScope;
-    getData({ ignoreCache: cacheScopeChanged });
+    getData();
 
     const unlistenMusicUpdated = playerEventemitter.listen(
       PlayerEventType.MUSIC_UPDATED,
@@ -136,7 +110,7 @@ export default () => {
       unlistenMusicDeleted();
       unlistenSingerUpdated();
     };
-  }, [cacheScope, getData, reload]);
+  }, [getData, reload]);
 
   return { data, reload };
 };

@@ -3,7 +3,6 @@ import { flexCenter } from '@/style/flexbox';
 import { animated, useTransition } from 'react-spring';
 import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
-import SizeObserver from '@/components/size_observer';
 import Empty from '@/components/empty';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -35,10 +34,11 @@ import {
   TOOLBAR_HEIGHT,
 } from '../search/constants';
 
-const ITEM_MIN_WIDTH = 164;
-const MOBILE_ITEM_WIDTH = 96;
+const ITEM_WIDTH = 164;
+const SINGER_ITEM_WIDTH = 240;
+const MOBILE_ITEM_WIDTH = 132;
+const MOBILE_SINGER_ITEM_WIDTH = 200;
 const GAP = 16;
-const MAX_SECTION_ROW_AMOUNT = 2;
 const MOBILE_BREAKPOINT = 720;
 const SEARCH_TOOLBAR_CONTENT_INSET = '12px';
 const ACCENT = {
@@ -129,8 +129,8 @@ const ContentContainer = styled(Container)`
 
   > .content {
     width: 100%;
-    padding: calc(var(--recommendation-toolbar-height) + 20px)
-      ${PAGE_HORIZONTAL_PADDING} 24px;
+    /* 横向滚动的卡片需要贴边, 这里只给上下间距, 左右留给小节自行处理。 */
+    padding: calc(var(--recommendation-toolbar-height) + 20px) 0 24px;
 
     display: flex;
     flex-direction: column;
@@ -165,7 +165,7 @@ const Section = styled.section<{
   $shadow: string;
 }>`
   > .heading {
-    margin-bottom: 14px;
+    margin: 0 ${PAGE_HORIZONTAL_PADDING} 14px;
 
     display: flex;
     align-items: center;
@@ -212,21 +212,46 @@ const Section = styled.section<{
   }
 `;
 const SectionContent = styled.div<{
-  $itemMinWidth: number;
-  $mobileItemMinWidth: number;
+  $itemWidth: number;
+  $mobileItemWidth: number;
 }>`
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(${({ $itemMinWidth }) => $itemMinWidth}px, 1fr)
-  );
+  /* 横向滚动: 卡片不换行, 容器内部用滚动区出现/隐藏滚动条。 */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   gap: ${GAP}px;
 
+  /* 留出阴影/抬起动效需要的空间, 避免在滚动区裁切。 */
+  padding-bottom: 8px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  > * {
+    flex: 0 0 ${({ $itemWidth }) => $itemWidth}px;
+    width: ${({ $itemWidth }) => $itemWidth}px;
+  }
+
+  /* 首尾两侧用 margin 给出页面留白; 滚动容器的 padding 在 Safari/旧浏览器
+   * 的尾部经常被忽略, 用 margin 才能稳定保留留白。 */
+  > *:first-child {
+    margin-inline-start: ${PAGE_HORIZONTAL_PADDING};
+  }
+
+  > *:last-child {
+    margin-inline-end: ${PAGE_HORIZONTAL_PADDING};
+  }
+
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    grid-template-columns: repeat(
-      auto-fill,
-      minmax(${({ $mobileItemMinWidth }) => $mobileItemMinWidth}px, 1fr)
-    );
+    > * {
+      flex-basis: ${({ $mobileItemWidth }) => $mobileItemWidth}px;
+      width: ${({ $mobileItemWidth }) => $mobileItemWidth}px;
+    }
   }
 `;
 
@@ -243,8 +268,8 @@ function ExplorationSection<Item>({
   icon,
   accent,
   shadow,
-  itemMinWidth = ITEM_MIN_WIDTH,
-  mobileItemMinWidth = MOBILE_ITEM_WIDTH,
+  itemWidth = ITEM_WIDTH,
+  mobileItemWidth = MOBILE_ITEM_WIDTH,
   renderItem,
 }: {
   title: string;
@@ -252,8 +277,8 @@ function ExplorationSection<Item>({
   icon: ReactNode;
   accent: string;
   shadow: string;
-  itemMinWidth?: number;
-  mobileItemMinWidth?: number;
+  itemWidth?: number;
+  mobileItemWidth?: number;
   renderItem: (item: Item) => ReactNode;
 }) {
   if (!items.length) {
@@ -268,30 +293,12 @@ function ExplorationSection<Item>({
           <h2 className="title">{title}</h2>
         </div>
       </div>
-      <SizeObserver>
-        {({ width }) => {
-          const isMobile = width <= MOBILE_BREAKPOINT;
-          const activeItemMinWidth = isMobile
-            ? mobileItemMinWidth
-            : itemMinWidth;
-          const amountOfOneLine = Math.max(
-            1,
-            Math.floor((width + GAP) / (activeItemMinWidth + GAP)),
-          );
-          const visibleItems = items.slice(
-            0,
-            amountOfOneLine * MAX_SECTION_ROW_AMOUNT,
-          );
-          return (
-            <SectionContent
-              $itemMinWidth={itemMinWidth}
-              $mobileItemMinWidth={mobileItemMinWidth}
-            >
-              {visibleItems.map(renderItem)}
-            </SectionContent>
-          );
-        }}
-      </SizeObserver>
+      <SectionContent
+        $itemWidth={itemWidth}
+        $mobileItemWidth={mobileItemWidth}
+      >
+        {items.map(renderItem)}
+      </SectionContent>
     </Section>
   );
 }
@@ -358,6 +365,9 @@ function RecommendationPanel() {
     enter: { opacity: 1 },
     leave: { opacity: 0 },
   });
+  // 由于音乐卡片宽度固定 (record/cassette = ITEM_WIDTH, profile = SINGER_ITEM_WIDTH),
+  // 请求图片时也用该宽度乘 devicePixelRatio 计算最终尺寸。
+  const imageSize = Math.ceil(ITEM_WIDTH * window.devicePixelRatio);
   return (
     <>
       {transitions((style, d) => {
@@ -378,7 +388,58 @@ function RecommendationPanel() {
         const hasData =
           d.value.musicList.length ||
           d.value.singerList.length ||
-          d.value.publicMusicbillList.length;
+          d.value.publicMusicbillList.length ||
+          d.value.recentMusicList.length ||
+          d.value.recentSingerList.length ||
+          d.value.recentPublicMusicbillList.length;
+        // 把单个卡片的渲染封装出来, 让 "推荐" 与 "最近添加" 复用相同的视觉单元。
+        const renderMusicCard = (
+          music: (typeof d.value.musicList)[number],
+        ) => (
+          <Cover
+            key={music.id}
+            accent={ACCENT.MUSIC}
+            shadow={ACCENT.MUSIC_SHADOW}
+            variant="record"
+            src={getResizedImage({ url: music.cover, size: imageSize })}
+            onClick={() => openMusicDrawer(music.id)}
+            info={<MusicInfo music={music} />}
+          />
+        );
+        const renderSingerCard = (
+          singer: (typeof d.value.singerList)[number],
+        ) => {
+          const avatar = singer.photos[0]?.asset;
+          return (
+            <Cover
+              key={singer.id}
+              accent={ACCENT.SINGER}
+              shadow={ACCENT.SINGER_SHADOW}
+              variant="profile"
+              src={
+                avatar ? getResizedImage({ url: avatar, size: imageSize }) : ''
+              }
+              onClick={() => openSingerDrawer(singer.id)}
+              info={<SingerInfo singer={singer} />}
+            />
+          );
+        };
+        const renderMusicbillCard = (
+          publicMusicbill: (typeof d.value.publicMusicbillList)[number],
+        ) => (
+          <Cover
+            key={publicMusicbill.id}
+            accent={ACCENT.MUSICBILL}
+            shadow={ACCENT.MUSICBILL_SHADOW}
+            variant="cassette"
+            src={getResizedImage({
+              url: publicMusicbill.cover,
+              size: imageSize,
+            })}
+            onClick={() => openMusicbillDrawer(publicMusicbill.id)}
+            info={<PublicMusicbillInfo publicMusicbill={publicMusicbill} />}
+          />
+        );
         return (
           <ContentContainer style={style}>
             {hasData ? (
@@ -389,22 +450,7 @@ function RecommendationPanel() {
                   icon={<MdMusicNote />}
                   accent={ACCENT.MUSIC}
                   shadow={ACCENT.MUSIC_SHADOW}
-                  renderItem={(music) => (
-                    <Cover
-                      key={music.id}
-                      accent={ACCENT.MUSIC}
-                      shadow={ACCENT.MUSIC_SHADOW}
-                      variant="record"
-                      src={getResizedImage({
-                        url: music.cover,
-                        size: Math.ceil(
-                          ITEM_MIN_WIDTH * window.devicePixelRatio,
-                        ),
-                      })}
-                      onClick={() => openMusicDrawer(music.id)}
-                      info={<MusicInfo music={music} />}
-                    />
-                  )}
+                  renderItem={renderMusicCard}
                 />
                 <ExplorationSection
                   title={t('recommended_singer')}
@@ -412,31 +458,9 @@ function RecommendationPanel() {
                   icon={<MdMic />}
                   accent={ACCENT.SINGER}
                   shadow={ACCENT.SINGER_SHADOW}
-                  itemMinWidth={240}
-                  mobileItemMinWidth={148}
-                  renderItem={(singer) => {
-                    const avatar = singer.photos[0]?.asset;
-                    return (
-                      <Cover
-                        key={singer.id}
-                        accent={ACCENT.SINGER}
-                        shadow={ACCENT.SINGER_SHADOW}
-                        variant="profile"
-                        src={
-                          avatar
-                            ? getResizedImage({
-                                url: avatar,
-                                size: Math.ceil(
-                                  ITEM_MIN_WIDTH * window.devicePixelRatio,
-                                ),
-                              })
-                            : ''
-                        }
-                        onClick={() => openSingerDrawer(singer.id)}
-                        info={<SingerInfo singer={singer} />}
-                      />
-                    );
-                  }}
+                  itemWidth={SINGER_ITEM_WIDTH}
+                  mobileItemWidth={MOBILE_SINGER_ITEM_WIDTH}
+                  renderItem={renderSingerCard}
                 />
                 <ExplorationSection
                   title={t('recommended_public_musicbill')}
@@ -444,26 +468,33 @@ function RecommendationPanel() {
                   icon={<MdQueueMusic />}
                   accent={ACCENT.MUSICBILL}
                   shadow={ACCENT.MUSICBILL_SHADOW}
-                  renderItem={(publicMusicbill) => (
-                    <Cover
-                      key={publicMusicbill.id}
-                      accent={ACCENT.MUSICBILL}
-                      shadow={ACCENT.MUSICBILL_SHADOW}
-                      variant="cassette"
-                      src={getResizedImage({
-                        url: publicMusicbill.cover,
-                        size: Math.ceil(
-                          ITEM_MIN_WIDTH * window.devicePixelRatio,
-                        ),
-                      })}
-                      onClick={() => openMusicbillDrawer(publicMusicbill.id)}
-                      info={
-                        <PublicMusicbillInfo
-                          publicMusicbill={publicMusicbill}
-                        />
-                      }
-                    />
-                  )}
+                  renderItem={renderMusicbillCard}
+                />
+                <ExplorationSection
+                  title={t('recent_music')}
+                  items={d.value.recentMusicList}
+                  icon={<MdMusicNote />}
+                  accent={ACCENT.MUSIC}
+                  shadow={ACCENT.MUSIC_SHADOW}
+                  renderItem={renderMusicCard}
+                />
+                <ExplorationSection
+                  title={t('recent_singer')}
+                  items={d.value.recentSingerList}
+                  icon={<MdMic />}
+                  accent={ACCENT.SINGER}
+                  shadow={ACCENT.SINGER_SHADOW}
+                  itemWidth={SINGER_ITEM_WIDTH}
+                  mobileItemWidth={MOBILE_SINGER_ITEM_WIDTH}
+                  renderItem={renderSingerCard}
+                />
+                <ExplorationSection
+                  title={t('recent_public_musicbill')}
+                  items={d.value.recentPublicMusicbillList}
+                  icon={<MdQueueMusic />}
+                  accent={ACCENT.MUSICBILL}
+                  shadow={ACCENT.MUSICBILL_SHADOW}
+                  renderItem={renderMusicbillCard}
                 />
               </div>
             ) : (

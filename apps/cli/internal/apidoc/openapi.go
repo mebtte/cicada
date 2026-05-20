@@ -2177,45 +2177,60 @@ func musicbillPageExample(listKey string) map[string]any {
 }
 
 func explorationSchema() map[string]any {
+	musicItemSchema := objSchema([]string{"id", "name", "cover", "singers"}, map[string]any{
+		"id":      strSchema("Music ID.", "music-1"),
+		"name":    strSchema("Music name.", "Nightingale"),
+		"cover":   strSchema("Cover path.", "/asset/music_cover/cover.jpg"),
+		"singers": objArraySchema(map[string]any{"id": strSchema("Singer ID.", "singer-1"), "name": strSchema("Singer name.", "Aurora")}),
+	})
+	singerItemSchema := objSchema([]string{"id", "name"}, map[string]any{
+		"id":   strSchema("Singer ID.", "singer-1"),
+		"name": strSchema("Singer name.", "Aurora"),
+	})
+	musicbillItemSchema := objSchema([]string{"id", "name", "cover", "user"}, map[string]any{
+		"id":    strSchema("Musicbill ID.", "musicbill-1"),
+		"name":  strSchema("Musicbill name.", "Late Night"),
+		"cover": strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+		"user":  userBriefSchema(false),
+	})
 	return objSchema(
-		[]string{"musicList", "singerList", "publicMusicbillList"},
+		[]string{
+			"musicList", "singerList", "publicMusicbillList",
+			"recentMusicList", "recentSingerList", "recentPublicMusicbillList",
+		},
 		map[string]any{
-			"musicList": arraySchema(objSchema([]string{"id", "name", "cover", "singers"}, map[string]any{
-				"id":      strSchema("Music ID.", "music-1"),
-				"name":    strSchema("Music name.", "Nightingale"),
-				"cover":   strSchema("Cover path.", "/asset/music_cover/cover.jpg"),
-				"singers": objArraySchema(map[string]any{"id": strSchema("Singer ID.", "singer-1"), "name": strSchema("Singer name.", "Aurora")}),
-			})),
-			"singerList": arraySchema(objSchema([]string{"id", "name"}, map[string]any{
-				"id":   strSchema("Singer ID.", "singer-1"),
-				"name": strSchema("Singer name.", "Aurora"),
-			})),
-			"publicMusicbillList": arraySchema(objSchema([]string{"id", "name", "cover", "user"}, map[string]any{
-				"id":    strSchema("Musicbill ID.", "musicbill-1"),
-				"name":  strSchema("Musicbill name.", "Late Night"),
-				"cover": strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
-				"user":  userBriefSchema(false),
-			})),
+			"musicList":                 arraySchema(musicItemSchema),
+			"singerList":                arraySchema(singerItemSchema),
+			"publicMusicbillList":       arraySchema(musicbillItemSchema),
+			"recentMusicList":           arraySchema(musicItemSchema),
+			"recentSingerList":          arraySchema(singerItemSchema),
+			"recentPublicMusicbillList": arraySchema(musicbillItemSchema),
 		},
 	)
 }
 
 func explorationExample() map[string]any {
+	musicExample := []any{
+		map[string]any{
+			"id":      "music-1",
+			"name":    "Nightingale",
+			"cover":   "/asset/music_cover/cover.jpg",
+			"singers": []any{map[string]any{"id": "singer-1", "name": "Aurora"}},
+		},
+	}
+	singerExample := []any{
+		map[string]any{"id": "singer-1", "name": "Aurora"},
+	}
+	musicbillExample := []any{
+		map[string]any{"id": "musicbill-1", "name": "Late Night", "cover": "/asset/musicbill_cover/cover.jpg", "user": map[string]any{"id": "1", "nickname": "Cicada"}},
+	}
 	return map[string]any{
-		"musicList": []any{
-			map[string]any{
-				"id":      "music-1",
-				"name":    "Nightingale",
-				"cover":   "/asset/music_cover/cover.jpg",
-				"singers": []any{map[string]any{"id": "singer-1", "name": "Aurora"}},
-			},
-		},
-		"singerList": []any{
-			map[string]any{"id": "singer-1", "name": "Aurora"},
-		},
-		"publicMusicbillList": []any{
-			map[string]any{"id": "musicbill-1", "name": "Late Night", "cover": "/asset/musicbill_cover/cover.jpg", "user": map[string]any{"id": "1", "nickname": "Cicada"}},
-		},
+		"musicList":                 musicExample,
+		"singerList":                singerExample,
+		"publicMusicbillList":       musicbillExample,
+		"recentMusicList":           musicExample,
+		"recentSingerList":          singerExample,
+		"recentPublicMusicbillList": musicbillExample,
 	}
 }
 
