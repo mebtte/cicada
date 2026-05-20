@@ -138,6 +138,8 @@ const NativeInput = styled.input<{ $size: InputSize }>`
   &::placeholder {
     color: rgb(205 205 205);
     font-weight: 500;
+    /* 与 Label 的首字母大写风格对齐（::placeholder 无法链式 ::first-letter） */
+    text-transform: capitalize;
   }
 
   &:disabled {

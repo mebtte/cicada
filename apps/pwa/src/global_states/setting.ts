@@ -22,6 +22,7 @@ const DEFAULT_SETTING: Setting = {
   playerVolume: 1,
   language: getInitialLanguage(),
   musicPlaybackQuality: DEFAULT_MUSIC_PLAYBACK_QUALITY,
+  adminQuickEdit: false,
 };
 const initialSetting = await storage.getItem(Key.SETTING);
 export const useSetting = create<Setting>(() => ({

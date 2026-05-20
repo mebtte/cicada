@@ -20,6 +20,7 @@ const zhCN: {
   zoom_out: '缩小',
   reset_zoom: '重置缩放',
   language: '语言',
+  admin_quick_edit: '管理员快捷编辑',
   continue: '继续',
   username: '用户名',
   captcha: '验证码',
@@ -125,6 +126,7 @@ const zhCN: {
   invitation_will_be_canceled_automatically_after_days:
     '邀请将在 %s1 天后自动取消',
   create_music: '创建音乐',
+  edit_music: '编辑音乐',
   edit_musicbill: '编辑乐单',
   no_music: '暂无音乐',
   no_modify_record: '暂无修改记录',

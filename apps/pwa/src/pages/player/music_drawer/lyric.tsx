@@ -7,6 +7,8 @@ import { saveAs } from 'file-saver';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
 import formatMusicFilename from '@/utils/format_music_filename';
+import { useUser } from '@/global_states/server';
+import { useSetting } from '@/global_states/setting';
 import { MusicDetail } from './constants';
 import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
@@ -104,8 +106,14 @@ const DownloadButton = styled.button`
 `;
 
 function Lyric({ music }: { music: MusicDetail }) {
+  const user = useUser();
+  const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
+  // 下载按钮归入「管理员快捷编辑」开关
   const downloadable =
-    music.type === MusicType.SONG && music.lyrics.length > 0;
+    !!user?.admin &&
+    adminQuickEdit &&
+    music.type === MusicType.SONG &&
+    music.lyrics.length > 0;
 
   const downloadLyrics = () => {
     const singerNames = music.singers.map((s) => s.name);

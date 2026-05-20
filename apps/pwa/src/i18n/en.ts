@@ -17,6 +17,7 @@ export default {
   zoom_out: 'zoom out',
   reset_zoom: 'reset zoom',
   language: 'language',
+  admin_quick_edit: 'admin quick edit',
   continue: 'continue',
   username: 'username',
   captcha: 'captcha',
@@ -126,6 +127,7 @@ export default {
   invitation_will_be_canceled_automatically_after_days:
     'invitation will be canceled automatically after %s1 days',
   create_music: 'create music',
+  edit_music: 'edit music',
   edit_musicbill: 'edit musicbill',
   no_music: 'no music',
   no_modify_record: 'no modify record',

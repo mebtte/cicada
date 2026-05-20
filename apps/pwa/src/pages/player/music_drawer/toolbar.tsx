@@ -4,9 +4,13 @@ import {
   MdPlayArrow,
   MdReadMore,
   MdOutlinePostAdd,
+  MdOutlineEdit,
   MdPlaylistAdd,
 } from 'react-icons/md';
 import { IconExport } from '@/components/icon';
+import { useUser } from '@/global_states/server';
+import { useSetting } from '@/global_states/setting';
+import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
 import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -58,6 +62,10 @@ function Toolbar({
   music: MusicDetail;
   floatingControllerOffset?: boolean;
 }) {
+  const user = useUser();
+  const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
+  // 编辑按钮: 管理员开启「管理员快捷编辑」时才出现, 点击跳转到管理页并自动打开该音乐的编辑 drawer
+  const showAdminEdit = !!user?.admin && adminQuickEdit;
   return (
     <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
@@ -124,6 +132,23 @@ function Toolbar({
         >
           <IconExport size="1em" />
         </Button>
+        {showAdminEdit ? (
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('edit_music')}
+            onClick={() =>
+              window.open(
+                `#${ROOT_PATH.ADMIN}/${ADMIN_PATH.MUSIC_MANAGEMENT}?edit_music_id=${encodeURIComponent(music.id)}`,
+                '_blank',
+                'noopener,noreferrer',
+              )
+            }
+          >
+            <MdOutlineEdit />
+          </Button>
+        ) : null}
       </div>
     </Style>
   );
