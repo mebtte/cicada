@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import {
   MdPlayArrow,
   MdReadMore,
@@ -82,72 +83,82 @@ function Toolbar({
         >
           <MdPlayArrow />
         </Button>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('play_next')}
-          onClick={() =>
-            playerEventemitter.emit(
-              PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-              {
-                music,
-              },
-            )
-          }
-        >
-          <MdReadMore />
-        </Button>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('add_to_musicbill')}
-          onClick={() =>
-            playerEventemitter.emit(
-              PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
-              {
-                music,
-              },
-            )
-          }
-        >
-          <MdOutlinePostAdd />
-        </Button>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('add_to_playlist')}
-          onClick={() => addMusicListToPlaylist([music])}
-        >
-          <MdPlaylistAdd />
-        </Button>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('export_music')}
-          onClick={() => openExportMusicListDialog([music])}
-        >
-          <IconExport size="1em" />
-        </Button>
-        {showAdminEdit ? (
+        <Tooltip content={t('play_next')}>
           <Button
             square
             variant="ghost"
             size="sm"
-            aria-label={t('edit_music')}
+            aria-label={t('play_next')}
             onClick={() =>
-              window.open(
-                `#${ROOT_PATH.ADMIN}/${ADMIN_PATH.MUSIC_MANAGEMENT}?edit_music_id=${encodeURIComponent(music.id)}`,
-                '_blank',
-                'noopener,noreferrer',
+              playerEventemitter.emit(
+                PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                {
+                  music,
+                },
               )
             }
           >
-            <MdOutlineEdit />
+            <MdReadMore />
           </Button>
+        </Tooltip>
+        <Tooltip content={t('add_to_musicbill')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('add_to_musicbill')}
+            onClick={() =>
+              playerEventemitter.emit(
+                PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
+                {
+                  music,
+                },
+              )
+            }
+          >
+            <MdOutlinePostAdd />
+          </Button>
+        </Tooltip>
+        <Tooltip content={t('add_to_playlist')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('add_to_playlist')}
+            onClick={() => addMusicListToPlaylist([music])}
+          >
+            <MdPlaylistAdd />
+          </Button>
+        </Tooltip>
+        <Tooltip content={t('export_music')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('export_music')}
+            onClick={() => openExportMusicListDialog([music])}
+          >
+            <IconExport size="1em" />
+          </Button>
+        </Tooltip>
+        {showAdminEdit ? (
+          <Tooltip content={t('edit_music')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('edit_music')}
+              onClick={() =>
+                window.open(
+                  `#${ROOT_PATH.ADMIN}/${ADMIN_PATH.MUSIC_MANAGEMENT}?edit_music_id=${encodeURIComponent(music.id)}`,
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+              }
+            >
+              <MdOutlineEdit />
+            </Button>
+          </Tooltip>
         ) : null}
       </div>
     </Style>

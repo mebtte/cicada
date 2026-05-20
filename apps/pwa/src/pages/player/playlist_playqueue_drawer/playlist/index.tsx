@@ -10,6 +10,7 @@ import {
 import styled from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import { MdPlayArrow, MdReadMore, MdOutlineClose } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
@@ -148,20 +149,22 @@ function Playlist() {
                         >
                           <MdPlayArrow />
                         </Button>
-                        <Button
-                          square
-                          variant="plain"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            return playerEventemitter.emit(
-                              PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-                              { music },
-                            );
-                          }}
-                        >
-                          <MdReadMore />
-                        </Button>
+                        <Tooltip content={t('play_next')}>
+                          <Button
+                            square
+                            variant="plain"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              return playerEventemitter.emit(
+                                PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                                { music },
+                              );
+                            }}
+                          >
+                            <MdReadMore />
+                          </Button>
+                        </Tooltip>
                         <Button
                           square
                           variant="plain"

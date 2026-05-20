@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import { MdPlayArrow, MdReadMore, MdOutlinePostAdd } from 'react-icons/md';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
+import { t } from '@/i18n';
 import { MusicWithSingerAliases } from '../constants';
 import e, { EventType } from '../eventemitter';
 import MusicBase from './music_base';
@@ -44,32 +46,36 @@ function Music({
           >
             <MdPlayArrow />
           </Button>
-          <Button
-            square
-            variant="plain"
-            size="sm"
-            onClick={(event) => {
-              event.stopPropagation();
-              return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
-                music,
-              });
-            }}
-          >
-            <MdReadMore />
-          </Button>
-          <Button
-            square
-            variant="plain"
-            size="sm"
-            onClick={(event) => {
-              event.stopPropagation();
-              return e.emit(EventType.OPEN_MUSICBILL_MUSIC_DRAWER, {
-                music,
-              });
-            }}
-          >
-            <MdOutlinePostAdd />
-          </Button>
+          <Tooltip content={t('play_next')}>
+            <Button
+              square
+              variant="plain"
+              size="sm"
+              onClick={(event) => {
+                event.stopPropagation();
+                return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
+                  music,
+                });
+              }}
+            >
+              <MdReadMore />
+            </Button>
+          </Tooltip>
+          <Tooltip content={t('add_to_musicbill')}>
+            <Button
+              square
+              variant="plain"
+              size="sm"
+              onClick={(event) => {
+                event.stopPropagation();
+                return e.emit(EventType.OPEN_MUSICBILL_MUSIC_DRAWER, {
+                  music,
+                });
+              }}
+            >
+              <MdOutlinePostAdd />
+            </Button>
+          </Tooltip>
         </LineAfterPart>
       }
       addon={addon}

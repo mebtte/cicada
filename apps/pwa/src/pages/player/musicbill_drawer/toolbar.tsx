@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import { MdPlaylistAdd, MdStar, MdStarOutline } from 'react-icons/md';
 import notice from '@/utils/notice';
 import collectPublicMusicbill from '@/server/api/collect_public_musicbill';
@@ -63,66 +64,74 @@ function Toolbar({
   return (
     <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('add_to_playlist')}
-          disabled={!hasMusic}
-          onClick={() => {
-            if (!hasMusic) {
-              return;
-            }
+        <Tooltip content={t('add_to_playlist')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('add_to_playlist')}
+            disabled={!hasMusic}
+            onClick={() => {
+              if (!hasMusic) {
+                return;
+              }
 
-            addMusicListToPlaylist(musicbill.musicList);
-          }}
+              addMusicListToPlaylist(musicbill.musicList);
+            }}
+          >
+            <MdPlaylistAdd />
+          </Button>
+        </Tooltip>
+        <Tooltip
+          content={collected ? t('uncollect_musicbill') : t('collect_musicbill')}
         >
-          <MdPlaylistAdd />
-        </Button>
-        <Button
-          square
-          variant={collected ? 'primary' : 'ghost'}
-          size="sm"
-          aria-label={t('public_musicbill_collection')}
-          aria-pressed={collected}
-          onClick={() => {
-            if (collected) {
-              e.emit(EventType.UNCOLLECT_MUSICBILL, { id: musicbill.id });
-              uncollectPublicMusicbill(musicbill.id)
-                .then(() =>
-                  playerEventemitter.emit(
-                    PlayerEventType.MUSICBILL_COLLECTION_CHANGE,
-                    null,
-                  ),
-                )
-                .catch((error) => {
-                  logger.error(error, '取消收藏乐单失败');
-                  notice.error(error.message);
-                  e.emit(EventType.COLLECT_MUSICBILL, { id: musicbill.id });
-                });
-            } else {
-              e.emit(EventType.COLLECT_MUSICBILL, {
-                id: musicbill.id,
-              });
-              collectPublicMusicbill(musicbill.id)
-                .then(() =>
-                  playerEventemitter.emit(
-                    PlayerEventType.MUSICBILL_COLLECTION_CHANGE,
-                    null,
-                  ),
-                )
-                .catch((error) => {
-                  logger.error(error, '收藏乐单失败');
-                  notice.error(error.message);
-                  e.emit(EventType.UNCOLLECT_MUSICBILL, {
-                    id: musicbill.id,
-                  });
-                });
+          <Button
+            square
+            variant={collected ? 'primary' : 'ghost'}
+            size="sm"
+            aria-label={
+              collected ? t('uncollect_musicbill') : t('collect_musicbill')
             }
-          }}
-        >
-          {collected ? <MdStar /> : <MdStarOutline />}
-        </Button>
+            aria-pressed={collected}
+            onClick={() => {
+              if (collected) {
+                e.emit(EventType.UNCOLLECT_MUSICBILL, { id: musicbill.id });
+                uncollectPublicMusicbill(musicbill.id)
+                  .then(() =>
+                    playerEventemitter.emit(
+                      PlayerEventType.MUSICBILL_COLLECTION_CHANGE,
+                      null,
+                    ),
+                  )
+                  .catch((error) => {
+                    logger.error(error, '取消收藏乐单失败');
+                    notice.error(error.message);
+                    e.emit(EventType.COLLECT_MUSICBILL, { id: musicbill.id });
+                  });
+              } else {
+                e.emit(EventType.COLLECT_MUSICBILL, {
+                  id: musicbill.id,
+                });
+                collectPublicMusicbill(musicbill.id)
+                  .then(() =>
+                    playerEventemitter.emit(
+                      PlayerEventType.MUSICBILL_COLLECTION_CHANGE,
+                      null,
+                    ),
+                  )
+                  .catch((error) => {
+                    logger.error(error, '收藏乐单失败');
+                    notice.error(error.message);
+                    e.emit(EventType.UNCOLLECT_MUSICBILL, {
+                      id: musicbill.id,
+                    });
+                  });
+              }
+            }}
+          >
+            {collected ? <MdStar /> : <MdStarOutline />}
+          </Button>
+        </Tooltip>
       </div>
     </Style>
   );

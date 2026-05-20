@@ -176,14 +176,7 @@ function MusicBase({
     e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id });
   return (
     <Style {...props}>
-      <Card
-        active={active}
-        onClick={openMusicDrawer}
-        onContextMenu={(event) => {
-          event.preventDefault();
-          return openMusicDrawer();
-        }}
-      >
+      <Card active={active} onClick={openMusicDrawer}>
         <div className="index">{index}</div>
         <div className="content">
           <div className="music">

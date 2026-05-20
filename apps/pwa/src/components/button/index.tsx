@@ -2,6 +2,7 @@ import {
   ButtonHTMLAttributes,
   MouseEvent as ReactMouseEvent,
   ReactNode,
+  forwardRef,
 } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { CSSVariable } from '@/global_style';
@@ -250,18 +251,22 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: ReactNode;
 }
 
-function Button({
-  variant = 'primary',
-  size = 'md',
-  loading = false,
-  block = false,
-  square = false,
-  disabled = false,
-  icon,
-  children,
-  onClick,
-  ...rest
-}: ButtonProps) {
+// forwardRef 让 Button 可以作为 Tooltip / Radix 等定位库的触发元素
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant = 'primary',
+    size = 'md',
+    loading = false,
+    block = false,
+    square = false,
+    disabled = false,
+    icon,
+    children,
+    onClick,
+    ...rest
+  },
+  ref,
+) {
   const offset = SHADOW_OFFSET[size];
   const handleClick = (event: ReactMouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
@@ -273,6 +278,7 @@ function Button({
 
   return (
     <StyledButton
+      ref={ref}
       type="button"
       $variant={variant}
       $size={size}
@@ -291,6 +297,6 @@ function Button({
       </span>
     </StyledButton>
   );
-}
+});
 
 export default Button;

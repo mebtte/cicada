@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import {
   MdOutlineQueueMusic,
   MdPause,
@@ -70,36 +71,40 @@ function Operation({
     <Style>
       {miniMode ? null : (
         <>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            onClick={() =>
-              queueMusic
-                ? playerEventemitter.emit(
-                    PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-                    { music: queueMusic },
-                  )
-                : alertNoPlayingMusic()
-            }
-          >
-            <MdReadMore />
-          </Button>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            onClick={() =>
-              queueMusic
-                ? playerEventemitter.emit(
-                    PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
-                    { music: queueMusic },
-                  )
-                : alertNoPlayingMusic()
-            }
-          >
-            <MdOutlinePostAdd />
-          </Button>
+          <Tooltip content={t('play_next')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                queueMusic
+                  ? playerEventemitter.emit(
+                      PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                      { music: queueMusic },
+                    )
+                  : alertNoPlayingMusic()
+              }
+            >
+              <MdReadMore />
+            </Button>
+          </Tooltip>
+          <Tooltip content={t('add_to_musicbill')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                queueMusic
+                  ? playerEventemitter.emit(
+                      PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
+                      { music: queueMusic },
+                    )
+                  : alertNoPlayingMusic()
+              }
+            >
+              <MdOutlinePostAdd />
+            </Button>
+          </Tooltip>
           <Button
             square
             variant="ghost"

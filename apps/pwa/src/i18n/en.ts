@@ -75,6 +75,7 @@ export default {
   remark: 'remark',
   description: 'description',
   create: 'create',
+  edit: 'edit',
   empty_captcha_warning: 'please enter the captcha',
   wrong_captcha: 'wrong captcha',
   delete_user: 'delete user',
@@ -289,6 +290,10 @@ export default {
   delete_origin_question:
     'are you sure to delete this server address and users within ?',
   sort_musicbill: 'sort musicbill',
+  reload_musicbill_list: 'refresh',
+  reload_musicbill: 'refresh',
+  collect_musicbill: 'collect musicbill',
+  uncollect_musicbill: 'uncollect musicbill',
   retry: 'retry',
 unknown_singer: 'unknown singer',
   someone_created_at: '%s1 created at %s2',

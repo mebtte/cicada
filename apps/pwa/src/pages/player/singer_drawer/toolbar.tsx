@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import { MdOutlineEdit, MdPlaylistAdd } from 'react-icons/md';
 import { IconExport } from '@/components/icon';
 import notice from '@/utils/notice';
@@ -62,49 +63,55 @@ function Toolbar({
   return (
     <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('add_to_playlist')}
-          onClick={() =>
-            hasMusic
-              ? addMusicListToPlaylist(singer.musicList)
-              : notice.error(t('no_music_singer_warning'))
-          }
-        >
-          <MdPlaylistAdd />
-        </Button>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('export_music')}
-          onClick={() =>
-            hasMusic
-              ? openExportMusicListDialog(singer.musicList)
-              : notice.error(t('no_music_singer_warning'))
-          }
-        >
-          <IconExport size="1em" />
-        </Button>
-        {showAdminEdit ? (
+        <Tooltip content={t('add_to_playlist')}>
           <Button
             square
             variant="ghost"
             size="sm"
-            aria-label={t('modify_singer')}
+            aria-label={t('add_to_playlist')}
             onClick={() =>
-              // 在新 tab 打开管理面板的歌手管理, 并通过 edit_singer_id 参数直接打开编辑抽屉
-              window.open(
-                `#${ROOT_PATH.ADMIN}/${ADMIN_PATH.SINGER_MANAGEMENT}?edit_singer_id=${encodeURIComponent(singer.id)}`,
-                '_blank',
-                'noopener,noreferrer',
-              )
+              hasMusic
+                ? addMusicListToPlaylist(singer.musicList)
+                : notice.error(t('no_music_singer_warning'))
             }
           >
-            <MdOutlineEdit />
+            <MdPlaylistAdd />
           </Button>
+        </Tooltip>
+        <Tooltip content={t('export_music')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('export_music')}
+            onClick={() =>
+              hasMusic
+                ? openExportMusicListDialog(singer.musicList)
+                : notice.error(t('no_music_singer_warning'))
+            }
+          >
+            <IconExport size="1em" />
+          </Button>
+        </Tooltip>
+        {showAdminEdit ? (
+          <Tooltip content={t('modify_singer')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('modify_singer')}
+              onClick={() =>
+                // 在新 tab 打开管理面板的歌手管理, 并通过 edit_singer_id 参数直接打开编辑抽屉
+                window.open(
+                  `#${ROOT_PATH.ADMIN}/${ADMIN_PATH.SINGER_MANAGEMENT}?edit_singer_id=${encodeURIComponent(singer.id)}`,
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+              }
+            >
+              <MdOutlineEdit />
+            </Button>
+          </Tooltip>
         ) : null}
       </div>
     </Style>
