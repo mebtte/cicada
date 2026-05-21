@@ -59,9 +59,11 @@ function Controller({
 
   return (
     <Style ref={containerRef}>
-      <Info queueMusic={queueMusic} />
-      <ProgressBar duration={duration} bufferedPercent={bufferedPercent} />
+      {/* 工具栏在上 */}
       <Operation queueMusic={queueMusic} paused={paused} loading={loading} />
+      <ProgressBar duration={duration} bufferedPercent={bufferedPercent} />
+      {/* 歌名/歌手在下 */}
+      <Info queueMusic={queueMusic} />
     </Style>
   );
 }
