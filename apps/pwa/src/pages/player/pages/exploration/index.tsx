@@ -221,7 +221,10 @@ const SectionContent = styled.div<{
   flex-wrap: nowrap;
   gap: ${GAP}px;
 
-  /* 留出阴影/抬起动效需要的空间, 避免在滚动区裁切。 */
+  /* 留出阴影/抬起动效需要的空间, 避免在滚动区裁切。
+   * 注意: overflow-x 非 visible 时, overflow-y 会被计算成 auto,
+   * 因此顶部也需要 padding 容纳 hover 时 translateY(-2px) 的上移。 */
+  padding-top: 4px;
   padding-bottom: 8px;
   overflow-x: auto;
   overflow-y: visible;

@@ -33,7 +33,7 @@ import {
 import ImportPanel from '.';
 import useSelectFiles from './use_select_files';
 
-const DRAWER_WIDTH = 540;
+const DRAWER_WIDTH = 420;
 // Keep a tappable overlay strip on small screens because the drawer itself no
 // longer renders a close button.
 const DRAWER_OUTSIDE_CLOSE_GUTTER = 56;

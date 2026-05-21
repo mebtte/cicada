@@ -14,8 +14,6 @@ const Root = styled.div`
   flex: 1;
   min-width: 0;
   height: 100%;
-
-  overflow: hidden;
 `;
 const Style = styled(animated.div)`
   position: absolute;

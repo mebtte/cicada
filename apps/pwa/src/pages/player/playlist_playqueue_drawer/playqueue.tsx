@@ -10,6 +10,7 @@ import {
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import { MdDragIndicator, MdOutlineClose, MdShuffle } from 'react-icons/md';
 import {
   closestCenter,
@@ -54,6 +55,10 @@ const DRAG_OVERLAY_Z_INDEX = ZIndex.FLOATING;
 const shuffleStyle: CSSProperties = {
   width: 24,
   color: CSSVariable.COLOR_PRIMARY,
+};
+// react-icons v4 不转发 ref, Tooltip 需要可接收 ref 的元素作为锚点, 这里用 span 包裹.
+const shuffleWrapperStyle: CSSProperties = {
+  display: 'inline-flex',
 };
 const Style = styled(TabContent)`
   > .content {
@@ -100,11 +105,13 @@ function QueueMusicItem({
   active,
   canRemove,
   dragHandle,
+  highlight,
   queueMusic,
 }: {
   active: boolean;
   canRemove: boolean;
   dragHandle?: ReactNode;
+  highlight: boolean;
   queueMusic: QueueMusic;
 }) {
   return (
@@ -112,13 +119,15 @@ function QueueMusicItem({
       index={queueMusic.index}
       music={queueMusic}
       active={active}
+      highlight={highlight}
       lineAfter={
         <Operation>
           {queueMusic.shuffle ? (
-            <MdShuffle
-              style={shuffleStyle}
-              title={t('pick_from_playlist_randomly')}
-            />
+            <Tooltip content={t('shuffle_play')}>
+              <span style={shuffleWrapperStyle}>
+                <MdShuffle style={shuffleStyle} />
+              </span>
+            </Tooltip>
           ) : null}
           {dragHandle}
           {canRemove ? (
@@ -149,10 +158,12 @@ function QueueMusicItem({
 function SortableQueueMusicItem({
   active,
   canRemove,
+  highlight,
   queueMusic,
 }: {
   active: boolean;
   canRemove: boolean;
+  highlight: boolean;
   queueMusic: QueueMusic;
 }) {
   const {
@@ -176,6 +187,7 @@ function SortableQueueMusicItem({
       <QueueMusicItem
         active={active}
         canRemove={canRemove}
+        highlight={highlight}
         queueMusic={queueMusic}
         dragHandle={
           <DragActivator {...attributes} {...listeners}>
@@ -212,6 +224,7 @@ function PlayqueueDragOverlay({
         <QueueMusicItem
           active={false}
           canRemove={false}
+          highlight={false}
           queueMusic={activeQueueMusic}
         />
       ) : null}
@@ -327,6 +340,10 @@ function Playqueue() {
                   const active =
                     !animatedQueueMusic.leaving &&
                     actualIndex === currentPlayqueuePosition;
+                  const highlight =
+                    !animatedQueueMusic.leaving &&
+                    currentPlayqueuePosition >= 0 &&
+                    actualIndex === currentPlayqueuePosition + 1;
                   const canRemove =
                     !animatedQueueMusic.leaving &&
                     actualIndex > currentPlayqueuePosition;
@@ -342,12 +359,14 @@ function Playqueue() {
                         <SortableQueueMusicItem
                           active={active}
                           canRemove={canRemove}
+                          highlight={highlight}
                           queueMusic={queueMusic}
                         />
                       ) : (
                         <QueueMusicItem
                           active={active}
                           canRemove={canRemove}
+                          highlight={highlight}
                           queueMusic={queueMusic}
                         />
                       )}

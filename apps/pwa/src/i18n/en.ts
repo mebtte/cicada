@@ -162,7 +162,7 @@ export default {
   music_id: 'music ID',
   cover: 'cover',
   public_musicbill: 'musicbill',
-  pick_from_playlist_randomly: 'pick from playlist randomly',
+  shuffle_play: 'shuffle play',
   relocate_to_here: 'relocate to here',
   empty_playqueue: 'empty playqueue',
   empty_playlist: 'empty playlist',

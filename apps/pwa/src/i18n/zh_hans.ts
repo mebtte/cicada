@@ -161,7 +161,7 @@ const zhCN: {
   music_id: '音乐 ID',
   cover: '封面',
   public_musicbill: '乐单',
-  pick_from_playlist_randomly: '随机从播放列表选取',
+  shuffle_play: '随机播放',
   relocate_to_here: '重定位到此处',
   empty_playqueue: '空的播放队列',
   empty_playlist: '空的播放列表',

@@ -1,10 +1,8 @@
 import { Slider } from '@/components';
 import styled from 'styled-components';
 import useAudioCurrentMillisecond from '../use_audio_current_millisecond';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../eventemitter';
 import { CONTROLLER_PROGRESS_HEIGHT } from '../constants';
+import useProgressSeek from '../use_progress_seek';
 
 const StyledSlider = styled(Slider)`
   z-index: 1;
@@ -18,19 +16,18 @@ function Progress({
   duration: number;
   bufferedPercent: number;
 }) {
-  const onChange = (p: number) =>
-    playerEventemitter.emit(PlayerEventType.ACTION_SET_TIME, {
-      second: duration * p,
-    });
-
   const currentMillisecond = useAudioCurrentMillisecond();
-  const percent = duration ? currentMillisecond / 1000 / duration : 0;
+  const { displayPercent, onChange, onCommit } = useProgressSeek({
+    duration,
+    currentMillisecond,
+  });
 
   return (
     <StyledSlider
       edge="rounded"
-      value={percent}
+      value={displayPercent}
       onChange={onChange}
+      onCommit={onCommit}
       secondValue={bufferedPercent}
       alwaysShowThumb
     />

@@ -1,12 +1,10 @@
 import styled from 'styled-components';
 import { Slider } from '@/components';
 import { CSSVariable } from '@/global_style';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../../eventemitter';
 import useAudioCurrentMillisecond from '../../use_audio_current_millisecond';
 import { formatSecond } from '../../utils';
 import { LYRIC_PANEL_PROGRESS_BOTTOM_PADDING } from '../constants';
+import useProgressSeek from '../../use_progress_seek';
 
 const Style = styled.div`
   display: flex;
@@ -39,19 +37,24 @@ function Wrapper({
   duration: number;
   bufferedPercent: number;
 }) {
-  const onTimeChange = (p: number) =>
-    playerEventemitter.emit(PlayerEventType.ACTION_SET_TIME, {
-      second: duration * p,
-    });
-
   const currentMillisecond = useAudioCurrentMillisecond();
-  const percent = duration ? currentMillisecond / 1000 / duration : 0;
+  const {
+    displayMillisecond,
+    displayPercent,
+    onChange: onTimeChange,
+    onCommit: onTimeCommit,
+  } = useProgressSeek({
+    duration,
+    currentMillisecond,
+  });
+
   return (
     <Style>
-      <div className="time">{formatSecond(currentMillisecond / 1000)}</div>
+      <div className="time">{formatSecond(displayMillisecond / 1000)}</div>
       <Slider
-        value={percent}
+        value={displayPercent}
         onChange={onTimeChange}
+        onCommit={onTimeCommit}
         className="slider"
         secondValue={bufferedPercent}
         alwaysShowThumb
