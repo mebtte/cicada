@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import {
   MdRefresh,
   MdPlaylistAdd,
@@ -35,66 +36,76 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
   const shared = sharedUserList.length > 0;
   return (
     <Style>
-      <Button
-        square
-        variant="ghost"
-        size="sm"
-        disabled={status !== RequestStatus.SUCCESS}
-        onClick={() =>
-          musicList.length
-            ? addMusicListToPlaylist(musicList)
-            : notice.error(upperCaseFirstLetter(t('no_music_in_musicbill')))
-        }
-      >
-        <MdPlaylistAdd />
-      </Button>
-      <Button
-        square
-        variant="ghost"
-        size="sm"
-        loading={status === RequestStatus.LOADING}
-        disabled={status !== RequestStatus.SUCCESS}
-        onClick={() =>
-          playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
-            id: musicbill.id,
-            silence: false,
-          })
-        }
-      >
-        <MdRefresh />
-      </Button>
-      <Button
-        square
-        variant="ghost"
-        size="sm"
-        onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}
-      >
-        <MdOutlineEdit />
-      </Button>
-      {ENABLE_FILE_SYSTEM ? (
+      <Tooltip content={t('add_to_playlist')}>
         <Button
           square
           variant="ghost"
           size="sm"
-          disabled={!musicbill.musicList.length}
-          onClick={() => openExportMusicListDialog(musicbill.musicList)}
+          disabled={status !== RequestStatus.SUCCESS}
+          onClick={() =>
+            musicList.length
+              ? addMusicListToPlaylist(musicList)
+              : notice.error(upperCaseFirstLetter(t('no_music_in_musicbill')))
+          }
         >
-          <IconExport size="1em" />
+          <MdPlaylistAdd />
         </Button>
+      </Tooltip>
+      <Tooltip content={t('reload_musicbill')}>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          loading={status === RequestStatus.LOADING}
+          disabled={status !== RequestStatus.SUCCESS}
+          onClick={() =>
+            playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
+              id: musicbill.id,
+              silence: false,
+            })
+          }
+        >
+          <MdRefresh />
+        </Button>
+      </Tooltip>
+      <Tooltip content={t('edit')}>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}
+        >
+          <MdOutlineEdit />
+        </Button>
+      </Tooltip>
+      {ENABLE_FILE_SYSTEM ? (
+        <Tooltip content={t('export_music')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            disabled={!musicbill.musicList.length}
+            onClick={() => openExportMusicListDialog(musicbill.musicList)}
+          >
+            <IconExport size="1em" />
+          </Button>
+        </Tooltip>
       ) : null}
-      <Button
-        square
-        variant={shared ? 'primary' : 'ghost'}
-        size="sm"
-        onClick={() =>
-          playerEventemitter.emit(
-            PlayerEventType.OPEN_MUSICBILL_SHARED_USER_DRAWER,
-            { id: musicbill.id },
-          )
-        }
-      >
-        <MdOutlinePeopleAlt />
-      </Button>
+      <Tooltip content={t('shared_user')}>
+        <Button
+          square
+          variant={shared ? 'primary' : 'ghost'}
+          size="sm"
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.OPEN_MUSICBILL_SHARED_USER_DRAWER,
+              { id: musicbill.id },
+            )
+          }
+        >
+          <MdOutlinePeopleAlt />
+        </Button>
+      </Tooltip>
     </Style>
   );
 }

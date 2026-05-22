@@ -34,7 +34,6 @@ func Start() {
 		fn   schedulerJobFunc
 	}{
 		{"remove_outdated_db", removeOutdatedDB},
-		{"remove_no_music_singer", removeNoMusicSinger},
 		{"remove_unlinked_asset", removeUnlinkedAsset},
 		{"decrease_music_heat", decreaseMusicHeat},
 		{"remove_outdated_shared_invitation", removeOutdatedSharedInvitation},
@@ -134,60 +133,6 @@ func removeOutdatedDB() (schedulerJobResult, error) {
 		Summary: "deleted expired database rows",
 		Metrics: metrics,
 	}, errors.Join(errs...)
-}
-
-// removeNoMusicSinger removes singers with no music that were created > 3 days ago.
-func removeNoMusicSinger() (schedulerJobResult, error) {
-	threshold := time.Now().Add(-3 * 24 * time.Hour).UnixMilli()
-	rows, err := store.DB().Query(
-		`SELECT id FROM singer
-		WHERE id NOT IN (SELECT singerId FROM music_singer_relation)
-		AND createTimestamp < ?`, threshold,
-	)
-	if err != nil {
-		return schedulerJobResult{Summary: "failed to find no-music singers"}, err
-	}
-	defer rows.Close()
-
-	var ids []string
-	for rows.Next() {
-		var id string
-		if err := rows.Scan(&id); err != nil {
-			return schedulerJobResult{Summary: "failed to scan no-music singers"}, err
-		}
-		ids = append(ids, id)
-	}
-	if err := rows.Err(); err != nil {
-		return schedulerJobResult{Summary: "failed to iterate no-music singers"}, err
-	}
-
-	metrics := map[string]int64{"candidate_singers": int64(len(ids))}
-	if len(ids) == 0 {
-		return schedulerJobResult{
-			Summary: "no no-music singers older than 3 days",
-			Metrics: metrics,
-		}, nil
-	}
-
-	placeholders := store.Placeholders(len(ids))
-	args := store.Strs2Any(ids)
-	// Delete photos first since they reference singer; the asset files are
-	// removed by removeUnlinkedAsset on the next run.
-	deletedPhotos, photoErr := execRowsAffected(`DELETE FROM singer_photo WHERE singerId IN (`+placeholders+`)`, args...)
-	metrics["deleted_singer_photos"] = deletedPhotos
-	if photoErr != nil {
-		return schedulerJobResult{
-			Summary: "failed to remove photos for no-music singers",
-			Metrics: metrics,
-		}, photoErr
-	}
-
-	deletedSingers, singerErr := execRowsAffected(`DELETE FROM singer WHERE id IN (`+placeholders+`)`, args...)
-	metrics["deleted_singers"] = deletedSingers
-	return schedulerJobResult{
-		Summary: fmt.Sprintf("removed %d no-music singers older than 3 days", deletedSingers),
-		Metrics: metrics,
-	}, singerErr
 }
 
 // removeUnlinkedAsset removes asset files not referenced by the DB.

@@ -5,12 +5,7 @@ import {
   FLOATING_CONTROLLER_SCROLL_SPACE,
 } from '../../../constants';
 import MusicBase from '../../../components/music_base';
-import {
-  MdAccessTime,
-  MdClose,
-  MdOutlineRestartAlt,
-} from 'react-icons/md';
-import { IconCheckCircle } from '@/components/icon';
+import { MdClose, MdOutlineRestartAlt } from 'react-icons/md';
 import {
   CSSProperties,
   useContext,
@@ -30,11 +25,11 @@ import Button from '@/components/button';
 import eventemitter, { EventType } from '@/pages/player/eventemitter';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
+import { MusicExportQuality } from '@/utils/music_export_asset';
 import { PAGE_HORIZONTAL_PADDING } from '../../page';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
-const BOTTOM_SCROLL_SPACE = `calc(${FLOATING_CONTROLLER_SCROLL_SPACE} + 16px)`;
 const SUMMARY_FLOATING_GAP = 12;
 const SUMMARY_STAT_CARD_HEIGHT = 44;
 const SUMMARY_GRID_GAP = 6;
@@ -229,7 +224,7 @@ const RetryHint = styled.span`
 const EmptyState = styled.div`
   flex: 1;
   min-height: 0;
-  padding-bottom: ${BOTTOM_SCROLL_SPACE};
+  padding-bottom: ${FLOATING_CONTROLLER_SCROLL_SPACE};
 
   display: flex;
   align-items: center;
@@ -247,78 +242,79 @@ const Queue = styled.div`
   &::after {
     content: '';
     display: block;
-    height: ${BOTTOM_SCROLL_SPACE};
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
   }
 `;
 const QueueItem = styled(animated.div)`
   overflow: hidden;
 `;
-const statusBadgeStyle = {
-  [ExportStatusType.WAITING]: css`
+/* 四种状态共用一颗 24px 高的胶囊 pill, 形状跟旁边的 QualityChip 同构, 仅靠配色 + 文案 + 前导图标区分 */
+type StatusTone = 'waiting' | 'exporting' | 'successful' | 'failed';
+const statusPillToneStyle: Record<StatusTone, ReturnType<typeof css>> = {
+  waiting: css`
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     background: #fff;
     border-color: rgb(210 210 210);
     box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
   `,
-  [ExportStatusType.EXPORTING]: css`
-    color: #fff;
-    background: ${PRIMARY};
-    border-color: ${PRIMARY_SHADOW};
-    box-shadow: 0 3px 0 ${PRIMARY_SHADOW};
+  exporting: css`
+    color: rgb(58 122 0);
+    background: rgb(232 255 218);
+    border-color: rgb(184 220 167);
+    box-shadow: 0 3px 0 rgb(184 220 167);
   `,
-  [ExportStatusType.FAILED]: css`
-    color: #fff;
-    background: ${CSSVariable.COLOR_DANGEROUS};
-    border-color: rgb(190 46 34);
-    box-shadow: 0 3px 0 rgb(190 46 34);
+  successful: css`
+    color: rgb(58 122 0);
+    background: #fff;
+    border-color: rgb(184 220 167);
+    box-shadow: 0 3px 0 rgb(184 220 167);
+  `,
+  failed: css`
+    /* MusicBase 给 lineAfter 内的 > button 注入了一组灰色基调 (specificity 0,4,2), 这里用 !important 强制覆盖, 避免失败 pill 退化成灰色方块 */
+    color: ${CSSVariable.COLOR_DANGEROUS} !important;
+    background: #fff !important;
+    border-color: rgb(222 145 137) !important;
+    box-shadow: 0 3px 0 rgb(222 145 137) !important;
   `,
 };
-const statusBadgeBase = css<{ $status: ExportStatusType }>`
-  width: 34px;
-  height: 34px;
+const statusPillBase = css<{ $tone: StatusTone }>`
+  height: 24px;
+  padding: 0 10px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 5px;
   flex: 0 0 auto;
+
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 
   border: 2px solid;
-  border-radius: 10px;
+  border-radius: 999px;
 
-  ${({ $status }) => statusBadgeStyle[$status]}
-
-  svg {
-    display: block;
-  }
-
-  .item {
-    background-color: currentColor;
-  }
-`;
-const StatusBadge = styled.span<{ $status: ExportStatusType }>`
-  ${statusBadgeBase}
-`;
-const StatusIcon = styled.span`
-  width: 34px;
-  height: 34px;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-
-  color: ${PRIMARY};
+  ${({ $tone }) => statusPillToneStyle[$tone]}
 
   svg {
     display: block;
+    flex: 0 0 auto;
   }
 `;
-const StatusButton = styled.button<{ $status: ExportStatusType }>`
-  ${statusBadgeBase}
+const StatusPill = styled.span<{ $tone: StatusTone }>`
+  ${statusPillBase}
+`;
+const StatusPillButton = styled.button<{ $tone: StatusTone }>`
+  ${statusPillBase}
 
-  padding: 0;
+  /* 同样需要强制覆盖 MusicBase 注入的 border-radius: 10px, 保持 pill 弧形 */
+  border-radius: 999px !important;
+
   appearance: none;
-  cursor: pointer;
+  /* MusicBase 的 .Card cursor: pointer 会向下流, 而部分浏览器 button 元素 UA 样式会覆盖, 加 !important 确保失败 pill 上稳定显示手型, 提示用户可点击触发重试 */
+  cursor: pointer !important;
   transition:
     transform 150ms ease-out,
     box-shadow 150ms ease-out,
@@ -342,27 +338,54 @@ const StatusButton = styled.button<{ $status: ExportStatusType }>`
     outline-offset: 3px;
   }
 `;
-const EXPORT_STATUS_SIZE = 24;
-const exportStatusStyle: CSSProperties = {
-  fontSize: EXPORT_STATUS_SIZE,
-};
+const STATUS_ICON_SIZE = 12;
 const removeStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
 
-function getExportStatusLabel(status: ExportStatusType) {
-  switch (status) {
-    case ExportStatusType.EXPORTING: {
-      return t('export_status_exporting');
+// 导出质量徽标的两套配色, 与右侧 StatusPill 同款 24px 胶囊形态, 仅靠配色区分原始/流畅.
+const qualityChipStyle = {
+  [MusicExportQuality.ORIGINAL]: css`
+    color: rgb(44 76 138);
+    background: rgb(232 240 255);
+    border-color: rgb(170 190 225);
+    box-shadow: 0 3px 0 rgb(170 190 225);
+  `,
+  [MusicExportQuality.SMOOTH]: css`
+    color: rgb(20 105 115);
+    background: rgb(220 245 247);
+    border-color: rgb(140 200 210);
+    box-shadow: 0 3px 0 rgb(140 200 210);
+  `,
+};
+const QualityChip = styled.span<{ $quality: MusicExportQuality }>`
+  height: 24px;
+  padding: 0 9px;
+
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  text-transform: capitalize;
+
+  border: 2px solid;
+  border-radius: 999px;
+
+  ${({ $quality }) => qualityChipStyle[$quality]}
+`;
+
+function getQualityLabel(quality: MusicExportQuality) {
+  switch (quality) {
+    case MusicExportQuality.ORIGINAL: {
+      return t('music_export_quality_original');
     }
-    case ExportStatusType.WAITING: {
-      return t('export_status_waiting');
-    }
-    case ExportStatusType.SUCCESSFUL: {
-      return t('export_status_successful');
-    }
-    case ExportStatusType.FAILED: {
-      return t('export_status_failed');
+    case MusicExportQuality.SMOOTH: {
+      return t('music_playback_quality_smooth');
     }
     default: {
       return '';
@@ -375,64 +398,68 @@ function ExportStatus({
 }: {
   exportingMusic: ExportingMusic;
 }) {
-  const { status } = exportingMusic;
-  const label = getExportStatusLabel(status);
-  const content = (() => {
-    switch (status) {
-      case ExportStatusType.EXPORTING: {
-        return <Spinner size={EXPORT_STATUS_SIZE} />;
-      }
-      case ExportStatusType.WAITING: {
-        return <MdAccessTime style={exportStatusStyle} />;
-      }
-      case ExportStatusType.SUCCESSFUL: {
-        return <IconCheckCircle style={exportStatusStyle} />;
-      }
-      case ExportStatusType.FAILED: {
-        return <MdOutlineRestartAlt style={exportStatusStyle} />;
-      }
-      default: {
-        return null;
-      }
+  const { status, loaded, total } = exportingMusic;
+
+  switch (status) {
+    case ExportStatusType.WAITING: {
+      const label = t('export_status_waiting');
+      return (
+        <StatusPill $tone="waiting" title={label} aria-label={label}>
+          {label}
+        </StatusPill>
+      );
     }
-  })();
-
-  if (!content) {
-    return null;
+    case ExportStatusType.EXPORTING: {
+      /* Content-Length 已知时把百分比拼进文本; 未知时显示 Spinner 表达不确定态 */
+      const hasProgress =
+        typeof total === 'number' && total > 0 && typeof loaded === 'number';
+      const pct = hasProgress
+        ? Math.min(100, Math.round((loaded / total) * 100))
+        : undefined;
+      const base = t('export_status_exporting');
+      const label = pct === undefined ? base : `${base} ${pct}%`;
+      return (
+        <StatusPill $tone="exporting" title={label} aria-label={label}>
+          {label}
+          {/* 未知进度时 Spinner 放在文字右侧, 表达"动作仍在持续"的尾随感, 跟左侧前导图标的其它状态作区分 */}
+          {pct === undefined ? <Spinner size={STATUS_ICON_SIZE} /> : null}
+        </StatusPill>
+      );
+    }
+    case ExportStatusType.SUCCESSFUL: {
+      const label = t('export_status_successful');
+      return (
+        <StatusPill $tone="successful" title={label} aria-label={label}>
+          {label}
+        </StatusPill>
+      );
+    }
+    case ExportStatusType.FAILED: {
+      /* 失败 pill 即操作: 整颗可点触发重试, 危险色文字 + 描边表达"出问题但可点重试" */
+      const actionLabel = t('retry_failed_item');
+      return (
+        <StatusPillButton
+          type="button"
+          $tone="failed"
+          title={actionLabel}
+          aria-label={actionLabel}
+          onClick={(event) => {
+            event.stopPropagation();
+            eventemitter.emit(EventType.EXPORT_MUSIC_LIST_RETRY_ITEM, {
+              id: exportingMusic.id,
+            });
+          }}
+        >
+          {t('export_status_failed')}
+          {/* 刷新箭头放在文字右侧, 作为可重试的尾随提示 */}
+          <MdOutlineRestartAlt size={STATUS_ICON_SIZE} />
+        </StatusPillButton>
+      );
+    }
+    default: {
+      return null;
+    }
   }
-
-  if (status === ExportStatusType.SUCCESSFUL) {
-    return (
-      <StatusIcon title={label} aria-label={label}>
-        {content}
-      </StatusIcon>
-    );
-  }
-
-  if (status === ExportStatusType.FAILED) {
-    return (
-      <StatusButton
-        type="button"
-        $status={status}
-        title={t('retry_failed_item')}
-        aria-label={t('retry_failed_item')}
-        onClick={(event) => {
-          event.stopPropagation();
-          eventemitter.emit(EventType.EXPORT_MUSIC_LIST_RETRY_ITEM, {
-            id: exportingMusic.id,
-          });
-        }}
-      >
-        {content}
-      </StatusButton>
-    );
-  }
-
-  return (
-    <StatusBadge $status={status} title={label} aria-label={label}>
-      {content}
-    </StatusBadge>
-  );
 }
 
 function SummaryPanel({
@@ -594,6 +621,14 @@ function MusicList() {
                   lineAfter={
                     <LineAfter>
                       <ExportStatus exportingMusic={exportingMusic} />
+                      {/* 标记此次导出选择的质量 (原始/流畅), 紧贴删除按钮放在右侧作为辅助元数据 */}
+                      <QualityChip
+                        $quality={exportingMusic.quality}
+                        title={getQualityLabel(exportingMusic.quality)}
+                        aria-label={getQualityLabel(exportingMusic.quality)}
+                      >
+                        {getQualityLabel(exportingMusic.quality)}
+                      </QualityChip>
                       <Button
                         square
                         variant="plain"
@@ -617,6 +652,8 @@ function MusicList() {
                           }
                           return dialog.confirm({
                             content: t('remove_export_item_question'),
+                            /* 移除进行中/等待中/失败的导出项属于破坏性操作, 确认按钮用 danger 变体提示风险 */
+                            confirmVariant: 'danger',
                             onConfirm: removeItem,
                           });
                         }}

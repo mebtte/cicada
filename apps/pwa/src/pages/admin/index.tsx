@@ -49,13 +49,14 @@ const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 const SURFACE_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
-const runningWave = `
-  @keyframes admin-import-running-wave {
-    from {
-      background-position-x: 0;
+// 上传中: 一道斜向白色高光从左滑到右, 在 36x36 的小按钮里也清晰可见
+const runningShimmer = `
+  @keyframes admin-import-running-shimmer {
+    0% {
+      transform: translateX(-130%);
     }
-    to {
-      background-position-x: 18px;
+    100% {
+      transform: translateX(130%);
     }
   }
 `;
@@ -350,8 +351,39 @@ const HeaderActions = styled.div`
   flex-shrink: 0;
 `;
 
-const UploadStatusButton = styled.button`
+// 导入按钮状态: idle 仅图标; active 显示百分比并高亮; failed 显示百分比并标红
+type UploadStatusVariant = 'idle' | 'active' | 'failed';
+
+const DANGER = 'rgb(242 80 66)';
+const DANGER_SHADOW = 'rgb(190 46 34)';
+
+const resolveStatusBackground = (
+  status: UploadStatusVariant,
+  open: boolean,
+) => {
+  if (status === 'failed') return DANGER;
+  if (status === 'active' || open) return PRIMARY;
+  return '#fff';
+};
+
+const resolveStatusBorder = (status: UploadStatusVariant, open: boolean) => {
+  if (status === 'failed') return DANGER_SHADOW;
+  if (status === 'active' || open) return PRIMARY_SHADOW;
+  return NEUTRAL_SHADOW;
+};
+
+const resolveStatusForeground = (
+  status: UploadStatusVariant,
+  open: boolean,
+) => (status !== 'idle' || open ? '#fff' : PRIMARY);
+
+const UploadStatusButton = styled.button<{
+  $status: UploadStatusVariant;
+  $open: boolean;
+  $running: boolean;
+}>`
   position: relative;
+  width: ${AVATAR_SIZE}px;
   height: ${AVATAR_SIZE + 5}px;
   padding: 0;
   border: none;
@@ -359,6 +391,7 @@ const UploadStatusButton = styled.button`
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  flex-shrink: 0;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
@@ -380,73 +413,57 @@ const UploadStatusButton = styled.button`
     outline-offset: 3px;
     border-radius: 14px;
   }
-`;
 
-const UploadStatusBox = styled.span<{
-  $active: boolean;
-  $open: boolean;
-  $running: boolean;
-}>`
-  position: relative;
-  width: auto;
-  min-width: ${({ $active }) => ($active ? '112px' : '104px')};
-  max-width: min(360px, 42vw);
-  height: ${AVATAR_SIZE}px;
-  padding: 0 10px;
-  border: 2px solid
-    ${({ $active, $open }) =>
-      $active || $open ? PRIMARY_SHADOW : NEUTRAL_SHADOW};
-  border-radius: 14px;
-  background: ${({ $active, $open }) =>
-    $active || $open ? PRIMARY : '#fff'};
-  box-shadow: 0 3px 0
-    ${({ $active, $open }) =>
-      $active || $open ? PRIMARY_SHADOW : NEUTRAL_SHADOW};
-  color: ${({ $active, $open }) =>
-    $active || $open ? '#fff' : PRIMARY};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  overflow: hidden;
-  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0;
-  white-space: nowrap;
-  transition:
-    border-color 150ms ease-out,
-    box-shadow 150ms ease-out,
-    color 150ms ease-out,
-    background 150ms ease-out,
-    filter 120ms;
+  /* 内层方形容器: 承担描边/底部阴影/颜色变体, 与 PlayerLinkBox 视觉一致 */
+  > span.upload-status-box {
+    position: relative;
+    width: ${AVATAR_SIZE}px;
+    height: ${AVATAR_SIZE}px;
+    border: 2px solid
+      ${({ $status, $open }) => resolveStatusBorder($status, $open)};
+    border-radius: 14px;
+    background: ${({ $status, $open }) =>
+      resolveStatusBackground($status, $open)};
+    box-shadow: 0 3px 0
+      ${({ $status, $open }) => resolveStatusBorder($status, $open)};
+    color: ${({ $status, $open }) => resolveStatusForeground($status, $open)};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0;
+    white-space: nowrap;
+    transition:
+      border-color 150ms ease-out,
+      box-shadow 150ms ease-out,
+      color 150ms ease-out,
+      background 150ms ease-out,
+      filter 120ms;
+  }
 
-  &::after {
+  /* 上传中: 全按钮斜向白光扫动, 比原来的横向波纹明显得多 */
+  > span.upload-status-box::after {
     content: '';
     position: absolute;
-    left: 8px;
-    right: 8px;
-    top: 50%;
+    inset: 0;
     z-index: 0;
-    height: 8px;
-    transform: translateY(-50%);
-    background:
-      radial-gradient(
-        8px 5px at 9px 8px,
-        transparent 6px,
-        rgb(255 255 255 / 0.46) 6.5px,
-        rgb(255 255 255 / 0.46) 7.5px,
-        transparent 8px
-      )
-      0 0 / 18px 8px repeat-x;
+    background: linear-gradient(
+      115deg,
+      transparent 35%,
+      rgb(255 255 255 / 0.75) 50%,
+      transparent 65%
+    );
     opacity: ${({ $running }) => ($running ? 1 : 0)};
     animation: ${({ $running }) =>
-      $running ? 'admin-import-running-wave 700ms linear infinite' : 'none'};
+      $running ? 'admin-import-running-shimmer 1.05s linear infinite' : 'none'};
     pointer-events: none;
     transition: opacity 120ms;
   }
 
-  > svg {
+  > span.upload-status-box > svg {
     position: relative;
     z-index: 1;
     width: 18px;
@@ -454,28 +471,25 @@ const UploadStatusBox = styled.span<{
     flex-shrink: 0;
   }
 
-  > span {
+  > span.upload-status-box > span {
     position: relative;
     z-index: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
-  @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    max-width: 38vw;
-    min-width: ${({ $active }) => ($active ? '92px' : '104px')};
-    font-size: 12px;
-  }
-
-  ${UploadStatusButton}:hover & {
-    border-color: ${({ $active, $open }) =>
-      $active || $open ? PRIMARY_SHADOW : PRIMARY};
-    box-shadow: 0 3px 0 ${PRIMARY_SHADOW};
+  &:hover > span.upload-status-box {
+    border-color: ${({ $status, $open }) =>
+      $status === 'failed'
+        ? DANGER_SHADOW
+        : $status === 'active' || $open
+          ? PRIMARY_SHADOW
+          : PRIMARY};
+    box-shadow: 0 3px 0
+      ${({ $status }) =>
+        $status === 'failed' ? DANGER_SHADOW : PRIMARY_SHADOW};
     filter: brightness(1.04);
   }
 
-  ${UploadStatusButton}:active & {
+  &:active > span.upload-status-box {
     box-shadow: none;
     transition:
       border-color 60ms ease-in,
@@ -483,7 +497,7 @@ const UploadStatusBox = styled.span<{
       filter 60ms;
   }
 
-  ${runningWave}
+  ${runningShimmer}
 `;
 
 const UserMenuRoot = styled.div`
@@ -662,8 +676,17 @@ function AdminPage() {
   const uploadRunning = uploadTasks.some((task) =>
     isActiveImportPhase(task.phase),
   );
+  // 任意一条任务失败时, 按钮转为危险色提示用户
+  const uploadFailed = uploadTasks.some((task) => task.phase === 'failed');
+  const uploadStatus: 'idle' | 'active' | 'failed' = uploadFailed
+    ? 'failed'
+    : uploadActive
+      ? 'active'
+      : 'idle';
+  // 按钮内只显示纯数字, tooltip 仍保留 % 提示是百分比
+  const uploadPercentText = uploadSummary.pct.toFixed(0);
   const uploadStatusText = uploadActive
-    ? `${uploadSummary.pct.toFixed(0)}%`
+    ? `${uploadPercentText}%`
     : capitalize(t('upload_music'));
 
   useEffect(() => {
@@ -785,15 +808,17 @@ function AdminPage() {
               title={uploadStatusText}
               aria-label={uploadStatusText}
               aria-pressed={uploadSidebarOpen}
+              $status={uploadStatus}
+              $open={uploadSidebarOpen}
+              $running={uploadRunning}
             >
-              <UploadStatusBox
-                $active={uploadActive}
-                $open={uploadSidebarOpen}
-                $running={uploadRunning}
-              >
-                <MdCloudUpload />
-                <span>{uploadStatusText}</span>
-              </UploadStatusBox>
+              <span className="upload-status-box">
+                {uploadActive ? (
+                  <span>{uploadPercentText}</span>
+                ) : (
+                  <MdCloudUpload />
+                )}
+              </span>
             </UploadStatusButton>
             <PlayerLink
               type="button"

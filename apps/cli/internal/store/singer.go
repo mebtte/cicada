@@ -221,3 +221,33 @@ func UpdateSinger(id, field string, value any) error {
 	_, err := DB().Exec(`UPDATE singer SET `+field+`=? WHERE id=?`, value, id)
 	return err
 }
+
+// GetMusicCountBySingerID 返回歌手关联的音乐数量，用于判定能否删除歌手。
+func GetMusicCountBySingerID(id string) (int, error) {
+	var count int
+	if err := DB().QueryRow(
+		`SELECT COUNT(1) FROM music_singer_relation WHERE singerId=?`, id,
+	).Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// DeleteSingerCascade 删除歌手以及其所有照片记录。照片对应的资源文件由
+// removeUnlinkedAsset 在下一次调度运行时清理。调用方需保证该歌手已无关联音乐。
+func DeleteSingerCascade(id string) error {
+	tx, err := DB().Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	for _, del := range []string{
+		`DELETE FROM singer_photo WHERE singerId=?`,
+		`DELETE FROM singer WHERE id=?`,
+	} {
+		if _, err := tx.Exec(del, id); err != nil {
+			return err
+		}
+	}
+	return tx.Commit()
+}

@@ -147,6 +147,7 @@ export interface SliderProps
   value: number;
   max?: number;
   onChange?: (value: number) => void;
+  onCommit?: (value: number) => void;
   edge?: SliderEdge;
   /** 在非触摸设备上也显示拇指 */
   alwaysShowThumb?: boolean;
@@ -158,6 +159,7 @@ function Slider({
   value,
   max = 1,
   onChange,
+  onCommit,
   edge = 'rounded',
   alwaysShowThumb = false,
   secondValue,
@@ -172,6 +174,7 @@ function Slider({
       step={max / 1000}
       value={[value]}
       onValueChange={([v]) => onChange?.(v)}
+      onValueCommit={([v]) => onCommit?.(v)}
       className={classnames(
         edge,
         {

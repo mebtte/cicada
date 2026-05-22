@@ -32,6 +32,7 @@ const toEditableSinger = (
   name: singer.name,
   aliases: singer.aliases,
   photos: singer.photos,
+  musicCount: singer.musicCount,
   createUser: {
     id: singer.createUser.id,
     username: singer.createUser.username,
@@ -85,6 +86,12 @@ function SingerEditDrawer({
     }
   };
 
+  // 删除完成后关闭抽屉, 同时通知外层刷新列表
+  const handleDeleted = () => {
+    onSaved();
+    onClose();
+  };
+
   return (
     <Drawer open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <EditDrawerContent
@@ -113,6 +120,7 @@ function SingerEditDrawer({
             singer={singer}
             onSaved={handleSaved}
             onPhotosChanged={handleSaved}
+            onDeleted={handleDeleted}
           />
         ) : null}
       </EditDrawerContent>

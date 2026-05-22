@@ -1,6 +1,7 @@
 import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import {
   MdOutlineAddBox,
   MdSort,
@@ -90,55 +91,64 @@ function Top() {
 
   return (
     <Style aria-label={t('musicbill')}>
-      <ToolButton
-        square
-        variant="ghost"
-        size="sm"
-        onClick={reloadMusicbillList}
-        loading={getMusicbillListStatus === RequestStatus.LOADING}
-      >
-        <MdRefresh />
-      </ToolButton>
-      <ToolButton
-        square
-        variant="primary"
-        size="sm"
-        onClick={openCreateMusicbillDialog}
-      >
-        <MdOutlineAddBox />
-      </ToolButton>
-      <ToolButton
-        square
-        variant="ghost"
-        size="sm"
-        disabled={getMusicbillListStatus !== RequestStatus.SUCCESS}
-        onClick={() => {
-          if (musicbillList.length) {
-            return e.emit(EventType.OPEN_MUSICBILL_ORDER_DRAWER, null);
-          }
-          return notice.info(t('no_musicbill'));
-        }}
-      >
-        <MdSort />
-      </ToolButton>
-      <ToolButton
-        square
-        variant="ghost"
-        size="sm"
-        onClick={openSharedMusicbillInvitationDrawer}
-      >
-        <MdOutlinePeopleAlt />
-      </ToolButton>
-      <ToolButton
-        square
-        variant="ghost"
-        size="sm"
-        aria-label={t('public_musicbill_collection')}
-        title={t('public_musicbill_collection')}
-        onClick={openPublicMusicbillCollectionDrawer}
-      >
-        <MdStarOutline />
-      </ToolButton>
+      <Tooltip content={t('reload_musicbill_list')}>
+        <ToolButton
+          square
+          variant="ghost"
+          size="sm"
+          onClick={reloadMusicbillList}
+          loading={getMusicbillListStatus === RequestStatus.LOADING}
+        >
+          <MdRefresh />
+        </ToolButton>
+      </Tooltip>
+      <Tooltip content={t('create')}>
+        <ToolButton
+          square
+          variant="primary"
+          size="sm"
+          onClick={openCreateMusicbillDialog}
+        >
+          <MdOutlineAddBox />
+        </ToolButton>
+      </Tooltip>
+      <Tooltip content={t('sort_musicbill')}>
+        <ToolButton
+          square
+          variant="ghost"
+          size="sm"
+          disabled={getMusicbillListStatus !== RequestStatus.SUCCESS}
+          onClick={() => {
+            if (musicbillList.length) {
+              return e.emit(EventType.OPEN_MUSICBILL_ORDER_DRAWER, null);
+            }
+            return notice.info(t('no_musicbill'));
+          }}
+        >
+          <MdSort />
+        </ToolButton>
+      </Tooltip>
+      <Tooltip content={t('shared_musicbill_invitation')}>
+        <ToolButton
+          square
+          variant="ghost"
+          size="sm"
+          onClick={openSharedMusicbillInvitationDrawer}
+        >
+          <MdOutlinePeopleAlt />
+        </ToolButton>
+      </Tooltip>
+      <Tooltip content={t('public_musicbill_collection')}>
+        <ToolButton
+          square
+          variant="ghost"
+          size="sm"
+          aria-label={t('public_musicbill_collection')}
+          onClick={openPublicMusicbillCollectionDrawer}
+        >
+          <MdStarOutline />
+        </ToolButton>
+      </Tooltip>
     </Style>
   );
 }

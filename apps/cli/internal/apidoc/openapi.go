@@ -1023,6 +1023,21 @@ func operations() []operation {
 			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "not_authorized", "not_authorized_for_admin"},
 		},
 		{
+			Method:      "DELETE",
+			Path:        "/api/admin/singer",
+			Summary:     "Admin delete singer",
+			Description: "Delete a singer along with its photos. The singer must not be referenced by any music; otherwise `singer_has_music_can_not_be_deleted` is returned. Asset files for removed photos are reclaimed by the next `remove_unlinked_asset` scheduler run.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			Parameters: []map[string]any{
+				queryParam("id", "Singer ID.", true, strSchema("", "singer-1")),
+			},
+			SuccessSchema:  nil,
+			SuccessExample: nil,
+			ErrorCodes:     []string{"wrong_parameter", "singer_not_existed", "singer_has_music_can_not_be_deleted", "server_error", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
 			Method:      "POST",
 			Path:        "/api/admin/singer/photo",
 			Summary:     "Admin add singer photo",
@@ -1681,7 +1696,7 @@ func musicDetailSchema() map[string]any {
 	return objSchema(
 		[]string{
 			"id", "type", "name", "aliases", "cover", "asset", "heat", "createTimestamp",
-			"singers", "createUser", "forkList", "forkFromList", "musicbillCount",
+			"singers", "forkList", "forkFromList", "musicbillCount",
 		},
 		map[string]any{
 			"id":              strSchema("Music ID.", "music-1"),
@@ -1694,7 +1709,6 @@ func musicDetailSchema() map[string]any {
 			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
 			"year":            nullableSchema(intSchema("Year.", 2024)),
 			"singers":         arraySchema(singerSchema()),
-			"createUser":      userBriefSchema(false),
 			"forkList":        arraySchema(musicRelatedSchema()),
 			"forkFromList":    arraySchema(musicRelatedSchema()),
 			"musicbillCount":  intSchema("Musicbill reference count.", 3),
@@ -1719,7 +1733,6 @@ func musicDetailExample() map[string]any {
 		"singers": []any{
 			map[string]any{"id": "singer-1", "name": "Aurora", "aliases": []string{"AUR"}},
 		},
-		"createUser":     map[string]any{"id": "1", "nickname": "Cicada"},
 		"forkList":       []any{},
 		"forkFromList":   []any{},
 		"musicbillCount": 3,
@@ -1896,12 +1909,13 @@ func singerDetailExample() map[string]any {
 
 func adminSingerDetailSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "aliases", "photos", "createTimestamp", "createUser"},
+		[]string{"id", "name", "aliases", "photos", "musicCount", "createTimestamp", "createUser"},
 		map[string]any{
 			"id":              strSchema("Singer ID.", "singer-1"),
 			"name":            strSchema("Singer name.", "Aurora"),
 			"aliases":         arraySchema(strSchema("", "AUR")),
 			"photos":          arraySchema(singerPhotoSchema()),
+			"musicCount":      intSchema("Number of music entries linked to this singer.", 3),
 			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
 			"createUser": objSchema([]string{"id", "username", "nickname"}, map[string]any{
 				"id":       strSchema("User ID.", "1"),
@@ -1920,6 +1934,7 @@ func adminSingerDetailExample() map[string]any {
 		"photos": []any{
 			map[string]any{"id": "photo-1", "asset": "/asset/singer_photo/photo.jpg", "description": "Live in Tokyo, 2024"},
 		},
+		"musicCount":      3,
 		"createTimestamp": int64(1710000000000),
 		"createUser":      map[string]any{"id": "1", "username": "alice", "nickname": "Alice"},
 	}
@@ -2160,45 +2175,60 @@ func musicbillPageExample(listKey string) map[string]any {
 }
 
 func explorationSchema() map[string]any {
+	musicItemSchema := objSchema([]string{"id", "name", "cover", "singers"}, map[string]any{
+		"id":      strSchema("Music ID.", "music-1"),
+		"name":    strSchema("Music name.", "Nightingale"),
+		"cover":   strSchema("Cover path.", "/asset/music_cover/cover.jpg"),
+		"singers": objArraySchema(map[string]any{"id": strSchema("Singer ID.", "singer-1"), "name": strSchema("Singer name.", "Aurora")}),
+	})
+	singerItemSchema := objSchema([]string{"id", "name"}, map[string]any{
+		"id":   strSchema("Singer ID.", "singer-1"),
+		"name": strSchema("Singer name.", "Aurora"),
+	})
+	musicbillItemSchema := objSchema([]string{"id", "name", "cover", "user"}, map[string]any{
+		"id":    strSchema("Musicbill ID.", "musicbill-1"),
+		"name":  strSchema("Musicbill name.", "Late Night"),
+		"cover": strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+		"user":  userBriefSchema(false),
+	})
 	return objSchema(
-		[]string{"musicList", "singerList", "publicMusicbillList"},
+		[]string{
+			"musicList", "singerList", "publicMusicbillList",
+			"recentMusicList", "recentSingerList", "recentPublicMusicbillList",
+		},
 		map[string]any{
-			"musicList": arraySchema(objSchema([]string{"id", "name", "cover", "singers"}, map[string]any{
-				"id":      strSchema("Music ID.", "music-1"),
-				"name":    strSchema("Music name.", "Nightingale"),
-				"cover":   strSchema("Cover path.", "/asset/music_cover/cover.jpg"),
-				"singers": objArraySchema(map[string]any{"id": strSchema("Singer ID.", "singer-1"), "name": strSchema("Singer name.", "Aurora")}),
-			})),
-			"singerList": arraySchema(objSchema([]string{"id", "name"}, map[string]any{
-				"id":   strSchema("Singer ID.", "singer-1"),
-				"name": strSchema("Singer name.", "Aurora"),
-			})),
-			"publicMusicbillList": arraySchema(objSchema([]string{"id", "name", "cover", "user"}, map[string]any{
-				"id":    strSchema("Musicbill ID.", "musicbill-1"),
-				"name":  strSchema("Musicbill name.", "Late Night"),
-				"cover": strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
-				"user":  userBriefSchema(false),
-			})),
+			"musicList":                 arraySchema(musicItemSchema),
+			"singerList":                arraySchema(singerItemSchema),
+			"publicMusicbillList":       arraySchema(musicbillItemSchema),
+			"recentMusicList":           arraySchema(musicItemSchema),
+			"recentSingerList":          arraySchema(singerItemSchema),
+			"recentPublicMusicbillList": arraySchema(musicbillItemSchema),
 		},
 	)
 }
 
 func explorationExample() map[string]any {
+	musicExample := []any{
+		map[string]any{
+			"id":      "music-1",
+			"name":    "Nightingale",
+			"cover":   "/asset/music_cover/cover.jpg",
+			"singers": []any{map[string]any{"id": "singer-1", "name": "Aurora"}},
+		},
+	}
+	singerExample := []any{
+		map[string]any{"id": "singer-1", "name": "Aurora"},
+	}
+	musicbillExample := []any{
+		map[string]any{"id": "musicbill-1", "name": "Late Night", "cover": "/asset/musicbill_cover/cover.jpg", "user": map[string]any{"id": "1", "nickname": "Cicada"}},
+	}
 	return map[string]any{
-		"musicList": []any{
-			map[string]any{
-				"id":      "music-1",
-				"name":    "Nightingale",
-				"cover":   "/asset/music_cover/cover.jpg",
-				"singers": []any{map[string]any{"id": "singer-1", "name": "Aurora"}},
-			},
-		},
-		"singerList": []any{
-			map[string]any{"id": "singer-1", "name": "Aurora"},
-		},
-		"publicMusicbillList": []any{
-			map[string]any{"id": "musicbill-1", "name": "Late Night", "cover": "/asset/musicbill_cover/cover.jpg", "user": map[string]any{"id": "1", "nickname": "Cicada"}},
-		},
+		"musicList":                 musicExample,
+		"singerList":                singerExample,
+		"publicMusicbillList":       musicbillExample,
+		"recentMusicList":           musicExample,
+		"recentSingerList":          singerExample,
+		"recentPublicMusicbillList": musicbillExample,
 	}
 }
 

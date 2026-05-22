@@ -4,6 +4,7 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import Page from '../page';
 import Volume from './volume';
 import Language from './language';
+import AdminQuickEdit from './admin_quick_edit';
 import Feedback from './feedback';
 import PlaybackQuality from './playback_quality';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
@@ -36,6 +37,7 @@ function Setting() {
       {AUDIO_VOLUME_SETABLE ? <Volume /> : null}
       <PlaybackQuality />
       <Language />
+      <AdminQuickEdit />
       <Feedback />
     </Style>
   );

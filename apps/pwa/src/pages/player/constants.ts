@@ -137,4 +137,8 @@ export interface ExportingMusic {
   ext: string;
   quality: MusicExportQuality;
   status: ExportStatus;
+  /* 已下载字节数, EXPORTING 阶段由流式读取实时累加 */
+  loaded?: number;
+  /* 文件总字节数, 来自 Content-Length 响应头, 可能缺失 */
+  total?: number;
 }

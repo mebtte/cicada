@@ -50,6 +50,7 @@ const TABLE_ROW_GAP = 10;
 enum SingerManagementQuery {
   FILTER_KEY = 'filter_key',
   PAGE_SIZE = 'page_size',
+  EDIT_SINGER_ID = 'edit_singer_id',
 }
 
 interface Data {
@@ -187,7 +188,6 @@ const StatusBox = styled.div`
 const TableScroll = styled.div`
   height: 100%;
   padding: 0 20px 92px;
-  background: rgb(247 247 247);
   overflow: auto;
   scroll-padding-bottom: 92px;
   ${autoScrollbar}
@@ -229,7 +229,7 @@ const Th = styled.th`
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
     box-shadow:
-      -6px 0 0 rgb(247 247 247),
+      -6px 0 0 #fff,
       0 3px 0 ${ROW_SHADOW};
   }
 `;
@@ -258,7 +258,7 @@ const Td = styled.td`
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
     box-shadow:
-      -6px 0 0 rgb(247 247 247),
+      -6px 0 0 #fff,
       0 3px 0 ${ROW_SHADOW};
   }
 
@@ -576,11 +576,14 @@ function SingerManagement() {
     | Query.PAGE
     | SingerManagementQuery.FILTER_KEY
     | SingerManagementQuery.PAGE_SIZE
+    | SingerManagementQuery.EDIT_SINGER_ID
   >();
   const keyword = query[Query.KEYWORD] ?? '';
   const filterKey = parseFilterKey(query[SingerManagementQuery.FILTER_KEY]);
   const page = parsePage(query[Query.PAGE]);
   const pageSize = parsePageSize(query[SingerManagementQuery.PAGE_SIZE]);
+  // 编辑抽屉以 URL 查询参数为唯一来源, 便于从 player 等其他位置深链直达
+  const editSingerId = query[SingerManagementQuery.EDIT_SINGER_ID] ?? null;
   const [data, setData] = useState<Data>({
     error: null,
     loading: true,
@@ -588,7 +591,6 @@ function SingerManagement() {
     singerList: [],
   });
   const [viewerPhoto, setViewerPhoto] = useState<ImageViewerPhoto | null>(null);
-  const [editSingerId, setEditSingerId] = useState<string | null>(null);
   const [keywordInput, setKeywordInput] = useState(keyword);
   const composingKeywordRef = useRef(false);
 
@@ -605,11 +607,12 @@ function SingerManagement() {
           [Query.PAGE]: page === 1 ? undefined : page,
           [SingerManagementQuery.PAGE_SIZE]:
             pageSize === DEFAULT_PAGE_SIZE ? undefined : pageSize,
+          [SingerManagementQuery.EDIT_SINGER_ID]: editSingerId ?? undefined,
           ...query,
         },
         replace,
       }),
-    [filterKey, keyword, navigate, page, pageSize],
+    [editSingerId, filterKey, keyword, navigate, page, pageSize],
   );
 
   useEffect(() => {
@@ -637,20 +640,25 @@ function SingerManagement() {
   const requestSingerList = useCallback(
     ({
       signal,
+      silent = false,
       page: requestPage = page,
       keyword: requestKeyword = keyword,
       filterKey: requestFilterKey = filterKey,
     }: {
       signal?: AbortSignal;
+      silent?: boolean;
       page?: number;
       keyword?: string;
       filterKey?: AdminSingerListFilterKey;
     } = {}) => {
-      setData((d) => ({
-        ...d,
-        error: null,
-        loading: true,
-      }));
+      // 静默刷新: 不触发 loading 态, 保持当前列表可见, 失败时再切到错误 UI
+      if (!silent) {
+        setData((d) => ({
+          ...d,
+          error: null,
+          loading: true,
+        }));
+      }
       return adminGetSingerList({
         page: requestPage,
         pageSize,
@@ -686,14 +694,19 @@ function SingerManagement() {
     return () => controller.abort();
   }, [requestSingerList]);
 
+  // CRUD 完成后的刷新: 静默路径
   const reload = useCallback(() => {
+    void requestSingerList({ silent: true });
+  }, [requestSingerList]);
+
+  // 错误 UI 的"重试"按钮: 显式 loading 反馈
+  const retry = useCallback(() => {
     void requestSingerList();
   }, [requestSingerList]);
 
   const onOpenCreateSingerDialog = useCallback(() => {
     openCreateSingerDialog({
       onCreated: (id) => {
-        setEditSingerId(id);
         if (
           !keyword &&
           filterKey === AdminSingerListFilterKey.ALL &&
@@ -701,12 +714,16 @@ function SingerManagement() {
           pageSize === DEFAULT_PAGE_SIZE
         ) {
           reload();
+          updateQuery({
+            [SingerManagementQuery.EDIT_SINGER_ID]: id,
+          });
         } else {
           updateQuery({
             [Query.KEYWORD]: undefined,
             [SingerManagementQuery.FILTER_KEY]: undefined,
             [Query.PAGE]: undefined,
             [SingerManagementQuery.PAGE_SIZE]: undefined,
+            [SingerManagementQuery.EDIT_SINGER_ID]: id,
           });
         }
       },
@@ -715,10 +732,18 @@ function SingerManagement() {
 
   const onEditSinger = useCallback(
     (id: string) => {
-      setEditSingerId(id);
+      updateQuery({
+        [SingerManagementQuery.EDIT_SINGER_ID]: id,
+      });
     },
-    [],
+    [updateQuery],
   );
+
+  const onCloseEditSinger = useCallback(() => {
+    updateQuery({
+      [SingerManagementQuery.EDIT_SINGER_ID]: undefined,
+    });
+  }, [updateQuery]);
 
   const totalPageCount = Math.ceil(data.total / pageSize);
   useEffect(() => {
@@ -790,7 +815,7 @@ function SingerManagement() {
         <Content>
           {data.error ? (
             <StatusBox>
-              <ErrorCard errorMessage={data.error.message} retry={reload} />
+              <ErrorCard errorMessage={data.error.message} retry={retry} />
             </StatusBox>
           ) : data.loading ? (
             <StatusBox>
@@ -950,7 +975,7 @@ function SingerManagement() {
       <SingerEditDrawer
         open={editSingerId !== null}
         singerId={editSingerId}
-        onClose={() => setEditSingerId(null)}
+        onClose={onCloseEditSinger}
         onSaved={reload}
       />
     </ScrollArea>

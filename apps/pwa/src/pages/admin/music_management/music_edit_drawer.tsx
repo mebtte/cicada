@@ -364,22 +364,20 @@ const LyricDeleteButton = styled(Button)`
   font-size: 14px;
 `;
 
-// 与删除按钮等大, 紧贴在删除按钮左侧
-const LyricUploadButton = styled(Button)`
-  position: absolute;
-  top: -16px;
-  right: 24px;
-  z-index: 2;
-  width: 26px;
-  height: 26px;
-  min-width: 0;
-  border-radius: 8px;
-  font-size: 14px;
-`;
-
 // 歌词块行距比通用 FieldGroup 大, 给按钮溢出留出空间
 const LyricFieldGroup = styled(FieldGroup)`
   gap: 20px;
+`;
+
+// 添加歌词 / 上传 LRC 两个按钮并排, 各占一半宽度
+const LyricActions = styled.div`
+  display: flex;
+  gap: 8px;
+
+  > button {
+    flex: 1;
+    min-width: 0;
+  }
 `;
 
 const HiddenFileInput = styled.input`
@@ -407,14 +405,17 @@ const Footer = styled.div`
 `;
 
 const ActionButton = styled(Button)`
-  flex: 1;
-  min-width: 0;
   min-height: 44px;
 
   @media (max-width: 360px) {
     padding: 0 12px;
     font-size: 14px;
   }
+`;
+
+const SaveButton = styled(ActionButton)`
+  flex: 1;
+  min-width: 0;
 `;
 
 const formatDurationMs = (durationMs: number) => {
@@ -621,8 +622,6 @@ function EditContent({
   const fileUploadIdRef = useRef<string | null>(null);
   const fileSelectDialogIdRef = useRef<string | null>(null);
   const lyricFileInputRef = useRef<HTMLInputElement | null>(null);
-  // 同一个隐藏 input 复用给所有歌词槽位, 用 ref 记住当前点击的是哪一条
-  const lyricUploadTargetRef = useRef<number | null>(null);
 
   useEffect(() => {
     setName(music.name);
@@ -738,8 +737,7 @@ function EditContent({
       list.length >= MUSIC_MAX_LRYIC_AMOUNT ? list : [...list, ''],
     );
 
-  const onTriggerLyricUpload = (index: number) => {
-    lyricUploadTargetRef.current = index;
+  const onTriggerLyricUpload = () => {
     lyricFileInputRef.current?.click();
   };
 
@@ -748,21 +746,18 @@ function EditContent({
   ) => {
     const input = event.target;
     const file = input.files?.[0];
-    const targetIndex = lyricUploadTargetRef.current;
-    lyricUploadTargetRef.current = null;
     // 重置以便用户再次选同一个文件时仍能触发 change 事件
     input.value = '';
-    if (!file || targetIndex === null) {
+    if (!file) {
       return;
     }
     try {
       const text = await file.text();
       // 超长直接截断, 与 textarea 的 maxLength 行为一致
       const truncated = text.slice(0, LYRIC_MAX_LENGTH);
+      // 将 lrc 内容作为一条新的歌词追加, 超过上限则丢弃
       setLyrics((list) =>
-        list.map((lyric, lyricIndex) =>
-          lyricIndex === targetIndex ? truncated : lyric,
-        ),
+        list.length >= MUSIC_MAX_LRYIC_AMOUNT ? list : [...list, truncated],
       );
     } catch (error) {
       logger.error(error as Error, 'Failed to read lyric file');
@@ -977,10 +972,6 @@ function EditContent({
     const nextName = normalizeText(name);
     if (!nextName) {
       notice.error(t('empty_name_warning'));
-      return;
-    }
-    if (!singerIds.length) {
-      notice.error(t('emtpy_singers_warning'));
       return;
     }
     if (
@@ -1227,17 +1218,6 @@ function EditContent({
                       onLyricChange(index, event.target.value)
                     }
                   />
-                  <LyricUploadButton
-                    square
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => onTriggerLyricUpload(index)}
-                    disabled={saving}
-                    title={t('upload_lyric')}
-                    aria-label={t('upload_lyric')}
-                  >
-                    <MdFileUpload />
-                  </LyricUploadButton>
                   <LyricDeleteButton
                     square
                     size="sm"
@@ -1252,14 +1232,26 @@ function EditContent({
                 </TextareaRow>
               ))}
               {lyrics.length < MUSIC_MAX_LRYIC_AMOUNT ? (
-                <Button
-                  variant="secondary"
-                  icon={<MdAdd />}
-                  onClick={onAddLyric}
-                  disabled={saving}
-                >
-                  {t('add')} {t('lyric')}
-                </Button>
+                <LyricActions>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon={<MdAdd />}
+                    onClick={onAddLyric}
+                    disabled={saving}
+                  >
+                    {t('add')} {t('lyric')}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon={<MdFileUpload />}
+                    onClick={onTriggerLyricUpload}
+                    disabled={saving}
+                  >
+                    {t('upload_lrc')}
+                  </Button>
+                </LyricActions>
               ) : null}
             </LyricFieldGroup>
             <HiddenFileInput
@@ -1274,7 +1266,7 @@ function EditContent({
       </Body>
 
       <Footer>
-        <ActionButton
+        <SaveButton
           variant="primary"
           onClick={onSave}
           loading={saving}
@@ -1283,15 +1275,14 @@ function EditContent({
           }
         >
           {t('save')}
-        </ActionButton>
+        </SaveButton>
         <ActionButton
           variant="danger"
-          icon={<MdDelete />}
           onClick={onDelete}
           loading={deleting}
           disabled={saving || coverSaving || coverDeleting || fileSaving}
         >
-          {t('delete_music')}
+          {t('delete')}
         </ActionButton>
       </Footer>
     </Form>
@@ -1314,39 +1305,56 @@ function MusicEditDrawer({
   const [error, setError] = useState<Error | null>(null);
   const [music, setMusic] = useState<Music | null>(null);
 
-  const loadMusic = useCallback(async (id: string) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await getMusicRequest({ id, requestMinimalDuration: 0 });
-      let lyrics: Lyric[] = [];
-      if (result.type === MusicType.SONG) {
-        lyrics = await getLyricList({ musicId: id, requestMinimalDuration: 0 });
+  const loadMusic = useCallback(
+    async (id: string, { silent = false }: { silent?: boolean } = {}) => {
+      // 静默刷新: 不切换到 Spinner, 避免保存后 EditContent 短暂被替换造成闪烁
+      if (!silent) {
+        setLoading(true);
+        setError(null);
       }
-      setMusic({
-        id: result.id,
-        name: result.name,
-        cover: result.cover,
-        asset: result.asset,
-        assetSize: result.assetSize,
-        assetDurationMs: result.assetDurationMs,
-        assetCodec: result.assetCodec,
-        assetBitRate: result.assetBitRate,
-        type: result.type,
-        aliases: result.aliases,
-        singers: result.singers,
-        heat: result.heat,
-        lyrics,
-        forkFromList: result.forkFromList,
-        forkList: result.forkList,
-        year: result.year ?? null,
-      });
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      try {
+        const result = await getMusicRequest({ id, requestMinimalDuration: 0 });
+        let lyrics: Lyric[] = [];
+        if (result.type === MusicType.SONG) {
+          lyrics = await getLyricList({
+            musicId: id,
+            requestMinimalDuration: 0,
+          });
+        }
+        setMusic({
+          id: result.id,
+          name: result.name,
+          cover: result.cover,
+          asset: result.asset,
+          assetSize: result.assetSize,
+          assetDurationMs: result.assetDurationMs,
+          assetCodec: result.assetCodec,
+          assetBitRate: result.assetBitRate,
+          type: result.type,
+          aliases: result.aliases,
+          singers: result.singers,
+          heat: result.heat,
+          lyrics,
+          forkFromList: result.forkFromList,
+          forkList: result.forkList,
+          year: result.year ?? null,
+        });
+      } catch (err) {
+        if (silent) {
+          // 静默路径下失败仅作提示, 保留当前 EditContent 不切到 ErrorCard
+          logger.error(err as Error, 'Failed to silently reload music');
+          notice.error((err as Error).message);
+        } else {
+          setError(err as Error);
+        }
+      } finally {
+        if (!silent) {
+          setLoading(false);
+        }
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     if (open && musicId) {
@@ -1366,7 +1374,8 @@ function MusicEditDrawer({
   const handleReload = () => {
     onSaved?.();
     if (musicId) {
-      void loadMusic(musicId);
+      // 保存/上传完成后刷新 drawer 数据走静默路径, drawer 内容不闪烁
+      void loadMusic(musicId, { silent: true });
     }
   };
 

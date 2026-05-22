@@ -1,12 +1,17 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import {
   MdPlayArrow,
   MdReadMore,
   MdOutlinePostAdd,
+  MdOutlineEdit,
   MdPlaylistAdd,
 } from 'react-icons/md';
 import { IconExport } from '@/components/icon';
+import { useUser } from '@/global_states/server';
+import { useSetting } from '@/global_states/setting';
+import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
 import { MusicDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -58,6 +63,10 @@ function Toolbar({
   music: MusicDetail;
   floatingControllerOffset?: boolean;
 }) {
+  const user = useUser();
+  const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
+  // 编辑按钮: 管理员开启「管理员快捷编辑」时才出现, 点击跳转到管理页并自动打开该音乐的编辑 drawer
+  const showAdminEdit = !!user?.admin && adminQuickEdit;
   return (
     <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
@@ -74,56 +83,83 @@ function Toolbar({
         >
           <MdPlayArrow />
         </Button>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('play_next')}
-          onClick={() =>
-            playerEventemitter.emit(
-              PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-              {
-                music,
-              },
-            )
-          }
-        >
-          <MdReadMore />
-        </Button>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('add_to_musicbill')}
-          onClick={() =>
-            playerEventemitter.emit(
-              PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
-              {
-                music,
-              },
-            )
-          }
-        >
-          <MdOutlinePostAdd />
-        </Button>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('add_to_playlist')}
-          onClick={() => addMusicListToPlaylist([music])}
-        >
-          <MdPlaylistAdd />
-        </Button>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('export_music')}
-          onClick={() => openExportMusicListDialog([music])}
-        >
-          <IconExport size="1em" />
-        </Button>
+        <Tooltip content={t('play_next')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('play_next')}
+            onClick={() =>
+              playerEventemitter.emit(
+                PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                {
+                  music,
+                },
+              )
+            }
+          >
+            <MdReadMore />
+          </Button>
+        </Tooltip>
+        <Tooltip content={t('add_to_musicbill')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('add_to_musicbill')}
+            onClick={() =>
+              playerEventemitter.emit(
+                PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
+                {
+                  music,
+                },
+              )
+            }
+          >
+            <MdOutlinePostAdd />
+          </Button>
+        </Tooltip>
+        <Tooltip content={t('add_to_playlist')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('add_to_playlist')}
+            onClick={() => addMusicListToPlaylist([music])}
+          >
+            <MdPlaylistAdd />
+          </Button>
+        </Tooltip>
+        <Tooltip content={t('export_music')}>
+          <Button
+            square
+            variant="ghost"
+            size="sm"
+            aria-label={t('export_music')}
+            onClick={() => openExportMusicListDialog([music])}
+          >
+            <IconExport size="1em" />
+          </Button>
+        </Tooltip>
+        {showAdminEdit ? (
+          <Tooltip content={t('edit_music')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('edit_music')}
+              onClick={() =>
+                window.open(
+                  `#${ROOT_PATH.ADMIN}/${ADMIN_PATH.MUSIC_MANAGEMENT}?edit_music_id=${encodeURIComponent(music.id)}`,
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+              }
+            >
+              <MdOutlineEdit />
+            </Button>
+          </Tooltip>
+        ) : null}
       </div>
     </Style>
   );

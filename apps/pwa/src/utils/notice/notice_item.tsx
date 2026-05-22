@@ -1,6 +1,7 @@
 import { memo, ReactNode, useCallback, useLayoutEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import { MdClose, MdInfoOutline, MdErrorOutline } from 'react-icons/md';
+import { Branch as DismissableLayerBranch } from '@radix-ui/react-dismissable-layer';
 import { CSSVariable } from '@/global_style';
 import { UtilZIndex } from '@/constants/style';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
@@ -153,34 +154,43 @@ function NoticeItem({ notice }: { notice: Notice }) {
   }, [id]);
 
   return (
-    <Style
-      ref={ref}
-      style={{
-        top,
-        opacity: visible ? 1 : 0,
-        transform: `translateX(${visible ? 0 : 110}%)`,
-      }}
-      type={type}
-    >
-      <div className="top">
-        {showTypeIcon ? (
-          <div className="type-icon">{NOTICE_TYPE_MAP[type].icon}</div>
-        ) : null}
-        <div className="content">{content}</div>
-        {closable ? (
-          <Button className="close" square variant="plain" size="sm" onClick={onClose}>
-            <MdClose />
-          </Button>
-        ) : null}
-      </div>
-      {duration === 0 ? null : (
-        <div
-          className="progress"
-          style={{ animationDuration: `${duration}ms` }}
-          onAnimationEnd={onClose}
-        />
-      )}
-    </Style>
+    // Notice 在独立的 React root 上, 需要注册为 Radix branch, 避免点击 notice 被 drawer/dialog 判定为外部点击并关闭.
+    <DismissableLayerBranch asChild>
+      <Style
+        ref={ref}
+        style={{
+          top,
+          opacity: visible ? 1 : 0,
+          transform: `translateX(${visible ? 0 : 110}%)`,
+        }}
+        type={type}
+      >
+        <div className="top">
+          {showTypeIcon ? (
+            <div className="type-icon">{NOTICE_TYPE_MAP[type].icon}</div>
+          ) : null}
+          <div className="content">{content}</div>
+          {closable ? (
+            <Button
+              className="close"
+              square
+              variant="plain"
+              size="sm"
+              onClick={onClose}
+            >
+              <MdClose />
+            </Button>
+          ) : null}
+        </div>
+        {duration === 0 ? null : (
+          <div
+            className="progress"
+            style={{ animationDuration: `${duration}ms` }}
+            onAnimationEnd={onClose}
+          />
+        )}
+      </Style>
+    </DismissableLayerBranch>
   );
 }
 

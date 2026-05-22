@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
+import { Tooltip } from '@/components';
 import {
   MdUnfoldLess,
   MdOutlineQueueMusic,
@@ -15,6 +16,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { QueueMusic } from '../../constants';
+import { t } from '@/i18n';
 
 const Style = styled.div`
   ${flexCenter}
@@ -46,31 +48,38 @@ function Operation({
 }) {
   return (
     <Style>
-      <Button
-        square
-        variant="ghost"
-        size="sm"
-        onClick={() =>
-          playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER, {
-            music: queueMusic,
-          })
-        }
-      >
-        <MdOutlinePostAdd />
-      </Button>
-      <Button
-        square
-        variant="ghost"
-        size="sm"
-        onClick={() =>
-          playerEventemitter.emit(
-            PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-            { music: queueMusic },
-          )
-        }
-      >
-        <MdReadMore />
-      </Button>
+      <Tooltip content={t('add_to_musicbill')}>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.OPEN_MUSICBILL_MUSIC_DRAWER,
+              {
+                music: queueMusic,
+              },
+            )
+          }
+        >
+          <MdOutlinePostAdd />
+        </Button>
+      </Tooltip>
+      <Tooltip content={t('play_next')}>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+              { music: queueMusic },
+            )
+          }
+        >
+          <MdReadMore />
+        </Button>
+      </Tooltip>
       <Button square variant="ghost" size="sm" onClick={onPrevious}>
         <MdSkipPrevious />
       </Button>
@@ -94,9 +103,11 @@ function Operation({
       >
         <MdOutlineQueueMusic />
       </Button>
-      <Button square variant="ghost" size="sm" onClick={closeLyricPanel}>
-        <MdUnfoldLess />
-      </Button>
+      <Tooltip content={t('collapse')}>
+        <Button square variant="ghost" size="sm" onClick={closeLyricPanel}>
+          <MdUnfoldLess />
+        </Button>
+      </Tooltip>
     </Style>
   );
 }

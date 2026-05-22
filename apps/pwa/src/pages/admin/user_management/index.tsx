@@ -199,7 +199,6 @@ const EmptyTip = styled.div`
 const TableScroll = styled.div`
   height: 100%;
   padding: 0 20px 92px;
-  background: rgb(247 247 247);
   overflow: auto;
   scroll-padding-bottom: 92px;
   ${autoScrollbar}
@@ -241,7 +240,7 @@ const Th = styled.th`
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
     box-shadow:
-      -6px 0 0 rgb(247 247 247),
+      -6px 0 0 #fff,
       0 3px 0 ${ROW_SHADOW};
   }
 `;
@@ -270,7 +269,7 @@ const Td = styled.td`
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
     box-shadow:
-      -6px 0 0 rgb(247 247 247),
+      -6px 0 0 #fff,
       0 3px 0 ${ROW_SHADOW};
   }
 
@@ -532,12 +531,18 @@ function UserManagement() {
   }, [keyword]);
 
   const requestUserList = useCallback(
-    ({ signal }: { signal?: AbortSignal } = {}) => {
-      setData((d) => ({
-        ...d,
-        error: null,
-        loading: true,
-      }));
+    ({
+      signal,
+      silent = false,
+    }: { signal?: AbortSignal; silent?: boolean } = {}) => {
+      // 静默刷新: 不触发 loading 态, 保持当前列表可见, 失败时再切到错误 UI
+      if (!silent) {
+        setData((d) => ({
+          ...d,
+          error: null,
+          loading: true,
+        }));
+      }
       return adminGetUserList()
         .then((userList) => {
           if (signal?.aborted) return;
@@ -565,7 +570,13 @@ function UserManagement() {
     return () => controller.abort();
   }, [requestUserList]);
 
+  // CRUD 完成后的刷新: 静默路径
   const reload = useCallback(() => {
+    void requestUserList({ silent: true });
+  }, [requestUserList]);
+
+  // 错误 UI 的"重试"按钮: 显式 loading 反馈, 与初次加载行为一致
+  const retry = useCallback(() => {
     void requestUserList();
   }, [requestUserList]);
 
@@ -705,7 +716,7 @@ function UserManagement() {
       <Content>
         {data.error ? (
           <StatusBox>
-            <ErrorCard errorMessage={data.error.message} retry={reload} />
+            <ErrorCard errorMessage={data.error.message} retry={retry} />
           </StatusBox>
         ) : data.loading ? (
           <StatusBox>

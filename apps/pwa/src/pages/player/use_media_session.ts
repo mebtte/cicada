@@ -37,6 +37,48 @@ function useMediaSession({
   paused: boolean;
   duration: number;
 }) {
+  /**
+   * 注册系统媒体键 handler.
+   * 只依赖 audio (实例稳定), 不随 music 变化重新注册.
+   * 切歌瞬间若 handler 被卸载, macOS Now Playing 会把 next/prev 等系统键
+   * 派发到其他媒体应用, 造成加载态下系统级切歌键无效.
+   * @author mebtte<i@mebtte.com>
+   */
+  useEffect(() => {
+    if (!('mediaSession' in window.navigator) || !audio) {
+      return;
+    }
+    const actions: [MediaSessionAction, MediaSessionActionHandler][] = [
+      ['play', () => e.emit(EventType.ACTION_PLAY, null)],
+      ['pause', () => e.emit(EventType.ACTION_PAUSE, null)],
+      ['previoustrack', () => e.emit(EventType.ACTION_PREVIOUS, null)],
+      ['nexttrack', () => e.emit(EventType.ACTION_NEXT, null)],
+      [
+        'seekto',
+        (details) => {
+          if (typeof details.seekTime === 'number') {
+            e.emit(EventType.ACTION_SET_TIME, { second: details.seekTime });
+          }
+        },
+      ],
+      [
+        'stop',
+        () => {
+          audio.pause();
+          audio.setCurrentTime(0);
+          e.emit(EventType.AUDIO_TIME_UPDATED, { currentMillisecond: 0 });
+        },
+      ],
+    ];
+    actions.forEach(([action, handler]) =>
+      safeSetActionHandler(action, handler),
+    );
+    return () => {
+      actions.forEach(([action]) => safeSetActionHandler(action, null));
+    };
+  }, [audio]);
+
+  // 同步 metadata: 仅随 music 变化.
   useEffect(() => {
     if (!('mediaSession' in window.navigator)) {
       return;
@@ -57,68 +99,48 @@ function useMediaSession({
           }))
         : [],
     });
+  }, [music]);
 
-    const actions: [MediaSessionAction, MediaSessionActionHandler][] = [
-      ['play', () => e.emit(EventType.ACTION_PLAY, null)],
-      ['pause', () => e.emit(EventType.ACTION_PAUSE, null)],
-      ['previoustrack', () => e.emit(EventType.ACTION_PREVIOUS, null)],
-      ['nexttrack', () => e.emit(EventType.ACTION_NEXT, null)],
-      [
-        'seekto',
-        (details) => {
-          if (typeof details.seekTime === 'number') {
-            e.emit(EventType.ACTION_SET_TIME, { second: details.seekTime });
-          }
-        },
-      ],
-      [
-        'stop',
-        () => {
-          if (!audio) {
-            return;
-          }
-          audio.pause();
-          audio.setCurrentTime(0);
-          e.emit(EventType.AUDIO_TIME_UPDATED, { currentMillisecond: 0 });
-        },
-      ],
-    ];
-    actions.forEach(([action, handler]) =>
-      safeSetActionHandler(action, handler),
-    );
-    return () => {
-      actions.forEach(([action]) => safeSetActionHandler(action, null));
-    };
-  }, [music, audio]);
-
-  useEffect(() => {
-    if (!('mediaSession' in window.navigator) || !music) {
-      return;
-    }
-    safeSetPlaybackState(paused ? 'paused' : 'playing');
-  }, [music, paused]);
-
+  /**
+   * 同步 playbackState.
+   * 切歌期间 audio 因 src 变更进入 HAVE_NOTHING, 会触发 'pause' 事件,
+   * 直接降级为 'paused' 会让 macOS Now Playing 释放本应用,
+   * 后续系统级切歌键将派发到其他应用. 这里在没有可播放数据时保持 'playing',
+   * 等到真正暂停 (用户手动或播放结束且数据已就绪) 才置为 'paused'.
+   * @author mebtte<i@mebtte.com>
+   */
   useEffect(() => {
     if (!('mediaSession' in window.navigator) || !music || !audio) {
       return;
     }
-    const sync = () =>
-      safeSetPlaybackState(audio.isPaused() ? 'paused' : 'playing');
-    const setPlaying = () => safeSetPlaybackState('playing');
-    const setPaused = () => safeSetPlaybackState('paused');
+    const sync = () => {
+      if (audio.isPaused() && audio.hasPlayableData()) {
+        safeSetPlaybackState('paused');
+      } else {
+        safeSetPlaybackState('playing');
+      }
+    };
 
     sync();
-    const unlistenPlay = audio.listen('play', setPlaying);
-    const unlistenPlaying = audio.listen('playing', setPlaying);
-    const unlistenPause = audio.listen('pause', setPaused);
-    const unlistenEnded = audio.listen('ended', setPaused);
-    const unlistenError = audio.listen('error', setPaused);
+    const unlistenPlay = audio.listen('play', sync);
+    const unlistenPlaying = audio.listen('playing', sync);
+    const unlistenPause = audio.listen('pause', sync);
+    const unlistenEnded = audio.listen('ended', sync);
+    const unlistenError = audio.listen('error', sync);
+    const unlistenEmptied = audio.listen('emptied', sync);
+    const unlistenLoadStart = audio.listen('loadstart', sync);
+    const unlistenCanplay = audio.listen('canplay', sync);
+    const unlistenLoadedData = audio.listen('loadeddata', sync);
     return () => {
       unlistenPlay();
       unlistenPlaying();
       unlistenPause();
       unlistenEnded();
       unlistenError();
+      unlistenEmptied();
+      unlistenLoadStart();
+      unlistenCanplay();
+      unlistenLoadedData();
     };
   }, [music, audio]);
 

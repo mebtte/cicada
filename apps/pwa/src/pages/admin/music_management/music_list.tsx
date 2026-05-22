@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import {
   MdArrowDownward,
   MdArrowUpward,
+  MdCloudUpload,
   MdMusicNote,
   MdOpenInNew,
   MdOutlineEdit,
@@ -43,6 +44,7 @@ import adminGetMusicList, {
   AdminMusicListSortBy,
   AdminMusicListSortOrder,
 } from '@/server/api/admin_get_music_list';
+import { setWindowOpen as setImportWindowOpen } from '@/global_states/music_import';
 import FloatingMusicPlayer from './floating_music_player';
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -162,6 +164,19 @@ const Content = styled.div`
   overflow: hidden;
 `;
 
+// 与歌手管理的浮动新增按钮风格一致, 点击打开音乐导入 drawer
+const FloatingImportButton = styled(Button)`
+  position: absolute;
+  right: 40px;
+  bottom: 34px;
+  z-index: 3;
+
+  @media (max-width: 640px) {
+    right: 28px;
+    bottom: 28px;
+  }
+`;
+
 const SearchForm = styled.form`
   display: flex;
   align-items: flex-start;
@@ -196,9 +211,10 @@ const StatusBox = styled.div`
 
 const TableScroll = styled.div`
   height: 100%;
-  padding: 0 20px 18px;
-  background: rgb(247 247 247);
+  /* 底部留出 92px 以避开浮动导入按钮, 与歌手管理一致 */
+  padding: 0 20px 92px;
   overflow: auto;
+  scroll-padding-bottom: 92px;
   ${autoScrollbar}
 `;
 
@@ -238,7 +254,7 @@ const Th = styled.th`
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
     box-shadow:
-      -6px 0 0 rgb(247 247 247),
+      -6px 0 0 #fff,
       0 3px 0 ${ROW_SHADOW};
   }
 `;
@@ -303,7 +319,7 @@ const Td = styled.td`
     border-right: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 0 15px 15px 0;
     box-shadow:
-      -6px 0 0 rgb(247 247 247),
+      -6px 0 0 #fff,
       0 3px 0 ${ROW_SHADOW};
   }
 
@@ -840,20 +856,25 @@ function MusicList({
   const requestMusicList = useCallback(
     ({
       signal,
+      silent = false,
       page: requestPage = page,
       keyword: requestKeyword = keyword,
       filterKey: requestFilterKey = filterKey,
     }: {
       signal?: AbortSignal;
+      silent?: boolean;
       page?: number;
       keyword?: string;
       filterKey?: AdminMusicListFilterKey;
     } = {}) => {
-      setData((d) => ({
-        ...d,
-        error: null,
-        loading: true,
-      }));
+      // 静默刷新: 不触发 loading 态, 保持当前列表可见, 失败时再切到错误 UI
+      if (!silent) {
+        setData((d) => ({
+          ...d,
+          error: null,
+          loading: true,
+        }));
+      }
       return adminGetMusicList({
         page: requestPage,
         pageSize,
@@ -885,11 +906,29 @@ function MusicList({
     [filterKey, keyword, page, pageSize, sortBy, sortOrder],
   );
 
+  // 初次挂载和筛选/排序/分页等参数变化: 显式 loading
   useEffect(() => {
     const controller = new AbortController();
     void requestMusicList({ signal: controller.signal });
     return () => controller.abort();
-  }, [requestMusicList, reloadToken]);
+  }, [requestMusicList]);
+
+  // 父级 reloadToken 在 CRUD 完成后递增, 走静默刷新; 跳过初次挂载避免重复请求
+  const requestMusicListRef = useRef(requestMusicList);
+  requestMusicListRef.current = requestMusicList;
+  const skipFirstReloadTokenRef = useRef(true);
+  useEffect(() => {
+    if (skipFirstReloadTokenRef.current) {
+      skipFirstReloadTokenRef.current = false;
+      return;
+    }
+    const controller = new AbortController();
+    void requestMusicListRef.current({
+      signal: controller.signal,
+      silent: true,
+    });
+    return () => controller.abort();
+  }, [reloadToken]);
 
   const onHeatSortClick = useCallback(() => {
     if (sortBy !== AdminMusicListSortBy.HEAT) {
@@ -924,7 +963,8 @@ function MusicList({
     }
   }, [data.musicList, playerMusic]);
 
-  const reload = useCallback(() => {
+  // 错误 UI 的"重试"按钮: 显式 loading 反馈
+  const retry = useCallback(() => {
     void requestMusicList();
   }, [requestMusicList]);
 
@@ -1002,7 +1042,7 @@ function MusicList({
       <Content>
         {data.error ? (
           <StatusBox>
-            <ErrorCard errorMessage={data.error.message} retry={reload} />
+            <ErrorCard errorMessage={data.error.message} retry={retry} />
           </StatusBox>
         ) : data.loading ? (
           <StatusBox>
@@ -1152,6 +1192,15 @@ function MusicList({
             </Table>
           </TableScroll>
         )}
+        <FloatingImportButton
+          square
+          size="lg"
+          variant="primary"
+          icon={<MdCloudUpload />}
+          aria-label={capitalize(t('upload_music'))}
+          title={capitalize(t('upload_music'))}
+          onClick={() => setImportWindowOpen(true)}
+        />
       </Content>
 
       <Footer>
