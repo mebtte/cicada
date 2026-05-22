@@ -137,9 +137,6 @@ func GetMusic(c *gin.Context) {
 	var musicbillCount int
 	store.DB().QueryRow(`SELECT COUNT(1) FROM musicbill_music WHERE musicId=?`, id).Scan(&musicbillCount)
 
-	var createUserNickname string
-	store.DB().QueryRow(`SELECT nickname FROM user WHERE id=?`, m.CreateUserID).Scan(&createUserNickname)
-
 	// Build fork music summaries
 	forkIDs := make([]string, len(forks))
 	for i, f := range forks {
@@ -191,7 +188,6 @@ func GetMusic(c *gin.Context) {
 		"createTimestamp":            m.CreateTimestamp,
 		"year":                       nullInt64(m.Year),
 		"singers":                    singerItemsWithPhotos(singersByMusic[id], photosBySinger),
-		"createUser":                 gin.H{"id": m.CreateUserID, "nickname": createUserNickname},
 		"forkList":                   forkList,
 		"forkFromList":               forkFromList,
 		"musicbillCount":             musicbillCount,

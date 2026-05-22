@@ -12,6 +12,7 @@ import Cover, { Shape } from '@/components/cover';
 import Spinner from '@/components/spinner';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
+import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { flexCenter } from '@/style/flexbox';
 import { t } from '@/i18n';
 import {
@@ -177,6 +178,17 @@ const DetailContent = styled.div<{ $insideDrawer: boolean }>`
   max-width: ${({ $insideDrawer }) => ($insideDrawer ? 'none' : '520px')};
   margin: 0 auto;
 `;
+const CreateTime = styled.div`
+  margin: 18px ${PAGE_HORIZONTAL_PADDING} 0;
+
+  text-align: center;
+  color: rgb(160 160 160);
+  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  ${upperCaseFirstLetter}
+`;
 const CoverFrame = styled.div<{ $insideDrawer: boolean }>`
   padding: ${({ $insideDrawer }) =>
     $insideDrawer ? '0' : `18px ${PAGE_HORIZONTAL_PADDING} 0`};
@@ -332,6 +344,8 @@ function Detail({
               musicbillList={music.relatedPublicMusicbillList}
             />
             <Lyric music={music} />
+            {/* 音乐创建时间, 居中显示在抽屉内容最底部 */}
+            <CreateTime>{t('create_at')} {music.createTime}</CreateTime>
           </DetailContent>
         </div>
       </div>

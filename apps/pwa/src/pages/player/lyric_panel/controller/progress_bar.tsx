@@ -10,7 +10,12 @@ const Style = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  /* 大屏下限制进度条最大宽度并居中, 避免横向拉得过开 */
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
   padding: 8px 10px ${LYRIC_PANEL_PROGRESS_BOTTOM_PADDING}px;
+  box-sizing: border-box;
 
   > .slider {
     flex: 1;

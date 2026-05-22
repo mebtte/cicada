@@ -1696,7 +1696,7 @@ func musicDetailSchema() map[string]any {
 	return objSchema(
 		[]string{
 			"id", "type", "name", "aliases", "cover", "asset", "heat", "createTimestamp",
-			"singers", "createUser", "forkList", "forkFromList", "musicbillCount",
+			"singers", "forkList", "forkFromList", "musicbillCount",
 		},
 		map[string]any{
 			"id":              strSchema("Music ID.", "music-1"),
@@ -1709,7 +1709,6 @@ func musicDetailSchema() map[string]any {
 			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
 			"year":            nullableSchema(intSchema("Year.", 2024)),
 			"singers":         arraySchema(singerSchema()),
-			"createUser":      userBriefSchema(false),
 			"forkList":        arraySchema(musicRelatedSchema()),
 			"forkFromList":    arraySchema(musicRelatedSchema()),
 			"musicbillCount":  intSchema("Musicbill reference count.", 3),
@@ -1734,7 +1733,6 @@ func musicDetailExample() map[string]any {
 		"singers": []any{
 			map[string]any{"id": "singer-1", "name": "Aurora", "aliases": []string{"AUR"}},
 		},
-		"createUser":     map[string]any{"id": "1", "nickname": "Cicada"},
 		"forkList":       []any{},
 		"forkFromList":   []any{},
 		"musicbillCount": 3,

@@ -26,7 +26,6 @@ type Response = Omit<Music, 'singers'> & {
   aliases: string[];
   heat: number;
   createTimestamp: number;
-  createUser: { id: string; nickname: string };
   forkList: Music[];
   forkFromList: Music[];
   year: number | null;
