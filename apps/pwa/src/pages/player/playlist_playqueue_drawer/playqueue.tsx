@@ -105,13 +105,11 @@ function QueueMusicItem({
   active,
   canRemove,
   dragHandle,
-  highlight,
   queueMusic,
 }: {
   active: boolean;
   canRemove: boolean;
   dragHandle?: ReactNode;
-  highlight: boolean;
   queueMusic: QueueMusic;
 }) {
   return (
@@ -119,7 +117,6 @@ function QueueMusicItem({
       index={queueMusic.index}
       music={queueMusic}
       active={active}
-      highlight={highlight}
       lineAfter={
         <Operation>
           {queueMusic.shuffle ? (
@@ -158,12 +155,10 @@ function QueueMusicItem({
 function SortableQueueMusicItem({
   active,
   canRemove,
-  highlight,
   queueMusic,
 }: {
   active: boolean;
   canRemove: boolean;
-  highlight: boolean;
   queueMusic: QueueMusic;
 }) {
   const {
@@ -187,7 +182,6 @@ function SortableQueueMusicItem({
       <QueueMusicItem
         active={active}
         canRemove={canRemove}
-        highlight={highlight}
         queueMusic={queueMusic}
         dragHandle={
           <DragActivator {...attributes} {...listeners}>
@@ -224,7 +218,6 @@ function PlayqueueDragOverlay({
         <QueueMusicItem
           active={false}
           canRemove={false}
-          highlight={false}
           queueMusic={activeQueueMusic}
         />
       ) : null}
@@ -340,10 +333,6 @@ function Playqueue() {
                   const active =
                     !animatedQueueMusic.leaving &&
                     actualIndex === currentPlayqueuePosition;
-                  const highlight =
-                    !animatedQueueMusic.leaving &&
-                    currentPlayqueuePosition >= 0 &&
-                    actualIndex === currentPlayqueuePosition + 1;
                   const canRemove =
                     !animatedQueueMusic.leaving &&
                     actualIndex > currentPlayqueuePosition;
@@ -359,14 +348,12 @@ function Playqueue() {
                         <SortableQueueMusicItem
                           active={active}
                           canRemove={canRemove}
-                          highlight={highlight}
                           queueMusic={queueMusic}
                         />
                       ) : (
                         <QueueMusicItem
                           active={active}
                           canRemove={canRemove}
-                          highlight={highlight}
                           queueMusic={queueMusic}
                         />
                       )}

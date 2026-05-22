@@ -9,16 +9,12 @@ import { Singer as SingerType } from '../constants';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
-const NEXT_BACKGROUND = 'rgb(255 248 224)';
-const NEXT_BORDER = 'rgb(245 176 43)';
-const NEXT_SHADOW = 'rgb(221 151 24)';
-const NEXT_TEXT = 'rgb(130 87 0)';
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
 const Style = styled.div`
   padding-bottom: 10px;
 `;
-const Card = styled.div<{ $active: boolean; $highlight: boolean }>`
+const Card = styled.div<{ $active: boolean }>`
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -34,22 +30,13 @@ const Card = styled.div<{ $active: boolean; $highlight: boolean }>`
   overflow: hidden;
 
   font-family: ${FONT};
-  background: ${({ $active, $highlight }) =>
-    $active
-      ? 'rgb(232 255 218)'
-      : $highlight
-        ? NEXT_BACKGROUND
-        : '#fff'} !important;
+  background: ${({ $active }) =>
+    $active ? 'rgb(232 255 218)' : '#fff'} !important;
   border: 2px solid
-    ${({ $active, $highlight }) =>
-      $active ? PRIMARY : $highlight ? NEXT_BORDER : CSSVariable.COLOR_BORDER};
+    ${({ $active }) => ($active ? PRIMARY : CSSVariable.COLOR_BORDER)};
   border-radius: 16px;
-  box-shadow: 0 4px 0 ${({ $active, $highlight }) =>
-    $active
-      ? PRIMARY_SHADOW
-      : $highlight
-        ? NEXT_SHADOW
-        : CSSVariable.COLOR_SURFACE_SHADOW};
+  box-shadow: 0 4px 0 ${({ $active }) =>
+    $active ? PRIMARY_SHADOW : CSSVariable.COLOR_SURFACE_SHADOW};
   transition:
     transform 150ms ease-out,
     box-shadow 150ms ease-out,
@@ -62,12 +49,8 @@ const Card = styled.div<{ $active: boolean; $highlight: boolean }>`
     background: transparent;
     border: 0;
     border-radius: 0;
-    color: ${({ $active, $highlight }) =>
-      $active
-        ? PRIMARY
-        : $highlight
-          ? NEXT_TEXT
-          : CSSVariable.TEXT_COLOR_SECONDARY};
+    color: ${({ $active }) =>
+      $active ? PRIMARY : CSSVariable.TEXT_COLOR_SECONDARY};
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     font-weight: 900;
     writing-mode: vertical-lr;
@@ -95,12 +78,8 @@ const Card = styled.div<{ $active: boolean; $highlight: boolean }>`
           > .name {
             line-height: 1.5;
             font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
-            color: ${({ $active, $highlight }) =>
-              $active
-                ? 'rgb(58 122 0)'
-                : $highlight
-                  ? NEXT_TEXT
-                  : CSSVariable.TEXT_COLOR_PRIMARY};
+            color: ${({ $active }) =>
+              $active ? 'rgb(58 122 0)' : CSSVariable.TEXT_COLOR_PRIMARY};
             font-weight: 900;
           }
 
@@ -159,8 +138,8 @@ const Card = styled.div<{ $active: boolean; $highlight: boolean }>`
   }
 
   &:hover {
-    border-color: ${({ $active, $highlight }) =>
-      $active ? PRIMARY : $highlight ? NEXT_BORDER : 'rgb(198 198 198)'};
+    border-color: ${({ $active }) =>
+      $active ? PRIMARY : 'rgb(198 198 198)'};
     filter: brightness(1.02);
   }
 
@@ -177,7 +156,6 @@ const Card = styled.div<{ $active: boolean; $highlight: boolean }>`
 
 function MusicBase({
   active = false,
-  highlight = false,
   index,
   music,
   lineAfter,
@@ -185,7 +163,6 @@ function MusicBase({
   ...props
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   active?: boolean;
-  highlight?: boolean;
   index: number;
   music: {
     id: string;
@@ -200,7 +177,7 @@ function MusicBase({
     e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id });
   return (
     <Style {...props}>
-      <Card $active={active} $highlight={highlight} onClick={openMusicDrawer}>
+      <Card $active={active} onClick={openMusicDrawer}>
         <div className="index">{index}</div>
         <div className="content">
           <div className="music">
