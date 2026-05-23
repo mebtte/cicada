@@ -156,6 +156,7 @@ const zhCN: {
   add: '添加',
   select_image: '选择图片',
   pwa_update_question: '发现新版本',
+  pwa_update_confirm: '更新',
   pwa_update_try_later: '更新超时, 请稍后再试',
   music: '音乐',
   music_id: '音乐 ID',

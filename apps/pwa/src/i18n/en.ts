@@ -157,6 +157,7 @@ export default {
   add: 'add',
   select_image: 'select image',
   pwa_update_question: 'new version available',
+  pwa_update_confirm: 'update',
   pwa_update_try_later: 'update timed out, try again later',
   music: 'music',
   music_id: 'music ID',

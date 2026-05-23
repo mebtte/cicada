@@ -170,7 +170,7 @@ function VersionUpdateNotice({
               wb.messageSkipWaiting();
             }}
           >
-            {t('alert_confirm')}
+            {t('pwa_update_confirm')}
           </Button>
           <Button
             className="dismiss-action"

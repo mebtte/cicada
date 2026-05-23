@@ -88,11 +88,9 @@ const Style = styled.div<{ $playing: boolean }>`
     > .content {
       gap: ${miniMode ? 10 : 15}px;
 
-      padding-right: ${miniMode ? 0 : 10}px;
-
       > .cover {
         align-self: flex-start;
-        /* 顶部留白 = 外层 padding(4) + INSET(6); 配合缩小的封面高度, 底部阴影末端也留出同样的间距 */
+        /* 顶部视觉留白 = 外层 VERTICAL_PADDING + INSET; 底部由阴影向下溢出补齐, 使上下视觉一致 */
         margin-top: ${CONTROLLER_COVER_INSET}px;
         height: ${CONTROLLER_COVER_HEIGHT}px;
       }

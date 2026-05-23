@@ -7,9 +7,11 @@ export const HEADER_HEIGHT = 72;
 
 export const CONTROLLER_BORDER_WIDTH = 2;
 export const CONTROLLER_VERTICAL_PADDING = 4;
-export const CONTROLLER_HORIZONTAL_PADDING = 10;
-/* 封面相对于内容区四周再额外预留的留白, 用于让封面看起来更小、更透气 */
-export const CONTROLLER_COVER_INSET = 6;
+/* 封面相对于内容区四周再额外预留的留白 */
+export const CONTROLLER_COVER_INSET = 2;
+/* 水平 padding 在封面顶部视觉留白 (VERTICAL_PADDING + COVER_INSET) 基础上额外 +3px, 给操作区留出呼吸空间, 左右对称 */
+export const CONTROLLER_HORIZONTAL_PADDING =
+  CONTROLLER_VERTICAL_PADDING + CONTROLLER_COVER_INSET + 3;
 export const CONTROLLER_PROGRESS_HEIGHT = 26;
 export const CONTROLLER_BUTTON_ROW_HEIGHT = 34;
 
@@ -27,11 +29,9 @@ export const CONTROLLER_CONTENT_HEIGHT =
   CONTROLLER_BUTTON_ROW_HEIGHT +
   CONTROLLER_COVER_EXTRA_SIZE;
 
-/* 封面元素尺寸 = 内容区高度 - 阴影偏移 - 两端额外留白 */
+/* 封面元素尺寸 = 内容区高度 - 两端额外留白; 阴影向下溢出元素本身, 视觉上抵消底部多余留白 */
 export const CONTROLLER_COVER_HEIGHT =
-  CONTROLLER_CONTENT_HEIGHT -
-  CONTROLLER_COVER_SHADOW -
-  CONTROLLER_COVER_INSET * 2;
+  CONTROLLER_CONTENT_HEIGHT - CONTROLLER_COVER_INSET * 2;
 
 export const CONTROLLER_HEIGHT =
   CONTROLLER_BORDER_WIDTH * 2 +
