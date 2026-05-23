@@ -12,6 +12,8 @@ import {
   CONTROLLER_HEIGHT,
   CONTROLLER_PROGRESS_BUTTON_GAP,
   CONTROLLER_VERTICAL_PADDING,
+  CONTROLLER_HORIZONTAL_PADDING,
+  CONTROLLER_COVER_INSET,
   type QueueMusic,
   ZIndex,
 } from '../constants';
@@ -42,7 +44,7 @@ const Style = styled.div<{ $playing: boolean }>`
   display: flex;
   flex-direction: column;
 
-  padding: ${CONTROLLER_VERTICAL_PADDING}px 10px;
+  padding: ${CONTROLLER_VERTICAL_PADDING}px ${CONTROLLER_HORIZONTAL_PADDING}px;
 
   background: #fff;
   border: ${CONTROLLER_BORDER_WIDTH}px solid
@@ -90,6 +92,8 @@ const Style = styled.div<{ $playing: boolean }>`
 
       > .cover {
         align-self: flex-start;
+        /* 顶部留白 = 外层 padding(4) + INSET(6); 配合缩小的封面高度, 底部阴影末端也留出同样的间距 */
+        margin-top: ${CONTROLLER_COVER_INSET}px;
         height: ${CONTROLLER_COVER_HEIGHT}px;
       }
 

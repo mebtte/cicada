@@ -21,6 +21,14 @@ const Style = styled.div`
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   user-select: none;
   transform: translateY(1.5px);
+
+  /* 上下时间之间的分隔线 */
+  > .separator {
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.4;
+  }
 `;
 
 function Time({ duration }: { duration: number }) {
@@ -28,6 +36,7 @@ function Time({ duration }: { duration: number }) {
   return (
     <Style>
       <div>{formatSecond(currentMillisecond / 1000)}</div>
+      <div className="separator" />
       <div className="duration">{formatSecond(duration)}</div>
     </Style>
   );
