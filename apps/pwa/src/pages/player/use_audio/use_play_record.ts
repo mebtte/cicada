@@ -7,6 +7,7 @@ import {
   enqueuePlayRecordUpload,
   flushPlayRecordUploadQueue,
   getCurrentMusicPlayRecordUploadAuth,
+  schedulePlayRecordUploadQueueFlush,
 } from './play_record_upload_queue';
 
 const PERIODIC_UPLOAD_INTERVAL = 15 * 1000;
@@ -23,6 +24,8 @@ interface ActivePlayRecord {
   maxPercent: number;
   thresholdIndex: number;
 }
+
+type FlushMode = 'immediate' | 'scheduled' | 'none';
 
 function getAudioDuration(audio: CustomAudio<QueueMusic>) {
   const duration = audio.getDuration();
@@ -121,7 +124,9 @@ export default (
 ) => {
   const activeRecordRef = useRef<ActivePlayRecord | null>(null);
 
-  const queueCurrentRecord = ({ flush = true }: { flush?: boolean } = {}) => {
+  const queueCurrentRecord = ({
+    flush = 'scheduled',
+  }: { flush?: FlushMode } = {}) => {
     if (!audio) {
       return;
     }
@@ -132,8 +137,11 @@ export default (
 
     const queueItem = createQueueItem(audio, activeRecord);
     void enqueuePlayRecordUpload(queueItem).then(() => {
-      if (flush) {
+      if (flush === 'immediate') {
         return flushPlayRecordUploadQueue();
+      }
+      if (flush === 'scheduled') {
+        schedulePlayRecordUploadQueueFlush();
       }
       return undefined;
     });
@@ -199,9 +207,11 @@ export default (
       }
     });
     const unlistenPause = audio.listen('pause', () => queueCurrentRecord());
-    const unlistenEnded = audio.listen('ended', () => queueCurrentRecord());
+    const unlistenEnded = audio.listen('ended', () =>
+      queueCurrentRecord({ flush: 'immediate' }),
+    );
     const flushOnOnline = () => void flushPlayRecordUploadQueue();
-    const queueBeforePageFreeze = () => queueCurrentRecord({ flush: false });
+    const queueBeforePageFreeze = () => queueCurrentRecord({ flush: 'none' });
     const queueWhenHidden = () => {
       if (window.document.visibilityState === 'hidden') {
         queueBeforePageFreeze();

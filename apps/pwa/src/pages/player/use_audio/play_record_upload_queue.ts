@@ -15,6 +15,7 @@ import storage, {
 const MAX_QUEUE_LENGTH = 200;
 const BASE_RETRY_DELAY = 3 * 1000;
 const MAX_RETRY_DELAY = 60 * 1000;
+const MIN_FLUSH_INTERVAL = 60 * 1000;
 
 export interface PlayRecordUploadAuth {
   serverOrigin: string;
@@ -36,6 +37,8 @@ type FlushResult =
 
 let storageOperationChain: Promise<unknown> = Promise.resolve();
 let flushPromise: Promise<void> | null = null;
+let scheduledFlushTimer: number | null = null;
+let lastFlushStartedAt = 0;
 
 function runStorageOperation<T>(operation: () => Promise<T>) {
   const result = storageOperationChain.then(operation, operation);
@@ -204,11 +207,21 @@ function applyFlushResults(results: FlushResult[]) {
   });
 }
 
+function clearScheduledFlush() {
+  if (scheduledFlushTimer === null) {
+    return;
+  }
+  window.clearTimeout(scheduledFlushTimer);
+  scheduledFlushTimer = null;
+}
+
 export function flushPlayRecordUploadQueue() {
+  clearScheduledFlush();
   if (flushPromise) {
     return flushPromise;
   }
 
+  lastFlushStartedAt = Date.now();
   flushPromise = (async () => {
     for (;;) {
       const candidates = await getFlushCandidates(Date.now());
@@ -261,6 +274,19 @@ export function flushPlayRecordUploadQueue() {
   });
 
   return flushPromise;
+}
+
+export function schedulePlayRecordUploadQueueFlush() {
+  if (scheduledFlushTimer !== null) {
+    return;
+  }
+
+  const now = Date.now();
+  const wait = Math.max(0, lastFlushStartedAt + MIN_FLUSH_INTERVAL - now);
+  scheduledFlushTimer = window.setTimeout(() => {
+    scheduledFlushTimer = null;
+    void flushPlayRecordUploadQueue();
+  }, wait);
 }
 
 let lastAuthKey = getCurrentAuthKey();
