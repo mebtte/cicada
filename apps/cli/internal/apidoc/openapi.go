@@ -139,7 +139,7 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/asset/{assetType}/{filename}",
 			Summary:     "Get static asset",
-			Description: "Return an image or audio asset. Image assets support square resizing via the `size` query parameter. Music assets support transcoding via the `codec` and `bitrate` query parameters.",
+			Description: "Return an image or audio asset. Image assets support square resizing via the `size` query parameter. Music assets support playback caches via the `quality` query parameter.",
 			Tags:        []string{"Asset"},
 			Parameters: []map[string]any{
 				pathParam("assetType", "Asset type. See enum values.", strEnumSchema([]string{
@@ -151,8 +151,7 @@ func operations() []operation {
 				}, string(config.AssetTypeMusicCover))),
 				pathParam("filename", "Asset filename.", strSchema("", "a1b2c3d4.jpg")),
 				queryParam("size", "Resize edge length. Only applies to image assets. Max 2048.", false, intSchema("", 256)),
-				queryParam("codec", "Music transcode codec. Supported combinations are codec=aac&bitrate=192 and codec=flac.", false, strEnumSchema([]string{"aac", "flac"}, "aac")),
-				queryParam("bitrate", "Music transcode bitrate. Only 192 is currently accepted, and only with codec=aac. If the source bitrate is lower, the transcode output is capped at the source bitrate.", false, strEnumSchema([]string{"192"}, "192")),
+				queryParam("quality", "Music playback quality. Other query parameters are ignored for music assets.", false, strEnumSchema([]string{"smooth", "source"}, "smooth")),
 			},
 			Responses: map[string]any{
 				"200": map[string]any{

@@ -1,17 +1,20 @@
 package scheduler
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime/debug"
+	"sync"
 	"time"
 
 	"cicada/internal/auth"
 	"cicada/internal/config"
 	"cicada/internal/musicasset"
+	"cicada/internal/musictranscode"
 	"cicada/internal/store"
 
 	"github.com/robfig/cron/v3"
@@ -35,6 +38,8 @@ func Start() {
 	}{
 		{"remove_outdated_db", removeOutdatedDB},
 		{"remove_unlinked_asset", removeUnlinkedAsset},
+		{"clean_music_transcode_cache", cleanMusicTranscodeCache},
+		{"pretranscode_music", pretranscodeMusic},
 		{"decrease_music_heat", decreaseMusicHeat},
 		{"remove_outdated_shared_invitation", removeOutdatedSharedInvitation},
 		{"remove_outdated_auth_session", removeOutdatedAuthSession},
@@ -64,6 +69,8 @@ func Start() {
 
 	c.Start()
 }
+
+var pretranscodeMusicMu sync.Mutex
 
 func runScheduledJob(logger *schedulerLogger, name string, fn schedulerJobFunc) {
 	start := time.Now()
@@ -219,6 +226,148 @@ func removeUnlinkedAsset() (schedulerJobResult, error) {
 	}, errors.Join(errs...)
 }
 
+func cleanMusicTranscodeCache() (schedulerJobResult, error) {
+	dir := config.MusicTranscodeCacheDir()
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return schedulerJobResult{
+				Summary: "removed 0 invalid music transcode cache entries",
+				Metrics: map[string]int64{"removed_music_transcode_cache_entries": 0},
+			}, nil
+		}
+		return schedulerJobResult{}, err
+	}
+
+	entryNames := map[string]bool{}
+	for _, entry := range entries {
+		entryNames[entry.Name()] = true
+	}
+
+	metrics := map[string]int64{
+		"scanned_music_transcode_cache_entries": int64(len(entries)),
+	}
+	var errs []error
+	var totalRemoved int64
+	removeEntry := func(name, metric string) {
+		if err := os.RemoveAll(filepath.Join(dir, name)); err != nil {
+			errs = append(errs, fmt.Errorf("remove music transcode cache %s: %w", name, err))
+			return
+		}
+		delete(entryNames, name)
+		metrics[metric]++
+		totalRemoved++
+	}
+
+	for _, entry := range entries {
+		name := entry.Name()
+		if !entry.Type().IsRegular() {
+			removeEntry(name, "removed_invalid_music_transcode_cache_entries")
+			continue
+		}
+
+		cacheEntry, ok := musictranscode.ParseCacheFilename(name)
+		if !ok {
+			removeEntry(name, "removed_invalid_music_transcode_cache_entries")
+			continue
+		}
+
+		sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), cacheEntry.Asset)
+		if _, err := os.Stat(sourcePath); err != nil {
+			if os.IsNotExist(err) {
+				removeEntry(name, "removed_missing_source_music_transcode_cache_entries")
+				continue
+			}
+			errs = append(errs, fmt.Errorf("stat music transcode source %s: %w", cacheEntry.Asset, err))
+			continue
+		}
+
+		if cacheEntry.Quality != musictranscode.QualitySource {
+			continue
+		}
+
+		audioName := musictranscode.CacheName(cacheEntry.Asset, musictranscode.QualitySource)
+		metaName := musictranscode.SourceCacheMetadataName(cacheEntry.Asset)
+		if cacheEntry.Sidecar {
+			if !entryNames[audioName] {
+				removeEntry(name, "removed_orphan_music_transcode_cache_metadata")
+				continue
+			}
+			if _, err := musictranscode.ReadSourceCacheMetadata(cacheEntry.Asset); err != nil {
+				removeEntry(name, "removed_invalid_music_transcode_cache_metadata")
+			}
+			continue
+		}
+
+		// source 缓存依赖 sidecar 响应头元数据; 缺失或损坏时删除音频缓存, 让后续请求重新生成。
+		if !entryNames[metaName] {
+			removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
+			continue
+		}
+		if _, err := musictranscode.ReadSourceCacheMetadata(cacheEntry.Asset); err != nil {
+			removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
+		}
+	}
+
+	metrics["removed_music_transcode_cache_entries"] = totalRemoved
+	return schedulerJobResult{
+		Summary: fmt.Sprintf("removed %d invalid music transcode cache entries", totalRemoved),
+		Metrics: metrics,
+	}, errors.Join(errs...)
+}
+
+func pretranscodeMusic() (schedulerJobResult, error) {
+	pretranscodeMusicMu.Lock()
+	defer pretranscodeMusicMu.Unlock()
+
+	musics, err := store.GetAllMusic()
+	if err != nil {
+		return schedulerJobResult{}, err
+	}
+
+	metrics := map[string]int64{
+		"scanned_music_rows": int64(len(musics)),
+	}
+	var errs []error
+	seen := map[string]bool{}
+	for _, music := range musics {
+		if music.Asset == "" {
+			metrics["skipped_empty_music_asset_rows"]++
+			continue
+		}
+		if seen[music.Asset] {
+			metrics["skipped_duplicate_music_assets"]++
+			continue
+		}
+		seen[music.Asset] = true
+
+		for _, quality := range []musictranscode.Quality{
+			musictranscode.QualitySmooth,
+			musictranscode.QualitySource,
+		} {
+			result, err := musictranscode.Ensure(context.Background(), music.Asset, quality)
+			if err != nil {
+				metrics["failed_music_transcode_cache_entries"]++
+				errs = append(errs, fmt.Errorf("pretranscode %s %s: %w", music.Asset, quality, err))
+				continue
+			}
+			if result.Generated {
+				metrics["generated_music_transcode_cache_entries"]++
+			} else {
+				metrics["skipped_existing_music_transcode_cache_entries"]++
+			}
+		}
+	}
+
+	return schedulerJobResult{
+		Summary: fmt.Sprintf(
+			"generated %d music transcode cache entries",
+			metrics["generated_music_transcode_cache_entries"],
+		),
+		Metrics: metrics,
+	}, errors.Join(errs...)
+}
+
 func decreaseMusicHeat() (schedulerJobResult, error) {
 	updated, err := execRowsAffected(
 		`UPDATE music
@@ -271,10 +420,6 @@ func cleanOutdatedFile() (schedulerJobResult, error) {
 			skipName: filepath.Base(config.ThumbnailCacheDir()),
 		},
 		{name: "thumbnail_cache", path: config.ThumbnailCacheDir()},
-		{
-			name: "music_transcode_cache",
-			path: config.MusicTranscodeCacheDir(),
-		},
 	}
 
 	metrics := map[string]int64{}

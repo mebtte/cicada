@@ -17,17 +17,12 @@ export function getMusicAssetOriginalExtension(asset: string) {
 
 export function getSmoothMusicAsset(asset: string) {
   const url = createMusicAssetURL(asset);
-  url.searchParams.delete('codec');
-  url.searchParams.delete('bitrate');
-  url.searchParams.set('codec', 'aac');
-  url.searchParams.set('bitrate', '192');
+  url.searchParams.set('quality', 'smooth');
   return url.href;
 }
 
-export function getSourceBitrateMusicAsset(asset: string) {
+export function getSourceMusicAsset(asset: string) {
   const url = createMusicAssetURL(asset);
-  url.searchParams.delete('codec');
-  url.searchParams.delete('bitrate');
-  url.searchParams.set('codec', 'flac');
+  url.searchParams.set('quality', 'source');
   return url.href;
 }

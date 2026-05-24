@@ -2,7 +2,7 @@ import { Language } from '@/constants/language';
 
 export enum MusicPlaybackQuality {
   SMOOTH = 'smooth',
-  SOURCE_BITRATE = 'source_bitrate',
+  SOURCE = 'source',
 }
 
 export interface Setting {

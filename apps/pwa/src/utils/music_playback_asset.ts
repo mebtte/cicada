@@ -1,8 +1,5 @@
 import { MusicPlaybackQuality } from '@/constants/setting';
-import {
-  getSmoothMusicAsset,
-  getSourceBitrateMusicAsset,
-} from './music_asset';
+import { getSmoothMusicAsset, getSourceMusicAsset } from './music_asset';
 
 export default function getMusicPlaybackAsset({
   asset,
@@ -15,8 +12,8 @@ export default function getMusicPlaybackAsset({
     case MusicPlaybackQuality.SMOOTH: {
       return getSmoothMusicAsset(asset);
     }
-    case MusicPlaybackQuality.SOURCE_BITRATE: {
-      return getSourceBitrateMusicAsset(asset);
+    case MusicPlaybackQuality.SOURCE: {
+      return getSourceMusicAsset(asset);
     }
   }
 }

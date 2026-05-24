@@ -6,7 +6,7 @@ import { Position } from './constants';
 export enum Key {
   CUSTOM_APP_NAME = 'custom_app_name',
 
-  SETTING = 'setting_v3',
+  SETTING = 'setting_v4',
   SERVER = 'server',
 
   DOWNLOAD_FLOATING_POSITION = 'download-floating-position',

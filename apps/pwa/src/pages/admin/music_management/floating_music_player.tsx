@@ -637,12 +637,12 @@ function FloatingMusicPlayer({
   const currentSecond = currentMillisecond / 1000;
   const nextMusicPlaybackQuality =
     musicPlaybackQuality === MusicPlaybackQuality.SMOOTH
-      ? MusicPlaybackQuality.SOURCE_BITRATE
+      ? MusicPlaybackQuality.SOURCE
       : MusicPlaybackQuality.SMOOTH;
   const musicPlaybackQualityLabel =
     musicPlaybackQuality === MusicPlaybackQuality.SMOOTH
       ? t('music_playback_quality_smooth')
-      : t('music_playback_quality_source_bitrate');
+      : t('music_playback_quality_source');
   const musicPlaybackQualityTitle = [
     t('music_playback_quality'),
     musicPlaybackQualityLabel,

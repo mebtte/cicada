@@ -60,8 +60,8 @@ const HelpContent = styled.div`
 
 const tabList = [
   {
-    tab: MusicPlaybackQuality.SOURCE_BITRATE,
-    label: t('music_playback_quality_source_bitrate'),
+    tab: MusicPlaybackQuality.SOURCE,
+    label: t('music_playback_quality_source'),
   },
   {
     tab: MusicPlaybackQuality.SMOOTH,
@@ -75,8 +75,8 @@ function openHelp() {
     content: (
       <HelpContent>
         <div>
-          <b>{t('music_playback_quality_source_bitrate')}</b>
-          <span>{t('music_playback_quality_source_bitrate_description')}</span>
+          <b>{t('music_playback_quality_source')}</b>
+          <span>{t('music_playback_quality_source_description')}</span>
         </div>
         <div>
           <b>{t('music_playback_quality_smooth')}</b>

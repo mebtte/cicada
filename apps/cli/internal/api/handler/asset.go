@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
@@ -102,4 +103,9 @@ func serveAssetFile(c *gin.Context, path, name, cacheControl, contentType string
 		c.Header("Content-Type", contentType)
 	}
 	http.ServeContent(c.Writer, c.Request, name, fi.ModTime(), f)
+}
+
+func touchFile(path string) {
+	now := time.Now()
+	_ = os.Chtimes(path, now, now)
 }
