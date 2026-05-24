@@ -21,5 +21,19 @@ export default () => {
     setOpen(false);
   }, [location.pathname]);
 
+  // 仅在播放详情 (歌词面板) 打开时监听 Esc, 按下时收起面板
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeydown);
+    return () => window.removeEventListener('keydown', onKeydown);
+  }, [open]);
+
   return open;
 };
