@@ -125,7 +125,7 @@ func TestAdminCreateSingerPhoto(t *testing.T) {
 		}
 	})
 
-	t.Run("position increments for the next photo", func(t *testing.T) {
+	t.Run("next photo is prepended to the front", func(t *testing.T) {
 		// asset file is reused — the handler only verifies existence, not uniqueness.
 		code, _, _ := callPhoto(t, AdminCreateSingerPhoto, http.MethodPost, "/api/admin/singer/photo",
 			map[string]any{"singerId": singerID, "asset": "pic.jpg"},
@@ -138,8 +138,12 @@ func TestAdminCreateSingerPhoto(t *testing.T) {
 		if len(photos) != 2 {
 			t.Fatalf("expected 2 photos, got %d", len(photos))
 		}
-		if photos[1].Position != 1 || photos[1].Description != "" {
-			t.Fatalf("expected pos=1 desc='' for second photo: %+v", photos[1])
+		// 新增写真应排在最前 (position 比现有最小值还要小)
+		if photos[0].Position != -1 || photos[0].Description != "" {
+			t.Fatalf("expected pos=-1 desc='' for new first photo: %+v", photos[0])
+		}
+		if photos[1].Position != 0 || photos[1].Description != "Live" {
+			t.Fatalf("expected pos=0 desc='Live' for previously-added photo: %+v", photos[1])
 		}
 	})
 
@@ -232,11 +236,12 @@ func TestAdminDeleteSingerPhoto(t *testing.T) {
 		if len(photos) != 2 {
 			t.Fatalf("expected 2 photos, got %d", len(photos))
 		}
-		// Positions 0 and 2 remain — gap at 1 is intentional.
-		if photos[0].ID != id1 || photos[0].Position != 0 {
+		// 写真按 position 升序返回. 由于 Create 使用 min-1 前置, 三张写真依次得到 0/-1/-2;
+		// 删除中间的 id2 (position=-1) 后, 剩余位置 -2 和 0 之间的间隙保留.
+		if photos[0].ID != id3 || photos[0].Position != -2 {
 			t.Fatalf("unexpected first photo: %+v", photos[0])
 		}
-		if photos[1].ID != id3 || photos[1].Position != 2 {
+		if photos[1].ID != id1 || photos[1].Position != 0 {
 			t.Fatalf("unexpected second photo: %+v", photos[1])
 		}
 	})
