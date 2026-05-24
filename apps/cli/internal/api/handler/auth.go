@@ -9,8 +9,6 @@ import (
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"cicada/internal/version"
-	"errors"
-	"math"
 	"os"
 	"strings"
 	"sync"
@@ -264,65 +262,6 @@ func limitString(v string, n int) string {
 		return v
 	}
 	return v[:n]
-}
-
-// ── Music play record (sendBeacon – token in body) ────────────────────────────
-
-const effectivePlayPercent = 0.75
-
-type playRecordBeaconBody struct {
-	Token          string  `json:"token" binding:"required"`
-	MusicID        string  `json:"musicId" binding:"required"`
-	ClientRecordID string  `json:"clientRecordId"`
-	Percent        float64 `json:"percent"`
-}
-
-func normalizePlayPercent(percent float64) (float64, bool) {
-	if math.IsNaN(percent) || math.IsInf(percent, 0) {
-		return 0, false
-	}
-	// HTMLMediaElement 结束点附近可能因为浮点误差给出略小于 0 或略大于 1 的值.
-	return min(max(percent, 0), 1), true
-}
-
-func CreateMusicPlayRecordBeacon(c *gin.Context) {
-	var body playRecordBeaconBody
-	if err := c.ShouldBindJSON(&body); err != nil {
-		api.Fail(c, apperr.WrongParameter)
-		return
-	}
-	clientRecordID := strings.TrimSpace(body.ClientRecordID)
-	if len(clientRecordID) > 128 {
-		api.Fail(c, apperr.WrongParameter)
-		return
-	}
-	percent, ok := normalizePlayPercent(body.Percent)
-	if !ok {
-		api.Fail(c, apperr.WrongParameter)
-		return
-	}
-
-	u, _, err := middleware.AuthenticateToken(c, body.Token)
-	if err != nil {
-		api.Fail(c, apperr.NotAuthorized)
-		return
-	}
-
-	m, err := store.GetMusicByID(body.MusicID)
-	if err != nil || m == nil {
-		api.Fail(c, apperr.MusicNotExisted)
-		return
-	}
-
-	if err := store.SavePlayRecord(u.ID, body.MusicID, clientRecordID, percent, effectivePlayPercent); err != nil {
-		if errors.Is(err, store.ErrPlayRecordClientIDConflict) {
-			api.Fail(c, apperr.WrongParameter)
-			return
-		}
-		api.Fail(c, apperr.ServerError)
-		return
-	}
-	api.OK(c, nil)
 }
 
 // ── 2FA management ────────────────────────────────────────────────────────────

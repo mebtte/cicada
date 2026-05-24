@@ -12,6 +12,10 @@ import {
   isComposingEnterKeyDown,
   isKeyboardEventComposing,
 } from "../src/utils/keyboard.js";
+import {
+  getSmoothMusicAsset,
+  getSourceMusicAsset,
+} from "../src/utils/music_asset.js";
 
 test("capitalize uppercases the first letter of each word", () => {
   assert.equal(capitalize("hello world"), "Hello World");
@@ -106,4 +110,15 @@ test("keyboard helpers detect IME composition before handling Enter", () => {
   assert.equal(isComposingEnterKeyDown(composingEnter), true);
   assert.equal(isComposingEnterKeyDown(legacyComposingEnter), true);
   assert.equal(isComposingEnterKeyDown(committedEnter), false);
+});
+
+test("music playback assets use quality query parameter", () => {
+  assert.equal(
+    getSmoothMusicAsset("/asset/music/song.mp3"),
+    "http://localhost/asset/music/song.mp3?quality=smooth",
+  );
+  assert.equal(
+    getSourceMusicAsset("/asset/music/song.mp3"),
+    "http://localhost/asset/music/song.mp3?quality=source",
+  );
 });

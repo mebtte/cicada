@@ -59,7 +59,6 @@ func NewServer() *gin.Engine {
 	base.GET("/captcha", handler.GetCaptcha)
 	base.POST("/login", handler.Login)
 	base.POST("/login_with_2fa", handler.LoginWith2FA)
-	base.POST("/music_play_record", handler.CreateMusicPlayRecordBeacon)
 
 	// API routes
 	api := r.Group("/api")
@@ -92,6 +91,7 @@ func NewServer() *gin.Engine {
 	api.GET("/lyric_list", auth(), handler.GetLyricList)
 
 	// Play records
+	api.POST("/music_play_record", auth(), handler.CreateMusicPlayRecord)
 	api.GET("/music_play_record_list", auth(), handler.GetMusicPlayRecordList)
 	api.DELETE("/music_play_record", auth(), handler.DeleteMusicPlayRecord)
 

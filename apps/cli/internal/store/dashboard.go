@@ -41,7 +41,7 @@ type AdminDashboardSummary struct {
 func GetAdminDashboardSummary(now time.Time) (AdminDashboardSummary, error) {
 	var summary AdminDashboardSummary
 
-	// “今日播放”按服务器本地日期切分，保证和服务端记录时间口径一致。
+	// “今日播放”按服务器本地日期切分；播放时间来自客户端并在写入时做未来时间钳制。
 	todayStart := time.Date(
 		now.Year(),
 		now.Month(),
@@ -55,14 +55,14 @@ func GetAdminDashboardSummary(now time.Time) (AdminDashboardSummary, error) {
 	sevenDaysAgo := now.AddDate(0, 0, -7).UnixMilli()
 
 	if err := DB().QueryRow(
-		`SELECT COUNT(1) FROM music_play_record WHERE timestamp >= ?`,
+		`SELECT COUNT(1) FROM music_play_record WHERE playedAt >= ?`,
 		todayStart,
 	).Scan(&summary.TodayPlayCount); err != nil {
 		return summary, err
 	}
 
 	if err := DB().QueryRow(
-		`SELECT COUNT(1) FROM music_play_record WHERE timestamp >= ?`,
+		`SELECT COUNT(1) FROM music_play_record WHERE playedAt >= ?`,
 		sevenDaysAgo,
 	).Scan(&summary.PlayCount7d); err != nil {
 		return summary, err

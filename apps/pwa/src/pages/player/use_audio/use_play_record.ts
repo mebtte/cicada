@@ -1,16 +1,13 @@
 import { useEffect, useRef } from 'react';
 import getRandomString from '@/utils/generate_random_string';
-import {
-  getCurrentMusicPlayRecordUploadAuth,
-  MusicPlayRecordUploadAuth,
-} from '@/server/base/upload_music_play_record';
 import CustomAudio from '@/utils/custom_audio';
 import { QueueMusic } from '../constants';
 import { PlayRecordUploadQueueItem } from '../storage';
 import {
   enqueuePlayRecordUpload,
   flushPlayRecordUploadQueue,
-  sendQueuedPlayRecordBeacon,
+  getCurrentMusicPlayRecordUploadAuth,
+  schedulePlayRecordUploadQueueFlush,
 } from './play_record_upload_queue';
 
 const PERIODIC_UPLOAD_INTERVAL = 15 * 1000;
@@ -20,7 +17,6 @@ const MAX_TIMEUPDATE_DELTA_SECONDS = 30;
 interface ActivePlayRecord {
   serverOrigin: string;
   userId: string;
-  token: string;
   clientRecordId: string;
   musicId: string;
   playedSeconds: number;
@@ -28,6 +24,8 @@ interface ActivePlayRecord {
   maxPercent: number;
   thresholdIndex: number;
 }
+
+type FlushMode = 'immediate' | 'scheduled' | 'none';
 
 function getAudioDuration(audio: CustomAudio<QueueMusic>) {
   const duration = audio.getDuration();
@@ -79,13 +77,12 @@ function createActivePlayRecord({
   auth,
   queueMusic,
 }: {
-  auth: MusicPlayRecordUploadAuth & { userId: string };
+  auth: NonNullable<ReturnType<typeof getCurrentMusicPlayRecordUploadAuth>>;
   queueMusic: QueueMusic;
 }): ActivePlayRecord {
   return {
-    serverOrigin: auth.origin,
+    serverOrigin: auth.serverOrigin,
     userId: auth.userId,
-    token: auth.token,
     clientRecordId: createClientRecordId(queueMusic),
     musicId: queueMusic.id,
     playedSeconds: 0,
@@ -103,12 +100,12 @@ function createQueueItem(
   return {
     serverOrigin: activeRecord.serverOrigin,
     userId: activeRecord.userId,
-    token: activeRecord.token,
     clientRecordId: activeRecord.clientRecordId,
     musicId: activeRecord.musicId,
     percent: activeRecord.maxPercent,
-    timestamp: Date.now(),
+    playedAt: Date.now(),
     retryCount: 0,
+    nextRetryAt: 0,
   };
 }
 
@@ -127,11 +124,9 @@ export default (
 ) => {
   const activeRecordRef = useRef<ActivePlayRecord | null>(null);
 
-  const queueCurrentRecord = (
-    options: {
-      beacon?: boolean;
-    } = {},
-  ) => {
+  const queueCurrentRecord = ({
+    flush = 'scheduled',
+  }: { flush?: FlushMode } = {}) => {
     if (!audio) {
       return;
     }
@@ -141,12 +136,15 @@ export default (
     }
 
     const queueItem = createQueueItem(audio, activeRecord);
-    if (options.beacon) {
-      sendQueuedPlayRecordBeacon(queueItem);
-    }
-    void enqueuePlayRecordUpload(queueItem).then(() =>
-      options.beacon ? undefined : flushPlayRecordUploadQueue(),
-    );
+    void enqueuePlayRecordUpload(queueItem).then(() => {
+      if (flush === 'immediate') {
+        return flushPlayRecordUploadQueue();
+      }
+      if (flush === 'scheduled') {
+        schedulePlayRecordUploadQueueFlush();
+      }
+      return undefined;
+    });
   };
 
   useEffect(() => {
@@ -208,28 +206,34 @@ export default (
         activeRecord.lastCurrentTime = null;
       }
     });
+    const unlistenPause = audio.listen('pause', () => queueCurrentRecord());
+    const unlistenEnded = audio.listen('ended', () =>
+      queueCurrentRecord({ flush: 'immediate' }),
+    );
     const flushOnOnline = () => void flushPlayRecordUploadQueue();
-    const uploadBeforePageFreeze = () => queueCurrentRecord({ beacon: true });
-    const uploadWhenHidden = () => {
+    const queueBeforePageFreeze = () => queueCurrentRecord({ flush: 'none' });
+    const queueWhenHidden = () => {
       if (window.document.visibilityState === 'hidden') {
-        uploadBeforePageFreeze();
+        queueBeforePageFreeze();
       }
     };
 
     window.addEventListener('online', flushOnOnline);
-    window.addEventListener('pagehide', uploadBeforePageFreeze);
-    window.document.addEventListener('visibilitychange', uploadWhenHidden);
+    window.addEventListener('pagehide', queueBeforePageFreeze);
+    window.document.addEventListener('visibilitychange', queueWhenHidden);
     void flushPlayRecordUploadQueue();
 
     return () => {
       window.clearInterval(uploadAtInterval);
       unlistenTimeUpdate();
       unlistenSeeking();
+      unlistenPause();
+      unlistenEnded();
       window.removeEventListener('online', flushOnOnline);
-      window.removeEventListener('pagehide', uploadBeforePageFreeze);
+      window.removeEventListener('pagehide', queueBeforePageFreeze);
       window.document.removeEventListener(
         'visibilitychange',
-        uploadWhenHidden,
+        queueWhenHidden,
       );
     };
   }, [audio]);

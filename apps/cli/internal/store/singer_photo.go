@@ -83,18 +83,19 @@ func ListSingerPhotosBySingerIDs(singerIDs []string) ([]SingerPhoto, error) {
 	return out, nil
 }
 
-// CreateSingerPhoto appends a photo to the end (position = max+1, or 0 for the
-// first photo of the singer). Returns the new photo id.
+// CreateSingerPhoto prepends a photo to the front (position = min-1, or 0 for
+// the first photo of the singer) so the newest addition appears first in
+// ListSingerPhotos and becomes the singer avatar. Returns the new photo id.
 func CreateSingerPhoto(singerID, asset, description, addUserID string) (string, error) {
-	var maxPos sql.NullInt64
+	var minPos sql.NullInt64
 	if err := DB().QueryRow(
-		`SELECT MAX(position) FROM singer_photo WHERE singerId=?`, singerID,
-	).Scan(&maxPos); err != nil {
+		`SELECT MIN(position) FROM singer_photo WHERE singerId=?`, singerID,
+	).Scan(&minPos); err != nil {
 		return "", err
 	}
 	next := int64(0)
-	if maxPos.Valid {
-		next = maxPos.Int64 + 1
+	if minPos.Valid {
+		next = minPos.Int64 - 1
 	}
 	id := uuid.New().String()
 	_, err := DB().Exec(

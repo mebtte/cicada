@@ -115,7 +115,7 @@ var tables = []string{
 		musicId TEXT NOT NULL REFERENCES music(id),
 		clientRecordId TEXT NOT NULL DEFAULT '',
 		percent REAL NOT NULL,
-		timestamp INTEGER NOT NULL,
+		playedAt INTEGER NOT NULL,
 		heatCounted INTEGER NOT NULL DEFAULT 0
 	)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_music_play_record_client_record

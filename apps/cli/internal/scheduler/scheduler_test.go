@@ -10,10 +10,11 @@ import (
 	"time"
 
 	"cicada/internal/config"
+	"cicada/internal/musictranscode"
 	"cicada/internal/store"
 )
 
-func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
+func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 	config.Set(config.Config{
 		Mode: config.ModeProduction,
 		Data: t.TempDir(),
@@ -68,14 +69,123 @@ func TestCleanOutdatedFileCleansCacheWithoutRemovingThumbnailDir(t *testing.T) {
 	if _, err := os.Stat(oldThumbnail); !os.IsNotExist(err) {
 		t.Fatalf("expected old thumbnail cache file to be removed, err=%v", err)
 	}
-	if _, err := os.Stat(oldTranscode); !os.IsNotExist(err) {
-		t.Fatalf("expected old transcode cache file to be removed, err=%v", err)
+	if _, err := os.Stat(oldTranscode); err != nil {
+		t.Fatalf("expected old transcode cache file to remain: %v", err)
 	}
 	if _, err := os.Stat(freshThumbnail); err != nil {
 		t.Fatalf("expected fresh thumbnail cache file to remain: %v", err)
 	}
 	if _, err := os.Stat(freshTranscode); err != nil {
 		t.Fatalf("expected fresh transcode cache file to remain: %v", err)
+	}
+}
+
+func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testing.T) {
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+
+	for _, dir := range []string{
+		config.AssetDir(config.AssetTypeMusic),
+		config.MusicTranscodeCacheDir(),
+	} {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			t.Fatalf("mkdir %s: %v", dir, err)
+		}
+	}
+
+	writeMusicAssetForCleanTest(t, "linked.mp3")
+	writeMusicAssetForCleanTest(t, "incomplete.mp3")
+	writeMusicAssetForCleanTest(t, "badmeta.mp3")
+
+	validSmooth := filepath.Join(
+		config.MusicTranscodeCacheDir(),
+		musictranscode.CacheName("linked.mp3", musictranscode.QualitySmooth),
+	)
+	validSource := filepath.Join(
+		config.MusicTranscodeCacheDir(),
+		musictranscode.CacheName("linked.mp3", musictranscode.QualitySource),
+	)
+	validSourceMeta := filepath.Join(
+		config.MusicTranscodeCacheDir(),
+		musictranscode.SourceCacheMetadataName("linked.mp3"),
+	)
+	missingSource := filepath.Join(
+		config.MusicTranscodeCacheDir(),
+		musictranscode.CacheName("missing.mp3", musictranscode.QualitySmooth),
+	)
+	legacyCache := filepath.Join(config.MusicTranscodeCacheDir(), "linked.mp3_codec-aac_bitrate-192k.m4a")
+	orphanMeta := filepath.Join(
+		config.MusicTranscodeCacheDir(),
+		musictranscode.SourceCacheMetadataName("orphan.mp3"),
+	)
+	incompleteSource := filepath.Join(
+		config.MusicTranscodeCacheDir(),
+		musictranscode.CacheName("incomplete.mp3", musictranscode.QualitySource),
+	)
+	badMetaSource := filepath.Join(
+		config.MusicTranscodeCacheDir(),
+		musictranscode.CacheName("badmeta.mp3", musictranscode.QualitySource),
+	)
+	badMeta := filepath.Join(
+		config.MusicTranscodeCacheDir(),
+		musictranscode.SourceCacheMetadataName("badmeta.mp3"),
+	)
+	legalNameDir := filepath.Join(
+		config.MusicTranscodeCacheDir(),
+		musictranscode.CacheName("dir.mp3", musictranscode.QualitySmooth),
+	)
+
+	for _, path := range []string{
+		validSmooth,
+		validSource,
+		missingSource,
+		legacyCache,
+		orphanMeta,
+		incompleteSource,
+		badMetaSource,
+	} {
+		if err := os.WriteFile(path, []byte("cache"), 0644); err != nil {
+			t.Fatalf("write %s: %v", path, err)
+		}
+	}
+	if err := os.WriteFile(validSourceMeta, []byte(`{"contentType":"audio/mpeg"}`), 0644); err != nil {
+		t.Fatalf("write valid source meta: %v", err)
+	}
+	if err := os.WriteFile(badMeta, []byte(`{}`), 0644); err != nil {
+		t.Fatalf("write bad source meta: %v", err)
+	}
+	if err := os.MkdirAll(legalNameDir, 0755); err != nil {
+		t.Fatalf("mkdir legal name dir: %v", err)
+	}
+
+	result, err := cleanMusicTranscodeCache()
+	if err != nil {
+		t.Fatalf("clean music transcode cache: %v", err)
+	}
+	if result.Metrics["removed_music_transcode_cache_entries"] == 0 {
+		t.Fatalf("expected removed cache entries, metrics=%+v", result.Metrics)
+	}
+
+	for _, path := range []string{validSmooth, validSource, validSourceMeta} {
+		if _, err := os.Stat(path); err != nil {
+			t.Fatalf("expected %s to remain: %v", path, err)
+		}
+	}
+	for _, path := range []string{
+		missingSource,
+		legacyCache,
+		orphanMeta,
+		incompleteSource,
+		badMetaSource,
+		badMeta,
+		legalNameDir,
+	} {
+		if _, err := os.Stat(path); !os.IsNotExist(err) {
+			t.Fatalf("expected %s to be removed, err=%v", path, err)
+		}
 	}
 }
 
@@ -340,6 +450,15 @@ func TestDecreaseMusicHeatDecreasesDailyWithoutGoingBelowZero(t *testing.T) {
 		if got != want {
 			t.Fatalf("%s heat = %d, want %d", id, got, want)
 		}
+	}
+}
+
+func writeMusicAssetForCleanTest(t *testing.T, filename string) {
+	t.Helper()
+
+	path := filepath.Join(config.AssetDir(config.AssetTypeMusic), filename)
+	if err := os.WriteFile(path, []byte("source"), 0644); err != nil {
+		t.Fatalf("write music asset %s: %v", filename, err)
 	}
 }
 

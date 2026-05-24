@@ -76,7 +76,7 @@ func TestAdminGetDashboard(t *testing.T) {
 		t.Fatalf("insert singer photo: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music_play_record (userId,musicId,percent,timestamp) VALUES
+		`INSERT INTO music_play_record (userId,musicId,percent,playedAt) VALUES
 			('user-2','music-recent',0.5,?),
 			('user-2','music-old',0.5,?),
 			('user-3','music-old',0.5,?)`,

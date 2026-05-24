@@ -28,13 +28,13 @@ const zhCN: {
   relative_volume: '相对音量',
   music_playback_quality: '播放质量',
   music_playback_quality_smooth: '流畅',
-  music_playback_quality_source_bitrate: '源码率',
+  music_playback_quality_source: '源码',
   music_playback_progress: '播放进度',
   music_playback_quality_help_title: '播放质量',
   music_playback_quality_change_question:
     '切换播放质量会重新开始播放当前音乐, 是否继续?',
-  music_playback_quality_source_bitrate_description:
-    '尽量保留源音频质量。无损源会使用 FLAC 输出; 有损源会直接使用原文件, 避免放大体积。',
+  music_playback_quality_source_description:
+    '尽量保留源音频质量, 同时输出浏览器可播放的格式。',
   music_playback_quality_smooth_description:
     '使用 AAC 192k 输出; 如果源文件码率更低, 会按源文件码率输出, 避免放大体积。',
   pwa_version: 'PWA 版本',
@@ -156,6 +156,7 @@ const zhCN: {
   add: '添加',
   select_image: '选择图片',
   pwa_update_question: '发现新版本',
+  pwa_update_confirm: '更新',
   pwa_update_try_later: '更新超时, 请稍后再试',
   music: '音乐',
   music_id: '音乐 ID',

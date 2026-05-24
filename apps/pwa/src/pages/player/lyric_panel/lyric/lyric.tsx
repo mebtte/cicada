@@ -75,7 +75,6 @@ const Line = styled.div<{ active?: boolean }>`
       color: ${active
         ? CSSVariable.COLOR_PRIMARY_ACTIVE
         : CSSVariable.TEXT_COLOR_PRIMARY};
-      font-size: ${active ? '21px' : '18px'};
 
       .outline {
         -webkit-text-stroke: ${active

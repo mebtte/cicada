@@ -26,13 +26,13 @@ export default {
   relative_volume: 'relative volume',
   music_playback_quality: 'playback quality',
   music_playback_quality_smooth: 'smooth',
-  music_playback_quality_source_bitrate: 'source bitrate',
+  music_playback_quality_source: 'source',
   music_playback_progress: 'playback progress',
   music_playback_quality_help_title: 'playback quality',
   music_playback_quality_change_question:
     'changing playback quality will restart the current music. Continue?',
-  music_playback_quality_source_bitrate_description:
-    'Keeps the source audio quality as much as possible. Lossless sources use FLAC output; lossy sources use the original file to avoid inflating size.',
+  music_playback_quality_source_description:
+    'Keeps the source audio quality as much as possible while using a browser-playable output.',
   music_playback_quality_smooth_description:
     'Uses AAC 192k output. If the source bitrate is lower, output is capped at the source bitrate to avoid inflating size.',
   pwa_version: 'PWA version',
@@ -157,6 +157,7 @@ export default {
   add: 'add',
   select_image: 'select image',
   pwa_update_question: 'new version available',
+  pwa_update_confirm: 'update',
   pwa_update_try_later: 'update timed out, try again later',
   music: 'music',
   music_id: 'music ID',
