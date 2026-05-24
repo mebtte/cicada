@@ -18,7 +18,7 @@ function getMusicPlayRecordList({
     musicPlayRecordList: {
       recordId: number;
       percent: number;
-      timestamp: number;
+      playedAt: number;
 
       id: string;
 

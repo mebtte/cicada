@@ -107,10 +107,6 @@ func authenticationGuide() map[string]any {
 		},
 		"exceptions": []any{
 			map[string]any{
-				"path":        "/base/music_play_record",
-				"description": "This endpoint accepts the token in the JSON request body field `token` because it is used with `sendBeacon`.",
-			},
-			map[string]any{
 				"path":        "/asset/{assetType}/{filename}",
 				"description": "Static asset download is public and does not require authentication.",
 			},
@@ -270,21 +266,22 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/base/music_play_record",
-			Summary:     "Report play record via Beacon",
-			Description: "Used by the frontend to report play progress. The token is sent in the request body instead of a request header. When `clientRecordId` is provided, repeated reports for the same play session are merged.",
-			Tags:        []string{"Base"},
+			Path:        "/api/music_play_record",
+			Summary:     "Upload play record",
+			Description: "Report play progress for one client play session. Repeated reports with the same `clientRecordId` are merged idempotently.",
+			Tags:        []string{"PlayRecord"},
+			Auth:        true,
 			RequestBody: jsonRequestBody(
 				objSchema(
-					[]string{"token", "musicId"},
+					[]string{"musicId", "clientRecordId", "playedAt"},
 					map[string]any{
-						"token":          strSchema("Opaque session token.", "cicada_abc123"),
 						"musicId":        strSchema("Music ID.", "music-1"),
-						"clientRecordId": strSchema("Optional client-side play session ID for idempotent retries.", "music-1-1710000000000-a1b2c3"),
+						"clientRecordId": strSchema("Client-side play session ID for idempotent retries.", "music-1-1710000000000-a1b2c3"),
 						"percent":        numSchema("Playback completion ratio, from 0 to 1.", 0.82),
+						"playedAt":       intSchema("Playback time in milliseconds.", 1710000000000),
 					},
 				),
-				map[string]any{"token": "cicada_abc123", "musicId": "music-1", "clientRecordId": "music-1-1710000000000-a1b2c3", "percent": 0.82},
+				map[string]any{"musicId": "music-1", "clientRecordId": "music-1-1710000000000-a1b2c3", "percent": 0.82, "playedAt": 1710000000000},
 			),
 			SuccessSchema:  nil,
 			SuccessExample: nil,
@@ -599,13 +596,13 @@ func operations() []operation {
 				"total": 1,
 				"musicPlayRecordList": []any{
 					map[string]any{
-						"recordId":  1,
-						"percent":   0.82,
-						"timestamp": 1710000000000,
-						"id":        "music-1",
-						"name":      "Nightingale",
-						"aliases":   []string{"Night Song"},
-						"singers":   []any{map[string]any{"id": "singer-1", "name": "Aurora"}},
+						"recordId": 1,
+						"percent":  0.82,
+						"playedAt": 1710000000000,
+						"id":       "music-1",
+						"name":     "Nightingale",
+						"aliases":  []string{"Night Song"},
+						"singers":  []any{map[string]any{"id": "singer-1", "name": "Aurora"}},
 					},
 				},
 			},
@@ -1953,14 +1950,14 @@ func updateSingerRequestSchema() map[string]any {
 
 func playRecordSchema() map[string]any {
 	return objSchema(
-		[]string{"recordId", "percent", "timestamp", "id", "name", "aliases", "singers"},
+		[]string{"recordId", "percent", "playedAt", "id", "name", "aliases", "singers"},
 		map[string]any{
-			"recordId":  intSchema("Play record ID.", 1),
-			"percent":   numSchema("Playback ratio.", 0.82),
-			"timestamp": intSchema("Playback timestamp in milliseconds.", 1710000000000),
-			"id":        strSchema("Music ID.", "music-1"),
-			"name":      strSchema("Music name.", "Nightingale"),
-			"aliases":   arraySchema(strSchema("", "Night Song")),
+			"recordId": intSchema("Play record ID.", 1),
+			"percent":  numSchema("Playback ratio.", 0.82),
+			"playedAt": intSchema("Playback time in milliseconds.", 1710000000000),
+			"id":       strSchema("Music ID.", "music-1"),
+			"name":     strSchema("Music name.", "Nightingale"),
+			"aliases":  arraySchema(strSchema("", "Night Song")),
 			"singers": objArraySchema(map[string]any{
 				"id":   strSchema("Singer ID.", "singer-1"),
 				"name": strSchema("Singer name.", "Aurora"),

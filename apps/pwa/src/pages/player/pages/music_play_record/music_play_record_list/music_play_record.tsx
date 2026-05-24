@@ -83,7 +83,7 @@ function MusicWithExternalInfo({
       }
       addon={
         <Addon>
-          <div>{day(musicPlayRecord.timestamp).format('YYYY-MM-DD HH:mm')}</div>
+          <div>{day(musicPlayRecord.playedAt).format('YYYY-MM-DD HH:mm')}</div>
           <div className="divider" />
           <MdAvTimer />
           <div>{Number((musicPlayRecord.percent * 100).toFixed(2))}%</div>

@@ -3,25 +3,25 @@ import { MusicWithSingerAliases } from './constants';
 
 export enum Key {
   PLAYLIST = 'playlist',
-  PLAY_RECORD_UPLOAD_QUEUE = 'play-record-upload-queue',
+  PLAY_RECORD_UPLOAD_QUEUE_V2 = 'play-record-upload-queue-v2',
 }
 
 export interface PlayRecordUploadQueueItem {
   serverOrigin: string;
   userId: string;
-  token: string;
   clientRecordId: string;
   musicId: string;
   percent: number;
-  timestamp: number;
+  playedAt: number;
   retryCount: number;
+  nextRetryAt: number;
 }
 
 const storage = new Storage<
   Key,
   {
     [Key.PLAYLIST]: MusicWithSingerAliases[];
-    [Key.PLAY_RECORD_UPLOAD_QUEUE]: PlayRecordUploadQueueItem[];
+    [Key.PLAY_RECORD_UPLOAD_QUEUE_V2]: PlayRecordUploadQueueItem[];
   }
 >('player');
 

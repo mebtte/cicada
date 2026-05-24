@@ -5,10 +5,82 @@ import (
 	"cicada/internal/api/apperr"
 	"cicada/internal/api/middleware"
 	"cicada/internal/store"
+	"errors"
+	"math"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
+
+const effectivePlayPercent = 0.75
+
+type createPlayRecordBody struct {
+	MusicID        string  `json:"musicId" binding:"required"`
+	ClientRecordID string  `json:"clientRecordId" binding:"required"`
+	Percent        float64 `json:"percent"`
+	PlayedAt       int64   `json:"playedAt"`
+}
+
+func normalizePlayPercent(percent float64) (float64, bool) {
+	if math.IsNaN(percent) || math.IsInf(percent, 0) {
+		return 0, false
+	}
+	// HTMLMediaElement 结束点附近可能因为浮点误差给出略小于 0 或略大于 1 的值.
+	return min(max(percent, 0), 1), true
+}
+
+func normalizePlayedAt(playedAt int64, now int64) (int64, bool) {
+	if playedAt <= 0 {
+		return 0, false
+	}
+	// 客户端时间可能快于服务端，钳制未来时间，避免播放记录排序被异常时间污染.
+	if playedAt > now {
+		return now, true
+	}
+	return playedAt, true
+}
+
+func CreateMusicPlayRecord(c *gin.Context) {
+	u := middleware.GetUser(c)
+	var body createPlayRecordBody
+	if u == nil || c.ShouldBindJSON(&body) != nil {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	clientRecordID := strings.TrimSpace(body.ClientRecordID)
+	if clientRecordID == "" || len(clientRecordID) > 128 {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	percent, ok := normalizePlayPercent(body.Percent)
+	if !ok {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	playedAt, ok := normalizePlayedAt(body.PlayedAt, time.Now().UnixMilli())
+	if !ok {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+
+	m, err := store.GetMusicByID(body.MusicID)
+	if err != nil || m == nil {
+		api.Fail(c, apperr.MusicNotExisted)
+		return
+	}
+
+	if err := store.SavePlayRecord(u.ID, body.MusicID, clientRecordID, percent, playedAt, effectivePlayPercent); err != nil {
+		if errors.Is(err, store.ErrPlayRecordClientIDConflict) {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	api.OK(c, nil)
+}
 
 func GetMusicPlayRecordList(c *gin.Context) {
 	u := middleware.GetUser(c)
@@ -51,13 +123,13 @@ func GetMusicPlayRecordList(c *gin.Context) {
 			ss = []gin.H{}
 		}
 		list[i] = gin.H{
-			"recordId":  r.ID,
-			"percent":   r.Percent,
-			"timestamp": r.Timestamp,
-			"id":        r.MusicID,
-			"name":      r.MusicName,
-			"aliases":   splitAliases(r.MusicAliases),
-			"singers":   ss,
+			"recordId": r.ID,
+			"percent":  r.Percent,
+			"playedAt": r.PlayedAt,
+			"id":       r.MusicID,
+			"name":     r.MusicName,
+			"aliases":  splitAliases(r.MusicAliases),
+			"singers":  ss,
 		}
 	}
 	api.OK(c, gin.H{"total": total, "musicPlayRecordList": list})

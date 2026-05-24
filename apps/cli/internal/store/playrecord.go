@@ -8,12 +8,12 @@ import (
 var ErrPlayRecordClientIDConflict = errors.New("play record client id conflicts with another music")
 
 type PlayRecord struct {
-	ID        int64
-	UserID    string
-	MusicID   string
-	ClientID  string
-	Percent   float64
-	Timestamp int64
+	ID       int64
+	UserID   string
+	MusicID  string
+	ClientID string
+	Percent  float64
+	PlayedAt int64
 	// Joined fields
 	MusicName    string
 	MusicAliases string
@@ -26,9 +26,9 @@ func GetPlayRecords(userID string, page, pageSize int) (int, []PlayRecord, error
 	var total int
 	DB().QueryRow(`SELECT COUNT(1) FROM music_play_record WHERE userId=?`, userID).Scan(&total)
 	rows, err := DB().Query(
-		`SELECT pr.id,pr.userId,pr.musicId,pr.percent,pr.timestamp,m.name,m.aliases,m.cover,m.asset,m.type
+		`SELECT pr.id,pr.userId,pr.musicId,pr.percent,pr.playedAt,m.name,m.aliases,m.cover,m.asset,m.type
 		FROM music_play_record pr JOIN music m ON pr.musicId=m.id
-		WHERE pr.userId=? ORDER BY pr.timestamp DESC LIMIT ? OFFSET ?`,
+		WHERE pr.userId=? ORDER BY pr.playedAt DESC LIMIT ? OFFSET ?`,
 		userID, pageSize, (page-1)*pageSize,
 	)
 	if err != nil {
@@ -38,7 +38,7 @@ func GetPlayRecords(userID string, page, pageSize int) (int, []PlayRecord, error
 	var out []PlayRecord
 	for rows.Next() {
 		r := PlayRecord{}
-		rows.Scan(&r.ID, &r.UserID, &r.MusicID, &r.Percent, &r.Timestamp,
+		rows.Scan(&r.ID, &r.UserID, &r.MusicID, &r.Percent, &r.PlayedAt,
 			&r.MusicName, &r.MusicAliases, &r.MusicCover, &r.MusicAsset, &r.MusicType)
 		out = append(out, r)
 	}
@@ -55,11 +55,11 @@ func DeletePlayRecord(id int64, userID string) (bool, error) {
 }
 
 func AddPlayRecord(userID, musicID string, percent float64) {
-	DB().Exec(`INSERT INTO music_play_record (userId,musicId,percent,timestamp) VALUES (?,?,?,?)`,
+	DB().Exec(`INSERT INTO music_play_record (userId,musicId,percent,playedAt) VALUES (?,?,?,?)`,
 		userID, musicID, percent, nowMs())
 }
 
-func SavePlayRecord(userID, musicID, clientRecordID string, percent, effectivePercent float64) error {
+func SavePlayRecord(userID, musicID, clientRecordID string, percent float64, playedAt int64, effectivePercent float64) error {
 	tx, err := DB().Begin()
 	if err != nil {
 		return err
@@ -67,11 +67,10 @@ func SavePlayRecord(userID, musicID, clientRecordID string, percent, effectivePe
 	defer tx.Rollback()
 
 	heatCounted := percent >= effectivePercent
-	now := nowMs()
 	if clientRecordID == "" {
 		if _, err := tx.Exec(
-			`INSERT INTO music_play_record (userId,musicId,percent,timestamp,heatCounted) VALUES (?,?,?,?,?)`,
-			userID, musicID, percent, now, boolInt(heatCounted),
+			`INSERT INTO music_play_record (userId,musicId,percent,playedAt,heatCounted) VALUES (?,?,?,?,?)`,
+			userID, musicID, percent, playedAt, boolInt(heatCounted),
 		); err != nil {
 			return err
 		}
@@ -87,16 +86,17 @@ func SavePlayRecord(userID, musicID, clientRecordID string, percent, effectivePe
 		ID          int64
 		MusicID     string
 		Percent     float64
+		PlayedAt    int64
 		HeatCounted int
 	}
 	err = tx.QueryRow(
-		`SELECT id,musicId,percent,heatCounted FROM music_play_record WHERE userId=? AND clientRecordId=?`,
+		`SELECT id,musicId,percent,playedAt,heatCounted FROM music_play_record WHERE userId=? AND clientRecordId=?`,
 		userID, clientRecordID,
-	).Scan(&existing.ID, &existing.MusicID, &existing.Percent, &existing.HeatCounted)
+	).Scan(&existing.ID, &existing.MusicID, &existing.Percent, &existing.PlayedAt, &existing.HeatCounted)
 	if errors.Is(err, sql.ErrNoRows) {
 		if _, err := tx.Exec(
-			`INSERT INTO music_play_record (userId,musicId,clientRecordId,percent,timestamp,heatCounted) VALUES (?,?,?,?,?,?)`,
-			userID, musicID, clientRecordID, percent, now, boolInt(heatCounted),
+			`INSERT INTO music_play_record (userId,musicId,clientRecordId,percent,playedAt,heatCounted) VALUES (?,?,?,?,?,?)`,
+			userID, musicID, clientRecordID, percent, playedAt, boolInt(heatCounted),
 		); err != nil {
 			return err
 		}
@@ -115,6 +115,7 @@ func SavePlayRecord(userID, musicID, clientRecordID string, percent, effectivePe
 	}
 
 	nextPercent := max(existing.Percent, percent)
+	nextPlayedAt := max(existing.PlayedAt, playedAt)
 	nextHeatCounted := existing.HeatCounted == 1
 	if !nextHeatCounted && nextPercent >= effectivePercent {
 		nextHeatCounted = true
@@ -123,8 +124,8 @@ func SavePlayRecord(userID, musicID, clientRecordID string, percent, effectivePe
 		}
 	}
 	if _, err := tx.Exec(
-		`UPDATE music_play_record SET percent=?, timestamp=?, heatCounted=? WHERE id=?`,
-		nextPercent, now, boolInt(nextHeatCounted), existing.ID,
+		`UPDATE music_play_record SET percent=?, playedAt=?, heatCounted=? WHERE id=?`,
+		nextPercent, nextPlayedAt, boolInt(nextHeatCounted), existing.ID,
 	); err != nil {
 		return err
 	}

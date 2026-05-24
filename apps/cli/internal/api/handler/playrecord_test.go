@@ -3,6 +3,7 @@ package handler
 import (
 	"bytes"
 	"cicada/internal/api/apperr"
+	"cicada/internal/api/middleware"
 	"cicada/internal/auth"
 	"cicada/internal/config"
 	"cicada/internal/store"
@@ -15,7 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TestCreateMusicPlayRecordBeaconUpsertsClientRecord(t *testing.T) {
+func TestCreateMusicPlayRecordUpsertsClientRecord(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	if err := store.ResetForTests(); err != nil {
 		t.Fatalf("reset store: %v", err)
@@ -35,7 +36,7 @@ func TestCreateMusicPlayRecordBeaconUpsertsClientRecord(t *testing.T) {
 		t.Fatalf("initialize store: %v", err)
 	}
 
-	now := time.Now().UnixMilli()
+	now := time.Now().Add(-time.Minute).UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
 		"user-1", "listener", store.DoubleMD5("password"), "Listener", now,
@@ -64,25 +65,27 @@ func TestCreateMusicPlayRecordBeaconUpsertsClientRecord(t *testing.T) {
 		t.Fatalf("create auth session: %v", err)
 	}
 
-	call := func(percent float64) {
+	router := gin.New()
+	router.POST("/api/music_play_record", middleware.Auth(), CreateMusicPlayRecord)
+
+	call := func(percent float64, playedAt int64) {
 		t.Helper()
 
 		body, err := json.Marshal(map[string]any{
-			"token":          token,
 			"musicId":        "music-1",
 			"clientRecordId": "client-record-1",
 			"percent":        percent,
+			"playedAt":       playedAt,
 		})
 		if err != nil {
 			t.Fatalf("encode request: %v", err)
 		}
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodPost, "/base/music_play_record", bytes.NewReader(body))
-		c.Request.Header.Set("Content-Type", "application/json")
-
-		CreateMusicPlayRecordBeacon(c)
+		req := httptest.NewRequest(http.MethodPost, "/api/music_play_record", bytes.NewReader(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("x-cicada-token", token)
+		router.ServeHTTP(w, req)
 
 		var resp struct {
 			Code string `json:"code"`
@@ -95,16 +98,17 @@ func TestCreateMusicPlayRecordBeaconUpsertsClientRecord(t *testing.T) {
 		}
 	}
 
-	call(0.7)
-	call(1.0000001)
-	call(0.8)
+	call(0.7, now)
+	call(1.0000001, now+2000)
+	call(0.8, now+1000)
 
 	var percent float64
+	var playedAt int64
 	var count int
 	if err := store.DB().QueryRow(
-		`SELECT COUNT(1), MAX(percent) FROM music_play_record WHERE userId=? AND musicId=? AND clientRecordId=?`,
+		`SELECT COUNT(1), MAX(percent), MAX(playedAt) FROM music_play_record WHERE userId=? AND musicId=? AND clientRecordId=?`,
 		"user-1", "music-1", "client-record-1",
-	).Scan(&count, &percent); err != nil {
+	).Scan(&count, &percent, &playedAt); err != nil {
 		t.Fatalf("query play record: %v", err)
 	}
 	if count != 1 {
@@ -112,6 +116,9 @@ func TestCreateMusicPlayRecordBeaconUpsertsClientRecord(t *testing.T) {
 	}
 	if percent != 1 {
 		t.Fatalf("expected percent to be normalized to 1, got %v", percent)
+	}
+	if playedAt != now+2000 {
+		t.Fatalf("expected playedAt to keep latest play time, got %d", playedAt)
 	}
 
 	var heat int64

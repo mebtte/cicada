@@ -1,8 +1,10 @@
 import { ExceptionCode } from '@/constants/exception';
 import {
-  sendMusicPlayRecordBeacon,
-  uploadMusicPlayRecord,
-} from '@/server/base/upload_music_play_record';
+  getSelectedServer,
+  getSelectedUser,
+  useServer,
+} from '@/global_states/server';
+import uploadMusicPlayRecord from '@/server/api/upload_music_play_record';
 import ErrorWithCode from '@/utils/error_with_code';
 import logger from '@/utils/logger';
 import storage, {
@@ -11,6 +13,26 @@ import storage, {
 } from '../storage';
 
 const MAX_QUEUE_LENGTH = 200;
+const BASE_RETRY_DELAY = 3 * 1000;
+const MAX_RETRY_DELAY = 60 * 1000;
+
+export interface PlayRecordUploadAuth {
+  serverOrigin: string;
+  userId: string;
+}
+
+type FlushResult =
+  | {
+      type: 'remove';
+      record: PlayRecordUploadQueueItem;
+      onlyIfCovered: boolean;
+    }
+  | {
+      type: 'retry';
+      record: PlayRecordUploadQueueItem;
+      retryCount: number;
+      nextRetryAt: number;
+    };
 
 let storageOperationChain: Promise<unknown> = Promise.resolve();
 let flushPromise: Promise<void> | null = null;
@@ -24,20 +46,39 @@ function runStorageOperation<T>(operation: () => Promise<T>) {
   return result;
 }
 
+function getCurrentMusicPlayRecordUploadAuth(): PlayRecordUploadAuth | null {
+  const selectedServer = getSelectedServer(useServer.getState());
+  if (!selectedServer) {
+    return null;
+  }
+  const selectedUser = getSelectedUser(selectedServer);
+  if (!selectedUser) {
+    return null;
+  }
+  return {
+    serverOrigin: selectedServer.origin,
+    userId: selectedUser.id,
+  };
+}
+
+function getCurrentAuthKey() {
+  const auth = getCurrentMusicPlayRecordUploadAuth();
+  return auth ? `${auth.serverOrigin}\n${auth.userId}` : '';
+}
+
 async function getQueue() {
-  return (await storage.getItem(Key.PLAY_RECORD_UPLOAD_QUEUE)) || [];
+  return (await storage.getItem(Key.PLAY_RECORD_UPLOAD_QUEUE_V2)) || [];
+}
+
+function getRecordKey(record: PlayRecordUploadQueueItem) {
+  return `${record.serverOrigin}\n${record.userId}\n${record.clientRecordId}`;
 }
 
 function mergeRecord(
   queue: PlayRecordUploadQueueItem[],
   record: PlayRecordUploadQueueItem,
 ) {
-  const index = queue.findIndex(
-    (q) =>
-      q.serverOrigin === record.serverOrigin &&
-      q.userId === record.userId &&
-      q.clientRecordId === record.clientRecordId,
-  );
+  const index = queue.findIndex((q) => getRecordKey(q) === getRecordKey(record));
   if (index < 0) {
     return [...queue, record].slice(-MAX_QUEUE_LENGTH);
   }
@@ -45,10 +86,9 @@ function mergeRecord(
   const next = [...queue];
   next[index] = {
     ...next[index],
-    token: record.token,
     musicId: record.musicId,
     percent: Math.max(next[index].percent, record.percent),
-    timestamp: Math.max(next[index].timestamp, record.timestamp),
+    playedAt: Math.max(next[index].playedAt, record.playedAt),
   };
   return next;
 }
@@ -56,7 +96,7 @@ function mergeRecord(
 export function enqueuePlayRecordUpload(record: PlayRecordUploadQueueItem) {
   return runStorageOperation(async () => {
     await storage.setItem(
-      Key.PLAY_RECORD_UPLOAD_QUEUE,
+      Key.PLAY_RECORD_UPLOAD_QUEUE_V2,
       mergeRecord(await getQueue(), record),
     );
   });
@@ -67,7 +107,6 @@ function isPermanentUploadError(error: unknown) {
     return false;
   }
   return [
-    ExceptionCode.NOT_AUTHORIZED,
     ExceptionCode.WRONG_PARAMETER,
     ExceptionCode.MUSIC_NOT_EXISTED,
   ].includes(error.code as ExceptionCode);
@@ -80,18 +119,89 @@ function reportFlushError(error: unknown) {
   );
 }
 
-export function sendQueuedPlayRecordBeacon(record: PlayRecordUploadQueueItem) {
-  return sendMusicPlayRecordBeacon(
-    {
-      musicId: record.musicId,
-      percent: record.percent,
-      clientRecordId: record.clientRecordId,
-    },
-    {
-      origin: record.serverOrigin,
-      token: record.token,
-    },
+function getNextRetryAt(retryCount: number, now: number) {
+  const delay =
+    BASE_RETRY_DELAY * 2 ** Math.min(Math.max(retryCount - 1, 0), 5);
+  return now + Math.min(delay, MAX_RETRY_DELAY);
+}
+
+function isCurrentAuthRecord(
+  record: PlayRecordUploadQueueItem,
+  auth: PlayRecordUploadAuth,
+) {
+  return (
+    record.serverOrigin === auth.serverOrigin && record.userId === auth.userId
   );
+}
+
+function recordUploadCoversCurrent(
+  current: PlayRecordUploadQueueItem,
+  uploaded: PlayRecordUploadQueueItem,
+) {
+  return (
+    current.musicId === uploaded.musicId &&
+    current.percent <= uploaded.percent &&
+    current.playedAt <= uploaded.playedAt
+  );
+}
+
+function getFlushCandidates(now: number) {
+  return runStorageOperation(async () => {
+    const auth = getCurrentMusicPlayRecordUploadAuth();
+    if (!auth) {
+      return [];
+    }
+    return (await getQueue()).filter(
+      (record) =>
+        isCurrentAuthRecord(record, auth) && record.nextRetryAt <= now,
+    );
+  });
+}
+
+function applyFlushResults(results: FlushResult[]) {
+  if (!results.length) {
+    return Promise.resolve();
+  }
+  const resultByKey = new Map(
+    results.map((result) => [getRecordKey(result.record), result]),
+  );
+
+  return runStorageOperation(async () => {
+    const queue = await getQueue();
+    const next: PlayRecordUploadQueueItem[] = [];
+    for (const record of queue) {
+      const result = resultByKey.get(getRecordKey(record));
+      if (!result) {
+        next.push(record);
+        continue;
+      }
+
+      if (result.type === 'remove') {
+        if (
+          result.onlyIfCovered &&
+          !recordUploadCoversCurrent(record, result.record)
+        ) {
+          next.push({
+            ...record,
+            retryCount: 0,
+            nextRetryAt: 0,
+          });
+        }
+        continue;
+      }
+
+      // 上传失败后保留同一播放会话的最新快照，并对后续 flush 做退避。
+      next.push({
+        ...record,
+        retryCount: result.retryCount,
+        nextRetryAt: result.nextRetryAt,
+      });
+    }
+    await storage.setItem(
+      Key.PLAY_RECORD_UPLOAD_QUEUE_V2,
+      next.slice(-MAX_QUEUE_LENGTH),
+    );
+  });
 }
 
 export function flushPlayRecordUploadQueue() {
@@ -99,44 +209,71 @@ export function flushPlayRecordUploadQueue() {
     return flushPromise;
   }
 
-  flushPromise = runStorageOperation(async () => {
-    const queue = await getQueue();
-    if (!queue.length) {
-      return;
-    }
+  flushPromise = (async () => {
+    for (;;) {
+      const candidates = await getFlushCandidates(Date.now());
+      if (!candidates.length) {
+        return;
+      }
 
-    const remaining: PlayRecordUploadQueueItem[] = [];
-    for (const record of queue) {
-      try {
-        await uploadMusicPlayRecord(
-          {
+      const results: FlushResult[] = [];
+      for (const record of candidates) {
+        const auth = getCurrentMusicPlayRecordUploadAuth();
+        if (!auth || !isCurrentAuthRecord(record, auth)) {
+          continue;
+        }
+        try {
+          await uploadMusicPlayRecord({
             musicId: record.musicId,
             percent: record.percent,
             clientRecordId: record.clientRecordId,
-          },
-          {
-            origin: record.serverOrigin,
-            token: record.token,
-          },
-        );
-      } catch (error) {
-        if (!isPermanentUploadError(error)) {
-          reportFlushError(error);
-          remaining.push({
-            ...record,
-            retryCount: record.retryCount + 1,
+            playedAt: record.playedAt,
           });
+          results.push({
+            type: 'remove',
+            record,
+            onlyIfCovered: true,
+          });
+        } catch (error) {
+          if (isPermanentUploadError(error)) {
+            results.push({
+              type: 'remove',
+              record,
+              onlyIfCovered: false,
+            });
+          } else {
+            reportFlushError(error);
+            const retryCount = record.retryCount + 1;
+            results.push({
+              type: 'retry',
+              record,
+              retryCount,
+              nextRetryAt: getNextRetryAt(retryCount, Date.now()),
+            });
+          }
         }
       }
-    }
 
-    await storage.setItem(
-      Key.PLAY_RECORD_UPLOAD_QUEUE,
-      remaining.slice(-MAX_QUEUE_LENGTH),
-    );
-  }).finally(() => {
+      await applyFlushResults(results);
+    }
+  })().finally(() => {
     flushPromise = null;
   });
 
   return flushPromise;
 }
+
+let lastAuthKey = getCurrentAuthKey();
+useServer.subscribe(() => {
+  const authKey = getCurrentAuthKey();
+  if (authKey === lastAuthKey) {
+    return;
+  }
+  lastAuthKey = authKey;
+  if (authKey) {
+    // 登录或切换账号后，尝试同步该账号之前保存在本地的播放记录.
+    void flushPlayRecordUploadQueue();
+  }
+});
+
+export { getCurrentMusicPlayRecordUploadAuth };
