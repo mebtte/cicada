@@ -9,7 +9,6 @@ import {
 import { RequestStatus } from '@/constants';
 import Spinner from '@/components/spinner';
 import ellipsis from '@/style/ellipsis';
-import notice from '@/utils/notice';
 import getResizedImage from '@/server/asset/get_resized_image';
 import {
   MusicWithSingerAliases,
@@ -19,7 +18,6 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import MusicbillCover from '../components/musicbill_cover';
-import { t } from '@/i18n';
 
 const ICON_SIZE = 24;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
@@ -199,7 +197,7 @@ function Musicbill({
           );
         }
         if (status === RequestStatus.LOADING) {
-          return notice.error(t('musicbill_is_loading'));
+          return;
         }
         return playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
           id,
