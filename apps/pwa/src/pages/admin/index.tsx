@@ -299,6 +299,9 @@ const Header = styled.header`
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
   box-shadow: 0 3px 0 ${SURFACE_SHADOW};
   z-index: 10;
+  /* window-controls-overlay 模式下让顶栏空白区域可拖动窗口;
+     内部按钮/链接已由全局样式设为 no-drag, 点击不受影响。 */
+  -webkit-app-region: drag;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
     padding: 0 12px;
