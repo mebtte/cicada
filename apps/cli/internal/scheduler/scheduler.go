@@ -401,49 +401,16 @@ func removeOutdatedAuthSession() (schedulerJobResult, error) {
 	}, err
 }
 
-// cleanOutdatedFile removes files older than 30 days from runtime caches.
+// cleanOutdatedFile removes thumbnail cache files older than 30 days. The cache
+// root itself is no longer scanned: legacy loose files there were cleared once
+// by a data migration, and current binaries only write into managed
+// subdirectories (thumbnails / music_transcoded).
 func cleanOutdatedFile() (schedulerJobResult, error) {
-	type cleanDir struct {
-		name     string
-		path     string
-		skipName string
-	}
-
-	dirs := []cleanDir{
-		{
-			name:     "cache",
-			path:     config.CacheDir(),
-			skipName: filepath.Base(config.ThumbnailCacheDir()),
-		},
-		{name: "thumbnail_cache", path: config.ThumbnailCacheDir()},
-	}
-
-	metrics := map[string]int64{}
-	var errs []error
-	var totalRemoved int64
-	for _, dir := range dirs {
-		skipNames := []string{}
-		if dir.path == config.CacheDir() {
-			skipNames = append(
-				skipNames,
-				filepath.Base(config.ThumbnailCacheDir()),
-				filepath.Base(config.MusicTranscodeCacheDir()),
-			)
-		} else if dir.skipName != "" {
-			skipNames = append(skipNames, dir.skipName)
-		}
-		removed, err := cleanOutdatedEntries(dir.path, 30*24*time.Hour, skipNames...)
-		metrics["removed_"+dir.name+"_entries"] = removed
-		totalRemoved += removed
-		if err != nil {
-			errs = append(errs, fmt.Errorf("clean outdated %s entries: %w", dir.name, err))
-		}
-	}
-	metrics["removed_entries"] = totalRemoved
+	removed, err := cleanOutdatedEntries(config.ThumbnailCacheDir(), 30*24*time.Hour, "")
 	return schedulerJobResult{
-		Summary: fmt.Sprintf("removed %d outdated cache entries", totalRemoved),
-		Metrics: metrics,
-	}, errors.Join(errs...)
+		Summary: fmt.Sprintf("removed %d outdated thumbnail cache entries", removed),
+		Metrics: map[string]int64{"removed_thumbnail_cache_entries": removed},
+	}, err
 }
 
 func cleanOutdatedAccessLog() (schedulerJobResult, error) {
