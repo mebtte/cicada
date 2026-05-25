@@ -49,10 +49,6 @@ func Start() {
 		{"clean_outdated_partial_upload", cleanOutdatedPartialUpload},
 	}
 
-	// Reap any partial uploads left over by a previous (possibly crashed)
-	// process so they do not occupy disk indefinitely.
-	go runScheduledJob(logger, "clean_outdated_partial_upload_startup", cleanOutdatedPartialUpload)
-
 	hour, min := 4, 0
 	for _, job := range jobs {
 		job := job // capture
