@@ -1,11 +1,13 @@
 import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 import Button from '@/components/button';
-import { MdHelpOutline } from 'react-icons/md';
+import { MdHelpOutline, MdRefresh } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import { PAGE_HORIZONTAL_PADDING } from '../../page';
 import Filter from './filter';
+import e, { EventType } from '../eventemitter';
 import { TOOLBAR_FLOATING_GAP, TOOLBAR_HEIGHT } from '../constants';
 
 const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
@@ -40,6 +42,16 @@ const Style = styled.div`
 `;
 
 function Toolbar() {
+  // 跟随列表的加载态, 加载过程中刷新按钮呈现 loading
+  const [loading, setLoading] = useState(false);
+  useEffect(
+    () =>
+      e.listen(EventType.LOADING_CHANGE, (payload) =>
+        setLoading(payload.loading),
+      ),
+    [],
+  );
+
   return (
     <Style>
       <Button
@@ -54,6 +66,16 @@ function Toolbar() {
         }
       >
         <MdHelpOutline />
+      </Button>
+      {/* 刷新按钮: 点击后通知列表重新拉取当前播放记录 */}
+      <Button
+        square
+        variant="ghost"
+        size="sm"
+        loading={loading}
+        onClick={() => e.emit(EventType.RELOAD, null)}
+      >
+        <MdRefresh />
       </Button>
       <Filter />
     </Style>

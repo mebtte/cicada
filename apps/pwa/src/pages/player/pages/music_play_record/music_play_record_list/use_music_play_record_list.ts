@@ -106,11 +106,18 @@ export default () => {
     getPageMusicPlayRecordList({ keyword, page });
   }, [getPageMusicPlayRecordList, keyword, page]);
 
+  // 同步加载态给工具栏, 使刷新按钮在加载过程中呈现 loading
+  useEffect(() => {
+    e.emit(EventType.LOADING_CHANGE, { loading: data.loading });
+  }, [data.loading]);
+
   useEffect(() => {
     const unlistenMusicDeleted = playerEventemitter.listen(
       PlayerEventType.MUSIC_DELETED,
       reload,
     );
+    // 监听工具栏的刷新按钮, 重新拉取当前播放记录
+    const unlistenReload = e.listen(EventType.RELOAD, reload);
     const unlistenMusicPlayRecordDeleted = e.listen(
       EventType.MUSIC_PLAY_RECORD_DELETED,
       ({ recordId }) => removeLocalMusicPlayRecord(recordId),
@@ -121,6 +128,7 @@ export default () => {
     );
     return () => {
       unlistenMusicDeleted();
+      unlistenReload();
       unlistenMusicPlayRecordDeleted();
       unlistenMusicPlayRecordDeleteFailed();
     };

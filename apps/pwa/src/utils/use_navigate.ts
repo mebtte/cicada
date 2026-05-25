@@ -15,10 +15,12 @@ function useNavigate() {
       path = location.pathname,
       query = {},
       replace = false,
+      state,
     }: {
       path?: string;
       query?: Record<string, QueryValue>;
       replace?: boolean;
+      state?: unknown;
     }) => {
       const combineQuery = {
         ...parseSearch(location.search),
@@ -36,7 +38,7 @@ function useNavigate() {
       if (target === `${location.pathname}${location.search}`) {
         return;
       }
-      return originalNavigate(target, { replace });
+      return originalNavigate(target, { replace, state });
     },
   );
   return navigate;
