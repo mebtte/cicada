@@ -39,8 +39,11 @@ import { CSSVariable } from '@/global_style';
 import { useTheme, CSS_VAR } from '../theme';
 import { t } from '@/i18n';
 import {
+  DialogTitleRegistryContext,
   useComposedRefs,
   useDialogContentA11y,
+  useDialogTitleRegistry,
+  useRegisterDialogTitle,
   visuallyHiddenStyle,
 } from '../dialog_a11y';
 
@@ -304,11 +307,13 @@ export const DialogContent = forwardRef<
   const viewportStyle = useVisualViewportStyle();
   const panelRef = useRef<HTMLDivElement | null>(null);
   const composedPanelRef = useComposedRefs(ref, panelRef);
-  const showFallbackTitle = useDialogContentA11y(panelRef, ariaDescribedBy);
+  const { title: registeredTitle, registerTitle } = useDialogTitleRegistry();
+  useDialogContentA11y(panelRef, ariaDescribedBy);
   const themeVars = {
     [CSS_VAR.colorPrimary]: theme.colorPrimary,
     [CSS_VAR.colorPrimaryShadow]: `color-mix(in srgb, ${theme.colorPrimary} 70%, #000)`,
   } as CSSProperties;
+  const fallbackTitle = accessibleTitle ?? registeredTitle ?? ariaLabel ?? t('dialog');
 
   return (
     <RadixDialog.Portal forceMount={forceMount}>
@@ -323,26 +328,27 @@ export const DialogContent = forwardRef<
           asChild
         >
           <Panel style={{ ...themeVars, ...style }}>
-            {showFallbackTitle && (
+            <DialogTitleRegistryContext.Provider value={registerTitle}>
+              {/* Radix validates Dialog.Title by id, so keep one mounted from first render. */}
               <RadixDialog.Title asChild>
                 <h2 style={visuallyHiddenStyle}>
-                  {accessibleTitle ?? ariaLabel ?? t('dialog')}
+                  {fallbackTitle}
                 </h2>
               </RadixDialog.Title>
-            )}
-            <Handle aria-hidden />
-            {showClose && (
-              <CloseButton aria-label={t('close')}>
-                <svg
-                  width={14} height={14} viewBox="0 0 24 24"
-                  fill="none" stroke="currentColor"
-                  strokeWidth={2.5} strokeLinecap="round"
-                >
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </CloseButton>
-            )}
-            <ScrollArea>{children}</ScrollArea>
+              <Handle aria-hidden />
+              {showClose && (
+                <CloseButton aria-label={t('close')}>
+                  <svg
+                    width={14} height={14} viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor"
+                    strokeWidth={2.5} strokeLinecap="round"
+                  >
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </CloseButton>
+              )}
+              <ScrollArea>{children}</ScrollArea>
+            </DialogTitleRegistryContext.Provider>
           </Panel>
         </RadixDialog.Content>
       </ViewportFrame>
@@ -372,18 +378,17 @@ const DialogTitleText = styled.h2`
 `;
 
 export const DialogTitle = forwardRef<
-  ElementRef<typeof RadixDialog.Title>,
-  ComponentPropsWithoutRef<typeof RadixDialog.Title>
->(({ children, ...props }, ref) => (
-  <RadixDialog.Title
-    ref={ref}
-    {...props}
-    data-cicada-dialog-title=""
-    asChild
-  >
-    <DialogTitleText>{children}</DialogTitleText>
-  </RadixDialog.Title>
-));
+  HTMLHeadingElement,
+  ComponentPropsWithoutRef<'h2'>
+>(({ children, ...props }, ref) => {
+  useRegisterDialogTitle(children);
+
+  return (
+    <DialogTitleText ref={ref} {...props} data-cicada-dialog-title="">
+      {children}
+    </DialogTitleText>
+  );
+});
 DialogTitle.displayName = 'DialogTitle';
 
 // ─── DialogDescription ───────────────────────────────────────────────────────

@@ -1,20 +1,13 @@
-import { CSSProperties, ReactNode, useCallback, useEffect, useState } from 'react';
-import { Dialog, DialogContent, DialogTitle } from '@/components';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
+import { Dialog, DialogContent } from '@/components';
 import { DialogOptions } from './constants';
 import e, { EventType } from './eventemitter';
 import { t } from '@/i18n';
 
-const srOnly: CSSProperties = {
-  position: 'absolute',
-  width: 1,
-  height: 1,
-  padding: 0,
-  margin: -1,
-  overflow: 'hidden',
-  clip: 'rect(0,0,0,0)',
-  whiteSpace: 'nowrap',
-  border: 0,
-};
+function getAccessibleTitle(options: DialogOptions) {
+  const title = 'title' in options ? (options.title as ReactNode) : null;
+  return title || t('dialog');
+}
 
 function DialogBase({
   options,
@@ -58,9 +51,9 @@ function DialogBase({
       <DialogContent
         showClose={false}
         aria-describedby={undefined}
+        accessibleTitle={getAccessibleTitle(options)}
         forceMount={hasOpened ? true : undefined}
       >
-        <DialogTitle style={srOnly}>{t('dialog')}</DialogTitle>
         {children({ onClose })}
       </DialogContent>
     </Dialog>

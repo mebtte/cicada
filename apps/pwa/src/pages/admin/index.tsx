@@ -16,7 +16,6 @@ import definition from '@/definition';
 import { CSS_VAR } from '@/components/theme';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import {
-  MdClose,
   MdCloudUpload,
   MdDashboard,
   MdHeadphones,
@@ -160,15 +159,6 @@ const BrandSubTitle = styled.div`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-
-const MobileCloseButton = styled(Button)`
-  display: none;
-
-  @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    margin-left: auto;
-    display: inline-flex;
-  }
 `;
 
 const MenuList = styled.nav`
@@ -752,15 +742,6 @@ function AdminPage() {
             <BrandName>{capitalize(t('cicada'))}</BrandName>
             <BrandSubTitle>{definition.VERSION}</BrandSubTitle>
           </BrandText>
-          <MobileCloseButton
-            square
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(false)}
-            aria-label={t('close_menu')}
-          >
-            <MdClose size={20} />
-          </MobileCloseButton>
         </SidebarHeader>
 
         <MenuList>

@@ -1,15 +1,18 @@
 import {
+  createContext,
   type CSSProperties,
   type MutableRefObject,
+  type ReactNode,
   type Ref,
   type RefCallback,
   type RefObject,
+  useContext,
   useCallback,
   useLayoutEffect,
+  useRef,
   useState,
 } from 'react';
 
-export const DIALOG_TITLE_ATTRIBUTE = 'data-cicada-dialog-title';
 export const DIALOG_DESCRIPTION_ATTRIBUTE = 'data-cicada-dialog-description';
 
 export const visuallyHiddenStyle: CSSProperties = {
@@ -23,6 +26,66 @@ export const visuallyHiddenStyle: CSSProperties = {
   whiteSpace: 'nowrap',
   border: 0,
 };
+
+type RegisteredDialogTitle = {
+  id: symbol;
+  title: ReactNode;
+};
+
+type DialogTitleRegistrar = (id: symbol, title: ReactNode | null) => void;
+
+export const DialogTitleRegistryContext =
+  createContext<DialogTitleRegistrar | null>(null);
+
+export function useDialogTitleRegistry() {
+  const [titles, setTitles] = useState<RegisteredDialogTitle[]>([]);
+
+  const registerTitle = useCallback<DialogTitleRegistrar>((id, title) => {
+    setTitles((current) => {
+      const existingIndex = current.findIndex((item) => item.id === id);
+
+      if (title === null) {
+        if (existingIndex === -1) return current;
+        return current.filter((item) => item.id !== id);
+      }
+
+      if (existingIndex !== -1) {
+        const existing = current[existingIndex];
+        if (existing.title === title) return current;
+
+        const next = current.slice();
+        next[existingIndex] = { id, title };
+        return next;
+      }
+
+      return [...current, { id, title }];
+    });
+  }, []);
+
+  return {
+    title: titles.length > 0 ? titles[titles.length - 1].title : null,
+    registerTitle,
+  };
+}
+
+export function useRegisterDialogTitle(title: ReactNode) {
+  const registerTitle = useContext(DialogTitleRegistryContext);
+  const titleIdRef = useRef<symbol | null>(null);
+
+  if (!titleIdRef.current) {
+    titleIdRef.current = Symbol('dialog-title');
+  }
+
+  useLayoutEffect(() => {
+    if (!registerTitle) return undefined;
+
+    // Visible titles feed the single hidden Radix title, avoiding duplicate title ids.
+    const titleId = titleIdRef.current!;
+    registerTitle(titleId, title);
+
+    return () => registerTitle(titleId, null);
+  }, [registerTitle, title]);
+}
 
 function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
   if (!ref) return;
@@ -47,18 +110,9 @@ export function useDialogContentA11y<T extends HTMLElement>(
   contentRef: RefObject<T | null>,
   describedBy: string | undefined,
 ) {
-  const [showFallbackTitle, setShowFallbackTitle] = useState(true);
-
   useLayoutEffect(() => {
     const content = contentRef.current;
     if (!content) return;
-
-    const hasTitle = Boolean(
-      content.querySelector(`[${DIALOG_TITLE_ATTRIBUTE}]`),
-    );
-    setShowFallbackTitle((current) =>
-      current === !hasTitle ? current : !hasTitle,
-    );
 
     if (describedBy !== undefined) return;
 
@@ -71,6 +125,4 @@ export function useDialogContentA11y<T extends HTMLElement>(
       content.removeAttribute('aria-describedby');
     }
   });
-
-  return showFallbackTitle;
 }

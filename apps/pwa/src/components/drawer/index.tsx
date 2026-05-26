@@ -39,8 +39,11 @@ import { useTheme, CSS_VAR } from '../theme';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import {
+  DialogTitleRegistryContext,
   useComposedRefs,
   useDialogContentA11y,
+  useDialogTitleRegistry,
+  useRegisterDialogTitle,
   visuallyHiddenStyle,
 } from '../dialog_a11y';
 
@@ -237,11 +240,13 @@ export const DrawerContent = forwardRef<
   const theme = useTheme();
   const panelRef = useRef<HTMLDivElement | null>(null);
   const composedPanelRef = useComposedRefs(ref, panelRef);
-  const showFallbackTitle = useDialogContentA11y(panelRef, ariaDescribedBy);
+  const { title: registeredTitle, registerTitle } = useDialogTitleRegistry();
+  useDialogContentA11y(panelRef, ariaDescribedBy);
   const themeVars = {
     [CSS_VAR.colorPrimary]: theme.colorPrimary,
     [CSS_VAR.colorPrimaryShadow]: `color-mix(in srgb, ${theme.colorPrimary} 70%, #000)`,
   } as CSSProperties;
+  const fallbackTitle = accessibleTitle ?? registeredTitle ?? ariaLabel ?? t('dialog');
 
   return (
     // Keep Radix's DismissableLayer stack aligned when an open drawer is raised.
@@ -255,19 +260,20 @@ export const DrawerContent = forwardRef<
         asChild
       >
         <Panel $side={side} style={{ ...themeVars, zIndex: zIndex + 1, ...style }}>
-          {showFallbackTitle && (
+          <DialogTitleRegistryContext.Provider value={registerTitle}>
+            {/* Radix validates Dialog.Title by id, so keep one mounted from first render. */}
             <RadixDialog.Title asChild>
               <h2 style={visuallyHiddenStyle}>
-                {accessibleTitle ?? ariaLabel ?? t('dialog')}
+                {fallbackTitle}
               </h2>
             </RadixDialog.Title>
-          )}
-          {showClose && (
-            <CloseButton aria-label={t('close')}>
-              <MdClose />
-            </CloseButton>
-          )}
-          <ScrollArea>{children}</ScrollArea>
+            {showClose && (
+              <CloseButton aria-label={t('close')}>
+                <MdClose />
+              </CloseButton>
+            )}
+            <ScrollArea>{children}</ScrollArea>
+          </DialogTitleRegistryContext.Provider>
         </Panel>
       </RadixDialog.Content>
     </RadixDialog.Portal>
@@ -297,18 +303,17 @@ const DrawerTitleText = styled.h2`
 `;
 
 export const DrawerTitle = forwardRef<
-  ElementRef<typeof RadixDialog.Title>,
-  ComponentPropsWithoutRef<typeof RadixDialog.Title>
->(({ children, ...props }, ref) => (
-  <RadixDialog.Title
-    ref={ref}
-    {...props}
-    data-cicada-dialog-title=""
-    asChild
-  >
-    <DrawerTitleText>{children}</DrawerTitleText>
-  </RadixDialog.Title>
-));
+  HTMLHeadingElement,
+  ComponentPropsWithoutRef<'h2'>
+>(({ children, ...props }, ref) => {
+  useRegisterDialogTitle(children);
+
+  return (
+    <DrawerTitleText ref={ref} {...props} data-cicada-dialog-title="">
+      {children}
+    </DrawerTitleText>
+  );
+});
 DrawerTitle.displayName = 'DrawerTitle';
 
 // ─── DrawerDescription ────────────────────────────────────────────────────────
