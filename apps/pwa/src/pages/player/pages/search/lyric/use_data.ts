@@ -23,7 +23,7 @@ type Data =
       error: null;
       loading: false;
       value: {
-        keyword;
+        keyword: string;
         total: number;
         musicList: MusicWithLyric[];
       };
@@ -49,7 +49,11 @@ export default () => {
   const pageNumber = (page ? Number(page) : 1) || 1;
   const [data, setData] = useState<Data>(dataLoading);
   const getData = useCallback(async () => {
-    if (!keyword) {
+    const normalizedKeyword = keyword
+      .replace(/\s+/g, ' ')
+      .trim()
+      .substring(0, SEARCH_KEYWORD_MAX_LENGTH);
+    if (!normalizedKeyword) {
       return setData({
         error: new Error(t('empty_lyric_search_keyword_warning')),
         loading: false,
@@ -60,10 +64,7 @@ export default () => {
     setData(dataLoading);
     try {
       const d = await searchMusicByLyric({
-        keyword: keyword
-          .replace(/\s+/g, ' ')
-          .trim()
-          .substring(0, SEARCH_KEYWORD_MAX_LENGTH),
+        keyword: normalizedKeyword,
         page: pageNumber,
         pageSize: PAGE_SIZE,
       });
@@ -71,11 +72,11 @@ export default () => {
         error: null,
         loading: false,
         value: {
-          keyword,
+          keyword: normalizedKeyword,
           total: d.total,
           musicList: d.musicList.map((music, index) => {
             let lrc = '';
-            const lowerCaseKeyword = keyword.toLowerCase();
+            const lowerCaseKeyword = normalizedKeyword.toLowerCase();
             for (const lyric of music.lyrics) {
               const lyricLines = (
                 parse(lyric.lrc).filter(
@@ -94,15 +95,18 @@ export default () => {
                   if (i > 1) {
                     lines.unshift(lyricLines[i - 2]);
                   }
-                  if (i < lyricLines.length - 2) {
-                    lines.push(lyricLines[i + 2]);
-                  }
                   if (i < lyricLines.length - 1) {
                     lines.push(lyricLines[i + 1]);
+                  }
+                  if (i < lyricLines.length - 2) {
+                    lines.push(lyricLines[i + 2]);
                   }
                   lrc = lines.map((line) => lyricLineToRaw(line)).join('\n');
                   break;
                 }
+              }
+              if (lrc) {
+                break;
               }
             }
 

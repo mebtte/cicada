@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 )
@@ -93,6 +94,14 @@ func GetMusicsByIDs(ids []string) ([]Music, error) {
 		}
 		out = append(out, m)
 	}
+	// WHERE IN 不保证返回顺序; 搜索/关联结果需要保持调用方传入的排序。
+	order := make(map[string]int, len(ids))
+	for i, id := range ids {
+		order[id] = i
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		return order[out[i].ID] < order[out[j].ID]
+	})
 	return out, nil
 }
 
@@ -273,13 +282,14 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	if keyword == "" {
 		return 0, []Music{}, nil
 	}
-	pat := "%" + keyword + "%"
-	where := `WHERE m.name LIKE ? OR m.aliases LIKE ?
+	pat := containsLikePattern(keyword)
+	prefixPat := prefixLikePattern(keyword)
+	where := `WHERE m.name LIKE ? ESCAPE '\' OR m.aliases LIKE ? ESCAPE '\'
 		OR EXISTS (
 			SELECT 1
 			FROM music_singer_relation msr
 			JOIN singer s ON msr.singerId=s.id
-			WHERE msr.musicId=m.id AND (s.name LIKE ? OR s.aliases LIKE ?)
+			WHERE msr.musicId=m.id AND (s.name LIKE ? ESCAPE '\' OR s.aliases LIKE ? ESCAPE '\')
 		)`
 	var total int
 	if err := DB().QueryRow(`SELECT COUNT(1) FROM music m `+where, pat, pat, pat, pat).Scan(&total); err != nil {
@@ -288,8 +298,38 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	rows, err := DB().Query(
 		`SELECT `+musicSelectColumnsWithAlias+`
 		FROM music m `+where+`
-		ORDER BY m.heat DESC LIMIT ? OFFSET ?`,
-		pat, pat, pat, pat, pageSize, (page-1)*pageSize,
+		ORDER BY
+			CASE
+				WHEN m.name = ? COLLATE NOCASE THEN 100
+				WHEN m.name LIKE ? ESCAPE '\' THEN 90
+				WHEN m.aliases LIKE ? ESCAPE '\' THEN 80
+				WHEN EXISTS (
+					SELECT 1
+					FROM music_singer_relation msr
+					JOIN singer s ON msr.singerId=s.id
+					WHERE msr.musicId=m.id AND s.name = ? COLLATE NOCASE
+				) THEN 70
+				WHEN EXISTS (
+					SELECT 1
+					FROM music_singer_relation msr
+					JOIN singer s ON msr.singerId=s.id
+					WHERE msr.musicId=m.id AND s.name LIKE ? ESCAPE '\'
+				) THEN 60
+				WHEN EXISTS (
+					SELECT 1
+					FROM music_singer_relation msr
+					JOIN singer s ON msr.singerId=s.id
+					WHERE msr.musicId=m.id AND s.aliases LIKE ? ESCAPE '\'
+				) THEN 50
+				ELSE 40
+			END DESC,
+			m.heat DESC,
+			m.createTimestamp DESC,
+			m.id ASC
+		LIMIT ? OFFSET ?`,
+		pat, pat, pat, pat,
+		keyword, prefixPat, pat, keyword, prefixPat, pat,
+		pageSize, (page-1)*pageSize,
 	)
 	if err != nil {
 		return 0, nil, err

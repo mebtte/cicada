@@ -280,17 +280,35 @@ func SearchPublicMusicbills(keyword string, page, pageSize int) (int, []Musicbil
 	if keyword == "" {
 		return 0, []MusicbillWithOwner{}, nil
 	}
-	pat := "%" + keyword + "%"
+	pat := containsLikePattern(keyword)
+	prefixPat := prefixLikePattern(keyword)
 	var total int
-	DB().QueryRow(`SELECT COUNT(1) FROM musicbill WHERE public=1 AND name LIKE ?`, pat).Scan(&total)
+	DB().QueryRow(
+		`SELECT COUNT(1)
+		FROM musicbill mb JOIN user u ON mb.userId=u.id
+		WHERE mb.public=1
+			AND (mb.name LIKE ? ESCAPE '\' OR u.nickname LIKE ? ESCAPE '\')`,
+		pat, pat,
+	).Scan(&total)
 	// 搜索页需要直接展示乐单音乐数量，在同一条查询里补齐避免二次请求。
 	rows, err := DB().Query(
 		`SELECT mb.id,mb.userId,mb.cover,mb.name,mb.public,mb.createTimestamp,u.nickname,u.avatar,
 			(SELECT COUNT(1) FROM musicbill_music mm WHERE mm.musicbillId=mb.id) AS musicCount
 		FROM musicbill mb JOIN user u ON mb.userId=u.id
-		WHERE mb.public=1 AND mb.name LIKE ?
-		ORDER BY mb.createTimestamp DESC LIMIT ? OFFSET ?`,
-		pat, pageSize, (page-1)*pageSize,
+		WHERE mb.public=1
+			AND (mb.name LIKE ? ESCAPE '\' OR u.nickname LIKE ? ESCAPE '\')
+		ORDER BY
+			CASE
+				WHEN mb.name = ? COLLATE NOCASE THEN 100
+				WHEN mb.name LIKE ? ESCAPE '\' THEN 90
+				WHEN u.nickname = ? COLLATE NOCASE THEN 80
+				WHEN u.nickname LIKE ? ESCAPE '\' THEN 70
+				ELSE 60
+			END DESC,
+			mb.createTimestamp DESC,
+			mb.id ASC
+		LIMIT ? OFFSET ?`,
+		pat, pat, keyword, prefixPat, keyword, prefixPat, pageSize, (page-1)*pageSize,
 	)
 	if err != nil {
 		return 0, nil, err

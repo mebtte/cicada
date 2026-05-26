@@ -71,12 +71,28 @@ func SearchSingers(keyword string, page, pageSize int) (int, []Singer, error) {
 	if keyword == "" {
 		return 0, []Singer{}, nil
 	}
-	pat := "%" + keyword + "%"
+	pat := containsLikePattern(keyword)
+	prefixPat := prefixLikePattern(keyword)
 	var total int
-	DB().QueryRow(`SELECT COUNT(1) FROM singer WHERE name LIKE ? OR aliases LIKE ?`, pat, pat).Scan(&total)
+	DB().QueryRow(
+		`SELECT COUNT(1) FROM singer WHERE name LIKE ? ESCAPE '\' OR aliases LIKE ? ESCAPE '\'`,
+		pat, pat,
+	).Scan(&total)
 	rows, err := DB().Query(
-		`SELECT id,name,aliases,createUserId,createTimestamp FROM singer WHERE name LIKE ? OR aliases LIKE ? ORDER BY createTimestamp DESC LIMIT ? OFFSET ?`,
-		pat, pat, pageSize, (page-1)*pageSize,
+		`SELECT id,name,aliases,createUserId,createTimestamp
+		FROM singer
+		WHERE name LIKE ? ESCAPE '\' OR aliases LIKE ? ESCAPE '\'
+		ORDER BY
+			CASE
+				WHEN name = ? COLLATE NOCASE THEN 100
+				WHEN name LIKE ? ESCAPE '\' THEN 90
+				WHEN aliases LIKE ? ESCAPE '\' THEN 80
+				ELSE 70
+			END DESC,
+			createTimestamp DESC,
+			id ASC
+		LIMIT ? OFFSET ?`,
+		pat, pat, keyword, prefixPat, pat, pageSize, (page-1)*pageSize,
 	)
 	if err != nil {
 		return 0, nil, err
