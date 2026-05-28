@@ -9,7 +9,11 @@ const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const TARGET_DIR = path.join(ROOT_DIR, 'apps', 'cli', 'internal', 'ffmpeg');
 const GENERATED_DIR = path.join(TARGET_DIR, 'generated');
 const OSX_EXPERTS_URL = 'https://www.osxexperts.net/';
-const BTBN_RELEASE_BASE = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/';
+const BTBN_RELEASE_BASE = 'https://github.com/BtbN/FFmpeg-Builds/releases/latest/download/';
+const BTBN_RELEASE_FALLBACK_BASES = [
+  BTBN_RELEASE_BASE,
+  'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/',
+];
 
 const TARGETS = {
   'darwin-arm64': {
@@ -105,7 +109,7 @@ async function fetchText(url) {
 async function downloadToFile(url, destination) {
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`download failed: ${response.status} ${response.statusText}`);
+    throw new Error(`download failed for ${url}: ${response.status} ${response.statusText}`);
   }
 
   const data = Buffer.from(await response.arrayBuffer());
@@ -262,16 +266,38 @@ function parseChecksumFile(content, filename) {
   return '';
 }
 
+async function fetchBtbNChecksumFile() {
+  const errors = [];
+
+  // Prefer GitHub's semantic latest-release URL, but keep BtbN's floating latest tag as a fallback.
+  for (const base of BTBN_RELEASE_FALLBACK_BASES) {
+    const checksumURL = new URL('checksums.sha256', base).toString();
+    try {
+      return {
+        releaseBase: base,
+        checksumFile: await fetchText(checksumURL),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      errors.push(`${checksumURL}: ${message}`);
+    }
+  }
+
+  throw new Error(`failed to fetch BtbN checksums.sha256 from known release URLs:\n${errors.join('\n')}`);
+}
+
 async function resolveBtbNSourcePlan(targetConfig) {
-  const checksumURL = new URL('checksums.sha256', BTBN_RELEASE_BASE).toString();
-  const checksumFile = await fetchText(checksumURL);
+  const { releaseBase, checksumFile } = await fetchBtbNChecksumFile();
   const archiveName = targetConfig.archiveName;
   const checksum = parseChecksumFile(checksumFile, archiveName);
+  if (!checksum) {
+    throw new Error(`cannot find ${archiveName} in BtbN checksums.sha256`);
+  }
   return {
     kind: 'archive',
     version: 'btbn-latest',
     archive: {
-      location: new URL(archiveName, BTBN_RELEASE_BASE).toString(),
+      location: new URL(archiveName, releaseBase).toString(),
       fileName: archiveName,
       sha256: checksum,
     },
