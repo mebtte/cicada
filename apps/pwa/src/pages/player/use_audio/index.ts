@@ -35,8 +35,6 @@ function useAudio({
    */
   const audioRef = useRef<CustomAudio<QueueMusic> | null>(null);
   const queueMusicPidRef = useRef<string | null>(null);
-  const playqueueRef = useRef(playqueue);
-  const currentPlayqueuePositionRef = useRef(currentPlayqueuePosition);
   if (!audioRef.current) {
     audioRef.current = new CustomAudio<QueueMusic>();
   }
@@ -46,14 +44,6 @@ function useAudio({
   const [duration, setDuration] = useState(0);
   const [paused, setPaused] = useState(true);
   const [bufferedPercent, setBufferedPercent] = useState(0);
-
-  useEffect(() => {
-    playqueueRef.current = playqueue;
-  }, [playqueue]);
-
-  useEffect(() => {
-    currentPlayqueuePositionRef.current = currentPlayqueuePosition;
-  }, [currentPlayqueuePosition]);
 
   useVolume(audio);
   useCache(audio, {
@@ -87,13 +77,7 @@ function useAudio({
       setLoading(false);
       setPaused(true);
       setBufferedPercent(0);
-      // 错误监听只注册一次, 这里通过 ref 读取最新队列来展示准确的下一首.
-      const latestPlayqueue = playqueueRef.current;
-      const latestPosition = currentPlayqueuePositionRef.current;
-      onError({
-        nextQueueMusic:
-          latestPosition >= 0 ? latestPlayqueue[latestPosition + 1] : undefined,
-      });
+      onError();
     });
     const unlistenDurationChange = audio.listen('durationchange', () =>
       setDuration(getFiniteAudioDuration(audio)),

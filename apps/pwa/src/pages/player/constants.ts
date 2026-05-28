@@ -5,6 +5,12 @@ import { MusicExportQuality } from '@/utils/music_export_asset';
 
 export const HEADER_HEIGHT = 72;
 
+/**
+ * 路由 state 字段: 标记本次跳转到发现页时需要自动聚焦搜索框.
+ * 由 header 的搜索按钮设置, 发现页据此在挂载时聚焦搜索框.
+ */
+export const EXPLORATION_FOCUS_SEARCH_STATE = 'focusSearch';
+
 export const CONTROLLER_BORDER_WIDTH = 2;
 export const CONTROLLER_VERTICAL_PADDING = 4;
 /* 封面相对于内容区四周再额外预留的留白 */

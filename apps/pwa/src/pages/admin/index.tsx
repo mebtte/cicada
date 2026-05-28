@@ -16,7 +16,6 @@ import definition from '@/definition';
 import { CSS_VAR } from '@/components/theme';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import {
-  MdClose,
   MdCloudUpload,
   MdDashboard,
   MdHeadphones,
@@ -162,15 +161,6 @@ const BrandSubTitle = styled.div`
   text-overflow: ellipsis;
 `;
 
-const MobileCloseButton = styled(Button)`
-  display: none;
-
-  @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    margin-left: auto;
-    display: inline-flex;
-  }
-`;
-
 const MenuList = styled.nav`
   padding: 4px 12px 18px;
   overflow-y: auto;
@@ -299,6 +289,9 @@ const Header = styled.header`
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
   box-shadow: 0 3px 0 ${SURFACE_SHADOW};
   z-index: 10;
+  /* window-controls-overlay 模式下让顶栏空白区域可拖动窗口;
+     内部按钮/链接已由全局样式设为 no-drag, 点击不受影响。 */
+  -webkit-app-region: drag;
 
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
     padding: 0 12px;
@@ -749,15 +742,6 @@ function AdminPage() {
             <BrandName>{capitalize(t('cicada'))}</BrandName>
             <BrandSubTitle>{definition.VERSION}</BrandSubTitle>
           </BrandText>
-          <MobileCloseButton
-            square
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(false)}
-            aria-label={t('close_menu')}
-          >
-            <MdClose size={20} />
-          </MobileCloseButton>
         </SidebarHeader>
 
         <MenuList>

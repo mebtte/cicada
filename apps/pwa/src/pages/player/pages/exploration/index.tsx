@@ -9,13 +9,18 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import { ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
 import useNavigate from '@/utils/use_navigate';
 import { useTheme } from '@/global_states/theme';
 import { DuolingoTabList } from '@/components/duolingo_tabs';
 import { MdMic, MdMusicNote, MdQueueMusic } from 'react-icons/md';
-import { FLOATING_CONTROLLER_SCROLL_SPACE, SearchTab } from '../../constants';
+import {
+  EXPLORATION_FOCUS_SEARCH_STATE,
+  FLOATING_CONTROLLER_SCROLL_SPACE,
+  SearchTab,
+} from '../../constants';
 import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
 import useData from './use_data';
 import playerEventemitter, {
@@ -324,7 +329,12 @@ function ExplorationToolbar({
 }) {
   const navigate = useNavigate();
   const { miniMode } = useTheme();
+  const location = useLocation();
   const searching = mode === 'search';
+  // header 搜索按钮跳转过来时会带上该 state, 据此在搜索框挂载时自动聚焦。
+  const focusSearch = !!(location.state as Record<string, unknown> | null)?.[
+    EXPLORATION_FOCUS_SEARCH_STATE
+  ];
 
   if (!searching && !miniMode) {
     return null;
@@ -336,7 +346,7 @@ function ExplorationToolbar({
         searching ? 'search-mode-toolbar' : 'recommendation-toolbar'
       }`}
     >
-      {miniMode ? <SearchInput autoFocus={searching} /> : null}
+      {miniMode ? <SearchInput autoFocus={searching || focusSearch} /> : null}
       {searching ? (
         <DuolingoTabList<SearchTab>
           className="search-tabs"

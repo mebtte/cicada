@@ -5,13 +5,13 @@ import Button from '@/components/button';
 import { MdArrowBack, MdMenu, MdSearch } from 'react-icons/md';
 import { useLocation, useNavigate as useRouterNavigate } from 'react-router-dom';
 import useNavigate from '@/utils/use_navigate';
-import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { ROOT_PATH } from '@/constants/route';
 import Search from './search';
 import Title from './title';
 import useTitle from './use_title';
 import e, { EventType } from '../eventemitter';
 import useTitlebar from './use_titlebar';
-import { HEADER_HEIGHT } from '../constants';
+import { EXPLORATION_FOCUS_SEARCH_STATE, HEADER_HEIGHT } from '../constants';
 import { useTheme } from '@/global_states/theme';
 import { CSSVariable } from '@/global_style';
 import { getIsHeaderBackButtonPath } from './back_button';
@@ -44,9 +44,6 @@ function Header() {
   const title = useTitle();
   const { left, right } = useTitlebar();
   const showBackButton = miniMode && getIsHeaderBackButtonPath(pathname);
-  const isExplorationPath =
-    pathname === ROOT_PATH.PLAYER ||
-    pathname === ROOT_PATH.PLAYER + PLAYER_PATH.EXPLORATION;
 
   return (
     <Style style={{ paddingLeft: left, paddingRight: right }}>
@@ -70,28 +67,27 @@ function Header() {
           >
             {showBackButton ? <MdArrowBack /> : <MdMenu />}
           </Button>
-          {isExplorationPath ? null : (
-            <Button
-              square
-              variant="ghost"
-              size="md"
-              onClick={() => {
-                navigate({
-                  path: ROOT_PATH.PLAYER,
-                  query: {
-                    keyword: null,
-                    page: null,
-                    search_tab: null,
-                  },
-                });
-                window.requestAnimationFrame(() =>
-                  e.emit(EventType.FOCUS_SEARCH_INPUT, null),
-                );
-              }}
-            >
-              <MdSearch />
-            </Button>
-          )}
+          <Button
+            square
+            variant="ghost"
+            size="md"
+            onClick={() => {
+              // 跳转到发现页并通过路由 state 通知其聚焦搜索框。
+              // 已在发现页时, 该跳转的目标地址与当前一致, useNavigate 会去重而不触发跳转,
+              // 搜索框也就不会重新挂载/聚焦, 满足 "已在发现页则不自动聚焦" 的要求。
+              navigate({
+                path: ROOT_PATH.PLAYER,
+                query: {
+                  keyword: null,
+                  page: null,
+                  search_tab: null,
+                },
+                state: { [EXPLORATION_FOCUS_SEARCH_STATE]: true },
+              });
+            }}
+          >
+            <MdSearch />
+          </Button>
         </>
       ) : (
         <Cover src="/logo.png" size={30} />

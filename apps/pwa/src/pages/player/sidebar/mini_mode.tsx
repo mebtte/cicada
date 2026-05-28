@@ -39,7 +39,13 @@ function MiniMode() {
 
   return (
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent side="left" showClose={false} style={{ width: WIDTH }}>
+      <DrawerContent
+        side="left"
+        showClose={false}
+        style={{ width: WIDTH }}
+        // 侧边栏由滑动手势呼出, 阻止 Radix 默认聚焦首个菜单项, 避免触发 focus-visible 描边
+        onOpenAutoFocus={(event) => event.preventDefault()}
+      >
         <ContentWrapper onClick={onClose}>
           <Content />
         </ContentWrapper>

@@ -38,6 +38,7 @@ import useExport from './use_export';
 import PlaylistAddAnimation from './playlist_add_animation';
 import PlayqueueInsertAnimation from './playqueue_insert_animation';
 import PublicMusicbillCollectionDrawer from './public_musicbill_collection_drawer';
+import useOpenSidebarSwipe from './use_open_sidebar_swipe';
 
 const Style = styled(PageContainer)`
   position: relative;
@@ -71,6 +72,7 @@ function Wrapper() {
   useDocumentTitle(capitalize(t('cicada')));
   useProfileUpdate();
   useSearchHotkey();
+  useOpenSidebarSwipe();
 
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
   const playlist = usePlaylist();

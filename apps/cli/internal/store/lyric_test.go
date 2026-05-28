@@ -85,3 +85,64 @@ func TestUpdateLyricsByMusicIDReplacesLyricsAndSearchContent(t *testing.T) {
 		t.Fatalf("unexpected lyric search result: total=%d ids=%v", total, ids)
 	}
 }
+
+func TestSearchMusicIDsByLyricRanksMatchesDeterministically(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO music (id,type,name,asset,heat,createUserId,createTimestamp) VALUES
+			('song-exact',   ?, 'Exact',   'exact.mp3',   1,   'user-1', ?),
+			('song-prefix',  ?, 'Prefix',  'prefix.mp3',  100, 'user-1', ?),
+			('song-contains',?, 'Contains','contains.mp3',999, 'user-1', ?)`,
+		int(MusicTypeSong), now-300,
+		int(MusicTypeSong), now-200,
+		int(MusicTypeSong), now-100,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO lyric (musicId,lrc,lrcContent) VALUES
+			('song-contains','[00:00.00]say hello','say hello'),
+			('song-prefix','[00:00.00]hello world','hello world'),
+			('song-exact','[00:00.00]hello','hello')`,
+	); err != nil {
+		t.Fatalf("insert lyrics: %v", err)
+	}
+
+	total, ids, err := SearchMusicIDsByLyric("hello", 1, 10)
+	if err != nil {
+		t.Fatalf("search lyrics: %v", err)
+	}
+	if total != 3 || len(ids) != 3 {
+		t.Fatalf("unexpected lyric search result: total=%d ids=%v", total, ids)
+	}
+	want := []string{"song-exact", "song-prefix", "song-contains"}
+	for i := range want {
+		if ids[i] != want[i] {
+			t.Fatalf("unexpected order: got %v want %v", ids, want)
+		}
+	}
+}

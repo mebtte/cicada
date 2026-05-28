@@ -137,6 +137,7 @@ function buildStyles<T, IsMulti extends boolean>(
 ): StylesConfig<SelectOption<T>, IsMulti, GroupBase<SelectOption<T>>> {
   const s = SIZE[size];
   const shadowColor = `color-mix(in srgb, ${primary} 70%, #000)`;
+  const optionShadow = Math.max(2, s.shadow - 1);
 
   return {
     control: (_, state) => ({
@@ -246,7 +247,8 @@ function buildStyles<T, IsMulti extends boolean>(
     }),
     menuPortal: (base) => ({ ...base, zIndex: 10000, pointerEvents: 'auto' }),
     menuList: (_) => ({
-      padding: 0,
+      // Keep room inside the scroll clipping area for the last option's hard shadow.
+      padding: `0 0 ${optionShadow}px`,
       maxHeight: 248,
       overflowY: 'auto' as const,
       scrollbarWidth: 'thin' as const,
@@ -262,9 +264,9 @@ function buildStyles<T, IsMulti extends boolean>(
       }`,
       borderRadius: Math.max(10, s.radius),
       boxShadow: state.isSelected
-        ? `0 ${Math.max(2, s.shadow - 1)}px 0 ${shadowColor}`
+        ? `0 ${optionShadow}px 0 ${shadowColor}`
         : state.isFocused
-          ? `0 ${Math.max(2, s.shadow - 1)}px 0 rgb(220 220 220)`
+          ? `0 ${optionShadow}px 0 rgb(220 220 220)`
           : 'none',
       fontFamily: FONT,
       fontSize: s.font,
@@ -277,7 +279,7 @@ function buildStyles<T, IsMulti extends boolean>(
         'background 120ms, border-color 120ms, box-shadow 120ms, color 120ms',
       ':active': {
         transform: state.isSelected || state.isFocused
-          ? `translateY(${Math.max(2, s.shadow - 1)}px)`
+          ? `translateY(${optionShadow}px)`
           : undefined,
         boxShadow: 'none',
       },

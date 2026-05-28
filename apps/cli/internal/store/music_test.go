@@ -116,3 +116,118 @@ func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 		}
 	}
 }
+
+func TestSearchMusicRanksNameMatchesAndEscapesWildcards(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO music (id,type,name,aliases,asset,heat,createUserId,createTimestamp) VALUES
+			('music-exact', ?, 'Love',      '', 'exact.mp3',   1,   'user-1', ?),
+			('music-prefix',?, 'Love Song', '', 'prefix.mp3',  100, 'user-1', ?),
+			('music-hot',   ?, 'My Love',   '', 'hot.mp3',     999, 'user-1', ?),
+			('music-percent', ?, '100% Love', '', 'percent.mp3', 0, 'user-1', ?)`,
+		int(MusicTypeSong), now-300,
+		int(MusicTypeSong), now-200,
+		int(MusicTypeSong), now-100,
+		int(MusicTypeSong), now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+
+	total, musics, err := SearchMusic("Love", 1, 10)
+	if err != nil {
+		t.Fatalf("search music: %v", err)
+	}
+	if total != 4 || len(musics) != 4 {
+		t.Fatalf("unexpected search result: total=%d musics=%+v", total, musics)
+	}
+	gotOrder := []string{musics[0].ID, musics[1].ID, musics[2].ID}
+	wantOrder := []string{"music-exact", "music-prefix", "music-hot"}
+	for i := range wantOrder {
+		if gotOrder[i] != wantOrder[i] {
+			t.Fatalf("unexpected ranked order: got %v want prefix %v", gotOrder, wantOrder)
+		}
+	}
+
+	total, musics, err = SearchMusic("%", 1, 10)
+	if err != nil {
+		t.Fatalf("search literal wildcard: %v", err)
+	}
+	if total != 1 || len(musics) != 1 || musics[0].ID != "music-percent" {
+		t.Fatalf("expected literal %% match only music-percent, total=%d musics=%+v", total, musics)
+	}
+}
+
+func TestGetMusicsByIDsPreservesInputOrder(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES
+			('music-a', ?, 'A', 'a.mp3', 'user-1', ?),
+			('music-b', ?, 'B', 'b.mp3', 'user-1', ?),
+			('music-c', ?, 'C', 'c.mp3', 'user-1', ?)`,
+		int(MusicTypeSong), now,
+		int(MusicTypeSong), now,
+		int(MusicTypeSong), now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+
+	musics, err := GetMusicsByIDs([]string{"music-c", "music-a", "music-b"})
+	if err != nil {
+		t.Fatalf("get musics by ids: %v", err)
+	}
+	got := []string{musics[0].ID, musics[1].ID, musics[2].ID}
+	want := []string{"music-c", "music-a", "music-b"}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("unexpected order: got %v want %v", got, want)
+		}
+	}
+}

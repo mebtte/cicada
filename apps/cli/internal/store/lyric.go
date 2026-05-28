@@ -77,12 +77,45 @@ func LRCContent(lrc string) string {
 }
 
 func SearchMusicIDsByLyric(keyword string, page, pageSize int) (int, []string, error) {
-	pat := "%" + keyword + "%"
+	keyword = strings.TrimSpace(keyword)
+	if keyword == "" {
+		return 0, []string{}, nil
+	}
+	pat := containsLikePattern(keyword)
+	prefixPat := prefixLikePattern(keyword)
+	linePrefixPat := "%\n" + prefixLikePattern(keyword)
+	lineExactStartPat := escapeLikeKeyword(keyword) + "\n%"
+	lineExactMiddlePat := "%\n" + escapeLikeKeyword(keyword) + "\n%"
+	lineExactEndPat := "%\n" + escapeLikeKeyword(keyword)
 	var total int
-	DB().QueryRow(`SELECT COUNT(DISTINCT musicId) FROM lyric WHERE lrcContent LIKE ?`, pat).Scan(&total)
+	DB().QueryRow(
+		`SELECT COUNT(DISTINCT musicId) FROM lyric WHERE lrcContent LIKE ? ESCAPE '\'`,
+		pat,
+	).Scan(&total)
 	rows, err := DB().Query(
-		`SELECT DISTINCT musicId FROM lyric WHERE lrcContent LIKE ? LIMIT ? OFFSET ?`,
-		pat, pageSize, (page-1)*pageSize,
+		`SELECT l.musicId
+		FROM lyric l JOIN music m ON m.id=l.musicId
+		WHERE l.lrcContent LIKE ? ESCAPE '\'
+		GROUP BY l.musicId
+		ORDER BY
+			MAX(
+				CASE
+					WHEN l.lrcContent = ? COLLATE NOCASE THEN 100
+					WHEN l.lrcContent LIKE ? ESCAPE '\' THEN 100
+					WHEN l.lrcContent LIKE ? ESCAPE '\' THEN 100
+					WHEN l.lrcContent LIKE ? ESCAPE '\' THEN 100
+					WHEN l.lrcContent LIKE ? ESCAPE '\' THEN 90
+					WHEN l.lrcContent LIKE ? ESCAPE '\' THEN 90
+					ELSE 50
+				END
+			) DESC,
+			m.heat DESC,
+			m.createTimestamp DESC,
+			l.musicId ASC
+		LIMIT ? OFFSET ?`,
+		pat,
+		keyword, lineExactStartPat, lineExactMiddlePat, lineExactEndPat, prefixPat, linePrefixPat,
+		pageSize, (page-1)*pageSize,
 	)
 	if err != nil {
 		return 0, nil, err

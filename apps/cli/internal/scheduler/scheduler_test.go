@@ -63,8 +63,9 @@ func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 	if info, err := os.Stat(config.MusicTranscodeCacheDir()); err != nil || !info.IsDir() {
 		t.Fatalf("expected music transcode cache dir to remain, info=%v err=%v", info, err)
 	}
-	if _, err := os.Stat(oldRootCache); !os.IsNotExist(err) {
-		t.Fatalf("expected old root cache file to be removed, err=%v", err)
+	// cache 根目录不再被定时清理, 根目录下的文件应保持不动
+	if _, err := os.Stat(oldRootCache); err != nil {
+		t.Fatalf("expected old root cache file to remain untouched: %v", err)
 	}
 	if _, err := os.Stat(oldThumbnail); !os.IsNotExist(err) {
 		t.Fatalf("expected old thumbnail cache file to be removed, err=%v", err)
