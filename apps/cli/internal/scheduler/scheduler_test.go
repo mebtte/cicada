@@ -135,39 +135,19 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 	writeMusicAssetForCleanTest(t, "incomplete.mp3")
 	writeMusicAssetForCleanTest(t, "badmeta.mp3")
 
-	validSmooth := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("linked.mp3", musictranscode.QualitySmooth),
-	)
-	validSource := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("linked.mp3", musictranscode.QualitySource),
-	)
-	validSourceMeta := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.SourceCacheMetadataName("linked.mp3"),
-	)
-	missingSource := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("missing.mp3", musictranscode.QualitySmooth),
-	)
-	legacyCache := filepath.Join(config.MusicTranscodeCacheDir(), "linked.mp3_codec-aac_bitrate-192k.m4a")
-	orphanMeta := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.SourceCacheMetadataName("orphan.mp3"),
-	)
-	incompleteSource := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("incomplete.mp3", musictranscode.QualitySource),
-	)
-	badMetaSource := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("badmeta.mp3", musictranscode.QualitySource),
-	)
-	badMeta := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.SourceCacheMetadataName("badmeta.mp3"),
-	)
+	_, validSmooth := config.MusicTranscodeCachePath("linked.mp3", musictranscode.CacheName("linked.mp3", musictranscode.QualitySmooth))
+	_, validSource := config.MusicTranscodeCachePath("linked.mp3", musictranscode.CacheName("linked.mp3", musictranscode.QualitySource))
+	_, validSourceMeta := config.MusicTranscodeCachePath("linked.mp3", musictranscode.SourceCacheMetadataName("linked.mp3"))
+	_, missingSource := config.MusicTranscodeCachePath("missing.mp3", musictranscode.CacheName("missing.mp3", musictranscode.QualitySmooth))
+	_, orphanMeta := config.MusicTranscodeCachePath("orphan.mp3", musictranscode.SourceCacheMetadataName("orphan.mp3"))
+	_, incompleteSource := config.MusicTranscodeCachePath("incomplete.mp3", musictranscode.CacheName("incomplete.mp3", musictranscode.QualitySource))
+	_, badMetaSource := config.MusicTranscodeCachePath("badmeta.mp3", musictranscode.CacheName("badmeta.mp3", musictranscode.QualitySource))
+	_, badMeta := config.MusicTranscodeCachePath("badmeta.mp3", musictranscode.SourceCacheMetadataName("badmeta.mp3"))
+	_, garbageInShard := config.MusicTranscodeCachePath("invalid.mp3", "linked.mp3_codec-aac_bitrate-192k.m4a")
+
+	// 旧版本残留在 cache 根目录的扁平文件; scheduler 不应触及, 留给 migration 处理
+	legacyRootFile := filepath.Join(config.MusicTranscodeCacheDir(), "linked.mp3_codec-aac_bitrate-192k.m4a")
+	// 根目录下名字像缓存文件但实际是目录的怪异条目: 走 shard 路径会被当成空 shard 移除
 	legalNameDir := filepath.Join(
 		config.MusicTranscodeCacheDir(),
 		musictranscode.CacheName("dir.mp3", musictranscode.QualitySmooth),
@@ -177,11 +157,14 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 		validSmooth,
 		validSource,
 		missingSource,
-		legacyCache,
+		garbageInShard,
 		orphanMeta,
 		incompleteSource,
 		badMetaSource,
 	} {
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			t.Fatalf("mkdir %s: %v", filepath.Dir(path), err)
+		}
 		if err := os.WriteFile(path, []byte("cache"), 0644); err != nil {
 			t.Fatalf("write %s: %v", path, err)
 		}
@@ -191,6 +174,9 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 	}
 	if err := os.WriteFile(badMeta, []byte(`{}`), 0644); err != nil {
 		t.Fatalf("write bad source meta: %v", err)
+	}
+	if err := os.WriteFile(legacyRootFile, []byte("legacy"), 0644); err != nil {
+		t.Fatalf("write legacy root file: %v", err)
 	}
 	if err := os.MkdirAll(legalNameDir, 0755); err != nil {
 		t.Fatalf("mkdir legal name dir: %v", err)
@@ -209,9 +195,12 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 			t.Fatalf("expected %s to remain: %v", path, err)
 		}
 	}
+	if _, err := os.Stat(legacyRootFile); err != nil {
+		t.Fatalf("expected legacy root file to remain (migration handles it): %v", err)
+	}
 	for _, path := range []string{
 		missingSource,
-		legacyCache,
+		garbageInShard,
 		orphanMeta,
 		incompleteSource,
 		badMetaSource,
@@ -220,6 +209,16 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 	} {
 		if _, err := os.Stat(path); !os.IsNotExist(err) {
 			t.Fatalf("expected %s to be removed, err=%v", path, err)
+		}
+	}
+
+	// 保留有效条目的 shard 必须仍在, 完全清空的 shard 必须随之被移除
+	if _, err := os.Stat(filepath.Dir(validSmooth)); err != nil {
+		t.Fatalf("expected shard with valid entries to remain: %v", err)
+	}
+	for _, path := range []string{missingSource, orphanMeta, incompleteSource, badMetaSource, garbageInShard} {
+		if _, err := os.Stat(filepath.Dir(path)); !os.IsNotExist(err) {
+			t.Fatalf("expected empty shard %s to be removed, err=%v", filepath.Dir(path), err)
 		}
 	}
 }

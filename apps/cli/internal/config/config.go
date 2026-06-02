@@ -135,6 +135,25 @@ func ThumbnailCachePath(size int, filename string) (dir, path string) {
 	path = filepath.Join(dir, cacheName)
 	return
 }
+
+// MusicTranscodeCachePath returns the on-disk dir and full path for a music
+// transcode cache entry. asset is the source music asset filename (md5 hex +
+// ext); cacheName is the full target cache file name as composed by the
+// musictranscode package (it embeds quality + version + extension, and for
+// QualitySource includes a parallel .json sidecar). Entries are sharded into
+// 256 buckets by the first two hex chars of asset so all products of one
+// source (smooth m4a + source audio + source metadata sidecar) always land in
+// the same shard — that lets the scheduler pair audio with sidecar locally
+// without scanning the whole cache.
+func MusicTranscodeCachePath(asset, cacheName string) (dir, path string) {
+	shard := "00"
+	if len(asset) >= 2 {
+		shard = asset[:2]
+	}
+	dir = filepath.Join(MusicTranscodeCacheDir(), shard)
+	path = filepath.Join(dir, cacheName)
+	return
+}
 func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }
 func AssetDir(t AssetType) string { return filepath.Join(Get().Data, "assets", string(t)) }
 func PartialUploadDir() string    { return filepath.Join(Get().Data, "partial_uploads") }

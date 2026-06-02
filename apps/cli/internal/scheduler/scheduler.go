@@ -222,9 +222,17 @@ func removeUnlinkedAsset() (schedulerJobResult, error) {
 	}, errors.Join(errs...)
 }
 
+// cleanMusicTranscodeCache validates entries under cache/music_transcoded.
+// Entries live in 256 hex-prefix shards (the first two chars of the source
+// asset filename); all products of one source (smooth m4a + source audio +
+// source metadata sidecar) share an asset prefix and therefore the same
+// shard, so audio<->sidecar pairing can be done within a shard. Plain files
+// directly under the cache root are leftovers from the pre-shard layout and
+// are left for the dedicated migration to clean; empty shard directories are
+// removed once their entries are gone.
 func cleanMusicTranscodeCache() (schedulerJobResult, error) {
-	dir := config.MusicTranscodeCacheDir()
-	entries, err := os.ReadDir(dir)
+	root := config.MusicTranscodeCacheDir()
+	shards, err := os.ReadDir(root)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return schedulerJobResult{
@@ -235,73 +243,90 @@ func cleanMusicTranscodeCache() (schedulerJobResult, error) {
 		return schedulerJobResult{}, err
 	}
 
-	entryNames := map[string]bool{}
-	for _, entry := range entries {
-		entryNames[entry.Name()] = true
-	}
-
 	metrics := map[string]int64{
-		"scanned_music_transcode_cache_entries": int64(len(entries)),
+		"scanned_music_transcode_cache_entries": 0,
 	}
 	var errs []error
 	var totalRemoved int64
-	removeEntry := func(name, metric string) {
-		if err := os.RemoveAll(filepath.Join(dir, name)); err != nil {
-			errs = append(errs, fmt.Errorf("remove music transcode cache %s: %w", name, err))
-			return
-		}
-		delete(entryNames, name)
-		metrics[metric]++
-		totalRemoved++
-	}
 
-	for _, entry := range entries {
-		name := entry.Name()
-		if !entry.Type().IsRegular() {
-			removeEntry(name, "removed_invalid_music_transcode_cache_entries")
+	for _, shard := range shards {
+		if !shard.IsDir() {
 			continue
 		}
-
-		cacheEntry, ok := musictranscode.ParseCacheFilename(name)
-		if !ok {
-			removeEntry(name, "removed_invalid_music_transcode_cache_entries")
+		shardDir := filepath.Join(root, shard.Name())
+		entries, err := os.ReadDir(shardDir)
+		if err != nil {
+			errs = append(errs, fmt.Errorf("read music transcode shard %s: %w", shard.Name(), err))
 			continue
 		}
+		metrics["scanned_music_transcode_cache_entries"] += int64(len(entries))
 
-		sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), cacheEntry.Asset)
-		if _, err := os.Stat(sourcePath); err != nil {
-			if os.IsNotExist(err) {
-				removeEntry(name, "removed_missing_source_music_transcode_cache_entries")
+		entryNames := map[string]bool{}
+		for _, entry := range entries {
+			entryNames[entry.Name()] = true
+		}
+		removeEntry := func(name, metric string) {
+			if err := os.RemoveAll(filepath.Join(shardDir, name)); err != nil {
+				errs = append(errs, fmt.Errorf("remove music transcode cache %s/%s: %w", shard.Name(), name, err))
+				return
+			}
+			delete(entryNames, name)
+			metrics[metric]++
+			totalRemoved++
+		}
+
+		for _, entry := range entries {
+			name := entry.Name()
+			if !entry.Type().IsRegular() {
+				removeEntry(name, "removed_invalid_music_transcode_cache_entries")
 				continue
 			}
-			errs = append(errs, fmt.Errorf("stat music transcode source %s: %w", cacheEntry.Asset, err))
-			continue
-		}
 
-		if cacheEntry.Quality != musictranscode.QualitySource {
-			continue
-		}
+			cacheEntry, ok := musictranscode.ParseCacheFilename(name)
+			if !ok {
+				removeEntry(name, "removed_invalid_music_transcode_cache_entries")
+				continue
+			}
 
-		audioName := musictranscode.CacheName(cacheEntry.Asset, musictranscode.QualitySource)
-		metaName := musictranscode.SourceCacheMetadataName(cacheEntry.Asset)
-		if cacheEntry.Sidecar {
-			if !entryNames[audioName] {
-				removeEntry(name, "removed_orphan_music_transcode_cache_metadata")
+			sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), cacheEntry.Asset)
+			if _, err := os.Stat(sourcePath); err != nil {
+				if os.IsNotExist(err) {
+					removeEntry(name, "removed_missing_source_music_transcode_cache_entries")
+					continue
+				}
+				errs = append(errs, fmt.Errorf("stat music transcode source %s: %w", cacheEntry.Asset, err))
+				continue
+			}
+
+			if cacheEntry.Quality != musictranscode.QualitySource {
+				continue
+			}
+
+			audioName := musictranscode.CacheName(cacheEntry.Asset, musictranscode.QualitySource)
+			metaName := musictranscode.SourceCacheMetadataName(cacheEntry.Asset)
+			if cacheEntry.Sidecar {
+				if !entryNames[audioName] {
+					removeEntry(name, "removed_orphan_music_transcode_cache_metadata")
+					continue
+				}
+				if _, err := musictranscode.ReadSourceCacheMetadata(cacheEntry.Asset); err != nil {
+					removeEntry(name, "removed_invalid_music_transcode_cache_metadata")
+				}
+				continue
+			}
+
+			// source 缓存依赖 sidecar 响应头元数据; 缺失或损坏时删除音频缓存, 让后续请求重新生成。
+			if !entryNames[metaName] {
+				removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
 				continue
 			}
 			if _, err := musictranscode.ReadSourceCacheMetadata(cacheEntry.Asset); err != nil {
-				removeEntry(name, "removed_invalid_music_transcode_cache_metadata")
+				removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
 			}
-			continue
 		}
 
-		// source 缓存依赖 sidecar 响应头元数据; 缺失或损坏时删除音频缓存, 让后续请求重新生成。
-		if !entryNames[metaName] {
-			removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
-			continue
-		}
-		if _, err := musictranscode.ReadSourceCacheMetadata(cacheEntry.Asset); err != nil {
-			removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
+		if remain, err := os.ReadDir(shardDir); err == nil && len(remain) == 0 {
+			_ = os.Remove(shardDir)
 		}
 	}
 

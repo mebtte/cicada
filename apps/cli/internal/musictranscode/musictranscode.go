@@ -110,11 +110,13 @@ func SourceCacheMetadataName(asset string) string {
 }
 
 func CachePath(asset string, quality Quality) string {
-	return filepath.Join(config.MusicTranscodeCacheDir(), CacheName(asset, quality))
+	_, path := config.MusicTranscodeCachePath(asset, CacheName(asset, quality))
+	return path
 }
 
 func SourceCacheMetadataPath(asset string) string {
-	return filepath.Join(config.MusicTranscodeCacheDir(), SourceCacheMetadataName(asset))
+	_, path := config.MusicTranscodeCachePath(asset, SourceCacheMetadataName(asset))
+	return path
 }
 
 func ParseCacheFilename(name string) (CacheEntry, bool) {
@@ -238,9 +240,6 @@ func generateCache(ctx context.Context, asset string, quality Quality, threads i
 	if _, err := os.Stat(sourcePath); err != nil {
 		return Result{}, err
 	}
-	if err := os.MkdirAll(config.MusicTranscodeCacheDir(), 0755); err != nil {
-		return Result{}, err
-	}
 
 	transcodeCtx, cancel := context.WithTimeout(ctx, TranscodeTimeout)
 	defer cancel()
@@ -255,7 +254,10 @@ func generateCache(ctx context.Context, asset string, quality Quality, threads i
 	}
 	plan.profile.Threads = threads
 
-	cachePath := CachePath(asset, quality)
+	shardDir, cachePath := config.MusicTranscodeCachePath(asset, CacheName(asset, quality))
+	if err := os.MkdirAll(shardDir, 0755); err != nil {
+		return Result{}, err
+	}
 	tmpPath := cachePath + ".tmp"
 	_ = os.Remove(tmpPath)
 

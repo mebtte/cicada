@@ -70,3 +70,62 @@ func TestThumbnailCachePath(t *testing.T) {
 		})
 	}
 }
+
+func TestMusicTranscodeCachePath(t *testing.T) {
+	Set(Config{Mode: ModeProduction, Data: "/tmp/cicada-test", Port: 8000})
+	t.Cleanup(func() {
+		Set(Config{Mode: ModeProduction, Data: "/tmp/cicada-test", Port: 8000})
+	})
+
+	cases := []struct {
+		name      string
+		asset     string
+		cacheName string
+		wantDir   string
+		wantPath  string
+	}{
+		{
+			name:      "smooth audio shard from asset prefix",
+			asset:     "abcdef0123456789.flac",
+			cacheName: "abcdef0123456789.flac__quality-smooth_v1.m4a",
+			wantDir:   filepath.Join(MusicTranscodeCacheDir(), "ab"),
+			wantPath:  filepath.Join(MusicTranscodeCacheDir(), "ab", "abcdef0123456789.flac__quality-smooth_v1.m4a"),
+		},
+		{
+			name:      "source audio and sidecar share shard",
+			asset:     "abcdef0123456789.flac",
+			cacheName: "abcdef0123456789.flac__quality-source_v1.audio.json",
+			wantDir:   filepath.Join(MusicTranscodeCacheDir(), "ab"),
+			wantPath:  filepath.Join(MusicTranscodeCacheDir(), "ab", "abcdef0123456789.flac__quality-source_v1.audio.json"),
+		},
+		{
+			name:      "different asset different shard",
+			asset:     "ff00112233445566.mp3",
+			cacheName: "ff00112233445566.mp3__quality-smooth_v1.m4a",
+			wantDir:   filepath.Join(MusicTranscodeCacheDir(), "ff"),
+			wantPath:  filepath.Join(MusicTranscodeCacheDir(), "ff", "ff00112233445566.mp3__quality-smooth_v1.m4a"),
+		},
+		{
+			name:      "short asset falls back to 00 shard",
+			asset:     "a",
+			cacheName: "a__quality-smooth_v1.m4a",
+			wantDir:   filepath.Join(MusicTranscodeCacheDir(), "00"),
+			wantPath:  filepath.Join(MusicTranscodeCacheDir(), "00", "a__quality-smooth_v1.m4a"),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			gotDir, gotPath := MusicTranscodeCachePath(tc.asset, tc.cacheName)
+			if gotDir != tc.wantDir {
+				t.Errorf("dir = %q, want %q", gotDir, tc.wantDir)
+			}
+			if gotPath != tc.wantPath {
+				t.Errorf("path = %q, want %q", gotPath, tc.wantPath)
+			}
+			if filepath.Dir(gotPath) != gotDir {
+				t.Errorf("path %q is not inside dir %q", gotPath, gotDir)
+			}
+		})
+	}
+}
