@@ -401,16 +401,44 @@ func removeOutdatedAuthSession() (schedulerJobResult, error) {
 	}, err
 }
 
-// cleanOutdatedFile removes thumbnail cache files older than 30 days. The cache
-// root itself is no longer scanned: legacy loose files there were cleared once
-// by a data migration, and current binaries only write into managed
-// subdirectories (thumbnails / music_transcoded).
+// cleanOutdatedFile removes thumbnail cache files older than 30 days. Thumbnails
+// live under cache/thumbnails/{shard}/ (256 shards by the first two hex chars
+// of the source filename); we walk each shard and let empty shards be removed
+// afterwards. Any plain file directly under cache/thumbnails is a leftover
+// from the pre-shard layout and is left for the dedicated migration to clean.
 func cleanOutdatedFile() (schedulerJobResult, error) {
-	removed, err := cleanOutdatedEntries(config.ThumbnailCacheDir(), 30*24*time.Hour, "")
+	root := config.ThumbnailCacheDir()
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return schedulerJobResult{
+				Summary: "thumbnail cache dir absent",
+				Metrics: map[string]int64{"removed_thumbnail_cache_entries": 0},
+			}, nil
+		}
+		return schedulerJobResult{}, err
+	}
+	var total int64
+	var errs []error
+	for _, e := range entries {
+		if !e.IsDir() {
+			continue
+		}
+		shardDir := filepath.Join(root, e.Name())
+		removed, err := cleanOutdatedEntries(shardDir, 30*24*time.Hour, "")
+		total += removed
+		if err != nil {
+			errs = append(errs, err)
+		}
+		remain, err := os.ReadDir(shardDir)
+		if err == nil && len(remain) == 0 {
+			_ = os.Remove(shardDir)
+		}
+	}
 	return schedulerJobResult{
-		Summary: fmt.Sprintf("removed %d outdated thumbnail cache entries", removed),
-		Metrics: map[string]int64{"removed_thumbnail_cache_entries": removed},
-	}, err
+		Summary: fmt.Sprintf("removed %d outdated thumbnail cache entries", total),
+		Metrics: map[string]int64{"removed_thumbnail_cache_entries": total},
+	}, errors.Join(errs...)
 }
 
 func cleanOutdatedAccessLog() (schedulerJobResult, error) {

@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -114,6 +115,25 @@ func CacheDir() string          { return filepath.Join(Get().Data, "cache") }
 func ThumbnailCacheDir() string { return filepath.Join(CacheDir(), "thumbnails") }
 func MusicTranscodeCacheDir() string {
 	return filepath.Join(CacheDir(), "music_transcoded")
+}
+
+// ThumbnailCachePath returns the on-disk dir and full path for a thumbnail
+// cache entry. filename is the original asset filename (md5 hex + ext) and
+// size is the resize size. Entries are sharded into 256 buckets by the first
+// two hex chars of filename to keep any single directory bounded; the cache
+// file name itself is {hash}_{size}{ext} so all sizes of the same image group
+// together lexicographically within a shard.
+func ThumbnailCachePath(size int, filename string) (dir, path string) {
+	shard := "00"
+	if len(filename) >= 2 {
+		shard = filename[:2]
+	}
+	ext := filepath.Ext(filename)
+	base := strings.TrimSuffix(filename, ext)
+	cacheName := base + "_" + strconv.Itoa(size) + ext
+	dir = filepath.Join(ThumbnailCacheDir(), shard)
+	path = filepath.Join(dir, cacheName)
+	return
 }
 func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }
 func AssetDir(t AssetType) string { return filepath.Join(Get().Data, "assets", string(t)) }

@@ -33,29 +33,51 @@ func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 
 	oldTime := time.Now().Add(-31 * 24 * time.Hour)
 	oldRootCache := filepath.Join(config.CacheDir(), "old-cache")
-	oldThumbnail := filepath.Join(config.ThumbnailCacheDir(), "64_old.jpg")
-	freshThumbnail := filepath.Join(config.ThumbnailCacheDir(), "64_fresh.jpg")
+	legacyFlatThumbnail := filepath.Join(config.ThumbnailCacheDir(), "64_legacy.jpg")
+	_, oldThumbnailShardA := config.ThumbnailCachePath(64, "abdeadbeef0001.jpg")
+	_, oldThumbnailShardB := config.ThumbnailCachePath(128, "cd1122334455.jpg")
+	_, freshThumbnail := config.ThumbnailCachePath(64, "ef9988776655.jpg")
+	oldEmptyShardLeftover := filepath.Join(config.ThumbnailCacheDir(), "ab", "abold_32.jpg")
 	oldTranscode := filepath.Join(config.MusicTranscodeCacheDir(), "song.flac_codec-aac_bitrate-192k.m4a")
 	freshTranscode := filepath.Join(config.MusicTranscodeCacheDir(), "song.flac_codec-flac.flac")
 
-	for _, path := range []string{oldRootCache, oldThumbnail, freshThumbnail, oldTranscode, freshTranscode} {
+	// 老分片 ab 里只剩一个超期文件 — 清理后整个 shard 应被移除
+	// 老分片 cd 里只有一个超期文件 — 同上
+	// 新分片 ef 里有一个新文件 — shard 必须保留
+	allFiles := []string{
+		oldRootCache,
+		legacyFlatThumbnail,
+		oldThumbnailShardA,
+		oldEmptyShardLeftover,
+		oldThumbnailShardB,
+		freshThumbnail,
+		oldTranscode,
+		freshTranscode,
+	}
+	for _, path := range allFiles {
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			t.Fatalf("mkdir %s: %v", filepath.Dir(path), err)
+		}
 		if err := os.WriteFile(path, []byte("cache"), 0644); err != nil {
 			t.Fatalf("write %s: %v", path, err)
 		}
 	}
-	for _, path := range []string{oldRootCache, oldThumbnail, oldTranscode} {
+	for _, path := range []string{
+		oldRootCache,
+		legacyFlatThumbnail,
+		oldThumbnailShardA,
+		oldEmptyShardLeftover,
+		oldThumbnailShardB,
+		oldTranscode,
+	} {
 		if err := os.Chtimes(path, oldTime, oldTime); err != nil {
 			t.Fatalf("chtimes %s: %v", path, err)
 		}
 	}
-	if err := os.Chtimes(config.ThumbnailCacheDir(), oldTime, oldTime); err != nil {
-		t.Fatalf("chtimes thumbnail dir: %v", err)
-	}
-	if err := os.Chtimes(config.MusicTranscodeCacheDir(), oldTime, oldTime); err != nil {
-		t.Fatalf("chtimes music transcode dir: %v", err)
-	}
 
-	cleanOutdatedFile()
+	if _, err := cleanOutdatedFile(); err != nil {
+		t.Fatalf("cleanOutdatedFile: %v", err)
+	}
 
 	if info, err := os.Stat(config.ThumbnailCacheDir()); err != nil || !info.IsDir() {
 		t.Fatalf("expected thumbnail cache dir to remain, info=%v err=%v", info, err)
@@ -67,14 +89,26 @@ func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 	if _, err := os.Stat(oldRootCache); err != nil {
 		t.Fatalf("expected old root cache file to remain untouched: %v", err)
 	}
-	if _, err := os.Stat(oldThumbnail); !os.IsNotExist(err) {
-		t.Fatalf("expected old thumbnail cache file to be removed, err=%v", err)
+	// 遗留平铺缩略图由 migration 负责清理, scheduler 不应动它
+	if _, err := os.Stat(legacyFlatThumbnail); err != nil {
+		t.Fatalf("expected legacy flat thumbnail to remain (migration handles it): %v", err)
 	}
-	if _, err := os.Stat(oldTranscode); err != nil {
-		t.Fatalf("expected old transcode cache file to remain: %v", err)
+	for _, path := range []string{oldThumbnailShardA, oldEmptyShardLeftover, oldThumbnailShardB} {
+		if _, err := os.Stat(path); !os.IsNotExist(err) {
+			t.Fatalf("expected old thumbnail %s to be removed, err=%v", path, err)
+		}
+	}
+	// 清空后的 shard 子目录也应被移除
+	for _, shard := range []string{"ab", "cd"} {
+		if _, err := os.Stat(filepath.Join(config.ThumbnailCacheDir(), shard)); !os.IsNotExist(err) {
+			t.Fatalf("expected empty shard %s to be removed, err=%v", shard, err)
+		}
 	}
 	if _, err := os.Stat(freshThumbnail); err != nil {
 		t.Fatalf("expected fresh thumbnail cache file to remain: %v", err)
+	}
+	if _, err := os.Stat(oldTranscode); err != nil {
+		t.Fatalf("expected old transcode cache file to remain: %v", err)
 	}
 	if _, err := os.Stat(freshTranscode); err != nil {
 		t.Fatalf("expected fresh transcode cache file to remain: %v", err)
