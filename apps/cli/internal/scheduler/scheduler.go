@@ -341,7 +341,7 @@ func pretranscodeMusic() (schedulerJobResult, error) {
 			musictranscode.QualitySmooth,
 			musictranscode.QualitySource,
 		} {
-			result, err := musictranscode.Ensure(context.Background(), music.Asset, quality)
+			result, err := musictranscode.EnsureBackground(context.Background(), music.Asset, quality)
 			if err != nil {
 				metrics["failed_music_transcode_cache_entries"]++
 				errs = append(errs, fmt.Errorf("pretranscode %s %s: %w", music.Asset, quality, err))

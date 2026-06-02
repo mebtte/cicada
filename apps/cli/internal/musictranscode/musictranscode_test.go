@@ -225,6 +225,62 @@ func TestEnsureSourceCacheRegeneratesWhenMetadataIsMissing(t *testing.T) {
 	}
 }
 
+func TestEnsurePassesDefaultThreadsToTranscoder(t *testing.T) {
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	writeMusicSource(t, "song.flac", "source")
+
+	restore := stubFFmpeg(t)
+	defer restore()
+
+	probeAudioStream = func(ctx context.Context, path string) (ffmpeg.AudioStreamInfo, error) {
+		return ffmpeg.AudioStreamInfo{CodecName: "flac", BitRate: 256000}, nil
+	}
+	var gotThreads int
+	transcodeAudio = func(ctx context.Context, inputPath, outputPath string, profile ffmpeg.AudioTranscodeProfile) error {
+		gotThreads = profile.Threads
+		return os.WriteFile(outputPath, []byte("cache"), 0644)
+	}
+
+	if _, err := Ensure(context.Background(), "song.flac", QualitySmooth); err != nil {
+		t.Fatalf("ensure: %v", err)
+	}
+	if gotThreads != 0 {
+		t.Fatalf("threads = %d, want 0 (ffmpeg default)", gotThreads)
+	}
+}
+
+func TestEnsureBackgroundForcesSingleThread(t *testing.T) {
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	writeMusicSource(t, "song.flac", "source")
+
+	restore := stubFFmpeg(t)
+	defer restore()
+
+	probeAudioStream = func(ctx context.Context, path string) (ffmpeg.AudioStreamInfo, error) {
+		return ffmpeg.AudioStreamInfo{CodecName: "flac", BitRate: 256000}, nil
+	}
+	var gotThreads int
+	transcodeAudio = func(ctx context.Context, inputPath, outputPath string, profile ffmpeg.AudioTranscodeProfile) error {
+		gotThreads = profile.Threads
+		return os.WriteFile(outputPath, []byte("cache"), 0644)
+	}
+
+	if _, err := EnsureBackground(context.Background(), "song.flac", QualitySmooth); err != nil {
+		t.Fatalf("ensure background: %v", err)
+	}
+	if gotThreads != 1 {
+		t.Fatalf("threads = %d, want 1", gotThreads)
+	}
+}
+
 func TestBuildSourcePlanRejectsUnsupportedLossySourceWithoutBitrate(t *testing.T) {
 	_, err := buildGenerationPlan(
 		QualitySource,
