@@ -9,10 +9,14 @@ const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const TARGET_DIR = path.join(ROOT_DIR, 'apps', 'cli', 'internal', 'ffmpeg');
 const GENERATED_DIR = path.join(TARGET_DIR, 'generated');
 const OSX_EXPERTS_URL = 'https://www.osxexperts.net/';
-const BTBN_RELEASE_BASE = 'https://github.com/BtbN/FFmpeg-Builds/releases/latest/download/';
+// BtbN 的 `master-latest` 命名只存在于 autobuild 滚动 tag (releases/download/latest/),
+// GitHub 的 `releases/latest/download/` 现在指向 semver stable release, 里面是带 build 号
+// 的文件名 (ffmpeg-N-XXXXXX-...), 无法满足脚本预期的 archiveName. 因此优先取 autobuild,
+// 仅在 autobuild 不可用时回退到 semver release.
+const BTBN_RELEASE_BASE = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/';
 const BTBN_RELEASE_FALLBACK_BASES = [
   BTBN_RELEASE_BASE,
-  'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/',
+  'https://github.com/BtbN/FFmpeg-Builds/releases/latest/download/',
 ];
 
 const TARGETS = {
