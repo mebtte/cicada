@@ -25,10 +25,10 @@ func TestServeAssetWritesThumbnailCacheToThumbnailDir(t *testing.T) {
 		Port: 8000,
 	})
 
-	if err := os.MkdirAll(config.AssetDir(config.AssetTypeMusicCover), 0755); err != nil {
+	assetDir, assetPath := config.AssetPath(config.AssetTypeMusicCover, "cover.jpg")
+	if err := os.MkdirAll(assetDir, 0755); err != nil {
 		t.Fatalf("mkdir asset dir: %v", err)
 	}
-	assetPath := filepath.Join(config.AssetDir(config.AssetTypeMusicCover), "cover.jpg")
 	writeTestJPEG(t, assetPath)
 
 	w := httptest.NewRecorder()
@@ -62,10 +62,10 @@ func TestServeAssetRefreshesThumbnailCacheModTimeOnAccess(t *testing.T) {
 		Port: 8000,
 	})
 
-	if err := os.MkdirAll(config.AssetDir(config.AssetTypeMusicCover), 0755); err != nil {
+	assetDir, assetPath := config.AssetPath(config.AssetTypeMusicCover, "cover.jpg")
+	if err := os.MkdirAll(assetDir, 0755); err != nil {
 		t.Fatalf("mkdir asset dir: %v", err)
 	}
-	assetPath := filepath.Join(config.AssetDir(config.AssetTypeMusicCover), "cover.jpg")
 	writeTestJPEG(t, assetPath)
 
 	requestThumbnail(t, "cover.jpg", 32)
@@ -95,10 +95,11 @@ func TestServeMusicAssetRejectsInvalidTranscodeQuery(t *testing.T) {
 		Port: 8000,
 	})
 
-	if err := os.MkdirAll(config.AssetDir(config.AssetTypeMusic), 0755); err != nil {
+	dir, path := config.AssetPath(config.AssetTypeMusic, "song.flac")
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		t.Fatalf("mkdir music asset dir: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(config.AssetDir(config.AssetTypeMusic), "song.flac"), []byte("not used"), 0644); err != nil {
+	if err := os.WriteFile(path, []byte("not used"), 0644); err != nil {
 		t.Fatalf("write music asset: %v", err)
 	}
 
@@ -123,10 +124,11 @@ func TestServeMusicAssetIgnoresUnknownQueryParameters(t *testing.T) {
 		Port: 8000,
 	})
 
-	if err := os.MkdirAll(config.AssetDir(config.AssetTypeMusic), 0755); err != nil {
+	dir, path := config.AssetPath(config.AssetTypeMusic, "song.mp3")
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		t.Fatalf("mkdir music asset dir: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(config.AssetDir(config.AssetTypeMusic), "song.mp3"), []byte("source"), 0644); err != nil {
+	if err := os.WriteFile(path, []byte("source"), 0644); err != nil {
 		t.Fatalf("write music asset: %v", err)
 	}
 
@@ -154,10 +156,11 @@ func TestServeMusicAssetWithoutTranscodeQueryReturnsSource(t *testing.T) {
 		Port: 8000,
 	})
 
-	if err := os.MkdirAll(config.AssetDir(config.AssetTypeMusic), 0755); err != nil {
+	dir, path := config.AssetPath(config.AssetTypeMusic, "song.flac")
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		t.Fatalf("mkdir music asset dir: %v", err)
 	}
-	if err := os.WriteFile(filepath.Join(config.AssetDir(config.AssetTypeMusic), "song.flac"), []byte("source"), 0644); err != nil {
+	if err := os.WriteFile(path, []byte("source"), 0644); err != nil {
 		t.Fatalf("write music asset: %v", err)
 	}
 

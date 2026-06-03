@@ -374,7 +374,6 @@ unknown_singer: 'unknown singer',
   cancel_upload: 'cancel import',
   retry_upload: 'retry',
   upload_status_uploaded: 'imported',
-  instant_upload_hit: 'instant',
   music_import_running_warning:
     'a music import is in progress, are you sure to leave?',
   resume_draft_question:

@@ -121,7 +121,12 @@ func importFile(path, uid string, skipExistenceCheck bool) error {
 	// Save asset file
 	hash := md5.Sum(data)
 	assetName := fmt.Sprintf("%x%s", hash, ext)
-	destPath := filepath.Join(config.AssetDir(config.AssetTypeMusic), assetName)
+	destDir, destPath := config.AssetPath(config.AssetTypeMusic, assetName)
+	if err := os.MkdirAll(destDir, 0755); err != nil {
+		log.Printf("[ %s ] failed to mkdir asset shard: %v", path, err)
+		ignored++
+		return nil
+	}
 	if err := os.WriteFile(destPath, data, 0644); err != nil {
 		log.Printf("[ %s ] failed to write asset: %v", path, err)
 		ignored++

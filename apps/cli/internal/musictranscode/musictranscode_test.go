@@ -295,8 +295,8 @@ func TestBuildSourcePlanRejectsUnsupportedLossySourceWithoutBitrate(t *testing.T
 func writeMusicSource(t *testing.T, filename, content string) string {
 	t.Helper()
 
-	path := filepath.Join(config.AssetDir(config.AssetTypeMusic), filename)
-	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+	dir, path := config.AssetPath(config.AssetTypeMusic, filename)
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		t.Fatalf("mkdir source dir: %v", err)
 	}
 	if err := os.WriteFile(path, []byte(content), 0644); err != nil {

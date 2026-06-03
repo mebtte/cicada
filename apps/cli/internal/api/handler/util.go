@@ -38,6 +38,7 @@ func assetExists(filename string, t config.AssetType) bool {
 	if filename == "" {
 		return false
 	}
-	_, err := os.Stat(config.AssetDir(t) + "/" + filename)
+	_, path := config.AssetPath(t, filename)
+	_, err := os.Stat(path)
 	return err == nil
 }

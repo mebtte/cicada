@@ -185,33 +185,55 @@ func removeUnlinkedAsset() (schedulerJobResult, error) {
 			continue
 		}
 
-		dir := config.AssetDir(aq.assetType)
-		entries, err := os.ReadDir(dir)
+		// Assets live under {assetDir}/{shard}/ (256 hex-prefix shards by
+		// filename[:2]). Walk shard subdirs only; any plain file directly under
+		// the type root is a pre-shard leftover that the migration moves on
+		// startup — leave it alone here.
+		root := config.AssetDir(aq.assetType)
+		shards, err := os.ReadDir(root)
 		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
 			errs = append(errs, fmt.Errorf("read %s asset dir: %w", aq.assetType, err))
 			continue
 		}
-		metrics[prefix+"_scanned_files"] = int64(len(entries))
 
-		var unlinked []string
-		for _, e := range entries {
-			if !e.IsDir() && !linked[e.Name()] {
-				unlinked = append(unlinked, e.Name())
-			}
-		}
-		if len(unlinked) == 0 {
-			continue
-		}
-
+		var scanned int64
+		var unlinkedCount int64
 		var removed int64
-		for _, name := range unlinked {
-			if err := os.Remove(filepath.Join(dir, name)); err != nil {
-				errs = append(errs, fmt.Errorf("remove unlinked %s asset %s: %w", aq.assetType, name, err))
+		for _, shard := range shards {
+			if !shard.IsDir() {
 				continue
 			}
-			removed++
+			shardDir := filepath.Join(root, shard.Name())
+			entries, err := os.ReadDir(shardDir)
+			if err != nil {
+				errs = append(errs, fmt.Errorf("read %s asset shard %s: %w", aq.assetType, shard.Name(), err))
+				continue
+			}
+			scanned += int64(len(entries))
+
+			var shardRemoved int64
+			for _, e := range entries {
+				if e.IsDir() || linked[e.Name()] {
+					continue
+				}
+				unlinkedCount++
+				if err := os.Remove(filepath.Join(shardDir, e.Name())); err != nil {
+					errs = append(errs, fmt.Errorf("remove unlinked %s asset %s/%s: %w", aq.assetType, shard.Name(), e.Name(), err))
+					continue
+				}
+				shardRemoved++
+			}
+			removed += shardRemoved
+
+			if remain, err := os.ReadDir(shardDir); err == nil && len(remain) == 0 {
+				_ = os.Remove(shardDir)
+			}
 		}
-		metrics[prefix+"_unlinked_files"] = int64(len(unlinked))
+		metrics[prefix+"_scanned_files"] = scanned
+		metrics[prefix+"_unlinked_files"] = unlinkedCount
 		metrics[prefix+"_removed_files"] = removed
 		totalRemoved += removed
 	}
@@ -288,7 +310,7 @@ func cleanMusicTranscodeCache() (schedulerJobResult, error) {
 				continue
 			}
 
-			sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), cacheEntry.Asset)
+			_, sourcePath := config.AssetPath(config.AssetTypeMusic, cacheEntry.Asset)
 			if _, err := os.Stat(sourcePath); err != nil {
 				if os.IsNotExist(err) {
 					removeEntry(name, "removed_missing_source_music_transcode_cache_entries")

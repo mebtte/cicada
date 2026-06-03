@@ -28,8 +28,7 @@ func ServeAsset(at config.AssetType) gin.HandlerFunc {
 			filename = filename[1:]
 		}
 
-		assetDir := config.AssetDir(at)
-		assetPath := filepath.Join(assetDir, filename)
+		_, assetPath := config.AssetPath(at, filename)
 
 		if at == config.AssetTypeMusic {
 			serveMusicAsset(c, filename, assetPath)

@@ -156,6 +156,22 @@ func MusicTranscodeCachePath(asset, cacheName string) (dir, path string) {
 }
 func AssetsDir() string           { return filepath.Join(Get().Data, "assets") }
 func AssetDir(t AssetType) string { return filepath.Join(Get().Data, "assets", string(t)) }
+
+// AssetPath returns the on-disk dir and full path for a stored asset. filename
+// is the canonical {md5_hex_32}{ext} name produced by the uploader. Entries
+// are sharded into 256 buckets by the first two hex chars of filename to keep
+// any single asset-type directory bounded; the public URL stays flat
+// (/asset/{type}/{filename}) and handlers resolve the shard internally.
+func AssetPath(t AssetType, filename string) (dir, path string) {
+	shard := "00"
+	if len(filename) >= 2 {
+		shard = filename[:2]
+	}
+	dir = filepath.Join(AssetDir(t), shard)
+	path = filepath.Join(dir, filename)
+	return
+}
+
 func PartialUploadDir() string    { return filepath.Join(Get().Data, "partial_uploads") }
 func UpgradeLockPath() string     { return filepath.Join(Get().Data, "upgrade.lock") }
 func UpgradeJournalPath() string  { return filepath.Join(Get().Data, "upgrade.journal") }

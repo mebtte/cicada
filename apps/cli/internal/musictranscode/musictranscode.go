@@ -236,7 +236,7 @@ func finishTranscode(cachePath string, call *transcodeCall, result Result, err e
 }
 
 func generateCache(ctx context.Context, asset string, quality Quality, threads int) (Result, error) {
-	sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), asset)
+	_, sourcePath := config.AssetPath(config.AssetTypeMusic, asset)
 	if _, err := os.Stat(sourcePath); err != nil {
 		return Result{}, err
 	}

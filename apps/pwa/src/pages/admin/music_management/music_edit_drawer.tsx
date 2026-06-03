@@ -113,7 +113,6 @@ interface MusicFileUploadProgress {
   phase: UploadPhase;
   uploadedBytes: number;
   totalBytes: number;
-  instant: boolean;
 }
 
 const COVER_SIZE = 120;
@@ -446,13 +445,7 @@ const getFileUploadPercent = (progress: MusicFileUploadProgress) =>
     ? clampPercent((progress.uploadedBytes / progress.totalBytes) * 100)
     : 0;
 
-const getFileUploadPhaseText = ({
-  phase,
-  instant,
-}: MusicFileUploadProgress) => {
-  if (instant) {
-    return t('instant_upload_hit');
-  }
+const getFileUploadPhaseText = ({ phase }: MusicFileUploadProgress) => {
   switch (phase) {
     case 'hashing':
       return t('hashing_file');
@@ -866,11 +859,10 @@ function EditContent({
       phase: 'hashing',
       uploadedBytes: 0,
       totalBytes: file.size,
-      instant: false,
     });
 
     try {
-      const { id, instant } = await uploadAssetChunked(file, AssetType.MUSIC, {
+      const { id } = await uploadAssetChunked(file, AssetType.MUSIC, {
         signal: controller.signal,
         onPhase: (phase) => {
           if (phase === 'completing') {
@@ -881,7 +873,6 @@ function EditContent({
             phase,
             uploadedBytes: currentUploadedBytes,
             totalBytes: currentTotalBytes,
-            instant: false,
           });
         },
         onProgress: (uploadedBytes, totalBytes) => {
@@ -891,7 +882,6 @@ function EditContent({
             phase: 'uploading',
             uploadedBytes,
             totalBytes,
-            instant: false,
           });
         },
         onResumeMetaResolved: (meta) => {
@@ -903,7 +893,6 @@ function EditContent({
         phase: 'completing',
         uploadedBytes: file.size,
         totalBytes: file.size,
-        instant,
       });
       await updateMusic({
         id: music.id,

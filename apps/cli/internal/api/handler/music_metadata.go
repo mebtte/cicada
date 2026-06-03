@@ -24,7 +24,7 @@ func syncMusicMetadataToAsset(musicID string) {
 		return
 	}
 
-	sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), m.Asset)
+	_, sourcePath := config.AssetPath(config.AssetTypeMusic, m.Asset)
 	if _, err := os.Stat(sourcePath); err != nil {
 		log.Printf("sync music metadata: stat source %s: %v", sourcePath, err)
 		return
@@ -41,7 +41,7 @@ func syncMusicMetadataToAsset(musicID string) {
 
 	coverPath := ""
 	if m.Cover != "" {
-		path := filepath.Join(config.AssetDir(config.AssetTypeMusicCover), m.Cover)
+		_, path := config.AssetPath(config.AssetTypeMusicCover, m.Cover)
 		if _, err := os.Stat(path); err == nil {
 			coverPath = path
 		}

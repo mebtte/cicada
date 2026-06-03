@@ -129,3 +129,62 @@ func TestMusicTranscodeCachePath(t *testing.T) {
 		})
 	}
 }
+
+func TestAssetPath(t *testing.T) {
+	Set(Config{Mode: ModeProduction, Data: "/tmp/cicada-test", Port: 8000})
+	t.Cleanup(func() {
+		Set(Config{Mode: ModeProduction, Data: "/tmp/cicada-test", Port: 8000})
+	})
+
+	cases := []struct {
+		name     string
+		t        AssetType
+		filename string
+		wantDir  string
+		wantPath string
+	}{
+		{
+			name:     "music typical md5 filename",
+			t:        AssetTypeMusic,
+			filename: "abcdef0123456789abcdef0123456789.mp3",
+			wantDir:  filepath.Join(AssetDir(AssetTypeMusic), "ab"),
+			wantPath: filepath.Join(AssetDir(AssetTypeMusic), "ab", "abcdef0123456789abcdef0123456789.mp3"),
+		},
+		{
+			name:     "music cover lands in own type root",
+			t:        AssetTypeMusicCover,
+			filename: "ff00112233445566ff00112233445566.jpg",
+			wantDir:  filepath.Join(AssetDir(AssetTypeMusicCover), "ff"),
+			wantPath: filepath.Join(AssetDir(AssetTypeMusicCover), "ff", "ff00112233445566ff00112233445566.jpg"),
+		},
+		{
+			name:     "user avatar separate from music cover",
+			t:        AssetTypeUserAvatar,
+			filename: "abcdef0123456789abcdef0123456789.jpg",
+			wantDir:  filepath.Join(AssetDir(AssetTypeUserAvatar), "ab"),
+			wantPath: filepath.Join(AssetDir(AssetTypeUserAvatar), "ab", "abcdef0123456789abcdef0123456789.jpg"),
+		},
+		{
+			name:     "short filename falls back to 00 shard",
+			t:        AssetTypeMusic,
+			filename: "a",
+			wantDir:  filepath.Join(AssetDir(AssetTypeMusic), "00"),
+			wantPath: filepath.Join(AssetDir(AssetTypeMusic), "00", "a"),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			gotDir, gotPath := AssetPath(tc.t, tc.filename)
+			if gotDir != tc.wantDir {
+				t.Errorf("dir = %q, want %q", gotDir, tc.wantDir)
+			}
+			if gotPath != tc.wantPath {
+				t.Errorf("path = %q, want %q", gotPath, tc.wantPath)
+			}
+			if filepath.Dir(gotPath) != gotDir {
+				t.Errorf("path %q is not inside dir %q", gotPath, gotDir)
+			}
+		})
+	}
+}

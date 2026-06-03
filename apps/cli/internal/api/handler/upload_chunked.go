@@ -36,8 +36,7 @@ type initPartialUploadBody struct {
 var fileHashRegexp = regexp.MustCompile(`^[0-9a-fA-F]{64}$`)
 
 // InitPartialUpload creates or resumes a chunked upload session for the given
-// file. If a finished asset with the same hash already exists, the response
-// short-circuits with completed=true so callers can skip re-uploading.
+// file.
 func InitPartialUpload(c *gin.Context) {
 	user := middleware.GetUser(c)
 	if user == nil {
@@ -71,23 +70,6 @@ func InitPartialUpload(c *gin.Context) {
 	}
 
 	uploadID := musicasset.ComputeUploadID(user.ID, string(at), body.FileHash, body.Size)
-
-	// Hash-based dedup: if any finished asset under this type already starts
-	// with the md5 we'd compute on complete, the uploader can skip the body.
-	// The finished filename is md5(content)+ext, so we cannot hit it from
-	// sha256 alone. Instead we look for a marker file named
-	// "<sha256_prefix>.hash" in the asset dir, written on first finalize.
-	if existing, ok := lookupAssetByHash(at, body.FileHash); ok {
-		api.OK(c, gin.H{
-			"uploadId":      "",
-			"receivedBytes": body.Size,
-			"chunkSize":     body.ChunkSize,
-			"completed":     true,
-			"id":            existing,
-			"path":          config.AssetPublicURL(existing, at),
-		})
-		return
-	}
 
 	meta := musicasset.PartialUploadMeta{
 		UploadID:  uploadID,
@@ -303,7 +285,12 @@ func CompletePartialUpload(c *gin.Context) {
 	if ext == "" {
 		ext = "." + mt.Extension()
 	}
-	dest := filepath.Join(config.AssetDir(at), contentMD5+ext)
+	finalName := contentMD5 + ext
+	destDir, dest := config.AssetPath(at, finalName)
+	if err := os.MkdirAll(destDir, 0755); err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
 
 	if _, statErr := os.Stat(dest); statErr == nil {
 		// Same content has already been finalised - drop the duplicate payload
@@ -324,12 +311,6 @@ func CompletePartialUpload(c *gin.Context) {
 			return
 		}
 	}
-
-	// Drop a hash marker so future uploads of the same content can be skipped
-	// without re-uploading.
-	writeHashMarker(at, meta.FileHash, contentMD5+ext)
-
-	finalName := contentMD5 + ext
 	api.OK(c, gin.H{
 		"id":   finalName,
 		"path": config.AssetPublicURL(finalName, at),
@@ -363,39 +344,6 @@ func CancelPartialUpload(c *gin.Context) {
 		return
 	}
 	api.OK(c, gin.H{"removed": true})
-}
-
-// hash marker layout: <DATA>/assets/<at>/.hashes/<sha256>.txt -> filename
-func hashMarkerPath(at config.AssetType, fileHash string) string {
-	return filepath.Join(config.AssetDir(at), ".hashes", fileHash)
-}
-
-func lookupAssetByHash(at config.AssetType, fileHash string) (string, bool) {
-	data, err := os.ReadFile(hashMarkerPath(at, fileHash))
-	if err != nil {
-		return "", false
-	}
-	filename := string(data)
-	if filename == "" {
-		return "", false
-	}
-	if _, err := os.Stat(filepath.Join(config.AssetDir(at), filename)); err != nil {
-		_ = os.Remove(hashMarkerPath(at, fileHash))
-		return "", false
-	}
-	return filename, true
-}
-
-func writeHashMarker(at config.AssetType, fileHash, filename string) {
-	dir := filepath.Dir(hashMarkerPath(at, fileHash))
-	if err := os.MkdirAll(dir, 0o755); err != nil {
-		return
-	}
-	tmp := hashMarkerPath(at, fileHash) + ".tmp"
-	if err := os.WriteFile(tmp, []byte(filename), 0o644); err != nil {
-		return
-	}
-	_ = os.Rename(tmp, hashMarkerPath(at, fileHash))
 }
 
 func md5File(path string) (string, error) {

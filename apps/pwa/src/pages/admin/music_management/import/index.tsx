@@ -250,18 +250,6 @@ const InlineActionButton = styled.button`
   }
 `;
 
-const InstantBadge = styled.span`
-  font-family: ${FONT};
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-  padding: 3px 8px;
-  border-radius: 8px;
-  background: ${CSSVariable.COLOR_PRIMARY};
-  color: #fff;
-  box-shadow: 0 2px 0 ${ROW_SHADOW};
-`;
-
 const ErrorText = styled.div`
   min-width: 0;
   max-width: min(240px, 100%);
@@ -341,7 +329,7 @@ const formatTaskMetadata = (task: ImportTask) =>
     .filter(Boolean)
     .join(' · ');
 
-function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean }) {
+function TaskCard({ task }: { task: ImportTask }) {
   const [viewerPhoto, setViewerPhoto] = useState<ImageViewerPhoto | null>(null);
   const editable = task.phase === 'editing';
   const pct = task.totalBytes
@@ -427,9 +415,6 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
                 {hasCover && metadataText ? <span>·</span> : null}
                 {metadataText ? <MetadataText>{metadataText}</MetadataText> : null}
               </FileMetadata>
-            ) : null}
-            {instantHit ? (
-              <InstantBadge>{t('instant_upload_hit')}</InstantBadge>
             ) : null}
           </HeaderRow>
           <Divider />

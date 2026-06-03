@@ -399,13 +399,24 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 		t.Fatalf("initialize store: %v", err)
 	}
 
-	assetDir := config.AssetDir(config.AssetTypeMusic)
-	linked := filepath.Join(assetDir, "linked.mp3")
-	unlinked := filepath.Join(assetDir, "unlinked.mp3")
+	// 注: 调度器只走 shard 子目录, root 下的扁平文件由 migration 搬, scheduler 不动。
+	// 这里直接把测试文件写到 shard 路径下, 模拟迁移后的状态。同时再放一个 root 扁平文件
+	// 验证它会被 scheduler 忽略, 等迁移处理。
+	linkedDir, linked := config.AssetPath(config.AssetTypeMusic, "linked.mp3")
+	unlinkedDir, unlinked := config.AssetPath(config.AssetTypeMusic, "unlinked.mp3")
+	for _, dir := range []string{linkedDir, unlinkedDir} {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			t.Fatalf("mkdir %s: %v", dir, err)
+		}
+	}
 	for _, path := range []string{linked, unlinked} {
 		if err := os.WriteFile(path, []byte("music"), 0644); err != nil {
 			t.Fatalf("write %s: %v", path, err)
 		}
+	}
+	legacyFlat := filepath.Join(config.AssetDir(config.AssetTypeMusic), "legacy.mp3")
+	if err := os.WriteFile(legacyFlat, []byte("legacy"), 0644); err != nil {
+		t.Fatalf("write legacy: %v", err)
 	}
 
 	if _, err := store.DB().Exec(
@@ -426,6 +437,14 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 	}
 	if _, err := os.Stat(unlinked); !os.IsNotExist(err) {
 		t.Fatalf("expected unlinked asset to be removed, err=%v", err)
+	}
+	// 完全清空的 shard 也应被移除
+	if _, err := os.Stat(unlinkedDir); !os.IsNotExist(err) {
+		t.Fatalf("expected empty shard %s to be removed, err=%v", unlinkedDir, err)
+	}
+	// root 下的扁平遗留文件由迁移处理, scheduler 不应触及
+	if _, err := os.Stat(legacyFlat); err != nil {
+		t.Fatalf("expected legacy flat asset to remain (migration handles it): %v", err)
 	}
 }
 
@@ -490,7 +509,10 @@ func TestDecreaseMusicHeatDecreasesDailyWithoutGoingBelowZero(t *testing.T) {
 func writeMusicAssetForCleanTest(t *testing.T, filename string) {
 	t.Helper()
 
-	path := filepath.Join(config.AssetDir(config.AssetTypeMusic), filename)
+	dir, path := config.AssetPath(config.AssetTypeMusic, filename)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		t.Fatalf("mkdir music asset shard %s: %v", filename, err)
+	}
 	if err := os.WriteFile(path, []byte("source"), 0644); err != nil {
 		t.Fatalf("write music asset %s: %v", filename, err)
 	}
