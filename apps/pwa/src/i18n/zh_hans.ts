@@ -362,7 +362,6 @@ const zhCN: {
   cancel_upload: '取消导入',
   retry_upload: '重试',
   upload_status_uploaded: '已导入',
-  instant_upload_hit: '秒传',
   music_import_running_warning: '正在导入音乐, 离开会暂停, 确定吗?',
   resume_draft_question: '选择对应的文件以继续上次未完成的导入',
   file_mismatch_warning: '所选文件与未完成的导入不匹配',

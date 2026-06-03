@@ -33,29 +33,51 @@ func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 
 	oldTime := time.Now().Add(-31 * 24 * time.Hour)
 	oldRootCache := filepath.Join(config.CacheDir(), "old-cache")
-	oldThumbnail := filepath.Join(config.ThumbnailCacheDir(), "64_old.jpg")
-	freshThumbnail := filepath.Join(config.ThumbnailCacheDir(), "64_fresh.jpg")
+	legacyFlatThumbnail := filepath.Join(config.ThumbnailCacheDir(), "64_legacy.jpg")
+	_, oldThumbnailShardA := config.ThumbnailCachePath(64, "abdeadbeef0001.jpg")
+	_, oldThumbnailShardB := config.ThumbnailCachePath(128, "cd1122334455.jpg")
+	_, freshThumbnail := config.ThumbnailCachePath(64, "ef9988776655.jpg")
+	oldEmptyShardLeftover := filepath.Join(config.ThumbnailCacheDir(), "ab", "abold_32.jpg")
 	oldTranscode := filepath.Join(config.MusicTranscodeCacheDir(), "song.flac_codec-aac_bitrate-192k.m4a")
 	freshTranscode := filepath.Join(config.MusicTranscodeCacheDir(), "song.flac_codec-flac.flac")
 
-	for _, path := range []string{oldRootCache, oldThumbnail, freshThumbnail, oldTranscode, freshTranscode} {
+	// 老分片 ab 里只剩一个超期文件 — 清理后整个 shard 应被移除
+	// 老分片 cd 里只有一个超期文件 — 同上
+	// 新分片 ef 里有一个新文件 — shard 必须保留
+	allFiles := []string{
+		oldRootCache,
+		legacyFlatThumbnail,
+		oldThumbnailShardA,
+		oldEmptyShardLeftover,
+		oldThumbnailShardB,
+		freshThumbnail,
+		oldTranscode,
+		freshTranscode,
+	}
+	for _, path := range allFiles {
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			t.Fatalf("mkdir %s: %v", filepath.Dir(path), err)
+		}
 		if err := os.WriteFile(path, []byte("cache"), 0644); err != nil {
 			t.Fatalf("write %s: %v", path, err)
 		}
 	}
-	for _, path := range []string{oldRootCache, oldThumbnail, oldTranscode} {
+	for _, path := range []string{
+		oldRootCache,
+		legacyFlatThumbnail,
+		oldThumbnailShardA,
+		oldEmptyShardLeftover,
+		oldThumbnailShardB,
+		oldTranscode,
+	} {
 		if err := os.Chtimes(path, oldTime, oldTime); err != nil {
 			t.Fatalf("chtimes %s: %v", path, err)
 		}
 	}
-	if err := os.Chtimes(config.ThumbnailCacheDir(), oldTime, oldTime); err != nil {
-		t.Fatalf("chtimes thumbnail dir: %v", err)
-	}
-	if err := os.Chtimes(config.MusicTranscodeCacheDir(), oldTime, oldTime); err != nil {
-		t.Fatalf("chtimes music transcode dir: %v", err)
-	}
 
-	cleanOutdatedFile()
+	if _, err := cleanOutdatedFile(); err != nil {
+		t.Fatalf("cleanOutdatedFile: %v", err)
+	}
 
 	if info, err := os.Stat(config.ThumbnailCacheDir()); err != nil || !info.IsDir() {
 		t.Fatalf("expected thumbnail cache dir to remain, info=%v err=%v", info, err)
@@ -67,14 +89,26 @@ func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 	if _, err := os.Stat(oldRootCache); err != nil {
 		t.Fatalf("expected old root cache file to remain untouched: %v", err)
 	}
-	if _, err := os.Stat(oldThumbnail); !os.IsNotExist(err) {
-		t.Fatalf("expected old thumbnail cache file to be removed, err=%v", err)
+	// 遗留平铺缩略图由 migration 负责清理, scheduler 不应动它
+	if _, err := os.Stat(legacyFlatThumbnail); err != nil {
+		t.Fatalf("expected legacy flat thumbnail to remain (migration handles it): %v", err)
 	}
-	if _, err := os.Stat(oldTranscode); err != nil {
-		t.Fatalf("expected old transcode cache file to remain: %v", err)
+	for _, path := range []string{oldThumbnailShardA, oldEmptyShardLeftover, oldThumbnailShardB} {
+		if _, err := os.Stat(path); !os.IsNotExist(err) {
+			t.Fatalf("expected old thumbnail %s to be removed, err=%v", path, err)
+		}
+	}
+	// 清空后的 shard 子目录也应被移除
+	for _, shard := range []string{"ab", "cd"} {
+		if _, err := os.Stat(filepath.Join(config.ThumbnailCacheDir(), shard)); !os.IsNotExist(err) {
+			t.Fatalf("expected empty shard %s to be removed, err=%v", shard, err)
+		}
 	}
 	if _, err := os.Stat(freshThumbnail); err != nil {
 		t.Fatalf("expected fresh thumbnail cache file to remain: %v", err)
+	}
+	if _, err := os.Stat(oldTranscode); err != nil {
+		t.Fatalf("expected old transcode cache file to remain: %v", err)
 	}
 	if _, err := os.Stat(freshTranscode); err != nil {
 		t.Fatalf("expected fresh transcode cache file to remain: %v", err)
@@ -101,39 +135,19 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 	writeMusicAssetForCleanTest(t, "incomplete.mp3")
 	writeMusicAssetForCleanTest(t, "badmeta.mp3")
 
-	validSmooth := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("linked.mp3", musictranscode.QualitySmooth),
-	)
-	validSource := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("linked.mp3", musictranscode.QualitySource),
-	)
-	validSourceMeta := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.SourceCacheMetadataName("linked.mp3"),
-	)
-	missingSource := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("missing.mp3", musictranscode.QualitySmooth),
-	)
-	legacyCache := filepath.Join(config.MusicTranscodeCacheDir(), "linked.mp3_codec-aac_bitrate-192k.m4a")
-	orphanMeta := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.SourceCacheMetadataName("orphan.mp3"),
-	)
-	incompleteSource := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("incomplete.mp3", musictranscode.QualitySource),
-	)
-	badMetaSource := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.CacheName("badmeta.mp3", musictranscode.QualitySource),
-	)
-	badMeta := filepath.Join(
-		config.MusicTranscodeCacheDir(),
-		musictranscode.SourceCacheMetadataName("badmeta.mp3"),
-	)
+	_, validSmooth := config.MusicTranscodeCachePath("linked.mp3", musictranscode.CacheName("linked.mp3", musictranscode.QualitySmooth))
+	_, validSource := config.MusicTranscodeCachePath("linked.mp3", musictranscode.CacheName("linked.mp3", musictranscode.QualitySource))
+	_, validSourceMeta := config.MusicTranscodeCachePath("linked.mp3", musictranscode.SourceCacheMetadataName("linked.mp3"))
+	_, missingSource := config.MusicTranscodeCachePath("missing.mp3", musictranscode.CacheName("missing.mp3", musictranscode.QualitySmooth))
+	_, orphanMeta := config.MusicTranscodeCachePath("orphan.mp3", musictranscode.SourceCacheMetadataName("orphan.mp3"))
+	_, incompleteSource := config.MusicTranscodeCachePath("incomplete.mp3", musictranscode.CacheName("incomplete.mp3", musictranscode.QualitySource))
+	_, badMetaSource := config.MusicTranscodeCachePath("badmeta.mp3", musictranscode.CacheName("badmeta.mp3", musictranscode.QualitySource))
+	_, badMeta := config.MusicTranscodeCachePath("badmeta.mp3", musictranscode.SourceCacheMetadataName("badmeta.mp3"))
+	_, garbageInShard := config.MusicTranscodeCachePath("invalid.mp3", "linked.mp3_codec-aac_bitrate-192k.m4a")
+
+	// 旧版本残留在 cache 根目录的扁平文件; scheduler 不应触及, 留给 migration 处理
+	legacyRootFile := filepath.Join(config.MusicTranscodeCacheDir(), "linked.mp3_codec-aac_bitrate-192k.m4a")
+	// 根目录下名字像缓存文件但实际是目录的怪异条目: 走 shard 路径会被当成空 shard 移除
 	legalNameDir := filepath.Join(
 		config.MusicTranscodeCacheDir(),
 		musictranscode.CacheName("dir.mp3", musictranscode.QualitySmooth),
@@ -143,11 +157,14 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 		validSmooth,
 		validSource,
 		missingSource,
-		legacyCache,
+		garbageInShard,
 		orphanMeta,
 		incompleteSource,
 		badMetaSource,
 	} {
+		if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+			t.Fatalf("mkdir %s: %v", filepath.Dir(path), err)
+		}
 		if err := os.WriteFile(path, []byte("cache"), 0644); err != nil {
 			t.Fatalf("write %s: %v", path, err)
 		}
@@ -157,6 +174,9 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 	}
 	if err := os.WriteFile(badMeta, []byte(`{}`), 0644); err != nil {
 		t.Fatalf("write bad source meta: %v", err)
+	}
+	if err := os.WriteFile(legacyRootFile, []byte("legacy"), 0644); err != nil {
+		t.Fatalf("write legacy root file: %v", err)
 	}
 	if err := os.MkdirAll(legalNameDir, 0755); err != nil {
 		t.Fatalf("mkdir legal name dir: %v", err)
@@ -175,9 +195,12 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 			t.Fatalf("expected %s to remain: %v", path, err)
 		}
 	}
+	if _, err := os.Stat(legacyRootFile); err != nil {
+		t.Fatalf("expected legacy root file to remain (migration handles it): %v", err)
+	}
 	for _, path := range []string{
 		missingSource,
-		legacyCache,
+		garbageInShard,
 		orphanMeta,
 		incompleteSource,
 		badMetaSource,
@@ -186,6 +209,16 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 	} {
 		if _, err := os.Stat(path); !os.IsNotExist(err) {
 			t.Fatalf("expected %s to be removed, err=%v", path, err)
+		}
+	}
+
+	// 保留有效条目的 shard 必须仍在, 完全清空的 shard 必须随之被移除
+	if _, err := os.Stat(filepath.Dir(validSmooth)); err != nil {
+		t.Fatalf("expected shard with valid entries to remain: %v", err)
+	}
+	for _, path := range []string{missingSource, orphanMeta, incompleteSource, badMetaSource, garbageInShard} {
+		if _, err := os.Stat(filepath.Dir(path)); !os.IsNotExist(err) {
+			t.Fatalf("expected empty shard %s to be removed, err=%v", filepath.Dir(path), err)
 		}
 	}
 }
@@ -366,13 +399,24 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 		t.Fatalf("initialize store: %v", err)
 	}
 
-	assetDir := config.AssetDir(config.AssetTypeMusic)
-	linked := filepath.Join(assetDir, "linked.mp3")
-	unlinked := filepath.Join(assetDir, "unlinked.mp3")
+	// 注: 调度器只走 shard 子目录, root 下的扁平文件由 migration 搬, scheduler 不动。
+	// 这里直接把测试文件写到 shard 路径下, 模拟迁移后的状态。同时再放一个 root 扁平文件
+	// 验证它会被 scheduler 忽略, 等迁移处理。
+	linkedDir, linked := config.AssetPath(config.AssetTypeMusic, "linked.mp3")
+	unlinkedDir, unlinked := config.AssetPath(config.AssetTypeMusic, "unlinked.mp3")
+	for _, dir := range []string{linkedDir, unlinkedDir} {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			t.Fatalf("mkdir %s: %v", dir, err)
+		}
+	}
 	for _, path := range []string{linked, unlinked} {
 		if err := os.WriteFile(path, []byte("music"), 0644); err != nil {
 			t.Fatalf("write %s: %v", path, err)
 		}
+	}
+	legacyFlat := filepath.Join(config.AssetDir(config.AssetTypeMusic), "legacy.mp3")
+	if err := os.WriteFile(legacyFlat, []byte("legacy"), 0644); err != nil {
+		t.Fatalf("write legacy: %v", err)
 	}
 
 	if _, err := store.DB().Exec(
@@ -393,6 +437,14 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 	}
 	if _, err := os.Stat(unlinked); !os.IsNotExist(err) {
 		t.Fatalf("expected unlinked asset to be removed, err=%v", err)
+	}
+	// 完全清空的 shard 也应被移除
+	if _, err := os.Stat(unlinkedDir); !os.IsNotExist(err) {
+		t.Fatalf("expected empty shard %s to be removed, err=%v", unlinkedDir, err)
+	}
+	// root 下的扁平遗留文件由迁移处理, scheduler 不应触及
+	if _, err := os.Stat(legacyFlat); err != nil {
+		t.Fatalf("expected legacy flat asset to remain (migration handles it): %v", err)
 	}
 }
 
@@ -457,7 +509,10 @@ func TestDecreaseMusicHeatDecreasesDailyWithoutGoingBelowZero(t *testing.T) {
 func writeMusicAssetForCleanTest(t *testing.T, filename string) {
 	t.Helper()
 
-	path := filepath.Join(config.AssetDir(config.AssetTypeMusic), filename)
+	dir, path := config.AssetPath(config.AssetTypeMusic, filename)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		t.Fatalf("mkdir music asset shard %s: %v", filename, err)
+	}
 	if err := os.WriteFile(path, []byte("source"), 0644); err != nil {
 		t.Fatalf("write music asset %s: %v", filename, err)
 	}

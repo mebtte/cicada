@@ -13,6 +13,8 @@ import (
 type AudioTranscodeProfile struct {
 	Codec   string
 	Bitrate string
+	// Threads 限制 ffmpeg 使用的线程数, 0 表示走 ffmpeg 默认(全核)。后台预转码传 1 把单首转码压在单 CPU。
+	Threads int
 }
 
 type AudioMetadata struct {
@@ -142,14 +144,17 @@ func TranscodeAudio(ctx context.Context, inputPath, outputPath string, profile A
 		return err
 	}
 
-	args := []string{
-		"-y",
+	args := []string{"-y"}
+	if profile.Threads > 0 {
+		args = append(args, "-threads", strconv.Itoa(profile.Threads))
+	}
+	args = append(args,
 		"-i", inputPath,
 		"-vn",
 		"-map", "0:a:0",
 		"-map_metadata", "-1",
 		"-map_chapters", "-1",
-	}
+	)
 	switch profile.Codec {
 	case "aac":
 		if profile.Bitrate == "" {

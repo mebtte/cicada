@@ -110,11 +110,13 @@ func SourceCacheMetadataName(asset string) string {
 }
 
 func CachePath(asset string, quality Quality) string {
-	return filepath.Join(config.MusicTranscodeCacheDir(), CacheName(asset, quality))
+	_, path := config.MusicTranscodeCachePath(asset, CacheName(asset, quality))
+	return path
 }
 
 func SourceCacheMetadataPath(asset string) string {
-	return filepath.Join(config.MusicTranscodeCacheDir(), SourceCacheMetadataName(asset))
+	_, path := config.MusicTranscodeCachePath(asset, SourceCacheMetadataName(asset))
+	return path
 }
 
 func ParseCacheFilename(name string) (CacheEntry, bool) {
@@ -131,6 +133,16 @@ func ParseCacheFilename(name string) (CacheEntry, bool) {
 }
 
 func Ensure(ctx context.Context, asset string, quality Quality) (Result, error) {
+	return ensure(ctx, asset, quality, 0)
+}
+
+// EnsureBackground 与 Ensure 行为一致, 但把 ffmpeg 限制在单线程, 用于调度器的预转码以避免长时间占满 CPU。
+// 如果实时请求碰巧命中正在执行的 EnsureBackground, 会阻塞等待其完成 (inflight 单飞), 这是预期取舍。
+func EnsureBackground(ctx context.Context, asset string, quality Quality) (Result, error) {
+	return ensure(ctx, asset, quality, 1)
+}
+
+func ensure(ctx context.Context, asset string, quality Quality, threads int) (Result, error) {
 	if asset == "" {
 		return Result{}, fmt.Errorf("empty music asset")
 	}
@@ -162,7 +174,7 @@ func Ensure(ctx context.Context, asset string, quality Quality) (Result, error) 
 		return cached, nil
 	}
 
-	result, err = generateCache(context.WithoutCancel(ctx), asset, quality)
+	result, err = generateCache(context.WithoutCancel(ctx), asset, quality, threads)
 	return result, err
 }
 
@@ -223,12 +235,9 @@ func finishTranscode(cachePath string, call *transcodeCall, result Result, err e
 	close(call.done)
 }
 
-func generateCache(ctx context.Context, asset string, quality Quality) (Result, error) {
-	sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), asset)
+func generateCache(ctx context.Context, asset string, quality Quality, threads int) (Result, error) {
+	_, sourcePath := config.AssetPath(config.AssetTypeMusic, asset)
 	if _, err := os.Stat(sourcePath); err != nil {
-		return Result{}, err
-	}
-	if err := os.MkdirAll(config.MusicTranscodeCacheDir(), 0755); err != nil {
 		return Result{}, err
 	}
 
@@ -243,8 +252,12 @@ func generateCache(ctx context.Context, asset string, quality Quality) (Result, 
 	if err != nil {
 		return Result{}, err
 	}
+	plan.profile.Threads = threads
 
-	cachePath := CachePath(asset, quality)
+	shardDir, cachePath := config.MusicTranscodeCachePath(asset, CacheName(asset, quality))
+	if err := os.MkdirAll(shardDir, 0755); err != nil {
+		return Result{}, err
+	}
 	tmpPath := cachePath + ".tmp"
 	_ = os.Remove(tmpPath)
 

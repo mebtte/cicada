@@ -185,33 +185,55 @@ func removeUnlinkedAsset() (schedulerJobResult, error) {
 			continue
 		}
 
-		dir := config.AssetDir(aq.assetType)
-		entries, err := os.ReadDir(dir)
+		// Assets live under {assetDir}/{shard}/ (256 hex-prefix shards by
+		// filename[:2]). Walk shard subdirs only; any plain file directly under
+		// the type root is a pre-shard leftover that the migration moves on
+		// startup — leave it alone here.
+		root := config.AssetDir(aq.assetType)
+		shards, err := os.ReadDir(root)
 		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
 			errs = append(errs, fmt.Errorf("read %s asset dir: %w", aq.assetType, err))
 			continue
 		}
-		metrics[prefix+"_scanned_files"] = int64(len(entries))
 
-		var unlinked []string
-		for _, e := range entries {
-			if !e.IsDir() && !linked[e.Name()] {
-				unlinked = append(unlinked, e.Name())
-			}
-		}
-		if len(unlinked) == 0 {
-			continue
-		}
-
+		var scanned int64
+		var unlinkedCount int64
 		var removed int64
-		for _, name := range unlinked {
-			if err := os.Remove(filepath.Join(dir, name)); err != nil {
-				errs = append(errs, fmt.Errorf("remove unlinked %s asset %s: %w", aq.assetType, name, err))
+		for _, shard := range shards {
+			if !shard.IsDir() {
 				continue
 			}
-			removed++
+			shardDir := filepath.Join(root, shard.Name())
+			entries, err := os.ReadDir(shardDir)
+			if err != nil {
+				errs = append(errs, fmt.Errorf("read %s asset shard %s: %w", aq.assetType, shard.Name(), err))
+				continue
+			}
+			scanned += int64(len(entries))
+
+			var shardRemoved int64
+			for _, e := range entries {
+				if e.IsDir() || linked[e.Name()] {
+					continue
+				}
+				unlinkedCount++
+				if err := os.Remove(filepath.Join(shardDir, e.Name())); err != nil {
+					errs = append(errs, fmt.Errorf("remove unlinked %s asset %s/%s: %w", aq.assetType, shard.Name(), e.Name(), err))
+					continue
+				}
+				shardRemoved++
+			}
+			removed += shardRemoved
+
+			if remain, err := os.ReadDir(shardDir); err == nil && len(remain) == 0 {
+				_ = os.Remove(shardDir)
+			}
 		}
-		metrics[prefix+"_unlinked_files"] = int64(len(unlinked))
+		metrics[prefix+"_scanned_files"] = scanned
+		metrics[prefix+"_unlinked_files"] = unlinkedCount
 		metrics[prefix+"_removed_files"] = removed
 		totalRemoved += removed
 	}
@@ -222,9 +244,17 @@ func removeUnlinkedAsset() (schedulerJobResult, error) {
 	}, errors.Join(errs...)
 }
 
+// cleanMusicTranscodeCache validates entries under cache/music_transcoded.
+// Entries live in 256 hex-prefix shards (the first two chars of the source
+// asset filename); all products of one source (smooth m4a + source audio +
+// source metadata sidecar) share an asset prefix and therefore the same
+// shard, so audio<->sidecar pairing can be done within a shard. Plain files
+// directly under the cache root are leftovers from the pre-shard layout and
+// are left for the dedicated migration to clean; empty shard directories are
+// removed once their entries are gone.
 func cleanMusicTranscodeCache() (schedulerJobResult, error) {
-	dir := config.MusicTranscodeCacheDir()
-	entries, err := os.ReadDir(dir)
+	root := config.MusicTranscodeCacheDir()
+	shards, err := os.ReadDir(root)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return schedulerJobResult{
@@ -235,73 +265,90 @@ func cleanMusicTranscodeCache() (schedulerJobResult, error) {
 		return schedulerJobResult{}, err
 	}
 
-	entryNames := map[string]bool{}
-	for _, entry := range entries {
-		entryNames[entry.Name()] = true
-	}
-
 	metrics := map[string]int64{
-		"scanned_music_transcode_cache_entries": int64(len(entries)),
+		"scanned_music_transcode_cache_entries": 0,
 	}
 	var errs []error
 	var totalRemoved int64
-	removeEntry := func(name, metric string) {
-		if err := os.RemoveAll(filepath.Join(dir, name)); err != nil {
-			errs = append(errs, fmt.Errorf("remove music transcode cache %s: %w", name, err))
-			return
-		}
-		delete(entryNames, name)
-		metrics[metric]++
-		totalRemoved++
-	}
 
-	for _, entry := range entries {
-		name := entry.Name()
-		if !entry.Type().IsRegular() {
-			removeEntry(name, "removed_invalid_music_transcode_cache_entries")
+	for _, shard := range shards {
+		if !shard.IsDir() {
 			continue
 		}
-
-		cacheEntry, ok := musictranscode.ParseCacheFilename(name)
-		if !ok {
-			removeEntry(name, "removed_invalid_music_transcode_cache_entries")
+		shardDir := filepath.Join(root, shard.Name())
+		entries, err := os.ReadDir(shardDir)
+		if err != nil {
+			errs = append(errs, fmt.Errorf("read music transcode shard %s: %w", shard.Name(), err))
 			continue
 		}
+		metrics["scanned_music_transcode_cache_entries"] += int64(len(entries))
 
-		sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), cacheEntry.Asset)
-		if _, err := os.Stat(sourcePath); err != nil {
-			if os.IsNotExist(err) {
-				removeEntry(name, "removed_missing_source_music_transcode_cache_entries")
+		entryNames := map[string]bool{}
+		for _, entry := range entries {
+			entryNames[entry.Name()] = true
+		}
+		removeEntry := func(name, metric string) {
+			if err := os.RemoveAll(filepath.Join(shardDir, name)); err != nil {
+				errs = append(errs, fmt.Errorf("remove music transcode cache %s/%s: %w", shard.Name(), name, err))
+				return
+			}
+			delete(entryNames, name)
+			metrics[metric]++
+			totalRemoved++
+		}
+
+		for _, entry := range entries {
+			name := entry.Name()
+			if !entry.Type().IsRegular() {
+				removeEntry(name, "removed_invalid_music_transcode_cache_entries")
 				continue
 			}
-			errs = append(errs, fmt.Errorf("stat music transcode source %s: %w", cacheEntry.Asset, err))
-			continue
-		}
 
-		if cacheEntry.Quality != musictranscode.QualitySource {
-			continue
-		}
+			cacheEntry, ok := musictranscode.ParseCacheFilename(name)
+			if !ok {
+				removeEntry(name, "removed_invalid_music_transcode_cache_entries")
+				continue
+			}
 
-		audioName := musictranscode.CacheName(cacheEntry.Asset, musictranscode.QualitySource)
-		metaName := musictranscode.SourceCacheMetadataName(cacheEntry.Asset)
-		if cacheEntry.Sidecar {
-			if !entryNames[audioName] {
-				removeEntry(name, "removed_orphan_music_transcode_cache_metadata")
+			_, sourcePath := config.AssetPath(config.AssetTypeMusic, cacheEntry.Asset)
+			if _, err := os.Stat(sourcePath); err != nil {
+				if os.IsNotExist(err) {
+					removeEntry(name, "removed_missing_source_music_transcode_cache_entries")
+					continue
+				}
+				errs = append(errs, fmt.Errorf("stat music transcode source %s: %w", cacheEntry.Asset, err))
+				continue
+			}
+
+			if cacheEntry.Quality != musictranscode.QualitySource {
+				continue
+			}
+
+			audioName := musictranscode.CacheName(cacheEntry.Asset, musictranscode.QualitySource)
+			metaName := musictranscode.SourceCacheMetadataName(cacheEntry.Asset)
+			if cacheEntry.Sidecar {
+				if !entryNames[audioName] {
+					removeEntry(name, "removed_orphan_music_transcode_cache_metadata")
+					continue
+				}
+				if _, err := musictranscode.ReadSourceCacheMetadata(cacheEntry.Asset); err != nil {
+					removeEntry(name, "removed_invalid_music_transcode_cache_metadata")
+				}
+				continue
+			}
+
+			// source 缓存依赖 sidecar 响应头元数据; 缺失或损坏时删除音频缓存, 让后续请求重新生成。
+			if !entryNames[metaName] {
+				removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
 				continue
 			}
 			if _, err := musictranscode.ReadSourceCacheMetadata(cacheEntry.Asset); err != nil {
-				removeEntry(name, "removed_invalid_music_transcode_cache_metadata")
+				removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
 			}
-			continue
 		}
 
-		// source 缓存依赖 sidecar 响应头元数据; 缺失或损坏时删除音频缓存, 让后续请求重新生成。
-		if !entryNames[metaName] {
-			removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
-			continue
-		}
-		if _, err := musictranscode.ReadSourceCacheMetadata(cacheEntry.Asset); err != nil {
-			removeEntry(name, "removed_incomplete_music_transcode_cache_entries")
+		if remain, err := os.ReadDir(shardDir); err == nil && len(remain) == 0 {
+			_ = os.Remove(shardDir)
 		}
 	}
 
@@ -341,7 +388,7 @@ func pretranscodeMusic() (schedulerJobResult, error) {
 			musictranscode.QualitySmooth,
 			musictranscode.QualitySource,
 		} {
-			result, err := musictranscode.Ensure(context.Background(), music.Asset, quality)
+			result, err := musictranscode.EnsureBackground(context.Background(), music.Asset, quality)
 			if err != nil {
 				metrics["failed_music_transcode_cache_entries"]++
 				errs = append(errs, fmt.Errorf("pretranscode %s %s: %w", music.Asset, quality, err))
@@ -401,16 +448,44 @@ func removeOutdatedAuthSession() (schedulerJobResult, error) {
 	}, err
 }
 
-// cleanOutdatedFile removes thumbnail cache files older than 30 days. The cache
-// root itself is no longer scanned: legacy loose files there were cleared once
-// by a data migration, and current binaries only write into managed
-// subdirectories (thumbnails / music_transcoded).
+// cleanOutdatedFile removes thumbnail cache files older than 30 days. Thumbnails
+// live under cache/thumbnails/{shard}/ (256 shards by the first two hex chars
+// of the source filename); we walk each shard and let empty shards be removed
+// afterwards. Any plain file directly under cache/thumbnails is a leftover
+// from the pre-shard layout and is left for the dedicated migration to clean.
 func cleanOutdatedFile() (schedulerJobResult, error) {
-	removed, err := cleanOutdatedEntries(config.ThumbnailCacheDir(), 30*24*time.Hour, "")
+	root := config.ThumbnailCacheDir()
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return schedulerJobResult{
+				Summary: "thumbnail cache dir absent",
+				Metrics: map[string]int64{"removed_thumbnail_cache_entries": 0},
+			}, nil
+		}
+		return schedulerJobResult{}, err
+	}
+	var total int64
+	var errs []error
+	for _, e := range entries {
+		if !e.IsDir() {
+			continue
+		}
+		shardDir := filepath.Join(root, e.Name())
+		removed, err := cleanOutdatedEntries(shardDir, 30*24*time.Hour, "")
+		total += removed
+		if err != nil {
+			errs = append(errs, err)
+		}
+		remain, err := os.ReadDir(shardDir)
+		if err == nil && len(remain) == 0 {
+			_ = os.Remove(shardDir)
+		}
+	}
 	return schedulerJobResult{
-		Summary: fmt.Sprintf("removed %d outdated thumbnail cache entries", removed),
-		Metrics: map[string]int64{"removed_thumbnail_cache_entries": removed},
-	}, err
+		Summary: fmt.Sprintf("removed %d outdated thumbnail cache entries", total),
+		Metrics: map[string]int64{"removed_thumbnail_cache_entries": total},
+	}, errors.Join(errs...)
 }
 
 func cleanOutdatedAccessLog() (schedulerJobResult, error) {

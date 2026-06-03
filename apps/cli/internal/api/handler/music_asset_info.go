@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"log"
-	"path/filepath"
 	"time"
 
 	"cicada/internal/config"
@@ -20,7 +19,7 @@ func syncMusicAssetInfo(musicID string) {
 		return
 	}
 
-	sourcePath := filepath.Join(config.AssetDir(config.AssetTypeMusic), m.Asset)
+	_, sourcePath := config.AssetPath(config.AssetTypeMusic, m.Asset)
 	ctx, cancel := context.WithTimeout(context.Background(), musicAssetInfoReadTimeout)
 	info, inspectErr := musicasset.Inspect(ctx, sourcePath)
 	cancel()

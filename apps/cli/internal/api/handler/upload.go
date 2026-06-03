@@ -105,7 +105,11 @@ func UploadAsset(c *gin.Context) {
 		ext = "." + mt.Extension()
 	}
 	filename := fmt.Sprintf("%x%s", hash, ext)
-	dest := filepath.Join(config.AssetDir(at), filename)
+	destDir, dest := config.AssetPath(at, filename)
+	if err := os.MkdirAll(destDir, 0755); err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
 
 	if err := os.WriteFile(dest, data, 0644); err != nil {
 		api.Fail(c, apperr.ServerError)

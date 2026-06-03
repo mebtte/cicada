@@ -39,8 +39,6 @@ export interface ChunkedUploadResult {
   path: string;
   /** Identity needed to resume a future upload of the same file. */
   meta: ChunkedUploadResumeMeta;
-  /** True when the server short-circuited because the same file already existed. */
-  instant: boolean;
 }
 
 export interface ChunkedUploadOptions {
@@ -64,9 +62,6 @@ interface InitResponse {
   uploadId: string;
   receivedBytes: number;
   chunkSize: number;
-  completed: boolean;
-  id?: string;
-  path?: string;
 }
 
 interface PutResponse {
@@ -354,16 +349,6 @@ async function uploadAssetChunked(
     signal,
   );
 
-  if (initRes.completed && initRes.id && initRes.path) {
-    onProgress?.(file.size, file.size);
-    return {
-      id: initRes.id,
-      path: initRes.path,
-      meta: { uploadId: '', fileHash, chunkSize: initRes.chunkSize },
-      instant: true,
-    };
-  }
-
   const uploadId = initRes.uploadId;
   const effectiveChunkSize = initRes.chunkSize;
   const meta: ChunkedUploadResumeMeta = {
@@ -431,7 +416,6 @@ async function uploadAssetChunked(
     id: completeRes.id,
     path: completeRes.path,
     meta,
-    instant: false,
   };
 }
 

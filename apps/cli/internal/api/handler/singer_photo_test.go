@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -59,10 +58,11 @@ func setupSingerPhotoTest(t *testing.T) (admin *store.User, singerID string) {
 	}
 
 	// A real asset file the handlers can stat.
-	if err := os.WriteFile(
-		filepath.Join(config.AssetDir(config.AssetTypeSingerPhoto), "pic.jpg"),
-		[]byte("fake-jpeg"), 0644,
-	); err != nil {
+	assetDir, assetPath := config.AssetPath(config.AssetTypeSingerPhoto, "pic.jpg")
+	if err := os.MkdirAll(assetDir, 0755); err != nil {
+		t.Fatalf("mkdir singer photo dir: %v", err)
+	}
+	if err := os.WriteFile(assetPath, []byte("fake-jpeg"), 0644); err != nil {
 		t.Fatalf("seed asset: %v", err)
 	}
 
