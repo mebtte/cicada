@@ -29,7 +29,7 @@ const Style = styled.div`
   align-items: center;
   justify-content: center;
   min-width: 0;
-  padding: 0 12px 4px;
+  padding: 4px 12px;
 
   color: #fff;
   background: ${CSSVariable.COLOR_DANGEROUS};
