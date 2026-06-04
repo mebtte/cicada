@@ -13,6 +13,14 @@ import {
 const PERIODIC_UPLOAD_INTERVAL = 15 * 1000;
 const PERCENT_UPLOAD_THRESHOLDS = [0.25, 0.5, 0.75, 0.95];
 const MAX_TIMEUPDATE_DELTA_SECONDS = 30;
+// timeupdate 触发频率有限, 自然播完时常落在 99.x%. 上报时按 5% 一档对齐,
+// 把这种边界差异以及浮点累积误差归一, 同时让记录列表的显示更整齐.
+const PERCENT_BUCKET_STEPS = 20;
+
+function bucketPercent(percent: number) {
+  const clamped = Math.min(Math.max(percent, 0), 1);
+  return Math.round(clamped * PERCENT_BUCKET_STEPS) / PERCENT_BUCKET_STEPS;
+}
 
 interface ActivePlayRecord {
   serverOrigin: string;
@@ -102,7 +110,7 @@ function createQueueItem(
     userId: activeRecord.userId,
     clientRecordId: activeRecord.clientRecordId,
     musicId: activeRecord.musicId,
-    percent: activeRecord.maxPercent,
+    percent: bucketPercent(activeRecord.maxPercent),
     playedAt: Date.now(),
     retryCount: 0,
     nextRetryAt: 0,
