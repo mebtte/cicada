@@ -9,8 +9,8 @@ import {
 import getAssetMaxSize from '@/utils/get_asset_max_size';
 import formatBytes from '@/utils/format_bytes';
 import logger from '@/utils/logger';
-import notice from '@/utils/notice';
 import { t } from '@/i18n';
+import dialog from '@/utils/dialog';
 import searchSingerRequest from '@/server/api/search_singer';
 import { parseMusicFile } from './use_parse_metadata';
 
@@ -91,26 +91,28 @@ async function resolveArtistSingers(artist?: string): Promise<ImportTaskSinger[]
 }
 
 /**
- * Validates a list of File objects against the server-published asset cap,
- * parses ID3 metadata for the accepted ones, and adds them to the import
- * store as `editing` tasks.
+ * Validates music files against the server-published asset cap, parses ID3
+ * metadata for the accepted ones, and adds them to the import store as
+ * `editing` tasks.
  */
 export default function useSelectFiles() {
   return useCallback(async (files: File[]) => {
     if (!files.length) return;
 
     const limit = getAssetMaxSize(AssetType.MUSIC);
-    const oversize = files.filter((f) => f.size > limit);
-    if (oversize.length) {
-      notice.error(
-        t(
-          'asset_oversize_warning',
-          oversize.map((f) => f.name).join(', '),
-          formatBytes(limit),
-        ),
-      );
+    if (limit) {
+      const oversize = files.filter((f) => f.size > limit);
+      if (oversize.length) {
+        dialog.alert({
+          content: t(
+            'asset_oversize_warning',
+            oversize.map((f) => f.name).join(', '),
+            formatBytes(limit),
+          ),
+        });
+      }
     }
-    const accepted = files.filter((f) => f.size <= limit);
+    const accepted = limit ? files.filter((f) => f.size <= limit) : files;
     if (!accepted.length) return;
 
     try {

@@ -43,8 +43,12 @@ func UploadAsset(c *gin.Context) {
 		return
 	}
 
-	maxSize := config.AssetMaxSize[at]
-	if fh.Size > int64(maxSize) {
+	maxSize, ok := config.AssetMaxSize(at)
+	if !ok {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	if fh.Size > maxSize {
 		api.Fail(c, apperr.AssetOversize)
 		return
 	}

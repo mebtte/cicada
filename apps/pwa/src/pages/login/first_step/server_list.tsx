@@ -161,6 +161,8 @@ function ServerList({
                           ...item,
                           version: metadata.version,
                           hostname: metadata.hostname,
+                          musicFileMaxSize: metadata.musicFileMaxSize,
+                          imageFileMaxSize: metadata.imageFileMaxSize,
                         }
                       : item,
                   ),

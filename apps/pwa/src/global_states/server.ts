@@ -47,7 +47,8 @@ function refreshSelectedServerMetadata() {
                   ...s,
                   version: data.version,
                   hostname: data.hostname,
-                  assetMaxSize: data.assetMaxSize,
+                  musicFileMaxSize: data.musicFileMaxSize,
+                  imageFileMaxSize: data.imageFileMaxSize,
                 }
               : s,
           ),

@@ -135,7 +135,10 @@ func TestPartialUploadInitCreatesSession(t *testing.T) {
 func TestPartialUploadInitOversize(t *testing.T) {
 	setupChunkedTest(t)
 
-	maxSize := config.AssetMaxSize[config.AssetTypeMusic]
+	maxSize, ok := config.AssetMaxSize(config.AssetTypeMusic)
+	if !ok {
+		t.Fatalf("expected music max size")
+	}
 	body := initBody(string(config.AssetTypeMusic), maxSize+1,
 		sha256Hex([]byte("placeholder")), 1024, "big.mp3")
 

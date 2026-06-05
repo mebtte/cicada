@@ -46,6 +46,7 @@ import { t } from '@/i18n';
 import autoScrollbar from '@/style/auto_scrollbar';
 import upperCaseFirstLetterStyle from '@/style/upper_case_first_letter';
 import dialog from '@/utils/dialog';
+import getAssetMaxSize from '@/utils/get_asset_max_size';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import formatBytes from '@/utils/format_bytes';
@@ -476,6 +477,17 @@ const isAbortedUploadError = (error: unknown) =>
   'code' in error &&
   (error as { code?: unknown }).code === 'aborted';
 
+const alertIfMusicFileOversize = (file: File) => {
+  const limit = getAssetMaxSize(AssetType.MUSIC);
+  if (!limit || file.size <= limit) {
+    return false;
+  }
+  dialog.alert({
+    content: t('asset_oversize_warning', file.name, formatBytes(limit)),
+  });
+  return true;
+};
+
 function MusicFileUploadProgressView({
   progress,
 }: {
@@ -844,6 +856,10 @@ function EditContent({
     setDialogProgress: (progress: MusicFileUploadProgress | null) => void,
     dialogSignal: AbortSignal,
   ) => {
+    if (alertIfMusicFileOversize(file)) {
+      return false;
+    }
+
     fileUploadAbortRef.current?.abort();
     const controller = new AbortController();
     const abortFromDialog = () => controller.abort();

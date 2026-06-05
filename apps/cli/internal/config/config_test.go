@@ -5,6 +5,108 @@ import (
 	"testing"
 )
 
+func TestConfigSetDefaultsFileMaxSizes(t *testing.T) {
+	Set(Config{Mode: ModeProduction, Data: "/tmp/cicada-test", Port: 8000})
+	t.Cleanup(func() {
+		Set(Config{Mode: ModeProduction, Data: "/tmp/cicada-test", Port: 8000})
+	})
+
+	cfg := Get()
+	if cfg.MusicFileMaxSize != DefaultMusicFileMaxSize {
+		t.Fatalf("music max size = %d, want %d", cfg.MusicFileMaxSize, DefaultMusicFileMaxSize)
+	}
+	if cfg.ImageFileMaxSize != DefaultImageFileMaxSize {
+		t.Fatalf("image max size = %d, want %d", cfg.ImageFileMaxSize, DefaultImageFileMaxSize)
+	}
+}
+
+func TestAssetMaxSizeUsesFileCategory(t *testing.T) {
+	Set(Config{
+		Mode:             ModeProduction,
+		Data:             "/tmp/cicada-test",
+		Port:             8000,
+		MusicFileMaxSize: 300,
+		ImageFileMaxSize: 20,
+	})
+	t.Cleanup(func() {
+		Set(Config{Mode: ModeProduction, Data: "/tmp/cicada-test", Port: 8000})
+	})
+
+	cases := []struct {
+		name string
+		t    AssetType
+		want int64
+	}{
+		{name: "music", t: AssetTypeMusic, want: 300},
+		{name: "user avatar", t: AssetTypeUserAvatar, want: 20},
+		{name: "musicbill cover", t: AssetTypeMusicbillCover, want: 20},
+		{name: "singer photo", t: AssetTypeSingerPhoto, want: 20},
+		{name: "music cover", t: AssetTypeMusicCover, want: 20},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, ok := AssetMaxSize(tc.t)
+			if !ok {
+				t.Fatalf("expected max size for %s", tc.t)
+			}
+			if got != tc.want {
+				t.Fatalf("max size = %d, want %d", got, tc.want)
+			}
+		})
+	}
+
+	if _, ok := AssetMaxSize(AssetType("unknown")); ok {
+		t.Fatalf("expected unknown asset type to be rejected")
+	}
+}
+
+func TestParseFileSize(t *testing.T) {
+	cases := []struct {
+		input string
+		want  int64
+	}{
+		{input: "1", want: 1},
+		{input: "512b", want: 512},
+		{input: "2kb", want: 2 * 1024},
+		{input: "1.5mb", want: 1536 * 1024},
+		{input: "3GB", want: 3 * 1024 * 1024 * 1024},
+		{input: " 5 mb ", want: 5 * 1024 * 1024},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.input, func(t *testing.T) {
+			got, err := ParseFileSize(tc.input)
+			if err != nil {
+				t.Fatalf("parse: %v", err)
+			}
+			if got != tc.want {
+				t.Fatalf("size = %d, want %d", got, tc.want)
+			}
+		})
+	}
+
+	for _, input := range []string{"", "mb", "0", "-1mb", "abc"} {
+		t.Run("invalid "+input, func(t *testing.T) {
+			if _, err := ParseFileSize(input); err == nil {
+				t.Fatalf("expected error")
+			}
+		})
+	}
+}
+
+func TestDefaultFileMaxSizeFromEnv(t *testing.T) {
+	t.Setenv(MusicFileMaxSizeEnvVar, "256mb")
+	t.Setenv(ImageFileMaxSizeEnvVar, "6mb")
+
+	if got := DefaultMusicFileMaxSizeFromEnv(); got != 256*1024*1024 {
+		t.Fatalf("music file max size = %d, want %d", got, 256*1024*1024)
+	}
+	if got := DefaultImageFileMaxSizeFromEnv(); got != 6*1024*1024 {
+		t.Fatalf("image file max size = %d, want %d", got, 6*1024*1024)
+	}
+}
+
 func TestThumbnailCachePath(t *testing.T) {
 	Set(Config{Mode: ModeProduction, Data: "/tmp/cicada-test", Port: 8000})
 	t.Cleanup(func() {
