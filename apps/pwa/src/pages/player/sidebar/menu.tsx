@@ -19,6 +19,7 @@ import { CSS_VAR } from '@/components/theme';
 import capitalize from '@/style/capitalize';
 import { IconExport, IconExternalLink } from '@/components/icon';
 import { useIsOnline } from '@/utils/use_is_online';
+import { isAudioAssetCacheEnabled } from '@/utils/audio_asset_cache';
 import useSidebarNavigate from './use_sidebar_navigate';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
@@ -205,7 +206,7 @@ function Menu() {
         label={t('music_play_record_short')}
         icon={<MdHistory />}
       />
-      {!online ? (
+      {!online && isAudioAssetCacheEnabled() ? (
         <SidebarItem
           active={
             pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.OFFLINE_CACHE}`
