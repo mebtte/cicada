@@ -21,6 +21,7 @@ import dialog from '@/utils/dialog';
 import {
   audioAssetCacheEvents,
   isAudioAssetCached,
+  removeCachedMusic,
 } from '@/utils/audio_asset_cache';
 import {
   getOfflineMusicMap,
@@ -29,6 +30,7 @@ import {
 } from '@/utils/offline_music';
 import { OfflineMusic } from '@/storage';
 import getMusicPlaybackAsset from '@/utils/music_playback_asset';
+import { MusicPlaybackQuality } from '@/constants/setting';
 import { useSetting } from '@/global_states/setting';
 import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
 import MusicBase from '../../components/music_base';
@@ -229,8 +231,16 @@ function OfflineCache() {
       confirmText: t('remove_from_offline_cache'),
       confirmVariant: 'danger',
       onConfirm: async () => {
-        // 只删数据层. 字节交给浏览器自然驱逐, 与系统层"不主动清理缓存"原则一致.
-        await removeOfflineMusic(entry.id);
+        // 用户行级删除: 元数据 + 各音质字节一并清掉. 与系统层"被动不清理"原则不冲突,
+        // 这是用户显式意图.
+        await Promise.all([
+          removeOfflineMusic(entry.id),
+          ...Object.values(MusicPlaybackQuality).map((quality) =>
+            removeCachedMusic(
+              getMusicPlaybackAsset({ asset: entry.asset, quality }),
+            ),
+          ),
+        ]);
       },
     });
   };
