@@ -1,14 +1,14 @@
 import Icon, { IconProps } from '../base';
 
-function IconPlayArrow(props: Omit<IconProps, 'children'>) {
+function PlayArrow(props: Omit<IconProps, 'children'>) {
   return (
     <Icon {...props}>
       <path
-        d="M8.5 5.8 C8.5 5 9.3 4.6 10 5 L18.5 10.7 C19.4 11.3 19.4 12.7 18.5 13.3 L10 19 C9.3 19.4 8.5 19 8.5 18.2 Z"
+        d="M5.5 4.5 C5.5 3.7 6.4 3.3 7.2 3.8 L19.2 11 C20.2 11.6 20.2 12.4 19.2 13 L7.2 20.2 C6.4 20.7 5.5 20.3 5.5 19.5 Z"
         fill="currentColor"
       />
     </Icon>
   );
 }
 
-export default IconPlayArrow;
+export default PlayArrow;

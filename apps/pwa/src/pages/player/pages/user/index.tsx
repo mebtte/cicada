@@ -31,7 +31,7 @@ import { t } from '@/i18n';
 import playerEventemitter, { EventType } from '../../eventemitter';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 import context from '../../context';
-import { IconEdit } from '@/components/icon';
+import { Edit } from '@/components/icon';
 import Input from '@/components/input';
 import Avatar from '@/components/avatar';
 import useNavigate from '@/utils/use_navigate';
@@ -295,7 +295,7 @@ function User() {
               title={t('edit_avatar')}
               aria-label={t('edit_avatar')}
             >
-              <IconEdit size={18} />
+              <Edit size={18} />
             </Button>
             <Button
               className="avatar-action"

@@ -22,7 +22,7 @@ import {
 } from '@/components';
 import Button from '@/components/button';
 import ErrorCard from '@/components/error_card';
-import { IconEdit } from '@/components/icon';
+import { Edit } from '@/components/icon';
 import Input from '@/components/input';
 import Slider from '@/components/slider';
 import Spinner from '@/components/spinner';
@@ -1142,7 +1142,7 @@ function EditContent({
               title={t('edit_cover')}
               aria-label={t('edit_cover')}
             >
-              <IconEdit size={18} />
+              <Edit size={18} />
             </Button>
             <Button
               variant="danger"

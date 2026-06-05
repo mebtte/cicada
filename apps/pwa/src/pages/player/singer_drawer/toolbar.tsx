@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import { MdOutlineEdit, MdPlaylistAdd } from 'react-icons/md';
-import { IconExport } from '@/components/icon';
+import { Export } from '@/components/icon';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
 import { useUser } from '@/global_states/server';
@@ -90,7 +90,7 @@ function Toolbar({
                 : notice.error(t('no_music_singer_warning'))
             }
           >
-            <IconExport size="1em" />
+            <Export size="1em" />
           </Button>
         </Tooltip>
         {showAdminEdit ? (

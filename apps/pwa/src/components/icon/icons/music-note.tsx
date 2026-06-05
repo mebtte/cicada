@@ -1,23 +1,23 @@
 import Icon, { IconProps } from '../base';
 
-function IconMusicNote(props: Omit<IconProps, 'children'>) {
+function MusicNote(props: Omit<IconProps, 'children'>) {
   return (
     <Icon {...props}>
       <ellipse
-        cx="9.5"
-        cy="17.5"
-        rx="3.2"
-        ry="2.5"
-        transform="rotate(-18 9.5 17.5)"
+        cx="9"
+        cy="17"
+        rx="3.8"
+        ry="2.9"
+        transform="rotate(-18 9 17)"
         fill="currentColor"
       />
-      <path d="M12 16.5 L12 6" />
+      <path d="M12 16 L12 5" />
       <path
-        d="M12 6 C14.5 7 17 9 17 11.8 C16 10.3 14 9.8 12 9.8 Z"
+        d="M12 5 C15 5.8 19 8 19 11.5 C17.5 9.7 14.5 9.2 12 9.2 Z"
         fill="currentColor"
       />
     </Icon>
   );
 }
 
-export default IconMusicNote;
+export default MusicNote;

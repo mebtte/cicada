@@ -1,12 +1,12 @@
 import Icon, { IconProps } from '../base';
 
-function IconClose(props: Omit<IconProps, 'children'>) {
+function Close(props: Omit<IconProps, 'children'>) {
   return (
     <Icon {...props}>
-      <path d="M8 8 Q12 11 16 16" />
-      <path d="M16 8 Q12 13 8 16" />
+      <line x1="5" y1="5" x2="19" y2="19" />
+      <line x1="19" y1="5" x2="5" y2="19" />
     </Icon>
   );
 }
 
-export default IconClose;
+export default Close;
