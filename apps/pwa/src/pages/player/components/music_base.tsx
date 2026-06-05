@@ -138,8 +138,10 @@ const Card = styled.div<{ $active: boolean }>`
   }
 
   &:hover {
-    border-color: ${({ $active }) =>
-      $active ? PRIMARY : 'rgb(198 198 198)'};
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0
+      ${({ $active }) =>
+        $active ? PRIMARY_SHADOW : CSSVariable.COLOR_SURFACE_SHADOW};
     filter: brightness(1.02);
   }
 

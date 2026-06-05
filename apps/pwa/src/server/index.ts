@@ -49,6 +49,10 @@ export async function request<Data = void>({
   requestMinimalDuration?: number;
   timeout?: number;
 }) {
+  if (method !== Method.GET && !window.navigator.onLine) {
+    throw new Error(t('network_unavailable_write_disabled'));
+  }
+
   const selectedServer = getSelectedServer(useServer.getState());
   if (!selectedServer) {
     throw new ErrorWithCode(

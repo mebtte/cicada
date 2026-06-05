@@ -171,7 +171,16 @@ export default {
   failed_to_play: 'failed to play',
   auto_play_next_after_seconds: 'auto play next after %s1 seconds',
   can_not_connect_to_server_temporarily:
-    'can not connect to server temporarily',
+    'network unavailable, only cached content is accessible',
+  offline_cache: 'offline cache',
+  offline_cache_empty: 'no offline cache yet',
+  remove_from_offline_cache: 'remove from offline cache',
+  remove_from_offline_cache_question: 'remove "%s1" from offline cache?',
+  network_unavailable_write_disabled: 'currently offline, action unavailable',
+  add_all_to_playlist: 'add all to playlist',
+  offline_cache_help_title: 'about offline cache',
+  offline_cache_help:
+    'Offline cache has two layers:\n\n• Music files: every played song is automatically cached locally; offline playback prefers the local copy and saves network usage.\n• Music data: songs you actively download or fully listen through appear in this list and can be opened offline.\n\nNotes:\n\n• Cache is keyed by playback quality. Switching the quality setting means each song needs to be re-cached at the new quality; bytes for the previous quality remain until the browser evicts them under storage pressure.\n• The size limit is allocated dynamically by the browser based on device storage, not a fixed cap; the browser may evict less-used caches when space is tight.\n• Installing this app to your home screen / desktop greatly improves cache durability.',
   music_type_short: 'type',
   music_type_song: 'song',
   music_type_instrument: 'instrument',

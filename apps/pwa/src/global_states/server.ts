@@ -97,7 +97,17 @@ export async function reloadUser() {
     const user = getSelectedUser(selectedServer);
     if (user) {
       const { default: getProfile } = await import('@/server/api/get_profile');
-      const profile = await getProfile(user.token);
+      let profile;
+      try {
+        profile = await getProfile(user.token);
+      } catch (error) {
+        /**
+         * 离线/网络错误时保留 zustand 中既有用户态, 不清空登录
+         * 401 的清空仍走 request 层处理
+         */
+        logger.error(error, 'reloadUser: failed to fetch profile');
+        return;
+      }
       useServer.setState((server) => ({
         serverList: server.serverList.map((s) =>
           s.origin === selectedServer.origin

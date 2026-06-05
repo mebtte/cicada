@@ -5,6 +5,7 @@ import useTitlebarAreaRect from '@/utils/use_titlebar_area_rect';
 import useWindowWidth from '@/utils/use_window_width';
 import { t } from '@/i18n';
 import { useServerMetadataStatus } from '@/global_states/server';
+import { useIsOnline } from '@/utils/use_is_online';
 
 const NETWORK_STATUS_HEIGHT = 40;
 const NETWORK_STATUS_HORIZONTAL_PADDING = 12;
@@ -89,8 +90,9 @@ function NetworkStatus() {
   const windowWidth = useWindowWidth();
   const { height, left, right } = useTitlebarAreaRect();
   const { error } = useServerMetadataStatus();
+  const online = useIsOnline();
 
-  if (error) {
+  if (error || !online) {
     return (
       <Style
         style={{
