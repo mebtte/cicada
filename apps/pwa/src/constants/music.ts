@@ -22,12 +22,14 @@ export const NAME_MAX_LENGTH = 128;
 
 export const MUSIC_MAX_ALIAS_COUNT = 5;
 export const ALIAS_MAX_LENGTH = 64;
+export const SEARCH_KEYWORDS_MAX_LENGTH = 4000;
 
 export enum AllowUpdateKey {
   COVER = 'cover',
   NAME = 'name',
   LYRIC = 'lyric',
   ALIASES = 'aliases',
+  SEARCH_KEYWORDS = 'searchKeywords',
   ASSET = 'asset',
   SINGER = 'singers',
   FORK_FROM = 'forkFrom',

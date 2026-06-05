@@ -68,6 +68,7 @@ var tables = []string{
 		id TEXT PRIMARY KEY NOT NULL,
 		name TEXT NOT NULL,
 		aliases TEXT NOT NULL DEFAULT '',
+		searchKeywords TEXT NOT NULL DEFAULT '',
 		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL
 	)`,
@@ -87,6 +88,7 @@ var tables = []string{
 		name TEXT NOT NULL,
 		year INTEGER DEFAULT NULL,
 		aliases TEXT NOT NULL DEFAULT '',
+		searchKeywords TEXT NOT NULL DEFAULT '',
 		cover TEXT NOT NULL DEFAULT '',
 		asset TEXT NOT NULL,
 		assetSize INTEGER NOT NULL DEFAULT 0,

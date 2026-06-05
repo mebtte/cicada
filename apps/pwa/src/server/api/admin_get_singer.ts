@@ -5,6 +5,7 @@ interface Response {
   id: string;
   name: string;
   aliases: string[];
+  searchKeywords: string;
   photos: {
     id: string;
     asset: string;
@@ -29,6 +30,7 @@ async function adminGetSinger(id: string): Promise<Response> {
   return {
     ...singer,
     aliases: singer.aliases ?? [],
+    searchKeywords: singer.searchKeywords ?? '',
     photos: (singer.photos ?? []).map((photo) => ({
       ...photo,
       asset: prefixServerOrigin(photo.asset),

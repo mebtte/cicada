@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -212,5 +213,83 @@ func TestUpdateMusicForkFrom(t *testing.T) {
 	}
 	if !seen["source-1"] || !seen["source-2"] || seen["old-source"] {
 		t.Fatalf("unexpected fork-from rows: %+v", forkFroms)
+	}
+}
+
+func TestUpdateMusicSearchKeywords(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", "user-1", now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+
+	call := func(value string) string {
+		t.Helper()
+
+		body, err := json.Marshal(map[string]any{
+			"id":    "music-1",
+			"key":   "searchKeywords",
+			"value": value,
+		})
+		if err != nil {
+			t.Fatalf("marshal body: %v", err)
+		}
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/music", bytes.NewReader(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+		c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+		AdminUpdateMusic(c)
+
+		var resp struct {
+			Code string `json:"code"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		return resp.Code
+	}
+
+	if code := call("  hidden token\nzjl  "); code != "success" {
+		t.Fatalf("expected success, got %s", code)
+	}
+	var stored string
+	if err := store.DB().QueryRow(`SELECT searchKeywords FROM music WHERE id=?`, "music-1").Scan(&stored); err != nil {
+		t.Fatalf("read searchKeywords: %v", err)
+	}
+	if stored != "hidden token\nzjl" {
+		t.Fatalf("unexpected stored searchKeywords: %q", stored)
+	}
+
+	if code := call(strings.Repeat("歌", searchKeywordsMaxLength+1)); code != "wrong_parameter" {
+		t.Fatalf("expected wrong_parameter for overlong searchKeywords, got %s", code)
 	}
 }

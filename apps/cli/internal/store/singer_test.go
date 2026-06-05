@@ -96,3 +96,48 @@ func TestSearchSingersRanksExactAndPrefixMatches(t *testing.T) {
 		}
 	}
 }
+
+func TestSearchSingersMatchesSearchKeywords(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO singer (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
+			('singer-hidden', 'Aurora', '', 'runaway voice token', 'user-1', ?),
+			('singer-other',  'Beta',   '', '', 'user-1', ?)`,
+		now,
+		now,
+	); err != nil {
+		t.Fatalf("insert singers: %v", err)
+	}
+
+	total, singers, err := SearchSingers("runaway voice", 1, 10)
+	if err != nil {
+		t.Fatalf("search singers: %v", err)
+	}
+	if total != 1 || len(singers) != 1 || singers[0].ID != "singer-hidden" {
+		t.Fatalf("expected singer-hidden by search keywords, total=%d singers=%+v", total, singers)
+	}
+}

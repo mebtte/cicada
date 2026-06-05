@@ -14,6 +14,7 @@ type Response = {
     id: string;
     name: string;
     aliases: string[];
+    searchKeywords: string;
     photos: {
       id: string;
       asset: string;
@@ -57,6 +58,7 @@ async function adminGetSingerList({
     ...data,
     singerList: data.singerList.map((singer) => ({
       ...singer,
+      searchKeywords: singer.searchKeywords ?? '',
       photos: singer.photos.map((photo) => ({
         ...photo,
         asset: prefixServerOrigin(photo.asset),

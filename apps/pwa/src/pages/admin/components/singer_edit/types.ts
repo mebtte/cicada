@@ -2,6 +2,7 @@ export interface Singer {
   id: string;
   name: string;
   aliases: string[];
+  searchKeywords: string;
   photos: {
     id: string;
     asset: string;

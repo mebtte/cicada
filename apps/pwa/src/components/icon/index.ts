@@ -11,3 +11,6 @@ export { default as IconEdit }         from './icons/edit';
 export { default as IconExternalLink } from './icons/external-link';
 export { default as IconExport }       from './icons/export';
 export { default as IconCheckCircle }  from './icons/check-circle';
+export { default as IconClose }        from './icons/close';
+export { default as IconPlayArrow }    from './icons/play-arrow';
+export { default as IconMusicNote }    from './icons/music-note';

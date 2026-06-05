@@ -5,11 +5,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
 )
 
 const aliasDivider = "♫"
+const searchKeywordsMaxLength = 4000
 
 func splitAliases(s string) []string {
 	if s == "" {
@@ -20,6 +22,11 @@ func splitAliases(s string) []string {
 
 func joinAliases(aliases []string) string {
 	return strings.Join(aliases, aliasDivider)
+}
+
+func normalizeSearchKeywords(value string) (string, bool) {
+	value = strings.TrimSpace(value)
+	return value, utf8.RuneCountInString(value) <= searchKeywordsMaxLength
 }
 
 func queryInt(c *gin.Context, key string, defaultVal int) int {

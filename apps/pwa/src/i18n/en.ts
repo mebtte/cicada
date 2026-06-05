@@ -117,6 +117,9 @@ export default {
   edit_alias: 'edit alias',
   alias: 'alias',
   aliases: 'aliases',
+  search_keywords: 'search keywords',
+  search_keywords_placeholder:
+    'Pinyin, initials, nicknames, misspellings, translations. Only used for search.',
   view_modify_record: 'view modify record',
   no_musicbill: 'no musicbill',
   no_data: 'no data',

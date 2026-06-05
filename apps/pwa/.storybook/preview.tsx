@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/react';
 import { createGlobalStyle } from 'styled-components';
 import { GlobalStyle } from '../src/global_style';
-import { ThemeProvider } from '../src/components_next/theme';
+import { ThemeProvider } from '../src/components/theme';
 
 const FontStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap');

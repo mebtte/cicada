@@ -27,6 +27,7 @@ type Response = {
     type: MusicType;
     name: string;
     aliases: string[];
+    searchKeywords: string;
     cover: string;
     asset: string;
     assetSize: number;
@@ -83,6 +84,7 @@ async function adminGetMusicList({
     ...data,
     musicList: data.musicList.map((music) => ({
       ...music,
+      searchKeywords: music.searchKeywords ?? '',
       cover: prefixServerOrigin(music.cover),
       asset: prefixServerOrigin(music.asset),
     })),

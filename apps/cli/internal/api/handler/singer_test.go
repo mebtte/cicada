@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -438,10 +439,10 @@ func TestAdminGetSingerList(t *testing.T) {
 		t.Fatalf("insert users: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES
-			('singer-alpha','Alpha',?, 'user-1', ?),
-			('singer-beta','Beta', ?, 'user-2', ?),
-			('singer-gamma','Gamma',?, 'user-1', ?)`,
+		`INSERT INTO singer (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
+			('singer-alpha','Alpha',?, 'alpha hidden token', 'user-1', ?),
+			('singer-beta','Beta', ?, '', 'user-2', ?),
+			('singer-gamma','Gamma',?, '', 'user-1', ?)`,
 		joinAliases([]string{"First Alias", "Shared Key"}), now-300,
 		joinAliases([]string{"Second Alias"}), now-100,
 		joinAliases([]string{"Third Alias"}), now-200,
@@ -477,10 +478,11 @@ func TestAdminGetSingerList(t *testing.T) {
 	}
 
 	type singerItem struct {
-		ID      string   `json:"id"`
-		Name    string   `json:"name"`
-		Aliases []string `json:"aliases"`
-		Photos  []struct {
+		ID             string   `json:"id"`
+		Name           string   `json:"name"`
+		Aliases        []string `json:"aliases"`
+		SearchKeywords string   `json:"searchKeywords"`
+		Photos         []struct {
 			ID          string `json:"id"`
 			Asset       string `json:"asset"`
 			Description string `json:"description"`
@@ -538,6 +540,9 @@ func TestAdminGetSingerList(t *testing.T) {
 		if len(resp.Data.SingerList[0].Aliases) != 1 || resp.Data.SingerList[0].Aliases[0] != "Second Alias" {
 			t.Fatalf("unexpected aliases: %+v", resp.Data.SingerList[0].Aliases)
 		}
+		if resp.Data.SingerList[1].SearchKeywords != "" {
+			t.Fatalf("unexpected search keywords for gamma: %q", resp.Data.SingerList[1].SearchKeywords)
+		}
 		photos := resp.Data.SingerList[0].Photos
 		if len(photos) != 2 {
 			t.Fatalf("expected 2 photos, got %+v", photos)
@@ -579,6 +584,7 @@ func TestAdminGetSingerList(t *testing.T) {
 			{"page=1&pageSize=10&filterKey=name&keyword=Beta", "singer-beta"},
 			{"page=1&pageSize=10&filterKey=alias&keyword=Third", "singer-gamma"},
 			{"page=1&pageSize=10&filterKey=all&keyword=Shared", "singer-alpha"},
+			{"page=1&pageSize=10&filterKey=all&keyword=hidden+token", "singer-alpha"},
 		}
 		for _, tc := range cases {
 			resp := call(tc.query)
@@ -622,8 +628,8 @@ func TestAdminGetSinger(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES
-			('singer-alpha','Alpha',?, 'user-1', ?)`,
+		`INSERT INTO singer (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
+			('singer-alpha','Alpha',?, 'alpha hidden token', 'user-1', ?)`,
 		joinAliases([]string{"First Alias", "Second Alias"}), now-100,
 	); err != nil {
 		t.Fatalf("insert singer: %v", err)
@@ -640,10 +646,11 @@ func TestAdminGetSinger(t *testing.T) {
 	type response struct {
 		Code string `json:"code"`
 		Data struct {
-			ID      string   `json:"id"`
-			Name    string   `json:"name"`
-			Aliases []string `json:"aliases"`
-			Photos  []struct {
+			ID             string   `json:"id"`
+			Name           string   `json:"name"`
+			Aliases        []string `json:"aliases"`
+			SearchKeywords string   `json:"searchKeywords"`
+			Photos         []struct {
 				ID          string `json:"id"`
 				Asset       string `json:"asset"`
 				Description string `json:"description"`
@@ -686,6 +693,9 @@ func TestAdminGetSinger(t *testing.T) {
 		if len(resp.Data.Aliases) != 2 || resp.Data.Aliases[0] != "First Alias" {
 			t.Fatalf("unexpected aliases: %+v", resp.Data.Aliases)
 		}
+		if resp.Data.SearchKeywords != "alpha hidden token" {
+			t.Fatalf("unexpected search keywords: %q", resp.Data.SearchKeywords)
+		}
 		if resp.Data.CreateUser.Username != "creator_one" || resp.Data.CreateUser.Nickname != "Creator One" {
 			t.Fatalf("unexpected create user: %+v", resp.Data.CreateUser)
 		}
@@ -714,4 +724,82 @@ func TestAdminGetSinger(t *testing.T) {
 			t.Fatalf("expected singer_not_existed, got %+v", resp)
 		}
 	})
+}
+
+func TestAdminUpdateSingerSearchKeywords(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO singer (id,name,createUserId,createTimestamp) VALUES (?,?,?,?)`,
+		"singer-1", "Singer", "user-1", now,
+	); err != nil {
+		t.Fatalf("insert singer: %v", err)
+	}
+
+	call := func(value string) string {
+		t.Helper()
+
+		body, err := json.Marshal(map[string]any{
+			"id":    "singer-1",
+			"key":   "searchKeywords",
+			"value": value,
+		})
+		if err != nil {
+			t.Fatalf("marshal body: %v", err)
+		}
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/singer", bytes.NewReader(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+		c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+		AdminUpdateSinger(c)
+
+		var resp struct {
+			Code string `json:"code"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		return resp.Code
+	}
+
+	if code := call("  hidden token\nzjl  "); code != "success" {
+		t.Fatalf("expected success, got %s", code)
+	}
+	var stored string
+	if err := store.DB().QueryRow(`SELECT searchKeywords FROM singer WHERE id=?`, "singer-1").Scan(&stored); err != nil {
+		t.Fatalf("read searchKeywords: %v", err)
+	}
+	if stored != "hidden token\nzjl" {
+		t.Fatalf("unexpected stored searchKeywords: %q", stored)
+	}
+
+	if code := call(strings.Repeat("歌", searchKeywordsMaxLength+1)); code != "wrong_parameter" {
+		t.Fatalf("expected wrong_parameter for overlong searchKeywords, got %s", code)
+	}
 }

@@ -116,6 +116,8 @@ const zhCN: {
   edit_alias: '编辑别名',
   alias: '别名',
   aliases: '别名',
+  search_keywords: '搜索词',
+  search_keywords_placeholder: '拼音、首字母、昵称、错拼、译名等，仅用于搜索',
   view_modify_record: '查看修改记录',
   no_musicbill: '暂无乐单',
   no_data: '暂无数据',

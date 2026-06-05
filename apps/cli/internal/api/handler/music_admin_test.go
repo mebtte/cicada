@@ -51,10 +51,10 @@ func TestAdminGetMusicList(t *testing.T) {
 		t.Fatalf("insert singers: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year) VALUES
-			('music-alpha', ?, 'Alpha Song', ?, 'alpha.jpg', 'alpha.mp3', 9, 'user-1', ?, 2020),
-			('music-beta', ?, 'Beta Tune', ?, '', 'beta.mp3', 3, 'user-2', ?, NULL),
-			('music-gamma', ?, 'Gamma Track', ?, '', 'gamma.mp3', 1, 'user-1', ?, 1999)`,
+		`INSERT INTO music (id,type,name,aliases,searchKeywords,cover,asset,heat,createUserId,createTimestamp,year) VALUES
+			('music-alpha', ?, 'Alpha Song', ?, 'alpha hidden token', 'alpha.jpg', 'alpha.mp3', 9, 'user-1', ?, 2020),
+			('music-beta', ?, 'Beta Tune', ?, '', '', 'beta.mp3', 3, 'user-2', ?, NULL),
+			('music-gamma', ?, 'Gamma Track', ?, '', '', 'gamma.mp3', 1, 'user-1', ?, 1999)`,
 		int(store.MusicTypeSong), joinAliases([]string{"First Alias"}), now-300,
 		int(store.MusicTypeInstrumental), joinAliases([]string{"Second Alias"}), now-100,
 		int(store.MusicTypeSong), joinAliases([]string{"Third Alias"}), now-200,
@@ -72,12 +72,13 @@ func TestAdminGetMusicList(t *testing.T) {
 	}
 
 	type musicItem struct {
-		ID      string   `json:"id"`
-		Name    string   `json:"name"`
-		Aliases []string `json:"aliases"`
-		Cover   string   `json:"cover"`
-		Year    *int64   `json:"year"`
-		Singers []struct {
+		ID             string   `json:"id"`
+		Name           string   `json:"name"`
+		Aliases        []string `json:"aliases"`
+		SearchKeywords string   `json:"searchKeywords"`
+		Cover          string   `json:"cover"`
+		Year           *int64   `json:"year"`
+		Singers        []struct {
 			ID      string   `json:"id"`
 			Name    string   `json:"name"`
 			Aliases []string `json:"aliases"`
@@ -134,6 +135,9 @@ func TestAdminGetMusicList(t *testing.T) {
 		if len(resp.Data.MusicList[0].Aliases) != 1 || resp.Data.MusicList[0].Aliases[0] != "Second Alias" {
 			t.Fatalf("unexpected aliases: %+v", resp.Data.MusicList[0].Aliases)
 		}
+		if resp.Data.MusicList[1].SearchKeywords != "" {
+			t.Fatalf("unexpected search keywords for gamma: %q", resp.Data.MusicList[1].SearchKeywords)
+		}
 		if resp.Data.MusicList[1].Year == nil || *resp.Data.MusicList[1].Year != 1999 {
 			t.Fatalf("unexpected year: %+v", resp.Data.MusicList[1].Year)
 		}
@@ -148,6 +152,7 @@ func TestAdminGetMusicList(t *testing.T) {
 			{"page=1&pageSize=10&filterKey=name&keyword=Beta", "music-beta"},
 			{"page=1&pageSize=10&filterKey=alias&keyword=Third", "music-gamma"},
 			{"page=1&pageSize=10&filterKey=singer&keyword=Voice", "music-alpha"},
+			{"page=1&pageSize=10&filterKey=all&keyword=hidden+token", "music-alpha"},
 			{"page=1&pageSize=10&filterKey=all&keyword=Alpha+Song", "music-alpha"},
 		}
 		for _, tc := range cases {
@@ -206,4 +211,72 @@ func TestAdminGetMusicList(t *testing.T) {
 			t.Fatalf("expected wrong_parameter for sortOrder, got %+v", resp)
 		}
 	})
+}
+
+func TestAdminGetMusicIncludesSearchKeywordsOnlyForAdminDetail(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,searchKeywords,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeSong), "Song", "hidden admin token", "song.mp3", "user-1", now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+
+	call := func(path string, handler func(*gin.Context)) map[string]any {
+		t.Helper()
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodGet, path, nil)
+		c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+		handler(c)
+
+		var resp struct {
+			Code string         `json:"code"`
+			Data map[string]any `json:"data"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		if resp.Code != "success" {
+			t.Fatalf("unexpected code: %s body=%s", resp.Code, w.Body.String())
+		}
+		return resp.Data
+	}
+
+	adminData := call("/api/admin/music?id=music-1", AdminGetMusic)
+	if adminData["searchKeywords"] != "hidden admin token" {
+		t.Fatalf("expected admin detail searchKeywords, got %+v", adminData)
+	}
+
+	playerData := call("/api/music?id=music-1", GetMusic)
+	if _, ok := playerData["searchKeywords"]; ok {
+		t.Fatalf("ordinary music detail leaked searchKeywords: %+v", playerData)
+	}
 }

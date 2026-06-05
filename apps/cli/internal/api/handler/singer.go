@@ -178,11 +178,12 @@ func AdminGetSingerList(c *gin.Context) {
 			photos = []gin.H{}
 		}
 		list[i] = gin.H{
-			"id":         s.ID,
-			"name":       s.Name,
-			"aliases":    splitAliases(s.Aliases),
-			"photos":     photos,
-			"musicCount": musicCounts[s.ID],
+			"id":             s.ID,
+			"name":           s.Name,
+			"aliases":        splitAliases(s.Aliases),
+			"searchKeywords": s.SearchKeywords,
+			"photos":         photos,
+			"musicCount":     musicCounts[s.ID],
 			"createUser": gin.H{
 				"id":       s.CreateUserID,
 				"username": s.CreateUserUsername,
@@ -227,11 +228,12 @@ func AdminGetSinger(c *gin.Context) {
 	musicCount, _ := store.GetMusicCountBySingerID(id)
 
 	api.OK(c, gin.H{
-		"id":         s.ID,
-		"name":       s.Name,
-		"aliases":    splitAliases(s.Aliases),
-		"photos":     photoItems,
-		"musicCount": musicCount,
+		"id":             s.ID,
+		"name":           s.Name,
+		"aliases":        splitAliases(s.Aliases),
+		"searchKeywords": s.SearchKeywords,
+		"photos":         photoItems,
+		"musicCount":     musicCount,
 		"createUser": gin.H{
 			"id":       s.CreateUserID,
 			"username": createUserUsername,
@@ -314,6 +316,19 @@ func AdminUpdateSinger(c *gin.Context) {
 			aliases[i] = s
 		}
 		store.UpdateSinger(body.ID, "aliases", joinAliases(aliases))
+
+	case "searchKeywords":
+		searchKeywords, ok := body.Value.(string)
+		if !ok {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		searchKeywords, ok = normalizeSearchKeywords(searchKeywords)
+		if !ok {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		store.UpdateSinger(body.ID, "searchKeywords", searchKeywords)
 
 	default:
 		api.Fail(c, apperr.WrongParameter)

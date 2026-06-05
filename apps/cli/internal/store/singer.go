@@ -15,6 +15,7 @@ type Singer struct {
 	ID              string
 	Name            string
 	Aliases         string
+	SearchKeywords  string
 	CreateUserID    string
 	CreateTimestamp int64
 }
@@ -23,6 +24,7 @@ type AdminSinger struct {
 	ID                 string
 	Name               string
 	Aliases            string
+	SearchKeywords     string
 	CreateUserID       string
 	CreateUserUsername string
 	CreateUserNickname string
@@ -32,8 +34,8 @@ type AdminSinger struct {
 func GetSingerByID(id string) (*Singer, error) {
 	s := &Singer{}
 	err := DB().QueryRow(
-		`SELECT id,name,aliases,createUserId,createTimestamp FROM singer WHERE id=?`, id,
-	).Scan(&s.ID, &s.Name, &s.Aliases, &s.CreateUserID, &s.CreateTimestamp)
+		`SELECT id,name,aliases,searchKeywords,createUserId,createTimestamp FROM singer WHERE id=?`, id,
+	).Scan(&s.ID, &s.Name, &s.Aliases, &s.SearchKeywords, &s.CreateUserID, &s.CreateTimestamp)
 	return s, err
 }
 
@@ -42,7 +44,7 @@ func GetSingersByIDs(ids []string) ([]Singer, error) {
 		return nil, nil
 	}
 	rows, err := DB().Query(
-		`SELECT id,name,aliases,createUserId,createTimestamp FROM singer WHERE id IN (`+placeholders(len(ids))+`)`,
+		`SELECT id,name,aliases,searchKeywords,createUserId,createTimestamp FROM singer WHERE id IN (`+placeholders(len(ids))+`)`,
 		strs2any(ids)...,
 	)
 	if err != nil {
@@ -52,7 +54,7 @@ func GetSingersByIDs(ids []string) ([]Singer, error) {
 	var out []Singer
 	for rows.Next() {
 		s := Singer{}
-		rows.Scan(&s.ID, &s.Name, &s.Aliases, &s.CreateUserID, &s.CreateTimestamp)
+		rows.Scan(&s.ID, &s.Name, &s.Aliases, &s.SearchKeywords, &s.CreateUserID, &s.CreateTimestamp)
 		out = append(out, s)
 	}
 	return out, nil
@@ -75,24 +77,25 @@ func SearchSingers(keyword string, page, pageSize int) (int, []Singer, error) {
 	prefixPat := prefixLikePattern(keyword)
 	var total int
 	DB().QueryRow(
-		`SELECT COUNT(1) FROM singer WHERE name LIKE ? ESCAPE '\' OR aliases LIKE ? ESCAPE '\'`,
-		pat, pat,
+		`SELECT COUNT(1) FROM singer WHERE name LIKE ? ESCAPE '\' OR aliases LIKE ? ESCAPE '\' OR searchKeywords LIKE ? ESCAPE '\'`,
+		pat, pat, pat,
 	).Scan(&total)
 	rows, err := DB().Query(
-		`SELECT id,name,aliases,createUserId,createTimestamp
+		`SELECT id,name,aliases,searchKeywords,createUserId,createTimestamp
 		FROM singer
-		WHERE name LIKE ? ESCAPE '\' OR aliases LIKE ? ESCAPE '\'
+		WHERE name LIKE ? ESCAPE '\' OR aliases LIKE ? ESCAPE '\' OR searchKeywords LIKE ? ESCAPE '\'
 		ORDER BY
 			CASE
 				WHEN name = ? COLLATE NOCASE THEN 100
 				WHEN name LIKE ? ESCAPE '\' THEN 90
 				WHEN aliases LIKE ? ESCAPE '\' THEN 80
-				ELSE 70
+				WHEN searchKeywords LIKE ? ESCAPE '\' THEN 70
+				ELSE 60
 			END DESC,
 			createTimestamp DESC,
 			id ASC
 		LIMIT ? OFFSET ?`,
-		pat, pat, keyword, prefixPat, pat, pageSize, (page-1)*pageSize,
+		pat, pat, pat, keyword, prefixPat, pat, pat, pageSize, (page-1)*pageSize,
 	)
 	if err != nil {
 		return 0, nil, err
@@ -101,7 +104,7 @@ func SearchSingers(keyword string, page, pageSize int) (int, []Singer, error) {
 	var singers []Singer
 	for rows.Next() {
 		s := Singer{}
-		rows.Scan(&s.ID, &s.Name, &s.Aliases, &s.CreateUserID, &s.CreateTimestamp)
+		rows.Scan(&s.ID, &s.Name, &s.Aliases, &s.SearchKeywords, &s.CreateUserID, &s.CreateTimestamp)
 		singers = append(singers, s)
 	}
 	return total, singers, nil
@@ -156,8 +159,8 @@ func GetAdminSingerList(keyword, filterKey string, page, pageSize int) (int, []A
 			where = " WHERE s.aliases LIKE ?"
 			args = append(args, pattern)
 		default:
-			where = " WHERE s.id LIKE ? OR s.name LIKE ? OR s.aliases LIKE ?"
-			args = append(args, pattern, pattern, pattern)
+			where = " WHERE s.id LIKE ? OR s.name LIKE ? OR s.aliases LIKE ? OR s.searchKeywords LIKE ?"
+			args = append(args, pattern, pattern, pattern, pattern)
 		}
 	}
 
@@ -169,7 +172,7 @@ func GetAdminSingerList(keyword, filterKey string, page, pageSize int) (int, []A
 	listArgs := append([]any{}, args...)
 	listArgs = append(listArgs, pageSize, (page-1)*pageSize)
 	rows, err := DB().Query(
-		`SELECT s.id,s.name,s.aliases,s.createUserId,s.createTimestamp,u.username,u.nickname
+		`SELECT s.id,s.name,s.aliases,s.searchKeywords,s.createUserId,s.createTimestamp,u.username,u.nickname
 		FROM singer s
 		LEFT JOIN user u ON u.id=s.createUserId`+where+`
 		ORDER BY s.createTimestamp DESC, s.id DESC
@@ -190,6 +193,7 @@ func GetAdminSingerList(keyword, filterKey string, page, pageSize int) (int, []A
 			&s.ID,
 			&s.Name,
 			&s.Aliases,
+			&s.SearchKeywords,
 			&s.CreateUserID,
 			&s.CreateTimestamp,
 			&username,

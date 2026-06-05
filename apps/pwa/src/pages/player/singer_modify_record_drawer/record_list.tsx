@@ -16,6 +16,7 @@ const KEY_MAP_LABEL: Record<AllowUpdateKey, string> = {
   [AllowUpdateKey.AVATAR]: t('avatar'),
   [AllowUpdateKey.NAME]: t('name'),
   [AllowUpdateKey.ALIASES]: t('aliases'),
+  [AllowUpdateKey.SEARCH_KEYWORDS]: t('search_keywords'),
 };
 const Root = styled.div`
   flex: 1;
