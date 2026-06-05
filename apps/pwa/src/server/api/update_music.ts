@@ -6,6 +6,7 @@ type KeyMapValue = {
   [AllowUpdateKey.NAME]: string;
   [AllowUpdateKey.LYRIC]: string[];
   [AllowUpdateKey.ALIASES]: string[];
+  [AllowUpdateKey.SEARCH_KEYWORDS]: string;
   [AllowUpdateKey.ASSET]: string;
   [AllowUpdateKey.SINGER]: string[];
   [AllowUpdateKey.FORK_FROM]: string[];

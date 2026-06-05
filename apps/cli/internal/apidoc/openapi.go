@@ -431,6 +431,21 @@ func operations() []operation {
 			ErrorCodes:     []string{"wrong_parameter", "music_not_existed", "not_authorized"},
 		},
 		{
+			Method:      "GET",
+			Path:        "/api/admin/music",
+			Summary:     "Admin get music details",
+			Description: "Return music details for the admin editor, including hidden search keywords.",
+			Tags:        []string{"Admin"},
+			Auth:        true,
+			Admin:       true,
+			Parameters: []map[string]any{
+				queryParam("id", "Music ID.", true, strSchema("", "music-1")),
+			},
+			SuccessSchema:  adminMusicDetailSchema(),
+			SuccessExample: adminMusicDetailExample(),
+			ErrorCodes:     []string{"wrong_parameter", "music_not_existed", "not_authorized", "not_authorized_for_admin"},
+		},
+		{
 			Method:      "POST",
 			Path:        "/api/admin/music",
 			Summary:     "Admin create music",
@@ -452,7 +467,7 @@ func operations() []operation {
 			Method:      "PUT",
 			Path:        "/api/admin/music",
 			Summary:     "Admin update music",
-			Description: "Update music name, aliases, lyrics, cover, file, singers, type, year, or fork source using the key/value pattern.",
+			Description: "Update music name, aliases, hidden search keywords, lyrics, cover, file, singers, type, year, or fork source using the key/value pattern.",
 			Tags:        []string{"Admin"},
 			Auth:        true,
 			Admin:       true,
@@ -972,7 +987,7 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/admin/singer",
 			Summary:     "Admin get singer",
-			Description: "Return singer metadata and ordered photo list for admin editing.",
+			Description: "Return singer metadata, hidden search keywords, and ordered photo list for admin editing.",
 			Tags:        []string{"Admin"},
 			Auth:        true,
 			Admin:       true,
@@ -1005,7 +1020,7 @@ func operations() []operation {
 			Method:      "PUT",
 			Path:        "/api/admin/singer",
 			Summary:     "Admin update singer",
-			Description: "Update singer name or aliases using the key/value pattern. To change the avatar, manage photos via the `/api/admin/singer/photo` endpoints.",
+			Description: "Update singer name, aliases, or hidden search keywords using the key/value pattern. To change the avatar, manage photos via the `/api/admin/singer/photo` endpoints.",
 			Tags:        []string{"Admin"},
 			Auth:        true,
 			Admin:       true,
@@ -1744,6 +1759,22 @@ func musicDetailExample() map[string]any {
 	}
 }
 
+func adminMusicDetailSchema() map[string]any {
+	schema := musicDetailSchema()
+	props := schema["properties"].(map[string]any)
+	props["searchKeywords"] = strSchema("Hidden admin-maintained search keywords.", "jay chou\nzjl")
+	if required, ok := schema["required"].([]any); ok {
+		schema["required"] = append(required, "searchKeywords")
+	}
+	return schema
+}
+
+func adminMusicDetailExample() map[string]any {
+	example := musicDetailExample()
+	example["searchKeywords"] = "jay chou\nzjl"
+	return example
+}
+
 func createMusicRequestSchema() map[string]any {
 	return objSchema(
 		[]string{"name", "singerIds", "asset"},
@@ -1774,7 +1805,7 @@ func updateMusicRequestSchema() map[string]any {
 		[]string{"id", "key"},
 		map[string]any{
 			"id":    strSchema("Music ID.", "music-1"),
-			"key":   strEnumSchema([]string{"name", "aliases", "lyric", "cover", "asset", "singers", "type", "year", "forkFrom"}, "aliases"),
+			"key":   strEnumSchema([]string{"name", "aliases", "searchKeywords", "lyric", "cover", "asset", "singers", "type", "year", "forkFrom"}, "aliases"),
 			"value": flexibleValueSchema(),
 		},
 	)
@@ -1905,11 +1936,12 @@ func singerDetailExample() map[string]any {
 
 func adminSingerDetailSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "aliases", "photos", "musicCount", "createTimestamp", "createUser"},
+		[]string{"id", "name", "aliases", "searchKeywords", "photos", "musicCount", "createTimestamp", "createUser"},
 		map[string]any{
 			"id":              strSchema("Singer ID.", "singer-1"),
 			"name":            strSchema("Singer name.", "Aurora"),
 			"aliases":         arraySchema(strSchema("", "AUR")),
+			"searchKeywords":  strSchema("Hidden admin-maintained search keywords.", "aurora aksnes\nrunaway voice"),
 			"photos":          arraySchema(singerPhotoSchema()),
 			"musicCount":      intSchema("Number of music entries linked to this singer.", 3),
 			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
@@ -1924,9 +1956,10 @@ func adminSingerDetailSchema() map[string]any {
 
 func adminSingerDetailExample() map[string]any {
 	return map[string]any{
-		"id":      "singer-1",
-		"name":    "Aurora",
-		"aliases": []string{"AUR"},
+		"id":             "singer-1",
+		"name":           "Aurora",
+		"aliases":        []string{"AUR"},
+		"searchKeywords": "aurora aksnes\nrunaway voice",
 		"photos": []any{
 			map[string]any{"id": "photo-1", "asset": "/asset/singer_photo/photo.jpg", "description": "Live in Tokyo, 2024"},
 		},
@@ -1941,7 +1974,7 @@ func updateSingerRequestSchema() map[string]any {
 		[]string{"id", "key"},
 		map[string]any{
 			"id":    strSchema("Singer ID.", "singer-1"),
-			"key":   strEnumSchema([]string{"name", "aliases"}, "name"),
+			"key":   strEnumSchema([]string{"name", "aliases", "searchKeywords"}, "name"),
 			"value": flexibleValueSchema(),
 		},
 	)

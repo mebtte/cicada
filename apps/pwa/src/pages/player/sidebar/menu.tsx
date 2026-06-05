@@ -4,6 +4,7 @@ import {
   MdOutlineSettings,
   MdHistory,
   MdAdminPanelSettings,
+  MdDownloadForOffline,
 } from 'react-icons/md';
 import { useLocation } from 'react-router-dom';
 import { ReactNode, useContext } from 'react';
@@ -16,7 +17,9 @@ import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
 import capitalize from '@/style/capitalize';
-import { IconExport, IconExternalLink } from '@/components/icon';
+import { Export, ExternalLink } from '@/components/icon';
+import { useIsOnline } from '@/utils/use_is_online';
+import { isAudioAssetCacheEnabled } from '@/utils/audio_asset_cache';
 import useSidebarNavigate from './use_sidebar_navigate';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
@@ -177,6 +180,7 @@ function Menu() {
   const { pathname } = useLocation();
   const navigate = useSidebarNavigate();
   const user = useUser()!;
+  const online = useIsOnline();
 
   const { exportingMusicList } = useContext(context);
   return (
@@ -202,6 +206,18 @@ function Menu() {
         label={t('music_play_record_short')}
         icon={<MdHistory />}
       />
+      {!online && isAudioAssetCacheEnabled() ? (
+        <SidebarItem
+          active={
+            pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.OFFLINE_CACHE}`
+          }
+          onClick={() =>
+            navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.OFFLINE_CACHE}`)
+          }
+          label={t('offline_cache')}
+          icon={<MdDownloadForOffline />}
+        />
+      ) : null}
       <SidebarItem
         active={pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.SETTING}`}
         onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.SETTING}`)}
@@ -217,7 +233,7 @@ function Menu() {
             navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPORTING_MUSIC}`)
           }
           label={t('export_music')}
-          icon={<IconExport />}
+          icon={<Export />}
           suffix={<ExportTag />}
         />
       ) : null}
@@ -229,7 +245,7 @@ function Menu() {
           }
           label={t('admin_panel')}
           icon={<MdAdminPanelSettings />}
-          suffix={<IconExternalLink aria-hidden="true" />}
+          suffix={<ExternalLink aria-hidden="true" />}
         />
       ) : null}
     </Style>

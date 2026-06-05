@@ -76,6 +76,7 @@ const toEditableSinger = (
   id: singer.id,
   name: singer.name,
   aliases: singer.aliases,
+  searchKeywords: singer.searchKeywords,
   photos: singer.photos,
   musicCount: singer.musicCount,
   createUser: {

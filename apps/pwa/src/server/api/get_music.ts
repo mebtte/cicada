@@ -1,5 +1,6 @@
 import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
+import { upsertOfflineMusicMetadata } from '@/utils/offline_music';
 import { request } from '..';
 
 interface SingerPhoto {
@@ -74,10 +75,25 @@ async function getMusic({
     withToken: true,
     requestMinimalDuration,
   });
+  const prefixedCover = prefixServerOrigin(music.cover);
+  const prefixedAsset = prefixServerOrigin(music.asset);
+  upsertOfflineMusicMetadata({
+    id: music.id,
+    asset: prefixedAsset,
+    type: music.type,
+    name: music.name,
+    aliases: music.aliases,
+    cover: prefixedCover,
+    singers: music.singers.map((s) => ({
+      id: s.id,
+      name: s.name,
+      aliases: s.aliases,
+    })),
+  });
   return {
     ...music,
-    cover: prefixServerOrigin(music.cover),
-    asset: prefixServerOrigin(music.asset),
+    cover: prefixedCover,
+    asset: prefixedAsset,
     singers: music.singers.map((s) => {
       const photos = normalizePhotos(s.photos);
       return {

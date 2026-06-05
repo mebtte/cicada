@@ -115,6 +115,26 @@ func GetMusic(c *gin.Context) {
 		return
 	}
 
+	api.OK(c, musicDetailResponse(m, false))
+}
+
+func AdminGetMusic(c *gin.Context) {
+	id := c.Query("id")
+	if id == "" {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	m, err := store.GetMusicByID(id)
+	if err != nil {
+		api.Fail(c, apperr.MusicNotExisted)
+		return
+	}
+
+	api.OK(c, musicDetailResponse(m, true))
+}
+
+func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
+	id := m.ID
 	forks, _ := store.GetMusicForks(id)
 	forkFroms, _ := store.GetMusicForkFroms(id)
 
@@ -173,7 +193,7 @@ func GetMusic(c *gin.Context) {
 		}
 	}
 
-	api.OK(c, gin.H{
+	resp := gin.H{
 		"id":                         m.ID,
 		"type":                       m.Type,
 		"name":                       m.Name,
@@ -192,7 +212,11 @@ func GetMusic(c *gin.Context) {
 		"forkFromList":               forkFromList,
 		"musicbillCount":             musicbillCount,
 		"relatedPublicMusicbillList": relatedPublicMusicbillItems(id),
-	})
+	}
+	if includeSearchKeywords {
+		resp["searchKeywords"] = m.SearchKeywords
+	}
+	return resp
 }
 
 // ── Create music ──────────────────────────────────────────────────────────────
@@ -311,6 +335,19 @@ func AdminUpdateMusic(c *gin.Context) {
 			aliases[i] = s
 		}
 		store.UpdateMusic(body.ID, "aliases", joinAliases(aliases))
+
+	case "searchKeywords":
+		searchKeywords, ok := body.Value.(string)
+		if !ok {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		searchKeywords, ok = normalizeSearchKeywords(searchKeywords)
+		if !ok {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		store.UpdateMusic(body.ID, "searchKeywords", searchKeywords)
 
 	case "lyric":
 		if m.Type == store.MusicTypeInstrumental {
@@ -814,6 +851,7 @@ func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
 			"type":            m.Type,
 			"name":            m.Name,
 			"aliases":         splitAliases(m.Aliases),
+			"searchKeywords":  m.SearchKeywords,
 			"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
 			"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
 			"assetSize":       m.AssetSize,

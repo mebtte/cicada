@@ -4,6 +4,7 @@ import { request, Method } from '..';
 type KeyMapData = {
   [AllowUpdateKey.NAME]: string;
   [AllowUpdateKey.ALIASES]: string[];
+  [AllowUpdateKey.SEARCH_KEYWORDS]: string;
   [AllowUpdateKey.AVATAR]: string;
 };
 

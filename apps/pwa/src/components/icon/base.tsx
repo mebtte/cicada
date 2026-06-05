@@ -14,7 +14,7 @@ export interface IconProps extends SVGProps<SVGSVGElement> {
 function Icon({
   size = 24,
   color = 'currentColor',
-  strokeWidth = 2,
+  strokeWidth = 2.2,
   style,
   children,
   ...rest

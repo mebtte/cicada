@@ -4,11 +4,13 @@ export const NAME_MAX_LENGTH = 64;
 
 export const SINGER_ALIAS_MAX_COUNT = 5;
 export const ALIAS_MAX_LENGTH = 64;
+export const SEARCH_KEYWORDS_MAX_LENGTH = 4000;
 
 export enum AllowUpdateKey {
   AVATAR = 'avatar',
   NAME = 'name',
   ALIASES = 'aliases',
+  SEARCH_KEYWORDS = 'searchKeywords',
 }
 
 /**

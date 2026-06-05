@@ -57,6 +57,7 @@ import {
   ALIAS_MAX_LENGTH,
   AllowUpdateKey,
   NAME_MAX_LENGTH,
+  SEARCH_KEYWORDS_MAX_LENGTH,
   SINGER_ALIAS_MAX_COUNT,
 } from '@/constants/singer';
 import type { Singer } from './types';
@@ -270,6 +271,28 @@ const PhotoDescriptionTextarea = styled(Textarea)`
   }
 `;
 
+const SearchKeywordsTextarea = styled(Textarea)`
+  min-width: 0;
+  height: 96px;
+  max-height: 160px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 13px;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
+  font-family: ${FONT};
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.4;
+  overflow-y: auto;
+  transition:
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+
+  &:focus {
+    border-color: ${CSSVariable.COLOR_PRIMARY};
+    box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
+  }
+`;
+
 const PhotoDeleteButton = styled(Button)`
   position: absolute;
   top: -8px;
@@ -352,6 +375,8 @@ const SaveButton = styled(Button)`
 `;
 
 const normalizeName = (name: string) => name.replace(/\s+/g, ' ').trim();
+
+const normalizeSearchKeywords = (value: string) => value.trim();
 
 const normalizeAliases = (aliases: string[]) =>
   aliases.map(normalizeName).filter((alias) => alias.length > 0);
@@ -456,6 +481,7 @@ function SingerEditContent({
 }) {
   const [name, setName] = useState(singer.name);
   const [aliases, setAliases] = useState<string[]>(() => singer.aliases);
+  const [searchKeywords, setSearchKeywords] = useState(singer.searchKeywords);
   const [photos, setPhotos] = useState(() => singer.photos);
   const [saving, setSaving] = useState(false);
   const [photoSaving, setPhotoSaving] = useState(false);
@@ -474,6 +500,7 @@ function SingerEditContent({
   useEffect(() => {
     setName(singer.name);
     setAliases(singer.aliases);
+    setSearchKeywords(singer.searchKeywords);
     setPhotos(singer.photos);
   }, [singer]);
 
@@ -489,6 +516,10 @@ function SingerEditContent({
   const avatar = photos[0]?.asset;
 
   const normalizedAliases = useMemo(() => normalizeAliases(aliases), [aliases]);
+  const normalizedSearchKeywords = useMemo(
+    () => normalizeSearchKeywords(searchKeywords),
+    [searchKeywords],
+  );
   const originalPhotoIds = useMemo(
     () => singer.photos.map((photo) => photo.id),
     [singer.photos],
@@ -510,11 +541,16 @@ function SingerEditContent({
   const changed =
     normalizeName(name) !== singer.name ||
     !stringArrayEqual(normalizedAliases, singer.aliases) ||
+    normalizedSearchKeywords !== singer.searchKeywords ||
     photoDescriptionChanges.length > 0 ||
     !stringArrayEqual(photoIds, originalPhotoIds);
 
   const onNameChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setName(event.target.value);
+
+  const onSearchKeywordsChange: ChangeEventHandler<HTMLTextAreaElement> = (
+    event,
+  ) => setSearchKeywords(event.target.value);
 
   const onAliasChange = (index: number, value: string) =>
     setAliases((list) =>
@@ -631,6 +667,14 @@ function SingerEditContent({
           id: singer.id,
           key: AllowUpdateKey.ALIASES,
           value: normalizedAliases,
+        });
+      }
+
+      if (normalizedSearchKeywords !== singer.searchKeywords) {
+        await updateSinger({
+          id: singer.id,
+          key: AllowUpdateKey.SEARCH_KEYWORDS,
+          value: normalizedSearchKeywords,
         });
       }
 
@@ -788,6 +832,17 @@ function SingerEditContent({
               </Button>
             ) : null}
           </FieldGroup>
+        </Group>
+
+        <Group>
+          <GroupTitle>{t('search_keywords')}</GroupTitle>
+          <SearchKeywordsTextarea
+            value={searchKeywords}
+            onChange={onSearchKeywordsChange}
+            maxLength={SEARCH_KEYWORDS_MAX_LENGTH}
+            disabled={saving}
+            placeholder={t('search_keywords_placeholder')}
+          />
         </Group>
       </Body>
 

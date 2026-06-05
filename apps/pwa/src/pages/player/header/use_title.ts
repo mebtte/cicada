@@ -279,6 +279,10 @@ export default () => {
       title = getStaticHeaderTitle('export_music');
       break;
     }
+    case ROOT_PATH.PLAYER + PLAYER_PATH.OFFLINE_CACHE: {
+      title = getStaticHeaderTitle('offline_cache');
+      break;
+    }
     default: {
       title = getStaticHeaderTitle('cicada');
     }

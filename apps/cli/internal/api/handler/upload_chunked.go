@@ -59,7 +59,7 @@ func InitPartialUpload(c *gin.Context) {
 	}
 
 	at := config.AssetType(body.AssetType)
-	maxSize, ok := config.AssetMaxSize[at]
+	maxSize, ok := config.AssetMaxSize(at)
 	if !ok {
 		api.Fail(c, apperr.WrongParameter)
 		return

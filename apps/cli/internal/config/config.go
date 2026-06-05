@@ -43,23 +43,24 @@ var AssetAcceptMIME = map[AssetType][]string{
 	AssetTypeMusic:          {"audio/mpeg", "audio/flac", "audio/x-flac", "audio/m4a", "audio/x-m4a", "audio/mp4", "video/mp4"},
 }
 
-var AssetMaxSize = map[AssetType]int64{
-	AssetTypeSingerPhoto:    2 * 1024 * 1024,
-	AssetTypeMusicbillCover: 2 * 1024 * 1024,
-	AssetTypeMusicCover:     2 * 1024 * 1024,
-	AssetTypeUserAvatar:     2 * 1024 * 1024,
-	AssetTypeMusic:          200 * 1024 * 1024,
-}
+const (
+	DefaultMusicFileMaxSize int64 = 200 * 1024 * 1024
+	DefaultImageFileMaxSize int64 = 5 * 1024 * 1024
+)
 
 type Config struct {
-	Mode Mode
-	Data string
-	Port int
+	Mode             Mode
+	Data             string
+	Port             int
+	MusicFileMaxSize int64
+	ImageFileMaxSize int64
 }
 
 const (
-	DataEnvVar = "CICADA_DATA"
-	PortEnvVar = "CICADA_PORT"
+	DataEnvVar             = "CICADA_DATA"
+	PortEnvVar             = "CICADA_PORT"
+	MusicFileMaxSizeEnvVar = "CICADA_MUSIC_FILE_MAX_SIZE"
+	ImageFileMaxSizeEnvVar = "CICADA_IMAGE_FILE_MAX_SIZE"
 
 	DefaultPortValue = 8000
 )
@@ -84,12 +85,31 @@ func DefaultPort() int {
 	return DefaultPortValue
 }
 
+func DefaultMusicFileMaxSizeFromEnv() int64 {
+	return defaultFileMaxSize(MusicFileMaxSizeEnvVar, DefaultMusicFileMaxSize)
+}
+
+func DefaultImageFileMaxSizeFromEnv() int64 {
+	return defaultFileMaxSize(ImageFileMaxSizeEnvVar, DefaultImageFileMaxSize)
+}
+
+func defaultFileMaxSize(envVar string, fallback int64) int64 {
+	if v := os.Getenv(envVar); v != "" {
+		if n, err := ParseFileSize(v); err == nil {
+			return n
+		}
+	}
+	return fallback
+}
+
 var (
 	mu  sync.RWMutex
 	cfg = Config{
-		Mode: DefaultMode(),
-		Data: DefaultDataPath(),
-		Port: DefaultPortValue,
+		Mode:             DefaultMode(),
+		Data:             DefaultDataPath(),
+		Port:             DefaultPortValue,
+		MusicFileMaxSize: DefaultMusicFileMaxSizeFromEnv(),
+		ImageFileMaxSize: DefaultImageFileMaxSizeFromEnv(),
 	}
 )
 
@@ -102,7 +122,81 @@ func Get() Config {
 func Set(c Config) {
 	mu.Lock()
 	defer mu.Unlock()
-	cfg = c
+	cfg = normalizeConfig(c)
+}
+
+func normalizeConfig(c Config) Config {
+	if c.MusicFileMaxSize <= 0 {
+		c.MusicFileMaxSize = DefaultMusicFileMaxSize
+	}
+	if c.ImageFileMaxSize <= 0 {
+		c.ImageFileMaxSize = DefaultImageFileMaxSize
+	}
+	return c
+}
+
+func AssetMaxSize(t AssetType) (int64, bool) {
+	switch t {
+	case AssetTypeMusic:
+		return Get().MusicFileMaxSize, true
+	case AssetTypeUserAvatar, AssetTypeMusicbillCover, AssetTypeSingerPhoto, AssetTypeMusicCover:
+		return Get().ImageFileMaxSize, true
+	default:
+		return 0, false
+	}
+}
+
+func ParseFileSize(v string) (int64, error) {
+	s := strings.TrimSpace(strings.ToLower(v))
+	if s == "" {
+		return 0, fmt.Errorf("empty file size")
+	}
+
+	multiplier := int64(1)
+	for _, unit := range []struct {
+		suffix     string
+		multiplier int64
+	}{
+		{"bytes", 1},
+		{"byte", 1},
+		{"gib", 1024 * 1024 * 1024},
+		{"gb", 1024 * 1024 * 1024},
+		{"g", 1024 * 1024 * 1024},
+		{"mib", 1024 * 1024},
+		{"mb", 1024 * 1024},
+		{"m", 1024 * 1024},
+		{"kib", 1024},
+		{"kb", 1024},
+		{"k", 1024},
+		{"b", 1},
+	} {
+		if strings.HasSuffix(s, unit.suffix) {
+			multiplier = unit.multiplier
+			s = strings.TrimSpace(strings.TrimSuffix(s, unit.suffix))
+			break
+		}
+	}
+	if s == "" {
+		return 0, fmt.Errorf("missing numeric file size")
+	}
+
+	n, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid file size %q", v)
+	}
+	if n <= 0 {
+		return 0, fmt.Errorf("file size must be greater than 0")
+	}
+
+	size := n * float64(multiplier)
+	maxInt64 := int64(^uint64(0) >> 1)
+	if size > float64(maxInt64) {
+		return 0, fmt.Errorf("file size is too large")
+	}
+	if size < 1 {
+		return 0, fmt.Errorf("file size must be at least 1 byte")
+	}
+	return int64(size), nil
 }
 
 func DataVersionPath() string   { return filepath.Join(Get().Data, "v") }
@@ -172,9 +266,9 @@ func AssetPath(t AssetType, filename string) (dir, path string) {
 	return
 }
 
-func PartialUploadDir() string    { return filepath.Join(Get().Data, "partial_uploads") }
-func UpgradeLockPath() string     { return filepath.Join(Get().Data, "upgrade.lock") }
-func UpgradeJournalPath() string  { return filepath.Join(Get().Data, "upgrade.journal") }
+func PartialUploadDir() string   { return filepath.Join(Get().Data, "partial_uploads") }
+func UpgradeLockPath() string    { return filepath.Join(Get().Data, "upgrade.lock") }
+func UpgradeJournalPath() string { return filepath.Join(Get().Data, "upgrade.journal") }
 
 // AssetPublicURL returns the public HTTP path for a stored asset filename.
 func AssetPublicURL(filename string, t AssetType) string {

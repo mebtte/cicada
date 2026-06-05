@@ -22,7 +22,7 @@ import {
 } from '@/components';
 import Button from '@/components/button';
 import ErrorCard from '@/components/error_card';
-import { IconEdit } from '@/components/icon';
+import { Edit } from '@/components/icon';
 import Input from '@/components/input';
 import Slider from '@/components/slider';
 import Spinner from '@/components/spinner';
@@ -35,6 +35,7 @@ import {
   MUSIC_MAX_LRYIC_AMOUNT,
   MusicType,
   NAME_MAX_LENGTH,
+  SEARCH_KEYWORDS_MAX_LENGTH as MUSIC_SEARCH_KEYWORDS_MAX_LENGTH,
   SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
   YEAR_MAX,
   YEAR_MIN,
@@ -46,6 +47,7 @@ import { t } from '@/i18n';
 import autoScrollbar from '@/style/auto_scrollbar';
 import upperCaseFirstLetterStyle from '@/style/upper_case_first_letter';
 import dialog from '@/utils/dialog';
+import getAssetMaxSize from '@/utils/get_asset_max_size';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import formatBytes from '@/utils/format_bytes';
@@ -57,7 +59,7 @@ import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 import deleteMusic from '@/server/api/delete_music';
 import getLyricList from '@/server/api/get_lyric_list';
-import getMusicRequest from '@/server/api/get_music';
+import adminGetMusic from '@/server/api/admin_get_music';
 import searchMusicRequest from '@/server/api/search_music';
 import searchSingerRequest from '@/server/api/search_singer';
 import updateMusic from '@/server/api/update_music';
@@ -101,6 +103,7 @@ interface Music {
   assetBitRate: number;
   type: MusicType;
   aliases: string[];
+  searchKeywords: string;
   singers: Singer[];
   heat: number;
   lyrics: Lyric[];
@@ -144,6 +147,8 @@ const formatMusicToOption = (
 });
 
 const normalizeText = (value: string) => value.replace(/\s+/g, ' ').trim();
+
+const normalizeSearchKeywords = (value: string) => value.trim();
 
 const normalizeAliases = (aliases: string[]) =>
   aliases.map(normalizeText).filter((alias) => alias.length > 0);
@@ -351,6 +356,28 @@ const LyricTextarea = styled(Textarea)`
   }
 `;
 
+const SearchKeywordsTextarea = styled(Textarea)`
+  min-width: 0;
+  height: 96px;
+  max-height: 160px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 13px;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
+  font-family: ${FONT};
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.4;
+  overflow-y: auto;
+  transition:
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+
+  &:focus {
+    border-color: ${CSSVariable.COLOR_PRIMARY};
+    box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
+  }
+`;
+
 const LyricDeleteButton = styled(Button)`
   position: absolute;
   top: -16px;
@@ -476,6 +503,17 @@ const isAbortedUploadError = (error: unknown) =>
   'code' in error &&
   (error as { code?: unknown }).code === 'aborted';
 
+const alertIfMusicFileOversize = (file: File) => {
+  const limit = getAssetMaxSize(AssetType.MUSIC);
+  if (!limit || file.size <= limit) {
+    return false;
+  }
+  dialog.alert({
+    content: t('asset_oversize_warning', file.name, formatBytes(limit)),
+  });
+  return true;
+};
+
 function MusicFileUploadProgressView({
   progress,
 }: {
@@ -595,6 +633,7 @@ function EditContent({
 }) {
   const [name, setName] = useState(music.name);
   const [aliases, setAliases] = useState<string[]>(() => music.aliases);
+  const [searchKeywords, setSearchKeywords] = useState(music.searchKeywords);
   const [lyrics, setLyrics] = useState<string[]>(() =>
     music.lyrics.map((lyric) => lyric.lrc),
   );
@@ -619,6 +658,7 @@ function EditContent({
   useEffect(() => {
     setName(music.name);
     setAliases(music.aliases);
+    setSearchKeywords(music.searchKeywords);
     setLyrics(music.lyrics.map((lyric) => lyric.lrc));
     setSingers(music.singers.map(formatSingerToOption));
     setForkFromList(music.forkFromList.map(formatMusicToOption));
@@ -663,6 +703,10 @@ function EditContent({
   );
 
   const normalizedAliases = useMemo(() => normalizeAliases(aliases), [aliases]);
+  const normalizedSearchKeywords = useMemo(
+    () => normalizeSearchKeywords(searchKeywords),
+    [searchKeywords],
+  );
   const normalizedLyrics = useMemo(() => normalizeLyrics(lyrics), [lyrics]);
   const singerIds = useMemo(
     () => singers.map((option) => option.value.id),
@@ -691,6 +735,7 @@ function EditContent({
   const changed =
     normalizeText(name) !== music.name ||
     !stringArrayEqual(normalizedAliases, music.aliases) ||
+    normalizedSearchKeywords !== music.searchKeywords ||
     (music.type === MusicType.SONG &&
       !stringArrayEqual(normalizedLyrics, originalLyrics)) ||
     !stringArrayEqual(sortedIds(singerIds), sortedIds(originalSingerIds)) ||
@@ -702,6 +747,10 @@ function EditContent({
 
   const onYearChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setYear(event.target.value);
+
+  const onSearchKeywordsChange: ChangeEventHandler<HTMLTextAreaElement> = (
+    event,
+  ) => setSearchKeywords(event.target.value);
 
   const onAliasChange = (index: number, value: string) =>
     setAliases((list) =>
@@ -844,6 +893,10 @@ function EditContent({
     setDialogProgress: (progress: MusicFileUploadProgress | null) => void,
     dialogSignal: AbortSignal,
   ) => {
+    if (alertIfMusicFileOversize(file)) {
+      return false;
+    }
+
     fileUploadAbortRef.current?.abort();
     const controller = new AbortController();
     const abortFromDialog = () => controller.abort();
@@ -993,6 +1046,14 @@ function EditContent({
         });
       }
 
+      if (normalizedSearchKeywords !== music.searchKeywords) {
+        await updateMusic({
+          id: music.id,
+          key: AllowUpdateKey.SEARCH_KEYWORDS,
+          value: normalizedSearchKeywords,
+        });
+      }
+
       if (
         music.type === MusicType.SONG &&
         !stringArrayEqual(normalizedLyrics, originalLyrics)
@@ -1081,7 +1142,7 @@ function EditContent({
               title={t('edit_cover')}
               aria-label={t('edit_cover')}
             >
-              <IconEdit size={18} />
+              <Edit size={18} />
             </Button>
             <Button
               variant="danger"
@@ -1144,6 +1205,17 @@ function EditContent({
               </Button>
             ) : null}
           </FieldGroup>
+        </Group>
+
+        <Group>
+          <GroupTitle>{t('search_keywords')}</GroupTitle>
+          <SearchKeywordsTextarea
+            value={searchKeywords}
+            onChange={onSearchKeywordsChange}
+            maxLength={MUSIC_SEARCH_KEYWORDS_MAX_LENGTH}
+            disabled={saving}
+            placeholder={t('search_keywords_placeholder')}
+          />
         </Group>
 
         <Group>
@@ -1302,7 +1374,7 @@ function MusicEditDrawer({
         setError(null);
       }
       try {
-        const result = await getMusicRequest({ id, requestMinimalDuration: 0 });
+        const result = await adminGetMusic({ id, requestMinimalDuration: 0 });
         let lyrics: Lyric[] = [];
         if (result.type === MusicType.SONG) {
           lyrics = await getLyricList({
@@ -1321,6 +1393,7 @@ function MusicEditDrawer({
           assetBitRate: result.assetBitRate,
           type: result.type,
           aliases: result.aliases,
+          searchKeywords: result.searchKeywords,
           singers: result.singers,
           heat: result.heat,
           lyrics,

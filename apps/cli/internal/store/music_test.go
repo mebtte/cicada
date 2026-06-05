@@ -117,6 +117,78 @@ func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 	}
 }
 
+func TestSearchMusicMatchesSearchKeywords(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO singer (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
+			('singer-1','Aurora','', 'runaway voice token', 'user-1', ?),
+			('singer-2','Beta',  '', '', 'user-1', ?)`,
+		now,
+		now,
+	); err != nil {
+		t.Fatalf("insert singers: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO music (id,type,name,aliases,searchKeywords,asset,heat,createUserId,createTimestamp) VALUES
+			('music-by-singer-keyword', ?, 'Hidden Track', '', '', 'one.mp3', 10, 'user-1', ?),
+			('music-by-own-keyword', ?, 'Other Track', '', 'manual lookup token', 'two.mp3', 20, 'user-1', ?)`,
+		int(MusicTypeSong), now,
+		int(MusicTypeSong), now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	if err := LinkMusicSingers("music-by-singer-keyword", []string{"singer-1"}); err != nil {
+		t.Fatalf("link music-by-singer-keyword singer: %v", err)
+	}
+	if err := LinkMusicSingers("music-by-own-keyword", []string{"singer-2"}); err != nil {
+		t.Fatalf("link music-by-own-keyword singer: %v", err)
+	}
+
+	tests := []struct {
+		keyword string
+		wantID  string
+	}{
+		{keyword: "manual lookup", wantID: "music-by-own-keyword"},
+		{keyword: "runaway voice", wantID: "music-by-singer-keyword"},
+	}
+	for _, tt := range tests {
+		total, musics, err := SearchMusic(tt.keyword, 1, 10)
+		if err != nil {
+			t.Fatalf("search by %q: %v", tt.keyword, err)
+		}
+		if total != 1 {
+			t.Fatalf("search by %q expected total 1, got %d", tt.keyword, total)
+		}
+		if len(musics) != 1 || musics[0].ID != tt.wantID {
+			t.Fatalf("search by %q expected %s, got %+v", tt.keyword, tt.wantID, musics)
+		}
+	}
+}
+
 func TestSearchMusicRanksNameMatchesAndEscapesWildcards(t *testing.T) {
 	if err := ResetForTests(); err != nil {
 		t.Fatalf("reset store: %v", err)

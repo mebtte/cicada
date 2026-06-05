@@ -5,12 +5,17 @@ import {
   isAbortError,
   isAudioAssetCacheEnabled,
 } from '@/utils/audio_asset_cache';
+import { upsertOfflineMusicMetadata } from '@/utils/offline_music';
+import ensureStoragePersistenceRequested from '@/utils/ensure_storage_persistence';
+import getMusic from '@/server/api/get_music';
 import CustomAudio from '@/utils/custom_audio';
 import getMusicPlaybackAsset from '@/utils/music_playback_asset';
 import logger from '@/utils/logger';
 import { QueueMusic } from '../constants';
 
 const PRELOAD_START_DELAY = 3000;
+const PLAY_CACHE_PERCENT_THRESHOLD = 0.75;
+const MAX_TIMEUPDATE_DELTA_SECONDS = 30;
 
 function normalizeError(error: unknown) {
   return error instanceof Error ? error : new Error(String(error));
@@ -177,4 +182,87 @@ export default (
 
     return () => controller.abort();
   }, [currentUrl, preloadBlocked, preloadUrls]);
+
+  /**
+   * 当前歌累计播放比例 (playedSeconds / duration) 越过 75% 时:
+   *   1. 主动 cacheAudioAsset 把当前音质字节灌进 ASSET_MEDIA (不依赖
+   *      audio 元素自身的 Range 请求是否会被 CacheFirst 顺手缓存)
+   *   2. 被动 upsert 元数据 (保留旧 cachedAt, 不抢用户主动下载的排序位)
+   *   3. 顺手 getMusic 一次, 让详情接口落进 SW API cache, 离线开 drawer 能用
+   * 同一首歌一次会话只触发一次. 切歌后 effect 重新挂载, 重新计数.
+   * 用 playedSeconds 而非 currentTime 直接判, 防止 seek 到末尾绕过门槛.
+   */
+  useEffect(() => {
+    if (!audio || !currentMusic || !isAudioAssetCacheEnabled()) {
+      return;
+    }
+    const sessionMusic = currentMusic;
+    let playedSeconds = 0;
+    let lastTime: number | null = null;
+    let fired = false;
+    const onTimeUpdate = () => {
+      if (fired) {
+        return;
+      }
+      const t = audio.getCurrentTime();
+      if (!Number.isFinite(t)) {
+        return;
+      }
+      if (lastTime !== null) {
+        const delta = t - lastTime;
+        if (
+          !audio.isPaused() &&
+          delta > 0 &&
+          delta <= MAX_TIMEUPDATE_DELTA_SECONDS
+        ) {
+          playedSeconds += delta;
+        }
+      }
+      lastTime = t;
+      const dur = audio.getDuration();
+      if (!Number.isFinite(dur) || dur <= 0) {
+        return;
+      }
+      if (playedSeconds / dur < PLAY_CACHE_PERCENT_THRESHOLD) {
+        return;
+      }
+      const src = audio.getSrc();
+      if (!src) {
+        return;
+      }
+      fired = true;
+      cacheAudioAsset(src, {}).catch((error) => {
+        if (!isAbortError(error)) {
+          logger.error(
+            normalizeError(error),
+            'cache audio after 75% play failed',
+          );
+        }
+      });
+      upsertOfflineMusicMetadata({
+        id: sessionMusic.id,
+        asset: sessionMusic.asset,
+        type: sessionMusic.type,
+        name: sessionMusic.name,
+        aliases: sessionMusic.aliases,
+        cover: sessionMusic.cover,
+        singers: sessionMusic.singers.map((s) => ({
+          id: s.id,
+          name: s.name,
+          aliases: s.aliases,
+        })),
+      });
+      getMusic({ id: sessionMusic.id }).catch(() => undefined);
+      ensureStoragePersistenceRequested().catch(() => undefined);
+    };
+    const onSeeking = () => {
+      lastTime = null;
+    };
+    const unlistenTimeUpdate = audio.listen('timeupdate', onTimeUpdate);
+    const unlistenSeeking = audio.listen('seeking', onSeeking);
+    return () => {
+      unlistenTimeUpdate();
+      unlistenSeeking();
+    };
+  }, [audio, currentMusic]);
 };

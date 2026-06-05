@@ -18,7 +18,7 @@ import {
   DrawerTitle,
   Input,
 } from '@/components';
-import { IconEdit } from '@/components/icon';
+import { Edit } from '@/components/icon';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import updateMusicbill from '@/server/api/update_musicbill';
@@ -401,7 +401,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     aria-label={t('edit_cover')}
                     onClick={editCover}
                   >
-                    <IconEdit size={18} />
+                    <Edit size={18} />
                   </Button>
                 </CoverActions>
               </CurrentCoverBox>

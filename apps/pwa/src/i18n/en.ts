@@ -117,6 +117,9 @@ export default {
   edit_alias: 'edit alias',
   alias: 'alias',
   aliases: 'aliases',
+  search_keywords: 'search keywords',
+  search_keywords_placeholder:
+    'Pinyin, initials, nicknames, misspellings, translations. Only used for search.',
   view_modify_record: 'view modify record',
   no_musicbill: 'no musicbill',
   no_data: 'no data',
@@ -171,7 +174,16 @@ export default {
   failed_to_play: 'failed to play',
   auto_play_next_after_seconds: 'auto play next after %s1 seconds',
   can_not_connect_to_server_temporarily:
-    'can not connect to server temporarily',
+    'network unavailable, only cached content is accessible',
+  offline_cache: 'offline cache',
+  offline_cache_empty: 'no offline cache yet',
+  remove_from_offline_cache: 'remove from offline cache',
+  remove_from_offline_cache_question: 'remove "%s1" from offline cache?',
+  network_unavailable_write_disabled: 'currently offline, action unavailable',
+  add_all_to_playlist: 'add all to playlist',
+  offline_cache_help_title: 'about offline cache',
+  offline_cache_help:
+    'Offline cache works in two independent layers:\n\n• Music data: songs you have viewed in the drawer or played get their metadata recorded automatically (title, cover, singers).\n• Music files: when a song\'s cumulative play ratio crosses 75%, the audio at the current playback quality is cached locally.\n\nThis page only shows songs that have BOTH the music data recorded AND the audio file cached at the current playback quality.\n\nNotes:\n\n• Audio is cached per quality. After switching the playback quality, each song needs to reach 75% again at the new quality before it gets cached.\n• Removing a song here clears both its metadata and every cached quality of its audio file.\n• The size limit is allocated dynamically by the browser based on device storage; the browser may evict less-used caches when space is tight.\n• Switching accounts or logging out clears the entire cache.',
   music_type_short: 'type',
   music_type_song: 'song',
   music_type_instrument: 'instrument',

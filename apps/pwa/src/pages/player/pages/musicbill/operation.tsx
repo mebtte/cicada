@@ -7,7 +7,7 @@ import {
   MdOutlineEdit,
   MdOutlinePeopleAlt,
 } from 'react-icons/md';
-import { IconExport } from '@/components/icon';
+import { Export } from '@/components/icon';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
@@ -87,7 +87,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
             disabled={!musicbill.musicList.length}
             onClick={() => openExportMusicListDialog(musicbill.musicList)}
           >
-            <IconExport size="1em" />
+            <Export size="1em" />
           </Button>
         </Tooltip>
       ) : null}

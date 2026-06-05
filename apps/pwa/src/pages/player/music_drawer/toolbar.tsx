@@ -8,7 +8,7 @@ import {
   MdOutlineEdit,
   MdPlaylistAdd,
 } from 'react-icons/md';
-import { IconExport } from '@/components/icon';
+import { Export } from '@/components/icon';
 import { useUser } from '@/global_states/server';
 import { useSetting } from '@/global_states/setting';
 import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
@@ -138,7 +138,7 @@ function Toolbar({
             aria-label={t('export_music')}
             onClick={() => openExportMusicListDialog([music])}
           >
-            <IconExport size="1em" />
+            <Export size="1em" />
           </Button>
         </Tooltip>
         {showAdminEdit ? (

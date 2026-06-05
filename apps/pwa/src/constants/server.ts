@@ -12,12 +12,11 @@ export interface User {
   sessionId?: string;
 }
 
-import { AssetType } from './asset';
-
 export interface Server {
   version: string;
   hostname: string;
-  assetMaxSize?: Partial<Record<AssetType, number>>;
+  musicFileMaxSize?: number;
+  imageFileMaxSize?: number;
 
   origin: string;
 

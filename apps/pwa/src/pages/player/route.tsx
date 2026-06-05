@@ -13,6 +13,7 @@ import Setting from './pages/setting';
 import Exploration from './pages/exploration';
 import MusicPlayRecord from './pages/music_play_record';
 import ExportingMusic from './pages/exporting_music';
+import OfflineCache from './pages/offline_cache';
 import Singer from './pages/singer';
 import { useEffect } from 'react';
 import e, { EventType } from './eventemitter';
@@ -59,6 +60,10 @@ function Wrapper() {
         <Route
           path={PLAYER_PATH.MUSIC_PLAY_RECORD}
           element={<MusicPlayRecord />}
+        />
+        <Route
+          path={PLAYER_PATH.OFFLINE_CACHE}
+          element={<OfflineCache />}
         />
 
         <Route

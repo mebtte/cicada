@@ -29,6 +29,7 @@ type Music struct {
 	Type            MusicType
 	Name            string
 	Aliases         string
+	SearchKeywords  string
 	Cover           string
 	Asset           string
 	Heat            int64
@@ -61,8 +62,8 @@ type MusicFork struct {
 }
 
 const (
-	musicSelectColumns          = `id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp,year,assetSize,assetDurationMs,assetCodec,assetBitRate`
-	musicSelectColumnsWithAlias = `m.id,m.type,m.name,m.aliases,m.cover,m.asset,m.heat,m.createUserId,m.createTimestamp,m.year,m.assetSize,m.assetDurationMs,m.assetCodec,m.assetBitRate`
+	musicSelectColumns          = `id,type,name,aliases,searchKeywords,cover,asset,heat,createUserId,createTimestamp,year,assetSize,assetDurationMs,assetCodec,assetBitRate`
+	musicSelectColumnsWithAlias = `m.id,m.type,m.name,m.aliases,m.searchKeywords,m.cover,m.asset,m.heat,m.createUserId,m.createTimestamp,m.year,m.assetSize,m.assetDurationMs,m.assetCodec,m.assetBitRate`
 )
 
 func GetMusicByID(id string) (*Music, error) {
@@ -276,7 +277,7 @@ func GetAllMusic() ([]Music, error) {
 	return scanMusicRows(rows)
 }
 
-// SearchMusic searches across all users by name/alias/singer (paginated).
+// SearchMusic searches across all users by name/alias/search keywords/singer (paginated).
 func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	keyword = strings.TrimSpace(keyword)
 	if keyword == "" {
@@ -284,15 +285,19 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	}
 	pat := containsLikePattern(keyword)
 	prefixPat := prefixLikePattern(keyword)
-	where := `WHERE m.name LIKE ? ESCAPE '\' OR m.aliases LIKE ? ESCAPE '\'
+	where := `WHERE m.name LIKE ? ESCAPE '\' OR m.aliases LIKE ? ESCAPE '\' OR m.searchKeywords LIKE ? ESCAPE '\'
 		OR EXISTS (
 			SELECT 1
 			FROM music_singer_relation msr
 			JOIN singer s ON msr.singerId=s.id
-			WHERE msr.musicId=m.id AND (s.name LIKE ? ESCAPE '\' OR s.aliases LIKE ? ESCAPE '\')
+			WHERE msr.musicId=m.id AND (
+				s.name LIKE ? ESCAPE '\'
+				OR s.aliases LIKE ? ESCAPE '\'
+				OR s.searchKeywords LIKE ? ESCAPE '\'
+			)
 		)`
 	var total int
-	if err := DB().QueryRow(`SELECT COUNT(1) FROM music m `+where, pat, pat, pat, pat).Scan(&total); err != nil {
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM music m `+where, pat, pat, pat, pat, pat, pat).Scan(&total); err != nil {
 		return 0, nil, err
 	}
 	rows, err := DB().Query(
@@ -303,6 +308,7 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 				WHEN m.name = ? COLLATE NOCASE THEN 100
 				WHEN m.name LIKE ? ESCAPE '\' THEN 90
 				WHEN m.aliases LIKE ? ESCAPE '\' THEN 80
+				WHEN m.searchKeywords LIKE ? ESCAPE '\' THEN 75
 				WHEN EXISTS (
 					SELECT 1
 					FROM music_singer_relation msr
@@ -321,14 +327,20 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 					JOIN singer s ON msr.singerId=s.id
 					WHERE msr.musicId=m.id AND s.aliases LIKE ? ESCAPE '\'
 				) THEN 50
+				WHEN EXISTS (
+					SELECT 1
+					FROM music_singer_relation msr
+					JOIN singer s ON msr.singerId=s.id
+					WHERE msr.musicId=m.id AND s.searchKeywords LIKE ? ESCAPE '\'
+				) THEN 45
 				ELSE 40
 			END DESC,
 			m.heat DESC,
 			m.createTimestamp DESC,
 			m.id ASC
 		LIMIT ? OFFSET ?`,
-		pat, pat, pat, pat,
-		keyword, prefixPat, pat, keyword, prefixPat, pat,
+		pat, pat, pat, pat, pat, pat,
+		keyword, prefixPat, pat, pat, keyword, prefixPat, pat, pat,
 		pageSize, (page-1)*pageSize,
 	)
 	if err != nil {
@@ -349,7 +361,7 @@ func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageS
 			SELECT 1
 			FROM music_singer_relation msr
 			JOIN singer s ON msr.singerId=s.id
-			WHERE msr.musicId=m.id AND (s.id LIKE ? OR s.name LIKE ? OR s.aliases LIKE ?)
+			WHERE msr.musicId=m.id AND (s.id LIKE ? OR s.name LIKE ? OR s.aliases LIKE ? OR s.searchKeywords LIKE ?)
 		)`
 		switch filterKey {
 		case "id":
@@ -363,10 +375,10 @@ func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageS
 			args = append(args, pattern)
 		case "singer":
 			where = " WHERE " + singerExists
-			args = append(args, pattern, pattern, pattern)
+			args = append(args, pattern, pattern, pattern, pattern)
 		default:
-			where = " WHERE m.id LIKE ? OR m.name LIKE ? OR m.aliases LIKE ? OR " + singerExists
-			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern)
+			where = " WHERE m.id LIKE ? OR m.name LIKE ? OR m.aliases LIKE ? OR m.searchKeywords LIKE ? OR " + singerExists
+			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern)
 		}
 	}
 
@@ -436,6 +448,7 @@ func scanMusicDest(m *Music) []any {
 		&m.Type,
 		&m.Name,
 		&m.Aliases,
+		&m.SearchKeywords,
 		&m.Cover,
 		&m.Asset,
 		&m.Heat,

@@ -32,11 +32,7 @@ import {
   YEAR_MAX,
 } from '@/constants/music';
 import uploadAsset from '@/server/form/upload_asset';
-import {
-  AssetType,
-  ASSET_TYPE_MAP,
-  MUSIC_ASSET_ACCEPT_TYPES,
-} from '@/constants/asset';
+import { AssetType, MUSIC_ASSET_ACCEPT_TYPES } from '@/constants/asset';
 import updateMusic from '@/server/api/update_music';
 import stringArrayEqual from '@/utils/string_array_equal';
 import dialog from '@/utils/dialog';
@@ -59,6 +55,8 @@ import playerEventemitter, {
 } from '../eventemitter';
 import MusicInfo from '../components/music_info';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
+import getAssetMaxSize from '@/utils/get_asset_max_size';
+import formatBytes from '@/utils/format_bytes';
 
 interface Singer {
   id: string;
@@ -69,6 +67,18 @@ const formatSingerToOption = (singer: Singer): SelectOption<Singer> => ({
   label: `${singer.name}${singer.aliases.length ? `(${singer.aliases[0]})` : ''}`,
   value: singer,
 });
+
+const alertIfMusicFileOversize = (file: File) => {
+  const limit = getAssetMaxSize(AssetType.MUSIC);
+  if (!limit || file.size <= limit) {
+    return false;
+  }
+  dialog.alert({
+    content: t('asset_oversize_warning', file.name, formatBytes(limit)),
+  });
+  return true;
+};
+
 const searchSinger = (search: string): Promise<SelectOption<Singer>[]> => {
   const keyword = search.trim().substring(0, SINGER_SEARCH_KEYWORD_MAX_LENGTH);
   if (!keyword) {
@@ -368,6 +378,9 @@ function EditMenu({ music }: { music: MusicDetail }) {
                 onConfirm: async (file) => {
                   if (!file) {
                     notice.error(t('empty_file_warning'));
+                    return false;
+                  }
+                  if (alertIfMusicFileOversize(file)) {
                     return false;
                   }
                   try {
