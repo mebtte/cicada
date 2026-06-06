@@ -26,7 +26,6 @@ const meta = {
       control: 'boolean',
       description: 'Highlight border & shadow with the primary color',
     },
-    onClick: { action: 'clicked' },
   },
   args: {
     src: DefaultCover,

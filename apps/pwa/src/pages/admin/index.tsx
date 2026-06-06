@@ -7,7 +7,7 @@ import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import capitalize from '@/utils/capitalize';
-import LanguageSelect from '@/components/language_select';
+import LanguageSelect from '@/features/language/language_select';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import getResizedImage from '@/server/asset/get_resized_image';
