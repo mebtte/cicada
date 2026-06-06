@@ -12,7 +12,7 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import { MdPlayArrow, MdOutlineClose } from 'react-icons/md';
-import { ReadMore } from '@/components/icon';
+import { QueueInsert } from '@/components/icon';
 import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
 import VirtualList from '@/components/virtual_list';
@@ -163,7 +163,7 @@ function Playlist() {
                               );
                             }}
                           >
-                            <ReadMore />
+                            <QueueInsert />
                           </Button>
                         </Tooltip>
                         <Button

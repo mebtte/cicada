@@ -5,7 +5,7 @@ import {
   MdPlayArrow,
   MdOutlineEdit,
 } from 'react-icons/md';
-import { Export, PlaylistAdd, PostAdd, ReadMore } from '@/components/icon';
+import { Export, PlaylistAdd, PostAdd, QueueInsert } from '@/components/icon';
 import { useUser } from '@/global_states/server';
 import { useSetting } from '@/global_states/setting';
 import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
@@ -95,7 +95,7 @@ function Toolbar({
               )
             }
           >
-            <ReadMore />
+            <QueueInsert />
           </Button>
         </Tooltip>
         <Tooltip content={t('add_to_musicbill')}>

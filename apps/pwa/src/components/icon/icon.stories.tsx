@@ -18,6 +18,7 @@ import {
   PlayQueue,
   PlaylistAdd,
   PostAdd,
+  QueueInsert,
   ReadMore,
   Refresh,
   Search,
@@ -40,6 +41,7 @@ const ALL_ICONS: { name: string; Component: (p: Omit<IconProps, 'children'>) => 
   { name: 'Delete',        Component: Delete        },
   { name: 'Refresh',       Component: Refresh       },
   { name: 'PlaylistAdd',   Component: PlaylistAdd   },
+  { name: 'QueueInsert',   Component: QueueInsert   },
   { name: 'Help',          Component: Help          },
   { name: 'PostAdd',       Component: PostAdd       },
   { name: 'DragIndicator', Component: DragIndicator },
@@ -245,7 +247,7 @@ export const InButton: Story = {
           <Button variant="secondary" icon={<Export />}>export</Button>
           <Button variant="ghost"     icon={<Refresh />}>refresh</Button>
           <Button variant="danger"    icon={<Delete />}>delete</Button>
-          <Button variant="plain"     icon={<ReadMore />}>play next</Button>
+          <Button variant="plain"     icon={<QueueInsert />}>play next</Button>
         </Row>
 
         <Row label="all icons · square ghost sm (verifies 1em scaling)">

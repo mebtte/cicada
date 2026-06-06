@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-import { ReadMore } from '@/components/icon';
+import { QueueInsert } from '@/components/icon';
 import { PiMusicNotesSimpleLight } from 'react-icons/pi';
 import { CSS_VAR } from '@/components/theme';
 import { CSSVariable } from '@/global_style';
@@ -303,7 +303,7 @@ function PlayqueueInsertAnimation() {
             <span className="bar" />
           </QueueRow>
           <Incoming $direction={item.direction}>
-            <ReadMore />
+            <QueueInsert />
           </Incoming>
         </Stage>
       ))}

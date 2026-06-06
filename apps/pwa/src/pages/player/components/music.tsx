@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import { MdPlayArrow } from 'react-icons/md';
-import { PostAdd, ReadMore } from '@/components/icon';
+import { PostAdd, QueueInsert } from '@/components/icon';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import { t } from '@/i18n';
 import { MusicWithSingerAliases } from '../constants';
@@ -59,7 +59,7 @@ function Music({
                 });
               }}
             >
-              <ReadMore />
+              <QueueInsert />
             </Button>
           </Tooltip>
           <Tooltip content={t('add_to_musicbill')}>

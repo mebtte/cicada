@@ -16,6 +16,7 @@ export type { IconProps } from './base';
 //   MdOutlinePostAdd, MdPostAdd       → PostAdd
 //   MdDragIndicator                   → DragIndicator
 //   MdReadMore                        → ReadMore
+//   play-next queue insertion         → QueueInsert
 //   MdInfoOutline                     → Info
 //   MdErrorOutline                    → Error
 //   MdHelpOutline                     → Help
@@ -46,6 +47,7 @@ export { default as Search }        from './icons/search';
 export { default as Delete }        from './icons/delete';
 export { default as Refresh }       from './icons/refresh';
 export { default as PlaylistAdd }   from './icons/playlist-add';
+export { default as QueueInsert }   from './icons/queue-insert';
 export { default as Help }          from './icons/help';
 export { default as PostAdd }       from './icons/post-add';
 export { default as DragIndicator } from './icons/drag-indicator';

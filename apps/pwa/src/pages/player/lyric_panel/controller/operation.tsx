@@ -9,7 +9,7 @@ import {
   MdPlayArrow,
   MdPause,
 } from 'react-icons/md';
-import { PostAdd, ReadMore } from '@/components/icon';
+import { PostAdd, QueueInsert } from '@/components/icon';
 import { flexCenter } from '@/style/flexbox';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -76,7 +76,7 @@ function Operation({
             )
           }
         >
-          <ReadMore />
+          <QueueInsert />
         </Button>
       </Tooltip>
       <Button square variant="ghost" size="sm" onClick={onPrevious}>

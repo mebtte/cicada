@@ -9,7 +9,7 @@ import {
   MdSkipNext,
   MdMoreHoriz,
 } from 'react-icons/md';
-import { PostAdd, ReadMore } from '@/components/icon';
+import { PostAdd, QueueInsert } from '@/components/icon';
 import { CSSVariable } from '@/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -84,7 +84,7 @@ function Operation({
                   : alertNoPlayingMusic()
               }
             >
-              <ReadMore />
+              <QueueInsert />
             </Button>
           </Tooltip>
           <Tooltip content={t('add_to_musicbill')}>
