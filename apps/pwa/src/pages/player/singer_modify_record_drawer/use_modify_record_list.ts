@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import getSingerModifyRecordList from '@/server/api/get_singer_modify_record_list';
+import getArtistModifyRecordList from '@/server/api/get_artist_modify_record_list';
 import { ModifyRecord } from './constants';
 
 type Data =
@@ -20,19 +20,19 @@ const dataLoading: Data = {
   value: null,
 };
 
-export default ({ singerId }: { singerId: string }) => {
+export default ({ artistId }: { artistId: string }) => {
   const [data, setData] = useState<Data>(dataLoading);
   const getModifyRecordList = useCallback(async () => {
     setData(dataLoading);
     try {
-      const modifyRecordList = await getSingerModifyRecordList({
-        id: singerId,
+      const modifyRecordList = await getArtistModifyRecordList({
+        id: artistId,
       });
       setData({ error: null, loading: false, value: modifyRecordList });
     } catch (error) {
       setData({ error, loading: false, value: null });
     }
-  }, [singerId]);
+  }, [artistId]);
 
   useEffect(() => {
     getModifyRecordList();

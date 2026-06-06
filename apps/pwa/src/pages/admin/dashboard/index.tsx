@@ -28,7 +28,7 @@ const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 const PRIMARY = CSSVariable.COLOR_PRIMARY;
 const PRIMARY_SHADOW = 'var(--cicada-color-primary-shadow)';
 
-type CardTone = 'play' | 'music' | 'singer' | 'user' | 'musicbill';
+type CardTone = 'play' | 'music' | 'artist' | 'user' | 'musicbill';
 
 const CARD_TONE_MAP: Record<CardTone, { face: string; shadow: string }> = {
   play: {
@@ -39,7 +39,7 @@ const CARD_TONE_MAP: Record<CardTone, { face: string; shadow: string }> = {
     face: PRIMARY,
     shadow: PRIMARY_SHADOW,
   },
-  singer: {
+  artist: {
     face: 'rgb(255 177 25)',
     shadow: 'rgb(201 132 8)',
   },
@@ -452,24 +452,24 @@ function Dashboard() {
 
           <ActionCard
             type="button"
-            onClick={() => navigate(getAdminPath(ADMIN_PATH.SINGER_MANAGEMENT))}
-            aria-label={capitalize(t('singer_management'))}
+            onClick={() => navigate(getAdminPath(ADMIN_PATH.ARTIST_MANAGEMENT))}
+            aria-label={capitalize(t('artist_management'))}
           >
             <CardHeader>
-              <CardTitle>{capitalize(t('singer_total'))}</CardTitle>
-              <IconBox $tone="singer">
+              <CardTitle>{capitalize(t('artist_total'))}</CardTitle>
+              <IconBox $tone="artist">
                 <Voice />
               </IconBox>
             </CardHeader>
-            <PrimaryValue>{formatCount(dashboard.singer.total)}</PrimaryValue>
+            <PrimaryValue>{formatCount(dashboard.artist.total)}</PrimaryValue>
             <MetaList>
               <MetaRow>
-                <span>{capitalize(t('new_singer_7d'))}</span>
-                <strong>{formatCount(dashboard.singer.created7d)}</strong>
+                <span>{capitalize(t('new_artist_7d'))}</span>
+                <strong>{formatCount(dashboard.artist.created7d)}</strong>
               </MetaRow>
               <MetaRow>
-                <span>{capitalize(t('singer_photo_total'))}</span>
-                <strong>{formatCount(dashboard.singer.photoCount)}</strong>
+                <span>{capitalize(t('artist_photo_total'))}</span>
+                <strong>{formatCount(dashboard.artist.photoCount)}</strong>
               </MetaRow>
             </MetaList>
           </ActionCard>

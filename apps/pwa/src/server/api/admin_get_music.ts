@@ -20,9 +20,10 @@ interface Music {
   cover: string;
   name: string;
   singers: Singer[];
+  lyricists: Singer[];
 }
 
-type Response = Omit<Music, 'singers'> & {
+type Response = Omit<Music, 'singers' | 'lyricists'> & {
   type: MusicType;
   aliases: string[];
   searchKeywords: string;
@@ -49,6 +50,7 @@ type Response = Omit<Music, 'singers'> & {
     };
   }[];
   singers: Singer[];
+  lyricists: Singer[];
 };
 
 const normalizePhotos = (photos: SingerPhoto[] = []) =>
@@ -76,7 +78,7 @@ async function adminGetMusic({
     searchKeywords: music.searchKeywords ?? '',
     cover: prefixServerOrigin(music.cover),
     asset: prefixServerOrigin(music.asset),
-    singers: music.singers.map((singer) => {
+    singers: (music.singers ?? []).map((singer) => {
       const photos = normalizePhotos(singer.photos);
       return {
         ...singer,
@@ -84,20 +86,36 @@ async function adminGetMusic({
         avatar: photos[0]?.asset ?? '',
       };
     }),
+    lyricists: (music.lyricists ?? []).map((artist) => {
+      const photos = normalizePhotos(artist.photos);
+      return {
+        ...artist,
+        photos,
+        avatar: photos[0]?.asset ?? '',
+      };
+    }),
     forkList: music.forkList.map((item) => ({
       ...item,
       cover: prefixServerOrigin(item.cover),
-      singers: item.singers.map((singer) => ({
+      singers: (item.singers ?? []).map((singer) => ({
         ...singer,
         photos: normalizePhotos(singer.photos),
+      })),
+      lyricists: (item.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
       })),
     })),
     forkFromList: music.forkFromList.map((item) => ({
       ...item,
       cover: prefixServerOrigin(item.cover),
-      singers: item.singers.map((singer) => ({
+      singers: (item.singers ?? []).map((singer) => ({
         ...singer,
         photos: normalizePhotos(singer.photos),
+      })),
+      lyricists: (item.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
       })),
     })),
     relatedPublicMusicbillList: (

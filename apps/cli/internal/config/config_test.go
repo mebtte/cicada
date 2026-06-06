@@ -40,7 +40,7 @@ func TestAssetMaxSizeUsesFileCategory(t *testing.T) {
 		{name: "music", t: AssetTypeMusic, want: 300},
 		{name: "user avatar", t: AssetTypeUserAvatar, want: 20},
 		{name: "musicbill cover", t: AssetTypeMusicbillCover, want: 20},
-		{name: "singer photo", t: AssetTypeSingerPhoto, want: 20},
+		{name: "artist photo", t: AssetTypeArtistPhoto, want: 20},
 		{name: "music cover", t: AssetTypeMusicCover, want: 20},
 	}
 

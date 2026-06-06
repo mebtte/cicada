@@ -17,7 +17,7 @@ import { CSS_VAR } from '@/components/theme';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import Dashboard from './dashboard';
 import MusicManagement from './music_management';
-import SingerManagement from './singer_management';
+import ArtistManagement from './artist_management';
 import UserManagement from './user_management';
 import UploadManagerHost from './music_management/import/upload_manager_host';
 import MusicImportSidebar from './music_management/import/sidebar';
@@ -72,8 +72,8 @@ const ADMIN_MENU_ITEMS = [
     Icon: People,
   },
   {
-    path: ADMIN_PATH.SINGER_MANAGEMENT,
-    label: 'singer_management',
+    path: ADMIN_PATH.ARTIST_MANAGEMENT,
+    label: 'artist_management',
     Icon: Voice,
   },
   {
@@ -874,8 +874,8 @@ function AdminPage() {
               element={<UserManagement />}
             />
             <Route
-              path={`${ADMIN_PATH.SINGER_MANAGEMENT}/*`}
-              element={<SingerManagement />}
+              path={`${ADMIN_PATH.ARTIST_MANAGEMENT}/*`}
+              element={<ArtistManagement />}
             />
             <Route
               path={ADMIN_PATH.MUSIC_MANAGEMENT}

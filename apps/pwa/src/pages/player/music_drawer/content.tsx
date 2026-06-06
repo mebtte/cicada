@@ -327,7 +327,8 @@ function Detail({
               showTitle={!insideDrawer || USE_COLLAPSING_DRAWER_TITLE}
               titleRef={titleRef}
             />
-            <SingerList singerList={music.singers} />
+            <SingerList label={t('singer')} singerList={music.singers} />
+            <SingerList label={t('lyricist')} singerList={music.lyricists} />
             {music.forkFromList.length ? (
               <SubMusicList
                 label={t('fork_from_these_musics')}

@@ -32,6 +32,7 @@ export enum AllowUpdateKey {
   SEARCH_KEYWORDS = 'searchKeywords',
   ASSET = 'asset',
   SINGER = 'singers',
+  LYRICIST = 'lyricists',
   FORK_FROM = 'forkFrom',
   YEAR = 'year',
 }

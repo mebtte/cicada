@@ -89,8 +89,8 @@ const filterOptions: SelectOption<AdminMusicListFilterKey>[] = [
     value: AdminMusicListFilterKey.ALIAS,
   },
   {
-    label: capitalize(t('singer')),
-    value: AdminMusicListFilterKey.SINGER,
+    label: capitalize(t('artist')),
+    value: AdminMusicListFilterKey.ARTIST,
   },
 ];
 
@@ -770,11 +770,11 @@ function LazyCover({
 function MusicList({
   reloadToken = 0,
   onEdit,
-  onSingerEdit,
+  onArtistEdit,
 }: {
   reloadToken?: number;
   onEdit: (id: string) => void;
-  onSingerEdit: (id: string) => void;
+  onArtistEdit: (id: string) => void;
 }) {
   const navigate = useNavigate();
   const compactPagination = useWindowWidth() <= MOBILE_BREAKPOINT;
@@ -1063,6 +1063,7 @@ function MusicList({
                   <Th>{capitalize(t('name'))}</Th>
                   <Th>{capitalize(t('alias'))}</Th>
                   <Th>{capitalize(t('singer'))}</Th>
+                  <Th>{capitalize(t('lyricist'))}</Th>
                   <Th>{capitalize(t('music_type_short'))}</Th>
                   <Th>{capitalize(t('file_info'))}</Th>
                   <Th>{capitalize(t('year_of_issue'))}</Th>
@@ -1137,7 +1138,7 @@ function MusicList({
                               key={singer.id}
                               type="button"
                               title={singer.name}
-                              onClick={() => onSingerEdit(singer.id)}
+                              onClick={() => onArtistEdit(singer.id)}
                             >
                               {singer.name}
                             </SingerButton>
@@ -1146,6 +1147,22 @@ function MusicList({
                       ) : (
                         <Muted>{t('unknown')}</Muted>
                       )}
+                    </Td>
+                    <Td>
+                      {music.lyricists.length ? (
+                        <TagList>
+                          {music.lyricists.map((lyricist) => (
+                            <SingerButton
+                              key={lyricist.id}
+                              type="button"
+                              title={lyricist.name}
+                              onClick={() => onArtistEdit(lyricist.id)}
+                            >
+                              {lyricist.name}
+                            </SingerButton>
+                          ))}
+                        </TagList>
+                      ) : null}
                     </Td>
                     <Td>
                       <TypeTag>

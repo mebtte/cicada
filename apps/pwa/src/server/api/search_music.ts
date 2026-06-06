@@ -16,6 +16,11 @@ type Response = {
       name: string;
       aliases: string[];
     }[];
+    lyricists: {
+      id: string;
+      name: string;
+      aliases: string[];
+    }[];
   }[];
 };
 
@@ -39,6 +44,7 @@ async function searchMusic({
       ...m,
       cover: prefixServerOrigin(m.cover),
       asset: prefixServerOrigin(m.asset),
+      lyricists: m.lyricists ?? [],
     })),
   };
 }

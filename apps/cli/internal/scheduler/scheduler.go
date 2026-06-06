@@ -147,7 +147,7 @@ func removeUnlinkedAsset() (schedulerJobResult, error) {
 	queries := []assetQuery{
 		{config.AssetTypeUserAvatar, `SELECT DISTINCT avatar FROM user WHERE avatar != ''`},
 		{config.AssetTypeMusicbillCover, `SELECT DISTINCT cover FROM musicbill WHERE cover != ''`},
-		{config.AssetTypeSingerPhoto, `SELECT DISTINCT asset FROM singer_photo WHERE asset != ''`},
+		{config.AssetTypeArtistPhoto, `SELECT DISTINCT asset FROM artist_photo WHERE asset != ''`},
 		{config.AssetTypeMusicCover, `SELECT DISTINCT cover FROM music WHERE cover != ''`},
 		{config.AssetTypeMusic, `SELECT DISTINCT asset FROM music WHERE asset != ''`},
 	}

@@ -41,7 +41,7 @@ import {
   YEAR_MIN,
 } from '@/constants/music';
 import { AssetType, MUSIC_ASSET_ACCEPT_TYPES } from '@/constants/asset';
-import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/singer';
+import { SEARCH_KEYWORD_MAX_LENGTH as ARTIST_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/artist';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -61,16 +61,16 @@ import deleteMusic from '@/server/api/delete_music';
 import getLyricList from '@/server/api/get_lyric_list';
 import adminGetMusic from '@/server/api/admin_get_music';
 import searchMusicRequest from '@/server/api/search_music';
-import searchSingerRequest from '@/server/api/search_singer';
+import searchArtistRequest from '@/server/api/search_artist';
 import updateMusic from '@/server/api/update_music';
 import uploadAsset from '@/server/form/upload_asset';
 import uploadAssetChunked, {
   cancelPartialUpload,
   type UploadPhase,
 } from '@/server/form/upload_asset_chunked';
-import CreateSingerLabel from '../components/create_singer_label';
+import CreateArtistLabel from '../components/create_artist_label';
 
-interface Singer {
+interface Artist {
   id: string;
   name: string;
   aliases: string[];
@@ -104,7 +104,8 @@ interface Music {
   type: MusicType;
   aliases: string[];
   searchKeywords: string;
-  singers: Singer[];
+  singers: Artist[];
+  lyricists: Artist[];
   heat: number;
   lyrics: Lyric[];
   forkFromList: RelatedMusic[];
@@ -124,18 +125,18 @@ const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 const DRAWER_WIDTH = 420;
 const DRAWER_NARROW_SCREEN_GUTTER = 48;
 
-const formatSingerToOption = (singer: Singer): SelectOption<Singer> => ({
-  label: `${singer.name}${singer.aliases.length ? `(${singer.aliases[0]})` : ''}`,
-  value: singer,
+const formatArtistToOption = (artist: Artist): SelectOption<Artist> => ({
+  label: `${artist.name}${artist.aliases.length ? `(${artist.aliases[0]})` : ''}`,
+  value: artist,
 });
 
-const searchSinger = (search: string): Promise<SelectOption<Singer>[]> => {
-  const keyword = search.trim().substring(0, SINGER_SEARCH_KEYWORD_MAX_LENGTH);
+const searchArtist = (search: string): Promise<SelectOption<Artist>[]> => {
+  const keyword = search.trim().substring(0, ARTIST_SEARCH_KEYWORD_MAX_LENGTH);
   if (!keyword) {
     return Promise.resolve([]);
   }
-  return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
-    data.singerList.map(formatSingerToOption),
+  return searchArtistRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
+    data.artistList.map(formatArtistToOption),
   );
 };
 
@@ -637,8 +638,11 @@ function EditContent({
   const [lyrics, setLyrics] = useState<string[]>(() =>
     music.lyrics.map((lyric) => lyric.lrc),
   );
-  const [singers, setSingers] = useState<SelectOption<Singer>[]>(() =>
-    music.singers.map(formatSingerToOption),
+  const [singers, setSingers] = useState<SelectOption<Artist>[]>(() =>
+    music.singers.map(formatArtistToOption),
+  );
+  const [lyricists, setLyricists] = useState<SelectOption<Artist>[]>(() =>
+    music.lyricists.map(formatArtistToOption),
   );
   const [forkFromList, setForkFromList] = useState<
     SelectOption<RelatedMusic>[]
@@ -660,7 +664,8 @@ function EditContent({
     setAliases(music.aliases);
     setSearchKeywords(music.searchKeywords);
     setLyrics(music.lyrics.map((lyric) => lyric.lrc));
-    setSingers(music.singers.map(formatSingerToOption));
+    setSingers(music.singers.map(formatArtistToOption));
+    setLyricists(music.lyricists.map(formatArtistToOption));
     setForkFromList(music.forkFromList.map(formatMusicToOption));
     setYear(music.year === null ? '' : `${music.year}`);
   }, [music]);
@@ -712,6 +717,10 @@ function EditContent({
     () => singers.map((option) => option.value.id),
     [singers],
   );
+  const lyricistIds = useMemo(
+    () => lyricists.map((option) => option.value.id),
+    [lyricists],
+  );
   const forkFromIds = useMemo(
     () => forkFromList.map((option) => option.value.id),
     [forkFromList],
@@ -723,6 +732,10 @@ function EditContent({
   const originalSingerIds = useMemo(
     () => music.singers.map((singer) => singer.id),
     [music.singers],
+  );
+  const originalLyricistIds = useMemo(
+    () => music.lyricists.map((lyricist) => lyricist.id),
+    [music.lyricists],
   );
   const originalForkFromIds = useMemo(
     () => music.forkFromList.map((forkFrom) => forkFrom.id),
@@ -739,6 +752,7 @@ function EditContent({
     (music.type === MusicType.SONG &&
       !stringArrayEqual(normalizedLyrics, originalLyrics)) ||
     !stringArrayEqual(sortedIds(singerIds), sortedIds(originalSingerIds)) ||
+    !stringArrayEqual(sortedIds(lyricistIds), sortedIds(originalLyricistIds)) ||
     !stringArrayEqual(sortedIds(forkFromIds), sortedIds(originalForkFromIds)) ||
     parsedYear !== music.year;
 
@@ -824,12 +838,21 @@ function EditContent({
     });
   };
 
-  const onSingerCreated = useCallback((singer: Singer) => {
+  const onSingerCreated = useCallback((artist: Artist) => {
     setSingers((list) => {
-      if (list.some((option) => option.value.id === singer.id)) {
+      if (list.some((option) => option.value.id === artist.id)) {
         return list;
       }
-      return [...list, formatSingerToOption(singer)];
+      return [...list, formatArtistToOption(artist)];
+    });
+  }, []);
+
+  const onLyricistCreated = useCallback((artist: Artist) => {
+    setLyricists((list) => {
+      if (list.some((option) => option.value.id === artist.id)) {
+        return list;
+      }
+      return [...list, formatArtistToOption(artist)];
     });
   }, []);
 
@@ -1074,6 +1097,16 @@ function EditContent({
       }
 
       if (
+        !stringArrayEqual(sortedIds(lyricistIds), sortedIds(originalLyricistIds))
+      ) {
+        await updateMusic({
+          id: music.id,
+          key: AllowUpdateKey.LYRICIST,
+          value: lyricistIds,
+        });
+      }
+
+      if (
         !stringArrayEqual(sortedIds(forkFromIds), sortedIds(originalForkFromIds))
       ) {
         await updateMusic({
@@ -1221,16 +1254,32 @@ function EditContent({
         <Group>
           <GroupHeader>
             <GroupTitle>{t('singer')}</GroupTitle>
-            <CreateSingerLabel
+            <CreateArtistLabel
               notifyOnCreated={false}
               onCreated={onSingerCreated}
             />
           </GroupHeader>
           <MultiSelect
             value={singers}
-            loadOptions={searchSinger}
+            loadOptions={searchArtist}
             onChange={setSingers}
-            clearable={false}
+            disabled={saving}
+            placeholder=""
+          />
+        </Group>
+
+        <Group>
+          <GroupHeader>
+            <GroupTitle>{t('lyricist')}</GroupTitle>
+            <CreateArtistLabel
+              notifyOnCreated={false}
+              onCreated={onLyricistCreated}
+            />
+          </GroupHeader>
+          <MultiSelect
+            value={lyricists}
+            loadOptions={searchArtist}
+            onChange={setLyricists}
             disabled={saving}
             placeholder=""
           />
@@ -1395,6 +1444,7 @@ function MusicEditDrawer({
           aliases: result.aliases,
           searchKeywords: result.searchKeywords,
           singers: result.singers,
+          lyricists: result.lyricists,
           heat: result.heat,
           lyrics,
           forkFromList: result.forkFromList,

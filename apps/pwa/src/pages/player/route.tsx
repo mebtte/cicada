@@ -14,7 +14,7 @@ import Exploration from './pages/exploration';
 import MusicPlayRecord from './pages/music_play_record';
 import ExportingMusic from './pages/exporting_music';
 import OfflineCache from './pages/offline_cache';
-import Singer from './pages/singer';
+import Artist from './pages/artist';
 import { useEffect } from 'react';
 import e, { EventType } from './eventemitter';
 
@@ -49,7 +49,7 @@ function Wrapper() {
         <Route path={PLAYER_PATH.EXPLORATION} element={<Exploration />} />
         <Route path={PLAYER_PATH.MUSIC} element={<Music />} />
         <Route path={PLAYER_PATH.MUSICBILL} element={<Musicbill />} />
-        <Route path={PLAYER_PATH.SINGER} element={<Singer />} />
+        <Route path={PLAYER_PATH.ARTIST} element={<Artist />} />
         <Route path={PLAYER_PATH.USER} element={<User />} />
         <Route path={PLAYER_PATH.SETTING} element={<Setting />} />
         <Route path={PLAYER_PATH.EXPORTING_MUSIC} element={<ExportingMusic />} />

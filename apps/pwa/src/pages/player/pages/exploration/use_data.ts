@@ -28,10 +28,10 @@ const dataLoading: Data = {
   loading: true,
   value: {
     musicList: [],
-    singerList: [],
+    artistList: [],
     publicMusicbillList: [],
     recentMusicList: [],
-    recentSingerList: [],
+    recentArtistList: [],
     recentPublicMusicbillList: [],
   },
 };
@@ -100,15 +100,15 @@ export default () => {
       PlayerEventType.MUSIC_DELETED,
       reload,
     );
-    const unlistenSingerUpdated = playerEventemitter.listen(
-      PlayerEventType.SINGER_UPDATED,
+    const unlistenArtistUpdated = playerEventemitter.listen(
+      PlayerEventType.ARTIST_UPDATED,
       reload,
     );
     return () => {
       requestIdRef.current += 1;
       unlistenMusicUpdated();
       unlistenMusicDeleted();
-      unlistenSingerUpdated();
+      unlistenArtistUpdated();
     };
   }, [getData, reload]);
 

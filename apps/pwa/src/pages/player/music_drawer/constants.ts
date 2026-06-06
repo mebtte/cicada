@@ -38,6 +38,7 @@ export interface MusicDetail extends Music {
   forkFromList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
   forkList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
   singers: SingerDetail[];
+  lyricists: SingerDetail[];
   year: number | null;
   musicbillCount: number;
   assetSize: number;

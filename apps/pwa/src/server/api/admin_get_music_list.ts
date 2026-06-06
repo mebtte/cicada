@@ -7,7 +7,7 @@ export enum AdminMusicListFilterKey {
   ID = 'id',
   NAME = 'name',
   ALIAS = 'alias',
-  SINGER = 'singer',
+  ARTIST = 'artist',
 }
 
 export enum AdminMusicListSortBy {
@@ -37,6 +37,11 @@ type Response = {
     heat: number;
     year: number | null;
     singers: {
+      id: string;
+      name: string;
+      aliases: string[];
+    }[];
+    lyricists: {
       id: string;
       name: string;
       aliases: string[];
@@ -87,6 +92,8 @@ async function adminGetMusicList({
       searchKeywords: music.searchKeywords ?? '',
       cover: prefixServerOrigin(music.cover),
       asset: prefixServerOrigin(music.asset),
+      singers: music.singers ?? [],
+      lyricists: music.lyricists ?? [],
     })),
   };
 }

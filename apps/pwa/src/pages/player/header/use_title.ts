@@ -2,7 +2,7 @@ import { matchPath, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t, type Key } from '@/i18n';
-import getSinger from '@/server/api/get_singer';
+import getArtist from '@/server/api/get_artist';
 import getMusic from '@/server/api/get_music';
 import logger from '@/utils/logger';
 import capitalize from '@/utils/capitalize';
@@ -13,7 +13,7 @@ export interface HeaderTitle {
   description?: string;
 }
 
-interface SingerHeaderTitle extends HeaderTitle {
+interface ArtistHeaderTitle extends HeaderTitle {
   id: string;
 }
 interface MusicHeaderTitle extends HeaderTitle {
@@ -42,15 +42,15 @@ const getMusicHeaderTitle = async (id: string): Promise<MusicHeaderTitle> => {
   };
 };
 
-const getSingerHeaderTitle = async (
+const getArtistHeaderTitle = async (
   id: string,
-): Promise<SingerHeaderTitle> => {
-  const singer = await getSinger(id);
+): Promise<ArtistHeaderTitle> => {
+  const artist = await getArtist(id);
   return {
     id,
-    title: singer.name,
-    description: singer.aliases.length
-      ? singer.aliases.join(' / ')
+    title: artist.name,
+    description: artist.aliases.length
+      ? artist.aliases.join(' / ')
       : undefined,
   };
 };
@@ -66,14 +66,14 @@ export default () => {
     `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSIC}`,
     pathname,
   );
-  const singerMatch = matchPath(
-    `${ROOT_PATH.PLAYER}${PLAYER_PATH.SINGER}`,
+  const artistMatch = matchPath(
+    `${ROOT_PATH.PLAYER}${PLAYER_PATH.ARTIST}`,
     pathname,
   );
-  const singerId = singerMatch?.params.id;
+  const artistId = artistMatch?.params.id;
   const musicId = musicMatch?.params.id;
   const [musicTitle, setMusicTitle] = useState<MusicHeaderTitle | null>(null);
-  const [singerTitle, setSingerTitle] = useState<SingerHeaderTitle | null>(
+  const [artistTitle, setArtistTitle] = useState<ArtistHeaderTitle | null>(
     null,
   );
   const loadMusicTitle = useCallback(async (id: string) => {
@@ -84,12 +84,12 @@ export default () => {
       setMusicTitle(null);
     }
   }, []);
-  const loadSingerTitle = useCallback(async (id: string) => {
+  const loadArtistTitle = useCallback(async (id: string) => {
     try {
-      setSingerTitle(await getSingerHeaderTitle(id));
+      setArtistTitle(await getArtistHeaderTitle(id));
     } catch (error) {
-      logger.error(error as Error, 'Fail to get singer title');
-      setSingerTitle(null);
+      logger.error(error as Error, 'Fail to get artist title');
+      setArtistTitle(null);
     }
   }, []);
 
@@ -122,32 +122,32 @@ export default () => {
   }, [musicId]);
 
   useEffect(() => {
-    if (!singerId) {
-      setSingerTitle(null);
+    if (!artistId) {
+      setArtistTitle(null);
       return;
     }
 
     let canceled = false;
-    setSingerTitle((current) => (current?.id === singerId ? current : null));
-    getSingerHeaderTitle(singerId)
-      .then((nextSingerTitle) => {
+    setArtistTitle((current) => (current?.id === artistId ? current : null));
+    getArtistHeaderTitle(artistId)
+      .then((nextArtistTitle) => {
         if (canceled) {
           return;
         }
-        setSingerTitle(nextSingerTitle);
+        setArtistTitle(nextArtistTitle);
       })
       .catch((error) => {
         if (canceled) {
           return;
         }
-        logger.error(error as Error, 'Fail to get singer title');
-        setSingerTitle(null);
+        logger.error(error as Error, 'Fail to get artist title');
+        setArtistTitle(null);
       });
 
     return () => {
       canceled = true;
     };
-  }, [singerId]);
+  }, [artistId]);
 
   useEffect(() => {
     if (!musicId) {
@@ -162,16 +162,16 @@ export default () => {
   }, [loadMusicTitle, musicId]);
 
   useEffect(() => {
-    if (!singerId) {
+    if (!artistId) {
       return;
     }
 
-    return playerEventemitter.listen(EventType.SINGER_UPDATED, (payload) => {
-      if (payload.id === singerId) {
-        loadSingerTitle(singerId);
+    return playerEventemitter.listen(EventType.ARTIST_UPDATED, (payload) => {
+      if (payload.id === artistId) {
+        loadArtistTitle(artistId);
       }
     });
-  }, [loadSingerTitle, singerId]);
+  }, [loadArtistTitle, artistId]);
 
   useEffect(() => {
     if (!musicId) {
@@ -195,15 +195,15 @@ export default () => {
   }, [musicId]);
 
   useEffect(() => {
-    if (!singerId) {
+    if (!artistId) {
       return;
     }
 
     return playerEventemitter.listen(
-      EventType.SINGER_DETAIL_LOADED,
+      EventType.ARTIST_DETAIL_LOADED,
       (payload) => {
-        if (payload.id === singerId) {
-          setSingerTitle({
+        if (payload.id === artistId) {
+          setArtistTitle({
             id: payload.id,
             title: payload.name,
             description: payload.aliases.length
@@ -213,10 +213,10 @@ export default () => {
         }
       },
     );
-  }, [singerId]);
+  }, [artistId]);
 
   let title: HeaderTitle;
-  if (musicMatch || musicbillMatch || singerId) {
+  if (musicMatch || musicbillMatch || artistId) {
     if (musicMatch) {
       if (musicTitle && musicTitle.id === musicId) {
         title = {
@@ -235,10 +235,10 @@ export default () => {
       lastTitleRef.current = title;
       return title;
     }
-    if (singerTitle && singerTitle.id === singerId) {
+    if (artistTitle && artistTitle.id === artistId) {
       title = {
-        title: singerTitle.title,
-        description: singerTitle.description,
+        title: artistTitle.title,
+        description: artistTitle.description,
       };
       lastTitleRef.current = title;
       return title;

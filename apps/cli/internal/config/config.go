@@ -21,7 +21,7 @@ type AssetType string
 const (
 	AssetTypeUserAvatar     AssetType = "user_avatar"
 	AssetTypeMusicbillCover AssetType = "musicbill_cover"
-	AssetTypeSingerPhoto    AssetType = "singer_photo"
+	AssetTypeArtistPhoto    AssetType = "artist_photo"
 	AssetTypeMusicCover     AssetType = "music_cover"
 	AssetTypeMusic          AssetType = "music"
 )
@@ -29,14 +29,14 @@ const (
 var AllAssetTypes = []AssetType{
 	AssetTypeUserAvatar,
 	AssetTypeMusicbillCover,
-	AssetTypeSingerPhoto,
+	AssetTypeArtistPhoto,
 	AssetTypeMusicCover,
 	AssetTypeMusic,
 }
 
 // AssetAcceptMIME defines allowed MIME types per asset type.
 var AssetAcceptMIME = map[AssetType][]string{
-	AssetTypeSingerPhoto:    {"image/jpeg"},
+	AssetTypeArtistPhoto:    {"image/jpeg"},
 	AssetTypeMusicbillCover: {"image/jpeg"},
 	AssetTypeMusicCover:     {"image/jpeg"},
 	AssetTypeUserAvatar:     {"image/jpeg"},
@@ -139,7 +139,7 @@ func AssetMaxSize(t AssetType) (int64, bool) {
 	switch t {
 	case AssetTypeMusic:
 		return Get().MusicFileMaxSize, true
-	case AssetTypeUserAvatar, AssetTypeMusicbillCover, AssetTypeSingerPhoto, AssetTypeMusicCover:
+	case AssetTypeUserAvatar, AssetTypeMusicbillCover, AssetTypeArtistPhoto, AssetTypeMusicCover:
 		return Get().ImageFileMaxSize, true
 	default:
 		return 0, false

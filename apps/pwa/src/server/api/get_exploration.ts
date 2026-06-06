@@ -10,7 +10,7 @@ type MusicItem = {
     name: string;
   }[];
 };
-type SingerItem = {
+type ArtistItem = {
   id: string;
   name: string;
   photos: { id: string; asset: string; description: string }[];
@@ -23,10 +23,10 @@ type PublicMusicbillItem = {
 };
 type Response = {
   musicList: MusicItem[];
-  singerList: SingerItem[];
+  artistList: ArtistItem[];
   publicMusicbillList: PublicMusicbillItem[];
   recentMusicList: MusicItem[];
-  recentSingerList: SingerItem[];
+  recentArtistList: ArtistItem[];
   recentPublicMusicbillList: PublicMusicbillItem[];
 };
 
@@ -34,9 +34,9 @@ const normalizeMusic = (m: MusicItem) => ({
   ...m,
   cover: prefixServerOrigin(m.cover),
 });
-const normalizeSinger = (s: SingerItem) => ({
-  ...s,
-  photos: s.photos.map((p) => ({
+const normalizeArtist = (artist: ArtistItem) => ({
+  ...artist,
+  photos: artist.photos.map((p) => ({
     ...p,
     asset: prefixServerOrigin(p.asset),
   })),
@@ -57,10 +57,10 @@ async function getExploration() {
   });
   return {
     musicList: data.musicList.map(normalizeMusic),
-    singerList: data.singerList.map(normalizeSinger),
+    artistList: data.artistList.map(normalizeArtist),
     publicMusicbillList: data.publicMusicbillList.map(normalizeMusicbill),
     recentMusicList: data.recentMusicList.map(normalizeMusic),
-    recentSingerList: data.recentSingerList.map(normalizeSinger),
+    recentArtistList: data.recentArtistList.map(normalizeArtist),
     recentPublicMusicbillList:
       data.recentPublicMusicbillList.map(normalizeMusicbill),
   };

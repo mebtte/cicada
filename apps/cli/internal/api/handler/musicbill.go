@@ -167,6 +167,7 @@ func GetMusicbill(c *gin.Context) {
 		musicIDs[i] = m.ID
 	}
 	singerMap := map[string][]gin.H{}
+	lyricistMap := map[string][]gin.H{}
 	if len(musicIDs) > 0 {
 		singers, _ := store.GetSingersInMusicIDs(musicIDs)
 		for _, s := range singers {
@@ -174,6 +175,14 @@ func GetMusicbill(c *gin.Context) {
 				"id":      s.ID,
 				"name":    s.Name,
 				"aliases": splitAliases(s.Aliases),
+			})
+		}
+		lyricists, _ := store.GetLyricistsInMusicIDs(musicIDs)
+		for _, artist := range lyricists {
+			lyricistMap[artist.MusicID] = append(lyricistMap[artist.MusicID], gin.H{
+				"id":      artist.ID,
+				"name":    artist.Name,
+				"aliases": splitAliases(artist.Aliases),
 			})
 		}
 	}
@@ -184,14 +193,19 @@ func GetMusicbill(c *gin.Context) {
 		if singers == nil {
 			singers = []gin.H{}
 		}
+		lyricists := lyricistMap[m.ID]
+		if lyricists == nil {
+			lyricists = []gin.H{}
+		}
 		musicItems[i] = gin.H{
-			"id":      m.ID,
-			"type":    m.Type,
-			"name":    m.Name,
-			"aliases": splitAliases(m.Aliases),
-			"cover":   config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
-			"asset":   config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
-			"singers": singers,
+			"id":        m.ID,
+			"type":      m.Type,
+			"name":      m.Name,
+			"aliases":   splitAliases(m.Aliases),
+			"cover":     config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+			"asset":     config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"singers":   singers,
+			"lyricists": lyricists,
 		}
 	}
 
@@ -586,6 +600,7 @@ func GetPublicMusicbill(c *gin.Context) {
 		musicIDs[i] = m.ID
 	}
 	singerMap := map[string][]gin.H{}
+	lyricistMap := map[string][]gin.H{}
 	if len(musicIDs) > 0 {
 		singers, _ := store.GetSingersInMusicIDs(musicIDs)
 		for _, s := range singers {
@@ -593,6 +608,14 @@ func GetPublicMusicbill(c *gin.Context) {
 				"id":      s.ID,
 				"name":    s.Name,
 				"aliases": splitAliases(s.Aliases),
+			})
+		}
+		lyricists, _ := store.GetLyricistsInMusicIDs(musicIDs)
+		for _, artist := range lyricists {
+			lyricistMap[artist.MusicID] = append(lyricistMap[artist.MusicID], gin.H{
+				"id":      artist.ID,
+				"name":    artist.Name,
+				"aliases": splitAliases(artist.Aliases),
 			})
 		}
 	}
@@ -603,14 +626,19 @@ func GetPublicMusicbill(c *gin.Context) {
 		if singers == nil {
 			singers = []gin.H{}
 		}
+		lyricists := lyricistMap[m.ID]
+		if lyricists == nil {
+			lyricists = []gin.H{}
+		}
 		musicItems[i] = gin.H{
-			"id":      m.ID,
-			"type":    m.Type,
-			"name":    m.Name,
-			"aliases": splitAliases(m.Aliases),
-			"cover":   config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
-			"asset":   config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
-			"singers": singers,
+			"id":        m.ID,
+			"type":      m.Type,
+			"name":      m.Name,
+			"aliases":   splitAliases(m.Aliases),
+			"cover":     config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+			"asset":     config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"singers":   singers,
+			"lyricists": lyricists,
 		}
 	}
 

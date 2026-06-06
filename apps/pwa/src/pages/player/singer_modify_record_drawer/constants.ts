@@ -1,4 +1,4 @@
-import getSingerModifyRecordList from '@/server/api/get_singer_modify_record_list';
+import getArtistModifyRecordList from '@/server/api/get_artist_modify_record_list';
 
 export interface Singer {
   id: string;
@@ -6,4 +6,6 @@ export interface Singer {
   name: string;
 }
 
-export type ModifyRecord = AsyncReturnType<typeof getSingerModifyRecordList>[0];
+export type Artist = Singer;
+
+export type ModifyRecord = AsyncReturnType<typeof getArtistModifyRecordList>[0];

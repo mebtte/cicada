@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SINGER_MODIFY_RECORD_TTL } from '@/constants/singer';
+import { ARTIST_MODIFY_RECORD_TTL } from '@/constants/artist';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 
@@ -15,8 +15,8 @@ function Hint() {
   return (
     <Style>
       {t(
-        'save_time_of_singer_modify_record_instruction',
-        (SINGER_MODIFY_RECORD_TTL / (1000 * 60 * 60 * 24)).toString(),
+        'save_time_of_artist_modify_record_instruction',
+        (ARTIST_MODIFY_RECORD_TTL / (1000 * 60 * 60 * 24)).toString(),
       )}
     </Style>
   );

@@ -23,6 +23,11 @@ type Response = {
       name: string;
       aliases: string[];
     }[];
+    lyricists: {
+      id: string;
+      name: string;
+      aliases: string[];
+    }[];
   }[];
 
   collected: boolean;
@@ -45,6 +50,7 @@ async function getPublicMusicbill(id: string) {
       ...m,
       cover: prefixServerOrigin(m.cover),
       asset: prefixServerOrigin(m.asset),
+      lyricists: m.lyricists ?? [],
     })),
     user: {
       ...musicbill.user,

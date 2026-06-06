@@ -49,10 +49,10 @@ func TestGetUser(t *testing.T) {
 		t.Fatalf("insert viewer: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?)`,
-		"singer-1", "Singer", joinAliases([]string{"Singer Alias"}), "user-1", now,
+		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?)`,
+		"artist-1", "Singer", joinAliases([]string{"Singer Alias"}), "user-1", now,
 	); err != nil {
-		t.Fatalf("insert singer: %v", err)
+		t.Fatalf("insert artist: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,aliases,cover,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?,?,?)`,
@@ -60,7 +60,7 @@ func TestGetUser(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-1", []string{"singer-1"}); err != nil {
+	if err := store.LinkMusicSingers("music-1", []string{"artist-1"}); err != nil {
 		t.Fatalf("link music singers: %v", err)
 	}
 	if _, err := store.DB().Exec(

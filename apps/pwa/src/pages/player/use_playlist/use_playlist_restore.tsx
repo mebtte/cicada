@@ -129,6 +129,14 @@ const Restore = styled.div`
   }
 `;
 
+const normalizeStoredPlaylist = (
+  playlist: MusicWithSingerAliases[],
+): MusicWithSingerAliases[] =>
+  playlist.map((music) => ({
+    ...music,
+    lyricists: music.lyricists ?? [],
+  }));
+
 function usePlaylistRestore(playlist: PlaylistMusic[]) {
   useEffect(
     () =>
@@ -156,10 +164,11 @@ function usePlaylistRestore(playlist: PlaylistMusic[]) {
       .getItem(Key.PLAYLIST)
       .then((cachedPlaylist) => {
         if (cachedPlaylist && cachedPlaylist.length > 0) {
+          const playlist = normalizeStoredPlaylist(cachedPlaylist);
           noticeId = notice.info(
             <RestoreNotice
               getNoticeId={() => noticeId!}
-              playlist={cachedPlaylist}
+              playlist={playlist}
             />,
             { duration: 0, closable: false, showTypeIcon: false },
           );

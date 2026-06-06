@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
-import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
 import { SingerDetail } from '../constants';
 import Singer from './singer';
@@ -27,10 +26,20 @@ const Style = styled.div`
   }
 `;
 
-function SingerList({ singerList }: { singerList: SingerDetail[] }) {
+function SingerList({
+  label,
+  singerList,
+}: {
+  label: string;
+  singerList: SingerDetail[];
+}) {
+  if (!singerList.length) {
+    return null;
+  }
+
   return (
     <Style>
-      <div className="label">{t('singer')}</div>
+      <div className="label">{label}</div>
       <div className="list">
         {singerList.map((singer) => (
           <Singer key={singer.id} singer={singer} />

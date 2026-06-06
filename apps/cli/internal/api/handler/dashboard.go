@@ -28,11 +28,11 @@ func AdminGetDashboard(c *gin.Context) {
 			"created7d":         summary.Music.Created7d,
 			"withoutCoverCount": summary.Music.WithoutCoverCount,
 		},
-		"singer": gin.H{
-			"total":             summary.Singer.Total,
-			"created7d":         summary.Singer.Created7d,
-			"photoCount":        summary.Singer.PhotoCount,
-			"withoutPhotoCount": summary.Singer.WithoutPhotoCount,
+		"artist": gin.H{
+			"total":             summary.Artist.Total,
+			"created7d":         summary.Artist.Created7d,
+			"photoCount":        summary.Artist.PhotoCount,
+			"withoutPhotoCount": summary.Artist.WithoutPhotoCount,
 		},
 		"user": gin.H{
 			"total":             summary.User.Total,

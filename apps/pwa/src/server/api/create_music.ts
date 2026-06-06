@@ -7,19 +7,27 @@ import { Method, request } from '..';
  */
 function createMusic({
   name,
-  singerIds,
+  singerIds = [],
+  lyricistIds = [],
   type,
   asset,
 }: {
   name: string;
-  singerIds: string[];
+  singerIds?: string[];
+  lyricistIds?: string[];
   type: MusicType;
   asset: string;
 }) {
   return request<string>({
     method: Method.POST,
     path: '/api/admin/music',
-    body: { name, singerIds: singerIds.join(','), type, asset },
+    body: {
+      name,
+      singerIds: singerIds.join(','),
+      lyricistIds: lyricistIds.join(','),
+      type,
+      asset,
+    },
     withToken: true,
   });
 }

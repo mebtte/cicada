@@ -11,7 +11,7 @@ export enum Query {
   KEYWORD = "keyword",
   SEARCH_TAB = "search_tab",
   MUSIC_DRAWER_ID = "music_drawer_id",
-  SINGER_DRAWER_ID = "singer_drawer_id",
+  ARTIST_DRAWER_ID = "artist_drawer_id",
 }
 
 export enum CommonQuery {

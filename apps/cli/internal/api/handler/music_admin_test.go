@@ -42,9 +42,9 @@ func TestAdminGetMusicList(t *testing.T) {
 		t.Fatalf("insert users: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES
-			('singer-alpha','Alpha Singer',?, 'user-1', ?),
-			('singer-beta','Beta Singer', ?, 'user-2', ?)`,
+		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES
+			('artist-alpha','Alpha Singer',?, 'user-1', ?),
+			('artist-beta','Beta Singer', ?, 'user-2', ?)`,
 		joinAliases([]string{"Voice Alias"}), now-200,
 		joinAliases([]string{"Shared Singer Alias"}), now-100,
 	); err != nil {
@@ -61,13 +61,13 @@ func TestAdminGetMusicList(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-alpha", []string{"singer-alpha"}); err != nil {
+	if err := store.LinkMusicSingers("music-alpha", []string{"artist-alpha"}); err != nil {
 		t.Fatalf("link alpha singers: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-beta", []string{"singer-beta"}); err != nil {
+	if err := store.LinkMusicSingers("music-beta", []string{"artist-beta"}); err != nil {
 		t.Fatalf("link beta singers: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-gamma", []string{"singer-beta"}); err != nil {
+	if err := store.LinkMusicSingers("music-gamma", []string{"artist-beta"}); err != nil {
 		t.Fatalf("link gamma singers: %v", err)
 	}
 
@@ -143,7 +143,7 @@ func TestAdminGetMusicList(t *testing.T) {
 		}
 	})
 
-	t.Run("filters by id name alias singer and all", func(t *testing.T) {
+	t.Run("filters by id name alias artist and all", func(t *testing.T) {
 		cases := []struct {
 			query string
 			want  string
@@ -151,7 +151,7 @@ func TestAdminGetMusicList(t *testing.T) {
 			{"page=1&pageSize=10&filterKey=id&keyword=alpha", "music-alpha"},
 			{"page=1&pageSize=10&filterKey=name&keyword=Beta", "music-beta"},
 			{"page=1&pageSize=10&filterKey=alias&keyword=Third", "music-gamma"},
-			{"page=1&pageSize=10&filterKey=singer&keyword=Voice", "music-alpha"},
+			{"page=1&pageSize=10&filterKey=artist&keyword=Voice", "music-alpha"},
 			{"page=1&pageSize=10&filterKey=all&keyword=hidden+token", "music-alpha"},
 			{"page=1&pageSize=10&filterKey=all&keyword=Alpha+Song", "music-alpha"},
 		}

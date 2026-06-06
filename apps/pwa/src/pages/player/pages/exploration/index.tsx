@@ -27,7 +27,7 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import Cover from './cover';
 import MusicInfo from './music_info';
-import SingerInfo from './singer_info';
+import ArtistInfo from './artist_info';
 import PublicMusicbillInfo from './public_musicbill_info';
 import SearchInput from '../search/input';
 import SearchContent from '../search/content';
@@ -40,17 +40,17 @@ import {
 import { Microphone, MusicNote, QueueMusic as QueueMusicIcon } from '@/components/icon';
 
 const ITEM_WIDTH = 164;
-const SINGER_ITEM_WIDTH = 240;
+const ARTIST_ITEM_WIDTH = 240;
 const MOBILE_ITEM_WIDTH = 132;
-const MOBILE_SINGER_ITEM_WIDTH = 200;
+const MOBILE_ARTIST_ITEM_WIDTH = 200;
 const GAP = 16;
 const MOBILE_BREAKPOINT = 720;
 const SEARCH_TOOLBAR_CONTENT_INSET = '12px';
 const ACCENT = {
   MUSIC: 'rgb(88 204 2)',
   MUSIC_SHADOW: 'rgb(88 167 0)',
-  SINGER: 'rgb(28 176 246)',
-  SINGER_SHADOW: 'rgb(24 132 183)',
+  ARTIST: 'rgb(28 176 246)',
+  ARTIST_SHADOW: 'rgb(24 132 183)',
   MUSICBILL: 'rgb(255 184 28)',
   MUSICBILL_SHADOW: 'rgb(214 130 0)',
 };
@@ -265,8 +265,8 @@ const SectionContent = styled.div<{
 
 const openMusicDrawer = (id: string) =>
   playerEventemitter.emit(PlayerEventType.OPEN_MUSIC_DRAWER, { id });
-const openSingerDrawer = (id: string) =>
-  playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, { id });
+const openArtistDrawer = (id: string) =>
+  playerEventemitter.emit(PlayerEventType.OPEN_ARTIST_DRAWER, { id });
 const openMusicbillDrawer = (id: string) =>
   playerEventemitter.emit(PlayerEventType.OPEN_MUSICBILL_DRAWER, { id });
 
@@ -378,7 +378,7 @@ function RecommendationPanel() {
     enter: { opacity: 1 },
     leave: { opacity: 0 },
   });
-  // 由于音乐卡片宽度固定 (record/cassette = ITEM_WIDTH, profile = SINGER_ITEM_WIDTH),
+  // 由于音乐卡片宽度固定 (record/cassette = ITEM_WIDTH, profile = ARTIST_ITEM_WIDTH),
   // 请求图片时也用该宽度乘 devicePixelRatio 计算最终尺寸。
   const imageSize = Math.ceil(ITEM_WIDTH * window.devicePixelRatio);
   return (
@@ -400,10 +400,10 @@ function RecommendationPanel() {
         }
         const hasData =
           d.value.musicList.length ||
-          d.value.singerList.length ||
+          d.value.artistList.length ||
           d.value.publicMusicbillList.length ||
           d.value.recentMusicList.length ||
-          d.value.recentSingerList.length ||
+          d.value.recentArtistList.length ||
           d.value.recentPublicMusicbillList.length;
         // 把单个卡片的渲染封装出来, 让 "推荐" 与 "最近添加" 复用相同的视觉单元。
         const renderMusicCard = (
@@ -419,21 +419,21 @@ function RecommendationPanel() {
             info={<MusicInfo music={music} />}
           />
         );
-        const renderSingerCard = (
-          singer: (typeof d.value.singerList)[number],
+        const renderArtistCard = (
+          artist: (typeof d.value.artistList)[number],
         ) => {
-          const avatar = singer.photos[0]?.asset;
+          const avatar = artist.photos[0]?.asset;
           return (
             <Cover
-              key={singer.id}
-              accent={ACCENT.SINGER}
-              shadow={ACCENT.SINGER_SHADOW}
+              key={artist.id}
+              accent={ACCENT.ARTIST}
+              shadow={ACCENT.ARTIST_SHADOW}
               variant="profile"
               src={
                 avatar ? getResizedImage({ url: avatar, size: imageSize }) : ''
               }
-              onClick={() => openSingerDrawer(singer.id)}
-              info={<SingerInfo singer={singer} />}
+              onClick={() => openArtistDrawer(artist.id)}
+              info={<ArtistInfo artist={artist} />}
             />
           );
         };
@@ -466,14 +466,14 @@ function RecommendationPanel() {
                   renderItem={renderMusicCard}
                 />
                 <ExplorationSection
-                  title={t('recommended_singer')}
-                  items={d.value.singerList}
+                  title={t('recommended_artist')}
+                  items={d.value.artistList}
                   icon={<Microphone />}
-                  accent={ACCENT.SINGER}
-                  shadow={ACCENT.SINGER_SHADOW}
-                  itemWidth={SINGER_ITEM_WIDTH}
-                  mobileItemWidth={MOBILE_SINGER_ITEM_WIDTH}
-                  renderItem={renderSingerCard}
+                  accent={ACCENT.ARTIST}
+                  shadow={ACCENT.ARTIST_SHADOW}
+                  itemWidth={ARTIST_ITEM_WIDTH}
+                  mobileItemWidth={MOBILE_ARTIST_ITEM_WIDTH}
+                  renderItem={renderArtistCard}
                 />
                 <ExplorationSection
                   title={t('recommended_public_musicbill')}
@@ -492,14 +492,14 @@ function RecommendationPanel() {
                   renderItem={renderMusicCard}
                 />
                 <ExplorationSection
-                  title={t('recent_singer')}
-                  items={d.value.recentSingerList}
+                  title={t('recent_artist')}
+                  items={d.value.recentArtistList}
                   icon={<Microphone />}
-                  accent={ACCENT.SINGER}
-                  shadow={ACCENT.SINGER_SHADOW}
-                  itemWidth={SINGER_ITEM_WIDTH}
-                  mobileItemWidth={MOBILE_SINGER_ITEM_WIDTH}
-                  renderItem={renderSingerCard}
+                  accent={ACCENT.ARTIST}
+                  shadow={ACCENT.ARTIST_SHADOW}
+                  itemWidth={ARTIST_ITEM_WIDTH}
+                  mobileItemWidth={MOBILE_ARTIST_ITEM_WIDTH}
+                  renderItem={renderArtistCard}
                 />
                 <ExplorationSection
                   title={t('recent_public_musicbill')}

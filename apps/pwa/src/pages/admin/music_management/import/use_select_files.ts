@@ -11,10 +11,10 @@ import formatBytes from '@/utils/format_bytes';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
 import dialog from '@/utils/dialog';
-import searchSingerRequest from '@/server/api/search_singer';
+import searchArtistRequest from '@/server/api/search_artist';
 import { parseMusicFile } from './use_parse_metadata';
 
-type SearchSingerItem = Awaited<ReturnType<typeof searchSingerRequest>>['singerList'][number];
+type SearchArtistItem = Awaited<ReturnType<typeof searchArtistRequest>>['artistList'][number];
 
 const artistSplitRegexp =
   /\s*(?:,|，|、|;|；|\+|＆|&|\/|／|×|\bx\b|\band\b|\bfeat\.?\b|\bft\.?\b|\bfeaturing\b)\s*/i;
@@ -34,7 +34,7 @@ function splitArtistNames(artist?: string) {
   );
 }
 
-function singerMatchesName(singer: SearchSingerItem, name: string) {
+function singerMatchesName(singer: SearchArtistItem, name: string) {
   const normalizedName = normalizeArtistName(name);
   return (
     normalizeArtistName(singer.name) === normalizedName ||
@@ -51,13 +51,13 @@ function findExactSinger(name: string): Promise<ImportTaskSinger | undefined> {
   const cached = singerCache.get(normalizedName);
   if (cached) return cached;
 
-  const request = searchSingerRequest({
+  const request = searchArtistRequest({
     keyword: name,
     page: 1,
     pageSize: 20,
     requestMinimalDuration: 0,
-  }).then(({ singerList }) => {
-    const matched = singerList.find((singer) => singerMatchesName(singer, name));
+  }).then(({ artistList }) => {
+    const matched = artistList.find((singer) => singerMatchesName(singer, name));
     return matched ? { id: matched.id, name: matched.name } : undefined;
   });
   singerCache.set(normalizedName, request);
