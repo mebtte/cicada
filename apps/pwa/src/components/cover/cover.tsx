@@ -50,35 +50,55 @@ const Img = styled(animated.img)`
   will-change: opacity, transform, filter;
 `;
 const preventDefault = (e) => e.preventDefault();
+type DisplayImage = {
+  src: string;
+  placeholder: boolean;
+};
+
+const displayImageKey = (image: DisplayImage) =>
+  `${image.placeholder ? 'placeholder' : 'image'}:${image.src}`;
 
 function Cover({
   size = ComponentSize.NORMAL,
   shape = Shape.ROUNDED,
   src,
+  placeholderSrc,
   style,
   ...props
 }: {
   src: string;
+  placeholderSrc?: string;
   size?: number | string;
   shape?: Shape;
 } & ImgHTMLAttributes<HTMLDivElement>) {
   const ref = useRef<HTMLDivElement>(null);
-  const [currentSrc, setCurrentSrc] = useState(() =>
-    src && isImageLoaded(src) ? src : DefaultCover,
-  );
+  const [currentImage, setCurrentImage] = useState<DisplayImage>(() => {
+    if (src && isImageLoaded(src)) {
+      return { src, placeholder: false };
+    }
+    return {
+      src: placeholderSrc || DefaultCover,
+      placeholder: !!placeholderSrc,
+    };
+  });
 
   useLayoutEffect(() => {
+    const fallbackSrc = placeholderSrc || DefaultCover;
+    const fallbackImage = {
+      src: fallbackSrc,
+      placeholder: !!placeholderSrc,
+    };
     if (!src) {
-      setCurrentSrc(DefaultCover);
+      setCurrentImage(fallbackImage);
       return;
     }
 
     if (isImageLoaded(src)) {
-      setCurrentSrc(src);
+      setCurrentImage({ src, placeholder: false });
       return;
     }
 
-    setCurrentSrc(DefaultCover);
+    setCurrentImage(fallbackImage);
 
     let active = true;
     const target = ref.current;
@@ -86,7 +106,7 @@ function Cover({
       loadImage(src)
         .then(() => {
           if (active) {
-            setCurrentSrc(src);
+            setCurrentImage({ src, placeholder: false });
           }
         })
         .catch((error) =>
@@ -97,24 +117,31 @@ function Cover({
       active = false;
       unobserve();
     };
-  }, [src]);
+  }, [placeholderSrc, src]);
 
-  const transitions = useTransition(currentSrc, {
-    from: {
+  const transitions = useTransition(currentImage, {
+    keys: displayImageKey,
+    from: (image) => ({
       opacity: 0,
-      transform: 'scale(1.035)',
-      filter: 'brightness(1.08) saturate(1.06)',
-    },
-    enter: {
+      transform: image.placeholder ? 'scale(1.08)' : 'scale(1.035)',
+      filter: image.placeholder
+        ? 'blur(8px) brightness(1.04) saturate(1.08)'
+        : 'brightness(1.08) saturate(1.06)',
+    }),
+    enter: (image) => ({
       opacity: 1,
-      transform: 'scale(1)',
-      filter: 'brightness(1) saturate(1)',
-    },
-    leave: {
+      transform: image.placeholder ? 'scale(1.08)' : 'scale(1)',
+      filter: image.placeholder
+        ? 'blur(8px) brightness(1.04) saturate(1.08)'
+        : 'brightness(1) saturate(1)',
+    }),
+    leave: (image) => ({
       opacity: 0,
-      transform: 'scale(1.02)',
-      filter: 'brightness(0.98) saturate(0.96)',
-    },
+      transform: image.placeholder ? 'scale(1.06)' : 'scale(1.02)',
+      filter: image.placeholder
+        ? 'blur(6px) brightness(0.98) saturate(1.02)'
+        : 'brightness(0.98) saturate(0.96)',
+    }),
     config: {
       duration: 260,
       easing: easeOutCubic,
@@ -131,10 +158,10 @@ function Cover({
       ref={ref}
       {...props}
     >
-      {transitions((transitionStyle, imageSrc) => (
+      {transitions((transitionStyle, image) => (
         <Img
           style={transitionStyle}
-          src={imageSrc}
+          src={image.src}
           crossOrigin="anonymous"
           onDragStart={preventDefault}
         />

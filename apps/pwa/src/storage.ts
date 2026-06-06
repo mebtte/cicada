@@ -15,6 +15,7 @@ export interface OfflineMusic {
   name: string;
   aliases: string[];
   cover: string;
+  coverThumbnail?: string;
   singers: { id: string; name: string; aliases: string[] }[];
   lyricists: { id: string; name: string; aliases: string[] }[];
   cachedAt: number;

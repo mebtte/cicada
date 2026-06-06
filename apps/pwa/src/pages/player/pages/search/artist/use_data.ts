@@ -45,6 +45,7 @@ export default () => {
           artistList: d.artistList.map((artist) => ({
             ...artist,
             avatar: artist.photos[0]?.asset || DefaultCover,
+            avatarThumbnail: artist.photos[0]?.thumbnail,
           })),
         },
       });

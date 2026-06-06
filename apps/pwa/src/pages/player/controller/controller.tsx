@@ -131,6 +131,7 @@ function Controller() {
               ? getResizedImage({ url: queueMusic.cover, size: 200 })
               : ''
           }
+          placeholderCover={queueMusic?.coverThumbnail}
           onClick={queueMusic ? toggleLyric : undefined}
           mask={!!queueMusic}
         />

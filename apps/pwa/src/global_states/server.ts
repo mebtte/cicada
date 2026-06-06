@@ -75,9 +75,12 @@ function refreshSelectedServerMetadata() {
 refreshSelectedServerMetadata();
 window.setInterval(refreshSelectedServerMetadata, 1000 * 15);
 
+const EMBEDDED_OR_ABSOLUTE_URL = /^(data:|blob:|https?:\/\/|\/\/)/;
+
 export function prefixServerOrigin(path: string) {
-  if (path) {
-    return `${getSelectedServer(useServer.getState())?.origin}${path}`;
+  if (path && !EMBEDDED_OR_ABSOLUTE_URL.test(path)) {
+    const origin = getSelectedServer(useServer.getState())?.origin;
+    return origin ? `${origin}${path}` : path;
   }
   return path;
 }

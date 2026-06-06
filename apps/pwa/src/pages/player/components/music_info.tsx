@@ -51,12 +51,14 @@ const Style = styled.div`
 function MusicInfo({
   musicId,
   musicCover,
+  musicCoverThumbnail,
   musicName,
   singers,
   ...props
 }: {
   musicId: string;
   musicCover: string;
+  musicCoverThumbnail?: string;
   musicName: string;
   singers: { id: string; name: string }[];
 } & HtmlHTMLAttributes<HTMLDivElement>) {
@@ -67,7 +69,7 @@ function MusicInfo({
         eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, { id: musicId })
       }
     >
-      <Cover src={musicCover} size={40} />
+      <Cover src={musicCover} placeholderSrc={musicCoverThumbnail} size={40} />
       <div className="info">
         <div className="name">{musicName}</div>
         <div className="singers ">

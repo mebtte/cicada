@@ -4,6 +4,7 @@ import { request } from '..';
 type ArtistPhoto = {
   id: string;
   asset: string;
+  thumbnail?: string;
   description: string;
 };
 
@@ -51,6 +52,7 @@ async function searchArtist({
       photos: (artist.photos ?? []).map((photo) => ({
         ...photo,
         asset: prefixServerOrigin(photo.asset),
+        thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
       })),
     })),
   };

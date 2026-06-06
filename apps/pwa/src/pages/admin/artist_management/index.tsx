@@ -344,7 +344,7 @@ const PhotoButton = styled.button`
   }
 `;
 
-const Photo = styled.img<{ $loaded: boolean }>`
+const Photo = styled.img<{ $placeholder: boolean; $visible: boolean }>`
   position: absolute;
   inset: 0;
   width: 100%;
@@ -352,8 +352,16 @@ const Photo = styled.img<{ $loaded: boolean }>`
   object-fit: cover;
   display: block;
   /* 加载完成前用透明遮住, 露出按钮白底, 避免快速滚动时露出 <img> 的浏览器原生裂图 */
-  opacity: ${({ $loaded }) => ($loaded ? 1 : 0)};
-  transition: opacity 120ms ease-out;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: ${({ $placeholder }) => ($placeholder ? 'scale(1.08)' : 'scale(1)')};
+  filter: ${({ $placeholder }) =>
+    $placeholder
+      ? 'blur(8px) brightness(1.04) saturate(1.08)'
+      : 'brightness(1) saturate(1)'};
+  transition:
+    opacity 120ms ease-out,
+    transform 180ms ease-out,
+    filter 180ms ease-out;
 `;
 
 const Muted = styled.span`
@@ -527,18 +535,20 @@ const formatCreateUser = (artist: Artist) => {
 
 function LazyPhoto({
   src,
+  placeholderSrc,
   alt,
   ...props
 }: {
   src: string;
+  placeholderSrc?: string;
   alt: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>) {
   const ref = useRef<HTMLImageElement>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [realLoaded, setRealLoaded] = useState(false);
 
   useEffect(() => {
     // src 变化时重置, 防止旧照片/旧加载状态泄漏到新照片
-    setLoaded(false);
+    setRealLoaded(false);
     const image = ref.current;
     if (!image || !src) return;
 
@@ -555,10 +565,17 @@ function LazyPhoto({
     <PhotoButton type="button" {...props}>
       <Photo
         ref={ref}
+        src={placeholderSrc}
         alt={alt}
         decoding="async"
-        $loaded={loaded}
-        onLoad={() => setLoaded(true)}
+        $placeholder={!!placeholderSrc && !realLoaded}
+        $visible={!!placeholderSrc || realLoaded}
+        onLoad={() => {
+          const image = ref.current;
+          if (image && image.currentSrc === src) {
+            setRealLoaded(true);
+          }
+        }}
       />
     </PhotoButton>
   );
@@ -867,6 +884,7 @@ function ArtistManagement() {
                                   url: photo.asset,
                                   size: PHOTO_SIZE * 2,
                                 })}
+                                placeholderSrc={photo.thumbnail}
                                 alt={photo.description || artist.name}
                                 title={photo.description || artist.name}
                                 onClick={() =>

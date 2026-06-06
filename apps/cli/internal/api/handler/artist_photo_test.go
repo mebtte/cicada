@@ -57,14 +57,12 @@ func setupSingerPhotoTest(t *testing.T) (admin *store.User, singerID string) {
 		t.Fatalf("insert artist: %v", err)
 	}
 
-	// A real asset file the handlers can stat.
+	// A real asset file the handlers can stat and thumbnail.
 	assetDir, assetPath := config.AssetPath(config.AssetTypeArtistPhoto, "pic.jpg")
 	if err := os.MkdirAll(assetDir, 0755); err != nil {
 		t.Fatalf("mkdir artist photo dir: %v", err)
 	}
-	if err := os.WriteFile(assetPath, []byte("fake-jpeg"), 0644); err != nil {
-		t.Fatalf("seed asset: %v", err)
-	}
+	writeTestJPEG(t, assetPath)
 
 	return &store.User{ID: "user-admin", Admin: 1}, "artist-1"
 }
@@ -122,6 +120,9 @@ func TestAdminCreateArtistPhoto(t *testing.T) {
 		}
 		if photos[0].Position != 0 || photos[0].Description != "Live" || photos[0].Asset != "pic.jpg" {
 			t.Fatalf("unexpected photo row: %+v", photos[0])
+		}
+		if !strings.HasPrefix(photos[0].Thumbnail, "data:image/jpeg;base64,") {
+			t.Fatalf("expected thumbnail data URL, got %q", photos[0].Thumbnail)
 		}
 	})
 

@@ -415,6 +415,7 @@ function RecommendationPanel() {
             shadow={ACCENT.MUSIC_SHADOW}
             variant="record"
             src={getResizedImage({ url: music.cover, size: imageSize })}
+            placeholderSrc={music.coverThumbnail}
             onClick={() => openMusicDrawer(music.id)}
             info={<MusicInfo music={music} />}
           />
@@ -423,6 +424,7 @@ function RecommendationPanel() {
           artist: (typeof d.value.artistList)[number],
         ) => {
           const avatar = artist.photos[0]?.asset;
+          const avatarThumbnail = artist.photos[0]?.thumbnail;
           return (
             <Cover
               key={artist.id}
@@ -432,6 +434,7 @@ function RecommendationPanel() {
               src={
                 avatar ? getResizedImage({ url: avatar, size: imageSize }) : ''
               }
+              placeholderSrc={avatarThumbnail}
               onClick={() => openArtistDrawer(artist.id)}
               info={<ArtistInfo artist={artist} />}
             />

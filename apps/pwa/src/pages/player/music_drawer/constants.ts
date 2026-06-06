@@ -13,6 +13,7 @@ export interface CreateUser {
 export interface SingerPhoto {
   id: string;
   asset: string;
+  thumbnail?: string;
   description: string;
 }
 

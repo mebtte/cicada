@@ -246,6 +246,7 @@ export default (
         name: sessionMusic.name,
         aliases: sessionMusic.aliases,
         cover: sessionMusic.cover,
+        coverThumbnail: sessionMusic.coverThumbnail,
         singers: sessionMusic.singers.map((s) => ({
           id: s.id,
           name: s.name,

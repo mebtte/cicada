@@ -10,6 +10,7 @@ type Response = {
     name: string;
     aliases: string[];
     cover: string;
+    coverThumbnail?: string;
     asset: string;
     singers: {
       id: string;
@@ -58,6 +59,7 @@ async function searchMusicByLyric({
       ...m,
       asset: prefixServerOrigin(m.asset),
       cover: prefixServerOrigin(m.cover),
+      coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
       lyricists: m.lyricists ?? [],
       lyrics: m.lyrics ?? [],
     })),

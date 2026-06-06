@@ -37,12 +37,13 @@ func AdminCreateArtistPhoto(c *gin.Context) {
 		api.Fail(c, apperr.AssetNotExisted)
 		return
 	}
-	id, err := store.CreateArtistPhoto(body.ArtistID, body.Asset, body.Description, u.ID)
+	thumbnail := assetThumbnailDataURL(body.Asset, config.AssetTypeArtistPhoto)
+	id, err := store.CreateArtistPhotoWithThumbnail(body.ArtistID, body.Asset, thumbnail, body.Description, u.ID)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
-	api.OK(c, gin.H{"id": id})
+	api.OK(c, gin.H{"id": id, "thumbnail": thumbnail})
 }
 
 type updateArtistPhotoBody struct {

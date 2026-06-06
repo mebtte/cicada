@@ -6,6 +6,7 @@ import { request } from '..';
 interface SingerPhoto {
   id: string;
   asset: string;
+  thumbnail?: string;
   description: string;
 }
 
@@ -19,6 +20,7 @@ interface Singer {
 interface Music {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   singers: Singer[];
   lyricists: Singer[];
@@ -61,6 +63,7 @@ const normalizePhotos = (photos: SingerPhoto[] = []) =>
   photos.map((p) => ({
     ...p,
     asset: prefixServerOrigin(p.asset),
+    thumbnail: prefixServerOrigin(p.thumbnail ?? ''),
   }));
 
 /**
@@ -81,6 +84,7 @@ async function getMusic({
     requestMinimalDuration,
   });
   const prefixedCover = prefixServerOrigin(music.cover);
+  const prefixedCoverThumbnail = prefixServerOrigin(music.coverThumbnail ?? '');
   const prefixedAsset = prefixServerOrigin(music.asset);
   upsertOfflineMusicMetadata({
     id: music.id,
@@ -89,6 +93,7 @@ async function getMusic({
     name: music.name,
     aliases: music.aliases,
     cover: prefixedCover,
+    coverThumbnail: prefixedCoverThumbnail,
     singers: (music.singers ?? []).map((s) => ({
       id: s.id,
       name: s.name,
@@ -103,6 +108,7 @@ async function getMusic({
   return {
     ...music,
     cover: prefixedCover,
+    coverThumbnail: prefixedCoverThumbnail,
     asset: prefixedAsset,
     singers: (music.singers ?? []).map((s) => {
       const photos = normalizePhotos(s.photos);
@@ -125,6 +131,7 @@ async function getMusic({
     forkList: music.forkList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),
+      coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
       singers: (m.singers ?? []).map((s) => ({
         ...s,
         photos: normalizePhotos(s.photos),
@@ -137,6 +144,7 @@ async function getMusic({
     forkFromList: music.forkFromList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),
+      coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
       singers: (m.singers ?? []).map((s) => ({
         ...s,
         photos: normalizePhotos(s.photos),

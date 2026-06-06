@@ -381,7 +381,7 @@ const CoverButton = styled.button`
   }
 `;
 
-const Cover = styled.img<{ $loaded: boolean }>`
+const Cover = styled.img<{ $placeholder: boolean; $visible: boolean }>`
   position: absolute;
   inset: 0;
   width: 100%;
@@ -389,8 +389,16 @@ const Cover = styled.img<{ $loaded: boolean }>`
   object-fit: cover;
   display: block;
   /* 加载完成前用透明遮住底层占位图标, 避免快速滚动时露出 <img> 的浏览器原生裂图 */
-  opacity: ${({ $loaded }) => ($loaded ? 1 : 0)};
-  transition: opacity 120ms ease-out;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: ${({ $placeholder }) => ($placeholder ? 'scale(1.08)' : 'scale(1)')};
+  filter: ${({ $placeholder }) =>
+    $placeholder
+      ? 'blur(8px) brightness(1.04) saturate(1.08)'
+      : 'brightness(1) saturate(1)'};
+  transition:
+    opacity 120ms ease-out,
+    transform 180ms ease-out,
+    filter 180ms ease-out;
 `;
 
 const Name = styled.div`
@@ -728,18 +736,20 @@ function MusicFileInfo({ music }: { music: MusicItem }) {
 
 function LazyCover({
   src,
+  placeholderSrc,
   alt,
   ...props
 }: {
   src: string;
+  placeholderSrc?: string;
   alt: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>) {
   const ref = useRef<HTMLImageElement>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [realLoaded, setRealLoaded] = useState(false);
 
   useEffect(() => {
     // src 变化时重置, 防止旧封面/旧加载状态泄漏到新封面
-    setLoaded(false);
+    setRealLoaded(false);
     const image = ref.current;
     if (!image) return;
 
@@ -758,10 +768,17 @@ function LazyCover({
       <MusicNote />
       <Cover
         ref={ref}
+        src={placeholderSrc}
         alt={alt}
         decoding="async"
-        $loaded={loaded}
-        onLoad={() => setLoaded(true)}
+        $placeholder={!!placeholderSrc && !realLoaded}
+        $visible={!!placeholderSrc || realLoaded}
+        onLoad={() => {
+          const image = ref.current;
+          if (image && image.currentSrc === src) {
+            setRealLoaded(true);
+          }
+        }}
       />
     </CoverButton>
   );
@@ -1105,6 +1122,7 @@ function MusicList({
                             url: music.cover,
                             size: COVER_SIZE * 2,
                           })}
+                          placeholderSrc={music.coverThumbnail}
                           alt={music.name}
                           title={music.name}
                           onClick={() =>

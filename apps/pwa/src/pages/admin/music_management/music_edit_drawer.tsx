@@ -96,6 +96,7 @@ interface Music {
   id: string;
   name: string;
   cover: string;
+  coverThumbnail?: string;
   asset: string;
   assetSize: number;
   assetDurationMs: number;
@@ -182,6 +183,7 @@ const CoverSection = styled.div`
 `;
 
 const CoverBox = styled.div`
+  position: relative;
   width: ${COVER_SIZE}px;
   height: ${COVER_SIZE}px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -196,7 +198,18 @@ const CoverBox = styled.div`
   color: ${CSSVariable.TEXT_COLOR_DISABLED};
   font-size: 22px;
 
+  > .thumbnail-placeholder {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.08);
+    filter: blur(8px) brightness(1.04) saturate(1.08);
+  }
+
   > img {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -1162,7 +1175,16 @@ function EditContent({
       <Body>
         <CoverSection>
           <CoverBox>
-            <img src={music.cover || DefaultCover} alt={music.name} />
+            {music.coverThumbnail ? (
+              <span
+                className="thumbnail-placeholder"
+                style={{ backgroundImage: `url("${music.coverThumbnail}")` }}
+              />
+            ) : null}
+            <img
+              src={music.cover || music.coverThumbnail || DefaultCover}
+              alt={music.name}
+            />
           </CoverBox>
           <CoverActions>
             <Button
@@ -1435,6 +1457,7 @@ function MusicEditDrawer({
           id: result.id,
           name: result.name,
           cover: result.cover,
+          coverThumbnail: result.coverThumbnail,
           asset: result.asset,
           assetSize: result.assetSize,
           assetDurationMs: result.assetDurationMs,

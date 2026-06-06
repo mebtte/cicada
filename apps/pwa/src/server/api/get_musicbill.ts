@@ -24,6 +24,7 @@ interface Response {
     name: string;
     aliases: string[];
     cover: string;
+    coverThumbnail?: string;
     asset: string;
     singers: {
       id: string;
@@ -64,6 +65,7 @@ async function getMusicbill(id: string) {
     musicList: musicbill.musicList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),
+      coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
       asset: prefixServerOrigin(m.asset),
       lyricists: m.lyricists ?? [],
     })),

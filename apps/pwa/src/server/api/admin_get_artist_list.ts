@@ -18,6 +18,7 @@ type Response = {
     photos: {
       id: string;
       asset: string;
+      thumbnail?: string;
       description: string;
     }[];
     musicCount: number;
@@ -62,6 +63,7 @@ async function adminGetArtistList({
       photos: artist.photos.map((photo) => ({
         ...photo,
         asset: prefixServerOrigin(photo.asset),
+        thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
       })),
     })),
   };

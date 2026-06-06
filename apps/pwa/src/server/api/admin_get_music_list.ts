@@ -29,6 +29,7 @@ type Response = {
     aliases: string[];
     searchKeywords: string;
     cover: string;
+    coverThumbnail?: string;
     asset: string;
     assetSize: number;
     assetDurationMs: number;
@@ -91,6 +92,7 @@ async function adminGetMusicList({
       ...music,
       searchKeywords: music.searchKeywords ?? '',
       cover: prefixServerOrigin(music.cover),
+      coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
       asset: prefixServerOrigin(music.asset),
       singers: music.singers ?? [],
       lyricists: music.lyricists ?? [],

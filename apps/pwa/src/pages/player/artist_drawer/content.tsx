@@ -225,6 +225,7 @@ function Detail({
               <Cover
                 className="header-cover-image"
                 src={artist.photos[0].asset}
+                placeholderSrc={artist.photos[0].thumbnail}
                 size="100%"
                 shape={Shape.ROUNDED}
               />

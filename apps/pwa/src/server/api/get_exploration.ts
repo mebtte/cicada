@@ -5,6 +5,7 @@ type MusicItem = {
   id: string;
   name: string;
   cover: string;
+  coverThumbnail?: string;
   singers: {
     id: string;
     name: string;
@@ -13,7 +14,7 @@ type MusicItem = {
 type ArtistItem = {
   id: string;
   name: string;
-  photos: { id: string; asset: string; description: string }[];
+  photos: { id: string; asset: string; thumbnail?: string; description: string }[];
 };
 type PublicMusicbillItem = {
   id: string;
@@ -33,12 +34,14 @@ type Response = {
 const normalizeMusic = (m: MusicItem) => ({
   ...m,
   cover: prefixServerOrigin(m.cover),
+  coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
 });
 const normalizeArtist = (artist: ArtistItem) => ({
   ...artist,
   photos: artist.photos.map((p) => ({
     ...p,
     asset: prefixServerOrigin(p.asset),
+    thumbnail: prefixServerOrigin(p.thumbnail ?? ''),
   })),
 });
 const normalizeMusicbill = (mb: PublicMusicbillItem) => ({

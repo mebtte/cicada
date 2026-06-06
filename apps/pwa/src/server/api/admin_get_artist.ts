@@ -9,6 +9,7 @@ interface Response {
   photos: {
     id: string;
     asset: string;
+    thumbnail?: string;
     description: string;
   }[];
   musicCount: number;
@@ -34,6 +35,7 @@ async function adminGetArtist(id: string): Promise<Response> {
     photos: (artist.photos ?? []).map((photo) => ({
       ...photo,
       asset: prefixServerOrigin(photo.asset),
+      thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
     })),
   };
 }

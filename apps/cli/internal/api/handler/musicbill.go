@@ -198,14 +198,15 @@ func GetMusicbill(c *gin.Context) {
 			lyricists = []gin.H{}
 		}
 		musicItems[i] = gin.H{
-			"id":        m.ID,
-			"type":      m.Type,
-			"name":      m.Name,
-			"aliases":   splitAliases(m.Aliases),
-			"cover":     config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
-			"asset":     config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
-			"singers":   singers,
-			"lyricists": lyricists,
+			"id":             m.ID,
+			"type":           m.Type,
+			"name":           m.Name,
+			"aliases":        splitAliases(m.Aliases),
+			"cover":          config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+			"coverThumbnail": m.CoverThumbnail,
+			"asset":          config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"singers":        singers,
+			"lyricists":      lyricists,
 		}
 	}
 
@@ -631,14 +632,15 @@ func GetPublicMusicbill(c *gin.Context) {
 			lyricists = []gin.H{}
 		}
 		musicItems[i] = gin.H{
-			"id":        m.ID,
-			"type":      m.Type,
-			"name":      m.Name,
-			"aliases":   splitAliases(m.Aliases),
-			"cover":     config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
-			"asset":     config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
-			"singers":   singers,
-			"lyricists": lyricists,
+			"id":             m.ID,
+			"type":           m.Type,
+			"name":           m.Name,
+			"aliases":        splitAliases(m.Aliases),
+			"cover":          config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+			"coverThumbnail": m.CoverThumbnail,
+			"asset":          config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
+			"singers":        singers,
+			"lyricists":      lyricists,
 		}
 	}
 

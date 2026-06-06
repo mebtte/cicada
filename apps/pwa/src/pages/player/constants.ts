@@ -67,6 +67,7 @@ export interface SingerWithAliases extends Singer {
 export interface Music {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   type: MusicType;
   aliases: string[];

@@ -31,6 +31,7 @@ func GetArtist(c *gin.Context) {
 		photoItems[i] = gin.H{
 			"id":          p.ID,
 			"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeArtistPhoto),
+			"thumbnail":   p.Thumbnail,
 			"description": p.Description,
 		}
 	}
@@ -165,6 +166,7 @@ func AdminGetArtist(c *gin.Context) {
 		photoItems[i] = gin.H{
 			"id":          p.ID,
 			"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeArtistPhoto),
+			"thumbnail":   p.Thumbnail,
 			"description": p.Description,
 		}
 	}
@@ -321,14 +323,15 @@ func artistMusicItems(musicList []store.Music) []gin.H {
 	musicItems := make([]gin.H, len(musicList))
 	for i, music := range musicList {
 		musicItems[i] = gin.H{
-			"id":        music.ID,
-			"type":      music.Type,
-			"name":      music.Name,
-			"aliases":   splitAliases(music.Aliases),
-			"cover":     config.AssetPublicURL(music.Cover, config.AssetTypeMusicCover),
-			"asset":     config.AssetPublicURL(music.Asset, config.AssetTypeMusic),
-			"singers":   artistItems(singerMap[music.ID]),
-			"lyricists": artistItems(lyricistMap[music.ID]),
+			"id":             music.ID,
+			"type":           music.Type,
+			"name":           music.Name,
+			"aliases":        splitAliases(music.Aliases),
+			"cover":          config.AssetPublicURL(music.Cover, config.AssetTypeMusicCover),
+			"coverThumbnail": music.CoverThumbnail,
+			"asset":          config.AssetPublicURL(music.Asset, config.AssetTypeMusic),
+			"singers":        artistItems(singerMap[music.ID]),
+			"lyricists":      artistItems(lyricistMap[music.ID]),
 		}
 	}
 	return musicItems

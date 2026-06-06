@@ -168,12 +168,14 @@ function Artist({
   artistId,
   artistName,
   artistAvatar,
+  artistAvatarThumbnail,
   artistAliases,
   musicCount,
 }: {
   artistId: string;
   artistName: string;
   artistAvatar: string;
+  artistAvatarThumbnail?: string;
   artistAliases?: string[];
   musicCount: number;
 }) {
@@ -195,6 +197,7 @@ function Artist({
           className="avatar"
           shape={Shape.ROUNDED}
           src={artistAvatar}
+          placeholderSrc={artistAvatarThumbnail}
           size="100%"
         />
       </div>

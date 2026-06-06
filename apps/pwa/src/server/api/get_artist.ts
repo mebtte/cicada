@@ -14,6 +14,7 @@ interface Music {
   name: string;
   aliases: string[];
   cover: string;
+  coverThumbnail?: string;
   asset: string;
   singers: ArtistInMusic[];
   lyricists: ArtistInMusic[];
@@ -26,6 +27,7 @@ interface Response {
   photos: {
     id: string;
     asset: string;
+    thumbnail?: string;
     description: string;
   }[];
   singerMusicList: Music[];
@@ -46,6 +48,7 @@ const normalizeMusic = (musicList: Music[] = []) =>
     ...music,
     aliases: music.aliases ?? [],
     cover: prefixServerOrigin(music.cover),
+    coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
     asset: prefixServerOrigin(music.asset),
     singers: music.singers ?? [],
     lyricists: music.lyricists ?? [],
@@ -65,6 +68,7 @@ async function getArtist(id: string): Promise<Response> {
     photos: photos.map((photo) => ({
       ...photo,
       asset: prefixServerOrigin(photo.asset),
+      thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
     })),
     singerMusicList: normalizeMusic(artist.singerMusicList),
     lyricistMusicList: normalizeMusic(artist.lyricistMusicList),

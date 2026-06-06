@@ -211,7 +211,12 @@ function Info({
           onClick={() => setSelectedId(photo.id)}
           aria-label={photo.description || artist.name}
         >
-          <Cover src={photo.asset} size="100%" shape={Shape.SQUARE} />
+          <Cover
+            src={photo.asset}
+            placeholderSrc={photo.thumbnail}
+            size="100%"
+            shape={Shape.SQUARE}
+          />
         </ThumbnailItem>
       ))}
     </ThumbnailRow>
@@ -229,7 +234,12 @@ function Info({
               setViewerPhoto({ src: selected.asset, alt: photoLabel })
             }
           >
-            <Cover src={selected.asset} size="100%" shape={Shape.SQUARE} />
+            <Cover
+              src={selected.asset}
+              placeholderSrc={selected.thumbnail}
+              size="100%"
+              shape={Shape.SQUARE}
+            />
           </button>
           <PhotoOverlay $hasThumbnails={showThumbnails}>
             {identity}

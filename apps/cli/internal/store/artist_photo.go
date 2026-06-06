@@ -13,16 +13,17 @@ type ArtistPhoto struct {
 	ID           string
 	ArtistID     string
 	Asset        string
+	Thumbnail    string
 	Position     int64
 	Description  string
 	AddUserID    string
 	AddTimestamp int64
 }
 
-const artistPhotoColumns = `id,artistId,asset,position,description,addUserId,addTimestamp`
+const artistPhotoColumns = `id,artistId,asset,thumbnail,position,description,addUserId,addTimestamp`
 
 func scanArtistPhoto(s scanner, p *ArtistPhoto) error {
-	return s.Scan(&p.ID, &p.ArtistID, &p.Asset, &p.Position, &p.Description, &p.AddUserID, &p.AddTimestamp)
+	return s.Scan(&p.ID, &p.ArtistID, &p.Asset, &p.Thumbnail, &p.Position, &p.Description, &p.AddUserID, &p.AddTimestamp)
 }
 
 type scanner interface {
@@ -87,6 +88,10 @@ func ListArtistPhotosByArtistIDs(artistIDs []string) ([]ArtistPhoto, error) {
 // the first photo of the artist) so the newest addition appears first in
 // ListArtistPhotos and becomes the artist avatar. Returns the new photo id.
 func CreateArtistPhoto(artistID, asset, description, addUserID string) (string, error) {
+	return CreateArtistPhotoWithThumbnail(artistID, asset, "", description, addUserID)
+}
+
+func CreateArtistPhotoWithThumbnail(artistID, asset, thumbnail, description, addUserID string) (string, error) {
 	var minPos sql.NullInt64
 	if err := DB().QueryRow(
 		`SELECT MIN(position) FROM artist_photo WHERE artistId=?`, artistID,
@@ -99,8 +104,8 @@ func CreateArtistPhoto(artistID, asset, description, addUserID string) (string, 
 	}
 	id := uuid.New().String()
 	_, err := DB().Exec(
-		`INSERT INTO artist_photo (`+artistPhotoColumns+`) VALUES (?,?,?,?,?,?,?)`,
-		id, artistID, asset, next, description, addUserID, time.Now().UnixMilli(),
+		`INSERT INTO artist_photo (`+artistPhotoColumns+`) VALUES (?,?,?,?,?,?,?,?)`,
+		id, artistID, asset, thumbnail, next, description, addUserID, time.Now().UnixMilli(),
 	)
 	if err != nil {
 		return "", err

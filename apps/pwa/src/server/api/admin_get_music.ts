@@ -5,6 +5,7 @@ import { request } from '..';
 interface SingerPhoto {
   id: string;
   asset: string;
+  thumbnail?: string;
   description: string;
 }
 
@@ -18,6 +19,7 @@ interface Singer {
 interface Music {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   singers: Singer[];
   lyricists: Singer[];
@@ -57,6 +59,7 @@ const normalizePhotos = (photos: SingerPhoto[] = []) =>
   photos.map((photo) => ({
     ...photo,
     asset: prefixServerOrigin(photo.asset),
+    thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
   }));
 
 async function adminGetMusic({
@@ -77,6 +80,7 @@ async function adminGetMusic({
     aliases: music.aliases ?? [],
     searchKeywords: music.searchKeywords ?? '',
     cover: prefixServerOrigin(music.cover),
+    coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
     asset: prefixServerOrigin(music.asset),
     singers: (music.singers ?? []).map((singer) => {
       const photos = normalizePhotos(singer.photos);
@@ -97,6 +101,7 @@ async function adminGetMusic({
     forkList: music.forkList.map((item) => ({
       ...item,
       cover: prefixServerOrigin(item.cover),
+      coverThumbnail: prefixServerOrigin(item.coverThumbnail ?? ''),
       singers: (item.singers ?? []).map((singer) => ({
         ...singer,
         photos: normalizePhotos(singer.photos),
@@ -109,6 +114,7 @@ async function adminGetMusic({
     forkFromList: music.forkFromList.map((item) => ({
       ...item,
       cover: prefixServerOrigin(item.cover),
+      coverThumbnail: prefixServerOrigin(item.coverThumbnail ?? ''),
       singers: (item.singers ?? []).map((singer) => ({
         ...singer,
         photos: normalizePhotos(singer.photos),

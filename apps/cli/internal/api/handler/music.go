@@ -181,10 +181,11 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 	for i, f := range forks {
 		rm := relatedMap[f.MusicID]
 		forkList[i] = gin.H{
-			"id":      rm.ID,
-			"name":    rm.Name,
-			"cover":   config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
-			"singers": artistItemsWithPhotos(singersByMusic[rm.ID], photosByArtist),
+			"id":             rm.ID,
+			"name":           rm.Name,
+			"cover":          config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
+			"coverThumbnail": rm.CoverThumbnail,
+			"singers":        artistItemsWithPhotos(singersByMusic[rm.ID], photosByArtist),
 			"lyricists": artistItemsWithPhotos(
 				lyricistsByMusic[rm.ID],
 				photosByArtist,
@@ -195,10 +196,11 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 	for i, f := range forkFroms {
 		rm := relatedMap[f.ForkFrom]
 		forkFromList[i] = gin.H{
-			"id":      rm.ID,
-			"name":    rm.Name,
-			"cover":   config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
-			"singers": artistItemsWithPhotos(singersByMusic[rm.ID], photosByArtist),
+			"id":             rm.ID,
+			"name":           rm.Name,
+			"cover":          config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
+			"coverThumbnail": rm.CoverThumbnail,
+			"singers":        artistItemsWithPhotos(singersByMusic[rm.ID], photosByArtist),
 			"lyricists": artistItemsWithPhotos(
 				lyricistsByMusic[rm.ID],
 				photosByArtist,
@@ -212,6 +214,7 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 		"name":                       m.Name,
 		"aliases":                    splitAliases(m.Aliases),
 		"cover":                      config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+		"coverThumbnail":             m.CoverThumbnail,
 		"asset":                      config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
 		"assetSize":                  m.AssetSize,
 		"assetDurationMs":            m.AssetDurationMs,
@@ -413,7 +416,7 @@ func AdminUpdateMusic(c *gin.Context) {
 			api.Fail(c, apperr.AssetNotExisted)
 			return
 		}
-		store.UpdateMusic(body.ID, "cover", cover)
+		store.UpdateMusicCover(body.ID, cover, assetThumbnailDataURL(cover, config.AssetTypeMusicCover))
 		syncMetadata = true
 
 	case "asset":
@@ -594,9 +597,10 @@ func GetExploration(c *gin.Context) {
 	const quality = 30
 	const recentLimit = 20
 	type musicRow struct {
-		ID    string
-		Name  string
-		Cover string
+		ID             string
+		Name           string
+		Cover          string
+		CoverThumbnail string
 	}
 	type artistRow struct {
 		ID   string
@@ -618,7 +622,7 @@ func GetExploration(c *gin.Context) {
 		var out []musicRow
 		for rows.Next() {
 			r := musicRow{}
-			rows.Scan(&r.ID, &r.Name, &r.Cover)
+			rows.Scan(&r.ID, &r.Name, &r.Cover, &r.CoverThumbnail)
 			out = append(out, r)
 		}
 		return out
@@ -653,7 +657,7 @@ func GetExploration(c *gin.Context) {
 	}
 
 	musicRows := queryMusicRows(
-		`SELECT id,name,cover FROM music WHERE cover!='' ORDER BY random() LIMIT ?`, quality,
+		`SELECT id,name,cover,coverThumbnail FROM music WHERE cover!='' ORDER BY random() LIMIT ?`, quality,
 	)
 	artistRows := queryArtistRows(
 		`SELECT id,name FROM artist ORDER BY random() LIMIT ?`, quality,
@@ -663,7 +667,7 @@ func GetExploration(c *gin.Context) {
 	)
 	// 最近添加: 按 createTimestamp 倒序取最新条目, 让发现页能呈现新入库内容。
 	recentMusicRows := queryMusicRows(
-		`SELECT id,name,cover FROM music WHERE cover!='' ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
+		`SELECT id,name,cover,coverThumbnail FROM music WHERE cover!='' ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
 	)
 	recentArtistRows := queryArtistRows(
 		`SELECT id,name FROM artist ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
@@ -711,10 +715,11 @@ func GetExploration(c *gin.Context) {
 				ss = append(ss, gin.H{"id": s.ID, "name": s.Name})
 			}
 			list[i] = gin.H{
-				"id":      m.ID,
-				"name":    m.Name,
-				"cover":   config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
-				"singers": ss,
+				"id":             m.ID,
+				"name":           m.Name,
+				"cover":          config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+				"coverThumbnail": m.CoverThumbnail,
+				"singers":        ss,
 			}
 		}
 		return list
@@ -727,6 +732,7 @@ func GetExploration(c *gin.Context) {
 			photosByArtist[p.ArtistID] = append(photosByArtist[p.ArtistID], gin.H{
 				"id":          p.ID,
 				"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeArtistPhoto),
+				"thumbnail":   p.Thumbnail,
 				"description": p.Description,
 			})
 		}
@@ -847,6 +853,7 @@ func musicListResponse(musics []store.Music, total int) gin.H {
 			"name":            m.Name,
 			"aliases":         splitAliases(m.Aliases),
 			"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+			"coverThumbnail":  m.CoverThumbnail,
 			"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
 			"assetSize":       m.AssetSize,
 			"assetDurationMs": m.AssetDurationMs,
@@ -906,6 +913,7 @@ func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
 			"aliases":         splitAliases(m.Aliases),
 			"searchKeywords":  m.SearchKeywords,
 			"cover":           config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
+			"coverThumbnail":  m.CoverThumbnail,
 			"asset":           config.AssetPublicURL(m.Asset, config.AssetTypeMusic),
 			"assetSize":       m.AssetSize,
 			"assetDurationMs": m.AssetDurationMs,
@@ -973,6 +981,7 @@ func artistPhotosByArtistIDs(artistIDs []string) map[string][]gin.H {
 		photosByArtist[p.ArtistID] = append(photosByArtist[p.ArtistID], gin.H{
 			"id":          p.ID,
 			"asset":       config.AssetPublicURL(p.Asset, config.AssetTypeArtistPhoto),
+			"thumbnail":   p.Thumbnail,
 			"description": p.Description,
 		})
 	}

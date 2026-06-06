@@ -31,6 +31,7 @@ type Music struct {
 	Aliases         string
 	SearchKeywords  string
 	Cover           string
+	CoverThumbnail  string
 	Asset           string
 	Heat            int64
 	CreateUserID    string
@@ -62,8 +63,8 @@ type MusicFork struct {
 }
 
 const (
-	musicSelectColumns          = `id,type,name,aliases,searchKeywords,cover,asset,heat,createUserId,createTimestamp,year,assetSize,assetDurationMs,assetCodec,assetBitRate`
-	musicSelectColumnsWithAlias = `m.id,m.type,m.name,m.aliases,m.searchKeywords,m.cover,m.asset,m.heat,m.createUserId,m.createTimestamp,m.year,m.assetSize,m.assetDurationMs,m.assetCodec,m.assetBitRate`
+	musicSelectColumns          = `id,type,name,aliases,searchKeywords,cover,coverThumbnail,asset,heat,createUserId,createTimestamp,year,assetSize,assetDurationMs,assetCodec,assetBitRate`
+	musicSelectColumnsWithAlias = `m.id,m.type,m.name,m.aliases,m.searchKeywords,m.cover,m.coverThumbnail,m.asset,m.heat,m.createUserId,m.createTimestamp,m.year,m.assetSize,m.assetDurationMs,m.assetCodec,m.assetBitRate`
 )
 
 func GetMusicByID(id string) (*Music, error) {
@@ -134,6 +135,11 @@ func CreateMusic(name string, t MusicType, createUserID, asset string) (string, 
 
 func UpdateMusic(id, field string, value any) error {
 	_, err := DB().Exec(`UPDATE music SET `+field+`=? WHERE id=?`, value, id)
+	return err
+}
+
+func UpdateMusicCover(id, cover, coverThumbnail string) error {
+	_, err := DB().Exec(`UPDATE music SET cover=?,coverThumbnail=? WHERE id=?`, cover, coverThumbnail, id)
 	return err
 }
 
@@ -538,6 +544,7 @@ func scanMusicDest(m *Music) []any {
 		&m.Aliases,
 		&m.SearchKeywords,
 		&m.Cover,
+		&m.CoverThumbnail,
 		&m.Asset,
 		&m.Heat,
 		&m.CreateUserID,

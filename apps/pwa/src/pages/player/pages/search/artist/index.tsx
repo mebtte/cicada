@@ -97,6 +97,7 @@ function Wrapper() {
                 url: artist.avatar,
                 size: Math.ceil(AVATAR_IMAGE_SIZE * window.devicePixelRatio),
               })}
+              artistAvatarThumbnail={artist.avatarThumbnail}
               artistAliases={artist.aliases}
               musicCount={artist.musicCount}
             />

@@ -234,8 +234,20 @@ const PhotoThumb = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 20px;
+  overflow: hidden;
+
+  > .thumbnail-placeholder {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.08);
+    filter: blur(8px) brightness(1.04) saturate(1.08);
+  }
 
   > img {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 100%;
     border-radius: 13px;
@@ -415,13 +427,21 @@ function SortablePhoto({
     >
       <PhotoThumb>
         {photo.asset ? (
-          <img
-            src={getResizedImage({
-              url: photo.asset,
-              size: 96,
-            })}
-            alt={photo.description || artistName}
-          />
+          <>
+            {photo.thumbnail ? (
+              <span
+                className="thumbnail-placeholder"
+                style={{ backgroundImage: `url("${photo.thumbnail}")` }}
+              />
+            ) : null}
+            <img
+              src={getResizedImage({
+                url: photo.asset,
+                size: 96,
+              })}
+              alt={photo.description || artistName}
+            />
+          </>
         ) : (
           <ImageIcon />
         )}
