@@ -54,7 +54,7 @@ const SIZE_MAP: Record<Size, ReturnType<typeof css>> = {
 //
 // Duolingo 核心公式：
 //   正常  — 纯色填充 + 底部纯色硬阴影（无 blur）
-//   悬停  — 整体略亮（filter brightness）
+//   悬停  — 向上抬起 2px + 阴影加深（同步播放器发现页卡片）
 //   按下  — translateY(offset) + box-shadow 归零
 //   释放  — 慢速弹回（150ms ease-out）
 //   禁用  — 保留更浅的硬阴影，避免视觉高度变矮
@@ -69,13 +69,13 @@ const makeVariant = (
   border-color: ${shadow};
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms;
+    box-shadow 150ms ease-out;
 
   box-shadow: 0 ${({ $offset }) => $offset}px 0 ${shadow};
 
   &:not(:disabled):hover {
-    filter: brightness(1.06);
+    transform: translateY(-2px);
+    box-shadow: 0 ${({ $offset }) => $offset + 2}px 0 ${shadow};
   }
 
   &:not(:disabled):active {
@@ -83,12 +83,7 @@ const makeVariant = (
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
-  }
-
-  &:disabled {
-    filter: none;
+      box-shadow 60ms ease-in;
   }
 `;
 
