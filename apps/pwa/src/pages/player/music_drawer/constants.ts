@@ -13,6 +13,7 @@ export interface CreateUser {
 export interface SingerPhoto {
   id: string;
   asset: string;
+  thumbnail?: string;
   description: string;
 }
 
@@ -38,6 +39,7 @@ export interface MusicDetail extends Music {
   forkFromList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
   forkList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
   singers: SingerDetail[];
+  lyricists: SingerDetail[];
   year: number | null;
   musicbillCount: number;
   assetSize: number;

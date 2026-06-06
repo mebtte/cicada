@@ -2,6 +2,7 @@ package handler
 
 import (
 	"cicada/internal/config"
+	"cicada/internal/imagethumb"
 	"os"
 	"strconv"
 	"strings"
@@ -48,4 +49,16 @@ func assetExists(filename string, t config.AssetType) bool {
 	_, path := config.AssetPath(t, filename)
 	_, err := os.Stat(path)
 	return err == nil
+}
+
+func assetThumbnailDataURL(filename string, t config.AssetType) string {
+	if filename == "" {
+		return ""
+	}
+	_, path := config.AssetPath(t, filename)
+	thumbnail, err := imagethumb.DataURLFromFile(path)
+	if err != nil {
+		return ""
+	}
+	return thumbnail
 }

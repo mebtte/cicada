@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
-  MdDelete,
-  MdHelpOutline,
-  MdPlayArrow,
-  MdPlaylistAdd,
-  MdReadMore,
-} from 'react-icons/md';
+  Delete,
+  Help,
+  PlaylistAdd,
+  QueueInsert,
+  PlayArrow,
+} from '@/components/icon';
 import autoScrollbar from '@/style/auto_scrollbar';
 import capitalizeString from '@/utils/capitalize';
 import { CSSVariable } from '@/global_style';
@@ -132,6 +132,11 @@ function entryToMusic(entry: OfflineMusic): MusicWithSingerAliases {
       id: s.id,
       name: s.name,
       aliases: s.aliases ?? [],
+    })),
+    lyricists: (entry.lyricists ?? []).map((artist) => ({
+      id: artist.id,
+      name: artist.name,
+      aliases: artist.aliases ?? [],
     })),
   };
 }
@@ -288,7 +293,7 @@ function OfflineCache() {
                           );
                         }}
                       >
-                        <MdPlayArrow />
+                        <PlayArrow />
                       </Button>
                       <Tooltip content={t('play_next')}>
                         <Button
@@ -303,7 +308,7 @@ function OfflineCache() {
                             );
                           }}
                         >
-                          <MdReadMore />
+                          <QueueInsert />
                         </Button>
                       </Tooltip>
                       <Tooltip content={t('remove_from_offline_cache')}>
@@ -317,7 +322,7 @@ function OfflineCache() {
                             handleRemove(entry);
                           }}
                         >
-                          <MdDelete />
+                          <Delete />
                         </Button>
                       </Tooltip>
                     </LineAfter>
@@ -339,7 +344,7 @@ function OfflineCache() {
             disabled={filteredEntries.length === 0}
             onClick={handleAddAll}
           >
-            <MdPlaylistAdd />
+            <PlaylistAdd />
           </Button>
         </Tooltip>
         <Input
@@ -381,7 +386,7 @@ function OfflineCache() {
               })
             }
           >
-            <MdHelpOutline />
+            <Help />
           </Button>
         </Tooltip>
       </SummaryBar>

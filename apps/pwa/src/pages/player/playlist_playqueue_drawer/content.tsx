@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { DuolingoTabPanels } from '@/components';
+import { TabPanels } from '@/components';
 import Playqueue from './playqueue';
 import Playlist from './playlist';
 import { Tab } from './constants';
@@ -30,7 +30,7 @@ function Content() {
 
   return (
     <Style>
-      <DuolingoTabPanels<Tab>
+      <TabPanels<Tab>
         current={selectedTab}
         tabList={[
           {

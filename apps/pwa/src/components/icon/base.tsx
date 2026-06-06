@@ -12,7 +12,7 @@ export interface IconProps extends SVGProps<SVGSVGElement> {
  * 风格规范：strokeLinecap / strokeLinejoin = round，颜色走 currentColor。
  */
 function Icon({
-  size = 24,
+  size = '1em',
   color = 'currentColor',
   strokeWidth = 2.2,
   style,

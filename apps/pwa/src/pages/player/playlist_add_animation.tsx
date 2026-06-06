@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { PiMusicNotesSimpleLight } from 'react-icons/pi';
 import { CSS_VAR } from '@/components/theme';
 import { CSSVariable } from '@/global_style';
 import eventemitter, { EventType } from './eventemitter';
 import { ZIndex } from './constants';
+import { MusicNotes } from '@/components/icon';
 
 const MAX_STAGE_COUNT = 4;
 const MAX_APPEND_COUNT = 3;
@@ -243,15 +243,15 @@ function PlaylistAddAnimation() {
           }}
         >
           <ExistingRow $top={16} $delay={0}>
-            <PiMusicNotesSimpleLight />
+            <MusicNotes />
             <span className="bar" />
           </ExistingRow>
           <ExistingRow $top={50} $delay={60}>
-            <PiMusicNotesSimpleLight />
+            <MusicNotes />
             <span className="bar" />
           </ExistingRow>
           <ExistingRow $top={84} $delay={120}>
-            <PiMusicNotesSimpleLight />
+            <MusicNotes />
             <span className="bar" />
           </ExistingRow>
           {Array.from({ length: item.count }, (_, index) => {
@@ -261,7 +261,7 @@ function PlaylistAddAnimation() {
               <div key={index}>
                 <AppendSlot $top={top - 2} $delay={delay - 120} />
                 <AppendRow $top={top} $delay={delay}>
-                  <PiMusicNotesSimpleLight />
+                  <MusicNotes />
                   <span className="bar" />
                 </AppendRow>
               </div>

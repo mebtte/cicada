@@ -5,12 +5,12 @@ import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import styled from 'styled-components';
 import Button from '@/components/button';
-import { MdClose, MdPlaylistPlay } from 'react-icons/md';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import eventemitter, { EventType } from '../eventemitter';
 import { t } from '@/i18n';
 import useUnmount from '@/utils/use_unmount';
 import { CSSVariable } from '@/global_style';
+import { Close, PlaylistPlay } from '@/components/icon';
 
 function RestoreNotice({
   getNoticeId,
@@ -22,7 +22,7 @@ function RestoreNotice({
   return (
     <Restore>
       <div className="badge">
-        <MdPlaylistPlay />
+        <PlaylistPlay />
       </div>
       <div className="body">
         <div className="text">{t('question_restore_playlist')}</div>
@@ -52,7 +52,7 @@ function RestoreNotice({
             aria-label={t('cancel')}
             onClick={() => notice.close(getNoticeId())}
           >
-            <MdClose />
+            <Close />
           </Button>
         </div>
       </div>
@@ -129,6 +129,14 @@ const Restore = styled.div`
   }
 `;
 
+const normalizeStoredPlaylist = (
+  playlist: MusicWithSingerAliases[],
+): MusicWithSingerAliases[] =>
+  playlist.map((music) => ({
+    ...music,
+    lyricists: music.lyricists ?? [],
+  }));
+
 function usePlaylistRestore(playlist: PlaylistMusic[]) {
   useEffect(
     () =>
@@ -156,10 +164,11 @@ function usePlaylistRestore(playlist: PlaylistMusic[]) {
       .getItem(Key.PLAYLIST)
       .then((cachedPlaylist) => {
         if (cachedPlaylist && cachedPlaylist.length > 0) {
+          const playlist = normalizeStoredPlaylist(cachedPlaylist);
           noticeId = notice.info(
             <RestoreNotice
               getNoticeId={() => noticeId!}
-              playlist={cachedPlaylist}
+              playlist={playlist}
             />,
             { duration: 0, closable: false, showTypeIcon: false },
           );

@@ -15,7 +15,6 @@ const cn = (v: string) => `var(${v})`;
 const PRIMARY        = cn(CSS_VAR.colorPrimary);
 const PRIMARY_SHADOW = cn(CSS_VAR.colorPrimaryShadow);
 const CONTROL_NEUTRAL = CSSVariable.COLOR_CONTROL_NEUTRAL;
-const DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
 
 // ─── 阴影偏移量 ────────────────────────────────────────────────────────────────
 
@@ -23,6 +22,9 @@ const SHADOW_OFFSET: Record<Size, number> = { sm: 3, md: 4, lg: 5 };
 
 // 纯图标按钮使用更大的图标（约按钮高度 50%），让视觉重心居中
 const SQUARE_ICON_SIZE: Record<Size, number> = { sm: 18, md: 22, lg: 28 };
+
+// 带文字按钮里的图标需要略大于字号, 否则在圆润粗体 label 旁边会偏弱。
+const LABEL_ICON_SIZE: Record<Size, number> = { sm: 16, md: 19, lg: 22 };
 
 // ─── 尺寸 ─────────────────────────────────────────────────────────────────────
 
@@ -54,7 +56,7 @@ const SIZE_MAP: Record<Size, ReturnType<typeof css>> = {
 //
 // Duolingo 核心公式：
 //   正常  — 纯色填充 + 底部纯色硬阴影（无 blur）
-//   悬停  — 整体略亮（filter brightness）
+//   悬停  — 向上抬起 2px + 阴影加深（同步播放器发现页卡片）
 //   按下  — translateY(offset) + box-shadow 归零
 //   释放  — 慢速弹回（150ms ease-out）
 //   禁用  — 保留更浅的硬阴影，避免视觉高度变矮
@@ -69,13 +71,13 @@ const makeVariant = (
   border-color: ${shadow};
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms;
+    box-shadow 150ms ease-out;
 
   box-shadow: 0 ${({ $offset }) => $offset}px 0 ${shadow};
 
   &:not(:disabled):hover {
-    filter: brightness(1.06);
+    transform: translateY(-2px);
+    box-shadow: 0 ${({ $offset }) => $offset + 2}px 0 ${shadow};
   }
 
   &:not(:disabled):active {
@@ -83,12 +85,7 @@ const makeVariant = (
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
-  }
-
-  &:disabled {
-    filter: none;
+      box-shadow 60ms ease-in;
   }
 `;
 
@@ -195,9 +192,30 @@ const StyledButton = styled.button<{
   }
 
   > .btn-label {
-    display: contents;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: inherit;
+    min-width: 0;
     transition: opacity 100ms;
     opacity: ${({ $loading }) => ($loading ? 0 : 1)};
+  }
+
+  > .btn-label > .btn-icon {
+    flex: 0 0 auto;
+    width: ${({ $size }) => LABEL_ICON_SIZE[$size]}px;
+    height: ${({ $size }) => LABEL_ICON_SIZE[$size]}px;
+    font-size: ${({ $size }) => LABEL_ICON_SIZE[$size]}px;
+    line-height: 1;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  > .btn-label > .btn-icon > svg {
+    width: 1em;
+    height: 1em;
   }
 
   ${({ $size }) => SIZE_MAP[$size]}
@@ -292,7 +310,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     >
       {loading && <Loader $size={size} />}
       <span className="btn-label">
-        {icon}
+        {icon ? <span className="btn-icon">{icon}</span> : null}
         {children}
       </span>
     </StyledButton>

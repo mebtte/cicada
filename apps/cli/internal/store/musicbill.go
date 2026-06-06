@@ -39,12 +39,13 @@ type SharedMusicbillRow struct {
 }
 
 type MusicInMusicbill struct {
-	ID      string
-	Type    MusicType
-	Name    string
-	Aliases string
-	Cover   string
-	Asset   string
+	ID             string
+	Type           MusicType
+	Name           string
+	Aliases        string
+	Cover          string
+	CoverThumbnail string
+	Asset          string
 }
 
 func GetMusicbillByID(id string) (*MusicbillWithOwner, error) {
@@ -157,7 +158,7 @@ func GetAllUserMusicbillCounts() (map[string]MusicbillCount, error) {
 
 func GetMusicsInMusicbill(musicbillID string) ([]MusicInMusicbill, error) {
 	rows, err := DB().Query(
-		`SELECT m.id,m.type,m.name,m.aliases,m.cover,m.asset
+		`SELECT m.id,m.type,m.name,m.aliases,m.cover,m.coverThumbnail,m.asset
 		FROM musicbill_music mm LEFT JOIN music m ON mm.musicId=m.id
 		WHERE mm.musicbillId=? ORDER BY mm.addTimestamp DESC`, musicbillID,
 	)
@@ -168,7 +169,7 @@ func GetMusicsInMusicbill(musicbillID string) ([]MusicInMusicbill, error) {
 	var out []MusicInMusicbill
 	for rows.Next() {
 		m := MusicInMusicbill{}
-		rows.Scan(&m.ID, &m.Type, &m.Name, &m.Aliases, &m.Cover, &m.Asset)
+		rows.Scan(&m.ID, &m.Type, &m.Name, &m.Aliases, &m.Cover, &m.CoverThumbnail, &m.Asset)
 		out = append(out, m)
 	}
 	return out, nil

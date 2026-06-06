@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
-import { MdDeleteOutline } from 'react-icons/md';
+import { Delete } from '@/components/icon';
 import { useServer } from '@/global_states/server';
 import { User } from '@/constants/server';
 import dialog from '@/utils/dialog';
@@ -226,7 +226,7 @@ function ManageContent({ onEmpty }: { onEmpty?: () => void }) {
               })
             }
           >
-            <MdDeleteOutline />
+            <Delete />
           </DeleteButton>
         </Card>
       ))}

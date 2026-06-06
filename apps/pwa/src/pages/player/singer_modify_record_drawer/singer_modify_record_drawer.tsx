@@ -1,7 +1,7 @@
 import { Drawer, DrawerContent } from '@/components';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { Singer } from './constants';
+import { Artist } from './constants';
 import Content from './content';
 import Hint from './hint';
 
@@ -12,13 +12,13 @@ const ContentWrapper = styled.div`
   ${autoScrollbar}
 `;
 
-function SingerModifyRecordDrawer({
-  singer,
+function ArtistModifyRecordDrawer({
+  artist,
   open,
   onClose,
   zIndex,
 }: {
-  singer: Singer;
+  artist: Artist;
   open: boolean;
   onClose: () => void;
   zIndex: number;
@@ -27,7 +27,7 @@ function SingerModifyRecordDrawer({
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
       <DrawerContent side="right" style={{ width: 300 }} zIndex={zIndex}>
         <ContentWrapper>
-          <Content singer={singer} />
+          <Content artist={artist} />
           <Hint />
         </ContentWrapper>
       </DrawerContent>
@@ -35,4 +35,4 @@ function SingerModifyRecordDrawer({
   );
 }
 
-export default SingerModifyRecordDrawer;
+export default ArtistModifyRecordDrawer;

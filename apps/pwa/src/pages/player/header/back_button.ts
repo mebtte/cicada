@@ -3,7 +3,7 @@ import { PLAYER_PATH, ROOT_PATH } from '../../../constants/route.js';
 
 const BACK_BUTTON_PLAYER_PATH_LIST = [
   PLAYER_PATH.MUSIC,
-  PLAYER_PATH.SINGER,
+  PLAYER_PATH.ARTIST,
 ];
 
 const getPlayerRelativePathname = (pathname: string) => {

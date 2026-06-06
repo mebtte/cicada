@@ -3,7 +3,7 @@ import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import day from '@/utils/day';
-import { AllowUpdateKey } from '@/constants/singer';
+import { AllowUpdateKey } from '@/constants/artist';
 import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
 import { t } from '@/i18n';
@@ -13,7 +13,6 @@ import playerEventemitter, {
 } from '../eventemitter';
 
 const KEY_MAP_LABEL: Record<AllowUpdateKey, string> = {
-  [AllowUpdateKey.AVATAR]: t('avatar'),
   [AllowUpdateKey.NAME]: t('name'),
   [AllowUpdateKey.ALIASES]: t('aliases'),
   [AllowUpdateKey.SEARCH_KEYWORDS]: t('search_keywords'),
@@ -75,8 +74,8 @@ const Style = styled(Root)`
   }
 `;
 
-function RecordList({ singerId }: { singerId: string }) {
-  const { data, reload } = useModifyRecordList({ singerId });
+function RecordList({ artistId }: { artistId: string }) {
+  const { data, reload } = useModifyRecordList({ artistId });
 
   if (data.error) {
     return (

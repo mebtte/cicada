@@ -1,43 +1,68 @@
 import { ForwardedRef, forwardRef, TextareaHTMLAttributes } from 'react';
 import styled from 'styled-components';
-import { CSSVariable } from '../global_style';
+import {
+  CONTROL_SIZE,
+  ControlSize,
+  controlDisabledTextStyles,
+  controlPlaceholderStyles,
+  controlSurfaceStyles,
+  controlTextStyles,
+} from './control_style';
 
-const Textarea = styled.textarea`
+export type TextareaSize = ControlSize;
+
+const StyledTextarea = styled.textarea<{
+  $size: TextareaSize;
+  $error: boolean;
+  $disabled: boolean;
+}>`
   display: block;
-  padding: 10px;
   width: 100%;
-
-  border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL};
-  border: 1px solid ${CSSVariable.COLOR_BORDER};
-  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-  font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+  min-width: 0;
+  line-height: 1.45;
   outline: none;
-  transition: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
   resize: none;
 
-  &:focus {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
-  }
+  ${controlSurfaceStyles('&:focus')}
+  ${controlTextStyles}
+  ${controlPlaceholderStyles}
+  ${controlDisabledTextStyles}
 
-  &:disabled {
-    border-color: ${CSSVariable.TEXT_COLOR_DISABLED};
-    background: ${CSSVariable.BACKGROUND_DISABLED};
-    cursor: not-allowed;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  }
+  ${({ $size }) => {
+    return `
+      padding: ${CONTROL_SIZE[$size].textareaPadding};
+    `;
+  }}
 `;
 
-type Props = {
+export type TextareaProps = {
   disabled?: boolean;
-} & TextareaHTMLAttributes<HTMLTextAreaElement>;
+  error?: boolean | string;
+  size?: TextareaSize;
+} & Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'>;
 
 function Wrapper(
-  { disabled = false, ...props }: Props,
+  { disabled = false, error = false, size = 'md', ...props }: TextareaProps,
   ref: ForwardedRef<HTMLTextAreaElement>,
 ) {
   return (
-    <Textarea {...props} autoComplete="off" disabled={disabled} ref={ref} />
+    <StyledTextarea
+      {...props}
+      $disabled={disabled}
+      $error={!!error}
+      $size={size}
+      autoComplete="off"
+      disabled={disabled}
+      ref={ref}
+    />
   );
 }
 
-export default forwardRef<HTMLTextAreaElement, Props>(Wrapper);
+const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(Wrapper);
+
+Textarea.displayName = 'Textarea';
+
+export default Textarea;

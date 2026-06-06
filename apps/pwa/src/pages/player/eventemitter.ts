@@ -42,11 +42,11 @@ export enum EventType {
 
   TOGGLE_LYRIC_PANEL = 'toggle_lyric_panel',
 
-  OPEN_SINGER_MODIFY_RECORD_DRAWER = 'open_singer_modify_record_drawer',
+  OPEN_ARTIST_MODIFY_RECORD_DRAWER = 'open_artist_modify_record_drawer',
   OPEN_MUSICBILL_MUSIC_DRAWER = 'open_musicbill_music_drawer',
   OPEN_MUSICBILL_SHARED_USER_DRAWER = 'open_musicbill_shared_user_drawer',
   OPEN_SHARED_MUSICBILL_INVITATION_DRAWER = 'open_shared_musicbill_invitation_drawer',
-  OPEN_SINGER_DRAWER = 'open_singer_drawer',
+  OPEN_ARTIST_DRAWER = 'open_artist_drawer',
   OPEN_MUSIC_DRAWER = 'open_music_drawer',
   OPEN_ORIGINAL_MUSIC_DIALOG = 'open_original_music_dialog',
   OPEN_MUSICBILL_ORDER_DRAWER = 'open_musicbill_order_drawer',
@@ -67,8 +67,8 @@ export enum EventType {
   MUSIC_DELETED = 'music_deleted',
   MUSIC_DETAIL_LOADED = 'music_detail_loaded',
 
-  SINGER_UPDATED = 'singer_updated',
-  SINGER_DETAIL_LOADED = 'singer_detail_loaded',
+  ARTIST_UPDATED = 'artist_updated',
+  ARTIST_DETAIL_LOADED = 'artist_detail_loaded',
 
   MUSICBILL_COLLECTION_CHANGE = 'musicbill_collection_change',
   CURRENT_MUSIC_CHANGE = 'current_music_change',
@@ -128,15 +128,15 @@ export default new Eventin<
 
     [EventType.TOGGLE_LYRIC_PANEL]: { open: boolean } | null;
 
-    [EventType.OPEN_SINGER_MODIFY_RECORD_DRAWER]: {
-      singer: { id: string; name: string; avatar: string };
+    [EventType.OPEN_ARTIST_MODIFY_RECORD_DRAWER]: {
+      artist: { id: string; name: string; avatar: string };
     };
     [EventType.OPEN_MUSICBILL_SHARED_USER_DRAWER]: { id: string };
     [EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER]: null;
     [EventType.OPEN_MUSICBILL_MUSIC_DRAWER]: {
       music: MusicWithSingerAliases;
     };
-    [EventType.OPEN_SINGER_DRAWER]: { id: string };
+    [EventType.OPEN_ARTIST_DRAWER]: { id: string };
     [EventType.OPEN_MUSIC_DRAWER]: { id: string };
     [EventType.OPEN_ORIGINAL_MUSIC_DIALOG]: null;
     [EventType.OPEN_MUSICBILL_ORDER_DRAWER]: null;
@@ -162,8 +162,8 @@ export default new Eventin<
       singers: { id: string; name: string }[];
     };
 
-    [EventType.SINGER_UPDATED]: { id: string };
-    [EventType.SINGER_DETAIL_LOADED]: {
+    [EventType.ARTIST_UPDATED]: { id: string };
+    [EventType.ARTIST_DETAIL_LOADED]: {
       id: string;
       name: string;
       aliases: string[];

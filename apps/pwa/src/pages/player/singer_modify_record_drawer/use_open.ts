@@ -1,22 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
 import e, { EventType } from '../eventemitter';
-import { Singer } from './constants';
+import { Artist } from './constants';
 
 export default () => {
-  const [singer, setSinger] = useState<Singer | null>(null);
+  const [artist, setArtist] = useState<Artist | null>(null);
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     const unlistenOpen = e.listen(
-      EventType.OPEN_SINGER_MODIFY_RECORD_DRAWER,
+      EventType.OPEN_ARTIST_MODIFY_RECORD_DRAWER,
       (payload) => {
-        setSinger(payload.singer);
+        setArtist(payload.artist);
         return window.setTimeout(() => setOpen(true), 0);
       },
     );
     return unlistenOpen;
   }, []);
 
-  return { singer, open, onClose };
+  return { artist, open, onClose };
 };

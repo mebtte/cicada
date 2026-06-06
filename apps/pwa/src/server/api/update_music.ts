@@ -9,6 +9,7 @@ type KeyMapValue = {
   [AllowUpdateKey.SEARCH_KEYWORDS]: string;
   [AllowUpdateKey.ASSET]: string;
   [AllowUpdateKey.SINGER]: string[];
+  [AllowUpdateKey.LYRICIST]: string[];
   [AllowUpdateKey.FORK_FROM]: string[];
   [AllowUpdateKey.YEAR]: number | null;
 };

@@ -11,7 +11,7 @@ import { CSSVariable } from '@/global_style';
 import Spinner from '@/components/spinner';
 import Empty from '@/components/empty';
 import ErrorCard from '@/components/error_card';
-import { MdHelpOutline } from 'react-icons/md';
+import { Help } from '@/components/icon';
 import { t } from '@/i18n';
 import autoScrollbar from '@/style/auto_scrollbar';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
@@ -133,7 +133,7 @@ function SharedMusicbillInvitationDrawer() {
             <ListBody>
               <>
                 <Hint>
-                  <MdHelpOutline />
+                  <Help />
                   <span>
                     {t(
                       'invitation_will_be_canceled_automatically_after_days',

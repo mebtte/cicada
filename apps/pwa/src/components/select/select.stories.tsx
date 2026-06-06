@@ -35,10 +35,7 @@ const meta = {
       description: 'Select size — aligns with Button / Input sizes',
       table: { defaultValue: { summary: 'md' } },
     },
-    placeholder: { control: 'text' },
     label:       { control: 'text' },
-    hint:        { control: 'text' },
-    error:       { control: 'text' },
     disabled:    { control: 'boolean' },
   },
 } satisfies Meta<typeof Select>;
@@ -64,6 +61,17 @@ const LANGUAGES: SelectOption<string>[] = [
   { label: '한국어',   value: 'ko'    },
 ];
 
+const loadFruitOptions = async (keyword: string) => {
+  const normalizedKeyword = keyword.trim().toLowerCase();
+  if (!normalizedKeyword) {
+    return FRUITS;
+  }
+
+  return FRUITS.filter(({ label }) =>
+    label.toLowerCase().includes(normalizedKeyword),
+  );
+};
+
 // ─── Stories ──────────────────────────────────────────────────────────────────
 
 function Controlled({ initialValue = '' }: { initialValue?: string }) {
@@ -77,7 +85,6 @@ function Controlled({ initialValue = '' }: { initialValue?: string }) {
         options={FRUITS}
         value={value}
         onChange={(v) => setValue(v)}
-        placeholder="Pick a fruit..."
       />
       <div style={{ fontSize: 12, color: '#888', fontFamily: 'monospace' }}>
         value: {JSON.stringify(value)}
@@ -90,7 +97,6 @@ export const Playground: Story = {
   args: {
     options:     FRUITS,
     value:       'cherry',
-    placeholder: 'Pick a fruit...',
     label:       'Fruit',
   },
 };
@@ -111,25 +117,11 @@ export const States: Story = {
       <Select
         label="Default"
         options={FRUITS}
-        placeholder="Pick a fruit..."
       />
       <Select
         label="With value"
         options={FRUITS}
         value="cherry"
-        placeholder="Pick a fruit..."
-      />
-      <Select
-        label="With hint"
-        options={FRUITS}
-        placeholder="Pick a fruit..."
-        hint="Choose your favourite"
-      />
-      <Select
-        label="Error"
-        options={FRUITS}
-        placeholder="Pick a fruit..."
-        error="This field is required"
       />
       <Select
         label="Disabled"
@@ -167,7 +159,6 @@ export const WithObjects: Story = {
           options={LANGUAGES}
           value={value}
           onChange={(v) => setValue(v)}
-          hint="Changing language reloads the page"
         />
         <div style={{ fontSize: 12, color: '#888', fontFamily: 'monospace' }}>
           value: {JSON.stringify(value)}
@@ -188,7 +179,7 @@ function MultiControlled() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <MultiSelect
         label="Fruits"
-        options={FRUITS}
+        loadOptions={loadFruitOptions}
         value={value}
         onChange={(vs) => setValue(vs)}
         placeholder="Pick fruits..."
@@ -215,23 +206,23 @@ export const MultiStates: Story = {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <MultiSelect
         label="Empty"
-        options={FRUITS}
+        loadOptions={loadFruitOptions}
         value={[]}
         placeholder="Pick fruits..."
       />
       <MultiSelect
         label="One selected"
-        options={FRUITS}
+        loadOptions={loadFruitOptions}
         value={[{ label: 'Banana', value: 'banana' }]}
       />
       <MultiSelect
         label="Two selected"
-        options={FRUITS}
+        loadOptions={loadFruitOptions}
         value={[{ label: 'Apple', value: 'apple' }, { label: 'Cherry', value: 'cherry' }]}
       />
       <MultiSelect
         label="Overflow (3+)"
-        options={FRUITS}
+        loadOptions={loadFruitOptions}
         value={[
           { label: 'Apple', value: 'apple' },
           { label: 'Banana', value: 'banana' },
@@ -240,14 +231,8 @@ export const MultiStates: Story = {
         ]}
       />
       <MultiSelect
-        label="Error"
-        options={FRUITS}
-        value={[]}
-        error="At least one item required"
-      />
-      <MultiSelect
         label="Disabled"
-        options={FRUITS}
+        loadOptions={loadFruitOptions}
         value={[{ label: 'Apple', value: 'apple' }]}
         disabled
       />

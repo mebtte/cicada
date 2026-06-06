@@ -246,10 +246,16 @@ export default (
         name: sessionMusic.name,
         aliases: sessionMusic.aliases,
         cover: sessionMusic.cover,
+        coverThumbnail: sessionMusic.coverThumbnail,
         singers: sessionMusic.singers.map((s) => ({
           id: s.id,
           name: s.name,
           aliases: s.aliases,
+        })),
+        lyricists: sessionMusic.lyricists.map((artist) => ({
+          id: artist.id,
+          name: artist.name,
+          aliases: artist.aliases,
         })),
       });
       getMusic({ id: sessionMusic.id }).catch(() => undefined);

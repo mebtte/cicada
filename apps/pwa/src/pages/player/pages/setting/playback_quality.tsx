@@ -1,7 +1,7 @@
 import { CSSProperties, memo, useContext } from 'react';
-import { MdHelpOutline } from 'react-icons/md';
+import { Help } from '@/components/icon';
 import styled, { css } from 'styled-components';
-import { Button, DuolingoTabList } from '@/components';
+import { Button, TabList } from '@/components';
 import {
   MusicPlaybackQuality,
   type MusicPlaybackQuality as MusicPlaybackQualityValue,
@@ -124,14 +124,14 @@ function PlaybackQuality() {
             aria-label={t('music_playback_quality_help_title')}
             onClick={openHelp}
           >
-            <MdHelpOutline />
+            <Help />
           </Button>
         </Label>
       }
       style={itemStyle}
     >
       <Control>
-        <DuolingoTabList<MusicPlaybackQualityValue>
+        <TabList<MusicPlaybackQualityValue>
           current={musicPlaybackQuality}
           tabList={tabList}
           onChange={onChange}

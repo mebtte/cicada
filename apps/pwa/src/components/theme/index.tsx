@@ -47,19 +47,17 @@ export function useTheme(): Theme {
 // ─── ThemeProvider ────────────────────────────────────────────────────────────
 
 export interface ThemeProviderProps {
-  theme?: Partial<Theme>;
   children: ReactNode;
 }
 
-export function ThemeProvider({ theme, children }: ThemeProviderProps) {
-  const merged: Theme = { ...DEFAULT_THEME, ...theme };
+export function ThemeProvider({ children }: ThemeProviderProps) {
   return (
-    <ThemeContext.Provider value={merged}>
+    <ThemeContext.Provider value={DEFAULT_THEME}>
       {/*
        * display:contents → 不产生任何盒模型影响，
        * 仅作为 CSS 变量的作用域容器
        */}
-      <div style={{ display: 'contents', ...buildCSSVars(merged) }}>
+      <div style={{ display: 'contents', ...buildCSSVars(DEFAULT_THEME) }}>
         {children}
       </div>
     </ThemeContext.Provider>

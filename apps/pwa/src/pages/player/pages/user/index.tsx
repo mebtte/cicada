@@ -1,12 +1,5 @@
 import { KeyboardEvent, memo, useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {
-  MdDevicesOther,
-  MdLogout,
-  MdPassword,
-  MdSecurity,
-  MdSwitchAccount,
-} from 'react-icons/md';
 import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { CSSVariable } from '@/global_style';
@@ -31,7 +24,14 @@ import { t } from '@/i18n';
 import playerEventemitter, { EventType } from '../../eventemitter';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 import context from '../../context';
-import { Edit } from '@/components/icon';
+import {
+  Edit,
+  Devices,
+  Logout,
+  Password,
+  Security,
+  SwitchAccount,
+} from '@/components/icon';
 import Input from '@/components/input';
 import Avatar from '@/components/avatar';
 import useNavigate from '@/utils/use_navigate';
@@ -349,7 +349,7 @@ function User() {
           block
           variant="ghost"
           onClick={changePassword}
-          icon={<MdPassword />}
+          icon={<Password />}
         >
           {t('change_password')}
         </Button>
@@ -359,7 +359,7 @@ function User() {
           onClick={() =>
             playerEventemitter.emit(EventType.OPEN_2FA_DIALOG, null)
           }
-          icon={<MdSecurity />}
+          icon={<Security />}
         >
           {user.twoFAEnabled ? t('disable_2fa') : t('enable_2fa')}
         </Button>
@@ -372,7 +372,7 @@ function User() {
               null,
             )
           }
-          icon={<MdDevicesOther />}
+          icon={<Devices />}
         >
           {t('authorized_devices')}
         </Button>
@@ -380,7 +380,7 @@ function User() {
           block
           variant="ghost"
           onClick={switchUser}
-          icon={<MdSwitchAccount />}
+          icon={<SwitchAccount />}
         >
           {t('switch_user')}
         </Button>
@@ -388,7 +388,7 @@ function User() {
           block
           variant="danger"
           onClick={logout}
-          icon={<MdLogout />}
+          icon={<Logout />}
         >
           {t('logout')}
         </Button>

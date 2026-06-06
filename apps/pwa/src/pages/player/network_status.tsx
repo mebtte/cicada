@@ -1,11 +1,11 @@
 import styled, { keyframes } from 'styled-components';
-import { MdCloudOff } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import useTitlebarAreaRect from '@/utils/use_titlebar_area_rect';
 import useWindowWidth from '@/utils/use_window_width';
 import { t } from '@/i18n';
 import { useServerMetadataStatus } from '@/global_states/server';
 import { useIsOnline } from '@/utils/use_is_online';
+import { CloudOff } from '@/components/icon';
 
 const NETWORK_STATUS_HEIGHT = 40;
 const NETWORK_STATUS_HORIZONTAL_PADDING = 12;
@@ -106,7 +106,7 @@ function NetworkStatus() {
       >
         <div className="network-status-banner">
           <span className="icon">
-            <MdCloudOff />
+            <CloudOff />
           </span>
           <span className="text">
             {t('can_not_connect_to_server_temporarily')}

@@ -1,7 +1,7 @@
 export enum AssetType {
   USER_AVATAR = 'user_avatar',
   MUSICBILL_COVER = 'musicbill_cover',
-  SINGER_PHOTO = 'singer_photo',
+  ARTIST_PHOTO = 'artist_photo',
   MUSIC_COVER = 'music_cover',
   MUSIC = 'music',
 }
@@ -20,7 +20,7 @@ export const ASSET_TYPE_MAP: Record<
     acceptType: Record<string, string[]>;
   }
 > = {
-  [AssetType.SINGER_PHOTO]: {
+  [AssetType.ARTIST_PHOTO]: {
     acceptType: {
       jpg: ['image/jpeg'],
       jpeg: ['image/jpeg'],

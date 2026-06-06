@@ -2,7 +2,7 @@ import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label } from '@/co
 import Button from '@/components/button';
 import Input from '@/components/input';
 import { useState } from 'react';
-import { MdDelete } from 'react-icons/md';
+import { Delete } from '@/components/icon';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
 import { DEFAULT_CANCEL_VARIANT, InputList as InputListShape } from './constants';
@@ -86,7 +86,7 @@ function InputListContent({
                 onClick={() => onDelete(value.id)}
                 disabled={confirming || canceling}
               >
-                <MdDelete />
+                <Delete />
               </Button>
             }
           >

@@ -67,15 +67,19 @@ export interface SingerWithAliases extends Singer {
 export interface Music {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   type: MusicType;
   aliases: string[];
   singers: Singer[];
+  lyricists: Singer[];
   asset: string;
 }
 
-export interface MusicWithSingerAliases extends Omit<Music, 'singers'> {
+export interface MusicWithSingerAliases
+  extends Omit<Music, 'singers' | 'lyricists'> {
   singers: SingerWithAliases[];
+  lyricists: SingerWithAliases[];
 }
 
 export type PlaylistMusic = MusicWithSingerAliases & { index: number };
@@ -129,7 +133,7 @@ export const ZIndex = {
 
 export enum SearchTab {
   MUSIC = 'music',
-  SINGER = 'singer',
+  ARTIST = 'artist',
   PUBLIC_MUSICBILL = 'public_musicbill',
   LYRIC = 'lyric',
 }

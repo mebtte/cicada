@@ -4,10 +4,10 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { CSSVariable } from '@/global_style';
-import { MdClose } from 'react-icons/md';
 import definition from './definition';
 import { t } from './i18n';
 import upperCaseFirstLetter from './style/upper_case_first_letter';
+import { Close } from '@/components/icon';
 
 type VersionUpdateWorker = {
   addEventListener: (type: 'controlling', listener: () => void) => void;
@@ -182,7 +182,7 @@ function VersionUpdateNotice({
             aria-label={t('cancel')}
             onClick={() => notice.close(getNoticeId())}
           >
-            <MdClose />
+            <Close />
           </Button>
         </div>
       </div>

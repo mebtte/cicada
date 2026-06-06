@@ -402,6 +402,7 @@ const ProfileScene = styled.div<{
 
 function Wrapper({
   src,
+  placeholderSrc,
   info,
   accent = 'rgb(88 204 2)',
   shadow = 'rgb(88 167 0)',
@@ -409,6 +410,7 @@ function Wrapper({
   ...props
 }: HTMLAttributes<HTMLDivElement> & {
   src: string;
+  placeholderSrc?: string;
   info: ReactNode;
   accent?: string;
   shadow?: string;
@@ -424,6 +426,7 @@ function Wrapper({
               shape={Shape.CIRCLE}
               size="100%"
               src={src}
+              placeholderSrc={placeholderSrc}
             />
           </div>
           <div className="profile-info">{info}</div>
@@ -432,7 +435,12 @@ function Wrapper({
         <>
           <CassetteScene $accent={accent} $shadow={shadow}>
             <div className="artwork-frame">
-              <Cover className="artwork" size="100%" src={src} />
+              <Cover
+                className="artwork"
+                size="100%"
+                src={src}
+                placeholderSrc={placeholderSrc}
+              />
             </div>
             <div className="cassette-panel">
               <div className="reel" />
@@ -448,7 +456,12 @@ function Wrapper({
             <div className="disc" />
             <div className="tonearm" />
             <div className="sleeve">
-              <Cover className="artwork" size="100%" src={src} />
+              <Cover
+                className="artwork"
+                size="100%"
+                src={src}
+                placeholderSrc={placeholderSrc}
+              />
             </div>
           </RecordScene>
           <div className="info">{info}</div>

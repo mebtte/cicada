@@ -9,16 +9,16 @@ import {
 import styled, { css } from 'styled-components';
 import { MultipleLrc, MultipleLrcLine } from 'react-lrc';
 import {
-  MdClose,
-  MdDragIndicator,
-  MdExpandLess,
-  MdExpandMore,
-  MdHighQuality,
-  MdMusicNote,
-  MdPause,
-  MdPlayArrow,
-  MdSpeed,
-} from 'react-icons/md';
+  DragIndicator,
+  Close,
+  ChevronUp,
+  ChevronDown,
+  HighQuality,
+  MusicNote,
+  Pause,
+  PlayArrow,
+  Speed,
+} from '@/components/icon';
 import { Slider } from '@/components';
 import Button from '@/components/button';
 import { useSetting } from '@/global_states/setting';
@@ -541,7 +541,7 @@ function Cover({ music, size }: { music: MusicItem; size: number }) {
   if (!music.cover) {
     return (
       <CoverBox $size={size}>
-        <MdMusicNote />
+        <MusicNote />
       </CoverBox>
     );
   }
@@ -853,7 +853,7 @@ function FloatingMusicPlayer({
                 aria-pressed={isSmoothPlaybackQuality}
                 onClick={togglePlaybackQuality}
               >
-                {isSmoothPlaybackQuality ? <MdSpeed /> : <MdHighQuality />}
+                {isSmoothPlaybackQuality ? <Speed /> : <HighQuality />}
               </Button>
               <Button
                 square
@@ -864,7 +864,7 @@ function FloatingMusicPlayer({
                 aria-label={paused ? t('play') : t('pause')}
                 onClick={togglePlay}
               >
-                {paused ? <MdPlayArrow /> : <MdPause />}
+                {paused ? <PlayArrow /> : <Pause />}
               </Button>
             </OperationGroup>
           </ControllerRest>
@@ -881,7 +881,7 @@ function FloatingMusicPlayer({
         $danger
         onClick={onClose}
       >
-        <MdClose />
+        <Close />
       </IconButton>
       <DragHandle
         type="button"
@@ -892,7 +892,7 @@ function FloatingMusicPlayer({
         onPointerUp={finishDrag}
         onPointerCancel={finishDrag}
       >
-        <MdDragIndicator />
+        <DragIndicator />
       </DragHandle>
       <IconButton
         type="button"
@@ -900,7 +900,7 @@ function FloatingMusicPlayer({
         aria-label={collapsed ? t('expand') : t('collapse')}
         onClick={() => setCollapsed((c) => !c)}
       >
-        {collapsed ? <MdExpandLess /> : <MdExpandMore />}
+        {collapsed ? <ChevronUp /> : <ChevronDown />}
       </IconButton>
     </ControlRail>
   );

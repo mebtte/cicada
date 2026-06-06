@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
-import { MdOutlineAddBox } from 'react-icons/md';
+import { AddBox } from '@/components/icon';
 import { TOOLBAR_HEIGHT } from '../constants';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../../constants';
 import { PAGE_HORIZONTAL_PADDING } from '../../page';
@@ -30,7 +30,7 @@ function Toolbar() {
   return (
     <Style>
       <Button square variant="plain" size="sm" onClick={openCreateUserDialog}>
-        <MdOutlineAddBox />
+        <AddBox />
       </Button>
       <Filter />
     </Style>

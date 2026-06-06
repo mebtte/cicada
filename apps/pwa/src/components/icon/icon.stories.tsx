@@ -1,33 +1,24 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  CheckCircle,
-  Close,
-  Edit,
-  Export,
-  ExternalLink,
-  List,
-  MusicNote,
-  PlayArrow,
-  PlayQueue,
-} from '.';
+import Button from '../button';
+import * as Icons from '.';
 import type { IconProps } from '.';
 
-const ALL_ICONS: { name: string; Component: (p: Omit<IconProps, 'children'>) => React.ReactElement }[] = [
-  { name: 'List',         Component: List         },
-  { name: 'PlayQueue',    Component: PlayQueue    },
-  { name: 'Edit',         Component: Edit         },
-  { name: 'ExternalLink', Component: ExternalLink },
-  { name: 'Export',       Component: Export       },
-  { name: 'CheckCircle',  Component: CheckCircle  },
-  { name: 'Close',        Component: Close        },
-  { name: 'PlayArrow',    Component: PlayArrow    },
-  { name: 'MusicNote',    Component: MusicNote    },
-];
+type IconComponent = (p: Omit<IconProps, 'children'>) => React.ReactElement;
+
+const ALL_ICONS: { name: string; Component: IconComponent }[] = Object.entries(
+  Icons,
+)
+  .filter(([name]) => name !== 'Icon')
+  .map(([name, Component]) => ({
+    name,
+    Component: Component as IconComponent,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 const meta = {
   title: 'Basic/Icon',
-  component: List,
+  component: Icons.List,
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
@@ -57,7 +48,7 @@ const meta = {
       table: { defaultValue: { summary: 'currentColor' } },
     },
   },
-} satisfies Meta<typeof List>;
+} satisfies Meta<typeof Icons.List>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -159,7 +150,7 @@ export const Sizes: Story = {
     <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end' }}>
       {[16, 20, 24, 32, 40].map((s) => (
         <div key={s} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <PlayQueue size={s} />
+          <Icons.PlayQueue size={s} />
           <span style={{ fontSize: 10, color: '#999' }}>{s}</span>
         </div>
       ))}
@@ -174,10 +165,66 @@ export const StrokeWeights: Story = {
     <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
       {[1, 1.5, 2, 2.5, 3].map((w) => (
         <div key={w} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <PlayQueue size={28} strokeWidth={w} />
+          <Icons.PlayQueue size={28} strokeWidth={w} />
           <span style={{ fontSize: 10, color: '#999' }}>{w}</span>
         </div>
       ))}
     </div>
   ),
+};
+
+// 在 Button 里使用时, 纯图标按钮跟随 square 字号, 带文字按钮由 .btn-icon 槽控制尺寸。
+export const InButton: Story = {
+  name: 'In Button',
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <span style={{ fontSize: 11, color: '#888', letterSpacing: 0.3 }}>{label}</span>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          {children}
+        </div>
+      </div>
+    );
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 28, padding: 12 }}>
+        <Row label="square · primary · sm / md / lg">
+          <Button square size="sm" variant="primary" aria-label="search"><Icons.Search /></Button>
+          <Button square size="md" variant="primary" aria-label="search"><Icons.Search /></Button>
+          <Button square size="lg" variant="primary" aria-label="search"><Icons.Search /></Button>
+        </Row>
+
+        <Row label="square · variants (md)">
+          <Button square size="md" variant="primary"   aria-label="add"><Icons.Add /></Button>
+          <Button square size="md" variant="secondary" aria-label="refresh"><Icons.Refresh /></Button>
+          <Button square size="md" variant="ghost"     aria-label="more"><Icons.DragIndicator /></Button>
+          <Button square size="md" variant="danger"    aria-label="delete"><Icons.Delete /></Button>
+          <Button square size="md" variant="plain"     aria-label="help"><Icons.Help /></Button>
+        </Row>
+
+        <Row label="icon + label · primary · sm / md / lg">
+          <Button size="sm" variant="primary" icon={<Icons.AddBox />}>create</Button>
+          <Button size="md" variant="primary" icon={<Icons.AddBox />}>create</Button>
+          <Button size="lg" variant="primary" icon={<Icons.AddBox />}>create</Button>
+        </Row>
+
+        <Row label="icon + label · variants (md)">
+          <Button variant="primary"   icon={<Icons.PlaylistAdd />}>add to playlist</Button>
+          <Button variant="secondary" icon={<Icons.Export />}>export</Button>
+          <Button variant="ghost"     icon={<Icons.Refresh />}>refresh</Button>
+          <Button variant="danger"    icon={<Icons.Delete />}>delete</Button>
+          <Button variant="plain"     icon={<Icons.QueueInsert />}>play next</Button>
+        </Row>
+
+        <Row label="all icons · square ghost sm (verifies 1em scaling)">
+          {ALL_ICONS.map(({ name, Component }) => (
+            <Button key={name} square size="sm" variant="ghost" aria-label={name} title={name}>
+              <Component />
+            </Button>
+          ))}
+        </Row>
+      </div>
+    );
+  },
 };

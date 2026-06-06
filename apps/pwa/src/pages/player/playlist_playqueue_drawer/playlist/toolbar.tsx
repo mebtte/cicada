@@ -2,7 +2,6 @@ import Input from '@/components/input';
 import { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from '@/components/button';
-import { MdPlaylistRemove } from 'react-icons/md';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
@@ -13,6 +12,7 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import capitalize from '@/utils/capitalize';
 import context from '../../context';
+import { PlaylistRemove } from '@/components/icon';
 
 const Style = styled.div`
   position: absolute;
@@ -73,7 +73,7 @@ function Toolbar({
           })
         }
       >
-        <MdPlaylistRemove />
+        <PlaylistRemove />
       </Button>
       <Input
         className="filter"

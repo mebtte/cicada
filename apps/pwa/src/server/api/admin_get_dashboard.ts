@@ -11,7 +11,7 @@ type Response = {
     created7d: number;
     withoutCoverCount: number;
   };
-  singer: {
+  artist: {
     total: number;
     created7d: number;
     photoCount: number;

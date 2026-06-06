@@ -2,10 +2,7 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
-import {
-  MdCheck,
-  MdRefresh,
-} from 'react-icons/md';
+import { Refresh, Check } from '@/components/icon';
 import { RequestStatus } from '@/constants';
 import Spinner from '@/components/spinner';
 import ellipsis from '@/style/ellipsis';
@@ -207,7 +204,7 @@ function Musicbill({
     >
       {status === RequestStatus.SUCCESS ? (
         <Checkbox $checked={selected}>
-          <MdCheck className={selected ? undefined : 'empty-check'} />
+          <Check className={selected ? undefined : 'empty-check'} />
         </Checkbox>
       ) : status === RequestStatus.LOADING ? (
         <Checkbox $checked={false}>
@@ -215,7 +212,7 @@ function Musicbill({
         </Checkbox>
       ) : (
         <Checkbox $checked={false}>
-          <MdRefresh className="refresh-icon" />
+          <Refresh className="refresh-icon" />
         </Checkbox>
       )}
       <MusicbillCover

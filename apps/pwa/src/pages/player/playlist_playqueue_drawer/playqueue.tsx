@@ -11,7 +11,7 @@ import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { MdDragIndicator, MdOutlineClose, MdShuffle } from 'react-icons/md';
+import { DragIndicator, Close, Shuffle } from '@/components/icon';
 import {
   closestCenter,
   DndContext,
@@ -56,7 +56,7 @@ const shuffleStyle: CSSProperties = {
   width: 24,
   color: CSSVariable.COLOR_PRIMARY,
 };
-// react-icons v4 不转发 ref, Tooltip 需要可接收 ref 的元素作为锚点, 这里用 span 包裹.
+// Tooltip 需要可接收 ref 的元素作为锚点, 这里用 span 保持定位稳定.
 const shuffleWrapperStyle: CSSProperties = {
   display: 'inline-flex',
 };
@@ -122,7 +122,7 @@ function QueueMusicItem({
           {queueMusic.shuffle ? (
             <Tooltip content={t('shuffle_play')}>
               <span style={shuffleWrapperStyle}>
-                <MdShuffle style={shuffleStyle} />
+                <Shuffle style={shuffleStyle} />
               </span>
             </Tooltip>
           ) : null}
@@ -143,7 +143,7 @@ function QueueMusicItem({
                 );
               }}
             >
-              <MdOutlineClose />
+              <Close />
             </Button>
           ) : null}
         </Operation>
@@ -193,7 +193,7 @@ function SortableQueueMusicItem({
               aria-label={t('sort')}
               onClick={(e) => e.stopPropagation()}
             >
-              <MdDragIndicator />
+              <DragIndicator />
             </Button>
           </DragActivator>
         }

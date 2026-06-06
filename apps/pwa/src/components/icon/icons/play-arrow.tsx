@@ -4,8 +4,9 @@ function PlayArrow(props: Omit<IconProps, 'children'>) {
   return (
     <Icon {...props}>
       <path
-        d="M5.5 4.5 C5.5 3.7 6.4 3.3 7.2 3.8 L19.2 11 C20.2 11.6 20.2 12.4 19.2 13 L7.2 20.2 C6.4 20.7 5.5 20.3 5.5 19.5 Z"
+        d="M8.2 7.2 C8.2 6.3 9.1 5.8 9.9 6.3 L17 10.6 C18.2 11.3 18.2 12.7 17 13.4 L9.9 17.7 C9.1 18.2 8.2 17.7 8.2 16.8 Z"
         fill="currentColor"
+        stroke="none"
       />
     </Icon>
   );

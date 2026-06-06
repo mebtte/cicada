@@ -9,7 +9,7 @@ const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 const FACE = '#ffffff';
 
-function getBorderWidth(size: number | string) {
+function getBorderWidth() {
   return 2;
 }
 
@@ -64,17 +64,20 @@ const Root = styled.div<{
   transition:
     transform 150ms ease-out,
     box-shadow 150ms ease-out,
-    border-color 150ms ease-out,
-    filter 120ms;
+    border-color 150ms ease-out;
+  will-change: transform, box-shadow;
 
   ${({ $interactive, $shadowOffset, $active }) =>
     $interactive &&
     css`
       cursor: pointer;
+      user-select: none;
       -webkit-tap-highlight-color: transparent;
 
       &:hover {
-        filter: brightness(1.06);
+        transform: translateY(-2px);
+        box-shadow: 0 ${$shadowOffset + 2}px 0
+          ${$active ? PRIMARY_SHADOW : NEUTRAL_SHADOW};
       }
 
       &:active {
@@ -82,8 +85,7 @@ const Root = styled.div<{
         box-shadow: none;
         transition:
           transform 60ms ease-in,
-          box-shadow 60ms ease-in,
-          filter 60ms;
+          box-shadow 60ms ease-in;
       }
     `}
 `;
@@ -115,7 +117,7 @@ function Avatar({
   onClick,
   ...props
 }: AvatarProps) {
-  const borderWidth = getBorderWidth(size);
+  const borderWidth = getBorderWidth();
   const radius = getRadius(size);
 
   return (

@@ -91,6 +91,7 @@ function SubMusicList({
             musicId={music.id}
             musicName={music.name}
             musicCover={getResizedImage({ url: music.cover, size: 80 })}
+            musicCoverThumbnail={music.coverThumbnail}
             singers={music.singers}
           />
         ))}

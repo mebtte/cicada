@@ -7,7 +7,7 @@ import {
   FormEvent,
 } from 'react';
 import styled from 'styled-components';
-import { MdSearch } from 'react-icons/md';
+import { Search } from '@/components/icon';
 import { ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
 import Input from '@/components/input';
@@ -129,7 +129,7 @@ function Wrapper() {
         aria-label={searchLabel}
         title={searchLabel}
       >
-        <MdSearch />
+        <Search />
       </Button>
     </SearchForm>
   );

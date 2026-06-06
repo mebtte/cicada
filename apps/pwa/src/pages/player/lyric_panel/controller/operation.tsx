@@ -2,15 +2,15 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  MdUnfoldLess,
-  MdOutlineQueueMusic,
-  MdSkipNext,
-  MdSkipPrevious,
-  MdPlayArrow,
-  MdPause,
-  MdOutlinePostAdd,
-  MdReadMore,
-} from 'react-icons/md';
+  PostAdd,
+  QueueInsert,
+  UnfoldLess,
+  QueueMusic as QueueMusicIcon,
+  SkipNext,
+  SkipPrevious,
+  PlayArrow,
+  Pause,
+} from '@/components/icon';
 import { flexCenter } from '@/style/flexbox';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -62,7 +62,7 @@ function Operation({
             )
           }
         >
-          <MdOutlinePostAdd />
+          <PostAdd />
         </Button>
       </Tooltip>
       <Tooltip content={t('play_next')}>
@@ -77,11 +77,11 @@ function Operation({
             )
           }
         >
-          <MdReadMore />
+          <QueueInsert />
         </Button>
       </Tooltip>
       <Button square variant="ghost" size="sm" onClick={onPrevious}>
-        <MdSkipPrevious />
+        <SkipPrevious />
       </Button>
       <Button
         square
@@ -90,10 +90,10 @@ function Operation({
         onClick={paused ? onPlay : onPause}
         loading={loading}
       >
-        {paused ? <MdPlayArrow /> : <MdPause />}
+        {paused ? <PlayArrow /> : <Pause />}
       </Button>
       <Button square variant="ghost" size="sm" onClick={onNext}>
-        <MdSkipNext />
+        <SkipNext />
       </Button>
       <Button
         square
@@ -101,11 +101,11 @@ function Operation({
         size="sm"
         onClick={openPlaylistPlayqueueDrawer}
       >
-        <MdOutlineQueueMusic />
+        <QueueMusicIcon />
       </Button>
       <Tooltip content={t('collapse')}>
         <Button square variant="ghost" size="sm" onClick={closeLyricPanel}>
-          <MdUnfoldLess />
+          <UnfoldLess />
         </Button>
       </Tooltip>
     </Style>

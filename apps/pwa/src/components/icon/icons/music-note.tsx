@@ -4,18 +4,16 @@ function MusicNote(props: Omit<IconProps, 'children'>) {
   return (
     <Icon {...props}>
       <ellipse
-        cx="9"
-        cy="17"
-        rx="3.8"
-        ry="2.9"
-        transform="rotate(-18 9 17)"
+        cx="8.6"
+        cy="17.2"
+        rx="2.8"
+        ry="2.1"
+        transform="rotate(-18 8.6 17.2)"
         fill="currentColor"
+        stroke="none"
       />
-      <path d="M12 16 L12 5" />
-      <path
-        d="M12 5 C15 5.8 19 8 19 11.5 C17.5 9.7 14.5 9.2 12 9.2 Z"
-        fill="currentColor"
-      />
+      <path d="M11.2 16.4 V5.3" />
+      <path d="M11.2 5.3 C14.1 5.8 17.2 7.2 18 9.7 C16.4 8.7 13.8 8.5 11.2 8.9" />
     </Icon>
   );
 }

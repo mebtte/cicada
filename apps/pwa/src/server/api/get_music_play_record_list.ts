@@ -28,6 +28,10 @@ function getMusicPlayRecordList({
         id: string;
         name: string;
       }[];
+      lyricists: {
+        id: string;
+        name: string;
+      }[];
     }[];
   }>({
     path: '/api/music_play_record_list',

@@ -291,6 +291,7 @@ function Detail({
                   <Cover
                     className="header-cover-image"
                     src={music.cover}
+                    placeholderSrc={music.coverThumbnail}
                     size="100%"
                     shape={Shape.ROUNDED}
                   />
@@ -318,7 +319,12 @@ function Detail({
             {music.cover ? (
               <CoverFrame $insideDrawer={insideDrawer}>
                 <div className="cover-shell">
-                  <Cover src={music.cover} size="100%" shape={Shape.SQUARE} />
+                  <Cover
+                    src={music.cover}
+                    placeholderSrc={music.coverThumbnail}
+                    size="100%"
+                    shape={Shape.SQUARE}
+                  />
                 </div>
               </CoverFrame>
             ) : null}
@@ -327,7 +333,8 @@ function Detail({
               showTitle={!insideDrawer || USE_COLLAPSING_DRAWER_TITLE}
               titleRef={titleRef}
             />
-            <SingerList singerList={music.singers} />
+            <SingerList label={t('singer')} singerList={music.singers} />
+            <SingerList label={t('lyricist')} singerList={music.lyricists} />
             {music.forkFromList.length ? (
               <SubMusicList
                 label={t('fork_from_these_musics')}

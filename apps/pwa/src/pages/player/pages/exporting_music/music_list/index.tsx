@@ -5,7 +5,6 @@ import {
   FLOATING_CONTROLLER_SCROLL_SPACE,
 } from '../../../constants';
 import MusicBase from '../../../components/music_base';
-import { MdClose, MdOutlineRestartAlt } from 'react-icons/md';
 import {
   CSSProperties,
   useContext,
@@ -27,6 +26,7 @@ import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
 import { MusicExportQuality } from '@/utils/music_export_asset';
 import { PAGE_HORIZONTAL_PADDING } from '../../page';
+import { Close, Restart } from '@/components/icon';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
@@ -452,7 +452,7 @@ function ExportStatus({
         >
           {t('export_status_failed')}
           {/* 刷新箭头放在文字右侧, 作为可重试的尾随提示 */}
-          <MdOutlineRestartAlt size={STATUS_ICON_SIZE} />
+          <Restart size={STATUS_ICON_SIZE} />
         </StatusPillButton>
       );
     }
@@ -527,7 +527,7 @@ function SummaryPanel({
             }
           >
             <RetryHint aria-hidden="true">
-              <MdOutlineRestartAlt size={14} />
+              <Restart size={14} />
             </RetryHint>
             <div className="value">{summary.failed}</div>
             <div className="label">{t('export_status_failed')}</div>
@@ -658,7 +658,7 @@ function MusicList() {
                           });
                         }}
                       >
-                        <MdClose style={removeStyle} />
+                        <Close style={removeStyle} />
                       </Button>
                     </LineAfter>
                   }

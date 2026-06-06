@@ -5,7 +5,7 @@ import useQuery from '@/utils/use_query';
 import useNavigate from '@/utils/use_navigate';
 import MusicList from './music_list';
 import MusicEditDrawer from './music_edit_drawer';
-import SingerEditDrawer from '../components/singer_edit/drawer';
+import ArtistEditDrawer from '../components/artist_edit/drawer';
 
 // 外部入口(例如 player music drawer 的编辑按钮)通过该 query 直接打开音乐编辑 drawer
 const EDIT_MUSIC_ID_QUERY = 'edit_music_id';
@@ -17,7 +17,7 @@ const ScrollArea = styled.div`
 
 function MusicManagement() {
   const [editMusicId, setEditMusicId] = useState<string | null>(null);
-  const [editSingerId, setEditSingerId] = useState<string | null>(null);
+  const [editArtistId, setEditArtistId] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
 
   const importReloadToken = useMusicImport((s) => s.reloadToken);
@@ -52,7 +52,7 @@ function MusicManagement() {
       <MusicList
         reloadToken={reloadToken}
         onEdit={setEditMusicId}
-        onSingerEdit={setEditSingerId}
+        onArtistEdit={setEditArtistId}
       />
       <MusicEditDrawer
         open={editMusicId !== null}
@@ -60,10 +60,10 @@ function MusicManagement() {
         onClose={() => setEditMusicId(null)}
         onSaved={reload}
       />
-      <SingerEditDrawer
-        open={editSingerId !== null}
-        singerId={editSingerId}
-        onClose={() => setEditSingerId(null)}
+      <ArtistEditDrawer
+        open={editArtistId !== null}
+        artistId={editArtistId}
+        onClose={() => setEditArtistId(null)}
         onSaved={reload}
       />
     </ScrollArea>

@@ -5,6 +5,7 @@ import { request } from '..';
 interface SingerPhoto {
   id: string;
   asset: string;
+  thumbnail?: string;
   description: string;
 }
 
@@ -18,11 +19,13 @@ interface Singer {
 interface Music {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   singers: Singer[];
+  lyricists: Singer[];
 }
 
-type Response = Omit<Music, 'singers'> & {
+type Response = Omit<Music, 'singers' | 'lyricists'> & {
   type: MusicType;
   aliases: string[];
   searchKeywords: string;
@@ -49,12 +52,14 @@ type Response = Omit<Music, 'singers'> & {
     };
   }[];
   singers: Singer[];
+  lyricists: Singer[];
 };
 
 const normalizePhotos = (photos: SingerPhoto[] = []) =>
   photos.map((photo) => ({
     ...photo,
     asset: prefixServerOrigin(photo.asset),
+    thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
   }));
 
 async function adminGetMusic({
@@ -75,8 +80,9 @@ async function adminGetMusic({
     aliases: music.aliases ?? [],
     searchKeywords: music.searchKeywords ?? '',
     cover: prefixServerOrigin(music.cover),
+    coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
     asset: prefixServerOrigin(music.asset),
-    singers: music.singers.map((singer) => {
+    singers: (music.singers ?? []).map((singer) => {
       const photos = normalizePhotos(singer.photos);
       return {
         ...singer,
@@ -84,20 +90,38 @@ async function adminGetMusic({
         avatar: photos[0]?.asset ?? '',
       };
     }),
+    lyricists: (music.lyricists ?? []).map((artist) => {
+      const photos = normalizePhotos(artist.photos);
+      return {
+        ...artist,
+        photos,
+        avatar: photos[0]?.asset ?? '',
+      };
+    }),
     forkList: music.forkList.map((item) => ({
       ...item,
       cover: prefixServerOrigin(item.cover),
-      singers: item.singers.map((singer) => ({
+      coverThumbnail: prefixServerOrigin(item.coverThumbnail ?? ''),
+      singers: (item.singers ?? []).map((singer) => ({
         ...singer,
         photos: normalizePhotos(singer.photos),
+      })),
+      lyricists: (item.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
       })),
     })),
     forkFromList: music.forkFromList.map((item) => ({
       ...item,
       cover: prefixServerOrigin(item.cover),
-      singers: item.singers.map((singer) => ({
+      coverThumbnail: prefixServerOrigin(item.coverThumbnail ?? ''),
+      singers: (item.singers ?? []).map((singer) => ({
         ...singer,
         photos: normalizePhotos(singer.photos),
+      })),
+      lyricists: (item.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
       })),
     })),
     relatedPublicMusicbillList: (

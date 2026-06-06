@@ -1,18 +1,18 @@
 import useOpen from './use_open';
-import SingerModifyRecordDrawer from './singer_modify_record_drawer';
+import ArtistModifyRecordDrawer from './singer_modify_record_drawer';
 import useDynamicZIndex from '../use_dynamic_z_index';
 import { EventType } from '../eventemitter';
 
 function Wrapper() {
-  const { singer, open, onClose } = useOpen();
-  const zIndex = useDynamicZIndex(EventType.OPEN_SINGER_MODIFY_RECORD_DRAWER);
+  const { artist, open, onClose } = useOpen();
+  const zIndex = useDynamicZIndex(EventType.OPEN_ARTIST_MODIFY_RECORD_DRAWER);
 
-  if (!singer) {
+  if (!artist) {
     return null;
   }
   return (
-    <SingerModifyRecordDrawer
-      singer={singer}
+    <ArtistModifyRecordDrawer
+      artist={artist}
       open={open}
       onClose={onClose}
       zIndex={zIndex}
