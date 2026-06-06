@@ -2,12 +2,10 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  MdRefresh,
-  MdPlaylistAdd,
   MdOutlineEdit,
   MdOutlinePeopleAlt,
 } from 'react-icons/md';
-import { Export } from '@/components/icon';
+import { Export, PlaylistAdd, Refresh } from '@/components/icon';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
@@ -48,7 +46,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
               : notice.error(upperCaseFirstLetter(t('no_music_in_musicbill')))
           }
         >
-          <MdPlaylistAdd />
+          <PlaylistAdd />
         </Button>
       </Tooltip>
       <Tooltip content={t('reload_musicbill')}>
@@ -65,7 +63,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
             })
           }
         >
-          <MdRefresh />
+          <Refresh />
         </Button>
       </Tooltip>
       <Tooltip content={t('edit')}>

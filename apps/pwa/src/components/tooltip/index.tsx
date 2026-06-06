@@ -62,17 +62,17 @@ type Placement = 'top' | 'bottom' | 'left' | 'right';
 type TooltipChildProps = { ref?: Ref<Element> };
 
 export type TooltipProps = {
-  /** 提示内容, 为空时不渲染 tooltip (直接返回 children) */
+  /** Tooltip content. Empty values skip rendering the tooltip and return the child directly. */
   content: ReactNode;
-  /** 触发元素, 必须是单个 ReactElement 且能转发 ref/事件 */
+  /** Trigger element. Must be a single ReactElement that can receive refs and events. */
   children: ReactElement;
-  /** 出现位置, 默认 top, 视口越界时自动翻转 */
+  /** Preferred placement. Defaults to top and flips automatically near viewport edges. */
   placement?: Placement;
-  /** hover 延迟 (ms), 默认 300 */
+  /** Hover delay in milliseconds. Defaults to 300. */
   hoverDelay?: number;
-  /** 长按延迟 (ms), 默认 500 */
+  /** Long-press delay in milliseconds. Defaults to 500. */
   longPressDelay?: number;
-  /** 禁用 tooltip, 直接返回 children */
+  /** Disable the tooltip and return the child directly. */
   disabled?: boolean;
 };
 

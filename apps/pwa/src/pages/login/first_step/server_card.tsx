@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
-import { MdDeleteOutline } from 'react-icons/md';
+import { Delete } from '@/components/icon';
 import { type User } from '@/constants/server';
 
 export const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
@@ -247,7 +247,7 @@ export function ServerCardItem({
         )}
       </div>
       <DeleteButton onClick={onDelete}>
-        <MdDeleteOutline />
+        <Delete />
       </DeleteButton>
     </ServerCard>
   );

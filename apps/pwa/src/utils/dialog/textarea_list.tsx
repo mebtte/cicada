@@ -2,7 +2,8 @@ import { DialogHeader, DialogTitle, DialogBody, DialogFooter, Label } from '@/co
 import Button from '@/components/button';
 import Textarea from '@/components/textarea';
 import { useState } from 'react';
-import { MdDelete, MdUploadFile } from 'react-icons/md';
+import { MdUploadFile } from 'react-icons/md';
+import { Delete } from '@/components/icon';
 import styled from 'styled-components';
 import { t } from '@/i18n';
 import DialogBase from './dialog_base';
@@ -126,7 +127,7 @@ function TextareaListContent({
                   onClick={() => onDelete(value.id)}
                   disabled={confirming || canceling}
                 >
-                  <MdDelete />
+                  <Delete />
                 </Button>
               </Addon>
             }

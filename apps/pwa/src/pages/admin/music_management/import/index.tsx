@@ -1,6 +1,7 @@
 import { ChangeEventHandler, useState } from 'react';
 import styled from 'styled-components';
-import { MdDelete, MdPlayArrow } from 'react-icons/md';
+import { MdPlayArrow } from 'react-icons/md';
+import { Delete } from '@/components/icon';
 import Button from '@/components/button';
 import Divider from '@/components/divider';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
@@ -396,7 +397,7 @@ function TaskCard({ task }: { task: ImportTask }) {
           title={deleteTitle}
           aria-label={deleteTitle}
         >
-          <MdDelete />
+          <Delete />
         </DeleteButton>
         <InfoBox>
           <HeaderRow>

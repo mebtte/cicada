@@ -3,12 +3,9 @@ import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
   MdPlayArrow,
-  MdReadMore,
-  MdOutlinePostAdd,
   MdOutlineEdit,
-  MdPlaylistAdd,
 } from 'react-icons/md';
-import { Export } from '@/components/icon';
+import { Export, PlaylistAdd, PostAdd, ReadMore } from '@/components/icon';
 import { useUser } from '@/global_states/server';
 import { useSetting } from '@/global_states/setting';
 import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
@@ -98,7 +95,7 @@ function Toolbar({
               )
             }
           >
-            <MdReadMore />
+            <ReadMore />
           </Button>
         </Tooltip>
         <Tooltip content={t('add_to_musicbill')}>
@@ -116,7 +113,7 @@ function Toolbar({
               )
             }
           >
-            <MdOutlinePostAdd />
+            <PostAdd />
           </Button>
         </Tooltip>
         <Tooltip content={t('add_to_playlist')}>
@@ -127,7 +124,7 @@ function Toolbar({
             aria-label={t('add_to_playlist')}
             onClick={() => addMusicListToPlaylist([music])}
           >
-            <MdPlaylistAdd />
+            <PlaylistAdd />
           </Button>
         </Tooltip>
         <Tooltip content={t('export_music')}>

@@ -8,11 +8,8 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import {
-  MdOutlineAddBox,
-  MdOutlineEdit,
-  MdSearch,
-} from 'react-icons/md';
+import { MdOutlineEdit } from 'react-icons/md';
+import { AddBox, Search } from '@/components/icon';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
 import Empty from '@/components/empty';
@@ -807,7 +804,7 @@ function SingerManagement() {
               aria-label={t('search')}
               title={t('search')}
             >
-              <MdSearch />
+              <Search />
             </Button>
           </SearchForm>
         </Toolbar>
@@ -913,7 +910,7 @@ function SingerManagement() {
             square
             size="lg"
             variant="primary"
-            icon={<MdOutlineAddBox />}
+            icon={<AddBox />}
             aria-label={t('create_singer')}
             title={t('create_singer')}
             onClick={onOpenCreateSingerDialog}

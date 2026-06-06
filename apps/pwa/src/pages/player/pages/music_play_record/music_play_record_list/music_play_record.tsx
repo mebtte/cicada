@@ -1,7 +1,8 @@
 import { CSSVariable } from '@/global_style';
 import day from '@/utils/day';
 import styled from 'styled-components';
-import { MdAvTimer, MdDeleteOutline } from 'react-icons/md';
+import { MdAvTimer } from 'react-icons/md';
+import { Delete } from '@/components/icon';
 import Button from '@/components/button';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
@@ -77,7 +78,7 @@ function MusicWithExternalInfo({
               });
             }}
           >
-            <MdDeleteOutline />
+            <Delete />
           </Button>
         </LineAfter>
       }

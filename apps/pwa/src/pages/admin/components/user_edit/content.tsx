@@ -1,6 +1,7 @@
 import { ChangeEventHandler, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { MdDeleteOutline, MdKey, MdSave } from 'react-icons/md';
+import { MdKey, MdSave } from 'react-icons/md';
+import { Delete } from '@/components/icon';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import Input from '@/components/input';
@@ -382,7 +383,7 @@ function UserEditContent({
           <Button
             type="button"
             variant="danger"
-            icon={<MdDeleteOutline />}
+            icon={<Delete />}
             disabled={busy}
             onClick={() =>
               dialog.confirm({

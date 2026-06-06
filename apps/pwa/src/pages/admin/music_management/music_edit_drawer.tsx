@@ -8,8 +8,6 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import {
-  MdAdd,
-  MdDelete,
   MdFileUpload,
   MdOutlineFilePresent,
 } from 'react-icons/md';
@@ -22,7 +20,7 @@ import {
 } from '@/components';
 import Button from '@/components/button';
 import ErrorCard from '@/components/error_card';
-import { Edit } from '@/components/icon';
+import { Add, Delete, Edit } from '@/components/icon';
 import Input from '@/components/input';
 import Slider from '@/components/slider';
 import Spinner from '@/components/spinner';
@@ -1156,7 +1154,7 @@ function EditContent({
               title={t('delete_cover')}
               aria-label={t('delete_cover')}
             >
-              <MdDelete />
+              <Delete />
             </Button>
           </CoverActions>
         </CoverSection>
@@ -1190,14 +1188,14 @@ function EditContent({
                   title={t('delete')}
                   aria-label={t('delete')}
                 >
-                  <MdDelete />
+                  <Delete />
                 </Button>
               </AliasInputRow>
             ))}
             {aliases.length < MUSIC_MAX_ALIAS_COUNT ? (
               <Button
                 variant="secondary"
-                icon={<MdAdd />}
+                icon={<Add />}
                 onClick={onAddAlias}
                 disabled={saving}
               >
@@ -1288,7 +1286,7 @@ function EditContent({
                     title={t('delete')}
                     aria-label={t('delete')}
                   >
-                    <MdDelete />
+                    <Delete />
                   </LyricDeleteButton>
                 </TextareaRow>
               ))}
@@ -1297,7 +1295,7 @@ function EditContent({
                   <Button
                     variant="secondary"
                     size="sm"
-                    icon={<MdAdd />}
+                    icon={<Add />}
                     onClick={onAddLyric}
                     disabled={saving}
                   >

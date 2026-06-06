@@ -7,28 +7,23 @@ import {
   useImperativeHandle,
   useRef,
 } from 'react';
-import styled, { css } from 'styled-components';
-import { CSSVariable } from '@/global_style';
-import { CSS_VAR } from '../theme';
+import styled from 'styled-components';
 import Label from '../label';
+import {
+  CONTROL_AFFIX_COLOR,
+  CONTROL_ERROR_COLOR,
+  CONTROL_FONT,
+  CONTROL_MUTED_TEXT_COLOR,
+  CONTROL_PRIMARY_COLOR,
+  CONTROL_SIZE,
+  ControlSize,
+  controlDisabledTextStyles,
+  controlPlaceholderStyles,
+  controlSurfaceStyles,
+  controlTextStyles,
+} from '../control_style';
 
-export type InputSize = 'sm' | 'md' | 'lg';
-
-// ─── Size tokens（与 Button 对齐） ────────────────────────────────────────────
-
-const SIZE: Record<
-  InputSize,
-  { height: number; font: number; radius: number; shadow: number; padding: string }
-> = {
-  sm: { height: 34, font: 13, radius: 10, shadow: 3, padding: '0 12px' },
-  md: { height: 44, font: 15, radius: 13, shadow: 4, padding: '0 14px' },
-  lg: { height: 54, font: 17, radius: 16, shadow: 5, padding: '0 18px' },
-};
-
-const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
-const DISABLED_BACKGROUND = 'rgb(248 248 248)';
-const DISABLED_BORDER = 'rgb(226 226 226)';
-const DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
+export type InputSize = ControlSize;
 
 // ─── Styled ───────────────────────────────────────────────────────────────────
 
@@ -48,70 +43,28 @@ const Wrapper = styled.div<{
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #fff;
-  border-style: solid;
-  border-width: 2px;
   cursor: text;
   -webkit-tap-highlight-color: transparent;
 
-  transition:
-    border-color 150ms ease-out,
-    box-shadow 150ms ease-out;
+  ${controlSurfaceStyles('&:focus-within')}
 
-  /* 尺寸 */
   ${({ $size }) => {
-    const s = SIZE[$size];
-    return css`
+    const s = CONTROL_SIZE[$size];
+    return `
       height: ${s.height}px;
-      padding: ${s.padding};
-      border-radius: ${s.radius}px;
-      box-shadow: 0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+      padding: ${s.inputPadding};
     `;
   }}
-
-  /* 默认状态 */
-  border-color: rgb(220 220 220);
-
-  /* 聚焦 */
-  &:focus-within {
-    border-color: var(${CSS_VAR.colorPrimary});
-    box-shadow: ${({ $size }) =>
-      `0 ${SIZE[$size].shadow}px 0 var(${CSS_VAR.colorPrimaryShadow})`};
-  }
-
-  /* 错误 */
-  ${({ $error, $size }) =>
-    $error &&
-    css`
-      border-color: rgb(242 80 66);
-      box-shadow: 0 ${SIZE[$size].shadow}px 0 rgb(190 46 34);
-
-      &:focus-within {
-        border-color: rgb(242 80 66);
-        box-shadow: 0 ${SIZE[$size].shadow}px 0 rgb(190 46 34);
-      }
-    `}
-
-  /* 禁用 */
-  ${({ $disabled, $size }) =>
-    $disabled &&
-    css`
-      background: ${DISABLED_BACKGROUND};
-      border-color: ${DISABLED_BORDER};
-      box-shadow: 0 ${SIZE[$size].shadow}px 0 ${DISABLED_SHADOW};
-      cursor: not-allowed;
-    `}
 `;
 
 const Affix = styled.span`
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  color: rgb(175 175 175);
+  color: ${CONTROL_AFFIX_COLOR};
 
-  /* 聚焦时前后缀也跟着变色 */
   ${Wrapper}:focus-within & {
-    color: var(${CSS_VAR.colorPrimary});
+    color: ${CONTROL_PRIMARY_COLOR};
   }
 `;
 
@@ -123,38 +76,21 @@ const NativeInput = styled.input<{ $size: InputSize }>`
   appearance: none;
   -webkit-appearance: none;
   background-color: transparent;
-  font-family: ${FONT};
-  font-weight: 600;
-  letter-spacing: 0.2px;
-  color: rgb(55 55 55);
   -webkit-tap-highlight-color: transparent;
 
-  font-size: ${({ $size }) => SIZE[$size].font}px;
-
-  @media (pointer: coarse) {
-    font-size: ${({ $size }) => Math.max(SIZE[$size].font, 16)}px;
-  }
-
-  &::placeholder {
-    color: rgb(205 205 205);
-    font-weight: 500;
-    /* 与 Label 的首字母大写风格对齐（::placeholder 无法链式 ::first-letter） */
-    text-transform: capitalize;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    color: rgb(145 145 145);
-  }
+  ${controlTextStyles}
+  ${controlPlaceholderStyles}
+  ${controlDisabledTextStyles}
 `;
 
 const Bottom = styled.p<{ $error: boolean }>`
   margin: 0;
-  font-family: ${FONT};
+  font-family: ${CONTROL_FONT};
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.1px;
-  color: ${({ $error }) => ($error ? 'rgb(242 80 66)' : 'rgb(160 160 160)')};
+  color: ${({ $error }) =>
+    $error ? CONTROL_ERROR_COLOR : CONTROL_MUTED_TEXT_COLOR};
 `;
 
 // ─── Props ────────────────────────────────────────────────────────────────────

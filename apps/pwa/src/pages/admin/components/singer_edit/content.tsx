@@ -23,11 +23,10 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import {
   MdAddPhotoAlternate,
-  MdDelete,
-  MdDragIndicator,
   MdImage,
   MdRecordVoiceOver,
 } from 'react-icons/md';
+import { Delete, DragIndicator } from '@/components/icon';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import Textarea from '@/components/textarea';
@@ -448,7 +447,7 @@ function SortablePhoto({
           {...attributes}
           {...listeners}
         >
-          <MdDragIndicator size={18} />
+          <DragIndicator size={18} />
         </DragHandle>
       ) : null}
       <PhotoDeleteButton
@@ -460,7 +459,7 @@ function SortablePhoto({
         aria-label={t('delete')}
         onClick={() => onDelete(photo.id)}
       >
-        <MdDelete />
+        <Delete />
       </PhotoDeleteButton>
     </PhotoRow>
   );
@@ -822,7 +821,7 @@ function SingerEditContent({
                   title={t('delete')}
                   aria-label={t('delete')}
                 >
-                  <MdDelete />
+                  <Delete />
                 </Button>
               </AliasInputRow>
             ))}

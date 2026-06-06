@@ -1,5 +1,5 @@
 import { CSSProperties, memo, useContext } from 'react';
-import { MdHelpOutline } from 'react-icons/md';
+import { Help } from '@/components/icon';
 import styled, { css } from 'styled-components';
 import { Button, TabList } from '@/components';
 import {
@@ -124,7 +124,7 @@ function PlaybackQuality() {
             aria-label={t('music_playback_quality_help_title')}
             onClick={openHelp}
           >
-            <MdHelpOutline />
+            <Help />
           </Button>
         </Label>
       }

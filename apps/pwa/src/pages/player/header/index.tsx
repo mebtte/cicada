@@ -2,7 +2,8 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
 import Button from '@/components/button';
-import { MdArrowBack, MdMenu, MdSearch } from 'react-icons/md';
+import { MdArrowBack, MdMenu } from 'react-icons/md';
+import { Search as SearchIcon } from '@/components/icon';
 import { useLocation, useNavigate as useRouterNavigate } from 'react-router-dom';
 import useNavigate from '@/utils/use_navigate';
 import { ROOT_PATH } from '@/constants/route';
@@ -86,7 +87,7 @@ function Header() {
               });
             }}
           >
-            <MdSearch />
+            <SearchIcon />
           </Button>
         </>
       ) : (

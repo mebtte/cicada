@@ -4,6 +4,9 @@ export type { ButtonProps, Variant as ButtonVariant, Size as ButtonSize } from '
 export { default as Input } from './input';
 export type { InputProps, InputSize } from './input';
 
+export { default as Textarea } from './textarea';
+export type { TextareaProps, TextareaSize } from './textarea';
+
 export { default as Label } from './label';
 export type { LabelProps } from './label';
 

@@ -2,10 +2,8 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
-import {
-  MdCheck,
-  MdRefresh,
-} from 'react-icons/md';
+import { MdCheck } from 'react-icons/md';
+import { Refresh } from '@/components/icon';
 import { RequestStatus } from '@/constants';
 import Spinner from '@/components/spinner';
 import ellipsis from '@/style/ellipsis';
@@ -215,7 +213,7 @@ function Musicbill({
         </Checkbox>
       ) : (
         <Checkbox $checked={false}>
-          <MdRefresh className="refresh-icon" />
+          <Refresh className="refresh-icon" />
         </Checkbox>
       )}
       <MusicbillCover

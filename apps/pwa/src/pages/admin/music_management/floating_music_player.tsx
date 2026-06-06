@@ -10,7 +10,6 @@ import styled, { css } from 'styled-components';
 import { MultipleLrc, MultipleLrcLine } from 'react-lrc';
 import {
   MdClose,
-  MdDragIndicator,
   MdExpandLess,
   MdExpandMore,
   MdHighQuality,
@@ -19,6 +18,7 @@ import {
   MdPlayArrow,
   MdSpeed,
 } from 'react-icons/md';
+import { DragIndicator } from '@/components/icon';
 import { Slider } from '@/components';
 import Button from '@/components/button';
 import { useSetting } from '@/global_states/setting';
@@ -892,7 +892,7 @@ function FloatingMusicPlayer({
         onPointerUp={finishDrag}
         onPointerCancel={finishDrag}
       >
-        <MdDragIndicator />
+        <DragIndicator />
       </DragHandle>
       <IconButton
         type="button"

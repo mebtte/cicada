@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Drawer, DrawerContent } from '@/components';
 import Button from '@/components/button';
-import { MdOutlineAddBox } from 'react-icons/md';
+import { AddBox } from '@/components/icon';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { MusicWithSingerAliases } from '../constants';
@@ -63,7 +63,7 @@ function MusicbillMusicDrawer({
             aria-label={t('create_musicbill')}
             onClick={openCreateMusicbillDialog}
           >
-            <MdOutlineAddBox />
+            <AddBox />
           </FloatingCreateButton>
         </Content>
       </DrawerContent>

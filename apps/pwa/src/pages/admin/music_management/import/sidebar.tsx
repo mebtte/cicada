@@ -1,10 +1,10 @@
 import { ChangeEventHandler, useCallback, useRef } from 'react';
 import {
-  MdAdd,
   MdDeleteSweep,
   MdMusicNote,
   MdPlayArrow,
 } from 'react-icons/md';
+import { Add } from '@/components/icon';
 import styled from 'styled-components';
 import {
   Drawer,
@@ -336,7 +336,7 @@ function MusicImportSidebar() {
                 title={capitalize(t('select_music_files'))}
                 aria-label={capitalize(t('select_music_files'))}
               >
-                <MdAdd />
+                <Add />
               </Button>
             </HeaderActions>
           </Header>

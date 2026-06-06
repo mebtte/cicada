@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { MdPlayArrow, MdReadMore, MdOutlinePostAdd } from 'react-icons/md';
+import { MdPlayArrow } from 'react-icons/md';
+import { PostAdd, ReadMore } from '@/components/icon';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import { t } from '@/i18n';
 import { MusicWithSingerAliases } from '../constants';
@@ -58,7 +59,7 @@ function Music({
                 });
               }}
             >
-              <MdReadMore />
+              <ReadMore />
             </Button>
           </Tooltip>
           <Tooltip content={t('add_to_musicbill')}>
@@ -73,7 +74,7 @@ function Music({
                 });
               }}
             >
-              <MdOutlinePostAdd />
+              <PostAdd />
             </Button>
           </Tooltip>
         </LineAfterPart>

@@ -16,9 +16,9 @@ import {
   MdOpenInNew,
   MdOutlineEdit,
   MdPlayArrow,
-  MdSearch,
   MdUnfoldMore,
 } from 'react-icons/md';
+import { Search } from '@/components/icon';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
 import Empty from '@/components/empty';
@@ -1034,7 +1034,7 @@ function MusicList({
             aria-label={t('search')}
             title={t('search')}
           >
-            <MdSearch />
+            <Search />
           </Button>
         </SearchForm>
       </Toolbar>

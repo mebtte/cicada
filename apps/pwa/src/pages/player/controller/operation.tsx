@@ -8,9 +8,8 @@ import {
   MdSkipPrevious,
   MdSkipNext,
   MdMoreHoriz,
-  MdReadMore,
-  MdOutlinePostAdd,
 } from 'react-icons/md';
+import { PostAdd, ReadMore } from '@/components/icon';
 import { CSSVariable } from '@/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -85,7 +84,7 @@ function Operation({
                   : alertNoPlayingMusic()
               }
             >
-              <MdReadMore />
+              <ReadMore />
             </Button>
           </Tooltip>
           <Tooltip content={t('add_to_musicbill')}>
@@ -102,7 +101,7 @@ function Operation({
                   : alertNoPlayingMusic()
               }
             >
-              <MdOutlinePostAdd />
+              <PostAdd />
             </Button>
           </Tooltip>
           <Button

@@ -11,7 +11,8 @@ import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { MdDragIndicator, MdOutlineClose, MdShuffle } from 'react-icons/md';
+import { MdOutlineClose, MdShuffle } from 'react-icons/md';
+import { DragIndicator } from '@/components/icon';
 import {
   closestCenter,
   DndContext,
@@ -193,7 +194,7 @@ function SortableQueueMusicItem({
               aria-label={t('sort')}
               onClick={(e) => e.stopPropagation()}
             >
-              <MdDragIndicator />
+              <DragIndicator />
             </Button>
           </DragActivator>
         }

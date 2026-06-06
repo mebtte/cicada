@@ -8,7 +8,7 @@ import { RequestStatus } from '@/constants';
 import { animated, useTransition } from 'react-spring';
 import Button from '@/components/button';
 import { t } from '@/i18n';
-import { MdOutlineAddBox } from 'react-icons/md';
+import { AddBox } from '@/components/icon';
 import Context from '../../context';
 import e, { EventType } from '../../eventemitter';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
@@ -87,7 +87,7 @@ function MusicbillList() {
                 block
                 size="sm"
                 variant="primary"
-                icon={<MdOutlineAddBox />}
+                icon={<AddBox />}
                 onClick={openCreateMusicbillDialog}
               >
                 {t('create_musicbill')}

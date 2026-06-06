@@ -7,7 +7,8 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import { MdAdd, MdClose, MdRefresh, MdRemove } from 'react-icons/md';
+import { MdClose, MdRemove } from 'react-icons/md';
+import { Add, Refresh } from '@/components/icon';
 import {
   TransformComponent,
   TransformWrapper,
@@ -195,7 +196,7 @@ function ImageViewer({
                     aria-label={t('reset_zoom')}
                     onClick={() => resetTransform()}
                   >
-                    <MdRefresh size={18} />
+                    <Refresh size={18} />
                   </Button>
                   <Button
                     square
@@ -205,7 +206,7 @@ function ImageViewer({
                     aria-label={t('zoom_in')}
                     onClick={() => zoomIn()}
                   >
-                    <MdAdd size={18} />
+                    <Add size={18} />
                   </Button>
                 </Toolbar>
               </>

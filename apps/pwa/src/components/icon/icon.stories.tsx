@@ -1,28 +1,49 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import Button from '../button';
 import {
+  Add,
+  AddBox,
   CheckCircle,
   Close,
+  Delete,
+  DragIndicator,
   Edit,
   Export,
   ExternalLink,
+  Help,
   List,
   MusicNote,
   PlayArrow,
   PlayQueue,
+  PlaylistAdd,
+  PostAdd,
+  ReadMore,
+  Refresh,
+  Search,
 } from '.';
 import type { IconProps } from '.';
 
 const ALL_ICONS: { name: string; Component: (p: Omit<IconProps, 'children'>) => React.ReactElement }[] = [
-  { name: 'List',         Component: List         },
-  { name: 'PlayQueue',    Component: PlayQueue    },
-  { name: 'Edit',         Component: Edit         },
-  { name: 'ExternalLink', Component: ExternalLink },
-  { name: 'Export',       Component: Export       },
-  { name: 'CheckCircle',  Component: CheckCircle  },
-  { name: 'Close',        Component: Close        },
-  { name: 'PlayArrow',    Component: PlayArrow    },
-  { name: 'MusicNote',    Component: MusicNote    },
+  { name: 'List',          Component: List          },
+  { name: 'PlayQueue',     Component: PlayQueue     },
+  { name: 'Edit',          Component: Edit          },
+  { name: 'ExternalLink',  Component: ExternalLink  },
+  { name: 'Export',        Component: Export        },
+  { name: 'CheckCircle',   Component: CheckCircle   },
+  { name: 'Close',         Component: Close         },
+  { name: 'PlayArrow',     Component: PlayArrow     },
+  { name: 'MusicNote',     Component: MusicNote     },
+  { name: 'Add',           Component: Add           },
+  { name: 'AddBox',        Component: AddBox        },
+  { name: 'Search',        Component: Search        },
+  { name: 'Delete',        Component: Delete        },
+  { name: 'Refresh',       Component: Refresh       },
+  { name: 'PlaylistAdd',   Component: PlaylistAdd   },
+  { name: 'Help',          Component: Help          },
+  { name: 'PostAdd',       Component: PostAdd       },
+  { name: 'DragIndicator', Component: DragIndicator },
+  { name: 'ReadMore',      Component: ReadMore      },
 ];
 
 const meta = {
@@ -180,4 +201,61 @@ export const StrokeWeights: Story = {
       ))}
     </div>
   ),
+};
+
+// 在 Button 里使用时, icon 默认 size='1em', 会跟随按钮的 font-size 缩放
+// (square sm/md/lg = 18/22/28px, 带文字时 sm/md/lg = 13/15/17px)。
+export const InButton: Story = {
+  name: 'In Button',
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <span style={{ fontSize: 11, color: '#888', letterSpacing: 0.3 }}>{label}</span>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          {children}
+        </div>
+      </div>
+    );
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 28, padding: 12 }}>
+        <Row label="square · primary · sm / md / lg">
+          <Button square size="sm" variant="primary" aria-label="search"><Search /></Button>
+          <Button square size="md" variant="primary" aria-label="search"><Search /></Button>
+          <Button square size="lg" variant="primary" aria-label="search"><Search /></Button>
+        </Row>
+
+        <Row label="square · variants (md)">
+          <Button square size="md" variant="primary"   aria-label="add"><Add /></Button>
+          <Button square size="md" variant="secondary" aria-label="refresh"><Refresh /></Button>
+          <Button square size="md" variant="ghost"     aria-label="more"><DragIndicator /></Button>
+          <Button square size="md" variant="danger"    aria-label="delete"><Delete /></Button>
+          <Button square size="md" variant="plain"     aria-label="help"><Help /></Button>
+        </Row>
+
+        <Row label="icon + label · primary · sm / md / lg">
+          <Button size="sm" variant="primary" icon={<AddBox />}>create</Button>
+          <Button size="md" variant="primary" icon={<AddBox />}>create</Button>
+          <Button size="lg" variant="primary" icon={<AddBox />}>create</Button>
+        </Row>
+
+        <Row label="icon + label · variants (md)">
+          <Button variant="primary"   icon={<PlaylistAdd />}>add to playlist</Button>
+          <Button variant="secondary" icon={<Export />}>export</Button>
+          <Button variant="ghost"     icon={<Refresh />}>refresh</Button>
+          <Button variant="danger"    icon={<Delete />}>delete</Button>
+          <Button variant="plain"     icon={<ReadMore />}>play next</Button>
+        </Row>
+
+        <Row label="all icons · square ghost sm (verifies 1em scaling)">
+          {ALL_ICONS.map(({ name, Component }) => (
+            <Button key={name} square size="sm" variant="ghost" aria-label={name} title={name}>
+              <Component />
+            </Button>
+          ))}
+        </Row>
+      </div>
+    );
+  },
 };

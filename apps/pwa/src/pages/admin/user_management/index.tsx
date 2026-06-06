@@ -9,11 +9,10 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import {
-  MdOutlineAddBox,
   MdOutlineEdit,
   MdPeopleOutline,
-  MdSearch,
 } from 'react-icons/md';
+import { AddBox, Search } from '@/components/icon';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import Input from '@/components/input';
@@ -708,7 +707,7 @@ function UserManagement() {
             aria-label={t('search')}
             title={t('search')}
           >
-            <MdSearch />
+            <Search />
           </Button>
         </SearchForm>
       </Toolbar>
@@ -819,7 +818,7 @@ function UserManagement() {
           square
           size="lg"
           variant="primary"
-          icon={<MdOutlineAddBox />}
+          icon={<AddBox />}
           aria-label={t('create_user')}
           title={t('create_user')}
           onClick={() => setCreateDialogOpen(true)}

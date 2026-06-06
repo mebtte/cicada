@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { MdOutlineEdit, MdPlaylistAdd } from 'react-icons/md';
-import { Export } from '@/components/icon';
+import { MdOutlineEdit } from 'react-icons/md';
+import { Export, PlaylistAdd } from '@/components/icon';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
 import { useUser } from '@/global_states/server';
@@ -75,7 +75,7 @@ function Toolbar({
                 : notice.error(t('no_music_singer_warning'))
             }
           >
-            <MdPlaylistAdd />
+            <PlaylistAdd />
           </Button>
         </Tooltip>
         <Tooltip content={t('export_music')}>

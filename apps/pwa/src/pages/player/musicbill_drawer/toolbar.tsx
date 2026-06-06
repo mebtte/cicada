@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { MdPlaylistAdd, MdStar, MdStarOutline } from 'react-icons/md';
+import { MdStar, MdStarOutline } from 'react-icons/md';
+import { PlaylistAdd } from '@/components/icon';
 import notice from '@/utils/notice';
 import collectPublicMusicbill from '@/server/api/collect_public_musicbill';
 import logger from '@/utils/logger';
@@ -79,7 +80,7 @@ function Toolbar({
               addMusicListToPlaylist(musicbill.musicList);
             }}
           >
-            <MdPlaylistAdd />
+            <PlaylistAdd />
           </Button>
         </Tooltip>
         <Tooltip

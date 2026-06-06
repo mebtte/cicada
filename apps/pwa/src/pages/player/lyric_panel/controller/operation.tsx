@@ -8,9 +8,8 @@ import {
   MdSkipPrevious,
   MdPlayArrow,
   MdPause,
-  MdOutlinePostAdd,
-  MdReadMore,
 } from 'react-icons/md';
+import { PostAdd, ReadMore } from '@/components/icon';
 import { flexCenter } from '@/style/flexbox';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -62,7 +61,7 @@ function Operation({
             )
           }
         >
-          <MdOutlinePostAdd />
+          <PostAdd />
         </Button>
       </Tooltip>
       <Tooltip content={t('play_next')}>
@@ -77,7 +76,7 @@ function Operation({
             )
           }
         >
-          <MdReadMore />
+          <ReadMore />
         </Button>
       </Tooltip>
       <Button square variant="ghost" size="sm" onClick={onPrevious}>

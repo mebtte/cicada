@@ -3,12 +3,11 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  MdOutlineAddBox,
   MdSort,
-  MdRefresh,
   MdOutlinePeopleAlt,
   MdStarOutline,
 } from 'react-icons/md';
+import { AddBox, Refresh } from '@/components/icon';
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
@@ -99,7 +98,7 @@ function Top() {
           onClick={reloadMusicbillList}
           loading={getMusicbillListStatus === RequestStatus.LOADING}
         >
-          <MdRefresh />
+          <Refresh />
         </ToolButton>
       </Tooltip>
       <Tooltip content={t('create')}>
@@ -109,7 +108,7 @@ function Top() {
           size="sm"
           onClick={openCreateMusicbillDialog}
         >
-          <MdOutlineAddBox />
+          <AddBox />
         </ToolButton>
       </Tooltip>
       <Tooltip content={t('sort_musicbill')}>

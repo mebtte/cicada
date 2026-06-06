@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom';
 import { t } from '@/i18n';
 import capitalize from '@/utils/capitalize';
 import styled from 'styled-components';
-import { MdSearch } from 'react-icons/md';
+import { Search } from '@/components/icon';
 import { ROOT_PATH } from '@/constants/route';
 import eventemitter, { EventType } from '../../eventemitter';
 import { isComposingEnterKeyDown } from '@/utils/keyboard';
@@ -101,7 +101,7 @@ function Wrapper({ autoFocus = true }: { autoFocus?: boolean }) {
         aria-label={searchLabel}
         title={searchLabel}
       >
-        <MdSearch />
+        <Search />
       </Button>
     </SearchForm>
   );
