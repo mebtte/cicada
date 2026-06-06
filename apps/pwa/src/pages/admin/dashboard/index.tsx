@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import {
-  MdLibraryMusic,
-  MdPeopleOutline,
-  MdPlayCircleOutline,
-  MdQueueMusic,
-  MdRecordVoiceOver,
-} from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
@@ -22,6 +15,13 @@ import formatBytes from '@/utils/format_bytes';
 import adminGetDashboard, {
   type AdminDashboard,
 } from '@/server/api/admin_get_dashboard';
+import {
+  LibraryMusic,
+  People,
+  PlayCircle,
+  QueueMusic as QueueMusicIcon,
+  Voice,
+} from '@/components/icon';
 
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
 const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
@@ -410,7 +410,7 @@ function Dashboard() {
             <CardHeader>
               <CardTitle>{capitalize(t('today_play_count'))}</CardTitle>
               <IconBox $tone="play">
-                <MdPlayCircleOutline />
+                <PlayCircle />
               </IconBox>
             </CardHeader>
             <PrimaryValue>{formatCount(dashboard.todayPlayCount)}</PrimaryValue>
@@ -430,7 +430,7 @@ function Dashboard() {
             <CardHeader>
               <CardTitle>{capitalize(t('music_total'))}</CardTitle>
               <IconBox $tone="music">
-                <MdLibraryMusic />
+                <LibraryMusic />
               </IconBox>
             </CardHeader>
             <PrimaryValue>{formatCount(dashboard.music.total)}</PrimaryValue>
@@ -458,7 +458,7 @@ function Dashboard() {
             <CardHeader>
               <CardTitle>{capitalize(t('singer_total'))}</CardTitle>
               <IconBox $tone="singer">
-                <MdRecordVoiceOver />
+                <Voice />
               </IconBox>
             </CardHeader>
             <PrimaryValue>{formatCount(dashboard.singer.total)}</PrimaryValue>
@@ -482,7 +482,7 @@ function Dashboard() {
             <CardHeader>
               <CardTitle>{capitalize(t('user_total'))}</CardTitle>
               <IconBox $tone="user">
-                <MdPeopleOutline />
+                <People />
               </IconBox>
             </CardHeader>
             <PrimaryValue>{formatCount(dashboard.user.total)}</PrimaryValue>
@@ -502,7 +502,7 @@ function Dashboard() {
             <CardHeader>
               <CardTitle>{capitalize(t('musicbill_total'))}</CardTitle>
               <IconBox $tone="musicbill">
-                <MdQueueMusic />
+                <QueueMusicIcon />
               </IconBox>
             </CardHeader>
             <PrimaryValue>{formatCount(dashboard.musicbill.total)}</PrimaryValue>

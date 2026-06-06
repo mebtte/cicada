@@ -15,15 +15,6 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import definition from '@/definition';
 import { CSS_VAR } from '@/components/theme';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
-import {
-  MdCloudUpload,
-  MdDashboard,
-  MdHeadphones,
-  MdLibraryMusic,
-  MdMenu,
-  MdPeopleOutline,
-  MdRecordVoiceOver,
-} from 'react-icons/md';
 import Dashboard from './dashboard';
 import MusicManagement from './music_management';
 import SingerManagement from './singer_management';
@@ -36,6 +27,15 @@ import {
   toggleWindow,
   useMusicImport,
 } from '@/global_states/music_import';
+import {
+  CloudUpload,
+  Dashboard as DashboardIcon,
+  Headphones,
+  LibraryMusic,
+  Menu as MenuIcon,
+  People,
+  Voice,
+} from '@/components/icon';
 
 const SIDEBAR_WIDTH = 240;
 const HEADER_HEIGHT = 72;
@@ -64,22 +64,22 @@ const ADMIN_MENU_ITEMS = [
   {
     path: ADMIN_PATH.DASHBOARD,
     label: 'dashboard',
-    Icon: MdDashboard,
+    Icon: DashboardIcon,
   },
   {
     path: ADMIN_PATH.USER_MANAGEMENT,
     label: 'user_management',
-    Icon: MdPeopleOutline,
+    Icon: People,
   },
   {
     path: ADMIN_PATH.SINGER_MANAGEMENT,
     label: 'singer_management',
-    Icon: MdRecordVoiceOver,
+    Icon: Voice,
   },
   {
     path: ADMIN_PATH.MUSIC_MANAGEMENT,
     label: 'music_management',
-    Icon: MdLibraryMusic,
+    Icon: LibraryMusic,
   },
 ] as const;
 
@@ -779,7 +779,7 @@ function AdminPage() {
             onClick={() => setSidebarOpen(true)}
             aria-label={t('open_menu')}
           >
-            <MdMenu size={22} />
+            <MenuIcon size={22} />
           </MenuToggle>
           <HeaderLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
           <HeaderTitle>
@@ -800,7 +800,7 @@ function AdminPage() {
                 {uploadActive ? (
                   <span>{uploadPercentText}</span>
                 ) : (
-                  <MdCloudUpload />
+                  <CloudUpload />
                 )}
               </span>
             </UploadStatusButton>
@@ -817,7 +817,7 @@ function AdminPage() {
               aria-label={capitalize(t('player'))}
             >
               <PlayerLinkBox>
-                <MdHeadphones size={20} />
+                <Headphones size={20} />
               </PlayerLinkBox>
             </PlayerLink>
             <UserMenuRoot ref={userMenuRef}>

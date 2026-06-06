@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Cover, { Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import { MdOutlineMusicNote } from 'react-icons/md';
 import Empty from '@/components/empty';
 import { CSSProperties } from 'react';
 import { t } from '@/i18n';
@@ -11,6 +10,7 @@ import { UserDetail } from './constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { MusicNote } from '@/components/icon';
 
 type MusicbillType = UserDetail['musicbillList'][0];
 const COVER_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
@@ -138,7 +138,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
           shape={Shape.SQUARE}
         />
         <div className="music-count">
-          <MdOutlineMusicNote />
+          <MusicNote />
           <div className="count">{musicbill.musicCount}</div>
         </div>
       </div>

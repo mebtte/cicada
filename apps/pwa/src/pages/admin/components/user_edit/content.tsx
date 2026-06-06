@@ -1,7 +1,6 @@
 import { ChangeEventHandler, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { MdKey, MdSave } from 'react-icons/md';
-import { Delete } from '@/components/icon';
+import { Delete, Key, Save } from '@/components/icon';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import Input from '@/components/input';
@@ -342,7 +341,7 @@ function UserEditContent({
         <Button
           type="button"
           variant="primary"
-          icon={<MdSave />}
+          icon={<Save />}
           loading={loading}
           disabled={adminUpdating || !changed || !username}
           onClick={onSave}
@@ -353,7 +352,7 @@ function UserEditContent({
           <Button
             type="button"
             variant="ghost"
-            icon={<MdKey />}
+            icon={<Key />}
             disabled={busy}
             onClick={() =>
               dialog.password({

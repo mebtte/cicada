@@ -2,7 +2,6 @@ import { MusicType } from '@/constants/music';
 import { CSSVariable } from '@/global_style';
 import { MultipleLrc } from 'react-lrc';
 import styled from 'styled-components';
-import { MdFileDownload } from 'react-icons/md';
 import { saveAs } from 'file-saver';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
@@ -11,6 +10,7 @@ import { useUser } from '@/global_states/server';
 import { useSetting } from '@/global_states/setting';
 import { MusicDetail } from './constants';
 import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
+import { FileDownload } from '@/components/icon';
 
 const Style = styled.section`
   margin: 22px ${PAGE_HORIZONTAL_PADDING} 4px;
@@ -161,7 +161,7 @@ function Lyric({ music }: { music: MusicDetail }) {
             aria-label={t('download_lyric')}
             onClick={downloadLyrics}
           >
-            <MdFileDownload />
+            <FileDownload />
           </DownloadButton>
         ) : null}
       </div>

@@ -1,14 +1,10 @@
 import { HtmlHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
-import {
-  MdKeyboardArrowLeft,
-  MdKeyboardArrowRight,
-  MdMoreHoriz,
-} from 'react-icons/md';
 import Button, { Size } from '@/components/button';
 import { CSSVariable } from '@/global_style';
 import usePagination from './use_pagination';
 import { t } from '@/i18n';
+import { ChevronLeft, ChevronRight, MoreHorizontal } from '@/components/icon';
 
 const GAP_MAP: Record<Size, number> = { sm: 5, md: 6, lg: 8 };
 const SHADOW_OFFSET: Record<Size, number> = { sm: 3, md: 4, lg: 5 };
@@ -113,7 +109,7 @@ function Pagination({
                 aria-label={t('previous_page')}
                 disabled={item.disabled}
                 onClick={() => navTo(page - 1)}
-                icon={<MdKeyboardArrowLeft />}
+                icon={<ChevronLeft />}
               />
             );
           case 'next':
@@ -126,7 +122,7 @@ function Pagination({
                 aria-label={t('next_page')}
                 disabled={item.disabled}
                 onClick={() => navTo(page + 1)}
-                icon={<MdKeyboardArrowRight />}
+                icon={<ChevronRight />}
               />
             );
           case 'start-ellipsis':
@@ -137,7 +133,7 @@ function Pagination({
                 $size={PAGINATION_SIZE}
                 aria-hidden="true"
               >
-                <MdMoreHoriz />
+                <MoreHorizontal />
               </Ellipsis>
             );
           case 'page':

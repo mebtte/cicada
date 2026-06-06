@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { MdPlayArrow } from 'react-icons/md';
-import { Delete, Help, PlaylistAdd, QueueInsert } from '@/components/icon';
+import {
+  Delete,
+  Help,
+  PlaylistAdd,
+  QueueInsert,
+  PlayArrow,
+} from '@/components/icon';
 import autoScrollbar from '@/style/auto_scrollbar';
 import capitalizeString from '@/utils/capitalize';
 import { CSSVariable } from '@/global_style';
@@ -283,7 +288,7 @@ function OfflineCache() {
                           );
                         }}
                       >
-                        <MdPlayArrow />
+                        <PlayArrow />
                       </Button>
                       <Tooltip content={t('play_next')}>
                         <Button

@@ -2,10 +2,13 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  MdPlayArrow,
-  MdOutlineEdit,
-} from 'react-icons/md';
-import { Export, PlaylistAdd, PostAdd, QueueInsert } from '@/components/icon';
+  Export,
+  PlaylistAdd,
+  PostAdd,
+  QueueInsert,
+  PlayArrow,
+  Edit,
+} from '@/components/icon';
 import { useUser } from '@/global_states/server';
 import { useSetting } from '@/global_states/setting';
 import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
@@ -78,7 +81,7 @@ function Toolbar({
             })
           }
         >
-          <MdPlayArrow />
+          <PlayArrow />
         </Button>
         <Tooltip content={t('play_next')}>
           <Button
@@ -153,7 +156,7 @@ function Toolbar({
                 )
               }
             >
-              <MdOutlineEdit />
+              <Edit />
             </Button>
           </Tooltip>
         ) : null}

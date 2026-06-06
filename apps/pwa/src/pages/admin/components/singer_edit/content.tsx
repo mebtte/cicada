@@ -22,11 +22,12 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  MdAddPhotoAlternate,
-  MdImage,
-  MdRecordVoiceOver,
-} from 'react-icons/md';
-import { Delete, DragIndicator } from '@/components/icon';
+  Delete,
+  DragIndicator,
+  PhotoAdd,
+  Image as ImageIcon,
+  Voice,
+} from '@/components/icon';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import Textarea from '@/components/textarea';
@@ -422,7 +423,7 @@ function SortablePhoto({
             alt={photo.description || singerName}
           />
         ) : (
-          <MdImage />
+          <ImageIcon />
         )}
       </PhotoThumb>
       <PhotoInfo>
@@ -740,7 +741,7 @@ function SingerEditContent({
                 alt={singer.name}
               />
             ) : (
-              <MdRecordVoiceOver />
+              <Voice />
             )}
           </AvatarBox>
           <HeaderInfo>
@@ -786,7 +787,7 @@ function SingerEditContent({
             ) : null}
             <Button
               variant="secondary"
-              icon={<MdAddPhotoAlternate />}
+              icon={<PhotoAdd />}
               onClick={onAddPhoto}
               loading={photoSaving}
               disabled={saving}

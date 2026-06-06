@@ -23,6 +23,9 @@ const SHADOW_OFFSET: Record<Size, number> = { sm: 3, md: 4, lg: 5 };
 // 纯图标按钮使用更大的图标（约按钮高度 50%），让视觉重心居中
 const SQUARE_ICON_SIZE: Record<Size, number> = { sm: 18, md: 22, lg: 28 };
 
+// 带文字按钮里的图标需要略大于字号, 否则在圆润粗体 label 旁边会偏弱。
+const LABEL_ICON_SIZE: Record<Size, number> = { sm: 16, md: 19, lg: 22 };
+
 // ─── 尺寸 ─────────────────────────────────────────────────────────────────────
 
 const SIZE_MAP: Record<Size, ReturnType<typeof css>> = {
@@ -189,9 +192,30 @@ const StyledButton = styled.button<{
   }
 
   > .btn-label {
-    display: contents;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: inherit;
+    min-width: 0;
     transition: opacity 100ms;
     opacity: ${({ $loading }) => ($loading ? 0 : 1)};
+  }
+
+  > .btn-label > .btn-icon {
+    flex: 0 0 auto;
+    width: ${({ $size }) => LABEL_ICON_SIZE[$size]}px;
+    height: ${({ $size }) => LABEL_ICON_SIZE[$size]}px;
+    font-size: ${({ $size }) => LABEL_ICON_SIZE[$size]}px;
+    line-height: 1;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  > .btn-label > .btn-icon > svg {
+    width: 1em;
+    height: 1em;
   }
 
   ${({ $size }) => SIZE_MAP[$size]}
@@ -286,7 +310,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     >
       {loading && <Loader $size={size} />}
       <span className="btn-label">
-        {icon}
+        {icon ? <span className="btn-icon">{icon}</span> : null}
         {children}
       </span>
     </StyledButton>

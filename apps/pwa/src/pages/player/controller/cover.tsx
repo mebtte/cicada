@@ -3,12 +3,12 @@ import logger from '@/utils/logger';
 import { HtmlHTMLAttributes, useEffect, useState } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled, { css } from 'styled-components';
-import { MdUnfoldMore } from 'react-icons/md';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import { CSS_VAR } from '@/components/theme';
 import PngDefaultCover from '@/asset/default_cover.jpeg';
 import { CONTROLLER_COVER_SHADOW } from '../constants';
+import { Expand } from '@/components/icon';
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
@@ -129,7 +129,7 @@ function Wrapper({
       ))}
       {mask ? (
         <div className="expand">
-          <MdUnfoldMore />
+          <Expand aria-hidden="true" />
         </div>
       ) : null}
     </Style>

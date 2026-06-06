@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  MdSort,
-  MdOutlinePeopleAlt,
-  MdStarOutline,
-} from 'react-icons/md';
-import { AddBox, Refresh } from '@/components/icon';
+  AddBox,
+  Refresh,
+  Sort,
+  People,
+  Star,
+} from '@/components/icon';
 import { useContext } from 'react';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
@@ -124,7 +125,7 @@ function Top() {
             return notice.info(t('no_musicbill'));
           }}
         >
-          <MdSort />
+          <Sort />
         </ToolButton>
       </Tooltip>
       <Tooltip content={t('shared_musicbill_invitation')}>
@@ -134,7 +135,7 @@ function Top() {
           size="sm"
           onClick={openSharedMusicbillInvitationDrawer}
         >
-          <MdOutlinePeopleAlt />
+          <People />
         </ToolButton>
       </Tooltip>
       <Tooltip content={t('public_musicbill_collection')}>
@@ -145,7 +146,7 @@ function Top() {
           aria-label={t('public_musicbill_collection')}
           onClick={openPublicMusicbillCollectionDrawer}
         >
-          <MdStarOutline />
+          <Star />
         </ToolButton>
       </Tooltip>
     </Style>

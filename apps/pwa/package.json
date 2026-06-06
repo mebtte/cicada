@@ -33,7 +33,6 @@
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-icons": "^4.9.0",
     "react-is": "^19.2.5",
     "react-lrc": "^3.2.1",
     "react-router-dom": "^7.14.0",

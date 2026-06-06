@@ -1,10 +1,10 @@
 import { ChangeEventHandler, useCallback, useRef } from 'react';
 import {
-  MdDeleteSweep,
-  MdMusicNote,
-  MdPlayArrow,
-} from 'react-icons/md';
-import { Add } from '@/components/icon';
+  Add,
+  DeleteSweep,
+  MusicNote,
+  PlayArrow,
+} from '@/components/icon';
 import styled from 'styled-components';
 import {
   Drawer,
@@ -375,7 +375,7 @@ function MusicImportSidebar() {
               <ImportPanel />
             ) : (
               <EmptyState>
-                <MdMusicNote />
+                <MusicNote />
                 <Button size="sm" variant="primary" onClick={onSelectClick}>
                   {capitalize(t('upload_music'))}
                 </Button>
@@ -391,7 +391,7 @@ function MusicImportSidebar() {
                   disabled={editableCount === 0}
                   onClick={onStartAll}
                 >
-                  <MdPlayArrow />
+                  <PlayArrow />
                   {capitalize(t('start_import'))}
                 </Button>
                 <Button
@@ -400,7 +400,7 @@ function MusicImportSidebar() {
                   disabled={cleanableCount === 0}
                   onClick={clearFinished}
                 >
-                  <MdDeleteSweep />
+                  <DeleteSweep />
                   {t('clean_successful_items')}
                 </Button>
               </FloatingToolbar>

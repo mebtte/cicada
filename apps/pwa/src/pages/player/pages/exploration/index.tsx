@@ -15,7 +15,6 @@ import useQuery from '@/utils/use_query';
 import useNavigate from '@/utils/use_navigate';
 import { useTheme } from '@/global_states/theme';
 import { TabList } from '@/components/tabs';
-import { MdMic, MdMusicNote, MdQueueMusic } from 'react-icons/md';
 import {
   EXPLORATION_FOCUS_SEARCH_STATE,
   FLOATING_CONTROLLER_SCROLL_SPACE,
@@ -38,6 +37,7 @@ import {
   TAB_LIST,
   TOOLBAR_HEIGHT,
 } from '../search/constants';
+import { Microphone, MusicNote, QueueMusic as QueueMusicIcon } from '@/components/icon';
 
 const ITEM_WIDTH = 164;
 const SINGER_ITEM_WIDTH = 240;
@@ -460,7 +460,7 @@ function RecommendationPanel() {
                 <ExplorationSection
                   title={t('recommended_music')}
                   items={d.value.musicList}
-                  icon={<MdMusicNote />}
+                  icon={<MusicNote />}
                   accent={ACCENT.MUSIC}
                   shadow={ACCENT.MUSIC_SHADOW}
                   renderItem={renderMusicCard}
@@ -468,7 +468,7 @@ function RecommendationPanel() {
                 <ExplorationSection
                   title={t('recommended_singer')}
                   items={d.value.singerList}
-                  icon={<MdMic />}
+                  icon={<Microphone />}
                   accent={ACCENT.SINGER}
                   shadow={ACCENT.SINGER_SHADOW}
                   itemWidth={SINGER_ITEM_WIDTH}
@@ -478,7 +478,7 @@ function RecommendationPanel() {
                 <ExplorationSection
                   title={t('recommended_public_musicbill')}
                   items={d.value.publicMusicbillList}
-                  icon={<MdQueueMusic />}
+                  icon={<QueueMusicIcon />}
                   accent={ACCENT.MUSICBILL}
                   shadow={ACCENT.MUSICBILL_SHADOW}
                   renderItem={renderMusicbillCard}
@@ -486,7 +486,7 @@ function RecommendationPanel() {
                 <ExplorationSection
                   title={t('recent_music')}
                   items={d.value.recentMusicList}
-                  icon={<MdMusicNote />}
+                  icon={<MusicNote />}
                   accent={ACCENT.MUSIC}
                   shadow={ACCENT.MUSIC_SHADOW}
                   renderItem={renderMusicCard}
@@ -494,7 +494,7 @@ function RecommendationPanel() {
                 <ExplorationSection
                   title={t('recent_singer')}
                   items={d.value.recentSingerList}
-                  icon={<MdMic />}
+                  icon={<Microphone />}
                   accent={ACCENT.SINGER}
                   shadow={ACCENT.SINGER_SHADOW}
                   itemWidth={SINGER_ITEM_WIDTH}
@@ -504,7 +504,7 @@ function RecommendationPanel() {
                 <ExplorationSection
                   title={t('recent_public_musicbill')}
                   items={d.value.recentPublicMusicbillList}
-                  icon={<MdQueueMusic />}
+                  icon={<QueueMusicIcon />}
                   accent={ACCENT.MUSICBILL}
                   shadow={ACCENT.MUSICBILL_SHADOW}
                   renderItem={renderMusicbillCard}

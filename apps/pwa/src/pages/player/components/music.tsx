@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { MdPlayArrow } from 'react-icons/md';
-import { PostAdd, QueueInsert } from '@/components/icon';
+import { PostAdd, QueueInsert, PlayArrow } from '@/components/icon';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import { t } from '@/i18n';
 import { MusicWithSingerAliases } from '../constants';
@@ -45,7 +44,7 @@ function Music({
               return e.emit(EventType.ACTION_PLAY_MUSIC, { music });
             }}
           >
-            <MdPlayArrow />
+            <PlayArrow />
           </Button>
           <Tooltip content={t('play_next')}>
             <Button

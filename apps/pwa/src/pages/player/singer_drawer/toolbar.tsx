@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { MdOutlineEdit } from 'react-icons/md';
-import { Export, PlaylistAdd } from '@/components/icon';
+import { Export, PlaylistAdd, Edit } from '@/components/icon';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
 import { useUser } from '@/global_states/server';
@@ -109,7 +108,7 @@ function Toolbar({
                 )
               }
             >
-              <MdOutlineEdit />
+              <Edit />
             </Button>
           </Tooltip>
         ) : null}

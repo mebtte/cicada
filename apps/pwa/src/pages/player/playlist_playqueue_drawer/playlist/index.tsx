@@ -11,8 +11,7 @@ import styled from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { MdPlayArrow, MdOutlineClose } from 'react-icons/md';
-import { QueueInsert } from '@/components/icon';
+import { QueueInsert, PlayArrow, Close } from '@/components/icon';
 import { CSSVariable } from '@/global_style';
 import Empty from '@/components/empty';
 import VirtualList from '@/components/virtual_list';
@@ -148,7 +147,7 @@ function Playlist() {
                             );
                           }}
                         >
-                          <MdPlayArrow />
+                          <PlayArrow />
                         </Button>
                         <Tooltip content={t('play_next')}>
                           <Button
@@ -179,7 +178,7 @@ function Playlist() {
                             );
                           }}
                         >
-                          <MdOutlineClose />
+                          <Close />
                         </Button>
                       </Operation>
                     }

@@ -1,6 +1,5 @@
 import { memo, ReactNode, useCallback, useLayoutEffect, useRef } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-import { MdClose, MdInfoOutline, MdErrorOutline } from 'react-icons/md';
 import { Branch as DismissableLayerBranch } from '@radix-ui/react-dismissable-layer';
 import { CSSVariable } from '@/global_style';
 import { UtilZIndex } from '@/constants/style';
@@ -8,6 +7,7 @@ import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { Notice, TRANSITION_DURATION, NoticeType } from './constants';
 import e, { EventType } from './eventemitter';
 import Button from '@/components/button';
+import { Close, Info, Error as ErrorIcon } from '@/components/icon';
 
 const NOTICE_TYPE_MAP: Record<
   NoticeType,
@@ -17,7 +17,7 @@ const NOTICE_TYPE_MAP: Record<
   }
 > = {
   [NoticeType.INFO]: {
-    icon: <MdInfoOutline />,
+    icon: <Info />,
     css: css`
       background-color: ${CSSVariable.COLOR_PRIMARY};
       border-color: ${CSSVariable.COLOR_PRIMARY_ACTIVE};
@@ -28,7 +28,7 @@ const NOTICE_TYPE_MAP: Record<
     `,
   },
   [NoticeType.ERROR]: {
-    icon: <MdErrorOutline />,
+    icon: <ErrorIcon />,
     css: css`
       background-color: ${CSSVariable.COLOR_DANGEROUS};
       border-color: rgb(190 46 34);
@@ -178,7 +178,7 @@ function NoticeItem({ notice }: { notice: Notice }) {
               size="sm"
               onClick={onClose}
             >
-              <MdClose />
+              <Close />
             </Button>
           ) : null}
         </div>

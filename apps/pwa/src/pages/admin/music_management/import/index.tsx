@@ -1,7 +1,6 @@
 import { ChangeEventHandler, useState } from 'react';
 import styled from 'styled-components';
-import { MdPlayArrow } from 'react-icons/md';
-import { Delete } from '@/components/icon';
+import { Delete, PlayArrow } from '@/components/icon';
 import Button from '@/components/button';
 import Divider from '@/components/divider';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
@@ -386,7 +385,7 @@ function TaskCard({ task }: { task: ImportTask }) {
             title={capitalize(t('start_import'))}
             aria-label={capitalize(t('start_import'))}
           >
-            <MdPlayArrow />
+            <PlayArrow />
           </StartButton>
         ) : null}
         <DeleteButton

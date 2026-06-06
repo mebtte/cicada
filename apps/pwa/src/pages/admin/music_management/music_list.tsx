@@ -9,16 +9,16 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import {
-  MdArrowDownward,
-  MdArrowUpward,
-  MdCloudUpload,
-  MdMusicNote,
-  MdOpenInNew,
-  MdOutlineEdit,
-  MdPlayArrow,
-  MdUnfoldMore,
-} from 'react-icons/md';
-import { Search } from '@/components/icon';
+  Search,
+  ArrowDown,
+  ArrowUp,
+  CloudUpload,
+  MusicNote,
+  ExternalLink,
+  Edit,
+  PlayArrow,
+  UnfoldMore,
+} from '@/components/icon';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
 import Empty from '@/components/empty';
@@ -708,7 +708,7 @@ function MusicFileInfo({ music }: { music: MusicItem }) {
           window.open(music.asset, '_blank', 'noopener,noreferrer')
         }
       >
-        <MdOpenInNew size={18} />
+        <ExternalLink size={18} />
       </ActionButton>
       <FileInfoText>
         {hasInfo ? (
@@ -755,7 +755,7 @@ function LazyCover({
   return (
     <CoverButton type="button" {...props}>
       {/* 占位图标始终存在, 加载完成前作为兜底显示, 避免裂图 */}
-      <MdMusicNote />
+      <MusicNote />
       <Cover
         ref={ref}
         alt={alt}
@@ -1076,12 +1076,12 @@ function MusicList({
                       {capitalize(t('music_heat'))}
                       {sortBy === AdminMusicListSortBy.HEAT ? (
                         sortOrder === AdminMusicListSortOrder.ASC ? (
-                          <MdArrowUpward />
+                          <ArrowUp />
                         ) : (
-                          <MdArrowDownward />
+                          <ArrowDown />
                         )
                       ) : (
-                        <MdUnfoldMore />
+                        <UnfoldMore />
                       )}
                     </SortHeaderButton>
                   </Th>
@@ -1174,7 +1174,7 @@ function MusicList({
                           $active={playerMusic?.id === music.id}
                           onClick={() => playMusic(music)}
                         >
-                          <MdPlayArrow size={18} />
+                          <PlayArrow size={18} />
                         </ActionButton>
                         <ActionButton
                           type="button"
@@ -1182,7 +1182,7 @@ function MusicList({
                           aria-label={t('edit_name')}
                           onClick={() => onEdit(music.id)}
                         >
-                          <MdOutlineEdit size={18} />
+                          <Edit size={18} />
                         </ActionButton>
                       </ActionGroup>
                     </Td>
@@ -1196,7 +1196,7 @@ function MusicList({
           square
           size="lg"
           variant="primary"
-          icon={<MdCloudUpload />}
+          icon={<CloudUpload />}
           aria-label={capitalize(t('upload_music'))}
           title={capitalize(t('upload_music'))}
           onClick={() => setImportWindowOpen(true)}

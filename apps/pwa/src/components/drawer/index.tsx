@@ -33,7 +33,6 @@ import {
   useRef,
 } from 'react';
 import * as RadixDialog from '@radix-ui/react-dialog';
-import { MdClose } from 'react-icons/md';
 import styled, { css, keyframes } from 'styled-components';
 import { useTheme, CSS_VAR } from '../theme';
 import { CSSVariable } from '@/global_style';
@@ -46,6 +45,7 @@ import {
   useRegisterDialogTitle,
   visuallyHiddenStyle,
 } from '../dialog_a11y';
+import { Close } from '@/components/icon';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 
@@ -269,7 +269,7 @@ export const DrawerContent = forwardRef<
             </RadixDialog.Title>
             {showClose && (
               <CloseButton aria-label={t('close')}>
-                <MdClose />
+                <Close />
               </CloseButton>
             )}
             <ScrollArea>{children}</ScrollArea>

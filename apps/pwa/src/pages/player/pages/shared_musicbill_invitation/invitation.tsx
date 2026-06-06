@@ -9,14 +9,11 @@ import notice from '@/utils/notice';
 import useNavigate from '@/utils/use_navigate';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
-import {
-  MdCheckCircle,
-  MdSchedule,
-} from 'react-icons/md';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { Invitation as InvitationType } from './constants';
+import { CheckCircle, Schedule } from '@/components/icon';
 
 const USER_MARKER = '__INVITE_USER__';
 const MUSICBILL_MARKER = '__INVITE_MUSICBILL__';
@@ -191,7 +188,7 @@ function Invitation({
     <Style>
       <Top>
         <TimeBadge>
-          <MdSchedule />
+          <Schedule />
           <span>{day(inviteTimestamp).format('MM-DD HH:mm')}</span>
         </TimeBadge>
       </Top>
@@ -202,7 +199,7 @@ function Invitation({
       />
       <Button
         block
-        icon={<MdCheckCircle />}
+        icon={<CheckCircle />}
         onClick={onAccept}
         loading={loading}
       >

@@ -7,10 +7,6 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import {
-  MdFileUpload,
-  MdOutlineFilePresent,
-} from 'react-icons/md';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import {
   Drawer,
@@ -20,7 +16,13 @@ import {
 } from '@/components';
 import Button from '@/components/button';
 import ErrorCard from '@/components/error_card';
-import { Add, Delete, Edit } from '@/components/icon';
+import {
+  Add,
+  Delete,
+  Edit,
+  UploadFile,
+  File as FileIcon,
+} from '@/components/icon';
 import Input from '@/components/input';
 import Slider from '@/components/slider';
 import Spinner from '@/components/spinner';
@@ -606,7 +608,7 @@ function MusicFileField({
         <Button
           variant="secondary"
           size="sm"
-          icon={<MdOutlineFilePresent />}
+          icon={<FileIcon />}
           onClick={onModifyFile}
           loading={loading}
           disabled={disabled}
@@ -1304,7 +1306,7 @@ function EditContent({
                   <Button
                     variant="secondary"
                     size="sm"
-                    icon={<MdFileUpload />}
+                    icon={<UploadFile />}
                     onClick={onTriggerLyricUpload}
                     disabled={saving}
                   >

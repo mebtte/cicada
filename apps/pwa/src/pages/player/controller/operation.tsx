@@ -2,14 +2,15 @@ import styled, { css } from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  MdOutlineQueueMusic,
-  MdPause,
-  MdPlayArrow,
-  MdSkipPrevious,
-  MdSkipNext,
-  MdMoreHoriz,
-} from 'react-icons/md';
-import { PostAdd, QueueInsert } from '@/components/icon';
+  PostAdd,
+  QueueInsert,
+  QueueMusic as QueueMusicIcon,
+  Pause,
+  PlayArrow,
+  SkipPrevious,
+  SkipNext,
+  MoreHorizontal,
+} from '@/components/icon';
 import { CSSVariable } from '@/global_style';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -116,17 +117,17 @@ function Operation({
                 : alertNoPlayingMusic()
             }
           >
-            <MdMoreHoriz />
+            <MoreHorizontal />
           </Button>
           <div className="divider" />
         </>
       )}
       <Button square variant="ghost" size="sm" onClick={openPlaylistPlayqueueDrawer}>
-        <MdOutlineQueueMusic />
+        <QueueMusicIcon />
       </Button>
       {miniMode ? null : (
         <Button square variant="ghost" size="sm" onClick={onPrevious}>
-          <MdSkipPrevious />
+          <SkipPrevious />
         </Button>
       )}
       <Button
@@ -136,10 +137,10 @@ function Operation({
         onClick={onTogglePlay}
         loading={!!queueMusic && loading}
       >
-        {paused ? <MdPlayArrow /> : <MdPause />}
+        {paused ? <PlayArrow /> : <Pause />}
       </Button>
       <Button square variant="ghost" size="sm" onClick={onNext}>
-        <MdSkipNext />
+        <SkipNext />
       </Button>
     </Style>
   );

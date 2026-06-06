@@ -8,8 +8,7 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { MdOutlineEdit } from 'react-icons/md';
-import { AddBox, Search } from '@/components/icon';
+import { AddBox, Search, Edit } from '@/components/icon';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
 import Empty from '@/components/empty';
@@ -897,7 +896,7 @@ function SingerManagement() {
                           aria-label={t('modify_singer')}
                           onClick={() => onEditSinger(singer.id)}
                         >
-                          <MdOutlineEdit size={18} />
+                          <Edit size={18} />
                         </ActionButton>
                       </Td>
                     </tr>

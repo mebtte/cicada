@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Cover, { Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import { MdClose } from 'react-icons/md';
 import Button from '@/components/button';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
@@ -15,6 +14,7 @@ import { CSS_VAR } from '@/components/theme';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
+import { Close } from '@/components/icon';
 
 const AVATAR_SIZE = 50;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
@@ -167,7 +167,7 @@ const StatusBadge = styled.div<{ $type: 'owner' | 'pending' }>`
     ${ellipsis}
   }
 `;
-const RemoveIcon = styled(MdClose)`
+const RemoveIcon = styled(Close)`
   color: ${CSSVariable.COLOR_DANGEROUS};
 `;
 

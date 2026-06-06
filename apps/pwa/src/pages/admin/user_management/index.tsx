@@ -9,10 +9,11 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import {
-  MdOutlineEdit,
-  MdPeopleOutline,
-} from 'react-icons/md';
-import { AddBox, Search } from '@/components/icon';
+  AddBox,
+  Search,
+  Edit,
+  People,
+} from '@/components/icon';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import Input from '@/components/input';
@@ -723,7 +724,7 @@ function UserManagement() {
           </StatusBox>
         ) : visibleUserList.length === 0 ? (
           <EmptyTip>
-            <MdPeopleOutline />
+            <People />
             {t('no_suitable_user')}
           </EmptyTip>
         ) : (
@@ -805,7 +806,7 @@ function UserManagement() {
                         aria-label={t('manage')}
                         onClick={() => setEditUser(user)}
                       >
-                        <MdOutlineEdit size={18} />
+                        <Edit size={18} />
                       </ActionButton>
                     </Td>
                   </tr>

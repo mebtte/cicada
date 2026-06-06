@@ -7,8 +7,12 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import styled from 'styled-components';
-import { MdClose, MdRemove } from 'react-icons/md';
-import { Add, Refresh } from '@/components/icon';
+import {
+  Add,
+  Refresh,
+  Close,
+  Remove,
+} from '@/components/icon';
 import {
   TransformComponent,
   TransformWrapper,
@@ -186,7 +190,7 @@ function ImageViewer({
                     aria-label={t('zoom_out')}
                     onClick={() => zoomOut()}
                   >
-                    <MdRemove size={18} />
+                    <Remove size={18} />
                   </Button>
                   <Button
                     square
@@ -227,7 +231,7 @@ function ImageViewer({
               aria-label={t('close')}
               onClick={close}
             >
-              <MdClose size={18} />
+              <Close size={18} />
             </Button>
           </CloseSlot>
         </Panel>

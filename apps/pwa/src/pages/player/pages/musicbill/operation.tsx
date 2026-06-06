@@ -2,10 +2,12 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  MdOutlineEdit,
-  MdOutlinePeopleAlt,
-} from 'react-icons/md';
-import { Export, PlaylistAdd, Refresh } from '@/components/icon';
+  Export,
+  PlaylistAdd,
+  Refresh,
+  Edit,
+  People,
+} from '@/components/icon';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
@@ -73,7 +75,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
           size="sm"
           onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}
         >
-          <MdOutlineEdit />
+          <Edit />
         </Button>
       </Tooltip>
       {ENABLE_FILE_SYSTEM ? (
@@ -101,7 +103,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
             )
           }
         >
-          <MdOutlinePeopleAlt />
+          <People />
         </Button>
       </Tooltip>
     </Style>

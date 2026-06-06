@@ -59,10 +59,8 @@ const Style = styled(NavLink)`
   }
 
   &:not(.active):hover {
-    color: ${PRIMARY};
-    background: #fff;
-    border-color: ${CSSVariable.COLOR_BORDER};
-    box-shadow: 0 3px 0 ${NEUTRAL_SHADOW};
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 ${NEUTRAL_SHADOW};
   }
 
   &:active {
@@ -82,11 +80,8 @@ const Style = styled(NavLink)`
   }
 
   &.active:hover {
-    color: #fff;
-    background: ${PRIMARY};
-    border-color: ${PRIMARY_SHADOW};
-    box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 ${PRIMARY_SHADOW};
   }
 
   &.active:active {

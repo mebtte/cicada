@@ -5,7 +5,6 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import { MdExitToApp } from 'react-icons/md';
 import {
   Button,
   Drawer,
@@ -15,7 +14,7 @@ import {
   DrawerTitle,
   Input,
 } from '@/components';
-import { Delete, Edit } from '@/components/icon';
+import { Delete, Edit, Exit } from '@/components/icon';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import updateMusicbill from '@/server/api/update_musicbill';
@@ -456,7 +455,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                   block
                   variant="danger"
                   disabled={updating}
-                  icon={<MdExitToApp />}
+                  icon={<Exit />}
                   onClick={openLeaveDialog}
                 >
                   {t('leave_shared_musicbill')}
