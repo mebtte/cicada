@@ -65,14 +65,12 @@ const DUOLINGO_FONT_FAMILY =
 
 export const GlobalStyle = createGlobalStyle`
   * {
-    box-sizing: border-box;
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
   }
 
   html {
-    height: 100%;
     overscroll-behavior-x: none;
 
     ${Object.keys(CSS_VARIABLE_MAP_VALUE)
@@ -88,24 +86,12 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    height: 100%;
-
     overscroll-behavior: contain;
     overscroll-behavior-x: none;
     overflow: hidden;
 
-    margin: 0;
-    padding: 0;
-
     /* 全局字体基线，避免页面局部逐个声明 Duolingo 字体。 */
     font-family: ${DUOLINGO_FONT_FAMILY};
-  }
-
-  button,
-  input,
-  textarea,
-  select {
-    font-family: inherit;
   }
 
   button,
@@ -125,14 +111,5 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-user-select: text;
     user-select: text;
     -webkit-touch-callout: default;
-  }
-
-  img,
-  svg {
-    -webkit-user-drag: none;
-  }
-
-  #root {
-    height: 100%;
   }
 `;
