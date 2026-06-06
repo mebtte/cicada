@@ -50,8 +50,8 @@ export type { Theme, ThemeProviderProps } from './theme';
 
 export { default as Divider } from './divider';
 
-export { DuolingoTabList, DuolingoTabPanels } from './duolingo_tabs';
-export type { DuolingoTabItem, DuolingoTabPanel } from './duolingo_tabs';
+export { TabList, TabPanels } from './tabs';
+export type { TabItem, TabPanel } from './tabs';
 
 export { default as Tooltip } from './tooltip';
 export type { TooltipProps } from './tooltip';

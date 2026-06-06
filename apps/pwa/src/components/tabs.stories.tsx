@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { DuolingoTabList, DuolingoTabPanels } from './duolingo_tabs';
+import { TabList, TabPanels } from './tabs';
 
 enum DemoTab {
   MUSIC = 'music',
@@ -15,7 +15,7 @@ const tabList = [
 ];
 
 const meta = {
-  title: 'Basic/DuolingoTabs',
+  title: 'Basic/Tabs',
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
@@ -64,13 +64,13 @@ function ControlledTabs() {
 
   return (
     <div style={{ width: 360 }}>
-      <DuolingoTabList<DemoTab>
+      <TabList<DemoTab>
         current={current}
         tabList={tabList}
         onChange={setCurrent}
       />
       <div style={{ height: 180, marginTop: 16 }}>
-        <DuolingoTabPanels<DemoTab>
+        <TabPanels<DemoTab>
           current={current}
           tabList={[
             {

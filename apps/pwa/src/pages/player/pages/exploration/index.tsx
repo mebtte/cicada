@@ -14,7 +14,7 @@ import { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
 import useNavigate from '@/utils/use_navigate';
 import { useTheme } from '@/global_states/theme';
-import { DuolingoTabList } from '@/components/duolingo_tabs';
+import { TabList } from '@/components/tabs';
 import { MdMic, MdMusicNote, MdQueueMusic } from 'react-icons/md';
 import {
   EXPLORATION_FOCUS_SEARCH_STATE,
@@ -348,7 +348,7 @@ function ExplorationToolbar({
     >
       {miniMode ? <SearchInput autoFocus={searching || focusSearch} /> : null}
       {searching ? (
-        <DuolingoTabList<SearchTab>
+        <TabList<SearchTab>
           className="search-tabs"
           current={tab}
           tabList={TAB_LIST}

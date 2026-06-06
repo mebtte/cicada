@@ -14,13 +14,13 @@ const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const HOVER_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
 
-export type DuolingoTabItem<TabType extends string> = {
+export type TabItem<TabType extends string> = {
   tab: TabType;
   label: ReactNode;
   disabled?: boolean;
 };
 
-export type DuolingoTabPanel<TabType extends string> = {
+export type TabPanel<TabType extends string> = {
   tab: TabType;
   content: ReactNode;
 };
@@ -174,7 +174,7 @@ const PanelRoot = styled(animated.div)<{ $active: boolean }>`
   transition: visibility 0s linear ${({ $active }) => ($active ? '0s' : '220ms')};
 `;
 
-export function DuolingoTabList<TabType extends string>({
+export function TabList<TabType extends string>({
   current,
   tabList,
   onChange,
@@ -182,7 +182,7 @@ export function DuolingoTabList<TabType extends string>({
   ...props
 }: Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> & {
   current: TabType;
-  tabList: DuolingoTabItem<TabType>[];
+  tabList: TabItem<TabType>[];
   onChange: (tab: TabType) => void;
 }) {
   const activeIndex = Math.max(
@@ -257,13 +257,13 @@ function AnimatedPanel({
   );
 }
 
-export function DuolingoTabPanels<TabType extends string>({
+export function TabPanels<TabType extends string>({
   current,
   tabList,
   ...props
 }: HTMLAttributes<HTMLDivElement> & {
   current: TabType;
-  tabList: DuolingoTabPanel<TabType>[];
+  tabList: TabPanel<TabType>[];
 }) {
   const [mountedTabs, setMountedTabs] = useState<Set<TabType>>(
     () => new Set([current]),

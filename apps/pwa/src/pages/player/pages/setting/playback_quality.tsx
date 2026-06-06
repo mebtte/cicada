@@ -1,7 +1,7 @@
 import { CSSProperties, memo, useContext } from 'react';
 import { MdHelpOutline } from 'react-icons/md';
 import styled, { css } from 'styled-components';
-import { Button, DuolingoTabList } from '@/components';
+import { Button, TabList } from '@/components';
 import {
   MusicPlaybackQuality,
   type MusicPlaybackQuality as MusicPlaybackQualityValue,
@@ -131,7 +131,7 @@ function PlaybackQuality() {
       style={itemStyle}
     >
       <Control>
-        <DuolingoTabList<MusicPlaybackQualityValue>
+        <TabList<MusicPlaybackQualityValue>
           current={musicPlaybackQuality}
           tabList={tabList}
           onChange={onChange}

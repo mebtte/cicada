@@ -1,4 +1,4 @@
-import { DuolingoTabPanels } from '@/components/duolingo_tabs';
+import { TabPanels } from '@/components/tabs';
 import styled, { css } from 'styled-components';
 import Music from './music';
 import Singer from './singer';
@@ -24,7 +24,7 @@ const Container = styled.div`
 function Content({ tab }: { tab: SearchTab }) {
   return (
     <Container>
-      <DuolingoTabPanels<SearchTab>
+      <TabPanels<SearchTab>
         current={tab}
         tabList={[
           {
