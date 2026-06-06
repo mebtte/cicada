@@ -1,6 +1,7 @@
 import ErrorBoundary from '@/components/error_boundary';
 import { GlobalStyle } from '@/global_style';
 import { ResetStyle } from '@/reset_style';
+import { TokensStyle } from '@/style/tokens_style';
 import { ThemeProvider } from 'styled-components';
 import { ThemeProvider as CicadaThemeProvider } from '@/components/theme';
 import { HashRouter } from 'react-router-dom';
@@ -20,6 +21,7 @@ function Wrapper() {
             <Head />
             <App />
             <ResetStyle />
+            <TokensStyle />
             <GlobalStyle />
           </ThemeProvider>
         </CicadaThemeProvider>
