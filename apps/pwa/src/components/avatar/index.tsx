@@ -9,7 +9,7 @@ const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 const FACE = '#ffffff';
 
-function getBorderWidth(size: number | string) {
+function getBorderWidth() {
   return 2;
 }
 
@@ -117,7 +117,7 @@ function Avatar({
   onClick,
   ...props
 }: AvatarProps) {
-  const borderWidth = getBorderWidth(size);
+  const borderWidth = getBorderWidth();
   const radius = getRadius(size);
 
   return (

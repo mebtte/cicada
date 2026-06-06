@@ -9,7 +9,6 @@ import playerEventemitter, {
 } from '../../../eventemitter';
 
 const ACCENT = 'rgb(28 176 246)';
-const SHADOW = 'rgb(24 132 183)';
 const SURFACE_BORDER = CSSVariable.COLOR_BORDER;
 const SURFACE_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 

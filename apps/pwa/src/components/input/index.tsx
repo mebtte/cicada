@@ -1,7 +1,6 @@
 import {
   forwardRef,
   InputHTMLAttributes,
-  ReactNode,
   useEffect,
   useId,
   useImperativeHandle,
@@ -10,11 +9,8 @@ import {
 import styled from 'styled-components';
 import Label from '../label';
 import {
-  CONTROL_AFFIX_COLOR,
   CONTROL_ERROR_COLOR,
   CONTROL_FONT,
-  CONTROL_MUTED_TEXT_COLOR,
-  CONTROL_PRIMARY_COLOR,
   CONTROL_SIZE,
   ControlSize,
   controlDisabledTextStyles,
@@ -57,17 +53,6 @@ const Wrapper = styled.div<{
   }}
 `;
 
-const Affix = styled.span`
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  color: ${CONTROL_AFFIX_COLOR};
-
-  ${Wrapper}:focus-within & {
-    color: ${CONTROL_PRIMARY_COLOR};
-  }
-`;
-
 const NativeInput = styled.input<{ $size: InputSize }>`
   flex: 1;
   min-width: 0;
@@ -83,14 +68,13 @@ const NativeInput = styled.input<{ $size: InputSize }>`
   ${controlDisabledTextStyles}
 `;
 
-const Bottom = styled.p<{ $error: boolean }>`
+const Bottom = styled.p`
   margin: 0;
   font-family: ${CONTROL_FONT};
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.1px;
-  color: ${({ $error }) =>
-    $error ? CONTROL_ERROR_COLOR : CONTROL_MUTED_TEXT_COLOR};
+  color: ${CONTROL_ERROR_COLOR};
 `;
 
 // ─── Props ────────────────────────────────────────────────────────────────────
@@ -101,14 +85,8 @@ export interface InputProps
   size?: InputSize;
   /** 标签文字 */
   label?: string;
-  /** 输入框前置内容（图标等） */
-  prefix?: ReactNode;
-  /** 输入框后置内容（图标、按钮等） */
-  suffix?: ReactNode;
   /** 错误提示（非空时触发错误样式） */
   error?: string;
-  /** 辅助说明文字（有 error 时被 error 替代） */
-  hint?: string;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -118,10 +96,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     {
       size = 'md',
       label,
-      prefix,
-      suffix,
       error,
-      hint,
       disabled,
       id: idProp,
       className,
@@ -135,7 +110,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputRef = useRef<HTMLInputElement>(null);
     const generatedId = useId();
     const id = idProp ?? generatedId;
-    const bottom = error || hint;
 
     useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);
 
@@ -153,7 +127,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       <Root className={className} style={style}>
         {label && <Label htmlFor={id}>{label}</Label>}
         <Wrapper $size={size} $error={!!error} $disabled={!!disabled}>
-          {prefix && <Affix>{prefix}</Affix>}
           <NativeInput
             ref={inputRef}
             id={id}
@@ -163,9 +136,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             {...rest}
             autoComplete={type === 'password' ? 'new-password' : 'off'}
           />
-          {suffix && <Affix>{suffix}</Affix>}
         </Wrapper>
-        {bottom && <Bottom $error={!!error}>{bottom}</Bottom>}
+        {error && <Bottom>{error}</Bottom>}
       </Root>
     );
   },

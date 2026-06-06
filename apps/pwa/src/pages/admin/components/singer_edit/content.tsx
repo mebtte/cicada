@@ -65,7 +65,6 @@ const AVATAR_SIZE = 48;
 const PHOTO_DESCRIPTION_MAX_LENGTH = 500;
 const FONT = "'Nunito', 'Varela Round', system-ui, sans-serif";
 const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
-const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
 
 const Form = styled.div<{ $page: boolean }>`
   position: ${({ $page }) => ($page ? 'static' : 'relative')};

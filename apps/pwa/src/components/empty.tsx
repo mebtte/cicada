@@ -97,16 +97,6 @@ const Style = styled.div`
     ${capitalize}
   }
 
-  > .text > .secondary {
-    width: 100%;
-    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-    font-weight: 600;
-    line-height: 1.5;
-    text-align: center;
-    color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-    overflow-wrap: anywhere;
-  }
-
   @media (max-width: 420px) {
     padding: 12px 10px;
     gap: 12px;
@@ -123,20 +113,15 @@ const Style = styled.div`
  */
 function Empty({
   description = t('no_data'),
-  secondaryDescription,
   ...props
 }: {
   description?: string;
-  secondaryDescription?: string;
 } & HTMLAttributes<HTMLDivElement>) {
   return (
     <Style {...props}>
       <EmptyIcon />
       <div className="text">
         <div className="description">{description}</div>
-        {secondaryDescription ? (
-          <div className="secondary">{secondaryDescription}</div>
-        ) : null}
       </div>
     </Style>
   );

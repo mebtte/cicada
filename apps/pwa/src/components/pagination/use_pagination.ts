@@ -3,11 +3,11 @@ import { useMemo } from 'react';
 export type PaginationItem =
   | { kind: 'previous'; disabled: boolean }
   | { kind: 'next'; disabled: boolean }
-  | { kind: 'first'; disabled: boolean }
-  | { kind: 'last'; disabled: boolean }
   | { kind: 'page'; page: number; selected: boolean }
   | { kind: 'start-ellipsis' }
   | { kind: 'end-ellipsis' };
+
+const BOUNDARY_COUNT = 1;
 
 const range = (start: number, end: number) =>
   Array.from({ length: Math.max(0, end - start + 1) }, (_, i) => start + i);
@@ -16,55 +16,49 @@ export default function usePagination({
   count,
   page,
   siblingCount,
-  boundaryCount,
-  showFirstButton,
-  showLastButton,
 }: {
   count: number;
   page: number;
   siblingCount: number;
-  boundaryCount: number;
-  showFirstButton: boolean;
-  showLastButton: boolean;
 }): PaginationItem[] {
   return useMemo(() => {
     if (count <= 0) {
       return [];
     }
 
-    const startPages = range(1, Math.min(boundaryCount, count));
+    const startPages = range(1, Math.min(BOUNDARY_COUNT, count));
     const endPages = range(
-      Math.max(count - boundaryCount + 1, boundaryCount + 1),
+      Math.max(count - BOUNDARY_COUNT + 1, BOUNDARY_COUNT + 1),
       count,
     );
 
     const siblingsStart = Math.max(
-      Math.min(page - siblingCount, count - boundaryCount - siblingCount * 2 - 1),
-      boundaryCount + 2,
+      Math.min(
+        page - siblingCount,
+        count - BOUNDARY_COUNT - siblingCount * 2 - 1,
+      ),
+      BOUNDARY_COUNT + 2,
     );
     const siblingsEnd = Math.min(
-      Math.max(page + siblingCount, boundaryCount + siblingCount * 2 + 2),
+      Math.max(page + siblingCount, BOUNDARY_COUNT + siblingCount * 2 + 2),
       endPages.length > 0 ? endPages[0] - 2 : count - 1,
     );
 
     const items: PaginationItem[] = [];
 
-    if (showFirstButton) {
-      items.push({ kind: 'first', disabled: page <= 1 });
-    }
     items.push({ kind: 'previous', disabled: page <= 1 });
 
     for (const p of startPages) {
       items.push({ kind: 'page', page: p, selected: p === page });
     }
 
-    if (siblingsStart > boundaryCount + 2) {
+    if (siblingsStart > BOUNDARY_COUNT + 2) {
       items.push({ kind: 'start-ellipsis' });
-    } else if (boundaryCount + 1 < count - boundaryCount) {
+    } else if (BOUNDARY_COUNT + 1 < count - BOUNDARY_COUNT) {
       items.push({
         kind: 'page',
-        page: boundaryCount + 1,
-        selected: page === boundaryCount + 1,
+        page: BOUNDARY_COUNT + 1,
+        selected: page === BOUNDARY_COUNT + 1,
       });
     }
 
@@ -72,13 +66,13 @@ export default function usePagination({
       items.push({ kind: 'page', page: p, selected: p === page });
     }
 
-    if (siblingsEnd < count - boundaryCount - 1) {
+    if (siblingsEnd < count - BOUNDARY_COUNT - 1) {
       items.push({ kind: 'end-ellipsis' });
-    } else if (count - boundaryCount > boundaryCount) {
+    } else if (count - BOUNDARY_COUNT > BOUNDARY_COUNT) {
       items.push({
         kind: 'page',
-        page: count - boundaryCount,
-        selected: page === count - boundaryCount,
+        page: count - BOUNDARY_COUNT,
+        selected: page === count - BOUNDARY_COUNT,
       });
     }
 
@@ -87,10 +81,7 @@ export default function usePagination({
     }
 
     items.push({ kind: 'next', disabled: page >= count });
-    if (showLastButton) {
-      items.push({ kind: 'last', disabled: page >= count });
-    }
 
     return items;
-  }, [count, page, siblingCount, boundaryCount, showFirstButton, showLastButton]);
+  }, [count, page, siblingCount]);
 }

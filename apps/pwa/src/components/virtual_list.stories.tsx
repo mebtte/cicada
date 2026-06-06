@@ -12,7 +12,6 @@ function TenThousandDemo() {
   return (
     <VirtualList
       count={ROWS.length}
-      estimateSize={64}
       getItemKey={(index) => ROWS[index].id}
       style={{
         width: 360,
@@ -67,7 +66,6 @@ function ExternalScrollDemo() {
       <VirtualList
         scrollElementRef={scrollRef}
         count={2_000}
-        estimateSize={56}
         getItemKey={(index) => `ext-${index}`}
         renderItem={(index) => (
           <div

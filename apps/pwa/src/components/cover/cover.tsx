@@ -54,7 +54,6 @@ const preventDefault = (e) => e.preventDefault();
 function Cover({
   size = ComponentSize.NORMAL,
   shape = Shape.ROUNDED,
-  defaultSrc = DefaultCover,
   src,
   style,
   ...props
@@ -62,16 +61,15 @@ function Cover({
   src: string;
   size?: number | string;
   shape?: Shape;
-  defaultSrc?: string;
 } & ImgHTMLAttributes<HTMLDivElement>) {
   const ref = useRef<HTMLDivElement>(null);
   const [currentSrc, setCurrentSrc] = useState(() =>
-    src && isImageLoaded(src) ? src : defaultSrc,
+    src && isImageLoaded(src) ? src : DefaultCover,
   );
 
   useLayoutEffect(() => {
     if (!src) {
-      setCurrentSrc(defaultSrc);
+      setCurrentSrc(DefaultCover);
       return;
     }
 
@@ -80,7 +78,7 @@ function Cover({
       return;
     }
 
-    setCurrentSrc(defaultSrc);
+    setCurrentSrc(DefaultCover);
 
     let active = true;
     const target = ref.current;
@@ -99,7 +97,7 @@ function Cover({
       active = false;
       unobserve();
     };
-  }, [src, defaultSrc]);
+  }, [src]);
 
   const transitions = useTransition(currentSrc, {
     from: {

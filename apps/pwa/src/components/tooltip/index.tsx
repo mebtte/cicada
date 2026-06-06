@@ -66,14 +66,6 @@ export type TooltipProps = {
   content: ReactNode;
   /** Trigger element. Must be a single ReactElement that can receive refs and events. */
   children: ReactElement;
-  /** Preferred placement. Defaults to top and flips automatically near viewport edges. */
-  placement?: Placement;
-  /** Hover delay in milliseconds. Defaults to 300. */
-  hoverDelay?: number;
-  /** Long-press delay in milliseconds. Defaults to 500. */
-  longPressDelay?: number;
-  /** Disable the tooltip and return the child directly. */
-  disabled?: boolean;
 };
 
 /**
@@ -109,10 +101,6 @@ function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
 const Tooltip = ({
   content,
   children,
-  placement = 'top',
-  hoverDelay = 300,
-  longPressDelay = 500,
-  disabled = false,
 }: TooltipProps) => {
   const referenceRef = useRef<Element>(null);
   const childRef = (children.props as TooltipChildProps).ref;
@@ -125,7 +113,7 @@ const Tooltip = ({
     [childRef],
   );
 
-  if (disabled || content === null || content === undefined || content === '') {
+  if (content === null || content === undefined || content === '') {
     return children;
   }
 
@@ -136,16 +124,16 @@ const Tooltip = ({
       })}
       <Tippy
         reference={referenceRef as RefObject<Element>}
-        placement={placement}
-        delay={[hoverDelay, 0]}
-        // 触屏: 长按 longPressDelay 才显示, short tap 不会触发, click 自然透传
-        touch={['hold', longPressDelay]}
+        placement="top"
+        delay={[300, 0]}
+        // 触屏: 长按才显示, short tap 不会触发, click 自然透传
+        touch={['hold', 500]}
         // 关闭 Tippy 默认动画, 由 react-spring 接管
         animation={false}
         // 渲染到 body, 避免被祖先 overflow 截断
         appendTo={() => document.body}
         render={(attrs) => (
-          <TooltipBody attrs={attrs} placement={placement}>
+          <TooltipBody attrs={attrs}>
             {content}
           </TooltipBody>
         )}
@@ -160,15 +148,13 @@ const Tooltip = ({
  */
 const TooltipBody = ({
   attrs,
-  placement,
   children,
 }: {
   attrs: Parameters<NonNullable<TippyProps['render']>>[0];
-  placement: Placement;
   children: ReactNode;
 }) => {
   // 根据实际 placement (可能因翻转而变化) 决定动画方向
-  const actualPlacement = (attrs['data-placement'] as Placement) || placement;
+  const actualPlacement = (attrs['data-placement'] as Placement) || 'top';
   const offset = getOffsetByPlacement(actualPlacement);
   const style = useSpring({
     from: {

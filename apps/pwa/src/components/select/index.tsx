@@ -68,20 +68,10 @@ const Root = styled.div`
   width: 100%;
 `;
 
-const Bottom = styled.p<{ $error: boolean }>`
-  margin: 0;
-  font-family: ${FONT};
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1px;
-  color: ${({ $error }) => ($error ? 'rgb(242 80 66)' : 'rgb(160 160 160)')};
-`;
-
 // ─── Custom chevron (matches original design) ─────────────────────────────────
 
 function DropdownIndicator<T>(props: DropdownIndicatorProps<SelectOption<T>, boolean, GroupBase<SelectOption<T>>>) {
-  const { selectProps, innerProps } = props;
-  const s = SIZE['md']; // size isn't passed to indicator; use as fallback
+  const { selectProps } = props;
   return (
     <components.DropdownIndicator {...props}>
       <svg
@@ -130,7 +120,6 @@ function MenuPortal<T, IsMulti extends boolean>(
 function buildStyles<T, IsMulti extends boolean>(
   primary: string,
   size: SelectSize,
-  hasError: boolean,
   isDisabled: boolean,
   isMulti: IsMulti,
   wrapValues = false,
@@ -148,7 +137,6 @@ function buildStyles<T, IsMulti extends boolean>(
       height: !isMulti || (size === 'sm' && !wrapValues) ? s.height : undefined,
       background: '#fff',
       border: `2px solid ${
-        hasError         ? 'rgb(242 80 66)' :
         isDisabled       ? DISABLED_BORDER   :
         state.isFocused  ? primary          :
         'rgb(220 220 220)'
@@ -156,11 +144,9 @@ function buildStyles<T, IsMulti extends boolean>(
       borderRadius: s.radius,
       boxShadow: isDisabled
         ? `0 ${s.shadow}px 0 ${DISABLED_SHADOW}`
-        : hasError
-          ? `0 ${s.shadow}px 0 rgb(190 46 34)`
-          : state.isFocused
-            ? `0 ${s.shadow}px 0 ${shadowColor}`
-            : `0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}`,
+        : state.isFocused
+          ? `0 ${s.shadow}px 0 ${shadowColor}`
+          : `0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}`,
       cursor: isDisabled ? 'not-allowed' : 'pointer',
       fontFamily: FONT,
       fontSize: s.font,
@@ -349,26 +335,23 @@ export interface SelectProps<T> {
   options:      SelectOption<T>[];
   value?:       T;
   onChange?:    (value: T, option: SelectOption<T>) => void;
-  placeholder?: string;
   menuPlacement?: MenuPlacement;
   disabled?:    boolean;
   size?:        SelectSize;
   label?:       string;
-  hint?:        string;
-  error?:       string;
   className?:   string;
   style?:       CSSProperties;
 }
 
 export function Select<T>({
-  options, value, onChange, placeholder = 'Select...', menuPlacement = 'auto', disabled = false,
-  size = 'md', label, hint, error, className, style,
+  options, value, onChange, menuPlacement = 'auto', disabled = false,
+  size = 'md', label, className, style,
 }: SelectProps<T>) {
   const inputId = useId();
   const { colorPrimary } = useTheme();
   const styles = useMemo(
-    () => buildStyles<T, false>(colorPrimary, size, !!error, !!disabled, false),
-    [colorPrimary, size, error, disabled],
+    () => buildStyles<T, false>(colorPrimary, size, !!disabled, false),
+    [colorPrimary, size, disabled],
   );
 
   const selectedOption = useMemo(
@@ -393,7 +376,6 @@ export function Select<T>({
         options={options}
         value={selectedOption}
         onChange={handleChange}
-        placeholder={placeholder}
         isDisabled={disabled}
         isSearchable={false}
         styles={styles}
@@ -403,7 +385,6 @@ export function Select<T>({
         menuPosition="fixed"
         components={{ DropdownIndicator, Menu, MenuPortal }}
       />
-      {(error || hint) && <Bottom $error={!!error}>{error ?? hint}</Bottom>}
     </Root>
   );
 }
@@ -411,8 +392,7 @@ export function Select<T>({
 // ─── MultiSelect ──────────────────────────────────────────────────────────────
 
 export interface MultiSelectProps<T> {
-  options?:     SelectOption<T>[];
-  loadOptions?: (keyword: string) => Promise<SelectOption<T>[]>;
+  loadOptions:  (keyword: string) => Promise<SelectOption<T>[]>;
   value:        SelectOption<T>[];
   onChange?:    (options: SelectOption<T>[]) => void;
   placeholder?: string;
@@ -423,16 +403,14 @@ export interface MultiSelectProps<T> {
   label?:       string;
   /** Label 右侧的附加内容（按钮等） */
   labelAddon?:  ReactNode;
-  hint?:        string;
-  error?:       string;
   className?:   string;
   style?:       CSSProperties;
 }
 
 export function MultiSelect<T>({
-  options: staticOptions, loadOptions, value, onChange,
+  loadOptions, value, onChange,
   placeholder = 'Select...', clearable, wrapValues = false, disabled = false,
-  size = 'md', label, labelAddon, hint, error, className, style,
+  size = 'md', label, labelAddon, className, style,
 }: MultiSelectProps<T>) {
   const inputId = useId();
   const { colorPrimary } = useTheme();
@@ -446,18 +424,15 @@ export function MultiSelect<T>({
       buildStyles<T, true>(
         colorPrimary,
         size,
-        !!error,
         !!disabled,
         true,
         wrapValues,
       ),
-    [colorPrimary, size, error, disabled, wrapValues],
+    [colorPrimary, size, disabled, wrapValues],
   );
 
   const requestOptions = useCallback(
     (keyword: string) => {
-      if (!loadOptions) return;
-
       const seq = requestSeqRef.current + 1;
       requestSeqRef.current = seq;
       setAsyncLoading(true);
@@ -482,7 +457,6 @@ export function MultiSelect<T>({
   );
 
   useEffect(() => {
-    if (!loadOptions) return;
     requestSeqRef.current += 1;
     setInputValue('');
     setAsyncOptions([]);
@@ -492,11 +466,9 @@ export function MultiSelect<T>({
   const handleChange = useCallback(
     (opts: MultiValue<SelectOption<T>>) => {
       onChange?.(Array.from(opts));
-      if (loadOptions) {
-        setInputValue('');
-      }
+      setInputValue('');
     },
-    [loadOptions, onChange],
+    [onChange],
   );
 
   const handleInputChange = useCallback(
@@ -548,11 +520,11 @@ export function MultiSelect<T>({
         DropdownIndicator,
         Menu,
         MenuPortal,
-        ...(loadOptions ? { Input } : {}),
+        Input,
         ...(clearable === false ? { ClearIndicator: () => null } : {}),
       };
     },
-    [clearable, loadOptions, requestOptions],
+    [clearable, requestOptions],
   );
 
   const sharedProps = {
@@ -577,22 +549,14 @@ export function MultiSelect<T>({
       {(label || labelAddon) && (
         <Label htmlFor={inputId} label={label} addon={labelAddon} />
       )}
-      {loadOptions ? (
-        <ReactSelect<SelectOption<T>, true>
-          {...sharedProps}
-          options={asyncOptions}
-          inputValue={inputValue}
-          onInputChange={handleInputChange}
-          isLoading={asyncLoading}
-          filterOption={() => true}
-        />
-      ) : (
-        <ReactSelect<SelectOption<T>, true>
-          {...sharedProps}
-          options={staticOptions ?? []}
-        />
-      )}
-      {(error || hint) && <Bottom $error={!!error}>{error ?? hint}</Bottom>}
+      <ReactSelect<SelectOption<T>, true>
+        {...sharedProps}
+        options={asyncOptions}
+        inputValue={inputValue}
+        onInputChange={handleInputChange}
+        isLoading={asyncLoading}
+        filterOption={() => true}
+      />
     </Root>
   );
 }

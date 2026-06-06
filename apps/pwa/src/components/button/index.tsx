@@ -15,7 +15,6 @@ const cn = (v: string) => `var(${v})`;
 const PRIMARY        = cn(CSS_VAR.colorPrimary);
 const PRIMARY_SHADOW = cn(CSS_VAR.colorPrimaryShadow);
 const CONTROL_NEUTRAL = CSSVariable.COLOR_CONTROL_NEUTRAL;
-const DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
 
 // ─── 阴影偏移量 ────────────────────────────────────────────────────────────────
 

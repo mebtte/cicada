@@ -46,7 +46,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Render-prop wrapper that measures its own offsetWidth / offsetHeight and re-renders children with the current size. Updates are throttled (`resizeDelay`) to avoid layout thrash. Skip rendering on the first pass — children only receive a size once measured.',
+          'Render-prop wrapper that measures its own offsetWidth / offsetHeight and re-renders children with the current size. Updates are throttled to avoid layout thrash. Skip rendering on the first pass — children only receive a size once measured.',
       },
     },
   },

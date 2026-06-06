@@ -26,10 +26,6 @@ const meta = {
       control: 'text',
       description: 'Primary message shown under the icon.',
     },
-    secondaryDescription: {
-      control: 'text',
-      description: 'Optional dimmer follow-up line.',
-    },
   },
 } satisfies Meta<typeof Empty>;
 
@@ -42,13 +38,5 @@ export const CustomMessage: Story = {
   name: 'Custom message',
   args: {
     description: 'Nothing here yet',
-  },
-};
-
-export const WithSecondary: Story = {
-  name: 'With secondary line',
-  args: {
-    description: 'No results',
-    secondaryDescription: 'Try a different keyword or remove the active filters.',
   },
 };

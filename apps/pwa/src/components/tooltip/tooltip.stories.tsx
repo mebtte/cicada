@@ -28,33 +28,6 @@ export const Basic: Story = {
   },
 };
 
-export const Placements: Story = {
-  args: { content: '', children: <span /> },
-  render: () => (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(4, auto)',
-        gap: 16,
-        padding: 80,
-      }}
-    >
-      <Tooltip content="Top placement" placement="top">
-        <Button>top</Button>
-      </Tooltip>
-      <Tooltip content="Bottom placement" placement="bottom">
-        <Button>bottom</Button>
-      </Tooltip>
-      <Tooltip content="Left placement" placement="left">
-        <Button>left</Button>
-      </Tooltip>
-      <Tooltip content="Right placement" placement="right">
-        <Button>right</Button>
-      </Tooltip>
-    </div>
-  ),
-};
-
 export const ClickPassThrough: Story = {
   args: { content: '', children: <span /> },
   render: () => {
@@ -89,13 +62,5 @@ export const LongContent: Story = {
     content:
       'This longer tooltip message demonstrates the maximum width and automatic line wrapping behavior.',
     children: <Button>Long content</Button>,
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    content: 'You should never see this tooltip',
-    disabled: true,
-    children: <Button>Disabled tooltip</Button>,
   },
 };

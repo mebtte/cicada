@@ -1,10 +1,8 @@
-import { HtmlHTMLAttributes, Ref } from 'react';
+import { HtmlHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 import {
   MdKeyboardArrowLeft,
   MdKeyboardArrowRight,
-  MdFirstPage,
-  MdLastPage,
   MdMoreHoriz,
 } from 'react-icons/md';
 import Button, { Size } from '@/components/button';
@@ -14,6 +12,7 @@ import { t } from '@/i18n';
 
 const GAP_MAP: Record<Size, number> = { sm: 5, md: 6, lg: 8 };
 const SHADOW_OFFSET: Record<Size, number> = { sm: 3, md: 4, lg: 5 };
+const PAGINATION_SIZE: Size = 'sm';
 const ELLIPSIS_SIZE: Record<Size, { box: number; icon: number }> = {
   sm: { box: 34, icon: 18 },
   md: { box: 44, icon: 22 },
@@ -80,15 +79,6 @@ type Props = Omit<HtmlHTMLAttributes<HTMLDivElement>, 'onChange'> & {
   onChange: (page: number) => void;
   /** Pages shown on each side of the current page. Default 1. */
   siblingCount?: number;
-  /** Pages shown at the start and end of the range. Default 1. */
-  boundaryCount?: number;
-  /** Show a "first page" jump button. Default false. */
-  showFirstButton?: boolean;
-  /** Show a "last page" jump button. Default false. */
-  showLastButton?: boolean;
-  disabled?: boolean;
-  size?: Size;
-  ref?: Ref<HTMLDivElement>;
 };
 
 function Pagination({
@@ -96,68 +86,32 @@ function Pagination({
   page,
   onChange,
   siblingCount = 1,
-  boundaryCount = 1,
-  showFirstButton = false,
-  showLastButton = false,
-  disabled = false,
-  size = 'sm',
-  ref,
   ...rest
 }: Props) {
   const items = usePagination({
     count,
     page,
     siblingCount,
-    boundaryCount,
-    showFirstButton,
-    showLastButton,
   });
 
   const navTo = (target: number) => {
-    if (disabled) return;
     if (target < 1 || target > count || target === page) return;
     onChange(target);
   };
 
   return (
-    <Style {...rest} ref={ref} $gap={GAP_MAP[size]}>
+    <Style {...rest} $gap={GAP_MAP[PAGINATION_SIZE]}>
       {items.map((item, index) => {
         switch (item.kind) {
-          case 'first':
-            return (
-              <Button
-                key={`first-${index}`}
-                square
-                size={size}
-                variant="ghost"
-                aria-label={t('first_page')}
-                disabled={disabled || item.disabled}
-                onClick={() => navTo(1)}
-                icon={<MdFirstPage />}
-              />
-            );
-          case 'last':
-            return (
-              <Button
-                key={`last-${index}`}
-                square
-                size={size}
-                variant="ghost"
-                aria-label={t('last_page')}
-                disabled={disabled || item.disabled}
-                onClick={() => navTo(count)}
-                icon={<MdLastPage />}
-              />
-            );
           case 'previous':
             return (
               <Button
                 key={`prev-${index}`}
                 square
-                size={size}
+                size={PAGINATION_SIZE}
                 variant="ghost"
                 aria-label={t('previous_page')}
-                disabled={disabled || item.disabled}
+                disabled={item.disabled}
                 onClick={() => navTo(page - 1)}
                 icon={<MdKeyboardArrowLeft />}
               />
@@ -167,10 +121,10 @@ function Pagination({
               <Button
                 key={`next-${index}`}
                 square
-                size={size}
+                size={PAGINATION_SIZE}
                 variant="ghost"
                 aria-label={t('next_page')}
-                disabled={disabled || item.disabled}
+                disabled={item.disabled}
                 onClick={() => navTo(page + 1)}
                 icon={<MdKeyboardArrowRight />}
               />
@@ -180,7 +134,7 @@ function Pagination({
             return (
               <Ellipsis
                 key={`${item.kind}-${index}`}
-                $size={size}
+                $size={PAGINATION_SIZE}
                 aria-hidden="true"
               >
                 <MdMoreHoriz />
@@ -190,13 +144,12 @@ function Pagination({
             return (
               <PageButton
                 key={`page-${item.page}`}
-                size={size}
+                size={PAGINATION_SIZE}
                 $selected={item.selected}
-                $size={size}
+                $size={PAGINATION_SIZE}
                 variant={item.selected ? 'primary' : 'plain'}
                 aria-label={`Page ${item.page}`}
                 aria-current={item.selected ? 'page' : undefined}
-                disabled={disabled}
                 onClick={() => navTo(item.page)}
               >
                 {item.page}
