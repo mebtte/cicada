@@ -83,7 +83,7 @@ export default {
   delete_user: 'delete user',
   delete_user_question: 'are you sure to delete user ?',
   delete_user_question_content:
-    'the music/singer current user created will transfer to your account after deleting',
+    'all music, singers, musicbills and related records the user created will be permanently deleted; this action cannot be undone',
   set_as_admin: 'enable admin role',
   set_as_admin_question: 'enable admin role ?',
   unset_as_admin: 'revoke admin role',

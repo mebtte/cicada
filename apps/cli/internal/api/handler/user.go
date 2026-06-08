@@ -392,7 +392,11 @@ func AdminDeleteUser(c *gin.Context) {
 		api.Fail(c, apperr.CanNotDeleteAdmin)
 		return
 	}
-	store.DeleteUser(q.ID)
+	// 级联清理用户在所有关联表中的数据, 否则外键约束会让 DELETE FROM user 静默失败.
+	if err := store.DeleteUserCascade(q.ID); err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
 	api.OK(c, nil)
 }
 
