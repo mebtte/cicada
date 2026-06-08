@@ -85,7 +85,7 @@ const zhCN: {
   delete_user: '删除用户',
   delete_user_question: '确定删除用户吗?',
   delete_user_question_content:
-    '删除用户后, 其创建的音乐/歌手将会转移到你的账号下',
+    '删除用户后, 其创建的音乐、歌手、乐单及所有相关记录都将被一并删除, 此操作不可恢复',
   set_as_admin: '启用管理员角色',
   set_as_admin_question: '确定启用管理员角色吗?',
   unset_as_admin: '撤销管理员角色',

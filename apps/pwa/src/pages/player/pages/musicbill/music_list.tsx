@@ -36,7 +36,7 @@ const ListContainer = styled(Container)`
   &::after {
     content: '';
     display: block;
-    height: calc(${FLOATING_CONTROLLER_SCROLL_SPACE} + 24px);
+    height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
   }
 `;
 
