@@ -1,4 +1,4 @@
-import { DuolingoTabList } from '@/components';
+import { TabList } from '@/components';
 import { t } from '@/i18n';
 import { useContext } from 'react';
 import styled from 'styled-components';
@@ -50,7 +50,7 @@ function Wrapper({
   };
   return (
     <Toolbar>
-      <DuolingoTabList<Tab>
+      <TabList<Tab>
         current={selectedTab}
         onChange={onChange}
         tabList={Object.values(Tab).map((tab) => {

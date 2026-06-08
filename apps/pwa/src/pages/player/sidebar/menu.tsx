@@ -1,10 +1,4 @@
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import {
-  MdLooks,
-  MdOutlineSettings,
-  MdHistory,
-  MdAdminPanelSettings,
-} from 'react-icons/md';
 import { useLocation } from 'react-router-dom';
 import { ReactNode, useContext } from 'react';
 import { t } from '@/i18n';
@@ -16,7 +10,17 @@ import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
 import capitalize from '@/style/capitalize';
-import { IconExport, IconExternalLink } from '@/components/icon';
+import {
+  Export,
+  ExternalLink,
+  Sparkles,
+  Settings,
+  History,
+  AdminPanel,
+  OfflineDownload,
+} from '@/components/icon';
+import { useIsOnline } from '@/utils/use_is_online';
+import { isAudioAssetCacheEnabled } from '@/utils/audio_asset_cache';
 import useSidebarNavigate from './use_sidebar_navigate';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
@@ -95,10 +99,11 @@ const Item = styled.button<{ $active: boolean }>`
   }
 
   &:not(:disabled):hover {
-    color: ${PRIMARY};
-    background: #fff;
-    border-color: ${CSSVariable.COLOR_BORDER};
-    box-shadow: 0 3px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
+    transform: translateY(-2px);
+    box-shadow: ${({ $active }) =>
+      $active
+        ? `0 6px 0 ${PRIMARY_SHADOW}`
+        : `0 5px 0 ${CSSVariable.COLOR_SURFACE_SHADOW}`};
   }
 
   ${({ $active }) =>
@@ -109,8 +114,7 @@ const Item = styled.button<{ $active: boolean }>`
       box-shadow: 0 3px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
 
       &:not(:disabled):hover {
-        color: ${PRIMARY};
-        border-color: ${CSSVariable.COLOR_BORDER};
+        box-shadow: 0 5px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
       }
     `}
 
@@ -132,11 +136,7 @@ const Item = styled.button<{ $active: boolean }>`
       box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
 
       &:not(:disabled):hover {
-        color: #fff;
-        background: ${PRIMARY};
-        border-color: ${PRIMARY_SHADOW};
-        box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
-        filter: brightness(1.04);
+        box-shadow: 0 6px 0 ${PRIMARY_SHADOW};
       }
 
       &:not(:disabled):active {
@@ -163,7 +163,6 @@ function SidebarItem({
       type="button"
       $active={active}
       aria-current={active ? 'page' : undefined}
-      title={label}
       onClick={onClick}
     >
       {icon}
@@ -177,6 +176,7 @@ function Menu() {
   const { pathname } = useLocation();
   const navigate = useSidebarNavigate();
   const user = useUser()!;
+  const online = useIsOnline();
 
   const { exportingMusicList } = useContext(context);
   return (
@@ -190,7 +190,7 @@ function Menu() {
           navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPLORATION}`)
         }
         label={t('exploration')}
-        icon={<MdLooks />}
+        icon={<Sparkles />}
       />
       <SidebarItem
         active={
@@ -200,13 +200,25 @@ function Menu() {
           navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSIC_PLAY_RECORD}`)
         }
         label={t('music_play_record_short')}
-        icon={<MdHistory />}
+        icon={<History />}
       />
+      {!online && isAudioAssetCacheEnabled() ? (
+        <SidebarItem
+          active={
+            pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.OFFLINE_CACHE}`
+          }
+          onClick={() =>
+            navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.OFFLINE_CACHE}`)
+          }
+          label={t('offline_cache')}
+          icon={<OfflineDownload />}
+        />
+      ) : null}
       <SidebarItem
         active={pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.SETTING}`}
         onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.SETTING}`)}
         label={t('setting')}
-        icon={<MdOutlineSettings />}
+        icon={<Settings />}
       />
       {ENABLE_FILE_SYSTEM && exportingMusicList.length ? (
         <SidebarItem
@@ -217,7 +229,7 @@ function Menu() {
             navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPORTING_MUSIC}`)
           }
           label={t('export_music')}
-          icon={<IconExport />}
+          icon={<Export />}
           suffix={<ExportTag />}
         />
       ) : null}
@@ -228,8 +240,8 @@ function Menu() {
             window.open(`#${ROOT_PATH.ADMIN}`, '_blank', 'noopener,noreferrer')
           }
           label={t('admin_panel')}
-          icon={<MdAdminPanelSettings />}
-          suffix={<IconExternalLink aria-hidden="true" />}
+          icon={<AdminPanel />}
+          suffix={<ExternalLink aria-hidden="true" />}
         />
       ) : null}
     </Style>

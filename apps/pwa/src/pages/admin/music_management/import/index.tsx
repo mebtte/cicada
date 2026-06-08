@@ -1,6 +1,6 @@
 import { ChangeEventHandler, useState } from 'react';
 import styled from 'styled-components';
-import { MdDelete, MdPlayArrow } from 'react-icons/md';
+import { Delete, PlayArrow } from '@/components/icon';
 import Button from '@/components/button';
 import Divider from '@/components/divider';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
@@ -18,8 +18,8 @@ import {
   MusicType,
   NAME_MAX_LENGTH,
 } from '@/constants/music';
-import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/singer';
-import searchSingerRequest from '@/server/api/search_singer';
+import { SEARCH_KEYWORD_MAX_LENGTH as ARTIST_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/artist';
+import searchArtistRequest from '@/server/api/search_artist';
 import {
   ImportPhase,
   ImportTask,
@@ -29,7 +29,7 @@ import {
   updateTask,
   useMusicImport,
 } from '@/global_states/music_import';
-import CreateSingerLabel from '../../components/create_singer_label';
+import CreateArtistLabel from '../../components/create_artist_label';
 import {
   cancelTask,
   retryTask,
@@ -250,18 +250,6 @@ const InlineActionButton = styled.button`
   }
 `;
 
-const InstantBadge = styled.span`
-  font-family: ${FONT};
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-  padding: 3px 8px;
-  border-radius: 8px;
-  background: ${CSSVariable.COLOR_PRIMARY};
-  color: #fff;
-  box-shadow: 0 2px 0 ${ROW_SHADOW};
-`;
-
 const ErrorText = styled.div`
   min-width: 0;
   max-width: min(240px, 100%);
@@ -297,13 +285,13 @@ const formatSingerToOption = (
   value: { id: singer.id, name: singer.name },
 });
 
-const searchSinger = (search: string): Promise<SelectOption<ImportTaskSinger>[]> => {
-  const keyword = search.trim().substring(0, SINGER_SEARCH_KEYWORD_MAX_LENGTH);
+const searchArtist = (search: string): Promise<SelectOption<ImportTaskSinger>[]> => {
+  const keyword = search.trim().substring(0, ARTIST_SEARCH_KEYWORD_MAX_LENGTH);
   if (!keyword) {
     return Promise.resolve([]);
   }
-  return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
-    data.singerList.map(formatSingerToOption),
+  return searchArtistRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
+    data.artistList.map(formatSingerToOption),
   );
 };
 
@@ -341,7 +329,7 @@ const formatTaskMetadata = (task: ImportTask) =>
     .filter(Boolean)
     .join(' · ');
 
-function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean }) {
+function TaskCard({ task }: { task: ImportTask }) {
   const [viewerPhoto, setViewerPhoto] = useState<ImageViewerPhoto | null>(null);
   const editable = task.phase === 'editing';
   const pct = task.totalBytes
@@ -397,7 +385,7 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
             title={capitalize(t('start_import'))}
             aria-label={capitalize(t('start_import'))}
           >
-            <MdPlayArrow />
+            <PlayArrow />
           </StartButton>
         ) : null}
         <DeleteButton
@@ -408,7 +396,7 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
           title={deleteTitle}
           aria-label={deleteTitle}
         >
-          <MdDelete />
+          <Delete />
         </DeleteButton>
         <InfoBox>
           <HeaderRow>
@@ -427,9 +415,6 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
                 {hasCover && metadataText ? <span>·</span> : null}
                 {metadataText ? <MetadataText>{metadataText}</MetadataText> : null}
               </FileMetadata>
-            ) : null}
-            {instantHit ? (
-              <InstantBadge>{t('instant_upload_hit')}</InstantBadge>
             ) : null}
           </HeaderRow>
           <Divider />
@@ -456,7 +441,7 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
                 label={t('singer')}
                 labelAddon={
                   editable ? (
-                    <CreateSingerLabel
+                    <CreateArtistLabel
                       notifyOnCreated={false}
                       onCreated={onSingerCreated}
                     />
@@ -464,7 +449,7 @@ function TaskCard({ task, instantHit }: { task: ImportTask; instantHit?: boolean
                 }
                 wrapValues
                 value={task.singers.map((s) => formatSingerToOption(s))}
-                loadOptions={searchSinger}
+                loadOptions={searchArtist}
                 onChange={(value) =>
                   updateTask(task.id, {
                     singers: value.map((v) => ({

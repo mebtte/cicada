@@ -62,18 +62,10 @@ type Placement = 'top' | 'bottom' | 'left' | 'right';
 type TooltipChildProps = { ref?: Ref<Element> };
 
 export type TooltipProps = {
-  /** 提示内容, 为空时不渲染 tooltip (直接返回 children) */
+  /** Tooltip content. Empty values skip rendering the tooltip and return the child directly. */
   content: ReactNode;
-  /** 触发元素, 必须是单个 ReactElement 且能转发 ref/事件 */
+  /** Trigger element. Must be a single ReactElement that can receive refs and events. */
   children: ReactElement;
-  /** 出现位置, 默认 top, 视口越界时自动翻转 */
-  placement?: Placement;
-  /** hover 延迟 (ms), 默认 300 */
-  hoverDelay?: number;
-  /** 长按延迟 (ms), 默认 500 */
-  longPressDelay?: number;
-  /** 禁用 tooltip, 直接返回 children */
-  disabled?: boolean;
 };
 
 /**
@@ -109,10 +101,6 @@ function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
 const Tooltip = ({
   content,
   children,
-  placement = 'top',
-  hoverDelay = 300,
-  longPressDelay = 500,
-  disabled = false,
 }: TooltipProps) => {
   const referenceRef = useRef<Element>(null);
   const childRef = (children.props as TooltipChildProps).ref;
@@ -125,7 +113,7 @@ const Tooltip = ({
     [childRef],
   );
 
-  if (disabled || content === null || content === undefined || content === '') {
+  if (content === null || content === undefined || content === '') {
     return children;
   }
 
@@ -136,16 +124,16 @@ const Tooltip = ({
       })}
       <Tippy
         reference={referenceRef as RefObject<Element>}
-        placement={placement}
-        delay={[hoverDelay, 0]}
-        // 触屏: 长按 longPressDelay 才显示, short tap 不会触发, click 自然透传
-        touch={['hold', longPressDelay]}
+        placement="top"
+        delay={[300, 0]}
+        // 触屏: 长按才显示, short tap 不会触发, click 自然透传
+        touch={['hold', 500]}
         // 关闭 Tippy 默认动画, 由 react-spring 接管
         animation={false}
         // 渲染到 body, 避免被祖先 overflow 截断
         appendTo={() => document.body}
         render={(attrs) => (
-          <TooltipBody attrs={attrs} placement={placement}>
+          <TooltipBody attrs={attrs}>
             {content}
           </TooltipBody>
         )}
@@ -160,15 +148,13 @@ const Tooltip = ({
  */
 const TooltipBody = ({
   attrs,
-  placement,
   children,
 }: {
   attrs: Parameters<NonNullable<TippyProps['render']>>[0];
-  placement: Placement;
   children: ReactNode;
 }) => {
   // 根据实际 placement (可能因翻转而变化) 决定动画方向
-  const actualPlacement = (attrs['data-placement'] as Placement) || placement;
+  const actualPlacement = (attrs['data-placement'] as Placement) || 'top';
   const offset = getOffsetByPlacement(actualPlacement);
   const style = useSpring({
     from: {

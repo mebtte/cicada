@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-import { MdReadMore } from 'react-icons/md';
-import { PiMusicNotesSimpleLight } from 'react-icons/pi';
+import { QueueInsert, MusicNotes } from '@/components/icon';
 import { CSS_VAR } from '@/components/theme';
 import { CSSVariable } from '@/global_style';
 import eventemitter, { EventType } from './eventemitter';
@@ -290,20 +289,20 @@ function PlayqueueInsertAnimation() {
           }}
         >
           <QueueRow $top={102} $active>
-            <PiMusicNotesSimpleLight />
+            <MusicNotes />
             <span className="bar" />
           </QueueRow>
           <Slot />
           <QueueRow $top={64} $shift>
-            <PiMusicNotesSimpleLight />
+            <MusicNotes />
             <span className="bar" />
           </QueueRow>
           <QueueRow $top={24} $shift $tail>
-            <PiMusicNotesSimpleLight />
+            <MusicNotes />
             <span className="bar" />
           </QueueRow>
           <Incoming $direction={item.direction}>
-            <MdReadMore />
+            <QueueInsert />
           </Incoming>
         </Stage>
       ))}

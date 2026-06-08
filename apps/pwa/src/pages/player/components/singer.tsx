@@ -34,7 +34,7 @@ function Singer({ singer }: { singer: { id: string; name: string } }) {
         className="name"
         onClick={(event) => {
           event.stopPropagation();
-          return playerEventemitter.emit(PlayerEventType.OPEN_SINGER_DRAWER, {
+          return playerEventemitter.emit(PlayerEventType.OPEN_ARTIST_DRAWER, {
             id: singer.id,
           });
         }}

@@ -2,13 +2,13 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  MdPlayArrow,
-  MdReadMore,
-  MdOutlinePostAdd,
-  MdOutlineEdit,
-  MdPlaylistAdd,
-} from 'react-icons/md';
-import { IconExport } from '@/components/icon';
+  Export,
+  PlaylistAdd,
+  PostAdd,
+  QueueInsert,
+  PlayArrow,
+  Edit,
+} from '@/components/icon';
 import { useUser } from '@/global_states/server';
 import { useSetting } from '@/global_states/setting';
 import { ADMIN_PATH, ROOT_PATH } from '@/constants/route';
@@ -81,7 +81,7 @@ function Toolbar({
             })
           }
         >
-          <MdPlayArrow />
+          <PlayArrow />
         </Button>
         <Tooltip content={t('play_next')}>
           <Button
@@ -98,7 +98,7 @@ function Toolbar({
               )
             }
           >
-            <MdReadMore />
+            <QueueInsert />
           </Button>
         </Tooltip>
         <Tooltip content={t('add_to_musicbill')}>
@@ -116,7 +116,7 @@ function Toolbar({
               )
             }
           >
-            <MdOutlinePostAdd />
+            <PostAdd />
           </Button>
         </Tooltip>
         <Tooltip content={t('add_to_playlist')}>
@@ -127,7 +127,7 @@ function Toolbar({
             aria-label={t('add_to_playlist')}
             onClick={() => addMusicListToPlaylist([music])}
           >
-            <MdPlaylistAdd />
+            <PlaylistAdd />
           </Button>
         </Tooltip>
         <Tooltip content={t('export_music')}>
@@ -138,7 +138,7 @@ function Toolbar({
             aria-label={t('export_music')}
             onClick={() => openExportMusicListDialog([music])}
           >
-            <IconExport size="1em" />
+            <Export size="1em" />
           </Button>
         </Tooltip>
         {showAdminEdit ? (
@@ -156,7 +156,7 @@ function Toolbar({
                 )
               }
             >
-              <MdOutlineEdit />
+              <Edit />
             </Button>
           </Tooltip>
         ) : null}

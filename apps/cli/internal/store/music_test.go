@@ -79,9 +79,9 @@ func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := DB().Exec(
-		`INSERT INTO singer (id,name,aliases,createUserId,createTimestamp) VALUES
-			('singer-1','Aurora',?, 'user-1', ?),
-			('singer-2','Beta',  ?, 'user-1', ?)`,
+		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES
+			('artist-1','Aurora',?, 'user-1', ?),
+			('artist-2','Beta',  ?, 'user-1', ?)`,
 		"Runaway Voice", now,
 		"Other Alias", now,
 	); err != nil {
@@ -96,11 +96,11 @@ func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := LinkMusicSingers("music-1", []string{"singer-1"}); err != nil {
-		t.Fatalf("link music-1 singer: %v", err)
+	if err := LinkMusicSingers("music-1", []string{"artist-1"}); err != nil {
+		t.Fatalf("link music-1 artist: %v", err)
 	}
-	if err := LinkMusicSingers("music-2", []string{"singer-2"}); err != nil {
-		t.Fatalf("link music-2 singer: %v", err)
+	if err := LinkMusicSingers("music-2", []string{"artist-2"}); err != nil {
+		t.Fatalf("link music-2 artist: %v", err)
 	}
 
 	for _, keyword := range []string{"Aurora", "Runaway"} {
@@ -113,6 +113,78 @@ func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 		}
 		if len(musics) != 1 || musics[0].ID != "music-1" {
 			t.Fatalf("search by %q expected music-1, got %+v", keyword, musics)
+		}
+	}
+}
+
+func TestSearchMusicMatchesSearchKeywords(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO artist (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
+			('artist-1','Aurora','', 'runaway voice token', 'user-1', ?),
+			('artist-2','Beta',  '', '', 'user-1', ?)`,
+		now,
+		now,
+	); err != nil {
+		t.Fatalf("insert singers: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO music (id,type,name,aliases,searchKeywords,asset,heat,createUserId,createTimestamp) VALUES
+			('music-by-artist-keyword', ?, 'Hidden Track', '', '', 'one.mp3', 10, 'user-1', ?),
+			('music-by-own-keyword', ?, 'Other Track', '', 'manual lookup token', 'two.mp3', 20, 'user-1', ?)`,
+		int(MusicTypeSong), now,
+		int(MusicTypeSong), now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	if err := LinkMusicSingers("music-by-artist-keyword", []string{"artist-1"}); err != nil {
+		t.Fatalf("link music-by-artist-keyword artist: %v", err)
+	}
+	if err := LinkMusicSingers("music-by-own-keyword", []string{"artist-2"}); err != nil {
+		t.Fatalf("link music-by-own-keyword artist: %v", err)
+	}
+
+	tests := []struct {
+		keyword string
+		wantID  string
+	}{
+		{keyword: "manual lookup", wantID: "music-by-own-keyword"},
+		{keyword: "runaway voice", wantID: "music-by-artist-keyword"},
+	}
+	for _, tt := range tests {
+		total, musics, err := SearchMusic(tt.keyword, 1, 10)
+		if err != nil {
+			t.Fatalf("search by %q: %v", tt.keyword, err)
+		}
+		if total != 1 {
+			t.Fatalf("search by %q expected total 1, got %d", tt.keyword, total)
+		}
+		if len(musics) != 1 || musics[0].ID != tt.wantID {
+			t.Fatalf("search by %q expected %s, got %+v", tt.keyword, tt.wantID, musics)
 		}
 	}
 }

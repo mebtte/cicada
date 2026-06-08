@@ -7,7 +7,10 @@ const SRC_DIR = path.resolve(CURRENT_DIR, '../src');
 const STATIC_DIR = path.resolve(SRC_DIR, 'static');
 
 const config: StorybookConfig = {
-  stories: ['../src/components_next/**/*.stories.@(ts|tsx)'],
+  stories: [
+    '../src/components/**/*.stories.@(ts|tsx)',
+    '../src/features/**/*.stories.@(ts|tsx)',
+  ],
   addons: [
     '@storybook/addon-essentials',
     '@storybook/addon-interactions',

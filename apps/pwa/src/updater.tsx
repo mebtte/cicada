@@ -4,10 +4,10 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { CSSVariable } from '@/global_style';
-import { MdClose } from 'react-icons/md';
 import definition from './definition';
 import { t } from './i18n';
 import upperCaseFirstLetter from './style/upper_case_first_letter';
+import { Close } from '@/components/icon';
 
 type VersionUpdateWorker = {
   addEventListener: (type: 'controlling', listener: () => void) => void;
@@ -182,7 +182,7 @@ function VersionUpdateNotice({
             aria-label={t('cancel')}
             onClick={() => notice.close(getNoticeId())}
           >
-            <MdClose />
+            <Close />
           </Button>
         </div>
       </div>
@@ -200,21 +200,20 @@ function openVersionUpdateNotice(wb: VersionUpdateWorker) {
 
 if ('serviceWorker' in navigator) {
   if (definition.WITH_SW) {
-    import('workbox-window').then(({ Workbox }) => {
-      const wb = new Workbox('/service_worker.js');
-      wb.register();
-
-      /**
-       * 生产模式下询问是否升级
-       * 开发模式下默认升级
-       * @author mebtte<i@mebtte.com>
-       */
-      if (process.env.NODE_ENV === 'production') {
+    /**
+     * 生产构建: 手动注册 /service_worker.js 并接管升级提示
+     * 开发模式: vite-plugin-pwa 已自动注入 dev SW 注册, 不要再手动注册避免冲突
+     * @author mebtte<i@mebtte.com>
+     */
+    if (process.env.NODE_ENV === 'production') {
+      import('workbox-window').then(({ Workbox }) => {
+        const wb = new Workbox('/service_worker.js');
+        wb.register();
         wb.addEventListener('waiting', () => {
           openVersionUpdateNotice(wb);
         });
-      }
-    });
+      });
+    }
   } else {
     window.navigator.serviceWorker
       .getRegistrations()

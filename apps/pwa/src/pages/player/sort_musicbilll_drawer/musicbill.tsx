@@ -4,7 +4,7 @@ import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { MdDragIndicator } from 'react-icons/md';
+import { DragIndicator } from '@/components/icon';
 import { CSS_VAR } from '@/components/theme';
 import Cover from '@/components/cover';
 import { LocalMusicbill } from './constant';
@@ -123,7 +123,7 @@ function Musicbill({ musicbill }: { musicbill: LocalMusicbill }) {
       />
       <div className="name">{musicbill.name}</div>
       <div className="handle">
-        <MdDragIndicator aria-hidden="true" />
+        <DragIndicator aria-hidden="true" />
       </div>
     </Style>
   );

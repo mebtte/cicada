@@ -1,4 +1,4 @@
-import LanguageSelect from '@/components/language_select';
+import LanguageSelect from '@/features/language/language_select';
 import { t } from '@/i18n';
 
 function Wrapper({ disabled }: { disabled: boolean }) {

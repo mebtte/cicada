@@ -2,14 +2,17 @@ package handler
 
 import (
 	"cicada/internal/config"
+	"cicada/internal/imagethumb"
 	"os"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
 )
 
 const aliasDivider = "♫"
+const searchKeywordsMaxLength = 4000
 
 func splitAliases(s string) []string {
 	if s == "" {
@@ -20,6 +23,11 @@ func splitAliases(s string) []string {
 
 func joinAliases(aliases []string) string {
 	return strings.Join(aliases, aliasDivider)
+}
+
+func normalizeSearchKeywords(value string) (string, bool) {
+	value = strings.TrimSpace(value)
+	return value, utf8.RuneCountInString(value) <= searchKeywordsMaxLength
 }
 
 func queryInt(c *gin.Context, key string, defaultVal int) int {
@@ -38,6 +46,19 @@ func assetExists(filename string, t config.AssetType) bool {
 	if filename == "" {
 		return false
 	}
-	_, err := os.Stat(config.AssetDir(t) + "/" + filename)
+	_, path := config.AssetPath(t, filename)
+	_, err := os.Stat(path)
 	return err == nil
+}
+
+func assetThumbnailDataURL(filename string, t config.AssetType) string {
+	if filename == "" {
+		return ""
+	}
+	_, path := config.AssetPath(t, filename)
+	thumbnail, err := imagethumb.DataURLFromFile(path)
+	if err != nil {
+		return ""
+	}
+	return thumbnail
 }

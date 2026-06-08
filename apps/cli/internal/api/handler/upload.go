@@ -43,8 +43,12 @@ func UploadAsset(c *gin.Context) {
 		return
 	}
 
-	maxSize := config.AssetMaxSize[at]
-	if fh.Size > int64(maxSize) {
+	maxSize, ok := config.AssetMaxSize(at)
+	if !ok {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	if fh.Size > maxSize {
 		api.Fail(c, apperr.AssetOversize)
 		return
 	}
@@ -105,7 +109,11 @@ func UploadAsset(c *gin.Context) {
 		ext = "." + mt.Extension()
 	}
 	filename := fmt.Sprintf("%x%s", hash, ext)
-	dest := filepath.Join(config.AssetDir(at), filename)
+	destDir, dest := config.AssetPath(at, filename)
+	if err := os.MkdirAll(destDir, 0755); err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
 
 	if err := os.WriteFile(dest, data, 0644); err != nil {
 		api.Fail(c, apperr.ServerError)

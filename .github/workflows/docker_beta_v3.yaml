@@ -61,6 +61,10 @@ jobs:
           file: docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
+          # 禁用 provenance/sbom attestation, 规避 Docker Hub 多架构推送
+          # 偶发的 "blob unknown to registry" 错误
+          provenance: false
+          sbom: false
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/cicada:beta.v3
 
       - name: Update Docker Hub overview

@@ -87,15 +87,19 @@ export default (id: string) => {
   }, [getMusic, id]);
 
   useEffect(() => {
-    const unlistenSingerUpdated = playerEventemitter.listen(
-      PlayerEventType.SINGER_UPDATED,
+    const unlistenArtistUpdated = playerEventemitter.listen(
+      PlayerEventType.ARTIST_UPDATED,
       (payload) => {
-        if (data.music?.singers.find((s) => s.id === payload.id)) {
+        const artists = [
+          ...(data.music?.singers ?? []),
+          ...(data.music?.lyricists ?? []),
+        ];
+        if (artists.find((artist) => artist.id === payload.id)) {
           getMusic();
         }
       },
     );
-    return unlistenSingerUpdated;
+    return unlistenArtistUpdated;
   }, [data.music, getMusic]);
 
   return { data, reload: getMusic };

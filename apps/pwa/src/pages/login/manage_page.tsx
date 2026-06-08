@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components';
-import { MdArrowBack } from 'react-icons/md';
 import { t } from '@/i18n';
 import ManageContent from './first_step/manage_content';
+import { ArrowBack } from '@/components/icon';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -92,7 +92,7 @@ function ManagePage({ onClose }: { onClose: () => void }) {
     <Wrapper>
       <Header>
         <BackButton onClick={onClose} aria-label={t('back')}>
-          <MdArrowBack />
+          <ArrowBack />
         </BackButton>
         <Title>{t('manage_origins')}</Title>
       </Header>

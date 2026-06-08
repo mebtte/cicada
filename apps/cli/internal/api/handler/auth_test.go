@@ -83,12 +83,14 @@ func TestDisable2FARequiresValidToken(t *testing.T) {
 	}
 }
 
-func TestGetMetadataIncludesAssetMaxSize(t *testing.T) {
+func TestGetMetadataIncludesFileMaxSizes(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	config.Set(config.Config{
-		Mode: config.ModeProduction,
-		Data: t.TempDir(),
-		Port: 8000,
+		Mode:             config.ModeProduction,
+		Data:             t.TempDir(),
+		Port:             8000,
+		MusicFileMaxSize: 123 * 1024 * 1024,
+		ImageFileMaxSize: 4 * 1024 * 1024,
 	})
 
 	w := httptest.NewRecorder()
@@ -100,9 +102,10 @@ func TestGetMetadataIncludesAssetMaxSize(t *testing.T) {
 	var resp struct {
 		Code string `json:"code"`
 		Data struct {
-			Hostname     string           `json:"hostname"`
-			Version      string           `json:"version"`
-			AssetMaxSize map[string]int64 `json:"assetMaxSize"`
+			Hostname         string `json:"hostname"`
+			Version          string `json:"version"`
+			MusicFileMaxSize int64  `json:"musicFileMaxSize"`
+			ImageFileMaxSize int64  `json:"imageFileMaxSize"`
 		} `json:"data"`
 	}
 	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
@@ -111,10 +114,11 @@ func TestGetMetadataIncludesAssetMaxSize(t *testing.T) {
 	if resp.Code != apperr.Success {
 		t.Fatalf("expected success, got %s", resp.Code)
 	}
-	got := resp.Data.AssetMaxSize[string(config.AssetTypeMusic)]
-	want := config.AssetMaxSize[config.AssetTypeMusic]
-	if got != want {
-		t.Fatalf("expected music max size %d, got %d", want, got)
+	if resp.Data.MusicFileMaxSize != 123*1024*1024 {
+		t.Fatalf("expected music file max size %d, got %d", 123*1024*1024, resp.Data.MusicFileMaxSize)
+	}
+	if resp.Data.ImageFileMaxSize != 4*1024*1024 {
+		t.Fatalf("expected image file max size %d, got %d", 4*1024*1024, resp.Data.ImageFileMaxSize)
 	}
 }
 

@@ -7,12 +7,6 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import {
-  MdAdd,
-  MdDelete,
-  MdFileUpload,
-  MdOutlineFilePresent,
-} from 'react-icons/md';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import {
   Drawer,
@@ -22,7 +16,13 @@ import {
 } from '@/components';
 import Button from '@/components/button';
 import ErrorCard from '@/components/error_card';
-import { IconEdit } from '@/components/icon';
+import {
+  Add,
+  Delete,
+  Edit,
+  UploadFile,
+  File as FileIcon,
+} from '@/components/icon';
 import Input from '@/components/input';
 import Slider from '@/components/slider';
 import Spinner from '@/components/spinner';
@@ -35,17 +35,19 @@ import {
   MUSIC_MAX_LRYIC_AMOUNT,
   MusicType,
   NAME_MAX_LENGTH,
+  SEARCH_KEYWORDS_MAX_LENGTH as MUSIC_SEARCH_KEYWORDS_MAX_LENGTH,
   SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
   YEAR_MAX,
   YEAR_MIN,
 } from '@/constants/music';
 import { AssetType, MUSIC_ASSET_ACCEPT_TYPES } from '@/constants/asset';
-import { SEARCH_KEYWORD_MAX_LENGTH as SINGER_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/singer';
+import { SEARCH_KEYWORD_MAX_LENGTH as ARTIST_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/artist';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import autoScrollbar from '@/style/auto_scrollbar';
 import upperCaseFirstLetterStyle from '@/style/upper_case_first_letter';
 import dialog from '@/utils/dialog';
+import getAssetMaxSize from '@/utils/get_asset_max_size';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
 import formatBytes from '@/utils/format_bytes';
@@ -57,18 +59,18 @@ import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 import deleteMusic from '@/server/api/delete_music';
 import getLyricList from '@/server/api/get_lyric_list';
-import getMusicRequest from '@/server/api/get_music';
+import adminGetMusic from '@/server/api/admin_get_music';
 import searchMusicRequest from '@/server/api/search_music';
-import searchSingerRequest from '@/server/api/search_singer';
+import searchArtistRequest from '@/server/api/search_artist';
 import updateMusic from '@/server/api/update_music';
 import uploadAsset from '@/server/form/upload_asset';
 import uploadAssetChunked, {
   cancelPartialUpload,
   type UploadPhase,
 } from '@/server/form/upload_asset_chunked';
-import CreateSingerLabel from '../components/create_singer_label';
+import CreateArtistLabel from '../components/create_artist_label';
 
-interface Singer {
+interface Artist {
   id: string;
   name: string;
   aliases: string[];
@@ -94,6 +96,7 @@ interface Music {
   id: string;
   name: string;
   cover: string;
+  coverThumbnail?: string;
   asset: string;
   assetSize: number;
   assetDurationMs: number;
@@ -101,7 +104,9 @@ interface Music {
   assetBitRate: number;
   type: MusicType;
   aliases: string[];
-  singers: Singer[];
+  searchKeywords: string;
+  singers: Artist[];
+  lyricists: Artist[];
   heat: number;
   lyrics: Lyric[];
   forkFromList: RelatedMusic[];
@@ -113,7 +118,6 @@ interface MusicFileUploadProgress {
   phase: UploadPhase;
   uploadedBytes: number;
   totalBytes: number;
-  instant: boolean;
 }
 
 const COVER_SIZE = 120;
@@ -122,18 +126,18 @@ const ROW_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 const DRAWER_WIDTH = 420;
 const DRAWER_NARROW_SCREEN_GUTTER = 48;
 
-const formatSingerToOption = (singer: Singer): SelectOption<Singer> => ({
-  label: `${singer.name}${singer.aliases.length ? `(${singer.aliases[0]})` : ''}`,
-  value: singer,
+const formatArtistToOption = (artist: Artist): SelectOption<Artist> => ({
+  label: `${artist.name}${artist.aliases.length ? `(${artist.aliases[0]})` : ''}`,
+  value: artist,
 });
 
-const searchSinger = (search: string): Promise<SelectOption<Singer>[]> => {
-  const keyword = search.trim().substring(0, SINGER_SEARCH_KEYWORD_MAX_LENGTH);
+const searchArtist = (search: string): Promise<SelectOption<Artist>[]> => {
+  const keyword = search.trim().substring(0, ARTIST_SEARCH_KEYWORD_MAX_LENGTH);
   if (!keyword) {
     return Promise.resolve([]);
   }
-  return searchSingerRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
-    data.singerList.map(formatSingerToOption),
+  return searchArtistRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
+    data.artistList.map(formatArtistToOption),
   );
 };
 
@@ -145,6 +149,8 @@ const formatMusicToOption = (
 });
 
 const normalizeText = (value: string) => value.replace(/\s+/g, ' ').trim();
+
+const normalizeSearchKeywords = (value: string) => value.trim();
 
 const normalizeAliases = (aliases: string[]) =>
   aliases.map(normalizeText).filter((alias) => alias.length > 0);
@@ -177,6 +183,7 @@ const CoverSection = styled.div`
 `;
 
 const CoverBox = styled.div`
+  position: relative;
   width: ${COVER_SIZE}px;
   height: ${COVER_SIZE}px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -191,7 +198,18 @@ const CoverBox = styled.div`
   color: ${CSSVariable.TEXT_COLOR_DISABLED};
   font-size: 22px;
 
+  > .thumbnail-placeholder {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.08);
+    filter: blur(8px) brightness(1.04) saturate(1.08);
+  }
+
   > img {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -352,6 +370,28 @@ const LyricTextarea = styled(Textarea)`
   }
 `;
 
+const SearchKeywordsTextarea = styled(Textarea)`
+  min-width: 0;
+  height: 96px;
+  max-height: 160px;
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border-radius: 13px;
+  box-shadow: 0 3px 0 ${ROW_SHADOW};
+  font-family: ${FONT};
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.4;
+  overflow-y: auto;
+  transition:
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+
+  &:focus {
+    border-color: ${CSSVariable.COLOR_PRIMARY};
+    box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
+  }
+`;
+
 const LyricDeleteButton = styled(Button)`
   position: absolute;
   top: -16px;
@@ -446,13 +486,7 @@ const getFileUploadPercent = (progress: MusicFileUploadProgress) =>
     ? clampPercent((progress.uploadedBytes / progress.totalBytes) * 100)
     : 0;
 
-const getFileUploadPhaseText = ({
-  phase,
-  instant,
-}: MusicFileUploadProgress) => {
-  if (instant) {
-    return t('instant_upload_hit');
-  }
+const getFileUploadPhaseText = ({ phase }: MusicFileUploadProgress) => {
   switch (phase) {
     case 'hashing':
       return t('hashing_file');
@@ -482,6 +516,17 @@ const isAbortedUploadError = (error: unknown) =>
   error !== null &&
   'code' in error &&
   (error as { code?: unknown }).code === 'aborted';
+
+const alertIfMusicFileOversize = (file: File) => {
+  const limit = getAssetMaxSize(AssetType.MUSIC);
+  if (!limit || file.size <= limit) {
+    return false;
+  }
+  dialog.alert({
+    content: t('asset_oversize_warning', file.name, formatBytes(limit)),
+  });
+  return true;
+};
 
 function MusicFileUploadProgressView({
   progress,
@@ -577,7 +622,7 @@ function MusicFileField({
         <Button
           variant="secondary"
           size="sm"
-          icon={<MdOutlineFilePresent />}
+          icon={<FileIcon />}
           onClick={onModifyFile}
           loading={loading}
           disabled={disabled}
@@ -602,11 +647,15 @@ function EditContent({
 }) {
   const [name, setName] = useState(music.name);
   const [aliases, setAliases] = useState<string[]>(() => music.aliases);
+  const [searchKeywords, setSearchKeywords] = useState(music.searchKeywords);
   const [lyrics, setLyrics] = useState<string[]>(() =>
     music.lyrics.map((lyric) => lyric.lrc),
   );
-  const [singers, setSingers] = useState<SelectOption<Singer>[]>(() =>
-    music.singers.map(formatSingerToOption),
+  const [singers, setSingers] = useState<SelectOption<Artist>[]>(() =>
+    music.singers.map(formatArtistToOption),
+  );
+  const [lyricists, setLyricists] = useState<SelectOption<Artist>[]>(() =>
+    music.lyricists.map(formatArtistToOption),
   );
   const [forkFromList, setForkFromList] = useState<
     SelectOption<RelatedMusic>[]
@@ -626,8 +675,10 @@ function EditContent({
   useEffect(() => {
     setName(music.name);
     setAliases(music.aliases);
+    setSearchKeywords(music.searchKeywords);
     setLyrics(music.lyrics.map((lyric) => lyric.lrc));
-    setSingers(music.singers.map(formatSingerToOption));
+    setSingers(music.singers.map(formatArtistToOption));
+    setLyricists(music.lyricists.map(formatArtistToOption));
     setForkFromList(music.forkFromList.map(formatMusicToOption));
     setYear(music.year === null ? '' : `${music.year}`);
   }, [music]);
@@ -670,10 +721,18 @@ function EditContent({
   );
 
   const normalizedAliases = useMemo(() => normalizeAliases(aliases), [aliases]);
+  const normalizedSearchKeywords = useMemo(
+    () => normalizeSearchKeywords(searchKeywords),
+    [searchKeywords],
+  );
   const normalizedLyrics = useMemo(() => normalizeLyrics(lyrics), [lyrics]);
   const singerIds = useMemo(
     () => singers.map((option) => option.value.id),
     [singers],
+  );
+  const lyricistIds = useMemo(
+    () => lyricists.map((option) => option.value.id),
+    [lyricists],
   );
   const forkFromIds = useMemo(
     () => forkFromList.map((option) => option.value.id),
@@ -687,6 +746,10 @@ function EditContent({
     () => music.singers.map((singer) => singer.id),
     [music.singers],
   );
+  const originalLyricistIds = useMemo(
+    () => music.lyricists.map((lyricist) => lyricist.id),
+    [music.lyricists],
+  );
   const originalForkFromIds = useMemo(
     () => music.forkFromList.map((forkFrom) => forkFrom.id),
     [music.forkFromList],
@@ -698,9 +761,11 @@ function EditContent({
   const changed =
     normalizeText(name) !== music.name ||
     !stringArrayEqual(normalizedAliases, music.aliases) ||
+    normalizedSearchKeywords !== music.searchKeywords ||
     (music.type === MusicType.SONG &&
       !stringArrayEqual(normalizedLyrics, originalLyrics)) ||
     !stringArrayEqual(sortedIds(singerIds), sortedIds(originalSingerIds)) ||
+    !stringArrayEqual(sortedIds(lyricistIds), sortedIds(originalLyricistIds)) ||
     !stringArrayEqual(sortedIds(forkFromIds), sortedIds(originalForkFromIds)) ||
     parsedYear !== music.year;
 
@@ -709,6 +774,10 @@ function EditContent({
 
   const onYearChange: ChangeEventHandler<HTMLInputElement> = (event) =>
     setYear(event.target.value);
+
+  const onSearchKeywordsChange: ChangeEventHandler<HTMLTextAreaElement> = (
+    event,
+  ) => setSearchKeywords(event.target.value);
 
   const onAliasChange = (index: number, value: string) =>
     setAliases((list) =>
@@ -782,12 +851,21 @@ function EditContent({
     });
   };
 
-  const onSingerCreated = useCallback((singer: Singer) => {
+  const onSingerCreated = useCallback((artist: Artist) => {
     setSingers((list) => {
-      if (list.some((option) => option.value.id === singer.id)) {
+      if (list.some((option) => option.value.id === artist.id)) {
         return list;
       }
-      return [...list, formatSingerToOption(singer)];
+      return [...list, formatArtistToOption(artist)];
+    });
+  }, []);
+
+  const onLyricistCreated = useCallback((artist: Artist) => {
+    setLyricists((list) => {
+      if (list.some((option) => option.value.id === artist.id)) {
+        return list;
+      }
+      return [...list, formatArtistToOption(artist)];
     });
   }, []);
 
@@ -851,6 +929,10 @@ function EditContent({
     setDialogProgress: (progress: MusicFileUploadProgress | null) => void,
     dialogSignal: AbortSignal,
   ) => {
+    if (alertIfMusicFileOversize(file)) {
+      return false;
+    }
+
     fileUploadAbortRef.current?.abort();
     const controller = new AbortController();
     const abortFromDialog = () => controller.abort();
@@ -866,11 +948,10 @@ function EditContent({
       phase: 'hashing',
       uploadedBytes: 0,
       totalBytes: file.size,
-      instant: false,
     });
 
     try {
-      const { id, instant } = await uploadAssetChunked(file, AssetType.MUSIC, {
+      const { id } = await uploadAssetChunked(file, AssetType.MUSIC, {
         signal: controller.signal,
         onPhase: (phase) => {
           if (phase === 'completing') {
@@ -881,7 +962,6 @@ function EditContent({
             phase,
             uploadedBytes: currentUploadedBytes,
             totalBytes: currentTotalBytes,
-            instant: false,
           });
         },
         onProgress: (uploadedBytes, totalBytes) => {
@@ -891,7 +971,6 @@ function EditContent({
             phase: 'uploading',
             uploadedBytes,
             totalBytes,
-            instant: false,
           });
         },
         onResumeMetaResolved: (meta) => {
@@ -903,7 +982,6 @@ function EditContent({
         phase: 'completing',
         uploadedBytes: file.size,
         totalBytes: file.size,
-        instant,
       });
       await updateMusic({
         id: music.id,
@@ -1004,6 +1082,14 @@ function EditContent({
         });
       }
 
+      if (normalizedSearchKeywords !== music.searchKeywords) {
+        await updateMusic({
+          id: music.id,
+          key: AllowUpdateKey.SEARCH_KEYWORDS,
+          value: normalizedSearchKeywords,
+        });
+      }
+
       if (
         music.type === MusicType.SONG &&
         !stringArrayEqual(normalizedLyrics, originalLyrics)
@@ -1020,6 +1106,16 @@ function EditContent({
           id: music.id,
           key: AllowUpdateKey.SINGER,
           value: singerIds,
+        });
+      }
+
+      if (
+        !stringArrayEqual(sortedIds(lyricistIds), sortedIds(originalLyricistIds))
+      ) {
+        await updateMusic({
+          id: music.id,
+          key: AllowUpdateKey.LYRICIST,
+          value: lyricistIds,
         });
       }
 
@@ -1079,7 +1175,16 @@ function EditContent({
       <Body>
         <CoverSection>
           <CoverBox>
-            <img src={music.cover || DefaultCover} alt={music.name} />
+            {music.coverThumbnail ? (
+              <span
+                className="thumbnail-placeholder"
+                style={{ backgroundImage: `url("${music.coverThumbnail}")` }}
+              />
+            ) : null}
+            <img
+              src={music.cover || music.coverThumbnail || DefaultCover}
+              alt={music.name}
+            />
           </CoverBox>
           <CoverActions>
             <Button
@@ -1092,7 +1197,7 @@ function EditContent({
               title={t('edit_cover')}
               aria-label={t('edit_cover')}
             >
-              <IconEdit size={18} />
+              <Edit size={18} />
             </Button>
             <Button
               variant="danger"
@@ -1106,7 +1211,7 @@ function EditContent({
               title={t('delete_cover')}
               aria-label={t('delete_cover')}
             >
-              <MdDelete />
+              <Delete />
             </Button>
           </CoverActions>
         </CoverSection>
@@ -1140,14 +1245,14 @@ function EditContent({
                   title={t('delete')}
                   aria-label={t('delete')}
                 >
-                  <MdDelete />
+                  <Delete />
                 </Button>
               </AliasInputRow>
             ))}
             {aliases.length < MUSIC_MAX_ALIAS_COUNT ? (
               <Button
                 variant="secondary"
-                icon={<MdAdd />}
+                icon={<Add />}
                 onClick={onAddAlias}
                 disabled={saving}
               >
@@ -1158,18 +1263,45 @@ function EditContent({
         </Group>
 
         <Group>
+          <GroupTitle>{t('search_keywords')}</GroupTitle>
+          <SearchKeywordsTextarea
+            value={searchKeywords}
+            onChange={onSearchKeywordsChange}
+            maxLength={MUSIC_SEARCH_KEYWORDS_MAX_LENGTH}
+            disabled={saving}
+            placeholder={t('search_keywords_placeholder')}
+          />
+        </Group>
+
+        <Group>
           <GroupHeader>
             <GroupTitle>{t('singer')}</GroupTitle>
-            <CreateSingerLabel
+            <CreateArtistLabel
               notifyOnCreated={false}
               onCreated={onSingerCreated}
             />
           </GroupHeader>
           <MultiSelect
             value={singers}
-            loadOptions={searchSinger}
+            loadOptions={searchArtist}
             onChange={setSingers}
-            clearable={false}
+            disabled={saving}
+            placeholder=""
+          />
+        </Group>
+
+        <Group>
+          <GroupHeader>
+            <GroupTitle>{t('lyricist')}</GroupTitle>
+            <CreateArtistLabel
+              notifyOnCreated={false}
+              onCreated={onLyricistCreated}
+            />
+          </GroupHeader>
+          <MultiSelect
+            value={lyricists}
+            loadOptions={searchArtist}
+            onChange={setLyricists}
             disabled={saving}
             placeholder=""
           />
@@ -1227,7 +1359,7 @@ function EditContent({
                     title={t('delete')}
                     aria-label={t('delete')}
                   >
-                    <MdDelete />
+                    <Delete />
                   </LyricDeleteButton>
                 </TextareaRow>
               ))}
@@ -1236,7 +1368,7 @@ function EditContent({
                   <Button
                     variant="secondary"
                     size="sm"
-                    icon={<MdAdd />}
+                    icon={<Add />}
                     onClick={onAddLyric}
                     disabled={saving}
                   >
@@ -1245,7 +1377,7 @@ function EditContent({
                   <Button
                     variant="secondary"
                     size="sm"
-                    icon={<MdFileUpload />}
+                    icon={<UploadFile />}
                     onClick={onTriggerLyricUpload}
                     disabled={saving}
                   >
@@ -1313,7 +1445,7 @@ function MusicEditDrawer({
         setError(null);
       }
       try {
-        const result = await getMusicRequest({ id, requestMinimalDuration: 0 });
+        const result = await adminGetMusic({ id, requestMinimalDuration: 0 });
         let lyrics: Lyric[] = [];
         if (result.type === MusicType.SONG) {
           lyrics = await getLyricList({
@@ -1325,6 +1457,7 @@ function MusicEditDrawer({
           id: result.id,
           name: result.name,
           cover: result.cover,
+          coverThumbnail: result.coverThumbnail,
           asset: result.asset,
           assetSize: result.assetSize,
           assetDurationMs: result.assetDurationMs,
@@ -1332,7 +1465,9 @@ function MusicEditDrawer({
           assetBitRate: result.assetBitRate,
           type: result.type,
           aliases: result.aliases,
+          searchKeywords: result.searchKeywords,
           singers: result.singers,
+          lyricists: result.lyricists,
           heat: result.heat,
           lyrics,
           forkFromList: result.forkFromList,

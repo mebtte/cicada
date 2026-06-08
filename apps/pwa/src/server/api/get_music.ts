@@ -1,27 +1,32 @@
 import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
+import { upsertOfflineMusicMetadata } from '@/utils/offline_music';
 import { request } from '..';
 
 interface SingerPhoto {
   id: string;
   asset: string;
+  thumbnail?: string;
   description: string;
 }
 
 interface Singer {
   id: string;
   name: string;
+  aliases?: string[];
   photos?: SingerPhoto[];
 }
 
 interface Music {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   singers: Singer[];
+  lyricists: Singer[];
 }
 
-type Response = Omit<Music, 'singers'> & {
+type Response = Omit<Music, 'singers' | 'lyricists'> & {
   type: MusicType;
   aliases: string[];
   heat: number;
@@ -49,12 +54,16 @@ type Response = Omit<Music, 'singers'> & {
   singers: (Singer & {
     aliases: string[];
   })[];
+  lyricists: (Singer & {
+    aliases: string[];
+  })[];
 };
 
 const normalizePhotos = (photos: SingerPhoto[] = []) =>
   photos.map((p) => ({
     ...p,
     asset: prefixServerOrigin(p.asset),
+    thumbnail: prefixServerOrigin(p.thumbnail ?? ''),
   }));
 
 /**
@@ -74,14 +83,47 @@ async function getMusic({
     withToken: true,
     requestMinimalDuration,
   });
+  const prefixedCover = prefixServerOrigin(music.cover);
+  const prefixedCoverThumbnail = prefixServerOrigin(music.coverThumbnail ?? '');
+  const prefixedAsset = prefixServerOrigin(music.asset);
+  upsertOfflineMusicMetadata({
+    id: music.id,
+    asset: prefixedAsset,
+    type: music.type,
+    name: music.name,
+    aliases: music.aliases,
+    cover: prefixedCover,
+    coverThumbnail: prefixedCoverThumbnail,
+    singers: (music.singers ?? []).map((s) => ({
+      id: s.id,
+      name: s.name,
+      aliases: s.aliases ?? [],
+    })),
+    lyricists: (music.lyricists ?? []).map((artist) => ({
+      id: artist.id,
+      name: artist.name,
+      aliases: artist.aliases ?? [],
+    })),
+  });
   return {
     ...music,
-    cover: prefixServerOrigin(music.cover),
-    asset: prefixServerOrigin(music.asset),
-    singers: music.singers.map((s) => {
+    cover: prefixedCover,
+    coverThumbnail: prefixedCoverThumbnail,
+    asset: prefixedAsset,
+    singers: (music.singers ?? []).map((s) => {
       const photos = normalizePhotos(s.photos);
       return {
         ...s,
+        aliases: s.aliases ?? [],
+        photos,
+        avatar: photos[0]?.asset ?? '',
+      };
+    }),
+    lyricists: (music.lyricists ?? []).map((artist) => {
+      const photos = normalizePhotos(artist.photos);
+      return {
+        ...artist,
+        aliases: artist.aliases ?? [],
         photos,
         avatar: photos[0]?.asset ?? '',
       };
@@ -89,17 +131,27 @@ async function getMusic({
     forkList: music.forkList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),
-      singers: m.singers.map((s) => ({
+      coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
+      singers: (m.singers ?? []).map((s) => ({
         ...s,
         photos: normalizePhotos(s.photos),
+      })),
+      lyricists: (m.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
       })),
     })),
     forkFromList: music.forkFromList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),
-      singers: m.singers.map((s) => ({
+      coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
+      singers: (m.singers ?? []).map((s) => ({
         ...s,
         photos: normalizePhotos(s.photos),
+      })),
+      lyricists: (m.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
       })),
     })),
     relatedPublicMusicbillList: (

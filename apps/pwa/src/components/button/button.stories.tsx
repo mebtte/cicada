@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Button from '.';
+import { Add, Close, ExternalLink, PlayArrow } from '../icon';
 
 const meta = {
   title: 'Basic/Button',
@@ -139,10 +140,10 @@ export const WithIcon: Story = {
   name: 'With Icon',
   render: () => (
     <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-      <Button icon={<span>▶</span>}>Play</Button>
-      <Button variant="secondary" icon={<span>+</span>}>Add to List</Button>
-      <Button variant="ghost" icon={<span>↗</span>}>Share</Button>
-      <Button variant="danger" icon={<span>✕</span>}>Remove</Button>
+      <Button icon={<PlayArrow />}>Play</Button>
+      <Button variant="secondary" icon={<Add />}>Add to List</Button>
+      <Button variant="ghost" icon={<ExternalLink />}>Share</Button>
+      <Button variant="danger" icon={<Close />}>Remove</Button>
     </div>
   ),
 };

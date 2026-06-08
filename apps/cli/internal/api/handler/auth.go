@@ -21,14 +21,12 @@ import (
 
 func GetMetadata(c *gin.Context) {
 	hostname, _ := os.Hostname()
-	assetMaxSize := make(map[string]int64, len(config.AssetMaxSize))
-	for at, size := range config.AssetMaxSize {
-		assetMaxSize[string(at)] = size
-	}
+	cfg := config.Get()
 	api.OK(c, gin.H{
-		"hostname":     hostname,
-		"version":      version.Get(),
-		"assetMaxSize": assetMaxSize,
+		"hostname":         hostname,
+		"version":          version.Get(),
+		"musicFileMaxSize": cfg.MusicFileMaxSize,
+		"imageFileMaxSize": cfg.ImageFileMaxSize,
 	})
 }
 

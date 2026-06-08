@@ -47,7 +47,8 @@ function refreshSelectedServerMetadata() {
                   ...s,
                   version: data.version,
                   hostname: data.hostname,
-                  assetMaxSize: data.assetMaxSize,
+                  musicFileMaxSize: data.musicFileMaxSize,
+                  imageFileMaxSize: data.imageFileMaxSize,
                 }
               : s,
           ),
@@ -74,9 +75,12 @@ function refreshSelectedServerMetadata() {
 refreshSelectedServerMetadata();
 window.setInterval(refreshSelectedServerMetadata, 1000 * 15);
 
+const EMBEDDED_OR_ABSOLUTE_URL = /^(data:|blob:|https?:\/\/|\/\/)/;
+
 export function prefixServerOrigin(path: string) {
-  if (path) {
-    return `${getSelectedServer(useServer.getState())?.origin}${path}`;
+  if (path && !EMBEDDED_OR_ABSOLUTE_URL.test(path)) {
+    const origin = getSelectedServer(useServer.getState())?.origin;
+    return origin ? `${origin}${path}` : path;
   }
   return path;
 }
@@ -97,7 +101,17 @@ export async function reloadUser() {
     const user = getSelectedUser(selectedServer);
     if (user) {
       const { default: getProfile } = await import('@/server/api/get_profile');
-      const profile = await getProfile(user.token);
+      let profile;
+      try {
+        profile = await getProfile(user.token);
+      } catch (error) {
+        /**
+         * 离线/网络错误时保留 zustand 中既有用户态, 不清空登录
+         * 401 的清空仍走 request 层处理
+         */
+        logger.error(error, 'reloadUser: failed to fetch profile');
+        return;
+      }
       useServer.setState((server) => ({
         serverList: server.serverList.map((s) =>
           s.origin === selectedServer.origin

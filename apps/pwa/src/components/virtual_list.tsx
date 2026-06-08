@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-virtual';
 
 const DEFAULT_ESTIMATE_SIZE = 82;
+const DEFAULT_OVERSCAN = 8;
 const MEASUREMENT_SETTLE_FRAMES = 12;
 const EMPTY_FORCE_RENDER_INDEXES: number[] = [];
 
@@ -232,10 +233,8 @@ function VirtualListRow({
 function VirtualList({
   className,
   count,
-  estimateSize = DEFAULT_ESTIMATE_SIZE,
   forceRenderIndexes = EMPTY_FORCE_RENDER_INDEXES,
   getItemKey,
-  overscan = 8,
   paddingEnd = 0,
   paddingStart = 0,
   renderItem,
@@ -244,10 +243,8 @@ function VirtualList({
 }: {
   className?: string;
   count: number;
-  estimateSize?: number;
   forceRenderIndexes?: number[];
   getItemKey?: (index: number) => Key;
-  overscan?: number;
   paddingEnd?: number;
   paddingStart?: number;
   renderItem: (
@@ -292,7 +289,7 @@ function VirtualList({
   );
   const virtualizer = useVirtualizer<HTMLElement, HTMLDivElement>({
     count,
-    estimateSize: () => estimateSize,
+    estimateSize: () => DEFAULT_ESTIMATE_SIZE,
     getItemKey,
     getScrollElement: () => scrollElement,
     measureElement: (element, entry, instance) => {
@@ -304,7 +301,7 @@ function VirtualList({
       return Math.round(size);
     },
     observeElementRect,
-    overscan,
+    overscan: DEFAULT_OVERSCAN,
     paddingEnd,
     paddingStart,
     rangeExtractor,
@@ -460,15 +457,16 @@ function VirtualList({
   const fallbackVirtualItems = useMemo(
     () =>
       Array.from(
-        { length: Math.min(count, Math.max(1, overscan)) },
+        { length: Math.min(count, DEFAULT_OVERSCAN) },
         (_, index) => ({
           index,
           key: getItemKey?.(index) ?? index,
-          size: estimateSize,
-          start: paddingStart + index * estimateSize + scrollMargin,
+          size: DEFAULT_ESTIMATE_SIZE,
+          start:
+            paddingStart + index * DEFAULT_ESTIMATE_SIZE + scrollMargin,
         }),
       ),
-    [count, estimateSize, getItemKey, overscan, paddingStart, scrollMargin],
+    [count, getItemKey, paddingStart, scrollMargin],
   );
   const renderedVirtualItems: RenderedVirtualItem[] =
     virtualItems.length || !count ? virtualItems : fallbackVirtualItems;

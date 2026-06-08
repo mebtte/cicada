@@ -1,7 +1,7 @@
-import { DuolingoTabPanels } from '@/components/duolingo_tabs';
+import { TabPanels } from '@/components/tabs';
 import styled, { css } from 'styled-components';
 import Music from './music';
-import Singer from './singer';
+import Artist from './artist';
 import Lyric from './lyric';
 import PublicMusicbill from './public_musicbill';
 import { SearchTab } from '../../constants';
@@ -24,7 +24,7 @@ const Container = styled.div`
 function Content({ tab }: { tab: SearchTab }) {
   return (
     <Container>
-      <DuolingoTabPanels<SearchTab>
+      <TabPanels<SearchTab>
         current={tab}
         tabList={[
           {
@@ -32,8 +32,8 @@ function Content({ tab }: { tab: SearchTab }) {
             content: <Music />,
           },
           {
-            tab: SearchTab.SINGER,
-            content: <Singer />,
+            tab: SearchTab.ARTIST,
+            content: <Artist />,
           },
           {
             tab: SearchTab.PUBLIC_MUSICBILL,

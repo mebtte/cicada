@@ -12,12 +12,12 @@ import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import { USERNAME_MAX_LENGTH } from '@/constants/user';
 import { useUser } from '@/global_states/server';
-import { MdLogout, MdPersonAddAlt1 } from 'react-icons/md';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import User from './user';
 import { Musicbill } from '../constants';
 import e, { EventType } from '../eventemitter';
 import { quitSharedMusicbill } from '../pages/musicbill/utils';
+import { Logout, PersonAdd } from '@/components/icon';
 
 const Content = styled.div`
   height: 100%;
@@ -94,7 +94,7 @@ function ShareDrawer({
           <ActionBar>
             <Button
               block
-              icon={<MdPersonAddAlt1 />}
+              icon={<PersonAdd />}
               variant="primary"
               onClick={() =>
                 dialog.input({
@@ -135,7 +135,7 @@ function ShareDrawer({
             {owned ? null : (
               <Button
                 block
-                icon={<MdLogout />}
+                icon={<Logout />}
                 variant="danger"
                 onClick={() =>
                   quitSharedMusicbill({

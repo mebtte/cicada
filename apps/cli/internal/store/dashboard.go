@@ -10,7 +10,7 @@ type AdminDashboardMusicSummary struct {
 	WithoutCoverCount int
 }
 
-type AdminDashboardSingerSummary struct {
+type AdminDashboardArtistSummary struct {
 	Total             int
 	Created7d         int
 	PhotoCount        int
@@ -33,7 +33,7 @@ type AdminDashboardSummary struct {
 	TodayPlayCount int
 	PlayCount7d    int
 	Music          AdminDashboardMusicSummary
-	Singer         AdminDashboardSingerSummary
+	Artist         AdminDashboardArtistSummary
 	User           AdminDashboardUserSummary
 	Musicbill      AdminDashboardMusicbillSummary
 }
@@ -91,17 +91,17 @@ func GetAdminDashboardSummary(now time.Time) (AdminDashboardSummary, error) {
 		`SELECT
 			COUNT(1),
 			COALESCE(SUM(CASE WHEN createTimestamp >= ? THEN 1 ELSE 0 END), 0),
-			(SELECT COUNT(1) FROM singer_photo),
+			(SELECT COUNT(1) FROM artist_photo),
 			COALESCE(SUM(CASE WHEN NOT EXISTS (
-				SELECT 1 FROM singer_photo sp WHERE sp.singerId = singer.id
+				SELECT 1 FROM artist_photo ap WHERE ap.artistId = artist.id
 			) THEN 1 ELSE 0 END), 0)
-		FROM singer`,
+		FROM artist`,
 		sevenDaysAgo,
 	).Scan(
-		&summary.Singer.Total,
-		&summary.Singer.Created7d,
-		&summary.Singer.PhotoCount,
-		&summary.Singer.WithoutPhotoCount,
+		&summary.Artist.Total,
+		&summary.Artist.Created7d,
+		&summary.Artist.PhotoCount,
+		&summary.Artist.WithoutPhotoCount,
 	); err != nil {
 		return summary, err
 	}

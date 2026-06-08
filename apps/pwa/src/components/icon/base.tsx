@@ -12,13 +12,18 @@ export interface IconProps extends SVGProps<SVGSVGElement> {
  * 风格规范：strokeLinecap / strokeLinejoin = round，颜色走 currentColor。
  */
 function Icon({
-  size = 24,
-  color = 'currentColor',
-  strokeWidth = 2,
+  size = '1em',
+  color,
+  strokeWidth = 2.2,
   style,
   children,
   ...rest
 }: IconProps) {
+  // 仅当显式传入 color 时才写入内联样式, 避免默认 'currentColor' 覆盖外部 className 设置的 color
+  const mergedStyle: CSSProperties | undefined =
+    color !== undefined
+      ? { color, ...(style as CSSProperties) }
+      : (style as CSSProperties | undefined);
   return (
     <svg
       viewBox="0 0 24 24"
@@ -29,7 +34,7 @@ function Icon({
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={{ color, ...(style as CSSProperties) }}
+      style={mergedStyle}
       {...rest}
     >
       {children}

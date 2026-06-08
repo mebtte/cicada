@@ -1,7 +1,11 @@
 /* global ServiceWorkerGlobalScope */
 import { clientsClaim } from 'workbox-core';
-import { precacheAndRoute, PrecacheEntry } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
+import {
+  createHandlerBoundToURL,
+  precacheAndRoute,
+  PrecacheEntry,
+} from 'workbox-precaching';
+import { NavigationRoute, registerRoute } from 'workbox-routing';
 import { CacheFirst, NetworkFirst } from 'workbox-strategies';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
@@ -28,6 +32,21 @@ if (process.env.NODE_ENV === 'production') {
    * @author mebtte<i@mebtte.com>
    */
   precacheAndRoute(self.__WB_MANIFEST || []);
+
+  /**
+   * SPA 路由兜底, 离线刷新任意路由都能进 App Shell
+   * 排除后端接口/资源/表单路径, 避免被 index.html 吞掉
+   */
+  registerRoute(
+    new NavigationRoute(createHandlerBoundToURL('/index.html'), {
+      denylist: [
+        new RegExp(`^/${PathPrefix.API}/`),
+        new RegExp(`^/${PathPrefix.ASSET}/`),
+        new RegExp(`^/${PathPrefix.BASE}/`),
+        new RegExp(`^/${PathPrefix.FORM}/`),
+      ],
+    }),
+  );
 
   self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
@@ -118,8 +137,6 @@ registerRoute(
 const PREVNET_CACHE_PATHS: string[] = [
   '/base/metadata',
   '/base/captcha',
-
-  '/api/profile',
 ];
 registerRoute(
   ({ request }) => {

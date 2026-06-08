@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Cover from '@/components/cover';
 import getResizedImage from '@/server/asset/get_resized_image';
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
-import { Singer } from './constants';
+import { Artist } from './constants';
 import RecordList from './record_list';
 
 const COVER_SIZE = 32;
@@ -12,7 +12,7 @@ const Style = styled.div`
   display: flex;
   flex-direction: column;
 
-  > .singer {
+  > .artist {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -21,25 +21,25 @@ const Style = styled.div`
   }
 `;
 
-function Content({ singer }: { singer: Singer }) {
+function Content({ artist }: { artist: Artist }) {
   const { height } = useTitlebarArea();
   return (
     <Style style={{ paddingTop: height }}>
-      <div className="singer">
+      <div className="artist">
         <Cover
           src={
-            singer.avatar
+            artist.avatar
               ? getResizedImage({
-                  url: singer.avatar,
+                  url: artist.avatar,
                   size: Math.ceil(COVER_SIZE * window.devicePixelRatio),
                 })
               : ''
           }
           size={COVER_SIZE}
         />
-        <div className="name">{singer.name}</div>
+        <div className="name">{artist.name}</div>
       </div>
-      <RecordList singerId={singer.id} />
+      <RecordList artistId={artist.id} />
     </Style>
   );
 }

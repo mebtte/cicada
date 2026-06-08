@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { useEffect, useState } from 'react';
 import Button from '@/components/button';
-import { MdHelpOutline, MdRefresh } from 'react-icons/md';
+import { Help, Refresh } from '@/components/icon';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
@@ -65,7 +65,7 @@ function Toolbar() {
           })
         }
       >
-        <MdHelpOutline />
+        <Help />
       </Button>
       {/* 刷新按钮: 点击后通知列表重新拉取当前播放记录 */}
       <Button
@@ -75,7 +75,7 @@ function Toolbar() {
         loading={loading}
         onClick={() => e.emit(EventType.RELOAD, null)}
       >
-        <MdRefresh />
+        <Refresh />
       </Button>
       <Filter />
     </Style>

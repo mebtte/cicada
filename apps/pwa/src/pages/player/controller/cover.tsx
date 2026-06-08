@@ -3,12 +3,12 @@ import logger from '@/utils/logger';
 import { HtmlHTMLAttributes, useEffect, useState } from 'react';
 import { animated, useTransition } from 'react-spring';
 import styled, { css } from 'styled-components';
-import { MdUnfoldMore } from 'react-icons/md';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import { CSS_VAR } from '@/components/theme';
 import PngDefaultCover from '@/asset/default_cover.jpeg';
 import { CONTROLLER_COVER_SHADOW } from '../constants';
+import { Expand } from '@/components/icon';
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
@@ -72,51 +72,86 @@ const Cover = styled(animated.img)`
   will-change: opacity, transform, filter;
 `;
 
+type DisplayImage = {
+  src: string;
+  placeholder: boolean;
+};
+
+const displayImageKey = (image: DisplayImage) =>
+  `${image.placeholder ? 'placeholder' : 'image'}:${image.src}`;
+
 function Wrapper({
   cover,
+  placeholderCover,
   mask,
   ...props
-}: { cover?: string; mask: boolean } & HtmlHTMLAttributes<HTMLDivElement>) {
-  const [src, setSrc] = useState(PngDefaultCover);
+}: {
+  cover?: string;
+  placeholderCover?: string;
+  mask: boolean;
+} & HtmlHTMLAttributes<HTMLDivElement>) {
+  const [image, setImage] = useState<DisplayImage>(() => ({
+    src: placeholderCover || PngDefaultCover,
+    placeholder: !!placeholderCover,
+  }));
 
   useEffect(() => {
+    const fallback = placeholderCover || PngDefaultCover;
+    const fallbackImage = {
+      src: fallback,
+      placeholder: !!placeholderCover,
+    };
     if (cover) {
+      setImage(fallbackImage);
       let canceled = false;
       loadImage(cover)
         .then(() => {
           if (!canceled) {
-            setSrc(cover);
+            setImage({ src: cover, placeholder: false });
           }
         })
         .catch((error) => {
           logger.error(error, 'Failed to load music cover');
           if (!canceled) {
-            setSrc(PngDefaultCover);
+            setImage(fallbackImage);
           }
         });
       return () => {
         canceled = true;
       };
     }
-    setSrc(PngDefaultCover);
-  }, [cover]);
+    setImage(fallbackImage);
+  }, [cover, placeholderCover]);
 
-  const transitions = useTransition(src, {
-    from: {
+  const transitions = useTransition(image, {
+    keys: displayImageKey,
+    from: (item) => ({
       opacity: 0,
-      transform: 'scale(1.12) translate3d(-3%, 0, 0)',
-      filter: 'brightness(1.18) saturate(1.12)',
-    },
-    enter: {
+      transform: item.placeholder
+        ? 'scale(1.14) translate3d(-3%, 0, 0)'
+        : 'scale(1.12) translate3d(-3%, 0, 0)',
+      filter: item.placeholder
+        ? 'blur(8px) brightness(1.08) saturate(1.1)'
+        : 'brightness(1.18) saturate(1.12)',
+    }),
+    enter: (item) => ({
       opacity: 1,
-      transform: 'scale(1.02) translate3d(0%, 0, 0)',
-      filter: 'brightness(1) saturate(1)',
-    },
-    leave: {
+      transform: item.placeholder
+        ? 'scale(1.1) translate3d(0%, 0, 0)'
+        : 'scale(1.02) translate3d(0%, 0, 0)',
+      filter: item.placeholder
+        ? 'blur(8px) brightness(1.04) saturate(1.08)'
+        : 'brightness(1) saturate(1)',
+    }),
+    leave: (item) => ({
       opacity: 0,
-      transform: 'scale(1.18) translate3d(3%, 0, 0)',
-      filter: 'brightness(0.88) saturate(0.9)',
-    },
+      transform: item.placeholder
+        ? 'scale(1.12) translate3d(3%, 0, 0)'
+        : 'scale(1.18) translate3d(3%, 0, 0)',
+      filter: item.placeholder
+        ? 'blur(6px) brightness(0.96) saturate(1.02)'
+        : 'brightness(0.88) saturate(0.9)',
+    }),
     config: {
       duration: 720,
       easing: easeOutCubic,
@@ -124,12 +159,12 @@ function Wrapper({
   });
   return (
     <Style {...props} $pressable={mask}>
-      {transitions((style, s) => (
-        <Cover style={style} src={s} crossOrigin="anonymous" />
+      {transitions((style, item) => (
+        <Cover style={style} src={item.src} crossOrigin="anonymous" />
       ))}
       {mask ? (
         <div className="expand">
-          <MdUnfoldMore />
+          <Expand aria-hidden="true" />
         </div>
       ) : null}
     </Style>

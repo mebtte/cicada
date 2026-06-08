@@ -75,7 +75,7 @@ test("header shows back button on nested player detail pages except musicbill", 
   );
   assert.equal(getIsHeaderBackButtonPath("/musicbill/musicbill-1"), false);
   assert.equal(getIsHeaderBackButtonPath("/player/music/music-1"), true);
-  assert.equal(getIsHeaderBackButtonPath("/player/singer/singer-1"), true);
+  assert.equal(getIsHeaderBackButtonPath("/player/artist/artist-1"), true);
 
   assert.equal(getIsHeaderBackButtonPath("/player"), false);
   assert.equal(getIsHeaderBackButtonPath("/player/setting"), false);

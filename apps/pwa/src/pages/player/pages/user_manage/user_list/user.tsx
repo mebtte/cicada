@@ -4,7 +4,6 @@ import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
 import Button from '@/components/button';
-import { MdMoreVert } from 'react-icons/md';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
@@ -14,6 +13,7 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../../eventemitter';
 import { GAP, ITEM_MIN_WIDTH } from './constants';
+import { MoreVertical } from '@/components/icon';
 
 const Style = styled.div`
   display: inline-block;
@@ -124,7 +124,7 @@ function User({ user, width }: { user: UserType; width: string }) {
             return e.emit(EventType.OPEN_USER_EDIT_DRAWER, { user });
           }}
         >
-          <MdMoreVert />
+          <MoreVertical />
         </Button>
       </div>
     </Style>

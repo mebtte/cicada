@@ -19,13 +19,13 @@ var (
 )
 
 var musicMIMEs = map[string]bool{
-	"audio/mpeg": true,
-	"audio/flac": true,
+	"audio/mpeg":   true,
+	"audio/flac":   true,
 	"audio/x-flac": true,
-	"audio/m4a":  true,
-	"audio/x-m4a": true,
-	"audio/mp4":  true,
-	"video/mp4":  true,
+	"audio/m4a":    true,
+	"audio/x-m4a":  true,
+	"audio/mp4":    true,
+	"video/mp4":    true,
 }
 
 // Run imports music from source (file or directory) into the cicada data directory.
@@ -121,7 +121,12 @@ func importFile(path, uid string, skipExistenceCheck bool) error {
 	// Save asset file
 	hash := md5.Sum(data)
 	assetName := fmt.Sprintf("%x%s", hash, ext)
-	destPath := filepath.Join(config.AssetDir(config.AssetTypeMusic), assetName)
+	destDir, destPath := config.AssetPath(config.AssetTypeMusic, assetName)
+	if err := os.MkdirAll(destDir, 0755); err != nil {
+		log.Printf("[ %s ] failed to mkdir asset shard: %v", path, err)
+		ignored++
+		return nil
+	}
 	if err := os.WriteFile(destPath, data, 0644); err != nil {
 		log.Printf("[ %s ] failed to write asset: %v", path, err)
 		ignored++
@@ -140,10 +145,10 @@ func importFile(path, uid string, skipExistenceCheck bool) error {
 		if singerName == "" {
 			singerName = "Unknown"
 		}
-		singerID, _ := getOrCreateSinger(singerName, uid)
+		artistID, _ := getOrCreateArtist(singerName, uid)
 		store.DB().Exec(
-			`INSERT OR IGNORE INTO music_singer_relation (musicId,singerId) VALUES (?,?)`,
-			musicID, singerID,
+			`INSERT OR IGNORE INTO music_singer_relation (musicId,artistId) VALUES (?,?)`,
+			musicID, artistID,
 		)
 	}
 
@@ -186,13 +191,13 @@ func checkMusicExists(name string, singers []string) (bool, error) {
 	return false, nil
 }
 
-func getOrCreateSinger(name, uid string) (string, error) {
+func getOrCreateArtist(name, uid string) (string, error) {
 	var id string
-	err := store.DB().QueryRow(`SELECT id FROM singer WHERE name=?`, name).Scan(&id)
+	err := store.DB().QueryRow(`SELECT id FROM artist WHERE name=?`, name).Scan(&id)
 	if err == nil {
 		return id, nil
 	}
-	return store.CreateSinger(name, uid)
+	return store.CreateArtist(name, uid)
 }
 
 func sortedCopy(s []string) []string {
@@ -218,4 +223,3 @@ func sliceEqual(a, b []string) bool {
 	}
 	return true
 }
-

@@ -15,13 +15,14 @@ import (
 const (
 	TableUser                      = "user"
 	TableCaptcha                   = "captcha"
-	TableSinger                    = "singer"
-	TableSingerPhoto               = "singer_photo"
+	TableArtist                    = "artist"
+	TableArtistPhoto               = "artist_photo"
 	TableMusic                     = "music"
 	TableMusicFork                 = "music_fork"
 	TableLyric                     = "lyric"
 	TableMusicPlayRecord           = "music_play_record"
 	TableMusicSingerRelation       = "music_singer_relation"
+	TableMusicLyricistRelation     = "music_lyricist_relation"
 	TableMusicbill                 = "musicbill"
 	TableMusicbillMusic            = "musicbill_music"
 	TablePublicMusicbillCollection = "public_musicbill_collection"
@@ -64,30 +65,34 @@ var tables = []string{
 		createTimestamp INTEGER NOT NULL,
 		used INTEGER NOT NULL DEFAULT 0
 	)`,
-	`CREATE TABLE IF NOT EXISTS singer (
+	`CREATE TABLE IF NOT EXISTS artist (
 		id TEXT PRIMARY KEY NOT NULL,
 		name TEXT NOT NULL,
 		aliases TEXT NOT NULL DEFAULT '',
+		searchKeywords TEXT NOT NULL DEFAULT '',
 		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL
 	)`,
-	`CREATE TABLE IF NOT EXISTS singer_photo (
+	`CREATE TABLE IF NOT EXISTS artist_photo (
 		id TEXT PRIMARY KEY NOT NULL,
-		singerId TEXT NOT NULL REFERENCES singer(id),
+		artistId TEXT NOT NULL REFERENCES artist(id),
 		asset TEXT NOT NULL,
+		thumbnail TEXT NOT NULL DEFAULT '',
 		position INTEGER NOT NULL,
 		description TEXT NOT NULL DEFAULT '',
 		addUserId TEXT NOT NULL REFERENCES user(id),
 		addTimestamp INTEGER NOT NULL
 	)`,
-	`CREATE INDEX IF NOT EXISTS idx_singer_photo_singer ON singer_photo(singerId, position)`,
+	`CREATE INDEX IF NOT EXISTS idx_artist_photo_artist ON artist_photo(artistId, position)`,
 	`CREATE TABLE IF NOT EXISTS music (
 		id TEXT PRIMARY KEY NOT NULL,
 		type INTEGER NOT NULL,
 		name TEXT NOT NULL,
 		year INTEGER DEFAULT NULL,
 		aliases TEXT NOT NULL DEFAULT '',
+		searchKeywords TEXT NOT NULL DEFAULT '',
 		cover TEXT NOT NULL DEFAULT '',
+		coverThumbnail TEXT NOT NULL DEFAULT '',
 		asset TEXT NOT NULL,
 		assetSize INTEGER NOT NULL DEFAULT 0,
 		assetDurationMs INTEGER NOT NULL DEFAULT 0,
@@ -124,9 +129,19 @@ var tables = []string{
 	`CREATE TABLE IF NOT EXISTS music_singer_relation (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		musicId TEXT NOT NULL REFERENCES music(id),
-		singerId TEXT NOT NULL REFERENCES singer(id),
-		UNIQUE(musicId, singerId) ON CONFLICT REPLACE
+		artistId TEXT NOT NULL REFERENCES artist(id),
+		UNIQUE(musicId, artistId) ON CONFLICT REPLACE
 	)`,
+	`CREATE INDEX IF NOT EXISTS idx_music_singer_relation_music ON music_singer_relation(musicId)`,
+	`CREATE INDEX IF NOT EXISTS idx_music_singer_relation_artist ON music_singer_relation(artistId)`,
+	`CREATE TABLE IF NOT EXISTS music_lyricist_relation (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		musicId TEXT NOT NULL REFERENCES music(id),
+		artistId TEXT NOT NULL REFERENCES artist(id),
+		UNIQUE(musicId, artistId) ON CONFLICT REPLACE
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_music_lyricist_relation_music ON music_lyricist_relation(musicId)`,
+	`CREATE INDEX IF NOT EXISTS idx_music_lyricist_relation_artist ON music_lyricist_relation(artistId)`,
 	`CREATE TABLE IF NOT EXISTS musicbill (
 		id TEXT PRIMARY KEY NOT NULL,
 		userId TEXT NOT NULL REFERENCES user(id),

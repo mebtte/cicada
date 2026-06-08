@@ -295,13 +295,15 @@ export default () => {
       EventType.MUSIC_DELETED,
       (payload) => onMusicChange(payload.id),
     );
-    const unlistenSingerUpdated = eventemitter.listen(
-      EventType.SINGER_UPDATED,
+    const unlistenArtistUpdated = eventemitter.listen(
+      EventType.ARTIST_UPDATED,
       (payload) => {
         for (const musicbill of musicbillList) {
           if (musicbill.status === RequestStatus.SUCCESS) {
             for (const music of musicbill.musicList) {
-              const exist = music.singers.find((s) => s.id === payload.id);
+              const exist = [...music.singers, ...music.lyricists].find(
+                (artist) => artist.id === payload.id,
+              );
               if (exist) {
                 getMusicbill({ id: musicbill.id, silence: true });
                 break;
@@ -314,7 +316,7 @@ export default () => {
     return () => {
       unlistenMusicUpdated();
       unlistenMusicDeleted();
-      unlistenSingerUpdated();
+      unlistenArtistUpdated();
     };
   }, [getMusicbill, musicbillList]);
 

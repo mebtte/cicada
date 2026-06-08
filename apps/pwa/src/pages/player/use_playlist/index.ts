@@ -122,11 +122,13 @@ export default () => {
   }, []);
 
   useEffect(() => {
-    const unlistenSingerUpdated = eventemitter.listen(
-      EventType.SINGER_UPDATED,
+    const unlistenArtistUpdated = eventemitter.listen(
+      EventType.ARTIST_UPDATED,
       (payload) => {
         for (const music of playlist) {
-          const exist = music.singers.find((s) => s.id === payload.id);
+          const exist = [...music.singers, ...music.lyricists].find(
+            (artist) => artist.id === payload.id,
+          );
           if (exist) {
             getMusic({ id: music.id, requestMinimalDuration: 0 })
               .then((newMusic) =>
@@ -146,7 +148,7 @@ export default () => {
         }
       },
     );
-    return unlistenSingerUpdated;
+    return unlistenArtistUpdated;
   }, [playlist]);
 
   return playlist;

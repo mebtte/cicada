@@ -4,6 +4,9 @@ export type { ButtonProps, Variant as ButtonVariant, Size as ButtonSize } from '
 export { default as Input } from './input';
 export type { InputProps, InputSize } from './input';
 
+export { default as Textarea } from './textarea';
+export type { TextareaProps, TextareaSize } from './textarea';
+
 export { default as Label } from './label';
 export type { LabelProps } from './label';
 
@@ -16,7 +19,7 @@ export type { SliderProps, SliderEdge } from './slider';
 export { Select, MultiSelect } from './select';
 export type { SelectProps, MultiSelectProps, SelectOption, SelectSize } from './select';
 
-export { Icon, IconList, IconPlayQueue } from './icon';
+export { Icon, List, PlayQueue } from './icon';
 export type { IconProps } from './icon';
 
 export {
@@ -50,8 +53,8 @@ export type { Theme, ThemeProviderProps } from './theme';
 
 export { default as Divider } from './divider';
 
-export { DuolingoTabList, DuolingoTabPanels } from './duolingo_tabs';
-export type { DuolingoTabItem, DuolingoTabPanel } from './duolingo_tabs';
+export { TabList, TabPanels } from './tabs';
+export type { TabItem, TabPanel } from './tabs';
 
 export { default as Tooltip } from './tooltip';
 export type { TooltipProps } from './tooltip';

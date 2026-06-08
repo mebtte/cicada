@@ -83,9 +83,9 @@ func NewServer() *gin.Engine {
 	api.GET("/music/search", auth(), handler.SearchMusic)
 	api.GET("/music/search_by_lyric", auth(), handler.SearchMusicByLyric)
 
-	// Singer (read)
-	api.GET("/singer", auth(), handler.GetSinger)
-	api.GET("/singer/search", auth(), handler.SearchSinger)
+	// Artist (read)
+	api.GET("/artist", auth(), handler.GetArtist)
+	api.GET("/artist/search", auth(), handler.SearchArtist)
 
 	// Lyric
 	api.GET("/lyric_list", auth(), handler.GetLyricList)
@@ -127,19 +127,20 @@ func NewServer() *gin.Engine {
 	api.DELETE("/admin/user", auth(), admin(), handler.AdminDeleteUser)
 	api.GET("/admin/dashboard", auth(), admin(), handler.AdminGetDashboard)
 	api.GET("/admin/user_list", auth(), admin(), handler.AdminGetUserList)
+	api.GET("/admin/music", auth(), admin(), handler.AdminGetMusic)
 	api.POST("/admin/music", auth(), admin(), handler.AdminCreateMusic)
 	api.PUT("/admin/music", auth(), admin(), handler.AdminUpdateMusic)
 	api.DELETE("/admin/music", auth(), admin(), handler.AdminDeleteMusic)
 	api.GET("/admin/music_list", auth(), admin(), handler.AdminGetMusicList)
-	api.GET("/admin/singer_list", auth(), admin(), handler.AdminGetSingerList)
-	api.GET("/admin/singer", auth(), admin(), handler.AdminGetSinger)
-	api.POST("/admin/singer", auth(), admin(), handler.AdminCreateSinger)
-	api.PUT("/admin/singer", auth(), admin(), handler.AdminUpdateSinger)
-	api.DELETE("/admin/singer", auth(), admin(), handler.AdminDeleteSinger)
-	api.POST("/admin/singer/photo", auth(), admin(), handler.AdminCreateSingerPhoto)
-	api.PUT("/admin/singer/photo", auth(), admin(), handler.AdminUpdateSingerPhoto)
-	api.DELETE("/admin/singer/photo", auth(), admin(), handler.AdminDeleteSingerPhoto)
-	api.PUT("/admin/singer/photo/order", auth(), admin(), handler.AdminReorderSingerPhotos)
+	api.GET("/admin/artist_list", auth(), admin(), handler.AdminGetArtistList)
+	api.GET("/admin/artist", auth(), admin(), handler.AdminGetArtist)
+	api.POST("/admin/artist", auth(), admin(), handler.AdminCreateArtist)
+	api.PUT("/admin/artist", auth(), admin(), handler.AdminUpdateArtist)
+	api.DELETE("/admin/artist", auth(), admin(), handler.AdminDeleteArtist)
+	api.POST("/admin/artist/photo", auth(), admin(), handler.AdminCreateArtistPhoto)
+	api.PUT("/admin/artist/photo", auth(), admin(), handler.AdminUpdateArtistPhoto)
+	api.DELETE("/admin/artist/photo", auth(), admin(), handler.AdminDeleteArtistPhoto)
+	api.PUT("/admin/artist/photo/order", auth(), admin(), handler.AdminReorderArtistPhotos)
 
 	return r
 }

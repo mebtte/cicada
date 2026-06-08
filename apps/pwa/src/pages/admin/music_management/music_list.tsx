@@ -9,16 +9,16 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import {
-  MdArrowDownward,
-  MdArrowUpward,
-  MdCloudUpload,
-  MdMusicNote,
-  MdOpenInNew,
-  MdOutlineEdit,
-  MdPlayArrow,
-  MdSearch,
-  MdUnfoldMore,
-} from 'react-icons/md';
+  Search,
+  ArrowDown,
+  ArrowUp,
+  CloudUpload,
+  MusicNote,
+  ExternalLink,
+  Edit,
+  PlayArrow,
+  UnfoldMore,
+} from '@/components/icon';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import Button from '@/components/button';
 import Empty from '@/components/empty';
@@ -89,8 +89,8 @@ const filterOptions: SelectOption<AdminMusicListFilterKey>[] = [
     value: AdminMusicListFilterKey.ALIAS,
   },
   {
-    label: capitalize(t('singer')),
-    value: AdminMusicListFilterKey.SINGER,
+    label: capitalize(t('artist')),
+    value: AdminMusicListFilterKey.ARTIST,
   },
 ];
 
@@ -381,7 +381,7 @@ const CoverButton = styled.button`
   }
 `;
 
-const Cover = styled.img<{ $loaded: boolean }>`
+const Cover = styled.img<{ $placeholder: boolean; $visible: boolean }>`
   position: absolute;
   inset: 0;
   width: 100%;
@@ -389,8 +389,16 @@ const Cover = styled.img<{ $loaded: boolean }>`
   object-fit: cover;
   display: block;
   /* 加载完成前用透明遮住底层占位图标, 避免快速滚动时露出 <img> 的浏览器原生裂图 */
-  opacity: ${({ $loaded }) => ($loaded ? 1 : 0)};
-  transition: opacity 120ms ease-out;
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: ${({ $placeholder }) => ($placeholder ? 'scale(1.08)' : 'scale(1)')};
+  filter: ${({ $placeholder }) =>
+    $placeholder
+      ? 'blur(8px) brightness(1.04) saturate(1.08)'
+      : 'brightness(1) saturate(1)'};
+  transition:
+    opacity 120ms ease-out,
+    transform 180ms ease-out,
+    filter 180ms ease-out;
 `;
 
 const Name = styled.div`
@@ -708,7 +716,7 @@ function MusicFileInfo({ music }: { music: MusicItem }) {
           window.open(music.asset, '_blank', 'noopener,noreferrer')
         }
       >
-        <MdOpenInNew size={18} />
+        <ExternalLink size={18} />
       </ActionButton>
       <FileInfoText>
         {hasInfo ? (
@@ -728,18 +736,20 @@ function MusicFileInfo({ music }: { music: MusicItem }) {
 
 function LazyCover({
   src,
+  placeholderSrc,
   alt,
   ...props
 }: {
   src: string;
+  placeholderSrc?: string;
   alt: string;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>) {
   const ref = useRef<HTMLImageElement>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [realLoaded, setRealLoaded] = useState(false);
 
   useEffect(() => {
     // src 变化时重置, 防止旧封面/旧加载状态泄漏到新封面
-    setLoaded(false);
+    setRealLoaded(false);
     const image = ref.current;
     if (!image) return;
 
@@ -755,13 +765,20 @@ function LazyCover({
   return (
     <CoverButton type="button" {...props}>
       {/* 占位图标始终存在, 加载完成前作为兜底显示, 避免裂图 */}
-      <MdMusicNote />
+      <MusicNote />
       <Cover
         ref={ref}
+        src={placeholderSrc}
         alt={alt}
         decoding="async"
-        $loaded={loaded}
-        onLoad={() => setLoaded(true)}
+        $placeholder={!!placeholderSrc && !realLoaded}
+        $visible={!!placeholderSrc || realLoaded}
+        onLoad={() => {
+          const image = ref.current;
+          if (image && image.currentSrc === src) {
+            setRealLoaded(true);
+          }
+        }}
       />
     </CoverButton>
   );
@@ -770,11 +787,11 @@ function LazyCover({
 function MusicList({
   reloadToken = 0,
   onEdit,
-  onSingerEdit,
+  onArtistEdit,
 }: {
   reloadToken?: number;
   onEdit: (id: string) => void;
-  onSingerEdit: (id: string) => void;
+  onArtistEdit: (id: string) => void;
 }) {
   const navigate = useNavigate();
   const compactPagination = useWindowWidth() <= MOBILE_BREAKPOINT;
@@ -1034,7 +1051,7 @@ function MusicList({
             aria-label={t('search')}
             title={t('search')}
           >
-            <MdSearch />
+            <Search />
           </Button>
         </SearchForm>
       </Toolbar>
@@ -1063,6 +1080,7 @@ function MusicList({
                   <Th>{capitalize(t('name'))}</Th>
                   <Th>{capitalize(t('alias'))}</Th>
                   <Th>{capitalize(t('singer'))}</Th>
+                  <Th>{capitalize(t('lyricist'))}</Th>
                   <Th>{capitalize(t('music_type_short'))}</Th>
                   <Th>{capitalize(t('file_info'))}</Th>
                   <Th>{capitalize(t('year_of_issue'))}</Th>
@@ -1076,12 +1094,12 @@ function MusicList({
                       {capitalize(t('music_heat'))}
                       {sortBy === AdminMusicListSortBy.HEAT ? (
                         sortOrder === AdminMusicListSortOrder.ASC ? (
-                          <MdArrowUpward />
+                          <ArrowUp />
                         ) : (
-                          <MdArrowDownward />
+                          <ArrowDown />
                         )
                       ) : (
-                        <MdUnfoldMore />
+                        <UnfoldMore />
                       )}
                     </SortHeaderButton>
                   </Th>
@@ -1104,6 +1122,7 @@ function MusicList({
                             url: music.cover,
                             size: COVER_SIZE * 2,
                           })}
+                          placeholderSrc={music.coverThumbnail}
                           alt={music.name}
                           title={music.name}
                           onClick={() =>
@@ -1137,7 +1156,7 @@ function MusicList({
                               key={singer.id}
                               type="button"
                               title={singer.name}
-                              onClick={() => onSingerEdit(singer.id)}
+                              onClick={() => onArtistEdit(singer.id)}
                             >
                               {singer.name}
                             </SingerButton>
@@ -1146,6 +1165,22 @@ function MusicList({
                       ) : (
                         <Muted>{t('unknown')}</Muted>
                       )}
+                    </Td>
+                    <Td>
+                      {music.lyricists.length ? (
+                        <TagList>
+                          {music.lyricists.map((lyricist) => (
+                            <SingerButton
+                              key={lyricist.id}
+                              type="button"
+                              title={lyricist.name}
+                              onClick={() => onArtistEdit(lyricist.id)}
+                            >
+                              {lyricist.name}
+                            </SingerButton>
+                          ))}
+                        </TagList>
+                      ) : null}
                     </Td>
                     <Td>
                       <TypeTag>
@@ -1174,7 +1209,7 @@ function MusicList({
                           $active={playerMusic?.id === music.id}
                           onClick={() => playMusic(music)}
                         >
-                          <MdPlayArrow size={18} />
+                          <PlayArrow size={18} />
                         </ActionButton>
                         <ActionButton
                           type="button"
@@ -1182,7 +1217,7 @@ function MusicList({
                           aria-label={t('edit_name')}
                           onClick={() => onEdit(music.id)}
                         >
-                          <MdOutlineEdit size={18} />
+                          <Edit size={18} />
                         </ActionButton>
                       </ActionGroup>
                     </Td>
@@ -1196,7 +1231,7 @@ function MusicList({
           square
           size="lg"
           variant="primary"
-          icon={<MdCloudUpload />}
+          icon={<CloudUpload />}
           aria-label={capitalize(t('upload_music'))}
           title={capitalize(t('upload_music'))}
           onClick={() => setImportWindowOpen(true)}

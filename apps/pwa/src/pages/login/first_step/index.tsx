@@ -66,6 +66,8 @@ function FirstStep({
                   ...s,
                   version: metadata.version,
                   hostname: metadata.hostname,
+                  musicFileMaxSize: metadata.musicFileMaxSize,
+                  imageFileMaxSize: metadata.imageFileMaxSize,
                 }
               : s,
           ),
@@ -78,6 +80,8 @@ function FirstStep({
             {
               version: metadata.version,
               hostname: metadata.hostname,
+              musicFileMaxSize: metadata.musicFileMaxSize,
+              imageFileMaxSize: metadata.imageFileMaxSize,
               origin,
               users: [],
               selectedUserId: undefined,

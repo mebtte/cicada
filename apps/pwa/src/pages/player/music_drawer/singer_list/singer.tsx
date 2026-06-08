@@ -49,7 +49,7 @@ const Style = styled.div`
 function Singer({ singer }: { singer: SingerDetail }) {
   return (
     <Style
-      onClick={() => e.emit(EventType.OPEN_SINGER_DRAWER, { id: singer.id })}
+      onClick={() => e.emit(EventType.OPEN_ARTIST_DRAWER, { id: singer.id })}
     >
       <Avatar
         size={AVATAR_SIZE}

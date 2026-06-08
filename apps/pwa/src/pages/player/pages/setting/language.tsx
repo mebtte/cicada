@@ -2,7 +2,7 @@ import { memo, CSSProperties } from 'react';
 import { t } from '@/i18n';
 import Item from './item';
 import { itemStyle } from './constants';
-import LanguageSelect from '@/components/language_select';
+import LanguageSelect from '@/features/language/language_select';
 import { useTheme } from '@/global_states/theme';
 
 const style: CSSProperties = {

@@ -1,7 +1,8 @@
 import type { Preview } from '@storybook/react';
 import { createGlobalStyle } from 'styled-components';
-import { GlobalStyle } from '../src/global_style';
-import { ThemeProvider } from '../src/components_next/theme';
+import { ResetStyle } from '../src/reset_style';
+import { TokensStyle } from '../src/style/tokens_style';
+import { ThemeProvider } from '../src/components/theme';
 
 const FontStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap');
@@ -14,7 +15,8 @@ const preview: Preview = {
       return (
         <ThemeProvider theme={primaryColor ? { colorPrimary: primaryColor } : undefined}>
           <FontStyle />
-          <GlobalStyle />
+          <ResetStyle />
+          <TokensStyle />
           <Story />
         </ThemeProvider>
       );

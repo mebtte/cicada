@@ -11,6 +11,12 @@ interface InflightTask {
 
 const inflightTasks = new Map<string, InflightTask>();
 
+export const audioAssetCacheEvents = new EventTarget();
+
+function emitChange() {
+  audioAssetCacheEvents.dispatchEvent(new Event('change'));
+}
+
 export function isAudioAssetCacheEnabled() {
   return Boolean(definition.WITH_SW && globalThis.caches);
 }
@@ -85,6 +91,7 @@ export function cacheAudioAsset(
     }
 
     await cache.put(url, response.clone());
+    emitChange();
     return true;
   })().finally(() => {
     if (options.signal) {
@@ -100,4 +107,46 @@ export function cacheAudioAsset(
   };
   inflightTasks.set(url, task);
   return promise;
+}
+
+export async function listCachedMusicUrls(): Promise<string[]> {
+  if (!isAudioAssetCacheEnabled()) {
+    return [];
+  }
+  const cache = await getMediaCache();
+  const requests = await cache.keys();
+  return requests.map((r) => r.url);
+}
+
+export async function removeCachedMusic(url: string): Promise<boolean> {
+  if (!isAudioAssetCacheEnabled()) {
+    return false;
+  }
+  const cache = await getMediaCache();
+  const deleted = await cache.delete(url);
+  if (deleted) {
+    emitChange();
+  }
+  return deleted;
+}
+
+export async function getCacheUsage(): Promise<{
+  usage: number;
+  quota: number;
+}> {
+  if (!globalThis.navigator?.storage?.estimate) {
+    return { usage: 0, quota: 0 };
+  }
+  const { usage = 0, quota = 0 } = await navigator.storage.estimate();
+  return { usage, quota };
+}
+
+export async function requestPersistence(): Promise<boolean> {
+  if (!globalThis.navigator?.storage?.persist) {
+    return false;
+  }
+  if (await navigator.storage.persisted()) {
+    return true;
+  }
+  return navigator.storage.persist();
 }

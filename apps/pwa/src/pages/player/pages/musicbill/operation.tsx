@@ -2,12 +2,12 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  MdRefresh,
-  MdPlaylistAdd,
-  MdOutlineEdit,
-  MdOutlinePeopleAlt,
-} from 'react-icons/md';
-import { IconExport } from '@/components/icon';
+  Export,
+  PlaylistAdd,
+  Refresh,
+  Edit,
+  People,
+} from '@/components/icon';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
@@ -48,7 +48,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
               : notice.error(upperCaseFirstLetter(t('no_music_in_musicbill')))
           }
         >
-          <MdPlaylistAdd />
+          <PlaylistAdd />
         </Button>
       </Tooltip>
       <Tooltip content={t('reload_musicbill')}>
@@ -65,7 +65,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
             })
           }
         >
-          <MdRefresh />
+          <Refresh />
         </Button>
       </Tooltip>
       <Tooltip content={t('edit')}>
@@ -75,7 +75,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
           size="sm"
           onClick={() => e.emit(EventType.OPEN_EDIT_MENU, null)}
         >
-          <MdOutlineEdit />
+          <Edit />
         </Button>
       </Tooltip>
       {ENABLE_FILE_SYSTEM ? (
@@ -87,7 +87,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
             disabled={!musicbill.musicList.length}
             onClick={() => openExportMusicListDialog(musicbill.musicList)}
           >
-            <IconExport size="1em" />
+            <Export size="1em" />
           </Button>
         </Tooltip>
       ) : null}
@@ -103,7 +103,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
             )
           }
         >
-          <MdOutlinePeopleAlt />
+          <People />
         </Button>
       </Tooltip>
     </Style>

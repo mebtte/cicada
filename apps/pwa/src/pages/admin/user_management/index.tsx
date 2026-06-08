@@ -9,11 +9,11 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import {
-  MdOutlineAddBox,
-  MdOutlineEdit,
-  MdPeopleOutline,
-  MdSearch,
-} from 'react-icons/md';
+  AddBox,
+  Search,
+  Edit,
+  People,
+} from '@/components/icon';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import Input from '@/components/input';
@@ -708,7 +708,7 @@ function UserManagement() {
             aria-label={t('search')}
             title={t('search')}
           >
-            <MdSearch />
+            <Search />
           </Button>
         </SearchForm>
       </Toolbar>
@@ -724,7 +724,7 @@ function UserManagement() {
           </StatusBox>
         ) : visibleUserList.length === 0 ? (
           <EmptyTip>
-            <MdPeopleOutline />
+            <People />
             {t('no_suitable_user')}
           </EmptyTip>
         ) : (
@@ -806,7 +806,7 @@ function UserManagement() {
                         aria-label={t('manage')}
                         onClick={() => setEditUser(user)}
                       >
-                        <MdOutlineEdit size={18} />
+                        <Edit size={18} />
                       </ActionButton>
                     </Td>
                   </tr>
@@ -819,7 +819,7 @@ function UserManagement() {
           square
           size="lg"
           variant="primary"
-          icon={<MdOutlineAddBox />}
+          icon={<AddBox />}
           aria-label={t('create_user')}
           title={t('create_user')}
           onClick={() => setCreateDialogOpen(true)}

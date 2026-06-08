@@ -51,9 +51,9 @@ func TestAdminGetDashboard(t *testing.T) {
 		t.Fatalf("insert users: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO singer (id,name,createUserId,createTimestamp) VALUES
-			('singer-recent','Recent Singer','user-1',?),
-			('singer-old','Old Singer','user-1',?)`,
+		`INSERT INTO artist (id,name,createUserId,createTimestamp) VALUES
+			('artist-recent','Recent Singer','user-1',?),
+			('artist-old','Old Singer','user-1',?)`,
 		recent,
 		old,
 	); err != nil {
@@ -69,11 +69,11 @@ func TestAdminGetDashboard(t *testing.T) {
 		t.Fatalf("insert music: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO singer_photo (id,singerId,asset,position,addUserId,addTimestamp) VALUES
-			('photo-old','singer-old','old.jpg',1,'user-1',?)`,
+		`INSERT INTO artist_photo (id,artistId,asset,position,addUserId,addTimestamp) VALUES
+			('photo-old','artist-old','old.jpg',1,'user-1',?)`,
 		recent,
 	); err != nil {
-		t.Fatalf("insert singer photo: %v", err)
+		t.Fatalf("insert artist photo: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music_play_record (userId,musicId,percent,playedAt) VALUES
@@ -132,7 +132,7 @@ func TestAdminGetDashboard(t *testing.T) {
 				Created7d         int `json:"created7d"`
 				PhotoCount        int `json:"photoCount"`
 				WithoutPhotoCount int `json:"withoutPhotoCount"`
-			} `json:"singer"`
+			} `json:"artist"`
 			User struct {
 				Total             int `json:"total"`
 				AdminCount        int `json:"adminCount"`
@@ -170,7 +170,7 @@ func TestAdminGetDashboard(t *testing.T) {
 		resp.Data.Singer.Created7d != 1 ||
 		resp.Data.Singer.PhotoCount != 1 ||
 		resp.Data.Singer.WithoutPhotoCount != 1 {
-		t.Fatalf("unexpected singer summary: %+v", resp.Data.Singer)
+		t.Fatalf("unexpected artist summary: %+v", resp.Data.Singer)
 	}
 	if resp.Data.User.Total != 3 ||
 		resp.Data.User.AdminCount != 1 ||

@@ -23,14 +23,14 @@ import MusicbillSharedUserDrawer from './musicbill_shared_user_drawer';
 import SharedMusicbillInvitationDrawer from './pages/shared_musicbill_invitation';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
-import SingerDrawer from './singer_drawer';
+import ArtistDrawer from './artist_drawer';
 import UserDrawer from './user_drawer';
 import MusicbillDrawer from './musicbill_drawer';
 import AuthorizedDeviceDrawer from './authorized_device_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import useSearchHotkey from './use_search_hotkey';
 import e, { EventType } from './eventemitter';
-import SingerModifyRecordDrawer from './singer_modify_record_drawer';
+import ArtistModifyRecordDrawer from './singer_modify_record_drawer';
 import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
@@ -155,7 +155,7 @@ function Wrapper() {
       </Style>
 
       {/* dynamic z-index */}
-      <SingerDrawer />
+      <ArtistDrawer />
       <MusicDrawer />
       <PlaylistPlayqueueDrawer />
       <MusicbillMusicDrawer />
@@ -166,7 +166,7 @@ function Wrapper() {
       <AuthorizedDeviceDrawer />
       <MusicbillSharedUserDrawer />
       <SharedMusicbillInvitationDrawer />
-      <SingerModifyRecordDrawer />
+      <ArtistModifyRecordDrawer />
 
       <PlaylistAddAnimation />
       <PlayqueueInsertAnimation />

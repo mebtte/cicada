@@ -14,7 +14,6 @@ import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import { MdExplore } from 'react-icons/md';
 import { CSSVariable } from '@/global_style';
 import {
   FLOATING_CONTROLLER_SCROLL_SPACE,
@@ -25,6 +24,7 @@ import useCollectionList from './use_collection_list';
 import useInfiniteCollectionList from './use_infinite_collection_list';
 import { PAGE_SIZE } from '../constants';
 import Musicbill from '../../search/public_musicbill/musicbill';
+import { Explore } from '@/components/icon';
 
 const COVER_IMAGE_SIZE = 96;
 const MOBILE_BREAKPOINT = 560;
@@ -211,7 +211,7 @@ function PagedCollectionList({
                 <Empty description={t('no_suitable_musicbill')} />
                 <Button
                   variant="primary"
-                  icon={<MdExplore />}
+                  icon={<Explore />}
                   onClick={navigateToDiscovery}
                 >
                   {t('discover_musicbill')}
@@ -341,7 +341,7 @@ function DrawerCollectionList({
             <Empty description={t('no_suitable_musicbill')} />
             <Button
               variant="primary"
-              icon={<MdExplore />}
+              icon={<Explore />}
               onClick={navigateToDiscovery}
             >
               {t('discover_musicbill')}
