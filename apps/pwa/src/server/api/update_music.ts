@@ -10,6 +10,7 @@ type KeyMapValue = {
   [AllowUpdateKey.ASSET]: string;
   [AllowUpdateKey.SINGER]: string[];
   [AllowUpdateKey.LYRICIST]: string[];
+  [AllowUpdateKey.COMPOSER]: string[];
   [AllowUpdateKey.FORK_FROM]: string[];
   [AllowUpdateKey.YEAR]: number | null;
 };

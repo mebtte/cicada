@@ -335,6 +335,7 @@ function Detail({
             />
             <SingerList label={t('singer')} singerList={music.singers} />
             <SingerList label={t('lyricist')} singerList={music.lyricists} />
+            <SingerList label={t('composer')} singerList={music.composers} />
             {music.forkFromList.length ? (
               <SubMusicList
                 label={t('fork_from_these_musics')}

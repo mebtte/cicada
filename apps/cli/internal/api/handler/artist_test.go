@@ -120,6 +120,9 @@ func TestGetArtist(t *testing.T) {
 			LyricistMusicList []struct {
 				ID string `json:"id"`
 			} `json:"lyricistMusicList"`
+			ComposerMusicList []struct {
+				ID string `json:"id"`
+			} `json:"composerMusicList"`
 		} `json:"data"`
 		RawData map[string]json.RawMessage `json:"-"`
 	}
@@ -190,6 +193,9 @@ func TestGetArtist(t *testing.T) {
 		}
 		if len(resp.Data.LyricistMusicList) != 0 {
 			t.Fatalf("unexpected lyricistMusicList: %+v", resp.Data.LyricistMusicList)
+		}
+		if len(resp.Data.ComposerMusicList) != 0 {
+			t.Fatalf("unexpected composerMusicList: %+v", resp.Data.ComposerMusicList)
 		}
 		music := resp.Data.SingerMusicList[0]
 		if music.ID != "music-1" || music.Name != "Song 1" {

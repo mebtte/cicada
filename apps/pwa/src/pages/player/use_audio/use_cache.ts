@@ -257,6 +257,11 @@ export default (
           name: artist.name,
           aliases: artist.aliases,
         })),
+        composers: sessionMusic.composers.map((artist) => ({
+          id: artist.id,
+          name: artist.name,
+          aliases: artist.aliases,
+        })),
       });
       getMusic({ id: sessionMusic.id }).catch(() => undefined);
       ensureStoragePersistenceRequested().catch(() => undefined);

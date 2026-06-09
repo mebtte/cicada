@@ -108,6 +108,7 @@ func GetMusicPlayRecordList(c *gin.Context) {
 	}
 	singers, _ := store.GetSingersInMusicIDs(musicIDs)
 	lyricists, _ := store.GetLyricistsInMusicIDs(musicIDs)
+	composers, _ := store.GetComposersInMusicIDs(musicIDs)
 	singerMap := map[string][]gin.H{}
 	for _, s := range singers {
 		singerMap[s.MusicID] = append(singerMap[s.MusicID], gin.H{
@@ -118,6 +119,13 @@ func GetMusicPlayRecordList(c *gin.Context) {
 	lyricistMap := map[string][]gin.H{}
 	for _, artist := range lyricists {
 		lyricistMap[artist.MusicID] = append(lyricistMap[artist.MusicID], gin.H{
+			"id":   artist.ID,
+			"name": artist.Name,
+		})
+	}
+	composerMap := map[string][]gin.H{}
+	for _, artist := range composers {
+		composerMap[artist.MusicID] = append(composerMap[artist.MusicID], gin.H{
 			"id":   artist.ID,
 			"name": artist.Name,
 		})
@@ -133,6 +141,10 @@ func GetMusicPlayRecordList(c *gin.Context) {
 		if ls == nil {
 			ls = []gin.H{}
 		}
+		cs := composerMap[r.MusicID]
+		if cs == nil {
+			cs = []gin.H{}
+		}
 		list[i] = gin.H{
 			"recordId":  r.ID,
 			"percent":   r.Percent,
@@ -142,6 +154,7 @@ func GetMusicPlayRecordList(c *gin.Context) {
 			"aliases":   splitAliases(r.MusicAliases),
 			"singers":   ss,
 			"lyricists": ls,
+			"composers": cs,
 		}
 	}
 	api.OK(c, gin.H{"total": total, "musicPlayRecordList": list})

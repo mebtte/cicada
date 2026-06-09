@@ -37,6 +37,8 @@ const Style = styled.div`
   }
 
   &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgb(229 229 229);
     filter: brightness(1.03);
   }
 

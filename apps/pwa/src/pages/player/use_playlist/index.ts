@@ -126,9 +126,11 @@ export default () => {
       EventType.ARTIST_UPDATED,
       (payload) => {
         for (const music of playlist) {
-          const exist = [...music.singers, ...music.lyricists].find(
-            (artist) => artist.id === payload.id,
-          );
+          const exist = [
+            ...music.singers,
+            ...music.lyricists,
+            ...music.composers,
+          ].find((artist) => artist.id === payload.id);
           if (exist) {
             getMusic({ id: music.id, requestMinimalDuration: 0 })
               .then((newMusic) =>

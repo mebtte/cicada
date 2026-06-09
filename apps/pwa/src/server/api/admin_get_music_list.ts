@@ -47,6 +47,11 @@ type Response = {
       name: string;
       aliases: string[];
     }[];
+    composers: {
+      id: string;
+      name: string;
+      aliases: string[];
+    }[];
     createTimestamp: number;
   }[];
 };
@@ -91,6 +96,7 @@ async function adminGetMusicList({
       asset: prefixServerOrigin(music.asset),
       singers: music.singers ?? [],
       lyricists: music.lyricists ?? [],
+      composers: music.composers ?? [],
     })),
   };
 }

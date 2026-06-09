@@ -93,15 +93,26 @@ const plainVariant = css<{ $offset: number }>`
   color: inherit;
   background: transparent;
   border-color: transparent;
-  box-shadow: none;
-  transition: background 120ms;
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.06);
+  transition:
+    background 120ms,
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
 
   &:not(:disabled):hover {
     background: rgb(0 0 0 / 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 rgb(0 0 0 / 0.18);
   }
 
   &:not(:disabled):active {
     background: rgb(0 0 0 / 0.12);
+    transform: translateY(0);
+    box-shadow: none;
+    transition:
+      background 60ms,
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in;
   }
 
   &:disabled {

@@ -23,9 +23,10 @@ interface Music {
   name: string;
   singers: Singer[];
   lyricists: Singer[];
+  composers: Singer[];
 }
 
-type Response = Omit<Music, 'singers' | 'lyricists'> & {
+type Response = Omit<Music, 'singers' | 'lyricists' | 'composers'> & {
   type: MusicType;
   aliases: string[];
   searchKeywords: string;
@@ -53,6 +54,7 @@ type Response = Omit<Music, 'singers' | 'lyricists'> & {
   }[];
   singers: Singer[];
   lyricists: Singer[];
+  composers: Singer[];
 };
 
 const normalizePhotos = (photos: SingerPhoto[] = []) =>
@@ -98,6 +100,14 @@ async function adminGetMusic({
         avatar: photos[0]?.asset ?? '',
       };
     }),
+    composers: (music.composers ?? []).map((artist) => {
+      const photos = normalizePhotos(artist.photos);
+      return {
+        ...artist,
+        photos,
+        avatar: photos[0]?.asset ?? '',
+      };
+    }),
     forkList: music.forkList.map((item) => ({
       ...item,
       cover: prefixServerOrigin(item.cover),
@@ -107,6 +117,10 @@ async function adminGetMusic({
         photos: normalizePhotos(singer.photos),
       })),
       lyricists: (item.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
+      })),
+      composers: (item.composers ?? []).map((artist) => ({
         ...artist,
         photos: normalizePhotos(artist.photos),
       })),
@@ -120,6 +134,10 @@ async function adminGetMusic({
         photos: normalizePhotos(singer.photos),
       })),
       lyricists: (item.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
+      })),
+      composers: (item.composers ?? []).map((artist) => ({
         ...artist,
         photos: normalizePhotos(artist.photos),
       })),

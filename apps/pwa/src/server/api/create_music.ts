@@ -9,12 +9,14 @@ function createMusic({
   name,
   singerIds = [],
   lyricistIds = [],
+  composerIds = [],
   type,
   asset,
 }: {
   name: string;
   singerIds?: string[];
   lyricistIds?: string[];
+  composerIds?: string[];
   type: MusicType;
   asset: string;
 }) {
@@ -25,6 +27,7 @@ function createMusic({
       name,
       singerIds: singerIds.join(','),
       lyricistIds: lyricistIds.join(','),
+      composerIds: composerIds.join(','),
       type,
       asset,
     },

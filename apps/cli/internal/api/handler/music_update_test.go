@@ -364,3 +364,93 @@ func TestUpdateMusicSearchKeywords(t *testing.T) {
 		t.Fatalf("expected wrong_parameter for overlong searchKeywords, got %s", code)
 	}
 }
+
+func TestUpdateMusicComposers(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO artist (id,name,createTimestamp) VALUES
+			('artist-1','Mozart',?),
+			('artist-2','Bach',?)`,
+		now, now,
+	); err != nil {
+		t.Fatalf("insert artists: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	// Seed an existing composer link to verify the handler replaces it.
+	if err := store.LinkMusicComposers("music-1", []string{"artist-1"}); err != nil {
+		t.Fatalf("seed composer: %v", err)
+	}
+
+	body := []byte(`{"id":"music-1","key":"composers","value":["artist-2"]}`)
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/music", bytes.NewReader(body))
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+	AdminUpdateMusic(c)
+
+	var resp struct {
+		Code string `json:"code"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if resp.Code != "success" {
+		t.Fatalf("unexpected code: %s body=%s", resp.Code, w.Body.String())
+	}
+
+	composers, err := store.GetComposersInMusicIDs([]string{"music-1"})
+	if err != nil {
+		t.Fatalf("get composers: %v", err)
+	}
+	if len(composers) != 1 || composers[0].ID != "artist-2" {
+		t.Fatalf("expected only artist-2 linked as composer, got %+v", composers)
+	}
+
+	// Unknown artist id should fail validation.
+	body = []byte(`{"id":"music-1","key":"composers","value":["ghost"]}`)
+	w = httptest.NewRecorder()
+	c, _ = gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/music", bytes.NewReader(body))
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+	AdminUpdateMusic(c)
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if resp.Code != "artist_not_existed" {
+		t.Fatalf("expected artist_not_existed for unknown artist, got %s", resp.Code)
+	}
+}

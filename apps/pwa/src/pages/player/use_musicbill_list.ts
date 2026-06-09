@@ -301,9 +301,11 @@ export default () => {
         for (const musicbill of musicbillList) {
           if (musicbill.status === RequestStatus.SUCCESS) {
             for (const music of musicbill.musicList) {
-              const exist = [...music.singers, ...music.lyricists].find(
-                (artist) => artist.id === payload.id,
-              );
+              const exist = [
+                ...music.singers,
+                ...music.lyricists,
+                ...music.composers,
+              ].find((artist) => artist.id === payload.id);
               if (exist) {
                 getMusicbill({ id: musicbill.id, silence: true });
                 break;

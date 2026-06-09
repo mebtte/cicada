@@ -28,6 +28,7 @@ import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 enum ArtistMusicTab {
   SINGER = 'singer',
   LYRICIST = 'lyricist',
+  COMPOSER = 'composer',
 }
 
 const Container = styled(animated.div)`
@@ -36,9 +37,16 @@ const Container = styled(animated.div)`
 const CardContainer = styled(Container)`
   ${flexCenter}
 `;
-const DetailContainer = styled(Container)<{ $floatingControllerOffset: boolean }>`
+const DetailContainer = styled(Container)<{
+  $floatingControllerOffset: boolean;
+  $insideDrawer: boolean;
+}>`
   display: flex;
   flex-direction: column;
+
+  /* 抽屉内整体宽度只有 ~400px, 压缩默认横向 padding 让内容更宽松。 */
+  ${({ $insideDrawer }) =>
+    $insideDrawer ? '--player-page-horizontal-padding: 12px;' : ''}
 
   > .scrollable {
     flex: 1;
@@ -58,13 +66,14 @@ const DetailContainer = styled(Container)<{ $floatingControllerOffset: boolean }
     }
   }
 `;
+const COLLAPSED_HEADER_HEIGHT = 72;
 const Header = styled(DrawerHeader)<{ $visible: boolean }>`
   z-index: 2;
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 72px;
+  height: ${COLLAPSED_HEADER_HEIGHT}px;
   padding: 0 20px;
   box-sizing: border-box;
 
@@ -141,8 +150,19 @@ const descriptionStyle = css`
 const ArtistDrawerDescription = styled(DrawerDescription)`
   ${descriptionStyle}
 `;
-const MusicTabs = styled.div`
-  padding: 12px ${PAGE_HORIZONTAL_PADDING} 0;
+const TAB_EXTRA_INSET = 12;
+const MusicTabs = styled.div<{ $stickyTop: number }>`
+  position: sticky;
+  top: ${({ $stickyTop }) => $stickyTop}px;
+  z-index: 1;
+  /* Tab 比下方 MusicList 内容再多收一截, 参考搜索页 search-tabs 的 inset 习惯。 */
+  padding: 12px calc(${PAGE_HORIZONTAL_PADDING} + ${TAB_EXTRA_INSET}px) 8px;
+  /* 透明容器, 下方滚动内容透出。 */
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
 `;
 type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
 
@@ -167,13 +187,18 @@ function Detail({
     ...(artist.lyricistMusicList.length
       ? [{ tab: ArtistMusicTab.LYRICIST, label: t('lyricist_music') }]
       : []),
+    ...(artist.composerMusicList.length
+      ? [{ tab: ArtistMusicTab.COMPOSER, label: t('composer_music') }]
+      : []),
   ];
   const activeTab = tabs.some((item) => item.tab === tab) ? tab : tabs[0]?.tab;
   const currentTab = activeTab ?? ArtistMusicTab.SINGER;
   const musicList =
     activeTab === ArtistMusicTab.LYRICIST
       ? artist.lyricistMusicList
-      : artist.singerMusicList;
+      : activeTab === ArtistMusicTab.COMPOSER
+        ? artist.composerMusicList
+        : artist.singerMusicList;
 
   const updateCollapsedHeaderVisibility = useCallback(() => {
     if (!useCollapsingHeader) {
@@ -217,6 +242,7 @@ function Detail({
     <DetailContainer
       style={style}
       $floatingControllerOffset={!insideDrawer}
+      $insideDrawer={insideDrawer}
     >
       {insideDrawer ? (
         <Header $visible={showCollapsedHeader}>
@@ -254,7 +280,7 @@ function Detail({
             identityRef={identityRef}
           />
           {tabs.length > 1 ? (
-            <MusicTabs>
+            <MusicTabs $stickyTop={insideDrawer ? COLLAPSED_HEADER_HEIGHT : 0}>
               <TabList<ArtistMusicTab>
                 current={currentTab}
                 tabList={tabs}

@@ -1049,6 +1049,7 @@ function MusicList({
                   <Th>{capitalize(t('alias'))}</Th>
                   <Th>{capitalize(t('singer'))}</Th>
                   <Th>{capitalize(t('lyricist'))}</Th>
+                  <Th>{capitalize(t('composer'))}</Th>
                   <Th>{capitalize(t('music_type_short'))}</Th>
                   <Th>{capitalize(t('file_info'))}</Th>
                   <Th>{capitalize(t('year_of_issue'))}</Th>
@@ -1144,6 +1145,22 @@ function MusicList({
                               onClick={() => onArtistEdit(lyricist.id)}
                             >
                               {lyricist.name}
+                            </SingerButton>
+                          ))}
+                        </TagList>
+                      ) : null}
+                    </Td>
+                    <Td>
+                      {music.composers.length ? (
+                        <TagList>
+                          {music.composers.map((composer) => (
+                            <SingerButton
+                              key={composer.id}
+                              type="button"
+                              title={composer.name}
+                              onClick={() => onArtistEdit(composer.id)}
+                            >
+                              {composer.name}
                             </SingerButton>
                           ))}
                         </TagList>

@@ -121,7 +121,13 @@ const Card = styled.div<{ $active: boolean }>`
           }
 
           &:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
             filter: brightness(1.05);
+          }
+
+          &.primary-action:not(:disabled):hover {
+            box-shadow: 0 5px 0 ${PRIMARY_SHADOW};
           }
 
           &:not(:disabled):active {
