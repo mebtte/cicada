@@ -17,10 +17,7 @@ import {
   Settings,
   History,
   AdminPanel,
-  OfflineDownload,
 } from '@/components/icon';
-import { useIsOnline } from '@/utils/use_is_online';
-import { isAudioAssetCacheEnabled } from '@/utils/audio_asset_cache';
 import useSidebarNavigate from './use_sidebar_navigate';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
@@ -176,7 +173,6 @@ function Menu() {
   const { pathname } = useLocation();
   const navigate = useSidebarNavigate();
   const user = useUser()!;
-  const online = useIsOnline();
 
   const { exportingMusicList } = useContext(context);
   return (
@@ -202,18 +198,6 @@ function Menu() {
         label={t('music_play_record_short')}
         icon={<History />}
       />
-      {!online && isAudioAssetCacheEnabled() ? (
-        <SidebarItem
-          active={
-            pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.OFFLINE_CACHE}`
-          }
-          onClick={() =>
-            navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.OFFLINE_CACHE}`)
-          }
-          label={t('offline_cache')}
-          icon={<OfflineDownload />}
-        />
-      ) : null}
       <SidebarItem
         active={pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.SETTING}`}
         onClick={() => navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.SETTING}`)}
