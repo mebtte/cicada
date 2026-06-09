@@ -181,17 +181,14 @@ func createLoginSession(c *gin.Context, userID, deviceName string) (loginRespons
 	if err != nil {
 		return loginResponse{}, err
 	}
-	userAgent := c.Request.UserAgent()
 	if deviceName == "" {
-		deviceName = defaultDeviceName(userAgent)
+		deviceName = defaultDeviceName(c.Request.UserAgent())
 	}
 	sessionID, err := store.CreateAuthSession(
 		userID,
 		tokenHash,
 		tokenPrefix,
 		limitString(deviceName, 80),
-		limitString(userAgent, 500),
-		c.ClientIP(),
 	)
 	if err != nil {
 		return loginResponse{}, err

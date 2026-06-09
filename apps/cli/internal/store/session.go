@@ -13,9 +13,6 @@ type AuthSession struct {
 	TokenHash         string
 	TokenPrefix       string
 	DeviceName        string
-	UserAgent         string
-	CreateIP          string
-	LastSeenIP        string
 	CreateTimestamp   int64
 	LastSeenTimestamp int64
 	RevokeTimestamp   sql.NullInt64
@@ -23,25 +20,25 @@ type AuthSession struct {
 }
 
 const authSessionColumns = `id, userId, tokenHash, tokenPrefix, deviceName,
-	userAgent, createIP, lastSeenIP, createTimestamp, lastSeenTimestamp, revokeTimestamp, revokeReason`
+	createTimestamp, lastSeenTimestamp, revokeTimestamp, revokeReason`
 
 func scanAuthSession(row interface{ Scan(...any) error }) (*AuthSession, error) {
 	s := &AuthSession{}
 	return s, row.Scan(
 		&s.ID, &s.UserID, &s.TokenHash, &s.TokenPrefix, &s.DeviceName,
-		&s.UserAgent, &s.CreateIP, &s.LastSeenIP, &s.CreateTimestamp, &s.LastSeenTimestamp,
+		&s.CreateTimestamp, &s.LastSeenTimestamp,
 		&s.RevokeTimestamp, &s.RevokeReason,
 	)
 }
 
-func CreateAuthSession(userID, tokenHash, tokenPrefix, deviceName, userAgent, ip string) (string, error) {
+func CreateAuthSession(userID, tokenHash, tokenPrefix, deviceName string) (string, error) {
 	id := uuid.NewString()
 	now := time.Now().UnixMilli()
 	_, err := DB().Exec(
 		`INSERT INTO auth_session (
-			id,userId,tokenHash,tokenPrefix,deviceName,userAgent,createIP,lastSeenIP,createTimestamp,lastSeenTimestamp
-		) VALUES (?,?,?,?,?,?,?,?,?,?)`,
-		id, userID, tokenHash, tokenPrefix, deviceName, userAgent, ip, ip, now, now,
+			id,userId,tokenHash,tokenPrefix,deviceName,createTimestamp,lastSeenTimestamp
+		) VALUES (?,?,?,?,?,?,?)`,
+		id, userID, tokenHash, tokenPrefix, deviceName, now, now,
 	)
 	return id, err
 }
@@ -50,7 +47,7 @@ func GetActiveAuthSessionByTokenHash(tokenHash string, activeAfter int64) (*Auth
 	row := DB().QueryRow(
 		`SELECT
 			s.id,s.userId,s.tokenHash,s.tokenPrefix,s.deviceName,
-			s.userAgent,s.createIP,s.lastSeenIP,s.createTimestamp,s.lastSeenTimestamp,s.revokeTimestamp,s.revokeReason,
+			s.createTimestamp,s.lastSeenTimestamp,s.revokeTimestamp,s.revokeReason,
 			`+userColumnsWithPrefix("u")+`
 		FROM auth_session s
 		JOIN user u ON u.id=s.userId
@@ -63,7 +60,7 @@ func GetActiveAuthSessionByTokenHash(tokenHash string, activeAfter int64) (*Auth
 	u := &User{}
 	err := row.Scan(
 		&s.ID, &s.UserID, &s.TokenHash, &s.TokenPrefix, &s.DeviceName,
-		&s.UserAgent, &s.CreateIP, &s.LastSeenIP, &s.CreateTimestamp, &s.LastSeenTimestamp,
+		&s.CreateTimestamp, &s.LastSeenTimestamp,
 		&s.RevokeTimestamp, &s.RevokeReason,
 		&u.ID, &u.Username, &u.Avatar, &u.Nickname, &u.JoinTimestamp,
 		&u.Admin, &u.Remark, &u.MusicbillOrdersJSON, &u.LastActiveTimestamp,
@@ -90,10 +87,10 @@ func userColumnsWithPrefix(prefix string) string {
 	return out
 }
 
-func TouchAuthSession(id, ip string, now, touchBefore int64) {
+func TouchAuthSession(id string, now, touchBefore int64) {
 	_, _ = DB().Exec(
-		`UPDATE auth_session SET lastSeenTimestamp=?, lastSeenIP=? WHERE id=? AND lastSeenTimestamp<?`,
-		now, ip, id, touchBefore,
+		`UPDATE auth_session SET lastSeenTimestamp=? WHERE id=? AND lastSeenTimestamp<?`,
+		now, id, touchBefore,
 	)
 }
 

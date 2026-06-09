@@ -197,13 +197,13 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert target user: %v", err)
 	}
-	if _, err := store.CreateAuthSession("target-user", "target-token-hash-1", "target1", "Browser 1", "agent", "127.0.0.1"); err != nil {
+	if _, err := store.CreateAuthSession("target-user", "target-token-hash-1", "target1", "Browser 1"); err != nil {
 		t.Fatalf("create target session 1: %v", err)
 	}
-	if _, err := store.CreateAuthSession("target-user", "target-token-hash-2", "target2", "Browser 2", "agent", "127.0.0.1"); err != nil {
+	if _, err := store.CreateAuthSession("target-user", "target-token-hash-2", "target2", "Browser 2"); err != nil {
 		t.Fatalf("create target session 2: %v", err)
 	}
-	adminSessionID, err := store.CreateAuthSession("admin-user", "admin-token-hash", "admin", "Admin Browser", "agent", "127.0.0.1")
+	adminSessionID, err := store.CreateAuthSession("admin-user", "admin-token-hash", "admin", "Admin Browser")
 	if err != nil {
 		t.Fatalf("create admin session: %v", err)
 	}

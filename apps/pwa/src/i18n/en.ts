@@ -243,7 +243,6 @@ export default {
   device_name: 'device name',
   created_at: 'created at',
   last_seen_at: 'last seen at',
-  last_seen_ip: 'last seen IP',
   inactive_expire_at: 'inactive expire at',
   rename: 'rename',
   modify: 'modify',

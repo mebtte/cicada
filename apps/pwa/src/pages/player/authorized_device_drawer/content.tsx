@@ -119,10 +119,7 @@ function formatTime(timestamp: number) {
 }
 
 function getSessionDeviceName(session: AuthSession) {
-  return (
-    getDisplayDeviceName(session.deviceName, session.userAgent) ||
-    t('unknown_device')
-  );
+  return getDisplayDeviceName(session.deviceName) || t('unknown_device');
 }
 
 function AuthorizedDeviceContent() {
@@ -201,10 +198,6 @@ function AuthorizedDeviceContent() {
                     <div>
                       <span className="label">{t('last_seen_at')}</span>
                       {formatTime(session.lastSeenTimestamp)}
-                    </div>
-                    <div>
-                      <span className="label">{t('last_seen_ip')}</span>
-                      {session.lastSeenIP || t('unknown')}
                     </div>
                     <div>
                       <span className="label">{t('inactive_expire_at')}</span>

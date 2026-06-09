@@ -48,10 +48,8 @@ func AuthenticateToken(c *gin.Context, token string) (*store.User, *store.AuthSe
 		return nil, nil, err
 	}
 	if s.LastSeenTimestamp < now.Add(-auth.SessionTouchInterval).UnixMilli() {
-		ip := c.ClientIP()
-		go store.TouchAuthSession(s.ID, ip, now.UnixMilli(), now.Add(-auth.SessionTouchInterval).UnixMilli())
+		go store.TouchAuthSession(s.ID, now.UnixMilli(), now.Add(-auth.SessionTouchInterval).UnixMilli())
 		s.LastSeenTimestamp = now.UnixMilli()
-		s.LastSeenIP = ip
 	}
 	u.Avatar = config.AssetPublicURL(u.Avatar, config.AssetTypeUserAvatar)
 	return u, s, nil

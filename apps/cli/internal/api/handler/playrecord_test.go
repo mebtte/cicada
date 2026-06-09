@@ -59,8 +59,6 @@ func TestCreateMusicPlayRecordUpsertsClientRecord(t *testing.T) {
 		tokenHash,
 		tokenPrefix,
 		"Test Device",
-		"test-agent",
-		"127.0.0.1",
 	); err != nil {
 		t.Fatalf("create auth session: %v", err)
 	}
