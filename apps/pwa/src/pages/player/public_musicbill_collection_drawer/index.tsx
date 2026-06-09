@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Drawer, DrawerContent } from '@/components';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components';
 import { Query } from '@/constants';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
+import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import useNavigate from '@/utils/use_navigate';
@@ -12,6 +13,7 @@ import e, { EventType } from '../eventemitter';
 import useDynamicZIndex from '../use_dynamic_z_index';
 
 const Shell = styled.div`
+  isolation: isolate;
   height: 100%;
   min-height: 0;
 
@@ -23,7 +25,19 @@ const Shell = styled.div`
     rgb(248 249 250);
 `;
 
+const Header = styled(DrawerHeader)`
+  position: relative;
+  z-index: 3;
+  padding: 20px 18px 16px;
+
+  background: #fff;
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
+`;
+
 const Body = styled.div`
+  position: relative;
+  z-index: 0;
   flex: 1;
   min-height: 0;
 `;
@@ -64,6 +78,9 @@ function PublicMusicbillCollectionDrawer() {
         zIndex={zIndex}
       >
         <Shell>
+          <Header>
+            <DrawerTitle>{t('public_musicbill_collection')}</DrawerTitle>
+          </Header>
           <Body>
             <CollectionList
               insideDrawer
