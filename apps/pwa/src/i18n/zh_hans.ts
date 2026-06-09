@@ -309,7 +309,7 @@ const zhCN: {
   manage_origins: '服务器地址管理',
   origin_users_count: '%s1 用户已登录',
   delete_origin_question: '确定删除该服务器地址以及已登录用户吗?',
-  sort_musicbill: '歌单排序',
+  sort_musicbill: '乐单排序',
   reload_musicbill_list: '刷新',
   reload_musicbill: '刷新',
   collect_musicbill: '收藏乐单',

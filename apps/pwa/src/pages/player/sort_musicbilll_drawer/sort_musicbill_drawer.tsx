@@ -35,6 +35,7 @@ import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
 
 const Shell = styled.div`
+  isolation: isolate;
   height: 100%;
   min-height: 0;
 
@@ -42,6 +43,8 @@ const Shell = styled.div`
   flex-direction: column;
 `;
 const Header = styled(DrawerHeader)`
+  position: relative;
+  z-index: 3;
   padding: 20px 18px 16px;
 
   background: #fff;
@@ -58,6 +61,8 @@ const HeaderTitle = styled(DrawerTitle)`
   min-width: 0;
 `;
 const Content = styled.div`
+  position: relative;
+  z-index: 0;
   flex: 1;
   min-height: 0;
   padding: 16px 14px max(20px, env(safe-area-inset-bottom, 20px));
