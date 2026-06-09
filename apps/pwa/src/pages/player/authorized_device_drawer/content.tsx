@@ -4,6 +4,7 @@ import Button from '@/components/button';
 import Empty from '@/components/empty';
 import Spinner from '@/components/spinner';
 import { CSSVariable } from '@/global_style';
+import autoScrollbar from '@/style/auto_scrollbar';
 import day from '@/utils/day';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
@@ -17,10 +18,13 @@ import { getDisplayDeviceName } from '@/utils/device_name';
 const Body = styled.div`
   flex: 1;
   min-height: 0;
-  padding: 20px 24px 24px;
+  padding: 16px 16px 24px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  ${autoScrollbar}
 `;
 
 const Status = styled.div`
@@ -40,7 +44,7 @@ const List = styled.div`
 const Item = styled.div<{ $current: boolean }>`
   padding: 16px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 1fr;
   gap: 16px;
 
   border: 2px solid
@@ -96,20 +100,12 @@ const Item = styled.div<{ $current: boolean }>`
 
   .actions {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 8px;
     flex-wrap: wrap;
-  }
 
-  @media (max-width: 720px) {
-    grid-template-columns: 1fr;
-
-    .actions {
-      align-items: stretch;
-
-      > button {
-        flex: 1;
-      }
+    > button {
+      flex: 1;
     }
   }
 `;
@@ -119,10 +115,7 @@ function formatTime(timestamp: number) {
 }
 
 function getSessionDeviceName(session: AuthSession) {
-  return (
-    getDisplayDeviceName(session.deviceName, session.userAgent) ||
-    t('unknown_device')
-  );
+  return getDisplayDeviceName(session.deviceName) || t('unknown_device');
 }
 
 function AuthorizedDeviceContent() {
@@ -201,10 +194,6 @@ function AuthorizedDeviceContent() {
                     <div>
                       <span className="label">{t('last_seen_at')}</span>
                       {formatTime(session.lastSeenTimestamp)}
-                    </div>
-                    <div>
-                      <span className="label">{t('last_seen_ip')}</span>
-                      {session.lastSeenIP || t('unknown')}
                     </div>
                     <div>
                       <span className="label">{t('inactive_expire_at')}</span>

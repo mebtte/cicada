@@ -3,7 +3,6 @@ package handler
 import (
 	"cicada/internal/api"
 	"cicada/internal/api/apperr"
-	"cicada/internal/api/middleware"
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"strings"
@@ -25,6 +24,7 @@ func GetArtist(c *gin.Context) {
 
 	singerMusicList, _ := store.GetMusicsBySingerID(id)
 	lyricistMusicList, _ := store.GetMusicsByLyricistID(id)
+	composerMusicList, _ := store.GetMusicsByComposerID(id)
 	photos, _ := store.ListArtistPhotos(id)
 	photoItems := make([]gin.H, len(photos))
 	for i, p := range photos {
@@ -43,6 +43,7 @@ func GetArtist(c *gin.Context) {
 		"photos":            photoItems,
 		"singerMusicList":   artistMusicItems(singerMusicList),
 		"lyricistMusicList": artistMusicItems(lyricistMusicList),
+		"composerMusicList": artistMusicItems(composerMusicList),
 	})
 }
 
@@ -124,17 +125,12 @@ func AdminGetArtistList(c *gin.Context) {
 			photos = []gin.H{}
 		}
 		list[i] = gin.H{
-			"id":             artist.ID,
-			"name":           artist.Name,
-			"aliases":        splitAliases(artist.Aliases),
-			"searchKeywords": artist.SearchKeywords,
-			"photos":         photos,
-			"musicCount":     musicCounts[artist.ID],
-			"createUser": gin.H{
-				"id":       artist.CreateUserID,
-				"username": artist.CreateUserUsername,
-				"nickname": artist.CreateUserNickname,
-			},
+			"id":              artist.ID,
+			"name":            artist.Name,
+			"aliases":         splitAliases(artist.Aliases),
+			"searchKeywords":  artist.SearchKeywords,
+			"photos":          photos,
+			"musicCount":      musicCounts[artist.ID],
 			"createTimestamp": artist.CreateTimestamp,
 		}
 	}
@@ -153,13 +149,6 @@ func AdminGetArtist(c *gin.Context) {
 		return
 	}
 
-	var createUserUsername string
-	var createUserNickname string
-	_ = store.DB().QueryRow(
-		`SELECT username,nickname FROM user WHERE id=?`,
-		artist.CreateUserID,
-	).Scan(&createUserUsername, &createUserNickname)
-
 	photos, _ := store.ListArtistPhotos(id)
 	photoItems := make([]gin.H, len(photos))
 	for i, p := range photos {
@@ -174,17 +163,12 @@ func AdminGetArtist(c *gin.Context) {
 	musicCount, _ := store.GetMusicCountByArtistID(id)
 
 	api.OK(c, gin.H{
-		"id":             artist.ID,
-		"name":           artist.Name,
-		"aliases":        splitAliases(artist.Aliases),
-		"searchKeywords": artist.SearchKeywords,
-		"photos":         photoItems,
-		"musicCount":     musicCount,
-		"createUser": gin.H{
-			"id":       artist.CreateUserID,
-			"username": createUserUsername,
-			"nickname": createUserNickname,
-		},
+		"id":              artist.ID,
+		"name":            artist.Name,
+		"aliases":         splitAliases(artist.Aliases),
+		"searchKeywords":  artist.SearchKeywords,
+		"photos":          photoItems,
+		"musicCount":      musicCount,
 		"createTimestamp": artist.CreateTimestamp,
 	})
 }
@@ -195,7 +179,6 @@ type createArtistBody struct {
 }
 
 func AdminCreateArtist(c *gin.Context) {
-	u := middleware.GetUser(c)
 	var body createArtistBody
 	if err := c.ShouldBindJSON(&body); err != nil || len(body.Name) > 50 {
 		api.Fail(c, apperr.WrongParameter)
@@ -212,7 +195,7 @@ func AdminCreateArtist(c *gin.Context) {
 			return
 		}
 	}
-	id, err := store.CreateArtist(body.Name, u.ID)
+	id, err := store.CreateArtist(body.Name)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
@@ -317,8 +300,10 @@ func artistMusicItems(musicList []store.Music) []gin.H {
 	}
 	singers, _ := store.GetSingersInMusicIDs(musicIDs)
 	lyricists, _ := store.GetLyricistsInMusicIDs(musicIDs)
+	composers, _ := store.GetComposersInMusicIDs(musicIDs)
 	singerMap := groupArtistsByMusic(singers)
 	lyricistMap := groupArtistsByMusic(lyricists)
+	composerMap := groupArtistsByMusic(composers)
 
 	musicItems := make([]gin.H, len(musicList))
 	for i, music := range musicList {
@@ -332,6 +317,7 @@ func artistMusicItems(musicList []store.Music) []gin.H {
 			"asset":          config.AssetPublicURL(music.Asset, config.AssetTypeMusic),
 			"singers":        artistItems(singerMap[music.ID]),
 			"lyricists":      artistItems(lyricistMap[music.ID]),
+			"composers":      artistItems(composerMap[music.ID]),
 		}
 	}
 	return musicItems

@@ -24,9 +24,10 @@ interface Music {
   name: string;
   singers: Singer[];
   lyricists: Singer[];
+  composers: Singer[];
 }
 
-type Response = Omit<Music, 'singers' | 'lyricists'> & {
+type Response = Omit<Music, 'singers' | 'lyricists' | 'composers'> & {
   type: MusicType;
   aliases: string[];
   heat: number;
@@ -55,6 +56,9 @@ type Response = Omit<Music, 'singers' | 'lyricists'> & {
     aliases: string[];
   })[];
   lyricists: (Singer & {
+    aliases: string[];
+  })[];
+  composers: (Singer & {
     aliases: string[];
   })[];
 };
@@ -104,6 +108,11 @@ async function getMusic({
       name: artist.name,
       aliases: artist.aliases ?? [],
     })),
+    composers: (music.composers ?? []).map((artist) => ({
+      id: artist.id,
+      name: artist.name,
+      aliases: artist.aliases ?? [],
+    })),
   });
   return {
     ...music,
@@ -128,6 +137,15 @@ async function getMusic({
         avatar: photos[0]?.asset ?? '',
       };
     }),
+    composers: (music.composers ?? []).map((artist) => {
+      const photos = normalizePhotos(artist.photos);
+      return {
+        ...artist,
+        aliases: artist.aliases ?? [],
+        photos,
+        avatar: photos[0]?.asset ?? '',
+      };
+    }),
     forkList: music.forkList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),
@@ -137,6 +155,10 @@ async function getMusic({
         photos: normalizePhotos(s.photos),
       })),
       lyricists: (m.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
+      })),
+      composers: (m.composers ?? []).map((artist) => ({
         ...artist,
         photos: normalizePhotos(artist.photos),
       })),
@@ -150,6 +172,10 @@ async function getMusic({
         photos: normalizePhotos(s.photos),
       })),
       lyricists: (m.lyricists ?? []).map((artist) => ({
+        ...artist,
+        photos: normalizePhotos(artist.photos),
+      })),
+      composers: (m.composers ?? []).map((artist) => ({
         ...artist,
         photos: normalizePhotos(artist.photos),
       })),

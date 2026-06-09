@@ -26,15 +26,7 @@ func TestCreateSingerUsesShortAlphanumericID(t *testing.T) {
 		t.Fatalf("initialize store: %v", err)
 	}
 
-	const userID = "user-1"
-	if _, err := DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		userID, "creator", DoubleMD5("password"), "Creator", time.Now().UnixMilli(),
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-
-	id, err := CreateArtist("Alpha", userID)
+	id, err := CreateArtist("Alpha")
 	if err != nil {
 		t.Fatalf("create artist: %v", err)
 	}
@@ -64,16 +56,10 @@ func TestSearchSingersRanksExactAndPrefixMatches(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := DB().Exec(
-		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES
-			('artist-exact', 'Beta',       '', 'user-1', ?),
-			('artist-prefix','Beta Band',  '', 'user-1', ?),
-			('artist-newer', 'The Beta',   '', 'user-1', ?)`,
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES
+			('artist-exact', 'Beta',       '', ?),
+			('artist-prefix','Beta Band',  '', ?),
+			('artist-newer', 'The Beta',   '', ?)`,
 		now-300,
 		now-200,
 		now,
@@ -118,15 +104,9 @@ func TestSearchSingersMatchesSearchKeywords(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := DB().Exec(
-		`INSERT INTO artist (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
-			('artist-hidden', 'Aurora', '', 'runaway voice token', 'user-1', ?),
-			('artist-other',  'Beta',   '', '', 'user-1', ?)`,
+		`INSERT INTO artist (id,name,aliases,searchKeywords,createTimestamp) VALUES
+			('artist-hidden', 'Aurora', '', 'runaway voice token', ?),
+			('artist-other',  'Beta',   '', '', ?)`,
 		now,
 		now,
 	); err != nil {

@@ -23,6 +23,7 @@ const (
 	TableMusicPlayRecord           = "music_play_record"
 	TableMusicSingerRelation       = "music_singer_relation"
 	TableMusicLyricistRelation     = "music_lyricist_relation"
+	TableMusicComposerRelation     = "music_composer_relation"
 	TableMusicbill                 = "musicbill"
 	TableMusicbillMusic            = "musicbill_music"
 	TablePublicMusicbillCollection = "public_musicbill_collection"
@@ -49,9 +50,6 @@ var tables = []string{
 		tokenHash TEXT NOT NULL UNIQUE,
 		tokenPrefix TEXT NOT NULL DEFAULT '',
 		deviceName TEXT NOT NULL DEFAULT '',
-		userAgent TEXT NOT NULL DEFAULT '',
-		createIP TEXT NOT NULL DEFAULT '',
-		lastSeenIP TEXT NOT NULL DEFAULT '',
 		createTimestamp INTEGER NOT NULL,
 		lastSeenTimestamp INTEGER NOT NULL,
 		revokeTimestamp INTEGER DEFAULT NULL,
@@ -70,7 +68,6 @@ var tables = []string{
 		name TEXT NOT NULL,
 		aliases TEXT NOT NULL DEFAULT '',
 		searchKeywords TEXT NOT NULL DEFAULT '',
-		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL
 	)`,
 	`CREATE TABLE IF NOT EXISTS artist_photo (
@@ -80,7 +77,6 @@ var tables = []string{
 		thumbnail TEXT NOT NULL DEFAULT '',
 		position INTEGER NOT NULL,
 		description TEXT NOT NULL DEFAULT '',
-		addUserId TEXT NOT NULL REFERENCES user(id),
 		addTimestamp INTEGER NOT NULL
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_artist_photo_artist ON artist_photo(artistId, position)`,
@@ -99,7 +95,6 @@ var tables = []string{
 		assetCodec TEXT NOT NULL DEFAULT '',
 		assetBitRate INTEGER NOT NULL DEFAULT 0,
 		heat INTEGER NOT NULL DEFAULT 0,
-		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL
 	)`,
 	`CREATE TABLE IF NOT EXISTS music_fork (
@@ -142,6 +137,14 @@ var tables = []string{
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_music_lyricist_relation_music ON music_lyricist_relation(musicId)`,
 	`CREATE INDEX IF NOT EXISTS idx_music_lyricist_relation_artist ON music_lyricist_relation(artistId)`,
+	`CREATE TABLE IF NOT EXISTS music_composer_relation (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		musicId TEXT NOT NULL REFERENCES music(id),
+		artistId TEXT NOT NULL REFERENCES artist(id),
+		UNIQUE(musicId, artistId) ON CONFLICT REPLACE
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_music_composer_relation_music ON music_composer_relation(musicId)`,
+	`CREATE INDEX IF NOT EXISTS idx_music_composer_relation_artist ON music_composer_relation(artistId)`,
 	`CREATE TABLE IF NOT EXISTS musicbill (
 		id TEXT PRIMARY KEY NOT NULL,
 		userId TEXT NOT NULL REFERENCES user(id),

@@ -93,6 +93,7 @@ export default (id: string) => {
         const artists = [
           ...(data.music?.singers ?? []),
           ...(data.music?.lyricists ?? []),
+          ...(data.music?.composers ?? []),
         ];
         if (artists.find((artist) => artist.id === payload.id)) {
           getMusic();

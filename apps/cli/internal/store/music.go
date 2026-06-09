@@ -34,19 +34,12 @@ type Music struct {
 	CoverThumbnail  string
 	Asset           string
 	Heat            int64
-	CreateUserID    string
 	CreateTimestamp int64
 	Year            sql.NullInt64
 	AssetSize       int64
 	AssetDurationMs int64
 	AssetCodec      string
 	AssetBitRate    int64
-}
-
-type AdminMusic struct {
-	Music
-	CreateUserUsername string
-	CreateUserNickname string
 }
 
 // ArtistInMusic is returned when querying artists that belong to a music track.
@@ -63,8 +56,8 @@ type MusicFork struct {
 }
 
 const (
-	musicSelectColumns          = `id,type,name,aliases,searchKeywords,cover,coverThumbnail,asset,heat,createUserId,createTimestamp,year,assetSize,assetDurationMs,assetCodec,assetBitRate`
-	musicSelectColumnsWithAlias = `m.id,m.type,m.name,m.aliases,m.searchKeywords,m.cover,m.coverThumbnail,m.asset,m.heat,m.createUserId,m.createTimestamp,m.year,m.assetSize,m.assetDurationMs,m.assetCodec,m.assetBitRate`
+	musicSelectColumns          = `id,type,name,aliases,searchKeywords,cover,coverThumbnail,asset,heat,createTimestamp,year,assetSize,assetDurationMs,assetCodec,assetBitRate`
+	musicSelectColumnsWithAlias = `m.id,m.type,m.name,m.aliases,m.searchKeywords,m.cover,m.coverThumbnail,m.asset,m.heat,m.createTimestamp,m.year,m.assetSize,m.assetDurationMs,m.assetCodec,m.assetBitRate`
 )
 
 func GetMusicByID(id string) (*Music, error) {
@@ -107,7 +100,7 @@ func GetMusicsByIDs(ids []string) ([]Music, error) {
 	return out, nil
 }
 
-func CreateMusic(name string, t MusicType, createUserID, asset string) (string, error) {
+func CreateMusic(name string, t MusicType, asset string) (string, error) {
 	for range maxCreateMusicIDAttempts {
 		id, err := generateShortPublicID()
 		if err != nil {
@@ -116,8 +109,8 @@ func CreateMusic(name string, t MusicType, createUserID, asset string) (string, 
 
 		// Short public IDs can theoretically collide, so insert atomically and retry on conflict.
 		result, err := DB().Exec(
-			`INSERT OR IGNORE INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-			id, int(t), name, asset, createUserID, time.Now().UnixMilli(),
+			`INSERT OR IGNORE INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+			id, int(t), name, asset, time.Now().UnixMilli(),
 		)
 		if err != nil {
 			return "", err
@@ -165,6 +158,7 @@ func DeleteMusicCascade(id string, isSong bool) error {
 		`DELETE FROM music_play_record WHERE musicId=?`,
 		`DELETE FROM music_singer_relation WHERE musicId=?`,
 		`DELETE FROM music_lyricist_relation WHERE musicId=?`,
+		`DELETE FROM music_composer_relation WHERE musicId=?`,
 		`DELETE FROM musicbill_music WHERE musicId=?`,
 		`DELETE FROM music WHERE id=?`,
 	} {
@@ -247,6 +241,27 @@ func GetLyricistsInMusicIDs(musicIDs []string) ([]ArtistInMusic, error) {
 	return out, nil
 }
 
+func GetComposersInMusicIDs(musicIDs []string) ([]ArtistInMusic, error) {
+	if len(musicIDs) == 0 {
+		return nil, nil
+	}
+	q := `SELECT mcr.musicId,a.id,a.name,a.aliases
+		FROM music_composer_relation mcr JOIN artist a ON mcr.artistId=a.id
+		WHERE mcr.musicId IN (` + placeholders(len(musicIDs)) + `)`
+	rows, err := DB().Query(q, strs2any(musicIDs)...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []ArtistInMusic
+	for rows.Next() {
+		a := ArtistInMusic{}
+		rows.Scan(&a.MusicID, &a.ID, &a.Name, &a.Aliases)
+		out = append(out, a)
+	}
+	return out, nil
+}
+
 func GetMusicsBySingerID(singerID string) ([]Music, error) {
 	rows, err := DB().Query(
 		`SELECT `+musicSelectColumnsWithAlias+`
@@ -275,11 +290,12 @@ func GetMusicsByLyricistID(artistID string) ([]Music, error) {
 	return scanMusicRows(rows)
 }
 
-func GetMusicsByCreateUserID(userID string) ([]Music, error) {
+func GetMusicsByComposerID(artistID string) ([]Music, error) {
 	rows, err := DB().Query(
-		`SELECT `+musicSelectColumns+`
-		FROM music WHERE createUserId=? ORDER BY createTimestamp DESC`,
-		userID,
+		`SELECT `+musicSelectColumnsWithAlias+`
+		FROM music_composer_relation mcr JOIN music m ON mcr.musicId=m.id
+		WHERE mcr.artistId=? ORDER BY m.heat DESC, m.createTimestamp DESC`,
+		artistID,
 	)
 	if err != nil {
 		return nil, err
@@ -311,6 +327,19 @@ func LinkMusicLyricists(musicID string, artistIDs []string) error {
 		args = append(args, musicID, artistID)
 	}
 	_, err := DB().Exec(`INSERT OR REPLACE INTO music_lyricist_relation (musicId,artistId) VALUES `+pairs[:len(pairs)-1], args...)
+	return err
+}
+
+func LinkMusicComposers(musicID string, artistIDs []string) error {
+	if len(artistIDs) == 0 {
+		return nil
+	}
+	pairs := strings.Repeat("(?,?),", len(artistIDs))
+	args := make([]any, 0, len(artistIDs)*2)
+	for _, artistID := range artistIDs {
+		args = append(args, musicID, artistID)
+	}
+	_, err := DB().Exec(`INSERT OR REPLACE INTO music_composer_relation (musicId,artistId) VALUES `+pairs[:len(pairs)-1], args...)
 	return err
 }
 
@@ -360,9 +389,19 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 				OR a.aliases LIKE ? ESCAPE '\'
 				OR a.searchKeywords LIKE ? ESCAPE '\'
 			)
+		)
+		OR EXISTS (
+			SELECT 1
+			FROM music_composer_relation mcr
+			JOIN artist c ON mcr.artistId=c.id
+			WHERE mcr.musicId=m.id AND (
+				c.name LIKE ? ESCAPE '\'
+				OR c.aliases LIKE ? ESCAPE '\'
+				OR c.searchKeywords LIKE ? ESCAPE '\'
+			)
 		)`
 	var total int
-	if err := DB().QueryRow(`SELECT COUNT(1) FROM music m `+where, pat, pat, pat, pat, pat, pat, pat, pat, pat).Scan(&total); err != nil {
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM music m `+where, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat).Scan(&total); err != nil {
 		return 0, nil, err
 	}
 	rows, err := DB().Query(
@@ -422,14 +461,38 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 					JOIN artist a ON mlr.artistId=a.id
 					WHERE mlr.musicId=m.id AND a.searchKeywords LIKE ? ESCAPE '\'
 				) THEN 30
+				WHEN EXISTS (
+					SELECT 1
+					FROM music_composer_relation mcr
+					JOIN artist c ON mcr.artistId=c.id
+					WHERE mcr.musicId=m.id AND c.name = ? COLLATE NOCASE
+				) THEN 28
+				WHEN EXISTS (
+					SELECT 1
+					FROM music_composer_relation mcr
+					JOIN artist c ON mcr.artistId=c.id
+					WHERE mcr.musicId=m.id AND c.name LIKE ? ESCAPE '\'
+				) THEN 24
+				WHEN EXISTS (
+					SELECT 1
+					FROM music_composer_relation mcr
+					JOIN artist c ON mcr.artistId=c.id
+					WHERE mcr.musicId=m.id AND c.aliases LIKE ? ESCAPE '\'
+				) THEN 20
+				WHEN EXISTS (
+					SELECT 1
+					FROM music_composer_relation mcr
+					JOIN artist c ON mcr.artistId=c.id
+					WHERE mcr.musicId=m.id AND c.searchKeywords LIKE ? ESCAPE '\'
+				) THEN 16
 				ELSE 40
 			END DESC,
 			m.heat DESC,
 			m.createTimestamp DESC,
 			m.id ASC
 		LIMIT ? OFFSET ?`,
-		pat, pat, pat, pat, pat, pat, pat, pat, pat,
-		keyword, prefixPat, pat, pat, keyword, prefixPat, pat, pat, keyword, prefixPat, pat, pat,
+		pat, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat,
+		keyword, prefixPat, pat, pat, keyword, prefixPat, pat, pat, keyword, prefixPat, pat, pat, keyword, prefixPat, pat, pat,
 		pageSize, (page-1)*pageSize,
 	)
 	if err != nil {
@@ -440,7 +503,7 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	return total, musics, err2
 }
 
-func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageSize int) (int, []AdminMusic, error) {
+func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageSize int) (int, []Music, error) {
 	where := ""
 	args := []any{}
 	trimmedKeyword := strings.TrimSpace(keyword)
@@ -456,6 +519,11 @@ func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageS
 			FROM music_lyricist_relation mlr
 			JOIN artist a ON mlr.artistId=a.id
 			WHERE mlr.musicId=m.id AND (a.id LIKE ? OR a.name LIKE ? OR a.aliases LIKE ? OR a.searchKeywords LIKE ?)
+		) OR EXISTS (
+			SELECT 1
+			FROM music_composer_relation mcr
+			JOIN artist c ON mcr.artistId=c.id
+			WHERE mcr.musicId=m.id AND (c.id LIKE ? OR c.name LIKE ? OR c.aliases LIKE ? OR c.searchKeywords LIKE ?)
 		))`
 		switch filterKey {
 		case "id":
@@ -469,10 +537,10 @@ func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageS
 			args = append(args, pattern)
 		case "artist":
 			where = " WHERE " + artistExists
-			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern)
+			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern)
 		default:
 			where = " WHERE m.id LIKE ? OR m.name LIKE ? OR m.aliases LIKE ? OR m.searchKeywords LIKE ? OR " + artistExists
-			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern)
+			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern)
 		}
 	}
 
@@ -494,9 +562,8 @@ func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageS
 	listArgs := append([]any{}, args...)
 	listArgs = append(listArgs, pageSize, (page-1)*pageSize)
 	rows, err := DB().Query(
-		`SELECT `+musicSelectColumnsWithAlias+`,u.username,u.nickname
-		FROM music m
-		LEFT JOIN user u ON u.id=m.createUserId`+where+`
+		`SELECT `+musicSelectColumnsWithAlias+`
+		FROM music m`+where+`
 		ORDER BY `+orderBy+`
 		LIMIT ? OFFSET ?`,
 		listArgs...,
@@ -505,20 +572,8 @@ func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageS
 		return 0, nil, err
 	}
 	defer rows.Close()
-
-	var musics []AdminMusic
-	for rows.Next() {
-		var username sql.NullString
-		var nickname sql.NullString
-		m := AdminMusic{}
-		if err := rows.Scan(append(scanMusicDest(&m.Music), &username, &nickname)...); err != nil {
-			return 0, nil, err
-		}
-		m.CreateUserUsername = username.String
-		m.CreateUserNickname = nickname.String
-		musics = append(musics, m)
-	}
-	if err := rows.Err(); err != nil {
+	musics, err := scanMusicRows(rows)
+	if err != nil {
 		return 0, nil, err
 	}
 	return total, musics, nil
@@ -533,7 +588,7 @@ func scanMusicRows(rows *sql.Rows) ([]Music, error) {
 		}
 		out = append(out, m)
 	}
-	return out, nil
+	return out, rows.Err()
 }
 
 func scanMusicDest(m *Music) []any {
@@ -547,7 +602,6 @@ func scanMusicDest(m *Music) []any {
 		&m.CoverThumbnail,
 		&m.Asset,
 		&m.Heat,
-		&m.CreateUserID,
 		&m.CreateTimestamp,
 		&m.Year,
 		&m.AssetSize,

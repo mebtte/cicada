@@ -138,6 +138,11 @@ function entryToMusic(entry: OfflineMusic): MusicWithSingerAliases {
       name: artist.name,
       aliases: artist.aliases ?? [],
     })),
+    composers: (entry.composers ?? []).map((artist) => ({
+      id: artist.id,
+      name: artist.name,
+      aliases: artist.aliases ?? [],
+    })),
   };
 }
 

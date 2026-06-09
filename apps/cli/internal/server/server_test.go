@@ -96,7 +96,7 @@ func TestMusicWriteRoutesRequireAdmin(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create token: %v", err)
 	}
-	if _, err := store.CreateAuthSession("user-1", tokenHash, tokenPrefix, "test", "agent", "127.0.0.1"); err != nil {
+	if _, err := store.CreateAuthSession("user-1", tokenHash, tokenPrefix, "test"); err != nil {
 		t.Fatalf("create auth session: %v", err)
 	}
 

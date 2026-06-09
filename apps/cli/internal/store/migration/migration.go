@@ -45,7 +45,15 @@ type Migration struct {
 	// safety net is the db.backup + journal mechanism — but the flag is
 	// surfaced in logs so operators understand what just ran.
 	Destructive bool
-	Up          func(ctx context.Context, env *Env) error
+	// WithoutForeignKeys disables FK enforcement on the connection for the
+	// duration of this migration. Required for table-rebuild migrations: the
+	// SQLite procedure for rebuilding a table with inbound FK references
+	// (https://sqlite.org/lang_altertable.html#otheralter) requires FK off
+	// outside the transaction, because `defer_foreign_keys=ON` only tracks a
+	// counter that DROP TABLE bumps and never clears even after the table is
+	// recreated under the same name.
+	WithoutForeignKeys bool
+	Up                 func(ctx context.Context, env *Env) error
 }
 
 var (

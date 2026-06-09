@@ -73,13 +73,15 @@ export interface Music {
   aliases: string[];
   singers: Singer[];
   lyricists: Singer[];
+  composers: Singer[];
   asset: string;
 }
 
 export interface MusicWithSingerAliases
-  extends Omit<Music, 'singers' | 'lyricists'> {
+  extends Omit<Music, 'singers' | 'lyricists' | 'composers'> {
   singers: SingerWithAliases[];
   lyricists: SingerWithAliases[];
+  composers: SingerWithAliases[];
 }
 
 export type PlaylistMusic = MusicWithSingerAliases & { index: number };

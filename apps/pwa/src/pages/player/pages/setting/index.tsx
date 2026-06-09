@@ -5,6 +5,7 @@ import Page from '../page';
 import Volume from './volume';
 import Language from './language';
 import AdminQuickEdit from './admin_quick_edit';
+import OfflineCache from './offline_cache';
 import Feedback from './feedback';
 import PlaybackQuality from './playback_quality';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
@@ -38,6 +39,7 @@ function Setting() {
       <PlaybackQuality />
       <Language />
       <AdminQuickEdit />
+      <OfflineCache />
       <Feedback />
     </Style>
   );

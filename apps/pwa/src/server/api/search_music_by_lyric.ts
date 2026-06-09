@@ -22,6 +22,11 @@ type Response = {
       name: string;
       aliases: string[];
     }[];
+    composers: {
+      id: string;
+      name: string;
+      aliases: string[];
+    }[];
     lyrics: {
       id: number;
       lrc: string;
@@ -61,6 +66,7 @@ async function searchMusicByLyric({
       cover: prefixServerOrigin(m.cover),
       coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
       lyricists: m.lyricists ?? [],
+      composers: m.composers ?? [],
       lyrics: m.lyrics ?? [],
     })),
   };

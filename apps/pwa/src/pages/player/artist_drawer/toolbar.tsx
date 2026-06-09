@@ -51,10 +51,11 @@ const Style = styled.div<{ $floatingControllerOffset: boolean }>`
 const getArtistMusicList = (artist: Artist): MusicWithSingerAliases[] =>
   Array.from(
     new Map(
-      [...artist.singerMusicList, ...artist.lyricistMusicList].map((music) => [
-        music.id,
-        music,
-      ]),
+      [
+        ...artist.singerMusicList,
+        ...artist.lyricistMusicList,
+        ...artist.composerMusicList,
+      ].map((music) => [music.id, music]),
     ).values(),
   );
 

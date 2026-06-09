@@ -2,7 +2,7 @@ import Storage from '@/utils/storage';
 import { MusicWithSingerAliases } from './constants';
 
 export enum Key {
-  PLAYLIST = 'playlist',
+  PLAYLIST = 'playlist-v2',
   PLAY_RECORD_UPLOAD_QUEUE_V2 = 'play-record-upload-queue-v2',
 }
 

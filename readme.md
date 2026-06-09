@@ -9,18 +9,16 @@ A multi-user music service for self-hosting.
 
 ## Features
 
-- **No privacy collection**
+- **No privacy collection** and manage data by yourself
 - Single-binary deployment with embedded PWA assets and bundled
   `ffmpeg`/`ffprobe`
-- Batch music import and manage data by yourself
 - Custom playqueue and share musicbills between users
-- Support 2FA
+- Multiple user and support 2FA
+- Support lyricist and composer
 
 ## Demo
 
-There is a online demo you can visit on [https://cicada.mebtte.com](https://cicada.mebtte.com), you can login by `username: cicada` and `password: cicada`. **The demo data resets every six hours.**
-
-> Attention: this account isn't a administrator, so you can't manage the data.
+There is a online demo you can visit on [https://cicada.mebtte.com](https://cicada.mebtte.com), you can login by `username: cicada` and `password: cicada@mebtte`. **The demo data resets every four hours.**
 
 ## Deploy
 

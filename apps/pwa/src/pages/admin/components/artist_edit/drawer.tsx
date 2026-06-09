@@ -34,11 +34,6 @@ const toEditableArtist = (
   searchKeywords: artist.searchKeywords,
   photos: artist.photos,
   musicCount: artist.musicCount,
-  createUser: {
-    id: artist.createUser.id,
-    username: artist.createUser.username,
-    nickname: artist.createUser.nickname,
-  },
   createTimestamp: artist.createTimestamp,
 });
 

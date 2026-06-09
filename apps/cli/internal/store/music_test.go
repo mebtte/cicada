@@ -35,7 +35,7 @@ func TestCreateMusicAndMusicbillUseShortPublicIDs(t *testing.T) {
 	}
 
 	pattern := regexp.MustCompile(`^[0-9A-Za-z]{8}$`)
-	musicID, err := CreateMusic("Hidden Track", MusicTypeSong, userID, "one.mp3")
+	musicID, err := CreateMusic("Hidden Track", MusicTypeSong, "one.mp3")
 	if err != nil {
 		t.Fatalf("create music: %v", err)
 	}
@@ -73,24 +73,18 @@ func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := DB().Exec(
-		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES
-			('artist-1','Aurora',?, 'user-1', ?),
-			('artist-2','Beta',  ?, 'user-1', ?)`,
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES
+			('artist-1','Aurora',?, ?),
+			('artist-2','Beta',  ?, ?)`,
 		"Runaway Voice", now,
 		"Other Alias", now,
 	); err != nil {
 		t.Fatalf("insert singers: %v", err)
 	}
 	if _, err := DB().Exec(
-		`INSERT INTO music (id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp) VALUES
-			('music-1', ?, 'Hidden Track', '', '', 'one.mp3', 10, 'user-1', ?),
-			('music-2', ?, 'Other Track',  '', '', 'two.mp3', 20, 'user-1', ?)`,
+		`INSERT INTO music (id,type,name,aliases,cover,asset,heat,createTimestamp) VALUES
+			('music-1', ?, 'Hidden Track', '', '', 'one.mp3', 10, ?),
+			('music-2', ?, 'Other Track',  '', '', 'two.mp3', 20, ?)`,
 		int(MusicTypeSong), now,
 		int(MusicTypeSong), now,
 	); err != nil {
@@ -138,24 +132,18 @@ func TestSearchMusicMatchesSearchKeywords(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := DB().Exec(
-		`INSERT INTO artist (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
-			('artist-1','Aurora','', 'runaway voice token', 'user-1', ?),
-			('artist-2','Beta',  '', '', 'user-1', ?)`,
+		`INSERT INTO artist (id,name,aliases,searchKeywords,createTimestamp) VALUES
+			('artist-1','Aurora','', 'runaway voice token', ?),
+			('artist-2','Beta',  '', '', ?)`,
 		now,
 		now,
 	); err != nil {
 		t.Fatalf("insert singers: %v", err)
 	}
 	if _, err := DB().Exec(
-		`INSERT INTO music (id,type,name,aliases,searchKeywords,asset,heat,createUserId,createTimestamp) VALUES
-			('music-by-artist-keyword', ?, 'Hidden Track', '', '', 'one.mp3', 10, 'user-1', ?),
-			('music-by-own-keyword', ?, 'Other Track', '', 'manual lookup token', 'two.mp3', 20, 'user-1', ?)`,
+		`INSERT INTO music (id,type,name,aliases,searchKeywords,asset,heat,createTimestamp) VALUES
+			('music-by-artist-keyword', ?, 'Hidden Track', '', '', 'one.mp3', 10, ?),
+			('music-by-own-keyword', ?, 'Other Track', '', 'manual lookup token', 'two.mp3', 20, ?)`,
 		int(MusicTypeSong), now,
 		int(MusicTypeSong), now,
 	); err != nil {
@@ -210,17 +198,11 @@ func TestSearchMusicRanksNameMatchesAndEscapesWildcards(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := DB().Exec(
-		`INSERT INTO music (id,type,name,aliases,asset,heat,createUserId,createTimestamp) VALUES
-			('music-exact', ?, 'Love',      '', 'exact.mp3',   1,   'user-1', ?),
-			('music-prefix',?, 'Love Song', '', 'prefix.mp3',  100, 'user-1', ?),
-			('music-hot',   ?, 'My Love',   '', 'hot.mp3',     999, 'user-1', ?),
-			('music-percent', ?, '100% Love', '', 'percent.mp3', 0, 'user-1', ?)`,
+		`INSERT INTO music (id,type,name,aliases,asset,heat,createTimestamp) VALUES
+			('music-exact', ?, 'Love',      '', 'exact.mp3',   1,   ?),
+			('music-prefix',?, 'Love Song', '', 'prefix.mp3',  100, ?),
+			('music-hot',   ?, 'My Love',   '', 'hot.mp3',     999, ?),
+			('music-percent', ?, '100% Love', '', 'percent.mp3', 0, ?)`,
 		int(MusicTypeSong), now-300,
 		int(MusicTypeSong), now-200,
 		int(MusicTypeSong), now-100,
@@ -274,16 +256,10 @@ func TestGetMusicsByIDsPreservesInputOrder(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES
-			('music-a', ?, 'A', 'a.mp3', 'user-1', ?),
-			('music-b', ?, 'B', 'b.mp3', 'user-1', ?),
-			('music-c', ?, 'C', 'c.mp3', 'user-1', ?)`,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES
+			('music-a', ?, 'A', 'a.mp3', ?),
+			('music-b', ?, 'B', 'b.mp3', ?),
+			('music-c', ?, 'C', 'c.mp3', ?)`,
 		int(MusicTypeSong), now,
 		int(MusicTypeSong), now,
 		int(MusicTypeSong), now,
@@ -301,5 +277,89 @@ func TestGetMusicsByIDsPreservesInputOrder(t *testing.T) {
 		if got[i] != want[i] {
 			t.Fatalf("unexpected order: got %v want %v", got, want)
 		}
+	}
+}
+
+func TestComposerRelationsAndSearch(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES
+			('artist-composer','Mozart','Wolfgang', ?),
+			('artist-singer','SingerOnly','', ?)`,
+		now, now,
+	); err != nil {
+		t.Fatalf("insert artists: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO music (id,type,name,aliases,cover,asset,heat,createTimestamp) VALUES
+			('m-composed', ?, 'Eine Kleine', '', '', 'a.mp3', 10, ?),
+			('m-other',    ?, 'Other',       '', '', 'b.mp3', 20, ?)`,
+		int(MusicTypeSong), now,
+		int(MusicTypeSong), now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	if err := LinkMusicComposers("m-composed", []string{"artist-composer"}); err != nil {
+		t.Fatalf("link composers: %v", err)
+	}
+	if err := LinkMusicSingers("m-other", []string{"artist-singer"}); err != nil {
+		t.Fatalf("link singer: %v", err)
+	}
+
+	composers, err := GetComposersInMusicIDs([]string{"m-composed", "m-other"})
+	if err != nil {
+		t.Fatalf("get composers: %v", err)
+	}
+	if len(composers) != 1 || composers[0].MusicID != "m-composed" || composers[0].ID != "artist-composer" {
+		t.Fatalf("unexpected composers: %+v", composers)
+	}
+
+	musics, err := GetMusicsByComposerID("artist-composer")
+	if err != nil {
+		t.Fatalf("get music by composer id: %v", err)
+	}
+	if len(musics) != 1 || musics[0].ID != "m-composed" {
+		t.Fatalf("unexpected music by composer: %+v", musics)
+	}
+
+	// Searching by composer name should surface the composed track.
+	for _, keyword := range []string{"Mozart", "Wolfgang"} {
+		total, found, err := SearchMusic(keyword, 1, 10)
+		if err != nil {
+			t.Fatalf("search %q: %v", keyword, err)
+		}
+		if total != 1 || len(found) != 1 || found[0].ID != "m-composed" {
+			t.Fatalf("search %q expected m-composed, got total=%d %+v", keyword, total, found)
+		}
+	}
+
+	// DeleteMusicCascade should clear the composer relation.
+	if err := DeleteMusicCascade("m-composed", true); err != nil {
+		t.Fatalf("cascade delete: %v", err)
+	}
+	var n int
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM music_composer_relation WHERE musicId='m-composed'`).Scan(&n); err != nil {
+		t.Fatalf("count after delete: %v", err)
+	}
+	if n != 0 {
+		t.Fatalf("expected composer relation removed by cascade, found %d", n)
 	}
 }

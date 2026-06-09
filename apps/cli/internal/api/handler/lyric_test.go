@@ -41,8 +41,8 @@ func TestGetLyricList(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"song-1", int(store.MusicTypeSong), "Song", "song.mp3", "1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"song-1", int(store.MusicTypeSong), "Song", "song.mp3", now,
 	); err != nil {
 		t.Fatalf("insert song: %v", err)
 	}
@@ -53,14 +53,14 @@ func TestGetLyricList(t *testing.T) {
 		t.Fatalf("insert lyric: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"song-empty", int(store.MusicTypeSong), "Song Empty", "song-empty.mp3", "1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"song-empty", int(store.MusicTypeSong), "Song Empty", "song-empty.mp3", now,
 	); err != nil {
 		t.Fatalf("insert song without lyric: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"inst-1", int(store.MusicTypeInstrumental), "Instrumental", "inst.mp3", "1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"inst-1", int(store.MusicTypeInstrumental), "Instrumental", "inst.mp3", now,
 	); err != nil {
 		t.Fatalf("insert instrumental: %v", err)
 	}
@@ -162,8 +162,8 @@ func TestSearchMusicByLyricIncludesLyrics(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"song-1", int(store.MusicTypeSong), "Song", "song.mp3", "1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"song-1", int(store.MusicTypeSong), "Song", "song.mp3", now,
 	); err != nil {
 		t.Fatalf("insert song: %v", err)
 	}

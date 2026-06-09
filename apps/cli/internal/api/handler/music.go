@@ -147,14 +147,19 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 	}
 	singers, _ := store.GetSingersInMusicIDs(unique(allIDs))
 	lyricists, _ := store.GetLyricistsInMusicIDs(unique(allIDs))
+	composers, _ := store.GetComposersInMusicIDs(unique(allIDs))
 
 	singersByMusic := groupArtistsByMusic(singers)
 	lyricistsByMusic := groupArtistsByMusic(lyricists)
-	artistIDs := make([]string, 0, len(singers)+len(lyricists))
+	composersByMusic := groupArtistsByMusic(composers)
+	artistIDs := make([]string, 0, len(singers)+len(lyricists)+len(composers))
 	for _, artist := range singers {
 		artistIDs = append(artistIDs, artist.ID)
 	}
 	for _, artist := range lyricists {
+		artistIDs = append(artistIDs, artist.ID)
+	}
+	for _, artist := range composers {
 		artistIDs = append(artistIDs, artist.ID)
 	}
 	photosByArtist := artistPhotosByArtistIDs(unique(artistIDs))
@@ -190,6 +195,10 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 				lyricistsByMusic[rm.ID],
 				photosByArtist,
 			),
+			"composers": artistItemsWithPhotos(
+				composersByMusic[rm.ID],
+				photosByArtist,
+			),
 		}
 	}
 	forkFromList := make([]gin.H, len(forkFroms))
@@ -203,6 +212,10 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 			"singers":        artistItemsWithPhotos(singersByMusic[rm.ID], photosByArtist),
 			"lyricists": artistItemsWithPhotos(
 				lyricistsByMusic[rm.ID],
+				photosByArtist,
+			),
+			"composers": artistItemsWithPhotos(
+				composersByMusic[rm.ID],
 				photosByArtist,
 			),
 		}
@@ -225,6 +238,7 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 		"year":                       nullInt64(m.Year),
 		"singers":                    artistItemsWithPhotos(singersByMusic[id], photosByArtist),
 		"lyricists":                  artistItemsWithPhotos(lyricistsByMusic[id], photosByArtist),
+		"composers":                  artistItemsWithPhotos(composersByMusic[id], photosByArtist),
 		"forkList":                   forkList,
 		"forkFromList":               forkFromList,
 		"musicbillCount":             musicbillCount,
@@ -242,6 +256,7 @@ type createMusicBody struct {
 	Name        string `json:"name" binding:"required"`
 	SingerIDs   string `json:"singerIds"`
 	LyricistIDs string `json:"lyricistIds"`
+	ComposerIDs string `json:"composerIds"`
 	Type        int    `json:"type"`
 	Asset       string `json:"asset" binding:"required"`
 }
@@ -294,13 +309,23 @@ func AdminCreateMusic(c *gin.Context) {
 			return
 		}
 	}
-	id, err := store.CreateMusic(body.Name, musicType, u.ID, body.Asset)
+	composerIDs := []string{}
+	if body.ComposerIDs != "" {
+		composerIDs = strings.Split(body.ComposerIDs, ",")
+		ok, _ := store.ArtistsExist(composerIDs)
+		if !ok {
+			api.Fail(c, apperr.ArtistNotExisted)
+			return
+		}
+	}
+	id, err := store.CreateMusic(body.Name, musicType, body.Asset)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
 	store.LinkMusicSingers(id, singerIDs)
 	store.LinkMusicLyricists(id, lyricistIDs)
+	store.LinkMusicComposers(id, composerIDs)
 	syncMusicMetadataToAsset(id)
 	syncMusicAssetInfo(id)
 	api.OK(c, id)
@@ -472,6 +497,29 @@ func AdminUpdateMusic(c *gin.Context) {
 		}
 		store.DB().Exec(`DELETE FROM music_lyricist_relation WHERE musicId=?`, body.ID)
 		store.LinkMusicLyricists(body.ID, ids)
+		syncMetadata = true
+
+	case "composers":
+		rawIDs, ok := body.Value.([]any)
+		if !ok {
+			api.Fail(c, apperr.WrongParameter)
+			return
+		}
+		ids := make([]string, len(rawIDs))
+		for i, v := range rawIDs {
+			s, ok := v.(string)
+			if !ok {
+				api.Fail(c, apperr.WrongParameter)
+				return
+			}
+			ids[i] = s
+		}
+		if ok, _ := store.ArtistsExist(ids); !ok {
+			api.Fail(c, apperr.ArtistNotExisted)
+			return
+		}
+		store.DB().Exec(`DELETE FROM music_composer_relation WHERE musicId=?`, body.ID)
+		store.LinkMusicComposers(body.ID, ids)
 		syncMetadata = true
 
 	case "type":
@@ -842,8 +890,10 @@ func musicListResponse(musics []store.Music, total int) gin.H {
 	}
 	singers, _ := store.GetSingersInMusicIDs(ids)
 	lyricists, _ := store.GetLyricistsInMusicIDs(ids)
+	composers, _ := store.GetComposersInMusicIDs(ids)
 	bySong := groupArtistsByMusic(singers)
 	lyricistsBySong := groupArtistsByMusic(lyricists)
+	composersBySong := groupArtistsByMusic(composers)
 
 	list := make([]gin.H, len(musics))
 	for i, m := range musics {
@@ -863,6 +913,7 @@ func musicListResponse(musics []store.Music, total int) gin.H {
 			"createTimestamp": m.CreateTimestamp,
 			"singers":         artistItems(bySong[m.ID]),
 			"lyricists":       artistItems(lyricistsBySong[m.ID]),
+			"composers":       artistItems(composersBySong[m.ID]),
 		}
 	}
 	return gin.H{"total": total, "musicList": list}
@@ -891,7 +942,7 @@ func musicListWithLyricsResponse(musics []store.Music, total int) (gin.H, error)
 	return resp, nil
 }
 
-func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
+func adminMusicListResponse(musics []store.Music, total int) gin.H {
 	if len(musics) == 0 {
 		return gin.H{"total": total, "musicList": []any{}}
 	}
@@ -901,8 +952,10 @@ func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
 	}
 	singers, _ := store.GetSingersInMusicIDs(ids)
 	lyricists, _ := store.GetLyricistsInMusicIDs(ids)
+	composers, _ := store.GetComposersInMusicIDs(ids)
 	bySong := groupArtistsByMusic(singers)
 	lyricistsBySong := groupArtistsByMusic(lyricists)
+	composersBySong := groupArtistsByMusic(composers)
 
 	list := make([]gin.H, len(musics))
 	for i, m := range musics {
@@ -924,11 +977,7 @@ func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
 			"createTimestamp": m.CreateTimestamp,
 			"singers":         artistItems(bySong[m.ID]),
 			"lyricists":       artistItems(lyricistsBySong[m.ID]),
-			"createUser": gin.H{
-				"id":       m.CreateUserID,
-				"username": m.CreateUserUsername,
-				"nickname": m.CreateUserNickname,
-			},
+			"composers":       artistItems(composersBySong[m.ID]),
 		}
 	}
 	return gin.H{"total": total, "musicList": list}
