@@ -279,3 +279,87 @@ func TestGetMusicsByIDsPreservesInputOrder(t *testing.T) {
 		}
 	}
 }
+
+func TestComposerRelationsAndSearch(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES
+			('artist-composer','Mozart','Wolfgang', ?),
+			('artist-singer','SingerOnly','', ?)`,
+		now, now,
+	); err != nil {
+		t.Fatalf("insert artists: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO music (id,type,name,aliases,cover,asset,heat,createTimestamp) VALUES
+			('m-composed', ?, 'Eine Kleine', '', '', 'a.mp3', 10, ?),
+			('m-other',    ?, 'Other',       '', '', 'b.mp3', 20, ?)`,
+		int(MusicTypeSong), now,
+		int(MusicTypeSong), now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	if err := LinkMusicComposers("m-composed", []string{"artist-composer"}); err != nil {
+		t.Fatalf("link composers: %v", err)
+	}
+	if err := LinkMusicSingers("m-other", []string{"artist-singer"}); err != nil {
+		t.Fatalf("link singer: %v", err)
+	}
+
+	composers, err := GetComposersInMusicIDs([]string{"m-composed", "m-other"})
+	if err != nil {
+		t.Fatalf("get composers: %v", err)
+	}
+	if len(composers) != 1 || composers[0].MusicID != "m-composed" || composers[0].ID != "artist-composer" {
+		t.Fatalf("unexpected composers: %+v", composers)
+	}
+
+	musics, err := GetMusicsByComposerID("artist-composer")
+	if err != nil {
+		t.Fatalf("get music by composer id: %v", err)
+	}
+	if len(musics) != 1 || musics[0].ID != "m-composed" {
+		t.Fatalf("unexpected music by composer: %+v", musics)
+	}
+
+	// Searching by composer name should surface the composed track.
+	for _, keyword := range []string{"Mozart", "Wolfgang"} {
+		total, found, err := SearchMusic(keyword, 1, 10)
+		if err != nil {
+			t.Fatalf("search %q: %v", keyword, err)
+		}
+		if total != 1 || len(found) != 1 || found[0].ID != "m-composed" {
+			t.Fatalf("search %q expected m-composed, got total=%d %+v", keyword, total, found)
+		}
+	}
+
+	// DeleteMusicCascade should clear the composer relation.
+	if err := DeleteMusicCascade("m-composed", true); err != nil {
+		t.Fatalf("cascade delete: %v", err)
+	}
+	var n int
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM music_composer_relation WHERE musicId='m-composed'`).Scan(&n); err != nil {
+		t.Fatalf("count after delete: %v", err)
+	}
+	if n != 0 {
+		t.Fatalf("expected composer relation removed by cascade, found %d", n)
+	}
+}

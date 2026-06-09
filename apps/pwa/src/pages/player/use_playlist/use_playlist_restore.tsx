@@ -131,11 +131,7 @@ const Restore = styled.div`
 
 const normalizeStoredPlaylist = (
   playlist: MusicWithSingerAliases[],
-): MusicWithSingerAliases[] =>
-  playlist.map((music) => ({
-    ...music,
-    lyricists: music.lyricists ?? [],
-  }));
+): MusicWithSingerAliases[] => playlist;
 
 function usePlaylistRestore(playlist: PlaylistMusic[]) {
   useEffect(

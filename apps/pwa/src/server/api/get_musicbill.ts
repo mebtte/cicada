@@ -38,6 +38,12 @@ interface Response {
       aliases: string[];
       avatar: string;
     }[];
+    composers: {
+      id: string;
+      name: string;
+      aliases: string[];
+      avatar: string;
+    }[];
   }[];
 }
 
@@ -68,6 +74,7 @@ async function getMusicbill(id: string) {
       coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
       asset: prefixServerOrigin(m.asset),
       lyricists: m.lyricists ?? [],
+      composers: m.composers ?? [],
     })),
   };
 }

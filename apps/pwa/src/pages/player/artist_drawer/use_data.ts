@@ -70,6 +70,7 @@ export default (artistId: string) => {
       const musicList = [
         ...(data.value?.singerMusicList ?? []),
         ...(data.value?.lyricistMusicList ?? []),
+        ...(data.value?.composerMusicList ?? []),
       ];
       if (musicList.find((m) => m.id === id)) {
         getData();

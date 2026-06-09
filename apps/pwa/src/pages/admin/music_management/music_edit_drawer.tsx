@@ -107,6 +107,7 @@ interface Music {
   searchKeywords: string;
   singers: Artist[];
   lyricists: Artist[];
+  composers: Artist[];
   heat: number;
   lyrics: Lyric[];
   forkFromList: RelatedMusic[];
@@ -657,6 +658,9 @@ function EditContent({
   const [lyricists, setLyricists] = useState<SelectOption<Artist>[]>(() =>
     music.lyricists.map(formatArtistToOption),
   );
+  const [composers, setComposers] = useState<SelectOption<Artist>[]>(() =>
+    music.composers.map(formatArtistToOption),
+  );
   const [forkFromList, setForkFromList] = useState<
     SelectOption<RelatedMusic>[]
   >(() => music.forkFromList.map(formatMusicToOption));
@@ -679,6 +683,7 @@ function EditContent({
     setLyrics(music.lyrics.map((lyric) => lyric.lrc));
     setSingers(music.singers.map(formatArtistToOption));
     setLyricists(music.lyricists.map(formatArtistToOption));
+    setComposers(music.composers.map(formatArtistToOption));
     setForkFromList(music.forkFromList.map(formatMusicToOption));
     setYear(music.year === null ? '' : `${music.year}`);
   }, [music]);
@@ -734,6 +739,10 @@ function EditContent({
     () => lyricists.map((option) => option.value.id),
     [lyricists],
   );
+  const composerIds = useMemo(
+    () => composers.map((option) => option.value.id),
+    [composers],
+  );
   const forkFromIds = useMemo(
     () => forkFromList.map((option) => option.value.id),
     [forkFromList],
@@ -749,6 +758,10 @@ function EditContent({
   const originalLyricistIds = useMemo(
     () => music.lyricists.map((lyricist) => lyricist.id),
     [music.lyricists],
+  );
+  const originalComposerIds = useMemo(
+    () => music.composers.map((composer) => composer.id),
+    [music.composers],
   );
   const originalForkFromIds = useMemo(
     () => music.forkFromList.map((forkFrom) => forkFrom.id),
@@ -766,6 +779,7 @@ function EditContent({
       !stringArrayEqual(normalizedLyrics, originalLyrics)) ||
     !stringArrayEqual(sortedIds(singerIds), sortedIds(originalSingerIds)) ||
     !stringArrayEqual(sortedIds(lyricistIds), sortedIds(originalLyricistIds)) ||
+    !stringArrayEqual(sortedIds(composerIds), sortedIds(originalComposerIds)) ||
     !stringArrayEqual(sortedIds(forkFromIds), sortedIds(originalForkFromIds)) ||
     parsedYear !== music.year;
 
@@ -862,6 +876,15 @@ function EditContent({
 
   const onLyricistCreated = useCallback((artist: Artist) => {
     setLyricists((list) => {
+      if (list.some((option) => option.value.id === artist.id)) {
+        return list;
+      }
+      return [...list, formatArtistToOption(artist)];
+    });
+  }, []);
+
+  const onComposerCreated = useCallback((artist: Artist) => {
+    setComposers((list) => {
       if (list.some((option) => option.value.id === artist.id)) {
         return list;
       }
@@ -1120,6 +1143,16 @@ function EditContent({
       }
 
       if (
+        !stringArrayEqual(sortedIds(composerIds), sortedIds(originalComposerIds))
+      ) {
+        await updateMusic({
+          id: music.id,
+          key: AllowUpdateKey.COMPOSER,
+          value: composerIds,
+        });
+      }
+
+      if (
         !stringArrayEqual(sortedIds(forkFromIds), sortedIds(originalForkFromIds))
       ) {
         await updateMusic({
@@ -1307,6 +1340,23 @@ function EditContent({
           />
         </Group>
 
+        <Group>
+          <GroupHeader>
+            <GroupTitle>{t('composer')}</GroupTitle>
+            <CreateArtistLabel
+              notifyOnCreated={false}
+              onCreated={onComposerCreated}
+            />
+          </GroupHeader>
+          <MultiSelect
+            value={composers}
+            loadOptions={searchArtist}
+            onChange={setComposers}
+            disabled={saving}
+            placeholder=""
+          />
+        </Group>
+
         <Input
           label={t('year_of_issue')}
           value={year}
@@ -1468,6 +1518,7 @@ function MusicEditDrawer({
           searchKeywords: result.searchKeywords,
           singers: result.singers,
           lyricists: result.lyricists,
+          composers: result.composers,
           heat: result.heat,
           lyrics,
           forkFromList: result.forkFromList,

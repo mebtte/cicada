@@ -18,6 +18,7 @@ interface Music {
   asset: string;
   singers: ArtistInMusic[];
   lyricists: ArtistInMusic[];
+  composers: ArtistInMusic[];
 }
 
 interface Response {
@@ -32,14 +33,16 @@ interface Response {
   }[];
   singerMusicList: Music[];
   lyricistMusicList: Music[];
+  composerMusicList: Music[];
 }
 
 type RawResponse = Omit<
   Response,
-  'singerMusicList' | 'lyricistMusicList' | 'photos'
+  'singerMusicList' | 'lyricistMusicList' | 'composerMusicList' | 'photos'
 > & {
   singerMusicList?: Response['singerMusicList'];
   lyricistMusicList?: Response['lyricistMusicList'];
+  composerMusicList?: Response['composerMusicList'];
   photos?: Response['photos'];
 };
 
@@ -52,6 +55,7 @@ const normalizeMusic = (musicList: Music[] = []) =>
     asset: prefixServerOrigin(music.asset),
     singers: music.singers ?? [],
     lyricists: music.lyricists ?? [],
+    composers: music.composers ?? [],
   }));
 
 async function getArtist(id: string): Promise<Response> {
@@ -72,6 +76,7 @@ async function getArtist(id: string): Promise<Response> {
     })),
     singerMusicList: normalizeMusic(artist.singerMusicList),
     lyricistMusicList: normalizeMusic(artist.lyricistMusicList),
+    composerMusicList: normalizeMusic(artist.composerMusicList),
   };
 }
 

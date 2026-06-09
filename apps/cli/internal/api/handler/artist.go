@@ -24,6 +24,7 @@ func GetArtist(c *gin.Context) {
 
 	singerMusicList, _ := store.GetMusicsBySingerID(id)
 	lyricistMusicList, _ := store.GetMusicsByLyricistID(id)
+	composerMusicList, _ := store.GetMusicsByComposerID(id)
 	photos, _ := store.ListArtistPhotos(id)
 	photoItems := make([]gin.H, len(photos))
 	for i, p := range photos {
@@ -42,6 +43,7 @@ func GetArtist(c *gin.Context) {
 		"photos":            photoItems,
 		"singerMusicList":   artistMusicItems(singerMusicList),
 		"lyricistMusicList": artistMusicItems(lyricistMusicList),
+		"composerMusicList": artistMusicItems(composerMusicList),
 	})
 }
 
@@ -298,8 +300,10 @@ func artistMusicItems(musicList []store.Music) []gin.H {
 	}
 	singers, _ := store.GetSingersInMusicIDs(musicIDs)
 	lyricists, _ := store.GetLyricistsInMusicIDs(musicIDs)
+	composers, _ := store.GetComposersInMusicIDs(musicIDs)
 	singerMap := groupArtistsByMusic(singers)
 	lyricistMap := groupArtistsByMusic(lyricists)
+	composerMap := groupArtistsByMusic(composers)
 
 	musicItems := make([]gin.H, len(musicList))
 	for i, music := range musicList {
@@ -313,6 +317,7 @@ func artistMusicItems(musicList []store.Music) []gin.H {
 			"asset":          config.AssetPublicURL(music.Asset, config.AssetTypeMusic),
 			"singers":        artistItems(singerMap[music.ID]),
 			"lyricists":      artistItems(lyricistMap[music.ID]),
+			"composers":      artistItems(composerMap[music.ID]),
 		}
 	}
 	return musicItems

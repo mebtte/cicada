@@ -33,6 +33,7 @@ export enum AllowUpdateKey {
   ASSET = 'asset',
   SINGER = 'singers',
   LYRICIST = 'lyricists',
+  COMPOSER = 'composers',
   FORK_FROM = 'forkFrom',
   YEAR = 'year',
 }

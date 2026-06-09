@@ -18,6 +18,7 @@ export interface OfflineMusic {
   coverThumbnail?: string;
   singers: { id: string; name: string; aliases: string[] }[];
   lyricists: { id: string; name: string; aliases: string[] }[];
+  composers: { id: string; name: string; aliases: string[] }[];
   cachedAt: number;
 }
 
@@ -30,7 +31,7 @@ export enum Key {
   SERVER = 'server',
 
   DOWNLOAD_FLOATING_POSITION = 'download-floating-position',
-  OFFLINE_MUSIC = 'offline-music',
+  OFFLINE_MUSIC = 'offline-music-v2',
   STORAGE_PERSISTENCE_REQUESTED = 'storage-persistence-requested',
 }
 

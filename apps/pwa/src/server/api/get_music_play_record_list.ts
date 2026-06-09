@@ -32,6 +32,10 @@ function getMusicPlayRecordList({
         id: string;
         name: string;
       }[];
+      composers: {
+        id: string;
+        name: string;
+      }[];
     }[];
   }>({
     path: '/api/music_play_record_list',
