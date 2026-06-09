@@ -9,35 +9,22 @@ import {
   People,
   Star,
 } from '@/components/icon';
-import { useContext } from 'react';
+import { type MouseEvent, useContext } from 'react';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
-import { useTheme } from '@/global_states/theme';
 import e, { EventType } from '../../eventemitter';
 import Context from '../../context';
 import { openCreateMusicbillDialog } from '../../utils';
 
 const reloadMusicbillList = () =>
   e.emit(EventType.RELOAD_MUSICBILL_LIST, { silence: false });
-const OPEN_DRAWER_AFTER_CLOSE_FRAME_COUNT = 2;
-
-function runAfterAnimationFrames(callback: () => void, frameCount: number) {
-  let currentFrame = 0;
-
-  const run = () => {
-    currentFrame += 1;
-
-    if (currentFrame >= frameCount) {
-      callback();
-      return;
-    }
-
-    window.requestAnimationFrame(run);
-  };
-
-  window.requestAnimationFrame(run);
-}
+const reloadMusicbillListWithoutClosingSidebar = (
+  event: MouseEvent<HTMLButtonElement>,
+) => {
+  event.stopPropagation();
+  reloadMusicbillList();
+};
 
 const Style = styled.div`
   margin: 0 12px;
@@ -63,30 +50,12 @@ const ToolButton = styled(Button)`
 `;
 
 function Top() {
-  const { miniMode } = useTheme();
   const { getMusicbillListStatus, musicbillList } = useContext(Context);
   const openSharedMusicbillInvitationDrawer = () => {
-    if (miniMode) {
-      e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
-      window.requestAnimationFrame(() =>
-        e.emit(EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER, null),
-      );
-      return;
-    }
     e.emit(EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER, null);
   };
   const openPublicMusicbillCollectionDrawer = () => {
-    if (!miniMode) {
-      e.emit(EventType.OPEN_PUBLIC_MUSICBILL_COLLECTION_DRAWER, null);
-      return;
-    }
-
-    e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
-    // 先等窄屏侧栏关闭，再打开收藏抽屉，避免两个 drawer 叠加后关闭按钮不可达。
-    runAfterAnimationFrames(
-      () => e.emit(EventType.OPEN_PUBLIC_MUSICBILL_COLLECTION_DRAWER, null),
-      OPEN_DRAWER_AFTER_CLOSE_FRAME_COUNT,
-    );
+    e.emit(EventType.OPEN_PUBLIC_MUSICBILL_COLLECTION_DRAWER, null);
   };
 
   return (
@@ -96,7 +65,7 @@ function Top() {
           square
           variant="ghost"
           size="sm"
-          onClick={reloadMusicbillList}
+          onClick={reloadMusicbillListWithoutClosingSidebar}
           loading={getMusicbillListStatus === RequestStatus.LOADING}
         >
           <Refresh />

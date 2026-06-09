@@ -6,6 +6,7 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import Content from './content';
 import e, { EventType } from '../eventemitter';
 import { WIDTH } from './constants';
+import useDynamicZIndex from '../use_dynamic_z_index';
 
 const onClose = () => e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
 const ContentWrapper = styled.div`
@@ -19,6 +20,7 @@ const ContentWrapper = styled.div`
 function MiniMode() {
   const [open, setOpen] = useState(false);
   const { pathname, search } = useLocation();
+  const zIndex = useDynamicZIndex(EventType.MINI_MODE_OPEN_SIDEBAR);
 
   useEffect(() => {
     const unlistenOpen = e.listen(EventType.MINI_MODE_OPEN_SIDEBAR, () =>
@@ -45,6 +47,7 @@ function MiniMode() {
         style={{ width: WIDTH }}
         // 侧边栏由滑动手势呼出, 阻止 Radix 默认聚焦首个菜单项, 避免触发 focus-visible 描边
         onOpenAutoFocus={(event) => event.preventDefault()}
+        zIndex={zIndex}
       >
         <ContentWrapper onClick={onClose}>
           <Content />

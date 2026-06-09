@@ -24,9 +24,6 @@ func GetSessionList(c *gin.Context) {
 		list[i] = gin.H{
 			"id":                      s.ID,
 			"deviceName":              s.DeviceName,
-			"userAgent":               s.UserAgent,
-			"createIP":                s.CreateIP,
-			"lastSeenIP":              s.LastSeenIP,
 			"createTimestamp":         s.CreateTimestamp,
 			"lastSeenTimestamp":       s.LastSeenTimestamp,
 			"inactiveExpireTimestamp": s.LastSeenTimestamp + int64(auth.SessionIdleTimeout/time.Millisecond),

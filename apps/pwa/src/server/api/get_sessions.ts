@@ -3,9 +3,6 @@ import { request } from '..';
 export interface AuthSession {
   id: string;
   deviceName: string;
-  userAgent: string;
-  createIP: string;
-  lastSeenIP: string;
   createTimestamp: number;
   lastSeenTimestamp: number;
   inactiveExpireTimestamp: number;

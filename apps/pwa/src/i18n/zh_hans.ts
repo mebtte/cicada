@@ -238,7 +238,6 @@ const zhCN: {
   device_name: '设备名称',
   created_at: '创建时间',
   last_seen_at: '最近活动时间',
-  last_seen_ip: '最近活动 IP',
   inactive_expire_at: '闲置失效时间',
   rename: '重命名',
   modify: '修改',

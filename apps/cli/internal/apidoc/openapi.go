@@ -1536,9 +1536,6 @@ func authSessionSchema() map[string]any {
 		map[string]any{
 			"id":                      strSchema("Auth session ID.", "session-1"),
 			"deviceName":              strSchema("Device display name.", "Chrome on macOS"),
-			"userAgent":               strSchema("Raw User-Agent.", "Chrome on macOS"),
-			"createIP":                strSchema("IP address used when the session was created.", "127.0.0.1"),
-			"lastSeenIP":              strSchema("Most recent IP address seen for the session.", "127.0.0.1"),
 			"createTimestamp":         intSchema("Creation timestamp in milliseconds.", 1710000000000),
 			"lastSeenTimestamp":       intSchema("Last activity timestamp in milliseconds.", 1710100000000),
 			"inactiveExpireTimestamp": intSchema("Idle-expiry timestamp in milliseconds.", 1725652000000),
@@ -1551,9 +1548,6 @@ func authSessionExample() map[string]any {
 	return map[string]any{
 		"id":                      "session-1",
 		"deviceName":              "Chrome on macOS",
-		"userAgent":               "Chrome on macOS",
-		"createIP":                "127.0.0.1",
-		"lastSeenIP":              "127.0.0.1",
 		"createTimestamp":         int64(1710000000000),
 		"lastSeenTimestamp":       int64(1710100000000),
 		"inactiveExpireTimestamp": int64(1725652000000),
