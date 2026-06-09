@@ -24,16 +24,25 @@ const TTL_DAY = SHARED_MUSICBILL_INVITATION_MINIMAL_TTL / (1000 * 60 * 60 * 24);
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
 const Root = styled.div`
+  isolation: isolate;
   height: 100%;
   min-height: 0;
 
   display: flex;
   flex-direction: column;
+`;
+const Header = styled(DrawerHeader)`
+  position: relative;
+  z-index: 3;
+  padding: 20px 18px 16px;
 
-  background:
-    linear-gradient(180deg, rgb(246 255 250) 0, #fff 170px);
+  background: #fff;
+  border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
 `;
 const Body = styled.div`
+  position: relative;
+  z-index: 0;
   flex: 1;
   min-height: 0;
   padding: 16px 16px max(22px, env(safe-area-inset-bottom, 22px));
@@ -114,9 +123,9 @@ function SharedMusicbillInvitationDrawer() {
         zIndex={zIndex}
       >
         <Root>
-          <DrawerHeader>
+          <Header>
             <DrawerTitle>{t('shared_musicbill_invitation')}</DrawerTitle>
-          </DrawerHeader>
+          </Header>
           {data.loading ? (
             <StateBody>
               <Center>
