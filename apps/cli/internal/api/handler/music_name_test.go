@@ -97,8 +97,8 @@ func TestAdminUpdateMusicNameLimit(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", "user-1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}

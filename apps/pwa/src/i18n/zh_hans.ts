@@ -75,7 +75,6 @@ const zhCN: {
   no_music_in_musicbill: '乐单暂无音乐',
   user_created: '用户已创建',
   create_user: '创建用户',
-  creator: '创建用户',
   remark: '备注',
   description: '描述',
   create: '创建',

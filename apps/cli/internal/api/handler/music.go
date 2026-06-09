@@ -294,7 +294,7 @@ func AdminCreateMusic(c *gin.Context) {
 			return
 		}
 	}
-	id, err := store.CreateMusic(body.Name, musicType, u.ID, body.Asset)
+	id, err := store.CreateMusic(body.Name, musicType, body.Asset)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
@@ -891,7 +891,7 @@ func musicListWithLyricsResponse(musics []store.Music, total int) (gin.H, error)
 	return resp, nil
 }
 
-func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
+func adminMusicListResponse(musics []store.Music, total int) gin.H {
 	if len(musics) == 0 {
 		return gin.H{"total": total, "musicList": []any{}}
 	}
@@ -924,11 +924,6 @@ func adminMusicListResponse(musics []store.AdminMusic, total int) gin.H {
 			"createTimestamp": m.CreateTimestamp,
 			"singers":         artistItems(bySong[m.ID]),
 			"lyricists":       artistItems(lyricistsBySong[m.ID]),
-			"createUser": gin.H{
-				"id":       m.CreateUserID,
-				"username": m.CreateUserUsername,
-				"nickname": m.CreateUserNickname,
-			},
 		}
 	}
 	return gin.H{"total": total, "musicList": list}

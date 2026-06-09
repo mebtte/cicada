@@ -1,7 +1,6 @@
 package store
 
 import (
-	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -16,26 +15,16 @@ type Artist struct {
 	Name            string
 	Aliases         string
 	SearchKeywords  string
-	CreateUserID    string
 	CreateTimestamp int64
 }
 
-type AdminArtist struct {
-	ID                 string
-	Name               string
-	Aliases            string
-	SearchKeywords     string
-	CreateUserID       string
-	CreateUserUsername string
-	CreateUserNickname string
-	CreateTimestamp    int64
-}
+const artistSelectColumns = `id,name,aliases,searchKeywords,createTimestamp`
 
 func GetArtistByID(id string) (*Artist, error) {
 	a := &Artist{}
 	err := DB().QueryRow(
-		`SELECT id,name,aliases,searchKeywords,createUserId,createTimestamp FROM artist WHERE id=?`, id,
-	).Scan(&a.ID, &a.Name, &a.Aliases, &a.SearchKeywords, &a.CreateUserID, &a.CreateTimestamp)
+		`SELECT `+artistSelectColumns+` FROM artist WHERE id=?`, id,
+	).Scan(&a.ID, &a.Name, &a.Aliases, &a.SearchKeywords, &a.CreateTimestamp)
 	return a, err
 }
 
@@ -44,7 +33,7 @@ func GetArtistsByIDs(ids []string) ([]Artist, error) {
 		return nil, nil
 	}
 	rows, err := DB().Query(
-		`SELECT id,name,aliases,searchKeywords,createUserId,createTimestamp FROM artist WHERE id IN (`+placeholders(len(ids))+`)`,
+		`SELECT `+artistSelectColumns+` FROM artist WHERE id IN (`+placeholders(len(ids))+`)`,
 		strs2any(ids)...,
 	)
 	if err != nil {
@@ -54,7 +43,7 @@ func GetArtistsByIDs(ids []string) ([]Artist, error) {
 	var out []Artist
 	for rows.Next() {
 		a := Artist{}
-		rows.Scan(&a.ID, &a.Name, &a.Aliases, &a.SearchKeywords, &a.CreateUserID, &a.CreateTimestamp)
+		rows.Scan(&a.ID, &a.Name, &a.Aliases, &a.SearchKeywords, &a.CreateTimestamp)
 		out = append(out, a)
 	}
 	return out, nil
@@ -81,7 +70,7 @@ func SearchArtists(keyword string, page, pageSize int) (int, []Artist, error) {
 		pat, pat, pat,
 	).Scan(&total)
 	rows, err := DB().Query(
-		`SELECT id,name,aliases,searchKeywords,createUserId,createTimestamp
+		`SELECT `+artistSelectColumns+`
 		FROM artist
 		WHERE name LIKE ? ESCAPE '\' OR aliases LIKE ? ESCAPE '\' OR searchKeywords LIKE ? ESCAPE '\'
 		ORDER BY
@@ -104,7 +93,7 @@ func SearchArtists(keyword string, page, pageSize int) (int, []Artist, error) {
 	var artists []Artist
 	for rows.Next() {
 		a := Artist{}
-		rows.Scan(&a.ID, &a.Name, &a.Aliases, &a.SearchKeywords, &a.CreateUserID, &a.CreateTimestamp)
+		rows.Scan(&a.ID, &a.Name, &a.Aliases, &a.SearchKeywords, &a.CreateTimestamp)
 		artists = append(artists, a)
 	}
 	return total, artists, nil
@@ -145,7 +134,7 @@ func GetMusicCountsByArtistIDs(artistIDs []string) (map[string]int, error) {
 	return counts, nil
 }
 
-func GetAdminArtistList(keyword, filterKey string, page, pageSize int) (int, []AdminArtist, error) {
+func GetAdminArtistList(keyword, filterKey string, page, pageSize int) (int, []Artist, error) {
 	where := ""
 	args := []any{}
 	trimmedKeyword := strings.TrimSpace(keyword)
@@ -153,32 +142,31 @@ func GetAdminArtistList(keyword, filterKey string, page, pageSize int) (int, []A
 		pattern := "%" + trimmedKeyword + "%"
 		switch filterKey {
 		case "id":
-			where = " WHERE a.id LIKE ?"
+			where = " WHERE id LIKE ?"
 			args = append(args, pattern)
 		case "name":
-			where = " WHERE a.name LIKE ?"
+			where = " WHERE name LIKE ?"
 			args = append(args, pattern)
 		case "alias":
-			where = " WHERE a.aliases LIKE ?"
+			where = " WHERE aliases LIKE ?"
 			args = append(args, pattern)
 		default:
-			where = " WHERE a.id LIKE ? OR a.name LIKE ? OR a.aliases LIKE ? OR a.searchKeywords LIKE ?"
+			where = " WHERE id LIKE ? OR name LIKE ? OR aliases LIKE ? OR searchKeywords LIKE ?"
 			args = append(args, pattern, pattern, pattern, pattern)
 		}
 	}
 
 	var total int
-	if err := DB().QueryRow(`SELECT COUNT(1) FROM artist a`+where, args...).Scan(&total); err != nil {
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM artist`+where, args...).Scan(&total); err != nil {
 		return 0, nil, err
 	}
 
 	listArgs := append([]any{}, args...)
 	listArgs = append(listArgs, pageSize, (page-1)*pageSize)
 	rows, err := DB().Query(
-		`SELECT a.id,a.name,a.aliases,a.searchKeywords,a.createUserId,a.createTimestamp,u.username,u.nickname
-		FROM artist a
-		LEFT JOIN user u ON u.id=a.createUserId`+where+`
-		ORDER BY a.createTimestamp DESC, a.id DESC
+		`SELECT `+artistSelectColumns+`
+		FROM artist`+where+`
+		ORDER BY createTimestamp DESC, id DESC
 		LIMIT ? OFFSET ?`,
 		listArgs...,
 	)
@@ -187,25 +175,12 @@ func GetAdminArtistList(keyword, filterKey string, page, pageSize int) (int, []A
 	}
 	defer rows.Close()
 
-	var artists []AdminArtist
+	var artists []Artist
 	for rows.Next() {
-		var username sql.NullString
-		var nickname sql.NullString
-		a := AdminArtist{}
-		if err := rows.Scan(
-			&a.ID,
-			&a.Name,
-			&a.Aliases,
-			&a.SearchKeywords,
-			&a.CreateUserID,
-			&a.CreateTimestamp,
-			&username,
-			&nickname,
-		); err != nil {
+		a := Artist{}
+		if err := rows.Scan(&a.ID, &a.Name, &a.Aliases, &a.SearchKeywords, &a.CreateTimestamp); err != nil {
 			return 0, nil, err
 		}
-		a.CreateUserUsername = username.String
-		a.CreateUserNickname = nickname.String
 		artists = append(artists, a)
 	}
 	if err := rows.Err(); err != nil {
@@ -214,7 +189,7 @@ func GetAdminArtistList(keyword, filterKey string, page, pageSize int) (int, []A
 	return total, artists, nil
 }
 
-func CreateArtist(name, createUserID string) (string, error) {
+func CreateArtist(name string) (string, error) {
 	for range maxCreateArtistIDAttempts {
 		id, err := generateShortPublicID()
 		if err != nil {
@@ -223,8 +198,8 @@ func CreateArtist(name, createUserID string) (string, error) {
 
 		// Short public IDs can theoretically collide, so insert atomically and retry on conflict.
 		result, err := DB().Exec(
-			`INSERT OR IGNORE INTO artist (id,name,createUserId,createTimestamp) VALUES (?,?,?,?)`,
-			id, name, createUserID, time.Now().UnixMilli(),
+			`INSERT OR IGNORE INTO artist (id,name,createTimestamp) VALUES (?,?,?)`,
+			id, name, time.Now().UnixMilli(),
 		)
 		if err != nil {
 			return "", err

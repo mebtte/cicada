@@ -42,19 +42,19 @@ func TestAdminGetMusicList(t *testing.T) {
 		t.Fatalf("insert users: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES
-			('artist-alpha','Alpha Singer',?, 'user-1', ?),
-			('artist-beta','Beta Singer', ?, 'user-2', ?)`,
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES
+			('artist-alpha','Alpha Singer',?, ?),
+			('artist-beta','Beta Singer', ?, ?)`,
 		joinAliases([]string{"Voice Alias"}), now-200,
 		joinAliases([]string{"Shared Singer Alias"}), now-100,
 	); err != nil {
 		t.Fatalf("insert singers: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,aliases,searchKeywords,cover,asset,heat,createUserId,createTimestamp,year) VALUES
-			('music-alpha', ?, 'Alpha Song', ?, 'alpha hidden token', 'alpha.jpg', 'alpha.mp3', 9, 'user-1', ?, 2020),
-			('music-beta', ?, 'Beta Tune', ?, '', '', 'beta.mp3', 3, 'user-2', ?, NULL),
-			('music-gamma', ?, 'Gamma Track', ?, '', '', 'gamma.mp3', 1, 'user-1', ?, 1999)`,
+		`INSERT INTO music (id,type,name,aliases,searchKeywords,cover,asset,heat,createTimestamp,year) VALUES
+			('music-alpha', ?, 'Alpha Song', ?, 'alpha hidden token', 'alpha.jpg', 'alpha.mp3', 9, ?, 2020),
+			('music-beta', ?, 'Beta Tune', ?, '', '', 'beta.mp3', 3, ?, NULL),
+			('music-gamma', ?, 'Gamma Track', ?, '', '', 'gamma.mp3', 1, ?, 1999)`,
 		int(store.MusicTypeSong), joinAliases([]string{"First Alias"}), now-300,
 		int(store.MusicTypeInstrumental), joinAliases([]string{"Second Alias"}), now-100,
 		int(store.MusicTypeSong), joinAliases([]string{"Third Alias"}), now-200,
@@ -83,11 +83,6 @@ func TestAdminGetMusicList(t *testing.T) {
 			Name    string   `json:"name"`
 			Aliases []string `json:"aliases"`
 		} `json:"singers"`
-		CreateUser struct {
-			ID       string `json:"id"`
-			Username string `json:"username"`
-			Nickname string `json:"nickname"`
-		} `json:"createUser"`
 		CreateTimestamp int64 `json:"createTimestamp"`
 	}
 	type response struct {
@@ -128,9 +123,6 @@ func TestAdminGetMusicList(t *testing.T) {
 		}
 		if resp.Data.MusicList[0].ID != "music-beta" || resp.Data.MusicList[1].ID != "music-gamma" {
 			t.Fatalf("unexpected order: %+v", resp.Data.MusicList)
-		}
-		if resp.Data.MusicList[0].CreateUser.Username != "creator_two" {
-			t.Fatalf("unexpected create user: %+v", resp.Data.MusicList[0].CreateUser)
 		}
 		if len(resp.Data.MusicList[0].Aliases) != 1 || resp.Data.MusicList[0].Aliases[0] != "Second Alias" {
 			t.Fatalf("unexpected aliases: %+v", resp.Data.MusicList[0].Aliases)
@@ -235,14 +227,8 @@ func TestAdminGetMusicIncludesSearchKeywordsOnlyForAdminDetail(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,searchKeywords,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeSong), "Song", "hidden admin token", "song.mp3", "user-1", now,
+		`INSERT INTO music (id,type,name,searchKeywords,asset,createTimestamp) VALUES (?,?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeSong), "Song", "hidden admin token", "song.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}

@@ -3,7 +3,6 @@ package handler
 import (
 	"cicada/internal/api"
 	"cicada/internal/api/apperr"
-	"cicada/internal/api/middleware"
 	"cicada/internal/config"
 	"cicada/internal/store"
 
@@ -19,7 +18,6 @@ type createArtistPhotoBody struct {
 }
 
 func AdminCreateArtistPhoto(c *gin.Context) {
-	u := middleware.GetUser(c)
 	var body createArtistPhotoBody
 	if err := c.ShouldBindJSON(&body); err != nil {
 		api.Fail(c, apperr.WrongParameter)
@@ -38,7 +36,7 @@ func AdminCreateArtistPhoto(c *gin.Context) {
 		return
 	}
 	thumbnail := assetThumbnailDataURL(body.Asset, config.AssetTypeArtistPhoto)
-	id, err := store.CreateArtistPhotoWithThumbnail(body.ArtistID, body.Asset, thumbnail, body.Description, u.ID)
+	id, err := store.CreateArtistPhotoWithThumbnail(body.ArtistID, body.Asset, thumbnail, body.Description)
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return

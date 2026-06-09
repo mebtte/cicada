@@ -486,22 +486,6 @@ const Muted = styled.span`
   color: ${CSSVariable.TEXT_COLOR_DISABLED};
 `;
 
-const UserName = styled.div`
-  font-family: ${FONT};
-  font-weight: 800;
-  line-height: 1.45;
-  color: rgb(75 75 75);
-`;
-
-const UserAccount = styled.div`
-  margin-top: 2px;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  font-family: ${FONT};
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0;
-`;
-
 const FileInfoBox = styled.div`
   min-width: 170px;
   display: flex;
@@ -656,22 +640,6 @@ const PaginationBox = styled.div`
     justify-content: center;
   }
 `;
-
-const formatCreateUser = (music: MusicItem) => {
-  const { createUser } = music;
-  if (!createUser.id) return <Muted>{t('unknown')}</Muted>;
-
-  return (
-    <>
-      <UserName title={createUser.nickname || createUser.username}>
-        {createUser.nickname || createUser.username || t('unknown')}
-      </UserName>
-      <UserAccount title={createUser.id}>
-        {createUser.username ? `@${createUser.username}` : createUser.id}
-      </UserAccount>
-    </>
-  );
-};
 
 const formatDurationMs = (durationMs: number) => {
   const totalSeconds = Math.round(durationMs / 1000);
@@ -1103,7 +1071,6 @@ function MusicList({
                       )}
                     </SortHeaderButton>
                   </Th>
-                  <Th>{capitalize(t('creator'))}</Th>
                   <Th>{capitalize(t('create_time'))}</Th>
                   <Th>{capitalize(t('manage'))}</Th>
                 </tr>
@@ -1196,7 +1163,6 @@ function MusicList({
                     <Td>
                       <Mono>{music.heat}</Mono>
                     </Td>
-                    <Td>{formatCreateUser(music)}</Td>
                     <Td>
                       {day(music.createTimestamp).format('YYYY-MM-DD HH:mm')}
                     </Td>

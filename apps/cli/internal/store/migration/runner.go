@@ -108,6 +108,14 @@ func runUpgrade(ctx context.Context, dataDir string, from, to int) error {
 		}
 		fmt.Fprintf(os.Stderr, "data: applying %d -> %d  %s\n", m.From, m.To, desc)
 
+		if m.WithoutForeignKeys {
+			if _, err := db.Exec(`PRAGMA foreign_keys=OFF`); err != nil {
+				db.Close()
+				journal.Close()
+				return fmt.Errorf("disable foreign keys for %d: %w", m.To, err)
+			}
+		}
+
 		tx, err := db.BeginTx(ctx, nil)
 		if err != nil {
 			db.Close()
@@ -120,14 +128,27 @@ func runUpgrade(ctx context.Context, dataDir string, from, to int) error {
 			// Undo this migration's filesystem ops; the next Recover (on next
 			// boot) is the safety net for db restoration.
 			_ = ReplayReverse(dataDir, m.From)
+			if m.WithoutForeignKeys {
+				_, _ = db.Exec(`PRAGMA foreign_keys=ON`)
+			}
 			db.Close()
 			journal.Close()
 			return fmt.Errorf("migration %d -> %d: %w", m.From, m.To, err)
 		}
 		if err := tx.Commit(); err != nil {
+			if m.WithoutForeignKeys {
+				_, _ = db.Exec(`PRAGMA foreign_keys=ON`)
+			}
 			db.Close()
 			journal.Close()
 			return fmt.Errorf("commit %d: %w", m.To, err)
+		}
+		if m.WithoutForeignKeys {
+			if _, err := db.Exec(`PRAGMA foreign_keys=ON`); err != nil {
+				db.Close()
+				journal.Close()
+				return fmt.Errorf("re-enable foreign keys after %d: %w", m.To, err)
+			}
 		}
 		if err := journal.Checkpoint(m.To); err != nil {
 			db.Close()

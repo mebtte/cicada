@@ -43,8 +43,8 @@ func TestUpdateMusicLyric(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", "user-1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
@@ -114,8 +114,8 @@ func TestUpdateMusicLyricRejectsInstrumental(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeInstrumental), "Instrumental", "missing.mp3", "user-1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeInstrumental), "Instrumental", "missing.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
@@ -169,8 +169,8 @@ func TestUpdateMusicForkFrom(t *testing.T) {
 	}
 	for _, musicID := range []string{"music-1", "source-1", "source-2", "old-source"} {
 		if _, err := store.DB().Exec(
-			`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-			musicID, int(store.MusicTypeSong), musicID, "missing.mp3", "user-1", now,
+			`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+			musicID, int(store.MusicTypeSong), musicID, "missing.mp3", now,
 		); err != nil {
 			t.Fatalf("insert music %s: %v", musicID, err)
 		}
@@ -245,8 +245,8 @@ func TestUpdateMusicCoverStoresThumbnail(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", "user-1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
@@ -315,8 +315,8 @@ func TestUpdateMusicSearchKeywords(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", "user-1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}

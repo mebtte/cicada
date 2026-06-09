@@ -420,12 +420,7 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 	}
 
 	if _, err := store.DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES ('u','u','p','u',0)`,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES ('m',1,'song','linked.mp3','u',0)`,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES ('m',1,'song','linked.mp3',0)`,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
@@ -469,15 +464,10 @@ func TestDecreaseMusicHeatDecreasesDailyWithoutGoingBelowZero(t *testing.T) {
 	}
 
 	if _, err := store.DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES ('u','u','p','u',0)`,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,heat,createUserId,createTimestamp) VALUES
-			('heat-2',1,'two','two.mp3',2,'u',0),
-			('heat-1',1,'one','one.mp3',1,'u',0),
-			('heat-0',1,'zero','zero.mp3',0,'u',0)`,
+		`INSERT INTO music (id,type,name,asset,heat,createTimestamp) VALUES
+			('heat-2',1,'two','two.mp3',2,0),
+			('heat-1',1,'one','one.mp3',1,0),
+			('heat-0',1,'zero','zero.mp3',0,0)`,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}

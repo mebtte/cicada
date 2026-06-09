@@ -86,15 +86,15 @@ func TestSearchHandlersMatchSearchKeywordsWithoutReturningThem(t *testing.T) {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
-			('artist-1','Visible Singer','', 'hidden artist token', 'user-1', ?)`,
+		`INSERT INTO artist (id,name,aliases,searchKeywords,createTimestamp) VALUES
+			('artist-1','Visible Singer','', 'hidden artist token', ?)`,
 		now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,aliases,searchKeywords,asset,createUserId,createTimestamp) VALUES
-			('music-1',1,'Visible Song','', 'hidden music token', 'song.mp3', 'user-1', ?)`,
+		`INSERT INTO music (id,type,name,aliases,searchKeywords,asset,createTimestamp) VALUES
+			('music-1',1,'Visible Song','', 'hidden music token', 'song.mp3', ?)`,
 		now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)

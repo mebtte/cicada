@@ -51,26 +51,26 @@ func TestAdminGetDashboard(t *testing.T) {
 		t.Fatalf("insert users: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,createUserId,createTimestamp) VALUES
-			('artist-recent','Recent Singer','user-1',?),
-			('artist-old','Old Singer','user-1',?)`,
+		`INSERT INTO artist (id,name,createTimestamp) VALUES
+			('artist-recent','Recent Singer',?),
+			('artist-old','Old Singer',?)`,
 		recent,
 		old,
 	); err != nil {
 		t.Fatalf("insert singers: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,cover,asset,assetSize,assetDurationMs,createUserId,createTimestamp) VALUES
-			('music-recent',?,'Recent Song','','recent.mp3',100,120000,'user-1',?),
-			('music-old',?,'Old Song','old.jpg','old.mp3',250,180000,'user-1',?)`,
+		`INSERT INTO music (id,type,name,cover,asset,assetSize,assetDurationMs,createTimestamp) VALUES
+			('music-recent',?,'Recent Song','','recent.mp3',100,120000,?),
+			('music-old',?,'Old Song','old.jpg','old.mp3',250,180000,?)`,
 		int(store.MusicTypeSong), recent,
 		int(store.MusicTypeSong), old,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist_photo (id,artistId,asset,position,addUserId,addTimestamp) VALUES
-			('photo-old','artist-old','old.jpg',1,'user-1',?)`,
+		`INSERT INTO artist_photo (id,artistId,asset,position,addTimestamp) VALUES
+			('photo-old','artist-old','old.jpg',1,?)`,
 		recent,
 	); err != nil {
 		t.Fatalf("insert artist photo: %v", err)

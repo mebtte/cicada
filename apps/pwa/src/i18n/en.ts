@@ -73,7 +73,6 @@ export default {
   no_music_in_musicbill: 'no music in musicbill',
   user_created: 'user created',
   create_user: 'create user',
-  creator: 'creator',
   remark: 'remark',
   description: 'description',
   create: 'create',

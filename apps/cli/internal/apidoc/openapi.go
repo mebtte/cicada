@@ -420,7 +420,7 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/music",
 			Summary:     "Get music details",
-			Description: "Return music metadata, singers, lyricists, fork relations, creator information, musicbill usage count, and related public musicbills.",
+			Description: "Return music metadata, singers, lyricists, fork relations, musicbill usage count, and related public musicbills.",
 			Tags:        []string{"Music"},
 			Auth:        true,
 			Parameters: []map[string]any{
@@ -1952,7 +1952,7 @@ func singerDetailExample() map[string]any {
 
 func adminSingerDetailSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "aliases", "searchKeywords", "photos", "musicCount", "createTimestamp", "createUser"},
+		[]string{"id", "name", "aliases", "searchKeywords", "photos", "musicCount", "createTimestamp"},
 		map[string]any{
 			"id":              strSchema("Artist ID.", "artist-1"),
 			"name":            strSchema("Artist name.", "Aurora"),
@@ -1961,11 +1961,6 @@ func adminSingerDetailSchema() map[string]any {
 			"photos":          arraySchema(singerPhotoSchema()),
 			"musicCount":      intSchema("Number of music entries linked to this artist.", 3),
 			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
-			"createUser": objSchema([]string{"id", "username", "nickname"}, map[string]any{
-				"id":       strSchema("User ID.", "1"),
-				"username": strSchema("Username.", "alice"),
-				"nickname": strSchema("Nickname.", "Alice"),
-			}),
 		},
 	)
 }
@@ -1981,7 +1976,6 @@ func adminSingerDetailExample() map[string]any {
 		},
 		"musicCount":      3,
 		"createTimestamp": int64(1710000000000),
-		"createUser":      map[string]any{"id": "1", "username": "alice", "nickname": "Alice"},
 	}
 }
 

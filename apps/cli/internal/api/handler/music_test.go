@@ -43,9 +43,9 @@ func TestGetMusicReturnsRelatedPublicMusicbills(t *testing.T) {
 		t.Fatalf("insert owner: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,cover,asset,createUserId,createTimestamp) VALUES
-			('music-1', ?, 'Target Song', 'target.jpg', 'target.mp3', 'owner-1', ?),
-			('music-2', ?, 'Other Song', 'other.jpg', 'other.mp3', 'owner-1', ?)`,
+		`INSERT INTO music (id,type,name,cover,asset,createTimestamp) VALUES
+			('music-1', ?, 'Target Song', 'target.jpg', 'target.mp3', ?),
+			('music-2', ?, 'Other Song', 'other.jpg', 'other.mp3', ?)`,
 		int(store.MusicTypeSong), now,
 		int(store.MusicTypeSong), now,
 	); err != nil {

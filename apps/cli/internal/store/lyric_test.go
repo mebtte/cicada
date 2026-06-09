@@ -37,14 +37,8 @@ func TestUpdateLyricsByMusicIDReplacesLyricsAndSearchContent(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES (?,?,?,?,?,?)`,
-		"music-1", int(MusicTypeSong), "Song", "song.mp3", "user-1", now,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"music-1", int(MusicTypeSong), "Song", "song.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
@@ -107,16 +101,10 @@ func TestSearchMusicIDsByLyricRanksMatchesDeterministically(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := DB().Exec(
-		`INSERT INTO music (id,type,name,asset,heat,createUserId,createTimestamp) VALUES
-			('song-exact',   ?, 'Exact',   'exact.mp3',   1,   'user-1', ?),
-			('song-prefix',  ?, 'Prefix',  'prefix.mp3',  100, 'user-1', ?),
-			('song-contains',?, 'Contains','contains.mp3',999, 'user-1', ?)`,
+		`INSERT INTO music (id,type,name,asset,heat,createTimestamp) VALUES
+			('song-exact',   ?, 'Exact',   'exact.mp3',   1,   ?),
+			('song-prefix',  ?, 'Prefix',  'prefix.mp3',  100, ?),
+			('song-contains',?, 'Contains','contains.mp3',999, ?)`,
 		int(MusicTypeSong), now-300,
 		int(MusicTypeSong), now-200,
 		int(MusicTypeSong), now-100,
