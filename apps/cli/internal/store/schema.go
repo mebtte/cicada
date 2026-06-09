@@ -70,7 +70,6 @@ var tables = []string{
 		name TEXT NOT NULL,
 		aliases TEXT NOT NULL DEFAULT '',
 		searchKeywords TEXT NOT NULL DEFAULT '',
-		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL
 	)`,
 	`CREATE TABLE IF NOT EXISTS artist_photo (
@@ -80,7 +79,6 @@ var tables = []string{
 		thumbnail TEXT NOT NULL DEFAULT '',
 		position INTEGER NOT NULL,
 		description TEXT NOT NULL DEFAULT '',
-		addUserId TEXT NOT NULL REFERENCES user(id),
 		addTimestamp INTEGER NOT NULL
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_artist_photo_artist ON artist_photo(artistId, position)`,
@@ -99,7 +97,6 @@ var tables = []string{
 		assetCodec TEXT NOT NULL DEFAULT '',
 		assetBitRate INTEGER NOT NULL DEFAULT 0,
 		heat INTEGER NOT NULL DEFAULT 0,
-		createUserId TEXT NOT NULL REFERENCES user(id),
 		createTimestamp INTEGER NOT NULL
 	)`,
 	`CREATE TABLE IF NOT EXISTS music_fork (

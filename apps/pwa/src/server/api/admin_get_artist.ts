@@ -13,11 +13,6 @@ interface Response {
     description: string;
   }[];
   musicCount: number;
-  createUser: {
-    id: string;
-    username: string;
-    nickname: string;
-  };
   createTimestamp: number;
 }
 

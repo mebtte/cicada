@@ -50,33 +50,33 @@ func TestGetArtist(t *testing.T) {
 	insertUser("user-2", "viewer", "Viewer")
 
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?)`,
-		"artist-1", "Creator Singer", joinAliases([]string{"Alias A", "Alias B"}), "user-1", now,
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES (?,?,?,?)`,
+		"artist-1", "Creator Singer", joinAliases([]string{"Alias A", "Alias B"}), now,
 	); err != nil {
 		t.Fatalf("insert artist-1: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?)`,
-		"artist-2", "Guest Singer", joinAliases([]string{"Guest Alias"}), "user-2", now,
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES (?,?,?,?)`,
+		"artist-2", "Guest Singer", joinAliases([]string{"Guest Alias"}), now,
 	); err != nil {
 		t.Fatalf("insert artist-2: %v", err)
 	}
 	// Two photos for artist-1 with explicit positions to verify ordering (and
 	// that descriptions round-trip).
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist_photo (id,artistId,asset,position,description,addUserId,addTimestamp) VALUES
-			('photo-a','artist-1','a.jpg',1,'second',  'user-1',?),
-			('photo-b','artist-1','b.jpg',0,'first one','user-1',?)`,
+		`INSERT INTO artist_photo (id,artistId,asset,position,description,addTimestamp) VALUES
+			('photo-a','artist-1','a.jpg',1,'second',  ?),
+			('photo-b','artist-1','b.jpg',0,'first one',?)`,
 		now, now,
 	); err != nil {
 		t.Fatalf("insert photos: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,aliases,cover,asset,heat,createUserId,createTimestamp) VALUES
-			('music-1', ?, 'Song 1', ?, 'cover.jpg', 'song.mp3', 20, 'user-1', ?),
-			('music-2', ?, 'Song 2', '', '', 'song-2.mp3', 20, 'user-1', ?),
-			('music-3', ?, 'Song 3', '', '', 'song-3.mp3', 10, 'user-1', ?),
-			('music-4', ?, 'Song 4', '', '', 'song-4.mp3', 1,  'user-1', ?)`,
+		`INSERT INTO music (id,type,name,aliases,cover,asset,heat,createTimestamp) VALUES
+			('music-1', ?, 'Song 1', ?, 'cover.jpg', 'song.mp3', 20, ?),
+			('music-2', ?, 'Song 2', '', '', 'song-2.mp3', 20, ?),
+			('music-3', ?, 'Song 3', '', '', 'song-3.mp3', 10, ?),
+			('music-4', ?, 'Song 4', '', '', 'song-4.mp3', 1,  ?)`,
 		int(store.MusicTypeSong), joinAliases([]string{"Song Alias"}), now+2000,
 		int(store.MusicTypeSong), now+1000,
 		int(store.MusicTypeSong), now+4000,
@@ -241,34 +241,27 @@ func TestSearchSingerReturnsPhotos(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES
-			('user-1','creator_one',?, 'Creator One', ?)`,
-		store.DoubleMD5("password"), now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES
-			('artist-alpha','Alpha',?, 'user-1', ?),
-			('artist-beta','Beta', ?, 'user-1', ?)`,
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES
+			('artist-alpha','Alpha',?, ?),
+			('artist-beta','Beta', ?, ?)`,
 		joinAliases([]string{"First Alias"}), now-100,
 		joinAliases([]string{"Second Alias"}), now,
 	); err != nil {
 		t.Fatalf("insert singers: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist_photo (id,artistId,asset,position,description,addUserId,addTimestamp) VALUES
-			('photo-beta-2','artist-beta','beta-2.jpg',1,'second beta photo','user-1',?),
-			('photo-beta-1','artist-beta','beta-1.jpg',0,'first beta photo','user-1',?)`,
+		`INSERT INTO artist_photo (id,artistId,asset,position,description,addTimestamp) VALUES
+			('photo-beta-2','artist-beta','beta-2.jpg',1,'second beta photo',?),
+			('photo-beta-1','artist-beta','beta-1.jpg',0,'first beta photo',?)`,
 		now, now,
 	); err != nil {
 		t.Fatalf("insert photos: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES
-			('music-beta-1',1,'Beta Song One','beta-1.mp3','user-1',?),
-			('music-beta-2',1,'Beta Song Two','beta-2.mp3','user-1',?),
-			('music-alpha-1',1,'Alpha Song','alpha-1.mp3','user-1',?)`,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES
+			('music-beta-1',1,'Beta Song One','beta-1.mp3',?),
+			('music-beta-2',1,'Beta Song Two','beta-2.mp3',?),
+			('music-alpha-1',1,'Alpha Song','alpha-1.mp3',?)`,
 		now, now-1, now-2,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
@@ -357,14 +350,8 @@ func TestAdminCreateArtistForceDuplicateName(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?)`,
-		"ABC123", "Same Name", "", "user-1", now,
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES (?,?,?,?)`,
+		"ABC123", "Same Name", "", now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}
@@ -437,18 +424,10 @@ func TestAdminGetArtistList(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES
-			('user-1','creator_one',?, 'Creator One', ?),
-			('user-2','creator_two',?, 'Creator Two', ?)`,
-		store.DoubleMD5("password"), now, store.DoubleMD5("password"), now,
-	); err != nil {
-		t.Fatalf("insert users: %v", err)
-	}
-	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
-			('artist-alpha','Alpha',?, 'alpha hidden token', 'user-1', ?),
-			('artist-beta','Beta', ?, '', 'user-2', ?),
-			('artist-gamma','Gamma',?, '', 'user-1', ?)`,
+		`INSERT INTO artist (id,name,aliases,searchKeywords,createTimestamp) VALUES
+			('artist-alpha','Alpha',?, 'alpha hidden token', ?),
+			('artist-beta','Beta', ?, '', ?),
+			('artist-gamma','Gamma',?, '', ?)`,
 		joinAliases([]string{"First Alias", "Shared Key"}), now-300,
 		joinAliases([]string{"Second Alias"}), now-100,
 		joinAliases([]string{"Third Alias"}), now-200,
@@ -456,20 +435,20 @@ func TestAdminGetArtistList(t *testing.T) {
 		t.Fatalf("insert singers: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist_photo (id,artistId,asset,position,description,addUserId,addTimestamp) VALUES
-			('photo-beta-2','artist-beta','beta-2.jpg',1,'second beta photo','user-2',?),
-			('photo-beta-1','artist-beta','beta-1.jpg',0,'first beta photo','user-2',?),
-			('photo-alpha-1','artist-alpha','alpha-1.jpg',0,'first alpha photo','user-1',?)`,
+		`INSERT INTO artist_photo (id,artistId,asset,position,description,addTimestamp) VALUES
+			('photo-beta-2','artist-beta','beta-2.jpg',1,'second beta photo',?),
+			('photo-beta-1','artist-beta','beta-1.jpg',0,'first beta photo',?),
+			('photo-alpha-1','artist-alpha','alpha-1.jpg',0,'first alpha photo',?)`,
 		now, now, now,
 	); err != nil {
 		t.Fatalf("insert photos: %v", err)
 	}
 	// 准备音乐和歌手关联数据用于校验 musicCount 字段
 	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,createUserId,createTimestamp) VALUES
-			('music-1',1,'Song One','song-1.mp3','user-1',?),
-			('music-2',1,'Song Two','song-2.mp3','user-1',?),
-			('music-3',1,'Song Three','song-3.mp3','user-1',?)`,
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES
+			('music-1',1,'Song One','song-1.mp3',?),
+			('music-2',1,'Song Two','song-2.mp3',?),
+			('music-3',1,'Song Three','song-3.mp3',?)`,
 		now, now, now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
@@ -493,12 +472,7 @@ func TestAdminGetArtistList(t *testing.T) {
 			Asset       string `json:"asset"`
 			Description string `json:"description"`
 		} `json:"photos"`
-		MusicCount int `json:"musicCount"`
-		CreateUser struct {
-			ID       string `json:"id"`
-			Username string `json:"username"`
-			Nickname string `json:"nickname"`
-		} `json:"createUser"`
+		MusicCount      int   `json:"musicCount"`
 		CreateTimestamp int64 `json:"createTimestamp"`
 	}
 	type response struct {
@@ -539,9 +513,6 @@ func TestAdminGetArtistList(t *testing.T) {
 		}
 		if resp.Data.ArtistList[0].ID != "artist-beta" || resp.Data.ArtistList[1].ID != "artist-gamma" {
 			t.Fatalf("unexpected order: %+v", resp.Data.ArtistList)
-		}
-		if resp.Data.ArtistList[0].CreateUser.Username != "creator_two" {
-			t.Fatalf("unexpected create user: %+v", resp.Data.ArtistList[0].CreateUser)
 		}
 		if len(resp.Data.ArtistList[0].Aliases) != 1 || resp.Data.ArtistList[0].Aliases[0] != "Second Alias" {
 			t.Fatalf("unexpected aliases: %+v", resp.Data.ArtistList[0].Aliases)
@@ -627,23 +598,16 @@ func TestAdminGetArtist(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES
-			('user-1','creator_one',?, 'Creator One', ?)`,
-		store.DoubleMD5("password"), now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,aliases,searchKeywords,createUserId,createTimestamp) VALUES
-			('artist-alpha','Alpha',?, 'alpha hidden token', 'user-1', ?)`,
+		`INSERT INTO artist (id,name,aliases,searchKeywords,createTimestamp) VALUES
+			('artist-alpha','Alpha',?, 'alpha hidden token', ?)`,
 		joinAliases([]string{"First Alias", "Second Alias"}), now-100,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist_photo (id,artistId,asset,position,description,addUserId,addTimestamp) VALUES
-			('photo-alpha-2','artist-alpha','alpha-2.jpg',1,'second photo','user-1',?),
-			('photo-alpha-1','artist-alpha','alpha-1.jpg',0,'first photo','user-1',?)`,
+		`INSERT INTO artist_photo (id,artistId,asset,position,description,addTimestamp) VALUES
+			('photo-alpha-2','artist-alpha','alpha-2.jpg',1,'second photo',?),
+			('photo-alpha-1','artist-alpha','alpha-1.jpg',0,'first photo',?)`,
 		now, now,
 	); err != nil {
 		t.Fatalf("insert photos: %v", err)
@@ -661,11 +625,6 @@ func TestAdminGetArtist(t *testing.T) {
 				Asset       string `json:"asset"`
 				Description string `json:"description"`
 			} `json:"photos"`
-			CreateUser struct {
-				ID       string `json:"id"`
-				Username string `json:"username"`
-				Nickname string `json:"nickname"`
-			} `json:"createUser"`
 			CreateTimestamp int64 `json:"createTimestamp"`
 			MusicList       []any `json:"musicList"`
 		} `json:"data"`
@@ -701,9 +660,6 @@ func TestAdminGetArtist(t *testing.T) {
 		}
 		if resp.Data.SearchKeywords != "alpha hidden token" {
 			t.Fatalf("unexpected search keywords: %q", resp.Data.SearchKeywords)
-		}
-		if resp.Data.CreateUser.Username != "creator_one" || resp.Data.CreateUser.Nickname != "Creator One" {
-			t.Fatalf("unexpected create user: %+v", resp.Data.CreateUser)
 		}
 		if resp.Data.CreateTimestamp != now-100 {
 			t.Fatalf("unexpected create timestamp: %d", resp.Data.CreateTimestamp)
@@ -754,14 +710,8 @@ func TestAdminUpdateArtistSearchKeywords(t *testing.T) {
 
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
-	); err != nil {
-		t.Fatalf("insert user: %v", err)
-	}
-	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,createUserId,createTimestamp) VALUES (?,?,?,?)`,
-		"artist-1", "Singer", "user-1", now,
+		`INSERT INTO artist (id,name,createTimestamp) VALUES (?,?,?)`,
+		"artist-1", "Singer", now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}

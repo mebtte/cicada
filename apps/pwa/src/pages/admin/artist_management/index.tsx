@@ -364,32 +364,12 @@ const Photo = styled.img<{ $placeholder: boolean; $visible: boolean }>`
     filter 180ms ease-out;
 `;
 
-const Muted = styled.span`
-  color: ${CSSVariable.TEXT_COLOR_DISABLED};
-`;
-
 const MusicCount = styled.span`
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     'Liberation Mono', 'Courier New', monospace;
   font-size: 13px;
   font-weight: 800;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-`;
-
-const UserName = styled.div`
-  font-family: ${FONT};
-  font-weight: 800;
-  line-height: 1.45;
-  color: rgb(75 75 75);
-`;
-
-const UserAccount = styled.div`
-  margin-top: 2px;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  font-family: ${FONT};
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0;
 `;
 
 const ActionButton = styled.button`
@@ -516,22 +496,6 @@ const PaginationBox = styled.div`
     justify-content: center;
   }
 `;
-
-const formatCreateUser = (artist: Artist) => {
-  const { createUser } = artist;
-  if (!createUser.id) return <Muted>{t('unknown')}</Muted>;
-
-  return (
-    <>
-      <UserName title={createUser.nickname || createUser.username}>
-        {createUser.nickname || createUser.username || t('unknown')}
-      </UserName>
-      <UserAccount title={createUser.id}>
-        {createUser.username ? `@${createUser.username}` : createUser.id}
-      </UserAccount>
-    </>
-  );
-};
 
 function LazyPhoto({
   src,
@@ -849,7 +813,6 @@ function ArtistManagement() {
                     <Th>{capitalize(t('alias'))}</Th>
                     <Th>{capitalize(t('photo'))}</Th>
                     <Th>{capitalize(t('music_amount'))}</Th>
-                    <Th>{capitalize(t('creator'))}</Th>
                     <Th>{capitalize(t('create_time'))}</Th>
                     <Th>{capitalize(t('manage'))}</Th>
                   </tr>
@@ -901,7 +864,6 @@ function ArtistManagement() {
                       <Td>
                         <MusicCount>{artist.musicCount ?? 0}</MusicCount>
                       </Td>
-                      <Td>{formatCreateUser(artist)}</Td>
                       <Td>
                         {day(artist.createTimestamp).format(
                           'YYYY-MM-DD HH:mm',

@@ -51,8 +51,8 @@ func setupSingerPhotoTest(t *testing.T) (admin *store.User, singerID string) {
 	}
 
 	if _, err := store.DB().Exec(
-		`INSERT INTO artist (id,name,aliases,createUserId,createTimestamp) VALUES (?,?,?,?,?)`,
-		"artist-1", "Aurora", "", "user-admin", now,
+		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES (?,?,?,?)`,
+		"artist-1", "Aurora", "", now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}
@@ -182,7 +182,7 @@ func TestAdminCreateArtistPhoto(t *testing.T) {
 
 func TestAdminUpdateArtistPhoto(t *testing.T) {
 	admin, singerID := setupSingerPhotoTest(t)
-	id, err := store.CreateArtistPhoto(singerID, "pic.jpg", "old", admin.ID)
+	id, err := store.CreateArtistPhoto(singerID, "pic.jpg", "old")
 	if err != nil {
 		t.Fatalf("seed photo: %v", err)
 	}
@@ -222,9 +222,9 @@ func TestAdminUpdateArtistPhoto(t *testing.T) {
 
 func TestAdminDeleteArtistPhoto(t *testing.T) {
 	admin, singerID := setupSingerPhotoTest(t)
-	id1, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "", admin.ID)
-	id2, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "", admin.ID)
-	id3, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "", admin.ID)
+	id1, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
+	id2, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
+	id3, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
 
 	t.Run("admin deletes middle photo, gap remains", func(t *testing.T) {
 		code, _, _ := callPhoto(t, AdminDeleteArtistPhoto, http.MethodDelete, "/api/admin/artist/photo",
@@ -250,9 +250,9 @@ func TestAdminDeleteArtistPhoto(t *testing.T) {
 
 func TestAdminReorderArtistPhotos(t *testing.T) {
 	admin, singerID := setupSingerPhotoTest(t)
-	id1, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "", admin.ID)
-	id2, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "", admin.ID)
-	id3, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "", admin.ID)
+	id1, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
+	id2, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
+	id3, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
 
 	t.Run("admin can reorder, first becomes avatar", func(t *testing.T) {
 		code, _, _ := callPhoto(t, AdminReorderArtistPhotos, http.MethodPut, "/api/admin/artist/photo/order",

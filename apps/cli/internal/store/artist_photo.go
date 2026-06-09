@@ -16,14 +16,13 @@ type ArtistPhoto struct {
 	Thumbnail    string
 	Position     int64
 	Description  string
-	AddUserID    string
 	AddTimestamp int64
 }
 
-const artistPhotoColumns = `id,artistId,asset,thumbnail,position,description,addUserId,addTimestamp`
+const artistPhotoColumns = `id,artistId,asset,thumbnail,position,description,addTimestamp`
 
 func scanArtistPhoto(s scanner, p *ArtistPhoto) error {
-	return s.Scan(&p.ID, &p.ArtistID, &p.Asset, &p.Thumbnail, &p.Position, &p.Description, &p.AddUserID, &p.AddTimestamp)
+	return s.Scan(&p.ID, &p.ArtistID, &p.Asset, &p.Thumbnail, &p.Position, &p.Description, &p.AddTimestamp)
 }
 
 type scanner interface {
@@ -87,11 +86,11 @@ func ListArtistPhotosByArtistIDs(artistIDs []string) ([]ArtistPhoto, error) {
 // CreateArtistPhoto prepends a photo to the front (position = min-1, or 0 for
 // the first photo of the artist) so the newest addition appears first in
 // ListArtistPhotos and becomes the artist avatar. Returns the new photo id.
-func CreateArtistPhoto(artistID, asset, description, addUserID string) (string, error) {
-	return CreateArtistPhotoWithThumbnail(artistID, asset, "", description, addUserID)
+func CreateArtistPhoto(artistID, asset, description string) (string, error) {
+	return CreateArtistPhotoWithThumbnail(artistID, asset, "", description)
 }
 
-func CreateArtistPhotoWithThumbnail(artistID, asset, thumbnail, description, addUserID string) (string, error) {
+func CreateArtistPhotoWithThumbnail(artistID, asset, thumbnail, description string) (string, error) {
 	var minPos sql.NullInt64
 	if err := DB().QueryRow(
 		`SELECT MIN(position) FROM artist_photo WHERE artistId=?`, artistID,
@@ -104,8 +103,8 @@ func CreateArtistPhotoWithThumbnail(artistID, asset, thumbnail, description, add
 	}
 	id := uuid.New().String()
 	_, err := DB().Exec(
-		`INSERT INTO artist_photo (`+artistPhotoColumns+`) VALUES (?,?,?,?,?,?,?,?)`,
-		id, artistID, asset, thumbnail, next, description, addUserID, time.Now().UnixMilli(),
+		`INSERT INTO artist_photo (`+artistPhotoColumns+`) VALUES (?,?,?,?,?,?,?)`,
+		id, artistID, asset, thumbnail, next, description, time.Now().UnixMilli(),
 	)
 	if err != nil {
 		return "", err

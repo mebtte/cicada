@@ -133,7 +133,7 @@ func importFile(path, uid string, skipExistenceCheck bool) error {
 		return nil
 	}
 
-	musicID, err := store.CreateMusic(name, store.MusicTypeSong, uid, assetName)
+	musicID, err := store.CreateMusic(name, store.MusicTypeSong, assetName)
 	if err != nil {
 		log.Printf("[ %s ] failed to create music: %v", path, err)
 		ignored++
@@ -145,7 +145,7 @@ func importFile(path, uid string, skipExistenceCheck bool) error {
 		if singerName == "" {
 			singerName = "Unknown"
 		}
-		artistID, _ := getOrCreateArtist(singerName, uid)
+		artistID, _ := getOrCreateArtist(singerName)
 		store.DB().Exec(
 			`INSERT OR IGNORE INTO music_singer_relation (musicId,artistId) VALUES (?,?)`,
 			musicID, artistID,
@@ -191,13 +191,13 @@ func checkMusicExists(name string, singers []string) (bool, error) {
 	return false, nil
 }
 
-func getOrCreateArtist(name, uid string) (string, error) {
+func getOrCreateArtist(name string) (string, error) {
 	var id string
 	err := store.DB().QueryRow(`SELECT id FROM artist WHERE name=?`, name).Scan(&id)
 	if err == nil {
 		return id, nil
 	}
-	return store.CreateArtist(name, uid)
+	return store.CreateArtist(name)
 }
 
 func sortedCopy(s []string) []string {

@@ -106,9 +106,9 @@ func DeleteUser(id string) error {
 }
 
 // DeleteUserCascade 在单个事务里清理用户在所有外键引用表中的痕迹后再删除用户.
-// 语义: 用户创建的 music / artist / musicbill 全部级联删除, 用户作为 sharedUser
-// 或 inviteUser 的乐单邀请、收藏、播放记录、会话也一并清掉.
-// 注意: 资产文件 (封面/音频) 沿用现有 DeleteMusicCascade 的做法, 不在此处删除.
+// 语义: 用户拥有的 musicbill 全部级联删除; 用户作为 sharedUser 或 inviteUser 的
+// 乐单邀请、收藏、播放记录、会话也一并清掉. music / artist / artist_photo 不再
+// 归属于具体用户, 因此不在此处删除.
 func DeleteUserCascade(id string) error {
 	tx, err := DB().Begin()
 	if err != nil {
@@ -116,35 +116,17 @@ func DeleteUserCascade(id string) error {
 	}
 	defer tx.Rollback()
 
-	// 删除顺序: 先处理引用了 musicbill / music / artist 的子表, 再删主表;
-	// 最后处理直接引用 user 的剩余行, 最后才能删 user.
 	statements := []struct {
 		sql  string
 		args []any
 	}{
-		// 用户创建的 musicbill 及其下游
+		// 用户拥有的 musicbill 及其下游
 		{`DELETE FROM shared_musicbill WHERE musicbillId IN (SELECT id FROM musicbill WHERE userId=?)`, []any{id}},
 		{`DELETE FROM public_musicbill_collection WHERE musicbillId IN (SELECT id FROM musicbill WHERE userId=?)`, []any{id}},
 		{`DELETE FROM musicbill_music WHERE musicbillId IN (SELECT id FROM musicbill WHERE userId=?)`, []any{id}},
 		{`DELETE FROM musicbill WHERE userId=?`, []any{id}},
 
-		// 用户创建的 music 及其下游 (含别的用户 music_fork 指向本用户 music 的情况)
-		{`DELETE FROM lyric WHERE musicId IN (SELECT id FROM music WHERE createUserId=?)`, []any{id}},
-		{`DELETE FROM music_fork WHERE musicId IN (SELECT id FROM music WHERE createUserId=?) OR forkFrom IN (SELECT id FROM music WHERE createUserId=?)`, []any{id, id}},
-		{`DELETE FROM music_play_record WHERE musicId IN (SELECT id FROM music WHERE createUserId=?)`, []any{id}},
-		{`DELETE FROM music_singer_relation WHERE musicId IN (SELECT id FROM music WHERE createUserId=?)`, []any{id}},
-		{`DELETE FROM music_lyricist_relation WHERE musicId IN (SELECT id FROM music WHERE createUserId=?)`, []any{id}},
-		{`DELETE FROM musicbill_music WHERE musicId IN (SELECT id FROM music WHERE createUserId=?)`, []any{id}},
-		{`DELETE FROM music WHERE createUserId=?`, []any{id}},
-
-		// 用户创建的 artist 及其下游 (会断开别的用户 music 与该 artist 的关联)
-		{`DELETE FROM artist_photo WHERE artistId IN (SELECT id FROM artist WHERE createUserId=?)`, []any{id}},
-		{`DELETE FROM music_singer_relation WHERE artistId IN (SELECT id FROM artist WHERE createUserId=?)`, []any{id}},
-		{`DELETE FROM music_lyricist_relation WHERE artistId IN (SELECT id FROM artist WHERE createUserId=?)`, []any{id}},
-		{`DELETE FROM artist WHERE createUserId=?`, []any{id}},
-
-		// 用户直接持有的剩余行 (其引用的 artist / music / musicbill 可能属于他人)
-		{`DELETE FROM artist_photo WHERE addUserId=?`, []any{id}},
+		// 用户直接持有的剩余行
 		{`DELETE FROM auth_session WHERE userId=?`, []any{id}},
 		{`DELETE FROM music_play_record WHERE userId=?`, []any{id}},
 		{`DELETE FROM public_musicbill_collection WHERE userId=?`, []any{id}},

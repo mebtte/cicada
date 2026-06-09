@@ -47,11 +47,6 @@ type Response = {
       name: string;
       aliases: string[];
     }[];
-    createUser: {
-      id: string;
-      username: string;
-      nickname: string;
-    };
     createTimestamp: number;
   }[];
 };
