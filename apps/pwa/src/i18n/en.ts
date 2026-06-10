@@ -42,6 +42,12 @@ export default {
   ffmpeg_supported_audio: 'audio supported by FFmpeg',
   music_play_record_short: 'play record',
   exploration: 'exploration',
+  radio_mode: 'radio mode',
+  switch_to_radio_mode_confirm:
+    'Switching to radio mode will stop current playback. Continue?',
+  exit_radio_mode: 'exit radio mode',
+  exit_radio_mode_confirm:
+    'Exiting radio mode will return to the player. Continue?',
   recommended_music: 'recommended music',
   recommended_singer: 'recommended singers',
   recommended_artist: 'recommended artists',

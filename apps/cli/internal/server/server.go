@@ -82,6 +82,7 @@ func NewServer() *gin.Engine {
 	api.GET("/music", auth(), handler.GetMusic)
 	api.GET("/music/search", auth(), handler.SearchMusic)
 	api.GET("/music/search_by_lyric", auth(), handler.SearchMusicByLyric)
+	api.GET("/music/random", auth(), handler.GetRandomMusic)
 
 	// Artist (read)
 	api.GET("/artist", auth(), handler.GetArtist)

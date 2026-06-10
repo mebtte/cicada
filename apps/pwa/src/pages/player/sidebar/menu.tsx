@@ -1,5 +1,5 @@
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactNode, useContext } from 'react';
 import { t } from '@/i18n';
 import context from '../context';
@@ -10,6 +10,10 @@ import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
 import capitalize from '@/style/capitalize';
+import dialog from '@/utils/dialog';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '../eventemitter';
 import {
   Export,
   ExternalLink,
@@ -17,6 +21,7 @@ import {
   Settings,
   History,
   AdminPanel,
+  Radio,
 } from '@/components/icon';
 import useSidebarNavigate from './use_sidebar_navigate';
 
@@ -172,9 +177,28 @@ function SidebarItem({
 function Menu() {
   const { pathname } = useLocation();
   const navigate = useSidebarNavigate();
+  const rawNavigate = useNavigate();
   const user = useUser()!;
 
-  const { exportingMusicList } = useContext(context);
+  const { exportingMusicList, audioPaused, playqueue, currentPlayqueuePosition } =
+    useContext(context);
+  const queueMusic = playqueue[currentPlayqueuePosition];
+  const goToRadio = () => {
+    // 暂停主播放器, 避免 /player 卸载后旧 audio 元素仍在后台发声.
+    playerEventemitter.emit(PlayerEventType.ACTION_PAUSE, null);
+    rawNavigate(ROOT_PATH.RADIO);
+  };
+  const onClickRadio = () => {
+    if (queueMusic && !audioPaused) {
+      dialog.confirm({
+        title: t('radio_mode'),
+        content: t('switch_to_radio_mode_confirm'),
+        onConfirm: goToRadio,
+      });
+      return;
+    }
+    goToRadio();
+  };
   return (
     <Style aria-label={t('sidebar')}>
       <SidebarItem
@@ -187,6 +211,12 @@ function Menu() {
         }
         label={t('exploration')}
         icon={<Sparkles />}
+      />
+      <SidebarItem
+        active={false}
+        onClick={onClickRadio}
+        label={t('radio_mode')}
+        icon={<Radio />}
       />
       <SidebarItem
         active={

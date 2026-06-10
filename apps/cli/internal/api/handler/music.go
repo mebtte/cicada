@@ -118,6 +118,18 @@ func GetMusic(c *gin.Context) {
 	api.OK(c, musicDetailResponse(m, false))
 }
 
+// ── Get random music (radio mode) ─────────────────────────────────────────────
+
+func GetRandomMusic(c *gin.Context) {
+	excludeID := c.Query("excludeId")
+	m, err := store.GetRandomMusic(excludeID)
+	if err != nil {
+		api.Fail(c, apperr.MusicNotExisted)
+		return
+	}
+	api.OK(c, musicDetailResponse(m, false))
+}
+
 func AdminGetMusic(c *gin.Context) {
 	id := c.Query("id")
 	if id == "" {
