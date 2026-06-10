@@ -207,7 +207,7 @@ const Incoming = styled.div`
 
   color: var(${CSS_VAR.colorPrimary});
   background: #fff;
-  border: 2px solid var(${CSS_VAR.colorPrimary});
+  border: 2px solid var(${CSS_VAR.colorPrimaryShadow});
   border-radius: 50%;
   box-shadow: 0 4px 0 var(${CSS_VAR.colorPrimaryShadow});
   filter: drop-shadow(0 8px 12px rgb(0 0 0 / 0.08));

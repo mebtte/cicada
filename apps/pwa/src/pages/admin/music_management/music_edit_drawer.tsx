@@ -366,7 +366,7 @@ const LyricTextarea = styled(Textarea)`
     box-shadow 150ms ease-out;
 
   &:focus {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
+    border-color: ${CSSVariable.COLOR_PRIMARY_ACTIVE};
     box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
   }
 `;
@@ -388,7 +388,7 @@ const SearchKeywordsTextarea = styled(Textarea)`
     box-shadow 150ms ease-out;
 
   &:focus {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
+    border-color: ${CSSVariable.COLOR_PRIMARY_ACTIVE};
     box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
   }
 `;

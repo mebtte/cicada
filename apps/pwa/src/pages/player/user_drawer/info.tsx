@@ -60,7 +60,7 @@ const Style = styled.section`
       line-height: 1;
       color: rgb(88 88 88);
       background: #fff;
-      border: 2px solid rgb(229 229 229);
+      border: 2px solid rgb(210 210 210);
       border-radius: 12px;
       box-shadow: 0 3px 0 rgb(210 210 210);
       ${ellipsis}

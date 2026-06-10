@@ -19,9 +19,7 @@ import { Close } from '@/components/icon';
 const AVATAR_SIZE = 50;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
-const OWNER = 'rgb(255 200 0)';
 const OWNER_SHADOW = 'rgb(224 168 0)';
-const PENDING = 'rgb(99 209 250)';
 const PENDING_SHADOW = 'rgb(72 179 220)';
 const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
@@ -37,7 +35,7 @@ const Style = styled.div<{ $owner: boolean; $accepted: boolean }>`
   background: #fff;
   border: 2px solid
     ${({ $owner, $accepted }) =>
-      $owner ? OWNER : $accepted ? CSSVariable.COLOR_BORDER : PENDING};
+      $owner ? OWNER_SHADOW : $accepted ? NEUTRAL_SHADOW : PENDING_SHADOW};
   border-radius: 18px;
   box-shadow: 0 4px 0
     ${({ $owner, $accepted }) =>
@@ -145,7 +143,7 @@ const StatusBadge = styled.div<{ $type: 'owner' | 'pending' }>`
       ? 'rgb(255 246 204)'
       : 'rgb(228 247 255)'};
   border: 2px solid
-    ${({ $type }) => ($type === 'owner' ? OWNER : PENDING)};
+    ${({ $type }) => ($type === 'owner' ? OWNER_SHADOW : PENDING_SHADOW)};
   border-radius: 999px;
   box-shadow: 0 2px 0
     ${({ $type }) => ($type === 'owner' ? OWNER_SHADOW : PENDING_SHADOW)};

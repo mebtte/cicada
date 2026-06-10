@@ -11,7 +11,6 @@ import { MINI_INFO_HEIGHT } from './constants';
 import Operation from './operation';
 
 const COVER_SIZE = 34;
-const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PUBLIC = '#63d1fa';
 const PUBLIC_SHADOW = 'rgb(72 179 220)';
 const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
@@ -55,7 +54,7 @@ const Style = styled(animated.div)`
   }
 
   &:focus-within {
-    border-color: ${PRIMARY};
+    border-color: var(${CSS_VAR.colorPrimaryShadow});
     box-shadow: 0 6px 0 var(${CSS_VAR.colorPrimaryShadow});
   }
 

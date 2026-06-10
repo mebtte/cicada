@@ -54,7 +54,7 @@ const TextareaBox = styled(Label)`
 
   textarea {
     min-height: 112px;
-    border: 2px solid ${CSSVariable.COLOR_BORDER};
+    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     border-radius: 13px;
     box-shadow: 0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     font-family: ${FONT};
@@ -62,7 +62,7 @@ const TextareaBox = styled(Label)`
     resize: vertical;
 
     &:focus {
-      border-color: ${CSSVariable.COLOR_PRIMARY};
+      border-color: var(--cicada-color-primary-shadow);
       box-shadow: 0 4px 0 var(--cicada-color-primary-shadow);
     }
   }

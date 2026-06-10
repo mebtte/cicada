@@ -91,7 +91,7 @@ const HeaderAvatar = styled.div`
   box-sizing: border-box;
 
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid rgb(210 210 210);
   border-radius: 14px;
   box-shadow: 0 4px 0 rgb(210 210 210);
 

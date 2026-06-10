@@ -108,7 +108,7 @@ const Card = styled.div<{ $active: boolean }>`
         > button {
           color: ${CSSVariable.TEXT_COLOR_PRIMARY};
           background: #fff;
-          border-color: rgb(210 210 210);
+          border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
           border-radius: 10px;
           box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
           transition:

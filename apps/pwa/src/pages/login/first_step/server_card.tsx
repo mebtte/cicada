@@ -14,7 +14,7 @@ export const ServerCard = styled.div`
   align-items: center;
   gap: 8px;
   padding: 12px 10px 12px 14px;
-  border: 2px solid rgb(220 220 220);
+  border: 2px solid rgb(210 210 210);
   border-radius: 14px;
   background: #fff;
   box-shadow: 0 4px 0 rgb(210 210 210);
@@ -22,7 +22,7 @@ export const ServerCard = styled.div`
   transition: border-color 120ms, box-shadow 80ms, transform 80ms;
 
   &:hover {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
+    border-color: rgb(30 150 100);
     box-shadow: 0 4px 0 rgb(30 150 100);
   }
 
@@ -90,7 +90,7 @@ export const DeleteButton = styled.button`
   flex-shrink: 0;
   width: 32px;
   height: 32px;
-  border: 2px solid rgb(240 210 210);
+  border: 2px solid rgb(230 200 200);
   border-radius: 10px;
   background: rgb(255 245 245);
   box-shadow: 0 3px 0 rgb(230 200 200);
@@ -103,7 +103,8 @@ export const DeleteButton = styled.button`
 
   &:hover {
     background: rgb(255 230 230);
-    border-color: rgb(242 80 66);
+    border-color: rgb(190 46 34);
+    box-shadow: 0 3px 0 rgb(190 46 34);
   }
 
   &:active {

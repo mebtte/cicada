@@ -97,7 +97,7 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     bottom: 0;
     width: min(360px, calc(100vw - 20px));
     border-radius: 20px 0 0 20px;
-    border: 2px solid rgb(220 220 220);
+    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     border-right: none;
     box-shadow: -5px 0 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 
@@ -110,7 +110,7 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     bottom: 0;
     width: min(360px, calc(100vw - 20px));
     border-radius: 0 20px 20px 0;
-    border: 2px solid rgb(220 220 220);
+    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     border-left: none;
     box-shadow: 5px 0 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 
@@ -123,7 +123,7 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     bottom: 0;
     max-height: 92dvh;
     border-radius: 20px 20px 0 0;
-    border: 2px solid rgb(220 220 220);
+    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     border-bottom: none;
     box-shadow: 0 -5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 

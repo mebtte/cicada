@@ -174,7 +174,7 @@ const ActionCard = styled.button`
     filter 120ms;
 
   &:hover {
-    border-color: ${PRIMARY};
+    border-color: ${PRIMARY_SHADOW};
     box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
     filter: brightness(1.02);
   }
