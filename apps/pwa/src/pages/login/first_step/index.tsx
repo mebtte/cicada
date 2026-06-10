@@ -31,6 +31,8 @@ function FirstStep({
   onManage: () => void;
 }) {
   const [loading, setLoading] = useState(false);
+  const [checkingOrigin, setCheckingOrigin] = useState<string>();
+  const busy = loading || !!checkingOrigin;
   const [origin, setOrigin] = useState(
     () => useServer.getState().selectedServerOrigin || window.location.origin,
   );
@@ -38,6 +40,7 @@ function FirstStep({
     setOrigin(event.target.value);
 
   const onSaveOrigin = async () => {
+    if (busy) return;
     setLoading(true);
     try {
       const existedServer = useServer
@@ -107,13 +110,18 @@ function FirstStep({
   return (
     <Style>
       <Logo />
-      <Language disabled={loading} />
+      <Language disabled={busy} />
       <Divider />
-      <ServerList toNext={toNext} disabled={loading} />
+      <ServerList
+        toNext={toNext}
+        disabled={loading}
+        checkingOrigin={checkingOrigin}
+        onCheckingOriginChange={setCheckingOrigin}
+      />
       <Input
         label={t('origin')}
         type="url"
-        disabled={loading}
+        disabled={busy}
         value={origin}
         onChange={onOriginChange}
         onKeyDown={onKeyDown}
@@ -122,7 +130,7 @@ function FirstStep({
       <Button
         variant={'primary'}
         onClick={onSaveOrigin}
-        disabled={!origin.length}
+        disabled={!origin.length || busy}
         loading={loading}
       >
         {t('add_origin')}

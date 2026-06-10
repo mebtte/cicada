@@ -79,13 +79,16 @@ const Style = styled.div`
 
 function ServerList({
   disabled,
+  checkingOrigin,
+  onCheckingOriginChange,
   toNext,
 }: {
   disabled: boolean;
+  checkingOrigin: string | undefined;
+  onCheckingOriginChange: (origin: string | undefined) => void;
   toNext: () => void;
 }) {
   const { serverList } = useServer();
-  const [checkingOrigin, setCheckingOrigin] = useState<string>();
 
   // 滚动边界遮罩: 通过监听 scrollTop 计算是否在顶/底, 决定上下渐变层是否显示
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -134,10 +137,14 @@ function ServerList({
             origin={s.origin}
             users={s.users}
             selectedUserId={s.selectedUserId}
+            loading={s.origin === checkingOrigin}
+            disabled={
+              disabled || (!!checkingOrigin && s.origin !== checkingOrigin)
+            }
             onClick={async () => {
               if (disabled || checkingOrigin) return;
 
-              setCheckingOrigin(s.origin);
+              onCheckingOriginChange(s.origin);
               try {
                 const { default: getMetadata } = await import(
                   '@/server/base/get_metadata'
@@ -175,7 +182,7 @@ function ServerList({
                 );
                 dialog.alert({ content: getServerMetadataErrorMessage(error) });
               } finally {
-                setCheckingOrigin(undefined);
+                onCheckingOriginChange(undefined);
               }
             }}
             onDelete={(e) => {
