@@ -17,7 +17,7 @@ const Body = styled(DialogBody)`
 
 const SelectedFile = styled.div`
   padding: 12px 14px;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
   border-radius: 14px;
   background: #fff;
   box-shadow: 0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};

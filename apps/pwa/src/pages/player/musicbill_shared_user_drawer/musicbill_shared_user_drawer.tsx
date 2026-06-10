@@ -87,6 +87,7 @@ function ShareDrawer({
                 user={u}
                 accepted={u.accepted}
                 deletable={owned}
+                transferable={owned}
                 musicbillId={musicbill.id}
               />
             ))}

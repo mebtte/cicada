@@ -1,7 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { Delete } from '@/components/icon';
 import { type User } from '@/constants/server';
+import Spinner from '@/components/spinner';
 
 export const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -9,27 +10,43 @@ export const MAX_AVATARS = 8;
 
 // ─── Card ────────────────────────────────────────────────────────────────────
 
-export const ServerCard = styled.div`
+export const ServerCard = styled.div<{
+  $loading: boolean;
+  $disabled: boolean;
+}>`
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 12px 10px 12px 14px;
-  border: 2px solid rgb(220 220 220);
+  border: 2px solid rgb(210 210 210);
   border-radius: 14px;
   background: #fff;
   box-shadow: 0 4px 0 rgb(210 210 210);
-  cursor: pointer;
-  transition: border-color 120ms, box-shadow 80ms, transform 80ms;
+  cursor: ${({ $loading, $disabled }) =>
+    $loading ? 'progress' : $disabled ? 'not-allowed' : 'pointer'};
+  transition: border-color 120ms, box-shadow 80ms, transform 80ms, filter 120ms;
 
-  &:hover {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
-    box-shadow: 0 4px 0 rgb(30 150 100);
-  }
+  ${({ $loading, $disabled }) =>
+    !$loading &&
+    !$disabled &&
+    css`
+      &:hover {
+        border-color: rgb(30 150 100);
+        box-shadow: 0 4px 0 rgb(30 150 100);
+      }
 
-  &:active {
-    box-shadow: 0 1px 0 rgb(210 210 210);
-    transform: translateY(3px);
-  }
+      &:active {
+        box-shadow: 0 1px 0 rgb(210 210 210);
+        transform: translateY(3px);
+      }
+    `}
+
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      filter: grayscale(1);
+      opacity: 0.7;
+    `}
 
   > .info {
     flex: 1;
@@ -90,7 +107,7 @@ export const DeleteButton = styled.button`
   flex-shrink: 0;
   width: 32px;
   height: 32px;
-  border: 2px solid rgb(240 210 210);
+  border: 2px solid rgb(230 200 200);
   border-radius: 10px;
   background: rgb(255 245 245);
   box-shadow: 0 3px 0 rgb(230 200 200);
@@ -101,14 +118,19 @@ export const DeleteButton = styled.button`
   cursor: pointer;
   transition: background 120ms, border-color 120ms, box-shadow 80ms, transform 80ms;
 
-  &:hover {
+  &:not(:disabled):hover {
     background: rgb(255 230 230);
-    border-color: rgb(242 80 66);
+    border-color: rgb(190 46 34);
+    box-shadow: 0 3px 0 rgb(190 46 34);
   }
 
-  &:active {
+  &:not(:disabled):active {
     box-shadow: 0 1px 0 rgb(230 200 200);
     transform: translateY(2px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
   }
 
   > svg {
@@ -221,6 +243,8 @@ export function ServerCardItem({
   origin,
   users,
   selectedUserId,
+  loading = false,
+  disabled = false,
   onClick,
   onDelete,
 }: {
@@ -229,11 +253,20 @@ export function ServerCardItem({
   origin: string;
   users: User[];
   selectedUserId?: string;
+  loading?: boolean;
+  disabled?: boolean;
   onClick: () => void;
   onDelete: (e: React.MouseEvent) => void;
 }) {
+  const inactive = loading || disabled;
   return (
-    <ServerCard onClick={onClick}>
+    <ServerCard
+      $loading={loading}
+      $disabled={disabled}
+      onClick={inactive ? undefined : onClick}
+      aria-busy={loading || undefined}
+      aria-disabled={inactive || undefined}
+    >
       <div className="info">
         <span className="name-row">
           <span className="hostname">{hostname}</span>
@@ -246,9 +279,13 @@ export function ServerCardItem({
           </div>
         )}
       </div>
-      <DeleteButton onClick={onDelete}>
-        <Delete />
-      </DeleteButton>
+      {loading ? (
+        <Spinner size={24} style={{ flexShrink: 0, marginInline: 4 }} aria-hidden />
+      ) : (
+        <DeleteButton type="button" onClick={onDelete} disabled={disabled}>
+          <Delete />
+        </DeleteButton>
+      )}
     </ServerCard>
   );
 }

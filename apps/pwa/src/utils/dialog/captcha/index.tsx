@@ -1,4 +1,10 @@
-import { DialogBody, DialogFooter } from '@/components';
+import {
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import {
@@ -83,9 +89,21 @@ function CaptchaContent({
     [onConfirm],
   );
 
+  const simpleContent =
+    typeof options.content === 'string' || typeof options.content === 'number';
+
   return (
     <>
+      {options.title ? (
+        <DialogHeader>
+          <DialogTitle>{options.title}</DialogTitle>
+          {simpleContent ? (
+            <DialogDescription>{options.content}</DialogDescription>
+          ) : null}
+        </DialogHeader>
+      ) : null}
       <DialogBody style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {options.content && (!options.title || !simpleContent) ? options.content : null}
         <Captcha captchaData={captchaData} reload={reload} />
         <Input
           label={t('captcha')}

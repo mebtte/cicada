@@ -42,6 +42,12 @@ export default {
   ffmpeg_supported_audio: 'audio supported by FFmpeg',
   music_play_record_short: 'play record',
   exploration: 'exploration',
+  radio_mode: 'radio mode',
+  switch_to_radio_mode_confirm:
+    'Switching to radio mode will stop current playback. Continue?',
+  exit_radio_mode: 'exit radio mode',
+  exit_radio_mode_confirm:
+    'Exiting radio mode will return to the player. Continue?',
   recommended_music: 'recommended music',
   recommended_singer: 'recommended singers',
   recommended_artist: 'recommended artists',
@@ -159,9 +165,9 @@ export default {
   artist: 'artist',
   lyricist: 'lyricist',
   composer: 'composer',
-  sung_music: 'sung music',
-  lyricist_music: 'lyricist music',
-  composer_music: 'composer music',
+  sung_music: 'vocals',
+  lyricist_music: 'lyrics',
+  composer_music: 'composition',
   emtpy_singers_warning: 'please select singers',
   modify_file_of_music: 'modify file of music',
   file_of_music: 'file of music',
@@ -293,7 +299,10 @@ export default {
   owner: 'owner',
   invitation_has_sent: 'invitation has sent',
   remove_user_from_shared_musicbill_question:
-    'are you sure to remove this user from shared musicbill ?',
+    'remove %s1 from this shared musicbill? they will lose access.',
+  transfer_musicbill_owner: 'transfer owner',
+  transfer_musicbill_owner_question:
+    'transfer ownership of this musicbill to %s1? you will become a shared user.',
   delete_musicbill: 'delete musicbill',
   set_musicbill_as_public: 'set musicbill as public',
   set_musicbill_as_private: 'set musicbill as private',

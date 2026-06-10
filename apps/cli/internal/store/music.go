@@ -71,6 +71,24 @@ func GetMusicByID(id string) (*Music, error) {
 	return m, nil
 }
 
+// GetRandomMusic 随机返回一首音乐, 用于电台模式.
+// 排除参数 excludeID 对应的音乐, 避免连续推荐同一首; 传空串表示不排除.
+func GetRandomMusic(excludeID string) (*Music, error) {
+	m := &Music{}
+	q := `SELECT ` + musicSelectColumns + ` FROM music`
+	args := []any{}
+	if excludeID != "" {
+		q += ` WHERE id!=?`
+		args = append(args, excludeID)
+	}
+	q += ` ORDER BY RANDOM() LIMIT 1`
+	err := DB().QueryRow(q, args...).Scan(scanMusicDest(m)...)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func GetMusicsByIDs(ids []string) ([]Music, error) {
 	if len(ids) == 0 {
 		return nil, nil

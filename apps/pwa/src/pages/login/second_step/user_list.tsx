@@ -45,7 +45,7 @@ const UserItem = styled.button`
   width: 96px;
   min-width: 96px;
   padding: 14px 10px 12px;
-  border: 2px solid rgb(220 220 220);
+  border: 2px solid rgb(210 210 210);
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 4px 0 rgb(210 210 210);
@@ -59,13 +59,13 @@ const UserItem = styled.button`
     background 120ms;
 
   &:hover {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
+    border-color: rgb(30 150 100);
     box-shadow: 0 4px 0 rgb(30 150 100);
   }
 
   &:hover > .avatar,
   &:focus-visible > .avatar {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
+    border-color: rgb(30 150 100);
     box-shadow: 0 4px 0 rgb(30 150 100);
   }
 
@@ -83,7 +83,7 @@ const UserItem = styled.button`
     width: 58px;
     height: 58px;
     border-radius: 16px;
-    border: 2px solid rgb(210 210 210);
+    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
     flex-shrink: 0;
     overflow: hidden;
     background: #fff;

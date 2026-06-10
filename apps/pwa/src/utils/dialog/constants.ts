@@ -74,6 +74,9 @@ export interface Captcha
     }>,
     Cancelable {
   type: DialogType.CAPTCHA;
+
+  title?: ReactNode;
+  content?: ReactNode;
 }
 
 export interface Input extends DialogOptions, Confirmable<string>, Cancelable {

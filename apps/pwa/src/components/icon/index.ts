@@ -97,6 +97,7 @@ export { default as PlayCircle }    from './icons/play-circle';
 export { default as PlaylistPlay }  from './icons/playlist-play';
 export { default as PlaylistRemove } from './icons/playlist-remove';
 export { default as QueueMusic }    from './icons/queue-music';
+export { default as Radio }         from './icons/radio';
 export { default as Remove }        from './icons/remove';
 export { default as Restart }       from './icons/restart';
 export { default as Save }          from './icons/save';

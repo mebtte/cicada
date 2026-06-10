@@ -125,7 +125,7 @@ const ThumbnailItem = styled.div<{ selected: boolean }>`
   width: 42px;
   height: 42px;
   box-sizing: border-box;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid rgb(210 210 210);
   border-radius: 12px;
   overflow: hidden;
   background: #fff;
@@ -145,7 +145,7 @@ const ThumbnailItem = styled.div<{ selected: boolean }>`
   ${({ selected }) =>
     selected
       ? css`
-        border-color: ${CSSVariable.COLOR_PRIMARY};
+        border-color: ${CSSVariable.COLOR_PRIMARY_ACTIVE};
         box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
         transform: translateY(-1px);
       `

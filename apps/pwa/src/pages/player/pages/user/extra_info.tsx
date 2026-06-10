@@ -2,6 +2,7 @@ import definition from '@/definition';
 import { useSelectedServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
+import { HTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 
 const Style = styled.section`
@@ -73,11 +74,11 @@ const ValueText = styled.span`
   text-overflow: ellipsis;
 `;
 
-function ExtraInfo() {
+function ExtraInfo(props: HTMLAttributes<HTMLElement>) {
   const selectedServer = useSelectedServer()!;
 
   return (
-    <Style>
+    <Style {...props}>
       <Table>
         <tbody>
           <tr>

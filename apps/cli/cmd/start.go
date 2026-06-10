@@ -24,15 +24,17 @@ var startCmd = &cobra.Command{
 var (
 	startData             string
 	startPort             int
-	startMusicFileMaxSize string
 	startImageFileMaxSize string
+	startAudioFileMaxSize string
+	startVideoFileMaxSize string
 )
 
 func init() {
 	startCmd.Flags().StringVar(&startData, "data", "", "Data directory, defaults to <exe_dir>/cicada_data (env: CICADA_DATA)")
 	startCmd.Flags().IntVar(&startPort, "port", 0, "HTTP listen port (env: CICADA_PORT, default 8000)")
-	startCmd.Flags().StringVar(&startMusicFileMaxSize, "music-file-max-size", "", "Maximum music file upload size, supports b/kb/mb/gb suffixes (env: CICADA_MUSIC_FILE_MAX_SIZE, default 200mb)")
 	startCmd.Flags().StringVar(&startImageFileMaxSize, "image-file-max-size", "", "Maximum image file upload size, supports b/kb/mb/gb suffixes (env: CICADA_IMAGE_FILE_MAX_SIZE, default 5mb)")
+	startCmd.Flags().StringVar(&startAudioFileMaxSize, "audio-file-max-size", "", "Maximum audio file upload size, supports b/kb/mb/gb suffixes (env: CICADA_AUDIO_FILE_MAX_SIZE, default 200mb)")
+	startCmd.Flags().StringVar(&startVideoFileMaxSize, "video-file-max-size", "", "Maximum video file upload size, supports b/kb/mb/gb suffixes (env: CICADA_VIDEO_FILE_MAX_SIZE, default 1gb)")
 	rootCmd.AddCommand(startCmd)
 }
 
@@ -45,15 +47,6 @@ func runStart(cmd *cobra.Command, args []string) error {
 	if port == 0 {
 		port = config.DefaultPort()
 	}
-	musicFileMaxSize, err := parseStartFileMaxSize(
-		"music file max size",
-		startMusicFileMaxSize,
-		config.MusicFileMaxSizeEnvVar,
-		config.DefaultMusicFileMaxSize,
-	)
-	if err != nil {
-		return err
-	}
 	imageFileMaxSize, err := parseStartFileMaxSize(
 		"image file max size",
 		startImageFileMaxSize,
@@ -63,12 +56,31 @@ func runStart(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	audioFileMaxSize, err := parseStartFileMaxSize(
+		"audio file max size",
+		startAudioFileMaxSize,
+		config.AudioFileMaxSizeEnvVar,
+		config.DefaultAudioFileMaxSize,
+	)
+	if err != nil {
+		return err
+	}
+	videoFileMaxSize, err := parseStartFileMaxSize(
+		"video file max size",
+		startVideoFileMaxSize,
+		config.VideoFileMaxSizeEnvVar,
+		config.DefaultVideoFileMaxSize,
+	)
+	if err != nil {
+		return err
+	}
 	cfg := config.Config{
 		Mode:             config.DefaultMode(),
 		Data:             data,
 		Port:             port,
-		MusicFileMaxSize: musicFileMaxSize,
 		ImageFileMaxSize: imageFileMaxSize,
+		AudioFileMaxSize: audioFileMaxSize,
+		VideoFileMaxSize: videoFileMaxSize,
 	}
 	config.Set(cfg)
 
@@ -85,8 +97,9 @@ func runStart(cmd *cobra.Command, args []string) error {
 	fmt.Printf("data: %s\n", cfg.Data)
 	fmt.Printf("mode: %s\n", cfg.Mode)
 	fmt.Printf("port: %d\n", cfg.Port)
-	fmt.Printf("musicFileMaxSize: %d\n", cfg.MusicFileMaxSize)
 	fmt.Printf("imageFileMaxSize: %d\n", cfg.ImageFileMaxSize)
+	fmt.Printf("audioFileMaxSize: %d\n", cfg.AudioFileMaxSize)
+	fmt.Printf("videoFileMaxSize: %d\n", cfg.VideoFileMaxSize)
 	fmt.Printf("ffmpegPath: %s\n", paths.FFmpeg)
 	fmt.Printf("ffprobePath: %s\n", paths.FFprobe)
 	fmt.Println("---")

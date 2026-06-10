@@ -33,7 +33,7 @@ const Style = styled.button`
   display: block;
 
   appearance: none;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid rgb(210 210 210);
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 4px 0 rgb(210 210 210);
@@ -77,7 +77,7 @@ const Style = styled.button`
       font-weight: 800;
       line-height: 1;
       background: #fff;
-      border: 2px solid rgb(229 229 229);
+      border: 2px solid rgb(210 210 210);
       border-radius: 10px;
       box-shadow: 0 2px 0 rgb(210 210 210);
 

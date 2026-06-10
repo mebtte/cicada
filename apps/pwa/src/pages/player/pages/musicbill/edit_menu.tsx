@@ -80,7 +80,7 @@ const CurrentCoverBox = styled.div`
 const CoverArt = styled(Cover)`
   flex: 0 0 auto;
   box-sizing: border-box;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
   border-radius: 16px;
   box-shadow: 0 5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
 `;

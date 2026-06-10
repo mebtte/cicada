@@ -12,7 +12,10 @@ const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
 const Style = styled.div`
-  padding-bottom: 10px;
+  /* 顶部预留 4px 容纳 hover 时 translateY(-2px) 的上移,
+   * 避免 overflow: auto 滚动容器把抬起的卡片顶部裁掉. */
+  padding-top: 4px;
+  padding-bottom: 6px;
 `;
 const Card = styled.div<{ $active: boolean }>`
   cursor: pointer;
@@ -105,7 +108,7 @@ const Card = styled.div<{ $active: boolean }>`
         > button {
           color: ${CSSVariable.TEXT_COLOR_PRIMARY};
           background: #fff;
-          border-color: rgb(210 210 210);
+          border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
           border-radius: 10px;
           box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
           transition:

@@ -119,7 +119,7 @@ function PlaybackQuality() {
           <span className="text">{t('music_playback_quality')}</span>
           <Button
             square
-            variant="plain"
+            variant="ghost"
             size="sm"
             aria-label={t('music_playback_quality_help_title')}
             onClick={openHelp}

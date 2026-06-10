@@ -1,6 +1,5 @@
 import { CSSVariable } from '@/global_style';
 import capitalize from '@/style/capitalize';
-import { CSS_VAR } from '@/components/theme';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import styled, { css } from 'styled-components';
 
@@ -16,9 +15,8 @@ const Style = styled.div`
   background: #fff;
   box-shadow: 0 5px 0 ${CSSVariable.COLOR_BORDER};
   transition:
-    border-color 120ms ease-out,
-    box-shadow 120ms ease-out,
-    filter 120ms ease-out;
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
 
   > .label {
     min-width: 0;
@@ -33,17 +31,8 @@ const Style = styled.div`
   }
 
   &:hover {
-    border-color: color-mix(
-      in srgb,
-      var(${CSS_VAR.colorPrimary}) 26%,
-      ${CSSVariable.COLOR_BORDER}
-    );
-    box-shadow: 0 5px 0 color-mix(
-      in srgb,
-      var(${CSS_VAR.colorPrimaryShadow}) 22%,
-      ${CSSVariable.COLOR_BORDER}
-    );
-    filter: brightness(1.01);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 ${CSSVariable.COLOR_BORDER};
   }
 
   ${({ theme: { miniMode } }) =>

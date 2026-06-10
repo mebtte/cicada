@@ -12,11 +12,14 @@ func TestConfigSetDefaultsFileMaxSizes(t *testing.T) {
 	})
 
 	cfg := Get()
-	if cfg.MusicFileMaxSize != DefaultMusicFileMaxSize {
-		t.Fatalf("music max size = %d, want %d", cfg.MusicFileMaxSize, DefaultMusicFileMaxSize)
-	}
 	if cfg.ImageFileMaxSize != DefaultImageFileMaxSize {
 		t.Fatalf("image max size = %d, want %d", cfg.ImageFileMaxSize, DefaultImageFileMaxSize)
+	}
+	if cfg.AudioFileMaxSize != DefaultAudioFileMaxSize {
+		t.Fatalf("audio max size = %d, want %d", cfg.AudioFileMaxSize, DefaultAudioFileMaxSize)
+	}
+	if cfg.VideoFileMaxSize != DefaultVideoFileMaxSize {
+		t.Fatalf("video max size = %d, want %d", cfg.VideoFileMaxSize, DefaultVideoFileMaxSize)
 	}
 }
 
@@ -25,8 +28,9 @@ func TestAssetMaxSizeUsesFileCategory(t *testing.T) {
 		Mode:             ModeProduction,
 		Data:             "/tmp/cicada-test",
 		Port:             8000,
-		MusicFileMaxSize: 300,
 		ImageFileMaxSize: 20,
+		AudioFileMaxSize: 300,
+		VideoFileMaxSize: 900,
 	})
 	t.Cleanup(func() {
 		Set(Config{Mode: ModeProduction, Data: "/tmp/cicada-test", Port: 8000})
@@ -35,18 +39,22 @@ func TestAssetMaxSizeUsesFileCategory(t *testing.T) {
 	cases := []struct {
 		name string
 		t    AssetType
+		mime string
 		want int64
 	}{
-		{name: "music", t: AssetTypeMusic, want: 300},
-		{name: "user avatar", t: AssetTypeUserAvatar, want: 20},
-		{name: "musicbill cover", t: AssetTypeMusicbillCover, want: 20},
-		{name: "artist photo", t: AssetTypeArtistPhoto, want: 20},
-		{name: "music cover", t: AssetTypeMusicCover, want: 20},
+		{name: "music audio mp3", t: AssetTypeMusic, mime: "audio/mpeg", want: 300},
+		{name: "music audio flac", t: AssetTypeMusic, mime: "audio/flac", want: 300},
+		{name: "music video mp4", t: AssetTypeMusic, mime: "video/mp4", want: 900},
+		{name: "music no mime falls back to max", t: AssetTypeMusic, mime: "", want: 900},
+		{name: "user avatar", t: AssetTypeUserAvatar, mime: "image/jpeg", want: 20},
+		{name: "musicbill cover", t: AssetTypeMusicbillCover, mime: "image/jpeg", want: 20},
+		{name: "artist photo", t: AssetTypeArtistPhoto, mime: "image/jpeg", want: 20},
+		{name: "music cover", t: AssetTypeMusicCover, mime: "image/jpeg", want: 20},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got, ok := AssetMaxSize(tc.t)
+			got, ok := AssetMaxSize(tc.t, tc.mime)
 			if !ok {
 				t.Fatalf("expected max size for %s", tc.t)
 			}
@@ -56,8 +64,11 @@ func TestAssetMaxSizeUsesFileCategory(t *testing.T) {
 		})
 	}
 
-	if _, ok := AssetMaxSize(AssetType("unknown")); ok {
+	if _, ok := AssetMaxSize(AssetType("unknown"), ""); ok {
 		t.Fatalf("expected unknown asset type to be rejected")
+	}
+	if _, ok := AssetMaxSize(AssetTypeMusic, "application/octet-stream"); ok {
+		t.Fatalf("expected unknown mime on music to be rejected")
 	}
 }
 
@@ -96,14 +107,18 @@ func TestParseFileSize(t *testing.T) {
 }
 
 func TestDefaultFileMaxSizeFromEnv(t *testing.T) {
-	t.Setenv(MusicFileMaxSizeEnvVar, "256mb")
 	t.Setenv(ImageFileMaxSizeEnvVar, "6mb")
+	t.Setenv(AudioFileMaxSizeEnvVar, "256mb")
+	t.Setenv(VideoFileMaxSizeEnvVar, "2gb")
 
-	if got := DefaultMusicFileMaxSizeFromEnv(); got != 256*1024*1024 {
-		t.Fatalf("music file max size = %d, want %d", got, 256*1024*1024)
-	}
 	if got := DefaultImageFileMaxSizeFromEnv(); got != 6*1024*1024 {
 		t.Fatalf("image file max size = %d, want %d", got, 6*1024*1024)
+	}
+	if got := DefaultAudioFileMaxSizeFromEnv(); got != 256*1024*1024 {
+		t.Fatalf("audio file max size = %d, want %d", got, 256*1024*1024)
+	}
+	if got := DefaultVideoFileMaxSizeFromEnv(); got != 2*1024*1024*1024 {
+		t.Fatalf("video file max size = %d, want %d", got, 2*1024*1024*1024)
 	}
 }
 

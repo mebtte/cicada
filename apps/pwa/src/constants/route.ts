@@ -2,6 +2,7 @@ export const ROOT_PATH = {
   LOGIN: '/login',
   PLAYER: '/player',
   ADMIN: '/admin',
+  RADIO: '/radio',
 };
 
 export const ADMIN_PATH = {

@@ -43,7 +43,10 @@ func UploadAsset(c *gin.Context) {
 		return
 	}
 
-	maxSize, ok := config.AssetMaxSize(at)
+	// Early gate: when mime is still unknown the music asset falls back to
+	// max(audio, video) so an oversized request is rejected before the body
+	// is read. The category-specific cap is re-checked once MIME is sniffed.
+	maxSize, ok := config.AssetMaxSize(at, "")
 	if !ok {
 		api.Fail(c, apperr.WrongParameter)
 		return
@@ -69,6 +72,12 @@ func UploadAsset(c *gin.Context) {
 	// detect MIME
 	mt := mimetype.Detect(data)
 	mimeStr := trimMIMEParams(mt.String())
+	if categoryMax, ok := config.AssetMaxSize(at, mimeStr); ok {
+		if int64(len(data)) > categoryMax {
+			api.Fail(c, apperr.AssetOversize)
+			return
+		}
+	}
 	if at == config.AssetTypeMusic {
 		validAudio, err := uploadedMusicHasAudioStream(
 			c.Request.Context(),

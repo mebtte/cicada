@@ -560,7 +560,7 @@ const PlayerLinkBox = styled.span`
 
   ${PlayerLink}:hover & {
     color: ${PRIMARY};
-    border-color: ${PRIMARY};
+    border-color: ${PRIMARY_SHADOW};
     box-shadow: 0 3px 0 ${PRIMARY_SHADOW};
   }
 `;

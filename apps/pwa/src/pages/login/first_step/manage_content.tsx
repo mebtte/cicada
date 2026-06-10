@@ -22,7 +22,7 @@ const Card = styled.div`
   gap: 14px;
   padding: 14px 16px;
   background: #fff;
-  border: 2px solid rgb(220 220 220);
+  border: 2px solid rgb(210 210 210);
   border-radius: 16px;
   box-shadow: 0 4px 0 rgb(210 210 210);
 `;

@@ -52,7 +52,6 @@ const SIZE: Record<SelectSize, {
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 const DISABLED_BACKGROUND = 'rgb(248 248 248)';
-const DISABLED_BORDER = 'rgb(226 226 226)';
 const DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
 
 function toKey<T>(v: T): string {
@@ -137,9 +136,9 @@ function buildStyles<T, IsMulti extends boolean>(
       height: !isMulti || (size === 'sm' && !wrapValues) ? s.height : undefined,
       background: '#fff',
       border: `2px solid ${
-        isDisabled       ? DISABLED_BORDER   :
-        state.isFocused  ? primary          :
-        'rgb(220 220 220)'
+        isDisabled       ? DISABLED_SHADOW  :
+        state.isFocused  ? shadowColor      :
+        CSSVariable.COLOR_CONTROL_NEUTRAL
       }`,
       borderRadius: s.radius,
       boxShadow: isDisabled
@@ -220,7 +219,7 @@ function buildStyles<T, IsMulti extends boolean>(
       ...base,
       zIndex: 10000,
       background: '#fff',
-      border: '2px solid rgb(220 220 220)',
+      border: `2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL}`,
       borderRadius: Math.max(15, s.radius + 2),
       boxShadow:
         state.placement === 'top'
@@ -279,7 +278,7 @@ function buildStyles<T, IsMulti extends boolean>(
       justifyContent: 'center',
       padding: '0 2px 0 8px',
       minHeight: size === 'sm' ? 20 : 24,
-      border: '2px solid rgb(220 220 220)',
+      border: `2px solid ${isDisabled ? DISABLED_SHADOW : 'rgb(220 220 220)'}`,
       borderRadius: 8,
       background: isDisabled ? DISABLED_BACKGROUND : '#fff',
       boxShadow: `0 2px 0 ${isDisabled ? DISABLED_SHADOW : 'rgb(220 220 220)'}`,

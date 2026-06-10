@@ -188,7 +188,7 @@ const AppendRow = styled(RowBase)<{
   $delay: number;
 }>`
   color: var(${CSS_VAR.colorPrimary});
-  border: 2px solid var(${CSS_VAR.colorPrimary});
+  border: 2px solid var(${CSS_VAR.colorPrimaryShadow});
   box-shadow: 0 3px 0 var(${CSS_VAR.colorPrimaryShadow});
   opacity: 0;
 

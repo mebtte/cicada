@@ -43,24 +43,35 @@ var AssetAcceptMIME = map[AssetType][]string{
 	AssetTypeMusic:          {"audio/mpeg", "audio/flac", "audio/x-flac", "audio/m4a", "audio/x-m4a", "audio/mp4", "video/mp4"},
 }
 
+type FileCategory string
+
 const (
-	DefaultMusicFileMaxSize int64 = 200 * 1024 * 1024
+	FileCategoryImage FileCategory = "image"
+	FileCategoryAudio FileCategory = "audio"
+	FileCategoryVideo FileCategory = "video"
+)
+
+const (
 	DefaultImageFileMaxSize int64 = 5 * 1024 * 1024
+	DefaultAudioFileMaxSize int64 = 200 * 1024 * 1024
+	DefaultVideoFileMaxSize int64 = 1024 * 1024 * 1024
 )
 
 type Config struct {
 	Mode             Mode
 	Data             string
 	Port             int
-	MusicFileMaxSize int64
 	ImageFileMaxSize int64
+	AudioFileMaxSize int64
+	VideoFileMaxSize int64
 }
 
 const (
 	DataEnvVar             = "CICADA_DATA"
 	PortEnvVar             = "CICADA_PORT"
-	MusicFileMaxSizeEnvVar = "CICADA_MUSIC_FILE_MAX_SIZE"
 	ImageFileMaxSizeEnvVar = "CICADA_IMAGE_FILE_MAX_SIZE"
+	AudioFileMaxSizeEnvVar = "CICADA_AUDIO_FILE_MAX_SIZE"
+	VideoFileMaxSizeEnvVar = "CICADA_VIDEO_FILE_MAX_SIZE"
 
 	DefaultPortValue = 8000
 )
@@ -85,12 +96,16 @@ func DefaultPort() int {
 	return DefaultPortValue
 }
 
-func DefaultMusicFileMaxSizeFromEnv() int64 {
-	return defaultFileMaxSize(MusicFileMaxSizeEnvVar, DefaultMusicFileMaxSize)
-}
-
 func DefaultImageFileMaxSizeFromEnv() int64 {
 	return defaultFileMaxSize(ImageFileMaxSizeEnvVar, DefaultImageFileMaxSize)
+}
+
+func DefaultAudioFileMaxSizeFromEnv() int64 {
+	return defaultFileMaxSize(AudioFileMaxSizeEnvVar, DefaultAudioFileMaxSize)
+}
+
+func DefaultVideoFileMaxSizeFromEnv() int64 {
+	return defaultFileMaxSize(VideoFileMaxSizeEnvVar, DefaultVideoFileMaxSize)
 }
 
 func defaultFileMaxSize(envVar string, fallback int64) int64 {
@@ -108,8 +123,9 @@ var (
 		Mode:             DefaultMode(),
 		Data:             DefaultDataPath(),
 		Port:             DefaultPortValue,
-		MusicFileMaxSize: DefaultMusicFileMaxSizeFromEnv(),
 		ImageFileMaxSize: DefaultImageFileMaxSizeFromEnv(),
+		AudioFileMaxSize: DefaultAudioFileMaxSizeFromEnv(),
+		VideoFileMaxSize: DefaultVideoFileMaxSizeFromEnv(),
 	}
 )
 
@@ -126,21 +142,72 @@ func Set(c Config) {
 }
 
 func normalizeConfig(c Config) Config {
-	if c.MusicFileMaxSize <= 0 {
-		c.MusicFileMaxSize = DefaultMusicFileMaxSize
-	}
 	if c.ImageFileMaxSize <= 0 {
 		c.ImageFileMaxSize = DefaultImageFileMaxSize
+	}
+	if c.AudioFileMaxSize <= 0 {
+		c.AudioFileMaxSize = DefaultAudioFileMaxSize
+	}
+	if c.VideoFileMaxSize <= 0 {
+		c.VideoFileMaxSize = DefaultVideoFileMaxSize
 	}
 	return c
 }
 
-func AssetMaxSize(t AssetType) (int64, bool) {
+// CategoryFromMIME maps a sniffed MIME string (sans parameters) to a
+// FileCategory. Returns false when the MIME does not belong to any of the
+// supported categories.
+func CategoryFromMIME(mime string) (FileCategory, bool) {
+	switch {
+	case strings.HasPrefix(mime, "image/"):
+		return FileCategoryImage, true
+	case strings.HasPrefix(mime, "audio/"):
+		return FileCategoryAudio, true
+	case strings.HasPrefix(mime, "video/"):
+		return FileCategoryVideo, true
+	default:
+		return "", false
+	}
+}
+
+// FileCategoryMaxSize returns the configured size cap for the given category.
+func FileCategoryMaxSize(cat FileCategory) (int64, bool) {
+	c := Get()
+	switch cat {
+	case FileCategoryImage:
+		return c.ImageFileMaxSize, true
+	case FileCategoryAudio:
+		return c.AudioFileMaxSize, true
+	case FileCategoryVideo:
+		return c.VideoFileMaxSize, true
+	default:
+		return 0, false
+	}
+}
+
+// AssetMaxSize returns the upload size cap for an asset type.
+//
+// When mime is empty (e.g. chunked init before any bytes are sniffed), music
+// assets fall back to max(audio, video) so the worst-case payload still passes
+// the early gate; the final per-category cap is re-checked at completion. Image
+// asset types always resolve to ImageFileMaxSize regardless of mime.
+func AssetMaxSize(t AssetType, mime string) (int64, bool) {
 	switch t {
-	case AssetTypeMusic:
-		return Get().MusicFileMaxSize, true
 	case AssetTypeUserAvatar, AssetTypeMusicbillCover, AssetTypeArtistPhoto, AssetTypeMusicCover:
 		return Get().ImageFileMaxSize, true
+	case AssetTypeMusic:
+		if mime == "" {
+			c := Get()
+			max := c.AudioFileMaxSize
+			if c.VideoFileMaxSize > max {
+				max = c.VideoFileMaxSize
+			}
+			return max, true
+		}
+		if cat, ok := CategoryFromMIME(mime); ok {
+			return FileCategoryMaxSize(cat)
+		}
+		return 0, false
 	default:
 		return 0, false
 	}

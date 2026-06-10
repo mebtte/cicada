@@ -42,6 +42,7 @@ const Style = styled.div<{ $dragging: boolean }>`
   box-shadow: 0 4px 0 ${({ $dragging }) =>
     $dragging ? PRIMARY_SHADOW : NEUTRAL_SHADOW};
   transition:
+    transform 150ms ease-out,
     border-color 150ms ease-out,
     box-shadow 150ms ease-out,
     filter 120ms ease-out,
@@ -81,7 +82,9 @@ const Style = styled.div<{ $dragging: boolean }>`
   }
 
   &:hover {
-    border-color: ${({ $dragging }) => ($dragging ? PRIMARY : 'rgb(198 198 198)')};
+    transform: translateY(-2px);
+    box-shadow: 0 ${({ $dragging }) => ($dragging ? '4px' : '6px')} 0
+      ${({ $dragging }) => ($dragging ? PRIMARY_SHADOW : NEUTRAL_SHADOW)};
     filter: brightness(1.02);
   }
 

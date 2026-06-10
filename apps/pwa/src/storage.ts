@@ -28,7 +28,7 @@ export enum Key {
   CUSTOM_APP_NAME = 'custom_app_name',
 
   SETTING = 'setting_v4',
-  SERVER = 'server',
+  SERVER = 'server_v2',
 
   DOWNLOAD_FLOATING_POSITION = 'download-floating-position',
   OFFLINE_MUSIC = 'offline-music-v2',

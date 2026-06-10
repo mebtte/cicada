@@ -366,7 +366,7 @@ const LyricTextarea = styled(Textarea)`
     box-shadow 150ms ease-out;
 
   &:focus {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
+    border-color: ${CSSVariable.COLOR_PRIMARY_ACTIVE};
     box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
   }
 `;
@@ -388,7 +388,7 @@ const SearchKeywordsTextarea = styled(Textarea)`
     box-shadow 150ms ease-out;
 
   &:focus {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
+    border-color: ${CSSVariable.COLOR_PRIMARY_ACTIVE};
     box-shadow: 0 3px 0 ${CSSVariable.COLOR_PRIMARY_ACTIVE};
   }
 `;
@@ -519,7 +519,7 @@ const isAbortedUploadError = (error: unknown) =>
   (error as { code?: unknown }).code === 'aborted';
 
 const alertIfMusicFileOversize = (file: File) => {
-  const limit = getAssetMaxSize(AssetType.MUSIC);
+  const limit = getAssetMaxSize(AssetType.MUSIC, file.type);
   if (!limit || file.size <= limit) {
     return false;
   }

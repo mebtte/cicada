@@ -82,6 +82,7 @@ func NewServer() *gin.Engine {
 	api.GET("/music", auth(), handler.GetMusic)
 	api.GET("/music/search", auth(), handler.SearchMusic)
 	api.GET("/music/search_by_lyric", auth(), handler.SearchMusicByLyric)
+	api.GET("/music/random", auth(), handler.GetRandomMusic)
 
 	// Artist (read)
 	api.GET("/artist", auth(), handler.GetArtist)
@@ -107,6 +108,7 @@ func NewServer() *gin.Engine {
 	// Shared musicbill
 	api.POST("/musicbill/shared_user", auth(), handler.AddMusicbillSharedUser)
 	api.DELETE("/musicbill/shared_user", auth(), handler.DeleteMusicbillSharedUser)
+	api.PUT("/musicbill/owner", auth(), handler.TransferMusicbillOwner)
 	api.GET("/shared_musicbill_invitation_list", auth(), handler.GetSharedMusicbillInvitationList)
 	api.PUT("/shared_musicbill_invitation", auth(), handler.AcceptSharedMusicbillInvitation)
 

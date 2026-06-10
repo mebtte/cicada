@@ -99,20 +99,25 @@ export default function useSelectFiles() {
   return useCallback(async (files: File[]) => {
     if (!files.length) return;
 
-    const limit = getAssetMaxSize(AssetType.MUSIC);
-    if (limit) {
-      const oversize = files.filter((f) => f.size > limit);
-      if (oversize.length) {
-        dialog.alert({
-          content: t(
-            'asset_oversize_warning',
-            oversize.map((f) => f.name).join(', '),
-            formatBytes(limit),
+    const oversize = files.filter((f) => {
+      const limit = getAssetMaxSize(AssetType.MUSIC, f.type);
+      return limit != null && f.size > limit;
+    });
+    if (oversize.length) {
+      dialog.alert({
+        content: t(
+          'asset_oversize_warning',
+          oversize.map((f) => f.name).join(', '),
+          formatBytes(
+            getAssetMaxSize(AssetType.MUSIC, oversize[0].type) ?? 0,
           ),
-        });
-      }
+        ),
+      });
     }
-    const accepted = limit ? files.filter((f) => f.size <= limit) : files;
+    const accepted = files.filter((f) => {
+      const limit = getAssetMaxSize(AssetType.MUSIC, f.type);
+      return limit == null || f.size <= limit;
+    });
     if (!accepted.length) return;
 
     try {

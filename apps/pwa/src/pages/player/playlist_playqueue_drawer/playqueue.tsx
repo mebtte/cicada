@@ -187,7 +187,7 @@ function SortableQueueMusicItem({
           <DragActivator {...attributes} {...listeners}>
             <Button
               square
-              variant="plain"
+              variant="ghost"
               size="sm"
               title={t('sort')}
               aria-label={t('sort')}

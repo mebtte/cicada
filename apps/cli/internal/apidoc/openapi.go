@@ -785,6 +785,29 @@ func operations() []operation {
 			ErrorCodes:     []string{"wrong_parameter", "musicbill_not_existed", "no_permission_to_delete_musicbill_shared_user", "not_authorized"},
 		},
 		{
+			Method:      "PUT",
+			Path:        "/api/musicbill/owner",
+			Summary:     "Transfer musicbill owner",
+			Description: "Transfer the musicbill owner to a user that has already accepted the share invitation. The previous owner is automatically kept as an accepted shared user.",
+			Tags:        []string{"Musicbill"},
+			Auth:        true,
+			RequestBody: jsonRequestBody(
+				objSchema(
+					[]string{"musicbillId", "userId", "captchaId", "captchaValue"},
+					map[string]any{
+						"musicbillId":  strSchema("Musicbill ID.", "musicbill-1"),
+						"userId":       strSchema("Target user ID (must be an accepted shared user).", "2"),
+						"captchaId":    strSchema("Captcha ID.", "9c4a0f42"),
+						"captchaValue": strSchema("Captcha value.", "5k7n"),
+					},
+				),
+				map[string]any{"musicbillId": "musicbill-1", "userId": "2", "captchaId": "9c4a0f42", "captchaValue": "5k7n"},
+			),
+			SuccessSchema:  nil,
+			SuccessExample: nil,
+			ErrorCodes:     []string{"wrong_parameter", "wrong_captcha", "musicbill_not_existed", "user_not_existed", "not_musicbill_owner", "target_user_not_accepted_shared_user", "server_error", "not_authorized"},
+		},
+		{
 			Method:         "GET",
 			Path:           "/api/shared_musicbill_invitation_list",
 			Summary:        "Get shared musicbill invitations",
