@@ -574,6 +574,70 @@ func GetSharedMusicbillInvitationList(c *gin.Context) {
 	api.OK(c, list)
 }
 
+type transferMusicbillOwnerBody struct {
+	MusicbillID  string `json:"musicbillId" binding:"required"`
+	UserID       string `json:"userId" binding:"required"`
+	CaptchaID    string `json:"captchaId" binding:"required"`
+	CaptchaValue string `json:"captchaValue" binding:"required"`
+}
+
+func TransferMusicbillOwner(c *gin.Context) {
+	u := middleware.GetUser(c)
+	var body transferMusicbillOwnerBody
+	if err := c.ShouldBindJSON(&body); err != nil {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	if body.UserID == u.ID {
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+
+	if !verifyCaptchaFromStore(body.CaptchaID, body.CaptchaValue) {
+		api.Fail(c, apperr.WrongCaptcha)
+		return
+	}
+
+	mb, err := store.GetMusicbillByID(body.MusicbillID)
+	if err != nil {
+		api.Fail(c, apperr.MusicbillNotExisted)
+		return
+	}
+	if mb.UserID != u.ID {
+		api.Fail(c, apperr.NotMusicbillOwner)
+		return
+	}
+
+	if _, err := store.GetUserByID(body.UserID); err != nil {
+		api.Fail(c, apperr.UserNotExisted)
+		return
+	}
+
+	sharedUsers, _ := store.GetSharedUsersInMusicbill(body.MusicbillID)
+	targetAccepted := false
+	for _, su := range sharedUsers {
+		if su.SharedUserID == body.UserID && su.Accepted == 1 {
+			targetAccepted = true
+			break
+		}
+	}
+	if !targetAccepted {
+		api.Fail(c, apperr.TargetUserNotAcceptedSharedUser)
+		return
+	}
+
+	ok, err := store.TransferMusicbillOwner(body.MusicbillID, u.ID, body.UserID)
+	if err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	if !ok {
+		api.Fail(c, apperr.NotMusicbillOwner)
+		return
+	}
+	api.OK(c, nil)
+}
+
 type acceptInvitationBody struct {
 	ID int64 `json:"id" binding:"required"`
 }

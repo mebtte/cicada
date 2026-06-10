@@ -299,7 +299,10 @@ export default {
   owner: 'owner',
   invitation_has_sent: 'invitation has sent',
   remove_user_from_shared_musicbill_question:
-    'are you sure to remove this user from shared musicbill ?',
+    'remove %s1 from this shared musicbill? they will lose access.',
+  transfer_musicbill_owner: 'transfer owner',
+  transfer_musicbill_owner_question:
+    'transfer ownership of this musicbill to %s1? you will become a shared user.',
   delete_musicbill: 'delete musicbill',
   set_musicbill_as_public: 'set musicbill as public',
   set_musicbill_as_private: 'set musicbill as private',

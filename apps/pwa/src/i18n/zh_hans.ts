@@ -287,7 +287,11 @@ const zhCN: {
   leave_shared_musicbill: '退出共享乐单',
   owner: '所有者',
   invitation_has_sent: '邀请已经发送',
-  remove_user_from_shared_musicbill_question: '确定从共享乐单中移除该用户吗?',
+  remove_user_from_shared_musicbill_question:
+    '确定将 %s1 从共享乐单中移除吗? 移除后对方将失去访问权限.',
+  transfer_musicbill_owner: '转让所有者',
+  transfer_musicbill_owner_question:
+    '确定将乐单所有者转让给 %s1 吗? 转让后你将变为共享用户.',
   delete_musicbill: '删除乐单',
   set_musicbill_as_public: '设为公开乐单',
   set_musicbill_as_private: '设为私有乐单',

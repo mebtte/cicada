@@ -34,6 +34,8 @@ export enum ExceptionCode {
   REPEATED_SHARED_MUSICBILL_INVITATION = "repeated_shared_musicbill_invitation",
   NO_PERMISSION_TO_DELETE_MUSICBILL_SHARED_USER = "no_permission_to_delete_musicbill_shared_user",
   SHARED_MUSICBILL_INVITATION_NOT_EXISTED = "shared_musicbill_invitation_not_existed",
+  NOT_MUSICBILL_OWNER = "not_musicbill_owner",
+  TARGET_USER_NOT_ACCEPTED_SHARED_USER = "target_user_not_accepted_shared_user",
   WRONG_USERNAME_OR_PASSWORD = "wrong_username_or_password",
   LACK_OF_2FA_TOKEN = "lack_of_2fa_token",
   WRONG_2FA_TOKEN = "wrong_2fa_token",

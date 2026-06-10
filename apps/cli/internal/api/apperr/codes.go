@@ -37,6 +37,8 @@ const (
 	RepeatedSharedMusicbillInvitation       = "repeated_shared_musicbill_invitation"
 	NoPermissionToDeleteMusicbillSharedUser = "no_permission_to_delete_musicbill_shared_user"
 	SharedMusicbillInvitationNotExisted     = "shared_musicbill_invitation_not_existed"
+	NotMusicbillOwner                       = "not_musicbill_owner"
+	TargetUserNotAcceptedSharedUser         = "target_user_not_accepted_shared_user"
 	WrongUsernameOrPassword                 = "wrong_username_or_password"
 	LackOf2FAToken                          = "lack_of_2fa_token"
 	Wrong2FAToken                           = "wrong_2fa_token"

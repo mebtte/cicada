@@ -53,6 +53,8 @@ function DialogBase({
         aria-describedby={undefined}
         accessibleTitle={getAccessibleTitle(options)}
         forceMount={hasOpened ? true : undefined}
+        // 避免 Radix 在弹窗打开时自动聚焦首个按钮并触发 focus-visible 描边。
+        onOpenAutoFocus={(event) => event.preventDefault()}
       >
         {children({ onClose })}
       </DialogContent>
