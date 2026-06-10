@@ -42,12 +42,12 @@ export default {
   ffmpeg_supported_audio: 'audio supported by FFmpeg',
   music_play_record_short: 'play record',
   exploration: 'exploration',
-  radio_mode: 'radio mode',
+  radio_mode: 'Cicada\'s Radio',
   switch_to_radio_mode_confirm:
-    'Switching to radio mode will stop current playback. Continue?',
-  exit_radio_mode: 'exit radio mode',
+    'Switching to Cicada\'s Radio will stop current playback. Continue?',
+  exit_radio_mode: 'exit Cicada\'s Radio',
   exit_radio_mode_confirm:
-    'Exiting radio mode will return to the player. Continue?',
+    'Exiting Cicada\'s Radio will return to the player. Continue?',
   recommended_music: 'recommended music',
   recommended_singer: 'recommended singers',
   recommended_artist: 'recommended artists',

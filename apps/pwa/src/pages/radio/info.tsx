@@ -3,7 +3,7 @@ import { animated, useTransition } from 'react-spring';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { QueueMusic } from '@/pages/player/constants';
-import Singer from '@/pages/player/components/singer';
+import { Singer } from '@/features/music/components';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '@/pages/player/eventemitter';
@@ -75,7 +75,15 @@ function Info({ queueMusic }: { queueMusic: QueueMusic }) {
           </div>
           <div className="singers">
             {qm.singers.map((singer) => (
-              <Singer key={singer.id} singer={singer} />
+              <Singer
+                key={singer.id}
+                singer={singer}
+                onOpen={(nextSinger) =>
+                  playerEventemitter.emit(PlayerEventType.OPEN_ARTIST_DRAWER, {
+                    id: nextSinger.id,
+                  })
+                }
+              />
             ))}
           </div>
         </Item>

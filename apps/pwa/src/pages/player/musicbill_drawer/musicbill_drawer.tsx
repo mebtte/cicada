@@ -13,13 +13,11 @@ import Spinner from '@/components/spinner';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
 import {
-  Drawer,
-  DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from '@/components';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
+import AppDrawer from '@/components/app_drawer';
 import Cover, { Shape } from '@/components/cover';
 import useData from './use_data';
 import { Musicbill as MusicbillType } from './constants';
@@ -225,7 +223,6 @@ function Wrapper({
   zIndex: number;
 }) {
   const { data, reload, collected } = useData(id);
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -233,39 +230,38 @@ function Wrapper({
     leave: { opacity: 0 },
   });
   return (
-    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent
-        side="right"
-        style={{ width: 'min(85%, 400px)', paddingTop: titlebarTop }}
-        showClose={false}
-        zIndex={zIndex}
-      >
-        {transitions((style, d) => {
-          const { error, loading, musicbill } = d;
-          if (error) {
-            return (
-              <StatusContainer style={style}>
-                <ErrorCard errorMessage={error.message} retry={reload} />
-              </StatusContainer>
-            );
-          }
-          if (loading) {
-            return (
-              <StatusContainer style={style}>
-                <Spinner />
-              </StatusContainer>
-            );
-          }
+    <AppDrawer
+      open={open}
+      onClose={onClose}
+      width="wide"
+      showClose={false}
+      zIndex={zIndex}
+    >
+      {transitions((style, d) => {
+        const { error, loading, musicbill } = d;
+        if (error) {
           return (
-            <Musicbill
-              style={style}
-              musicbill={musicbill!}
-              collected={collected}
-            />
+            <StatusContainer style={style}>
+              <ErrorCard errorMessage={error.message} retry={reload} />
+            </StatusContainer>
           );
-        })}
-      </DrawerContent>
-    </Drawer>
+        }
+        if (loading) {
+          return (
+            <StatusContainer style={style}>
+              <Spinner />
+            </StatusContainer>
+          );
+        }
+        return (
+          <Musicbill
+            style={style}
+            musicbill={musicbill!}
+            collected={collected}
+          />
+        );
+      })}
+    </AppDrawer>
   );
 }
 

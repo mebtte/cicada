@@ -1,7 +1,7 @@
-import { HtmlHTMLAttributes } from 'react';
+import { HTMLAttributes } from 'react';
 import styled from 'styled-components';
-import Cover from '@/components/cover';
 import classnames from 'classnames';
+import Cover from '@/components/cover';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { CSSVariable } from '@/global_style';
 
@@ -26,20 +26,21 @@ const Style = styled.div`
     }
   }
 `;
+
 const preventDefault = (event) => event.preventDefault();
 
 function MusicbillCover({
-  src,
-  size,
   publiz,
   shared,
+  size,
+  src,
   ...props
 }: {
-  src: string;
-  size: number;
   publiz: boolean;
   shared: boolean;
-} & HtmlHTMLAttributes<HTMLDivElement>) {
+  size: number;
+  src: string;
+} & HTMLAttributes<HTMLDivElement>) {
   return (
     <Style
       {...props}

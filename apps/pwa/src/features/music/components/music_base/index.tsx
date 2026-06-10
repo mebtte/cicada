@@ -1,24 +1,37 @@
-import { CSSVariable } from '@/global_style';
+import { HTMLAttributes, ReactNode } from 'react';
 import styled from 'styled-components';
-import { HtmlHTMLAttributes, ReactNode } from 'react';
+import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { CSS_VAR } from '@/components/theme';
-import e, { EventType } from '../eventemitter';
-import Singer from './singer';
-import { Singer as SingerType } from '../constants';
+import Singer, { type SingerValue } from '../singer';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
+export interface MusicBaseValue {
+  aliases: string[];
+  id: string;
+  name: string;
+  singers: SingerValue[];
+}
+
+export interface MusicBaseProps extends HTMLAttributes<HTMLDivElement> {
+  active?: boolean;
+  addon?: ReactNode;
+  index: number;
+  lineAfter: ReactNode;
+  music: MusicBaseValue;
+  onOpenMusic?: (music: MusicBaseValue) => void;
+  onOpenSinger?: (singer: SingerValue) => void;
+}
+
 const Style = styled.div`
-  /* 顶部预留 4px 容纳 hover 时 translateY(-2px) 的上移,
-   * 避免 overflow: auto 滚动容器把抬起的卡片顶部裁掉. */
   padding-top: 4px;
   padding-bottom: 6px;
 `;
-const Card = styled.div<{ $active: boolean }>`
-  cursor: pointer;
+const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 
@@ -162,33 +175,25 @@ const Card = styled.div<{ $active: boolean }>`
       box-shadow 60ms ease-in,
       filter 60ms ease-in;
   }
-
 `;
 
 function MusicBase({
   active = false,
-  index,
-  music,
-  lineAfter,
   addon,
+  index,
+  lineAfter,
+  music,
+  onOpenMusic,
+  onOpenSinger,
   ...props
-}: HtmlHTMLAttributes<HTMLDivElement> & {
-  active?: boolean;
-  index: number;
-  music: {
-    id: string;
-    name: string;
-    singers: SingerType[];
-    aliases: string[];
-  };
-  lineAfter: ReactNode;
-  addon?: ReactNode;
-}) {
-  const openMusicDrawer = () =>
-    e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id });
+}: MusicBaseProps) {
   return (
     <Style {...props}>
-      <Card $active={active} onClick={openMusicDrawer}>
+      <Card
+        $active={active}
+        $clickable={!!onOpenMusic}
+        onClick={() => onOpenMusic?.(music)}
+      >
         <div className="index">{index}</div>
         <div className="content">
           <div className="music">
@@ -201,7 +206,11 @@ function MusicBase({
               </div>
               <div className="singers">
                 {music.singers.map((singer) => (
-                  <Singer key={singer.id} singer={singer} />
+                  <Singer
+                    key={singer.id}
+                    singer={singer}
+                    onOpen={onOpenSinger}
+                  />
                 ))}
               </div>
             </div>

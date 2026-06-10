@@ -1,28 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Drawer, DrawerContent } from '@/components';
-import ErrorCard from '@/components/error_card';
-import Spinner from '@/components/spinner';
+import AppDrawer from '@/components/app_drawer';
+import AsyncContent from '@/components/async_content';
 import adminGetArtist from '@/server/api/admin_get_artist';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import ArtistEditContent from './content';
 import type { Artist } from './types';
 
 const DRAWER_WIDTH = 360;
 const DRAWER_NARROW_SCREEN_GUTTER = 48;
 
-const EditDrawerContent = styled(DrawerContent)`
+const EditDrawer = styled(AppDrawer)`
   > div {
     overflow: hidden;
   }
-`;
-
-const CenterBox = styled.div`
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
 `;
 
 const toEditableArtist = (
@@ -48,7 +38,6 @@ function ArtistEditDrawer({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [artist, setArtist] = useState<Artist | null>(null);
@@ -89,29 +78,22 @@ function ArtistEditDrawer({
   };
 
   return (
-    <Drawer open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
-      <EditDrawerContent
-        side="right"
-        style={{
-          width: DRAWER_WIDTH,
-          maxWidth: `calc(100vw - ${DRAWER_NARROW_SCREEN_GUTTER}px)`,
-          paddingTop: titlebarTop,
-        }}
-        showClose={false}
-        onOpenAutoFocus={(event) => event.preventDefault()}
+    <EditDrawer
+      open={open}
+      onClose={onClose}
+      width={DRAWER_WIDTH}
+      style={{
+        maxWidth: `calc(100vw - ${DRAWER_NARROW_SCREEN_GUTTER}px)`,
+      }}
+      showClose={false}
+      onOpenAutoFocus={(event) => event.preventDefault()}
+    >
+      <AsyncContent
+        loading={loading}
+        error={error}
+        retry={() => artistId && loadArtist(artistId)}
       >
-        {loading ? (
-          <CenterBox>
-            <Spinner />
-          </CenterBox>
-        ) : error ? (
-          <CenterBox>
-            <ErrorCard
-              errorMessage={error.message}
-              retry={() => artistId && loadArtist(artistId)}
-            />
-          </CenterBox>
-        ) : artist ? (
+        {artist ? (
           <ArtistEditContent
             artist={artist}
             onSaved={handleSaved}
@@ -119,8 +101,8 @@ function ArtistEditDrawer({
             onDeleted={handleDeleted}
           />
         ) : null}
-      </EditDrawerContent>
-    </Drawer>
+      </AsyncContent>
+    </EditDrawer>
   );
 }
 

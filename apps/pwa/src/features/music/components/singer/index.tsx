@@ -1,8 +1,16 @@
+import { MouseEvent } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../eventemitter';
+
+export interface SingerValue {
+  id: string;
+  name: string;
+}
+
+export interface SingerProps {
+  onOpen?: (singer: SingerValue, event: MouseEvent<HTMLSpanElement>) => void;
+  singer: SingerValue;
+}
 
 const Style = styled.span`
   user-select: none;
@@ -27,16 +35,14 @@ const Style = styled.span`
   }
 `;
 
-function Singer({ singer }: { singer: { id: string; name: string } }) {
+function Singer({ onOpen, singer }: SingerProps) {
   return (
     <Style>
       <span
         className="name"
         onClick={(event) => {
           event.stopPropagation();
-          return playerEventemitter.emit(PlayerEventType.OPEN_ARTIST_DRAWER, {
-            id: singer.id,
-          });
+          onOpen?.(singer, event);
         }}
       >
         {singer.name}
