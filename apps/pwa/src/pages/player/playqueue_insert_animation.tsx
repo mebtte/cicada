@@ -11,7 +11,6 @@ const INSERT_ANIMATION_DURATION = 1280;
 
 interface AnimationItem {
   id: number;
-  direction: number;
 }
 
 const stageLife = keyframes`
@@ -75,47 +74,25 @@ const slotPulse = keyframes`
   }
 `;
 
-const insertLeft = keyframes`
-  0% {
-    opacity: 0;
-    transform: translate3d(-34px, -10px, 0) scale(0.56);
-  }
-
-  16% {
-    opacity: 1;
-    transform: translate3d(8px, 8px, 0) scale(1.08);
-  }
-
-  48% {
-    opacity: 1;
-    transform: translate3d(58px, 56px, 0) scale(0.94);
-  }
-
-  68%, 100% {
-    opacity: 1;
-    transform: translate3d(58px, 56px, 0) scale(1);
-  }
-`;
-
 const insertRight = keyframes`
   0% {
     opacity: 0;
-    transform: translate3d(160px, -10px, 0) scale(0.56);
+    transform: translate3d(210px, -10px, 0) scale(0.56);
   }
 
   16% {
     opacity: 1;
-    transform: translate3d(118px, 8px, 0) scale(1.08);
+    transform: translate3d(168px, 8px, 0) scale(1.08);
   }
 
   48% {
     opacity: 1;
-    transform: translate3d(58px, 56px, 0) scale(0.94);
+    transform: translate3d(118px, 56px, 0) scale(0.94);
   }
 
   68%, 100% {
     opacity: 1;
-    transform: translate3d(58px, 56px, 0) scale(1);
+    transform: translate3d(118px, 56px, 0) scale(1);
   }
 `;
 
@@ -217,7 +194,7 @@ const Slot = styled.div`
   animation: ${slotPulse} ${INSERT_ANIMATION_DURATION}ms ease-out forwards;
 `;
 
-const Incoming = styled.div<{ $direction: number }>`
+const Incoming = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -235,29 +212,19 @@ const Incoming = styled.div<{ $direction: number }>`
   box-shadow: 0 4px 0 var(${CSS_VAR.colorPrimaryShadow});
   filter: drop-shadow(0 8px 12px rgb(0 0 0 / 0.08));
   opacity: 0;
-  transform: ${({ $direction }) =>
-    $direction < 0
-      ? 'translate3d(-34px, -10px, 0) scale(0.56)'
-      : 'translate3d(160px, -10px, 0) scale(0.56)'};
+  transform: translate3d(210px, -10px, 0) scale(0.56);
   transform-origin: center;
   backface-visibility: hidden;
   will-change: transform, opacity;
 
-  animation: ${({ $direction }) => ($direction < 0 ? insertLeft : insertRight)}
-    ${INSERT_ANIMATION_DURATION}ms cubic-bezier(0.18, 0.88, 0.24, 1) both;
+  animation: ${insertRight} ${INSERT_ANIMATION_DURATION}ms
+    cubic-bezier(0.18, 0.88, 0.24, 1) both;
 
   > svg {
     width: 27px;
     height: 27px;
   }
 `;
-
-function createItem(id: number): AnimationItem {
-  return {
-    id,
-    direction: Math.random() > 0.5 ? 1 : -1,
-  };
-}
 
 function PlayqueueInsertAnimation() {
   const [items, setItems] = useState<AnimationItem[]>([]);
@@ -267,7 +234,7 @@ function PlayqueueInsertAnimation() {
     return eventemitter.listen(
       EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
       () => {
-        const item = createItem(nextId);
+        const item: AnimationItem = { id: nextId };
         nextId += 1;
         setItems((list) => [...list, item].slice(-MAX_ITEM_COUNT));
       },
@@ -301,7 +268,7 @@ function PlayqueueInsertAnimation() {
             <MusicNotes />
             <span className="bar" />
           </QueueRow>
-          <Incoming $direction={item.direction}>
+          <Incoming>
             <QueueInsert />
           </Incoming>
         </Stage>
