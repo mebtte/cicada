@@ -7,8 +7,9 @@ import { getCommonParams } from '..';
 interface Response {
   version: string;
   hostname: string;
-  musicFileMaxSize: number;
   imageFileMaxSize: number;
+  audioFileMaxSize: number;
+  videoFileMaxSize: number;
 }
 
 const METADATA_TIMEOUT_MS = 10 * 1000;

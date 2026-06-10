@@ -89,8 +89,9 @@ func TestGetMetadataIncludesFileMaxSizes(t *testing.T) {
 		Mode:             config.ModeProduction,
 		Data:             t.TempDir(),
 		Port:             8000,
-		MusicFileMaxSize: 123 * 1024 * 1024,
 		ImageFileMaxSize: 4 * 1024 * 1024,
+		AudioFileMaxSize: 123 * 1024 * 1024,
+		VideoFileMaxSize: 777 * 1024 * 1024,
 	})
 
 	w := httptest.NewRecorder()
@@ -104,8 +105,9 @@ func TestGetMetadataIncludesFileMaxSizes(t *testing.T) {
 		Data struct {
 			Hostname         string `json:"hostname"`
 			Version          string `json:"version"`
-			MusicFileMaxSize int64  `json:"musicFileMaxSize"`
 			ImageFileMaxSize int64  `json:"imageFileMaxSize"`
+			AudioFileMaxSize int64  `json:"audioFileMaxSize"`
+			VideoFileMaxSize int64  `json:"videoFileMaxSize"`
 		} `json:"data"`
 	}
 	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
@@ -114,11 +116,14 @@ func TestGetMetadataIncludesFileMaxSizes(t *testing.T) {
 	if resp.Code != apperr.Success {
 		t.Fatalf("expected success, got %s", resp.Code)
 	}
-	if resp.Data.MusicFileMaxSize != 123*1024*1024 {
-		t.Fatalf("expected music file max size %d, got %d", 123*1024*1024, resp.Data.MusicFileMaxSize)
-	}
 	if resp.Data.ImageFileMaxSize != 4*1024*1024 {
 		t.Fatalf("expected image file max size %d, got %d", 4*1024*1024, resp.Data.ImageFileMaxSize)
+	}
+	if resp.Data.AudioFileMaxSize != 123*1024*1024 {
+		t.Fatalf("expected audio file max size %d, got %d", 123*1024*1024, resp.Data.AudioFileMaxSize)
+	}
+	if resp.Data.VideoFileMaxSize != 777*1024*1024 {
+		t.Fatalf("expected video file max size %d, got %d", 777*1024*1024, resp.Data.VideoFileMaxSize)
 	}
 }
 

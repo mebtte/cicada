@@ -519,7 +519,7 @@ const isAbortedUploadError = (error: unknown) =>
   (error as { code?: unknown }).code === 'aborted';
 
 const alertIfMusicFileOversize = (file: File) => {
-  const limit = getAssetMaxSize(AssetType.MUSIC);
+  const limit = getAssetMaxSize(AssetType.MUSIC, file.type);
   if (!limit || file.size <= limit) {
     return false;
   }

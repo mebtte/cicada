@@ -25,8 +25,9 @@ func GetMetadata(c *gin.Context) {
 	api.OK(c, gin.H{
 		"hostname":         hostname,
 		"version":          version.Get(),
-		"musicFileMaxSize": cfg.MusicFileMaxSize,
 		"imageFileMaxSize": cfg.ImageFileMaxSize,
+		"audioFileMaxSize": cfg.AudioFileMaxSize,
+		"videoFileMaxSize": cfg.VideoFileMaxSize,
 	})
 }
 

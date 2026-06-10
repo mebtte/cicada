@@ -322,7 +322,9 @@ async function uploadAssetChunked(
   // Music files can be large enough that hashing/uploading before rejection is
   // expensive. Only enforce the client-side cap once server metadata is known.
   const limit =
-    assetType === AssetType.MUSIC ? getAssetMaxSize(assetType) : undefined;
+    assetType === AssetType.MUSIC
+      ? getAssetMaxSize(assetType, file.type)
+      : undefined;
   if (limit && file.size > limit) {
     throw new ErrorWithCode('asset oversize', ExceptionCode.ASSET_OVERSIZE);
   }
