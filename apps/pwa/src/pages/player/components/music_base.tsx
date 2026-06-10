@@ -12,7 +12,10 @@ const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
 const Style = styled.div`
-  padding-bottom: 10px;
+  /* 顶部预留 4px 容纳 hover 时 translateY(-2px) 的上移,
+   * 避免 overflow: auto 滚动容器把抬起的卡片顶部裁掉. */
+  padding-top: 4px;
+  padding-bottom: 6px;
 `;
 const Card = styled.div<{ $active: boolean }>`
   cursor: pointer;
