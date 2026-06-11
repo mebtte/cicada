@@ -308,18 +308,6 @@ const MenuToggle = styled(Button)`
   }
 `;
 
-const HeaderLogo = styled.img`
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-  flex-shrink: 0;
-  user-select: none;
-
-  @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    display: none;
-  }
-`;
-
 const HeaderTitle = styled.div`
   flex: 1;
   min-width: 0;
@@ -781,7 +769,6 @@ function AdminPage() {
           >
             <MenuIcon size={22} />
           </MenuToggle>
-          <HeaderLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
           <HeaderTitle>
             <HeaderTitleText>{capitalize(t(currentMenuItem.label))}</HeaderTitleText>
           </HeaderTitle>

@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import Cover from '@/components/cover';
 import Button from '@/components/button';
 import { Search as SearchIcon, ArrowBack, Menu as MenuIcon } from '@/components/icon';
 import { useLocation, useNavigate as useRouterNavigate } from 'react-router-dom';
@@ -89,9 +88,7 @@ function Header() {
             <SearchIcon />
           </Button>
         </>
-      ) : (
-        <Cover src="/logo.png" size={30} />
-      )}
+      ) : null}
       <Title title={title.title} description={title.description} />
       {miniMode ? null : <Search />}
     </Style>
