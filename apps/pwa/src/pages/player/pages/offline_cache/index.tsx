@@ -288,7 +288,7 @@ function OfflineCache() {
                       <Button
                         className="primary-action"
                         square
-                        variant="plain"
+                        variant="ghost"
                         size="sm"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -303,7 +303,7 @@ function OfflineCache() {
                       <Tooltip content={t('play_next')}>
                         <Button
                           square
-                          variant="plain"
+                          variant="ghost"
                           size="sm"
                           onClick={(event) => {
                             event.stopPropagation();
@@ -319,7 +319,7 @@ function OfflineCache() {
                       <Tooltip content={t('remove_from_offline_cache')}>
                         <Button
                           square
-                          variant="plain"
+                          variant="ghost"
                           size="sm"
                           aria-label={t('remove_from_offline_cache')}
                           onClick={(event) => {

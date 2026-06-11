@@ -185,6 +185,11 @@ const zhCN: {
   invitation_has_been_sent: '邀请已发送',
   origin: '服务器地址',
   add_origin: '添加服务器',
+  empty_origin_warning: '请输入服务器地址',
+  origin_is_invalid: '服务器地址格式不正确',
+  origin_protocol_is_invalid: '服务器地址必须以 http:// 或 https:// 开头',
+  origin_mixed_content_warning:
+    'HTTPS PWA 只能连接 HTTPS 服务器, localhost 除外',
   failed_to_get_server_metadata: '无法连接到当前服务器',
   server_major_version_mismatch:
     'PWA 和服务器必须使用相同的大版本。PWA: %s1，服务器: %s2',

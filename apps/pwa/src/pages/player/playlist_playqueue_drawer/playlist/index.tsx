@@ -137,7 +137,7 @@ function Playlist() {
                         <Button
                           className="primary-action"
                           square
-                          variant="plain"
+                          variant="ghost"
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
@@ -152,7 +152,7 @@ function Playlist() {
                         <Tooltip content={t('play_next')}>
                           <Button
                             square
-                            variant="plain"
+                            variant="ghost"
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -167,7 +167,7 @@ function Playlist() {
                         </Tooltip>
                         <Button
                           square
-                          variant="plain"
+                          variant="ghost"
                           size="sm"
                           style={removeStyle}
                           onClick={(e) => {

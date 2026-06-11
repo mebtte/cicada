@@ -174,7 +174,7 @@ function NoticeItem({ notice }: { notice: Notice }) {
             <Button
               className="close"
               square
-              variant="plain"
+              variant="ghost"
               size="sm"
               onClick={onClose}
             >

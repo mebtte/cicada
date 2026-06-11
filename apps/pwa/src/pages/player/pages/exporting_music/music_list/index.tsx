@@ -631,7 +631,7 @@ function MusicList() {
                       </QualityChip>
                       <Button
                         square
-                        variant="plain"
+                        variant="ghost"
                         size="sm"
                         title={t('delete')}
                         aria-label={t('delete')}

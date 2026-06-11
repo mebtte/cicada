@@ -188,6 +188,11 @@ export default {
   invitation_has_been_sent: 'invitation has been sent',
   origin: 'server address',
   add_origin: 'add server address',
+  empty_origin_warning: 'please enter the server address',
+  origin_is_invalid: 'server address is invalid',
+  origin_protocol_is_invalid: 'server address must start with http:// or https://',
+  origin_mixed_content_warning:
+    'HTTPS PWA can only connect to HTTPS servers, except localhost',
   failed_to_get_server_metadata: 'failed to connect this server',
   server_major_version_mismatch:
     'PWA and server must use the same major version. PWA: %s1, server: %s2',

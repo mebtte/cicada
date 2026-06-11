@@ -846,24 +846,22 @@ function AdminPage() {
               </PlayerLink>
             </Tooltip>
             <UserMenuRoot ref={userMenuRef}>
-              <Tooltip content={user.nickname}>
-                <AvatarButton
-                  role="button"
-                  tabIndex={0}
-                  aria-label={user.nickname}
-                  aria-haspopup="menu"
-                  aria-expanded={userMenuOpen}
-                  onClick={toggleUserMenu}
-                  onKeyDown={onAvatarKeyDown}
-                >
-                  {/* Empty src lets Avatar render the shared default avatar image. */}
-                  <Avatar
-                    src={avatarSrc}
-                    size={AVATAR_SIZE}
-                    active={userMenuOpen}
-                  />
-                </AvatarButton>
-              </Tooltip>
+              <AvatarButton
+                role="button"
+                tabIndex={0}
+                aria-label={user.nickname}
+                aria-haspopup="menu"
+                aria-expanded={userMenuOpen}
+                onClick={toggleUserMenu}
+                onKeyDown={onAvatarKeyDown}
+              >
+                {/* Empty src lets Avatar render the shared default avatar image. */}
+                <Avatar
+                  src={avatarSrc}
+                  size={AVATAR_SIZE}
+                  active={userMenuOpen}
+                />
+              </AvatarButton>
               {userMenuOpen ? (
                 <UserMenu role="menu">
                   <UserMenuProfile>

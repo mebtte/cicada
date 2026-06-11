@@ -29,7 +29,7 @@ const Style = styled.div`
 function Toolbar() {
   return (
     <Style>
-      <Button square variant="plain" size="sm" onClick={openCreateUserDialog}>
+      <Button square variant="ghost" size="sm" onClick={openCreateUserDialog}>
         <AddBox />
       </Button>
       <Filter />

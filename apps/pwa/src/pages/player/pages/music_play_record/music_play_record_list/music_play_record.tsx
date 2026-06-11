@@ -54,7 +54,7 @@ function MusicWithExternalInfo({
         <LineAfter>
           <Button
             square
-            variant="plain"
+            variant="ghost"
             size="sm"
             onClick={(event) => {
               event.stopPropagation();
