@@ -3,7 +3,7 @@ import FeatureMusicInfo, {
 } from '@/features/music/components/music_info';
 import eventemitter, { EventType } from '../../eventemitter';
 
-type Props = Omit<FeatureMusicInfoProps, 'onOpenMusic' | 'onOpenSinger'>;
+type Props = Omit<FeatureMusicInfoProps, 'onOpenMusic' | 'onOpenArtist'>;
 
 function MusicInfo(props: Props) {
   return (
@@ -12,8 +12,8 @@ function MusicInfo(props: Props) {
       onOpenMusic={(musicId) =>
         eventemitter.emit(EventType.OPEN_MUSIC_DRAWER, { id: musicId })
       }
-      onOpenSinger={(singer) =>
-        eventemitter.emit(EventType.OPEN_ARTIST_DRAWER, { id: singer.id })
+      onOpenArtist={(performer) =>
+        eventemitter.emit(EventType.OPEN_ARTIST_DRAWER, { id: performer.id })
       }
     />
   );

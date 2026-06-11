@@ -52,12 +52,12 @@ func TestAdminGetDashboard(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,createTimestamp) VALUES
-			('artist-recent','Recent Singer',?),
-			('artist-old','Old Singer',?)`,
+			('artist-recent','Recent Artist',?),
+			('artist-old','Old Artist',?)`,
 		recent,
 		old,
 	); err != nil {
-		t.Fatalf("insert singers: %v", err)
+		t.Fatalf("insert performers: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,cover,asset,assetSize,assetDurationMs,createTimestamp) VALUES
@@ -127,7 +127,7 @@ func TestAdminGetDashboard(t *testing.T) {
 				Created7d         int   `json:"created7d"`
 				WithoutCoverCount int   `json:"withoutCoverCount"`
 			} `json:"music"`
-			Singer struct {
+			Artist struct {
 				Total             int `json:"total"`
 				Created7d         int `json:"created7d"`
 				PhotoCount        int `json:"photoCount"`
@@ -166,11 +166,11 @@ func TestAdminGetDashboard(t *testing.T) {
 		resp.Data.Music.WithoutCoverCount != 1 {
 		t.Fatalf("unexpected music summary: %+v", resp.Data.Music)
 	}
-	if resp.Data.Singer.Total != 2 ||
-		resp.Data.Singer.Created7d != 1 ||
-		resp.Data.Singer.PhotoCount != 1 ||
-		resp.Data.Singer.WithoutPhotoCount != 1 {
-		t.Fatalf("unexpected artist summary: %+v", resp.Data.Singer)
+	if resp.Data.Artist.Total != 2 ||
+		resp.Data.Artist.Created7d != 1 ||
+		resp.Data.Artist.PhotoCount != 1 ||
+		resp.Data.Artist.WithoutPhotoCount != 1 {
+		t.Fatalf("unexpected artist summary: %+v", resp.Data.Artist)
 	}
 	if resp.Data.User.Total != 3 ||
 		resp.Data.User.AdminCount != 1 ||

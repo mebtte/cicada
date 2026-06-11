@@ -91,7 +91,7 @@ function useMediaSession({
     window.navigator.mediaSession.metadata = new MediaMetadata({
       title: music.name,
       artist:
-        music.singers.map((s) => s.name).join(',') || t('unknown_singer'),
+        music.performers.map((s) => s.name).join(',') || t('unknown_artist'),
       artwork: music.cover
         ? COVER_SIZES.map((size) => ({
             src: getResizedImage({ url: music.cover, size }),

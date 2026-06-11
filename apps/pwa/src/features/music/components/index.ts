@@ -6,5 +6,5 @@ export type { MusicInfoProps } from './music_info';
 
 export { default as MusicbillCover } from './musicbill_cover';
 
-export { default as Singer } from './singer';
-export type { SingerProps, SingerValue } from './singer';
+export { default as Performer } from './performer';
+export type { ArtistProps, ArtistValue } from './performer';

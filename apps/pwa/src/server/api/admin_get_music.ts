@@ -2,18 +2,18 @@ import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
 
-interface SingerPhoto {
+interface ArtistPhoto {
   id: string;
   asset: string;
   thumbnail?: string;
   description: string;
 }
 
-interface Singer {
+interface Performer {
   id: string;
   name: string;
   aliases: string[];
-  photos?: SingerPhoto[];
+  photos?: ArtistPhoto[];
 }
 
 interface Music {
@@ -21,12 +21,12 @@ interface Music {
   cover: string;
   coverThumbnail?: string;
   name: string;
-  singers: Singer[];
-  lyricists: Singer[];
-  composers: Singer[];
+  performers: Performer[];
+  lyricists: Performer[];
+  composers: Performer[];
 }
 
-type Response = Omit<Music, 'singers' | 'lyricists' | 'composers'> & {
+type Response = Omit<Music, 'performers' | 'lyricists' | 'composers'> & {
   type: MusicType;
   aliases: string[];
   searchKeywords: string;
@@ -52,12 +52,12 @@ type Response = Omit<Music, 'singers' | 'lyricists' | 'composers'> & {
       avatar: string;
     };
   }[];
-  singers: Singer[];
-  lyricists: Singer[];
-  composers: Singer[];
+  performers: Performer[];
+  lyricists: Performer[];
+  composers: Performer[];
 };
 
-const normalizePhotos = (photos: SingerPhoto[] = []) =>
+const normalizePhotos = (photos: ArtistPhoto[] = []) =>
   photos.map((photo) => ({
     ...photo,
     asset: prefixServerOrigin(photo.asset),
@@ -84,10 +84,10 @@ async function adminGetMusic({
     cover: prefixServerOrigin(music.cover),
     coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
     asset: prefixServerOrigin(music.asset),
-    singers: (music.singers ?? []).map((singer) => {
-      const photos = normalizePhotos(singer.photos);
+    performers: (music.performers ?? []).map((performer) => {
+      const photos = normalizePhotos(performer.photos);
       return {
-        ...singer,
+        ...performer,
         photos,
         avatar: photos[0]?.asset ?? '',
       };
@@ -112,9 +112,9 @@ async function adminGetMusic({
       ...item,
       cover: prefixServerOrigin(item.cover),
       coverThumbnail: prefixServerOrigin(item.coverThumbnail ?? ''),
-      singers: (item.singers ?? []).map((singer) => ({
-        ...singer,
-        photos: normalizePhotos(singer.photos),
+      performers: (item.performers ?? []).map((performer) => ({
+        ...performer,
+        photos: normalizePhotos(performer.photos),
       })),
       lyricists: (item.lyricists ?? []).map((artist) => ({
         ...artist,
@@ -129,9 +129,9 @@ async function adminGetMusic({
       ...item,
       cover: prefixServerOrigin(item.cover),
       coverThumbnail: prefixServerOrigin(item.coverThumbnail ?? ''),
-      singers: (item.singers ?? []).map((singer) => ({
-        ...singer,
-        photos: normalizePhotos(singer.photos),
+      performers: (item.performers ?? []).map((performer) => ({
+        ...performer,
+        photos: normalizePhotos(performer.photos),
       })),
       lyricists: (item.lyricists ?? []).map((artist) => ({
         ...artist,

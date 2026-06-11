@@ -52,7 +52,7 @@ func TestCreateMusicAndMusicbillUseShortPublicIDs(t *testing.T) {
 	}
 }
 
-func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
+func TestSearchMusicMatchesPerformerNameAndAliases(t *testing.T) {
 	if err := ResetForTests(); err != nil {
 		t.Fatalf("reset store: %v", err)
 	}
@@ -79,7 +79,7 @@ func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 		"Runaway Voice", now,
 		"Other Alias", now,
 	); err != nil {
-		t.Fatalf("insert singers: %v", err)
+		t.Fatalf("insert performers: %v", err)
 	}
 	if _, err := DB().Exec(
 		`INSERT INTO music (id,type,name,aliases,cover,asset,heat,createTimestamp) VALUES
@@ -90,10 +90,10 @@ func TestSearchMusicMatchesSingerNameAndAliases(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := LinkMusicSingers("music-1", []string{"artist-1"}); err != nil {
+	if err := ReplaceMusicArtistsByRole("music-1", MusicArtistRolePerformer, []string{"artist-1"}); err != nil {
 		t.Fatalf("link music-1 artist: %v", err)
 	}
-	if err := LinkMusicSingers("music-2", []string{"artist-2"}); err != nil {
+	if err := ReplaceMusicArtistsByRole("music-2", MusicArtistRolePerformer, []string{"artist-2"}); err != nil {
 		t.Fatalf("link music-2 artist: %v", err)
 	}
 
@@ -138,7 +138,7 @@ func TestSearchMusicMatchesSearchKeywords(t *testing.T) {
 		now,
 		now,
 	); err != nil {
-		t.Fatalf("insert singers: %v", err)
+		t.Fatalf("insert performers: %v", err)
 	}
 	if _, err := DB().Exec(
 		`INSERT INTO music (id,type,name,aliases,searchKeywords,asset,heat,createTimestamp) VALUES
@@ -149,10 +149,10 @@ func TestSearchMusicMatchesSearchKeywords(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := LinkMusicSingers("music-by-artist-keyword", []string{"artist-1"}); err != nil {
+	if err := ReplaceMusicArtistsByRole("music-by-artist-keyword", MusicArtistRolePerformer, []string{"artist-1"}); err != nil {
 		t.Fatalf("link music-by-artist-keyword artist: %v", err)
 	}
-	if err := LinkMusicSingers("music-by-own-keyword", []string{"artist-2"}); err != nil {
+	if err := ReplaceMusicArtistsByRole("music-by-own-keyword", MusicArtistRolePerformer, []string{"artist-2"}); err != nil {
 		t.Fatalf("link music-by-own-keyword artist: %v", err)
 	}
 
@@ -303,7 +303,7 @@ func TestComposerRelationsAndSearch(t *testing.T) {
 	if _, err := DB().Exec(
 		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES
 			('artist-composer','Mozart','Wolfgang', ?),
-			('artist-singer','SingerOnly','', ?)`,
+			('artist-performer','PerformerOnly','', ?)`,
 		now, now,
 	); err != nil {
 		t.Fatalf("insert artists: %v", err)
@@ -317,14 +317,14 @@ func TestComposerRelationsAndSearch(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := LinkMusicComposers("m-composed", []string{"artist-composer"}); err != nil {
+	if err := ReplaceMusicArtistsByRole("m-composed", MusicArtistRoleComposer, []string{"artist-composer"}); err != nil {
 		t.Fatalf("link composers: %v", err)
 	}
-	if err := LinkMusicSingers("m-other", []string{"artist-singer"}); err != nil {
-		t.Fatalf("link singer: %v", err)
+	if err := ReplaceMusicArtistsByRole("m-other", MusicArtistRolePerformer, []string{"artist-performer"}); err != nil {
+		t.Fatalf("link performer: %v", err)
 	}
 
-	composers, err := GetComposersInMusicIDs([]string{"m-composed", "m-other"})
+	composers, err := GetArtistsInMusicIDsByRole([]string{"m-composed", "m-other"}, MusicArtistRoleComposer)
 	if err != nil {
 		t.Fatalf("get composers: %v", err)
 	}
@@ -332,7 +332,7 @@ func TestComposerRelationsAndSearch(t *testing.T) {
 		t.Fatalf("unexpected composers: %+v", composers)
 	}
 
-	musics, err := GetMusicsByComposerID("artist-composer")
+	musics, err := GetMusicsByArtistIDAndRole("artist-composer", MusicArtistRoleComposer)
 	if err != nil {
 		t.Fatalf("get music by composer id: %v", err)
 	}
@@ -356,7 +356,7 @@ func TestComposerRelationsAndSearch(t *testing.T) {
 		t.Fatalf("cascade delete: %v", err)
 	}
 	var n int
-	if err := DB().QueryRow(`SELECT COUNT(1) FROM music_composer_relation WHERE musicId='m-composed'`).Scan(&n); err != nil {
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM music_artist_relation WHERE musicId='m-composed' AND role='composer'`).Scan(&n); err != nil {
 		t.Fatalf("count after delete: %v", err)
 	}
 	if n != 0 {

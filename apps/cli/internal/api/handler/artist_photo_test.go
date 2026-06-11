@@ -15,12 +15,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// setupSingerPhotoTest initialises the store, seeds an admin user and one
+// setupArtistPhotoTest initialises the store, seeds an admin user and one
 // artist. It also creates a real asset file under the artist_photo dir so
 // handler-side asset existence checks pass. Authorization is enforced by the
 // admin middleware, which is not exercised at this level — these tests only
 // cover the handler logic itself.
-func setupSingerPhotoTest(t *testing.T) (admin *store.User, singerID string) {
+func setupArtistPhotoTest(t *testing.T) (admin *store.User, artistID string) {
 	t.Helper()
 	gin.SetMode(gin.TestMode)
 	if err := store.ResetForTests(); err != nil {
@@ -100,11 +100,11 @@ func callPhoto(t *testing.T, h gin.HandlerFunc, method, url string, body any, u 
 }
 
 func TestAdminCreateArtistPhoto(t *testing.T) {
-	admin, singerID := setupSingerPhotoTest(t)
+	admin, artistID := setupArtistPhotoTest(t)
 
 	t.Run("admin can add a photo with description", func(t *testing.T) {
 		code, _, data := callPhoto(t, AdminCreateArtistPhoto, http.MethodPost, "/api/admin/artist/photo",
-			map[string]any{"artistId": singerID, "asset": "pic.jpg", "description": "Live"},
+			map[string]any{"artistId": artistID, "asset": "pic.jpg", "description": "Live"},
 			admin,
 		)
 		if code != "success" {
@@ -114,7 +114,7 @@ func TestAdminCreateArtistPhoto(t *testing.T) {
 		if id == "" {
 			t.Fatalf("expected id in response, got %+v", data)
 		}
-		photos, _ := store.ListArtistPhotos(singerID)
+		photos, _ := store.ListArtistPhotos(artistID)
 		if len(photos) != 1 {
 			t.Fatalf("expected 1 photo, got %d", len(photos))
 		}
@@ -129,13 +129,13 @@ func TestAdminCreateArtistPhoto(t *testing.T) {
 	t.Run("next photo is prepended to the front", func(t *testing.T) {
 		// asset file is reused — the handler only verifies existence, not uniqueness.
 		code, _, _ := callPhoto(t, AdminCreateArtistPhoto, http.MethodPost, "/api/admin/artist/photo",
-			map[string]any{"artistId": singerID, "asset": "pic.jpg"},
+			map[string]any{"artistId": artistID, "asset": "pic.jpg"},
 			admin,
 		)
 		if code != "success" {
 			t.Fatalf("expected success, got %s", code)
 		}
-		photos, _ := store.ListArtistPhotos(singerID)
+		photos, _ := store.ListArtistPhotos(artistID)
 		if len(photos) != 2 {
 			t.Fatalf("expected 2 photos, got %d", len(photos))
 		}
@@ -150,7 +150,7 @@ func TestAdminCreateArtistPhoto(t *testing.T) {
 
 	t.Run("rejects when asset is missing", func(t *testing.T) {
 		code, _, _ := callPhoto(t, AdminCreateArtistPhoto, http.MethodPost, "/api/admin/artist/photo",
-			map[string]any{"artistId": singerID, "asset": "ghost.jpg"},
+			map[string]any{"artistId": artistID, "asset": "ghost.jpg"},
 			admin,
 		)
 		if code != "asset_not_existed" {
@@ -171,7 +171,7 @@ func TestAdminCreateArtistPhoto(t *testing.T) {
 	t.Run("rejects when description is too long", func(t *testing.T) {
 		long := strings.Repeat("x", artistPhotoDescriptionMaxLen+1)
 		code, _, _ := callPhoto(t, AdminCreateArtistPhoto, http.MethodPost, "/api/admin/artist/photo",
-			map[string]any{"artistId": singerID, "asset": "pic.jpg", "description": long},
+			map[string]any{"artistId": artistID, "asset": "pic.jpg", "description": long},
 			admin,
 		)
 		if code != "wrong_parameter" {
@@ -181,8 +181,8 @@ func TestAdminCreateArtistPhoto(t *testing.T) {
 }
 
 func TestAdminUpdateArtistPhoto(t *testing.T) {
-	admin, singerID := setupSingerPhotoTest(t)
-	id, err := store.CreateArtistPhoto(singerID, "pic.jpg", "old")
+	admin, artistID := setupArtistPhotoTest(t)
+	id, err := store.CreateArtistPhoto(artistID, "pic.jpg", "old")
 	if err != nil {
 		t.Fatalf("seed photo: %v", err)
 	}
@@ -221,10 +221,10 @@ func TestAdminUpdateArtistPhoto(t *testing.T) {
 }
 
 func TestAdminDeleteArtistPhoto(t *testing.T) {
-	admin, singerID := setupSingerPhotoTest(t)
-	id1, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
-	id2, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
-	id3, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
+	admin, artistID := setupArtistPhotoTest(t)
+	id1, _ := store.CreateArtistPhoto(artistID, "pic.jpg", "")
+	id2, _ := store.CreateArtistPhoto(artistID, "pic.jpg", "")
+	id3, _ := store.CreateArtistPhoto(artistID, "pic.jpg", "")
 
 	t.Run("admin deletes middle photo, gap remains", func(t *testing.T) {
 		code, _, _ := callPhoto(t, AdminDeleteArtistPhoto, http.MethodDelete, "/api/admin/artist/photo",
@@ -233,7 +233,7 @@ func TestAdminDeleteArtistPhoto(t *testing.T) {
 		if code != "success" {
 			t.Fatalf("expected success, got %s", code)
 		}
-		photos, _ := store.ListArtistPhotos(singerID)
+		photos, _ := store.ListArtistPhotos(artistID)
 		if len(photos) != 2 {
 			t.Fatalf("expected 2 photos, got %d", len(photos))
 		}
@@ -249,19 +249,19 @@ func TestAdminDeleteArtistPhoto(t *testing.T) {
 }
 
 func TestAdminReorderArtistPhotos(t *testing.T) {
-	admin, singerID := setupSingerPhotoTest(t)
-	id1, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
-	id2, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
-	id3, _ := store.CreateArtistPhoto(singerID, "pic.jpg", "")
+	admin, artistID := setupArtistPhotoTest(t)
+	id1, _ := store.CreateArtistPhoto(artistID, "pic.jpg", "")
+	id2, _ := store.CreateArtistPhoto(artistID, "pic.jpg", "")
+	id3, _ := store.CreateArtistPhoto(artistID, "pic.jpg", "")
 
 	t.Run("admin can reorder, first becomes avatar", func(t *testing.T) {
 		code, _, _ := callPhoto(t, AdminReorderArtistPhotos, http.MethodPut, "/api/admin/artist/photo/order",
-			map[string]any{"artistId": singerID, "ids": []string{id3, id1, id2}}, admin,
+			map[string]any{"artistId": artistID, "ids": []string{id3, id1, id2}}, admin,
 		)
 		if code != "success" {
 			t.Fatalf("expected success, got %s", code)
 		}
-		photos, _ := store.ListArtistPhotos(singerID)
+		photos, _ := store.ListArtistPhotos(artistID)
 		if len(photos) != 3 ||
 			photos[0].ID != id3 ||
 			photos[1].ID != id1 ||
@@ -272,7 +272,7 @@ func TestAdminReorderArtistPhotos(t *testing.T) {
 
 	t.Run("rejects when ids set mismatches", func(t *testing.T) {
 		code, _, _ := callPhoto(t, AdminReorderArtistPhotos, http.MethodPut, "/api/admin/artist/photo/order",
-			map[string]any{"artistId": singerID, "ids": []string{id3, id1}}, admin,
+			map[string]any{"artistId": artistID, "ids": []string{id3, id1}}, admin,
 		)
 		if code != "wrong_parameter" {
 			t.Fatalf("expected wrong_parameter, got %s", code)
@@ -281,7 +281,7 @@ func TestAdminReorderArtistPhotos(t *testing.T) {
 
 	t.Run("rejects duplicate ids", func(t *testing.T) {
 		code, _, _ := callPhoto(t, AdminReorderArtistPhotos, http.MethodPut, "/api/admin/artist/photo/order",
-			map[string]any{"artistId": singerID, "ids": []string{id1, id1, id2}}, admin,
+			map[string]any{"artistId": artistID, "ids": []string{id1, id1, id2}}, admin,
 		)
 		if code != "wrong_parameter" {
 			t.Fatalf("expected wrong_parameter, got %s", code)

@@ -4,12 +4,12 @@ import getRandomInteger from '@/utils/generate_random_integer';
 import getRandomString from '@/utils/generate_random_string';
 import { t } from '@/i18n';
 import eventemitter, { EventType } from './eventemitter';
-import { MusicWithSingerAliases, QueueMusic } from './constants';
+import { MusicWithArtistAliases, QueueMusic } from './constants';
 import { insertMusicToPlayqueue } from './playqueue_utils';
 
 function getRandomPlaylistMusic(
-  playlist: MusicWithSingerAliases[],
-  currentMusic?: MusicWithSingerAliases,
+  playlist: MusicWithArtistAliases[],
+  currentMusic?: MusicWithArtistAliases,
 ) {
   const nextMusicCandidates =
     currentMusic && playlist.length > 1
@@ -24,7 +24,7 @@ function createShuffleQueueMusic({
   music,
   index,
 }: {
-  music: MusicWithSingerAliases;
+  music: MusicWithArtistAliases;
   index: number;
 }): QueueMusic {
   return {
@@ -41,7 +41,7 @@ function appendRandomMusicFromPlaylist({
   currentPosition,
 }: {
   playqueue: QueueMusic[];
-  playlist: MusicWithSingerAliases[];
+  playlist: MusicWithArtistAliases[];
   currentPosition: number;
 }) {
   const music = getRandomPlaylistMusic(
@@ -64,7 +64,7 @@ function moveArrayItem<T>(list: T[], from: number, to: number) {
   return next;
 }
 
-export default (playlist: MusicWithSingerAliases[]) => {
+export default (playlist: MusicWithArtistAliases[]) => {
   const [playqueue, setPlayqueue] = useState<QueueMusic[]>([]);
   const [currentPosition, setCurrentPosition] = useState(-1);
   const playlistRef = useRef(playlist);

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { CSS_VAR } from '@/components/theme';
-import Singer, { type SingerValue } from '../singer';
+import Performer, { type ArtistValue } from '../performer';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
@@ -13,7 +13,7 @@ export interface MusicBaseValue {
   aliases: string[];
   id: string;
   name: string;
-  singers: SingerValue[];
+  performers: ArtistValue[];
 }
 
 export interface MusicBaseProps extends HTMLAttributes<HTMLDivElement> {
@@ -23,7 +23,7 @@ export interface MusicBaseProps extends HTMLAttributes<HTMLDivElement> {
   lineAfter: ReactNode;
   music: MusicBaseValue;
   onOpenMusic?: (music: MusicBaseValue) => void;
-  onOpenSinger?: (singer: SingerValue) => void;
+  onOpenArtist?: (performer: ArtistValue) => void;
 }
 
 const Style = styled.div`
@@ -105,7 +105,7 @@ const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
           }
         }
 
-        > .singers {
+        > .performers {
           ${ellipsis}
 
           font-size: ${CSSVariable.TEXT_SIZE_SMALL};
@@ -184,7 +184,7 @@ function MusicBase({
   lineAfter,
   music,
   onOpenMusic,
-  onOpenSinger,
+  onOpenArtist,
   ...props
 }: MusicBaseProps) {
   return (
@@ -204,12 +204,12 @@ function MusicBase({
                   <span className="alias">&nbsp;{music.aliases[0]}</span>
                 ) : null}
               </div>
-              <div className="singers">
-                {music.singers.map((singer) => (
-                  <Singer
-                    key={singer.id}
-                    singer={singer}
-                    onOpen={onOpenSinger}
+              <div className="performers">
+                {music.performers.map((performer) => (
+                  <Performer
+                    key={performer.id}
+                    performer={performer}
+                    onOpen={onOpenArtist}
                   />
                 ))}
               </div>

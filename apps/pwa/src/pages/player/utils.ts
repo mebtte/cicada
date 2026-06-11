@@ -4,7 +4,7 @@ import createMusicbillRequest from '@/server/api/create_musicbill';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
-import { Music, SingerWithAliases } from './constants';
+import { Music, ArtistWithAliases } from './constants';
 import e, { EventType } from './eventemitter';
 import { MusicExportQuality } from '@/utils/music_export_asset';
 
@@ -35,8 +35,8 @@ export function openCreateMusicbillDialog() {
 }
 
 export function filterMusic(
-  music: Omit<Music, 'singers'> & {
-    singers: SingerWithAliases[];
+  music: Omit<Music, 'performers'> & {
+    performers: ArtistWithAliases[];
   },
   keyword: string,
 ) {
@@ -45,10 +45,10 @@ export function filterMusic(
     return (
       music.name.toLowerCase().includes(lowerCaseKeyword) ||
       music.aliases.find((a) => a.toLowerCase().includes(lowerCaseKeyword)) ||
-      music.singers.find(
-        (singer) =>
-          singer.name.toLowerCase().includes(lowerCaseKeyword) ||
-          singer.aliases.find((alias) =>
+      music.performers.find(
+        (performer) =>
+          performer.name.toLowerCase().includes(lowerCaseKeyword) ||
+          performer.aliases.find((alias) =>
             alias.toLowerCase().includes(lowerCaseKeyword),
           ),
       )

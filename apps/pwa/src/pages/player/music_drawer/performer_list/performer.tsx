@@ -3,7 +3,7 @@ import { CSSVariable } from '@/global_style';
 import styled from 'styled-components';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
-import { SingerDetail } from '../constants';
+import { ArtistDetail } from '../constants';
 import e, { EventType } from '../../eventemitter';
 
 const AVATAR_SIZE = 32;
@@ -48,18 +48,18 @@ const Style = styled.div`
   }
 `;
 
-function Singer({ singer }: { singer: SingerDetail }) {
+function Performer({ performer }: { performer: ArtistDetail }) {
   return (
     <Style
-      onClick={() => e.emit(EventType.OPEN_ARTIST_DRAWER, { id: singer.id })}
+      onClick={() => e.emit(EventType.OPEN_ARTIST_DRAWER, { id: performer.id })}
     >
       <Avatar
         size={AVATAR_SIZE}
-        src={getResizedImage({ url: singer.avatar, size: AVATAR_SIZE * 2 })}
+        src={getResizedImage({ url: performer.avatar, size: AVATAR_SIZE * 2 })}
       />
-      <div className="name">{singer.name}</div>
+      <div className="name">{performer.name}</div>
     </Style>
   );
 }
 
-export default Singer;
+export default Performer;

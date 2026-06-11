@@ -212,14 +212,14 @@ func TestUpdateMusicLyricistsRejectsInstrumentalAndAllowsClear(t *testing.T) {
 	if code := call([]string{"artist-1"}); code != apperr.InstrumentalHasNoLyricist {
 		t.Fatalf("expected %s, got %s", apperr.InstrumentalHasNoLyricist, code)
 	}
-	if err := store.LinkMusicLyricists("music-1", []string{"artist-1"}); err != nil {
+	if err := store.ReplaceMusicArtistsByRole("music-1", store.MusicArtistRoleLyricist, []string{"artist-1"}); err != nil {
 		t.Fatalf("link legacy lyricist: %v", err)
 	}
 	if code := call([]string{}); code != apperr.Success {
 		t.Fatalf("expected %s while clearing, got %s", apperr.Success, code)
 	}
 	var count int
-	if err := store.DB().QueryRow(`SELECT COUNT(1) FROM music_lyricist_relation WHERE musicId=?`, "music-1").Scan(&count); err != nil {
+	if err := store.DB().QueryRow(`SELECT COUNT(1) FROM music_artist_relation WHERE musicId=? AND role='lyricist'`, "music-1").Scan(&count); err != nil {
 		t.Fatalf("count lyricists: %v", err)
 	}
 	if count != 0 {
@@ -272,7 +272,7 @@ func TestUpdateMusicTypeToInstrumentalClearsLyricsAndLyricists(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert lyric: %v", err)
 	}
-	if err := store.LinkMusicLyricists("music-1", []string{"artist-1"}); err != nil {
+	if err := store.ReplaceMusicArtistsByRole("music-1", store.MusicArtistRoleLyricist, []string{"artist-1"}); err != nil {
 		t.Fatalf("link lyricist: %v", err)
 	}
 
@@ -316,7 +316,7 @@ func TestUpdateMusicTypeToInstrumentalClearsLyricsAndLyricists(t *testing.T) {
 		t.Fatalf("expected lyrics cleared, got %+v", lyrics)
 	}
 	var lyricistCount int
-	if err := store.DB().QueryRow(`SELECT COUNT(1) FROM music_lyricist_relation WHERE musicId=?`, "music-1").Scan(&lyricistCount); err != nil {
+	if err := store.DB().QueryRow(`SELECT COUNT(1) FROM music_artist_relation WHERE musicId=? AND role='lyricist'`, "music-1").Scan(&lyricistCount); err != nil {
 		t.Fatalf("count lyricists: %v", err)
 	}
 	if lyricistCount != 0 {
@@ -591,7 +591,7 @@ func TestUpdateMusicComposers(t *testing.T) {
 		t.Fatalf("insert music: %v", err)
 	}
 	// Seed an existing composer link to verify the handler replaces it.
-	if err := store.LinkMusicComposers("music-1", []string{"artist-1"}); err != nil {
+	if err := store.ReplaceMusicArtistsByRole("music-1", store.MusicArtistRoleComposer, []string{"artist-1"}); err != nil {
 		t.Fatalf("seed composer: %v", err)
 	}
 
@@ -614,7 +614,7 @@ func TestUpdateMusicComposers(t *testing.T) {
 		t.Fatalf("unexpected code: %s body=%s", resp.Code, w.Body.String())
 	}
 
-	composers, err := store.GetComposersInMusicIDs([]string{"music-1"})
+	composers, err := store.GetArtistsInMusicIDsByRole([]string{"music-1"}, store.MusicArtistRoleComposer)
 	if err != nil {
 		t.Fatalf("get composers: %v", err)
 	}

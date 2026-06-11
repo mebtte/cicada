@@ -17,13 +17,14 @@ import {
   MUSIC_TYPE_MAP,
   MusicType,
   NAME_MAX_LENGTH,
+  getPerformerLabel,
 } from '@/constants/music';
 import { SEARCH_KEYWORD_MAX_LENGTH as ARTIST_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/artist';
 import searchArtistRequest from '@/server/api/search_artist';
 import {
   ImportPhase,
   ImportTask,
-  ImportTaskSinger,
+  ImportTaskPerformer,
   isActiveImportPhase,
   removeTask,
   updateTask,
@@ -177,7 +178,7 @@ const Fields = styled.div`
   row-gap: 14px;
 `;
 
-const SingerField = styled.div`
+const PerformerField = styled.div`
   grid-column: 1 / -1;
   min-width: 0;
 `;
@@ -276,22 +277,22 @@ const UploadedText = styled.span`
   white-space: nowrap;
 `;
 
-const formatSingerToOption = (
-  singer: ImportTaskSinger & { aliases?: string[] },
-): SelectOption<ImportTaskSinger> => ({
-  label: singer.aliases?.length
-    ? `${singer.name}(${singer.aliases[0]})`
-    : singer.name,
-  value: { id: singer.id, name: singer.name },
+const formatPerformerToOption = (
+  performer: ImportTaskPerformer & { aliases?: string[] },
+): SelectOption<ImportTaskPerformer> => ({
+  label: performer.aliases?.length
+    ? `${performer.name}(${performer.aliases[0]})`
+    : performer.name,
+  value: { id: performer.id, name: performer.name },
 });
 
-const searchArtist = (search: string): Promise<SelectOption<ImportTaskSinger>[]> => {
+const searchArtist = (search: string): Promise<SelectOption<ImportTaskPerformer>[]> => {
   const keyword = search.trim().substring(0, ARTIST_SEARCH_KEYWORD_MAX_LENGTH);
   if (!keyword) {
     return Promise.resolve([]);
   }
   return searchArtistRequest({ keyword, page: 1, pageSize: 100 }).then((data) =>
-    data.artistList.map(formatSingerToOption),
+    data.artistList.map(formatPerformerToOption),
   );
 };
 
@@ -363,13 +364,13 @@ function TaskCard({ task }: { task: ImportTask }) {
     });
   };
 
-  // Append the newly-created singer to the current task without disturbing
-  // other in-flight drafts; existing tasks discover new singers through async
+  // Append the newly-created performer to the current task without disturbing
+  // other in-flight drafts; existing tasks discover new performers through async
   // search.
-  const onSingerCreated = (singer: { id: string; name: string }) => {
-    if (task.singers.some((s) => s.id === singer.id)) return;
+  const onPerformerCreated = (performer: { id: string; name: string }) => {
+    if (task.performers.some((s) => s.id === performer.id)) return;
     updateTask(task.id, {
-      singers: [...task.singers, { id: singer.id, name: singer.name }],
+      performers: [...task.performers, { id: performer.id, name: performer.name }],
     });
   };
 
@@ -435,24 +436,24 @@ function TaskCard({ task }: { task: ImportTask }) {
               onChange={(value) => updateTask(task.id, { type: value })}
               disabled={!editable}
             />
-            <SingerField>
+            <PerformerField>
               <MultiSelect
                 size="sm"
-                label={t('singer')}
+                label={getPerformerLabel(task.type)}
                 labelAddon={
                   editable ? (
                     <CreateArtistLabel
                       notifyOnCreated={false}
-                      onCreated={onSingerCreated}
+                      onCreated={onPerformerCreated}
                     />
                   ) : undefined
                 }
                 wrapValues
-                value={task.singers.map((s) => formatSingerToOption(s))}
+                value={task.performers.map((s) => formatPerformerToOption(s))}
                 loadOptions={searchArtist}
                 onChange={(value) =>
                   updateTask(task.id, {
-                    singers: value.map((v) => ({
+                    performers: value.map((v) => ({
                       id: v.value.id,
                       name: v.value.name,
                     })),
@@ -461,7 +462,7 @@ function TaskCard({ task }: { task: ImportTask }) {
                 disabled={!editable}
                 placeholder=""
               />
-            </SingerField>
+            </PerformerField>
           </Fields>
           <ProgressBlock>
             <ProgressSizeText>

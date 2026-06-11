@@ -4,7 +4,7 @@ import { Tooltip } from '@/components';
 import { PostAdd, QueueInsert, PlayArrow } from '@/components/icon';
 import { HtmlHTMLAttributes, ReactNode } from 'react';
 import { t } from '@/i18n';
-import { MusicWithSingerAliases } from '../constants';
+import { MusicWithArtistAliases } from '../constants';
 import e, { EventType } from '../eventemitter';
 import MusicBase from './music_base';
 
@@ -23,7 +23,7 @@ function Music({
 }: HtmlHTMLAttributes<HTMLDivElement> & {
   active: boolean;
   index: number;
-  music: MusicWithSingerAliases;
+  music: MusicWithArtistAliases;
   addon?: ReactNode;
 }) {
   return (

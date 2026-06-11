@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import capitalize from '@/style/capitalize';
-import { SingerDetail } from '../constants';
-import Singer from './singer';
+import { ArtistDetail } from '../constants';
+import Performer from './performer';
 import { PAGE_HORIZONTAL_PADDING } from '../../pages/page';
 
 const Style = styled.div`
@@ -26,14 +26,14 @@ const Style = styled.div`
   }
 `;
 
-function SingerList({
+function ArtistList({
   label,
-  singerList,
+  artistList,
 }: {
   label: string;
-  singerList: SingerDetail[];
+  artistList: ArtistDetail[];
 }) {
-  if (!singerList.length) {
+  if (!artistList.length) {
     return null;
   }
 
@@ -41,12 +41,12 @@ function SingerList({
     <Style>
       <div className="label">{label}</div>
       <div className="list">
-        {singerList.map((singer) => (
-          <Singer key={singer.id} singer={singer} />
+        {artistList.map((performer) => (
+          <Performer key={performer.id} performer={performer} />
         ))}
       </div>
     </Style>
   );
 }
 
-export default SingerList;
+export default ArtistList;

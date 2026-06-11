@@ -167,7 +167,7 @@ async function runOne(task: ImportTask) {
     updateTask(task.id, { phase: 'creating' });
     const musicId = await createMusic({
       name: task.name,
-      singerIds: task.singers.map((s) => s.id),
+      performerIds: task.performers.map((s) => s.id),
       type: task.type,
       asset: result.id,
     });

@@ -284,7 +284,7 @@ export default () => {
           if (musicbill.status === RequestStatus.SUCCESS) {
             for (const music of musicbill.musicList) {
               const exist = [
-                ...music.singers,
+                ...music.performers,
                 ...music.lyricists,
                 ...music.composers,
               ].find((artist) => artist.id === payload.id);

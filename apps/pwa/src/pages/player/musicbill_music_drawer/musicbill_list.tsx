@@ -6,7 +6,7 @@ import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
 import Empty from '@/components/empty';
 import { t } from '@/i18n';
-import { MusicWithSingerAliases } from '../constants';
+import { MusicWithArtistAliases } from '../constants';
 import Context from '../context';
 import playerEventemitter, {
   EventType as PlayerEventType,
@@ -26,7 +26,7 @@ const StatusContainer = styled.div`
   padding: 30px 0;
 `;
 
-function MusicbillList({ music }: { music: MusicWithSingerAliases }) {
+function MusicbillList({ music }: { music: MusicWithArtistAliases }) {
   const { getMusicbillListStatus, musicbillList } = useContext(Context);
   if (getMusicbillListStatus === RequestStatus.SUCCESS) {
     if (musicbillList.length) {

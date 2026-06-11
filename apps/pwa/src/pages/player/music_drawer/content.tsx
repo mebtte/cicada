@@ -15,7 +15,7 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { flexCenter } from '@/style/flexbox';
 import { t } from '@/i18n';
-import { MusicType } from '@/constants/music';
+import { MusicType, getPerformerLabel } from '@/constants/music';
 import {
   DrawerHeader,
   DrawerTitle,
@@ -24,7 +24,7 @@ import {
 import Info from './info';
 import { MusicDetail } from './constants';
 import Lyric from './lyric';
-import SingerList from './singer_list';
+import ArtistList from './performer_list';
 import SubMusicList from './sub_music_list';
 import RelatedPublicMusicbillList from './related_public_musicbill_list';
 import Toolbar from './toolbar';
@@ -334,11 +334,14 @@ function Detail({
               showTitle={!insideDrawer || USE_COLLAPSING_DRAWER_TITLE}
               titleRef={titleRef}
             />
-            <SingerList label={t('singer')} singerList={music.singers} />
+            <ArtistList
+              label={getPerformerLabel(music.type)}
+              artistList={music.performers}
+            />
             {music.type === MusicType.SONG ? (
-              <SingerList label={t('lyricist')} singerList={music.lyricists} />
+              <ArtistList label={t('lyricist')} artistList={music.lyricists} />
             ) : null}
-            <SingerList label={t('composer')} singerList={music.composers} />
+            <ArtistList label={t('composer')} artistList={music.composers} />
             {music.forkFromList.length ? (
               <SubMusicList
                 label={t('fork_from_these_musics')}
@@ -385,7 +388,7 @@ function MusicContent({
         id: data.music.id,
         name: data.music.name,
         aliases: data.music.aliases,
-        singers: data.music.singers.map((s) => ({
+        performers: data.music.performers.map((s) => ({
           id: s.id,
           name: s.name,
         })),

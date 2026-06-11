@@ -26,7 +26,7 @@ import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../constants';
 import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
 enum ArtistMusicTab {
-  SINGER = 'singer',
+  PERFORMER = 'performer',
   LYRICIST = 'lyricist',
   COMPOSER = 'composer',
 }
@@ -178,11 +178,11 @@ function Detail({
   const scrollableRef = useRef<HTMLDivElement | null>(null);
   const identityRef = useRef<HTMLElement | null>(null);
   const [showCollapsedHeader, setShowCollapsedHeader] = useState(false);
-  const [tab, setTab] = useState<ArtistMusicTab>(ArtistMusicTab.SINGER);
+  const [tab, setTab] = useState<ArtistMusicTab>(ArtistMusicTab.PERFORMER);
   const useCollapsingHeader = insideDrawer;
   const tabs: TabItem<ArtistMusicTab>[] = [
-    ...(artist.singerMusicList.length
-      ? [{ tab: ArtistMusicTab.SINGER, label: t('sung_music') }]
+    ...(artist.performerMusicList.length
+      ? [{ tab: ArtistMusicTab.PERFORMER, label: t('performed_music') }]
       : []),
     ...(artist.lyricistMusicList.length
       ? [{ tab: ArtistMusicTab.LYRICIST, label: t('lyricist_music') }]
@@ -192,13 +192,13 @@ function Detail({
       : []),
   ];
   const activeTab = tabs.some((item) => item.tab === tab) ? tab : tabs[0]?.tab;
-  const currentTab = activeTab ?? ArtistMusicTab.SINGER;
+  const currentTab = activeTab ?? ArtistMusicTab.PERFORMER;
   const musicList =
     activeTab === ArtistMusicTab.LYRICIST
       ? artist.lyricistMusicList
       : activeTab === ArtistMusicTab.COMPOSER
         ? artist.composerMusicList
-        : artist.singerMusicList;
+        : artist.performerMusicList;
 
   const updateCollapsedHeaderVisibility = useCallback(() => {
     if (!useCollapsingHeader) {

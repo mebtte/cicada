@@ -40,10 +40,10 @@ func TestAdminCreateMusicNameLimit(t *testing.T) {
 		t.Helper()
 
 		body, err := json.Marshal(map[string]any{
-			"name":      name,
-			"singerIds": "",
-			"type":      int(store.MusicTypeSong),
-			"asset":     "missing.mp3",
+			"name":         name,
+			"performerIds": "",
+			"type":         int(store.MusicTypeSong),
+			"asset":        "missing.mp3",
 		})
 		if err != nil {
 			t.Fatalf("marshal body: %v", err)

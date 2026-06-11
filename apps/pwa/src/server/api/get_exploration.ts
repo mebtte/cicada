@@ -6,7 +6,7 @@ type MusicItem = {
   name: string;
   cover: string;
   coverThumbnail?: string;
-  singers: {
+  performers: {
     id: string;
     name: string;
   }[];

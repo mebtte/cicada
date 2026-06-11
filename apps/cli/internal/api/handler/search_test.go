@@ -87,7 +87,7 @@ func TestSearchHandlersMatchSearchKeywordsWithoutReturningThem(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,aliases,searchKeywords,createTimestamp) VALUES
-			('artist-1','Visible Singer','', 'hidden artist token', ?)`,
+			('artist-1','Visible Performer','', 'hidden artist token', ?)`,
 		now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
@@ -99,7 +99,7 @@ func TestSearchHandlersMatchSearchKeywordsWithoutReturningThem(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-1", []string{"artist-1"}); err != nil {
+	if err := store.ReplaceMusicArtistsByRole("music-1", store.MusicArtistRolePerformer, []string{"artist-1"}); err != nil {
 		t.Fatalf("link music artist: %v", err)
 	}
 

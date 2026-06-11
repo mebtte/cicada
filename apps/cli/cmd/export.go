@@ -62,14 +62,14 @@ func runExport(cmd *cobra.Command, args []string) error {
 		musicIDs[i] = m.ID
 	}
 
-	singerRelations, err := store.GetSingersInMusicIDs(musicIDs)
+	performerRelations, err := store.GetArtistsInMusicIDsByRole(musicIDs, store.MusicArtistRolePerformer)
 	if err != nil {
-		return fmt.Errorf("get singers: %w", err)
+		return fmt.Errorf("get performers: %w", err)
 	}
 
-	singerMap := make(map[string][]string)
-	for _, sr := range singerRelations {
-		singerMap[sr.MusicID] = append(singerMap[sr.MusicID], sr.Name)
+	performerMap := make(map[string][]string)
+	for _, pr := range performerRelations {
+		performerMap[pr.MusicID] = append(performerMap[pr.MusicID], pr.Name)
 	}
 
 	if err := os.MkdirAll(dest, 0755); err != nil {
@@ -81,11 +81,11 @@ func runExport(cmd *cobra.Command, args []string) error {
 
 	for _, m := range musics {
 		ext := filepath.Ext(m.Asset)
-		singers := singerMap[m.ID]
+		performers := performerMap[m.ID]
 
 		var filename string
-		if len(singers) > 0 {
-			filename = strings.Join(singers, ",") + " - " + m.Name + ext
+		if len(performers) > 0 {
+			filename = strings.Join(performers, ",") + " - " + m.Name + ext
 		} else {
 			filename = m.Name + ext
 		}

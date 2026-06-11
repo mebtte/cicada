@@ -114,10 +114,10 @@ function RadioQueueDrawer({
                           { id: music.id },
                         )
                       }
-                      onOpenSinger={(singer) =>
+                      onOpenArtist={(performer) =>
                         playerEventemitter.emit(
                           PlayerEventType.OPEN_ARTIST_DRAWER,
-                          { id: singer.id },
+                          { id: performer.id },
                         )
                       }
                     />

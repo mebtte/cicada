@@ -5,7 +5,7 @@ import e, { EventType } from '../../eventemitter';
 
 type Props = Omit<
   FeatureMusicBaseProps,
-  'onOpenMusic' | 'onOpenSinger'
+  'onOpenMusic' | 'onOpenArtist'
 >;
 
 function MusicBase(props: Props) {
@@ -15,8 +15,8 @@ function MusicBase(props: Props) {
       onOpenMusic={(music) =>
         e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id })
       }
-      onOpenSinger={(singer) =>
-        e.emit(EventType.OPEN_ARTIST_DRAWER, { id: singer.id })
+      onOpenArtist={(performer) =>
+        e.emit(EventType.OPEN_ARTIST_DRAWER, { id: performer.id })
       }
     />
   );

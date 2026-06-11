@@ -51,13 +51,13 @@ func TestGetArtist(t *testing.T) {
 
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES (?,?,?,?)`,
-		"artist-1", "Creator Singer", joinAliases([]string{"Alias A", "Alias B"}), now,
+		"artist-1", "Creator Performer", joinAliases([]string{"Alias A", "Alias B"}), now,
 	); err != nil {
 		t.Fatalf("insert artist-1: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES (?,?,?,?)`,
-		"artist-2", "Guest Singer", joinAliases([]string{"Guest Alias"}), now,
+		"artist-2", "Guest Performer", joinAliases([]string{"Guest Alias"}), now,
 	); err != nil {
 		t.Fatalf("insert artist-2: %v", err)
 	}
@@ -84,12 +84,12 @@ func TestGetArtist(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-1", []string{"artist-1", "artist-2"}); err != nil {
-		t.Fatalf("link music singers: %v", err)
+	if err := store.ReplaceMusicArtistsByRole("music-1", store.MusicArtistRolePerformer, []string{"artist-1", "artist-2"}); err != nil {
+		t.Fatalf("link music performers: %v", err)
 	}
 	for _, musicID := range []string{"music-2", "music-3", "music-4"} {
-		if err := store.LinkMusicSingers(musicID, []string{"artist-1"}); err != nil {
-			t.Fatalf("link %s singers: %v", musicID, err)
+		if err := store.ReplaceMusicArtistsByRole(musicID, store.MusicArtistRolePerformer, []string{"artist-1"}); err != nil {
+			t.Fatalf("link %s performers: %v", musicID, err)
 		}
 	}
 
@@ -101,22 +101,22 @@ func TestGetArtist(t *testing.T) {
 	type response struct {
 		Code string `json:"code"`
 		Data struct {
-			ID              string      `json:"id"`
-			Name            string      `json:"name"`
-			Aliases         []string    `json:"aliases"`
-			Photos          []photoResp `json:"photos"`
-			SingerMusicList []struct {
-				ID      string   `json:"id"`
-				Name    string   `json:"name"`
-				Aliases []string `json:"aliases"`
-				Cover   string   `json:"cover"`
-				Asset   string   `json:"asset"`
-				Singers []struct {
+			ID                 string      `json:"id"`
+			Name               string      `json:"name"`
+			Aliases            []string    `json:"aliases"`
+			Photos             []photoResp `json:"photos"`
+			PerformerMusicList []struct {
+				ID         string   `json:"id"`
+				Name       string   `json:"name"`
+				Aliases    []string `json:"aliases"`
+				Cover      string   `json:"cover"`
+				Asset      string   `json:"asset"`
+				Performers []struct {
 					ID      string   `json:"id"`
 					Name    string   `json:"name"`
 					Aliases []string `json:"aliases"`
-				} `json:"singers"`
-			} `json:"singerMusicList"`
+				} `json:"performers"`
+			} `json:"performerMusicList"`
 			LyricistMusicList []struct {
 				ID string `json:"id"`
 			} `json:"lyricistMusicList"`
@@ -127,7 +127,7 @@ func TestGetArtist(t *testing.T) {
 		RawData map[string]json.RawMessage `json:"-"`
 	}
 
-	getSinger := func(userID string, admin int) response {
+	getArtist := func(userID string, admin int) response {
 		t.Helper()
 
 		w := httptest.NewRecorder()
@@ -152,11 +152,11 @@ func TestGetArtist(t *testing.T) {
 	}
 
 	t.Run("returns the full artist detail payload", func(t *testing.T) {
-		resp := getSinger("user-1", 0)
+		resp := getArtist("user-1", 0)
 		if resp.Code != "success" {
 			t.Fatalf("unexpected code: %s", resp.Code)
 		}
-		if resp.Data.ID != "artist-1" || resp.Data.Name != "Creator Singer" {
+		if resp.Data.ID != "artist-1" || resp.Data.Name != "Creator Performer" {
 			t.Fatalf("unexpected artist payload: %+v", resp.Data)
 		}
 		if len(resp.Data.Aliases) != 2 || resp.Data.Aliases[0] != "Alias A" {
@@ -183,12 +183,12 @@ func TestGetArtist(t *testing.T) {
 			t.Fatalf("expected photo-a second: %+v", resp.Data.Photos[1])
 		}
 
-		if len(resp.Data.SingerMusicList) != 4 {
-			t.Fatalf("unexpected singerMusicList: %+v", resp.Data.SingerMusicList)
+		if len(resp.Data.PerformerMusicList) != 4 {
+			t.Fatalf("unexpected performerMusicList: %+v", resp.Data.PerformerMusicList)
 		}
 		for i, wantID := range []string{"music-1", "music-2", "music-3", "music-4"} {
-			if resp.Data.SingerMusicList[i].ID != wantID {
-				t.Fatalf("singerMusicList[%d] ID = %s, want %s; list = %+v", i, resp.Data.SingerMusicList[i].ID, wantID, resp.Data.SingerMusicList)
+			if resp.Data.PerformerMusicList[i].ID != wantID {
+				t.Fatalf("performerMusicList[%d] ID = %s, want %s; list = %+v", i, resp.Data.PerformerMusicList[i].ID, wantID, resp.Data.PerformerMusicList)
 			}
 		}
 		if len(resp.Data.LyricistMusicList) != 0 {
@@ -197,21 +197,21 @@ func TestGetArtist(t *testing.T) {
 		if len(resp.Data.ComposerMusicList) != 0 {
 			t.Fatalf("unexpected composerMusicList: %+v", resp.Data.ComposerMusicList)
 		}
-		music := resp.Data.SingerMusicList[0]
+		music := resp.Data.PerformerMusicList[0]
 		if music.ID != "music-1" || music.Name != "Song 1" {
 			t.Fatalf("unexpected music item: %+v", music)
 		}
 		if len(music.Aliases) != 1 || music.Aliases[0] != "Song Alias" {
 			t.Fatalf("unexpected music aliases: %+v", music.Aliases)
 		}
-		if len(music.Singers) != 2 {
-			t.Fatalf("unexpected nested singers: %+v", music.Singers)
+		if len(music.Performers) != 2 {
+			t.Fatalf("unexpected nested performers: %+v", music.Performers)
 		}
 		guestFound := false
-		for _, artist := range music.Singers {
+		for _, artist := range music.Performers {
 			if artist.ID == "artist-2" {
 				guestFound = true
-				if artist.Name != "Guest Singer" {
+				if artist.Name != "Guest Performer" {
 					t.Fatalf("unexpected guest artist: %+v", artist)
 				}
 				if len(artist.Aliases) != 1 || artist.Aliases[0] != "Guest Alias" {
@@ -220,12 +220,12 @@ func TestGetArtist(t *testing.T) {
 			}
 		}
 		if !guestFound {
-			t.Fatalf("guest artist not found in nested artist list: %+v", music.Singers)
+			t.Fatalf("guest artist not found in nested artist list: %+v", music.Performers)
 		}
 	})
 }
 
-func TestSearchSingerReturnsPhotos(t *testing.T) {
+func TestSearchArtistReturnsPhotos(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	if err := store.ResetForTests(); err != nil {
 		t.Fatalf("reset store: %v", err)
@@ -253,7 +253,7 @@ func TestSearchSingerReturnsPhotos(t *testing.T) {
 		joinAliases([]string{"First Alias"}), now-100,
 		joinAliases([]string{"Second Alias"}), now,
 	); err != nil {
-		t.Fatalf("insert singers: %v", err)
+		t.Fatalf("insert performers: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist_photo (id,artistId,asset,position,description,addTimestamp) VALUES
@@ -273,10 +273,10 @@ func TestSearchSingerReturnsPhotos(t *testing.T) {
 		t.Fatalf("insert music: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music_singer_relation (musicId,artistId) VALUES
-			('music-beta-1','artist-beta'),
-			('music-beta-2','artist-beta'),
-			('music-alpha-1','artist-alpha')`,
+		`INSERT INTO music_artist_relation (musicId,role,artistId) VALUES
+			('music-beta-1','performer','artist-beta'),
+			('music-beta-2','performer','artist-beta'),
+			('music-alpha-1','performer','artist-alpha')`,
 	); err != nil {
 		t.Fatalf("insert music artist relations: %v", err)
 	}
@@ -400,10 +400,10 @@ func TestAdminCreateArtistForceDuplicateName(t *testing.T) {
 	}
 	var count int
 	if err := store.DB().QueryRow(`SELECT COUNT(1) FROM artist WHERE name=?`, "Same Name").Scan(&count); err != nil {
-		t.Fatalf("count singers: %v", err)
+		t.Fatalf("count performers: %v", err)
 	}
 	if count != 2 {
-		t.Fatalf("expected 2 same-name singers after force create, got %d", count)
+		t.Fatalf("expected 2 same-name performers after force create, got %d", count)
 	}
 }
 
@@ -438,7 +438,7 @@ func TestAdminGetArtistList(t *testing.T) {
 		joinAliases([]string{"Second Alias"}), now-100,
 		joinAliases([]string{"Third Alias"}), now-200,
 	); err != nil {
-		t.Fatalf("insert singers: %v", err)
+		t.Fatalf("insert performers: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist_photo (id,artistId,asset,position,description,addTimestamp) VALUES
@@ -449,7 +449,7 @@ func TestAdminGetArtistList(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert photos: %v", err)
 	}
-	// 准备音乐和歌手关联数据用于校验 musicCount 字段
+	// 准备音乐和艺人关联数据用于校验 musicCount 字段
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES
 			('music-1',1,'Song One','song-1.mp3',?),
@@ -460,15 +460,15 @@ func TestAdminGetArtistList(t *testing.T) {
 		t.Fatalf("insert music: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO music_singer_relation (musicId,artistId) VALUES
-			('music-1','artist-alpha'),
-			('music-2','artist-alpha'),
-			('music-3','artist-beta')`,
+		`INSERT INTO music_artist_relation (musicId,role,artistId) VALUES
+			('music-1','performer','artist-alpha'),
+			('music-2','performer','artist-alpha'),
+			('music-3','performer','artist-beta')`,
 	); err != nil {
-		t.Fatalf("insert music_singer_relation: %v", err)
+		t.Fatalf("insert music artist relations: %v", err)
 	}
 
-	type singerItem struct {
+	type artistItem struct {
 		ID             string   `json:"id"`
 		Name           string   `json:"name"`
 		Aliases        []string `json:"aliases"`
@@ -485,7 +485,7 @@ func TestAdminGetArtistList(t *testing.T) {
 		Code string `json:"code"`
 		Data struct {
 			Total      int          `json:"total"`
-			ArtistList []singerItem `json:"artistList"`
+			ArtistList []artistItem `json:"artistList"`
 		} `json:"data"`
 	}
 
@@ -506,7 +506,7 @@ func TestAdminGetArtistList(t *testing.T) {
 		return resp
 	}
 
-	t.Run("returns paged singers ordered by create time desc", func(t *testing.T) {
+	t.Run("returns paged performers ordered by create time desc", func(t *testing.T) {
 		resp := call("page=1&pageSize=2")
 		if resp.Code != "success" {
 			t.Fatalf("unexpected code: %s", resp.Code)
@@ -515,7 +515,7 @@ func TestAdminGetArtistList(t *testing.T) {
 			t.Fatalf("expected total 3, got %d", resp.Data.Total)
 		}
 		if len(resp.Data.ArtistList) != 2 {
-			t.Fatalf("expected 2 singers, got %d", len(resp.Data.ArtistList))
+			t.Fatalf("expected 2 performers, got %d", len(resp.Data.ArtistList))
 		}
 		if resp.Data.ArtistList[0].ID != "artist-beta" || resp.Data.ArtistList[1].ID != "artist-gamma" {
 			t.Fatalf("unexpected order: %+v", resp.Data.ArtistList)
@@ -717,7 +717,7 @@ func TestAdminUpdateArtistSearchKeywords(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,createTimestamp) VALUES (?,?,?)`,
-		"artist-1", "Singer", now,
+		"artist-1", "Artist", now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}

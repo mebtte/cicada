@@ -247,7 +247,7 @@ export default (
         aliases: sessionMusic.aliases,
         cover: sessionMusic.cover,
         coverThumbnail: sessionMusic.coverThumbnail,
-        singers: sessionMusic.singers.map((s) => ({
+        performers: sessionMusic.performers.map((s) => ({
           id: s.id,
           name: s.name,
           aliases: s.aliases,

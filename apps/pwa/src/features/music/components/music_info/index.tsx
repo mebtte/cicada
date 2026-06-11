@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import Singer, { type SingerValue } from '../singer';
+import Performer, { type ArtistValue } from '../performer';
 
 export interface MusicInfoProps extends HTMLAttributes<HTMLDivElement> {
   musicCover: string;
@@ -11,8 +11,8 @@ export interface MusicInfoProps extends HTMLAttributes<HTMLDivElement> {
   musicId: string;
   musicName: string;
   onOpenMusic?: (id: string) => void;
-  onOpenSinger?: (singer: SingerValue) => void;
-  singers: SingerValue[];
+  onOpenArtist?: (performer: ArtistValue) => void;
+  performers: ArtistValue[];
 }
 
 const Style = styled.div`
@@ -35,7 +35,7 @@ const Style = styled.div`
       line-height: 1.5;
     }
 
-    > .singers {
+    > .performers {
       ${ellipsis}
       font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       color: rgb(155 155 155);
@@ -63,8 +63,8 @@ function MusicInfo({
   musicId,
   musicName,
   onOpenMusic,
-  onOpenSinger,
-  singers,
+  onOpenArtist,
+  performers,
   ...props
 }: MusicInfoProps) {
   return (
@@ -72,9 +72,9 @@ function MusicInfo({
       <Cover src={musicCover} placeholderSrc={musicCoverThumbnail} size={40} />
       <div className="info">
         <div className="name">{musicName}</div>
-        <div className="singers ">
-          {singers.map((singer) => (
-            <Singer key={singer.id} singer={singer} onOpen={onOpenSinger} />
+        <div className="performers ">
+          {performers.map((performer) => (
+            <Performer key={performer.id} performer={performer} onOpen={onOpenArtist} />
           ))}
         </div>
       </div>

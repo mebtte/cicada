@@ -2,14 +2,14 @@ import { MouseEvent } from 'react';
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
 
-export interface SingerValue {
+export interface ArtistValue {
   id: string;
   name: string;
 }
 
-export interface SingerProps {
-  onOpen?: (singer: SingerValue, event: MouseEvent<HTMLSpanElement>) => void;
-  singer: SingerValue;
+export interface ArtistProps {
+  onOpen?: (performer: ArtistValue, event: MouseEvent<HTMLSpanElement>) => void;
+  performer: ArtistValue;
 }
 
 const Style = styled.span`
@@ -35,21 +35,21 @@ const Style = styled.span`
   }
 `;
 
-function Singer({ onOpen, singer }: SingerProps) {
+function Performer({ onOpen, performer }: ArtistProps) {
   return (
     <Style>
       <span
         className="name"
         onClick={(event) => {
           event.stopPropagation();
-          onOpen?.(singer, event);
+          onOpen?.(performer, event);
         }}
       >
-        {singer.name}
+        {performer.name}
       </span>
       <span className="divider">&nbsp;|&nbsp;</span>
     </Style>
   );
 }
 
-export default Singer;
+export default Performer;

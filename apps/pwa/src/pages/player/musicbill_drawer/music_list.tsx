@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { t } from '@/i18n';
 import VirtualList from '@/components/virtual_list';
 import Music from '../components/music';
-import { MusicWithSingerAliases } from '../constants';
+import { MusicWithArtistAliases } from '../constants';
 import Context from '../context';
 
 const emptyStyle: CSSProperties = {
@@ -18,7 +18,7 @@ function MusicList({
   musicList,
   scrollElementRef,
 }: {
-  musicList: MusicWithSingerAliases[];
+  musicList: MusicWithArtistAliases[];
   scrollElementRef?: RefObject<HTMLElement | null>;
 }) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);

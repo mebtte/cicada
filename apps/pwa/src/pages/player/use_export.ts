@@ -36,10 +36,10 @@ async function exportAndSave(
   signal: AbortSignal,
 ) {
   const { id, music, directoryHandle, asset, ext } = exportingMusic;
-  const singerNames = music.singers.map((s) => s.name);
+  const performerNames = music.performers.map((s) => s.name);
   const baseFilename = formatMusicFilename({
     name: music.name,
-    singerNames,
+    performerNames,
     ext,
   });
   /* 临时文件: 前缀 . 让 macOS/Linux 的文件管理器默认隐藏; 用 export id 加在中间防止同首歌并发导出冲突; .cicada-part 后缀语义清晰, 即便残留也容易识别清理 */
@@ -95,7 +95,7 @@ async function exportAndSave(
       if (tag) {
         finalFilename = formatMusicFilename({
           name: music.name,
-          singerNames,
+          performerNames,
           ext,
           tag,
         });

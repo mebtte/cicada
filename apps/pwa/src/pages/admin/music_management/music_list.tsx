@@ -435,7 +435,7 @@ const Tag = styled.span`
   white-space: nowrap;
 `;
 
-const SingerButton = styled.button`
+const ArtistButton = styled.button`
   max-width: 170px;
   padding: 4px 8px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -1047,7 +1047,7 @@ function MusicList({
                   <Th>{capitalize(t('cover'))}</Th>
                   <Th>{capitalize(t('name'))}</Th>
                   <Th>{capitalize(t('alias'))}</Th>
-                  <Th>{capitalize(t('singer'))}</Th>
+                  <Th>{capitalize(t('performer'))}</Th>
                   <Th>{capitalize(t('lyricist'))}</Th>
                   <Th>{capitalize(t('composer'))}</Th>
                   <Th>{capitalize(t('music_type_short'))}</Th>
@@ -1117,17 +1117,17 @@ function MusicList({
                       ) : null}
                     </Td>
                     <Td>
-                      {music.singers.length ? (
+                      {music.performers.length ? (
                         <TagList>
-                          {music.singers.map((singer) => (
-                            <SingerButton
-                              key={singer.id}
+                          {music.performers.map((performer) => (
+                            <ArtistButton
+                              key={performer.id}
                               type="button"
-                              title={singer.name}
-                              onClick={() => onArtistEdit(singer.id)}
+                              title={performer.name}
+                              onClick={() => onArtistEdit(performer.id)}
                             >
-                              {singer.name}
-                            </SingerButton>
+                              {performer.name}
+                            </ArtistButton>
                           ))}
                         </TagList>
                       ) : (
@@ -1138,14 +1138,14 @@ function MusicList({
                       {music.type === MusicType.SONG && music.lyricists.length ? (
                         <TagList>
                           {music.lyricists.map((lyricist) => (
-                            <SingerButton
+                            <ArtistButton
                               key={lyricist.id}
                               type="button"
                               title={lyricist.name}
                               onClick={() => onArtistEdit(lyricist.id)}
                             >
                               {lyricist.name}
-                            </SingerButton>
+                            </ArtistButton>
                           ))}
                         </TagList>
                       ) : null}
@@ -1154,14 +1154,14 @@ function MusicList({
                       {music.composers.length ? (
                         <TagList>
                           {music.composers.map((composer) => (
-                            <SingerButton
+                            <ArtistButton
                               key={composer.id}
                               type="button"
                               title={composer.name}
                               onClick={() => onArtistEdit(composer.id)}
                             >
                               {composer.name}
-                            </SingerButton>
+                            </ArtistButton>
                           ))}
                         </TagList>
                       ) : null}

@@ -9,7 +9,7 @@ import { useSetting } from '@/global_states/setting';
 import { ROOT_PATH, ADMIN_PATH } from '@/constants/route';
 import { Artist } from './constants';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
-import { MusicWithSingerAliases } from '../constants';
+import { MusicWithArtistAliases } from '../constants';
 import addMusicListToPlaylist from '../add_to_playlist';
 import { openExportMusicListDialog } from '../export_music_list';
 
@@ -48,11 +48,11 @@ const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   }
 `;
 
-const getArtistMusicList = (artist: Artist): MusicWithSingerAliases[] =>
+const getArtistMusicList = (artist: Artist): MusicWithArtistAliases[] =>
   Array.from(
     new Map(
       [
-        ...artist.singerMusicList,
+        ...artist.performerMusicList,
         ...artist.lyricistMusicList,
         ...artist.composerMusicList,
       ].map((music) => [music.id, music]),

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import getRandomMusic from '@/server/api/get_random_music';
 import logger from '@/utils/logger';
-import { MusicWithSingerAliases, QueueMusic } from '@/pages/player/constants';
+import { MusicWithArtistAliases, QueueMusic } from '@/pages/player/constants';
 import { toRadioQueueMusic } from './utils';
 
 interface FetchOptions {
@@ -91,7 +91,7 @@ function useRadioQueue() {
     currentIndexRef.current = currentIndex;
   }, [currentIndex]);
 
-  const insertNext = useCallback((music: MusicWithSingerAliases) => {
+  const insertNext = useCallback((music: MusicWithArtistAliases) => {
     setQueue((prev) => {
       const position = currentIndexRef.current + 1;
       if (position <= 0) {

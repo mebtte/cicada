@@ -78,7 +78,7 @@ export default (id: string) => {
       PlayerEventType.ARTIST_UPDATED,
       (payload) => {
         const artists = [
-          ...(data.music?.singers ?? []),
+          ...(data.music?.performers ?? []),
           ...(data.music?.lyricists ?? []),
           ...(data.music?.composers ?? []),
         ];

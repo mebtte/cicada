@@ -95,7 +95,7 @@ export default () => {
       (payload) => {
         for (const music of playlist) {
           const exist = [
-            ...music.singers,
+            ...music.performers,
             ...music.lyricists,
             ...music.composers,
           ].find((artist) => artist.id === payload.id);

@@ -43,12 +43,12 @@ func TestAdminGetMusicList(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES
-			('artist-alpha','Alpha Singer',?, ?),
-			('artist-beta','Beta Singer', ?, ?)`,
+			('artist-alpha','Alpha Performer',?, ?),
+			('artist-beta','Beta Performer', ?, ?)`,
 		joinAliases([]string{"Voice Alias"}), now-200,
-		joinAliases([]string{"Shared Singer Alias"}), now-100,
+		joinAliases([]string{"Shared Performer Alias"}), now-100,
 	); err != nil {
-		t.Fatalf("insert singers: %v", err)
+		t.Fatalf("insert performers: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,aliases,searchKeywords,cover,asset,heat,createTimestamp,year) VALUES
@@ -61,14 +61,14 @@ func TestAdminGetMusicList(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-alpha", []string{"artist-alpha"}); err != nil {
-		t.Fatalf("link alpha singers: %v", err)
+	if err := store.ReplaceMusicArtistsByRole("music-alpha", store.MusicArtistRolePerformer, []string{"artist-alpha"}); err != nil {
+		t.Fatalf("link alpha performers: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-beta", []string{"artist-beta"}); err != nil {
-		t.Fatalf("link beta singers: %v", err)
+	if err := store.ReplaceMusicArtistsByRole("music-beta", store.MusicArtistRolePerformer, []string{"artist-beta"}); err != nil {
+		t.Fatalf("link beta performers: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-gamma", []string{"artist-beta"}); err != nil {
-		t.Fatalf("link gamma singers: %v", err)
+	if err := store.ReplaceMusicArtistsByRole("music-gamma", store.MusicArtistRolePerformer, []string{"artist-beta"}); err != nil {
+		t.Fatalf("link gamma performers: %v", err)
 	}
 
 	type musicItem struct {
@@ -78,11 +78,11 @@ func TestAdminGetMusicList(t *testing.T) {
 		SearchKeywords string   `json:"searchKeywords"`
 		Cover          string   `json:"cover"`
 		Year           *int64   `json:"year"`
-		Singers        []struct {
+		Performers     []struct {
 			ID      string   `json:"id"`
 			Name    string   `json:"name"`
 			Aliases []string `json:"aliases"`
-		} `json:"singers"`
+		} `json:"performers"`
 		CreateTimestamp int64 `json:"createTimestamp"`
 	}
 	type response struct {

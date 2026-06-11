@@ -392,7 +392,7 @@ const InfoTop = styled.div`
   }
 `;
 
-const SingerText = styled.div`
+const PerformerText = styled.div`
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -632,7 +632,7 @@ function FloatingMusicPlayer({
         : '',
     [music, musicPlaybackQuality],
   );
-  const singerText = music?.singers.map((singer) => singer.name).join(', ') || '';
+  const performerText = music?.performers.map((performer) => performer.name).join(', ') || '';
   const canSeek = duration > 0 && Number.isFinite(duration);
   const currentSecond = currentMillisecond / 1000;
   const nextMusicPlaybackQuality =
@@ -835,9 +835,9 @@ function FloatingMusicPlayer({
                   <span className="alias">&nbsp;{music.aliases[0]}</span>
                 ) : null}
               </InfoTop>
-              <SingerText title={singerText}>
-                {singerText || t('unknown_singer')}
-              </SingerText>
+              <PerformerText title={performerText}>
+                {performerText || t('unknown_artist')}
+              </PerformerText>
             </ControllerInfo>
             <TimeBadge>
               <div>{formatSecond(currentSecond)}</div>

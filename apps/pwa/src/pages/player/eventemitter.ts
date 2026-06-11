@@ -2,7 +2,7 @@ import Eventin from 'eventin';
 import {
   Music,
   Musicbill,
-  MusicWithSingerAliases,
+  MusicWithArtistAliases,
   QueueMusic,
 } from './constants';
 import { MusicExportQuality } from '@/utils/music_export_asset';
@@ -87,12 +87,12 @@ export default new Eventin<
     [EventType.ACTION_SET_TIME]: { second: number };
     [EventType.ACTION_PREVIOUS]: null;
     [EventType.ACTION_NEXT]: null;
-    [EventType.ACTION_PLAY_MUSIC]: { music: MusicWithSingerAliases };
+    [EventType.ACTION_PLAY_MUSIC]: { music: MusicWithArtistAliases };
     [EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST]: {
-      musicList: MusicWithSingerAliases[];
+      musicList: MusicWithArtistAliases[];
     };
     [EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE]: {
-      music: MusicWithSingerAliases;
+      music: MusicWithArtistAliases;
     };
     [EventType.ACTION_CLEAR_PLAYLIST]: null;
     [EventType.ACTION_REMOVE_PLAYLIST_MUSIC]: { id: string };
@@ -106,11 +106,11 @@ export default new Eventin<
     [EventType.RELOAD_MUSICBILL]: { id: string; silence: boolean };
     [EventType.ADD_MUSIC_TO_MUSICBILL]: {
       musicbill: Musicbill;
-      music: MusicWithSingerAliases;
+      music: MusicWithArtistAliases;
     };
     [EventType.REMOVE_MUSIC_FROM_MUSICBILL]: {
       musicbill: Musicbill;
-      music: MusicWithSingerAliases;
+      music: MusicWithArtistAliases;
     };
 
     [EventType.TOGGLE_LYRIC_PANEL]: { open: boolean } | null;
@@ -118,7 +118,7 @@ export default new Eventin<
     [EventType.OPEN_MUSICBILL_SHARED_USER_DRAWER]: { id: string };
     [EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER]: null;
     [EventType.OPEN_MUSICBILL_MUSIC_DRAWER]: {
-      music: MusicWithSingerAliases;
+      music: MusicWithArtistAliases;
     };
     [EventType.OPEN_ARTIST_DRAWER]: { id: string };
     [EventType.OPEN_MUSIC_DRAWER]: { id: string };
@@ -139,7 +139,7 @@ export default new Eventin<
       id: string;
       name: string;
       aliases: string[];
-      singers: { id: string; name: string }[];
+      performers: { id: string; name: string }[];
     };
 
     [EventType.ARTIST_UPDATED]: { id: string };

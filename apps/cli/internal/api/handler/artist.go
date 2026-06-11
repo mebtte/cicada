@@ -22,9 +22,9 @@ func GetArtist(c *gin.Context) {
 		return
 	}
 
-	singerMusicList, _ := store.GetMusicsBySingerID(id)
-	lyricistMusicList, _ := store.GetMusicsByLyricistID(id)
-	composerMusicList, _ := store.GetMusicsByComposerID(id)
+	performerMusicList, _ := store.GetMusicsByArtistIDAndRole(id, store.MusicArtistRolePerformer)
+	lyricistMusicList, _ := store.GetMusicsByArtistIDAndRole(id, store.MusicArtistRoleLyricist)
+	composerMusicList, _ := store.GetMusicsByArtistIDAndRole(id, store.MusicArtistRoleComposer)
 	photos, _ := store.ListArtistPhotos(id)
 	photoItems := make([]gin.H, len(photos))
 	for i, p := range photos {
@@ -37,13 +37,13 @@ func GetArtist(c *gin.Context) {
 	}
 
 	api.OK(c, gin.H{
-		"id":                artist.ID,
-		"name":              artist.Name,
-		"aliases":           splitAliases(artist.Aliases),
-		"photos":            photoItems,
-		"singerMusicList":   artistMusicItems(singerMusicList),
-		"lyricistMusicList": artistMusicItems(lyricistMusicList),
-		"composerMusicList": artistMusicItems(composerMusicList),
+		"id":                 artist.ID,
+		"name":               artist.Name,
+		"aliases":            splitAliases(artist.Aliases),
+		"photos":             photoItems,
+		"performerMusicList": artistMusicItems(performerMusicList),
+		"lyricistMusicList":  artistMusicItems(lyricistMusicList),
+		"composerMusicList":  artistMusicItems(composerMusicList),
 	})
 }
 
@@ -298,10 +298,10 @@ func artistMusicItems(musicList []store.Music) []gin.H {
 	for i, music := range musicList {
 		musicIDs[i] = music.ID
 	}
-	singers, _ := store.GetSingersInMusicIDs(musicIDs)
-	lyricists, _ := store.GetLyricistsInMusicIDs(musicIDs)
-	composers, _ := store.GetComposersInMusicIDs(musicIDs)
-	singerMap := groupArtistsByMusic(singers)
+	performers, _ := store.GetArtistsInMusicIDsByRole(musicIDs, store.MusicArtistRolePerformer)
+	lyricists, _ := store.GetArtistsInMusicIDsByRole(musicIDs, store.MusicArtistRoleLyricist)
+	composers, _ := store.GetArtistsInMusicIDsByRole(musicIDs, store.MusicArtistRoleComposer)
+	performerMap := groupArtistsByMusic(performers)
 	lyricistMap := groupArtistsByMusic(lyricists)
 	composerMap := groupArtistsByMusic(composers)
 
@@ -315,7 +315,7 @@ func artistMusicItems(musicList []store.Music) []gin.H {
 			"cover":          config.AssetPublicURL(music.Cover, config.AssetTypeMusicCover),
 			"coverThumbnail": music.CoverThumbnail,
 			"asset":          config.AssetPublicURL(music.Asset, config.AssetTypeMusic),
-			"singers":        artistItems(singerMap[music.ID]),
+			"performers":     artistItems(performerMap[music.ID]),
 			"lyricists":      artistItems(lyricistMap[music.ID]),
 			"composers":      artistItems(composerMap[music.ID]),
 		}
