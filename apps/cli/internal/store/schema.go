@@ -30,7 +30,7 @@ const (
 
 var tables = []string{
 	`CREATE TABLE IF NOT EXISTS user (
-		id TEXT PRIMARY KEY NOT NULL,
+		id TEXT PRIMARY KEY NOT NULL CHECK(length(id)=6 AND id GLOB '[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]'),
 		username TEXT UNIQUE NOT NULL,
 		avatar TEXT NOT NULL DEFAULT '',
 		nickname TEXT NOT NULL,
@@ -62,7 +62,7 @@ var tables = []string{
 		used INTEGER NOT NULL DEFAULT 0
 	)`,
 	`CREATE TABLE IF NOT EXISTS artist (
-		id TEXT PRIMARY KEY NOT NULL,
+		id TEXT PRIMARY KEY NOT NULL CHECK(length(id)=6 AND id GLOB '[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]'),
 		name TEXT NOT NULL,
 		aliases TEXT NOT NULL DEFAULT '',
 		searchKeywords TEXT NOT NULL DEFAULT '',
@@ -79,7 +79,7 @@ var tables = []string{
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_artist_photo_artist ON artist_photo(artistId, position)`,
 	`CREATE TABLE IF NOT EXISTS music (
-		id TEXT PRIMARY KEY NOT NULL,
+		id TEXT PRIMARY KEY NOT NULL CHECK(length(id)=6 AND id GLOB '[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]'),
 		type INTEGER NOT NULL,
 		name TEXT NOT NULL,
 		year INTEGER DEFAULT NULL,
@@ -130,7 +130,7 @@ var tables = []string{
 	`CREATE INDEX IF NOT EXISTS idx_music_artist_relation_music_role ON music_artist_relation(musicId, role, position)`,
 	`CREATE INDEX IF NOT EXISTS idx_music_artist_relation_artist_role ON music_artist_relation(artistId, role, position)`,
 	`CREATE TABLE IF NOT EXISTS musicbill (
-		id TEXT PRIMARY KEY NOT NULL,
+		id TEXT PRIMARY KEY NOT NULL CHECK(length(id)=6 AND id GLOB '[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]'),
 		userId TEXT NOT NULL REFERENCES user(id),
 		cover TEXT NOT NULL DEFAULT '',
 		name TEXT NOT NULL,
@@ -221,11 +221,6 @@ func Initialize() error {
 			username    = "cicada"
 			letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 		)
-		idNum, err := rand.Int(rand.Reader, big.NewInt(9990000))
-		if err != nil {
-			return fmt.Errorf("generate admin id: %w", err)
-		}
-		id := fmt.Sprintf("%d", 10000+idNum.Int64())
 		password, err := secureRandomString(16, letterBytes)
 		if err != nil {
 			return fmt.Errorf("generate admin password: %w", err)
@@ -234,12 +229,30 @@ func Initialize() error {
 		if err != nil {
 			return fmt.Errorf("hash admin password: %w", err)
 		}
-		_, err = DB().Exec(
-			`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin) VALUES (?,?,?,?,?,1)`,
-			id, username, passwordHash, "Cicada", time.Now().UnixMilli(),
-		)
-		if err != nil {
-			return fmt.Errorf("seed admin: %w", err)
+		var inserted bool
+		for range maxCreateUserIDAttempts {
+			id, err := generatePublicID()
+			if err != nil {
+				return fmt.Errorf("generate admin id: %w", err)
+			}
+			result, err := DB().Exec(
+				`INSERT OR IGNORE INTO user (id,username,password,nickname,joinTimestamp,admin) VALUES (?,?,?,?,?,1)`,
+				id, username, passwordHash, "Cicada", time.Now().UnixMilli(),
+			)
+			if err != nil {
+				return fmt.Errorf("seed admin: %w", err)
+			}
+			affected, err := result.RowsAffected()
+			if err != nil {
+				return fmt.Errorf("seed admin rows affected: %w", err)
+			}
+			if affected > 0 {
+				inserted = true
+				break
+			}
+		}
+		if !inserted {
+			return fmt.Errorf("seed admin: exhausted %d id generation attempts", maxCreateUserIDAttempts)
 		}
 		fmt.Printf("\n========================================\n")
 		fmt.Printf("  DEFAULT USER\n")

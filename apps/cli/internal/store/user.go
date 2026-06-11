@@ -2,7 +2,12 @@ package store
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
+)
+
+const (
+	maxCreateUserIDAttempts = 20
 )
 
 type User struct {
@@ -88,16 +93,34 @@ func GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
-func CreateUser(id, username, password, remark string) error {
+func CreateUser(username, password, remark string) (string, error) {
 	passwordHash, err := HashPassword(password)
 	if err != nil {
-		return err
+		return "", err
 	}
-	_, err = DB().Exec(
-		`INSERT INTO user (id,username,password,nickname,joinTimestamp,remark) VALUES (?,?,?,?,?,?)`,
-		id, username, passwordHash, username, time.Now().UnixMilli(), remark,
-	)
-	return err
+	for range maxCreateUserIDAttempts {
+		id, err := generatePublicID()
+		if err != nil {
+			return "", err
+		}
+
+		// Public IDs can theoretically collide, so insert atomically and retry on conflict.
+		result, err := DB().Exec(
+			`INSERT OR IGNORE INTO user (id,username,password,nickname,joinTimestamp,remark) VALUES (?,?,?,?,?,?)`,
+			id, username, passwordHash, username, time.Now().UnixMilli(), remark,
+		)
+		if err != nil {
+			return "", err
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return "", err
+		}
+		if affected > 0 {
+			return id, nil
+		}
+	}
+	return "", fmt.Errorf("create user: exhausted %d id generation attempts", maxCreateUserIDAttempts)
 }
 
 func DeleteUser(id string) error {

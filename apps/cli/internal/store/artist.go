@@ -187,7 +187,7 @@ func GetAdminArtistList(keyword, filterKey string, page, pageSize int) (int, []A
 
 func CreateArtist(name string) (string, error) {
 	for range maxCreateArtistIDAttempts {
-		id, err := generateShortPublicID()
+		id, err := generatePublicID()
 		if err != nil {
 			return "", err
 		}

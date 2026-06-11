@@ -70,7 +70,7 @@ function getCurrentAuthKey() {
 }
 
 async function getQueue() {
-  return (await storage.getItem(Key.PLAY_RECORD_UPLOAD_QUEUE_V2)) || [];
+  return (await storage.getItem(Key.PLAY_RECORD_UPLOAD_QUEUE_V3)) || [];
 }
 
 function getRecordKey(record: PlayRecordUploadQueueItem) {
@@ -99,7 +99,7 @@ function mergeRecord(
 export function enqueuePlayRecordUpload(record: PlayRecordUploadQueueItem) {
   return runStorageOperation(async () => {
     await storage.setItem(
-      Key.PLAY_RECORD_UPLOAD_QUEUE_V2,
+      Key.PLAY_RECORD_UPLOAD_QUEUE_V3,
       mergeRecord(await getQueue(), record),
     );
   });
@@ -201,7 +201,7 @@ function applyFlushResults(results: FlushResult[]) {
       });
     }
     await storage.setItem(
-      Key.PLAY_RECORD_UPLOAD_QUEUE_V2,
+      Key.PLAY_RECORD_UPLOAD_QUEUE_V3,
       next.slice(-MAX_QUEUE_LENGTH),
     );
   });

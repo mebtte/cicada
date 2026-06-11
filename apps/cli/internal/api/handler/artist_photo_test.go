@@ -45,14 +45,14 @@ func setupArtistPhotoTest(t *testing.T) (admin *store.User, artistID string) {
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin) VALUES (?,?,?,?,?,?)`,
-		"user-admin", "admin", store.DoubleMD5("password"), "Admin", now, 1,
+		"ADMIN1", "admin", store.DoubleMD5("password"), "Admin", now, 1,
 	); err != nil {
 		t.Fatalf("insert admin user: %v", err)
 	}
 
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES (?,?,?,?)`,
-		"artist-1", "Aurora", "", now,
+		"ART001", "Aurora", "", now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}
@@ -64,7 +64,7 @@ func setupArtistPhotoTest(t *testing.T) (admin *store.User, artistID string) {
 	}
 	writeTestJPEG(t, assetPath)
 
-	return &store.User{ID: "user-admin", Admin: 1}, "artist-1"
+	return &store.User{ID: "ADMIN1", Admin: 1}, "ART001"
 }
 
 // callPhoto invokes a handler with a JSON body and a logged-in user. Returns

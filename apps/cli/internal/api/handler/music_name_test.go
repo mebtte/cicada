@@ -53,7 +53,7 @@ func TestAdminCreateMusicNameLimit(t *testing.T) {
 		c, _ := gin.CreateTestContext(w)
 		c.Request = httptest.NewRequest(http.MethodPost, "/api/admin/music", bytes.NewReader(body))
 		c.Request.Header.Set("Content-Type", "application/json")
-		c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+		c.Set("authed_user", &store.User{ID: "USER01", Admin: 1})
 
 		AdminCreateMusic(c)
 
@@ -93,7 +93,7 @@ func TestAdminCreateMusicRejectsInstrumentalLyricists(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,createTimestamp) VALUES (?,?,?)`,
-		"artist-1", "Writer", now,
+		"ART001", "Writer", now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}
@@ -107,7 +107,7 @@ func TestAdminCreateMusicRejectsInstrumentalLyricists(t *testing.T) {
 
 	body, err := json.Marshal(map[string]any{
 		"name":        "Instrumental",
-		"lyricistIds": "artist-1",
+		"lyricistIds": "ART001",
 		"type":        int(store.MusicTypeInstrumental),
 		"asset":       "song.mp3",
 	})
@@ -118,7 +118,7 @@ func TestAdminCreateMusicRejectsInstrumentalLyricists(t *testing.T) {
 	c, _ := gin.CreateTestContext(w)
 	c.Request = httptest.NewRequest(http.MethodPost, "/api/admin/music", bytes.NewReader(body))
 	c.Request.Header.Set("Content-Type", "application/json")
-	c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+	c.Set("authed_user", &store.User{ID: "USER01", Admin: 1})
 
 	AdminCreateMusic(c)
 
@@ -157,13 +157,13 @@ func TestAdminUpdateMusicNameLimit(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
+		"USER01", "creator", store.DoubleMD5("password"), "Creator", now,
 	); err != nil {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", now,
+		"MUS001", int(store.MusicTypeSong), "Song", "missing.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
@@ -172,7 +172,7 @@ func TestAdminUpdateMusicNameLimit(t *testing.T) {
 		t.Helper()
 
 		body, err := json.Marshal(map[string]any{
-			"id":    "music-1",
+			"id":    "MUS001",
 			"key":   "name",
 			"value": name,
 		})
@@ -184,7 +184,7 @@ func TestAdminUpdateMusicNameLimit(t *testing.T) {
 		c, _ := gin.CreateTestContext(w)
 		c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/music", bytes.NewReader(body))
 		c.Request.Header.Set("Content-Type", "application/json")
-		c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+		c.Set("authed_user", &store.User{ID: "USER01", Admin: 1})
 
 		AdminUpdateMusic(c)
 
@@ -197,7 +197,7 @@ func TestAdminUpdateMusicNameLimit(t *testing.T) {
 	}
 
 	var storedName string
-	if err := store.DB().QueryRow(`SELECT name FROM music WHERE id=?`, "music-1").Scan(&storedName); err != nil {
+	if err := store.DB().QueryRow(`SELECT name FROM music WHERE id=?`, "MUS001").Scan(&storedName); err != nil {
 		t.Fatalf("get stored name: %v", err)
 	}
 	if storedName != validName {

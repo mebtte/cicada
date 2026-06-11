@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestCreateArtistUsesShortAlphanumericID(t *testing.T) {
+func TestCreateArtistUsesPublicID(t *testing.T) {
 	if err := ResetForTests(); err != nil {
 		t.Fatalf("reset store: %v", err)
 	}
@@ -30,8 +30,8 @@ func TestCreateArtistUsesShortAlphanumericID(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create artist: %v", err)
 	}
-	if matched := regexp.MustCompile(`^[0-9A-Za-z]{8}$`).MatchString(id); !matched {
-		t.Fatalf("expected 8-character alphanumeric artist id, got %q", id)
+	if matched := regexp.MustCompile(`^[0-9A-Z]{6}$`).MatchString(id); !matched {
+		t.Fatalf("expected 6-character uppercase alphanumeric artist id, got %q", id)
 	}
 }
 
@@ -57,9 +57,9 @@ func TestSearchPerformersRanksExactAndPrefixMatches(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
 		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES
-			('artist-exact', 'Beta',       '', ?),
-			('artist-prefix','Beta Band',  '', ?),
-			('artist-newer', 'The Beta',   '', ?)`,
+			('ART001', 'Beta',       '', ?),
+			('ART002','Beta Band',  '', ?),
+			('ART003', 'The Beta',   '', ?)`,
 		now-300,
 		now-200,
 		now,
@@ -75,7 +75,7 @@ func TestSearchPerformersRanksExactAndPrefixMatches(t *testing.T) {
 		t.Fatalf("unexpected search result: total=%d performers=%+v", total, performers)
 	}
 	got := []string{performers[0].ID, performers[1].ID, performers[2].ID}
-	want := []string{"artist-exact", "artist-prefix", "artist-newer"}
+	want := []string{"ART001", "ART002", "ART003"}
 	for i := range want {
 		if got[i] != want[i] {
 			t.Fatalf("unexpected order: got %v want %v", got, want)
@@ -105,8 +105,8 @@ func TestSearchPerformersMatchesSearchKeywords(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
 		`INSERT INTO artist (id,name,aliases,searchKeywords,createTimestamp) VALUES
-			('artist-hidden', 'Aurora', '', 'runaway voice token', ?),
-			('artist-other',  'Beta',   '', '', ?)`,
+			('ART004', 'Aurora', '', 'runaway voice token', ?),
+			('ART005',  'Beta',   '', '', ?)`,
 		now,
 		now,
 	); err != nil {
@@ -117,7 +117,7 @@ func TestSearchPerformersMatchesSearchKeywords(t *testing.T) {
 	if err != nil {
 		t.Fatalf("search performers: %v", err)
 	}
-	if total != 1 || len(performers) != 1 || performers[0].ID != "artist-hidden" {
-		t.Fatalf("expected artist-hidden by search keywords, total=%d performers=%+v", total, performers)
+	if total != 1 || len(performers) != 1 || performers[0].ID != "ART004" {
+		t.Fatalf("expected ART004 by search keywords, total=%d performers=%+v", total, performers)
 	}
 }

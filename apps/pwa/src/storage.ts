@@ -28,10 +28,10 @@ export enum Key {
   CUSTOM_APP_NAME = 'custom_app_name',
 
   SETTING = 'setting_v4',
-  SERVER = 'server_v2',
+  SERVER = 'server_v3',
 
   DOWNLOAD_FLOATING_POSITION = 'download-floating-position',
-  OFFLINE_MUSIC = 'offline-music-v3',
+  OFFLINE_MUSIC = 'offline-music-v4',
   STORAGE_PERSISTENCE_REQUESTED = 'storage-persistence-requested',
 }
 

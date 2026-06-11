@@ -134,7 +134,7 @@ func GetMusicsByIDs(ids []string) ([]Music, error) {
 
 func CreateMusic(name string, t MusicType, asset string) (string, error) {
 	for range maxCreateMusicIDAttempts {
-		id, err := generateShortPublicID()
+		id, err := generatePublicID()
 		if err != nil {
 			return "", err
 		}

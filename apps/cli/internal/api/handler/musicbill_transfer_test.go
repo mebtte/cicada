@@ -35,10 +35,10 @@ func setupTransferOwnerHandlerTest(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES
-			('owner','owner',?, 'Owner', ?),
-			('shared','shared',?, 'Shared', ?),
-			('pending','pending',?, 'Pending', ?),
-			('stranger','stranger',?, 'Stranger', ?)`,
+			('OWNER1','owner',?, 'Owner', ?),
+			('SHARE1','shared',?, 'Shared', ?),
+			('PEND01','pending',?, 'Pending', ?),
+			('STRNGR','stranger',?, 'Stranger', ?)`,
 		store.DoubleMD5("password"), now,
 		store.DoubleMD5("password"), now,
 		store.DoubleMD5("password"), now,
@@ -47,15 +47,15 @@ func setupTransferOwnerHandlerTest(t *testing.T) {
 		t.Fatalf("insert users: %v", err)
 	}
 	if _, err := store.DB().Exec(
-		`INSERT INTO musicbill (id,userId,name,createTimestamp) VALUES ('mb-1','owner','Bill',?)`,
+		`INSERT INTO musicbill (id,userId,name,createTimestamp) VALUES ('BILL01','OWNER1','Bill',?)`,
 		now,
 	); err != nil {
 		t.Fatalf("insert musicbill: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO shared_musicbill (musicbillId,sharedUserId,inviteUserId,inviteTimestamp,accepted) VALUES
-			('mb-1','shared','owner',?,1),
-			('mb-1','pending','owner',?,0)`,
+			('BILL01','SHARE1','OWNER1',?,1),
+			('BILL01','PEND01','OWNER1',?,0)`,
 		now, now,
 	); err != nil {
 		t.Fatalf("insert shared rows: %v", err)
@@ -101,18 +101,18 @@ func TestTransferMusicbillOwnerHandler(t *testing.T) {
 		setupTransferOwnerHandlerTest(t)
 		seedCaptcha(t, "cap-ok", "abcd")
 
-		code, _ := callTransferOwner(t, "owner", map[string]any{
-			"musicbillId":  "mb-1",
-			"userId":       "shared",
+		code, _ := callTransferOwner(t, "OWNER1", map[string]any{
+			"musicbillId":  "BILL01",
+			"userId":       "SHARE1",
 			"captchaId":    "cap-ok",
 			"captchaValue": "abcd",
 		})
 		if code != "success" {
 			t.Fatalf("expected success, got %q", code)
 		}
-		mb, _ := store.GetMusicbillByID("mb-1")
-		if mb.UserID != "shared" {
-			t.Fatalf("expected owner=shared, got %q", mb.UserID)
+		mb, _ := store.GetMusicbillByID("BILL01")
+		if mb.UserID != "SHARE1" {
+			t.Fatalf("expected owner=SHARE1, got %q", mb.UserID)
 		}
 	})
 
@@ -120,9 +120,9 @@ func TestTransferMusicbillOwnerHandler(t *testing.T) {
 		setupTransferOwnerHandlerTest(t)
 		seedCaptcha(t, "cap-bad", "abcd")
 
-		code, _ := callTransferOwner(t, "owner", map[string]any{
-			"musicbillId":  "mb-1",
-			"userId":       "shared",
+		code, _ := callTransferOwner(t, "OWNER1", map[string]any{
+			"musicbillId":  "BILL01",
+			"userId":       "SHARE1",
 			"captchaId":    "cap-bad",
 			"captchaValue": "wrong",
 		})
@@ -135,9 +135,9 @@ func TestTransferMusicbillOwnerHandler(t *testing.T) {
 		setupTransferOwnerHandlerTest(t)
 		seedCaptcha(t, "cap-x", "abcd")
 
-		code, _ := callTransferOwner(t, "stranger", map[string]any{
-			"musicbillId":  "mb-1",
-			"userId":       "shared",
+		code, _ := callTransferOwner(t, "STRNGR", map[string]any{
+			"musicbillId":  "BILL01",
+			"userId":       "SHARE1",
 			"captchaId":    "cap-x",
 			"captchaValue": "abcd",
 		})
@@ -148,9 +148,9 @@ func TestTransferMusicbillOwnerHandler(t *testing.T) {
 
 	t.Run("target is self", func(t *testing.T) {
 		setupTransferOwnerHandlerTest(t)
-		code, _ := callTransferOwner(t, "owner", map[string]any{
-			"musicbillId":  "mb-1",
-			"userId":       "owner",
+		code, _ := callTransferOwner(t, "OWNER1", map[string]any{
+			"musicbillId":  "BILL01",
+			"userId":       "OWNER1",
 			"captchaId":    "cap-unused",
 			"captchaValue": "abcd",
 		})
@@ -163,9 +163,9 @@ func TestTransferMusicbillOwnerHandler(t *testing.T) {
 		setupTransferOwnerHandlerTest(t)
 		seedCaptcha(t, "cap-p", "abcd")
 
-		code, _ := callTransferOwner(t, "owner", map[string]any{
-			"musicbillId":  "mb-1",
-			"userId":       "pending",
+		code, _ := callTransferOwner(t, "OWNER1", map[string]any{
+			"musicbillId":  "BILL01",
+			"userId":       "PEND01",
 			"captchaId":    "cap-p",
 			"captchaValue": "abcd",
 		})
@@ -178,9 +178,9 @@ func TestTransferMusicbillOwnerHandler(t *testing.T) {
 		setupTransferOwnerHandlerTest(t)
 		seedCaptcha(t, "cap-s", "abcd")
 
-		code, _ := callTransferOwner(t, "owner", map[string]any{
-			"musicbillId":  "mb-1",
-			"userId":       "stranger",
+		code, _ := callTransferOwner(t, "OWNER1", map[string]any{
+			"musicbillId":  "BILL01",
+			"userId":       "STRNGR",
 			"captchaId":    "cap-s",
 			"captchaValue": "abcd",
 		})

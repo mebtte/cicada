@@ -8,8 +8,6 @@ import (
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"database/sql"
-	"fmt"
-	"math/rand"
 	"strings"
 	"time"
 
@@ -255,8 +253,7 @@ func AdminCreateUser(c *gin.Context) {
 		api.Fail(c, apperr.UsernameAlreadyRegistered)
 		return
 	}
-	id := randUserID()
-	if err := store.CreateUser(id, body.Username, body.Password, body.Remark); err != nil {
+	if _, err := store.CreateUser(body.Username, body.Password, body.Remark); err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
@@ -429,9 +426,4 @@ func AdminGetUserList(c *gin.Context) {
 		}
 	}
 	api.OK(c, list)
-}
-
-func randUserID() string {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	return fmt.Sprintf("%d", 10000+r.Intn(9990000))
 }
