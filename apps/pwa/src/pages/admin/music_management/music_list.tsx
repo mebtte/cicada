@@ -28,7 +28,7 @@ import Pagination from '@/components/pagination';
 import Spinner from '@/components/spinner';
 import ErrorCard from '@/components/error_card';
 import { Query } from '@/constants';
-import { MUSIC_TYPE_MAP } from '@/constants/music';
+import { MUSIC_TYPE_MAP, MusicType } from '@/constants/music';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
@@ -1135,7 +1135,7 @@ function MusicList({
                       )}
                     </Td>
                     <Td>
-                      {music.lyricists.length ? (
+                      {music.type === MusicType.SONG && music.lyricists.length ? (
                         <TagList>
                           {music.lyricists.map((lyricist) => (
                             <SingerButton

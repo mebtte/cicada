@@ -778,7 +778,11 @@ function EditContent({
     (music.type === MusicType.SONG &&
       !stringArrayEqual(normalizedLyrics, originalLyrics)) ||
     !stringArrayEqual(sortedIds(singerIds), sortedIds(originalSingerIds)) ||
-    !stringArrayEqual(sortedIds(lyricistIds), sortedIds(originalLyricistIds)) ||
+    (music.type === MusicType.SONG &&
+      !stringArrayEqual(
+        sortedIds(lyricistIds),
+        sortedIds(originalLyricistIds),
+      )) ||
     !stringArrayEqual(sortedIds(composerIds), sortedIds(originalComposerIds)) ||
     !stringArrayEqual(sortedIds(forkFromIds), sortedIds(originalForkFromIds)) ||
     parsedYear !== music.year;
@@ -1133,6 +1137,7 @@ function EditContent({
       }
 
       if (
+        music.type === MusicType.SONG &&
         !stringArrayEqual(sortedIds(lyricistIds), sortedIds(originalLyricistIds))
       ) {
         await updateMusic({
@@ -1323,22 +1328,24 @@ function EditContent({
           />
         </Group>
 
-        <Group>
-          <GroupHeader>
-            <GroupTitle>{t('lyricist')}</GroupTitle>
-            <CreateArtistLabel
-              notifyOnCreated={false}
-              onCreated={onLyricistCreated}
+        {music.type === MusicType.SONG ? (
+          <Group>
+            <GroupHeader>
+              <GroupTitle>{t('lyricist')}</GroupTitle>
+              <CreateArtistLabel
+                notifyOnCreated={false}
+                onCreated={onLyricistCreated}
+              />
+            </GroupHeader>
+            <MultiSelect
+              value={lyricists}
+              loadOptions={searchArtist}
+              onChange={setLyricists}
+              disabled={saving}
+              placeholder=""
             />
-          </GroupHeader>
-          <MultiSelect
-            value={lyricists}
-            loadOptions={searchArtist}
-            onChange={setLyricists}
-            disabled={saving}
-            placeholder=""
-          />
-        </Group>
+          </Group>
+        ) : null}
 
         <Group>
           <GroupHeader>
@@ -1517,7 +1524,7 @@ function MusicEditDrawer({
           aliases: result.aliases,
           searchKeywords: result.searchKeywords,
           singers: result.singers,
-          lyricists: result.lyricists,
+          lyricists: result.type === MusicType.SONG ? result.lyricists : [],
           composers: result.composers,
           heat: result.heat,
           lyrics,

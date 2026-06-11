@@ -314,6 +314,10 @@ func AdminCreateMusic(c *gin.Context) {
 	}
 	lyricistIDs := []string{}
 	if body.LyricistIDs != "" {
+		if musicType == store.MusicTypeInstrumental {
+			api.Fail(c, apperr.InstrumentalHasNoLyricist)
+			return
+		}
 		lyricistIDs = strings.Split(body.LyricistIDs, ",")
 		ok, _ := store.ArtistsExist(lyricistIDs)
 		if !ok {
@@ -503,6 +507,10 @@ func AdminUpdateMusic(c *gin.Context) {
 			}
 			ids[i] = s
 		}
+		if m.Type == store.MusicTypeInstrumental && len(ids) > 0 {
+			api.Fail(c, apperr.InstrumentalHasNoLyricist)
+			return
+		}
 		if ok, _ := store.ArtistsExist(ids); !ok {
 			api.Fail(c, apperr.ArtistNotExisted)
 			return
@@ -545,7 +553,31 @@ func AdminUpdateMusic(c *gin.Context) {
 			api.Fail(c, apperr.WrongParameter)
 			return
 		}
-		store.UpdateMusic(body.ID, "type", int(musicType))
+		tx, err := store.DB().Begin()
+		if err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		defer tx.Rollback()
+		if _, err := tx.Exec(`UPDATE music SET type=? WHERE id=?`, int(musicType), body.ID); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		if musicType == store.MusicTypeInstrumental {
+			if _, err := tx.Exec(`DELETE FROM lyric WHERE musicId=?`, body.ID); err != nil {
+				api.Fail(c, apperr.ServerError)
+				return
+			}
+			if _, err := tx.Exec(`DELETE FROM music_lyricist_relation WHERE musicId=?`, body.ID); err != nil {
+				api.Fail(c, apperr.ServerError)
+				return
+			}
+		}
+		if err := tx.Commit(); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		syncMetadata = true
 
 	case "year":
 		var year any

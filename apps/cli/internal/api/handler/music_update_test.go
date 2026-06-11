@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"cicada/internal/api/apperr"
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"encoding/json"
@@ -137,6 +138,189 @@ func TestUpdateMusicLyricRejectsInstrumental(t *testing.T) {
 	}
 	if resp.Code != "instrumental_has_no_lyric" {
 		t.Fatalf("unexpected code: %s body=%s", resp.Code, w.Body.String())
+	}
+}
+
+func TestUpdateMusicLyricistsRejectsInstrumentalAndAllowsClear(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO artist (id,name,createTimestamp) VALUES (?,?,?)`,
+		"artist-1", "Writer", now,
+	); err != nil {
+		t.Fatalf("insert artist: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeInstrumental), "Instrumental", "missing.mp3", now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+
+	call := func(value []string) string {
+		t.Helper()
+
+		body, err := json.Marshal(map[string]any{
+			"id":    "music-1",
+			"key":   "lyricists",
+			"value": value,
+		})
+		if err != nil {
+			t.Fatalf("marshal body: %v", err)
+		}
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/music", bytes.NewReader(body))
+		c.Request.Header.Set("Content-Type", "application/json")
+		c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+		AdminUpdateMusic(c)
+
+		var resp struct {
+			Code string `json:"code"`
+		}
+		if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("decode response: %v", err)
+		}
+		return resp.Code
+	}
+
+	if code := call([]string{"artist-1"}); code != apperr.InstrumentalHasNoLyricist {
+		t.Fatalf("expected %s, got %s", apperr.InstrumentalHasNoLyricist, code)
+	}
+	if err := store.LinkMusicLyricists("music-1", []string{"artist-1"}); err != nil {
+		t.Fatalf("link legacy lyricist: %v", err)
+	}
+	if code := call([]string{}); code != apperr.Success {
+		t.Fatalf("expected %s while clearing, got %s", apperr.Success, code)
+	}
+	var count int
+	if err := store.DB().QueryRow(`SELECT COUNT(1) FROM music_lyricist_relation WHERE musicId=?`, "music-1").Scan(&count); err != nil {
+		t.Fatalf("count lyricists: %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("expected lyricists cleared, got %d", count)
+	}
+}
+
+func TestUpdateMusicTypeToInstrumentalClearsLyricsAndLyricists(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
+		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
+	); err != nil {
+		t.Fatalf("insert user: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO artist (id,name,createTimestamp) VALUES (?,?,?)`,
+		"artist-1", "Writer", now,
+	); err != nil {
+		t.Fatalf("insert artist: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
+		"music-1", int(store.MusicTypeSong), "Song", "missing.mp3", now,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO lyric (musicId,lrc,lrcContent) VALUES (?,?,?)`,
+		"music-1", "[00:00.00]old", "old",
+	); err != nil {
+		t.Fatalf("insert lyric: %v", err)
+	}
+	if err := store.LinkMusicLyricists("music-1", []string{"artist-1"}); err != nil {
+		t.Fatalf("link lyricist: %v", err)
+	}
+
+	body, err := json.Marshal(map[string]any{
+		"id":    "music-1",
+		"key":   "type",
+		"value": int(store.MusicTypeInstrumental),
+	})
+	if err != nil {
+		t.Fatalf("marshal body: %v", err)
+	}
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodPut, "/api/admin/music", bytes.NewReader(body))
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+	AdminUpdateMusic(c)
+
+	var resp struct {
+		Code string `json:"code"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	if resp.Code != apperr.Success {
+		t.Fatalf("unexpected code: %s body=%s", resp.Code, w.Body.String())
+	}
+	m, err := store.GetMusicByID("music-1")
+	if err != nil {
+		t.Fatalf("get music: %v", err)
+	}
+	if m.Type != store.MusicTypeInstrumental {
+		t.Fatalf("expected instrumental type, got %d", m.Type)
+	}
+	lyrics, err := store.GetLyricsByMusicID("music-1")
+	if err != nil {
+		t.Fatalf("get lyrics: %v", err)
+	}
+	if len(lyrics) != 0 {
+		t.Fatalf("expected lyrics cleared, got %+v", lyrics)
+	}
+	var lyricistCount int
+	if err := store.DB().QueryRow(`SELECT COUNT(1) FROM music_lyricist_relation WHERE musicId=?`, "music-1").Scan(&lyricistCount); err != nil {
+		t.Fatalf("count lyricists: %v", err)
+	}
+	if lyricistCount != 0 {
+		t.Fatalf("expected lyricists cleared, got %d", lyricistCount)
 	}
 }
 

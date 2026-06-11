@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -66,6 +67,70 @@ func TestAdminCreateMusicNameLimit(t *testing.T) {
 	}
 	if code := call(strings.Repeat("歌", musicNameMaxLength+1)); code != apperr.WrongParameter {
 		t.Fatalf("expected %s for overlong name, got %s", apperr.WrongParameter, code)
+	}
+}
+
+func TestAdminCreateMusicRejectsInstrumentalLyricists(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	if err := store.ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := store.Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := store.DB().Exec(
+		`INSERT INTO artist (id,name,createTimestamp) VALUES (?,?,?)`,
+		"artist-1", "Writer", now,
+	); err != nil {
+		t.Fatalf("insert artist: %v", err)
+	}
+	assetDir, assetPath := config.AssetPath(config.AssetTypeMusic, "song.mp3")
+	if err := os.MkdirAll(assetDir, 0755); err != nil {
+		t.Fatalf("mkdir asset dir: %v", err)
+	}
+	if err := os.WriteFile(assetPath, []byte("placeholder"), 0644); err != nil {
+		t.Fatalf("write asset: %v", err)
+	}
+
+	body, err := json.Marshal(map[string]any{
+		"name":        "Instrumental",
+		"lyricistIds": "artist-1",
+		"type":        int(store.MusicTypeInstrumental),
+		"asset":       "song.mp3",
+	})
+	if err != nil {
+		t.Fatalf("marshal body: %v", err)
+	}
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	c.Request = httptest.NewRequest(http.MethodPost, "/api/admin/music", bytes.NewReader(body))
+	c.Request.Header.Set("Content-Type", "application/json")
+	c.Set("authed_user", &store.User{ID: "user-1", Admin: 1})
+
+	AdminCreateMusic(c)
+
+	if code := responseCode(t, w); code != apperr.InstrumentalHasNoLyricist {
+		t.Fatalf("expected %s, got %s body=%s", apperr.InstrumentalHasNoLyricist, code, w.Body.String())
+	}
+	var count int
+	if err := store.DB().QueryRow(`SELECT COUNT(1) FROM music`).Scan(&count); err != nil {
+		t.Fatalf("count music: %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("expected no music row, got %d", count)
 	}
 }
 

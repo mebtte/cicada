@@ -243,9 +243,12 @@ func GetLyricistsInMusicIDs(musicIDs []string) ([]ArtistInMusic, error) {
 		return nil, nil
 	}
 	q := `SELECT mlr.musicId,a.id,a.name,a.aliases
-		FROM music_lyricist_relation mlr JOIN artist a ON mlr.artistId=a.id
-		WHERE mlr.musicId IN (` + placeholders(len(musicIDs)) + `)`
-	rows, err := DB().Query(q, strs2any(musicIDs)...)
+		FROM music_lyricist_relation mlr
+		JOIN music m ON mlr.musicId=m.id
+		JOIN artist a ON mlr.artistId=a.id
+		WHERE mlr.musicId IN (` + placeholders(len(musicIDs)) + `) AND m.type=?`
+	args := append(strs2any(musicIDs), int(MusicTypeSong))
+	rows, err := DB().Query(q, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -298,8 +301,8 @@ func GetMusicsByLyricistID(artistID string) ([]Music, error) {
 	rows, err := DB().Query(
 		`SELECT `+musicSelectColumnsWithAlias+`
 		FROM music_lyricist_relation mlr JOIN music m ON mlr.musicId=m.id
-		WHERE mlr.artistId=? ORDER BY m.heat DESC, m.createTimestamp DESC`,
-		artistID,
+		WHERE mlr.artistId=? AND m.type=? ORDER BY m.heat DESC, m.createTimestamp DESC`,
+		artistID, int(MusicTypeSong),
 	)
 	if err != nil {
 		return nil, err
@@ -398,7 +401,7 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 				OR s.searchKeywords LIKE ? ESCAPE '\'
 			)
 		)
-		OR EXISTS (
+		OR (m.type=1 AND EXISTS (
 			SELECT 1
 			FROM music_lyricist_relation mlr
 			JOIN artist a ON mlr.artistId=a.id
@@ -407,7 +410,7 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 				OR a.aliases LIKE ? ESCAPE '\'
 				OR a.searchKeywords LIKE ? ESCAPE '\'
 			)
-		)
+		))
 		OR EXISTS (
 			SELECT 1
 			FROM music_composer_relation mcr
@@ -443,42 +446,42 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 					JOIN artist s ON msr.artistId=s.id
 					WHERE msr.musicId=m.id AND s.name LIKE ? ESCAPE '\'
 				) THEN 60
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_singer_relation msr
-					JOIN artist s ON msr.artistId=s.id
-					WHERE msr.musicId=m.id AND s.aliases LIKE ? ESCAPE '\'
-				) THEN 50
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_singer_relation msr
-					JOIN artist s ON msr.artistId=s.id
-					WHERE msr.musicId=m.id AND s.searchKeywords LIKE ? ESCAPE '\'
-				) THEN 45
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_lyricist_relation mlr
-					JOIN artist a ON mlr.artistId=a.id
-					WHERE mlr.musicId=m.id AND a.name = ? COLLATE NOCASE
-				) THEN 42
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_lyricist_relation mlr
-					JOIN artist a ON mlr.artistId=a.id
-					WHERE mlr.musicId=m.id AND a.name LIKE ? ESCAPE '\'
-				) THEN 38
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_lyricist_relation mlr
-					JOIN artist a ON mlr.artistId=a.id
-					WHERE mlr.musicId=m.id AND a.aliases LIKE ? ESCAPE '\'
-				) THEN 34
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_lyricist_relation mlr
-					JOIN artist a ON mlr.artistId=a.id
-					WHERE mlr.musicId=m.id AND a.searchKeywords LIKE ? ESCAPE '\'
-				) THEN 30
+					WHEN EXISTS (
+						SELECT 1
+						FROM music_singer_relation msr
+						JOIN artist s ON msr.artistId=s.id
+						WHERE msr.musicId=m.id AND s.aliases LIKE ? ESCAPE '\'
+					) THEN 50
+					WHEN EXISTS (
+						SELECT 1
+						FROM music_singer_relation msr
+						JOIN artist s ON msr.artistId=s.id
+						WHERE msr.musicId=m.id AND s.searchKeywords LIKE ? ESCAPE '\'
+					) THEN 45
+					WHEN m.type=1 AND EXISTS (
+						SELECT 1
+						FROM music_lyricist_relation mlr
+						JOIN artist a ON mlr.artistId=a.id
+						WHERE mlr.musicId=m.id AND a.name = ? COLLATE NOCASE
+					) THEN 42
+					WHEN m.type=1 AND EXISTS (
+						SELECT 1
+						FROM music_lyricist_relation mlr
+						JOIN artist a ON mlr.artistId=a.id
+						WHERE mlr.musicId=m.id AND a.name LIKE ? ESCAPE '\'
+					) THEN 38
+					WHEN m.type=1 AND EXISTS (
+						SELECT 1
+						FROM music_lyricist_relation mlr
+						JOIN artist a ON mlr.artistId=a.id
+						WHERE mlr.musicId=m.id AND a.aliases LIKE ? ESCAPE '\'
+					) THEN 34
+					WHEN m.type=1 AND EXISTS (
+						SELECT 1
+						FROM music_lyricist_relation mlr
+						JOIN artist a ON mlr.artistId=a.id
+						WHERE mlr.musicId=m.id AND a.searchKeywords LIKE ? ESCAPE '\'
+					) THEN 30
 				WHEN EXISTS (
 					SELECT 1
 					FROM music_composer_relation mcr
@@ -532,12 +535,12 @@ func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageS
 			FROM music_singer_relation msr
 			JOIN artist s ON msr.artistId=s.id
 			WHERE msr.musicId=m.id AND (s.id LIKE ? OR s.name LIKE ? OR s.aliases LIKE ? OR s.searchKeywords LIKE ?)
-		) OR EXISTS (
+		) OR (m.type=1 AND EXISTS (
 			SELECT 1
 			FROM music_lyricist_relation mlr
 			JOIN artist a ON mlr.artistId=a.id
 			WHERE mlr.musicId=m.id AND (a.id LIKE ? OR a.name LIKE ? OR a.aliases LIKE ? OR a.searchKeywords LIKE ?)
-		) OR EXISTS (
+		)) OR EXISTS (
 			SELECT 1
 			FROM music_composer_relation mcr
 			JOIN artist c ON mcr.artistId=c.id

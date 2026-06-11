@@ -15,6 +15,7 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { flexCenter } from '@/style/flexbox';
 import { t } from '@/i18n';
+import { MusicType } from '@/constants/music';
 import {
   DrawerHeader,
   DrawerTitle,
@@ -334,7 +335,9 @@ function Detail({
               titleRef={titleRef}
             />
             <SingerList label={t('singer')} singerList={music.singers} />
-            <SingerList label={t('lyricist')} singerList={music.lyricists} />
+            {music.type === MusicType.SONG ? (
+              <SingerList label={t('lyricist')} singerList={music.lyricists} />
+            ) : null}
             <SingerList label={t('composer')} singerList={music.composers} />
             {music.forkFromList.length ? (
               <SubMusicList
