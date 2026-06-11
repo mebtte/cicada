@@ -35,6 +35,14 @@ const Style = styled.div`
   -webkit-app-region: drag;
 `;
 
+const HeaderLogo = styled.img`
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
+  user-select: none;
+`;
+
 function Header() {
   const navigate = useNavigate();
   const routerNavigate = useRouterNavigate();
@@ -88,7 +96,9 @@ function Header() {
             <SearchIcon />
           </Button>
         </>
-      ) : null}
+      ) : (
+        <HeaderLogo src="/app_logo.png" alt="" aria-hidden="true" />
+      )}
       <Title title={title.title} description={title.description} />
       {miniMode ? null : <Search />}
     </Style>

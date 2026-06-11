@@ -124,7 +124,6 @@ const SidebarHeader = styled.div`
 const BrandLogo = styled.img`
   width: 52px;
   height: 52px;
-  padding: 8px;
   object-fit: contain;
   flex-shrink: 0;
   user-select: none;
@@ -725,7 +724,7 @@ function AdminPage() {
       <MusicImportSidebar />
       <Sidebar $open={sidebarOpen}>
         <SidebarHeader style={{ paddingTop: sidebarTopPadding }}>
-          <BrandLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
+          <BrandLogo src="/app_logo.png" alt={t('logo')} crossOrigin="anonymous" />
           <BrandText>
             <BrandName>{capitalize(t('cicada'))}</BrandName>
             <BrandSubTitle>{definition.VERSION}</BrandSubTitle>
