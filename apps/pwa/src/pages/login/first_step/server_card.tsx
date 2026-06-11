@@ -3,6 +3,8 @@ import { CSSVariable } from '@/global_style';
 import { Delete } from '@/components/icon';
 import { type User } from '@/constants/server';
 import Spinner from '@/components/spinner';
+import Button from '@/components/button';
+import { t } from '@/i18n';
 
 export const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -24,20 +26,20 @@ export const ServerCard = styled.div<{
   box-shadow: 0 4px 0 rgb(210 210 210);
   cursor: ${({ $loading, $disabled }) =>
     $loading ? 'progress' : $disabled ? 'not-allowed' : 'pointer'};
-  transition: border-color 120ms, box-shadow 80ms, transform 80ms, filter 120ms;
+  transition: box-shadow 150ms ease-out, transform 150ms ease-out, filter 120ms;
 
   ${({ $loading, $disabled }) =>
     !$loading &&
     !$disabled &&
     css`
       &:hover {
-        border-color: rgb(30 150 100);
-        box-shadow: 0 4px 0 rgb(30 150 100);
+        box-shadow: 0 6px 0 rgb(210 210 210);
+        transform: translateY(-2px);
       }
 
       &:active {
-        box-shadow: 0 1px 0 rgb(210 210 210);
-        transform: translateY(3px);
+        box-shadow: none;
+        transform: translateY(4px);
       }
     `}
 
@@ -103,37 +105,13 @@ export const ServerCard = styled.div<{
 
 // ─── Delete button ────────────────────────────────────────────────────────────
 
-export const DeleteButton = styled.button`
+export const DeleteButton = styled(Button)`
   flex-shrink: 0;
   width: 32px;
   height: 32px;
-  border: 2px solid rgb(230 200 200);
   border-radius: 10px;
-  background: rgb(255 245 245);
-  box-shadow: 0 3px 0 rgb(230 200 200);
-  color: ${CSSVariable.COLOR_DANGEROUS};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 120ms, border-color 120ms, box-shadow 80ms, transform 80ms;
 
-  &:not(:disabled):hover {
-    background: rgb(255 230 230);
-    border-color: rgb(190 46 34);
-    box-shadow: 0 3px 0 rgb(190 46 34);
-  }
-
-  &:not(:disabled):active {
-    box-shadow: 0 1px 0 rgb(230 200 200);
-    transform: translateY(2px);
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-  }
-
-  > svg {
+  > .btn-label > svg {
     font-size: 16px;
   }
 `;
@@ -282,7 +260,15 @@ export function ServerCardItem({
       {loading ? (
         <Spinner size={24} style={{ flexShrink: 0, marginInline: 4 }} aria-hidden />
       ) : (
-        <DeleteButton type="button" onClick={onDelete} disabled={disabled}>
+        <DeleteButton
+          type="button"
+          variant="danger"
+          size="sm"
+          square
+          aria-label={t('delete')}
+          onClick={onDelete}
+          disabled={disabled}
+        >
           <Delete />
         </DeleteButton>
       )}

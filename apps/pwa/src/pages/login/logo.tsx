@@ -1,7 +1,5 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { ROOT_PATH } from '@/constants/route';
 import { t } from '@/i18n';
 
 const Style = styled.div`
@@ -13,20 +11,20 @@ const Style = styled.div`
 
   .logo {
     height: 64px;
+    width: 64px;
+    object-fit: contain;
   }
 `;
 
 function Logo() {
   return (
     <Style>
-      <Link to={ROOT_PATH.PLAYER}>
-        <img
-          className="logo"
-          src="/logo.png"
-          alt={t('logo')}
-          crossOrigin="anonymous"
-        />
-      </Link>
+      <img
+        className="logo"
+        src="/app_logo.png"
+        alt={t('logo')}
+        crossOrigin="anonymous"
+      />
     </Style>
   );
 }

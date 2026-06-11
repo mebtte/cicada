@@ -2,6 +2,7 @@ import styled, { keyframes } from 'styled-components';
 import { t } from '@/i18n';
 import ManageContent from './first_step/manage_content';
 import { ArrowBack } from '@/components/icon';
+import Button from '@/components/button';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -32,29 +33,13 @@ const Header = styled.div`
   box-shadow: 0 4px 0 rgb(210 210 210);
 `;
 
-const BackButton = styled.button`
+const BackButton = styled(Button)`
+  flex-shrink: 0;
   width: 40px;
   height: 40px;
-  border: none;
   border-radius: 12px;
-  background: rgb(240 240 240);
-  color: rgb(88 88 88);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 120ms, transform 120ms;
 
-  &:hover {
-    background: rgb(228 228 228);
-  }
-
-  &:active {
-    transform: scale(0.93);
-  }
-
-  > svg {
+  > .btn-label > svg {
     font-size: 22px;
   }
 `;
@@ -91,7 +76,13 @@ function ManagePage({ onClose }: { onClose: () => void }) {
   return (
     <Wrapper>
       <Header>
-        <BackButton onClick={onClose} aria-label={t('back')}>
+        <BackButton
+          variant="ghost"
+          size="md"
+          square
+          onClick={onClose}
+          aria-label={t('back')}
+        >
           <ArrowBack />
         </BackButton>
         <Title>{t('manage_origins')}</Title>

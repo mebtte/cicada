@@ -31,7 +31,7 @@ const Style = styled.div`
       gap: 8px;
       max-height: 216px;
       overflow-y: auto;
-      padding-bottom: 4px;
+      padding: 2px 0 6px;
 
       /* 隐藏原生滚动条, 避免 macOS overlay 滚动条遮挡卡片右侧;
        * 滚动状态由上方 .edge-shadow 渐变遮罩传达 */
