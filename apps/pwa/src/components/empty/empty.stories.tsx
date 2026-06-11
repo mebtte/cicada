@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Empty from './empty';
+import Empty from '.';
 
 const meta = {
   title: 'Basic/Empty',
@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Empty-state placeholder with a Duolingo-style "target" icon and a pop-in animation. Use it whenever a list or search result returns no items.',
+          'Empty-state placeholder with a cicada illustration and a pop-in animation. Use it whenever a list or search result returns no items.',
       },
     },
   },

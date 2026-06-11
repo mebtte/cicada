@@ -3,39 +3,7 @@ import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import capitalize from '@/style/capitalize';
 import { t } from '@/i18n';
-
-function EmptyIcon() {
-  return (
-    <svg
-      className="placeholder"
-      viewBox="0 0 128 128"
-      fill="none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <circle
-        cx="64"
-        cy="64"
-        r="44"
-        fill="rgb(44 182 125 / 0.1)"
-        stroke="currentColor"
-        strokeWidth="6"
-      />
-      <circle
-        cx="64"
-        cy="64"
-        r="28"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeDasharray="3 6"
-        strokeLinecap="round"
-        opacity="0.55"
-      />
-      <circle cx="64" cy="64" r="11" fill="currentColor" />
-      <circle cx="64" cy="64" r="3" fill="white" />
-    </svg>
-  );
-}
+import emptyPlaceholder from './empty_placeholder.png';
 
 const Style = styled.div`
   width: min(100%, 360px);
@@ -69,11 +37,12 @@ const Style = styled.div`
   }
 
   > .placeholder {
-    width: 132px;
+    width: 172px;
     max-width: 56%;
     display: block;
-    color: ${CSSVariable.COLOR_PRIMARY};
-    filter: drop-shadow(0 4px 0 rgb(44 182 125 / 0.15));
+    height: auto;
+    user-select: none;
+    filter: drop-shadow(0 10px 18px rgb(44 182 125 / 0.14));
   }
 
   > .text {
@@ -119,7 +88,13 @@ function Empty({
 } & HTMLAttributes<HTMLDivElement>) {
   return (
     <Style {...props}>
-      <EmptyIcon />
+      <img
+        className="placeholder"
+        src={emptyPlaceholder}
+        alt=""
+        aria-hidden="true"
+        draggable={false}
+      />
       <div className="text">
         <div className="description">{description}</div>
       </div>
