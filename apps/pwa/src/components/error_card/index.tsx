@@ -4,7 +4,7 @@ import Button from '@/components/button';
 import { CSSVariable } from '@/global_style';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { t } from '@/i18n';
-import ErrorImage from '@/asset/error.png';
+import ErrorImage from './error.png';
 
 function RefreshIcon() {
   return (
