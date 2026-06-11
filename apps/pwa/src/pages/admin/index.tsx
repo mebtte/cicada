@@ -11,6 +11,7 @@ import LanguageSelect from '@/features/language/language_select';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import AppExtraInfo from '@/components/app_extra_info';
+import Tooltip from '@/components/tooltip';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { CSS_VAR } from '@/components/theme';
@@ -808,57 +809,61 @@ function AdminPage() {
             <HeaderTitleText>{capitalize(t(currentMenuItem.label))}</HeaderTitleText>
           </HeaderTitle>
           <HeaderActions>
-            <UploadStatusButton
-              type="button"
-              onClick={toggleWindow}
-              title={uploadStatusText}
-              aria-label={uploadStatusText}
-              aria-pressed={uploadSidebarOpen}
-              $status={uploadStatus}
-              $open={uploadSidebarOpen}
-              $running={uploadRunning}
-            >
-              <span className="upload-status-box">
-                {uploadActive ? (
-                  <span>{uploadPercentText}</span>
-                ) : (
-                  <CloudUpload />
-                )}
-              </span>
-            </UploadStatusButton>
-            <PlayerLink
-              type="button"
-              onClick={() =>
-                window.open(
-                  `#${ROOT_PATH.PLAYER}`,
-                  '_blank',
-                  'noopener,noreferrer',
-                )
-              }
-              title={capitalize(t('player'))}
-              aria-label={capitalize(t('player'))}
-            >
-              <PlayerLinkBox>
-                <Headphones size={20} />
-              </PlayerLinkBox>
-            </PlayerLink>
-            <UserMenuRoot ref={userMenuRef}>
-              <AvatarButton
-                role="button"
-                tabIndex={0}
-                title={user.nickname}
-                aria-haspopup="menu"
-                aria-expanded={userMenuOpen}
-                onClick={toggleUserMenu}
-                onKeyDown={onAvatarKeyDown}
+            <Tooltip content={uploadStatusText}>
+              <UploadStatusButton
+                type="button"
+                onClick={toggleWindow}
+                aria-label={uploadStatusText}
+                aria-pressed={uploadSidebarOpen}
+                $status={uploadStatus}
+                $open={uploadSidebarOpen}
+                $running={uploadRunning}
               >
-                {/* Empty src lets Avatar render the shared default avatar image. */}
-                <Avatar
-                  src={avatarSrc}
-                  size={AVATAR_SIZE}
-                  active={userMenuOpen}
-                />
-              </AvatarButton>
+                <span className="upload-status-box">
+                  {uploadActive ? (
+                    <span>{uploadPercentText}</span>
+                  ) : (
+                    <CloudUpload />
+                  )}
+                </span>
+              </UploadStatusButton>
+            </Tooltip>
+            <Tooltip content={capitalize(t('player'))}>
+              <PlayerLink
+                type="button"
+                onClick={() =>
+                  window.open(
+                    `#${ROOT_PATH.PLAYER}`,
+                    '_blank',
+                    'noopener,noreferrer',
+                  )
+                }
+                aria-label={capitalize(t('player'))}
+              >
+                <PlayerLinkBox>
+                  <Headphones size={20} />
+                </PlayerLinkBox>
+              </PlayerLink>
+            </Tooltip>
+            <UserMenuRoot ref={userMenuRef}>
+              <Tooltip content={user.nickname}>
+                <AvatarButton
+                  role="button"
+                  tabIndex={0}
+                  aria-label={user.nickname}
+                  aria-haspopup="menu"
+                  aria-expanded={userMenuOpen}
+                  onClick={toggleUserMenu}
+                  onKeyDown={onAvatarKeyDown}
+                >
+                  {/* Empty src lets Avatar render the shared default avatar image. */}
+                  <Avatar
+                    src={avatarSrc}
+                    size={AVATAR_SIZE}
+                    active={userMenuOpen}
+                  />
+                </AvatarButton>
+              </Tooltip>
               {userMenuOpen ? (
                 <UserMenu role="menu">
                   <UserMenuProfile>
