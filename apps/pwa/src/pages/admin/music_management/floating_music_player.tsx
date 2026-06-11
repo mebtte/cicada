@@ -580,7 +580,7 @@ function LyricContent({
     case 'empty':
       return <LyricStatusBox>{t('no_lyric')}</LyricStatusBox>;
     case 'instrumental':
-      return <LyricStatusBox>{t('instrument_without_lyric')}</LyricStatusBox>;
+      return <LyricStatusBox>{t('instrumental_without_lyric')}</LyricStatusBox>;
     case 'error':
       return (
         <LyricStatusBox>

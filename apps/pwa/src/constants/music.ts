@@ -53,5 +53,5 @@ export const EFFECTIVE_PLAY_PERCENT = 0.75;
 
 export const MUSIC_TYPE_MAP: Record<MusicType, { label: string }> = {
   [MusicType.SONG]: { label: t('music_type_song') },
-  [MusicType.INSTRUMENTAL]: { label: t('music_type_instrument') },
+  [MusicType.INSTRUMENTAL]: { label: t('music_type_instrumental') },
 };

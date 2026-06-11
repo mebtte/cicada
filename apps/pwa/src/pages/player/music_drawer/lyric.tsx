@@ -153,7 +153,7 @@ function Lyric({ music }: { music: MusicDetail }) {
             <Line>{t('no_lyric')}</Line>
           )
         ) : (
-          <Line>{t('instrument_without_lyric')}</Line>
+          <Line>{t('instrumental_without_lyric')}</Line>
         )}
         {downloadable ? (
           <DownloadButton
