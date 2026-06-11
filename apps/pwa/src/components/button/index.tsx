@@ -4,9 +4,10 @@ import {
   ReactNode,
   forwardRef,
 } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '../theme';
+import Spinner from '../spinner';
 
 export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type Size = 'sm' | 'md' | 'lg';
@@ -105,28 +106,13 @@ const FOCUS_RING_MAP: Record<Variant, string> = {
 
 // ─── Loader ───────────────────────────────────────────────────────────────────
 
-const spin = keyframes`to { transform: rotate(360deg); }`;
+const LOADER_SIZE: Record<Size, number> = { sm: 14, md: 17, lg: 20 };
 
-const Loader = styled.span<{ $size: Size }>`
+const Loader = styled(Spinner)`
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: auto;
   pointer-events: none;
-
-  &::after {
-    content: '';
-    border-radius: 50%;
-    border: 2px solid currentColor;
-    border-top-color: transparent;
-    opacity: 0.8;
-    animation: ${spin} 0.55s linear infinite;
-    ${({ $size }) => {
-      const s = $size === 'sm' ? 14 : $size === 'lg' ? 20 : 17;
-      return css`width: ${s}px; height: ${s}px;`;
-    }}
-  }
 `;
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
@@ -275,7 +261,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       {...rest}
       onClick={handleClick}
     >
-      {loading && <Loader $size={size} />}
+      {loading && (
+        <Loader size={LOADER_SIZE[size]} color="currentColor" aria-hidden />
+      )}
       <span className="btn-label">
         {icon ? <span className="btn-icon">{icon}</span> : null}
         {children}

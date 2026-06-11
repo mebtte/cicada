@@ -1,41 +1,26 @@
 import styled, { keyframes } from 'styled-components';
-import { CSSProperties, HtmlHTMLAttributes, memo } from 'react';
+import { CSSProperties, HTMLAttributes, memo } from 'react';
 import { CSSVariable } from '../global_style';
 import { ComponentSize } from '../constants/style';
 
-const wavy = keyframes`
-  0% {
-    transform: scaleY(0.2);
-  } 50% {
-    transform: scaleY(1);
-  } 100% {
-    transform: scaleY(0.2);
-  }
-`;
-const Style = styled.div`
+const spin = keyframes`to { transform: rotate(360deg); }`;
+
+const Style = styled.div<{ $color?: CSSProperties['color'] }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8%;
+  color: ${({ $color }) => $color ?? CSSVariable.COLOR_PRIMARY};
 
-  > .item {
-    width: 8%;
-    height: 75%;
-
-    background-color: ${CSSVariable.COLOR_PRIMARY};
-    animation-name: ${wavy};
-    animation-duration: 1.25s;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
-
-    &:nth-child(2),
-    &:nth-child(4) {
-      animation-delay: -0.3125s;
-    }
-
-    &:nth-child(3) {
-      animation-delay: -0.625s;
-    }
+  &::after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    opacity: 0.8;
+    animation: ${spin} 0.55s linear infinite;
   }
 `;
 
@@ -45,27 +30,26 @@ const Style = styled.div`
  */
 function Spinner({
   size = ComponentSize.SMALL,
+  color,
   style,
   ...props
 }: {
   /** 尺寸, 单位 px */
   size?: number;
+  /** 颜色, 默认使用 PWA 主题主色。传 currentColor 可继承父级颜色。 */
+  color?: CSSProperties['color'];
   style?: CSSProperties;
-} & HtmlHTMLAttributes<HTMLDivElement>) {
+} & HTMLAttributes<HTMLDivElement>) {
   return (
     <Style
       {...props}
+      $color={color}
       style={{
         width: size,
         height: size,
         ...style,
       }}
     >
-      <div className="item" />
-      <div className="item" />
-      <div className="item" />
-      <div className="item" />
-      <div className="item" />
     </Style>
   );
 }
