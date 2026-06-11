@@ -74,7 +74,7 @@ const ValueText = styled.span`
   text-overflow: ellipsis;
 `;
 
-function ExtraInfo(props: HTMLAttributes<HTMLElement>) {
+function AppExtraInfo(props: HTMLAttributes<HTMLElement>) {
   const selectedServer = useSelectedServer()!;
 
   return (
@@ -119,4 +119,4 @@ function ExtraInfo(props: HTMLAttributes<HTMLElement>) {
   );
 }
 
-export default ExtraInfo;
+export default AppExtraInfo;

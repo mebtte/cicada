@@ -21,6 +21,7 @@ import { ROOT_PATH } from '@/constants/route';
 import notice from '@/utils/notice';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
+import AppExtraInfo from '@/components/app_extra_info';
 import playerEventemitter, { EventType } from '../../eventemitter';
 import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../../constants';
 import context from '../../context';
@@ -37,7 +38,6 @@ import Avatar from '@/components/avatar';
 import useNavigate from '@/utils/use_navigate';
 import deleteCurrentSession from '@/server/api/delete_current_session';
 import clearApiCache from '@/utils/clear_api_cache';
-import ExtraInfo from './extra_info';
 import { isKeyboardEventComposing } from '@/utils/keyboard';
 
 const AVATAR_SIZE = 120;
@@ -394,7 +394,7 @@ function User() {
         </Button>
       </ActionGrid>
 
-      <ExtraInfo />
+      <AppExtraInfo />
     </Style>
   );
 }

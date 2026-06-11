@@ -1,8 +1,8 @@
 import { memo } from 'react';
 import styled from 'styled-components';
+import AppExtraInfo from '@/components/app_extra_info';
 import autoScrollbar from '@/style/auto_scrollbar';
 import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
-import ExtraInfo from '../user/extra_info';
 import Volume from './volume';
 import Language from './language';
 import AdminQuickEdit from './admin_quick_edit';
@@ -45,7 +45,7 @@ function Setting() {
       <AdminQuickEdit />
       <OfflineCache />
       <Feedback />
-      <ExtraInfo style={extraInfoStyle} />
+      <AppExtraInfo style={extraInfoStyle} />
     </Style>
   );
 }

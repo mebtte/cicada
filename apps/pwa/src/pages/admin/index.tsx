@@ -10,9 +10,9 @@ import capitalize from '@/utils/capitalize';
 import LanguageSelect from '@/features/language/language_select';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
+import AppExtraInfo from '@/components/app_extra_info';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
-import definition from '@/definition';
 import { CSS_VAR } from '@/components/theme';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import Dashboard from './dashboard';
@@ -148,22 +148,56 @@ const BrandName = styled.div`
   text-overflow: ellipsis;
 `;
 
-const BrandSubTitle = styled.div`
-  margin-top: 3px;
-  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: rgb(150 150 150);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
 const MenuList = styled.nav`
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 4px 12px 18px;
   overflow-y: auto;
   ${autoScrollbar}
+`;
+
+const SidebarExtraInfo = styled(AppExtraInfo)`
+  margin: 14px 12px 18px;
+  border-radius: 15px;
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
+  font-size: 11px;
+
+  table {
+    table-layout: auto;
+  }
+
+  tbody > tr {
+    display: block;
+    padding: 9px 11px 10px;
+  }
+
+  tbody > tr:not(:first-child) {
+    border-top: 2px solid ${CSSVariable.COLOR_BORDER};
+  }
+
+  tbody > tr:not(:first-child) > th,
+  tbody > tr:not(:first-child) > td {
+    border-top: none;
+  }
+
+  th,
+  td {
+    display: block;
+    width: 100%;
+    padding: 0;
+    text-align: left;
+  }
+
+  th {
+    margin-bottom: 3px;
+    font-size: 10px;
+    line-height: 1.15;
+  }
+
+  td {
+    font-size: 12px;
+    line-height: 1.25;
+  }
 `;
 
 const MenuLink = styled(NavLink)`
@@ -729,7 +763,6 @@ function AdminPage() {
           <BrandLogo src="/app_logo.png" alt={t('logo')} crossOrigin="anonymous" />
           <BrandText>
             <BrandName>{capitalize(t('cicada'))}</BrandName>
-            <BrandSubTitle>{definition.VERSION}</BrandSubTitle>
           </BrandText>
         </SidebarHeader>
 
@@ -746,6 +779,7 @@ function AdminPage() {
             </MenuLink>
           ))}
         </MenuList>
+        <SidebarExtraInfo />
       </Sidebar>
       <Overlay
         type="button"
