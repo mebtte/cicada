@@ -26,7 +26,7 @@ const Style = styled.div`
 
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
 
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   background: #fff;
@@ -36,10 +36,11 @@ const Style = styled.div`
 `;
 
 const HeaderLogo = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
   flex-shrink: 0;
+  transform: translateY(-5px);
   user-select: none;
 `;
 
