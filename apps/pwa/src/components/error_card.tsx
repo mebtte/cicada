@@ -4,28 +4,7 @@ import Button from '@/components/button';
 import { CSSVariable } from '@/global_style';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { t } from '@/i18n';
-
-function ErrorIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="1em"
-      height="1em"
-      fill="none"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.4" />
-      <path
-        d="M12 7.25v6"
-        stroke="currentColor"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-      />
-      <circle cx="12" cy="17" r="1.25" fill="currentColor" />
-    </svg>
-  );
-}
+import ErrorImage from '@/asset/error.png';
 
 function RefreshIcon() {
   return (
@@ -69,21 +48,12 @@ const Style = styled.div`
 
   font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
 
-  > .error-icon {
-    width: 44px;
-    height: 44px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    color: ${CSSVariable.COLOR_DANGEROUS};
-    font-size: 42px;
-    line-height: 1;
-
-    > svg {
-      display: block;
-    }
+  > .error-placeholder {
+    width: min(100%, 260px);
+    height: auto;
+    display: block;
+    pointer-events: none;
+    user-select: none;
   }
 
   > .error-message {
@@ -112,10 +82,8 @@ const Style = styled.div`
   @media (max-width: 420px) {
     padding: 10px;
 
-    > .error-icon {
-      width: 40px;
-      height: 40px;
-      font-size: 38px;
+    > .error-placeholder {
+      width: min(100%, 220px);
     }
   }
 `;
@@ -136,9 +104,12 @@ function ErrorCard({
 } & HTMLAttributes<HTMLDivElement>) {
   return (
     <Style {...props}>
-      <div className="error-icon">
-        <ErrorIcon />
-      </div>
+      <img
+        className="error-placeholder"
+        src={ErrorImage}
+        alt=""
+        aria-hidden="true"
+      />
       <div className="error-message">{errorMessage}</div>
       <Button
         className="retry"
