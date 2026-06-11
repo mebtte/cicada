@@ -42,7 +42,6 @@ export enum EventType {
 
   TOGGLE_LYRIC_PANEL = 'toggle_lyric_panel',
 
-  OPEN_ARTIST_MODIFY_RECORD_DRAWER = 'open_artist_modify_record_drawer',
   OPEN_MUSICBILL_MUSIC_DRAWER = 'open_musicbill_music_drawer',
   OPEN_MUSICBILL_SHARED_USER_DRAWER = 'open_musicbill_shared_user_drawer',
   OPEN_SHARED_MUSICBILL_INVITATION_DRAWER = 'open_shared_musicbill_invitation_drawer',
@@ -128,9 +127,6 @@ export default new Eventin<
 
     [EventType.TOGGLE_LYRIC_PANEL]: { open: boolean } | null;
 
-    [EventType.OPEN_ARTIST_MODIFY_RECORD_DRAWER]: {
-      artist: { id: string; name: string; avatar: string };
-    };
     [EventType.OPEN_MUSICBILL_SHARED_USER_DRAWER]: { id: string };
     [EventType.OPEN_SHARED_MUSICBILL_INVITATION_DRAWER]: null;
     [EventType.OPEN_MUSICBILL_MUSIC_DRAWER]: {

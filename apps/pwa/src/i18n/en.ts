@@ -131,7 +131,6 @@ export default {
   search_keywords: 'search keywords',
   search_keywords_placeholder:
     'Pinyin, initials, nicknames, misspellings, translations. Only used for search.',
-  view_modify_record: 'view modify record',
   no_musicbill: 'no musicbill',
   no_data: 'no data',
   no_suitable_music_play_record: 'no suitable music play record',
@@ -145,7 +144,6 @@ export default {
   edit_music: 'edit music',
   edit_musicbill: 'edit musicbill',
   no_music: 'no music',
-  no_modify_record: 'no modify record',
   no_public_musicbill: 'no musicbill',
   edit_cover: 'edit cover',
   empty_cover_warning: 'please select a cover',
@@ -320,10 +318,6 @@ export default {
     'playlist has included these musics already',
   next_music_info: 'next music is %s1',
   failed_to_get_musicbill_list: 'failed to get musicbill list',
-  save_time_of_singer_modify_record_instruction:
-    'save time of singer modify record is %s1 days',
-  save_time_of_artist_modify_record_instruction:
-    'save time of artist modify record is %s1 days',
   singers_name_copied: "singer's name copied",
   no_music_singer_warning: 'this singer has no music',
   no_music_artist_warning: 'this artist has no music',

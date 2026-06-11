@@ -126,7 +126,6 @@ const zhCN: {
   aliases: '别名',
   search_keywords: '搜索词',
   search_keywords_placeholder: '拼音、首字母、昵称、错拼、译名等，仅用于搜索',
-  view_modify_record: '查看修改记录',
   no_musicbill: '暂无乐单',
   no_data: '暂无数据',
   no_suitable_music_play_record: '暂无相关的音乐播放记录',
@@ -140,7 +139,6 @@ const zhCN: {
   edit_music: '编辑音乐',
   edit_musicbill: '编辑乐单',
   no_music: '暂无音乐',
-  no_modify_record: '暂无修改记录',
   no_public_musicbill: '暂无乐单',
   edit_cover: '编辑封面',
   empty_cover_warning: '请选择封面',
@@ -306,10 +304,6 @@ const zhCN: {
   music_list_are_added_to_playlist_unsuccessfully: '播放列表已包含这些音乐',
   next_music_info: '下一首播放 %s1',
   failed_to_get_musicbill_list: '获取乐单列表失败',
-  save_time_of_singer_modify_record_instruction:
-    '歌手修改记录保留时间为 %s1 天',
-  save_time_of_artist_modify_record_instruction:
-    '艺人修改记录保留时间为 %s1 天',
   singers_name_copied: '歌手名已复制',
   no_music_singer_warning: '该歌手暂未收录音乐',
   no_music_artist_warning: '该艺人暂未收录音乐',
