@@ -277,24 +277,6 @@ export default () => {
   }, [getMusicbillList, navigate]);
 
   useEffect(() => {
-    const onMusicChange = (id: string) => {
-      for (const musicbill of musicbillList) {
-        if (musicbill.status === RequestStatus.SUCCESS) {
-          const exist = musicbill.musicList.find((m) => m.id === id);
-          if (exist) {
-            getMusicbill({ id: musicbill.id, silence: true });
-          }
-        }
-      }
-    };
-    const unlistenMusicUpdated = eventemitter.listen(
-      EventType.MUSIC_UPDATED,
-      (payload) => onMusicChange(payload.id),
-    );
-    const unlistenMusicDeleted = eventemitter.listen(
-      EventType.MUSIC_DELETED,
-      (payload) => onMusicChange(payload.id),
-    );
     const unlistenArtistUpdated = eventemitter.listen(
       EventType.ARTIST_UPDATED,
       (payload) => {
@@ -316,8 +298,6 @@ export default () => {
       },
     );
     return () => {
-      unlistenMusicUpdated();
-      unlistenMusicDeleted();
       unlistenArtistUpdated();
     };
   }, [getMusicbill, musicbillList]);

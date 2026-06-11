@@ -105,10 +105,6 @@ export default (playlist: MusicWithSingerAliases[]) => {
         setCurrentPositionSync(current - 1);
       },
     );
-    const unlistenActionPlayPlayqueueIndex = eventemitter.listen(
-      EventType.ACTION_PLAY_PLAYQUEUE_INDEX,
-      ({ index }) => setCurrentPositionSync(index),
-    );
     const unlistenActionRemovePlayqueueMusic = eventemitter.listen(
       EventType.ACTION_REMOVE_PLAYQUEUE_MUSIC,
       ({ queueMusic }) => {
@@ -130,26 +126,6 @@ export default (playlist: MusicWithSingerAliases[]) => {
         );
       },
     );
-    const unlistenActionMovePlayqueueMusicLater = eventemitter.listen(
-      EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_LATER,
-      ({ queueMusic }) =>
-        setPlayqueue((pq) => {
-          const { index } = queueMusic;
-          return [
-            ...pq.slice(0, index - 1),
-            pq[index],
-            pq[index - 1],
-            ...pq.slice(index + 1, pq.length),
-          ].map((m, i) =>
-            i + 1 >= queueMusic.index
-              ? {
-                  ...m,
-                  index: i + 1,
-                }
-              : m,
-          );
-        }),
-    );
     const unlistenActionAddMusicListToPlaylist = eventemitter.listen(
       EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST,
       ({ musicList }) =>
@@ -169,33 +145,10 @@ export default (playlist: MusicWithSingerAliases[]) => {
           return next;
         }),
     );
-    const unlistenActionMovePlayqueueMusicEarly = eventemitter.listen(
-      EventType.ACTION_MOVE_PLAYQUEUE_MUSIC_EARLY,
-      ({ queueMusic }) =>
-        setPlayqueue((pq) => {
-          const { index } = queueMusic;
-          return [
-            ...pq.slice(0, index - 2),
-            pq[index - 1],
-            pq[index - 2],
-            ...pq.slice(index, pq.length),
-          ].map((m, i) =>
-            i + 1 >= queueMusic.index - 1
-              ? {
-                  ...m,
-                  index: i + 1,
-                }
-              : m,
-          );
-        }),
-    );
     return () => {
       unlistenActionPrevious();
-      unlistenActionPlayPlayqueueIndex();
       unlistenActionRemovePlayqueueMusic();
-      unlistenActionMovePlayqueueMusicLater();
       unlistenActionAddMusicListToPlaylist();
-      unlistenActionMovePlayqueueMusicEarly();
     };
   }, [setCurrentPositionSync]);
 

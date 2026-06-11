@@ -150,18 +150,6 @@ export default () => {
   }, [artistId]);
 
   useEffect(() => {
-    if (!musicId) {
-      return;
-    }
-
-    return playerEventemitter.listen(EventType.MUSIC_UPDATED, (payload) => {
-      if (payload.id === musicId) {
-        loadMusicTitle(musicId);
-      }
-    });
-  }, [loadMusicTitle, musicId]);
-
-  useEffect(() => {
     if (!artistId) {
       return;
     }

@@ -80,44 +80,12 @@ export default () => {
           }));
         }),
     );
-    const unlistenMusicUpdated = eventemitter.listen(
-      EventType.MUSIC_UPDATED,
-      ({ id }) =>
-        getMusic({ id, requestMinimalDuration: 0 })
-          .then((music) =>
-            setPlaylist((pl) =>
-              pl.map((m) =>
-                m.id === music.id
-                  ? {
-                      ...m,
-                      ...music,
-                    }
-                  : m,
-              ),
-            ),
-          )
-          .catch((error) => logger.error(error, 'Failed to get music')),
-    );
-    const unlistenMusicDeleted = eventemitter.listen(
-      EventType.MUSIC_DELETED,
-      (data) =>
-        setPlaylist((pl) =>
-          pl
-            .filter((m) => m.id !== data.id)
-            .map((music, index, { length }) => ({
-              ...music,
-              index: length - index,
-            })),
-        ),
-    );
     return () => {
       unlistenActionPlayMusic();
       unlistenActionAddMusicListToPlaylist();
       unlistenActionInsertMusicToPlayqueue();
       unlistenActionClearPlaylist();
       unlistenActionRemovePlaylistMusic();
-      unlistenMusicUpdated();
-      unlistenMusicDeleted();
     };
   }, []);
 
