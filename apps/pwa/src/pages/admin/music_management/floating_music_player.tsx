@@ -235,12 +235,18 @@ const IconButton = styled.button<{ $primary?: boolean; $danger?: boolean }>`
   justify-content: center;
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms;
+    box-shadow 150ms ease-out;
   -webkit-tap-highlight-color: transparent;
 
   &:hover {
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0
+      ${({ $danger, $primary }) =>
+        $danger
+          ? 'rgb(190 46 34)'
+          : $primary
+            ? CSSVariable.COLOR_PRIMARY_ACTIVE
+            : ROW_SHADOW};
   }
 
   &:active {
@@ -248,8 +254,7 @@ const IconButton = styled.button<{ $primary?: boolean; $danger?: boolean }>`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {

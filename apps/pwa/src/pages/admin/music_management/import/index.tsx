@@ -152,10 +152,15 @@ const CoverMetadataButton = styled.button`
   white-space: nowrap;
   flex-shrink: 0;
   cursor: pointer;
+  display: inline-flex;
   -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 150ms ease-out,
+    text-shadow 150ms ease-out;
 
   &:hover {
-    filter: brightness(1.05);
+    transform: translateY(-1px);
+    text-shadow: 0 2px 0 rgb(0 0 0 / 0.08);
   }
 
   &:focus-visible {
@@ -231,13 +236,14 @@ const InlineActionButton = styled.button`
   white-space: nowrap;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
   transition:
-    color 120ms,
-    filter 120ms,
-    transform 120ms;
+    transform 150ms ease-out,
+    text-shadow 150ms ease-out;
 
   &:hover {
-    filter: brightness(1.05);
+    transform: translateY(-1px);
+    text-shadow: 0 2px 0 rgb(0 0 0 / 0.08);
   }
 
   &:active {

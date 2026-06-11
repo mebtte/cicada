@@ -193,8 +193,7 @@ const MenuLink = styled(NavLink)`
     box-shadow 150ms ease-out,
     border-color 150ms ease-out,
     background 150ms ease-out,
-    color 150ms ease-out,
-    filter 120ms ease-out;
+    color 150ms ease-out;
   -webkit-tap-highlight-color: transparent;
 
   > svg {
@@ -218,9 +217,8 @@ const MenuLink = styled(NavLink)`
   }
 
   &:not(.active):hover {
-    color: ${PRIMARY};
-    border-color: ${CSSVariable.COLOR_BORDER};
-    filter: brightness(1.02);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 ${SURFACE_SHADOW};
   }
 
   &:active {
@@ -228,8 +226,7 @@ const MenuLink = styled(NavLink)`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 
   &.active {
@@ -239,11 +236,8 @@ const MenuLink = styled(NavLink)`
     color: #fff;
 
     &:hover {
-      color: #fff;
-      background: ${PRIMARY};
-      border-color: ${PRIMARY_SHADOW};
-      box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
-      filter: brightness(1.04);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 ${PRIMARY_SHADOW};
     }
 
     &:active {
@@ -379,13 +373,10 @@ const UploadStatusButton = styled.button<{
   -webkit-tap-highlight-color: transparent;
   transition:
     transform 150ms ease-out,
-    filter 120ms;
+    box-shadow 150ms ease-out;
 
-  &:active {
-    transform: translateY(3px);
-    transition:
-      transform 60ms ease-in,
-      filter 60ms;
+  &:hover {
+    transform: translateY(-2px);
   }
 
   &:focus-visible {
@@ -420,8 +411,7 @@ const UploadStatusButton = styled.button<{
       border-color 150ms ease-out,
       box-shadow 150ms ease-out,
       color 150ms ease-out,
-      background 150ms ease-out,
-      filter 120ms;
+      background 150ms ease-out;
   }
 
   /* 上传中: 全按钮斜向白光扫动, 比原来的横向波纹明显得多 */
@@ -457,24 +447,22 @@ const UploadStatusButton = styled.button<{
   }
 
   &:hover > span.upload-status-box {
-    border-color: ${({ $status, $open }) =>
-      $status === 'failed'
-        ? DANGER_SHADOW
-        : $status === 'active' || $open
-          ? PRIMARY_SHADOW
-          : PRIMARY};
-    box-shadow: 0 3px 0
-      ${({ $status }) =>
-        $status === 'failed' ? DANGER_SHADOW : PRIMARY_SHADOW};
-    filter: brightness(1.04);
+    box-shadow: 0 5px 0
+      ${({ $status, $open }) => resolveStatusBorder($status, $open)};
+  }
+
+  &:active {
+    transform: translateY(3px);
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in;
   }
 
   &:active > span.upload-status-box {
     box-shadow: none;
     transition:
       border-color 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   ${runningShimmer}
@@ -494,6 +482,18 @@ const AvatarButton = styled.div`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 150ms ease-out;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:hover > div {
+    box-shadow: 0 5px 0 ${NEUTRAL_SHADOW};
+  }
+
+  &[aria-expanded='true']:hover > div {
+    box-shadow: 0 5px 0 ${PRIMARY_SHADOW};
+  }
 
   &:active {
     transform: translateY(3px);
@@ -519,6 +519,10 @@ const PlayerLink = styled.button`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 150ms ease-out;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 
   &:active {
     transform: translateY(3px);
@@ -546,9 +550,7 @@ const PlayerLinkBox = styled.span`
   justify-content: center;
 
   ${PlayerLink}:hover & {
-    color: ${PRIMARY};
-    border-color: ${PRIMARY_SHADOW};
-    box-shadow: 0 3px 0 ${PRIMARY_SHADOW};
+    box-shadow: 0 5px 0 ${NEUTRAL_SHADOW};
   }
 `;
 

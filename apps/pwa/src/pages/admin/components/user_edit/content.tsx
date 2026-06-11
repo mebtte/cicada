@@ -106,11 +106,15 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
   transition:
     transform 150ms ease-out,
     background 150ms ease,
-    box-shadow 150ms ease,
-    filter 120ms;
+    box-shadow 150ms ease;
 
   &:not(:disabled):hover {
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0
+      ${({ $checked }) =>
+        $checked
+          ? CSSVariable.COLOR_PRIMARY_ACTIVE
+          : CSSVariable.COLOR_CONTROL_NEUTRAL};
   }
 
   &:not(:disabled):active {
@@ -118,8 +122,7 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   &:disabled {
