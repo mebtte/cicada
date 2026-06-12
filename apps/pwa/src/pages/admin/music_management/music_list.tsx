@@ -28,7 +28,7 @@ import Pagination from '@/components/pagination';
 import Spinner from '@/components/spinner';
 import ErrorCard from '@/components/error_card';
 import { Query } from '@/constants';
-import { MUSIC_TYPE_MAP } from '@/constants/music';
+import { MUSIC_TYPE_MAP, MusicType } from '@/constants/music';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
@@ -275,13 +275,22 @@ const SortHeaderButton = styled.button<{ $active: boolean }>`
   cursor: pointer;
   border-radius: 8px;
   -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 0 0 transparent;
   transition:
-    color 120ms,
-    background 120ms;
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
 
   &:hover {
-    color: ${CSSVariable.COLOR_PRIMARY};
-    background: rgb(247 247 247);
+    transform: translateY(-2px);
+    box-shadow: 0 3px 0 ${ROW_SHADOW};
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: none;
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {
@@ -296,6 +305,7 @@ const SortHeaderButton = styled.button<{ $active: boolean }>`
 `;
 
 const Td = styled.td`
+  position: relative;
   padding: 12px 18px;
   background: #fff;
   border-top: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -306,6 +316,9 @@ const Td = styled.td`
   font-weight: 700;
   letter-spacing: 0;
   vertical-align: middle;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
 
   &:first-child {
     border-left: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -324,8 +337,15 @@ const Td = styled.td`
   }
 
   tbody tr:hover & {
-    color: rgb(75 75 75);
-    filter: brightness(1.01);
+    z-index: 2;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 ${ROW_SHADOW};
+  }
+
+  tbody tr:hover &:last-child {
+    box-shadow:
+      -6px 0 0 #fff,
+      0 5px 0 ${ROW_SHADOW};
   }
 `;
 
@@ -355,11 +375,11 @@ const CoverButton = styled.button`
   justify-content: center;
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms ease-out;
+    box-shadow 150ms ease-out;
 
   &:hover {
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 ${ROW_SHADOW};
   }
 
   &:active {
@@ -367,8 +387,7 @@ const CoverButton = styled.button`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {
@@ -435,7 +454,7 @@ const Tag = styled.span`
   white-space: nowrap;
 `;
 
-const SingerButton = styled.button`
+const ArtistButton = styled.button`
   max-width: 170px;
   padding: 4px 8px;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -454,13 +473,11 @@ const SingerButton = styled.button`
   -webkit-tap-highlight-color: transparent;
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    color 120ms,
-    filter 120ms;
+    box-shadow 150ms ease-out;
 
   &:hover {
-    color: ${CSSVariable.COLOR_PRIMARY};
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0 ${ROW_SHADOW};
   }
 
   &:active {
@@ -468,8 +485,7 @@ const SingerButton = styled.button`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {
@@ -532,13 +548,13 @@ const ActionButton = styled.button<{ $active?: boolean }>`
   -webkit-tap-highlight-color: transparent;
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    color 120ms,
-    filter 120ms;
+    box-shadow 150ms ease-out;
 
   &:hover {
-    color: ${CSSVariable.COLOR_PRIMARY};
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0
+      ${({ $active }) =>
+        $active ? CSSVariable.COLOR_PRIMARY_ACTIVE : ROW_SHADOW};
   }
 
   &:active {
@@ -546,8 +562,7 @@ const ActionButton = styled.button<{ $active?: boolean }>`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {
@@ -1047,7 +1062,7 @@ function MusicList({
                   <Th>{capitalize(t('cover'))}</Th>
                   <Th>{capitalize(t('name'))}</Th>
                   <Th>{capitalize(t('alias'))}</Th>
-                  <Th>{capitalize(t('singer'))}</Th>
+                  <Th>{capitalize(t('performer'))}</Th>
                   <Th>{capitalize(t('lyricist'))}</Th>
                   <Th>{capitalize(t('composer'))}</Th>
                   <Th>{capitalize(t('music_type_short'))}</Th>
@@ -1117,17 +1132,17 @@ function MusicList({
                       ) : null}
                     </Td>
                     <Td>
-                      {music.singers.length ? (
+                      {music.performers.length ? (
                         <TagList>
-                          {music.singers.map((singer) => (
-                            <SingerButton
-                              key={singer.id}
+                          {music.performers.map((performer) => (
+                            <ArtistButton
+                              key={performer.id}
                               type="button"
-                              title={singer.name}
-                              onClick={() => onArtistEdit(singer.id)}
+                              title={performer.name}
+                              onClick={() => onArtistEdit(performer.id)}
                             >
-                              {singer.name}
-                            </SingerButton>
+                              {performer.name}
+                            </ArtistButton>
                           ))}
                         </TagList>
                       ) : (
@@ -1135,17 +1150,17 @@ function MusicList({
                       )}
                     </Td>
                     <Td>
-                      {music.lyricists.length ? (
+                      {music.type === MusicType.SONG && music.lyricists.length ? (
                         <TagList>
                           {music.lyricists.map((lyricist) => (
-                            <SingerButton
+                            <ArtistButton
                               key={lyricist.id}
                               type="button"
                               title={lyricist.name}
                               onClick={() => onArtistEdit(lyricist.id)}
                             >
                               {lyricist.name}
-                            </SingerButton>
+                            </ArtistButton>
                           ))}
                         </TagList>
                       ) : null}
@@ -1154,14 +1169,14 @@ function MusicList({
                       {music.composers.length ? (
                         <TagList>
                           {music.composers.map((composer) => (
-                            <SingerButton
+                            <ArtistButton
                               key={composer.id}
                               type="button"
                               title={composer.name}
                               onClick={() => onArtistEdit(composer.id)}
                             >
                               {composer.name}
-                            </SingerButton>
+                            </ArtistButton>
                           ))}
                         </TagList>
                       ) : null}

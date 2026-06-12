@@ -4,7 +4,7 @@ import Button from '@/components/button';
 import { AddBox } from '@/components/icon';
 import styled from 'styled-components';
 import autoScrollbar from '@/style/auto_scrollbar';
-import { MusicWithSingerAliases } from '../constants';
+import { MusicWithArtistAliases } from '../constants';
 import { t } from '@/i18n';
 import { openCreateMusicbillDialog } from '../utils';
 import Top from './top';
@@ -40,7 +40,7 @@ function MusicbillMusicDrawer({
 }: {
   open: boolean;
   onClose: () => void;
-  music: MusicWithSingerAliases;
+  music: MusicWithArtistAliases;
   zIndex: number;
 }) {
   return (

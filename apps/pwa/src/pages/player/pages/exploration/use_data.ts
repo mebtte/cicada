@@ -92,22 +92,12 @@ export default () => {
   useEffect(() => {
     getData();
 
-    const unlistenMusicUpdated = playerEventemitter.listen(
-      PlayerEventType.MUSIC_UPDATED,
-      reload,
-    );
-    const unlistenMusicDeleted = playerEventemitter.listen(
-      PlayerEventType.MUSIC_DELETED,
-      reload,
-    );
     const unlistenArtistUpdated = playerEventemitter.listen(
       PlayerEventType.ARTIST_UPDATED,
       reload,
     );
     return () => {
       requestIdRef.current += 1;
-      unlistenMusicUpdated();
-      unlistenMusicDeleted();
       unlistenArtistUpdated();
     };
   }, [getData, reload]);

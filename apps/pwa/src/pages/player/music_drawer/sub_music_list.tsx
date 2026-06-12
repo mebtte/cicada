@@ -64,7 +64,7 @@ const Style = styled.div`
           color: rgb(55 55 55);
         }
 
-        > .singers {
+        > .performers {
           font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
           font-weight: 700;
         }
@@ -92,7 +92,7 @@ function SubMusicList({
             musicName={music.name}
             musicCover={getResizedImage({ url: music.cover, size: 80 })}
             musicCoverThumbnail={music.coverThumbnail}
-            singers={music.singers}
+            performers={music.performers}
           />
         ))}
       </div>

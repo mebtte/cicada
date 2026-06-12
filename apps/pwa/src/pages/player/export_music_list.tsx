@@ -23,7 +23,7 @@ function exportMusicByFileSaver(
     asset.url,
     formatMusicFilename({
       name: music.name,
-      singerNames: music.singers.map((s) => s.name),
+      performerNames: music.performers.map((s) => s.name),
       ext: asset.ext,
     }),
   );

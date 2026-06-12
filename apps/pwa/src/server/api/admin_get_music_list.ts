@@ -37,7 +37,7 @@ type Response = {
     assetBitRate: number;
     heat: number;
     year: number | null;
-    singers: {
+    performers: {
       id: string;
       name: string;
       aliases: string[];
@@ -94,7 +94,7 @@ async function adminGetMusicList({
       cover: prefixServerOrigin(music.cover),
       coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
       asset: prefixServerOrigin(music.asset),
-      singers: music.singers ?? [],
+      performers: music.performers ?? [],
       lyricists: music.lyricists ?? [],
       composers: music.composers ?? [],
     })),

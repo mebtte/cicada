@@ -12,7 +12,7 @@ export type ImportPhase =
   | 'paused'
   | 'canceled';
 
-export interface ImportTaskSinger {
+export interface ImportTaskPerformer {
   id: string;
   name: string;
 }
@@ -36,7 +36,7 @@ export interface ImportTask {
   parsed: ImportTaskParsedMetadata;
   // user-editable fields
   name: string;
-  singers: ImportTaskSinger[];
+  performers: ImportTaskPerformer[];
   type: MusicType;
   // runtime
   phase: ImportPhase;

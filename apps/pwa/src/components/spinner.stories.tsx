@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Five-bar wavy loading indicator. Each bar pulses independently to form a left-to-right wave. Color follows the active theme primary.',
+          'Circular loading indicator. Color follows the active theme primary by default, and can inherit the parent color with currentColor.',
       },
     },
   },

@@ -24,6 +24,20 @@ func (t MusicType) Valid() bool {
 	return t == MusicTypeSong || t == MusicTypeInstrumental
 }
 
+type MusicArtistRole string
+
+const (
+	MusicArtistRolePerformer MusicArtistRole = "performer"
+	MusicArtistRoleLyricist  MusicArtistRole = "lyricist"
+	MusicArtistRoleComposer  MusicArtistRole = "composer"
+)
+
+func (r MusicArtistRole) Valid() bool {
+	return r == MusicArtistRolePerformer ||
+		r == MusicArtistRoleLyricist ||
+		r == MusicArtistRoleComposer
+}
+
 type Music struct {
 	ID              string
 	Type            MusicType
@@ -120,7 +134,7 @@ func GetMusicsByIDs(ids []string) ([]Music, error) {
 
 func CreateMusic(name string, t MusicType, asset string) (string, error) {
 	for range maxCreateMusicIDAttempts {
-		id, err := generateShortPublicID()
+		id, err := generatePublicID()
 		if err != nil {
 			return "", err
 		}
@@ -174,9 +188,7 @@ func DeleteMusicCascade(id string, isSong bool) error {
 	for _, del := range []string{
 		`DELETE FROM music_fork WHERE musicId=?`,
 		`DELETE FROM music_play_record WHERE musicId=?`,
-		`DELETE FROM music_singer_relation WHERE musicId=?`,
-		`DELETE FROM music_lyricist_relation WHERE musicId=?`,
-		`DELETE FROM music_composer_relation WHERE musicId=?`,
+		`DELETE FROM music_artist_relation WHERE musicId=?`,
 		`DELETE FROM musicbill_music WHERE musicId=?`,
 		`DELETE FROM music WHERE id=?`,
 	} {
@@ -217,14 +229,26 @@ func GetMusicForkFroms(musicID string) ([]MusicFork, error) {
 	return out, nil
 }
 
-func GetSingersInMusicIDs(musicIDs []string) ([]ArtistInMusic, error) {
+func GetArtistsInMusicIDsByRole(musicIDs []string, role MusicArtistRole) ([]ArtistInMusic, error) {
 	if len(musicIDs) == 0 {
 		return nil, nil
 	}
-	q := `SELECT msr.musicId,a.id,a.name,a.aliases
-		FROM music_singer_relation msr JOIN artist a ON msr.artistId=a.id
-		WHERE msr.musicId IN (` + placeholders(len(musicIDs)) + `)`
-	rows, err := DB().Query(q, strs2any(musicIDs)...)
+	if !role.Valid() {
+		return nil, fmt.Errorf("invalid music artist role %q", role)
+	}
+
+	q := `SELECT mar.musicId,a.id,a.name,a.aliases
+		FROM music_artist_relation mar
+		JOIN artist a ON mar.artistId=a.id`
+	where := ` WHERE mar.musicId IN (` + placeholders(len(musicIDs)) + `) AND mar.role=?`
+	args := append(strs2any(musicIDs), string(role))
+	if role == MusicArtistRoleLyricist {
+		q += ` JOIN music m ON mar.musicId=m.id`
+		where += ` AND m.type=?`
+		args = append(args, int(MusicTypeSong))
+	}
+	q += where + ` ORDER BY mar.musicId, mar.position, mar.id`
+	rows, err := DB().Query(q, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -236,129 +260,6 @@ func GetSingersInMusicIDs(musicIDs []string) ([]ArtistInMusic, error) {
 		out = append(out, a)
 	}
 	return out, nil
-}
-
-func GetLyricistsInMusicIDs(musicIDs []string) ([]ArtistInMusic, error) {
-	if len(musicIDs) == 0 {
-		return nil, nil
-	}
-	q := `SELECT mlr.musicId,a.id,a.name,a.aliases
-		FROM music_lyricist_relation mlr JOIN artist a ON mlr.artistId=a.id
-		WHERE mlr.musicId IN (` + placeholders(len(musicIDs)) + `)`
-	rows, err := DB().Query(q, strs2any(musicIDs)...)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var out []ArtistInMusic
-	for rows.Next() {
-		a := ArtistInMusic{}
-		rows.Scan(&a.MusicID, &a.ID, &a.Name, &a.Aliases)
-		out = append(out, a)
-	}
-	return out, nil
-}
-
-func GetComposersInMusicIDs(musicIDs []string) ([]ArtistInMusic, error) {
-	if len(musicIDs) == 0 {
-		return nil, nil
-	}
-	q := `SELECT mcr.musicId,a.id,a.name,a.aliases
-		FROM music_composer_relation mcr JOIN artist a ON mcr.artistId=a.id
-		WHERE mcr.musicId IN (` + placeholders(len(musicIDs)) + `)`
-	rows, err := DB().Query(q, strs2any(musicIDs)...)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var out []ArtistInMusic
-	for rows.Next() {
-		a := ArtistInMusic{}
-		rows.Scan(&a.MusicID, &a.ID, &a.Name, &a.Aliases)
-		out = append(out, a)
-	}
-	return out, nil
-}
-
-func GetMusicsBySingerID(singerID string) ([]Music, error) {
-	rows, err := DB().Query(
-		`SELECT `+musicSelectColumnsWithAlias+`
-		FROM music_singer_relation msr JOIN music m ON msr.musicId=m.id
-		WHERE msr.artistId=? ORDER BY m.heat DESC, m.createTimestamp DESC`,
-		singerID,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return scanMusicRows(rows)
-}
-
-func GetMusicsByLyricistID(artistID string) ([]Music, error) {
-	rows, err := DB().Query(
-		`SELECT `+musicSelectColumnsWithAlias+`
-		FROM music_lyricist_relation mlr JOIN music m ON mlr.musicId=m.id
-		WHERE mlr.artistId=? ORDER BY m.heat DESC, m.createTimestamp DESC`,
-		artistID,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return scanMusicRows(rows)
-}
-
-func GetMusicsByComposerID(artistID string) ([]Music, error) {
-	rows, err := DB().Query(
-		`SELECT `+musicSelectColumnsWithAlias+`
-		FROM music_composer_relation mcr JOIN music m ON mcr.musicId=m.id
-		WHERE mcr.artistId=? ORDER BY m.heat DESC, m.createTimestamp DESC`,
-		artistID,
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	return scanMusicRows(rows)
-}
-
-func LinkMusicSingers(musicID string, artistIDs []string) error {
-	if len(artistIDs) == 0 {
-		return nil
-	}
-	pairs := strings.Repeat("(?,?),", len(artistIDs))
-	args := make([]any, 0, len(artistIDs)*2)
-	for _, artistID := range artistIDs {
-		args = append(args, musicID, artistID)
-	}
-	_, err := DB().Exec(`INSERT OR REPLACE INTO music_singer_relation (musicId,artistId) VALUES `+pairs[:len(pairs)-1], args...)
-	return err
-}
-
-func LinkMusicLyricists(musicID string, artistIDs []string) error {
-	if len(artistIDs) == 0 {
-		return nil
-	}
-	pairs := strings.Repeat("(?,?),", len(artistIDs))
-	args := make([]any, 0, len(artistIDs)*2)
-	for _, artistID := range artistIDs {
-		args = append(args, musicID, artistID)
-	}
-	_, err := DB().Exec(`INSERT OR REPLACE INTO music_lyricist_relation (musicId,artistId) VALUES `+pairs[:len(pairs)-1], args...)
-	return err
-}
-
-func LinkMusicComposers(musicID string, artistIDs []string) error {
-	if len(artistIDs) == 0 {
-		return nil
-	}
-	pairs := strings.Repeat("(?,?),", len(artistIDs))
-	args := make([]any, 0, len(artistIDs)*2)
-	for _, artistID := range artistIDs {
-		args = append(args, musicID, artistID)
-	}
-	_, err := DB().Exec(`INSERT OR REPLACE INTO music_composer_relation (musicId,artistId) VALUES `+pairs[:len(pairs)-1], args...)
-	return err
 }
 
 func ArtistsExist(ids []string) (bool, error) {
@@ -370,6 +271,57 @@ func ArtistsExist(ids []string) (bool, error) {
 	return count == len(ids), err
 }
 
+func GetMusicsByArtistIDAndRole(artistID string, role MusicArtistRole) ([]Music, error) {
+	if !role.Valid() {
+		return nil, fmt.Errorf("invalid music artist role %q", role)
+	}
+	q := `SELECT ` + musicSelectColumnsWithAlias + `
+		FROM music_artist_relation mar JOIN music m ON mar.musicId=m.id
+		WHERE mar.artistId=? AND mar.role=?`
+	args := []any{artistID, string(role)}
+	if role == MusicArtistRoleLyricist {
+		q += ` AND m.type=?`
+		args = append(args, int(MusicTypeSong))
+	}
+	q += ` ORDER BY m.heat DESC, m.createTimestamp DESC`
+	rows, err := DB().Query(q, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	return scanMusicRows(rows)
+}
+
+func ReplaceMusicArtistsByRole(musicID string, role MusicArtistRole, artistIDs []string) error {
+	if !role.Valid() {
+		return fmt.Errorf("invalid music artist role %q", role)
+	}
+	tx, err := DB().Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if _, err := tx.Exec(`DELETE FROM music_artist_relation WHERE musicId=? AND role=?`, musicID, string(role)); err != nil {
+		return err
+	}
+	if len(artistIDs) == 0 {
+		return tx.Commit()
+	}
+
+	pairs := strings.Repeat("(?,?,?,?),", len(artistIDs))
+	args := make([]any, 0, len(artistIDs)*4)
+	for position, artistID := range artistIDs {
+		args = append(args, musicID, artistID, string(role), position)
+	}
+	if _, err := tx.Exec(
+		`INSERT OR REPLACE INTO music_artist_relation (musicId,artistId,role,position) VALUES `+pairs[:len(pairs)-1],
+		args...,
+	); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
+
 func GetAllMusic() ([]Music, error) {
 	rows, err := DB().Query(`SELECT ` + musicSelectColumns + ` FROM music ORDER BY createTimestamp ASC`)
 	if err != nil {
@@ -379,7 +331,7 @@ func GetAllMusic() ([]Music, error) {
 	return scanMusicRows(rows)
 }
 
-// SearchMusic searches across all users by name/alias/search keywords/singer (paginated).
+// SearchMusic searches across all users by name/alias/search keywords/artist (paginated).
 func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	keyword = strings.TrimSpace(keyword)
 	if keyword == "" {
@@ -390,36 +342,18 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 	where := `WHERE m.name LIKE ? ESCAPE '\' OR m.aliases LIKE ? ESCAPE '\' OR m.searchKeywords LIKE ? ESCAPE '\'
 		OR EXISTS (
 			SELECT 1
-			FROM music_singer_relation msr
-			JOIN artist s ON msr.artistId=s.id
-			WHERE msr.musicId=m.id AND (
-				s.name LIKE ? ESCAPE '\'
-				OR s.aliases LIKE ? ESCAPE '\'
-				OR s.searchKeywords LIKE ? ESCAPE '\'
-			)
-		)
-		OR EXISTS (
-			SELECT 1
-			FROM music_lyricist_relation mlr
-			JOIN artist a ON mlr.artistId=a.id
-			WHERE mlr.musicId=m.id AND (
-				a.name LIKE ? ESCAPE '\'
-				OR a.aliases LIKE ? ESCAPE '\'
-				OR a.searchKeywords LIKE ? ESCAPE '\'
-			)
-		)
-		OR EXISTS (
-			SELECT 1
-			FROM music_composer_relation mcr
-			JOIN artist c ON mcr.artistId=c.id
-			WHERE mcr.musicId=m.id AND (
-				c.name LIKE ? ESCAPE '\'
-				OR c.aliases LIKE ? ESCAPE '\'
-				OR c.searchKeywords LIKE ? ESCAPE '\'
-			)
-		)`
+			FROM music_artist_relation mar
+			JOIN artist a ON mar.artistId=a.id
+			WHERE mar.musicId=m.id
+				AND (mar.role!='lyricist' OR m.type=1)
+				AND (
+					a.name LIKE ? ESCAPE '\'
+					OR a.aliases LIKE ? ESCAPE '\'
+					OR a.searchKeywords LIKE ? ESCAPE '\'
+				)
+			)`
 	var total int
-	if err := DB().QueryRow(`SELECT COUNT(1) FROM music m `+where, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat).Scan(&total); err != nil {
+	if err := DB().QueryRow(`SELECT COUNT(1) FROM music m `+where, pat, pat, pat, pat, pat, pat).Scan(&total); err != nil {
 		return 0, nil, err
 	}
 	rows, err := DB().Query(
@@ -433,75 +367,75 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 				WHEN m.searchKeywords LIKE ? ESCAPE '\' THEN 75
 				WHEN EXISTS (
 					SELECT 1
-					FROM music_singer_relation msr
-					JOIN artist s ON msr.artistId=s.id
-					WHERE msr.musicId=m.id AND s.name = ? COLLATE NOCASE
+					FROM music_artist_relation mar
+					JOIN artist p ON mar.artistId=p.id
+					WHERE mar.musicId=m.id AND mar.role='performer' AND p.name = ? COLLATE NOCASE
 				) THEN 70
 				WHEN EXISTS (
 					SELECT 1
-					FROM music_singer_relation msr
-					JOIN artist s ON msr.artistId=s.id
-					WHERE msr.musicId=m.id AND s.name LIKE ? ESCAPE '\'
+					FROM music_artist_relation mar
+					JOIN artist p ON mar.artistId=p.id
+					WHERE mar.musicId=m.id AND mar.role='performer' AND p.name LIKE ? ESCAPE '\'
 				) THEN 60
+					WHEN EXISTS (
+						SELECT 1
+						FROM music_artist_relation mar
+						JOIN artist p ON mar.artistId=p.id
+						WHERE mar.musicId=m.id AND mar.role='performer' AND p.aliases LIKE ? ESCAPE '\'
+					) THEN 50
+					WHEN EXISTS (
+						SELECT 1
+						FROM music_artist_relation mar
+						JOIN artist p ON mar.artistId=p.id
+						WHERE mar.musicId=m.id AND mar.role='performer' AND p.searchKeywords LIKE ? ESCAPE '\'
+					) THEN 45
+					WHEN m.type=1 AND EXISTS (
+						SELECT 1
+						FROM music_artist_relation mar
+						JOIN artist a ON mar.artistId=a.id
+						WHERE mar.musicId=m.id AND mar.role='lyricist' AND a.name = ? COLLATE NOCASE
+					) THEN 42
+					WHEN m.type=1 AND EXISTS (
+						SELECT 1
+						FROM music_artist_relation mar
+						JOIN artist a ON mar.artistId=a.id
+						WHERE mar.musicId=m.id AND mar.role='lyricist' AND a.name LIKE ? ESCAPE '\'
+					) THEN 38
+					WHEN m.type=1 AND EXISTS (
+						SELECT 1
+						FROM music_artist_relation mar
+						JOIN artist a ON mar.artistId=a.id
+						WHERE mar.musicId=m.id AND mar.role='lyricist' AND a.aliases LIKE ? ESCAPE '\'
+					) THEN 34
+					WHEN m.type=1 AND EXISTS (
+						SELECT 1
+						FROM music_artist_relation mar
+						JOIN artist a ON mar.artistId=a.id
+						WHERE mar.musicId=m.id AND mar.role='lyricist' AND a.searchKeywords LIKE ? ESCAPE '\'
+					) THEN 30
 				WHEN EXISTS (
 					SELECT 1
-					FROM music_singer_relation msr
-					JOIN artist s ON msr.artistId=s.id
-					WHERE msr.musicId=m.id AND s.aliases LIKE ? ESCAPE '\'
-				) THEN 50
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_singer_relation msr
-					JOIN artist s ON msr.artistId=s.id
-					WHERE msr.musicId=m.id AND s.searchKeywords LIKE ? ESCAPE '\'
-				) THEN 45
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_lyricist_relation mlr
-					JOIN artist a ON mlr.artistId=a.id
-					WHERE mlr.musicId=m.id AND a.name = ? COLLATE NOCASE
-				) THEN 42
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_lyricist_relation mlr
-					JOIN artist a ON mlr.artistId=a.id
-					WHERE mlr.musicId=m.id AND a.name LIKE ? ESCAPE '\'
-				) THEN 38
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_lyricist_relation mlr
-					JOIN artist a ON mlr.artistId=a.id
-					WHERE mlr.musicId=m.id AND a.aliases LIKE ? ESCAPE '\'
-				) THEN 34
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_lyricist_relation mlr
-					JOIN artist a ON mlr.artistId=a.id
-					WHERE mlr.musicId=m.id AND a.searchKeywords LIKE ? ESCAPE '\'
-				) THEN 30
-				WHEN EXISTS (
-					SELECT 1
-					FROM music_composer_relation mcr
-					JOIN artist c ON mcr.artistId=c.id
-					WHERE mcr.musicId=m.id AND c.name = ? COLLATE NOCASE
+					FROM music_artist_relation mar
+					JOIN artist c ON mar.artistId=c.id
+					WHERE mar.musicId=m.id AND mar.role='composer' AND c.name = ? COLLATE NOCASE
 				) THEN 28
 				WHEN EXISTS (
 					SELECT 1
-					FROM music_composer_relation mcr
-					JOIN artist c ON mcr.artistId=c.id
-					WHERE mcr.musicId=m.id AND c.name LIKE ? ESCAPE '\'
+					FROM music_artist_relation mar
+					JOIN artist c ON mar.artistId=c.id
+					WHERE mar.musicId=m.id AND mar.role='composer' AND c.name LIKE ? ESCAPE '\'
 				) THEN 24
 				WHEN EXISTS (
 					SELECT 1
-					FROM music_composer_relation mcr
-					JOIN artist c ON mcr.artistId=c.id
-					WHERE mcr.musicId=m.id AND c.aliases LIKE ? ESCAPE '\'
+					FROM music_artist_relation mar
+					JOIN artist c ON mar.artistId=c.id
+					WHERE mar.musicId=m.id AND mar.role='composer' AND c.aliases LIKE ? ESCAPE '\'
 				) THEN 20
 				WHEN EXISTS (
 					SELECT 1
-					FROM music_composer_relation mcr
-					JOIN artist c ON mcr.artistId=c.id
-					WHERE mcr.musicId=m.id AND c.searchKeywords LIKE ? ESCAPE '\'
+					FROM music_artist_relation mar
+					JOIN artist c ON mar.artistId=c.id
+					WHERE mar.musicId=m.id AND mar.role='composer' AND c.searchKeywords LIKE ? ESCAPE '\'
 				) THEN 16
 				ELSE 40
 			END DESC,
@@ -509,7 +443,7 @@ func SearchMusic(keyword string, page, pageSize int) (int, []Music, error) {
 			m.createTimestamp DESC,
 			m.id ASC
 		LIMIT ? OFFSET ?`,
-		pat, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat, pat,
+		pat, pat, pat, pat, pat, pat,
 		keyword, prefixPat, pat, pat, keyword, prefixPat, pat, pat, keyword, prefixPat, pat, pat, keyword, prefixPat, pat, pat,
 		pageSize, (page-1)*pageSize,
 	)
@@ -529,19 +463,11 @@ func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageS
 		pattern := "%" + trimmedKeyword + "%"
 		artistExists := `(EXISTS (
 			SELECT 1
-			FROM music_singer_relation msr
-			JOIN artist s ON msr.artistId=s.id
-			WHERE msr.musicId=m.id AND (s.id LIKE ? OR s.name LIKE ? OR s.aliases LIKE ? OR s.searchKeywords LIKE ?)
-		) OR EXISTS (
-			SELECT 1
-			FROM music_lyricist_relation mlr
-			JOIN artist a ON mlr.artistId=a.id
-			WHERE mlr.musicId=m.id AND (a.id LIKE ? OR a.name LIKE ? OR a.aliases LIKE ? OR a.searchKeywords LIKE ?)
-		) OR EXISTS (
-			SELECT 1
-			FROM music_composer_relation mcr
-			JOIN artist c ON mcr.artistId=c.id
-			WHERE mcr.musicId=m.id AND (c.id LIKE ? OR c.name LIKE ? OR c.aliases LIKE ? OR c.searchKeywords LIKE ?)
+			FROM music_artist_relation mar
+			JOIN artist a ON mar.artistId=a.id
+			WHERE mar.musicId=m.id
+				AND (mar.role!='lyricist' OR m.type=1)
+				AND (a.id LIKE ? OR a.name LIKE ? OR a.aliases LIKE ? OR a.searchKeywords LIKE ?)
 		))`
 		switch filterKey {
 		case "id":
@@ -555,10 +481,10 @@ func GetAdminMusicList(keyword, filterKey, sortBy, sortOrder string, page, pageS
 			args = append(args, pattern)
 		case "artist":
 			where = " WHERE " + artistExists
-			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern)
+			args = append(args, pattern, pattern, pattern, pattern)
 		default:
 			where = " WHERE m.id LIKE ? OR m.name LIKE ? OR m.aliases LIKE ? OR m.searchKeywords LIKE ? OR " + artistExists
-			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern)
+			args = append(args, pattern, pattern, pattern, pattern, pattern, pattern, pattern, pattern)
 		}
 	}
 

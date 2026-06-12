@@ -130,7 +130,7 @@ function QueueMusicItem({
           {canRemove ? (
             <Button
               square
-              variant="plain"
+              variant="ghost"
               size="sm"
               style={removeStyle}
               onClick={(e) => {

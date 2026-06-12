@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Centered error placeholder with an alert icon, message, and a primary "Retry" button. Use it as the fallback for failed data loads.',
+          'Centered error placeholder with an illustrated image, message, and a primary "Retry" button. Use it as the fallback for failed data loads.',
       },
     },
   },

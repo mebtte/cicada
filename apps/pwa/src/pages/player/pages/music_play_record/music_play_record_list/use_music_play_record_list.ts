@@ -3,9 +3,6 @@ import type { Query } from '@/constants';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE, MusicPlayRecord } from '../constants';
-import playerEventemitter, {
-  EventType as PlayerEventType,
-} from '../../../eventemitter';
 import e, { EventType } from '../eventemitter';
 
 type Data =
@@ -112,10 +109,6 @@ export default () => {
   }, [data.loading]);
 
   useEffect(() => {
-    const unlistenMusicDeleted = playerEventemitter.listen(
-      PlayerEventType.MUSIC_DELETED,
-      reload,
-    );
     // 监听工具栏的刷新按钮, 重新拉取当前播放记录
     const unlistenReload = e.listen(EventType.RELOAD, reload);
     const unlistenMusicPlayRecordDeleted = e.listen(
@@ -127,7 +120,6 @@ export default () => {
       reload,
     );
     return () => {
-      unlistenMusicDeleted();
       unlistenReload();
       unlistenMusicPlayRecordDeleted();
       unlistenMusicPlayRecordDeleteFailed();

@@ -44,7 +44,7 @@ func TestDisable2FARequiresValidToken(t *testing.T) {
 	activeSecret := secret[len(auth.UnusedTOTPPrefix):]
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp,twoFASecret) VALUES (?,?,?,?,?,?)`,
-		"user-1", "creator", store.DoubleMD5("password"), "Creator", time.Now().UnixMilli(), activeSecret,
+		"USER01", "creator", store.DoubleMD5("password"), "Creator", time.Now().UnixMilli(), activeSecret,
 	); err != nil {
 		t.Fatalf("insert user: %v", err)
 	}
@@ -62,7 +62,7 @@ func TestDisable2FARequiresValidToken(t *testing.T) {
 	if wrongResp.Code != apperr.Wrong2FAToken {
 		t.Fatalf("expected %s, got %s", apperr.Wrong2FAToken, wrongResp.Code)
 	}
-	u, err := store.GetUserByID("user-1")
+	u, err := store.GetUserByID("USER01")
 	if err != nil {
 		t.Fatalf("get user after wrong token: %v", err)
 	}
@@ -74,7 +74,7 @@ func TestDisable2FARequiresValidToken(t *testing.T) {
 	if successResp.Code != apperr.Success {
 		t.Fatalf("expected %s, got %s", apperr.Success, successResp.Code)
 	}
-	u, err = store.GetUserByID("user-1")
+	u, err = store.GetUserByID("USER01")
 	if err != nil {
 		t.Fatalf("get user after valid token: %v", err)
 	}
@@ -142,7 +142,7 @@ func callDisable2FA(t *testing.T, token string, secret string) struct {
 	c.Request = httptest.NewRequest(http.MethodDelete, "/api/2fa", bytes.NewReader(body))
 	c.Request.Header.Set("Content-Type", "application/json")
 	c.Set("authed_user", &store.User{
-		ID:          "user-1",
+		ID:          "USER01",
 		TwoFASecret: sql.NullString{String: secret, Valid: true},
 	})
 

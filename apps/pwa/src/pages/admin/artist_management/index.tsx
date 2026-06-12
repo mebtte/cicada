@@ -231,6 +231,7 @@ const Th = styled.th`
 `;
 
 const Td = styled.td`
+  position: relative;
   padding: 12px 18px;
   background: #fff;
   border-top: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -241,6 +242,9 @@ const Td = styled.td`
   font-weight: 700;
   letter-spacing: 0;
   vertical-align: middle;
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out;
 
   &:first-child {
     border-left: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -259,8 +263,15 @@ const Td = styled.td`
   }
 
   tbody tr:hover & {
-    color: rgb(75 75 75);
-    filter: brightness(1.01);
+    z-index: 2;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 ${ROW_SHADOW};
+  }
+
+  tbody tr:hover &:last-child {
+    box-shadow:
+      -6px 0 0 #fff,
+      0 5px 0 ${ROW_SHADOW};
   }
 `;
 
@@ -322,11 +333,11 @@ const PhotoButton = styled.button`
   -webkit-tap-highlight-color: transparent;
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms ease-out;
+    box-shadow 150ms ease-out;
 
   &:hover {
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 ${ROW_SHADOW};
   }
 
   &:active {
@@ -334,8 +345,7 @@ const PhotoButton = styled.button`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {
@@ -388,13 +398,11 @@ const ActionButton = styled.button`
   -webkit-tap-highlight-color: transparent;
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    color 120ms,
-    filter 120ms;
+    box-shadow 150ms ease-out;
 
   &:hover {
-    color: ${CSSVariable.COLOR_PRIMARY};
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 ${ROW_SHADOW};
   }
 
   &:active {
@@ -402,8 +410,7 @@ const ActionButton = styled.button`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {

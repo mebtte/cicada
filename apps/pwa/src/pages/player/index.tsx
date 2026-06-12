@@ -30,7 +30,6 @@ import AuthorizedDeviceDrawer from './authorized_device_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import useSearchHotkey from './use_search_hotkey';
 import e, { EventType } from './eventemitter';
-import ArtistModifyRecordDrawer from './singer_modify_record_drawer';
 import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
@@ -166,7 +165,6 @@ function Wrapper() {
       <AuthorizedDeviceDrawer />
       <MusicbillSharedUserDrawer />
       <SharedMusicbillInvitationDrawer />
-      <ArtistModifyRecordDrawer />
 
       <PlaylistAddAnimation />
       <PlayqueueInsertAnimation />

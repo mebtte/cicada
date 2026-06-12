@@ -48,6 +48,7 @@ const (
 	LoginTooFrequent                        = "login_too_frequent"
 	LoginWith2FATooFrequent                 = "login_with_2fa_too_frequent"
 	InstrumentalHasNoLyric                  = "instrumental_has_no_lyric"
+	InstrumentalHasNoLyricist               = "instrumental_has_no_lyricist"
 	PartialUploadNotExisted                 = "partial_upload_not_existed"
 	PartialUploadOwnerMismatch              = "partial_upload_owner_mismatch"
 	PartialUploadRangeInvalid               = "partial_upload_range_invalid"

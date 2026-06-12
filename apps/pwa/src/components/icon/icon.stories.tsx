@@ -200,7 +200,7 @@ export const InButton: Story = {
           <Button square size="md" variant="secondary" aria-label="refresh"><Icons.Refresh /></Button>
           <Button square size="md" variant="ghost"     aria-label="more"><Icons.DragIndicator /></Button>
           <Button square size="md" variant="danger"    aria-label="delete"><Icons.Delete /></Button>
-          <Button square size="md" variant="plain"     aria-label="help"><Icons.Help /></Button>
+          <Button square size="md" variant="ghost"     aria-label="help"><Icons.Help /></Button>
         </Row>
 
         <Row label="icon + label · primary · sm / md / lg">
@@ -214,7 +214,7 @@ export const InButton: Story = {
           <Button variant="secondary" icon={<Icons.Export />}>export</Button>
           <Button variant="ghost"     icon={<Icons.Refresh />}>refresh</Button>
           <Button variant="danger"    icon={<Icons.Delete />}>delete</Button>
-          <Button variant="plain"     icon={<Icons.QueueInsert />}>play next</Button>
+          <Button variant="ghost"     icon={<Icons.QueueInsert />}>play next</Button>
         </Row>
 
         <Row label="all icons · square ghost sm (verifies 1em scaling)">

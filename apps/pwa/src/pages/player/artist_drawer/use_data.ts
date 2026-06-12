@@ -65,30 +65,5 @@ export default (artistId: string) => {
     return unlistenArtistUpdated;
   }, [getData, artistId]);
 
-  useEffect(() => {
-    const musicUpdatedOrDeleted = ({ id }: { id: string }) => {
-      const musicList = [
-        ...(data.value?.singerMusicList ?? []),
-        ...(data.value?.lyricistMusicList ?? []),
-        ...(data.value?.composerMusicList ?? []),
-      ];
-      if (musicList.find((m) => m.id === id)) {
-        getData();
-      }
-    };
-    const unlistenMusicUpdated = playerEventemitter.listen(
-      PlayerEventType.MUSIC_UPDATED,
-      musicUpdatedOrDeleted,
-    );
-    const unlistenMusicDeleted = playerEventemitter.listen(
-      PlayerEventType.MUSIC_DELETED,
-      musicUpdatedOrDeleted,
-    );
-    return () => {
-      unlistenMusicUpdated();
-      unlistenMusicDeleted();
-    };
-  }, [data, getData]);
-
   return { data, reload: getData };
 };

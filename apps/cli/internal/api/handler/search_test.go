@@ -81,25 +81,25 @@ func TestSearchHandlersMatchSearchKeywordsWithoutReturningThem(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "creator", store.DoubleMD5("password"), "Creator", now,
+		"USER01", "creator", store.DoubleMD5("password"), "Creator", now,
 	); err != nil {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,aliases,searchKeywords,createTimestamp) VALUES
-			('artist-1','Visible Singer','', 'hidden artist token', ?)`,
+			('ART001','Visible Performer','', 'hidden artist token', ?)`,
 		now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,aliases,searchKeywords,asset,createTimestamp) VALUES
-			('music-1',1,'Visible Song','', 'hidden music token', 'song.mp3', ?)`,
+			('MUS001',1,'Visible Song','', 'hidden music token', 'song.mp3', ?)`,
 		now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-1", []string{"artist-1"}); err != nil {
+	if err := store.ReplaceMusicArtistsByRole("MUS001", store.MusicArtistRolePerformer, []string{"ART001"}); err != nil {
 		t.Fatalf("link music artist: %v", err)
 	}
 

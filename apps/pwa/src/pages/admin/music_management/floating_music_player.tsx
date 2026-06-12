@@ -235,12 +235,18 @@ const IconButton = styled.button<{ $primary?: boolean; $danger?: boolean }>`
   justify-content: center;
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms;
+    box-shadow 150ms ease-out;
   -webkit-tap-highlight-color: transparent;
 
   &:hover {
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 0
+      ${({ $danger, $primary }) =>
+        $danger
+          ? 'rgb(190 46 34)'
+          : $primary
+            ? CSSVariable.COLOR_PRIMARY_ACTIVE
+            : ROW_SHADOW};
   }
 
   &:active {
@@ -248,8 +254,7 @@ const IconButton = styled.button<{ $primary?: boolean; $danger?: boolean }>`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {
@@ -392,7 +397,7 @@ const InfoTop = styled.div`
   }
 `;
 
-const SingerText = styled.div`
+const PerformerText = styled.div`
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -580,7 +585,7 @@ function LyricContent({
     case 'empty':
       return <LyricStatusBox>{t('no_lyric')}</LyricStatusBox>;
     case 'instrumental':
-      return <LyricStatusBox>{t('instrument_without_lyric')}</LyricStatusBox>;
+      return <LyricStatusBox>{t('instrumental_without_lyric')}</LyricStatusBox>;
     case 'error':
       return (
         <LyricStatusBox>
@@ -632,7 +637,7 @@ function FloatingMusicPlayer({
         : '',
     [music, musicPlaybackQuality],
   );
-  const singerText = music?.singers.map((singer) => singer.name).join(', ') || '';
+  const performerText = music?.performers.map((performer) => performer.name).join(', ') || '';
   const canSeek = duration > 0 && Number.isFinite(duration);
   const currentSecond = currentMillisecond / 1000;
   const nextMusicPlaybackQuality =
@@ -835,9 +840,9 @@ function FloatingMusicPlayer({
                   <span className="alias">&nbsp;{music.aliases[0]}</span>
                 ) : null}
               </InfoTop>
-              <SingerText title={singerText}>
-                {singerText || t('unknown_singer')}
-              </SingerText>
+              <PerformerText title={performerText}>
+                {performerText || t('unknown_artist')}
+              </PerformerText>
             </ControllerInfo>
             <TimeBadge>
               <div>{formatSecond(currentSecond)}</div>

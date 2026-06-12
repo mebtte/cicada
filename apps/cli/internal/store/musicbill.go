@@ -76,7 +76,7 @@ func GetMusicbillsByUserID(userID string) ([]Musicbill, error) {
 
 func CreateMusicbill(userID, name string) (string, error) {
 	for range maxCreateMusicbillIDAttempts {
-		id, err := generateShortPublicID()
+		id, err := generatePublicID()
 		if err != nil {
 			return "", err
 		}

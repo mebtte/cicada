@@ -15,6 +15,7 @@ export enum ExceptionCode {
   ASSET_NOT_EXISTED = "asset_not_existed",
   ARTIST_NOT_EXISTED = "artist_not_existed",
   INSTRUMENTAL_HAS_NO_LYRIC = "instrumental_has_no_lyric",
+  INSTRUMENTAL_HAS_NO_LYRICIST = "instrumental_has_no_lyricist",
   ARTIST_ALREADY_EXISTED = "artist_already_existed",
   ARTIST_HAS_MUSIC_CAN_NOT_BE_DELETED = "artist_has_music_can_not_be_deleted",
   NO_NEED_TO_UPDATE = "no_need_to_update",

@@ -3,13 +3,13 @@ import { t } from '@/i18n';
 
 function formatMusicFilename({
   name,
-  singerNames,
+  performerNames,
   ext,
   index,
   tag,
 }: {
   name: string;
-  singerNames: string[];
+  performerNames: string[];
   ext: string;
   // 多文件场景下用于追加 (1)/(2)/... 后缀; 单文件不传
   index?: number;
@@ -18,11 +18,11 @@ function formatMusicFilename({
 }) {
   return sanitize(
     `${
-      singerNames.length === 0
-        ? t('unknown_singer')
-        : singerNames.length > 3
-        ? t('multiple_singers')
-        : singerNames.join(',')
+      performerNames.length === 0
+        ? t('unknown_artist')
+        : performerNames.length > 3
+        ? t('multiple_artists')
+        : performerNames.join(',')
     } - ${name}${index === undefined ? '' : `(${index})`}${
       tag ? `.${tag}` : ''
     }.${ext}`,

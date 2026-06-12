@@ -7,9 +7,11 @@ import Empty from '@/components/empty';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
 import { QueueMusic } from '@/pages/player/constants';
-import MusicBase from '@/pages/player/components/music_base';
+import { MusicBase } from '@/features/music/components';
 import useDynamicZIndex from '@/pages/player/use_dynamic_z_index';
-import { EventType as PlayerEventType } from '@/pages/player/eventemitter';
+import playerEventemitter, {
+  EventType as PlayerEventType,
+} from '@/pages/player/eventemitter';
 
 const Content = styled.div`
   position: relative;
@@ -106,6 +108,18 @@ function RadioQueueDrawer({
                       music={qm}
                       active={idx === currentIndex}
                       lineAfter={null}
+                      onOpenMusic={(music) =>
+                        playerEventemitter.emit(
+                          PlayerEventType.OPEN_MUSIC_DRAWER,
+                          { id: music.id },
+                        )
+                      }
+                      onOpenArtist={(performer) =>
+                        playerEventemitter.emit(
+                          PlayerEventType.OPEN_ARTIST_DRAWER,
+                          { id: performer.id },
+                        )
+                      }
                     />
                   </Row>
                 );

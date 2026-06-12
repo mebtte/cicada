@@ -1,4 +1,4 @@
-import { MusicWithSingerAliases, QueueMusic } from '@/pages/player/constants';
+import { MusicWithArtistAliases, QueueMusic } from '@/pages/player/constants';
 
 /**
  * 电台模式没有真实的播放列表概念, 但要复用主播放器的 `QueueMusic` 类型
@@ -6,7 +6,7 @@ import { MusicWithSingerAliases, QueueMusic } from '@/pages/player/constants';
  * 唯一的 pid 保证同首歌作为新队列项播放时被识别成新的会话.
  */
 export function toRadioQueueMusic(
-  music: MusicWithSingerAliases,
+  music: MusicWithArtistAliases,
   sequence: number,
 ): QueueMusic {
   return {
@@ -17,7 +17,7 @@ export function toRadioQueueMusic(
     type: music.type,
     aliases: music.aliases,
     asset: music.asset,
-    singers: music.singers,
+    performers: music.performers,
     lyricists: music.lyricists,
     composers: music.composers,
     index: sequence,

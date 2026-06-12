@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { RequestStatus } from '@/constants';
 import {
-  MusicWithSingerAliases,
+  MusicWithArtistAliases,
   QueueMusic,
   Musicbill,
   ExportingMusic,
@@ -16,7 +16,7 @@ interface Context {
   audioDuration: number;
   audioBufferedPercent: number;
 
-  playlist: (MusicWithSingerAliases & { index: number })[];
+  playlist: (MusicWithArtistAliases & { index: number })[];
 
   playqueue: QueueMusic[];
   currentPlayqueuePosition: number;

@@ -1,9 +1,9 @@
 import Storage from '@/utils/storage';
-import { MusicWithSingerAliases } from './constants';
+import { MusicWithArtistAliases } from './constants';
 
 export enum Key {
-  PLAYLIST = 'playlist-v2',
-  PLAY_RECORD_UPLOAD_QUEUE_V2 = 'play-record-upload-queue-v2',
+  PLAYLIST = 'playlist-v4',
+  PLAY_RECORD_UPLOAD_QUEUE_V3 = 'play-record-upload-queue-v3',
 }
 
 export interface PlayRecordUploadQueueItem {
@@ -20,8 +20,8 @@ export interface PlayRecordUploadQueueItem {
 const storage = new Storage<
   Key,
   {
-    [Key.PLAYLIST]: MusicWithSingerAliases[];
-    [Key.PLAY_RECORD_UPLOAD_QUEUE_V2]: PlayRecordUploadQueueItem[];
+    [Key.PLAYLIST]: MusicWithArtistAliases[];
+    [Key.PLAY_RECORD_UPLOAD_QUEUE_V3]: PlayRecordUploadQueueItem[];
   }
 >('player');
 

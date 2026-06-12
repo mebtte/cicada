@@ -8,7 +8,7 @@ import Spinner from '@/components/spinner';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
 import {
-  MusicWithSingerAliases,
+  MusicWithArtistAliases,
   Musicbill as MusicbillType,
 } from '../constants';
 import playerEventemitter, {
@@ -166,7 +166,7 @@ function Musicbill({
   music,
 }: {
   musicbill: MusicbillType;
-  music: MusicWithSingerAliases;
+  music: MusicWithArtistAliases;
 }) {
   const { id, status, musicList } = musicbill;
   const selected =

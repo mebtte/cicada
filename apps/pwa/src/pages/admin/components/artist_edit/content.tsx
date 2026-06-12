@@ -212,12 +212,16 @@ const PhotoRow = styled.div<{ $dragging: boolean; $sortable: boolean }>`
   opacity: ${({ $dragging }) => ($dragging ? 0.72 : 1)};
   z-index: ${({ $dragging }) => ($dragging ? 1 : 0)};
   transition:
+    transform 150ms ease-out,
     border-color 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms ease-out;
+    box-shadow 150ms ease-out;
 
   &:hover {
-    filter: brightness(1.01);
+    transform: ${({ $dragging }) =>
+      $dragging ? 'translateY(0)' : 'translateY(-2px)'};
+    box-shadow: 0 ${({ $dragging }) => ($dragging ? 4 : 6)}px 0
+      ${({ $dragging }) =>
+        $dragging ? CSSVariable.COLOR_PRIMARY_ACTIVE : ROW_SHADOW};
   }
 `;
 
@@ -337,14 +341,12 @@ const DragHandle = styled.button`
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
   transition:
-    color 120ms,
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms ease-out;
+    box-shadow 150ms ease-out;
 
   &:hover {
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    filter: brightness(1.04);
+    transform: translateY(calc(-50% - 2px));
+    box-shadow: 0 5px 0 ${ROW_SHADOW};
   }
 
   &:active {
@@ -353,8 +355,7 @@ const DragHandle = styled.button`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 
   &:disabled {

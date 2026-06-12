@@ -59,6 +59,14 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 self.addEventListener('activate', () => {
+  void self.caches.keys().then((keys) =>
+    Promise.all(
+      keys
+        .filter((key) => key === 'api' || key === 'asset_media')
+        .map((key) => self.caches.delete(key)),
+    ),
+  );
+
   /**
    * 移除过期的 API cache
    * @author mebtte<i@mebtte.com>

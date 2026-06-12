@@ -4,11 +4,12 @@ import {
   ReactNode,
   forwardRef,
 } from 'react';
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '../theme';
+import Spinner from '../spinner';
 
-export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'plain';
+export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type Size = 'sm' | 'md' | 'lg';
 
 const cn = (v: string) => `var(${v})`;
@@ -89,43 +90,11 @@ const makeVariant = (
   }
 `;
 
-const plainVariant = css<{ $offset: number }>`
-  color: inherit;
-  background: transparent;
-  border-color: transparent;
-  box-shadow: 0 1px 0 rgb(0 0 0 / 0.06);
-  transition:
-    background 120ms,
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out;
-
-  &:not(:disabled):hover {
-    background: rgb(0 0 0 / 0.06);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 0 rgb(0 0 0 / 0.18);
-  }
-
-  &:not(:disabled):active {
-    background: rgb(0 0 0 / 0.12);
-    transform: translateY(0);
-    box-shadow: none;
-    transition:
-      background 60ms,
-      transform 60ms ease-in,
-      box-shadow 60ms ease-in;
-  }
-
-  &:disabled {
-    box-shadow: none;
-  }
-`;
-
 const VARIANT_MAP: Record<Variant, ReturnType<typeof css>> = {
   primary:   makeVariant(PRIMARY,   PRIMARY_SHADOW),
   secondary: makeVariant('#ffffff', PRIMARY,        PRIMARY),
   ghost:     makeVariant('#ffffff', CONTROL_NEUTRAL, 'rgb(88 88 88)'),
   danger:    makeVariant('rgb(242 80 66)', 'rgb(190 46 34)'),
-  plain:     plainVariant,
 };
 
 const FOCUS_RING_MAP: Record<Variant, string> = {
@@ -133,33 +102,17 @@ const FOCUS_RING_MAP: Record<Variant, string> = {
   secondary: PRIMARY,
   ghost: CONTROL_NEUTRAL,
   danger: 'rgb(242 80 66)',
-  plain: PRIMARY,
 };
 
 // ─── Loader ───────────────────────────────────────────────────────────────────
 
-const spin = keyframes`to { transform: rotate(360deg); }`;
+const LOADER_SIZE: Record<Size, number> = { sm: 14, md: 17, lg: 20 };
 
-const Loader = styled.span<{ $size: Size }>`
+const Loader = styled(Spinner)`
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin: auto;
   pointer-events: none;
-
-  &::after {
-    content: '';
-    border-radius: 50%;
-    border: 2px solid currentColor;
-    border-top-color: transparent;
-    opacity: 0.8;
-    animation: ${spin} 0.55s linear infinite;
-    ${({ $size }) => {
-      const s = $size === 'sm' ? 14 : $size === 'lg' ? 20 : 17;
-      return css`width: ${s}px; height: ${s}px;`;
-    }}
-  }
 `;
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
@@ -240,33 +193,22 @@ const StyledButton = styled.button<{
     --offset: ${$offset}px;
   `}
   // loading 时同样会设置 disabled，保留禁用外观避免提交中看起来仍可点击。
-  ${({ $offset, $variant }) =>
-    $variant === 'plain'
-      ? css`
-          &:disabled {
-            color: ${CSSVariable.TEXT_COLOR_DISABLED};
-            background: transparent;
-            border-color: transparent;
-            box-shadow: none;
-            filter: grayscale(1);
-          }
-        `
-      : css`
-          &:disabled {
-            color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-            background: ${CSSVariable.BACKGROUND_DISABLED};
-            border-color: ${CSSVariable.COLOR_DISABLED_SHADOW};
-            box-shadow: 0 ${$offset}px 0 ${CSSVariable.COLOR_DISABLED_SHADOW};
-            filter: grayscale(1);
-          }
+  ${({ $offset }) => css`
+    &:disabled {
+      color: ${CSSVariable.TEXT_COLOR_SECONDARY};
+      background: ${CSSVariable.BACKGROUND_DISABLED};
+      border-color: ${CSSVariable.COLOR_DISABLED_SHADOW};
+      box-shadow: 0 ${$offset}px 0 ${CSSVariable.COLOR_DISABLED_SHADOW};
+      filter: grayscale(1);
+    }
 
-          &:disabled:hover,
-          &:disabled:active {
-            transform: none;
-            box-shadow: 0 ${$offset}px 0 ${CSSVariable.COLOR_DISABLED_SHADOW};
-            filter: grayscale(1);
-          }
-        `}
+    &:disabled:hover,
+    &:disabled:active {
+      transform: none;
+      box-shadow: 0 ${$offset}px 0 ${CSSVariable.COLOR_DISABLED_SHADOW};
+      filter: grayscale(1);
+    }
+  `}
 `;
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -319,7 +261,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       {...rest}
       onClick={handleClick}
     >
-      {loading && <Loader $size={size} />}
+      {loading && (
+        <Loader size={LOADER_SIZE[size]} color="currentColor" aria-hidden />
+      )}
       <span className="btn-label">
         {icon ? <span className="btn-icon">{icon}</span> : null}
         {children}

@@ -41,7 +41,7 @@ import playerEventemitter, {
 import {
   CONTROLLER_FLOATING_RESERVED_HEIGHT,
   FLOATING_CONTROLLER_SCROLL_SPACE,
-  MusicWithSingerAliases,
+  MusicWithArtistAliases,
 } from '../../constants';
 
 const SUMMARY_BAR_HEIGHT = 58;
@@ -120,7 +120,7 @@ const SummaryBar = styled.div`
   }
 `;
 
-function entryToMusic(entry: OfflineMusic): MusicWithSingerAliases {
+function entryToMusic(entry: OfflineMusic): MusicWithArtistAliases {
   return {
     id: entry.id,
     name: entry.name,
@@ -128,7 +128,7 @@ function entryToMusic(entry: OfflineMusic): MusicWithSingerAliases {
     cover: entry.cover,
     type: entry.type,
     asset: entry.asset,
-    singers: entry.singers.map((s) => ({
+    performers: entry.performers.map((s) => ({
       id: s.id,
       name: s.name,
       aliases: s.aliases ?? [],
@@ -181,7 +181,7 @@ function OfflineCache() {
       ) {
         return true;
       }
-      return entry.singers.some((s) => {
+      return entry.performers.some((s) => {
         if (s.name.toLowerCase().includes(normalizedKeyword)) {
           return true;
         }
@@ -280,7 +280,7 @@ function OfflineCache() {
                   music={{
                     id: entry.id,
                     name: entry.name,
-                    singers: entry.singers,
+                    performers: entry.performers,
                     aliases: entry.aliases,
                   }}
                   lineAfter={
@@ -288,7 +288,7 @@ function OfflineCache() {
                       <Button
                         className="primary-action"
                         square
-                        variant="plain"
+                        variant="ghost"
                         size="sm"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -303,7 +303,7 @@ function OfflineCache() {
                       <Tooltip content={t('play_next')}>
                         <Button
                           square
-                          variant="plain"
+                          variant="ghost"
                           size="sm"
                           onClick={(event) => {
                             event.stopPropagation();
@@ -319,7 +319,7 @@ function OfflineCache() {
                       <Tooltip content={t('remove_from_offline_cache')}>
                         <Button
                           square
-                          variant="plain"
+                          variant="ghost"
                           size="sm"
                           aria-label={t('remove_from_offline_cache')}
                           onClick={(event) => {

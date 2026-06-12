@@ -116,13 +116,13 @@ function Lyric({ music }: { music: MusicDetail }) {
     music.lyrics.length > 0;
 
   const downloadLyrics = () => {
-    const singerNames = music.singers.map((s) => s.name);
+    const performerNames = music.performers.map((s) => s.name);
     // 单条歌词不加 (n) 后缀, 多条则按 1..N 顺序追加
     const multiple = music.lyrics.length > 1;
     music.lyrics.forEach((lyric, i) => {
       const filename = formatMusicFilename({
         name: music.name,
-        singerNames,
+        performerNames,
         ext: 'lrc',
         index: multiple ? i + 1 : undefined,
       });
@@ -153,7 +153,7 @@ function Lyric({ music }: { music: MusicDetail }) {
             <Line>{t('no_lyric')}</Line>
           )
         ) : (
-          <Line>{t('instrument_without_lyric')}</Line>
+          <Line>{t('instrumental_without_lyric')}</Line>
         )}
         {downloadable ? (
           <DownloadButton

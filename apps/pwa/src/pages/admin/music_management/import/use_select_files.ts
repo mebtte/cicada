@@ -4,7 +4,7 @@ import { MusicType } from '@/constants/music';
 import {
   addTasks,
   ImportTask,
-  ImportTaskSinger,
+  ImportTaskPerformer,
 } from '@/global_states/music_import';
 import getAssetMaxSize from '@/utils/get_asset_max_size';
 import formatBytes from '@/utils/format_bytes';
@@ -34,21 +34,21 @@ function splitArtistNames(artist?: string) {
   );
 }
 
-function singerMatchesName(singer: SearchArtistItem, name: string) {
+function performerMatchesName(performer: SearchArtistItem, name: string) {
   const normalizedName = normalizeArtistName(name);
   return (
-    normalizeArtistName(singer.name) === normalizedName ||
-    singer.aliases.some((alias) => normalizeArtistName(alias) === normalizedName)
+    normalizeArtistName(performer.name) === normalizedName ||
+    performer.aliases.some((alias) => normalizeArtistName(alias) === normalizedName)
   );
 }
 
-const singerCache = new Map<string, Promise<ImportTaskSinger | undefined>>();
+const performerCache = new Map<string, Promise<ImportTaskPerformer | undefined>>();
 
-function findExactSinger(name: string): Promise<ImportTaskSinger | undefined> {
+function findExactPerformer(name: string): Promise<ImportTaskPerformer | undefined> {
   const normalizedName = normalizeArtistName(name);
   if (!normalizedName) return Promise.resolve(undefined);
 
-  const cached = singerCache.get(normalizedName);
+  const cached = performerCache.get(normalizedName);
   if (cached) return cached;
 
   const request = searchArtistRequest({
@@ -57,30 +57,30 @@ function findExactSinger(name: string): Promise<ImportTaskSinger | undefined> {
     pageSize: 20,
     requestMinimalDuration: 0,
   }).then(({ artistList }) => {
-    const matched = artistList.find((singer) => singerMatchesName(singer, name));
+    const matched = artistList.find((performer) => performerMatchesName(performer, name));
     return matched ? { id: matched.id, name: matched.name } : undefined;
   });
-  singerCache.set(normalizedName, request);
+  performerCache.set(normalizedName, request);
   return request;
 }
 
-async function resolveArtistSingers(artist?: string): Promise<ImportTaskSinger[]> {
+async function resolveArtistPerformers(artist?: string): Promise<ImportTaskPerformer[]> {
   const trimmedArtist = artist?.trim();
   if (!trimmedArtist) return [];
 
   try {
     // Prefer an exact whole-artist match so names like "AC/DC" are not split
-    // into unrelated singers when that artist already exists.
-    const wholeMatch = await findExactSinger(trimmedArtist);
+    // into unrelated performers when that artist already exists.
+    const wholeMatch = await findExactPerformer(trimmedArtist);
     if (wholeMatch) return [wholeMatch];
 
-    const singers = await Promise.all(
-      splitArtistNames(trimmedArtist).map(findExactSinger),
+    const performers = await Promise.all(
+      splitArtistNames(trimmedArtist).map(findExactPerformer),
     );
-    const deduped = new Map<string, ImportTaskSinger>();
-    singers.forEach((singer) => {
-      if (singer) {
-        deduped.set(singer.id, singer);
+    const deduped = new Map<string, ImportTaskPerformer>();
+    performers.forEach((performer) => {
+      if (performer) {
+        deduped.set(performer.id, performer);
       }
     });
     return Array.from(deduped.values());
@@ -122,8 +122,8 @@ export default function useSelectFiles() {
 
     try {
       const parsed = await Promise.all(accepted.map(parseMusicFile));
-      const parsedSingers = await Promise.all(
-        parsed.map((item) => resolveArtistSingers(item.parsed.artist)),
+      const parsedPerformers = await Promise.all(
+        parsed.map((item) => resolveArtistPerformers(item.parsed.artist)),
       );
       const now = Date.now();
       const newTasks: ImportTask[] = accepted.map((file, i) => ({
@@ -133,7 +133,7 @@ export default function useSelectFiles() {
         fileSize: file.size,
         parsed: parsed[i].parsed,
         name: parsed[i].name,
-        singers: parsedSingers[i],
+        performers: parsedPerformers[i],
         type: MusicType.SONG,
         phase: 'editing',
         uploadedBytes: 0,

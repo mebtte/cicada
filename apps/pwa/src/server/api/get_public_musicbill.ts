@@ -19,7 +19,7 @@ type Response = {
     cover: string;
     coverThumbnail?: string;
     asset: string;
-    singers: {
+    performers: {
       id: string;
       name: string;
       aliases: string[];

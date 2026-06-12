@@ -63,7 +63,7 @@ const Style = styled.div`
       color: rgb(50 50 50);
     }
 
-    > .info > .singers {
+    > .info > .performers {
       font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
       font-size: 12px;
       font-weight: 700;
@@ -108,7 +108,7 @@ function Top({ music }: { music: Music }) {
         musicName={music.name}
         musicCover={getResizedImage({ url: music.cover, size: 80 })}
         musicCoverThumbnail={music.coverThumbnail}
-        singers={music.singers}
+        performers={music.performers}
       />
     </Style>
   );

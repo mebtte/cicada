@@ -117,7 +117,7 @@ function User({ user, width }: { user: UserType; width: string }) {
         </div>
         <Button
           square
-          variant="plain"
+          variant="ghost"
           size="sm"
           onClick={(event) => {
             event.stopPropagation();

@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import styled from 'styled-components';
-import Cover from '@/components/cover';
 import Button from '@/components/button';
 import { Search as SearchIcon, ArrowBack, Menu as MenuIcon } from '@/components/icon';
 import { useLocation, useNavigate as useRouterNavigate } from 'react-router-dom';
@@ -27,13 +26,22 @@ const Style = styled.div`
 
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
 
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   background: #fff;
   border-bottom: 2px solid ${CSSVariable.COLOR_BORDER};
   box-shadow: 0 3px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
   -webkit-app-region: drag;
+`;
+
+const HeaderLogo = styled.img`
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  flex-shrink: 0;
+  transform: translateY(-5px);
+  user-select: none;
 `;
 
 function Header() {
@@ -90,7 +98,7 @@ function Header() {
           </Button>
         </>
       ) : (
-        <Cover src="/logo.png" size={30} />
+        <HeaderLogo src="/app_logo.png" alt="" aria-hidden="true" />
       )}
       <Title title={title.title} description={title.description} />
       {miniMode ? null : <Search />}

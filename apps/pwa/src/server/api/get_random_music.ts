@@ -2,18 +2,18 @@ import { MusicType } from '@/constants/music';
 import { prefixServerOrigin } from '@/global_states/server';
 import { request } from '..';
 
-interface SingerPhoto {
+interface ArtistPhoto {
   id: string;
   asset: string;
   thumbnail?: string;
   description: string;
 }
 
-interface Singer {
+interface Performer {
   id: string;
   name: string;
   aliases?: string[];
-  photos?: SingerPhoto[];
+  photos?: ArtistPhoto[];
 }
 
 interface RawMusic {
@@ -31,19 +31,19 @@ interface RawMusic {
   heat: number;
   createTimestamp: number;
   year: number | null;
-  singers: (Singer & { aliases: string[] })[];
-  lyricists: (Singer & { aliases: string[] })[];
-  composers: (Singer & { aliases: string[] })[];
+  performers: (Performer & { aliases: string[] })[];
+  lyricists: (Performer & { aliases: string[] })[];
+  composers: (Performer & { aliases: string[] })[];
 }
 
-const normalizePhotos = (photos: SingerPhoto[] = []) =>
+const normalizePhotos = (photos: ArtistPhoto[] = []) =>
   photos.map((p) => ({
     ...p,
     asset: prefixServerOrigin(p.asset),
     thumbnail: prefixServerOrigin(p.thumbnail ?? ''),
   }));
 
-const normalizeArtist = <T extends Singer & { aliases: string[] }>(artist: T) => {
+const normalizeArtist = <T extends Performer & { aliases: string[] }>(artist: T) => {
   const photos = normalizePhotos(artist.photos);
   return {
     ...artist,
@@ -68,7 +68,7 @@ async function getRandomMusic({ excludeId }: { excludeId?: string } = {}) {
     cover: prefixServerOrigin(music.cover),
     coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
     asset: prefixServerOrigin(music.asset),
-    singers: (music.singers ?? []).map(normalizeArtist),
+    performers: (music.performers ?? []).map(normalizeArtist),
     lyricists: (music.lyricists ?? []).map(normalizeArtist),
     composers: (music.composers ?? []).map(normalizeArtist),
   };

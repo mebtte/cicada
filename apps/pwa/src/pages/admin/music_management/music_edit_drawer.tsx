@@ -39,10 +39,13 @@ import {
   SEARCH_KEYWORD_MAX_LENGTH as MUSIC_SEARCH_KEYWORD_MAX_LENGTH,
   YEAR_MAX,
   YEAR_MIN,
+  getPerformerLabel,
 } from '@/constants/music';
 import { AssetType, MUSIC_ASSET_ACCEPT_TYPES } from '@/constants/asset';
 import { SEARCH_KEYWORD_MAX_LENGTH as ARTIST_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/artist';
+import { Language } from '@/constants/language';
 import { CSSVariable } from '@/global_style';
+import { useSetting } from '@/global_states/setting';
 import { t } from '@/i18n';
 import autoScrollbar from '@/style/auto_scrollbar';
 import upperCaseFirstLetterStyle from '@/style/upper_case_first_letter';
@@ -76,7 +79,7 @@ interface Artist {
   aliases: string[];
 }
 
-interface MusicSinger {
+interface MusicPerformer {
   id: string;
   name: string;
 }
@@ -84,7 +87,7 @@ interface MusicSinger {
 interface RelatedMusic {
   id: string;
   name: string;
-  singers: MusicSinger[];
+  performers: MusicPerformer[];
 }
 
 interface Lyric {
@@ -105,7 +108,7 @@ interface Music {
   type: MusicType;
   aliases: string[];
   searchKeywords: string;
-  singers: Artist[];
+  performers: Artist[];
   lyricists: Artist[];
   composers: Artist[];
   heat: number;
@@ -113,6 +116,20 @@ interface Music {
   forkFromList: RelatedMusic[];
   forkList: RelatedMusic[];
   year: number | null;
+}
+
+function getMusicEditPerformerLabel(type: MusicType) {
+  if (useSetting.getState().language !== Language.EN) {
+    return getPerformerLabel(type);
+  }
+  return type === MusicType.SONG ? 'singers' : 'instrumentalists';
+}
+
+function getMusicEditArtistRoleLabel(role: 'lyricist' | 'composer') {
+  if (useSetting.getState().language !== Language.EN) {
+    return t(role);
+  }
+  return role === 'lyricist' ? 'lyricists' : 'composers';
 }
 
 interface MusicFileUploadProgress {
@@ -145,7 +162,7 @@ const searchArtist = (search: string): Promise<SelectOption<Artist>[]> => {
 const formatMusicToOption = (
   music: RelatedMusic,
 ): SelectOption<RelatedMusic> => ({
-  label: `${music.name} - ${music.singers.map((s) => s.name).join(',')}`,
+  label: `${music.name} - ${music.performers.map((s) => s.name).join(',')}`,
   value: music,
 });
 
@@ -652,8 +669,8 @@ function EditContent({
   const [lyrics, setLyrics] = useState<string[]>(() =>
     music.lyrics.map((lyric) => lyric.lrc),
   );
-  const [singers, setSingers] = useState<SelectOption<Artist>[]>(() =>
-    music.singers.map(formatArtistToOption),
+  const [performers, setPerformers] = useState<SelectOption<Artist>[]>(() =>
+    music.performers.map(formatArtistToOption),
   );
   const [lyricists, setLyricists] = useState<SelectOption<Artist>[]>(() =>
     music.lyricists.map(formatArtistToOption),
@@ -681,7 +698,7 @@ function EditContent({
     setAliases(music.aliases);
     setSearchKeywords(music.searchKeywords);
     setLyrics(music.lyrics.map((lyric) => lyric.lrc));
-    setSingers(music.singers.map(formatArtistToOption));
+    setPerformers(music.performers.map(formatArtistToOption));
     setLyricists(music.lyricists.map(formatArtistToOption));
     setComposers(music.composers.map(formatArtistToOption));
     setForkFromList(music.forkFromList.map(formatMusicToOption));
@@ -731,9 +748,9 @@ function EditContent({
     [searchKeywords],
   );
   const normalizedLyrics = useMemo(() => normalizeLyrics(lyrics), [lyrics]);
-  const singerIds = useMemo(
-    () => singers.map((option) => option.value.id),
-    [singers],
+  const performerIds = useMemo(
+    () => performers.map((option) => option.value.id),
+    [performers],
   );
   const lyricistIds = useMemo(
     () => lyricists.map((option) => option.value.id),
@@ -751,9 +768,9 @@ function EditContent({
     () => music.lyrics.map((lyric) => lyric.lrc),
     [music.lyrics],
   );
-  const originalSingerIds = useMemo(
-    () => music.singers.map((singer) => singer.id),
-    [music.singers],
+  const originalPerformerIds = useMemo(
+    () => music.performers.map((performer) => performer.id),
+    [music.performers],
   );
   const originalLyricistIds = useMemo(
     () => music.lyricists.map((lyricist) => lyricist.id),
@@ -777,8 +794,12 @@ function EditContent({
     normalizedSearchKeywords !== music.searchKeywords ||
     (music.type === MusicType.SONG &&
       !stringArrayEqual(normalizedLyrics, originalLyrics)) ||
-    !stringArrayEqual(sortedIds(singerIds), sortedIds(originalSingerIds)) ||
-    !stringArrayEqual(sortedIds(lyricistIds), sortedIds(originalLyricistIds)) ||
+    !stringArrayEqual(sortedIds(performerIds), sortedIds(originalPerformerIds)) ||
+    (music.type === MusicType.SONG &&
+      !stringArrayEqual(
+        sortedIds(lyricistIds),
+        sortedIds(originalLyricistIds),
+      )) ||
     !stringArrayEqual(sortedIds(composerIds), sortedIds(originalComposerIds)) ||
     !stringArrayEqual(sortedIds(forkFromIds), sortedIds(originalForkFromIds)) ||
     parsedYear !== music.year;
@@ -865,8 +886,8 @@ function EditContent({
     });
   };
 
-  const onSingerCreated = useCallback((artist: Artist) => {
-    setSingers((list) => {
+  const onPerformerCreated = useCallback((artist: Artist) => {
+    setPerformers((list) => {
       if (list.some((option) => option.value.id === artist.id)) {
         return list;
       }
@@ -1124,15 +1145,16 @@ function EditContent({
         });
       }
 
-      if (!stringArrayEqual(sortedIds(singerIds), sortedIds(originalSingerIds))) {
+      if (!stringArrayEqual(sortedIds(performerIds), sortedIds(originalPerformerIds))) {
         await updateMusic({
           id: music.id,
-          key: AllowUpdateKey.SINGER,
-          value: singerIds,
+          key: AllowUpdateKey.PERFORMER,
+          value: performerIds,
         });
       }
 
       if (
+        music.type === MusicType.SONG &&
         !stringArrayEqual(sortedIds(lyricistIds), sortedIds(originalLyricistIds))
       ) {
         await updateMusic({
@@ -1308,41 +1330,43 @@ function EditContent({
 
         <Group>
           <GroupHeader>
-            <GroupTitle>{t('singer')}</GroupTitle>
+            <GroupTitle>{getMusicEditPerformerLabel(music.type)}</GroupTitle>
             <CreateArtistLabel
               notifyOnCreated={false}
-              onCreated={onSingerCreated}
+              onCreated={onPerformerCreated}
             />
           </GroupHeader>
           <MultiSelect
-            value={singers}
+            value={performers}
             loadOptions={searchArtist}
-            onChange={setSingers}
+            onChange={setPerformers}
             disabled={saving}
             placeholder=""
           />
         </Group>
 
-        <Group>
-          <GroupHeader>
-            <GroupTitle>{t('lyricist')}</GroupTitle>
-            <CreateArtistLabel
-              notifyOnCreated={false}
-              onCreated={onLyricistCreated}
+        {music.type === MusicType.SONG ? (
+          <Group>
+            <GroupHeader>
+              <GroupTitle>{getMusicEditArtistRoleLabel('lyricist')}</GroupTitle>
+              <CreateArtistLabel
+                notifyOnCreated={false}
+                onCreated={onLyricistCreated}
+              />
+            </GroupHeader>
+            <MultiSelect
+              value={lyricists}
+              loadOptions={searchArtist}
+              onChange={setLyricists}
+              disabled={saving}
+              placeholder=""
             />
-          </GroupHeader>
-          <MultiSelect
-            value={lyricists}
-            loadOptions={searchArtist}
-            onChange={setLyricists}
-            disabled={saving}
-            placeholder=""
-          />
-        </Group>
+          </Group>
+        ) : null}
 
         <Group>
           <GroupHeader>
-            <GroupTitle>{t('composer')}</GroupTitle>
+            <GroupTitle>{getMusicEditArtistRoleLabel('composer')}</GroupTitle>
             <CreateArtistLabel
               notifyOnCreated={false}
               onCreated={onComposerCreated}
@@ -1516,8 +1540,8 @@ function MusicEditDrawer({
           type: result.type,
           aliases: result.aliases,
           searchKeywords: result.searchKeywords,
-          singers: result.singers,
-          lyricists: result.lyricists,
+          performers: result.performers,
+          lyricists: result.type === MusicType.SONG ? result.lyricists : [],
           composers: result.composers,
           heat: result.heat,
           lyrics,

@@ -3,7 +3,7 @@ import { CSSVariable } from '@/global_style';
 import { animated, useTransition } from 'react-spring';
 import ellipsis from '@/style/ellipsis';
 import { QueueMusic } from '../constants';
-import Singer from '../components/singer';
+import Performer from '../components/performer';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
@@ -51,7 +51,7 @@ const Style = styled(animated.div)`
     }
   }
 
-  > .singers {
+  > .performers {
     font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     font-weight: 700;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
@@ -88,9 +88,9 @@ function Info({ queueMusic }: { queueMusic?: QueueMusic }) {
                 <span className="alias">&nbsp;{qm.aliases[0]}</span>
               ) : null}
             </div>
-            <div className="singers">
-              {qm.singers.map((singer) => (
-                <Singer key={singer.id} singer={singer} />
+            <div className="performers">
+              {qm.performers.map((performer) => (
+                <Performer key={performer.id} performer={performer} />
               ))}
             </div>
           </Style>

@@ -9,7 +9,7 @@ interface TestMusic {
   name: string;
   type: number;
   aliases: string[];
-  singers: { id: string; name: string; aliases: string[] }[];
+  performers: { id: string; name: string; aliases: string[] }[];
   asset: string;
 }
 
@@ -26,7 +26,7 @@ function createMusic(id: string): TestMusic {
     name: id,
     type: 1,
     aliases: [],
-    singers: [],
+    performers: [],
     asset: `${id}.mp3`,
   };
 }
