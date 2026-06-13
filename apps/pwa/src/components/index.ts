@@ -64,3 +64,6 @@ export type { AppDrawerProps, AppDrawerWidth } from './app_drawer';
 
 export { default as AsyncContent } from './async_content';
 export type { AsyncContentProps } from './async_content';
+
+export { default as Tag } from './tag';
+export type { TagProps, Variant as TagVariant, Size as TagSize } from './tag';

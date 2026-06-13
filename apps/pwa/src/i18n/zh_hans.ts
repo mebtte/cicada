@@ -213,6 +213,7 @@ const zhCN: {
   unknown: '未知',
   unknown_device: '未知设备',
   authorized_devices: '授权设备',
+  current_device: '当前设备',
   device_name: '设备名称',
   created_at: '创建时间',
   last_seen_at: '最近活动时间',

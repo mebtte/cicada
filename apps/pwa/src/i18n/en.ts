@@ -217,6 +217,7 @@ export default {
   unknown: 'unknown',
   unknown_device: 'unknown device',
   authorized_devices: 'authorized devices',
+  current_device: 'current device',
   device_name: 'device name',
   created_at: 'created at',
   last_seen_at: 'last seen at',
