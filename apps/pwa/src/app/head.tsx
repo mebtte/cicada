@@ -2,44 +2,24 @@ import { t } from '@/i18n';
 import capitalize from '@/utils/capitalize';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 import { memo } from 'react';
-import { IS_MAC_OS } from '@/constants/browser';
 import storage, { Key } from '@/storage';
 
 const appName =
   (await storage.getItem(Key.CUSTOM_APP_NAME)) || capitalize(t('cicada'));
+// Chrome 触发 PWA 安装按钮要求 manifest 至少包含一个 ≥192x192 的图标
+const FAVICON_SIZES = [16, 32, 48, 64, 96, 128, 192, 256, 512] as const;
+const icons = FAVICON_SIZES.map((size) => ({
+  src: `${window.location.origin}/favicon-${size}.png`,
+  type: 'image/png',
+  sizes: `${size}x${size}`,
+}));
 const MANIFEST_URL = URL.createObjectURL(
   new Blob(
     [
       JSON.stringify({
         name: appName,
         description: upperCaseFirstLetter(t('cicada_description')),
-        icons: IS_MAC_OS
-          ? [
-              {
-                src: `${window.location.origin}/app_icon_macos_512.png`,
-                type: 'image/png',
-                sizes: '512x512',
-              },
-              {
-                src: `${window.location.origin}/app_icon_maskable_macos_512.png`,
-                type: 'image/png',
-                sizes: '512x512',
-                purpose: 'maskable',
-              },
-            ]
-          : [
-              {
-                src: `${window.location.origin}/app_icon_512.png`,
-                type: 'image/png',
-                sizes: '512x512',
-              },
-              {
-                src: `${window.location.origin}/app_icon_maskable_512.png`,
-                type: 'image/png',
-                sizes: '512x512',
-                purpose: 'maskable',
-              },
-            ],
+        icons,
         start_url: window.location.origin,
         background_color: '#ffffff',
         display: 'standalone',

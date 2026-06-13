@@ -13,6 +13,7 @@ import { t } from '@/i18n';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { CSSVariable } from '@/global_style';
 import { DrawerDescription, DrawerHeader, DrawerTitle } from '@/components';
 import { TabList, type TabItem } from '@/components/tabs';
 import Cover, { Shape } from '@/components/cover';
@@ -26,7 +27,7 @@ import { FLOATING_CONTROLLER_SCROLL_SPACE } from '../constants';
 import { PAGE_HORIZONTAL_PADDING } from '../pages/page';
 
 enum ArtistMusicTab {
-  SINGER = 'singer',
+  PERFORMER = 'performer',
   LYRICIST = 'lyricist',
   COMPOSER = 'composer',
 }
@@ -84,7 +85,8 @@ const Header = styled(DrawerHeader)<{ $visible: boolean }>`
   background-color: ${({ $visible }) =>
     $visible ? 'rgb(255 255 255 / 0.92)' : 'transparent'};
   border-bottom: 1px solid
-    ${({ $visible }) => ($visible ? 'rgb(229 229 229)' : 'transparent')};
+    ${({ $visible }) =>
+      $visible ? CSSVariable.COLOR_NEUTRAL_SHADOW : 'transparent'};
   backdrop-filter: ${({ $visible }) => ($visible ? 'blur(8px)' : 'none')};
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transform: translateY(${({ $visible }) => ($visible ? 0 : '-4px')});
@@ -107,9 +109,9 @@ const HeaderCover = styled.div`
   box-sizing: border-box;
 
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 12px;
-  box-shadow: 0 4px 0 rgb(229 229 229);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   > .header-cover-image {
     border-radius: 8px;
@@ -178,11 +180,11 @@ function Detail({
   const scrollableRef = useRef<HTMLDivElement | null>(null);
   const identityRef = useRef<HTMLElement | null>(null);
   const [showCollapsedHeader, setShowCollapsedHeader] = useState(false);
-  const [tab, setTab] = useState<ArtistMusicTab>(ArtistMusicTab.SINGER);
+  const [tab, setTab] = useState<ArtistMusicTab>(ArtistMusicTab.PERFORMER);
   const useCollapsingHeader = insideDrawer;
   const tabs: TabItem<ArtistMusicTab>[] = [
-    ...(artist.singerMusicList.length
-      ? [{ tab: ArtistMusicTab.SINGER, label: t('sung_music') }]
+    ...(artist.performerMusicList.length
+      ? [{ tab: ArtistMusicTab.PERFORMER, label: t('performed_music') }]
       : []),
     ...(artist.lyricistMusicList.length
       ? [{ tab: ArtistMusicTab.LYRICIST, label: t('lyricist_music') }]
@@ -192,13 +194,13 @@ function Detail({
       : []),
   ];
   const activeTab = tabs.some((item) => item.tab === tab) ? tab : tabs[0]?.tab;
-  const currentTab = activeTab ?? ArtistMusicTab.SINGER;
+  const currentTab = activeTab ?? ArtistMusicTab.PERFORMER;
   const musicList =
     activeTab === ArtistMusicTab.LYRICIST
       ? artist.lyricistMusicList
       : activeTab === ArtistMusicTab.COMPOSER
         ? artist.composerMusicList
-        : artist.singerMusicList;
+        : artist.performerMusicList;
 
   const updateCollapsedHeaderVisibility = useCallback(() => {
     if (!useCollapsingHeader) {

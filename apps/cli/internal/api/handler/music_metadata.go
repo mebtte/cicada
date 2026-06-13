@@ -66,15 +66,15 @@ func syncMusicMetadataToAsset(musicID string) {
 }
 
 func musicArtist(musicID string) string {
-	singers, err := store.GetSingersInMusicIDs([]string{musicID})
+	performers, err := store.GetArtistsInMusicIDsByRole([]string{musicID}, store.MusicArtistRolePerformer)
 	if err != nil {
-		log.Printf("sync music metadata: get singers for %s: %v", musicID, err)
+		log.Printf("sync music metadata: get performers for %s: %v", musicID, err)
 		return ""
 	}
 
-	names := make([]string, 0, len(singers))
-	for _, s := range singers {
-		names = append(names, s.Name)
+	names := make([]string, 0, len(performers))
+	for _, performer := range performers {
+		names = append(names, performer.Name)
 	}
 	return strings.Join(names, ", ")
 }

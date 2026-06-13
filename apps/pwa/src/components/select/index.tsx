@@ -52,8 +52,8 @@ const SIZE: Record<SelectSize, {
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 const DISABLED_BACKGROUND = 'rgb(248 248 248)';
-const DISABLED_BORDER = 'rgb(226 226 226)';
 const DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 function toKey<T>(v: T): string {
   return JSON.stringify(v);
@@ -137,16 +137,16 @@ function buildStyles<T, IsMulti extends boolean>(
       height: !isMulti || (size === 'sm' && !wrapValues) ? s.height : undefined,
       background: '#fff',
       border: `2px solid ${
-        isDisabled       ? DISABLED_BORDER   :
-        state.isFocused  ? primary          :
-        'rgb(220 220 220)'
+        isDisabled       ? DISABLED_SHADOW  :
+        state.isFocused  ? shadowColor      :
+        NEUTRAL_SHADOW
       }`,
       borderRadius: s.radius,
       boxShadow: isDisabled
         ? `0 ${s.shadow}px 0 ${DISABLED_SHADOW}`
         : state.isFocused
           ? `0 ${s.shadow}px 0 ${shadowColor}`
-          : `0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}`,
+          : `0 ${s.shadow}px 0 ${NEUTRAL_SHADOW}`,
       cursor: isDisabled ? 'not-allowed' : 'pointer',
       fontFamily: FONT,
       fontSize: s.font,
@@ -220,12 +220,12 @@ function buildStyles<T, IsMulti extends boolean>(
       ...base,
       zIndex: 10000,
       background: '#fff',
-      border: '2px solid rgb(220 220 220)',
+      border: `2px solid ${NEUTRAL_SHADOW}`,
       borderRadius: Math.max(15, s.radius + 2),
       boxShadow:
         state.placement === 'top'
-          ? `0 -4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}, 0 14px 28px rgb(0 0 0 / 0.1)`
-          : `0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL}, 0 14px 28px rgb(0 0 0 / 0.1)`,
+          ? `0 -4px 0 ${NEUTRAL_SHADOW}, 0 14px 28px rgb(0 0 0 / 0.1)`
+          : `0 4px 0 ${NEUTRAL_SHADOW}, 0 14px 28px rgb(0 0 0 / 0.1)`,
       overflow: 'visible',
       padding: 6,
       marginTop: state.placement === 'top' ? 0 : s.shadow + 6,
@@ -246,13 +246,13 @@ function buildStyles<T, IsMulti extends boolean>(
       padding: `0 ${s.px}px`,
       marginTop: state.isSelected || state.isFocused ? 0 : 0,
       border: `2px solid ${
-        state.isSelected ? shadowColor : state.isFocused ? 'rgb(220 220 220)' : 'transparent'
+        state.isSelected ? shadowColor : state.isFocused ? NEUTRAL_SHADOW : 'transparent'
       }`,
       borderRadius: Math.max(10, s.radius),
       boxShadow: state.isSelected
         ? `0 ${optionShadow}px 0 ${shadowColor}`
         : state.isFocused
-          ? `0 ${optionShadow}px 0 rgb(220 220 220)`
+          ? `0 ${optionShadow}px 0 ${NEUTRAL_SHADOW}`
           : 'none',
       fontFamily: FONT,
       fontSize: s.font,
@@ -279,10 +279,10 @@ function buildStyles<T, IsMulti extends boolean>(
       justifyContent: 'center',
       padding: '0 2px 0 8px',
       minHeight: size === 'sm' ? 20 : 24,
-      border: '2px solid rgb(220 220 220)',
+      border: `2px solid ${isDisabled ? DISABLED_SHADOW : NEUTRAL_SHADOW}`,
       borderRadius: 8,
       background: isDisabled ? DISABLED_BACKGROUND : '#fff',
-      boxShadow: `0 2px 0 ${isDisabled ? DISABLED_SHADOW : 'rgb(220 220 220)'}`,
+      boxShadow: `0 2px 0 ${isDisabled ? DISABLED_SHADOW : NEUTRAL_SHADOW}`,
       flexShrink: 0,
       maxWidth: wrapValues ? 'min(180px, 100%)' : size === 'sm' ? 84 : 140,
     }),

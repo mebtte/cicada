@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
+import { CSSVariable } from '@/global_style';
 import {
   Export,
   PlaylistAdd,
@@ -40,10 +41,10 @@ const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   gap: 8px;
 
   background: rgb(255 255 255 / 0.92);
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 16px;
   box-shadow:
-    0 4px 0 rgb(229 229 229),
+    0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW},
     0 10px 24px rgb(0 0 0 / 0.1);
   backdrop-filter: blur(12px);
 

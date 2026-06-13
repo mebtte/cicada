@@ -1,6 +1,6 @@
-import { MusicWithSingerAliases } from '../../../constants';
+import { MusicWithArtistAliases } from '../../../constants';
 
-export interface MusicWithLyric extends MusicWithSingerAliases {
+export interface MusicWithLyric extends MusicWithArtistAliases {
   lrc: string;
 }
 

@@ -54,15 +54,15 @@ const TextareaBox = styled(Label)`
 
   textarea {
     min-height: 112px;
-    border: 2px solid ${CSSVariable.COLOR_BORDER};
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-radius: 13px;
-    box-shadow: 0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     font-family: ${FONT};
     font-weight: 600;
     resize: vertical;
 
     &:focus {
-      border-color: ${CSSVariable.COLOR_PRIMARY};
+      border-color: var(--cicada-color-primary-shadow);
       box-shadow: 0 4px 0 var(--cicada-color-primary-shadow);
     }
   }
@@ -93,7 +93,7 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
     ${({ $checked }) =>
       $checked
         ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_CONTROL_NEUTRAL};
+        : CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 999px;
   background: ${({ $checked }) =>
     $checked ? CSSVariable.COLOR_PRIMARY : '#fff'};
@@ -101,16 +101,20 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
     ${({ $checked }) =>
       $checked
         ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_CONTROL_NEUTRAL};
+        : CSSVariable.COLOR_NEUTRAL_SHADOW};
   cursor: pointer;
   transition:
     transform 150ms ease-out,
     background 150ms ease,
-    box-shadow 150ms ease,
-    filter 120ms;
+    box-shadow 150ms ease;
 
   &:not(:disabled):hover {
-    filter: brightness(1.04);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0
+      ${({ $checked }) =>
+        $checked
+          ? CSSVariable.COLOR_PRIMARY_ACTIVE
+          : CSSVariable.COLOR_NEUTRAL_SHADOW};
   }
 
   &:not(:disabled):active {
@@ -118,8 +122,7 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   &:disabled {
@@ -142,14 +145,14 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
       ${({ $checked }) =>
         $checked
           ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_CONTROL_NEUTRAL};
+          : CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-radius: 50%;
     background: #fff;
     box-shadow: 0 2px 0
       ${({ $checked }) =>
         $checked
           ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_CONTROL_NEUTRAL};
+          : CSSVariable.COLOR_NEUTRAL_SHADOW};
     transform: translateX(${({ $checked }) => ($checked ? '24px' : '0')});
     transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -385,30 +388,26 @@ function UserEditContent({
             icon={<Delete />}
             disabled={busy}
             onClick={() =>
-              dialog.confirm({
+              dialog.captcha({
                 title: t('delete_user_question'),
                 content: t('delete_user_question_content'),
-                confirmText: t('continue'),
-                onConfirm: () =>
-                  void dialog.captcha({
-                    confirmText: t('delete_user'),
-                    confirmVariant: 'danger',
-                    onConfirm: async ({ captchaId, captchaValue }) => {
-                      try {
-                        await adminDeleteUser({
-                          id: user.id,
-                          captchaId,
-                          captchaValue,
-                        });
-                        onDeleted(user.id);
-                        onClose();
-                      } catch (error) {
-                        logger.error(error, 'Failed to delete user');
-                        notice.error(error.message);
-                        return false;
-                      }
-                    },
-                  }),
+                confirmText: t('delete_user'),
+                confirmVariant: 'danger',
+                onConfirm: async ({ captchaId, captchaValue }) => {
+                  try {
+                    await adminDeleteUser({
+                      id: user.id,
+                      captchaId,
+                      captchaValue,
+                    });
+                    onDeleted(user.id);
+                    onClose();
+                  } catch (error) {
+                    logger.error(error, 'Failed to delete user');
+                    notice.error(error.message);
+                    return false;
+                  }
+                },
               })
             }
           >

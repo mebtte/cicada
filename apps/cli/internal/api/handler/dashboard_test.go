@@ -41,9 +41,9 @@ func TestAdminGetDashboard(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin,lastActiveTimestamp) VALUES
-			('user-1','admin',?, 'Admin', ?, 1, ?),
-			('user-2','listener',?, 'Listener', ?, 0, ?),
-			('user-3','editor',?, 'Editor', ?, 0, ?)`,
+			('USER01','admin',?, 'Admin', ?, 1, ?),
+			('USER02','listener',?, 'Listener', ?, 0, ?),
+			('USER03','editor',?, 'Editor', ?, 0, ?)`,
 		store.DoubleMD5("password"), old, recent,
 		store.DoubleMD5("password"), recent, recent,
 		store.DoubleMD5("password"), recent, old,
@@ -52,17 +52,17 @@ func TestAdminGetDashboard(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,createTimestamp) VALUES
-			('artist-recent','Recent Singer',?),
-			('artist-old','Old Singer',?)`,
+			('ART201','Recent Artist',?),
+			('ART202','Old Artist',?)`,
 		recent,
 		old,
 	); err != nil {
-		t.Fatalf("insert singers: %v", err)
+		t.Fatalf("insert performers: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,cover,asset,assetSize,assetDurationMs,createTimestamp) VALUES
-			('music-recent',?,'Recent Song','','recent.mp3',100,120000,?),
-			('music-old',?,'Old Song','old.jpg','old.mp3',250,180000,?)`,
+			('MUS201',?,'Recent Song','','recent.mp3',100,120000,?),
+			('MUS202',?,'Old Song','old.jpg','old.mp3',250,180000,?)`,
 		int(store.MusicTypeSong), recent,
 		int(store.MusicTypeSong), old,
 	); err != nil {
@@ -70,16 +70,16 @@ func TestAdminGetDashboard(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist_photo (id,artistId,asset,position,addTimestamp) VALUES
-			('photo-old','artist-old','old.jpg',1,?)`,
+			('photo-old','ART202','old.jpg',1,?)`,
 		recent,
 	); err != nil {
 		t.Fatalf("insert artist photo: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music_play_record (userId,musicId,percent,playedAt) VALUES
-			('user-2','music-recent',0.5,?),
-			('user-2','music-old',0.5,?),
-			('user-3','music-old',0.5,?)`,
+			('USER02','MUS201',0.5,?),
+			('USER02','MUS202',0.5,?),
+			('USER03','MUS202',0.5,?)`,
 		now.UnixMilli(),
 		now.AddDate(0, 0, -1).UnixMilli(),
 		now.AddDate(0, 0, -8).UnixMilli(),
@@ -88,9 +88,9 @@ func TestAdminGetDashboard(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO musicbill (id,userId,name,public,createTimestamp) VALUES
-			('musicbill-1','user-1','Public One',1,?),
-			('musicbill-2','user-2','Public Two',1,?),
-			('musicbill-3','user-3','Private One',0,?)`,
+			('BILL01','USER01','Public One',1,?),
+			('BILL02','USER02','Public Two',1,?),
+			('BILL03','USER03','Private One',0,?)`,
 		recent,
 		recent,
 		old,
@@ -99,9 +99,9 @@ func TestAdminGetDashboard(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO shared_musicbill (musicbillId,sharedUserId,inviteUserId,inviteTimestamp,accepted) VALUES
-			('musicbill-1','user-2','user-1',?,1),
-			('musicbill-1','user-3','user-1',?,1),
-			('musicbill-2','user-3','user-1',?,0)`,
+			('BILL01','USER02','USER01',?,1),
+			('BILL01','USER03','USER01',?,1),
+			('BILL02','USER03','USER01',?,0)`,
 		recent,
 		recent,
 		recent,
@@ -127,7 +127,7 @@ func TestAdminGetDashboard(t *testing.T) {
 				Created7d         int   `json:"created7d"`
 				WithoutCoverCount int   `json:"withoutCoverCount"`
 			} `json:"music"`
-			Singer struct {
+			Artist struct {
 				Total             int `json:"total"`
 				Created7d         int `json:"created7d"`
 				PhotoCount        int `json:"photoCount"`
@@ -166,11 +166,11 @@ func TestAdminGetDashboard(t *testing.T) {
 		resp.Data.Music.WithoutCoverCount != 1 {
 		t.Fatalf("unexpected music summary: %+v", resp.Data.Music)
 	}
-	if resp.Data.Singer.Total != 2 ||
-		resp.Data.Singer.Created7d != 1 ||
-		resp.Data.Singer.PhotoCount != 1 ||
-		resp.Data.Singer.WithoutPhotoCount != 1 {
-		t.Fatalf("unexpected artist summary: %+v", resp.Data.Singer)
+	if resp.Data.Artist.Total != 2 ||
+		resp.Data.Artist.Created7d != 1 ||
+		resp.Data.Artist.PhotoCount != 1 ||
+		resp.Data.Artist.WithoutPhotoCount != 1 {
+		t.Fatalf("unexpected artist summary: %+v", resp.Data.Artist)
 	}
 	if resp.Data.User.Total != 3 ||
 		resp.Data.User.AdminCount != 1 ||

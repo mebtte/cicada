@@ -59,7 +59,10 @@ func InitPartialUpload(c *gin.Context) {
 	}
 
 	at := config.AssetType(body.AssetType)
-	maxSize, ok := config.AssetMaxSize(at)
+	// Early gate: mime is not known until the assembled file is sniffed at
+	// completion, so music here resolves to max(audio, video) and the
+	// per-category cap is enforced again in CompletePartialUpload.
+	maxSize, ok := config.AssetMaxSize(at, "")
 	if !ok {
 		api.Fail(c, apperr.WrongParameter)
 		return
@@ -239,6 +242,13 @@ func CompletePartialUpload(c *gin.Context) {
 		return
 	}
 	mimeStr := trimMIMEParams(mt.String())
+	if categoryMax, ok := config.AssetMaxSize(at, mimeStr); ok {
+		if meta.Size > categoryMax {
+			_ = musicasset.CancelSession(uploadID)
+			api.Fail(c, apperr.AssetOversize)
+			return
+		}
+	}
 	if at == config.AssetTypeMusic {
 		probeCtx, cancel := context.WithTimeout(c.Request.Context(), 30*time.Second)
 		ok, ferr := probeUploadedMusicHasAudioStream(probeCtx, srcPath)

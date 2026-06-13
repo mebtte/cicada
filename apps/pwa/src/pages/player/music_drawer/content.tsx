@@ -15,6 +15,8 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { flexCenter } from '@/style/flexbox';
 import { t } from '@/i18n';
+import { CSSVariable } from '@/global_style';
+import { MusicType, getPerformerLabel } from '@/constants/music';
 import {
   DrawerHeader,
   DrawerTitle,
@@ -23,7 +25,7 @@ import {
 import Info from './info';
 import { MusicDetail } from './constants';
 import Lyric from './lyric';
-import SingerList from './singer_list';
+import ArtistList from './performer_list';
 import SubMusicList from './sub_music_list';
 import RelatedPublicMusicbillList from './related_public_musicbill_list';
 import Toolbar from './toolbar';
@@ -81,7 +83,7 @@ const Header = styled(DrawerHeader)<{ $floating: boolean; $visible: boolean }>`
             ? 'rgb(255 255 255 / 0.92)'
             : 'transparent'};
           border-bottom: 1px solid
-            ${$visible ? 'rgb(229 229 229)' : 'transparent'};
+            ${$visible ? CSSVariable.COLOR_NEUTRAL_SHADOW : 'transparent'};
           backdrop-filter: ${$visible ? 'blur(8px)' : 'none'};
         `
       : null}
@@ -126,9 +128,9 @@ const HeaderCover = styled.div`
   box-sizing: border-box;
 
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 12px;
-  box-shadow: 0 4px 0 rgb(229 229 229);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   > .header-cover-image {
     border-radius: 8px;
@@ -198,10 +200,14 @@ const CoverFrame = styled.div<{ $insideDrawer: boolean }>`
     overflow: hidden;
     background: rgb(247 247 247);
     border: ${({ $insideDrawer }) =>
-      $insideDrawer ? 'none' : '2px solid rgb(229 229 229)'};
+      $insideDrawer
+        ? 'none'
+        : `2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW}`};
     border-radius: ${({ $insideDrawer }) => ($insideDrawer ? 0 : '18px')};
     box-shadow: ${({ $insideDrawer }) =>
-      $insideDrawer ? 'none' : '0 5px 0 rgb(229 229 229)'};
+      $insideDrawer
+        ? 'none'
+        : `0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW}`};
 
     &::after {
       content: '';
@@ -333,9 +339,14 @@ function Detail({
               showTitle={!insideDrawer || USE_COLLAPSING_DRAWER_TITLE}
               titleRef={titleRef}
             />
-            <SingerList label={t('singer')} singerList={music.singers} />
-            <SingerList label={t('lyricist')} singerList={music.lyricists} />
-            <SingerList label={t('composer')} singerList={music.composers} />
+            <ArtistList
+              label={getPerformerLabel(music.type)}
+              artistList={music.performers}
+            />
+            {music.type === MusicType.SONG ? (
+              <ArtistList label={t('lyricist')} artistList={music.lyricists} />
+            ) : null}
+            <ArtistList label={t('composer')} artistList={music.composers} />
             {music.forkFromList.length ? (
               <SubMusicList
                 label={t('fork_from_these_musics')}
@@ -382,7 +393,7 @@ function MusicContent({
         id: data.music.id,
         name: data.music.name,
         aliases: data.music.aliases,
-        singers: data.music.singers.map((s) => ({
+        performers: data.music.performers.map((s) => ({
           id: s.id,
           name: s.name,
         })),

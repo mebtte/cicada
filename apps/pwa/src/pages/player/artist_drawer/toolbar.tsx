@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import { Export, PlaylistAdd, Edit } from '@/components/icon';
+import { CSSVariable } from '@/global_style';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
 import { useUser } from '@/global_states/server';
@@ -9,7 +10,7 @@ import { useSetting } from '@/global_states/setting';
 import { ROOT_PATH, ADMIN_PATH } from '@/constants/route';
 import { Artist } from './constants';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
-import { MusicWithSingerAliases } from '../constants';
+import { MusicWithArtistAliases } from '../constants';
 import addMusicListToPlaylist from '../add_to_playlist';
 import { openExportMusicListDialog } from '../export_music_list';
 
@@ -32,10 +33,10 @@ const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   gap: 8px;
 
   background: rgb(255 255 255 / 0.92);
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 16px;
   box-shadow:
-    0 4px 0 rgb(229 229 229),
+    0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW},
     0 10px 24px rgb(0 0 0 / 0.1);
   backdrop-filter: blur(12px);
 
@@ -48,11 +49,11 @@ const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   }
 `;
 
-const getArtistMusicList = (artist: Artist): MusicWithSingerAliases[] =>
+const getArtistMusicList = (artist: Artist): MusicWithArtistAliases[] =>
   Array.from(
     new Map(
       [
-        ...artist.singerMusicList,
+        ...artist.performerMusicList,
         ...artist.lyricistMusicList,
         ...artist.composerMusicList,
       ].map((music) => [music.id, music]),

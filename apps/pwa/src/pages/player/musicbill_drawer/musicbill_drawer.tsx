@@ -12,14 +12,13 @@ import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { CSSVariable } from '@/global_style';
 import {
-  Drawer,
-  DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from '@/components';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
+import AppDrawer from '@/components/app_drawer';
 import Cover, { Shape } from '@/components/cover';
 import useData from './use_data';
 import { Musicbill as MusicbillType } from './constants';
@@ -74,7 +73,8 @@ const Header = styled(DrawerHeader)<{ $visible: boolean }>`
   background-color: ${({ $visible }) =>
     $visible ? 'rgb(255 255 255 / 0.92)' : 'transparent'};
   border-bottom: 1px solid
-    ${({ $visible }) => ($visible ? 'rgb(229 229 229)' : 'transparent')};
+    ${({ $visible }) =>
+      $visible ? CSSVariable.COLOR_NEUTRAL_SHADOW : 'transparent'};
   backdrop-filter: ${({ $visible }) => ($visible ? 'blur(8px)' : 'none')};
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transform: translateY(${({ $visible }) => ($visible ? 0 : '-4px')});
@@ -93,9 +93,9 @@ const HeaderCover = styled.div`
   box-sizing: border-box;
 
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 12px;
-  box-shadow: 0 4px 0 rgb(229 229 229);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   > .header-cover-image {
     border-radius: 8px;
@@ -225,7 +225,6 @@ function Wrapper({
   zIndex: number;
 }) {
   const { data, reload, collected } = useData(id);
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   const transitions = useTransition(data, {
     from: { opacity: 0 },
@@ -233,39 +232,38 @@ function Wrapper({
     leave: { opacity: 0 },
   });
   return (
-    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent
-        side="right"
-        style={{ width: 'min(85%, 400px)', paddingTop: titlebarTop }}
-        showClose={false}
-        zIndex={zIndex}
-      >
-        {transitions((style, d) => {
-          const { error, loading, musicbill } = d;
-          if (error) {
-            return (
-              <StatusContainer style={style}>
-                <ErrorCard errorMessage={error.message} retry={reload} />
-              </StatusContainer>
-            );
-          }
-          if (loading) {
-            return (
-              <StatusContainer style={style}>
-                <Spinner />
-              </StatusContainer>
-            );
-          }
+    <AppDrawer
+      open={open}
+      onClose={onClose}
+      width="wide"
+      showClose={false}
+      zIndex={zIndex}
+    >
+      {transitions((style, d) => {
+        const { error, loading, musicbill } = d;
+        if (error) {
           return (
-            <Musicbill
-              style={style}
-              musicbill={musicbill!}
-              collected={collected}
-            />
+            <StatusContainer style={style}>
+              <ErrorCard errorMessage={error.message} retry={reload} />
+            </StatusContainer>
           );
-        })}
-      </DrawerContent>
-    </Drawer>
+        }
+        if (loading) {
+          return (
+            <StatusContainer style={style}>
+              <Spinner />
+            </StatusContainer>
+          );
+        }
+        return (
+          <Musicbill
+            style={style}
+            musicbill={musicbill!}
+            collected={collected}
+          />
+        );
+      })}
+    </AppDrawer>
   );
 }
 

@@ -118,6 +118,18 @@ func GetMusic(c *gin.Context) {
 	api.OK(c, musicDetailResponse(m, false))
 }
 
+// ── Get random music (radio mode) ─────────────────────────────────────────────
+
+func GetRandomMusic(c *gin.Context) {
+	excludeID := c.Query("excludeId")
+	m, err := store.GetRandomMusic(excludeID)
+	if err != nil {
+		api.Fail(c, apperr.MusicNotExisted)
+		return
+	}
+	api.OK(c, musicDetailResponse(m, false))
+}
+
 func AdminGetMusic(c *gin.Context) {
 	id := c.Query("id")
 	if id == "" {
@@ -145,15 +157,15 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 	for _, f := range forkFroms {
 		allIDs = append(allIDs, f.ForkFrom)
 	}
-	singers, _ := store.GetSingersInMusicIDs(unique(allIDs))
-	lyricists, _ := store.GetLyricistsInMusicIDs(unique(allIDs))
-	composers, _ := store.GetComposersInMusicIDs(unique(allIDs))
+	performers, _ := store.GetArtistsInMusicIDsByRole(unique(allIDs), store.MusicArtistRolePerformer)
+	lyricists, _ := store.GetArtistsInMusicIDsByRole(unique(allIDs), store.MusicArtistRoleLyricist)
+	composers, _ := store.GetArtistsInMusicIDsByRole(unique(allIDs), store.MusicArtistRoleComposer)
 
-	singersByMusic := groupArtistsByMusic(singers)
+	performersByMusic := groupArtistsByMusic(performers)
 	lyricistsByMusic := groupArtistsByMusic(lyricists)
 	composersByMusic := groupArtistsByMusic(composers)
-	artistIDs := make([]string, 0, len(singers)+len(lyricists)+len(composers))
-	for _, artist := range singers {
+	artistIDs := make([]string, 0, len(performers)+len(lyricists)+len(composers))
+	for _, artist := range performers {
 		artistIDs = append(artistIDs, artist.ID)
 	}
 	for _, artist := range lyricists {
@@ -190,7 +202,7 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 			"name":           rm.Name,
 			"cover":          config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
 			"coverThumbnail": rm.CoverThumbnail,
-			"singers":        artistItemsWithPhotos(singersByMusic[rm.ID], photosByArtist),
+			"performers":     artistItemsWithPhotos(performersByMusic[rm.ID], photosByArtist),
 			"lyricists": artistItemsWithPhotos(
 				lyricistsByMusic[rm.ID],
 				photosByArtist,
@@ -209,7 +221,7 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 			"name":           rm.Name,
 			"cover":          config.AssetPublicURL(rm.Cover, config.AssetTypeMusicCover),
 			"coverThumbnail": rm.CoverThumbnail,
-			"singers":        artistItemsWithPhotos(singersByMusic[rm.ID], photosByArtist),
+			"performers":     artistItemsWithPhotos(performersByMusic[rm.ID], photosByArtist),
 			"lyricists": artistItemsWithPhotos(
 				lyricistsByMusic[rm.ID],
 				photosByArtist,
@@ -236,7 +248,7 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 		"heat":                       m.Heat,
 		"createTimestamp":            m.CreateTimestamp,
 		"year":                       nullInt64(m.Year),
-		"singers":                    artistItemsWithPhotos(singersByMusic[id], photosByArtist),
+		"performers":                 artistItemsWithPhotos(performersByMusic[id], photosByArtist),
 		"lyricists":                  artistItemsWithPhotos(lyricistsByMusic[id], photosByArtist),
 		"composers":                  artistItemsWithPhotos(composersByMusic[id], photosByArtist),
 		"forkList":                   forkList,
@@ -253,12 +265,12 @@ func musicDetailResponse(m *store.Music, includeSearchKeywords bool) gin.H {
 // ── Create music ──────────────────────────────────────────────────────────────
 
 type createMusicBody struct {
-	Name        string `json:"name" binding:"required"`
-	SingerIDs   string `json:"singerIds"`
-	LyricistIDs string `json:"lyricistIds"`
-	ComposerIDs string `json:"composerIds"`
-	Type        int    `json:"type"`
-	Asset       string `json:"asset" binding:"required"`
+	Name         string `json:"name" binding:"required"`
+	PerformerIDs string `json:"performerIds"`
+	LyricistIDs  string `json:"lyricistIds"`
+	ComposerIDs  string `json:"composerIds"`
+	Type         int    `json:"type"`
+	Asset        string `json:"asset" binding:"required"`
 }
 
 const musicNameMaxLength = 128
@@ -291,10 +303,10 @@ func AdminCreateMusic(c *gin.Context) {
 		api.Fail(c, apperr.AssetNotExisted)
 		return
 	}
-	singerIDs := []string{}
-	if body.SingerIDs != "" {
-		singerIDs = strings.Split(body.SingerIDs, ",")
-		ok, _ := store.ArtistsExist(singerIDs)
+	performerIDs := []string{}
+	if body.PerformerIDs != "" {
+		performerIDs = strings.Split(body.PerformerIDs, ",")
+		ok, _ := store.ArtistsExist(performerIDs)
 		if !ok {
 			api.Fail(c, apperr.ArtistNotExisted)
 			return
@@ -302,6 +314,10 @@ func AdminCreateMusic(c *gin.Context) {
 	}
 	lyricistIDs := []string{}
 	if body.LyricistIDs != "" {
+		if musicType == store.MusicTypeInstrumental {
+			api.Fail(c, apperr.InstrumentalHasNoLyricist)
+			return
+		}
 		lyricistIDs = strings.Split(body.LyricistIDs, ",")
 		ok, _ := store.ArtistsExist(lyricistIDs)
 		if !ok {
@@ -323,9 +339,18 @@ func AdminCreateMusic(c *gin.Context) {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
-	store.LinkMusicSingers(id, singerIDs)
-	store.LinkMusicLyricists(id, lyricistIDs)
-	store.LinkMusicComposers(id, composerIDs)
+	if err := store.ReplaceMusicArtistsByRole(id, store.MusicArtistRolePerformer, performerIDs); err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	if err := store.ReplaceMusicArtistsByRole(id, store.MusicArtistRoleLyricist, lyricistIDs); err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
+	if err := store.ReplaceMusicArtistsByRole(id, store.MusicArtistRoleComposer, composerIDs); err != nil {
+		api.Fail(c, apperr.ServerError)
+		return
+	}
 	syncMusicMetadataToAsset(id)
 	syncMusicAssetInfo(id)
 	api.OK(c, id)
@@ -453,7 +478,7 @@ func AdminUpdateMusic(c *gin.Context) {
 		store.UpdateMusic(body.ID, "asset", asset)
 		syncMetadata = true
 
-	case "singers":
+	case "performers":
 		rawIDs, ok := body.Value.([]any)
 		if !ok {
 			api.Fail(c, apperr.WrongParameter)
@@ -472,8 +497,10 @@ func AdminUpdateMusic(c *gin.Context) {
 			api.Fail(c, apperr.ArtistNotExisted)
 			return
 		}
-		store.DB().Exec(`DELETE FROM music_singer_relation WHERE musicId=?`, body.ID)
-		store.LinkMusicSingers(body.ID, ids)
+		if err := store.ReplaceMusicArtistsByRole(body.ID, store.MusicArtistRolePerformer, ids); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
 		syncMetadata = true
 
 	case "lyricists":
@@ -491,12 +518,18 @@ func AdminUpdateMusic(c *gin.Context) {
 			}
 			ids[i] = s
 		}
+		if m.Type == store.MusicTypeInstrumental && len(ids) > 0 {
+			api.Fail(c, apperr.InstrumentalHasNoLyricist)
+			return
+		}
 		if ok, _ := store.ArtistsExist(ids); !ok {
 			api.Fail(c, apperr.ArtistNotExisted)
 			return
 		}
-		store.DB().Exec(`DELETE FROM music_lyricist_relation WHERE musicId=?`, body.ID)
-		store.LinkMusicLyricists(body.ID, ids)
+		if err := store.ReplaceMusicArtistsByRole(body.ID, store.MusicArtistRoleLyricist, ids); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
 		syncMetadata = true
 
 	case "composers":
@@ -518,8 +551,10 @@ func AdminUpdateMusic(c *gin.Context) {
 			api.Fail(c, apperr.ArtistNotExisted)
 			return
 		}
-		store.DB().Exec(`DELETE FROM music_composer_relation WHERE musicId=?`, body.ID)
-		store.LinkMusicComposers(body.ID, ids)
+		if err := store.ReplaceMusicArtistsByRole(body.ID, store.MusicArtistRoleComposer, ids); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
 		syncMetadata = true
 
 	case "type":
@@ -533,7 +568,31 @@ func AdminUpdateMusic(c *gin.Context) {
 			api.Fail(c, apperr.WrongParameter)
 			return
 		}
-		store.UpdateMusic(body.ID, "type", int(musicType))
+		tx, err := store.DB().Begin()
+		if err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		defer tx.Rollback()
+		if _, err := tx.Exec(`UPDATE music SET type=? WHERE id=?`, int(musicType), body.ID); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		if musicType == store.MusicTypeInstrumental {
+			if _, err := tx.Exec(`DELETE FROM lyric WHERE musicId=?`, body.ID); err != nil {
+				api.Fail(c, apperr.ServerError)
+				return
+			}
+			if _, err := tx.Exec(`DELETE FROM music_artist_relation WHERE musicId=? AND role=?`, body.ID, string(store.MusicArtistRoleLyricist)); err != nil {
+				api.Fail(c, apperr.ServerError)
+				return
+			}
+		}
+		if err := tx.Commit(); err != nil {
+			api.Fail(c, apperr.ServerError)
+			return
+		}
+		syncMetadata = true
 
 	case "year":
 		var year any
@@ -724,7 +783,7 @@ func GetExploration(c *gin.Context) {
 		`SELECT id,name,cover,userId FROM musicbill WHERE public=1 AND cover!='' ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
 	)
 
-	// 合并随机和最近添加列表的 ID, 用一次查询拉齐关联数据 (歌手、图片、用户), 减少数据库往返。
+	// 合并随机和最近添加列表的 ID, 用一次查询拉齐关联数据 (表演者、图片、用户), 减少数据库往返。
 	collectMusicIDs := func(groups ...[]musicRow) []string {
 		ids := []string{}
 		for _, g := range groups {
@@ -753,21 +812,21 @@ func GetExploration(c *gin.Context) {
 		return ids
 	}
 
-	allSingers, _ := store.GetSingersInMusicIDs(collectMusicIDs(musicRows, recentMusicRows))
-	bySong := groupArtistsByMusic(allSingers)
+	allPerformers, _ := store.GetArtistsInMusicIDsByRole(collectMusicIDs(musicRows, recentMusicRows), store.MusicArtistRolePerformer)
+	performersByMusic := groupArtistsByMusic(allPerformers)
 	buildMusicList := func(rows []musicRow) []gin.H {
 		list := make([]gin.H, len(rows))
 		for i, m := range rows {
-			ss := make([]gin.H, 0)
-			for _, s := range bySong[m.ID] {
-				ss = append(ss, gin.H{"id": s.ID, "name": s.Name})
+			performers := make([]gin.H, 0)
+			for _, artist := range performersByMusic[m.ID] {
+				performers = append(performers, gin.H{"id": artist.ID, "name": artist.Name})
 			}
 			list[i] = gin.H{
 				"id":             m.ID,
 				"name":           m.Name,
 				"cover":          config.AssetPublicURL(m.Cover, config.AssetTypeMusicCover),
 				"coverThumbnail": m.CoverThumbnail,
-				"singers":        ss,
+				"performers":     performers,
 			}
 		}
 		return list
@@ -888,10 +947,10 @@ func musicListResponse(musics []store.Music, total int) gin.H {
 	for i, m := range musics {
 		ids[i] = m.ID
 	}
-	singers, _ := store.GetSingersInMusicIDs(ids)
-	lyricists, _ := store.GetLyricistsInMusicIDs(ids)
-	composers, _ := store.GetComposersInMusicIDs(ids)
-	bySong := groupArtistsByMusic(singers)
+	performers, _ := store.GetArtistsInMusicIDsByRole(ids, store.MusicArtistRolePerformer)
+	lyricists, _ := store.GetArtistsInMusicIDsByRole(ids, store.MusicArtistRoleLyricist)
+	composers, _ := store.GetArtistsInMusicIDsByRole(ids, store.MusicArtistRoleComposer)
+	performersByMusic := groupArtistsByMusic(performers)
 	lyricistsBySong := groupArtistsByMusic(lyricists)
 	composersBySong := groupArtistsByMusic(composers)
 
@@ -911,7 +970,7 @@ func musicListResponse(musics []store.Music, total int) gin.H {
 			"assetBitRate":    m.AssetBitRate,
 			"heat":            m.Heat,
 			"createTimestamp": m.CreateTimestamp,
-			"singers":         artistItems(bySong[m.ID]),
+			"performers":      artistItems(performersByMusic[m.ID]),
 			"lyricists":       artistItems(lyricistsBySong[m.ID]),
 			"composers":       artistItems(composersBySong[m.ID]),
 		}
@@ -950,10 +1009,10 @@ func adminMusicListResponse(musics []store.Music, total int) gin.H {
 	for i, m := range musics {
 		ids[i] = m.ID
 	}
-	singers, _ := store.GetSingersInMusicIDs(ids)
-	lyricists, _ := store.GetLyricistsInMusicIDs(ids)
-	composers, _ := store.GetComposersInMusicIDs(ids)
-	bySong := groupArtistsByMusic(singers)
+	performers, _ := store.GetArtistsInMusicIDsByRole(ids, store.MusicArtistRolePerformer)
+	lyricists, _ := store.GetArtistsInMusicIDsByRole(ids, store.MusicArtistRoleLyricist)
+	composers, _ := store.GetArtistsInMusicIDsByRole(ids, store.MusicArtistRoleComposer)
+	performersByMusic := groupArtistsByMusic(performers)
 	lyricistsBySong := groupArtistsByMusic(lyricists)
 	composersBySong := groupArtistsByMusic(composers)
 
@@ -975,7 +1034,7 @@ func adminMusicListResponse(musics []store.Music, total int) gin.H {
 			"heat":            m.Heat,
 			"year":            nullInt64(m.Year),
 			"createTimestamp": m.CreateTimestamp,
-			"singers":         artistItems(bySong[m.ID]),
+			"performers":      artistItems(performersByMusic[m.ID]),
 			"lyricists":       artistItems(lyricistsBySong[m.ID]),
 			"composers":       artistItems(composersBySong[m.ID]),
 		}

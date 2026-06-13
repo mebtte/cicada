@@ -6,13 +6,13 @@ import (
 )
 
 func TestParseStartFileMaxSizeUsesFlagBeforeEnv(t *testing.T) {
-	t.Setenv(config.MusicFileMaxSizeEnvVar, "300mb")
+	t.Setenv(config.AudioFileMaxSizeEnvVar, "300mb")
 
 	got, err := parseStartFileMaxSize(
-		"music file max size",
+		"audio file max size",
 		"250mb",
-		config.MusicFileMaxSizeEnvVar,
-		config.DefaultMusicFileMaxSize,
+		config.AudioFileMaxSizeEnvVar,
+		config.DefaultAudioFileMaxSize,
 	)
 	if err != nil {
 		t.Fatalf("parse: %v", err)
@@ -39,14 +39,31 @@ func TestParseStartFileMaxSizeUsesEnv(t *testing.T) {
 	}
 }
 
+func TestParseStartFileMaxSizeUsesVideoEnv(t *testing.T) {
+	t.Setenv(config.VideoFileMaxSizeEnvVar, "2gb")
+
+	got, err := parseStartFileMaxSize(
+		"video file max size",
+		"",
+		config.VideoFileMaxSizeEnvVar,
+		config.DefaultVideoFileMaxSize,
+	)
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+	if got != 2*1024*1024*1024 {
+		t.Fatalf("size = %d, want %d", got, 2*1024*1024*1024)
+	}
+}
+
 func TestParseStartFileMaxSizeRejectsInvalidEnv(t *testing.T) {
-	t.Setenv(config.MusicFileMaxSizeEnvVar, "invalid")
+	t.Setenv(config.AudioFileMaxSizeEnvVar, "invalid")
 
 	if _, err := parseStartFileMaxSize(
-		"music file max size",
+		"audio file max size",
 		"",
-		config.MusicFileMaxSizeEnvVar,
-		config.DefaultMusicFileMaxSize,
+		config.AudioFileMaxSizeEnvVar,
+		config.DefaultAudioFileMaxSize,
 	); err == nil {
 		t.Fatalf("expected error")
 	}

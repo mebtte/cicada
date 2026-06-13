@@ -13,6 +13,9 @@ const Player = lazy(
 const Admin = lazy(
   () => import(/* webpackChunkName: "page_admin" */ '../pages/admin'),
 );
+const Radio = lazy(
+  () => import(/* webpackChunkName: "page_radio" */ '../pages/radio'),
+);
 const ROUTES: RouteObject[] = [
   {
     path: `${ROOT_PATH.PLAYER}/*`,
@@ -25,6 +28,10 @@ const ROUTES: RouteObject[] = [
   {
     path: `${ROOT_PATH.ADMIN}/*`,
     element: <Admin />,
+  },
+  {
+    path: `${ROOT_PATH.RADIO}/*`,
+    element: <Radio />,
   },
   {
     path: '*',

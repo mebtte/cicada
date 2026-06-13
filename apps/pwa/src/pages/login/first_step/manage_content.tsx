@@ -5,6 +5,8 @@ import { useServer } from '@/global_states/server';
 import { User } from '@/constants/server';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
+import Button from '@/components/button';
+import { CSSVariable } from '@/global_style';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -22,9 +24,9 @@ const Card = styled.div`
   gap: 14px;
   padding: 14px 16px;
   background: #fff;
-  border: 2px solid rgb(220 220 220);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 16px;
-  box-shadow: 0 4px 0 rgb(210 210 210);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 `;
 
 const Avatar = styled.div`
@@ -74,29 +76,13 @@ const Info = styled.div`
   }
 `;
 
-const DeleteButton = styled.button`
+const DeleteButton = styled(Button)`
+  flex-shrink: 0;
   width: 36px;
   height: 36px;
-  border: none;
   border-radius: 10px;
-  background: rgb(255 240 240);
-  color: #f25042;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 120ms;
 
-  &:hover {
-    background: rgb(255 220 220);
-  }
-
-  &:active {
-    background: rgb(255 200 200);
-  }
-
-  > svg {
+  > .btn-label > svg {
     font-size: 18px;
   }
 `;
@@ -213,6 +199,10 @@ function ManageContent({ onEmpty }: { onEmpty?: () => void }) {
             </div>
           </Info>
           <DeleteButton
+            variant="danger"
+            size="sm"
+            square
+            aria-label={t('delete')}
             onClick={() =>
               dialog.confirm({
                 content: t('delete_origin_question'),

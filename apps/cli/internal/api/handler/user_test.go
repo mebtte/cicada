@@ -38,42 +38,42 @@ func TestGetUser(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,avatar,joinTimestamp) VALUES (?,?,?,?,?,?)`,
-		"user-1", "creator", store.DoubleMD5("password"), "Creator", "avatar.jpg", now,
+		"USER01", "creator", store.DoubleMD5("password"), "Creator", "avatar.jpg", now,
 	); err != nil {
-		t.Fatalf("insert user-1: %v", err)
+		t.Fatalf("insert USER01: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"viewer", "viewer", store.DoubleMD5("password"), "Viewer", now,
+		"VIEWER", "viewer", store.DoubleMD5("password"), "Viewer", now,
 	); err != nil {
 		t.Fatalf("insert viewer: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO artist (id,name,aliases,createTimestamp) VALUES (?,?,?,?)`,
-		"artist-1", "Singer", joinAliases([]string{"Singer Alias"}), now,
+		"ART001", "Performer", joinAliases([]string{"Performer Alias"}), now,
 	); err != nil {
 		t.Fatalf("insert artist: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,aliases,cover,asset,createTimestamp) VALUES (?,?,?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeSong), "Song", joinAliases([]string{"Song Alias"}), "cover.jpg", "song.mp3", now,
+		"MUS001", int(store.MusicTypeSong), "Song", joinAliases([]string{"Song Alias"}), "cover.jpg", "song.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
-	if err := store.LinkMusicSingers("music-1", []string{"artist-1"}); err != nil {
-		t.Fatalf("link music singers: %v", err)
+	if err := store.ReplaceMusicArtistsByRole("MUS001", store.MusicArtistRolePerformer, []string{"ART001"}); err != nil {
+		t.Fatalf("link music performers: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO musicbill (id,userId,cover,name,public,createTimestamp) VALUES
-			('public-mb','user-1','public.jpg','Public',1,?),
-			('private-mb','user-1','private.jpg','Private',0,?)`,
+			('PUBMB1','USER01','public.jpg','Public',1,?),
+			('PRVMB1','USER01','private.jpg','Private',0,?)`,
 		now, now,
 	); err != nil {
 		t.Fatalf("insert musicbills: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO musicbill_music (musicbillId,musicId,addTimestamp) VALUES (?,?,?)`,
-		"public-mb", "music-1", now,
+		"PUBMB1", "MUS001", now,
 	); err != nil {
 		t.Fatalf("insert musicbill music: %v", err)
 	}
@@ -82,7 +82,7 @@ func TestGetUser(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Request = httptest.NewRequest(http.MethodGet, "/api/user", nil)
-		c.Set("authed_user", &store.User{ID: "viewer"})
+		c.Set("authed_user", &store.User{ID: "VIEWER"})
 
 		GetUser(c)
 
@@ -100,8 +100,8 @@ func TestGetUser(t *testing.T) {
 	t.Run("returns public profile drawer payload", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/user?userId=user-1", nil)
-		c.Set("authed_user", &store.User{ID: "viewer"})
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/user?userId=USER01", nil)
+		c.Set("authed_user", &store.User{ID: "VIEWER"})
 
 		GetUser(c)
 
@@ -137,7 +137,7 @@ func TestGetUser(t *testing.T) {
 		if _, ok := rawResp.Data["musicList"]; ok {
 			t.Fatalf("user payload should not include musicList: %s", string(rawResp.Data["musicList"]))
 		}
-		if resp.Data.ID != "user-1" || resp.Data.Username != "creator" || resp.Data.Nickname != "Creator" {
+		if resp.Data.ID != "USER01" || resp.Data.Username != "creator" || resp.Data.Nickname != "Creator" {
 			t.Fatalf("unexpected user payload: %+v", resp.Data)
 		}
 		if resp.Data.Avatar != "/asset/user_avatar/avatar.jpg" {
@@ -146,7 +146,7 @@ func TestGetUser(t *testing.T) {
 		if resp.Data.JoinTimestamp != now {
 			t.Fatalf("unexpected join timestamp: %d", resp.Data.JoinTimestamp)
 		}
-		if len(resp.Data.MusicbillList) != 1 || resp.Data.MusicbillList[0].ID != "public-mb" {
+		if len(resp.Data.MusicbillList) != 1 || resp.Data.MusicbillList[0].ID != "PUBMB1" {
 			t.Fatalf("unexpected musicbill list: %+v", resp.Data.MusicbillList)
 		}
 		if resp.Data.MusicbillList[0].MusicCount != 1 {
@@ -187,32 +187,32 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin,twoFASecret) VALUES (?,?,?,?,?,?,?)`,
-		"admin-user", "admin-user", adminPasswordHash, "Admin", now, 1, "admin-two-fa",
+		"ADMIN1", "ADMIN1", adminPasswordHash, "Admin", now, 1, "ADM2FA",
 	); err != nil {
 		t.Fatalf("insert admin user: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin,twoFASecret) VALUES (?,?,?,?,?,?,?)`,
-		"target-user", "target-user", targetPasswordHash, "Target", now, 0, "target-two-fa",
+		"TARGET", "TARGET", targetPasswordHash, "Target", now, 0, "TGT2FA",
 	); err != nil {
 		t.Fatalf("insert target user: %v", err)
 	}
-	if _, err := store.CreateAuthSession("target-user", "target-token-hash-1", "target1", "Browser 1"); err != nil {
+	if _, err := store.CreateAuthSession("TARGET", "target-token-hash-1", "target1", "Browser 1"); err != nil {
 		t.Fatalf("create target session 1: %v", err)
 	}
-	if _, err := store.CreateAuthSession("target-user", "target-token-hash-2", "target2", "Browser 2"); err != nil {
+	if _, err := store.CreateAuthSession("TARGET", "target-token-hash-2", "target2", "Browser 2"); err != nil {
 		t.Fatalf("create target session 2: %v", err)
 	}
-	adminSessionID, err := store.CreateAuthSession("admin-user", "admin-token-hash", "admin", "Admin Browser")
+	adminSessionID, err := store.CreateAuthSession("ADMIN1", "admin-token-hash", "admin", "Admin Browser")
 	if err != nil {
 		t.Fatalf("create admin session: %v", err)
 	}
 
-	admin := &store.User{ID: "admin-user", Admin: 1}
+	admin := &store.User{ID: "ADMIN1", Admin: 1}
 
 	t.Run("resetting another user password disables 2FA and revokes sessions", func(t *testing.T) {
 		resp := callAdminUpdateUser(t, admin, map[string]any{
-			"id":    "target-user",
+			"id":    "TARGET",
 			"key":   "password",
 			"value": "new-password",
 		})
@@ -220,7 +220,7 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 			t.Fatalf("expected success, got %+v", resp)
 		}
 
-		target, err := store.GetUserByID("target-user")
+		target, err := store.GetUserByID("TARGET")
 		if err != nil {
 			t.Fatalf("get target user: %v", err)
 		}
@@ -236,7 +236,7 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 		if err := store.DB().QueryRow(
 			`SELECT COUNT(1) FROM auth_session
 			WHERE userId=? AND revokeTimestamp IS NOT NULL AND revokeReason=?`,
-			"target-user", "admin_reset",
+			"TARGET", "admin_reset",
 		).Scan(&revokedCount); err != nil {
 			t.Fatalf("count target revoked sessions: %v", err)
 		}
@@ -247,7 +247,7 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 
 	t.Run("admin cannot reset own password through admin endpoint", func(t *testing.T) {
 		resp := callAdminUpdateUser(t, admin, map[string]any{
-			"id":    "admin-user",
+			"id":    "ADMIN1",
 			"key":   "password",
 			"value": "self-new-password",
 		})
@@ -255,7 +255,7 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 			t.Fatalf("expected %s, got %+v", apperr.CanNotResetOwnPassword, resp)
 		}
 
-		updatedAdmin, err := store.GetUserByID("admin-user")
+		updatedAdmin, err := store.GetUserByID("ADMIN1")
 		if err != nil {
 			t.Fatalf("get admin user: %v", err)
 		}
@@ -263,7 +263,7 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 		if !ok {
 			t.Fatal("admin password should remain unchanged")
 		}
-		if !updatedAdmin.TwoFASecret.Valid || updatedAdmin.TwoFASecret.String != "admin-two-fa" {
+		if !updatedAdmin.TwoFASecret.Valid || updatedAdmin.TwoFASecret.String != "ADM2FA" {
 			t.Fatalf("admin 2FA should remain unchanged, got %+v", updatedAdmin.TwoFASecret)
 		}
 
@@ -281,14 +281,14 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 
 	t.Run("admin can grant and revoke another user's admin role", func(t *testing.T) {
 		resp := callAdminUpdateUserAdmin(t, admin, map[string]any{
-			"id":    "target-user",
+			"id":    "TARGET",
 			"admin": 1,
 		})
 		if resp.Code != apperr.Success {
 			t.Fatalf("expected grant success, got %+v", resp)
 		}
 
-		target, err := store.GetUserByID("target-user")
+		target, err := store.GetUserByID("TARGET")
 		if err != nil {
 			t.Fatalf("get target user after grant: %v", err)
 		}
@@ -297,14 +297,14 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 		}
 
 		resp = callAdminUpdateUserAdmin(t, admin, map[string]any{
-			"id":    "target-user",
+			"id":    "TARGET",
 			"admin": 0,
 		})
 		if resp.Code != apperr.Success {
 			t.Fatalf("expected revoke success, got %+v", resp)
 		}
 
-		target, err = store.GetUserByID("target-user")
+		target, err = store.GetUserByID("TARGET")
 		if err != nil {
 			t.Fatalf("get target user after revoke: %v", err)
 		}
@@ -315,14 +315,14 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 
 	t.Run("admin cannot change own admin role", func(t *testing.T) {
 		resp := callAdminUpdateUserAdmin(t, admin, map[string]any{
-			"id":    "admin-user",
+			"id":    "ADMIN1",
 			"admin": 0,
 		})
 		if resp.Code != apperr.UserIsAdminAlready {
 			t.Fatalf("expected %s, got %+v", apperr.UserIsAdminAlready, resp)
 		}
 
-		updatedAdmin, err := store.GetUserByID("admin-user")
+		updatedAdmin, err := store.GetUserByID("ADMIN1")
 		if err != nil {
 			t.Fatalf("get admin user: %v", err)
 		}

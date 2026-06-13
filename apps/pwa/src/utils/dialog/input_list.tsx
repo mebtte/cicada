@@ -81,7 +81,7 @@ function InputListContent({
             addon={
               <Button
                 square
-                variant="plain"
+                variant="ghost"
                 size="sm"
                 onClick={() => onDelete(value.id)}
                 disabled={confirming || canceling}

@@ -6,7 +6,7 @@ import { CSS_VAR } from '../theme';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
-const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 const FACE = '#ffffff';
 
 function getBorderWidth() {

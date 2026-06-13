@@ -1,4 +1,4 @@
-import { Music, SingerWithAliases } from '../constants';
+import { Music, ArtistWithAliases } from '../constants';
 
 export interface Lyric {
   id: number;
@@ -10,16 +10,16 @@ export interface CreateUser {
   nickname: string;
 }
 
-export interface SingerPhoto {
+export interface ArtistPhoto {
   id: string;
   asset: string;
   thumbnail?: string;
   description: string;
 }
 
-export interface SingerDetail extends SingerWithAliases {
+export interface ArtistDetail extends ArtistWithAliases {
   avatar: string;
-  photos: SingerPhoto[];
+  photos: ArtistPhoto[];
 }
 
 export interface RelatedPublicMusicbill {
@@ -38,9 +38,9 @@ export interface MusicDetail extends Music {
   createTime: string;
   forkFromList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
   forkList: Omit<Music, 'asset' | 'type' | 'aliases'>[];
-  singers: SingerDetail[];
-  lyricists: SingerDetail[];
-  composers: SingerDetail[];
+  performers: ArtistDetail[];
+  lyricists: ArtistDetail[];
+  composers: ArtistDetail[];
   year: number | null;
   musicbillCount: number;
   assetSize: number;

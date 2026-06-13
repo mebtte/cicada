@@ -4,7 +4,7 @@ import { Query } from '@/constants';
 import searchMusic from '@/server/api/search_music';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
-import { MusicWithSingerAliases } from '../../../constants';
+import { MusicWithArtistAliases } from '../../../constants';
 import { PAGE_SIZE } from '../constants';
 
 type Data =
@@ -23,7 +23,7 @@ type Data =
       loading: false;
       value: {
         total: number;
-        musicList: MusicWithSingerAliases[];
+        musicList: MusicWithArtistAliases[];
       };
     };
 const dataLoading: Data = {

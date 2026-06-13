@@ -2,6 +2,8 @@ import styled, { keyframes } from 'styled-components';
 import { t } from '@/i18n';
 import ManageContent from './first_step/manage_content';
 import { ArrowBack } from '@/components/icon';
+import Button from '@/components/button';
+import { CSSVariable } from '@/global_style';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -28,33 +30,17 @@ const Header = styled.div`
   padding: 14px 16px;
   padding-top: max(14px, env(safe-area-inset-top, 14px));
   background: #fff;
-  border-bottom: 2px solid rgb(220 220 220);
-  box-shadow: 0 4px 0 rgb(210 210 210);
+  border-bottom: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 `;
 
-const BackButton = styled.button`
+const BackButton = styled(Button)`
+  flex-shrink: 0;
   width: 40px;
   height: 40px;
-  border: none;
   border-radius: 12px;
-  background: rgb(240 240 240);
-  color: rgb(88 88 88);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background 120ms, transform 120ms;
 
-  &:hover {
-    background: rgb(228 228 228);
-  }
-
-  &:active {
-    transform: scale(0.93);
-  }
-
-  > svg {
+  > .btn-label > svg {
     font-size: 22px;
   }
 `;
@@ -91,7 +77,13 @@ function ManagePage({ onClose }: { onClose: () => void }) {
   return (
     <Wrapper>
       <Header>
-        <BackButton onClick={onClose} aria-label={t('back')}>
+        <BackButton
+          variant="ghost"
+          size="md"
+          square
+          onClick={onClose}
+          aria-label={t('back')}
+        >
           <ArrowBack />
         </BackButton>
         <Title>{t('manage_origins')}</Title>

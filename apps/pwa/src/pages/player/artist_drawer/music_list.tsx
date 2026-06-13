@@ -1,7 +1,7 @@
 import { CSSProperties, memo, useContext } from 'react';
 import Empty from '@/components/empty';
 import styled from 'styled-components';
-import { MusicWithSingerAliases } from '../constants';
+import { MusicWithArtistAliases } from '../constants';
 import Music from '../components/music';
 import Context from '../context';
 import { t } from '@/i18n';
@@ -14,7 +14,7 @@ const emptyStyle: CSSProperties = {
   padding: '50px 0',
 };
 
-function MusicList({ musicList }: { musicList: MusicWithSingerAliases[] }) {
+function MusicList({ musicList }: { musicList: MusicWithArtistAliases[] }) {
   const { playqueue, currentPlayqueuePosition } = useContext(Context);
   return musicList.length ? (
     <Root>

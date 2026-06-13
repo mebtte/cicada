@@ -45,9 +45,9 @@ const Item = styled.div`
   gap: 12px;
 
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 14px;
-  box-shadow: 0 4px 0 rgb(229 229 229);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   cursor: pointer;
   user-select: none;
   transition:
@@ -63,9 +63,9 @@ const Item = styled.div`
     box-sizing: border-box;
 
     background: #fff;
-    border: 2px solid rgb(229 229 229);
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-radius: 10px;
-    box-shadow: 0 2px 0 rgb(229 229 229);
+    box-shadow: 0 2px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   }
 
   > .cover-frame > .cover {
@@ -123,7 +123,7 @@ const Item = styled.div`
     align-items: center;
     justify-content: center;
 
-    border-left: 2px solid rgb(229 229 229);
+    border-left: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
     line-height: 1.05;

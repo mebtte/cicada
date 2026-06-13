@@ -38,18 +38,18 @@ func TestUpdateLyricsByMusicIDReplacesLyricsAndSearchContent(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
 		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
-		"music-1", int(MusicTypeSong), "Song", "song.mp3", now,
+		"MUS001", int(MusicTypeSong), "Song", "song.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
 	if _, err := DB().Exec(
 		`INSERT INTO lyric (musicId,lrc,lrcContent) VALUES (?,?,?)`,
-		"music-1", "[00:00.00]old", "old",
+		"MUS001", "[00:00.00]old", "old",
 	); err != nil {
 		t.Fatalf("insert old lyric: %v", err)
 	}
 
-	err := UpdateLyricsByMusicID("music-1", []string{
+	err := UpdateLyricsByMusicID("MUS001", []string{
 		"[00:00.00]hello world",
 		"[00:01.00]second line",
 	})
@@ -57,7 +57,7 @@ func TestUpdateLyricsByMusicIDReplacesLyricsAndSearchContent(t *testing.T) {
 		t.Fatalf("update lyrics: %v", err)
 	}
 
-	lyrics, err := GetLyricsByMusicID("music-1")
+	lyrics, err := GetLyricsByMusicID("MUS001")
 	if err != nil {
 		t.Fatalf("get lyrics: %v", err)
 	}
@@ -75,7 +75,7 @@ func TestUpdateLyricsByMusicIDReplacesLyricsAndSearchContent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("search lyrics: %v", err)
 	}
-	if total != 1 || len(ids) != 1 || ids[0] != "music-1" {
+	if total != 1 || len(ids) != 1 || ids[0] != "MUS001" {
 		t.Fatalf("unexpected lyric search result: total=%d ids=%v", total, ids)
 	}
 }
@@ -102,9 +102,9 @@ func TestSearchMusicIDsByLyricRanksMatchesDeterministically(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := DB().Exec(
 		`INSERT INTO music (id,type,name,asset,heat,createTimestamp) VALUES
-			('song-exact',   ?, 'Exact',   'exact.mp3',   1,   ?),
-			('song-prefix',  ?, 'Prefix',  'prefix.mp3',  100, ?),
-			('song-contains',?, 'Contains','contains.mp3',999, ?)`,
+			('SONG01',   ?, 'Exact',   'exact.mp3',   1,   ?),
+			('SONG02',  ?, 'Prefix',  'prefix.mp3',  100, ?),
+			('SONG03',?, 'Contains','contains.mp3',999, ?)`,
 		int(MusicTypeSong), now-300,
 		int(MusicTypeSong), now-200,
 		int(MusicTypeSong), now-100,
@@ -113,9 +113,9 @@ func TestSearchMusicIDsByLyricRanksMatchesDeterministically(t *testing.T) {
 	}
 	if _, err := DB().Exec(
 		`INSERT INTO lyric (musicId,lrc,lrcContent) VALUES
-			('song-contains','[00:00.00]say hello','say hello'),
-			('song-prefix','[00:00.00]hello world','hello world'),
-			('song-exact','[00:00.00]hello','hello')`,
+			('SONG03','[00:00.00]say hello','say hello'),
+			('SONG02','[00:00.00]hello world','hello world'),
+			('SONG01','[00:00.00]hello','hello')`,
 	); err != nil {
 		t.Fatalf("insert lyrics: %v", err)
 	}
@@ -127,7 +127,7 @@ func TestSearchMusicIDsByLyricRanksMatchesDeterministically(t *testing.T) {
 	if total != 3 || len(ids) != 3 {
 		t.Fatalf("unexpected lyric search result: total=%d ids=%v", total, ids)
 	}
-	want := []string{"song-exact", "song-prefix", "song-contains"}
+	want := []string{"SONG01", "SONG02", "SONG03"}
 	for i := range want {
 		if ids[i] != want[i] {
 			t.Fatalf("unexpected order: got %v want %v", ids, want)

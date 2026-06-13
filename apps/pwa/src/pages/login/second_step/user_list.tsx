@@ -5,6 +5,7 @@ import { t } from '@/i18n';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { useMemo } from 'react';
 import styled from 'styled-components';
+import Button from '@/components/button';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -26,8 +27,7 @@ const Style = styled.div`
     width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-inline: 2px;
-    padding-bottom: 4px;
+    padding: 2px 2px 6px;
   }
 
   > .divider {
@@ -35,55 +35,31 @@ const Style = styled.div`
   }
 `;
 
-const UserItem = styled.button`
-  appearance: none;
+const UserItem = styled(Button)`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
   width: 96px;
+  height: auto;
   min-width: 96px;
   padding: 14px 10px 12px;
-  border: 2px solid rgb(220 220 220);
   border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 4px 0 rgb(210 210 210);
-  cursor: pointer;
   text-align: center;
-  -webkit-tap-highlight-color: transparent;
-  transition:
-    border-color 120ms,
-    box-shadow 80ms,
-    transform 80ms,
-    background 120ms;
+  text-transform: none;
 
-  &:hover {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
-    box-shadow: 0 4px 0 rgb(30 150 100);
+  > .btn-label {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
   }
 
-  &:hover > .avatar,
-  &:focus-visible > .avatar {
-    border-color: ${CSSVariable.COLOR_PRIMARY};
-    box-shadow: 0 4px 0 rgb(30 150 100);
-  }
-
-  &:active {
-    box-shadow: 0 1px 0 rgb(210 210 210);
-    transform: translateY(3px);
-  }
-
-  &:focus-visible {
-    outline: 3px solid rgb(44 182 125 / 0.2);
-    outline-offset: 3px;
-  }
-
-  > .avatar {
+  > .btn-label > .avatar {
     width: 58px;
     height: 58px;
     border-radius: 16px;
-    border: 2px solid rgb(210 210 210);
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     flex-shrink: 0;
     overflow: hidden;
     background: #fff;
@@ -95,8 +71,7 @@ const UserItem = styled.button`
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
-    box-shadow: 0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
-    transition: border-color 120ms, box-shadow 80ms;
+    box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
     > img {
       width: 100%;
@@ -105,7 +80,7 @@ const UserItem = styled.button`
     }
   }
 
-  > .name {
+  > .btn-label > .name {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -147,6 +122,8 @@ function UserList({ redirect }: { redirect: () => void }) {
             return (
               <UserItem
                 key={user.id}
+                variant="ghost"
+                size="md"
                 type="button"
                 title={user.nickname}
                 onClick={() => {

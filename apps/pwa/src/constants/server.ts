@@ -15,8 +15,9 @@ export interface User {
 export interface Server {
   version: string;
   hostname: string;
-  musicFileMaxSize?: number;
   imageFileMaxSize?: number;
+  audioFileMaxSize?: number;
+  videoFileMaxSize?: number;
 
   origin: string;
 

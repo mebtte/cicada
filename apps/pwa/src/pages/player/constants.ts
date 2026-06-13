@@ -55,12 +55,12 @@ export const CONTROLLER_FLOATING_RESERVED_HEIGHT = `calc(${CONTROLLER_HEIGHT}px 
 export const FLOATING_CONTROLLER_SCROLL_SPACE =
   CONTROLLER_FLOATING_RESERVED_HEIGHT;
 
-export interface Singer {
+export interface Performer {
   id: string;
   name: string;
 }
 
-export interface SingerWithAliases extends Singer {
+export interface ArtistWithAliases extends Performer {
   aliases: string[];
 }
 
@@ -71,22 +71,22 @@ export interface Music {
   name: string;
   type: MusicType;
   aliases: string[];
-  singers: Singer[];
-  lyricists: Singer[];
-  composers: Singer[];
+  performers: Performer[];
+  lyricists: Performer[];
+  composers: Performer[];
   asset: string;
 }
 
-export interface MusicWithSingerAliases
-  extends Omit<Music, 'singers' | 'lyricists' | 'composers'> {
-  singers: SingerWithAliases[];
-  lyricists: SingerWithAliases[];
-  composers: SingerWithAliases[];
+export interface MusicWithArtistAliases
+  extends Omit<Music, 'performers' | 'lyricists' | 'composers'> {
+  performers: ArtistWithAliases[];
+  lyricists: ArtistWithAliases[];
+  composers: ArtistWithAliases[];
 }
 
-export type PlaylistMusic = MusicWithSingerAliases & { index: number };
+export type PlaylistMusic = MusicWithArtistAliases & { index: number };
 
-export interface QueueMusic extends MusicWithSingerAliases {
+export interface QueueMusic extends MusicWithArtistAliases {
   index: number;
   pid: string;
   shuffle: boolean;
@@ -108,7 +108,7 @@ export interface Musicbill {
   sharedUserList: (MusicbillUser & {
     accepted: boolean;
   })[];
-  musicList: (MusicWithSingerAliases & { index: number })[];
+  musicList: (MusicWithArtistAliases & { index: number })[];
 
   status: RequestStatus;
   error: Error | null;

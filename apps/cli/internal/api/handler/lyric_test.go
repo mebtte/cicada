@@ -36,31 +36,31 @@ func TestGetLyricList(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"1", "tester", store.DoubleMD5("password"), "Tester", now,
+		"USER01", "tester", store.DoubleMD5("password"), "Tester", now,
 	); err != nil {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
-		"song-1", int(store.MusicTypeSong), "Song", "song.mp3", now,
+		"SONG01", int(store.MusicTypeSong), "Song", "song.mp3", now,
 	); err != nil {
 		t.Fatalf("insert song: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO lyric (musicId,lrc,lrcContent) VALUES (?,?,?)`,
-		"song-1", "[00:00.00]hello", "hello",
+		"SONG01", "[00:00.00]hello", "hello",
 	); err != nil {
 		t.Fatalf("insert lyric: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
-		"song-empty", int(store.MusicTypeSong), "Song Empty", "song-empty.mp3", now,
+		"SONG02", int(store.MusicTypeSong), "Song Empty", "SONG02.mp3", now,
 	); err != nil {
 		t.Fatalf("insert song without lyric: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
-		"inst-1", int(store.MusicTypeInstrumental), "Instrumental", "inst.mp3", now,
+		"INST01", int(store.MusicTypeInstrumental), "Instrumental", "inst.mp3", now,
 	); err != nil {
 		t.Fatalf("insert instrumental: %v", err)
 	}
@@ -68,7 +68,7 @@ func TestGetLyricList(t *testing.T) {
 	t.Run("song returns stored lyrics", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/lyric_list?musicId=song-1", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/lyric_list?musicId=SONG01", nil)
 
 		GetLyricList(c)
 
@@ -93,7 +93,7 @@ func TestGetLyricList(t *testing.T) {
 	t.Run("song without lyrics returns empty list", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/lyric_list?musicId=song-empty", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/lyric_list?musicId=SONG02", nil)
 
 		GetLyricList(c)
 
@@ -118,7 +118,7 @@ func TestGetLyricList(t *testing.T) {
 	t.Run("instrumental returns no lyric error", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/lyric_list?musicId=inst-1", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/lyric_list?musicId=INST01", nil)
 
 		GetLyricList(c)
 
@@ -157,19 +157,19 @@ func TestSearchMusicByLyricIncludesLyrics(t *testing.T) {
 	now := time.Now().UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"1", "tester", store.DoubleMD5("password"), "Tester", now,
+		"USER01", "tester", store.DoubleMD5("password"), "Tester", now,
 	); err != nil {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
-		"song-1", int(store.MusicTypeSong), "Song", "song.mp3", now,
+		"SONG01", int(store.MusicTypeSong), "Song", "song.mp3", now,
 	); err != nil {
 		t.Fatalf("insert song: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO lyric (musicId,lrc,lrcContent) VALUES (?,?,?)`,
-		"song-1", "[00:00.00]hello world", "hello world",
+		"SONG01", "[00:00.00]hello world", "hello world",
 	); err != nil {
 		t.Fatalf("insert lyric: %v", err)
 	}
@@ -202,7 +202,7 @@ func TestSearchMusicByLyricIncludesLyrics(t *testing.T) {
 	if resp.Data.Total != 1 || len(resp.Data.MusicList) != 1 {
 		t.Fatalf("unexpected music list: %+v", resp.Data)
 	}
-	if resp.Data.MusicList[0].ID != "song-1" {
+	if resp.Data.MusicList[0].ID != "SONG01" {
 		t.Fatalf("unexpected music item: %+v", resp.Data.MusicList[0])
 	}
 	if len(resp.Data.MusicList[0].Lyrics) != 1 || resp.Data.MusicList[0].Lyrics[0].LRC != "[00:00.00]hello world" {

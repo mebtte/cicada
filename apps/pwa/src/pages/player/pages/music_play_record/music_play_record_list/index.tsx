@@ -64,7 +64,10 @@ const MusicListContainer = styled(Container)`
   }
 `;
 const MusicPlayRecordContainer = styled(animated.div)`
-  overflow: hidden;
+  /* overflow: clip 仍能让 maxHeight 入场动画裁掉超出部分,
+   * 同时 overflow-clip-margin 给 hover translateY(-2px) 留出 4px 空间, 顶部不会被截断. */
+  overflow: clip;
+  overflow-clip-margin: 4px;
 `;
 const paginationStyle: CSSProperties = {
   margin: '10px 0',

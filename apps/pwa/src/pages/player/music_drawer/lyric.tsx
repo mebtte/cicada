@@ -31,9 +31,9 @@ const Style = styled.section`
     padding: 8px 0 12px;
 
     background: #fff;
-    border: 2px solid rgb(229 229 229);
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-radius: 14px;
-    box-shadow: 0 4px 0 rgb(229 229 229);
+    box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   }
 `;
 const Line = styled.div`
@@ -62,9 +62,9 @@ const DownloadButton = styled.button`
 
   color: rgb(120 120 120);
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 8px;
-  box-shadow: 0 ${DOWNLOAD_BTN_OFFSET}px 0 rgb(229 229 229);
+  box-shadow: 0 ${DOWNLOAD_BTN_OFFSET}px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   font-size: 13px;
   line-height: 1;
   cursor: pointer;
@@ -108,21 +108,23 @@ const DownloadButton = styled.button`
 function Lyric({ music }: { music: MusicDetail }) {
   const user = useUser();
   const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
+
+  // 乐曲或没有歌词的歌曲, 不展示歌词模块
+  if (music.type !== MusicType.SONG || music.lyrics.length === 0) {
+    return null;
+  }
+
   // 下载按钮归入「管理员快捷编辑」开关
-  const downloadable =
-    !!user?.admin &&
-    adminQuickEdit &&
-    music.type === MusicType.SONG &&
-    music.lyrics.length > 0;
+  const downloadable = !!user?.admin && adminQuickEdit;
 
   const downloadLyrics = () => {
-    const singerNames = music.singers.map((s) => s.name);
+    const performerNames = music.performers.map((s) => s.name);
     // 单条歌词不加 (n) 后缀, 多条则按 1..N 顺序追加
     const multiple = music.lyrics.length > 1;
     music.lyrics.forEach((lyric, i) => {
       const filename = formatMusicFilename({
         name: music.name,
-        singerNames,
+        performerNames,
         ext: 'lrc',
         index: multiple ? i + 1 : undefined,
       });
@@ -137,24 +139,16 @@ function Lyric({ music }: { music: MusicDetail }) {
     <Style>
       <div className="label">{t('lyric')}</div>
       <div className="content">
-        {music.type === MusicType.SONG ? (
-          music.lyrics.length ? (
-            <MultipleLrc
-              lrcs={music.lyrics.map((l) => l.lrc)}
-              lineRenderer={({ line }) => (
-                <Line key={line.id}>
-                  {line.children.map((child) => (
-                    <div key={child.id}>{child.content}</div>
-                  ))}
-                </Line>
-              )}
-            />
-          ) : (
-            <Line>{t('no_lyric')}</Line>
-          )
-        ) : (
-          <Line>{t('instrument_without_lyric')}</Line>
-        )}
+        <MultipleLrc
+          lrcs={music.lyrics.map((l) => l.lrc)}
+          lineRenderer={({ line }) => (
+            <Line key={line.id}>
+              {line.children.map((child) => (
+                <div key={child.id}>{child.content}</div>
+              ))}
+            </Line>
+          )}
+        />
         {downloadable ? (
           <DownloadButton
             type="button"

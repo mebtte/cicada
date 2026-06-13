@@ -41,13 +41,13 @@ import playerEventemitter, {
 import {
   CONTROLLER_FLOATING_RESERVED_HEIGHT,
   FLOATING_CONTROLLER_SCROLL_SPACE,
-  MusicWithSingerAliases,
+  MusicWithArtistAliases,
 } from '../../constants';
 
 const SUMMARY_BAR_HEIGHT = 58;
 const SUMMARY_BAR_FLOATING_GAP = 12;
 const SUMMARY_BAR_HORIZONTAL_INSET = `calc(${PAGE_HORIZONTAL_PADDING} + 8px)`;
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 const Style = styled(Page)`
   position: absolute;
@@ -83,7 +83,7 @@ const EmptyWrap = styled.div`
 const Tail = styled.div`
   height: calc(
     ${FLOATING_CONTROLLER_SCROLL_SPACE} + ${SUMMARY_BAR_HEIGHT}px +
-      ${SUMMARY_BAR_FLOATING_GAP * 2}px
+      ${SUMMARY_BAR_FLOATING_GAP}px
   );
 `;
 
@@ -99,7 +99,7 @@ const SummaryBar = styled.div`
   position: absolute;
   left: ${SUMMARY_BAR_HORIZONTAL_INSET};
   right: ${SUMMARY_BAR_HORIZONTAL_INSET};
-  bottom: calc(${CONTROLLER_FLOATING_RESERVED_HEIGHT} + ${SUMMARY_BAR_FLOATING_GAP}px);
+  bottom: ${CONTROLLER_FLOATING_RESERVED_HEIGHT};
   height: ${SUMMARY_BAR_HEIGHT}px;
 
   padding: 7px 10px 9px;
@@ -120,7 +120,7 @@ const SummaryBar = styled.div`
   }
 `;
 
-function entryToMusic(entry: OfflineMusic): MusicWithSingerAliases {
+function entryToMusic(entry: OfflineMusic): MusicWithArtistAliases {
   return {
     id: entry.id,
     name: entry.name,
@@ -128,7 +128,7 @@ function entryToMusic(entry: OfflineMusic): MusicWithSingerAliases {
     cover: entry.cover,
     type: entry.type,
     asset: entry.asset,
-    singers: entry.singers.map((s) => ({
+    performers: entry.performers.map((s) => ({
       id: s.id,
       name: s.name,
       aliases: s.aliases ?? [],
@@ -181,7 +181,7 @@ function OfflineCache() {
       ) {
         return true;
       }
-      return entry.singers.some((s) => {
+      return entry.performers.some((s) => {
         if (s.name.toLowerCase().includes(normalizedKeyword)) {
           return true;
         }
@@ -264,7 +264,13 @@ function OfflineCache() {
 
   return (
     <Style>
-      <div className="scrollable">
+      <div
+        className="scrollable"
+        // 空状态时禁止滚动, 避免底部占位让页面出现无意义滚动条
+        style={
+          filteredEntries.length === 0 ? { overflow: 'hidden' } : undefined
+        }
+      >
         <ListWrap>
           {filteredEntries.length === 0 ? (
             <EmptyWrap>
@@ -280,7 +286,7 @@ function OfflineCache() {
                   music={{
                     id: entry.id,
                     name: entry.name,
-                    singers: entry.singers,
+                    performers: entry.performers,
                     aliases: entry.aliases,
                   }}
                   lineAfter={
@@ -288,7 +294,7 @@ function OfflineCache() {
                       <Button
                         className="primary-action"
                         square
-                        variant="plain"
+                        variant="ghost"
                         size="sm"
                         onClick={(event) => {
                           event.stopPropagation();
@@ -303,7 +309,7 @@ function OfflineCache() {
                       <Tooltip content={t('play_next')}>
                         <Button
                           square
-                          variant="plain"
+                          variant="ghost"
                           size="sm"
                           onClick={(event) => {
                             event.stopPropagation();
@@ -319,7 +325,7 @@ function OfflineCache() {
                       <Tooltip content={t('remove_from_offline_cache')}>
                         <Button
                           square
-                          variant="plain"
+                          variant="ghost"
                           size="sm"
                           aria-label={t('remove_from_offline_cache')}
                           onClick={(event) => {

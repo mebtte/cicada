@@ -42,10 +42,10 @@ const ImgBox = styled.div`
   justify-content: center;
   max-height: var(--image-cut-preview-max-height);
   overflow: hidden;
-  border: 2px solid ${CSSVariable.COLOR_BORDER};
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 16px;
   background: #fff;
-  box-shadow: 0 5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+  box-shadow: 0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   img {
     display: block;

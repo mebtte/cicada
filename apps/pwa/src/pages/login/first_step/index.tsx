@@ -12,7 +12,11 @@ import { Divider } from '@/components';
 import definition from '@/definition';
 import { isSameMajorVersion } from '@/utils/version';
 import dialog from '@/utils/dialog';
-import { getServerMetadataErrorMessage } from '../utils';
+import {
+  getServerMetadataErrorMessage,
+  getServerOriginKey,
+  normalizeServerOriginInput,
+} from '../utils';
 import { isKeyboardEventComposing } from '@/utils/keyboard';
 
 const Style = styled.div`
@@ -31,22 +35,40 @@ function FirstStep({
   onManage: () => void;
 }) {
   const [loading, setLoading] = useState(false);
+  const [checkingOrigin, setCheckingOrigin] = useState<string>();
+  const busy = loading || !!checkingOrigin;
   const [origin, setOrigin] = useState(
     () => useServer.getState().selectedServerOrigin || window.location.origin,
   );
-  const onOriginChange: ChangeEventHandler<HTMLInputElement> = (event) =>
+  const [originError, setOriginError] = useState<string>();
+  const onOriginChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setOrigin(event.target.value);
+    setOriginError(undefined);
+  };
 
   const onSaveOrigin = async () => {
+    if (busy) return;
+
+    const normalized = normalizeServerOriginInput(origin);
+    if (normalized.origin !== origin) {
+      setOrigin(normalized.origin);
+    }
+    if (!normalized.ok) {
+      setOriginError(normalized.error);
+      return;
+    }
+
+    const nextOrigin = normalized.origin;
+    setOriginError(undefined);
     setLoading(true);
     try {
       const existedServer = useServer
         .getState()
-        .serverList.find((s) => s.origin === origin);
+        .serverList.find((s) => getServerOriginKey(s.origin) === nextOrigin);
       const { default: getMetadata } = await import(
         '@/server/base/get_metadata'
       );
-      const metadata = await getMetadata(origin);
+      const metadata = await getMetadata(nextOrigin);
       if (!isSameMajorVersion(definition.VERSION, metadata.version)) {
         dialog.alert({
           content: t(
@@ -59,30 +81,33 @@ function FirstStep({
       }
       if (existedServer) {
         useServer.setState((server) => ({
-          selectedServerOrigin: origin,
+          selectedServerOrigin: nextOrigin,
           serverList: server.serverList.map((s) =>
-            s.origin === origin
+            getServerOriginKey(s.origin) === nextOrigin
               ? {
                   ...s,
                   version: metadata.version,
                   hostname: metadata.hostname,
-                  musicFileMaxSize: metadata.musicFileMaxSize,
                   imageFileMaxSize: metadata.imageFileMaxSize,
+                  audioFileMaxSize: metadata.audioFileMaxSize,
+                  videoFileMaxSize: metadata.videoFileMaxSize,
+                  origin: nextOrigin,
                 }
               : s,
           ),
         }));
       } else {
         useServer.setState((server) => ({
-          selectedServerOrigin: origin,
+          selectedServerOrigin: nextOrigin,
           serverList: [
             ...server.serverList,
             {
               version: metadata.version,
               hostname: metadata.hostname,
-              musicFileMaxSize: metadata.musicFileMaxSize,
               imageFileMaxSize: metadata.imageFileMaxSize,
-              origin,
+              audioFileMaxSize: metadata.audioFileMaxSize,
+              videoFileMaxSize: metadata.videoFileMaxSize,
+              origin: nextOrigin,
               users: [],
               selectedUserId: undefined,
             },
@@ -91,7 +116,7 @@ function FirstStep({
       }
       toNext();
     } catch (error) {
-      logger.error(error, `Failed to get origin "${origin}" metadata`);
+      logger.error(error, `Failed to get origin "${nextOrigin}" metadata`);
       dialog.alert({ content: getServerMetadataErrorMessage(error) });
     } finally {
       setLoading(false);
@@ -107,14 +132,20 @@ function FirstStep({
   return (
     <Style>
       <Logo />
-      <Language disabled={loading} />
+      <Language disabled={busy} />
       <Divider />
-      <ServerList toNext={toNext} disabled={loading} />
+      <ServerList
+        toNext={toNext}
+        disabled={loading}
+        checkingOrigin={checkingOrigin}
+        onCheckingOriginChange={setCheckingOrigin}
+      />
       <Input
         label={t('origin')}
         type="url"
-        disabled={loading}
+        disabled={busy}
         value={origin}
+        error={originError}
         onChange={onOriginChange}
         onKeyDown={onKeyDown}
         autoFocus
@@ -122,7 +153,7 @@ function FirstStep({
       <Button
         variant={'primary'}
         onClick={onSaveOrigin}
-        disabled={!origin.length}
+        disabled={!origin.trim().length || busy}
         loading={loading}
       >
         {t('add_origin')}

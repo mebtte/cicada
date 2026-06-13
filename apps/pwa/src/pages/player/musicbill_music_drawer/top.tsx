@@ -8,7 +8,7 @@ import MusicInfo from '../components/music_info';
 import { FLOATING_GAP } from './constants';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 const Style = styled.div`
   z-index: 1;
@@ -22,7 +22,8 @@ const Style = styled.div`
   pointer-events: none;
 
   > .music-info {
-    margin: 0 12px;
+    /* 比下方乐单条目更窄, 悬浮在上方时通过左右缩进与乐单区分, 避免视觉融合 */
+    margin: 0 24px;
 
     pointer-events: auto;
     backdrop-filter: blur(8px);
@@ -63,7 +64,7 @@ const Style = styled.div`
       color: rgb(50 50 50);
     }
 
-    > .info > .singers {
+    > .info > .performers {
       font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
       font-size: 12px;
       font-weight: 700;
@@ -108,7 +109,7 @@ function Top({ music }: { music: Music }) {
         musicName={music.name}
         musicCover={getResizedImage({ url: music.cover, size: 80 })}
         musicCoverThumbnail={music.coverThumbnail}
-        singers={music.singers}
+        performers={music.performers}
       />
     </Style>
   );

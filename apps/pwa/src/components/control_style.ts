@@ -48,12 +48,11 @@ export const CONTROL_DISABLED_TEXT_COLOR = 'rgb(145 145 145)';
 export const CONTROL_MUTED_TEXT_COLOR = 'rgb(160 160 160)';
 export const CONTROL_AFFIX_COLOR = 'rgb(175 175 175)';
 export const CONTROL_PLACEHOLDER_COLOR = 'rgb(205 205 205)';
-export const CONTROL_BORDER_COLOR = 'rgb(220 220 220)';
 export const CONTROL_ERROR_COLOR = 'rgb(242 80 66)';
 export const CONTROL_ERROR_SHADOW = 'rgb(190 46 34)';
 export const CONTROL_DISABLED_BACKGROUND = 'rgb(248 248 248)';
-export const CONTROL_DISABLED_BORDER = 'rgb(226 226 226)';
 export const CONTROL_DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
+export const CONTROL_NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 export type ControlSurfaceProps = {
   $size: ControlSize;
@@ -65,7 +64,7 @@ export const controlSurfaceStyles = (focusSelector: string) => css<ControlSurfac
   background: #fff;
   border-style: solid;
   border-width: 2px;
-  border-color: ${CONTROL_BORDER_COLOR};
+  border-color: ${CONTROL_NEUTRAL_SHADOW};
 
   transition:
     border-color 150ms ease-out,
@@ -75,12 +74,12 @@ export const controlSurfaceStyles = (focusSelector: string) => css<ControlSurfac
     const s = CONTROL_SIZE[$size];
     return css`
       border-radius: ${s.radius}px;
-      box-shadow: 0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+      box-shadow: 0 ${s.shadow}px 0 ${CONTROL_NEUTRAL_SHADOW};
     `;
   }}
 
   ${focusSelector} {
-    border-color: var(${CSS_VAR.colorPrimary});
+    border-color: var(${CSS_VAR.colorPrimaryShadow});
     box-shadow: ${({ $size }) =>
       `0 ${CONTROL_SIZE[$size].shadow}px 0 var(${CSS_VAR.colorPrimaryShadow})`};
   }
@@ -88,11 +87,11 @@ export const controlSurfaceStyles = (focusSelector: string) => css<ControlSurfac
   ${({ $error, $size }) =>
     $error &&
     css`
-      border-color: ${CONTROL_ERROR_COLOR};
+      border-color: ${CONTROL_ERROR_SHADOW};
       box-shadow: 0 ${CONTROL_SIZE[$size].shadow}px 0 ${CONTROL_ERROR_SHADOW};
 
       ${focusSelector} {
-        border-color: ${CONTROL_ERROR_COLOR};
+        border-color: ${CONTROL_ERROR_SHADOW};
         box-shadow: 0 ${CONTROL_SIZE[$size].shadow}px 0 ${CONTROL_ERROR_SHADOW};
       }
     `}
@@ -101,7 +100,7 @@ export const controlSurfaceStyles = (focusSelector: string) => css<ControlSurfac
     $disabled &&
     css`
       background: ${CONTROL_DISABLED_BACKGROUND};
-      border-color: ${CONTROL_DISABLED_BORDER};
+      border-color: ${CONTROL_DISABLED_SHADOW};
       box-shadow: 0 ${CONTROL_SIZE[$size].shadow}px 0 ${CONTROL_DISABLED_SHADOW};
       cursor: not-allowed;
     `}

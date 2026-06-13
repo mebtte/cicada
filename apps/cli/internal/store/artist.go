@@ -107,11 +107,7 @@ func GetMusicCountsByArtistIDs(artistIDs []string) (map[string]int, error) {
 
 	rows, err := DB().Query(
 		`SELECT artistId,COUNT(DISTINCT musicId)
-		FROM (
-			SELECT artistId,musicId FROM music_singer_relation
-			UNION ALL
-			SELECT artistId,musicId FROM music_lyricist_relation
-		)
+		FROM music_artist_relation
 		WHERE artistId IN (`+placeholders(len(artistIDs))+`)
 		GROUP BY artistId`,
 		strs2any(artistIDs)...,
@@ -191,7 +187,7 @@ func GetAdminArtistList(keyword, filterKey string, page, pageSize int) (int, []A
 
 func CreateArtist(name string) (string, error) {
 	for range maxCreateArtistIDAttempts {
-		id, err := generateShortPublicID()
+		id, err := generatePublicID()
 		if err != nil {
 			return "", err
 		}

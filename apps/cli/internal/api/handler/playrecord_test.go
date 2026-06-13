@@ -39,13 +39,13 @@ func TestCreateMusicPlayRecordUpsertsClientRecord(t *testing.T) {
 	now := time.Now().Add(-time.Minute).UnixMilli()
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp) VALUES (?,?,?,?,?)`,
-		"user-1", "listener", store.DoubleMD5("password"), "Listener", now,
+		"USER01", "listener", store.DoubleMD5("password"), "Listener", now,
 	); err != nil {
 		t.Fatalf("insert user: %v", err)
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO music (id,type,name,asset,createTimestamp) VALUES (?,?,?,?,?)`,
-		"music-1", int(store.MusicTypeSong), "Song", "song.mp3", now,
+		"MUS001", int(store.MusicTypeSong), "Song", "song.mp3", now,
 	); err != nil {
 		t.Fatalf("insert music: %v", err)
 	}
@@ -55,7 +55,7 @@ func TestCreateMusicPlayRecordUpsertsClientRecord(t *testing.T) {
 		t.Fatalf("create session token: %v", err)
 	}
 	if _, err := store.CreateAuthSession(
-		"user-1",
+		"USER01",
 		tokenHash,
 		tokenPrefix,
 		"Test Device",
@@ -70,7 +70,7 @@ func TestCreateMusicPlayRecordUpsertsClientRecord(t *testing.T) {
 		t.Helper()
 
 		body, err := json.Marshal(map[string]any{
-			"musicId":        "music-1",
+			"musicId":        "MUS001",
 			"clientRecordId": "client-record-1",
 			"percent":        percent,
 			"playedAt":       playedAt,
@@ -105,7 +105,7 @@ func TestCreateMusicPlayRecordUpsertsClientRecord(t *testing.T) {
 	var count int
 	if err := store.DB().QueryRow(
 		`SELECT COUNT(1), MAX(percent), MAX(playedAt) FROM music_play_record WHERE userId=? AND musicId=? AND clientRecordId=?`,
-		"user-1", "music-1", "client-record-1",
+		"USER01", "MUS001", "client-record-1",
 	).Scan(&count, &percent, &playedAt); err != nil {
 		t.Fatalf("query play record: %v", err)
 	}
@@ -120,7 +120,7 @@ func TestCreateMusicPlayRecordUpsertsClientRecord(t *testing.T) {
 	}
 
 	var heat int64
-	if err := store.DB().QueryRow(`SELECT heat FROM music WHERE id=?`, "music-1").Scan(&heat); err != nil {
+	if err := store.DB().QueryRow(`SELECT heat FROM music WHERE id=?`, "MUS001").Scan(&heat); err != nil {
 		t.Fatalf("query music heat: %v", err)
 	}
 	if heat != 1 {

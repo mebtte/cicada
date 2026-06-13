@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { MusicWithSingerAliases, PlaylistMusic } from '../constants';
+import { MusicWithArtistAliases, PlaylistMusic } from '../constants';
 import storage, { Key } from '../storage';
 import logger from '@/utils/logger';
 import notice from '@/utils/notice';
@@ -17,7 +17,7 @@ function RestoreNotice({
   playlist,
 }: {
   getNoticeId: () => string;
-  playlist: MusicWithSingerAliases[];
+  playlist: MusicWithArtistAliases[];
 }) {
   return (
     <Restore>
@@ -114,8 +114,8 @@ const Restore = styled.div`
       > .confirm-action {
         color: rgb(29 139 94);
         background: #fff;
-        border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
-        box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+        border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+        box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
         &:not(:disabled):hover {
           filter: brightness(1.03);
@@ -130,8 +130,8 @@ const Restore = styled.div`
 `;
 
 const normalizeStoredPlaylist = (
-  playlist: MusicWithSingerAliases[],
-): MusicWithSingerAliases[] => playlist;
+  playlist: MusicWithArtistAliases[],
+): MusicWithArtistAliases[] => playlist;
 
 function usePlaylistRestore(playlist: PlaylistMusic[]) {
   useEffect(

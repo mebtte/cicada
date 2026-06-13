@@ -74,24 +74,11 @@ export default (id: string) => {
   }, [getMusic]);
 
   useEffect(() => {
-    const unlistenMusicUpdated = playerEventemitter.listen(
-      PlayerEventType.MUSIC_UPDATED,
-      (payload) => {
-        if (payload.id === id) {
-          getMusic();
-        }
-      },
-    );
-
-    return unlistenMusicUpdated;
-  }, [getMusic, id]);
-
-  useEffect(() => {
     const unlistenArtistUpdated = playerEventemitter.listen(
       PlayerEventType.ARTIST_UPDATED,
       (payload) => {
         const artists = [
-          ...(data.music?.singers ?? []),
+          ...(data.music?.performers ?? []),
           ...(data.music?.lyricists ?? []),
           ...(data.music?.composers ?? []),
         ];

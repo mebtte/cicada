@@ -18,7 +18,7 @@ import { CheckCircle, Schedule } from '@/components/icon';
 const USER_MARKER = '__INVITE_USER__';
 const MUSICBILL_MARKER = '__INVITE_MUSICBILL__';
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 const Style = styled.article`
   padding: 14px 14px 16px;

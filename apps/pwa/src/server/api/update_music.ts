@@ -8,7 +8,7 @@ type KeyMapValue = {
   [AllowUpdateKey.ALIASES]: string[];
   [AllowUpdateKey.SEARCH_KEYWORDS]: string;
   [AllowUpdateKey.ASSET]: string;
-  [AllowUpdateKey.SINGER]: string[];
+  [AllowUpdateKey.PERFORMER]: string[];
   [AllowUpdateKey.LYRICIST]: string[];
   [AllowUpdateKey.COMPOSER]: string[];
   [AllowUpdateKey.FORK_FROM]: string[];

@@ -76,7 +76,7 @@ func GetMusicbillsByUserID(userID string) ([]Musicbill, error) {
 
 func CreateMusicbill(userID, name string) (string, error) {
 	for range maxCreateMusicbillIDAttempts {
-		id, err := generateShortPublicID()
+		id, err := generatePublicID()
 		if err != nil {
 			return "", err
 		}
@@ -263,6 +263,58 @@ func AcceptInvitation(id int64, userID string) (bool, error) {
 	}
 	n, _ := res.RowsAffected()
 	return n > 0, nil
+}
+
+// TransferMusicbillOwner 把乐单所有者从 fromUserID 转给 toUserID. toUserID 必须是已接受
+// 共享邀请的用户; 转让成功后, 旧 owner 自动作为已接受的共享用户保留访问权限.
+// 整个过程在事务中完成, 通过条件 UPDATE 防止并发重复转让.
+// 返回 false 表示当前 owner 已变 (并发或调用方不再是 owner) 而不视为错误.
+func TransferMusicbillOwner(musicbillID, fromUserID, toUserID string) (bool, error) {
+	tx, err := DB().Begin()
+	if err != nil {
+		return false, err
+	}
+	defer tx.Rollback()
+
+	var accepted int
+	if err := tx.QueryRow(
+		`SELECT accepted FROM shared_musicbill WHERE musicbillId=? AND sharedUserId=?`,
+		musicbillID, toUserID,
+	).Scan(&accepted); err != nil || accepted != 1 {
+		// 目标不再是已接受的共享用户 (handler 已预校验, 这里兜底并发).
+		return false, nil
+	}
+
+	res, err := tx.Exec(
+		`UPDATE musicbill SET userId=? WHERE id=? AND userId=?`,
+		toUserID, musicbillID, fromUserID,
+	)
+	if err != nil {
+		return false, err
+	}
+	n, _ := res.RowsAffected()
+	if n == 0 {
+		return false, nil
+	}
+
+	if _, err := tx.Exec(
+		`DELETE FROM shared_musicbill WHERE musicbillId=? AND sharedUserId=?`,
+		musicbillID, toUserID,
+	); err != nil {
+		return false, err
+	}
+
+	if _, err := tx.Exec(
+		`INSERT OR REPLACE INTO shared_musicbill (musicbillId,sharedUserId,inviteUserId,inviteTimestamp,accepted) VALUES (?,?,?,?,1)`,
+		musicbillID, fromUserID, toUserID, time.Now().UnixMilli(),
+	); err != nil {
+		return false, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // Public musicbill collection

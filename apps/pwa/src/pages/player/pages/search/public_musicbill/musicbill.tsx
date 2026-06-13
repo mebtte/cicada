@@ -38,8 +38,7 @@ const Style = styled.button`
 
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms ease-out;
+    box-shadow 150ms ease-out;
 
   > .cover-frame {
     flex: 0 0 64px;
@@ -113,9 +112,7 @@ const Style = styled.button`
 
   &:hover {
     transform: translateY(-2px);
-    border-color: rgb(210 210 210);
     box-shadow: 0 6px 0 ${SURFACE_SHADOW};
-    filter: brightness(1.01);
   }
 
   &:active {
@@ -123,8 +120,7 @@ const Style = styled.button`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {
@@ -161,7 +157,7 @@ function Musicbill({
   id: string;
   cover: string;
   name: string;
-  userNickname: string;
+  userNickname?: string;
   musicCount?: number;
 }) {
   const normalizedMusicCount = musicCount ?? 0;
@@ -187,7 +183,7 @@ function Musicbill({
       </div>
       <div className="info">
         <div className="name">{name}</div>
-        <div className="owner">{userNickname}</div>
+        {userNickname ? <div className="owner">{userNickname}</div> : null}
       </div>
       <div className="count" aria-label={musicCountText}>
         <span className="value">{normalizedMusicCount}</span>

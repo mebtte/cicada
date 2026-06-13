@@ -101,16 +101,16 @@ func importFile(path, uid string, skipExistenceCheck bool) error {
 	if name == "" {
 		name = "Unknown"
 	}
-	singers := []string{"Unknown"}
+	performers := []string{"Unknown"}
 
 	// Try to extract title/artist from filename pattern: "Artist - Title"
 	if parts := strings.SplitN(name, " - ", 2); len(parts) == 2 {
-		singers = []string{strings.TrimSpace(parts[0])}
+		performers = []string{strings.TrimSpace(parts[0])}
 		name = strings.TrimSpace(parts[1])
 	}
 
 	if !skipExistenceCheck {
-		exists, _ := checkMusicExists(name, singers)
+		exists, _ := checkMusicExists(name, performers)
 		if exists {
 			log.Printf("[ %s ] already in database, ignored (use --skip-existence-check to skip)", path)
 			ignored++
@@ -140,16 +140,19 @@ func importFile(path, uid string, skipExistenceCheck bool) error {
 		return nil
 	}
 
-	for _, singerName := range singers {
-		singerName = strings.TrimSpace(singerName)
-		if singerName == "" {
-			singerName = "Unknown"
+	artistIDs := make([]string, 0, len(performers))
+	for _, performerName := range performers {
+		performerName = strings.TrimSpace(performerName)
+		if performerName == "" {
+			performerName = "Unknown"
 		}
-		artistID, _ := getOrCreateArtist(singerName)
-		store.DB().Exec(
-			`INSERT OR IGNORE INTO music_singer_relation (musicId,artistId) VALUES (?,?)`,
-			musicID, artistID,
-		)
+		artistID, _ := getOrCreateArtist(performerName)
+		artistIDs = append(artistIDs, artistID)
+	}
+	if err := store.ReplaceMusicArtistsByRole(musicID, store.MusicArtistRolePerformer, artistIDs); err != nil {
+		log.Printf("[ %s ] failed to link performers: %v", path, err)
+		ignored++
+		return nil
 	}
 
 	log.Printf("[ %s ] imported", path)
@@ -157,7 +160,7 @@ func importFile(path, uid string, skipExistenceCheck bool) error {
 	return nil
 }
 
-func checkMusicExists(name string, singers []string) (bool, error) {
+func checkMusicExists(name string, performers []string) (bool, error) {
 	rows, err := store.DB().Query(`SELECT id FROM music WHERE name=?`, name)
 	if err != nil {
 		return false, err
@@ -176,15 +179,15 @@ func checkMusicExists(name string, singers []string) (bool, error) {
 		return false, nil
 	}
 
-	dbSingers, _ := store.GetSingersInMusicIDs(musicIDs)
+	dbPerformers, _ := store.GetArtistsInMusicIDsByRole(musicIDs, store.MusicArtistRolePerformer)
 	for _, mid := range musicIDs {
 		var names []string
-		for _, s := range dbSingers {
-			if s.MusicID == mid {
-				names = append(names, s.Name)
+		for _, performer := range dbPerformers {
+			if performer.MusicID == mid {
+				names = append(names, performer.Name)
 			}
 		}
-		if sliceEqual(sortedCopy(names), sortedCopy(singers)) {
+		if sliceEqual(sortedCopy(names), sortedCopy(performers)) {
 			return true, nil
 		}
 	}

@@ -22,6 +22,11 @@ const Style = styled.div<{ $gap: number }>`
 `;
 const PageButton = styled(Button)<{ $selected: boolean; $size: Size }>`
   min-width: ${({ $size }) => ELLIPSIS_SIZE[$size].box}px;
+  line-height: 1;
+
+  > .btn-label {
+    line-height: 1;
+  }
 
   ${({ $selected, $size }) =>
     !$selected &&
@@ -35,9 +40,9 @@ const PageButton = styled(Button)<{ $selected: boolean; $size: Size }>`
 
       &:not(:disabled):hover {
         background: #fff;
-        border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
-        box-shadow: 0 ${SHADOW_OFFSET[$size]}px 0
-          ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+        border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+        box-shadow: 0 ${SHADOW_OFFSET[$size] + 2}px 0
+          ${CSSVariable.COLOR_NEUTRAL_SHADOW};
       }
 
       &:not(:disabled):active {
@@ -143,7 +148,7 @@ function Pagination({
                 size={PAGINATION_SIZE}
                 $selected={item.selected}
                 $size={PAGINATION_SIZE}
-                variant={item.selected ? 'primary' : 'plain'}
+                variant={item.selected ? 'primary' : 'ghost'}
                 aria-label={`Page ${item.page}`}
                 aria-current={item.selected ? 'page' : undefined}
                 onClick={() => navTo(item.page)}

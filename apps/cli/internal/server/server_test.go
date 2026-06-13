@@ -88,7 +88,7 @@ func TestMusicWriteRoutesRequireAdmin(t *testing.T) {
 	}
 	if _, err := store.DB().Exec(
 		`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin) VALUES (?,?,?,?,?,?)`,
-		"user-1", "user", store.DoubleMD5("password"), "User", time.Now().UnixMilli(), 0,
+		"USER01", "user", store.DoubleMD5("password"), "User", time.Now().UnixMilli(), 0,
 	); err != nil {
 		t.Fatalf("insert user: %v", err)
 	}
@@ -96,7 +96,7 @@ func TestMusicWriteRoutesRequireAdmin(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create token: %v", err)
 	}
-	if _, err := store.CreateAuthSession("user-1", tokenHash, tokenPrefix, "test"); err != nil {
+	if _, err := store.CreateAuthSession("USER01", tokenHash, tokenPrefix, "test"); err != nil {
 		t.Fatalf("create auth session: %v", err)
 	}
 

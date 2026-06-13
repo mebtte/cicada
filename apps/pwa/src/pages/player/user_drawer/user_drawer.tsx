@@ -22,6 +22,7 @@ import {
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import Cover, { Shape } from '@/components/cover';
 import getResizedImage from '@/server/asset/get_resized_image';
+import { CSSVariable } from '@/global_style';
 import useData from './use_data';
 import { UserDetail as UserDetailType } from './constants';
 import Info from './info';
@@ -72,7 +73,8 @@ const Header = styled(DrawerHeader)<{ $visible: boolean }>`
   background-color: ${({ $visible }) =>
     $visible ? 'rgb(255 255 255 / 0.92)' : 'transparent'};
   border-bottom: 1px solid
-    ${({ $visible }) => ($visible ? 'rgb(229 229 229)' : 'transparent')};
+    ${({ $visible }) =>
+      $visible ? CSSVariable.COLOR_NEUTRAL_SHADOW : 'transparent'};
   backdrop-filter: ${({ $visible }) => ($visible ? 'blur(8px)' : 'none')};
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transform: translateY(${({ $visible }) => ($visible ? 0 : '-4px')});
@@ -91,9 +93,9 @@ const HeaderAvatar = styled.div`
   box-sizing: border-box;
 
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 14px;
-  box-shadow: 0 4px 0 rgb(210 210 210);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   > .header-avatar-image {
     border-radius: 10px;
@@ -225,7 +227,7 @@ function Wrapper({
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
       <DrawerContent
         side="right"
-        style={{ width: 'min(85%, 400px)', paddingTop: titlebarTop }}
+        style={{ width: 'min(80%, 340px)', paddingTop: titlebarTop }}
         showClose={false}
         zIndex={zIndex}
       >

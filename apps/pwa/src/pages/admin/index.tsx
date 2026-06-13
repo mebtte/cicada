@@ -10,11 +10,13 @@ import capitalize from '@/utils/capitalize';
 import LanguageSelect from '@/features/language/language_select';
 import Avatar from '@/components/avatar';
 import Button from '@/components/button';
+import AppExtraInfo from '@/components/app_extra_info';
+import Tooltip from '@/components/tooltip';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
-import definition from '@/definition';
 import { CSS_VAR } from '@/components/theme';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
+import useDocumentTitle from '@/utils/use_document_title';
 import Dashboard from './dashboard';
 import MusicManagement from './music_management';
 import ArtistManagement from './artist_management';
@@ -45,7 +47,7 @@ const MOBILE_SIDEBAR_Z_INDEX = 30;
 const AVATAR_SIZE = 36;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
-const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 const SURFACE_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
 // 上传中: 一道斜向白色高光从左滑到右, 在 36x36 的小按钮里也清晰可见
@@ -124,7 +126,6 @@ const SidebarHeader = styled.div`
 const BrandLogo = styled.img`
   width: 52px;
   height: 52px;
-  padding: 8px;
   object-fit: contain;
   flex-shrink: 0;
   user-select: none;
@@ -149,22 +150,56 @@ const BrandName = styled.div`
   text-overflow: ellipsis;
 `;
 
-const BrandSubTitle = styled.div`
-  margin-top: 3px;
-  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0;
-  color: rgb(150 150 150);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
 const MenuList = styled.nav`
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 4px 12px 18px;
   overflow-y: auto;
   ${autoScrollbar}
+`;
+
+const SidebarExtraInfo = styled(AppExtraInfo)`
+  margin: 14px 12px 18px;
+  border-radius: 15px;
+  box-shadow: 0 3px 0 ${SURFACE_SHADOW};
+  font-size: 11px;
+
+  table {
+    table-layout: auto;
+  }
+
+  tbody > tr {
+    display: block;
+    padding: 9px 11px 10px;
+  }
+
+  tbody > tr:not(:first-child) {
+    border-top: 2px solid ${CSSVariable.COLOR_BORDER};
+  }
+
+  tbody > tr:not(:first-child) > th,
+  tbody > tr:not(:first-child) > td {
+    border-top: none;
+  }
+
+  th,
+  td {
+    display: block;
+    width: 100%;
+    padding: 0;
+    text-align: left;
+  }
+
+  th {
+    margin-bottom: 3px;
+    font-size: 10px;
+    line-height: 1.15;
+  }
+
+  td {
+    font-size: 12px;
+    line-height: 1.25;
+  }
 `;
 
 const MenuLink = styled(NavLink)`
@@ -194,8 +229,7 @@ const MenuLink = styled(NavLink)`
     box-shadow 150ms ease-out,
     border-color 150ms ease-out,
     background 150ms ease-out,
-    color 150ms ease-out,
-    filter 120ms ease-out;
+    color 150ms ease-out;
   -webkit-tap-highlight-color: transparent;
 
   > svg {
@@ -219,9 +253,8 @@ const MenuLink = styled(NavLink)`
   }
 
   &:not(.active):hover {
-    color: ${PRIMARY};
-    border-color: ${CSSVariable.COLOR_BORDER};
-    filter: brightness(1.02);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 ${SURFACE_SHADOW};
   }
 
   &:active {
@@ -229,8 +262,7 @@ const MenuLink = styled(NavLink)`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 
   &.active {
@@ -240,11 +272,8 @@ const MenuLink = styled(NavLink)`
     color: #fff;
 
     &:hover {
-      color: #fff;
-      background: ${PRIMARY};
-      border-color: ${PRIMARY_SHADOW};
-      box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
-      filter: brightness(1.04);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 ${PRIMARY_SHADOW};
     }
 
     &:active {
@@ -305,18 +334,6 @@ const MenuToggle = styled(Button)`
   @media (max-width: ${MOBILE_BREAKPOINT}px) {
     flex-shrink: 0;
     display: inline-flex;
-  }
-`;
-
-const HeaderLogo = styled.img`
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-  flex-shrink: 0;
-  user-select: none;
-
-  @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    display: none;
   }
 `;
 
@@ -392,13 +409,10 @@ const UploadStatusButton = styled.button<{
   -webkit-tap-highlight-color: transparent;
   transition:
     transform 150ms ease-out,
-    filter 120ms;
+    box-shadow 150ms ease-out;
 
-  &:active {
-    transform: translateY(3px);
-    transition:
-      transform 60ms ease-in,
-      filter 60ms;
+  &:hover {
+    transform: translateY(-2px);
   }
 
   &:focus-visible {
@@ -433,8 +447,7 @@ const UploadStatusButton = styled.button<{
       border-color 150ms ease-out,
       box-shadow 150ms ease-out,
       color 150ms ease-out,
-      background 150ms ease-out,
-      filter 120ms;
+      background 150ms ease-out;
   }
 
   /* 上传中: 全按钮斜向白光扫动, 比原来的横向波纹明显得多 */
@@ -470,24 +483,22 @@ const UploadStatusButton = styled.button<{
   }
 
   &:hover > span.upload-status-box {
-    border-color: ${({ $status, $open }) =>
-      $status === 'failed'
-        ? DANGER_SHADOW
-        : $status === 'active' || $open
-          ? PRIMARY_SHADOW
-          : PRIMARY};
-    box-shadow: 0 3px 0
-      ${({ $status }) =>
-        $status === 'failed' ? DANGER_SHADOW : PRIMARY_SHADOW};
-    filter: brightness(1.04);
+    box-shadow: 0 5px 0
+      ${({ $status, $open }) => resolveStatusBorder($status, $open)};
+  }
+
+  &:active {
+    transform: translateY(3px);
+    transition:
+      transform 60ms ease-in,
+      box-shadow 60ms ease-in;
   }
 
   &:active > span.upload-status-box {
     box-shadow: none;
     transition:
       border-color 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   ${runningShimmer}
@@ -507,6 +518,18 @@ const AvatarButton = styled.div`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 150ms ease-out;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:hover > div {
+    box-shadow: 0 5px 0 ${NEUTRAL_SHADOW};
+  }
+
+  &[aria-expanded='true']:hover > div {
+    box-shadow: 0 5px 0 ${PRIMARY_SHADOW};
+  }
 
   &:active {
     transform: translateY(3px);
@@ -532,6 +555,10 @@ const PlayerLink = styled.button`
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: transform 150ms ease-out;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 
   &:active {
     transform: translateY(3px);
@@ -559,9 +586,7 @@ const PlayerLinkBox = styled.span`
   justify-content: center;
 
   ${PlayerLink}:hover & {
-    color: ${PRIMARY};
-    border-color: ${PRIMARY};
-    box-shadow: 0 3px 0 ${PRIMARY_SHADOW};
+    box-shadow: 0 5px 0 ${NEUTRAL_SHADOW};
   }
 `;
 
@@ -650,6 +675,8 @@ const getCurrentMenuItem = (pathname: string) => {
 };
 
 function AdminPage() {
+  useDocumentTitle(t('admin'));
+
   const user = useUser()!;
   const { pathname } = useLocation();
   const {
@@ -737,10 +764,9 @@ function AdminPage() {
       <MusicImportSidebar />
       <Sidebar $open={sidebarOpen}>
         <SidebarHeader style={{ paddingTop: sidebarTopPadding }}>
-          <BrandLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
+          <BrandLogo src="/app_logo.png" alt={t('logo')} crossOrigin="anonymous" />
           <BrandText>
             <BrandName>{capitalize(t('cicada'))}</BrandName>
-            <BrandSubTitle>{definition.VERSION}</BrandSubTitle>
           </BrandText>
         </SidebarHeader>
 
@@ -757,6 +783,7 @@ function AdminPage() {
             </MenuLink>
           ))}
         </MenuList>
+        <SidebarExtraInfo />
       </Sidebar>
       <Overlay
         type="button"
@@ -781,50 +808,51 @@ function AdminPage() {
           >
             <MenuIcon size={22} />
           </MenuToggle>
-          <HeaderLogo src="/logo.png" alt={t('logo')} crossOrigin="anonymous" />
           <HeaderTitle>
             <HeaderTitleText>{capitalize(t(currentMenuItem.label))}</HeaderTitleText>
           </HeaderTitle>
           <HeaderActions>
-            <UploadStatusButton
-              type="button"
-              onClick={toggleWindow}
-              title={uploadStatusText}
-              aria-label={uploadStatusText}
-              aria-pressed={uploadSidebarOpen}
-              $status={uploadStatus}
-              $open={uploadSidebarOpen}
-              $running={uploadRunning}
-            >
-              <span className="upload-status-box">
-                {uploadActive ? (
-                  <span>{uploadPercentText}</span>
-                ) : (
-                  <CloudUpload />
-                )}
-              </span>
-            </UploadStatusButton>
-            <PlayerLink
-              type="button"
-              onClick={() =>
-                window.open(
-                  `#${ROOT_PATH.PLAYER}`,
-                  '_blank',
-                  'noopener,noreferrer',
-                )
-              }
-              title={capitalize(t('player'))}
-              aria-label={capitalize(t('player'))}
-            >
-              <PlayerLinkBox>
-                <Headphones size={20} />
-              </PlayerLinkBox>
-            </PlayerLink>
+            <Tooltip content={uploadStatusText}>
+              <UploadStatusButton
+                type="button"
+                onClick={toggleWindow}
+                aria-label={uploadStatusText}
+                aria-pressed={uploadSidebarOpen}
+                $status={uploadStatus}
+                $open={uploadSidebarOpen}
+                $running={uploadRunning}
+              >
+                <span className="upload-status-box">
+                  {uploadActive ? (
+                    <span>{uploadPercentText}</span>
+                  ) : (
+                    <CloudUpload />
+                  )}
+                </span>
+              </UploadStatusButton>
+            </Tooltip>
+            <Tooltip content={capitalize(t('player'))}>
+              <PlayerLink
+                type="button"
+                onClick={() =>
+                  window.open(
+                    `#${ROOT_PATH.PLAYER}`,
+                    '_blank',
+                    'noopener,noreferrer',
+                  )
+                }
+                aria-label={capitalize(t('player'))}
+              >
+                <PlayerLinkBox>
+                  <Headphones size={20} />
+                </PlayerLinkBox>
+              </PlayerLink>
+            </Tooltip>
             <UserMenuRoot ref={userMenuRef}>
               <AvatarButton
                 role="button"
                 tabIndex={0}
-                title={user.nickname}
+                aria-label={user.nickname}
                 aria-haspopup="menu"
                 aria-expanded={userMenuOpen}
                 onClick={toggleUserMenu}

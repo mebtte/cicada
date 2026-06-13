@@ -4,13 +4,13 @@ import { TabList, TabPanels } from './tabs';
 
 enum DemoTab {
   MUSIC = 'music',
-  SINGER = 'singer',
+  SINGER = 'performer',
   LYRIC = 'lyric',
 }
 
 const tabList = [
   { tab: DemoTab.MUSIC, label: 'Music' },
-  { tab: DemoTab.SINGER, label: 'Singer' },
+  { tab: DemoTab.SINGER, label: 'Performer' },
   { tab: DemoTab.LYRIC, label: 'Lyric' },
 ];
 
@@ -79,7 +79,7 @@ function ControlledTabs() {
             },
             {
               tab: DemoTab.SINGER,
-              content: <StatefulPanel label="Singer state" />,
+              content: <StatefulPanel label="Performer state" />,
             },
             {
               tab: DemoTab.LYRIC,

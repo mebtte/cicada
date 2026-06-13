@@ -8,7 +8,7 @@ import Spinner from '@/components/spinner';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
 import {
-  MusicWithSingerAliases,
+  MusicWithArtistAliases,
   Musicbill as MusicbillType,
 } from '../constants';
 import playerEventemitter, {
@@ -21,8 +21,8 @@ const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const PUBLIC = '#63d1fa';
 const PUBLIC_SHADOW = 'rgb(72 179 220)';
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
-const CONTROL_NEUTRAL = CSSVariable.COLOR_CONTROL_NEUTRAL;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
+const CONTROL_NEUTRAL = CSSVariable.COLOR_NEUTRAL_SHADOW;
 const COVER_SIZE = 28;
 const COVER_INNER_SIZE = COVER_SIZE - 4;
 const CHECKBOX_SIZE = 24;
@@ -166,7 +166,7 @@ function Musicbill({
   music,
 }: {
   musicbill: MusicbillType;
-  music: MusicWithSingerAliases;
+  music: MusicWithArtistAliases;
 }) {
   const { id, status, musicList } = musicbill;
   const selected =

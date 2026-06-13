@@ -7,14 +7,14 @@ import { Method, request } from '..';
  */
 function createMusic({
   name,
-  singerIds = [],
+  performerIds = [],
   lyricistIds = [],
   composerIds = [],
   type,
   asset,
 }: {
   name: string;
-  singerIds?: string[];
+  performerIds?: string[];
   lyricistIds?: string[];
   composerIds?: string[];
   type: MusicType;
@@ -25,7 +25,7 @@ function createMusic({
     path: '/api/admin/music',
     body: {
       name,
-      singerIds: singerIds.join(','),
+      performerIds: performerIds.join(','),
       lyricistIds: lyricistIds.join(','),
       composerIds: composerIds.join(','),
       type,

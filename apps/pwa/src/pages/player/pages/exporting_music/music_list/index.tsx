@@ -254,8 +254,8 @@ const statusPillToneStyle: Record<StatusTone, ReturnType<typeof css>> = {
   waiting: css`
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     background: #fff;
-    border-color: rgb(210 210 210);
-    box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+    box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   `,
   exporting: css`
     color: rgb(58 122 0);
@@ -631,7 +631,7 @@ function MusicList() {
                       </QualityChip>
                       <Button
                         square
-                        variant="plain"
+                        variant="ghost"
                         size="sm"
                         title={t('delete')}
                         aria-label={t('delete')}

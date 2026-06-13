@@ -1,7 +1,8 @@
 import { memo } from 'react';
 import styled from 'styled-components';
+import AppExtraInfo from '@/components/app_extra_info';
 import autoScrollbar from '@/style/auto_scrollbar';
-import Page from '../page';
+import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
 import Volume from './volume';
 import Language from './language';
 import AdminQuickEdit from './admin_quick_edit';
@@ -31,6 +32,9 @@ const Style = styled(Page)`
     height: ${FLOATING_CONTROLLER_SCROLL_SPACE};
   }
 `;
+const extraInfoStyle = {
+  margin: `20px ${PAGE_HORIZONTAL_PADDING}`,
+};
 
 function Setting() {
   return (
@@ -41,6 +45,7 @@ function Setting() {
       <AdminQuickEdit />
       <OfflineCache />
       <Feedback />
+      <AppExtraInfo style={extraInfoStyle} />
     </Style>
   );
 }

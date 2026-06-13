@@ -4,7 +4,6 @@ import { useEffect, useMemo } from 'react';
 import PageContainer from '@/components/page_container';
 import useDocumentTitle from '@/utils/use_document_title';
 import { t } from '@/i18n';
-import capitalize from '@/utils/capitalize';
 import Sidebar from './sidebar';
 import Header from './header';
 import Controller from './controller';
@@ -30,7 +29,6 @@ import AuthorizedDeviceDrawer from './authorized_device_drawer';
 import useLyricPanelOpen from './use_lyric_panel_open';
 import useSearchHotkey from './use_search_hotkey';
 import e, { EventType } from './eventemitter';
-import ArtistModifyRecordDrawer from './singer_modify_record_drawer';
 import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
@@ -69,7 +67,7 @@ const Style = styled(PageContainer)`
 `;
 
 function Wrapper() {
-  useDocumentTitle(capitalize(t('cicada')));
+  useDocumentTitle(t('player'));
   useProfileUpdate();
   useSearchHotkey();
   useOpenSidebarSwipe();
@@ -166,7 +164,6 @@ function Wrapper() {
       <AuthorizedDeviceDrawer />
       <MusicbillSharedUserDrawer />
       <SharedMusicbillInvitationDrawer />
-      <ArtistModifyRecordDrawer />
 
       <PlaylistAddAnimation />
       <PlayqueueInsertAnimation />

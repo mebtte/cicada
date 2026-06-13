@@ -17,7 +17,7 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
     ${({ $checked }) =>
       $checked
         ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_CONTROL_NEUTRAL};
+        : CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 999px;
   background: ${({ $checked }) =>
     $checked ? CSSVariable.COLOR_PRIMARY : '#fff'};
@@ -25,7 +25,7 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
     ${({ $checked }) =>
       $checked
         ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_CONTROL_NEUTRAL};
+        : CSSVariable.COLOR_NEUTRAL_SHADOW};
   cursor: pointer;
   transition:
     transform 150ms ease-out,
@@ -60,14 +60,14 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
       ${({ $checked }) =>
         $checked
           ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_CONTROL_NEUTRAL};
+          : CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-radius: 50%;
     background: #fff;
     box-shadow: 0 2px 0
       ${({ $checked }) =>
         $checked
           ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_CONTROL_NEUTRAL};
+          : CSSVariable.COLOR_NEUTRAL_SHADOW};
     transform: translateX(${({ $checked }) => ($checked ? '24px' : '0')});
     transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
   }

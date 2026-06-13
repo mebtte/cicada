@@ -16,7 +16,7 @@ interface Music {
   cover: string;
   coverThumbnail?: string;
   asset: string;
-  singers: ArtistInMusic[];
+  performers: ArtistInMusic[];
   lyricists: ArtistInMusic[];
   composers: ArtistInMusic[];
 }
@@ -31,16 +31,16 @@ interface Response {
     thumbnail?: string;
     description: string;
   }[];
-  singerMusicList: Music[];
+  performerMusicList: Music[];
   lyricistMusicList: Music[];
   composerMusicList: Music[];
 }
 
 type RawResponse = Omit<
   Response,
-  'singerMusicList' | 'lyricistMusicList' | 'composerMusicList' | 'photos'
+  'performerMusicList' | 'lyricistMusicList' | 'composerMusicList' | 'photos'
 > & {
-  singerMusicList?: Response['singerMusicList'];
+  performerMusicList?: Response['performerMusicList'];
   lyricistMusicList?: Response['lyricistMusicList'];
   composerMusicList?: Response['composerMusicList'];
   photos?: Response['photos'];
@@ -53,7 +53,7 @@ const normalizeMusic = (musicList: Music[] = []) =>
     cover: prefixServerOrigin(music.cover),
     coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
     asset: prefixServerOrigin(music.asset),
-    singers: music.singers ?? [],
+    performers: music.performers ?? [],
     lyricists: music.lyricists ?? [],
     composers: music.composers ?? [],
   }));
@@ -74,7 +74,7 @@ async function getArtist(id: string): Promise<Response> {
       asset: prefixServerOrigin(photo.asset),
       thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
     })),
-    singerMusicList: normalizeMusic(artist.singerMusicList),
+    performerMusicList: normalizeMusic(artist.performerMusicList),
     lyricistMusicList: normalizeMusic(artist.lyricistMusicList),
     composerMusicList: normalizeMusic(artist.composerMusicList),
   };

@@ -31,7 +31,7 @@ const Style = styled.div`
       gap: 8px;
       max-height: 216px;
       overflow-y: auto;
-      padding-bottom: 4px;
+      padding: 2px 0 6px;
 
       /* 隐藏原生滚动条, 避免 macOS overlay 滚动条遮挡卡片右侧;
        * 滚动状态由上方 .edge-shadow 渐变遮罩传达 */
@@ -79,13 +79,16 @@ const Style = styled.div`
 
 function ServerList({
   disabled,
+  checkingOrigin,
+  onCheckingOriginChange,
   toNext,
 }: {
   disabled: boolean;
+  checkingOrigin: string | undefined;
+  onCheckingOriginChange: (origin: string | undefined) => void;
   toNext: () => void;
 }) {
   const { serverList } = useServer();
-  const [checkingOrigin, setCheckingOrigin] = useState<string>();
 
   // 滚动边界遮罩: 通过监听 scrollTop 计算是否在顶/底, 决定上下渐变层是否显示
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -134,10 +137,14 @@ function ServerList({
             origin={s.origin}
             users={s.users}
             selectedUserId={s.selectedUserId}
+            loading={s.origin === checkingOrigin}
+            disabled={
+              disabled || (!!checkingOrigin && s.origin !== checkingOrigin)
+            }
             onClick={async () => {
               if (disabled || checkingOrigin) return;
 
-              setCheckingOrigin(s.origin);
+              onCheckingOriginChange(s.origin);
               try {
                 const { default: getMetadata } = await import(
                   '@/server/base/get_metadata'
@@ -161,8 +168,9 @@ function ServerList({
                           ...item,
                           version: metadata.version,
                           hostname: metadata.hostname,
-                          musicFileMaxSize: metadata.musicFileMaxSize,
                           imageFileMaxSize: metadata.imageFileMaxSize,
+                          audioFileMaxSize: metadata.audioFileMaxSize,
+                          videoFileMaxSize: metadata.videoFileMaxSize,
                         }
                       : item,
                   ),
@@ -175,7 +183,7 @@ function ServerList({
                 );
                 dialog.alert({ content: getServerMetadataErrorMessage(error) });
               } finally {
-                setCheckingOrigin(undefined);
+                onCheckingOriginChange(undefined);
               }
             }}
             onDelete={(e) => {

@@ -19,7 +19,7 @@ export type { SliderProps, SliderEdge } from './slider';
 export { Select, MultiSelect } from './select';
 export type { SelectProps, MultiSelectProps, SelectOption, SelectSize } from './select';
 
-export { Icon, List, PlayQueue } from './icon';
+export { Icon } from './icon';
 export type { IconProps } from './icon';
 
 export {
@@ -58,3 +58,12 @@ export type { TabItem, TabPanel } from './tabs';
 
 export { default as Tooltip } from './tooltip';
 export type { TooltipProps } from './tooltip';
+
+export { default as AppDrawer } from './app_drawer';
+export type { AppDrawerProps, AppDrawerWidth } from './app_drawer';
+
+export { default as AsyncContent } from './async_content';
+export type { AsyncContentProps } from './async_content';
+
+export { default as Tag } from './tag';
+export type { TagProps, Variant as TagVariant, Size as TagSize } from './tag';

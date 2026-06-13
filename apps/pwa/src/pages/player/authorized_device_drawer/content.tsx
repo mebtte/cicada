@@ -14,6 +14,7 @@ import updateSession from '@/server/api/update_session';
 import deleteSession from '@/server/api/delete_session';
 import { t } from '@/i18n';
 import { getDisplayDeviceName } from '@/utils/device_name';
+import Tag from '@/components/tag';
 
 const Body = styled.div`
   flex: 1;
@@ -41,20 +42,16 @@ const List = styled.div`
   gap: 14px;
 `;
 
-const Item = styled.div<{ $current: boolean }>`
+const Item = styled.div`
   padding: 16px;
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
 
-  border: 2px solid
-    ${({ $current }) =>
-      $current ? CSSVariable.COLOR_PRIMARY : CSSVariable.COLOR_BORDER};
+  border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 16px;
   background: #fff;
-  box-shadow: 0 5px 0
-    ${({ $current }) =>
-      $current ? CSSVariable.COLOR_PRIMARY : CSSVariable.COLOR_BORDER};
+  box-shadow: 0 5px 0 ${CSSVariable.COLOR_BORDER};
 
   > .main {
     min-width: 0;
@@ -185,10 +182,11 @@ function AuthorizedDeviceContent() {
           {sessions.map((session) => {
             const deviceName = getSessionDeviceName(session);
             return (
-              <Item key={session.id} $current={session.current}>
+              <Item key={session.id}>
                 <div className="main">
                   <div className="header">
                     <div className="name">{deviceName}</div>
+                    {session.current ? <Tag>{t('current_device')}</Tag> : null}
                   </div>
                   <div className="meta">
                     <div>

@@ -18,7 +18,7 @@ const ALL_ICONS: { name: string; Component: IconComponent }[] = Object.entries(
 
 const meta = {
   title: 'Basic/Icon',
-  component: Icons.List,
+  component: Icons.Search,
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
@@ -26,7 +26,7 @@ const meta = {
       description: {
         component:
           'Stroke-based SVG icons. Each icon is an independent file — unused icons are tree-shaken out of the bundle. ' +
-          'Import named icons directly: `import { PlayQueue } from "@/components/icon"`. ' +
+          'Import named icons directly: `import { Search } from "@/components/icon"`. ' +
           'To add a new icon, create a file under `icons/` and add one export line to `index.ts`.',
       },
     },
@@ -48,7 +48,7 @@ const meta = {
       table: { defaultValue: { summary: 'currentColor' } },
     },
   },
-} satisfies Meta<typeof Icons.List>;
+} satisfies Meta<typeof Icons.Search>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -150,7 +150,7 @@ export const Sizes: Story = {
     <div style={{ display: 'flex', gap: 20, alignItems: 'flex-end' }}>
       {[16, 20, 24, 32, 40].map((s) => (
         <div key={s} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <Icons.PlayQueue size={s} />
+          <Icons.Search size={s} />
           <span style={{ fontSize: 10, color: '#999' }}>{s}</span>
         </div>
       ))}
@@ -165,7 +165,7 @@ export const StrokeWeights: Story = {
     <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
       {[1, 1.5, 2, 2.5, 3].map((w) => (
         <div key={w} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <Icons.PlayQueue size={28} strokeWidth={w} />
+          <Icons.Search size={28} strokeWidth={w} />
           <span style={{ fontSize: 10, color: '#999' }}>{w}</span>
         </div>
       ))}
@@ -200,7 +200,7 @@ export const InButton: Story = {
           <Button square size="md" variant="secondary" aria-label="refresh"><Icons.Refresh /></Button>
           <Button square size="md" variant="ghost"     aria-label="more"><Icons.DragIndicator /></Button>
           <Button square size="md" variant="danger"    aria-label="delete"><Icons.Delete /></Button>
-          <Button square size="md" variant="plain"     aria-label="help"><Icons.Help /></Button>
+          <Button square size="md" variant="ghost"     aria-label="help"><Icons.Help /></Button>
         </Row>
 
         <Row label="icon + label · primary · sm / md / lg">
@@ -214,7 +214,7 @@ export const InButton: Story = {
           <Button variant="secondary" icon={<Icons.Export />}>export</Button>
           <Button variant="ghost"     icon={<Icons.Refresh />}>refresh</Button>
           <Button variant="danger"    icon={<Icons.Delete />}>delete</Button>
-          <Button variant="plain"     icon={<Icons.QueueInsert />}>play next</Button>
+          <Button variant="ghost"     icon={<Icons.QueueInsert />}>play next</Button>
         </Row>
 
         <Row label="all icons · square ghost sm (verifies 1em scaling)">

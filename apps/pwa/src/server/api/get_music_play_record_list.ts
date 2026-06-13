@@ -24,7 +24,7 @@ function getMusicPlayRecordList({
 
       name: string;
       aliases: string[];
-      singers: {
+      performers: {
         id: string;
         name: string;
       }[];

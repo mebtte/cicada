@@ -170,13 +170,11 @@ const ActionCard = styled.button`
   transition:
     transform 150ms ease-out,
     box-shadow 150ms ease-out,
-    border-color 150ms ease-out,
-    filter 120ms;
+    border-color 150ms ease-out;
 
   &:hover {
-    border-color: ${PRIMARY};
-    box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
-    filter: brightness(1.02);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 ${ROW_SHADOW};
   }
 
   &:active {
@@ -184,8 +182,7 @@ const ActionCard = styled.button`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {

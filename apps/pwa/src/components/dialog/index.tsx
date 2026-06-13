@@ -186,9 +186,9 @@ const Panel = styled.div`
   bottom: 0;
   max-height: 92%;
   border-radius: 20px 20px 0 0;
-  border: 2px solid rgb(220 220 220);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-bottom: none;
-  box-shadow: 0 -5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+  box-shadow: 0 -5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   &[data-state='open'] {
     animation: ${sheetIn} 340ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -209,8 +209,8 @@ const Panel = styled.div`
     width: min(480px, calc(100% - 48px));
     max-height: calc(100% - 48px);
     border-radius: 20px;
-    border: 2px solid rgb(220 220 220);
-    box-shadow: 0 8px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+    box-shadow: 0 8px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
     &[data-state='open'] {
       animation: ${modalIn} 210ms cubic-bezier(0.16, 1, 0.3, 1);

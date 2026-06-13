@@ -36,15 +36,10 @@ export default (
         EventType.ACTION_PAUSE,
         () => audio.pause(),
       );
-      const unlistenActionTogglePlay = eventemitter.listen(
-        EventType.ACTION_TOGGLE_PLAY,
-        () => (audio.isPaused() ? play() : audio.pause()),
-      );
       return () => {
         unlistenActionSetTime();
         unlistenActionPlay();
         unlistenActionPause();
-        unlistenActionTogglePlay();
       };
     }
   }, [audio, onPlayRequest]);

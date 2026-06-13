@@ -112,7 +112,7 @@ function TextareaListContent({
               <Addon>
                 <Button
                   square
-                  variant="plain"
+                  variant="ghost"
                   size="sm"
                   onClick={() => onOpenFile(value.id)}
                   disabled={confirming || canceling}
@@ -121,7 +121,7 @@ function TextareaListContent({
                 </Button>
                 <Button
                   square
-                  variant="plain"
+                  variant="ghost"
                   size="sm"
                   onClick={() => onDelete(value.id)}
                   disabled={confirming || canceling}

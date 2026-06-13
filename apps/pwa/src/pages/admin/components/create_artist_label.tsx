@@ -15,10 +15,15 @@ const Style = styled.div`
   letter-spacing: 0;
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
   cursor: pointer;
+  display: inline-flex;
+  transition:
+    transform 150ms ease-out,
+    text-shadow 150ms ease-out;
   ${upperCaseFirstLetter}
 
   &:hover {
-    color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+    transform: translateY(-1px);
+    text-shadow: 0 2px 0 rgb(0 0 0 / 0.08);
   }
 `;
 
