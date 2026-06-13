@@ -373,6 +373,7 @@ const zhCN: {
   previous_page: '上一页',
   next_page: '下一页',
   play: '播放',
+  play_from_here: '跳转到这里',
   play_next: '下一首播放',
   add_to_playlist: '添加到播放列表',
   close_menu_overlay: '关闭菜单遮罩',

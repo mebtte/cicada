@@ -24,6 +24,7 @@ export enum EventType {
   ACTION_PREVIOUS = 'action_previous',
   ACTION_NEXT = 'action_next',
   ACTION_PLAY_MUSIC = 'action_play_music',
+  ACTION_LOCATE_PLAYQUEUE_MUSIC = 'action_locate_playqueue_music',
   ACTION_ADD_MUSIC_LIST_TO_PLAYLIST = 'action_add_music_list_to_playlist',
   ACTION_INSERT_MUSIC_TO_PLAYQUEUE = 'action_insert_music_to_playqueue',
   ACTION_CLEAR_PLAYLIST = 'action_clear_playlist',
@@ -88,6 +89,7 @@ export default new Eventin<
     [EventType.ACTION_PREVIOUS]: null;
     [EventType.ACTION_NEXT]: null;
     [EventType.ACTION_PLAY_MUSIC]: { music: MusicWithArtistAliases };
+    [EventType.ACTION_LOCATE_PLAYQUEUE_MUSIC]: { pid: string };
     [EventType.ACTION_ADD_MUSIC_LIST_TO_PLAYLIST]: {
       musicList: MusicWithArtistAliases[];
     };

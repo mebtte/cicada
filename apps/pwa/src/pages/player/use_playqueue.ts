@@ -145,10 +145,25 @@ export default (playlist: MusicWithArtistAliases[]) => {
           return next;
         }),
     );
+    const unlistenActionLocatePlayqueueMusic = eventemitter.listen(
+      EventType.ACTION_LOCATE_PLAYQUEUE_MUSIC,
+      ({ pid }) => {
+        // 用 pid 从最新队列定位, 避免倒序渲染或删除动画期间的显示 index 过期.
+        const nextPosition = playqueueRef.current.findIndex(
+          (queueMusic) => queueMusic.pid === pid,
+        );
+        if (nextPosition < 0) {
+          return;
+        }
+
+        setCurrentPositionSync(nextPosition);
+      },
+    );
     return () => {
       unlistenActionPrevious();
       unlistenActionRemovePlayqueueMusic();
       unlistenActionAddMusicListToPlaylist();
+      unlistenActionLocatePlayqueueMusic();
     };
   }, [setCurrentPositionSync]);
 

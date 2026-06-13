@@ -56,8 +56,7 @@ const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
   transition:
     transform 150ms ease-out,
     box-shadow 150ms ease-out,
-    border-color 150ms ease-out,
-    filter 120ms ease-out;
+    border-color 150ms ease-out;
 
   > .index {
     width: auto;
@@ -126,8 +125,7 @@ const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
           box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
           transition:
             transform 150ms ease-out,
-            box-shadow 150ms ease-out,
-            filter 120ms ease-out;
+            box-shadow 150ms ease-out;
 
           &.primary-action {
             color: #fff;
@@ -139,7 +137,6 @@ const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
           &:not(:disabled):hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-            filter: brightness(1.05);
           }
 
           &.primary-action:not(:disabled):hover {
@@ -151,8 +148,7 @@ const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
             box-shadow: none;
             transition:
               transform 60ms ease-in,
-              box-shadow 60ms ease-in,
-              filter 60ms ease-in;
+              box-shadow 60ms ease-in;
           }
         }
       }
@@ -164,7 +160,6 @@ const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
     box-shadow: 0 6px 0
       ${({ $active }) =>
         $active ? PRIMARY_SHADOW : CSSVariable.COLOR_SURFACE_SHADOW};
-    filter: brightness(1.02);
   }
 
   &:active {
@@ -172,8 +167,7 @@ const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 `;
 

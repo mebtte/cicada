@@ -11,7 +11,7 @@ import { createPortal } from 'react-dom';
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { DragIndicator, Close, Shuffle } from '@/components/icon';
+import { DragIndicator, Close, Shuffle, Locate } from '@/components/icon';
 import {
   closestCenter,
   DndContext,
@@ -127,6 +127,27 @@ function QueueMusicItem({
             </Tooltip>
           ) : null}
           {dragHandle}
+          {!active ? (
+            <Tooltip content={t('play_from_here')}>
+              <Button
+                square
+                variant="ghost"
+                size="sm"
+                aria-label={t('play_from_here')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  return playerEventemitter.emit(
+                    PlayerEventType.ACTION_LOCATE_PLAYQUEUE_MUSIC,
+                    {
+                      pid: queueMusic.pid,
+                    },
+                  );
+                }}
+              >
+                <Locate />
+              </Button>
+            </Tooltip>
+          ) : null}
           {canRemove ? (
             <Button
               square

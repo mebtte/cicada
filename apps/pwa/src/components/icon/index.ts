@@ -19,6 +19,7 @@ export type { IconProps } from './base';
 //   MdDragIndicator                   → DragIndicator
 //   MdReadMore                        → ReadMore
 //   play-next queue insertion         → QueueInsert
+//   downward arrow to a target dot    → Locate
 //   MdInfoOutline                     → Info
 //   MdErrorOutline                    → Error
 //   MdHelpOutline                     → Help
@@ -81,6 +82,7 @@ export { default as Image }         from './icons/image';
 export { default as Info }          from './icons/info';
 export { default as Key }           from './icons/key';
 export { default as LibraryMusic }  from './icons/library-music';
+export { default as Locate }        from './icons/locate';
 export { default as Logout }        from './icons/logout';
 export { default as Menu }          from './icons/menu';
 export { default as Microphone }    from './icons/microphone';

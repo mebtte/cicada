@@ -386,6 +386,7 @@ export default {
   previous_page: 'previous page',
   next_page: 'next page',
   play: 'play',
+  play_from_here: 'play from here',
   play_next: 'play next',
   add_to_playlist: 'add to playlist',
   close_menu_overlay: 'close menu overlay',
