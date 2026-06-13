@@ -388,30 +388,26 @@ function UserEditContent({
             icon={<Delete />}
             disabled={busy}
             onClick={() =>
-              dialog.confirm({
+              dialog.captcha({
                 title: t('delete_user_question'),
                 content: t('delete_user_question_content'),
-                confirmText: t('continue'),
-                onConfirm: () =>
-                  void dialog.captcha({
-                    confirmText: t('delete_user'),
-                    confirmVariant: 'danger',
-                    onConfirm: async ({ captchaId, captchaValue }) => {
-                      try {
-                        await adminDeleteUser({
-                          id: user.id,
-                          captchaId,
-                          captchaValue,
-                        });
-                        onDeleted(user.id);
-                        onClose();
-                      } catch (error) {
-                        logger.error(error, 'Failed to delete user');
-                        notice.error(error.message);
-                        return false;
-                      }
-                    },
-                  }),
+                confirmText: t('delete_user'),
+                confirmVariant: 'danger',
+                onConfirm: async ({ captchaId, captchaValue }) => {
+                  try {
+                    await adminDeleteUser({
+                      id: user.id,
+                      captchaId,
+                      captchaValue,
+                    });
+                    onDeleted(user.id);
+                    onClose();
+                  } catch (error) {
+                    logger.error(error, 'Failed to delete user');
+                    notice.error(error.message);
+                    return false;
+                  }
+                },
               })
             }
           >
