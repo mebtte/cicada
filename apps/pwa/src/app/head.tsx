@@ -6,7 +6,8 @@ import storage, { Key } from '@/storage';
 
 const appName =
   (await storage.getItem(Key.CUSTOM_APP_NAME)) || capitalize(t('cicada'));
-const FAVICON_SIZES = [16, 32, 48, 64, 96, 128] as const;
+// Chrome 触发 PWA 安装按钮要求 manifest 至少包含一个 ≥192x192 的图标
+const FAVICON_SIZES = [16, 32, 48, 64, 96, 128, 192, 256, 512] as const;
 const icons = FAVICON_SIZES.map((size) => ({
   src: `${window.location.origin}/favicon-${size}.png`,
   type: 'image/png',
