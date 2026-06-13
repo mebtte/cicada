@@ -4,7 +4,6 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import withLogin from '@/platform/with_login';
 import PageContainer from '@/components/page_container';
 import useDocumentTitle from '@/utils/use_document_title';
-import capitalize from '@/utils/capitalize';
 import { t } from '@/i18n';
 import { ROOT_PATH } from '@/constants/route';
 import dialog from '@/utils/dialog';
@@ -28,7 +27,7 @@ const Style = styled(PageContainer)`
 `;
 
 function Radio() {
-  useDocumentTitle(`${capitalize(t('radio_mode'))} - ${capitalize(t('cicada'))}`);
+  useDocumentTitle(t('radio'));
 
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
   const {

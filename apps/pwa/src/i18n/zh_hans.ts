@@ -43,6 +43,7 @@ const zhCN: {
   ffmpeg_supported_audio: 'FFmpeg 可识别的音频',
   music_play_record_short: '播放记录',
   exploration: '发现',
+  radio: '电台',
   radio_mode: '知了电台',
   switch_to_radio_mode_confirm: '切换到知了电台将停止当前播放, 是否继续?',
   exit_radio_mode: '退出知了电台',

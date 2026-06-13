@@ -6,6 +6,7 @@ import definition from '@/definition';
 import { useSelectedServer } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
+import useDocumentTitle from '@/utils/use_document_title';
 import FirstStep from './first_step';
 import SecondStep from './second_step';
 import { Step } from './constants';
@@ -54,6 +55,8 @@ const VersionFooter = styled.div`
 const CENTER_TRANSFORM = 'translateX(0)';
 
 function Login() {
+  useDocumentTitle(t('login'));
+
   const [step, setStep] = useState(Step.FIRST);
   const [showManagePage, setShowManagePage] = useState(false);
   const [stageMinHeight, setStageMinHeight] = useState(0);

@@ -16,6 +16,7 @@ import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { CSS_VAR } from '@/components/theme';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
+import useDocumentTitle from '@/utils/use_document_title';
 import Dashboard from './dashboard';
 import MusicManagement from './music_management';
 import ArtistManagement from './artist_management';
@@ -674,6 +675,8 @@ const getCurrentMenuItem = (pathname: string) => {
 };
 
 function AdminPage() {
+  useDocumentTitle(t('admin'));
+
   const user = useUser()!;
   const { pathname } = useLocation();
   const {

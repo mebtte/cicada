@@ -40,6 +40,7 @@ export default {
   ffmpeg_supported_audio: 'audio supported by FFmpeg',
   music_play_record_short: 'play record',
   exploration: 'exploration',
+  radio: 'radio',
   radio_mode: 'Cicada\'s Radio',
   switch_to_radio_mode_confirm:
     'Switching to Cicada\'s Radio will stop current playback. Continue?',
