@@ -225,7 +225,7 @@ function Wrapper({
     <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
       <DrawerContent
         side="right"
-        style={{ width: 'min(85%, 400px)', paddingTop: titlebarTop }}
+        style={{ width: 'min(80%, 340px)', paddingTop: titlebarTop }}
         showClose={false}
         zIndex={zIndex}
       >

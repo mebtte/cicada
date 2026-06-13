@@ -13,12 +13,6 @@ const Style = styled.section`
   padding: 28px 20px 20px;
 
   font-size: 0;
-  background: linear-gradient(
-    to bottom,
-    rgb(232 255 218) 0%,
-    rgb(255 248 220) 58%,
-    #fff 100%
-  );
   border-bottom: 2px solid rgb(229 229 229);
   user-select: none;
 

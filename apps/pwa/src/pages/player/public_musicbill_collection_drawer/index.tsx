@@ -74,7 +74,7 @@ function PublicMusicbillCollectionDrawer() {
         side="right"
         showClose={false}
         accessibleTitle={t('public_musicbill_collection')}
-        style={{ width: 'min(85%, 420px)', paddingTop: titlebarTop }}
+        style={{ width: 'min(80%, 360px)', paddingTop: titlebarTop }}
         zIndex={zIndex}
       >
         <Shell>
