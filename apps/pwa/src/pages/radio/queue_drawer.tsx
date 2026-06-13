@@ -5,7 +5,6 @@ import { Drawer, DrawerContent } from '@/components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import Empty from '@/components/empty';
 import { t } from '@/i18n';
-import { CSSVariable } from '@/global_style';
 import { QueueMusic } from '@/pages/player/constants';
 import { MusicBase } from '@/features/music/components';
 import useDynamicZIndex from '@/pages/player/use_dynamic_z_index';
@@ -37,14 +36,6 @@ const EmptyContent = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
-const Section = styled.div`
-  margin-bottom: 8px;
-
-  font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
-  font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-  font-weight: 800;
-  color: ${CSSVariable.TEXT_COLOR_SECONDARY};
 `;
 const Row = styled(animated.div)`
   will-change: transform, opacity;
@@ -98,7 +89,6 @@ function RadioQueueDrawer({
         <Content>
           {rendered.length ? (
             <ScrollContent>
-              <Section>{t('playqueue')}</Section>
               {transitions((style, qm) => {
                 const idx = queue.indexOf(qm);
                 return (

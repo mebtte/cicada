@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
+import Spinner from '@/components/spinner';
 import { QueueMusic } from '@/pages/player/constants';
 import useLyricData from '@/pages/player/lyric_panel/lyric/use_lyric_data';
 import { Status as LyricStatus } from '@/pages/player/lyric_panel/lyric/constants';
@@ -22,9 +23,16 @@ const CoverArea = styled.div`
   ${flexCenter}
   padding: 24px 24px 0 24px;
 `;
+const LoadingArea = styled.div`
+  ${absoluteFullSize}
+  ${flexCenter}
+`;
 
 /**
- * 中间区: 当前歌曲有歌词时展示歌词, 否则 (乐曲/暂无歌词/加载中/错误) 展示大封面.
+ * 中间区:
+ * - 歌词加载中 → 展示 loading, 避免先闪一下封面再切歌词
+ * - 拿到歌词 → 展示歌词
+ * - 乐曲/暂无歌词/错误 → 展示大封面
  */
 function Center({
   queueMusic,
@@ -34,6 +42,13 @@ function Center({
   bottomGap: number;
 }) {
   const { data } = useLyricData(queueMusic);
+  if (data.status === LyricStatus.LOADING) {
+    return (
+      <LoadingArea style={{ paddingBottom: bottomGap }}>
+        <Spinner />
+      </LoadingArea>
+    );
+  }
   if (data.status === LyricStatus.SUCCESS) {
     return (
       <LyricContainer style={{ bottom: bottomGap }}>

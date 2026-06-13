@@ -7,7 +7,6 @@ import {
   SkipNext,
   PlayArrow,
   Pause,
-  Exit,
   QueueMusic as QueueMusicIcon,
 } from '@/components/icon';
 import { flexCenter } from '@/style/flexbox';
@@ -34,7 +33,6 @@ function Operation({
   onNext,
   onPlayNext,
   onOpenQueue,
-  onExit,
 }: {
   queueMusic: QueueMusic;
   paused: boolean;
@@ -43,7 +41,6 @@ function Operation({
   onNext: () => void;
   onPlayNext: () => void;
   onOpenQueue: () => void;
-  onExit: () => void;
 }) {
   return (
     <Style>
@@ -88,17 +85,6 @@ function Operation({
           onClick={onOpenQueue}
         >
           <QueueMusicIcon />
-        </Button>
-      </Tooltip>
-      <Tooltip content={t('exit_radio_mode')}>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          aria-label={t('exit_radio_mode')}
-          onClick={onExit}
-        >
-          <Exit />
         </Button>
       </Tooltip>
     </Style>
