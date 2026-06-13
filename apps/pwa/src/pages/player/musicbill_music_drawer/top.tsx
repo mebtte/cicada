@@ -22,7 +22,8 @@ const Style = styled.div`
   pointer-events: none;
 
   > .music-info {
-    margin: 0 12px;
+    /* 比下方乐单条目更窄, 悬浮在上方时通过左右缩进与乐单区分, 避免视觉融合 */
+    margin: 0 24px;
 
     pointer-events: auto;
     backdrop-filter: blur(8px);
