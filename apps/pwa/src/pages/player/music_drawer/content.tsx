@@ -16,7 +16,7 @@ import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { flexCenter } from '@/style/flexbox';
 import { t } from '@/i18n';
 import { CSSVariable } from '@/global_style';
-import { MusicType, getPerformerLabel } from '@/constants/music';
+import { MusicType } from '@/constants/music';
 import {
   DrawerHeader,
   DrawerTitle,
@@ -231,6 +231,10 @@ type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
 
 const getDescription = (music: MusicDetail) =>
   music.aliases.length ? music.aliases.join(' / ') : undefined;
+const getMusicDrawerPerformerLabel = (type: MusicType) =>
+  type === MusicType.SONG
+    ? t('music_drawer_singers')
+    : t('music_drawer_instrumentalists');
 
 function Detail({
   style,
@@ -340,13 +344,19 @@ function Detail({
               titleRef={titleRef}
             />
             <ArtistList
-              label={getPerformerLabel(music.type)}
+              label={getMusicDrawerPerformerLabel(music.type)}
               artistList={music.performers}
             />
             {music.type === MusicType.SONG ? (
-              <ArtistList label={t('lyricist')} artistList={music.lyricists} />
+              <ArtistList
+                label={t('music_drawer_lyricists')}
+                artistList={music.lyricists}
+              />
             ) : null}
-            <ArtistList label={t('composer')} artistList={music.composers} />
+            <ArtistList
+              label={t('music_drawer_composers')}
+              artistList={music.composers}
+            />
             {music.forkFromList.length ? (
               <SubMusicList
                 label={t('fork_from_these_musics')}
