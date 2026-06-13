@@ -7,6 +7,10 @@ A multi-user music service for self-hosting.
 
 ![](./docs/screenshot.png)
 
+## Demo
+
+There is an online demo you can visit on [https://cicada.mebtte.com](https://cicada.mebtte.com), you can login by `username: cicada` and `password: cicada@mebtte`.
+
 ## Features
 
 - **No privacy collection** and manage data by yourself
@@ -15,10 +19,6 @@ A multi-user music service for self-hosting.
 - Custom playqueue and share musicbills between users
 - Multiple user and support 2FA
 - Support lyricist and composer
-
-## Demo
-
-There is a online demo you can visit on [https://cicada.mebtte.com](https://cicada.mebtte.com), you can login by `username: cicada` and `password: cicada@mebtte`. **The demo data resets every four hours.**
 
 ## Deploy
 
