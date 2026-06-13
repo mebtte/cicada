@@ -33,7 +33,7 @@ function LyricPanel({ style }: { style: unknown }) {
     // @ts-expect-error: style is known
     <Style style={style}>
       <Backdrop cover={queueMusic.cover} />
-      <Lyric queueMusic={queueMusic} controllerHeight={controllerHeight} />
+      <Lyric queueMusic={queueMusic} bottomGap={controllerHeight} />
       <Controller
         queueMusic={queueMusic}
         paused={audioPaused}

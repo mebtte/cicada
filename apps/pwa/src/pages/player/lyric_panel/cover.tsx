@@ -41,7 +41,7 @@ function Cover({ cover }: { cover: string }) {
         if (!canceled) setResolved(cover);
       })
       .catch((error) => {
-        logger.error(error, '加载电台封面失败');
+        logger.error(error, '加载封面失败');
         if (!canceled) setResolved(DefaultCover);
       });
     return () => {
