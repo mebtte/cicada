@@ -161,7 +161,7 @@ const zhCN: {
   auto_play_next_after_seconds: '%s1 秒后自动播放下一首',
   can_not_connect_to_server_temporarily: '网络异常, 仅可访问已缓存内容',
   offline_cache: '离线缓存',
-  offline_cache_empty: '暂无离线缓存',
+  offline_cache_empty: '没有符合条件的音乐',
   remove_from_offline_cache: '从离线缓存移除',
   remove_from_offline_cache_question: '确定从离线缓存移除「%s1」吗?',
   network_unavailable_write_disabled: '当前离线, 操作不可用',

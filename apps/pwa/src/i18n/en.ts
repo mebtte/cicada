@@ -164,7 +164,7 @@ export default {
   can_not_connect_to_server_temporarily:
     'network unavailable, only cached content is accessible',
   offline_cache: 'offline cache',
-  offline_cache_empty: 'no offline cache yet',
+  offline_cache_empty: 'no matching music',
   remove_from_offline_cache: 'remove from offline cache',
   remove_from_offline_cache_question: 'remove "%s1" from offline cache?',
   network_unavailable_write_disabled: 'currently offline, action unavailable',

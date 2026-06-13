@@ -83,7 +83,7 @@ const EmptyWrap = styled.div`
 const Tail = styled.div`
   height: calc(
     ${FLOATING_CONTROLLER_SCROLL_SPACE} + ${SUMMARY_BAR_HEIGHT}px +
-      ${SUMMARY_BAR_FLOATING_GAP * 2}px
+      ${SUMMARY_BAR_FLOATING_GAP}px
   );
 `;
 
@@ -99,7 +99,7 @@ const SummaryBar = styled.div`
   position: absolute;
   left: ${SUMMARY_BAR_HORIZONTAL_INSET};
   right: ${SUMMARY_BAR_HORIZONTAL_INSET};
-  bottom: calc(${CONTROLLER_FLOATING_RESERVED_HEIGHT} + ${SUMMARY_BAR_FLOATING_GAP}px);
+  bottom: ${CONTROLLER_FLOATING_RESERVED_HEIGHT};
   height: ${SUMMARY_BAR_HEIGHT}px;
 
   padding: 7px 10px 9px;
@@ -264,7 +264,13 @@ function OfflineCache() {
 
   return (
     <Style>
-      <div className="scrollable">
+      <div
+        className="scrollable"
+        // 空状态时禁止滚动, 避免底部占位让页面出现无意义滚动条
+        style={
+          filteredEntries.length === 0 ? { overflow: 'hidden' } : undefined
+        }
+      >
         <ListWrap>
           {filteredEntries.length === 0 ? (
             <EmptyWrap>

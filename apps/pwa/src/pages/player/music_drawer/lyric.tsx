@@ -108,12 +108,14 @@ const DownloadButton = styled.button`
 function Lyric({ music }: { music: MusicDetail }) {
   const user = useUser();
   const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
+
+  // 乐曲或没有歌词的歌曲, 不展示歌词模块
+  if (music.type !== MusicType.SONG || music.lyrics.length === 0) {
+    return null;
+  }
+
   // 下载按钮归入「管理员快捷编辑」开关
-  const downloadable =
-    !!user?.admin &&
-    adminQuickEdit &&
-    music.type === MusicType.SONG &&
-    music.lyrics.length > 0;
+  const downloadable = !!user?.admin && adminQuickEdit;
 
   const downloadLyrics = () => {
     const performerNames = music.performers.map((s) => s.name);
@@ -137,24 +139,16 @@ function Lyric({ music }: { music: MusicDetail }) {
     <Style>
       <div className="label">{t('lyric')}</div>
       <div className="content">
-        {music.type === MusicType.SONG ? (
-          music.lyrics.length ? (
-            <MultipleLrc
-              lrcs={music.lyrics.map((l) => l.lrc)}
-              lineRenderer={({ line }) => (
-                <Line key={line.id}>
-                  {line.children.map((child) => (
-                    <div key={child.id}>{child.content}</div>
-                  ))}
-                </Line>
-              )}
-            />
-          ) : (
-            <Line>{t('no_lyric')}</Line>
-          )
-        ) : (
-          <Line>{t('instrumental_without_lyric')}</Line>
-        )}
+        <MultipleLrc
+          lrcs={music.lyrics.map((l) => l.lrc)}
+          lineRenderer={({ line }) => (
+            <Line key={line.id}>
+              {line.children.map((child) => (
+                <div key={child.id}>{child.content}</div>
+              ))}
+            </Line>
+          )}
+        />
         {downloadable ? (
           <DownloadButton
             type="button"
