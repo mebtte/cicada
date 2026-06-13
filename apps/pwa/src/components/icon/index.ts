@@ -17,7 +17,6 @@ export type { IconProps } from './base';
 //   MdPlaylistAdd                     → PlaylistAdd
 //   MdOutlinePostAdd, MdPostAdd       → PostAdd
 //   MdDragIndicator                   → DragIndicator
-//   MdReadMore                        → ReadMore
 //   play-next queue insertion         → QueueInsert
 //   downward arrow to a target dot    → Locate
 //   MdInfoOutline                     → Info
@@ -35,8 +34,6 @@ export type { IconProps } from './base';
 // 新增 icon: 在 icons/ 下建文件, 此处加一行 export, 再加到 icon.stories.tsx 的 ALL_ICONS。
 // ─────────────────────────────────────────────────────────────────────────────
 
-export { default as List }          from './icons/list';
-export { default as PlayQueue }     from './icons/play-queue';
 export { default as Edit }          from './icons/edit';
 export { default as ExternalLink }  from './icons/external-link';
 export { default as Export }        from './icons/export';
@@ -54,7 +51,6 @@ export { default as QueueInsert }   from './icons/queue-insert';
 export { default as Help }          from './icons/help';
 export { default as PostAdd }       from './icons/post-add';
 export { default as DragIndicator } from './icons/drag-indicator';
-export { default as ReadMore }      from './icons/read-more';
 export { default as AdminPanel }    from './icons/admin-panel';
 export { default as ArrowBack }     from './icons/arrow-back';
 export { default as ArrowDown }     from './icons/arrow-down';

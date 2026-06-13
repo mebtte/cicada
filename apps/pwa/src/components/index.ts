@@ -19,7 +19,7 @@ export type { SliderProps, SliderEdge } from './slider';
 export { Select, MultiSelect } from './select';
 export type { SelectProps, MultiSelectProps, SelectOption, SelectSize } from './select';
 
-export { Icon, List, PlayQueue } from './icon';
+export { Icon } from './icon';
 export type { IconProps } from './icon';
 
 export {
