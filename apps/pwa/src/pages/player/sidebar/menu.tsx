@@ -27,6 +27,7 @@ import useSidebarNavigate from './use_sidebar_navigate';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 const Style = styled.nav`
   padding: 0 12px;
@@ -105,18 +106,18 @@ const Item = styled.button<{ $active: boolean }>`
     box-shadow: ${({ $active }) =>
       $active
         ? `0 6px 0 ${PRIMARY_SHADOW}`
-        : `0 5px 0 ${CSSVariable.COLOR_SURFACE_SHADOW}`};
+        : `0 5px 0 ${NEUTRAL_SHADOW}`};
   }
 
   ${({ $active }) =>
     !$active &&
     css`
       background: #fff;
-      border-color: ${CSSVariable.COLOR_BORDER};
-      box-shadow: 0 3px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
+      border-color: ${NEUTRAL_SHADOW};
+      box-shadow: 0 3px 0 ${NEUTRAL_SHADOW};
 
       &:not(:disabled):hover {
-        box-shadow: 0 5px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
+        box-shadow: 0 5px 0 ${NEUTRAL_SHADOW};
       }
     `}
 

@@ -21,9 +21,9 @@ const Style = styled.div`
     filter 120ms ease-out;
   cursor: pointer;
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 14px;
-  box-shadow: 0 4px 0 rgb(229 229 229);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   > .name {
     flex: 1;
@@ -38,7 +38,7 @@ const Style = styled.div`
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 0 rgb(229 229 229);
+    box-shadow: 0 6px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     filter: brightness(1.03);
   }
 

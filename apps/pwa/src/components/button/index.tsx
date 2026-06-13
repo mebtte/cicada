@@ -16,6 +16,7 @@ const cn = (v: string) => `var(${v})`;
 const PRIMARY        = cn(CSS_VAR.colorPrimary);
 const PRIMARY_SHADOW = cn(CSS_VAR.colorPrimaryShadow);
 const CONTROL_NEUTRAL = CSSVariable.COLOR_CONTROL_NEUTRAL;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 // ─── 阴影偏移量 ────────────────────────────────────────────────────────────────
 
@@ -93,7 +94,7 @@ const makeVariant = (
 const VARIANT_MAP: Record<Variant, ReturnType<typeof css>> = {
   primary:   makeVariant(PRIMARY,   PRIMARY_SHADOW),
   secondary: makeVariant('#ffffff', PRIMARY,        PRIMARY),
-  ghost:     makeVariant('#ffffff', CONTROL_NEUTRAL, 'rgb(88 88 88)'),
+  ghost:     makeVariant('#ffffff', NEUTRAL_SHADOW, 'rgb(88 88 88)'),
   danger:    makeVariant('rgb(242 80 66)', 'rgb(190 46 34)'),
 };
 

@@ -254,8 +254,8 @@ const statusPillToneStyle: Record<StatusTone, ReturnType<typeof css>> = {
   waiting: css`
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     background: #fff;
-    border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
-    box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+    box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   `,
   exporting: css`
     color: rgb(58 122 0);

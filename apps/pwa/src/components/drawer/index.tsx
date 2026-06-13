@@ -97,9 +97,9 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     bottom: 0;
     width: min(360px, calc(100vw - 20px));
     border-radius: 20px 0 0 20px;
-    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-right: none;
-    box-shadow: -5px 0 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    box-shadow: -5px 0 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
     &[data-state='open']   { animation: ${slideInRight}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
     &[data-state='closed'] { animation: ${slideOutRight} 220ms ease-in; }
@@ -110,9 +110,9 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     bottom: 0;
     width: min(360px, calc(100vw - 20px));
     border-radius: 0 20px 20px 0;
-    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-left: none;
-    box-shadow: 5px 0 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    box-shadow: 5px 0 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
     &[data-state='open']   { animation: ${slideInLeft}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
     &[data-state='closed'] { animation: ${slideOutLeft} 220ms ease-in; }
@@ -123,9 +123,9 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     bottom: 0;
     max-height: 92dvh;
     border-radius: 20px 20px 0 0;
-    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-bottom: none;
-    box-shadow: 0 -5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    box-shadow: 0 -5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
     &[data-state='open']   { animation: ${slideInBottom}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
     &[data-state='closed'] { animation: ${slideOutBottom} 220ms ease-in; }
@@ -157,10 +157,10 @@ const CloseButton = styled(RadixDialog.Close)`
   width: 34px;
   height: 34px;
   padding: 0;
-  border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 10px;
   background: #fff;
-  box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+  box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   color: rgb(88 88 88);
   cursor: pointer;
   flex-shrink: 0;

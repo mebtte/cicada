@@ -6,6 +6,7 @@ import { User } from '@/constants/server';
 import dialog from '@/utils/dialog';
 import { t } from '@/i18n';
 import Button from '@/components/button';
+import { CSSVariable } from '@/global_style';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -23,9 +24,9 @@ const Card = styled.div`
   gap: 14px;
   padding: 14px 16px;
   background: #fff;
-  border: 2px solid rgb(210 210 210);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 16px;
-  box-shadow: 0 4px 0 rgb(210 210 210);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 `;
 
 const Avatar = styled.div`

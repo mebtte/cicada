@@ -15,6 +15,7 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { flexCenter } from '@/style/flexbox';
 import { t } from '@/i18n';
+import { CSSVariable } from '@/global_style';
 import { MusicType, getPerformerLabel } from '@/constants/music';
 import {
   DrawerHeader,
@@ -82,7 +83,7 @@ const Header = styled(DrawerHeader)<{ $floating: boolean; $visible: boolean }>`
             ? 'rgb(255 255 255 / 0.92)'
             : 'transparent'};
           border-bottom: 1px solid
-            ${$visible ? 'rgb(229 229 229)' : 'transparent'};
+            ${$visible ? CSSVariable.COLOR_NEUTRAL_SHADOW : 'transparent'};
           backdrop-filter: ${$visible ? 'blur(8px)' : 'none'};
         `
       : null}
@@ -127,9 +128,9 @@ const HeaderCover = styled.div`
   box-sizing: border-box;
 
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 12px;
-  box-shadow: 0 4px 0 rgb(229 229 229);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   > .header-cover-image {
     border-radius: 8px;
@@ -199,10 +200,14 @@ const CoverFrame = styled.div<{ $insideDrawer: boolean }>`
     overflow: hidden;
     background: rgb(247 247 247);
     border: ${({ $insideDrawer }) =>
-      $insideDrawer ? 'none' : '2px solid rgb(229 229 229)'};
+      $insideDrawer
+        ? 'none'
+        : `2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW}`};
     border-radius: ${({ $insideDrawer }) => ($insideDrawer ? 0 : '18px')};
     box-shadow: ${({ $insideDrawer }) =>
-      $insideDrawer ? 'none' : '0 5px 0 rgb(229 229 229)'};
+      $insideDrawer
+        ? 'none'
+        : `0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW}`};
 
     &::after {
       content: '';

@@ -54,9 +54,9 @@ const TextareaBox = styled(Label)`
 
   textarea {
     min-height: 112px;
-    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-radius: 13px;
-    box-shadow: 0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     font-family: ${FONT};
     font-weight: 600;
     resize: vertical;
@@ -93,7 +93,7 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
     ${({ $checked }) =>
       $checked
         ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_CONTROL_NEUTRAL};
+        : CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 999px;
   background: ${({ $checked }) =>
     $checked ? CSSVariable.COLOR_PRIMARY : '#fff'};
@@ -101,7 +101,7 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
     ${({ $checked }) =>
       $checked
         ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_CONTROL_NEUTRAL};
+        : CSSVariable.COLOR_NEUTRAL_SHADOW};
   cursor: pointer;
   transition:
     transform 150ms ease-out,
@@ -114,7 +114,7 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
       ${({ $checked }) =>
         $checked
           ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_CONTROL_NEUTRAL};
+          : CSSVariable.COLOR_NEUTRAL_SHADOW};
   }
 
   &:not(:disabled):active {
@@ -145,14 +145,14 @@ const SwitchButton = styled.button<{ $checked: boolean }>`
       ${({ $checked }) =>
         $checked
           ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_CONTROL_NEUTRAL};
+          : CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-radius: 50%;
     background: #fff;
     box-shadow: 0 2px 0
       ${({ $checked }) =>
         $checked
           ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_CONTROL_NEUTRAL};
+          : CSSVariable.COLOR_NEUTRAL_SHADOW};
     transform: translateX(${({ $checked }) => ($checked ? '24px' : '0')});
     transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
   }

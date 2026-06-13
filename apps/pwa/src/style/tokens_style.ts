@@ -13,6 +13,7 @@ export enum CSSVariable {
   COLOR_BORDER = 'var(--color-border)',
   COLOR_CONTROL_NEUTRAL = 'var(--color-control-neutral)',
   COLOR_DISABLED_SHADOW = 'var(--color-disabled-shadow)',
+  COLOR_NEUTRAL_SHADOW = 'var(--color-neutral-shadow)',
   COLOR_SURFACE_SHADOW = 'var(--color-surface-shadow)',
 
   TEXT_SIZE_TITLE = 'var(--text-size-title)',
@@ -43,6 +44,8 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.COLOR_BORDER]: 'rgb(232 232 232)',
   [CSSVariable.COLOR_CONTROL_NEUTRAL]: 'rgb(180 180 180)',
   [CSSVariable.COLOR_DISABLED_SHADOW]: 'rgb(214 214 214)',
+  // 交互控件统一使用较浅的灰色硬阴影,避免 button/input/sidebar 等各自发散。
+  [CSSVariable.COLOR_NEUTRAL_SHADOW]: 'rgb(232 232 232)',
   [CSSVariable.COLOR_SURFACE_SHADOW]: 'rgb(232 232 232)',
 
   [CSSVariable.TEXT_SIZE_TITLE]: '18px',

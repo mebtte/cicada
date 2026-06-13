@@ -20,10 +20,10 @@ export const ServerCard = styled.div<{
   align-items: center;
   gap: 8px;
   padding: 12px 10px 12px 14px;
-  border: 2px solid rgb(210 210 210);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 14px;
   background: #fff;
-  box-shadow: 0 4px 0 rgb(210 210 210);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   cursor: ${({ $loading, $disabled }) =>
     $loading ? 'progress' : $disabled ? 'not-allowed' : 'pointer'};
   transition: box-shadow 150ms ease-out, transform 150ms ease-out, filter 120ms;
@@ -33,7 +33,7 @@ export const ServerCard = styled.div<{
     !$disabled &&
     css`
       &:hover {
-        box-shadow: 0 6px 0 rgb(210 210 210);
+        box-shadow: 0 6px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
         transform: translateY(-2px);
       }
 
@@ -125,7 +125,7 @@ const avatarBase = `
   border-radius: 8px;
   border: 2px solid #fff;
   flex-shrink: 0;
-  box-shadow: 0 2px 0 rgb(205 205 205);
+  box-shadow: 0 2px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   &:not(:first-child) {
     margin-left: -6px;

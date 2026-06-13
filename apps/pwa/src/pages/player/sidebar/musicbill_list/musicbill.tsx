@@ -15,7 +15,7 @@ const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const PUBLIC = '#63d1fa';
 const PUBLIC_SHADOW = 'rgb(72 179 220)';
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 const Style = styled(NavLink)`
   min-height: 40px;

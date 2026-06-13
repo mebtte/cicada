@@ -10,7 +10,7 @@ import Filter from './filter';
 import e, { EventType } from '../eventemitter';
 import { TOOLBAR_FLOATING_GAP, TOOLBAR_HEIGHT } from '../constants';
 
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 const TOOLBAR_HORIZONTAL_INSET = `calc(${PAGE_HORIZONTAL_PADDING} + 8px)`;
 
 const Style = styled.div`

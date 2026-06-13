@@ -125,11 +125,11 @@ const ThumbnailItem = styled.div<{ selected: boolean }>`
   width: 42px;
   height: 42px;
   box-sizing: border-box;
-  border: 2px solid rgb(210 210 210);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 12px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 3px 0 rgb(210 210 210);
+  box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   cursor: pointer;
   scroll-snap-align: start;
   transition:
@@ -152,7 +152,7 @@ const ThumbnailItem = styled.div<{ selected: boolean }>`
       : css`
           &:active {
             transform: translateY(2px);
-            box-shadow: 0 1px 0 rgb(210 210 210);
+            box-shadow: 0 1px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
           }
         `}
 `;

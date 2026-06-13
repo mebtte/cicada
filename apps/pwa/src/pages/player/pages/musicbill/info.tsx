@@ -12,7 +12,7 @@ import Operation from './operation';
 const COVER_SIZE = 96;
 const PUBLIC = '#63d1fa';
 const PUBLIC_SHADOW = 'rgb(72 179 220)';
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 const Style = styled.div`
   height: ${INFO_HEIGHT}px;
   width: 100%;

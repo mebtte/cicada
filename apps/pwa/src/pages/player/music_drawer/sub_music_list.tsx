@@ -30,9 +30,9 @@ const Style = styled.div`
       padding: 8px 10px 12px;
 
       background: #fff;
-      border: 2px solid rgb(229 229 229);
+      border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
       border-radius: 14px;
-      box-shadow: 0 4px 0 rgb(229 229 229);
+      box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
       transition:
         transform 120ms ease-out,
         box-shadow 120ms ease-out,
@@ -52,9 +52,9 @@ const Style = styled.div`
       > div:first-child {
         box-sizing: border-box;
         background: #fff;
-        border: 2px solid rgb(229 229 229);
+        border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
         border-radius: 10px;
-        box-shadow: 0 2px 0 rgb(229 229 229);
+        box-shadow: 0 2px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
       }
 
       > .info {

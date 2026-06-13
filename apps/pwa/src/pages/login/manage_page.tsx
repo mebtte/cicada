@@ -3,6 +3,7 @@ import { t } from '@/i18n';
 import ManageContent from './first_step/manage_content';
 import { ArrowBack } from '@/components/icon';
 import Button from '@/components/button';
+import { CSSVariable } from '@/global_style';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
@@ -29,8 +30,8 @@ const Header = styled.div`
   padding: 14px 16px;
   padding-top: max(14px, env(safe-area-inset-top, 14px));
   background: #fff;
-  border-bottom: 2px solid rgb(220 220 220);
-  box-shadow: 0 4px 0 rgb(210 210 210);
+  border-bottom: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 `;
 
 const BackButton = styled(Button)`

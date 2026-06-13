@@ -114,8 +114,8 @@ const Restore = styled.div`
       > .confirm-action {
         color: rgb(29 139 94);
         background: #fff;
-        border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
-        box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+        border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+        box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
         &:not(:disabled):hover {
           filter: brightness(1.03);

@@ -12,6 +12,7 @@ import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
+import { CSSVariable } from '@/global_style';
 import {
   DrawerDescription,
   DrawerHeader,
@@ -72,7 +73,8 @@ const Header = styled(DrawerHeader)<{ $visible: boolean }>`
   background-color: ${({ $visible }) =>
     $visible ? 'rgb(255 255 255 / 0.92)' : 'transparent'};
   border-bottom: 1px solid
-    ${({ $visible }) => ($visible ? 'rgb(229 229 229)' : 'transparent')};
+    ${({ $visible }) =>
+      $visible ? CSSVariable.COLOR_NEUTRAL_SHADOW : 'transparent'};
   backdrop-filter: ${({ $visible }) => ($visible ? 'blur(8px)' : 'none')};
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transform: translateY(${({ $visible }) => ($visible ? 0 : '-4px')});
@@ -91,9 +93,9 @@ const HeaderCover = styled.div`
   box-sizing: border-box;
 
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 12px;
-  box-shadow: 0 4px 0 rgb(229 229 229);
+  box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   > .header-cover-image {
     border-radius: 8px;

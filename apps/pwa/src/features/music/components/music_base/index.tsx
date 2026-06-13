@@ -121,9 +121,9 @@ const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
         > button {
           color: ${CSSVariable.TEXT_COLOR_PRIMARY};
           background: #fff;
-          border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+          border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
           border-radius: 10px;
-          box-shadow: 0 3px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+          box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
           transition:
             transform 150ms ease-out,
             box-shadow 150ms ease-out,
@@ -138,7 +138,7 @@ const Card = styled.div<{ $active: boolean; $clickable: boolean }>`
 
           &:not(:disabled):hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+            box-shadow: 0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
             filter: brightness(1.05);
           }
 

@@ -11,7 +11,7 @@ import playerEventemitter, {
 } from '../eventemitter';
 
 const AVATAR_SIZE = 32;
-const USER_CARD_SHADOW = 'rgb(210 210 210)';
+const USER_CARD_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 const Style = styled.div`
   background: #fff;
   font-size: 0;
@@ -81,7 +81,7 @@ const Identity = styled.section`
     cursor: pointer;
 
     &:hover {
-      border-color: rgb(210 210 210);
+      border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
       filter: brightness(1.03);
     }
 

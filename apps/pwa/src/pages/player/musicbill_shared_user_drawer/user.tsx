@@ -23,7 +23,7 @@ const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 const OWNER_BG = `var(${CSS_VAR.colorPrimary})`;
 const OWNER_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const PENDING_SHADOW = 'rgb(72 179 220)';
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 const Style = styled.div<{ $accepted: boolean }>`
   margin: 0 0 12px;

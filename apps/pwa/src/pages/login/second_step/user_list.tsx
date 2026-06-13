@@ -59,7 +59,7 @@ const UserItem = styled(Button)`
     width: 58px;
     height: 58px;
     border-radius: 16px;
-    border: 2px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     flex-shrink: 0;
     overflow: hidden;
     background: #fff;
@@ -71,7 +71,7 @@ const UserItem = styled(Button)`
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
-    box-shadow: 0 4px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+    box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
     > img {
       width: 100%;

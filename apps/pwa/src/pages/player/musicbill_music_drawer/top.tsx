@@ -8,7 +8,7 @@ import MusicInfo from '../components/music_info';
 import { FLOATING_GAP } from './constants';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 const Style = styled.div`
   z-index: 1;

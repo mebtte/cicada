@@ -52,6 +52,7 @@ export const CONTROL_ERROR_COLOR = 'rgb(242 80 66)';
 export const CONTROL_ERROR_SHADOW = 'rgb(190 46 34)';
 export const CONTROL_DISABLED_BACKGROUND = 'rgb(248 248 248)';
 export const CONTROL_DISABLED_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
+export const CONTROL_NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 export type ControlSurfaceProps = {
   $size: ControlSize;
@@ -63,7 +64,7 @@ export const controlSurfaceStyles = (focusSelector: string) => css<ControlSurfac
   background: #fff;
   border-style: solid;
   border-width: 2px;
-  border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+  border-color: ${CONTROL_NEUTRAL_SHADOW};
 
   transition:
     border-color 150ms ease-out,
@@ -73,7 +74,7 @@ export const controlSurfaceStyles = (focusSelector: string) => css<ControlSurfac
     const s = CONTROL_SIZE[$size];
     return css`
       border-radius: ${s.radius}px;
-      box-shadow: 0 ${s.shadow}px 0 ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+      box-shadow: 0 ${s.shadow}px 0 ${CONTROL_NEUTRAL_SHADOW};
     `;
   }}
 

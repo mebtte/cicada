@@ -31,9 +31,9 @@ const Style = styled.section`
     padding: 8px 0 12px;
 
     background: #fff;
-    border: 2px solid rgb(229 229 229);
+    border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-radius: 14px;
-    box-shadow: 0 4px 0 rgb(229 229 229);
+    box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   }
 `;
 const Line = styled.div`
@@ -62,9 +62,9 @@ const DownloadButton = styled.button`
 
   color: rgb(120 120 120);
   background: #fff;
-  border: 2px solid rgb(229 229 229);
+  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 8px;
-  box-shadow: 0 ${DOWNLOAD_BTN_OFFSET}px 0 rgb(229 229 229);
+  box-shadow: 0 ${DOWNLOAD_BTN_OFFSET}px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   font-size: 13px;
   line-height: 1;
   cursor: pointer;

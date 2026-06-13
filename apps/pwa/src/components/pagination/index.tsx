@@ -40,9 +40,9 @@ const PageButton = styled(Button)<{ $selected: boolean; $size: Size }>`
 
       &:not(:disabled):hover {
         background: #fff;
-        border-color: ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+        border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
         box-shadow: 0 ${SHADOW_OFFSET[$size] + 2}px 0
-          ${CSSVariable.COLOR_CONTROL_NEUTRAL};
+          ${CSSVariable.COLOR_NEUTRAL_SHADOW};
       }
 
       &:not(:disabled):active {

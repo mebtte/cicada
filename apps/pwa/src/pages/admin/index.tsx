@@ -47,7 +47,7 @@ const MOBILE_SIDEBAR_Z_INDEX = 30;
 const AVATAR_SIZE = 36;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
-const NEUTRAL_SHADOW = CSSVariable.COLOR_CONTROL_NEUTRAL;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 const SURFACE_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
 
 // 上传中: 一道斜向白色高光从左滑到右, 在 36x36 的小按钮里也清晰可见

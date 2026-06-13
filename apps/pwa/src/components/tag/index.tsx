@@ -15,7 +15,7 @@ export type Size = 'sm' | 'md';
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const NEUTRAL_FACE = 'rgb(247 247 247)';
-const NEUTRAL_SHADOW = CSSVariable.COLOR_SURFACE_SHADOW;
+const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 const DANGER_FACE = 'rgb(242 80 66)';
 const DANGER_SHADOW = 'rgb(190 46 34)';
 

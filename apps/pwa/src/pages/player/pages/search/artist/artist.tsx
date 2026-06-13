@@ -126,8 +126,8 @@ const Style = styled.button`
 
   &:hover {
     transform: translateY(-2px);
-    border-color: rgb(210 210 210);
-    box-shadow: 0 6px 0 rgb(210 210 210);
+    border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+    box-shadow: 0 6px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     filter: brightness(1.01);
   }
 
