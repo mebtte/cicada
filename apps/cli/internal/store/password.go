@@ -6,17 +6,26 @@ import (
 	"encoding/base64"
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
 	"golang.org/x/crypto/argon2"
 )
 
 const (
+	PasswordMinLength = 6
+	PasswordMaxLength = 32
+
 	passwordHashMemory      = 32 * 1024
 	passwordHashIterations  = 2
 	passwordHashParallelism = 1
 	passwordHashSaltBytes   = 16
 	passwordHashKeyBytes    = 32
 )
+
+func ValidPasswordLength(password string) bool {
+	length := utf8.RuneCountInString(password)
+	return length >= PasswordMinLength && length <= PasswordMaxLength
+}
 
 func HashPassword(password string) (string, error) {
 	salt := make([]byte, passwordHashSaltBytes)

@@ -1,13 +1,7 @@
 package handler
 
-import "unicode/utf8"
-
-const (
-	passwordMinLength = 6
-	passwordMaxLength = 32
-)
+import "cicada/internal/store"
 
 func validPasswordLength(password string) bool {
-	length := utf8.RuneCountInString(password)
-	return length >= passwordMinLength && length <= passwordMaxLength
+	return store.ValidPasswordLength(password)
 }
