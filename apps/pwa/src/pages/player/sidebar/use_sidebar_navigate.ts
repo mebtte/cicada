@@ -33,6 +33,9 @@ function useSidebarNavigate() {
     }
 
     e.emit(EventType.MINI_MODE_CLOSE_SIDEBAR, null);
+    // 窄屏侧滑可在播放详情 (歌词面板) 之上呼出侧边栏, 点击菜单后若仅关闭侧边栏,
+    // 歌词面板仍会遮挡新页面直到自身退出动画结束, 这里同步关闭以让目标页面立即可见
+    e.emit(EventType.TOGGLE_LYRIC_PANEL, { open: false });
     runAfterAnimationFrames(
       () => navigate(to, options),
       NAVIGATE_AFTER_CLOSE_FRAME_COUNT,

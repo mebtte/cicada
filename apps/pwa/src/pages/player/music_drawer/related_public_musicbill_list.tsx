@@ -205,7 +205,7 @@ function RelatedPublicMusicbillList({
 
   return (
     <Style>
-      <div className="label">{t('related_public_musicbill')}</div>
+      <div className="label">{t('related_public_musicbills')}</div>
       <div className="list">
         {sampledMusicbillList.map((musicbill) => (
           <Item

@@ -3,11 +3,9 @@ import getMusic from '@/server/api/get_music';
 import logger from '@/utils/logger';
 import { PlaylistMusic } from '../constants';
 import eventemitter, { EventType } from '../eventemitter';
-import usePlaylistRestore from './use_playlist_restore';
 
 export default () => {
   const [playlist, setPlaylist] = useState<PlaylistMusic[]>([]);
-  usePlaylistRestore(playlist);
 
   useEffect(() => {
     const unlistenActionPlayMusic = eventemitter.listen(
