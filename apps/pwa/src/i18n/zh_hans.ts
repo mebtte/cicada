@@ -288,7 +288,6 @@ const zhCN: {
   forked_by_these_musics: '被以下音乐二次创作',
   timeout_while_fetching_data: '获取数据超时',
   timeout: '超时 %s1 毫秒',
-  question_restore_playlist: '恢复上次播放列表?',
   multiple_artists: '群星',
   clean_successful_items: '清理已完成项目',
   retry_failed_items: '重试失败项目',

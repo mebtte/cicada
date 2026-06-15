@@ -297,7 +297,6 @@ export default {
   forked_by_these_musics: 'forked by these musics',
   timeout_while_fetching_data: 'timeout while fetching data',
   timeout: 'timeout of %s1 milliseconds',
-  question_restore_playlist: 'restore last playlist?',
   multiple_artists: 'various artists',
   clean_successful_items: 'clean successful items',
   retry_failed_items: 'retry failed items',
