@@ -122,7 +122,7 @@ function ServerList({
 
   return (
     <Style>
-      <div className="label">{t('existing_server')}</div>
+      <div className="label">{t('existing_servers')}</div>
       <div className="scroll-shell">
         <div
           className={`edge-shadow top${atTop ? '' : ' visible'}`}

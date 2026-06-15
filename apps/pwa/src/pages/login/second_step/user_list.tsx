@@ -116,7 +116,7 @@ function UserList({ redirect }: { redirect: () => void }) {
   if (userList.length) {
     return (
       <Style>
-        <div className="label">{t('existing_user')}</div>
+        <div className="label">{t('existing_users')}</div>
         <div className="user-items">
           {sortedUserList.map((user) => {
             return (
