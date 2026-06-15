@@ -181,14 +181,13 @@ const Panel = styled.div`
   pointer-events: auto;
 
   /* ── Mobile: bottom sheet ─────────────────────────────── */
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: calc(12px + env(safe-area-inset-left, 0px));
+  right: calc(12px + env(safe-area-inset-right, 0px));
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   max-height: 92%;
-  border-radius: 20px 20px 0 0;
+  border-radius: 20px;
   border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-  border-bottom: none;
-  box-shadow: 0 -5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+  box-shadow: 0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
   &[data-state='open'] {
     animation: ${sheetIn} 340ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -220,21 +219,6 @@ const Panel = styled.div`
       pointer-events: none;
       animation: ${modalOut} 160ms ease-in forwards;
     }
-  }
-`;
-
-// ─── Drag handle (mobile only) ────────────────────────────────────────────────
-
-const Handle = styled.div`
-  flex-shrink: 0;
-  width: 36px;
-  height: 4px;
-  border-radius: 2px;
-  background: rgb(215 215 215);
-  margin: 12px auto 0;
-
-  @media (min-width: ${MOBILE}px) {
-    display: none;
   }
 `;
 
@@ -335,7 +319,6 @@ export const DialogContent = forwardRef<
                   {fallbackTitle}
                 </h2>
               </RadixDialog.Title>
-              <Handle aria-hidden />
               {showClose && (
                 <CloseButton aria-label={t('close')}>
                   <svg
