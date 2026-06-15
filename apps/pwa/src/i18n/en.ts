@@ -161,6 +161,7 @@ export default {
   public_musicbill: 'musicbill',
   shuffle_play: 'shuffle play',
   empty_playqueue: 'empty playqueue',
+  locate_playqueue_music_question: 'Play "%s1" from here?',
   empty_playlist: 'empty playlist',
   next_music: 'next music',
   failed_to_play: 'failed to play',

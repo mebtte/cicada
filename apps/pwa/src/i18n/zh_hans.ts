@@ -159,6 +159,7 @@ const zhCN: {
   public_musicbill: '乐单',
   shuffle_play: '随机播放',
   empty_playqueue: '空的播放队列',
+  locate_playqueue_music_question: '确定从「%s1」开始播放吗?',
   empty_playlist: '空的播放列表',
   next_music: '下一首',
   failed_to_play: '播放发生错误',
