@@ -21,7 +21,7 @@ function Logo() {
     <Style>
       <img
         className="logo"
-        src="/app_logo.png"
+        src="/app_logo_v1.png"
         alt={t('logo')}
         crossOrigin="anonymous"
       />

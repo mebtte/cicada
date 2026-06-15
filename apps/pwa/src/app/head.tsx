@@ -9,7 +9,7 @@ const appName =
 // Chrome 触发 PWA 安装按钮要求 manifest 至少包含一个 ≥192x192 的图标
 const FAVICON_SIZES = [16, 32, 48, 64, 96, 128, 192, 256, 512] as const;
 const icons = FAVICON_SIZES.map((size) => ({
-  src: `${window.location.origin}/favicon-${size}.png`,
+  src: `${window.location.origin}/favicon-${size}_v1.png`,
   type: 'image/png',
   sizes: `${size}x${size}`,
 }));
