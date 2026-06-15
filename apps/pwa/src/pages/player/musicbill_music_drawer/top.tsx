@@ -80,7 +80,6 @@ const Style = styled.div`
     &:hover {
       background: #fff;
       border-color: ${PRIMARY};
-      filter: brightness(1.03);
     }
 
     &:active {
@@ -88,8 +87,7 @@ const Style = styled.div`
       box-shadow: none;
       transition:
         transform 60ms ease-in,
-        box-shadow 60ms ease-in,
-        filter 60ms ease-in;
+        box-shadow 60ms ease-in;
     }
   }
 `;

@@ -45,8 +45,7 @@ const Style = styled.div<{ $accepted: boolean }>`
   overflow: hidden;
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms ease-out;
+    box-shadow 150ms ease-out;
 
   > .profile {
     flex: 1;
@@ -113,7 +112,6 @@ const Style = styled.div<{ $accepted: boolean }>`
     transform: translateY(-2px);
     box-shadow: 0 6px 0
       ${({ $accepted }) => ($accepted ? NEUTRAL_SHADOW : PENDING_SHADOW)};
-    filter: brightness(1.03);
   }
 
   &:active {
@@ -121,8 +119,7 @@ const Style = styled.div<{ $accepted: boolean }>`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 `;
 const StatusBadge = styled.div<{ $type: 'owner' | 'pending' }>`

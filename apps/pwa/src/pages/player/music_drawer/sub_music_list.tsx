@@ -35,12 +35,10 @@ const Style = styled.div`
       box-shadow: 0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
       transition:
         transform 120ms ease-out,
-        box-shadow 120ms ease-out,
-        filter 120ms ease-out;
+        box-shadow 120ms ease-out;
 
       &:hover {
         background: #fff;
-        filter: brightness(1.03);
       }
 
       &:active {

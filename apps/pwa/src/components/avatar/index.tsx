@@ -1,28 +1,14 @@
-import Cover, { Shape } from '@/components/cover';
 import { HTMLAttributes } from 'react';
-import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import ImageFrame, { getImageFrameRadius } from '@/components/image_frame';
 import { CSS_VAR } from '../theme';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
-const FACE = '#ffffff';
 
 function getBorderWidth() {
   return 2;
-}
-
-function getRadius(size: number | string) {
-  if (typeof size === 'number') {
-    return Math.max(14, Math.round(size * 0.24));
-  }
-
-  return 20;
-}
-
-function getInnerRadius(radius: number, borderWidth: number) {
-  return Math.max(0, radius - borderWidth);
 }
 
 function getShadowOffset(size: number | string) {
@@ -39,71 +25,6 @@ function getShadowOffset(size: number | string) {
   return 4;
 }
 
-const Root = styled.div<{
-  $size: number | string;
-  $borderWidth: number;
-  $radius: number;
-  $shadowOffset: number;
-  $active: boolean;
-  $interactive: boolean;
-}>`
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: ${({ $size }) => (typeof $size === 'number' ? `${$size}px` : $size)};
-  aspect-ratio: 1;
-  box-sizing: border-box;
-
-  border-radius: ${({ $radius }) => `${$radius}px`};
-  border: ${({ $borderWidth }) => `${$borderWidth}px`} solid
-    ${({ $active }) => ($active ? PRIMARY : NEUTRAL_SHADOW)};
-  background: ${FACE};
-  box-shadow: 0 ${({ $shadowOffset }) => `${$shadowOffset}px`} 0
-    ${({ $active }) => ($active ? PRIMARY_SHADOW : NEUTRAL_SHADOW)};
-  transition:
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    border-color 150ms ease-out;
-  will-change: transform, box-shadow;
-
-  ${({ $interactive, $shadowOffset, $active }) =>
-    $interactive &&
-    css`
-      cursor: pointer;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 ${$shadowOffset + 2}px 0
-          ${$active ? PRIMARY_SHADOW : NEUTRAL_SHADOW};
-      }
-
-      &:active {
-        transform: translateY(${$shadowOffset}px);
-        box-shadow: none;
-        transition:
-          transform 60ms ease-in,
-          box-shadow 60ms ease-in;
-      }
-    `}
-`;
-
-const Frame = styled.div<{ $radius: number }>`
-  width: 100%;
-  aspect-ratio: 1;
-  overflow: hidden;
-
-  border-radius: ${({ $radius }) => `${$radius}px`};
-  background: transparent;
-`;
-
-const ImageBox = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
 export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   src: string;
   size?: number | string;
@@ -118,25 +39,20 @@ function Avatar({
   ...props
 }: AvatarProps) {
   const borderWidth = getBorderWidth();
-  const radius = getRadius(size);
+  const radius = getImageFrameRadius(size);
 
   return (
-    <Root
-      $size={size}
-      $borderWidth={borderWidth}
-      $radius={radius}
-      $shadowOffset={getShadowOffset(size)}
-      $active={active}
-      $interactive={!!onClick}
+    <ImageFrame
+      src={src}
+      size={size}
+      radius={radius}
+      borderWidth={borderWidth}
+      borderColor={active ? PRIMARY : NEUTRAL_SHADOW}
+      shadowColor={active ? PRIMARY_SHADOW : NEUTRAL_SHADOW}
+      shadowOffset={getShadowOffset(size)}
       onClick={onClick}
       {...props}
-    >
-      <Frame $radius={getInnerRadius(radius, borderWidth)}>
-        <ImageBox>
-          <Cover src={src} size="100%" shape={Shape.SQUARE} />
-        </ImageBox>
-      </Frame>
-    </Root>
+    />
   );
 }
 

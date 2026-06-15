@@ -117,10 +117,6 @@ const Restore = styled.div`
         border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
         box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
-        &:not(:disabled):hover {
-          filter: brightness(1.03);
-        }
-
         &:not(:disabled):active {
           box-shadow: none;
         }

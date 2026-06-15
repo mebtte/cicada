@@ -76,13 +76,11 @@ const Identity = styled.section`
     transition:
       transform 150ms ease-out,
       box-shadow 150ms ease-out,
-      filter 120ms ease-out,
       border-color 150ms ease-out;
     cursor: pointer;
 
     &:hover {
       border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-      filter: brightness(1.03);
     }
 
     &:active {
@@ -90,8 +88,7 @@ const Identity = styled.section`
       box-shadow: none;
       transition:
         transform 60ms ease-in,
-        box-shadow 60ms ease-in,
-        filter 60ms;
+        box-shadow 60ms ease-in;
     }
 
     > .avatar {

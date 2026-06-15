@@ -26,6 +26,7 @@ const (
 	TableMusicbillMusic            = "musicbill_music"
 	TablePublicMusicbillCollection = "public_musicbill_collection"
 	TableSharedMusicbill           = "shared_musicbill"
+	TableMusicbillFollowedArtist   = "musicbill_followed_artist"
 )
 
 var tables = []string{
@@ -160,6 +161,14 @@ var tables = []string{
 		accepted INTEGER NOT NULL DEFAULT 0,
 		UNIQUE(musicbillId, sharedUserId) ON CONFLICT REPLACE
 	)`,
+	`CREATE TABLE IF NOT EXISTS musicbill_followed_artist (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		musicbillId TEXT NOT NULL REFERENCES musicbill(id),
+		artistId TEXT NOT NULL REFERENCES artist(id),
+		createTimestamp INTEGER NOT NULL,
+		UNIQUE(musicbillId, artistId) ON CONFLICT IGNORE
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_musicbill_followed_artist_artist ON musicbill_followed_artist(artistId)`,
 }
 
 // Initialize creates directories, verifies data version, creates tables and default admin.
