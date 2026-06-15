@@ -729,7 +729,7 @@ function FloatingMusicPlayer({
 
     let canceled = false;
     setLyricState({ status: 'loading' });
-    getLyricList({ musicId: music.id, requestMinimalDuration: 0 })
+    getLyricList({ musicId: music.id })
       .then((lyricList) => {
         if (canceled) return;
         setLyricState(

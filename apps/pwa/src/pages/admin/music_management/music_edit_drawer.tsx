@@ -1522,10 +1522,7 @@ function MusicEditDrawer({
         const result = await adminGetMusic({ id, requestMinimalDuration: 0 });
         let lyrics: Lyric[] = [];
         if (result.type === MusicType.SONG) {
-          lyrics = await getLyricList({
-            musicId: id,
-            requestMinimalDuration: 0,
-          });
+          lyrics = await getLyricList({ musicId: id });
         }
         setMusic({
           id: result.id,
