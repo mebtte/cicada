@@ -37,6 +37,7 @@ function Radio() {
     nextMusic,
     next,
     insertNext,
+    remove,
     fetchingMessage,
   } = useRadioQueue();
   const { audio, paused, loading, play, pause, togglePlay } = useRadioAudio({
@@ -163,6 +164,7 @@ function Radio() {
         onClose={onCloseQueue}
         queue={queue}
         currentIndex={currentIndex}
+        onRemove={remove}
       />
     </playerContext.Provider>
   );

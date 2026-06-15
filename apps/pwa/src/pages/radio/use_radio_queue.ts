@@ -105,6 +105,17 @@ function useRadioQueue() {
     });
   }, []);
 
+  const remove = useCallback((pid: string) => {
+    setQueue((prev) => {
+      const index = prev.findIndex((m) => m.pid === pid);
+      // 仅允许删除当前播放之后的项, 避免动到已播或正在播的位置.
+      if (index <= currentIndexRef.current) {
+        return prev;
+      }
+      return prev.filter((m) => m.pid !== pid);
+    });
+  }, []);
+
   return {
     queue,
     currentIndex,
@@ -115,6 +126,7 @@ function useRadioQueue() {
         : undefined,
     next,
     insertNext,
+    remove,
     fetchingMessage,
   };
 }

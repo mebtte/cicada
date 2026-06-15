@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { memo } from 'react';
+import { CSSProperties, memo } from 'react';
 import { animated, useTransition } from 'react-spring';
 import { Drawer, DrawerContent } from '@/components';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -11,6 +11,9 @@ import useDynamicZIndex from '@/pages/player/use_dynamic_z_index';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '@/pages/player/eventemitter';
+import Button from '@/components/button';
+import { Close } from '@/components/icon';
+import { CSSVariable } from '@/global_style';
 
 const Content = styled.div`
   position: relative;
@@ -41,11 +44,16 @@ const Row = styled(animated.div)`
   will-change: transform, opacity;
 `;
 
+const removeStyle: CSSProperties = {
+  color: CSSVariable.COLOR_DANGEROUS,
+};
+
 interface RadioQueueDrawerProps {
   open: boolean;
   onClose: () => void;
   queue: QueueMusic[];
   currentIndex: number;
+  onRemove: (pid: string) => void;
 }
 
 function RadioQueueDrawer({
@@ -53,6 +61,7 @@ function RadioQueueDrawer({
   onClose,
   queue,
   currentIndex,
+  onRemove,
 }: RadioQueueDrawerProps) {
   // 复用主播放器的 playqueue drawer 事件参与 z-index 分层, 否则后续弹起的
   // MusicDrawer / ArtistDrawer 会被本抽屉遮挡.
@@ -91,13 +100,31 @@ function RadioQueueDrawer({
             <ScrollContent>
               {transitions((style, qm) => {
                 const idx = queue.indexOf(qm);
+                // 仅"下一首播放"插入的项 (shuffle=false) 在待播位置显示删除按钮.
+                const removable = idx > currentIndex && !qm.shuffle;
                 return (
                   <Row style={style}>
                     <MusicBase
                       index={idx + 1}
                       music={qm}
                       active={idx === currentIndex}
-                      lineAfter={null}
+                      lineAfter={
+                        removable ? (
+                          <Button
+                            square
+                            variant="ghost"
+                            size="sm"
+                            style={removeStyle}
+                            aria-label={t('remove')}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onRemove(qm.pid);
+                            }}
+                          >
+                            <Close />
+                          </Button>
+                        ) : null
+                      }
                       onOpenMusic={(music) =>
                         playerEventemitter.emit(
                           PlayerEventType.OPEN_MUSIC_DRAWER,

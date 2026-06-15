@@ -25,6 +25,7 @@ function useRadioAudio({
   onEnded: () => void;
 }) {
   const audioRef = useRef<CustomAudio<QueueMusic> | null>(null);
+  const queueMusicPidRef = useRef<string | null>(null);
   if (!audioRef.current) {
     audioRef.current = new CustomAudio<QueueMusic>();
   }
@@ -107,6 +108,7 @@ function useRadioAudio({
 
   useEffect(() => {
     if (!queueMusic) {
+      queueMusicPidRef.current = null;
       audio.clearSource();
       setLoading(false);
       setPaused(true);
@@ -117,14 +119,21 @@ function useRadioAudio({
       quality: MusicPlaybackQuality.SMOOTH,
     });
     const sourceChanged = audio.getSrc() !== src;
+    const queueMusicChanged = queueMusicPidRef.current !== queueMusic.pid;
+    queueMusicPidRef.current = queueMusic.pid;
+
     audio.setSource({ src, extra: queueMusic });
-    if (sourceChanged) {
+    if (sourceChanged || queueMusicChanged) {
       playerEventemitter.emit(PlayerEventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: 0,
       });
     }
+    if (!sourceChanged && queueMusicChanged) {
+      // 同一首歌作为新的队列项播放时 src 不变, 浏览器不会自动重载音源.
+      audio.setCurrentTime(0);
+    }
     setLoading(sourceChanged || !audio.hasPlayableData());
-    if (sourceChanged) {
+    if (sourceChanged || queueMusicChanged) {
       if (userStartedRef.current) {
         // 用户已经点过一次 play, 切歌后自动续播
         audio.play();
