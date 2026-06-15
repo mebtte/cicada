@@ -53,8 +53,9 @@ function Wrapper({
       error: musicbill.error,
       id: musicbill.id,
       status: musicbill.status,
+      musicList: musicbill.musicList,
     }),
-    [musicbill.error, musicbill.id, musicbill.status],
+    [musicbill.error, musicbill.id, musicbill.status, musicbill.musicList],
   );
 
   // 列表数据更新时不能重建整块列表，否则外部滚动容器会被浏览器夹回顶部。
@@ -84,15 +85,15 @@ function Wrapper({
         }
 
         if (state.status === RequestStatus.SUCCESS) {
-          if (musicbill.musicList.length) {
+          if (state.musicList.length) {
             return (
               <ListContainer style={style}>
                 <VirtualList
-                  count={musicbill.musicList.length}
-                  getItemKey={(index) => musicbill.musicList[index].id}
+                  count={state.musicList.length}
+                  getItemKey={(index) => state.musicList[index].id}
                   scrollElementRef={scrollElementRef}
                   renderItem={(index, key) => {
-                    const music = musicbill.musicList[index];
+                    const music = state.musicList[index];
                     const active =
                       playqueue[currentPlayqueuePosition]?.id === music.id;
                     return (

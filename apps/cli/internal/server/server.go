@@ -104,6 +104,9 @@ func NewServer() *gin.Engine {
 	api.DELETE("/musicbill", auth(), handler.DeleteMusicbill)
 	api.POST("/musicbill_music", auth(), handler.AddMusicToMusicbill)
 	api.DELETE("/musicbill_music", auth(), handler.RemoveMusicFromMusicbill)
+	api.GET("/musicbill/followed_artist", auth(), handler.GetMusicbillFollowedArtistList)
+	api.POST("/musicbill/followed_artist", auth(), handler.AddMusicbillFollowedArtist)
+	api.DELETE("/musicbill/followed_artist", auth(), handler.DeleteMusicbillFollowedArtist)
 
 	// Shared musicbill
 	api.POST("/musicbill/shared_user", auth(), handler.AddMusicbillSharedUser)

@@ -272,7 +272,6 @@ const zhCN: {
   delete_origin_question: '确定删除该服务器地址以及已登录用户吗?',
   sort_musicbill: '乐单排序',
   reload_musicbill_list: '刷新',
-  reload_musicbill: '刷新',
   collect_musicbill: '收藏乐单',
   uncollect_musicbill: '取消收藏乐单',
   retry: '重试',
@@ -385,6 +384,17 @@ const zhCN: {
   drag_player: '拖动播放器',
   user_avatar: '用户头像',
   logo: '标志',
+  followed_artist: '关注的艺术家',
+  follow_artist: '关注艺术家',
+  unfollow_artist: '取消关注',
+  follow_artist_question: '关注 %s1?',
+  unfollow_artist_question: '取消关注 %s1?',
+  follow_artist_consequence_1: '该艺术家的所有音乐会添加到当前乐单',
+  follow_artist_consequence_2: '该艺术家后续新增的音乐也会自动加入当前乐单',
+  unfollow_artist_consequence_1: '已加入乐单的该艺术家音乐不会被移除',
+  unfollow_artist_consequence_2: '该艺术家后续新增的音乐不再自动加入乐单',
+  no_followed_artist: '暂无关注的艺术家',
+  repeated_followed_artist: '已关注该艺术家',
 };
 
 export default zhCN;

@@ -280,7 +280,6 @@ export default {
     'are you sure to delete this server address and users within ?',
   sort_musicbill: 'sort musicbill',
   reload_musicbill_list: 'refresh',
-  reload_musicbill: 'refresh',
   collect_musicbill: 'collect musicbill',
   uncollect_musicbill: 'uncollect musicbill',
   retry: 'retry',
@@ -398,4 +397,19 @@ export default {
   drag_player: 'drag player',
   user_avatar: 'user avatar',
   logo: 'logo',
+  followed_artist: 'followed artist',
+  follow_artist: 'follow artist',
+  unfollow_artist: 'unfollow artist',
+  follow_artist_question: 'follow %s1?',
+  unfollow_artist_question: 'unfollow %s1?',
+  follow_artist_consequence_1:
+    'all of this artist\'s existing music will be added to the current musicbill',
+  follow_artist_consequence_2:
+    'new music released by this artist will be added to this musicbill automatically',
+  unfollow_artist_consequence_1:
+    'this artist\'s music already in the musicbill will not be removed',
+  unfollow_artist_consequence_2:
+    'new music released by this artist will no longer be added automatically',
+  no_followed_artist: 'no followed artist',
+  repeated_followed_artist: 'this artist is already followed',
 };

@@ -115,6 +115,7 @@ func DeleteMusicbill(id string) error {
 		`DELETE FROM musicbill_music WHERE musicbillId=?`,
 		`DELETE FROM shared_musicbill WHERE musicbillId=?`,
 		`DELETE FROM public_musicbill_collection WHERE musicbillId=?`,
+		`DELETE FROM musicbill_followed_artist WHERE musicbillId=?`,
 		`DELETE FROM musicbill WHERE id=?`,
 	} {
 		if _, err := tx.Exec(q, id); err != nil {

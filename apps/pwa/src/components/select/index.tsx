@@ -194,6 +194,7 @@ function buildStyles<T, IsMulti extends boolean>(
       fontWeight: 500,
       fontSize: s.font,
       letterSpacing: '0.2px',
+      textTransform: 'capitalize',
     }),
     indicatorsContainer: (_) => ({
       display: 'flex',

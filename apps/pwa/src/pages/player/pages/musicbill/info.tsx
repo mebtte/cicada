@@ -2,16 +2,20 @@ import styled from 'styled-components';
 import day from '@/utils/day';
 import { CSSVariable } from '@/global_style';
 import getResizedImage from '@/server/asset/get_resized_image';
-import Cover from '@/components/cover';
+import ImageFrame from '@/components/image_frame';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { Musicbill } from '../../constants';
+import {
+  getMusicbillCoverRadius,
+  MUSICBILL_COVER_PUBLIC_COLOR,
+  MUSICBILL_COVER_PUBLIC_SHADOW,
+} from '../../components/musicbill_cover_style';
 import { INFO_HEIGHT } from './constants';
 import Operation from './operation';
 
 const COVER_SIZE = 96;
-const PUBLIC = '#63d1fa';
-const PUBLIC_SHADOW = 'rgb(72 179 220)';
+const COVER_RADIUS = getMusicbillCoverRadius(COVER_SIZE);
 const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 const Style = styled.div`
   height: ${INFO_HEIGHT}px;
@@ -97,27 +101,28 @@ const Style = styled.div`
     }
   }
 `;
-const CoverArt = styled(Cover)<{ $public: boolean }>`
+const CoverArt = styled(ImageFrame)`
   flex: 0 0 auto;
-  box-sizing: border-box;
-  overflow: hidden;
-
-  background: #fff;
-  border: 2px solid
-    ${({ $public }) => ($public ? PUBLIC : CSSVariable.COLOR_BORDER)};
-  border-radius: 16px;
-  box-shadow: 0 6px 0
-    ${({ $public }) => ($public ? PUBLIC_SHADOW : NEUTRAL_SHADOW)};
 `;
 
 function Info({ musicbill }: { musicbill: Musicbill }) {
+  const borderColor = musicbill.public
+    ? MUSICBILL_COVER_PUBLIC_COLOR
+    : CSSVariable.COLOR_BORDER;
+  const shadowColor = musicbill.public
+    ? MUSICBILL_COVER_PUBLIC_SHADOW
+    : NEUTRAL_SHADOW;
+
   return (
     <Style>
       <CoverArt
         className="cover-card"
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         size={COVER_SIZE}
-        $public={musicbill.public}
+        radius={COVER_RADIUS}
+        borderColor={borderColor}
+        shadowColor={shadowColor}
+        shadowOffset={6}
       />
       <div className="info">
         <div className="name">{musicbill.name}</div>

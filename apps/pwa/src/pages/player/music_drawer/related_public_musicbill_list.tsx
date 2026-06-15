@@ -145,7 +145,6 @@ const Item = styled.div`
 
   &:hover {
     background: #fff;
-    filter: brightness(1.03);
   }
 
   &:active {

@@ -7,6 +7,7 @@ import (
 	"cicada/internal/auth"
 	"cicada/internal/config"
 	"cicada/internal/store"
+	"log"
 	"strings"
 	"unicode/utf8"
 
@@ -353,7 +354,61 @@ func AdminCreateMusic(c *gin.Context) {
 	}
 	syncMusicMetadataToAsset(id)
 	syncMusicAssetInfo(id)
+	autoAddMusicToFollowingMusicbills(id, performerIDs, lyricistIDs, composerIDs)
 	api.OK(c, id)
+}
+
+// getMusicArtistIDsByRole returns the artist IDs currently linked to the music for the given role.
+func getMusicArtistIDsByRole(musicID string, role store.MusicArtistRole) []string {
+	rows, err := store.GetArtistsInMusicIDsByRole([]string{musicID}, role)
+	if err != nil {
+		return nil
+	}
+	ids := make([]string, len(rows))
+	for i, r := range rows {
+		ids[i] = r.ID
+	}
+	return ids
+}
+
+// diffNewlyAdded returns ids present in newIDs but not in oldIDs.
+func diffNewlyAdded(oldIDs, newIDs []string) []string {
+	old := make(map[string]struct{}, len(oldIDs))
+	for _, id := range oldIDs {
+		old[id] = struct{}{}
+	}
+	added := make([]string, 0)
+	for _, id := range newIDs {
+		if _, ok := old[id]; !ok {
+			added = append(added, id)
+		}
+	}
+	return added
+}
+
+// autoAddMusicToFollowingMusicbills 把音乐自动加入所有关注了该音乐任一艺术家的乐单.
+// 内部去重 + 单条 SQL; 失败仅记录.
+func autoAddMusicToFollowingMusicbills(musicID string, artistIDGroups ...[]string) {
+	seen := map[string]struct{}{}
+	all := make([]string, 0)
+	for _, ids := range artistIDGroups {
+		for _, id := range ids {
+			if id == "" {
+				continue
+			}
+			if _, ok := seen[id]; ok {
+				continue
+			}
+			seen[id] = struct{}{}
+			all = append(all, id)
+		}
+	}
+	if len(all) == 0 {
+		return
+	}
+	if _, err := store.AutoAddMusicToFollowingMusicbills(musicID, all); err != nil {
+		log.Printf("auto add music %s to following musicbills: %v", musicID, err)
+	}
 }
 
 // ── Update music ──────────────────────────────────────────────────────────────
@@ -497,10 +552,12 @@ func AdminUpdateMusic(c *gin.Context) {
 			api.Fail(c, apperr.ArtistNotExisted)
 			return
 		}
+		oldIDs := getMusicArtistIDsByRole(body.ID, store.MusicArtistRolePerformer)
 		if err := store.ReplaceMusicArtistsByRole(body.ID, store.MusicArtistRolePerformer, ids); err != nil {
 			api.Fail(c, apperr.ServerError)
 			return
 		}
+		autoAddMusicToFollowingMusicbills(body.ID, diffNewlyAdded(oldIDs, ids))
 		syncMetadata = true
 
 	case "lyricists":
@@ -526,10 +583,12 @@ func AdminUpdateMusic(c *gin.Context) {
 			api.Fail(c, apperr.ArtistNotExisted)
 			return
 		}
+		oldIDs := getMusicArtistIDsByRole(body.ID, store.MusicArtistRoleLyricist)
 		if err := store.ReplaceMusicArtistsByRole(body.ID, store.MusicArtistRoleLyricist, ids); err != nil {
 			api.Fail(c, apperr.ServerError)
 			return
 		}
+		autoAddMusicToFollowingMusicbills(body.ID, diffNewlyAdded(oldIDs, ids))
 		syncMetadata = true
 
 	case "composers":
@@ -551,10 +610,12 @@ func AdminUpdateMusic(c *gin.Context) {
 			api.Fail(c, apperr.ArtistNotExisted)
 			return
 		}
+		oldIDs := getMusicArtistIDsByRole(body.ID, store.MusicArtistRoleComposer)
 		if err := store.ReplaceMusicArtistsByRole(body.ID, store.MusicArtistRoleComposer, ids); err != nil {
 			api.Fail(c, apperr.ServerError)
 			return
 		}
+		autoAddMusicToFollowingMusicbills(body.ID, diffNewlyAdded(oldIDs, ids))
 		syncMetadata = true
 
 	case "type":

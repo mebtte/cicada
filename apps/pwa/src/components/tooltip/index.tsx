@@ -28,15 +28,15 @@ import styled from 'styled-components';
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
 const Bubble = styled(animated.div)`
-  /* Duolingo 风格: 深底白字 + 立体阴影 */
+  /* Duolingo 风格: 浅灰底 + 中性硬阴影, 比纯白柔和又能保留立体落差 */
   max-width: 240px;
   padding: 6px 10px;
 
-  background: rgb(60 60 60);
-  color: #fff;
-  border: 2px solid rgb(35 35 35);
+  background: rgb(248 248 248);
+  color: rgb(60 60 60);
+  border: 2px solid rgb(180 180 180);
   border-radius: 12px;
-  box-shadow: 0 4px 0 rgb(35 35 35);
+  box-shadow: 0 4px 0 rgb(180 180 180);
 
   font-family: ${FONT};
   font-size: 12px;

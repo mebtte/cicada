@@ -232,6 +232,7 @@ func DeleteArtistCascade(id string) error {
 	defer tx.Rollback()
 	for _, del := range []string{
 		`DELETE FROM artist_photo WHERE artistId=?`,
+		`DELETE FROM musicbill_followed_artist WHERE artistId=?`,
 		`DELETE FROM artist WHERE id=?`,
 	} {
 		if _, err := tx.Exec(del, id); err != nil {
