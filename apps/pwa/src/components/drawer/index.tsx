@@ -89,9 +89,9 @@ const Overlay = styled(RadixDialog.Overlay)`
 // but reveal page space on top and bottom, so the downward hard shadow can land
 // in the bottom gap and read as "raised toward viewer" (mirrors Button).
 
-const INSET = '12px';
-const SAFE_TOP    = `max(${INSET}, env(safe-area-inset-top, ${INSET}))`;
-const SAFE_BOTTOM = `max(${INSET}, env(safe-area-inset-bottom, ${INSET}))`;
+const INSET = '24px';
+const SAFE_TOP    = `calc(${INSET} + env(safe-area-inset-top, 0px))`;
+const SAFE_BOTTOM = `calc(${INSET} + env(safe-area-inset-bottom, 0px))`;
 
 const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
   right: css`

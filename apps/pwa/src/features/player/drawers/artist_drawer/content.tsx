@@ -83,11 +83,10 @@ const Header = styled(DrawerHeader)<{ $visible: boolean }>`
   pointer-events: none;
 
   background-color: ${({ $visible }) =>
-    $visible ? 'rgb(255 255 255 / 0.92)' : 'transparent'};
+    $visible ? '#fff' : 'transparent'};
   border-bottom: 1px solid
     ${({ $visible }) =>
       $visible ? CSSVariable.COLOR_NEUTRAL_SHADOW : 'transparent'};
-  backdrop-filter: ${({ $visible }) => ($visible ? 'blur(8px)' : 'none')};
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transform: translateY(${({ $visible }) => ($visible ? 0 : '-4px')});
   transition:

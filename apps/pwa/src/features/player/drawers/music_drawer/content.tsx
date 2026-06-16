@@ -80,11 +80,10 @@ const Header = styled(DrawerHeader)<{ $floating: boolean; $visible: boolean }>`
           left: 0;
           right: 0;
           background-color: ${$visible
-            ? 'rgb(255 255 255 / 0.92)'
+            ? '#fff'
             : 'transparent'};
           border-bottom: 1px solid
             ${$visible ? CSSVariable.COLOR_NEUTRAL_SHADOW : 'transparent'};
-          backdrop-filter: ${$visible ? 'blur(8px)' : 'none'};
         `
       : null}
 

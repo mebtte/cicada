@@ -26,9 +26,7 @@ const Style = styled.div`
     margin: 0 24px;
 
     pointer-events: auto;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    background: rgb(255 255 255 / 0.96);
+    background: #fff;
     border: 2px solid ${CSSVariable.COLOR_BORDER};
     border-radius: 14px;
     box-shadow: 0 4px 0 ${NEUTRAL_SHADOW};

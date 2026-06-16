@@ -13,13 +13,11 @@ import Spinner from '@/components/spinner';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
 import {
-  Drawer,
-  DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from '@/components';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
+import AppDrawer from '@/components/app_drawer';
 import Cover, { Shape } from '@/components/cover';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { CSSVariable } from '@/global_style';
@@ -71,24 +69,39 @@ const Header = styled(DrawerHeader)<{ $visible: boolean }>`
   pointer-events: none;
 
   background-color: ${({ $visible }) =>
-    $visible ? 'rgb(255 255 255 / 0.92)' : 'transparent'};
+    $visible ? '#fff' : 'transparent'};
   border-bottom: 1px solid
     ${({ $visible }) =>
       $visible ? CSSVariable.COLOR_NEUTRAL_SHADOW : 'transparent'};
-  backdrop-filter: ${({ $visible }) => ($visible ? 'blur(8px)' : 'none')};
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+`;
+const HeaderRow = styled.div`
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+const HeaderMeta = styled.div<{ $visible: boolean }>`
+  flex: 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transform: translateY(${({ $visible }) => ($visible ? 0 : '-4px')});
   transition:
     opacity 160ms ease,
-    transform 160ms ease,
-    background-color 160ms ease,
-    border-color 160ms ease;
+    transform 160ms ease;
 `;
 const HeaderAvatar = styled.div`
   flex-shrink: 0;
   width: 48px;
   height: 48px;
-  margin-right: 10px;
   padding: 2px;
   box-sizing: border-box;
 
@@ -150,20 +163,20 @@ function UserDetail({
   user: UserDetailType;
 }) {
   const scrollableRef = useRef<HTMLDivElement | null>(null);
-  const identityRef = useRef<HTMLElement | null>(null);
+  const infoRef = useRef<HTMLElement | null>(null);
   const [showCollapsedHeader, setShowCollapsedHeader] = useState(false);
 
   const updateCollapsedHeaderVisibility = useCallback(() => {
     const scrollableElement = scrollableRef.current;
-    const identityElement = identityRef.current;
-    if (!scrollableElement || !identityElement) {
+    const infoElement = infoRef.current;
+    if (!scrollableElement || !infoElement) {
       setShowCollapsedHeader(false);
       return;
     }
 
     const scrollableRect = scrollableElement.getBoundingClientRect();
-    const identityRect = identityElement.getBoundingClientRect();
-    const nextVisible = identityRect.bottom <= scrollableRect.top + 8;
+    const infoRect = infoElement.getBoundingClientRect();
+    const nextVisible = infoRect.bottom <= scrollableRect.top + 8;
     setShowCollapsedHeader((current) =>
       current === nextVisible ? current : nextVisible,
     );
@@ -178,21 +191,25 @@ function UserDetail({
   return (
     <DetailContainer style={style}>
       <Header $visible={showCollapsedHeader}>
-        <HeaderAvatar>
-          <Cover
-            className="header-avatar-image"
-            src={getResizedImage({
-              url: user.avatar,
-              size: Math.ceil(48 * window.devicePixelRatio),
-            })}
-            size="100%"
-            shape={Shape.SQUARE}
-          />
-        </HeaderAvatar>
-        <HeaderText>
-          <UserDrawerTitle>{user.nickname}</UserDrawerTitle>
-          <UserDrawerDescription>@{user.username}</UserDrawerDescription>
-        </HeaderText>
+        <HeaderRow>
+          <HeaderMeta $visible={showCollapsedHeader}>
+            <HeaderAvatar>
+              <Cover
+                className="header-avatar-image"
+                src={getResizedImage({
+                  url: user.avatar,
+                  size: Math.ceil(48 * window.devicePixelRatio),
+                })}
+                size="100%"
+                shape={Shape.SQUARE}
+              />
+            </HeaderAvatar>
+            <HeaderText>
+              <UserDrawerTitle>{user.nickname}</UserDrawerTitle>
+              <UserDrawerDescription>@{user.username}</UserDrawerDescription>
+            </HeaderText>
+          </HeaderMeta>
+        </HeaderRow>
       </Header>
       <div
         className="scrollable"
@@ -200,7 +217,7 @@ function UserDetail({
         onScroll={updateCollapsedHeaderVisibility}
       >
         <div className="first-screen">
-          <Info user={user} identityRef={identityRef} />
+          <Info user={user} infoRef={infoRef} />
           <MusicbillList musicbillList={user.musicbillList} />
         </div>
       </div>
@@ -220,39 +237,35 @@ function Wrapper({
   zIndex: number;
 }) {
   const { data, reload } = useData(id);
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   const transitions = useTransition(data, TRANSITION);
   return (
-    <Drawer open={open} onOpenChange={(v) => !v && onClose()}>
-      <DrawerContent
-        side="right"
-        style={{ width: 'min(80%, 340px)', paddingTop: titlebarTop }}
-        showClose={false}
-        zIndex={zIndex}
-      >
-        {transitions((style, d) => {
-          const { error, loading, userDetail } = d;
-          if (error) {
-            return (
-              <StatusContainer style={style}>
-                <ErrorCard errorMessage={error.message} retry={reload} />
-              </StatusContainer>
-            );
-          }
-          if (loading) {
-            return (
-              <StatusContainer style={style}>
-                <Spinner />
-              </StatusContainer>
-            );
-          }
+    <AppDrawer
+      open={open}
+      onClose={onClose}
+      width="min(80%, 340px)"
+      showClose={false}
+      zIndex={zIndex}
+    >
+      {transitions((style, d) => {
+        const { error, loading, userDetail } = d;
+        if (error) {
           return (
-            <UserDetail style={style} user={userDetail!} />
+            <StatusContainer style={style}>
+              <ErrorCard errorMessage={error.message} retry={reload} />
+            </StatusContainer>
           );
-        })}
-      </DrawerContent>
-    </Drawer>
+        }
+        if (loading) {
+          return (
+            <StatusContainer style={style}>
+              <Spinner />
+            </StatusContainer>
+          );
+        }
+        return <UserDetail style={style} user={userDetail!} />;
+      })}
+    </AppDrawer>
   );
 }
 

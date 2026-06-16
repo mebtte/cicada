@@ -79,17 +79,17 @@ const Style = styled.section`
 
 function Info({
   user,
-  identityRef,
+  infoRef,
 }: {
   user: UserDetail;
-  identityRef?: Ref<HTMLElement>;
+  infoRef?: Ref<HTMLElement>;
 }) {
   return (
-    <Style>
+    <Style ref={infoRef}>
       <div className="avatar-stage">
         <Avatar className="avatar" src={user.avatar} size={AVATAR_SIZE} />
       </div>
-      <section className="identity" ref={identityRef}>
+      <section className="identity">
         <h1 className="nickname">{user.nickname}</h1>
         <div className="username">@{user.username}</div>
         <div className="join-time">

@@ -40,13 +40,12 @@ const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   align-items: center;
   gap: 8px;
 
-  background: rgb(255 255 255 / 0.92);
+  background: #fff;
   border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 16px;
   box-shadow:
     0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW},
     0 10px 24px rgb(0 0 0 / 0.1);
-  backdrop-filter: blur(12px);
 
   > .left {
     min-width: 0;
