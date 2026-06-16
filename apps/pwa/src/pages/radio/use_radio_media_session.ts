@@ -96,7 +96,13 @@ function useRadioMediaSession({
       return;
     }
     const sync = () => {
-      if (audio.isPaused() && audio.hasPlayableData()) {
+      // 'ended' 时 paused 已静默置为 true, 数据仍就绪. 下发 'paused' 会让
+      // macOS Now Playing 在 next 跳到新曲并 setSource 之前释放控制权.
+      if (
+        audio.isPaused() &&
+        audio.hasPlayableData() &&
+        !audio.isEnded()
+      ) {
         safeSetPlaybackState('paused');
       } else {
         safeSetPlaybackState('playing');

@@ -126,6 +126,10 @@ class CustomAudio<Extra> {
     return this.audio.paused;
   }
 
+  isEnded() {
+    return this.audio.ended;
+  }
+
   hasPlayableData() {
     return this.audio.readyState >= this.audio.HAVE_FUTURE_DATA;
   }
