@@ -1,7 +1,8 @@
 import styled from 'styled-components';
+import { useContext } from 'react';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { PlaylistAdd, StarFilled, Star } from '@/components/icon';
+import { PlaylistAdd, StarFilled, Star, Export } from '@/components/icon';
 import { CSSVariable } from '@/global_style';
 import notice from '@/utils/notice';
 import collectPublicMusicbill from '@/server/api/collect_public_musicbill';
@@ -15,6 +16,8 @@ import playerEventemitter, {
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../constants';
 import e, { EventType } from './eventemitter';
 import addMusicListToPlaylist from '../../add_to_playlist';
+import { openExportMusicListDialog } from '../../export_music_list';
+import Context from '../../context';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
@@ -61,28 +64,51 @@ function Toolbar({
   floatingControllerOffset?: boolean;
 }) {
   const hasMusic = !!musicbill.musicList.length;
+  const { addToPlaylistEnabled, exportEnabled } = useContext(Context);
 
   return (
     <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
-        <Tooltip content={t('add_to_playlist')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            aria-label={t('add_to_playlist')}
-            disabled={!hasMusic}
-            onClick={() => {
-              if (!hasMusic) {
-                return;
-              }
+        {addToPlaylistEnabled ? (
+          <Tooltip content={t('add_to_playlist')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('add_to_playlist')}
+              disabled={!hasMusic}
+              onClick={() => {
+                if (!hasMusic) {
+                  return;
+                }
 
-              addMusicListToPlaylist(musicbill.musicList);
-            }}
-          >
-            <PlaylistAdd />
-          </Button>
-        </Tooltip>
+                addMusicListToPlaylist(musicbill.musicList);
+              }}
+            >
+              <PlaylistAdd />
+            </Button>
+          </Tooltip>
+        ) : null}
+        {exportEnabled ? (
+          <Tooltip content={t('export_music')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('export_music')}
+              disabled={!hasMusic}
+              onClick={() => {
+                if (!hasMusic) {
+                  return;
+                }
+
+                openExportMusicListDialog(musicbill.musicList);
+              }}
+            >
+              <Export size="1em" />
+            </Button>
+          </Tooltip>
+        ) : null}
         {musicbill.public ? (
           <Tooltip
             content={

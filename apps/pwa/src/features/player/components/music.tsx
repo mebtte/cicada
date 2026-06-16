@@ -27,7 +27,7 @@ function Music({
   music: MusicWithArtistAliases;
   addon?: ReactNode;
 }) {
-  const { playNextEnabled } = useContext(Context);
+  const { playEnabled, playNextEnabled } = useContext(Context);
 
   return (
     <MusicBase
@@ -37,18 +37,20 @@ function Music({
       music={music}
       lineAfter={
         <LineAfterPart>
-          <Button
-            className="primary-action"
-            square
-            variant="ghost"
-            size="sm"
-            onClick={(event) => {
-              event.stopPropagation();
-              return e.emit(EventType.ACTION_PLAY_MUSIC, { music });
-            }}
-          >
-            <PlayArrow />
-          </Button>
+          {playEnabled ? (
+            <Button
+              className="primary-action"
+              square
+              variant="ghost"
+              size="sm"
+              onClick={(event) => {
+                event.stopPropagation();
+                return e.emit(EventType.ACTION_PLAY_MUSIC, { music });
+              }}
+            >
+              <PlayArrow />
+            </Button>
+          ) : null}
           {playNextEnabled ? (
             <Tooltip content={t('play_next')}>
               <Button

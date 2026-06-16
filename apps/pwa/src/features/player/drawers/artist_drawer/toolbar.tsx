@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useContext } from 'react';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import { Export, PlaylistAdd, Edit } from '@/components/icon';
@@ -13,6 +14,7 @@ import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../constants';
 import { MusicWithArtistAliases } from '../../constants';
 import addMusicListToPlaylist from '../../add_to_playlist';
 import { openExportMusicListDialog } from '../../export_music_list';
+import Context from '../../context';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
@@ -69,6 +71,7 @@ function Toolbar({
 }) {
   const user = useUser();
   const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
+  const { addToPlaylistEnabled, exportEnabled } = useContext(Context);
   const musicList = getArtistMusicList(artist);
   const hasMusic = musicList.length > 0;
   // 仅在 admin 且开启「管理员快捷编辑」开关时展示编辑入口
@@ -76,36 +79,43 @@ function Toolbar({
   return (
     <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
-        <Tooltip content={t('add_to_playlist')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            aria-label={t('add_to_playlist')}
-            onClick={() =>
-              hasMusic
-                ? addMusicListToPlaylist(musicList)
-                : notice.error(t('no_music_artist_warning'))
-            }
-          >
-            <PlaylistAdd />
-          </Button>
-        </Tooltip>
-        <Tooltip content={t('export_music')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            aria-label={t('export_music')}
-            onClick={() =>
-              hasMusic
-                ? openExportMusicListDialog(musicList)
-                : notice.error(t('no_music_artist_warning'))
-            }
-          >
-            <Export size="1em" />
-          </Button>
-        </Tooltip>
+        {addToPlaylistEnabled ? (
+          <Tooltip content={t('add_to_playlist')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('add_to_playlist')}
+              onClick={() =>
+                hasMusic
+                  ? addMusicListToPlaylist(musicList)
+                  : notice.error(t('no_music_artist_warning'))
+              }
+            >
+              <PlaylistAdd />
+            </Button>
+          </Tooltip>
+        ) : null}
+        {exportEnabled ? (
+          <Tooltip content={t('export_music')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('export_music')}
+              disabled={!hasMusic}
+              onClick={() => {
+                if (!hasMusic) {
+                  return;
+                }
+
+                openExportMusicListDialog(musicList);
+              }}
+            >
+              <Export size="1em" />
+            </Button>
+          </Tooltip>
+        ) : null}
         {showAdminEdit ? (
           <Tooltip content={t('modify_artist')}>
             <Button

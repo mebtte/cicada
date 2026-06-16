@@ -16,6 +16,7 @@ import MusicDrawer from '@/features/player/drawers/music_drawer';
 import MusicbillMusicDrawer from '@/features/player/drawers/musicbill_music_drawer';
 import ArtistDrawer from '@/features/player/drawers/artist_drawer';
 import MusicbillDrawer from '@/features/player/drawers/musicbill_drawer';
+import UserDrawer from '@/features/player/drawers/user_drawer';
 import useRadioQueue from './use_radio_queue';
 import useRadioAudio from './use_radio_audio';
 import useRadioPreload from './use_radio_preload';
@@ -81,7 +82,10 @@ function Radio() {
   // 列表中的高亮态和乐单写入入口.
   const contextValue = useMemo(
     () => ({
+      playEnabled: false,
       playNextEnabled: false,
+      addToPlaylistEnabled: false,
+      exportEnabled: false,
 
       getMusicbillListStatus,
       musicbillList,
@@ -139,6 +143,7 @@ function Radio() {
       <MusicbillMusicDrawer />
       <ArtistDrawer />
       <MusicbillDrawer />
+      <UserDrawer />
       <RadioQueueDrawer
         open={queueDrawerOpen}
         onClose={onCloseQueue}

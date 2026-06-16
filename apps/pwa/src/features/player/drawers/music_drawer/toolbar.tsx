@@ -68,25 +68,32 @@ function Toolbar({
 }) {
   const user = useUser();
   const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
-  const { playNextEnabled } = useContext(Context);
+  const {
+    playEnabled,
+    playNextEnabled,
+    addToPlaylistEnabled,
+    exportEnabled,
+  } = useContext(Context);
   // 编辑按钮: 管理员开启「管理员快捷编辑」时才出现, 点击跳转到管理页并自动打开该音乐的编辑 drawer
   const showAdminEdit = !!user?.admin && adminQuickEdit;
   return (
     <Style $floatingControllerOffset={floatingControllerOffset}>
       <div className="left">
-        <Button
-          square
-          variant="primary"
-          size="sm"
-          aria-label={t('play')}
-          onClick={() =>
-            playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, {
-              music,
-            })
-          }
-        >
-          <PlayArrow />
-        </Button>
+        {playEnabled ? (
+          <Button
+            square
+            variant="primary"
+            size="sm"
+            aria-label={t('play')}
+            onClick={() =>
+              playerEventemitter.emit(PlayerEventType.ACTION_PLAY_MUSIC, {
+                music,
+              })
+            }
+          >
+            <PlayArrow />
+          </Button>
+        ) : null}
         {playNextEnabled ? (
           <Tooltip content={t('play_next')}>
             <Button
@@ -125,28 +132,32 @@ function Toolbar({
             <PostAdd />
           </Button>
         </Tooltip>
-        <Tooltip content={t('add_to_playlist')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            aria-label={t('add_to_playlist')}
-            onClick={() => addMusicListToPlaylist([music])}
-          >
-            <PlaylistAdd />
-          </Button>
-        </Tooltip>
-        <Tooltip content={t('export_music')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            aria-label={t('export_music')}
-            onClick={() => openExportMusicListDialog([music])}
-          >
-            <Export size="1em" />
-          </Button>
-        </Tooltip>
+        {addToPlaylistEnabled ? (
+          <Tooltip content={t('add_to_playlist')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('add_to_playlist')}
+              onClick={() => addMusicListToPlaylist([music])}
+            >
+              <PlaylistAdd />
+            </Button>
+          </Tooltip>
+        ) : null}
+        {exportEnabled ? (
+          <Tooltip content={t('export_music')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('export_music')}
+              onClick={() => openExportMusicListDialog([music])}
+            >
+              <Export size="1em" />
+            </Button>
+          </Tooltip>
+        ) : null}
         {showAdminEdit ? (
           <Tooltip content={t('edit_music')}>
             <Button
