@@ -1,3 +1,1 @@
-import getPublicMusicbill from '@/server/api/get_public_musicbill';
-
-export type Musicbill = AsyncReturnType<typeof getPublicMusicbill>;
+export * from '@/features/player/drawers/musicbill_drawer/constants';

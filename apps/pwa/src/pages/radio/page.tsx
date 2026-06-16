@@ -12,6 +12,7 @@ import Info from './info';
 import Operation from './operation';
 
 const LYRIC_PANEL_CONTROLLER_GAP = 10;
+const TOOLBAR_TITLE_GAP = 16;
 const LYRIC_PANEL_PROGRESS_BOTTOM_PADDING = 12;
 
 const Style = styled.div`
@@ -38,7 +39,7 @@ const Bottom = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: ${LYRIC_PANEL_CONTROLLER_GAP}px;
+  gap: ${TOOLBAR_TITLE_GAP}px;
 `;
 const Placeholder = styled.div`
   ${absoluteFullSize}

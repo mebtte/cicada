@@ -15,6 +15,7 @@ import playerEventemitter, {
 import MusicDrawer from '@/features/player/drawers/music_drawer';
 import MusicbillMusicDrawer from '@/features/player/drawers/musicbill_music_drawer';
 import ArtistDrawer from '@/features/player/drawers/artist_drawer';
+import MusicbillDrawer from '@/features/player/drawers/musicbill_drawer';
 import useRadioQueue from './use_radio_queue';
 import useRadioAudio from './use_radio_audio';
 import useRadioPreload from './use_radio_preload';
@@ -137,6 +138,7 @@ function Radio() {
       <MusicDrawer />
       <MusicbillMusicDrawer />
       <ArtistDrawer />
+      <MusicbillDrawer />
       <RadioQueueDrawer
         open={queueDrawerOpen}
         onClose={onCloseQueue}
