@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import CustomAudio from '@/utils/custom_audio';
-import { QueueMusic } from '@/pages/player/constants';
+import { QueueMusic } from '@/features/player/constants';
 
 const COVER_SIZES = [96, 256, 512];
 

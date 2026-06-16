@@ -1,4 +1,4 @@
-import { MusicWithArtistAliases, QueueMusic } from '@/pages/player/constants';
+import { MusicWithArtistAliases, QueueMusic } from '@/features/player/constants';
 
 /**
  * 电台模式没有真实的播放列表概念, 但要复用主播放器的 `QueueMusic` 类型

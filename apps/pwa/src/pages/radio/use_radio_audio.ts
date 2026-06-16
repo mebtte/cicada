@@ -3,12 +3,12 @@ import { debounce } from 'lodash-es';
 import CustomAudio from '@/utils/custom_audio';
 import getMusicPlaybackAsset from '@/utils/music_playback_asset';
 import { MusicPlaybackQuality } from '@/constants/setting';
-import { QueueMusic } from '@/pages/player/constants';
+import { QueueMusic } from '@/features/player/constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '@/pages/player/eventemitter';
-import onError from '@/pages/player/use_audio/on_error';
-import usePlayRecord from '@/pages/player/use_audio/use_play_record';
+} from '@/features/player/eventemitter';
+import onError from '@/features/player/use_audio/on_error';
+import usePlayRecord from '@/features/player/use_audio/use_play_record';
 
 /**
  * 电台模式专用的精简版 useAudio:

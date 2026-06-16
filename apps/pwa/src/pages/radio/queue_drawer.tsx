@@ -5,12 +5,12 @@ import { Drawer, DrawerContent } from '@/components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import Empty from '@/components/empty';
 import { t } from '@/i18n';
-import { QueueMusic } from '@/pages/player/constants';
+import { QueueMusic } from '@/features/player/constants';
 import { MusicBase } from '@/features/music/components';
-import useDynamicZIndex from '@/pages/player/use_dynamic_z_index';
+import useDynamicZIndex from '@/features/player/use_dynamic_z_index';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '@/pages/player/eventemitter';
+} from '@/features/player/eventemitter';
 import Button from '@/components/button';
 import { Close } from '@/components/icon';
 import { CSSVariable } from '@/global_style';

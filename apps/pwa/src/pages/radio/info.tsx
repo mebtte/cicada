@@ -2,11 +2,11 @@ import styled from 'styled-components';
 import { animated, useTransition } from 'react-spring';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
-import { QueueMusic } from '@/pages/player/constants';
+import { QueueMusic } from '@/features/player/constants';
 import { Performer } from '@/features/music/components';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '@/pages/player/eventemitter';
+} from '@/features/player/eventemitter';
 
 const Root = styled.div`
   display: grid;

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import getRandomMusic from '@/server/api/get_random_music';
 import logger from '@/utils/logger';
-import { MusicWithArtistAliases, QueueMusic } from '@/pages/player/constants';
+import { MusicWithArtistAliases, QueueMusic } from '@/features/player/constants';
 import { toRadioQueueMusic } from './utils';
 
 interface FetchOptions {

@@ -12,8 +12,8 @@ import {
 import { flexCenter } from '@/style/flexbox';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '@/pages/player/eventemitter';
-import { QueueMusic } from '@/pages/player/constants';
+} from '@/features/player/eventemitter';
+import { QueueMusic } from '@/features/player/constants';
 import { t } from '@/i18n';
 
 const Style = styled.div`

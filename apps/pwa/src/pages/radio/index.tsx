@@ -7,18 +7,19 @@ import useDocumentTitle from '@/utils/use_document_title';
 import { t } from '@/i18n';
 import { ROOT_PATH } from '@/constants/route';
 import dialog from '@/utils/dialog';
-import playerContext from '@/pages/player/context';
-import useMusicbillList from '@/pages/player/use_musicbill_list';
+import playerContext from '@/features/player/context';
+import useMusicbillList from '@/features/player/use_musicbill_list';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '@/pages/player/eventemitter';
-import MusicDrawer from '@/pages/player/music_drawer';
-import MusicbillMusicDrawer from '@/pages/player/musicbill_music_drawer';
-import ArtistDrawer from '@/pages/player/artist_drawer';
+} from '@/features/player/eventemitter';
+import MusicDrawer from '@/features/player/drawers/music_drawer';
+import MusicbillMusicDrawer from '@/features/player/drawers/musicbill_music_drawer';
+import ArtistDrawer from '@/features/player/drawers/artist_drawer';
 import useRadioQueue from './use_radio_queue';
 import useRadioAudio from './use_radio_audio';
 import useRadioPreload from './use_radio_preload';
 import useRadioMediaSession from './use_radio_media_session';
+import useDisableSwipeBack from './use_disable_swipe_back';
 import RadioPage from './page';
 import RadioQueueDrawer from './queue_drawer';
 
@@ -28,6 +29,7 @@ const Style = styled(PageContainer)`
 
 function Radio() {
   useDocumentTitle(t('radio'));
+  useDisableSwipeBack();
 
   const { status: getMusicbillListStatus, musicbillList } = useMusicbillList();
   const {
