@@ -41,12 +41,14 @@ function safeSetPlaybackState(state: MediaSessionPlaybackState) {
 function useRadioMediaSession({
   music,
   audio,
+  paused,
   onPlay,
   onPause,
   onNext,
 }: {
   music: QueueMusic | undefined;
   audio: CustomAudio<QueueMusic>;
+  paused: boolean;
   onPlay: () => void;
   onPause: () => void;
   onNext: () => void;
@@ -126,6 +128,51 @@ function useRadioMediaSession({
       unlistenCanplay();
     };
   }, [music, audio]);
+
+  useEffect(() => {
+    if (
+      !('mediaSession' in window.navigator) ||
+      !navigator.mediaSession.setPositionState
+    ) {
+      return;
+    }
+    const sync = () => {
+      const dur = audio.getDuration();
+      const pos = audio.getCurrentTime();
+      if (!Number.isFinite(dur) || dur <= 0 || !Number.isFinite(pos)) {
+        return;
+      }
+      try {
+        window.navigator.mediaSession.setPositionState({
+          duration: dur,
+          position: Math.max(0, Math.min(pos, dur)),
+          playbackRate: 1,
+        });
+      } catch {
+        /* ignore */
+      }
+    };
+
+    sync();
+    const unlistenSeeked = audio.listen('seeked', sync);
+    const unlistenDurationChange = audio.listen('durationchange', sync);
+    const unlistenPlay = audio.listen('play', sync);
+    const unlistenPlaying = audio.listen('playing', sync);
+    const unlistenPause = audio.listen('pause', sync);
+    const unlistenRateChange = audio.listen('ratechange', sync);
+    const heartbeat = paused ? null : window.setInterval(sync, 1000);
+    return () => {
+      unlistenSeeked();
+      unlistenDurationChange();
+      unlistenPlay();
+      unlistenPlaying();
+      unlistenPause();
+      unlistenRateChange();
+      if (heartbeat !== null) {
+        window.clearInterval(heartbeat);
+      }
+    };
+  }, [audio, paused]);
 }
 
 export default useRadioMediaSession;

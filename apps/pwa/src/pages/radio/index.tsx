@@ -48,6 +48,7 @@ function Radio() {
   useRadioMediaSession({
     music: currentMusic,
     audio,
+    paused,
     onPlay: play,
     onPause: pause,
     onNext: next,
