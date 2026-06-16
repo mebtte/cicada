@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useContext } from 'react';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import { CSSVariable } from '@/global_style';
@@ -20,6 +21,7 @@ import playerEventemitter, {
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../constants';
 import { openExportMusicListDialog } from '../../export_music_list';
 import addMusicListToPlaylist from '../../add_to_playlist';
+import Context from '../../context';
 import { t } from '@/i18n';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
@@ -66,6 +68,7 @@ function Toolbar({
 }) {
   const user = useUser();
   const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
+  const { playNextEnabled } = useContext(Context);
   // 编辑按钮: 管理员开启「管理员快捷编辑」时才出现, 点击跳转到管理页并自动打开该音乐的编辑 drawer
   const showAdminEdit = !!user?.admin && adminQuickEdit;
   return (
@@ -84,24 +87,26 @@ function Toolbar({
         >
           <PlayArrow />
         </Button>
-        <Tooltip content={t('play_next')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            aria-label={t('play_next')}
-            onClick={() =>
-              playerEventemitter.emit(
-                PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-                {
-                  music,
-                },
-              )
-            }
-          >
-            <QueueInsert />
-          </Button>
-        </Tooltip>
+        {playNextEnabled ? (
+          <Tooltip content={t('play_next')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('play_next')}
+              onClick={() =>
+                playerEventemitter.emit(
+                  PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                  {
+                    music,
+                  },
+                )
+              }
+            >
+              <QueueInsert />
+            </Button>
+          </Tooltip>
+        ) : null}
         <Tooltip content={t('add_to_musicbill')}>
           <Button
             square

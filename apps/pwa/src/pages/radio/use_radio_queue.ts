@@ -10,7 +10,7 @@ interface FetchOptions {
 
 /**
  * 电台模式的播放队列: 始终保证 currentIndex 之后至少有一首预取歌
- * (供"下一首"立刻播放). currentIndex < 0 表示首次拉取尚未返回.
+ * (供跳过时立刻播放). currentIndex < 0 表示首次拉取尚未返回.
  */
 function useRadioQueue() {
   const [queue, setQueue] = useState<QueueMusic[]>([]);
@@ -85,13 +85,13 @@ function useRadioQueue() {
     setCurrentIndex((i) => i + 1);
   }, []);
 
-  // 通过 ref 让 insertNext 总能拿到最新 currentIndex (避免 useCallback 闭包)
+  // 通过 ref 让跨 drawer 事件总能拿到最新 currentIndex (避免 useCallback 闭包)
   const currentIndexRef = useRef(currentIndex);
   useEffect(() => {
     currentIndexRef.current = currentIndex;
   }, [currentIndex]);
 
-  const insertNext = useCallback((music: MusicWithArtistAliases) => {
+  const playImmediately = useCallback((music: MusicWithArtistAliases) => {
     setQueue((prev) => {
       const position = currentIndexRef.current + 1;
       if (position <= 0) {
@@ -103,17 +103,7 @@ function useRadioQueue() {
       next.splice(position, 0, { ...inserted, shuffle: false });
       return next;
     });
-  }, []);
-
-  const remove = useCallback((pid: string) => {
-    setQueue((prev) => {
-      const index = prev.findIndex((m) => m.pid === pid);
-      // 仅允许删除当前播放之后的项, 避免动到已播或正在播的位置.
-      if (index <= currentIndexRef.current) {
-        return prev;
-      }
-      return prev.filter((m) => m.pid !== pid);
-    });
+    setCurrentIndex((index) => (index < 0 ? index : index + 1));
   }, []);
 
   return {
@@ -125,8 +115,7 @@ function useRadioQueue() {
         ? queue[currentIndex + 1]
         : undefined,
     next,
-    insertNext,
-    remove,
+    playImmediately,
     fetchingMessage,
   };
 }

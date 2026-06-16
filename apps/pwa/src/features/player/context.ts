@@ -8,6 +8,8 @@ import {
 } from './constants';
 
 interface Context {
+  playNextEnabled: boolean;
+
   getMusicbillListStatus: RequestStatus;
   musicbillList: Musicbill[];
 
@@ -27,6 +29,8 @@ interface Context {
 }
 
 const context = createContext<Context>({
+  playNextEnabled: true,
+
   getMusicbillListStatus: RequestStatus.LOADING,
   musicbillList: [],
 

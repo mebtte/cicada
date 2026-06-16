@@ -2,11 +2,12 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import { PostAdd, QueueInsert, PlayArrow } from '@/components/icon';
-import { HtmlHTMLAttributes, ReactNode } from 'react';
+import { HtmlHTMLAttributes, ReactNode, useContext } from 'react';
 import { t } from '@/i18n';
 import { MusicWithArtistAliases } from '../constants';
 import e, { EventType } from '../eventemitter';
 import { MusicBase } from '@/features/music/components';
+import Context from '../context';
 
 const LineAfterPart = styled.div`
   display: flex;
@@ -26,6 +27,8 @@ function Music({
   music: MusicWithArtistAliases;
   addon?: ReactNode;
 }) {
+  const { playNextEnabled } = useContext(Context);
+
   return (
     <MusicBase
       {...props}
@@ -46,21 +49,23 @@ function Music({
           >
             <PlayArrow />
           </Button>
-          <Tooltip content={t('play_next')}>
-            <Button
-              square
-              variant="ghost"
-              size="sm"
-              onClick={(event) => {
-                event.stopPropagation();
-                return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
-                  music,
-                });
-              }}
-            >
-              <QueueInsert />
-            </Button>
-          </Tooltip>
+          {playNextEnabled ? (
+            <Tooltip content={t('play_next')}>
+              <Button
+                square
+                variant="ghost"
+                size="sm"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  return e.emit(EventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE, {
+                    music,
+                  });
+                }}
+              >
+                <QueueInsert />
+              </Button>
+            </Tooltip>
+          ) : null}
           <Tooltip content={t('add_to_musicbill')}>
             <Button
               square

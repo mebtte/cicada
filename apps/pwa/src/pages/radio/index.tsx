@@ -38,8 +38,7 @@ function Radio() {
     currentMusic,
     nextMusic,
     next,
-    insertNext,
-    remove,
+    playImmediately,
     fetchingMessage,
   } = useRadioQueue();
   const { audio, paused, loading, play, pause, togglePlay } = useRadioAudio({
@@ -77,25 +76,12 @@ function Radio() {
   }, []);
   const onCloseQueue = useCallback(() => setQueueDrawerOpen(false), []);
 
-  // "下一首播放": 先打开队列抽屉, 等抽屉挂载完成再插入歌曲, 让插入项触发
-  // useTransition 的入场动画.
-  const onPlayNext = useCallback(() => {
-    if (!currentMusic) {
-      return;
-    }
-    onOpenQueue();
-    window.setTimeout(() => {
-      playerEventemitter.emit(
-        PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-        { music: currentMusic },
-      );
-    }, 360);
-  }, [currentMusic, onOpenQueue]);
-
   // 透传给主播放器现成的 drawer 组件: 它们依赖 playqueue/musicbillList 决定
   // 列表中的高亮态和乐单写入入口.
   const contextValue = useMemo(
     () => ({
+      playNextEnabled: false,
+
       getMusicbillListStatus,
       musicbillList,
 
@@ -123,26 +109,16 @@ function Radio() {
     ],
   );
 
-  // drawer 的"下一首播放"按钮会发 ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-  // 电台模式下落到自己的队列里.
+  // drawer 的"立即播放"按钮落到电台自己的队列里.
   useEffect(() => {
-    const unlistenInsert = playerEventemitter.listen(
-      PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
-      ({ music }) => insertNext(music),
-    );
-    // drawer 的"立即播放"按钮: 插入到下一首并跳过.
     const unlistenPlay = playerEventemitter.listen(
       PlayerEventType.ACTION_PLAY_MUSIC,
-      ({ music }) => {
-        insertNext(music);
-        next();
-      },
+      ({ music }) => playImmediately(music),
     );
     return () => {
-      unlistenInsert();
       unlistenPlay();
     };
-  }, [insertNext, next]);
+  }, [playImmediately]);
 
   return (
     <playerContext.Provider value={contextValue}>
@@ -154,7 +130,6 @@ function Radio() {
           fetchingMessage={fetchingMessage}
           onTogglePlay={togglePlay}
           onNext={next}
-          onPlayNext={onPlayNext}
           onOpenQueue={onOpenQueue}
           onExit={onExit}
         />
@@ -167,7 +142,6 @@ function Radio() {
         onClose={onCloseQueue}
         queue={queue}
         currentIndex={currentIndex}
-        onRemove={remove}
       />
     </playerContext.Provider>
   );
