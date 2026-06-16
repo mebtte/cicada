@@ -83,56 +83,60 @@ function Toolbar({
             <PlaylistAdd />
           </Button>
         </Tooltip>
-        <Tooltip
-          content={collected ? t('uncollect_musicbill') : t('collect_musicbill')}
-        >
-          <Button
-            square
-            variant={collected ? 'primary' : 'ghost'}
-            size="sm"
-            aria-label={
+        {musicbill.public ? (
+          <Tooltip
+            content={
               collected ? t('uncollect_musicbill') : t('collect_musicbill')
             }
-            aria-pressed={collected}
-            onClick={() => {
-              if (collected) {
-                e.emit(EventType.UNCOLLECT_MUSICBILL, { id: musicbill.id });
-                uncollectPublicMusicbill(musicbill.id)
-                  .then(() =>
-                    playerEventemitter.emit(
-                      PlayerEventType.MUSICBILL_COLLECTION_CHANGE,
-                      null,
-                    ),
-                  )
-                  .catch((error) => {
-                    logger.error(error, '取消收藏乐单失败');
-                    notice.error(error.message);
-                    e.emit(EventType.COLLECT_MUSICBILL, { id: musicbill.id });
-                  });
-              } else {
-                e.emit(EventType.COLLECT_MUSICBILL, {
-                  id: musicbill.id,
-                });
-                collectPublicMusicbill(musicbill.id)
-                  .then(() =>
-                    playerEventemitter.emit(
-                      PlayerEventType.MUSICBILL_COLLECTION_CHANGE,
-                      null,
-                    ),
-                  )
-                  .catch((error) => {
-                    logger.error(error, '收藏乐单失败');
-                    notice.error(error.message);
-                    e.emit(EventType.UNCOLLECT_MUSICBILL, {
-                      id: musicbill.id,
-                    });
-                  });
-              }
-            }}
           >
-            {collected ? <StarFilled /> : <Star />}
-          </Button>
-        </Tooltip>
+            <Button
+              square
+              variant={collected ? 'primary' : 'ghost'}
+              size="sm"
+              aria-label={
+                collected ? t('uncollect_musicbill') : t('collect_musicbill')
+              }
+              aria-pressed={collected}
+              onClick={() => {
+                if (collected) {
+                  e.emit(EventType.UNCOLLECT_MUSICBILL, { id: musicbill.id });
+                  uncollectPublicMusicbill(musicbill.id)
+                    .then(() =>
+                      playerEventemitter.emit(
+                        PlayerEventType.MUSICBILL_COLLECTION_CHANGE,
+                        null,
+                      ),
+                    )
+                    .catch((error) => {
+                      logger.error(error, '取消收藏乐单失败');
+                      notice.error(error.message);
+                      e.emit(EventType.COLLECT_MUSICBILL, { id: musicbill.id });
+                    });
+                } else {
+                  e.emit(EventType.COLLECT_MUSICBILL, {
+                    id: musicbill.id,
+                  });
+                  collectPublicMusicbill(musicbill.id)
+                    .then(() =>
+                      playerEventemitter.emit(
+                        PlayerEventType.MUSICBILL_COLLECTION_CHANGE,
+                        null,
+                      ),
+                    )
+                    .catch((error) => {
+                      logger.error(error, '收藏乐单失败');
+                      notice.error(error.message);
+                      e.emit(EventType.UNCOLLECT_MUSICBILL, {
+                        id: musicbill.id,
+                      });
+                    });
+                }
+              }}
+            >
+              {collected ? <StarFilled /> : <Star />}
+            </Button>
+          </Tooltip>
+        ) : null}
       </div>
     </Style>
   );

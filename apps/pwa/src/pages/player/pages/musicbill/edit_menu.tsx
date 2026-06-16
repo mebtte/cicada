@@ -294,27 +294,66 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
     }
   };
 
-  const updatePubliz = async () => {
+  const updatePubliz = () => {
     if (publizUpdating) {
       return;
     }
 
-    const nextPubliz = !publiz;
-    setPubliz(nextPubliz);
-    setPublizUpdating(true);
-    try {
-      await updateMusicbill({
-        id: musicbill.id,
-        key: AllowUpdateKey.PUBLIC,
-        value: nextPubliz,
+    if (!publiz) {
+      dialog.confirm({
+        title: t('make_public_musicbill_question'),
+        content: t('make_public_musicbill_consequence_1'),
+        confirmText: t('public'),
+        confirmVariant: 'primary',
+        onConfirm: async () => {
+          setPubliz(true);
+          setPublizUpdating(true);
+          try {
+            await updateMusicbill({
+              id: musicbill.id,
+              key: AllowUpdateKey.PUBLIC,
+              value: true,
+            });
+            reloadMusicbill();
+          } catch (error) {
+            setPubliz(musicbill.public);
+            logger.error(error, "Failed to update musicbill's public state");
+            dialog.alert({ content: error.message });
+            return false;
+          } finally {
+            setPublizUpdating(false);
+          }
+        },
       });
-      reloadMusicbill();
-    } catch (error) {
-      setPubliz(musicbill.public);
-      logger.error(error, "Failed to update musicbill's public state");
-      dialog.alert({ content: error.message });
+      return;
     }
-    setPublizUpdating(false);
+
+    dialog.captcha({
+      title: t('cancel_public_musicbill_question'),
+      content: t('cancel_public_musicbill_consequence_1'),
+      confirmVariant: 'danger',
+      onConfirm: async ({ captchaId, captchaValue }) => {
+        setPubliz(false);
+        setPublizUpdating(true);
+        try {
+          await updateMusicbill({
+            id: musicbill.id,
+            key: AllowUpdateKey.PUBLIC,
+            value: false,
+            captchaId,
+            captchaValue,
+          });
+          reloadMusicbill();
+        } catch (error) {
+          setPubliz(musicbill.public);
+          logger.error(error, "Failed to update musicbill's public state");
+          dialog.alert({ content: error.message });
+          return false;
+        } finally {
+          setPublizUpdating(false);
+        }
+      },
+    });
   };
 
   const openDeleteDialog = () => {

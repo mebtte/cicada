@@ -6,6 +6,7 @@ type Response = {
   id: string;
   cover: string;
   name: string;
+  public: boolean;
   user: {
     id: string;
     nickname: string;
