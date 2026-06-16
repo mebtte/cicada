@@ -24,7 +24,6 @@ const zhCN: {
   username: '用户名',
   captcha: '验证码',
   change_language_question: '更换语言将会重新加载应用, 是否继续?',
-  relative_volume: '相对音量',
   music_playback_quality: '播放质量',
   music_playback_quality_smooth: '流畅',
   music_playback_quality_source: '源码',

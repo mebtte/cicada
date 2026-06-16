@@ -35,7 +35,6 @@ class CustomAudio<Extra> {
       | 'abort'
       | 'encrypted'
       | 'ratechange'
-      | 'volumechange'
       | 'error'
       | 'canplaythrough'
       | 'durationchange'
@@ -84,14 +83,6 @@ class CustomAudio<Extra> {
 
   getSrc() {
     return this.audio.src;
-  }
-
-  setVolume(volume: number) {
-    this.audio.volume = volume;
-  }
-
-  getVolume() {
-    return this.audio.volume;
   }
 
   getDuration() {

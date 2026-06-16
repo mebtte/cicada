@@ -7,7 +7,6 @@ import { QueueMusic } from '../constants';
 import onError from './on_error';
 import eventemitter, { EventType } from '../eventemitter';
 import useCache from './use_cache';
-import useVolume from './use_volume';
 import useAction from './use_action';
 import usePlayRecord from './use_play_record';
 
@@ -45,7 +44,6 @@ function useAudio({
   const [paused, setPaused] = useState(true);
   const [bufferedPercent, setBufferedPercent] = useState(0);
 
-  useVolume(audio);
   useCache(audio, {
     playqueue,
     currentPlayqueuePosition,

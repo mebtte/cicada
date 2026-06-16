@@ -19,7 +19,6 @@ function getInitialLanguage() {
 // Keep first-run defaults and invalid stored values on the same playback quality.
 const DEFAULT_MUSIC_PLAYBACK_QUALITY = MusicPlaybackQuality.SMOOTH;
 const DEFAULT_SETTING: Setting = {
-  playerVolume: 1,
   language: getInitialLanguage(),
   musicPlaybackQuality: DEFAULT_MUSIC_PLAYBACK_QUALITY,
   adminQuickEdit: false,

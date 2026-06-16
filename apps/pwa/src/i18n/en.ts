@@ -21,7 +21,6 @@ export default {
   captcha: 'captcha',
   change_language_question:
     'changing language will reload application, continue?',
-  relative_volume: 'relative volume',
   music_playback_quality: 'playback quality',
   music_playback_quality_smooth: 'smooth',
   music_playback_quality_source: 'source',
