@@ -107,6 +107,11 @@ function Wrapper() {
   const exportingMusicList = useExport();
   const contextValue = useMemo(
     () => ({
+      playEnabled: true,
+      playNextEnabled: true,
+      addToPlaylistEnabled: true,
+      exportEnabled: true,
+
       getMusicbillListStatus,
       musicbillList,
 

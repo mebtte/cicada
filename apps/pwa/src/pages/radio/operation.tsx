@@ -3,17 +3,17 @@ import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
   PostAdd,
-  QueueInsert,
   SkipNext,
   PlayArrow,
   Pause,
+  Exit,
   QueueMusic as QueueMusicIcon,
 } from '@/components/icon';
 import { flexCenter } from '@/style/flexbox';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '@/pages/player/eventemitter';
-import { QueueMusic } from '@/pages/player/constants';
+} from '@/features/player/eventemitter';
+import { QueueMusic } from '@/features/player/constants';
 import { t } from '@/i18n';
 
 const Style = styled.div`
@@ -31,19 +31,30 @@ function Operation({
   loading,
   onTogglePlay,
   onNext,
-  onPlayNext,
   onOpenQueue,
+  onExit,
 }: {
   queueMusic: QueueMusic;
   paused: boolean;
   loading: boolean;
   onTogglePlay: () => void;
   onNext: () => void;
-  onPlayNext: () => void;
   onOpenQueue: () => void;
+  onExit: () => void;
 }) {
   return (
     <Style>
+      <Tooltip content={t('playqueue')}>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          aria-label={t('playqueue')}
+          onClick={onOpenQueue}
+        >
+          <QueueMusicIcon />
+        </Button>
+      </Tooltip>
       <Tooltip content={t('add_to_musicbill')}>
         <Button
           square
@@ -59,11 +70,6 @@ function Operation({
           <PostAdd />
         </Button>
       </Tooltip>
-      <Tooltip content={t('play_next')}>
-        <Button square variant="ghost" size="sm" onClick={onPlayNext}>
-          <QueueInsert />
-        </Button>
-      </Tooltip>
       <Button
         square
         variant="primary"
@@ -76,15 +82,15 @@ function Operation({
       <Button square variant="ghost" size="sm" onClick={onNext}>
         <SkipNext />
       </Button>
-      <Tooltip content={t('playqueue')}>
+      <Tooltip content={t('exit_radio_mode')}>
         <Button
           square
           variant="ghost"
           size="sm"
-          aria-label={t('playqueue')}
-          onClick={onOpenQueue}
+          aria-label={t('exit_radio_mode')}
+          onClick={onExit}
         >
-          <QueueMusicIcon />
+          <Exit />
         </Button>
       </Tooltip>
     </Style>

@@ -8,7 +8,7 @@ import getMusicPlaybackAsset from '@/utils/music_playback_asset';
 import { MusicPlaybackQuality } from '@/constants/setting';
 import CustomAudio from '@/utils/custom_audio';
 import logger from '@/utils/logger';
-import { QueueMusic } from '@/pages/player/constants';
+import { QueueMusic } from '@/features/player/constants';
 
 const PRELOAD_START_DELAY = 3000;
 

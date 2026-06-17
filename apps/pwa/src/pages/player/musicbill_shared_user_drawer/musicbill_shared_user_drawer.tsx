@@ -42,10 +42,8 @@ const ActionBar = styled.div`
   display: grid;
   gap: 12px;
 
-  background: rgb(255 255 255 / 0.94);
+  background: #fff;
   border-top: 2px solid ${CSSVariable.COLOR_BORDER};
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 `;
 
 function ShareDrawer({

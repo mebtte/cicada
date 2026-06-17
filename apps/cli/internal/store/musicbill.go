@@ -394,6 +394,11 @@ func UncollectPublicMusicbill(musicbillID, userID string) (bool, error) {
 	return n > 0, nil
 }
 
+func ClearPublicMusicbillCollections(musicbillID string) error {
+	_, err := DB().Exec(`DELETE FROM public_musicbill_collection WHERE musicbillId=?`, musicbillID)
+	return err
+}
+
 func IsPublicMusicbillCollected(musicbillID, userID string) bool {
 	var n int
 	DB().QueryRow(`SELECT COUNT(1) FROM public_musicbill_collection WHERE musicbillId=? AND userId=?`, musicbillID, userID).Scan(&n)

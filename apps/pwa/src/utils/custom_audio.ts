@@ -35,7 +35,6 @@ class CustomAudio<Extra> {
       | 'abort'
       | 'encrypted'
       | 'ratechange'
-      | 'volumechange'
       | 'error'
       | 'canplaythrough'
       | 'durationchange'
@@ -86,14 +85,6 @@ class CustomAudio<Extra> {
     return this.audio.src;
   }
 
-  setVolume(volume: number) {
-    this.audio.volume = volume;
-  }
-
-  getVolume() {
-    return this.audio.volume;
-  }
-
   getDuration() {
     return this.audio.duration;
   }
@@ -124,6 +115,10 @@ class CustomAudio<Extra> {
 
   isPaused() {
     return this.audio.paused;
+  }
+
+  isEnded() {
+    return this.audio.ended;
   }
 
   hasPlayableData() {

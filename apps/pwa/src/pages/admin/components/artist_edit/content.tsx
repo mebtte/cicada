@@ -52,7 +52,7 @@ import updateArtist from '@/server/api/update_artist';
 import { ExceptionCode } from '@/constants/exception';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '@/pages/player/eventemitter';
+} from '@/features/player/eventemitter';
 import {
   ALIAS_MAX_LENGTH,
   AllowUpdateKey,

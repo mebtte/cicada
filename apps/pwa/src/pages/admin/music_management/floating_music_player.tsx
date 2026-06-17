@@ -611,7 +611,7 @@ function FloatingMusicPlayer({
   playToken: number;
   onClose: () => void;
 }) {
-  const { musicPlaybackQuality, playerVolume } = useSetting();
+  const { musicPlaybackQuality } = useSetting();
   const [collapsed, setCollapsed] = useState(false);
   const [position, setPosition] = useState(getInitialPosition);
   const [dragging, setDragging] = useState(false);
@@ -687,12 +687,6 @@ function FloatingMusicPlayer({
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, [clampToPlayerSize]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.volume = playerVolume;
-  }, [playerVolume, music]);
 
   useEffect(() => {
     if (!music) return;

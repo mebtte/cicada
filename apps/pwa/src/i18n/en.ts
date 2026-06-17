@@ -21,7 +21,6 @@ export default {
   captcha: 'captcha',
   change_language_question:
     'changing language will reload application, continue?',
-  relative_volume: 'relative volume',
   music_playback_quality: 'playback quality',
   music_playback_quality_smooth: 'smooth',
   music_playback_quality_source: 'source',
@@ -283,6 +282,12 @@ export default {
   reload_musicbill_list: 'refresh',
   collect_musicbill: 'collect musicbill',
   uncollect_musicbill: 'uncollect musicbill',
+  make_public_musicbill_question: 'make this musicbill public?',
+  make_public_musicbill_consequence_1:
+    'anyone will be able to view and collect this musicbill',
+  cancel_public_musicbill_question: 'cancel the musicbill being public?',
+  cancel_public_musicbill_consequence_1:
+    'all collections of this musicbill by other users will be cleared',
   retry: 'retry',
   unknown_artist: 'unknown artist',
   quit_shared_musicbill_question:

@@ -28,12 +28,10 @@ const Style = styled.div`
 
   padding: 8px 10px 12px;
 
-  background: rgb(255 255 255 / 0.94);
+  background: #fff;
   border: 2px solid ${CSSVariable.COLOR_BORDER};
   border-radius: 16px;
   box-shadow: 0 4px 0 ${CSSVariable.COLOR_SURFACE_SHADOW};
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 
   > .filter {
     flex: 1;

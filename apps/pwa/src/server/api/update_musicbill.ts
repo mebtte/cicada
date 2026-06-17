@@ -11,15 +11,19 @@ function updateMusicbill<K extends AllowUpdateKey>({
   id,
   key,
   value,
+  captchaId,
+  captchaValue,
 }: {
   id: string;
   key: K;
   value: AllowUpdateKeyMapValue[K];
+  captchaId?: string;
+  captchaValue?: string;
 }) {
   return request({
     method: Method.PUT,
     path: '/api/musicbill',
-    body: { id, key, value },
+    body: { id, key, value, captchaId, captchaValue },
     withToken: true,
   });
 }

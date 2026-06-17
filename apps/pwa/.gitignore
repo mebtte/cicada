@@ -3,4 +3,5 @@ node_modules/
 
 dist/
 dist-sw/
+dev-dist/
 .test-dist/
