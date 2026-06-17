@@ -8,7 +8,6 @@ import (
 	_ "image/jpeg"
 	"io"
 	"os"
-	"path/filepath"
 	"time"
 
 	"cicada/internal/api"
@@ -113,7 +112,10 @@ func UploadAsset(c *gin.Context) {
 
 	// generate filename: md5(data) + ext
 	hash := md5.Sum(data)
-	ext := filepath.Ext(fh.Filename)
+	// Extension is derived from the sniffed MIME, never from fh.Filename, so
+	// the on-disk name (and thus the response Content-Type) cannot be coerced
+	// into HTML/SVG by a polyglot upload.
+	ext := safeAssetExt(mimeStr)
 	if ext == "" {
 		ext = "." + mt.Extension()
 	}

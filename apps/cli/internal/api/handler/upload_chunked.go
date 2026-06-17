@@ -291,7 +291,10 @@ func CompletePartialUpload(c *gin.Context) {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
-	ext := filepath.Ext(meta.Filename)
+	// Extension is derived from the sniffed MIME, never from meta.Filename, so
+	// the on-disk name (and thus the response Content-Type) cannot be coerced
+	// into HTML/SVG by a polyglot upload.
+	ext := safeAssetExt(mimeStr)
 	if ext == "" {
 		ext = "." + mt.Extension()
 	}
