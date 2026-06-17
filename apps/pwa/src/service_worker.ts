@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'production') {
 
   /**
    * SPA 路由兜底, 离线刷新任意路由都能进 App Shell
-   * 排除后端接口/资源/表单路径, 避免被 index.html 吞掉
+   * 排除后端接口/资源路径, 避免被 index.html 吞掉
    */
   registerRoute(
     new NavigationRoute(createHandlerBoundToURL('/index.html'), {
@@ -43,7 +43,6 @@ if (process.env.NODE_ENV === 'production') {
         new RegExp(`^/${PathPrefix.API}/`),
         new RegExp(`^/${PathPrefix.ASSET}/`),
         new RegExp(`^/${PathPrefix.BASE}/`),
-        new RegExp(`^/${PathPrefix.FORM}/`),
       ],
     }),
   );

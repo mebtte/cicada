@@ -8,10 +8,9 @@ function uploadAsset(asset: Blob, assetType: AssetType) {
   return request<{
     id: string;
     path: string;
-    url: string;
   }>({
     method: Method.POST,
-    path: '/form/asset',
+    path: '/api/asset',
     body: form,
     withToken: true,
     timeout: 5 * 60 * 1000,
