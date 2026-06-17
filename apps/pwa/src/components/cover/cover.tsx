@@ -1,5 +1,5 @@
 import { ImgHTMLAttributes, useLayoutEffect, useRef, useState } from 'react';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '@/constants/style';
 import DefaultCover from '@/asset/default_cover.jpeg';

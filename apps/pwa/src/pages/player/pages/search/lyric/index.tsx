@@ -1,6 +1,6 @@
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Spinner from '@/components/spinner';

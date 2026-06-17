@@ -4,6 +4,7 @@ import (
 	"cicada/internal/api"
 	"cicada/internal/api/apperr"
 	"cicada/internal/api/middleware"
+	"cicada/internal/auth"
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"strings"
@@ -359,7 +360,7 @@ func UpdateMusicbill(c *gin.Context) {
 				api.Fail(c, apperr.WrongCaptcha)
 				return
 			}
-			if !verifyCaptchaFromStore(body.CaptchaID, body.CaptchaValue) {
+			if !verifyCaptcha(body.CaptchaID, body.CaptchaValue) {
 				api.Fail(c, apperr.WrongCaptcha)
 				return
 			}
@@ -390,8 +391,7 @@ func DeleteMusicbill(c *gin.Context) {
 	}
 
 	// verify captcha
-	from_store := verifyCaptchaFromStore(q.CaptchaID, q.CaptchaValue)
-	if !from_store {
+	if !verifyCaptcha(q.CaptchaID, q.CaptchaValue) {
 		api.Fail(c, apperr.WrongCaptcha)
 		return
 	}
@@ -609,7 +609,7 @@ func TransferMusicbillOwner(c *gin.Context) {
 		return
 	}
 
-	if !verifyCaptchaFromStore(body.CaptchaID, body.CaptchaValue) {
+	if !verifyCaptcha(body.CaptchaID, body.CaptchaValue) {
 		api.Fail(c, apperr.WrongCaptcha)
 		return
 	}
@@ -1003,14 +1003,7 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 	api.OK(c, gin.H{"total": total, "collectionList": list})
 }
 
-// verifyCaptchaFromStore verifies a captcha directly via the store DB.
-func verifyCaptchaFromStore(id, value string) bool {
-	var storedValue string
-	var used int
-	err := store.DB().QueryRow(`SELECT value,used FROM captcha WHERE id=?`, id).Scan(&storedValue, &used)
-	if err != nil || used == 1 {
-		return false
-	}
-	store.DB().Exec(`UPDATE captcha SET used=1 WHERE id=?`, id)
-	return strings.EqualFold(storedValue, value)
+func verifyCaptcha(id, value string) bool {
+	ok, _ := auth.VerifyCaptcha(id, value)
+	return ok
 }

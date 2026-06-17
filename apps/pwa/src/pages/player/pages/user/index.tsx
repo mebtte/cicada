@@ -13,7 +13,7 @@ import {
 import day from '@/utils/day';
 import Button from '@/components/button';
 import dialog from '@/utils/dialog';
-import uploadAsset from '@/server/form/upload_asset';
+import uploadAsset from '@/server/asset/upload_asset';
 import { AssetType } from '@/constants/asset';
 import updateProfile from '@/server/api/update_profile';
 import { AllowUpdateKey, NICKNAME_MAX_LENGTH } from '@/constants/user';

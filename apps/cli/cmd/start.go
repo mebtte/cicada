@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -27,6 +28,13 @@ var (
 	startImageFileMaxSize string
 	startAudioFileMaxSize string
 	startVideoFileMaxSize string
+)
+
+const (
+	httpReadHeaderTimeout = 10 * time.Second
+	httpReadTimeout       = 5 * time.Minute
+	httpWriteTimeout      = 30 * time.Minute
+	httpIdleTimeout       = 2 * time.Minute
 )
 
 func init() {
@@ -111,7 +119,15 @@ func runStart(cmd *cobra.Command, args []string) error {
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 	log.Printf("cicada listening on %s", addr)
-	return http.ListenAndServe(addr, r)
+	srv := &http.Server{
+		Addr:              addr,
+		Handler:           r,
+		ReadHeaderTimeout: httpReadHeaderTimeout,
+		ReadTimeout:       httpReadTimeout,
+		WriteTimeout:      httpWriteTimeout,
+		IdleTimeout:       httpIdleTimeout,
+	}
+	return srv.ListenAndServe()
 }
 
 func parseStartFileMaxSize(name, value, envVar string, fallback int64) (int64, error) {

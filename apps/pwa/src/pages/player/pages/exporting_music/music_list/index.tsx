@@ -13,7 +13,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
 import Spinner from '@/components/spinner';

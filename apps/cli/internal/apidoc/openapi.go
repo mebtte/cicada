@@ -72,7 +72,7 @@ func Spec() map[string]any {
 					"type":        "apiKey",
 					"in":          "header",
 					"name":        "x-cicada-token",
-					"description": "Business auth token. Obtain it from `/base/login` or `/base/login_with_2fa`, then send it in the `x-cicada-token` header. Unless stated otherwise, `/api` and `/form` endpoints require this header.",
+					"description": "Business auth token. Obtain it from `/base/login` or `/base/login_with_2fa`, then send it in the `x-cicada-token` header. Unless stated otherwise, `/api` endpoints require this header.",
 				},
 			},
 		},
@@ -101,7 +101,7 @@ func authenticationGuide() map[string]any {
 			},
 		},
 		"rules": []any{
-			"Send the token in the `x-cicada-token` header for authenticated `/api` and `/form` endpoints.",
+			"Send the token in the `x-cicada-token` header for authenticated `/api` endpoints.",
 			"Admin endpoints require a valid token and a user with `admin = 1`.",
 			"When the token is missing, invalid, expired, or revoked, the API returns `not_authorized`.",
 		},
@@ -171,7 +171,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/form/asset",
+			Path:        "/api/asset",
 			Summary:     "Upload asset",
 			Description: "Upload an image or audio asset and return the asset ID and public path. Music uploads are accepted when ffprobe can detect an audio stream.",
 			Tags:        []string{"Asset"},
@@ -204,6 +204,90 @@ func operations() []operation {
 				"path": "/asset/music_cover/a1b2c3d4.jpg",
 			},
 			ErrorCodes: []string{"wrong_parameter", "asset_oversize", "wrong_asset_type", "server_error"},
+		},
+		{
+			Method:      "POST",
+			Path:        "/api/asset/upload",
+			Summary:     "Create or resume chunked asset upload",
+			Description: "Create or resume a chunked upload session. Sessions are keyed by authenticated user, asset type, file SHA-256, and total size. Idle sessions expire after 24 hours and are cleaned by the daily scheduler.",
+			Tags:        []string{"Asset"},
+			Auth:        true,
+			RequestBody: jsonRequestBody(initPartialUploadRequestSchema(), map[string]any{
+				"assetType": string(config.AssetTypeMusic),
+				"size":      12345678,
+				"fileHash":  "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+				"chunkSize": 4194304,
+				"filename":  "song.mp3",
+			}),
+			SuccessSchema: partialUploadInitSchema(),
+			SuccessExample: map[string]any{
+				"uploadId":      "0123456789abcdef0123456789abcdef",
+				"size":          12345678,
+				"receivedBytes": 0,
+				"chunkSize":     4194304,
+				"expiresAt":     int64(1710086400000),
+			},
+			ErrorCodes: []string{"wrong_parameter", "asset_oversize", "partial_upload_hash_mismatch", "server_error", "not_authorized"},
+		},
+		{
+			Method:      "GET",
+			Path:        "/api/asset/upload/{uploadId}",
+			Summary:     "Get chunked asset upload status",
+			Description: "Return the current received byte offset for a chunked upload session so the client can resume from the next missing byte.",
+			Tags:        []string{"Asset"},
+			Auth:        true,
+			Parameters: []map[string]any{
+				pathParam("uploadId", "Upload session ID, 32 lower-case hex characters.", uploadIDSchema()),
+			},
+			SuccessSchema: partialUploadStatusSchema(),
+			SuccessExample: map[string]any{
+				"uploadId":      "0123456789abcdef0123456789abcdef",
+				"assetType":     string(config.AssetTypeMusic),
+				"size":          12345678,
+				"receivedBytes": 4194304,
+				"chunkSize":     4194304,
+				"updatedAt":     int64(1710000000000),
+				"expiresAt":     int64(1710086400000),
+			},
+			ErrorCodes: []string{"wrong_parameter", "partial_upload_not_existed", "partial_upload_owner_mismatch", "server_error", "not_authorized"},
+		},
+		{
+			Method:      "PUT",
+			Path:        "/api/asset/upload/{uploadId}",
+			Summary:     "Upload asset chunk",
+			Description: "Upload one binary chunk. `Content-Range` must use `bytes start-end/total`; `start` normally equals the server's `receivedBytes`. If the start offset is stale, the server returns the current progress without appending the body.",
+			Tags:        []string{"Asset"},
+			Auth:        true,
+			Parameters: []map[string]any{
+				pathParam("uploadId", "Upload session ID, 32 lower-case hex characters.", uploadIDSchema()),
+				headerParam("Content-Range", "Byte range for this chunk, for example `bytes 0-4194303/12345678`.", strSchema("", "bytes 0-4194303/12345678")),
+			},
+			RequestBody:   octetStreamRequestBody("Raw chunk bytes. Maximum chunk size is 8 MiB."),
+			SuccessSchema: partialUploadProgressSchema(),
+			SuccessExample: map[string]any{
+				"uploadId":      "0123456789abcdef0123456789abcdef",
+				"size":          12345678,
+				"receivedBytes": 4194304,
+				"nextOffset":    4194304,
+			},
+			ErrorCodes: []string{"wrong_parameter", "partial_upload_not_existed", "partial_upload_owner_mismatch", "partial_upload_range_invalid", "server_error", "not_authorized"},
+		},
+		{
+			Method:      "POST",
+			Path:        "/api/asset/upload/{uploadId}/complete",
+			Summary:     "Complete chunked asset upload",
+			Description: "Complete a chunked upload. The server verifies the received byte count, SHA-256 hash, MIME type, audio stream for music, image shape for image assets, and configured size limits before moving the file into the public asset store.",
+			Tags:        []string{"Asset"},
+			Auth:        true,
+			Parameters: []map[string]any{
+				pathParam("uploadId", "Upload session ID, 32 lower-case hex characters.", uploadIDSchema()),
+			},
+			SuccessSchema: uploadAssetSchema(),
+			SuccessExample: map[string]any{
+				"id":   "a1b2c3d4.mp3",
+				"path": "/asset/music/a1b2c3d4.mp3",
+			},
+			ErrorCodes: []string{"wrong_parameter", "asset_oversize", "wrong_asset_type", "partial_upload_not_existed", "partial_upload_owner_mismatch", "partial_upload_range_invalid", "partial_upload_hash_mismatch", "server_error", "not_authorized"},
 		},
 		{
 			Method:         "GET",
@@ -1270,6 +1354,20 @@ func multipartRequestBody(schema map[string]any, example any) map[string]any {
 	}
 }
 
+func octetStreamRequestBody(desc string) map[string]any {
+	schema := map[string]any{
+		"type":        "string",
+		"format":      "binary",
+		"description": desc,
+	}
+	return map[string]any{
+		"required": true,
+		"content": map[string]any{
+			"application/octet-stream": map[string]any{"schema": schema},
+		},
+	}
+}
+
 func successEnvelopeSchema(dataSchema map[string]any) map[string]any {
 	props := map[string]any{
 		"code": strEnumSchema([]string{"success"}, "success"),
@@ -1305,6 +1403,16 @@ func pathParam(name, desc string, schema map[string]any) map[string]any {
 	return map[string]any{
 		"name":        name,
 		"in":          "path",
+		"required":    true,
+		"description": desc,
+		"schema":      schema,
+	}
+}
+
+func headerParam(name, desc string, schema map[string]any) map[string]any {
+	return map[string]any{
+		"name":        name,
+		"in":          "header",
 		"required":    true,
 		"description": desc,
 		"schema":      schema,
@@ -1457,6 +1565,77 @@ func uploadAssetSchema() map[string]any {
 		map[string]any{
 			"id":   strSchema("Asset filename ID.", "a1b2c3d4.jpg"),
 			"path": strSchema("Publicly accessible asset path.", "/asset/music_cover/a1b2c3d4.jpg"),
+		},
+	)
+}
+
+func uploadIDSchema() map[string]any {
+	schema := strSchema("", "0123456789abcdef0123456789abcdef")
+	schema["pattern"] = "^[0-9a-f]{32}$"
+	return schema
+}
+
+func sha256HexSchema(desc string) map[string]any {
+	schema := strSchema(desc, "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")
+	schema["pattern"] = "^[0-9a-fA-F]{64}$"
+	return schema
+}
+
+func initPartialUploadRequestSchema() map[string]any {
+	return objSchema(
+		[]string{"assetType", "size", "fileHash", "chunkSize"},
+		map[string]any{
+			"assetType": strEnumSchema([]string{
+				string(config.AssetTypeUserAvatar),
+				string(config.AssetTypeMusicbillCover),
+				string(config.AssetTypeArtistPhoto),
+				string(config.AssetTypeMusicCover),
+				string(config.AssetTypeMusic),
+			}, string(config.AssetTypeMusic)),
+			"size":      intSchema("Total file size in bytes.", 12345678),
+			"fileHash":  sha256HexSchema("SHA-256 hex digest of the full file bytes."),
+			"chunkSize": intSchema("Preferred chunk size in bytes. Maximum is 8 MiB.", 4194304),
+			"filename":  strSchema("Optional original filename for diagnostics.", "song.mp3"),
+		},
+	)
+}
+
+func partialUploadInitSchema() map[string]any {
+	return objSchema(
+		[]string{"uploadId", "size", "receivedBytes", "chunkSize", "expiresAt"},
+		map[string]any{
+			"uploadId":      uploadIDSchema(),
+			"size":          intSchema("Total file size in bytes.", 12345678),
+			"receivedBytes": intSchema("Number of bytes already received.", 0),
+			"chunkSize":     intSchema("Server-accepted chunk size in bytes.", 4194304),
+			"expiresAt":     intSchema("Idle-expiry timestamp in milliseconds.", 1710086400000),
+		},
+	)
+}
+
+func partialUploadStatusSchema() map[string]any {
+	return objSchema(
+		[]string{"uploadId", "assetType", "size", "receivedBytes", "chunkSize", "updatedAt", "expiresAt"},
+		map[string]any{
+			"uploadId":      uploadIDSchema(),
+			"assetType":     strSchema("Asset type for this upload session.", string(config.AssetTypeMusic)),
+			"size":          intSchema("Total file size in bytes.", 12345678),
+			"receivedBytes": intSchema("Number of bytes already received.", 4194304),
+			"chunkSize":     intSchema("Server-accepted chunk size in bytes.", 4194304),
+			"updatedAt":     intSchema("Last session update timestamp in milliseconds.", 1710000000000),
+			"expiresAt":     intSchema("Idle-expiry timestamp in milliseconds.", 1710086400000),
+		},
+	)
+}
+
+func partialUploadProgressSchema() map[string]any {
+	return objSchema(
+		[]string{"uploadId", "size", "receivedBytes", "nextOffset"},
+		map[string]any{
+			"uploadId":      uploadIDSchema(),
+			"size":          intSchema("Total file size in bytes.", 12345678),
+			"receivedBytes": intSchema("Number of bytes already received.", 4194304),
+			"nextOffset":    intSchema("Offset the next PUT should start from.", 4194304),
 		},
 	)
 }

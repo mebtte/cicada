@@ -66,11 +66,10 @@ import adminGetMusic from '@/server/api/admin_get_music';
 import searchMusicRequest from '@/server/api/search_music';
 import searchArtistRequest from '@/server/api/search_artist';
 import updateMusic from '@/server/api/update_music';
-import uploadAsset from '@/server/form/upload_asset';
+import uploadAsset from '@/server/asset/upload_asset';
 import uploadAssetChunked, {
-  cancelPartialUpload,
   type UploadPhase,
-} from '@/server/form/upload_asset_chunked';
+} from '@/server/asset/upload_asset_chunked';
 import CreateArtistLabel from '../components/create_artist_label';
 
 interface Artist {
@@ -708,7 +707,6 @@ function EditContent({
   useEffect(() => {
     return () => {
       mountedRef.current = false;
-      const uploadId = fileUploadIdRef.current;
       fileUploadIdRef.current = null;
       fileUploadAbortRef.current?.abort();
       fileUploadAbortRef.current = null;
@@ -716,13 +714,7 @@ function EditContent({
         dialog.close(fileSelectDialogIdRef.current);
         fileSelectDialogIdRef.current = null;
       }
-      // Drawer-local replacement uploads have no resume UI, so cancel the
-      // partial server session when the drawer disappears mid-upload.
-      if (uploadId) {
-        cancelPartialUpload(uploadId).catch((error) =>
-          logger.error(error as Error, 'Failed to cancel partial music upload'),
-        );
-      }
+      // Server-side partial sessions are reclaimed by the partial upload TTL.
     };
   }, []);
 
@@ -1037,16 +1029,7 @@ function EditContent({
       }
       return true;
     } catch (error) {
-      const uploadId = fileUploadIdRef.current;
       fileUploadIdRef.current = null;
-      if (uploadId) {
-        cancelPartialUpload(uploadId).catch((cancelError) =>
-          logger.error(
-            cancelError as Error,
-            'Failed to cancel partial music upload',
-          ),
-        );
-      }
       if (isAbortedUploadError(error)) {
         return false;
       }

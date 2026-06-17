@@ -42,7 +42,7 @@ import notice from '@/utils/notice';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import stringArrayEqual from '@/utils/string_array_equal';
 import getResizedImage from '@/server/asset/get_resized_image';
-import uploadAsset from '@/server/form/upload_asset';
+import uploadAsset from '@/server/asset/upload_asset';
 import adminCreateArtistPhoto from '@/server/api/admin_create_artist_photo';
 import adminDeleteArtist from '@/server/api/admin_delete_artist';
 import adminDeleteArtistPhoto from '@/server/api/admin_delete_artist_photo';

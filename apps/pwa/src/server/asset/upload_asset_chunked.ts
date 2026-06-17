@@ -60,12 +60,17 @@ interface ServerResponse<T> {
 
 interface InitResponse {
   uploadId: string;
+  size: number;
   receivedBytes: number;
   chunkSize: number;
+  expiresAt: number;
 }
 
 interface PutResponse {
+  uploadId: string;
+  size: number;
   receivedBytes: number;
+  nextOffset: number;
 }
 
 interface CompleteResponse {
@@ -206,7 +211,7 @@ function putChunk(
     const xhr = new XMLHttpRequest();
     xhr.open(
       'PUT',
-      `${origin}${withQuery(`/form/asset/chunked/${uploadId}`)}`,
+      `${origin}${withQuery(`/api/asset/upload/${uploadId}`)}`,
       true,
     );
     xhr.setRequestHeader(
@@ -338,7 +343,7 @@ async function uploadAssetChunked(
   const initRes = await jsonRequest<InitResponse>(
     origin,
     token,
-    '/form/asset/chunked/init',
+    '/api/asset/upload',
     {
       method: 'POST',
       body: JSON.stringify({
@@ -410,7 +415,7 @@ async function uploadAssetChunked(
   const completeRes = await jsonRequest<CompleteResponse>(
     origin,
     token,
-    `/form/asset/chunked/${uploadId}/complete`,
+    `/api/asset/upload/${uploadId}/complete`,
     { method: 'POST' },
     signal,
   );
@@ -420,18 +425,6 @@ async function uploadAssetChunked(
     path: completeRes.path,
     meta,
   };
-}
-
-/**
- * DELETE the partial upload session on the server. Use when the user cancels
- * (as opposed to merely pausing).
- */
-export async function cancelPartialUpload(uploadId: string): Promise<void> {
-  if (!uploadId) return;
-  const { origin, token } = getOriginAndHeaders();
-  await jsonRequest(origin, token, `/form/asset/chunked/${uploadId}`, {
-    method: 'DELETE',
-  });
 }
 
 export default uploadAssetChunked;

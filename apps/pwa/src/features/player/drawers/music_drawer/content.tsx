@@ -5,7 +5,7 @@ import {
   useState,
   type ComponentProps,
 } from 'react';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Cover, { Shape } from '@/components/cover';

@@ -87,9 +87,10 @@ func initBody(at string, size int64, hash string, chunkSize int64, filename stri
 
 type initOK struct {
 	UploadID      string `json:"uploadId"`
+	Size          int64  `json:"size"`
 	ReceivedBytes int64  `json:"receivedBytes"`
 	ChunkSize     int64  `json:"chunkSize"`
-	Completed     bool   `json:"completed"`
+	ExpiresAt     int64  `json:"expiresAt"`
 	ID            string `json:"id"`
 	Path          string `json:"path"`
 }
@@ -104,7 +105,7 @@ func TestPartialUploadInitCreatesSession(t *testing.T) {
 	body := initBody(string(config.AssetTypeMusic), int64(len(payload)), hash, 1024, "song.mp3")
 
 	w, resp := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
+		"/api/asset/upload",
 		map[string]string{"Content-Type": "application/json"},
 		body, "USER01", nil)
 
@@ -124,8 +125,11 @@ func TestPartialUploadInitCreatesSession(t *testing.T) {
 	if data.ReceivedBytes != 0 {
 		t.Fatalf("expected receivedBytes 0, got %d", data.ReceivedBytes)
 	}
-	if data.Completed {
-		t.Fatalf("did not expect completed flag")
+	if data.Size != int64(len(payload)) {
+		t.Fatalf("expected size %d, got %d", len(payload), data.Size)
+	}
+	if data.ExpiresAt == 0 {
+		t.Fatalf("expected expiresAt")
 	}
 	if _, err := os.Stat(filepath.Join(musicasset.SessionDir(data.UploadID), musicasset.PartialUploadMetaFilename)); err != nil {
 		t.Fatalf("session meta should exist: %v", err)
@@ -143,7 +147,7 @@ func TestPartialUploadInitOversize(t *testing.T) {
 		sha256Hex([]byte("placeholder")), 1024, "big.mp3")
 
 	_, resp := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
+		"/api/asset/upload",
 		map[string]string{"Content-Type": "application/json"},
 		body, "USER01", nil)
 
@@ -160,7 +164,7 @@ func TestPartialUploadInitResumesSameUserSameFile(t *testing.T) {
 	body := initBody(string(config.AssetTypeMusic), int64(len(payload)), hash, 1024, "x.mp3")
 
 	_, first := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
+		"/api/asset/upload",
 		map[string]string{"Content-Type": "application/json"},
 		body, "USER01", nil)
 	if first.Code != apperr.Success {
@@ -172,7 +176,7 @@ func TestPartialUploadInitResumesSameUserSameFile(t *testing.T) {
 	// Append a chunk so receivedBytes > 0.
 	rangeHdr := fmt.Sprintf("bytes 0-%d/%d", len(payload)-1, len(payload))
 	_, putResp := invokeChunkedHandler(t, PutPartialUploadChunk, http.MethodPut,
-		"/form/asset/chunked/"+firstData.UploadID,
+		"/api/asset/upload/"+firstData.UploadID,
 		map[string]string{"Content-Range": rangeHdr},
 		payload, "USER01", gin.Params{{Key: "uploadId", Value: firstData.UploadID}})
 	if putResp.Code != apperr.Success {
@@ -181,7 +185,7 @@ func TestPartialUploadInitResumesSameUserSameFile(t *testing.T) {
 
 	// Re-init with the same params: should resume and return receivedBytes>0.
 	_, second := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
+		"/api/asset/upload",
 		map[string]string{"Content-Type": "application/json"},
 		body, "USER01", nil)
 	if second.Code != apperr.Success {
@@ -205,7 +209,7 @@ func TestPartialUploadPutSequentialChunks(t *testing.T) {
 	body := initBody(string(config.AssetTypeMusic), int64(len(payload)), hash, 4, "seq.mp3")
 
 	_, init := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
+		"/api/asset/upload",
 		map[string]string{"Content-Type": "application/json"},
 		body, "USER01", nil)
 	if init.Code != apperr.Success {
@@ -220,7 +224,7 @@ func TestPartialUploadPutSequentialChunks(t *testing.T) {
 		chunk := payload[offset : offset+4]
 		rangeHdr := fmt.Sprintf("bytes %d-%d/%d", offset, end, len(payload))
 		_, putResp := invokeChunkedHandler(t, PutPartialUploadChunk, http.MethodPut,
-			"/form/asset/chunked/"+initData.UploadID,
+			"/api/asset/upload/"+initData.UploadID,
 			map[string]string{"Content-Range": rangeHdr},
 			chunk, "USER01", gin.Params{{Key: "uploadId", Value: initData.UploadID}})
 		if putResp.Code != apperr.Success {
@@ -229,7 +233,7 @@ func TestPartialUploadPutSequentialChunks(t *testing.T) {
 	}
 
 	_, status := invokeChunkedHandler(t, GetPartialUpload, http.MethodGet,
-		"/form/asset/chunked/"+initData.UploadID,
+		"/api/asset/upload/"+initData.UploadID,
 		nil, nil, "USER01",
 		gin.Params{{Key: "uploadId", Value: initData.UploadID}})
 	if status.Code != apperr.Success {
@@ -264,7 +268,7 @@ func TestPartialUploadCompleteAllowsMP3MIMEFallback(t *testing.T) {
 	body := initBody(string(config.AssetTypeMusic), int64(len(payload)), hash, int64(len(payload)), "song.mp3")
 
 	_, init := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
+		"/api/asset/upload",
 		map[string]string{"Content-Type": "application/json"},
 		body, "USER01", nil)
 	if init.Code != apperr.Success {
@@ -275,7 +279,7 @@ func TestPartialUploadCompleteAllowsMP3MIMEFallback(t *testing.T) {
 
 	rangeHdr := fmt.Sprintf("bytes 0-%d/%d", len(payload)-1, len(payload))
 	_, putResp := invokeChunkedHandler(t, PutPartialUploadChunk, http.MethodPut,
-		"/form/asset/chunked/"+initData.UploadID,
+		"/api/asset/upload/"+initData.UploadID,
 		map[string]string{"Content-Range": rangeHdr},
 		payload, "USER01", gin.Params{{Key: "uploadId", Value: initData.UploadID}})
 	if putResp.Code != apperr.Success {
@@ -283,7 +287,7 @@ func TestPartialUploadCompleteAllowsMP3MIMEFallback(t *testing.T) {
 	}
 
 	_, complete := invokeChunkedHandler(t, CompletePartialUpload, http.MethodPost,
-		"/form/asset/chunked/"+initData.UploadID+"/complete",
+		"/api/asset/upload/"+initData.UploadID+"/complete",
 		nil, nil, "USER01",
 		gin.Params{{Key: "uploadId", Value: initData.UploadID}})
 	if complete.Code != apperr.Success {
@@ -291,7 +295,7 @@ func TestPartialUploadCompleteAllowsMP3MIMEFallback(t *testing.T) {
 	}
 }
 
-func TestPartialUploadPutOutOfOrderRejected(t *testing.T) {
+func TestPartialUploadPutOutOfOrderReturnsCurrentOffset(t *testing.T) {
 	setupChunkedTest(t)
 
 	payload := []byte("abcdefgh")
@@ -299,7 +303,7 @@ func TestPartialUploadPutOutOfOrderRejected(t *testing.T) {
 	body := initBody(string(config.AssetTypeMusic), int64(len(payload)), hash, 4, "ooo.mp3")
 
 	_, init := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
+		"/api/asset/upload",
 		map[string]string{"Content-Type": "application/json"},
 		body, "USER01", nil)
 	var initData initOK
@@ -309,11 +313,19 @@ func TestPartialUploadPutOutOfOrderRejected(t *testing.T) {
 	chunk := payload[4:]
 	rangeHdr := fmt.Sprintf("bytes 4-7/%d", len(payload))
 	_, putResp := invokeChunkedHandler(t, PutPartialUploadChunk, http.MethodPut,
-		"/form/asset/chunked/"+initData.UploadID,
+		"/api/asset/upload/"+initData.UploadID,
 		map[string]string{"Content-Range": rangeHdr},
 		chunk, "USER01", gin.Params{{Key: "uploadId", Value: initData.UploadID}})
-	if putResp.Code != apperr.PartialUploadRangeInvalid {
-		t.Fatalf("expected %s, got %s", apperr.PartialUploadRangeInvalid, putResp.Code)
+	if putResp.Code != apperr.Success {
+		t.Fatalf("expected success, got %s", putResp.Code)
+	}
+	var putData struct {
+		ReceivedBytes int64 `json:"receivedBytes"`
+		NextOffset    int64 `json:"nextOffset"`
+	}
+	_ = json.Unmarshal(putResp.Data, &putData)
+	if putData.ReceivedBytes != 0 || putData.NextOffset != 0 {
+		t.Fatalf("expected current offset 0, got receivedBytes=%d nextOffset=%d", putData.ReceivedBytes, putData.NextOffset)
 	}
 }
 
@@ -325,7 +337,7 @@ func TestPartialUploadOwnerIsolation(t *testing.T) {
 	body := initBody(string(config.AssetTypeMusic), int64(len(payload)), hash, 4, "p.mp3")
 
 	_, init := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
+		"/api/asset/upload",
 		map[string]string{"Content-Type": "application/json"},
 		body, "USER01", nil)
 	var initData initOK
@@ -333,7 +345,7 @@ func TestPartialUploadOwnerIsolation(t *testing.T) {
 
 	// Different user attempts to read the session.
 	_, status := invokeChunkedHandler(t, GetPartialUpload, http.MethodGet,
-		"/form/asset/chunked/"+initData.UploadID,
+		"/api/asset/upload/"+initData.UploadID,
 		nil, nil, "USER02",
 		gin.Params{{Key: "uploadId", Value: initData.UploadID}})
 	if status.Code != apperr.PartialUploadOwnerMismatch {
@@ -341,29 +353,15 @@ func TestPartialUploadOwnerIsolation(t *testing.T) {
 	}
 }
 
-func TestPartialUploadCancelRemovesSession(t *testing.T) {
+func TestPartialUploadRejectsInvalidUploadID(t *testing.T) {
 	setupChunkedTest(t)
 
-	payload := []byte("byebye")
-	hash := sha256Hex(payload)
-	body := initBody(string(config.AssetTypeMusic), int64(len(payload)), hash, 4, "c.mp3")
-
-	_, init := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
-		map[string]string{"Content-Type": "application/json"},
-		body, "USER01", nil)
-	var initData initOK
-	_ = json.Unmarshal(init.Data, &initData)
-
-	_, cancel := invokeChunkedHandler(t, CancelPartialUpload, http.MethodDelete,
-		"/form/asset/chunked/"+initData.UploadID,
+	_, resp := invokeChunkedHandler(t, GetPartialUpload, http.MethodGet,
+		"/api/asset/upload/not-a-valid-upload-id",
 		nil, nil, "USER01",
-		gin.Params{{Key: "uploadId", Value: initData.UploadID}})
-	if cancel.Code != apperr.Success {
-		t.Fatalf("expected success, got %s", cancel.Code)
-	}
-	if _, err := os.Stat(musicasset.SessionDir(initData.UploadID)); !os.IsNotExist(err) {
-		t.Fatalf("expected session dir removed, stat err=%v", err)
+		gin.Params{{Key: "uploadId", Value: "not-a-valid-upload-id"}})
+	if resp.Code != apperr.WrongParameter {
+		t.Fatalf("expected %s, got %s", apperr.WrongParameter, resp.Code)
 	}
 }
 
@@ -372,7 +370,7 @@ func TestPartialUploadInitRejectsBadHash(t *testing.T) {
 
 	body := initBody(string(config.AssetTypeMusic), 16, "not-a-hex-hash", 4, "bad.mp3")
 	_, resp := invokeChunkedHandler(t, InitPartialUpload, http.MethodPost,
-		"/form/asset/chunked/init",
+		"/api/asset/upload",
 		map[string]string{"Content-Type": "application/json"},
 		body, "USER01", nil)
 	if resp.Code != apperr.WrongParameter {

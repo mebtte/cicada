@@ -2,7 +2,7 @@ import logger from '@/utils/logger';
 import absoluteFullSize from '@/style/absolute_full_size';
 import loadImage from '@/utils/load_image';
 import { useEffect, useState } from 'react';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled from 'styled-components';
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);

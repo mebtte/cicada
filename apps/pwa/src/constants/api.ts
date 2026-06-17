@@ -1,5 +1,4 @@
 export enum PathPrefix {
-  FORM = 'form',
   ASSET = 'asset',
   API = 'api',
   BASE = 'base',

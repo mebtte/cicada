@@ -16,8 +16,8 @@ Cicada is monorepo which has multiple apps:
 
 ## Rules
 
-- Variabls prefer lower-camel case
-- Uses [semver](https://semver.org) as version norm
+- Variables prefer lower-camel case
+- Use [semver](https://semver.org) as version norm
 
 ---
 

@@ -3,7 +3,7 @@ import { CSS_VAR } from '@/components/theme';
 import { type ComponentProps } from 'react';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
-import { animated } from 'react-spring';
+import { animated } from '@react-spring/web';
 import getResizedImage from '@/server/asset/get_resized_image';
 import ImageFrame from '@/components/image_frame';
 import { Musicbill } from '../../constants';

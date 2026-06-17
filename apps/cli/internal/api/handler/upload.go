@@ -3,12 +3,13 @@ package handler
 import (
 	"context"
 	"crypto/md5"
+	"errors"
 	"fmt"
 	"image"
 	_ "image/jpeg"
 	"io"
+	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	"cicada/internal/api"
@@ -21,8 +22,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	directUploadBodyMaxSize     int64 = 64 * 1024 * 1024
+	directUploadMultipartMemory int64 = 8 * 1024 * 1024
+)
+
 func UploadAsset(c *gin.Context) {
 	_ = middleware.GetUser(c) // ensure authenticated
+
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, directUploadBodyMaxSize)
+	if err := c.Request.ParseMultipartForm(directUploadMultipartMemory); err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			api.Fail(c, apperr.AssetOversize)
+			return
+		}
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	if c.Request.MultipartForm != nil {
+		defer c.Request.MultipartForm.RemoveAll()
+	}
 
 	assetTypeStr := c.PostForm("assetType")
 	if assetTypeStr == "" {
@@ -113,7 +133,10 @@ func UploadAsset(c *gin.Context) {
 
 	// generate filename: md5(data) + ext
 	hash := md5.Sum(data)
-	ext := filepath.Ext(fh.Filename)
+	// Extension is derived from the sniffed MIME, never from fh.Filename, so
+	// the on-disk name (and thus the response Content-Type) cannot be coerced
+	// into HTML/SVG by a polyglot upload.
+	ext := safeAssetExt(mimeStr)
 	if ext == "" {
 		ext = "." + mt.Extension()
 	}

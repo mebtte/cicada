@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useTransition, animated } from 'react-spring';
+import { useTransition, animated } from '@react-spring/web';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 

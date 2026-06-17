@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { memo } from 'react';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import { Drawer, DrawerContent } from '@/components';
 import autoScrollbar from '@/style/auto_scrollbar';
 import Empty from '@/components/empty';

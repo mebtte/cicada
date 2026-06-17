@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled from 'styled-components';
 import PageContainer from '@/components/page_container';
 import definition from '@/definition';

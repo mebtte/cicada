@@ -29,7 +29,7 @@ func TestCORSAllowsChunkedUploadHeaders(t *testing.T) {
 	})
 	r := NewServer()
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodOptions, "/form/asset/chunked/upload-id", nil)
+	req := httptest.NewRequest(http.MethodOptions, "/api/asset/upload/upload-id", nil)
 	req.Header.Set("Origin", "http://localhost:5173")
 	req.Header.Set("Access-Control-Request-Method", http.MethodPut)
 	req.Header.Set("Access-Control-Request-Headers", "content-range,x-cicada-token")
@@ -42,6 +42,44 @@ func TestCORSAllowsChunkedUploadHeaders(t *testing.T) {
 	allowHeaders := w.Header().Get("Access-Control-Allow-Headers")
 	if !strings.Contains(strings.ToLower(allowHeaders), "content-range") {
 		t.Fatalf("expected Content-Range to be allowed, got %q", allowHeaders)
+	}
+}
+
+func TestAssetUploadRoutesUseAPIAsset(t *testing.T) {
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	r := NewServer()
+
+	routes := map[string]bool{}
+	for _, route := range r.Routes() {
+		routes[route.Method+" "+route.Path] = true
+	}
+
+	for _, route := range []string{
+		http.MethodPost + " /api/asset",
+		http.MethodPost + " /api/asset/upload",
+		http.MethodGet + " /api/asset/upload/:uploadId",
+		http.MethodPut + " /api/asset/upload/:uploadId",
+		http.MethodPost + " /api/asset/upload/:uploadId/complete",
+	} {
+		if !routes[route] {
+			t.Fatalf("expected %s to be registered", route)
+		}
+	}
+	for _, route := range []string{
+		http.MethodPost + " /form/asset",
+		http.MethodPost + " /form/asset/chunked/init",
+		http.MethodGet + " /form/asset/chunked/:uploadId",
+		http.MethodPut + " /form/asset/chunked/:uploadId",
+		http.MethodPost + " /form/asset/chunked/:uploadId/complete",
+		http.MethodDelete + " /api/asset/upload/:uploadId",
+	} {
+		if routes[route] {
+			t.Fatalf("did not expect %s to be registered", route)
+		}
 	}
 }
 

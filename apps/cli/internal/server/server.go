@@ -44,14 +44,14 @@ func NewServer() *gin.Engine {
 	auth := middleware.Auth
 	admin := middleware.Admin
 
-	// Form: asset upload
-	form := r.Group("/form")
-	form.POST("/asset", auth(), handler.UploadAsset)
-	form.POST("/asset/chunked/init", auth(), handler.InitPartialUpload)
-	form.GET("/asset/chunked/:uploadId", auth(), handler.GetPartialUpload)
-	form.PUT("/asset/chunked/:uploadId", auth(), handler.PutPartialUploadChunk)
-	form.POST("/asset/chunked/:uploadId/complete", auth(), handler.CompletePartialUpload)
-	form.DELETE("/asset/chunked/:uploadId", auth(), handler.CancelPartialUpload)
+	api := r.Group("/api")
+
+	// Asset upload
+	api.POST("/asset", auth(), handler.UploadAsset)
+	api.POST("/asset/upload", auth(), handler.InitPartialUpload)
+	api.GET("/asset/upload/:uploadId", auth(), handler.GetPartialUpload)
+	api.PUT("/asset/upload/:uploadId", auth(), handler.PutPartialUploadChunk)
+	api.POST("/asset/upload/:uploadId/complete", auth(), handler.CompletePartialUpload)
 
 	// Base routes (public)
 	base := r.Group("/base")
@@ -61,7 +61,6 @@ func NewServer() *gin.Engine {
 	base.POST("/login_with_2fa", handler.LoginWith2FA)
 
 	// API routes
-	api := r.Group("/api")
 
 	// User / profile
 	api.GET("/profile", auth(), handler.GetProfile)

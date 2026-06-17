@@ -1,4 +1,4 @@
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
 import Spinner from '@/components/spinner';

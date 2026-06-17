@@ -1,7 +1,7 @@
 import loadImage from '@/utils/load_image';
 import logger from '@/utils/logger';
 import { HtmlHTMLAttributes, useEffect, useState } from 'react';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';

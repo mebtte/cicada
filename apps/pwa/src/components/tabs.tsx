@@ -5,7 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { animated, useSpring } from 'react-spring';
+import { animated, useSpring } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from './theme';

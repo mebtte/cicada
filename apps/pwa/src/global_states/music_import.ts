@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { MusicType } from '@/constants/music';
-import type { ChunkedUploadResumeMeta, UploadPhase } from '@/server/form/upload_asset_chunked';
+import type {
+  ChunkedUploadResumeMeta,
+  UploadPhase,
+} from '@/server/asset/upload_asset_chunked';
 
 export type ImportPhase =
   | 'editing'
