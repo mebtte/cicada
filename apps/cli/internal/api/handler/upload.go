@@ -3,10 +3,12 @@ package handler
 import (
 	"context"
 	"crypto/md5"
+	"errors"
 	"fmt"
 	"image"
 	_ "image/jpeg"
 	"io"
+	"net/http"
 	"os"
 	"time"
 
@@ -20,8 +22,27 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	directUploadBodyMaxSize     int64 = 64 * 1024 * 1024
+	directUploadMultipartMemory int64 = 8 * 1024 * 1024
+)
+
 func UploadAsset(c *gin.Context) {
 	_ = middleware.GetUser(c) // ensure authenticated
+
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, directUploadBodyMaxSize)
+	if err := c.Request.ParseMultipartForm(directUploadMultipartMemory); err != nil {
+		var maxBytesErr *http.MaxBytesError
+		if errors.As(err, &maxBytesErr) {
+			api.Fail(c, apperr.AssetOversize)
+			return
+		}
+		api.Fail(c, apperr.WrongParameter)
+		return
+	}
+	if c.Request.MultipartForm != nil {
+		defer c.Request.MultipartForm.RemoveAll()
+	}
 
 	assetTypeStr := c.PostForm("assetType")
 	if assetTypeStr == "" {

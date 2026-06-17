@@ -334,8 +334,10 @@ func AdminUpdateUser(c *gin.Context) {
 }
 
 type updateUserAdminBody struct {
-	ID    string `json:"id" binding:"required"`
-	Admin *int   `json:"admin" binding:"required"`
+	ID           string `json:"id" binding:"required"`
+	Admin        *int   `json:"admin" binding:"required"`
+	CaptchaID    string `json:"captchaId" binding:"required"`
+	CaptchaValue string `json:"captchaValue" binding:"required"`
 }
 
 func AdminUpdateUserAdmin(c *gin.Context) {
@@ -353,6 +355,10 @@ func AdminUpdateUserAdmin(c *gin.Context) {
 		api.Fail(c, apperr.WrongParameter)
 		return
 	}
+	if requester == nil {
+		api.Fail(c, apperr.NotAuthorized)
+		return
+	}
 	if body.ID == requester.ID {
 		api.Fail(c, apperr.UserIsAdminAlready)
 		return
@@ -366,12 +372,19 @@ func AdminUpdateUserAdmin(c *gin.Context) {
 		api.Fail(c, apperr.UserIsAdminAlready)
 		return
 	}
+	ok, _ := auth.VerifyCaptcha(body.CaptchaID, body.CaptchaValue)
+	if !ok {
+		api.Fail(c, apperr.WrongCaptcha)
+		return
+	}
 	store.UpdateUser(body.ID, "admin", *body.Admin)
 	api.OK(c, nil)
 }
 
 type deleteUserQuery struct {
-	ID string `form:"id" binding:"required"`
+	ID           string `form:"id" binding:"required"`
+	CaptchaID    string `form:"captchaId" binding:"required"`
+	CaptchaValue string `form:"captchaValue" binding:"required"`
 }
 
 func AdminDeleteUser(c *gin.Context) {
@@ -387,6 +400,11 @@ func AdminDeleteUser(c *gin.Context) {
 	}
 	if target.Admin == 1 {
 		api.Fail(c, apperr.CanNotDeleteAdmin)
+		return
+	}
+	ok, _ := auth.VerifyCaptcha(q.CaptchaID, q.CaptchaValue)
+	if !ok {
+		api.Fail(c, apperr.WrongCaptcha)
 		return
 	}
 	// 级联清理用户在所有关联表中的数据, 否则外键约束会让 DELETE FROM user 静默失败.

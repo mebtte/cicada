@@ -1,6 +1,6 @@
 import Spinner from '@/components/spinner';
 import { flexCenter } from '@/style/flexbox';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Empty from '@/components/empty';

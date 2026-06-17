@@ -6,7 +6,7 @@ import {
   useState,
   type ComponentProps,
 } from 'react';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import { t } from '@/i18n';

@@ -5,7 +5,7 @@ import {
   useState,
   type ComponentProps,
 } from 'react';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import { flexCenter } from '@/style/flexbox';
 import ErrorCard from '@/components/error_card';

@@ -1,4 +1,4 @@
-import { useTransition } from 'react-spring';
+import { useTransition } from '@react-spring/web';
 import LyricPanel from './lyric_panel';
 
 function Wrapper({ open }: { open: boolean }) {

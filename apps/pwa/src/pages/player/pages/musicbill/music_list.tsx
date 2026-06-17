@@ -1,7 +1,7 @@
 import Spinner from '@/components/spinner';
 import { flexCenter } from '@/style/flexbox';
 import { RequestStatus } from '@/constants';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Empty from '@/components/empty';

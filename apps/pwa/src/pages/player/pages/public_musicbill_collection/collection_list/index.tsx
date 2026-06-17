@@ -7,7 +7,7 @@ import { CSSProperties, useCallback, useEffect, useRef } from 'react';
 import ErrorCard from '@/components/error_card';
 import useNavigate from '@/utils/use_navigate';
 import { Query } from '@/constants';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import absoluteFullSize from '@/style/absolute_full_size';
 import Button from '@/components/button';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';

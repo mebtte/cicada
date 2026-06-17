@@ -22,7 +22,7 @@ import {
   useRef,
 } from 'react';
 import Tippy, { TippyProps } from '@tippyjs/react/headless';
-import { animated, useSpring } from 'react-spring';
+import { animated, useSpring } from '@react-spring/web';
 import styled from 'styled-components';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
@@ -128,7 +128,7 @@ const Tooltip = ({
         delay={[300, 0]}
         // 触屏: 长按才显示, short tap 不会触发, click 自然透传
         touch={['hold', 500]}
-        // 关闭 Tippy 默认动画, 由 react-spring 接管
+        // 关闭 Tippy 默认动画, 由 @react-spring/web 接管
         animation={false}
         // 渲染到 body, 避免被祖先 overflow 截断
         appendTo={() => document.body}
@@ -143,7 +143,7 @@ const Tooltip = ({
 };
 
 /**
- * 把 react-spring 的过渡逻辑封装到内部组件:
+ * 把 @react-spring/web 的过渡逻辑封装到内部组件:
  * Tippy 通过 render 回调把定位 attrs 给我们, 我们只负责样式 + 入场动画
  */
 const TooltipBody = ({
