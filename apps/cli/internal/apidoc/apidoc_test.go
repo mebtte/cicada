@@ -24,11 +24,11 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 
 	requiredPaths := []string{
 		"/api_reference/openapi.json",
-		"/base/login",
-		"/api/profile",
-		"/api/music",
+		"/api/base/login",
+		"/api/common/profile",
+		"/api/common/music",
 		"/api/admin/music",
-		"/api/musicbill",
+		"/api/common/musicbill",
 	}
 
 	for _, path := range requiredPaths {
@@ -37,9 +37,9 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 		}
 	}
 
-	profilePath, ok := paths["/api/profile"].(map[string]any)
+	profilePath, ok := paths["/api/common/profile"].(map[string]any)
 	if !ok {
-		t.Fatalf("profile path missing or invalid: %T", paths["/api/profile"])
+		t.Fatalf("profile path missing or invalid: %T", paths["/api/common/profile"])
 	}
 	profileGet, ok := profilePath["get"].(map[string]any)
 	if !ok {
@@ -61,9 +61,9 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 		t.Fatalf("expected admin music write operation to require admin")
 	}
 
-	loginPath, ok := paths["/base/login"].(map[string]any)
+	loginPath, ok := paths["/api/base/login"].(map[string]any)
 	if !ok {
-		t.Fatalf("login path missing or invalid: %T", paths["/base/login"])
+		t.Fatalf("login path missing or invalid: %T", paths["/api/base/login"])
 	}
 	loginPost, ok := loginPath["post"].(map[string]any)
 	if !ok {

@@ -64,7 +64,7 @@ func TestCreateMusicPlayRecordUpsertsClientRecord(t *testing.T) {
 	}
 
 	router := gin.New()
-	router.POST("/api/music_play_record", middleware.Auth(), CreateMusicPlayRecord)
+	router.POST("/api/common/music_play_record", middleware.Auth(), CreateMusicPlayRecord)
 
 	call := func(percent float64, playedAt int64) {
 		t.Helper()
@@ -80,7 +80,7 @@ func TestCreateMusicPlayRecordUpsertsClientRecord(t *testing.T) {
 		}
 
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodPost, "/api/music_play_record", bytes.NewReader(body))
+		req := httptest.NewRequest(http.MethodPost, "/api/common/music_play_record", bytes.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("x-cicada-token", token)
 		router.ServeHTTP(w, req)

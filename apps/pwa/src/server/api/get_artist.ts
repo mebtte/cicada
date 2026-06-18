@@ -60,7 +60,7 @@ const normalizeMusic = (musicList: Music[] = []) =>
 
 async function getArtist(id: string): Promise<Response> {
   const artist = await request<RawResponse>({
-    path: '/api/artist',
+    path: '/api/common/artist',
     params: { id },
     withToken: true,
   });

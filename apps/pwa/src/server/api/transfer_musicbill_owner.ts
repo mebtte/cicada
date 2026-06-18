@@ -17,7 +17,7 @@ function transferMusicbillOwner({
   captchaValue: string;
 }) {
   return request({
-    path: '/api/musicbill/owner',
+    path: '/api/common/musicbill/owner',
     method: Method.PUT,
     withToken: true,
     body: { musicbillId, userId, captchaId, captchaValue },

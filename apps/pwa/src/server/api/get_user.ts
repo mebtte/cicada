@@ -21,7 +21,7 @@ interface Response {
  */
 async function getUser(id: string) {
   const user = await request<Response>({
-    path: '/api/user',
+    path: '/api/common/user',
     params: { userId: id },
     withToken: true,
   });

@@ -68,7 +68,7 @@ func TestGetLyricList(t *testing.T) {
 	t.Run("song returns stored lyrics", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/lyric_list?musicId=SONG01", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/common/lyric_list?musicId=SONG01", nil)
 
 		GetLyricList(c)
 
@@ -93,7 +93,7 @@ func TestGetLyricList(t *testing.T) {
 	t.Run("song without lyrics returns empty list", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/lyric_list?musicId=SONG02", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/common/lyric_list?musicId=SONG02", nil)
 
 		GetLyricList(c)
 
@@ -118,7 +118,7 @@ func TestGetLyricList(t *testing.T) {
 	t.Run("instrumental returns no lyric error", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/lyric_list?musicId=INST01", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/common/lyric_list?musicId=INST01", nil)
 
 		GetLyricList(c)
 
@@ -176,7 +176,7 @@ func TestSearchMusicByLyricIncludesLyrics(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodGet, "/api/music/search_by_lyric?keyword=hello&page=1&pageSize=10", nil)
+	c.Request = httptest.NewRequest(http.MethodGet, "/api/common/music/search_by_lyric?keyword=hello&page=1&pageSize=10", nil)
 
 	SearchMusicByLyric(c)
 

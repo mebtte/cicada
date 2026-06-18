@@ -8,7 +8,7 @@ function addMusicbillFollowedArtist({
   artistId: string;
 }) {
   return request({
-    path: '/api/musicbill/followed_artist',
+    path: '/api/common/musicbill/followed_artist',
     method: Method.POST,
     withToken: true,
     body: { musicbillId, artistId },

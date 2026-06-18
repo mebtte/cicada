@@ -25,7 +25,7 @@ async function getMusicbillFollowedArtistList({
   musicbillId: string;
 }) {
   const data = await request<RawResponse>({
-    path: '/api/musicbill/followed_artist',
+    path: '/api/common/musicbill/followed_artist',
     withToken: true,
     params: { musicbillId },
   });

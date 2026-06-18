@@ -15,7 +15,7 @@ export interface LoginResponse {
 
 function login(data: RequestBody) {
   return request<LoginResponse>({
-    path: '/base/login',
+    path: '/api/base/login',
     method: Method.POST,
     body: {
       username: data.username,

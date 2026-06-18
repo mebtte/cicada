@@ -82,7 +82,7 @@ async function getMusic({
   requestMinimalDuration?: number;
 }) {
   const music = await request<Response>({
-    path: '/api/music',
+    path: '/api/common/music',
     params: { id },
     withToken: true,
     requestMinimalDuration,

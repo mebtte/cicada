@@ -7,7 +7,7 @@ function getLyricList({ musicId }: { musicId: string }) {
       lrc: string;
     }[]
   >({
-    path: '/api/lyric_list',
+    path: '/api/common/lyric_list',
     params: { musicId },
     withToken: true,
   });

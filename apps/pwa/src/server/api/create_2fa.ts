@@ -7,7 +7,7 @@ interface Response {
 
 function create2FA() {
   return request<Response>({
-    path: '/api/2fa',
+    path: '/api/common/2fa',
     method: Method.POST,
     withToken: true,
     requestMinimalDuration: 0,

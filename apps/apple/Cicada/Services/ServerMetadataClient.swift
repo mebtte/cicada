@@ -45,7 +45,7 @@ struct ServerMetadataClient {
         }
 
         var components = URLComponents(
-            url: baseURL.appending(path: "/base/metadata"),
+            url: baseURL.appending(path: "/api/base/metadata"),
             resolvingAgainstBaseURL: false
         )
         components?.queryItems = [

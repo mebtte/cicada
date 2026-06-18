@@ -22,7 +22,7 @@ function updateMusicbill<K extends AllowUpdateKey>({
 }) {
   return request({
     method: Method.PUT,
-    path: '/api/musicbill',
+    path: '/api/common/musicbill',
     body: { id, key, value, captchaId, captchaValue },
     withToken: true,
   });

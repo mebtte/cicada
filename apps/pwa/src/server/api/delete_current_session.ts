@@ -2,7 +2,7 @@ import { Method, request } from '..';
 
 function deleteCurrentSession() {
   return request({
-    path: '/api/sessions/current',
+    path: '/api/common/sessions/current',
     method: Method.DELETE,
     withToken: true,
   });

@@ -218,7 +218,7 @@ enum ServerSetupError: LocalizedError {
         case .invalidAddress:
             return "Use a valid server origin such as https://music.example.com."
         case .pathNotSupported:
-            return "Enter only the server origin. Paths like /base are not supported here."
+            return "Enter only the server origin. Paths are not supported here."
         }
     }
 }

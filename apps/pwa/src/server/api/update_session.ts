@@ -8,7 +8,7 @@ function updateSession({
   deviceName: string;
 }) {
   return request({
-    path: `/api/sessions/${window.encodeURIComponent(id)}`,
+    path: `/api/common/sessions/${window.encodeURIComponent(id)}`,
     method: Method.PUT,
     body: { deviceName },
     withToken: true,

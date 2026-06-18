@@ -20,7 +20,7 @@ function updateProfile<K extends AllowUpdateKey>({
   value: KeyMapData[K];
 }) {
   return request({
-    path: '/api/profile',
+    path: '/api/common/profile',
     method: Method.PUT,
     body: { key, value },
     withToken: true,

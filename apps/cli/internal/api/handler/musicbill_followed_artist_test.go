@@ -89,7 +89,7 @@ func callAddFollowed(t *testing.T, userID string, body map[string]any) string {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	buf, _ := json.Marshal(body)
-	req := httptest.NewRequest(http.MethodPost, "/api/musicbill/followed_artist", bytes.NewReader(buf))
+	req := httptest.NewRequest(http.MethodPost, "/api/common/musicbill/followed_artist", bytes.NewReader(buf))
 	req.Header.Set("Content-Type", "application/json")
 	c.Request = req
 	c.Set("authed_user", &store.User{ID: userID})
@@ -105,7 +105,7 @@ func callListFollowed(t *testing.T, userID, musicbillID string) followedArtistRe
 	t.Helper()
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	req := httptest.NewRequest(http.MethodGet, "/api/musicbill/followed_artist?musicbillId="+musicbillID, nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/common/musicbill/followed_artist?musicbillId="+musicbillID, nil)
 	c.Request = req
 	c.Set("authed_user", &store.User{ID: userID})
 	GetMusicbillFollowedArtistList(c)
@@ -151,7 +151,7 @@ func TestFollowedArtistHandlerLifecycle(t *testing.T) {
 	// 取消关注: 不删音乐
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	req := httptest.NewRequest(http.MethodDelete, "/api/musicbill/followed_artist?musicbillId=BILL01&artistId=ART001", nil)
+	req := httptest.NewRequest(http.MethodDelete, "/api/common/musicbill/followed_artist?musicbillId=BILL01&artistId=ART001", nil)
 	c.Request = req
 	c.Set("authed_user", &store.User{ID: "OWNER1"})
 	DeleteMusicbillFollowedArtist(c)

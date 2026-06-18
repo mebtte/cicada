@@ -10,7 +10,7 @@ function uploadAsset(asset: Blob, assetType: AssetType) {
     path: string;
   }>({
     method: Method.POST,
-    path: '/api/asset',
+    path: '/api/common/asset',
     body: form,
     withToken: true,
     timeout: 5 * 60 * 1000,

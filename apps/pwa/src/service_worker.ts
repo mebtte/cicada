@@ -42,7 +42,6 @@ if (process.env.NODE_ENV === 'production') {
       denylist: [
         new RegExp(`^/${PathPrefix.API}/`),
         new RegExp(`^/${PathPrefix.ASSET}/`),
-        new RegExp(`^/${PathPrefix.BASE}/`),
       ],
     }),
   );
@@ -141,17 +140,17 @@ registerRoute(
  * API 网络优先
  * @author mebtte<i@mebtte.com>
  */
-const PREVNET_CACHE_PATHS: string[] = [
-  '/base/metadata',
-  '/base/captcha',
-];
+const COMMON_API_PATH_PREFIX = `/${PathPrefix.API}/common`;
+function isCommonAPIPath(pathname: string) {
+  return (
+    pathname === COMMON_API_PATH_PREFIX ||
+    pathname.startsWith(`${COMMON_API_PATH_PREFIX}/`)
+  );
+}
 registerRoute(
   ({ request }) => {
     const url = new URL(request.url);
-    return (
-      url.pathname.startsWith(`/${PathPrefix.API}`) &&
-      !PREVNET_CACHE_PATHS.includes(url.pathname)
-    );
+    return isCommonAPIPath(url.pathname);
   },
   new NetworkFirst({
     cacheName: CacheName.API,

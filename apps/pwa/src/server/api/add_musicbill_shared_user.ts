@@ -12,7 +12,7 @@ function addMusicbillSharedUser({
   username: string;
 }) {
   return request({
-    path: '/api/musicbill/shared_user',
+    path: '/api/common/musicbill/shared_user',
     method: Method.POST,
     withToken: true,
     body: { musicbillId, username },

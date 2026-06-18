@@ -14,7 +14,7 @@ import { useServer, getSelectedServer, getSelectedUser } from './server';
  *   - CacheName.ASSET_MEDIA (SW): 音频字节 (可能有服务端用户级权限)
  *
  * 不清理 zustand 中的 token / 用户列表 (那由登入登出本身管理).
- * 不在 app 首次启动时清 (lastIdentity 初值就是当前身份).
+ * App 首次启动时不清 (lastIdentity 初值就是当前身份); 之后任何身份变化都清.
  */
 
 function computeIdentity(state: ServerState): string {
@@ -62,11 +62,6 @@ useServer.subscribe((state) => {
   if (next === lastIdentity) {
     return;
   }
-  const previous = lastIdentity;
   lastIdentity = next;
-  if (!previous) {
-    // 首次登录 (从无身份变成有身份), 不需要清前任的数据
-    return;
-  }
   void clearAccountScopedCaches();
 });

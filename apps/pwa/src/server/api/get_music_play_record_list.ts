@@ -38,7 +38,7 @@ function getMusicPlayRecordList({
       }[];
     }[];
   }>({
-    path: '/api/music_play_record_list',
+    path: '/api/common/music_play_record_list',
     params: {
       page,
       pageSize,

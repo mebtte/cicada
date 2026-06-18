@@ -88,7 +88,7 @@ func TestGetMusicReturnsRelatedPublicMusicbills(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodGet, "/api/music?id=MUS001", nil)
+	c.Request = httptest.NewRequest(http.MethodGet, "/api/common/music?id=MUS001", nil)
 
 	GetMusic(c)
 
