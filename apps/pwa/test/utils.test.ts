@@ -4,7 +4,11 @@ import test from "node:test";
 import capitalize from "../src/utils/capitalize.js";
 import stringArrayEqual from "../src/utils/string_array_equal.js";
 import parseSearch from "../src/utils/parse_search.js";
-import { getMajorVersion, isSameMajorVersion } from "../src/utils/version.js";
+import {
+  getBaseVersion,
+  getMajorVersion,
+  isSameMajorVersion,
+} from "../src/utils/version.js";
 import Cache from "../src/utils/cache.js";
 import { getIsHeaderBackButtonPath } from "../src/pages/player/header/back_button.js";
 import { isPasswordLengthValid } from "../src/constants/user.js";
@@ -59,10 +63,14 @@ test("cache removes entries with the same scoped key replacement used for set", 
 });
 
 test("version helpers compare semantic major versions", () => {
+  assert.equal(getBaseVersion("3.1.0-local"), "3.1.0");
+  assert.equal(getBaseVersion("3.1.0-beta.2606181430"), "3.1.0");
+  assert.equal(getBaseVersion("3.1.0"), "3.1.0");
   assert.equal(getMajorVersion("v3.1.0"), 3);
   assert.equal(getMajorVersion("3.1.0-beta.20260508"), 3);
   assert.equal(getMajorVersion("unknown"), null);
 
+  assert.equal(isSameMajorVersion("3.1.0-local", "3.2.0-beta.1"), true);
   assert.equal(isSameMajorVersion("3.1.0", "3.2.0-beta.1"), true);
   assert.equal(isSameMajorVersion("3.1.0", "4.0.0"), false);
   assert.equal(isSameMajorVersion("unknown", "4.0.0"), true);

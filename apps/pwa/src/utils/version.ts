@@ -1,5 +1,15 @@
+export function getBaseVersion(version: string) {
+  const trimmed = version.trim();
+  const suffixIndex = trimmed.indexOf('-');
+
+  if (suffixIndex === -1) {
+    return trimmed;
+  }
+  return trimmed.slice(0, suffixIndex);
+}
+
 export function getMajorVersion(version: string) {
-  const match = version.trim().match(/^v?(\d+)(?:[.+-]|$)/);
+  const match = getBaseVersion(version).match(/^v?(\d+)(?:[.+]|$)/);
   if (!match) {
     return null;
   }

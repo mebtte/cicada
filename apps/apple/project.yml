@@ -6,7 +6,7 @@ options:
   developmentLanguage: en
 settings:
   base:
-    MARKETING_VERSION: 0.1.0
+    MARKETING_VERSION: 0.0.0
     CURRENT_PROJECT_VERSION: 1
     IPHONEOS_DEPLOYMENT_TARGET: "17.0"
     MACOSX_DEPLOYMENT_TARGET: "14.0"
@@ -21,7 +21,8 @@ targets:
     info:
       path: Cicada/Info.plist
       properties:
-        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleShortVersionString: CICADA_BASE_VERSION
+        CicadaVersion: CICADA_APP_VERSION
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSApplicationCategoryType: public.app-category.music
         UIApplicationSceneManifest:
@@ -47,6 +48,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.manyone.cicada.apple
         SWIFT_VERSION: 6.0
         GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_PREPROCESS: YES
+        INFOPLIST_PREFIX_HEADER: $(DERIVED_FILE_DIR)/CicadaVersionInfo.h
         CODE_SIGN_STYLE: Automatic
         TARGETED_DEVICE_FAMILY: "1,2"
         SUPPORTS_MACCATALYST: NO
@@ -55,6 +58,60 @@ targets:
         ENABLE_PREVIEWS: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
         LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]: "$(inherited) @executable_path/../Frameworks"
+    postBuildScripts:
+      - name: Resolve Cicada Version
+        shell: /bin/bash
+        basedOnDependencyAnalysis: false
+        outputFiles:
+          - $(DERIVED_FILE_DIR)/CicadaVersionInfo.h
+        script: |
+          set -euo pipefail
+
+          root_dir="$(git -C "${SRCROOT}" rev-parse --show-toplevel 2>/dev/null || true)"
+          if [ -z "${root_dir}" ]; then
+            root_dir="${SRCROOT}/../.."
+          fi
+
+          latest_tag="$(
+            git -C "${root_dir}" for-each-ref --sort=-creatordate --format='%(refname:short)' refs/tags |
+              awk '/^[0-9]+\.[0-9]+\.[0-9]+$/ { print; exit }'
+          )"
+          if [ -z "${latest_tag}" ]; then
+            latest_tag="unknown"
+          fi
+
+          if [ -n "${CICADA_VERSION:-}" ]; then
+            app_version="${CICADA_VERSION}"
+          elif [ "${CICADA_BUILD_PROFILE:-}" = "beta" ]; then
+            timestamp="$(TZ=Asia/Shanghai date +%y%m%d%H%M)"
+            app_version="${latest_tag}-beta.${timestamp}"
+          elif [ "${CONFIGURATION:-}" = "Debug" ]; then
+            app_version="${latest_tag}-local"
+          else
+            app_version="${latest_tag}"
+          fi
+
+          base_version="${app_version%%-*}"
+          app_version_pattern='^[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9]+(\.[A-Za-z0-9]+)*)?$'
+          base_version_pattern='^[0-9]+\.[0-9]+\.[0-9]+$'
+          if [[ ! "${app_version}" =~ ${app_version_pattern} ]]; then
+            echo "Invalid CicadaVersion: ${app_version}" >&2
+            exit 1
+          fi
+          if [[ ! "${base_version}" =~ ${base_version_pattern} ]]; then
+            echo "Invalid Cicada base version: ${base_version}" >&2
+            exit 1
+          fi
+
+          version_header="${DERIVED_FILE_DIR}/CicadaVersionInfo.h"
+          mkdir -p "$(dirname "${version_header}")"
+
+          {
+            echo "#define CICADA_APP_VERSION ${app_version}"
+            echo "#define CICADA_BASE_VERSION ${base_version}"
+          } > "${version_header}"
+
+          echo "Resolved CicadaVersion=${app_version}"
 schemes:
   Cicada:
     build:

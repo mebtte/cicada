@@ -40,7 +40,7 @@ struct ServerMetadataClient {
 
     static let preview = ServerMetadataClient { _ in
         ServerMetadata(
-            version: "preview",
+            version: AppVersion.baseVersion(from: AppVersion.current),
             hostname: "demo.cicada.local",
             imageFileMaxSize: nil,
             audioFileMaxSize: nil,
@@ -69,8 +69,7 @@ struct ServerMetadataClient {
     }
 
     private static var appVersion: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-            ?? "apple"
+        AppVersion.current
     }
 
     private static var preferredLanguage: String {

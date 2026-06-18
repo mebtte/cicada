@@ -402,8 +402,7 @@ struct CicadaAPIClient: Sendable {
     }
 
     private var appVersion: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-            ?? "apple"
+        AppVersion.current
     }
 
     private var preferredLanguage: String {

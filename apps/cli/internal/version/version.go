@@ -2,6 +2,7 @@ package version
 
 import (
 	"os/exec"
+	"regexp"
 	"strings"
 	"sync"
 )
@@ -12,6 +13,8 @@ const (
 )
 
 var Version string
+
+var baseVersionPattern = regexp.MustCompile(`^\d+\.\d+\.\d+$`)
 
 var (
 	once   sync.Once
@@ -39,22 +42,32 @@ func buildVersion(buildProfile, latestTagValue string) string {
 		latestTagValue = "unknown"
 	}
 
+	baseVersion := BaseVersion(latestTagValue)
 	if buildProfile == buildProfileDevelopment {
-		return latestTagValue + "-local"
+		return baseVersion + "-local"
 	}
 
-	return latestTagValue
+	return baseVersion
+}
+
+func BaseVersion(version string) string {
+	base, _, _ := strings.Cut(strings.TrimSpace(version), "-")
+	return base
 }
 
 func latestTag() string {
-	tag := runGit(
+	tags := runGit(
 		"for-each-ref",
 		"--sort=-creatordate",
-		"--count=1",
 		"--format=%(refname:short)",
 		"refs/tags",
 	)
-	return strings.TrimSpace(tag)
+	for _, tag := range strings.Fields(tags) {
+		if baseVersionPattern.MatchString(tag) {
+			return tag
+		}
+	}
+	return ""
 }
 
 func runGit(args ...string) string {

@@ -44,8 +44,8 @@ final class ServerSetupStore: ObservableObject {
     var selectedServerVersionWarning: String? {
         guard
             let selectedServer,
-            let appMajorVersion = majorVersion(from: appVersion),
-            let serverMajorVersion = majorVersion(from: selectedServer.version),
+            let appMajorVersion = AppVersion.majorVersion(from: appVersion),
+            let serverMajorVersion = AppVersion.majorVersion(from: selectedServer.version),
             appMajorVersion != serverMajorVersion
         else {
             return nil
@@ -232,7 +232,7 @@ final class ServerSetupStore: ObservableObject {
         let snapshot = ServerSnapshot(
             savedServers: [
                 ServerRecord(
-                    version: "0.24.1",
+                    version: "3.6.0",
                     hostname: "studio.cicada.local",
                     imageFileMaxSize: nil,
                     audioFileMaxSize: nil,
@@ -242,7 +242,7 @@ final class ServerSetupStore: ObservableObject {
                     selectedUserID: nil
                 ),
                 ServerRecord(
-                    version: "0.23.8",
+                    version: "3.5.0",
                     hostname: "archive.cicada.local",
                     imageFileMaxSize: nil,
                     audioFileMaxSize: nil,
@@ -351,12 +351,7 @@ final class ServerSetupStore: ObservableObject {
     }
 
     private var appVersion: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-            ?? "apple"
-    }
-
-    private func majorVersion(from version: String) -> Int? {
-        version.split(separator: ".").first.flatMap { Int($0) }
+        AppVersion.current
     }
 }
 
