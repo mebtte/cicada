@@ -7,35 +7,55 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0971B6785F612465DAC7E5BD /* CaptchaImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC82AC368AC0AD4A87C72665 /* CaptchaImageView.swift */; };
 		0F984FDDD69B564E0230A4CB /* CicadaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B910A3665B4DDA99878FF71 /* CicadaApp.swift */; };
+		1CD8C8775EFCD83973DB933B /* AudioPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01204AADF1F4582CCE6A10EA /* AudioPlayerController.swift */; };
+		2A6F7DF61B34ACA044BB046D /* APIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA29737AD4D244F48D114F8 /* APIModels.swift */; };
+		31B3D04BEAC099A5CD672D60 /* PlayerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CCF322654991CDF520E710 /* PlayerStore.swift */; };
 		540311FF630F605EB2D029B6 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBA9673A23B3A3AF4CDB32B /* AppColors.swift */; };
+		84F4925E7C08BF0AE904CF85 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62AB02B4FFD013256547676 /* PlayerView.swift */; };
+		8A0CD7264E3F54F3AFE8C6F5 /* CicadaAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DB83045806185AB692E010 /* CicadaAPIClient.swift */; };
+		8BB183D6F68837E6692076B4 /* LoginStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B1F585BB98EF97B6443166 /* LoginStore.swift */; };
 		8FDB0E06C64B71D69AABD4B5 /* PlatformInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2F0A927788D9B8B22DC854 /* PlatformInfo.swift */; };
 		9941AEA5E64BF322A1E85221 /* ServerSetupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36EF13F40A064872555EB02B /* ServerSetupStore.swift */; };
+		9CA0E180D97A85B9E1EDE04D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7067CA4929E277FCFCE50DDA /* LoginView.swift */; };
 		BA878239D0B590108F8B4AA4 /* ServerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE82971270AEBC4A2CEAF2A /* ServerRecord.swift */; };
 		C949567AF84958831A724FB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11DF74913AF882BC9F3654D6 /* Assets.xcassets */; };
 		D45A1192D9D8B8471640DC09 /* ServerMetadataClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CB5BD527128393183232E7 /* ServerMetadataClient.swift */; };
 		DA49924C26B41DAB98303DB6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844DE39A003BD06B5E365B8B /* ContentView.swift */; };
 		DAB7FB034762D499332DF78A /* ServerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A15DAAA9D87410AC3E70B9 /* ServerSetupView.swift */; };
+		F70A633508CDCE7968069DF8 /* ArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1670EB172F3C2EDCDEFC845 /* ArtworkView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		01204AADF1F4582CCE6A10EA /* AudioPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerController.swift; sourceTree = "<group>"; };
+		03B1F585BB98EF97B6443166 /* LoginStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStore.swift; sourceTree = "<group>"; };
 		11DF74913AF882BC9F3654D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2B910A3665B4DDA99878FF71 /* CicadaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CicadaApp.swift; sourceTree = "<group>"; };
 		36EF13F40A064872555EB02B /* ServerSetupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupStore.swift; sourceTree = "<group>"; };
+		50DB83045806185AB692E010 /* CicadaAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CicadaAPIClient.swift; sourceTree = "<group>"; };
 		51CB5BD527128393183232E7 /* ServerMetadataClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMetadataClient.swift; sourceTree = "<group>"; };
+		7067CA4929E277FCFCE50DDA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		7CBA9673A23B3A3AF4CDB32B /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
 		844DE39A003BD06B5E365B8B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		9C663FB13EEF5FDD127BC458 /* Cicada.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cicada.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C663FB13EEF5FDD127BC458 /* Cicada.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Cicada.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A62AB02B4FFD013256547676 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
 		AB2F0A927788D9B8B22DC854 /* PlatformInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformInfo.swift; sourceTree = "<group>"; };
 		AC69C6574E7CD3012188A930 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BCE82971270AEBC4A2CEAF2A /* ServerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRecord.swift; sourceTree = "<group>"; };
 		C9A15DAAA9D87410AC3E70B9 /* ServerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupView.swift; sourceTree = "<group>"; };
+		DFA29737AD4D244F48D114F8 /* APIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModels.swift; sourceTree = "<group>"; };
+		E1670EB172F3C2EDCDEFC845 /* ArtworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkView.swift; sourceTree = "<group>"; };
+		E6CCF322654991CDF520E710 /* PlayerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStore.swift; sourceTree = "<group>"; };
+		EC82AC368AC0AD4A87C72665 /* CaptchaImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptchaImageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
 		00D1D5527B4D131DC5FC3825 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				E99BC40DBE6B338A95AF438D /* Login */,
+				CE2BE27675CD84C5A4E682FD /* Player */,
 				7FEC245E90F46072ACAF8FDA /* ServerSetup */,
 			);
 			path = Features;
@@ -52,6 +72,8 @@
 		278F84A51E18DDAF379C696D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				01204AADF1F4582CCE6A10EA /* AudioPlayerController.swift */,
+				50DB83045806185AB692E010 /* CicadaAPIClient.swift */,
 				51CB5BD527128393183232E7 /* ServerMetadataClient.swift */,
 			);
 			path = Services;
@@ -83,6 +105,7 @@
 		67D9BE56502E37BEA9237F97 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DFA29737AD4D244F48D114F8 /* APIModels.swift */,
 				BCE82971270AEBC4A2CEAF2A /* ServerRecord.swift */,
 			);
 			path = Models;
@@ -105,10 +128,21 @@
 			);
 			sourceTree = "<group>";
 		};
+		CE2BE27675CD84C5A4E682FD /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				E6CCF322654991CDF520E710 /* PlayerStore.swift */,
+				A62AB02B4FFD013256547676 /* PlayerView.swift */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
 		D34B57D98321BA8178A5C181 /* Support */ = {
 			isa = PBXGroup;
 			children = (
 				7CBA9673A23B3A3AF4CDB32B /* AppColors.swift */,
+				E1670EB172F3C2EDCDEFC845 /* ArtworkView.swift */,
+				EC82AC368AC0AD4A87C72665 /* CaptchaImageView.swift */,
 				AB2F0A927788D9B8B22DC854 /* PlatformInfo.swift */,
 			);
 			path = Support;
@@ -120,6 +154,15 @@
 				844DE39A003BD06B5E365B8B /* ContentView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		E99BC40DBE6B338A95AF438D /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				03B1F585BB98EF97B6443166 /* LoginStore.swift */,
+				7067CA4929E277FCFCE50DDA /* LoginView.swift */,
+			);
+			path = Login;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -192,10 +235,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A6F7DF61B34ACA044BB046D /* APIModels.swift in Sources */,
 				540311FF630F605EB2D029B6 /* AppColors.swift in Sources */,
+				F70A633508CDCE7968069DF8 /* ArtworkView.swift in Sources */,
+				1CD8C8775EFCD83973DB933B /* AudioPlayerController.swift in Sources */,
+				0971B6785F612465DAC7E5BD /* CaptchaImageView.swift in Sources */,
+				8A0CD7264E3F54F3AFE8C6F5 /* CicadaAPIClient.swift in Sources */,
 				0F984FDDD69B564E0230A4CB /* CicadaApp.swift in Sources */,
 				DA49924C26B41DAB98303DB6 /* ContentView.swift in Sources */,
+				8BB183D6F68837E6692076B4 /* LoginStore.swift in Sources */,
+				9CA0E180D97A85B9E1EDE04D /* LoginView.swift in Sources */,
 				8FDB0E06C64B71D69AABD4B5 /* PlatformInfo.swift in Sources */,
+				31B3D04BEAC099A5CD672D60 /* PlayerStore.swift in Sources */,
+				84F4925E7C08BF0AE904CF85 /* PlayerView.swift in Sources */,
 				D45A1192D9D8B8471640DC09 /* ServerMetadataClient.swift in Sources */,
 				BA878239D0B590108F8B4AA4 /* ServerRecord.swift in Sources */,
 				9941AEA5E64BF322A1E85221 /* ServerSetupStore.swift in Sources */,
@@ -213,18 +265,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GCDGT9G53T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Cicada/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.manyone.cicada.apple;
 				PRODUCT_NAME = Cicada;
 				SDKROOT = auto;
@@ -244,18 +289,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GCDGT9G53T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Cicada/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.manyone.cicada.apple;
 				PRODUCT_NAME = Cicada;
 				SDKROOT = auto;

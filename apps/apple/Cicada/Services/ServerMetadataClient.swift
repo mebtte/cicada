@@ -3,6 +3,9 @@ import Foundation
 struct ServerMetadata: Decodable {
     let version: String
     let hostname: String
+    let imageFileMaxSize: Int?
+    let audioFileMaxSize: Int?
+    let videoFileMaxSize: Int?
 }
 
 struct ServerMetadataClient {
@@ -36,7 +39,13 @@ struct ServerMetadataClient {
     }
 
     static let preview = ServerMetadataClient { _ in
-        ServerMetadata(version: "preview", hostname: "demo.cicada.local")
+        ServerMetadata(
+            version: "preview",
+            hostname: "demo.cicada.local",
+            imageFileMaxSize: nil,
+            audioFileMaxSize: nil,
+            videoFileMaxSize: nil
+        )
     }
 
     private static func metadataURL(for origin: String) throws -> URL {

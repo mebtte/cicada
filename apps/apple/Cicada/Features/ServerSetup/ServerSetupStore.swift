@@ -34,9 +34,88 @@ final class ServerSetupStore: ObservableObject {
         savedServers.first(where: { $0.origin == selectedServerOrigin })
     }
 
+    var selectedUser: ServerUserRecord? {
+        selectedServer?.selectedUser
+    }
+
     func select(_ server: ServerRecord) {
         selectedServerOrigin = server.origin
         draftOrigin = server.origin
+        persist()
+    }
+
+    func showServerSetup() {
+        selectedServerOrigin = nil
+        draftOrigin = savedServers.first?.origin ?? ""
+        persist()
+    }
+
+    func selectUser(_ user: ServerUserRecord) {
+        guard let selectedServerOrigin else { return }
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.selectedUserID = user.id
+            return next
+        }
+        persist()
+    }
+
+    func clearSelectedUser() {
+        guard let selectedServerOrigin else { return }
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.selectedUserID = nil
+            return next
+        }
+        persist()
+    }
+
+    func removeSelectedUser() {
+        guard
+            let selectedServerOrigin,
+            let selectedUserID = selectedServer?.selectedUserID
+        else {
+            return
+        }
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.users.removeAll(where: { $0.id == selectedUserID })
+            next.selectedUserID = nil
+            return next
+        }
+        persist()
+    }
+
+    func upsertAuthenticatedUser(
+        profile: UserProfile,
+        token: String,
+        sessionID: String
+    ) {
+        guard let selectedServerOrigin else { return }
+        let user = ServerUserRecord(
+            id: profile.id,
+            username: profile.username,
+            avatar: profile.avatar,
+            nickname: profile.nickname,
+            joinTimestamp: profile.joinTimestamp,
+            admin: profile.admin,
+            musicbillOrders: profile.musicbillOrders,
+            twoFAEnabled: profile.twoFAEnabled,
+            token: token,
+            sessionID: sessionID
+        )
+
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.users.removeAll(where: { $0.id == user.id })
+            next.users.append(user)
+            next.selectedUserID = user.id
+            return next
+        }
         persist()
     }
 
@@ -59,6 +138,9 @@ final class ServerSetupStore: ObservableObject {
             let record = ServerRecord(
                 version: metadata.version,
                 hostname: metadata.hostname,
+                imageFileMaxSize: metadata.imageFileMaxSize,
+                audioFileMaxSize: metadata.audioFileMaxSize,
+                videoFileMaxSize: metadata.videoFileMaxSize,
                 origin: normalizedOrigin,
                 users: [],
                 selectedUserID: nil
@@ -108,6 +190,9 @@ final class ServerSetupStore: ObservableObject {
                 ServerRecord(
                     version: "0.24.1",
                     hostname: "studio.cicada.local",
+                    imageFileMaxSize: nil,
+                    audioFileMaxSize: nil,
+                    videoFileMaxSize: nil,
                     origin: "https://studio.cicada.local",
                     users: [],
                     selectedUserID: nil
@@ -115,6 +200,9 @@ final class ServerSetupStore: ObservableObject {
                 ServerRecord(
                     version: "0.23.8",
                     hostname: "archive.cicada.local",
+                    imageFileMaxSize: nil,
+                    audioFileMaxSize: nil,
+                    videoFileMaxSize: nil,
                     origin: "https://archive.cicada.local",
                     users: [],
                     selectedUserID: nil
