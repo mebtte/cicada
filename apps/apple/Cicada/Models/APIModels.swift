@@ -185,6 +185,30 @@ struct MusicSearchResponse: Decodable, Hashable {
     var musicList: [Music]
 }
 
+struct MusicWithLyrics: Decodable, Hashable, Identifiable {
+    var music: Music
+    let lyrics: [LyricItem]
+
+    var id: Music.ID {
+        music.id
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case lyrics
+    }
+
+    init(from decoder: Decoder) throws {
+        music = try Music(from: decoder)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        lyrics = try container.decodeIfPresent([LyricItem].self, forKey: .lyrics) ?? []
+    }
+}
+
+struct LyricSearchResponse: Decodable, Hashable {
+    let total: Int
+    var musicList: [MusicWithLyrics]
+}
+
 struct LyricItem: Decodable, Hashable, Identifiable {
     let id: Int
     let lrc: String

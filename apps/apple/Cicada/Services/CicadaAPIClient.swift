@@ -226,6 +226,21 @@ struct CicadaAPIClient: Sendable {
         return result
     }
 
+    func searchMusicByLyric(keyword: String, page: Int, pageSize: Int) async throws -> LyricSearchResponse {
+        var result: LyricSearchResponse = try await request(
+            path: "/api/common/music/search_by_lyric",
+            query: [
+                "keyword": keyword,
+                "page": String(page),
+                "pageSize": String(pageSize),
+            ]
+        )
+        for index in result.musicList.indices {
+            normalizeMusicAssets(&result.musicList[index].music)
+        }
+        return result
+    }
+
     func createMusicPlayRecord(_ payload: CreateMusicPlayRecordPayload) async throws {
         let _: EmptyResponse = try await request(
             path: "/api/common/music_play_record",

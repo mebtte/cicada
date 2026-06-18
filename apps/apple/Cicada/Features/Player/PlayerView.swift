@@ -673,20 +673,40 @@ private struct AddToMusicbillRow: View {
     }
 }
 
+private enum PlayerSearchTab: String, CaseIterable, Identifiable {
+    case music = "Music"
+    case lyrics = "Lyrics"
+
+    var id: String {
+        rawValue
+    }
+
+    var prompt: String {
+        rawValue
+    }
+}
+
 private struct SearchMusicView: View {
     @ObservedObject var playerStore: PlayerStore
 
     @Environment(\.dismiss) private var dismiss
+    @State private var selectedTab = PlayerSearchTab.music
     @State private var searchText = ""
     @State private var musicForMusicbillSelection: Music?
 
-    private var totalPages: Int {
-        max(1, Int(ceil(Double(playerStore.searchMusicTotal) / Double(playerStore.searchMusicPageSize))))
-    }
-
     var body: some View {
         NavigationStack {
-            content
+            VStack(spacing: 0) {
+                Picker("Search Type", selection: $selectedTab) {
+                    ForEach(PlayerSearchTab.allCases) { tab in
+                        Text(tab.rawValue).tag(tab)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding()
+
+                content
+            }
                 .navigationTitle("Search")
                 #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
@@ -706,16 +726,19 @@ private struct SearchMusicView: View {
                         } label: {
                             Image(systemName: "magnifyingglass")
                         }
-                        .disabled(trimmedSearchText.isEmpty || playerStore.isSearchingMusic)
+                        .disabled(trimmedSearchText.isEmpty || isSearching)
                         .help("Search")
                     }
                 }
         }
-        .searchable(text: $searchText, prompt: "Music")
+        .searchable(text: $searchText, prompt: selectedTab.prompt)
         .onSubmit(of: .search) {
             Task {
                 await search(page: 1)
             }
+        }
+        .onChange(of: selectedTab) { _, _ in
+            syncSearchTextWithSelectedTab()
         }
         .sheet(item: $musicForMusicbillSelection) { music in
             AddToMusicbillSheet(
@@ -727,6 +750,16 @@ private struct SearchMusicView: View {
 
     @ViewBuilder
     private var content: some View {
+        switch selectedTab {
+        case .music:
+            musicContent
+        case .lyrics:
+            lyricContent
+        }
+    }
+
+    @ViewBuilder
+    private var musicContent: some View {
         if playerStore.isSearchingMusic && playerStore.searchMusicResults.isEmpty {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -758,7 +791,7 @@ private struct SearchMusicView: View {
                     }
                 }
 
-                if totalPages > 1 {
+                if musicTotalPages > 1 {
                     Section {
                         HStack {
                             Button {
@@ -772,7 +805,7 @@ private struct SearchMusicView: View {
 
                             Spacer()
 
-                            Text("Page \(playerStore.searchMusicPage) of \(totalPages)")
+                            Text("Page \(playerStore.searchMusicPage) of \(musicTotalPages)")
                                 .font(.footnote.monospacedDigit())
                                 .foregroundStyle(.secondary)
 
@@ -785,7 +818,7 @@ private struct SearchMusicView: View {
                             } label: {
                                 Label("Next", systemImage: "chevron.right")
                             }
-                            .disabled(playerStore.searchMusicPage >= totalPages || playerStore.isSearchingMusic)
+                            .disabled(playerStore.searchMusicPage >= musicTotalPages || playerStore.isSearchingMusic)
                         }
                     }
                 }
@@ -801,15 +834,138 @@ private struct SearchMusicView: View {
         }
     }
 
+    @ViewBuilder
+    private var lyricContent: some View {
+        if playerStore.isSearchingLyrics && playerStore.searchLyricResults.isEmpty {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if !playerStore.hasSearchedLyrics {
+            ContentUnavailableView(
+                "Search Lyrics",
+                systemImage: "text.quote",
+                description: Text("Search matching lyric lines across songs.")
+            )
+        } else if playerStore.searchLyricResults.isEmpty {
+            ContentUnavailableView(
+                "No Results",
+                systemImage: "text.quote",
+                description: Text("Try another lyric keyword.")
+            )
+        } else {
+            List {
+                Section("\(playerStore.searchLyricTotal) Songs") {
+                    ForEach(playerStore.searchLyricResults) { result in
+                        MusicRow(
+                            music: result.music,
+                            isCurrent: playerStore.audioPlayer.currentMusic?.id == result.music.id,
+                            isPlaying: playerStore.audioPlayer.currentMusic?.id == result.music.id && playerStore.audioPlayer.isPlaying,
+                            lyricSnippet: result.snippetLines,
+                            lyricKeyword: playerStore.searchLyricKeyword
+                        ) {
+                            playerStore.play(
+                                music: result.music,
+                                in: playerStore.searchLyricResults.map(\.music)
+                            )
+                        } onAddToMusicbill: {
+                            musicForMusicbillSelection = result.music
+                        }
+                    }
+                }
+
+                if lyricTotalPages > 1 {
+                    Section {
+                        HStack {
+                            Button {
+                                Task {
+                                    await search(page: playerStore.searchLyricPage - 1)
+                                }
+                            } label: {
+                                Label("Previous", systemImage: "chevron.left")
+                            }
+                            .disabled(playerStore.searchLyricPage <= 1 || playerStore.isSearchingLyrics)
+
+                            Spacer()
+
+                            Text("Page \(playerStore.searchLyricPage) of \(lyricTotalPages)")
+                                .font(.footnote.monospacedDigit())
+                                .foregroundStyle(.secondary)
+
+                            Spacer()
+
+                            Button {
+                                Task {
+                                    await search(page: playerStore.searchLyricPage + 1)
+                                }
+                            } label: {
+                                Label("Next", systemImage: "chevron.right")
+                            }
+                            .disabled(playerStore.searchLyricPage >= lyricTotalPages || playerStore.isSearchingLyrics)
+                        }
+                    }
+                }
+            }
+            .overlay {
+                if playerStore.isSearchingLyrics {
+                    ProgressView()
+                        .padding(16)
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+            }
+        }
+    }
+
     private var trimmedSearchText: String {
         searchText.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private func search(page: Int) async {
-        await playerStore.searchMusic(keyword: searchText, page: page)
-        if !playerStore.searchMusicKeyword.isEmpty {
-            searchText = playerStore.searchMusicKeyword
+    private var isSearching: Bool {
+        switch selectedTab {
+        case .music:
+            return playerStore.isSearchingMusic
+        case .lyrics:
+            return playerStore.isSearchingLyrics
         }
+    }
+
+    private var musicTotalPages: Int {
+        totalPages(total: playerStore.searchMusicTotal, pageSize: playerStore.searchMusicPageSize)
+    }
+
+    private var lyricTotalPages: Int {
+        totalPages(total: playerStore.searchLyricTotal, pageSize: playerStore.searchLyricPageSize)
+    }
+
+    private func search(page: Int) async {
+        switch selectedTab {
+        case .music:
+            await playerStore.searchMusic(keyword: searchText, page: page)
+            if !playerStore.searchMusicKeyword.isEmpty {
+                searchText = playerStore.searchMusicKeyword
+            }
+        case .lyrics:
+            await playerStore.searchLyrics(keyword: searchText, page: page)
+            if !playerStore.searchLyricKeyword.isEmpty {
+                searchText = playerStore.searchLyricKeyword
+            }
+        }
+    }
+
+    private func syncSearchTextWithSelectedTab() {
+        switch selectedTab {
+        case .music:
+            if !playerStore.searchMusicKeyword.isEmpty {
+                searchText = playerStore.searchMusicKeyword
+            }
+        case .lyrics:
+            if !playerStore.searchLyricKeyword.isEmpty {
+                searchText = playerStore.searchLyricKeyword
+            }
+        }
+    }
+
+    private func totalPages(total: Int, pageSize: Int) -> Int {
+        max(1, Int(ceil(Double(total) / Double(pageSize))))
     }
 }
 
@@ -984,33 +1140,61 @@ private struct MusicRow: View {
     let music: Music
     let isCurrent: Bool
     let isPlaying: Bool
+    let lyricSnippet: [LyricSearchSnippetLine]
+    let lyricKeyword: String
     let onPlay: () -> Void
     let onAddToMusicbill: () -> Void
     var onRemoveFromMusicbill: (() -> Void)? = nil
 
+    init(
+        music: Music,
+        isCurrent: Bool,
+        isPlaying: Bool,
+        lyricSnippet: [LyricSearchSnippetLine] = [],
+        lyricKeyword: String = "",
+        onPlay: @escaping () -> Void,
+        onAddToMusicbill: @escaping () -> Void,
+        onRemoveFromMusicbill: (() -> Void)? = nil
+    ) {
+        self.music = music
+        self.isCurrent = isCurrent
+        self.isPlaying = isPlaying
+        self.lyricSnippet = lyricSnippet
+        self.lyricKeyword = lyricKeyword
+        self.onPlay = onPlay
+        self.onAddToMusicbill = onAddToMusicbill
+        self.onRemoveFromMusicbill = onRemoveFromMusicbill
+    }
+
     var body: some View {
         Button(action: onPlay) {
-            HStack(spacing: 12) {
-                ArtworkView(
-                    urlString: music.coverThumbnail?.isEmpty == false ? music.coverThumbnail : music.cover,
-                    systemImage: "music.note",
-                    size: 44
-                )
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 12) {
+                    ArtworkView(
+                        urlString: music.coverThumbnail?.isEmpty == false ? music.coverThumbnail : music.cover,
+                        systemImage: "music.note",
+                        size: 44
+                    )
 
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(music.name)
-                        .lineLimit(1)
-                    Text(music.performerLine)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(music.name)
+                            .lineLimit(1)
+                        Text(music.performerLine)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+
+                    if isCurrent {
+                        Image(systemName: isPlaying ? "speaker.wave.2.fill" : "pause.circle")
+                            .foregroundStyle(.tint)
+                    }
                 }
 
-                Spacer()
-
-                if isCurrent {
-                    Image(systemName: isPlaying ? "speaker.wave.2.fill" : "pause.circle")
-                        .foregroundStyle(.tint)
+                if !lyricSnippet.isEmpty {
+                    lyricSnippetView
                 }
             }
         }
@@ -1039,6 +1223,19 @@ private struct MusicRow: View {
                 }
             }
         }
+    }
+
+    private var lyricSnippetView: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            ForEach(lyricSnippet) { line in
+                Text(line.text)
+                    .font(line.isMatch ? .callout.weight(.semibold) : .footnote)
+                    .foregroundStyle(line.isMatch ? Color.accentColor : Color.secondary)
+                    .lineLimit(2)
+            }
+        }
+        .padding(.leading, 56)
+        .accessibilityLabel("Matched lyrics")
     }
 }
 

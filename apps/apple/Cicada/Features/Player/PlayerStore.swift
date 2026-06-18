@@ -7,6 +7,21 @@ enum PlayerLyricLoadResult: Equatable {
     case failed(String)
 }
 
+struct LyricSearchSnippetLine: Hashable, Identifiable {
+    let id: String
+    let text: String
+    let isMatch: Bool
+}
+
+struct LyricSearchResult: Hashable, Identifiable {
+    let music: Music
+    let snippetLines: [LyricSearchSnippetLine]
+
+    var id: Music.ID {
+        music.id
+    }
+}
+
 private enum MusicbillMusicBusinessCode {
     static let alreadyExists = "music_already_existed_in_musicbill"
     static let notExists = "music_not_existed_in_musicbill"
@@ -14,7 +29,8 @@ private enum MusicbillMusicBusinessCode {
 
 private enum PlayerSearchConstants {
     static let keywordMaxLength = 32
-    static let pageSize = 50
+    static let musicPageSize = 50
+    static let lyricPageSize = 20
 }
 
 @MainActor
@@ -33,13 +49,23 @@ final class PlayerStore: ObservableObject {
     @Published private(set) var searchMusicKeyword = ""
     @Published private(set) var isSearchingMusic = false
     @Published private(set) var hasSearchedMusic = false
+    @Published private(set) var searchLyricResults: [LyricSearchResult] = []
+    @Published private(set) var searchLyricTotal = 0
+    @Published private(set) var searchLyricPage = 1
+    @Published private(set) var searchLyricKeyword = ""
+    @Published private(set) var isSearchingLyrics = false
+    @Published private(set) var hasSearchedLyrics = false
     @Published var errorMessage: String?
     @Published private(set) var authorizationExpiredMessage: String?
 
     let audioPlayer = AudioPlayerController()
 
     var searchMusicPageSize: Int {
-        PlayerSearchConstants.pageSize
+        PlayerSearchConstants.musicPageSize
+    }
+
+    var searchLyricPageSize: Int {
+        PlayerSearchConstants.lyricPageSize
     }
 
     private var client: CicadaAPIClient?
@@ -61,7 +87,7 @@ final class PlayerStore: ObservableObject {
         isSavingMusicbill = false
         musicbillActionCaptcha = nil
         isLoadingMusicbillActionCaptcha = false
-        resetMusicSearch()
+        resetSearches()
         authorizationExpiredMessage = nil
         audioPlayer.configure(client: client)
     }
@@ -336,7 +362,7 @@ final class PlayerStore: ObservableObject {
             let result = try await client.searchMusic(
                 keyword: keyword,
                 page: page,
-                pageSize: PlayerSearchConstants.pageSize
+                pageSize: PlayerSearchConstants.musicPageSize
             )
             guard searchMusicKeyword == keyword, searchMusicPage == page else {
                 return
@@ -355,6 +381,50 @@ final class PlayerStore: ObservableObject {
         searchMusicKeyword = ""
         isSearchingMusic = false
         hasSearchedMusic = false
+    }
+
+    func searchLyrics(keyword rawKeyword: String, page rawPage: Int = 1) async {
+        guard let client, !isSearchingLyrics else { return }
+        let keyword = normalizedSearchKeyword(rawKeyword)
+        guard !keyword.isEmpty else {
+            resetLyricSearch()
+            return
+        }
+
+        let page = max(1, rawPage)
+        isSearchingLyrics = true
+        hasSearchedLyrics = true
+        searchLyricKeyword = keyword
+        searchLyricPage = page
+        searchLyricResults = []
+        searchLyricTotal = 0
+        defer { isSearchingLyrics = false }
+
+        do {
+            let result = try await client.searchMusicByLyric(
+                keyword: keyword,
+                page: page,
+                pageSize: PlayerSearchConstants.lyricPageSize
+            )
+            guard searchLyricKeyword == keyword, searchLyricPage == page else {
+                return
+            }
+            searchLyricResults = result.musicList.map { item in
+                lyricSearchResult(from: item, keyword: keyword)
+            }
+            searchLyricTotal = result.total
+        } catch {
+            handleRequestError(error)
+        }
+    }
+
+    func resetLyricSearch() {
+        searchLyricResults = []
+        searchLyricTotal = 0
+        searchLyricPage = 1
+        searchLyricKeyword = ""
+        isSearchingLyrics = false
+        hasSearchedLyrics = false
     }
 
     func summary(for id: MusicbillSummary.ID) -> MusicbillSummary? {
@@ -435,6 +505,11 @@ final class PlayerStore: ObservableObject {
         await loadMusicbill(id: id, force: true)
     }
 
+    private func resetSearches() {
+        resetMusicSearch()
+        resetLyricSearch()
+    }
+
     private func normalizedMusicbillName(_ rawName: String) -> String? {
         let name = rawName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty, name.count <= 64 else {
@@ -454,6 +529,49 @@ final class PlayerStore: ObservableObject {
             .filter { !$0.isEmpty }
             .joined(separator: " ")
         return String(collapsedWhitespace.prefix(PlayerSearchConstants.keywordMaxLength))
+    }
+
+    private func lyricSearchResult(from item: MusicWithLyrics, keyword: String) -> LyricSearchResult {
+        for lyric in item.lyrics {
+            let lines = lyricTextLines(from: lyric.lrc)
+            guard let matchIndex = lines.firstIndex(where: { line in
+                line.range(of: keyword, options: [.caseInsensitive, .diacriticInsensitive]) != nil
+            }) else {
+                continue
+            }
+
+            let lowerBound = max(0, matchIndex - 2)
+            let upperBound = min(lines.count - 1, matchIndex + 2)
+            let snippetLines = (lowerBound...upperBound).map { index in
+                LyricSearchSnippetLine(
+                    id: "\(item.id)-\(lyric.id)-\(index)",
+                    text: lines[index],
+                    isMatch: index == matchIndex
+                )
+            }
+            return LyricSearchResult(music: item.music, snippetLines: snippetLines)
+        }
+
+        return LyricSearchResult(music: item.music, snippetLines: [])
+    }
+
+    private func lyricTextLines(from lrc: String) -> [String] {
+        lrc.components(separatedBy: .newlines).compactMap(strippedLyricLine)
+    }
+
+    private func strippedLyricLine(_ rawLine: String) -> String? {
+        let trimmedLine = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedLine.isEmpty else { return nil }
+
+        let pattern = #"\[[^\]]+\]"#
+        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+            return trimmedLine
+        }
+        let range = NSRange(location: 0, length: (trimmedLine as NSString).length)
+        let text = regex
+            .stringByReplacingMatches(in: trimmedLine, range: range, withTemplate: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return text.isEmpty ? nil : text
     }
 
     private func handleRequestError(_ error: Error) {
