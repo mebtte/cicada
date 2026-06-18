@@ -21,6 +21,17 @@ enum CicadaAPIError: LocalizedError, Equatable {
             return "The server response was empty."
         }
     }
+
+    var businessCode: String? {
+        guard case .business(let code, _) = self else {
+            return nil
+        }
+        return code
+    }
+
+    static func isNotAuthorized(_ error: Error) -> Bool {
+        (error as? CicadaAPIError)?.businessCode == "not_authorized"
+    }
 }
 
 struct CicadaAPIClient: Sendable {
@@ -120,11 +131,99 @@ struct CicadaAPIClient: Sendable {
         return musicbill
     }
 
+    func createMusicbill(name: String) async throws -> String {
+        try await request(
+            path: "/api/common/musicbill",
+            method: "POST",
+            body: CreateMusicbillBody(name: name)
+        )
+    }
+
+    func updateMusicbillName(id: String, name: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/musicbill",
+            method: "PUT",
+            body: UpdateMusicbillStringBody(id: id, key: "name", value: name)
+        )
+    }
+
+    func updateMusicbillPublic(
+        id: String,
+        isPublic: Bool,
+        captchaID: String? = nil,
+        captchaValue: String? = nil
+    ) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/musicbill",
+            method: "PUT",
+            body: UpdateMusicbillBoolBody(
+                id: id,
+                key: "public",
+                value: isPublic,
+                captchaId: captchaID,
+                captchaValue: captchaValue
+            )
+        )
+    }
+
+    func deleteMusicbill(
+        id: String,
+        captchaID: String,
+        captchaValue: String
+    ) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/musicbill",
+            method: "DELETE",
+            query: [
+                "id": id,
+                "captchaId": captchaID,
+                "captchaValue": captchaValue,
+            ]
+        )
+    }
+
+    func addMusicToMusicbill(musicbillID: String, musicID: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/musicbill_music",
+            method: "POST",
+            body: MusicbillMusicBody(
+                musicbillId: musicbillID,
+                musicId: musicID
+            )
+        )
+    }
+
+    func removeMusicFromMusicbill(musicbillID: String, musicID: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/musicbill_music",
+            method: "DELETE",
+            query: [
+                "musicbillId": musicbillID,
+                "musicId": musicID,
+            ]
+        )
+    }
+
     func getLyricList(musicID: String) async throws -> [LyricItem] {
         try await request(
             path: "/api/common/lyric_list",
             query: ["musicId": musicID]
         )
+    }
+
+    func searchMusic(keyword: String, page: Int, pageSize: Int) async throws -> MusicSearchResponse {
+        var result: MusicSearchResponse = try await request(
+            path: "/api/common/music/search",
+            query: [
+                "keyword": keyword,
+                "page": String(page),
+                "pageSize": String(pageSize),
+            ]
+        )
+        for index in result.musicList.indices {
+            normalizeMusicAssets(&result.musicList[index])
+        }
+        return result
     }
 
     func createMusicPlayRecord(_ payload: CreateMusicPlayRecordPayload) async throws {
@@ -331,4 +430,27 @@ private struct LoginWith2FABody: Encodable {
     let password: String
     let twoFAToken: String
     let deviceName: String
+}
+
+private struct CreateMusicbillBody: Encodable {
+    let name: String
+}
+
+private struct UpdateMusicbillStringBody: Encodable {
+    let id: String
+    let key: String
+    let value: String
+}
+
+private struct UpdateMusicbillBoolBody: Encodable {
+    let id: String
+    let key: String
+    let value: Bool
+    let captchaId: String?
+    let captchaValue: String?
+}
+
+private struct MusicbillMusicBody: Encodable {
+    let musicbillId: String
+    let musicId: String
 }

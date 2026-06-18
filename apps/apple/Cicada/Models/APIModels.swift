@@ -180,6 +180,11 @@ struct MusicbillDetail: Decodable, Hashable, Identifiable {
     }
 }
 
+struct MusicSearchResponse: Decodable, Hashable {
+    let total: Int
+    var musicList: [Music]
+}
+
 struct LyricItem: Decodable, Hashable, Identifiable {
     let id: Int
     let lrc: String

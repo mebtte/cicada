@@ -27,8 +27,8 @@ struct ServerUserRecord: Codable, Hashable, Identifiable {
 }
 
 struct ServerRecord: Codable, Hashable, Identifiable {
-    let version: String
-    let hostname: String
+    var version: String
+    var hostname: String
     var imageFileMaxSize: Int?
     var audioFileMaxSize: Int?
     var videoFileMaxSize: Int?

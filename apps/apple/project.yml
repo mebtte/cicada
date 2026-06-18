@@ -21,6 +21,8 @@ targets:
     info:
       path: Cicada/Info.plist
       properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSApplicationCategoryType: public.app-category.music
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true

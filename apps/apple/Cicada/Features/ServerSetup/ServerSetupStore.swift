@@ -8,7 +8,10 @@ final class ServerSetupStore: ObservableObject {
     @Published var selectedServerOrigin: String?
     @Published var draftOrigin: String
     @Published var isConnecting = false
+    @Published private(set) var isRefreshingSelectedServerMetadata = false
+    @Published private(set) var selectedServerMetadataError: String?
     @Published var errorMessage: String?
+    @Published var authenticationMessage: String?
     @Published var pendingDeletion: ServerRecord?
 
     private let client: ServerMetadataClient
@@ -36,6 +39,18 @@ final class ServerSetupStore: ObservableObject {
 
     var selectedUser: ServerUserRecord? {
         selectedServer?.selectedUser
+    }
+
+    var selectedServerVersionWarning: String? {
+        guard
+            let selectedServer,
+            let appMajorVersion = majorVersion(from: appVersion),
+            let serverMajorVersion = majorVersion(from: selectedServer.version),
+            appMajorVersion != serverMajorVersion
+        else {
+            return nil
+        }
+        return "Server \(selectedServer.version) may not match app \(appVersion)."
     }
 
     func select(_ server: ServerRecord) {
@@ -72,7 +87,7 @@ final class ServerSetupStore: ObservableObject {
         persist()
     }
 
-    func removeSelectedUser() {
+    func removeSelectedUser(message: String? = nil) {
         guard
             let selectedServerOrigin,
             let selectedUserID = selectedServer?.selectedUserID
@@ -86,7 +101,12 @@ final class ServerSetupStore: ObservableObject {
             next.selectedUserID = nil
             return next
         }
+        authenticationMessage = message
         persist()
+    }
+
+    func dismissAuthenticationMessage() {
+        authenticationMessage = nil
     }
 
     func upsertAuthenticatedUser(
@@ -126,32 +146,56 @@ final class ServerSetupStore: ObservableObject {
             let normalizedOrigin = try normalizeOrigin(from: draftOrigin)
             draftOrigin = normalizedOrigin
 
-            if let existingServer = savedServers.first(where: { $0.origin == normalizedOrigin }) {
-                select(existingServer)
-                return
-            }
-
             isConnecting = true
             defer { isConnecting = false }
 
             let metadata = try await client.fetchMetadata(normalizedOrigin)
-            let record = ServerRecord(
-                version: metadata.version,
-                hostname: metadata.hostname,
-                imageFileMaxSize: metadata.imageFileMaxSize,
-                audioFileMaxSize: metadata.audioFileMaxSize,
-                videoFileMaxSize: metadata.videoFileMaxSize,
-                origin: normalizedOrigin,
-                users: [],
-                selectedUserID: nil
-            )
+            if savedServers.contains(where: { $0.origin == normalizedOrigin }) {
+                updateServerMetadata(origin: normalizedOrigin, metadata: metadata)
+                selectedServerOrigin = normalizedOrigin
+            } else {
+                let record = ServerRecord(
+                    version: metadata.version,
+                    hostname: metadata.hostname,
+                    imageFileMaxSize: metadata.imageFileMaxSize,
+                    audioFileMaxSize: metadata.audioFileMaxSize,
+                    videoFileMaxSize: metadata.videoFileMaxSize,
+                    origin: normalizedOrigin,
+                    users: [],
+                    selectedUserID: nil
+                )
 
-            savedServers.insert(record, at: 0)
-            selectedServerOrigin = record.origin
-            draftOrigin = record.origin
+                savedServers.insert(record, at: 0)
+                selectedServerOrigin = record.origin
+            }
+            selectedServerMetadataError = nil
+            draftOrigin = normalizedOrigin
             persist()
         } catch {
             errorMessage = presentableMessage(for: error)
+        }
+    }
+
+    func refreshSelectedServerMetadata() async {
+        guard
+            let selectedServer,
+            !isRefreshingSelectedServerMetadata
+        else {
+            return
+        }
+
+        isRefreshingSelectedServerMetadata = true
+        defer {
+            isRefreshingSelectedServerMetadata = false
+        }
+
+        do {
+            let metadata = try await client.fetchMetadata(selectedServer.origin)
+            updateServerMetadata(origin: selectedServer.origin, metadata: metadata)
+            selectedServerMetadataError = nil
+            persist()
+        } catch {
+            selectedServerMetadataError = presentableMessage(for: error)
         }
     }
 
@@ -273,6 +317,19 @@ final class ServerSetupStore: ObservableObject {
         storage.set(data, forKey: Self.storageKey)
     }
 
+    private func updateServerMetadata(origin: String, metadata: ServerMetadata) {
+        savedServers = savedServers.map { server in
+            guard server.origin == origin else { return server }
+            var next = server
+            next.version = metadata.version
+            next.hostname = metadata.hostname
+            next.imageFileMaxSize = metadata.imageFileMaxSize
+            next.audioFileMaxSize = metadata.audioFileMaxSize
+            next.videoFileMaxSize = metadata.videoFileMaxSize
+            return next
+        }
+    }
+
     private static func loadSnapshot(from storage: UserDefaults) -> ServerSnapshot {
         guard
             let data = storage.data(forKey: storageKey),
@@ -291,6 +348,15 @@ final class ServerSetupStore: ObservableObject {
         }
 
         return error.localizedDescription
+    }
+
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            ?? "apple"
+    }
+
+    private func majorVersion(from version: String) -> Int? {
+        version.split(separator: ".").first.flatMap { Int($0) }
     }
 }
 

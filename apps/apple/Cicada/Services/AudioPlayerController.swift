@@ -4,6 +4,8 @@ import Foundation
 @MainActor
 final class AudioPlayerController: ObservableObject {
     @Published private(set) var currentMusic: Music?
+    @Published private(set) var queue: [Music] = []
+    @Published private(set) var currentQueueIndex = -1
     @Published var currentTime: Double = 0
     @Published private(set) var duration: Double = 0
     @Published private(set) var isPlaying = false
@@ -12,8 +14,6 @@ final class AudioPlayerController: ObservableObject {
     private let player = AVPlayer()
     private var timeObserver: Any?
     private var endObserver: NSObjectProtocol?
-    private var playlist: [Music] = []
-    private var currentIndex = -1
     private var client: CicadaAPIClient?
     private var activeRecord: ActivePlaybackRecord?
 
@@ -43,9 +43,13 @@ final class AudioPlayerController: ObservableObject {
             return
         }
         self.client = client
-        self.playlist = playlist.isEmpty ? [music] : playlist
-        let nextIndex = self.playlist.firstIndex(where: { $0.id == music.id }) ?? 0
+        queue = playlist.isEmpty ? [music] : playlist
+        let nextIndex = queue.firstIndex(where: { $0.id == music.id }) ?? 0
         playAt(index: nextIndex, uploadCurrent: true)
+    }
+
+    func playQueueItem(at index: Int) {
+        playAt(index: index, uploadCurrent: true)
     }
 
     func togglePlayback() {
@@ -69,18 +73,18 @@ final class AudioPlayerController: ObservableObject {
     }
 
     func next() {
-        guard !playlist.isEmpty else { return }
-        let nextIndex = currentIndex + 1 < playlist.count ? currentIndex + 1 : 0
+        guard !queue.isEmpty else { return }
+        let nextIndex = currentQueueIndex + 1 < queue.count ? currentQueueIndex + 1 : 0
         playAt(index: nextIndex, uploadCurrent: true)
     }
 
     func previous() {
-        guard !playlist.isEmpty else { return }
+        guard !queue.isEmpty else { return }
         if currentTime > 3 {
             seek(to: 0)
             return
         }
-        let nextIndex = currentIndex > 0 ? currentIndex - 1 : playlist.count - 1
+        let nextIndex = currentQueueIndex > 0 ? currentQueueIndex - 1 : queue.count - 1
         playAt(index: nextIndex, uploadCurrent: true)
     }
 
@@ -100,8 +104,8 @@ final class AudioPlayerController: ObservableObject {
         player.pause()
         player.replaceCurrentItem(with: nil)
         removeEndObserver()
-        playlist = []
-        currentIndex = -1
+        queue = []
+        currentQueueIndex = -1
         currentMusic = nil
         currentTime = 0
         duration = 0
@@ -110,12 +114,12 @@ final class AudioPlayerController: ObservableObject {
     }
 
     private func playAt(index: Int, uploadCurrent: Bool) {
-        guard playlist.indices.contains(index) else { return }
+        guard queue.indices.contains(index) else { return }
         if uploadCurrent {
             uploadActiveRecord()
         }
 
-        let music = playlist[index]
+        let music = queue[index]
         guard let url = client?.musicPlaybackURL(for: music) else {
             errorMessage = "This music asset URL is invalid."
             return
@@ -125,7 +129,7 @@ final class AudioPlayerController: ObservableObject {
         player.replaceCurrentItem(with: item)
         installEndObserver(for: item)
 
-        currentIndex = index
+        currentQueueIndex = index
         currentMusic = music
         currentTime = 0
         duration = 0
@@ -185,8 +189,8 @@ final class AudioPlayerController: ObservableObject {
         activeRecord?.maxPercent = 1
         uploadActiveRecord()
 
-        if currentIndex + 1 < playlist.count {
-            playAt(index: currentIndex + 1, uploadCurrent: false)
+        if currentQueueIndex + 1 < queue.count {
+            playAt(index: currentQueueIndex + 1, uploadCurrent: false)
         } else {
             isPlaying = false
         }

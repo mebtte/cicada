@@ -126,6 +126,23 @@ struct LoginView: View {
         } message: {
             Text(loginStore.errorMessage ?? "")
         }
+        .alert(
+            "Session Ended",
+            isPresented: Binding(
+                get: { store.authenticationMessage != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        store.dismissAuthenticationMessage()
+                    }
+                }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                store.dismissAuthenticationMessage()
+            }
+        } message: {
+            Text(store.authenticationMessage ?? "")
+        }
         .sheet(isPresented: $loginStore.needsTwoFA) {
             TwoFALoginSheet(loginStore: loginStore, serverStore: store)
         }
