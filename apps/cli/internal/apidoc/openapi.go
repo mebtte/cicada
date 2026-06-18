@@ -27,9 +27,9 @@ type operation struct {
 
 // Register mounts the OpenAPI spec and the built-in documentation page.
 func Register(r *gin.Engine) {
-	r.GET("/api_reference", servePage)
-	r.GET("/api_reference/", servePage)
-	r.GET("/api_reference/openapi.json", func(c *gin.Context) {
+	r.GET("/apidoc", servePage)
+	r.GET("/apidoc/", servePage)
+	r.GET("/apidoc/openapi.json", func(c *gin.Context) {
 		c.JSON(http.StatusOK, Spec())
 	})
 }
@@ -118,7 +118,7 @@ func operations() []operation {
 	return []operation{
 		{
 			Method:      "GET",
-			Path:        "/api_reference/openapi.json",
+			Path:        "/apidoc/openapi.json",
 			Summary:     "Get OpenAPI spec",
 			Description: "Return the OpenAPI 3.0 JSON document for the current service.",
 			Tags:        []string{"Docs"},

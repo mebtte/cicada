@@ -34,15 +34,12 @@ if (process.env.NODE_ENV === 'production') {
   precacheAndRoute(self.__WB_MANIFEST || []);
 
   /**
-   * SPA 路由兜底, 离线刷新任意路由都能进 App Shell
-   * 排除后端接口/资源路径, 避免被 index.html 吞掉
+   * SPA 路由兜底. PWA 使用 HashRouter, 只有根路径需要返回 App Shell;
+   * 其它导航路径交给后端, 避免新增后端路径被 index.html 吞掉.
    */
   registerRoute(
     new NavigationRoute(createHandlerBoundToURL('/index.html'), {
-      denylist: [
-        new RegExp(`^/${PathPrefix.API}/`),
-        new RegExp(`^/${PathPrefix.ASSET}/`),
-      ],
+      allowlist: [/^\/$/],
     }),
   );
 

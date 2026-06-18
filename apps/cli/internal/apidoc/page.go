@@ -418,7 +418,7 @@ const docsPageHTML = `<!doctype html>
         <p>OpenAPI-backed reference for the current Go service.</p>
       </div>
       <input id="search" class="search" type="search" placeholder="Search path, summary, or tag">
-      <a class="raw-link" href="/api_reference/openapi.json" target="_blank" rel="noreferrer">View raw OpenAPI JSON</a>
+      <a class="raw-link" href="/apidoc/openapi.json" target="_blank" rel="noreferrer">View raw OpenAPI JSON</a>
       <nav id="nav"></nav>
     </aside>
     <main class="content">
@@ -774,7 +774,7 @@ const docsPageHTML = `<!doctype html>
       const status = document.getElementById("status");
 
       try {
-        const response = await fetch("/api_reference/openapi.json");
+        const response = await fetch("/apidoc/openapi.json");
         if (!response.ok) throw new Error("HTTP " + response.status);
         const spec = await response.json();
         const operations = buildOperations(spec);
