@@ -198,6 +198,8 @@ const zhCN: {
   failed_to_get_server_metadata: '无法连接到当前服务器',
   server_major_version_mismatch:
     'PWA 和服务器必须使用相同的大版本。PWA: %s1，服务器: %s2',
+  server_version_unsupported:
+    '当前 PWA 的版本是 %s1，服务端的版本是 %s2，PWA 只能使用同大版本且大于 %s1 的服务端。',
   password: '密码',
   login: '登录',
   or: '或者',

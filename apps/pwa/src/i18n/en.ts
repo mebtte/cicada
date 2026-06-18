@@ -201,6 +201,8 @@ export default {
   failed_to_get_server_metadata: 'failed to connect this server',
   server_major_version_mismatch:
     'PWA and server must use the same major version. PWA: %s1, server: %s2',
+  server_version_unsupported:
+    'Current PWA version is %s1, server version is %s2. This PWA can only use a server in the same major version and greater than %s1.',
   password: 'password',
   login: 'login',
   or: 'or',
