@@ -69,6 +69,37 @@ struct MusicbillUser: Decodable, Hashable, Identifiable {
     let nickname: String
     var avatar: String
     var accepted: Bool?
+
+    init(
+        id: String,
+        nickname: String,
+        avatar: String,
+        accepted: Bool? = nil
+    ) {
+        self.id = id
+        self.nickname = nickname
+        self.avatar = avatar
+        self.accepted = accepted
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case nickname
+        case avatar
+        case accepted
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        nickname = try container.decode(String.self, forKey: .nickname)
+        avatar = try container.decodeIfPresent(String.self, forKey: .avatar) ?? ""
+        if container.contains(.accepted) {
+            accepted = try container.decodeFlexibleBool(forKey: .accepted)
+        } else {
+            accepted = nil
+        }
+    }
 }
 
 struct ArtistSummary: Decodable, Hashable, Identifiable {
@@ -236,6 +267,253 @@ struct MusicbillDetail: Decodable, Hashable, Identifiable {
     }
 }
 
+struct PublicMusicbillSearchItem: Decodable, Hashable, Identifiable {
+    let id: String
+    let name: String
+    var cover: String
+    let musicCount: Int
+    let collectionCount: Int
+    var user: MusicbillUser
+
+    init(
+        id: String,
+        name: String,
+        cover: String,
+        musicCount: Int,
+        collectionCount: Int,
+        user: MusicbillUser
+    ) {
+        self.id = id
+        self.name = name
+        self.cover = cover
+        self.musicCount = musicCount
+        self.collectionCount = collectionCount
+        self.user = user
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case cover
+        case musicCount
+        case collectionCount
+        case user
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        musicCount = try container.decodeIfPresent(Int.self, forKey: .musicCount) ?? 0
+        collectionCount = try container.decodeIfPresent(Int.self, forKey: .collectionCount) ?? 0
+        user = try container.decode(MusicbillUser.self, forKey: .user)
+    }
+}
+
+struct PublicMusicbillSearchResponse: Decodable, Hashable {
+    let total: Int
+    var musicbillList: [PublicMusicbillSearchItem]
+}
+
+struct PublicMusicbillCollectionItem: Decodable, Hashable, Identifiable {
+    let id: String
+    let name: String
+    var cover: String
+    let musicCount: Int
+    var user: MusicbillUser
+
+    var searchItem: PublicMusicbillSearchItem {
+        PublicMusicbillSearchItem(
+            id: id,
+            name: name,
+            cover: cover,
+            musicCount: musicCount,
+            collectionCount: 0,
+            user: user
+        )
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case cover
+        case musicCount
+        case user
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        musicCount = try container.decodeIfPresent(Int.self, forKey: .musicCount) ?? 0
+        user = try container.decode(MusicbillUser.self, forKey: .user)
+    }
+}
+
+struct PublicMusicbillCollectionResponse: Decodable, Hashable {
+    let total: Int
+    var collectionList: [PublicMusicbillCollectionItem]
+}
+
+struct SharedMusicbillInvitation: Decodable, Hashable, Identifiable {
+    let id: Int
+    let inviteTimestamp: TimeInterval
+    let inviteUserID: String
+    let inviteUserNickname: String
+    let musicbillID: String
+    let musicbillName: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case inviteTimestamp
+        case inviteUserID = "inviteUserId"
+        case inviteUserNickname
+        case musicbillID = "musicbillId"
+        case musicbillName
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        inviteTimestamp = try container.decode(TimeInterval.self, forKey: .inviteTimestamp)
+        inviteUserID = try container.decode(String.self, forKey: .inviteUserID)
+        inviteUserNickname = try container.decode(String.self, forKey: .inviteUserNickname)
+        musicbillID = try container.decode(String.self, forKey: .musicbillID)
+        musicbillName = try container.decodeIfPresent(String.self, forKey: .musicbillName) ?? ""
+    }
+}
+
+struct UserPublicMusicbill: Decodable, Hashable, Identifiable {
+    let id: String
+    var cover: String
+    let name: String
+    let musicCount: Int
+
+    func searchItem(user: MusicbillUser) -> PublicMusicbillSearchItem {
+        PublicMusicbillSearchItem(
+            id: id,
+            name: name,
+            cover: cover,
+            musicCount: musicCount,
+            collectionCount: 0,
+            user: user
+        )
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case cover
+        case name
+        case musicCount
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        name = try container.decode(String.self, forKey: .name)
+        musicCount = try container.decodeIfPresent(Int.self, forKey: .musicCount) ?? 0
+    }
+}
+
+struct UserDetail: Decodable, Hashable, Identifiable {
+    let id: String
+    var avatar: String
+    let joinTimestamp: TimeInterval
+    let nickname: String
+    let username: String
+    var musicbillList: [UserPublicMusicbill]
+
+    var musicbillUser: MusicbillUser {
+        MusicbillUser(
+            id: id,
+            nickname: nickname,
+            avatar: avatar,
+            accepted: nil
+        )
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case avatar
+        case joinTimestamp
+        case nickname
+        case username
+        case musicbillList
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        avatar = try container.decodeIfPresent(String.self, forKey: .avatar) ?? ""
+        joinTimestamp = try container.decode(TimeInterval.self, forKey: .joinTimestamp)
+        nickname = try container.decode(String.self, forKey: .nickname)
+        username = try container.decode(String.self, forKey: .username)
+        musicbillList = try container.decodeIfPresent([UserPublicMusicbill].self, forKey: .musicbillList) ?? []
+    }
+}
+
+struct AuthSession: Decodable, Hashable, Identifiable {
+    let id: String
+    let deviceName: String
+    let createTimestamp: TimeInterval
+    let lastSeenTimestamp: TimeInterval
+    let inactiveExpireTimestamp: TimeInterval
+    let current: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case deviceName
+        case createTimestamp
+        case lastSeenTimestamp
+        case inactiveExpireTimestamp
+        case current
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        deviceName = try container.decodeIfPresent(String.self, forKey: .deviceName) ?? ""
+        createTimestamp = try container.decode(TimeInterval.self, forKey: .createTimestamp)
+        lastSeenTimestamp = try container.decode(TimeInterval.self, forKey: .lastSeenTimestamp)
+        inactiveExpireTimestamp = try container.decode(TimeInterval.self, forKey: .inactiveExpireTimestamp)
+        current = try container.decodeFlexibleBool(forKey: .current)
+    }
+}
+
+struct PublicMusicbillDetail: Decodable, Hashable, Identifiable {
+    let id: String
+    var cover: String
+    let name: String
+    let isPublic: Bool
+    var user: MusicbillUser
+    var musicList: [Music]
+    var collected: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case cover
+        case name
+        case isPublic = "public"
+        case user
+        case musicList
+        case collected
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        name = try container.decode(String.self, forKey: .name)
+        isPublic = try container.decodeFlexibleBool(forKey: .isPublic)
+        user = try container.decode(MusicbillUser.self, forKey: .user)
+        musicList = try container.decodeIfPresent([Music].self, forKey: .musicList) ?? []
+        collected = try container.decodeFlexibleBool(forKey: .collected)
+    }
+}
+
 struct MusicSearchResponse: Decodable, Hashable {
     let total: Int
     var musicList: [Music]
@@ -263,6 +541,70 @@ struct MusicWithLyrics: Decodable, Hashable, Identifiable {
 struct LyricSearchResponse: Decodable, Hashable {
     let total: Int
     var musicList: [MusicWithLyrics]
+}
+
+struct MusicDetail: Decodable, Hashable, Identifiable {
+    let id: String
+    let type: Int
+    let name: String
+    let aliases: [String]
+    var cover: String
+    var coverThumbnail: String?
+    var asset: String
+    let heat: Int
+    let createTimestamp: TimeInterval
+    let year: Int?
+    let assetDurationMs: Int?
+    let assetCodec: String?
+    let assetBitRate: Int?
+    let musicbillCount: Int
+    var relatedPublicMusicbillList: [PublicMusicbillSearchItem]
+    var performers: [ArtistSearchItem]
+    var lyricists: [ArtistSearchItem]
+    var composers: [ArtistSearchItem]
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case type
+        case name
+        case aliases
+        case cover
+        case coverThumbnail
+        case asset
+        case heat
+        case createTimestamp
+        case year
+        case assetDurationMs
+        case assetCodec
+        case assetBitRate
+        case musicbillCount
+        case relatedPublicMusicbillList
+        case performers
+        case lyricists
+        case composers
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        type = try container.decode(Int.self, forKey: .type)
+        name = try container.decode(String.self, forKey: .name)
+        aliases = try container.decodeIfPresent([String].self, forKey: .aliases) ?? []
+        cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        coverThumbnail = try container.decodeIfPresent(String.self, forKey: .coverThumbnail)
+        asset = try container.decodeIfPresent(String.self, forKey: .asset) ?? ""
+        heat = try container.decodeIfPresent(Int.self, forKey: .heat) ?? 0
+        createTimestamp = try container.decodeIfPresent(TimeInterval.self, forKey: .createTimestamp) ?? 0
+        year = try container.decodeIfPresent(Int.self, forKey: .year)
+        assetDurationMs = try container.decodeIfPresent(Int.self, forKey: .assetDurationMs)
+        assetCodec = try container.decodeIfPresent(String.self, forKey: .assetCodec)
+        assetBitRate = try container.decodeIfPresent(Int.self, forKey: .assetBitRate)
+        musicbillCount = try container.decodeIfPresent(Int.self, forKey: .musicbillCount) ?? 0
+        relatedPublicMusicbillList = try container.decodeIfPresent([PublicMusicbillSearchItem].self, forKey: .relatedPublicMusicbillList) ?? []
+        performers = try container.decodeIfPresent([ArtistSearchItem].self, forKey: .performers) ?? []
+        lyricists = try container.decodeIfPresent([ArtistSearchItem].self, forKey: .lyricists) ?? []
+        composers = try container.decodeIfPresent([ArtistSearchItem].self, forKey: .composers) ?? []
+    }
 }
 
 struct ArtistDetail: Decodable, Hashable, Identifiable {

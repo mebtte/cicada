@@ -8,6 +8,9 @@ struct PlayerView: View {
     @State private var isShowingNowPlaying = false
     @State private var isShowingQueue = false
     @State private var isShowingSearch = false
+    @State private var isShowingProfile = false
+    @State private var isShowingSharedMusicbillInvitations = false
+    @State private var isShowingPublicMusicbillCollections = false
 
     var body: some View {
         if let server = serverStore.selectedServer,
@@ -45,6 +48,18 @@ struct PlayerView: View {
             }
             .sheet(isPresented: $isShowingSearch) {
                 SearchMusicView(playerStore: playerStore)
+            }
+            .sheet(isPresented: $isShowingProfile) {
+                AccountProfileView(
+                    playerStore: playerStore,
+                    serverStore: serverStore
+                )
+            }
+            .sheet(isPresented: $isShowingSharedMusicbillInvitations) {
+                SharedMusicbillInvitationView(playerStore: playerStore)
+            }
+            .sheet(isPresented: $isShowingPublicMusicbillCollections) {
+                PublicMusicbillCollectionView(playerStore: playerStore)
             }
             .task(id: authKey(server: server, user: user)) {
                 playerStore.configure(server: server, user: user)
@@ -147,6 +162,20 @@ struct PlayerView: View {
                 .help("Search Music")
 
                 Button {
+                    isShowingSharedMusicbillInvitations = true
+                } label: {
+                    Image(systemName: "person.2")
+                }
+                .help("Shared Invitations")
+
+                Button {
+                    isShowingPublicMusicbillCollections = true
+                } label: {
+                    Image(systemName: "star")
+                }
+                .help("Public Collections")
+
+                Button {
                     isShowingCreateMusicbill = true
                 } label: {
                     Image(systemName: "plus")
@@ -176,6 +205,14 @@ struct PlayerView: View {
 
     private func accountMenu(server: ServerRecord, user: ServerUserRecord) -> some View {
         Menu {
+            Button {
+                isShowingProfile = true
+            } label: {
+                Label("Profile", systemImage: "person.crop.circle")
+            }
+
+            Divider()
+
             Button {
                 playerStore.audioPlayer.stop()
                 serverStore.clearSelectedUser()
@@ -316,6 +353,699 @@ private struct MusicbillNameSheet: View {
         if didSave {
             dismiss()
         }
+    }
+}
+
+private struct UserDetailTarget: Identifiable {
+    let id: String
+}
+
+private struct AccountProfileView: View {
+    @ObservedObject var playerStore: PlayerStore
+    @ObservedObject var serverStore: ServerSetupStore
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var nickname = ""
+    @State private var isShowingPasswordSheet = false
+    @State private var isShowingSessions = false
+    @State private var userForDetail: UserDetailTarget?
+
+    private var user: ServerUserRecord? {
+        serverStore.selectedUser
+    }
+
+    private var trimmedNickname: String {
+        nickname
+            .components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
+    }
+
+    private var canSaveNickname: Bool {
+        guard let user else { return false }
+        return !playerStore.isUpdatingProfile &&
+            !trimmedNickname.isEmpty &&
+            trimmedNickname.count <= 32 &&
+            trimmedNickname != user.nickname
+    }
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let user {
+                    Form {
+                        Section {
+                            HStack(spacing: 14) {
+                                ArtworkView(
+                                    urlString: user.avatar,
+                                    systemImage: "person.crop.square",
+                                    size: 72
+                                )
+
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Text(user.nickname)
+                                        .font(.headline)
+                                    Text("@\(user.username)")
+                                        .foregroundStyle(.secondary)
+                                    Label(
+                                        user.twoFAEnabled ? "2FA Enabled" : "2FA Disabled",
+                                        systemImage: user.twoFAEnabled ? "lock.shield" : "lock.open"
+                                    )
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+
+                        Section("Nickname") {
+                            TextField("Nickname", text: $nickname)
+                                .onChange(of: nickname) { _, value in
+                                    if value.count > 32 {
+                                        nickname = String(value.prefix(32))
+                                    }
+                                }
+                                .onSubmit {
+                                    guard canSaveNickname else { return }
+                                    Task {
+                                        await saveNickname()
+                                    }
+                                }
+
+                            LabeledContent("Characters", value: "\(trimmedNickname.count)/32")
+                                .font(.footnote)
+                                .foregroundStyle(trimmedNickname.count > 32 ? Color.red : Color.secondary)
+                        }
+
+                        Section("Account") {
+                            LabeledContent("Username", value: user.username)
+                            LabeledContent("Joined", value: formatCicadaTimestamp(user.joinTimestamp, date: .abbreviated, time: .omitted))
+                        }
+
+                        Section {
+                            Button {
+                                Task {
+                                    await saveNickname()
+                                }
+                            } label: {
+                                if playerStore.isUpdatingProfile {
+                                    ProgressView()
+                                } else {
+                                    Label("Save Nickname", systemImage: "checkmark")
+                                }
+                            }
+                            .disabled(!canSaveNickname)
+
+                            Button {
+                                isShowingPasswordSheet = true
+                            } label: {
+                                Label("Change Password", systemImage: "key")
+                            }
+                            .disabled(playerStore.isChangingPassword)
+
+                            Button {
+                                isShowingSessions = true
+                            } label: {
+                                Label("Authorized Devices", systemImage: "desktopcomputer.and.macbook")
+                            }
+
+                            Button {
+                                userForDetail = UserDetailTarget(id: user.id)
+                            } label: {
+                                Label("Public Profile", systemImage: "person.text.rectangle")
+                            }
+                        }
+                    }
+                } else {
+                    ContentUnavailableView(
+                        "No User Selected",
+                        systemImage: "person.crop.circle.badge.exclamationmark",
+                        description: Text("Sign in before editing profile.")
+                    )
+                }
+            }
+            .navigationTitle("Profile")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        Task {
+                            await refreshProfile()
+                        }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                    .disabled(playerStore.isUpdatingProfile)
+                    .help("Refresh Profile")
+                }
+            }
+        }
+        .sheet(isPresented: $isShowingPasswordSheet) {
+            ChangePasswordSheet(
+                playerStore: playerStore,
+                twoFAEnabled: user?.twoFAEnabled == true
+            )
+        }
+        .sheet(isPresented: $isShowingSessions) {
+            AuthorizedDevicesView(playerStore: playerStore)
+        }
+        .sheet(item: $userForDetail) { target in
+            UserProfileView(
+                userID: target.id,
+                playerStore: playerStore
+            )
+        }
+        .task(id: user?.id) {
+            nickname = user?.nickname ?? ""
+            await refreshProfile()
+        }
+        .onChange(of: user?.nickname ?? "") { _, value in
+            if !playerStore.isUpdatingProfile {
+                nickname = value
+            }
+        }
+    }
+
+    private func refreshProfile() async {
+        if let profile = await playerStore.refreshCurrentProfile() {
+            serverStore.updateSelectedUser(profile: profile)
+            nickname = profile.nickname
+        }
+    }
+
+    private func saveNickname() async {
+        guard canSaveNickname else { return }
+        if let profile = await playerStore.updateNickname(nickname) {
+            serverStore.updateSelectedUser(profile: profile)
+            nickname = profile.nickname
+        }
+    }
+}
+
+private struct ChangePasswordSheet: View {
+    @ObservedObject var playerStore: PlayerStore
+    let twoFAEnabled: Bool
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var credential = ""
+    @State private var newPassword = ""
+    @State private var confirmation = ""
+
+    private var canSubmit: Bool {
+        !credential.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+            newPassword.count >= 6 &&
+            newPassword.count <= 32 &&
+            newPassword == confirmation &&
+            !playerStore.isChangingPassword
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    SecureField(
+                        twoFAEnabled ? "Current Password or 2FA Token" : "Current Password",
+                        text: $credential
+                    )
+                    SecureField("New Password", text: $newPassword)
+                        .onChange(of: newPassword) { _, value in
+                            if value.count > 32 {
+                                newPassword = String(value.prefix(32))
+                            }
+                        }
+                    SecureField("Confirm Password", text: $confirmation)
+                        .onChange(of: confirmation) { _, value in
+                            if value.count > 32 {
+                                confirmation = String(value.prefix(32))
+                            }
+                        }
+                } footer: {
+                    Text("Password must be 6-32 characters.")
+                }
+
+                if !confirmation.isEmpty && newPassword != confirmation {
+                    Section {
+                        Label("Passwords do not match.", systemImage: "exclamationmark.triangle")
+                            .foregroundStyle(.orange)
+                    }
+                }
+            }
+            .navigationTitle("Change Password")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .disabled(playerStore.isChangingPassword)
+                }
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        Task {
+                            await submit()
+                        }
+                    } label: {
+                        if playerStore.isChangingPassword {
+                            ProgressView()
+                        } else {
+                            Text("Save")
+                        }
+                    }
+                    .disabled(!canSubmit)
+                }
+            }
+        }
+    }
+
+    private func submit() async {
+        let didChange = await playerStore.changePassword(
+            credential: credential,
+            newPassword: newPassword
+        )
+        if didChange {
+            dismiss()
+        }
+    }
+}
+
+private struct AuthorizedDevicesView: View {
+    @ObservedObject var playerStore: PlayerStore
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var sessionForRename: AuthSession?
+    @State private var sessionForRevocation: AuthSession?
+
+    var body: some View {
+        NavigationStack {
+            content
+                .navigationTitle("Authorized Devices")
+                #if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") {
+                            dismiss()
+                        }
+                    }
+
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            Task {
+                                await playerStore.loadSessions(force: true)
+                            }
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                        .disabled(playerStore.isLoadingSessions)
+                        .help("Refresh Devices")
+                    }
+                }
+        }
+        .sheet(item: $sessionForRename) { session in
+            RenameDeviceSheet(
+                playerStore: playerStore,
+                session: session
+            )
+        }
+        .confirmationDialog(
+            "Revoke Device?",
+            isPresented: Binding(
+                get: { sessionForRevocation != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        sessionForRevocation = nil
+                    }
+                }
+            ),
+            titleVisibility: .visible
+        ) {
+            if let sessionForRevocation {
+                Button("Revoke", role: .destructive) {
+                    Task {
+                        let didRevoke = await playerStore.revokeSession(id: sessionForRevocation.id)
+                        if didRevoke {
+                            self.sessionForRevocation = nil
+                        }
+                    }
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                sessionForRevocation = nil
+            }
+        } message: {
+            if let sessionForRevocation {
+                Text("Revoke \(displayDeviceName(sessionForRevocation)) from this account.")
+            }
+        }
+        .task {
+            await playerStore.loadSessions()
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if playerStore.isLoadingSessions && playerStore.sessions.isEmpty {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if !playerStore.hasLoadedSessions {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if playerStore.sessions.isEmpty {
+            ContentUnavailableView(
+                "No Authorized Devices",
+                systemImage: "desktopcomputer.and.macbook",
+                description: Text("Signed-in devices will appear here.")
+            )
+        } else {
+            List {
+                Section {
+                    ForEach(playerStore.sessions) { session in
+                        AuthSessionRow(
+                            session: session,
+                            isUpdating: playerStore.updatingSessionIDs.contains(session.id)
+                        ) {
+                            sessionForRename = session
+                        } onRevoke: {
+                            sessionForRevocation = session
+                        }
+                    }
+                }
+            }
+            .refreshable {
+                await playerStore.loadSessions(force: true)
+            }
+            .overlay {
+                if playerStore.isLoadingSessions {
+                    ProgressView()
+                        .padding(16)
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+            }
+        }
+    }
+}
+
+private struct AuthSessionRow: View {
+    let session: AuthSession
+    let isUpdating: Bool
+    let onRename: () -> Void
+    let onRevoke: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: session.current ? "checkmark.circle.fill" : "desktopcomputer")
+                .font(.title2)
+                .foregroundStyle(session.current ? Color.accentColor : Color.secondary)
+                .frame(width: 34, height: 34)
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
+                    Text(displayDeviceName(session))
+                        .font(.headline)
+                        .lineLimit(1)
+                    if session.current {
+                        Text("Current")
+                            .font(.caption2.weight(.semibold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.accentColor.opacity(0.14))
+                            .clipShape(Capsule())
+                    }
+                }
+
+                Text("Last seen \(formatCicadaTimestamp(session.lastSeenTimestamp, date: .abbreviated, time: .shortened))")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+
+                Text("Expires \(formatCicadaTimestamp(session.inactiveExpireTimestamp, date: .abbreviated, time: .shortened))")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            Menu {
+                Button {
+                    onRename()
+                } label: {
+                    Label("Rename", systemImage: "pencil")
+                }
+                .disabled(isUpdating)
+
+                if !session.current {
+                    Button(role: .destructive) {
+                        onRevoke()
+                    } label: {
+                        Label("Revoke", systemImage: "trash")
+                    }
+                    .disabled(isUpdating)
+                }
+            } label: {
+                if isUpdating {
+                    ProgressView()
+                } else {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+            .disabled(isUpdating)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+private struct RenameDeviceSheet: View {
+    @ObservedObject var playerStore: PlayerStore
+    let session: AuthSession
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var deviceName: String
+
+    init(playerStore: PlayerStore, session: AuthSession) {
+        self.playerStore = playerStore
+        self.session = session
+        _deviceName = State(initialValue: displayDeviceName(session))
+    }
+
+    private var trimmedDeviceName: String {
+        deviceName.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var isSaving: Bool {
+        playerStore.updatingSessionIDs.contains(session.id)
+    }
+
+    private var canSubmit: Bool {
+        !trimmedDeviceName.isEmpty &&
+            trimmedDeviceName.count <= 64 &&
+            !isSaving
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Device Name", text: $deviceName)
+                        .onChange(of: deviceName) { _, value in
+                            if value.count > 64 {
+                                deviceName = String(value.prefix(64))
+                            }
+                        }
+                        .onSubmit {
+                            guard canSubmit else { return }
+                            Task {
+                                await submit()
+                            }
+                        }
+
+                    LabeledContent("Characters", value: "\(trimmedDeviceName.count)/64")
+                        .font(.footnote)
+                        .foregroundStyle(trimmedDeviceName.count > 64 ? Color.red : Color.secondary)
+                }
+            }
+            .navigationTitle("Rename Device")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .disabled(isSaving)
+                }
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        Task {
+                            await submit()
+                        }
+                    } label: {
+                        if isSaving {
+                            ProgressView()
+                        } else {
+                            Text("Save")
+                        }
+                    }
+                    .disabled(!canSubmit)
+                }
+            }
+        }
+    }
+
+    private func submit() async {
+        let didRename = await playerStore.renameSession(
+            id: session.id,
+            deviceName: trimmedDeviceName
+        )
+        if didRename {
+            dismiss()
+        }
+    }
+}
+
+private struct UserProfileView: View {
+    let userID: UserDetail.ID
+    @ObservedObject var playerStore: PlayerStore
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var publicMusicbillForDetail: PublicMusicbillSearchItem?
+
+    private var detail: UserDetail? {
+        playerStore.userDetails[userID]
+    }
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let detail {
+                    userContent(detail)
+                } else if playerStore.loadingUserIDs.contains(userID) {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ContentUnavailableView(
+                        "User Not Loaded",
+                        systemImage: "person.crop.circle.badge.exclamationmark",
+                        description: Text("Pull to refresh or try again.")
+                    )
+                }
+            }
+            .navigationTitle(detail?.nickname ?? "User")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .sheet(item: $publicMusicbillForDetail) { musicbill in
+            PublicMusicbillDetailView(
+                musicbill: musicbill,
+                playerStore: playerStore
+            )
+        }
+        .task(id: userID) {
+            await playerStore.loadUser(id: userID)
+        }
+    }
+
+    private func userContent(_ detail: UserDetail) -> some View {
+        List {
+            Section {
+                HStack(spacing: 14) {
+                    ArtworkView(
+                        urlString: detail.avatar,
+                        systemImage: "person.crop.square",
+                        size: 76
+                    )
+
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(detail.nickname)
+                            .font(.headline)
+                            .lineLimit(1)
+                        Text("@\(detail.username)")
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                        Text("Joined \(formatCicadaTimestamp(detail.joinTimestamp, date: .abbreviated, time: .omitted))")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+
+            Section("Public Musicbills") {
+                if detail.musicbillList.isEmpty {
+                    ContentUnavailableView(
+                        "No Public Musicbills",
+                        systemImage: "music.note.list",
+                        description: Text("This user has not published musicbills.")
+                    )
+                } else {
+                    ForEach(detail.musicbillList) { musicbill in
+                        UserPublicMusicbillRow(musicbill: musicbill) {
+                            publicMusicbillForDetail = musicbill.searchItem(user: detail.musicbillUser)
+                        }
+                    }
+                }
+            }
+        }
+        .refreshable {
+            await playerStore.loadUser(id: detail.id, force: true)
+        }
+    }
+}
+
+private struct UserPublicMusicbillRow: View {
+    let musicbill: UserPublicMusicbill
+    let onOpen: () -> Void
+
+    var body: some View {
+        Button(action: onOpen) {
+            HStack(spacing: 12) {
+                ArtworkView(
+                    urlString: musicbill.cover,
+                    systemImage: "music.note.list",
+                    size: 50
+                )
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(musicbill.name)
+                        .font(.headline)
+                        .lineLimit(1)
+                    Text("\(musicbill.musicCount) songs")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -673,9 +1403,328 @@ private struct AddToMusicbillRow: View {
     }
 }
 
+private struct SharedMusicbillInvitationView: View {
+    @ObservedObject var playerStore: PlayerStore
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var userForDetail: UserDetailTarget?
+
+    var body: some View {
+        NavigationStack {
+            content
+                .navigationTitle("Shared Invitations")
+                #if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") {
+                            dismiss()
+                        }
+                    }
+
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            Task {
+                                await playerStore.loadSharedMusicbillInvitations(force: true)
+                            }
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                        .disabled(playerStore.isLoadingSharedMusicbillInvitations)
+                        .help("Refresh Invitations")
+                    }
+                }
+        }
+        .task {
+            await playerStore.loadSharedMusicbillInvitations(force: true)
+        }
+        .sheet(item: $userForDetail) { target in
+            UserProfileView(
+                userID: target.id,
+                playerStore: playerStore
+            )
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if playerStore.isLoadingSharedMusicbillInvitations &&
+            playerStore.sharedMusicbillInvitations.isEmpty {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if !playerStore.hasLoadedSharedMusicbillInvitations {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if playerStore.sharedMusicbillInvitations.isEmpty {
+            ContentUnavailableView(
+                "No Invitations",
+                systemImage: "person.2",
+                description: Text("Shared musicbill invitations will appear here.")
+            )
+        } else {
+            List {
+                Section {
+                    Label(
+                        "Invitations expire automatically after 3-4 days.",
+                        systemImage: "clock"
+                    )
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                }
+
+                Section("Invitations") {
+                    ForEach(playerStore.sharedMusicbillInvitations) { invitation in
+                        SharedMusicbillInvitationRow(
+                            invitation: invitation,
+                            isAccepting: playerStore.acceptingSharedMusicbillInvitationIDs.contains(invitation.id)
+                        ) {
+                            userForDetail = UserDetailTarget(id: invitation.inviteUserID)
+                        } onAccept: {
+                            let didAccept = await playerStore.acceptSharedMusicbillInvitation(invitation)
+                            if didAccept {
+                                dismiss()
+                            }
+                        }
+                    }
+                }
+            }
+            .refreshable {
+                await playerStore.loadSharedMusicbillInvitations(force: true)
+            }
+            .overlay {
+                if playerStore.isLoadingSharedMusicbillInvitations {
+                    ProgressView()
+                        .padding(16)
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+            }
+        }
+    }
+}
+
+private struct SharedMusicbillInvitationRow: View {
+    let invitation: SharedMusicbillInvitation
+    let isAccepting: Bool
+    let onOpenUser: () -> Void
+    let onAccept: () async -> Void
+
+    private var musicbillName: String {
+        invitation.musicbillName.isEmpty ? "Musicbill" : invitation.musicbillName
+    }
+
+    private var inviteDate: Date {
+        let timestamp = invitation.inviteTimestamp
+        let seconds = timestamp > 10_000_000_000 ? timestamp / 1000 : timestamp
+        return Date(timeIntervalSince1970: seconds)
+    }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "person.crop.circle.badge.plus")
+                .font(.title2)
+                .foregroundStyle(.tint)
+                .frame(width: 34, height: 34)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Button(action: onOpenUser) {
+                    Label(invitation.inviteUserNickname, systemImage: "person.crop.circle")
+                        .font(.headline)
+                        .lineLimit(1)
+                }
+                .buttonStyle(.plain)
+
+                Text(musicbillName)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+
+                Text(inviteDate.formatted(date: .abbreviated, time: .shortened))
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+
+            Spacer()
+
+            Button {
+                Task {
+                    await onAccept()
+                }
+            } label: {
+                if isAccepting {
+                    ProgressView()
+                } else {
+                    Label("Accept", systemImage: "checkmark.circle")
+                }
+            }
+            .disabled(isAccepting)
+            .buttonStyle(.borderedProminent)
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+private struct PublicMusicbillCollectionView: View {
+    @ObservedObject var playerStore: PlayerStore
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var searchText = ""
+    @State private var musicbillForDetail: PublicMusicbillSearchItem?
+
+    var body: some View {
+        NavigationStack {
+            content
+                .navigationTitle("Public Collections")
+                #if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") {
+                            dismiss()
+                        }
+                    }
+
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            Task {
+                                await load(page: 1, force: true)
+                            }
+                        } label: {
+                            Image(systemName: "magnifyingglass")
+                        }
+                        .disabled(playerStore.isLoadingPublicMusicbillCollections)
+                        .help("Search Collections")
+                    }
+                }
+        }
+        .searchable(text: $searchText, prompt: "Collections")
+        .onSubmit(of: .search) {
+            Task {
+                await load(page: 1, force: true)
+            }
+        }
+        .sheet(item: $musicbillForDetail) { musicbill in
+            PublicMusicbillDetailView(
+                musicbill: musicbill,
+                playerStore: playerStore
+            )
+        }
+        .task {
+            searchText = playerStore.publicMusicbillCollectionKeyword
+            if !playerStore.hasLoadedPublicMusicbillCollections {
+                await load(page: 1)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if playerStore.isLoadingPublicMusicbillCollections &&
+            playerStore.publicMusicbillCollections.isEmpty {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if !playerStore.hasLoadedPublicMusicbillCollections {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if playerStore.publicMusicbillCollections.isEmpty {
+            ContentUnavailableView(
+                playerStore.publicMusicbillCollectionKeyword.isEmpty ? "No Collections" : "No Results",
+                systemImage: "star",
+                description: Text(
+                    playerStore.publicMusicbillCollectionKeyword.isEmpty ?
+                        "Collect public musicbills from Search." :
+                        "Try another collection keyword."
+                )
+            )
+        } else {
+            List {
+                Section("\(playerStore.publicMusicbillCollectionTotal) Musicbills") {
+                    ForEach(playerStore.publicMusicbillCollections) { collection in
+                        PublicMusicbillSearchRow(musicbill: collection.searchItem) {
+                            musicbillForDetail = collection.searchItem
+                        }
+                    }
+                }
+
+                if totalPages > 1 {
+                    Section {
+                        HStack {
+                            Button {
+                                Task {
+                                    await load(page: playerStore.publicMusicbillCollectionPage - 1)
+                                }
+                            } label: {
+                                Label("Previous", systemImage: "chevron.left")
+                            }
+                            .disabled(
+                                playerStore.publicMusicbillCollectionPage <= 1 ||
+                                    playerStore.isLoadingPublicMusicbillCollections
+                            )
+
+                            Spacer()
+
+                            Text("Page \(playerStore.publicMusicbillCollectionPage) of \(totalPages)")
+                                .font(.footnote.monospacedDigit())
+                                .foregroundStyle(.secondary)
+
+                            Spacer()
+
+                            Button {
+                                Task {
+                                    await load(page: playerStore.publicMusicbillCollectionPage + 1)
+                                }
+                            } label: {
+                                Label("Next", systemImage: "chevron.right")
+                            }
+                            .disabled(
+                                playerStore.publicMusicbillCollectionPage >= totalPages ||
+                                    playerStore.isLoadingPublicMusicbillCollections
+                            )
+                        }
+                    }
+                }
+            }
+            .refreshable {
+                await load(page: playerStore.publicMusicbillCollectionPage, force: true)
+            }
+            .overlay {
+                if playerStore.isLoadingPublicMusicbillCollections {
+                    ProgressView()
+                        .padding(16)
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+            }
+        }
+    }
+
+    private var totalPages: Int {
+        max(
+            1,
+            Int(
+                ceil(
+                    Double(playerStore.publicMusicbillCollectionTotal) /
+                        Double(playerStore.publicMusicbillCollectionPageSize)
+                )
+            )
+        )
+    }
+
+    private func load(page: Int, force: Bool = false) async {
+        await playerStore.loadPublicMusicbillCollections(
+            keyword: searchText,
+            page: page,
+            force: force
+        )
+        searchText = playerStore.publicMusicbillCollectionKeyword
+    }
+}
+
 private enum PlayerSearchTab: String, CaseIterable, Identifiable {
     case music = "Music"
     case artists = "Artists"
+    case publicMusicbills = "Public"
     case lyrics = "Lyrics"
 
     var id: String {
@@ -683,7 +1732,12 @@ private enum PlayerSearchTab: String, CaseIterable, Identifiable {
     }
 
     var prompt: String {
-        rawValue
+        switch self {
+        case .music, .artists, .lyrics:
+            return rawValue
+        case .publicMusicbills:
+            return "Public Musicbills"
+        }
     }
 }
 
@@ -695,6 +1749,7 @@ private struct SearchMusicView: View {
     @State private var searchText = ""
     @State private var musicForMusicbillSelection: Music?
     @State private var artistForDetail: ArtistSearchItem?
+    @State private var publicMusicbillForDetail: PublicMusicbillSearchItem?
 
     var body: some View {
         NavigationStack {
@@ -754,6 +1809,12 @@ private struct SearchMusicView: View {
                 playerStore: playerStore
             )
         }
+        .sheet(item: $publicMusicbillForDetail) { musicbill in
+            PublicMusicbillDetailView(
+                musicbill: musicbill,
+                playerStore: playerStore
+            )
+        }
     }
 
     @ViewBuilder
@@ -763,6 +1824,8 @@ private struct SearchMusicView: View {
             musicContent
         case .artists:
             artistContent
+        case .publicMusicbills:
+            publicMusicbillContent
         case .lyrics:
             lyricContent
         }
@@ -915,6 +1978,76 @@ private struct SearchMusicView: View {
     }
 
     @ViewBuilder
+    private var publicMusicbillContent: some View {
+        if playerStore.isSearchingPublicMusicbills && playerStore.searchPublicMusicbillResults.isEmpty {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if !playerStore.hasSearchedPublicMusicbills {
+            ContentUnavailableView(
+                "Search Public Musicbills",
+                systemImage: "music.note.list",
+                description: Text("Search public musicbills by name.")
+            )
+        } else if playerStore.searchPublicMusicbillResults.isEmpty {
+            ContentUnavailableView(
+                "No Results",
+                systemImage: "music.note.list",
+                description: Text("Try another musicbill keyword.")
+            )
+        } else {
+            List {
+                Section("\(playerStore.searchPublicMusicbillTotal) Musicbills") {
+                    ForEach(playerStore.searchPublicMusicbillResults) { musicbill in
+                        PublicMusicbillSearchRow(musicbill: musicbill) {
+                            publicMusicbillForDetail = musicbill
+                        }
+                    }
+                }
+
+                if publicMusicbillTotalPages > 1 {
+                    Section {
+                        HStack {
+                            Button {
+                                Task {
+                                    await search(page: playerStore.searchPublicMusicbillPage - 1)
+                                }
+                            } label: {
+                                Label("Previous", systemImage: "chevron.left")
+                            }
+                            .disabled(playerStore.searchPublicMusicbillPage <= 1 || playerStore.isSearchingPublicMusicbills)
+
+                            Spacer()
+
+                            Text("Page \(playerStore.searchPublicMusicbillPage) of \(publicMusicbillTotalPages)")
+                                .font(.footnote.monospacedDigit())
+                                .foregroundStyle(.secondary)
+
+                            Spacer()
+
+                            Button {
+                                Task {
+                                    await search(page: playerStore.searchPublicMusicbillPage + 1)
+                                }
+                            } label: {
+                                Label("Next", systemImage: "chevron.right")
+                            }
+                            .disabled(playerStore.searchPublicMusicbillPage >= publicMusicbillTotalPages || playerStore.isSearchingPublicMusicbills)
+                        }
+                    }
+                }
+            }
+            .overlay {
+                if playerStore.isSearchingPublicMusicbills {
+                    ProgressView()
+                        .padding(16)
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
     private var lyricContent: some View {
         if playerStore.isSearchingLyrics && playerStore.searchLyricResults.isEmpty {
             ProgressView()
@@ -1005,6 +2138,8 @@ private struct SearchMusicView: View {
             return playerStore.isSearchingMusic
         case .artists:
             return playerStore.isSearchingArtists
+        case .publicMusicbills:
+            return playerStore.isSearchingPublicMusicbills
         case .lyrics:
             return playerStore.isSearchingLyrics
         }
@@ -1016,6 +2151,10 @@ private struct SearchMusicView: View {
 
     private var artistTotalPages: Int {
         totalPages(total: playerStore.searchArtistTotal, pageSize: playerStore.searchArtistPageSize)
+    }
+
+    private var publicMusicbillTotalPages: Int {
+        totalPages(total: playerStore.searchPublicMusicbillTotal, pageSize: playerStore.searchPublicMusicbillPageSize)
     }
 
     private var lyricTotalPages: Int {
@@ -1034,6 +2173,11 @@ private struct SearchMusicView: View {
             if !playerStore.searchArtistKeyword.isEmpty {
                 searchText = playerStore.searchArtistKeyword
             }
+        case .publicMusicbills:
+            await playerStore.searchPublicMusicbills(keyword: searchText, page: page)
+            if !playerStore.searchPublicMusicbillKeyword.isEmpty {
+                searchText = playerStore.searchPublicMusicbillKeyword
+            }
         case .lyrics:
             await playerStore.searchLyrics(keyword: searchText, page: page)
             if !playerStore.searchLyricKeyword.isEmpty {
@@ -1051,6 +2195,10 @@ private struct SearchMusicView: View {
         case .artists:
             if !playerStore.searchArtistKeyword.isEmpty {
                 searchText = playerStore.searchArtistKeyword
+            }
+        case .publicMusicbills:
+            if !playerStore.searchPublicMusicbillKeyword.isEmpty {
+                searchText = playerStore.searchPublicMusicbillKeyword
             }
         case .lyrics:
             if !playerStore.searchLyricKeyword.isEmpty {
@@ -1267,10 +2415,541 @@ private struct ArtistDetailView: View {
     }
 }
 
+private struct PublicMusicbillSearchRow: View {
+    let musicbill: PublicMusicbillSearchItem
+    let onOpen: () -> Void
+
+    var body: some View {
+        Button(action: onOpen) {
+            HStack(spacing: 12) {
+                ArtworkView(
+                    urlString: musicbill.cover,
+                    systemImage: "music.note.list",
+                    size: 50
+                )
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(musicbill.name)
+                        .font(.headline)
+                        .lineLimit(1)
+                    Text(musicbill.user.nickname)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(musicbill.musicCount)")
+                        .font(.headline.monospacedDigit())
+                    Text("Songs")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct PublicMusicbillDetailView: View {
+    let musicbill: PublicMusicbillSearchItem
+    @ObservedObject var playerStore: PlayerStore
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var musicForMusicbillSelection: Music?
+    @State private var userForDetail: UserDetailTarget?
+
+    private var detail: PublicMusicbillDetail? {
+        playerStore.publicMusicbillDetails[musicbill.id]
+    }
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let detail {
+                    detailContent(detail)
+                } else if playerStore.loadingPublicMusicbillIDs.contains(musicbill.id) {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ContentUnavailableView(
+                        "Musicbill Not Loaded",
+                        systemImage: "music.note.list",
+                        description: Text("Pull to refresh or try again.")
+                    )
+                }
+            }
+            .navigationTitle(detail?.name ?? musicbill.name)
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+
+                if let detail {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            Task {
+                                await playerStore.setPublicMusicbillCollected(
+                                    id: detail.id,
+                                    collected: !detail.collected
+                                )
+                            }
+                        } label: {
+                            Image(systemName: detail.collected ? "star.fill" : "star")
+                        }
+                        .disabled(playerStore.collectingPublicMusicbillIDs.contains(detail.id))
+                        .help(detail.collected ? "Uncollect Musicbill" : "Collect Musicbill")
+                    }
+                }
+            }
+        }
+        .sheet(item: $musicForMusicbillSelection) { music in
+            AddToMusicbillSheet(
+                music: music,
+                playerStore: playerStore
+            )
+        }
+        .sheet(item: $userForDetail) { target in
+            UserProfileView(
+                userID: target.id,
+                playerStore: playerStore
+            )
+        }
+        .task(id: musicbill.id) {
+            await playerStore.loadPublicMusicbill(id: musicbill.id)
+        }
+    }
+
+    private func detailContent(_ detail: PublicMusicbillDetail) -> some View {
+        List {
+            Section {
+                HStack(spacing: 14) {
+                    ArtworkView(
+                        urlString: detail.cover.isEmpty ? musicbill.cover : detail.cover,
+                        systemImage: "music.note.list",
+                        size: 72
+                    )
+
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(detail.name)
+                            .font(.headline)
+                        Button {
+                            userForDetail = UserDetailTarget(id: detail.user.id)
+                        } label: {
+                            Label(detail.user.nickname, systemImage: "person.crop.circle")
+                                .lineLimit(1)
+                        }
+                        .buttonStyle(.plain)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        HStack(spacing: 10) {
+                            Text("\(detail.musicList.count) songs")
+                            Label(detail.collected ? "Collected" : "Public", systemImage: detail.collected ? "star.fill" : "globe")
+                        }
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+
+            Section("Songs") {
+                if detail.musicList.isEmpty {
+                    ContentUnavailableView(
+                        "No Songs",
+                        systemImage: "music.note",
+                        description: Text("This public musicbill does not contain songs.")
+                    )
+                } else {
+                    ForEach(detail.musicList) { music in
+                        MusicRow(
+                            music: music,
+                            isCurrent: playerStore.audioPlayer.currentMusic?.id == music.id,
+                            isPlaying: playerStore.audioPlayer.currentMusic?.id == music.id && playerStore.audioPlayer.isPlaying
+                        ) {
+                            playerStore.play(music: music, in: detail.musicList)
+                        } onAddToMusicbill: {
+                            musicForMusicbillSelection = music
+                        }
+                    }
+                }
+            }
+        }
+        .refreshable {
+            await playerStore.loadPublicMusicbill(id: detail.id, force: true)
+        }
+    }
+}
+
+private struct MusicbillSharedUsersView: View {
+    @ObservedObject var playerStore: PlayerStore
+    let musicbillID: MusicbillDetail.ID
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var isShowingInviteSheet = false
+    @State private var userForRemoval: MusicbillUser?
+    @State private var userForDetail: UserDetailTarget?
+    @State private var isConfirmingLeave = false
+
+    private var detail: MusicbillDetail? {
+        playerStore.musicbillDetails[musicbillID]
+    }
+
+    private var isUpdating: Bool {
+        playerStore.updatingSharedUserMusicbillIDs.contains(musicbillID)
+    }
+
+    var body: some View {
+        NavigationStack {
+            content
+                .navigationTitle("Shared Users")
+                #if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") {
+                            dismiss()
+                        }
+                        .disabled(isUpdating)
+                    }
+
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            isShowingInviteSheet = true
+                        } label: {
+                            Image(systemName: "person.badge.plus")
+                        }
+                        .disabled(detail == nil || isUpdating)
+                        .help("Invite User")
+                    }
+                }
+        }
+        .sheet(isPresented: $isShowingInviteSheet) {
+            InviteSharedUserSheet(
+                playerStore: playerStore,
+                musicbillID: musicbillID
+            )
+        }
+        .sheet(item: $userForDetail) { target in
+            UserProfileView(
+                userID: target.id,
+                playerStore: playerStore
+            )
+        }
+        .confirmationDialog(
+            "Remove Shared User?",
+            isPresented: Binding(
+                get: { userForRemoval != nil },
+                set: { isPresented in
+                    if !isPresented {
+                        userForRemoval = nil
+                    }
+                }
+            ),
+            titleVisibility: .visible
+        ) {
+            if let userForRemoval {
+                Button("Remove", role: .destructive) {
+                    Task {
+                        let didRemove = await playerStore.removeSharedUser(
+                            userID: userForRemoval.id,
+                            from: musicbillID
+                        )
+                        if didRemove {
+                            self.userForRemoval = nil
+                        }
+                    }
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                userForRemoval = nil
+            }
+        } message: {
+            if let userForRemoval {
+                Text("Remove \(userForRemoval.nickname) from this shared musicbill.")
+            }
+        }
+        .confirmationDialog(
+            "Leave Shared Musicbill?",
+            isPresented: $isConfirmingLeave,
+            titleVisibility: .visible
+        ) {
+            Button("Leave", role: .destructive) {
+                Task {
+                    let didLeave = await playerStore.leaveSharedMusicbill(id: musicbillID)
+                    if didLeave {
+                        dismiss()
+                    }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This musicbill will be removed from your sidebar.")
+        }
+        .task(id: musicbillID) {
+            await playerStore.loadMusicbill(id: musicbillID)
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if let detail {
+            userList(detail)
+        } else if playerStore.loadingMusicbillIDs.contains(musicbillID) {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ContentUnavailableView(
+                "Shared Users Not Loaded",
+                systemImage: "person.2",
+                description: Text("Pull to refresh or try again.")
+            )
+        }
+    }
+
+    private func userList(_ detail: MusicbillDetail) -> some View {
+        let isOwner = playerStore.isMusicbillOwner(detail)
+
+        return List {
+            Section("Owner") {
+                MusicbillSharedUserRow(
+                    user: detail.owner,
+                    role: .owner,
+                    canRemove: false,
+                    isUpdating: isUpdating
+                ) {
+                    userForDetail = UserDetailTarget(id: detail.owner.id)
+                } onRemove: {}
+            }
+
+            Section("Shared Users") {
+                if detail.sharedUserList.isEmpty {
+                    ContentUnavailableView(
+                        "No Shared Users",
+                        systemImage: "person.2.slash",
+                        description: Text("Invite a user to share this musicbill.")
+                    )
+                } else {
+                    ForEach(detail.sharedUserList) { sharedUser in
+                        MusicbillSharedUserRow(
+                            user: sharedUser,
+                            role: sharedUser.accepted == false ? .pending : .accepted,
+                            canRemove: isOwner,
+                            isUpdating: isUpdating
+                        ) {
+                            userForDetail = UserDetailTarget(id: sharedUser.id)
+                        } onRemove: {
+                            userForRemoval = sharedUser
+                        }
+                    }
+                }
+            }
+
+            if !isOwner {
+                Section {
+                    Button(role: .destructive) {
+                        isConfirmingLeave = true
+                    } label: {
+                        Label("Leave Shared Musicbill", systemImage: "rectangle.portrait.and.arrow.right")
+                    }
+                    .disabled(isUpdating)
+                }
+            }
+        }
+        .refreshable {
+            await playerStore.loadMusicbill(id: detail.id, force: true)
+        }
+        .overlay {
+            if isUpdating {
+                ProgressView()
+                    .padding(16)
+                    .background(.regularMaterial)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            }
+        }
+    }
+}
+
+private enum MusicbillSharedUserRole: Equatable {
+    case owner
+    case accepted
+    case pending
+
+    var title: String {
+        switch self {
+        case .owner:
+            return "Owner"
+        case .accepted:
+            return "Accepted"
+        case .pending:
+            return "Pending"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .owner:
+            return "crown"
+        case .accepted:
+            return "checkmark.circle"
+        case .pending:
+            return "clock"
+        }
+    }
+}
+
+private struct MusicbillSharedUserRow: View {
+    let user: MusicbillUser
+    let role: MusicbillSharedUserRole
+    let canRemove: Bool
+    let isUpdating: Bool
+    let onOpen: () -> Void
+    let onRemove: () -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: onOpen) {
+                HStack(spacing: 12) {
+                    ArtworkView(
+                        urlString: user.avatar,
+                        systemImage: "person.crop.square",
+                        size: 44
+                    )
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(user.nickname)
+                            .lineLimit(1)
+
+                        Label(role.title, systemImage: role.systemImage)
+                            .font(.footnote)
+                            .foregroundStyle(role == .pending ? Color.orange : Color.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            Spacer()
+
+            if canRemove {
+                Button(role: .destructive, action: onRemove) {
+                    Image(systemName: "trash")
+                }
+                .disabled(isUpdating)
+                .help("Remove User")
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+private struct InviteSharedUserSheet: View {
+    @ObservedObject var playerStore: PlayerStore
+    let musicbillID: MusicbillDetail.ID
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var username = ""
+
+    private var trimmedUsername: String {
+        username.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var isSaving: Bool {
+        playerStore.updatingSharedUserMusicbillIDs.contains(musicbillID)
+    }
+
+    private var canSubmit: Bool {
+        !trimmedUsername.isEmpty &&
+            trimmedUsername.count <= 16 &&
+            !isSaving
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Username", text: $username)
+                        #if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        #endif
+                        .autocorrectionDisabled()
+                        .onChange(of: username) { _, value in
+                            username = String(value.trimmingCharacters(in: .whitespacesAndNewlines).prefix(16))
+                        }
+                        .onSubmit {
+                            guard canSubmit else { return }
+                            Task {
+                                await submit()
+                            }
+                        }
+
+                    LabeledContent("Characters", value: "\(trimmedUsername.count)/16")
+                        .font(.footnote)
+                        .foregroundStyle(trimmedUsername.count > 16 ? Color.red : Color.secondary)
+                } footer: {
+                    Text("The user will receive a shared musicbill invitation.")
+                }
+            }
+            .navigationTitle("Invite User")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                    .disabled(isSaving)
+                }
+
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        Task {
+                            await submit()
+                        }
+                    } label: {
+                        if isSaving {
+                            ProgressView()
+                        } else {
+                            Text("Invite")
+                        }
+                    }
+                    .disabled(!canSubmit)
+                }
+            }
+        }
+    }
+
+    private func submit() async {
+        let didInvite = await playerStore.inviteSharedUser(
+            username: trimmedUsername,
+            to: musicbillID
+        )
+        if didInvite {
+            dismiss()
+        }
+    }
+}
+
 private struct MusicbillDetailView: View {
     @ObservedObject var playerStore: PlayerStore
     let musicbillID: MusicbillDetail.ID
     @State private var isShowingRenameSheet = false
+    @State private var isShowingSharedUsers = false
     @State private var isConfirmingPublish = false
     @State private var captchaAction: MusicbillCaptchaAction?
     @State private var musicForMusicbillSelection: Music?
@@ -1310,6 +2989,12 @@ private struct MusicbillDetailView: View {
             ) { name in
                 await playerStore.renameMusicbill(id: musicbillID, name: name)
             }
+        }
+        .sheet(isPresented: $isShowingSharedUsers) {
+            MusicbillSharedUsersView(
+                playerStore: playerStore,
+                musicbillID: musicbillID
+            )
         }
         .sheet(item: $captchaAction) { action in
             MusicbillCaptchaActionSheet(
@@ -1351,6 +3036,12 @@ private struct MusicbillDetailView: View {
                 isShowingRenameSheet = true
             } label: {
                 Label("Rename", systemImage: "pencil")
+            }
+
+            Button {
+                isShowingSharedUsers = true
+            } label: {
+                Label("Shared Users", systemImage: "person.2")
             }
 
             if !detail.isPublic {
@@ -1552,6 +3243,9 @@ private struct NowPlayingDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var lyricState: NowPlayingLyricState = .idle
     @State private var musicForMusicbillSelection: Music?
+    @State private var artistForDetail: ArtistSearchItem?
+    @State private var publicMusicbillForDetail: PublicMusicbillSearchItem?
+    @State private var userForDetail: UserDetailTarget?
 
     var body: some View {
         NavigationStack {
@@ -1613,12 +3307,36 @@ private struct NowPlayingDetailView: View {
                 playerStore: playerStore
             )
         }
+        .sheet(item: $artistForDetail) { artist in
+            ArtistDetailView(
+                artist: artist,
+                playerStore: playerStore
+            )
+        }
+        .sheet(item: $publicMusicbillForDetail) { musicbill in
+            PublicMusicbillDetailView(
+                musicbill: musicbill,
+                playerStore: playerStore
+            )
+        }
+        .sheet(item: $userForDetail) { target in
+            UserProfileView(
+                userID: target.id,
+                playerStore: playerStore
+            )
+        }
         .task(id: audioPlayer.currentMusic?.id) {
             guard let music = audioPlayer.currentMusic else {
                 lyricState = .idle
                 return
             }
             await loadLyrics(for: music)
+        }
+        .task(id: audioPlayer.currentMusic?.id) {
+            guard let musicID = audioPlayer.currentMusic?.id else {
+                return
+            }
+            await playerStore.loadMusicDetail(id: musicID)
         }
     }
 
@@ -1705,24 +3423,140 @@ private struct NowPlayingDetailView: View {
     }
 
     private func metadataBlock(for music: Music) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Details")
-                .font(.headline)
+        let detail = playerStore.musicDetails[music.id]
+        let isLoadingDetail = playerStore.loadingMusicDetailIDs.contains(music.id)
+
+        return VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Details")
+                    .font(.headline)
+
+                Spacer()
+
+                if isLoadingDetail {
+                    ProgressView()
+                        .controlSize(.small)
+                }
+            }
 
             VStack(spacing: 10) {
                 detailRow("Type", music.type == 2 ? "Instrumental" : "Song")
-                detailRow("Performers", artistLine(music.performers))
 
-                if !music.lyricists.isEmpty {
-                    detailRow("Lyricists", artistLine(music.lyricists))
-                }
+                if let detail {
+                    if let year = detail.year {
+                        detailRow("Year", String(year))
+                    }
 
-                if !music.composers.isEmpty {
-                    detailRow("Composers", artistLine(music.composers))
+                    if detail.createTimestamp > 0 {
+                        detailRow(
+                            "Added",
+                            formatCicadaTimestamp(
+                                detail.createTimestamp,
+                                date: .abbreviated,
+                                time: .omitted
+                            )
+                        )
+                    }
+
+                    if let assetDurationMs = detail.assetDurationMs {
+                        detailRow("Duration", formatPlaybackTime(Double(assetDurationMs) / 1000))
+                    }
+
+                    if let assetCodec = detail.assetCodec, !assetCodec.isEmpty {
+                        detailRow("Codec", assetCodec.uppercased())
+                    }
+
+                    if let assetBitRate = detail.assetBitRate {
+                        detailRow("Bit Rate", formatAssetBitRate(assetBitRate))
+                    }
+
+                    detailRow("Heat", String(detail.heat))
+                    detailRow("Musicbills", String(detail.musicbillCount))
+                } else {
+                    detailRow("Performers", artistLine(music.performers))
+
+                    if !music.lyricists.isEmpty {
+                        detailRow("Lyricists", artistLine(music.lyricists))
+                    }
+
+                    if !music.composers.isEmpty {
+                        detailRow("Composers", artistLine(music.composers))
+                    }
                 }
+            }
+
+            if let detail {
+                artistSection("Performers", artists: detail.performers)
+                artistSection("Lyricists", artists: detail.lyricists)
+                artistSection("Composers", artists: detail.composers)
+                relatedPublicMusicbillSection(detail.relatedPublicMusicbillList)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private func artistSection(_ title: String, artists: [ArtistSearchItem]) -> some View {
+        if !artists.isEmpty {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(title)
+                    .font(.headline)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(artists.enumerated()), id: \.element.id) { index, artist in
+                        Button {
+                            artistForDetail = artist
+                        } label: {
+                            MusicDetailArtistRow(artist: artist)
+                        }
+                        .buttonStyle(.plain)
+
+                        if index < artists.count - 1 {
+                            Divider()
+                                .padding(.leading, 52)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func relatedPublicMusicbillSection(_ musicbills: [PublicMusicbillSearchItem]) -> some View {
+        if !musicbills.isEmpty {
+            let visibleMusicbills = Array(musicbills.prefix(5))
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Related Musicbills")
+                    .font(.headline)
+
+                VStack(spacing: 0) {
+                    ForEach(Array(visibleMusicbills.enumerated()), id: \.element.id) { index, musicbill in
+                        RelatedPublicMusicbillRow(
+                            musicbill: musicbill,
+                            onOpen: {
+                                publicMusicbillForDetail = musicbill
+                            },
+                            onOpenUser: {
+                                userForDetail = UserDetailTarget(id: musicbill.user.id)
+                            }
+                        )
+
+                        if index < visibleMusicbills.count - 1 {
+                            Divider()
+                                .padding(.leading, 52)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func formatAssetBitRate(_ bitRate: Int) -> String {
+        if bitRate >= 1000 {
+            return "\(bitRate / 1000) kbps"
+        }
+        return "\(bitRate) bps"
     }
 
     private func detailRow(_ title: String, _ value: String) -> some View {
@@ -1822,6 +3656,96 @@ private struct NowPlayingDetailView: View {
 
     private func artistLine(_ artists: [ArtistSummary]) -> String {
         artists.map(\.name).joined(separator: ", ")
+    }
+}
+
+private struct MusicDetailArtistRow: View {
+    let artist: ArtistSearchItem
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ArtworkView(
+                urlString: artist.avatar,
+                systemImage: "person.crop.square",
+                size: 40
+            )
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(artist.name)
+                    .font(.subheadline.weight(.semibold))
+                    .lineLimit(1)
+
+                if !artist.aliases.isEmpty {
+                    Text(artist.aliases.joined(separator: " / "))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
+
+            Spacer()
+
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.vertical, 8)
+        .contentShape(Rectangle())
+    }
+}
+
+private struct RelatedPublicMusicbillRow: View {
+    let musicbill: PublicMusicbillSearchItem
+    let onOpen: () -> Void
+    let onOpenUser: () -> Void
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Button(action: onOpen) {
+                HStack(spacing: 12) {
+                    ArtworkView(
+                        urlString: musicbill.cover,
+                        systemImage: "music.note.list",
+                        size: 40
+                    )
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(musicbill.name)
+                            .font(.subheadline.weight(.semibold))
+                            .lineLimit(1)
+                        Text(musicbill.user.nickname)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("\(musicbill.musicCount)")
+                            .font(.subheadline.monospacedDigit().weight(.semibold))
+                        Text("Songs")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            Button(action: onOpenUser) {
+                Image(systemName: "person.crop.circle")
+                    .font(.body)
+                    .frame(width: 28, height: 28)
+            }
+            .buttonStyle(.borderless)
+            .help("Open Owner")
+        }
+        .padding(.vertical, 8)
     }
 }
 
@@ -2247,6 +4171,24 @@ private func lyricTimeMillis(from match: NSTextCheckingResult, in line: NSString
     }
 
     return ((minutes * 60) + seconds) * 1000 + milliseconds
+}
+
+private func dateFromCicadaTimestamp(_ timestamp: TimeInterval) -> Date {
+    let seconds = timestamp > 10_000_000_000 ? timestamp / 1000 : timestamp
+    return Date(timeIntervalSince1970: seconds)
+}
+
+private func formatCicadaTimestamp(
+    _ timestamp: TimeInterval,
+    date: Date.FormatStyle.DateStyle,
+    time: Date.FormatStyle.TimeStyle
+) -> String {
+    dateFromCicadaTimestamp(timestamp).formatted(date: date, time: time)
+}
+
+private func displayDeviceName(_ session: AuthSession) -> String {
+    let name = session.deviceName.trimmingCharacters(in: .whitespacesAndNewlines)
+    return name.isEmpty ? "Unknown Device" : name
 }
 
 private func formatPlaybackTime(_ seconds: Double) -> String {

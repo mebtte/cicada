@@ -103,6 +103,44 @@ struct CicadaAPIClient: Sendable {
         return profile
     }
 
+    func updateProfileNickname(_ nickname: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/profile",
+            method: "PUT",
+            body: UpdateProfileBody(key: "nickname", value: nickname)
+        )
+    }
+
+    func updateProfilePassword(
+        password: String,
+        credential: String
+    ) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/profile",
+            method: "PUT",
+            body: UpdateProfileBody(
+                key: "password",
+                value: UpdateProfilePasswordValue(
+                    password: password,
+                    currentPassword: credential,
+                    twoFAToken: credential
+                )
+            )
+        )
+    }
+
+    func getUser(id: String) async throws -> UserDetail {
+        var user: UserDetail = try await request(
+            path: "/api/common/user",
+            query: ["userId": id]
+        )
+        user.avatar = absoluteURLString(user.avatar)
+        for index in user.musicbillList.indices {
+            user.musicbillList[index].cover = absoluteURLString(user.musicbillList[index].cover)
+        }
+        return user
+    }
+
     func getMusicbillList() async throws -> [MusicbillSummary] {
         var musicbills: [MusicbillSummary] = try await request(path: "/api/common/musicbill_list")
         for index in musicbills.indices {
@@ -129,6 +167,53 @@ struct CicadaAPIClient: Sendable {
             normalizeMusicAssets(&musicbill.musicList[index])
         }
         return musicbill
+    }
+
+    func searchPublicMusicbill(keyword: String, page: Int, pageSize: Int) async throws -> PublicMusicbillSearchResponse {
+        var result: PublicMusicbillSearchResponse = try await request(
+            path: "/api/common/public_musicbill/search",
+            query: [
+                "keyword": keyword,
+                "page": String(page),
+                "pageSize": String(pageSize),
+            ]
+        )
+        for index in result.musicbillList.indices {
+            result.musicbillList[index].cover = absoluteURLString(result.musicbillList[index].cover)
+            result.musicbillList[index].user.avatar = absoluteURLString(result.musicbillList[index].user.avatar)
+        }
+        return result
+    }
+
+    func getPublicMusicbill(id: String) async throws -> PublicMusicbillDetail {
+        var musicbill: PublicMusicbillDetail = try await request(
+            path: "/api/common/public_musicbill",
+            query: ["id": id]
+        )
+        musicbill.cover = absoluteURLString(musicbill.cover)
+        musicbill.user.avatar = absoluteURLString(musicbill.user.avatar)
+        normalizeMusicListAssets(&musicbill.musicList)
+        return musicbill
+    }
+
+    func getPublicMusicbillCollectionList(
+        keyword: String,
+        page: Int,
+        pageSize: Int
+    ) async throws -> PublicMusicbillCollectionResponse {
+        var result: PublicMusicbillCollectionResponse = try await request(
+            path: "/api/common/public_musicbill_collection_list",
+            query: [
+                "keyword": keyword,
+                "page": String(page),
+                "pageSize": String(pageSize),
+            ]
+        )
+        for index in result.collectionList.indices {
+            result.collectionList[index].cover = absoluteURLString(result.collectionList[index].cover)
+            result.collectionList[index].user.avatar = absoluteURLString(result.collectionList[index].user.avatar)
+        }
+        return result
     }
 
     func createMusicbill(name: String) async throws -> String {
@@ -204,6 +289,28 @@ struct CicadaAPIClient: Sendable {
         )
     }
 
+    func addMusicbillSharedUser(musicbillID: String, username: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/musicbill/shared_user",
+            method: "POST",
+            body: AddMusicbillSharedUserBody(
+                musicbillId: musicbillID,
+                username: username
+            )
+        )
+    }
+
+    func deleteMusicbillSharedUser(musicbillID: String, userID: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/musicbill/shared_user",
+            method: "DELETE",
+            query: [
+                "musicbillId": musicbillID,
+                "userId": userID,
+            ]
+        )
+    }
+
     func getLyricList(musicID: String) async throws -> [LyricItem] {
         try await request(
             path: "/api/common/lyric_list",
@@ -241,6 +348,24 @@ struct CicadaAPIClient: Sendable {
         return result
     }
 
+    func getMusic(id: String) async throws -> MusicDetail {
+        var music: MusicDetail = try await request(
+            path: "/api/common/music",
+            query: ["id": id]
+        )
+        music.cover = absoluteURLString(music.cover)
+        music.coverThumbnail = absoluteURLString(music.coverThumbnail)
+        music.asset = absoluteURLString(music.asset)
+        normalizeArtistSearchItems(&music.performers)
+        normalizeArtistSearchItems(&music.lyricists)
+        normalizeArtistSearchItems(&music.composers)
+        for index in music.relatedPublicMusicbillList.indices {
+            music.relatedPublicMusicbillList[index].cover = absoluteURLString(music.relatedPublicMusicbillList[index].cover)
+            music.relatedPublicMusicbillList[index].user.avatar = absoluteURLString(music.relatedPublicMusicbillList[index].user.avatar)
+        }
+        return music
+    }
+
     func searchArtist(keyword: String, page: Int, pageSize: Int) async throws -> ArtistSearchResponse {
         var result: ArtistSearchResponse = try await request(
             path: "/api/common/artist/search",
@@ -268,6 +393,34 @@ struct CicadaAPIClient: Sendable {
         return artist
     }
 
+    func collectPublicMusicbill(id: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/public_musicbill/collection",
+            method: "POST",
+            body: PublicMusicbillCollectionBody(id: id)
+        )
+    }
+
+    func uncollectPublicMusicbill(id: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/public_musicbill/collection",
+            method: "DELETE",
+            query: ["id": id]
+        )
+    }
+
+    func getSharedMusicbillInvitationList() async throws -> [SharedMusicbillInvitation] {
+        try await request(path: "/api/common/shared_musicbill_invitation_list")
+    }
+
+    func acceptSharedMusicbillInvitation(id: Int) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/shared_musicbill_invitation",
+            method: "PUT",
+            body: SharedMusicbillInvitationBody(id: id)
+        )
+    }
+
     func createMusicPlayRecord(_ payload: CreateMusicPlayRecordPayload) async throws {
         let _: EmptyResponse = try await request(
             path: "/api/common/music_play_record",
@@ -279,6 +432,25 @@ struct CicadaAPIClient: Sendable {
     func deleteCurrentSession() async throws {
         let _: EmptyResponse = try await request(
             path: "/api/common/sessions/current",
+            method: "DELETE"
+        )
+    }
+
+    func getSessions() async throws -> [AuthSession] {
+        try await request(path: "/api/common/sessions")
+    }
+
+    func updateSession(id: String, deviceName: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/sessions/\(id)",
+            method: "PUT",
+            body: UpdateSessionBody(deviceName: deviceName)
+        )
+    }
+
+    func deleteSession(id: String) async throws {
+        let _: EmptyResponse = try await request(
+            path: "/api/common/sessions/\(id)",
             method: "DELETE"
         )
     }
@@ -456,6 +628,12 @@ struct CicadaAPIClient: Sendable {
         }
     }
 
+    private func normalizeArtistSearchItems(_ artists: inout [ArtistSearchItem]) {
+        for index in artists.indices {
+            normalizeArtistPhotos(&artists[index].photos)
+        }
+    }
+
     private var appVersion: String {
         AppVersion.current
     }
@@ -486,6 +664,17 @@ private struct LoginWith2FABody: Encodable {
     let deviceName: String
 }
 
+private struct UpdateProfileBody<Value: Encodable>: Encodable {
+    let key: String
+    let value: Value
+}
+
+private struct UpdateProfilePasswordValue: Encodable {
+    let password: String
+    let currentPassword: String
+    let twoFAToken: String
+}
+
 private struct CreateMusicbillBody: Encodable {
     let name: String
 }
@@ -507,4 +696,21 @@ private struct UpdateMusicbillBoolBody: Encodable {
 private struct MusicbillMusicBody: Encodable {
     let musicbillId: String
     let musicId: String
+}
+
+private struct AddMusicbillSharedUserBody: Encodable {
+    let musicbillId: String
+    let username: String
+}
+
+private struct PublicMusicbillCollectionBody: Encodable {
+    let id: String
+}
+
+private struct SharedMusicbillInvitationBody: Encodable {
+    let id: Int
+}
+
+private struct UpdateSessionBody: Encodable {
+    let deviceName: String
 }

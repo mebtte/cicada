@@ -139,6 +139,32 @@ final class ServerSetupStore: ObservableObject {
         persist()
     }
 
+    func updateSelectedUser(profile: UserProfile) {
+        guard let selectedServerOrigin else { return }
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.users = next.users.map { user in
+                guard user.id == profile.id else { return user }
+                var nextUser = user
+                nextUser.username = profile.username
+                nextUser.avatar = profile.avatar
+                nextUser.nickname = profile.nickname
+                nextUser.joinTimestamp = profile.joinTimestamp
+                nextUser.admin = profile.admin
+                nextUser.musicbillOrders = profile.musicbillOrders
+                nextUser.twoFAEnabled = profile.twoFAEnabled
+                return nextUser
+            }
+            if next.selectedUserID == nil,
+               next.users.contains(where: { $0.id == profile.id }) {
+                next.selectedUserID = profile.id
+            }
+            return next
+        }
+        persist()
+    }
+
     func connectDraftOrigin() async {
         guard !isConnecting else { return }
 
