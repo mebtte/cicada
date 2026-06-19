@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ExportingMusic, ExportStatus } from './constants';
+import getMusicRequest from '@/server/api/get_music';
+import { ExportingMusic, ExportStatus, Music } from './constants';
 import eventemitter, { EventType } from './eventemitter';
 import generateRandomString from '@/utils/generate_random_string';
 import formatMusicFilename from '@/utils/format_music_filename';
@@ -199,6 +200,8 @@ function useExport() {
                   /* 清掉上一轮失败时残留的进度, 避免下一轮启动前显示旧百分比 */
                   loaded: undefined,
                   total: undefined,
+                  /* 重试前重新拉取详情, 刷新可能已过期的资源地址 */
+                  needRefetch: true,
                 }
               : m,
           ),
@@ -220,6 +223,8 @@ function useExport() {
                     status: ExportStatus.WAITING,
                     loaded: undefined,
                     total: undefined,
+                    /* 重试前重新拉取详情, 刷新可能已过期的资源地址 */
+                    needRefetch: true,
                   }
                 : m,
             ),
@@ -244,7 +249,7 @@ function useExport() {
         ml.map((m) =>
           m.id === waiting.id
             ? {
-                ...waiting,
+                ...m,
                 status: ExportStatus.EXPORTING,
                 loaded: undefined,
                 total: undefined,
@@ -259,12 +264,66 @@ function useExport() {
             m.id === waiting.id ? { ...m, loaded, total } : m,
           ),
         );
-      exportAndSaveWithTimeout(waiting, onProgress)
+
+      /* 启动单个导出: 若是失败重试 (needRefetch), 先重新拉取音乐详情刷新可能已过期的资源地址再下载 */
+      const run = async () => {
+        let target = waiting;
+        if (waiting.needRefetch) {
+          try {
+            const latest = await getMusicRequest({ id: waiting.music.id });
+            const asset = getMusicExportAsset({
+              asset: latest.asset,
+              quality: waiting.quality,
+            });
+            /* 用最新详情重建导出所需的字段 (文件名依赖 name/performers, 下载依赖 asset) */
+            const refreshedMusic: Music = {
+              ...waiting.music,
+              cover: latest.cover,
+              coverThumbnail: latest.coverThumbnail,
+              name: latest.name,
+              type: latest.type,
+              aliases: latest.aliases,
+              performers: latest.performers.map((p) => ({
+                id: p.id,
+                name: p.name,
+              })),
+              asset: latest.asset,
+            };
+            target = {
+              ...waiting,
+              music: refreshedMusic,
+              asset: asset.url,
+              ext: asset.ext,
+              needRefetch: false,
+            };
+            /* 把刷新后的详情写回列表, 让界面展示与最终文件名都基于最新数据 */
+            setExportingMusicList((ml) =>
+              ml.map((m) =>
+                m.id === waiting.id
+                  ? {
+                      ...m,
+                      music: refreshedMusic,
+                      asset: asset.url,
+                      ext: asset.ext,
+                      needRefetch: false,
+                    }
+                  : m,
+              ),
+            );
+          } catch (error) {
+            /* 拉取失败不阻断重试, 退回到使用原有资源地址继续尝试导出 */
+            logger.error(error, '重试前重新拉取音乐详情失败, 使用原有资源地址导出');
+          }
+        }
+        return exportAndSaveWithTimeout(target, onProgress);
+      };
+
+      run()
         .then(() =>
           setExportingMusicList((ml) =>
             ml.map((m) =>
               m.id === waiting.id
-                ? { ...waiting, status: ExportStatus.SUCCESSFUL }
+                ? { ...m, status: ExportStatus.SUCCESSFUL }
                 : m,
             ),
           ),
@@ -274,7 +333,7 @@ function useExport() {
           setExportingMusicList((ml) =>
             ml.map((m) =>
               m.id === waiting.id
-                ? { ...waiting, status: ExportStatus.FAILED }
+                ? { ...m, status: ExportStatus.FAILED }
                 : m,
             ),
           );

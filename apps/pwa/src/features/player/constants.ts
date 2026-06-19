@@ -159,4 +159,6 @@ export interface ExportingMusic {
   loaded?: number;
   /* 文件总字节数, 来自 Content-Length 响应头, 可能缺失 */
   total?: number;
+  /* 失败重试时置位: 提示导出前先重新拉取音乐详情, 刷新可能已过期的资源地址 */
+  needRefetch?: boolean;
 }
