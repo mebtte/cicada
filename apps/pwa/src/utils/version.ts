@@ -63,11 +63,14 @@ export function isServerVersionSupported(
   pwaVersion: string,
   serverVersion: string,
 ) {
-  const pwa = getSemanticVersion(pwaVersion);
-  const server = getSemanticVersion(serverVersion);
+  // 兼容性判断只比较基础版本, 服务端构建描述如 "-local" 不参与大小比较
+  const pwaBaseVersion = getBaseVersion(pwaVersion);
+  const serverBaseVersion = getBaseVersion(serverVersion);
+  const pwa = getSemanticVersion(pwaBaseVersion);
+  const server = getSemanticVersion(serverBaseVersion);
 
   if (!pwa || !server || pwa.major !== server.major) {
     return false;
   }
-  return compareSemanticVersion(serverVersion, pwaVersion) === 1;
+  return compareSemanticVersion(serverBaseVersion, pwaBaseVersion)! >= 0;
 }

@@ -80,6 +80,7 @@ test("version helpers compare semantic major versions", () => {
   assert.equal(getSemanticVersion("unknown"), null);
   assert.equal(compareSemanticVersion("3.2.0", "3.1.9"), 1);
   assert.equal(compareSemanticVersion("3.1.0", "3.1.0-beta.1"), 0);
+  assert.equal(compareSemanticVersion("3.1.1-local", "3.1.0"), 1);
   assert.equal(compareSemanticVersion("3.1.0", "3.1.1"), -1);
 
   assert.equal(isSameMajorVersion("3.1.0-local", "3.2.0-beta.1"), true);
@@ -88,7 +89,13 @@ test("version helpers compare semantic major versions", () => {
   assert.equal(isSameMajorVersion("unknown", "4.0.0"), true);
   assert.equal(isServerVersionSupported("3.1.0-local", "3.1.1"), true);
   assert.equal(isServerVersionSupported("3.1.0", "3.2.0-beta.1"), true);
-  assert.equal(isServerVersionSupported("3.1.0", "3.1.0-beta.1"), false);
+  assert.equal(isServerVersionSupported("3.1.0-local", "3.1.0"), true);
+  assert.equal(isServerVersionSupported("3.1.0", "3.1.1-local"), true);
+  assert.equal(
+    isServerVersionSupported("3.1.0-local", "3.1.1-beta.2606181430"),
+    true,
+  );
+  assert.equal(isServerVersionSupported("3.1.0", "3.1.0-beta.1"), true);
   assert.equal(isServerVersionSupported("3.1.1", "3.1.0"), false);
   assert.equal(isServerVersionSupported("3.1.0", "4.0.0"), false);
   assert.equal(isServerVersionSupported("unknown", "4.0.0"), false);
