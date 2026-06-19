@@ -18,7 +18,6 @@ import VirtualList from '@/components/virtual_list';
 import { flexCenter } from '@/style/flexbox';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { TAB_LIST_HEIGHT } from '../constants';
 import Context from '../../context';
 import TabContent from '../tab_content';
@@ -81,10 +80,9 @@ function Playlist() {
     );
   }, [keyword]);
 
-  const { height: titlebarAreaHeight } = useTitlebarArea();
-  const listTopSpace = titlebarAreaHeight + 12;
+  const listTopSpace = 12;
   const emptyContentStyle: CSSProperties = {
-    paddingTop: titlebarAreaHeight + 12,
+    paddingTop: 12,
     paddingBottom: LIST_BOTTOM_SAFE_AREA_SPACE,
   };
 

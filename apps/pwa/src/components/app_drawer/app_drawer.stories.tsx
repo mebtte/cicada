@@ -15,12 +15,10 @@ const meta = {
       control: 'select',
       options: ['compact', 'medium', 'wide'],
     },
-    includeTitlebarInset: { control: 'boolean' },
     showClose: { control: 'boolean' },
   },
   args: {
     width: 'medium',
-    includeTitlebarInset: true,
     showClose: true,
     open: false,
     onClose: () => {},
@@ -46,7 +44,7 @@ function Demo(args: Story['args']) {
           <DrawerTitle>App drawer</DrawerTitle>
         </DrawerHeader>
         <DrawerBody>
-          Drawer shell with titlebar inset and width presets centralized.
+          Drawer shell with width presets centralized.
         </DrawerBody>
       </AppDrawer>
     </div>

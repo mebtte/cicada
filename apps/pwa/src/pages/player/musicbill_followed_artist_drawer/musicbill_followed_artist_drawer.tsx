@@ -7,7 +7,6 @@ import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { SEARCH_KEYWORD_MAX_LENGTH as ARTIST_SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/artist';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 import searchArtistRequest from '@/server/api/search_artist';
 import getMusicbillFollowedArtistList from '@/server/api/get_musicbill_followed_artist_list';
@@ -78,7 +77,6 @@ function FollowedArtistDrawer({
   musicbillId: string;
   zIndex: number;
 }) {
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const [artists, setArtists] = useState<FollowedArtist[]>([]);
 
   const reload = useCallback(() => {
@@ -144,7 +142,7 @@ function FollowedArtistDrawer({
         style={{ width: 340 }}
         zIndex={zIndex}
       >
-        <Content style={{ paddingTop: titlebarTop }}>
+        <Content>
           <SearchBar>
             <MultiSelect
               value={[]}

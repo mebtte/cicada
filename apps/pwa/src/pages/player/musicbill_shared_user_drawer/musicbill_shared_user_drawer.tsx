@@ -12,7 +12,6 @@ import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
 import { USERNAME_MAX_LENGTH } from '@/constants/user';
 import { useUser } from '@/global_states/server';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import User from './user';
 import { Musicbill } from '../constants';
 import e, { EventType } from '../eventemitter';
@@ -59,7 +58,6 @@ function ShareDrawer({
 }) {
   const navigate = useNavigate();
   const user = useUser()!;
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   const owned = musicbill.owner.id === user.id;
 
@@ -71,7 +69,7 @@ function ShareDrawer({
         style={{ width: 340 }}
         zIndex={zIndex}
       >
-        <Content style={{ paddingTop: titlebarTop }}>
+        <Content>
           <List>
             <User
               user={musicbill.owner}

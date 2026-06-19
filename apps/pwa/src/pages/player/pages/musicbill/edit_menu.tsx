@@ -27,7 +27,6 @@ import notice from '@/utils/notice';
 import deleteMusicbill from '@/server/api/delete_musicbill';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import { useUser } from '@/global_states/server';
 import { t } from '@/i18n';
 import getResizedImage from '@/server/asset/get_resized_image';
@@ -196,7 +195,6 @@ const DangerArea = styled.div`
 function EditMenu({ musicbill }: { musicbill: Musicbill }) {
   const navigate = useNavigate();
   const user = useUser()!;
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
@@ -406,7 +404,6 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
         side="right"
         style={{
           width: 'min(390px, calc(100vw - 20px))',
-          paddingTop: titlebarTop,
         }}
         zIndex={EDIT_DRAWER_Z_INDEX}
         accessibleTitle={t('edit_musicbill')}

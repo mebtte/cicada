@@ -5,7 +5,6 @@ import { Query } from '@/constants';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import useNavigate from '@/utils/use_navigate';
 import CollectionList from '../pages/public_musicbill_collection/collection_list';
 import { SearchTab } from '../constants';
@@ -44,7 +43,6 @@ const Body = styled.div`
 
 function PublicMusicbillCollectionDrawer() {
   const [open, setOpen] = useState(false);
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const zIndex = useDynamicZIndex(
     EventType.OPEN_PUBLIC_MUSICBILL_COLLECTION_DRAWER,
   );
@@ -74,7 +72,7 @@ function PublicMusicbillCollectionDrawer() {
         side="right"
         showClose={false}
         accessibleTitle={t('public_musicbill_collection')}
-        style={{ width: 'min(80%, 360px)', paddingTop: titlebarTop }}
+        style={{ width: 'min(80%, 360px)' }}
         zIndex={zIndex}
       >
         <Shell>

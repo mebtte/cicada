@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import { CSSVariable } from '@/global_style';
 import { CSS_VAR } from '@/components/theme';
 import getResizedImage from '@/server/asset/get_resized_image';
@@ -91,12 +90,10 @@ const Style = styled.div`
 `;
 
 function Top({ music }: { music: Music }) {
-  const { height } = useTitlebarArea();
-
   return (
     <Style
       style={{
-        padding: `${height + FLOATING_GAP}px 0 0 0`,
+        padding: `${FLOATING_GAP}px 0 0 0`,
       }}
     >
       <MusicInfo

@@ -88,9 +88,14 @@ const Overlay = styled(RadixDialog.Overlay)`
 // Vertical inset only — drawers stay glued to their slide-in edge horizontally
 // but reveal page space on top and bottom, so the downward hard shadow can land
 // in the bottom gap and read as "raised toward viewer" (mirrors Button).
+//
+// Top inset combines the OS notch safe area with the window-controls-overlay
+// titlebar area so installed PWAs (display_override: window-controls-overlay)
+// keep the hollow gap visible below the system titlebar.
 
 const INSET = '24px';
-const SAFE_TOP    = `calc(${INSET} + env(safe-area-inset-top, 0px))`;
+const TOP_OVERLAY = `max(env(safe-area-inset-top, 0px), env(titlebar-area-height, 0px))`;
+const SAFE_TOP    = `calc(${INSET} + ${TOP_OVERLAY})`;
 const SAFE_BOTTOM = `calc(${INSET} + env(safe-area-inset-bottom, 0px))`;
 
 const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
@@ -124,7 +129,8 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
     left: 0;
     right: 0;
     bottom: ${SAFE_BOTTOM};
-    max-height: calc(92dvh - 24px);
+    /* Leave the hollow gap at the top intact even at the drawer's tallest. */
+    max-height: calc(100dvh - ${SAFE_TOP} - ${SAFE_BOTTOM});
     border-radius: 20px;
     border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     box-shadow: 0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};

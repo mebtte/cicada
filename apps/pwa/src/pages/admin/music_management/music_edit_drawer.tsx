@@ -58,7 +58,6 @@ import getMusicFileMetadata, {
   type Metadata as MusicFileMetadata,
 } from '@/utils/get_music_file_metadata';
 import stringArrayEqual from '@/utils/string_array_equal';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 import deleteMusic from '@/server/api/delete_music';
 import getLyricList from '@/server/api/get_lyric_list';
@@ -1489,7 +1488,6 @@ function MusicEditDrawer({
   onClose: () => void;
   onSaved?: () => void;
 }) {
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [music, setMusic] = useState<Music | null>(null);
@@ -1576,7 +1574,6 @@ function MusicEditDrawer({
         style={{
           width: DRAWER_WIDTH,
           maxWidth: `calc(100vw - ${DRAWER_NARROW_SCREEN_GUTTER}px)`,
-          paddingTop: titlebarTop,
         }}
         showClose={false}
         onOpenAutoFocus={(event) => event.preventDefault()}
