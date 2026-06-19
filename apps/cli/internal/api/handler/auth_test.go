@@ -96,7 +96,7 @@ func TestGetMetadataIncludesFileMaxSizes(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodGet, "/base/metadata", nil)
+	c.Request = httptest.NewRequest(http.MethodGet, "/api/base/metadata", nil)
 
 	GetMetadata(c)
 
@@ -139,7 +139,7 @@ func callDisable2FA(t *testing.T, token string, secret string) struct {
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodDelete, "/api/2fa", bytes.NewReader(body))
+	c.Request = httptest.NewRequest(http.MethodDelete, "/api/common/2fa", bytes.NewReader(body))
 	c.Request.Header.Set("Content-Type", "application/json")
 	c.Set("authed_user", &store.User{
 		ID:          "USER01",

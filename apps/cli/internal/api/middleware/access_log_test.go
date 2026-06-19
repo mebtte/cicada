@@ -22,14 +22,14 @@ func TestAccessLoggerWritesStructuredRecord(t *testing.T) {
 	logger := newAccessLogger(dir, accessLogMaxSize)
 	r := gin.New()
 	r.Use(logger.Middleware())
-	r.POST("/api/music/:id", func(c *gin.Context) {
+	r.POST("/api/common/music/:id", func(c *gin.Context) {
 		c.Set(ctxUser, &store.User{ID: "u1"})
 		c.String(http.StatusCreated, "ok")
 	})
 
 	req := httptest.NewRequest(
 		http.MethodPost,
-		"/api/music/42?keyword=hello&token=secret&password=pw",
+		"/api/common/music/42?keyword=hello&token=secret&password=pw",
 		strings.NewReader("hello"),
 	)
 	req.Header.Set(accessLogRequestIDHeader, "req-test")
@@ -50,7 +50,7 @@ func TestAccessLoggerWritesStructuredRecord(t *testing.T) {
 	if record.Method != http.MethodPost {
 		t.Fatalf("method = %q", record.Method)
 	}
-	if record.Path != "/api/music/:id" {
+	if record.Path != "/api/common/music/:id" {
 		t.Fatalf("path = %q", record.Path)
 	}
 	if record.Status != http.StatusCreated {
@@ -90,7 +90,7 @@ func TestAccessLoggerRotatesBySize(t *testing.T) {
 		Time:      time.Now().Format(time.RFC3339Nano),
 		RequestID: "req-test",
 		Method:    http.MethodGet,
-		Path:      "/api/test",
+		Path:      "/api/common/test",
 		Query:     map[string][]string{},
 		Status:    http.StatusOK,
 	}

@@ -4,7 +4,7 @@ import { getSelectedServer, useServer } from '@/global_states/server';
 /**
  * Returns the byte size cap for the given asset type.
  *
- * Source of truth is the server-side config exposed via /base/metadata. When
+ * Source of truth is the server-side config exposed via /api/base/metadata. When
  * metadata has not arrived yet, callers should skip client-side size checks
  * and let the API return the final error.
  *

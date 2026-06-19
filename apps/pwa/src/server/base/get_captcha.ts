@@ -5,7 +5,7 @@ function getCaptcha() {
     id: string;
     svg: string;
   }>({
-    path: '/base/captcha',
+    path: '/api/base/captcha',
   });
 }
 

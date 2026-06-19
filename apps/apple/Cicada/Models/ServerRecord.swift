@@ -10,11 +10,28 @@ struct ServerUserRecord: Codable, Hashable, Identifiable {
     var musicbillOrders: [String]
     var twoFAEnabled: Bool
     var token: String
+    var sessionID: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case username
+        case avatar
+        case nickname
+        case joinTimestamp
+        case admin
+        case musicbillOrders
+        case twoFAEnabled
+        case token
+        case sessionID = "sessionId"
+    }
 }
 
 struct ServerRecord: Codable, Hashable, Identifiable {
-    let version: String
-    let hostname: String
+    var version: String
+    var hostname: String
+    var imageFileMaxSize: Int?
+    var audioFileMaxSize: Int?
+    var videoFileMaxSize: Int?
     let origin: String
     var users: [ServerUserRecord]
     var selectedUserID: String?
@@ -30,9 +47,17 @@ struct ServerRecord: Codable, Hashable, Identifiable {
         }
     }
 
+    var selectedUser: ServerUserRecord? {
+        guard let selectedUserID else { return nil }
+        return users.first(where: { $0.id == selectedUserID })
+    }
+
     enum CodingKeys: String, CodingKey {
         case version
         case hostname
+        case imageFileMaxSize
+        case audioFileMaxSize
+        case videoFileMaxSize
         case origin
         case users
         case selectedUserID = "selectedUserId"

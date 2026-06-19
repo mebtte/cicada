@@ -16,7 +16,7 @@ interface Response {
 
 async function getProfile(token?: string) {
   const profile = await request<Response>({
-    path: '/api/profile',
+    path: '/api/common/profile',
     headers: token
       ? {
           [HEADER_TOKEN]: token,

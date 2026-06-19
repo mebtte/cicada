@@ -29,7 +29,7 @@ async function getSelfMusicbillCollectionList({
   pageSize: number;
 }) {
   const data = await request<RawResponse>({
-    path: '/api/public_musicbill_collection_list',
+    path: '/api/common/public_musicbill_collection_list',
     params: { keyword, page, pageSize },
     withToken: true,
   });

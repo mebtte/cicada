@@ -16,7 +16,7 @@ const METADATA_TIMEOUT_MS = 10 * 1000;
 
 async function getMetadata(origin: string) {
   const commonParams = getCommonParams();
-  const url = `${origin}/base/metadata?${Object.keys(commonParams)
+  const url = `${origin}/api/base/metadata?${Object.keys(commonParams)
     .map((key) => `${key}=${commonParams[key]}`)
     .join('&')}`;
 

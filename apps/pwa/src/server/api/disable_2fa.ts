@@ -6,7 +6,7 @@ interface RequestParams {
 
 function disable2FA(params: RequestParams) {
   return request({
-    path: '/api/2fa',
+    path: '/api/common/2fa',
     method: Method.DELETE,
     withToken: true,
     body: {

@@ -211,7 +211,7 @@ function putChunk(
     const xhr = new XMLHttpRequest();
     xhr.open(
       'PUT',
-      `${origin}${withQuery(`/api/asset/upload/${uploadId}`)}`,
+      `${origin}${withQuery(`/api/common/asset/upload/${uploadId}`)}`,
       true,
     );
     xhr.setRequestHeader(
@@ -343,7 +343,7 @@ async function uploadAssetChunked(
   const initRes = await jsonRequest<InitResponse>(
     origin,
     token,
-    '/api/asset/upload',
+    '/api/common/asset/upload',
     {
       method: 'POST',
       body: JSON.stringify({
@@ -415,7 +415,7 @@ async function uploadAssetChunked(
   const completeRes = await jsonRequest<CompleteResponse>(
     origin,
     token,
-    `/api/asset/upload/${uploadId}/complete`,
+    `/api/common/asset/upload/${uploadId}/complete`,
     { method: 'POST' },
     signal,
   );

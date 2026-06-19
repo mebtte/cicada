@@ -8,7 +8,10 @@ final class ServerSetupStore: ObservableObject {
     @Published var selectedServerOrigin: String?
     @Published var draftOrigin: String
     @Published var isConnecting = false
+    @Published private(set) var isRefreshingSelectedServerMetadata = false
+    @Published private(set) var selectedServerMetadataError: String?
     @Published var errorMessage: String?
+    @Published var authenticationMessage: String?
     @Published var pendingDeletion: ServerRecord?
 
     private let client: ServerMetadataClient
@@ -34,9 +37,131 @@ final class ServerSetupStore: ObservableObject {
         savedServers.first(where: { $0.origin == selectedServerOrigin })
     }
 
+    var selectedUser: ServerUserRecord? {
+        selectedServer?.selectedUser
+    }
+
+    var selectedServerVersionWarning: String? {
+        guard
+            let selectedServer,
+            let appMajorVersion = AppVersion.majorVersion(from: appVersion),
+            let serverMajorVersion = AppVersion.majorVersion(from: selectedServer.version),
+            appMajorVersion != serverMajorVersion
+        else {
+            return nil
+        }
+        return "Server \(selectedServer.version) may not match app \(appVersion)."
+    }
+
     func select(_ server: ServerRecord) {
         selectedServerOrigin = server.origin
         draftOrigin = server.origin
+        persist()
+    }
+
+    func showServerSetup() {
+        selectedServerOrigin = nil
+        draftOrigin = savedServers.first?.origin ?? ""
+        persist()
+    }
+
+    func selectUser(_ user: ServerUserRecord) {
+        guard let selectedServerOrigin else { return }
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.selectedUserID = user.id
+            return next
+        }
+        persist()
+    }
+
+    func clearSelectedUser() {
+        guard let selectedServerOrigin else { return }
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.selectedUserID = nil
+            return next
+        }
+        persist()
+    }
+
+    func removeSelectedUser(message: String? = nil) {
+        guard
+            let selectedServerOrigin,
+            let selectedUserID = selectedServer?.selectedUserID
+        else {
+            return
+        }
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.users.removeAll(where: { $0.id == selectedUserID })
+            next.selectedUserID = nil
+            return next
+        }
+        authenticationMessage = message
+        persist()
+    }
+
+    func dismissAuthenticationMessage() {
+        authenticationMessage = nil
+    }
+
+    func upsertAuthenticatedUser(
+        profile: UserProfile,
+        token: String,
+        sessionID: String
+    ) {
+        guard let selectedServerOrigin else { return }
+        let user = ServerUserRecord(
+            id: profile.id,
+            username: profile.username,
+            avatar: profile.avatar,
+            nickname: profile.nickname,
+            joinTimestamp: profile.joinTimestamp,
+            admin: profile.admin,
+            musicbillOrders: profile.musicbillOrders,
+            twoFAEnabled: profile.twoFAEnabled,
+            token: token,
+            sessionID: sessionID
+        )
+
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.users.removeAll(where: { $0.id == user.id })
+            next.users.append(user)
+            next.selectedUserID = user.id
+            return next
+        }
+        persist()
+    }
+
+    func updateSelectedUser(profile: UserProfile) {
+        guard let selectedServerOrigin else { return }
+        savedServers = savedServers.map { server in
+            guard server.origin == selectedServerOrigin else { return server }
+            var next = server
+            next.users = next.users.map { user in
+                guard user.id == profile.id else { return user }
+                var nextUser = user
+                nextUser.username = profile.username
+                nextUser.avatar = profile.avatar
+                nextUser.nickname = profile.nickname
+                nextUser.joinTimestamp = profile.joinTimestamp
+                nextUser.admin = profile.admin
+                nextUser.musicbillOrders = profile.musicbillOrders
+                nextUser.twoFAEnabled = profile.twoFAEnabled
+                return nextUser
+            }
+            if next.selectedUserID == nil,
+               next.users.contains(where: { $0.id == profile.id }) {
+                next.selectedUserID = profile.id
+            }
+            return next
+        }
         persist()
     }
 
@@ -47,29 +172,56 @@ final class ServerSetupStore: ObservableObject {
             let normalizedOrigin = try normalizeOrigin(from: draftOrigin)
             draftOrigin = normalizedOrigin
 
-            if let existingServer = savedServers.first(where: { $0.origin == normalizedOrigin }) {
-                select(existingServer)
-                return
-            }
-
             isConnecting = true
             defer { isConnecting = false }
 
             let metadata = try await client.fetchMetadata(normalizedOrigin)
-            let record = ServerRecord(
-                version: metadata.version,
-                hostname: metadata.hostname,
-                origin: normalizedOrigin,
-                users: [],
-                selectedUserID: nil
-            )
+            if savedServers.contains(where: { $0.origin == normalizedOrigin }) {
+                updateServerMetadata(origin: normalizedOrigin, metadata: metadata)
+                selectedServerOrigin = normalizedOrigin
+            } else {
+                let record = ServerRecord(
+                    version: metadata.version,
+                    hostname: metadata.hostname,
+                    imageFileMaxSize: metadata.imageFileMaxSize,
+                    audioFileMaxSize: metadata.audioFileMaxSize,
+                    videoFileMaxSize: metadata.videoFileMaxSize,
+                    origin: normalizedOrigin,
+                    users: [],
+                    selectedUserID: nil
+                )
 
-            savedServers.insert(record, at: 0)
-            selectedServerOrigin = record.origin
-            draftOrigin = record.origin
+                savedServers.insert(record, at: 0)
+                selectedServerOrigin = record.origin
+            }
+            selectedServerMetadataError = nil
+            draftOrigin = normalizedOrigin
             persist()
         } catch {
             errorMessage = presentableMessage(for: error)
+        }
+    }
+
+    func refreshSelectedServerMetadata() async {
+        guard
+            let selectedServer,
+            !isRefreshingSelectedServerMetadata
+        else {
+            return
+        }
+
+        isRefreshingSelectedServerMetadata = true
+        defer {
+            isRefreshingSelectedServerMetadata = false
+        }
+
+        do {
+            let metadata = try await client.fetchMetadata(selectedServer.origin)
+            updateServerMetadata(origin: selectedServer.origin, metadata: metadata)
+            selectedServerMetadataError = nil
+            persist()
+        } catch {
+            selectedServerMetadataError = presentableMessage(for: error)
         }
     }
 
@@ -106,15 +258,21 @@ final class ServerSetupStore: ObservableObject {
         let snapshot = ServerSnapshot(
             savedServers: [
                 ServerRecord(
-                    version: "0.24.1",
+                    version: "3.6.0",
                     hostname: "studio.cicada.local",
+                    imageFileMaxSize: nil,
+                    audioFileMaxSize: nil,
+                    videoFileMaxSize: nil,
                     origin: "https://studio.cicada.local",
                     users: [],
                     selectedUserID: nil
                 ),
                 ServerRecord(
-                    version: "0.23.8",
+                    version: "3.5.0",
                     hostname: "archive.cicada.local",
+                    imageFileMaxSize: nil,
+                    audioFileMaxSize: nil,
+                    videoFileMaxSize: nil,
                     origin: "https://archive.cicada.local",
                     users: [],
                     selectedUserID: nil
@@ -185,6 +343,19 @@ final class ServerSetupStore: ObservableObject {
         storage.set(data, forKey: Self.storageKey)
     }
 
+    private func updateServerMetadata(origin: String, metadata: ServerMetadata) {
+        savedServers = savedServers.map { server in
+            guard server.origin == origin else { return server }
+            var next = server
+            next.version = metadata.version
+            next.hostname = metadata.hostname
+            next.imageFileMaxSize = metadata.imageFileMaxSize
+            next.audioFileMaxSize = metadata.audioFileMaxSize
+            next.videoFileMaxSize = metadata.videoFileMaxSize
+            return next
+        }
+    }
+
     private static func loadSnapshot(from storage: UserDefaults) -> ServerSnapshot {
         guard
             let data = storage.data(forKey: storageKey),
@@ -204,6 +375,10 @@ final class ServerSetupStore: ObservableObject {
 
         return error.localizedDescription
     }
+
+    private var appVersion: String {
+        AppVersion.current
+    }
 }
 
 enum ServerSetupError: LocalizedError {
@@ -218,7 +393,7 @@ enum ServerSetupError: LocalizedError {
         case .invalidAddress:
             return "Use a valid server origin such as https://music.example.com."
         case .pathNotSupported:
-            return "Enter only the server origin. Paths like /base are not supported here."
+            return "Enter only the server origin. Paths are not supported here."
         }
     }
 }

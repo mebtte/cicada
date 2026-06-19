@@ -40,4 +40,4 @@ CICADA_DATA=/path_to/data air
 
 ## API Reference
 
-After starting dev server, the API reference can be visited on `http://localhost:8000/api_reference`.
+After starting dev server, the API reference can be visited on `http://localhost:8000/apidoc`.

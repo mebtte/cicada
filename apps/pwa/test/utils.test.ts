@@ -4,7 +4,14 @@ import test from "node:test";
 import capitalize from "../src/utils/capitalize.js";
 import stringArrayEqual from "../src/utils/string_array_equal.js";
 import parseSearch from "../src/utils/parse_search.js";
-import { getMajorVersion, isSameMajorVersion } from "../src/utils/version.js";
+import {
+  getBaseVersion,
+  getSemanticVersion,
+  getMajorVersion,
+  compareSemanticVersion,
+  isSameMajorVersion,
+  isServerVersionSupported,
+} from "../src/utils/version.js";
 import Cache from "../src/utils/cache.js";
 import { getIsHeaderBackButtonPath } from "../src/pages/player/header/back_button.js";
 import { isPasswordLengthValid } from "../src/constants/user.js";
@@ -59,13 +66,32 @@ test("cache removes entries with the same scoped key replacement used for set", 
 });
 
 test("version helpers compare semantic major versions", () => {
+  assert.equal(getBaseVersion("3.1.0-local"), "3.1.0");
+  assert.equal(getBaseVersion("3.1.0-beta.2606181430"), "3.1.0");
+  assert.equal(getBaseVersion("3.1.0"), "3.1.0");
   assert.equal(getMajorVersion("v3.1.0"), 3);
   assert.equal(getMajorVersion("3.1.0-beta.20260508"), 3);
   assert.equal(getMajorVersion("unknown"), null);
+  assert.deepEqual(getSemanticVersion("3.1.2-local"), {
+    major: 3,
+    minor: 1,
+    patch: 2,
+  });
+  assert.equal(getSemanticVersion("unknown"), null);
+  assert.equal(compareSemanticVersion("3.2.0", "3.1.9"), 1);
+  assert.equal(compareSemanticVersion("3.1.0", "3.1.0-beta.1"), 0);
+  assert.equal(compareSemanticVersion("3.1.0", "3.1.1"), -1);
 
+  assert.equal(isSameMajorVersion("3.1.0-local", "3.2.0-beta.1"), true);
   assert.equal(isSameMajorVersion("3.1.0", "3.2.0-beta.1"), true);
   assert.equal(isSameMajorVersion("3.1.0", "4.0.0"), false);
   assert.equal(isSameMajorVersion("unknown", "4.0.0"), true);
+  assert.equal(isServerVersionSupported("3.1.0-local", "3.1.1"), true);
+  assert.equal(isServerVersionSupported("3.1.0", "3.2.0-beta.1"), true);
+  assert.equal(isServerVersionSupported("3.1.0", "3.1.0-beta.1"), false);
+  assert.equal(isServerVersionSupported("3.1.1", "3.1.0"), false);
+  assert.equal(isServerVersionSupported("3.1.0", "4.0.0"), false);
+  assert.equal(isServerVersionSupported("unknown", "4.0.0"), false);
 });
 
 test("header shows back button on nested player detail pages except musicbill", () => {

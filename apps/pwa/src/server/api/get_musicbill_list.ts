@@ -21,7 +21,7 @@ type Response = {
 
 async function getMusicbillList() {
   const musicbillList = await request<Response>({
-    path: '/api/musicbill_list',
+    path: '/api/common/musicbill_list',
     withToken: true,
   });
   return musicbillList.map((mb) => ({

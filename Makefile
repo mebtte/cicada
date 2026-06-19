@@ -1,12 +1,13 @@
 .DEFAULT_GOAL := release
 
-VERSION   := $(shell node scripts/build_version.mjs latest-tag 2>/dev/null || echo unknown)
+VERSION   := $(shell node scripts/build_version.mjs latest-tag 2>/dev/null)
 ROOT_DIR  := $(CURDIR)
 BUILD_DIR := $(ROOT_DIR)/build
 CLI_DIR   := $(ROOT_DIR)/apps/cli
 FFMPEG_VERSION ?= unknown
 
 define build_cli
+	node $(ROOT_DIR)/scripts/build_version.mjs validate "$(VERSION)"
 	cd $(CLI_DIR) && CGO_ENABLED=0 GOOS=$(1) GOARCH=$(2) go build -tags prod -ldflags "-X cicada/internal/version.Version=$(VERSION)" -o $(3) .
 endef
 
@@ -18,6 +19,7 @@ endef
 
 ## 构建 PWA 并嵌入 CLI
 pwa:
+	node scripts/build_version.mjs validate "$(VERSION)"
 	npm ci --prefix apps/pwa
 	CICADA_VERSION=$(VERSION) npm run build --prefix apps/pwa
 	rm -rf $(CLI_DIR)/pwa/dist

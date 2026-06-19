@@ -10,7 +10,7 @@ interface RequestBody {
 
 function loginWith2FA(data: RequestBody) {
   return request<LoginResponse>({
-    path: '/base/login_with_2fa',
+    path: '/api/base/login_with_2fa',
     method: Method.POST,
     body: {
       username: data.username,
