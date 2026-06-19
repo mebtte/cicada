@@ -241,6 +241,33 @@ struct CicadaAPIClient: Sendable {
         return result
     }
 
+    func searchArtist(keyword: String, page: Int, pageSize: Int) async throws -> ArtistSearchResponse {
+        var result: ArtistSearchResponse = try await request(
+            path: "/api/common/artist/search",
+            query: [
+                "keyword": keyword,
+                "page": String(page),
+                "pageSize": String(pageSize),
+            ]
+        )
+        for index in result.artistList.indices {
+            normalizeArtistPhotos(&result.artistList[index].photos)
+        }
+        return result
+    }
+
+    func getArtist(id: String) async throws -> ArtistDetail {
+        var artist: ArtistDetail = try await request(
+            path: "/api/common/artist",
+            query: ["id": id]
+        )
+        normalizeArtistPhotos(&artist.photos)
+        normalizeMusicListAssets(&artist.performerMusicList)
+        normalizeMusicListAssets(&artist.lyricistMusicList)
+        normalizeMusicListAssets(&artist.composerMusicList)
+        return artist
+    }
+
     func createMusicPlayRecord(_ payload: CreateMusicPlayRecordPayload) async throws {
         let _: EmptyResponse = try await request(
             path: "/api/common/music_play_record",
@@ -414,6 +441,19 @@ struct CicadaAPIClient: Sendable {
         music.cover = absoluteURLString(music.cover)
         music.coverThumbnail = absoluteURLString(music.coverThumbnail)
         music.asset = absoluteURLString(music.asset)
+    }
+
+    private func normalizeMusicListAssets(_ musicList: inout [Music]) {
+        for index in musicList.indices {
+            normalizeMusicAssets(&musicList[index])
+        }
+    }
+
+    private func normalizeArtistPhotos(_ photos: inout [ArtistPhoto]) {
+        for index in photos.indices {
+            photos[index].asset = absoluteURLString(photos[index].asset)
+            photos[index].thumbnail = absoluteURLString(photos[index].thumbnail)
+        }
     }
 
     private var appVersion: String {

@@ -30,6 +30,7 @@ private enum MusicbillMusicBusinessCode {
 private enum PlayerSearchConstants {
     static let keywordMaxLength = 32
     static let musicPageSize = 50
+    static let artistPageSize = 50
     static let lyricPageSize = 20
 }
 
@@ -49,6 +50,14 @@ final class PlayerStore: ObservableObject {
     @Published private(set) var searchMusicKeyword = ""
     @Published private(set) var isSearchingMusic = false
     @Published private(set) var hasSearchedMusic = false
+    @Published private(set) var searchArtistResults: [ArtistSearchItem] = []
+    @Published private(set) var searchArtistTotal = 0
+    @Published private(set) var searchArtistPage = 1
+    @Published private(set) var searchArtistKeyword = ""
+    @Published private(set) var isSearchingArtists = false
+    @Published private(set) var hasSearchedArtists = false
+    @Published private(set) var artistDetails: [ArtistDetail.ID: ArtistDetail] = [:]
+    @Published private(set) var loadingArtistIDs: Set<ArtistDetail.ID> = []
     @Published private(set) var searchLyricResults: [LyricSearchResult] = []
     @Published private(set) var searchLyricTotal = 0
     @Published private(set) var searchLyricPage = 1
@@ -62,6 +71,10 @@ final class PlayerStore: ObservableObject {
 
     var searchMusicPageSize: Int {
         PlayerSearchConstants.musicPageSize
+    }
+
+    var searchArtistPageSize: Int {
+        PlayerSearchConstants.artistPageSize
     }
 
     var searchLyricPageSize: Int {
@@ -84,6 +97,8 @@ final class PlayerStore: ObservableObject {
         selectedMusicbillID = nil
         musicbillDetails = [:]
         loadingMusicbillIDs = []
+        artistDetails = [:]
+        loadingArtistIDs = []
         isSavingMusicbill = false
         musicbillActionCaptcha = nil
         isLoadingMusicbillActionCaptcha = false
@@ -383,6 +398,67 @@ final class PlayerStore: ObservableObject {
         hasSearchedMusic = false
     }
 
+    func searchArtists(keyword rawKeyword: String, page rawPage: Int = 1) async {
+        guard let client, !isSearchingArtists else { return }
+        let keyword = normalizedSearchKeyword(rawKeyword)
+        guard !keyword.isEmpty else {
+            resetArtistSearch()
+            return
+        }
+
+        let page = max(1, rawPage)
+        isSearchingArtists = true
+        hasSearchedArtists = true
+        searchArtistKeyword = keyword
+        searchArtistPage = page
+        searchArtistResults = []
+        searchArtistTotal = 0
+        defer { isSearchingArtists = false }
+
+        do {
+            let result = try await client.searchArtist(
+                keyword: keyword,
+                page: page,
+                pageSize: PlayerSearchConstants.artistPageSize
+            )
+            guard searchArtistKeyword == keyword, searchArtistPage == page else {
+                return
+            }
+            searchArtistResults = result.artistList
+            searchArtistTotal = result.total
+        } catch {
+            handleRequestError(error)
+        }
+    }
+
+    func resetArtistSearch() {
+        searchArtistResults = []
+        searchArtistTotal = 0
+        searchArtistPage = 1
+        searchArtistKeyword = ""
+        isSearchingArtists = false
+        hasSearchedArtists = false
+    }
+
+    func loadArtist(id: ArtistDetail.ID, force: Bool = false) async {
+        guard let client else { return }
+        if !force, artistDetails[id] != nil {
+            return
+        }
+        guard !loadingArtistIDs.contains(id) else { return }
+
+        loadingArtistIDs.insert(id)
+        defer {
+            loadingArtistIDs.remove(id)
+        }
+
+        do {
+            artistDetails[id] = try await client.getArtist(id: id)
+        } catch {
+            handleRequestError(error)
+        }
+    }
+
     func searchLyrics(keyword rawKeyword: String, page rawPage: Int = 1) async {
         guard let client, !isSearchingLyrics else { return }
         let keyword = normalizedSearchKeyword(rawKeyword)
@@ -507,6 +583,7 @@ final class PlayerStore: ObservableObject {
 
     private func resetSearches() {
         resetMusicSearch()
+        resetArtistSearch()
         resetLyricSearch()
     }
 

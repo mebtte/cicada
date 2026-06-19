@@ -675,6 +675,7 @@ private struct AddToMusicbillRow: View {
 
 private enum PlayerSearchTab: String, CaseIterable, Identifiable {
     case music = "Music"
+    case artists = "Artists"
     case lyrics = "Lyrics"
 
     var id: String {
@@ -693,6 +694,7 @@ private struct SearchMusicView: View {
     @State private var selectedTab = PlayerSearchTab.music
     @State private var searchText = ""
     @State private var musicForMusicbillSelection: Music?
+    @State private var artistForDetail: ArtistSearchItem?
 
     var body: some View {
         NavigationStack {
@@ -746,6 +748,12 @@ private struct SearchMusicView: View {
                 playerStore: playerStore
             )
         }
+        .sheet(item: $artistForDetail) { artist in
+            ArtistDetailView(
+                artist: artist,
+                playerStore: playerStore
+            )
+        }
     }
 
     @ViewBuilder
@@ -753,6 +761,8 @@ private struct SearchMusicView: View {
         switch selectedTab {
         case .music:
             musicContent
+        case .artists:
+            artistContent
         case .lyrics:
             lyricContent
         }
@@ -825,6 +835,76 @@ private struct SearchMusicView: View {
             }
             .overlay {
                 if playerStore.isSearchingMusic {
+                    ProgressView()
+                        .padding(16)
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var artistContent: some View {
+        if playerStore.isSearchingArtists && playerStore.searchArtistResults.isEmpty {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if !playerStore.hasSearchedArtists {
+            ContentUnavailableView(
+                "Search Artists",
+                systemImage: "person.2",
+                description: Text("Search by artist name or alias.")
+            )
+        } else if playerStore.searchArtistResults.isEmpty {
+            ContentUnavailableView(
+                "No Results",
+                systemImage: "person.crop.circle",
+                description: Text("Try another artist keyword.")
+            )
+        } else {
+            List {
+                Section("\(playerStore.searchArtistTotal) Artists") {
+                    ForEach(playerStore.searchArtistResults) { artist in
+                        ArtistSearchRow(artist: artist) {
+                            artistForDetail = artist
+                        }
+                    }
+                }
+
+                if artistTotalPages > 1 {
+                    Section {
+                        HStack {
+                            Button {
+                                Task {
+                                    await search(page: playerStore.searchArtistPage - 1)
+                                }
+                            } label: {
+                                Label("Previous", systemImage: "chevron.left")
+                            }
+                            .disabled(playerStore.searchArtistPage <= 1 || playerStore.isSearchingArtists)
+
+                            Spacer()
+
+                            Text("Page \(playerStore.searchArtistPage) of \(artistTotalPages)")
+                                .font(.footnote.monospacedDigit())
+                                .foregroundStyle(.secondary)
+
+                            Spacer()
+
+                            Button {
+                                Task {
+                                    await search(page: playerStore.searchArtistPage + 1)
+                                }
+                            } label: {
+                                Label("Next", systemImage: "chevron.right")
+                            }
+                            .disabled(playerStore.searchArtistPage >= artistTotalPages || playerStore.isSearchingArtists)
+                        }
+                    }
+                }
+            }
+            .overlay {
+                if playerStore.isSearchingArtists {
                     ProgressView()
                         .padding(16)
                         .background(.regularMaterial)
@@ -923,6 +1003,8 @@ private struct SearchMusicView: View {
         switch selectedTab {
         case .music:
             return playerStore.isSearchingMusic
+        case .artists:
+            return playerStore.isSearchingArtists
         case .lyrics:
             return playerStore.isSearchingLyrics
         }
@@ -930,6 +1012,10 @@ private struct SearchMusicView: View {
 
     private var musicTotalPages: Int {
         totalPages(total: playerStore.searchMusicTotal, pageSize: playerStore.searchMusicPageSize)
+    }
+
+    private var artistTotalPages: Int {
+        totalPages(total: playerStore.searchArtistTotal, pageSize: playerStore.searchArtistPageSize)
     }
 
     private var lyricTotalPages: Int {
@@ -942,6 +1028,11 @@ private struct SearchMusicView: View {
             await playerStore.searchMusic(keyword: searchText, page: page)
             if !playerStore.searchMusicKeyword.isEmpty {
                 searchText = playerStore.searchMusicKeyword
+            }
+        case .artists:
+            await playerStore.searchArtists(keyword: searchText, page: page)
+            if !playerStore.searchArtistKeyword.isEmpty {
+                searchText = playerStore.searchArtistKeyword
             }
         case .lyrics:
             await playerStore.searchLyrics(keyword: searchText, page: page)
@@ -957,6 +1048,10 @@ private struct SearchMusicView: View {
             if !playerStore.searchMusicKeyword.isEmpty {
                 searchText = playerStore.searchMusicKeyword
             }
+        case .artists:
+            if !playerStore.searchArtistKeyword.isEmpty {
+                searchText = playerStore.searchArtistKeyword
+            }
         case .lyrics:
             if !playerStore.searchLyricKeyword.isEmpty {
                 searchText = playerStore.searchLyricKeyword
@@ -966,6 +1061,209 @@ private struct SearchMusicView: View {
 
     private func totalPages(total: Int, pageSize: Int) -> Int {
         max(1, Int(ceil(Double(total) / Double(pageSize))))
+    }
+}
+
+private struct ArtistSearchRow: View {
+    let artist: ArtistSearchItem
+    let onOpen: () -> Void
+
+    var body: some View {
+        Button(action: onOpen) {
+            HStack(spacing: 12) {
+                ArtworkView(
+                    urlString: artist.avatar,
+                    systemImage: "person.crop.square",
+                    size: 50
+                )
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(artist.name)
+                        .font(.headline)
+                        .lineLimit(1)
+
+                    if !artist.aliases.isEmpty {
+                        Text(artist.aliases.joined(separator: " / "))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("\(artist.musicCount)")
+                        .font(.headline.monospacedDigit())
+                    Text("Songs")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private enum ArtistMusicRole: String, CaseIterable, Identifiable {
+    case performer = "Performed"
+    case lyricist = "Lyrics"
+    case composer = "Composed"
+
+    var id: String {
+        rawValue
+    }
+}
+
+private struct ArtistDetailView: View {
+    let artist: ArtistSearchItem
+    @ObservedObject var playerStore: PlayerStore
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var selectedRole = ArtistMusicRole.performer
+    @State private var musicForMusicbillSelection: Music?
+
+    private var detail: ArtistDetail? {
+        playerStore.artistDetails[artist.id]
+    }
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if let detail {
+                    detailContent(detail)
+                } else if playerStore.loadingArtistIDs.contains(artist.id) {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    ContentUnavailableView(
+                        "Artist Not Loaded",
+                        systemImage: "person.crop.circle.badge.exclamationmark",
+                        description: Text("Pull to refresh or try again.")
+                    )
+                }
+            }
+            .navigationTitle(detail?.name ?? artist.name)
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .sheet(item: $musicForMusicbillSelection) { music in
+            AddToMusicbillSheet(
+                music: music,
+                playerStore: playerStore
+            )
+        }
+        .task(id: artist.id) {
+            await playerStore.loadArtist(id: artist.id)
+        }
+    }
+
+    private func detailContent(_ detail: ArtistDetail) -> some View {
+        let roles = availableRoles(for: detail)
+        let role = roles.contains(selectedRole) ? selectedRole : roles.first ?? .performer
+        let musicList = musicList(for: role, in: detail)
+
+        return List {
+            Section {
+                HStack(spacing: 14) {
+                    ArtworkView(
+                        urlString: detail.avatar.isEmpty ? artist.avatar : detail.avatar,
+                        systemImage: "person.crop.square",
+                        size: 72
+                    )
+
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(detail.name)
+                            .font(.headline)
+
+                        if !detail.aliases.isEmpty {
+                            Text(detail.aliases.joined(separator: " / "))
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                        }
+
+                        Text("\(uniqueMusicList(in: detail).count) songs")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+
+            if roles.count > 1 {
+                Section {
+                    Picker("Music Role", selection: $selectedRole) {
+                        ForEach(roles) { role in
+                            Text(role.rawValue).tag(role)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+            }
+
+            Section(role.rawValue) {
+                if musicList.isEmpty {
+                    ContentUnavailableView(
+                        "No Songs",
+                        systemImage: "music.note",
+                        description: Text("This artist has no songs in this category.")
+                    )
+                } else {
+                    ForEach(musicList) { music in
+                        MusicRow(
+                            music: music,
+                            isCurrent: playerStore.audioPlayer.currentMusic?.id == music.id,
+                            isPlaying: playerStore.audioPlayer.currentMusic?.id == music.id && playerStore.audioPlayer.isPlaying
+                        ) {
+                            playerStore.play(music: music, in: musicList)
+                        } onAddToMusicbill: {
+                            musicForMusicbillSelection = music
+                        }
+                    }
+                }
+            }
+        }
+        .refreshable {
+            await playerStore.loadArtist(id: artist.id, force: true)
+        }
+    }
+
+    private func availableRoles(for detail: ArtistDetail) -> [ArtistMusicRole] {
+        ArtistMusicRole.allCases.filter { role in
+            !musicList(for: role, in: detail).isEmpty
+        }
+    }
+
+    private func musicList(for role: ArtistMusicRole, in detail: ArtistDetail) -> [Music] {
+        switch role {
+        case .performer:
+            return detail.performerMusicList
+        case .lyricist:
+            return detail.lyricistMusicList
+        case .composer:
+            return detail.composerMusicList
+        }
+    }
+
+    private func uniqueMusicList(in detail: ArtistDetail) -> [Music] {
+        var seenIDs = Set<Music.ID>()
+        return (detail.performerMusicList + detail.lyricistMusicList + detail.composerMusicList)
+            .filter { music in
+                seenIDs.insert(music.id).inserted
+            }
     }
 }
 

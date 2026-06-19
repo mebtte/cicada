@@ -93,6 +93,62 @@ struct ArtistSummary: Decodable, Hashable, Identifiable {
     }
 }
 
+struct ArtistPhoto: Decodable, Hashable, Identifiable {
+    let id: String
+    var asset: String
+    var thumbnail: String?
+    let description: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case asset
+        case thumbnail
+        case description
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        asset = try container.decodeIfPresent(String.self, forKey: .asset) ?? ""
+        thumbnail = try container.decodeIfPresent(String.self, forKey: .thumbnail)
+        description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
+    }
+}
+
+struct ArtistSearchItem: Decodable, Hashable, Identifiable {
+    let id: String
+    let name: String
+    let aliases: [String]
+    let musicCount: Int
+    var photos: [ArtistPhoto]
+
+    var avatar: String {
+        photos.first?.asset ?? ""
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case aliases
+        case musicCount
+        case photos
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        aliases = try container.decodeIfPresent([String].self, forKey: .aliases) ?? []
+        musicCount = try container.decodeIfPresent(Int.self, forKey: .musicCount) ?? 0
+        photos = try container.decodeIfPresent([ArtistPhoto].self, forKey: .photos) ?? []
+    }
+}
+
+struct ArtistSearchResponse: Decodable, Hashable {
+    let total: Int
+    var artistList: [ArtistSearchItem]
+}
+
 struct Music: Decodable, Hashable, Identifiable {
     let id: String
     let type: Int
@@ -207,6 +263,41 @@ struct MusicWithLyrics: Decodable, Hashable, Identifiable {
 struct LyricSearchResponse: Decodable, Hashable {
     let total: Int
     var musicList: [MusicWithLyrics]
+}
+
+struct ArtistDetail: Decodable, Hashable, Identifiable {
+    let id: String
+    let name: String
+    let aliases: [String]
+    var photos: [ArtistPhoto]
+    var performerMusicList: [Music]
+    var lyricistMusicList: [Music]
+    var composerMusicList: [Music]
+
+    var avatar: String {
+        photos.first?.asset ?? ""
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case aliases
+        case photos
+        case performerMusicList
+        case lyricistMusicList
+        case composerMusicList
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        aliases = try container.decodeIfPresent([String].self, forKey: .aliases) ?? []
+        photos = try container.decodeIfPresent([ArtistPhoto].self, forKey: .photos) ?? []
+        performerMusicList = try container.decodeIfPresent([Music].self, forKey: .performerMusicList) ?? []
+        lyricistMusicList = try container.decodeIfPresent([Music].self, forKey: .lyricistMusicList) ?? []
+        composerMusicList = try container.decodeIfPresent([Music].self, forKey: .composerMusicList) ?? []
+    }
 }
 
 struct LyricItem: Decodable, Hashable, Identifiable {
