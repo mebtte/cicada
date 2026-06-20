@@ -43,8 +43,8 @@ async function exportAndSave(
     performerNames,
     ext,
   });
-  /* 临时文件: 前缀 . 让 macOS/Linux 的文件管理器默认隐藏; 用 export id 加在中间防止同首歌并发导出冲突; .cicada-part 后缀语义清晰, 即便残留也容易识别清理 */
-  const tempFilename = `.${baseFilename}.${id}.cicada-part`;
+  /* 临时文件名只使用短 ASCII 字符, 避免歌名/歌手名里的特殊字符或 UTF-8 字节长度触发 File System Access API 的名称校验。 */
+  const tempFilename = `cicada-export-${exportingMusic.quality}-${id}.part`;
 
   /* 走"下载到临时文件 -> 解析元数据 -> 改名为最终文件" 需要 FileSystemFileHandle.move (Chromium 110+), 否则直接失败让该项落 FAILED */
   if (
@@ -164,7 +164,7 @@ function useExport() {
                 quality: payload.quality,
               });
               return {
-                id: generateRandomString(),
+                id: generateRandomString(16, false),
                 music,
                 directoryHandle: payload.directoryHandle,
                 asset: asset.url,
