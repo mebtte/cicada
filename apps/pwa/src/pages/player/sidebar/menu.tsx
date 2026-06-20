@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ReactNode, useContext } from 'react';
 import { t } from '@/i18n';
 import context from '../context';
-import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import ExportTag from './export_tag';
 import { useUser } from '@/global_states/server';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
@@ -15,7 +13,6 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import {
-  Export,
   ExternalLink,
   Sparkles,
   Settings,
@@ -181,7 +178,7 @@ function Menu() {
   const rawNavigate = useNavigate();
   const user = useUser()!;
 
-  const { exportingMusicList, audioPaused, playqueue, currentPlayqueuePosition } =
+  const { audioPaused, playqueue, currentPlayqueuePosition } =
     useContext(context);
   const queueMusic = playqueue[currentPlayqueuePosition];
   const goToRadio = () => {
@@ -235,19 +232,6 @@ function Menu() {
         label={t('setting')}
         icon={<Settings />}
       />
-      {ENABLE_FILE_SYSTEM && exportingMusicList.length ? (
-        <SidebarItem
-          active={
-            pathname === `${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPORTING_MUSIC}`
-          }
-          onClick={() =>
-            navigate(`${ROOT_PATH.PLAYER}${PLAYER_PATH.EXPORTING_MUSIC}`)
-          }
-          label={t('export_music')}
-          icon={<Export />}
-          suffix={<ExportTag />}
-        />
-      ) : null}
       {user.admin ? (
         <SidebarItem
           active={false}

@@ -1,7 +1,6 @@
 import { RequestStatus } from '@/constants';
 import { MusicType } from '@/constants/music';
 import { UtilZIndex } from '@/constants/style';
-import { MusicExportQuality } from '@/utils/music_export_asset';
 
 export const HEADER_HEIGHT = 72;
 
@@ -138,27 +137,4 @@ export enum SearchTab {
   ARTIST = 'artist',
   PUBLIC_MUSICBILL = 'public_musicbill',
   LYRIC = 'lyric',
-}
-
-export enum ExportStatus {
-  WAITING,
-  EXPORTING,
-  FAILED,
-  SUCCESSFUL,
-}
-
-export interface ExportingMusic {
-  id: string;
-  music: Music;
-  directoryHandle: FileSystemDirectoryHandle;
-  asset: string;
-  ext: string;
-  quality: MusicExportQuality;
-  status: ExportStatus;
-  /* 已下载字节数, EXPORTING 阶段由流式读取实时累加 */
-  loaded?: number;
-  /* 文件总字节数, 来自 Content-Length 响应头, 可能缺失 */
-  total?: number;
-  /* 失败重试时置位: 提示导出前先重新拉取音乐详情, 刷新可能已过期的资源地址 */
-  needRefetch?: boolean;
 }

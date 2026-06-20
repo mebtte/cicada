@@ -85,7 +85,7 @@ function Radio() {
       playEnabled: false,
       playNextEnabled: false,
       addToPlaylistEnabled: false,
-      exportEnabled: false,
+      downloadEnabled: true,
 
       getMusicbillListStatus,
       musicbillList,
@@ -101,8 +101,6 @@ function Radio() {
       currentPlayqueuePosition: currentIndex,
 
       lyricPanelOpen: false,
-
-      exportingMusicList: [],
     }),
     [
       getMusicbillListStatus,

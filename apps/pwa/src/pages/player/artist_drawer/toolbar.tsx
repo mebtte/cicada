@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { Export, PlaylistAdd, Edit } from '@/components/icon';
+import { PlaylistAdd, Edit } from '@/components/icon';
 import { CSSVariable } from '@/global_style';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
@@ -12,7 +12,6 @@ import { Artist } from './constants';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
 import { MusicWithArtistAliases } from '../constants';
 import addMusicListToPlaylist from '../add_to_playlist';
-import { openExportMusicListDialog } from '../export_music_list';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
@@ -88,21 +87,6 @@ function Toolbar({
             }
           >
             <PlaylistAdd />
-          </Button>
-        </Tooltip>
-        <Tooltip content={t('export_music')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            aria-label={t('export_music')}
-            onClick={() =>
-              hasMusic
-                ? openExportMusicListDialog(musicList)
-                : notice.error(t('no_music_artist_warning'))
-            }
-          >
-            <Export size="1em" />
           </Button>
         </Tooltip>
         {showAdminEdit ? (

@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  Export,
   PlaylistAdd,
   Edit,
   People,
@@ -18,8 +17,6 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
-import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import { openExportMusicListDialog } from '../../export_music_list';
 import addMusicListToPlaylist from '../../add_to_playlist';
 
 const Style = styled.div`
@@ -61,19 +58,6 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
           <Edit />
         </Button>
       </Tooltip>
-      {ENABLE_FILE_SYSTEM ? (
-        <Tooltip content={t('export_music')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            disabled={!musicbill.musicList.length}
-            onClick={() => openExportMusicListDialog(musicbill.musicList)}
-          >
-            <Export size="1em" />
-          </Button>
-        </Tooltip>
-      ) : null}
       <Tooltip content={t('shared_user')}>
         <Button
           square

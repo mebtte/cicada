@@ -5,14 +5,8 @@ import {
   MusicWithArtistAliases,
   QueueMusic,
 } from './constants';
-import { MusicExportQuality } from '@/utils/music_export_asset';
 
 export enum EventType {
-  EXPORT_MUSIC_LIST = 'export-music-list',
-  EXPORT_MUSIC_LIST_RETRY_FAILED = 'export-music-list-retry-failed',
-  EXPORT_MUSIC_LIST_RETRY_ITEM = 'export-music-list-retry-item',
-  EXPORT_MUSIC_LIST_REMOVE_ITEM = 'export-music-list-remove-item',
-
   MINI_MODE_OPEN_SIDEBAR = 'mini_mode_OPEN_sidebar',
   MINI_MODE_CLOSE_SIDEBAR = 'mini_mode_close_sidebar',
 
@@ -70,15 +64,6 @@ export enum EventType {
 export default new Eventin<
   EventType,
   {
-    [EventType.EXPORT_MUSIC_LIST]: {
-      musicList: Music[];
-      directoryHandle: FileSystemDirectoryHandle;
-      quality: MusicExportQuality;
-    };
-    [EventType.EXPORT_MUSIC_LIST_RETRY_FAILED]: null;
-    [EventType.EXPORT_MUSIC_LIST_RETRY_ITEM]: { id: string };
-    [EventType.EXPORT_MUSIC_LIST_REMOVE_ITEM]: { id: string };
-
     [EventType.MINI_MODE_OPEN_SIDEBAR]: null;
     [EventType.MINI_MODE_CLOSE_SIDEBAR]: null;
 

@@ -36,7 +36,6 @@ export type { IconProps } from './base';
 
 export { default as Edit }          from './icons/edit';
 export { default as ExternalLink }  from './icons/external-link';
-export { default as Export }        from './icons/export';
 export { default as CheckCircle }   from './icons/check-circle';
 export { default as Close }         from './icons/close';
 export { default as PlayArrow }     from './icons/play-arrow';

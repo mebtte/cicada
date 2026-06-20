@@ -6,7 +6,6 @@ import logger from '@/utils/logger';
 import { t } from '@/i18n';
 import { Music, ArtistWithAliases } from './constants';
 import e, { EventType } from './eventemitter';
-import { MusicExportQuality } from '@/utils/music_export_asset';
 
 export function openCreateMusicbillDialog() {
   return dialog.input({
@@ -63,27 +62,4 @@ export function formatSecond(s: number) {
   return `${minute < 10 ? '0' : ''}${minute}:${
     second < 10 ? '0' : ''
   }${second}`;
-}
-
-export async function exportMusicListByFileSystem(
-  musicList: Music[],
-  quality: MusicExportQuality,
-) {
-  try {
-    const directoryHandle = await window.showDirectoryPicker({
-      mode: 'readwrite',
-      startIn: 'downloads',
-    });
-    e.emit(EventType.EXPORT_MUSIC_LIST, {
-      musicList,
-      directoryHandle,
-      quality,
-    });
-  } catch (error) {
-    if (error instanceof DOMException && error.name === 'AbortError') {
-      return;
-    }
-    logger.error(error, '无法选择保存目录');
-    notice.error(error.message);
-  }
 }

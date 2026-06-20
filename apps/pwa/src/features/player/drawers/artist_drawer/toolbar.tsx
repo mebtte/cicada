@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useContext } from 'react';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import { Export, PlaylistAdd, Edit } from '@/components/icon';
+import { PlaylistAdd, Edit } from '@/components/icon';
 import { CSSVariable } from '@/global_style';
 import notice from '@/utils/notice';
 import { t } from '@/i18n';
@@ -13,7 +13,6 @@ import { Artist } from './constants';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../constants';
 import { MusicWithArtistAliases } from '../../constants';
 import addMusicListToPlaylist from '../../add_to_playlist';
-import { openExportMusicListDialog } from '../../export_music_list';
 import Context from '../../context';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
@@ -70,7 +69,7 @@ function Toolbar({
 }) {
   const user = useUser();
   const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
-  const { addToPlaylistEnabled, exportEnabled } = useContext(Context);
+  const { addToPlaylistEnabled } = useContext(Context);
   const musicList = getArtistMusicList(artist);
   const hasMusic = musicList.length > 0;
   // 仅在 admin 且开启「管理员快捷编辑」开关时展示编辑入口
@@ -92,26 +91,6 @@ function Toolbar({
               }
             >
               <PlaylistAdd />
-            </Button>
-          </Tooltip>
-        ) : null}
-        {exportEnabled ? (
-          <Tooltip content={t('export_music')}>
-            <Button
-              square
-              variant="ghost"
-              size="sm"
-              aria-label={t('export_music')}
-              disabled={!hasMusic}
-              onClick={() => {
-                if (!hasMusic) {
-                  return;
-                }
-
-                openExportMusicListDialog(musicList);
-              }}
-            >
-              <Export size="1em" />
             </Button>
           </Tooltip>
         ) : null}

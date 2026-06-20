@@ -4,7 +4,7 @@ import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import { CSSVariable } from '@/global_style';
 import {
-  Export,
+  FileDownload,
   PlaylistAdd,
   PostAdd,
   QueueInsert,
@@ -19,10 +19,10 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../../eventemitter';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../../constants';
-import { openExportMusicListDialog } from '../../export_music_list';
 import addMusicListToPlaylist from '../../add_to_playlist';
 import Context from '../../context';
 import { t } from '@/i18n';
+import downloadOriginalMusicFile from '../../download_music';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
@@ -71,7 +71,7 @@ function Toolbar({
     playEnabled,
     playNextEnabled,
     addToPlaylistEnabled,
-    exportEnabled,
+    downloadEnabled,
   } = useContext(Context);
   // 编辑按钮: 管理员开启「管理员快捷编辑」时才出现, 点击跳转到管理页并自动打开该音乐的编辑 drawer
   const showAdminEdit = !!user?.admin && adminQuickEdit;
@@ -144,16 +144,16 @@ function Toolbar({
             </Button>
           </Tooltip>
         ) : null}
-        {exportEnabled ? (
-          <Tooltip content={t('export_music')}>
+        {downloadEnabled ? (
+          <Tooltip content={t('download_music')}>
             <Button
               square
               variant="ghost"
               size="sm"
-              aria-label={t('export_music')}
-              onClick={() => openExportMusicListDialog([music])}
+              aria-label={t('download_music')}
+              onClick={() => downloadOriginalMusicFile(music)}
             >
-              <Export size="1em" />
+              <FileDownload size="1em" />
             </Button>
           </Tooltip>
         ) : null}

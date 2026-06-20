@@ -4,14 +4,13 @@ import {
   MusicWithArtistAliases,
   QueueMusic,
   Musicbill,
-  ExportingMusic,
 } from './constants';
 
 interface Context {
   playEnabled: boolean;
   playNextEnabled: boolean;
   addToPlaylistEnabled: boolean;
-  exportEnabled: boolean;
+  downloadEnabled: boolean;
 
   getMusicbillListStatus: RequestStatus;
   musicbillList: Musicbill[];
@@ -27,15 +26,13 @@ interface Context {
   currentPlayqueuePosition: number;
 
   lyricPanelOpen: boolean;
-
-  exportingMusicList: ExportingMusic[];
 }
 
 const context = createContext<Context>({
   playEnabled: true,
   playNextEnabled: true,
   addToPlaylistEnabled: true,
-  exportEnabled: true,
+  downloadEnabled: true,
 
   getMusicbillListStatus: RequestStatus.LOADING,
   musicbillList: [],
@@ -51,8 +48,6 @@ const context = createContext<Context>({
   currentPlayqueuePosition: -1,
 
   lyricPanelOpen: false,
-
-  exportingMusicList: [],
 });
 
 export default context;

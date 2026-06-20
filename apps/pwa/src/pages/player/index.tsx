@@ -33,7 +33,6 @@ import e, { EventType } from './eventemitter';
 import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
-import useExport from './use_export';
 import PlaylistAddAnimation from './playlist_add_animation';
 import PlayqueueInsertAnimation from './playqueue_insert_animation';
 import PublicMusicbillCollectionDrawer from './public_musicbill_collection_drawer';
@@ -104,13 +103,12 @@ function Wrapper() {
     [queueMusic],
   );
 
-  const exportingMusicList = useExport();
   const contextValue = useMemo(
     () => ({
       playEnabled: true,
       playNextEnabled: true,
       addToPlaylistEnabled: true,
-      exportEnabled: true,
+      downloadEnabled: true,
 
       getMusicbillListStatus,
       musicbillList,
@@ -126,8 +124,6 @@ function Wrapper() {
       currentPlayqueuePosition,
 
       lyricPanelOpen,
-
-      exportingMusicList,
     }),
     [
       audioBufferedPercent,
@@ -140,7 +136,6 @@ function Wrapper() {
       musicbillList,
       playlist,
       playqueue,
-      exportingMusicList,
     ],
   );
   return (
