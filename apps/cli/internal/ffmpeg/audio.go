@@ -166,6 +166,15 @@ func TranscodeAudio(ctx context.Context, inputPath, outputPath string, profile A
 			"-movflags", "+faststart",
 			"-f", "mp4",
 		)
+	case "mp3":
+		if profile.Bitrate == "" {
+			return fmt.Errorf("missing mp3 bitrate")
+		}
+		args = append(args,
+			"-c:a", "libmp3lame",
+			"-b:a", profile.Bitrate,
+			"-f", "mp3",
+		)
 	case "flac":
 		args = append(args,
 			"-c:a", "flac",
