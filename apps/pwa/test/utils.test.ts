@@ -23,6 +23,10 @@ import {
   getSmoothMusicAsset,
   getSourceMusicAsset,
 } from "../src/utils/music_asset.js";
+import {
+  formatMusicFilenamePerformerPrefix,
+  sanitizeMusicFilename,
+} from "../src/utils/music_filename.js";
 
 test("capitalize uppercases the first letter of each word", () => {
   assert.equal(capitalize("hello world"), "Hello World");
@@ -153,5 +157,18 @@ test("music playback assets use quality query parameter", () => {
   assert.equal(
     getSourceMusicAsset("/asset/music/song.mp3"),
     "http://localhost/asset/music/song.mp3?quality=source",
+  );
+});
+
+test("music filenames keep first three performers and sanitize invalid characters", () => {
+  const performerPrefix = formatMusicFilenamePerformerPrefix(
+    ["A/One", "B:Two", "C*Three", "D?Four"],
+    "unknown artist",
+  );
+
+  assert.equal(performerPrefix, "A/One,B:Two,C*Three,...");
+  assert.equal(
+    sanitizeMusicFilename(`${performerPrefix} - Song <Title>|.flac`),
+    "A_One,B_Two,C_Three,... - Song _Title__.flac",
   );
 });

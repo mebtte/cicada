@@ -177,12 +177,7 @@ func exportMusicbillTo(mb *store.MusicbillWithOwner, dest string, transcode bool
 	for i, m := range musics {
 		performers := performerMap[m.ID]
 
-		var base string
-		if len(performers) > 0 {
-			base = strings.Join(performers, ",") + " - " + m.Name
-		} else {
-			base = m.Name
-		}
+		base := exportMusicBaseName(performers, m.Name)
 
 		ext := ".mp3"
 		if !transcode {
@@ -193,7 +188,7 @@ func exportMusicbillTo(mb *store.MusicbillWithOwner, dest string, transcode bool
 		if transcode {
 			reservedSuffix = transcodeTempSuffix
 		}
-		filename := exportMusicbillFilename(used, base, ext, reservedSuffix)
+		filename := exportMusicFilename(used, base, ext, reservedSuffix)
 		dst := filepath.Join(outDir, filename)
 
 		_, src := config.AssetPath(config.AssetTypeMusic, m.Asset)
@@ -280,13 +275,31 @@ func mp3Bitrate(info ffmpeg.AudioStreamInfo, quality string) string {
 
 const (
 	// maxFilenameBytes 是多数文件系统(ext4/APFS/NTFS)单个文件名的字节上限.
-	maxFilenameBytes    = 255
-	transcodeTempSuffix = ".transcoding.mp3"
+	maxFilenameBytes                     = 255
+	maxExportMusicbillFilenamePerformers = 3
+	transcodeTempSuffix                  = ".transcoding.mp3"
 )
 
-// exportMusicbillFilename 在已用名集合中生成不冲突的文件名.
+// exportMusicBaseName 生成导出文件的主文件名: singer1,singer2 - music name.
+// 歌手过多时只保留前三位, 再追加 "...", 避免文件名过长且保留主要识别信息.
+func exportMusicBaseName(performers []string, musicName string) string {
+	if len(performers) == 0 {
+		return musicName
+	}
+
+	visiblePerformers := performers
+	if len(visiblePerformers) > maxExportMusicbillFilenamePerformers {
+		visiblePerformers = append(
+			append([]string{}, visiblePerformers[:maxExportMusicbillFilenamePerformers]...),
+			"...",
+		)
+	}
+	return strings.Join(visiblePerformers, ",") + " - " + musicName
+}
+
+// exportMusicFilename 在已用名集合中生成不冲突的文件名.
 // reservedSuffix 用于预留转码临时文件后缀, 避免临时路径先触发 "file name too long".
-func exportMusicbillFilename(used map[string]bool, base, ext, reservedSuffix string) string {
+func exportMusicFilename(used map[string]bool, base, ext, reservedSuffix string) string {
 	safeBase := sanitizeFilename(base)
 	for i := 1; ; i++ {
 		dedupSuffix := ""

@@ -1,5 +1,8 @@
-import sanitize from 'sanitize-filename';
 import { t } from '@/i18n';
+import {
+  formatMusicFilenamePerformerPrefix,
+  sanitizeMusicFilename,
+} from './music_filename';
 
 function formatMusicFilename({
   name,
@@ -16,14 +19,11 @@ function formatMusicFilename({
   // 可选的码率/编码标签, 比如 "192k.AAC", 会以点分隔插在文件名与扩展名之间
   tag?: string;
 }) {
-  return sanitize(
-    `${
-      performerNames.length === 0
-        ? t('unknown_artist')
-        : performerNames.length > 3
-        ? t('multiple_artists')
-        : performerNames.join(',')
-    } - ${name}${index === undefined ? '' : `(${index})`}${
+  return sanitizeMusicFilename(
+    `${formatMusicFilenamePerformerPrefix(
+      performerNames,
+      t('unknown_artist'),
+    )} - ${name}${index === undefined ? '' : `(${index})`}${
       tag ? `.${tag}` : ''
     }.${ext}`,
   );
