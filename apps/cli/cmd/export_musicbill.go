@@ -189,10 +189,11 @@ func exportMusicbillTo(mb *store.MusicbillWithOwner, dest string, transcode bool
 			ext = filepath.Ext(m.Asset)
 		}
 
-		// 歌手过多时基名可能超过文件系统单个文件名的字节上限, 这里按 rune 边界截断,
-		// 并预留 dedup 后缀的空间, 避免写文件时报 "file name too long".
-		safeBase := truncateUTF8(sanitizeFilename(base), maxFilenameBytes-len(ext)-dedupReserveBytes)
-		filename := uniqueFilename(used, safeBase, ext)
+		reservedSuffix := ""
+		if transcode {
+			reservedSuffix = transcodeTempSuffix
+		}
+		filename := exportMusicbillFilename(used, base, ext, reservedSuffix)
 		dst := filepath.Join(outDir, filename)
 
 		_, src := config.AssetPath(config.AssetTypeMusic, m.Asset)
@@ -239,7 +240,7 @@ func transcodeMusicToMP3(ctx context.Context, src, dst string, m store.MusicInMu
 	bitrate := mp3Bitrate(info, quality)
 
 	// 先转码到临时文件, 再写入元数据/封面, 最后落到目标路径.
-	tmp := dst + ".transcoding.mp3"
+	tmp := dst + transcodeTempSuffix
 	defer os.Remove(tmp)
 	if err := ffmpeg.TranscodeAudio(ctx, src, tmp, ffmpeg.AudioTranscodeProfile{Codec: "mp3", Bitrate: bitrate}); err != nil {
 		return fmt.Errorf("transcode: %w", err)
@@ -277,13 +278,31 @@ func mp3Bitrate(info ffmpeg.AudioStreamInfo, quality string) string {
 	return fmt.Sprintf("%dk", kbps)
 }
 
-// uniqueFilename 在已用名集合中为 base+ext 生成不冲突的文件名, 冲突时追加 " (n)".
 const (
 	// maxFilenameBytes 是多数文件系统(ext4/APFS/NTFS)单个文件名的字节上限.
-	maxFilenameBytes = 255
-	// dedupReserveBytes 为重名时追加的 " (n)" 后缀预留空间.
-	dedupReserveBytes = 8
+	maxFilenameBytes    = 255
+	transcodeTempSuffix = ".transcoding.mp3"
 )
+
+// exportMusicbillFilename 在已用名集合中生成不冲突的文件名.
+// reservedSuffix 用于预留转码临时文件后缀, 避免临时路径先触发 "file name too long".
+func exportMusicbillFilename(used map[string]bool, base, ext, reservedSuffix string) string {
+	safeBase := sanitizeFilename(base)
+	for i := 1; ; i++ {
+		dedupSuffix := ""
+		if i > 1 {
+			dedupSuffix = fmt.Sprintf(" (%d)", i)
+		}
+
+		// 每次重名重试都重新计算预算, 保证 "文件名 + 临时后缀" 不超过单文件名上限.
+		maxBaseBytes := maxFilenameBytes - len(ext) - len(reservedSuffix) - len(dedupSuffix)
+		name := truncateUTF8(safeBase, maxBaseBytes) + dedupSuffix + ext
+		if !used[name] {
+			used[name] = true
+			return name
+		}
+	}
+}
 
 // truncateUTF8 把字符串按字节上限截断, 且不切断多字节 UTF-8 字符(中文歌手名每字 3 字节).
 func truncateUTF8(s string, maxBytes int) string {
@@ -304,13 +323,4 @@ func truncateUTF8(s string, maxBytes int) string {
 		b += size
 	}
 	return string(out)
-}
-
-func uniqueFilename(used map[string]bool, base, ext string) string {
-	name := base + ext
-	for i := 2; used[name]; i++ {
-		name = fmt.Sprintf("%s (%d)%s", base, i, ext)
-	}
-	used[name] = true
-	return name
 }
