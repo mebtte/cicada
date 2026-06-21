@@ -161,12 +161,15 @@ test("music playback assets use quality query parameter", () => {
 });
 
 test("music filenames keep first three performers and sanitize invalid characters", () => {
-  const performerPrefix = formatMusicFilenamePerformerPrefix(
-    ["A/One", "B:Two", "C*Three", "D?Four"],
-    "unknown artist",
-  );
+  const performerPrefix = formatMusicFilenamePerformerPrefix([
+    "A/One",
+    "B:Two",
+    "C*Three",
+    "D?Four",
+  ]);
 
   assert.equal(performerPrefix, "A/One,B:Two,C*Three,...");
+  assert.equal(formatMusicFilenamePerformerPrefix([]), "");
   assert.equal(
     sanitizeMusicFilename(`${performerPrefix} - Song <Title>|.flac`),
     "A_One,B_Two,C_Three,... - Song _Title__.flac",
