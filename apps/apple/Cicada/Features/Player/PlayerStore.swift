@@ -101,10 +101,15 @@ final class PlayerStore: ObservableObject {
     @Published private(set) var searchLyricKeyword = ""
     @Published private(set) var isSearchingLyrics = false
     @Published private(set) var hasSearchedLyrics = false
+    @Published private(set) var exploration: ExplorationData?
+    @Published private(set) var isLoadingExploration = false
+    @Published private(set) var hasLoadedExploration = false
+    @Published private(set) var isRadioLoading = false
     @Published var errorMessage: String?
     @Published private(set) var authorizationExpiredMessage: String?
 
     let audioPlayer = AudioPlayerController()
+    let offlineCacheManager = OfflineCacheManager()
 
     var searchMusicPageSize: Int {
         PlayerSearchConstants.musicPageSize
@@ -129,6 +134,7 @@ final class PlayerStore: ObservableObject {
     private var client: CicadaAPIClient?
     private var user: ServerUserRecord?
     private var authKey: String?
+    private var radioFetchTask: Task<Void, Never>?
 
     func configure(server: ServerRecord, user: ServerUserRecord) {
         let nextAuthKey = "\(server.origin)|\(user.id)|\(user.token)"
@@ -161,8 +167,29 @@ final class PlayerStore: ObservableObject {
         musicbillActionCaptcha = nil
         isLoadingMusicbillActionCaptcha = false
         resetSearches()
+        resetExploration()
+        stopRadio()
         authorizationExpiredMessage = nil
         audioPlayer.configure(client: client)
+        configureOfflineCache(client: client)
+    }
+
+    private func configureOfflineCache(client: CicadaAPIClient) {
+        offlineCacheManager.configure(client: client)
+        offlineCacheManager.isMusicProtected = { [weak self] musicID in
+            self?.audioPlayer.currentMusic?.id == musicID
+        }
+        audioPlayer.localAssetURLProvider = { [weak self] music in
+            self?.offlineCacheManager.localPlaybackURL(for: music)
+        }
+        audioPlayer.onCacheEligible = { [weak self] music in
+            guard AppSettingsSnapshot.offlineCacheEnabled() else { return }
+            Task { await self?.offlineCacheManager.cache(music) }
+        }
+    }
+
+    func saveOffline(_ music: Music) {
+        Task { await offlineCacheManager.cache(music) }
     }
 
     func loadMusicbillList() async {
@@ -999,6 +1026,104 @@ final class PlayerStore: ObservableObject {
         searchLyricKeyword = ""
         isSearchingLyrics = false
         hasSearchedLyrics = false
+    }
+
+    func loadExploration(force: Bool = false) async {
+        guard let client, !isLoadingExploration else { return }
+        if hasLoadedExploration, !force {
+            return
+        }
+
+        isLoadingExploration = true
+        hasLoadedExploration = true
+        defer { isLoadingExploration = false }
+
+        do {
+            exploration = try await client.getExploration()
+        } catch {
+            handleRequestError(error)
+        }
+    }
+
+    func resetExploration() {
+        exploration = nil
+        isLoadingExploration = false
+        hasLoadedExploration = false
+    }
+
+    /// Fetch the full, playable version of a music item (exploration items carry
+    /// no asset) and start playing it as a single-item queue.
+    func playMusic(id: Music.ID) async {
+        guard let client else { return }
+
+        do {
+            let detail = try await client.getMusic(id: id)
+            let music = Music(detail: detail)
+            audioPlayer.play(music: music, in: [music])
+        } catch {
+            handleRequestError(error)
+        }
+    }
+
+    func startRadio() async {
+        guard let client else { return }
+        guard !isRadioLoading else { return }
+
+        radioFetchTask?.cancel()
+        radioFetchTask = nil
+        audioPlayer.onRadioAdvance = { [weak self] in
+            self?.scheduleRadioPrefetch()
+        }
+        isRadioLoading = true
+        defer { isRadioLoading = false }
+
+        do {
+            let music = try await client.getRandomMusic(excludeID: nil)
+            audioPlayer.startRadio(initial: music)
+            await prefetchRadio()
+        } catch {
+            audioPlayer.onRadioAdvance = nil
+            handleRequestError(error)
+        }
+    }
+
+    func skipRadio() {
+        guard audioPlayer.isRadioMode else { return }
+        audioPlayer.next()
+    }
+
+    func stopRadio() {
+        radioFetchTask?.cancel()
+        radioFetchTask = nil
+        isRadioLoading = false
+        audioPlayer.onRadioAdvance = nil
+        if audioPlayer.isRadioMode {
+            audioPlayer.stop()
+        }
+    }
+
+    private func scheduleRadioPrefetch() {
+        guard radioFetchTask == nil else { return }
+        radioFetchTask = Task { [weak self] in
+            await self?.prefetchRadio()
+            self?.radioFetchTask = nil
+        }
+    }
+
+    private func prefetchRadio() async {
+        guard let client else { return }
+        // Keep at least one upcoming track queued so playback never stalls.
+        while audioPlayer.isRadioMode,
+              audioPlayer.queue.count - 1 - audioPlayer.currentQueueIndex < 1 {
+            let excludeID = audioPlayer.queue.last?.id
+            do {
+                let music = try await client.getRandomMusic(excludeID: excludeID)
+                guard audioPlayer.isRadioMode else { return }
+                audioPlayer.appendMusic(music)
+            } catch {
+                return
+            }
+        }
     }
 
     func summary(for id: MusicbillSummary.ID) -> MusicbillSummary? {

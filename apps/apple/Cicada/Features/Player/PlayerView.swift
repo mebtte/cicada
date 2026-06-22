@@ -11,6 +11,10 @@ struct PlayerView: View {
     @State private var isShowingProfile = false
     @State private var isShowingSharedMusicbillInvitations = false
     @State private var isShowingPublicMusicbillCollections = false
+    @State private var isShowingExploration = false
+    @State private var isShowingRadio = false
+    @State private var isShowingSettings = false
+    @StateObject private var settings = AppSettingsStore.shared
 
     var body: some View {
         if let server = serverStore.selectedServer,
@@ -60,6 +64,22 @@ struct PlayerView: View {
             }
             .sheet(isPresented: $isShowingPublicMusicbillCollections) {
                 PublicMusicbillCollectionView(playerStore: playerStore)
+            }
+            .sheet(isPresented: $isShowingExploration) {
+                ExplorationView(playerStore: playerStore)
+            }
+            .sheet(isPresented: $isShowingRadio) {
+                RadioView(
+                    playerStore: playerStore,
+                    audioPlayer: playerStore.audioPlayer
+                )
+            }
+            .sheet(isPresented: $isShowingSettings) {
+                SettingsView(
+                    settings: settings,
+                    playerStore: playerStore,
+                    offlineCacheManager: playerStore.offlineCacheManager
+                )
             }
             .task(id: authKey(server: server, user: user)) {
                 playerStore.configure(server: server, user: user)
@@ -155,6 +175,20 @@ struct PlayerView: View {
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
                 Button {
+                    isShowingExploration = true
+                } label: {
+                    Image(systemName: "sparkles")
+                }
+                .help("Explore")
+
+                Button {
+                    isShowingRadio = true
+                } label: {
+                    Image(systemName: "dot.radiowaves.left.and.right")
+                }
+                .help("Radio")
+
+                Button {
                     isShowingSearch = true
                 } label: {
                     Image(systemName: "magnifyingglass")
@@ -209,6 +243,12 @@ struct PlayerView: View {
                 isShowingProfile = true
             } label: {
                 Label("Profile", systemImage: "person.crop.circle")
+            }
+
+            Button {
+                isShowingSettings = true
+            } label: {
+                Label("Settings", systemImage: "gearshape")
             }
 
             Divider()
@@ -1860,6 +1900,8 @@ private struct SearchMusicView: View {
                             playerStore.play(music: music, in: playerStore.searchMusicResults)
                         } onAddToMusicbill: {
                             musicForMusicbillSelection = music
+                        } onSaveOffline: {
+                            playerStore.saveOffline(music)
                         }
                     }
                 }
@@ -2081,6 +2123,8 @@ private struct SearchMusicView: View {
                             )
                         } onAddToMusicbill: {
                             musicForMusicbillSelection = result.music
+                        } onSaveOffline: {
+                            playerStore.saveOffline(result.music)
                         }
                     }
                 }
@@ -2379,6 +2423,8 @@ private struct ArtistDetailView: View {
                             playerStore.play(music: music, in: musicList)
                         } onAddToMusicbill: {
                             musicForMusicbillSelection = music
+                        } onSaveOffline: {
+                            playerStore.saveOffline(music)
                         }
                     }
                 }
@@ -2582,6 +2628,8 @@ private struct PublicMusicbillDetailView: View {
                             playerStore.play(music: music, in: detail.musicList)
                         } onAddToMusicbill: {
                             musicForMusicbillSelection = music
+                        } onSaveOffline: {
+                            playerStore.saveOffline(music)
                         }
                     }
                 }
@@ -3117,6 +3165,8 @@ private struct MusicbillDetailView: View {
                             Task {
                                 await playerStore.removeMusic(music, from: detail.id)
                             }
+                        } onSaveOffline: {
+                            playerStore.saveOffline(music)
                         }
                     }
                 }
@@ -3134,6 +3184,7 @@ private struct MusicRow: View {
     let onPlay: () -> Void
     let onAddToMusicbill: () -> Void
     var onRemoveFromMusicbill: (() -> Void)? = nil
+    var onSaveOffline: (() -> Void)? = nil
 
     init(
         music: Music,
@@ -3143,7 +3194,8 @@ private struct MusicRow: View {
         lyricKeyword: String = "",
         onPlay: @escaping () -> Void,
         onAddToMusicbill: @escaping () -> Void,
-        onRemoveFromMusicbill: (() -> Void)? = nil
+        onRemoveFromMusicbill: (() -> Void)? = nil,
+        onSaveOffline: (() -> Void)? = nil
     ) {
         self.music = music
         self.isCurrent = isCurrent
@@ -3153,6 +3205,7 @@ private struct MusicRow: View {
         self.onPlay = onPlay
         self.onAddToMusicbill = onAddToMusicbill
         self.onRemoveFromMusicbill = onRemoveFromMusicbill
+        self.onSaveOffline = onSaveOffline
     }
 
     var body: some View {
@@ -3191,6 +3244,12 @@ private struct MusicRow: View {
         .contextMenu {
             Button(action: onAddToMusicbill) {
                 Label("Add to Musicbill", systemImage: "text.badge.plus")
+            }
+
+            if let onSaveOffline {
+                Button(action: onSaveOffline) {
+                    Label("Save for Offline", systemImage: "arrow.down.circle")
+                }
             }
 
             if let onRemoveFromMusicbill {
@@ -4202,4 +4261,356 @@ private func formatPlaybackTime(_ seconds: Double) -> String {
         return "\(hours):\(String(format: "%02d", minutes)):\(String(format: "%02d", remainingSeconds))"
     }
     return "\(minutes):\(String(format: "%02d", remainingSeconds))"
+}
+
+// MARK: - Exploration
+
+private struct ExplorationView: View {
+    @ObservedObject var playerStore: PlayerStore
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var artistForDetail: ArtistSearchItem?
+    @State private var publicMusicbillForDetail: PublicMusicbillSearchItem?
+
+    var body: some View {
+        NavigationStack {
+            content
+                .navigationTitle("Explore")
+                #if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") {
+                            dismiss()
+                        }
+                    }
+
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            Task {
+                                await playerStore.loadExploration(force: true)
+                            }
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                        .disabled(playerStore.isLoadingExploration)
+                        .help("Refresh")
+                    }
+                }
+        }
+        .task {
+            await playerStore.loadExploration()
+        }
+        .sheet(item: $artistForDetail) { artist in
+            ArtistDetailView(artist: artist, playerStore: playerStore)
+        }
+        .sheet(item: $publicMusicbillForDetail) { musicbill in
+            PublicMusicbillDetailView(musicbill: musicbill, playerStore: playerStore)
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if playerStore.isLoadingExploration && playerStore.exploration == nil {
+            ProgressView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else if let exploration = playerStore.exploration, !exploration.isEmpty {
+            List {
+                musicSection("For You", items: exploration.musicList)
+                artistSection("Artists", items: exploration.artistList)
+                musicbillSection("Public Musicbills", items: exploration.publicMusicbillList)
+                musicSection("Recently Added", items: exploration.recentMusicList)
+                artistSection("Recent Artists", items: exploration.recentArtistList)
+                musicbillSection("Recent Musicbills", items: exploration.recentPublicMusicbillList)
+            }
+            .overlay {
+                if playerStore.isLoadingExploration {
+                    ProgressView()
+                        .padding(16)
+                        .background(.regularMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
+            }
+        } else if playerStore.exploration != nil {
+            ContentUnavailableView(
+                "Nothing to Explore",
+                systemImage: "sparkles",
+                description: Text("Check back later for new picks.")
+            )
+        } else {
+            ContentUnavailableView(
+                "Explore",
+                systemImage: "sparkles",
+                description: Text("Discover music, artists, and public musicbills.")
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func musicSection(_ title: String, items: [ExplorationMusicItem]) -> some View {
+        if !items.isEmpty {
+            Section(title) {
+                ForEach(items) { music in
+                    ExplorationMusicRow(
+                        music: music,
+                        isCurrent: playerStore.audioPlayer.currentMusic?.id == music.id,
+                        isPlaying: playerStore.audioPlayer.currentMusic?.id == music.id && playerStore.audioPlayer.isPlaying
+                    ) {
+                        Task {
+                            await playerStore.playMusic(id: music.id)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func artistSection(_ title: String, items: [ExplorationArtistItem]) -> some View {
+        if !items.isEmpty {
+            Section(title) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 14) {
+                        ForEach(items) { artist in
+                            ExplorationArtistCard(artist: artist) {
+                                artistForDetail = artist.asSearchItem()
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func musicbillSection(_ title: String, items: [ExplorationPublicMusicbillItem]) -> some View {
+        if !items.isEmpty {
+            Section(title) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 14) {
+                        ForEach(items) { musicbill in
+                            ExplorationMusicbillCard(musicbill: musicbill) {
+                                publicMusicbillForDetail = musicbill.asSearchItem()
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            }
+        }
+    }
+}
+
+private struct ExplorationMusicRow: View {
+    let music: ExplorationMusicItem
+    let isCurrent: Bool
+    let isPlaying: Bool
+    let onPlay: () -> Void
+
+    var body: some View {
+        Button(action: onPlay) {
+            HStack(spacing: 12) {
+                ArtworkView(
+                    urlString: music.coverThumbnail?.isEmpty == false ? music.coverThumbnail : music.cover,
+                    systemImage: "music.note",
+                    size: 44
+                )
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(music.name)
+                        .lineLimit(1)
+                    Text(music.performerLine)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                if isCurrent {
+                    Image(systemName: isPlaying ? "speaker.wave.2.fill" : "pause.circle")
+                        .foregroundStyle(.tint)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct ExplorationArtistCard: View {
+    let artist: ExplorationArtistItem
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 8) {
+                ArtworkView(
+                    urlString: artist.photos.first?.thumbnail?.isEmpty == false ? artist.photos.first?.thumbnail : artist.avatar,
+                    systemImage: "music.mic",
+                    size: 96
+                )
+                .clipShape(Circle())
+
+                Text(artist.name)
+                    .font(.footnote)
+                    .lineLimit(1)
+                    .frame(width: 96)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct ExplorationMusicbillCard: View {
+    let musicbill: ExplorationPublicMusicbillItem
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 8) {
+                ArtworkView(
+                    urlString: musicbill.cover,
+                    systemImage: "music.note.list",
+                    size: 120
+                )
+
+                Text(musicbill.name)
+                    .font(.footnote)
+                    .lineLimit(1)
+                Text(musicbill.user.nickname)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            .frame(width: 120, alignment: .leading)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Radio
+
+private struct RadioView: View {
+    @ObservedObject var playerStore: PlayerStore
+    @ObservedObject var audioPlayer: AudioPlayerController
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            content
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .navigationTitle("Radio")
+                #if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Done") {
+                            dismiss()
+                        }
+                    }
+
+                    if audioPlayer.isRadioMode {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button(role: .destructive) {
+                                playerStore.stopRadio()
+                            } label: {
+                                Text("Stop")
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if audioPlayer.isRadioMode, let music = audioPlayer.currentMusic {
+            playingView(music: music)
+        } else if playerStore.isRadioLoading {
+            ProgressView("Tuning in…")
+        } else {
+            startView
+        }
+    }
+
+    private var startView: some View {
+        ContentUnavailableView {
+            Label("Radio", systemImage: "dot.radiowaves.left.and.right")
+        } description: {
+            Text("Play an endless shuffle of random music.")
+        } actions: {
+            Button {
+                Task {
+                    await playerStore.startRadio()
+                }
+            } label: {
+                Text("Start Radio")
+                    .frame(maxWidth: 220)
+            }
+            .buttonStyle(.borderedProminent)
+        }
+    }
+
+    private func playingView(music: Music) -> some View {
+        VStack(spacing: 28) {
+            Spacer()
+
+            ArtworkView(
+                urlString: music.cover.isEmpty ? music.coverThumbnail : music.cover,
+                systemImage: "dot.radiowaves.left.and.right",
+                size: 260
+            )
+
+            VStack(spacing: 6) {
+                Text(music.name)
+                    .font(.title2.bold())
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                Text(music.performerLine)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+
+            HStack(spacing: 48) {
+                Button {
+                    audioPlayer.togglePlayback()
+                } label: {
+                    Image(systemName: audioPlayer.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                        .font(.system(size: 64))
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    playerStore.skipRadio()
+                } label: {
+                    Image(systemName: "forward.fill")
+                        .font(.system(size: 32))
+                }
+                .buttonStyle(.plain)
+            }
+
+            if let upcoming {
+                Label("Next: \(upcoming.name)", systemImage: "music.note")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+        }
+    }
+
+    private var upcoming: Music? {
+        let nextIndex = audioPlayer.currentQueueIndex + 1
+        guard audioPlayer.queue.indices.contains(nextIndex) else { return nil }
+        return audioPlayer.queue[nextIndex]
+    }
 }

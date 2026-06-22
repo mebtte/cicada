@@ -73,7 +73,7 @@ struct ServerMetadataClient {
     }
 
     private static var preferredLanguage: String {
-        Locale.preferredLanguages.first ?? Locale.current.identifier
+        AppSettingsSnapshot.languageQueryValue()
     }
 }
 
