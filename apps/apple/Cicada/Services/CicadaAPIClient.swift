@@ -490,6 +490,18 @@ struct CicadaAPIClient: Sendable {
         return components.url
     }
 
+    /// Builds an authenticated request to download a music asset for offline
+    /// caching. Reuses `musicPlaybackURL` so the current quality is applied.
+    func assetDownloadRequest(for music: Music) -> URLRequest? {
+        guard let url = musicPlaybackURL(for: music) else { return nil }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        if let token, !token.isEmpty {
+            request.setValue(token, forHTTPHeaderField: Self.tokenHeader)
+        }
+        return request
+    }
+
     func absoluteURLString(_ rawValue: String?) -> String {
         guard let rawValue else { return "" }
         let trimmed = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)

@@ -48,9 +48,44 @@ enum AppLanguageOption: String, CaseIterable, Identifiable, Sendable {
     }
 }
 
+enum OfflineCacheLimit: String, CaseIterable, Identifiable, Sendable {
+    case gb5
+    case gb50
+    case unlimited
+
+    static let `default`: OfflineCacheLimit = .gb5
+
+    var id: String { rawValue }
+
+    /// Maximum cache size in bytes, or `nil` for unlimited.
+    var bytes: Int64? {
+        switch self {
+        case .gb5:
+            return 5 * 1024 * 1024 * 1024
+        case .gb50:
+            return 50 * 1024 * 1024 * 1024
+        case .unlimited:
+            return nil
+        }
+    }
+
+    var displayName: String {
+        switch self {
+        case .gb5:
+            return "5 GB"
+        case .gb50:
+            return "50 GB"
+        case .unlimited:
+            return "Unlimited"
+        }
+    }
+}
+
 private enum AppSettingsStorageKey {
     static let musicPlaybackQuality = "io.github.manyone.cicada.apple.setting.musicPlaybackQuality"
     static let language = "io.github.manyone.cicada.apple.setting.language"
+    static let offlineCacheEnabled = "io.github.manyone.cicada.apple.setting.offlineCacheEnabled"
+    static let offlineCacheLimit = "io.github.manyone.cicada.apple.setting.offlineCacheLimit"
 }
 
 /// UI-facing observable settings store. Writes are mirrored into `UserDefaults`
@@ -71,6 +106,18 @@ final class AppSettingsStore: ObservableObject {
         }
     }
 
+    @Published var offlineCacheEnabled: Bool {
+        didSet {
+            storage.set(offlineCacheEnabled, forKey: AppSettingsStorageKey.offlineCacheEnabled)
+        }
+    }
+
+    @Published var offlineCacheLimit: OfflineCacheLimit {
+        didSet {
+            storage.set(offlineCacheLimit.rawValue, forKey: AppSettingsStorageKey.offlineCacheLimit)
+        }
+    }
+
     private let storage: UserDefaults
 
     init(storage: UserDefaults = .standard) {
@@ -79,6 +126,13 @@ final class AppSettingsStore: ObservableObject {
         musicPlaybackQuality = MusicPlaybackQuality(rawValue: rawQuality ?? "") ?? .default
         let rawLanguage = storage.string(forKey: AppSettingsStorageKey.language)
         language = AppLanguageOption(rawValue: rawLanguage ?? "") ?? .default
+        if storage.object(forKey: AppSettingsStorageKey.offlineCacheEnabled) == nil {
+            offlineCacheEnabled = true
+        } else {
+            offlineCacheEnabled = storage.bool(forKey: AppSettingsStorageKey.offlineCacheEnabled)
+        }
+        let rawLimit = storage.string(forKey: AppSettingsStorageKey.offlineCacheLimit)
+        offlineCacheLimit = OfflineCacheLimit(rawValue: rawLimit ?? "") ?? .default
     }
 }
 
@@ -99,5 +153,17 @@ enum AppSettingsSnapshot {
         case .english:
             return AppLanguageOption.english.rawValue
         }
+    }
+
+    static func offlineCacheEnabled(_ storage: UserDefaults = .standard) -> Bool {
+        if storage.object(forKey: AppSettingsStorageKey.offlineCacheEnabled) == nil {
+            return true
+        }
+        return storage.bool(forKey: AppSettingsStorageKey.offlineCacheEnabled)
+    }
+
+    static func maxOfflineCacheBytes(_ storage: UserDefaults = .standard) -> Int64? {
+        let raw = storage.string(forKey: AppSettingsStorageKey.offlineCacheLimit)
+        return (OfflineCacheLimit(rawValue: raw ?? "") ?? .default).bytes
     }
 }

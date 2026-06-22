@@ -75,7 +75,11 @@ struct PlayerView: View {
                 )
             }
             .sheet(isPresented: $isShowingSettings) {
-                SettingsView(settings: settings)
+                SettingsView(
+                    settings: settings,
+                    playerStore: playerStore,
+                    offlineCacheManager: playerStore.offlineCacheManager
+                )
             }
             .task(id: authKey(server: server, user: user)) {
                 playerStore.configure(server: server, user: user)
@@ -1896,6 +1900,8 @@ private struct SearchMusicView: View {
                             playerStore.play(music: music, in: playerStore.searchMusicResults)
                         } onAddToMusicbill: {
                             musicForMusicbillSelection = music
+                        } onSaveOffline: {
+                            playerStore.saveOffline(music)
                         }
                     }
                 }
@@ -2117,6 +2123,8 @@ private struct SearchMusicView: View {
                             )
                         } onAddToMusicbill: {
                             musicForMusicbillSelection = result.music
+                        } onSaveOffline: {
+                            playerStore.saveOffline(result.music)
                         }
                     }
                 }
@@ -2415,6 +2423,8 @@ private struct ArtistDetailView: View {
                             playerStore.play(music: music, in: musicList)
                         } onAddToMusicbill: {
                             musicForMusicbillSelection = music
+                        } onSaveOffline: {
+                            playerStore.saveOffline(music)
                         }
                     }
                 }
@@ -2618,6 +2628,8 @@ private struct PublicMusicbillDetailView: View {
                             playerStore.play(music: music, in: detail.musicList)
                         } onAddToMusicbill: {
                             musicForMusicbillSelection = music
+                        } onSaveOffline: {
+                            playerStore.saveOffline(music)
                         }
                     }
                 }
@@ -3153,6 +3165,8 @@ private struct MusicbillDetailView: View {
                             Task {
                                 await playerStore.removeMusic(music, from: detail.id)
                             }
+                        } onSaveOffline: {
+                            playerStore.saveOffline(music)
                         }
                     }
                 }
@@ -3170,6 +3184,7 @@ private struct MusicRow: View {
     let onPlay: () -> Void
     let onAddToMusicbill: () -> Void
     var onRemoveFromMusicbill: (() -> Void)? = nil
+    var onSaveOffline: (() -> Void)? = nil
 
     init(
         music: Music,
@@ -3179,7 +3194,8 @@ private struct MusicRow: View {
         lyricKeyword: String = "",
         onPlay: @escaping () -> Void,
         onAddToMusicbill: @escaping () -> Void,
-        onRemoveFromMusicbill: (() -> Void)? = nil
+        onRemoveFromMusicbill: (() -> Void)? = nil,
+        onSaveOffline: (() -> Void)? = nil
     ) {
         self.music = music
         self.isCurrent = isCurrent
@@ -3189,6 +3205,7 @@ private struct MusicRow: View {
         self.onPlay = onPlay
         self.onAddToMusicbill = onAddToMusicbill
         self.onRemoveFromMusicbill = onRemoveFromMusicbill
+        self.onSaveOffline = onSaveOffline
     }
 
     var body: some View {
@@ -3227,6 +3244,12 @@ private struct MusicRow: View {
         .contextMenu {
             Button(action: onAddToMusicbill) {
                 Label("Add to Musicbill", systemImage: "text.badge.plus")
+            }
+
+            if let onSaveOffline {
+                Button(action: onSaveOffline) {
+                    Label("Save for Offline", systemImage: "arrow.down.circle")
+                }
             }
 
             if let onRemoveFromMusicbill {

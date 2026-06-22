@@ -16,6 +16,14 @@ final class AudioPlayerController: ObservableObject {
     /// prefetch additional random songs to keep the queue populated.
     var onRadioAdvance: (() -> Void)?
 
+    /// Resolves a local cached file URL for a track, if one exists. When set and
+    /// returning non-nil, playback uses the local file instead of streaming.
+    var localAssetURLProvider: ((Music) -> URL?)?
+
+    /// Called once per track when playback passes the offline-cache threshold,
+    /// so the owner can cache the asset for offline use.
+    var onCacheEligible: ((Music) -> Void)?
+
     private let player = AVPlayer()
     private var timeObserver: Any?
     private var endObserver: NSObjectProtocol?
@@ -176,7 +184,7 @@ final class AudioPlayerController: ObservableObject {
         }
 
         let music = queue[index]
-        guard let url = client?.musicPlaybackURL(for: music) else {
+        guard let url = localAssetURLProvider?(music) ?? client?.musicPlaybackURL(for: music) else {
             errorMessage = "This music asset URL is invalid."
             return
         }
@@ -274,6 +282,12 @@ final class AudioPlayerController: ObservableObject {
         if duration > 0 {
             record.maxPercent = min(max(record.maxPercent, record.playedSeconds / duration), 1)
         }
+
+        if !record.cacheTriggered, record.maxPercent >= 0.75, let music = currentMusic, music.id == record.musicID {
+            record.cacheTriggered = true
+            onCacheEligible?(music)
+        }
+
         activeRecord = record
     }
 
@@ -317,4 +331,5 @@ private struct ActivePlaybackRecord {
     var playedSeconds: Double = 0
     var lastCurrentTime: Double?
     var maxPercent: Double = 0
+    var cacheTriggered = false
 }

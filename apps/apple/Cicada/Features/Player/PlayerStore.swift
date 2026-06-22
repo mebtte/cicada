@@ -109,6 +109,7 @@ final class PlayerStore: ObservableObject {
     @Published private(set) var authorizationExpiredMessage: String?
 
     let audioPlayer = AudioPlayerController()
+    let offlineCacheManager = OfflineCacheManager()
 
     var searchMusicPageSize: Int {
         PlayerSearchConstants.musicPageSize
@@ -170,6 +171,25 @@ final class PlayerStore: ObservableObject {
         stopRadio()
         authorizationExpiredMessage = nil
         audioPlayer.configure(client: client)
+        configureOfflineCache(client: client)
+    }
+
+    private func configureOfflineCache(client: CicadaAPIClient) {
+        offlineCacheManager.configure(client: client)
+        offlineCacheManager.isMusicProtected = { [weak self] musicID in
+            self?.audioPlayer.currentMusic?.id == musicID
+        }
+        audioPlayer.localAssetURLProvider = { [weak self] music in
+            self?.offlineCacheManager.localPlaybackURL(for: music)
+        }
+        audioPlayer.onCacheEligible = { [weak self] music in
+            guard AppSettingsSnapshot.offlineCacheEnabled() else { return }
+            Task { await self?.offlineCacheManager.cache(music) }
+        }
+    }
+
+    func saveOffline(_ music: Music) {
+        Task { await offlineCacheManager.cache(music) }
     }
 
     func loadMusicbillList() async {

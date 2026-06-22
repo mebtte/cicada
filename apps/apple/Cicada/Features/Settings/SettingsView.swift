@@ -2,10 +2,16 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var settings: AppSettingsStore
+    @ObservedObject var playerStore: PlayerStore
+    @ObservedObject var offlineCacheManager: OfflineCacheManager
 
     @Environment(\.dismiss) private var dismiss
 
     private let feedbackURL = URL(string: "https://github.com/mebtte/cicada/issues")
+
+    private var usageText: String {
+        ByteCountFormatter.string(fromByteCount: offlineCacheManager.totalBytes, countStyle: .file)
+    }
 
     var body: some View {
         NavigationStack {
@@ -32,6 +38,29 @@ struct SettingsView: View {
                     Text("Language")
                 } footer: {
                     Text("Affects the language of server-provided content.")
+                }
+
+                Section {
+                    Toggle("Offline Cache", isOn: $settings.offlineCacheEnabled)
+
+                    Picker("Cache Limit", selection: $settings.offlineCacheLimit) {
+                        ForEach(OfflineCacheLimit.allCases) { limit in
+                            Text(limit.displayName).tag(limit)
+                        }
+                    }
+
+                    NavigationLink {
+                        OfflineCacheView(
+                            playerStore: playerStore,
+                            manager: offlineCacheManager
+                        )
+                    } label: {
+                        LabeledContent("Manage", value: usageText)
+                    }
+                } header: {
+                    Text("Offline")
+                } footer: {
+                    Text("Songs you play past 75% are cached automatically. Oldest songs are removed when the limit is reached.")
                 }
 
                 Section("About") {

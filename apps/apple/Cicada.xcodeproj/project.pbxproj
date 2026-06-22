@@ -12,6 +12,7 @@
 		1CD8C8775EFCD83973DB933B /* AudioPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01204AADF1F4582CCE6A10EA /* AudioPlayerController.swift */; };
 		2A6F7DF61B34ACA044BB046D /* APIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA29737AD4D244F48D114F8 /* APIModels.swift */; };
 		31B3D04BEAC099A5CD672D60 /* PlayerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CCF322654991CDF520E710 /* PlayerStore.swift */; };
+		522E7C044AD259D040DB6A46 /* OfflineCacheView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23FB3F71F15FCC9E8CB388FE /* OfflineCacheView.swift */; };
 		540311FF630F605EB2D029B6 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBA9673A23B3A3AF4CDB32B /* AppColors.swift */; };
 		6D00ED9698D002F1A9D4C814 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55AE864A81F35D85018195F /* AppSettings.swift */; };
 		84F4925E7C08BF0AE904CF85 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62AB02B4FFD013256547676 /* PlayerView.swift */; };
@@ -24,6 +25,7 @@
 		B30F51263A6F4D6D4707BA71 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2250FE910651D41CF043E8E9 /* SettingsView.swift */; };
 		BA878239D0B590108F8B4AA4 /* ServerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE82971270AEBC4A2CEAF2A /* ServerRecord.swift */; };
 		C949567AF84958831A724FB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11DF74913AF882BC9F3654D6 /* Assets.xcassets */; };
+		C9EFAA3FE8DE7F4B5E114691 /* OfflineCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B42BC74FFEB76515CE2B3E /* OfflineCacheManager.swift */; };
 		D45A1192D9D8B8471640DC09 /* ServerMetadataClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CB5BD527128393183232E7 /* ServerMetadataClient.swift */; };
 		DA49924C26B41DAB98303DB6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844DE39A003BD06B5E365B8B /* ContentView.swift */; };
 		DAB7FB034762D499332DF78A /* ServerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A15DAAA9D87410AC3E70B9 /* ServerSetupView.swift */; };
@@ -35,8 +37,10 @@
 		03B1F585BB98EF97B6443166 /* LoginStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStore.swift; sourceTree = "<group>"; };
 		11DF74913AF882BC9F3654D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2250FE910651D41CF043E8E9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		23FB3F71F15FCC9E8CB388FE /* OfflineCacheView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineCacheView.swift; sourceTree = "<group>"; };
 		2B910A3665B4DDA99878FF71 /* CicadaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CicadaApp.swift; sourceTree = "<group>"; };
 		36EF13F40A064872555EB02B /* ServerSetupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupStore.swift; sourceTree = "<group>"; };
+		37B42BC74FFEB76515CE2B3E /* OfflineCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineCacheManager.swift; sourceTree = "<group>"; };
 		50DB83045806185AB692E010 /* CicadaAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CicadaAPIClient.swift; sourceTree = "<group>"; };
 		51CB5BD527128393183232E7 /* ServerMetadataClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMetadataClient.swift; sourceTree = "<group>"; };
 		7067CA4929E277FCFCE50DDA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
@@ -61,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				E99BC40DBE6B338A95AF438D /* Login */,
+				5069862B0DA36DC91D4BD1D2 /* OfflineCache */,
 				CE2BE27675CD84C5A4E682FD /* Player */,
 				7FEC245E90F46072ACAF8FDA /* ServerSetup */,
 				9C69978E351FACEAB90F5CDC /* Settings */,
@@ -81,9 +86,18 @@
 			children = (
 				01204AADF1F4582CCE6A10EA /* AudioPlayerController.swift */,
 				50DB83045806185AB692E010 /* CicadaAPIClient.swift */,
+				37B42BC74FFEB76515CE2B3E /* OfflineCacheManager.swift */,
 				51CB5BD527128393183232E7 /* ServerMetadataClient.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		5069862B0DA36DC91D4BD1D2 /* OfflineCache */ = {
+			isa = PBXGroup;
+			children = (
+				23FB3F71F15FCC9E8CB388FE /* OfflineCacheView.swift */,
+			);
+			path = OfflineCache;
 			sourceTree = "<group>";
 		};
 		57FBA0E7E939B674E1E61726 /* Cicada */ = {
@@ -288,6 +302,8 @@
 				DA49924C26B41DAB98303DB6 /* ContentView.swift in Sources */,
 				8BB183D6F68837E6692076B4 /* LoginStore.swift in Sources */,
 				9CA0E180D97A85B9E1EDE04D /* LoginView.swift in Sources */,
+				C9EFAA3FE8DE7F4B5E114691 /* OfflineCacheManager.swift in Sources */,
+				522E7C044AD259D040DB6A46 /* OfflineCacheView.swift in Sources */,
 				8FDB0E06C64B71D69AABD4B5 /* PlatformInfo.swift in Sources */,
 				31B3D04BEAC099A5CD672D60 /* PlayerStore.swift in Sources */,
 				84F4925E7C08BF0AE904CF85 /* PlayerView.swift in Sources */,
