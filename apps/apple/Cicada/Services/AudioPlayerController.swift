@@ -9,13 +9,19 @@ final class AudioPlayerController: ObservableObject {
     @Published var currentTime: Double = 0
     @Published private(set) var duration: Double = 0
     @Published private(set) var isPlaying = false
+    @Published private(set) var isRadioMode = false
     @Published var errorMessage: String?
+
+    /// Called whenever radio playback advances to a new track so the owner can
+    /// prefetch additional random songs to keep the queue populated.
+    var onRadioAdvance: (() -> Void)?
 
     private let player = AVPlayer()
     private var timeObserver: Any?
     private var endObserver: NSObjectProtocol?
     private var client: CicadaAPIClient?
     private var activeRecord: ActivePlaybackRecord?
+    private var pendingRadioAutoplay = false
 
     init() {
         configureAudioSession()
@@ -43,9 +49,35 @@ final class AudioPlayerController: ObservableObject {
             return
         }
         self.client = client
+        exitRadioMode()
         queue = playlist.isEmpty ? [music] : playlist
         let nextIndex = queue.firstIndex(where: { $0.id == music.id }) ?? 0
         playAt(index: nextIndex, uploadCurrent: true)
+    }
+
+    /// Start a fresh radio session seeded with a single random track. Additional
+    /// tracks are appended via `appendMusic(_:)` as `onRadioAdvance` requests them.
+    func startRadio(initial music: Music) {
+        guard let client else {
+            errorMessage = "Sign in before playing music."
+            return
+        }
+        self.client = client
+        uploadActiveRecord()
+        isRadioMode = true
+        pendingRadioAutoplay = false
+        queue = [music]
+        playAt(index: 0, uploadCurrent: false)
+    }
+
+    /// Append a track to the queue. In radio mode, resumes playback if it was
+    /// waiting for the next prefetched song.
+    func appendMusic(_ music: Music) {
+        queue.append(music)
+        if pendingRadioAutoplay, currentQueueIndex + 1 < queue.count {
+            pendingRadioAutoplay = false
+            playAt(index: currentQueueIndex + 1, uploadCurrent: false)
+        }
     }
 
     func playQueueItem(at index: Int) {
@@ -74,6 +106,15 @@ final class AudioPlayerController: ObservableObject {
 
     func next() {
         guard !queue.isEmpty else { return }
+        if isRadioMode {
+            if currentQueueIndex + 1 < queue.count {
+                playAt(index: currentQueueIndex + 1, uploadCurrent: true)
+            } else {
+                pendingRadioAutoplay = true
+                onRadioAdvance?()
+            }
+            return
+        }
         let nextIndex = currentQueueIndex + 1 < queue.count ? currentQueueIndex + 1 : 0
         playAt(index: nextIndex, uploadCurrent: true)
     }
@@ -82,6 +123,14 @@ final class AudioPlayerController: ObservableObject {
         guard !queue.isEmpty else { return }
         if currentTime > 3 {
             seek(to: 0)
+            return
+        }
+        if isRadioMode {
+            if currentQueueIndex > 0 {
+                playAt(index: currentQueueIndex - 1, uploadCurrent: true)
+            } else {
+                seek(to: 0)
+            }
             return
         }
         let nextIndex = currentQueueIndex > 0 ? currentQueueIndex - 1 : queue.count - 1
@@ -111,6 +160,13 @@ final class AudioPlayerController: ObservableObject {
         duration = 0
         isPlaying = false
         activeRecord = nil
+        exitRadioMode()
+    }
+
+    private func exitRadioMode() {
+        isRadioMode = false
+        pendingRadioAutoplay = false
+        onRadioAdvance = nil
     }
 
     private func playAt(index: Int, uploadCurrent: Bool) {
@@ -137,6 +193,10 @@ final class AudioPlayerController: ObservableObject {
 
         player.play()
         isPlaying = true
+
+        if isRadioMode {
+            onRadioAdvance?()
+        }
     }
 
     private func installTimeObserver() {
@@ -191,6 +251,10 @@ final class AudioPlayerController: ObservableObject {
 
         if currentQueueIndex + 1 < queue.count {
             playAt(index: currentQueueIndex + 1, uploadCurrent: false)
+        } else if isRadioMode {
+            pendingRadioAutoplay = true
+            isPlaying = false
+            onRadioAdvance?()
         } else {
             isPlaying = false
         }

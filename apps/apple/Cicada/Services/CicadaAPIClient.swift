@@ -421,6 +421,30 @@ struct CicadaAPIClient: Sendable {
         )
     }
 
+    func getExploration() async throws -> ExplorationData {
+        var data: ExplorationData = try await request(path: "/api/common/exploration")
+        normalizeExplorationMusic(&data.musicList)
+        normalizeExplorationMusic(&data.recentMusicList)
+        normalizeExplorationArtists(&data.artistList)
+        normalizeExplorationArtists(&data.recentArtistList)
+        normalizeExplorationMusicbills(&data.publicMusicbillList)
+        normalizeExplorationMusicbills(&data.recentPublicMusicbillList)
+        return data
+    }
+
+    func getRandomMusic(excludeID: String?) async throws -> Music {
+        var query: [String: String] = [:]
+        if let excludeID, !excludeID.isEmpty {
+            query["excludeId"] = excludeID
+        }
+        var music: Music = try await request(
+            path: "/api/common/music/random",
+            query: query
+        )
+        normalizeMusicAssets(&music)
+        return music
+    }
+
     func createMusicPlayRecord(_ payload: CreateMusicPlayRecordPayload) async throws {
         let _: EmptyResponse = try await request(
             path: "/api/common/music_play_record",
@@ -461,7 +485,7 @@ struct CicadaAPIClient: Sendable {
         }
         var queryItems = components.queryItems ?? []
         queryItems.removeAll(where: { $0.name == "quality" })
-        queryItems.append(URLQueryItem(name: "quality", value: "smooth"))
+        queryItems.append(URLQueryItem(name: "quality", value: AppSettingsSnapshot.musicPlaybackQuality()))
         components.queryItems = queryItems
         return components.url
     }
@@ -634,12 +658,32 @@ struct CicadaAPIClient: Sendable {
         }
     }
 
+    private func normalizeExplorationMusic(_ list: inout [ExplorationMusicItem]) {
+        for index in list.indices {
+            list[index].cover = absoluteURLString(list[index].cover)
+            list[index].coverThumbnail = absoluteURLString(list[index].coverThumbnail)
+        }
+    }
+
+    private func normalizeExplorationArtists(_ list: inout [ExplorationArtistItem]) {
+        for index in list.indices {
+            normalizeArtistPhotos(&list[index].photos)
+        }
+    }
+
+    private func normalizeExplorationMusicbills(_ list: inout [ExplorationPublicMusicbillItem]) {
+        for index in list.indices {
+            list[index].cover = absoluteURLString(list[index].cover)
+            list[index].user.avatar = absoluteURLString(list[index].user.avatar)
+        }
+    }
+
     private var appVersion: String {
         AppVersion.current
     }
 
     private var preferredLanguage: String {
-        Locale.preferredLanguages.first ?? Locale.current.identifier
+        AppSettingsSnapshot.languageQueryValue()
     }
 }
 

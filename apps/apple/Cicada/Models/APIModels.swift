@@ -108,6 +108,13 @@ struct ArtistSummary: Decodable, Hashable, Identifiable {
     let aliases: [String]
     var avatar: String?
 
+    init(id: String, name: String, aliases: [String] = [], avatar: String? = nil) {
+        self.id = id
+        self.name = name
+        self.aliases = aliases
+        self.avatar = avatar
+    }
+
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -157,6 +164,20 @@ struct ArtistSearchItem: Decodable, Hashable, Identifiable {
         photos.first?.asset ?? ""
     }
 
+    init(
+        id: String,
+        name: String,
+        aliases: [String] = [],
+        musicCount: Int = 0,
+        photos: [ArtistPhoto] = []
+    ) {
+        self.id = id
+        self.name = name
+        self.aliases = aliases
+        self.musicCount = musicCount
+        self.photos = photos
+    }
+
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -195,6 +216,48 @@ struct Music: Decodable, Hashable, Identifiable {
     var performerLine: String {
         let names = performers.map(\.name)
         return names.isEmpty ? "Unknown Artist" : names.joined(separator: ", ")
+    }
+
+    init(
+        id: String,
+        type: Int,
+        name: String,
+        aliases: [String],
+        cover: String,
+        coverThumbnail: String?,
+        asset: String,
+        performers: [ArtistSummary],
+        lyricists: [ArtistSummary],
+        composers: [ArtistSummary]
+    ) {
+        self.id = id
+        self.type = type
+        self.name = name
+        self.aliases = aliases
+        self.cover = cover
+        self.coverThumbnail = coverThumbnail
+        self.asset = asset
+        self.performers = performers
+        self.lyricists = lyricists
+        self.composers = composers
+    }
+
+    init(detail: MusicDetail) {
+        func summaries(_ items: [ArtistSearchItem]) -> [ArtistSummary] {
+            items.map { ArtistSummary(id: $0.id, name: $0.name, aliases: $0.aliases, avatar: $0.avatar) }
+        }
+        self.init(
+            id: detail.id,
+            type: detail.type,
+            name: detail.name,
+            aliases: detail.aliases,
+            cover: detail.cover,
+            coverThumbnail: detail.coverThumbnail,
+            asset: detail.asset,
+            performers: summaries(detail.performers),
+            lyricists: summaries(detail.lyricists),
+            composers: summaries(detail.composers)
+        )
     }
 
     enum CodingKeys: String, CodingKey {
@@ -652,6 +715,133 @@ struct CreateMusicPlayRecordPayload: Encodable, Sendable {
     let clientRecordId: String
     let percent: Double
     let playedAt: Int64
+}
+
+struct ExplorationMusicItem: Decodable, Hashable, Identifiable {
+    let id: String
+    let name: String
+    var cover: String
+    var coverThumbnail: String?
+    let performers: [ArtistSummary]
+
+    var performerLine: String {
+        let names = performers.map(\.name)
+        return names.isEmpty ? "Unknown Artist" : names.joined(separator: ", ")
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case cover
+        case coverThumbnail
+        case performers
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        coverThumbnail = try container.decodeIfPresent(String.self, forKey: .coverThumbnail)
+        performers = try container.decodeIfPresent([ArtistSummary].self, forKey: .performers) ?? []
+    }
+}
+
+struct ExplorationArtistItem: Decodable, Hashable, Identifiable {
+    let id: String
+    let name: String
+    var photos: [ArtistPhoto]
+
+    var avatar: String {
+        photos.first?.asset ?? ""
+    }
+
+    func asSearchItem() -> ArtistSearchItem {
+        ArtistSearchItem(id: id, name: name, aliases: [], musicCount: 0, photos: photos)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case photos
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        photos = try container.decodeIfPresent([ArtistPhoto].self, forKey: .photos) ?? []
+    }
+}
+
+struct ExplorationPublicMusicbillItem: Decodable, Hashable, Identifiable {
+    let id: String
+    let name: String
+    var cover: String
+    var user: MusicbillUser
+
+    func asSearchItem() -> PublicMusicbillSearchItem {
+        PublicMusicbillSearchItem(
+            id: id,
+            name: name,
+            cover: cover,
+            musicCount: 0,
+            collectionCount: 0,
+            user: user
+        )
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case cover
+        case user
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        user = try container.decode(MusicbillUser.self, forKey: .user)
+    }
+}
+
+struct ExplorationData: Decodable, Hashable {
+    var musicList: [ExplorationMusicItem]
+    var artistList: [ExplorationArtistItem]
+    var publicMusicbillList: [ExplorationPublicMusicbillItem]
+    var recentMusicList: [ExplorationMusicItem]
+    var recentArtistList: [ExplorationArtistItem]
+    var recentPublicMusicbillList: [ExplorationPublicMusicbillItem]
+
+    var isEmpty: Bool {
+        musicList.isEmpty
+            && artistList.isEmpty
+            && publicMusicbillList.isEmpty
+            && recentMusicList.isEmpty
+            && recentArtistList.isEmpty
+            && recentPublicMusicbillList.isEmpty
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case musicList
+        case artistList
+        case publicMusicbillList
+        case recentMusicList
+        case recentArtistList
+        case recentPublicMusicbillList
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        musicList = try container.decodeIfPresent([ExplorationMusicItem].self, forKey: .musicList) ?? []
+        artistList = try container.decodeIfPresent([ExplorationArtistItem].self, forKey: .artistList) ?? []
+        publicMusicbillList = try container.decodeIfPresent([ExplorationPublicMusicbillItem].self, forKey: .publicMusicbillList) ?? []
+        recentMusicList = try container.decodeIfPresent([ExplorationMusicItem].self, forKey: .recentMusicList) ?? []
+        recentArtistList = try container.decodeIfPresent([ExplorationArtistItem].self, forKey: .recentArtistList) ?? []
+        recentPublicMusicbillList = try container.decodeIfPresent([ExplorationPublicMusicbillItem].self, forKey: .recentPublicMusicbillList) ?? []
+    }
 }
 
 extension KeyedDecodingContainer {
