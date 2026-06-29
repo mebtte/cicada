@@ -38,6 +38,7 @@ export default defineConfig(({ command }) => {
           strategies: 'injectManifest',
           srcDir: 'src',
           filename: 'service_worker.ts',
+          includeAssets: ['**/*'],
           manifest: false,
           devOptions: {
             enabled: true,
