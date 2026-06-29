@@ -53,7 +53,7 @@ const ActiveBlock = styled.div<{
     ${({ $leftPercent }) => $leftPercent}% + ${({ $leftOffset }) =>
         $leftOffset}px
   );
-  bottom: 8px;
+  bottom: 4px;
   z-index: 0;
 
   width: calc(
@@ -63,7 +63,6 @@ const ActiveBlock = styled.div<{
   background: ${PRIMARY};
   border: 2px solid ${PRIMARY_SHADOW};
   border-radius: 12px;
-  box-shadow: 0 4px 0 ${PRIMARY_SHADOW};
   transition: left 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
   pointer-events: none;
 `;
@@ -75,7 +74,11 @@ const TabButton = styled.button<{ $active: boolean }>`
   flex: 1 1 0;
   min-width: 0;
   height: 34px;
-  padding: 0 12px 4px;
+  padding: 0 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   border: 0;
   border-radius: 12px;
@@ -96,31 +99,23 @@ const TabButton = styled.button<{ $active: boolean }>`
 
   transition:
     color 150ms ease-out,
-    filter 120ms ease-out,
-    transform 120ms ease-out;
+    filter 120ms ease-out;
 
   &::before {
     content: '';
     position: absolute;
-    inset: 0 0 4px;
+    inset: 0;
     z-index: -1;
     border: 2px solid ${HOVER_SHADOW};
     border-radius: 12px;
     background: #fff;
-    box-shadow: 0 4px 0 ${HOVER_SHADOW};
     opacity: 0;
-    transition:
-      opacity 120ms ease-out,
-      box-shadow 120ms ease-out;
+    transition: opacity 120ms ease-out;
     pointer-events: none;
   }
 
   &:not(:disabled):hover {
     filter: brightness(1.04);
-  }
-
-  &:not(:disabled):active {
-    transform: translateY(2px);
   }
 
   &:disabled {
@@ -145,12 +140,6 @@ const TabButton = styled.button<{ $active: boolean }>`
       &:not(:disabled):hover {
         &::before {
           opacity: 1;
-        }
-      }
-
-      &:not(:disabled):active {
-        &::before {
-          box-shadow: none;
         }
       }
     `}
