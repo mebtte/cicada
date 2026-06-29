@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { debounce } from 'lodash-es';
 import CustomAudio from '@/utils/custom_audio';
 import getMusicPlaybackAsset from '@/utils/music_playback_asset';
+import onVisible from '@/utils/on_visible';
 import { MusicPlaybackQuality } from '@/constants/setting';
 import { QueueMusic } from '@/features/player/constants';
 import playerEventemitter, {
@@ -104,6 +105,21 @@ function useRadioAudio({
       unlistenLoadedData();
       unlistenEnded();
     };
+  }, [audio]);
+
+  /**
+   * 回到前台时以 <audio> 真实状态对账, 见 pages/player/use_audio.
+   * @author mebtte<i@mebtte.com>
+   */
+  useEffect(() => {
+    const reconcile = () => {
+      setPaused(audio.isPaused());
+      setLoading(!audio.isPaused() && !audio.hasPlayableData());
+      playerEventemitter.emit(PlayerEventType.AUDIO_TIME_UPDATED, {
+        currentMillisecond: audio.getCurrentTime() * 1000,
+      });
+    };
+    return onVisible(reconcile);
   }, [audio]);
 
   useEffect(() => {

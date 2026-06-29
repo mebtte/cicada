@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import Input from '@/components/input';
 import { Label } from '@/components';
+import Switch from '@/components/switch';
 import Textarea from '@/components/textarea';
 import Button from '@/components/button';
 import day from '@/utils/day';
@@ -42,78 +43,6 @@ const AdminFieldTitle = styled.div`
   font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
   font-weight: 800;
   text-transform: capitalize;
-`;
-
-const SwitchButton = styled.button<{ $checked: boolean }>`
-  position: relative;
-  flex: 0 0 auto;
-  width: 58px;
-  height: 34px;
-  padding: 3px;
-  border: 2px solid
-    ${({ $checked }) =>
-      $checked
-        ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_NEUTRAL_SHADOW};
-  border-radius: 999px;
-  background: ${({ $checked }) =>
-    $checked ? CSSVariable.COLOR_PRIMARY : '#fff'};
-  box-shadow: 0 4px 0
-    ${({ $checked }) =>
-      $checked
-        ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_NEUTRAL_SHADOW};
-  cursor: pointer;
-  transition:
-    transform 150ms ease-out,
-    background 150ms ease,
-    box-shadow 150ms ease,
-    filter 120ms;
-
-  &:not(:disabled):hover {
-    filter: brightness(1.04);
-  }
-
-  &:not(:disabled):active {
-    transform: translateY(4px);
-    box-shadow: none;
-    transition:
-      transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-    filter: saturate(0.45);
-  }
-
-  &:focus-visible {
-    outline: 3px solid ${CSSVariable.COLOR_PRIMARY};
-    outline-offset: 3px;
-  }
-
-  > .thumb {
-    display: block;
-    width: 24px;
-    height: 24px;
-    box-sizing: border-box;
-    border: 2px solid
-      ${({ $checked }) =>
-        $checked
-          ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_NEUTRAL_SHADOW};
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 2px 0
-      ${({ $checked }) =>
-        $checked
-          ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_NEUTRAL_SHADOW};
-    transform: translateX(${({ $checked }) => ($checked ? '24px' : '0')});
-    transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
 `;
 
 function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
@@ -226,17 +155,12 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
       <Style>
         <AdminField className="part">
           <AdminFieldTitle>{t('admin')}</AdminFieldTitle>
-          <SwitchButton
-            type="button"
-            role="switch"
-            aria-checked={admin}
+          <Switch
+            checked={admin}
             aria-label={t('admin')}
-            $checked={admin}
             disabled={busy || isCurrentUser}
             onClick={() => void onAdminToggle()}
-          >
-            <span className="thumb" />
-          </SwitchButton>
+          />
         </AdminField>
         <Input
           className="part"

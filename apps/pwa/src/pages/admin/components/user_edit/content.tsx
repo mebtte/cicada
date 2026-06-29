@@ -5,6 +5,7 @@ import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import { Label } from '@/components';
+import Switch from '@/components/switch';
 import Textarea from '@/components/textarea';
 import DefaultCover from '@/asset/default_cover.jpeg';
 import { CSSVariable } from '@/global_style';
@@ -81,81 +82,6 @@ const SwitchTitle = styled.div`
   font-size: 14px;
   font-weight: 800;
   text-transform: capitalize;
-`;
-
-const SwitchButton = styled.button<{ $checked: boolean }>`
-  position: relative;
-  flex: 0 0 auto;
-  width: 58px;
-  height: 34px;
-  padding: 3px;
-  border: 2px solid
-    ${({ $checked }) =>
-      $checked
-        ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_NEUTRAL_SHADOW};
-  border-radius: 999px;
-  background: ${({ $checked }) =>
-    $checked ? CSSVariable.COLOR_PRIMARY : '#fff'};
-  box-shadow: 0 4px 0
-    ${({ $checked }) =>
-      $checked
-        ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_NEUTRAL_SHADOW};
-  cursor: pointer;
-  transition:
-    transform 150ms ease-out,
-    background 150ms ease,
-    box-shadow 150ms ease;
-
-  &:not(:disabled):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0
-      ${({ $checked }) =>
-        $checked
-          ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_NEUTRAL_SHADOW};
-  }
-
-  &:not(:disabled):active {
-    transform: translateY(4px);
-    box-shadow: none;
-    transition:
-      transform 60ms ease-in,
-      box-shadow 60ms ease-in;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-    filter: saturate(0.45);
-  }
-
-  &:focus-visible {
-    outline: 3px solid ${CSSVariable.COLOR_PRIMARY};
-    outline-offset: 3px;
-  }
-
-  > .thumb {
-    display: block;
-    width: 24px;
-    height: 24px;
-    box-sizing: border-box;
-    border: 2px solid
-      ${({ $checked }) =>
-        $checked
-          ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_NEUTRAL_SHADOW};
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 2px 0
-      ${({ $checked }) =>
-        $checked
-          ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_NEUTRAL_SHADOW};
-    transform: translateX(${({ $checked }) => ($checked ? '24px' : '0')});
-    transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
 `;
 
 const ActionList = styled.div`
@@ -304,17 +230,12 @@ function UserEditContent({
       <Form>
         <SwitchField>
           <SwitchTitle>{t('admin')}</SwitchTitle>
-          <SwitchButton
-            type="button"
-            role="switch"
-            aria-checked={admin}
+          <Switch
+            checked={admin}
             aria-label={t('admin')}
-            $checked={admin}
             disabled={busy || isCurrentUser}
             onClick={() => void onAdminToggle()}
-          >
-            <span className="thumb" />
-          </SwitchButton>
+          />
         </SwitchField>
         <Input
           label={t('username')}

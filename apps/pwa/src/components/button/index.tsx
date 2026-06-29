@@ -67,7 +67,7 @@ const makeVariant = (
   face: string,
   shadow: string,
   textColor = '#fff',
-) => css<{ $offset: number }>`
+) => css<{ $offset: number; $disableHoverLift: boolean }>`
   color: ${textColor};
   background: ${face};
   border-color: ${shadow};
@@ -78,8 +78,16 @@ const makeVariant = (
   box-shadow: 0 ${({ $offset }) => $offset}px 0 ${shadow};
 
   &:not(:disabled):hover {
-    transform: translateY(-2px);
-    box-shadow: 0 ${({ $offset }) => $offset + 2}px 0 ${shadow};
+    ${({ $disableHoverLift, $offset }) =>
+      $disableHoverLift
+        ? css`
+            transform: none;
+            box-shadow: 0 ${$offset}px 0 ${shadow};
+          `
+        : css`
+            transform: translateY(-2px);
+            box-shadow: 0 ${$offset + 2}px 0 ${shadow};
+          `}
   }
 
   &:not(:disabled):active {
@@ -125,6 +133,7 @@ const StyledButton = styled.button<{
   $loading: boolean;
   $offset: number;
   $square: boolean;
+  $disableHoverLift: boolean;
 }>`
   position: relative;
   display: inline-flex;
@@ -221,6 +230,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   block?: boolean;
   square?: boolean;
   icon?: ReactNode;
+  disableHoverLift?: boolean;
 }
 
 // forwardRef 让 Button 可以作为 Tooltip / Radix 等定位库的触发元素
@@ -231,6 +241,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     loading = false,
     block = false,
     square = false,
+    disableHoverLift = false,
     disabled = false,
     icon,
     children,
@@ -258,6 +269,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
       $square={square}
       $loading={loading}
       $offset={offset}
+      $disableHoverLift={disableHoverLift}
       disabled={loading || disabled}
       {...rest}
       onClick={handleClick}

@@ -13,6 +13,7 @@ import {
   DrawerHeader,
   DrawerTitle,
   Input,
+  Switch,
 } from '@/components';
 import { Delete, Edit, Exit } from '@/components/icon';
 import Cover from '@/components/cover';
@@ -114,78 +115,6 @@ const PublicField = styled.div`
   justify-content: space-between;
   gap: 16px;
   min-height: 44px;
-`;
-
-const SwitchButton = styled.button<{ $checked: boolean }>`
-  position: relative;
-  flex: 0 0 auto;
-  width: 58px;
-  height: 34px;
-  padding: 3px;
-  border: 2px solid
-    ${({ $checked }) =>
-      $checked
-        ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_NEUTRAL_SHADOW};
-  border-radius: 999px;
-  background: ${({ $checked }) =>
-    $checked ? CSSVariable.COLOR_PRIMARY : '#fff'};
-  box-shadow: 0 4px 0
-    ${({ $checked }) =>
-      $checked
-        ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_NEUTRAL_SHADOW};
-  cursor: pointer;
-  transition:
-    transform 150ms ease-out,
-    background 150ms ease,
-    box-shadow 150ms ease,
-    filter 120ms;
-
-  &:not(:disabled):hover {
-    filter: brightness(1.04);
-  }
-
-  &:not(:disabled):active {
-    transform: translateY(4px);
-    box-shadow: none;
-    transition:
-      transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-    filter: saturate(0.45);
-  }
-
-  &:focus-visible {
-    outline: 3px solid ${CSSVariable.COLOR_PRIMARY};
-    outline-offset: 3px;
-  }
-
-  > .thumb {
-    display: block;
-    width: 24px;
-    height: 24px;
-    box-sizing: border-box;
-    border: 2px solid
-      ${({ $checked }) =>
-        $checked
-          ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_NEUTRAL_SHADOW};
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 2px 0
-      ${({ $checked }) =>
-        $checked
-          ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_NEUTRAL_SHADOW};
-    transform: translateX(${({ $checked }) => ($checked ? '24px' : '0')});
-    transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
 `;
 
 const DangerArea = styled.div`
@@ -462,17 +391,12 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
 
             <PublicField>
               <FieldTitle>{t('public')}</FieldTitle>
-              <SwitchButton
-                type="button"
-                role="switch"
-                aria-checked={publiz}
+              <Switch
+                checked={publiz}
                 aria-label={t('public')}
-                $checked={publiz}
                 disabled={publizUpdating}
                 onClick={() => void updatePubliz()}
-              >
-                <span className="thumb" />
-              </SwitchButton>
+              />
             </PublicField>
 
             <DangerArea>

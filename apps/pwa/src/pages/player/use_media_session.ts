@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import CustomAudio from '@/utils/custom_audio';
+import onVisible from '@/utils/on_visible';
 import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
 
@@ -137,6 +138,8 @@ function useMediaSession({
     const unlistenLoadStart = audio.listen('loadstart', sync);
     const unlistenCanplay = audio.listen('canplay', sync);
     const unlistenLoadedData = audio.listen('loadeddata', sync);
+    // 后台冻结期间 play/pause 等事件可能漏掉, 回到前台重新对账锁屏状态.
+    const unlistenVisible = onVisible(sync);
     return () => {
       unlistenPlay();
       unlistenPlaying();
@@ -147,6 +150,7 @@ function useMediaSession({
       unlistenLoadStart();
       unlistenCanplay();
       unlistenLoadedData();
+      unlistenVisible();
     };
   }, [music, audio]);
 
@@ -181,6 +185,7 @@ function useMediaSession({
     const unlistenPlaying = audio.listen('playing', sync);
     const unlistenPause = audio.listen('pause', sync);
     const unlistenRateChange = audio.listen('ratechange', sync);
+    const unlistenVisible = onVisible(sync);
     const heartbeat = paused ? null : window.setInterval(sync, 1000);
     return () => {
       unlistenSeeked();
@@ -189,6 +194,7 @@ function useMediaSession({
       unlistenPlaying();
       unlistenPause();
       unlistenRateChange();
+      unlistenVisible();
       if (heartbeat !== null) {
         window.clearInterval(heartbeat);
       }
