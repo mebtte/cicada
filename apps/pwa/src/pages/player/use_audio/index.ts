@@ -3,6 +3,7 @@ import { debounce } from 'lodash-es';
 import CustomAudio from '@/utils/custom_audio';
 import { useSetting } from '@/global_states/setting';
 import getMusicPlaybackAsset from '@/utils/music_playback_asset';
+import onVisible from '@/utils/on_visible';
 import { QueueMusic } from '../constants';
 import onError from './on_error';
 import eventemitter, { EventType } from '../eventemitter';
@@ -148,6 +149,26 @@ function useAudio({
       unlistenSeeking();
       unlistenSeeked();
     };
+  }, [audio]);
+
+  /**
+   * 回到前台时以 <audio> 真实状态对账.
+   * 后台被电话等打断时 JS 冻结, pause/timeupdate 等事件不被派发, 恢复后
+   * 若不主动重读, paused / 进度 / 缓冲会停留在冻结前. 不主动续播, 仅纠正显示,
+   * iOS 打断后的恢复交给用户手势.
+   * @author mebtte<i@mebtte.com>
+   */
+  useEffect(() => {
+    const reconcile = () => {
+      setPaused(audio.isPaused());
+      setBufferedPercent(audio.getBufferedPercent());
+      setDuration(getFiniteAudioDuration(audio));
+      setLoading(!audio.isPaused() && !audio.hasPlayableData());
+      eventemitter.emit(EventType.AUDIO_TIME_UPDATED, {
+        currentMillisecond: audio.getCurrentTime() * 1000,
+      });
+    };
+    return onVisible(reconcile);
   }, [audio]);
 
   /**

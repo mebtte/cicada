@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import CustomAudio from '@/utils/custom_audio';
+import onVisible from '@/utils/on_visible';
 import { QueueMusic } from '@/features/player/constants';
 
 const COVER_SIZES = [96, 256, 512];
@@ -118,6 +119,8 @@ function useRadioMediaSession({
     const unlistenError = audio.listen('error', sync);
     const unlistenLoadStart = audio.listen('loadstart', sync);
     const unlistenCanplay = audio.listen('canplay', sync);
+    // 后台冻结期间 play/pause 等事件可能漏掉, 回到前台重新对账锁屏状态.
+    const unlistenVisible = onVisible(sync);
     return () => {
       unlistenPlay();
       unlistenPlaying();
@@ -126,6 +129,7 @@ function useRadioMediaSession({
       unlistenError();
       unlistenLoadStart();
       unlistenCanplay();
+      unlistenVisible();
     };
   }, [music, audio]);
 
@@ -160,6 +164,7 @@ function useRadioMediaSession({
     const unlistenPlaying = audio.listen('playing', sync);
     const unlistenPause = audio.listen('pause', sync);
     const unlistenRateChange = audio.listen('ratechange', sync);
+    const unlistenVisible = onVisible(sync);
     const heartbeat = paused ? null : window.setInterval(sync, 1000);
     return () => {
       unlistenSeeked();
@@ -168,6 +173,7 @@ function useRadioMediaSession({
       unlistenPlaying();
       unlistenPause();
       unlistenRateChange();
+      unlistenVisible();
       if (heartbeat !== null) {
         window.clearInterval(heartbeat);
       }
