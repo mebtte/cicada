@@ -35,6 +35,13 @@ function Music({
       active={active}
       index={index}
       music={music}
+      // MusicBase 是跨 feature 的纯展示组件, 播放器场景需要在这里接回抽屉事件。
+      onOpenMusic={(music) =>
+        e.emit(EventType.OPEN_MUSIC_DRAWER, { id: music.id })
+      }
+      onOpenArtist={(performer) =>
+        e.emit(EventType.OPEN_ARTIST_DRAWER, { id: performer.id })
+      }
       lineAfter={
         <LineAfterPart>
           {playEnabled ? (
