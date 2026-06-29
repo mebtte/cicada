@@ -67,3 +67,6 @@ export type { AsyncContentProps } from './async_content';
 
 export { default as Tag } from './tag';
 export type { TagProps, Variant as TagVariant, Size as TagSize } from './tag';
+
+export { default as Switch } from './switch';
+export type { SwitchProps } from './switch';
