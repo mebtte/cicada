@@ -53,7 +53,7 @@ interface Response {
  */
 async function getMusicbill(id: string) {
   const musicbill = await request<Response>({
-    path: '/api/musicbill',
+    path: '/api/common/musicbill',
     params: { id },
     withToken: true,
   });

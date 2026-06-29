@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { MusicType } from '@/constants/music';
-import type { ChunkedUploadResumeMeta, UploadPhase } from '@/server/form/upload_asset_chunked';
+import type {
+  ChunkedUploadResumeMeta,
+  UploadPhase,
+} from '@/server/asset/upload_asset_chunked';
 
 export type ImportPhase =
   | 'editing'
@@ -89,7 +92,8 @@ export function getTask(id: string): ImportTask | undefined {
 }
 
 export function addTasks(newTasks: ImportTask[]) {
-  useMusicImport.setState((s) => ({ tasks: [...s.tasks, ...newTasks] }));
+  // 新增任务放在列表最前面, 方便用户立即看到刚选择的文件
+  useMusicImport.setState((s) => ({ tasks: [...newTasks, ...s.tasks] }));
 }
 
 export function updateTask(id: string, patch: Partial<ImportTask>) {

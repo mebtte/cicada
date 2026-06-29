@@ -29,7 +29,7 @@ func TestCORSAllowsChunkedUploadHeaders(t *testing.T) {
 	})
 	r := NewServer()
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodOptions, "/form/asset/chunked/upload-id", nil)
+	req := httptest.NewRequest(http.MethodOptions, "/api/common/asset/upload/upload-id", nil)
 	req.Header.Set("Origin", "http://localhost:5173")
 	req.Header.Set("Access-Control-Request-Method", http.MethodPut)
 	req.Header.Set("Access-Control-Request-Headers", "content-range,x-cicada-token")
@@ -42,6 +42,91 @@ func TestCORSAllowsChunkedUploadHeaders(t *testing.T) {
 	allowHeaders := w.Header().Get("Access-Control-Allow-Headers")
 	if !strings.Contains(strings.ToLower(allowHeaders), "content-range") {
 		t.Fatalf("expected Content-Range to be allowed, got %q", allowHeaders)
+	}
+}
+
+func TestAssetUploadRoutesUseCommonAPIAsset(t *testing.T) {
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	r := NewServer()
+
+	routes := map[string]bool{}
+	for _, route := range r.Routes() {
+		routes[route.Method+" "+route.Path] = true
+	}
+
+	for _, route := range []string{
+		http.MethodPost + " /api/common/asset",
+		http.MethodPost + " /api/common/asset/upload",
+		http.MethodGet + " /api/common/asset/upload/:uploadId",
+		http.MethodPut + " /api/common/asset/upload/:uploadId",
+		http.MethodPost + " /api/common/asset/upload/:uploadId/complete",
+	} {
+		if !routes[route] {
+			t.Fatalf("expected %s to be registered", route)
+		}
+	}
+	for _, route := range []string{
+		http.MethodPost + " /form/asset",
+		http.MethodPost + " /form/asset/chunked/init",
+		http.MethodGet + " /form/asset/chunked/:uploadId",
+		http.MethodPut + " /form/asset/chunked/:uploadId",
+		http.MethodPost + " /form/asset/chunked/:uploadId/complete",
+		http.MethodPost + " /api/asset",
+		http.MethodPost + " /api/asset/upload",
+		http.MethodGet + " /api/asset/upload/:uploadId",
+		http.MethodPut + " /api/asset/upload/:uploadId",
+		http.MethodPost + " /api/asset/upload/:uploadId/complete",
+		http.MethodDelete + " /api/common/asset/upload/:uploadId",
+	} {
+		if routes[route] {
+			t.Fatalf("did not expect %s to be registered", route)
+		}
+	}
+}
+
+func TestBaseAndCommonRoutesUseAPIPrefixes(t *testing.T) {
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	r := NewServer()
+
+	routes := map[string]bool{}
+	for _, route := range r.Routes() {
+		routes[route.Method+" "+route.Path] = true
+	}
+
+	for _, route := range []string{
+		http.MethodGet + " /api/base/metadata",
+		http.MethodGet + " /api/base/captcha",
+		http.MethodPost + " /api/base/login",
+		http.MethodPost + " /api/base/login_with_2fa",
+		http.MethodGet + " /api/common/profile",
+		http.MethodGet + " /api/common/music",
+		http.MethodGet + " /api/common/musicbill",
+	} {
+		if !routes[route] {
+			t.Fatalf("expected %s to be registered", route)
+		}
+	}
+
+	for _, route := range []string{
+		http.MethodGet + " /base/metadata",
+		http.MethodGet + " /base/captcha",
+		http.MethodPost + " /base/login",
+		http.MethodPost + " /base/login_with_2fa",
+		http.MethodGet + " /api/profile",
+		http.MethodGet + " /api/music",
+		http.MethodGet + " /api/musicbill",
+	} {
+		if routes[route] {
+			t.Fatalf("did not expect %s to be registered", route)
+		}
 	}
 }
 
@@ -64,6 +149,9 @@ func TestMusicWriteRoutesAreUnderAdmin(t *testing.T) {
 		}
 		if routes[method+" /api/music"] {
 			t.Fatalf("did not expect %s /api/music to remain registered", method)
+		}
+		if routes[method+" /api/common/music"] {
+			t.Fatalf("did not expect %s /api/common/music to be registered", method)
 		}
 	}
 }

@@ -55,7 +55,7 @@ const normalizeMusicbill = (mb: PublicMusicbillItem) => ({
  */
 async function getExploration() {
   const data = await request<Response>({
-    path: '/api/exploration',
+    path: '/api/common/exploration',
     withToken: true,
   });
   return {

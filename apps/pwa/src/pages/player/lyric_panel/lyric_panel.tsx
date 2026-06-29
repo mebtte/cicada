@@ -1,6 +1,6 @@
 import absoluteFullSize from '@/style/absolute_full_size';
 import { useContext, useState } from 'react';
-import { animated } from 'react-spring';
+import { animated } from '@react-spring/web';
 import styled from 'styled-components';
 import { ZIndex } from '../constants';
 import Context from '../context';

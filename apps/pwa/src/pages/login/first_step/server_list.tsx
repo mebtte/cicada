@@ -6,7 +6,7 @@ import dialog from '@/utils/dialog';
 import { Divider } from '@/components';
 import { FONT, ServerCardItem } from './server_card';
 import definition from '@/definition';
-import { isSameMajorVersion } from '@/utils/version';
+import { isServerVersionSupported } from '@/utils/version';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import logger from '@/utils/logger';
 import { getServerMetadataErrorMessage } from '../utils';
@@ -122,7 +122,7 @@ function ServerList({
 
   return (
     <Style>
-      <div className="label">{t('existing_server')}</div>
+      <div className="label">{t('existing_servers')}</div>
       <div className="scroll-shell">
         <div
           className={`edge-shadow top${atTop ? '' : ' visible'}`}
@@ -150,10 +150,15 @@ function ServerList({
                   '@/server/base/get_metadata'
                 );
                 const metadata = await getMetadata(s.origin);
-                if (!isSameMajorVersion(definition.VERSION, metadata.version)) {
+                if (
+                  !isServerVersionSupported(
+                    definition.VERSION,
+                    metadata.version,
+                  )
+                ) {
                   dialog.alert({
                     content: t(
-                      'server_major_version_mismatch',
+                      'server_version_unsupported',
                       definition.VERSION,
                       metadata.version,
                     ),

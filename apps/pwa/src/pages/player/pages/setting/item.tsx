@@ -14,9 +14,6 @@ const Style = styled.div`
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 5px 0 ${CSSVariable.COLOR_BORDER};
-  transition:
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out;
 
   > .label {
     min-width: 0;
@@ -28,11 +25,6 @@ const Style = styled.div`
     color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 
     ${capitalize}
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 0 ${CSSVariable.COLOR_BORDER};
   }
 
   ${({ theme: { miniMode } }) =>

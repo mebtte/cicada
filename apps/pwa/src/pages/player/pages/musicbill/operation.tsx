@@ -2,11 +2,10 @@ import styled from 'styled-components';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import {
-  Export,
   PlaylistAdd,
-  Refresh,
   Edit,
   People,
+  PersonStar,
 } from '@/components/icon';
 import { RequestStatus } from '@/constants';
 import notice from '@/utils/notice';
@@ -18,8 +17,6 @@ import playerEventemitter, {
 } from '../../eventemitter';
 import { Musicbill } from '../../constants';
 import e, { EventType } from './eventemitter';
-import { ENABLE_FILE_SYSTEM } from '@/constants/browser';
-import { openExportMusicListDialog } from '../../export_music_list';
 import addMusicListToPlaylist from '../../add_to_playlist';
 
 const Style = styled.div`
@@ -51,23 +48,6 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
           <PlaylistAdd />
         </Button>
       </Tooltip>
-      <Tooltip content={t('reload_musicbill')}>
-        <Button
-          square
-          variant="ghost"
-          size="sm"
-          loading={status === RequestStatus.LOADING}
-          disabled={status !== RequestStatus.SUCCESS}
-          onClick={() =>
-            playerEventemitter.emit(PlayerEventType.RELOAD_MUSICBILL, {
-              id: musicbill.id,
-              silence: false,
-            })
-          }
-        >
-          <Refresh />
-        </Button>
-      </Tooltip>
       <Tooltip content={t('edit')}>
         <Button
           square
@@ -78,19 +58,6 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
           <Edit />
         </Button>
       </Tooltip>
-      {ENABLE_FILE_SYSTEM ? (
-        <Tooltip content={t('export_music')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            disabled={!musicbill.musicList.length}
-            onClick={() => openExportMusicListDialog(musicbill.musicList)}
-          >
-            <Export size="1em" />
-          </Button>
-        </Tooltip>
-      ) : null}
       <Tooltip content={t('shared_user')}>
         <Button
           square
@@ -104,6 +71,21 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
           }
         >
           <People />
+        </Button>
+      </Tooltip>
+      <Tooltip content={t('followed_artist')}>
+        <Button
+          square
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            playerEventemitter.emit(
+              PlayerEventType.OPEN_MUSICBILL_FOLLOWED_ARTIST_DRAWER,
+              { id: musicbill.id },
+            )
+          }
+        >
+          <PersonStar />
         </Button>
       </Tooltip>
     </Style>

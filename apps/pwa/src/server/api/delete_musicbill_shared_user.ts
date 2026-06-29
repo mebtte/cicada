@@ -12,7 +12,7 @@ function deleteMusicbillSharedUser({
   userId: string;
 }) {
   return request({
-    path: '/api/musicbill/shared_user',
+    path: '/api/common/musicbill/shared_user',
     withToken: true,
     params: { musicbillId, userId },
     method: Method.DELETE,

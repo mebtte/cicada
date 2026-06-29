@@ -22,17 +22,17 @@ func TestSearchHandlersRequireKeyword(t *testing.T) {
 	}{
 		{
 			name:    "music",
-			path:    "/api/music/search?page=1&pageSize=10",
+			path:    "/api/common/music/search?page=1&pageSize=10",
 			handler: SearchMusic,
 		},
 		{
 			name:    "artist",
-			path:    "/api/artist/search?keyword=%20%20%20&page=1&pageSize=10",
+			path:    "/api/common/artist/search?keyword=%20%20%20&page=1&pageSize=10",
 			handler: SearchArtist,
 		},
 		{
 			name:    "public_musicbill",
-			path:    "/api/public_musicbill/search?page=1&pageSize=10",
+			path:    "/api/common/public_musicbill/search?page=1&pageSize=10",
 			handler: SearchPublicMusicbill,
 		},
 	}
@@ -106,7 +106,7 @@ func TestSearchHandlersMatchSearchKeywordsWithoutReturningThem(t *testing.T) {
 	t.Run("music", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/music/search?keyword=hidden+music&page=1&pageSize=10", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/common/music/search?keyword=hidden+music&page=1&pageSize=10", nil)
 
 		SearchMusic(c)
 
@@ -131,7 +131,7 @@ func TestSearchHandlersMatchSearchKeywordsWithoutReturningThem(t *testing.T) {
 	t.Run("artist", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/artist/search?keyword=hidden+artist&page=1&pageSize=10", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/common/artist/search?keyword=hidden+artist&page=1&pageSize=10", nil)
 
 		SearchArtist(c)
 

@@ -5,16 +5,20 @@ import { type MouseEvent } from 'react';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
-import Cover from '@/components/cover';
+import ImageFrame from '@/components/image_frame';
 import { Musicbill as MusicbillType } from '../../constants';
 import { CSS_VAR } from '@/components/theme';
 import useSidebarNavigate from '../use_sidebar_navigate';
+import {
+  getMusicbillCoverRadius,
+  MUSICBILL_COVER_PUBLIC_COLOR,
+  MUSICBILL_COVER_PUBLIC_SHADOW,
+} from '../../components/musicbill_cover_style';
 
 const COVER_SIZE = 26;
+const COVER_RADIUS = getMusicbillCoverRadius(COVER_SIZE);
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
-const PUBLIC = '#63d1fa';
-const PUBLIC_SHADOW = 'rgb(72 179 220)';
 const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 const Style = styled(NavLink)`
@@ -88,17 +92,8 @@ const Style = styled(NavLink)`
     box-shadow: none;
   }
 `;
-const CoverArt = styled(Cover)<{ $public: boolean }>`
+const CoverArt = styled(ImageFrame)`
   flex: 0 0 auto;
-  box-sizing: border-box;
-  overflow: hidden;
-
-  background: #fff;
-  border: 2px solid
-    ${({ $public }) => ($public ? PUBLIC : CSSVariable.COLOR_BORDER)};
-  border-radius: 9px;
-  box-shadow: 0 3px 0
-    ${({ $public }) => ($public ? PUBLIC_SHADOW : NEUTRAL_SHADOW)};
 `;
 
 function shouldUseBrowserNavigation(event: MouseEvent<HTMLAnchorElement>) {
@@ -114,6 +109,12 @@ function shouldUseBrowserNavigation(event: MouseEvent<HTMLAnchorElement>) {
 
 function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
   const navigate = useSidebarNavigate();
+  const borderColor = musicbill.public
+    ? MUSICBILL_COVER_PUBLIC_COLOR
+    : CSSVariable.COLOR_BORDER;
+  const shadowColor = musicbill.public
+    ? MUSICBILL_COVER_PUBLIC_SHADOW
+    : NEUTRAL_SHADOW;
   const to = `${ROOT_PATH.PLAYER}${PLAYER_PATH.MUSICBILL.replace(
     ':id',
     musicbill.id,
@@ -132,8 +133,11 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
       }}
     >
       <CoverArt
-        $public={musicbill.public}
         size={COVER_SIZE}
+        radius={COVER_RADIUS}
+        borderColor={borderColor}
+        shadowColor={shadowColor}
+        shadowOffset={3}
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
       />
       <div className="name">{musicbill.name}</div>

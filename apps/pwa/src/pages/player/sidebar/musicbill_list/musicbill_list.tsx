@@ -5,7 +5,7 @@ import { useContext } from 'react';
 import styled from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import { RequestStatus } from '@/constants';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import Button from '@/components/button';
 import { t } from '@/i18n';
 import { AddBox } from '@/components/icon';

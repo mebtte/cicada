@@ -1,9 +1,10 @@
 import styled from 'styled-components';
+import { useContext } from 'react';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
 import { CSSVariable } from '@/global_style';
 import {
-  Export,
+  FileDownload,
   PlaylistAdd,
   PostAdd,
   QueueInsert,
@@ -18,9 +19,10 @@ import playerEventemitter, {
   EventType as PlayerEventType,
 } from '../eventemitter';
 import { CONTROLLER_FLOATING_RESERVED_HEIGHT } from '../constants';
-import { openExportMusicListDialog } from '../export_music_list';
 import addMusicListToPlaylist from '../add_to_playlist';
 import { t } from '@/i18n';
+import Context from '../context';
+import downloadOriginalMusicFile from '@/features/player/download_music';
 
 const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   z-index: 1;
@@ -40,13 +42,12 @@ const Style = styled.div<{ $floatingControllerOffset: boolean }>`
   align-items: center;
   gap: 8px;
 
-  background: rgb(255 255 255 / 0.92);
+  background: #fff;
   border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
   border-radius: 16px;
   box-shadow:
     0 4px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW},
     0 10px 24px rgb(0 0 0 / 0.1);
-  backdrop-filter: blur(12px);
 
   > .left {
     min-width: 0;
@@ -66,6 +67,7 @@ function Toolbar({
 }) {
   const user = useUser();
   const adminQuickEdit = useSetting((s) => s.adminQuickEdit);
+  const { downloadEnabled } = useContext(Context);
   // 编辑按钮: 管理员开启「管理员快捷编辑」时才出现, 点击跳转到管理页并自动打开该音乐的编辑 drawer
   const showAdminEdit = !!user?.admin && adminQuickEdit;
   return (
@@ -131,17 +133,19 @@ function Toolbar({
             <PlaylistAdd />
           </Button>
         </Tooltip>
-        <Tooltip content={t('export_music')}>
-          <Button
-            square
-            variant="ghost"
-            size="sm"
-            aria-label={t('export_music')}
-            onClick={() => openExportMusicListDialog([music])}
-          >
-            <Export size="1em" />
-          </Button>
-        </Tooltip>
+        {downloadEnabled ? (
+          <Tooltip content={t('download_music')}>
+            <Button
+              square
+              variant="ghost"
+              size="sm"
+              aria-label={t('download_music')}
+              onClick={() => downloadOriginalMusicFile(music)}
+            >
+              <FileDownload size="1em" />
+            </Button>
+          </Tooltip>
+        ) : null}
         {showAdminEdit ? (
           <Tooltip content={t('edit_music')}>
             <Button

@@ -44,105 +44,109 @@ func NewServer() *gin.Engine {
 	auth := middleware.Auth
 	admin := middleware.Admin
 
-	// Form: asset upload
-	form := r.Group("/form")
-	form.POST("/asset", auth(), handler.UploadAsset)
-	form.POST("/asset/chunked/init", auth(), handler.InitPartialUpload)
-	form.GET("/asset/chunked/:uploadId", auth(), handler.GetPartialUpload)
-	form.PUT("/asset/chunked/:uploadId", auth(), handler.PutPartialUploadChunk)
-	form.POST("/asset/chunked/:uploadId/complete", auth(), handler.CompletePartialUpload)
-	form.DELETE("/asset/chunked/:uploadId", auth(), handler.CancelPartialUpload)
+	api := r.Group("/api")
+	base := api.Group("/base")
+	common := api.Group("/common")
+	adminAPI := api.Group("/admin")
 
 	// Base routes (public)
-	base := r.Group("/base")
 	base.GET("/metadata", handler.GetMetadata)
 	base.GET("/captcha", handler.GetCaptcha)
 	base.POST("/login", handler.Login)
 	base.POST("/login_with_2fa", handler.LoginWith2FA)
 
-	// API routes
-	api := r.Group("/api")
+	// Common API routes
+
+	// Asset upload
+	common.POST("/asset", auth(), handler.UploadAsset)
+	common.POST("/asset/upload", auth(), handler.InitPartialUpload)
+	common.GET("/asset/upload/:uploadId", auth(), handler.GetPartialUpload)
+	common.PUT("/asset/upload/:uploadId", auth(), handler.PutPartialUploadChunk)
+	common.POST("/asset/upload/:uploadId/complete", auth(), handler.CompletePartialUpload)
 
 	// User / profile
-	api.GET("/profile", auth(), handler.GetProfile)
-	api.PUT("/profile", auth(), handler.UpdateProfile)
-	api.GET("/user", auth(), handler.GetUser)
+	common.GET("/profile", auth(), handler.GetProfile)
+	common.PUT("/profile", auth(), handler.UpdateProfile)
+	common.GET("/user", auth(), handler.GetUser)
 
 	// 2FA
-	api.POST("/2fa", auth(), handler.Create2FA)
-	api.PUT("/2fa", auth(), handler.Enable2FA)
-	api.DELETE("/2fa", auth(), handler.Disable2FA)
+	common.POST("/2fa", auth(), handler.Create2FA)
+	common.PUT("/2fa", auth(), handler.Enable2FA)
+	common.DELETE("/2fa", auth(), handler.Disable2FA)
 
 	// Auth sessions
-	api.GET("/sessions", auth(), handler.GetSessionList)
-	api.PUT("/sessions/:id", auth(), handler.UpdateSession)
-	api.DELETE("/sessions/:id", auth(), handler.DeleteSession)
+	common.GET("/sessions", auth(), handler.GetSessionList)
+	common.PUT("/sessions/:id", auth(), handler.UpdateSession)
+	common.DELETE("/sessions/:id", auth(), handler.DeleteSession)
 
 	// Music
-	api.GET("/music", auth(), handler.GetMusic)
-	api.GET("/music/search", auth(), handler.SearchMusic)
-	api.GET("/music/search_by_lyric", auth(), handler.SearchMusicByLyric)
-	api.GET("/music/random", auth(), handler.GetRandomMusic)
+	common.GET("/music", auth(), handler.GetMusic)
+	common.GET("/music/search", auth(), handler.SearchMusic)
+	common.GET("/music/search_by_lyric", auth(), handler.SearchMusicByLyric)
+	common.GET("/music/random", auth(), handler.GetRandomMusic)
 
 	// Artist (read)
-	api.GET("/artist", auth(), handler.GetArtist)
-	api.GET("/artist/search", auth(), handler.SearchArtist)
+	common.GET("/artist", auth(), handler.GetArtist)
+	common.GET("/artist/search", auth(), handler.SearchArtist)
 
 	// Lyric
-	api.GET("/lyric_list", auth(), handler.GetLyricList)
+	common.GET("/lyric_list", auth(), handler.GetLyricList)
 
 	// Play records
-	api.POST("/music_play_record", auth(), handler.CreateMusicPlayRecord)
-	api.GET("/music_play_record_list", auth(), handler.GetMusicPlayRecordList)
-	api.DELETE("/music_play_record", auth(), handler.DeleteMusicPlayRecord)
+	common.POST("/music_play_record", auth(), handler.CreateMusicPlayRecord)
+	common.GET("/music_play_record_list", auth(), handler.GetMusicPlayRecordList)
+	common.DELETE("/music_play_record", auth(), handler.DeleteMusicPlayRecord)
 
 	// Musicbill
-	api.GET("/musicbill_list", auth(), handler.GetMusicbillList)
-	api.GET("/musicbill", auth(), handler.GetMusicbill)
-	api.POST("/musicbill", auth(), handler.CreateMusicbill)
-	api.PUT("/musicbill", auth(), handler.UpdateMusicbill)
-	api.DELETE("/musicbill", auth(), handler.DeleteMusicbill)
-	api.POST("/musicbill_music", auth(), handler.AddMusicToMusicbill)
-	api.DELETE("/musicbill_music", auth(), handler.RemoveMusicFromMusicbill)
+	common.GET("/musicbill_list", auth(), handler.GetMusicbillList)
+	common.GET("/musicbill", auth(), handler.GetMusicbill)
+	common.POST("/musicbill", auth(), handler.CreateMusicbill)
+	common.PUT("/musicbill", auth(), handler.UpdateMusicbill)
+	common.DELETE("/musicbill", auth(), handler.DeleteMusicbill)
+	common.POST("/musicbill_music", auth(), handler.AddMusicToMusicbill)
+	common.DELETE("/musicbill_music", auth(), handler.RemoveMusicFromMusicbill)
+	common.GET("/musicbill/followed_artist", auth(), handler.GetMusicbillFollowedArtistList)
+	common.POST("/musicbill/followed_artist", auth(), handler.AddMusicbillFollowedArtist)
+	common.DELETE("/musicbill/followed_artist", auth(), handler.DeleteMusicbillFollowedArtist)
 
 	// Shared musicbill
-	api.POST("/musicbill/shared_user", auth(), handler.AddMusicbillSharedUser)
-	api.DELETE("/musicbill/shared_user", auth(), handler.DeleteMusicbillSharedUser)
-	api.PUT("/musicbill/owner", auth(), handler.TransferMusicbillOwner)
-	api.GET("/shared_musicbill_invitation_list", auth(), handler.GetSharedMusicbillInvitationList)
-	api.PUT("/shared_musicbill_invitation", auth(), handler.AcceptSharedMusicbillInvitation)
+	common.POST("/musicbill/shared_user", auth(), handler.AddMusicbillSharedUser)
+	common.DELETE("/musicbill/shared_user", auth(), handler.DeleteMusicbillSharedUser)
+	common.PUT("/musicbill/owner", auth(), handler.TransferMusicbillOwner)
+	common.GET("/shared_musicbill_invitation_list", auth(), handler.GetSharedMusicbillInvitationList)
+	common.PUT("/shared_musicbill_invitation", auth(), handler.AcceptSharedMusicbillInvitation)
 
 	// Public musicbill
-	api.GET("/public_musicbill", auth(), handler.GetPublicMusicbill)
-	api.GET("/public_musicbill/search", auth(), handler.SearchPublicMusicbill)
-	api.POST("/public_musicbill/collection", auth(), handler.CollectPublicMusicbill)
-	api.DELETE("/public_musicbill/collection", auth(), handler.UncollectPublicMusicbill)
-	api.GET("/public_musicbill_collection_list", auth(), handler.GetPublicMusicbillCollectionList)
+	common.GET("/public_musicbill", auth(), handler.GetPublicMusicbill)
+	common.GET("/public_musicbill/search", auth(), handler.SearchPublicMusicbill)
+	common.POST("/public_musicbill/collection", auth(), handler.CollectPublicMusicbill)
+	common.DELETE("/public_musicbill/collection", auth(), handler.UncollectPublicMusicbill)
+	common.GET("/public_musicbill_collection_list", auth(), handler.GetPublicMusicbillCollectionList)
 
 	// Exploration
-	api.GET("/exploration", auth(), handler.GetExploration)
+	common.GET("/exploration", auth(), handler.GetExploration)
 
 	// Admin (auth + admin on every route)
-	api.POST("/admin/user", auth(), admin(), handler.AdminCreateUser)
-	api.PUT("/admin/user", auth(), admin(), handler.AdminUpdateUser)
-	api.PUT("/admin/user_admin", auth(), admin(), handler.AdminUpdateUserAdmin)
-	api.DELETE("/admin/user", auth(), admin(), handler.AdminDeleteUser)
-	api.GET("/admin/dashboard", auth(), admin(), handler.AdminGetDashboard)
-	api.GET("/admin/user_list", auth(), admin(), handler.AdminGetUserList)
-	api.GET("/admin/music", auth(), admin(), handler.AdminGetMusic)
-	api.POST("/admin/music", auth(), admin(), handler.AdminCreateMusic)
-	api.PUT("/admin/music", auth(), admin(), handler.AdminUpdateMusic)
-	api.DELETE("/admin/music", auth(), admin(), handler.AdminDeleteMusic)
-	api.GET("/admin/music_list", auth(), admin(), handler.AdminGetMusicList)
-	api.GET("/admin/artist_list", auth(), admin(), handler.AdminGetArtistList)
-	api.GET("/admin/artist", auth(), admin(), handler.AdminGetArtist)
-	api.POST("/admin/artist", auth(), admin(), handler.AdminCreateArtist)
-	api.PUT("/admin/artist", auth(), admin(), handler.AdminUpdateArtist)
-	api.DELETE("/admin/artist", auth(), admin(), handler.AdminDeleteArtist)
-	api.POST("/admin/artist/photo", auth(), admin(), handler.AdminCreateArtistPhoto)
-	api.PUT("/admin/artist/photo", auth(), admin(), handler.AdminUpdateArtistPhoto)
-	api.DELETE("/admin/artist/photo", auth(), admin(), handler.AdminDeleteArtistPhoto)
-	api.PUT("/admin/artist/photo/order", auth(), admin(), handler.AdminReorderArtistPhotos)
+	adminAPI.POST("/user", auth(), admin(), handler.AdminCreateUser)
+	adminAPI.PUT("/user", auth(), admin(), handler.AdminUpdateUser)
+	adminAPI.PUT("/user_admin", auth(), admin(), handler.AdminUpdateUserAdmin)
+	adminAPI.DELETE("/user", auth(), admin(), handler.AdminDeleteUser)
+	adminAPI.GET("/dashboard", auth(), admin(), handler.AdminGetDashboard)
+	adminAPI.GET("/user_list", auth(), admin(), handler.AdminGetUserList)
+	adminAPI.GET("/music", auth(), admin(), handler.AdminGetMusic)
+	adminAPI.POST("/music", auth(), admin(), handler.AdminCreateMusic)
+	adminAPI.PUT("/music", auth(), admin(), handler.AdminUpdateMusic)
+	adminAPI.DELETE("/music", auth(), admin(), handler.AdminDeleteMusic)
+	adminAPI.GET("/music_list", auth(), admin(), handler.AdminGetMusicList)
+	adminAPI.GET("/artist_list", auth(), admin(), handler.AdminGetArtistList)
+	adminAPI.GET("/artist", auth(), admin(), handler.AdminGetArtist)
+	adminAPI.POST("/artist", auth(), admin(), handler.AdminCreateArtist)
+	adminAPI.PUT("/artist", auth(), admin(), handler.AdminUpdateArtist)
+	adminAPI.DELETE("/artist", auth(), admin(), handler.AdminDeleteArtist)
+	adminAPI.POST("/artist/photo", auth(), admin(), handler.AdminCreateArtistPhoto)
+	adminAPI.PUT("/artist/photo", auth(), admin(), handler.AdminUpdateArtistPhoto)
+	adminAPI.DELETE("/artist/photo", auth(), admin(), handler.AdminDeleteArtistPhoto)
+	adminAPI.PUT("/artist/photo/order", auth(), admin(), handler.AdminReorderArtistPhotos)
 
 	return r
 }

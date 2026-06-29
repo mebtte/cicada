@@ -20,7 +20,6 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import capitalize from '@/utils/capitalize';
 import formatBytes from '@/utils/format_bytes';
 import notice from '@/utils/notice';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import { MUSIC_ASSET_ACCEPT_TYPES } from '@/constants/asset';
 import {
   clearFinished,
@@ -254,7 +253,6 @@ function MusicImportSidebar() {
   const open = useMusicImport((s) => s.windowOpen);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const selectFiles = useSelectFiles();
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const summary = getMusicImportSummary(tasks);
   const editableCount = tasks.filter((task) => task.phase === 'editing').length;
   const pendingCount = tasks.filter(
@@ -306,7 +304,6 @@ function MusicImportSidebar() {
         style={{
           width: DRAWER_WIDTH,
           maxWidth: `calc(100vw - ${DRAWER_OUTSIDE_CLOSE_GUTTER}px)`,
-          paddingTop: titlebarTop,
         }}
         accessibleTitle={capitalize(t('upload_music'))}
         onOpenAutoFocus={(event) => event.preventDefault()}

@@ -6,7 +6,7 @@ interface RequestBody {
 
 function enable2FA(data: RequestBody) {
   return request({
-    path: '/api/2fa',
+    path: '/api/common/2fa',
     method: Method.PUT,
     withToken: true,
     body: {

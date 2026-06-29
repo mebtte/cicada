@@ -29,3 +29,17 @@ func TestBuildVersion(t *testing.T) {
 		}
 	})
 }
+
+func TestBaseVersion(t *testing.T) {
+	tests := map[string]string{
+		"2.13.0":                 "2.13.0",
+		"2.13.0-local":           "2.13.0",
+		"2.13.0-beta.2606181430": "2.13.0",
+	}
+
+	for input, want := range tests {
+		if got := BaseVersion(input); got != want {
+			t.Fatalf("BaseVersion(%q) = %q, want %q", input, got, want)
+		}
+	}
+}

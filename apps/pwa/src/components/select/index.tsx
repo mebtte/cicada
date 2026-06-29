@@ -18,6 +18,7 @@ import ReactSelect, {
   type DropdownIndicatorProps,
   type InputActionMeta,
   type InputProps,
+  type MenuListProps,
   type MenuProps,
   type MenuPlacement,
 } from 'react-select';
@@ -95,6 +96,46 @@ function Menu<T, IsMulti extends boolean>(
   return (
     <components.Menu {...props} />
   );
+}
+
+/**
+ * Radix Dialog 内开启 Select 时, react-remove-scroll 会在 document 上以 bubble
+ * 监听 wheel/touchmove 并 preventDefault, 把 menu portal 出去的部分拦在 shards 白名单外,
+ * 导致下拉无法滚动. 在 menuList 上 stopPropagation, 事件就到不了 document, 锁失效.
+ */
+function MenuList<T, IsMulti extends boolean>(
+  props: MenuListProps<SelectOption<T>, IsMulti, GroupBase<SelectOption<T>>>,
+) {
+  const localRef = useRef<HTMLDivElement | null>(null);
+  const { innerRef } = props;
+
+  const setRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      localRef.current = node;
+      if (typeof innerRef === 'function') {
+        innerRef(node);
+      } else if (innerRef && typeof innerRef === 'object') {
+        (innerRef as { current: HTMLDivElement | null }).current = node;
+      }
+    },
+    [innerRef],
+  );
+
+  useEffect(() => {
+    const el = localRef.current;
+    if (!el) {
+      return;
+    }
+    const stop = (event: Event) => event.stopPropagation();
+    el.addEventListener('wheel', stop, { passive: true });
+    el.addEventListener('touchmove', stop, { passive: true });
+    return () => {
+      el.removeEventListener('wheel', stop);
+      el.removeEventListener('touchmove', stop);
+    };
+  }, []);
+
+  return <components.MenuList {...props} innerRef={setRef} />;
 }
 
 function MenuPortal<T, IsMulti extends boolean>(
@@ -194,6 +235,7 @@ function buildStyles<T, IsMulti extends boolean>(
       fontWeight: 500,
       fontSize: s.font,
       letterSpacing: '0.2px',
+      textTransform: 'capitalize',
     }),
     indicatorsContainer: (_) => ({
       display: 'flex',
@@ -383,7 +425,7 @@ export function Select<T>({
         menuPlacement={menuPlacement}
         menuPortalTarget={document.body}
         menuPosition="fixed"
-        components={{ DropdownIndicator, Menu, MenuPortal }}
+        components={{ DropdownIndicator, Menu, MenuList, MenuPortal }}
       />
     </Root>
   );
@@ -519,6 +561,7 @@ export function MultiSelect<T>({
       return {
         DropdownIndicator,
         Menu,
+        MenuList,
         MenuPortal,
         Input,
         ...(clearable === false ? { ClearIndicator: () => null } : {}),

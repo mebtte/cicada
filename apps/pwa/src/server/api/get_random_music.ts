@@ -59,7 +59,7 @@ const normalizeArtist = <T extends Performer & { aliases: string[] }>(artist: T)
  */
 async function getRandomMusic({ excludeId }: { excludeId?: string } = {}) {
   const music = await request<RawMusic>({
-    path: '/api/music/random',
+    path: '/api/common/music/random',
     params: excludeId ? { excludeId } : undefined,
     withToken: true,
   });

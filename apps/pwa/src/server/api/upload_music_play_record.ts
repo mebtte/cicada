@@ -9,7 +9,7 @@ export interface UploadMusicPlayRecordPayload {
 
 function uploadMusicPlayRecord(payload: UploadMusicPlayRecordPayload) {
   return request({
-    path: '/api/music_play_record',
+    path: '/api/common/music_play_record',
     method: Method.POST,
     body: { ...payload },
     withToken: true,

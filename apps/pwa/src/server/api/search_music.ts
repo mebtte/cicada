@@ -40,7 +40,7 @@ async function searchMusic({
   pageSize: number;
 }) {
   const result = await request<Response>({
-    path: '/api/music/search',
+    path: '/api/common/music/search',
     params: { keyword, page, pageSize },
     withToken: true,
   });

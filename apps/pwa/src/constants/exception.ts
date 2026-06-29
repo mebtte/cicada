@@ -50,4 +50,5 @@ export enum ExceptionCode {
   PARTIAL_UPLOAD_RANGE_INVALID = "partial_upload_range_invalid",
   PARTIAL_UPLOAD_HASH_MISMATCH = "partial_upload_hash_mismatch",
   DISK_SPACE_INSUFFICIENT = "disk_space_insufficient",
+  REPEATED_FOLLOWED_ARTIST = "repeated_followed_artist",
 }

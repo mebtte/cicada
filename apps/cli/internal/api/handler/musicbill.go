@@ -4,6 +4,7 @@ import (
 	"cicada/internal/api"
 	"cicada/internal/api/apperr"
 	"cicada/internal/api/middleware"
+	"cicada/internal/auth"
 	"cicada/internal/config"
 	"cicada/internal/store"
 	"strings"
@@ -277,9 +278,11 @@ func CreateMusicbill(c *gin.Context) {
 }
 
 type updateMusicbillBody struct {
-	ID    string `json:"id" binding:"required"`
-	Key   string `json:"key" binding:"required"`
-	Value any    `json:"value"`
+	ID           string `json:"id" binding:"required"`
+	Key          string `json:"key" binding:"required"`
+	Value        any    `json:"value"`
+	CaptchaID    string `json:"captchaId"`
+	CaptchaValue string `json:"captchaValue"`
 }
 
 func UpdateMusicbill(c *gin.Context) {
@@ -351,7 +354,21 @@ func UpdateMusicbill(c *gin.Context) {
 			api.Fail(c, apperr.NoNeedToUpdate)
 			return
 		}
+		// Un-publicizing wipes every collector's record, so guard it behind a captcha.
+		if !pub {
+			if body.CaptchaID == "" || body.CaptchaValue == "" {
+				api.Fail(c, apperr.WrongCaptcha)
+				return
+			}
+			if !verifyCaptcha(body.CaptchaID, body.CaptchaValue) {
+				api.Fail(c, apperr.WrongCaptcha)
+				return
+			}
+		}
 		store.UpdateMusicbill(body.ID, "public", newVal)
+		if !pub {
+			store.ClearPublicMusicbillCollections(body.ID)
+		}
 	default:
 		api.Fail(c, apperr.WrongParameter)
 		return
@@ -374,8 +391,7 @@ func DeleteMusicbill(c *gin.Context) {
 	}
 
 	// verify captcha
-	from_store := verifyCaptchaFromStore(q.CaptchaID, q.CaptchaValue)
-	if !from_store {
+	if !verifyCaptcha(q.CaptchaID, q.CaptchaValue) {
 		api.Fail(c, apperr.WrongCaptcha)
 		return
 	}
@@ -593,7 +609,7 @@ func TransferMusicbillOwner(c *gin.Context) {
 		return
 	}
 
-	if !verifyCaptchaFromStore(body.CaptchaID, body.CaptchaValue) {
+	if !verifyCaptcha(body.CaptchaID, body.CaptchaValue) {
 		api.Fail(c, apperr.WrongCaptcha)
 		return
 	}
@@ -667,8 +683,12 @@ func GetPublicMusicbill(c *gin.Context) {
 		return
 	}
 
-	mb, err := store.GetPublicMusicbillByID(id)
+	mb, err := store.GetMusicbillByID(id)
 	if err != nil {
+		api.Fail(c, apperr.MusicbillNotExisted)
+		return
+	}
+	if mb.Public != 1 && mb.UserID != u.ID {
 		api.Fail(c, apperr.MusicbillNotExisted)
 		return
 	}
@@ -742,6 +762,7 @@ func GetPublicMusicbill(c *gin.Context) {
 		"id":              mb.ID,
 		"name":            mb.Name,
 		"cover":           config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+		"public":          mb.Public == 1,
 		"createTimestamp": mb.CreateTimestamp,
 		"user": gin.H{
 			"id":       mb.UserID,
@@ -982,14 +1003,7 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 	api.OK(c, gin.H{"total": total, "collectionList": list})
 }
 
-// verifyCaptchaFromStore verifies a captcha directly via the store DB.
-func verifyCaptchaFromStore(id, value string) bool {
-	var storedValue string
-	var used int
-	err := store.DB().QueryRow(`SELECT value,used FROM captcha WHERE id=?`, id).Scan(&storedValue, &used)
-	if err != nil || used == 1 {
-		return false
-	}
-	store.DB().Exec(`UPDATE captcha SET used=1 WHERE id=?`, id)
-	return strings.EqualFold(storedValue, value)
+func verifyCaptcha(id, value string) bool {
+	ok, _ := auth.VerifyCaptcha(id, value)
+	return ok
 }

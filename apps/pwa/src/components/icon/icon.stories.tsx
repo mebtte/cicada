@@ -211,7 +211,7 @@ export const InButton: Story = {
 
         <Row label="icon + label · variants (md)">
           <Button variant="primary"   icon={<Icons.PlaylistAdd />}>add to playlist</Button>
-          <Button variant="secondary" icon={<Icons.Export />}>export</Button>
+          <Button variant="secondary" icon={<Icons.FileDownload />}>download</Button>
           <Button variant="ghost"     icon={<Icons.Refresh />}>refresh</Button>
           <Button variant="danger"    icon={<Icons.Delete />}>delete</Button>
           <Button variant="ghost"     icon={<Icons.QueueInsert />}>play next</Button>

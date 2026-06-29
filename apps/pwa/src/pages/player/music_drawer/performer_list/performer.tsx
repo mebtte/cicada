@@ -39,7 +39,6 @@ const Style = styled.div`
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-    filter: brightness(1.03);
   }
 
   &:active {

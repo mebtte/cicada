@@ -54,7 +54,7 @@ async function searchMusicByLyric({
   pageSize: number;
 }) {
   const data = await request<RawResponse>({
-    path: '/api/music/search_by_lyric',
+    path: '/api/common/music/search_by_lyric',
     params: { keyword, page, pageSize },
     withToken: true,
   });

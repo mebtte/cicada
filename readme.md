@@ -1,4 +1,4 @@
-# <img src="./apps/pwa/src/static/app_logo.png" alt="Cicada logo" width="36" height="36" /> Cicada
+# <img src="./apps/pwa/src/static/app_logo_v1.png" alt="Cicada logo" width="36" height="36" /> Cicada
 
 A multi-user music service for self-hosting.
 

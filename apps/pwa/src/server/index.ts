@@ -7,7 +7,6 @@ import {
 import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '@/utils/sleep';
 import definition from '@/definition';
-import { NORMAL_REQUEST_MINIMAL_DURATION } from '@/constants';
 import timeoutFn from '@/utils/timeout';
 import { CommonQuery } from '@/constants';
 import { HEADER_TOKEN } from '@/constants/api';
@@ -37,7 +36,7 @@ export async function request<Data = void>({
   body,
   headers = {},
   withToken = false,
-  requestMinimalDuration = NORMAL_REQUEST_MINIMAL_DURATION,
+  requestMinimalDuration = 0,
   timeout = 10 * 1000,
 }: {
   path: string;

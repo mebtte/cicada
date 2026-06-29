@@ -76,22 +76,15 @@ func runExport(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("create destination: %w", err)
 	}
 
-	musicDir := config.AssetDir(config.AssetTypeMusic)
 	exported, skipped := 0, 0
+	used := make(map[string]bool) // 记录已用文件名, 避免同名歌曲互相覆盖.
 
 	for _, m := range musics {
 		ext := filepath.Ext(m.Asset)
 		performers := performerMap[m.ID]
+		filename := exportMusicFilename(used, exportMusicBaseName(performers, m.Name), ext, "")
 
-		var filename string
-		if len(performers) > 0 {
-			filename = strings.Join(performers, ",") + " - " + m.Name + ext
-		} else {
-			filename = m.Name + ext
-		}
-		filename = sanitizeFilename(filename)
-
-		src := filepath.Join(musicDir, m.Asset)
+		_, src := config.AssetPath(config.AssetTypeMusic, m.Asset)
 		dst := filepath.Join(dest, filename)
 
 		if err := exportCopyFile(src, dst); err != nil {

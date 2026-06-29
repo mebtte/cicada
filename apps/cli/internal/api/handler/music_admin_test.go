@@ -261,7 +261,7 @@ func TestAdminGetMusicIncludesSearchKeywordsOnlyForAdminDetail(t *testing.T) {
 		t.Fatalf("expected admin detail searchKeywords, got %+v", adminData)
 	}
 
-	playerData := call("/api/music?id=MUS001", GetMusic)
+	playerData := call("/api/common/music?id=MUS001", GetMusic)
 	if _, ok := playerData["searchKeywords"]; ok {
 		t.Fatalf("ordinary music detail leaked searchKeywords: %+v", playerData)
 	}

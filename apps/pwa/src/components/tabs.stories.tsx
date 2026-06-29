@@ -22,7 +22,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Duolingo-style tabs with an animated hard-shadow active block. Panels stay mounted so each tab keeps local state while switching.',
+          'Duolingo-style tabs with an animated active block. Panels stay mounted so each tab keeps local state while switching.',
       },
     },
   },

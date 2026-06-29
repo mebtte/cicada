@@ -81,7 +81,7 @@ func TestGetUser(t *testing.T) {
 	t.Run("requires userId", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/user", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/common/user", nil)
 		c.Set("authed_user", &store.User{ID: "VIEWER"})
 
 		GetUser(c)
@@ -100,7 +100,7 @@ func TestGetUser(t *testing.T) {
 	t.Run("returns public profile drawer payload", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/user?userId=USER01", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/common/user?userId=USER01", nil)
 		c.Set("authed_user", &store.User{ID: "VIEWER"})
 
 		GetUser(c)
@@ -197,6 +197,12 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 	); err != nil {
 		t.Fatalf("insert target user: %v", err)
 	}
+	if _, err := store.DB().Exec(
+		`INSERT INTO user (id,username,password,nickname,joinTimestamp,admin,twoFASecret) VALUES (?,?,?,?,?,?,?)`,
+		"DELETE", "DELETE", targetPasswordHash, "Delete", now, 0, "DEL2FA",
+	); err != nil {
+		t.Fatalf("insert delete user: %v", err)
+	}
 	if _, err := store.CreateAuthSession("TARGET", "target-token-hash-1", "target1", "Browser 1"); err != nil {
 		t.Fatalf("create target session 1: %v", err)
 	}
@@ -280,9 +286,12 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 	})
 
 	t.Run("admin can grant and revoke another user's admin role", func(t *testing.T) {
+		seedCaptcha(t, "cap-admin-grant", "abcd")
 		resp := callAdminUpdateUserAdmin(t, admin, map[string]any{
-			"id":    "TARGET",
-			"admin": 1,
+			"id":           "TARGET",
+			"admin":        1,
+			"captchaId":    "cap-admin-grant",
+			"captchaValue": "abcd",
 		})
 		if resp.Code != apperr.Success {
 			t.Fatalf("expected grant success, got %+v", resp)
@@ -296,9 +305,12 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 			t.Fatalf("expected target admin flag 1, got %d", target.Admin)
 		}
 
+		seedCaptcha(t, "cap-admin-revoke", "abcd")
 		resp = callAdminUpdateUserAdmin(t, admin, map[string]any{
-			"id":    "TARGET",
-			"admin": 0,
+			"id":           "TARGET",
+			"admin":        0,
+			"captchaId":    "cap-admin-revoke",
+			"captchaValue": "abcd",
 		})
 		if resp.Code != apperr.Success {
 			t.Fatalf("expected revoke success, got %+v", resp)
@@ -313,10 +325,33 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 		}
 	})
 
+	t.Run("admin role change rejects wrong captcha", func(t *testing.T) {
+		seedCaptcha(t, "cap-admin-bad", "abcd")
+		resp := callAdminUpdateUserAdmin(t, admin, map[string]any{
+			"id":           "TARGET",
+			"admin":        1,
+			"captchaId":    "cap-admin-bad",
+			"captchaValue": "wrong",
+		})
+		if resp.Code != apperr.WrongCaptcha {
+			t.Fatalf("expected %s, got %+v", apperr.WrongCaptcha, resp)
+		}
+
+		target, err := store.GetUserByID("TARGET")
+		if err != nil {
+			t.Fatalf("get target user: %v", err)
+		}
+		if target.Admin != 0 {
+			t.Fatalf("target admin role should remain unchanged, got %d", target.Admin)
+		}
+	})
+
 	t.Run("admin cannot change own admin role", func(t *testing.T) {
 		resp := callAdminUpdateUserAdmin(t, admin, map[string]any{
-			"id":    "ADMIN1",
-			"admin": 0,
+			"id":           "ADMIN1",
+			"admin":        0,
+			"captchaId":    "cap-unused",
+			"captchaValue": "abcd",
 		})
 		if resp.Code != apperr.UserIsAdminAlready {
 			t.Fatalf("expected %s, got %+v", apperr.UserIsAdminAlready, resp)
@@ -328,6 +363,18 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 		}
 		if updatedAdmin.Admin != 1 {
 			t.Fatalf("admin role should remain unchanged, got %d", updatedAdmin.Admin)
+		}
+	})
+
+	t.Run("admin delete user requires captcha", func(t *testing.T) {
+		seedCaptcha(t, "cap-delete-ok", "abcd")
+		resp := callAdminDeleteUser(t, admin, "DELETE", "cap-delete-ok", "abcd")
+		if resp.Code != apperr.Success {
+			t.Fatalf("expected delete success, got %+v", resp)
+		}
+
+		if _, err := store.GetUserByID("DELETE"); err == nil {
+			t.Fatal("deleted user should not exist")
 		}
 	})
 }
@@ -375,6 +422,35 @@ func callAdminUpdateUserAdmin(t *testing.T, requester *store.User, body map[stri
 	c.Set("authed_user", requester)
 
 	AdminUpdateUserAdmin(c)
+
+	var resp struct {
+		Code    string `json:"code"`
+		Message string `json:"message"`
+	}
+	if err := json.Unmarshal(w.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("decode response: %v", err)
+	}
+	return resp
+}
+
+func callAdminDeleteUser(t *testing.T, requester *store.User, id, captchaID, captchaValue string) struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+} {
+	t.Helper()
+
+	w := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(w)
+	req := httptest.NewRequest(http.MethodDelete, "/api/admin/user", nil)
+	q := req.URL.Query()
+	q.Set("id", id)
+	q.Set("captchaId", captchaID)
+	q.Set("captchaValue", captchaValue)
+	req.URL.RawQuery = q.Encode()
+	c.Request = req
+	c.Set("authed_user", requester)
+
+	AdminDeleteUser(c)
 
 	var resp struct {
 		Code    string `json:"code"`

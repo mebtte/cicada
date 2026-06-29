@@ -54,4 +54,5 @@ const (
 	PartialUploadRangeInvalid               = "partial_upload_range_invalid"
 	PartialUploadHashMismatch               = "partial_upload_hash_mismatch"
 	DiskSpaceInsufficient                   = "disk_space_insufficient"
+	RepeatedFollowedArtist                  = "repeated_followed_artist"
 )

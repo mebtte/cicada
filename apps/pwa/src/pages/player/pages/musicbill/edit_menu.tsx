@@ -13,13 +13,14 @@ import {
   DrawerHeader,
   DrawerTitle,
   Input,
+  Switch,
 } from '@/components';
 import { Delete, Edit, Exit } from '@/components/icon';
 import Cover from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import updateMusicbill from '@/server/api/update_musicbill';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '@/constants/musicbill';
-import uploadAsset from '@/server/form/upload_asset';
+import uploadAsset from '@/server/asset/upload_asset';
 import { AssetType } from '@/constants/asset';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
@@ -27,7 +28,6 @@ import notice from '@/utils/notice';
 import deleteMusicbill from '@/server/api/delete_musicbill';
 import { PLAYER_PATH, ROOT_PATH } from '@/constants/route';
 import useNavigate from '@/utils/use_navigate';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import { useUser } from '@/global_states/server';
 import { t } from '@/i18n';
 import getResizedImage from '@/server/asset/get_resized_image';
@@ -117,78 +117,6 @@ const PublicField = styled.div`
   min-height: 44px;
 `;
 
-const SwitchButton = styled.button<{ $checked: boolean }>`
-  position: relative;
-  flex: 0 0 auto;
-  width: 58px;
-  height: 34px;
-  padding: 3px;
-  border: 2px solid
-    ${({ $checked }) =>
-      $checked
-        ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_NEUTRAL_SHADOW};
-  border-radius: 999px;
-  background: ${({ $checked }) =>
-    $checked ? CSSVariable.COLOR_PRIMARY : '#fff'};
-  box-shadow: 0 4px 0
-    ${({ $checked }) =>
-      $checked
-        ? CSSVariable.COLOR_PRIMARY_ACTIVE
-        : CSSVariable.COLOR_NEUTRAL_SHADOW};
-  cursor: pointer;
-  transition:
-    transform 150ms ease-out,
-    background 150ms ease,
-    box-shadow 150ms ease,
-    filter 120ms;
-
-  &:not(:disabled):hover {
-    filter: brightness(1.04);
-  }
-
-  &:not(:disabled):active {
-    transform: translateY(4px);
-    box-shadow: none;
-    transition:
-      transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-    filter: saturate(0.45);
-  }
-
-  &:focus-visible {
-    outline: 3px solid ${CSSVariable.COLOR_PRIMARY};
-    outline-offset: 3px;
-  }
-
-  > .thumb {
-    display: block;
-    width: 24px;
-    height: 24px;
-    box-sizing: border-box;
-    border: 2px solid
-      ${({ $checked }) =>
-        $checked
-          ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_NEUTRAL_SHADOW};
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 2px 0
-      ${({ $checked }) =>
-        $checked
-          ? CSSVariable.COLOR_PRIMARY_ACTIVE
-          : CSSVariable.COLOR_NEUTRAL_SHADOW};
-    transform: translateX(${({ $checked }) => ($checked ? '24px' : '0')});
-    transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-`;
-
 const DangerArea = styled.div`
   padding-top: 8px;
 `;
@@ -196,7 +124,6 @@ const DangerArea = styled.div`
 function EditMenu({ musicbill }: { musicbill: Musicbill }) {
   const navigate = useNavigate();
   const user = useUser()!;
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
 
   const [open, setOpen] = useState(false);
   const onClose = () => setOpen(false);
@@ -294,27 +221,66 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
     }
   };
 
-  const updatePubliz = async () => {
+  const updatePubliz = () => {
     if (publizUpdating) {
       return;
     }
 
-    const nextPubliz = !publiz;
-    setPubliz(nextPubliz);
-    setPublizUpdating(true);
-    try {
-      await updateMusicbill({
-        id: musicbill.id,
-        key: AllowUpdateKey.PUBLIC,
-        value: nextPubliz,
+    if (!publiz) {
+      dialog.confirm({
+        title: t('make_public_musicbill_question'),
+        content: t('make_public_musicbill_consequence_1'),
+        confirmText: t('public'),
+        confirmVariant: 'primary',
+        onConfirm: async () => {
+          setPubliz(true);
+          setPublizUpdating(true);
+          try {
+            await updateMusicbill({
+              id: musicbill.id,
+              key: AllowUpdateKey.PUBLIC,
+              value: true,
+            });
+            reloadMusicbill();
+          } catch (error) {
+            setPubliz(musicbill.public);
+            logger.error(error, "Failed to update musicbill's public state");
+            dialog.alert({ content: error.message });
+            return false;
+          } finally {
+            setPublizUpdating(false);
+          }
+        },
       });
-      reloadMusicbill();
-    } catch (error) {
-      setPubliz(musicbill.public);
-      logger.error(error, "Failed to update musicbill's public state");
-      dialog.alert({ content: error.message });
+      return;
     }
-    setPublizUpdating(false);
+
+    dialog.captcha({
+      title: t('cancel_public_musicbill_question'),
+      content: t('cancel_public_musicbill_consequence_1'),
+      confirmVariant: 'danger',
+      onConfirm: async ({ captchaId, captchaValue }) => {
+        setPubliz(false);
+        setPublizUpdating(true);
+        try {
+          await updateMusicbill({
+            id: musicbill.id,
+            key: AllowUpdateKey.PUBLIC,
+            value: false,
+            captchaId,
+            captchaValue,
+          });
+          reloadMusicbill();
+        } catch (error) {
+          setPubliz(musicbill.public);
+          logger.error(error, "Failed to update musicbill's public state");
+          dialog.alert({ content: error.message });
+          return false;
+        } finally {
+          setPublizUpdating(false);
+        }
+      },
+    });
   };
 
   const openDeleteDialog = () => {
@@ -367,7 +333,6 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
         side="right"
         style={{
           width: 'min(390px, calc(100vw - 20px))',
-          paddingTop: titlebarTop,
         }}
         zIndex={EDIT_DRAWER_Z_INDEX}
         accessibleTitle={t('edit_musicbill')}
@@ -426,17 +391,12 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
 
             <PublicField>
               <FieldTitle>{t('public')}</FieldTitle>
-              <SwitchButton
-                type="button"
-                role="switch"
-                aria-checked={publiz}
+              <Switch
+                checked={publiz}
                 aria-label={t('public')}
-                $checked={publiz}
                 disabled={publizUpdating}
                 onClick={() => void updatePubliz()}
-              >
-                <span className="thumb" />
-              </SwitchButton>
+              />
             </PublicField>
 
             <DangerArea>

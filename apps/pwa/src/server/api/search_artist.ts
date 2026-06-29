@@ -39,7 +39,7 @@ async function searchArtist({
   requestMinimalDuration?: number;
 }) {
   const data = await request<RawResponse>({
-    path: '/api/artist/search',
+    path: '/api/common/artist/search',
     params: { keyword, page, pageSize },
     withToken: true,
     requestMinimalDuration,

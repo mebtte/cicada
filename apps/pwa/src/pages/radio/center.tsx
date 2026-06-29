@@ -1,5 +1,5 @@
-import { QueueMusic } from '@/pages/player/constants';
-import Lyric from '@/pages/player/lyric_panel/lyric';
+import { QueueMusic } from '@/features/player/constants';
+import Lyric from '@/features/player/lyric_panel/lyric';
 
 /**
  * 中间区: 直接复用播放器歌词面板的展示组件, 保持两边状态机统一.

@@ -60,6 +60,16 @@ function Top() {
 
   return (
     <Style aria-label={t('musicbill')}>
+      <Tooltip content={t('create')}>
+        <ToolButton
+          square
+          variant="primary"
+          size="sm"
+          onClick={openCreateMusicbillDialog}
+        >
+          <AddBox />
+        </ToolButton>
+      </Tooltip>
       <Tooltip content={t('reload_musicbill_list')}>
         <ToolButton
           square
@@ -69,16 +79,6 @@ function Top() {
           loading={getMusicbillListStatus === RequestStatus.LOADING}
         >
           <Refresh />
-        </ToolButton>
-      </Tooltip>
-      <Tooltip content={t('create')}>
-        <ToolButton
-          square
-          variant="primary"
-          size="sm"
-          onClick={openCreateMusicbillDialog}
-        >
-          <AddBox />
         </ToolButton>
       </Tooltip>
       <Tooltip content={t('sort_musicbill')}>

@@ -34,17 +34,12 @@ if (process.env.NODE_ENV === 'production') {
   precacheAndRoute(self.__WB_MANIFEST || []);
 
   /**
-   * SPA 路由兜底, 离线刷新任意路由都能进 App Shell
-   * 排除后端接口/资源/表单路径, 避免被 index.html 吞掉
+   * SPA 路由兜底. PWA 使用 HashRouter, 只有根路径需要返回 App Shell;
+   * 其它导航路径交给后端, 避免新增后端路径被 index.html 吞掉.
    */
   registerRoute(
     new NavigationRoute(createHandlerBoundToURL('/index.html'), {
-      denylist: [
-        new RegExp(`^/${PathPrefix.API}/`),
-        new RegExp(`^/${PathPrefix.ASSET}/`),
-        new RegExp(`^/${PathPrefix.BASE}/`),
-        new RegExp(`^/${PathPrefix.FORM}/`),
-      ],
+      allowlist: [/^\/$/],
     }),
   );
 
@@ -142,17 +137,17 @@ registerRoute(
  * API 网络优先
  * @author mebtte<i@mebtte.com>
  */
-const PREVNET_CACHE_PATHS: string[] = [
-  '/base/metadata',
-  '/base/captcha',
-];
+const COMMON_API_PATH_PREFIX = `/${PathPrefix.API}/common`;
+function isCommonAPIPath(pathname: string) {
+  return (
+    pathname === COMMON_API_PATH_PREFIX ||
+    pathname.startsWith(`${COMMON_API_PATH_PREFIX}/`)
+  );
+}
 registerRoute(
   ({ request }) => {
     const url = new URL(request.url);
-    return (
-      url.pathname.startsWith(`/${PathPrefix.API}`) &&
-      !PREVNET_CACHE_PATHS.includes(url.pathname)
-    );
+    return isCommonAPIPath(url.pathname);
   },
   new NetworkFirst({
     cacheName: CacheName.API,

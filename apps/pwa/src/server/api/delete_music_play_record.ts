@@ -6,7 +6,7 @@ import { request, Method } from '..';
  */
 function deleteMusicPlayRecord(id: number) {
   return request({
-    path: '/api/music_play_record',
+    path: '/api/common/music_play_record',
     method: Method.DELETE,
     params: { id },
     withToken: true,

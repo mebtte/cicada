@@ -85,34 +85,42 @@ const Overlay = styled(RadixDialog.Overlay)`
 
 // ─── Panel ────────────────────────────────────────────────────────────────────
 //
-// Hard shadow mirrors the design system's Duolingo-style depth:
-//   right  drawer → shadow extends left  (−x)
-//   left   drawer → shadow extends right (+x)
-//   bottom drawer → shadow extends up    (−y)
+// Vertical inset only — drawers stay glued to their slide-in edge horizontally
+// but reveal page space on top and bottom, so the downward hard shadow can land
+// in the bottom gap and read as "raised toward viewer" (mirrors Button).
+//
+// Top inset combines the OS notch safe area with the window-controls-overlay
+// titlebar area so installed PWAs (display_override: window-controls-overlay)
+// keep the hollow gap visible below the system titlebar.
+
+const INSET = '24px';
+const TOP_OVERLAY = `max(env(safe-area-inset-top, 0px), env(titlebar-area-height, 0px))`;
+const SAFE_TOP    = `calc(${INSET} + ${TOP_OVERLAY})`;
+const SAFE_BOTTOM = `calc(${INSET} + env(safe-area-inset-bottom, 0px))`;
 
 const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
   right: css`
-    top: 0;
+    top: ${SAFE_TOP};
     right: 0;
-    bottom: 0;
+    bottom: ${SAFE_BOTTOM};
     width: min(360px, calc(100vw - 20px));
     border-radius: 20px 0 0 20px;
     border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-right: none;
-    box-shadow: -5px 0 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+    box-shadow: 0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
     &[data-state='open']   { animation: ${slideInRight}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
     &[data-state='closed'] { animation: ${slideOutRight} 220ms ease-in; }
   `,
   left: css`
-    top: 0;
+    top: ${SAFE_TOP};
     left: 0;
-    bottom: 0;
+    bottom: ${SAFE_BOTTOM};
     width: min(360px, calc(100vw - 20px));
     border-radius: 0 20px 20px 0;
     border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
     border-left: none;
-    box-shadow: 5px 0 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+    box-shadow: 0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
     &[data-state='open']   { animation: ${slideInLeft}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
     &[data-state='closed'] { animation: ${slideOutLeft} 220ms ease-in; }
@@ -120,12 +128,12 @@ const SIDE_MAP: Record<DrawerSide, ReturnType<typeof css>> = {
   bottom: css`
     left: 0;
     right: 0;
-    bottom: 0;
-    max-height: 92dvh;
-    border-radius: 20px 20px 0 0;
+    bottom: ${SAFE_BOTTOM};
+    /* Leave the hollow gap at the top intact even at the drawer's tallest. */
+    max-height: calc(100dvh - ${SAFE_TOP} - ${SAFE_BOTTOM});
+    border-radius: 20px;
     border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-    border-bottom: none;
-    box-shadow: 0 -5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+    box-shadow: 0 5px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
 
     &[data-state='open']   { animation: ${slideInBottom}  340ms cubic-bezier(0.16, 1, 0.3, 1); }
     &[data-state='closed'] { animation: ${slideOutBottom} 220ms ease-in; }
@@ -369,7 +377,6 @@ export const DrawerFooter = styled.div<HTMLAttributes<HTMLDivElement>>`
   align-items: center;
   gap: 10px;
   padding: 20px 24px;
-  padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
   flex-shrink: 0;
 `;
 

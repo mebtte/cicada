@@ -1,6 +1,6 @@
 import { UIEventHandler, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { useTransition } from 'react-spring';
+import { useTransition } from '@react-spring/web';
 import autoScrollbar from '@/style/auto_scrollbar';
 import playerEventemitter, {
   EventType as PlayerEventType,

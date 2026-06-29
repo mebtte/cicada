@@ -4,12 +4,24 @@ struct ContentView: View {
     @StateObject private var store = ServerSetupStore()
 
     var body: some View {
-        NavigationStack {
-            ServerSetupView(store: store)
+        Group {
+            if store.selectedUser != nil {
+                PlayerView(serverStore: store)
+            } else {
+                NavigationStack {
+                    if store.selectedServer == nil {
+                        ServerSetupView(store: store)
+                    } else {
+                        LoginView(store: store)
+                    }
+                }
+            }
         }
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentViewPreviews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }

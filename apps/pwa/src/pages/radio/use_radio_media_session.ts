@@ -2,7 +2,8 @@ import { useEffect } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import CustomAudio from '@/utils/custom_audio';
-import { QueueMusic } from '@/pages/player/constants';
+import onVisible from '@/utils/on_visible';
+import { QueueMusic } from '@/features/player/constants';
 
 const COVER_SIZES = [96, 256, 512];
 
@@ -41,12 +42,14 @@ function safeSetPlaybackState(state: MediaSessionPlaybackState) {
 function useRadioMediaSession({
   music,
   audio,
+  paused,
   onPlay,
   onPause,
   onNext,
 }: {
   music: QueueMusic | undefined;
   audio: CustomAudio<QueueMusic>;
+  paused: boolean;
   onPlay: () => void;
   onPause: () => void;
   onNext: () => void;
@@ -96,7 +99,13 @@ function useRadioMediaSession({
       return;
     }
     const sync = () => {
-      if (audio.isPaused() && audio.hasPlayableData()) {
+      // 'ended' 时 paused 已静默置为 true, 数据仍就绪. 下发 'paused' 会让
+      // macOS Now Playing 在 next 跳到新曲并 setSource 之前释放控制权.
+      if (
+        audio.isPaused() &&
+        audio.hasPlayableData() &&
+        !audio.isEnded()
+      ) {
         safeSetPlaybackState('paused');
       } else {
         safeSetPlaybackState('playing');
@@ -110,6 +119,8 @@ function useRadioMediaSession({
     const unlistenError = audio.listen('error', sync);
     const unlistenLoadStart = audio.listen('loadstart', sync);
     const unlistenCanplay = audio.listen('canplay', sync);
+    // 后台冻结期间 play/pause 等事件可能漏掉, 回到前台重新对账锁屏状态.
+    const unlistenVisible = onVisible(sync);
     return () => {
       unlistenPlay();
       unlistenPlaying();
@@ -118,8 +129,56 @@ function useRadioMediaSession({
       unlistenError();
       unlistenLoadStart();
       unlistenCanplay();
+      unlistenVisible();
     };
   }, [music, audio]);
+
+  useEffect(() => {
+    if (
+      !('mediaSession' in window.navigator) ||
+      !navigator.mediaSession.setPositionState
+    ) {
+      return;
+    }
+    const sync = () => {
+      const dur = audio.getDuration();
+      const pos = audio.getCurrentTime();
+      if (!Number.isFinite(dur) || dur <= 0 || !Number.isFinite(pos)) {
+        return;
+      }
+      try {
+        window.navigator.mediaSession.setPositionState({
+          duration: dur,
+          position: Math.max(0, Math.min(pos, dur)),
+          playbackRate: 1,
+        });
+      } catch {
+        /* ignore */
+      }
+    };
+
+    sync();
+    const unlistenSeeked = audio.listen('seeked', sync);
+    const unlistenDurationChange = audio.listen('durationchange', sync);
+    const unlistenPlay = audio.listen('play', sync);
+    const unlistenPlaying = audio.listen('playing', sync);
+    const unlistenPause = audio.listen('pause', sync);
+    const unlistenRateChange = audio.listen('ratechange', sync);
+    const unlistenVisible = onVisible(sync);
+    const heartbeat = paused ? null : window.setInterval(sync, 1000);
+    return () => {
+      unlistenSeeked();
+      unlistenDurationChange();
+      unlistenPlay();
+      unlistenPlaying();
+      unlistenPause();
+      unlistenRateChange();
+      unlistenVisible();
+      if (heartbeat !== null) {
+        window.clearInterval(heartbeat);
+      }
+    };
+  }, [audio, paused]);
 }
 
 export default useRadioMediaSession;

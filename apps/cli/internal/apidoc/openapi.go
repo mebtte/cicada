@@ -27,9 +27,9 @@ type operation struct {
 
 // Register mounts the OpenAPI spec and the built-in documentation page.
 func Register(r *gin.Engine) {
-	r.GET("/api_reference", servePage)
-	r.GET("/api_reference/", servePage)
-	r.GET("/api_reference/openapi.json", func(c *gin.Context) {
+	r.GET("/apidoc", servePage)
+	r.GET("/apidoc/", servePage)
+	r.GET("/apidoc/openapi.json", func(c *gin.Context) {
 		c.JSON(http.StatusOK, Spec())
 	})
 }
@@ -72,7 +72,7 @@ func Spec() map[string]any {
 					"type":        "apiKey",
 					"in":          "header",
 					"name":        "x-cicada-token",
-					"description": "Business auth token. Obtain it from `/base/login` or `/base/login_with_2fa`, then send it in the `x-cicada-token` header. Unless stated otherwise, `/api` and `/form` endpoints require this header.",
+					"description": "Business auth token. Obtain it from `/api/base/login` or `/api/base/login_with_2fa`, then send it in the `x-cicada-token` header. Unless stated otherwise, `/api/common` and `/api/admin` endpoints require this header.",
 				},
 			},
 		},
@@ -91,17 +91,17 @@ func authenticationGuide() map[string]any {
 		"tokenEndpoints": []any{
 			map[string]any{
 				"method":      "POST",
-				"path":        "/base/login",
+				"path":        "/api/base/login",
 				"description": "Returns a token after username, password, and captcha verification.",
 			},
 			map[string]any{
 				"method":      "POST",
-				"path":        "/base/login_with_2fa",
+				"path":        "/api/base/login_with_2fa",
 				"description": "Returns a token after username, password, and TOTP verification.",
 			},
 		},
 		"rules": []any{
-			"Send the token in the `x-cicada-token` header for authenticated `/api` and `/form` endpoints.",
+			"Send the token in the `x-cicada-token` header for authenticated `/api/common` and `/api/admin` endpoints.",
 			"Admin endpoints require a valid token and a user with `admin = 1`.",
 			"When the token is missing, invalid, expired, or revoked, the API returns `not_authorized`.",
 		},
@@ -118,7 +118,7 @@ func operations() []operation {
 	return []operation{
 		{
 			Method:      "GET",
-			Path:        "/api_reference/openapi.json",
+			Path:        "/apidoc/openapi.json",
 			Summary:     "Get OpenAPI spec",
 			Description: "Return the OpenAPI 3.0 JSON document for the current service.",
 			Tags:        []string{"Docs"},
@@ -171,7 +171,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/form/asset",
+			Path:        "/api/common/asset",
 			Summary:     "Upload asset",
 			Description: "Upload an image or audio asset and return the asset ID and public path. Music uploads are accepted when ffprobe can detect an audio stream.",
 			Tags:        []string{"Asset"},
@@ -206,8 +206,92 @@ func operations() []operation {
 			ErrorCodes: []string{"wrong_parameter", "asset_oversize", "wrong_asset_type", "server_error"},
 		},
 		{
+			Method:      "POST",
+			Path:        "/api/common/asset/upload",
+			Summary:     "Create or resume chunked asset upload",
+			Description: "Create or resume a chunked upload session. Sessions are keyed by authenticated user, asset type, file SHA-256, and total size. Idle sessions expire after 24 hours and are cleaned by the daily scheduler.",
+			Tags:        []string{"Asset"},
+			Auth:        true,
+			RequestBody: jsonRequestBody(initPartialUploadRequestSchema(), map[string]any{
+				"assetType": string(config.AssetTypeMusic),
+				"size":      12345678,
+				"fileHash":  "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+				"chunkSize": 4194304,
+				"filename":  "song.mp3",
+			}),
+			SuccessSchema: partialUploadInitSchema(),
+			SuccessExample: map[string]any{
+				"uploadId":      "0123456789abcdef0123456789abcdef",
+				"size":          12345678,
+				"receivedBytes": 0,
+				"chunkSize":     4194304,
+				"expiresAt":     int64(1710086400000),
+			},
+			ErrorCodes: []string{"wrong_parameter", "asset_oversize", "partial_upload_hash_mismatch", "server_error", "not_authorized"},
+		},
+		{
+			Method:      "GET",
+			Path:        "/api/common/asset/upload/{uploadId}",
+			Summary:     "Get chunked asset upload status",
+			Description: "Return the current received byte offset for a chunked upload session so the client can resume from the next missing byte.",
+			Tags:        []string{"Asset"},
+			Auth:        true,
+			Parameters: []map[string]any{
+				pathParam("uploadId", "Upload session ID, 32 lower-case hex characters.", uploadIDSchema()),
+			},
+			SuccessSchema: partialUploadStatusSchema(),
+			SuccessExample: map[string]any{
+				"uploadId":      "0123456789abcdef0123456789abcdef",
+				"assetType":     string(config.AssetTypeMusic),
+				"size":          12345678,
+				"receivedBytes": 4194304,
+				"chunkSize":     4194304,
+				"updatedAt":     int64(1710000000000),
+				"expiresAt":     int64(1710086400000),
+			},
+			ErrorCodes: []string{"wrong_parameter", "partial_upload_not_existed", "partial_upload_owner_mismatch", "server_error", "not_authorized"},
+		},
+		{
+			Method:      "PUT",
+			Path:        "/api/common/asset/upload/{uploadId}",
+			Summary:     "Upload asset chunk",
+			Description: "Upload one binary chunk. `Content-Range` must use `bytes start-end/total`; `start` normally equals the server's `receivedBytes`. If the start offset is stale, the server returns the current progress without appending the body.",
+			Tags:        []string{"Asset"},
+			Auth:        true,
+			Parameters: []map[string]any{
+				pathParam("uploadId", "Upload session ID, 32 lower-case hex characters.", uploadIDSchema()),
+				headerParam("Content-Range", "Byte range for this chunk, for example `bytes 0-4194303/12345678`.", strSchema("", "bytes 0-4194303/12345678")),
+			},
+			RequestBody:   octetStreamRequestBody("Raw chunk bytes. Maximum chunk size is 8 MiB."),
+			SuccessSchema: partialUploadProgressSchema(),
+			SuccessExample: map[string]any{
+				"uploadId":      "0123456789abcdef0123456789abcdef",
+				"size":          12345678,
+				"receivedBytes": 4194304,
+				"nextOffset":    4194304,
+			},
+			ErrorCodes: []string{"wrong_parameter", "partial_upload_not_existed", "partial_upload_owner_mismatch", "partial_upload_range_invalid", "server_error", "not_authorized"},
+		},
+		{
+			Method:      "POST",
+			Path:        "/api/common/asset/upload/{uploadId}/complete",
+			Summary:     "Complete chunked asset upload",
+			Description: "Complete a chunked upload. The server verifies the received byte count, SHA-256 hash, MIME type, audio stream for music, image shape for image assets, and configured size limits before moving the file into the public asset store.",
+			Tags:        []string{"Asset"},
+			Auth:        true,
+			Parameters: []map[string]any{
+				pathParam("uploadId", "Upload session ID, 32 lower-case hex characters.", uploadIDSchema()),
+			},
+			SuccessSchema: uploadAssetSchema(),
+			SuccessExample: map[string]any{
+				"id":   "a1b2c3d4.mp3",
+				"path": "/asset/music/a1b2c3d4.mp3",
+			},
+			ErrorCodes: []string{"wrong_parameter", "asset_oversize", "wrong_asset_type", "partial_upload_not_existed", "partial_upload_owner_mismatch", "partial_upload_range_invalid", "partial_upload_hash_mismatch", "server_error", "not_authorized"},
+		},
+		{
 			Method:         "GET",
-			Path:           "/base/metadata",
+			Path:           "/api/base/metadata",
 			Summary:        "Get service metadata",
 			Description:    "Return the current node hostname and version.",
 			Tags:           []string{"Base"},
@@ -216,7 +300,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/base/captcha",
+			Path:        "/api/base/captcha",
 			Summary:     "Get captcha",
 			Description: "Return the captcha ID and SVG payload.",
 			Tags:        []string{"Base"},
@@ -232,7 +316,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/base/login",
+			Path:        "/api/base/login",
 			Summary:     "Login with password",
 			Description: "Login with username and password. Returns `need_2fa` when the user has 2FA enabled.",
 			Tags:        []string{"Base"},
@@ -249,7 +333,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/base/login_with_2fa",
+			Path:        "/api/base/login_with_2fa",
 			Summary:     "Login with 2FA",
 			Description: "Login with username, password, and a 2FA token.",
 			Tags:        []string{"Base"},
@@ -265,7 +349,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/api/music_play_record",
+			Path:        "/api/common/music_play_record",
 			Summary:     "Upload play record",
 			Description: "Report play progress for one client play session. Repeated reports with the same `clientRecordId` are merged idempotently.",
 			Tags:        []string{"PlayRecord"},
@@ -288,7 +372,7 @@ func operations() []operation {
 		},
 		{
 			Method:         "GET",
-			Path:           "/api/profile",
+			Path:           "/api/common/profile",
 			Summary:        "Get current profile",
 			Description:    "Return the full profile and quota settings for the current signed-in user.",
 			Tags:           []string{"Profile"},
@@ -299,7 +383,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "PUT",
-			Path:        "/api/profile",
+			Path:        "/api/common/profile",
 			Summary:     "Update current profile",
 			Description: "Update password, avatar, nickname, or musicbill order using the key/value pattern.",
 			Tags:        []string{"Profile"},
@@ -314,7 +398,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/user",
+			Path:        "/api/common/user",
 			Summary:     "Get public user info",
 			Description: "Return the public user profile and public musicbills by `userId`.",
 			Tags:        []string{"User"},
@@ -328,7 +412,7 @@ func operations() []operation {
 		},
 		{
 			Method:         "POST",
-			Path:           "/api/2fa",
+			Path:           "/api/common/2fa",
 			Summary:        "Create 2FA secret",
 			Description:    "Generate a new 2FA secret and otpauth URL for the current user.",
 			Tags:           []string{"Profile"},
@@ -339,7 +423,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "PUT",
-			Path:        "/api/2fa",
+			Path:        "/api/common/2fa",
 			Summary:     "Enable 2FA",
 			Description: "Activate the generated 2FA secret for the current user using a TOTP code.",
 			Tags:        []string{"Profile"},
@@ -356,7 +440,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "DELETE",
-			Path:        "/api/2fa",
+			Path:        "/api/common/2fa",
 			Summary:     "Disable 2FA",
 			Description: "Disable 2FA for the current user using a TOTP code.",
 			Tags:        []string{"Profile"},
@@ -373,7 +457,7 @@ func operations() []operation {
 		},
 		{
 			Method:         "GET",
-			Path:           "/api/sessions",
+			Path:           "/api/common/sessions",
 			Summary:        "List authorized devices",
 			Description:    "Return active auth sessions for the current user.",
 			Tags:           []string{"Profile"},
@@ -384,7 +468,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "PUT",
-			Path:        "/api/sessions/{id}",
+			Path:        "/api/common/sessions/{id}",
 			Summary:     "Rename authorized device",
 			Description: "Update the display name for one of the current user's auth sessions.",
 			Tags:        []string{"Profile"},
@@ -404,7 +488,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "DELETE",
-			Path:        "/api/sessions/{id}",
+			Path:        "/api/common/sessions/{id}",
 			Summary:     "Revoke authorized device",
 			Description: "Revoke one auth session. Use `current` as the ID to revoke the current device.",
 			Tags:        []string{"Profile"},
@@ -418,7 +502,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/music",
+			Path:        "/api/common/music",
 			Summary:     "Get music details",
 			Description: "Return music metadata, performers, lyricists, composers, fork relations, musicbill usage count, and related public musicbills.",
 			Tags:        []string{"Music"},
@@ -501,7 +585,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/music/search",
+			Path:        "/api/common/music/search",
 			Summary:     "Search music",
 			Description: "Search all music by keyword.",
 			Tags:        []string{"Music"},
@@ -515,7 +599,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/music/search_by_lyric",
+			Path:        "/api/common/music/search_by_lyric",
 			Summary:     "Search music by lyric",
 			Description: "Search music by lyric content.",
 			Tags:        []string{"Music"},
@@ -529,7 +613,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/artist",
+			Path:        "/api/common/artist",
 			Summary:     "Get artist details",
 			Description: "Return artist metadata, photo list, music where the artist is a performer, music where the artist is a lyricist, and music where the artist is a composer. The first photo (lowest position) is treated as the avatar by clients.",
 			Tags:        []string{"Artist"},
@@ -543,7 +627,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/artist/search",
+			Path:        "/api/common/artist/search",
 			Summary:     "Search artists",
 			Description: "Search artists by name or alias. The photo list is sorted by position; clients can use the first photo as the artist avatar.",
 			Tags:        []string{"Artist"},
@@ -576,7 +660,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/lyric_list",
+			Path:        "/api/common/lyric_list",
 			Summary:     "Get lyric list",
 			Description: "Return the lyric versions for a music item.",
 			Tags:        []string{"Lyric"},
@@ -595,7 +679,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/music_play_record_list",
+			Path:        "/api/common/music_play_record_list",
 			Summary:     "Get play records",
 			Description: "Return paginated play records for the current user.",
 			Tags:        []string{"PlayRecord"},
@@ -626,7 +710,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "DELETE",
-			Path:        "/api/music_play_record",
+			Path:        "/api/common/music_play_record",
 			Summary:     "Delete play record",
 			Description: "Delete the specified play record.",
 			Tags:        []string{"PlayRecord"},
@@ -640,7 +724,7 @@ func operations() []operation {
 		},
 		{
 			Method:         "GET",
-			Path:           "/api/musicbill_list",
+			Path:           "/api/common/musicbill_list",
 			Summary:        "Get my musicbill list",
 			Description:    "Return musicbills owned by the current user or shared with the current user and already accepted.",
 			Tags:           []string{"Musicbill"},
@@ -651,7 +735,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/musicbill",
+			Path:        "/api/common/musicbill",
 			Summary:     "Get musicbill details",
 			Description: "Return musicbill metadata, shared users, and music list.",
 			Tags:        []string{"Musicbill"},
@@ -665,7 +749,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/api/musicbill",
+			Path:        "/api/common/musicbill",
 			Summary:     "Create musicbill",
 			Description: "Create a new musicbill for the current user. Each user can have up to 1024 musicbills.",
 			Tags:        []string{"Musicbill"},
@@ -682,7 +766,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "PUT",
-			Path:        "/api/musicbill",
+			Path:        "/api/common/musicbill",
 			Summary:     "Update musicbill",
 			Description: "Update musicbill name, cover, or public status using the key/value pattern.",
 			Tags:        []string{"Musicbill"},
@@ -698,7 +782,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "DELETE",
-			Path:        "/api/musicbill",
+			Path:        "/api/common/musicbill",
 			Summary:     "Delete musicbill",
 			Description: "Delete a musicbill owned by the current user.",
 			Tags:        []string{"Musicbill"},
@@ -714,7 +798,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/api/musicbill_music",
+			Path:        "/api/common/musicbill_music",
 			Summary:     "Add music to musicbill",
 			Description: "Add a music item to a musicbill.",
 			Tags:        []string{"Musicbill"},
@@ -735,7 +819,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "DELETE",
-			Path:        "/api/musicbill_music",
+			Path:        "/api/common/musicbill_music",
 			Summary:     "Remove music from musicbill",
 			Description: "Remove the specified music item from a musicbill.",
 			Tags:        []string{"Musicbill"},
@@ -750,7 +834,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/api/musicbill/shared_user",
+			Path:        "/api/common/musicbill/shared_user",
 			Summary:     "Invite shared musicbill user",
 			Description: "Invite another user to a shared musicbill by username.",
 			Tags:        []string{"Musicbill"},
@@ -771,7 +855,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "DELETE",
-			Path:        "/api/musicbill/shared_user",
+			Path:        "/api/common/musicbill/shared_user",
 			Summary:     "Remove shared musicbill user",
 			Description: "The owner can remove any shared user. A shared user can only remove themselves.",
 			Tags:        []string{"Musicbill"},
@@ -786,7 +870,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "PUT",
-			Path:        "/api/musicbill/owner",
+			Path:        "/api/common/musicbill/owner",
 			Summary:     "Transfer musicbill owner",
 			Description: "Transfer the musicbill owner to a user that has already accepted the share invitation. The previous owner is automatically kept as an accepted shared user.",
 			Tags:        []string{"Musicbill"},
@@ -809,7 +893,7 @@ func operations() []operation {
 		},
 		{
 			Method:         "GET",
-			Path:           "/api/shared_musicbill_invitation_list",
+			Path:           "/api/common/shared_musicbill_invitation_list",
 			Summary:        "Get shared musicbill invitations",
 			Description:    "Return pending shared musicbill invitations for the current user.",
 			Tags:           []string{"Musicbill"},
@@ -820,7 +904,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "PUT",
-			Path:        "/api/shared_musicbill_invitation",
+			Path:        "/api/common/shared_musicbill_invitation",
 			Summary:     "Accept shared musicbill invitation",
 			Description: "Accept the specified shared musicbill invitation.",
 			Tags:        []string{"Musicbill"},
@@ -837,7 +921,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/public_musicbill",
+			Path:        "/api/common/public_musicbill",
 			Summary:     "Get public musicbill details",
 			Description: "Return public musicbill details and whether the current user has collected it.",
 			Tags:        []string{"Musicbill"},
@@ -851,7 +935,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/public_musicbill/search",
+			Path:        "/api/common/public_musicbill/search",
 			Summary:     "Search public musicbills",
 			Description: "Search public musicbills by keyword.",
 			Tags:        []string{"Musicbill"},
@@ -865,7 +949,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "POST",
-			Path:        "/api/public_musicbill/collection",
+			Path:        "/api/common/public_musicbill/collection",
 			Summary:     "Collect public musicbill",
 			Description: "Collect the specified public musicbill.",
 			Tags:        []string{"Musicbill"},
@@ -882,7 +966,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "DELETE",
-			Path:        "/api/public_musicbill/collection",
+			Path:        "/api/common/public_musicbill/collection",
 			Summary:     "Uncollect public musicbill",
 			Description: "Uncollect the specified public musicbill.",
 			Tags:        []string{"Musicbill"},
@@ -896,7 +980,7 @@ func operations() []operation {
 		},
 		{
 			Method:      "GET",
-			Path:        "/api/public_musicbill_collection_list",
+			Path:        "/api/common/public_musicbill_collection_list",
 			Summary:     "Get collected public musicbills",
 			Description: "Return the public musicbills collected by the current user.",
 			Tags:        []string{"Musicbill"},
@@ -910,7 +994,7 @@ func operations() []operation {
 		},
 		{
 			Method:         "GET",
-			Path:           "/api/exploration",
+			Path:           "/api/common/exploration",
 			Summary:        "Get exploration data",
 			Description:    "Return random recommendation data for music, artists, and public musicbills.",
 			Tags:           []string{"Music"},
@@ -946,7 +1030,7 @@ func operations() []operation {
 			Method:      "PUT",
 			Path:        "/api/admin/user",
 			Summary:     "Admin update user settings",
-			Description: "Update user password, remarks, and quota settings using the key/value pattern. Password resets disable the target user's 2FA and revoke all target sessions. Admins must use `/api/profile` to change their own password.",
+			Description: "Update user password, remarks, and quota settings using the key/value pattern. Password resets disable the target user's 2FA and revoke all target sessions. Admins must use `/api/common/profile` to change their own password.",
 			Tags:        []string{"Admin"},
 			Auth:        true,
 			Admin:       true,
@@ -1270,6 +1354,20 @@ func multipartRequestBody(schema map[string]any, example any) map[string]any {
 	}
 }
 
+func octetStreamRequestBody(desc string) map[string]any {
+	schema := map[string]any{
+		"type":        "string",
+		"format":      "binary",
+		"description": desc,
+	}
+	return map[string]any{
+		"required": true,
+		"content": map[string]any{
+			"application/octet-stream": map[string]any{"schema": schema},
+		},
+	}
+}
+
 func successEnvelopeSchema(dataSchema map[string]any) map[string]any {
 	props := map[string]any{
 		"code": strEnumSchema([]string{"success"}, "success"),
@@ -1305,6 +1403,16 @@ func pathParam(name, desc string, schema map[string]any) map[string]any {
 	return map[string]any{
 		"name":        name,
 		"in":          "path",
+		"required":    true,
+		"description": desc,
+		"schema":      schema,
+	}
+}
+
+func headerParam(name, desc string, schema map[string]any) map[string]any {
+	return map[string]any{
+		"name":        name,
+		"in":          "header",
 		"required":    true,
 		"description": desc,
 		"schema":      schema,
@@ -1457,6 +1565,77 @@ func uploadAssetSchema() map[string]any {
 		map[string]any{
 			"id":   strSchema("Asset filename ID.", "a1b2c3d4.jpg"),
 			"path": strSchema("Publicly accessible asset path.", "/asset/music_cover/a1b2c3d4.jpg"),
+		},
+	)
+}
+
+func uploadIDSchema() map[string]any {
+	schema := strSchema("", "0123456789abcdef0123456789abcdef")
+	schema["pattern"] = "^[0-9a-f]{32}$"
+	return schema
+}
+
+func sha256HexSchema(desc string) map[string]any {
+	schema := strSchema(desc, "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef")
+	schema["pattern"] = "^[0-9a-fA-F]{64}$"
+	return schema
+}
+
+func initPartialUploadRequestSchema() map[string]any {
+	return objSchema(
+		[]string{"assetType", "size", "fileHash", "chunkSize"},
+		map[string]any{
+			"assetType": strEnumSchema([]string{
+				string(config.AssetTypeUserAvatar),
+				string(config.AssetTypeMusicbillCover),
+				string(config.AssetTypeArtistPhoto),
+				string(config.AssetTypeMusicCover),
+				string(config.AssetTypeMusic),
+			}, string(config.AssetTypeMusic)),
+			"size":      intSchema("Total file size in bytes.", 12345678),
+			"fileHash":  sha256HexSchema("SHA-256 hex digest of the full file bytes."),
+			"chunkSize": intSchema("Preferred chunk size in bytes. Maximum is 8 MiB.", 4194304),
+			"filename":  strSchema("Optional original filename for diagnostics.", "song.mp3"),
+		},
+	)
+}
+
+func partialUploadInitSchema() map[string]any {
+	return objSchema(
+		[]string{"uploadId", "size", "receivedBytes", "chunkSize", "expiresAt"},
+		map[string]any{
+			"uploadId":      uploadIDSchema(),
+			"size":          intSchema("Total file size in bytes.", 12345678),
+			"receivedBytes": intSchema("Number of bytes already received.", 0),
+			"chunkSize":     intSchema("Server-accepted chunk size in bytes.", 4194304),
+			"expiresAt":     intSchema("Idle-expiry timestamp in milliseconds.", 1710086400000),
+		},
+	)
+}
+
+func partialUploadStatusSchema() map[string]any {
+	return objSchema(
+		[]string{"uploadId", "assetType", "size", "receivedBytes", "chunkSize", "updatedAt", "expiresAt"},
+		map[string]any{
+			"uploadId":      uploadIDSchema(),
+			"assetType":     strSchema("Asset type for this upload session.", string(config.AssetTypeMusic)),
+			"size":          intSchema("Total file size in bytes.", 12345678),
+			"receivedBytes": intSchema("Number of bytes already received.", 4194304),
+			"chunkSize":     intSchema("Server-accepted chunk size in bytes.", 4194304),
+			"updatedAt":     intSchema("Last session update timestamp in milliseconds.", 1710000000000),
+			"expiresAt":     intSchema("Idle-expiry timestamp in milliseconds.", 1710086400000),
+		},
+	)
+}
+
+func partialUploadProgressSchema() map[string]any {
+	return objSchema(
+		[]string{"uploadId", "size", "receivedBytes", "nextOffset"},
+		map[string]any{
+			"uploadId":      uploadIDSchema(),
+			"size":          intSchema("Total file size in bytes.", 12345678),
+			"receivedBytes": intSchema("Number of bytes already received.", 4194304),
+			"nextOffset":    intSchema("Offset the next PUT should start from.", 4194304),
 		},
 	)
 }

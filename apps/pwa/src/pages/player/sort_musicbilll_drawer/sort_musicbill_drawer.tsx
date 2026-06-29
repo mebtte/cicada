@@ -29,7 +29,6 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
 import { reloadUser } from '@/global_states/server';
 import { CSSVariable } from '@/global_style';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import { Musicbill as MusicbillType } from '../constants';
 import { LocalMusicbill } from './constant';
 import Musicbill from './musicbill';
@@ -98,7 +97,6 @@ function MusicbillOrderDrawer({
   musicbillList: MusicbillType[];
   zIndex: number;
 }) {
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const [localMusicbillList, setLocalMusicbillList] = useState(() =>
     musicbillList.map(toLocalMusicbill),
   );
@@ -150,7 +148,7 @@ function MusicbillOrderDrawer({
     <Drawer open={open} onOpenChange={(v) => !v && onCloseWrapper()}>
       <DrawerContent
         side="right"
-        style={{ ...drawerStyle, paddingTop: titlebarTop }}
+        style={drawerStyle}
         zIndex={zIndex}
       >
         <Shell>

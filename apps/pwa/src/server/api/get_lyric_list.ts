@@ -1,22 +1,15 @@
 import { request } from '..';
 
-function getLyricList({
-  musicId,
-  requestMinimalDuration = 1000,
-}: {
-  musicId: string;
-  requestMinimalDuration?: number;
-}) {
+function getLyricList({ musicId }: { musicId: string }) {
   return request<
     {
       id: number;
       lrc: string;
     }[]
   >({
-    path: '/api/lyric_list',
+    path: '/api/common/lyric_list',
     params: { musicId },
     withToken: true,
-    requestMinimalDuration,
   });
 }
 

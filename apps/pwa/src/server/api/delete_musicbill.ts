@@ -15,7 +15,7 @@ function deleteMusicbill({
 }) {
   return request({
     method: Method.DELETE,
-    path: '/api/musicbill',
+    path: '/api/common/musicbill',
     params: { id, captchaId, captchaValue },
     withToken: true,
   });

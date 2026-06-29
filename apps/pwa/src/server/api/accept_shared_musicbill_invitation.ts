@@ -6,7 +6,7 @@ import { Method, request } from '..';
  */
 function acceptSharedMusicbillInvitation(id: number) {
   return request({
-    path: '/api/shared_musicbill_invitation',
+    path: '/api/common/shared_musicbill_invitation',
     withToken: true,
     body: { id },
     method: Method.PUT,

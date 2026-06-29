@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import CustomAudio from '@/utils/custom_audio';
+import onVisible from '@/utils/on_visible';
 import e, { EventType } from './eventemitter';
 import { QueueMusic } from './constants';
 
@@ -107,6 +108,8 @@ function useMediaSession({
    * 直接降级为 'paused' 会让 macOS Now Playing 释放本应用,
    * 后续系统级切歌键将派发到其他应用. 这里在没有可播放数据时保持 'playing',
    * 等到真正暂停 (用户手动或播放结束且数据已就绪) 才置为 'paused'.
+   * 'ended' 时 paused 已静默置为 true 但数据仍就绪, 同样需要避免下发
+   * 'paused', 否则 ACTION_NEXT 触发的 setSource 还没跑, 控制权就丢了.
    * @author mebtte<i@mebtte.com>
    */
   useEffect(() => {
@@ -114,7 +117,11 @@ function useMediaSession({
       return;
     }
     const sync = () => {
-      if (audio.isPaused() && audio.hasPlayableData()) {
+      if (
+        audio.isPaused() &&
+        audio.hasPlayableData() &&
+        !audio.isEnded()
+      ) {
         safeSetPlaybackState('paused');
       } else {
         safeSetPlaybackState('playing');
@@ -131,6 +138,8 @@ function useMediaSession({
     const unlistenLoadStart = audio.listen('loadstart', sync);
     const unlistenCanplay = audio.listen('canplay', sync);
     const unlistenLoadedData = audio.listen('loadeddata', sync);
+    // 后台冻结期间 play/pause 等事件可能漏掉, 回到前台重新对账锁屏状态.
+    const unlistenVisible = onVisible(sync);
     return () => {
       unlistenPlay();
       unlistenPlaying();
@@ -141,6 +150,7 @@ function useMediaSession({
       unlistenLoadStart();
       unlistenCanplay();
       unlistenLoadedData();
+      unlistenVisible();
     };
   }, [music, audio]);
 
@@ -175,6 +185,7 @@ function useMediaSession({
     const unlistenPlaying = audio.listen('playing', sync);
     const unlistenPause = audio.listen('pause', sync);
     const unlistenRateChange = audio.listen('ratechange', sync);
+    const unlistenVisible = onVisible(sync);
     const heartbeat = paused ? null : window.setInterval(sync, 1000);
     return () => {
       unlistenSeeked();
@@ -183,6 +194,7 @@ function useMediaSession({
       unlistenPlaying();
       unlistenPause();
       unlistenRateChange();
+      unlistenVisible();
       if (heartbeat !== null) {
         window.clearInterval(heartbeat);
       }

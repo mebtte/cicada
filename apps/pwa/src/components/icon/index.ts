@@ -36,7 +36,6 @@ export type { IconProps } from './base';
 
 export { default as Edit }          from './icons/edit';
 export { default as ExternalLink }  from './icons/external-link';
-export { default as Export }        from './icons/export';
 export { default as CheckCircle }   from './icons/check-circle';
 export { default as Close }         from './icons/close';
 export { default as PlayArrow }     from './icons/play-arrow';
@@ -90,6 +89,7 @@ export { default as Password }      from './icons/password';
 export { default as Pause }         from './icons/pause';
 export { default as People }        from './icons/people';
 export { default as PersonAdd }     from './icons/person-add';
+export { default as PersonStar }    from './icons/person-star';
 export { default as PhotoAdd }      from './icons/photo-add';
 export { default as PlayCircle }    from './icons/play-circle';
 export { default as PlaylistPlay }  from './icons/playlist-play';

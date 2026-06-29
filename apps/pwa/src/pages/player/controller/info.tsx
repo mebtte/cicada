@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import ellipsis from '@/style/ellipsis';
 import { QueueMusic } from '../constants';
 import Performer from '../components/performer';

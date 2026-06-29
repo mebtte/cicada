@@ -4,16 +4,14 @@ import {
   updateTask,
   useMusicImport,
 } from '@/global_states/music_import';
-import uploadAssetChunked, {
-  cancelPartialUpload,
-} from '@/server/form/upload_asset_chunked';
+import uploadAssetChunked from '@/server/asset/upload_asset_chunked';
 import createMusic from '@/server/api/create_music';
 import updateMusic from '@/server/api/update_music';
 import { AssetType } from '@/constants/asset';
 import { ExceptionCode } from '@/constants/exception';
 import { AllowUpdateKey } from '@/constants/music';
 import { base64ToCover } from '@/utils/music_file';
-import uploadAsset from '@/server/form/upload_asset';
+import uploadAsset from '@/server/asset/upload_asset';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
 
@@ -74,13 +72,7 @@ export async function cancelTask(id: string) {
   if (controller) {
     controller.abort();
   }
-  const task = useMusicImport.getState().tasks.find((t) => t.id === id);
   updateTask(id, { phase: 'canceled' });
-  if (task?.resumeMeta?.uploadId) {
-    cancelPartialUpload(task.resumeMeta.uploadId).catch((error) =>
-      logger.error(error, `Failed to cancel partial upload ${id}`),
-    );
-  }
 }
 
 function drainQueue() {

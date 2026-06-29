@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { CSSVariable } from '@/global_style';
 import { t } from '@/i18n';
-import upperCaseFirstLetter from '@/style/upper_case_first_letter';
+import upperCaseFirstLetter from '@/utils/upper_case_first_letter';
 import notice from '@/utils/notice';
 import openCreateArtistDialog, {
   type CreatedArtist,
@@ -19,7 +19,6 @@ const Style = styled.div`
   transition:
     transform 150ms ease-out,
     text-shadow 150ms ease-out;
-  ${upperCaseFirstLetter}
 
   &:hover {
     transform: translateY(-1px);
@@ -49,7 +48,7 @@ function CreateArtistLabel({
         });
       }}
     >
-      {t('create_artist')}
+      {upperCaseFirstLetter(t('create_artist'))}
     </Style>
   );
 }

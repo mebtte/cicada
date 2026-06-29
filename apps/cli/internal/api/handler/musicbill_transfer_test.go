@@ -81,7 +81,7 @@ func callTransferOwner(t *testing.T, userID string, body map[string]any) (string
 	if err != nil {
 		t.Fatalf("marshal body: %v", err)
 	}
-	req := httptest.NewRequest(http.MethodPut, "/api/musicbill/owner", bytes.NewReader(buf))
+	req := httptest.NewRequest(http.MethodPut, "/api/common/musicbill/owner", bytes.NewReader(buf))
 	req.Header.Set("Content-Type", "application/json")
 	c.Request = req
 	c.Set("authed_user", &store.User{ID: userID})

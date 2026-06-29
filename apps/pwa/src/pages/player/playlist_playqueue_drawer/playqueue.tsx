@@ -36,7 +36,7 @@ import absoluteFullSize from '@/style/absolute_full_size';
 import { CSSVariable } from '@/global_style';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { t } from '@/i18n';
-import useTitlebarArea from '@/utils/use_titlebar_area_rect';
+import dialog from '@/utils/dialog';
 import { IS_TOUCHABLE } from '@/constants/browser';
 import Context from '../context';
 import TabContent from './tab_content';
@@ -101,6 +101,21 @@ const removeStyle: CSSProperties = {
   color: CSSVariable.COLOR_DANGEROUS,
 };
 
+function confirmLocateQueueMusic(queueMusic: QueueMusic) {
+  dialog.confirm({
+    title: t('play_from_here'),
+    content: t('locate_playqueue_music_question', queueMusic.name),
+    confirmVariant: 'primary',
+    onConfirm: () =>
+      void playerEventemitter.emit(
+        PlayerEventType.ACTION_LOCATE_PLAYQUEUE_MUSIC,
+        {
+          pid: queueMusic.pid,
+        },
+      ),
+  });
+}
+
 function QueueMusicItem({
   active,
   canRemove,
@@ -136,12 +151,7 @@ function QueueMusicItem({
                 aria-label={t('play_from_here')}
                 onClick={(e) => {
                   e.stopPropagation();
-                  return playerEventemitter.emit(
-                    PlayerEventType.ACTION_LOCATE_PLAYQUEUE_MUSIC,
-                    {
-                      pid: queueMusic.pid,
-                    },
-                  );
+                  confirmLocateQueueMusic(queueMusic);
                 }}
               >
                 <Locate />
@@ -249,7 +259,6 @@ function PlayqueueDragOverlay({
 
 function Playqueue() {
   const { currentPlayqueuePosition, playqueue } = useContext(Context);
-  const { height: titlebarAreaHeight } = useTitlebarArea();
   const listRef = useRef<HTMLDivElement>(null);
   const [activePid, setActivePid] = useState<string | null>(null);
   const sensors = useSensors(
@@ -305,7 +314,7 @@ function Playqueue() {
   const activeQueueMusic = activePid
     ? (playqueue.find((queueMusic) => queueMusic.pid === activePid) ?? null)
     : null;
-  const listTopSpace = titlebarAreaHeight + 12;
+  const listTopSpace = 12;
   const onDragStart = ({ active }: DragStartEvent) =>
     setActivePid(String(active.id));
   const onDragEnd = ({ active, over }: DragEndEvent) => {
@@ -390,7 +399,7 @@ function Playqueue() {
         <div
           className="content empty"
           style={{
-            paddingTop: titlebarAreaHeight + 12,
+            paddingTop: 12,
             paddingBottom: LIST_BOTTOM_SPACE,
           }}
         >

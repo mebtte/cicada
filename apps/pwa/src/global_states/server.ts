@@ -3,6 +3,11 @@ import storage, { Key } from '@/storage';
 import { type Server, type ServerState } from '@/constants/server';
 import globalEventemitter, { EventType } from '@/platform/global_eventemitter';
 import { create } from 'zustand';
+import definition from '@/definition';
+import { t } from '@/i18n';
+import { isServerVersionSupported } from '@/utils/version';
+import dialog from '@/utils/dialog';
+import { ROOT_PATH } from '@/constants/route';
 
 export function getSelectedServer(ss: ServerState) {
   return ss.selectedServerOrigin
@@ -34,12 +39,49 @@ useServer.subscribe((server) =>
     .catch((error) => logger.error(error, 'Failed to store server')),
 );
 
+let unsupportedMetadataServerOrigin: string | undefined;
+
+function logoutFromUnsupportedServerVersion(
+  selectedServer: Server,
+  serverVersion: string,
+) {
+  const shouldAlert = unsupportedMetadataServerOrigin !== selectedServer.origin;
+  unsupportedMetadataServerOrigin = selectedServer.origin;
+
+  const error = new Error(
+    t('server_version_unsupported', definition.VERSION, serverVersion),
+  );
+  useServer.setState((server) => ({
+    selectedServerOrigin: undefined,
+    serverList: server.serverList.map((s) =>
+      s.origin === selectedServer.origin
+        ? {
+            ...s,
+            version: serverVersion,
+            selectedUserId: undefined,
+          }
+        : s,
+    ),
+  }));
+  useServerMetadataStatus.setState({ error });
+  globalEventemitter.emit(EventType.FETCH_SERVER_METADATA_FAILED, { error });
+  window.location.hash = ROOT_PATH.LOGIN;
+  if (shouldAlert) {
+    dialog.alert({ content: error.message });
+  }
+}
+
 function refreshSelectedServerMetadata() {
   const selectedServer = getSelectedServer(useServer.getState());
   if (selectedServer) {
     import('@/server/base/get_metadata')
       .then(({ default: getMetadata }) => getMetadata(selectedServer.origin))
       .then((data) => {
+        if (!isServerVersionSupported(definition.VERSION, data.version)) {
+          logoutFromUnsupportedServerVersion(selectedServer, data.version);
+          return;
+        }
+        unsupportedMetadataServerOrigin = undefined;
         useServer.setState((server) => ({
           serverList: server.serverList.map((s) =>
             s.origin === selectedServer.origin

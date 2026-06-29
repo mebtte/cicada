@@ -21,8 +21,6 @@ export enum CommonQuery {
 
 export const MINI_MODE_MAX_WIDTH = 720;
 
-export const NORMAL_REQUEST_MINIMAL_DURATION = 500;
-
 /**
  * 禁止修改分隔符
  * 否则数据库数据将异常

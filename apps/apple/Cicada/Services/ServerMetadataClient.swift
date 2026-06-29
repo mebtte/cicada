@@ -3,6 +3,9 @@ import Foundation
 struct ServerMetadata: Decodable {
     let version: String
     let hostname: String
+    let imageFileMaxSize: Int?
+    let audioFileMaxSize: Int?
+    let videoFileMaxSize: Int?
 }
 
 struct ServerMetadataClient {
@@ -36,7 +39,13 @@ struct ServerMetadataClient {
     }
 
     static let preview = ServerMetadataClient { _ in
-        ServerMetadata(version: "preview", hostname: "demo.cicada.local")
+        ServerMetadata(
+            version: AppVersion.baseVersion(from: AppVersion.current),
+            hostname: "demo.cicada.local",
+            imageFileMaxSize: nil,
+            audioFileMaxSize: nil,
+            videoFileMaxSize: nil
+        )
     }
 
     private static func metadataURL(for origin: String) throws -> URL {
@@ -45,7 +54,7 @@ struct ServerMetadataClient {
         }
 
         var components = URLComponents(
-            url: baseURL.appending(path: "/base/metadata"),
+            url: baseURL.appending(path: "/api/base/metadata"),
             resolvingAgainstBaseURL: false
         )
         components?.queryItems = [
@@ -60,12 +69,11 @@ struct ServerMetadataClient {
     }
 
     private static var appVersion: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-            ?? "apple"
+        AppVersion.current
     }
 
     private static var preferredLanguage: String {
-        Locale.preferredLanguages.first ?? Locale.current.identifier
+        AppSettingsSnapshot.languageQueryValue()
     }
 }
 

@@ -3,16 +3,20 @@ import { CSS_VAR } from '@/components/theme';
 import { type ComponentProps } from 'react';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
-import { animated } from 'react-spring';
+import { animated } from '@react-spring/web';
 import getResizedImage from '@/server/asset/get_resized_image';
-import Cover from '@/components/cover';
+import ImageFrame from '@/components/image_frame';
 import { Musicbill } from '../../constants';
+import {
+  getMusicbillCoverRadius,
+  MUSICBILL_COVER_PUBLIC_COLOR,
+  MUSICBILL_COVER_PUBLIC_SHADOW,
+} from '../../components/musicbill_cover_style';
 import { MINI_INFO_HEIGHT } from './constants';
 import Operation from './operation';
 
 const COVER_SIZE = 34;
-const PUBLIC = '#63d1fa';
-const PUBLIC_SHADOW = 'rgb(72 179 220)';
+const COVER_RADIUS = getMusicbillCoverRadius(COVER_SIZE);
 const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 type AnimatedStyle = ComponentProps<typeof animated.div>['style'];
 
@@ -71,17 +75,8 @@ const Style = styled(animated.div)`
     padding-left: 10px;
   }
 `;
-const CoverArt = styled(Cover)<{ $public: boolean }>`
+const CoverArt = styled(ImageFrame)`
   flex: 0 0 auto;
-  box-sizing: border-box;
-  overflow: hidden;
-
-  background: #fff;
-  border: 2px solid
-    ${({ $public }) => ($public ? PUBLIC : CSSVariable.COLOR_BORDER)};
-  border-radius: 10px;
-  box-shadow: 0 3px 0
-    ${({ $public }) => ($public ? PUBLIC_SHADOW : NEUTRAL_SHADOW)};
 `;
 
 function MiniInfo({
@@ -91,13 +86,23 @@ function MiniInfo({
   musicbill: Musicbill;
   style?: AnimatedStyle;
 }) {
+  const borderColor = musicbill.public
+    ? MUSICBILL_COVER_PUBLIC_COLOR
+    : CSSVariable.COLOR_BORDER;
+  const shadowColor = musicbill.public
+    ? MUSICBILL_COVER_PUBLIC_SHADOW
+    : NEUTRAL_SHADOW;
+
   return (
     <Style style={style}>
       <CoverArt
         className="cover-card"
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         size={COVER_SIZE}
-        $public={musicbill.public}
+        radius={COVER_RADIUS}
+        borderColor={borderColor}
+        shadowColor={shadowColor}
+        shadowOffset={3}
       />
       <div className="name">{musicbill.name}</div>
       <div className="operation-row">

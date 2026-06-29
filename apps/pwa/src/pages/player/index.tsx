@@ -19,6 +19,7 @@ import PlaylistPlayqueueDrawer from './playlist_playqueue_drawer';
 import MusicbillMusicDrawer from './musicbill_music_drawer';
 import SortMusicbillDrawer from './sort_musicbilll_drawer';
 import MusicbillSharedUserDrawer from './musicbill_shared_user_drawer';
+import MusicbillFollowedArtistDrawer from './musicbill_followed_artist_drawer';
 import SharedMusicbillInvitationDrawer from './pages/shared_musicbill_invitation';
 import { QueueMusic } from './constants';
 import LyricPanel from './lyric_panel';
@@ -32,7 +33,6 @@ import e, { EventType } from './eventemitter';
 import NetworkStatus from './network_status';
 import useProfileUpdate from './use_profile_update';
 import TwoFADialog from './2fa_dialog';
-import useExport from './use_export';
 import PlaylistAddAnimation from './playlist_add_animation';
 import PlayqueueInsertAnimation from './playqueue_insert_animation';
 import PublicMusicbillCollectionDrawer from './public_musicbill_collection_drawer';
@@ -103,9 +103,13 @@ function Wrapper() {
     [queueMusic],
   );
 
-  const exportingMusicList = useExport();
   const contextValue = useMemo(
     () => ({
+      playEnabled: true,
+      playNextEnabled: true,
+      addToPlaylistEnabled: true,
+      downloadEnabled: true,
+
       getMusicbillListStatus,
       musicbillList,
 
@@ -120,8 +124,6 @@ function Wrapper() {
       currentPlayqueuePosition,
 
       lyricPanelOpen,
-
-      exportingMusicList,
     }),
     [
       audioBufferedPercent,
@@ -134,7 +136,6 @@ function Wrapper() {
       musicbillList,
       playlist,
       playqueue,
-      exportingMusicList,
     ],
   );
   return (
@@ -163,6 +164,7 @@ function Wrapper() {
       <PublicMusicbillCollectionDrawer />
       <AuthorizedDeviceDrawer />
       <MusicbillSharedUserDrawer />
+      <MusicbillFollowedArtistDrawer />
       <SharedMusicbillInvitationDrawer />
 
       <PlaylistAddAnimation />

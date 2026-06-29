@@ -23,6 +23,5 @@ export const PLAYER_PATH = {
   USER_MANAGE: '/user_manage',
   PUBLIC_MUSICBILL_COLLECTION: '/public_musicbill_collection',
   MUSIC_PLAY_RECORD: '/music_play_record',
-  EXPORTING_MUSIC: '/exporting_music',
   OFFLINE_CACHE: '/offline_cache',
 };

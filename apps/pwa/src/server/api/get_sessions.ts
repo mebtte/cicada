@@ -11,7 +11,7 @@ export interface AuthSession {
 
 function getSessions() {
   return request<AuthSession[]>({
-    path: '/api/sessions',
+    path: '/api/common/sessions',
     withToken: true,
   });
 }

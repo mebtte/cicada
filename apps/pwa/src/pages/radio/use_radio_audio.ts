@@ -2,13 +2,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { debounce } from 'lodash-es';
 import CustomAudio from '@/utils/custom_audio';
 import getMusicPlaybackAsset from '@/utils/music_playback_asset';
+import onVisible from '@/utils/on_visible';
 import { MusicPlaybackQuality } from '@/constants/setting';
-import { QueueMusic } from '@/pages/player/constants';
+import { QueueMusic } from '@/features/player/constants';
 import playerEventemitter, {
   EventType as PlayerEventType,
-} from '@/pages/player/eventemitter';
-import onError from '@/pages/player/use_audio/on_error';
-import usePlayRecord from '@/pages/player/use_audio/use_play_record';
+} from '@/features/player/eventemitter';
+import onError from '@/features/player/use_audio/on_error';
+import usePlayRecord from '@/features/player/use_audio/use_play_record';
 
 /**
  * 电台模式专用的精简版 useAudio:
@@ -25,6 +26,7 @@ function useRadioAudio({
   onEnded: () => void;
 }) {
   const audioRef = useRef<CustomAudio<QueueMusic> | null>(null);
+  const queueMusicPidRef = useRef<string | null>(null);
   if (!audioRef.current) {
     audioRef.current = new CustomAudio<QueueMusic>();
   }
@@ -105,8 +107,24 @@ function useRadioAudio({
     };
   }, [audio]);
 
+  /**
+   * 回到前台时以 <audio> 真实状态对账, 见 pages/player/use_audio.
+   * @author mebtte<i@mebtte.com>
+   */
+  useEffect(() => {
+    const reconcile = () => {
+      setPaused(audio.isPaused());
+      setLoading(!audio.isPaused() && !audio.hasPlayableData());
+      playerEventemitter.emit(PlayerEventType.AUDIO_TIME_UPDATED, {
+        currentMillisecond: audio.getCurrentTime() * 1000,
+      });
+    };
+    return onVisible(reconcile);
+  }, [audio]);
+
   useEffect(() => {
     if (!queueMusic) {
+      queueMusicPidRef.current = null;
       audio.clearSource();
       setLoading(false);
       setPaused(true);
@@ -117,14 +135,21 @@ function useRadioAudio({
       quality: MusicPlaybackQuality.SMOOTH,
     });
     const sourceChanged = audio.getSrc() !== src;
+    const queueMusicChanged = queueMusicPidRef.current !== queueMusic.pid;
+    queueMusicPidRef.current = queueMusic.pid;
+
     audio.setSource({ src, extra: queueMusic });
-    if (sourceChanged) {
+    if (sourceChanged || queueMusicChanged) {
       playerEventemitter.emit(PlayerEventType.AUDIO_TIME_UPDATED, {
         currentMillisecond: 0,
       });
     }
+    if (!sourceChanged && queueMusicChanged) {
+      // 同一首歌作为新的队列项播放时 src 不变, 浏览器不会自动重载音源.
+      audio.setCurrentTime(0);
+    }
     setLoading(sourceChanged || !audio.hasPlayableData());
-    if (sourceChanged) {
+    if (sourceChanged || queueMusicChanged) {
       if (userStartedRef.current) {
         // 用户已经点过一次 play, 切歌后自动续播
         audio.play();

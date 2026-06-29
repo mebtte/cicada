@@ -22,21 +22,21 @@ import {
   useRef,
 } from 'react';
 import Tippy, { TippyProps } from '@tippyjs/react/headless';
-import { animated, useSpring } from 'react-spring';
+import { animated, useSpring } from '@react-spring/web';
 import styled from 'styled-components';
 
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
 const Bubble = styled(animated.div)`
-  /* Duolingo 风格: 深底白字 + 立体阴影 */
+  /* Duolingo 风格: 浅灰底 + 中性硬阴影, 比纯白柔和又能保留立体落差 */
   max-width: 240px;
   padding: 6px 10px;
 
-  background: rgb(60 60 60);
-  color: #fff;
-  border: 2px solid rgb(35 35 35);
+  background: rgb(248 248 248);
+  color: rgb(60 60 60);
+  border: 2px solid rgb(180 180 180);
   border-radius: 12px;
-  box-shadow: 0 4px 0 rgb(35 35 35);
+  box-shadow: 0 4px 0 rgb(180 180 180);
 
   font-family: ${FONT};
   font-size: 12px;
@@ -128,7 +128,7 @@ const Tooltip = ({
         delay={[300, 0]}
         // 触屏: 长按才显示, short tap 不会触发, click 自然透传
         touch={['hold', 500]}
-        // 关闭 Tippy 默认动画, 由 react-spring 接管
+        // 关闭 Tippy 默认动画, 由 @react-spring/web 接管
         animation={false}
         // 渲染到 body, 避免被祖先 overflow 截断
         appendTo={() => document.body}
@@ -143,7 +143,7 @@ const Tooltip = ({
 };
 
 /**
- * 把 react-spring 的过渡逻辑封装到内部组件:
+ * 把 @react-spring/web 的过渡逻辑封装到内部组件:
  * Tippy 通过 render 回调把定位 attrs 给我们, 我们只负责样式 + 入场动画
  */
 const TooltipBody = ({

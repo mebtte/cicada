@@ -98,7 +98,7 @@ function Header() {
           </Button>
         </>
       ) : (
-        <HeaderLogo src="/app_logo.png" alt="" aria-hidden="true" />
+        <HeaderLogo src="/app_logo_v1.png" alt="" aria-hidden="true" />
       )}
       <Title title={title.title} description={title.description} />
       {miniMode ? null : <Search />}

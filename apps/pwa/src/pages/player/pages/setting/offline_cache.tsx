@@ -19,6 +19,7 @@ function OfflineCache() {
       variant={'ghost'}
       style={buttonItemStyle}
       icon={<OfflineDownload size={16} aria-hidden="true" />}
+      disableHoverLift
       onClick={() => navigate(ROOT_PATH.PLAYER + PLAYER_PATH.OFFLINE_CACHE)}
     >
       {t('offline_cache')}

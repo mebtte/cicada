@@ -132,7 +132,7 @@ func TestGetArtist(t *testing.T) {
 
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		c.Request = httptest.NewRequest(http.MethodGet, "/api/artist?id=ART001", nil)
+		c.Request = httptest.NewRequest(http.MethodGet, "/api/common/artist?id=ART001", nil)
 		c.Set("authed_user", &store.User{ID: userID, Admin: admin})
 
 		GetArtist(c)
@@ -301,7 +301,7 @@ func TestSearchArtistReturnsPhotos(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
-	c.Request = httptest.NewRequest(http.MethodGet, "/api/artist/search?keyword=Beta&page=1&pageSize=10", nil)
+	c.Request = httptest.NewRequest(http.MethodGet, "/api/common/artist/search?keyword=Beta&page=1&pageSize=10", nil)
 	c.Set("authed_user", &store.User{ID: "USER01", Admin: 0})
 
 	SearchArtist(c)

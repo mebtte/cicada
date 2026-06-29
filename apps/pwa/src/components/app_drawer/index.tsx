@@ -5,7 +5,6 @@ import {
   type DrawerContentProps,
   type DrawerSide,
 } from '@/components/drawer';
-import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 
 export type AppDrawerWidth = 'compact' | 'medium' | 'wide' | number | string;
 
@@ -37,7 +36,6 @@ function getWidthStyle(width: AppDrawerWidth | undefined): CSSProperties {
 export interface AppDrawerProps
   extends Omit<DrawerContentProps, 'children' | 'side' | 'style'> {
   children: ReactNode;
-  includeTitlebarInset?: boolean;
   onClose: () => void;
   open: boolean;
   side?: DrawerSide;
@@ -47,7 +45,6 @@ export interface AppDrawerProps
 
 function AppDrawer({
   children,
-  includeTitlebarInset = true,
   onClose,
   open,
   side = 'right',
@@ -55,10 +52,8 @@ function AppDrawer({
   width,
   ...contentProps
 }: AppDrawerProps) {
-  const { top: titlebarTop } = useTitlebarOverlayInsets();
   const contentStyle: CSSProperties = {
     ...getWidthStyle(width),
-    ...(includeTitlebarInset ? { paddingTop: titlebarTop } : null),
     ...style,
   };
 

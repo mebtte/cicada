@@ -1,6 +1,6 @@
 import Spinner from '@/components/spinner';
 import { flexCenter } from '@/style/flexbox';
-import { animated, useTransition } from 'react-spring';
+import { animated, useTransition } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
 import Empty from '@/components/empty';
@@ -469,7 +469,7 @@ function RecommendationPanel() {
                   renderItem={renderMusicCard}
                 />
                 <ExplorationSection
-                  title={t('recommended_artist')}
+                  title={t('recommended_artists')}
                   items={d.value.artistList}
                   icon={<Microphone />}
                   accent={ACCENT.ARTIST}
@@ -479,7 +479,7 @@ function RecommendationPanel() {
                   renderItem={renderArtistCard}
                 />
                 <ExplorationSection
-                  title={t('recommended_public_musicbill')}
+                  title={t('recommended_public_musicbills')}
                   items={d.value.publicMusicbillList}
                   icon={<QueueMusicIcon />}
                   accent={ACCENT.MUSICBILL}
@@ -495,7 +495,7 @@ function RecommendationPanel() {
                   renderItem={renderMusicCard}
                 />
                 <ExplorationSection
-                  title={t('recent_artist')}
+                  title={t('recent_artists')}
                   items={d.value.recentArtistList}
                   icon={<Microphone />}
                   accent={ACCENT.ARTIST}
@@ -505,7 +505,7 @@ function RecommendationPanel() {
                   renderItem={renderArtistCard}
                 />
                 <ExplorationSection
-                  title={t('recent_public_musicbill')}
+                  title={t('recent_public_musicbills')}
                   items={d.value.recentPublicMusicbillList}
                   icon={<QueueMusicIcon />}
                   accent={ACCENT.MUSICBILL}

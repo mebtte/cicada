@@ -23,12 +23,12 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 	}
 
 	requiredPaths := []string{
-		"/api_reference/openapi.json",
-		"/base/login",
-		"/api/profile",
-		"/api/music",
+		"/apidoc/openapi.json",
+		"/api/base/login",
+		"/api/common/profile",
+		"/api/common/music",
 		"/api/admin/music",
-		"/api/musicbill",
+		"/api/common/musicbill",
 	}
 
 	for _, path := range requiredPaths {
@@ -37,9 +37,9 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 		}
 	}
 
-	profilePath, ok := paths["/api/profile"].(map[string]any)
+	profilePath, ok := paths["/api/common/profile"].(map[string]any)
 	if !ok {
-		t.Fatalf("profile path missing or invalid: %T", paths["/api/profile"])
+		t.Fatalf("profile path missing or invalid: %T", paths["/api/common/profile"])
 	}
 	profileGet, ok := profilePath["get"].(map[string]any)
 	if !ok {
@@ -61,9 +61,9 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 		t.Fatalf("expected admin music write operation to require admin")
 	}
 
-	loginPath, ok := paths["/base/login"].(map[string]any)
+	loginPath, ok := paths["/api/base/login"].(map[string]any)
 	if !ok {
-		t.Fatalf("login path missing or invalid: %T", paths["/base/login"])
+		t.Fatalf("login path missing or invalid: %T", paths["/api/base/login"])
 	}
 	loginPost, ok := loginPath["post"].(map[string]any)
 	if !ok {
@@ -96,13 +96,13 @@ func TestRegisterServesDocsPageAndSpec(t *testing.T) {
 
 	t.Run("page", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/api_reference", nil)
+		req := httptest.NewRequest(http.MethodGet, "/apidoc", nil)
 		r.ServeHTTP(w, req)
 
 		if w.Code != http.StatusOK {
 			t.Fatalf("unexpected status: %d", w.Code)
 		}
-		if !strings.Contains(w.Body.String(), "/api_reference/openapi.json") {
+		if !strings.Contains(w.Body.String(), "/apidoc/openapi.json") {
 			t.Fatalf("docs page does not reference the OpenAPI document")
 		}
 		if !strings.Contains(w.Body.String(), "Authentication") {
@@ -115,7 +115,7 @@ func TestRegisterServesDocsPageAndSpec(t *testing.T) {
 
 	t.Run("spec", func(t *testing.T) {
 		w := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "/api_reference/openapi.json", nil)
+		req := httptest.NewRequest(http.MethodGet, "/apidoc/openapi.json", nil)
 		r.ServeHTTP(w, req)
 
 		if w.Code != http.StatusOK {

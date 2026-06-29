@@ -15,7 +15,7 @@ type Response = {
  */
 function getSharedMusicbillInvitationList() {
   return request<Response>({
-    path: '/api/shared_musicbill_invitation_list',
+    path: '/api/common/shared_musicbill_invitation_list',
     withToken: true,
   });
 }

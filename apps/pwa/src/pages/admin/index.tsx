@@ -764,7 +764,7 @@ function AdminPage() {
       <MusicImportSidebar />
       <Sidebar $open={sidebarOpen}>
         <SidebarHeader style={{ paddingTop: sidebarTopPadding }}>
-          <BrandLogo src="/app_logo.png" alt={t('logo')} crossOrigin="anonymous" />
+          <BrandLogo src="/app_logo_v1.png" alt={t('logo')} crossOrigin="anonymous" />
           <BrandText>
             <BrandName>{capitalize(t('cicada'))}</BrandName>
           </BrandText>

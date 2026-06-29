@@ -38,7 +38,7 @@ async function searchPublicMusicbill({
   pageSize: number;
 }) {
   const data = await request<RawResponse>({
-    path: '/api/public_musicbill/search',
+    path: '/api/common/public_musicbill/search',
     params: { keyword, page, pageSize },
     withToken: true,
   });

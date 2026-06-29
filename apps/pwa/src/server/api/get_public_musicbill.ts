@@ -6,6 +6,7 @@ type Response = {
   id: string;
   cover: string;
   name: string;
+  public: boolean;
   user: {
     id: string;
     nickname: string;
@@ -45,7 +46,7 @@ type Response = {
  */
 async function getPublicMusicbill(id: string) {
   const musicbill = await request<Response>({
-    path: '/api/public_musicbill',
+    path: '/api/common/public_musicbill',
     params: { id },
     withToken: true,
   });

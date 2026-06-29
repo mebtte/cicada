@@ -10,6 +10,7 @@ function UserManage() {
     <Button
       variant={'primary'}
       style={buttonItemStyle}
+      disableHoverLift
       onClick={() => navigate(ROOT_PATH.PLAYER + PLAYER_PATH.USER_MANAGE)}
     >
       {t('user_management')}

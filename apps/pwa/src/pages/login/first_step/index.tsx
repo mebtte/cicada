@@ -10,7 +10,7 @@ import ServerList from './server_list';
 import { useServer } from '@/global_states/server';
 import { Divider } from '@/components';
 import definition from '@/definition';
-import { isSameMajorVersion } from '@/utils/version';
+import { isServerVersionSupported } from '@/utils/version';
 import dialog from '@/utils/dialog';
 import {
   getServerMetadataErrorMessage,
@@ -69,10 +69,10 @@ function FirstStep({
         '@/server/base/get_metadata'
       );
       const metadata = await getMetadata(nextOrigin);
-      if (!isSameMajorVersion(definition.VERSION, metadata.version)) {
+      if (!isServerVersionSupported(definition.VERSION, metadata.version)) {
         dialog.alert({
           content: t(
-            'server_major_version_mismatch',
+            'server_version_unsupported',
             definition.VERSION,
             metadata.version,
           ),
