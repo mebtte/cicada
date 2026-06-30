@@ -443,59 +443,6 @@ func TestRemoveUnlinkedAssetDeletesUnreferencedFiles(t *testing.T) {
 	}
 }
 
-func TestDecreaseMusicHeatDecreasesDailyWithoutGoingBelowZero(t *testing.T) {
-	if err := store.ResetForTests(); err != nil {
-		t.Fatalf("reset store: %v", err)
-	}
-	t.Cleanup(func() {
-		if err := store.ResetForTests(); err != nil {
-			t.Fatalf("cleanup store: %v", err)
-		}
-	})
-
-	config.Set(config.Config{
-		Mode: config.ModeProduction,
-		Data: t.TempDir(),
-		Port: 8000,
-	})
-
-	if err := store.Initialize(); err != nil {
-		t.Fatalf("initialize store: %v", err)
-	}
-
-	if _, err := store.DB().Exec(
-		`INSERT INTO music (id,type,name,asset,heat,createTimestamp) VALUES
-			('HEAT02',1,'two','two.mp3',2,0),
-			('HEAT01',1,'one','one.mp3',1,0),
-			('HEAT00',1,'zero','zero.mp3',0,0)`,
-	); err != nil {
-		t.Fatalf("insert music: %v", err)
-	}
-
-	result, err := decreaseMusicHeat()
-	if err != nil {
-		t.Fatalf("decrease music heat: %v", err)
-	}
-	if result.Metrics["updated_music_heat_rows"] != 2 {
-		t.Fatalf("updated rows = %d", result.Metrics["updated_music_heat_rows"])
-	}
-
-	expected := map[string]int64{
-		"HEAT02": 1,
-		"HEAT01": 0,
-		"HEAT00": 0,
-	}
-	for id, want := range expected {
-		var got int64
-		if err := store.DB().QueryRow(`SELECT heat FROM music WHERE id=?`, id).Scan(&got); err != nil {
-			t.Fatalf("query %s heat: %v", id, err)
-		}
-		if got != want {
-			t.Fatalf("%s heat = %d, want %d", id, got, want)
-		}
-	}
-}
-
 func writeMusicAssetForCleanTest(t *testing.T, filename string) {
 	t.Helper()
 
