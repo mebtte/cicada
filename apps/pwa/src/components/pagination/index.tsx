@@ -2,6 +2,7 @@ import { HtmlHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 import Button, { Size } from '@/components/button';
 import { CSSVariable } from '@/global_style';
+import hover from '@/style/hover';
 import usePagination from './use_pagination';
 import { t } from '@/i18n';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from '@/components/icon';
@@ -38,12 +39,14 @@ const PageButton = styled(Button)<{ $selected: boolean; $size: Size }>`
         transform 150ms ease-out,
         filter 120ms ease-out;
 
-      &:not(:disabled):hover {
-        background: #fff;
-        border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-        box-shadow: 0 ${SHADOW_OFFSET[$size] + 2}px 0
-          ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-      }
+      ${hover(css`
+        &:not(:disabled):hover {
+          background: #fff;
+          border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+          box-shadow: 0 ${SHADOW_OFFSET[$size] + 2}px 0
+            ${CSSVariable.COLOR_NEUTRAL_SHADOW};
+        }
+      `)}
 
       &:not(:disabled):active {
         transition:

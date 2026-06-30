@@ -6,6 +6,7 @@ import {
 } from 'react';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import hover from '@/style/hover';
 import { CSS_VAR } from '../theme';
 import Spinner from '../spinner';
 
@@ -77,18 +78,20 @@ const makeVariant = (
 
   box-shadow: 0 ${({ $offset }) => $offset}px 0 ${shadow};
 
-  &:not(:disabled):hover {
-    ${({ $disableHoverLift, $offset }) =>
-      $disableHoverLift
-        ? css`
-            transform: none;
-            box-shadow: 0 ${$offset}px 0 ${shadow};
-          `
-        : css`
-            transform: translateY(-2px);
-            box-shadow: 0 ${$offset + 2}px 0 ${shadow};
-          `}
-  }
+  ${hover(css<{ $disableHoverLift: boolean; $offset: number }>`
+    &:not(:disabled):hover {
+      ${({ $disableHoverLift, $offset }) =>
+        $disableHoverLift
+          ? css`
+              transform: none;
+              box-shadow: 0 ${$offset}px 0 ${shadow};
+            `
+          : css`
+              transform: translateY(-2px);
+              box-shadow: 0 ${$offset + 2}px 0 ${shadow};
+            `}
+    }
+  `)}
 
   &:not(:disabled):active {
     transform: translateY(${({ $offset }) => $offset}px);

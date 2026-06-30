@@ -34,8 +34,9 @@ import {
   useState,
 } from 'react';
 import * as RadixDialog from '@radix-ui/react-dialog';
-import styled, { keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import hover from '@/style/hover';
 import { useTheme, CSS_VAR } from '../theme';
 import { t } from '@/i18n';
 import {
@@ -241,7 +242,9 @@ const CloseButton = styled(RadixDialog.Close)`
   cursor: pointer;
   transition: color 120ms, background 120ms;
 
-  &:hover { color: rgb(60 60 60); background: rgb(240 240 240); }
+  ${hover(css`
+    &:hover { color: rgb(60 60 60); background: rgb(240 240 240); }
+  `)}
   &:focus-visible {
     outline: 3px solid currentColor;
     outline-offset: 2px;

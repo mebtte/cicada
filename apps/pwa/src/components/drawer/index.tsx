@@ -36,6 +36,7 @@ import * as RadixDialog from '@radix-ui/react-dialog';
 import styled, { css, keyframes } from 'styled-components';
 import { useTheme, CSS_VAR } from '../theme';
 import { CSSVariable } from '@/global_style';
+import hover from '@/style/hover';
 import { t } from '@/i18n';
 import {
   DialogTitleRegistryContext,
@@ -178,9 +179,11 @@ const CloseButton = styled(RadixDialog.Close)`
     box-shadow 150ms ease-out,
     filter 120ms;
 
-  &:hover {
-    filter: brightness(1.06);
-  }
+  ${hover(css`
+    &:hover {
+      filter: brightness(1.06);
+    }
+  `)}
 
   &:active {
     transform: translateY(3px);

@@ -1,8 +1,8 @@
 import * as Radix from '@radix-ui/react-slider';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import hover, { FINE_POINTER_MEDIA } from '@/style/hover';
 import classnames from 'classnames';
 import { ComponentPropsWithoutRef } from 'react';
-import { IS_TOUCHABLE } from '@/constants/browser';
 import { CSS_VAR } from '../theme';
 
 export type SliderEdge = 'rounded' | 'square';
@@ -121,9 +121,11 @@ const StyledRoot = styled(Radix.Root)`
   &.square  ${StyledTrack} { border-radius: 4px;   }
 
   /* hover：轨道略亮，同 Button hover 行为 */
-  &:not([data-disabled]):hover ${StyledTrack} {
-    filter: brightness(1.06);
-  }
+  ${hover(css`
+    &:not([data-disabled]):hover ${StyledTrack} {
+      filter: brightness(1.06);
+    }
+  `)}
 
   /* disabled */
   &[data-disabled] {
@@ -131,9 +133,11 @@ const StyledRoot = styled(Radix.Root)`
     opacity: 0.5;
   }
 
-  /* 非触摸设备：默认隐藏拇指 */
-  &.untouchable:not(.always-show-thumb) ${StyledThumb} {
-    display: none;
+  /* 精确指针设备 (鼠标等)：默认隐藏拇指, 仅留轨道, 反馈交给 hover 提亮 */
+  @media ${FINE_POINTER_MEDIA} {
+    &:not(.always-show-thumb) ${StyledThumb} {
+      display: none;
+    }
   }
 `;
 
@@ -178,7 +182,6 @@ function Slider({
       className={classnames(
         edge,
         {
-          untouchable: !IS_TOUCHABLE,
           'always-show-thumb': alwaysShowThumb,
         },
         className,
