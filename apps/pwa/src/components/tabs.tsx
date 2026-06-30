@@ -8,6 +8,7 @@ import {
 import { animated, useSpring } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import hover from '@/style/hover';
 import { CSS_VAR } from './theme';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
@@ -114,9 +115,11 @@ const TabButton = styled.button<{ $active: boolean }>`
     pointer-events: none;
   }
 
-  &:not(:disabled):hover {
-    filter: brightness(1.04);
-  }
+  ${hover(css`
+    &:not(:disabled):hover {
+      filter: brightness(1.04);
+    }
+  `)}
 
   &:disabled {
     cursor: not-allowed;
@@ -137,11 +140,13 @@ const TabButton = styled.button<{ $active: boolean }>`
   ${({ $active }) =>
     !$active &&
     css`
-      &:not(:disabled):hover {
-        &::before {
-          opacity: 1;
+      ${hover(css`
+        &:not(:disabled):hover {
+          &::before {
+            opacity: 1;
+          }
         }
-      }
+      `)}
     `}
 `;
 

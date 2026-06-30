@@ -29,7 +29,6 @@ function Progress({
       onChange={onChange}
       onCommit={onCommit}
       secondValue={bufferedPercent}
-      alwaysShowThumb
     />
   );
 }

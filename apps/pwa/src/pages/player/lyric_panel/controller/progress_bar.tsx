@@ -62,7 +62,6 @@ function Wrapper({
         onCommit={onTimeCommit}
         className="slider"
         secondValue={bufferedPercent}
-        alwaysShowThumb
       />
       <div className="time">{formatSecond(duration)}</div>
     </Style>

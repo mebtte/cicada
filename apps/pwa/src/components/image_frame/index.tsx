@@ -1,5 +1,6 @@
 import { HTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
+import hover from '@/style/hover';
 import Cover, { Shape } from '@/components/cover';
 
 const FACE = '#ffffff';
@@ -62,10 +63,12 @@ const Root = styled.div<{
       user-select: none;
       -webkit-tap-highlight-color: transparent;
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 ${$shadowOffset + 2}px 0 ${$shadowColor};
-      }
+      ${hover(css`
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 ${$shadowOffset + 2}px 0 ${$shadowColor};
+        }
+      `)}
 
       &:active {
         transform: translateY(${$shadowOffset}px);
