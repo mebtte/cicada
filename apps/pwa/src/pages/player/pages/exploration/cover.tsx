@@ -11,6 +11,7 @@ const Style = styled.div<{
   $variant: Variant;
 }>`
   position: relative;
+  isolation: isolate;
   min-width: 0;
   padding: ${({ $variant }) => {
     if ($variant === 'profile') {
@@ -46,7 +47,14 @@ const Style = styled.div<{
     border-radius: 50%;
     background: ${({ $accent }) => $accent};
     box-shadow: 0 2px 0 ${({ $shadow }) => $shadow};
-    z-index: 2;
+    z-index: 4;
+    pointer-events: none;
+    transform: translateZ(0);
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
   }
 
   > .info {
@@ -191,6 +199,7 @@ const CassetteScene = styled.div<{
 }>`
   position: relative;
   aspect-ratio: 1;
+  isolation: isolate;
   overflow: hidden;
 
   border: 3px solid ${({ $shadow }) => $shadow};
@@ -201,16 +210,17 @@ const CassetteScene = styled.div<{
     content: '';
     position: absolute;
     inset: 0;
-    z-index: 1;
-    background:
-      linear-gradient(180deg, transparent 0 48%, rgb(0 0 0 / 0.08) 100%),
-      radial-gradient(circle at 20% 16%, rgb(255 255 255 / 0.42) 0 14px, transparent 15px);
+    z-index: 2;
+    background: linear-gradient(180deg, transparent 0 48%, rgb(0 0 0 / 0.08) 100%);
     pointer-events: none;
+    transform: translateZ(0);
   }
 
   > .artwork-frame {
     position: absolute;
     inset: 0;
+    z-index: 0;
+    contain: paint;
     overflow: hidden;
   }
 
@@ -228,7 +238,7 @@ const CassetteScene = styled.div<{
     left: 7%;
     right: 7%;
     bottom: 7%;
-    z-index: 2;
+    z-index: 3;
     height: 38%;
     padding: 7% 12% 6%;
 
