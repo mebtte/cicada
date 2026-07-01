@@ -235,7 +235,6 @@ function Wrapper({
       open={open}
       onClose={onClose}
       width="wide"
-      showClose={false}
       zIndex={zIndex}
     >
       {transitions((style, d) => {

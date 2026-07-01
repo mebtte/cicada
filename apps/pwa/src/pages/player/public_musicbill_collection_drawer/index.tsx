@@ -66,7 +66,6 @@ function PublicMusicbillCollectionDrawer() {
     <Drawer open={open} onOpenChange={(v) => !v && setOpen(false)}>
       <DrawerContent
         side="right"
-        showClose={false}
         accessibleTitle={t('public_musicbill_collection')}
         style={{ width: 'min(80%, 360px)' }}
         zIndex={zIndex}

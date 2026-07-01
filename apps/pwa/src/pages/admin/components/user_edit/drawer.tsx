@@ -20,7 +20,6 @@ function UserEditDrawer({
       <DrawerContent
         side="right"
         style={{ width: 390 }}
-        showClose={false}
         accessibleTitle={user?.username}
         onOpenAutoFocus={(event) => event.preventDefault()}
       >

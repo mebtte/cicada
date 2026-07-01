@@ -1,4 +1,4 @@
-import { KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { CSSProperties, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import withLogin from '@/platform/with_login';
@@ -12,6 +12,7 @@ import Avatar from '@/components/avatar';
 import Button from '@/components/button';
 import AppExtraInfo from '@/components/app_extra_info';
 import Tooltip from '@/components/tooltip';
+import { Drawer, DrawerContent } from '@/components/drawer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { CSS_VAR } from '@/components/theme';
@@ -42,8 +43,6 @@ import {
 const SIDEBAR_WIDTH = 240;
 const HEADER_HEIGHT = 72;
 const MOBILE_BREAKPOINT = 760;
-const MOBILE_OVERLAY_Z_INDEX = 20;
-const MOBILE_SIDEBAR_Z_INDEX = 30;
 const AVATAR_SIZE = 36;
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
@@ -94,7 +93,9 @@ const Page = styled.div`
   overflow: hidden;
 `;
 
-const Sidebar = styled.aside<{ $open: boolean }>`
+// Desktop-only persistent rail. Narrow screens render the same menu inside the
+// shared <Drawer side="left"> instead of transforming this element off-screen.
+const Sidebar = styled.aside`
   width: ${SIDEBAR_WIDTH}px;
   flex-shrink: 0;
   display: flex;
@@ -104,15 +105,14 @@ const Sidebar = styled.aside<{ $open: boolean }>`
   box-shadow: 4px 0 0
     color-mix(in srgb, ${SURFACE_SHADOW} 35%, transparent);
   z-index: 3;
+`;
 
-  @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    position: fixed;
-    inset: 0 auto 0 0;
-    /* Keep the mobile drawer above the fixed admin header while it is open. */
-    z-index: ${MOBILE_SIDEBAR_Z_INDEX};
-    transform: translateX(${({ $open }) => ($open ? '0' : '-100%')});
-    transition: transform 180ms ease;
-  }
+// Fills the Drawer's scroll area so the menu list flexes and the info card stays
+// pinned to the bottom, mirroring the desktop sidebar's column layout.
+const DrawerSidebarInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 `;
 
 const SidebarHeader = styled.div`
@@ -282,20 +282,6 @@ const MenuLink = styled(NavLink)`
 
   & + & {
     margin-top: 8px;
-  }
-`;
-
-const Overlay = styled.button<{ $open: boolean }>`
-  display: none;
-
-  @media (max-width: ${MOBILE_BREAKPOINT}px) {
-    position: fixed;
-    inset: 0;
-    display: ${({ $open }) => ($open ? 'block' : 'none')};
-    z-index: ${MOBILE_OVERLAY_Z_INDEX};
-    border: none;
-    padding: 0;
-    background: rgb(0 0 0 / 0.26);
   }
 `;
 
@@ -746,6 +732,39 @@ function AdminPage() {
     url: user.avatar,
     size: AVATAR_SIZE * 2,
   });
+  // Shared menu body — reused by the desktop rail and the mobile drawer. On
+  // desktop we pass the titlebar-aware top padding; inside the drawer the panel
+  // already reserves the safe-area/titlebar inset, so no extra padding is added.
+  const renderMenu = (headerStyle?: CSSProperties) => (
+    <>
+      <SidebarHeader style={headerStyle}>
+        <BrandLogo
+          src="/app_logo_v1.png"
+          alt={t('logo')}
+          crossOrigin="anonymous"
+        />
+        <BrandText>
+          <BrandName>{capitalize(t('cicada'))}</BrandName>
+        </BrandText>
+      </SidebarHeader>
+
+      <MenuList>
+        {ADMIN_MENU_ITEMS.map(({ path, label, Icon }) => (
+          <MenuLink
+            key={path}
+            to={getAdminPath(path)}
+            end={path === ADMIN_PATH.DASHBOARD}
+            onClick={closeSidebar}
+          >
+            <Icon />
+            <span>{capitalize(t(label))}</span>
+          </MenuLink>
+        ))}
+      </MenuList>
+      <SidebarExtraInfo />
+    </>
+  );
+
   const toggleUserMenu = () => setUserMenuOpen((open) => !open);
   const onAvatarKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -761,35 +780,18 @@ function AdminPage() {
     <Page>
       <UploadManagerHost />
       <MusicImportSidebar />
-      <Sidebar $open={sidebarOpen}>
-        <SidebarHeader style={{ paddingTop: sidebarTopPadding }}>
-          <BrandLogo src="/app_logo_v1.png" alt={t('logo')} crossOrigin="anonymous" />
-          <BrandText>
-            <BrandName>{capitalize(t('cicada'))}</BrandName>
-          </BrandText>
-        </SidebarHeader>
-
-        <MenuList>
-          {ADMIN_MENU_ITEMS.map(({ path, label, Icon }) => (
-            <MenuLink
-              key={path}
-              to={getAdminPath(path)}
-              end={path === ADMIN_PATH.DASHBOARD}
-              onClick={closeSidebar}
-            >
-              <Icon />
-              <span>{capitalize(t(label))}</span>
-            </MenuLink>
-          ))}
-        </MenuList>
-        <SidebarExtraInfo />
-      </Sidebar>
-      <Overlay
-        type="button"
-        $open={sidebarOpen}
-        onClick={() => setSidebarOpen(false)}
-        aria-label={t('close_menu_overlay')}
-      />
+      {isMobileLayout ? (
+        <Drawer open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <DrawerContent
+            side="left"
+            accessibleTitle={capitalize(t('open_menu'))}
+          >
+            <DrawerSidebarInner>{renderMenu()}</DrawerSidebarInner>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <Sidebar>{renderMenu({ paddingTop: sidebarTopPadding })}</Sidebar>
+      )}
 
       <Main>
         <Header

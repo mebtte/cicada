@@ -18,7 +18,6 @@ function MusicDrawer({
       onClose={onClose}
       width="medium"
       zIndex={zIndex}
-      showClose={false}
     >
       <MusicContent id={id} insideDrawer />
     </AppDrawer>
