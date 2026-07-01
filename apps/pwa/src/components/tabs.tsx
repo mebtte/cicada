@@ -157,7 +157,6 @@ const TabButtonLabel = styled.span`
   min-width: 0;
   max-width: 100%;
   height: 100%;
-  padding-bottom: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
