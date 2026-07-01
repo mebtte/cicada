@@ -106,7 +106,7 @@ const zhCN: {
   alias: '别名',
   aliases: '别名',
   search_keywords: '搜索词',
-  search_keywords_placeholder: '拼音、首字母、昵称、错拼、译名等，仅用于搜索',
+  search_keywords_placeholder: '搜索关键词，仅用于搜索匹配，不展示，一行一个',
   no_musicbill: '暂无乐单',
   no_data: '暂无数据',
   no_suitable_music_play_record: '暂无相关的音乐播放记录',

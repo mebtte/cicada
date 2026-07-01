@@ -1130,9 +1130,7 @@ function MusicList({
                             </ArtistButton>
                           ))}
                         </TagList>
-                      ) : (
-                        <Muted>{t('unknown')}</Muted>
-                      )}
+                      ) : null}
                     </Td>
                     <Td>
                       {music.type === MusicType.SONG && music.lyricists.length ? (
