@@ -91,7 +91,6 @@ const Page = styled.div`
   position: fixed;
   inset: 0;
   display: flex;
-  background: rgb(247 247 247);
   overflow: hidden;
 `;
 

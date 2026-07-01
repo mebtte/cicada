@@ -18,10 +18,6 @@ const Shell = styled.div`
 
   display: flex;
   flex-direction: column;
-
-  background:
-    linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 240px),
-    rgb(248 249 250);
 `;
 
 const Header = styled(DrawerHeader)`
