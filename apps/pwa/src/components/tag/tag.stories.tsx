@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Duolingo-style pill badge with the same hard-shadow formula as `Button`. Use it for read-only status, role, or type tags (e.g. "current device", "admin"). Supports 3 variants (`primary`, `neutral`, `danger`), 2 sizes, and an optional leading icon. Primary variant follows the per-server custom theme color.',
+          'Pill badge with the same hard-shadow formula as `Button`. Use it for read-only status, role, or type tags (e.g. "current device", "admin"). Supports 3 variants (`primary`, `neutral`, `danger`), 2 sizes, and an optional leading icon. Primary variant follows the per-server custom theme color.',
       },
     },
   },

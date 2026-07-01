@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import Button from './button';
 import Spinner from './spinner';
 
 const meta = {
@@ -10,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Circular loading indicator. Color follows the active theme primary by default, and can inherit the parent color with currentColor.',
+          'Beat loading indicator. Color follows the active theme primary by default, and can inherit the parent color with currentColor.',
       },
     },
   },
@@ -48,6 +49,34 @@ export const Sizes: Story = {
           <span style={{ fontSize: 11, color: '#999' }}>{size}px</span>
         </div>
       ))}
+    </div>
+  ),
+};
+
+export const InsideButton: Story = {
+  name: 'Inside button',
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        flexWrap: 'wrap',
+      }}
+    >
+      <Button size="sm" loading>
+        Saving
+      </Button>
+      <Button size="md" loading>
+        Uploading
+      </Button>
+      <Button size="lg" loading>
+        Importing
+      </Button>
+      <Button variant="ghost" loading>
+        Refresh
+      </Button>
     </div>
   ),
 };

@@ -7,12 +7,12 @@ import { CSS_VAR } from '../theme';
 
 export type SliderEdge = 'rounded' | 'square';
 
-const PRIMARY        = `var(${CSS_VAR.colorPrimary})`;
+const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 
-const TRACK_H  = 12;   // px — 轨道高度，与 Button 同等视觉分量
-const OFFSET   = 4;    // px — 阴影偏移，对应 Button md 的 4px
-const BORDER   = 2;    // px — 描边宽度，与 Button 一致
+const TRACK_H = 12;   // px — 轨道高度，与 Button 同等视觉分量
+const OFFSET = 4;    // px — 阴影偏移，对应 Button md 的 4px
+const BORDER = 2;    // px — 描边宽度，与 Button 一致
 
 // ─── fills ────────────────────────────────────────────────────────────────────
 
@@ -32,11 +32,6 @@ const SecondaryFill = styled.div`
   transition: transform 0.3s;
   z-index: 0;
 `;
-
-// ─── track ────────────────────────────────────────────────────────────────────
-//
-// Duolingo 公式：实色填充 + 底部硬阴影（无 blur）+ hover 略亮
-// 不做 active 下沉（Radix 依赖 track 的真实位置做拖拽计算，translate 会偏移命中区）
 
 const StyledTrack = styled(Radix.Track)`
   position: relative;
