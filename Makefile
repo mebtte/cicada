@@ -15,15 +15,24 @@ define stage_ffmpeg_bundle
 	node scripts/prepare_ffmpeg_bundle.mjs --target $(1) --version "$(FFMPEG_VERSION)" $(if $($(2)),--archive "$($(2))") $(if $($(3)),--sha256 "$($(3))")
 endef
 
-.PHONY: pwa release docker clean ffmpeg-bundles ffmpeg-bundle-darwin-arm64 ffmpeg-bundle-windows-amd64 ffmpeg-bundle-windows-arm64 ffmpeg-bundle-linux-amd64 ffmpeg-bundle-linux-arm64
+.PHONY: pwa storybook release docker clean ffmpeg-bundles ffmpeg-bundle-darwin-arm64 ffmpeg-bundle-windows-amd64 ffmpeg-bundle-windows-arm64 ffmpeg-bundle-linux-amd64 ffmpeg-bundle-linux-arm64
+
+## 安装前端依赖 (供 pwa 与 storybook 构建复用, 依赖 lockfile 变更时才重装)
+apps/pwa/node_modules/.package-lock.json: apps/pwa/package-lock.json
+	npm ci --prefix apps/pwa
 
 ## 构建 PWA 并嵌入 CLI
-pwa:
+pwa: apps/pwa/node_modules/.package-lock.json
 	node scripts/build_version.mjs validate "$(VERSION)"
-	npm ci --prefix apps/pwa
 	CICADA_VERSION=$(VERSION) npm run build --prefix apps/pwa
 	rm -rf $(CLI_DIR)/pwa/dist
 	cp -R apps/pwa/dist $(CLI_DIR)/pwa/dist
+
+## 构建 Storybook 并嵌入 CLI (托管于 /storybook)
+storybook: apps/pwa/node_modules/.package-lock.json
+	npm run build-storybook --prefix apps/pwa
+	rm -rf $(CLI_DIR)/storybook/static
+	cp -R apps/pwa/storybook-static $(CLI_DIR)/storybook/static
 
 ffmpeg-bundle-darwin-arm64:
 	$(call stage_ffmpeg_bundle,darwin-arm64,FFMPEG_ARCHIVE_DARWIN_ARM64,FFMPEG_SHA256_DARWIN_ARM64)
@@ -48,7 +57,7 @@ ffmpeg-bundles: \
 	ffmpeg-bundle-linux-arm64
 
 ## 全平台构建发布包 (默认目标)
-release: pwa ffmpeg-bundles
+release: pwa storybook ffmpeg-bundles
 	rm -rf $(BUILD_DIR)
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(BUILD_DIR)/darwin-arm64
@@ -74,7 +83,7 @@ release: pwa ffmpeg-bundles
 		$(BUILD_DIR)/linux-arm64
 
 ## 构建 Linux 多架构二进制 (供 Docker buildx 使用, 不压缩)
-docker: pwa ffmpeg-bundle-linux-amd64 ffmpeg-bundle-linux-arm64
+docker: pwa storybook ffmpeg-bundle-linux-amd64 ffmpeg-bundle-linux-arm64
 	rm -rf $(BUILD_DIR)
 	mkdir -p $(BUILD_DIR)/linux-amd64
 	$(call build_cli,linux,amd64,$(BUILD_DIR)/linux-amd64/cicada)
@@ -84,4 +93,4 @@ docker: pwa ffmpeg-bundle-linux-amd64 ffmpeg-bundle-linux-arm64
 
 ## 清理构建产物
 clean:
-	rm -rf $(BUILD_DIR) apps/cli/pwa/dist apps/pwa/dist apps/cli/internal/ffmpeg/generated apps/cli/internal/ffmpeg/zz_bundle_*.go
+	rm -rf $(BUILD_DIR) apps/cli/pwa/dist apps/pwa/dist apps/cli/storybook/static apps/pwa/storybook-static apps/cli/internal/ffmpeg/generated apps/cli/internal/ffmpeg/zz_bundle_*.go
