@@ -1,11 +1,15 @@
 import { HTMLAttributes } from 'react';
 import { CSSVariable } from '@/global_style';
-import ImageFrame, { getImageFrameRadius } from '@/components/image_frame';
+import ImageFrame from '@/components/image_frame';
+import { CONTROL_SIZE } from '@/components/control_style';
 import { CSS_VAR } from '../theme';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
+const DEFAULT_RADIUS = CONTROL_SIZE.lg.radius;
+const SM_RADIUS_MAX = CONTROL_SIZE.sm.height;
+const MD_RADIUS_MAX = CONTROL_SIZE.md.height;
 
 function getBorderWidth() {
   return 2;
@@ -25,6 +29,22 @@ function getShadowOffset(size: number | string) {
   return 4;
 }
 
+function getAvatarRadius(size: number | string) {
+  if (typeof size !== 'number') {
+    return DEFAULT_RADIUS;
+  }
+
+  if (size <= SM_RADIUS_MAX) {
+    return CONTROL_SIZE.sm.radius;
+  }
+
+  if (size <= MD_RADIUS_MAX) {
+    return CONTROL_SIZE.md.radius;
+  }
+
+  return CONTROL_SIZE.lg.radius;
+}
+
 export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   src: string;
   size?: number | string;
@@ -39,7 +59,7 @@ function Avatar({
   ...props
 }: AvatarProps) {
   const borderWidth = getBorderWidth();
-  const radius = getImageFrameRadius(size);
+  const radius = getAvatarRadius(size);
 
   return (
     <ImageFrame
