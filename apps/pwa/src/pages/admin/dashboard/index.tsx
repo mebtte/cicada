@@ -62,7 +62,6 @@ interface Data {
 const Page = styled.div`
   height: 100%;
   padding: 20px;
-  background: rgb(247 247 247);
   overflow: auto;
   font-family: ${FONT};
   ${autoScrollbar}

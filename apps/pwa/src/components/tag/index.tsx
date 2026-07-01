@@ -77,11 +77,6 @@ export interface TagProps extends HTMLAttributes<HTMLSpanElement> {
   icon?: ReactNode;
 }
 
-/**
- * 胶囊徽章 (Tag)
- * 与 Button 共用 Duolingo 式视觉公式: 纯色填充 + 同色硬阴影,
- * 用于状态/角色/类型等只读标签.
- */
 function Tag(
   {
     variant = 'primary',

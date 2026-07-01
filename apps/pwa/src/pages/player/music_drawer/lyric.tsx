@@ -44,7 +44,7 @@ const Line = styled.div`
   font-weight: 600;
   color: rgb(120 120 120);
 `;
-// Duolingo 风格小按钮: 纯色填充 + 同色硬阴影(无 blur), 按下 translateY 抹平阴影
+
 const DOWNLOAD_BTN_OFFSET = 2;
 const DownloadButton = styled.button`
   position: absolute;

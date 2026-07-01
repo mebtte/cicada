@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { useArgs } from '@storybook/preview-api';
 import { useState } from 'react';
 import { Select, MultiSelect } from '.';
 import type { SelectOption } from '.';
@@ -98,6 +99,16 @@ export const Playground: Story = {
     options:     FRUITS,
     value:       'cherry',
     label:       'Fruit',
+  },
+  render: (args) => {
+    const [{ value }, updateArgs] = useArgs();
+    return (
+      <Select
+        {...args}
+        value={value}
+        onChange={(next) => updateArgs({ value: next })}
+      />
+    );
   },
 };
 

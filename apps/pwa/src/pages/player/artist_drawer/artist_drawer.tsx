@@ -18,7 +18,6 @@ function ArtistDrawer({
       onClose={onClose}
       width="wide"
       zIndex={zIndex}
-      showClose={false}
     >
       <ArtistContent id={id} insideDrawer />
     </AppDrawer>

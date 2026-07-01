@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Duolingo-style divider. Without a label renders a plain 2px horizontal rule. With a label renders an "OR"-style separator with the text centred between two lines.',
+          'Divider. Without a label renders a plain 2px horizontal rule. With a label renders an "OR"-style separator with the text centred between two lines.',
       },
     },
   },

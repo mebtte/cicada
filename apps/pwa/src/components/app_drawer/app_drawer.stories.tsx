@@ -15,11 +15,9 @@ const meta = {
       control: 'select',
       options: ['compact', 'medium', 'wide'],
     },
-    showClose: { control: 'boolean' },
   },
   args: {
     width: 'medium',
-    showClose: true,
     open: false,
     onClose: () => {},
     children: null,

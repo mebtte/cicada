@@ -1575,7 +1575,6 @@ function MusicEditDrawer({
           width: DRAWER_WIDTH,
           maxWidth: `calc(100vw - ${DRAWER_NARROW_SCREEN_GUTTER}px)`,
         }}
-        showClose={false}
         onOpenAutoFocus={(event) => event.preventDefault()}
       >
         {loading ? (

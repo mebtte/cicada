@@ -235,6 +235,57 @@ func TestSearchMusicRanksNameMatchesAndEscapesWildcards(t *testing.T) {
 	}
 }
 
+func TestSearchMusicOrdersSameRankByHeatThenCreateTimestamp(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO music (id,type,name,aliases,asset,heat,createTimestamp) VALUES
+			('MUS211', ?, 'Love Alpha',   '', 'alpha.mp3',   10, ?),
+			('MUS212', ?, 'Love Beta',    '', 'beta.mp3',    10, ?),
+			('MUS213', ?, 'Love Charlie', '', 'charlie.mp3', 5,  ?),
+			('MUS214', ?, 'Love Delta',   '', 'delta.mp3',   5,  ?)`,
+		int(MusicTypeSong), now-400,
+		int(MusicTypeSong), now-300,
+		int(MusicTypeSong), now-100,
+		int(MusicTypeSong), now-200,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+
+	total, musics, err := SearchMusic("Love", 1, 10)
+	if err != nil {
+		t.Fatalf("search music: %v", err)
+	}
+	if total != 4 || len(musics) != 4 {
+		t.Fatalf("unexpected search result: total=%d musics=%+v", total, musics)
+	}
+
+	got := []string{musics[0].ID, musics[1].ID, musics[2].ID, musics[3].ID}
+	want := []string{"MUS212", "MUS211", "MUS213", "MUS214"}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("unexpected order: got %v want %v", got, want)
+		}
+	}
+}
+
 func TestGetMusicsByIDsPreservesInputOrder(t *testing.T) {
 	if err := ResetForTests(); err != nil {
 		t.Fatalf("reset store: %v", err)

@@ -39,10 +39,6 @@ On Windows, use `cicada.exe`:
 
 On the first startup, Cicada creates a default user and prints `username`/`password` to the log. After startup, you can visit cicada on `http://localhost:8000`.
 
-## Development
-
-If you are interested in developing `cicada`, see the development [docs](./docs/development/index.md).
-
 ## License
 
 [GPL](./license)

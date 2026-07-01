@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Duolingo-style slider: track with hard shadow outline, thumb presses down on interaction — same visual language as Button.',
+          'Slider: track with hard shadow outline, thumb presses down on interaction — same visual language as Button.',
       },
     },
   },

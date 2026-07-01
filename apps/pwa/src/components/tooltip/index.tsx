@@ -1,5 +1,5 @@
 /**
- * Tooltip — 基于 @tippyjs/react 封装的 Duolingo 风格提示气泡
+ * Tooltip — 基于 @tippyjs/react 封装的提示气泡
  *
  * 交互策略:
  * - 鼠标 hover: 延迟 300ms 显示, 离开立即消失
@@ -28,7 +28,7 @@ import styled from 'styled-components';
 const FONT = `'Nunito', 'Varela Round', system-ui, sans-serif`;
 
 const Bubble = styled(animated.div)`
-  /* Duolingo 风格: 浅灰底 + 中性硬阴影, 比纯白柔和又能保留立体落差 */
+
   max-width: 240px;
   padding: 6px 10px;
 

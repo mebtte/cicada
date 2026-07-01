@@ -134,3 +134,62 @@ func TestSearchMusicIDsByLyricRanksMatchesDeterministically(t *testing.T) {
 		}
 	}
 }
+
+func TestSearchMusicIDsByLyricOrdersSameRankByHeatThenCreateTimestamp(t *testing.T) {
+	if err := ResetForTests(); err != nil {
+		t.Fatalf("reset store: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := ResetForTests(); err != nil {
+			t.Fatalf("cleanup store: %v", err)
+		}
+	})
+
+	config.Set(config.Config{
+		Mode: config.ModeProduction,
+		Data: t.TempDir(),
+		Port: 8000,
+	})
+	if err := Initialize(); err != nil {
+		t.Fatalf("initialize store: %v", err)
+	}
+
+	now := time.Now().UnixMilli()
+	if _, err := DB().Exec(
+		`INSERT INTO music (id,type,name,asset,heat,createTimestamp) VALUES
+			('SONG11', ?, 'Alpha',   'alpha.mp3',   10, ?),
+			('SONG12', ?, 'Beta',    'beta.mp3',    10, ?),
+			('SONG13', ?, 'Charlie', 'charlie.mp3', 5,  ?),
+			('SONG14', ?, 'Delta',   'delta.mp3',   5,  ?)`,
+		int(MusicTypeSong), now-400,
+		int(MusicTypeSong), now-300,
+		int(MusicTypeSong), now-100,
+		int(MusicTypeSong), now-200,
+	); err != nil {
+		t.Fatalf("insert music: %v", err)
+	}
+	if _, err := DB().Exec(
+		`INSERT INTO lyric (musicId,lrc,lrcContent) VALUES
+			('SONG11','[00:00.00]hello alpha','hello alpha'),
+			('SONG12','[00:00.00]hello beta','hello beta'),
+			('SONG13','[00:00.00]hello charlie','hello charlie'),
+			('SONG14','[00:00.00]hello delta','hello delta')`,
+	); err != nil {
+		t.Fatalf("insert lyrics: %v", err)
+	}
+
+	total, ids, err := SearchMusicIDsByLyric("hello", 1, 10)
+	if err != nil {
+		t.Fatalf("search lyrics: %v", err)
+	}
+	if total != 4 || len(ids) != 4 {
+		t.Fatalf("unexpected lyric search result: total=%d ids=%v", total, ids)
+	}
+
+	want := []string{"SONG12", "SONG11", "SONG13", "SONG14"}
+	for i := range want {
+		if ids[i] != want[i] {
+			t.Fatalf("unexpected order: got %v want %v", ids, want)
+		}
+	}
+}

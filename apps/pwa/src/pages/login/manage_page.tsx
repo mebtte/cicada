@@ -16,7 +16,6 @@ const Wrapper = styled.div`
   position: absolute;
   inset: 0;
   z-index: 10;
-  background: rgb(248 248 248);
   display: flex;
   flex-direction: column;
   animation: ${slideIn} 300ms cubic-bezier(0.16, 1, 0.3, 1);

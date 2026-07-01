@@ -316,9 +316,6 @@ const Td = styled.td`
   font-weight: 700;
   letter-spacing: 0;
   vertical-align: middle;
-  transition:
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out;
 
   &:first-child {
     border-left: 2px solid ${CSSVariable.COLOR_BORDER};
@@ -334,18 +331,6 @@ const Td = styled.td`
     box-shadow:
       -6px 0 0 #fff,
       0 3px 0 ${ROW_SHADOW};
-  }
-
-  tbody tr:hover & {
-    z-index: 2;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 0 ${ROW_SHADOW};
-  }
-
-  tbody tr:hover &:last-child {
-    box-shadow:
-      -6px 0 0 #fff,
-      0 5px 0 ${ROW_SHADOW};
   }
 `;
 
@@ -1145,9 +1130,7 @@ function MusicList({
                             </ArtistButton>
                           ))}
                         </TagList>
-                      ) : (
-                        <Muted>{t('unknown')}</Muted>
-                      )}
+                      ) : null}
                     </Td>
                     <Td>
                       {music.type === MusicType.SONG && music.lyricists.length ? (
