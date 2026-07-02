@@ -1,6 +1,7 @@
 import { memo } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import hover from '@/style/hover';
 import { CSS_VAR } from '@/components/theme';
 import { Refresh, Check } from '@/components/icon';
 import { RequestStatus } from '@/constants';
@@ -52,20 +53,22 @@ const Style = styled.div<{ $public: boolean; $selected: boolean }>`
     box-shadow 150ms ease-out,
     border-color 150ms ease-out,
     background 150ms ease-out,
-    color 150ms ease-out,
-    filter 120ms ease-out;
+    color 150ms ease-out;
 
-  &:hover {
-    filter: brightness(1.04);
-  }
+  ${hover(css<{ $selected: boolean }>`
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0
+        ${({ $selected }) => ($selected ? PRIMARY_SHADOW : NEUTRAL_SHADOW)};
+    }
+  `)}
 
   &:active {
     transform: translateY(4px);
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 
   > .icon {
