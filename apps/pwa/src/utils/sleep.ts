@@ -3,7 +3,9 @@
  * @author mebtte<i@mebtte.com>
  */
 function sleep(ms: number) {
-  return new Promise<void>((resolve) => global.setTimeout(() => resolve(), ms));
+  return new Promise<void>((resolve) =>
+    globalThis.setTimeout(() => resolve(), ms),
+  );
 }
 
 export default sleep;

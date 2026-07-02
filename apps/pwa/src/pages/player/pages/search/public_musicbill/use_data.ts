@@ -2,7 +2,6 @@ import { SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/musicbill';
 import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import searchPublicMusicbill from '@/server/api/search_public_musicbill';
-import DefaultCover from '@/static/apple-touch-icon_v1.png';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE } from '../constants';
@@ -42,18 +41,11 @@ export default () => {
         loading: false,
         value: {
           total: d.total,
-          musicbillList: d.musicbillList.map((mm) => ({
-            ...mm,
-            cover: mm.cover || DefaultCover,
-            user: {
-              ...mm.user,
-              avatar: mm.user.avatar || DefaultCover,
-            },
-          })),
+          musicbillList: d.musicbillList,
         },
       });
     } catch (error) {
-      logger.error(error, '搜索乐单失败');
+      logger.error(error, 'Failed to search musicbill');
       setData({
         error,
         loading: false,
