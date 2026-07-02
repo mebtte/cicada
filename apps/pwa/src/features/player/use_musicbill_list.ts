@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import DefaultCover from '@/asset/default_cover.jpeg';
+import DefaultCover from '@/static/apple-touch-icon_v1.png';
 import { RequestStatus } from '@/constants';
 import getMusicbillListRequest from '@/server/api/get_musicbill_list';
 import addMusicToMusicbill from '@/server/api/add_music_to_musicbill';

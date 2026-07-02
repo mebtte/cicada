@@ -7,7 +7,6 @@ import Input from '@/components/input';
 import { Label } from '@/components';
 import Switch from '@/components/switch';
 import Textarea from '@/components/textarea';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import { CSSVariable } from '@/global_style';
 import {
   AdminAllowUpdateKey,
@@ -115,10 +114,12 @@ function UserEditContent({
 
   const avatarSrc = useMemo(
     () =>
-      getResizedImage({
-        url: user.avatar || DefaultCover,
-        size: AVATAR_SIZE * 2,
-      }),
+      user.avatar
+        ? getResizedImage({
+            url: user.avatar,
+            size: AVATAR_SIZE * 2,
+          })
+        : null,
     [user.avatar],
   );
   const changed =
@@ -223,9 +224,11 @@ function UserEditContent({
 
   return (
     <Root>
-      <Header>
-        <Avatar src={avatarSrc} size={AVATAR_SIZE} />
-      </Header>
+      {avatarSrc ? (
+        <Header>
+          <Avatar src={avatarSrc} size={AVATAR_SIZE} />
+        </Header>
+      ) : null}
 
       <Form>
         <SwitchField>

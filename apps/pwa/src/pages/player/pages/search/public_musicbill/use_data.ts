@@ -2,7 +2,7 @@ import { SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/musicbill';
 import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import searchPublicMusicbill from '@/server/api/search_public_musicbill';
-import DefaultCover from '@/asset/default_cover.jpeg';
+import DefaultCover from '@/static/apple-touch-icon_v1.png';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE } from '../constants';

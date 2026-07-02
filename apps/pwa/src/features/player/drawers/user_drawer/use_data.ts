@@ -1,6 +1,6 @@
 import logger from '@/utils/logger';
 import getUser from '@/server/api/get_user';
-import DefaultCover from '@/asset/default_cover.jpeg';
+import DefaultCover from '@/static/apple-touch-icon_v1.png';
 import { useCallback, useEffect, useState } from 'react';
 import { UserDetail } from './constants';
 

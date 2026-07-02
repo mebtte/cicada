@@ -1,6 +1,6 @@
 import adminGetUserList from '@/server/api/admin_get_user_list';
 import { useCallback, useEffect, useState } from 'react';
-import DefaultCover from '@/asset/default_cover.jpeg';
+import DefaultCover from '@/static/apple-touch-icon_v1.png';
 import { User } from '../constants';
 import e, { EventType } from '../eventemitter';
 

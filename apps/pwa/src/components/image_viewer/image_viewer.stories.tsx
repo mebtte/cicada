@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import ImageViewer, { type ImageViewerPhoto } from '.';
 import Button from '../button';
-import DefaultCover from '@/asset/default_cover.jpeg';
+import DefaultCover from '@/static/apple-touch-icon_v1.png';
 
 function ImageViewerDemo({ src, alt }: { src: string; alt: string }) {
   const [photo, setPhoto] = useState<ImageViewerPhoto | null>(null);

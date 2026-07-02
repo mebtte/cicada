@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { flexCenter } from '@/style/flexbox';
 import { CSS_VAR } from '@/components/theme';
-import PngDefaultCover from '@/asset/default_cover.jpeg';
+import PngDefaultCover from '@/static/apple-touch-icon_v1.png';
 import { CONTROLLER_COVER_SHADOW } from '../constants';
 import { Expand } from '@/components/icon';
 

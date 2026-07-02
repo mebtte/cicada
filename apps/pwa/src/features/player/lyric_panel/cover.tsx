@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { animated, useTransition } from '@react-spring/web';
 import styled from 'styled-components';
-import DefaultCover from '@/asset/default_cover.jpeg';
+import DefaultCover from '@/static/apple-touch-icon_v1.png';
 import loadImage from '@/utils/load_image';
 import logger from '@/utils/logger';
 import { CSSVariable } from '@/global_style';
