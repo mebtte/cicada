@@ -274,7 +274,7 @@ const zhCN: {
   manage_origins: '服务器地址管理',
   delete_origin_question: '确定删除该服务器地址以及已登录用户吗?',
   sort_musicbill: '乐单排序',
-  reload_musicbill_list: '刷新',
+  reload_musicbill_list: '重新加载乐单',
   collect_musicbill: '收藏乐单',
   uncollect_musicbill: '取消收藏乐单',
   make_public_musicbill_question: '公开此乐单?',
