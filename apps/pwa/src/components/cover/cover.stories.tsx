@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import Cover from '.';
 import { Shape } from './constants';
-import DefaultCover from '@/static/apple-touch-icon_v1.png';
+
+const SAMPLE_COVER = 'https://picsum.photos/seed/cicada-cover/256';
 
 const meta = {
   title: 'Basic/Cover',
@@ -13,7 +14,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Square cover image with three shape variants. Loading is lazy via IntersectionObserver — the default cover shows until the real image is decoded, then the new image crossfades in with a subtle scale and saturation pop.',
+          'Square cover image with three shape variants. Loading is lazy via IntersectionObserver, then the new image crossfades in with a subtle scale and saturation pop.',
       },
     },
   },
@@ -30,7 +31,7 @@ const meta = {
     },
   },
   args: {
-    src: DefaultCover,
+    src: SAMPLE_COVER,
     size: 160,
     shape: Shape.ROUNDED,
   },
@@ -56,7 +57,7 @@ export const AllShapes: Story = {
             gap: 8,
           }}
         >
-          <Cover src={DefaultCover} size={120} shape={shape} />
+          <Cover src={SAMPLE_COVER} size={120} shape={shape} />
           <span style={{ fontSize: 11, color: '#999' }}>{shape}</span>
         </div>
       ))}
@@ -70,7 +71,7 @@ export const AllSizes: Story = {
   render: () => (
     <div style={{ display: 'flex', alignItems: 'flex-end', gap: 16 }}>
       {[48, 72, 96, 128, 160].map((size) => (
-        <Cover key={size} src={DefaultCover} size={size} />
+        <Cover key={size} src={SAMPLE_COVER} size={size} />
       ))}
     </div>
   ),
@@ -81,7 +82,7 @@ export const SwapSource: Story = {
   parameters: { controls: { disable: true } },
   render: () => {
     const sources = [
-      DefaultCover,
+      SAMPLE_COVER,
       'https://picsum.photos/seed/cicada-1/256',
       'https://picsum.photos/seed/cicada-2/256',
     ];
