@@ -33,7 +33,7 @@ function Operation({ musicbill }: { musicbill: Musicbill }) {
   const shared = sharedUserList.length > 0;
   return (
     <Style>
-      <Tooltip content={t('add_to_playlist')}>
+      <Tooltip content={t('add_all_to_playlist')}>
         <Button
           square
           variant="ghost"

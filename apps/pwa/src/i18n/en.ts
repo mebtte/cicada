@@ -282,7 +282,7 @@ export default {
   delete_origin_question:
     'are you sure to delete this server address and users within?',
   sort_musicbill: 'sort musicbill',
-  reload_musicbill_list: 'refresh',
+  reload_musicbill_list: 'reload musicbill list',
   collect_musicbill: 'collect musicbill',
   uncollect_musicbill: 'uncollect musicbill',
   make_public_musicbill_question: 'make this musicbill public?',

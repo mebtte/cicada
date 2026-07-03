@@ -18,7 +18,7 @@ import useData from './use_data';
 import Artist from './artist';
 import { PAGE_HORIZONTAL_PADDING } from '../../page';
 
-const AVATAR_IMAGE_SIZE = 72;
+const AVATAR_IMAGE_SIZE = 96;
 const Container = styled(animated.div)`
   ${absoluteFullSize}
 `;

@@ -41,9 +41,9 @@ const Style = styled.button`
     box-shadow 150ms ease-out;
 
   > .cover-frame {
-    flex: 0 0 64px;
-    width: 64px;
-    height: 50px;
+    flex: 0 0 52px;
+    width: 52px;
+    height: 52px;
 
     border: 3px solid ${SURFACE_BORDER};
     border-radius: 8px;
@@ -134,9 +134,9 @@ const Style = styled.button`
     gap: 10px;
 
     > .cover-frame {
-      flex-basis: 56px;
-      width: 56px;
-      height: 46px;
+      flex-basis: 48px;
+      width: 48px;
+      height: 48px;
     }
 
     > .count {

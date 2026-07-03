@@ -1,6 +1,5 @@
 import adminGetUserList from '@/server/api/admin_get_user_list';
 import { useCallback, useEffect, useState } from 'react';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import { User } from '../constants';
 import e, { EventType } from '../eventemitter';
 
@@ -15,6 +14,9 @@ const dataLoading: Data = {
   userList: [],
 };
 
+const normalizeError = (error: unknown) =>
+  error instanceof Error ? error : new Error(String(error));
+
 export default () => {
   const [data, setData] = useState(dataLoading);
   const getData = useCallback(async () => {
@@ -24,14 +26,11 @@ export default () => {
       setData({
         error: null,
         loading: false,
-        userList: userList.map((user) => ({
-          ...user,
-          avatar: user.avatar || DefaultCover,
-        })),
+        userList,
       });
     } catch (error) {
       setData({
-        error,
+        error: normalizeError(error),
         loading: false,
         userList: [],
       });

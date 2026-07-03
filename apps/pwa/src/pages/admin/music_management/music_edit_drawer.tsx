@@ -7,7 +7,6 @@ import {
   useState,
 } from 'react';
 import styled from 'styled-components';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import {
   Drawer,
   DrawerContent,
@@ -238,6 +237,10 @@ const CoverActions = styled.div`
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+`;
+
+const CoverEditButton = styled(Button)`
+  align-self: flex-start;
 `;
 
 const Body = styled.div`
@@ -1206,25 +1209,59 @@ function EditContent({
       },
     });
   };
+  const hasCover = !!music.cover;
 
   return (
     <Form>
       <Body>
-        <CoverSection>
-          <CoverBox>
-            {music.coverThumbnail ? (
-              <span
-                className="thumbnail-placeholder"
-                style={{ backgroundImage: `url("${music.coverThumbnail}")` }}
-              />
-            ) : null}
-            <img
-              src={music.cover || music.coverThumbnail || DefaultCover}
-              alt={music.name}
-            />
-          </CoverBox>
-          <CoverActions>
-            <Button
+        {hasCover ? (
+          <CoverSection>
+            <CoverBox>
+              {music.coverThumbnail ? (
+                <span
+                  className="thumbnail-placeholder"
+                  style={{ backgroundImage: `url("${music.coverThumbnail}")` }}
+                />
+              ) : null}
+              <img src={music.cover} alt={music.name} />
+            </CoverBox>
+            <CoverActions>
+              <Button
+                variant="secondary"
+                size="sm"
+                square
+                onClick={onEditCover}
+                loading={coverSaving}
+                disabled={saving || fileSaving || deleting || coverDeleting}
+                title={t('edit_cover')}
+                aria-label={t('edit_cover')}
+              >
+                <Edit size={18} />
+              </Button>
+              <Button
+                variant="danger"
+                size="sm"
+                square
+                onClick={onDeleteCover}
+                loading={coverDeleting}
+                disabled={
+                  !music.cover ||
+                  saving ||
+                  fileSaving ||
+                  deleting ||
+                  coverSaving
+                }
+                title={t('delete_cover')}
+                aria-label={t('delete_cover')}
+              >
+                <Delete />
+              </Button>
+            </CoverActions>
+          </CoverSection>
+        ) : (
+          <Group>
+            <GroupTitle>{t('cover')}</GroupTitle>
+            <CoverEditButton
               variant="secondary"
               size="sm"
               square
@@ -1235,23 +1272,9 @@ function EditContent({
               aria-label={t('edit_cover')}
             >
               <Edit size={18} />
-            </Button>
-            <Button
-              variant="danger"
-              size="sm"
-              square
-              onClick={onDeleteCover}
-              loading={coverDeleting}
-              disabled={
-                !music.cover || saving || fileSaving || deleting || coverSaving
-              }
-              title={t('delete_cover')}
-              aria-label={t('delete_cover')}
-            >
-              <Delete />
-            </Button>
-          </CoverActions>
-        </CoverSection>
+            </CoverEditButton>
+          </Group>
+        )}
 
         <Input
           label={t('name')}

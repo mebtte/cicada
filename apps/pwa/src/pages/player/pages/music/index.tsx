@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Page from '../page';
-import MusicContent from '../../music_drawer/content';
+import MusicContent from '@/features/player/drawers/music_drawer/content';
 
 const Style = styled(Page)`
   z-index: 1;

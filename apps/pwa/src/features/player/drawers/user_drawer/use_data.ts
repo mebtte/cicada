@@ -1,6 +1,5 @@
 import logger from '@/utils/logger';
 import getUser from '@/server/api/get_user';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import { useCallback, useEffect, useState } from 'react';
 import { UserDetail } from './constants';
 
@@ -24,14 +23,7 @@ export default (id: string) => {
       setData({
         error: null,
         loading: false,
-        userDetail: {
-          ...userDetail,
-          avatar: userDetail.avatar || DefaultCover,
-          musicbillList: userDetail.musicbillList.map((m) => ({
-            ...m,
-            cover: m.cover || DefaultCover,
-          })),
-        },
+        userDetail,
       });
     } catch (error) {
       logger.error(error, '获取用户详情失败');

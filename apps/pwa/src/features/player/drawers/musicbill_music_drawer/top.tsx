@@ -1,12 +1,11 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
-import { CSS_VAR } from '@/components/theme';
 import getResizedImage from '@/server/asset/get_resized_image';
+import hover from '@/style/hover';
 import { Music } from '../../constants';
 import MusicInfo from '../../components/music_info';
 import { FLOATING_GAP } from './constants';
 
-const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
 
 const Style = styled.div`
@@ -32,8 +31,7 @@ const Style = styled.div`
     transition:
       transform 150ms ease-out,
       box-shadow 150ms ease-out,
-      border-color 150ms ease-out,
-      filter 120ms ease-out;
+      border-color 150ms ease-out;
 
     > :first-child {
       flex: 0 0 auto;
@@ -74,10 +72,12 @@ const Style = styled.div`
       }
     }
 
-    &:hover {
-      background: #fff;
-      border-color: ${PRIMARY};
-    }
+    ${hover(css`
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 0 ${NEUTRAL_SHADOW};
+      }
+    `)}
 
     &:active {
       transform: translateY(4px);

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { animated, useTransition } from '@react-spring/web';
 import styled from 'styled-components';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import loadImage from '@/utils/load_image';
 import logger from '@/utils/logger';
 import { CSSVariable } from '@/global_style';
@@ -28,11 +27,11 @@ const Image = styled(animated.div)`
 `;
 
 function Cover({ cover }: { cover: string }) {
-  const [resolved, setResolved] = useState<string>(DefaultCover);
+  const [resolved, setResolved] = useState<string | null>(null);
 
   useEffect(() => {
     if (!cover) {
-      setResolved(DefaultCover);
+      setResolved(null);
       return;
     }
     let canceled = false;
@@ -42,14 +41,14 @@ function Cover({ cover }: { cover: string }) {
       })
       .catch((error) => {
         logger.error(error, '加载封面失败');
-        if (!canceled) setResolved(DefaultCover);
+        if (!canceled) setResolved(null);
       });
     return () => {
       canceled = true;
     };
   }, [cover]);
 
-  const transitions = useTransition(resolved, {
+  const transitions = useTransition(resolved ? [resolved] : [], {
     keys: (url: string) => url,
     from: { opacity: 0, transform: 'scale(1.04)' },
     enter: { opacity: 1, transform: 'scale(1)' },
