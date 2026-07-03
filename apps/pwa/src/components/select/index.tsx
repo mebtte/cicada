@@ -410,7 +410,12 @@ export function Select<T>({
         getOptionValue={(o) => toKey(o.value)}
         menuPlacement={menuPlacement}
         menuPortalTarget={document.body}
-        menuPosition="fixed"
+        // Body portal escapes drawer/overflow clipping; `absolute` (react-select's
+        // default) keeps the menu anchored in document coordinates. `fixed` anchors
+        // to the layout viewport, which iOS Safari mis-resolves inside a fixed drawer
+        // (and when the soft keyboard shrinks the visual viewport), placing the menu
+        // in the wrong spot. See MultiSelect below for the same reasoning.
+        menuPosition="absolute"
         components={{ DropdownIndicator, Menu, MenuList, MenuPortal }}
       />
     </Root>
@@ -567,7 +572,10 @@ export function MultiSelect<T>({
     styles,
     getOptionValue: (o: SelectOption<T>) => toKey(o.value),
     menuPortalTarget: document.body,
-    menuPosition: 'fixed' as const,
+    // `absolute` (document-relative) instead of `fixed`; iOS Safari mis-positions a
+    // fixed-anchored menu inside the fixed drawer, worsened by the search keyboard
+    // shrinking the visual viewport. Body portal still avoids overflow clipping.
+    menuPosition: 'absolute' as const,
     components: selectComponents,
     closeMenuOnSelect: false,
     blurInputOnSelect: false,
