@@ -38,14 +38,12 @@ const Style = styled.button`
 
   transition:
     transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms ease-out;
+    box-shadow 150ms ease-out;
 
   > .avatar-frame {
-    position: relative;
-    flex: 0 0 64px;
-    width: 64px;
-    height: 50px;
+    flex: 0 0 52px;
+    width: 52px;
+    height: 52px;
 
     border: 3px solid ${SURFACE_BORDER};
     border-radius: 8px;
@@ -63,19 +61,7 @@ const Style = styled.button`
     min-width: 0;
   }
 
-  > .info > .name-line {
-    min-width: 0;
-
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-
-    white-space: nowrap;
-    overflow: hidden;
-  }
-
-  > .info > .name-line > .name {
-    flex: 0 1 auto;
+  > .info > .name {
     min-width: 0;
 
     font-size: ${CSSVariable.TEXT_SIZE_LARGE};
@@ -85,11 +71,11 @@ const Style = styled.button`
     ${ellipsis}
   }
 
-  > .info > .name-line > .alias {
-    flex: 1 1 auto;
+  > .info > .alias {
+    margin-top: 3px;
     min-width: 0;
 
-    font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
+    font-size: ${CSSVariable.TEXT_SIZE_SMALL};
     font-weight: 800;
     color: ${CSSVariable.TEXT_COLOR_SECONDARY};
     ${ellipsis}
@@ -126,9 +112,7 @@ const Style = styled.button`
 
   &:hover {
     transform: translateY(-2px);
-    border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-    box-shadow: 0 6px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-    filter: brightness(1.01);
+    box-shadow: 0 6px 0 ${SURFACE_SHADOW};
   }
 
   &:active {
@@ -136,8 +120,7 @@ const Style = styled.button`
     box-shadow: none;
     transition:
       transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms ease-in;
+      box-shadow 60ms ease-in;
   }
 
   &:focus-visible {
@@ -151,9 +134,9 @@ const Style = styled.button`
     gap: 10px;
 
     > .avatar-frame {
-      flex-basis: 56px;
-      width: 56px;
-      height: 46px;
+      flex-basis: 48px;
+      width: 48px;
+      height: 48px;
     }
 
     > .count {
@@ -202,10 +185,8 @@ function Artist({
         />
       </div>
       <div className="info">
-        <div className="name-line">
-          <span className="name">{artistName}</span>
-          {alias ? <span className="alias">{alias}</span> : null}
-        </div>
+        <div className="name">{artistName}</div>
+        {alias ? <div className="alias">{alias}</div> : null}
       </div>
       <div className="count" aria-label={musicCountText}>
         <span className="value">{musicCount}</span>
