@@ -1,5 +1,12 @@
 @preconcurrency import AVFoundation
 import Foundation
+#if canImport(MediaPlayer)
+import MediaPlayer
+#endif
+#if canImport(MediaPlayer) && os(iOS)
+import UIKit
+private typealias SystemArtworkImage = UIImage
+#endif
 
 @MainActor
 final class AudioPlayerController: ObservableObject {
@@ -30,9 +37,13 @@ final class AudioPlayerController: ObservableObject {
     private var client: CicadaAPIClient?
     private var activeRecord: ActivePlaybackRecord?
     private var pendingRadioAutoplay = false
+    #if canImport(MediaPlayer) && os(iOS)
+    private var systemArtworkTask: Task<Void, Never>?
+    #endif
 
     init() {
         configureAudioSession()
+        configureSystemMediaRemoteCommands()
         installTimeObserver()
     }
 
@@ -44,6 +55,13 @@ final class AudioPlayerController: ObservableObject {
             if let endObserver {
                 NotificationCenter.default.removeObserver(endObserver)
             }
+            #if canImport(MediaPlayer) && os(iOS)
+            systemArtworkTask?.cancel()
+            #endif
+            #if canImport(MediaPlayer)
+            removeSystemMediaRemoteCommands()
+            clearSystemNowPlayingInfo()
+            #endif
         }
     }
 
@@ -104,12 +122,14 @@ final class AudioPlayerController: ObservableObject {
         player.pause()
         isPlaying = false
         uploadActiveRecord()
+        updateSystemNowPlayingInfo()
     }
 
     func resume() {
         guard currentMusic != nil else { return }
         player.play()
         isPlaying = true
+        updateSystemNowPlayingInfo()
     }
 
     func next() {
@@ -154,6 +174,7 @@ final class AudioPlayerController: ObservableObject {
             toleranceAfter: .zero
         )
         currentTime = clampedSeconds
+        updateSystemNowPlayingInfo()
     }
 
     func stop() {
@@ -169,6 +190,7 @@ final class AudioPlayerController: ObservableObject {
         isPlaying = false
         activeRecord = nil
         exitRadioMode()
+        clearSystemNowPlayingInfo()
     }
 
     private func exitRadioMode() {
@@ -201,6 +223,7 @@ final class AudioPlayerController: ObservableObject {
 
         player.play()
         isPlaying = true
+        updateSystemNowPlayingInfo(loadArtwork: true)
 
         if isRadioMode {
             onRadioAdvance?()
@@ -248,6 +271,7 @@ final class AudioPlayerController: ObservableObject {
         }
 
         syncActiveRecord()
+        updateSystemNowPlayingInfo()
     }
 
     private func handlePlaybackEnded() {
@@ -266,6 +290,7 @@ final class AudioPlayerController: ObservableObject {
         } else {
             isPlaying = false
         }
+        updateSystemNowPlayingInfo()
     }
 
     private func syncActiveRecord() {
@@ -316,6 +341,175 @@ final class AudioPlayerController: ObservableObject {
         let clamped = min(max(percent, 0), 1)
         return (clamped * 20).rounded() / 20
     }
+
+    #if canImport(MediaPlayer)
+    private func configureSystemMediaRemoteCommands() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+
+        commandCenter.playCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                self?.resume()
+            }
+            return .success
+        }
+
+        commandCenter.pauseCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                self?.pause()
+            }
+            return .success
+        }
+
+        commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                self?.togglePlayback()
+            }
+            return .success
+        }
+
+        commandCenter.nextTrackCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                self?.next()
+            }
+            return .success
+        }
+
+        commandCenter.previousTrackCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                self?.previous()
+            }
+            return .success
+        }
+
+        commandCenter.changePlaybackPositionCommand.addTarget { [weak self] event in
+            guard let event = event as? MPChangePlaybackPositionCommandEvent else {
+                return .commandFailed
+            }
+
+            Task { @MainActor in
+                self?.seek(to: event.positionTime)
+            }
+            return .success
+        }
+
+        commandCenter.stopCommand.isEnabled = false
+        updateSystemCommandAvailability()
+    }
+
+    private func removeSystemMediaRemoteCommands() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+        commandCenter.playCommand.removeTarget(nil)
+        commandCenter.pauseCommand.removeTarget(nil)
+        commandCenter.togglePlayPauseCommand.removeTarget(nil)
+        commandCenter.nextTrackCommand.removeTarget(nil)
+        commandCenter.previousTrackCommand.removeTarget(nil)
+        commandCenter.changePlaybackPositionCommand.removeTarget(nil)
+    }
+
+    private func updateSystemCommandAvailability() {
+        let hasCurrentMusic = currentMusic != nil
+        let commandCenter = MPRemoteCommandCenter.shared()
+
+        commandCenter.playCommand.isEnabled = hasCurrentMusic && !isPlaying
+        commandCenter.pauseCommand.isEnabled = hasCurrentMusic && isPlaying
+        commandCenter.togglePlayPauseCommand.isEnabled = hasCurrentMusic
+        commandCenter.nextTrackCommand.isEnabled = hasCurrentMusic && (queue.count > 1 || isRadioMode)
+        commandCenter.previousTrackCommand.isEnabled = hasCurrentMusic
+        commandCenter.changePlaybackPositionCommand.isEnabled = hasCurrentMusic && duration > 0
+    }
+
+    private func updateSystemNowPlayingInfo(loadArtwork: Bool = false) {
+        guard let music = currentMusic else {
+            clearSystemNowPlayingInfo()
+            return
+        }
+
+        // Keep system media surfaces authoritative for title, timing, queue
+        // position, and playback rate; artwork is loaded separately.
+        var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+        info[MPMediaItemPropertyTitle] = music.name
+        info[MPMediaItemPropertyArtist] = music.performerLine
+        info[MPMediaItemPropertyPlaybackDuration] = duration
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = currentTime
+        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+        info[MPNowPlayingInfoPropertyDefaultPlaybackRate] = 1.0
+        info[MPNowPlayingInfoPropertyPlaybackQueueIndex] = max(0, currentQueueIndex)
+        info[MPNowPlayingInfoPropertyPlaybackQueueCount] = max(1, queue.count)
+        info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
+        info[MPNowPlayingInfoPropertyExternalContentIdentifier] = music.id
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+        MPNowPlayingInfoCenter.default().playbackState = isPlaying ? .playing : .paused
+
+        updateSystemCommandAvailability()
+
+        #if os(iOS)
+        if loadArtwork {
+            loadSystemArtwork(for: music)
+        }
+        #endif
+    }
+
+    #if os(iOS)
+    private func loadSystemArtwork(for music: Music) {
+        systemArtworkTask?.cancel()
+
+        let artworkURLString = music.coverThumbnail?.isEmpty == false ? music.coverThumbnail : music.cover
+        guard
+            let artworkURLString,
+            let artworkURL = URL(string: artworkURLString)
+        else {
+            removeSystemArtwork()
+            return
+        }
+
+        let musicID = music.id
+        systemArtworkTask = Task { [weak self, artworkURL, musicID] in
+            guard
+                let (data, _) = try? await URLSession.shared.data(from: artworkURL),
+                !Task.isCancelled
+            else {
+                return
+            }
+
+            self?.applySystemArtwork(data: data, musicID: musicID)
+        }
+    }
+
+    private func applySystemArtwork(data: Data, musicID: Music.ID) {
+        guard
+            currentMusic?.id == musicID,
+            let image = SystemArtworkImage(data: data)
+        else {
+            return
+        }
+
+        var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+        info[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in
+            image
+        }
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+
+    private func removeSystemArtwork() {
+        var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+        info.removeValue(forKey: MPMediaItemPropertyArtwork)
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+    #endif
+
+    private func clearSystemNowPlayingInfo() {
+        #if os(iOS)
+        systemArtworkTask?.cancel()
+        #endif
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+        MPNowPlayingInfoCenter.default().playbackState = .stopped
+        updateSystemCommandAvailability()
+    }
+    #else
+    private func configureSystemMediaRemoteCommands() {}
+    private func updateSystemNowPlayingInfo(loadArtwork: Bool = false) {}
+    private func clearSystemNowPlayingInfo() {}
+    #endif
 
     private func configureAudioSession() {
         #if os(iOS)
