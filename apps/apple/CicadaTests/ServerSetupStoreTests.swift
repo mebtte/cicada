@@ -3,27 +3,13 @@ import XCTest
 
 @MainActor
 final class ServerSetupStoreTests: XCTestCase {
-    private var suiteName: String!
-    private var defaults: UserDefaults!
-
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        suiteName = "io.github.manyone.cicada.apple.tests.\(UUID().uuidString)"
-        defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
-        defaults.removePersistentDomain(forName: suiteName)
-    }
-
-    override func tearDownWithError() throws {
-        defaults.removePersistentDomain(forName: suiteName)
-        defaults = nil
-        suiteName = nil
-        try super.tearDownWithError()
-    }
-
     func testConnectDraftOriginNormalizesAndPersistsServer() async throws {
+        let storage = try makeStorage()
+        defer { storage.removePersistentDomain() }
+
         let store = ServerSetupStore(
             client: .stub(metadata: .test(version: "3.6.0", hostname: "music.local")),
-            storage: defaults
+            storage: storage.defaults
         )
         store.draftOrigin = " Music.Local "
 
@@ -35,17 +21,20 @@ final class ServerSetupStoreTests: XCTestCase {
         XCTAssertEqual(store.savedServers.map(\.origin), ["https://music.local"])
         XCTAssertEqual(store.selectedServer?.version, "3.6.0")
 
-        let reloaded = ServerSetupStore(client: .stub(), storage: defaults)
+        let reloaded = ServerSetupStore(client: .stub(), storage: storage.defaults)
         XCTAssertEqual(reloaded.selectedServerOrigin, "https://music.local")
         XCTAssertEqual(reloaded.savedServers.first?.hostname, "music.local")
     }
 
-    func testConnectDraftOriginRejectsPathsBeforeFetchingMetadata() async {
+    func testConnectDraftOriginRejectsPathsBeforeFetchingMetadata() async throws {
+        let storage = try makeStorage()
+        defer { storage.removePersistentDomain() }
+
         let store = ServerSetupStore(
             client: ServerMetadataClient { _ in
                 throw ServerMetadataClientError.missingPayload
             },
-            storage: defaults
+            storage: storage.defaults
         )
         store.draftOrigin = "https://music.local/app"
 
@@ -58,7 +47,10 @@ final class ServerSetupStoreTests: XCTestCase {
         XCTAssertTrue(store.savedServers.isEmpty)
     }
 
-    func testSelectUserAndRemoveSelectedUserPersistChanges() {
+    func testSelectUserAndRemoveSelectedUserPersistChanges() throws {
+        let storage = try makeStorage()
+        defer { storage.removePersistentDomain() }
+
         persist(
             ServerSnapshot(
                 savedServers: [
@@ -72,9 +64,10 @@ final class ServerSetupStoreTests: XCTestCase {
                     ),
                 ],
                 selectedServerOrigin: "https://music.local"
-            )
+            ),
+            in: storage.defaults
         )
-        let store = ServerSetupStore(client: .stub(), storage: defaults)
+        let store = ServerSetupStore(client: .stub(), storage: storage.defaults)
 
         store.selectUser(.test(id: "u2", nickname: "Two"))
         XCTAssertEqual(store.selectedUser?.id, "u2")
@@ -84,12 +77,15 @@ final class ServerSetupStoreTests: XCTestCase {
         XCTAssertNil(store.selectedUser)
         XCTAssertEqual(store.selectedServer?.users.map(\.id), ["u1"])
 
-        let reloaded = ServerSetupStore(client: .stub(), storage: defaults)
+        let reloaded = ServerSetupStore(client: .stub(), storage: storage.defaults)
         XCTAssertNil(reloaded.selectedUser)
         XCTAssertEqual(reloaded.selectedServer?.users.map(\.id), ["u1"])
     }
 
-    func testRefreshSelectedServerMetadataUpdatesExistingRecord() async {
+    func testRefreshSelectedServerMetadataUpdatesExistingRecord() async throws {
+        let storage = try makeStorage()
+        defer { storage.removePersistentDomain() }
+
         persist(
             ServerSnapshot(
                 savedServers: [
@@ -100,7 +96,8 @@ final class ServerSetupStoreTests: XCTestCase {
                     ),
                 ],
                 selectedServerOrigin: "https://music.local"
-            )
+            ),
+            in: storage.defaults
         )
         let store = ServerSetupStore(
             client: .stub(
@@ -112,7 +109,7 @@ final class ServerSetupStoreTests: XCTestCase {
                     videoFileMaxSize: 300
                 )
             ),
-            storage: defaults
+            storage: storage.defaults
         )
 
         await store.refreshSelectedServerMetadata()
@@ -125,9 +122,25 @@ final class ServerSetupStoreTests: XCTestCase {
         XCTAssertEqual(store.selectedServer?.videoFileMaxSize, 300)
     }
 
-    private func persist(_ snapshot: ServerSnapshot) {
+    private func makeStorage() throws -> TestStorage {
+        let suiteName = "io.github.manyone.cicada.apple.tests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defaults.removePersistentDomain(forName: suiteName)
+        return TestStorage(suiteName: suiteName, defaults: defaults)
+    }
+
+    private func persist(_ snapshot: ServerSnapshot, in defaults: UserDefaults) {
         let data = try! JSONEncoder().encode(snapshot)
         defaults.set(data, forKey: ServerSetupStore.storageKey)
+    }
+}
+
+private struct TestStorage {
+    let suiteName: String
+    let defaults: UserDefaults
+
+    func removePersistentDomain() {
+        defaults.removePersistentDomain(forName: suiteName)
     }
 }
 
