@@ -54,6 +54,7 @@ export default ({
             collectionList: d.collectionList.map((mb) => ({
               ...mb,
               cover: mb.cover,
+              coverThumbnail: mb.coverThumbnail,
             })),
           },
         });

@@ -125,6 +125,7 @@ const LoadMoreState = styled.div`
 function CollectionMusicbill({ collection }: { collection: {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   user: { nickname: string };
   musicCount: number;
@@ -136,6 +137,7 @@ function CollectionMusicbill({ collection }: { collection: {
         url: collection.cover,
         size: Math.ceil(COVER_IMAGE_SIZE * window.devicePixelRatio),
       })}
+      coverThumbnail={collection.coverThumbnail}
       name={collection.name}
       userNickname={collection.user.nickname}
       musicCount={collection.musicCount}

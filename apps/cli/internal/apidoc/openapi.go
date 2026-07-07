@@ -1780,10 +1780,11 @@ func publicUserExample() map[string]any {
 		"username":      "cicada",
 		"musicbillList": []any{
 			map[string]any{
-				"id":         "musicbill-1",
-				"cover":      "/asset/musicbill_cover/cover.jpg",
-				"name":       "Favorites",
-				"musicCount": 12,
+				"id":             "musicbill-1",
+				"cover":          "/asset/musicbill_cover/cover.jpg",
+				"coverThumbnail": "data:image/jpeg;base64,...",
+				"name":           "Favorites",
+				"musicCount":     12,
 			},
 		},
 	}
@@ -1791,12 +1792,13 @@ func publicUserExample() map[string]any {
 
 func publicUserMusicbillSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "cover", "name", "musicCount"},
+		[]string{"id", "cover", "coverThumbnail", "name", "musicCount"},
 		map[string]any{
-			"id":         strSchema("Public musicbill ID.", "musicbill-1"),
-			"cover":      strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
-			"name":       strSchema("Musicbill name.", "Favorites"),
-			"musicCount": intSchema("Music count.", 12),
+			"id":             strSchema("Public musicbill ID.", "musicbill-1"),
+			"cover":          strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+			"coverThumbnail": strSchema("Tiny cover placeholder data URL.", "data:image/jpeg;base64,..."),
+			"name":           strSchema("Musicbill name.", "Favorites"),
+			"musicCount":     intSchema("Music count.", 12),
 		},
 	)
 }
@@ -1894,13 +1896,14 @@ func musicRelatedSchema() map[string]any {
 
 func relatedPublicMusicbillSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "cover", "musicCount", "user"},
+		[]string{"id", "name", "cover", "coverThumbnail", "musicCount", "user"},
 		map[string]any{
-			"id":         strSchema("Musicbill ID.", "musicbill-1"),
-			"name":       strSchema("Musicbill name.", "Late Night"),
-			"cover":      strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
-			"musicCount": intSchema("Music count.", 12),
-			"user":       userBriefSchema(true),
+			"id":             strSchema("Musicbill ID.", "musicbill-1"),
+			"name":           strSchema("Musicbill name.", "Late Night"),
+			"cover":          strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+			"coverThumbnail": strSchema("Tiny cover placeholder data URL.", "data:image/jpeg;base64,..."),
+			"musicCount":     intSchema("Music count.", 12),
+			"user":           userBriefSchema(true),
 		},
 	)
 }
@@ -2241,11 +2244,12 @@ func sharedUserSchema() map[string]any {
 
 func musicbillSummarySchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "cover", "public", "createTimestamp", "owner", "sharedUserList"},
+		[]string{"id", "name", "cover", "coverThumbnail", "public", "createTimestamp", "owner", "sharedUserList"},
 		map[string]any{
 			"id":              strSchema("Musicbill ID.", "musicbill-1"),
 			"name":            strSchema("Musicbill name.", "Late Night"),
 			"cover":           strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+			"coverThumbnail":  strSchema("Tiny cover placeholder data URL.", "data:image/jpeg;base64,..."),
 			"public":          boolSchema("Whether the musicbill is public.", true),
 			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
 			"owner":           userBriefSchema(true),
@@ -2259,6 +2263,7 @@ func musicbillSummaryExample() map[string]any {
 		"id":              "musicbill-1",
 		"name":            "Late Night",
 		"cover":           "/asset/musicbill_cover/cover.jpg",
+		"coverThumbnail":  "data:image/jpeg;base64,...",
 		"public":          true,
 		"createTimestamp": int64(1710000000000),
 		"owner":           map[string]any{"id": "1", "nickname": "Cicada", "avatar": "/asset/user_avatar/avatar.jpg"},
@@ -2268,11 +2273,12 @@ func musicbillSummaryExample() map[string]any {
 
 func musicbillDetailSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "cover", "public", "createTimestamp", "owner", "sharedUserList", "musicList"},
+		[]string{"id", "name", "cover", "coverThumbnail", "public", "createTimestamp", "owner", "sharedUserList", "musicList"},
 		map[string]any{
 			"id":              strSchema("Musicbill ID.", "musicbill-1"),
 			"name":            strSchema("Musicbill name.", "Late Night"),
 			"cover":           strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+			"coverThumbnail":  strSchema("Tiny cover placeholder data URL.", "data:image/jpeg;base64,..."),
 			"public":          boolSchema("Whether the musicbill is public.", true),
 			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
 			"owner":           userBriefSchema(true),
@@ -2297,6 +2303,7 @@ func musicbillDetailExample() map[string]any {
 		"id":              "musicbill-1",
 		"name":            "Late Night",
 		"cover":           "/asset/musicbill_cover/cover.jpg",
+		"coverThumbnail":  "data:image/jpeg;base64,...",
 		"public":          true,
 		"createTimestamp": int64(1710000000000),
 		"owner":           map[string]any{"id": "1", "nickname": "Cicada", "avatar": "/asset/user_avatar/avatar.jpg"},
@@ -2353,11 +2360,12 @@ func invitationExample() map[string]any {
 
 func publicMusicbillDetailSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "cover", "createTimestamp", "user", "musicList", "collected"},
+		[]string{"id", "name", "cover", "coverThumbnail", "createTimestamp", "user", "musicList", "collected"},
 		map[string]any{
 			"id":              strSchema("Musicbill ID.", "musicbill-1"),
 			"name":            strSchema("Musicbill name.", "Late Night"),
 			"cover":           strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+			"coverThumbnail":  strSchema("Tiny cover placeholder data URL.", "data:image/jpeg;base64,..."),
 			"createTimestamp": intSchema("Creation timestamp in milliseconds.", 1710000000000),
 			"user":            userBriefSchema(true),
 			"musicList": objArraySchema(map[string]any{
@@ -2379,6 +2387,7 @@ func publicMusicbillDetailExample() map[string]any {
 		"id":              "musicbill-1",
 		"name":            "Late Night",
 		"cover":           "/asset/musicbill_cover/cover.jpg",
+		"coverThumbnail":  "data:image/jpeg;base64,...",
 		"createTimestamp": int64(1710000000000),
 		"user":            map[string]any{"id": "1", "nickname": "Cicada", "avatar": "/asset/user_avatar/avatar.jpg"},
 		"musicList": []any{
@@ -2398,13 +2407,14 @@ func publicMusicbillDetailExample() map[string]any {
 
 func musicbillCardSchema() map[string]any {
 	return objSchema(
-		[]string{"id", "name", "cover", "musicCount", "user"},
+		[]string{"id", "name", "cover", "coverThumbnail", "musicCount", "user"},
 		map[string]any{
-			"id":         strSchema("Musicbill ID.", "musicbill-1"),
-			"name":       strSchema("Musicbill name.", "Late Night"),
-			"cover":      strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
-			"musicCount": intSchema("Music count.", 12),
-			"user":       userBriefSchema(true),
+			"id":             strSchema("Musicbill ID.", "musicbill-1"),
+			"name":           strSchema("Musicbill name.", "Late Night"),
+			"cover":          strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+			"coverThumbnail": strSchema("Tiny cover placeholder data URL.", "data:image/jpeg;base64,..."),
+			"musicCount":     intSchema("Music count.", 12),
+			"user":           userBriefSchema(true),
 		},
 	)
 }
@@ -2424,11 +2434,12 @@ func musicbillPageExample(listKey string) map[string]any {
 		"total": 1,
 		listKey: []any{
 			map[string]any{
-				"id":         "musicbill-1",
-				"name":       "Late Night",
-				"cover":      "/asset/musicbill_cover/cover.jpg",
-				"musicCount": 12,
-				"user":       map[string]any{"id": "1", "nickname": "Cicada", "avatar": "/asset/user_avatar/avatar.jpg"},
+				"id":             "musicbill-1",
+				"name":           "Late Night",
+				"cover":          "/asset/musicbill_cover/cover.jpg",
+				"coverThumbnail": "data:image/jpeg;base64,...",
+				"musicCount":     12,
+				"user":           map[string]any{"id": "1", "nickname": "Cicada", "avatar": "/asset/user_avatar/avatar.jpg"},
 			},
 		},
 	}
@@ -2445,11 +2456,12 @@ func explorationSchema() map[string]any {
 		"id":   strSchema("Artist ID.", "artist-1"),
 		"name": strSchema("Artist name.", "Aurora"),
 	})
-	musicbillItemSchema := objSchema([]string{"id", "name", "cover", "user"}, map[string]any{
-		"id":    strSchema("Musicbill ID.", "musicbill-1"),
-		"name":  strSchema("Musicbill name.", "Late Night"),
-		"cover": strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
-		"user":  userBriefSchema(false),
+	musicbillItemSchema := objSchema([]string{"id", "name", "cover", "coverThumbnail", "user"}, map[string]any{
+		"id":             strSchema("Musicbill ID.", "musicbill-1"),
+		"name":           strSchema("Musicbill name.", "Late Night"),
+		"cover":          strSchema("Cover path.", "/asset/musicbill_cover/cover.jpg"),
+		"coverThumbnail": strSchema("Tiny cover placeholder data URL.", "data:image/jpeg;base64,..."),
+		"user":           userBriefSchema(false),
 	})
 	return objSchema(
 		[]string{
@@ -2480,7 +2492,13 @@ func explorationExample() map[string]any {
 		map[string]any{"id": "artist-1", "name": "Aurora"},
 	}
 	musicbillExample := []any{
-		map[string]any{"id": "musicbill-1", "name": "Late Night", "cover": "/asset/musicbill_cover/cover.jpg", "user": map[string]any{"id": "1", "nickname": "Cicada"}},
+		map[string]any{
+			"id":             "musicbill-1",
+			"name":           "Late Night",
+			"cover":          "/asset/musicbill_cover/cover.jpg",
+			"coverThumbnail": "data:image/jpeg;base64,...",
+			"user":           map[string]any{"id": "1", "nickname": "Cicada"},
+		},
 	}
 	return map[string]any{
 		"musicList":                 musicExample,

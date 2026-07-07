@@ -139,6 +139,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
         shadowColor={shadowColor}
         shadowOffset={3}
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
+        placeholderSrc={musicbill.coverThumbnail}
       />
       <div className="name">{musicbill.name}</div>
     </Style>

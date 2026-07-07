@@ -103,6 +103,7 @@ function Wrapper() {
                 url: musicbill.cover,
                 size: Math.ceil(COVER_IMAGE_SIZE * window.devicePixelRatio),
               })}
+              coverThumbnail={musicbill.coverThumbnail}
               name={musicbill.name}
               userNickname={musicbill.user.nickname}
               musicCount={musicbill.musicCount}

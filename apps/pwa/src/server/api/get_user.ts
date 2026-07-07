@@ -10,6 +10,7 @@ interface Response {
   musicbillList: {
     id: string;
     cover: string;
+    coverThumbnail?: string;
     name: string;
     musicCount: number;
   }[];
@@ -31,6 +32,7 @@ async function getUser(id: string) {
     musicbillList: user.musicbillList.map((mb) => ({
       ...mb,
       cover: prefixServerOrigin(mb.cover),
+      coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
     })),
   };
 }

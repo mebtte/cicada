@@ -225,6 +225,7 @@ function Musicbill({
           url: musicbill.cover,
           size: Math.ceil(COVER_INNER_SIZE * window.devicePixelRatio),
         })}
+        placeholderSrc={musicbill.coverThumbnail}
         publiz={false}
         shared={false}
       />

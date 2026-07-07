@@ -487,6 +487,7 @@ struct MusicbillDetailView: View {
                 HStack(spacing: 14) {
                     ArtworkView(
                         urlString: detail.cover,
+                        placeholderURLString: detail.coverThumbnail,
                         systemImage: "music.note.list",
                         size: 72
                     )

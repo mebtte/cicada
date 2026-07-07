@@ -98,6 +98,7 @@ function MiniInfo({
       <CoverArt
         className="cover-card"
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
+        placeholderSrc={musicbill.coverThumbnail}
         size={COVER_SIZE}
         radius={COVER_RADIUS}
         borderColor={borderColor}

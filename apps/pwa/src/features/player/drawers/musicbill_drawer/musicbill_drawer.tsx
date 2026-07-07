@@ -183,6 +183,7 @@ function Musicbill({
           <Cover
             className="header-cover-image"
             src={musicbill.cover}
+            placeholderSrc={musicbill.coverThumbnail}
             size="100%"
             shape={Shape.ROUNDED}
           />

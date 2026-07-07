@@ -7,6 +7,7 @@ type Response = {
     id: string;
     name: string;
     cover: string;
+    coverThumbnail?: string;
     musicCount: number;
     collectionCount: number;
     user: {
@@ -49,6 +50,7 @@ async function searchPublicMusicbill({
       musicCount: mb.musicCount ?? 0,
       collectionCount: mb.collectionCount ?? 0,
       cover: prefixServerOrigin(mb.cover),
+      coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
       user: {
         ...mb.user,
         avatar: prefixServerOrigin(mb.user.avatar),

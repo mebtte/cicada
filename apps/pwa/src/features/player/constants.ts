@@ -101,6 +101,7 @@ export interface Musicbill {
   id: string;
   name: string;
   cover: string;
+  coverThumbnail?: string;
   createTimestamp: number;
   public: boolean;
   owner: MusicbillUser;

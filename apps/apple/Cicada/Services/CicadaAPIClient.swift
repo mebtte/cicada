@@ -137,6 +137,7 @@ struct CicadaAPIClient: Sendable {
         user.avatar = absoluteURLString(user.avatar)
         for index in user.musicbillList.indices {
             user.musicbillList[index].cover = absoluteURLString(user.musicbillList[index].cover)
+            user.musicbillList[index].coverThumbnail = absoluteURLString(user.musicbillList[index].coverThumbnail)
         }
         return user
     }
@@ -146,6 +147,7 @@ struct CicadaAPIClient: Sendable {
         for index in musicbills.indices {
             var musicbill = musicbills[index]
             musicbill.cover = absoluteURLString(musicbill.cover)
+            musicbill.coverThumbnail = absoluteURLString(musicbill.coverThumbnail)
             normalizeUserAssets(&musicbill.owner, sharedUsers: &musicbill.sharedUserList)
             musicbills[index] = musicbill
         }
@@ -158,6 +160,7 @@ struct CicadaAPIClient: Sendable {
             query: ["id": id]
         )
         musicbill.cover = absoluteURLString(musicbill.cover)
+        musicbill.coverThumbnail = absoluteURLString(musicbill.coverThumbnail)
         var owner = musicbill.owner
         var sharedUserList = musicbill.sharedUserList
         normalizeUserAssets(&owner, sharedUsers: &sharedUserList)
@@ -180,6 +183,7 @@ struct CicadaAPIClient: Sendable {
         )
         for index in result.musicbillList.indices {
             result.musicbillList[index].cover = absoluteURLString(result.musicbillList[index].cover)
+            result.musicbillList[index].coverThumbnail = absoluteURLString(result.musicbillList[index].coverThumbnail)
             result.musicbillList[index].user.avatar = absoluteURLString(result.musicbillList[index].user.avatar)
         }
         return result
@@ -191,6 +195,7 @@ struct CicadaAPIClient: Sendable {
             query: ["id": id]
         )
         musicbill.cover = absoluteURLString(musicbill.cover)
+        musicbill.coverThumbnail = absoluteURLString(musicbill.coverThumbnail)
         musicbill.user.avatar = absoluteURLString(musicbill.user.avatar)
         normalizeMusicListAssets(&musicbill.musicList)
         return musicbill
@@ -211,6 +216,7 @@ struct CicadaAPIClient: Sendable {
         )
         for index in result.collectionList.indices {
             result.collectionList[index].cover = absoluteURLString(result.collectionList[index].cover)
+            result.collectionList[index].coverThumbnail = absoluteURLString(result.collectionList[index].coverThumbnail)
             result.collectionList[index].user.avatar = absoluteURLString(result.collectionList[index].user.avatar)
         }
         return result
@@ -361,6 +367,7 @@ struct CicadaAPIClient: Sendable {
         normalizeArtistSearchItems(&music.composers)
         for index in music.relatedPublicMusicbillList.indices {
             music.relatedPublicMusicbillList[index].cover = absoluteURLString(music.relatedPublicMusicbillList[index].cover)
+            music.relatedPublicMusicbillList[index].coverThumbnail = absoluteURLString(music.relatedPublicMusicbillList[index].coverThumbnail)
             music.relatedPublicMusicbillList[index].user.avatar = absoluteURLString(music.relatedPublicMusicbillList[index].user.avatar)
         }
         return music
@@ -686,6 +693,7 @@ struct CicadaAPIClient: Sendable {
     private func normalizeExplorationMusicbills(_ list: inout [ExplorationPublicMusicbillItem]) {
         for index in list.indices {
             list[index].cover = absoluteURLString(list[index].cover)
+            list[index].coverThumbnail = absoluteURLString(list[index].coverThumbnail)
             list[index].user.avatar = absoluteURLString(list[index].user.avatar)
         }
     }

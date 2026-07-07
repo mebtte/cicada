@@ -5,6 +5,7 @@ import { request } from '..';
 type Response = {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   public: boolean;
   user: {
@@ -53,6 +54,7 @@ async function getPublicMusicbill(id: string) {
   return {
     ...musicbill,
     cover: prefixServerOrigin(musicbill.cover),
+    coverThumbnail: prefixServerOrigin(musicbill.coverThumbnail ?? ''),
     musicList: musicbill.musicList.map((m) => ({
       ...m,
       cover: prefixServerOrigin(m.cover),

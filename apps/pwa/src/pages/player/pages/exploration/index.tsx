@@ -449,6 +449,7 @@ function RecommendationPanel() {
               url: publicMusicbill.cover,
               size: imageSize,
             })}
+            placeholderSrc={publicMusicbill.coverThumbnail}
             onClick={() => openMusicbillDrawer(publicMusicbill.id)}
             info={<PublicMusicbillInfo publicMusicbill={publicMusicbill} />}
           />

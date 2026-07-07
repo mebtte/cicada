@@ -11,6 +11,7 @@ interface User {
 interface Response {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   public: boolean;
   createTimestamp: number;
@@ -60,6 +61,7 @@ async function getMusicbill(id: string) {
   return {
     ...musicbill,
     cover: prefixServerOrigin(musicbill.cover),
+    coverThumbnail: prefixServerOrigin(musicbill.coverThumbnail ?? ''),
     owner: {
       ...musicbill.owner,
       avatar: prefixServerOrigin(musicbill.owner.avatar),

@@ -330,6 +330,7 @@ struct MusicbillSidebarRow: View {
         HStack(spacing: 12) {
             ArtworkView(
                 urlString: musicbill.cover,
+                placeholderURLString: musicbill.coverThumbnail,
                 systemImage: "music.note.list",
                 size: 36
             )

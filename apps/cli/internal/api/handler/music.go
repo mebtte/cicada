@@ -775,10 +775,11 @@ func GetExploration(c *gin.Context) {
 		Name string
 	}
 	type mbRow struct {
-		ID     string
-		Name   string
-		Cover  string
-		UserID string
+		ID             string
+		Name           string
+		Cover          string
+		CoverThumbnail string
+		UserID         string
 	}
 
 	queryMusicRows := func(sql string, args ...any) []musicRow {
@@ -818,7 +819,7 @@ func GetExploration(c *gin.Context) {
 		var out []mbRow
 		for rows.Next() {
 			r := mbRow{}
-			rows.Scan(&r.ID, &r.Name, &r.Cover, &r.UserID)
+			rows.Scan(&r.ID, &r.Name, &r.Cover, &r.CoverThumbnail, &r.UserID)
 			out = append(out, r)
 		}
 		return out
@@ -831,7 +832,7 @@ func GetExploration(c *gin.Context) {
 		`SELECT id,name FROM artist ORDER BY random() LIMIT ?`, quality,
 	)
 	mbRows := queryMbRows(
-		`SELECT id,name,cover,userId FROM musicbill WHERE public=1 AND cover!='' ORDER BY random() LIMIT ?`, quality,
+		`SELECT id,name,cover,coverThumbnail,userId FROM musicbill WHERE public=1 AND cover!='' ORDER BY random() LIMIT ?`, quality,
 	)
 	// 最近添加: 按 createTimestamp 倒序取最新条目, 让发现页能呈现新入库内容。
 	recentMusicRows := queryMusicRows(
@@ -841,7 +842,7 @@ func GetExploration(c *gin.Context) {
 		`SELECT id,name FROM artist ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
 	)
 	recentMbRows := queryMbRows(
-		`SELECT id,name,cover,userId FROM musicbill WHERE public=1 AND cover!='' ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
+		`SELECT id,name,cover,coverThumbnail,userId FROM musicbill WHERE public=1 AND cover!='' ORDER BY createTimestamp DESC LIMIT ?`, recentLimit,
 	)
 
 	// 合并随机和最近添加列表的 ID, 用一次查询拉齐关联数据 (表演者、图片、用户), 减少数据库往返。
@@ -939,10 +940,11 @@ func GetExploration(c *gin.Context) {
 		list := make([]gin.H, len(rows))
 		for i, mb := range rows {
 			list[i] = gin.H{
-				"id":    mb.ID,
-				"name":  mb.Name,
-				"cover": config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
-				"user":  gin.H{"id": mb.UserID, "nickname": userMap[mb.UserID]},
+				"id":             mb.ID,
+				"name":           mb.Name,
+				"cover":          config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+				"coverThumbnail": mb.CoverThumbnail,
+				"user":           gin.H{"id": mb.UserID, "nickname": userMap[mb.UserID]},
 			}
 		}
 		return list
@@ -963,13 +965,13 @@ func GetExploration(c *gin.Context) {
 func relatedPublicMusicbillItems(musicID string) []gin.H {
 	// 相关公开乐单只在音乐抽屉末尾展示少量卡片, 在数据库层随机抽样避免返回全量后再裁剪。
 	rows, err := store.DB().Query(
-		`SELECT mb.id,mb.name,mb.cover,mb.userId,u.nickname,u.avatar,COUNT(all_mm.id)
+		`SELECT mb.id,mb.name,mb.cover,mb.coverThumbnail,mb.userId,u.nickname,u.avatar,COUNT(all_mm.id)
 		FROM musicbill mb
 		JOIN musicbill_music matched_mm ON matched_mm.musicbillId=mb.id AND matched_mm.musicId=?
 		JOIN user u ON u.id=mb.userId
 		LEFT JOIN musicbill_music all_mm ON all_mm.musicbillId=mb.id
 		WHERE mb.public=1
-		GROUP BY mb.id,mb.name,mb.cover,mb.userId,u.nickname,u.avatar
+		GROUP BY mb.id,mb.name,mb.cover,mb.coverThumbnail,mb.userId,u.nickname,u.avatar
 		ORDER BY random()
 		LIMIT 5`, musicID,
 	)
@@ -980,16 +982,17 @@ func relatedPublicMusicbillItems(musicID string) []gin.H {
 
 	list := []gin.H{}
 	for rows.Next() {
-		var id, name, cover, userID, nickname, avatar string
+		var id, name, cover, coverThumbnail, userID, nickname, avatar string
 		var musicCount int
-		if err := rows.Scan(&id, &name, &cover, &userID, &nickname, &avatar, &musicCount); err != nil {
+		if err := rows.Scan(&id, &name, &cover, &coverThumbnail, &userID, &nickname, &avatar, &musicCount); err != nil {
 			continue
 		}
 		list = append(list, gin.H{
-			"id":         id,
-			"name":       name,
-			"cover":      config.AssetPublicURL(cover, config.AssetTypeMusicbillCover),
-			"musicCount": musicCount,
+			"id":             id,
+			"name":           name,
+			"cover":          config.AssetPublicURL(cover, config.AssetTypeMusicbillCover),
+			"coverThumbnail": coverThumbnail,
+			"musicCount":     musicCount,
 			"user": gin.H{
 				"id":       userID,
 				"nickname": nickname,

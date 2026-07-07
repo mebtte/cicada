@@ -123,6 +123,7 @@ function Musicbill({ musicbill }: { musicbill: LocalMusicbill }) {
         $public={musicbill.public}
         size={COVER_SIZE}
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
+        placeholderSrc={musicbill.coverThumbnail}
       />
       <div className="name">{musicbill.name}</div>
       <div className="handle">

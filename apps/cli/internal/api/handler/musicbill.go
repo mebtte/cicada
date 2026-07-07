@@ -22,7 +22,7 @@ func GetMusicbillList(c *gin.Context) {
 	}
 	// shared musicbills accepted
 	sharedRows, _ := store.DB().Query(
-		`SELECT mb.id,mb.userId,mb.cover,mb.name,mb.public,mb.createTimestamp,owner.nickname,owner.avatar
+		`SELECT mb.id,mb.userId,mb.cover,mb.coverThumbnail,mb.name,mb.public,mb.createTimestamp,owner.nickname,owner.avatar
 		FROM shared_musicbill smb
 		JOIN musicbill mb ON smb.musicbillId=mb.id
 		JOIN user owner ON mb.userId=owner.id
@@ -34,7 +34,7 @@ func GetMusicbillList(c *gin.Context) {
 		for sharedRows.Next() {
 			var mb store.Musicbill
 			var ownerNick, ownerAvatar string
-			sharedRows.Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.Name, &mb.Public, &mb.CreateTimestamp, &ownerNick, &ownerAvatar)
+			sharedRows.Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.CoverThumbnail, &mb.Name, &mb.Public, &mb.CreateTimestamp, &ownerNick, &ownerAvatar)
 			shared = append(shared, mb)
 		}
 	}
@@ -111,6 +111,7 @@ func GetMusicbillList(c *gin.Context) {
 			"id":              mb.ID,
 			"name":            mb.Name,
 			"cover":           config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+			"coverThumbnail":  mb.CoverThumbnail,
 			"public":          mb.Public == 1,
 			"createTimestamp": mb.CreateTimestamp,
 			"owner":           ownerMap[mb.UserID],
@@ -239,6 +240,7 @@ func GetMusicbill(c *gin.Context) {
 		"id":              mb.ID,
 		"name":            mb.Name,
 		"cover":           config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+		"coverThumbnail":  mb.CoverThumbnail,
 		"public":          mb.Public == 1,
 		"createTimestamp": mb.CreateTimestamp,
 		"owner": gin.H{
@@ -339,7 +341,7 @@ func UpdateMusicbill(c *gin.Context) {
 			api.Fail(c, apperr.AssetNotExisted)
 			return
 		}
-		store.UpdateMusicbill(body.ID, "cover", cover)
+		store.UpdateMusicbillCover(body.ID, cover, assetThumbnailDataURL(cover, config.AssetTypeMusicbillCover))
 	case "public":
 		pub, ok := body.Value.(bool)
 		if !ok {
@@ -762,6 +764,7 @@ func GetPublicMusicbill(c *gin.Context) {
 		"id":              mb.ID,
 		"name":            mb.Name,
 		"cover":           config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+		"coverThumbnail":  mb.CoverThumbnail,
 		"public":          mb.Public == 1,
 		"createTimestamp": mb.CreateTimestamp,
 		"user": gin.H{
@@ -790,10 +793,11 @@ func SearchPublicMusicbill(c *gin.Context) {
 	list := make([]gin.H, len(mbs))
 	for i, mb := range mbs {
 		list[i] = gin.H{
-			"id":         mb.ID,
-			"name":       mb.Name,
-			"cover":      config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
-			"musicCount": mb.MusicCount,
+			"id":             mb.ID,
+			"name":           mb.Name,
+			"cover":          config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+			"coverThumbnail": mb.CoverThumbnail,
+			"musicCount":     mb.MusicCount,
 			"user": gin.H{
 				"id":       mb.UserID,
 				"nickname": mb.OwnerNickname,
@@ -866,7 +870,7 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 		).Scan(&total)
 		// 收藏页直接展示乐单音乐数量，在列表查询里一起取出。
 		r, err := store.DB().Query(
-			`SELECT m.id,m.name,m.cover,m.userId,
+			`SELECT m.id,m.name,m.cover,m.coverThumbnail,m.userId,
 				(SELECT COUNT(1) FROM musicbill_music mm WHERE mm.musicbillId=m.id) AS musicCount
 			FROM public_musicbill_collection mc
 			LEFT JOIN musicbill m ON m.id=mc.musicbillId
@@ -882,14 +886,14 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 		defer r.Close()
 
 		type row struct {
-			ID, Name, Cover, UserID string
-			MusicCount              int
+			ID, Name, Cover, CoverThumbnail, UserID string
+			MusicCount                              int
 		}
 		var items []row
 		sqlRows := r
 		for sqlRows.Next() {
 			var item row
-			sqlRows.Scan(&item.ID, &item.Name, &item.Cover, &item.UserID, &item.MusicCount)
+			sqlRows.Scan(&item.ID, &item.Name, &item.Cover, &item.CoverThumbnail, &item.UserID, &item.MusicCount)
 			items = append(items, item)
 		}
 
@@ -921,11 +925,12 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 		list := make([]gin.H, len(items))
 		for i, item := range items {
 			list[i] = gin.H{
-				"id":         item.ID,
-				"name":       item.Name,
-				"cover":      config.AssetPublicURL(item.Cover, config.AssetTypeMusicbillCover),
-				"musicCount": item.MusicCount,
-				"user":       ownerMap[item.UserID],
+				"id":             item.ID,
+				"name":           item.Name,
+				"cover":          config.AssetPublicURL(item.Cover, config.AssetTypeMusicbillCover),
+				"coverThumbnail": item.CoverThumbnail,
+				"musicCount":     item.MusicCount,
+				"user":           ownerMap[item.UserID],
 			}
 		}
 		_ = rows
@@ -941,7 +946,7 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 		u.ID,
 	).Scan(&total)
 	r, err := store.DB().Query(
-		`SELECT m.id,m.name,m.cover,m.userId,
+		`SELECT m.id,m.name,m.cover,m.coverThumbnail,m.userId,
 			(SELECT COUNT(1) FROM musicbill_music mm WHERE mm.musicbillId=m.id) AS musicCount
 		FROM public_musicbill_collection mc
 		LEFT JOIN musicbill m ON m.id=mc.musicbillId
@@ -956,13 +961,13 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 	defer r.Close()
 
 	type row struct {
-		ID, Name, Cover, UserID string
-		MusicCount              int
+		ID, Name, Cover, CoverThumbnail, UserID string
+		MusicCount                              int
 	}
 	var items []row
 	for r.Next() {
 		var item row
-		r.Scan(&item.ID, &item.Name, &item.Cover, &item.UserID, &item.MusicCount)
+		r.Scan(&item.ID, &item.Name, &item.Cover, &item.CoverThumbnail, &item.UserID, &item.MusicCount)
 		items = append(items, item)
 	}
 
@@ -993,11 +998,12 @@ func GetPublicMusicbillCollectionList(c *gin.Context) {
 	list := make([]gin.H, len(items))
 	for i, item := range items {
 		list[i] = gin.H{
-			"id":         item.ID,
-			"name":       item.Name,
-			"cover":      config.AssetPublicURL(item.Cover, config.AssetTypeMusicbillCover),
-			"musicCount": item.MusicCount,
-			"user":       ownerMap[item.UserID],
+			"id":             item.ID,
+			"name":           item.Name,
+			"cover":          config.AssetPublicURL(item.Cover, config.AssetTypeMusicbillCover),
+			"coverThumbnail": item.CoverThumbnail,
+			"musicCount":     item.MusicCount,
+			"user":           ownerMap[item.UserID],
 		}
 	}
 	api.OK(c, gin.H{"total": total, "collectionList": list})

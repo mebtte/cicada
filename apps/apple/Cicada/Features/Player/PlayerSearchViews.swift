@@ -834,6 +834,7 @@ struct PublicMusicbillSearchRow: View {
             HStack(spacing: 12) {
                 ArtworkView(
                     urlString: musicbill.cover,
+                    placeholderURLString: musicbill.coverThumbnail,
                     systemImage: "music.note.list",
                     size: 50
                 )
@@ -948,6 +949,7 @@ struct PublicMusicbillDetailView: View {
                 HStack(spacing: 14) {
                     ArtworkView(
                         urlString: detail.cover.isEmpty ? musicbill.cover : detail.cover,
+                        placeholderURLString: detail.coverThumbnail?.isEmpty == false ? detail.coverThumbnail : musicbill.coverThumbnail,
                         systemImage: "music.note.list",
                         size: 72
                     )

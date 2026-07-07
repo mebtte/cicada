@@ -245,6 +245,7 @@ struct ExplorationMusicbillCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 ArtworkView(
                     urlString: musicbill.cover,
+                    placeholderURLString: musicbill.coverThumbnail,
                     systemImage: "music.note.list",
                     size: 120
                 )

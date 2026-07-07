@@ -303,6 +303,7 @@ struct AddToMusicbillRow: View {
 
                 ArtworkView(
                     urlString: musicbill.cover,
+                    placeholderURLString: musicbill.coverThumbnail,
                     systemImage: "music.note.list",
                     size: 42
                 )

@@ -7,6 +7,7 @@ type Response = {
     id: string;
     name: string;
     cover: string;
+    coverThumbnail?: string;
     musicCount: number;
     user: { id: string; nickname: string };
   }[];
@@ -39,6 +40,7 @@ async function getSelfMusicbillCollectionList({
       ...mb,
       musicCount: mb.musicCount ?? 0,
       cover: prefixServerOrigin(mb.cover),
+      coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
     })),
   };
 }
