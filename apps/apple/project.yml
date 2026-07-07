@@ -28,6 +28,8 @@ targets:
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
         UIApplicationSupportsIndirectInputEvents: true
+        UIBackgroundModes:
+          - audio
         NSAppTransportSecurity:
           NSAllowsArbitraryLoads: true
         NSLocalNetworkUsageDescription: Cicada connects to your selected music server on the local network.
@@ -112,11 +114,32 @@ targets:
           } > "${version_header}"
 
           echo "Resolved CicadaVersion=${app_version}"
+  CicadaTests:
+    type: bundle.unit-test
+    supportedDestinations:
+      - iOS
+      - macOS
+    sources:
+      - path: CicadaTests
+    dependencies:
+      - target: Cicada
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.manyone.cicada.apple.tests
+        SWIFT_VERSION: 6.0
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST[sdk=macosx*]: "$(BUILT_PRODUCTS_DIR)/Cicada.app/Contents/MacOS/Cicada"
+        BUNDLE_LOADER[sdk=macosx*]: "$(TEST_HOST)"
 schemes:
   Cicada:
     build:
       targets:
         Cicada: all
+        CicadaTests: [test]
+    test:
+      config: Debug
+      targets:
+        - CicadaTests
     run:
       config: Debug
     analyze:

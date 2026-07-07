@@ -53,3 +53,26 @@ jobs:
 
       - name: Run PWA tests
         run: npm run test
+
+  apple-test:
+    name: Apple Test
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: apps/apple
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Run Apple tests
+        run: >
+          xcodebuild test
+          -project Cicada.xcodeproj
+          -scheme Cicada
+          -destination 'platform=macOS'
+          CODE_SIGNING_ALLOWED=NO
