@@ -9,68 +9,82 @@
 /* Begin PBXBuildFile section */
 		0971B6785F612465DAC7E5BD /* CaptchaImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC82AC368AC0AD4A87C72665 /* CaptchaImageView.swift */; };
 		0F984FDDD69B564E0230A4CB /* CicadaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B910A3665B4DDA99878FF71 /* CicadaApp.swift */; };
-		13D7B1A71F2D482F9E6A0010 /* AppNavigationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D7B1A61F2D482F9E6A0010 /* AppNavigationStore.swift */; };
+		112C703AE04F465FA9762C56 /* PlayerExplorationRadioViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC72DC5FD4E50276A92E4654 /* PlayerExplorationRadioViews.swift */; };
 		1CD8C8775EFCD83973DB933B /* AudioPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01204AADF1F4582CCE6A10EA /* AudioPlayerController.swift */; };
 		2A6F7DF61B34ACA044BB046D /* APIModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA29737AD4D244F48D114F8 /* APIModels.swift */; };
 		31B3D04BEAC099A5CD672D60 /* PlayerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6CCF322654991CDF520E710 /* PlayerStore.swift */; };
+		3F50FA295F60CA24919349C1 /* PlayerSearchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1370A6FCEDFFA172C619609A /* PlayerSearchViews.swift */; };
+		42A5CBE405310DBB5D3B40DF /* ServerSetupStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBB7D56DD8812C26BA79DD4 /* ServerSetupStoreTests.swift */; };
+		4C9130DBF7664AE42E680D69 /* ServerRecordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBFF48282943C43077475A76 /* ServerRecordTests.swift */; };
 		522E7C044AD259D040DB6A46 /* OfflineCacheView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23FB3F71F15FCC9E8CB388FE /* OfflineCacheView.swift */; };
 		540311FF630F605EB2D029B6 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBA9673A23B3A3AF4CDB32B /* AppColors.swift */; };
+		66FD613565F71EEBF361F900 /* PlayerMusicbillSupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBD8C10FAF67A419AFF5173 /* PlayerMusicbillSupportViews.swift */; };
+		6C0E5E60E5A3182A246AAF2A /* PlayerAccountViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B5EF6368C0FEEE5E53E431 /* PlayerAccountViews.swift */; };
 		6D00ED9698D002F1A9D4C814 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55AE864A81F35D85018195F /* AppSettings.swift */; };
 		84F4925E7C08BF0AE904CF85 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62AB02B4FFD013256547676 /* PlayerView.swift */; };
-		6100A2FCDDB995D3056E3B45 /* PlayerExplorationRadioViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0D41CD205DBA29048EF774 /* PlayerExplorationRadioViews.swift */; };
-		8F8D4AA5A7D9AE534D334901 /* PlayerNowPlayingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF178D0A4182994E99689349 /* PlayerNowPlayingViews.swift */; };
-		46DAE37850937E759CE0698B /* PlayerMusicbillDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 746A69A92D4F6717CD3C0452 /* PlayerMusicbillDetailViews.swift */; };
-		3C6005FAEFE7103B9657F309 /* PlayerSearchViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D79E25260AA4A311419937 /* PlayerSearchViews.swift */; };
-		224FDAFC15C8E1F7F070634F /* PlayerMusicbillSupportViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B43A907FE4C56ED54C4047A1 /* PlayerMusicbillSupportViews.swift */; };
-		E09561F6671729F3453473A7 /* PlayerAccountViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 887FDD449E702D3E092D92DE /* PlayerAccountViews.swift */; };
-		7112A3328E417CBCE76511AE /* PlayerMusicbillNameSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F353823A54B8893FC504E8A /* PlayerMusicbillNameSheet.swift */; };
-		FB9EF9BBA6C65202247C8ED2 /* PlayerSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F86AC9C57332160E8433CB2 /* PlayerSidebar.swift */; };
-		531EF17D74A610A0F2E4BD34 /* PlayerLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9404B53D77A0F5111CBA0764 /* PlayerLayout.swift */; };
 		8A0CD7264E3F54F3AFE8C6F5 /* CicadaAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DB83045806185AB692E010 /* CicadaAPIClient.swift */; };
 		8BB183D6F68837E6692076B4 /* LoginStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B1F585BB98EF97B6443166 /* LoginStore.swift */; };
+		8D1F23444735F772CBD0299A /* PlayerMusicbillDetailViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BD4AA96F4EFF200DB3773F /* PlayerMusicbillDetailViews.swift */; };
 		8FDB0E06C64B71D69AABD4B5 /* PlatformInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB2F0A927788D9B8B22DC854 /* PlatformInfo.swift */; };
 		9941AEA5E64BF322A1E85221 /* ServerSetupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36EF13F40A064872555EB02B /* ServerSetupStore.swift */; };
+		9B503D867B3EF4203CE562B9 /* PlayerLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0A9F20EAEDA5ADA461D4AE /* PlayerLayout.swift */; };
 		9CA0E180D97A85B9E1EDE04D /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7067CA4929E277FCFCE50DDA /* LoginView.swift */; };
+		A9ACDE9ADB7C8A824BD89ACC /* PlayerNowPlayingViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1CF43D8AB99EC59094A4E1B /* PlayerNowPlayingViews.swift */; };
+		ADC8C0AC91684F87F92E7699 /* PlayerMusicbillNameSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737D4E4B35286C69006237ED /* PlayerMusicbillNameSheet.swift */; };
 		B099B02F694B9F862BCA197D /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E996EE12D82CF08D777808F8 /* AppVersion.swift */; };
 		B30F51263A6F4D6D4707BA71 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2250FE910651D41CF043E8E9 /* SettingsView.swift */; };
+		B801386A0863B523FD6C5CF7 /* PlayerSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B71744A7DEAB1117098C109 /* PlayerSidebar.swift */; };
 		BA878239D0B590108F8B4AA4 /* ServerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE82971270AEBC4A2CEAF2A /* ServerRecord.swift */; };
 		C949567AF84958831A724FB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11DF74913AF882BC9F3654D6 /* Assets.xcassets */; };
 		C9EFAA3FE8DE7F4B5E114691 /* OfflineCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B42BC74FFEB76515CE2B3E /* OfflineCacheManager.swift */; };
 		D45A1192D9D8B8471640DC09 /* ServerMetadataClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CB5BD527128393183232E7 /* ServerMetadataClient.swift */; };
 		DA49924C26B41DAB98303DB6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 844DE39A003BD06B5E365B8B /* ContentView.swift */; };
 		DAB7FB034762D499332DF78A /* ServerSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A15DAAA9D87410AC3E70B9 /* ServerSetupView.swift */; };
+		EA50C3199C36F6847CE6574B /* AppNavigationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E159272B8453578EF7343C /* AppNavigationStore.swift */; };
 		F70A633508CDCE7968069DF8 /* ArtworkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1670EB172F3C2EDCDEFC845 /* ArtworkView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		049DA1426BD0AD56B2B41D73 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 14800BBF7013A048425A1E92 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 124777041E4254679B8F1E36;
+			remoteInfo = Cicada;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		01204AADF1F4582CCE6A10EA /* AudioPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerController.swift; sourceTree = "<group>"; };
 		03B1F585BB98EF97B6443166 /* LoginStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStore.swift; sourceTree = "<group>"; };
 		11DF74913AF882BC9F3654D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1370A6FCEDFFA172C619609A /* PlayerSearchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSearchViews.swift; sourceTree = "<group>"; };
+		1B71744A7DEAB1117098C109 /* PlayerSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSidebar.swift; sourceTree = "<group>"; };
 		2250FE910651D41CF043E8E9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		23FB3F71F15FCC9E8CB388FE /* OfflineCacheView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineCacheView.swift; sourceTree = "<group>"; };
 		2B910A3665B4DDA99878FF71 /* CicadaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CicadaApp.swift; sourceTree = "<group>"; };
-		13D7B1A61F2D482F9E6A0010 /* AppNavigationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigationStore.swift; sourceTree = "<group>"; };
+		2DBD8C10FAF67A419AFF5173 /* PlayerMusicbillSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMusicbillSupportViews.swift; sourceTree = "<group>"; };
 		36EF13F40A064872555EB02B /* ServerSetupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupStore.swift; sourceTree = "<group>"; };
 		37B42BC74FFEB76515CE2B3E /* OfflineCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineCacheManager.swift; sourceTree = "<group>"; };
+		38BD4AA96F4EFF200DB3773F /* PlayerMusicbillDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMusicbillDetailViews.swift; sourceTree = "<group>"; };
 		50DB83045806185AB692E010 /* CicadaAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CicadaAPIClient.swift; sourceTree = "<group>"; };
+		51B5EF6368C0FEEE5E53E431 /* PlayerAccountViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerAccountViews.swift; sourceTree = "<group>"; };
 		51CB5BD527128393183232E7 /* ServerMetadataClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMetadataClient.swift; sourceTree = "<group>"; };
+		6DBB7D56DD8812C26BA79DD4 /* ServerSetupStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupStoreTests.swift; sourceTree = "<group>"; };
 		7067CA4929E277FCFCE50DDA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		737D4E4B35286C69006237ED /* PlayerMusicbillNameSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMusicbillNameSheet.swift; sourceTree = "<group>"; };
 		7CBA9673A23B3A3AF4CDB32B /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
 		844DE39A003BD06B5E365B8B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		9C663FB13EEF5FDD127BC458 /* Cicada.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cicada.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A0A9F20EAEDA5ADA461D4AE /* PlayerLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerLayout.swift; sourceTree = "<group>"; };
+		9C663FB13EEF5FDD127BC458 /* Cicada.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Cicada.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A62AB02B4FFD013256547676 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
-		0C0D41CD205DBA29048EF774 /* PlayerExplorationRadioViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerExplorationRadioViews.swift; sourceTree = "<group>"; };
-		FF178D0A4182994E99689349 /* PlayerNowPlayingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerNowPlayingViews.swift; sourceTree = "<group>"; };
-		746A69A92D4F6717CD3C0452 /* PlayerMusicbillDetailViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMusicbillDetailViews.swift; sourceTree = "<group>"; };
-		F5D79E25260AA4A311419937 /* PlayerSearchViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSearchViews.swift; sourceTree = "<group>"; };
-		B43A907FE4C56ED54C4047A1 /* PlayerMusicbillSupportViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMusicbillSupportViews.swift; sourceTree = "<group>"; };
-		887FDD449E702D3E092D92DE /* PlayerAccountViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerAccountViews.swift; sourceTree = "<group>"; };
-		9F353823A54B8893FC504E8A /* PlayerMusicbillNameSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMusicbillNameSheet.swift; sourceTree = "<group>"; };
-		4F86AC9C57332160E8433CB2 /* PlayerSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerSidebar.swift; sourceTree = "<group>"; };
-		9404B53D77A0F5111CBA0764 /* PlayerLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerLayout.swift; sourceTree = "<group>"; };
 		AB2F0A927788D9B8B22DC854 /* PlatformInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformInfo.swift; sourceTree = "<group>"; };
 		AC69C6574E7CD3012188A930 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B05C0C97D99C862F41003F01 /* CicadaTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = CicadaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BBFF48282943C43077475A76 /* ServerRecordTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRecordTests.swift; sourceTree = "<group>"; };
+		BC72DC5FD4E50276A92E4654 /* PlayerExplorationRadioViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerExplorationRadioViews.swift; sourceTree = "<group>"; };
 		BCE82971270AEBC4A2CEAF2A /* ServerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerRecord.swift; sourceTree = "<group>"; };
+		C0E159272B8453578EF7343C /* AppNavigationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigationStore.swift; sourceTree = "<group>"; };
 		C55AE864A81F35D85018195F /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		C9A15DAAA9D87410AC3E70B9 /* ServerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupView.swift; sourceTree = "<group>"; };
 		DFA29737AD4D244F48D114F8 /* APIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModels.swift; sourceTree = "<group>"; };
@@ -78,6 +92,7 @@
 		E6CCF322654991CDF520E710 /* PlayerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStore.swift; sourceTree = "<group>"; };
 		E996EE12D82CF08D777808F8 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		EC82AC368AC0AD4A87C72665 /* CaptchaImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptchaImageView.swift; sourceTree = "<group>"; };
+		F1CF43D8AB99EC59094A4E1B /* PlayerNowPlayingViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerNowPlayingViews.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -97,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				9C663FB13EEF5FDD127BC458 /* Cicada.app */,
+				B05C0C97D99C862F41003F01 /* CicadaTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,8 +154,8 @@
 		5EC1E076E2C5CDA3244BDD54 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				C0E159272B8453578EF7343C /* AppNavigationStore.swift */,
 				2B910A3665B4DDA99878FF71 /* CicadaApp.swift */,
-				13D7B1A61F2D482F9E6A0010 /* AppNavigationStore.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -170,10 +186,20 @@
 			path = Settings;
 			sourceTree = "<group>";
 		};
+		9DC9071A7E07EB417BD3AE6A /* CicadaTests */ = {
+			isa = PBXGroup;
+			children = (
+				BBFF48282943C43077475A76 /* ServerRecordTests.swift */,
+				6DBB7D56DD8812C26BA79DD4 /* ServerSetupStoreTests.swift */,
+			);
+			path = CicadaTests;
+			sourceTree = "<group>";
+		};
 		BDE7D3869486DF739938B1BE = {
 			isa = PBXGroup;
 			children = (
 				57FBA0E7E939B674E1E61726 /* Cicada */,
+				9DC9071A7E07EB417BD3AE6A /* CicadaTests */,
 				15ECD16330D6D168583775E6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -181,17 +207,17 @@
 		CE2BE27675CD84C5A4E682FD /* Player */ = {
 			isa = PBXGroup;
 			children = (
+				51B5EF6368C0FEEE5E53E431 /* PlayerAccountViews.swift */,
+				BC72DC5FD4E50276A92E4654 /* PlayerExplorationRadioViews.swift */,
+				8A0A9F20EAEDA5ADA461D4AE /* PlayerLayout.swift */,
+				38BD4AA96F4EFF200DB3773F /* PlayerMusicbillDetailViews.swift */,
+				737D4E4B35286C69006237ED /* PlayerMusicbillNameSheet.swift */,
+				2DBD8C10FAF67A419AFF5173 /* PlayerMusicbillSupportViews.swift */,
+				F1CF43D8AB99EC59094A4E1B /* PlayerNowPlayingViews.swift */,
+				1370A6FCEDFFA172C619609A /* PlayerSearchViews.swift */,
+				1B71744A7DEAB1117098C109 /* PlayerSidebar.swift */,
 				E6CCF322654991CDF520E710 /* PlayerStore.swift */,
 				A62AB02B4FFD013256547676 /* PlayerView.swift */,
-				0C0D41CD205DBA29048EF774 /* PlayerExplorationRadioViews.swift */,
-				FF178D0A4182994E99689349 /* PlayerNowPlayingViews.swift */,
-				746A69A92D4F6717CD3C0452 /* PlayerMusicbillDetailViews.swift */,
-				F5D79E25260AA4A311419937 /* PlayerSearchViews.swift */,
-				B43A907FE4C56ED54C4047A1 /* PlayerMusicbillSupportViews.swift */,
-				887FDD449E702D3E092D92DE /* PlayerAccountViews.swift */,
-				9F353823A54B8893FC504E8A /* PlayerMusicbillNameSheet.swift */,
-				4F86AC9C57332160E8433CB2 /* PlayerSidebar.swift */,
-				9404B53D77A0F5111CBA0764 /* PlayerLayout.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -248,6 +274,24 @@
 			productReference = 9C663FB13EEF5FDD127BC458 /* Cicada.app */;
 			productType = "com.apple.product-type.application";
 		};
+		2873F1B452FA6D23CE8135B7 /* CicadaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 83E46CC99AA4EE157550B64F /* Build configuration list for PBXNativeTarget "CicadaTests" */;
+			buildPhases = (
+				DA53C21704492983CAD76DD8 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2A620D00EC99121792068072 /* PBXTargetDependency */,
+			);
+			name = CicadaTests;
+			packageProductDependencies = (
+			);
+			productName = CicadaTests;
+			productReference = B05C0C97D99C862F41003F01 /* CicadaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -277,6 +321,7 @@
 			projectRoot = "";
 			targets = (
 				124777041E4254679B8F1E36 /* Cicada */,
+				2873F1B452FA6D23CE8135B7 /* CicadaTests */,
 			);
 		};
 /* End PBXProject section */
@@ -322,13 +367,13 @@
 			files = (
 				2A6F7DF61B34ACA044BB046D /* APIModels.swift in Sources */,
 				540311FF630F605EB2D029B6 /* AppColors.swift in Sources */,
+				EA50C3199C36F6847CE6574B /* AppNavigationStore.swift in Sources */,
 				6D00ED9698D002F1A9D4C814 /* AppSettings.swift in Sources */,
 				B099B02F694B9F862BCA197D /* AppVersion.swift in Sources */,
 				F70A633508CDCE7968069DF8 /* ArtworkView.swift in Sources */,
 				1CD8C8775EFCD83973DB933B /* AudioPlayerController.swift in Sources */,
 				0971B6785F612465DAC7E5BD /* CaptchaImageView.swift in Sources */,
 				8A0CD7264E3F54F3AFE8C6F5 /* CicadaAPIClient.swift in Sources */,
-				13D7B1A71F2D482F9E6A0010 /* AppNavigationStore.swift in Sources */,
 				0F984FDDD69B564E0230A4CB /* CicadaApp.swift in Sources */,
 				DA49924C26B41DAB98303DB6 /* ContentView.swift in Sources */,
 				8BB183D6F68837E6692076B4 /* LoginStore.swift in Sources */,
@@ -336,17 +381,17 @@
 				C9EFAA3FE8DE7F4B5E114691 /* OfflineCacheManager.swift in Sources */,
 				522E7C044AD259D040DB6A46 /* OfflineCacheView.swift in Sources */,
 				8FDB0E06C64B71D69AABD4B5 /* PlatformInfo.swift in Sources */,
+				6C0E5E60E5A3182A246AAF2A /* PlayerAccountViews.swift in Sources */,
+				112C703AE04F465FA9762C56 /* PlayerExplorationRadioViews.swift in Sources */,
+				9B503D867B3EF4203CE562B9 /* PlayerLayout.swift in Sources */,
+				8D1F23444735F772CBD0299A /* PlayerMusicbillDetailViews.swift in Sources */,
+				ADC8C0AC91684F87F92E7699 /* PlayerMusicbillNameSheet.swift in Sources */,
+				66FD613565F71EEBF361F900 /* PlayerMusicbillSupportViews.swift in Sources */,
+				A9ACDE9ADB7C8A824BD89ACC /* PlayerNowPlayingViews.swift in Sources */,
+				3F50FA295F60CA24919349C1 /* PlayerSearchViews.swift in Sources */,
+				B801386A0863B523FD6C5CF7 /* PlayerSidebar.swift in Sources */,
 				31B3D04BEAC099A5CD672D60 /* PlayerStore.swift in Sources */,
 				84F4925E7C08BF0AE904CF85 /* PlayerView.swift in Sources */,
-				6100A2FCDDB995D3056E3B45 /* PlayerExplorationRadioViews.swift in Sources */,
-				8F8D4AA5A7D9AE534D334901 /* PlayerNowPlayingViews.swift in Sources */,
-				46DAE37850937E759CE0698B /* PlayerMusicbillDetailViews.swift in Sources */,
-				3C6005FAEFE7103B9657F309 /* PlayerSearchViews.swift in Sources */,
-				224FDAFC15C8E1F7F070634F /* PlayerMusicbillSupportViews.swift in Sources */,
-				E09561F6671729F3453473A7 /* PlayerAccountViews.swift in Sources */,
-				7112A3328E417CBCE76511AE /* PlayerMusicbillNameSheet.swift in Sources */,
-				FB9EF9BBA6C65202247C8ED2 /* PlayerSidebar.swift in Sources */,
-				531EF17D74A610A0F2E4BD34 /* PlayerLayout.swift in Sources */,
 				D45A1192D9D8B8471640DC09 /* ServerMetadataClient.swift in Sources */,
 				BA878239D0B590108F8B4AA4 /* ServerRecord.swift in Sources */,
 				9941AEA5E64BF322A1E85221 /* ServerSetupStore.swift in Sources */,
@@ -355,9 +400,50 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DA53C21704492983CAD76DD8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4C9130DBF7664AE42E680D69 /* ServerRecordTests.swift in Sources */,
+				42A5CBE405310DBB5D3B40DF /* ServerSetupStoreTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		2A620D00EC99121792068072 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 124777041E4254679B8F1E36 /* Cicada */;
+			targetProxy = 049DA1426BD0AD56B2B41D73 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		31293CA0EF89A1FC9785CACB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"BUNDLE_LOADER[sdk=macosx*]" = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.manyone.cicada.apple.tests;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cicada.app/Cicada";
+				"TEST_HOST[sdk=macosx*]" = "$(BUILT_PRODUCTS_DIR)/Cicada.app/Contents/MacOS/Cicada";
+			};
+			name = Release;
+		};
 		346532BEFD397AE80A237650 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -365,22 +451,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GCDGT9G53T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Cicada/Info.plist;
 				INFOPLIST_PREFIX_HEADER = "$(DERIVED_FILE_DIR)/CicadaVersionInfo.h";
 				INFOPLIST_PREPROCESS = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.manyone.cicada.apple;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.mebtte.cicada;
 				PRODUCT_NAME = Cicada;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -392,29 +470,46 @@
 			};
 			name = Release;
 		};
+		4201408F920657BEFD60F799 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"BUNDLE_LOADER[sdk=macosx*]" = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.manyone.cicada.apple.tests;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Cicada.app/Cicada";
+				"TEST_HOST[sdk=macosx*]" = "$(BUILT_PRODUCTS_DIR)/Cicada.app/Contents/MacOS/Cicada";
+			};
+			name = Debug;
+		};
 		4896A955FB9B7A1D8D348FFB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = GCDGT9G53T;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Cicada/Info.plist;
 				INFOPLIST_PREFIX_HEADER = "$(DERIVED_FILE_DIR)/CicadaVersionInfo.h";
 				INFOPLIST_PREPROCESS = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = io.github.manyone.cicada.apple;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.mebtte.cicada;
 				PRODUCT_NAME = Cicada;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
@@ -568,6 +663,15 @@
 			buildConfigurations = (
 				77F58339CAA6A99337CD5B4B /* Debug */,
 				9CF469A5DB27A108769F2DE1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		83E46CC99AA4EE157550B64F /* Build configuration list for PBXNativeTarget "CicadaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4201408F920657BEFD60F799 /* Debug */,
+				31293CA0EF89A1FC9785CACB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
