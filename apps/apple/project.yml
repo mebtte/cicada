@@ -60,6 +60,9 @@ targets:
         ENABLE_PREVIEWS: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks"
         LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]: "$(inherited) @executable_path/../Frameworks"
+      configs:
+        Debug:
+          CODE_SIGNING_ALLOWED: NO
     postBuildScripts:
       - name: Resolve Cicada Version
         shell: /bin/bash
