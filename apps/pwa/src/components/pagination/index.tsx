@@ -1,13 +1,11 @@
 import { HtmlHTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 import Button, { Size } from '@/components/button';
-import { CSSVariable } from '@/global_style';
 import usePagination from './use_pagination';
 import { t } from '@/i18n';
 import { ChevronLeft, ChevronRight, MoreHorizontal } from '@/components/icon';
 
 const GAP_MAP: Record<Size, number> = { sm: 5, md: 6, lg: 8 };
-const SHADOW_OFFSET: Record<Size, number> = { sm: 3, md: 4, lg: 5 };
 const PAGINATION_SIZE: Size = 'sm';
 const ELLIPSIS_SIZE: Record<Size, { box: number; icon: number }> = {
   sm: { box: 34, icon: 18 },
@@ -20,38 +18,13 @@ const Style = styled.div<{ $gap: number }>`
   align-items: center;
   gap: ${({ $gap }) => $gap}px;
 `;
-const PageButton = styled(Button)<{ $selected: boolean; $size: Size }>`
+const PageButton = styled(Button)<{ $size: Size }>`
   min-width: ${({ $size }) => ELLIPSIS_SIZE[$size].box}px;
   line-height: 1;
 
   > .btn-label {
     line-height: 1;
   }
-
-  ${({ $selected, $size }) =>
-    !$selected &&
-    css`
-      transition:
-        background 150ms ease-out,
-        border-color 150ms ease-out,
-        box-shadow 150ms ease-out,
-        transform 150ms ease-out,
-        filter 120ms ease-out;
-
-      &:not(:disabled):hover {
-        background: #fff;
-        border-color: ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-        box-shadow: 0 ${SHADOW_OFFSET[$size] + 2}px 0
-          ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-      }
-
-      &:not(:disabled):active {
-        transition:
-          transform 60ms ease-in,
-          box-shadow 60ms ease-in,
-          filter 60ms ease-in;
-      }
-    `}
 `;
 const Ellipsis = styled.span<{ $size: Size }>`
   display: inline-flex;
@@ -146,7 +119,6 @@ function Pagination({
               <PageButton
                 key={`page-${item.page}`}
                 size={PAGINATION_SIZE}
-                $selected={item.selected}
                 $size={PAGINATION_SIZE}
                 variant={item.selected ? 'primary' : 'ghost'}
                 aria-label={`Page ${item.page}`}

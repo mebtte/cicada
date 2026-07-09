@@ -41,6 +41,7 @@ function MusicbillList({
               url: musicbill.cover,
               size: Math.ceil(COVER_IMAGE_SIZE * window.devicePixelRatio),
             })}
+            coverThumbnail={musicbill.coverThumbnail}
             name={musicbill.name}
             musicCount={musicbill.musicCount}
           />

@@ -134,6 +134,7 @@ var tables = []string{
 		id TEXT PRIMARY KEY NOT NULL CHECK(length(id)=6 AND id GLOB '[0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z][0-9A-Z]'),
 		userId TEXT NOT NULL REFERENCES user(id),
 		cover TEXT NOT NULL DEFAULT '',
+		coverThumbnail TEXT NOT NULL DEFAULT '',
 		name TEXT NOT NULL,
 		public INTEGER NOT NULL DEFAULT 0,
 		createTimestamp INTEGER NOT NULL

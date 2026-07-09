@@ -167,7 +167,6 @@ function buildStyles<T, IsMulti extends boolean>(
 ): StylesConfig<SelectOption<T>, IsMulti, GroupBase<SelectOption<T>>> {
   const s = SIZE[size];
   const shadowColor = `color-mix(in srgb, ${primary} 70%, #000)`;
-  const optionShadow = Math.max(2, s.shadow - 1);
 
   return {
     control: (_, state) => ({
@@ -269,14 +268,13 @@ function buildStyles<T, IsMulti extends boolean>(
           ? `0 -4px 0 ${NEUTRAL_SHADOW}, 0 14px 28px rgb(0 0 0 / 0.1)`
           : `0 4px 0 ${NEUTRAL_SHADOW}, 0 14px 28px rgb(0 0 0 / 0.1)`,
       overflow: 'visible',
-      padding: 6,
+      padding: 4,
       marginTop: state.placement === 'top' ? 0 : s.shadow + 6,
       marginBottom: state.placement === 'top' ? s.shadow + 6 : 0,
     }),
     menuPortal: (base) => ({ ...base, zIndex: 10000, pointerEvents: 'auto' }),
     menuList: (_) => ({
-      // Keep room inside the scroll clipping area for the last option's hard shadow.
-      padding: `0 0 ${optionShadow}px`,
+      padding: 0,
       maxHeight: 248,
       overflowY: 'auto' as const,
       scrollbarWidth: 'thin' as const,
@@ -286,16 +284,11 @@ function buildStyles<T, IsMulti extends boolean>(
       alignItems: 'center',
       minHeight: Math.max(30, Math.round(s.height * 0.88)),
       padding: `0 ${s.px}px`,
-      marginTop: state.isSelected || state.isFocused ? 0 : 0,
       border: `2px solid ${
         state.isSelected ? shadowColor : state.isFocused ? NEUTRAL_SHADOW : 'transparent'
       }`,
       borderRadius: Math.max(10, s.radius),
-      boxShadow: state.isSelected
-        ? `0 ${optionShadow}px 0 ${shadowColor}`
-        : state.isFocused
-          ? `0 ${optionShadow}px 0 ${NEUTRAL_SHADOW}`
-          : 'none',
+      boxShadow: 'none',
       fontFamily: FONT,
       fontSize: s.font,
       fontWeight: 800,
@@ -304,15 +297,9 @@ function buildStyles<T, IsMulti extends boolean>(
       background: state.isSelected ? primary : '#fff',
       color: state.isSelected ? '#fff' : 'rgb(55 55 55)',
       transition:
-        'background 120ms, border-color 120ms, box-shadow 120ms, color 120ms',
-      ':active': {
-        transform: state.isSelected || state.isFocused
-          ? `translateY(${optionShadow}px)`
-          : undefined,
-        boxShadow: 'none',
-      },
+        'background 120ms, border-color 120ms, color 120ms',
       ':not(:first-of-type)': {
-        marginTop: 6,
+        marginTop: 4,
       },
     }),
     multiValue: (_) => ({
@@ -324,7 +311,6 @@ function buildStyles<T, IsMulti extends boolean>(
       border: `2px solid ${isDisabled ? DISABLED_SHADOW : NEUTRAL_SHADOW}`,
       borderRadius: 8,
       background: isDisabled ? DISABLED_BACKGROUND : '#fff',
-      boxShadow: `0 2px 0 ${isDisabled ? DISABLED_SHADOW : NEUTRAL_SHADOW}`,
       flexShrink: 0,
       maxWidth: wrapValues ? 'min(180px, 100%)' : size === 'sm' ? 84 : 140,
     }),
@@ -424,7 +410,12 @@ export function Select<T>({
         getOptionValue={(o) => toKey(o.value)}
         menuPlacement={menuPlacement}
         menuPortalTarget={document.body}
-        menuPosition="fixed"
+        // Body portal escapes drawer/overflow clipping; `absolute` (react-select's
+        // default) keeps the menu anchored in document coordinates. `fixed` anchors
+        // to the layout viewport, which iOS Safari mis-resolves inside a fixed drawer
+        // (and when the soft keyboard shrinks the visual viewport), placing the menu
+        // in the wrong spot. See MultiSelect below for the same reasoning.
+        menuPosition="absolute"
         components={{ DropdownIndicator, Menu, MenuList, MenuPortal }}
       />
     </Root>
@@ -581,7 +572,10 @@ export function MultiSelect<T>({
     styles,
     getOptionValue: (o: SelectOption<T>) => toKey(o.value),
     menuPortalTarget: document.body,
-    menuPosition: 'fixed' as const,
+    // `absolute` (document-relative) instead of `fixed`; iOS Safari mis-positions a
+    // fixed-anchored menu inside the fixed drawer, worsened by the search keyboard
+    // shrinking the visual viewport. Body portal still avoids overflow clipping.
+    menuPosition: 'absolute' as const,
     components: selectComponents,
     closeMenuOnSelect: false,
     blurInputOnSelect: false,

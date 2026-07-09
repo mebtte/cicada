@@ -12,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Duolingo-style tooltip. Mouse hover shows the tooltip after a short delay; touch long press shows it after 500ms by default. Short taps on touch devices keep the tooltip hidden and pass the click through to the child element.',
+          'Tooltip. Mouse hover shows the tooltip after a short delay; touch long press shows it after 500ms by default. Short taps on touch devices keep the tooltip hidden and pass the click through to the child element.',
       },
     },
   },

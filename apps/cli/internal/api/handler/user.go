@@ -181,13 +181,14 @@ func GetUser(c *gin.Context) {
 	}
 
 	type publicMusicbill struct {
-		ID         string
-		Cover      string
-		Name       string
-		MusicCount int
+		ID             string
+		Cover          string
+		CoverThumbnail string
+		Name           string
+		MusicCount     int
 	}
 	rows, err := store.DB().Query(
-		`SELECT id,cover,name,
+		`SELECT id,cover,coverThumbnail,name,
 			(SELECT COUNT(1) FROM musicbill_music WHERE musicbillId=musicbill.id)
 		FROM musicbill
 		WHERE userId=? AND public=1
@@ -203,7 +204,7 @@ func GetUser(c *gin.Context) {
 	musicbills := []publicMusicbill{}
 	for rows.Next() {
 		mb := publicMusicbill{}
-		if err := rows.Scan(&mb.ID, &mb.Cover, &mb.Name, &mb.MusicCount); err != nil {
+		if err := rows.Scan(&mb.ID, &mb.Cover, &mb.CoverThumbnail, &mb.Name, &mb.MusicCount); err != nil {
 			api.Fail(c, apperr.ServerError)
 			return
 		}
@@ -217,10 +218,11 @@ func GetUser(c *gin.Context) {
 	musicbillItems := make([]gin.H, len(musicbills))
 	for i, mb := range musicbills {
 		musicbillItems[i] = gin.H{
-			"id":         mb.ID,
-			"cover":      config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
-			"name":       mb.Name,
-			"musicCount": mb.MusicCount,
+			"id":             mb.ID,
+			"cover":          config.AssetPublicURL(mb.Cover, config.AssetTypeMusicbillCover),
+			"coverThumbnail": mb.CoverThumbnail,
+			"name":           mb.Name,
+			"musicCount":     mb.MusicCount,
 		}
 	}
 

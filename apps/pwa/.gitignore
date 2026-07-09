@@ -2,6 +2,7 @@
 node_modules/
 
 dist/
+storybook-static/
 dist-sw/
 dev-dist/
 .test-dist/

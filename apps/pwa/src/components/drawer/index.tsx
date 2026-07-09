@@ -45,7 +45,6 @@ import {
   useRegisterDialogTitle,
   visuallyHiddenStyle,
 } from '../dialog_a11y';
-import { Close } from '@/components/icon';
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
 
@@ -152,53 +151,8 @@ const Panel = styled.div<{ $side: DrawerSide }>`
   ${({ $side }) => SIDE_MAP[$side]}
 `;
 
-// ─── Close button ─────────────────────────────────────────────────────────────
-
-const CloseButton = styled(RadixDialog.Close)`
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  padding: 0;
-  border: 2px solid ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-  border-radius: 10px;
-  background: #fff;
-  box-shadow: 0 3px 0 ${CSSVariable.COLOR_NEUTRAL_SHADOW};
-  color: rgb(88 88 88);
-  cursor: pointer;
-  flex-shrink: 0;
-  font-size: 20px;
-  transition:
-    transform 150ms ease-out,
-    box-shadow 150ms ease-out,
-    filter 120ms;
-
-  &:hover {
-    filter: brightness(1.06);
-  }
-
-  &:active {
-    transform: translateY(3px);
-    box-shadow: none;
-    transition:
-      transform 60ms ease-in,
-      box-shadow 60ms ease-in,
-      filter 60ms;
-  }
-
-  &:focus-visible {
-    outline: 3px solid ${CSSVariable.COLOR_CONTROL_NEUTRAL};
-    outline-offset: 2px;
-  }
-`;
-
 // ─── Scroll area ──────────────────────────────────────────────────────────────
-// Wraps all slotted children so they can scroll while the close button stays fixed.
+// Wraps all slotted children so they can scroll within the panel.
 
 const ScrollArea = styled.div`
   flex: 1;
@@ -217,8 +171,6 @@ export interface DrawerContentProps
   extends ComponentPropsWithoutRef<typeof RadixDialog.Content> {
   /** Which edge the drawer slides from. Default: 'right'. */
   side?: DrawerSide;
-  /** Show the close button. Default: false. */
-  showClose?: boolean;
   /** Screen reader title used when no DrawerTitle is rendered. */
   accessibleTitle?: ReactNode;
   /**
@@ -237,7 +189,6 @@ export const DrawerContent = forwardRef<
 >(({
   children,
   side = 'right',
-  showClose = false,
   zIndex = DEFAULT_Z_INDEX,
   style,
   accessibleTitle,
@@ -275,11 +226,6 @@ export const DrawerContent = forwardRef<
                 {fallbackTitle}
               </h2>
             </RadixDialog.Title>
-            {showClose && (
-              <CloseButton aria-label={t('close')}>
-                <Close />
-              </CloseButton>
-            )}
             <ScrollArea>{children}</ScrollArea>
           </DialogTitleRegistryContext.Provider>
         </Panel>

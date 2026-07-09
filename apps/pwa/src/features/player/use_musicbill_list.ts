@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import { RequestStatus } from '@/constants';
 import getMusicbillListRequest from '@/server/api/get_musicbill_list';
 import addMusicToMusicbill from '@/server/api/add_music_to_musicbill';
@@ -29,7 +28,8 @@ export default () => {
         mbl.map((mb) => ({
           id: mb.id,
           name: mb.name,
-          cover: mb.cover || DefaultCover,
+          cover: mb.cover,
+          coverThumbnail: mb.coverThumbnail,
           createTimestamp: mb.createTimestamp,
           public: !!mb.public,
           owner: mb.owner,
@@ -73,7 +73,8 @@ export default () => {
               return {
                 ...mb,
                 name: data.name,
-                cover: data.cover || mb.cover || DefaultCover,
+                cover: data.cover || mb.cover,
+                coverThumbnail: data.coverThumbnail || mb.coverThumbnail,
                 public: data.public,
                 owner: data.owner,
                 sharedUserList: data.sharedUserList,

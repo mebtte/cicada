@@ -19,7 +19,6 @@ const Style = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: #fff;
   overflow: hidden;
 `;
 const Bottom = styled.div`

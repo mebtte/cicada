@@ -19,15 +19,11 @@ const Style = styled(Page)`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgb(248 249 250);
 
   > .scrollable {
     height: 100%;
     overflow: auto;
     padding: ${PAGE_HORIZONTAL_PADDING};
-    background:
-      linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 300px),
-      rgb(248 249 250);
     ${autoScrollbar}
   }
 `;

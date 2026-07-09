@@ -59,9 +59,6 @@ type ExplorationMode = 'recommendation' | 'search';
 const Root = styled(Page)`
   position: relative;
   overflow: hidden;
-  background:
-    linear-gradient(180deg, rgb(247 253 248) 0, rgb(248 249 250) 310px),
-    rgb(248 249 250);
 
   > .search-toolbar {
     z-index: 2;
@@ -452,6 +449,7 @@ function RecommendationPanel() {
               url: publicMusicbill.cover,
               size: imageSize,
             })}
+            placeholderSrc={publicMusicbill.coverThumbnail}
             onClick={() => openMusicbillDrawer(publicMusicbill.id)}
             info={<PublicMusicbillInfo publicMusicbill={publicMusicbill} />}
           />

@@ -48,9 +48,22 @@ const VersionFooter = styled.div`
   flex-shrink: 0;
   width: 100%;
   margin-top: 16px;
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 8px;
+  row-gap: 2px;
+  justify-content: center;
+  align-items: baseline;
   font-size: ${CSSVariable.TEXT_SIZE_SMALL};
   color: ${CSSVariable.TEXT_COLOR_SECONDARY};
-  text-align: center;
+`;
+const VersionLabel = styled.div`
+  text-align: right;
+`;
+const VersionValue = styled.div`
+  text-align: left;
+  font-variant-numeric: tabular-nums;
+  color: ${CSSVariable.TEXT_COLOR_PRIMARY};
 `;
 const CENTER_TRANSFORM = 'translateX(0)';
 
@@ -157,20 +170,19 @@ function Login() {
           </Stage>
         </StageSlot>
         <VersionFooter>
-          {/* 第二步时已选定服务端, 将版本号拆成 server 和 pwa 各一行展示 */}
+          {/* label 右对齐 / value 左对齐的两列 grid, 冒号靠列对齐替代, 数字用 tabular-nums 等宽 */}
           {step === Step.SECOND && selectedServer ? (
             <>
-              <div>
-                {t('server_version')}: {selectedServer.version}
-              </div>
-              <div>
-                {t('pwa_version')}: {definition.VERSION}
-              </div>
+              <VersionLabel>{t('server_version')}</VersionLabel>
+              <VersionValue>{selectedServer.version}</VersionValue>
+              <VersionLabel>{t('pwa_version')}</VersionLabel>
+              <VersionValue>{definition.VERSION}</VersionValue>
             </>
           ) : (
-            <div>
-              {t('pwa_version')}: {definition.VERSION}
-            </div>
+            <>
+              <VersionLabel>{t('pwa_version')}</VersionLabel>
+              <VersionValue>{definition.VERSION}</VersionValue>
+            </>
           )}
         </VersionFooter>
       </Layout>

@@ -4,6 +4,7 @@ import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
 import Cover from '@/components/cover';
 import Button from '@/components/button';
+import Tag from '@/components/tag';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import capitalize from '@/style/capitalize';
@@ -28,15 +29,8 @@ const Style = styled.div`
 
     > .admin {
       position: absolute;
-      top: 0;
-      left: 0;
-
-      background-color: ${CSSVariable.COLOR_PRIMARY};
-      color: #fff;
-      font-size: ${CSSVariable.TEXT_SIZE_SMALL};
-      padding: 2px 5px;
-      border-radius: ${CSSVariable.BORDER_RADIUS_NORMAL} 0
-        ${CSSVariable.BORDER_RADIUS_NORMAL} 0;
+      top: 5px;
+      left: 5px;
     }
   }
 
@@ -96,7 +90,7 @@ function User({ user, width }: { user: UserType; width: string }) {
           src={getResizedImage({ url: user.avatar, size: ITEM_MIN_WIDTH * 2 })}
           size="100%"
         />
-        {user.admin ? <div className="admin">{t('admin')}</div> : null}
+        {user.admin ? <Tag className="admin">{t('admin')}</Tag> : null}
       </div>
       <div className="bottom">
         <div className="info">

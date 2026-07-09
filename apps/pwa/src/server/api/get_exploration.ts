@@ -20,6 +20,7 @@ type PublicMusicbillItem = {
   id: string;
   name: string;
   cover: string;
+  coverThumbnail?: string;
   user: { id: string; nickname: string };
 };
 type Response = {
@@ -47,6 +48,7 @@ const normalizeArtist = (artist: ArtistItem) => ({
 const normalizeMusicbill = (mb: PublicMusicbillItem) => ({
   ...mb,
   cover: prefixServerOrigin(mb.cover),
+  coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
 });
 
 /**

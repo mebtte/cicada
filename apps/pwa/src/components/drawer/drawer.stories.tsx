@@ -33,11 +33,6 @@ const meta = {
       description: 'Which edge the drawer slides from.',
       table: { defaultValue: { summary: 'right' } },
     },
-    showClose: {
-      control: 'boolean',
-      description: 'Show the close button.',
-      table: { defaultValue: { summary: 'false' } },
-    },
   },
 } satisfies Meta<typeof DrawerContent>;
 
@@ -50,13 +45,11 @@ function DrawerDemo({
   side = 'right',
   title = 'Drawer',
   description,
-  showClose = false,
   longContent = false,
 }: {
   side?: 'left' | 'right' | 'bottom';
   title?: string;
   description?: string;
-  showClose?: boolean;
   longContent?: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -64,7 +57,7 @@ function DrawerDemo({
     <>
       <Button onClick={() => setOpen(true)}>Open {title}</Button>
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerContent side={side} showClose={showClose}>
+        <DrawerContent side={side}>
           <DrawerHeader>
             <DrawerTitle>{title}</DrawerTitle>
             {description && <DrawerDescription>{description}</DrawerDescription>}
@@ -158,30 +151,6 @@ export const LongContent: Story = {
       title="Long Content"
       description="Scroll to see the footer stays accessible."
       longContent
-    />
-  ),
-};
-
-export const NoCloseButton: Story = {
-  name: 'No close button',
-  render: () => (
-    <DrawerDemo
-      side="right"
-      title="No × Button"
-      description="Use the Cancel button or press Escape to close."
-      showClose={false}
-    />
-  ),
-};
-
-export const WithCloseButton: Story = {
-  name: 'With close button',
-  render: () => (
-    <DrawerDemo
-      side="right"
-      title="Close Button"
-      description="The optional close button uses the same hard-shadow button style."
-      showClose
     />
   ),
 };

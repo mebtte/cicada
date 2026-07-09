@@ -823,7 +823,6 @@ function FloatingMusicPlayer({
             value={progressValue}
             onChange={onSeek}
             disabled={!canSeek}
-            alwaysShowThumb
             aria-label={t('music_playback_progress')}
           />
           <ControllerRest>

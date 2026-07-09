@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Duolingo-style slider: track with hard shadow outline, thumb presses down on interaction — same visual language as Button.',
+          'Slider: track with hard shadow outline, thumb presses down on interaction — same visual language as Button.',
       },
     },
   },
@@ -34,11 +34,6 @@ const meta = {
     secondValue: {
       control: { type: 'range', min: 0, max: 1, step: 0.01 },
       description: 'Secondary track value (0–1), e.g. buffer progress',
-    },
-    alwaysShowThumb: {
-      control: 'boolean',
-      description: 'Show thumb on non-touch devices',
-      table: { defaultValue: { summary: 'false' } },
     },
     disabled: {
       control: 'boolean',
@@ -133,7 +128,7 @@ export const Scenarios: Story = {
         <div style={{ fontSize: 11, color: '#aaa', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           Volume
         </div>
-        <Slider value={0.75} alwaysShowThumb />
+        <Slider value={0.75} />
       </div>
       <div>
         <div style={{ fontSize: 11, color: '#aaa', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>

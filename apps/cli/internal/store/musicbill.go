@@ -14,6 +14,7 @@ type Musicbill struct {
 	ID              string
 	UserID          string
 	Cover           string
+	CoverThumbnail  string
 	Name            string
 	Public          int
 	CreateTimestamp int64
@@ -51,15 +52,15 @@ type MusicInMusicbill struct {
 func GetMusicbillByID(id string) (*MusicbillWithOwner, error) {
 	mb := &MusicbillWithOwner{}
 	err := DB().QueryRow(
-		`SELECT mb.id,mb.userId,mb.cover,mb.name,mb.public,mb.createTimestamp,u.nickname,u.avatar
+		`SELECT mb.id,mb.userId,mb.cover,mb.coverThumbnail,mb.name,mb.public,mb.createTimestamp,u.nickname,u.avatar
 		FROM musicbill mb JOIN user u ON mb.userId=u.id WHERE mb.id=?`, id,
-	).Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.Name, &mb.Public, &mb.CreateTimestamp, &mb.OwnerNickname, &mb.OwnerAvatar)
+	).Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.CoverThumbnail, &mb.Name, &mb.Public, &mb.CreateTimestamp, &mb.OwnerNickname, &mb.OwnerAvatar)
 	return mb, err
 }
 
 func GetMusicbillsByUserID(userID string) ([]Musicbill, error) {
 	rows, err := DB().Query(
-		`SELECT id,userId,cover,name,public,createTimestamp FROM musicbill WHERE userId=? ORDER BY createTimestamp DESC`, userID,
+		`SELECT id,userId,cover,coverThumbnail,name,public,createTimestamp FROM musicbill WHERE userId=? ORDER BY createTimestamp DESC`, userID,
 	)
 	if err != nil {
 		return nil, err
@@ -68,7 +69,7 @@ func GetMusicbillsByUserID(userID string) ([]Musicbill, error) {
 	var out []Musicbill
 	for rows.Next() {
 		mb := Musicbill{}
-		rows.Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.Name, &mb.Public, &mb.CreateTimestamp)
+		rows.Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.CoverThumbnail, &mb.Name, &mb.Public, &mb.CreateTimestamp)
 		out = append(out, mb)
 	}
 	return out, nil
@@ -102,6 +103,11 @@ func CreateMusicbill(userID, name string) (string, error) {
 
 func UpdateMusicbill(id, field string, value any) error {
 	_, err := DB().Exec(`UPDATE musicbill SET `+field+`=? WHERE id=?`, value, id)
+	return err
+}
+
+func UpdateMusicbillCover(id, cover, coverThumbnail string) error {
+	_, err := DB().Exec(`UPDATE musicbill SET cover=?,coverThumbnail=? WHERE id=?`, cover, coverThumbnail, id)
 	return err
 }
 
@@ -323,9 +329,9 @@ func TransferMusicbillOwner(musicbillID, fromUserID, toUserID string) (bool, err
 func GetPublicMusicbillByID(id string) (*MusicbillWithOwner, error) {
 	mb := &MusicbillWithOwner{}
 	err := DB().QueryRow(
-		`SELECT mb.id,mb.userId,mb.cover,mb.name,mb.public,mb.createTimestamp,u.nickname,u.avatar
+		`SELECT mb.id,mb.userId,mb.cover,mb.coverThumbnail,mb.name,mb.public,mb.createTimestamp,u.nickname,u.avatar
 		FROM musicbill mb JOIN user u ON mb.userId=u.id WHERE mb.id=? AND mb.public=1`, id,
-	).Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.Name, &mb.Public, &mb.CreateTimestamp, &mb.OwnerNickname, &mb.OwnerAvatar)
+	).Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.CoverThumbnail, &mb.Name, &mb.Public, &mb.CreateTimestamp, &mb.OwnerNickname, &mb.OwnerAvatar)
 	return mb, err
 }
 
@@ -346,7 +352,7 @@ func SearchPublicMusicbills(keyword string, page, pageSize int) (int, []Musicbil
 	).Scan(&total)
 	// 搜索页需要直接展示乐单音乐数量，在同一条查询里补齐避免二次请求。
 	rows, err := DB().Query(
-		`SELECT mb.id,mb.userId,mb.cover,mb.name,mb.public,mb.createTimestamp,u.nickname,u.avatar,
+		`SELECT mb.id,mb.userId,mb.cover,mb.coverThumbnail,mb.name,mb.public,mb.createTimestamp,u.nickname,u.avatar,
 			(SELECT COUNT(1) FROM musicbill_music mm WHERE mm.musicbillId=mb.id) AS musicCount
 		FROM musicbill mb JOIN user u ON mb.userId=u.id
 		WHERE mb.public=1
@@ -371,7 +377,7 @@ func SearchPublicMusicbills(keyword string, page, pageSize int) (int, []Musicbil
 	var out []MusicbillWithOwner
 	for rows.Next() {
 		mb := MusicbillWithOwner{}
-		rows.Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.Name, &mb.Public, &mb.CreateTimestamp, &mb.OwnerNickname, &mb.OwnerAvatar, &mb.MusicCount)
+		rows.Scan(&mb.ID, &mb.UserID, &mb.Cover, &mb.CoverThumbnail, &mb.Name, &mb.Public, &mb.CreateTimestamp, &mb.OwnerNickname, &mb.OwnerAvatar, &mb.MusicCount)
 		out = append(out, mb)
 	}
 	return total, out, nil

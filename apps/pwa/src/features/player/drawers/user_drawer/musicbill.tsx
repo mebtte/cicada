@@ -140,11 +140,13 @@ const Style = styled.button`
 function Musicbill({
   id,
   cover,
+  coverThumbnail,
   name,
   musicCount,
 }: {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   musicCount?: number;
 }) {
@@ -166,6 +168,7 @@ function Musicbill({
           className="cover"
           shape={Shape.ROUNDED}
           src={cover}
+          placeholderSrc={coverThumbnail}
           size="100%"
         />
       </div>

@@ -6,6 +6,7 @@ import {
 } from 'react';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import hover from '@/style/hover';
 import { CSS_VAR } from '../theme';
 import Spinner from '../spinner';
 
@@ -13,7 +14,7 @@ export type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type Size = 'sm' | 'md' | 'lg';
 
 const cn = (v: string) => `var(${v})`;
-const PRIMARY        = cn(CSS_VAR.colorPrimary);
+const PRIMARY = cn(CSS_VAR.colorPrimary);
 const PRIMARY_SHADOW = cn(CSS_VAR.colorPrimaryShadow);
 const CONTROL_NEUTRAL = CSSVariable.COLOR_CONTROL_NEUTRAL;
 const NEUTRAL_SHADOW = CSSVariable.COLOR_NEUTRAL_SHADOW;
@@ -54,15 +55,6 @@ const SIZE_MAP: Record<Size, ReturnType<typeof css>> = {
   `,
 };
 
-// ─── 变体 ─────────────────────────────────────────────────────────────────────
-//
-// Duolingo 核心公式：
-//   正常  — 纯色填充 + 底部纯色硬阴影（无 blur）
-//   悬停  — 向上抬起 2px + 阴影加深（同步播放器发现页卡片）
-//   按下  — translateY(offset) + box-shadow 归零
-//   释放  — 慢速弹回（150ms ease-out）
-//   禁用  — 保留更浅的硬阴影，避免视觉高度变矮
-
 const makeVariant = (
   face: string,
   shadow: string,
@@ -77,18 +69,20 @@ const makeVariant = (
 
   box-shadow: 0 ${({ $offset }) => $offset}px 0 ${shadow};
 
-  &:not(:disabled):hover {
-    ${({ $disableHoverLift, $offset }) =>
-      $disableHoverLift
-        ? css`
-            transform: none;
-            box-shadow: 0 ${$offset}px 0 ${shadow};
-          `
-        : css`
-            transform: translateY(-2px);
-            box-shadow: 0 ${$offset + 2}px 0 ${shadow};
-          `}
-  }
+  ${hover(css<{ $disableHoverLift: boolean; $offset: number }>`
+    &:not(:disabled):hover {
+      ${({ $disableHoverLift, $offset }) =>
+    $disableHoverLift
+      ? css`
+              transform: none;
+              box-shadow: 0 ${$offset}px 0 ${shadow};
+            `
+      : css`
+              transform: translateY(-2px);
+              box-shadow: 0 ${$offset + 2}px 0 ${shadow};
+            `}
+    }
+  `)}
 
   &:not(:disabled):active {
     transform: translateY(${({ $offset }) => $offset}px);
@@ -100,10 +94,10 @@ const makeVariant = (
 `;
 
 const VARIANT_MAP: Record<Variant, ReturnType<typeof css>> = {
-  primary:   makeVariant(PRIMARY,   PRIMARY_SHADOW),
-  secondary: makeVariant('#ffffff', PRIMARY,        PRIMARY),
-  ghost:     makeVariant('#ffffff', NEUTRAL_SHADOW, 'rgb(88 88 88)'),
-  danger:    makeVariant('rgb(242 80 66)', 'rgb(190 46 34)'),
+  primary: makeVariant(PRIMARY, PRIMARY_SHADOW),
+  secondary: makeVariant('#ffffff', PRIMARY, PRIMARY),
+  ghost: makeVariant('#ffffff', NEUTRAL_SHADOW, 'rgb(88 88 88)'),
+  danger: makeVariant('rgb(242 80 66)', 'rgb(190 46 34)'),
 };
 
 const FOCUS_RING_MAP: Record<Variant, string> = {

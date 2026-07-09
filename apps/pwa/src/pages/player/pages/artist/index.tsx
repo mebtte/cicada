@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Page from '../page';
-import ArtistContent from '../../artist_drawer/content';
+import ArtistContent from '@/features/player/drawers/artist_drawer/content';
 
 const Style = styled(Page)`
   z-index: 1;
@@ -10,7 +10,6 @@ const Style = styled(Page)`
   left: 0;
   width: 100%;
   height: 100%;
-  background: #fff;
 `;
 
 function Wrapper() {

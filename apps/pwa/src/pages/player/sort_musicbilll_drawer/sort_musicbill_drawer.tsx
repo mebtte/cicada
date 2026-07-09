@@ -82,6 +82,7 @@ const drawerStyle = {
 const toLocalMusicbill = (musicbill: MusicbillType): LocalMusicbill => ({
   id: musicbill.id,
   cover: musicbill.cover,
+  coverThumbnail: musicbill.coverThumbnail,
   name: musicbill.name,
   public: musicbill.public,
 });

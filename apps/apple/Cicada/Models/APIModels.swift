@@ -291,6 +291,7 @@ struct Music: Decodable, Hashable, Identifiable {
 struct MusicbillSummary: Decodable, Hashable, Identifiable {
     let id: String
     var cover: String
+    var coverThumbnail: String?
     let name: String
     let isPublic: Bool
     let createTimestamp: TimeInterval
@@ -300,6 +301,7 @@ struct MusicbillSummary: Decodable, Hashable, Identifiable {
     enum CodingKeys: String, CodingKey {
         case id
         case cover
+        case coverThumbnail
         case name
         case isPublic = "public"
         case createTimestamp
@@ -311,6 +313,7 @@ struct MusicbillSummary: Decodable, Hashable, Identifiable {
 struct MusicbillDetail: Decodable, Hashable, Identifiable {
     let id: String
     var cover: String
+    var coverThumbnail: String?
     let name: String
     let isPublic: Bool
     let createTimestamp: TimeInterval
@@ -321,6 +324,7 @@ struct MusicbillDetail: Decodable, Hashable, Identifiable {
     enum CodingKeys: String, CodingKey {
         case id
         case cover
+        case coverThumbnail
         case name
         case isPublic = "public"
         case createTimestamp
@@ -334,6 +338,7 @@ struct PublicMusicbillSearchItem: Decodable, Hashable, Identifiable {
     let id: String
     let name: String
     var cover: String
+    var coverThumbnail: String?
     let musicCount: Int
     let collectionCount: Int
     var user: MusicbillUser
@@ -342,6 +347,7 @@ struct PublicMusicbillSearchItem: Decodable, Hashable, Identifiable {
         id: String,
         name: String,
         cover: String,
+        coverThumbnail: String?,
         musicCount: Int,
         collectionCount: Int,
         user: MusicbillUser
@@ -349,6 +355,7 @@ struct PublicMusicbillSearchItem: Decodable, Hashable, Identifiable {
         self.id = id
         self.name = name
         self.cover = cover
+        self.coverThumbnail = coverThumbnail
         self.musicCount = musicCount
         self.collectionCount = collectionCount
         self.user = user
@@ -358,6 +365,7 @@ struct PublicMusicbillSearchItem: Decodable, Hashable, Identifiable {
         case id
         case name
         case cover
+        case coverThumbnail
         case musicCount
         case collectionCount
         case user
@@ -368,6 +376,7 @@ struct PublicMusicbillSearchItem: Decodable, Hashable, Identifiable {
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        coverThumbnail = try container.decodeIfPresent(String.self, forKey: .coverThumbnail)
         musicCount = try container.decodeIfPresent(Int.self, forKey: .musicCount) ?? 0
         collectionCount = try container.decodeIfPresent(Int.self, forKey: .collectionCount) ?? 0
         user = try container.decode(MusicbillUser.self, forKey: .user)
@@ -383,6 +392,7 @@ struct PublicMusicbillCollectionItem: Decodable, Hashable, Identifiable {
     let id: String
     let name: String
     var cover: String
+    var coverThumbnail: String?
     let musicCount: Int
     var user: MusicbillUser
 
@@ -391,6 +401,7 @@ struct PublicMusicbillCollectionItem: Decodable, Hashable, Identifiable {
             id: id,
             name: name,
             cover: cover,
+            coverThumbnail: coverThumbnail,
             musicCount: musicCount,
             collectionCount: 0,
             user: user
@@ -401,6 +412,7 @@ struct PublicMusicbillCollectionItem: Decodable, Hashable, Identifiable {
         case id
         case name
         case cover
+        case coverThumbnail
         case musicCount
         case user
     }
@@ -410,6 +422,7 @@ struct PublicMusicbillCollectionItem: Decodable, Hashable, Identifiable {
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        coverThumbnail = try container.decodeIfPresent(String.self, forKey: .coverThumbnail)
         musicCount = try container.decodeIfPresent(Int.self, forKey: .musicCount) ?? 0
         user = try container.decode(MusicbillUser.self, forKey: .user)
     }
@@ -451,6 +464,7 @@ struct SharedMusicbillInvitation: Decodable, Hashable, Identifiable {
 struct UserPublicMusicbill: Decodable, Hashable, Identifiable {
     let id: String
     var cover: String
+    var coverThumbnail: String?
     let name: String
     let musicCount: Int
 
@@ -459,6 +473,7 @@ struct UserPublicMusicbill: Decodable, Hashable, Identifiable {
             id: id,
             name: name,
             cover: cover,
+            coverThumbnail: coverThumbnail,
             musicCount: musicCount,
             collectionCount: 0,
             user: user
@@ -468,6 +483,7 @@ struct UserPublicMusicbill: Decodable, Hashable, Identifiable {
     enum CodingKeys: String, CodingKey {
         case id
         case cover
+        case coverThumbnail
         case name
         case musicCount
     }
@@ -476,6 +492,7 @@ struct UserPublicMusicbill: Decodable, Hashable, Identifiable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        coverThumbnail = try container.decodeIfPresent(String.self, forKey: .coverThumbnail)
         name = try container.decode(String.self, forKey: .name)
         musicCount = try container.decodeIfPresent(Int.self, forKey: .musicCount) ?? 0
     }
@@ -549,6 +566,7 @@ struct AuthSession: Decodable, Hashable, Identifiable {
 struct PublicMusicbillDetail: Decodable, Hashable, Identifiable {
     let id: String
     var cover: String
+    var coverThumbnail: String?
     let name: String
     let isPublic: Bool
     var user: MusicbillUser
@@ -558,6 +576,7 @@ struct PublicMusicbillDetail: Decodable, Hashable, Identifiable {
     enum CodingKeys: String, CodingKey {
         case id
         case cover
+        case coverThumbnail
         case name
         case isPublic = "public"
         case user
@@ -569,6 +588,7 @@ struct PublicMusicbillDetail: Decodable, Hashable, Identifiable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        coverThumbnail = try container.decodeIfPresent(String.self, forKey: .coverThumbnail)
         name = try container.decode(String.self, forKey: .name)
         isPublic = try container.decodeFlexibleBool(forKey: .isPublic)
         user = try container.decode(MusicbillUser.self, forKey: .user)
@@ -778,6 +798,7 @@ struct ExplorationPublicMusicbillItem: Decodable, Hashable, Identifiable {
     let id: String
     let name: String
     var cover: String
+    var coverThumbnail: String?
     var user: MusicbillUser
 
     func asSearchItem() -> PublicMusicbillSearchItem {
@@ -785,6 +806,7 @@ struct ExplorationPublicMusicbillItem: Decodable, Hashable, Identifiable {
             id: id,
             name: name,
             cover: cover,
+            coverThumbnail: coverThumbnail,
             musicCount: 0,
             collectionCount: 0,
             user: user
@@ -795,6 +817,7 @@ struct ExplorationPublicMusicbillItem: Decodable, Hashable, Identifiable {
         case id
         case name
         case cover
+        case coverThumbnail
         case user
     }
 
@@ -803,6 +826,7 @@ struct ExplorationPublicMusicbillItem: Decodable, Hashable, Identifiable {
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         cover = try container.decodeIfPresent(String.self, forKey: .cover) ?? ""
+        coverThumbnail = try container.decodeIfPresent(String.self, forKey: .coverThumbnail)
         user = try container.decode(MusicbillUser.self, forKey: .user)
     }
 }

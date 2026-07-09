@@ -12,16 +12,22 @@ export interface ArtistProps {
   performer: ArtistValue;
 }
 
-const Style = styled.span`
+const Style = styled.span<{ $clickable: boolean }>`
   user-select: none;
 
   > .name {
-    cursor: pointer;
     transition: color 120ms ease-out;
 
-    &:hover {
-      color: ${CSSVariable.TEXT_COLOR_PRIMARY};
-    }
+    ${({ $clickable }) =>
+      $clickable
+        ? `
+          cursor: pointer;
+
+          &:hover {
+            color: ${CSSVariable.TEXT_COLOR_PRIMARY};
+          }
+        `
+        : ''}
   }
 
   > .divider {
@@ -36,13 +42,20 @@ const Style = styled.span`
 `;
 
 function Performer({ onOpen, performer }: ArtistProps) {
+  const clickable = !!onOpen;
+
   return (
-    <Style>
+    <Style $clickable={clickable}>
       <span
         className="name"
         onClick={(event) => {
+          if (!onOpen) {
+            return;
+          }
+
+          // Artist 标签处于可点击音乐卡片内部时, 需要阻止冒泡避免同时打开 music drawer。
           event.stopPropagation();
-          onOpen?.(performer, event);
+          onOpen(performer, event);
         }}
       >
         {performer.name}

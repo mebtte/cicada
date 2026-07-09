@@ -68,25 +68,24 @@ const CSS_VARIABLE_MAP_VALUE: Record<CSSVariable, string> = {
   [CSSVariable.BORDER_RADIUS_NORMAL]: '4px',
 };
 
-const DUOLINGO_FONT_FAMILY =
+const FONT_FAMILY =
   "'Nunito', 'Varela Round', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
 export const TokensStyle = createGlobalStyle`
   html {
     ${Object.keys(CSS_VARIABLE_MAP_VALUE)
-      .map(
-        (variable) =>
-          `${variable.match(/^var\((.+)\)$/)![1]}: ${
-            CSS_VARIABLE_MAP_VALUE[variable]
-          };`,
-      )
-      .join('\n')}
+    .map(
+      (variable) =>
+        `${variable.match(/^var\((.+)\)$/)![1]}: ${CSS_VARIABLE_MAP_VALUE[variable]
+        };`,
+    )
+    .join('\n')}
 
     accent-color: ${CSSVariable.COLOR_PRIMARY};
   }
 
   body {
-    font-family: ${DUOLINGO_FONT_FAMILY};
+    font-family: ${FONT_FAMILY};
   }
 
   input,

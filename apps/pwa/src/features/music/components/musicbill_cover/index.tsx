@@ -34,19 +34,26 @@ function MusicbillCover({
   shared,
   size,
   src,
+  placeholderSrc,
   ...props
 }: {
   publiz: boolean;
   shared: boolean;
   size: number;
   src: string;
+  placeholderSrc?: string;
 } & HTMLAttributes<HTMLDivElement>) {
   return (
     <Style
       {...props}
       className={classnames(props.className, { publiz, shared })}
     >
-      <Cover src={src} size={size} onDragStart={preventDefault} />
+      <Cover
+        src={src}
+        placeholderSrc={placeholderSrc}
+        size={size}
+        onDragStart={preventDefault}
+      />
     </Style>
   );
 }

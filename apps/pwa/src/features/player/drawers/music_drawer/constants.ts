@@ -26,6 +26,7 @@ export interface RelatedPublicMusicbill {
   id: string;
   name: string;
   cover: string;
+  coverThumbnail?: string;
   musicCount: number;
   user: CreateUser & {
     avatar: string;

@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import ImageViewer, { type ImageViewerPhoto } from '.';
 import Button from '../button';
-import DefaultCover from '@/asset/default_cover.jpeg';
+
+const SAMPLE_IMAGE = 'https://picsum.photos/seed/cicada-viewer/1600/1000';
 
 function ImageViewerDemo({ src, alt }: { src: string; alt: string }) {
   const [photo, setPhoto] = useState<ImageViewerPhoto | null>(null);
@@ -28,8 +29,8 @@ const meta = {
     },
   },
   args: {
-    src: DefaultCover,
-    alt: 'Default cover',
+    src: SAMPLE_IMAGE,
+    alt: 'Sample image',
   },
 } satisfies Meta<typeof ImageViewerDemo>;
 
@@ -41,7 +42,7 @@ export const Basic: Story = {};
 export const RemoteImage: Story = {
   name: 'Remote image',
   args: {
-    src: 'https://picsum.photos/seed/cicada-viewer/1600/1000',
+    src: SAMPLE_IMAGE,
     alt: 'Random landscape',
   },
 };

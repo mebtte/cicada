@@ -224,6 +224,7 @@ function RelatedPublicMusicbillList({
                   url: musicbill.cover,
                   size: Math.ceil(COVER_IMAGE_SIZE * window.devicePixelRatio),
                 })}
+                placeholderSrc={musicbill.coverThumbnail}
                 size="100%"
               />
             </div>

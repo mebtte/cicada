@@ -11,7 +11,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Duolingo-style button with a hard bottom shadow and a satisfying press-down animation. Supports 4 variants (`primary`, `secondary`, `ghost`, `danger`), 3 sizes, loading and disabled states. Use `square` prop for icon-only buttons (replaces the old icon_button component).',
+          'Button with a hard bottom shadow and a satisfying press-down animation. Supports 4 variants (`primary`, `secondary`, `ghost`, `danger`), 3 sizes, loading and disabled states. Use `square` prop for icon-only buttons (replaces the old icon_button component).',
       },
     },
   },

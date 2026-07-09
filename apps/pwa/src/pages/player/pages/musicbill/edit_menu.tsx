@@ -350,6 +350,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     url: musicbill.cover,
                     size: COVER_SIZE * 2,
                   })}
+                  placeholderSrc={musicbill.coverThumbnail}
                   size={COVER_SIZE}
                 />
                 <CoverActions>

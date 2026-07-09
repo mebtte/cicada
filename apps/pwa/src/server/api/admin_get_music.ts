@@ -45,6 +45,7 @@ type Response = Omit<Music, 'performers' | 'lyricists' | 'composers'> & {
     id: string;
     name: string;
     cover: string;
+    coverThumbnail?: string;
     musicCount: number;
     user: {
       id: string;
@@ -147,6 +148,7 @@ async function adminGetMusic({
     ).map((musicbill) => ({
       ...musicbill,
       cover: prefixServerOrigin(musicbill.cover),
+      coverThumbnail: prefixServerOrigin(musicbill.coverThumbnail ?? ''),
       user: {
         ...musicbill.user,
         avatar: prefixServerOrigin(musicbill.user.avatar),

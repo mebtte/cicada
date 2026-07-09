@@ -2,7 +2,6 @@ import { SEARCH_KEYWORD_MAX_LENGTH } from '@/constants/artist';
 import logger from '@/utils/logger';
 import { Query } from '@/constants';
 import searchArtist from '@/server/api/search_artist';
-import DefaultCover from '@/asset/default_cover.jpeg';
 import useQuery from '@/utils/use_query';
 import { useCallback, useEffect, useState } from 'react';
 import { PAGE_SIZE } from '../constants';
@@ -44,7 +43,7 @@ export default () => {
           total: d.total,
           artistList: d.artistList.map((artist) => ({
             ...artist,
-            avatar: artist.photos[0]?.asset || DefaultCover,
+            avatar: artist.photos[0]?.asset || '',
             avatarThumbnail: artist.photos[0]?.thumbnail,
           })),
         },

@@ -108,7 +108,7 @@ export default {
   aliases: 'aliases',
   search_keywords: 'search keywords',
   search_keywords_placeholder:
-    'Pinyin, initials, nicknames, misspellings, translations. Only used for search.',
+    'Search keywords, only used for search matching, not displayed, one per line.',
   no_musicbill: 'no musicbill',
   no_data: 'no data',
   no_suitable_music_play_record: 'no suitable music play record',
@@ -282,7 +282,7 @@ export default {
   delete_origin_question:
     'are you sure to delete this server address and users within?',
   sort_musicbill: 'sort musicbill',
-  reload_musicbill_list: 'refresh',
+  reload_musicbill_list: 'reload musicbill list',
   collect_musicbill: 'collect musicbill',
   uncollect_musicbill: 'uncollect musicbill',
   make_public_musicbill_question: 'make this musicbill public?',

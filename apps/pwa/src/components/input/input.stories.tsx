@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Text input field with Duolingo-style hard shadow. Supports label and error messages. Built with `forwardRef` for compatibility with form libraries like React Hook Form.',
+          'Text input field with hard shadow. Supports label and error messages. Built with `forwardRef` for compatibility with form libraries like React Hook Form.',
       },
     },
   },
@@ -28,10 +28,10 @@ const meta = {
       description: 'Input size — aligns with Button sizes',
       table: { defaultValue: { summary: 'md' } },
     },
-    label:       { control: 'text', description: 'Label rendered above the input' },
+    label: { control: 'text', description: 'Label rendered above the input' },
     placeholder: { control: 'text', description: 'Placeholder text' },
-    error:       { control: 'text', description: 'Error message — also triggers the error visual state' },
-    disabled:    { control: 'boolean', description: 'Disabled state' },
+    error: { control: 'text', description: 'Error message — also triggers the error visual state' },
+    disabled: { control: 'boolean', description: 'Disabled state' },
   },
 } satisfies Meta<typeof Input>;
 
@@ -50,9 +50,9 @@ export const States: Story = {
   parameters: { controls: { disable: true } },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <Input label="Default"   placeholder="Placeholder..." />
-      <Input label="Error"     placeholder="Type something..." error="This field is required" />
-      <Input label="Disabled"  placeholder="Not editable"     disabled />
+      <Input label="Default" placeholder="Placeholder..." />
+      <Input label="Error" placeholder="Type something..." error="This field is required" />
+      <Input label="Disabled" placeholder="Not editable" disabled />
     </div>
   ),
 };
@@ -62,9 +62,9 @@ export const Sizes: Story = {
   parameters: { controls: { disable: true } },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <Input size="sm" label="Small"  placeholder="Small input..."  />
+      <Input size="sm" label="Small" placeholder="Small input..." />
       <Input size="md" label="Medium" placeholder="Medium input..." />
-      <Input size="lg" label="Large"  placeholder="Large input..."  />
+      <Input size="lg" label="Large" placeholder="Large input..." />
     </div>
   ),
 };

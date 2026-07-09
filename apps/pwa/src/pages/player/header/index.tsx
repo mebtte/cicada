@@ -40,7 +40,6 @@ const HeaderLogo = styled.img`
   height: 36px;
   object-fit: contain;
   flex-shrink: 0;
-  transform: translateY(-5px);
   user-select: none;
 `;
 
@@ -98,7 +97,7 @@ function Header() {
           </Button>
         </>
       ) : (
-        <HeaderLogo src="/app_logo_v1.png" alt="" aria-hidden="true" />
+        <HeaderLogo src="/favicon-64_v1.png" alt="" aria-hidden="true" />
       )}
       <Title title={title.title} description={title.description} />
       {miniMode ? null : <Search />}

@@ -60,7 +60,7 @@ function Top() {
 
   return (
     <Style aria-label={t('musicbill')}>
-      <Tooltip content={t('create')}>
+      <Tooltip content={t('create_musicbill')}>
         <ToolButton
           square
           variant="primary"

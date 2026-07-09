@@ -118,11 +118,16 @@ function Info({
   musicbill: Musicbill;
   identityRef?: Ref<HTMLElement>;
 }) {
-  const { name, cover, user } = musicbill;
+  const { name, cover, coverThumbnail, user } = musicbill;
   return (
     <Style>
       <Main>
-        <Cover src={cover} size="100%" shape={Shape.SQUARE} />
+        <Cover
+          src={cover}
+          placeholderSrc={coverThumbnail}
+          size="100%"
+          shape={Shape.SQUARE}
+        />
         <CoverOverlay>
           <Identity ref={identityRef}>
             <h1 className="name">{name}</h1>

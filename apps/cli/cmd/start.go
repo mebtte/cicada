@@ -7,6 +7,7 @@ import (
 	"cicada/internal/server"
 	"cicada/internal/store"
 	"cicada/pwa"
+	"cicada/storybook"
 	"fmt"
 	"log"
 	"net/http"
@@ -116,6 +117,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 
 	r := server.NewServer()
 	pwa.Register(r)
+	storybook.Register(r)
 
 	addr := fmt.Sprintf(":%d", cfg.Port)
 	log.Printf("cicada listening on %s", addr)

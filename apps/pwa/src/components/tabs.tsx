@@ -8,11 +8,13 @@ import {
 import { animated, useSpring } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import { CSSVariable } from '@/global_style';
+import hover from '@/style/hover';
 import { CSS_VAR } from './theme';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
 const PRIMARY_SHADOW = `var(${CSS_VAR.colorPrimaryShadow})`;
 const HOVER_SHADOW = CSSVariable.COLOR_DISABLED_SHADOW;
+const TAB_HEIGHT = 34;
 
 export type TabItem<TabType extends string> = {
   tab: TabType;
@@ -61,7 +63,7 @@ const ActiveBlock = styled.div<{
         $widthOffset}px
   );
   background: ${PRIMARY};
-  border: 2px solid ${PRIMARY_SHADOW};
+  box-shadow: inset 0 0 0 2px ${PRIMARY_SHADOW};
   border-radius: 12px;
   transition: left 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
   pointer-events: none;
@@ -73,7 +75,7 @@ const TabButton = styled.button<{ $active: boolean }>`
   isolation: isolate;
   flex: 1 1 0;
   min-width: 0;
-  height: 34px;
+  height: ${TAB_HEIGHT}px;
   padding: 0 12px;
 
   display: flex;
@@ -83,6 +85,8 @@ const TabButton = styled.button<{ $active: boolean }>`
   border: 0;
   border-radius: 12px;
   background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
   color: ${CSSVariable.TEXT_COLOR_PRIMARY};
   cursor: pointer;
   user-select: none;
@@ -91,11 +95,9 @@ const TabButton = styled.button<{ $active: boolean }>`
   font-family: 'Nunito', 'Varela Round', system-ui, sans-serif;
   font-size: ${CSSVariable.TEXT_SIZE_NORMAL};
   font-weight: 800;
+  line-height: 1;
   letter-spacing: 0;
   text-transform: capitalize;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 
   transition:
     color 150ms ease-out,
@@ -114,9 +116,11 @@ const TabButton = styled.button<{ $active: boolean }>`
     pointer-events: none;
   }
 
-  &:not(:disabled):hover {
-    filter: brightness(1.04);
-  }
+  ${hover(css`
+    &:not(:disabled):hover {
+      filter: brightness(1.04);
+    }
+  `)}
 
   &:disabled {
     cursor: not-allowed;
@@ -137,12 +141,27 @@ const TabButton = styled.button<{ $active: boolean }>`
   ${({ $active }) =>
     !$active &&
     css`
-      &:not(:disabled):hover {
-        &::before {
-          opacity: 1;
+      ${hover(css`
+        &:not(:disabled):hover {
+          &::before {
+            opacity: 1;
+          }
         }
-      }
+      `)}
     `}
+`;
+
+const TabButtonLabel = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1;
 `;
 
 const PanelsRoot = styled.div`
@@ -211,7 +230,7 @@ export function TabList<TabType extends string>({
               }
             }}
           >
-            {label}
+            <TabButtonLabel>{label}</TabButtonLabel>
           </TabButton>
         );
       })}

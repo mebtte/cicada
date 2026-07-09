@@ -10,6 +10,7 @@ interface User {
 type Response = {
   id: string;
   cover: string;
+  coverThumbnail?: string;
   name: string;
   public: boolean;
   createTimestamp: number;
@@ -27,6 +28,7 @@ async function getMusicbillList() {
   return musicbillList.map((mb) => ({
     ...mb,
     cover: prefixServerOrigin(mb.cover),
+    coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
     owner: {
       ...mb.owner,
       avatar: prefixServerOrigin(mb.owner.avatar),
