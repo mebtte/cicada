@@ -2,12 +2,14 @@ import { ImgHTMLAttributes, useLayoutEffect, useRef, useState } from 'react';
 import { animated, useTransition } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import { ComponentSize } from '@/constants/style';
-import DefaultCover from '@/static/apple-touch-icon_v1.png';
 import loadImage, { isImageLoaded } from '@/utils/load_image';
 import logger from '@/utils/logger';
 import { CSSVariable } from '@/global_style';
 import { Shape } from './constants';
 import intersectionObserver from './intersection_observer';
+
+// src/static 是 vite 的 publicDir, 资源以根路径托管, 不能用 import 导入, 直接引用 URL
+const DefaultCover = '/apple-touch-icon_v1.png';
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
