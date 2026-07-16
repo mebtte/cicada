@@ -26,6 +26,9 @@ export default () => {
       }
 
       event.preventDefault();
+
+      // 聚焦搜索框前先收起播放详情 (歌词面板), 避免面板遮挡搜索框
+      eventemitter.emit(EventType.TOGGLE_LYRIC_PANEL, { open: false });
       eventemitter.emit(EventType.FOCUS_SEARCH_INPUT, null);
     };
 
