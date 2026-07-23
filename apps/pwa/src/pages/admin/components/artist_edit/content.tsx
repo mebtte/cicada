@@ -49,7 +49,6 @@ import adminDeleteArtistPhoto from '@/server/api/admin_delete_artist_photo';
 import adminReorderArtistPhotos from '@/server/api/admin_reorder_artist_photos';
 import adminUpdateArtistPhoto from '@/server/api/admin_update_artist_photo';
 import updateArtist from '@/server/api/update_artist';
-import { ExceptionCode } from '@/constants/exception';
 import playerEventemitter, {
   EventType as PlayerEventType,
 } from '@/features/player/eventemitter';
@@ -736,12 +735,7 @@ function ArtistEditContent({
           onDeleted?.();
         } catch (error) {
           logger.error(error, 'Failed to delete artist');
-          // 服务端兜底返回的错误码需要翻译成可读文案
-          notice.error(
-            error.code === ExceptionCode.ARTIST_HAS_MUSIC_CAN_NOT_BE_DELETED
-              ? t('artist_has_music_can_not_be_deleted')
-              : error.message,
-          );
+          notice.error(error.message);
           return false;
         } finally {
           setDeleting(false);

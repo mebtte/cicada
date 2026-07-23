@@ -135,6 +135,27 @@ func TestSpecDocumentsClientLanguageOnEveryAPI(t *testing.T) {
 	}
 }
 
+func TestEnvelopeExamplesAlwaysContainStableFields(t *testing.T) {
+	success := successEnvelopeExample(nil)
+	if len(success) != 3 || success["code"] != "success" || success["message"] != "" {
+		t.Fatalf("unexpected success envelope: %v", success)
+	}
+	if data, ok := success["data"]; !ok || data != nil {
+		t.Fatalf("success envelope must contain null data: %v", success)
+	}
+
+	failure := errorEnvelopeExample("wrong_parameter")
+	if len(failure) != 3 || failure["code"] != "wrong_parameter" {
+		t.Fatalf("unexpected error envelope: %v", failure)
+	}
+	if message, _ := failure["message"].(string); message == "" || message == "wrong_parameter" {
+		t.Fatalf("error envelope must contain a friendly message: %v", failure)
+	}
+	if data, ok := failure["data"]; !ok || data != nil {
+		t.Fatalf("error envelope must contain null data: %v", failure)
+	}
+}
+
 func TestRegisterServesDocsPageAndSpec(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 

@@ -146,7 +146,7 @@ async function jsonRequest<T>(
   }
   const payload = (await response.json()) as ServerResponse<T>;
   if (payload.code !== ExceptionCode.SUCCESS) {
-    throw new ErrorWithCode(payload.message || payload.code, payload.code);
+    throw new ErrorWithCode(payload.message, payload.code);
   }
   return payload.data;
 }
@@ -243,7 +243,7 @@ function putChunk(
       try {
         const payload = JSON.parse(xhr.responseText) as ServerResponse<PutResponse>;
         if (payload.code !== ExceptionCode.SUCCESS) {
-          reject(new ErrorWithCode(payload.message || payload.code, payload.code));
+          reject(new ErrorWithCode(payload.message, payload.code));
           return;
         }
         resolve(payload.data);
@@ -327,7 +327,10 @@ async function uploadAssetChunked(
       ? getAssetMaxSize(assetType, file.type)
       : undefined;
   if (limit && file.size > limit) {
-    throw new ErrorWithCode('asset oversize', ExceptionCode.ASSET_OVERSIZE);
+    throw new ErrorWithCode(
+      t('import_asset_oversize'),
+      ExceptionCode.ASSET_OVERSIZE,
+    );
   }
 
   onPhase?.('hashing');

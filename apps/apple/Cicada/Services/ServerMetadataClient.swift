@@ -28,9 +28,7 @@ struct ServerMetadataClient {
 
         let envelope = try JSONDecoder().decode(MetadataEnvelope.self, from: data)
         guard envelope.code == "success" else {
-            throw ServerMetadataClientError.serverMessage(
-                envelope.message ?? envelope.code
-            )
+            throw ServerMetadataClientError.serverMessage(envelope.message)
         }
         guard let metadata = envelope.data else {
             throw ServerMetadataClientError.missingPayload
@@ -68,7 +66,7 @@ struct ServerMetadataClient {
 
 private struct MetadataEnvelope: Decodable {
     let code: String
-    let message: String?
+    let message: String
     let data: ServerMetadata?
 }
 

@@ -1,6 +1,7 @@
 package apidoc
 
 import (
+	"cicada/internal/api/apperr"
 	"cicada/internal/config"
 	"cicada/internal/version"
 	"net/http"
@@ -1375,34 +1376,41 @@ func octetStreamRequestBody(desc string) map[string]any {
 }
 
 func successEnvelopeSchema(dataSchema map[string]any) map[string]any {
+	messageSchema := strEnumSchema([]string{""}, "")
+	messageSchema["description"] = "Empty for successful responses."
+	messageSchema["example"] = ""
+	if dataSchema == nil {
+		dataSchema = nullableSchema(anySchema("Successful response data. Null when the endpoint has no payload."))
+	}
 	props := map[string]any{
-		"code": strEnumSchema([]string{"success"}, "success"),
+		"code":    strEnumSchema([]string{"success"}, "success"),
+		"message": messageSchema,
+		"data":    dataSchema,
 	}
-	if dataSchema != nil {
-		props["data"] = dataSchema
-	}
-	return objSchema([]string{"code"}, props)
+	return objSchema([]string{"code", "message", "data"}, props)
 }
 
 func errorEnvelopeSchema() map[string]any {
 	return objSchema(
-		[]string{"code", "message"},
+		[]string{"code", "message", "data"},
 		map[string]any{
 			"code":    strSchema("Business error code.", "wrong_parameter"),
-			"message": strSchema("Error message. The current implementation returns the same value as `code`.", "wrong_parameter"),
+			"message": strSchema("Localized user-facing error message selected by `__client_language`.", apperr.Message(apperr.WrongParameter, apperr.LanguageEnglish)),
+			"data":    nullableSchema(anySchema("Always null for error responses.")),
 		},
 	)
 }
 
 func successEnvelopeExample(data any) map[string]any {
-	if data == nil {
-		return map[string]any{"code": "success"}
-	}
-	return map[string]any{"code": "success", "data": data}
+	return map[string]any{"code": "success", "message": "", "data": data}
 }
 
 func errorEnvelopeExample(code string) map[string]any {
-	return map[string]any{"code": code, "message": code}
+	return map[string]any{
+		"code":    code,
+		"message": apperr.Message(code, apperr.LanguageEnglish),
+		"data":    nil,
+	}
 }
 
 func pathParam(name, desc string, schema map[string]any) map[string]any {

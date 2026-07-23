@@ -625,7 +625,7 @@ struct CicadaAPIClient: Sendable {
         guard envelope.code == "success" else {
             throw CicadaAPIError.business(
                 code: envelope.code,
-                message: envelope.message ?? envelope.code
+                message: envelope.message
             )
         }
         if let payload = envelope.data {
@@ -715,7 +715,7 @@ struct CicadaAPIClient: Sendable {
 
 private struct APIEnvelope<Data: Decodable>: Decodable {
     let code: String
-    let message: String?
+    let message: String
     let data: Data?
 }
 

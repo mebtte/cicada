@@ -93,8 +93,6 @@ export default {
   music_forked_by_other_can_not_be_deleted:
     'music forked by others cannot be deleted',
   delete_artist_question: 'are you sure to delete this artist?',
-  artist_has_music_can_not_be_deleted:
-    'artist with linked music cannot be deleted',
   year_of_issue: 'year of issue',
   year_of_issue_limit: 'year of issue should be between %s1 and %s2',
   edit_avatar: 'edit avatar',
@@ -249,7 +247,6 @@ export default {
     'using Authenticator App like Microsoft Authenticator or Google Authenticator to scan the QR code',
   '2fa_token': '2FA token',
   lack_of_2fa_token: 'lack of 2FA token',
-  wrong_2fa_token: 'wrong 2FA token',
   '2fa_has_disabled': '2FA has disabled',
   create_musicbill: 'create musicbill',
   empty_musicbill_warning: 'musicbill is empty',
@@ -257,8 +254,6 @@ export default {
   no_suitable_musicbill_warning: 'no suitable musicbill?',
   no_suitable_artist: 'no suitable artist',
   create_artist: 'create artist',
-  repeated_name_artist_warning:
-    'there is an artist with the same name, are you sure to create forcibly?',
   created: 'created',
   accept: 'accept',
   shared_musicbill_invitation_instruction:
