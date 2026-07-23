@@ -1,11 +1,24 @@
 export enum Language {
-  ZH_HANS = 'zh-hans',
   EN = 'en',
+  ZH_HANS = 'zh-Hans',
+  ZH_HANT = 'zh-Hant',
 }
 export const LANGUAGES = Object.values(Language);
 export const DEFAULT_LANGUAGE = Language.EN;
 
 export function getClientLanguage(language: Language) {
-  // 本地存储沿用既有枚举值, 仅在 API 边界转换为规范的 BCP 47 标签。
-  return language === Language.ZH_HANS ? 'zh-Hans' : 'en';
+  return language;
+}
+
+export function getOrderedLanguages(selectedLanguage: Language): Language[] {
+  // 当前语言固定排在首位，其余语言按规范语言 key 的英文顺序排列。
+  const remainingLanguages = LANGUAGES.filter(
+    (language) => language !== selectedLanguage,
+  ).sort((left, right) => {
+    if (left < right) return -1;
+    if (left > right) return 1;
+    return 0;
+  });
+
+  return [selectedLanguage, ...remainingLanguages];
 }

@@ -3,12 +3,7 @@ import { Select, SelectOption, SelectProps } from '@/components';
 import { useSetting } from '@/global_states/setting';
 import { LANGUAGE_MAP, t } from '@/i18n';
 import dialog from '@/utils/dialog';
-import { LANGUAGES, Language } from '@/constants/language';
-
-const options: SelectOption<Language>[] = LANGUAGES.map((language) => ({
-  label: LANGUAGE_MAP[language].label,
-  value: language,
-}));
+import { getOrderedLanguages, Language } from '@/constants/language';
 
 function reloadAfterLanguageChange(language: Language) {
   useSetting.setState({ language });
@@ -33,6 +28,12 @@ function LanguageSelect({
   style,
 }: Props) {
   const { language } = useSetting();
+  const options: SelectOption<Language>[] = getOrderedLanguages(language).map(
+    (optionLanguage) => ({
+      label: LANGUAGE_MAP[optionLanguage].label,
+      value: optionLanguage,
+    }),
+  );
 
   return (
     <Select<Language>

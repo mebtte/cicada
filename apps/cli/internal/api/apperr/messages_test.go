@@ -69,6 +69,9 @@ func TestEveryErrorCodeHasFriendlyMessages(t *testing.T) {
 			if message.simplifiedChinese == "" || message.simplifiedChinese == code {
 				t.Fatalf("invalid Simplified Chinese message %q", message.simplifiedChinese)
 			}
+			if message.traditionalChinese == "" || message.traditionalChinese == code {
+				t.Fatalf("invalid Traditional Chinese message %q", message.traditionalChinese)
+			}
 		})
 	}
 
@@ -81,13 +84,19 @@ func TestMessageLanguageAndFallbackRules(t *testing.T) {
 	if got := Message(Success, LanguageSimplifiedChinese); got != "" {
 		t.Fatalf("success message must be empty, got %q", got)
 	}
-	if got := Message(WrongCaptcha, "zh-hans"); got != localizedMessages[WrongCaptcha].simplifiedChinese {
+	if got := Message(WrongCaptcha, LanguageSimplifiedChinese); got != localizedMessages[WrongCaptcha].simplifiedChinese {
 		t.Fatalf("expected Simplified Chinese message, got %q", got)
+	}
+	if got := Message(WrongCaptcha, LanguageTraditionalChinese); got != localizedMessages[WrongCaptcha].traditionalChinese {
+		t.Fatalf("expected Traditional Chinese message, got %q", got)
 	}
 	if got := Message(WrongCaptcha, "zh-CN"); got != localizedMessages[WrongCaptcha].english {
 		t.Fatalf("unsupported language must use English, got %q", got)
 	}
 	if got := Message("unknown_code", LanguageSimplifiedChinese); got != fallbackMessages.simplifiedChinese {
 		t.Fatalf("unknown code must use friendly fallback, got %q", got)
+	}
+	if got := Message("unknown_code", LanguageTraditionalChinese); got != fallbackMessages.traditionalChinese {
+		t.Fatalf("unknown code must use friendly Traditional Chinese fallback, got %q", got)
 	}
 }

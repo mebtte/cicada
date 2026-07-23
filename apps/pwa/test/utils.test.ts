@@ -29,6 +29,7 @@ import {
 } from "../src/utils/music_filename.js";
 import {
   getClientLanguage,
+  getOrderedLanguages,
   Language,
 } from "../src/constants/language.js";
 
@@ -40,6 +41,20 @@ test("capitalize uppercases the first letter of each word", () => {
 test("client language uses canonical API values", () => {
   assert.equal(getClientLanguage(Language.EN), "en");
   assert.equal(getClientLanguage(Language.ZH_HANS), "zh-Hans");
+  assert.equal(getClientLanguage(Language.ZH_HANT), "zh-Hant");
+});
+
+test("selected language is ordered before the remaining languages", () => {
+  assert.deepEqual(getOrderedLanguages(Language.ZH_HANT), [
+    Language.ZH_HANT,
+    Language.EN,
+    Language.ZH_HANS,
+  ]);
+  assert.deepEqual(getOrderedLanguages(Language.ZH_HANS), [
+    Language.ZH_HANS,
+    Language.EN,
+    Language.ZH_HANT,
+  ]);
 });
 
 test("stringArrayEqual compares array length and item order", () => {

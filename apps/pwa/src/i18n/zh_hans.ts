@@ -1,6 +1,6 @@
 import { Key } from './constants';
 
-const zhCN: {
+const zhHans: {
   [key in Key]: string;
 } = {
   cicada: '知了',
@@ -387,4 +387,4 @@ const zhCN: {
   repeated_followed_artist: '已关注该艺术家',
 };
 
-export default zhCN;
+export default zhHans;

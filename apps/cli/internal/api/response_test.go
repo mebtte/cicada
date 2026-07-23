@@ -55,6 +55,11 @@ func TestFailReturnsLocalizedStableEnvelope(t *testing.T) {
 			expectedLanguage: apperr.LanguageSimplifiedChinese,
 		},
 		{
+			name:             "Traditional Chinese",
+			clientLanguage:   apperr.LanguageTraditionalChinese,
+			expectedLanguage: apperr.LanguageTraditionalChinese,
+		},
+		{
 			name:             "unsupported language",
 			clientLanguage:   "zh-CN",
 			expectedLanguage: apperr.LanguageEnglish,

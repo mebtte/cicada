@@ -5,15 +5,23 @@ import logger from '@/utils/logger';
 import { DEFAULT_LANGUAGE, LANGUAGES, Language } from '@/constants/language';
 
 function getInitialLanguage() {
-  switch (window.navigator.language.toLowerCase()) {
-    case 'zh':
-    case 'zh-cn': {
-      return Language.ZH_HANS;
-    }
-    default: {
-      return DEFAULT_LANGUAGE;
-    }
+  const language = window.navigator.language.toLowerCase();
+
+  // 脚本标签优先；没有脚本时再按中文的常见地区标签判断。
+  if (
+    language.startsWith('zh-hant') ||
+    ['zh-tw', 'zh-hk', 'zh-mo'].includes(language)
+  ) {
+    return Language.ZH_HANT;
   }
+  if (
+    language === 'zh' ||
+    language.startsWith('zh-hans') ||
+    ['zh-cn', 'zh-sg'].includes(language)
+  ) {
+    return Language.ZH_HANS;
+  }
+  return DEFAULT_LANGUAGE;
 }
 
 // Keep first-run defaults and invalid stored values on the same playback quality.

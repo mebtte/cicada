@@ -124,7 +124,7 @@ func TestSpecDocumentsClientLanguageOnEveryAPI(t *testing.T) {
 				}
 				schema := parameter["schema"].(map[string]any)
 				values := schema["enum"].([]any)
-				if len(values) != 2 || values[0] != "en" || values[1] != "zh-Hans" {
+				if len(values) != 3 || values[0] != "en" || values[1] != "zh-Hans" || values[2] != "zh-Hant" {
 					t.Fatalf("%s %s has unexpected client languages: %v", method, path, values)
 				}
 			}

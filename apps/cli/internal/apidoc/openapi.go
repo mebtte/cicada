@@ -51,7 +51,7 @@ func Spec() map[string]any {
 			"description": "Cicada server API documentation.\n\n" +
 				"Except for static asset downloads, business endpoints usually return HTTP 200 for both success and failure.\n" +
 				"Use the `code` field in the response body to determine success: `success` means success; any other value is a business error code.\n\n" +
-				"API clients may send the optional `__client_language` query parameter with `en` or `zh-Hans`. If omitted or unsupported, the server uses English.",
+				"API clients may send the optional `__client_language` query parameter with `en`, `zh-Hans`, or `zh-Hant`. If omitted or unsupported, the server uses English.",
 		},
 		"tags": []map[string]any{
 			{"name": "Docs", "description": "Documentation and spec output"},
@@ -1446,9 +1446,9 @@ func queryParam(name, desc string, required bool, schema map[string]any) map[str
 func clientLanguageParam() map[string]any {
 	return queryParam(
 		"__client_language",
-		"Optional client language for localized response text. Supported values are `en` and `zh-Hans`; omitted or unsupported values use English.",
+		"Optional client language for localized response text. Supported values are `en`, `zh-Hans`, and `zh-Hant`; omitted or unsupported values use English.",
 		false,
-		strEnumSchema([]string{"en", "zh-Hans"}, "zh-Hans"),
+		strEnumSchema([]string{"en", "zh-Hans", "zh-Hant"}, "zh-Hans"),
 	)
 }
 

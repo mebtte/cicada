@@ -14,9 +14,24 @@ final class ServerSetupStoreTests: XCTestCase {
         XCTAssertEqual(items.first?.name, "__client_language")
         XCTAssertEqual(items.first?.value, "zh-Hans")
 
+        settings.language = .zhHant
+        items = CicadaAPIQuery.commonItems(storage.defaults)
+        XCTAssertEqual(items.first?.value, "zh-Hant")
+
         settings.language = .english
         items = CicadaAPIQuery.commonItems(storage.defaults)
         XCTAssertEqual(items.first?.value, "en")
+    }
+
+    func testSelectedLanguageIsOrderedBeforeRemainingOptions() {
+        XCTAssertEqual(
+            AppLanguageOption.orderedCases(selected: .zhHant),
+            [.zhHant, .english, .system, .zhHans]
+        )
+        XCTAssertEqual(
+            AppLanguageOption.orderedCases(selected: .zhHans),
+            [.zhHans, .english, .system, .zhHant]
+        )
     }
 
     func testConnectDraftOriginNormalizesAndPersistsServer() async throws {

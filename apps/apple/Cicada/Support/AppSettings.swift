@@ -29,12 +29,21 @@ enum MusicPlaybackQuality: String, CaseIterable, Identifiable, Sendable {
 
 enum AppLanguageOption: String, CaseIterable, Identifiable, Sendable {
     case system
-    case zhHans = "zh-hans"
     case english = "en"
+    case zhHans = "zh-Hans"
+    case zhHant = "zh-Hant"
 
     static let `default`: AppLanguageOption = .system
 
     var id: String { rawValue }
+
+    static func orderedCases(selected: AppLanguageOption) -> [AppLanguageOption] {
+        // 当前语言固定排在首位，其余语言按规范语言 key 的英文顺序排列。
+        let remainingCases = allCases
+            .filter { $0 != selected }
+            .sorted { $0.rawValue < $1.rawValue }
+        return [selected] + remainingCases
+    }
 
     var displayName: String {
         switch self {
@@ -42,6 +51,8 @@ enum AppLanguageOption: String, CaseIterable, Identifiable, Sendable {
             return "Follow System"
         case .zhHans:
             return "简体中文"
+        case .zhHant:
+            return "繁體中文"
         case .english:
             return "English"
         }
@@ -148,17 +159,24 @@ enum AppSettingsSnapshot {
         switch AppLanguageOption(rawValue: raw) ?? .default {
         case .system:
             let preferred = (Locale.preferredLanguages.first ?? Locale.current.identifier).lowercased()
-            // 服务端当前只支持英文与简体中文, 系统语言需要归一化为约定值。
+            // 脚本标签优先；没有脚本时再按中文的常见地区标签判断。
+            if preferred.hasPrefix("zh-hant")
+                || preferred == "zh-tw" || preferred == "zh-hk" || preferred == "zh-mo"
+            {
+                return AppLanguageOption.zhHant.rawValue
+            }
             if preferred == "zh" || preferred == "zh-cn" || preferred == "zh-sg"
                 || preferred.hasPrefix("zh-hans")
             {
-                return "zh-Hans"
+                return AppLanguageOption.zhHans.rawValue
             }
-            return "en"
+            return AppLanguageOption.english.rawValue
         case .zhHans:
-            return "zh-Hans"
+            return AppLanguageOption.zhHans.rawValue
+        case .zhHant:
+            return AppLanguageOption.zhHant.rawValue
         case .english:
-            return "en"
+            return AppLanguageOption.english.rawValue
         }
     }
 
