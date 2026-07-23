@@ -1,5 +1,20 @@
 import Foundation
 
+enum CicadaAPIQuery {
+    static let clientLanguage = "__client_language"
+
+    /// Keep protocol-level parameters in one place so every API client sends
+    /// the same optional language preference.
+    static func commonItems(_ storage: UserDefaults = .standard) -> [URLQueryItem] {
+        [
+            URLQueryItem(
+                name: clientLanguage,
+                value: AppSettingsSnapshot.clientLanguageQueryValue(storage)
+            )
+        ]
+    }
+}
+
 enum CicadaAPIError: LocalizedError, Equatable {
     case invalidURL
     case invalidResponse
@@ -635,8 +650,7 @@ struct CicadaAPIClient: Sendable {
         var queryItems = query.map {
             URLQueryItem(name: $0.key, value: $0.value)
         }
-        queryItems.append(URLQueryItem(name: "version", value: appVersion))
-        queryItems.append(URLQueryItem(name: "language", value: preferredLanguage))
+        queryItems.append(contentsOf: CicadaAPIQuery.commonItems())
         components.queryItems = queryItems
 
         return components.url
@@ -696,14 +710,6 @@ struct CicadaAPIClient: Sendable {
             list[index].coverThumbnail = absoluteURLString(list[index].coverThumbnail)
             list[index].user.avatar = absoluteURLString(list[index].user.avatar)
         }
-    }
-
-    private var appVersion: String {
-        AppVersion.current
-    }
-
-    private var preferredLanguage: String {
-        AppSettingsSnapshot.languageQueryValue()
     }
 }
 

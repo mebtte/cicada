@@ -49,7 +49,8 @@ func Spec() map[string]any {
 			"version": appVersion,
 			"description": "Cicada server API documentation.\n\n" +
 				"Except for static asset downloads, business endpoints usually return HTTP 200 for both success and failure.\n" +
-				"Use the `code` field in the response body to determine success: `success` means success; any other value is a business error code.",
+				"Use the `code` field in the response body to determine success: `success` means success; any other value is a business error code.\n\n" +
+				"API clients may send the optional `__client_language` query parameter with `en` or `zh-Hans`. If omitted or unsupported, the server uses English.",
 		},
 		"tags": []map[string]any{
 			{"name": "Docs", "description": "Documentation and spec output"},
@@ -1265,8 +1266,13 @@ func addOperation(paths map[string]any, op operation) {
 		"x-cicada-errorCodes": op.ErrorCodes,
 		"responses":           op.Responses,
 	}
-	if len(op.Parameters) > 0 {
-		item["parameters"] = op.Parameters
+	parameters := op.Parameters
+	if strings.HasPrefix(op.Path, "/api/") {
+		// 公参集中注入, 避免各接口文档遗漏或产生不同定义。
+		parameters = append([]map[string]any{clientLanguageParam()}, parameters...)
+	}
+	if len(parameters) > 0 {
+		item["parameters"] = parameters
 	}
 	if op.RequestBody != nil {
 		item["requestBody"] = op.RequestBody
@@ -1427,6 +1433,15 @@ func queryParam(name, desc string, required bool, schema map[string]any) map[str
 		"description": desc,
 		"schema":      schema,
 	}
+}
+
+func clientLanguageParam() map[string]any {
+	return queryParam(
+		"__client_language",
+		"Optional client language for localized response text. Supported values are `en` and `zh-Hans`; omitted or unsupported values use English.",
+		false,
+		strEnumSchema([]string{"en", "zh-Hans"}, "zh-Hans"),
+	)
 }
 
 func paginationParams(extra ...map[string]any) []map[string]any {

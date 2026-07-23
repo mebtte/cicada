@@ -57,23 +57,12 @@ struct ServerMetadataClient {
             url: baseURL.appending(path: "/api/base/metadata"),
             resolvingAgainstBaseURL: false
         )
-        components?.queryItems = [
-            URLQueryItem(name: "version", value: appVersion),
-            URLQueryItem(name: "language", value: preferredLanguage),
-        ]
+        components?.queryItems = CicadaAPIQuery.commonItems()
 
         guard let url = components?.url else {
             throw ServerMetadataClientError.invalidResponse
         }
         return url
-    }
-
-    private static var appVersion: String {
-        AppVersion.current
-    }
-
-    private static var preferredLanguage: String {
-        AppSettingsSnapshot.languageQueryValue()
     }
 }
 

@@ -8,11 +8,12 @@ import ErrorWithCode from '@/utils/error_with_code';
 import sleep from '@/utils/sleep';
 import definition from '@/definition';
 import timeoutFn from '@/utils/timeout';
-import { CommonQuery } from '@/constants';
 import { HEADER_TOKEN } from '@/constants/api';
 import { t } from '@/i18n';
-import { useSetting } from '@/global_states/setting';
 import { isSameMajorVersion } from '@/utils/version';
+import getCommonParams from './common_params';
+
+export { getCommonParams };
 
 export enum Method {
   GET = 'get',
@@ -20,13 +21,6 @@ export enum Method {
   PUT = 'put',
   PATCH = 'patch',
   DELETE = 'delete',
-}
-
-export function getCommonParams() {
-  return {
-    [CommonQuery.VERSION]: definition.VERSION,
-    [CommonQuery.LANGUAGE]: useSetting.getState().language,
-  };
 }
 
 export async function request<Data = void>({

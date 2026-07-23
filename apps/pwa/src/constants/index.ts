@@ -15,8 +15,7 @@ export enum Query {
 }
 
 export enum CommonQuery {
-  VERSION = "__v",
-  LANGUAGE = "__lang",
+  CLIENT_LANGUAGE = "__client_language",
 }
 
 export const MINI_MODE_MAX_WIDTH = 720;

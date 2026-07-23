@@ -12,9 +12,6 @@ import { RangeRequestsPlugin } from 'workbox-range-requests';
 import { CacheName } from '@/constants/cache';
 import { AssetType } from '@/constants/asset';
 import { PathPrefix } from '@/constants/api';
-import { CommonQuery } from '@/constants';
-import parseSearch from './utils/parse_search';
-import definition from './definition';
 
 export type {};
 declare const self: ServiceWorkerGlobalScope & {
@@ -53,32 +50,23 @@ if (process.env.NODE_ENV === 'production') {
   clientsClaim();
 }
 
-self.addEventListener('activate', () => {
-  void self.caches.keys().then((keys) =>
-    Promise.all(
-      keys
-        .filter((key) => key === 'api' || key === 'asset_media')
-        .map((key) => self.caches.delete(key)),
-    ),
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    Promise.all([
+      self.caches.keys().then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key === 'api' || key === 'asset_media')
+            .map((key) => self.caches.delete(key)),
+        ),
+      ),
+      /**
+       * API 请求不再携带客户端版本, SW 升级时直接清空旧响应,
+       * 避免新版 PWA 复用旧数据结构的缓存。
+       */
+      self.caches.delete(CacheName.API),
+    ]).then(() => undefined),
   );
-
-  /**
-   * 移除过期的 API cache
-   * @author mebtte<i@mebtte.com>
-   */
-  self.caches.open(CacheName.API).then(async (cache) => {
-    const keys = await cache.keys();
-    for (const key of keys) {
-      const url = new URL(key.url);
-      const query = parseSearch<CommonQuery.VERSION>(url.search);
-      if (
-        !query[CommonQuery.VERSION] ||
-        query[CommonQuery.VERSION] !== definition.VERSION
-      ) {
-        cache.delete(key);
-      }
-    }
-  });
 });
 
 /**

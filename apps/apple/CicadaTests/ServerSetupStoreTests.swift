@@ -3,6 +3,22 @@ import XCTest
 
 @MainActor
 final class ServerSetupStoreTests: XCTestCase {
+    func testCommonQueryOnlyContainsCanonicalClientLanguage() throws {
+        let storage = try makeStorage()
+        defer { storage.removePersistentDomain() }
+        let settings = AppSettingsStore(storage: storage.defaults)
+
+        settings.language = .zhHans
+        var items = CicadaAPIQuery.commonItems(storage.defaults)
+        XCTAssertEqual(items.count, 1)
+        XCTAssertEqual(items.first?.name, "__client_language")
+        XCTAssertEqual(items.first?.value, "zh-Hans")
+
+        settings.language = .english
+        items = CicadaAPIQuery.commonItems(storage.defaults)
+        XCTAssertEqual(items.first?.value, "en")
+    }
+
     func testConnectDraftOriginNormalizesAndPersistsServer() async throws {
         let storage = try makeStorage()
         defer { storage.removePersistentDomain() }

@@ -88,6 +88,53 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 	}
 }
 
+func TestSpecDocumentsClientLanguageOnEveryAPI(t *testing.T) {
+	paths := Spec()["paths"].(map[string]any)
+	oldCommonParams := map[string]bool{
+		"__v":      true,
+		"__lang":   true,
+		"version":  true,
+		"language": true,
+	}
+
+	for path, rawPathItem := range paths {
+		if !strings.HasPrefix(path, "/api/") {
+			continue
+		}
+		pathItem := rawPathItem.(map[string]any)
+		for method, rawOperation := range pathItem {
+			operation := rawOperation.(map[string]any)
+			parameters, ok := operation["parameters"].([]map[string]any)
+			if !ok {
+				t.Fatalf("%s %s does not document parameters", method, path)
+			}
+
+			clientLanguageCount := 0
+			for _, parameter := range parameters {
+				name, _ := parameter["name"].(string)
+				if oldCommonParams[name] {
+					t.Fatalf("%s %s still documents old common parameter %q", method, path, name)
+				}
+				if name != "__client_language" {
+					continue
+				}
+				clientLanguageCount++
+				if parameter["required"] != false {
+					t.Fatalf("%s %s client language must be optional", method, path)
+				}
+				schema := parameter["schema"].(map[string]any)
+				values := schema["enum"].([]any)
+				if len(values) != 2 || values[0] != "en" || values[1] != "zh-Hans" {
+					t.Fatalf("%s %s has unexpected client languages: %v", method, path, values)
+				}
+			}
+			if clientLanguageCount != 1 {
+				t.Fatalf("%s %s documents client language %d times", method, path, clientLanguageCount)
+			}
+		}
+	}
+}
+
 func TestRegisterServesDocsPageAndSpec(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 

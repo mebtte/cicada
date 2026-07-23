@@ -27,10 +27,19 @@ import {
   formatMusicFilenamePerformerPrefix,
   sanitizeMusicFilename,
 } from "../src/utils/music_filename.js";
+import {
+  getClientLanguage,
+  Language,
+} from "../src/constants/language.js";
 
 test("capitalize uppercases the first letter of each word", () => {
   assert.equal(capitalize("hello world"), "Hello World");
   assert.equal(capitalize("cicada"), "Cicada");
+});
+
+test("client language uses canonical API values", () => {
+  assert.equal(getClientLanguage(Language.EN), "en");
+  assert.equal(getClientLanguage(Language.ZH_HANS), "zh-Hans");
 });
 
 test("stringArrayEqual compares array length and item order", () => {

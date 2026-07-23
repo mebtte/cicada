@@ -143,15 +143,22 @@ enum AppSettingsSnapshot {
         return MusicPlaybackQuality(rawValue: raw ?? "")?.rawValue ?? MusicPlaybackQuality.default.rawValue
     }
 
-    static func languageQueryValue(_ storage: UserDefaults = .standard) -> String {
+    static func clientLanguageQueryValue(_ storage: UserDefaults = .standard) -> String {
         let raw = storage.string(forKey: AppSettingsStorageKey.language) ?? AppLanguageOption.default.rawValue
         switch AppLanguageOption(rawValue: raw) ?? .default {
         case .system:
-            return Locale.preferredLanguages.first ?? Locale.current.identifier
+            let preferred = (Locale.preferredLanguages.first ?? Locale.current.identifier).lowercased()
+            // 服务端当前只支持英文与简体中文, 系统语言需要归一化为约定值。
+            if preferred == "zh" || preferred == "zh-cn" || preferred == "zh-sg"
+                || preferred.hasPrefix("zh-hans")
+            {
+                return "zh-Hans"
+            }
+            return "en"
         case .zhHans:
-            return AppLanguageOption.zhHans.rawValue
+            return "zh-Hans"
         case .english:
-            return AppLanguageOption.english.rawValue
+            return "en"
         }
     }
 
