@@ -1,5 +1,6 @@
 import { CSSVariable } from '@/global_style';
 import ImageFrame from '@/components/image_frame';
+import { CoverFallback } from '@/components/cover';
 
 // 纯音乐/无歌词时展示的大封面. 复用 ImageFrame(头像同款): 2px 中性边框 + 硬底投影,
 // 阴影风格与头像一致, 契合全站扁平设计语言.
@@ -17,6 +18,7 @@ function Cover({ cover }: { cover: string }) {
       shadowOffset={SHADOW_OFFSET}
       borderColor={CSSVariable.COLOR_NEUTRAL_SHADOW}
       shadowColor={CSSVariable.COLOR_NEUTRAL_SHADOW}
+      fallbackVariant={CoverFallback.MUSIC}
     />
   );
 }

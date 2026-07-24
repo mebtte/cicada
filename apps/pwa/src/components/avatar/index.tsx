@@ -2,6 +2,7 @@ import { HTMLAttributes } from 'react';
 import { CSSVariable } from '@/global_style';
 import ImageFrame from '@/components/image_frame';
 import { CONTROL_SIZE } from '@/components/control_style';
+import { CoverFallback } from '@/components/cover';
 import { CSS_VAR } from '../theme';
 
 const PRIMARY = `var(${CSS_VAR.colorPrimary})`;
@@ -70,6 +71,7 @@ function Avatar({
       borderColor={active ? PRIMARY : NEUTRAL_SHADOW}
       shadowColor={active ? PRIMARY_SHADOW : NEUTRAL_SHADOW}
       shadowOffset={getShadowOffset(size)}
+      fallbackVariant={CoverFallback.USER}
       onClick={onClick}
       {...props}
     />
