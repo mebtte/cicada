@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import Button from '@/components/button';
@@ -224,6 +224,7 @@ function User({
             className="avatar"
             size="100%"
             src={getResizedImage({ url: user.avatar, size: AVATAR_SIZE * 2 })}
+            fallbackVariant={CoverFallback.USER}
             shape={Shape.SQUARE}
           />
         </div>

@@ -2,7 +2,7 @@ import day from '@/utils/day';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import styled from 'styled-components';
-import Cover from '@/components/cover';
+import Cover, { CoverFallback } from '@/components/cover';
 import Button from '@/components/button';
 import Tag from '@/components/tag';
 import getResizedImage from '@/server/asset/get_resized_image';
@@ -88,6 +88,7 @@ function User({ user, width }: { user: UserType; width: string }) {
         <Cover
           className="avatar"
           src={getResizedImage({ url: user.avatar, size: ITEM_MIN_WIDTH * 2 })}
+          fallbackVariant={CoverFallback.USER}
           size="100%"
         />
         {user.admin ? <Tag className="admin">{t('admin')}</Tag> : null}

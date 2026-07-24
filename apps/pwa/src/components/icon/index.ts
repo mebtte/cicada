@@ -88,6 +88,7 @@ export { default as OfflineDownload } from './icons/offline-download';
 export { default as Password }      from './icons/password';
 export { default as Pause }         from './icons/pause';
 export { default as People }        from './icons/people';
+export { default as Person }        from './icons/person';
 export { default as PersonAdd }     from './icons/person-add';
 export { default as PersonStar }    from './icons/person-star';
 export { default as PhotoAdd }      from './icons/photo-add';

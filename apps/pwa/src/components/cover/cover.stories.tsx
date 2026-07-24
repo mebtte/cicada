@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import Cover from '.';
-import { Shape } from './constants';
+import { CoverFallback, Shape } from './constants';
 
 const SAMPLE_COVER = 'https://picsum.photos/seed/cicada-cover/256';
 
@@ -28,6 +28,11 @@ const meta = {
       control: 'select',
       options: Object.values(Shape),
       description: 'Cover shape.',
+    },
+    fallbackVariant: {
+      control: 'select',
+      options: Object.values(CoverFallback),
+      description: 'Semantic placeholder shown when artwork is unavailable.',
     },
   },
   args: {
@@ -123,4 +128,38 @@ export const BrokenSource: Story = {
     src: 'https://example.invalid/does-not-exist.jpg',
     size: 160,
   },
+};
+
+export const SemanticFallbacks: Story = {
+  name: 'Semantic fallbacks',
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <div style={{ display: 'flex', gap: 20 }}>
+      {Object.values(CoverFallback).map((fallbackVariant) => (
+        <div
+          key={fallbackVariant}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <Cover
+            src=""
+            size={120}
+            shape={
+              fallbackVariant === CoverFallback.USER
+                ? Shape.CIRCLE
+                : Shape.ROUNDED
+            }
+            fallbackVariant={fallbackVariant}
+          />
+          <span style={{ fontSize: 11, color: '#999' }}>
+            {fallbackVariant}
+          </span>
+        </div>
+      ))}
+    </div>
+  ),
 };

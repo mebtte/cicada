@@ -19,7 +19,7 @@ import {
   DrawerTitle,
 } from '@/components';
 import AppDrawer from '@/components/app_drawer';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import useData from './use_data';
 import { Musicbill as MusicbillType } from './constants';
 import Info from './info';
@@ -184,6 +184,7 @@ function Musicbill({
             className="header-cover-image"
             src={musicbill.cover}
             placeholderSrc={musicbill.coverThumbnail}
+            fallbackVariant={CoverFallback.MUSICBILL}
             size="100%"
             shape={Shape.ROUNDED}
           />

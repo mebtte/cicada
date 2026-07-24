@@ -6,7 +6,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { DragIndicator } from '@/components/icon';
 import { CSS_VAR } from '@/components/theme';
-import Cover from '@/components/cover';
+import Cover, { CoverFallback } from '@/components/cover';
 import { LocalMusicbill } from './constant';
 
 const COVER_SIZE = 42;
@@ -124,6 +124,7 @@ function Musicbill({ musicbill }: { musicbill: LocalMusicbill }) {
         size={COVER_SIZE}
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         placeholderSrc={musicbill.coverThumbnail}
+        fallbackVariant={CoverFallback.MUSICBILL}
       />
       <div className="name">{musicbill.name}</div>
       <div className="handle">
