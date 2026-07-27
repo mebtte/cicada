@@ -1,7 +1,7 @@
 import { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 import classnames from 'classnames';
-import Cover from '@/components/cover';
+import Cover, { CoverFallback } from '@/components/cover';
 import absoluteFullSize from '@/style/absolute_full_size';
 import { CSSVariable } from '@/global_style';
 
@@ -51,6 +51,7 @@ function MusicbillCover({
       <Cover
         src={src}
         placeholderSrc={placeholderSrc}
+        fallbackVariant={CoverFallback.MUSICBILL}
         size={size}
         onDragStart={preventDefault}
       />

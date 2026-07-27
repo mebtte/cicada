@@ -6,6 +6,7 @@ import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import getResizedImage from '@/server/asset/get_resized_image';
 import ImageFrame from '@/components/image_frame';
+import { CoverFallback } from '@/components/cover';
 import { Musicbill as MusicbillType } from '../../constants';
 import { CSS_VAR } from '@/components/theme';
 import useSidebarNavigate from '../use_sidebar_navigate';
@@ -140,6 +141,7 @@ function Musicbill({ musicbill }: { musicbill: MusicbillType }) {
         shadowOffset={3}
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         placeholderSrc={musicbill.coverThumbnail}
+        fallbackVariant={CoverFallback.MUSICBILL}
       />
       <div className="name">{musicbill.name}</div>
     </Style>

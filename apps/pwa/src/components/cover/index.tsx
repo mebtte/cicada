@@ -1,5 +1,5 @@
 import Cover from './cover';
-import { Shape } from './constants';
+import { CoverFallback, Shape } from './constants';
 
-export { Shape };
+export { CoverFallback, Shape };
 export default Cover;

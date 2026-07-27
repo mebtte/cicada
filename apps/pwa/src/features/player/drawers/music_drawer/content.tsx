@@ -8,7 +8,7 @@ import {
 import { animated, useTransition } from '@react-spring/web';
 import styled, { css } from 'styled-components';
 import ErrorCard from '@/components/error_card';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import Spinner from '@/components/spinner';
 import absoluteFullSize from '@/style/absolute_full_size';
 import autoScrollbar from '@/style/auto_scrollbar';
@@ -295,12 +295,13 @@ function Detail({
         <Header $floating={useCollapsingTitle} $visible={showCollapsedTitle}>
           <HeaderRow>
             <HeaderMeta $visible={showCollapsedTitle}>
-              {useCollapsingTitle && music.cover ? (
+              {useCollapsingTitle ? (
                 <HeaderCover>
                   <Cover
                     className="header-cover-image"
                     src={music.cover}
                     placeholderSrc={music.coverThumbnail}
+                    fallbackVariant={CoverFallback.MUSIC}
                     size="100%"
                     shape={Shape.ROUNDED}
                   />
@@ -325,18 +326,17 @@ function Detail({
       >
         <div className="first-screen">
           <DetailContent $insideDrawer={insideDrawer}>
-            {music.cover ? (
-              <CoverFrame $insideDrawer={insideDrawer}>
-                <div className="cover-shell">
-                  <Cover
-                    src={music.cover}
-                    placeholderSrc={music.coverThumbnail}
-                    size="100%"
-                    shape={Shape.SQUARE}
-                  />
-                </div>
-              </CoverFrame>
-            ) : null}
+            <CoverFrame $insideDrawer={insideDrawer}>
+              <div className="cover-shell">
+                <Cover
+                  src={music.cover}
+                  placeholderSrc={music.coverThumbnail}
+                  fallbackVariant={CoverFallback.MUSIC}
+                  size="100%"
+                  shape={Shape.SQUARE}
+                />
+              </div>
+            </CoverFrame>
             <Info
               music={music}
               showTitle={!insideDrawer || USE_COLLAPSING_DRAWER_TITLE}

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-import Cover from '@/components/cover';
-import { Shape } from '@/components/cover/constants';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { t } from '@/i18n';
@@ -181,6 +180,7 @@ function Artist({
           shape={Shape.ROUNDED}
           src={artistAvatar}
           placeholderSrc={artistAvatarThumbnail}
+          fallbackVariant={CoverFallback.ARTIST}
           size="100%"
         />
       </div>

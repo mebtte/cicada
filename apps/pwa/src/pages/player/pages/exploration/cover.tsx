@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { HTMLAttributes, ReactNode } from 'react';
-import Cover from '@/components/cover';
-import { Shape } from '@/components/cover/constants';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 
 type Variant = 'record' | 'profile' | 'cassette';
 
@@ -426,6 +425,13 @@ function Wrapper({
   shadow?: string;
   variant?: Variant;
 }) {
+  const fallbackVariant =
+    variant === 'profile'
+      ? CoverFallback.ARTIST
+      : variant === 'cassette'
+        ? CoverFallback.MUSICBILL
+        : CoverFallback.MUSIC;
+
   return (
     <Style $accent={accent} $shadow={shadow} $variant={variant} {...props}>
       {variant === 'profile' ? (
@@ -437,6 +443,7 @@ function Wrapper({
               size="100%"
               src={src}
               placeholderSrc={placeholderSrc}
+              fallbackVariant={fallbackVariant}
             />
           </div>
           <div className="profile-info">{info}</div>
@@ -450,6 +457,7 @@ function Wrapper({
                 size="100%"
                 src={src}
                 placeholderSrc={placeholderSrc}
+                fallbackVariant={fallbackVariant}
               />
             </div>
             <div className="cassette-panel">
@@ -471,6 +479,7 @@ function Wrapper({
                 size="100%"
                 src={src}
                 placeholderSrc={placeholderSrc}
+                fallbackVariant={fallbackVariant}
               />
             </div>
           </RecordScene>

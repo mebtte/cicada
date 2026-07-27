@@ -3,7 +3,7 @@ import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import Button from '@/components/button';
 import { Tooltip } from '@/components';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import dialog from '@/utils/dialog';
 import logger from '@/utils/logger';
 import removeMusicbillFollowedArtist from '@/server/api/remove_musicbill_followed_artist';
@@ -143,6 +143,7 @@ function Artist({
             className="avatar"
             size="100%"
             src={avatar ? getResizedImage({ url: avatar, size: AVATAR_SIZE * 2 }) : ''}
+            fallbackVariant={CoverFallback.ARTIST}
             shape={Shape.SQUARE}
           />
         </div>

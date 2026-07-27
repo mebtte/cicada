@@ -5,7 +5,7 @@ import { flexCenter } from '@/style/flexbox';
 import { CSS_VAR } from '@/components/theme';
 import { CONTROLLER_COVER_SHADOW } from '../constants';
 import { Expand } from '@/components/icon';
-import BaseCover, { Shape } from '@/components/cover';
+import BaseCover, { CoverFallback, Shape } from '@/components/cover';
 
 const Style = styled.div<{ $pressable: boolean }>`
   position: relative;
@@ -76,6 +76,7 @@ function Wrapper({
       <CoverImage
         src={cover || ''}
         placeholderSrc={placeholderCover}
+        fallbackVariant={CoverFallback.MUSIC}
         size="100%"
         shape={Shape.SQUARE}
       />

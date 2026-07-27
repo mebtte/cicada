@@ -1,6 +1,6 @@
 import { useMemo, type KeyboardEvent } from 'react';
 import styled from 'styled-components';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import capitalize from '@/style/capitalize';
@@ -225,6 +225,7 @@ function RelatedPublicMusicbillList({
                   size: Math.ceil(COVER_IMAGE_SIZE * window.devicePixelRatio),
                 })}
                 placeholderSrc={musicbill.coverThumbnail}
+                fallbackVariant={CoverFallback.MUSICBILL}
                 size="100%"
               />
             </div>

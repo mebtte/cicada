@@ -26,7 +26,7 @@ import {
   DragIndicator,
   PhotoAdd,
   Image as ImageIcon,
-  Voice,
+  Person,
 } from '@/components/icon';
 import Button from '@/components/button';
 import Input from '@/components/input';
@@ -754,7 +754,7 @@ function ArtistEditContent({
                 alt={artist.name}
               />
             ) : (
-              <Voice />
+              <Person />
             )}
           </AvatarBox>
           <HeaderInfo>

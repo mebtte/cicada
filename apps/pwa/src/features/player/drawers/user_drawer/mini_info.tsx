@@ -1,6 +1,6 @@
 import useTitlebarArea from '@/utils/use_titlebar_area_rect';
 import styled from 'styled-components';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import { useEffect, useState } from 'react';
@@ -52,6 +52,7 @@ function MiniInfo({ user }: { user: UserDetail }) {
           url: user.avatar,
           size: Math.ceil(AVATAR_SIZE * window.devicePixelRatio),
         })}
+        fallbackVariant={CoverFallback.USER}
         size={AVATAR_SIZE}
         alt={t('user_avatar')}
         shape={Shape.CIRCLE}

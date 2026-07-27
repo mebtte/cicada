@@ -1,7 +1,7 @@
 import { HTMLAttributes } from 'react';
 import styled, { css } from 'styled-components';
 import hover from '@/style/hover';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 
 const FACE = '#ffffff';
 const DEFAULT_RADIUS_MAX = 18;
@@ -98,6 +98,7 @@ export interface ImageFrameProps extends HTMLAttributes<HTMLDivElement> {
   borderWidth?: number;
   shadowOffset?: number;
   placeholderSrc?: string;
+  fallbackVariant?: CoverFallback;
 }
 
 function ImageFrame({
@@ -109,6 +110,7 @@ function ImageFrame({
   borderWidth = 2,
   shadowOffset = 4,
   placeholderSrc,
+  fallbackVariant = CoverFallback.NEUTRAL,
   onClick,
   ...props
 }: ImageFrameProps) {
@@ -130,6 +132,7 @@ function ImageFrame({
           size="100%"
           shape={Shape.SQUARE}
           placeholderSrc={placeholderSrc}
+          fallbackVariant={fallbackVariant}
         />
       </Frame>
     </Root>
