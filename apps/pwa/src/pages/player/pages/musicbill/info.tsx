@@ -3,6 +3,7 @@ import day from '@/utils/day';
 import { CSSVariable } from '@/global_style';
 import getResizedImage from '@/server/asset/get_resized_image';
 import ImageFrame from '@/components/image_frame';
+import { CoverFallback } from '@/components/cover';
 import { t } from '@/i18n';
 import upperCaseFirstLetter from '@/style/upper_case_first_letter';
 import { Musicbill } from '../../constants';
@@ -119,6 +120,7 @@ function Info({ musicbill }: { musicbill: Musicbill }) {
         className="cover-card"
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         placeholderSrc={musicbill.coverThumbnail}
+        fallbackVariant={CoverFallback.MUSICBILL}
         size={COVER_SIZE}
         radius={COVER_RADIUS}
         borderColor={borderColor}

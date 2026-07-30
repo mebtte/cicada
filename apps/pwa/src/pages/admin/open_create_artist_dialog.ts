@@ -37,7 +37,7 @@ function openCreateArtistDialog({
       logger.error(error, 'Failed to create artist');
       if (error.code === ExceptionCode.ARTIST_ALREADY_EXISTED) {
         dialog.confirm({
-          content: t('repeated_name_artist_warning'),
+          content: error.message,
           onConfirm: () => void createArtist({ name, force: true }),
         });
         return;

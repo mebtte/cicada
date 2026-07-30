@@ -1,6 +1,6 @@
 import { Key } from './constants';
 
-const zhCN: {
+const zhHans: {
   [key in Key]: string;
 } = {
   cicada: '知了',
@@ -93,7 +93,6 @@ const zhCN: {
   delete: '删除',
   music_forked_by_other_can_not_be_deleted: '被二次创作的音乐无法被删除',
   delete_artist_question: '确定删除该艺人吗?',
-  artist_has_music_can_not_be_deleted: '艺人关联了音乐, 无法被删除',
   year_of_issue: '发行年份',
   year_of_issue_limit: '发行年份应在 %s1 - %s2 之间',
   edit_avatar: '编辑头像',
@@ -244,7 +243,6 @@ const zhCN: {
     '使用例如 Microsoft Authenticator / Google Authenticator 等验证器扫描二维码',
   '2fa_token': '2FA 凭证',
   lack_of_2fa_token: '缺少 2FA 凭证',
-  wrong_2fa_token: '错误的 2FA 凭证',
   '2fa_has_disabled': '2FA 已被禁用',
   create_musicbill: '创建乐单',
   empty_musicbill_warning: '空的乐单',
@@ -252,7 +250,6 @@ const zhCN: {
   no_suitable_musicbill_warning: '找不到想要的乐单?',
   no_suitable_artist: '暂无相关艺人',
   create_artist: '创建艺人',
-  repeated_name_artist_warning: '已有重名艺人, 是否重复创建?',
   created: '已创建',
   accept: '接受',
   shared_musicbill_invitation_instruction: '%s1 邀请你共享乐单 %s2',
@@ -390,4 +387,4 @@ const zhCN: {
   repeated_followed_artist: '已关注该艺术家',
 };
 
-export default zhCN;
+export default zhHans;

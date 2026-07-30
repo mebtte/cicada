@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { animated } from '@react-spring/web';
 import getResizedImage from '@/server/asset/get_resized_image';
 import ImageFrame from '@/components/image_frame';
+import { CoverFallback } from '@/components/cover';
 import { Musicbill } from '../../constants';
 import {
   getMusicbillCoverRadius,
@@ -99,6 +100,7 @@ function MiniInfo({
         className="cover-card"
         src={getResizedImage({ url: musicbill.cover, size: COVER_SIZE * 2 })}
         placeholderSrc={musicbill.coverThumbnail}
+        fallbackVariant={CoverFallback.MUSICBILL}
         size={COVER_SIZE}
         radius={COVER_RADIUS}
         borderColor={borderColor}

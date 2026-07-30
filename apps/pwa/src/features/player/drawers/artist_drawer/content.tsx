@@ -16,7 +16,7 @@ import autoScrollbar from '@/style/auto_scrollbar';
 import { CSSVariable } from '@/global_style';
 import { DrawerDescription, DrawerHeader, DrawerTitle } from '@/components';
 import { TabList, type TabItem } from '@/components/tabs';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import useData from './use_data';
 import { Artist } from './constants';
 import Info from './info';
@@ -247,17 +247,16 @@ function Detail({
     >
       {insideDrawer ? (
         <Header $visible={showCollapsedHeader}>
-          {artist.photos[0] ? (
-            <HeaderCover>
-              <Cover
-                className="header-cover-image"
-                src={artist.photos[0].asset}
-                placeholderSrc={artist.photos[0].thumbnail}
-                size="100%"
-                shape={Shape.ROUNDED}
-              />
-            </HeaderCover>
-          ) : null}
+          <HeaderCover>
+            <Cover
+              className="header-cover-image"
+              src={artist.photos[0]?.asset || ''}
+              placeholderSrc={artist.photos[0]?.thumbnail}
+              fallbackVariant={CoverFallback.ARTIST}
+              size="100%"
+              shape={Shape.ROUNDED}
+            />
+          </HeaderCover>
           <HeaderText>
             <ArtistDrawerTitle>{artist.name}</ArtistDrawerTitle>
             {artist.aliases.length ? (

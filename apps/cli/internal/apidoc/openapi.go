@@ -1,6 +1,7 @@
 package apidoc
 
 import (
+	"cicada/internal/api/apperr"
 	"cicada/internal/config"
 	"cicada/internal/version"
 	"net/http"
@@ -49,7 +50,8 @@ func Spec() map[string]any {
 			"version": appVersion,
 			"description": "Cicada server API documentation.\n\n" +
 				"Except for static asset downloads, business endpoints usually return HTTP 200 for both success and failure.\n" +
-				"Use the `code` field in the response body to determine success: `success` means success; any other value is a business error code.",
+				"Use the `code` field in the response body to determine success: `success` means success; any other value is a business error code.\n\n" +
+				"API clients may send the optional `__client_language` query parameter with `en`, `zh-Hans`, or `zh-Hant`. If omitted or unsupported, the server uses English.",
 		},
 		"tags": []map[string]any{
 			{"name": "Docs", "description": "Documentation and spec output"},
@@ -1265,8 +1267,13 @@ func addOperation(paths map[string]any, op operation) {
 		"x-cicada-errorCodes": op.ErrorCodes,
 		"responses":           op.Responses,
 	}
-	if len(op.Parameters) > 0 {
-		item["parameters"] = op.Parameters
+	parameters := op.Parameters
+	if strings.HasPrefix(op.Path, "/api/") {
+		// 公参集中注入, 避免各接口文档遗漏或产生不同定义。
+		parameters = append([]map[string]any{clientLanguageParam()}, parameters...)
+	}
+	if len(parameters) > 0 {
+		item["parameters"] = parameters
 	}
 	if op.RequestBody != nil {
 		item["requestBody"] = op.RequestBody
@@ -1369,34 +1376,41 @@ func octetStreamRequestBody(desc string) map[string]any {
 }
 
 func successEnvelopeSchema(dataSchema map[string]any) map[string]any {
+	messageSchema := strEnumSchema([]string{""}, "")
+	messageSchema["description"] = "Empty for successful responses."
+	messageSchema["example"] = ""
+	if dataSchema == nil {
+		dataSchema = nullableSchema(anySchema("Successful response data. Null when the endpoint has no payload."))
+	}
 	props := map[string]any{
-		"code": strEnumSchema([]string{"success"}, "success"),
+		"code":    strEnumSchema([]string{"success"}, "success"),
+		"message": messageSchema,
+		"data":    dataSchema,
 	}
-	if dataSchema != nil {
-		props["data"] = dataSchema
-	}
-	return objSchema([]string{"code"}, props)
+	return objSchema([]string{"code", "message", "data"}, props)
 }
 
 func errorEnvelopeSchema() map[string]any {
 	return objSchema(
-		[]string{"code", "message"},
+		[]string{"code", "message", "data"},
 		map[string]any{
 			"code":    strSchema("Business error code.", "wrong_parameter"),
-			"message": strSchema("Error message. The current implementation returns the same value as `code`.", "wrong_parameter"),
+			"message": strSchema("Localized user-facing error message selected by `__client_language`.", apperr.Message(apperr.WrongParameter, apperr.LanguageEnglish)),
+			"data":    nullableSchema(anySchema("Always null for error responses.")),
 		},
 	)
 }
 
 func successEnvelopeExample(data any) map[string]any {
-	if data == nil {
-		return map[string]any{"code": "success"}
-	}
-	return map[string]any{"code": "success", "data": data}
+	return map[string]any{"code": "success", "message": "", "data": data}
 }
 
 func errorEnvelopeExample(code string) map[string]any {
-	return map[string]any{"code": code, "message": code}
+	return map[string]any{
+		"code":    code,
+		"message": apperr.Message(code, apperr.LanguageEnglish),
+		"data":    nil,
+	}
 }
 
 func pathParam(name, desc string, schema map[string]any) map[string]any {
@@ -1427,6 +1441,15 @@ func queryParam(name, desc string, required bool, schema map[string]any) map[str
 		"description": desc,
 		"schema":      schema,
 	}
+}
+
+func clientLanguageParam() map[string]any {
+	return queryParam(
+		"__client_language",
+		"Optional client language for localized response text. Supported values are `en`, `zh-Hans`, and `zh-Hant`; omitted or unsupported values use English.",
+		false,
+		strEnumSchema([]string{"en", "zh-Hans", "zh-Hant"}, "zh-Hans"),
+	)
 }
 
 func paginationParams(extra ...map[string]any) []map[string]any {

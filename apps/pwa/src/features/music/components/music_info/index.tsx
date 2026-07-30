@@ -1,6 +1,6 @@
 import { HTMLAttributes } from 'react';
 import styled from 'styled-components';
-import Cover from '@/components/cover';
+import Cover, { CoverFallback } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
 import Performer, { type ArtistValue } from '../performer';
@@ -69,7 +69,12 @@ function MusicInfo({
 }: MusicInfoProps) {
   return (
     <Style {...props} onClick={() => onOpenMusic?.(musicId)}>
-      <Cover src={musicCover} placeholderSrc={musicCoverThumbnail} size={40} />
+      <Cover
+        src={musicCover}
+        placeholderSrc={musicCoverThumbnail}
+        fallbackVariant={CoverFallback.MUSIC}
+        size={40}
+      />
       <div className="info">
         <div className="name">{musicName}</div>
         <div className="performers ">

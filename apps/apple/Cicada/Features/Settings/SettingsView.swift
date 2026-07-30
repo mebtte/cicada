@@ -57,7 +57,7 @@ struct SettingsView: View {
 
             Section {
                 Picker("Language", selection: $settings.language) {
-                    ForEach(AppLanguageOption.allCases) { option in
+                    ForEach(AppLanguageOption.orderedCases(selected: settings.language)) { option in
                         Text(option.displayName).tag(option)
                     }
                 }

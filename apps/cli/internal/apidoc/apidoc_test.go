@@ -88,6 +88,74 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 	}
 }
 
+func TestSpecDocumentsClientLanguageOnEveryAPI(t *testing.T) {
+	paths := Spec()["paths"].(map[string]any)
+	oldCommonParams := map[string]bool{
+		"__v":      true,
+		"__lang":   true,
+		"version":  true,
+		"language": true,
+	}
+
+	for path, rawPathItem := range paths {
+		if !strings.HasPrefix(path, "/api/") {
+			continue
+		}
+		pathItem := rawPathItem.(map[string]any)
+		for method, rawOperation := range pathItem {
+			operation := rawOperation.(map[string]any)
+			parameters, ok := operation["parameters"].([]map[string]any)
+			if !ok {
+				t.Fatalf("%s %s does not document parameters", method, path)
+			}
+
+			clientLanguageCount := 0
+			for _, parameter := range parameters {
+				name, _ := parameter["name"].(string)
+				if oldCommonParams[name] {
+					t.Fatalf("%s %s still documents old common parameter %q", method, path, name)
+				}
+				if name != "__client_language" {
+					continue
+				}
+				clientLanguageCount++
+				if parameter["required"] != false {
+					t.Fatalf("%s %s client language must be optional", method, path)
+				}
+				schema := parameter["schema"].(map[string]any)
+				values := schema["enum"].([]any)
+				if len(values) != 3 || values[0] != "en" || values[1] != "zh-Hans" || values[2] != "zh-Hant" {
+					t.Fatalf("%s %s has unexpected client languages: %v", method, path, values)
+				}
+			}
+			if clientLanguageCount != 1 {
+				t.Fatalf("%s %s documents client language %d times", method, path, clientLanguageCount)
+			}
+		}
+	}
+}
+
+func TestEnvelopeExamplesAlwaysContainStableFields(t *testing.T) {
+	success := successEnvelopeExample(nil)
+	if len(success) != 3 || success["code"] != "success" || success["message"] != "" {
+		t.Fatalf("unexpected success envelope: %v", success)
+	}
+	if data, ok := success["data"]; !ok || data != nil {
+		t.Fatalf("success envelope must contain null data: %v", success)
+	}
+
+	failure := errorEnvelopeExample("wrong_parameter")
+	if len(failure) != 3 || failure["code"] != "wrong_parameter" {
+		t.Fatalf("unexpected error envelope: %v", failure)
+	}
+	if message, _ := failure["message"].(string); message == "" || message == "wrong_parameter" {
+		t.Fatalf("error envelope must contain a friendly message: %v", failure)
+	}
+	if data, ok := failure["data"]; !ok || data != nil {
+		t.Fatalf("error envelope must contain null data: %v", failure)
+	}
+}
+
 func TestRegisterServesDocsPageAndSpec(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 

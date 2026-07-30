@@ -28,9 +28,7 @@ struct ServerMetadataClient {
 
         let envelope = try JSONDecoder().decode(MetadataEnvelope.self, from: data)
         guard envelope.code == "success" else {
-            throw ServerMetadataClientError.serverMessage(
-                envelope.message ?? envelope.code
-            )
+            throw ServerMetadataClientError.serverMessage(envelope.message)
         }
         guard let metadata = envelope.data else {
             throw ServerMetadataClientError.missingPayload
@@ -57,29 +55,18 @@ struct ServerMetadataClient {
             url: baseURL.appending(path: "/api/base/metadata"),
             resolvingAgainstBaseURL: false
         )
-        components?.queryItems = [
-            URLQueryItem(name: "version", value: appVersion),
-            URLQueryItem(name: "language", value: preferredLanguage),
-        ]
+        components?.queryItems = CicadaAPIQuery.commonItems()
 
         guard let url = components?.url else {
             throw ServerMetadataClientError.invalidResponse
         }
         return url
     }
-
-    private static var appVersion: String {
-        AppVersion.current
-    }
-
-    private static var preferredLanguage: String {
-        AppSettingsSnapshot.languageQueryValue()
-    }
 }
 
 private struct MetadataEnvelope: Decodable {
     let code: String
-    let message: String?
+    let message: String
     let data: ServerMetadata?
 }
 

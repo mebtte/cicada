@@ -18,7 +18,7 @@ import {
   DrawerTitle,
 } from '@/components';
 import AppDrawer from '@/components/app_drawer';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { CSSVariable } from '@/global_style';
 import useData from './use_data';
@@ -200,6 +200,7 @@ function UserDetail({
                   url: user.avatar,
                   size: Math.ceil(48 * window.devicePixelRatio),
                 })}
+                fallbackVariant={CoverFallback.USER}
                 size="100%"
                 shape={Shape.SQUARE}
               />

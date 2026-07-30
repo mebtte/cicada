@@ -47,7 +47,7 @@ function TwoFADialog() {
         mode === 'disable' ? 'Failed to disable 2FA' : 'Failed to enable 2FA',
       );
       if (error.code === ExceptionCode.WRONG_2FA_TOKEN) {
-        dialog.alert({ content: t(ExceptionCode.WRONG_2FA_TOKEN) });
+        dialog.alert({ content: error.message });
       } else {
         notice.error(error.message);
       }

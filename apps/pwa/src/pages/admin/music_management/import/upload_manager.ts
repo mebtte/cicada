@@ -8,12 +8,12 @@ import uploadAssetChunked from '@/server/asset/upload_asset_chunked';
 import createMusic from '@/server/api/create_music';
 import updateMusic from '@/server/api/update_music';
 import { AssetType } from '@/constants/asset';
-import { ExceptionCode } from '@/constants/exception';
 import { AllowUpdateKey } from '@/constants/music';
 import { base64ToCover } from '@/utils/music_file';
 import uploadAsset from '@/server/asset/upload_asset';
 import logger from '@/utils/logger';
 import { t } from '@/i18n';
+import ErrorWithCode from '@/utils/error_with_code';
 
 /**
  * Drives queued ImportTasks across menu navigations within the
@@ -95,16 +95,12 @@ function drainQueue() {
 }
 
 function getSafeImportErrorMessage(error: unknown) {
-  const code = (error as { code?: unknown }).code;
-  if (code === ExceptionCode.ASSET_OVERSIZE) {
-    return t('import_asset_oversize');
-  }
-  if (code === ExceptionCode.WRONG_ASSET_TYPE) {
-    return t('import_wrong_asset_type');
-  }
-
   const err = error as { message?: string; name?: string };
   const message = err.message || '';
+  if (error instanceof ErrorWithCode && message) {
+    return message;
+  }
+
   if (
     err.name === 'NotReadableError' ||
     /could not be read|permission|read.*file|file.*read/i.test(message)

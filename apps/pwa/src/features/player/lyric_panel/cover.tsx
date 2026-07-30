@@ -1,67 +1,25 @@
-import { useEffect, useState } from 'react';
-import { animated, useTransition } from '@react-spring/web';
-import styled from 'styled-components';
-import loadImage from '@/utils/load_image';
-import logger from '@/utils/logger';
 import { CSSVariable } from '@/global_style';
+import ImageFrame from '@/components/image_frame';
+import { CoverFallback } from '@/components/cover';
 
-const Root = styled.div`
-  position: relative;
-
-  width: min(70vw, 320px);
-  aspect-ratio: 1 / 1;
-
-  border-radius: 24px;
-  overflow: hidden;
-  background-color: ${CSSVariable.BACKGROUND_COLOR_LEVEL_TWO};
-  box-shadow:
-    0 24px 60px rgb(0 0 0 / 0.25),
-    0 6px 18px rgb(0 0 0 / 0.15);
-`;
-const Image = styled(animated.div)`
-  position: absolute;
-  inset: 0;
-
-  background-size: cover;
-  background-position: center;
-`;
+// 纯音乐/无歌词时展示的大封面. 复用 ImageFrame(头像同款): 2px 中性边框 + 硬底投影,
+// 阴影风格与头像一致, 契合全站扁平设计语言.
+const SIZE = 'min(70vw, 320px)';
+const RADIUS = 18;
+// 大封面尺度比头像大, 底部硬投影相应加深一点保持比例
+const SHADOW_OFFSET = 6;
 
 function Cover({ cover }: { cover: string }) {
-  const [resolved, setResolved] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!cover) {
-      setResolved(null);
-      return;
-    }
-    let canceled = false;
-    loadImage(cover)
-      .then(() => {
-        if (!canceled) setResolved(cover);
-      })
-      .catch((error) => {
-        logger.error(error, '加载封面失败');
-        if (!canceled) setResolved(null);
-      });
-    return () => {
-      canceled = true;
-    };
-  }, [cover]);
-
-  const transitions = useTransition(resolved ? [resolved] : [], {
-    keys: (url: string) => url,
-    from: { opacity: 0, transform: 'scale(1.04)' },
-    enter: { opacity: 1, transform: 'scale(1)' },
-    leave: { opacity: 0, transform: 'scale(0.96)' },
-    config: { tension: 220, friction: 28 },
-  });
-
   return (
-    <Root>
-      {transitions((style, url) => (
-        <Image style={{ ...style, backgroundImage: `url(${url})` }} />
-      ))}
-    </Root>
+    <ImageFrame
+      src={cover}
+      size={SIZE}
+      radius={RADIUS}
+      shadowOffset={SHADOW_OFFSET}
+      borderColor={CSSVariable.COLOR_NEUTRAL_SHADOW}
+      shadowColor={CSSVariable.COLOR_NEUTRAL_SHADOW}
+      fallbackVariant={CoverFallback.MUSIC}
+    />
   );
 }
 

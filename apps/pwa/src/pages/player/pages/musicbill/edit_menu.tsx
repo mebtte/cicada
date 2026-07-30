@@ -16,7 +16,7 @@ import {
   Switch,
 } from '@/components';
 import { Delete, Edit, Exit } from '@/components/icon';
-import Cover from '@/components/cover';
+import Cover, { CoverFallback } from '@/components/cover';
 import { CSSVariable } from '@/global_style';
 import updateMusicbill from '@/server/api/update_musicbill';
 import { AllowUpdateKey, NAME_MAX_LENGTH } from '@/constants/musicbill';
@@ -351,6 +351,7 @@ function EditMenu({ musicbill }: { musicbill: Musicbill }) {
                     size: COVER_SIZE * 2,
                   })}
                   placeholderSrc={musicbill.coverThumbnail}
+                  fallbackVariant={CoverFallback.MUSICBILL}
                   size={COVER_SIZE}
                 />
                 <CoverActions>

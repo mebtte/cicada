@@ -1,6 +1,6 @@
 import { type Ref } from 'react';
 import styled from 'styled-components';
-import Cover, { Shape } from '@/components/cover';
+import Cover, { CoverFallback, Shape } from '@/components/cover';
 import Avatar from '@/components/avatar';
 import { CSSVariable } from '@/global_style';
 import ellipsis from '@/style/ellipsis';
@@ -125,6 +125,7 @@ function Info({
         <Cover
           src={cover}
           placeholderSrc={coverThumbnail}
+          fallbackVariant={CoverFallback.MUSICBILL}
           size="100%"
           shape={Shape.SQUARE}
         />

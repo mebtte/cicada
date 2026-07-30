@@ -1,19 +1,18 @@
 import { ExceptionCode } from '@/constants/exception';
 import { AssetType } from '@/constants/asset';
 import { HEADER_TOKEN } from '@/constants/api';
-import { CommonQuery } from '@/constants';
 import {
   getSelectedServer,
   getSelectedUser,
   useServer,
 } from '@/global_states/server';
-import { useSetting } from '@/global_states/setting';
 import definition from '@/definition';
 import ErrorWithCode from '@/utils/error_with_code';
 import getAssetMaxSize from '@/utils/get_asset_max_size';
 import { isSameMajorVersion } from '@/utils/version';
 import { bytesToHex, sha256Hex } from '@/utils/sha256';
 import { t } from '@/i18n';
+import getCommonParams from '@/server/common_params';
 
 export const HASH_CHUNK_SIZE = 4 * 1024 * 1024;
 export const DEFAULT_UPLOAD_CHUNK_SIZE = 4 * 1024 * 1024;
@@ -111,10 +110,7 @@ function getOriginAndHeaders() {
 }
 
 function buildQueryString() {
-  const params: Record<string, string> = {
-    [CommonQuery.VERSION]: definition.VERSION,
-    [CommonQuery.LANGUAGE]: useSetting.getState().language,
-  };
+  const params = getCommonParams();
   return Object.keys(params)
     .map(
       (key) =>
@@ -150,7 +146,7 @@ async function jsonRequest<T>(
   }
   const payload = (await response.json()) as ServerResponse<T>;
   if (payload.code !== ExceptionCode.SUCCESS) {
-    throw new ErrorWithCode(payload.message || payload.code, payload.code);
+    throw new ErrorWithCode(payload.message, payload.code);
   }
   return payload.data;
 }
@@ -247,7 +243,7 @@ function putChunk(
       try {
         const payload = JSON.parse(xhr.responseText) as ServerResponse<PutResponse>;
         if (payload.code !== ExceptionCode.SUCCESS) {
-          reject(new ErrorWithCode(payload.message || payload.code, payload.code));
+          reject(new ErrorWithCode(payload.message, payload.code));
           return;
         }
         resolve(payload.data);
@@ -331,7 +327,10 @@ async function uploadAssetChunked(
       ? getAssetMaxSize(assetType, file.type)
       : undefined;
   if (limit && file.size > limit) {
-    throw new ErrorWithCode('asset oversize', ExceptionCode.ASSET_OVERSIZE);
+    throw new ErrorWithCode(
+      t('import_asset_oversize'),
+      ExceptionCode.ASSET_OVERSIZE,
+    );
   }
 
   onPhase?.('hashing');
