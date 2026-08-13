@@ -3,6 +3,7 @@ import getRandomMusic from '@/server/api/get_random_music';
 import logger from '@/utils/logger';
 import { MusicWithArtistAliases, QueueMusic } from '@/features/player/constants';
 import { toRadioQueueMusic } from './utils';
+import { getNextRadioQueueIndex } from './radio_queue_utils';
 
 interface FetchOptions {
   excludeId?: string;
@@ -82,8 +83,10 @@ function useRadioQueue() {
   }, [currentIndex, queue, fetchOne]);
 
   const next = useCallback(() => {
-    setCurrentIndex((i) => i + 1);
-  }, []);
+    setCurrentIndex((currentIndex) =>
+      getNextRadioQueueIndex({ currentIndex, queueLength: queue.length }),
+    );
+  }, [queue.length]);
 
   // 通过 ref 让跨 drawer 事件总能拿到最新 currentIndex (避免 useCallback 闭包)
   const currentIndexRef = useRef(currentIndex);
