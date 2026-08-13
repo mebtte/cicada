@@ -120,8 +120,6 @@ const Style = styled.div<{ type: NoticeType }>`
 
     > .close {
       flex: 0 0 auto;
-
-      color: #fff;
     }
   }
 
