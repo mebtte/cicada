@@ -104,10 +104,10 @@ function useMediaSession({
 
   /**
    * 同步 playbackState.
-   * 切歌期间 audio 因 src 变更进入 HAVE_NOTHING, 会触发 'pause' 事件,
+   * 切歌期间 audio 因 src 变更会为旧音源触发临时 'pause' 事件,
    * 直接降级为 'paused' 会让 macOS Now Playing 释放本应用,
-   * 后续系统级切歌键将派发到其他应用. 这里在没有可播放数据时保持 'playing',
-   * 等到真正暂停 (用户手动或播放结束且数据已就绪) 才置为 'paused'.
+   * 后续系统级切歌键将派发到其他应用. CustomAudio 会保留切歌前的播放意图,
+   * 因此加载新音源时仍保持 'playing', 只有明确暂停才置为 'paused'.
    * 'ended' 时 paused 已静默置为 true 但数据仍就绪, 同样需要避免下发
    * 'paused', 否则 ACTION_NEXT 触发的 setSource 还没跑, 控制权就丢了.
    * @author mebtte<i@mebtte.com>
@@ -117,14 +117,10 @@ function useMediaSession({
       return;
     }
     const sync = () => {
-      if (
-        audio.isPaused() &&
-        audio.hasPlayableData() &&
-        !audio.isEnded()
-      ) {
-        safeSetPlaybackState('paused');
-      } else {
+      if (audio.isPlaybackRequested() || audio.isEnded()) {
         safeSetPlaybackState('playing');
+      } else {
+        safeSetPlaybackState('paused');
       }
     };
 

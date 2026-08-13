@@ -1,7 +1,10 @@
+import AudioPlaybackIntent from './audio_playback_intent';
+
 class CustomAudio<Extra> {
   extra: Extra | null = null;
 
   private readonly audio: HTMLAudioElement;
+  private readonly playbackIntent = new AudioPlaybackIntent();
 
   constructor() {
     const audio = window.document.createElement('audio');
@@ -25,6 +28,26 @@ class CustomAudio<Extra> {
 
     (window.document.body || window.document.documentElement).appendChild(
       audio,
+    );
+
+    audio.addEventListener('loadstart', () =>
+      this.playbackIntent.startSourceLoading(),
+    );
+    audio.addEventListener('loadeddata', () =>
+      this.playbackIntent.finishSourceLoading(),
+    );
+    audio.addEventListener('canplay', () =>
+      this.playbackIntent.finishSourceLoading(),
+    );
+    audio.addEventListener('error', () => this.playbackIntent.reset());
+    audio.addEventListener('abort', () =>
+      this.playbackIntent.finishSourceLoading(),
+    );
+    audio.addEventListener('playing', () =>
+      this.playbackIntent.requestPlay(),
+    );
+    audio.addEventListener('pause', () =>
+      this.playbackIntent.handleNativePause(),
     );
 
     this.audio = audio;
@@ -71,12 +94,14 @@ class CustomAudio<Extra> {
   setSource({ src, extra }: { src: string; extra: Extra }) {
     this.extra = extra;
     if (this.audio.src !== src) {
+      this.playbackIntent.startSourceLoading();
       this.audio.src = src;
     }
   }
 
   clearSource() {
     this.extra = null;
+    this.playbackIntent.reset();
     this.audio.removeAttribute('src');
     this.audio.load();
   }
@@ -98,10 +123,13 @@ class CustomAudio<Extra> {
   }
 
   play() {
+    this.playbackIntent.requestPlay();
     const p = this.audio.play();
     if (p && typeof p.then === 'function') {
       p.catch((err: DOMException) => {
-        if (err.name !== 'AbortError' && err.name !== 'NotAllowedError') {
+        if (err.name === 'NotAllowedError') {
+          this.playbackIntent.requestPause();
+        } else if (err.name !== 'AbortError') {
           throw err;
         }
       });
@@ -110,7 +138,12 @@ class CustomAudio<Extra> {
   }
 
   pause() {
+    this.playbackIntent.requestPause();
     return this.audio.pause();
+  }
+
+  isPlaybackRequested() {
+    return this.playbackIntent.isPlaybackRequested();
   }
 
   isPaused() {
