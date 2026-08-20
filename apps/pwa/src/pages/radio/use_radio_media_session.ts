@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import CustomAudio from '@/utils/custom_audio';
@@ -72,7 +72,8 @@ function useRadioMediaSession({
     };
   }, [onPlay, onPause, onNext]);
 
-  useEffect(() => {
+  // 必须早于 useRadioAudio 的普通 effect 切换 src, 避免 iOS 闪回旧曲目.
+  useLayoutEffect(() => {
     if (!('mediaSession' in window.navigator)) {
       return;
     }

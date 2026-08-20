@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import CustomAudio from '@/utils/custom_audio';
@@ -79,8 +79,12 @@ function useMediaSession({
     };
   }, [audio]);
 
-  // 同步 metadata: 仅随 music 变化.
-  useEffect(() => {
+  /**
+   * 在普通 effect 切换 audio.src 前提交下一首 metadata.
+   * iOS 会在 src 变化时立即刷新系统媒体中心; 若 metadata 仍是上一首,
+   * WebKit 可能先恢复历史 Now Playing 条目, 随后才显示真正的下一首.
+   */
+  useLayoutEffect(() => {
     if (!('mediaSession' in window.navigator)) {
       return;
     }
