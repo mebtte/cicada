@@ -49,6 +49,7 @@ and is the value used when talking to the server.
 ## Rules
 
 - Variables prefer lower-camel case
+- Uses english as commit message
 
 ---
 

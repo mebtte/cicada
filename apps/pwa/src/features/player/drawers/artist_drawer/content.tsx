@@ -176,6 +176,10 @@ function Detail({
   artist: Artist;
   insideDrawer: boolean;
 }) {
+  // Only photos with displayable artwork should occupy photo UI slots.
+  const coverPhoto = artist.photos.find(
+    (photo) => photo.asset || photo.thumbnail,
+  );
   const scrollableRef = useRef<HTMLDivElement | null>(null);
   const identityRef = useRef<HTMLElement | null>(null);
   const [showCollapsedHeader, setShowCollapsedHeader] = useState(false);
@@ -247,16 +251,18 @@ function Detail({
     >
       {insideDrawer ? (
         <Header $visible={showCollapsedHeader}>
-          <HeaderCover>
-            <Cover
-              className="header-cover-image"
-              src={artist.photos[0]?.asset || ''}
-              placeholderSrc={artist.photos[0]?.thumbnail}
-              fallbackVariant={CoverFallback.ARTIST}
-              size="100%"
-              shape={Shape.ROUNDED}
-            />
-          </HeaderCover>
+          {coverPhoto ? (
+            <HeaderCover>
+              <Cover
+                className="header-cover-image"
+                src={coverPhoto.asset}
+                placeholderSrc={coverPhoto.thumbnail}
+                fallbackVariant={CoverFallback.ARTIST}
+                size="100%"
+                shape={Shape.ROUNDED}
+              />
+            </HeaderCover>
+          ) : null}
           <HeaderText>
             <ArtistDrawerTitle>{artist.name}</ArtistDrawerTitle>
             {artist.aliases.length ? (

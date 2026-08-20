@@ -42,7 +42,7 @@ function openCreateArtistDialog({
         });
         return;
       }
-      notice.error(error.message);
+      dialog.alert({ content: error.message });
       return false;
     }
   };

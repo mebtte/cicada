@@ -1,6 +1,6 @@
 import { CSSVariable } from '@/global_style';
 import styled, { css } from 'styled-components';
-import { useEffect, useState, type Ref } from 'react';
+import { useEffect, useMemo, useState, type Ref } from 'react';
 import Cover, { Shape } from '@/components/cover';
 import ImageViewer, { type ImageViewerPhoto } from '@/components/image_viewer';
 import { t } from '@/i18n';
@@ -164,7 +164,11 @@ function Info({
   artist: Artist;
   identityRef?: Ref<HTMLElement>;
 }) {
-  const { photos } = artist;
+  // Ignore empty photo records so Cover never turns them into default artwork.
+  const photos = useMemo(
+    () => artist.photos.filter((photo) => photo.asset || photo.thumbnail),
+    [artist.photos],
+  );
   const [selectedId, setSelectedId] = useState<string | undefined>(
     () => photos[0]?.id,
   );

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import getResizedImage from '@/server/asset/get_resized_image';
 import { t } from '@/i18n';
 import CustomAudio from '@/utils/custom_audio';
@@ -72,7 +72,8 @@ function useRadioMediaSession({
     };
   }, [onPlay, onPause, onNext]);
 
-  useEffect(() => {
+  // 必须早于 useRadioAudio 的普通 effect 切换 src, 避免 iOS 闪回旧曲目.
+  useLayoutEffect(() => {
     if (!('mediaSession' in window.navigator)) {
       return;
     }
@@ -99,16 +100,13 @@ function useRadioMediaSession({
       return;
     }
     const sync = () => {
-      // 'ended' 时 paused 已静默置为 true, 数据仍就绪. 下发 'paused' 会让
-      // macOS Now Playing 在 next 跳到新曲并 setSource 之前释放控制权.
-      if (
-        audio.isPaused() &&
-        audio.hasPlayableData() &&
-        !audio.isEnded()
-      ) {
-        safeSetPlaybackState('paused');
-      } else {
+      // 切换电台歌曲时旧音源会产生临时 pause, 继续遵循 CustomAudio 保留的
+      // 播放意图, 避免 macOS Now Playing 在新音源加载期间释放下一首控制权.
+      // ended 同样保持 playing, 直到电台队列切换到下一首.
+      if (audio.isPlaybackRequested() || audio.isEnded()) {
         safeSetPlaybackState('playing');
+      } else {
+        safeSetPlaybackState('paused');
       }
     };
     sync();

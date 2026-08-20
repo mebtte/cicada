@@ -43,6 +43,3 @@ On the first startup, Cicada creates a default user and prints `username`/`passw
 
 [GPL](./license)
 
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=mebtte/cicada&type=Date)](https://star-history.com/#mebtte/cicada&Date)

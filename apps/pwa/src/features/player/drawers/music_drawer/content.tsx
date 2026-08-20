@@ -247,6 +247,9 @@ function Detail({
   insideDrawer: boolean;
 }) {
   const description = getDescription(music);
+  // No artwork container is rendered when music has no cover, avoiding a
+  // misleading default cover in both the drawer body and collapsed header.
+  const hasCover = Boolean(music.cover || music.coverThumbnail);
   const scrollableRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLDivElement | null>(null);
   const [showCollapsedTitle, setShowCollapsedTitle] = useState(
@@ -295,7 +298,7 @@ function Detail({
         <Header $floating={useCollapsingTitle} $visible={showCollapsedTitle}>
           <HeaderRow>
             <HeaderMeta $visible={showCollapsedTitle}>
-              {useCollapsingTitle ? (
+              {useCollapsingTitle && hasCover ? (
                 <HeaderCover>
                   <Cover
                     className="header-cover-image"
@@ -326,17 +329,19 @@ function Detail({
       >
         <div className="first-screen">
           <DetailContent $insideDrawer={insideDrawer}>
-            <CoverFrame $insideDrawer={insideDrawer}>
-              <div className="cover-shell">
-                <Cover
-                  src={music.cover}
-                  placeholderSrc={music.coverThumbnail}
-                  fallbackVariant={CoverFallback.MUSIC}
-                  size="100%"
-                  shape={Shape.SQUARE}
-                />
-              </div>
-            </CoverFrame>
+            {hasCover ? (
+              <CoverFrame $insideDrawer={insideDrawer}>
+                <div className="cover-shell">
+                  <Cover
+                    src={music.cover}
+                    placeholderSrc={music.coverThumbnail}
+                    fallbackVariant={CoverFallback.MUSIC}
+                    size="100%"
+                    shape={Shape.SQUARE}
+                  />
+                </div>
+              </CoverFrame>
+            ) : null}
             <Info
               music={music}
               showTitle={!insideDrawer || USE_COLLAPSING_DRAWER_TITLE}
