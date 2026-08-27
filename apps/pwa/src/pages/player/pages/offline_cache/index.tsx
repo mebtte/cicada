@@ -13,6 +13,8 @@ import { CSSVariable } from '@/global_style';
 import Button from '@/components/button';
 import Input from '@/components/input';
 import Empty from '@/components/empty';
+import Spinner from '@/components/spinner';
+import VirtualList from '@/components/virtual_list';
 import { Tooltip } from '@/components';
 import { flexCenter } from '@/style/flexbox';
 import { IS_TOUCHABLE } from '@/constants/browser';
@@ -20,7 +22,7 @@ import { t } from '@/i18n';
 import dialog from '@/utils/dialog';
 import {
   audioAssetCacheEvents,
-  isAudioAssetCached,
+  listCachedMusicUrls,
   removeCachedMusic,
 } from '@/utils/audio_asset_cache';
 import {
@@ -32,6 +34,7 @@ import { OfflineMusic } from '@/storage';
 import getMusicPlaybackAsset from '@/utils/music_playback_asset';
 import { MusicPlaybackQuality } from '@/constants/setting';
 import { useSetting } from '@/global_states/setting';
+import logger from '@/utils/logger';
 import Page, { PAGE_HORIZONTAL_PADDING } from '../page';
 import MusicBase from '../../components/music_base';
 import addMusicListToPlaylist from '../../add_to_playlist';
@@ -70,7 +73,7 @@ const ListWrap = styled.div`
   min-height: 100%;
 `;
 
-const EmptyWrap = styled.div`
+const StatusWrap = styled.div`
   position: absolute;
   inset: 0;
   ${flexCenter}
@@ -147,9 +150,11 @@ const searchInputStyle = { flex: 1, minWidth: 0 } as const;
 function OfflineCache() {
   const musicPlaybackQuality = useSetting((s) => s.musicPlaybackQuality);
   const [entries, setEntries] = useState<OfflineMusic[]>([]);
+  const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState('');
   const [keyword, setKeyword] = useState('');
   const composingRef = useRef(false);
+  const scrollElementRef = useRef<HTMLDivElement | null>(null);
   const normalizedKeyword = keyword.trim().toLowerCase();
 
   /**
@@ -198,30 +203,44 @@ function OfflineCache() {
    */
   useEffect(() => {
     let cancelled = false;
+    let latestReload = 0;
+    setLoading(true);
     const reload = async () => {
-      const map = await getOfflineMusicMap();
-      if (cancelled) {
-        return;
+      // 多个缓存 change 事件可能让读取重叠，只允许最后一次读取更新页面。
+      const reloadId = ++latestReload;
+      try {
+        // CacheStorage 一次读取全部 key，避免条目多时逐首 Cache.match 阻塞页面。
+        const [map, cachedMusicUrls] = await Promise.all([
+          getOfflineMusicMap(),
+          listCachedMusicUrls(),
+        ]);
+        if (cancelled || reloadId !== latestReload) {
+          return;
+        }
+        const cachedMusicUrlSet = new Set(cachedMusicUrls);
+        const visible = Object.values(map).filter(
+          (entry) =>
+            entry.asset &&
+            cachedMusicUrlSet.has(
+              getMusicPlaybackAsset({
+                asset: entry.asset,
+                quality: musicPlaybackQuality,
+              }),
+            ),
+        );
+        setEntries(visible.sort((a, b) => b.cachedAt - a.cachedAt));
+      } catch (error) {
+        logger.error(
+          error instanceof Error ? error : new Error(String(error)),
+          'Failed to load offline cache',
+        );
+      } finally {
+        if (!cancelled && reloadId === latestReload) {
+          setLoading(false);
+        }
       }
-      const allEntries = Object.values(map).filter((e) => e.asset);
-      const checks = await Promise.all(
-        allEntries.map(async (entry) => ({
-          entry,
-          cached: await isAudioAssetCached(
-            getMusicPlaybackAsset({
-              asset: entry.asset,
-              quality: musicPlaybackQuality,
-            }),
-          ),
-        })),
-      );
-      if (cancelled) {
-        return;
-      }
-      const visible = checks.filter((c) => c.cached).map((c) => c.entry);
-      setEntries(visible.sort((a, b) => b.cachedAt - a.cachedAt));
     };
-    reload();
+    void reload();
     offlineMusicEvents.addEventListener('change', reload);
     audioAssetCacheEvents.addEventListener('change', reload);
     return () => {
@@ -262,81 +281,94 @@ function OfflineCache() {
     <Style>
       <div
         className="scrollable"
+        ref={scrollElementRef}
         // 空状态时禁止滚动, 避免底部占位让页面出现无意义滚动条
         style={
-          filteredEntries.length === 0 ? { overflow: 'hidden' } : undefined
+          loading || filteredEntries.length === 0
+            ? { overflow: 'hidden' }
+            : undefined
         }
       >
         <ListWrap>
-          {filteredEntries.length === 0 ? (
-            <EmptyWrap>
+          {loading ? (
+            <StatusWrap>
+              <Spinner />
+            </StatusWrap>
+          ) : filteredEntries.length === 0 ? (
+            <StatusWrap>
               <Empty description={t('offline_cache_empty')} />
-            </EmptyWrap>
+            </StatusWrap>
           ) : (
-            filteredEntries.map((entry) => {
-              const music = entryToMusic(entry);
-              return (
-                <MusicBase
-                  key={entry.id}
-                  index={idToIndex.get(entry.id) ?? 0}
-                  music={{
-                    id: entry.id,
-                    name: entry.name,
-                    performers: entry.performers,
-                    aliases: entry.aliases,
-                  }}
-                  lineAfter={
-                    <LineAfter>
-                      <Button
-                        className="primary-action"
-                        square
-                        variant="ghost"
-                        size="sm"
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          playerEventemitter.emit(
-                            PlayerEventType.ACTION_PLAY_MUSIC,
-                            { music },
-                          );
-                        }}
-                      >
-                        <PlayArrow />
-                      </Button>
-                      <Tooltip content={t('play_next')}>
+            <VirtualList
+              count={filteredEntries.length}
+              getItemKey={(index) => filteredEntries[index].id}
+              scrollElementRef={scrollElementRef}
+              renderItem={(index, key) => {
+                const entry = filteredEntries[index];
+                const music = entryToMusic(entry);
+                return (
+                  <MusicBase
+                    key={key}
+                    index={idToIndex.get(entry.id) ?? 0}
+                    music={{
+                      id: entry.id,
+                      name: entry.name,
+                      performers: entry.performers,
+                      aliases: entry.aliases,
+                    }}
+                    lineAfter={
+                      <LineAfter>
                         <Button
+                          className="primary-action"
                           square
                           variant="ghost"
                           size="sm"
                           onClick={(event) => {
                             event.stopPropagation();
                             playerEventemitter.emit(
-                              PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                              PlayerEventType.ACTION_PLAY_MUSIC,
                               { music },
                             );
                           }}
                         >
-                          <QueueInsert />
+                          <PlayArrow />
                         </Button>
-                      </Tooltip>
-                      <Tooltip content={t('remove_from_offline_cache')}>
-                        <Button
-                          square
-                          variant="ghost"
-                          size="sm"
-                          aria-label={t('remove_from_offline_cache')}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleRemove(entry);
-                          }}
-                        >
-                          <Delete />
-                        </Button>
-                      </Tooltip>
-                    </LineAfter>
-                  }
-                />
-              );
-            })
+                        <Tooltip content={t('play_next')}>
+                          <Button
+                            square
+                            variant="ghost"
+                            size="sm"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              playerEventemitter.emit(
+                                PlayerEventType.ACTION_INSERT_MUSIC_TO_PLAYQUEUE,
+                                { music },
+                              );
+                            }}
+                          >
+                            <QueueInsert />
+                          </Button>
+                        </Tooltip>
+                        <Tooltip content={t('remove_from_offline_cache')}>
+                          <Button
+                            square
+                            variant="ghost"
+                            size="sm"
+                            aria-label={t('remove_from_offline_cache')}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleRemove(entry);
+                            }}
+                          >
+                            <Delete />
+                          </Button>
+                        </Tooltip>
+                      </LineAfter>
+                    }
+                  />
+                );
+              }}
+            />
           )}
         </ListWrap>
         <Tail />
@@ -348,7 +380,7 @@ function OfflineCache() {
             variant="primary"
             size="sm"
             aria-label={t('add_all_to_playlist')}
-            disabled={filteredEntries.length === 0}
+            disabled={loading || filteredEntries.length === 0}
             onClick={handleAddAll}
           >
             <PlaylistAdd />
