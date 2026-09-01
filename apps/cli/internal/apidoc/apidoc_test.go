@@ -88,6 +88,46 @@ func TestSpecIncludesCorePaths(t *testing.T) {
 	}
 }
 
+func TestAdminRoleUpdateDocumentsCaptchaContract(t *testing.T) {
+	paths := Spec()["paths"].(map[string]any)
+	path := paths["/api/admin/user_admin"].(map[string]any)
+	operation := path["put"].(map[string]any)
+	requestBody := operation["requestBody"].(map[string]any)
+	content := requestBody["content"].(map[string]any)
+	media := content["application/json"].(map[string]any)
+	schema := media["schema"].(map[string]any)
+
+	required := schema["required"].([]any)
+	for _, field := range []string{"id", "admin", "captchaId", "captchaValue"} {
+		if !containsAnyString(required, field) {
+			t.Fatalf("admin role request does not require %q: %v", field, required)
+		}
+	}
+
+	errorCodes := operation["x-cicada-errorCodes"].([]string)
+	if !containsString(errorCodes, "wrong_captcha") {
+		t.Fatalf("admin role request does not document wrong_captcha: %v", errorCodes)
+	}
+}
+
+func containsAnyString(values []any, target string) bool {
+	for _, value := range values {
+		if value == target {
+			return true
+		}
+	}
+	return false
+}
+
+func containsString(values []string, target string) bool {
+	for _, value := range values {
+		if value == target {
+			return true
+		}
+	}
+	return false
+}
+
 func TestSpecDocumentsClientLanguageOnEveryAPI(t *testing.T) {
 	paths := Spec()["paths"].(map[string]any)
 	oldCommonParams := map[string]bool{

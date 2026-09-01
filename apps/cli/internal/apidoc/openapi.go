@@ -1055,17 +1055,24 @@ func operations() []operation {
 			Admin:       true,
 			RequestBody: jsonRequestBody(
 				objSchema(
-					[]string{"id", "admin"},
+					[]string{"id", "admin", "captchaId", "captchaValue"},
 					map[string]any{
-						"id":    strSchema("User ID.", "10001"),
-						"admin": intSchema("Admin flag, 0 or 1.", 1),
+						"id":           strSchema("User ID.", "10001"),
+						"admin":        intSchema("Admin flag, 0 or 1.", 1),
+						"captchaId":    strSchema("Captcha ID.", "captcha-id"),
+						"captchaValue": strSchema("Captcha value.", "abcd"),
 					},
 				),
-				map[string]any{"id": "10001", "admin": 1},
+				map[string]any{
+					"id":           "10001",
+					"admin":        1,
+					"captchaId":    "captcha-id",
+					"captchaValue": "abcd",
+				},
 			),
 			SuccessSchema:  nil,
 			SuccessExample: nil,
-			ErrorCodes:     []string{"wrong_parameter", "user_not_existed", "user_is_admin_already", "not_authorized", "not_authorized_for_admin"},
+			ErrorCodes:     []string{"wrong_parameter", "wrong_captcha", "user_not_existed", "user_is_admin_already", "not_authorized", "not_authorized_for_admin"},
 		},
 		{
 			Method:      "DELETE",

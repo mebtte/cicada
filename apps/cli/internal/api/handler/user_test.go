@@ -285,6 +285,24 @@ func TestAdminUpdateUserPasswordSecurity(t *testing.T) {
 		}
 	})
 
+	t.Run("admin role change requires captcha fields", func(t *testing.T) {
+		resp := callAdminUpdateUserAdmin(t, admin, map[string]any{
+			"id":    "TARGET",
+			"admin": 1,
+		})
+		if resp.Code != apperr.WrongParameter {
+			t.Fatalf("expected %s, got %+v", apperr.WrongParameter, resp)
+		}
+
+		target, err := store.GetUserByID("TARGET")
+		if err != nil {
+			t.Fatalf("get target user: %v", err)
+		}
+		if target.Admin != 0 {
+			t.Fatalf("target admin role should remain unchanged, got %d", target.Admin)
+		}
+	})
+
 	t.Run("admin can grant and revoke another user's admin role", func(t *testing.T) {
 		seedCaptcha(t, "cap-admin-grant", "abcd")
 		resp := callAdminUpdateUserAdmin(t, admin, map[string]any{

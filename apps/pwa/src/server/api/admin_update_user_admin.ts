@@ -12,8 +12,8 @@ function adminUpdateUserAdmin({
 }: {
   id: string;
   admin: boolean | 0 | 1;
-  captchaId?: string;
-  captchaValue?: string;
+  captchaId: string;
+  captchaValue: string;
 }) {
   return request({
     path: '/api/admin/user_admin',

@@ -107,12 +107,18 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
     setLoading(false);
   };
 
-  const updateAdmin = async (nextAdmin: boolean) => {
+  const updateAdmin = async (
+    nextAdmin: boolean,
+    captchaId: string,
+    captchaValue: string,
+  ) => {
     setAdminUpdating(true);
     try {
       await adminUpdateUserAdmin({
         id: user.id,
         admin: nextAdmin,
+        captchaId,
+        captchaValue,
       });
       setAdmin(nextAdmin);
       e.emit(EventType.USER_UPDATED, null);
@@ -132,21 +138,13 @@ function UserEdit({ user, onClose }: { user: User; onClose: () => void }) {
     }
 
     const nextAdmin = !admin;
-    if (nextAdmin) {
-      dialog.confirm({
-        title: t('set_as_admin_question'),
-        confirmText: t('set_as_admin'),
-        confirmVariant: 'primary',
-        onConfirm: () => updateAdmin(nextAdmin),
-      });
-      return;
-    }
-
-    dialog.confirm({
-      title: t('unset_as_admin_question'),
-      confirmText: t('unset_as_admin'),
-      confirmVariant: 'danger',
-      onConfirm: () => updateAdmin(nextAdmin),
+    // 管理员角色变更属于高风险操作，服务端要求每次提交验证码。
+    dialog.captcha({
+      title: t(nextAdmin ? 'set_as_admin_question' : 'unset_as_admin_question'),
+      confirmText: t(nextAdmin ? 'set_as_admin' : 'unset_as_admin'),
+      confirmVariant: nextAdmin ? 'primary' : 'danger',
+      onConfirm: ({ captchaId, captchaValue }) =>
+        updateAdmin(nextAdmin, captchaId, captchaValue),
     });
   };
 
