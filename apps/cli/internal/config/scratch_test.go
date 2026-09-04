@@ -27,6 +27,7 @@ func TestScratchPaths(t *testing.T) {
 				{ThumbnailCacheDir(), "thumbnails"}, {MusicTranscodeCacheDir(), "music_transcoded"},
 				{PartialUploadDir(), "partial_uploads"}, {AccessLogDir(), "logs/access"},
 				{SchedulerLogDir(), "logs/scheduler"}, {BinDir(), "bin"},
+				{FFmpegLogDir(), "logs/ffmpeg"},
 			} {
 				if want := filepath.Join(tc.want, p.suffix); p.got != want {
 					t.Fatalf("path = %q, want %q", p.got, want)

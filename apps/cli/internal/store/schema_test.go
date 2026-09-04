@@ -40,7 +40,7 @@ func TestInitializeCreatesScratchAndPreservesExistingContents(t *testing.T) {
 				t.Fatal(err)
 			}
 			assertScratchVersionMatchesData(t, data, scratch)
-			for _, child := range []string{"", "bin", "thumbnails", "music_transcoded", "partial_uploads", "logs/access", "logs/scheduler"} {
+			for _, child := range []string{"", "bin", "thumbnails", "music_transcoded", "partial_uploads", "logs/access", "logs/scheduler", "logs/ffmpeg"} {
 				if info, err := os.Stat(filepath.Join(scratch, child)); err != nil || !info.IsDir() {
 					t.Fatalf("missing %s: %v", child, err)
 				}

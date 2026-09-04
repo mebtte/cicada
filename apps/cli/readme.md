@@ -48,7 +48,21 @@ scratch/
   logs/
     access/
     scheduler/
+    ffmpeg/
 ```
+
+FFmpeg process calls (audio transcoding and metadata rewriting, including each
+retry) are recorded in `logs/ffmpeg/ffmpeg-YYYY-MM-DD.log` as one JSON object per
+line. Start records include `call_id`, `executable`, and the complete `args`
+array; finish records include the same ID, status, duration in milliseconds,
+and exit code when available. Failed, timed-out, or canceled calls also retain
+the last 16 KiB of stderr. Status values are `success`, `failed`, `timeout`, and
+`canceled`; a process that cannot start has no exit code. Cache hits, file
+copies, concurrent waiters, and ffprobe calls do not produce these records.
+Dates follow the server's local timezone, so calls spanning midnight have
+their start and finish in separate daily files. The scheduler cleans logs
+whose modification time is older than 30 days daily at 04:50. Log write errors
+are reported to the service log without interrupting the FFmpeg call.
 
 `bin` is exclusively managed by Cicada. Each startup checks the embedded tools,
 reuses identical files, and stages changed or missing executables in this

@@ -62,7 +62,7 @@ another host.
 
 The example separately mounts a device-local directory at `/scratch` and passes
 `--scratch /scratch`. Scratch contains `bin`, `thumbnails`, `music_transcoded`,
-`partial_uploads`, and `logs/access` and `logs/scheduler`, without a nested
+`partial_uploads`, and `logs/access`, `logs/scheduler`, and `logs/ffmpeg`, without a nested
 `cache` directory. Its `v` file tracks local upgrade progress. Missing directories are created at startup; invalid or
 unwritable paths prevent startup. Container mount permissions must allow Cicada
 to write to both data and scratch.

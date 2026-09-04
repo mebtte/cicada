@@ -24,6 +24,7 @@ func dailyJobs(mode config.MusicTranscodeMode) []dailyJob {
 		{name: "clean_outdated_access_log", fn: cleanOutdatedAccessLog},
 		{name: "clean_outdated_scheduler_log", fn: cleanOutdatedSchedulerLog},
 		{name: "clean_outdated_partial_upload", fn: cleanOutdatedPartialUpload},
+		{name: "clean_outdated_ffmpeg_log", fn: cleanOutdatedFFmpegLog},
 	}
 	selected := make([]dailyJob, 0, len(jobs))
 	for i, job := range jobs {

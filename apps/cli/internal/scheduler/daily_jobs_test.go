@@ -13,9 +13,9 @@ func TestDailyJobsModesPreserveSchedule(t *testing.T) {
 	for _, mode := range []config.MusicTranscodeMode{config.MusicTranscodeEager, config.MusicTranscodeLazy} {
 		t.Run(string(mode), func(t *testing.T) {
 			jobs := dailyJobs(mode)
-			wantCount := 10
+			wantCount := 11
 			if mode == config.MusicTranscodeLazy {
-				wantCount = 9
+				wantCount = 10
 			}
 			if len(jobs) != wantCount {
 				t.Fatalf("job count = %d, want %d", len(jobs), wantCount)
@@ -31,6 +31,7 @@ func TestDailyJobsModesPreserveSchedule(t *testing.T) {
 				"clean_outdated_access_log":         35,
 				"clean_outdated_scheduler_log":      40,
 				"clean_outdated_partial_upload":     45,
+				"clean_outdated_ffmpeg_log":         50,
 			}
 			if mode == config.MusicTranscodeLazy {
 				delete(wantMinutes, "pretranscode_music")

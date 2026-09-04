@@ -63,6 +63,7 @@ func scratchDirectories() []string {
 	return []string{
 		config.ScratchDir(), config.BinDir(), config.ThumbnailCacheDir(), config.MusicTranscodeCacheDir(),
 		config.PartialUploadDir(), config.LogDir(), config.AccessLogDir(), config.SchedulerLogDir(),
+		config.FFmpegLogDir(),
 	}
 }
 

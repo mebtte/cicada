@@ -23,6 +23,7 @@ func BinDir() string            { return filepath.Join(ScratchDir(), "bin") }
 func LogDir() string            { return filepath.Join(ScratchDir(), "logs") }
 func AccessLogDir() string      { return filepath.Join(LogDir(), "access") }
 func SchedulerLogDir() string   { return filepath.Join(LogDir(), "scheduler") }
+func FFmpegLogDir() string      { return filepath.Join(LogDir(), "ffmpeg") }
 func ThumbnailCacheDir() string { return filepath.Join(ScratchDir(), "thumbnails") }
 func MusicTranscodeCacheDir() string {
 	return filepath.Join(ScratchDir(), "music_transcoded")
