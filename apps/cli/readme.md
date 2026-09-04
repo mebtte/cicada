@@ -55,11 +55,10 @@ symbolic links, because the upgrade removes those directories.
 
 Stop the service before clearing scratch or changing its location. It can be
 recreated on the next start, but unfinished uploads and historical logs cannot
-be recovered. Cache files are regenerated. Music pretranscoding, cache reuse,
-and scheduled cleanup remain enabled with their existing rules. Moving scratch
-reduces synchronized data, but does not guarantee lower total disk usage;
-source-quality files that could previously use hard links may require copies
-when scratch and assets are on different filesystems.
+be recovered. Cache files are regenerated according to the selected music
+transcoding mode. Moving scratch reduces synchronized data, but does not
+guarantee lower total disk usage. Music caches are independent files; source
+formats that can be reused are copied rather than hard-linked.
 
 ### Upgrade
 
@@ -88,6 +87,48 @@ preserves the files. If the data upgrade succeeds but the scratch upgrade fails,
 startup stops; retrying completes local scratch recovery and migration without
 rolling back the successful data upgrade. Do not edit or remove only `scratch/v`
 to bypass a version error, since it records which migrations have been applied.
+
+## Music Transcoding
+
+Choose a server-wide mode at startup:
+
+```sh
+cicada start --music-transcode=eager  # default
+cicada start --music-transcode=lazy
+```
+
+- `eager` pretranscodes both music quality levels in the background. Valid
+  caches are retained indefinitely; scheduled cleanup removes invalid caches.
+- `lazy` does not register the background pretranscoding job. Playback requests
+  generate missing caches on demand, and daily cleanup also removes caches
+  unused for more than 60 days. This favors limited storage and libraries where
+  only a small subset is played regularly.
+
+Both modes wait for the whole file to finish transcoding on a cache miss before
+returning audio. Each server request using a cache updates that audio file's
+modification time, including Range, HEAD, and conditional requests. Quality
+levels are timed independently. Browser or proxy cache hits that never reach
+Cicada do not renew the server cache. Background checks of existing caches do
+not renew them either. New caches start their 60-day period when generated.
+
+The lazy expiry threshold is strictly more than 60 × 24 hours since the last
+access. Cleanup runs daily at 04:10 in the server's local timezone; it skips
+caches currently being generated or served. An expired cache that is accessed
+before cleanup can still be reused and renewed. This retention policy does not
+impose a disk-capacity limit. Invalid caches are cleaned in either mode.
+
+Restart with the other mode to switch behavior; compatible caches remain.
+Switching to lazy makes existing caches eligible for expiry based on their
+modification times. Invalid parameter values stop startup. There is no
+corresponding environment variable.
+
+This change advances the data version by one and discards older music caches
+through the local scratch migration, including their metadata. Uploaded assets
+and business database contents are preserved. New music caches never use hard
+links, so access updates cannot change original file timestamps. In eager mode,
+background jobs and requests rebuild caches; in lazy mode, only requests do.
+The first playback after upgrading may therefore require transcoding. Keep a
+pre-upgrade backup if you need to return to a previous binary.
 
 ## Start DEV Server
 

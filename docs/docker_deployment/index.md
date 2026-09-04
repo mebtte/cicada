@@ -74,10 +74,45 @@ use the command argument. Startup output shows the resolved scratch path.
 
 Stop the service before clearing scratch or changing its location. Missing
 scratch is recreated on startup, but its historical logs and unfinished uploads
-are lost. Music pretranscoding and scheduled cleanup keep their existing
-behavior. Moving scratch does not guarantee a smaller total disk footprint:
-cache regeneration consumes space, and source-quality caches may need copies
-instead of hard links across separate filesystems.
+are lost. Music caches are rebuilt according to the selected transcoding mode.
+Moving scratch does not guarantee a smaller total disk footprint: cache
+regeneration consumes space, and reusable source-quality files are copied into
+independent caches rather than hard-linked.
+
+## Music Transcoding Mode
+
+The default `eager` mode generates music caches in the background and retains
+valid caches indefinitely. For limited storage, choose `lazy` in the Compose
+command and recreate the container:
+
+```yaml
+command: ["start", "--scratch", "/scratch", "--music-transcode=lazy"]
+```
+
+With plain Docker, append `--music-transcode=lazy` after `start`. The option is
+server-wide and accepts only `eager` or `lazy`; invalid values stop startup.
+There is no corresponding environment variable. Restart with
+`--music-transcode=eager` or omit the option to restore the default.
+
+Lazy mode generates missing caches when requested and has no background
+pretranscoding job. The first request waits for the whole file to finish
+transcoding. Every server request using a cache refreshes that audio file's
+modification time; the two quality levels are tracked independently. Requests
+served entirely by a browser or proxy cache do not refresh server timestamps,
+and background checks do not renew existing caches.
+
+Daily cleanup at 04:10 in the container's local timezone removes lazy caches
+unused for more than 60 × 24 hours, alongside invalid caches. Active generation
+and responses are protected. Existing caches remain when switching modes, but
+switching to lazy makes them subject to expiry. Expiry reduces idle cache
+storage; it does not guarantee a maximum disk footprint. Eager mode only
+cleans invalid caches.
+
+The music cache change advances the data version by one. Its local scratch
+migration discards old music caches and metadata, preserving uploaded files
+and business database contents. New caches use independent files, never hard
+links. They are rebuilt by background jobs or requests in eager mode, and only
+by requests in lazy mode. Allow for cache regeneration after upgrading.
 
 ## Upgrade
 
