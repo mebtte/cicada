@@ -46,6 +46,16 @@ Apple builds keep `CFBundleShortVersionString` as the base version for platform
 compatibility. The full Cicada application version is stored in `CicadaVersion`
 and is the value used when talking to the server.
 
+## Embedded Tools
+
+Embedded executable files live directly in `scratch/bin`. The complete inventory
+is passed to `internal/embeddedtools.Prepare` from the FFmpeg startup preparation;
+add any future tools to that inventory so cleanup retains them. Preparation runs
+after scratch migration and before the server or scheduler starts. It reuses
+identical files, stages replacements beside their destinations, and removes
+obsolete entries only after every current tool is ready. The bin directory is
+program-owned and must not be a symlink or shared by running instances.
+
 ## Data and Scratch Migrations
 
 Data and scratch share one migration version sequence, but store progress

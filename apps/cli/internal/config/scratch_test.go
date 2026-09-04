@@ -26,7 +26,7 @@ func TestScratchPaths(t *testing.T) {
 			for _, p := range []struct{ got, suffix string }{
 				{ThumbnailCacheDir(), "thumbnails"}, {MusicTranscodeCacheDir(), "music_transcoded"},
 				{PartialUploadDir(), "partial_uploads"}, {AccessLogDir(), "logs/access"},
-				{SchedulerLogDir(), "logs/scheduler"},
+				{SchedulerLogDir(), "logs/scheduler"}, {BinDir(), "bin"},
 			} {
 				if want := filepath.Join(tc.want, p.suffix); p.got != want {
 					t.Fatalf("path = %q, want %q", p.got, want)
@@ -37,6 +37,16 @@ func TestScratchPaths(t *testing.T) {
 	Set(Config{Data: filepath.Join(root, "another-library")})
 	if want := filepath.Join(root, "another-library", "scratch"); ScratchDir() != want {
 		t.Fatalf("empty Scratch should fall back to current Data: %s", ScratchDir())
+	}
+}
+
+func TestScratchRejectsBinSymlink(t *testing.T) {
+	data, scratch, outside := t.TempDir(), t.TempDir(), t.TempDir()
+	if err := os.Symlink(outside, filepath.Join(scratch, "bin")); err != nil {
+		t.Skipf("symlinks unavailable: %v", err)
+	}
+	if _, err := ResolveScratchDir(data, scratch); err == nil {
+		t.Fatal("accepted a bin symlink that could redirect executable cleanup")
 	}
 }
 

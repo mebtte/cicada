@@ -19,6 +19,7 @@ func ScratchDir() string {
 func DataVersionPath() string   { return filepath.Join(Get().Data, "v") }
 func DBPath() string            { return filepath.Join(Get().Data, "db") }
 func DBBackupPath() string      { return filepath.Join(Get().Data, "db.backup") }
+func BinDir() string            { return filepath.Join(ScratchDir(), "bin") }
 func LogDir() string            { return filepath.Join(ScratchDir(), "logs") }
 func AccessLogDir() string      { return filepath.Join(LogDir(), "access") }
 func SchedulerLogDir() string   { return filepath.Join(LogDir(), "scheduler") }

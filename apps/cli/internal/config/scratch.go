@@ -28,6 +28,16 @@ func ResolveScratchDir(data, scratch string) (string, error) {
 	if err != nil && !os.IsNotExist(err) {
 		return "", fmt.Errorf("inspect scratch directory %q: %w", abs, err)
 	}
+	// bin is exclusively managed, including stale-file removal. Never let it
+	// redirect tool replacement or cleanup outside scratch through a symlink.
+	bin := filepath.Join(abs, "bin")
+	if info, err := os.Lstat(bin); err == nil {
+		if !info.IsDir() {
+			return "", fmt.Errorf("scratch bin %q must be a directory, not a file or symlink", bin)
+		}
+	} else if !os.IsNotExist(err) {
+		return "", fmt.Errorf("inspect scratch bin %q: %w", bin, err)
+	}
 	dataAbs, err := filepath.Abs(data)
 	if err != nil {
 		return "", err
@@ -41,7 +51,7 @@ func ResolveScratchDir(data, scratch string) (string, error) {
 	// back into a legacy directory even when the scratch root itself is safe.
 	paths := []string{abs}
 	for _, child := range []string{
-		"thumbnails", "music_transcoded", "partial_uploads", "logs", "logs/access", "logs/scheduler",
+		"bin", "thumbnails", "music_transcoded", "partial_uploads", "logs", "logs/access", "logs/scheduler", "logs/ffmpeg",
 		"v", "upgrade.lock", "upgrade.journal", "upgrade.trash",
 	} {
 		paths = append(paths, filepath.Join(abs, child))

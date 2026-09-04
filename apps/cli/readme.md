@@ -39,6 +39,9 @@ subdirectories are created automatically; an unusable path prevents startup.
 ```text
 scratch/
   v
+  bin/
+    ffmpeg
+    ffprobe
   thumbnails/
   music_transcoded/
   partial_uploads/
@@ -47,8 +50,18 @@ scratch/
     scheduler/
 ```
 
-Keep a separate scratch directory for each data directory. To exclude these
-files from synchronization, explicitly choose a path outside the synchronized
+`bin` is exclusively managed by Cicada. Each startup checks the embedded tools,
+reuses identical files, and stages changed or missing executables in this
+directory before replacing their destinations. Windows uses `ffmpeg.exe` and
+`ffprobe.exe`. After all tools are ready, entries outside the current inventory
+are removed, including binaries copied from another platform and interrupted
+staging files. Do not store your own files in `bin` or make it a symbolic link.
+The scratch filesystem must allow executing these tools. Old copies in the
+user cache are no longer used and can be removed after stopping older versions.
+
+Keep a separate scratch directory for each data directory, and never share it
+between running instances. To exclude these files from synchronization,
+explicitly choose a path outside the synchronized
 directory. The default remains inside data. Scratch must not overlap the old
 `data/cache`, `data/partial_uploads`, or `data/logs` directories, including through
 symbolic links, because the upgrade removes those directories.

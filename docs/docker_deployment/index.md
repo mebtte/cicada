@@ -61,11 +61,17 @@ and other persistent data. Back it up before upgrading or moving the service to
 another host.
 
 The example separately mounts a device-local directory at `/scratch` and passes
-`--scratch /scratch`. Scratch contains `thumbnails`, `music_transcoded`,
+`--scratch /scratch`. Scratch contains `bin`, `thumbnails`, `music_transcoded`,
 `partial_uploads`, and `logs/access` and `logs/scheduler`, without a nested
 `cache` directory. Its `v` file tracks local upgrade progress. Missing directories are created at startup; invalid or
 unwritable paths prevent startup. Container mount permissions must allow Cicada
 to write to both data and scratch.
+
+`scratch/bin` is reserved for embedded executables. At startup, Cicada reuses
+identical tools, replaces changed or missing tools via files staged in the same
+directory, then removes obsolete entries. Do not put your own files there or
+share scratch between running instances. The scratch mount must allow execution
+of these tools (it cannot be mounted with `noexec`).
 
 Without `--scratch`, the default is `<data>/scratch`, which still participates
 in data-directory synchronization. Relative paths are resolved from the process

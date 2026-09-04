@@ -43,7 +43,7 @@ const (
 func init() {
 	startCmd.Flags().StringVar(&startMusicTranscode, "music-transcode", string(config.MusicTranscodeEager), "Music transcoding: eager pretranscodes in the background and retains valid caches; lazy transcodes on request and cleans caches unused for more than 60 days")
 	startCmd.Flags().StringVar(&startData, "data", "", "Data directory, defaults to <exe_dir>/cicada_data (env: CICADA_DATA)")
-	startCmd.Flags().StringVar(&startScratch, "scratch", "", "Working directory for caches, partial uploads and logs (default <data>/scratch; relative to the working directory)")
+	startCmd.Flags().StringVar(&startScratch, "scratch", "", "Working directory for embedded tools, caches, partial uploads and logs (default <data>/scratch; relative to the working directory)")
 	startCmd.Flags().IntVar(&startPort, "port", 0, "HTTP listen port (env: CICADA_PORT, default 8000)")
 	startCmd.Flags().StringVar(&startImageFileMaxSize, "image-file-max-size", "", "Maximum image file upload size, supports b/kb/mb/gb suffixes (env: CICADA_IMAGE_FILE_MAX_SIZE, default 5mb)")
 	startCmd.Flags().StringVar(&startAudioFileMaxSize, "audio-file-max-size", "", "Maximum audio file upload size, supports b/kb/mb/gb suffixes (env: CICADA_AUDIO_FILE_MAX_SIZE, default 200mb)")
@@ -112,8 +112,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 	}
 	cfg = config.Get()
 
-	paths, err := ffmpeg.PrepareEmbeddedTools()
-	if err != nil {
+	if _, err := ffmpeg.PrepareEmbeddedTools(); err != nil {
 		return fmt.Errorf("prepare embedded ffmpeg tools: %w", err)
 	}
 
@@ -126,8 +125,6 @@ func runStart(cmd *cobra.Command, args []string) error {
 	fmt.Printf("imageFileMaxSize: %d\n", cfg.ImageFileMaxSize)
 	fmt.Printf("audioFileMaxSize: %d\n", cfg.AudioFileMaxSize)
 	fmt.Printf("videoFileMaxSize: %d\n", cfg.VideoFileMaxSize)
-	fmt.Printf("ffmpegPath: %s\n", paths.FFmpeg)
-	fmt.Printf("ffprobePath: %s\n", paths.FFprobe)
 	fmt.Println("---")
 
 	scheduler.Start()

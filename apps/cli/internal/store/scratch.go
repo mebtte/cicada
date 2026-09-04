@@ -61,7 +61,7 @@ func prepareScratch() error {
 
 func scratchDirectories() []string {
 	return []string{
-		config.ScratchDir(), config.ThumbnailCacheDir(), config.MusicTranscodeCacheDir(),
+		config.ScratchDir(), config.BinDir(), config.ThumbnailCacheDir(), config.MusicTranscodeCacheDir(),
 		config.PartialUploadDir(), config.LogDir(), config.AccessLogDir(), config.SchedulerLogDir(),
 	}
 }
