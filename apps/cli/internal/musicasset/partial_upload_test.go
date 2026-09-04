@@ -11,6 +11,8 @@ import (
 
 func setupTempData(t *testing.T) {
 	t.Helper()
+	previous := config.Get()
+	t.Cleanup(func() { config.Set(previous) })
 	config.Set(config.Config{
 		Mode: config.ModeProduction,
 		Data: t.TempDir(),
