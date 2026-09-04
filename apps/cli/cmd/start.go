@@ -122,11 +122,6 @@ func runStart(cmd *cobra.Command, args []string) error {
 	fmt.Printf("scratch: %s\n", cfg.Scratch)
 	fmt.Printf("mode: %s\n", cfg.Mode)
 	fmt.Printf("musicTranscode: %s\n", cfg.MusicTranscode)
-	if cfg.MusicTranscode == config.MusicTranscodeLazy {
-		fmt.Println("musicCacheRetention: 60 days since last server access")
-	} else {
-		fmt.Println("musicCacheRetention: valid caches retained indefinitely")
-	}
 	fmt.Printf("port: %d\n", cfg.Port)
 	fmt.Printf("imageFileMaxSize: %d\n", cfg.ImageFileMaxSize)
 	fmt.Printf("audioFileMaxSize: %d\n", cfg.AudioFileMaxSize)
