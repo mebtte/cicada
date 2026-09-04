@@ -59,6 +59,7 @@ const (
 
 type Config struct {
 	Mode             Mode
+	MusicTranscode   MusicTranscodeMode
 	Data             string
 	Scratch          string
 	Port             int
@@ -122,6 +123,7 @@ var (
 	mu  sync.RWMutex
 	cfg = Config{
 		Mode:             DefaultMode(),
+		MusicTranscode:   MusicTranscodeEager,
 		Data:             DefaultDataPath(),
 		Port:             DefaultPortValue,
 		ImageFileMaxSize: DefaultImageFileMaxSizeFromEnv(),
@@ -143,6 +145,9 @@ func Set(c Config) {
 }
 
 func normalizeConfig(c Config) Config {
+	if c.MusicTranscode == "" {
+		c.MusicTranscode = MusicTranscodeEager
+	}
 	if c.ImageFileMaxSize <= 0 {
 		c.ImageFileMaxSize = DefaultImageFileMaxSize
 	}

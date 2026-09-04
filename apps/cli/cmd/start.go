@@ -30,6 +30,7 @@ var (
 	startImageFileMaxSize string
 	startAudioFileMaxSize string
 	startVideoFileMaxSize string
+	startMusicTranscode   string
 )
 
 const (
@@ -40,6 +41,7 @@ const (
 )
 
 func init() {
+	startCmd.Flags().StringVar(&startMusicTranscode, "music-transcode", string(config.MusicTranscodeEager), "Music transcoding: eager pretranscodes in the background and retains valid caches; lazy transcodes on request and cleans caches unused for more than 60 days")
 	startCmd.Flags().StringVar(&startData, "data", "", "Data directory, defaults to <exe_dir>/cicada_data (env: CICADA_DATA)")
 	startCmd.Flags().StringVar(&startScratch, "scratch", "", "Working directory for caches, partial uploads and logs (default <data>/scratch; relative to the working directory)")
 	startCmd.Flags().IntVar(&startPort, "port", 0, "HTTP listen port (env: CICADA_PORT, default 8000)")
@@ -50,6 +52,10 @@ func init() {
 }
 
 func runStart(cmd *cobra.Command, args []string) error {
+	musicTranscode, err := config.ParseMusicTranscodeMode(startMusicTranscode)
+	if err != nil {
+		return err
+	}
 	data := startData
 	if data == "" {
 		data = config.DefaultDataPath()
@@ -91,6 +97,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 	}
 	cfg := config.Config{
 		Mode:             config.DefaultMode(),
+		MusicTranscode:   musicTranscode,
 		Data:             data,
 		Scratch:          scratch,
 		Port:             port,
@@ -114,6 +121,12 @@ func runStart(cmd *cobra.Command, args []string) error {
 	fmt.Printf("data: %s\n", cfg.Data)
 	fmt.Printf("scratch: %s\n", cfg.Scratch)
 	fmt.Printf("mode: %s\n", cfg.Mode)
+	fmt.Printf("musicTranscode: %s\n", cfg.MusicTranscode)
+	if cfg.MusicTranscode == config.MusicTranscodeLazy {
+		fmt.Println("musicCacheRetention: 60 days since last server access")
+	} else {
+		fmt.Println("musicCacheRetention: valid caches retained indefinitely")
+	}
 	fmt.Printf("port: %d\n", cfg.Port)
 	fmt.Printf("imageFileMaxSize: %d\n", cfg.ImageFileMaxSize)
 	fmt.Printf("audioFileMaxSize: %d\n", cfg.AudioFileMaxSize)
