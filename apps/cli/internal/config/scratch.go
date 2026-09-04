@@ -19,6 +19,15 @@ func ResolveScratchDir(data, scratch string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	// Validate the root before resolving children so errors identify the
+	// invalid scratch directory rather than one of its children.
+	info, err := os.Stat(abs)
+	if err == nil && !info.IsDir() {
+		return "", fmt.Errorf("scratch path %q is not a directory", abs)
+	}
+	if err != nil && !os.IsNotExist(err) {
+		return "", fmt.Errorf("inspect scratch directory %q: %w", abs, err)
+	}
 	dataAbs, err := filepath.Abs(data)
 	if err != nil {
 		return "", err

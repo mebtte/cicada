@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -36,6 +37,44 @@ func TestScratchPaths(t *testing.T) {
 	Set(Config{Data: filepath.Join(root, "another-library")})
 	if want := filepath.Join(root, "another-library", "scratch"); ScratchDir() != want {
 		t.Fatalf("empty Scratch should fall back to current Data: %s", ScratchDir())
+	}
+}
+
+func TestScratchRejectsFileRoot(t *testing.T) {
+	root := t.TempDir()
+	file, err := os.CreateTemp(root, "scratch-*")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"file", "symlink"} {
+		t.Run(name, func(t *testing.T) {
+			scratch := file.Name()
+			if name == "symlink" {
+				scratch = filepath.Join(root, "alias")
+				if err := os.Symlink(file.Name(), scratch); err != nil {
+					t.Skipf("symlinks unavailable: %v", err)
+				}
+			}
+			_, err := ResolveScratchDir(filepath.Join(root, "data"), scratch)
+			if err == nil || !strings.Contains(err.Error(), scratch) || !strings.Contains(err.Error(), "is not a directory") {
+				t.Fatalf("expected actionable error for scratch file, got %v", err)
+			}
+			info, err := os.Stat(file.Name())
+			if err != nil || !info.Mode().IsRegular() || info.Size() != 0 {
+				t.Fatalf("scratch file must remain unchanged: %v, %v", info, err)
+			}
+		})
+	}
+}
+
+func TestScratchAcceptsTemporaryDirectory(t *testing.T) {
+	scratch := t.TempDir()
+	got, err := ResolveScratchDir(t.TempDir(), scratch)
+	if err != nil || got != scratch {
+		t.Fatalf("ResolveScratchDir = %q, %v; want %q", got, err, scratch)
 	}
 }
 
