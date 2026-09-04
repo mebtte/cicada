@@ -19,7 +19,9 @@ import (
 //
 //	{"id":N,"op":"rename","from":"REL","to":"REL"}
 //	{"id":N,"op":"trash","path":"REL","trash":"upgrade.trash/N-base"}
+//	{"id":N,"op":"mkdir","path":"REL"}
 //	{"id":N,"op":"checkpoint","migration":VER}
+//	{"id":N,"op":"undo"} // operation N has been reversed
 //
 // Paths are stored relative to data dir for portability.
 type Journal struct {
@@ -44,8 +46,24 @@ type journalEntry struct {
 // OpenJournal opens (creating if needed) the journal file in append mode.
 // Existing entries are scanned to compute the next id.
 func OpenJournal(dataDir string) (*Journal, error) {
+	dataDir, err := filepath.Abs(dataDir)
+	if err != nil {
+		return nil, err
+	}
 	path := filepath.Join(dataDir, "upgrade.journal")
 	trash := filepath.Join(dataDir, "upgrade.trash")
+	for _, artifact := range []string{path, trash} {
+		info, err := os.Lstat(artifact)
+		if os.IsNotExist(err) {
+			continue
+		}
+		if err != nil {
+			return nil, err
+		}
+		if (artifact == path && !info.Mode().IsRegular()) || (artifact == trash && !info.IsDir()) {
+			return nil, fmt.Errorf("invalid journal artifact %s: symlinks and unexpected file types are not allowed", artifact)
+		}
+	}
 	if err := os.MkdirAll(trash, 0755); err != nil {
 		return nil, fmt.Errorf("mkdir upgrade.trash: %w", err)
 	}
@@ -100,10 +118,24 @@ func (j *Journal) Rename(from, to string) error {
 	if err != nil {
 		return err
 	}
-	if err := j.write(journalEntry{ID: j.id(), Op: "rename", From: relFrom, To: relTo}); err != nil {
+	from, to = j.absolute(relFrom), j.absolute(relTo)
+	// Recovery may reverse the intent even if Rename never ran. Require a
+	// source and an unused destination so it cannot mistake an existing target
+	// for this operation's output. Journal renames never overwrite entries.
+	if _, err := os.Lstat(from); err != nil {
+		return fmt.Errorf("inspect rename source %s: %w", from, err)
+	}
+	if _, err := os.Lstat(to); err == nil {
+		return fmt.Errorf("rename target %s already exists", to)
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("inspect rename target %s: %w", to, err)
+	}
+	// Record parent creation before the rename intent so reverse replay first
+	// restores the moved entry, then removes the newly created empty parents.
+	if err := j.mkdirParents(filepath.Dir(to)); err != nil {
 		return err
 	}
-	if err := os.MkdirAll(filepath.Dir(to), 0755); err != nil {
+	if err := j.write(journalEntry{ID: j.id(), Op: "rename", From: relFrom, To: relTo}); err != nil {
 		return err
 	}
 	return os.Rename(from, to)
@@ -116,6 +148,7 @@ func (j *Journal) Trash(path string) error {
 	if err != nil {
 		return err
 	}
+	path = j.absolute(relPath)
 	id := j.id()
 	stashName := fmt.Sprintf("%d-%s", id, filepath.Base(path))
 	stashAbs := filepath.Join(j.trash, stashName)
@@ -127,6 +160,28 @@ func (j *Journal) Trash(path string) error {
 		return err
 	}
 	return os.Rename(path, stashAbs)
+}
+
+// Mkdir creates one directory and records it for rollback. Existing real
+// directories are preserved. Its parent must already exist.
+func (j *Journal) Mkdir(path string) error {
+	rel, err := j.rel(path)
+	if err != nil {
+		return err
+	}
+	path = j.absolute(rel)
+	if info, err := os.Lstat(path); err == nil {
+		if !info.IsDir() {
+			return fmt.Errorf("%s must be a directory, not a file or symlink", path)
+		}
+		return nil
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+	if err := j.write(journalEntry{ID: j.id(), Op: "mkdir", Path: rel}); err != nil {
+		return err
+	}
+	return os.Mkdir(path, 0755)
 }
 
 // Checkpoint marks the boundary between two migrations. Used by Recover to
@@ -156,77 +211,6 @@ func (j *Journal) id() int {
 	id := j.nextID
 	j.nextID++
 	return id
-}
-
-func (j *Journal) rel(p string) (string, error) {
-	if !filepath.IsAbs(p) {
-		p = filepath.Join(j.dataDir, p)
-	}
-	rel, err := filepath.Rel(j.dataDir, p)
-	if err != nil {
-		return "", fmt.Errorf("path %s outside data dir: %w", p, err)
-	}
-	return filepath.ToSlash(rel), nil
-}
-
-// ReplayReverse undoes every entry in the journal in reverse order, stopping
-// after it has processed every line. Idempotent: missing files are skipped.
-// Used by Recover (full journal) and runner (single-migration suffix on tx
-// rollback).
-//
-// stopAtCheckpointAfter, when non-zero, makes replay stop once it has
-// processed entries belonging to migrations strictly greater than the given
-// version (i.e. it undoes the in-flight migration's tail and stops). Pass 0
-// to undo everything.
-func ReplayReverse(dataDir string, stopAtCheckpointAfter int) error {
-	path := filepath.Join(dataDir, "upgrade.journal")
-	entries, err := readEntries(path)
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return nil
-		}
-		return err
-	}
-	for i := len(entries) - 1; i >= 0; i-- {
-		e := entries[i]
-		if e.Op == "checkpoint" {
-			if stopAtCheckpointAfter != 0 && e.Migration <= stopAtCheckpointAfter {
-				return nil
-			}
-			continue
-		}
-		if err := undo(dataDir, e); err != nil {
-			return fmt.Errorf("undo entry %d (%s): %w", e.ID, e.Op, err)
-		}
-	}
-	return nil
-}
-
-func undo(dataDir string, e journalEntry) error {
-	switch e.Op {
-	case "rename":
-		from := filepath.Join(dataDir, filepath.FromSlash(e.From))
-		to := filepath.Join(dataDir, filepath.FromSlash(e.To))
-		if _, err := os.Stat(to); errors.Is(err, os.ErrNotExist) {
-			return nil
-		}
-		if err := os.MkdirAll(filepath.Dir(from), 0755); err != nil {
-			return err
-		}
-		return os.Rename(to, from)
-	case "trash":
-		orig := filepath.Join(dataDir, filepath.FromSlash(e.Path))
-		stash := filepath.Join(dataDir, filepath.FromSlash(e.Trash))
-		if _, err := os.Stat(stash); errors.Is(err, os.ErrNotExist) {
-			return nil
-		}
-		if err := os.MkdirAll(filepath.Dir(orig), 0755); err != nil {
-			return err
-		}
-		return os.Rename(stash, orig)
-	default:
-		return fmt.Errorf("unknown op %q", e.Op)
-	}
 }
 
 func readEntries(path string) ([]journalEntry, error) {
