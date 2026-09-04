@@ -243,7 +243,7 @@ func removeUnlinkedAsset() (schedulerJobResult, error) {
 	}, errors.Join(errs...)
 }
 
-// cleanMusicTranscodeCache validates entries under cache/music_transcoded.
+// cleanMusicTranscodeCache validates entries under scratch/music_transcoded.
 // Entries live in 256 hex-prefix shards (the first two chars of the source
 // asset filename); all products of one source (smooth m4a + source audio +
 // source metadata sidecar) share an asset prefix and therefore the same
@@ -436,9 +436,9 @@ func removeOutdatedAuthSession() (schedulerJobResult, error) {
 }
 
 // cleanOutdatedFile removes thumbnail cache files older than 30 days. Thumbnails
-// live under cache/thumbnails/{shard}/ (256 shards by the first two hex chars
+// live under scratch/thumbnails/{shard}/ (256 shards by the first two hex chars
 // of the source filename); we walk each shard and let empty shards be removed
-// afterwards. Any plain file directly under cache/thumbnails is a leftover
+// afterwards. Any plain file directly under scratch/thumbnails is a leftover
 // from the pre-shard layout and is left for the dedicated migration to clean.
 func cleanOutdatedFile() (schedulerJobResult, error) {
 	root := config.ThumbnailCacheDir()

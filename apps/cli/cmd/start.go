@@ -25,6 +25,7 @@ var startCmd = &cobra.Command{
 
 var (
 	startData             string
+	startScratch          string
 	startPort             int
 	startImageFileMaxSize string
 	startAudioFileMaxSize string
@@ -40,6 +41,7 @@ const (
 
 func init() {
 	startCmd.Flags().StringVar(&startData, "data", "", "Data directory, defaults to <exe_dir>/cicada_data (env: CICADA_DATA)")
+	startCmd.Flags().StringVar(&startScratch, "scratch", "", "Working directory for caches, partial uploads and logs (default <data>/scratch; relative to the working directory)")
 	startCmd.Flags().IntVar(&startPort, "port", 0, "HTTP listen port (env: CICADA_PORT, default 8000)")
 	startCmd.Flags().StringVar(&startImageFileMaxSize, "image-file-max-size", "", "Maximum image file upload size, supports b/kb/mb/gb suffixes (env: CICADA_IMAGE_FILE_MAX_SIZE, default 5mb)")
 	startCmd.Flags().StringVar(&startAudioFileMaxSize, "audio-file-max-size", "", "Maximum audio file upload size, supports b/kb/mb/gb suffixes (env: CICADA_AUDIO_FILE_MAX_SIZE, default 200mb)")
@@ -83,9 +85,14 @@ func runStart(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	scratch, err := config.ResolveScratchDir(data, startScratch)
+	if err != nil {
+		return fmt.Errorf("resolve scratch directory: %w", err)
+	}
 	cfg := config.Config{
 		Mode:             config.DefaultMode(),
 		Data:             data,
+		Scratch:          scratch,
 		Port:             port,
 		ImageFileMaxSize: imageFileMaxSize,
 		AudioFileMaxSize: audioFileMaxSize,
@@ -96,6 +103,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 	if err := store.Initialize(); err != nil {
 		return fmt.Errorf("initialize: %w", err)
 	}
+	cfg = config.Get()
 
 	paths, err := ffmpeg.PrepareEmbeddedTools()
 	if err != nil {
@@ -104,6 +112,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 
 	fmt.Println("---")
 	fmt.Printf("data: %s\n", cfg.Data)
+	fmt.Printf("scratch: %s\n", cfg.Scratch)
 	fmt.Printf("mode: %s\n", cfg.Mode)
 	fmt.Printf("port: %d\n", cfg.Port)
 	fmt.Printf("imageFileMaxSize: %d\n", cfg.ImageFileMaxSize)

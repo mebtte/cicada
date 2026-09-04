@@ -84,10 +84,14 @@ func TestSmoothBitrateCapsLossySourceBitrate(t *testing.T) {
 }
 
 func TestEnsureSharesConcurrentSmoothTranscode(t *testing.T) {
+	original := config.Get()
+	t.Cleanup(func() { config.Set(original) })
+	scratch := t.TempDir()
 	config.Set(config.Config{
-		Mode: config.ModeProduction,
-		Data: t.TempDir(),
-		Port: 8000,
+		Mode:    config.ModeProduction,
+		Data:    t.TempDir(),
+		Scratch: scratch,
+		Port:    8000,
 	})
 	sourcePath := writeMusicSource(t, "song.flac", "source")
 
@@ -140,7 +144,7 @@ func TestEnsureSharesConcurrentSmoothTranscode(t *testing.T) {
 	if calls.Load() != 1 {
 		t.Fatalf("transcode calls = %d", calls.Load())
 	}
-	cachePath := CachePath("song.flac", QualitySmooth)
+	cachePath := filepath.Join(scratch, "music_transcoded", "so", CacheName("song.flac", QualitySmooth))
 	if content, err := os.ReadFile(cachePath); err != nil || string(content) != "cache" {
 		t.Fatalf("cache content = %q, err=%v", string(content), err)
 	}

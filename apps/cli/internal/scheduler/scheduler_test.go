@@ -15,16 +15,20 @@ import (
 )
 
 func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
+	original := config.Get()
+	t.Cleanup(func() { config.Set(original) })
+	scratch := t.TempDir()
 	config.Set(config.Config{
-		Mode: config.ModeProduction,
-		Data: t.TempDir(),
-		Port: 8000,
+		Mode:    config.ModeProduction,
+		Data:    t.TempDir(),
+		Scratch: scratch,
+		Port:    8000,
 	})
 
 	for _, dir := range []string{
-		config.CacheDir(),
-		config.ThumbnailCacheDir(),
-		config.MusicTranscodeCacheDir(),
+		config.ScratchDir(),
+		filepath.Join(scratch, "thumbnails"),
+		filepath.Join(scratch, "music_transcoded"),
 	} {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			t.Fatalf("mkdir %s: %v", dir, err)
@@ -32,14 +36,14 @@ func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 	}
 
 	oldTime := time.Now().Add(-31 * 24 * time.Hour)
-	oldRootCache := filepath.Join(config.CacheDir(), "old-cache")
-	legacyFlatThumbnail := filepath.Join(config.ThumbnailCacheDir(), "64_legacy.jpg")
+	oldRootCache := filepath.Join(config.ScratchDir(), "old-cache")
+	legacyFlatThumbnail := filepath.Join(scratch, "thumbnails", "64_legacy.jpg")
 	_, oldThumbnailShardA := config.ThumbnailCachePath(64, "abdeadbeef0001.jpg")
 	_, oldThumbnailShardB := config.ThumbnailCachePath(128, "cd1122334455.jpg")
 	_, freshThumbnail := config.ThumbnailCachePath(64, "ef9988776655.jpg")
-	oldEmptyShardLeftover := filepath.Join(config.ThumbnailCacheDir(), "ab", "abold_32.jpg")
-	oldTranscode := filepath.Join(config.MusicTranscodeCacheDir(), "song.flac_codec-aac_bitrate-192k.m4a")
-	freshTranscode := filepath.Join(config.MusicTranscodeCacheDir(), "song.flac_codec-flac.flac")
+	oldEmptyShardLeftover := filepath.Join(scratch, "thumbnails", "ab", "abold_32.jpg")
+	oldTranscode := filepath.Join(scratch, "music_transcoded", "song.flac_codec-aac_bitrate-192k.m4a")
+	freshTranscode := filepath.Join(scratch, "music_transcoded", "song.flac_codec-flac.flac")
 
 	// 老分片 ab 里只剩一个超期文件 — 清理后整个 shard 应被移除
 	// 老分片 cd 里只有一个超期文件 — 同上
@@ -79,13 +83,13 @@ func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 		t.Fatalf("cleanOutdatedFile: %v", err)
 	}
 
-	if info, err := os.Stat(config.ThumbnailCacheDir()); err != nil || !info.IsDir() {
+	if info, err := os.Stat(filepath.Join(scratch, "thumbnails")); err != nil || !info.IsDir() {
 		t.Fatalf("expected thumbnail cache dir to remain, info=%v err=%v", info, err)
 	}
-	if info, err := os.Stat(config.MusicTranscodeCacheDir()); err != nil || !info.IsDir() {
+	if info, err := os.Stat(filepath.Join(scratch, "music_transcoded")); err != nil || !info.IsDir() {
 		t.Fatalf("expected music transcode cache dir to remain, info=%v err=%v", info, err)
 	}
-	// cache 根目录不再被定时清理, 根目录下的文件应保持不动
+	// scratch 根目录不被定时清理, 根目录下的文件应保持不动
 	if _, err := os.Stat(oldRootCache); err != nil {
 		t.Fatalf("expected old root cache file to remain untouched: %v", err)
 	}
@@ -100,7 +104,7 @@ func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 	}
 	// 清空后的 shard 子目录也应被移除
 	for _, shard := range []string{"ab", "cd"} {
-		if _, err := os.Stat(filepath.Join(config.ThumbnailCacheDir(), shard)); !os.IsNotExist(err) {
+		if _, err := os.Stat(filepath.Join(scratch, "thumbnails", shard)); !os.IsNotExist(err) {
 			t.Fatalf("expected empty shard %s to be removed, err=%v", shard, err)
 		}
 	}
@@ -116,15 +120,19 @@ func TestCleanOutdatedFileDoesNotRemoveMusicTranscodeCache(t *testing.T) {
 }
 
 func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testing.T) {
+	original := config.Get()
+	t.Cleanup(func() { config.Set(original) })
+	scratch := t.TempDir()
 	config.Set(config.Config{
-		Mode: config.ModeProduction,
-		Data: t.TempDir(),
-		Port: 8000,
+		Mode:    config.ModeProduction,
+		Data:    t.TempDir(),
+		Scratch: scratch,
+		Port:    8000,
 	})
 
 	for _, dir := range []string{
 		config.AssetDir(config.AssetTypeMusic),
-		config.MusicTranscodeCacheDir(),
+		filepath.Join(scratch, "music_transcoded"),
 	} {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			t.Fatalf("mkdir %s: %v", dir, err)
@@ -146,10 +154,10 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 	_, garbageInShard := config.MusicTranscodeCachePath("invalid.mp3", "linked.mp3_codec-aac_bitrate-192k.m4a")
 
 	// 旧版本残留在 cache 根目录的扁平文件; scheduler 不应触及, 留给 migration 处理
-	legacyRootFile := filepath.Join(config.MusicTranscodeCacheDir(), "linked.mp3_codec-aac_bitrate-192k.m4a")
+	legacyRootFile := filepath.Join(scratch, "music_transcoded", "linked.mp3_codec-aac_bitrate-192k.m4a")
 	// 根目录下名字像缓存文件但实际是目录的怪异条目: 走 shard 路径会被当成空 shard 移除
 	legalNameDir := filepath.Join(
-		config.MusicTranscodeCacheDir(),
+		filepath.Join(scratch, "music_transcoded"),
 		musictranscode.CacheName("dir.mp3", musictranscode.QualitySmooth),
 	)
 
@@ -224,19 +232,23 @@ func TestCleanMusicTranscodeCacheRemovesInvalidAndMissingSourceEntries(t *testin
 }
 
 func TestCleanOutdatedAccessLogRemovesOnlyOldAccessLogs(t *testing.T) {
+	original := config.Get()
+	t.Cleanup(func() { config.Set(original) })
+	scratch := t.TempDir()
 	config.Set(config.Config{
-		Mode: config.ModeProduction,
-		Data: t.TempDir(),
-		Port: 8000,
+		Mode:    config.ModeProduction,
+		Data:    t.TempDir(),
+		Scratch: scratch,
+		Port:    8000,
 	})
 
-	if err := os.MkdirAll(config.AccessLogDir(), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Join(scratch, "logs", "access"), 0755); err != nil {
 		t.Fatalf("mkdir access log dir: %v", err)
 	}
 
 	oldTime := time.Now().Add(-31 * 24 * time.Hour)
-	oldAccessLog := filepath.Join(config.AccessLogDir(), "access-old.log")
-	freshAccessLog := filepath.Join(config.AccessLogDir(), "access-fresh.log")
+	oldAccessLog := filepath.Join(scratch, "logs", "access", "access-old.log")
+	freshAccessLog := filepath.Join(scratch, "logs", "access", "access-fresh.log")
 	for _, path := range []string{oldAccessLog, freshAccessLog} {
 		if err := os.WriteFile(path, []byte("access"), 0644); err != nil {
 			t.Fatalf("write %s: %v", path, err)
@@ -248,7 +260,7 @@ func TestCleanOutdatedAccessLogRemovesOnlyOldAccessLogs(t *testing.T) {
 
 	cleanOutdatedAccessLog()
 
-	if info, err := os.Stat(config.AccessLogDir()); err != nil || !info.IsDir() {
+	if info, err := os.Stat(filepath.Join(scratch, "logs", "access")); err != nil || !info.IsDir() {
 		t.Fatalf("expected access log dir to remain, info=%v err=%v", info, err)
 	}
 	if _, err := os.Stat(oldAccessLog); !os.IsNotExist(err) {
@@ -260,19 +272,23 @@ func TestCleanOutdatedAccessLogRemovesOnlyOldAccessLogs(t *testing.T) {
 }
 
 func TestCleanOutdatedSchedulerLogRemovesOnlyOldSchedulerLogs(t *testing.T) {
+	original := config.Get()
+	t.Cleanup(func() { config.Set(original) })
+	scratch := t.TempDir()
 	config.Set(config.Config{
-		Mode: config.ModeProduction,
-		Data: t.TempDir(),
-		Port: 8000,
+		Mode:    config.ModeProduction,
+		Data:    t.TempDir(),
+		Scratch: scratch,
+		Port:    8000,
 	})
 
-	if err := os.MkdirAll(config.SchedulerLogDir(), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Join(scratch, "logs", "scheduler"), 0755); err != nil {
 		t.Fatalf("mkdir scheduler log dir: %v", err)
 	}
 
 	oldTime := time.Now().Add(-31 * 24 * time.Hour)
-	oldSchedulerLog := filepath.Join(config.SchedulerLogDir(), "scheduler-old.log")
-	freshSchedulerLog := filepath.Join(config.SchedulerLogDir(), "scheduler-fresh.log")
+	oldSchedulerLog := filepath.Join(scratch, "logs", "scheduler", "scheduler-old.log")
+	freshSchedulerLog := filepath.Join(scratch, "logs", "scheduler", "scheduler-fresh.log")
 	for _, path := range []string{oldSchedulerLog, freshSchedulerLog} {
 		if err := os.WriteFile(path, []byte("scheduler"), 0644); err != nil {
 			t.Fatalf("write %s: %v", path, err)
@@ -284,7 +300,7 @@ func TestCleanOutdatedSchedulerLogRemovesOnlyOldSchedulerLogs(t *testing.T) {
 
 	cleanOutdatedSchedulerLog()
 
-	if info, err := os.Stat(config.SchedulerLogDir()); err != nil || !info.IsDir() {
+	if info, err := os.Stat(filepath.Join(scratch, "logs", "scheduler")); err != nil || !info.IsDir() {
 		t.Fatalf("expected scheduler log dir to remain, info=%v err=%v", info, err)
 	}
 	if _, err := os.Stat(oldSchedulerLog); !os.IsNotExist(err) {
