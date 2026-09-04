@@ -54,6 +54,9 @@ type Migration struct {
 	// recreated under the same name.
 	WithoutForeignKeys bool
 	Up                 func(ctx context.Context, env *Env) error
+	// ScratchUp upgrades device-local files to the same version independently
+	// of data. Nil preserves all scratch contents and advances its version.
+	ScratchUp func(ctx context.Context, env *ScratchEnv) error
 }
 
 var (
