@@ -112,11 +112,17 @@ func TestInitializeAdoptsDeviceScratchAfterDataAlreadyUpgraded(t *testing.T) {
 		t.Fatal(err)
 	}
 	assertScratchVersionMatchesData(t, data, secondScratch)
-	for _, name := range []string{"thumbnails/ab/image.jpg", "music_transcoded/ab/audio", "partial_uploads/session/data", "logs/access/history.log"} {
+	for _, name := range []string{"thumbnails/ab/image.jpg", "partial_uploads/session/data", "logs/access/history.log"} {
 		content, err := os.ReadFile(filepath.Join(secondScratch, name))
 		if err != nil || string(content) != name {
 			t.Fatalf("scratch content %s changed: %q %v", name, content, err)
 		}
+	}
+	// Device-local scratch still runs the 123 -> 124 cache migration even
+	// though the synced data directory has already advanced to that version.
+	entries, err := os.ReadDir(filepath.Join(secondScratch, "music_transcoded"))
+	if err != nil || len(entries) != 0 {
+		t.Fatalf("legacy music cache not discarded: %v, %v", entries, err)
 	}
 }
 
