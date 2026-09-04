@@ -97,15 +97,11 @@ In development, `cicada` uses [air](https://github.com/air-verse/air) to start d
 go install github.com/air-verse/air@latest
 ```
 
-Use the follow command to start dev server:
+Run the following command from `apps/cli` to start the dev server:
 
 ```sh
-CICADA_DATA=/path_to/data air
+air -- start --data /path_to/data
 ```
-
-To keep development scratch outside synchronized data, add
-`"--scratch", "/device-local/cicada-scratch"` to the `build.entrypoint`
-arguments in `.air.toml` (or pass it when running `go run . start` directly).
 
 `/path_to/data` means the directory of the data, you should replace to yours. And the server can be visited on `http://localhost:8000`.
 
