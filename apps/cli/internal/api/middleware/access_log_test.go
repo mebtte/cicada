@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"cicada/internal/config"
 	"cicada/internal/store"
 
 	"github.com/gin-gonic/gin"
@@ -18,10 +19,13 @@ import (
 func TestAccessLoggerWritesStructuredRecord(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	dir := t.TempDir()
-	logger := newAccessLogger(dir, accessLogMaxSize)
+	original := config.Get()
+	t.Cleanup(func() { config.Set(original) })
+	scratch := t.TempDir()
+	config.Set(config.Config{Data: t.TempDir(), Scratch: scratch})
+	dir := filepath.Join(scratch, "logs", "access")
 	r := gin.New()
-	r.Use(logger.Middleware())
+	r.Use(AccessLogger())
 	r.POST("/api/common/music/:id", func(c *gin.Context) {
 		c.Set(ctxUser, &store.User{ID: "u1"})
 		c.String(http.StatusCreated, "ok")

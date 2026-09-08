@@ -46,6 +46,56 @@ Apple builds keep `CFBundleShortVersionString` as the base version for platform
 compatibility. The full Cicada application version is stored in `CicadaVersion`
 and is the value used when talking to the server.
 
+## Embedded Tools
+
+Embedded executable files live directly in `scratch/bin`. The complete inventory
+is passed to `internal/embeddedtools.Prepare` from the FFmpeg startup preparation;
+add any future tools to that inventory so cleanup retains them. Preparation runs
+after scratch migration and before the server or scheduler starts. It reuses
+identical files, stages replacements beside their destinations, and removes
+obsolete entries only after every current tool is ready. The bin directory is
+program-owned and must not be a symlink or shared by running instances.
+
+## Data and Scratch Migrations
+
+Data and scratch share one migration version sequence, but store progress
+separately in `data/v` and `scratch/v`. Startup completes data migration first,
+then runs scratch migration to the resulting data version before starting the
+server or scheduler. Always check scratch progress, including when data is
+already current: synchronized data may have been upgraded on another device
+while this device's scratch still has an older layout.
+
+Version 123 is the scratch baseline. An existing scratch directory without `v`
+is adopted at that version without clearing its contents, then follows newer
+registered steps. Invalid markers and scratch versions newer than data must
+fail without deleting files. A successful data upgrade is not rolled back if
+scratch fails; the next startup recovers and retries scratch independently.
+
+When adding a migration:
+
+- Add a new registered `Migration`; do not edit historical migration scripts.
+- Keep persistent data changes in `Migration.Up`. It must not modify scratch:
+  that callback may already have run on another device.
+- Put local layout changes in the optional `Migration.ScratchUp` callback,
+  which receives `ScratchEnv{ScratchDir, Journal}`. Resolve paths under the
+  supplied `ScratchDir`, not under data or through global configuration.
+- Leave `ScratchUp` nil when the change does not affect scratch. The runner
+  advances the local version marker without clearing caches or other files.
+- Preserve reusable files. Prefer a journaled rename for a compatible layout
+  change; convert or remove only the affected entries when a format cannot be
+  reused. A data version increase alone is not a reason to clear scratch.
+- Use the journal for scratch file changes so interrupted or failed migrations
+  can recover. Use `ScratchEnv.EnsureDir` for required directories rather
+  than untracked filesystem writes. Do not bypass the journal with direct
+  rename, overwrite, or deletion operations.
+
+Test the scratch callback with reusable existing files, an older local marker
+paired with already-upgraded data, and interrupted operations. Also cover
+nil callbacks retaining caches, adoption without a marker, invalid/newer
+markers preserving files, and scratch failure after data commit followed by a
+successful retry. Migration version numbers are independent of application
+release versions and cache filename versions.
+
 ## Rules
 
 - Variables prefer lower-camel case

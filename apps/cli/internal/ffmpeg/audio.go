@@ -186,14 +186,7 @@ func TranscodeAudio(ctx context.Context, inputPath, outputPath string, profile A
 	}
 	args = append(args, outputPath)
 
-	output, err := exec.CommandContext(ctx, paths.FFmpeg, args...).CombinedOutput()
-	if err != nil {
-		if ctx.Err() != nil {
-			return ctx.Err()
-		}
-		return fmt.Errorf("%w: %s", err, strings.TrimSpace(string(output)))
-	}
-	return nil
+	return runFFmpeg(ctx, paths.FFmpeg, args)
 }
 
 func RewriteAudioMetadata(ctx context.Context, inputPath, outputPath string, metadata AudioMetadata, coverPath string) error {
@@ -211,14 +204,7 @@ func rewriteAudioMetadata(ctx context.Context, inputPath, outputPath string, met
 	}
 
 	args := rewriteAudioMetadataArgs(inputPath, outputPath, metadata, coverPath)
-	output, err := exec.CommandContext(ctx, paths.FFmpeg, args...).CombinedOutput()
-	if err != nil {
-		if ctx.Err() != nil {
-			return ctx.Err()
-		}
-		return fmt.Errorf("%w: %s", err, strings.TrimSpace(string(output)))
-	}
-	return nil
+	return runFFmpeg(ctx, paths.FFmpeg, args)
 }
 
 func rewriteAudioMetadataArgs(inputPath, outputPath string, metadata AudioMetadata, coverPath string) []string {

@@ -2,13 +2,9 @@ package musictranscode
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"net/url"
 	"os"
-	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -22,7 +18,7 @@ const (
 	SmoothBitrateKbps  = 192
 	SmoothContentType  = "audio/mp4"
 	SourceContentType  = "audio/flac"
-	cacheVersion       = "v1"
+	cacheVersion       = "v2"
 	smoothCacheSuffix  = "__quality-smooth_" + cacheVersion + ".m4a"
 	sourceCacheSuffix  = "__quality-source_" + cacheVersion + ".audio"
 	sourceMetaSuffix   = sourceCacheSuffix + ".json"
@@ -149,6 +145,8 @@ func ensure(ctx context.Context, asset string, quality Quality, threads int) (Re
 	if quality != QualitySmooth && quality != QualitySource {
 		return Result{}, fmt.Errorf("unsupported music transcode quality %q", quality)
 	}
+	release := beginCacheUse(CachePath(asset, quality))
+	defer release()
 	if result, ok := cachedResult(asset, quality); ok {
 		return result, nil
 	}
@@ -171,7 +169,8 @@ func ensure(ctx context.Context, asset string, quality Quality, threads int) (Re
 	}()
 
 	if cached, ok := cachedResult(asset, quality); ok {
-		return cached, nil
+		result = cached
+		return result, nil
 	}
 
 	result, err = generateCache(context.WithoutCancel(ctx), asset, quality, threads)
@@ -263,11 +262,18 @@ func generateCache(ctx context.Context, asset string, quality Quality, threads i
 
 	// 缓存写入先落到临时文件, 确认完整后再替换正式缓存, 避免请求读到半成品。
 	if plan.copySource {
-		if err := linkOrCopyFile(sourcePath, tmpPath); err != nil {
+		if err := copyFile(sourcePath, tmpPath); err != nil {
 			_ = os.Remove(tmpPath)
 			return Result{}, err
 		}
 	} else if err := transcodeAudio(transcodeCtx, sourcePath, tmpPath, plan.profile); err != nil {
+		_ = os.Remove(tmpPath)
+		return Result{}, err
+	}
+
+	// Initialize idle age at completion, including copied audio.
+	now := time.Now()
+	if err := os.Chtimes(tmpPath, now, now); err != nil {
 		_ = os.Remove(tmpPath)
 		return Result{}, err
 	}
@@ -287,166 +293,4 @@ func generateCache(ctx context.Context, asset string, quality Quality, threads i
 		ContentType: plan.contentType,
 		Generated:   true,
 	}, nil
-}
-
-func buildGenerationPlan(quality Quality, sourcePath string, streamInfo ffmpeg.AudioStreamInfo) (generationPlan, error) {
-	switch quality {
-	case QualitySmooth:
-		return generationPlan{
-			contentType: SmoothContentType,
-			profile: ffmpeg.AudioTranscodeProfile{
-				Codec:   "aac",
-				Bitrate: smoothBitrate(streamInfo),
-			},
-		}, nil
-	case QualitySource:
-		if streamInfo.Lossless() {
-			return generationPlan{
-				contentType: SourceContentType,
-				profile: ffmpeg.AudioTranscodeProfile{
-					Codec: "flac",
-				},
-			}, nil
-		}
-		if contentType, ok := playableLossySourceContentType(sourcePath, streamInfo); ok {
-			return generationPlan{
-				contentType: contentType,
-				copySource:  true,
-			}, nil
-		}
-		bitrate, err := sourceBitrate(streamInfo)
-		if err != nil {
-			return generationPlan{}, err
-		}
-		return generationPlan{
-			contentType: SmoothContentType,
-			profile: ffmpeg.AudioTranscodeProfile{
-				Codec:   "aac",
-				Bitrate: bitrate,
-			},
-		}, nil
-	default:
-		return generationPlan{}, fmt.Errorf("unsupported music transcode quality %q", quality)
-	}
-}
-
-func smoothBitrate(streamInfo ffmpeg.AudioStreamInfo) string {
-	if streamInfo.Lossless() || streamInfo.BitRate <= 0 {
-		return fmt.Sprintf("%dk", SmoothBitrateKbps)
-	}
-	kbps := bitrateKbps(streamInfo.BitRate)
-	if kbps > SmoothBitrateKbps {
-		kbps = SmoothBitrateKbps
-	}
-	return fmt.Sprintf("%dk", kbps)
-}
-
-func sourceBitrate(streamInfo ffmpeg.AudioStreamInfo) (string, error) {
-	if streamInfo.BitRate <= 0 {
-		return "", errors.New("source bitrate is required for lossy source transcode")
-	}
-	return fmt.Sprintf("%dk", bitrateKbps(streamInfo.BitRate)), nil
-}
-
-func bitrateKbps(bitRate int64) int {
-	kbps := int(bitRate / 1000)
-	if kbps < minimumBitrateKbps {
-		return minimumBitrateKbps
-	}
-	return kbps
-}
-
-func playableLossySourceContentType(sourcePath string, streamInfo ffmpeg.AudioStreamInfo) (string, bool) {
-	ext := strings.ToLower(filepath.Ext(sourcePath))
-	switch streamInfo.CodecName {
-	case "mp3":
-		return "audio/mpeg", true
-	case "aac":
-		if ext == ".m4a" || ext == ".mp4" {
-			return "audio/mp4", true
-		}
-	}
-	return "", false
-}
-
-func writeSourceCache(asset, cachePath, tmpPath, contentType string) error {
-	metaPath := SourceCacheMetadataPath(asset)
-	tmpMetaPath := metaPath + ".tmp"
-	_ = os.Remove(tmpMetaPath)
-
-	meta := SourceCacheMetadata{ContentType: contentType}
-	data, err := json.Marshal(meta)
-	if err != nil {
-		_ = os.Remove(tmpPath)
-		return err
-	}
-	data = append(data, '\n')
-	if err := os.WriteFile(tmpMetaPath, data, 0644); err != nil {
-		_ = os.Remove(tmpPath)
-		return err
-	}
-
-	if err := replaceFile(tmpPath, cachePath); err != nil {
-		_ = os.Remove(tmpPath)
-		_ = os.Remove(tmpMetaPath)
-		return err
-	}
-	if err := replaceFile(tmpMetaPath, metaPath); err != nil {
-		_ = os.Remove(cachePath)
-		_ = os.Remove(tmpMetaPath)
-		_ = os.Remove(metaPath)
-		return err
-	}
-	return nil
-}
-
-func readSourceCacheMetadata(path string) (SourceCacheMetadata, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return SourceCacheMetadata{}, err
-	}
-	var meta SourceCacheMetadata
-	if err := json.Unmarshal(data, &meta); err != nil {
-		return SourceCacheMetadata{}, err
-	}
-	if meta.ContentType == "" {
-		return SourceCacheMetadata{}, errors.New("missing source cache content type")
-	}
-	return meta, nil
-}
-
-func linkOrCopyFile(sourcePath, tmpPath string) error {
-	if err := os.Link(sourcePath, tmpPath); err == nil {
-		return nil
-	}
-
-	in, err := os.Open(sourcePath)
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-
-	out, err := os.OpenFile(tmpPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
-	if err != nil {
-		return err
-	}
-
-	if _, err := io.Copy(out, in); err != nil {
-		_ = out.Close()
-		return err
-	}
-	return out.Close()
-}
-
-func replaceFile(tmpPath, targetPath string) error {
-	if err := os.Rename(tmpPath, targetPath); err == nil {
-		return nil
-	}
-	_ = os.Remove(targetPath)
-	return os.Rename(tmpPath, targetPath)
-}
-
-func isRegularFile(path string) bool {
-	info, err := os.Stat(path)
-	return err == nil && info.Mode().IsRegular()
 }

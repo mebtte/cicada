@@ -190,10 +190,15 @@ var (
 	ErrRangeOverflow   = errors.New("partial upload range overflow")
 )
 
-// FinaliseSession verifies the on-disk payload matches FileHash, then renames
-// the data file to dest. The session directory is removed on success.
+// FinaliseSession verifies the on-disk payload matches FileHash, then publishes
+// it to dest, including when scratch and assets use different filesystems.
+// The session directory is removed on success.
 // On any verification failure the session directory is removed too.
 func FinaliseSession(uploadID, userID string, dest string) (PartialUploadMeta, error) {
+	return finaliseSession(uploadID, userID, dest, uploadTransfer{rename: os.Rename, copy: io.Copy})
+}
+
+func finaliseSession(uploadID, userID, dest string, transfer uploadTransfer) (PartialUploadMeta, error) {
 	mu := lockForUpload(uploadID)
 	mu.Lock()
 	defer mu.Unlock()
@@ -231,7 +236,7 @@ func FinaliseSession(uploadID, userID string, dest string) (PartialUploadMeta, e
 	if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
 		return PartialUploadMeta{}, err
 	}
-	if err := os.Rename(srcPath, dest); err != nil {
+	if err := transfer.publish(srcPath, dest, meta.Size); err != nil {
 		return PartialUploadMeta{}, err
 	}
 	_ = os.RemoveAll(SessionDir(uploadID))

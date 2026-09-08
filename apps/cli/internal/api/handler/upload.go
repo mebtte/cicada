@@ -183,10 +183,10 @@ func uploadedMusicHasAudioStream(
 	data []byte,
 	mimeStr string,
 ) (bool, error) {
-	if err := os.MkdirAll(config.CacheDir(), 0755); err != nil {
+	if err := os.MkdirAll(config.ScratchDir(), 0755); err != nil {
 		return false, err
 	}
-	tmp, err := os.CreateTemp(config.CacheDir(), "upload_music_*")
+	tmp, err := os.CreateTemp(config.ScratchDir(), "upload_music_*")
 	if err != nil {
 		return false, err
 	}

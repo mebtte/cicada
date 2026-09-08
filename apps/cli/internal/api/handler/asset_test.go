@@ -2,6 +2,7 @@ package handler
 
 import (
 	"cicada/internal/config"
+	"cicada/internal/musictranscode"
 	"image"
 	"image/color"
 	"image/jpeg"
@@ -17,12 +18,16 @@ import (
 )
 
 func TestServeAssetWritesThumbnailCacheToThumbnailDir(t *testing.T) {
+	original := config.Get()
+	t.Cleanup(func() { config.Set(original) })
+	scratch := t.TempDir()
 	gin.SetMode(gin.TestMode)
 
 	config.Set(config.Config{
-		Mode: config.ModeProduction,
-		Data: t.TempDir(),
-		Port: 8000,
+		Mode:    config.ModeProduction,
+		Data:    t.TempDir(),
+		Scratch: scratch,
+		Port:    8000,
 	})
 
 	assetDir, assetPath := config.AssetPath(config.AssetTypeMusicCover, "cover.jpg")
@@ -41,15 +46,15 @@ func TestServeAssetWritesThumbnailCacheToThumbnailDir(t *testing.T) {
 	if w.Code != http.StatusOK {
 		t.Fatalf("expected status 200, got %d", w.Code)
 	}
-	_, cachePath := config.ThumbnailCachePath(32, "cover.jpg")
+	cachePath := filepath.Join(scratch, "thumbnails", "co", "cover_32.jpg")
 	if _, err := os.Stat(cachePath); err != nil {
 		t.Fatalf("expected thumbnail cache file at %s: %v", cachePath, err)
 	}
 	if _, err := os.Stat(filepath.Join(config.ThumbnailCacheDir(), "32_cover.jpg")); !os.IsNotExist(err) {
 		t.Fatalf("expected no flat thumbnail cache file in thumbnail root, got err=%v", err)
 	}
-	if _, err := os.Stat(filepath.Join(config.CacheDir(), "32_cover.jpg")); !os.IsNotExist(err) {
-		t.Fatalf("expected no thumbnail cache file in cache root, got err=%v", err)
+	if _, err := os.Stat(filepath.Join(config.Get().Data, "cache")); !os.IsNotExist(err) {
+		t.Fatalf("expected no legacy cache directory, got err=%v", err)
 	}
 }
 
@@ -215,5 +220,46 @@ func writeTestJPEG(t *testing.T, path string) {
 	defer f.Close()
 	if err := jpeg.Encode(f, img, &jpeg.Options{Quality: 90}); err != nil {
 		t.Fatalf("encode jpeg: %v", err)
+	}
+}
+
+func TestServeMusicCachedRangeUsesExternalScratch(t *testing.T) {
+	original := config.Get()
+	t.Cleanup(func() { config.Set(original) })
+	scratch := t.TempDir()
+	config.Set(config.Config{Mode: config.ModeProduction, Data: t.TempDir(), Scratch: scratch})
+	gin.SetMode(gin.TestMode)
+	for _, quality := range []musictranscode.Quality{musictranscode.QualitySmooth, musictranscode.QualitySource} {
+		t.Run(string(quality), func(t *testing.T) {
+			// Seed the documented layout independently of config path helpers.
+			shard := filepath.Join(scratch, "music_transcoded", "so")
+			if err := os.MkdirAll(shard, 0755); err != nil {
+				t.Fatal(err)
+			}
+			path := filepath.Join(shard, musictranscode.CacheName("song.mp3", quality))
+			if err := os.WriteFile(path, []byte("0123456789"), 0644); err != nil {
+				t.Fatal(err)
+			}
+			if quality == musictranscode.QualitySource {
+				if err := os.WriteFile(filepath.Join(shard, musictranscode.SourceCacheMetadataName("song.mp3")), []byte(`{"contentType":"audio/mpeg"}`), 0644); err != nil {
+					t.Fatal(err)
+				}
+			}
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Params = gin.Params{{Key: "filename", Value: "song.mp3"}}
+			c.Request = httptest.NewRequest(http.MethodGet, "/asset/music/song.mp3?quality="+string(quality), nil)
+			c.Request.Header.Set("Range", "bytes=2-5")
+			ServeAsset(config.AssetTypeMusic)(c)
+			if w.Code != http.StatusPartialContent || w.Body.String() != "2345" {
+				t.Fatalf("range response = %d %q", w.Code, w.Body.String())
+			}
+			if got := w.Header().Get("Content-Range"); got != "bytes 2-5/10" {
+				t.Fatalf("content range = %q", got)
+			}
+		})
+	}
+	if _, err := os.Stat(filepath.Join(config.Get().Data, "cache")); !os.IsNotExist(err) {
+		t.Fatalf("unexpected legacy cache: %v", err)
 	}
 }

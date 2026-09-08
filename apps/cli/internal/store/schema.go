@@ -174,16 +174,14 @@ var tables = []string{
 
 // Initialize creates directories, verifies data version, creates tables and default admin.
 func Initialize() error {
-	// Directories
+	if err := prepareScratch(); err != nil {
+		return err
+	}
+	// Persistent directories are kept in data; working directories were
+	// validated before any destructive upgrade or recovery in prepareScratch.
 	dirs := append(
 		[]string{
 			config.Get().Data,
-			config.LogDir(),
-			config.AccessLogDir(),
-			config.SchedulerLogDir(),
-			config.CacheDir(),
-			config.ThumbnailCacheDir(),
-			config.MusicTranscodeCacheDir(),
 			config.AssetsDir(),
 		},
 		func() []string {
@@ -200,16 +198,14 @@ func Initialize() error {
 		}
 	}
 
-	// Recover from any half-finished previous upgrade before touching the db.
-	if err := migration.Recover(config.Get().Data); err != nil {
-		return fmt.Errorf("recover: %w", err)
-	}
-
 	// Bring data dir to the binary's current data version (no-op when up to
 	// date). Run owns the db connection while it works and closes it before
 	// returning, so the long-lived Open() below gets a clean handle.
 	if err := migration.Run(context.Background(), config.Get().Data); err != nil {
 		return fmt.Errorf("data upgrade: %w", err)
+	}
+	if err := upgradeScratch(); err != nil {
+		return err
 	}
 
 	// Open DB

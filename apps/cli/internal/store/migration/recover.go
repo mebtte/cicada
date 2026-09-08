@@ -9,25 +9,23 @@ import (
 )
 
 // LockState is the JSON content of upgrade.lock. It records what the upgrade
-// attempt was trying to do so a recovery on next start can roll back to From.
+// attempt was trying to do so the next start can roll back to From or finish
+// cleanup after the version commit.
 type LockState struct {
 	From        int   `json:"from"`
 	To          int   `json:"to"`
 	Started     int64 `json:"started"`
 	PID         int   `json:"pid"`
 	LastApplied int   `json:"lastApplied"`
+	// RolledBack makes artifact cleanup retryable without replaying file
+	// operations that have already been reversed.
+	RolledBack bool `json:"rolledBack,omitempty"`
 }
 
 // Recover detects a half-finished upgrade left by a crashed previous run and
-// restores the data dir to the pre-upgrade state. No-op when there's no lock.
-//
-// Steps:
-//  1. Read upgrade.lock; if absent, return nil.
-//  2. If db.backup exists, copy it over data/db (and drop WAL/SHM).
-//  3. Replay journal in reverse to undo file ops.
-//  4. Delete lock, journal, db.backup, upgrade.trash.
-//  5. data/v stays at LockState.From because the runner only writes the new
-//     version after every step succeeded.
+// restores the data dir to the pre-upgrade state. Once data/v contains the
+// target version, the upgrade is committed and recovery only finishes cleanup.
+// No-op when there's no lock.
 func Recover(dataDir string) error {
 	lockPath := filepath.Join(dataDir, "upgrade.lock")
 	state, err := readLock(lockPath)
@@ -36,6 +34,21 @@ func Recover(dataDir string) error {
 	}
 	if err != nil {
 		return fmt.Errorf("read upgrade.lock: %w", err)
+	}
+	version, exists, err := readVersion(filepath.Join(dataDir, "v"))
+	if err != nil {
+		return err
+	}
+	if (exists && version == state.To) || state.RolledBack {
+		// The version stamp is the commit boundary. Restoring a backup now
+		// would combine an old database with the newly stamped data version.
+		if err := cleanupArtifacts(dataDir); err != nil {
+			return fmt.Errorf("finish upgrade cleanup: %w", err)
+		}
+		return nil
+	}
+	if exists && version != state.From {
+		return fmt.Errorf("cannot recover upgrade %d -> %d with data version %d", state.From, state.To, version)
 	}
 
 	dbPath := filepath.Join(dataDir, "db")
@@ -50,6 +63,13 @@ func Recover(dataDir string) error {
 
 	if err := ReplayReverse(dataDir, 0); err != nil {
 		return fmt.Errorf("replay journal: %w", err)
+	}
+	if err := writeVersion(filepath.Join(dataDir, "v"), state.From); err != nil {
+		return fmt.Errorf("restore data version: %w", err)
+	}
+	state.RolledBack = true
+	if err := writeLock(lockPath, *state); err != nil {
+		return fmt.Errorf("record rollback completion: %w", err)
 	}
 
 	if err := cleanupArtifacts(dataDir); err != nil {
@@ -88,17 +108,19 @@ func writeLock(path string, s LockState) error {
 }
 
 func cleanupArtifacts(dataDir string) error {
+	// Retain the lock until every artifact has been removed so the next
+	// startup retries cleanup even if the version has already been stamped.
+	if err := os.RemoveAll(filepath.Join(dataDir, "upgrade.trash")); err != nil {
+		return err
+	}
 	for _, p := range []string{
-		filepath.Join(dataDir, "upgrade.lock"),
 		filepath.Join(dataDir, "upgrade.journal"),
 		filepath.Join(dataDir, "db.backup"),
+		filepath.Join(dataDir, "upgrade.lock"),
 	} {
 		if err := os.Remove(p); err != nil && !errors.Is(err, os.ErrNotExist) {
 			return err
 		}
-	}
-	if err := os.RemoveAll(filepath.Join(dataDir, "upgrade.trash")); err != nil {
-		return err
 	}
 	return nil
 }

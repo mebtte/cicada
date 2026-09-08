@@ -23,7 +23,7 @@ func serveMusicAsset(c *gin.Context, filename, sourcePath string) {
 		return
 	}
 
-	result, err := musictranscode.Ensure(c.Request.Context(), filename, quality)
+	result, err := musictranscode.OpenForPlayback(c.Request.Context(), filename, quality)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			c.AbortWithStatus(http.StatusNotFound)
@@ -32,5 +32,10 @@ func serveMusicAsset(c *gin.Context, filename, sourcePath string) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	serveAssetFile(c, result.Path, result.Name, musicTranscodeCacheControl, result.ContentType)
+	defer result.Close()
+	c.Header("Cache-Control", musicTranscodeCacheControl)
+	c.Header("Content-Type", result.ContentType)
+	c.Header("X-Content-Type-Options", "nosniff")
+	// Audio mtime is the idle clock, so HTTP validators use stable source time.
+	http.ServeContent(c.Writer, c.Request, result.Name, result.ModTime, result.File)
 }
