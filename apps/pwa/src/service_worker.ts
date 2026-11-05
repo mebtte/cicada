@@ -1,5 +1,5 @@
 /* global ServiceWorkerGlobalScope */
-import { clientsClaim } from 'workbox-core';
+import { clientsClaim, setCacheNameDetails } from 'workbox-core';
 import {
   createHandlerBoundToURL,
   precacheAndRoute,
@@ -11,12 +11,17 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { RangeRequestsPlugin } from 'workbox-range-requests';
 import { CacheName } from '@/constants/cache';
 import { AssetType } from '@/constants/asset';
-import { PathPrefix } from '@/constants/api';
+import { HEADER_TOKEN } from '@/constants/api';
+import { APP_BASE_URL, APP_NAMESPACE, resolveAppURL } from '@/constants/app';
+import { getAppNavigationPattern } from '@/utils/app_url';
+import { getAssetType, isCommonAPIPath } from '@/utils/service_worker_routes';
 
 export type {};
 declare const self: ServiceWorkerGlobalScope & {
   __WB_MANIFEST: PrecacheEntry[];
 };
+
+setCacheNameDetails({ prefix: APP_NAMESPACE });
 
 /**
  * 生产模式下缓存构建资源以及收到指令才升级
@@ -35,8 +40,8 @@ if (process.env.NODE_ENV === 'production') {
    * 其它导航路径交给后端, 避免新增后端路径被 index.html 吞掉.
    */
   registerRoute(
-    new NavigationRoute(createHandlerBoundToURL('/index.html'), {
-      allowlist: [/^\/$/],
+    new NavigationRoute(createHandlerBoundToURL(resolveAppURL('index.html')), {
+      allowlist: [getAppNavigationPattern(APP_BASE_URL)],
     }),
   );
 
@@ -52,20 +57,8 @@ if (process.env.NODE_ENV === 'production') {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    Promise.all([
-      self.caches.keys().then((keys) =>
-        Promise.all(
-          keys
-            .filter((key) => key === 'api' || key === 'asset_media')
-            .map((key) => self.caches.delete(key)),
-        ),
-      ),
-      /**
-       * API 请求不再携带客户端版本, SW 升级时直接清空旧响应,
-       * 避免新版 PWA 复用旧数据结构的缓存。
-       */
-      self.caches.delete(CacheName.API),
-    ]).then(() => undefined),
+    // Only invalidate this deployment's API responses when its app upgrades.
+    self.caches.delete(CacheName.API).then(() => undefined),
   );
 });
 
@@ -75,20 +68,8 @@ self.addEventListener('activate', (event) => {
  * 详情查看 https://developer.chrome.com/docs/workbox/serving-cached-audio-and-video
  * @author mebtte<i@mebtte.com>
  */
-const MEDIA_ASSET_TYPES = [AssetType.MUSIC];
-function isMediaAsset(url: URL) {
-  for (const mediaAssetType of MEDIA_ASSET_TYPES) {
-    if (url.pathname.includes(`/${mediaAssetType}/`)) {
-      return true;
-    }
-  }
-  return false;
-}
 registerRoute(
-  ({ request }) => {
-    const url = new URL(request.url);
-    return url.pathname.startsWith(`/${PathPrefix.ASSET}`) && isMediaAsset(url);
-  },
+  ({ url }) => getAssetType(url.pathname) === AssetType.MUSIC,
   new CacheFirst({
     cacheName: CacheName.ASSET_MEDIA,
     matchOptions: {
@@ -110,11 +91,9 @@ registerRoute(
  * @author mebtte<i@mebtte.com>
  */
 registerRoute(
-  ({ request }) => {
-    const url = new URL(request.url);
-    return (
-      url.pathname.startsWith(`/${PathPrefix.ASSET}`) && !isMediaAsset(url)
-    );
+  ({ url }) => {
+    const type = getAssetType(url.pathname);
+    return type !== undefined && type !== AssetType.MUSIC;
   },
   new CacheFirst({
     cacheName: CacheName.ASSET,
@@ -125,18 +104,9 @@ registerRoute(
  * API 网络优先
  * @author mebtte<i@mebtte.com>
  */
-const COMMON_API_PATH_PREFIX = `/${PathPrefix.API}/common`;
-function isCommonAPIPath(pathname: string) {
-  return (
-    pathname === COMMON_API_PATH_PREFIX ||
-    pathname.startsWith(`${COMMON_API_PATH_PREFIX}/`)
-  );
-}
 registerRoute(
-  ({ request }) => {
-    const url = new URL(request.url);
-    return isCommonAPIPath(url.pathname);
-  },
+  ({ request, url }) =>
+    request.headers.has(HEADER_TOKEN) && isCommonAPIPath(url.pathname),
   new NetworkFirst({
     cacheName: CacheName.API,
   }),

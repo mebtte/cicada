@@ -16,6 +16,7 @@ import { Drawer, DrawerContent } from '@/components/drawer';
 import getResizedImage from '@/server/asset/get_resized_image';
 import autoScrollbar from '@/style/auto_scrollbar';
 import { CSS_VAR } from '@/components/theme';
+import { resolveAppURL } from '@/constants/app';
 import useTitlebarOverlayInsets from '@/utils/use_titlebar_overlay_insets';
 import useDocumentTitle from '@/utils/use_document_title';
 import Dashboard from './dashboard';
@@ -739,7 +740,7 @@ function AdminPage() {
     <>
       <SidebarHeader style={headerStyle}>
         <BrandLogo
-          src="/app_logo_v1.png"
+          src={resolveAppURL('app_logo_v1.png')}
           alt={t('logo')}
           crossOrigin="anonymous"
         />

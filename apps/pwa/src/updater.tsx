@@ -8,6 +8,7 @@ import definition from './definition';
 import { t } from './i18n';
 import upperCaseFirstLetter from './style/upper_case_first_letter';
 import { Close } from '@/components/icon';
+import { APP_BASE_URL, resolveAppURL } from '@/constants/app';
 
 type VersionUpdateWorker = {
   addEventListener: (type: 'controlling', listener: () => void) => void;
@@ -197,24 +198,28 @@ function openVersionUpdateNotice(wb: VersionUpdateWorker) {
 if ('serviceWorker' in navigator) {
   if (definition.WITH_SW) {
     /**
-     * 生产构建: 手动注册 /service_worker.js 并接管升级提示
+     * 生产构建: 在当前应用路径注册 service_worker.js 并接管升级提示
      * 开发模式: vite-plugin-pwa 已自动注入 dev SW 注册, 不要再手动注册避免冲突
      * @author mebtte<i@mebtte.com>
      */
     if (process.env.NODE_ENV === 'production') {
       import('workbox-window').then(({ Workbox }) => {
-        const wb = new Workbox('/service_worker.js');
-        wb.register();
+        const wb = new Workbox(resolveAppURL('service_worker.js'), {
+          scope: APP_BASE_URL,
+        });
         wb.addEventListener('waiting', () => {
           openVersionUpdateNotice(wb);
         });
+        wb.register();
       });
     }
   } else {
     window.navigator.serviceWorker
       .getRegistrations()
       .then((registrations) =>
-        registrations.forEach((registration) => registration.unregister()),
+        registrations
+          .filter((registration) => registration.scope === APP_BASE_URL)
+          .forEach((registration) => registration.unregister()),
       );
   }
 }

@@ -1,4 +1,4 @@
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 type Response = {
@@ -39,8 +39,8 @@ async function getSelfMusicbillCollectionList({
     collectionList: data.collectionList.map((mb) => ({
       ...mb,
       musicCount: mb.musicCount ?? 0,
-      cover: prefixServerOrigin(mb.cover),
-      coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
+      cover: resolveServerURL(mb.cover),
+      coverThumbnail: resolveServerURL(mb.coverThumbnail ?? ''),
     })),
   };
 }

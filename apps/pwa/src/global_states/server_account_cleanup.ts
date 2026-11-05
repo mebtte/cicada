@@ -26,7 +26,7 @@ function computeIdentity(state: ServerState): string {
   if (!user) {
     return '';
   }
-  return `${server.origin}::${user.id}`;
+  return `${server.baseURL}::${user.id}`;
 }
 
 async function clearAccountScopedCaches() {

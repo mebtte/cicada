@@ -9,10 +9,10 @@ struct ServerMetadata: Decodable {
 }
 
 struct ServerMetadataClient {
-    var fetchMetadata: @Sendable (_ origin: String) async throws -> ServerMetadata
+    var fetchMetadata: @Sendable (_ baseURL: String) async throws -> ServerMetadata
 
-    static let live = ServerMetadataClient { origin in
-        let metadataURL = try metadataURL(for: origin)
+    static let live = ServerMetadataClient { baseURL in
+        let metadataURL = try metadataURL(for: baseURL)
         var request = URLRequest(url: metadataURL)
         request.timeoutInterval = 10
         request.cachePolicy = .reloadIgnoringLocalCacheData
@@ -46,18 +46,12 @@ struct ServerMetadataClient {
         )
     }
 
-    private static func metadataURL(for origin: String) throws -> URL {
-        guard let baseURL = URL(string: origin) else {
-            throw ServerMetadataClientError.invalidResponse
-        }
-
-        var components = URLComponents(
-            url: baseURL.appending(path: "/api/base/metadata"),
-            resolvingAgainstBaseURL: false
-        )
-        components?.queryItems = CicadaAPIQuery.commonItems()
-
-        guard let url = components?.url else {
+    static func metadataURL(for baseURL: String) throws -> URL {
+        guard let url = ServerURL.url(
+            baseURL: baseURL,
+            path: "/api/base/metadata",
+            queryItems: CicadaAPIQuery.commonItems()
+        ) else {
             throw ServerMetadataClientError.invalidResponse
         }
         return url

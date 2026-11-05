@@ -12,5 +12,5 @@ export type CaptchaData =
   | {
       error: null;
       loading: false;
-      data: { id: string; svg: string };
+      data: { id: string; image: string };
     };

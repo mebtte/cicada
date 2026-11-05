@@ -40,7 +40,7 @@ struct PlayerView: View {
                 playerStore.configure(server: server, user: user)
                 await playerStore.loadMusicbillList()
             }
-            .task(id: server.origin) {
+            .task(id: server.baseURL) {
                 await serverStore.refreshSelectedServerMetadata()
                 while !Task.isCancelled {
                     try? await Task.sleep(nanoseconds: 15_000_000_000)
@@ -223,6 +223,6 @@ struct PlayerView: View {
     }
 
     private func authKey(server: ServerRecord, user: ServerUserRecord) -> String {
-        "\(server.origin)|\(user.id)|\(user.token)"
+        "\(server.baseURL)|\(user.id)|\(user.token)"
     }
 }

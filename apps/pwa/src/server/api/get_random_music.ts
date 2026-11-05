@@ -1,5 +1,5 @@
 import { MusicType } from '@/constants/music';
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 interface ArtistPhoto {
@@ -39,8 +39,8 @@ interface RawMusic {
 const normalizePhotos = (photos: ArtistPhoto[] = []) =>
   photos.map((p) => ({
     ...p,
-    asset: prefixServerOrigin(p.asset),
-    thumbnail: prefixServerOrigin(p.thumbnail ?? ''),
+    asset: resolveServerURL(p.asset),
+    thumbnail: resolveServerURL(p.thumbnail ?? ''),
   }));
 
 const normalizeArtist = <T extends Performer & { aliases: string[] }>(artist: T) => {
@@ -65,9 +65,9 @@ async function getRandomMusic({ excludeId }: { excludeId?: string } = {}) {
   });
   return {
     ...music,
-    cover: prefixServerOrigin(music.cover),
-    coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
-    asset: prefixServerOrigin(music.asset),
+    cover: resolveServerURL(music.cover),
+    coverThumbnail: resolveServerURL(music.coverThumbnail ?? ''),
+    asset: resolveServerURL(music.asset),
     performers: (music.performers ?? []).map(normalizeArtist),
     lyricists: (music.lyricists ?? []).map(normalizeArtist),
     composers: (music.composers ?? []).map(normalizeArtist),

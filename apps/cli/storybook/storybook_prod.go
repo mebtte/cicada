@@ -3,6 +3,7 @@
 package storybook
 
 import (
+	"cicada/internal/config"
 	"embed"
 	"io/fs"
 	"net/http"
@@ -23,12 +24,21 @@ func Register(r *gin.Engine) {
 	if err != nil {
 		panic(err)
 	}
-	fileServer := http.StripPrefix("/storybook/", http.FileServer(http.FS(sub)))
+	basePath := config.Get().BasePath
+	storybookPath := basePath + "/storybook"
+	fileServer := http.StripPrefix(storybookPath+"/", http.FileServer(http.FS(sub)))
+	mount := r.Group(basePath)
 
-	r.GET("/storybook", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/storybook/")
-	})
-	r.GET("/storybook/*filepath", func(c *gin.Context) {
+	redirect := func(c *gin.Context) {
+		location := storybookPath + "/"
+		if c.Request.URL.RawQuery != "" {
+			location += "?" + c.Request.URL.RawQuery
+		}
+		c.Redirect(http.StatusMovedPermanently, location)
+	}
+	mount.GET("/storybook", redirect)
+	mount.HEAD("/storybook", redirect)
+	serve := func(c *gin.Context) {
 		filepath := strings.TrimPrefix(c.Param("filepath"), "/")
 		// 根路径交给 FileServer 返回 index.html；其余仅当真实文件存在时才服务，
 		// 未声明的路径一律 404，避免误把任意路径当作 index.html 返回。
@@ -39,5 +49,7 @@ func Register(r *gin.Engine) {
 			}
 		}
 		fileServer.ServeHTTP(c.Writer, c.Request)
-	})
+	}
+	mount.GET("/storybook/*filepath", serve)
+	mount.HEAD("/storybook/*filepath", serve)
 }

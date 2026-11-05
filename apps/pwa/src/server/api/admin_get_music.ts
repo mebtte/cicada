@@ -1,5 +1,5 @@
 import { MusicType } from '@/constants/music';
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 interface ArtistPhoto {
@@ -61,8 +61,8 @@ type Response = Omit<Music, 'performers' | 'lyricists' | 'composers'> & {
 const normalizePhotos = (photos: ArtistPhoto[] = []) =>
   photos.map((photo) => ({
     ...photo,
-    asset: prefixServerOrigin(photo.asset),
-    thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
+    asset: resolveServerURL(photo.asset),
+    thumbnail: resolveServerURL(photo.thumbnail ?? ''),
   }));
 
 async function adminGetMusic({
@@ -82,9 +82,9 @@ async function adminGetMusic({
     ...music,
     aliases: music.aliases ?? [],
     searchKeywords: music.searchKeywords ?? '',
-    cover: prefixServerOrigin(music.cover),
-    coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
-    asset: prefixServerOrigin(music.asset),
+    cover: resolveServerURL(music.cover),
+    coverThumbnail: resolveServerURL(music.coverThumbnail ?? ''),
+    asset: resolveServerURL(music.asset),
     performers: (music.performers ?? []).map((performer) => {
       const photos = normalizePhotos(performer.photos);
       return {
@@ -111,8 +111,8 @@ async function adminGetMusic({
     }),
     forkList: music.forkList.map((item) => ({
       ...item,
-      cover: prefixServerOrigin(item.cover),
-      coverThumbnail: prefixServerOrigin(item.coverThumbnail ?? ''),
+      cover: resolveServerURL(item.cover),
+      coverThumbnail: resolveServerURL(item.coverThumbnail ?? ''),
       performers: (item.performers ?? []).map((performer) => ({
         ...performer,
         photos: normalizePhotos(performer.photos),
@@ -128,8 +128,8 @@ async function adminGetMusic({
     })),
     forkFromList: music.forkFromList.map((item) => ({
       ...item,
-      cover: prefixServerOrigin(item.cover),
-      coverThumbnail: prefixServerOrigin(item.coverThumbnail ?? ''),
+      cover: resolveServerURL(item.cover),
+      coverThumbnail: resolveServerURL(item.coverThumbnail ?? ''),
       performers: (item.performers ?? []).map((performer) => ({
         ...performer,
         photos: normalizePhotos(performer.photos),
@@ -147,11 +147,11 @@ async function adminGetMusic({
       music.relatedPublicMusicbillList ?? []
     ).map((musicbill) => ({
       ...musicbill,
-      cover: prefixServerOrigin(musicbill.cover),
-      coverThumbnail: prefixServerOrigin(musicbill.coverThumbnail ?? ''),
+      cover: resolveServerURL(musicbill.cover),
+      coverThumbnail: resolveServerURL(musicbill.coverThumbnail ?? ''),
       user: {
         ...musicbill.user,
-        avatar: prefixServerOrigin(musicbill.user.avatar),
+        avatar: resolveServerURL(musicbill.user.avatar),
       },
     })),
   };

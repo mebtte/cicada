@@ -5,8 +5,8 @@ final class ServerSetupStore: ObservableObject {
     static let storageKey = "io.github.manyone.cicada.apple.serverSnapshot"
 
     @Published private(set) var savedServers: [ServerRecord]
-    @Published var selectedServerOrigin: String?
-    @Published var draftOrigin: String
+    @Published var selectedServerBaseURL: String?
+    @Published var draftBaseURL: String
     @Published var isConnecting = false
     @Published private(set) var isRefreshingSelectedServerMetadata = false
     @Published private(set) var selectedServerMetadataError: String?
@@ -25,16 +25,16 @@ final class ServerSetupStore: ObservableObject {
         self.storage = storage
 
         let snapshot = Self.loadSnapshot(from: storage)
-        let initialSelectedOrigin = snapshot.selectedServerOrigin
-            ?? snapshot.savedServers.first?.origin
+        let initialSelectedBaseURL = snapshot.selectedServerBaseURL
+            ?? snapshot.savedServers.first?.baseURL
 
         savedServers = snapshot.savedServers
-        selectedServerOrigin = initialSelectedOrigin
-        draftOrigin = initialSelectedOrigin ?? ""
+        selectedServerBaseURL = initialSelectedBaseURL
+        draftBaseURL = initialSelectedBaseURL ?? ""
     }
 
     var selectedServer: ServerRecord? {
-        savedServers.first(where: { $0.origin == selectedServerOrigin })
+        savedServers.first(where: { $0.baseURL == selectedServerBaseURL })
     }
 
     var selectedUser: ServerUserRecord? {
@@ -54,21 +54,21 @@ final class ServerSetupStore: ObservableObject {
     }
 
     func select(_ server: ServerRecord) {
-        selectedServerOrigin = server.origin
-        draftOrigin = server.origin
+        selectedServerBaseURL = server.baseURL
+        draftBaseURL = server.baseURL
         persist()
     }
 
     func showServerSetup() {
-        selectedServerOrigin = nil
-        draftOrigin = savedServers.first?.origin ?? ""
+        selectedServerBaseURL = nil
+        draftBaseURL = savedServers.first?.baseURL ?? ""
         persist()
     }
 
     func selectUser(_ user: ServerUserRecord) {
-        guard let selectedServerOrigin else { return }
+        guard let selectedServerBaseURL else { return }
         savedServers = savedServers.map { server in
-            guard server.origin == selectedServerOrigin else { return server }
+            guard server.baseURL == selectedServerBaseURL else { return server }
             var next = server
             next.selectedUserID = user.id
             return next
@@ -77,9 +77,9 @@ final class ServerSetupStore: ObservableObject {
     }
 
     func clearSelectedUser() {
-        guard let selectedServerOrigin else { return }
+        guard let selectedServerBaseURL else { return }
         savedServers = savedServers.map { server in
-            guard server.origin == selectedServerOrigin else { return server }
+            guard server.baseURL == selectedServerBaseURL else { return server }
             var next = server
             next.selectedUserID = nil
             return next
@@ -89,13 +89,13 @@ final class ServerSetupStore: ObservableObject {
 
     func removeSelectedUser(message: String? = nil) {
         guard
-            let selectedServerOrigin,
+            let selectedServerBaseURL,
             let selectedUserID = selectedServer?.selectedUserID
         else {
             return
         }
         savedServers = savedServers.map { server in
-            guard server.origin == selectedServerOrigin else { return server }
+            guard server.baseURL == selectedServerBaseURL else { return server }
             var next = server
             next.users.removeAll(where: { $0.id == selectedUserID })
             next.selectedUserID = nil
@@ -114,7 +114,7 @@ final class ServerSetupStore: ObservableObject {
         token: String,
         sessionID: String
     ) {
-        guard let selectedServerOrigin else { return }
+        guard let selectedServerBaseURL else { return }
         let user = ServerUserRecord(
             id: profile.id,
             username: profile.username,
@@ -129,7 +129,7 @@ final class ServerSetupStore: ObservableObject {
         )
 
         savedServers = savedServers.map { server in
-            guard server.origin == selectedServerOrigin else { return server }
+            guard server.baseURL == selectedServerBaseURL else { return server }
             var next = server
             next.users.removeAll(where: { $0.id == user.id })
             next.users.append(user)
@@ -140,9 +140,9 @@ final class ServerSetupStore: ObservableObject {
     }
 
     func updateSelectedUser(profile: UserProfile) {
-        guard let selectedServerOrigin else { return }
+        guard let selectedServerBaseURL else { return }
         savedServers = savedServers.map { server in
-            guard server.origin == selectedServerOrigin else { return server }
+            guard server.baseURL == selectedServerBaseURL else { return server }
             var next = server
             next.users = next.users.map { user in
                 guard user.id == profile.id else { return user }
@@ -165,20 +165,20 @@ final class ServerSetupStore: ObservableObject {
         persist()
     }
 
-    func connectDraftOrigin() async {
+    func connectDraftBaseURL() async {
         guard !isConnecting else { return }
 
         do {
-            let normalizedOrigin = try normalizeOrigin(from: draftOrigin)
-            draftOrigin = normalizedOrigin
+            let normalizedBaseURL = try normalizeBaseURL(from: draftBaseURL)
+            draftBaseURL = normalizedBaseURL
 
             isConnecting = true
             defer { isConnecting = false }
 
-            let metadata = try await client.fetchMetadata(normalizedOrigin)
-            if savedServers.contains(where: { $0.origin == normalizedOrigin }) {
-                updateServerMetadata(origin: normalizedOrigin, metadata: metadata)
-                selectedServerOrigin = normalizedOrigin
+            let metadata = try await client.fetchMetadata(normalizedBaseURL)
+            if savedServers.contains(where: { $0.baseURL == normalizedBaseURL }) {
+                updateServerMetadata(baseURL: normalizedBaseURL, metadata: metadata)
+                selectedServerBaseURL = normalizedBaseURL
             } else {
                 let record = ServerRecord(
                     version: metadata.version,
@@ -186,16 +186,16 @@ final class ServerSetupStore: ObservableObject {
                     imageFileMaxSize: metadata.imageFileMaxSize,
                     audioFileMaxSize: metadata.audioFileMaxSize,
                     videoFileMaxSize: metadata.videoFileMaxSize,
-                    origin: normalizedOrigin,
+                    baseURL: normalizedBaseURL,
                     users: [],
                     selectedUserID: nil
                 )
 
                 savedServers.insert(record, at: 0)
-                selectedServerOrigin = record.origin
+                selectedServerBaseURL = record.baseURL
             }
             selectedServerMetadataError = nil
-            draftOrigin = normalizedOrigin
+            draftBaseURL = normalizedBaseURL
             persist()
         } catch {
             errorMessage = presentableMessage(for: error)
@@ -216,8 +216,8 @@ final class ServerSetupStore: ObservableObject {
         }
 
         do {
-            let metadata = try await client.fetchMetadata(selectedServer.origin)
-            updateServerMetadata(origin: selectedServer.origin, metadata: metadata)
+            let metadata = try await client.fetchMetadata(selectedServer.baseURL)
+            updateServerMetadata(baseURL: selectedServer.baseURL, metadata: metadata)
             selectedServerMetadataError = nil
             persist()
         } catch {
@@ -232,12 +232,12 @@ final class ServerSetupStore: ObservableObject {
     func deletePendingServer() {
         guard let pendingDeletion else { return }
 
-        savedServers.removeAll(where: { $0.origin == pendingDeletion.origin })
-        if selectedServerOrigin == pendingDeletion.origin {
-            selectedServerOrigin = savedServers.first?.origin
+        savedServers.removeAll(where: { $0.baseURL == pendingDeletion.baseURL })
+        if selectedServerBaseURL == pendingDeletion.baseURL {
+            selectedServerBaseURL = savedServers.first?.baseURL
         }
-        if draftOrigin == pendingDeletion.origin {
-            draftOrigin = selectedServerOrigin ?? ""
+        if draftBaseURL == pendingDeletion.baseURL {
+            draftBaseURL = selectedServerBaseURL ?? ""
         }
         self.pendingDeletion = nil
         persist()
@@ -263,7 +263,7 @@ final class ServerSetupStore: ObservableObject {
                     imageFileMaxSize: nil,
                     audioFileMaxSize: nil,
                     videoFileMaxSize: nil,
-                    origin: "https://studio.cicada.local",
+                    baseURL: "https://studio.cicada.local",
                     users: [],
                     selectedUserID: nil
                 ),
@@ -273,12 +273,12 @@ final class ServerSetupStore: ObservableObject {
                     imageFileMaxSize: nil,
                     audioFileMaxSize: nil,
                     videoFileMaxSize: nil,
-                    origin: "https://archive.cicada.local",
+                    baseURL: "https://archive.cicada.local",
                     users: [],
                     selectedUserID: nil
                 ),
             ],
-            selectedServerOrigin: "https://studio.cicada.local"
+            selectedServerBaseURL: "https://studio.cicada.local"
         )
 
         if let data = try? JSONEncoder().encode(snapshot) {
@@ -288,7 +288,7 @@ final class ServerSetupStore: ObservableObject {
         return ServerSetupStore(client: .preview, storage: defaults)
     }
 
-    private func normalizeOrigin(from rawValue: String) throws -> String {
+    private func normalizeBaseURL(from rawValue: String) throws -> String {
         let trimmed = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             throw ServerSetupError.emptyAddress
@@ -312,17 +312,29 @@ final class ServerSetupStore: ObservableObject {
             throw ServerSetupError.invalidAddress
         }
 
-        if !components.percentEncodedPath.isEmpty, components.percentEncodedPath != "/" {
-            throw ServerSetupError.pathNotSupported
-        }
-
         if components.query != nil || components.fragment != nil {
             throw ServerSetupError.invalidAddress
         }
 
+        var basePath = components.percentEncodedPath
+        if basePath.hasSuffix("/") {
+            basePath.removeLast()
+        }
+        if !basePath.isEmpty {
+            let allowed = CharacterSet(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+            let segments = basePath.dropFirst().split(separator: "/", omittingEmptySubsequences: false)
+            guard basePath.hasPrefix("/"),
+                  segments.allSatisfy({ segment in
+                      !segment.isEmpty && segment != "." && segment != ".."
+                          && segment.unicodeScalars.allSatisfy(allowed.contains)
+                  }) else {
+                throw ServerSetupError.invalidAddress
+            }
+        }
+
         components.scheme = scheme
         components.host = host
-        components.percentEncodedPath = ""
+        components.percentEncodedPath = basePath
 
         guard let normalizedURL = components.url else {
             throw ServerSetupError.invalidAddress
@@ -334,7 +346,7 @@ final class ServerSetupStore: ObservableObject {
     private func persist() {
         let snapshot = ServerSnapshot(
             savedServers: savedServers,
-            selectedServerOrigin: selectedServerOrigin
+            selectedServerBaseURL: selectedServerBaseURL
         )
 
         guard let data = try? JSONEncoder().encode(snapshot) else {
@@ -343,9 +355,9 @@ final class ServerSetupStore: ObservableObject {
         storage.set(data, forKey: Self.storageKey)
     }
 
-    private func updateServerMetadata(origin: String, metadata: ServerMetadata) {
+    private func updateServerMetadata(baseURL: String, metadata: ServerMetadata) {
         savedServers = savedServers.map { server in
-            guard server.origin == origin else { return server }
+            guard server.baseURL == baseURL else { return server }
             var next = server
             next.version = metadata.version
             next.hostname = metadata.hostname
@@ -361,7 +373,7 @@ final class ServerSetupStore: ObservableObject {
             let data = storage.data(forKey: storageKey),
             let snapshot = try? JSONDecoder().decode(ServerSnapshot.self, from: data)
         else {
-            return ServerSnapshot(savedServers: [], selectedServerOrigin: nil)
+            return ServerSnapshot(savedServers: [], selectedServerBaseURL: nil)
         }
         return snapshot
     }
@@ -384,16 +396,13 @@ final class ServerSetupStore: ObservableObject {
 enum ServerSetupError: LocalizedError {
     case emptyAddress
     case invalidAddress
-    case pathNotSupported
 
     var errorDescription: String? {
         switch self {
         case .emptyAddress:
             return "Enter a server address first."
         case .invalidAddress:
-            return "Use a valid server origin such as https://music.example.com."
-        case .pathNotSupported:
-            return "Enter only the server origin. Paths are not supported here."
+            return "Use a valid server URL such as https://music.example.com/cicada."
         }
     }
 }

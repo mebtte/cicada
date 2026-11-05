@@ -1,4 +1,4 @@
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 type Response = {
@@ -22,7 +22,7 @@ async function adminGetUserList() {
   });
   return userList.map((u) => ({
     ...u,
-    avatar: prefixServerOrigin(u.avatar),
+    avatar: resolveServerURL(u.avatar),
   }));
 }
 

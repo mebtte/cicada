@@ -1,5 +1,5 @@
 import { request } from '..';
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 
 export enum AdminArtistListFilterKey {
   ALL = 'all',
@@ -57,8 +57,8 @@ async function adminGetArtistList({
       searchKeywords: artist.searchKeywords ?? '',
       photos: artist.photos.map((photo) => ({
         ...photo,
-        asset: prefixServerOrigin(photo.asset),
-        thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
+        asset: resolveServerURL(photo.asset),
+        thumbnail: resolveServerURL(photo.thumbnail ?? ''),
       })),
     })),
   };

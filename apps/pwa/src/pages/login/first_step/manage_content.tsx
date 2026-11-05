@@ -60,7 +60,7 @@ const Info = styled.div`
     white-space: nowrap;
   }
 
-  > .origin {
+  > .server-address {
     font-family: ${FONT};
     font-size: 12px;
     font-weight: 600;
@@ -189,11 +189,11 @@ function ManageContent({ onEmpty }: { onEmpty?: () => void }) {
   return (
     <List>
       {serverList.map((s) => (
-        <Card key={s.origin}>
+        <Card key={s.baseURL}>
           <Avatar>{getInitials(s.hostname)}</Avatar>
           <Info>
             <div className="name">{s.hostname}</div>
-            <div className="origin">{s.origin}</div>
+            <div className="server-address">{s.baseURL}</div>
             <div className="user-avatars">
               <UserAvatars users={s.users} />
             </div>
@@ -205,12 +205,12 @@ function ManageContent({ onEmpty }: { onEmpty?: () => void }) {
             aria-label={t('delete')}
             onClick={() =>
               dialog.confirm({
-                content: t('delete_origin_question'),
+                content: t('delete_server_question'),
                 confirmVariant: 'danger',
                 onConfirm: () =>
                   useServer.setState((server) => ({
                     serverList: server.serverList.filter(
-                      (is) => is.origin !== s.origin,
+                      (is) => is.baseURL !== s.baseURL,
                     ),
                   })),
               })

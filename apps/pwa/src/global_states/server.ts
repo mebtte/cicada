@@ -8,10 +8,11 @@ import { t } from '@/i18n';
 import { isServerVersionSupported } from '@/utils/version';
 import dialog from '@/utils/dialog';
 import { ROOT_PATH } from '@/constants/route';
+import { buildServerURL } from '@/utils/server_url';
 
 export function getSelectedServer(ss: ServerState) {
-  return ss.selectedServerOrigin
-    ? ss.serverList.find((s) => s.origin === ss.selectedServerOrigin)
+  return ss.selectedServerBaseURL
+    ? ss.serverList.find((s) => s.baseURL === ss.selectedServerBaseURL)
     : undefined;
 }
 
@@ -39,22 +40,22 @@ useServer.subscribe((server) =>
     .catch((error) => logger.error(error, 'Failed to store server')),
 );
 
-let unsupportedMetadataServerOrigin: string | undefined;
+let unsupportedMetadataServerBaseURL: string | undefined;
 
 function logoutFromUnsupportedServerVersion(
   selectedServer: Server,
   serverVersion: string,
 ) {
-  const shouldAlert = unsupportedMetadataServerOrigin !== selectedServer.origin;
-  unsupportedMetadataServerOrigin = selectedServer.origin;
+  const shouldAlert = unsupportedMetadataServerBaseURL !== selectedServer.baseURL;
+  unsupportedMetadataServerBaseURL = selectedServer.baseURL;
 
   const error = new Error(
     t('server_version_unsupported', definition.VERSION, serverVersion),
   );
   useServer.setState((server) => ({
-    selectedServerOrigin: undefined,
+    selectedServerBaseURL: undefined,
     serverList: server.serverList.map((s) =>
-      s.origin === selectedServer.origin
+      s.baseURL === selectedServer.baseURL
         ? {
             ...s,
             version: serverVersion,
@@ -75,16 +76,16 @@ function refreshSelectedServerMetadata() {
   const selectedServer = getSelectedServer(useServer.getState());
   if (selectedServer) {
     import('@/server/base/get_metadata')
-      .then(({ default: getMetadata }) => getMetadata(selectedServer.origin))
+      .then(({ default: getMetadata }) => getMetadata(selectedServer.baseURL))
       .then((data) => {
         if (!isServerVersionSupported(definition.VERSION, data.version)) {
           logoutFromUnsupportedServerVersion(selectedServer, data.version);
           return;
         }
-        unsupportedMetadataServerOrigin = undefined;
+        unsupportedMetadataServerBaseURL = undefined;
         useServer.setState((server) => ({
           serverList: server.serverList.map((s) =>
-            s.origin === selectedServer.origin
+            s.baseURL === selectedServer.baseURL
               ? {
                   ...s,
                   version: data.version,
@@ -105,7 +106,7 @@ function refreshSelectedServerMetadata() {
       .catch((error) => {
         logger.error(
           error,
-          `Failed to fetch server "${selectedServer.origin}" metadata`,
+          `Failed to fetch server "${selectedServer.baseURL}" metadata`,
         );
         useServerMetadataStatus.setState({ error });
         return globalEventemitter.emit(EventType.FETCH_SERVER_METADATA_FAILED, {
@@ -118,14 +119,8 @@ function refreshSelectedServerMetadata() {
 refreshSelectedServerMetadata();
 window.setInterval(refreshSelectedServerMetadata, 1000 * 15);
 
-const EMBEDDED_OR_ABSOLUTE_URL = /^(data:|blob:|https?:\/\/|\/\/)/;
-
-export function prefixServerOrigin(path: string) {
-  if (path && !EMBEDDED_OR_ABSOLUTE_URL.test(path)) {
-    const origin = getSelectedServer(useServer.getState())?.origin;
-    return origin ? `${origin}${path}` : path;
-  }
-  return path;
+export function resolveServerURL(path: string) {
+  return buildServerURL(getSelectedServer(useServer.getState())?.baseURL, path);
 }
 
 export function useSelectedServer() {
@@ -157,7 +152,7 @@ export async function reloadUser() {
       }
       useServer.setState((server) => ({
         serverList: server.serverList.map((s) =>
-          s.origin === selectedServer.origin
+          s.baseURL === selectedServer.baseURL
             ? {
                 ...s,
                 users: s.users.map((u) =>

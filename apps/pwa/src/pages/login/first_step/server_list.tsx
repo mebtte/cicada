@@ -79,13 +79,13 @@ const Style = styled.div`
 
 function ServerList({
   disabled,
-  checkingOrigin,
-  onCheckingOriginChange,
+  checkingBaseURL,
+  onCheckingBaseURLChange,
   toNext,
 }: {
   disabled: boolean;
-  checkingOrigin: string | undefined;
-  onCheckingOriginChange: (origin: string | undefined) => void;
+  checkingBaseURL: string | undefined;
+  onCheckingBaseURLChange: (baseURL: string | undefined) => void;
   toNext: () => void;
 }) {
   const { serverList } = useServer();
@@ -131,25 +131,25 @@ function ServerList({
         <div ref={scrollRef} className="server-items">
         {serverList.map((s) => (
           <ServerCardItem
-            key={s.origin}
+            key={s.baseURL}
             hostname={s.hostname}
             version={s.version}
-            origin={s.origin}
+            baseURL={s.baseURL}
             users={s.users}
             selectedUserId={s.selectedUserId}
-            loading={s.origin === checkingOrigin}
+            loading={s.baseURL === checkingBaseURL}
             disabled={
-              disabled || (!!checkingOrigin && s.origin !== checkingOrigin)
+              disabled || (!!checkingBaseURL && s.baseURL !== checkingBaseURL)
             }
             onClick={async () => {
-              if (disabled || checkingOrigin) return;
+              if (disabled || checkingBaseURL) return;
 
-              onCheckingOriginChange(s.origin);
+              onCheckingBaseURLChange(s.baseURL);
               try {
                 const { default: getMetadata } = await import(
                   '@/server/base/get_metadata'
                 );
-                const metadata = await getMetadata(s.origin);
+                const metadata = await getMetadata(s.baseURL);
                 if (
                   !isServerVersionSupported(
                     definition.VERSION,
@@ -166,9 +166,9 @@ function ServerList({
                   return;
                 }
                 useServer.setState((server) => ({
-                  selectedServerOrigin: s.origin,
+                  selectedServerBaseURL: s.baseURL,
                   serverList: server.serverList.map((item) =>
-                    item.origin === s.origin
+                    item.baseURL === s.baseURL
                       ? {
                           ...item,
                           version: metadata.version,
@@ -184,22 +184,22 @@ function ServerList({
               } catch (error) {
                 logger.error(
                   error,
-                  `Failed to get origin "${s.origin}" metadata`,
+                  `Failed to get server "${s.baseURL}" metadata`,
                 );
                 dialog.alert({ content: getServerMetadataErrorMessage(error) });
               } finally {
-                onCheckingOriginChange(undefined);
+                onCheckingBaseURLChange(undefined);
               }
             }}
             onDelete={(e) => {
               e.stopPropagation();
               dialog.confirm({
-                content: t('delete_origin_question'),
+                content: t('delete_server_question'),
                 confirmVariant: 'danger',
                 onConfirm: () =>
                   useServer.setState((server) => ({
                     serverList: server.serverList.filter(
-                      (is) => is.origin !== s.origin,
+                      (is) => is.baseURL !== s.baseURL,
                     ),
                   })),
               });

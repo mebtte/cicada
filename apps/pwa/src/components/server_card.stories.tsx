@@ -51,7 +51,7 @@ const ALL_USERS = [
 
 const BASE_PROPS = {
   hostname: 'My Music Server',
-  origin: 'https://music.example.com',
+  baseURL: 'https://music.example.com',
   selectedUserId: '1',
   onClick: () => {},
   onDelete: () => {},
@@ -97,7 +97,7 @@ export const AllCases: Story = {
         <ServerCardItem
           key={n}
           hostname={`Server — ${n} user${n > 1 ? 's' : ''}`}
-          origin="https://music.example.com"
+          baseURL="https://music.example.com"
           users={ALL_USERS.slice(0, n)}
           selectedUserId="1"
           onClick={() => {}}

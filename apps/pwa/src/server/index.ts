@@ -10,6 +10,7 @@ import definition from '@/definition';
 import timeoutFn from '@/utils/timeout';
 import { HEADER_TOKEN } from '@/constants/api';
 import { t } from '@/i18n';
+import { buildServerURL } from '@/utils/server_url';
 import { isSameMajorVersion } from '@/utils/version';
 import getCommonParams from './common_params';
 
@@ -64,7 +65,7 @@ export async function request<Data = void>({
   }
 
   const selectedUser = getSelectedUser(selectedServer);
-  let url = `${selectedServer.origin}${path}`;
+  let url = buildServerURL(selectedServer.baseURL, path);
 
   const combineParams = {
     ...params,
@@ -144,7 +145,7 @@ export async function request<Data = void>({
       case ExceptionCode.NOT_AUTHORIZED: {
         useServer.setState((server) => ({
           serverList: server.serverList.map((s) =>
-            s.origin === selectedServer.origin
+            s.baseURL === selectedServer.baseURL
               ? {
                   ...s,
                   users: s.users.filter((u) => u.id !== s.selectedUserId),

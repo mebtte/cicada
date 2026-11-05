@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ServerSetupView: View {
     @ObservedObject var store: ServerSetupStore
-    @FocusState private var originFieldFocused: Bool
+    @FocusState private var baseURLFieldFocused: Bool
 
     var body: some View {
         Form {
@@ -19,7 +19,7 @@ struct ServerSetupView: View {
             Section {
                 TextField(
                     "https://music.example.com",
-                    text: $store.draftOrigin
+                    text: $store.draftBaseURL
                 )
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
@@ -29,16 +29,16 @@ struct ServerSetupView: View {
                 .keyboardType(.URL)
                 #endif
                 .textContentType(.URL)
-                .focused($originFieldFocused)
+                .focused($baseURLFieldFocused)
                 .onSubmit {
                     Task {
-                        await store.connectDraftOrigin()
+                        await store.connectDraftBaseURL()
                     }
                 }
 
                 Button {
                     Task {
-                        await store.connectDraftOrigin()
+                        await store.connectDraftBaseURL()
                     }
                 } label: {
                     if store.isConnecting {
@@ -47,11 +47,11 @@ struct ServerSetupView: View {
                         Label("Add Server", systemImage: "plus.circle")
                     }
                 }
-                .disabled(store.draftOrigin.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.isConnecting)
+                .disabled(store.draftBaseURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || store.isConnecting)
             } header: {
                 Text(store.savedServers.isEmpty ? "Add Server" : "New Server")
             } footer: {
-                Text("Enter only the server origin.")
+                Text("Enter the server URL, including its path when hosted at a subpath, such as https://music.example.com/cicada.")
             }
         }
         .navigationTitle(store.savedServers.isEmpty ? "Add Server" : "Servers")
@@ -91,10 +91,10 @@ struct ServerSetupView: View {
                 store.pendingDeletion = nil
             }
         } message: {
-            Text(store.pendingDeletion?.origin ?? "")
+            Text(store.pendingDeletion?.baseURL ?? "")
         }
         .onAppear {
-            originFieldFocused = store.savedServers.isEmpty
+            baseURLFieldFocused = store.savedServers.isEmpty
         }
     }
 
@@ -102,7 +102,7 @@ struct ServerSetupView: View {
     private func savedServerRow(for server: ServerRecord) -> some View {
         ServerRow(
             server: server,
-            isSelected: store.selectedServerOrigin == server.origin,
+            isSelected: store.selectedServerBaseURL == server.baseURL,
             onSelect: {
                 store.select(server)
             },
@@ -129,7 +129,7 @@ private struct ServerRow: View {
                     Text(server.hostname)
                         .font(.body)
 
-                    Text(server.origin)
+                    Text(server.baseURL)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)

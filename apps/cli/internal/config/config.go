@@ -58,11 +58,13 @@ const (
 )
 
 type Config struct {
-	Mode             Mode
-	MusicTranscode   MusicTranscodeMode
-	Data             string
-	Scratch          string
-	Port             int
+	Mode           Mode
+	MusicTranscode MusicTranscodeMode
+	Data           string
+	Scratch        string
+	Port           int
+	// BasePath is the HTTP mount path, without a trailing slash; empty means root.
+	BasePath         string
 	ImageFileMaxSize int64
 	AudioFileMaxSize int64
 	VideoFileMaxSize int64

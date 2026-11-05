@@ -1,4 +1,4 @@
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 type MusicItem = {
@@ -34,21 +34,21 @@ type Response = {
 
 const normalizeMusic = (m: MusicItem) => ({
   ...m,
-  cover: prefixServerOrigin(m.cover),
-  coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
+  cover: resolveServerURL(m.cover),
+  coverThumbnail: resolveServerURL(m.coverThumbnail ?? ''),
 });
 const normalizeArtist = (artist: ArtistItem) => ({
   ...artist,
   photos: artist.photos.map((p) => ({
     ...p,
-    asset: prefixServerOrigin(p.asset),
-    thumbnail: prefixServerOrigin(p.thumbnail ?? ''),
+    asset: resolveServerURL(p.asset),
+    thumbnail: resolveServerURL(p.thumbnail ?? ''),
   })),
 });
 const normalizeMusicbill = (mb: PublicMusicbillItem) => ({
   ...mb,
-  cover: prefixServerOrigin(mb.cover),
-  coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
+  cover: resolveServerURL(mb.cover),
+  coverThumbnail: resolveServerURL(mb.coverThumbnail ?? ''),
 });
 
 /**

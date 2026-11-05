@@ -108,8 +108,8 @@ function AppExtraInfo(props: HTMLAttributes<HTMLElement>) {
           <tr>
             <LabelCell>{t('server_address')}</LabelCell>
             <ValueCell>
-              <ValueText title={selectedServer.origin}>
-                {selectedServer.origin}
+              <ValueText title={selectedServer.baseURL}>
+                {selectedServer.baseURL}
               </ValueText>
             </ValueCell>
           </tr>

@@ -14,6 +14,7 @@ import { EXPLORATION_FOCUS_SEARCH_STATE, HEADER_HEIGHT } from '../constants';
 import { useTheme } from '@/global_states/theme';
 import { CSSVariable } from '@/global_style';
 import { getIsHeaderBackButtonPath } from './back_button';
+import { resolveAppURL } from '@/constants/app';
 
 const openSidebar = () => e.emit(EventType.MINI_MODE_OPEN_SIDEBAR, null);
 const Style = styled.div`
@@ -97,7 +98,7 @@ function Header() {
           </Button>
         </>
       ) : (
-        <HeaderLogo src="/favicon-64_v1.png" alt="" aria-hidden="true" />
+        <HeaderLogo src={resolveAppURL('favicon-64_v1.png')} alt="" aria-hidden="true" />
       )}
       <Title title={title.title} description={title.description} />
       {miniMode ? null : <Search />}

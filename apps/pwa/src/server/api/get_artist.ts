@@ -1,5 +1,5 @@
 import { MusicType } from '@/constants/music';
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 interface ArtistInMusic {
@@ -50,9 +50,9 @@ const normalizeMusic = (musicList: Music[] = []) =>
   musicList.map((music) => ({
     ...music,
     aliases: music.aliases ?? [],
-    cover: prefixServerOrigin(music.cover),
-    coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
-    asset: prefixServerOrigin(music.asset),
+    cover: resolveServerURL(music.cover),
+    coverThumbnail: resolveServerURL(music.coverThumbnail ?? ''),
+    asset: resolveServerURL(music.asset),
     performers: music.performers ?? [],
     lyricists: music.lyricists ?? [],
     composers: music.composers ?? [],
@@ -71,8 +71,8 @@ async function getArtist(id: string): Promise<Response> {
     aliases: artist.aliases ?? [],
     photos: photos.map((photo) => ({
       ...photo,
-      asset: prefixServerOrigin(photo.asset),
-      thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
+      asset: resolveServerURL(photo.asset),
+      thumbnail: resolveServerURL(photo.thumbnail ?? ''),
     })),
     performerMusicList: normalizeMusic(artist.performerMusicList),
     lyricistMusicList: normalizeMusic(artist.lyricistMusicList),

@@ -52,16 +52,16 @@ enum CicadaAPIError: LocalizedError, Equatable {
 struct CicadaAPIClient: Sendable {
     private static let tokenHeader = "x-cicada-token"
 
-    let origin: String
+    let baseURL: String
     let token: String?
 
-    init(origin: String, token: String? = nil) {
-        self.origin = origin
+    init(baseURL: String, token: String? = nil) {
+        self.baseURL = baseURL
         self.token = token
     }
 
     init(server: ServerRecord, user: ServerUserRecord? = nil) {
-        self.init(origin: server.origin, token: user?.token)
+        self.init(baseURL: server.baseURL, token: user?.token)
     }
 
     func getCaptcha() async throws -> CaptchaResponse {
@@ -525,24 +525,7 @@ struct CicadaAPIClient: Sendable {
     }
 
     func absoluteURLString(_ rawValue: String?) -> String {
-        guard let rawValue else { return "" }
-        let trimmed = rawValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return "" }
-
-        if trimmed.hasPrefix("http://") || trimmed.hasPrefix("https://") || trimmed.hasPrefix("data:") || trimmed.hasPrefix("blob:") {
-            return trimmed
-        }
-
-        if trimmed.hasPrefix("//") {
-            let scheme = URL(string: origin)?.scheme ?? "https"
-            return "\(scheme):\(trimmed)"
-        }
-
-        if trimmed.hasPrefix("/") {
-            return origin + trimmed
-        }
-
-        return origin + "/" + trimmed
+        ServerURL.assetURLString(rawValue, baseURL: baseURL)
     }
 
     private func request<Data: Decodable>(
@@ -637,23 +620,12 @@ struct CicadaAPIClient: Sendable {
         throw CicadaAPIError.missingPayload
     }
 
-    private func makeURL(path: String, query: [String: String]) -> URL? {
-        guard let baseURL = URL(string: origin) else {
-            return nil
-        }
-        let cleanPath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        let url = baseURL.appending(path: cleanPath)
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            return nil
-        }
-
+    func makeURL(path: String, query: [String: String]) -> URL? {
         var queryItems = query.map {
             URLQueryItem(name: $0.key, value: $0.value)
         }
         queryItems.append(contentsOf: CicadaAPIQuery.commonItems())
-        components.queryItems = queryItems
-
-        return components.url
+        return ServerURL.url(baseURL: baseURL, path: path, queryItems: queryItems)
     }
 
     private func normalizeUserAssets(

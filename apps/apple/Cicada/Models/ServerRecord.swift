@@ -32,11 +32,11 @@ struct ServerRecord: Codable, Hashable, Identifiable {
     var imageFileMaxSize: Int?
     var audioFileMaxSize: Int?
     var videoFileMaxSize: Int?
-    let origin: String
+    let baseURL: String
     var users: [ServerUserRecord]
     var selectedUserID: String?
 
-    var id: String { origin }
+    var id: String { baseURL }
 
     var userCountLabel: String {
         switch users.count {
@@ -58,7 +58,7 @@ struct ServerRecord: Codable, Hashable, Identifiable {
         case imageFileMaxSize
         case audioFileMaxSize
         case videoFileMaxSize
-        case origin
+        case baseURL
         case users
         case selectedUserID = "selectedUserId"
     }
@@ -66,5 +66,5 @@ struct ServerRecord: Codable, Hashable, Identifiable {
 
 struct ServerSnapshot: Codable {
     var savedServers: [ServerRecord]
-    var selectedServerOrigin: String?
+    var selectedServerBaseURL: String?
 }

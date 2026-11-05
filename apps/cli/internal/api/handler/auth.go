@@ -34,12 +34,13 @@ func GetMetadata(c *gin.Context) {
 // ── Captcha ───────────────────────────────────────────────────────────────────
 
 func GetCaptcha(c *gin.Context) {
-	id, svg, err := auth.NewCaptcha()
+	c.Header("Cache-Control", "no-store")
+	id, image, err := auth.NewCaptcha()
 	if err != nil {
 		api.Fail(c, apperr.ServerError)
 		return
 	}
-	api.OK(c, gin.H{"id": id, "svg": svg})
+	api.OK(c, gin.H{"id": id, "image": image})
 }
 
 // ── Login ─────────────────────────────────────────────────────────────────────

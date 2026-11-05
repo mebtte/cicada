@@ -118,7 +118,7 @@ function clearCurrentUser() {
   if (!selectedServer) return;
   useServer.setState((server) => ({
     serverList: server.serverList.map((s) =>
-      s.origin === selectedServer.origin
+      s.baseURL === selectedServer.baseURL
         ? {
             ...s,
             users: s.users.filter((u) => u.id !== s.selectedUserId),

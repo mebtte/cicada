@@ -1,5 +1,5 @@
 import { MusicType } from '@/constants/music';
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 type Response = {
@@ -53,19 +53,19 @@ async function getPublicMusicbill(id: string) {
   });
   return {
     ...musicbill,
-    cover: prefixServerOrigin(musicbill.cover),
-    coverThumbnail: prefixServerOrigin(musicbill.coverThumbnail ?? ''),
+    cover: resolveServerURL(musicbill.cover),
+    coverThumbnail: resolveServerURL(musicbill.coverThumbnail ?? ''),
     musicList: musicbill.musicList.map((m) => ({
       ...m,
-      cover: prefixServerOrigin(m.cover),
-      coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
-      asset: prefixServerOrigin(m.asset),
+      cover: resolveServerURL(m.cover),
+      coverThumbnail: resolveServerURL(m.coverThumbnail ?? ''),
+      asset: resolveServerURL(m.asset),
       lyricists: m.lyricists ?? [],
       composers: m.composers ?? [],
     })),
     user: {
       ...musicbill.user,
-      avatar: prefixServerOrigin(musicbill.user.avatar),
+      avatar: resolveServerURL(musicbill.user.avatar),
     },
   };
 }

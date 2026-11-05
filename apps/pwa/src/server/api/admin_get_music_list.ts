@@ -1,5 +1,5 @@
 import { MusicType } from '@/constants/music';
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 export enum AdminMusicListFilterKey {
@@ -91,9 +91,9 @@ async function adminGetMusicList({
     musicList: data.musicList.map((music) => ({
       ...music,
       searchKeywords: music.searchKeywords ?? '',
-      cover: prefixServerOrigin(music.cover),
-      coverThumbnail: prefixServerOrigin(music.coverThumbnail ?? ''),
-      asset: prefixServerOrigin(music.asset),
+      cover: resolveServerURL(music.cover),
+      coverThumbnail: resolveServerURL(music.coverThumbnail ?? ''),
+      asset: resolveServerURL(music.asset),
       performers: music.performers ?? [],
       lyricists: music.lyricists ?? [],
       composers: music.composers ?? [],

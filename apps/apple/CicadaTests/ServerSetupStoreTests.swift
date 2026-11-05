@@ -34,7 +34,7 @@ final class ServerSetupStoreTests: XCTestCase {
         )
     }
 
-    func testConnectDraftOriginNormalizesAndPersistsServer() async throws {
+    func testConnectDraftBaseURLNormalizesAndPersistsServer() async throws {
         let storage = try makeStorage()
         defer { storage.removePersistentDomain() }
 
@@ -42,40 +42,85 @@ final class ServerSetupStoreTests: XCTestCase {
             client: .stub(metadata: .test(version: "3.6.0", hostname: "music.local")),
             storage: storage.defaults
         )
-        store.draftOrigin = " Music.Local "
+        store.draftBaseURL = " Music.Local "
 
-        await store.connectDraftOrigin()
+        await store.connectDraftBaseURL()
 
         XCTAssertNil(store.errorMessage)
-        XCTAssertEqual(store.draftOrigin, "https://music.local")
-        XCTAssertEqual(store.selectedServerOrigin, "https://music.local")
-        XCTAssertEqual(store.savedServers.map(\.origin), ["https://music.local"])
+        XCTAssertEqual(store.draftBaseURL, "https://music.local")
+        XCTAssertEqual(store.selectedServerBaseURL, "https://music.local")
+        XCTAssertEqual(store.savedServers.map(\.baseURL), ["https://music.local"])
         XCTAssertEqual(store.selectedServer?.version, "3.6.0")
 
         let reloaded = ServerSetupStore(client: .stub(), storage: storage.defaults)
-        XCTAssertEqual(reloaded.selectedServerOrigin, "https://music.local")
+        XCTAssertEqual(reloaded.selectedServerBaseURL, "https://music.local")
         XCTAssertEqual(reloaded.savedServers.first?.hostname, "music.local")
     }
 
-    func testConnectDraftOriginRejectsPathsBeforeFetchingMetadata() async throws {
+    func testConnectDraftBaseURLPreservesSubpathAndPersistsServer() async throws {
         let storage = try makeStorage()
         defer { storage.removePersistentDomain() }
 
         let store = ServerSetupStore(
+            client: ServerMetadataClient { baseURL in
+                XCTAssertEqual(baseURL, "https://music.local/tools/Cicada_v2-~.1")
+                return .test()
+            },
+            storage: storage.defaults
+        )
+        store.draftBaseURL = " Music.Local/tools/Cicada_v2-~.1/ "
+
+        await store.connectDraftBaseURL()
+
+        XCTAssertNil(store.errorMessage)
+        XCTAssertEqual(store.selectedServerBaseURL, "https://music.local/tools/Cicada_v2-~.1")
+        let reloaded = ServerSetupStore(client: .stub(), storage: storage.defaults)
+        XCTAssertEqual(reloaded.savedServers.first?.baseURL, store.selectedServerBaseURL)
+    }
+
+    func testConnectDraftBaseURLRejectsInvalidAddressesBeforeFetchingMetadata() async throws {
+        let storage = try makeStorage()
+        defer { storage.removePersistentDomain() }
+        let store = ServerSetupStore(
             client: ServerMetadataClient { _ in
+                XCTFail("Invalid addresses must be rejected before fetching metadata")
                 throw ServerMetadataClientError.missingPayload
             },
             storage: storage.defaults
         )
-        store.draftOrigin = "https://music.local/app"
+        let invalidAddresses = [
+            "https://music.local/app//nested", "https://music.local/app//",
+            "https://music.local/.", "https://music.local/app/../nested",
+            "https://music.local/%2e%2e", "https://music.local/app%2Fnested",
+            "https://music.local/app space", "https://music.local/音乐",
+            "https://music.local/app?query=1", "https://music.local/app#player",
+            "https://user:password@music.local/app", "ftp://music.local/app",
+        ]
 
-        await store.connectDraftOrigin()
+        for address in invalidAddresses {
+            store.draftBaseURL = address
+            await store.connectDraftBaseURL()
+            XCTAssertEqual(store.errorMessage, ServerSetupError.invalidAddress.errorDescription, address)
+            XCTAssertTrue(store.savedServers.isEmpty, address)
+        }
+    }
 
-        XCTAssertEqual(
-            store.errorMessage,
-            ServerSetupError.pathNotSupported.errorDescription
-        )
-        XCTAssertTrue(store.savedServers.isEmpty)
+    func testSameDomainSubpathsAreSeparateServersAndTrailingSlashDoesNotDuplicate() async throws {
+        let storage = try makeStorage()
+        defer { storage.removePersistentDomain() }
+        let store = ServerSetupStore(client: .stub(), storage: storage.defaults)
+
+        for address in ["https://music.local/", "https://music.local/a", "https://music.local/b/"] {
+            store.draftBaseURL = address
+            await store.connectDraftBaseURL()
+        }
+        XCTAssertEqual(Set(store.savedServers.map(\.baseURL)), Set([
+            "https://music.local", "https://music.local/a", "https://music.local/b",
+        ]))
+        store.draftBaseURL = "https://music.local/a/"
+        await store.connectDraftBaseURL()
+        XCTAssertEqual(store.savedServers.count, 3)
+        XCTAssertEqual(store.selectedServerBaseURL, "https://music.local/a")
     }
 
     func testSelectUserAndRemoveSelectedUserPersistChanges() throws {
@@ -86,7 +131,7 @@ final class ServerSetupStoreTests: XCTestCase {
             ServerSnapshot(
                 savedServers: [
                     .test(
-                        origin: "https://music.local",
+                        baseURL: "https://music.local",
                         users: [
                             .test(id: "u1", nickname: "One"),
                             .test(id: "u2", nickname: "Two"),
@@ -94,7 +139,7 @@ final class ServerSetupStoreTests: XCTestCase {
                         selectedUserID: "u1"
                     ),
                 ],
-                selectedServerOrigin: "https://music.local"
+                selectedServerBaseURL: "https://music.local"
             ),
             in: storage.defaults
         )
@@ -123,10 +168,10 @@ final class ServerSetupStoreTests: XCTestCase {
                     .test(
                         version: "3.5.0",
                         hostname: "old.local",
-                        origin: "https://music.local"
+                        baseURL: "https://music.local"
                     ),
                 ],
-                selectedServerOrigin: "https://music.local"
+                selectedServerBaseURL: "https://music.local"
             ),
             in: storage.defaults
         )
@@ -203,7 +248,7 @@ private extension ServerRecord {
     static func test(
         version: String = "3.6.0",
         hostname: String = "music.local",
-        origin: String = "https://music.local",
+        baseURL: String = "https://music.local",
         users: [ServerUserRecord] = [],
         selectedUserID: String? = nil
     ) -> ServerRecord {
@@ -213,7 +258,7 @@ private extension ServerRecord {
             imageFileMaxSize: nil,
             audioFileMaxSize: nil,
             videoFileMaxSize: nil,
-            origin: origin,
+            baseURL: baseURL,
             users: users,
             selectedUserID: selectedUserID
         )

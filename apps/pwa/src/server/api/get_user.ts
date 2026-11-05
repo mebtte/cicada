@@ -1,4 +1,4 @@
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 interface Response {
@@ -28,11 +28,11 @@ async function getUser(id: string) {
   });
   return {
     ...user,
-    avatar: prefixServerOrigin(user.avatar),
+    avatar: resolveServerURL(user.avatar),
     musicbillList: user.musicbillList.map((mb) => ({
       ...mb,
-      cover: prefixServerOrigin(mb.cover),
-      coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
+      cover: resolveServerURL(mb.cover),
+      coverThumbnail: resolveServerURL(mb.coverThumbnail ?? ''),
     })),
   };
 }

@@ -19,7 +19,7 @@ export interface Server {
   audioFileMaxSize?: number;
   videoFileMaxSize?: number;
 
-  origin: string;
+  baseURL: string;
 
   users: User[];
   selectedUserId?: string;
@@ -27,5 +27,5 @@ export interface Server {
 
 export interface ServerState {
   serverList: Server[];
-  selectedServerOrigin?: string;
+  selectedServerBaseURL?: string;
 }

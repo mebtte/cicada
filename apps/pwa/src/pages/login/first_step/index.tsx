@@ -14,10 +14,10 @@ import { isServerVersionSupported } from '@/utils/version';
 import dialog from '@/utils/dialog';
 import {
   getServerMetadataErrorMessage,
-  getServerOriginKey,
-  normalizeServerOriginInput,
+  normalizeServerBaseURLInput,
 } from '../utils';
 import { isKeyboardEventComposing } from '@/utils/keyboard';
+import { APP_BASE_URL } from '@/constants/app';
 
 const Style = styled.div`
   display: flex;
@@ -35,40 +35,40 @@ function FirstStep({
   onManage: () => void;
 }) {
   const [loading, setLoading] = useState(false);
-  const [checkingOrigin, setCheckingOrigin] = useState<string>();
-  const busy = loading || !!checkingOrigin;
-  const [origin, setOrigin] = useState(
-    () => useServer.getState().selectedServerOrigin || window.location.origin,
+  const [checkingBaseURL, setCheckingBaseURL] = useState<string>();
+  const busy = loading || !!checkingBaseURL;
+  const [baseURL, setBaseURL] = useState(
+    () => useServer.getState().selectedServerBaseURL || APP_BASE_URL.replace(/\/$/, ''),
   );
-  const [originError, setOriginError] = useState<string>();
-  const onOriginChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setOrigin(event.target.value);
-    setOriginError(undefined);
+  const [baseURLError, setBaseURLError] = useState<string>();
+  const onBaseURLChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    setBaseURL(event.target.value);
+    setBaseURLError(undefined);
   };
 
-  const onSaveOrigin = async () => {
+  const onSaveBaseURL = async () => {
     if (busy) return;
 
-    const normalized = normalizeServerOriginInput(origin);
-    if (normalized.origin !== origin) {
-      setOrigin(normalized.origin);
+    const normalized = normalizeServerBaseURLInput(baseURL);
+    if (normalized.baseURL !== baseURL) {
+      setBaseURL(normalized.baseURL);
     }
     if (!normalized.ok) {
-      setOriginError(normalized.error);
+      setBaseURLError(normalized.error);
       return;
     }
 
-    const nextOrigin = normalized.origin;
-    setOriginError(undefined);
+    const nextBaseURL = normalized.baseURL;
+    setBaseURLError(undefined);
     setLoading(true);
     try {
       const existedServer = useServer
         .getState()
-        .serverList.find((s) => getServerOriginKey(s.origin) === nextOrigin);
+        .serverList.find((s) => s.baseURL === nextBaseURL);
       const { default: getMetadata } = await import(
         '@/server/base/get_metadata'
       );
-      const metadata = await getMetadata(nextOrigin);
+      const metadata = await getMetadata(nextBaseURL);
       if (!isServerVersionSupported(definition.VERSION, metadata.version)) {
         dialog.alert({
           content: t(
@@ -81,9 +81,9 @@ function FirstStep({
       }
       if (existedServer) {
         useServer.setState((server) => ({
-          selectedServerOrigin: nextOrigin,
+          selectedServerBaseURL: nextBaseURL,
           serverList: server.serverList.map((s) =>
-            getServerOriginKey(s.origin) === nextOrigin
+            s.baseURL === nextBaseURL
               ? {
                   ...s,
                   version: metadata.version,
@@ -91,14 +91,14 @@ function FirstStep({
                   imageFileMaxSize: metadata.imageFileMaxSize,
                   audioFileMaxSize: metadata.audioFileMaxSize,
                   videoFileMaxSize: metadata.videoFileMaxSize,
-                  origin: nextOrigin,
+                  baseURL: nextBaseURL,
                 }
               : s,
           ),
         }));
       } else {
         useServer.setState((server) => ({
-          selectedServerOrigin: nextOrigin,
+          selectedServerBaseURL: nextBaseURL,
           serverList: [
             ...server.serverList,
             {
@@ -107,7 +107,7 @@ function FirstStep({
               imageFileMaxSize: metadata.imageFileMaxSize,
               audioFileMaxSize: metadata.audioFileMaxSize,
               videoFileMaxSize: metadata.videoFileMaxSize,
-              origin: nextOrigin,
+              baseURL: nextBaseURL,
               users: [],
               selectedUserId: undefined,
             },
@@ -116,7 +116,7 @@ function FirstStep({
       }
       toNext();
     } catch (error) {
-      logger.error(error, `Failed to get origin "${nextOrigin}" metadata`);
+      logger.error(error, `Failed to get server "${nextBaseURL}" metadata`);
       dialog.alert({ content: getServerMetadataErrorMessage(error) });
     } finally {
       setLoading(false);
@@ -125,7 +125,7 @@ function FirstStep({
 
   const onKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (!isKeyboardEventComposing(event) && event.key === 'Enter') {
-      onSaveOrigin();
+      onSaveBaseURL();
     }
   };
 
@@ -137,26 +137,26 @@ function FirstStep({
       <ServerList
         toNext={toNext}
         disabled={loading}
-        checkingOrigin={checkingOrigin}
-        onCheckingOriginChange={setCheckingOrigin}
+        checkingBaseURL={checkingBaseURL}
+        onCheckingBaseURLChange={setCheckingBaseURL}
       />
       <Input
-        label={t('origin')}
+        label={t('server_address')}
         type="url"
         disabled={busy}
-        value={origin}
-        error={originError}
-        onChange={onOriginChange}
+        value={baseURL}
+        error={baseURLError}
+        onChange={onBaseURLChange}
         onKeyDown={onKeyDown}
         autoFocus
       />
       <Button
         variant={'primary'}
-        onClick={onSaveOrigin}
-        disabled={!origin.trim().length || busy}
+        onClick={onSaveBaseURL}
+        disabled={!baseURL.trim().length || busy}
         loading={loading}
       >
-        {t('add_origin')}
+        {t('add_server')}
       </Button>
     </Style>
   );

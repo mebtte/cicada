@@ -1,11 +1,12 @@
 import Storage from '@/utils/storage';
+import { APP_NAMESPACE } from '@/constants/app';
 
 export enum Key {
   PLAY_RECORD_UPLOAD_QUEUE_V3 = 'play-record-upload-queue-v3',
 }
 
 export interface PlayRecordUploadQueueItem {
-  serverOrigin: string;
+  serverBaseURL: string;
   userId: string;
   clientRecordId: string;
   musicId: string;
@@ -20,6 +21,6 @@ const storage = new Storage<
   {
     [Key.PLAY_RECORD_UPLOAD_QUEUE_V3]: PlayRecordUploadQueueItem[];
   }
->('player');
+>(`${APP_NAMESPACE}:player`);
 
 export default storage;

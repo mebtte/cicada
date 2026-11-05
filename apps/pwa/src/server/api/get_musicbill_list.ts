@@ -1,4 +1,4 @@
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 interface User {
@@ -27,15 +27,15 @@ async function getMusicbillList() {
   });
   return musicbillList.map((mb) => ({
     ...mb,
-    cover: prefixServerOrigin(mb.cover),
-    coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
+    cover: resolveServerURL(mb.cover),
+    coverThumbnail: resolveServerURL(mb.coverThumbnail ?? ''),
     owner: {
       ...mb.owner,
-      avatar: prefixServerOrigin(mb.owner.avatar),
+      avatar: resolveServerURL(mb.owner.avatar),
     },
     sharedUserList: mb.sharedUserList.map((u) => ({
       ...u,
-      avatar: prefixServerOrigin(u.avatar),
+      avatar: resolveServerURL(u.avatar),
     })),
   }));
 }
