@@ -313,16 +313,16 @@ func operations() []operation {
 			Method:      "GET",
 			Path:        "/api/base/captcha",
 			Summary:     "Get captcha",
-			Description: "Return the captcha ID and SVG payload.",
+			Description: "Return the captcha ID and a PNG image data URL. Display the image directly; the answer is not included in the response.",
 			Tags:        []string{"Base"},
 			SuccessSchema: objSchema(
-				[]string{"id", "svg"},
+				[]string{"id", "image"},
 				map[string]any{
-					"id":  strSchema("Captcha ID.", "9c4a0f42"),
-					"svg": strSchema("Captcha SVG content.", "<svg>...</svg>"),
+					"id":    strSchema("Captcha ID.", "9c4a0f42"),
+					"image": strSchema("PNG data URL with the data:image/png;base64, prefix.", "data:image/png;base64,iVBORw0KGgo..."),
 				},
 			),
-			SuccessExample: map[string]any{"id": "9c4a0f42", "svg": "<svg>...</svg>"},
+			SuccessExample: map[string]any{"id": "9c4a0f42", "image": "data:image/png;base64,iVBORw0KGgo..."},
 			ErrorCodes:     []string{"server_error"},
 		},
 		{

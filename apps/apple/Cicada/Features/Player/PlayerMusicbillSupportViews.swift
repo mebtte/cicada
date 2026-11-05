@@ -143,7 +143,7 @@ struct MusicbillCaptchaActionSheet: View {
         HStack {
             Group {
                 if let captcha = playerStore.musicbillActionCaptcha {
-                    CaptchaImageView(svg: captcha.svg)
+                    CaptchaImageView(image: captcha.image)
                 } else if playerStore.isLoadingMusicbillActionCaptcha {
                     ProgressView()
                 } else {

@@ -157,7 +157,7 @@ struct LoginView: View {
             HStack {
                 Group {
                     if let captcha = loginStore.captcha {
-                        CaptchaImageView(svg: captcha.svg)
+                        CaptchaImageView(image: captcha.image)
                     } else if loginStore.isLoadingCaptcha {
                         ProgressView()
                     } else {

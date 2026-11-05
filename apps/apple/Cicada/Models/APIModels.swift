@@ -4,7 +4,17 @@ struct EmptyResponse: Decodable {}
 
 struct CaptchaResponse: Decodable {
     let id: String
-    let svg: String
+    let image: String
+
+    static func pngData(from image: String) -> Data? {
+        let prefix = "data:image/png;base64,"
+        guard image.hasPrefix(prefix),
+              let data = Data(base64Encoded: String(image.dropFirst(prefix.count))),
+              data.starts(with: [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]) else {
+            return nil
+        }
+        return data
+    }
 }
 
 struct LoginResponse: Decodable {

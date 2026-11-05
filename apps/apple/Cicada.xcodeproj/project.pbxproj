@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AE6DAA31EC294D9299DB9344 /* CaptchaResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87F05B8804A45AB997024A2 /* CaptchaResponseTests.swift */; };
 		03F39871A6CA11887C0BD54D /* ServerURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5741912FF8898D9AEE9E815 /* ServerURL.swift */; };
 		0971B6785F612465DAC7E5BD /* CaptchaImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC82AC368AC0AD4A87C72665 /* CaptchaImageView.swift */; };
 		0A46BB2BD764AC8C5F358F12 /* ServerURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6147A5B6282A610C1A6C6D55 /* ServerURLTests.swift */; };
@@ -57,6 +58,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E87F05B8804A45AB997024A2 /* CaptchaResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptchaResponseTests.swift; sourceTree = "<group>"; };
 		01204AADF1F4582CCE6A10EA /* AudioPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerController.swift; sourceTree = "<group>"; };
 		03B1F585BB98EF97B6443166 /* LoginStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginStore.swift; sourceTree = "<group>"; };
 		11DF74913AF882BC9F3654D6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 		9DC9071A7E07EB417BD3AE6A /* CicadaTests */ = {
 			isa = PBXGroup;
 			children = (
+				E87F05B8804A45AB997024A2 /* CaptchaResponseTests.swift */,
 				BBFF48282943C43077475A76 /* ServerRecordTests.swift */,
 				6DBB7D56DD8812C26BA79DD4 /* ServerSetupStoreTests.swift */,
 				6147A5B6282A610C1A6C6D55 /* ServerURLTests.swift */,
@@ -411,6 +414,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE6DAA31EC294D9299DB9344 /* CaptchaResponseTests.swift in Sources */,
 				4C9130DBF7664AE42E680D69 /* ServerRecordTests.swift in Sources */,
 				42A5CBE405310DBB5D3B40DF /* ServerSetupStoreTests.swift in Sources */,
 				0A46BB2BD764AC8C5F358F12 /* ServerURLTests.swift in Sources */,

@@ -23,6 +23,7 @@ const zhHant: {
   continue: '繼續',
   username: '用戶名',
   captcha: '驗證碼',
+  refresh_captcha: '重新產生驗證碼',
   change_language_question: '更換語言將會重新加載應用, 是否繼續?',
   music_playback_quality: '播放質量',
   music_playback_quality_smooth: '流暢',

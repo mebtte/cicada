@@ -23,6 +23,7 @@ const zhHans: {
   continue: '继续',
   username: '用户名',
   captcha: '验证码',
+  refresh_captcha: '刷新验证码',
   change_language_question: '更换语言将会重新加载应用, 是否继续?',
   music_playback_quality: '播放质量',
   music_playback_quality_smooth: '流畅',

@@ -3,7 +3,7 @@ import { request } from '..';
 function getCaptcha() {
   return request<{
     id: string;
-    svg: string;
+    image: string;
   }>({
     path: '/api/base/captcha',
   });

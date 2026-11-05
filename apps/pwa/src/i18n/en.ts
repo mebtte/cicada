@@ -19,6 +19,7 @@ export default {
   continue: 'continue',
   username: 'username',
   captcha: 'captcha',
+  refresh_captcha: 'refresh captcha',
   change_language_question:
     'changing language will reload application, continue?',
   music_playback_quality: 'playback quality',
