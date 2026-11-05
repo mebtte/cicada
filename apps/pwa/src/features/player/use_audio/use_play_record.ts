@@ -23,7 +23,7 @@ function bucketPercent(percent: number) {
 }
 
 interface ActivePlayRecord {
-  serverOrigin: string;
+  serverBaseURL: string;
   userId: string;
   clientRecordId: string;
   musicId: string;
@@ -89,7 +89,7 @@ function createActivePlayRecord({
   queueMusic: QueueMusic;
 }): ActivePlayRecord {
   return {
-    serverOrigin: auth.serverOrigin,
+    serverBaseURL: auth.serverBaseURL,
     userId: auth.userId,
     clientRecordId: createClientRecordId(queueMusic),
     musicId: queueMusic.id,
@@ -106,7 +106,7 @@ function createQueueItem(
 ): PlayRecordUploadQueueItem {
   syncActiveRecordProgress(audio, activeRecord);
   return {
-    serverOrigin: activeRecord.serverOrigin,
+    serverBaseURL: activeRecord.serverBaseURL,
     userId: activeRecord.userId,
     clientRecordId: activeRecord.clientRecordId,
     musicId: activeRecord.musicId,

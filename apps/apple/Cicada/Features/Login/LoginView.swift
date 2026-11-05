@@ -21,7 +21,7 @@ struct LoginView: View {
                         Text(server.version)
                             .foregroundStyle(.secondary)
                     }
-                    Text(server.origin)
+                    Text(server.baseURL)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
 
@@ -106,7 +106,7 @@ struct LoginView: View {
             }
         }
         .navigationTitle("Sign In")
-        .task(id: store.selectedServerOrigin) {
+        .task(id: store.selectedServerBaseURL) {
             await loginStore.loadCaptcha(server: store.selectedServer)
         }
         .alert(

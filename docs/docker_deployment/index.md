@@ -41,6 +41,37 @@ docker compose up -d
 
 Open `http://localhost:8000` after the container starts.
 
+## Deploy Under a Subpath
+
+To share a domain with other applications, pass the mount path in `command`:
+
+```yaml
+command: ["start", "--scratch", "/scratch", "--base-path", "/cicada"]
+```
+
+The same image now serves its PWA, API, assets and documentation under
+`/cicada`. Open `https://example.com/cicada/`, and use
+`https://example.com/cicada` as the server address in clients. Nested mount
+paths such as `/apps/music` are also supported.
+
+Configure the reverse proxy to preserve the path when forwarding requests.
+For example, with Nginx:
+
+```nginx
+location = /cicada {
+    return 308 /cicada/$is_args$args;
+}
+
+location /cicada/ {
+    proxy_pass http://127.0.0.1:8000;
+}
+```
+
+The `proxy_pass` URL has no trailing slash, so `/cicada/api/...` reaches Cicada
+with its prefix intact. TLS terminates at the reverse proxy; HTTPS enables PWA
+installation and offline caching. No frontend rebuild is needed when choosing
+a different mount path. Omitting `--base-path` keeps the root deployment.
+
 ## First Login
 
 On the first startup, Cicada creates a default admin user and prints the

@@ -27,6 +27,7 @@ var (
 	startData             string
 	startScratch          string
 	startPort             int
+	startBasePath         string
 	startImageFileMaxSize string
 	startAudioFileMaxSize string
 	startVideoFileMaxSize string
@@ -45,6 +46,7 @@ func init() {
 	startCmd.Flags().StringVar(&startData, "data", "", "Data directory, defaults to <exe_dir>/cicada_data (env: CICADA_DATA)")
 	startCmd.Flags().StringVar(&startScratch, "scratch", "", "Working directory for embedded tools, caches, partial uploads and logs (default <data>/scratch; relative to the working directory)")
 	startCmd.Flags().IntVar(&startPort, "port", 0, "HTTP listen port (env: CICADA_PORT, default 8000)")
+	startCmd.Flags().StringVar(&startBasePath, "base-path", "", "HTTP mount path, for example /cicada (default /)")
 	startCmd.Flags().StringVar(&startImageFileMaxSize, "image-file-max-size", "", "Maximum image file upload size, supports b/kb/mb/gb suffixes (env: CICADA_IMAGE_FILE_MAX_SIZE, default 5mb)")
 	startCmd.Flags().StringVar(&startAudioFileMaxSize, "audio-file-max-size", "", "Maximum audio file upload size, supports b/kb/mb/gb suffixes (env: CICADA_AUDIO_FILE_MAX_SIZE, default 200mb)")
 	startCmd.Flags().StringVar(&startVideoFileMaxSize, "video-file-max-size", "", "Maximum video file upload size, supports b/kb/mb/gb suffixes (env: CICADA_VIDEO_FILE_MAX_SIZE, default 1gb)")
@@ -52,6 +54,10 @@ func init() {
 }
 
 func runStart(cmd *cobra.Command, args []string) error {
+	basePath, err := config.ParseBasePath(startBasePath)
+	if err != nil {
+		return fmt.Errorf("parse base path: %w", err)
+	}
 	musicTranscode, err := config.ParseMusicTranscodeMode(startMusicTranscode)
 	if err != nil {
 		return err
@@ -101,6 +107,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 		Data:             data,
 		Scratch:          scratch,
 		Port:             port,
+		BasePath:         basePath,
 		ImageFileMaxSize: imageFileMaxSize,
 		AudioFileMaxSize: audioFileMaxSize,
 		VideoFileMaxSize: videoFileMaxSize,
@@ -122,6 +129,7 @@ func runStart(cmd *cobra.Command, args []string) error {
 	fmt.Printf("mode: %s\n", cfg.Mode)
 	fmt.Printf("musicTranscode: %s\n", cfg.MusicTranscode)
 	fmt.Printf("port: %d\n", cfg.Port)
+	fmt.Printf("basePath: %s\n", cfg.BasePath+"/")
 	fmt.Printf("imageFileMaxSize: %d\n", cfg.ImageFileMaxSize)
 	fmt.Printf("audioFileMaxSize: %d\n", cfg.AudioFileMaxSize)
 	fmt.Printf("videoFileMaxSize: %d\n", cfg.VideoFileMaxSize)

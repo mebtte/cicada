@@ -188,12 +188,11 @@ const zhHans: {
   shared_user: '共享用户',
   username_is_invalid: '非法的用户名',
   invitation_has_been_sent: '邀请已发送',
-  origin: '服务器地址',
-  add_origin: '添加服务器',
-  empty_origin_warning: '请输入服务器地址',
-  origin_is_invalid: '服务器地址格式不正确',
-  origin_protocol_is_invalid: '服务器地址必须以 http:// 或 https:// 开头',
-  origin_mixed_content_warning:
+  add_server: '添加服务器',
+  empty_server_address_warning: '请输入服务器地址',
+  server_address_is_invalid: '服务器地址格式不正确',
+  server_address_protocol_is_invalid: '服务器地址必须以 http:// 或 https:// 开头',
+  server_address_mixed_content_warning:
     'HTTPS PWA 只能连接 HTTPS 服务器, localhost 除外',
   failed_to_get_server_metadata: '无法连接到当前服务器',
   server_major_version_mismatch:
@@ -268,8 +267,8 @@ const zhHans: {
   failed_to_get_musicbill_list: '获取乐单列表失败',
   no_music_artist_warning: '该艺人暂未收录音乐',
   manage: '管理',
-  manage_origins: '服务器地址管理',
-  delete_origin_question: '确定删除该服务器地址以及已登录用户吗?',
+  manage_servers: '服务器地址管理',
+  delete_server_question: '确定删除该服务器地址以及已登录用户吗?',
   sort_musicbill: '乐单排序',
   reload_musicbill_list: '重新加载乐单',
   collect_musicbill: '收藏乐单',

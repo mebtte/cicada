@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03F39871A6CA11887C0BD54D /* ServerURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5741912FF8898D9AEE9E815 /* ServerURL.swift */; };
 		0971B6785F612465DAC7E5BD /* CaptchaImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC82AC368AC0AD4A87C72665 /* CaptchaImageView.swift */; };
+		0A46BB2BD764AC8C5F358F12 /* ServerURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6147A5B6282A610C1A6C6D55 /* ServerURLTests.swift */; };
 		0F984FDDD69B564E0230A4CB /* CicadaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B910A3665B4DDA99878FF71 /* CicadaApp.swift */; };
 		112C703AE04F465FA9762C56 /* PlayerExplorationRadioViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC72DC5FD4E50276A92E4654 /* PlayerExplorationRadioViews.swift */; };
 		1CD8C8775EFCD83973DB933B /* AudioPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01204AADF1F4582CCE6A10EA /* AudioPlayerController.swift */; };
@@ -70,6 +72,7 @@
 		50DB83045806185AB692E010 /* CicadaAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CicadaAPIClient.swift; sourceTree = "<group>"; };
 		51B5EF6368C0FEEE5E53E431 /* PlayerAccountViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerAccountViews.swift; sourceTree = "<group>"; };
 		51CB5BD527128393183232E7 /* ServerMetadataClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMetadataClient.swift; sourceTree = "<group>"; };
+		6147A5B6282A610C1A6C6D55 /* ServerURLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerURLTests.swift; sourceTree = "<group>"; };
 		6DBB7D56DD8812C26BA79DD4 /* ServerSetupStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupStoreTests.swift; sourceTree = "<group>"; };
 		7067CA4929E277FCFCE50DDA /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		737D4E4B35286C69006237ED /* PlayerMusicbillNameSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerMusicbillNameSheet.swift; sourceTree = "<group>"; };
@@ -87,6 +90,7 @@
 		C0E159272B8453578EF7343C /* AppNavigationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigationStore.swift; sourceTree = "<group>"; };
 		C55AE864A81F35D85018195F /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		C9A15DAAA9D87410AC3E70B9 /* ServerSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSetupView.swift; sourceTree = "<group>"; };
+		D5741912FF8898D9AEE9E815 /* ServerURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerURL.swift; sourceTree = "<group>"; };
 		DFA29737AD4D244F48D114F8 /* APIModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIModels.swift; sourceTree = "<group>"; };
 		E1670EB172F3C2EDCDEFC845 /* ArtworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtworkView.swift; sourceTree = "<group>"; };
 		E6CCF322654991CDF520E710 /* PlayerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStore.swift; sourceTree = "<group>"; };
@@ -124,6 +128,7 @@
 				50DB83045806185AB692E010 /* CicadaAPIClient.swift */,
 				37B42BC74FFEB76515CE2B3E /* OfflineCacheManager.swift */,
 				51CB5BD527128393183232E7 /* ServerMetadataClient.swift */,
+				D5741912FF8898D9AEE9E815 /* ServerURL.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -191,6 +196,7 @@
 			children = (
 				BBFF48282943C43077475A76 /* ServerRecordTests.swift */,
 				6DBB7D56DD8812C26BA79DD4 /* ServerSetupStoreTests.swift */,
+				6147A5B6282A610C1A6C6D55 /* ServerURLTests.swift */,
 			);
 			path = CicadaTests;
 			sourceTree = "<group>";
@@ -396,6 +402,7 @@
 				BA878239D0B590108F8B4AA4 /* ServerRecord.swift in Sources */,
 				9941AEA5E64BF322A1E85221 /* ServerSetupStore.swift in Sources */,
 				DAB7FB034762D499332DF78A /* ServerSetupView.swift in Sources */,
+				03F39871A6CA11887C0BD54D /* ServerURL.swift in Sources */,
 				B30F51263A6F4D6D4707BA71 /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -406,6 +413,7 @@
 			files = (
 				4C9130DBF7664AE42E680D69 /* ServerRecordTests.swift in Sources */,
 				42A5CBE405310DBB5D3B40DF /* ServerSetupStoreTests.swift in Sources */,
+				0A46BB2BD764AC8C5F358F12 /* ServerURLTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

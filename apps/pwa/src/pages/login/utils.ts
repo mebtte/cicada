@@ -1,13 +1,17 @@
 import { t } from '@/i18n';
+import {
+  normalizeServerBaseURL,
+  ServerURLValidationError,
+} from '@/utils/server_url';
 
-type NormalizeServerOriginResult =
+type NormalizeServerBaseURLResult =
   | {
       ok: true;
-      origin: string;
+      baseURL: string;
     }
   | {
       ok: false;
-      origin: string;
+      baseURL: string;
       error: string;
     };
 
@@ -23,46 +27,26 @@ function isLocalServerHost(hostname: string) {
   );
 }
 
-export function getServerOriginKey(origin: string) {
-  const value = origin.trim();
+export function normalizeServerBaseURLInput(
+  baseURL: string,
+): NormalizeServerBaseURLResult {
+  const value = baseURL.trim();
+  let normalized: string;
   try {
-    return new URL(value).origin;
-  } catch {
-    return value;
-  }
-}
-
-export function normalizeServerOriginInput(
-  origin: string,
-): NormalizeServerOriginResult {
-  const value = origin.trim();
-  if (!value) {
+    normalized = normalizeServerBaseURL(value);
+  } catch (error) {
     return {
       ok: false,
-      origin: value,
-      error: t('empty_origin_warning'),
+      baseURL: value,
+      error:
+        error instanceof ServerURLValidationError && error.reason === 'empty'
+          ? t('empty_server_address_warning')
+          : error instanceof ServerURLValidationError && error.reason === 'protocol'
+            ? t('server_address_protocol_is_invalid')
+            : t('server_address_is_invalid'),
     };
   }
-
-  let url: URL;
-  try {
-    url = new URL(value);
-  } catch {
-    return {
-      ok: false,
-      origin: value,
-      error: t('origin_is_invalid'),
-    };
-  }
-
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') {
-    return {
-      ok: false,
-      origin: value,
-      error: t('origin_protocol_is_invalid'),
-    };
-  }
-
+  const url = new URL(normalized);
   if (
     globalThis.location?.protocol === 'https:' &&
     url.protocol === 'http:' &&
@@ -70,14 +54,14 @@ export function normalizeServerOriginInput(
   ) {
     return {
       ok: false,
-      origin: value,
-      error: t('origin_mixed_content_warning'),
+      baseURL: value,
+      error: t('server_address_mixed_content_warning'),
     };
   }
 
   return {
     ok: true,
-    origin: url.origin,
+    baseURL: normalized,
   };
 }
 

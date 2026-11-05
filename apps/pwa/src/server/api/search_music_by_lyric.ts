@@ -1,5 +1,5 @@
 import { MusicType } from '@/constants/music';
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 type Response = {
@@ -62,9 +62,9 @@ async function searchMusicByLyric({
     ...data,
     musicList: data.musicList.map((m) => ({
       ...m,
-      asset: prefixServerOrigin(m.asset),
-      cover: prefixServerOrigin(m.cover),
-      coverThumbnail: prefixServerOrigin(m.coverThumbnail ?? ''),
+      asset: resolveServerURL(m.asset),
+      cover: resolveServerURL(m.cover),
+      coverThumbnail: resolveServerURL(m.coverThumbnail ?? ''),
       lyricists: m.lyricists ?? [],
       composers: m.composers ?? [],
       lyrics: m.lyrics ?? [],

@@ -1,4 +1,4 @@
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 type ArtistPhoto = {
@@ -51,8 +51,8 @@ async function searchArtist({
       musicCount: artist.musicCount ?? 0,
       photos: (artist.photos ?? []).map((photo) => ({
         ...photo,
-        asset: prefixServerOrigin(photo.asset),
-        thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
+        asset: resolveServerURL(photo.asset),
+        thumbnail: resolveServerURL(photo.thumbnail ?? ''),
       })),
     })),
   };

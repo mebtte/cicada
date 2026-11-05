@@ -1,5 +1,7 @@
-export enum CacheName {
-  API = 'api-v2',
-  ASSET = 'asset',
-  ASSET_MEDIA = 'asset_media-v2',
-}
+import { APP_NAMESPACE } from './app';
+
+export const CacheName = {
+  API: `${APP_NAMESPACE}:api`,
+  ASSET: `${APP_NAMESPACE}:asset`,
+  ASSET_MEDIA: `${APP_NAMESPACE}:asset-media`,
+} as const;

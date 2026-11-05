@@ -22,6 +22,33 @@ cd apps/cli
 go run . --help
 ```
 
+## HTTP Base Path
+
+Use `--base-path` to mount the entire service below a URL path:
+
+```sh
+cicada start --base-path /cicada
+```
+
+Open `http://localhost:8000/cicada/`. The PWA, API, music and image assets,
+API documentation, and Storybook all use the prefix. For example, metadata is
+at `/cicada/api/base/metadata`, documentation at `/cicada/apidoc`, and Storybook
+at `/cicada/storybook/`. A request to `/cicada` redirects to `/cicada/` and
+retains its query string. Paths outside the prefix return 404.
+
+The default is `/`, which retains root deployment. A trailing slash is removed
+from configured prefixes, and nested paths such as `/apps/music` are supported.
+Segments may contain ASCII letters, digits, `-`, `.`, `_`, and `~`; empty,
+`.` and `..` segments, escaped characters, query strings, and fragments are
+rejected before startup. There is no corresponding environment variable.
+The effective base path is printed on startup.
+
+Configure a reverse proxy to preserve the prefix when forwarding requests to
+Cicada. For this example, forward `/cicada/...` as `/cicada/...` to port 8000.
+Enter the complete service address, including `/cicada`, in clients. Assets
+returned by the API use service-relative paths such as `/asset/music/file.mp3`;
+clients append those paths to the complete service address.
+
 ## Scratch Directory
 
 `cicada start --scratch <path>` places generated and temporary files outside

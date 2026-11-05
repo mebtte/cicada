@@ -1,13 +1,16 @@
 package apidoc
 
 import (
+	"cicada/internal/config"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func servePage(c *gin.Context) {
-	c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(docsPageHTML))
+	page := strings.ReplaceAll(docsPageHTML, "/apidoc/openapi.json", config.Get().BasePath+"/apidoc/openapi.json")
+	c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(page))
 }
 
 const docsPageHTML = `<!doctype html>

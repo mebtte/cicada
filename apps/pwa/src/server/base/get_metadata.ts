@@ -3,6 +3,7 @@ import ErrorWithCode from '@/utils/error_with_code';
 import { t } from '@/i18n';
 import timeout from '@/utils/timeout';
 import { getCommonParams } from '..';
+import { buildServerURL } from '@/utils/server_url';
 
 interface Response {
   version: string;
@@ -14,9 +15,9 @@ interface Response {
 
 const METADATA_TIMEOUT_MS = 10 * 1000;
 
-async function getMetadata(origin: string) {
+async function getMetadata(baseURL: string) {
   const commonParams = getCommonParams();
-  const url = `${origin}/api/base/metadata?${Object.keys(commonParams)
+  const url = `${buildServerURL(baseURL, '/api/base/metadata')}?${Object.keys(commonParams)
     .map((key) => `${key}=${commonParams[key]}`)
     .join('&')}`;
 

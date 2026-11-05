@@ -13,6 +13,7 @@ export default defineConfig(({ command }) => {
   const version = resolveVersion({ command });
 
   return {
+    base: './',
     publicDir: STATIC_DIR,
     server: {
       port: 8001,
@@ -35,6 +36,7 @@ export default defineConfig(({ command }) => {
       react(),
       withSW &&
         VitePWA({
+          injectRegister: command === 'build' ? false : 'auto',
           strategies: 'injectManifest',
           srcDir: 'src',
           filename: 'service_worker.ts',

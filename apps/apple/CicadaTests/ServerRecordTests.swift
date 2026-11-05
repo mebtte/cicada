@@ -43,7 +43,7 @@ private func makeServer(
         imageFileMaxSize: nil,
         audioFileMaxSize: nil,
         videoFileMaxSize: nil,
-        origin: "https://music.local",
+        baseURL: "https://music.local",
         users: users,
         selectedUserID: selectedUserID
     )

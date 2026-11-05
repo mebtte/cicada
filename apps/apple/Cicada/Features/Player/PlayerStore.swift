@@ -137,7 +137,7 @@ final class PlayerStore: ObservableObject {
     private var radioFetchTask: Task<Void, Never>?
 
     func configure(server: ServerRecord, user: ServerUserRecord) {
-        let nextAuthKey = "\(server.origin)|\(user.id)|\(user.token)"
+        let nextAuthKey = "\(server.baseURL)|\(user.id)|\(user.token)"
         guard authKey != nextAuthKey else { return }
 
         let client = CicadaAPIClient(server: server, user: user)

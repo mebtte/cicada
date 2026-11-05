@@ -1,6 +1,7 @@
 import { ExceptionCode } from '@/constants/exception';
 import { AssetType } from '@/constants/asset';
 import { HEADER_TOKEN } from '@/constants/api';
+import { buildServerURL } from '@/utils/server_url';
 import {
   getSelectedServer,
   getSelectedUser,
@@ -79,7 +80,7 @@ interface CompleteResponse {
 
 const DEFAULT_TIMEOUT = 60 * 1000;
 
-function getOriginAndHeaders() {
+function getBaseURLAndHeaders() {
   const selectedServer = getSelectedServer(useServer.getState());
   if (!selectedServer) {
     throw new ErrorWithCode(
@@ -104,7 +105,7 @@ function getOriginAndHeaders() {
     );
   }
   return {
-    origin: selectedServer.origin,
+    baseURL: selectedServer.baseURL,
     token: selectedUser.token,
   };
 }
@@ -126,13 +127,13 @@ function withQuery(path: string) {
 }
 
 async function jsonRequest<T>(
-  origin: string,
+  baseURL: string,
   token: string,
   path: string,
   init: { method: string; body?: BodyInit | null },
   signal?: AbortSignal,
 ): Promise<T> {
-  const response = await window.fetch(`${origin}${withQuery(path)}`, {
+  const response = await window.fetch(buildServerURL(baseURL, withQuery(path)), {
     method: init.method,
     headers: {
       'Content-Type': 'application/json',
@@ -193,7 +194,7 @@ export async function hashFile(
 }
 
 function putChunk(
-  origin: string,
+  baseURL: string,
   token: string,
   uploadId: string,
   chunk: Blob,
@@ -207,7 +208,7 @@ function putChunk(
     const xhr = new XMLHttpRequest();
     xhr.open(
       'PUT',
-      `${origin}${withQuery(`/api/common/asset/upload/${uploadId}`)}`,
+      buildServerURL(baseURL, withQuery(`/api/common/asset/upload/${uploadId}`)),
       true,
     );
     xhr.setRequestHeader(
@@ -336,11 +337,11 @@ async function uploadAssetChunked(
   onPhase?.('hashing');
   const fileHash = resumeMeta?.fileHash ?? (await hashFile(file, signal));
 
-  const { origin, token } = getOriginAndHeaders();
+  const { baseURL, token } = getBaseURLAndHeaders();
 
   onPhase?.('initializing');
   const initRes = await jsonRequest<InitResponse>(
-    origin,
+    baseURL,
     token,
     '/api/common/asset/upload',
     {
@@ -382,7 +383,7 @@ async function uploadAssetChunked(
     while (attempt < PUT_RETRY_LIMIT) {
       try {
         const res = await putChunk(
-          origin,
+          baseURL,
           token,
           uploadId,
           chunk,
@@ -412,7 +413,7 @@ async function uploadAssetChunked(
 
   onPhase?.('completing');
   const completeRes = await jsonRequest<CompleteResponse>(
-    origin,
+    baseURL,
     token,
     `/api/common/asset/upload/${uploadId}/complete`,
     { method: 'POST' },

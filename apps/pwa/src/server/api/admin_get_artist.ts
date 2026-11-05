@@ -1,4 +1,4 @@
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 interface Response {
@@ -29,8 +29,8 @@ async function adminGetArtist(id: string): Promise<Response> {
     searchKeywords: artist.searchKeywords ?? '',
     photos: (artist.photos ?? []).map((photo) => ({
       ...photo,
-      asset: prefixServerOrigin(photo.asset),
-      thumbnail: prefixServerOrigin(photo.thumbnail ?? ''),
+      asset: resolveServerURL(photo.asset),
+      thumbnail: resolveServerURL(photo.thumbnail ?? ''),
     })),
   };
 }

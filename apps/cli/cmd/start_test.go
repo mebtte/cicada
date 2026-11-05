@@ -2,8 +2,18 @@ package cmd
 
 import (
 	"cicada/internal/config"
+	"strings"
 	"testing"
 )
+
+func TestRunStartRejectsInvalidBasePathBeforeInitialization(t *testing.T) {
+	previous := startBasePath
+	t.Cleanup(func() { startBasePath = previous })
+	startBasePath = "/music/../cicada"
+	if err := runStart(nil, nil); err == nil || !strings.Contains(err.Error(), "base path") {
+		t.Fatalf("runStart invalid base path error = %v", err)
+	}
+}
 
 func TestParseStartFileMaxSizeUsesFlagBeforeEnv(t *testing.T) {
 	t.Setenv(config.AudioFileMaxSizeEnvVar, "300mb")

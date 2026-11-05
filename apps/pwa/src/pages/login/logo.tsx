@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import styled from 'styled-components';
 import { t } from '@/i18n';
+import { resolveAppURL } from '@/constants/app';
 
 const Style = styled.div`
   display: flex;
@@ -21,7 +22,7 @@ function Logo() {
     <Style>
       <img
         className="logo"
-        src="/app_logo_v1.png"
+        src={resolveAppURL('app_logo_v1.png')}
         alt={t('logo')}
         crossOrigin="anonymous"
       />

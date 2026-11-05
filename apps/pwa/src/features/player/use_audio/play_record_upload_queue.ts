@@ -18,7 +18,7 @@ const MAX_RETRY_DELAY = 60 * 1000;
 const MIN_FLUSH_INTERVAL = 60 * 1000;
 
 export interface PlayRecordUploadAuth {
-  serverOrigin: string;
+  serverBaseURL: string;
   userId: string;
 }
 
@@ -59,14 +59,14 @@ function getCurrentMusicPlayRecordUploadAuth(): PlayRecordUploadAuth | null {
     return null;
   }
   return {
-    serverOrigin: selectedServer.origin,
+    serverBaseURL: selectedServer.baseURL,
     userId: selectedUser.id,
   };
 }
 
 function getCurrentAuthKey() {
   const auth = getCurrentMusicPlayRecordUploadAuth();
-  return auth ? `${auth.serverOrigin}\n${auth.userId}` : '';
+  return auth ? `${auth.serverBaseURL}\n${auth.userId}` : '';
 }
 
 async function getQueue() {
@@ -74,7 +74,7 @@ async function getQueue() {
 }
 
 function getRecordKey(record: PlayRecordUploadQueueItem) {
-  return `${record.serverOrigin}\n${record.userId}\n${record.clientRecordId}`;
+  return `${record.serverBaseURL}\n${record.userId}\n${record.clientRecordId}`;
 }
 
 function mergeRecord(
@@ -133,7 +133,7 @@ function isCurrentAuthRecord(
   auth: PlayRecordUploadAuth,
 ) {
   return (
-    record.serverOrigin === auth.serverOrigin && record.userId === auth.userId
+    record.serverBaseURL === auth.serverBaseURL && record.userId === auth.userId
   );
 }
 

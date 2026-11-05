@@ -3,9 +3,11 @@
 package pwa
 
 import (
+	"cicada/internal/config"
 	"embed"
 	"io/fs"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,10 +23,16 @@ func Register(r *gin.Engine) {
 	if err != nil {
 		panic(err)
 	}
-	fileServer := http.FileServer(http.FS(sub))
+	basePath := config.Get().BasePath
+	fileServer := http.StripPrefix(basePath, http.FileServer(http.FS(sub)))
 
 	r.NoRoute(func(c *gin.Context) {
 		path := c.Request.URL.Path
+		if (c.Request.Method != http.MethodGet && c.Request.Method != http.MethodHead) || !strings.HasPrefix(path, basePath+"/") {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+		path = strings.TrimPrefix(path, basePath)
 		// 根路径交给 FileServer 返回 index.html
 		if path == "/" {
 			fileServer.ServeHTTP(c.Writer, c.Request)

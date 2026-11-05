@@ -85,7 +85,7 @@ function ManagePage({ onClose }: { onClose: () => void }) {
         >
           <ArrowBack />
         </BackButton>
-        <Title>{t('manage_origins')}</Title>
+        <Title>{t('manage_servers')}</Title>
       </Header>
       <ScrollArea>
         <ManageContent onEmpty={onClose} />

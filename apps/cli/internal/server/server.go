@@ -6,6 +6,8 @@ import (
 	"cicada/internal/apidoc"
 	"cicada/internal/config"
 	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,15 +25,38 @@ func NewServer() *gin.Engine {
 	}
 	r.Use(middleware.AccessLogger())
 	r.Use(middleware.Recovery())
+	basePath := config.Get().BasePath
+	// Match a whole path segment so /cicada-other cannot enter /cicada.
+	r.Use(func(c *gin.Context) {
+		path := c.Request.URL.Path
+		if basePath == "" {
+			return
+		}
+		if path != basePath && !strings.HasPrefix(path, basePath+"/") {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+		// Keep this in middleware: declaring a /cicada route alone makes Gin
+		// redirect /cicada/ back to it before the static NoRoute handler runs.
+		if path == basePath && (c.Request.Method == http.MethodGet || c.Request.Method == http.MethodHead) {
+			location := basePath + "/"
+			if c.Request.URL.RawQuery != "" {
+				location += "?" + c.Request.URL.RawQuery
+			}
+			c.Redirect(http.StatusPermanentRedirect, location)
+			c.Abort()
+		}
+	})
 	r.Use(corsMiddleware())
-	apidoc.Register(r)
+	mount := r.Group(basePath)
+	apidoc.Register(mount)
 
 	// Asset serving (no auth)
 	for _, at := range config.AllAssetTypes {
 		path := fmt.Sprintf("/asset/%s/:filename", at)
 		assetHandler := handler.ServeAsset(at)
-		r.GET(path, assetHandler)
-		r.HEAD(path, assetHandler)
+		mount.GET(path, assetHandler)
+		mount.HEAD(path, assetHandler)
 	}
 
 	// Per-route auth: each handler explicitly declares the middleware it needs.
@@ -44,7 +69,7 @@ func NewServer() *gin.Engine {
 	auth := middleware.Auth
 	admin := middleware.Admin
 
-	api := r.Group("/api")
+	api := mount.Group("/api")
 	base := api.Group("/base")
 	common := api.Group("/common")
 	adminAPI := api.Group("/admin")

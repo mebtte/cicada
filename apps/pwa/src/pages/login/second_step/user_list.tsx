@@ -129,7 +129,7 @@ function UserList({ redirect }: { redirect: () => void }) {
                 onClick={() => {
                   useServer.setState((server) => ({
                     serverList: server.serverList.map((s) =>
-                      s.origin === selectedServer?.origin
+                      s.baseURL === selectedServer?.baseURL
                         ? { ...s, selectedUserId: user.id }
                         : s,
                     ),

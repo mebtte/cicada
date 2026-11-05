@@ -27,7 +27,7 @@ type operation struct {
 }
 
 // Register mounts the OpenAPI spec and the built-in documentation page.
-func Register(r *gin.Engine) {
+func Register(r gin.IRoutes) {
 	r.GET("/apidoc", servePage)
 	r.GET("/apidoc/", servePage)
 	r.GET("/apidoc/openapi.json", func(c *gin.Context) {
@@ -45,13 +45,15 @@ func Spec() map[string]any {
 
 	return map[string]any{
 		"openapi": "3.0.3",
+		"servers": []map[string]any{{"url": specServerURL()}},
 		"info": map[string]any{
 			"title":   "Cicada API",
 			"version": appVersion,
 			"description": "Cicada server API documentation.\n\n" +
 				"Except for static asset downloads, business endpoints usually return HTTP 200 for both success and failure.\n" +
 				"Use the `code` field in the response body to determine success: `success` means success; any other value is a business error code.\n\n" +
-				"API clients may send the optional `__client_language` query parameter with `en`, `zh-Hans`, or `zh-Hant`. If omitted or unsupported, the server uses English.",
+				"API clients may send the optional `__client_language` query parameter with `en`, `zh-Hans`, or `zh-Hant`. If omitted or unsupported, the server uses English.\n\n" +
+				"Asset paths in responses are relative to the Cicada service root. Append them to the complete server base URL, including its mount path.",
 		},
 		"tags": []map[string]any{
 			{"name": "Docs", "description": "Documentation and spec output"},
@@ -79,6 +81,13 @@ func Spec() map[string]any {
 			},
 		},
 	}
+}
+
+func specServerURL() string {
+	if path := config.Get().BasePath; path != "" {
+		return path
+	}
+	return "/"
 }
 
 func authenticationGuide() map[string]any {

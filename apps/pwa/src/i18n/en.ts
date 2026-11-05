@@ -190,12 +190,11 @@ export default {
   shared_user: 'shared user',
   username_is_invalid: 'username is invalid',
   invitation_has_been_sent: 'invitation has been sent',
-  origin: 'server address',
-  add_origin: 'add server address',
-  empty_origin_warning: 'please enter the server address',
-  origin_is_invalid: 'server address is invalid',
-  origin_protocol_is_invalid: 'server address must start with http:// or https://',
-  origin_mixed_content_warning:
+  add_server: 'add server address',
+  empty_server_address_warning: 'please enter the server address',
+  server_address_is_invalid: 'server address is invalid',
+  server_address_protocol_is_invalid: 'server address must start with http:// or https://',
+  server_address_mixed_content_warning:
     'HTTPS PWA can only connect to HTTPS servers, except localhost',
   failed_to_get_server_metadata: 'failed to connect this server',
   server_major_version_mismatch:
@@ -273,8 +272,8 @@ export default {
   failed_to_get_musicbill_list: 'failed to get musicbill list',
   no_music_artist_warning: 'this artist has no music',
   manage: 'manage',
-  manage_origins: 'manage server addresses',
-  delete_origin_question:
+  manage_servers: 'manage server addresses',
+  delete_server_question:
     'are you sure to delete this server address and users within?',
   sort_musicbill: 'sort musicbill',
   reload_musicbill_list: 'reload musicbill list',

@@ -85,7 +85,7 @@ export const ServerCard = styled.div<{
       }
     }
 
-    > .origin {
+    > .server-address {
       font-family: ${FONT};
       font-size: ${CSSVariable.TEXT_SIZE_SMALL};
       font-weight: 600;
@@ -218,7 +218,7 @@ export function UserAvatars({
 export function ServerCardItem({
   hostname,
   version,
-  origin,
+  baseURL,
   users,
   selectedUserId,
   loading = false,
@@ -228,7 +228,7 @@ export function ServerCardItem({
 }: {
   hostname: string;
   version?: string;
-  origin: string;
+  baseURL: string;
   users: User[];
   selectedUserId?: string;
   loading?: boolean;
@@ -250,7 +250,7 @@ export function ServerCardItem({
           <span className="hostname">{hostname}</span>
           {version && <span className="server-version">{version}</span>}
         </span>
-        <span className="origin">{origin}</span>
+        <span className="server-address">{baseURL}</span>
         {users.length > 0 && (
           <div className="users">
             <UserAvatars users={users} selectedUserId={selectedUserId} />

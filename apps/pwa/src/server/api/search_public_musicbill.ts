@@ -1,4 +1,4 @@
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { request } from '..';
 
 type Response = {
@@ -49,11 +49,11 @@ async function searchPublicMusicbill({
       ...mb,
       musicCount: mb.musicCount ?? 0,
       collectionCount: mb.collectionCount ?? 0,
-      cover: prefixServerOrigin(mb.cover),
-      coverThumbnail: prefixServerOrigin(mb.coverThumbnail ?? ''),
+      cover: resolveServerURL(mb.cover),
+      coverThumbnail: resolveServerURL(mb.coverThumbnail ?? ''),
       user: {
         ...mb.user,
-        avatar: prefixServerOrigin(mb.user.avatar),
+        avatar: resolveServerURL(mb.user.avatar),
       },
     })),
   };

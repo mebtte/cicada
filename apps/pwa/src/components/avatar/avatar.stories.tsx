@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Avatar from '.';
+import { resolveAppURL } from '@/constants/app';
 
-// src/static 是 vite 的 publicDir, 资源以根路径托管, 直接引用 URL
-const DefaultCover = '/apple-touch-icon_v1.png';
+// Resolve public assets under the current Storybook mount.
+const DefaultCover = resolveAppURL('apple-touch-icon_v1.png');
 
 const meta = {
   title: 'Basic/Avatar',

@@ -43,7 +43,7 @@ const addProfile = async ({ token, sessionId }: LoginResponse) => {
   const profile = await getProfile(token);
   useServer.setState((server) => ({
     serverList: server.serverList.map((s) =>
-      s.origin === server.selectedServerOrigin
+      s.baseURL === server.selectedServerBaseURL
         ? {
             ...s,
             selectedUserId: profile.id,

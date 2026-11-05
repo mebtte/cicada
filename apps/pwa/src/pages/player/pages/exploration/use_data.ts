@@ -39,14 +39,14 @@ const dataLoading: Data = {
 export default () => {
   const selectedServer = useSelectedServer();
   const user = useUser();
-  const selectedServerOrigin = selectedServer?.origin;
+  const selectedServerBaseURL = selectedServer?.baseURL;
   const userId = user?.id;
   const [data, setData] = useState<Data>(dataLoading);
   const requestIdRef = useRef(0);
   // 仅作为"是否处于已登录会话"的判定; 发现页数据不再做缓存, 每次都直接请求。
   const sessionReady = useMemo(
-    () => Boolean(selectedServerOrigin && userId),
-    [selectedServerOrigin, userId],
+    () => Boolean(selectedServerBaseURL && userId),
+    [selectedServerBaseURL, userId],
   );
   const getData = useCallback(async () => {
     const requestId = requestIdRef.current + 1;

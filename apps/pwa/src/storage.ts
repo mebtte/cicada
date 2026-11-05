@@ -3,6 +3,7 @@ import { Setting } from '@/constants/setting';
 import { MusicType } from '@/constants/music';
 import { ServerState } from './constants/server';
 import { Position } from './constants';
+import { APP_NAMESPACE } from './constants/app';
 
 export interface OfflineMusic {
   id: string;
@@ -45,7 +46,7 @@ const storage = new Storage<
     [Key.OFFLINE_MUSIC]: OfflineMusicMap;
     [Key.STORAGE_PERSISTENCE_REQUESTED]: boolean;
   }
->('app');
+>(`${APP_NAMESPACE}:app`);
 
 // @ts-expect-error: for debug
 window.appStorage = storage;

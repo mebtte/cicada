@@ -1,4 +1,4 @@
-import { prefixServerOrigin } from '@/global_states/server';
+import { resolveServerURL } from '@/global_states/server';
 import { HEADER_TOKEN } from '@/constants/api';
 import { request } from '..';
 
@@ -26,7 +26,7 @@ async function getProfile(token?: string) {
   });
   return {
     ...profile,
-    avatar: prefixServerOrigin(profile.avatar),
+    avatar: resolveServerURL(profile.avatar),
   };
 }
 

@@ -88,7 +88,8 @@ func PartialUploadDir() string   { return filepath.Join(ScratchDir(), "partial_u
 func UpgradeLockPath() string    { return filepath.Join(Get().Data, "upgrade.lock") }
 func UpgradeJournalPath() string { return filepath.Join(Get().Data, "upgrade.journal") }
 
-// AssetPublicURL returns the public HTTP path for a stored asset filename.
+// AssetPublicURL returns a service-relative HTTP path for a stored filename.
+// Clients append it to their complete server base URL, including BasePath.
 func AssetPublicURL(filename string, t AssetType) string {
 	if filename == "" {
 		return ""
