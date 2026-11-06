@@ -191,7 +191,7 @@ export default {
   shared_user: 'shared user',
   username_is_invalid: 'username is invalid',
   invitation_has_been_sent: 'invitation has been sent',
-  add_server: 'add server address',
+  add_server: 'add server',
   empty_server_address_warning: 'please enter the server address',
   server_address_is_invalid: 'server address is invalid',
   server_address_protocol_is_invalid: 'server address must start with http:// or https://',
