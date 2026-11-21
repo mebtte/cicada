@@ -39,6 +39,10 @@ On Windows, use `cicada.exe`:
 
 On the first startup, Cicada creates a default user and prints `username`/`password` to the log. After startup, you can visit cicada on `http://localhost:8000`.
 
+## Contributors
+
+[![Cicada contributors](https://contrib.rocks/image?repo=mebtte/cicada)](https://github.com/mebtte/cicada/graphs/contributors)
+
 ## License
 
 [GPL](./license)
