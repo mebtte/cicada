@@ -3,7 +3,7 @@ name: docker beta.v3
 on:
   push:
     branches:
-      - beta.v3
+      - v3
     paths:
       - '.github/workflows/docker_beta_v3.yaml'
       - 'Makefile'
