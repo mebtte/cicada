@@ -20,9 +20,7 @@ There is an online demo you can visit on [https://cicada.mebtte.com](https://cic
 - Multiple user and support 2FA
 - Support lyricist and composer
 
-## Deploy
-
-> If you use docker, see this [docs](./docs/docker_deployment/index.md).
+## Deployment
 
 Download the archive for your platform from
 [GitHub Releases](https://github.com/mebtte/cicada/releases). Extract and start the server:
@@ -31,17 +29,40 @@ Download the archive for your platform from
 ./cicada start --data /path/to/cicada_data --port 8000
 ```
 
-On Windows, use `cicada.exe`:
+On the first startup, Cicada creates a default user and prints `username`/`password` to the log. After startup, you can visit cicada on `http://localhost:8000`.
 
-```powershell
-.\cicada.exe start --data C:\path\to\cicada_data --port 8000
+### Docker CLI
+
+```sh
+docker run -d \
+  --name cicada \
+  --restart unless-stopped \
+  -p 8000:8000 \
+  -v ./data:/data \
+  mebtte/cicada:v3 start --data /data
 ```
 
-On the first startup, Cicada creates a default user and prints `username`/`password` to the log. After startup, you can visit cicada on `http://localhost:8000`.
+### Docker Compose
+
+```yaml
+services:
+  cicada:
+    image: mebtte/cicada:v3
+    container_name: cicada
+    restart: unless-stopped
+    ports:
+      - 8000:8000
+    volumes:
+      - ./data:/data
+    command: ["start", "--data", "/data"]
+```
+
+On the first startup, Cicada creates a default admin user and prints the password to the container log.
 
 ## Usage
 
-```text
+```console
+$ cicada -h
 A multi-user music service for self-hosting.
 
 Usage:
