@@ -39,6 +39,29 @@ On Windows, use `cicada.exe`:
 
 On the first startup, Cicada creates a default user and prints `username`/`password` to the log. After startup, you can visit cicada on `http://localhost:8000`.
 
+## Usage
+
+```text
+A multi-user music service for self-hosting.
+
+Usage:
+  cicada [command]
+
+Available Commands:
+  change-password  Change a user's password
+  completion       Generate the autocompletion script for the specified shell
+  export           Export all music files to a directory
+  export-musicbill Export a musicbill's music to a directory (interactive)
+  help             Help about any command
+  start            Start the cicada server
+
+Flags:
+  -h, --help      help for cicada
+  -v, --version   version for cicada
+
+Use "cicada [command] --help" for more information about a command.
+```
+
 ## Contributors
 
 [![Cicada contributors](https://contrib.rocks/image?repo=mebtte/cicada)](https://github.com/mebtte/cicada/graphs/contributors)
